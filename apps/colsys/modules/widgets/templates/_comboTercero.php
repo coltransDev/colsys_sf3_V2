@@ -8,16 +8,18 @@
 ?>
 
 
-<input type="hidden" name="<?=$name?>" id="<?=$id?>" value="<?=isset($tercero)?$tercero->getCaIdtercero():""?>" >
+<input type="hidden" name="<?=$name?>" id="<?=$id?>" value="<?=isset($tercero)?$tercero->getCaIdtercero():""?>" />
 
 <table border="0">
     <tr>
-        <td>
-            <input type="text" id="<?=$id?>_fld" value="<?=isset($tercero)?$tercero->getCaNombre():""?>" size="60" >
+        <td width="332px">
+            <div  id="<?=$id?>_fld"  ></div>
         </td>
         <td>
-            <?=image_tag("16x16/new.gif", "onClick=nuevoTercero('$tipo', '$id') title='Nuevo consignatario'")." "?>
-            <?=image_tag("16x16/edit.gif", "onClick=editarTercero('$tipo', '$id') id='editar$id' title='Editar consignatario' ".(isset($tercero)&&$tercero->getCaIdtercero()?"style='display:inline'":"style='display:none'" ))."  "?>
+            <?=image_tag("16x16/new.gif", "onClick=nuevoTercero('$tipo', '$id') title='Nuevo $tipo'")." "?>
+            <?=image_tag("16x16/edit.gif", "onClick=editarTercero('$tipo', '$id') id='editar$id' title='Editar $tipo' ".(isset($tercero)&&$tercero->getCaIdtercero()?"style='display:inline'":"style='display:none'" ))."  "?>
+            <?=image_tag("16x16/delete.gif", "onClick=eliminarTercero('$id') id='eliminar$id' title='Eliminar $tipo' ".(isset($tercero)&&$tercero->getCaIdtercero()?"style='display:inline'":"style='display:none'" ))."  "?>
+
          </td>
     </tr>
 </table>
@@ -58,13 +60,17 @@ Ext.onReady(function(){
         width: 320,
         valueNotFoundText: 'No encontrado' ,
 		minChars: 1,
-        hideTrigger:true,
+        //hideTrigger:true,
         tpl: resultTpl,
-        applyTo: '<?=$id?>_fld',
+        
         itemSelector: 'div.search-item',
 	    emptyText:'Escriba el nombre del <?=ucfirst($tipo)?>...',
 	    forceSelection:true,
-		selectOnFocus:true,
+        triggerAction: 'all',
+        renderTo: "<?=$id?>_fld",
+        
+		//selectOnFocus:true,
+        value: '<?=isset($tercero)?$tercero->getCaNombre():""?>',
 
 		onSelect: function(record, index){ // override default onSelect to do redirect
 			if(this.fireEvent('beforeselect', this, record, index) !== false){
@@ -76,7 +82,7 @@ Ext.onReady(function(){
 			document.getElementById("<?=$id?>_fld").value=record.data.nombre;
 			document.getElementById("<?=$id?>").value=record.data.id;
 			document.getElementById("editar<?=$id?>").style.display="inline";
-
+            document.getElementById("eliminar<?=$id?>").style.display="inline";
 
         }
     });
