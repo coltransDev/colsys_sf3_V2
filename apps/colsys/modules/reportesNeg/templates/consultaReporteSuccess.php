@@ -90,6 +90,9 @@
 
 
 <?
+
+
+
 include_component("reportesNeg","infoReporte", array("reporte"=>$reporte));
 
 include_component("reportesNeg","mainPanel", array("reporte"=>$reporte));
@@ -166,12 +169,40 @@ if( $reporte->getCaColmas()=="Sí" || $reporte->getCaTransporte() == Constantes::
     ?>
     }
 
+
+    var importarConceptosFletes = function(){
+        panelFletes.importarConceptosFletes();
+    }
+
+
     <?
     if( $panelConceptosFletes ){
     ?>
         var panelFletes = new PanelConceptosFletes({
             title: 'Conceptos de fletes',
-            tbar: tbarObj
+            tbar: [
+                {
+                    text:'Guardar',
+                    iconCls: 'disk',
+                    scope:this,
+                    handler: guardarCambios
+                }
+                <?
+                if( $reporte->getCaIdproducto() ){
+                ?>
+                ,
+                '-',
+
+                 {
+                    text:'Importar Cotizacion',
+                    iconCls: 'import',
+                    scope:this,
+                    handler: importarConceptosFletes
+                }
+                <?
+                }
+                ?>
+            ]
         });
     <?
     }
@@ -197,7 +228,8 @@ if( $reporte->getCaColmas()=="Sí" || $reporte->getCaTransporte() == Constantes::
 
       var bodyStyle = 'padding: 5px 5px 5px 5px;';
 
-      var mainPanel = new MainPanel({                                                        
+      var mainPanel = new MainPanel({
+                            activeTab: 5,
                             items: [
                                     {contentEl:'trayecto', title: 'Trayecto', bodyStyle: bodyStyle},
                                     {contentEl:'cliente', title: 'Cliente', bodyStyle: bodyStyle},

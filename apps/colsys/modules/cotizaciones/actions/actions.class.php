@@ -1086,6 +1086,8 @@ class cotizacionesActions extends sfActions
         $cotizacion = Doctrine::getTable("Cotizacion")->find( $id );
 
 		$cotProductos = $cotizacion->getCotProductos();
+
+        $modo = $this->getRequestParameter("modo");
 				
 		$this->productos = array();
         
@@ -1225,22 +1227,24 @@ class cotizacionesActions extends sfActions
 				$row['orden']="Y-".utf8_encode($tipoRecargo->getCaRecargo());
 				$this->productos[] = $row;					
 			}
-			
-			//Se envia una fila vacia por cada grupo para agregar una nueva opción  
-			$row = $baseRow;
-			$row['idopcion']="";
-			$row['iditem']="";
-			$row['item']="+";
-			$row['idconcepto']="";
-			$row['valor_tar']="";
-			$row['aplica_tar']="";
-			$row['valor_min']="";
-			$row['aplica_min']="";
-			$row['idmoneda']="";
-			$row['detalles']="";
-			$row['tipo']="concepto";				
-            $row['orden']="Z";			
-			$this->productos[] = $row;
+
+            if( $modo!="consulta" ){
+                //Se envia una fila vacia por cada grupo para agregar una nueva opción
+                $row = $baseRow;
+                $row['idopcion']="";
+                $row['iditem']="";
+                $row['item']="+";
+                $row['idconcepto']="";
+                $row['valor_tar']="";
+                $row['aplica_tar']="";
+                $row['valor_min']="";
+                $row['aplica_min']="";
+                $row['idmoneda']="";
+                $row['detalles']="";
+                $row['tipo']="concepto";
+                $row['orden']="Z";
+                $this->productos[] = $row;
+           }
 			
 		}
 

@@ -15,8 +15,10 @@ $usuarios = $sf_data->getRaw("usuarios");
          <td colspan="3">
            <?
             echo $form['ca_seguro']->renderError();
-            if( $reporte ){
+            if( $reporte && $reporte->getCaSeguro() ){
                 $form->setDefault('ca_seguro', $reporte->getCaSeguro() );
+            }else{
+                $form->setDefault('ca_seguro', "No" );
             }
             echo $form['ca_seguro']->render();
             ?>

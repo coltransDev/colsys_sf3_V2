@@ -277,6 +277,21 @@ class reportesNegComponents extends sfComponents
 
     }
 
+    /*
+     *
+     */
+    public function executeCotizacionWindow()
+	{
+        if( $this->reporte->getCaIdproducto() ){
+            $this->producto = Doctrine::getTable("CotProducto")->find( $this->reporte->getCaIdproducto() );
+            $this->cotizacion = $this->producto->getCotizacion();             
+        }else{
+            $this->producto = null;
+            $this->cotizacion = null;
+           
+        }
+	}
+
 	
 		
 }

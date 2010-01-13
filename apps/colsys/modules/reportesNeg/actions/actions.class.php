@@ -96,11 +96,9 @@ class reportesNegActions extends sfActions
 		$this->reporte = $reporte;
 
         $response = sfContext::getInstance()->getResponse();
-
 		$response->addJavaScript("extExtras/RowExpander",'last');
-        //$response->addJavaScript("tabpane/tabpane",'last');
-        //$response->addStylesheet("tabpane/luna/tab",'last');
-
+		$response->addJavaScript("extExtras/CheckColumn",'last');
+        
 
 
 
@@ -136,7 +134,7 @@ class reportesNegActions extends sfActions
 
 
         
-        //print_r( $_POST );
+        
         
         
 		if( $this->getRequestParameter("id") ){
@@ -212,9 +210,11 @@ class reportesNegActions extends sfActions
             }
             $this->idproveedor = implode("|", $proveedores );
             $bindValues["ca_idproveedor"] = $this->idproveedor;
-            $this->orden_prov = implode("|", $orden_prov );
+            $this->orden_prov = implode("|", $orden_prov );           
+            
             $bindValues["ca_orden_prov"] = $this->orden_prov;
             $this->incoterms = implode("|", $incoterms );
+            $bindValues["ca_incoterms"] = $this->incoterms;
         }else{
             $this->idproveedor = "";
             $this->orden_prov = "";
@@ -222,7 +222,7 @@ class reportesNegActions extends sfActions
         }
 
         $this->idconsignatario = $request->getParameter("idconsignatario");
-        $bindValues["ca_orden_prov"] = $this->idconsignatario;
+        $bindValues["ca_idconsignatario"] = $this->idconsignatario;
         $this->idnotify = $request->getParameter("idnotify");
         $this->idrepresentante = $request->getParameter("idrepresentante");
         $this->idmaster = $request->getParameter("idmaster");
@@ -252,8 +252,8 @@ class reportesNegActions extends sfActions
             $bindValues["ca_idconcliente"] = $request->getParameter("ca_idconcliente");
 
             
-            //$bindValues["ca_idlinea"] = 0;
-
+            
+            
             $form->bind( $bindValues );
 
             //Coloca el Rep. Comercial
@@ -397,7 +397,7 @@ class reportesNegActions extends sfActions
                     }else{
                         $reporte->setCaIdproveedor( null );
                     }
-
+                    
                     if( $this->orden_prov ){
                         $reporte->setCaOrdenProv( $this->orden_prov );
                     }else{
@@ -471,6 +471,19 @@ class reportesNegActions extends sfActions
                 }
 
 
+                if( $bindValues["ca_idcotizacion"] ){
+                    $reporte->setCaIdcotizacion( $bindValues["ca_idcotizacion"] );
+                }else{
+                    $reporte->setCaIdcotizacion( null );
+                }
+
+                if( $bindValues["ca_idproducto"] ){
+                    $reporte->setCaIdproducto( $bindValues["ca_idproducto"] );
+                }else{
+                    $reporte->setCaIdproducto( null );
+                }
+
+                
                 /*
                  *
                  */

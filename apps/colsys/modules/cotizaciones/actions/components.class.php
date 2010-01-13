@@ -51,9 +51,14 @@ class cotizacionesComponents extends sfComponents
 	* Grilla que muestra los trayectos y sus respectivos conceptos
 	* @author: Andres Botero
 	*/
-	public function executeGrillaProductos(){
+	public function executePanelProductos(){
 		$this->aplicacionesAereo = ParametroTable::retrieveByCaso("CU064", null, Constantes::AEREO );
 		$this->aplicacionesMaritimo = ParametroTable::retrieveByCaso("CU064", null, Constantes::MARITIMO );
+
+        if(!isset($this->modo)){
+            $this->modo = "";
+        }
+
 	}
 	
 	/*

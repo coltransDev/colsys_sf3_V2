@@ -11,7 +11,6 @@ $modalidadesAduana = $sf_data->getRaw("modalidadesAduana");
 $bodegas = $sf_data->getRaw("bodegas");
 ?>
 <script language="javascript">
-
     
 
     var traficos = <?=json_encode($traficos)?>;
@@ -355,10 +354,8 @@ include_partial("ventanaTercero", array("reporte"=>$reporte));
 <form action="<?=url_for("reportesNeg/formReporte")?>" method="post">
 <div align="center" class="content">
     <h1>Reportes de Negocio</h1>
-    <br />
-    
-        <?        
-        
+    <br />    
+        <?
 
         echo $form->renderHiddenFields();
 
@@ -369,15 +366,31 @@ include_partial("ventanaTercero", array("reporte"=>$reporte));
         }
 
         ?>
+        <div style="display:none" >
+            <?
+            echo $form['ca_idcotizacion']->renderError();
+            if( $reporte ){
+                $form->setDefault('ca_idcotizacion', $reporte->getCaIdcotizacion() );
+            }
+            echo $form['ca_idcotizacion']->render();
+
+            echo $form['ca_idproducto']->renderError();
+            if( $reporte ){
+                $form->setDefault('ca_idproducto', $reporte->getCaIdproducto() );
+            }
+            echo $form['ca_idproducto']->render();
+            ?>
+
+        </div>
         <table class="tableList alignLeft" width="80%">
             <tr>
-                <th colspan="6">Datos para el reporte</th>
+                <th colspan="8">Datos para el reporte</th>
             </tr>
              <?
             if( $form->hasErrors() || $formAduana->hasErrors() || $formSeguro->hasErrors() || $formExpo->hasErrors() ){
             ?>
             <tr>
-                <td colspan="6">
+                <td colspan="8">
                     <ul class="error_list">
                         <li><div align="center">Hay un error, por favor verifique los datos digitados.</div></li>
                     </ul>
@@ -390,7 +403,7 @@ include_partial("ventanaTercero", array("reporte"=>$reporte));
             if( $form->renderGlobalErrors() || $formExpo->renderGlobalErrors() || $formAduana->renderGlobalErrors() || $formSeguro->renderGlobalErrors()  ){
             ?>
             <tr>
-                <td colspan="6">
+                <td colspan="8">
                     <div align="left">
                         <?=$form->renderGlobalErrors()?>
                         <?=$formExpo->renderGlobalErrors()?>
@@ -403,6 +416,10 @@ include_partial("ventanaTercero", array("reporte"=>$reporte));
             }
             ?>
             <tr>
+                <td width="16%"><b>Cotizaci&oacute;n</b></td>
+                <td width="16%">
+                    <?=include_component("widgets", "comboCotizaciones", array("value"=>$reporte->getCaIdcotizacion() ) )?>
+                </td>
                 <td width="16%"><b>Clase</b></td>
                 <td width="16%">
                     
@@ -441,10 +458,11 @@ include_partial("ventanaTercero", array("reporte"=>$reporte));
                     }
                     ?>
                 </td>
+                
             </tr>
             
             <tr >
-                <td colspan="6">
+                <td colspan="8">
                     <div id="tab-panel"></div>
                     
                 </td>
@@ -454,7 +472,7 @@ include_partial("ventanaTercero", array("reporte"=>$reporte));
 
            
             <tr>
-                <td colspan="6">
+                <td colspan="8">
                     <div align="center">
                         <input type="submit" value="Guardar" class="button" />
                         <?
@@ -546,7 +564,7 @@ include_partial("ventanaTercero", array("reporte"=>$reporte));
      var bodyStyle = 'padding: 5px 5px 5px 5px;';
      tabpanel = new Ext.TabPanel({       
         width:850,
-        activeTab: 5,
+        activeTab: 0,
         frame:false,
         defaults:{autoHeight: true},
         items:[
@@ -563,7 +581,8 @@ include_partial("ventanaTercero", array("reporte"=>$reporte));
     tabpanel.render('tab-panel');
     tabpanel.setWidth(Ext.getBody().getWidth()-250);
 
-    var ds = new Ext.data.Store({
+    Ext.onReady(function(){
+        var ds = new Ext.data.Store({
             proxy: new Ext.data.HttpProxy({
                 url: '<?=url_for('widgets/listaContactosClientesJSON')?>'
             }),
@@ -609,6 +628,7 @@ include_partial("ventanaTercero", array("reporte"=>$reporte));
         ?>
         var comboclientes =  new Ext.form.ComboBox({
                             store: ds,
+                            id: 'combo-cliente',
                             fieldLabel: 'Cliente',
                             displayField:'compania',
                             typeAhead: false,
@@ -691,7 +711,66 @@ include_partial("ventanaTercero", array("reporte"=>$reporte));
                             }
                         });
 
-    
+    var comboCotizacion = Ext.getCmp("combo-cotizacion").addListener("select", function(combo, record, index){ ;
+
+        //alert(record.data.consecutivo);
+        document.getElementById("reporte_ca_idcotizacion").value=record.data.consecutivo;
+        document.getElementById("reporte_ca_idproducto").value=record.data.idproducto;
+        document.getElementById("reporte_ca_mercancia_desc").value=record.data.producto;
+        document.getElementById("reporte_ca_impoexpo").value=record.data.impoexpo;
+        cambiarImpoexpo();
+        document.getElementById("reporte_ca_transporte").value=record.data.transporte;
+        cambiarTransporte();
+        document.getElementById("reporte_ca_modalidad").value=record.data.idmodalidad;
+        
+        Ext.getCmp('combo-cliente').setValue(record.data.compania);
+        document.getElementById("ca_idconcliente").value = record.get("idcontacto");
+        document.getElementById("div_contacto").innerHTML = record.get("nombre")+' '+record.get("papellido")+' '+record.get("sapellido") ;
+
+        document.getElementById("reporte_ca_preferencias_clie").value=record.data.preferencias;
+
+        for(i=0; i< <?=ReporteForm::NUM_CC?>; i++){
+            
+            document.getElementById("reporte_contactos_"+i).value="";
+            document.getElementById("reporte_confirmar_"+i).checked=false;
+        }
+
+
+        var confirmar =  record.data.confirmar ;
+        var brokenconfirmar=confirmar.split(",");
+
+        for(i=0; i<brokenconfirmar.length&&i< <?=ReporteForm::NUM_CC?>; i++){
+            document.getElementById("reporte_contactos_"+i).value=brokenconfirmar[i];
+            document.getElementById("reporte_confirmar_"+i).checked=true;
+        }
+
+        document.getElementById("country_reporte_ca_origen").value = record.data.tra_origen;        
+        llenarCiudades('country_reporte_ca_origen', 'reporte_ca_origen',false, record.data.idorigen)
+
+        document.getElementById("country_reporte_ca_destino").value = record.data.tra_destino;
+        llenarCiudades('country_reporte_ca_destino', 'reporte_ca_destino',false, record.data.iddestino)
+
+
+        <?
+        if($nivel>=2){
+        ?>
+         document.getElementById("reporte_ca_login").value=record.data.vendedor;
+        <?
+        }else{
+        ?>
+
+         document.getElementById("comercial").innerHTML=record.data.vendedor;
+
+        <?
+        }
+        ?>
+
+
+        document.getElementById("reporte_ca_idlinea").value=record.data.idlinea;
+
+
+    });
+});
 </script>
 
 

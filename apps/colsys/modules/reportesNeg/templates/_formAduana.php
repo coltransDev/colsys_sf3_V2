@@ -15,8 +15,10 @@
          <td colspan="3">
             <?
             echo $form['ca_colmas']->renderError();
-            if( $reporte ){
+            if( $reporte && $reporte->getCaColmas() ){
                 $form->setDefault('ca_colmas', $reporte->getCaColmas() );
+            }else{
+                $form->setDefault('ca_colmas', "No" );
             }
             echo $form['ca_colmas']->render();
             ?>

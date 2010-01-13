@@ -5,7 +5,9 @@
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
 
-
+if( $cotizacion->getCaEmpresa() == Constantes::COLTRANS ){
+    include_component("cotizaciones","panelProductos",array("cotizacion"=>$cotizacion));
+}
 ?>
 <script type="text/javascript">
 
@@ -13,7 +15,7 @@
 SubPanel = function(){
     
     function guardarItems(){		
-		guardarGridProductos();
+		grid_productos.guardarItems();
 		updateRecargosModel();
 		updateContViajeModel();		
 		updateSeguroModel();
@@ -25,13 +27,13 @@ SubPanel = function(){
 
 
     if( $cotizacion->getCaEmpresa() == Constantes::COLTRANS ){
-        include_component("cotizaciones","grillaProductos",array("cotizacion"=>$cotizacion));
+        //mejor cambie grilla x grid, suena mejor        
         include_component("cotizaciones","grillaRecargos",array("cotizacion"=>$cotizacion,"tipo"=>"Recargo Local"));
         include_component("cotizaciones","grillaContViajes",array("cotizacion"=>$cotizacion));
         include_component("cotizaciones","grillaAgentes",array("cotizacion"=>$cotizacion));
     }
     include_component("cotizaciones","grillaSeguros",array("cotizacion"=>$cotizacion));
-
+    
     /*
 	* ================  Panel de archivos adjuntos  =======================
 	* Crea el objeto $object que contine el panel solicitado
@@ -46,7 +48,13 @@ SubPanel = function(){
 	}
     ?>
 
-
+    <?
+    if( $cotizacion->getCaEmpresa() == Constantes::COLTRANS  ){
+    ?>
+    grid_productos = new PanelProductos();
+    <?
+    }
+    ?>
     MainPanel.superclass.constructor.call(this, {
        labelAlign: 'top',
 			bodyStyle:'padding:1px',

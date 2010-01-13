@@ -15,7 +15,7 @@ MainPanel = function( config ){
 
 
     MainPanel.superclass.constructor.call(this, {
-        activeTab: 0,
+        activeTab: 6,
         title: 'Reportes de Negocio'
     });
 
