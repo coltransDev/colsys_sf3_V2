@@ -384,7 +384,7 @@ class falabellaAduActions extends sfActions {
                     $salida.= $fala_detail["d_ca_cantidad_pedido"]."\t"; // 6
                     $salida.= $fala_detail["d_ca_cantidad_dav"]."\t"; // 7
                     $salida.= $fala_detail["d_ca_cantidad_dim"]."\t"; // 8
-                    $salida.= $fala_detail["d_ca_valor_fob"]."\t"; // 9
+                    $salida.= floatval($fala_detail["d_ca_valor_fob"])."\t"; // 9
                     $salida.= $fala_detail["d_ca_unidad_medidad_cantidad"]."\t"; // 10
                     $salida.= $fala_detail["d_ca_descripcion_item"]."\t"; // 11
                     $salida.= $fala_detail["d_ca_cantidad_paquetes_miles"]."\t"; // 12
@@ -427,7 +427,7 @@ class falabellaAduActions extends sfActions {
 
                 $handle = fopen($file, "r");
                 $input = fread($handle, filesize($file));
-                $input = str_replace(chr(34), "", $input);
+                $input = str_replace(chr(13),"",str_replace(chr(34), "", $input));
 
                 $records = explode(chr(10),$input); // Divide el archivo por los Saltos de Línea
 
@@ -454,7 +454,7 @@ class falabellaAduActions extends sfActions {
                                ->createQuery("d")
                                ->delete()
                                ->where("ca_iddoc IN (SELECT h.ca_iddoc FROM FalaHeaderAdu h WHERE h.ca_referencia=?)", $referencia )
-                               ->setHydrationMode(Doctrine::HYDRATE_SCALAR)                               
+                               ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
                                ->execute();
 
                 $records = explode(chr(10),$input); // Divide el archivo por los Saltos de Línea
@@ -472,6 +472,7 @@ class falabellaAduActions extends sfActions {
                             $set = "set".str_replace(" ","",$set);
                             $i++;
 
+                            $field = ($set=='setCaSubpartida' and $field==null)?"":$field;
                             $falaDetailAdu->$set($field);
                         }
                         $falaDetailAdu->save();
