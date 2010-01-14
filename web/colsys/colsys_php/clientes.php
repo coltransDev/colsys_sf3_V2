@@ -290,7 +290,7 @@ elseif (!isset($boton) and !isset($accion) and isset($criterio)){
 	echo "<HEAD>";
 	echo "<TITLE>Tabla de Clientes Coltrans S.A.</TITLE>";
 	if ($salida[0] == "Columnas"){		
-		$columnas = array("N.i.t."=>"ca_idcliente","DV"=>"ca_digito","Cliente"=>"ca_compania","Dirección"=>array("ca_direccion","ca_oficina","ca_torre","ca_bloque","ca_interior","ca_localidad","ca_complemento"),"Teléfonos"=>"ca_telefonos","Fax"=>"ca_fax","Ciudad"=>"ca_ciudad","Vendedor"=>"ca_vendedor","Sucursal"=>"ca_sucursal","Circular 170"=>array("ca_fchcircular","ca_stdcircular"),"Nivel/Riesgo"=>"ca_nvlriesgo","Coord.Colmas"=>"ca_nombre_coor","Lista Clinton"=>"ca_listaclinton","Ley/Insolvencia"=>"ca_leyinsolvencia","Estado/Coltrans"=>array("ca_coltrans_std","ca_coltrans_fch"),"Estado/Colmas"=>array("ca_colmas_std","ca_colmas_fch"),"Días/Crédito"=>"ca_diascredito","Cupo/Crédito"=>"ca_cupo","Observaciones"=>"ca_observaciones");
+		$columnas = array("N.i.t."=>"ca_idcliente","DV"=>"ca_digito","Cliente"=>"ca_compania","Dirección"=>array("ca_direccion","ca_oficina","ca_torre","ca_bloque","ca_interior","ca_localidad","ca_complemento"),"Teléfonos"=>"ca_telefonos","Fax"=>"ca_fax","Ciudad"=>"ca_ciudad","Vendedor"=>"ca_vendedor","Sucursal"=>"ca_sucursal","Circular 170"=>array("ca_fchcircular","ca_stdcircular"),"Carta Grtia."=>array("ca_fchvencimiento","ca_stdcarta_gtia"),"Nivel/Riesgo"=>"ca_nvlriesgo","Coord.Colmas"=>"ca_nombre_coor","Lista Clinton"=>"ca_listaclinton","Ley/Insolvencia"=>"ca_leyinsolvencia","Estado/Coltrans"=>array("ca_coltrans_std","ca_coltrans_fch"),"Estado/Colmas"=>array("ca_colmas_std","ca_colmas_fch"),"Días/Crédito"=>"ca_diascredito","Cupo/Crédito"=>"ca_cupo","Observaciones"=>"ca_observaciones");
 		echo "</HEAD>";
 		echo "<BODY>";
 require_once("menu.php");
