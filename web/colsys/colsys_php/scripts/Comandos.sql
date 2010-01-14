@@ -1719,7 +1719,7 @@ CREATE TABLE tb_faladetails_adu
   ca_ano character varying(4),
   ca_factura_nro character varying(30),
   ca_factura_fch date,
-  CONSTRAINT pk_tb_faladetails_adu PRIMARY KEY (ca_iddoc, ca_sku),
+  CONSTRAINT pk_tb_faladetails_adu PRIMARY KEY (ca_iddoc, ca_sku, ca_subpartida),
   CONSTRAINT fk_tb_faladetails_adu FOREIGN KEY (ca_iddoc)
       REFERENCES tb_falaheader_adu (ca_iddoc) MATCH SIMPLE
       ON UPDATE NO ACTION ON DELETE NO ACTION
@@ -2007,7 +2007,7 @@ CREATE TABLE tb_falanota_det
   ca_fchactualizado timestamp,
   ca_usuactualizado varchar (20),
   CONSTRAINT tb_falanota_det_pkey PRIMARY KEY (ca_referencia, ca_numdocumento, ca_idconcepto),
-  CONSTRAINT tb_falanota_det_ca_referencia_fkey FOREIGN KEY (ca_referencia)
+  CONSTRAINT tb_falanota_det_ca_referencia_fkey FOREIGN KEY (ca_referencia, ca_numdocumento)
       REFERENCES tb_falanota_cab (ca_referencia, ca_numdocumento) MATCH SIMPLE
       ON UPDATE NO ACTION ON DELETE NO ACTION
 )
