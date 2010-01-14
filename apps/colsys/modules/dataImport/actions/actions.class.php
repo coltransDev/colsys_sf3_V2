@@ -111,6 +111,7 @@ class dataImportActions extends sfActions
                                                 if ($i==0){
                                                     $falaDeclaracionDts->setCaItem($val);
                                                 }else if($i==1){
+                                                    $val = ($val==null)?"":$val;
                                                     $falaDeclaracionDts->setCaSubpartida($val);
                                                 }else if($i==2){
                                                     $falaDeclaracionDts->setCaMod($val);
