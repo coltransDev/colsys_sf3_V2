@@ -186,7 +186,7 @@ class FileImported extends BaseFileImported
                                     $falaDetail->setCaSku( trim($this->row['sku']) );
                                     $falaDetail->setCaCantidadDav( intval($this->row['order_quantity']) );
                                     $falaDetail->setCaCantidadDim( intval($this->row['order_quantity']) );
-                                    $falaDetail->setCaValorFob( intval($this->row['order_quantity'])*floatval($this->row['unit_price']) );
+                                    $falaDetail->setCaValorFob( round(intval($this->row['order_quantity'])*floatval($this->row['unit_price'])/100,2) );
                                     $falaDetail->setCaPreinspeccion( 'Estilo: '.trim($this->row['style']).' Talla:'.trim($this->row['talla']).'Color: '.trim($this->row['color']).' Composicion:'.trim($this->row['composicion']) );
                                 }
 				$falaDetail->setCaIddoc( trim($this->row['po_number']) );
