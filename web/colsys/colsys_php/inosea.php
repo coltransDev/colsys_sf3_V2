@@ -209,6 +209,11 @@ elseif (isset($boton)) {                                                       /
                     echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
                     echo "<script>document.location.href = 'entrada.php';</script>";
                     exit; }
+                $dm =& DlRecordset::NewRecordset($conn);                                   // Apuntador que permite manejar la conexiòn a la base de datos
+                if (!$dm->Open("select * from tb_dianmaestra where ca_referencia = '".$rs->Value('ca_referencia')."' order by ca_fchactualizado DESC limit 5")) {                      // Selecciona el registros del log de envio a la Dian
+                    echo "<script>alert(\"".addslashes($dm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+                    echo "<script>document.location.href = 'entrada.php';</script>";
+                    exit; }
                 echo "<HTML>";
                 echo "<HEAD>";
                 echo "<TITLE>$titulo</TITLE>";
@@ -251,7 +256,10 @@ elseif (isset($boton)) {                                                       /
                     echo "    <IMG style='visibility: $visible;' src='./graficos/edit.gif' alt='Editar el Registro' border=0 onclick='elegir(\"Modificar\", \"".$rs->Value('ca_referencia')."\", 0, 0);'>";
                     echo "    <IMG style='visibility: $visible;' src='./graficos/del.gif'  alt='Eliminar el Registro' border=0 onclick='elegir(\"Eliminar\", \"".$rs->Value('ca_referencia')."\", 0, 0);'><BR><BR>";
                     echo "    <IMG style='visibility: $visible;' src='./graficos/muisca.gif'  alt='Informacion Muisca' border=0 onclick='elegir(\"Muisca\", \"".$rs->Value('ca_referencia')."\", 0, 0);'><BR>";
-
+                    if ($dm->value("ca_usuenvio") != ''){
+                        $fch_envio = explode(" ",$dm->value("ca_fchenvio"));
+                        echo "<br /><b>Radicado:</b><br />".$dm->value("ca_usuenvio")."<br />".$fch_envio[0]."<br />".$fch_envio[1]."<br />";
+                    }
                     echo "  </TD>";
                     echo "</TR>";
                     echo "<TR>";
@@ -350,7 +358,7 @@ elseif (isset($boton)) {                                                       /
                     echo "  <TD Class=listar style='font-weight:bold;'>Fecha Estim.Arribo:</TD>";
                     echo "  <TD Class=listar>".$rs->Value('ca_fcharribo')."</TD>";
                     echo "  <TD Class=listar style='text-align: center;'>";
-                    echo "    <IMG style='visibility: $visible;' src='./graficos/xml.gif'  alt='Generar Información para el Prevalidador' border=0 onclick='elegir(\"Prevalidador\", \"".$rs->Value('ca_referencia')."\", 0, 0);'><BR>";
+                    echo "    <IMG style='visibility: $visible;' src='./graficos/xml.gif'  alt='nerar Información para el Prevalidador' border=0 onclick='elegir(\"Prevalidador\", \"".$rs->Value('ca_referencia')."\", 0, 0);'><BR>";
                     echo "  </TD>";
                     echo "</TR>";
                     echo "<TR HEIGHT=5>";
