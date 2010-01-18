@@ -181,48 +181,4 @@ HdeskTicketUser:
       foreign: ca_login
       type: one
 
-HdeskKBase:
-  options:
-    symfony:
-      form: false
-      filter: false
-  generatePath: helpdesk
-  tableName: helpdesk.tb_kbase
-  columns:
-    ca_idkbase:
-      type: integer
-      primary: true
-      autoincrement: true
-    ca_idcategory: string
-    ca_login: string
-    ca_createdat: timestamp
-    ca_text: string
-    ca_title: string
-    ca_private: boolean
-  relations:
-    HdeskKBaseCategory:
-      local: ca_idcategory
-      foreign: ca_idcategory
-      type: one
-
-
-HdeskKBaseCategory:
-  options:
-    symfony:
-      form: false
-      filter: false
-  generatePath: helpdesk
-  tableName: helpdesk.tb_kbasecategory
-  columns:
-    ca_idcategory:
-      type: integer
-      primary: true
-      autoincrement: true
-    ca_parent: integer
-    ca_name: string
-  relations:
-    HdeskKBase:
-      local: ca_idcategory
-      foreign: ca_idcategory
-      type: many
 

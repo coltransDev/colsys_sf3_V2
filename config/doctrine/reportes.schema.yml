@@ -13,7 +13,8 @@ Reporte:
     ca_fchreporte: date
     ca_consecutivo: string
     ca_version: integer
-    ca_idcotizacion: integer
+    ca_idcotizacion: string
+    ca_idproducto: integer
     ca_origen:
       type: string      
     ca_destino:
@@ -400,14 +401,24 @@ RepSeguro:
     ca_idreporte:
       type: integer
       primary: true     
-    ca_vlrasegurado: decimal
+    ca_vlrasegurado:
+      type: decimal
+      notnull: true
     ca_idmoneda_vlr: string
-    ca_primaventa: decimal
-    ca_minimaventa: decimal
+    ca_primaventa:
+      type: decimal
+      notnull: true
+    ca_minimaventa:
+      type: decimal
+      notnull: true
     ca_idmoneda_vta: string
-    ca_obtencionpoliza: decimal
+    ca_obtencionpoliza:
+      type: decimal
+      notnull: true
     ca_idmoneda_pol: string
-    ca_seguro_conf: string
+    ca_seguro_conf:
+      type: string
+      notnull: true
   relations:
     Reporte:
       local: ca_idreporte
@@ -459,13 +470,15 @@ RepExpo:
     ca_volumen: decimal
     ca_piezas: string
     ca_dimensiones: string
-    ca_valorcarga: string
+    ca_valorcarga: decimal
     ca_anticipo: string
-    ca_idsia: integer
+    ca_idsia:
+      type: integer
+      notnull: true
     ca_tipoexpo: integer
     ca_idlineaterrestre: integer
-    ca_motonave: string
-    ca_emisionbl: string
+    ca_motonave: string(50)
+    ca_emisionbl: string(10)
     ca_datosbl: string
     ca_numbl: integer    
   relations:
@@ -477,6 +490,7 @@ RepExpo:
       local: ca_idsia
       foreign: ca_idsia
       type: one
+      
 
 RepAsignacion:
   options:

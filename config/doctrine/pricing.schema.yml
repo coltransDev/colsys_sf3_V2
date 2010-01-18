@@ -563,3 +563,76 @@ PricNotificacion:
     ca_caducidad: string
     ca_fchcreado: timestamp
     ca_usucreado: string
+
+
+
+PricRecargoCliente:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: pricing
+  tableName: pric.tb_recargos_cliente
+  attributes:
+    export: tables
+  columns:
+    ca_consecutivo:
+      type: integer
+      primary: true
+    ca_idconcepto: integer
+    ca_idcliente: integer
+    ca_vlr1: decimal
+    ca_vlr2: decimal
+    ca_aplicacion: string
+    ca_idmoneda: string
+    ca_fchinicio: date
+    ca_fchvencimiento: date
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fcheliminado: timestamp
+  relations:
+    InoConcepto:
+      local: ca_idconcepto
+      foreign: ca_idconcepto
+      type: one
+    Cliente:
+      local: ca_idcliente
+      foreign: ca_idcliente
+      type: one
+
+
+PricRecargoClienteBs:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: pricing
+  tableName: pric.bs_recargos_cliente
+  attributes:
+    export: tables
+  columns:
+    ca_consecutivo:
+      type: integer
+      primary: true
+    ca_idconcepto: integer
+    ca_idcliente: integer
+    ca_vlr1: decimal
+    ca_vlr2: decimal
+    ca_aplicacion: string
+    ca_idmoneda: string
+    ca_fchinicio: date
+    ca_fchvencimiento: date
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fcheliminado: timestamp
+  relations:
+    InoConcepto:
+      local: ca_idconcepto
+      foreign: ca_idconcepto
+      type: one
+    Cliente:
+      local: ca_idcliente
+      foreign: ca_idcliente
+      type: one
+
+

@@ -302,7 +302,7 @@ InoConcepto:
   columns:
     ca_idconcepto:
       type: integer
-#      autoincrement: true
+      autoincrement: true
       primary: true
     ca_concepto:
       type: string
@@ -314,6 +314,9 @@ InoConcepto:
     ca_recargoorigen: boolean
     ca_recargootmdta: boolean
     ca_costo: boolean
+    ca_col1: string
+    ca_col2: string
+    ca_tarifario_costos_cliente: boolean
   relations:
     InoConceptoModalidad:
       local: ca_idconcepto

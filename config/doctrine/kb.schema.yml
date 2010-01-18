@@ -1,0 +1,56 @@
+
+KBIssue:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: kbase
+  tableName: helpdesk.tb_kbissues
+  columns:
+    ca_idissue:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_idcategory: integer
+    ca_title: string
+    ca_info: string
+    ca_summary: string
+    ca_level: integer
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string
+  relations:
+    KBCategory:
+      local: ca_idcategory
+      foreign: ca_idcategory
+      type: one
+
+KBCategory:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: kbase
+  tableName: helpdesk.tb_kbcategories
+  columns:
+    ca_idcategory:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_parent: integer
+    ca_name: string
+    ca_order: integer
+    ca_icon: string
+  relations:
+    SubCategory:
+      local: ca_idcategory
+      foreign: ca_parent
+      type: many
+      class: KBCategory
+      orderBy: ca_order ASC
+    KBIssue:
+      local: ca_idcategory
+      foreign: ca_idcategory
+      type: many
+    
