@@ -1,4 +1,3 @@
-
 <?
 /*
 * Permite crear trayectos en la cotización e incluir diferentes

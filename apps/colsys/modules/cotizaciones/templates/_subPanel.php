@@ -8,38 +8,33 @@
 if( $cotizacion->getCaEmpresa() == Constantes::COLTRANS ){
     include_component("cotizaciones","panelProductos",array("cotizacion"=>$cotizacion));
     include_component("cotizaciones","panelRecargosCotizacion",array("cotizacion"=>$cotizacion,"tipo"=>"Recargo Local"));
+    include_component("cotizaciones","panelContViajes",array("cotizacion"=>$cotizacion));
+    include_component("cotizaciones","panelSeguros",array("cotizacion"=>$cotizacion));
+    include_component("cotizaciones","panelAgentes",array("cotizacion"=>$cotizacion));
 }
 ?>
 <script type="text/javascript">
 
 function guardarDatosPaneles(){
-    grid_productos.guardarItems();
-    grid_recargos.guardarItems();
-    updateContViajeModel();
-    updateSeguroModel();
-    guardarGridAgentes();
-
+    <?
+    if( $cotizacion->getCaEmpresa() == Constantes::COLTRANS ){
+    ?>
+        gridProductos.guardarItems();
+        gridRecargos.guardarItems();
+        gridContviajes.guardarItems();
+        gridSeguros.guardarItems();
+        gridAgentes.guardarItems();
+    <?
+    }
+    ?>
 }
 
 SubPanel = function(){
-    
-    
-
-    <?
-
-
-    if( $cotizacion->getCaEmpresa() == Constantes::COLTRANS ){
-        //mejor cambie grilla x grid, suena mejor                
-        include_component("cotizaciones","grillaContViajes",array("cotizacion"=>$cotizacion));
-        include_component("cotizaciones","grillaAgentes",array("cotizacion"=>$cotizacion));
-    }
-    include_component("cotizaciones","grillaSeguros",array("cotizacion"=>$cotizacion));
-    
+    <?       
     /*
 	* ================  Panel de archivos adjuntos  =======================
 	* Crea el objeto $object que contine el panel solicitado
-	*/
-	
+	*/	
 	if( $cotizacion->getCaIdcotizacion() ){
         include_component("gestDocumental", "panelArchivos",
 						array("folder"=>$cotizacion->getDirectorioBase(),
@@ -52,8 +47,11 @@ SubPanel = function(){
     <?
     if( $cotizacion->getCaEmpresa() == Constantes::COLTRANS  ){
     ?>
-    grid_productos = new PanelProductos();
-    grid_recargos = new PanelRecargosCotizacion();
+    gridProductos = new PanelProductos();
+    gridRecargos = new PanelRecargosCotizacion();
+    gridContviajes = new PanelContViajes();
+    gridSeguros = new PanelSeguros();
+    gridAgentes = new PanelAgentes();
     <?
     }
     ?>
@@ -73,11 +71,11 @@ SubPanel = function(){
 					<?
 					if( $cotizacion->getCaEmpresa() == Constantes::COLTRANS  ){
 					?>
-					   grid_productos,
-                       grid_recargos,
-					   grid_contviajes,
-					   grid_seguros,
-					   grid_agentes,
+					   gridProductos,
+                       gridRecargos,
+					   gridContviajes,
+					   gridSeguros,
+					   gridAgentes,
 					<?
 					}
 					?>
@@ -86,7 +84,7 @@ SubPanel = function(){
 			}]
 
     });
-
+    
 
 };
 
@@ -94,5 +92,7 @@ Ext.extend(SubPanel, Ext.FormPanel, {
     
 
 });
+
+
 
 </script>

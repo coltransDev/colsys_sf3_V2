@@ -101,7 +101,7 @@ class cotizacionesComponents extends sfComponents
 	/*
 	* 
 	*/	
-	public function executeGrillaContViajes(){
+	public function executePanelContViajes(){
 		$id = $this->cotizacion->getCaIdcotizacion();
 		
 	}
@@ -109,7 +109,7 @@ class cotizacionesComponents extends sfComponents
 	/*
 	* 
 	*/	
-	public function executeGrillaSeguros(){
+	public function executePanelSeguros(){
 		$id = $this->cotizacion->getCaIdcotizacion();
 		
 				
@@ -137,7 +137,7 @@ class cotizacionesComponents extends sfComponents
 	/*
 	* 
 	*/	
-	public function executeGrillaAgentes(){
+	public function executePanelAgentes(){
 		
 		$response = sfContext::getInstance()->getResponse();
 		$response->addJavaScript("extExtras/CheckColumn",'last');
