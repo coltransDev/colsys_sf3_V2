@@ -39,7 +39,6 @@ $header = $sf_data->getRaw( "header" );
             forceSelection: true,
             triggerAction: 'all',
             selectOnFocus: true,
-            mode: 'local',
             lazyRender:true,
             displayField: 'referencia',
             valueField: 'referencia',
