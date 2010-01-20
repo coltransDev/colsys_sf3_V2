@@ -24,7 +24,9 @@ class falabellaAduActions extends sfActions {
         $this->fala_headers = Doctrine::getTable("FalaHeaderAdu")
             ->createQuery("f")
             ->leftJoin("f.FalaDeclaracionImp d")
-            ->addOrderBy("f.ca_fecha_carpeta")
+            ->addOrderBy("f.ca_reqd_delivery desc")
+            ->addOrderBy("f.ca_referencia")
+            ->addOrderBy("f.ca_archivo_origen")
             ->execute();
     }
 
