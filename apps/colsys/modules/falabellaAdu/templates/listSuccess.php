@@ -38,8 +38,8 @@
     }
     ?>
 
-    <td ><?php echo link_to($fala_header->getCaIddoc(), 'falabellaAdu/shippingInstructions?iddoc='.base64_encode($fala_header->getCaIddoc())) ?></td>
-      <td><?php echo $fala_header->getCaFechaCarpeta() ?></td>
+    <td ><?php echo link_to($fala_header->getCaIddoc(), 'falabellaAdu/details?iddoc='.base64_encode($fala_header->getCaIddoc()))?></td>
+      <td><?php echo $fala_header->getCaReqdDelivery() ?></td>
       <td><?php echo $fala_header->getCaArchivoOrigen() ?></td>
       <td><?php echo $link?(link_to($fala_header->getCaReferencia(), 'falabellaAdu/declaracion?referencia='.base64_encode($fala_header->getCaReferencia()))):"<div class='qtip' title='Debe cargar la Declaraci&oacute;n de Importaci&oacute;n'>".$fala_header->getCaReferencia()."</div>"?></td>
       <td><?php echo $fala_header->getCaNumViaje() ?></td>

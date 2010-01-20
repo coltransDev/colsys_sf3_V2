@@ -18,7 +18,7 @@ switch($action){
 		$button[0]["tooltip"]="Pagina principal";
 		$button[0]["image"]="22x22/home.gif";
 		$button[0]["link"]= "falabellaAdu/list";
-		
+
 		$button[1]["name"]="Aprocom";
 		$button[1]["tooltip"]="Genera Archivo Plano con Información para Aprocom";
 		$button[1]["image"]="22x22/kexi_kexi.gif";
@@ -34,10 +34,15 @@ switch($action){
 		$button[3]["image"]="22x22/todo.gif";
 		$button[3]["link"]= "falabellaAdu/importaExcel?iddoc=".$this->getRequestParameter("iddoc");
 
-		$button[4]["name"]="Anular";
-		$button[4]["tooltip"]="Anular la Orden de Pedido";
-		$button[4]["image"]="22x22/cancel.gif";
-		$button[4]["link"]= "falabellaAdu/anularOrden?iddoc=".$this->getRequestParameter("iddoc");
+		$button[4]["name"]="Shp.Instructions";
+		$button[4]["tooltip"]="Envía Email con Shipping Instructions a Analista de Importaciones";
+		$button[4]["image"]="22x22/mail_forward.gif";
+		$button[4]["link"]= "falabellaAdu/shippingInstructions?iddoc=".$this->getRequestParameter("iddoc");
+
+		$button[5]["name"]="Anular";
+		$button[5]["tooltip"]="Anular la Orden de Pedido";
+		$button[5]["image"]="22x22/cancel.gif";
+		$button[5]["link"]= "falabellaAdu/anularOrden?iddoc=".$this->getRequestParameter("iddoc");
 
 		break;	
 	case "shippingInstructions":

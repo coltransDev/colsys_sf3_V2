@@ -397,7 +397,6 @@ PanelDetalles = function(){
             rowContextMenu: this.onRowcontextMenu
 	}
 
-
     });
 
 
@@ -442,8 +441,47 @@ Ext.extend(PanelDetalles, Ext.grid.EditorGridPanel, {
                     }
                  }
             );
-
         }
+    }
+    ,
+    eliminarItem : function(){
+        var storeTransacciones = this.store;
+
+        if( this.ctxRecord &&  confirm("Desea continuar?") ){
+
+            var id = this.ctxRecord.id;
+
+            Ext.Ajax.request(
+            {
+                waitMsg: 'Eliminando...',
+                url: '<?=url_for("falabellaAdu/eliminarDetail")?>',
+                //method: 'POST',
+                //Solamente se envian los cambios
+                params :	{
+                    id: id,
+                    iddoc: this.ctxRecord.data.iddoc,
+                    sku: this.ctxRecord.data.sku,
+                    subpartida: this.ctxRecord.data.subpartida
+                },
+
+                //Ejecuta esta accion en caso de fallo
+                //(404 error etc, ***NOT*** success=false)
+                failure:function(response,options){
+                    alert( response.responseText );
+                    success = false;
+                },
+
+                //Ejecuta esta accion cuando el resultado es exitoso
+                success:function(response,options){
+                    var res = Ext.util.JSON.decode( response.responseText );
+                    if( res.success ){
+                        record = storeTransacciones.getById( res.id );
+                        storeTransacciones.remove(record);
+                    }
+                }
+            });
+        }
+
     }
     ,
     onRowcontextMenu: function(grid, index, e){
@@ -461,10 +499,10 @@ Ext.extend(PanelDetalles, Ext.grid.EditorGridPanel, {
                         scope:this,
                         handler: this.seleccionarTodo
                     },{
-                        text: 'Duplicar item',
+                        text: 'Eliminar item',
                         iconCls: '',
                         scope:this,
-                        handler: this.duplicarItem
+                        handler: this.eliminarItem
                     }
 
                     ]
@@ -487,10 +525,6 @@ Ext.extend(PanelDetalles, Ext.grid.EditorGridPanel, {
             Ext.fly(this.ctxRow).removeClass('x-node-ctx');
             this.ctxRow = null;
         }
-    }
-    ,
-    duplicarItem : function(){
-
     }
     ,
     formatItem: function(value, p, record) {
