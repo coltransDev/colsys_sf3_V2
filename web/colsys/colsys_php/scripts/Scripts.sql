@@ -1961,6 +1961,43 @@ GRANT ALL ON TABLE tb_dianreservados TO "Usuarios";
 
 
 
+-- Table: tb_bavaria
+-- DROP TABLE tb_bavaria;
+CREATE TABLE tb_bavaria
+(
+  ca_consecutivo varchar (10) NOT NULL,
+  ca_orden_nro varchar (10) NOT NULL,
+  ca_modalidad varchar (12) NOT NULL,
+  ca_factura_nro varchar (15) NOT NULL,
+  ca_factura_fch date,
+  ca_zarpe_fch date,
+  ca_doctransporte varchar (25),
+  ca_doctransporte_fch date,
+  ca_peso_bruto numeric(10,2),
+  ca_peso_neto numeric(10,2),
+  ca_tipo_embalaje varchar (2),
+  ca_transportadora varchar (10),
+  ca_bandera varchar (3),
+  ca_fchreportado timestamp without time zone,
+  ca_usureportado character varying(20),
+  ca_fchanulado timestamp without time zone,
+  ca_usuanulado character varying(20),
+  ca_fchcreado timestamp without time zone,
+  ca_usucreado character varying(20),
+  ca_fchactualizado timestamp without time zone,
+  ca_usuactualizado character varying(20),
+  CONSTRAINT pk_bavaria PRIMARY KEY (ca_consecutivo, ca_orden_nro)
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE tb_bavaria OWNER TO postgres;
+GRANT ALL ON TABLE tb_bavaria TO postgres;
+GRANT ALL ON TABLE tb_bavaria TO "Administrador";
+GRANT ALL ON TABLE tb_bavaria TO "Usuarios";
+
+
+
 /* Vistas de la Base de Datos */
 
 // Drop view vi_usuarios;
