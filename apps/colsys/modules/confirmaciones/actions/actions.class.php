@@ -29,7 +29,7 @@ class confirmacionesActions extends sfActions
 	public function executeBusqueda(sfWebRequest $request){
 		$criterio = $request->getParameter( "criterio" );
 		$this->modo = $request->getParameter( "modo" );
-		$cadena = str_replace("-", ".", $request->getParameter( "cadena" ));
+		$cadena = $request->getParameter( "cadena" );
 		
 		if(!$cadena){
 			$this->redirect("confirmaciones/index?modo=".$this->modo);		
@@ -46,6 +46,7 @@ class confirmacionesActions extends sfActions
 		
 		switch( $criterio ){
 			case "referencia":
+                $cadena = str_replace("-", ".", $cadena );
                 $q->addWhere("m.ca_referencia like ? ", $cadena."%");				
 				break;
 			case "reporte":

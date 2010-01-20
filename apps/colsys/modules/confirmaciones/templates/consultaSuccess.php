@@ -2,12 +2,12 @@
 use_helper("ExtCalendar");
 
 $inoClientes = $sf_data->getRaw("inoClientes");
-$bodegas = $sf_data->getRaw("bodegas");
 
 
 switch( $modo ){
 	case "otm":
 		$titulo = "Módulo de Avisos de OTM";
+        $bodegas = $sf_data->getRaw("bodegas");
 		break;
 	default: 
 		$titulo = "Módulo de Status y Confirmaciones de Llegada";
