@@ -94,7 +94,7 @@ class FileImported extends BaseFileImported
 				$falaHeader->setCaOrigin( trim($this->row['origin']) );
 				$falaHeader->setCaDestination( trim($this->row['destination']) );
 				$falaHeader->setCaTransShipPort( trim($this->row['trans_ship_port']) );
-				$falaHeader->setCaReqdDelivery( trim($this->row['reqd_delivery']) );
+				// $falaHeader->setCaReqdDelivery( trim($this->row['reqd_delivery']) );
 				$falaHeader->setCaOrdenComments( trim($this->row['orden_comments']) );
 				$falaHeader->setCaManufacturerContact( trim($this->row['manufacturer_contact']) );
 				$falaHeader->setCaManufacturerPhone( trim($this->row['manufacturer_phone']) );
