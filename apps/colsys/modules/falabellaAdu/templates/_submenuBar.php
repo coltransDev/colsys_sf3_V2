@@ -34,7 +34,7 @@ switch($action){
 		$button[3]["image"]="22x22/todo.gif";
 		$button[3]["link"]= "falabellaAdu/importaExcel?iddoc=".$this->getRequestParameter("iddoc");
 
-		$button[4]["name"]="Shp.Instructions";
+		$button[4]["name"]="S.Instructions";
 		$button[4]["tooltip"]="Envía Email con Shipping Instructions a Analista de Importaciones";
 		$button[4]["image"]="22x22/mail_forward.gif";
 		$button[4]["link"]= "falabellaAdu/shippingInstructions?iddoc=".$this->getRequestParameter("iddoc");
