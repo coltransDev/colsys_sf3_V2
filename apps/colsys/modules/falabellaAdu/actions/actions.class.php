@@ -75,16 +75,22 @@ class falabellaAduActions extends sfActions {
 	* Guarda los cambios en el encabezado del documento
 	*/
     public function executeObserveHeader() {
-        $fala_header = Doctrine::getTable("FalaHeaderAdu")->find ( base64_decode($this->getRequestParameter ( 'iddoc' )) );
+        $fala_header = Doctrine::getTable("FalaHeaderAdu")->find ( $this->getRequestParameter ( 'iddoc' ) );
         $this->forward404Unless($fala_header);
+
+        $this->responseArray=array("id"=>$this->getRequestParameter('id'), "success"=>false);
 
         if( $this->getRequestParameter ( 'referencia' )!==null ) {
             $fala_header->setCaReferencia( $this->getRequestParameter ( 'referencia' ) );
         }
 
+        if( $this->getRequestParameter ( 'reqd_delivery' )!==null ) {
+            $fala_header->setCaReqdDelivery( $this->getRequestParameter ( 'reqd_delivery' ) );
+        }
+
         $fala_header->save();
 
-        $this->responseArray=array("success"=>true);
+        $this->responseArray["success"]=true;
         $this->setTemplate("responseTemplate");
     }
 
@@ -97,9 +103,6 @@ class falabellaAduActions extends sfActions {
         $this->forward404Unless($fala_declaracion);
 
         $this->responseArray=array("id"=>$this->getRequestParameter('id'), "success"=>false);
-
-        // echo $this->getRequestParameter ( 'numdeclaracion' );
-        // exit();
 
         if( $this->getRequestParameter ( 'numdeclaracion' )!==null ) {
             $fala_declaracion->setCaNumdeclaracion( $this->getRequestParameter ( 'numdeclaracion' ) );
@@ -243,6 +246,25 @@ class falabellaAduActions extends sfActions {
         $this->setTemplate("responseTemplate");
     }
 
+
+	/*
+	* Guarda los cambios en el detalle del documento
+	*/
+    public function executeEliminarDetail() {
+        if ($this->getRequestParameter ( 'subpartida' )==null){
+            $faladetail = Doctrine::getTable("FalaDetailAdu")->find(array( $this->getRequestParameter ( 'iddoc' ), $this->getRequestParameter ( 'sku' )) ) ;
+        }else{
+            $faladetail = Doctrine::getTable("FalaDetailAdu")->find(array( $this->getRequestParameter ( 'iddoc' ), $this->getRequestParameter ( 'sku' ), $this->getRequestParameter ( 'subpartida' )) ) ;
+        }
+        $this->forward404Unless($faladetail);
+
+        $this->responseArray=array("id"=>$this->getRequestParameter ( 'id' ),  "success"=>false);
+
+        $faladetail->delete();
+
+        $this->responseArray["success"]=true;
+        $this->setTemplate("responseTemplate");
+    }
 
 	/*
 	* Permite anular la Orden de Pedido

@@ -44,6 +44,12 @@ class falabellaAduComponents extends sfComponents {
 	*
 	*/
 	public function executeMainPanel() {
+            $this->header = Doctrine::getTable("FalaHeaderAdu")
+                                   ->createQuery("d")
+                                   ->select("d.ca_iddoc, d.ca_referencia, d.ca_reqd_delivery")
+                                   ->where("d.ca_iddoc = ? ", $this->fala_header->getCaIddoc())
+                                   ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                                   ->execute();
 		
 	}
 
