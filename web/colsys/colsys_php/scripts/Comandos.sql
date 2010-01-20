@@ -2049,6 +2049,10 @@ update tb_fileimported set ca_proceso = 'Coltrans';
 alter table tb_falainstructionsadu add column ca_embarque varchar(2);
 
 
+update tb_falaheader_adu set ca_reqd_delivery = '2010-01-19' where ca_fecha_carpeta in ('2010-01-04','2010-01-07');
+update tb_falaheader_adu set ca_reqd_delivery = '2010-01-21' where ca_fecha_carpeta in ('2010-01-15');
+
+
 insert into tb_parametros values ('CU078',0,'Barriles','66');
 insert into tb_parametros values ('CU078',0,'Billon de Unidades','63');
 insert into tb_parametros values ('CU078',0,'Bulto','10');
