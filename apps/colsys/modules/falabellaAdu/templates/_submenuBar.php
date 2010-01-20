@@ -7,7 +7,7 @@ switch($action){
 		$button[0]["image"]="22x22/kexi_kexi.gif";
 		$button[0]["link"]= "dataImport/importFile?fileHeader=4&proceso=Colmas&token=".md5(time());
 
-		$button[1]["name"]="Cargas DIM";
+		$button[1]["name"]="Cargar DIM";
 		$button[1]["tooltip"]="Carga Declaraciones de Importación Generadas por Aprocom";
 		$button[1]["image"]="22x22/kexi_kexi.gif";
 		$button[1]["link"]= "dataImport/loadFile?&token=".md5(time());
