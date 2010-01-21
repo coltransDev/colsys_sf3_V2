@@ -27,6 +27,8 @@ class FileImported extends BaseFileImported
 		$resultado = array();
 
 		$content = explode("\n",$this->getCaContent());
+
+                $num_iddocs = "";
                
 		foreach ($content as $line )
 		{
@@ -50,7 +52,7 @@ class FileImported extends BaseFileImported
 
 					}
 
-                                        if(!$this->processFalabella()){
+                                        if(!$this->processFalabella($num_iddocs)){
 						return false;
 					}
 				}
@@ -59,12 +61,20 @@ class FileImported extends BaseFileImported
 		return true;
 	}
 
-	public function processFalabella(){
+	public function processFalabella(&$num_iddocs){
 
                 $table = ($this->getCaProceso() == 'Coltrans')?'FalaHeader':($this->getCaProceso() == 'Colmas')?'FalaHeaderAdu':'';
 
 		if(isset($this->row['FALPOH01'])){ //REGISTRO TIPO 1
-                        $header = Doctrine::getTable($table)->find(trim($this->row['po_number']));
+                        $header = Doctrine::getTable($table)
+                                       ->createQuery("h")
+                                       ->where("h.ca_iddoc LIKE ? ", trim($this->row['po_number'])."%")
+                                       ->execute();
+                        if ($header->count()!=0){   // Analiza cuantos registros con el mismo número de orden hay y les agrega un -consecutivo
+                            $num_iddocs = "-".$header->count();
+                        }
+
+                        $header = Doctrine::getTable($table)->find(trim($this->row['po_number']).$num_iddocs);
 
 			if( !$header ){ //Verifica que no se haya procesado
                                 if ($this->getCaProceso() == 'Coltrans'){
@@ -73,7 +83,7 @@ class FileImported extends BaseFileImported
                                     $falaHeader = new FalaHeaderAdu();
                                 }
 
-				$falaHeader->setCaIddoc( trim($this->row['po_number']) );
+				$falaHeader->setCaIddoc( trim($this->row['po_number']).$num_iddocs );
 				$falaHeader->setCaFechaCarpeta( $this->row['po_date'] );
 				$falaHeader->setCaCodigoPuertoPickup( $this->row['origin'] );
 				$falaHeader->setCaCodigoPuertoDescarga( $this->row['destination'] );
@@ -107,14 +117,14 @@ class FileImported extends BaseFileImported
 		}
 
 		if(isset($this->row['FALPOH02'])){
-			if( Doctrine::getTable($table)->find(trim($this->row['po_number'])) ){
+			if( Doctrine::getTable($table)->find(trim($this->row['po_number']).$num_iddocs) ){
                                 if ($this->getCaProceso() == 'Coltrans'){
                                     $falaShip = new FalaShipmentInfo();
                                 }else if ($this->getCaProceso() == 'Colmas'){
                                     $falaShip = new FalaShipmentInfoAdu();
                                 }
 
-				$falaShip->setCaIddoc( trim($this->row['po_number']) );
+				$falaShip->setCaIddoc( trim($this->row['po_number']).$num_iddocs );
 				$falaShip->setCaBeginWindow( trim($this->row['esd']) );
 				$falaShip->setCaEndWindow( trim($this->row['lsd']) );
 				$falaShip->setCaCommodities( trim($this->row['commodities']) );
@@ -161,14 +171,14 @@ class FileImported extends BaseFileImported
 		}
 
 		if(isset($this->row['FALPOH03'])){ //REGISTRO TIPO 3
-			if( Doctrine::getTable($table)->find(trim($this->row['po_number'])) ){
+			if( Doctrine::getTable($table)->find(trim($this->row['po_number']).$num_iddocs) ){
                                 if ($this->getCaProceso() == 'Coltrans'){
                                     $falaInst = new FalaInstruction();
                                 }else if ($this->getCaProceso() == 'Colmas'){
                                     $falaInst = new FalaInstructionAdu();
                                 }
                                 
-				$falaInst->setCaIddoc( trim($this->row['po_number']) );
+				$falaInst->setCaIddoc( trim($this->row['po_number']).$num_iddocs );
 				$falaInst->setCaInstructions( trim($this->row['instructions']) );
                                 $falaInst->setCaEmbarque( trim($this->row['embarque']) );
 				$falaInst->save();
@@ -177,7 +187,7 @@ class FileImported extends BaseFileImported
 
 
 		if(isset($this->row['FALPOD01'])){ //REGISTRO TIPO 4
-			if( Doctrine::getTable($table)->find(trim($this->row['po_number'])) ){
+			if( Doctrine::getTable($table)->find(trim($this->row['po_number']).$num_iddocs) ){
                                 if ($this->getCaProceso() == 'Coltrans'){
                                     $falaDetail = new FalaDetail();
                                     $falaDetail->setCaCantidadMiles( intval($this->row['order_quantity']) );
@@ -188,8 +198,9 @@ class FileImported extends BaseFileImported
                                     $falaDetail->setCaCantidadDim( intval($this->row['order_quantity']) );
                                     $falaDetail->setCaValorFob( round(intval($this->row['order_quantity'])*floatval($this->row['unit_price'])/100,2) );
                                     $falaDetail->setCaPreinspeccion( 'Estilo: '.trim($this->row['style']).' Talla:'.trim($this->row['talla']).'Color: '.trim($this->row['color']).' Composicion:'.trim($this->row['composicion']) );
+                                    $falaDetail->setCaSubpartida( '' );
                                 }
-				$falaDetail->setCaIddoc( trim($this->row['po_number']) );
+				$falaDetail->setCaIddoc( trim($this->row['po_number']).$num_iddocs );
 				$falaDetail->setCaSku( trim($this->row['sku']) );
 				$falaDetail->setCaDescripcionItem( trim($this->row['item_description']) );
                                 $falaDetail->setCaCantidadPedido( intval($this->row['order_quantity']) );
