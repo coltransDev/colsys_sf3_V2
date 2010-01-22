@@ -8,14 +8,16 @@ class FalaDeclaracionImpTable extends Doctrine_Table
 	*/
 	public static function declaracionImportacion($referencia){
 
-            $query = "select fdi.ca_referencia, fdi.ca_numinternacion, fdi.ca_emision_fch, fdi.ca_vencimiento_fch, fdi.ca_aceptacion_fch, fdi.ca_pago_fch, fdi.ca_moneda, fdi.ca_valor_trm, ";
+            $query = "select fdi.ca_referencia, fdi.ca_numinternacion ";
             $query.= "  fdd.ca_numdeclaracion, fdd.ca_arancel, fdd.ca_iva, fdd.ca_compensa, fdd.ca_antidump, fdd.ca_salvaguarda, fdd.ca_sancion, fdd.ca_rescate, fdd.ca_valor_fob, fdd.ca_gastos_despacho, fdd.ca_flete, fdd.ca_seguro, fdd.ca_gastos_embarque, fdd.ca_valor_aduana, fdd.ca_ajuste_valor, fdd.ca_valor_aduana, ";
-            $query.= "  fsp.ca_iddoc, fsp.ca_num_viaje, fsp.ca_subpartida, fsp.ca_prorrateo_fob from tb_faladeclaracion_imp fdi "; // fvf.ca_subtotal_fob,
+            $query.= "  fsp.ca_iddoc, fsp.ca_embarque, fsp.ca_emision_fch, fsp.ca_vencimiento_fch, fsp.ca_aceptacion_fch, fsp.ca_pago_fch, fsp.ca_moneda, fsp.ca_valor_trm, fsp.ca_subpartida, fsp.ca_prorrateo_fob from tb_faladeclaracion_imp fdi "; // fvf.ca_subtotal_fob,
             $query.= "  inner join (select * from tb_faladeclaracion_dts where ca_referencia = '$referencia') fdd on fdd.ca_referencia = fdi.ca_referencia ";
 
-            $query.= "  inner join (select fh.ca_referencia, fh.ca_iddoc, fh.ca_num_viaje, fd.ca_subpartida, sum(fd.ca_valor_fob) as ca_prorrateo_fob from ";
+            $query.= "  inner join (select fh.ca_referencia, fh.ca_iddoc, fi.ca_embarque, fd.ca_emision_fch, fd.ca_vencimiento_fch, fd.ca_aceptacion_fch, fd.ca_pago_fch, fd.ca_moneda, fd.ca_valor_trm, fd.ca_subpartida, sum(fd.ca_valor_fob) as ca_prorrateo_fob from ";
             $query.= "      tb_falaheader_adu fh ";
             $query.= "      inner join tb_faladetails_adu fd on fd.ca_iddoc = fh.ca_iddoc where fh.ca_referencia = '$referencia' ";
+            $query.= "      inner join tb_falainstructions_adu fi on fi.ca_iddoc = fh.ca_iddoc ";
+
             $query.= "      group by fh.ca_referencia, fh.ca_iddoc, fh.ca_num_viaje, fd.ca_subpartida ";
             $query.= "      order by fh.ca_referencia, fd.ca_subpartida, fh.ca_iddoc) fsp on fsp.ca_referencia = fdd.ca_referencia and fsp.ca_subpartida = fdd.ca_subpartida ";
 
@@ -33,7 +35,8 @@ class FalaDeclaracionImpTable extends Doctrine_Table
 	*/
 	public static function facturacionNacionalizacion($referencia){
 
-            $query = "select fh.ca_iddoc, fh.ca_referencia, fh.ca_num_viaje, ff.ca_numdocumento, ff.ca_emision_fch, ff.ca_vencimiento_fch, ff.ca_moneda, ff.ca_tipo_cambio, ff.ca_afecto_vlr, ff.ca_iva_vlr, ff.ca_exento_vlr, fdd.ca_valor_fob, fsp.* from tb_falaheader_adu fh ";
+            $query = "select fh.ca_iddoc, fh.ca_referencia, fi.ca_embarque, ff.ca_numdocumento, ff.ca_emision_fch, ff.ca_vencimiento_fch, ff.ca_moneda, ff.ca_tipo_cambio, ff.ca_afecto_vlr, ff.ca_iva_vlr, ff.ca_exento_vlr, fdd.ca_valor_fob, fsp.* from tb_falaheader_adu fh ";
+            $query.= "  inner join tb_falainstructions_adu fi on fi.ca_iddoc = fh.ca_iddoc ";
             $query.= "  inner join (select * from tb_falafacturacion_adu where ca_referencia = '$referencia') ff on ff.ca_referencia = fh.ca_referencia ";
             $query.= "  inner join (select ca_referencia, sum(ca_valor_fob) as ca_valor_fob from tb_faladeclaracion_dts where ca_referencia = '$referencia' group by ca_referencia) fdd on fdd.ca_referencia = fh.ca_referencia ";
 
