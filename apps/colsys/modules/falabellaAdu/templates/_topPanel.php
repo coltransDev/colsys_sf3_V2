@@ -29,74 +29,12 @@ TopPanel = function(){
 				style: 'text-align:left',
 				decimalPrecision :0
 			})
-      },
-      {
-        header: "Fch.Emisión",
-        dataIndex: 'emision_fch',
-        sortable:false,
-        width: 45,
-        renderer: Ext.util.Format.dateRenderer('Y-m-d'),
-        editor: new Ext.form.DateField({
-                                format: 'Y-m-d',
-                                allowBlank: false
-                        })
-      },
-      {
-        header: "Fch.Vencimiento",
-        dataIndex: 'vencimiento_fch',
-        sortable:false,
-        width: 45,
-        renderer: Ext.util.Format.dateRenderer('Y-m-d'),
-        editor: new Ext.form.DateField({
-                                format: 'Y-m-d',
-                                allowBlank: false
-                        })
-      },
-      {
-        header: "Fch.Aceptación",
-        dataIndex: 'aceptacion_fch',
-        sortable:false,
-        width: 45,
-        renderer: Ext.util.Format.dateRenderer('Y-m-d'),
-        editor: new Ext.form.DateField({
-                                format: 'Y-m-d',
-                                allowBlank: false
-                        })
-      },
-      {
-        header: "Fch.Pago",
-        dataIndex: 'pago_fch',
-        sortable:false,
-        width: 45,
-        renderer: Ext.util.Format.dateRenderer('Y-m-d'),
-        editor: new Ext.form.DateField({
-                                format: 'Y-m-d',
-                                allowBlank: false
-                        })
-      },
-      {
-        header: "Mon.",
-        dataIndex: 'moneda',
-        sortable:false,
-        width: 35
-      },
-      {
-        header: "T.R.M.",
-        dataIndex: 'valor_trm',
-        sortable:false,
-        width: 40
       }
     ];
 
     this.record = Ext.data.Record.create([
             {name: 'referencia', type: 'string', mapping: 'd_ca_referencia'},
-            {name: 'numinternacion', type: 'string', mapping: 'd_ca_numinternacion'},
-            {name: 'emision_fch', type: 'date', dateFormat: 'Y-m-d', mapping: 'd_ca_emision_fch'},
-            {name: 'vencimiento_fch', type: 'date', dateFormat: 'Y-m-d', mapping: 'd_ca_vencimiento_fch'},
-            {name: 'aceptacion_fch', type: 'date', dateFormat: 'Y-m-d', mapping: 'd_ca_aceptacion_fch'},
-            {name: 'pago_fch', type: 'date', dateFormat: 'Y-m-d', mapping: 'd_ca_pago_fch'},
-            {name: 'moneda', type: 'string', mapping: 'd_ca_moneda'},
-            {name: 'valor_trm', type: 'string', mapping: 'd_ca_valor_trm'},
+            {name: 'numinternacion', type: 'string', mapping: 'd_ca_numinternacion'}
         ]);
 
     this.store = new Ext.data.Store({
@@ -132,7 +70,6 @@ TopPanel = function(){
     });
 
 };
-
 
     Ext.extend(TopPanel, Ext.grid.EditorGridPanel, {
         height: 75,
