@@ -219,7 +219,27 @@ class Reporte extends BaseReporte
 		$count = Doctrine::getTable("Reporte")
                            ->createQuery("r")
                            ->select("count(*)")
+                           ->where("r.ca_consecutivo = ?", $this->getCaConsecutivo())
+                           ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)
+                           ->execute();
+
+		return $count;
+
+	}
+
+
+    /*
+	* Retorna el numero de versiones existentes de este reporte
+	* Author: Andres Botero
+	*/
+	public function getUltVersion(){
+
+		$count = Doctrine::getTable("Reporte")
+                           ->createQuery("r")
+                           ->select("r.ca_version")
                            ->where("r.ca_consecutivo = ? AND ca_fchanulado IS NULL", $this->getCaConsecutivo())
+                           ->orderBy("r.ca_version DESC")
+                           ->limit(1)
                            ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)
                            ->execute();
 
@@ -376,6 +396,17 @@ class Reporte extends BaseReporte
 			$repexpo = new RepExpo();
 		}
 		return $repexpo;
+	}
+
+    /*
+	* Devuelve la ubicacion del directorio donde se encuentran los archivos de la referencia
+	* @author Andres Botero
+	*/
+	public function getCotizacion(){
+		return Doctrine::getTable("Cotizacion")
+                                ->createQuery("c")
+                                ->where("c.ca_consecutivo = ?",$this->getCaConsecutivo() )
+                                ->fetchOne();
 	}
 
 
@@ -718,6 +749,113 @@ class Reporte extends BaseReporte
 	public function getDirectorioBase(){
 		return "reportes".DIRECTORY_SEPARATOR.$this->getCaConsecutivo().DIRECTORY_SEPARATOR;
 	}
+    
+    
+    /*
+	* Copia el reporte y todas las tablas asociadas
+	* @author Andres Botero
+    * @param $opcion 1 indica que es un nuevo reporte 2 indica una nueva version
+	*/
+	public function copiar( $opcion ){
+        $reporte = $this->copy(  );        
+
+
+        
+        try{
+            $conn = $this->getTable()->getConnection();
+            $conn->beginTransaction();
+            
+            if( $opcion==1 ){
+                //echo ReporteTable::siguienteConsecutivo(date("Y"));
+                //exit();
+                $reporte->setCaConsecutivo( ReporteTable::siguienteConsecutivo(date("Y")) );
+                $reporte->setCaVersion( 1 );
+                $reporte->setCaIdetapa( null );
+                $reporte->setCaFchultstatus( null );
+                $reporte->setCaFchreporte( date("Y-m-d") );
+            }
+
+            if( $opcion==2 ){
+                $reporte->setCaVersion( $this->numVersiones()+1 );
+            }
+
+            $reporte->setCaDetanulado( null );
+            $reporte->setCaFchcreado( null );
+            $reporte->setCaUsucreado( null );
+            $reporte->setCaFchactualizado( null );
+            $reporte->setCaUsuactualizado( null);
+            $reporte->save( $conn );
+
+            //Copia los conceptos
+            $conceptos = $this->getRepTarifa();
+            foreach( $conceptos as $concepto ){
+                $newConcepto = $concepto->copy();
+                $newConcepto->setCaIdconcepto( $concepto->getCaIdconcepto() );
+                $newConcepto->setCaIdreporte( $reporte->getCaIdreporte() );
+                $newConcepto->save( $conn );
+            }
+
+            //Copia los gastos
+            $gastos = $this->getRecargos( );
+            foreach($gastos as $gasto ){
+                $newGasto = $gasto->copy();
+                $newGasto->setCaIdconcepto( $gasto->getCaIdconcepto() );
+                $newGasto->setCaIdrecargo( $gasto->getCaIdrecargo() );
+                $newGasto->setCaIdreporte( $reporte->getCaIdreporte() );
+                $newGasto->save( $conn );
+            }
+
+
+            $costos = $this->getCostos( );
+            foreach($costos as $costo ){
+                $newCosto = $costo->copy();
+                $newCosto->setCaIdcosto( $costo->getCaIdcosto() );
+                $newCosto->setCaIdreporte( $reporte->getCaIdreporte() );
+                $newCosto->save();
+            }
+
+            if( $this->getCaImpoexpo()==Constantes::EXPO ){
+                $repExpo = $this->getRepExpo();
+                $repExpoNew = $repExpo->copy();
+                $repExpoNew->setCaIdreporte( $reporte->getCaIdreporte() );
+                $repExpoNew->save();
+            }
+
+            if( $this->getCaColmas()=="Sí" ){
+                $repAduana = $this->getRepAduana();
+                $repAduanaNew = $repAduana->copy();
+                $repAduanaNew->setCaIdreporte( $reporte->getCaIdreporte() );
+                $repAduanaNew->save();
+            }
+
+            if( $this->getCaSeguro() =="Sí" ){
+                $repSeguro = $this->getRepSeguro();
+                $repSeguroNew = $repSeguro->copy();
+                $repSeguroNew->setCaIdreporte( $reporte->getCaIdreporte() );
+                $repSeguroNew->save();
+            }            
+            $conn->commit();
+        }
+        catch (Exception $e){
+
+            throw $e;
+            $conn->rollBack();
+        }
+        /*
+        
+		
+
+		
+
+		
+         */
+        
+
+        return $reporte;
+    }
+
+
+
 
 
 }

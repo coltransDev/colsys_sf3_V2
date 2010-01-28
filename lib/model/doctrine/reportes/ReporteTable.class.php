@@ -28,7 +28,7 @@ class ReporteTable extends Doctrine_Table
                             ->select("r.*")
                             ->innerJoin("r.Contacto c")
                             ->innerJoin("c.Cliente cl")
-                            ->where("cl.ca_idgrupo = ? ", $idCliente)
+                            ->where("cl.ca_idgrupo = ? OR cl.ca_idcliente = ? ", array($idCliente, $idCliente))
                             ->addWhere("r.ca_usuanulado IS NULL");
 
 
@@ -48,9 +48,9 @@ class ReporteTable extends Doctrine_Table
                 $q->addOrderBy("r.ca_orden_clie");				
 				break;
 			default:                
-                /*$q->leftJoin("r.Proveedor p ON r.ca_idproveedor=p.ca_idtercero");
+                $q->leftJoin("r.Proveedor p ON r.ca_idproveedor=p.ca_idtercero");
                 $q->addOrderBy("p.ca_nombre");
-                $q->addOrderBy("r.ca_orden_clie");*/
+                $q->addOrderBy("r.ca_orden_clie");
 				break;
 
 		}
