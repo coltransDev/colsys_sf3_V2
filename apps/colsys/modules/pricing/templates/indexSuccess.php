@@ -1,20 +1,24 @@
+<?
+/*
+ *  This file is part of the Colsys Project.
+ *
+ *  (c) Coltrans S.A. - Colmas Ltda.
+ */
+include_component("pricing", "panelCostosAduanaRecargos", array("nivel"=>$nivel));
+include_component("pricing", "panelCostosAduanaWindow", array("nivel"=>$nivel));
+include_component("pricing", "panelCostosAduana", array("nivel"=>$nivel));
 
+include_component("gestDocumental", "panelArchivos", array("readOnly"=>$opcion=="consulta") );
+
+
+?>
 <script type="text/javascript">
 Ext.onReady(function(){
         
         <?
         include_component("pricing", "panelNoticias");
 
-        include_component("gestDocumental", "panelArchivos",
-						array("folder"=>"Tarifario".DIRECTORY_SEPARATOR."ArchivosAdicionales",
-							"closable"=>true,
-                            "id"=>"ArchivosMugre",
-                            "object"=>"archivosMugre",
-                            "title"=>"Archivos",
-							"closable"=>true,
-							"readOnly"=>$opcion=="consulta",
-                            "height"=>200
-						));
+        
         ?>
         var treePanelOnclickHandler = function(n){
 		//var sn = this.selModel.selNode || {}; // selNode is null on initial selection
@@ -33,120 +37,142 @@ Ext.onReady(function(){
 				impoexpo = "<?=Constantes::EXPO?>";
 			}
 
+            if( nodeoptions[4] ){
+                idtrafico = nodeoptions[4];
+                idcomponent+="_"+idtrafico;
+            }else{
+                    idtrafico = "";
+            }
 
-			switch( opcion ){
-				case "recgen":
-					/*
-					* Se muestran los recargos generales para el pais seleccionado
-					*/
-					<?
-					$url = "pricing/recargosGenerales";
+            if( opcion=="files" ){
 
-					?>
-					var url = '<?=url_for( $url )?>';
-					break;
-
-				case "reclin":
-					/*
-					* Se muestran los recargos generales para el pais seleccionado
-					*/
-					<?
-					$url = "pricing/recargosPorLinea";
-
-					?>
-					var url = '<?=url_for( $url )?>';
-					break;
-				case "admtraf":
-					/*
-					* Se muestran la administracion de trayectos para el pais seleccionado
-					*/
-					<?
-					$url = "pricing/adminTrayectos";
-
-					?>
-					var url = '<?=url_for( $url )?>';
-					break;
-				case "files":
-					/*
-					* Se muestran la administracion de trayectos para el pais seleccionado
-					*/
-					<?
-					$url = "pricing/archivosPais";
-
-					?>
-					var url = '<?=url_for( $url )?>';
-					break;
-				default:
-					/*
-					*  Se muestra una grilla con la información de fletes
-					*  del trafico seleccionado
-					*/
-					<?
-					$url = "pricing/grillaPorTrafico";
-
-					?>
-					var url = '<?=url_for( $url )?>';
-					break;
-			}
-
-			var idcomponent = opcion+"_"+impoexpo+"_"+transporte+"_"+modalidad
-
-			if( nodeoptions[4] ){
-				idtrafico = nodeoptions[4];
-				idcomponent+="_"+idtrafico;
-			}else{
-					idtrafico = "";
-			}
-
-			if( nodeoptions[5] ){
-				if( opcion=="fletesciudad" ){
-					var idciudad = nodeoptions[5];
-					var idlinea = "";
-				}
-
-				if( opcion=="fleteslinea" || opcion=="reclin" ){
-					var idciudad = "";
-					var idlinea = nodeoptions[5];
-				}
-
-				idcomponent+="_"+nodeoptions[5];
-
-			}
+                var folder = "Tarifario/"+impoexpo.substring(0, 1)+"_"+transporte.substring(0, 1)+"_"+modalidad+"_"+idtrafico;
 
 
-			if( Ext.getCmp('tab-panel').findById(idcomponent)!=null ){
-				Ext.getCmp('tab-panel').activate(idcomponent);
-				//Ext.getCmp('tab-panel').show();
-				return 0;
-			}
+                var newComponent = new PanelArchivos({folder:folder,
+                                                     title:"Archivos "+impoexpo.substring(0, 4)+"»"+transporte+"»"+modalidad+"»"+idtrafico,
+                                                     closable: true});
+                                              
 
-			Ext.Ajax.request({
-				url: url,
-				params: {
-					impoexpo: impoexpo,
-					idtrafico: idtrafico,
-					transporte:transporte,
-					modalidad: modalidad,
-					idlinea: idlinea,
-					idciudad: idciudad
-				},
-				success: function(xhr) {
-					//alert( xhr.responseText );
-					var newComponent = eval(xhr.responseText);
-					Ext.getCmp('tab-panel').add(newComponent);
-					Ext.getCmp('tab-panel').setActiveTab(newComponent);
+                Ext.getCmp('tab-panel').add(newComponent);
+                Ext.getCmp('tab-panel').setActiveTab(newComponent);
+            }else{
 
-				},
-				failure: function() {
-					Ext.Msg.alert("Tab creation failed", "Server communication failure");
-				}
-			});
+                switch( opcion ){
+                    case "recgen":
+                        /*
+                        * Se muestran los recargos generales para el pais seleccionado
+                        */
+                        <?
+                        $url = "pricing/recargosGenerales";
 
+                        ?>
+                        var url = '<?=url_for( $url )?>';
+                        break;
+
+                    case "reclin":
+                        /*
+                        * Se muestran los recargos generales para el pais seleccionado
+                        */
+                        <?
+                        $url = "pricing/recargosPorLinea";
+
+                        ?>
+                        var url = '<?=url_for( $url )?>';
+                        break;
+                    case "admtraf":
+                        /*
+                        * Se muestran la administracion de trayectos para el pais seleccionado
+                        */
+                        <?
+                        $url = "pricing/adminTrayectos";
+
+                        ?>
+                        var url = '<?=url_for( $url )?>';
+                        break;
+                    case "files":
+                        /*
+                        * Se muestran la administracion de trayectos para el pais seleccionado
+                        */
+                        <?
+                        $url = "pricing/archivosPais";
+
+                        ?>
+                        var url = '<?=url_for( $url )?>';
+                        break;
+                    default:
+                        /*
+                        *  Se muestra una grilla con la información de fletes
+                        *  del trafico seleccionado
+                        */
+                        <?
+                        $url = "pricing/grillaPorTrafico";
+
+                        ?>
+                        var url = '<?=url_for( $url )?>';
+                        break;
+                }
+
+                var idcomponent = opcion+"_"+impoexpo+"_"+transporte+"_"+modalidad
+
+
+
+                if( nodeoptions[5] ){
+                    if( opcion=="fletesciudad" ){
+                        var idciudad = nodeoptions[5];
+                        var idlinea = "";
+                    }
+
+                    if( opcion=="fleteslinea" || opcion=="reclin" ){
+                        var idciudad = "";
+                        var idlinea = nodeoptions[5];
+                    }
+
+                    idcomponent+="_"+nodeoptions[5];
+
+                }
+
+
+                if( Ext.getCmp('tab-panel').findById(idcomponent)!=null ){
+                    Ext.getCmp('tab-panel').activate(idcomponent);
+                    //Ext.getCmp('tab-panel').show();
+                    return 0;
+                }
+
+                Ext.Ajax.request({
+                    url: url,
+                    params: {
+                        impoexpo: impoexpo,
+                        idtrafico: idtrafico,
+                        transporte:transporte,
+                        modalidad: modalidad,
+                        idlinea: idlinea,
+                        idciudad: idciudad
+                    },
+                    success: function(xhr) {
+                        //alert( xhr.responseText );
+                        var newComponent = eval(xhr.responseText);
+                        Ext.getCmp('tab-panel').add(newComponent);
+                        Ext.getCmp('tab-panel').setActiveTab(newComponent);
+
+                    },
+                    failure: function() {
+                        Ext.Msg.alert("Tab creation failed", "Server communication failure");
+                    }
+                });
+           }
 		}else{
 			n.expand();
 		}
 	}
 
+
+    var archivosMugre = new PanelArchivos({
+        folder: "<?=base64_encode("Tarifario".DIRECTORY_SEPARATOR."ArchivosAdicionales")?>",
+        closable: true,
+        title: "Archivos",
+        height: 200
+    });
 
         // NOTE: This is an example showing simple state management. During development,
         // it is generally best to disable state management as dynamically-generated ids
@@ -228,7 +254,11 @@ Ext.onReady(function(){
 					,
 					<?						
 					include_component("pricing","panelConsultaCiudades", array( "impoexpo"=>Constantes::EXPO, "transporte"=>Constantes::AEREO, "titulo"=>"Exportaciones Aéreas"));				
-					?> 
+					?>
+                    ,
+                    <?
+                    include_partial("formAduana", array("opcion"=>$opcion));
+                    ?>
                     ,
                     <?
                     include_partial("formSeguros", array("opcion"=>$opcion));
@@ -296,7 +326,13 @@ Ext.onReady(function(){
 <div style="height:100%"></div>
 <script type="text/javascript">
     Ext.onReady(function(){
-        
-          });
+           /* var newComponent = new PanelCostosAduana({
+                                                             closable: true,
+                                                             title: 'Tarifario Aduana'
+                                                            });
+                    Ext.getCmp('tab-panel').add(newComponent);
+                    Ext.getCmp('tab-panel').setActiveTab(newComponent);*/
+    });
+
 
 </script>
