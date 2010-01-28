@@ -34,6 +34,15 @@ class cotizacionesComponents extends sfComponents
 
     }
 
+
+    /*
+     * Panel principal inferior
+     */
+    public function executeFormTrayectoWindow()
+	{
+
+    }
+
 	/*
 	* Muestra los Productos de una Cotizacion y un formulario para agregar un nuevo registro, tambien 
 	* permite editar un campo haciendo doble click en el.

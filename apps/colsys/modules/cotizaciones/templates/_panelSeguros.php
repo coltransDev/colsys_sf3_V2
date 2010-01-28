@@ -153,7 +153,9 @@ PanelSeguros = function( config ){
             text: 'Guardar Cambios',
             tooltip: 'Guarda los cambios realizados en Seguros',
             iconCls: 'disk',  // reference to our css
-            handler: guardarDatosPaneles
+            handler: function(){
+                Ext.getCmp("subpanel-cotizaciones").guardarDatosPaneles();
+            }
         }
         ,
         {
