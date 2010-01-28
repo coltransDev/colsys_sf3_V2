@@ -26,5 +26,7 @@ class RepAduanaForm extends BaseRepAduanaForm
                                                                             'key_method' => "getCaValor"
                                                                       ));
 
+        $this->widgetSchema['ca_coordinador']=new sfWidgetFormDoctrineChoice(array('model' => 'Usuario', 'add_empty' => false, 'table_method'=>"getCoordinadoresAduana"));
+
     }
 }

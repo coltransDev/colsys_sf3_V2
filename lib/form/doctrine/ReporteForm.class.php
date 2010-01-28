@@ -22,7 +22,7 @@ class ReporteForm extends BaseReporteForm
                                                                             'add_empty' => false,
                                                                             'query' => $q
                                                                       ));
-        $agentes = Doctrine_Query::create()
+        /*$agentes = Doctrine_Query::create()
                              ->select("a.*, i.ca_nombre, t.ca_nombre")
                              ->from("IdsAgente a")
                              ->innerJoin("a.Ids i")
@@ -37,8 +37,8 @@ class ReporteForm extends BaseReporteForm
         $choices = array();
         foreach( $agentes as $agente ){
             $choices[$agente["a_ca_idagente"]] = $agente["t_ca_nombre"]." - ".$agente["i_ca_nombre"] ;
-        }
-        $this->widgetSchema['ca_idagente']=new sfWidgetFormChoice(array("choices" => $choices));
+        }*/
+        $this->widgetSchema['ca_idagente']=new sfWidgetFormChoice(array("choices" => array()));
         
 
         $this->widgetSchema['ca_idconcliente']=new sfWidgetFormInputHidden();
@@ -136,6 +136,9 @@ class ReporteForm extends BaseReporteForm
         $q = Doctrine::getTable("Parametro")->createQuery("p")->where("ca_casouso = ?", "CU021");
         $this->widgetSchema['ca_incoterms']=new sfWidgetFormDoctrineChoice(array('model' => "Parametro", 'add_empty' => false, "query"=>$q, "method"=>"getValIncoterm"));
 
+        $this->widgetSchema['ca_idcotizacion']=new sfWidgetFormInputText();
+        $this->widgetSchema['ca_idproducto']=new sfWidgetFormInputText();
+
         //Expo
         //$consignar = ParametroPeer::retrieveByCaso( "CU055" );
 
@@ -176,6 +179,9 @@ class ReporteForm extends BaseReporteForm
 			$this->validatorSchema['ca_idproveedor']->setOption('required', true);
             $this->validatorSchema['ca_orden_prov']->setOption('required', true);
 		}
+
+        //varia si es AG
+        $this->validatorSchema['ca_modalidad']->setOption('required', true);
         
 		parent::bind($taintedValues, $taintedFiles);
 
