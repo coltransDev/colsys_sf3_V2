@@ -20,7 +20,7 @@ foreach($buttons as $button){
 	echo image_tag("");
 	if( isset($button['onClick']) ){
 		?>
-		<a onclick="<?=$button['onClick']?>" class="toolbarBtn"><?=image_tag( $button["image"] ) ." ".$button["name"] ?></a>
+		<a onclick="<?=$button['onClick']?>" class="toolbarBtn" <?=$button['id']?'id="'.$button['id'].'"':""?>><?=image_tag( $button["image"] ) ." ".$button["name"] ?></a>
 		<?
 	}else{
 		echo link_to( image_tag( $button["image"] ) ." ".$button["name"]  , isset($button["link"])?$button["link"]:"#" , "$options class=toolbarBtn  $onClick ".($button["tooltip"]?" title='".$button["tooltip"]."'":"")." ".(isset($button["confirm"])?" confirm='".$button["confirm"]."'":"") ); 					

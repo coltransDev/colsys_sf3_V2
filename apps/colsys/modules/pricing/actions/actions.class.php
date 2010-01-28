@@ -44,6 +44,12 @@ class pricingActions extends sfActions
 		$response->addJavaScript("extExtras/myRowExpander",'last');
 		$response->addJavaScript("extExtras/NumberFieldMin",'last');
 		$response->addJavaScript("extExtras/CheckColumn",'last');	
+        $response->addJavaScript("extExtras/LockingGridView",'last');
+        $response->addStylesheet("extExtras/LockingGridView",'last');
+        $response->addJavaScript("extExtras/ColumnHeaderGroup",'last');
+        $response->addStylesheet("extExtras/ColumnHeaderGroup",'last');
+
+
 		
 		$this->nivel = $this->getUser()->getNivelAcceso( pricingActions::RUTINA );
 		
@@ -2315,6 +2321,141 @@ class pricingActions extends sfActions
 	
 	
 				
-	
+	/*
+    * Tarifario Aduana
+    */
+
+    /*
+	* Datos para el tarifario de Aduana que se cargan en el panel
+	* @author: Andres Botero
+	*/
+	public function executeDatosPanelCostosAduana(){
+        $this->nivel = $this->getUser()->getNivelAcceso( pricingActions::RUTINA );
+       
+        
+        //Clientes Activos en colmas + Sus recargos
+
+        $cl = Doctrine::getTable("Cliente")
+                           ->createQuery("c")
+                           ->select("c.ca_compania, c.ca_idcliente, e.ca_estado")
+                           //->addFrom("(SELECT MAX(ca_fchestado) FROM StdCliente e2 WHERE e2.ca_empresa = e.ca_empresa AND e2.ca_estado = e.ca_estado ) std")
+                           ->innerJoin("c.StdCliente e")
+                           ->addWhere("e.ca_empresa = ?", Constantes::COLMAS)
+                           //->addWhere("e.ca_estado = ?", "Activo")
+                           //->addWhere("e.ca_fchestado = (SELECT MAX(e2.ca_fchestado) FROM StdCliente e2 WHERE e2.ca_empresa = e.ca_empresa AND e2.ca_estado = e.ca_estado )" )
+                           
+                           ->addOrderBy("e.ca_idcliente ASC")
+                           ->addOrderBy("e.ca_fchestado DESC")
+                           ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                           //->limit(50)
+                           //->getSqlQuery();
+                           ->execute();
+        //echo $cl;
+        
+        $lastId = null;
+        $clientes = array();
+        foreach( $cl as $val){
+            if( $lastId != $val["c_ca_idcliente"] ){
+                $lastId = $val["c_ca_idcliente"];
+                if( $val["e_ca_estado"]=="Activo" ){
+                    $clientes[] = array("idcliente"=>$val["c_ca_idcliente"], "compania"=>$val["c_ca_compania"]);
+                }
+            }
+        }
+        
+        $recs = Doctrine::getTable("PricRecargoCliente")
+                           ->createQuery("r")
+                           ->select("r.*")
+                           //->limit(50)
+                           ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                           ->execute();
+
+        $recargos = array();
+        foreach( $recs as $rec ){
+            $recargos[$rec["r_ca_idcliente"]][$rec["r_ca_idconcepto"]]["col1"]= $rec["r_ca_vlr1"];
+            $recargos[$rec["r_ca_idcliente"]][$rec["r_ca_idconcepto"]]["col2"]= $rec["r_ca_vlr2"];
+        }
+
+
+
+
+        
+        $datos = array();
+        $k = 0;
+        foreach( $clientes as $key=>$val ){
+
+            $datos[$k]["compania"] = utf8_encode( $clientes[$key]["compania"] );
+            $datos[$k]["idcliente"] =  $clientes[$key]["idcliente"];
+
+
+            if( isset($recargos[ $clientes[$key]["idcliente"] ] )){
+                $recargos = $recargos[ $clientes[$key]["idcliente"] ];
+
+                foreach( $recargos as $idconcepto=>$cols ){
+                    foreach( $cols as $col=>$vlr ){
+                        $datos[$k]["recargo_".$idconcepto."_".$col] = $vlr;
+                    }
+                }                
+            }
+
+            $k++;
+
+        }
+        $this->responseArray = array("root"=>$datos, "total",count($datos));
+
+
+        $this->setTemplate("responseTemplate");
+
+    }
+
+    /*
+	* Guarda los cambios del panelss
+	* @author: Andres Botero
+	*/
+	public function executeObservePanelCostosAduana(){
+        $id = $this->getRequestParameter("id");
+        $this->responseArray = array("id"=>$id );
+        $idcliente = $this->getRequestParameter("idcliente");
+        //print_r( $_POST );
+        foreach( $_POST as $key=>$val ){
+            if(substr($key,0,7)=="recargo"){
+
+                $vals = explode("_",$key);
+                $idconcepto = $vals[1];
+                $col = $vals[2];
+                
+                $concepto = Doctrine::getTable("PricRecargoCliente")
+                              ->createQuery("r")
+                              ->where("r.ca_idconcepto = ?", $idconcepto )
+                              ->addWhere("r.ca_idcliente = ?", $idcliente )
+                              ->fetchOne();
+
+                if( !$concepto ){
+                    $concepto = new PricRecargoCliente();
+                    $concepto->setCaIdcliente($idcliente);
+                    $concepto->setCaIdconcepto($idconcepto);
+                    $concepto->setCaIdmoneda("COP");                    
+
+                }
+
+                
+                //exit();
+                if( $col=="col1" ){
+                   //echo $col." ".$val;
+                   $concepto->setCaVlr1($val);
+                }
+
+                if( $col=="col2" ){
+                   //echo $col." ".$val;
+                   $concepto->setCaVlr2($val);
+                }
+
+                $concepto->save();
+            }
+        }
+
+		$this->setTemplate("responseTemplate");
+    }
+
 }
 ?>

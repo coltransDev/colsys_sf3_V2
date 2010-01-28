@@ -461,8 +461,8 @@ class idsActions extends sfActions
 					$contacto->setCaIdsucursal( $this->sucursal->getCaIdsucursal() );					
 				}
 
-				$contacto->setCaNombres( ucfirst( trim($bindValues["nombre"]) ));
-				$contacto->setCaPapellido( ucfirst( trim($bindValues["apellido"]) ));
+				$contacto->setCaNombres( ucwords(strtolower( trim($bindValues["nombre"]))));
+				$contacto->setCaPapellido( ucwords(strtolower( trim($bindValues["apellido"]))));
 				//$contacto->setCaDireccion( trim($bindValues["direccion"]) );
 				//$contacto->setCaIdciudad( $bindValues["idciudad"] );
 				$contacto->setCaTelefonos( $bindValues["telefonos"] );
@@ -1081,6 +1081,8 @@ class idsActions extends sfActions
 
         return sfView::NONE;
     }
+
+    
 
 
 

@@ -17,8 +17,9 @@
     <?php include_javascripts() ?>
     <script type="text/javascript" src="/js/loginWindow.js"></script>
 
+
 </head>
-<body>
+<body >
 	<div align="center">
 		<div class="header" align="center" >	
 			

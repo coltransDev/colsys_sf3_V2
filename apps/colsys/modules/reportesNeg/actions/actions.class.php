@@ -93,7 +93,11 @@ class reportesNegActions extends sfActions
 		$reporte = Doctrine::getTable("Reporte")->find( $this->getRequestParameter("id") );
 		$this->forward404Unless( $reporte );
 
+        if( $reporte->getCaUsuanulado() ){
+            $this->redirect( "reportesNeg/verReporte?id=".$reporte->getCaIdreporte() );
+        }
 		$this->reporte = $reporte;
+        
 
         $response = sfContext::getInstance()->getResponse();
 		$response->addJavaScript("extExtras/RowExpander",'last');
@@ -114,6 +118,7 @@ class reportesNegActions extends sfActions
         
 		$this->reporte = Doctrine::getTable("Reporte")->find( $this->getRequestParameter("id") );
 		$this->forward404Unless( $this->reporte );
+        $this->user = $this->getUser();
 		
 	}
     
@@ -130,12 +135,6 @@ class reportesNegActions extends sfActions
         $this->destino = $request->getParameter("destino");
         $this->idconcliente = $request->getParameter("idconcliente");
         $this->ca_idconcliente = $request->getParameter("ca_idconcliente");
-		
-
-
-        
-        
-        
         
 		if( $this->getRequestParameter("id") ){
 			$reporte = Doctrine::getTable("Reporte")->find( $request->getParameter("id") );
@@ -144,8 +143,6 @@ class reportesNegActions extends sfActions
 		}else{		
 			$reporte = new Reporte();
 		}
-
-        
 
         $form = new ReporteForm();
         $this->modalidadesAduana = array();
@@ -158,8 +155,6 @@ class reportesNegActions extends sfActions
         foreach( $modalidadesAduana as $row ){
             $this->modalidadesAduana[]=$row["m_ca_idmodalidad"];
         }
-
-
 
         $this->bodegas = Doctrine::getTable("Bodega")
                                              ->createQuery("b")
@@ -230,10 +225,13 @@ class reportesNegActions extends sfActions
 
         $this->seguro_conf = $request->getParameter("seguro_conf");
 
+        $this->idcotizacion =  isset($bindValues["ca_idcotizacion"])?$bindValues["ca_idcotizacion"]:null;
 
-        if ($request->isMethod('post')){            
-        
-            $soloAduana = $reporte->esSoloAduana();
+        if ($request->isMethod('post')){                    
+            
+            /**********************************************
+            * Validaciones los datos
+            ***********************************************/
 
             //TODO Hacer referencia a la tabla modalidades
             //print_r( $bindValues );
@@ -241,7 +239,20 @@ class reportesNegActions extends sfActions
             $bindValues["ca_modalidad"] = $modalidad->getCaModalidad();
             $bindValues["ca_transporte"] = $modalidad->getCaTransporte();
             $bindValues["ca_impoexpo"] = $modalidad->getCaImpoexpo();
+            
+            if( $bindValues["ca_impoexpo"] ){
+                $reporte->setCaImpoexpo( $bindValues["ca_impoexpo"] );
+            }
 
+            if( $bindValues["ca_transporte"] ){
+                $reporte->setCaTransporte( $bindValues["ca_transporte"] );
+            }
+
+            if( $bindValues["ca_modalidad"] ){
+                $reporte->setCaModalidad( $bindValues["ca_modalidad"] );
+            }
+
+            $soloAduana = $reporte->esSoloAduana();
 
             if( $soloAduana ){
                 $bindValues["ca_idagente"] = null;
@@ -250,9 +261,6 @@ class reportesNegActions extends sfActions
             }
             
             $bindValues["ca_idconcliente"] = $request->getParameter("ca_idconcliente");
-
-            
-            
             
             $form->bind( $bindValues );
 
@@ -261,7 +269,6 @@ class reportesNegActions extends sfActions
                 $cliente = $reporte->getCliente();
                 $bindValues["ca_login"] = $cliente->getCaVendedor();
             }
-
 
             if( $bindValues["ca_colmas"]=="Sí" ){
                 $bindValuesAduana = $request->getParameter( $formAduana->getName() );
@@ -276,7 +283,6 @@ class reportesNegActions extends sfActions
             }else{
                 $aduanaValido = true;
             }
-
 
             if( $bindValues["ca_seguro"]=="Sí" ){
                 $bindValuesSeguro = $request->getParameter( $formSeguro->getName() );
@@ -304,35 +310,33 @@ class reportesNegActions extends sfActions
                 $expoValido = true;
             }
 
-
-
 			if( $form->isValid() && $aduanaValido && $seguroValido && $expoValido ){
-                //$reporte  = $form->save();
-                if( !$reporte->getCaIdreporte() ){
-                    $reporte->setCaFchreporte( date("Y-m-d") );
-                    $reporte->setCaLogin( "abotero" );
-                    $reporte->setCaConsecutivo( ReporteTable::siguienteConsecutivo(date("Y")) );
-                    $reporte->setCaVersion( 1 );
+                /**********************************************
+                * Guarda los datos
+                ***********************************************/
+                $opcion = $request->getParameter("opcion");
+                
+                switch( $opcion ){
+                    case 1:
+                        if( !$reporte->getCaIdreporte() ){
+                            $reporte->setCaFchreporte( date("Y-m-d") );
+                            $reporte->setCaConsecutivo( ReporteTable::siguienteConsecutivo(date("Y")) );
+                            $reporte->setCaVersion( 1 );
+                        }
+                        break;
+                    case 2:
+                        $reporte = $reporte->copiar(2);                        
+                        break;
+                    case 3:
+                        $reporte = $reporte->copiar(1);
+                        break;
                 }
+                
 
                 if( $this->ca_idconcliente ){
                     $reporte->setCaIdconcliente( $this->ca_idconcliente );
                 }
-
                 
-
-                if( $bindValues["ca_impoexpo"] ){
-                    $reporte->setCaImpoexpo( $bindValues["ca_impoexpo"] );
-                }
-
-                if( $bindValues["ca_transporte"] ){
-                    $reporte->setCaTransporte( $bindValues["ca_transporte"] );
-                }
-
-                if( $bindValues["ca_modalidad"] ){
-                    $reporte->setCaModalidad( $bindValues["ca_modalidad"] );
-                }
-
                 if( $bindValues["ca_idlinea"]!==null ){
                     $reporte->setCaIdlinea( $bindValues["ca_idlinea"] );
                 }
@@ -352,7 +356,6 @@ class reportesNegActions extends sfActions
                 if( $bindValues["ca_fchdespacho"] ){
                     $reporte->setCaFchdespacho( $bindValues["ca_fchdespacho"] );
                 }
-
                 
                 if( $bindValues["ca_login"] ){
                     $reporte->setCaLogin( $bindValues["ca_login"] );
@@ -367,8 +370,7 @@ class reportesNegActions extends sfActions
                 }else{
                     $reporte->setCaMciaPeligrosa( false );
                 }
-
-
+                
                 if( $bindValues["ca_preferencias_clie"]!==null ){
                     $reporte->setCaPreferenciasClie( $bindValues["ca_preferencias_clie"] );
                 }
@@ -377,21 +379,21 @@ class reportesNegActions extends sfActions
                     $reporte->setCaInstrucciones( $bindValues["ca_instrucciones"] );
                 }
 
-                 for( $i=0; $i<ReporteForm::NUM_CC; $i++ ){
+                for( $i=0; $i<ReporteForm::NUM_CC; $i++ ){
                     if( isset( $bindValues["contactos_".$i] ) && isset( $bindValues["confirmar_".$i] ) && $bindValues["confirmar_".$i] ){
                         $contactos[] = $bindValues["contactos_".$i];
                     }
-                 }
-                 
-                 if( count( $contactos )>0 ){
-                     $reporte->setCaConfirmarClie( implode(",",$contactos) );
+                }
+                
+                if( count( $contactos )>0 ){
+                    $reporte->setCaConfirmarClie( implode(",",$contactos) );
 
-                 }
+                }
 
-                 /*
-                  * Datos de proveedores y consignatarios
-                  */
-                 if( $bindValues["ca_impoexpo"]==Constantes::IMPO ){
+                /*
+                * Datos de proveedores y consignatarios
+                */
+                if( $bindValues["ca_impoexpo"]==Constantes::IMPO ){
                     if( $this->idproveedor ){
                         $reporte->setCaIdproveedor( $this->idproveedor );
                     }else{
@@ -472,10 +474,11 @@ class reportesNegActions extends sfActions
 
 
                 if( $bindValues["ca_idcotizacion"] ){
-                    $reporte->setCaIdcotizacion( $bindValues["ca_idcotizacion"] );
+                    $reporte->setCaIdcotizacion( $bindValues["ca_idcotizacion"] );                
                 }else{
-                    $reporte->setCaIdcotizacion( null );
+                    $reporte->setCaIdcotizacion( null );                
                 }
+
 
                 if( $bindValues["ca_idproducto"] ){
                     $reporte->setCaIdproducto( $bindValues["ca_idproducto"] );
@@ -484,11 +487,7 @@ class reportesNegActions extends sfActions
                 }
 
                 
-                /*
-                 *
-                 */
-
-
+                
                 if( $bindValues["ca_colmas"]=="Sí" ){
                     $reporte->setCaColmas( "Sí" );
                     
@@ -518,7 +517,9 @@ class reportesNegActions extends sfActions
 
                 $reporte->setCaLiberacion( 0 );
                 $reporte->setCaTiempocredito( 0 );
-                    
+                if( $opcion!=1 ){ //Al copiar el reporte ya se coloco el usuario y la fecha
+                    $reporte->stopBlaming();
+                }
                 $reporte->save();
                 $repaduana = Doctrine::getTable("RepAduana")->find( $reporte->getCaIdreporte() );
                 if( $bindValues["ca_colmas"]=="Sí" ){                    
@@ -529,6 +530,7 @@ class reportesNegActions extends sfActions
                     $repaduana->setCaInstrucciones( $bindValuesAduana["ca_instrucciones"] );
                     if( $reporte->getCaImpoexpo()!=Constantes::EXPO ){
                         $repaduana->setCaTransnacarga( $bindValuesAduana["ca_transnacarga"] );
+                        $repaduana->setCaCoordinador( $bindValuesAduana["ca_coordinador"] );
                     }else{
                         $repaduana->setCaTransnacarga( null );
                     }
@@ -1224,464 +1226,7 @@ class reportesNegActions extends sfActions
 
 
 
-	/*
-	* Copia un reporte en otro nuevo creando una nueva version o un 
-	* nuevo consecutivo 
-	* @author Andres Botero
-	*/
-	public function executeCopiarReporte(){	
-		$this->modo = $this->getRequestParameter("modo");					
-		$this->forward404Unless( $this->modo );
-				
-		$reporteNegocio = Doctrine::getTable("Reporte")->find( $this->getRequestParameter("reporteId") );
-		$this->forward404Unless( $reporteNegocio );
-		$reporteNegocioOld = $reporteNegocio;
-		$reporteNegocio = $reporteNegocioOld->copy( false ); 
-		
-		$user_id = $this->getUser()->getUserId();
-				
-		if( $this->getRequestParameter('option')=="nuevaVersion" ){	
-			$reporteNegocio->setCaConsecutivo( $reporteNegocioOld->getCaConsecutivo() ); 				
-			$reporteNegocio->setCaVersion( $reporteNegocioOld->getCaVersion()+1 );	
-						
-			$reporteNegocio->setCaFchactualizado( date("Y-m-d H:i:s") );	
-			$reporteNegocio->setCaUsuactualizado( $user_id  );
-			
-		}else{
-			$sig = ReportePeer::siguienteConsecutivo( date("Y") );		
-			$reporteNegocio->setCaConsecutivo( $sig ); 
-			$reporteNegocio->setCaVersion( 1 );
-			$reporteNegocio->setCaFchreporte( date("Y-m-d H:i:s") ); 
-			
-			$reporteNegocio->setCaFchcreado( date("Y-m-d H:i:s") );	
-			$reporteNegocio->setCaUsucreado( $user_id );			
 	
-			$reporteNegocio->setCaFchactualizado( null );	
-			$reporteNegocio->setCaUsuactualizado( null);	
-			
-			$reporteNegocio->setCaIdetapa( null );		
-			$reporteNegocio->setCaFchultstatus( null );		
-		}
-		
-		
-		
-		$reporteNegocio->save();					
-		
-				
-		//Copia los conceptos				
-		$conceptos = $reporteNegocioOld->getRepTarifas( );				
-		foreach( $conceptos as $concepto ){
-			$newConcepto = $concepto->copy();
-			$newConcepto->setCaIdconcepto( $concepto->getCaIdconcepto() );
-			$newConcepto->setCaIdreporte( $reporteNegocio->getCaIdreporte() );
-			$newConcepto->save();
-		}
-		
-		//Copia los gastos				
-		$gastos = $reporteNegocioOld->getRecargos( );	
-		foreach($gastos as $gasto ){
-			$newGasto = $gasto->copy();
-			$newGasto->setCaIdconcepto( $gasto->getCaIdconcepto() );
-			$newGasto->setCaIdrecargo( $gasto->getCaIdrecargo() );
-			$newGasto->setCaIdreporte( $reporteNegocio->getCaIdreporte() );
-			$newGasto->save();
-		}
-		
-		$costos = $reporteNegocioOld->getCostos( );
-		foreach($costos as $costo ){
-			$newCosto = $costo->copy();			
-			$newCosto->setCaIdcosto( $costo->getCaIdcosto() );
-			$newCosto->setCaIdreporte( $reporteNegocio->getCaIdreporte() );
-			$newCosto->save();
-		}
-		
-		if( $reporteNegocio->getCaImpoexpo()=="Exportación" ){
-			$repExpo = $reporteNegocioOld->getRepExpo();
-			$repExpoNew = $repExpo->copy();
-			$repExpoNew->setCaidreporte( $reporteNegocio->getCaIdreporte() );
-			$repExpoNew->save();
-		}
-		
-		if( $reporteNegocio->getCaColmas()=="Sí" ){				
-			$repAduana = $reporteNegocioOld->getRepAduana();
-			$repAduanaNew = $repAduana->copy();
-			$repAduanaNew->setCaidreporte( $reporteNegocio->getCaIdreporte() );
-			$repAduanaNew->save();
-		}
-		
-		if( $reporteNegocio->getCaSeguro() =="Sí" ){				
-			$repSeguro = $reporteNegocioOld->getRepSeguro();
-			$repSeguroNew = $repSeguro->copy();
-			$repSeguroNew->setCaidreporte( $reporteNegocio->getCaIdreporte() );
-			$repSeguroNew->save();
-		}
-		
-		$this->redirect( "reportesNeg/consultaReporte?modo=".$this->modo."&reporteId=".$reporteNegocio->getCaIdreporte()."&token=".md5(time()) );
-		
-	}
-	
-	
-	/*
-	* Guarda los cambios realizados  
-	* @author Andres Botero
-	*/
-	public function executeFormReporteGuardar(){
-		
-		$this->modo = $this->getRequestParameter("modo");					
-		$this->forward404Unless( $this->modo );
-		
-		if( $this->getRequestParameter("reporteId") ){
-			$reporteNegocio = Doctrine::getTable("Reporte")->find( $this->getRequestParameter("reporteId") );
-			$this->forward404Unless( $reporteNegocio );
-			
-		}else{		
-			$reporteNegocio = new Reporte();
-			$sig = ReportePeer::siguienteConsecutivo( date("Y") );			
-			$reporteNegocio->setCaConsecutivo( $sig ); 
-			$reporteNegocio->setCaVersion( 1 ); 			
-		}
-		
-		if( $this->getRequestParameter( "idconcliente") ){				
-			$user_id = $this->getUser()->getUserId();
-						
-			$reporteNegocio->setCaFchreporte( date("Y-m-d H:i:s") );  
-							
-			$reporteNegocio->setCaIdcotizacion( $this->getRequestParameter( "idcotizacion"  ) ); 
-			
-			if( $this->modo=="expo" ){
-				$reporteNegocio->setCaImpoExpo( "Exportación" );  				  
-			}else{
-				$reporteNegocio->setCaImpoExpo( "Importación" ); 
-			}
-
-			$reporteNegocio->setCaOrdenClie( $this->getRequestParameter( "orden_clie" ) ); 
-			if( $this->modo=="expo" ){
-				//el proveedor no existe en exportaciones
-				$reporteNegocio->setCaIdproveedor( null );
-				$reporteNegocio->setCaOrdenProv( "''" );
-				$reporteNegocio->setCaIdrepresentante( 0 ); 
-				$reporteNegocio->setCaInformarRepr( '' );	
-				$reporteNegocio->setCaInformarCons( '' );
-				$reporteNegocio->setCaInformarNoti( '' );	
-				$reporteNegocio->setCaNotify( '' );
-				$reporteNegocio->setCaLiberacion( '' );		
-				$reporteNegocio->setCaTiempoCredito( '-' );
-				$reporteNegocio->setCaContinuacion( 'N/A' );						
-			}
-			
-			
-			
-			//Cliente Coltrans  
-			//Agente			
-			$reporteNegocio->setCaIdconsignar( $this->getRequestParameter( "idconsignar" ) );
-			$reporteNegocio->setCaIdconsignarmaster( $this->getRequestParameter( "idconsignarmaster" ) );
-			$reporteNegocio->setCaMasterSame( false );	
-			
-			
-			$idconcliente = $this->getRequestParameter( "idconcliente" );
-			
-			$contacto = ContactoPeer::retrieveByPk( $idconcliente );
-			
-			$cliente = $contacto->getCliente();						
-			
-			//Colocar lista de correo			
-			$contactos = $this->getRequestParameter( "contactos" );
-			$confirmar = $this->getRequestParameter( "confirmar" );
-			$reporteNegocio->setCaConfirmarClie("");
-			
-			if( is_array($contactos) && is_array($confirmar) ){
-				for($i=0; $i<count($contactos); $i++){		
-					if(in_array($i,$confirmar)){	
-						$reporteNegocio->addConfirmarClie( $contactos[$i] );
-					}
-				}
-			}
-			
-			if( is_array($contactos) ){
-				$cliente->setCaConfirmar( implode(",", $contactos) );					
-				$cliente->save();
-			}
-
-			
-			
-			
-			if( $idconcliente ){
-				$reporteNegocio->setCaIdConcliente( $idconcliente );  			  
-			}
-			
-			$fchDespacho = $this->getRequestParameter( "fchDespacho" );
-			if( $fchDespacho ){
-				$reporteNegocio->setCaFchDespacho( $fchDespacho );  			  
-			}
-			
-			$mercancia_desc = $this->getRequestParameter( "mercancia_desc" );
-			if( $mercancia_desc ){
-				$reporteNegocio->setCaMercanciaDesc( $mercancia_desc );  
-			}
-			
-			$ca_origen = $this->getRequestParameter( "idCiudadOrigen" );
-			if( $ca_origen ){
-				$reporteNegocio->setCaOrigen( $ca_origen );  				
-			}
-			
-			$ca_destino = $this->getRequestParameter( "idCiudad" );
-			if( $ca_destino ){
-				$reporteNegocio->setCaDestino( $ca_destino );  
-			}
-								
-			$ca_transporte = $this->getRequestParameter( "transporte" );
-			if( $ca_transporte ){
-				$reporteNegocio->setCaTransporte( $ca_transporte );  
-			}
-			
-			$ca_incoterms = $this->getRequestParameter( "incoterms" );
-			if( $ca_incoterms ){
-				$reporteNegocio->setCaIncoterms( $ca_incoterms );  
-			}
-									
-			/*$ca_idsia = $this->getRequestParameter( "sia" );
-			if( $ca_idsia ){
-				$reporteNegocio->setCaIdsia( $ca_idsia );  
-			}*/
-												
-			if( !$reporteNegocio->getCaIdreporte() ){
-				$reporteNegocio->setCaFchcreado( date("Y-m-d H:i:s") );	
-				$reporteNegocio->setCaUsucreado( $user_id );			
-			}else{
-				$reporteNegocio->setCaFchactualizado( date("Y-m-d H:i:s") );	
-				$reporteNegocio->setCaUsuactualizado( $user_id );							
-			}
-			
-			/*
-			$ca_tipoexpo = $this->getRequestParameter( "modalidad" );
-			if( $ca_tipoexpo ){
-				$reporteNegocio->setCaTipoExpo( $ca_tipoexpo );  
-			}
-			*/
-			
-			$ca_idconsignatario = $this->getRequestParameter( "idconsignatario" );
-			if( $ca_idconsignatario ){
-				$reporteNegocio->setCaIdConsignatario( $ca_idconsignatario );  
-			}
-			
-			$ca_idnotify = $this->getRequestParameter( "idnotify" );
-			if( $ca_idnotify ){
-				$reporteNegocio->setCaIdnotify( $ca_idnotify );  
-			}else{
-				$reporteNegocio->setCaIdnotify( 0 );					
-			}
-			
-				
-			$ca_login = $this->getRequestParameter( "login" );
-			if( $ca_login ){
-				$reporteNegocio->setCaLogin( $ca_login );  
-			}else{
-				$cliente = $reporteNegocio->getCliente();
-				if( $cliente->getCaVendedor() ){
-					$reporteNegocio->setCaLogin( $cliente->getCaVendedor() );  
-				}else{
-					$reporteNegocio->setCaLogin( "Comercial" );  
-				}
-				
-			}
-					
-			$ca_preferencias_clie = $this->getRequestParameter( "preferencias_clie" );
-			if( $ca_preferencias_clie !== null ){
-				$reporteNegocio->setCaPreferenciasClie( $ca_preferencias_clie );  
-			}
-			
-			$ca_idagente = $this->getRequestParameter( "agente" );
-			if( $ca_idagente ){
-				$reporteNegocio->setCaIdagente( $ca_idagente );  
-			}else{
-				$reporteNegocio->setCaIdagente( null );  
-			}
-			
-			
-			$ca_instrucciones = $this->getRequestParameter( "instrucciones_agente" );			
-			
-			if( $ca_instrucciones !== null ){
-				$reporteNegocio->setCaInstrucciones( $ca_instrucciones );  
-			}
-									
-			if( $reporteNegocio->getCaTransporte() == "Marítimo"  ){
-				$idlinea = $this->getRequestParameter( "idnaviera" );
-				$reporteNegocio->setCaIdlinea( $idlinea );
-				
-				$reporteNegocio->setCaModalidad( $this->getRequestParameter( "modalidad_mar" ) );					
-			}
-			
-			if( $reporteNegocio->getCaTransporte() == "Aéreo"  ){
-				$idlinea = $this->getRequestParameter( "idaerolinea" );
-				$reporteNegocio->setCaIdlinea( $idlinea );	
-				$reporteNegocio->setCaModalidad( $this->getRequestParameter( "modalidad_aer" ) );		
-			}
-			
-			if( $reporteNegocio->getCaTransporte() == "Terrestre"  ){
-				$idlineaterrestre = $this->getRequestParameter( "idlineaterrestre" );
-				
-				$reporteNegocio->setCaIdlinea( $idlineaterrestre );
-				$reporteNegocio->setCaModalidad( $this->getRequestParameter( "modalidad_ter" ) );
-			}
-			
-						
-			
-			$colmas = $this->getRequestParameter( "colmas" );
-			if( $colmas=="No" ){
-				$reporteNegocio->setCaColmas( "No" ); 
-			}else{
-				$reporteNegocio->setCaColmas( "Sí" ); 
-			}	
-			
-			$seguro = $this->getRequestParameter( "seguro" );
-			if( $seguro=="No" ){
-				$reporteNegocio->setCaSeguro( "No" ); 
-			}else{
-				$reporteNegocio->setCaSeguro( "Sí" ); 
-			}						
-			
-					
-			$reporteNegocio->save();	
-						
-			/**********************************************************************
-			* Guarda los datos de aduana en caso de un reporte de exportaciones
-			***********************************************************************/
-			if( $reporteNegocio->getCaImpoexpo() =="Exportación" ){
-				$repExpo = $reporteNegocio->getRepExpo();
-				$repExpo->setCaidreporte( $reporteNegocio->getCaIdreporte() );
-				if( $this->getRequestParameter( "peso" )!==null ){
-					$repExpo->setCaPeso( $this->getRequestParameter( "peso" )."|".$this->getRequestParameter( "tipo_peso" ) );	
-				}
-				
-				if( $this->getRequestParameter( "volumen" )!==null ){
-					$repExpo->setCaVolumen( $this->getRequestParameter( "volumen" )."|".$this->getRequestParameter( "tipo_volumen" ) );	
-				}	
-				
-				
-						
-				if( $this->getRequestParameter( "piezas" )!==null ){
-					$repExpo->setCaPiezas( $this->getRequestParameter( "piezas" )."|".$this->getRequestParameter( "tipo_piezas" ) );	
-				}				
-			
-				$repExpo->setCaDimensiones( $this->getRequestParameter( "dimensiones" ) );	
-				
-				if( $this->getRequestParameter( "valorCarga" )!==null ){
-					$repExpo->setCaValorcarga( $this->getRequestParameter( "valorCarga" ));	
-				}
-				
-				if( $this->getRequestParameter( "anticipo" )!==null ){
-					$repExpo->setCaAnticipo( $this->getRequestParameter( "anticipo" ));	
-				}
-				
-				if( $this->getRequestParameter( "tipoexpo" )!==null ){
-					$repExpo->setCaTipoexpo( $this->getRequestParameter( "tipoexpo" ) );	
-				}
-				
-				if( $this->getRequestParameter( "sia" )!==null ){
-					$repExpo->setCaIdsia( $this->getRequestParameter( "sia" ) );	
-				}
-				
-				/*
-				if( $reporteNegocio->getCaTransporte() == "Aereo/Terrestre" || $reporteNegocio->getCaTransporte() == "Maritimo/Terrestre"  || $reporteNegocio->getCaTransporte() == "Terrestre"  ){
-					$idlineaterrestre = $this->getRequestParameter( "idlineaterrestre" );
-					$repExpo->setCaIdlineaterrestre( $idlineaterrestre );				
-				}else{
-					$repExpo->setCaIdlineaterrestre( null );
-				}*/
-				
-				if( $this->getRequestParameter( "motonave" )!==null ){
-					$repExpo->setCaMotonave( $this->getRequestParameter( "motonave" ) );	
-				}
-				
-				if( $this->getRequestParameter( "emisionbl" )!==null ){
-					$repExpo->setCaEmisionbl( $this->getRequestParameter( "emisionbl" ) );	
-				}
-				
-				
-				if( $this->getRequestParameter( "numbl" )!==null ){
-					$repExpo->setCaNumbl( $this->getRequestParameter( "numbl" ) );	
-				}
-				
-				$repExpo->save();				
-			}else{
-				$repExpo = $reportesNegocio->getRepExpo();
-				if( $repExpo ){
-					$repExpo->delete();
-				}
-			}
-			
-								
-			/**********************************************************************
-			* Guarda los datos de aduana en caso de que seleccione Colmas Si
-			***********************************************************************/	
-			if( $colmas=="No" ){
-				//En caso de que el registro exista lo elimina
-				$repAduana = RepAduanaPeer::retrieveByPk( $reporteNegocio->getCaIdreporte() );
-				if( $repAduana ){
-					$repAduana->delete();
-				}
-			}else{
-				
-				$repAduana = RepAduanaPeer::retrieveByPk( $reporteNegocio->getCaIdreporte() );
-				if( !$repAduana ){
-					$repAduana = new RepAduana();
-					$repAduana->setCaIdReporte( $reporteNegocio->getCaIdreporte()  );
-				}
-				
-				if( $this->getRequestparameter("instrucciones")!==null ){
-					$repAduana->setCaInstrucciones( $this->getRequestparameter("instrucciones") );
-				}
-				
-				if( $this->getRequestparameter("transnacarga")=="No" ){
-					$repAduana->setCaTransnacarga( "No" );
-				}else{
-					$repAduana->setCaTransnacarga( "Sí" );
-				}
-				
-								
-				
-				
-				if( $this->getRequestparameter("transnatipo") ){
-					$repAduana->setCaTransnatipo( $this->getRequestparameter("transnatipo") );
-				}
-				//busca coordinador
-				$repAduana->setCaCoordinador(null);
-				$repAduana->save();
-			}
-			
-			
-			/**********************************************************************
-			* Guarda los datos de aduana en caso de que seleccione Colmas Si
-			***********************************************************************/	
-			
-			if( $seguro=="No" ){				
-				$repSeguro = RepSeguroPeer::retrieveByPk( $reporteNegocio->getCaIdreporte() ); 				 				if( $repSeguro ){
-					$repSeguro->delete();
-				}				
-			}else{									
-				$repSeguro = RepSeguroPeer::retrieveByPk( $reporteNegocio->getCaIdreporte() );
-				if( !$repSeguro ){
-					$repSeguro = new RepSeguro();
-					$repSeguro->setCaIdReporte( $reporteNegocio->getCaIdreporte()  );
-				}
-								
-				$repSeguro->setCaVlrasegurado( $this->getRequestparameter("vlrasegurado") );
-				$repSeguro->setCaIdmonedaVlr( $this->getRequestparameter("idmoneda_vlr") );				
-				$repSeguro->setCaPrimaventa( $this->getRequestparameter("primaventa") );		
-				$repSeguro->setCaMinimaventa( $this->getRequestparameter("minimaventa") );	
-				$repSeguro->setCaIdmonedaVta( $this->getRequestparameter("idmoneda_vta") );		
-				$repSeguro->setCaObtencionPoliza(  $this->getRequestparameter("obtencionpoliza") );	
-				$repSeguro->setCaIdmonedaPol( $this->getRequestparameter("idmoneda_pol") );	
-				$repSeguro->setCaSeguroConf( "spena" );			
-				$repSeguro->save();
-			}
-			
-			$this->redirect( "reportesNeg/consultaReporte?modo=".$this->modo."&reporteId=".$reporteNegocio->getCaIdreporte()."&token=".md5(time()) );
-					
-		}		
-		
-		exit;	
-	}
 	
 	
 	
@@ -1701,17 +1246,38 @@ class reportesNegActions extends sfActions
 	* Anula un reporte 
 	* @author: Andres Botero 
 	*/
-	public function executeAnularReporte(){
-		$this->reporteNegocio = Doctrine::getTable("Reporte")->find( $this->getrequestparameter("reporteId") );
-		$this->forward404Unless($this->reporteNegocio);	
-		$modo=$this->getrequestparameter("modo");
-		$user = $this->getuser();
-		$this->reporteNegocio->setCaUsuanulado( $user->getUserId() );
-		$this->reporteNegocio->setCaFchanulado( time() );
-		$this->reporteNegocio->save();
-        
-		$this->redirect( "reportesNeg/index?modo=".$modo );
-		
+	public function executeAnularReporte( $request ){
+        $this->forward404Unless( $request->getParameter("id") );
+        $this->forward404Unless( trim($request->getParameter("motivo")) );
+		$reporte = Doctrine::getTable("Reporte")->find( $request->getParameter("id") );
+		$this->forward404Unless($reporte);
+
+		$user = $this->getUser();
+		$reporte->setCaUsuanulado( $user->getUserId() );
+		$reporte->setCaFchanulado( date("Y-m-d H:i:s") );
+        $reporte->setCaDetanulado( trim($request->getParameter("motivo")));
+		$reporte->save();
+
+        $this->responseArray = array("success"=>true);
+        $this->setTemplate("responseTemplate");
+	}
+
+    /*
+	* Revive un reporte anulado
+	* @author: Andres Botero
+	*/
+	public function executeRevivirReporte( $request ){
+        $this->forward404Unless( $request->getParameter("id") );        
+		$reporte = Doctrine::getTable("Reporte")->find( $request->getParameter("id") );
+		$this->forward404Unless($reporte);
+
+		$user = $this->getUser();
+		$reporte->setCaUsuanulado( null );
+		$reporte->setCaFchanulado( null );
+        $reporte->setCaDetanulado( "Revivido por: ".$user->getUserId()." ".date("Y-m-d H:i:s") );
+		$reporte->save();
+
+        $this->redirect( "reportesNeg/verReporte?id=".$reporte->getCaIdreporte() );
 	}
 	
 	

@@ -167,6 +167,10 @@ class reportesNegComponents extends sfComponents
             $this->repaduana = new RepAduana();
         }
 
+
+
+
+
         //print_r( $this->repaduana );
         //exit();
 

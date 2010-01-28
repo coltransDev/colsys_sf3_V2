@@ -27,6 +27,24 @@
 
 </div>
 	
+<?
+if( $reporte->getCaUsuanulado()){
+    ?>
+    <div style="width:830px" class="box1">
+    <? //image_tag("16x16/info.gif")?> Reporte anulado por <?=$reporte->getCaUsuanulado()?> <?=Utils::fechaMes($reporte->getCaFchanulado())?>
 
+    <br />
+    <b>Motivo:</b> <?=$reporte->getCaDetanulado()?>
+    <br />
+    <?
+    if( $reporte->getCaUsuanulado()==$user->getUserId() ){
+        echo link_to("Haga click aca para revivir este reporte", "reportesNeg/revivirReporte?id=".$reporte->getCaIdreporte(), array("confirm"=>"Esta seguro?"));
+    }
+    ?>
+    </div>
+    <br />
+    <?
+}
+?>
 <iframe src="<?=url_for("reportesNeg/generarPDF?id=".$reporte->getCaIdreporte()."&token=".md5(time()))?>" width="830px" height="650px"></iframe>
 </div>

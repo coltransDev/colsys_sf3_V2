@@ -55,7 +55,7 @@ class gestDocumentalActions extends sfActions
 		$folder = base64_decode($this->getRequestParameter("folder"));
 		$this->forward404Unless($folder);
         $directory = sfConfig::get('app_digitalFile_root').DIRECTORY_SEPARATOR.$folder.DIRECTORY_SEPARATOR;
-
+       
         if(!is_dir($directory)){
             mkdir($directory, 0777, true);
            

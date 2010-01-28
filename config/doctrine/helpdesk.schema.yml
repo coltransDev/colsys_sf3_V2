@@ -182,3 +182,25 @@ HdeskTicketUser:
       type: one
 
 
+HdeskDepartamentClasification:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: helpdesk
+  tableName: helpdesk.tb_departament_clasification
+  columns:
+    ca_iddepartament:
+      type: integer
+      primary: true
+    ca_clasification:
+      type: string
+      primary: true
+    ca_order: integer
+  relations:
+    Departamento:
+      local: ca_iddepartament
+      foreign: ca_iddepartamento
+      type: one
+
+

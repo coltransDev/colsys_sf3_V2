@@ -299,6 +299,10 @@ Cliente:
       local: ca_idciudad
       foreign: ca_idciudad
       type: one
+    StdCliente:
+      local: ca_idcliente
+      foreign: ca_idcliente
+      type: many
 
 
 Contacto:

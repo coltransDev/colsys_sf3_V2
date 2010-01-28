@@ -29,6 +29,9 @@ class ProjectConfiguration extends sfProjectConfiguration
 
         $manager->setAttribute(Doctrine::ATTR_SEQNAME_FORMAT, '%s_id');
 
+        $manager->registerExtension('Blameable');
+
+
     }
 
 

@@ -64,6 +64,20 @@
             ?>
 			</td>
 	</tr>
+    <tr id="aduana-row3">
+		<td >
+            <b>Coordinador:</b>
+            <?
+            echo $formAduana['ca_coordinador']->renderError();
+            if( $reporte ){
+                $formAduana->setDefault('ca_coordinador', $repaduana->getCaCoordinador() );
+            }else{
+
+            }
+            echo $formAduana['ca_coordinador']->render();
+            ?>
+        </td>
+	</tr>
 
 
 

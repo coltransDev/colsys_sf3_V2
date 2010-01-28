@@ -170,6 +170,7 @@ class reportesActions extends sfActions
                     }
                     $tarea->setAsignaciones( $asignaciones );
                     $reporte->setCaIdtareaRext( $tarea->getCaIdtarea() );
+                    $reporte->stopBlaming();
                     $reporte->save();
                 }
             }

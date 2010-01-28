@@ -11,7 +11,11 @@ $modalidadesAduana = $sf_data->getRaw("modalidadesAduana");
 $bodegas = $sf_data->getRaw("bodegas");
 ?>
 <script language="javascript">
-    
+
+    var guardar = function( opcion ){
+        document.getElementById("opcion").value = opcion;
+        document.form1.submit();
+    }
 
     var traficos = <?=json_encode($traficos)?>;
     var cambiarImpoexpo = function(){
@@ -123,7 +127,7 @@ $bodegas = $sf_data->getRaw("bodegas");
         cambiarTransporte();
     }
 
-    function cambiarTransporte(){
+    var cambiarTransporte = function(){
         llenarModalidades('reporte_ca_impoexpo','reporte_ca_transporte', 'reporte_ca_modalidad', null, '<?=$reporte->getCaModalidad()?>');
         llenarLineas('reporte_ca_transporte', 'reporte_ca_idlinea', null, '<?=$reporte->getCaIdlinea()?>');
         llenarContinuaciones('reporte_ca_transporte', 'reporte_ca_continuacion',  '<?=$reporte->getCaContinuacion()?>');
@@ -153,11 +157,11 @@ $bodegas = $sf_data->getRaw("bodegas");
 
     }
 
-    function cambiarModalidad(){        
+    var cambiarModalidad = function(){
         cambiarAduana();
     }
 
-    function cambiarAduana(){
+    var cambiarAduana = function(){
         var modalidadesAduana = [<?=implode(",", $modalidadesAduana )?>];
 
         var transporte = document.getElementById("reporte_ca_transporte").value;
@@ -200,9 +204,11 @@ $bodegas = $sf_data->getRaw("bodegas");
             document.getElementById("aduana-row0").style.display = "";
             if( impoexpo!="<?=Constantes::EXPO?>" ){
                 document.getElementById("aduana-row1").style.display = "";
+                document.getElementById("aduana-row3").style.display = "";
                 document.getElementById("titulo-aduana").innerHTML = "<b>Transporte de Carga Nacionalizada</b>";
             }else{
                 document.getElementById("aduana-row1").style.display = "none";
+                document.getElementById("aduana-row3").style.display = "none";
                 document.getElementById("titulo-aduana").innerHTML = "<b>Transporte Nacional</b>";
             }
             document.getElementById("aduana-row2").style.display = "";
@@ -212,11 +218,12 @@ $bodegas = $sf_data->getRaw("bodegas");
             document.getElementById("aduana-row0").style.display = "none";
             document.getElementById("aduana-row1").style.display = "none";
             document.getElementById("aduana-row2").style.display = "none";
+            document.getElementById("aduana-row3").style.display = "none";
         }
     }
 
 
-    function cambiarSeguros(){
+    var cambiarSeguros = function(){
 
         if( document.getElementById("reporte_ca_seguro").value == "Sí" ){
             document.getElementById("seguros-row0").style.display = "";
@@ -227,7 +234,7 @@ $bodegas = $sf_data->getRaw("bodegas");
         }
     }
 
-    function cambiarContinuacion(){
+    var cambiarContinuacion = function(){
 
         if( document.getElementById("reporte_ca_continuacion").value != "N/A" ){
             document.getElementById("continuacion-row0").style.display = "";
@@ -239,7 +246,7 @@ $bodegas = $sf_data->getRaw("bodegas");
     }
 
 
-    function llenarContinuaciones( transporte , continuacionFldId,  defaultVal){
+    var llenarContinuaciones = function( transporte , continuacionFldId,  defaultVal){
         var transporteVal = document.getElementById( transporte ).value;
         var fld = document.getElementById( continuacionFldId );
 
@@ -258,7 +265,7 @@ $bodegas = $sf_data->getRaw("bodegas");
 
     var bodegas = <?=json_encode($bodegas)?>
     
-    function llenarBodegas(){
+    var llenarBodegas  = function(){
         var tipo = document.getElementById("reporte_tipo").value;
         var transporte = document.getElementById( "reporte_ca_transporte" ).value;
         var bodega = document.getElementById("reporte_ca_idbodega");
@@ -284,7 +291,7 @@ $bodegas = $sf_data->getRaw("bodegas");
         }
     }
 
-    function llenarTipos(){
+    var llenarTipos = function(){
         var transporte = document.getElementById( "reporte_ca_transporte" ).value;
         var tipo = document.getElementById("reporte_tipo");
         tipo.length=0;
@@ -342,6 +349,11 @@ $bodegas = $sf_data->getRaw("bodegas");
        
         llenarBodegas();
     }
+
+    var llenarAgentes = function(){
+        
+
+    }
     
 
     
@@ -351,9 +363,17 @@ $bodegas = $sf_data->getRaw("bodegas");
 <?
 include_partial("ventanaTercero", array("reporte"=>$reporte));
 ?>
-<form action="<?=url_for("reportesNeg/formReporte")?>" method="post">
+<form name="form1" action="<?=url_for("reportesNeg/formReporte")?>" method="post">
+    <input type="hidden" name="opcion" id="opcion" value="" />
 <div align="center" class="content">
-    <h1>Reportes de Negocio</h1>
+    <h1>Reporte de Negocio
+    <?
+    if( $reporte->getCaIdreporte() ){
+        
+        echo $reporte->getCaConsecutivo()." ".$reporte->getCaVersion()."/".$reporte->numVersiones();
+    }
+    ?>
+    </h1>
     <br />    
         <?
 
@@ -414,11 +434,18 @@ include_partial("ventanaTercero", array("reporte"=>$reporte));
             </tr>
             <?
             }
+
+
+            if( $idcotizacion ){
+                $value = $idcotizacion;
+            }else{
+                $value = $reporte->getCaIdcotizacion();
+            }
             ?>
             <tr>
                 <td width="16%"><b>Cotizaci&oacute;n</b></td>
                 <td width="16%">
-                    <?=include_component("widgets", "comboCotizaciones", array("value"=>$reporte->getCaIdcotizacion() ) )?>
+                    <?=include_component("widgets", "comboCotizaciones", array("value"=>$value ) )?>
                 </td>
                 <td width="16%"><b>Clase</b></td>
                 <td width="16%">
@@ -464,18 +491,23 @@ include_partial("ventanaTercero", array("reporte"=>$reporte));
             <tr >
                 <td colspan="8">
                     <div id="tab-panel"></div>
-                    
                 </td>
-            </tr>     
-            
-
-
-           
+            </tr>   
             <tr>
                 <td colspan="8">
                     <div align="center">
-                        <input type="submit" value="Guardar" class="button" />
                         <?
+                        if( $reporte->isNew() || $reporte->getCaVersion() == $reporte->getUltVersion() ){
+                        ?>
+                        <input type="button" value="Guardar" class="button" onClick="javascript:guardar(1)" />
+                        <?
+                        }
+                        if( $reporte->getCaIdreporte() ){
+                        ?>
+                        <input type="button" value="Nueva versi&oacute;n" class="button" onClick="javascript:guardar(2)" />
+                        <input type="button" value="Reporte nuevo" class="button" onClick="javascript:guardar(3)" />
+                        <?
+                        }
                         if( $reporte->isNew() ){
                             $url = "reportesNeg/index";
                         }else{
@@ -484,15 +516,9 @@ include_partial("ventanaTercero", array("reporte"=>$reporte));
                         ?>
                         <input type="button" value="Cancelar" class="button" onClick="document.location='<?=url_for($url)?>'" />
                     </div>
-
                 </td>
-
             </tr>
         </table>
-    
-
-    
-
 </div>
 
 
@@ -573,7 +599,7 @@ include_partial("ventanaTercero", array("reporte"=>$reporte));
             {contentEl:'preferencias', title: 'Preferencias', bodyStyle: bodyStyle},
             {contentEl:'aduana', title: 'Aduana', bodyStyle: bodyStyle},
             {contentEl:'seguros', title: 'Seguros', bodyStyle: bodyStyle},
-            {contentEl:'guias', title: 'Corte de guias', bodyStyle: bodyStyle},
+            {contentEl:'guias', title: 'Corte de Documentos', bodyStyle: bodyStyle},
             {contentEl:'exportaciones', title: 'Exportaciones', id: 'tab-expo', bodyStyle: bodyStyle}
         ]
     });
@@ -603,7 +629,8 @@ include_partial("ventanaTercero", array("reporte"=>$reporte));
                 {name: 'fchcircular', mapping: 'ca_fchcircular', type:'int'},
                 {name: 'status', mapping: 'ca_status'},
                 {name: 'confirmar', mapping: 'ca_confirmar'},
-                {name: 'preferencias', mapping: 'ca_preferencias'}
+                {name: 'preferencias', mapping: 'ca_preferencias'},
+                {name: 'coordinador', mapping: 'ca_coordinador'}
 
             ])
         });
@@ -657,17 +684,14 @@ include_partial("ventanaTercero", array("reporte"=>$reporte));
                                 <?
                                 if($nivel>=2){
                                 ?>
-                                 document.getElementById("reporte_ca_login").value=record.data.vendedor;
+                                    document.getElementById("reporte_ca_login").value=record.data.vendedor;
                                 <?
                                 }else{
                                 ?>
-
-                                 document.getElementById("comercial").innerHTML=record.data.vendedor;
-
+                                    document.getElementById("comercial").innerHTML=record.data.vendedor;
                                 <?
                                 }
                                 ?>
-
                                 document.getElementById("ca_idconcliente").value = record.get("idcontacto");
                                 document.getElementById("div_contacto").innerHTML = record.get("nombre")+' '+record.get("papellido")+' '+record.get("sapellido") ;
 
@@ -687,6 +711,8 @@ include_partial("ventanaTercero", array("reporte"=>$reporte));
                                     document.getElementById("reporte_contactos_"+i).value=brokenconfirmar[i];
                                     document.getElementById("reporte_confirmar_"+i).checked=true;
                                 }
+
+                                document.getElementById("rep_aduana_ca_coordinador").value=record.data.coordinador;
 
                                 if( record.data.ca_listaclinton=="Sí" ){
                                     alert("Este cliente se encuentra en lista Clinton");
@@ -764,6 +790,8 @@ include_partial("ventanaTercero", array("reporte"=>$reporte));
         <?
         }
         ?>
+        
+        document.getElementById("rep_aduana_ca_coordinador").value=record.data.coordinador;
 
 
         document.getElementById("reporte_ca_idlinea").value=record.data.idlinea;

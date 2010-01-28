@@ -4,10 +4,11 @@
  *
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
+/*
 include_component("pricing", "panelCostosAduanaRecargos", array("nivel"=>$nivel));
 include_component("pricing", "panelCostosAduanaWindow", array("nivel"=>$nivel));
 include_component("pricing", "panelCostosAduana", array("nivel"=>$nivel));
-
+*/
 include_component("gestDocumental", "panelArchivos", array("readOnly"=>$opcion=="consulta") );
 
 
@@ -257,9 +258,9 @@ Ext.onReady(function(){
 					?>
                     ,
                     <?
-                    include_partial("formAduana", array("opcion"=>$opcion));
+                    //include_partial("formAduana", array("opcion"=>$opcion));
                     ?>
-                    ,
+                    //,
                     <?
                     include_partial("formSeguros", array("opcion"=>$opcion));
                     ?>

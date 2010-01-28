@@ -121,7 +121,52 @@ if( $reporte->getCaColmas()=="Sí" || $reporte->getCaTransporte() == Constantes::
 <script language="javascript">
 
 
-   
+    var anularReporte = function(btn, text){
+        if( btn == "ok"){
+            if( text.trim()==""){
+                alert("Debe colocar un motivo");
+            }else{
+                Ext.Ajax.request(
+                {
+                    waitMsg: 'Anulando...',
+                    url: '<?=url_for("reportesNeg/anularReporte?id=".$reporte->getCaIdreporte())?>',
+                    //method: 'POST',
+                    //Solamente se envian los cambios
+                    params :	{
+                        motivo: text.trim()
+                    },
+                    
+                    //Ejecuta esta accion cuando el resultado es exitoso
+                    callback :function(options, success, response){
+                        var res = Ext.util.JSON.decode( response.responseText );                        
+                        if( res.success ){
+                            document.location="<?=url_for("reportesNeg/verReporte?id=".$reporte->getCaIdreporte())?>";
+                        }
+                    }
+                 }
+            );
+            }
+        }
+    };
+
+
+    var ventanaAnularReporte = function(){
+
+
+
+        Ext.MessageBox.show({
+           title: 'Anular Reporte',
+           msg: 'por favor coloque el motivo por el que anula el reporte:',
+           width:300,
+           buttons: Ext.MessageBox.OKCANCEL,
+           multiline: true,
+           fn: anularReporte,
+           animEl: 'anular-reporte',
+           modal: true
+       });
+
+
+    }
 
     //tabpanel.render('panel-info');
     //tabpanel.setWidth(Ext.getBody().getWidth()-250);
@@ -256,9 +301,11 @@ if( $reporte->getCaColmas()=="Sí" || $reporte->getCaTransporte() == Constantes::
                                     {contentEl:'seguros', title: 'Seguros', bodyStyle: bodyStyle},
                                     <?
                                     }
+                                    if( !$reporte->esSoloAduana() ){
                                     ?>
-                                    {contentEl:'guias', title: 'Corte de guias', bodyStyle: bodyStyle},
+                                    {contentEl:'guias', title: 'Corte de Documentos', bodyStyle: bodyStyle},
                                     <?
+                                    }
                                     if($reporte->getCaImpoexpo()==Constantes::EXPO){
                                     ?>
                                     {contentEl:'exportaciones', title: 'Exportaciones', bodyStyle: bodyStyle},

@@ -144,6 +144,7 @@ class reporteExtActions extends sfActions
 					$tarea->setAsignaciones( $loginsAsignaciones );	
 					
 					$reporte->setCaIdseguimiento( $tarea->getCaIdtarea() );
+                    $reporte->stopBlaming();
 					$reporte->save();				
 				}else{
 					if( $tarea && $tarea->getCaIdtarea() ){

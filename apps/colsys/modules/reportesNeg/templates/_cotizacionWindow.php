@@ -136,9 +136,7 @@ if( $cotizacion ){
 
 
                         newRec = gridConceptos.store.getById( newRec.id );
-                        newRec.set("cantidad", 1);
-                        newRec.set("neta_tar", 0);
-                        newRec.set("neta_min", 0);
+                        
                         newRec.set("neta_idm", r.data.idmoneda);
                         newRec.set("reportar_tar", r.data.valor_tar);
                         newRec.set("reportar_min", r.data.valor_min);
@@ -149,12 +147,27 @@ if( $cotizacion ){
 
                         if( r.data.tipo=="recargo" ){
                             newRec.set("aplicacion", "Valor Fijo");
-                            newRec.set("tipo_app", "$");
-                            newRec.set("orden", lastConceptoTxt+"-"+r.data.item);
+                            newRec.set("tipo_app", "$");                          
+
+                            if( lastConcepto==9999){
+                                newRec.set("orden", "Y"+"-"+r.data.item);
+                            }else{
+                                newRec.set("orden", lastConceptoTxt+"-"+r.data.item);                                
+                                newRec.set("neta_tar", 0);
+                                newRec.set("neta_min", 0);
+                            }
                         }                        
 
-                        if( r.data.tipo=="concepto" ){                            
-                            newRec.set("orden", r.data.item);
+                        if( r.data.tipo=="concepto" ){
+                            //alert( r.data.item );
+                            if( r.data.iditem==9999){
+                                newRec.set("orden", "Y");
+                            }else{
+                                newRec.set("orden", r.data.item);
+                                newRec.set("cantidad", 1);
+                                newRec.set("neta_tar", 0);
+                                newRec.set("neta_min", 0);
+                            }
                         }
 
                         gridConceptos.store.sort("orden", "ASC");

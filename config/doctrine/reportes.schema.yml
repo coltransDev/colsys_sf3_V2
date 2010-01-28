@@ -307,9 +307,7 @@ RepTarifa:
       filter: false
   generatePath: reportes
   tableName: tb_reptarifas
-  columns:
-    oid:
-      type: integer
+  columns:    
     ca_idreporte:
       type: integer
       primary: true
@@ -348,8 +346,7 @@ RepGasto:
       filter: false
   generatePath: reportes
   tableName: tb_repgastos
-  columns:
-    oid: integer
+  columns:    
     ca_idreporte:
       type: integer
       primary: true    
