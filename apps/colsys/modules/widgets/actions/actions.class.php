@@ -322,9 +322,9 @@ class widgetsActions extends sfActions
         $rows = Doctrine_Query::create()
                         ->select("c.ca_idcontacto, cl.ca_compania, c.ca_nombres,
                                   c.ca_papellido, c.ca_sapellido, c.ca_cargo, 
-                                  cl.ca_preferencias, cl.ca_confirmar, cl.ca_vendedor
+                                  cl.ca_preferencias, cl.ca_confirmar, cl.ca_vendedor, cl.ca_coordinador,
                                   v.ca_nombre, cl.ca_listaclinton, cl.ca_fchcircular
-                                  ,cl.ca_status
+                                  ,cl.ca_status, cl.ca_vendedor
                                  ")
                         ->from("Contacto c")
                         ->innerJoin("c.Cliente cl")
@@ -341,20 +341,23 @@ class widgetsActions extends sfActions
 		$clientes = array();
 
    		foreach ( $rows as $row ) {
-            $row["ca_idcontacto"]=$row["c_ca_idcontacto"];
-			$row["ca_compania"]=utf8_encode($row["cl_ca_compania"]);
-			$row["ca_nombres"]=utf8_encode($row["c_ca_nombres"]);
-			$row["ca_papellido"]=utf8_encode($row["c_ca_papellido"]);
-			$row["ca_sapellido"]=utf8_encode($row["c_ca_sapellido"]);
-			$row["ca_preferencias"]=utf8_encode($row["cl_ca_preferencias"]);
-			$row["ca_nombre"]=utf8_encode($row["cl_v.ca_nombre"]);
-			$row["ca_cargo"]=utf8_encode($row["c_ca_cargo"]);
-			$row["ca_listaclinton"]=utf8_encode($row["cl_ca_listaclinton"]);
-			$row["ca_fchcircular"]=strtotime($row["cl_ca_fchcircular"]);
-            $row["ca_confirmar"]=$row["cl_ca_confirmar"];
-            $row["ca_idcontacto"]=$row["c_ca_idcontacto"];
-            $row["ca_status"]=$row["cl_ca_status"];
-            $clientes[]=$row;
+            $result = array();
+            $result["ca_idcontacto"]=$row["c_ca_idcontacto"];
+			$result["ca_compania"]=utf8_encode($row["cl_ca_compania"]);
+			$result["ca_nombres"]=utf8_encode($row["c_ca_nombres"]);
+			$result["ca_papellido"]=utf8_encode($row["c_ca_papellido"]);
+			$result["ca_sapellido"]=utf8_encode($row["c_ca_sapellido"]);
+			$result["ca_preferencias"]=utf8_encode($row["cl_ca_preferencias"]);
+			$result["ca_nombre"]=utf8_encode($row["v_ca_nombre"]);
+			$result["ca_cargo"]=utf8_encode($row["c_ca_cargo"]);
+			$result["ca_listaclinton"]=utf8_encode($row["cl_ca_listaclinton"]);
+			$result["ca_fchcircular"]=strtotime($row["cl_ca_fchcircular"]);
+            $result["ca_confirmar"]=$row["cl_ca_confirmar"];
+            $result["ca_idcontacto"]=$row["c_ca_idcontacto"];
+            $result["ca_status"]=$row["cl_ca_status"];
+            $result["ca_vendedor"]=$row["cl_ca_vendedor"];
+            $result["ca_coordinador"]=$row["cl_ca_coordinador"];
+            $clientes[]=$result;
 			
 		}
         $this->responseArray = array( "totalCount"=>count( $clientes ), "clientes"=>$clientes  );
@@ -483,6 +486,51 @@ class widgetsActions extends sfActions
 		$this->setTemplate("responseTemplate");
 	}
 
+
+    /*
+     *
+     */
+    public function executeListaCotizacionesJSON(){
+		$criterio =  $this->getRequestParameter("query");
+        $q = Doctrine::getTable("Cotizacion")
+                       ->createQuery("c")
+                       ->select("c.ca_idcotizacion, c.ca_consecutivo, p.ca_idproducto, o.ca_ciudad, d.ca_ciudad, o.ca_idciudad, d.ca_idciudad,o.ca_idtrafico, d.ca_idtrafico, p.ca_producto
+                                , p.ca_impoexpo, p.ca_transporte, p.ca_modalidad, con.ca_idcontacto, con.ca_nombres, con.ca_papellido, con.ca_sapellido, con.ca_cargo
+                                ,cl.ca_idcliente, cl.ca_compania, cl.ca_preferencias, cl.ca_confirmar, cl.ca_coordinador, c.ca_usuario, p.ca_idlinea ")
+                       ->leftJoin("c.CotProducto p")
+                       ->leftJoin("p.Origen o")
+                       ->leftJoin("p.Destino d")
+                       ->leftJoin("c.Contacto con")
+                       ->leftJoin("con.Cliente cl")
+                       ->where("c.ca_consecutivo LIKE ?", $criterio."%")
+                       ->limit(40);
+
+        $cotizaciones = $q->setHydrationMode(Doctrine::HYDRATE_SCALAR)->execute();
+
+        foreach( $cotizaciones as $key=>$val ){
+            $cotizaciones[$key]["o_ca_ciudad"] = utf8_encode($cotizaciones[$key]["o_ca_ciudad"]);
+            $cotizaciones[$key]["d_ca_ciudad"] = utf8_encode($cotizaciones[$key]["d_ca_ciudad"]);
+            $cotizaciones[$key]["p_ca_producto"] = utf8_encode($cotizaciones[$key]["p_ca_producto"]);
+            $cotizaciones[$key]["p_ca_impoexpo"] = utf8_encode($cotizaciones[$key]["p_ca_impoexpo"]);
+            $cotizaciones[$key]["p_ca_transporte"] = utf8_encode($cotizaciones[$key]["p_ca_transporte"]);
+            $cotizaciones[$key]["cl_ca_compania"] = utf8_encode($cotizaciones[$key]["cl_ca_compania"]);
+
+            $idmodalidad = Doctrine::getTable("Modalidad")
+                                             ->createQuery("m")
+                                             ->select("m.ca_idmodalidad")
+                                             ->addWhere("m.ca_modalidad = ?", $cotizaciones[$key]["p_ca_modalidad"])
+                                             ->addWhere("m.ca_transporte = ?", utf8_decode($cotizaciones[$key]["p_ca_transporte"]))
+                                             ->addWhere("m.ca_impoexpo = ?", utf8_decode($cotizaciones[$key]["p_ca_impoexpo"]))
+                                             ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)
+                                             ->execute();
+           $cotizaciones[$key]["idmodalidad"] = $idmodalidad;
+        }
+
+        $this->responseArray = array("root"=>$cotizaciones, "total"=>count($cotizaciones), "success"=>true);
+		$this->setTemplate("responseTemplate");
+
+
+	}
 
         /*
 	* Datos de los conceptos según sea el medio de transporte y la modalidad
