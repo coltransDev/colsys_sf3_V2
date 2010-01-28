@@ -118,11 +118,11 @@ PanelArchivos = function( config ){
                 handler: function(){
                     Ext.getCmp("panel-archivos").abrirArchivo();
                 }
-            },
+            }
             <?
             if( !$readOnly ){
             ?>            
-            {
+            ,{
                 text: 'Borrar',
                 tooltip: 'Elimina el archivo seleccionado',
                 iconCls:'delete',  // reference to our css
