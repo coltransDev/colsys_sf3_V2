@@ -22,4 +22,14 @@ class UsuarioTable extends Doctrine_Table
                              ->addOrderBy("u.ca_nombre")
                              ->execute();
     }
+
+    public static function getCoordinadoresAduana(){
+
+        return Doctrine::getTable("Usuario")
+                             ->createQuery("u")
+                             ->where("( u.ca_cargo like '%Coordinador%Aduana%')")
+                             ->addWhere("u.ca_activo = true")
+                             ->addOrderBy("u.ca_nombre")
+                             ->execute();
+    }
 }
