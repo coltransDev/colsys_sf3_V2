@@ -35,6 +35,7 @@ Ext.onReady(function(){
 			{name: 'confirmar', mapping: 'cl_ca_confirmar'},
 			{name: 'idorigen', mapping: 'ca_idorigen'},
             {name: 'vendedor', mapping: 'c_ca_usuario'},
+            {name: 'coordinador', mapping: 'cl_ca_coordinador'}
         ])
     });
 
