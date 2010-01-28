@@ -268,6 +268,15 @@ class widgetsComponents extends sfComponents
         
 	}
 
+    /*
+	* Muestra una seleccion de las cotizaciones a partir del numero
+	*/
+	public function executeComboCotizaciones(){
+		/*$response = sfContext::getInstance()->getResponse();
+		$response->addJavascript('components/comboCotizaciones');*/
+		$this->selected="";
+	}
+
 
 }
 ?>
