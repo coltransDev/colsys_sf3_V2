@@ -16,12 +16,18 @@ prod:
 #      loggers: ~
 
 cli:
+#  controller:
+#    class: sfConsoleController
+#  request:
+#    class: sfConsoleRequest
+#  response:
+#    class: sfConsoleResponse
   controller:
-    class: sfConsoleController
+    class: sfFrontWebController
   request:
-    class: sfConsoleRequest
+    class: sfWebRequest
   response:
-    class: sfConsoleResponse
+    class: sfWebResponse
   logger:
     class: sfAggregateLogger
     param:
