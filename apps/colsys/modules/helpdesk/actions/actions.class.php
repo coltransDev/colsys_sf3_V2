@@ -239,10 +239,12 @@ class helpdeskActions extends sfActions
 	*/
 	public function executeCrearTicket( sfWebRequest $request ){
 		
-		$this->nivel = $this->getUser()->getNivelAcceso( helpdeskActions::RUTINA );	
+		$this->nivel = $this->getUser()->getNivelAcceso( helpdeskActions::RUTINA );
+        
 		if( !$this->nivel ){
 			$this->nivel = 0;
 		}
+        
 		$idticket = $request->getParameter("id");
 		$this->ticket = HdeskTicketTable::retrieveIdTicket($idticket, $this->nivel );
 		
@@ -266,7 +268,19 @@ class helpdeskActions extends sfActions
 		
 			
 		$this->iddepartamento = $this->getUser()->getIddepartamento();
-				
+
+        $usersGroup = Doctrine::getTable("HdeskUserGroup")
+                         ->createQuery("d")
+                         ->where("d.ca_login = ?", $this->getUser()->getUserId())
+                         ->execute();
+        $this->grupos = array();
+        foreach( $usersGroup as $usersGroup ){
+            $this->grupos[] = $usersGroup->getCaIdgroup();            
+        }
+
+
+        $response = sfContext::getInstance()->getResponse();
+		$response->addJavaScript("extExtras/FileUploadField",'last');
 		
 	}
 	
@@ -390,8 +404,8 @@ class helpdeskActions extends sfActions
 			$ticket->setCaIdproject( $request->getParameter("project") );
 		}
         
-        $ticket->setCaTitle( utf8_decode($request->getParameter("title")) );
-        $ticket->setCaText( utf8_decode($request->getParameter("text")) );
+        $ticket->setCaTitle( ($request->getParameter("title")) );
+        $ticket->setCaText( ($request->getParameter("text")) );
         
 
 
@@ -412,7 +426,18 @@ class helpdeskActions extends sfActions
 				
 		@$ticket->save();
 
+       
+        if( isset( $_FILES["archivo"] )){
+            
+            $archivo = $_FILES["archivo"];
+            $directorio = $ticket->getDirectorio();           
 
+            if( !is_dir($directorio) ){
+                mkdir($directorio, 0777, true);
+            }
+            move_uploaded_file( $archivo["tmp_name"], $directorio.DIRECTORY_SEPARATOR. $archivo["name"]);            
+        }
+       
        
 		if( !$update ){			
 			$request->setParameter("id", $ticket->getCaIdticket() );
@@ -453,9 +478,14 @@ class helpdeskActions extends sfActions
 		if( !$update ){		
 			$tarea->notificar();
 		}
-		
-		$this->responseArray = array("idticket"=>$ticket->getCaIdticket(), "success"=>true);	
-		$this->setTemplate("responseTemplate");		
+
+        
+        
+
+
+		$this->redirect("helpdesk/verTicket?id=".$ticket->getCaIdticket());
+
+
 		
 	
 	}
@@ -641,6 +671,31 @@ class helpdeskActions extends sfActions
 		
 	}
 
+    /**
+	* Datos de las areas de acuerdo al departamento
+	*
+	* @param sfRequest $request A request object
+	*/
+	public function executeDatosClasificacion(sfWebRequest $request){
+		$departamento = $request->getParameter("departamento");
+		$data = array();
+
+		if( $departamento ){
+            $clasificaciones = Doctrine::getTable("HdeskDepartamentClasification")
+                      ->createQuery("c")
+                      ->where("c.ca_iddepartament = ?",  $departamento)
+                      ->addOrderBy("c.ca_order")
+                      ->execute();
+
+			foreach( $clasificaciones as $clasificacion ){
+				$data[] = array("iddepartamento"=>$departamento, "clasification"=>utf8_encode($clasificacion->getCaClasification()));
+			}
+		}
+
+		$this->responseArray = array("root"=>$data, "success"=>true);
+		$this->setTemplate("responseTemplate");
+
+	}
 
     /**
 	* Lista de tickets de acuerdo al numero de horas de trabajo y a l aprioridad

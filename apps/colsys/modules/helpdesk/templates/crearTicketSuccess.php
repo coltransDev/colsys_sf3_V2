@@ -1,5 +1,6 @@
 <?
 $ticket = $sf_data->getRaw("ticket");
+$grupos = $sf_data->getRaw("grupos");
 $grupo = $ticket->getHdeskGroup();
 $proyecto = $ticket->getHdeskProject();
 
@@ -51,6 +52,16 @@ var bloquearCampos = function(){
     Ext.getCmp('proyecto_id').setDisabled(true);
 }
 
+var desbloquearCampos = function(){
+
+	Ext.getCmp('priority_id').setDisabled(false);
+	Ext.getCmp('type_id').setDisabled(false);
+	Ext.getCmp('assignedto_id').setDisabled(false);
+	Ext.getCmp('type_id').setDisabled(false);
+	Ext.getCmp('actionTicket_id').setDisabled(false);
+    Ext.getCmp('proyecto_id').setDisabled(false);
+}
+
 
 
 var dataDepartamentos = <?=json_encode(array("departamentos"=>$sf_data->getRaw("departamentos")))?>;
@@ -86,16 +97,44 @@ var departamentos = new Ext.form.ComboBox({
 		)									
 	}),
 	listeners:{select:function( field, record, index ){
-						
-						
-						area = Ext.getCmp('area_id');
-						
-						area.store.baseParams = {
-							departamento: record.data.iddepartamento
-						};
-						area.store.reload();
-						
-				  }
+            area = Ext.getCmp('area_id');
+            area.store.setBaseParam( "departamento",record.data.iddepartamento );
+            area.store.load();
+            area.setValue("");
+
+            type = Ext.getCmp('type_id');
+            type.store.setBaseParam( "departamento",record.data.iddepartamento );
+            type.store.load();
+            type.setValue("");
+
+            proyecto = Ext.getCmp('proyecto_id');
+            proyecto.setValue("");
+
+            assignedto = Ext.getCmp('assignedto_id');
+            assignedto.setValue("");
+
+
+            <?
+            if( $nivel==2 ){
+            ?>
+            if( record.data.iddepartamento!=<?=$iddepartamento?> ){
+                bloquearCampos();
+            }else{
+                desbloquearCampos();
+            }
+            <?
+            }
+
+            if( $nivel<2 ){
+            ?>
+                bloquearCampos();                
+            <?
+            }
+            ?>
+
+
+
+        }
 	}
 	
 });
@@ -117,8 +156,7 @@ var areas = new Ext.form.ComboBox({
 	displayField: 'nombre',
 	valueField: 'idgrupo',
 	hiddenName: 'area', 
-	listClass: 'x-combo-list-small',
-	mode: 'local',	
+	listClass: 'x-combo-list-small',	
 	
 	store : new Ext.data.Store({
 		autoLoad : true ,
@@ -141,14 +179,46 @@ var areas = new Ext.form.ComboBox({
 						proyecto.store.baseParams = {
 							idgrupo: record.data.idgrupo
 						};
-						proyecto.store.reload();
+						proyecto.store.load();
 						
 						
 						assignedto = Ext.getCmp('assignedto_id');											
 						assignedto.store.baseParams = {
 							idgrupo: record.data.idgrupo
 						};
-						assignedto.store.reload();
+						assignedto.store.load();
+
+
+                        proyecto = Ext.getCmp('proyecto_id');
+                        proyecto.setValue("");
+
+                        assignedto = Ext.getCmp('assignedto_id');											
+                        assignedto.setValue("");
+
+
+                        <?
+                        if( $nivel==1 && is_array($grupos) ){
+                            //&& !in_array($grupo->getCaIdgroup(),$grupos)
+                        
+                        ?>
+                            var grupos = <?=json_encode($grupos)?>;
+                            var encontro = false;
+                            for(i in grupos ){
+                                //alert(grupos[i]+"");
+                                if( grupos[i] == record.data.idgrupo ){
+                                    encontro = true;
+                                }
+                            }
+                            if( !encontro ){
+                                bloquearCampos();
+                            }else{
+                                desbloquearCampos();
+                            }
+                        <?
+                        }
+                        ?>
+
+
 				  }
 	}
 	
@@ -267,16 +337,25 @@ var tipos = new Ext.form.ComboBox({
 	id: 'type_id',	
 	lazyRender:true,
 	allowBlank: true,
-	listClass: 'x-combo-list-small',	
-	store : [		
-				["", ""],	
-				["Tarea", "Tarea"],
-				["Mejora", "Mejora"],
-				["Defecto", "Defecto"],
-				["Control", "Control"],
-                ["Sugerencia", "Sugerencia"],
-				["Invalido", "Invalido"]		
-			]
+	listClass: 'x-combo-list-small',
+    displayField: 'clasification',
+	valueField: 'clasification',
+    store : new Ext.data.Store({
+		autoLoad : false ,
+		url: '<?=url_for("helpdesk/datosClasificacion")?>',
+		reader: new Ext.data.JsonReader(
+			{
+				root: 'root',
+				totalProperty: 'total',
+				successProperty: 'success'
+			},
+			Ext.data.Record.create([
+				{name: 'iddepartamento'},
+				{name: 'clasification'}
+			])
+		)
+	})
+    
 });
 
 
@@ -308,7 +387,10 @@ var mainPanel = new Ext.FormPanel({
 	frame: true,
 	title: '<?=$ticket->getCaIdticket()?"Editar ticket":"Nuevo ticket"?>',
 	bodyStyle:'padding:5px 5px 0',
-	
+	standardSubmit: true,
+    url: '<?=url_for('helpdesk/formTicketGuardar')?>',
+    fileUpload : true,
+
 	items: [{
 		layout:'column',
 		items:[{
@@ -373,6 +455,17 @@ var mainPanel = new Ext.FormPanel({
 		allowBlank: false
 		 
 	},
+    {
+        xtype: 'fileuploadfield',
+        id: 'archivo',
+        width: 250,
+        fieldLabel: 'Adjuntar',
+        emptyText: 'Seleccione un archivo',
+        buttonCfg: {
+            text: '',
+            iconCls: 'upload-icon'
+        }
+    },
 	{
 			xtype:'hidden',			
 			name: 'idticket',
@@ -383,20 +476,10 @@ var mainPanel = new Ext.FormPanel({
 
 	buttons: [{
 		text: 'Enviar',
-		handler: function(){					
-	            	if( mainPanel.getForm().isValid() ){						
-	            		mainPanel.getForm().submit({url:'<?=url_for('helpdesk/formTicketGuardar')?>', 
-	            							 	waitMsg:'Salvando Datos del ticket ...',
-												success:function(response,options){														
-													
-													document.location='<?=url_for("helpdesk/verTicket?id=")?>'+options.result.idticket;
-													
-												},
-	            							 	// standardSubmit: false, 												
-		            							failure:function(response,options){							
-													Ext.Msg.alert( "Error "+response.responseText );
-												}//end failure block  
-											});
+		handler: function(){
+                    var form =mainPanel.getForm()
+	            	if( form.isValid() ){
+	            		form.submit();
 					}else{
 						Ext.MessageBox.alert('Sistema de Tickets:', '¡Por favor complete los campos subrayados!');
 					}	            	
@@ -460,16 +543,37 @@ if( $grupo ){
 	proyecto.store.baseParams = {
 		idgrupo: '<?=$grupo->getCaIdgroup()?>'
 	};
-	proyecto.store.load();	
+	proyecto.store.load();
+    proyecto.setValue("");
 	
 	assignedto = Ext.getCmp('assignedto_id');											
 	assignedto.store.baseParams = {
 		idgrupo: '<?=$grupo->getCaIdgroup()?>'
 	};
 	assignedto.store.load();
-	
-	
+    assignedto.setValue("");
+
+
+    Ext.getCmp('type_id').store.baseParams = {
+							departamento: '<?=$departamento->getCaIddepartamento()?>'
+						};
+    Ext.getCmp('type_id').store.load();
+    <?
+    if( $nivel==2 &&  $departamento->getCaIddepartamento()!=$iddepartamento  ){
+    ?>
+        bloquearCampos();
+    <?
+    }
+
+    if( $nivel==1 && is_array($grupos) && !in_array($grupo->getCaIdgroup(),$grupos)  ){
+    ?>
+        bloquearCampos();
+    <?
+    }
+    ?>
+
 <?
+    
 	
 }
 
@@ -482,7 +586,17 @@ if( $proyecto ){
 }
 ?>
 
-validarVigencia();
+//validarVigencia();
+
+<?
+if( $nivel==0 ){
+?>
+    bloquearCampos();
+<?
+}
+?>
+
+
 
 
 
