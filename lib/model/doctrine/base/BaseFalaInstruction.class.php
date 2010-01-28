@@ -8,19 +8,19 @@
  * @property integer $ca_idfalainstructions
  * @property string $ca_iddoc
  * @property string $ca_instructions
+ * @property string $ca_embarque
  * @property FalaHeader $FalaHeader
- * @property FalaHeaderAdu $FalaHeaderAdu
  * 
  * @method integer         getCaIdfalainstructions()  Returns the current record's "ca_idfalainstructions" value
  * @method string          getCaIddoc()               Returns the current record's "ca_iddoc" value
  * @method string          getCaInstructions()        Returns the current record's "ca_instructions" value
+ * @method string          getCaEmbarque()            Returns the current record's "ca_embarque" value
  * @method FalaHeader      getFalaHeader()            Returns the current record's "FalaHeader" value
- * @method FalaHeaderAdu   getFalaHeaderAdu()         Returns the current record's "FalaHeaderAdu" value
  * @method FalaInstruction setCaIdfalainstructions()  Sets the current record's "ca_idfalainstructions" value
  * @method FalaInstruction setCaIddoc()               Sets the current record's "ca_iddoc" value
  * @method FalaInstruction setCaInstructions()        Sets the current record's "ca_instructions" value
+ * @method FalaInstruction setCaEmbarque()            Sets the current record's "ca_embarque" value
  * @method FalaInstruction setFalaHeader()            Sets the current record's "FalaHeader" value
- * @method FalaInstruction setFalaHeaderAdu()         Sets the current record's "FalaHeaderAdu" value
  * 
  * @package    symfony
  * @subpackage model
@@ -42,6 +42,9 @@ abstract class BaseFalaInstruction extends myDoctrineRecord
         $this->hasColumn('ca_instructions', 'string', null, array(
              'type' => 'string',
              ));
+        $this->hasColumn('ca_embarque', 'string', null, array(
+             'type' => 'string',
+             ));
 
         $this->option('symfony', array(
              'form' => false,
@@ -53,10 +56,6 @@ abstract class BaseFalaInstruction extends myDoctrineRecord
     {
         parent::setUp();
         $this->hasOne('FalaHeader', array(
-             'local' => 'ca_iddoc',
-             'foreign' => 'ca_iddoc'));
-
-        $this->hasOne('FalaHeaderAdu', array(
              'local' => 'ca_iddoc',
              'foreign' => 'ca_iddoc'));
     }

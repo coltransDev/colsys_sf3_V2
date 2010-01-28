@@ -9,20 +9,23 @@
  * @property timestamp $ca_fchestado
  * @property string $ca_estado
  * @property string $ca_empresa
+ * @property Cliente $Cliente
  * 
  * @method integer    getCaIdcliente()  Returns the current record's "ca_idcliente" value
  * @method timestamp  getCaFchestado()  Returns the current record's "ca_fchestado" value
  * @method string     getCaEstado()     Returns the current record's "ca_estado" value
  * @method string     getCaEmpresa()    Returns the current record's "ca_empresa" value
+ * @method Cliente    getCliente()      Returns the current record's "Cliente" value
  * @method StdCliente setCaIdcliente()  Sets the current record's "ca_idcliente" value
  * @method StdCliente setCaFchestado()  Sets the current record's "ca_fchestado" value
  * @method StdCliente setCaEstado()     Sets the current record's "ca_estado" value
  * @method StdCliente setCaEmpresa()    Sets the current record's "ca_empresa" value
+ * @method StdCliente setCliente()      Sets the current record's "Cliente" value
  * 
  * @package    symfony
  * @subpackage model
  * @author     Your name here
- * @version    SVN: $Id: Builder.php 6716 2009-11-12 19:26:28Z jwage $
+ * @version    SVN: $Id: Builder.php 6820 2009-11-30 17:27:49Z jwage $
  */
 abstract class BaseStdCliente extends myDoctrineRecord
 {
@@ -52,6 +55,8 @@ abstract class BaseStdCliente extends myDoctrineRecord
     public function setUp()
     {
         parent::setUp();
-        
+        $this->hasOne('Cliente', array(
+             'local' => 'ca_idcliente',
+             'foreign' => 'ca_idcliente'));
     }
 }

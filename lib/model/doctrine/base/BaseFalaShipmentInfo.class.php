@@ -47,7 +47,6 @@
  * @property varchar $ca_alter_port
  * @property date $ca_limit_date
  * @property FalaHeader $FalaHeader
- * @property FalaHeaderAdu $FalaHeaderAdu
  * 
  * @method string           getCaIddoc()               Returns the current record's "ca_iddoc" value
  * @method date             getCaBeginWindow()         Returns the current record's "ca_begin_window" value
@@ -91,7 +90,6 @@
  * @method varchar          getCaAlterPort()           Returns the current record's "ca_alter_port" value
  * @method date             getCaLimitDate()           Returns the current record's "ca_limit_date" value
  * @method FalaHeader       getFalaHeader()            Returns the current record's "FalaHeader" value
- * @method FalaHeaderAdu    getFalaHeaderAdu()         Returns the current record's "FalaHeaderAdu" value
  * @method FalaShipmentInfo setCaIddoc()               Sets the current record's "ca_iddoc" value
  * @method FalaShipmentInfo setCaBeginWindow()         Sets the current record's "ca_begin_window" value
  * @method FalaShipmentInfo setCaEndWindow()           Sets the current record's "ca_end_window" value
@@ -134,7 +132,6 @@
  * @method FalaShipmentInfo setCaAlterPort()           Sets the current record's "ca_alter_port" value
  * @method FalaShipmentInfo setCaLimitDate()           Sets the current record's "ca_limit_date" value
  * @method FalaShipmentInfo setFalaHeader()            Sets the current record's "FalaHeader" value
- * @method FalaShipmentInfo setFalaHeaderAdu()         Sets the current record's "FalaHeaderAdu" value
  * 
  * @package    symfony
  * @subpackage model
@@ -281,10 +278,6 @@ abstract class BaseFalaShipmentInfo extends myDoctrineRecord
     {
         parent::setUp();
         $this->hasOne('FalaHeader', array(
-             'local' => 'ca_iddoc',
-             'foreign' => 'ca_iddoc'));
-
-        $this->hasOne('FalaHeaderAdu', array(
              'local' => 'ca_iddoc',
              'foreign' => 'ca_iddoc'));
     }

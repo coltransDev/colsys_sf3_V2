@@ -42,8 +42,8 @@
  * @property timestamp $ca_fchanulado
  * @property string $ca_usuanulado
  * @property Doctrine_Collection $FalaDetailAdu
- * @property Doctrine_Collection $FalaShipmentInfo
- * @property Doctrine_Collection $FalaInstruction
+ * @property FalaShipmentInfoAdu $FalaShipmentInfoAdu
+ * @property Doctrine_Collection $FalaInstructionAdu
  * @property FalaDeclaracionImp $FalaDeclaracionImp
  * 
  * @method string              getCaIddoc()                   Returns the current record's "ca_iddoc" value
@@ -83,8 +83,8 @@
  * @method timestamp           getCaFchanulado()              Returns the current record's "ca_fchanulado" value
  * @method string              getCaUsuanulado()              Returns the current record's "ca_usuanulado" value
  * @method Doctrine_Collection getFalaDetailAdu()             Returns the current record's "FalaDetailAdu" collection
- * @method Doctrine_Collection getFalaShipmentInfo()          Returns the current record's "FalaShipmentInfo" collection
- * @method Doctrine_Collection getFalaInstruction()           Returns the current record's "FalaInstruction" collection
+ * @method FalaShipmentInfoAdu getFalaShipmentInfoAdu()       Returns the current record's "FalaShipmentInfoAdu" value
+ * @method Doctrine_Collection getFalaInstructionAdu()        Returns the current record's "FalaInstructionAdu" collection
  * @method FalaDeclaracionImp  getFalaDeclaracionImp()        Returns the current record's "FalaDeclaracionImp" value
  * @method FalaHeaderAdu       setCaIddoc()                   Sets the current record's "ca_iddoc" value
  * @method FalaHeaderAdu       setCaFechaCarpeta()            Sets the current record's "ca_fecha_carpeta" value
@@ -123,8 +123,8 @@
  * @method FalaHeaderAdu       setCaFchanulado()              Sets the current record's "ca_fchanulado" value
  * @method FalaHeaderAdu       setCaUsuanulado()              Sets the current record's "ca_usuanulado" value
  * @method FalaHeaderAdu       setFalaDetailAdu()             Sets the current record's "FalaDetailAdu" collection
- * @method FalaHeaderAdu       setFalaShipmentInfo()          Sets the current record's "FalaShipmentInfo" collection
- * @method FalaHeaderAdu       setFalaInstruction()           Sets the current record's "FalaInstruction" collection
+ * @method FalaHeaderAdu       setFalaShipmentInfoAdu()       Sets the current record's "FalaShipmentInfoAdu" value
+ * @method FalaHeaderAdu       setFalaInstructionAdu()        Sets the current record's "FalaInstructionAdu" collection
  * @method FalaHeaderAdu       setFalaDeclaracionImp()        Sets the current record's "FalaDeclaracionImp" value
  * 
  * @package    symfony
@@ -261,11 +261,11 @@ abstract class BaseFalaHeaderAdu extends myDoctrineRecord
              'foreign' => 'ca_iddoc',
              'orderBy' => 'ca_sku ASC'));
 
-        $this->hasMany('FalaShipmentInfo', array(
+        $this->hasOne('FalaShipmentInfoAdu', array(
              'local' => 'ca_iddoc',
              'foreign' => 'ca_iddoc'));
 
-        $this->hasMany('FalaInstruction', array(
+        $this->hasMany('FalaInstructionAdu', array(
              'local' => 'ca_iddoc',
              'foreign' => 'ca_iddoc'));
 

@@ -53,27 +53,32 @@ abstract class BaseRepSeguro extends myDoctrineRecord
              ));
         $this->hasColumn('ca_vlrasegurado', 'decimal', null, array(
              'type' => 'decimal',
+             'notnull' => true,
              ));
         $this->hasColumn('ca_idmoneda_vlr', 'string', null, array(
              'type' => 'string',
              ));
         $this->hasColumn('ca_primaventa', 'decimal', null, array(
              'type' => 'decimal',
+             'notnull' => true,
              ));
         $this->hasColumn('ca_minimaventa', 'decimal', null, array(
              'type' => 'decimal',
+             'notnull' => true,
              ));
         $this->hasColumn('ca_idmoneda_vta', 'string', null, array(
              'type' => 'string',
              ));
         $this->hasColumn('ca_obtencionpoliza', 'decimal', null, array(
              'type' => 'decimal',
+             'notnull' => true,
              ));
         $this->hasColumn('ca_idmoneda_pol', 'string', null, array(
              'type' => 'string',
              ));
         $this->hasColumn('ca_seguro_conf', 'string', null, array(
              'type' => 'string',
+             'notnull' => true,
              ));
 
 

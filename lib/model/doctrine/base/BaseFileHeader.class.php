@@ -10,6 +10,7 @@
  * @property string $ca_tipoarchivo
  * @property string $ca_separador
  * @property boolean $ca_separadordec
+ * @property string $ca_in_out
  * @property timestamp $ca_fchcreado
  * @property string $ca_usucreado
  * @property timestamp $ca_fchactualizado
@@ -22,6 +23,7 @@
  * @method string              getCaTipoarchivo()     Returns the current record's "ca_tipoarchivo" value
  * @method string              getCaSeparador()       Returns the current record's "ca_separador" value
  * @method boolean             getCaSeparadordec()    Returns the current record's "ca_separadordec" value
+ * @method string              getCaInOut()           Returns the current record's "ca_in_out" value
  * @method timestamp           getCaFchcreado()       Returns the current record's "ca_fchcreado" value
  * @method string              getCaUsucreado()       Returns the current record's "ca_usucreado" value
  * @method timestamp           getCaFchactualizado()  Returns the current record's "ca_fchactualizado" value
@@ -33,6 +35,7 @@
  * @method FileHeader          setCaTipoarchivo()     Sets the current record's "ca_tipoarchivo" value
  * @method FileHeader          setCaSeparador()       Sets the current record's "ca_separador" value
  * @method FileHeader          setCaSeparadordec()    Sets the current record's "ca_separadordec" value
+ * @method FileHeader          setCaInOut()           Sets the current record's "ca_in_out" value
  * @method FileHeader          setCaFchcreado()       Sets the current record's "ca_fchcreado" value
  * @method FileHeader          setCaUsucreado()       Sets the current record's "ca_usucreado" value
  * @method FileHeader          setCaFchactualizado()  Sets the current record's "ca_fchactualizado" value
@@ -66,6 +69,9 @@ abstract class BaseFileHeader extends myDoctrineRecord
              ));
         $this->hasColumn('ca_separadordec', 'boolean', null, array(
              'type' => 'boolean',
+             ));
+        $this->hasColumn('ca_in_out', 'string', null, array(
+             'type' => 'string',
              ));
         $this->hasColumn('ca_fchcreado', 'timestamp', null, array(
              'type' => 'timestamp',

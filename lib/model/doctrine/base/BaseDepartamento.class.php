@@ -9,15 +9,18 @@
  * @property string $ca_nombre
  * @property boolean $ca_inhelpdesk
  * @property Doctrine_Collection $HdeskGroup
+ * @property Doctrine_Collection $HdeskDepartamentClasification
  * 
- * @method integer             getCaIddepartamento()  Returns the current record's "ca_iddepartamento" value
- * @method string              getCaNombre()          Returns the current record's "ca_nombre" value
- * @method boolean             getCaInhelpdesk()      Returns the current record's "ca_inhelpdesk" value
- * @method Doctrine_Collection getHdeskGroup()        Returns the current record's "HdeskGroup" collection
- * @method Departamento        setCaIddepartamento()  Sets the current record's "ca_iddepartamento" value
- * @method Departamento        setCaNombre()          Sets the current record's "ca_nombre" value
- * @method Departamento        setCaInhelpdesk()      Sets the current record's "ca_inhelpdesk" value
- * @method Departamento        setHdeskGroup()        Sets the current record's "HdeskGroup" collection
+ * @method integer             getCaIddepartamento()              Returns the current record's "ca_iddepartamento" value
+ * @method string              getCaNombre()                      Returns the current record's "ca_nombre" value
+ * @method boolean             getCaInhelpdesk()                  Returns the current record's "ca_inhelpdesk" value
+ * @method Doctrine_Collection getHdeskGroup()                    Returns the current record's "HdeskGroup" collection
+ * @method Doctrine_Collection getHdeskDepartamentClasification() Returns the current record's "HdeskDepartamentClasification" collection
+ * @method Departamento        setCaIddepartamento()              Sets the current record's "ca_iddepartamento" value
+ * @method Departamento        setCaNombre()                      Sets the current record's "ca_nombre" value
+ * @method Departamento        setCaInhelpdesk()                  Sets the current record's "ca_inhelpdesk" value
+ * @method Departamento        setHdeskGroup()                    Sets the current record's "HdeskGroup" collection
+ * @method Departamento        setHdeskDepartamentClasification() Sets the current record's "HdeskDepartamentClasification" collection
  * 
  * @package    symfony
  * @subpackage model
@@ -52,6 +55,10 @@ abstract class BaseDepartamento extends myDoctrineRecord
     {
         parent::setUp();
         $this->hasMany('HdeskGroup', array(
+             'local' => 'ca_iddepartamento',
+             'foreign' => 'ca_iddepartament'));
+
+        $this->hasMany('HdeskDepartamentClasification', array(
              'local' => 'ca_iddepartamento',
              'foreign' => 'ca_iddepartament'));
     }

@@ -7,6 +7,7 @@
  * 
  * @property string $ca_referencia
  * @property integer $ca_item
+ * @property string $ca_numdeclaracion
  * @property string $ca_subpartida
  * @property string $ca_mod
  * @property decimal $ca_cantidad
@@ -40,6 +41,7 @@
  * 
  * @method string             getCaReferencia()           Returns the current record's "ca_referencia" value
  * @method integer            getCaItem()                 Returns the current record's "ca_item" value
+ * @method string             getCaNumdeclaracion()       Returns the current record's "ca_numdeclaracion" value
  * @method string             getCaSubpartida()           Returns the current record's "ca_subpartida" value
  * @method string             getCaMod()                  Returns the current record's "ca_mod" value
  * @method decimal            getCaCantidad()             Returns the current record's "ca_cantidad" value
@@ -72,6 +74,7 @@
  * @method FalaDeclaracionImp getFalaDeclaracionImp()     Returns the current record's "FalaDeclaracionImp" value
  * @method FalaDeclaracionDts setCaReferencia()           Sets the current record's "ca_referencia" value
  * @method FalaDeclaracionDts setCaItem()                 Sets the current record's "ca_item" value
+ * @method FalaDeclaracionDts setCaNumdeclaracion()       Sets the current record's "ca_numdeclaracion" value
  * @method FalaDeclaracionDts setCaSubpartida()           Sets the current record's "ca_subpartida" value
  * @method FalaDeclaracionDts setCaMod()                  Sets the current record's "ca_mod" value
  * @method FalaDeclaracionDts setCaCantidad()             Sets the current record's "ca_cantidad" value
@@ -120,6 +123,9 @@ abstract class BaseFalaDeclaracionDts extends myDoctrineRecord
         $this->hasColumn('ca_item', 'integer', null, array(
              'type' => 'integer',
              'primary' => true,
+             ));
+        $this->hasColumn('ca_numdeclaracion', 'string', null, array(
+             'type' => 'string',
              ));
         $this->hasColumn('ca_subpartida', 'string', null, array(
              'type' => 'string',

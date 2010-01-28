@@ -11,6 +11,7 @@
  * @property string $ca_usuario
  * @property boolean $ca_procesado
  * @property string $ca_nombre
+ * @property string $ca_proceso
  * @property FileHeader $FileHeader
  * 
  * @method integer      getCaIdfileheader()    Returns the current record's "ca_idfileheader" value
@@ -19,6 +20,7 @@
  * @method string       getCaUsuario()         Returns the current record's "ca_usuario" value
  * @method boolean      getCaProcesado()       Returns the current record's "ca_procesado" value
  * @method string       getCaNombre()          Returns the current record's "ca_nombre" value
+ * @method string       getCaProceso()         Returns the current record's "ca_proceso" value
  * @method FileHeader   getFileHeader()        Returns the current record's "FileHeader" value
  * @method FileImported setCaIdfileheader()    Sets the current record's "ca_idfileheader" value
  * @method FileImported setCaFchimportacion()  Sets the current record's "ca_fchimportacion" value
@@ -26,6 +28,7 @@
  * @method FileImported setCaUsuario()         Sets the current record's "ca_usuario" value
  * @method FileImported setCaProcesado()       Sets the current record's "ca_procesado" value
  * @method FileImported setCaNombre()          Sets the current record's "ca_nombre" value
+ * @method FileImported setCaProceso()         Sets the current record's "ca_proceso" value
  * @method FileImported setFileHeader()        Sets the current record's "FileHeader" value
  * 
  * @package    symfony
@@ -55,6 +58,9 @@ abstract class BaseFileImported extends myDoctrineRecord
              'type' => 'boolean',
              ));
         $this->hasColumn('ca_nombre', 'string', null, array(
+             'type' => 'string',
+             ));
+        $this->hasColumn('ca_proceso', 'string', null, array(
              'type' => 'string',
              ));
 

@@ -9,7 +9,8 @@
  * @property date $ca_fchreporte
  * @property string $ca_consecutivo
  * @property integer $ca_version
- * @property integer $ca_idcotizacion
+ * @property string $ca_idcotizacion
+ * @property integer $ca_idproducto
  * @property string $ca_origen
  * @property string $ca_destino
  * @property string $ca_impoexpo
@@ -92,7 +93,8 @@
  * @method date                getCaFchreporte()         Returns the current record's "ca_fchreporte" value
  * @method string              getCaConsecutivo()        Returns the current record's "ca_consecutivo" value
  * @method integer             getCaVersion()            Returns the current record's "ca_version" value
- * @method integer             getCaIdcotizacion()       Returns the current record's "ca_idcotizacion" value
+ * @method string              getCaIdcotizacion()       Returns the current record's "ca_idcotizacion" value
+ * @method integer             getCaIdproducto()         Returns the current record's "ca_idproducto" value
  * @method string              getCaOrigen()             Returns the current record's "ca_origen" value
  * @method string              getCaDestino()            Returns the current record's "ca_destino" value
  * @method string              getCaImpoexpo()           Returns the current record's "ca_impoexpo" value
@@ -175,6 +177,7 @@
  * @method Reporte             setCaConsecutivo()        Sets the current record's "ca_consecutivo" value
  * @method Reporte             setCaVersion()            Sets the current record's "ca_version" value
  * @method Reporte             setCaIdcotizacion()       Sets the current record's "ca_idcotizacion" value
+ * @method Reporte             setCaIdproducto()         Sets the current record's "ca_idproducto" value
  * @method Reporte             setCaOrigen()             Sets the current record's "ca_origen" value
  * @method Reporte             setCaDestino()            Sets the current record's "ca_destino" value
  * @method Reporte             setCaImpoexpo()           Sets the current record's "ca_impoexpo" value
@@ -277,7 +280,10 @@ abstract class BaseReporte extends myDoctrineRecord
         $this->hasColumn('ca_version', 'integer', null, array(
              'type' => 'integer',
              ));
-        $this->hasColumn('ca_idcotizacion', 'integer', null, array(
+        $this->hasColumn('ca_idcotizacion', 'string', null, array(
+             'type' => 'string',
+             ));
+        $this->hasColumn('ca_idproducto', 'integer', null, array(
              'type' => 'integer',
              ));
         $this->hasColumn('ca_origen', 'string', null, array(

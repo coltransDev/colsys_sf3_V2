@@ -10,7 +10,7 @@
  * @property decimal $ca_volumen
  * @property string $ca_piezas
  * @property string $ca_dimensiones
- * @property string $ca_valorcarga
+ * @property decimal $ca_valorcarga
  * @property string $ca_anticipo
  * @property integer $ca_idsia
  * @property integer $ca_tipoexpo
@@ -27,7 +27,7 @@
  * @method decimal getCaVolumen()           Returns the current record's "ca_volumen" value
  * @method string  getCaPiezas()            Returns the current record's "ca_piezas" value
  * @method string  getCaDimensiones()       Returns the current record's "ca_dimensiones" value
- * @method string  getCaValorcarga()        Returns the current record's "ca_valorcarga" value
+ * @method decimal getCaValorcarga()        Returns the current record's "ca_valorcarga" value
  * @method string  getCaAnticipo()          Returns the current record's "ca_anticipo" value
  * @method integer getCaIdsia()             Returns the current record's "ca_idsia" value
  * @method integer getCaTipoexpo()          Returns the current record's "ca_tipoexpo" value
@@ -81,14 +81,15 @@ abstract class BaseRepExpo extends myDoctrineRecord
         $this->hasColumn('ca_dimensiones', 'string', null, array(
              'type' => 'string',
              ));
-        $this->hasColumn('ca_valorcarga', 'string', null, array(
-             'type' => 'string',
+        $this->hasColumn('ca_valorcarga', 'decimal', null, array(
+             'type' => 'decimal',
              ));
         $this->hasColumn('ca_anticipo', 'string', null, array(
              'type' => 'string',
              ));
         $this->hasColumn('ca_idsia', 'integer', null, array(
              'type' => 'integer',
+             'notnull' => true,
              ));
         $this->hasColumn('ca_tipoexpo', 'integer', null, array(
              'type' => 'integer',
@@ -96,11 +97,13 @@ abstract class BaseRepExpo extends myDoctrineRecord
         $this->hasColumn('ca_idlineaterrestre', 'integer', null, array(
              'type' => 'integer',
              ));
-        $this->hasColumn('ca_motonave', 'string', null, array(
+        $this->hasColumn('ca_motonave', 'string', 50, array(
              'type' => 'string',
+             'length' => '50',
              ));
-        $this->hasColumn('ca_emisionbl', 'string', null, array(
+        $this->hasColumn('ca_emisionbl', 'string', 10, array(
              'type' => 'string',
+             'length' => '10',
              ));
         $this->hasColumn('ca_datosbl', 'string', null, array(
              'type' => 'string',

@@ -71,6 +71,7 @@ abstract class BaseFileColumn extends myDoctrineRecord
              ));
         $this->hasColumn('ca_idcolumna', 'string', null, array(
              'type' => 'string',
+             'primary' => true,
              ));
         $this->hasColumn('ca_columna', 'string', null, array(
              'type' => 'string',

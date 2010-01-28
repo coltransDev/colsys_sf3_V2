@@ -46,7 +46,7 @@
  * @property varchar $ca_final_port
  * @property varchar $ca_alter_port
  * @property date $ca_limit_date
- * @property FalaHeader $FalaHeader
+ * @property FalaHeaderAdu $FalaHeaderAdu
  * 
  * @method string              getCaIddoc()               Returns the current record's "ca_iddoc" value
  * @method date                getCaBeginWindow()         Returns the current record's "ca_begin_window" value
@@ -89,7 +89,7 @@
  * @method varchar             getCaFinalPort()           Returns the current record's "ca_final_port" value
  * @method varchar             getCaAlterPort()           Returns the current record's "ca_alter_port" value
  * @method date                getCaLimitDate()           Returns the current record's "ca_limit_date" value
- * @method FalaHeader          getFalaHeader()            Returns the current record's "FalaHeader" value
+ * @method FalaHeaderAdu       getFalaHeaderAdu()         Returns the current record's "FalaHeaderAdu" value
  * @method FalaShipmentInfoAdu setCaIddoc()               Sets the current record's "ca_iddoc" value
  * @method FalaShipmentInfoAdu setCaBeginWindow()         Sets the current record's "ca_begin_window" value
  * @method FalaShipmentInfoAdu setCaEndWindow()           Sets the current record's "ca_end_window" value
@@ -131,7 +131,7 @@
  * @method FalaShipmentInfoAdu setCaFinalPort()           Sets the current record's "ca_final_port" value
  * @method FalaShipmentInfoAdu setCaAlterPort()           Sets the current record's "ca_alter_port" value
  * @method FalaShipmentInfoAdu setCaLimitDate()           Sets the current record's "ca_limit_date" value
- * @method FalaShipmentInfoAdu setFalaHeader()            Sets the current record's "FalaHeader" value
+ * @method FalaShipmentInfoAdu setFalaHeaderAdu()         Sets the current record's "FalaHeaderAdu" value
  * 
  * @package    symfony
  * @subpackage model
@@ -277,7 +277,7 @@ abstract class BaseFalaShipmentInfoAdu extends myDoctrineRecord
     public function setUp()
     {
         parent::setUp();
-        $this->hasOne('FalaHeader', array(
+        $this->hasOne('FalaHeaderAdu', array(
              'local' => 'ca_iddoc',
              'foreign' => 'ca_iddoc'));
     }
