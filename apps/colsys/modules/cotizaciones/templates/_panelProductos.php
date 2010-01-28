@@ -347,6 +347,11 @@ PanelProductos = function( config ){
         if( !record.data.iditem && field!="item" ){
             return false;
         }
+
+        if( field!="item" && record.data.tipo=="concepto" && record.data.iditem =="9999"  ){
+            return false;
+        }
+
         return Ext.grid.ColumnModel.prototype.isCellEditable.call(this, colIndex, rowIndex);
     }
 
