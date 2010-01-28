@@ -307,6 +307,10 @@ function actualizarContenido( id , url, params ){
         var ciudadesTrafico = ciudades[idtrafico];
         cargarTraficos( ciudadesTrafico, fldCiudades, defaultVal );
      }
+
+    if( typeof(llenarAgentes)!='undefined' ){
+        llenarAgentes();
+    }
 }
 
 function cargarTraficos( ciudadesTrafico, fldCiudades, defaultVal ){
