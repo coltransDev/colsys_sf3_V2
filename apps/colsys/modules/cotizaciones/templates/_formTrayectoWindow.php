@@ -156,12 +156,12 @@
 
 
         guardar: function() {
-            this.el.mask('Guardando...', 'x-mask-loading');
+            
 
 
             var fp = Ext.getCmp("producto-form");
             if( fp.getForm().isValid() ){
-
+                this.el.mask('Guardando...', 'x-mask-loading');
                 ttransito = fp.getForm().findField("ttransito").getValue();
                 frecuencia = fp.getForm().findField("frecuencia").getValue();
                 impoexpo = fp.getForm().findField("impoexpo").getValue();
@@ -186,12 +186,13 @@
                                             }//end failure block
                                         });
                 }
+                this.el.unmask();
+                this.hide();
             }else{
                 Ext.MessageBox.alert('Sistema de Cotizaciones - Error:', '¡Atención: La información del Producto no es válida o está incompleta!');
             }
 
-            this.el.unmask();
-            this.hide();
+            
         }
 
 

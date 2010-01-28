@@ -102,7 +102,7 @@ PanelProductos = function( config ){
         {name: 'consecutivo', type: 'string'},
         {name: 'vigencia', type: 'date', dateFormat:'Y-m-d'},
         {name: 'orden', type: 'string'},
-        {name: 'parent', type: 'int'},
+        {name: 'parent', type: 'int'}
     ]);
 
     <?
@@ -1009,6 +1009,46 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
                             });
 
 
+
+        }else{
+            var recordProductos = this.record;
+            var newRec = new recordProductos({});
+            var fp = Ext.getCmp("producto-form");
+            form = fp.getForm().loadRecord(newRec);
+            
+            fp.getForm().findField("impoexpo").enable();
+            fp.getForm().findField("transporte").enable();
+            fp.getForm().findField("modalidad").enable();
+            
+            fp.getForm().findField("tra_origen_id").setRawValue("");
+            fp.getForm().findField("tra_origen_id").hiddenField.value = "";
+            fp.getForm().findField("ciu_origen_id").setRawValue("");
+            fp.getForm().findField("ciu_origen_id").hiddenField.value = "";
+
+            fp.getForm().findField("tra_destino_id").setRawValue("");
+            fp.getForm().findField("tra_destino_id").hiddenField.value = "";
+            fp.getForm().findField("ciu_destino_id").setRawValue("");
+            fp.getForm().findField("ciu_destino_id").hiddenField.value = "";
+
+            fp.getForm().findField("tra_escala_id").setRawValue("");
+            fp.getForm().findField("tra_escala_id").hiddenField.value = "";
+            fp.getForm().findField("ciu_escala_id").setRawValue("");
+            fp.getForm().findField("ciu_escala_id").hiddenField.value = "";
+            fp.getForm().findField("idlinea").setRawValue("");
+            fp.getForm().findField("idlinea").hiddenField.value = "";
+
+            fp.getForm().findField("frecuencia").setRawValue("");
+            fp.getForm().findField("ttransito").setRawValue("");
+            fp.getForm().findField("imprimir").setRawValue("Por Item");
+            fp.getForm().findField("vigencia").setRawValue("");
+            fp.getForm().findField("observaciones").setRawValue("");
+            fp.getForm().findField("producto").setRawValue("");
+            fp.getForm().findField("idproducto").setRawValue("");
+
+
+
+
+          
 
         }
 
