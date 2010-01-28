@@ -12,5 +12,7 @@
  */
 class Parametro extends BaseParametro
 {
-
+    public function getValIncoterm(){
+        return $this->getCaValor()." - ".$this->getCaValor2();
+    }
 }
