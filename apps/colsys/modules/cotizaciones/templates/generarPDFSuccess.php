@@ -996,6 +996,11 @@ if(count($continuaciones)>0){
 	
 					
 	}
+    $pdf->Ln(2);
+    $pdf->MultiCell(0, 4, "Nota Importante: Es responsabilidad del importador, los prejuicios a que haya lugar como consecuencia de inexactitudes o errores en la documentación suministrada, así como de las sanciones resultado de requerimientos aduaneros por faltantes o sobrantes.
+
+La Poliza del Importador deberá incluir los tributos aduaneros. El OTM no se hace responsable por el pago de tributos aduaneros a la DIAN, la póliza de tributos aduanero sólo cumple la función de garantía a la DIAN. Los pagos por tríbutos aduaneros deberán ser asumidos por el importador y reclamados a su compañía de seguros para ser pagados a la DIAN.", 0,'J',0);
+
 
 	$pdf->flushGroup();
 }
