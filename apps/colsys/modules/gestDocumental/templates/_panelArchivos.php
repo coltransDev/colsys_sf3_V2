@@ -41,13 +41,14 @@ PanelArchivos = function( config ){
     this.dataView = new Ext.DataView({
 			store: this.store,
 			tpl: this.tplFileView,
-			id: 'file-view',
+			//id: 'file-view',
             cls: 'file-view',
 			autoHeight:true,
 			singleSelect : true,
 			overClass:'x-view-over',
 			itemSelector:'div.thumb-wrap',
 			emptyText: 'No hay archivos',
+            folder: this.folder,
 
 			/*
 			plugins: [
@@ -69,14 +70,15 @@ PanelArchivos = function( config ){
 						var s = l != 1 ? 's' : '';
 						panel.setTitle('Simple DataView ('+l+' item'+s+' selected)');*/
 					}
-				},
-
-				 dblclick : {
+				}
+                ,
+				dblclick : {
 					fn: function(dv,nodes){
 
-                        var panel = Ext.getCmp("panel-archivos");
-                        var fv = panel.dataView;
-                        var folder = panel.folder;
+                        //var panel = Ext.getCmp("panel-archivos");
+                        //var fv = panel.dataView;
+                        var fv = this;
+                        var folder = this.folder;
 						records =  fv.getSelectedRecords();
 						for( var i=0;i< records.length; i++){							
 							document.location.href = "<?=url_for($viewUrl)?>?folder="+folder+"&idarchivo="+records[i].data.idarchivo;
@@ -88,7 +90,7 @@ PanelArchivos = function( config ){
 
 
     PanelArchivos.superclass.constructor.call(this, {
-        id: 'panel-archivos',
+        //id: 'panel-archivos',
 		frame:false,
 		width:535,        
 		collapsible:true,
@@ -104,9 +106,12 @@ PanelArchivos = function( config ){
                 text: 'Nuevo',
                 tooltip: 'Sube un nuevo archivo',
                 iconCls:'add',
-                handler: function(){
+                scope: this,
+                handler: this.nuevoArchivo
+
+                /*handler: function(){
                     Ext.getCmp("panel-archivos").nuevoArchivo();
-                }
+                }*/
             },
             <?
             }
@@ -115,9 +120,11 @@ PanelArchivos = function( config ){
                 text: 'Abrir',
                 tooltip: 'Abre el archivo seleccionado',
                 iconCls:'folder',  // reference to our css
-                handler: function(){
+                scope: this,
+                handler: this.abrirArchivo
+                /*handler: function(){
                     Ext.getCmp("panel-archivos").abrirArchivo();
-                }
+                }*/
             }
             <?
             if( !$readOnly ){
@@ -126,10 +133,12 @@ PanelArchivos = function( config ){
                 text: 'Borrar',
                 tooltip: 'Elimina el archivo seleccionado',
                 iconCls:'delete',  // reference to our css
-                handler: function(){
+                scope: this,
+                handler: this.eliminarArchivo
+                /*handler: function(){
                     Ext.getCmp("panel-archivos").eliminarArchivo();
 
-                }
+                }*/
             }
             <?
             }
