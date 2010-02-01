@@ -256,6 +256,21 @@ class reporteExtActions extends sfActions
 						$tarea->save();
 					}
 				}
+
+                if( !$reporte->getCaIdetapa() ){
+
+
+                    if( $reporte->getCaTransporte()==Constantes::MARITIMO ){
+                        $reporte->setCaIdetapa( "IMCAG" );
+                    }
+
+                    if( $reporte->getCaTransporte()==Constantes::AEREO ){
+                        $reporte->setCaIdetapa( "IACAG" );
+                    }
+
+                    $reporte->stopBlaming();
+					$reporte->save();
+                }
 								
 				$this->redirect( "traficos/listaStatus?modo=".$this->modo."&reporte=".$this->reporte->getCaConsecutivo() );
 					

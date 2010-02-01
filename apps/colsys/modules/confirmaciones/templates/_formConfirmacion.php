@@ -59,7 +59,8 @@
                     <?
                 }
             ?>
-
+            <input name='tipo_<?=$inoCliente->getOid()?>'  id='tipo_<?=$inoCliente->getOid()?>' type='radio'  value = '00000' onclick="mostrar('<?=$inoCliente->getOid()?>');" />
+            Orden anulado<br />
             <input name='tipo_<?=$inoCliente->getOid()?>'  id='tipo_<?=$inoCliente->getOid()?>' type='radio'  value = '99999' onclick="mostrar('<?=$inoCliente->getOid()?>');" />
             Cierre<br />
         <?
