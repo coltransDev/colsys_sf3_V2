@@ -7,7 +7,7 @@ $inoClientes = $sf_data->getRaw("inoClientes");
 switch( $modo ){
 	case "otm":
 		$titulo = "Módulo de Avisos de OTM";
-        $bodegas = $sf_data->getRaw("bodegas");
+        
 		break;
 	default: 
 		$titulo = "Módulo de Status y Confirmaciones de Llegada";

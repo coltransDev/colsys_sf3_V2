@@ -5,6 +5,7 @@
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
 //print_r( $bodegas );
+$bodegas = $sf_data->getRaw("bodegas");
 ?>
 
 <table id="tb_<?=$inoCliente->getOid()?>" style='display:none' cellspacing="1" width="100%">
