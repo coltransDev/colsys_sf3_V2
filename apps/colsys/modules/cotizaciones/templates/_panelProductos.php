@@ -396,68 +396,71 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
     guardarGridProductosRec: function( r ){
         var storeProductos = this.store;
         var changes = r.getChanges();
-        //alert( r.data.id );
-        changes['id']=r.id;
-        changes['parent']=r.data.parent;
-        changes['idproducto']=r.data.idproducto;
-        changes['tipo']=r.data.tipo;
-        changes['idopcion']=r.data.idopcion;
-        changes['idconcepto']=r.data.idconcepto;
-        changes['idcotrecargo']=r.data.idcotrecargo;
-        changes['iditem']=r.data.iditem;
-        changes['modalidad']=r.data.modalidad;
 
-        //envia los datos al servidor
-        Ext.Ajax.request(
-            {
-                waitMsg: 'Guardando cambios...',
-                url: '<?=url_for("cotizaciones/observeItemsOpciones?idcotizacion=".$cotizacion->getCaIdcotizacion())?>',
-                //method: 'POST',
-                //Solamente se envian los cambios
-                params :	changes,
+        if( r.data.iditem ){
+            //alert( r.data.id );
+            changes['id']=r.id;
+            changes['parent']=r.data.parent;
+            changes['idproducto']=r.data.idproducto;
+            changes['tipo']=r.data.tipo;
+            changes['idopcion']=r.data.idopcion;
+            changes['idconcepto']=r.data.idconcepto;
+            changes['idcotrecargo']=r.data.idcotrecargo;
+            changes['iditem']=r.data.iditem;
+            changes['modalidad']=r.data.modalidad;
 
-                //Ejecuta esta accion en caso de fallo
-                //(404 error etc, ***NOT*** success=false)
-                failure:function(response,options){
-                    //alert( response.responseText );
-                    success = false;
-                },
-                //Ejecuta esta accion cuando el resultado es exitoso
-                callback :function(options, success, response){
+            //envia los datos al servidor
+            Ext.Ajax.request(
+                {
+                    waitMsg: 'Guardando cambios...',
+                    url: '<?=url_for("cotizaciones/observeItemsOpciones?idcotizacion=".$cotizacion->getCaIdcotizacion())?>',
+                    //method: 'POST',
+                    //Solamente se envian los cambios
+                    params :	changes,
 
-                    var res = Ext.util.JSON.decode( response.responseText );
-                    var rec = storeProductos.getById( res.id );
-                    rec.set("idopcion", res.idopcion );
-                    if( rec.data.tipo=="concepto" ){
-                        if( rec.data.idopcion!=999 ){
-                            rec.set("orden", res.idopcion );
-                        }else{
-                            rec.set("orden", "Y" );
-                        }
-                         //Se coloca el id del padre en la bd
-                        storeProductos.each( function(r){
-                            if(r.data.parent && r.data.parent == rec.data.parent && r.data.tipo=="recargo"  ){
-                                r.data.idopcion = res.idopcion;
+                    //Ejecuta esta accion en caso de fallo
+                    //(404 error etc, ***NOT*** success=false)
+                    failure:function(response,options){
+                        //alert( response.responseText );
+                        success = false;
+                    },
+                    //Ejecuta esta accion cuando el resultado es exitoso
+                    callback :function(options, success, response){
 
-                                r.data.orden = res.idopcion+"-"+r.data.item;
-
-                                if( r.dirty ){
-                                    this.guardarGridProductosRec( r );
-                                }
+                        var res = Ext.util.JSON.decode( response.responseText );
+                        var rec = storeProductos.getById( res.id );
+                        rec.set("idopcion", res.idopcion );
+                        if( rec.data.tipo=="concepto" ){
+                            if( rec.data.idopcion!=999 ){
+                                rec.set("orden", res.idopcion );
+                            }else{
+                                rec.set("orden", "Y" );
                             }
-                        } );
+                             //Se coloca el id del padre en la bd
+                            storeProductos.each( function(r){
+                                if(r.data.parent && r.data.parent == rec.data.parent && r.data.tipo=="recargo"  ){
+                                    r.data.idopcion = res.idopcion;
 
+                                    r.data.orden = res.idopcion+"-"+r.data.item;
+
+                                    if( r.dirty ){
+                                        this.guardarGridProductosRec( r );
+                                    }
+                                }
+                            } );
+
+                        }
+
+                        if( rec.data.tipo=="recargo" ){
+                            rec.set("idcotrecargo", res.idcotrecargo );
+                        }
+
+                        rec.commit();
+                        storeProductos.sort("orden", "ASC");
                     }
-
-                    if( rec.data.tipo=="recargo" ){
-                        rec.set("idcotrecargo", res.idcotrecargo );
-                    }
-
-                    rec.commit();
-                    storeProductos.sort("orden", "ASC");
-                }
-             }
-        );
+                 }
+            );
+        }
     },
     
     formatItem : function(value, p, record) {
