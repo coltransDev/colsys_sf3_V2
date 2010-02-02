@@ -24,6 +24,7 @@ class falabellaAduActions extends sfActions {
         $this->fala_headers = Doctrine::getTable("FalaHeaderAdu")
             ->createQuery("f")
             ->leftJoin("f.FalaDeclaracionImp d")
+            ->leftJoin("f FalaInstructionAdu i")
             ->addOrderBy("f.ca_reqd_delivery desc")
             ->addOrderBy("f.ca_referencia")
             ->addOrderBy("f.ca_archivo_origen")
@@ -129,22 +130,6 @@ class falabellaAduActions extends sfActions {
         $this->forward404Unless($faladetail);
 
         $this->responseArray=array("id"=>$this->getRequestParameter ( 'id' ),  "success"=>false);
-
-        if( $this->getRequestParameter ( 'emision_fch' )!==null ) {
-            $faladetail->setCaEmisionFch( $this->getRequestParameter ( 'emision_fch' ) );
-        }
-
-        if( $this->getRequestParameter ( 'vencimiento_fch' )!==null ) {
-            $faladetail->setCaVencimientoFch( $this->getRequestParameter ( 'vencimiento_fch' ) );
-        }
-
-        if( $this->getRequestParameter ( 'aceptacion_fch' )!==null ) {
-            $faladetail->setCaAceptacionFch( $this->getRequestParameter ( 'aceptacion_fch' ) );
-        }
-
-        if( $this->getRequestParameter ( 'pago_fch' )!==null ) {
-            $faladetail->setCaPagoFch( $this->getRequestParameter ( 'pago_fch' ) );
-        }
 
         if( $this->getRequestParameter ( 'subpartida' )!==null ) {
             $faladetail->setCaSubpartida( $this->getRequestParameter ( 'subpartida' ) );
@@ -598,12 +583,11 @@ class falabellaAduActions extends sfActions {
             $salida.= str_pad(null,10, " "); // 9
             $salida.= str_pad(null,2, " "); // 10
 
-            list($anno,$mes,$dia) = sscanf($row["ca_emision_fch"],"%d-%d-%d");
+            list($anno,$mes,$dia) = sscanf(date("Y-m-d"),"%d-%d-%d");
             $emision = date("dmY", mktime(0,0,0,$mes,$dia,$anno));
             $salida.= $emision; // 11
 
-            list($anno,$mes,$dia) = sscanf($row["ca_vencimiento_fch"],"%d-%d-%d");
-            $vencimiento = date("dmY", mktime(0,0,0,$mes,$dia,$anno));
+            $vencimiento = date("dmY", mktime(0,0,0,$mes+1,5,$anno));
             $salida.= $vencimiento; // 12
 
             list($anno,$mes,$dia) = sscanf($row["ca_aceptacion_fch"],"%d-%d-%d");
@@ -639,7 +623,7 @@ class falabellaAduActions extends sfActions {
             $salida.= str_pad(number_format($valor_fle,2,'.',''), 15, "0", STR_PAD_LEFT); // 26
             $salida.= str_pad(number_format($valor_seg,2,'.',''), 15, "0", STR_PAD_LEFT); // 27
 
-            $valor_cif = ($valor_fob + $valor_fle + $valor_seg + $valor_gas);
+            $valor_cif = ($valor_fob + $valor_fle + $valor_seg);
 
             $salida.= str_pad(number_format($valor_cif,2,'.',''), 15, "0", STR_PAD_LEFT); // 28
             $salida.= str_pad(number_format($valor_gas,2,'.',''), 15, "0", STR_PAD_LEFT); // 29
@@ -658,6 +642,10 @@ class falabellaAduActions extends sfActions {
             $salida.= str_pad(number_format(round(floatval($row["ca_salvaguarda"]) * $factor, 0),2,'.',''), 15, "0", STR_PAD_LEFT); // 39
             $salida.= str_pad(null,30, " "); // 40
             $salida.= "\r\n";
+
+            $falaHeaderAdu = Doctrine::getTable("FalaHeaderAdu")->find ( $row["ca_iddoc"] );
+            $falaHeaderAdu->setCaProcesado(TRUE);
+            $falaHeaderAdu->save();
         }
 
         $filename = $directory.DIRECTORY_SEPARATOR.'DI_'.$numdeclaracion.'.txt';
@@ -1052,7 +1040,26 @@ class falabellaAduActions extends sfActions {
 
         $declaracionDts = Doctrine::getTable("FalaDeclaracionDts")->find(array($referencia, $item));
         if( $declaracionDts ){
-            $declaracionDts->setCaNumdeclaracion($request->getParameter("numdeclaracion"));
+            if( $this->getRequestParameter ( 'numdeclaracion' )!==null ) {
+                $declaracionDts->setCaNumdeclaracion( $this->getRequestParameter ( 'numdeclaracion' ) );
+            }
+
+            if( $this->getRequestParameter ( 'emision_fch' )!==null ) {
+                $declaracionDts->setCaEmisionFch( $this->getRequestParameter ( 'emision_fch' ) );
+            }
+
+            if( $this->getRequestParameter ( 'vencimiento_fch' )!==null ) {
+                $declaracionDts->setCaVencimientoFch( $this->getRequestParameter ( 'vencimiento_fch' ) );
+            }
+
+            if( $this->getRequestParameter ( 'aceptacion_fch' )!==null ) {
+                $declaracionDts->setCaAceptacionFch( $this->getRequestParameter ( 'aceptacion_fch' ) );
+            }
+
+            if( $this->getRequestParameter ( 'pago_fch' )!==null ) {
+                $declaracionDts->setCaPagoFch( $this->getRequestParameter ( 'pago_fch' ) );
+            }
+
             $declaracionDts->save();
             $this->responseArray["success"]=true;
         }
@@ -1201,8 +1208,8 @@ class falabellaAduActions extends sfActions {
             $detalle->setCaReferencia( $referencia );
             $detalle->setCaNumdocumento( $numdocumento );
         }
-        if( $this->getRequestParameter ( 'concepto' ) ) {
-            $detalle->setCaIdconcepto( $this->getRequestParameter ( 'concepto' ) );
+        if( $this->getRequestParameter ( 'idconcepto' ) ) {
+            $detalle->setCaIdconcepto( $this->getRequestParameter ( 'idconcepto' ) );
         }
         if( $this->getRequestParameter ( 'nit_ter' ) ) {
             $detalle->setCaNitTer( $this->getRequestParameter ( 'nit_ter' ) );

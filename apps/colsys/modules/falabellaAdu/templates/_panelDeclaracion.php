@@ -34,18 +34,7 @@ PanelDeclaracion = function(){
         header: "Fch.Emisión",
         dataIndex: 'emision_fch',
         sortable:false,
-        width: 45,
-        renderer: Ext.util.Format.dateRenderer('Y-m-d'),
-        editor: new Ext.form.DateField({
-                                format: 'Y-m-d',
-                                allowBlank: false
-                        })
-      },
-      {
-        header: "Fch.Vencimiento",
-        dataIndex: 'vencimiento_fch',
-        sortable:false,
-        width: 45,
+        width: 90,
         renderer: Ext.util.Format.dateRenderer('Y-m-d'),
         editor: new Ext.form.DateField({
                                 format: 'Y-m-d',
@@ -56,7 +45,7 @@ PanelDeclaracion = function(){
         header: "Fch.Aceptación",
         dataIndex: 'aceptacion_fch',
         sortable:false,
-        width: 45,
+        width: 90,
         renderer: Ext.util.Format.dateRenderer('Y-m-d'),
         editor: new Ext.form.DateField({
                                 format: 'Y-m-d',
@@ -67,7 +56,7 @@ PanelDeclaracion = function(){
         header: "Fch.Pago",
         dataIndex: 'pago_fch',
         sortable:false,
-        width: 45,
+        width: 90,
         renderer: Ext.util.Format.dateRenderer('Y-m-d'),
         editor: new Ext.form.DateField({
                                 format: 'Y-m-d',
@@ -278,7 +267,6 @@ PanelDeclaracion = function(){
             {name: 'item', type: 'string', mapping: 'd_ca_item'},
             {name: 'numdeclaracion', type: 'string', mapping: 'd_ca_numdeclaracion'},
             {name: 'emision_fch', type: 'date', dateFormat: 'Y-m-d', mapping: 'd_ca_emision_fch'},
-            {name: 'vencimiento_fch', type: 'date', dateFormat: 'Y-m-d', mapping: 'd_ca_vencimiento_fch'},
             {name: 'aceptacion_fch', type: 'date', dateFormat: 'Y-m-d', mapping: 'd_ca_aceptacion_fch'},
             {name: 'pago_fch', type: 'date', dateFormat: 'Y-m-d', mapping: 'd_ca_pago_fch'},
             {name: 'moneda', type: 'string', mapping: 'd_ca_moneda'},

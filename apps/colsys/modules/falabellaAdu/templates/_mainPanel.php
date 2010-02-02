@@ -125,8 +125,7 @@ $header = $sf_data->getRaw( "header" );
     };
 
     Ext.extend(MainPanel, Ext.grid.EditorGridPanel, {
-        height: 80
-        ,
+        height: 80,
         guardarCambios: function(){
             var store = this.store;
             var records = store.getModifiedRecords();

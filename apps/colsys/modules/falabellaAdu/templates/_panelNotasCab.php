@@ -135,7 +135,6 @@ Ext.extend(PanelNotasCab, Ext.grid.EditorGridPanel, {
 
             //Da formato a las fechas antes de enviarlas
 
-
             changes['id']=r.id;
 
             changes['numdocumento']=r.data.numdocumento;
@@ -146,7 +145,7 @@ Ext.extend(PanelNotasCab, Ext.grid.EditorGridPanel, {
                     {
                         waitMsg: 'Guardando cambios...',
                         url: '<?=url_for("falabellaAdu/observePanelNotasCab?referencia=".base64_encode($referencia))?>',
-						//method: 'POST',
+			//method: 'POST',
                         //Solamente se envian los cambios
                         params :	changes,
 
@@ -155,8 +154,6 @@ Ext.extend(PanelNotasCab, Ext.grid.EditorGridPanel, {
                             var res = Ext.util.JSON.decode( response.responseText );
                             if( res.id && res.success){
                                 var rec = store.getById( res.id );
-                                
-                                
                                 rec.commit();
                             }
                         }
