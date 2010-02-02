@@ -15,7 +15,7 @@
   <th>Fecha</th>
   <th>Archivo origen</th>
   <th>Referencia</th>
-  <th>Numero Viaje</th>
+  <th>Numero Embarque</th>
   <th>C&oacute;digo puerto pickup</th>
   <th>C&oacute;digo puerto descarga</th>
   <th>Container mode</th>
@@ -42,7 +42,7 @@
       <td><?php echo $fala_header->getCaReqdDelivery() ?></td>
       <td><?php echo $fala_header->getCaArchivoOrigen() ?></td>
       <td><?php echo $link?(link_to($fala_header->getCaReferencia(), 'falabellaAdu/declaracion?referencia='.base64_encode($fala_header->getCaReferencia()))):"<div class='qtip' title='Debe cargar la Declaraci&oacute;n de Importaci&oacute;n'>".$fala_header->getCaReferencia()."</div>"?></td>
-      <td><?php echo $fala_header->getCaNumViaje() ?></td>
+      <td><?php echo $fala_header->getFalaInstructionAdu()->getCaEmbarque() ?></td>
       <td><?php echo $fala_header->getCaCodigoPuertoPickup() ?></td>
       <td><?php echo $fala_header->getCaCodigoPuertoDescarga() ?></td>
       <td><?php echo $fala_header->getCaContainerMode() ?></td>
