@@ -17,11 +17,15 @@ class myLogger extends sfFileLogger
             $id .=" query: ".$_SERVER["QUERY_STRING"];
         }
 
-        if( count($_REQUEST)>0 ){
-            $id .=" request: ".var_export  ( $_REQUEST, true );
+        if( $_SERVER["REQUEST_METHOD"]=="POST" && count($_POST)>0 ){
+            $id .=" request: ". str_replace("\n", " ", var_export  ( $_POST, true ));
         }
 
-        $id .="]";
+        if( $_SERVER["REQUEST_METHOD"]=="GET" && count($_GET)>0 ){
+            $id .=" request: ". str_replace("\n", " ", var_export  ( $_GET, true ));
+        }
+
+        $id .="]\n";
 
         parent::doLog($message.$id, $priority);
     }
