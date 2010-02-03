@@ -279,6 +279,7 @@ PanelProductos = function( config ){
                 text: 'Agregar trayecto',
                 tooltip: 'Agregar un nuevo producto a la Cotización',
                 iconCls: 'add',  // reference to our css
+
                 handler: function(){
                     Ext.getCmp("grid_productos").agregarTrayecto();
                 }
@@ -886,6 +887,8 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
                tra_escala_value: rec.data.tra_escala_value,
                ciu_escala: rec.data.ciu_escala,
                ciu_escala_value: rec.data.ciu_escala_value,
+               idlinea: rec.data.idlinea,
+               linea: rec.data.linea,
                impoexpo: rec.data.impoexpo,
                incoterms: rec.data.incoterms,
                frecuencia: rec.data.frecuencia,
@@ -1027,7 +1030,12 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
             fp.getForm().findField("impoexpo").enable();
             fp.getForm().findField("transporte").enable();
             fp.getForm().findField("modalidad").enable();
-            
+
+            fp.getForm().findField("impoexpo").setRawValue("");
+            fp.getForm().findField("transporte").setRawValue("");
+            fp.getForm().findField("modalidad").setRawValue("");
+            fp.getForm().findField("incoterms").setRawValue("");
+
             fp.getForm().findField("tra_origen_id").setRawValue("");
             fp.getForm().findField("tra_origen_id").hiddenField.value = "";
             fp.getForm().findField("ciu_origen_id").setRawValue("");
