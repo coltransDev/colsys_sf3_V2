@@ -101,6 +101,9 @@ class dataImportActions extends sfActions
                                             }
                                             $falaDeclaracionDts = new FalaDeclaracionDts();
                                             $falaDeclaracionDts->setCaReferencia($falaDeclaracionImp->getCaReferencia());
+                                            $falaDeclaracionDts->setCaMoneda($moneda_mem);
+                                            $falaDeclaracionDts->setCaValorTrm($valortrm_mem);
+                                            
                                             $vals = explode( "\n",$node->nodeValue);
                                             $this->depurar_arreglo($vals);
                                             $i = 0;
@@ -173,13 +176,23 @@ class dataImportActions extends sfActions
                                     if ($val == 'D.O. Nro') {
                                         $val = trim(current($vals));
                                         $falaDeclaracionImp->setCaReferencia($val);
+                                        // Elimina importaciones de Archivo Anteriores
+                                        $this->data = Doctrine::getTable("FalaDeclaracionDts")
+                                                ->createQuery("d")
+                                                ->delete()
+                                                ->where("d.ca_referencia = ?", $val)
+                                                ->execute();
+                                        $this->data = Doctrine::getTable("FalaDeclaracionImp")
+                                                ->createQuery("d")
+                                                ->delete()
+                                                ->where("d.ca_referencia = ?", $val)
+                                                ->execute();
                                     }elseif($val == 'Moneda de Negociación :') {         //ca_moneda
                                         $val = current($vals);
                                         $parametro = Doctrine::getTable("Parametro")->find(array("CU079",0,$val));
-                                        $falaDeclaracionImp->setCaMoneda($parametro->getCaValor2());
+                                        $moneda_mem = $parametro->getCaValor2();
                                     }elseif($val == 'Tasa Representativa') {         //ca_valor_trm
-                                        $val = floatval(str_replace(",","",current($vals)));
-                                        $falaDeclaracionImp->setCaValorTrm($val);
+                                        $valortrm_mem = floatval(str_replace(",","",current($vals)));
                                     }elseif($val == 'Año') {         //ca_ano_trm
                                         $falaDeclaracionImp->setCaAnoTrm(intval(current($vals)));
                                     }elseif($val == 'Semana') {         //ca_semana_trm
