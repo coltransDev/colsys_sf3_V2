@@ -6,7 +6,7 @@
  */
 
 ?>
-<table width="100%" cellspacing="0"  class="tableList">
+<table width="100%" cellspacing="0"  class="tableList alignLeft">
     <?
     $i=0;
     foreach( $sucursales as $sucursal){

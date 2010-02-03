@@ -20,18 +20,18 @@ $initialYear = 2007;
 $actualYear = date("Y");
 $numYears = $actualYear-$initialYear+1;
 ?>
-<table class="tableList" width="100%" border="1">
-    <tr>
+<table class="tableList " width="100%" border="1">
+    <tr class="row0">
         <?
         for( $year=$initialYear;$year<=$actualYear; $year++ ){
         ?>
-        <th><div align="center"><?=$year?></div></th>
+        <td><div align="center"><?=$year?></div></td>
         <?
         }
         ?>
-        <th><div align="center">+</div></th>
-        <th><div align="center">=</div></th>
-        <th><div align="center">-</div></th>
+        <td><div align="center">+</div></td>
+        <td><div align="center">=</div></td>
+        <td><div align="center">-</div></td>
     </tr>
     <tr>
             <?
@@ -57,9 +57,9 @@ $numYears = $actualYear-$initialYear+1;
      </tr>
 </table>
 <br>
-<table class="tableList" width="100%" border="1">
+<table class="tableList alignLeft" width="100%" border="1">
     <tr class="row0">
-        <td width="20%">
+        <td width="15%">
             <b>Fecha </b>
         </td>
         <td width="10%">
@@ -74,7 +74,7 @@ $numYears = $actualYear-$initialYear+1;
         <td width="10%">
             <b>Calificaci&oacute;n</b>
         </td>
-        <td width="20%" align="center">
+        <td width="25%" align="center">
             <?
             if( $nivel>=2 ){
             ?>

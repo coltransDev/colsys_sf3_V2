@@ -62,7 +62,7 @@ class cotizacionesActions extends sfActions
 
 		switch( $criterio ){
 			case "mis_cotizaciones":								
-				$q->where("c.ca_usuario like ?", "%".$user->getUserId()."%" );
+				$q->where("c.ca_usuario = ? OR c.ca_usucreado = ?", array($user->getUserId(), $user->getUserId()) );    
                 break;
 			case "consecutivo":				
                 $q->where("c.ca_consecutivo like ?", "".$cadena."%" );
@@ -92,10 +92,10 @@ class cotizacionesActions extends sfActions
                 $q->where("LOWER(s.ca_nombre) like  ?", "%".strtolower( $cadena )."%" );
 				break;
              case "seguimiento":
-                $q->where("c.ca_usuario like ?", "%".$user->getUserId()."%" );
+                $q->where("c.ca_usuario = ? OR c.ca_usucreado = ?", array($user->getUserId(), $user->getUserId()) );
                 $q->addWhere("c.ca_usuanulado IS NULL");
 				$q->leftJoin("c.CotProducto p");
-                $q->addWhere("p.ca_etapa= ? OR c.ca_etapa = ?", array($seguimiento, $seguimiento) );
+                $q->addWhere("(p.ca_etapa=? AND p.ca_etapa IS NOT NULL) OR (c.ca_etapa = ? AND p.ca_etapa IS NULL)", array($seguimiento, $seguimiento) );
 
 
 				break;

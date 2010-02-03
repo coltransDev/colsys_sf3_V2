@@ -149,6 +149,11 @@ PanelArchivos = function( config ){
 
 Ext.extend(PanelArchivos, Ext.Panel, {
     nuevoArchivo: function(){
+
+        var panel = this;
+        var storeFileView = panel.store;
+        var folder = panel.folder;
+        
         win = new Ext.Window({
             //applyTo     : 'hello-win',
             //layout      : 'fit',
@@ -158,19 +163,19 @@ Ext.extend(PanelArchivos, Ext.Panel, {
             plain       : true,
 
             items       : new Ext.FormPanel({
-                fileUpload: true,
-                frame: true,
-                title: 'Por favor seleccione un archivo',
-                autoHeight: true,
-                bodyStyle: 'padding: 10px 10px 0 10px;',
-                labelWidth: 50,
-                id: 'file-panel-form',
-                defaults: {
-                    anchor: '95%',
-                    allowBlank: false
+            fileUpload: true,
+            frame: true,
+            title: 'Por favor seleccione un archivo',
+            autoHeight: true,
+            bodyStyle: 'padding: 10px 10px 0 10px;',
+            labelWidth: 50,
+            id: 'file-panel-form',
+            defaults: {
+                anchor: '95%',
+                allowBlank: false
 
-                },
-                items: [{
+            },
+            items: [{
                     xtype: 'fileuploadfield',
                     id: 'file',
                     name: 'file',
@@ -187,11 +192,10 @@ Ext.extend(PanelArchivos, Ext.Panel, {
 
             buttons: [{
                 text     : 'Guardar',
-                handler: function(){
+
+                handler: function(){                    
                     var fp = Ext.getCmp("file-panel-form");
-                    var panel = Ext.getCmp("panel-archivos");
-                    var storeFileView = panel.store;
-                    var folder = panel.folder;
+
                     if(fp.getForm().isValid()){
 
                         fp.getForm().submit({
@@ -215,12 +219,13 @@ Ext.extend(PanelArchivos, Ext.Panel, {
                 }
             },{
                 text     : 'Cancelar',
-                handler  : function(){
+                handler: function(){
                     win.close();
                 }
             }]
         });
-
+        
+        
         win.show( );
 
     },

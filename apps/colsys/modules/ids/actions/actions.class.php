@@ -1028,16 +1028,18 @@ class idsActions extends sfActions
     public function executeAlertasDocumentos(sfWebRequest $request){
        $this->modo=$request->getParameter("modo");  
        $this->fecha = date("Y-m-d", time()+86400*16);
+       echo$this->fecha ;
        $q = Doctrine::getTable("IdsDocumento")
                                ->createQuery("d")
                                ->select("i.ca_id, d.ca_iddocumento, d.ca_fchvencimiento, t.ca_tipo, i.ca_nombre")
                                ->innerJoin("d.Ids i")
                                ->innerJoin("d.IdsTipoDocumento t")
                                ->where("d.ca_fchvencimiento<=?", $this->fecha )
-                               ->addWhere("d.ca_idtipo IN (SELECT dd.ca_idtipo FROM IdsDocumento dd WHERE dd.ca_iddocumento=d.ca_iddocumento ORDER BY dd.ca_fchvencimiento DESC LIMIT 1)")
+                               ->addWhere("d.ca_iddocumento IN (SELECT dd.ca_iddocumento FROM IdsDocumento dd WHERE dd.ca_idtipo=d.ca_idtipo AND dd.ca_id=d.ca_id ORDER BY dd.ca_fchvencimiento DESC LIMIT 1)")
+
                                ->addOrderBy("d.ca_fchvencimiento ASC")
                                ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
-       if( $this->modo ){
+       if( $this->modo=="prov" ){
             $q->innerJoin("i.IdsProveedor p");
             $q->addWhere("p.ca_controladoporsig = ?", true);
             $this->titulo = "Documentos de proveedores controlados por SIG";
@@ -1046,6 +1048,8 @@ class idsActions extends sfActions
        if( $request->getParameter("layout") ){
             $this->setLayout($request->getParameter("layout"));
        }
+       /* echo $q->getSqlQuery();
+        exit();*/
 
        $this->documentos = $q->execute();
     }

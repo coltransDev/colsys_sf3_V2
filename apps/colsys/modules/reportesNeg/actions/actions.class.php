@@ -130,21 +130,75 @@ class reportesNegActions extends sfActions
     public function executeFormReporte(sfWebRequest $request){           
 
         $this->nivel = $this->getNivel();
-        
+
+
+        /*
+        * Parametros que se mantienen en caso de que ocurra un error
+        */
+        $bindValues = $request->getParameter("reporte");
+
         $this->origen = $request->getParameter("origen");
         $this->destino = $request->getParameter("destino");
         $this->idconcliente = $request->getParameter("idconcliente");
         $this->ca_idconcliente = $request->getParameter("ca_idconcliente");
-        
-		if( $this->getRequestParameter("id") ){
-			$reporte = Doctrine::getTable("Reporte")->find( $request->getParameter("id") );
-			$this->forward404Unless( $reporte );
-			
-		}else{		
-			$reporte = new Reporte();
-		}
 
-        $form = new ReporteForm();
+        $country_reporte = $request->getParameter("country_reporte");
+        $this->ca_traorigen = $country_reporte["ca_origen"];
+        $this->ca_tradestino = $country_reporte["ca_destino"];
+        
+        $this->ca_origen = $bindValues["ca_origen"];
+        $this->ca_destino = $bindValues["ca_destino"];
+
+        $this->contactos = array();
+
+        for( $i=0; $i<ReporteForm::NUM_CC; $i++ ){
+            if( isset( $bindValues["contactos_".$i] )){
+                $bindValues["contactos_".$i] = trim($bindValues["contactos_".$i]);
+                $this->contactos[] = $bindValues["contactos_".$i];
+            }
+        }
+
+
+        if( $request->getParameter("idproveedor") ){
+            $proveedores = $request->getParameter("idproveedor");
+            $orden_prov = $request->getParameter("orden_prov");
+            $incoterms = $request->getParameter("incoterms");
+
+            foreach( $proveedores as $key=>$val){ //Despues de agregar y elimianr proveedores esto evita un error
+                if( !$val ){
+                    unset($proveedores[$key]);
+                    unset($orden_prov[$key]);
+                    unset($incoterms[$key]);
+                }
+            }
+            $this->idproveedor = implode("|", $proveedores );
+            $bindValues["ca_idproveedor"] = $this->idproveedor;
+            $this->orden_prov = implode("|", $orden_prov );
+
+            $bindValues["ca_orden_prov"] = $this->orden_prov;
+            $this->incoterms = implode("|", $incoterms );
+            $bindValues["ca_incoterms"] = $this->incoterms;
+        }else{
+            $this->idproveedor = "";
+            $this->orden_prov = "";
+            $this->incoterms = "";
+        }
+
+        $this->idconsignatario = $request->getParameter("idconsignatario");
+        $bindValues["ca_idconsignatario"] = $this->idconsignatario;
+        $this->idnotify = $request->getParameter("idnotify");
+        $this->idrepresentante = $request->getParameter("idrepresentante");
+        $this->idmaster = $request->getParameter("idmaster");
+        $this->ca_notify = $request->getParameter("repnotify");
+
+        $this->seguro_conf = $request->getParameter("seguro_conf");
+
+        $this->idcotizacion =  isset($bindValues["ca_idcotizacion"])?$bindValues["ca_idcotizacion"]:null;
+
+        /*
+        *  Datos que se utilizan en el formulario
+        */
+
         $this->modalidadesAduana = array();
         $modalidadesAduana = Doctrine::getTable("Modalidad")
                                              ->createQuery("m")
@@ -170,63 +224,65 @@ class reportesNegActions extends sfActions
             $this->bodegas[$key]["b_ca_nombre"] = utf8_encode($this->bodegas[$key]["b_ca_nombre"]);
         }
 
+        $this->traficos = Doctrine::getTable('Trafico')->createQuery('t')
+                            ->select("t.ca_idtrafico, t.ca_nombre")
+                            ->where('t.ca_idtrafico != ?', '99-999')
+                            ->addOrderBy('t.ca_nombre ASC')
+                            ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
+                            ->execute();
+
+        foreach($this->traficos as $key=>$val){
+			$this->traficos[$key]["ca_nombre"] = utf8_encode( $this->traficos[$key]["ca_nombre"] );
+		}
+
+        $agentes = Doctrine_Query::create()
+                             ->select("a.*, i.ca_nombre, t.ca_idtrafico, t.ca_nombre")
+                             ->from("IdsAgente a")
+                             ->innerJoin("a.Ids i")
+                             ->innerJoin("i.IdsSucursal s")
+                             ->innerJoin("s.Ciudad c")
+                             ->innerJoin("c.Trafico t")
+                             ->where("s.ca_principal = ?", true)
+                             ->addWhere("a.ca_activo = ?", true)
+                             ->addOrderBy("t.ca_nombre")
+                             ->addOrderBy("i.ca_nombre")
+                             ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                             ->execute();
+        $this->agentes = array();
+        foreach( $agentes as $agente ){
+            $this->agentes[ $agente["t_ca_idtrafico"] ]["idagente"] = $agente["a_ca_idagente"];
+            $this->agentes[ $agente["t_ca_idtrafico"] ]["nombre"] = utf8_encode($agente["i_ca_nombre"]) ;
+            $this->agentes[ $agente["t_ca_idtrafico"] ]["pais"] = utf8_encode($agente["t_ca_nombre"]) ;
+        }
+
+
+        /*
+        * Se inicializan los formularios
+        */
+
+        $form = new ReporteForm();
         $formAduana = new RepAduanaForm();
         $formSeguro = new RepSeguroForm();
         $formExpo = new RepExpoForm();
 
-        $country_reporte = $request->getParameter("country_reporte");
-        $this->ca_traorigen = $country_reporte["ca_origen"];
-        $this->ca_tradestino = $country_reporte["ca_destino"];
+        /*
+        * Se inicializa el objeto
+        */
 
-        $bindValues = $request->getParameter("reporte");
-        $this->ca_origen = $bindValues["ca_origen"];
-        $this->ca_destino = $bindValues["ca_destino"];
-        $this->contactos = array();
+		if( $this->getRequestParameter("id") ){
+			$reporte = Doctrine::getTable("Reporte")->find( $request->getParameter("id") );
+			$this->forward404Unless( $reporte );
+			
+		}else{		
+			$reporte = new Reporte();
+		}
 
-        for( $i=0; $i<ReporteForm::NUM_CC; $i++ ){
-            if( isset( $bindValues["contactos_".$i] )){
-                $bindValues["contactos_".$i] = trim($bindValues["contactos_".$i]);
-                $this->contactos[] = $bindValues["contactos_".$i];
-            }
-        }
+        
 
-
-        if( $request->getParameter("idproveedor") ){
-            $proveedores = $request->getParameter("idproveedor");
-            $orden_prov = $request->getParameter("orden_prov");
-            $incoterms = $request->getParameter("incoterms");
-
-            foreach( $proveedores as $key=>$val){ //Despues de agregar y elimianr proveedores esto evita un error
-                if( !$val ){
-                    unset($proveedores[$key]);
-                    unset($orden_prov[$key]);
-                    unset($incoterms[$key]);
-                }
-            }
-            $this->idproveedor = implode("|", $proveedores );
-            $bindValues["ca_idproveedor"] = $this->idproveedor;
-            $this->orden_prov = implode("|", $orden_prov );           
-            
-            $bindValues["ca_orden_prov"] = $this->orden_prov;
-            $this->incoterms = implode("|", $incoterms );
-            $bindValues["ca_incoterms"] = $this->incoterms;
-        }else{
-            $this->idproveedor = "";
-            $this->orden_prov = "";
-            $this->incoterms = "";
-        }
-
-        $this->idconsignatario = $request->getParameter("idconsignatario");
-        $bindValues["ca_idconsignatario"] = $this->idconsignatario;
-        $this->idnotify = $request->getParameter("idnotify");
-        $this->idrepresentante = $request->getParameter("idrepresentante");
-        $this->idmaster = $request->getParameter("idmaster");
-        $this->ca_notify = $request->getParameter("repnotify");
-
-        $this->seguro_conf = $request->getParameter("seguro_conf");
-
-        $this->idcotizacion =  isset($bindValues["ca_idcotizacion"])?$bindValues["ca_idcotizacion"]:null;
-
+        
+        /*
+        * Se procesa la forma
+        */
         if ($request->isMethod('post')){                    
             
             /**********************************************
@@ -610,16 +666,7 @@ class reportesNegActions extends sfActions
             }
         }
 
-        $this->traficos = Doctrine::getTable('Trafico')->createQuery('t')
-                            ->select("t.ca_idtrafico, t.ca_nombre")
-                            ->where('t.ca_idtrafico != ?', '99-999')
-                            ->addOrderBy('t.ca_nombre ASC')
-                            ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
-                            ->execute();
         
-        foreach($this->traficos as $key=>$val){
-			$this->traficos[$key]["ca_nombre"] = utf8_encode( $this->traficos[$key]["ca_nombre"] );
-		}
         
         $this->reporte=$reporte;
         $this->form = $form;

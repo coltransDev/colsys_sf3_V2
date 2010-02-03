@@ -9,10 +9,10 @@
 use_helper("MimeType");
 ?>
 
-<table class="tableList" width="100%">
+<table class="tableList alignLeft" width="100%">
     <tr class="row0">
         <td>
-            <b>Documento </b>
+           <b>Documento</b>
         </td>
         <td>
            <b>Inicio</b>
@@ -33,6 +33,7 @@ use_helper("MimeType");
     </tr>
     <?
     $tipo = null;
+    $i = 0;
     foreach( $documentos as $documento ){
         if( $tipo!=$documento->getCaIdtipo() ){
             $tipo = $documento->getCaIdtipo();
@@ -43,7 +44,7 @@ use_helper("MimeType");
         }
     
     ?>
-    <tr class="<?=$class?$class:""?>" <?=$class?'style="display:none;"':""?>  >
+    <tr id="<?=$class?$class."_".$i++:""?>" <?=$class?'style="display:none;"':""?>  >
         <td>
            <?
            if( !$class ){

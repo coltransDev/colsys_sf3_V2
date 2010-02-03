@@ -121,6 +121,7 @@ class widgetsActions extends sfActions
         if( $query ){
             $q->addWhere("id.ca_nombre like ?", $query."%");
         }
+        $q->where("p.ca_activo = ?", true );
 
         $q->fetchArray();
 

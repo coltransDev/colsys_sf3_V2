@@ -9,6 +9,7 @@ $traficos = $sf_data->getRaw("traficos");
 $reporte = $sf_data->getRaw("reporte");
 $modalidadesAduana = $sf_data->getRaw("modalidadesAduana");
 $bodegas = $sf_data->getRaw("bodegas");
+$agentes = $sf_data->getRaw("agentes");
 ?>
 <script language="javascript">
 
@@ -351,8 +352,36 @@ $bodegas = $sf_data->getRaw("bodegas");
     }
 
     var llenarAgentes = function(){
+        var agentes = <?=json_encode($agentes)?>;
+        var target = document.getElementById("reporte_ca_idagente");
+        var clase = document.getElementById("reporte_ca_impoexpo").value;
         
 
+        if( document.getElementById("listar_todos")!=null ){
+            var listar_todos = document.getElementById("listar_todos").checked;
+            if( clase=="<?=Constantes::EXPO?>" ){
+                var trafico = document.getElementById( "country_reporte_ca_destino" ).value;
+            }else{
+                var trafico = document.getElementById( "country_reporte_ca_origen" ).value;
+            }
+
+            target.length=0;
+
+            for( i in agentes ){
+                var selected = false;
+                var idagente = agentes[i]["idagente"];
+                if( typeof(idagente)!="undefined" ){
+
+                    if( agentes[i]["idagente"]=="<?=$reporte->getCaIdagente()?>" ){
+                        selected = true;
+                    }
+
+                    if( i== trafico || listar_todos || agentes[i]["idagente"]=="<?=$reporte->getCaIdagente()?>" ){
+                        target[target.length] = new Option(agentes[i]["pais"]+"-"+agentes[i]["nombre"],agentes[i]["idagente"],false,selected);
+                    }
+                }
+            }
+        }
     }
     
 

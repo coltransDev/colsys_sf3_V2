@@ -14,6 +14,9 @@ include_component("gestDocumental", "panelArchivos", array("readOnly"=>$opcion==
 
 ?>
 <script type="text/javascript">
+
+
+
 Ext.onReady(function(){
         
         <?
@@ -47,7 +50,7 @@ Ext.onReady(function(){
 
             if( opcion=="files" ){
 
-                var folder = "Tarifario/"+impoexpo.substring(0, 1)+"_"+transporte.substring(0, 1)+"_"+modalidad+"_"+idtrafico;
+                var folder = Base64.encode("Tarifario/"+impoexpo.substring(0, 1)+"_"+transporte.substring(0, 1)+"_"+modalidad+"_"+idtrafico);
 
 
                 var newComponent = new PanelArchivos({folder:folder,
@@ -179,7 +182,7 @@ Ext.onReady(function(){
         // it is generally best to disable state management as dynamically-generated ids
         // can change across page loads, leading to unpredictable results.  The developer
         // should ensure that stable state ids are set for stateful components in real apps.
-        Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
+       // Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
 
         var viewport = new Ext.Viewport({
             layout: 'border',

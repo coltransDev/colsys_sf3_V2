@@ -81,7 +81,7 @@
             }
             echo $form['ca_idagente']->render();
             ?>
-            &nbsp;&nbsp; <b>Listar todos:</b> <input type="checkbox" id="listar_todos" />
+             &nbsp;&nbsp; <b>Listar todos:</b> <input type="checkbox" id="listar_todos" onclick="llenarAgentes()" />
         </td>
 
     </tr>

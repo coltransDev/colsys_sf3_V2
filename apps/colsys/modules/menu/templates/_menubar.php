@@ -23,8 +23,8 @@
 				foreach( $grupo as $rutina ){
 				?>
 					<li >
-						<a href="<?=$rutina->getCaPrograma()?>">
-							<?=$rutina->getCaOpcion()?>
+						<a href="<?=$rutina["ca_programa"]?>">
+							<?=$rutina["ca_opcion"]?>
 						</a>
 					</li>
 				<?
