@@ -1,10 +1,10 @@
 <?php
 
 /**
- * bavaria actions.
+ * falabellaAdu actions.
  *
  * @package    colsys
- * @subpackage bavaria
+ * @subpackage falabellaAdu
  * @author     Your name here
  * @version    SVN: $Id: actions.class.php 3335 2007-01-23 16:19:56Z fabien $
  */
@@ -31,29 +31,35 @@ class falabellaAduComponents extends sfComponents {
 	public function executePanelDeclaracion() {
 
             $this->referencia = $this->fala_declaracion["d_ca_referencia"];
-            
+
             $this->fala_detallesimp = Doctrine::getTable("FalaDeclaracionDts")
                 -> createQuery("d")
                 ->where ( "d.ca_referencia = ?", $this->referencia  )
                 ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
                 ->execute();
-       
+
 	}
 
     /*
 	*
 	*/
 	public function executeMainPanel() {
-		
+            $this->header = Doctrine::getTable("FalaHeaderAdu")
+                                   ->createQuery("d")
+                                   ->select("d.ca_iddoc, d.ca_referencia, d.ca_reqd_delivery")
+                                   ->where("d.ca_iddoc = ? ", $this->fala_header->getCaIddoc())
+                                   ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                                   ->execute();
+
 	}
 
-    
+
 
     /*
 	*
 	*/
 	public function executeTopPanel() {
-            
+
 	}
 
     /*
@@ -112,7 +118,7 @@ class falabellaAduComponents extends sfComponents {
                                     ->createQuery("d")
                                     ->select("d.*")
                                     ->where("d.ca_referencia = ?", $this->referencia)
-                                    ->addWhere("d.ca_numdocumento = ?", $this->referencia)
+                                    ->addWhere("d.ca_numdocumento = ?", $this->numdocumento)
                                     ->setHydrationMode(Doctrine::HYDRATE_SCALAR )
                                     ->execute();
             $this->data[] = array("ca_numdocumento"=>"", "orden"=>"Z");
@@ -120,6 +126,6 @@ class falabellaAduComponents extends sfComponents {
             $this->conceptos = ParametroTable::retrieveByCaso("CU080");
 
 	}
-	
+
 }
 ?>

@@ -6,7 +6,7 @@
  */
 
 $data = $sf_data->getRaw( "data" );
-
+$conceptos = $sf_data->getRaw( "conceptos" );
 
 ?>
 <script type="text/javascript">
@@ -28,7 +28,7 @@ PanelNotasDet = function(){
                     if($i++!=0){
                         echo ",";
                     }
-                    echo "[\"".$concepto->getCaValor2()."\",\"".$concepto->getCaValor()."\"]";
+                    echo "[\"".intval($concepto->getCaValor2())."\",\"".$concepto->getCaValor()."\"]";
                 }
             ?>
             ]
@@ -126,7 +126,7 @@ PanelNotasDet = function(){
 
 
     this.record = Ext.data.Record.create([
-            {name: 'iddetalle', type: 'string', mapping: 'd_ca_iddetalle'},
+            {name: 'referencia', type: 'string', mapping: 'd_ca_referencia'},
             {name: 'numdocumento', type: 'string', mapping: 'd_ca_numdocumento'},
             {name: 'idconcepto', type: 'int', mapping: 'd_ca_idconcepto'},
             {name: 'nit_ter', type: 'string', mapping: 'd_ca_nit_ter'},
@@ -154,7 +154,7 @@ PanelNotasDet = function(){
     PanelNotasDet.superclass.constructor.call(this, {
         id: 'panel-notas-det',
         loadMask: {msg:'Cargando...'},
-        clicksToEdit: 1,
+        clicksToEdit: 2,
         stripeRows: true,
         title: 'Nota Detalle',
         region:'south',
@@ -198,7 +198,7 @@ Ext.extend(PanelNotasDet, Ext.grid.EditorGridPanel, {
 
 
             changes['id']=r.id;
-            changes['iddetalle']=r.data.iddetalle;
+            changes['idconcepto']=r.data.idconcepto;
             changes['numdocumento']=r.data.numdocumento;
 
             if( r.data.idconcepto ){
@@ -216,7 +216,7 @@ Ext.extend(PanelNotasDet, Ext.grid.EditorGridPanel, {
                             var res = Ext.util.JSON.decode( response.responseText );
                             if( res.id && res.success){
                                 var rec = store.getById( res.id );
-                                rec.set("iddetalle", res.iddetalle );
+                                rec.set("idconcepto", res.idconcepto );
 
                                 rec.commit();
                             }
@@ -234,7 +234,7 @@ Ext.extend(PanelNotasDet, Ext.grid.EditorGridPanel, {
         if( this.ctxRecord &&  confirm("Desea continuar?") ){
 
             var id = this.ctxRecord.id;
-            if( this.ctxRecord.data.iddetalle ){
+            if( this.ctxRecord.data.idconcepto ){
                 Ext.Ajax.request(
                 {
                     waitMsg: 'Eliminando...',
@@ -243,7 +243,8 @@ Ext.extend(PanelNotasDet, Ext.grid.EditorGridPanel, {
                     //Solamente se envian los cambios
                     params :	{
                         id: id,
-                        iddetalle: this.ctxRecord.data.iddetalle
+                        numdocumento: this.ctxRecord.data.numdocumento,
+                        idconcepto: this.ctxRecord.data.idconcepto
                     },
 
                     //Ejecuta esta accion en caso de fallo

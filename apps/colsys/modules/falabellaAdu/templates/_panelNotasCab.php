@@ -91,7 +91,7 @@ PanelNotasCab = function(){
     PanelNotasCab.superclass.constructor.call(this, {
         id: 'panel-notas-cab',
         loadMask: {msg:'Cargando...'},
-        clicksToEdit: 1,
+        clicksToEdit: 2,
         stripeRows: true,
         title: 'Nota Cabecera',
         region:'center',

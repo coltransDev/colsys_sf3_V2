@@ -1199,18 +1199,16 @@ class falabellaAduActions extends sfActions {
 
         $referencia = base64_decode($request->getParameter("referencia"));
         $numdocumento = $request->getParameter("numdocumento");
-        $iddetalle = $request->getParameter("iddetalle");
-        if( $iddetalle ){
-            $detalle = Doctrine::getTable("FalaNotaDet")->find($iddetalle);
-            $this->forward404Unless( $detalle );
-        }else{
+        $idconcepto = $request->getParameter("idconcepto");
+        $detalle = Doctrine::getTable("FalaNotaDet")->find(array($referencia, $numdocumento, $idconcepto));
+
+        if (!$detalle){
             $detalle = new FalaNotaDet();
             $detalle->setCaReferencia( $referencia );
             $detalle->setCaNumdocumento( $numdocumento );
+            $detalle->setCaIdconcepto( $idconcepto );
         }
-        if( $this->getRequestParameter ( 'idconcepto' ) ) {
-            $detalle->setCaIdconcepto( $this->getRequestParameter ( 'idconcepto' ) );
-        }
+
         if( $this->getRequestParameter ( 'nit_ter' ) ) {
             $detalle->setCaNitTer( $this->getRequestParameter ( 'nit_ter' ) );
         }
@@ -1231,7 +1229,7 @@ class falabellaAduActions extends sfActions {
         }
         $detalle->save();
 
-        $this->responseArray["iddetalle"]=$detalle->getCaIddetalle();
+        $this->responseArray["idconcepto"]=$detalle->getCaIdconcepto();
         $this->responseArray["success"]=true;
         $this->setTemplate("responseTemplate");
     }
@@ -1241,14 +1239,16 @@ class falabellaAduActions extends sfActions {
 
         $referencia = base64_decode($request->getParameter("referencia"));
         $numdocumento = $request->getParameter("numdocumento");
-        $concepto = $request->getParameter("concepto");
-        $iddetalle = $request->getParameter("iddetalle");
-        if( $iddetalle ){
-            $detalle = Doctrine::getTable("FalaNotaDet")->find($iddetalle);
-            $this->forward404Unless( $detalle );
+        $idconcepto = $request->getParameter("idconcepto");
+
+        $detalle = Doctrine::getTable("FalaNotaDet")->find(array($referencia, $numdocumento, $idconcepto));
+        if( $detalle )
+        {
             $detalle->delete();
-            $this->responseArray["success"]=true;
         }
+
+        $this->responseArray["success"]=true;
+
         $this->setTemplate("responseTemplate");
     }
 
