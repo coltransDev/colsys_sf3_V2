@@ -15,15 +15,35 @@ $rsMenu->Open( $sql );
 
 $grupos = array();
 
-while (!$rsMenu->Eof() and !$rsMenu->IsEmpty()) {    
-	if( !isset( $grupos[$rsMenu->Value('ca_grupo')] )){
-		$grupos[$rsMenu->Value('ca_grupo')]=array();
-	}
-	
-	$grupos[$rsMenu->Value('ca_grupo')][]=array( "opcion"=>$rsMenu->Value('ca_opcion'),
-												 "programa"=>$rsMenu->Value('ca_programa')
-										);
-	$rsMenu->moveNext();
+if( !isset($_COOKIE["menu"]) ){
+    while (!$rsMenu->Eof() and !$rsMenu->IsEmpty()) {
+        if( !isset( $grupos[$rsMenu->Value('ca_grupo')] )){
+            $grupos[$rsMenu->Value('ca_grupo')]=array();
+        }
+
+        $grupos[$rsMenu->Value('ca_grupo')][]=array( "opcion"=>$rsMenu->Value('ca_opcion'),
+                                                     "programa"=>$rsMenu->Value('ca_programa')
+                                            );
+        $rsMenu->moveNext();
+    }
+}else{
+    
+    $menu = explode("\n",(utf8_decode($_COOKIE["menu"])));
+    $grupos = array();
+
+    foreach( $menu as $m ){
+        $pos =  strpos( $m, "|" );
+
+        $grupo = substr( $m, 0, $pos );
+        $items = explode( ";", substr( $m, $pos+1 , 9999 ) );
+        foreach( $items as $item ){
+            $val = explode("#", $item);
+
+            if( $val[0] ){
+                $grupos[$grupo][] = array("programa"=>$val[0],"opcion"=>$val[1]);
+            }
+        }
+    }
 }
 
 
