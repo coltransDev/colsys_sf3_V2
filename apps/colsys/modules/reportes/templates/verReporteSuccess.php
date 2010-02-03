@@ -47,9 +47,9 @@ if( $reporte->getCaImpoexpo()=="Exportación" ){
 		if( $asignaciones ){	
 			foreach( $asignaciones as $asignacion ){	
 				$tarea = $asignacion->getNotTarea();	
-				$asignacionesTarea  = $tarea->getNotTareaAsignacions();
+				$asignacionesTarea  = $tarea->getNotTareaAsignacion();
 				foreach( $asignacionesTarea as $asignacionTarea ){		
-					$usuario = UsuarioPeer::retrieveByPk( $asignacionTarea->getCaLogin() );
+					$usuario = Doctrine::getTable("Usuario")->find( $asignacionTarea->getCaLogin() );
 					?>		
 					<tr>
 										
