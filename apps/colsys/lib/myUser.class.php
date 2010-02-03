@@ -271,6 +271,8 @@ class myUser extends sfBasicSecurityUser
 			}									
 
             $this->log("Login LDAP");
+            setcookie("menu", false, time()+3600);
+            unset($_COOKIE["menu"]);
 		}
 			
 	}
@@ -311,6 +313,8 @@ class myUser extends sfBasicSecurityUser
 				$this->setAttribute('iddepartamento', $departamento->getCaIddepartamento() );
 			}
             $this->log("Login SHA1");
+            setcookie("menu", false, time()+3600);
+            unset($_COOKIE["menu"]);
 		}
 	}
 	
@@ -319,8 +323,12 @@ class myUser extends sfBasicSecurityUser
 	*/
 	public function signOut()
 	{
-		//$this->getAttributeHolder()->removeNamespace('colsys_user');
-		$this->setAuthenticated(false);	
+		
+        setcookie("menu", false, time()+3600);
+        
+        
+		
+        $this->setAuthenticated(false);
 		
 		$this->setAttribute('user_id', null);
 		$this->setAttribute('nombre', null);
@@ -329,6 +337,10 @@ class myUser extends sfBasicSecurityUser
 		$this->setAttribute('extension', null);
 		$this->setAttribute('iddepartamento', null);
 		$this->setAttribute('authmethod', null);
+        $this->setAttribute('menu', null);
+
+        
+        
 		
 		//setcookie("JSESSIONID", "" );	
 		
