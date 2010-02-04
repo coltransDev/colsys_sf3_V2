@@ -1028,6 +1028,7 @@ class cotizacionesActions extends sfActions
 			if( $idcotrecargo ){                
                 $recargo = Doctrine::getTable("CotRecargo")->find( $idcotrecargo );                
             }else{
+
 				$recargo = new CotRecargo();									
 				$recargo->setCaIdcotizacion( $idcotizacion );
 				$recargo->setCaIdproducto( $idproducto );
