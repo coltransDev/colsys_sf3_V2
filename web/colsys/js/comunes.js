@@ -240,18 +240,19 @@ document.getElementsByClass = function(needle) {
 */
 var expandCollapseGroup = function( obj , id ){
 
-    var elements = document.getElementsByClass(id);
-
-    for(var i=0; i<elements.length; i++ ){
-        target = elements[i];
-        if( target.style.display=="none" ){
-            target.style.display="";
-            obj.className="group_expanded";
-        }else{
-            target.style.display="none";
-            obj.className="group_collapsed";
+    for( var i=0; i<10; i++ ){
+        var target = document.getElementById(id+"_"+i);
+       
+        if( target && typeof(target)!="undefined" ){             
+            if( target.style.display=="none" ){
+                target.style.display="";
+                obj.className="group_expanded";
+            }else{
+                target.style.display="none";
+                obj.className="group_collapsed";
+            }
         }
-    }
+    }    
 }
 
 
