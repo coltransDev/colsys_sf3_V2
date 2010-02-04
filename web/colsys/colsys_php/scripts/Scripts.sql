@@ -1961,10 +1961,24 @@ GRANT ALL ON TABLE tb_dianreservados TO "Usuarios";
 
 
 
+/* Generador de Id para la tabla tb_bavaria */;
+
+drop sequence tb_bavaria_id;
+create sequence tb_bavaria_id
+minvalue     1
+maxvalue 32767
+increment    1
+start        1;
+REVOKE ALL ON tb_bavaria_id FROM PUBLIC;
+GRANT ALL ON tb_bavaria_id TO "Administrador";
+GRANT ALL ON tb_bavaria_id TO GROUP "Usuarios";
+
+
 -- Table: tb_bavaria
 -- DROP TABLE tb_bavaria;
 CREATE TABLE tb_bavaria
 (
+  ca_idbavaria smallint DEFAULT nextval('tb_bavaria_id') UNIQUE NOT NULL,
   ca_consecutivo varchar (10) NOT NULL,
   ca_orden_nro varchar (10) NOT NULL,
   ca_modalidad varchar (12) NOT NULL,
@@ -1978,6 +1992,7 @@ CREATE TABLE tb_bavaria
   ca_tipo_embalaje varchar (2),
   ca_transportadora varchar (10),
   ca_bandera varchar (3),
+  ca_reportado boolean,
   ca_fchreportado timestamp without time zone,
   ca_usureportado character varying(20),
   ca_fchanulado timestamp without time zone,
@@ -2221,9 +2236,10 @@ GRANT ALL ON vi_liberaciones TO GROUP "Usuarios";
 // Drop view vi_clientes cascade;
 Create view vi_clientes as
 Select c.ca_idcliente, c.ca_digito, c.ca_compania, c.ca_papellido, c.ca_sapellido, c.ca_nombres, c.ca_nombres ||' '|| c.ca_papellido ||' '|| c.ca_sapellido as ca_ncompleto, c.ca_saludo, c.ca_sexo, c.ca_cumpleanos, c.ca_direccion, c.ca_oficina, c.ca_torre, c.ca_bloque, c.ca_interior, c.ca_localidad, c.ca_complemento, c.ca_telefonos, c.ca_fax, c.ca_idciudad, cd.ca_ciudad, tr.ca_nombre as ca_pais, c.ca_website, c.ca_email, c.ca_actividad, c.ca_sectoreco, c.ca_vendedor, tu.ca_sucursal, c.ca_confirmar,
-       c.ca_fchcircular, case when nullvalue(c.ca_fchcircular) then 'Sin' else case when (c.ca_fchcircular+365<now()) then 'Vencido' else 'Vigente' end end as ca_stdcircular, c.ca_nvlriesgo, c.ca_fchcotratoag, case when nullvalue(c.ca_fchcircular) then 'Sin' else case when (c.ca_fchcotratoag+365<now()) then 'Vencido' else 'Vigente' end end as ca_stdcotratoag, c.ca_listaclinton, c.ca_leyinsolvencia, c.ca_comentario, c.ca_status, c.ca_calificacion, c.ca_coordinador, u.ca_nombre as ca_nombre_coor,
-	   c.ca_preferencias, (select max(e.ca_fchvisita) from vi_enccliente e where c.ca_idcliente = e.ca_idcliente) as ca_fchvisita, c.ca_fchcreado, c.ca_usucreado, c.ca_fchactualizado, c.ca_usuactualizado, cl.ca_diascredito, cl.ca_cupo, cl.ca_observaciones, cm.ca_fchfirmado, cm.ca_fchvencimiento, cl.ca_fchcreado as ca_fchcreado_lb, cl.ca_usucreado as ca_usucreado_lb, cl.ca_fchactualizado as ca_fchactualizado_lb, cl.ca_usuactualizado as ca_usuactualizado_lb,
-       st1.ca_estado as ca_coltrans_std, st1.ca_fchestado as ca_coltrans_fch, st2.ca_estado as ca_colmas_std, st2.ca_fchestado as ca_colmas_fch  
+       c.ca_fchcircular, case when c.ca_fchcircular IS NULL then 'Sin' else case when (c.ca_fchcircular+365<now()) then 'Vencido' else 'Vigente' end end as ca_stdcircular, c.ca_nvlriesgo, c.ca_fchcotratoag, case when c.ca_fchcotratoag IS NULL then 'Sin' else case when (c.ca_fchcotratoag+365<now()) then 'Vencido' else 'Vigente' end end as ca_stdcotratoag, c.ca_listaclinton, c.ca_leyinsolvencia, c.ca_comentario, c.ca_status, c.ca_calificacion, c.ca_coordinador, u.ca_nombre as ca_nombre_coor,
+       c.ca_preferencias, (select max(e.ca_fchvisita) from vi_enccliente e where c.ca_idcliente = e.ca_idcliente) as ca_fchvisita, c.ca_fchcreado, c.ca_usucreado, c.ca_fchactualizado, c.ca_usuactualizado, cl.ca_diascredito, cl.ca_cupo, cl.ca_observaciones, cm.ca_fchfirmado, cm.ca_fchvencimiento, case when cm.ca_fchfirmado IS NULL then 'Sin' else case when (cm.ca_fchvencimiento<now()) then 'Vencido' else 'Vigente' end end as ca_stdcarta_gtia,
+       cl.ca_fchcreado as ca_fchcreado_lb, cl.ca_usucreado as ca_usucreado_lb, cl.ca_fchactualizado as ca_fchactualizado_lb, cl.ca_usuactualizado as ca_usuactualizado_lb,
+       st1.ca_estado as ca_coltrans_std, st1.ca_fchestado as ca_coltrans_fch, st2.ca_estado as ca_colmas_std, st2.ca_fchestado as ca_colmas_fch
        from tb_clientes c
        LEFT OUTER JOIN (select * from tb_stdcliente where OID IN (select max(sc.OID) from tb_stdcliente sc where ca_empresa = 'Coltrans' group by ca_idcliente)) as st1 ON (c.ca_idcliente = st1.ca_idcliente)
        LEFT OUTER JOIN (select * from tb_stdcliente where OID IN (select max(sc.OID) from tb_stdcliente sc where ca_empresa = 'Colmas' group by ca_idcliente)) as st2 ON (c.ca_idcliente = st2.ca_idcliente)
@@ -2344,18 +2360,22 @@ GRANT ALL ON vi_reportes TO GROUP "Usuarios";
 
 
 // Drop view vi_repconsulta cascade;
-Create view vi_repconsulta as
-select rp.ca_fchreporte, rp.ca_idreporte, rp.ca_consecutivo, cl.ca_compania as ca_nombre_cli, tr.ca_nombre as ca_nombre_pro, cd1.ca_ciudad as ca_ciuorigen, cd2.ca_ciudad as ca_ciudestino, rp.ca_transporte, rp.ca_mercancia_desc, rp.ca_modalidad, rp.ca_incoterms, rp.ca_login as ca_vendedor 
-	from tb_reportes rp LEFT OUTER JOIN tb_ciudades cd1 ON (rp.ca_origen = cd1.ca_idciudad) 
-	LEFT OUTER JOIN tb_ciudades cd2 ON (rp.ca_destino = cd2.ca_idciudad) 
-	LEFT OUTER JOIN tb_concliente cc ON (rp.ca_idconcliente = cc.ca_idcontacto) 
-	LEFT OUTER JOIN tb_clientes cl ON (cc.ca_idcliente = cl.ca_idcliente) 
-	LEFT OUTER JOIN tb_terceros tr ON (rp.ca_idproveedor::int = tr.ca_idtercero::int) 
-	where ca_modalidad = '' and ca_incoterms NOT LIKE 'CIF%' and ca_incoterms NOT LIKE 'CIP%' and ca_incoterms NOT LIKE 'CPT%' and ca_incoterms NOT LIKE 'CFR%' and nullvalue(r.ca_usuanulado)
-	order by EXTRACT ('year' from ca_fchreporte) DESC, to_number(substr(ca_consecutivo,0,position('-' in ca_consecutivo)),'99999999') DESC, ca_version DESC;
-REVOKE ALL ON vi_repconsulta FROM PUBLIC;
-GRANT ALL ON vi_repconsulta TO "Administrador";
-GRANT ALL ON vi_repconsulta TO GROUP "Usuarios";
+CREATE OR REPLACE VIEW vi_repconsulta AS
+ SELECT rp.ca_fchreporte, rp.ca_idreporte, rp.ca_consecutivo, cl.ca_compania AS ca_nombre_cli, tr.ca_nombre AS ca_nombre_pro, cd1.ca_ciudad AS ca_ciuorigen, cd2.ca_ciudad AS ca_ciudestino, rp.ca_transporte, rp.ca_mercancia_desc, rp.ca_modalidad, rp.ca_incoterms, rp.ca_login AS ca_vendedor, rp.ca_colmas, rp.ca_idetapa
+   FROM tb_reportes rp
+   LEFT JOIN tb_ciudades cd1 ON rp.ca_origen::text = cd1.ca_idciudad::text
+   LEFT JOIN tb_ciudades cd2 ON rp.ca_destino::text = cd2.ca_idciudad::text
+   LEFT JOIN tb_concliente cc ON rp.ca_idconcliente = cc.ca_idcontacto
+   LEFT JOIN tb_clientes cl ON cc.ca_idcliente = cl.ca_idcliente
+   LEFT JOIN tb_terceros tr ON rp.ca_idproveedor::integer = tr.ca_idtercero::integer
+  WHERE rp.ca_modalidad::text = ''::text AND rp.ca_incoterms::text !~~ 'CIF%'::text AND rp.ca_incoterms::text !~~ 'CIP%'::text AND rp.ca_incoterms::text !~~ 'CPT%'::text AND rp.ca_incoterms::text !~~ 'CFR%'::text AND rp.ca_usuanulado IS NULL
+  ORDER BY date_part('year'::text, rp.ca_fchreporte) DESC, to_number(substr(rp.ca_consecutivo::text, 0, "position"(rp.ca_consecutivo::text, '-'::text)), '99999999'::text) DESC, rp.ca_version DESC;
+
+ALTER TABLE vi_repconsulta OWNER TO postgres;
+GRANT ALL ON TABLE vi_repconsulta TO postgres;
+GRANT ALL ON TABLE vi_repconsulta TO "Administrador";
+GRANT ALL ON TABLE vi_repconsulta TO "Usuarios";
+
 
 
 // Drop view vi_repultimo cascade;
@@ -2412,19 +2432,7 @@ GRANT ALL ON vi_repavisos TO "Administrador";
 GRANT ALL ON vi_repavisos TO GROUP "Usuarios";
 
 
-// Drop view vi_fallabella_asn;
-Create view vi_fallabella_asn as
-select	rp.ca_consecutivo as ca_reporte, rp.ca_version, (case when rp.ca_transporte = 'Aéreo' then 'HAWB' else 'HBL' end) as ca_docu_type, ra.ca_doctransporte as ca_docu_number, ra.ca_docmaster as ca_docu_master,
-	ra.ca_idnave as ca_vessel_name, 0::integer as ca_voyage_number, (case when rp.ca_transporte = 'Aéreo' then 'A' else 'S' end) as ca_via, ra.ca_fchsalida as ca_fch_carga, ra.ca_fchllegada as ca_fch_eta
-	from vi_reportes rp LEFT OUTER JOIN (select rpt.ca_consecutivo as ca_consecutivo_f, max(rpa.ca_idemail) as ca_idemail from tb_reportes rpt, tb_repavisos rpa where nullvalue(rpt.ca_usuanulado) and rpt.ca_idreporte = rpa.ca_idreporte group by ca_consecutivo) rf ON (rp.ca_consecutivo = rf.ca_consecutivo_f)
-	LEFT OUTER JOIN tb_repavisos ra ON (ra.ca_idemail = rf.ca_idemail), (select ca_consecutivo as ca_consecutivo_f, max(ca_idreporte) as ca_idreporte from tb_reportes where nullvalue(ca_usuanulado) group by ca_consecutivo_f) rx where rp.ca_idreporte = rx.ca_idreporte and nullvalue(rp.ca_usuanulado)
-	order by rp.ca_idreporte DESC;
-REVOKE ALL ON vi_fallabella_asn FROM PUBLIC;
-GRANT ALL ON vi_fallabella_asn TO "Administrador";
-GRANT ALL ON vi_fallabella_asn TO GROUP "Usuarios";
-
-
-
+/* Versión Original de Query */
 // Drop view vi_inomaestra_sea cascade;
 Create view vi_inomaestra_sea as
 Select substr(i.ca_referencia,15,1) as ca_ano, substr(i.ca_referencia,8,2)||'-'||substr(i.ca_referencia,15,1) as ca_mes, substr(i.ca_referencia,5,2) as ca_trafico, substr(i.ca_referencia,1,3) as ca_modal, i.ca_fchreferencia, i.ca_referencia, i.ca_impoexpo, i.ca_origen, c1.ca_ciudad as ca_ciuorigen, t1.ca_nombre as ca_traorigen, i.ca_destino,
@@ -2435,18 +2443,48 @@ Select substr(i.ca_referencia,15,1) as ca_ano, substr(i.ca_referencia,8,2)||'-'|
        (select sum(ic.ca_numpiezas) from tb_inoclientes_sea ic where i.ca_referencia = ic.ca_referencia) as ca_numpiezas,
        (select sum(ic.ca_peso) from tb_inoclientes_sea ic where i.ca_referencia = ic.ca_referencia) as ca_peso,
        (select sum(ic.ca_volumen) from tb_inoclientes_sea ic where i.ca_referencia = ic.ca_referencia) as ca_volumen,
-       (select sum(ic.ca_neto*ic.ca_tcambio) from tb_inocostos_sea ic where i.ca_referencia = ic.ca_referencia) as ca_costoneto,
-       (select sum(ic.ca_venta)-sum(ic.ca_neto*ic.ca_tcambio) from tb_inocostos_sea ic, tb_costos c where ic.ca_idcosto = c.ca_idcosto and i.ca_referencia = ic.ca_referencia and c.ca_comisionable != 'No') as ca_comisionable,
-       (select sum(ic.ca_venta)-sum(ic.ca_neto*ic.ca_tcambio) from tb_inocostos_sea ic, tb_costos c where ic.ca_idcosto = c.ca_idcosto and i.ca_referencia = ic.ca_referencia and c.ca_comisionable = 'No') as ca_nocomisionable,
-       (select sum(ii.ca_valor) from tb_inoingresos_sea ii where i.ca_referencia = ii.ca_referencia) as ca_facturacion,
-       (select sum(d.ca_valor) from tb_inodeduccion_sea d where i.ca_referencia = d.ca_referencia) as ca_deduccion,
-       (select sum(ic.ca_venta) from tb_inocostos_sea ic, tb_costos c where ic.ca_idcosto = c.ca_idcosto and i.ca_referencia = ic.ca_referencia and c.ca_comisionable != 'No' and ic.ca_login = '') as ca_utilidad,
-       (case when i.ca_provisional then 'Provisional' else (case when nullvalue(i.ca_usucerrado) = false and length(i.ca_usucerrado) != 0 then 'Cerrado' else 'Abierto' end) end) as ca_estado
+       (select sum(round((case when ic.ca_neto IS NOT NULL then ic.ca_neto else 0 end)::numeric*ic.ca_tcambio::numeric,0)) from tb_inocostos_sea ic where i.ca_referencia = ic.ca_referencia) as ca_costoneto,
+       (select sum(case when ic.ca_venta IS NOT NULL then ic.ca_venta else 0 end)::numeric-sum(round((case when ic.ca_neto IS NOT NULL then ic.ca_neto else 0 end)::numeric*ic.ca_tcambio::numeric,0)) from tb_inocostos_sea ic, tb_costos c where ic.ca_idcosto = c.ca_idcosto and i.ca_referencia = ic.ca_referencia and c.ca_comisionable != 'No') as ca_comisionable,
+       (select sum(case when ic.ca_venta IS NOT NULL then ic.ca_venta else 0 end)::numeric-sum(round((case when ic.ca_neto IS NOT NULL then ic.ca_neto else 0 end)::numeric*ic.ca_tcambio::numeric,0)) from tb_inocostos_sea ic, tb_costos c where ic.ca_idcosto = c.ca_idcosto and i.ca_referencia = ic.ca_referencia and c.ca_comisionable = 'No') as ca_nocomisionable,
+       (case when EXISTS(select ca_referencia from tb_inoingresos_sea ii where i.ca_referencia = ii.ca_referencia) then (select sum(case when ii.ca_valor IS NOT NULL then ii.ca_valor else 0 end)::numeric from tb_inoingresos_sea ii where i.ca_referencia = ii.ca_referencia) else 0 end) as ca_facturacion,
+       (case when EXISTS(select ca_referencia from tb_inodeduccion_sea d where i.ca_referencia = d.ca_referencia) then (select sum(case when d.ca_valor IS NOT NULL then d.ca_valor else 0 end)::numeric from tb_inodeduccion_sea d where i.ca_referencia = d.ca_referencia) else 0 end) as ca_deduccion,
+       (case when EXISTS(select ca_referencia from tb_inocostos_sea ic where i.ca_referencia = ic.ca_referencia) then (select sum(case when ic.ca_venta IS NOT NULL then ic.ca_venta else 0 end)::numeric from tb_inocostos_sea ic, tb_costos c where ic.ca_idcosto = c.ca_idcosto and i.ca_referencia = ic.ca_referencia and c.ca_comisionable != 'No' and ic.ca_login = '') else 0 end) as ca_utilidad,
+       (case when i.ca_provisional then 'Provisional' else (case when i.ca_usucerrado IS NOT NULL then 'Cerrado' else 'Abierto' end) end) as ca_estado
        from tb_inomaestra_sea i, tb_ciudades c1, tb_ciudades c2, tb_traficos t1, tb_traficos t2, vi_transporlineas t where i.ca_origen = c1.ca_idciudad and i.ca_destino = c2.ca_idciudad and c1.ca_idtrafico = t1.ca_idtrafico and c2.ca_idtrafico = t2.ca_idtrafico and i.ca_idlinea = t.ca_idlinea
        order by ca_ano DESC, ca_mes, ca_trafico, ca_modal, ca_referencia;
 REVOKE ALL ON vi_inomaestra_sea FROM PUBLIC;
 GRANT ALL ON vi_inomaestra_sea TO "Administrador";
 GRANT ALL ON vi_inomaestra_sea TO GROUP "Usuarios";
+
+
+
+/* Nueva Vista pero tiene problemas de Rendimiento */
+// Drop view vi_inomaestra_sea cascade;
+Create view vi_inomaestra_sea as
+Select substr(i.ca_referencia,15,1) as ca_ano, substr(i.ca_referencia,8,2)||'-'||substr(i.ca_referencia,15,1) as ca_mes, substr(i.ca_referencia,5,2) as ca_trafico, substr(i.ca_referencia,1,3) as ca_modal, i.ca_fchreferencia, i.ca_referencia, i.ca_impoexpo, i.ca_origen, c1.ca_ciudad as ca_ciuorigen, t1.ca_nombre as ca_traorigen, i.ca_destino,
+       c2.ca_ciudad as ca_ciudestino, t2.ca_nombre as ca_tradestino, i.ca_fchembarque, i.ca_fcharribo, i.ca_modalidad, i.ca_idlinea, t.ca_nombre, t.ca_sigla, t.ca_nomtransportista, i.ca_motonave, i.ca_ciclo, i.ca_mbls, i.ca_observaciones, i.ca_fchconfirmacion, i.ca_horaconfirmacion, i.ca_registroadu, i.ca_fchregistroadu, i.ca_registrocap,
+       i.ca_bandera, i.ca_fchdesconsolidacion, i.ca_fchvaciado, i.ca_horavaciado, i.ca_mnllegada, i.ca_fchliberacion, i.ca_nroliberacion, i.ca_mensaje, i.ca_fchconfirmado, i.ca_usuconfirmado, i.ca_asunto_otm, i.ca_mensaje_otm, i.ca_fchllegada_otm, i.ca_ciudad_otm , i.ca_anulado, i.ca_fchcreado, i.ca_usucreado, i.ca_fchactualizado, i.ca_usuactualizado, i.ca_fchliquidado, i.ca_usuliquidado, i.ca_fchcerrado, i.ca_usucerrado, i.ca_provisional,
+       ie.ca_peso_cap, ie.ca_volumen_cap, ic.ca_numpiezas, ic.ca_peso, ic.ca_volumen, ics.ca_costoneto, sicom.ca_comisionable, nocom.ca_nocomisionable, fc.ca_facturacion, dd.ca_deduccion, ut.ca_utilidad,
+       (case when i.ca_provisional then 'Provisional' else (case when i.ca_usucerrado IS NOT NULL then 'Cerrado' else 'Abierto' end) end) as ca_estado
+       from tb_inomaestra_sea i
+           LEFT JOIN (select ca_referencia, sum(ca_peso) as ca_peso_cap, sum(ca_volumen) as ca_volumen_cap from vi_inoequipos_sea ie group by ca_referencia) ie ON (ie.ca_referencia = i.ca_referencia)
+           LEFT JOIN (select ca_referencia, sum(ca_numpiezas) as ca_numpiezas, sum(ca_peso) as ca_peso, sum(ca_volumen) as ca_volumen from tb_inoclientes_sea group by ca_referencia) ic ON (ic.ca_referencia = i.ca_referencia)
+           LEFT JOIN (select ca_referencia, sum(round((case when ca_neto IS NOT NULL then ca_neto else 0 end)::numeric*ca_tcambio::numeric,0)) as ca_costoneto from tb_inocostos_sea group by ca_referencia) ics ON (ics.ca_referencia = i.ca_referencia)
+           LEFT JOIN (select ic.ca_referencia, sum(case when ic.ca_venta IS NOT NULL then ic.ca_venta else 0 end)::numeric-sum(round((case when ic.ca_neto IS NOT NULL then ic.ca_neto else 0 end)::numeric*ic.ca_tcambio::numeric,0)) as ca_comisionable from tb_inocostos_sea ic, tb_costos c where ic.ca_idcosto = c.ca_idcosto and c.ca_comisionable != 'No' group by ic.ca_referencia) sicom ON (sicom.ca_referencia = i.ca_referencia)
+           LEFT JOIN (select ic.ca_referencia, sum(case when ic.ca_venta IS NOT NULL then ic.ca_venta else 0 end)::numeric-sum(round((case when ic.ca_neto IS NOT NULL then ic.ca_neto else 0 end)::numeric*ic.ca_tcambio::numeric,0)) as ca_nocomisionable from tb_inocostos_sea ic, tb_costos c where ic.ca_idcosto = c.ca_idcosto and c.ca_comisionable = 'No' group by ic.ca_referencia) nocom ON (nocom.ca_referencia = i.ca_referencia)
+           LEFT JOIN (select ca_referencia, sum(case when ca_valor IS NOT NULL then ca_valor else 0 end)::numeric as ca_facturacion from tb_inoingresos_sea group by ca_referencia) fc ON (fc.ca_referencia = i.ca_referencia)
+           LEFT JOIN (select ca_referencia, sum(case when ca_valor IS NOT NULL then ca_valor else 0 end)::numeric as ca_deduccion from tb_inodeduccion_sea group by ca_referencia) dd ON (dd.ca_referencia = i.ca_referencia)
+           LEFT JOIN (select ca_referencia, sum(case when ic.ca_venta IS NOT NULL then ic.ca_venta else 0 end)::numeric as ca_utilidad from tb_inocostos_sea ic, tb_costos c where ic.ca_idcosto = c.ca_idcosto and c.ca_comisionable != 'No' and ic.ca_login = ''  group by ic.ca_referencia) ut ON (ut.ca_referencia = i.ca_referencia)
+           INNER JOIN tb_ciudades c1 ON i.ca_origen = c1.ca_idciudad
+           INNER JOIN tb_ciudades c2 ON i.ca_destino = c2.ca_idciudad
+           INNER JOIN tb_traficos t1 ON c1.ca_idtrafico = t1.ca_idtrafico
+           INNER JOIN tb_traficos t2 ON c2.ca_idtrafico = t2.ca_idtrafico
+           INNER JOIN vi_transporlineas t ON i.ca_idlinea = t.ca_idlinea
+       order by ca_ano DESC, ca_mes, ca_trafico, ca_modal, ca_referencia;
+REVOKE ALL ON vi_inomaestra_sea FROM PUBLIC;
+GRANT ALL ON vi_inomaestra_sea TO "Administrador";
+GRANT ALL ON vi_inomaestra_sea TO GROUP "Usuarios";
+
 
 
 // Drop view vi_inocontenedores_sea cascade;
@@ -2457,18 +2495,19 @@ Select substr(i.ca_referencia,15,1) as ca_ano, substr(i.ca_referencia,8,2)||'-'|
        (select sum(ic.ca_numpiezas) from tb_inoclientes_sea ic where i.ca_referencia = ic.ca_referencia) as ca_numpiezas,
        (select sum(ic.ca_peso) from tb_inoclientes_sea ic where i.ca_referencia = ic.ca_referencia) as ca_peso,
        (select sum(ic.ca_volumen) from tb_inoclientes_sea ic where i.ca_referencia = ic.ca_referencia) as ca_volumen,
-       (select sum(ic.ca_neto*ic.ca_tcambio) from tb_inocostos_sea ic where i.ca_referencia = ic.ca_referencia) as ca_costoneto,
-       (select sum(ic.ca_venta)-sum(ic.ca_neto*ic.ca_tcambio) from tb_inocostos_sea ic, tb_costos c where ic.ca_idcosto = c.ca_idcosto and i.ca_referencia = ic.ca_referencia and c.ca_comisionable != 'No') as ca_comisionable,
-       (select sum(ic.ca_venta)-sum(ic.ca_neto*ic.ca_tcambio) from tb_inocostos_sea ic, tb_costos c where ic.ca_idcosto = c.ca_idcosto and i.ca_referencia = ic.ca_referencia and c.ca_comisionable = 'No') as ca_nocomisionable,
-       (select sum(ii.ca_valor) from tb_inoingresos_sea ii where i.ca_referencia = ii.ca_referencia) as ca_facturacion,
-       (select sum(d.ca_valor) from tb_inodeduccion_sea d where i.ca_referencia = d.ca_referencia) as ca_deduccion,
-       (select sum(ic.ca_venta) from tb_inocostos_sea ic, tb_costos c where ic.ca_idcosto = c.ca_idcosto and i.ca_referencia = ic.ca_referencia and c.ca_comisionable != 'No' and ic.ca_login = '') as ca_utilidad,
-       (case when i.ca_provisional then 'Provisional' else (case when nullvalue(i.ca_usucerrado) = false and length(i.ca_usucerrado) != 0 then 'Cerrado' else 'Abierto' end) end) as ca_estado
+       (select sum(ic.ca_neto::numeric*ic.ca_tcambio::numeric) from tb_inocostos_sea ic where i.ca_referencia = ic.ca_referencia) as ca_costoneto,
+       (select sum(ic.ca_venta::float)-sum(ic.ca_neto::numeric*ic.ca_tcambio::numeric) from tb_inocostos_sea ic, tb_costos c where ic.ca_idcosto = c.ca_idcosto and i.ca_referencia = ic.ca_referencia and c.ca_comisionable != 'No') as ca_comisionable,
+       (select sum(ic.ca_venta::float)-sum(ic.ca_neto::numeric*ic.ca_tcambio::numeric) from tb_inocostos_sea ic, tb_costos c where ic.ca_idcosto = c.ca_idcosto and i.ca_referencia = ic.ca_referencia and c.ca_comisionable = 'No') as ca_nocomisionable,
+       (select sum(ii.ca_valor::float) from tb_inoingresos_sea ii where i.ca_referencia = ii.ca_referencia) as ca_facturacion,
+       (select sum(d.ca_valor::float) from tb_inodeduccion_sea d where i.ca_referencia = d.ca_referencia) as ca_deduccion,
+       (select sum(ic.ca_venta::float) from tb_inocostos_sea ic, tb_costos c where ic.ca_idcosto = c.ca_idcosto and i.ca_referencia = ic.ca_referencia and c.ca_comisionable != 'No' and ic.ca_login = '') as ca_utilidad,
+       (case when i.ca_provisional then 'Provisional' else (case when i.ca_usucerrado IS NOT NULL then 'Cerrado' else 'Abierto' end) end) as ca_estado
        from tb_inomaestra_sea i, tb_ciudades c1, tb_ciudades c2, tb_traficos t1, tb_traficos t2, vi_transporlineas t where i.ca_origen = c1.ca_idciudad and i.ca_destino = c2.ca_idciudad and c1.ca_idtrafico = t1.ca_idtrafico and c2.ca_idtrafico = t2.ca_idtrafico and i.ca_idlinea = t.ca_idlinea
        order by ca_ano DESC, ca_mes, ca_trafico, ca_modal, ca_referencia;
 REVOKE ALL ON vi_inocontenedores_sea FROM PUBLIC;
 GRANT ALL ON vi_inocontenedores_sea TO "Administrador";
 GRANT ALL ON vi_inocontenedores_sea TO GROUP "Usuarios";
+
 
 Drop view vi_inoequipos_sea cascade;
 Create view vi_inoequipos_sea as
@@ -2499,7 +2538,7 @@ GRANT ALL ON vi_inoclientes_sea TO GROUP "Usuarios";
 Create view vi_inoconsulta_sea as
 Select substr(im.ca_referencia,15,1) as ca_ano, substr(im.ca_referencia,8,2)||'-'||substr(im.ca_referencia,15,1) as ca_mes, substr(im.ca_referencia,5,2) as ca_trafico, substr(im.ca_referencia,1,3) as ca_modal, im.ca_referencia, im.ca_mbls, im.ca_motonave, im.ca_observaciones, t.ca_nombre, t.ca_sigla, ie.ca_idequipo, im.ca_origen, c1.ca_ciudad as ca_ciuorigen, t1.ca_nombre as ca_traorigen, im.ca_destino,
        c2.ca_ciudad as ca_ciudestino, t2.ca_nombre as ca_tradestino, im.ca_fchembarque, im.ca_fcharribo, ic.ca_hbls, ic.ca_idcliente, c.ca_compania, rp.ca_consecutivo, ii.ca_factura, it.ca_factura as ca_factura_prov, us.ca_sucursal, dm.ca_iddocactual, dm.ca_fchenvio, dm.ca_usuenvio,
-	   (case when im.ca_provisional then 'Provisional' else (case when nullvalue(im.ca_usucerrado) = false and length(im.ca_usucerrado) != 0 then 'Cerrado' else 'Abierto' end) end) as ca_estado
+	   (case when im.ca_provisional then 'Provisional' else (case when im.ca_usucerrado IS NOT NULL then 'Cerrado' else 'Abierto' end) end) as ca_estado
        from tb_inomaestra_sea im
        LEFT JOIN tb_ciudades c1 ON (im.ca_origen = c1.ca_idciudad)
        LEFT JOIN tb_ciudades c2 ON (im.ca_destino = c2.ca_idciudad)
@@ -2532,11 +2571,11 @@ GRANT ALL ON vi_inocostos_sea TO GROUP "Usuarios";
 
 -- Drop view vi_inocomisiones_sea;
 Create view vi_inocomisiones_sea as
-Select i.ca_ano, i.ca_mes, i.ca_trafico, i.ca_modal, i.ca_traorigen, i.ca_ciuorigen, i.ca_ciudestino, i.ca_modalidad, i.ca_referencia, c.ca_login, l.ca_sucursal, c.ca_idcliente, cl.ca_compania, c.ca_hbls, c.ca_volumen, i.ca_facturacion AS ca_facturacion_r, i.ca_deduccion AS ca_deduccion_r, i.ca_utilidad AS ca_utilidad_r, i.ca_volumen AS ca_volumen_r,
+Select i.ca_ano, i.ca_mes, i.ca_trafico, i.ca_modal, i.ca_traorigen, i.ca_ciuorigen, i.ca_ciudestino, i.ca_modalidad, i.ca_referencia, c.ca_login, l.ca_sucursal, c.ca_idcliente, cl.ca_compania, c.ca_hbls, c.ca_volumen, (case when i.ca_facturacion IS NOT NULL then i.ca_facturacion else 0 end)::numeric AS ca_facturacion_r, (case when i.ca_deduccion IS NOT NULL then i.ca_deduccion else 0 end)::numeric AS ca_deduccion_r, (case when i.ca_utilidad IS NOT NULL then i.ca_utilidad else 0 end)::numeric AS ca_utilidad_r, i.ca_volumen AS ca_volumen_r,
        u.ca_idcosto AS ca_idcosto_ded, s.ca_costo AS ca_costo_ded, u.ca_factura AS ca_factura_ded, u.ca_valor AS ca_valor_ded, i.ca_estado,
-       (select sum(n.ca_valor) from tb_inoingresos_sea n where c.ca_referencia = n.ca_referencia AND c.ca_idcliente = n.ca_idcliente AND c.ca_hbls = n.ca_hbls) as ca_valor,
-       (select sum(s.ca_vlrcomision) from tb_inocomisiones_sea s where s.ca_referencia = c.ca_referencia AND s.ca_idcliente = c.ca_idcliente AND s.ca_hbls = c.ca_hbls) as ca_vlrcomisiones,
-       (select sum(s.ca_sbrcomision) from tb_inocomisiones_sea s where s.ca_referencia = c.ca_referencia AND s.ca_idcliente = c.ca_idcliente AND s.ca_hbls = c.ca_hbls) as ca_sbrcomisiones
+       (select sum(case when n.ca_valor IS NOT NULL then n.ca_valor else 0 end)::numeric from tb_inoingresos_sea n where c.ca_referencia = n.ca_referencia AND c.ca_idcliente = n.ca_idcliente AND c.ca_hbls = n.ca_hbls) as ca_valor,
+       (select sum(case when s.ca_vlrcomision IS NOT NULL then s.ca_vlrcomision else 0 end)::numeric from tb_inocomisiones_sea s where s.ca_referencia = c.ca_referencia AND s.ca_idcliente = c.ca_idcliente AND s.ca_hbls = c.ca_hbls) as ca_vlrcomisiones,
+       (select sum(case when s.ca_sbrcomision IS NOT NULL then s.ca_sbrcomision else 0 end)::numeric from tb_inocomisiones_sea s where s.ca_referencia = c.ca_referencia AND s.ca_idcliente = c.ca_idcliente AND s.ca_hbls = c.ca_hbls) as ca_sbrcomisiones
    FROM vi_inocontenedores_sea i
    LEFT JOIN tb_inoclientes_sea c ON (i.ca_referencia = c.ca_referencia)
    LEFT JOIN tb_inoutilidad_sea u ON (u.ca_referencia = c.ca_referencia AND u.ca_idcliente = c.ca_idcliente AND u.ca_hbls = c.ca_hbls)
@@ -2563,7 +2602,7 @@ Select DISTINCT i.oid as ca_oid, substr(i.ca_referencia,15,1) as ca_ano, substr(
        (select sum(ic.ca_venta) from tb_inocostos_sea ic, tb_costos c where ic.ca_idcosto = c.ca_idcosto and i.ca_referencia = ic.ca_referencia and c.ca_comisionable != 'No' and ic.ca_login = '') as ca_utilidad_r,
        (select sum(iu.ca_valor) from tb_inoutilidad_sea iu where l.ca_referencia = iu.ca_referencia and l.ca_idcliente = iu.ca_idcliente and l.ca_hbls = iu.ca_hbls) as ca_sbrcomision,
        cm.ca_comprobante, cm.ca_fchliquidacion, cm.ca_vlrcomision as ca_vlrcomision_cob, cm.ca_sbrcomision as ca_sbrcomision_cob,
-       (case when m.ca_provisional then 'Provisional' else (case when nullvalue(m.ca_usucerrado) = false and length(m.ca_usucerrado) != 0 then 'Cerrado' else 'Abierto' end) end) as ca_estado
+       (case when m.ca_provisional then 'Provisional' else (case when m.ca_usucerrado IS NOT NULL then 'Cerrado' else 'Abierto' end) end) as ca_estado
        FROM tb_inoingresos_sea i
        LEFT JOIN tb_inoclientes_sea l ON (i.ca_referencia = l.ca_referencia and i.ca_hbls = l.ca_hbls)
        LEFT JOIN tb_clientes c ON (l.ca_idcliente = c.ca_idcliente)
@@ -2660,7 +2699,7 @@ Create view vi_inoauditor_sea as
 Select case when an.ca_idevento!=0 then an.ca_idevento else ev.ca_idevento end as ca_idevento_ant,
        case when an.ca_idevento!=0 then an.ca_asunto else ev.ca_asunto end as ca_asunto_ant,
        ev.oid as ca_oid, ev.ca_idevento, ev.ca_referencia, ev.ca_fchevento, ev.ca_tipo, ev.ca_asunto, ev.ca_detalle, ev.ca_compromisos, ev.ca_fchcompromiso, ev.ca_idantecedente, ev.ca_usuario, 
-	   (case when im.ca_provisional then 'Provisional' else (case when nullvalue(im.ca_usucerrado) = false and length(im.ca_usucerrado) != 0 then 'Cerrado' else 'Abierto' end) end) as ca_estado
+	   (case when im.ca_provisional then 'Provisional' else (case when im.ca_usucerrado IS NOT NULL then 'Cerrado' else 'Abierto' end) end) as ca_estado
        from tb_inoauditor_sea an RIGHT OUTER JOIN tb_inoauditor_sea ev ON (ev.ca_idantecedente = an.ca_idevento) LEFT OUTER JOIN tb_inomaestra_sea im ON (ev.ca_referencia = im.ca_referencia)
        order by ca_idevento_ant DESC, ca_idevento DESC;
 REVOKE ALL ON vi_inoauditor_sea FROM PUBLIC;
@@ -2699,7 +2738,7 @@ select i.ca_ano, i.ca_mes, i.ca_idcliente, i.ca_compania, i.ca_trafico, i.ca_tra
          LEFT OUTER JOIN tb_traficos t ON (c.ca_idtrafico = t.ca_idtrafico)
          where im.ca_modalidad not in ('FCL','PROYECTOS') and substr(im.ca_referencia,15,1) = i.ca_ano and substr(im.ca_referencia,8,2)||'-'||substr(im.ca_referencia,15,1) = i.ca_mes and ic.ca_idcliente = i.ca_idcliente and t.ca_nombre = i.ca_traorigen
        ) as ca_cbms
-       from ( select im.ca_ano, im.ca_mes, im.ca_trafico, im.ca_traorigen, ic.ca_referencia, ic.ca_idcliente, c.ca_compania, ic.ca_hbls, ic.ca_volumen, sum(ii.ca_valor) as ca_valor, im.ca_facturacion as ca_facturacion_r, im.ca_deduccion as ca_deduccion_r, im.ca_utilidad as ca_utilidad_r, im.ca_volumen as ca_volumen_r, u.ca_login, u.ca_sucursal
+       from ( select im.ca_ano, im.ca_mes, im.ca_trafico, im.ca_traorigen, ic.ca_referencia, ic.ca_idcliente, c.ca_compania, ic.ca_hbls, ic.ca_volumen, sum(ii.ca_valor) as ca_valor, im.ca_facturacion::numeric as ca_facturacion_r, im.ca_deduccion::numeric as ca_deduccion_r, im.ca_utilidad::numeric as ca_utilidad_r, im.ca_volumen as ca_volumen_r, u.ca_login, u.ca_sucursal
               from tb_inoclientes_sea ic LEFT OUTER JOIN tb_inoingresos_sea ii ON (ic.ca_referencia = ii.ca_referencia and ic.ca_idcliente = ii.ca_idcliente and ic.ca_hbls = ii.ca_hbls) LEFT OUTER JOIN control.tb_usuarios u ON (ic.ca_login = u.ca_login), vi_inocontenedores_sea im, tb_clientes c
               where ic.ca_referencia = im.ca_referencia and ic.ca_idcliente = c.ca_idcliente
               group by im.ca_ano, im.ca_mes, im.ca_trafico, im.ca_traorigen, ic.ca_referencia, ic.ca_idcliente, c.ca_compania, ic.ca_hbls, ic.ca_volumen, im.ca_facturacion, im.ca_deduccion, im.ca_utilidad, im.ca_volumen, u.ca_sucursal, u.ca_login ) as i
@@ -2725,7 +2764,6 @@ Select substr(m.ca_referencia,8,2)||'-'||substr(m.ca_referencia,15,1) as ca_mes,
 REVOKE ALL ON vi_inotraficos_sea FROM PUBLIC;
 GRANT ALL ON vi_inotraficos_sea TO "Administrador";
 GRANT ALL ON vi_inotraficos_sea TO GROUP "Usuarios";
---     where nullvalue(i.ca_usucerrado) = false and length(i.ca_usucerrado) != 0
 
 -- Drop view vi_inoutilidades_sea;
 Create view vi_inoutilidades_sea as
@@ -2741,8 +2779,8 @@ GRANT ALL ON vi_inoutilidades_sea TO GROUP "Usuarios";
 // Drop view vi_inoctrlcontenedores_sea cascade;
 Create view vi_inoctrlcontenedores_sea as
 Select i.oid as ca_oid, substr(i.ca_referencia,15,1) as ca_ano, substr(i.ca_referencia,8,2)||'-'||substr(i.ca_referencia,15,1) as ca_mes, substr(i.ca_referencia,5,2) as ca_trafico, substr(i.ca_referencia,1,3) as ca_modal, i.ca_referencia, i.ca_origen, c1.ca_ciudad as ca_ciuorigen, t1.ca_nombre as ca_traorigen, i.ca_destino,
-       c2.ca_ciudad as ca_ciudestino, t2.ca_nombre as ca_tradestino, i.ca_idlinea, t.ca_nombre, t.ca_sigla, t.ca_nomtransportista, case when nullvalue(i.ca_mnllegada) then i.ca_motonave else i.ca_mnllegada end, i.ca_ciclo, i.ca_mbls, case when nullvalue(i.ca_fchconfirmacion) then i.ca_fcharribo else i.ca_fchconfirmacion end,
-	   i.ca_horaconfirmacion, (case when nullvalue(i.ca_fchconfirmacion) then i.ca_fcharribo else i.ca_fchconfirmacion end + int2(case when nullvalue(p.ca_valor) then '10' else p.ca_valor end)) as ca_fchdevolucion, i.ca_registroadu, i.ca_fchregistroadu, i.ca_registrocap,
+       c2.ca_ciudad as ca_ciudestino, t2.ca_nombre as ca_tradestino, i.ca_idlinea, t.ca_nombre, t.ca_sigla, t.ca_nomtransportista, case when i.ca_mnllegada IS NULL then i.ca_motonave else i.ca_mnllegada end, i.ca_ciclo, i.ca_mbls, case when i.ca_fchconfirmacion IS NULL then i.ca_fcharribo else i.ca_fchconfirmacion end,
+	   i.ca_horaconfirmacion, (case when i.ca_fchconfirmacion IS NULL then i.ca_fcharribo else i.ca_fchconfirmacion end + int2(case when p.ca_valor IS NULL then '10' else p.ca_valor end)) as ca_fchdevolucion, i.ca_registroadu, i.ca_fchregistroadu, i.ca_registrocap,
        i.ca_bandera, i.ca_fchdesconsolidacion, c.ca_idcliente, cl.ca_compania, c.ca_hbls, m.ca_fchvencimiento
        from tb_inomaestra_sea i LEFT OUTER JOIN tb_inoclientes_sea c ON (i.ca_referencia = c.ca_referencia) LEFT OUTER JOIN tb_clientes cl ON (c.ca_idcliente = cl.ca_idcliente) LEFT OUTER JOIN tb_parametros p ON (p.ca_casouso = 'CU040' and i.ca_idlinea = p.ca_identificacion) LEFT OUTER JOIN tb_comcliente m ON (c.ca_idcliente = m.ca_idcliente and date('now') >= m.ca_fchfirmado and date('now') <= m.ca_fchvencimiento),
 	   tb_ciudades c1, tb_ciudades c2, tb_traficos t1, tb_traficos t2, vi_transporlineas t where i.ca_origen = c1.ca_idciudad and i.ca_destino = c2.ca_idciudad and c1.ca_idtrafico = t1.ca_idtrafico and c2.ca_idtrafico = t2.ca_idtrafico and i.ca_idlinea = t.ca_idlinea
@@ -2759,13 +2797,13 @@ select substr(ic.ca_referencia,15) as ca_ano, substr(ic.ca_referencia,8,2) as ca
 	ii.ca_facturacion, (round(iu.ca_utilidad_r / (case when iu.ca_volumen_r = 0 then 1 else iu.ca_volumen_r end) * ic.ca_volumen,0)) as ca_utilidad, iv.ca_sobreventa,
 	(case when im.ca_modalidad not in ('FCL','PROYECTOS') then ic.ca_volumen else 0 end) as ca_cbm,
 	(case when im.ca_modalidad in ('FCL','PROYECTOS') then (round(ie.ca_teus / (case when iu.ca_volumen_r = 0 then 1 else iu.ca_volumen_r end) * ic.ca_volumen,2)) else 0 end) as ca_teus,
-	(case when im.ca_provisional then 'Provisional' else (case when nullvalue(im.ca_usucerrado) = false and length(im.ca_usucerrado) != 0 then 'Cerrado' else 'Abierto' end) end) as ca_estado,
+	(case when im.ca_provisional then 'Provisional' else (case when im.ca_usucerrado IS NOT NULL then 'Cerrado' else 'Abierto' end) end) as ca_estado,
 	nv.ca_nombre as ca_nomlinea, ic.ca_login, us.ca_nombre as ca_vendedor
 	
 	from tb_inoclientes_sea ic
 		LEFT OUTER JOIN (select ca_referencia, ca_hbls, ca_idcliente, sum(to_number(ca_valor::text,'9999999999.99')) as ca_facturacion from tb_inoingresos_sea group by ca_referencia, ca_hbls, ca_idcliente) ii ON (ic.ca_referencia = ii.ca_referencia and ic.ca_idcliente = ii.ca_idcliente and ic.ca_hbls = ii.ca_hbls)
 		LEFT OUTER JOIN (
-			select im.ca_referencia, iv.ca_volumen_r, (case when not nullvalue(ii.ca_facturacion_r) then ii.ca_facturacion_r else 0 end)-(case when not nullvalue(id.ca_deduccion_r) then id.ca_deduccion_r else 0 end)-(case when not nullvalue(ic.ca_costosplus_r) then ic.ca_costosplus_r else 0 end) as ca_utilidad_r from tb_inomaestra_sea im
+			select im.ca_referencia, iv.ca_volumen_r, (case when not ii.ca_facturacion_r IS NULL then ii.ca_facturacion_r else 0 end)-(case when not id.ca_deduccion_r IS NULL then id.ca_deduccion_r else 0 end)-(case when not ic.ca_costosplus_r IS NULL then ic.ca_costosplus_r else 0 end) as ca_utilidad_r from tb_inomaestra_sea im
 			LEFT OUTER JOIN (select ca_referencia, sum(ca_volumen) as ca_volumen_r from tb_inoclientes_sea group by ca_referencia) iv on (im.ca_referencia = iv.ca_referencia)
 			LEFT OUTER JOIN (select ca_referencia, sum(ca_valor) as ca_facturacion_r from tb_inoingresos_sea group by ca_referencia) ii on (im.ca_referencia = ii.ca_referencia)
 			LEFT OUTER JOIN (select ca_referencia, sum(ca_valor) as ca_deduccion_r from tb_inodeduccion_sea group by ca_referencia) id on (im.ca_referencia = id.ca_referencia)
@@ -3368,7 +3406,7 @@ BEGIN
     a_output:= a_output || a_mes[1] || '.%.' || a_mes[2];
 
 	select into registro max(ca_referencia) as ca_referencia from tb_inomaestra_sea where ca_referencia like a_output;
-	IF nullvalue(registro.ca_referencia) THEN
+	IF registro.ca_referencia IS NULL THEN
 		a_referencia:= string_to_array(a_output,'.');
 		a_referencia[4]:= '001';
 	ELSE
@@ -3623,65 +3661,89 @@ DROP TRIGGER actualiza_clientes ON tb_clientes CASCADE;
 DROP TRIGGER adicion_inomaestra_sea ON tb_inoclientes_sea CASCADE;
 DROP TRIGGER adicion_inomaestra_air ON tb_inoclientes_air CASCADE;
 DROP TRIGGER adicion_inomaestra_exp ON tb_expo_maestra CASCADE;
-DROP TRIGGER adicion_inomaestra_brk ON tb_brk_maestra CASCADE;
+DROP TRIGGER adicion_inomaestra_brk ON tb_brk_ingresos CASCADE;
 
-CREATE OR REPLACE FUNCTION fun_stdcliente_tri() RETURNS trigger AS $$
+-- Function: fun_stdcliente_tri()
+
+-- DROP FUNCTION fun_stdcliente_tri();
+
+CREATE OR REPLACE FUNCTION fun_stdcliente_tri()
+  RETURNS trigger AS
+$BODY$
 DECLARE
     referrer_keys RECORD;  -- Declare a generic record to be used in a FOR
-	v_estado1 text:= '';
-	v_estado2 text:= '';
+    referrer_refs RECORD;  -- Declare a generic record to be used in a FOR
+    v_estado1 text:= '';
+    v_estado2 text:= '';
+    v_idcliente integer;
 
 BEGIN
-	IF (NOT nullvalue(TG_ARGV[0])) THEN
-		NEW.ca_idcliente = TG_ARGV[0];
-	END IF;
+    IF (NOT nullvalue(TG_ARGV[0])) THEN
+        NEW.ca_idcliente = TG_ARGV[0];
+    END IF;
 
-	IF (TG_RELNAME = 'tb_clientes') THEN
-		IF (TG_OP = 'INSERT') THEN
-			INSERT INTO tb_stdcliente VALUES (NEW.ca_idcliente, to_timestamp(to_char(current_timestamp,'YYYY-MM-DD hh:mi:ss'),'YYYY-MM-DD hh:mi:ss'), 'Potencial', 'Coltrans');
-			INSERT INTO tb_stdcliente VALUES (NEW.ca_idcliente, to_timestamp(to_char(current_timestamp,'YYYY-MM-DD hh:mi:ss'),'YYYY-MM-DD hh:mi:ss'), 'Potencial', 'Colmas');
-		ELSIF (TG_OP = 'UPDATE' AND NEW.ca_status != OLD.ca_status) THEN
-			INSERT INTO tb_stdcliente VALUES (NEW.ca_idcliente, to_timestamp(to_char(current_timestamp,'YYYY-MM-DD hh:mi:ss'),'YYYY-MM-DD hh:mi:ss'), NEW.ca_status, 'Coltrans');
-			INSERT INTO tb_stdcliente VALUES (NEW.ca_idcliente, to_timestamp(to_char(current_timestamp,'YYYY-MM-DD hh:mi:ss'),'YYYY-MM-DD hh:mi:ss'), NEW.ca_status, 'Colmas');
-		END IF;
-	ELSE
-		FOR referrer_keys IN select vc.ca_idcliente, vc.ca_coltrans_std, vc.ca_colmas_std from vi_clientes vc where vc.ca_idcliente = NEW.ca_idcliente LOOP
-			IF NOT nullvalue(referrer_keys.ca_coltrans_std) AND NOT nullvalue(referrer_keys.ca_colmas_std) THEN
-				v_estado1 = referrer_keys.ca_coltrans_std;
-				v_estado2 = referrer_keys.ca_colmas_std;
-			END IF;
-		END LOOP;
-		
-		FOR referrer_keys IN select * from vi_stdcliente where ca_idcliente = NEW.ca_idcliente LOOP
-			IF (TG_RELNAME = 'tb_inoclientes_sea' OR TG_RELNAME = 'tb_inoclientes_air') THEN 
-				IF (referrer_keys.ca_cantidad_sea + referrer_keys.ca_cantidad_air) = 0 THEN
-					IF v_estado1 != 'Potencial' THEN
-						INSERT INTO tb_stdcliente VALUES (NEW.ca_idcliente, to_timestamp(to_char(current_timestamp,'YYYY-MM-DD hh:mi:ss'),'YYYY-MM-DD hh:mi:ss'), 'Potencial', 'Coltrans');
-					END IF;
-				ELSIF (referrer_keys.ca_ultimos_sea + referrer_keys.ca_ultimos_air) > 0 THEN
-					IF v_estado1 = 'Potencial' THEN
-						INSERT INTO tb_stdcliente VALUES (NEW.ca_idcliente, to_timestamp(to_char(current_timestamp,'YYYY-MM-DD hh:mi:ss'),'YYYY-MM-DD hh:mi:ss'), 'Activo', 'Coltrans');
-					END IF;
-				END IF;
-			ELSIF (TG_RELNAME = 'tb_expo_maestra' OR TG_RELNAME = 'tb_inomaestra_brk') THEN
-				IF (referrer_keys.ca_cantidad_exp + referrer_keys.ca_cantidad_brk) = 0 THEN
-					IF v_estado2 != 'Potencial' THEN
-						INSERT INTO tb_stdcliente VALUES (NEW.ca_idcliente, to_timestamp(to_char(current_timestamp,'YYYY-MM-DD hh:mi:ss'),'YYYY-MM-DD hh:mi:ss'), 'Potencial', 'Colmas');
-					END IF;
-				ELSIF (referrer_keys.ca_ultimos_exp + referrer_keys.ca_ultimos_brk) > 0 THEN
-					IF v_estado2 = 'Potencial' THEN
-						INSERT INTO tb_stdcliente VALUES (NEW.ca_idcliente, to_timestamp(to_char(current_timestamp,'YYYY-MM-DD hh:mi:ss'),'YYYY-MM-DD hh:mi:ss'), 'Activo', 'Colmas');
-					END IF;
-				END IF;
-			END IF;
-			
-			UPDATE tb_clientes SET ca_status = '' WHERE ca_idcliente = NEW.ca_idcliente;
-		END LOOP;
-	END IF;
+    IF (TG_RELNAME = 'tb_brk_ingresos') THEN
+        FOR referrer_refs IN select ima.ca_idcliente from tb_brk_maestra ima where ima.ca_referencia = NEW.ca_referencia LOOP
+            IF NOT nullvalue(referrer_refs.ca_idcliente) THEN
+                v_idcliente = referrer_refs.ca_idcliente;
+            END IF;
+        END LOOP;
+    ELSE
+        v_idcliente = NEW.ca_idcliente;
+    END IF;
 
-	RETURN NULL;
+
+    IF (TG_RELNAME = 'tb_clientes') THEN
+        IF (TG_OP = 'INSERT') THEN
+            INSERT INTO tb_stdcliente VALUES (v_idcliente, to_timestamp(to_char(current_timestamp,'YYYY-MM-DD hh:mi:ss'),'YYYY-MM-DD hh:mi:ss'), 'Potencial', 'Coltrans');
+            INSERT INTO tb_stdcliente VALUES (v_idcliente, to_timestamp(to_char(current_timestamp,'YYYY-MM-DD hh:mi:ss'),'YYYY-MM-DD hh:mi:ss'), 'Potencial', 'Colmas');
+        ELSIF (TG_OP = 'UPDATE' AND NEW.ca_status != OLD.ca_status AND NEW.ca_status != '') THEN
+            INSERT INTO tb_stdcliente VALUES (v_idcliente, to_timestamp(to_char(current_timestamp,'YYYY-MM-DD hh:mi:ss'),'YYYY-MM-DD hh:mi:ss'), NEW.ca_status, 'Coltrans');
+            INSERT INTO tb_stdcliente VALUES (v_idcliente, to_timestamp(to_char(current_timestamp,'YYYY-MM-DD hh:mi:ss'),'YYYY-MM-DD hh:mi:ss'), NEW.ca_status, 'Colmas');
+        END IF;
+    ELSE
+        FOR referrer_keys IN select vc.ca_idcliente, vc.ca_coltrans_std, vc.ca_colmas_std from vi_clientes vc where vc.ca_idcliente = v_idcliente LOOP
+            IF NOT nullvalue(referrer_keys.ca_coltrans_std) AND NOT nullvalue(referrer_keys.ca_colmas_std) THEN
+                v_estado1 = referrer_keys.ca_coltrans_std;
+                v_estado2 = referrer_keys.ca_colmas_std;
+            END IF;
+        END LOOP;
+
+        FOR referrer_keys IN select * from vi_stdcliente where ca_idcliente = v_idcliente LOOP
+            IF (TG_RELNAME = 'tb_inoclientes_sea' OR TG_RELNAME = 'tb_inoclientes_air') THEN
+                IF (referrer_keys.ca_cantidad_sea + referrer_keys.ca_cantidad_air) = 0 THEN
+                    IF v_estado1 != 'Potencial' THEN
+                        INSERT INTO tb_stdcliente VALUES (v_idcliente, to_timestamp(to_char(current_timestamp,'YYYY-MM-DD hh:mi:ss'),'YYYY-MM-DD hh:mi:ss'), 'Potencial', 'Coltrans');
+                    END IF;
+                ELSIF (referrer_keys.ca_ultimos_sea + referrer_keys.ca_ultimos_air) > 0 THEN
+                    IF v_estado1 = 'Potencial' THEN
+                        INSERT INTO tb_stdcliente VALUES (v_idcliente, to_timestamp(to_char(current_timestamp,'YYYY-MM-DD hh:mi:ss'),'YYYY-MM-DD hh:mi:ss'), 'Activo', 'Coltrans');
+                    END IF;
+                END IF;
+            ELSIF (TG_RELNAME = 'tb_expo_ingresos' OR TG_RELNAME = 'tb_brk_ingresos') THEN
+                IF (referrer_keys.ca_cantidad_exp + referrer_keys.ca_cantidad_brk) = 0 THEN
+                    IF v_estado2 != 'Potencial' THEN
+                        INSERT INTO tb_stdcliente VALUES (v_idcliente, to_timestamp(to_char(current_timestamp,'YYYY-MM-DD hh:mi:ss'),'YYYY-MM-DD hh:mi:ss'), 'Potencial', 'Colmas');
+                    END IF;
+                ELSIF (referrer_keys.ca_ultimos_exp + referrer_keys.ca_ultimos_brk) > 0 THEN
+                    IF v_estado2 = 'Potencial' THEN
+                        INSERT INTO tb_stdcliente VALUES (v_idcliente, to_timestamp(to_char(current_timestamp,'YYYY-MM-DD hh:mi:ss'),'YYYY-MM-DD hh:mi:ss'), 'Activo', 'Colmas');
+                    END IF;
+                END IF;
+            END IF;
+            UPDATE tb_clientes SET ca_status = '' WHERE ca_idcliente = v_idcliente;
+        END LOOP;
+    END IF;
+    RETURN NULL;
 END;
-$$ LANGUAGE 'plpgsql';
+$BODY$
+  LANGUAGE 'plpgsql' VOLATILE
+  COST 100;
+ALTER FUNCTION fun_stdcliente_tri() OWNER TO postgres;
+GRANT EXECUTE ON FUNCTION fun_stdcliente_tri() TO postgres;
+GRANT EXECUTE ON FUNCTION fun_stdcliente_tri() TO public;
+GRANT EXECUTE ON FUNCTION fun_stdcliente_tri() TO "Usuarios";
+
 
 CREATE TRIGGER actualiza_clientes
 	AFTER INSERT OR UPDATE ON tb_clientes
@@ -3699,12 +3761,12 @@ CREATE TRIGGER adicion_inomaestra_air
 EXECUTE PROCEDURE fun_stdcliente_tri();
 
 CREATE TRIGGER adicion_inomaestra_exp
-	AFTER INSERT ON tb_expo_maestra
+	AFTER INSERT ON tb_expo_ingresos
 	FOR EACH ROW
 EXECUTE PROCEDURE fun_stdcliente_tri();
 
 CREATE TRIGGER adicion_inomaestra_brk
-	AFTER INSERT ON tb_brk_maestra
+	AFTER INSERT ON tb_brk_ingresos
 	FOR EACH ROW
 EXECUTE PROCEDURE fun_stdcliente_tri();
 
