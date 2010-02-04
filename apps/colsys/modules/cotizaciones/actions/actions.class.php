@@ -64,7 +64,8 @@ class cotizacionesActions extends sfActions
 			case "mis_cotizaciones":								
 				$q->where("c.ca_usuario = ? OR c.ca_usucreado = ?", array($user->getUserId(), $user->getUserId()) );    
                 break;
-			case "consecutivo":				
+			case "consecutivo":
+                $cadena = str_replace("C", "", $cadena);
                 $q->where("c.ca_consecutivo like ?", "".$cadena."%" );
 				break;	
 			case "nombre_del_cliente":
@@ -84,7 +85,7 @@ class cotizacionesActions extends sfActions
                 $q->where("c.ca_usuario  = ?", $login );				
 				break;	
 			case "numero_de_cotizacion":
-                $q->where("c.ca_idcotizacion = ?",  $cadena  );
+                $q->where("c.ca_idcotizacion = ?",  intval($cadena)  );
 				break;	
 			case "sucursal":
                 $q->innerJoin("c.Usuario u");
@@ -928,7 +929,7 @@ class cotizacionesActions extends sfActions
 	* recargos en origen de una cotización
 	* @author Andres Botero
 	*/
-	public function executeObserveItemsOpciones(){
+	public function executeObserveItemsOpciones(){       
 		$idcotizacion = $this->getRequestParameter("idcotizacion");
 		$idproducto = $this->getRequestParameter("idproducto");
 		$idcotizacion = $this->getRequestParameter("idcotizacion");
@@ -1024,8 +1025,8 @@ class cotizacionesActions extends sfActions
 			$this->responseArray["idopcion"]=$idopcion;
 
             
-			if( $idcotrecargo ){
-                $recargo = Doctrine::getTable("CotRecargo")->find( $idcotrecargo );
+			if( $idcotrecargo ){                
+                $recargo = Doctrine::getTable("CotRecargo")->find( $idcotrecargo );                
             }else{
 				$recargo = new CotRecargo();									
 				$recargo->setCaIdcotizacion( $idcotizacion );

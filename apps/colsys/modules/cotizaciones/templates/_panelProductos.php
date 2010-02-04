@@ -102,7 +102,8 @@ PanelProductos = function( config ){
         {name: 'consecutivo', type: 'string'},
         {name: 'vigencia', type: 'date', dateFormat:'Y-m-d'},
         {name: 'orden', type: 'string'},
-        {name: 'parent', type: 'int'}
+        {name: 'parent', type: 'int'},
+        {name: 'inSave', type: 'bool'}
     ]);
 
     <?
@@ -228,9 +229,8 @@ PanelProductos = function( config ){
                         style: 'text-align:left',
                         allowBlank: true
                     })
-                }
-                /*
-                ,{
+                }                                
+                /*,{
                     header: "Orden",
                     width: 100,
                     dataIndex: 'orden'
@@ -240,6 +240,11 @@ PanelProductos = function( config ){
                     header: "Opcion",
                     width: 100,
                     dataIndex: 'idopcion'
+                }*/
+                 /*,{
+                    header: "save",
+                    width: 100,
+                    dataIndex: 'inSave'
                 }*/
     ];
 
@@ -386,10 +391,15 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
                 this.guardarGridProductosRec( records[i] );
             }
         }
-        Ext.getCmp('guardarbtn').enable();
+
+        
+        window.setTimeout(this.enableButton, 3000);
 
     },
 
+    enableButton: function(){
+        Ext.getCmp('guardarbtn').enable();
+    },
 
     /*
     * Guarda un record en la Base de datos
@@ -397,8 +407,8 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
     guardarGridProductosRec: function( r ){
         var storeProductos = this.store;
         var changes = r.getChanges();
-
-        if( r.data.iditem ){
+        
+        if( r.data.iditem && !r.data.inSave ){
             //alert( r.data.id );
             changes['id']=r.id;
             changes['parent']=r.data.parent;
@@ -410,6 +420,7 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
             changes['iditem']=r.data.iditem;
             changes['modalidad']=r.data.modalidad;
 
+            r.set("inSave", true);
             //envia los datos al servidor
             Ext.Ajax.request(
                 {
@@ -424,10 +435,11 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
                     failure:function(response,options){
                         //alert( response.responseText );
                         success = false;
+                        r.set("inSave", false);
                     },
                     //Ejecuta esta accion cuando el resultado es exitoso
                     callback :function(options, success, response){
-
+                        r.set("inSave", false);
                         var res = Ext.util.JSON.decode( response.responseText );
                         var rec = storeProductos.getById( res.id );
                         rec.set("idopcion", res.idopcion );
@@ -441,11 +453,14 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
                             storeProductos.each( function(r){
                                 if(r.data.parent && r.data.parent == rec.data.parent && r.data.tipo=="recargo"  ){
                                     r.data.idopcion = res.idopcion;
-
-                                    r.data.orden = res.idopcion+"-"+r.data.item;
+                                    if(res.idopcion=="999"){
+                                        r.data.orden = "Y-"+r.data.item;
+                                    }else{
+                                        r.data.orden = res.idopcion+"-"+r.data.item;
+                                    }
 
                                     if( r.dirty ){
-                                        this.guardarGridProductosRec( r );
+                                        Ext.getCmp("grid_productos").guardarGridProductosRec( r );
                                     }
                                 }
                             } );
@@ -456,6 +471,7 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
                             rec.set("idcotrecargo", res.idcotrecargo );
                         }
 
+                        //rec.set("inSave", false);
                         rec.commit();
                         storeProductos.sort("orden", "ASC");
                     }
@@ -1239,6 +1255,8 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
                                            tra_escala_value: activeRecord.data.tra_escala_value,
                                            ciu_escala: activeRecord.data.ciu_escala,
                                            ciu_escala_value: activeRecord.data.ciu_escala_value,
+                                           idlinea: activeRecord.data.idlinea,
+                                           linea: activeRecord.data.linea,
                                            impoexpo: activeRecord.data.impoexpo,
                                            incoterms: activeRecord.data.incoterms,
                                            frecuencia: activeRecord.data.frecuencia,

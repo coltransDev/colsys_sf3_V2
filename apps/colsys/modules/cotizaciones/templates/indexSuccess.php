@@ -49,9 +49,9 @@
                 <option value="nombre_del_cliente">Nombre del Cliente</option>
                 <option value="nombre_del_contacto">Nombre del Contacto</option>
                 <option value="asunto">Asunto</option>
-                <option value="vendedor">Vendedor</option>
-                <option value="numero_de_cotizacion">N&uacute;mero de Cotizaci&oacute;n</option>
+                <option value="vendedor">Vendedor</option>                
                 <option value="sucursal">Sucursal</option>
+                <option value="numero_de_cotizacion">Id</option>
             </select>
 	    </td>
 		<td width="337" >&nbsp;
