@@ -710,7 +710,7 @@ class falabellaAduActions extends sfActions {
             $salida.= str_pad($vlr_iva, 10, "0", STR_PAD_LEFT); // 14
             $salida.= str_pad("18",5, " "); // 15
             $salida.= str_pad(substr($row["ca_iddoc"],0,15),20, " "); // 16
-            $salida.= str_pad(floatval($row["ca_num_viaje"]), 2, "0", STR_PAD_LEFT); // 17
+            $salida.= str_pad(floatval($row["ca_embarque"]), 2, "0", STR_PAD_LEFT); // 17
 
             $factor = round($row["ca_prorrateo_fob"] / $row["ca_valor_fob"],2);
 
@@ -795,7 +795,7 @@ class falabellaAduActions extends sfActions {
                 $adicion.= str_pad($row["ca_numdocumento"],7, " "); // 4
                 $adicion.= str_pad(1, 7, "0", STR_PAD_LEFT); // 5
                 $adicion.= str_pad(null,2, " "); // 6
-                $adicion.= str_pad(floatval($row["ca_num_viaje"]), 8, " "); // 7
+                $adicion.= str_pad(floatval($row["ca_embarque"]), 8, " "); // 7
                 list($anno,$mes,$dia) = sscanf($row["ca_emision_fch"],"%d-%d-%d");
                 $emision = date("Ymd", mktime(0,0,0,$mes,$dia,$anno));
                 $adicion.= $emision; // 8
@@ -856,7 +856,7 @@ class falabellaAduActions extends sfActions {
             $salida.= str_pad($row["ca_tipo"],1, " "); // 16
             $salida.= str_pad(0, 10, "0", STR_PAD_LEFT); // 17
             $salida.= str_pad(substr($row["ca_iddoc"],0,15),20, " "); // 18
-            $salida.= str_pad(floatval($row["ca_num_viaje"]), 2, " "); // 19
+            $salida.= str_pad(floatval($row["ca_embarque"]), 2, " "); // 19
             $salida.= str_pad(round((floatval($row["ca_factura_vlr"])+floatval($row["ca_factura_iva"])) * $factor,0), 15, "0", STR_PAD_LEFT); // 20
             $salida.= "\r\n";
         }
