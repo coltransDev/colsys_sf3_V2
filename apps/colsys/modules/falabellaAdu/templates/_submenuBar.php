@@ -73,11 +73,13 @@ switch($action){
 		$button[1]["tooltip"]="Exportar la informaci&oacute;n de la Declaraci&oacute;n de Importaci&oacute;n";
 		$button[1]["image"]="22x22/kexi_kexi.gif";
                 $button[1]["link"]= "falabellaAdu/generaDeclaracion?referencia=".$this->getRequestParameter("referencia");
+                $button[2]["confirm"]= "¿Está seguro que desea enviar al sitio FTP, la información de la Declaración de Importación?";
 
 		$button[2]["name"]="Facturaci&oacute;n";
 		$button[2]["tooltip"]="Exportar la informaci&oacute;n de la Facturaci&oacute;n";
 		$button[2]["image"]="22x22/kexi_kexi.gif";
                 $button[2]["link"]= "falabellaAdu/generaFactura?referencia=".$this->getRequestParameter("referencia");
+                $button[2]["confirm"]= "¿Está seguro que desea enviar al sitio FTP, la información de facturación?";
                 break;
 	
 }
