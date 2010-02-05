@@ -631,7 +631,7 @@ class falabellaAduActions extends sfActions {
             $salida.= str_pad($row["ca_iddoc"],20, " "); // 31
             $salida.= str_pad($row["ca_embarque"],2, " "); // 32                                   No de Embarque
 
-            $factor = round($row["ca_prorrateo_fob"] / $row["ca_valor_fob"],2);
+            $factor = $row["ca_prorrateo_fob"] / $row["ca_valor_fob"];
 
             $salida.= str_pad(number_format(round($valor_tot * $factor, 0),2,'.',''), 15, "0", STR_PAD_LEFT); // 33
             $salida.= str_pad(number_format(round(floatval($row["ca_iva"]) * $factor, 0),2,'.',''), 15, "0", STR_PAD_LEFT); // 34
@@ -712,7 +712,7 @@ class falabellaAduActions extends sfActions {
             $salida.= str_pad(substr($row["ca_iddoc"],0,15),20, " "); // 16
             $salida.= str_pad(floatval($row["ca_embarque"]), 2, "0", STR_PAD_LEFT); // 17
 
-            $factor = round($row["ca_prorrateo_fob"] / $row["ca_valor_fob"],2);
+            $factor = $row["ca_prorrateo_fob"] / $row["ca_valor_fob"];
 
             $salida.= str_pad(round($vlr_total * $factor,0), 10, "0", STR_PAD_LEFT); // 18
 
@@ -786,7 +786,7 @@ class falabellaAduActions extends sfActions {
             }
             $adicion = '';
             $numdocumento = $row["ca_numdocumento"];
-            $factor = round($row["ca_prorrateo_fob"] / $row["ca_valor_fob"],2);
+            $factor = $row["ca_prorrateo_fob"] / $row["ca_valor_fob"];
 
             if (!isset($acumula[$row["ca_iddoc"]])){
                 $adicion.= "01"; // 1
@@ -847,17 +847,20 @@ class falabellaAduActions extends sfActions {
 
             $salida.= str_pad($row["ca_factura_ter"],20, " "); // 10
             $salida.= str_pad($row["ca_nit_ter"],10, " "); // 11
+            
             list($anno,$mes,$dia) = sscanf($row["ca_factura_fch"],"%d-%d-%d");
             $emision = date("Ymd", mktime(0,0,0,$mes,$dia,$anno));
             $salida.= $emision; // 12
             $salida.= str_pad(floatval($row["ca_factura_vlr"]), 10, "0", STR_PAD_LEFT); // 13
             $salida.= str_pad(floatval($row["ca_factura_iva"]), 10, "0", STR_PAD_LEFT); // 14
-            $salida.= str_pad(floatval($row["ca_factura_vlr"])+floatval($row["ca_factura_iva"]), 10, "0", STR_PAD_LEFT); // 15
+
+            $tot_doc = floatval($row["ca_factura_vlr"])+floatval($row["ca_factura_iva"]);
+            $salida.= str_pad($tot_doc, 10, "0", STR_PAD_LEFT); // 15
             $salida.= str_pad($row["ca_tipo"],1, " "); // 16
             $salida.= str_pad(0, 10, "0", STR_PAD_LEFT); // 17
             $salida.= str_pad(substr($row["ca_iddoc"],0,15),20, " "); // 18
             $salida.= str_pad(floatval($row["ca_embarque"]), 2, " "); // 19
-            $salida.= str_pad(round((floatval($row["ca_factura_vlr"])+floatval($row["ca_factura_iva"])) * $factor,0), 15, "0", STR_PAD_LEFT); // 20
+            $salida.= str_pad(round($tot_doc * $factor,0), 15, "0", STR_PAD_LEFT); // 20
             $salida.= "\r\n";
         }
 
