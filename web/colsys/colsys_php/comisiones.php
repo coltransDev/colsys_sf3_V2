@@ -270,10 +270,11 @@ elseif (isset($boton)) {                                                       /
 
             $annos_mem = '';
 			for ($i=8; $i<=$ano-2000; $i++){
-				$annos_mem.="'$i',";
+				$annos_mem.="'".substr($i,-1)."',";
 			}
 			$annos_mem = substr($annos_mem,0,strlen($annos_mem)-1);
             $condicion= "substr(ca_referencia,15)::text in ($annos_mem) and ca_login like '$usuario' and ca_estado <> 'Abierto'";
+
             if (!$rs->Open("select * from vi_inoingresos_sea where $condicion")) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
                 echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
                 echo "<script>document.location.href = 'entrada.php';</script>";
