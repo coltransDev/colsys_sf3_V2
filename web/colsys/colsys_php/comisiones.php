@@ -287,11 +287,12 @@ elseif (isset($boton)) {                                                       /
             echo "  cadena = campo.getAttribute('ID');";
             echo "  indice = cadena.substring(0, cadena.indexOf('_'));";            //, cadena.length
             echo "  elemento = document.getElementById('CHK_'+indice);";
+            echo "  circular = document.getElementById('CIR_'+indice);";
             echo "  i = 0;";
             echo "  check = true;";
             echo "  while (isNaN(document.getElementById(indice+'_'+i))) {";
             echo "     objeto = document.getElementById(indice+'_'+i);";
-            echo "     if (objeto.value == '') {";
+            echo "     if (objeto.value == '' || circular.value != 'Vigente') {";
             echo "        check = false;";
             echo "     }";
             echo "     i++;";
@@ -399,7 +400,7 @@ require_once("menu.php");
                 }
                 echo "<TR>";
                 if ($num_ref != $rs->Value('ca_referencia')) {
-					echo "  <TD Class=listar style='font-weight:bold; font-size: 9px;$back_col' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'".substr($back_col,14,6)."');\" onclick='javascript:window.open(\"inosea_gere.php?boton=Consultar\&id=".$rs->Value('ca_referencia')."\");'>".$rs->Value('ca_referencia')."</TD>";
+                    echo "  <TD Class=listar style='font-weight:bold; font-size: 9px;$back_col' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'".substr($back_col,14,6)."');\" onclick='javascript:window.open(\"inosea_gere.php?boton=Consultar\&id=".$rs->Value('ca_referencia')."\");'>".$rs->Value('ca_referencia')."</TD>";
                     $num_ref = $rs->Value('ca_referencia');
                 }else{
                     echo "  <TD Class=listar></TD>";
@@ -429,6 +430,7 @@ require_once("menu.php");
                     echo "    </TABLE>";
                     echo "    <INPUT ID=VLR_$num_oid TYPE='HIDDEN' NAME='hbls[$num_oid][comision]' VALUE=".($com_cas-$rs->Value('ca_vlrcomisiones')).">";
                     echo "    <INPUT ID=SBR_$num_oid TYPE='HIDDEN' NAME='hbls[$num_oid][sobrevta]' VALUE=".($com_sbr-$rs->Value('ca_sbrcomisiones')).">";
+                    echo "    <INPUT ID=CIR_$num_oid TYPE='HIDDEN' NAME='hbls[$num_oid][circular]' VALUE=".$rs->Value('ca_stdcircular').">";
                     echo "  </TD>";
                     $rec_com = false;
                 }else{

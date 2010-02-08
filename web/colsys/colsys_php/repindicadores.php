@@ -513,6 +513,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
         $source = "vi_repindicador_brk";
         $transporte = "ca_transporte = 'Aduana'";
         $subque = " INNER JOIN ( select bke.*, prm.ca_valor, prm.ca_valor2 from tb_brk_evento bke INNER JOIN (select * from tb_parametros where ca_casouso = 'CU037' and ca_identificacion in (15, 17) order by ca_valor2) prm ON (prm.ca_identificacion = bke.ca_idevento) order by ca_referencia ) bke ON ($source.ca_referencia = bke.ca_referencia) ";
+       	$subque.= " LEFT JOIN (select DISTINCT subf.ca_referencia_sub,  subf.ca_fchfactura, fact.ca_observaciones from tb_brk_ingresos fact INNER JOIN (select ca_referencia as ca_referencia_sub, min(ca_fchfactura) as ca_fchfactura from tb_brk_ingresos group by ca_referencia) subf ON fact.ca_referencia = subf.ca_referencia_sub and fact.ca_fchfactura = subf.ca_fchfactura) rf ON (rf.ca_referencia_sub = vi_repindicador_brk.ca_referencia) ";
 
         if (!$tm->Open("select ca_fchfestivo from tb_festivos")) {        // Selecciona todos lo registros de la tabla Festivos
             echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
@@ -524,7 +525,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
             $tm->MoveNext();
         }
         $ind_mem  = 11;
-        $add_cols = 3;
+        $add_cols = 4;
         $cot_ant  = null;
         $campos.= ", $source.ca_referencia, ca_valor2";
     } else if ($indicador == "Oportunidad en Exportación") {
@@ -680,6 +681,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
             break;
         case 11:
             echo "	<TH>Referencia</TH>";
+            echo "	<TH>Observaciones</TH>";
             echo "	<TH>Coordinador</TH>";
             echo "	<TH>Eventos</TH>";
             echo "	<TH>Calculos</TH>";
@@ -951,6 +953,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
                 $dif_ref = 0;
                 $exc_dig = true;
                 $exc_fac = true;
+                $exc_idg = ($rs->Value('ca_aplicaidg')=="t")?true:false;
                 while ($referencia == $rs->Value('ca_referencia') and !$rs->Eof() and !$rs->IsEmpty()) {
                     $array_eventos[$rs->Value('ca_valor2')] = $rs->Value('ca_valor');
                     $fchEventoArry = date_parse($rs->Value('ca_fchevento'));
@@ -1094,7 +1097,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
                 $hour   = intval($dif_ref / 60);
                 $minute = $dif_ref % 60;
 
-                $dif_ref = ($exc_dig or $exc_fac)?null:str_pad($hour,2,"0", STR_PAD_LEFT).":".str_pad($minute,2,"0", STR_PAD_LEFT).":".str_pad(null,2,"0", STR_PAD_LEFT);
+                $dif_ref = ($exc_dig or $exc_fac or !$exc_idg)?null:str_pad($hour,2,"0", STR_PAD_LEFT).":".str_pad($minute,2,"0", STR_PAD_LEFT).":".str_pad(null,2,"0", STR_PAD_LEFT);
 
                 $color = analizar_dif($tipo, $lci_var, $lcs_var, $dif_ref, $array_avg, $array_pnc, $array_pmc, $array_null); // Función que retorna un Arreglo con el resultado de Dif
                 echo "  <TD Class=$color style='font-size: 9px; text-align:right;'>".$dif_ref."</TD>";
@@ -1106,7 +1109,9 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
                 break;
             case 11:
                 echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_referencia')."</TD>";
+                echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_observaciones')."</TD>";
                 echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_coordinador')."</TD>";
+                $observaciones = $rs->Value("ca_observaciones");
 
                 echo "  <TD Class=mostrar style='font-size: 9px; vertical-align:top;'><TABLE CELLSPACING=1>";
 
@@ -1153,6 +1158,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
                     echo "</TR>";
                 }
                 echo "  </TABLE></TD>";
+                $dif_mem = ($observaciones == 'Cierre Contable' or $rs->Value("ca_observaciones") == 'Anulación de Facturas')?null:$dif_mem;
                 $color = analizar_dif($tipo, $lci_var, $lcs_var, $dif_mem, $array_avg, $array_pnc, $array_pmc, $array_null); // Función que retorna un Arreglo con el resultado de Dif
                 echo "  <TD Class=$color style='font-size: 9px; text-align:right;'>".$dif_mem."</TD>";
 
