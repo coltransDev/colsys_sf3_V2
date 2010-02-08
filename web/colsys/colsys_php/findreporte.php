@@ -20,15 +20,7 @@ $opciones = array("Número de Reporte"=>"ca_consecutivo", "Nombre del Cliente"=>"
 include_once 'include/datalib.php';                                            // Incorpora la libreria de funciones, para accesar leer bases de datos
 require_once("checklogin.php");                                                                 // Captura las variables de la sessión abierta
 
- 
-
-$rs =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
-if (!$rs->Open("select ca_piezas, ca_peso, ca_volumen from vi_repavisos $condicion")) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
-   echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
-   echo "<script>document.location.href = 'entrada.php';</script>";
-   exit; }
-
-if (!isset($contents) and !isset($boton) and !isset($accion)){
+ if (!isset($contents) and !isset($boton) and !isset($accion)){
     $modulo = "00100000";                                                      // Identificación del módulo para la ayuda en línea
     echo "<HTML>";
     echo "<HEAD>";
