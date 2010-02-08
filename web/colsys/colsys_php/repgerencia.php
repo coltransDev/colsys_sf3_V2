@@ -266,6 +266,58 @@ require_once("menu.php");
        echo "  <TD Class=valores style='font-size: 9px;$back_col'>".number_format($par_utl)."</TD>";
        echo "  <TD Class=valores style='font-size: 9px;$back_col'>".number_format($par_sbr + $par_utl)."</TD>";
        echo "</TR>";
+	   
+       /*
+       // Módulo para detectar incosistencias en el calculo de la utilidad
+       $vl =& DlRecordset::NewRecordset($conn);
+       if (!$vl->Open("select ca_referencia, ca_facturacion, ca_deduccion, ca_utilidad, ca_comisionable from vi_inomaestra_sea where ca_referencia = '".$rs->Value('ca_referencia')."'")) {
+           echo "<script>alert(\"".addslashes($vl->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+           echo "<script>document.location.href = 'repgerencia.php';</script>";
+           exit; }
+       $vl->MoveFirst();
+       echo "<TR>";
+       echo "  <TD Class=valores style='font-size: 9px;$back_col'>".number_format($vl->Value('ca_facturacion')- $par_fac)."</TD>";
+       echo "  <TD Class=valores style='font-size: 9px;$back_col'>".number_format($vl->Value('ca_utilidad') - $vl->Value('ca_comisionable') - $rs->Value('ca_costoneto'))."</TD>";
+       echo "  <TD Class=valores style='font-size: 9px;$back_col'>".number_format($vl->Value('ca_deduccion') - $rs->Value('ca_deduccion'))."</TD>";
+       echo "  <TD Class=valores style='font-size: 9px;$back_col'>".number_format($vl->Value('ca_comisionable') - $par_sbr)."</TD>";
+       echo "  <TD Class=valores style='font-size: 9px;$back_col'>".number_format($vl->Value('ca_facturacion') - $vl->Value('ca_utilidad') - $vl->Value('ca_deduccion') - $par_utl)."</TD>";
+       echo "  <TD Class=valores style='font-size: 9px;$back_col'>";
+
+       if (abs(($vl->Value('ca_facturacion')- $par_fac) + ($vl->Value('ca_utilidad') - $vl->Value('ca_comisionable') - $rs->Value('ca_costoneto')) + ($vl->Value('ca_deduccion') - $rs->Value('ca_deduccion')) + ($vl->Value('ca_comisionable') - $par_sbr) + ($vl->Value('ca_facturacion') - $vl->Value('ca_utilidad') - $vl->Value('ca_deduccion') - $par_utl)) > 1){
+            echo "ERROR ";
+       }
+       */
+       /*
+       $vl =& DlRecordset::NewRecordset($conn);
+	   $query = "select ca_referencia, sum(ca_ino) as ca_ino, sum(ca_valor_ded) as ca_valor_ded from ";
+	   $query.= "(select ca_referencia, max(ca_ino) as ca_ino, sum(ca_valor_ded) as ca_valor_ded, ca_sucursal from ";
+	   $query.= "  ( select ic.ca_referencia, ca_idcliente, ca_hbls, round(((ic.ca_facturacion_r::float-ic.ca_deduccion_r::float-ic.ca_utilidad_r::float)/ic.ca_volumen_r::float*ic.ca_volumen::float)::numeric,0) as ca_ino, (ic.ca_valor_ded::float) as ca_valor_ded, us.ca_sucursal ";
+	   $query.= "  from vi_inocomisiones_sea ic inner join vi_usuarios us on ic.ca_login::text = us.ca_login::text and ic.ca_referencia = '".$rs->Value('ca_referencia')."' ) as sb ";
+	   $query.= "  group by ca_referencia, ca_idcliente, ca_hbls, ca_sucursal) sc ";
+	   $query.= "where ca_sucursal like '$sucursal' group by ca_referencia ";
+	   
+       if (!$vl->Open("$query")) {
+           echo "<script>alert(\"".addslashes($vl->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+           echo "<script>document.location.href = 'repgerencia.php';</script>";
+           exit; }
+       $vl->MoveFirst();
+       echo "<TR>";
+       echo "  <TD Class=valores style='font-size: 9px;$back_col'></TD>";
+       echo "  <TD Class=valores style='font-size: 9px;$back_col'></TD>";
+       echo "  <TD Class=valores style='font-size: 9px;$back_col'></TD>";
+       echo "  <TD Class=valores style='font-size: 9px;$back_col'>".number_format($vl->Value('ca_valor_ded') - $par_sbr)."</TD>";
+       echo "  <TD Class=valores style='font-size: 9px;$back_col'>".number_format($vl->Value('ca_ino') - $par_utl)."</TD>";
+       echo "  <TD Class=valores style='font-size: 9px;$back_col'>";
+
+       if (abs(($vl->Value('ca_valor_ded') - $par_sbr) + ($vl->Value('ca_ino') - $par_utl)) > 1){
+            echo "ERROR ";
+	   }
+	   
+       echo "</TD>";
+       echo "</TR>";
+       *
+       */
+
        $sub_fac+= $par_fac;
        $sub_cos+= $rs->Value('ca_costoneto');
        $sub_ded+= $rs->Value('ca_deduccion');

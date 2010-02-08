@@ -3379,7 +3379,7 @@ elseif (isset($boton)) {                                                       /
                 echo "</TR>";
 
                 echo "<TR>";
-                if (!$cu->Open("select ca_idtransportista, ca_nombre from tb_transportistas where ca_idtransportista in (select ca_valor::int from tb_parametros where ca_casouso = 'CU073' and ca_identificacion = 10 and ca_valor2 like '%".$rs->Value("ca_destino")."%') order by ca_nombre")) {
+                if (!$cu->Open("select ca_idtransportista, ca_nombre from vi_transportistas where ca_idtransportista in (select ca_valor::int from tb_parametros where ca_casouso = 'CU073' and ca_identificacion = 10 and ca_valor2 like '%".$rs->Value("ca_destino")."%') order by ca_nombre")) {
                     echo "<script>alert(\"".addslashes($cu->mErrMsg)."\");</script>";      // Muestra el mensaje de error
                     echo "<script>document.location.href = 'inosea.php';</script>";
                     exit; }
@@ -3910,7 +3910,7 @@ elseif (isset($boton)) {                                                       /
 
                 // =========================== Agente de Carga ===========================
                 $tm =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
-                if (!$tm->Open("select ca_idtransportista, ca_digito from tb_transportistas where ca_idtransportista::text = '".$dm->Value("ca_idtransportista")."'")) {    // Trae la Información del Agente Genera de Carga / Transportista
+                if (!$tm->Open("select ca_idtransportista, ca_digito from vi_transportistas where ca_idtransportista::text = '".$dm->Value("ca_idtransportista")."'")) {    // Trae la Información del Agente Genera de Carga / Transportista
                     echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";     // Muestra el mensaje de error
                     echo "<script>document.location.href = 'inosea.php';</script>";
                     exit;
@@ -4059,7 +4059,7 @@ elseif (isset($boton)) {                                                       /
                         $nit = explode("-",$nit);
                         $nit = $nit[0];
 
-                        if (!$tm->Open("select * from tb_transportistas where ca_idtransportista = $nit")) {    // Trae la información del Operador Multimodal de la Tabla Transportistas.
+                        if (!$tm->Open("select * from vi_transportistas where ca_idtransportista = $nit")) {    // Trae la información del Operador Multimodal de la Tabla Transportistas.
                             echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";     // Muestra el mensaje de error
                             echo "<script>document.location.href = 'inosea.php';</script>";
                             exit;
@@ -4862,11 +4862,6 @@ elseif (isset($accion)) {                                                      /
                         exit;
                     }
                     if (!$rs->Open("update tb_inocomisiones_sea set ca_hbls = '$hbls' where ca_referencia = '$referencia' and ca_idcliente = '$idcliente' and ca_hbls = '$hbl'")) {
-                        echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
-                        echo "<script>document.location.href = 'inosea.php';</script>";
-                        exit;
-                    }
-                    if (!$rs->Open("update tb_inoavisos_sea set ca_hbls = '$hbls' where ca_referencia = '$referencia' and ca_idcliente = '$idcliente' and ca_hbls = '$hbl'")) {
                         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                         echo "<script>document.location.href = 'inosea.php';</script>";
                         exit;

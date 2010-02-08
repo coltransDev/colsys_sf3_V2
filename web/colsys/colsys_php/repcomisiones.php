@@ -129,7 +129,7 @@ elseif (!isset($boton) and !isset($accion) and isset($login)){
     $modulo = "00100000";                                                      // Identificación del módulo para la ayuda en línea
 //  include_once 'include/seguridad.php';                                      // Control de Acceso al módulo
     $condicion= "substr(ca_referencia,8,2) like '$mes' and substr(ca_referencia,15) = ".substr($ano, -1)." and ca_sucursal like '%$sucursal%' and ca_login like '$login' and ".str_replace("\"","'",$casos);
-    if (!$rs->Open("select * from vi_inocomisiones_sea where $condicion order by ca_mes, ca_login, ca_compania, ca_referencia")) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
+    if (!$rs->Open("select * from vi_inocomisiones_sea where $condicion order by ca_mes, ca_login, ca_compania, ca_referencia, ca_hbls")) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
         echo "<script>document.location.href = 'entrada.php';</script>";
         exit; }
@@ -158,14 +158,16 @@ require_once("menu.php");
     echo "<FORM METHOD=post NAME='informe' ACTION='repcomisiones.php'>";             // Hace una llamado nuevamente a este script pero con
     echo "<TABLE WIDTH=680 CELLSPACING=1>";                                    // un boton de comando definido para hacer mantemientos
     echo "<TR>";
-    echo "  <TH Class=titulo COLSPAN=11>COLTRANS S.A.<BR>$titulo<BR>$meses[$mes]/$ano</TH>";
+    echo "  <TH Class=titulo COLSPAN=13>COLTRANS S.A.<BR>$titulo<BR>$meses[$mes]/$ano</TH>";
     echo "</TR>";
     $log_ven = '';
     $cia_mem = '';
     $ref_mem = '';
     $nom_cli = '';
     $hbl_cli = '';
+    $ino_tot = 0;
     $utl_tot = 0;
+    $sbr_tot = 0;
     $sob_tot = 0;
     $con_tot = 0;
     $com_tot = 0;
@@ -177,7 +179,7 @@ require_once("menu.php");
                echo "<script>document.location.href = 'repcomisiones.php';</script>";
                exit; }
            echo "<TR>";
-           echo "  <TD Class=titulo COLSPAN=11 style='text-align:left; font-weight:bold; font-size: 10px;'>".strtoupper($us->Value('ca_nombre'))." «Comisiones por Cobrar <IMG style='visibility: $visible;' src='./graficos/details.gif' alt='Ver Comisiones Pendientes por Cobrar' border=0 onclick='elegir(\"ComisionesXC\",\"".$rs->Value('ca_login')."\",\"$mes|$ano|$sucursal|$login|".str_replace(chr(34),"¬",$casos)."\");'>»</TD>";
+           echo "  <TD Class=titulo COLSPAN=13 style='text-align:left; font-weight:bold; font-size: 10px;'>".strtoupper($us->Value('ca_nombre'))." «Comisiones por Cobrar <IMG style='visibility: $visible;' src='./graficos/details.gif' alt='Ver Comisiones Pendientes por Cobrar' border=0 onclick='elegir(\"ComisionesXC\",\"".$rs->Value('ca_login')."\",\"$mes|$ano|$sucursal|$login|".str_replace(chr(34),"¬",$casos)."\");'>»</TD>";
            echo "</TR>";
            echo "<TR>";
            echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Cliente</TD>";
@@ -186,13 +188,16 @@ require_once("menu.php");
            echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Vlr.Facturado</TD>";
            echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Estado</TD>";
            echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Vol.CMB</TD>";
+           echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Utilidad</TD>";
            echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Comisiones</TD>";
-           echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;' COLSPAN=2>Comis/Sobreventa</TD>";
+           echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;' COLSPAN=3>Comis/Sobreventa</TD>";
            echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Comis/Cobradas</TD>";
            echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Comprobantes</TD>";
            echo "</TR>";
            $cmb_ven = 0;
+           $utl_ven = 0;
            $utl_con = 0;
+           $sob_utl = 0;
            $sob_ven = 0;
            $com_ven = 0;
            $log_ven = $rs->Value('ca_login');
@@ -224,10 +229,10 @@ require_once("menu.php");
 
        if ($cia_mem != $rs->Value('ca_compania')) {
            echo "<TR HEIGHT=5>";
-           echo "  <TD Class=invertir COLSPAN=11></TD>";
+           echo "  <TD Class=invertir COLSPAN=13></TD>";
            echo "</TR>";
            echo "<TR>";
-           echo "  <TD Class=invertir style='font-weight:bold; font-size:10px;' COLSPAN=11>&nbsp;&nbsp;".substr(ucwords(strtolower($rs->Value('ca_compania'))),0,30)."</TD>";
+           echo "  <TD Class=invertir style='font-weight:bold; font-size:10px;' COLSPAN=13>&nbsp;&nbsp;".substr(ucwords(strtolower($rs->Value('ca_compania'))),0,30)."</TD>";
            echo "</TR>";
            $cia_mem = $rs->Value('ca_compania');
        }
@@ -236,9 +241,12 @@ require_once("menu.php");
        $hbl_cli = $rs->Value('ca_hbls');
        $utl_cas = round($rs->Value('ca_volumen') * $utl_cbm * $rs->Value('ca_porcentaje') / 100, 0);
        $utl_con+= $utl_cas;
+       $utl_par = round(($rs->Value('ca_facturacion_r')-$rs->Value('ca_deduccion_r')-$rs->Value('ca_utilidad_r'))/$rs->Value('ca_volumen_r')*$rs->Value('ca_volumen'),0);
+       $utl_ven+= $utl_par;
        $cmb_ven+= $rs->Value('ca_volumen');
        $com_cas = $rs->Value('ca_vlrcomisiones')+$rs->Value('ca_sbrcomisiones');
        $com_ven+= $com_cas;
+
        echo "<TR>";
        echo "  <TD Class=listar></TD>";
        echo "  <TD Class=listar  style='font-weight:bold; font-size: 9px;$back_col' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'".substr($back_col,14,6)."');\" onclick='javascript:window.open(\"inosea_gere.php?boton=Consultar\&id=".$rs->Value('ca_referencia')."\");'>".$rs->Value('ca_referencia')."</TD>";
@@ -246,6 +254,7 @@ require_once("menu.php");
        echo "  <TD Class=valores style='font-size: 9px;$back_col'>".number_format($rs->Value('ca_valor'))."</TD>";
        echo "  <TD Class=listar  style='font-size: 9px;$back_col'>".$rs->Value('ca_estado')."</TD>";
        echo "  <TD Class=valores style='font-size: 9px;$back_col'>".$rs->Value('ca_volumen')."</TD>";
+       echo "  <TD Class=valores style='font-size: 9px;$back_col'>".number_format($utl_par)."</TD>";
        echo "  <TD Class=valores style='font-size: 9px;$back_col'>".number_format($utl_cas)."</TD>";
        $mul_lin = false;
        $arr_fac = array();
@@ -256,17 +265,20 @@ require_once("menu.php");
                echo "  <TD Class=listar>&nbsp;</TD>";
                echo "</TR>";
                echo "<TR>";
-               echo "  <TD Class=listar COLSPAN=7>&nbsp;</TD>";
+               echo "  <TD Class=listar COLSPAN=8>&nbsp;</TD>";
            }
            if ($imp_mem and $rs->Value('ca_valor_ded') != 0) {
                $sob_cas = round($rs->Value('ca_valor_ded') * $rs->Value('ca_porcentaje') / 100, 0);
                echo "  <TD Class=listar style='font-size: 9px;$back_col'>".str_replace(" ","&nbsp;","&nbsp;".$rs->Value('ca_costo_ded'))."</TD>";
+               echo "  <TD Class=valores style='font-size: 9px;$back_col'>".number_format($rs->Value('ca_valor_ded'))."</TD>";
                echo "  <TD Class=valores style='font-size: 9px;$back_col'>".number_format($sob_cas)."</TD>";
+               $sob_utl+= $rs->Value('ca_valor_ded');
                $sob_ven+= $sob_cas;
                array_push($arr_fac,$rs->Value('ca_factura_ded'));
                $mul_lin = true;
               }
            else if ($imp_mem) {
+               echo "  <TD Class=listar>&nbsp;</TD>";
                echo "  <TD Class=listar>&nbsp;</TD>";
                echo "  <TD Class=listar>&nbsp;</TD>";
                array_push($arr_fac,$rs->Value('ca_factura_ded'));
@@ -282,49 +294,57 @@ require_once("menu.php");
        echo "</TR>";
        if ($log_ven != $rs->Value('ca_login') or $rs->Eof()) {
             echo "<TR HEIGHT=5>";
-            echo "  <TD Class=titulo COLSPAN=11></TD>";
+            echo "  <TD Class=titulo COLSPAN=13></TD>";
             echo "</TR>";
             echo "<TR>";
             echo "  <TD Class=Valores style='font-weight:bold;' COLSPAN=5>Totales por Vendedor :</TD>";
             echo "  <TD Class=valores style='font-weight:bold;'>".number_format($cmb_ven,2)."</TD>";
+            echo "  <TD Class=valores>".number_format($utl_ven)."</TD>";
             echo "  <TD Class=valores style='font-weight:bold;'>".number_format($utl_con)."</TD>";
             echo "  <TD Class=listar style='font-weight:bold;'>&nbsp;Sobreventa :</TD>";
+            echo "  <TD Class=valores>&nbsp;&nbsp;".number_format($sob_utl)."</TD>";
             echo "  <TD Class=valores style='font-weight:bold;'>&nbsp;&nbsp;".number_format($sob_ven)."</TD>";
             echo "  <TD Class=listar style='font-weight:bold;'></TD>";
             echo "  <TD Class=listar style='font-weight:bold;'></TD>";
             echo "</TR>";
             echo "<TR>";
             echo "  <TD Class=Valores style='font-weight:bold;' COLSPAN=8>Gran Total para ".ucwords(strtolower($nom_ven))." :</TD>";
+            echo "  <TD Class=valores COLSPAN=2>Comision&nbsp;Causada:</TD>";
             echo "  <TD Class=valores style='font-weight:bold;'>".number_format($utl_con+$sob_ven)."</TD>";
+            echo "  <TD Class=valores>Comision&nbsp;Cobrada:</TD>";
             echo "  <TD Class=valores style='font-weight:bold;'>&nbsp;&nbsp;".number_format($com_ven)."</TD>";
             echo "  <TD Class=valores style='font-weight:bold;'></TD>";
             echo "</TR>";
             echo "<TR HEIGHT=5>";
-            echo "  <TD Class=invertir COLSPAN=11></TD>";
+            echo "  <TD Class=invertir COLSPAN=13></TD>";
             echo "</TR>";
+            $ino_tot+= $utl_ven;
             $cmb_tot+= $cmb_ven;
             $utl_tot+= $utl_con;
+            $sbr_tot+= $sob_utl;
             $sob_tot+= $sob_ven;
             $com_tot+= $com_ven;
            }
        }
     echo "<TR HEIGHT=5>";
-    echo "  <TD Class=imprimir COLSPAN=11></TD>";
+    echo "  <TD Class=imprimir COLSPAN=13></TD>";
     echo "</TR>";
     echo "<TR HEIGHT=5>";
-    echo "  <TD Class=titulo COLSPAN=11></TD>";
+    echo "  <TD Class=titulo COLSPAN=13></TD>";
     echo "</TR>";
     echo "<TR>";
     echo "  <TD Class=Valores style='font-weight:bold;' COLSPAN=5>Totales del Informe:</TD>";
     echo "  <TD Class=valores style='font-weight:bold;'>".number_format($cmb_tot,2)."</TD>";
+    echo "  <TD Class=valores>".number_format($ino_tot)."</TD>";
     echo "  <TD Class=valores style='font-weight:bold;'>".number_format($utl_tot)."</TD>";
     echo "  <TD Class=valores style='font-weight:bold;'>&nbsp;Tot.Sobreventa:</TD>";
+    echo "  <TD Class=valores>".number_format($sbr_tot)."</TD>";
     echo "  <TD Class=valores style='font-weight:bold;'>".number_format($sob_tot)."</TD>";
-    echo "  <TD Class=valores style='font-weight:bold;'>".number_format($com_tot)."</TD>";
-    echo "  <TD Class=valores style='font-weight:bold;'></TD>";
+    echo "  <TD Class=valores>Causado:&nbsp;<b>".number_format($utl_tot + $sob_tot)."</b></TD>";
+    echo "  <TD Class=valores>Cobrado:&nbsp;<b>".number_format($com_tot)."</b></TD>";
     echo "</TR>";
     echo "<TR HEIGHT=5>";
-    echo "  <TD Class=titulo COLSPAN=11></TD>";
+    echo "  <TD Class=titulo COLSPAN=13></TD>";
     echo "</TR>";
     echo "</TABLE><BR>";
 
