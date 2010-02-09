@@ -2951,7 +2951,7 @@ GRANT ALL ON vi_cotindicadores TO GROUP "Usuarios";
 // Drop view vi_repindicador_brk cascade;
 Create view vi_repindicador_brk as
 select bkm.ca_referencia, bkm.ca_fchreferencia, bkm.ca_fcharribo, bkm.ca_idcliente, bkm.ca_coordinador, (((string_to_array(bkm.ca_referencia,'.'))[5]::int)+2000)::text as ca_ano, ((string_to_array(bkm.ca_referencia,'.'))[3])::text as ca_mes, sc.ca_nombre as ca_sucursal,
-        tro.ca_nombre as ca_traorigen, cid.ca_ciudad as ca_ciudestino, 'Aduana'::text as ca_transporte, 'Aduana'::text as ca_modalidad, 'Importación'::text as ca_impoexpo, ccl.ca_compania
+        tro.ca_nombre as ca_traorigen, cid.ca_ciudad as ca_ciudestino, 'Aduana'::text as ca_transporte, 'Aduana'::text as ca_modalidad, 'Importación'::text as ca_impoexpo, ccl.ca_compania, bkm.ca_aplicaidg
 from tb_brk_maestra bkm
 	LEFT OUTER JOIN control.tb_usuarios us ON (bkm.ca_vendedor = us.ca_login)
 	LEFT OUTER JOIN control.tb_sucursales sc ON (us.ca_idsucursal = sc.ca_idsucursal)
