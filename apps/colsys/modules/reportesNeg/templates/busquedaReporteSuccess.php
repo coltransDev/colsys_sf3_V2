@@ -7,24 +7,20 @@
 <div align="center">
 <table width="800px" border="1" class="tableList alignLeft">
 	<tr>
-		<th width="57" scope="col">Consecutivo</th>
-		<th width="57" scope="col">Versi&oacute;n</th>
+		<th width="70" scope="col">Consecutivo</th>
 		<th width="668" scope="col">Trayecto</th>
 	</tr>
 	<?
-	foreach( $reportes as $reporte ){
-		if( !$reporte->esUltimaVersion() ){
-			continue;
-		}
+	foreach( $reportes as $reporte ){		
 		$origen = $reporte->getOrigen();
 		$destino = $reporte->getDestino();
-		
+
+        $url = "reportesNeg/consultaReporte?id=".$reporte->getCaIdreporte().($opcion?"&opcion=".$opcion:"");
 	?>
 	<tr>
-		<td rowspan="2"  ><?=link_to($reporte->getCaConsecutivo(), "reportesNeg/consultaReporte?reporteId=".$reporte->getCaIdreporte()."&modo=".$modo)?></td>
-		<td rowspan="2"  ><?=link_to($reporte->getCaVersion()." ", "reportesNeg/consultaReporte?reporteId=".$reporte->getCaIdreporte()."&modo=".$modo)?></td>
+		<td rowspan="2"  ><?=link_to($reporte->getCaConsecutivo()." V".$reporte->getCaVersion(), $url )?></td>
 		<td  >
-			<?=link_to($reporte->getCliente(), "reportesNeg/consultaReporte?reporteId=".$reporte->getCaIdreporte()."&modo=".$modo)?>
+			<?="<b>".$reporte->getCliente()."</b> (".$reporte->getCaTransporte()." ".$reporte->getCaModalidad().")"?>
 			</td>
 	</tr>
 	<tr >
@@ -35,6 +31,7 @@
 						<td class="invertir" style="font-weight: bold;">Destino</td>
 						<td width="20%" class="invertir" style="font-weight: bold;">Fch.Despacho</td>
 						<td width="20%" class="invertir" style="font-weight: bold;">T.Incoterms</td>
+                        <td width="20%" class="invertir" style="font-weight: bold;">Orden</td
 						<td width="21%" class="invertir" style="font-weight: bold;">Cotizaci&oacute;n</td>
 					</tr>
 					<tr>
@@ -42,7 +39,8 @@
 						<td class="listar"><?=$destino?$destino->getTrafico()."->".$destino->getCaCiudad():"&nbsp;"?></td>
 						<td class="listar"><?=$reporte->getCaFchreporte()?></td>
 						<td class="listar"><?=$reporte->getCaIncoterms()?></td>
-						<td class="listar">&nbsp;</td>
+                        <td class="listar"><?=$reporte->getCaOrdenClie()?></td>
+						<td class="listar"><?=$reporte->getCaIdcotizacion()?></td>
 					</tr>
 				</tbody>
 			</table></td>
@@ -52,3 +50,9 @@
 	?>
 </table>
 </div>
+<?
+include_component("kbase","tooltipById", array("idcategory"=>18));
+if( $opcion=="ayudas" ){
+    include_component("kbase","tooltipCreator", array("idcategory"=>18));
+}
+?>

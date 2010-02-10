@@ -5,7 +5,9 @@
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
 //print_r( $bodegas );
-$bodegas = $sf_data->getRaw("bodegas");
+if( $modo=="otm" ){
+    $bodegas = $sf_data->getRaw("bodegas");
+}
 ?>
 
 <table id="tb_<?=$inoCliente->getOid()?>" style='display:none' cellspacing="1" width="100%">
@@ -132,8 +134,9 @@ $bodegas = $sf_data->getRaw("bodegas");
     <tr>
         <td class="listar" colspan="3"><b>Ingrese mensaje exclusivo para este cliente:</b><br />
                 <div id="divmessage_<?=$inoCliente->getOid()?>"></div>
-            <textarea name='mensaje_<?=$inoCliente->getOid()?>' id='mensaje_<?=$inoCliente->getOid()?>' wrap="virtual" rows="5" cols="65"><?=$inoCliente->getCaMensaje().$mensaje?>
-    </textarea></td>
+            <textarea name='mensaje_<?=$inoCliente->getOid()?>' id='mensaje_<?=$inoCliente->getOid()?>' wrap="virtual" rows="5" cols="65"></textarea>
+            <input type="hidden" id='mensajeOTM_<?=$inoCliente->getOid()?>' value="<?=$inoCliente->getCaMensaje().$mensaje?>" />
+    </td>
     </tr>
     <tr>
         <td class="invertir">Adjunto para Cliente : </td>

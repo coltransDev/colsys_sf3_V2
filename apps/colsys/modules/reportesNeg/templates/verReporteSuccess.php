@@ -48,3 +48,10 @@ if( $reporte->getCaUsuanulado()){
 ?>
 <iframe src="<?=url_for("reportesNeg/generarPDF?id=".$reporte->getCaIdreporte()."&token=".md5(time()))?>" width="830px" height="650px"></iframe>
 </div>
+
+<?
+include_component("kbase","tooltipById", array("idcategory"=>18));
+if( $opcion=="ayudas" ){
+    include_component("kbase","tooltipCreator", array("idcategory"=>18));
+}
+?>

@@ -7,11 +7,13 @@
 
 $i = 0;
 
+$opcion = ($this->getRequestParameter("opcion")?"&opcion=".$this->getRequestParameter("opcion"):"");
+
 if( $action!="index" ){
 	$button[$i]["name"]="Inicio ";
 	$button[$i]["tooltip"]="Pagina inicial del reporte de negocios";
 	$button[$i]["image"]="22x22/home.gif";
-	$button[$i]["link"]= "reportesNeg/index?modo=".$this->getRequestParameter("modo");
+	$button[$i]["link"]= "reportesNeg/index?token=".md5(time()).$opcion;
 	$i++;
 }
 
@@ -20,7 +22,7 @@ switch($action){
 		$button[$i]["name"]="Nuevo";
 		$button[$i]["tooltip"]="Crear un nuevo reporte de negocios";
 		$button[$i]["image"]="22x22/new.gif";
-		$button[$i]["link"]= "reportesNeg/formReporte?modo=".$this->getRequestParameter("modo")."&token=".md5(time());
+		$button[$i]["link"]= "reportesNeg/formReporte?token=".md5(time()).$opcion;
         $i++;
 		break;	
 	case "consultaReporte":		
@@ -29,13 +31,13 @@ switch($action){
         $button[$i]["name"]="Editar ";
 		$button[$i]["tooltip"]="Modificar este reporte";
 		$button[$i]["image"]="22x22/edit.gif";
-		$button[$i]["link"]= "reportesNeg/formReporte?id=".$this->getRequestParameter("id")."&token=".md5(time());
+		$button[$i]["link"]= "reportesNeg/formReporte?id=".$this->getRequestParameter("id").$opcion;
         $i++;
 
         $button[$i]["name"]="Generar ";
 		$button[$i]["tooltip"]="Genera un archivo PDF con el reporte";
 		$button[$i]["image"]="22x22/pdf.gif";
-		$button[$i]["link"]= "reportesNeg/verReporte?id=".$this->getRequestParameter("id")."&token=".md5(time());
+		$button[$i]["link"]= "reportesNeg/verReporte?id=".$this->getRequestParameter("id").$opcion;
         $i++;
        		
         $button[$i]["id"]="anular-reporte";
@@ -51,7 +53,7 @@ switch($action){
 		$button[$i]["name"]="Volver ";
 		$button[$i]["tooltip"]="Vuelve a la pagina anterior";
 		$button[$i]["image"]="22x22/1leftarrow.gif";
-		$button[$i]["link"]= "reportesNeg/consultaReporte?id=".$this->getRequestParameter("id")."&token=".md5(time());
+		$button[$i]["link"]= "reportesNeg/consultaReporte?id=".$this->getRequestParameter("id").$opcion;
 		$i++;
 		
 		$button[$i]["name"]="Email ";

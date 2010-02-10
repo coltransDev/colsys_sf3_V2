@@ -14,6 +14,11 @@ if( $cotizacion->getCaEmpresa() == Constantes::COLTRANS ){
 }
 
 
+if( $cotizacion->getCaEmpresa() == Constantes::COLMAS ){
+    include_component("cotizaciones","panelTransporteAduana",array("cotizacion"=>$cotizacion));
+}
+
+
 
 /*
 * ================  Panel de archivos adjuntos  =======================
@@ -37,10 +42,16 @@ SubPanel = function(){
         this.gridContviajes = new PanelContViajes();
         this.gridSeguros = new PanelSeguros();
         this.gridAgentes = new PanelAgentes();
+        
+        <?
+    }
+
+    if( $cotizacion->getCaEmpresa() == Constantes::COLMAS ){
+        ?>
+        this.gridTransporte = new PanelTransporteAduana();
         <?
     }
     ?>
-
     this.panelArchivos = new PanelArchivos({
                                                 folder:"<?=base64_encode($cotizacion->getDirectorioBase())?>",
                                                 closable:true,
@@ -70,7 +81,12 @@ SubPanel = function(){
                    this.gridRecargos,
                    this.gridContviajes,
                    this.gridSeguros,
-                   this.gridAgentes,
+                   this.gridAgentes,                   
+                <?
+                }
+                if( $cotizacion->getCaEmpresa() == Constantes::COLMAS  ){
+                ?>
+                   this.gridTransporte,
                 <?
                 }
                 ?>

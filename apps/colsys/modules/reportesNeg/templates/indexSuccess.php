@@ -9,7 +9,7 @@
 
 <br />
 <br />
-<form action="<?=url_for( "reportesNeg/busquedaReporte?modo=".$modo	)?>" method="post">
+<form action="<?=url_for( "reportesNeg/busquedaReporte".($opcion?"?opcion=".$opcion:""))?>" method="post">
 <table width="550px" align="center" border="0" cellpadding="5px" cellspacing="1px" class="tableList alignLeft">
 	<tr>
 		<th colspan="3" style='font-size: 12px; font-weight:bold;'><b>Sistema Reporte de negocios </b>		</th>
@@ -28,7 +28,7 @@
 					</select>
 		</td>
 		<td  ><div id="visible" style="visibility:visible"><b>Que contenga la cadena:</b><br />
-			<input type="text" name="cadena" size="60" />
+			<input type="text"  name="cadena" size="60" />
 		</div></td>
 		<td  ><input class="submit" type='submit' name='buscar' value=' Buscar' /></td>
 	</tr>
@@ -39,3 +39,10 @@
 <br />
 <br />
 </div>
+
+<?
+include_component("kbase","tooltipById", array("idcategory"=>18));
+if( $opcion=="ayudas" ){
+    include_component("kbase","tooltipCreator", array("idcategory"=>18));
+}
+?>

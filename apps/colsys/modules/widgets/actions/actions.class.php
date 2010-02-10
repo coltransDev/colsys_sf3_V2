@@ -241,7 +241,7 @@ class widgetsActions extends sfActions
                   ->from("Reporte r")                  
                   ->where("r.ca_consecutivo LIKE ?", $criterio."%" )
                   ->addWhere("r.ca_usuanulado IS NULL")
-                  ->addWhere("r.ca_version = (SELECT MAX(r2.ca_version) FROM Reporte r2 WHERE r2.ca_consecutivo = r.ca_consecutivo) AND ca_usuanulado IS NULL")
+                  ->addWhere("r.ca_version = (SELECT MAX(r2.ca_version) FROM Reporte r2 WHERE r2.ca_consecutivo = r.ca_consecutivo AND ca_usuanulado IS NULL ) ")
                   ->addOrderBy("r.ca_fchcreado DESC")
                   ->limit(20);
                   

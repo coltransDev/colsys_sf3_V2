@@ -60,7 +60,9 @@ include_component("menu", "submenubar");
 
 <script type="text/javascript" charset="utf-8">
 
-    $('.qtip').tooltip();
+    $('.qtip').tooltip({track: true});
+
+    $('.help').tooltip({track: true, fade: 250, opacity: 1, top: -15, extraClass: "pretty fancy" });
 
 	/*$$("a").each( function(input) {
 		if(input.title){

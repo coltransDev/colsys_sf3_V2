@@ -31,7 +31,8 @@ class reportesNegActions extends sfActions
 	* @author Andres Botero
 	*/
 	public function executeIndex()
-	{	
+	{
+        $this->opcion = $this->getRequestParameter("opcion");
 		/*$this->modo = $this->getRequestParameter("modo");
 		$this->forward404Unless( $this->modo );*/
 	}
@@ -44,8 +45,9 @@ class reportesNegActions extends sfActions
 	*/	
 	public function executeBusquedaReporte()
 	{
-		$this->modo = $this->getRequestParameter("modo");					
-		$this->forward404Unless( $this->modo );
+        $this->opcion = $this->getRequestParameter("opcion");
+
+
 		
 		$criterio = $this->getRequestParameter("criterio");
 		$cadena = $this->getRequestParameter("cadena");
@@ -68,17 +70,7 @@ class reportesNegActions extends sfActions
 				break;					
 		}	
 		
-		switch( $this->modo ){
-			case "expo":
-                $q->addWhere("r.ca_impoexpo = ?", Constantes::EXPO);
-				break;	
-			case "impo":
-				$q->addWhere("r.ca_impoexpo = ?", Constantes::IMPO);
-				break;	
-			default:
-				exit;	
-								
-		}		
+			
 		
 		$this->reportes = $q->execute();
 	}
@@ -89,12 +81,12 @@ class reportesNegActions extends sfActions
 	* @author Andres Botero
 	*/
 	public function executeConsultaReporte(){
-
+        $this->opcion = $this->getRequestParameter("opcion");
 		$reporte = Doctrine::getTable("Reporte")->find( $this->getRequestParameter("id") );
 		$this->forward404Unless( $reporte );
 
         if( $reporte->getCaUsuanulado() ){
-            $this->redirect( "reportesNeg/verReporte?id=".$reporte->getCaIdreporte() );
+            $this->redirect( "reportesNeg/verReporte?id=".$reporte->getCaIdreporte().($this->opcion?"&opcion=".$this->opcion:"") );
         }
 		$this->reporte = $reporte;
         
@@ -114,7 +106,7 @@ class reportesNegActions extends sfActions
 	*/
 	public function executeVerReporte(){
 
-        
+        $this->opcion = $this->getRequestParameter("opcion");
         
 		$this->reporte = Doctrine::getTable("Reporte")->find( $this->getRequestParameter("id") );
 		$this->forward404Unless( $this->reporte );
@@ -130,7 +122,7 @@ class reportesNegActions extends sfActions
     public function executeFormReporte(sfWebRequest $request){           
 
         $this->nivel = $this->getNivel();
-
+        $this->opcion = $this->getRequestParameter("opcion");
 
         /*
         * Parametros que se mantienen en caso de que ocurra un error
@@ -662,7 +654,7 @@ class reportesNegActions extends sfActions
                     }
                 }
 
-                $this->redirect("reportesNeg/consultaReporte?id=".$reporte->getCaIdreporte());
+                $this->redirect("reportesNeg/consultaReporte?id=".$reporte->getCaIdreporte().($this->opcion?"&opcion=".$this->opcion:""));
             }
         }
 
@@ -1257,23 +1249,6 @@ class reportesNegActions extends sfActions
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	
 	
 	
 	
@@ -1283,6 +1258,7 @@ class reportesNegActions extends sfActions
 	* @author Andres Botero
 	*/
 	public function executeGenerarPDF( $request ){
+        $this->opcion = $this->getRequestParameter("opcion");
 		$this->forward404Unless( $request->getParameter("id") );
         $this->reporte = Doctrine::getTable("Reporte")->find( $request->getParameter("id") );
 		$this->forward404Unless($this->reporte);
@@ -1294,6 +1270,7 @@ class reportesNegActions extends sfActions
 	* @author: Andres Botero 
 	*/
 	public function executeAnularReporte( $request ){
+        $this->opcion = $this->getRequestParameter("opcion");
         $this->forward404Unless( $request->getParameter("id") );
         $this->forward404Unless( trim($request->getParameter("motivo")) );
 		$reporte = Doctrine::getTable("Reporte")->find( $request->getParameter("id") );
@@ -1314,6 +1291,7 @@ class reportesNegActions extends sfActions
 	* @author: Andres Botero
 	*/
 	public function executeRevivirReporte( $request ){
+        $this->opcion = $this->getRequestParameter("opcion");
         $this->forward404Unless( $request->getParameter("id") );        
 		$reporte = Doctrine::getTable("Reporte")->find( $request->getParameter("id") );
 		$this->forward404Unless($reporte);
@@ -1324,7 +1302,7 @@ class reportesNegActions extends sfActions
         $reporte->setCaDetanulado( "Revivido por: ".$user->getUserId()." ".date("Y-m-d H:i:s") );
 		$reporte->save();
 
-        $this->redirect( "reportesNeg/verReporte?id=".$reporte->getCaIdreporte() );
+        $this->redirect( "reportesNeg/verReporte?id=".$reporte->getCaIdreporte().($this->opcion?"&opcion=".$this->opcion:"") );
 	}
 	
 	
@@ -1333,6 +1311,7 @@ class reportesNegActions extends sfActions
 	* Envia un reporte por correo 	
 	*/
 	public function executeEnviarReporteEmail(){
+        $this->opcion = $this->getRequestParameter("opcion");
 		$this->reporteNegocio =  Doctrine::getTable("Reporte")->find( $this->getRequestParameter("reporteId") );
 		$fileName = sfConfig::get('sf_root_dir').DIRECTORY_SEPARATOR."tmp".DIRECTORY_SEPARATOR."reporte".$this->getRequestParameter("reporteId").".pdf" ;
 		if(file_exists($fileName)){

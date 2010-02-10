@@ -1823,98 +1823,7 @@ class cotizacionesActions extends sfActions
 		
 	}
 	
-	/*************************************************************************
-	* Administración de archivos adjuntos
-	*
-	**************************************************************************/	
 	
-	/*
-	* Guarda un archivo en la base de datos
-	*/	
-	/*public function executeDataArchivosCotizacion(){
-		$idcotizacion = $this->getRequestParameter( "idcotizacion" );
-		$this->forward404Unless( $idcotizacion );
-		
-        $cotArchivos = Doctrine::getTable("CotArchivo")
-                   ->createQuery("a")
-                   ->where("a.ca_idcotizacion=?", $idcotizacion)
-                   ->execute();
-		
-		$this->files = array();
-		foreach($cotArchivos as $archivo ){
-			$this->files[]=array("idarchivo"=>$archivo->getCaIdarchivo(),
-							"name"=>utf8_encode($archivo->getCaNombre()),
-							"lastmod"=>$archivo->getCaFchcreado()
-					);
-		}		
-
-	}*/
-			
-	/*
-	* Guarda un archivo en la base de datos
-	*/	
-	public function executeAdjuntarArchivo( $request ){						
-		sfConfig::set('sf_web_debug', false) ;				
-		$idcotizacion = $this->getRequestParameter( "idcotizacion" );
-		$this->forward404Unless( $idcotizacion );
-		
-		if ( count( $_FILES )>0 ){		 	
-			foreach ( $_FILES as $uploadedFile){
-				
-				$fileName  = $uploadedFile['name'];
-				$fileSize  = $uploadedFile['size'];
-				$fileType  = $uploadedFile['type'];				
-				$path = $uploadedFile['tmp_name'];		
-				
-				$fileObj = new CotArchivo();
-				$fileObj->setCaTamano($fileSize);
-				$fileObj->setCaNombre($fileName);
-				$fileObj->setCaIdcotizacion($idcotizacion);
-				$fileObj->setCaTipo($fileType);
-				
-				$fp = fopen($path, "r");
-				$data = fread( $fp , $fileSize);
-				fclose( $fp );
-				$fileObj->setCaDatos($data);								
-				$fileObj->save();	
-				$id = $fileObj->getCaIdarchivo();
-				
-				$this->responseArray = array("id"=>$id, "filename"=>$fileName, "success"=>true);				
-			
-		  	}
-		}else{
-			$this->responseArray = array("success"=>false);
-		}
-		
-		$this->setTemplate("responseTemplate");
-	}
-	
-	/*
-	* Elimina un archivo de la base de datos
-	*/	
-	/*public function executeEliminarArchivo(){
-		$id = $this->getRequestParameter( "id" );
-		$idarchivo = $this->getRequestParameter( "idarchivo" );
-		
-		$this->forward404Unless( $id );
-		$cotArchivo = Doctrine::getTable("CotArchivo")->find( $idarchivo );
-		$cotArchivo->delete();					
-		$this->responseArray = array("id"=>$id);	
-		$this->setTemplate("responseTemplate");
-	}*/
-	
-	
-	/*
-	* Permite visualizar un archivo del panel 
-	* @author: Andres Botero 
-	*/
-	/*public function executeVerArchivo(){
-		$this->archivo = Doctrine::getTable("CotArchivo")->find( $this->getRequestParameter("idarchivo") );
-		$this->forward404Unless( $this->archivo );
-		
-		session_cache_limiter('public'); 
-		
-	}*/
 	
 	/*************************************************************************
 	* OTROS
@@ -1946,11 +1855,255 @@ class cotizacionesActions extends sfActions
 	
 	
 	
+	/*************************************************************************
+	* COTIZACIONES ADUANA
+	*
+	**************************************************************************/
+
 	/*
-	* Indice de ayuda
+	* Guarda los cambios realizados a trayectos
+	* @author Andres Botero
 	*/
-	public function executeAyuda(){
-	
+	public function executeFormTrayectoAduanaGuardar(){
+
+		$user_id = $this->getUser()->getUserId();
+
+        if( $this->getRequestParameter("idtrayecto") ){
+			$trayecto = Doctrine::getTable("CotTrayectoAduana")->find(  $this->getRequestParameter("idtrayecto") );
+			$this->forward404Unless( $trayecto );
+            $cotizacion = $trayecto->getCotizacion();
+		}else{
+			$trayecto = new CotTrayectoAduana();
+            $cotizacion = Doctrine::getTable("Cotizacion")->find(  $this->getRequestParameter("idcotizacion") );
+            $this->forward404Unless( $cotizacion );
+			$trayecto->setCaIdcotizacion( $cotizacion->getCaIdcotizacion() );
+		}
+
+		$trayecto->setCaProducto( utf8_decode($this->getRequestParameter("producto")) );
+        
+        if( $this->getRequestParameter("vigencia") ){
+            $trayecto->setCaVigencia( $this->getRequestParameter("vigencia") );
+        }else{
+            $trayecto->setCaVigencia( null );
+        }
+
+		
+		$trayecto->setCaOrigen( $this->getRequestParameter("ciu_origen") );
+		$trayecto->setCaDestino( $this->getRequestParameter("ciu_destino") );
+		$trayecto->setCaObservaciones( utf8_decode($this->getRequestParameter("observaciones")) );
+		
+		$trayecto->save();
+
+        //Elimina el seguimiento por cotizacion y lo establece por trayecto
+        if( $cotizacion->getCaEtapa() ){
+            $cotizacion->setCaEtapa(null);
+            $cotizacion->save();
+            $tarea = $cotizacion->getNotTarea();
+            if( $tarea ){
+                $tarea->delete();
+            }
+        }
+
+        /*
+        $tarea = $cotizacion->getTareaIDGEnvioOportuno();
+		if( $tarea ){
+			$texto = "Debe enviar esta cotizacion por email o colocar la fecha de presentación para cumplir esta tarea.<br />";
+
+            $productos = Doctrine::getTable("CotProducto")
+                      ->createQuery("p")
+                      ->where("p.ca_idcotizacion = ?", $cotizacion->getCaIdcotizacion() )
+                      ->execute();
+            foreach( $productos as $producto ){
+                 $texto.=$producto->getCaImpoexpo()." ".$producto->getCaModalidad()." ".$producto->getOrigen()." - ".$producto->getDestino()."<br />";
+            }
+
+            $tarea->setCaTexto($texto);
+            $tarea->save();
+        }*/
+
+
+        $this->responseArray=array("success"=>true);
+        $this->setTemplate("responseTemplate");
+
 	}
+
+
+
+    /*
+	* Muestra los datos de la grilla de prooductos del componente grillaProductos
+	*/
+	public function executeDatosPanelTransporteAduana(){
+		$id = $this->getRequestParameter("idcotizacion");
+        $idtrayecto = $this->getRequestParameter("idtrayecto");
+
+        $cotizacion = Doctrine::getTable("Cotizacion")->find( $id );
+
+		$cotTrayectos = $cotizacion->getCotTrayectoAduana();
+
+        $modo = $this->getRequestParameter("modo");
+
+		$this->trayectos = array();
+
+		foreach( $cotTrayectos as $trayecto ){
+
+            if( $idtrayecto && $idtrayecto!=$trayecto->getCaIdtrayecto()){//Se desea uno solo
+                continue;
+            }
+
+			$j=0;
+			$origen = $trayecto->getOrigen();
+			$destino = $trayecto->getDestino();
+			
+
+			
+
+			$trayectoStr = utf8_encode("[". $origen->getCaCiudad() ." » ".$destino->getCaCiudad()."] ".$trayecto->getCaProducto()." ".$trayecto->getCaIdtrayecto());
+			
+
+			
+
+			//Se envian las opciones existentes
+			
+
+			$baseRow = array(
+		 					 'trayecto'=>$trayectoStr,
+							 'idtrayecto'=>$trayecto->getCaIdtrayecto(),
+							 'producto'=>utf8_encode($trayecto->getCaProducto()),
+							 'idcotizacion'=>$trayecto->getCaIdcotizacion(),
+							 'ciu_origen'=>$origen->getCaIdciudad(),
+							 'ciu_origen_value'=>utf8_encode($origen->getCaCiudad()),							 
+							 'ciu_destino'=>$destino->getCaIdciudad(),
+							 'ciu_destino_value'=>utf8_encode($destino->getCaCiudad()),							 
+							 'observaciones'=>utf8_encode($trayecto->getCaObservaciones()),
+                             'vigencia'=>$trayecto->getCaVigencia(),
+						);
+             /*$opciones = $producto->getCotOpciones();
+			foreach( $opciones as $opcion ){
+				$concepto = $opcion->getConcepto();
+				$row = $baseRow;
+				$row['idopcion']=$opcion->getCaIdopcion();
+				$row['iditem']=$opcion->getCaIdconcepto();
+				$row['item']=utf8_encode($concepto->getCaConcepto());
+				$row['valor_tar']=$opcion->getCaValorTar();
+				$row['aplica_tar']=utf8_encode($opcion->getCaAplicaTar());
+				$row['valor_min']=$opcion->getCaValorMin();
+				$row['aplica_min']=utf8_encode($opcion->getCaAplicaMin());
+				$row['idmoneda']=$opcion->getCaIdmoneda();
+				$row['detalles']=utf8_encode($opcion->getCaObservaciones());
+				$row['tipo']="concepto";
+				$row['orden']=$opcion->getCaIdopcion();
+
+				$this->productos[] = $row;
+				 //Se muestran los recargos
+				$recargos = $opcion->getCotRecargos();
+
+				foreach( $recargos as $recargo ){
+					$tipoRecargo = $recargo->getTipoRecargo();
+
+					$row = $baseRow;
+                    $row['idcotrecargo']=$recargo->getCaIdcotrecargo();
+					$row['idopcion']=$opcion->getCaIdopcion();
+					$row['iditem']=$tipoRecargo->getCaIdrecargo();
+					$row['item']=utf8_encode($tipoRecargo->getCaRecargo());
+					$row['idconcepto']=$recargo->getCaIdconcepto();
+					$row['valor_tar']=$recargo->getCaValorTar();
+					$row['aplica_tar']=utf8_encode($recargo->getCaAplicaTar());
+					$row['valor_min']=$recargo->getCaValorMin();
+					$row['aplica_min']=utf8_encode($recargo->getCaAplicaMin());
+					$row['idmoneda']=$recargo->getCaIdmoneda();
+					$row['detalles']=utf8_encode($recargo->getCaObservaciones());
+					$row['tipo']="recargo";
+					$row['orden']=$opcion->getCaIdopcion()."-".utf8_encode($tipoRecargo->getCaRecargo());
+					$this->productos[] = $row;
+				}
+			}
+
+			$recargos = $producto->getRecargosGenerales();
+
+			if( count($recargos)>0 ){
+				$row = $baseRow;
+				$row['idopcion']=999;
+				$row['iditem']=9999;
+				$row['item']="Recargos generales del trayecto";
+				$row['idconcepto']=9999;
+				$row['valor_tar']='';
+				$row['aplica_tar']='';
+				$row['valor_min']='';
+				$row['aplica_min']='';
+				$row['idmoneda']='';
+				$row['detalles']='';
+				$row['tipo']="concepto";
+				//$row['id']+=$j++;
+				$row['orden']="Y";
+				//$parent = $row['id'];
+				$this->productos[] = $row;
+			}
+
+			foreach( $recargos as $recargo ){
+				$tipoRecargo = $recargo->getTipoRecargo();
+				$row = $baseRow;
+                $row['idcotrecargo']=$recargo->getCaIdcotrecargo();
+				$row['idopcion']=999;
+				$row['iditem']=$tipoRecargo->getCaIdrecargo();
+				$row['item']=utf8_encode($tipoRecargo->getCaRecargo());
+				$row['idconcepto']=$recargo->getCaIdconcepto();
+				$row['valor_tar']=$recargo->getCaValorTar();
+				$row['aplica_tar']=utf8_encode($recargo->getCaAplicaTar());
+				$row['valor_min']=$recargo->getCaValorMin();
+				$row['aplica_min']=utf8_encode($recargo->getCaAplicaMin());
+				$row['idmoneda']=$recargo->getCaIdmoneda();
+				$row['detalles']=utf8_encode($recargo->getCaObservaciones());
+				$row['tipo']="recargo";
+
+				$row['orden']="Y-".utf8_encode($tipoRecargo->getCaRecargo());
+				$this->productos[] = $row;
+			}*/
+
+            if( $modo!="consulta" ){
+                //Se envia una fila vacia por cada grupo para agregar una nueva opción
+                $row = $baseRow;
+                $row['idopcion']="";
+                $row['iditem']="";
+                $row['item']="+";
+                $row['idconcepto']="";
+                $row['valor_tar']="";
+                $row['aplica_tar']="";
+                $row['valor_min']="";
+                $row['aplica_min']="";
+                $row['idmoneda']="";
+                $row['detalles']="";
+                $row['tipo']="concepto";
+                $row['orden']="Z";
+                $this->trayectos[] = $row;
+           }
+
+		}
+
+        $this->responseArray=array("productos"=>$this->trayectos, "total"=>count($this->trayectos));
+        $this->setTemplate("responseTemplate");
+
+	}
+
+
+    /*
+	* Permite eliminar un trayecto
+	* @author: Andres Botero
+	*/
+	public function executeEliminarPanelTransporteAduana(){
+		$idtrayecto = $this->getRequestParameter("idtrayecto");
+		$this->responseArray = array();
+        $this->responseArray["success"] = false;
+		if( $idtrayecto  ){
+			$trayecto = Doctrine::getTable("CotTrayectoAduana")->find($idtrayecto);
+			if( $trayecto ){
+				$trayecto->delete();
+			}
+			$this->responseArray["success"] = true;
+		}
+
+        $this->setTemplate("responseTemplate");
+
+	}
+
 }
 ?>

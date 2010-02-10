@@ -40,7 +40,7 @@ Ext.onReady(function(){
      mainPanel.render("panel1");
 
      <?
-     if( $cotizacion->getCaIdcotizacion() && $tarea && $cotizacion->getCaEmpresa() == Constantes::COLTRANS ){
+     if( $cotizacion->getCaIdcotizacion() && $tarea  ){
      ?>
         var subPanel = new SubPanel();
         subPanel.render("panel2");

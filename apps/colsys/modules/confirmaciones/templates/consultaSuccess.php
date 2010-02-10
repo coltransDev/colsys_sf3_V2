@@ -180,6 +180,41 @@ function mostrar(oid){
     ?>
 }
 
+function cambiarTextosOTM( value ){
+    if( value=="Fact" ){
+        var msg = "<?=str_replace("\n", "<br />",$textos['mensajeFact'])?>";
+        document.getElementById('status_body').value= msg.split("<br />").join("\n");
+    }else{
+        var msg = "<?=str_replace("\n", "<br />",$textos['mensajeStatus'])?>";
+        document.getElementById('status_body').value= msg.split("<br />").join("\n");
+    }
+    <?
+    foreach( $inoClientes as $inoCliente ){
+        ?>
+        if( value=="Fact" ){
+            document.getElementById('mensaje_<?=$inoCliente->getOid()?>').value="";
+        }else{
+            document.getElementById('mensaje_<?=$inoCliente->getOid()?>').value=document.getElementById('mensajeOTM_<?=$inoCliente->getOid()?>').value;
+        }
+        <?
+    }
+    ?>
+}
+
+function cambiarTipoMsg( value ){    
+    if( value=="Conf" ){
+        document.getElementById('confirmacion_tbl').style.display='block';
+        document.getElementById('status_tbl').style.display='none';
+    }else{
+        document.getElementById('status_tbl').style.display='block';
+        document.getElementById('confirmacion_tbl').style.display='none';        
+    }
+
+    cambiarTextosOTM( value );
+}
+
+
+
 </script>
 
 <div align="center">
@@ -325,10 +360,10 @@ function mostrar(oid){
 			<tr>
 				<td class="partir">&nbsp;</td>
 				<td class="partir">
-                        <input name="tipo_msg" value="Conf" checked="checked" onclick="document.getElementById('confirmacion_tbl').style.display='block';document.getElementById('status_tbl').style.display='none'" type="radio">
-                        Confirmación:
+                        <input name="tipo_msg" id="tipo_msg" value="Conf" checked="checked" onclick="cambiarTipoMsg(this.value)" type="radio">
+                        Confirmaci&oacute;n:
                 </td>
-				<td class="mostrar" colspan="4" rowspan="2">
+				<td class="mostrar" colspan="4" rowspan="3">
 
                     <table id="confirmacion_tbl" style="display: block;" cellspacing="1" width="100%">
 						<tbody>
@@ -375,13 +410,11 @@ function mostrar(oid){
 						<tbody>
 							<tr>
 								<td class="mostrar" colspan="4"><b>Introducci&oacute;n al Status:</b><br>
-									<textarea name="status_body_intro" wrap="virtual" rows="2" cols="93"><?=$textos['mensajeStatusIntro']?>
-</textarea></td>
+									<textarea name="status_body_intro" wrap="virtual" rows="2" cols="93"><?=$textos['mensajeStatusIntro']?></textarea></td>
 							</tr>
 							<tr>
 								<td class="mostrar" colspan="4"><b>Mensaje de Status:</b><br>
-									<textarea name="status_body" wrap="virtual" rows="3" cols="93"><?=$textos['mensajeStatus']?>
-</textarea></td>
+									<textarea name="status_body" id="status_body" wrap="virtual" rows="3" cols="93"></textarea></td>
 							</tr>
 						</tbody>
 					</table>
@@ -390,8 +423,13 @@ function mostrar(oid){
 			</tr>
 			<tr>
 				<td class="partir">&nbsp;</td>
-				<td class="partir"><input name="tipo_msg" value="Status" onclick="document.getElementById('status_tbl').style.display='block';document.getElementById('confirmacion_tbl').style.display='none'" type="radio">
+				<td class="partir"><input name="tipo_msg" id="tipo_msg" value="Status" onclick="cambiarTipoMsg(this.value)" type="radio">
 					Status:</td>
+			</tr>
+            <tr>
+				<td class="partir">&nbsp;</td>
+				<td class="partir"><input name="tipo_msg" id="tipo_msg" value="Fact" onclick="cambiarTipoMsg(this.value)" type="radio">
+					Factura Fletes:</td>
 			</tr>
 			<?
 			}
@@ -486,8 +524,7 @@ function mostrar(oid){
 			<tr>
 			
 			<td class="invertir" colspan="6">
-				<?
-                
+				<?                
                 include_component("confirmaciones","formConfirmacion", array("inoCliente"=>$inoCliente, "modo"=>$modo, "reporte"=>$reporte, "cliente"=>$cliente, "etapas"=>$etapas, "coordinadores"=>$coordinadores, "textos"=>$textos, $bodegas="bodegas"))
                 ?>
             </td>
@@ -551,5 +588,15 @@ function mostrar(oid){
 	<?
 	}
 	?>
+    
+    radioObj = document.form1.tipo_msg;
+	for(var i = 0; i < radioObj.length; i++) {
+		if(radioObj[i].checked) {
+            cambiarTipoMsg( radioObj[i].value )
+		}
+	}
+
+    //;
+
 </script>
 

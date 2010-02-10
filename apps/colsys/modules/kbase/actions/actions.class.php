@@ -123,9 +123,55 @@ class kbaseActions extends sfActions
         $this->issue = $issue;
 
 	}
-	
-	
-	
+
+
+    /*
+     * Carga los valores para editar un tooltip
+     */
+    public function executeCargarDatosTooltip( sfWebRequest $request ){
+        
+        $idcategory = $request->getParameter("idcategory");
+        $elemId = $request->getParameter("elemId");
+        $this->responseArray = array("success"=>true);
+
+        $tooltip = Doctrine::getTable("KBTooltip")->find(array($idcategory, $elemId));
+
+        if( $tooltip ){
+            $this->responseArray["titulo"] = utf8_encode($tooltip->getCaTitle());
+            $this->responseArray["contenido"] = utf8_encode($tooltip->getCaInfo());
+        }else{
+            $this->responseArray["titulo"] = "";
+            $this->responseArray["contenido"] = "";
+        }
+        $this->setTemplate("responseTemplate");
+    }
+
+    /*
+     * Guarda los valores para editar un tooltip
+     */
+    public function executeGuardarDatosTooltip( sfWebRequest $request ){
+
+        $idcategory = $request->getParameter("idcategory");
+        $elemId = $request->getParameter("elemId");
+        $this->responseArray = array("success"=>true);
+
+        $tooltip = Doctrine::getTable("KBTooltip")->find(array($idcategory, $elemId));
+
+        if( !$tooltip ){
+            $tooltip = new KBTooltip();
+            $tooltip->setCaIdcategory( $idcategory );
+            $tooltip->setCaFieldId( $elemId );
+        }
+
+        $tooltip->setCaTitle( utf8_decode($request->getParameter("titulo")));
+        $tooltip->setCaInfo( utf8_decode($request->getParameter("contenido")));
+        $tooltip->save();
+
+        $this->responseArray["titulo"] = utf8_encode($tooltip->getCaTitle());
+        $this->responseArray["contenido"] = utf8_encode($tooltip->getCaInfo());
+        
+        $this->setTemplate("responseTemplate");
+    }
 	
 }
 ?>

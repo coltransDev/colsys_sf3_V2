@@ -296,13 +296,17 @@ class confirmacionesActions extends sfActions
 			
 			switch( $modo ){
 				case "conf":
-					if( $tipo_msg=="Conf" ){						
-						$status->setCaIdetapa("IMCPD");
-						$status->setCaFchllegada( $referencia->getCaFchconfirmacion() );
-					}else{
-						$status->setCaIdetapa("88888");
-					}
-					
+                    switch( $tipo_msg ){
+                        case "Conf":
+                            $status->setCaIdetapa("IMCPD");
+                            $status->setCaFchllegada( $referencia->getCaFchconfirmacion() );
+                            break;                        
+                        default:
+                            $status->setCaIdetapa("88888");
+                            break;
+
+                    }
+										
 					if( $referencia->getCaMnllegada() ){
 						$status->setCaIdnave( $referencia->getCaMnllegada() );
 					}else{

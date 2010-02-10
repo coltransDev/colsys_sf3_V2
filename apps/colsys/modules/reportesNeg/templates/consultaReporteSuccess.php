@@ -19,10 +19,10 @@
                        <?=$reporte->getCaConsecutivo()?>
                 </div>
             </td>
-            <td width="90"  ><div align="center"><span ><b>Fecha</b></span><br />
+            <td width="90"  ><div align="center" class="help" id="fchreporte"><span ><b>Fecha</b></span><br />
                             <?=Utils::fechaMes($reporte->getCaFchreporte())?>
             </div></td>
-            <td width="107" ><div align="center"><b>Versi&oacute;n No.</b>:<br />
+            <td width="107" ><div align="center" class="help" id="versiones"><b>Versi&oacute;n No.</b>:<br />
                             <?=$reporte->getCaVersion()."/".$reporte->numVersiones()?>
             </div></td>
             <td width="85" >
@@ -361,3 +361,10 @@ if( $reporte->getCaColmas()=="Sí" || $reporte->getCaTransporte() == Constantes::
 
 
 </script>
+
+<?
+include_component("kbase","tooltipById", array("idcategory"=>18));
+if( $opcion=="ayudas" ){
+    include_component("kbase","tooltipCreator", array("idcategory"=>18));
+}
+?>
