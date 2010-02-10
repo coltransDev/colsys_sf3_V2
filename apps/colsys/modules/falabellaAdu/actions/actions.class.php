@@ -628,7 +628,7 @@ class falabellaAduActions extends sfActions {
             $salida.= str_pad(number_format($valor_cif,2,'.',''), 15, "0", STR_PAD_LEFT); // 28
             $salida.= str_pad(number_format($valor_gas,2,'.',''), 15, "0", STR_PAD_LEFT); // 29
             $salida.= str_pad(number_format($valor_cif + $valor_gas,2,'.',''), 15, "0", STR_PAD_LEFT); // 30
-            $salida.= str_pad($row["ca_iddoc"],20, " "); // 31
+            $salida.= str_pad(substr($row["ca_iddoc"],0,15),20, " "); // 31
             $salida.= str_pad($row["ca_embarque"],2, " "); // 32                                   No de Embarque
 
             $factor = $row["ca_prorrateo_fob"] / $row["ca_valor_fob"];
