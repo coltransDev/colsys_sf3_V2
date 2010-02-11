@@ -161,7 +161,7 @@
 
             var fp = Ext.getCmp("producto-form");
             if( fp.getForm().isValid() ){
-                this.el.mask('Guardando...', 'x-mask-loading');
+                
                 ttransito = fp.getForm().findField("ttransito").getValue();
                 frecuencia = fp.getForm().findField("frecuencia").getValue();
                 impoexpo = fp.getForm().findField("impoexpo").getValue();
@@ -170,24 +170,25 @@
                 if( ttransito=="" && frecuencia=="" && ((impoexpo=="<?=Constantes::IMPO?>" && transporte!="<?=Constantes::AEREO?>") || impoexpo=="<?=Constantes::EXPO?>" ) ){ // Solamente cuando es importación aérea se permite en blanco
                     Ext.MessageBox.alert('Sistema de Cotizaciones - Error:', 'Por favor indique el tiempo de transito y la frecuencia');
                 }else{
-
+                    this.el.mask('Guardando...', 'x-mask-loading');
+                    var win = this;
                     fp.getForm().submit({url:'<?=url_for('cotizaciones/formProductoGuardar')?>',
-                                            waitMsg:'Salvando Datos de Productos...',
-                                            // standardSubmit: false,
+                        waitMsg:'Salvando Datos de Productos...',
+                        // standardSubmit: false,
 
-                                            success:function(response,options){
-                                                //Ext.Msg.alert( "Success "+response.responseText );
-                                                storeProductos.reload();
-                                                win.close();
-                                            },
-                                            failure:function(response,options){
-                                                Ext.Msg.alert( "Error "+response.responseText );
-                                                win.close();
-                                            }//end failure block
-                                        });
+                        success:function(form,action){
+                            storeProductos.reload();
+                            win.hide();
+                        },
+                        failure:function(form,action){
+                            Ext.MessageBox.alert('Error Message', "Se ha presentado un error: "+action.result.errorInfo+" \n Codigo HTTP "+action.response.status);
+                        }//end failure block
+
+                    });
+                    this.el.unmask();
+                    
                 }
-                this.el.unmask();
-                this.hide();
+                
             }else{
                 Ext.MessageBox.alert('Sistema de Cotizaciones - Error:', '¡Atención: La información del Producto no es válida o está incompleta!');
             }

@@ -825,6 +825,8 @@ class cotizacionesActions extends sfActions
 	* @author Andres Botero
 	*/
 	public function executeFormProductoGuardar(){
+
+        
        
 		$user_id = $this->getUser()->getUserId();
 
@@ -919,7 +921,7 @@ class cotizacionesActions extends sfActions
         }
 
 
-        $this->responseArray=array("success"=>true);
+        $this->responseArray=array("success"=>true);        
         $this->setTemplate("responseTemplate");
 		
 	}
