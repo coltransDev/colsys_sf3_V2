@@ -9,11 +9,20 @@ foreach( $results as $modalidad=>$grupos ){
 	{
 		text:'<?=$modalidad?>',	
 		leaf:false,
+        impoexpo: '<?=$impoexpo?>',
+        transporte: '<?=$transporte?>',
+        modalidad: '<?=$modalidad?>',
+
 		children:[			
 			{
-				text:'Recargos locales',
-				id:'recgen_<?=$impoexpo?>_<?=$transporte?>_<?=$modalidad?>',		
-				leaf:true
+				text:'Recargos locales',                
+				leaf:true,
+                opcion: 'recgen',
+                impoexpo: '<?=$impoexpo?>',
+                transporte: '<?=$transporte?>',
+                modalidad: '<?=$modalidad?>',
+                idtrafico: '99-999',
+
 			},
 			
 			<?
@@ -30,9 +39,12 @@ foreach( $results as $modalidad=>$grupos ){
 			
 			?>
 			{
-				text:'Recargos locales x <?=$linea?>',
-				id:'reclin_<?=$impoexpo?>_<?=$transporte?>_<?=$modalidad?>',		
+				text:'Recargos locales x <?=$linea?>',                
 				leaf:false,
+                opcion: 'reclin',
+                impoexpo: '<?=$impoexpo?>',
+                transporte: '<?=$transporte?>',
+                modalidad: '<?=$modalidad?>',
 				children:[
 					<?
 					$k=0;
@@ -44,9 +56,15 @@ foreach( $results as $modalidad=>$grupos ){
 						}	
                         ?>
                         {
-                            text:'<?=$linea['p_ca_sigla']?$linea['p_ca_sigla']:$linea["id_ca_nombre"]?>',
-                            id:'reclin_<?=$impoexpo?>_<?=$transporte?>_<?=$modalidad?>_99-999_<?=$linea["p_ca_idproveedor"]?>',
-                            leaf:true
+                            text:'<?=$linea['p_ca_sigla']?$linea['p_ca_sigla']:$linea["id_ca_nombre"]?>',                            
+                            leaf:true,
+                            opcion: 'reclin',                            
+                            impoexpo: '<?=$impoexpo?>',
+                            transporte: '<?=$transporte?>',
+                            modalidad: '<?=$modalidad?>',
+                            idtrafico: '99-999',
+                            idtrafico: 'Todos los paises',
+                            idlinea: '<?=$linea["p_ca_idproveedor"]?>'
                         }
                         <?
                         }
@@ -75,9 +93,15 @@ foreach( $results as $modalidad=>$grupos ){
 						}					
 					?>
 					{
-						text:'<?=$pais['pais']?>',	
-						id: '<?=$impoexpo."_".$transporte."_".$modalidad."_".$pais['idtrafico']?>',
-						leaf:false
+						text:'<?=$pais['pais']?>',
+                        id: '<?=$impoexpo."_".$transporte."_".$modalidad."_".$pais['idtrafico']?>',
+						leaf:false,                        
+                        impoexpo: '<?=$impoexpo?>',
+                        transporte: '<?=$transporte?>',
+                        modalidad: '<?=$modalidad?>',
+                        idtrafico: '<?=$pais['idtrafico']?>',
+                        trafico: '<?=$pais['pais']?>'
+
 					}
 					<?
 					}				

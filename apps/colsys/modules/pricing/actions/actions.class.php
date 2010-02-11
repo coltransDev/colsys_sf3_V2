@@ -1845,7 +1845,7 @@ class pricingActions extends sfActions
 	/*
 	* Muestra los datos para la administración de trayectos
 	*/
-	public function executeDatosAdminTrayectos(){
+	public function executeDatosPanelTrayecto(){
 		
 		$this->nivel = $this->getUser()->getNivelAcceso( pricingActions::RUTINA );
 		
@@ -1872,18 +1872,22 @@ class pricingActions extends sfActions
 
         $q = Doctrine::getTable("Trayecto")
                                ->createQuery("t")
-                               ->select("t.*")
-                               ->where("c.ca_idtrafico = ? AND t.ca_transporte = ? AND t.ca_modalidad = ? AND t.ca_impoexpo = ?", array($idtrafico, $transporte, $modalidad, $impoexpo))
+                               ->select("t.*, o.ca_idciudad, d.ca_idciudad, o.ca_ciudad, d.ca_ciudad, to.ca_nombre, td.ca_nombre, i.ca_nombre")
+                               ->where("t.ca_transporte = ? AND t.ca_modalidad = ? AND t.ca_impoexpo = ?", array($transporte, $modalidad, $impoexpo))
                                ->innerJoin("t.IdsProveedor p")
                                ->innerJoin("p.Ids i")
                                ->addOrderBy("i.ca_nombre");
         
+        $q->innerJoin("t.Origen o");
+        $q->innerJoin("o.Trafico to");
+        $q->innerJoin("t.Destino d");
+        $q->innerJoin("d.Trafico td");
         if( $impoexpo==Constantes::EXPO ){
-            $q->innerJoin("t.Destino c");
+            $q->addWhere("d.ca_idtrafico = ?", $idtrafico );
         }else{
-            $q->innerJoin("t.Origen c");
-        }       
-		$trayectos = $q->execute();
+            $q->addWhere("o.ca_idtrafico = ?", $idtrafico );
+        } 
+		$trayectos = $q->setHydrationMode(Doctrine::HYDRATE_SCALAR)->execute();
 
 		
 			
@@ -1891,20 +1895,16 @@ class pricingActions extends sfActions
 		$data=array();
 		$transportador_id = null;
 		foreach( $trayectos as $trayecto ){
-			$transportador = $trayecto->getIdsProveedor()->getIds()->getCaNombre();
-			
-			$trayectoStr = utf8_encode(strtoupper($trayecto->getOrigen()->getCaCiudad()))."»".utf8_encode(strtoupper($trayecto->getDestino()->getCaCiudad()));
-			
 			
 			$row = array(
-				'idtrayecto' => $trayecto->getCaIdtrayecto(),
-				'trayecto' =>utf8_encode($trayectoStr),
-				'origen'=>utf8_encode($trayecto->getOrigen()->getCaCiudad()),
-				'destino'=>utf8_encode($trayecto->getDestino()->getCaCiudad()), 
-				'linea'=> $transportador?utf8_encode($transportador):"",
-				'ttransito'=>utf8_encode($trayecto->getCaTiempotransito()),
-				'frecuencia'=>$trayecto->getCaFrecuencia(),
-				'activo'=>$trayecto->getCaActivo()
+				'idtrayecto' => $trayecto["t_ca_idtrayecto"],	
+				'origen'=> utf8_encode($trayecto["o_ca_ciudad"]),                
+				'destino'=> utf8_encode($trayecto["d_ca_ciudad"]),                
+				'linea'=> $trayecto["i_ca_nombre"],
+                'idlinea'=> $trayecto["t_ca_idlinea"],
+				'ttransito'=>utf8_encode($trayecto["t_ca_tiempotransito"]),
+				'frecuencia'=>$trayecto["t_ca_frecuencia"],
+				'activo'=>$trayecto["t_ca_activo"]
 			);						
 			$data[] = $row;			
 		}
@@ -2060,6 +2060,7 @@ class pricingActions extends sfActions
 	* Genera la pestaña donde se muestran los archivos 
 	* @author: Andres Botero 
 	*/
+    /*
 	public function executeArchivosPais(){
 		$this->nivel = $this->getUser()->getNivelAcceso( pricingActions::RUTINA );
 		
@@ -2097,9 +2098,12 @@ class pricingActions extends sfActions
 		$this->transporte = utf8_encode($transporte);
 		$this->modalidad = $modalidad;
 	}
-	
+	*/
 
-	
+	/*********************************************************************
+	* Datos panelCiudades
+	*
+	*********************************************************************/
 	
 	/*
 	* Muestra las ciudades y las devuelve en forma de arbol, el cliente 
@@ -2115,6 +2119,8 @@ class pricingActions extends sfActions
 		$impoexpo = utf8_decode($this->getRequestParameter("impoexpo"));
 		
 		$node = $this->getRequestParameter("node");
+
+        
 		
 		$this->nivel = $this->getUser()->getNivelAcceso( pricingActions::RUTINA );
 		
@@ -2208,8 +2214,6 @@ class pricingActions extends sfActions
 			$q->setHydrationMode(Doctrine::HYDRATE_SCALAR);			
 			$this->ciudades = $q->execute();
 
-            
-
             $q = Doctrine_Query::create()
                                  ->distinct()
                                  ->select("p.ca_idproveedor, p.ca_sigla, id.ca_nombre, t.ca_modalidad")
@@ -2232,6 +2236,7 @@ class pricingActions extends sfActions
             $q->distinct();
             $q->setHydrationMode(Doctrine::HYDRATE_SCALAR);
 			$this->lineas = $q->execute();
+            $this->trafico=Doctrine::getTable("Trafico")->find($idtrafico);
 			$this->idtrafico=$idtrafico;
 			$this->modalidad=$modalidad;			
 			
@@ -2456,6 +2461,65 @@ class pricingActions extends sfActions
 
 		$this->setTemplate("responseTemplate");
     }
+
+
+
+
+    /*
+	* Guarda un trayecto
+	* @author: Andres Botero
+	*/
+
+	public function executePanelTrayectoGuardar( $request ){
+        
+        $idtrayecto = $request->getParameter("idtrayecto");
+        
+        if( $idtrayecto ){
+            $trayecto = Doctrine::getTable("Trayecto")->find($idtrayecto);
+            $this->forward404Unless( $trayecto );
+        }else{
+            $trayecto = new Trayecto();
+        }        
+
+		$transporte = utf8_decode($this->getRequestParameter("transporte"));
+		$impoexpo = utf8_decode($this->getRequestParameter("impoexpo"));
+        $modalidad = utf8_decode($this->getRequestParameter("modalidad"));
+        $idlinea = utf8_decode($this->getRequestParameter("idlinea"));
+        $idagente = utf8_decode($this->getRequestParameter("idagente"));
+        $origen = utf8_decode($this->getRequestParameter("ciu_origen"));
+        $destino = utf8_decode($this->getRequestParameter("ciu_destino"));
+        $observaciones = utf8_decode($this->getRequestParameter("observaciones"));
+        $frecuencia = utf8_decode($this->getRequestParameter("frecuencia"));
+        $ttransito = utf8_decode($this->getRequestParameter("ttransito"));
+        $activo = utf8_decode($this->getRequestParameter("activo"));
+
+        $trayecto->setCaImpoexpo($impoexpo);
+        $trayecto->setCaTransporte($transporte);
+        $trayecto->setCaModalidad($impoexpo);
+        $trayecto->setCaOrigen($origen);
+        $trayecto->setCaDestino($destino);
+        $trayecto->setCaIdlinea($idlinea);
+        if( $idagente ){
+            $trayecto->setCaIdagente($idagente);
+        }
+        if( $observaciones ){
+            $trayecto->setCaObservaciones($observaciones);
+        }
+        if( $ttransito ){
+            $trayecto->setCaTiempotransito($ttransito);
+        }
+        if( $frecuencia ){
+            $trayecto->setCaFrecuencia($frecuencia);
+        }
+        $trayecto->setCaActivo($activo=="on");
+
+        $trayecto->save();
+
+		$this->responseArray = array("success"=>true);
+        $this->setTemplate("responseTemplate");
+
+	}
+
 
 }
 ?>

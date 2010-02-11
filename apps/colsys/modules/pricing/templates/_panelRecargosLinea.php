@@ -637,6 +637,7 @@ function guardarRecargosPorLinea(){
 		changes['id']=r.id;
 		changes['idlinea']=r.data.idlinea;										
  	    changes['idrecargo']=r.data.idrecargo;
+        changes['idmoneda']=r.data.idmoneda;
         if(changes['inicio']){
 			changes['inicio']=Ext.util.Format.date(changes['inicio'],'Y-m-d');
 		}

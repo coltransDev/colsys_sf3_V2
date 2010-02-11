@@ -12,7 +12,13 @@ include_component("pricing", "panelCostosAduana", array("nivel"=>$nivel));
 include_component("gestDocumental", "panelArchivos", array("readOnly"=>$opcion=="consulta") );
 include_component("pricing", "panelNoticias");
 
-include_component("pricing","panelConsultaCiudades");
+
+include_component("pricing", "panelTrayectoWindow");
+include_component("pricing", "panelTrayecto", array("readOnly"=>true));
+
+//Paneles laterales
+include_component("pricing","panelConsultaCiudades", array("readOnly"=>$opcion=="consulta"));
+
 
 ?>
 <script type="text/javascript">
@@ -21,12 +27,7 @@ include_component("pricing","panelConsultaCiudades");
 
 Ext.onReady(function(){
         
-    var archivosMugre = new PanelArchivos({
-        folder: "<?=base64_encode("Tarifario".DIRECTORY_SEPARATOR."ArchivosAdicionales")?>",
-        closable: true,
-        title: "Archivos",
-        height: 200
-    });
+   
 
     var gridNoticias = new PanelNoticias();
 
@@ -58,25 +59,31 @@ Ext.onReady(function(){
             items: [
                     new PanelConsultaCiudades({
                         title: "Importaciones Marítimas",
-                        "impoexpo": "<?=utf8_encode(Constantes::IMPO)?>",
-                        "transporte": "<?=utf8_encode(Constantes::MARITIMO)?>"
+                        "impoexpo": "<?=(Constantes::IMPO)?>",
+                        "transporte": "<?=(Constantes::MARITIMO)?>"
                     }),
 
                     new PanelConsultaCiudades({
                         title: "Importaciones Aéreas",
-                        "impoexpo": "<?=utf8_encode(Constantes::IMPO)?>",
-                        "transporte": "<?=utf8_encode(Constantes::AEREO)?>"
+                        "impoexpo": "<?=(Constantes::IMPO)?>",
+                        "transporte": "<?=(Constantes::AEREO)?>"
                     }),
                     new PanelConsultaCiudades({
                         title: "Exportaciones Marítimas",
-                        "impoexpo": "<?=utf8_encode(Constantes::EXPO)?>",
-                        "transporte": "<?=utf8_encode(Constantes::MARITIMO)?>"
+                        "impoexpo": "<?=(Constantes::EXPO)?>",
+                        "transporte": "<?=(Constantes::MARITIMO)?>"
                     }),
                     new PanelConsultaCiudades({
                         title: "Exportaciones Aéreas",
-                        "impoexpo": "<?=utf8_encode(Constantes::EXPO)?>",
-                        "transporte": "<?=utf8_encode(Constantes::AEREO)?>"
+                        "impoexpo": "<?=(Constantes::EXPO)?>",
+                        "transporte": "<?=(Constantes::AEREO)?>"
                     }),
+                    new PanelConsultaCiudades({
+                        title: "OTM/DTA",
+                        "impoexpo": "<?=(Constantes::IMPO)?>",
+                        "transporte": "<?=(Constantes::TERRESTRE)?>"
+                    }),
+                    
                 <?
                 //include_partial("formAduana", array("opcion"=>$opcion));
                 ?>
@@ -85,7 +92,12 @@ Ext.onReady(function(){
                 include_partial("formSeguros", array("opcion"=>$opcion));
                 ?>
                 ,
-                archivosMugre
+                new PanelArchivos({
+                    folder: "<?=base64_encode("Tarifario".DIRECTORY_SEPARATOR."ArchivosAdicionales")?>",
+                    closable: true,
+                    title: "Archivos",
+                    height: 200
+                })
 
             ]
         },

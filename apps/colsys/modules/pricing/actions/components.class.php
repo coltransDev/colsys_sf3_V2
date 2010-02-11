@@ -52,13 +52,7 @@ class pricingComponents extends sfComponents
 	}
 	
 	
-	/*
-	* Muestra la informacion del panel de cargas nacionales
-	* @author: Andres Botero 
-	*/
-	public function executePanelCargasNacionales(){
-		
-	}
+	
 	
 	/*
 	* Muestra información como deposito, liberacion o creditoen la parte 
@@ -228,6 +222,28 @@ class pricingComponents extends sfComponents
             $this->recargos[$key]["c_ca_concepto"] = utf8_encode( $this->recargos[$key]["c_ca_concepto"] );
         }
 	}
+
+    /***************************************************************************
+    *
+    *   Creación y edición de trayectos
+    *
+    ***************************************************************************/
+
+    /*
+	* Muestra la lista de trayectos
+	* @author: Andres Botero
+	*/
+    public function executePanelTrayecto(){
+
+    }
+
+    /*
+	* Permite crear y editar trayectos
+	* @author: Andres Botero
+	*/
+    public function executePanelTrayectoWindow(){
+
+    }
 		
 }
 ?>

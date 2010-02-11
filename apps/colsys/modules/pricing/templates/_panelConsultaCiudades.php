@@ -1,3 +1,6 @@
+<?
+
+?>
 <script type="text/javascript">
 
 PanelConsultaCiudades = function( config ){
@@ -24,25 +27,51 @@ PanelConsultaCiudades = function( config ){
         root: new Ext.tree.AsyncTreeNode()
         ,
         listeners:  {
-             click : this.onClickHandler
+             click : this.onClick
+             <?
+             if( !$readOnly ){
+             ?>
+             ,contextmenu: this.onContextMenu
+             <?
+             }
+             ?>
         }
     });
-
-
-
-
 }
 
 Ext.extend(PanelConsultaCiudades, Ext.tree.TreePanel, {
-    onClickHandler: function(n){
+    onClick: function(n){
         //var sn = this.selModel.selNode || {}; // selNode is null on initial selection
-        if( n.leaf ){  // ignore clicks on folders
-            var nodeoptions = n.id.split("_");
-            var opcion = nodeoptions[0];
-            var impoexpo = nodeoptions[1];
-            var transporte = nodeoptions[2];
-            var modalidad = nodeoptions[3];
+        if( n.leaf ){  // ignore clicks on folders           
+            //var nodeoptions = n.id.split("_");
+            var trafico = n.attributes.trafico;
+            var opcion = n.attributes.opcion;
+            var impoexpo = n.attributes.impoexpo;
+            var transporte = n.attributes.transporte;
+            var modalidad = n.attributes.modalidad;
+            var idtrafico = n.attributes.idtrafico;
 
+            //Coloca un identificador unico para evitar que el componente se cree dos veces
+            var idcomponent = opcion+"_"+impoexpo+"_"+transporte+"_"+modalidad;
+            if( typeof(n.attributes.idtrafico)!="undefined" ){
+                var idtrafico = n.attributes.idtrafico;
+                idcomponent+="_"+idtrafico;
+            }else{
+                var idtrafico = "";
+            }
+
+            if( typeof(n.attributes.idciudad)!="undefined" ){
+                var idciudad = n.attributes.idciudad;
+                var idlinea = "";
+                idcomponent+="_"+idciudad;
+            }
+
+            if( typeof(n.attributes.idlinea)!="undefined" ){
+                var idciudad = "";
+                var idlinea = n.attributes.idlinea;
+                idcomponent+="_"+idlinea;
+            }
+            
             if( impoexpo=="impo" ){
                 impoexpo = "<?=Constantes::IMPO?>";
             }
@@ -51,28 +80,46 @@ Ext.extend(PanelConsultaCiudades, Ext.tree.TreePanel, {
                 impoexpo = "<?=Constantes::EXPO?>";
             }
 
-            if( nodeoptions[4] ){
-                idtrafico = nodeoptions[4];
-                idcomponent+="_"+idtrafico;
+            
+            if( opcion=="files"||opcion=="admtraf" ){
+                /*
+                * Todo debe quedar de esta manera
+                **/                
+                if( Ext.getCmp('tab-panel').findById(idcomponent) ){
+                    Ext.getCmp('tab-panel').setActiveTab(idcomponent);
+                }else{
+
+                    switch( opcion ){
+                        case "files":
+                            var folder = Base64.encode("Tarifario/"+impoexpo.substring(0, 1)+"_"+transporte.substring(0, 1)+"_"+modalidad+"_"+idtrafico);
+                            var newComponent = new PanelArchivos({id:idcomponent,
+                                                                 folder:folder,
+                                                                 title:"Archivos "+impoexpo.substring(0, 4)+"»"+transporte+"»"+modalidad+"»"+trafico,
+                                                                 closable: true});
+                            break;
+                        case "admtraf":
+                            /*
+                            * Se muestran la administracion de trayectos para el pais seleccionado
+                            */
+                            var newComponent = new PanelTrayecto({id:idcomponent,
+                                                                  impoexpo: impoexpo,
+                                                                  idtrafico: idtrafico,
+                                                                  transporte:transporte,
+                                                                  modalidad: modalidad,
+                                                                  title:"Trayectos "+impoexpo.substring(0, 4)+"»"+transporte+"»"+modalidad+"»"+trafico,
+                                                                  closable: true
+                                                                 });
+                            break;
+                    }
+
+                
+                    Ext.getCmp('tab-panel').add(newComponent);
+                    Ext.getCmp('tab-panel').setActiveTab(newComponent);
+                }
+                return 0;
             }else{
-                    idtrafico = "";
-            }
 
-            if( opcion=="files" ){
-
-                var folder = Base64.encode("Tarifario/"+impoexpo.substring(0, 1)+"_"+transporte.substring(0, 1)+"_"+modalidad+"_"+idtrafico);
-
-
-                var newComponent = new PanelArchivos({folder:folder,
-                                                     title:"Archivos "+impoexpo.substring(0, 4)+"»"+transporte+"»"+modalidad+"»"+idtrafico,
-                                                     closable: true});
-
-
-                Ext.getCmp('tab-panel').add(newComponent);
-                Ext.getCmp('tab-panel').setActiveTab(newComponent);
-            }else{
-
-                switch( opcion ){
+                switch( opcion ){                    
                     case "recgen":
                         /*
                         * Se muestran los recargos generales para el pais seleccionado
@@ -94,26 +141,6 @@ Ext.extend(PanelConsultaCiudades, Ext.tree.TreePanel, {
                         ?>
                         var url = '<?=url_for( $url )?>';
                         break;
-                    case "admtraf":
-                        /*
-                        * Se muestran la administracion de trayectos para el pais seleccionado
-                        */
-                        <?
-                        $url = "pricing/adminTrayectos";
-
-                        ?>
-                        var url = '<?=url_for( $url )?>';
-                        break;
-                    case "files":
-                        /*
-                        * Se muestran la administracion de trayectos para el pais seleccionado
-                        */
-                        <?
-                        $url = "pricing/archivosPais";
-
-                        ?>
-                        var url = '<?=url_for( $url )?>';
-                        break;
                     default:
                         /*
                         *  Se muestra una grilla con la información de fletes
@@ -127,24 +154,7 @@ Ext.extend(PanelConsultaCiudades, Ext.tree.TreePanel, {
                         break;
                 }
 
-                var idcomponent = opcion+"_"+impoexpo+"_"+transporte+"_"+modalidad
-
-
-
-                if( nodeoptions[5] ){
-                    if( opcion=="fletesciudad" ){
-                        var idciudad = nodeoptions[5];
-                        var idlinea = "";
-                    }
-
-                    if( opcion=="fleteslinea" || opcion=="reclin" ){
-                        var idciudad = "";
-                        var idlinea = nodeoptions[5];
-                    }
-
-                    idcomponent+="_"+nodeoptions[5];
-
-                }
+                
 
 
                 if( Ext.getCmp('tab-panel').findById(idcomponent)!=null ){
@@ -178,6 +188,43 @@ Ext.extend(PanelConsultaCiudades, Ext.tree.TreePanel, {
         }else{
             n.expand();
         }
+    },
+
+    onContextMenu: function( node,  e ) {
+        if(!this.menu){ // create context menu on first right click
+            this.menu = new Ext.menu.Menu({
+            enableScrolling : false,
+            items: [{
+                        text: 'Agregar trayecto',
+                        iconCls: 'add',
+                        scope:this,
+                        handler: function(){
+                              this.crearTrayecto( node );
+                        }
+                    }]
+            });        
+        }
+        e.stopEvent();        
+        this.menu.showAt(e.getXY());
+    },
+
+    crearTrayecto: function( n ){
+
+        
+        this.win = new PanelTrayectoWindow();        
+
+        this.win.show();
+        var fp = Ext.getCmp("trayecto-form");
+        fp.getForm().findField("impoexpo").disable();
+        fp.getForm().findField("transporte").disable();
+        fp.getForm().findField("modalidad").disable();
+        if( n.attributes.impoexpo=="expo" ){
+            fp.getForm().findField("impoexpo").setValue( '<?=Constantes::EXPO?>' );
+        }else{
+            fp.getForm().findField("impoexpo").setValue( '<?=Constantes::IMPO?>' );
+        }
+        fp.getForm().findField("transporte").setValue( n.attributes.transporte );
+        fp.getForm().findField("modalidad").setValue( n.attributes.modalidad );        
     }
     
 });

@@ -11,8 +11,14 @@
 		?>
 		{
 			text:'<?=($linea['p_ca_sigla']?$linea['p_ca_sigla']." - ":"").$linea['id_ca_nombre']?>',
-			id:'fleteslinea_<?=$impoexpo?>_<?=$transporte?>_<?=$modalidad?>_<?=$idtrafico?>_<?=$linea['p_ca_idproveedor']?>',
-			leaf:true
+			leaf:true,
+            opcion: 'fleteslinea',
+            trafico: '<?=$trafico->getCaNombre()?>',
+            impoexpo: '<?=$impoexpo?>',
+            transporte: '<?=$transporte?>',
+            modalidad: '<?=$modalidad?>',
+            idtrafico: '<?=$idtrafico?>',
+            idlinea: '<?=$linea['p_ca_idproveedor']?>'
 		}
 		<?
 		}
@@ -34,9 +40,16 @@
 			}
 		?>
 		{
-			text:'<?=$ciudad['c_ca_ciudad']?>',
-			id:'fletesciudad_<?=$impoexpo?>_<?=$transporte?>_<?=$modalidad?>_<?=$idtrafico?>_<?=$ciudad['c_ca_idciudad']?>',
-			leaf:true
+			text:'<?=$ciudad['c_ca_ciudad']?>',			
+			leaf:true,
+            opcion: 'fletesciudad',
+            trafico: '<?=$trafico->getCaNombre()?>',
+            impoexpo: '<?=$impoexpo?>',
+            transporte: '<?=$transporte?>',
+            modalidad: '<?=$modalidad?>',
+            idtrafico: '<?=$idtrafico?>',
+            idciudad: '<?=$ciudad['c_ca_idciudad']?>'
+           
 		}
 		<?
 		}
@@ -49,17 +62,28 @@ if( count($ciudades)*count($lineas)<=16){ //Si se muestran muchos registros el b
 ,
 {
 	text:'Todas las Ciudades',
-	id:'fletes_<?=$impoexpo."_".$transporte."_".$modalidad."_".$idtrafico?>',		
-	leaf:true
+    leaf:true,
+    opcion: 'fletes',
+    trafico: '<?=$trafico->getCaNombre()?>',
+    impoexpo: '<?=$impoexpo?>',
+    transporte: '<?=$transporte?>',
+    modalidad: '<?=$modalidad?>',
+    idtrafico: '<?=$idtrafico?>'
 }
 <?
 }
 ?>
 ,
 {
-	text:'Recargos por Ciudad',
-	id:'recgen_<?=$impoexpo."_".$transporte."_".$modalidad."_".$idtrafico?>',		
-	leaf:true
+	text:'Recargos por Ciudad',	
+	leaf:true,
+    opcion: 'recgen',
+    trafico: '<?=$trafico->getCaNombre()?>',
+    impoexpo: '<?=$impoexpo?>',
+    transporte: '<?=$transporte?>',
+    modalidad: '<?=$modalidad?>',
+    idtrafico: '<?=$idtrafico?>'
+    
 }
 
 <?
@@ -74,25 +98,36 @@ if( $transporte==Constantes::MARITIMO ){
 
 ,
 {
-	text:'Recargos por <?=$linea?>',
-	id:'reclin_<?=$impoexpo."_".$transporte."_".$modalidad."_".$idtrafico?>',		
-	leaf:true
+	text:'Recargos por <?=$linea?>',	
+	leaf:true,
+    opcion: 'reclin',
+    trafico: '<?=$trafico->getCaNombre()?>',
+    impoexpo: '<?=$impoexpo?>',
+    transporte: '<?=$transporte?>',
+    modalidad: '<?=$modalidad?>',
+    idtrafico: '<?=$idtrafico?>'
 }
 ,
 {
-	text:'Trayectos (T.T., Freq.)',
-	id:'admtraf_<?=$impoexpo."_".$transporte."_".$modalidad."_".$idtrafico?>',		
-	leaf:true
+	text:'Trayectos',	
+	leaf:true,
+    opcion: 'admtraf',
+    trafico: '<?=$trafico->getCaNombre()?>',
+    impoexpo: '<?=$impoexpo?>',
+    transporte: '<?=$transporte?>',
+    modalidad: '<?=$modalidad?>',
+    idtrafico: '<?=$idtrafico?>'
 },
 {
-	text:'Itinerarios',
-	id:'itiner_<?=$impoexpo."_".$transporte."_".$modalidad."_".$idtrafico?>',
-	leaf:true
-},
-{
-	text:'Archivos del pais',
-	id:'files_<?=$impoexpo."_".$transporte."_".$modalidad."_".$idtrafico?>',		
-	leaf:true
+	text:'Archivos del pais',	
+	leaf:true,
+    opcion: 'files',
+    trafico: '<?=$trafico->getCaNombre()?>',
+    impoexpo: '<?=$impoexpo?>',
+    transporte: '<?=$transporte?>',
+    modalidad: '<?=$modalidad?>',
+    idtrafico: '<?=$idtrafico?>'
+    
 }	
 ]
 <?

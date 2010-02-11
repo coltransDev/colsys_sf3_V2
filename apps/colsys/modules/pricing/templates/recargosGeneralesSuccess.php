@@ -510,7 +510,9 @@ function guardarRecargosGenerales(){
 						
 		changes['id']=r.id;
 		changes['idciudad']=r.data.idciudad;										
- 	    changes['idrecargo']=r.data.idrecargo;											
+ 	    changes['idrecargo']=r.data.idrecargo;	
+        changes['idmoneda']=r.data.idmoneda;
+
 		
         //Da formato a las fechas antes de enviarlas 
 		if(changes['inicio']){
