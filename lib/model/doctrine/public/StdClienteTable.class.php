@@ -8,14 +8,15 @@ class StdClienteTable extends Doctrine_Table
 	*/
 	public static function vencimientoEstado($empresa, $estado, $idcliente){
 
+            $query = "select cl.ca_idcliente from tb_clientes cl ";
             if ($empresa == 'Coltrans') {
-                $query = "select act.ca_idcliente from ( select ca_idcliente, max(ca_fchcreado) as ca_fchcreado from (select ca_idcliente, ca_fchcreado from tb_inoclientes_sea UNION select ca_idcliente, ca_fchcreado from tb_inoclientes_air) cl group by ca_idcliente ) act";
+                $query.= "LEFT JOIN ( select ca_idcliente, max(ca_fchcreado) as ca_fchcreado from (select ca_idcliente, ca_fchcreado from tb_inoclientes_sea UNION select ca_idcliente, ca_fchcreado from tb_inoclientes_air) cl group by ca_idcliente ) act ON (cl.ca_idcliente = act.ca_idcliente)";
             } else if ($empresa == 'Colmas'){
-                $query = "select act.ca_idcliente from ( select ca_idcliente, max(ca_fchcreado) as ca_fchcreado from (select ca_idcliente, ca_fchcreado from tb_expo_maestra UNION select ca_idcliente, ca_fchcreado from tb_brk_maestra) cl group by ca_idcliente ) act";
+                $query.= "LEFT JOIN ( select ca_idcliente, max(ca_fchcreado) as ca_fchcreado from (select ca_idcliente, ca_fchcreado from tb_expo_maestra UNION select ca_idcliente, ca_fchcreado from tb_brk_maestra) cl group by ca_idcliente ) act ON (cl.ca_idcliente = act.ca_idcliente)";
             }
-            $query.= " LEFT OUTER JOIN ( select ca_idcliente, max(ca_fchestado) as ca_fchestado from tb_stdcliente where ca_empresa = '$empresa' group by ca_idcliente ) ult ON (act.ca_idcliente = ult.ca_idcliente)";
-            $query.= " LEFT OUTER JOIN ( select ca_idcliente, ca_fchestado, ca_estado from tb_stdcliente where ca_empresa= '$empresa' ) std ON (std.ca_idcliente = ult.ca_idcliente and std.ca_fchestado = ult.ca_fchestado)";
-            $query.= " where act.ca_fchcreado <= to_date(date_part('year',now())::int-1||'-'||date_part('month',now())||'-'||date_part('day',now()),'YYYY-MM-DD')  and std.ca_estado = '$estado' ";
+            $query.= " INNER JOIN ( select ca_idcliente, max(ca_fchestado) as ca_fchestado from tb_stdcliente where ca_empresa = '$empresa' group by ca_idcliente ) ult ON (cl.ca_idcliente = ult.ca_idcliente)";
+            $query.= " INNER JOIN ( select ca_idcliente, ca_fchestado, ca_estado from tb_stdcliente where ca_empresa= '$empresa' ) std ON (std.ca_idcliente = ult.ca_idcliente and std.ca_fchestado::text = ult.ca_fchestado::text)";
+            $query.= " where (act.ca_fchcreado IS NULL or act.ca_fchcreado::date <= to_date(date_part('year',now())::int-1||'-'||date_part('month',now())||'-'||date_part('day',now()),'YYYY-MM-DD')) and std.ca_estado = '$estado'::text ";
 
             if ($idcliente != null){
                 $query.= "and act.ca_idcliente = $idcliente";
