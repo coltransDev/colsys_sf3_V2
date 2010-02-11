@@ -56,11 +56,11 @@ switch($action){
 		$button[$i]["link"]= "reportesNeg/consultaReporte?id=".$this->getRequestParameter("id").$opcion;
 		$i++;
 		
-		$button[$i]["name"]="Email ";
-		$button[$i]["tooltip"]="Enviar la cotizaci&oacute;n por e-mail";
+		$button[$i]["name"]="Notificar";
+		$button[$i]["tooltip"]="Envia una notificación a las personas relacionadas en el reporte para que lo revisen";
 		$button[$i]["image"]="22x22/email.gif";
-		$button[$i]["link"]= "#";
-		$button[$i]["onClick"]= "showEmailForm()";
+		$button[$i]["link"]= "/reportesNeg/enviarNotificacion/idreporte/".$this->getRequestParameter("id")."/token/".md5(time());
+
         $i++;		
 		
 		break;		
