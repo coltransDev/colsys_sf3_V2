@@ -310,8 +310,8 @@ PanelFletePorTrayecto = function( config ){
 			sortable: false,
             hideable: false,
 			groupable: false,
-			dataIndex: 'aplicacion'
-			//editor: <? //include_component("widgets", "aplicaciones" ,array("id"=>"", "transporte"=>$transporte ))?>
+			dataIndex: 'aplicacion',
+			editor: <?=include_component("widgets", "emptyCombo" ,array("id"=>""))?>
 
 
 		},		
@@ -333,8 +333,8 @@ PanelFletePorTrayecto = function( config ){
             hideable: false,
 			groupable: false,
             hidden: mostrarMinima,
-			dataIndex: 'aplicacion_min'
-			//editor: <? //include_component("widgets", "aplicaciones" ,array("id"=>"", "transporte"=>$transporte ))?>
+			dataIndex: 'aplicacion_min',
+			editor: <?=include_component("widgets", "emptyCombo" ,array("id"=>""))?>
 
 		},
 		{
@@ -415,7 +415,7 @@ PanelFletePorTrayecto = function( config ){
             var record = store.getAt(rowIndex);
             var field = this.getDataIndex(colIndex);
 
-            if( record.data.tipo=="recargoxciudad" ){
+            if( record.data.tipo=="recargoxciudad" ){                
                 return false;
             }
 
@@ -518,6 +518,43 @@ Ext.extend(PanelFletePorTrayecto, Ext.grid.EditorGridPanel, {
                 this.storeConceptos.setBaseParam('tipo', '<?=Constantes::RECARGO_EN_ORIGEN?>');
             }
             this.storeConceptos.load();
+        }
+
+        if( e.field=="aplicacion" || e.field=="aplicacion_min" ){
+            var dataAereo = [
+                <?
+                $i=0;
+                foreach( $aplicacionesAereo as $aplicacion ){
+                    if( $i++!=0){
+                        echo ",";
+                    }
+                ?>
+                    ['<?=$aplicacion->getCaValor()?>']
+                <?
+                }
+                ?>
+            ];
+
+            var dataMaritimo = [
+                <?
+                $i=0;
+                foreach( $aplicacionesMaritimo as $aplicacion ){
+                    if( $i++!=0){
+                        echo ",";
+                    }
+                ?>
+                    ['<?=$aplicacion->getCaValor()?>']
+                <?
+                }
+                ?>
+            ];
+
+            var ed = this.colModel.getCellEditor(e.column, e.row);            
+            if( this.transporte=="<?=Constantes::AEREO?>" ){
+                ed.field.store.loadData( dataAereo );
+            }else{
+                ed.field.store.loadData( dataMaritimo );
+            }
         }
     },
 

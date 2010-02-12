@@ -257,7 +257,8 @@ class pricingComponents extends sfComponents
 	* @author: Andres Botero
 	*/
     public function executePanelFletesPorTrayecto(){
-        
+        $this->aplicacionesAereo = ParametroTable::retrieveByCaso("CU064", null, Constantes::AEREO );
+		$this->aplicacionesMaritimo = ParametroTable::retrieveByCaso("CU064", null, Constantes::MARITIMO );
     }
 }
 ?>
