@@ -8,7 +8,7 @@
 ?>
 <script type="text/javascript">
 
-PanelFletePorTrayecto = function( config ){
+PanelFletesPorTrayecto = function( config ){
     Ext.apply(this, config);
     
     
@@ -371,7 +371,7 @@ PanelFletePorTrayecto = function( config ){
         this.tbar = null;
     }
 
-    PanelFletePorTrayecto.superclass.constructor.call(this, {
+    PanelFletesPorTrayecto.superclass.constructor.call(this, {
 
         clicksToEdit: 1,
         loadMask: {msg:'Cargando...'},
@@ -448,7 +448,7 @@ PanelFletePorTrayecto = function( config ){
 
 }
 
-Ext.extend(PanelFletePorTrayecto, Ext.grid.EditorGridPanel, {
+Ext.extend(PanelFletesPorTrayecto, Ext.grid.EditorGridPanel, {
     
 
     /*
@@ -1034,7 +1034,7 @@ Ext.extend(PanelFletePorTrayecto, Ext.grid.EditorGridPanel, {
                         params["title"]+=fp.getForm().findField("fecha-cambio").getRawValue()+" "+horacambio;
                         params["fechacambio"] = fechacambio;
                         params["horacambio"] = horacambio;
-                        var newComponent = new PanelFletePorTrayecto(
+                        var newComponent = new PanelFletesPorTrayecto(
                                                                     params
                                                                     );
                         Ext.getCmp('tab-panel').add(newComponent);

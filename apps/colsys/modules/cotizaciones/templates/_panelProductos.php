@@ -1116,7 +1116,7 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
         modalidad = record.data.modalidad;
         idlinea = record.data.idlinea;
 
-        var newComponent = new PanelFletePorTrayecto({
+        var newComponent = new PanelFletesPorTrayecto({
                                                           impoexpo: impoexpo,
                                                           idtrafico: idtrafico,
                                                           trafico: idtrafico,

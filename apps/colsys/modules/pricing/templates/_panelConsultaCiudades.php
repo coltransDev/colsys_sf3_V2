@@ -109,7 +109,7 @@ Ext.extend(PanelConsultaCiudades, Ext.tree.TreePanel, {
                             /*
                             * Se muestran la administracion de trayectos para el pais seleccionado
                             */                           
-                            var newComponent = new PanelFletePorTrayecto({id:idcomponent,
+                            var newComponent = new PanelFletesPorTrayecto({id:idcomponent,
                                                                   impoexpo: impoexpo,
                                                                   idtrafico: idtrafico,
                                                                   trafico: trafico,
