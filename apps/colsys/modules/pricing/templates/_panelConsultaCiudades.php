@@ -27,14 +27,8 @@ PanelConsultaCiudades = function( config ){
         root: new Ext.tree.AsyncTreeNode()
         ,
         listeners:  {
-             click : this.onClick
-             <?
-             if( !$readOnly ){
-             ?>
-             ,contextmenu: this.onContextMenu
-             <?
-             }
-             ?>
+             click : this.onClick,
+             contextmenu: this.onContextMenu
         }
     });
 }
@@ -60,7 +54,7 @@ Ext.extend(PanelConsultaCiudades, Ext.tree.TreePanel, {
                 var idtrafico = "";
             }
 
-            if( typeof(n.attributes.idciudad)!="undefined" ){
+            if( typeof(n.attributes.idciudad)!="undefined" ){                
                 var idciudad = n.attributes.idciudad;
                 var idlinea = "";
                 idcomponent+="_"+idciudad;
@@ -81,7 +75,7 @@ Ext.extend(PanelConsultaCiudades, Ext.tree.TreePanel, {
             }
 
             
-            if( opcion=="files"||opcion=="admtraf" ){
+            if( opcion!="recgen" && opcion!="reclin" ){
                 /*
                 * Todo debe quedar de esta manera
                 **/                
@@ -109,6 +103,26 @@ Ext.extend(PanelConsultaCiudades, Ext.tree.TreePanel, {
                                                                   title:"Trayectos "+impoexpo.substring(0, 4)+"»"+transporte+"»"+modalidad+"»"+trafico,
                                                                   closable: true
                                                                  });
+                            break;
+                        default:
+
+                            /*
+                            * Se muestran la administracion de trayectos para el pais seleccionado
+                            */                           
+                            var newComponent = new PanelFletePorTrayecto({id:idcomponent,
+                                                                  impoexpo: impoexpo,
+                                                                  idtrafico: idtrafico,
+                                                                  trafico: trafico,
+                                                                  transporte:transporte,
+                                                                  modalidad: modalidad,
+                                                                  idciudad: idciudad,
+                                                                  idlinea: idlinea,
+                                                                  title: impoexpo.substring(0, 4)+"»"+transporte+"»"+modalidad+"»"+trafico,
+                                                                  closable: true,
+                                                                  readOnly: this.readOnly
+                                                                 });
+                            
+
                             break;
                     }
 
@@ -141,17 +155,8 @@ Ext.extend(PanelConsultaCiudades, Ext.tree.TreePanel, {
                         ?>
                         var url = '<?=url_for( $url )?>';
                         break;
-                    default:
-                        /*
-                        *  Se muestra una grilla con la información de fletes
-                        *  del trafico seleccionado
-                        */
-                        <?
-                        $url = "pricing/grillaPorTrafico";
-
-                        ?>
-                        var url = '<?=url_for( $url )?>';
-                        break;
+                    
+                        
                 }
 
                 
@@ -190,22 +195,24 @@ Ext.extend(PanelConsultaCiudades, Ext.tree.TreePanel, {
         }
     },
 
-    onContextMenu: function( node,  e ) {
-        if(!this.menu){ // create context menu on first right click
-            this.menu = new Ext.menu.Menu({
-            enableScrolling : false,
-            items: [{
-                        text: 'Agregar trayecto',
-                        iconCls: 'add',
-                        scope:this,
-                        handler: function(){
-                              this.crearTrayecto( node );
-                        }
-                    }]
-            });        
+    onContextMenu: function( node,  e ) {        
+        if( !this.readOnly ){
+            if(!this.menu){ // create context menu on first right click
+                this.menu = new Ext.menu.Menu({
+                enableScrolling : false,
+                items: [{
+                            text: 'Agregar trayecto',
+                            iconCls: 'add',
+                            scope:this,
+                            handler: function(){
+                                  this.crearTrayecto( node );
+                            }
+                        }]
+                });
+            }
+            e.stopEvent();
+            this.menu.showAt(e.getXY());
         }
-        e.stopEvent();        
-        this.menu.showAt(e.getXY());
     },
 
     crearTrayecto: function( n ){

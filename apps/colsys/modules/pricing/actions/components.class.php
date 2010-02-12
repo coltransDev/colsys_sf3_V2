@@ -9,7 +9,8 @@
  * @version    SVN: $Id: actions.class.php 2692 2006-11-15 21:03:55Z fabien $
  */
 class pricingComponents extends sfComponents
-{ 
+{
+    const RUTINA = "61";
  	/*
 	* Muestra un panel con noticias 
 	*/
@@ -244,6 +245,19 @@ class pricingComponents extends sfComponents
     public function executePanelTrayectoWindow(){
 
     }
-		
+
+    /***************************************************************************
+    *
+    *   Tarifario de fletes
+    *
+    ***************************************************************************/
+
+    /*
+	* Edicion de tarifas por trayecto y sus respuectivos recargos.
+	* @author: Andres Botero
+	*/
+    public function executePanelFletesPorTrayecto(){
+        
+    }
 }
 ?>

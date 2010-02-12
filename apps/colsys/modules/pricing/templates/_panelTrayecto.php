@@ -136,7 +136,7 @@ PanelTrayecto = function( config ){
        <?
        }else{
        ?>
-           return true;
+           return Ext.grid.ColumnModel.prototype.isCellEditable.call(this, colIndex, rowIndex);
        <?
        }
        ?>

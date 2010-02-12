@@ -14,12 +14,14 @@ include_component("pricing", "panelNoticias");
 
 
 include_component("pricing", "panelTrayectoWindow");
-include_component("pricing", "panelTrayecto", array("readOnly"=>true));
+include_component("pricing", "panelTrayecto", array("readOnly"=>$opcion=="consulta"));
+
+include_component("pricing", "panelFletesPorTrayecto");
 
 //Paneles laterales
-include_component("pricing","panelConsultaCiudades", array("readOnly"=>$opcion=="consulta"));
+include_component("pricing","panelConsultaCiudades");
 
-
+//$opcion="consulta";
 ?>
 <script type="text/javascript">
 
@@ -27,11 +29,15 @@ include_component("pricing","panelConsultaCiudades", array("readOnly"=>$opcion==
 
 Ext.onReady(function(){
         
-   
+    /* Inicializa los tooltips
+    */
+    Ext.QuickTips.init();
+    Ext.apply(Ext.QuickTips.getQuickTip(), {
+       dismissDelay: 200000 //permite que los tips permanezcan por mas tiempo.
+    });
 
-    var gridNoticias = new PanelNoticias();
 
-    var viewport = new Ext.Viewport({
+    new Ext.Viewport({
         layout: 'border',
         items: [
         // create instance immediately
@@ -59,29 +65,34 @@ Ext.onReady(function(){
             items: [
                     new PanelConsultaCiudades({
                         title: "Importaciones Marítimas",
-                        "impoexpo": "<?=(Constantes::IMPO)?>",
-                        "transporte": "<?=(Constantes::MARITIMO)?>"
+                        "impoexpo": "<?=utf8_encode(Constantes::IMPO)?>",
+                        "transporte": "<?=utf8_encode(Constantes::MARITIMO)?>",
+                        "readOnly": <?=$opcion=="consulta"?"true":"false"?>
                     }),
 
                     new PanelConsultaCiudades({
                         title: "Importaciones Aéreas",
-                        "impoexpo": "<?=(Constantes::IMPO)?>",
-                        "transporte": "<?=(Constantes::AEREO)?>"
+                        "impoexpo": "<?=utf8_encode(Constantes::IMPO)?>",
+                        "transporte": "<?=utf8_encode(Constantes::AEREO)?>",
+                        "readOnly": <?=$opcion=="consulta"?"true":"false"?>
                     }),
                     new PanelConsultaCiudades({
                         title: "Exportaciones Marítimas",
-                        "impoexpo": "<?=(Constantes::EXPO)?>",
-                        "transporte": "<?=(Constantes::MARITIMO)?>"
+                        "impoexpo": "<?=utf8_encode(Constantes::EXPO)?>",
+                        "transporte": "<?=utf8_encode(Constantes::MARITIMO)?>",
+                        "readOnly": <?=$opcion=="consulta"?"true":"false"?>
                     }),
                     new PanelConsultaCiudades({
                         title: "Exportaciones Aéreas",
-                        "impoexpo": "<?=(Constantes::EXPO)?>",
-                        "transporte": "<?=(Constantes::AEREO)?>"
+                        "impoexpo": "<?=utf8_encode(Constantes::EXPO)?>",
+                        "transporte": "<?=utf8_encode(Constantes::AEREO)?>",
+                        "readOnly": <?=$opcion=="consulta"?"true":"false"?>
                     }),
                     new PanelConsultaCiudades({
                         title: "OTM/DTA",
-                        "impoexpo": "<?=(Constantes::IMPO)?>",
-                        "transporte": "<?=(Constantes::TERRESTRE)?>"
+                        "impoexpo": "<?=utf8_encode(Constantes::IMPO)?>",
+                        "transporte": "<?=utf8_encode(Constantes::TERRESTRE)?>",
+                        "readOnly": <?=$opcion=="consulta"?"true":"false"?>
                     }),
                     
                 <?
@@ -115,7 +126,7 @@ Ext.onReady(function(){
                 title: 'Acerca de',
                 autoScroll: true
             },
-            gridNoticias
+            new PanelNoticias()
             ]
         })]
     });
@@ -165,6 +176,19 @@ Ext.onReady(function(){
                                                             });
                     Ext.getCmp('tab-panel').add(newComponent);
                     Ext.getCmp('tab-panel').setActiveTab(newComponent);*/
+
+        var newComponent = new PanelFletePorTrayecto({id:'idcomponent',
+                                                                  impoexpo: "Importación",
+                                                                  //idtrafico: "DO-809",
+                                                                  idtrafico: "MX-052",
+                                                                  transporte: "Marítimo",
+                                                                  modalidad: "FCL",
+                                                                  title: "Prueba",
+                                                                  closable: true,
+                                                                  readOnly: <?=$opcion=="consulta"?"true":"false"?> });
+                                                              
+        Ext.getCmp('tab-panel').add(newComponent);
+        Ext.getCmp('tab-panel').setActiveTab(newComponent);                                                       
     });
 
 

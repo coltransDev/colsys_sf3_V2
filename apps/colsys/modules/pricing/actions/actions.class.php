@@ -73,7 +73,7 @@ class pricingActions extends sfActions
     * Retorna un Panel que se coloca en el tab panel principal.
 	* @author: Andres Botero
 	*/
-	public function executeGrillaPorTrafico( $request ){
+	/*public function executeGrillaPorTrafico( $request ){
 		
 		$this->nivel = $this->getUser()->getNivelAcceso( pricingActions::RUTINA );
 		
@@ -183,12 +183,12 @@ class pricingActions extends sfActions
                                     ->addOrderBy("c.ca_concepto")
                                     ->execute();
 
-	}
+	}*/
 	
 	/*
 	* Muestra los trayectos
 	*/
-	public function executeDatosGrillaPorTrafico(){
+	public function executeDatosPanelTrayectoFlete(){
 		
 		$this->nivel = $this->getUser()->getNivelAcceso( pricingActions::RUTINA );
 		
@@ -222,9 +222,16 @@ class pricingActions extends sfActions
         
         $this->forward404Unless($this->trafico);
 
-		//Busqueda historica
-		$timestamp = $this->getRequestParameter("timestamp");
-		
+
+        if( $this->getRequestParameter( "fechacambio" ) ){
+            $fechacambio = str_replace("|","-", $this->getRequestParameter( "fechacambio" ) );
+            $timestamp = strtotime($fechacambio." ".$this->getRequestParameter( "horacambio" ));
+            $this->opcion = "consulta";
+        }else{
+            $timestamp = null;
+        }
+
+        
 		if( $timestamp ){
 			$fchcorte = date( "Y-m-d H:i:s", $timestamp );			
 		}else{
@@ -655,7 +662,7 @@ class pricingActions extends sfActions
 	* Observa los cambios realizados en grillaPorTraficos
 	* @author: Andres Botero
 	*/
-	public function executeObserveGrillaPorTraficos(){
+	public function executeGuardarPanelTrayectoFlete(){
 
         $this->nivel = $this->getUser()->getNivelAcceso( pricingActions::RUTINA );
 
@@ -746,6 +753,7 @@ class pricingActions extends sfActions
 		}
 		
 		if( $tipo=="recargo" ){
+            
 			$minima = $this->getRequestParameter("minima");
 			$idconcepto = $this->getRequestParameter("idconcepto");
 			$idrecargo = $this->getRequestParameter("iditem");
@@ -759,6 +767,7 @@ class pricingActions extends sfActions
 					$flete->save();
 				}
 			}
+           
 			
 			$pricRecargo = Doctrine::getTable("PricRecargoxConcepto")->find(array( $trayecto->getCaIdtrayecto() , $idconcepto , $idrecargo));
 			
@@ -824,7 +833,7 @@ class pricingActions extends sfActions
 		$this->setTemplate("responseTemplate");			
 	}
 	
-	public function executeEliminarRecargoGrillaPorTraficos(){
+	public function executeEliminarPanelTrayectoFlete(){
 		
         $this->nivel = $this->getUser()->getNivelAcceso( pricingActions::RUTINA );
 
@@ -1797,7 +1806,7 @@ class pricingActions extends sfActions
 	* y frecuencia) 
 	* @author: Andres Botero
 	*/
-	public function executeAdminTrayectos( $request ){
+	/*public function executeAdminTrayectos( $request ){
 		
 		$this->nivel = $this->getUser()->getNivelAcceso( pricingActions::RUTINA );
 		
@@ -1835,12 +1844,8 @@ class pricingActions extends sfActions
 		$this->modalidad = $modalidad;
 		$this->transporte = $transporte;
 		$this->idtrafico = $idtrafico;					
-		$this->linea = "";		
-		
-		
-		
-		
-	}
+		$this->linea = "";				
+	}*/
 	
 	/*
 	* Muestra los datos para la administración de trayectos

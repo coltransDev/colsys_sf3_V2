@@ -5,7 +5,7 @@
 * @author: Andres Botero
 */
 
-
+include_component("pricing", "panelFletesPorTrayecto");
 include_component("cotizaciones", "formTrayectoWindow", array("cotizacion"=>$cotizacion) );
 ?>
 
@@ -619,7 +619,8 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
                                 this.ventanaTarifario( this.ctxRecord );
                             }
                         }
-                    },
+                    }
+                    /*,
                     {
                         text: 'Archivos del tarifario',
                         iconCls: 'import',
@@ -629,7 +630,7 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
                                 this.ventanaTarifarioArchivos( this.ctxRecord );
                             }
                         }
-                    }
+                    }*/
                     ,
                     {
                         text: 'Nuevo recargo',
@@ -1094,6 +1095,7 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
     ventanaTarifario : function( record ){
         recordProductos = this.record;
         storeProductos = this.store;
+
         var url = '<?=url_for("pricing/grillaPorTrafico?opcion=consulta")?>';
 
         activeRecord = record;
@@ -1109,34 +1111,37 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
             idtrafico = record.data.tra_destino;
         }
 
-        Ext.Ajax.request({
-            url: url,
-            params: {
-                idtrafico: idtrafico,
-                idciudad: idciudad,
-                idciudad2: idciudad2,
-                transporte: record.data.transporte,
-                impoexpo: record.data.impoexpo,
-                modalidad: record.data.modalidad,
-                idlinea: record.data.idlinea
-            },
-            success: function(xhr) {
-                //alert( xhr.responseText );
-                var newComponent = eval(xhr.responseText);
+        impoexpo = record.data.impoexpo;
+        transporte = record.data.transporte;
+        modalidad = record.data.modalidad;
+        idlinea = record.data.idlinea;
 
-                //Se crea la ventana
-
-                win = new Ext.Window({
-                width       : 800,
-                height      : 460,
-                closeAction :'close',
-                plain       : true,
-
-                items       : [newComponent],
+        var newComponent = new PanelFletePorTrayecto({
+                                                          impoexpo: impoexpo,
+                                                          idtrafico: idtrafico,
+                                                          trafico: idtrafico,
+                                                          transporte: transporte,
+                                                          modalidad: modalidad,
+                                                          idciudad: idciudad,
+                                                          idciudad2: idciudad2,
+                                                          idlinea: idlinea,                                                          
+                                                          closable: false,
+                                                          readOnly: true
+                                                      });
 
 
-                buttons: [
-                    {
+        //Se crea la ventana
+        win = new Ext.Window({
+            width       : 800,
+            height      : 460,
+            closeAction :'close',
+            plain       : true,
+            title       : "Por favor seleccion las tarifas que desea importar",
+            items       : [newComponent],
+
+
+            buttons: [{
+                    
                         text     : 'Importar',
                         handler  : function( ){
                             storePricing = newComponent.store;
@@ -1315,11 +1320,7 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
                 ]
             });
             win.show( );
-            },
-            failure: function() {
-                Ext.Msg.alert("Tab creation failed", "Server communication failure");
-            }
-        });
+            
     },
 
     /*
