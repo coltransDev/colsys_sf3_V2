@@ -21,7 +21,7 @@ foreach( $results as $modalidad=>$grupos ){
                 impoexpo: '<?=$impoexpo?>',
                 transporte: '<?=$transporte?>',
                 modalidad: '<?=$modalidad?>',
-                idtrafico: '99-999',
+                idtrafico: '99-999'
 
 			},
 			
@@ -108,13 +108,9 @@ foreach( $results as $modalidad=>$grupos ){
 					?>					
 				]
 			}
-				
-			
 			<?
 			}
 			?>
-			
-			
 		]
 	}
 <?
