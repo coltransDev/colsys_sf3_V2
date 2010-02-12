@@ -177,7 +177,7 @@ Ext.onReady(function(){
                     Ext.getCmp('tab-panel').add(newComponent);
                     Ext.getCmp('tab-panel').setActiveTab(newComponent);*/
 
-        var newComponent = new PanelFletePorTrayecto({id:'idcomponent',
+        /*var newComponent = new PanelFletePorTrayecto({id:'idcomponent',
                                                                   impoexpo: "Importación",
                                                                   //idtrafico: "DO-809",
                                                                   idtrafico: "MX-052",
@@ -188,7 +188,7 @@ Ext.onReady(function(){
                                                                   readOnly: <?=$opcion=="consulta"?"true":"false"?> });
                                                               
         Ext.getCmp('tab-panel').add(newComponent);
-        Ext.getCmp('tab-panel').setActiveTab(newComponent);                                                       
+        Ext.getCmp('tab-panel').setActiveTab(newComponent);  */
     });
 
 

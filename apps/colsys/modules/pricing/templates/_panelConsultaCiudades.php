@@ -140,34 +140,26 @@ Ext.extend(PanelConsultaCiudades, Ext.tree.TreePanel, {
                         */
                         <?
                         $url = "pricing/recargosGenerales";
-
                         ?>
                         var url = '<?=url_for( $url )?>';
                         break;
-
                     case "reclin":
                         /*
                         * Se muestran los recargos generales para el pais seleccionado
                         */
                         <?
                         $url = "pricing/recargosPorLinea";
-
                         ?>
                         var url = '<?=url_for( $url )?>';
                         break;
-                    
-                        
                 }
-
-                
-
 
                 if( Ext.getCmp('tab-panel').findById(idcomponent)!=null ){
                     Ext.getCmp('tab-panel').activate(idcomponent);
                     //Ext.getCmp('tab-panel').show();
                     return 0;
                 }
-
+                
                 Ext.Ajax.request({
                     url: url,
                     params: {

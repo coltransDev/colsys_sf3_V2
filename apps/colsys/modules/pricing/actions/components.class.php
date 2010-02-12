@@ -92,7 +92,7 @@ class pricingComponents extends sfComponents
 			
 			if( $idtrafico != "99-999" ){
 				$tipo = Constantes::RECARGO_EN_ORIGEN;			
-				$this->titulo = "Recargos x Linea»".substr( $impoexpo ,0 ,4 )."»".$modalidad."»".$this->trafico->getCaNombre();								
+				$this->titulo = "Recargos x Linea»".substr( $impoexpo ,0 ,4 )."»".$modalidad."»".$idtrafico;
 			}else{
 				$tipo = Constantes::RECARGO_LOCAL;	
 				$this->titulo = "Recargos Locales";		

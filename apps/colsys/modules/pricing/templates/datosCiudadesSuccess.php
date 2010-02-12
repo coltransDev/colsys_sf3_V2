@@ -62,8 +62,7 @@ foreach( $results as $modalidad=>$grupos ){
                             impoexpo: '<?=$impoexpo?>',
                             transporte: '<?=$transporte?>',
                             modalidad: '<?=$modalidad?>',
-                            idtrafico: '99-999',
-                            idtrafico: 'Todos los paises',
+                            idtrafico: '99-999',                            
                             idlinea: '<?=$linea["p_ca_idproveedor"]?>'
                         }
                         <?
