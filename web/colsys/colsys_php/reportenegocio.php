@@ -1724,11 +1724,14 @@ elseif (isset($boton)) {                                                       /
                 echo "  <TD Class=invertir COLSPAN=4>11.1 Preferencias del Cliente:<BR><TEXTAREA ID=preferencias_clie NAME='preferencias_clie' WRAP=virtual ROWS=9 COLS=80>".$rs->Value('ca_preferencias_clie')."</TEXTAREA><BR><INPUT TYPE='CHECKBOX' NAME='actualizar_pref' VALUE='true'> Actualizar preferencias en maestra de clientes</TD>";
                 echo "  <TD Class=listar ROWSPAN=2>11.3 Informaciones a:<BR><TABLE WIDTH=100% CELLSPACING=1 CELLPADDING=0 BORDER=0>";
                 $z=0;
-                $emails = explode(",", $rs->Value('ca_confirmar_clie'));
+                $emails = str_replace(" ", "", $rs->Value('ca_confirmar_clie'));
+                $emails = explode(",", $emails);
                 for ($i=1; $i<=11; $i++) {
-                    $cadena = (in_array($contactos[$z],$emails))?"VALUE='".$contactos[$z]."' CHECKED":"";
+                    $contactos[$z] = trim($contactos[$z]);
+                    $cadena = (in_array($contactos[$z],$emails, false))?"VALUE='".$contactos[$z]."' CHECKED":"";
+                    $email = (strlen($contactos[$z])!=0)?trim($contactos[$z]):" ";
                     echo "  <TR>";
-                    echo "    <TD Class=invertir style='vertical-align:bottom;' WIDTH=130><INPUT ID=conf_$z Class=field TYPE='TEXT' NAME='contactos[]' VALUE='".$contactos[$z]."' ONCHANGE='cambiar_email(this);' SIZE=40 MAXLENGTH=50></TD><TD Class=invertir><INPUT ID=email_$z TYPE='CHECKBOX' NAME='confirmar[]' WIDTH=10 ONCHANGE='asignar_email(this);' $cadena></TD>";
+                    echo "    <TD Class=invertir style='vertical-align:bottom;' WIDTH=130><INPUT ID=conf_$z Class=field TYPE='TEXT' NAME='contactos[]' VALUE='$email' ONCHANGE='cambiar_email(this);' SIZE=40 MAXLENGTH=50></TD><TD Class=invertir><INPUT ID=email_$z TYPE='CHECKBOX' NAME='confirmar[]' WIDTH=10 ONCHANGE='asignar_email(this);' $cadena></TD>";
                     echo "  </TR>";
                     $z++;
                 }
@@ -2455,7 +2458,7 @@ elseif (isset($boton)) {                                                       /
 elseif (isset($accion)) {                                                       // Switch que evalua cual botòn de comando fue pulsado por el usuario
     if ($accion == 'Guardar Modificación' or $accion == 'Nueva Versión' or $accion == 'Guardar' or $accion == 'Borrador' or $accion == 'Reporte Nuevo') {
         $idconcliente = (strlen($idconcliente)==0)?0:$idconcliente;
-        $contactos = (isset($contactos))?implode(",",array_filter($contactos, "vacios")):"";           // Retira las posiciones en blanco del arreglo
+        $contactos = (isset($contactos))?str_replace(" ","",implode(",",array_filter($contactos, "vacios"))):"";           // Retira las posiciones en blanco del arreglo
         if (isset($actualizar_pref)) {
             $comando = "update tb_clientes set ca_preferencias = '$preferencias_clie', ";
             $comando.= "ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usuactualizado = '$usuario' ";
@@ -2482,11 +2485,11 @@ elseif (isset($accion)) {                                                       
         $idproveedor = (isset($idproveedor))?implode("|",array_filter($idproveedor, "vacios")):"";       // Retira las posiciones en blanco del arreglo
         $orden_prov = (isset($orden_prov))?implode("|",array_filter($orden_prov, "vacios")):"";         // Retira las posiciones en blanco del arreglo
         $incoterms = (isset($incoterms))?implode("|",array_filter($incoterms, "vacios")):"";         // Retira las posiciones en blanco del arreglo
-        $confirmar = (isset($confirmar))?implode(",",array_filter($confirmar, "vacios")):"";           // Retira las posiciones en blanco del arreglo
+        $confirmar = (isset($confirmar))?str_replace(" ","",implode(",",array_filter($confirmar, "vacios"))):""; // Retira las posiciones en blanco del arreglo
         $continuacion_conf = (isset($econt))?implode(",",array_filter($econt, "vacios")):"";           // Retira las posiciones en blanco del arreglo
     }else if ($accion == 'Crear Reporte AG') {
             $idconcliente = (strlen($idconcliente)==0)?0:$idconcliente;
-            $contactos = (isset($contactos))?implode(",",array_filter($contactos, "vacios")):"";           // Retira las posiciones en blanco del arreglo
+            $contactos = (isset($contactos))?str_replace(" ","",implode(",",array_filter($contactos, "vacios"))):"";           // Retira las posiciones en blanco del arreglo
             if (!$rs->Open("select fun_confirmarcli($idconcliente, '$contactos', '$usuario')")) {
                 echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                 echo "<script>document.location.href = 'reportenegocio.php';</script>";
@@ -2503,7 +2506,7 @@ elseif (isset($accion)) {                                                       
             $idproveedor = (isset($idproveedor))?implode("|",array_filter($idproveedor, "vacios")):"";       // Retira las posiciones en blanco del arreglo
             $orden_prov = (isset($orden_prov))?implode("|",array_filter($orden_prov, "vacios")):"";         // Retira las posiciones en blanco del arreglo
             $incoterms = (isset($incoterms))?implode("|",array_filter($incoterms, "vacios")):"";         // Retira las posiciones en blanco del arreglo
-            $confirmar = (isset($confirmar))?implode(",",array_filter($confirmar, "vacios")):"";           // Retira las posiciones en blanco del arreglo
+            $confirmar = (isset($confirmar))?str_replace(" ","",implode(",",array_filter($confirmar, "vacios"))):""; // Retira las posiciones en blanco del arreglo
             $modalidad = (isset($modalidad))?$modalidad:"";
             $repnotify = (isset($repnotify))?$repnotify:0;
         }
@@ -2938,7 +2941,6 @@ elseif (isset($accion)) {                                                       
                         exit;
                     }
                 }else {
-
                     if (!$rs->Open("insert into tb_reportes (ca_idreporte, ca_fchreporte, ca_consecutivo, ca_version, ca_idcotizacion, ca_origen, ca_destino, ca_impoexpo, ca_fchdespacho, ca_idagente, ca_incoterms, ca_mercancia_desc, ca_mcia_peligrosa, ca_idproveedor, ca_orden_prov, ca_idconcliente, ca_orden_clie, ca_confirmar_clie, ca_idconsignatario, ca_informar_cons, ca_idnotify, ca_informar_noti, ca_idmaster, ca_informar_mast, ca_notify, ca_idrepresentante, ca_informar_repr, ca_transporte, ca_modalidad, ca_colmas, ca_seguro, ca_liberacion, ca_tiempocredito, ca_preferencias_clie, ca_instrucciones, ca_idlinea, ca_idconsignar, ca_idbodega, ca_mastersame, ca_continuacion, ca_continuacion_dest, ca_continuacion_conf, ca_idetapa,ca_fchultstatus, ca_propiedades, ca_idseguimiento,  ca_login, ca_fchcreado, ca_usucreado) values($id, '$fchreporte', '$consecutivo', fun_reportever('$consecutivo'), $idcotizacion, '$idciuorigen', '$idciudestino', '$impoexpo', '$fchdespacho', $idagente, '$incoterms', '".addslashes($mercancia_desc)."', '$mcia_peligrosa','$idproveedor', '$orden_prov', $idconcliente, '$orden_clie', '$confirmar', $idconsignatario, '$informar_cons', $idnotify, '$informar_noti', $idmaster, '$informar_mast', $repnotify, $idrepresentante, '$informar_repr', '$transporte', '$modalidad', '$colmas', '$seguro', '$liberacion', '$tiempocredito', '".addslashes($preferencias_clie)."', '".addslashes($instrucciones)."', $idlinea, $idconsignar, $idbodega, '$mastersame', '$continuacion', '$continuacion_dest', ".($continuacion_conf?"'$continuacion_conf'":"null").", ".($idetapa?"'$idetapa'":"null").", ".($fchultstatus?"'$fchultstatus'":"null").",'$propiedades', ".($idseguimiento?"'$idseguimiento'":"null").",  '$login', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
                         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                         echo "<script>document.location.href = 'reportenegocio.php';</script>";
@@ -3308,7 +3310,8 @@ function datos_basicos(&$visible,&$rs,&$tm) {
     echo "  <TD Class=mostrar COLSPAN=4><B>11.3 Copiar comunicaciones a:</B><BR>";
     echo "    <TABLE WIDTH=100% CELLSPACING=1 CELLPADDING=0 BORDER=0>";
     $z=0;
-    $emails = explode(",", $rs->Value('ca_confirmar_clie'));
+    $emails = str_replace(" ", "", $rs->Value('ca_confirmar_clie'));
+    $emails = explode(",", $emails);
     for ($i=0; $i<4; $i++) {
         echo "  <TR>";
         for ($j=0; $j<3; $j++) {
