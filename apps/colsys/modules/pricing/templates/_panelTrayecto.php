@@ -7,6 +7,9 @@
 
 ?>
 <script type="text/javascript">
+/**
+ * PanelTrayecto object definition
+ **/
 
 PanelTrayecto = function( config ){
     Ext.apply(this, config);
@@ -26,7 +29,14 @@ PanelTrayecto = function( config ){
 
     this.store = new Ext.data.GroupingStore({
         autoLoad : true,
-        url: '<?=url_for("pricing/datosPanelTrayecto")?>?impoexpo='+this.impoexpo+'&modalidad='+this.modalidad+'&transporte='+this.transporte+'&idtrafico='+this.idtrafico,
+        url: '<?=url_for("pricing/datosPanelTrayecto")?>',
+        baseParams : {
+            impoexpo: this.impoexpo,
+            transporte: this.transporte,
+            modalidad: this.modalidad,
+            idtrafico: this.idtrafico
+
+        },
         reader: new Ext.data.JsonReader(
             {
                 id: 'idtrayecto',

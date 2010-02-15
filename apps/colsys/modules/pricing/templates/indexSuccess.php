@@ -17,6 +17,8 @@ include_component("pricing", "panelTrayectoWindow");
 include_component("pricing", "panelTrayecto", array("readOnly"=>$opcion=="consulta"));
 
 include_component("pricing", "panelFletesPorTrayecto");
+include_component("pricing", "panelRecargosPorCiudad");
+//include_component("pricing", "panelRecargosPorLinea");
 
 //Paneles laterales
 include_component("pricing","panelConsultaCiudades");
@@ -65,33 +67,33 @@ Ext.onReady(function(){
             items: [
                     new PanelConsultaCiudades({
                         title: "Importaciones Marítimas",
-                        "impoexpo": "<?=utf8_encode(Constantes::IMPO)?>",
-                        "transporte": "<?=utf8_encode(Constantes::MARITIMO)?>",
+                        "impoexpo": "<?=(Constantes::IMPO)?>",
+                        "transporte": "<?=(Constantes::MARITIMO)?>",
                         "readOnly": <?=$opcion=="consulta"?"true":"false"?>
                     }),
 
                     new PanelConsultaCiudades({
                         title: "Importaciones Aéreas",
-                        "impoexpo": "<?=utf8_encode(Constantes::IMPO)?>",
-                        "transporte": "<?=utf8_encode(Constantes::AEREO)?>",
+                        "impoexpo": "<?=(Constantes::IMPO)?>",
+                        "transporte": "<?=(Constantes::AEREO)?>",
                         "readOnly": <?=$opcion=="consulta"?"true":"false"?>
                     }),
                     new PanelConsultaCiudades({
                         title: "Exportaciones Marítimas",
-                        "impoexpo": "<?=utf8_encode(Constantes::EXPO)?>",
-                        "transporte": "<?=utf8_encode(Constantes::MARITIMO)?>",
+                        "impoexpo": "<?=(Constantes::EXPO)?>",
+                        "transporte": "<?=(Constantes::MARITIMO)?>",
                         "readOnly": <?=$opcion=="consulta"?"true":"false"?>
                     }),
                     new PanelConsultaCiudades({
                         title: "Exportaciones Aéreas",
-                        "impoexpo": "<?=utf8_encode(Constantes::EXPO)?>",
-                        "transporte": "<?=utf8_encode(Constantes::AEREO)?>",
+                        "impoexpo": "<?=(Constantes::EXPO)?>",
+                        "transporte": "<?=(Constantes::AEREO)?>",
                         "readOnly": <?=$opcion=="consulta"?"true":"false"?>
                     }),
                     new PanelConsultaCiudades({
                         title: "OTM/DTA",
-                        "impoexpo": "<?=utf8_encode(Constantes::IMPO)?>",
-                        "transporte": "<?=utf8_encode(Constantes::TERRESTRE)?>",
+                        "impoexpo": "<?=(Constantes::IMPO)?>",
+                        "transporte": "<?=(Constantes::TERRESTRE)?>",
                         "readOnly": <?=$opcion=="consulta"?"true":"false"?>
                     }),
                     
@@ -177,18 +179,19 @@ Ext.onReady(function(){
                     Ext.getCmp('tab-panel').add(newComponent);
                     Ext.getCmp('tab-panel').setActiveTab(newComponent);*/
 
-        /*var newComponent = new PanelFletesPorTrayecto({id:'idcomponent',
+        /*var newComponent = new PanelRecargosPorCiudad({id:'idcomponent',
                                                                   impoexpo: "Importación",
                                                                   //idtrafico: "DO-809",
                                                                   idtrafico: "MX-052",
+                                                                  //idtrafico: "99-999",
                                                                   transporte: "Marítimo",
                                                                   modalidad: "FCL",
-                                                                  title: "Prueba",
+                                                                  title: "MEX Marítimo FCL",
                                                                   closable: true,
-                                                                  readOnly: <?=$opcion=="consulta"?"true":"false"?> });
+                                                                  readOnly: false });
                                                               
         Ext.getCmp('tab-panel').add(newComponent);
-        Ext.getCmp('tab-panel').setActiveTab(newComponent);  */
+        Ext.getCmp('tab-panel').setActiveTab(newComponent); */
     });
 
 

@@ -3,7 +3,9 @@
 * Permite crear recargos locales
 * @author: Andres Botero
 */
-
+if($modo!="consulta"){
+    include_component("pricing", "panelRecargosPorCiudad");
+}
 ?>
 <script type="text/javascript">
 
@@ -548,21 +550,27 @@ Ext.extend(PanelRecargosCotizacion, Ext.grid.EditorGridPanel, {
 
         activeRecordRec = record;
         var storeRecargosCot = this.store;
+        var impoexpo = "<?=Constantes::IMPO?>"; //TODO Corregir para expo
+        var transporte = record.data.transporte;
+        var modalidad = record.data.modalidad;
+        var recordCot = this.record;
         
-        Ext.Ajax.request({
-            url: url,
-            params: {
-                transporte: record.data.transporte,
-                modalidad: record.data.modalidad,
-                impoexpo: "Importación" //TODO Corregir para expo
-            },
-            success: function(xhr) {
-                //alert( xhr.responseText );
-                var newComponent = eval(xhr.responseText);
+        var newComponent = new PanelRecargosPorCiudad({
+                                              impoexpo: impoexpo,
+                                              idtrafico: '99-999',
+                                              transporte:transporte,
+                                              modalidad: modalidad,
+                                              title: "Recargos Locales "+impoexpo.substring(0, 4)+"»"+transporte+"»"+modalidad,
+                                              closable: false,
+                                              readOnly: true
+                                             });
 
-                //Se crea la ventana
 
-                win = new Ext.Window({
+        
+
+            //Se crea la ventana
+
+            win = new Ext.Window({
                 width       : 800,
                 height      : 460,
                 closeAction :'close',
@@ -574,8 +582,10 @@ Ext.extend(PanelRecargosCotizacion, Ext.grid.EditorGridPanel, {
                 buttons: [
                     {
                         text     : 'Importar',
+                        scope    : this,
                         handler  : function( ){
                             storePricing = newComponent.store;
+                            
                             //
 
                             /*
@@ -597,11 +607,11 @@ Ext.extend(PanelRecargosCotizacion, Ext.grid.EditorGridPanel, {
 
                             var id = activeRecordRec.data.id;
                             var j = 0;
-                            storeRecargos.each( function(r){
+                            storePricing.each( function(r){
                                 if( r.data.sel==true ){
                                     j++;
                                     var newId = id+j;
-                                    var newRec = new record({
+                                    var newRec = new recordCot({
                                         id: newId,
                                         agrupamiento: activeRecordRec.data.agrupamiento,
                                         recargo: '',
@@ -648,11 +658,7 @@ Ext.extend(PanelRecargosCotizacion, Ext.grid.EditorGridPanel, {
                 ]
             });
             win.show( );
-            },
-            failure: function() {
-                Ext.Msg.alert("Tab creation failed", "Server communication failure");
-            }
-        });
+            
     },
 
 

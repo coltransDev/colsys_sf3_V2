@@ -1,8 +1,14 @@
 <?
-
+/*
+ *  This file is part of the Colsys Project.
+ *
+ *  (c) Coltrans S.A. - Colmas Ltda.
+ */
 ?>
 <script type="text/javascript">
-
+/**
+ * PanelConsultaCiudades object definition
+ **/
 PanelConsultaCiudades = function( config ){
     Ext.apply(this, config);
 
@@ -21,7 +27,11 @@ PanelConsultaCiudades = function( config ){
         animate:true,
 
         loader: new Ext.tree.TreeLoader({
-            dataUrl:'<?=url_for("pricing/datosCiudades")?>?transporte='+this.transporte+'&impoexpo='+this.impoexpo
+            dataUrl:'<?=url_for("pricing/datosCiudades")?>',
+            baseParams : {
+                impoexpo: this.impoexpo,
+                transporte: this.transporte
+            }
         }),
 
         root: new Ext.tree.AsyncTreeNode()
@@ -75,7 +85,7 @@ Ext.extend(PanelConsultaCiudades, Ext.tree.TreePanel, {
             }
 
             
-            if( opcion!="recgen" && opcion!="reclin" ){
+            if( opcion!="reclin" ){
                 /*
                 * Todo debe quedar de esta manera
                 **/                
@@ -101,6 +111,24 @@ Ext.extend(PanelConsultaCiudades, Ext.tree.TreePanel, {
                                                                   transporte:transporte,
                                                                   modalidad: modalidad,
                                                                   title:"Trayectos "+impoexpo.substring(0, 4)+"»"+transporte+"»"+modalidad+"»"+trafico,
+                                                                  closable: true
+                                                                 });
+                            break;
+                        case "recgen":
+                            /*
+                            * Se muestran la administracion de trayectos para el pais seleccionado
+                            */
+                            if( idtrafico=="99-999"){
+                                var titulo = "Recargos Locales "+impoexpo.substring(0, 4)+"»"+transporte+"»"+modalidad;
+                            }else{
+                                var titulo = "Recargos "+impoexpo.substring(0, 4)+"»"+transporte+"»"+modalidad+"»"+trafico;
+                            }
+                            var newComponent = new PanelRecargosPorCiudad({id:idcomponent,
+                                                                  impoexpo: impoexpo,
+                                                                  idtrafico: idtrafico,
+                                                                  transporte:transporte,
+                                                                  modalidad: modalidad,
+                                                                  title: titulo,
                                                                   closable: true
                                                                  });
                             break;
@@ -133,16 +161,7 @@ Ext.extend(PanelConsultaCiudades, Ext.tree.TreePanel, {
                 return 0;
             }else{
 
-                switch( opcion ){                    
-                    case "recgen":
-                        /*
-                        * Se muestran los recargos generales para el pais seleccionado
-                        */
-                        <?
-                        $url = "pricing/recargosGenerales";
-                        ?>
-                        var url = '<?=url_for( $url )?>';
-                        break;
+                switch( opcion ){                                        
                     case "reclin":
                         /*
                         * Se muestran los recargos generales para el pais seleccionado

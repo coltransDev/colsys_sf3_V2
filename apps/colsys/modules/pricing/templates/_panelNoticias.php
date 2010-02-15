@@ -2,6 +2,9 @@
 $data = $sf_data->getRaw('data')
 ?>
 <script type="text/javascript">
+/**
+ * PanelNoticias object definition
+ **/
 PanelNoticias = function( config ){
     Ext.apply(this, config);
 

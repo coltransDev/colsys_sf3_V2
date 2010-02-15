@@ -253,12 +253,33 @@ class pricingComponents extends sfComponents
     ***************************************************************************/
 
     /*
-	* Edicion de tarifas por trayecto y sus respuectivos recargos.
+	* Edición de tarifas por trayecto y sus respuectivos recargos.
 	* @author: Andres Botero
 	*/
     public function executePanelFletesPorTrayecto(){
         $this->aplicacionesAereo = ParametroTable::retrieveByCaso("CU064", null, Constantes::AEREO );
 		$this->aplicacionesMaritimo = ParametroTable::retrieveByCaso("CU064", null, Constantes::MARITIMO );
+    }
+
+    /*
+	* Edición de recargos por ciudad
+	* @author: Andres Botero
+	*/
+    public function executePanelRecargosPorCiudad(){
+        
+
+        $this->aplicacionesAereo = ParametroTable::retrieveByCaso("CU064", null, Constantes::AEREO );
+		$this->aplicacionesMaritimo = ParametroTable::retrieveByCaso("CU064", null, Constantes::MARITIMO );
+    }
+
+    /*
+	* Edición de recargos por linea
+	* @author: Andres Botero
+	*/
+    public function executePanelRecargosPorLinea(){
+        $this->aplicacionesAereo = ParametroTable::retrieveByCaso("CU064", null, Constantes::AEREO );
+		$this->aplicacionesMaritimo = ParametroTable::retrieveByCaso("CU064", null, Constantes::MARITIMO );
+        
     }
 }
 ?>

@@ -7,6 +7,9 @@
 
 ?>
 <script type="text/javascript">
+/**
+ * PanelFletesPorTrayecto object definition
+ **/
 
 PanelFletesPorTrayecto = function( config ){
     Ext.apply(this, config);
@@ -99,7 +102,7 @@ PanelFletesPorTrayecto = function( config ){
     
     this.store = new Ext.data.GroupingStore({
         autoLoad : true,
-        url: '<?=url_for("pricing/datosPanelTrayectoFlete")?>',
+        url: '<?=url_for("pricing/datosPanelFletesPorTrayecto")?>',
         baseParams : {
             impoexpo: this.impoexpo,
             transporte: this.transporte,
@@ -836,7 +839,7 @@ Ext.extend(PanelFletesPorTrayecto, Ext.grid.EditorGridPanel, {
             Ext.Ajax.request(
                 {
                     waitMsg: 'Eliminando...',
-                    url: '<?=url_for("pricing/eliminarPanelTrayectoFlete")?>',
+                    url: '<?=url_for("pricing/eliminarPanelFletesPorTrayecto")?>',
                     method: 'POST',
                     //Solamente se envian los cambios
                     params :	params,
@@ -952,7 +955,7 @@ Ext.extend(PanelFletesPorTrayecto, Ext.grid.EditorGridPanel, {
             //envia los datos al servidor
             Ext.Ajax.request({                
                 waitMsg: 'Guardando cambios...',
-                url: '<?=url_for("pricing/guardarPanelTrayectoFlete")?>', 						//method: 'POST',
+                url: '<?=url_for("pricing/guardarPanelFletesPorTrayecto")?>', 						//method: 'POST',
                 //Solamente se envian los cambios
                 params :	changes,
                 callback :function(options, success, response){

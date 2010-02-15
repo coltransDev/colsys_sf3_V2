@@ -258,7 +258,7 @@ MainPanel = function(){
 					readOnly: true
 				},
 				<?
-				include_component("widgets", "comerciales" ,array("id"=>"vendedor", "label"=>"Representante Comercial", "allowBlank"=>"true", "value"=>$usuario->getCaLogin(), "nivel"=>$nivel ));
+				include_component("widgets", "comerciales" ,array("id"=>"vendedor", "label"=>"Representante Comercial", "allowBlank"=>"false", "value"=>$usuario->getCaLogin(), "nivel"=>$nivel ));
 				?>
 
 				<?
