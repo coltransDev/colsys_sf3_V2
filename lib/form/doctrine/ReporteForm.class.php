@@ -22,22 +22,7 @@ class ReporteForm extends BaseReporteForm
                                                                             'add_empty' => false,
                                                                             'query' => $q
                                                                       ));
-        /*$agentes = Doctrine_Query::create()
-                             ->select("a.*, i.ca_nombre, t.ca_nombre")
-                             ->from("IdsAgente a")
-                             ->innerJoin("a.Ids i")
-                             ->innerJoin("i.IdsSucursal s")
-                             ->innerJoin("s.Ciudad c")
-                             ->innerJoin("c.Trafico t")
-                             ->where("s.ca_principal = ?", true)
-                             ->addOrderBy("t.ca_nombre")
-                             ->addOrderBy("i.ca_nombre")
-                             ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
-                             ->execute();
-        $choices = array();
-        foreach( $agentes as $agente ){
-            $choices[$agente["a_ca_idagente"]] = $agente["t_ca_nombre"]." - ".$agente["i_ca_nombre"] ;
-        }*/
+        
         $this->widgetSchema['ca_idagente']=new sfWidgetFormChoice(array("choices" => array()));
         
 
