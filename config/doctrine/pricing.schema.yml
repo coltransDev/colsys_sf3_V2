@@ -4,7 +4,7 @@ Trayecto:
       form: true
       filter: false
   generatePath: pricing
-  tableName: tb_trayectos
+  tableName: pric.tb_trayectos
   attributes:
     export: tables
   columns:
@@ -35,8 +35,7 @@ Trayecto:
     ca_observaciones: string
     ca_idagente: integer
     ca_activo: boolean
-    ca_fchcreado: timestamp
-    ca_inpricing: boolean
+    ca_fchcreado: timestamp    
   relations:
     Origen:
       local: ca_origen

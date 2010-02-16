@@ -25,6 +25,7 @@ KBIssue:
       local: ca_idcategory
       foreign: ca_idcategory
       type: one
+    
 
 KBCategory:
   options:
@@ -53,4 +54,34 @@ KBCategory:
       local: ca_idcategory
       foreign: ca_idcategory
       type: many
-    
+    KBTooltip:
+      local: ca_idcategory
+      foreign: ca_idcategory
+      type: many
+
+
+KBTooltip:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: kbase
+  tableName: helpdesk.tb_kbtooltips
+  columns:
+    ca_idcategory:
+      type: integer
+      primary: true
+    ca_field_id:
+      type: string
+      primary: true
+    ca_title: string
+    ca_info: string
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string
+  relations:
+    KBCategory:
+      local: ca_idcategory
+      foreign: ca_idcategory
+      type: one
