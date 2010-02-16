@@ -184,14 +184,18 @@ class clientesActions extends sfActions
             $this->clientesEstados = array();
 
             list($year, $month, $day) = sscanf($inicio, "%d-%d-%d");
-            $ultimo = date('Y-m-d',mktime(0,0,0,$month,$day-1,$year));
+            $inicio = date('Y-m-d h:i:s',mktime( 0, 0, 0,$month,$day ,$year));
+            list($year, $month, $day) = sscanf($final, "%d-%d-%d");
+            $final  = date('Y-m-d h:i:s',mktime(23,59,59,$month,$day ,$year));
+
+            $ultimo = date('Y-m-d h:i:s',mktime(23,59,59,$month,$day-1,$year));
 
             $stmt = ClienteTable::estadoClientes($inicio, $final, $empresa, null, $estado, $sucursal);
             $ante = ClienteTable::estadoClientes(null, $ultimo, $empresa, null, "Potencial", $sucursal);
 
             while($row = $stmt->fetch()) {
                 $anterior = array();
-                $facturar = array();
+                $negocios = array();
                 $actual = $row;
 
                 list($year, $month, $day, $hour, $mins, $secn) = sscanf($row["ca_fchestado"], "%d-%d-%d %d:%d:%d");
@@ -203,14 +207,14 @@ class clientesActions extends sfActions
                     );
                 }
 
-                $sb = ClienteTable::facturacionClientes($inicio, $final, $empresa, $row["ca_idcliente"]);
+                $sb = ClienteTable::negociosClientes($inicio, $final, $empresa, $row["ca_idcliente"]);
                 while($row2 = $sb->fetch()) {
-                    $facturar = $row2;
+                    $negocios = $row2;
                 }
                 if (count($anterior)==0) {
                     $anterior = array('ca_fchestado_ant'=>null, 'ca_estado_ant'=>null);
                 }
-                $this->clientesEstados[] = array_merge($actual, $anterior, $facturar);
+                $this->clientesEstados[] = array_merge($actual, $anterior, $negocios);
 
             }
             $i = 0;
