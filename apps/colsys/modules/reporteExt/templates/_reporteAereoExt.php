@@ -57,7 +57,7 @@ $i++;
 }
 ?>
 <tr>
-	<td><b>CLIENT ORDER :</b></td>
+	<td><b>ORDER CLIENT:</b></td>
 	<td colspan="3"><?=$reporte->getCaOrdenClie()?></td>
 </tr>
 <tr>

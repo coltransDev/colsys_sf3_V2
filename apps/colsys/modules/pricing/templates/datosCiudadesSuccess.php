@@ -25,7 +25,7 @@ foreach( $results as $modalidad=>$grupos ){
 
 			},
 			<?
-			if( $transporte==Constantes::MARITIMO && $modalidad=="FCL"){
+			if( $transporte==Constantes::MARITIMO ){
                 if( $transporte==Constantes::MARITIMO ){ 
                     $linea = "Naviera";
                 }elseif( $transporte==Constantes::AEREO ){

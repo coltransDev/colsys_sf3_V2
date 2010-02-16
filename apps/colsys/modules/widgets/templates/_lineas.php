@@ -14,17 +14,14 @@ new Ext.form.ComboBox({
 		mode : 'local',
 		lazyRender:true,
 		listClass: 'x-combo-list-small',
-		listeners:{focus:function( field, newVal, oldVal ){
+		listeners:{focus:function( field, newVal, oldVal ){                            
 							<?
 							if( isset($link) ){
 							?>	
 								linea = Ext.getCmp('<?=$id?>_id');
-								var transporte = Ext.getCmp('<?=$link?>').getValue();
-								
-								linea.store.baseParams = {
-									transporte: transporte
-								};
-								linea.store.reload();
+								var transporte = Ext.getCmp('<?=$link?>').getValue();								
+								linea.store.setBaseParam("transporte", transporte );
+								linea.store.load();                                
 							<?
 							}
 							?>

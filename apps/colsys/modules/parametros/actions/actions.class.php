@@ -74,17 +74,17 @@ class parametrosActions extends sfActions
 		$this->forward404Unless( $transporte );
 
 		if( $modo=="recargos" ){			
-
+            //echo $tipo;
 			//$c->setLimit(3);
 			$q = Doctrine::getTable("TipoRecargo")
                          ->createQuery("c")
-                         ->where("c.ca_transporte = ? AND ca_tipo = ? ", array($transporte, $tipo ))
+                         ->addWhere("c.ca_transporte = ? AND ca_tipo = ? ", array($transporte, $tipo ))
                          ->innerJoin("c.InoConceptoModalidad cm")
                          ->innerJoin("cm.Modalidad m")
                          ->addWhere("m.ca_impoexpo like ? ", "%".$impoexpo."%" )
                          ->distinct()
                          ->addOrderBy( "c.ca_recargo" );
-                         
+            
             $recargos = $q->execute();
 			$this->conceptos = array();
 			foreach( $recargos as $recargo ){
@@ -118,8 +118,7 @@ class parametrosActions extends sfActions
 		}
 
         $this->responseArray = array( "totalCount"=>count( $this->conceptos ), "root"=>$this->conceptos  );
-		$this->setTemplate("responseTemplate");		
-
+		$this->setTemplate("responseTemplate");	
     }
 
      /**

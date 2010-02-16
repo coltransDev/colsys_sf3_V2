@@ -104,16 +104,16 @@ class widgetsActions extends sfActions
 	*/
 	public function executeDatosLineas($request)
 	{		
-		$idlinea = utf8_decode($this->getRequestParameter("idlinea"));
-		$transporte = utf8_decode($this->getRequestParameter("transporte"));
-		$query = utf8_decode($this->getRequestParameter("query"));
+		$idlinea = utf8_decode($request->getParameter("idlinea"));
+		$transporte = utf8_decode($request->getParameter("transporte"));
+		$query = utf8_decode($request->getParameter("query"));
 		
 		$q = Doctrine_Query::create()
                   ->select("p.ca_idproveedor, id.ca_nombre, p.ca_transporte ")
                   ->from("IdsProveedor p")
                   ->innerJoin("p.Ids id")                  
                   ->addOrderBy("id.ca_nombre");
-
+        
         if( $transporte ){
             $q->where("p.ca_transporte = ?", $transporte );
         }
@@ -121,7 +121,7 @@ class widgetsActions extends sfActions
         if( $query ){
             $q->addWhere("id.ca_nombre like ?", $query."%");
         }
-        $q->where("p.ca_activo = ?", true );
+        $q->addWhere("p.ca_activo = ?", true );
 
         $q->fetchArray();
 
