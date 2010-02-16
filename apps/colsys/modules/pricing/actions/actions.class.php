@@ -768,76 +768,7 @@ class pricingActions extends sfActions
 	* Acciones del PanelRecargosPorCiudad
 	*	
 	*********************************************************************/
-	
-	
-	/*
-	* Recargos generales de un pais ó los recargos locales de un
-	* transporte y una modalidad 
-	* @author: Andres Botero 
-	*/
-	public function executeRecargosGenerales(){
 		
-		$this->nivel = $this->getUser()->getNivelAcceso( pricingActions::RUTINA );
-		
-		$this->opcion = "";
-		if( $this->nivel==-1 ){
-			$this->forward404();
-		}
-		
-		if( $this->nivel==0 ){
-			$this->opcion = "consulta";
-		}
-
-        if( $this->getRequestParameter( "opcion" )=="consulta" ){
-            $this->opcion = "consulta";
-        }
-        
-		
-		$transporte = utf8_decode($this->getRequestParameter( "transporte" ));
-		$idtrafico = $this->getRequestParameter( "idtrafico" );
-		$modalidad = $this->getRequestParameter( "modalidad" );
-		$impoexpo = utf8_decode($this->getRequestParameter( "impoexpo" ));
-		
-		$this->forward404Unless( $transporte );
-		$this->forward404Unless( $modalidad );
-		$this->forward404Unless( $impoexpo );
-		
-		if( $idtrafico ){
-			$this->trafico = Doctrine::getTable("Trafico")->find($idtrafico);
-			
-			if( $this->opcion != "consulta" ){	
-				
-				$this->ciudades = Doctrine::getTable("Ciudad")
-                                  ->createQuery("c")
-                                  ->where("c.ca_idtrafico = ? ", $idtrafico)
-                                  ->addOrderBy("c.ca_ciudad")
-                                  ->execute();
-			}			
-			$tipo = Constantes::RECARGO_EN_ORIGEN;
-			
-			$this->idcomponent = $this->trafico->getCaIdtrafico()."_".$transporte."_".$modalidad;
-					
-		}else{
-			$tipo = Constantes::RECARGO_LOCAL;	
-			$idtrafico = "99-999"; 
-			$this->idcomponent = "recargoslocales-".$transporte."_".$modalidad;		
-		}
-		
-				
-		$this->modalidad = $modalidad;
-		$this->transporte = $transporte;
-		$this->idtrafico = $idtrafico;
-		$this->impoexpo = $impoexpo;		
-		
-		if( $this->opcion != "consulta" ){							
-			$this->recargos = Doctrine::getTable("TipoRecargo")
-                              ->createQuery("t")
-                              ->where("t.ca_transporte = ? AND t.ca_tipo= ?", array($transporte, $tipo))
-                              ->addOrderBy("t.ca_recargo")
-                              ->execute();
-			
-		}					
-	}
 	
 	/*
 	* Provee datos para los recargos por ciudad
@@ -1144,7 +1075,7 @@ class pricingActions extends sfActions
 	* Provee datos para los recargos por ciudad
 	* @author: Andres Botero 
 	*/
-	public function executeRecargosPorLineaData(){
+	public function executeDatosPanelRecargosPorLinea(){
 		
 		$this->nivel = $this->getUser()->getNivelAcceso( pricingActions::RUTINA );
 		
@@ -1156,11 +1087,15 @@ class pricingActions extends sfActions
 		if( $this->nivel==0 ){
 			$this->opcion = "consulta";
 		}
+
+        if( $this->getRequestParameter( "readOnly" )=="true" ){
+            $this->opcion = "consulta";
+        }
 		
 		$transporte = utf8_decode($this->getRequestParameter( "transporte" ));
 		$idtrafico = $this->getRequestParameter( "idtrafico" );
 		$modalidad = $this->getRequestParameter( "modalidad" );				
-		$impoexpo = $this->getRequestParameter( "impoexpo" );
+		$impoexpo = utf8_decode($this->getRequestParameter( "impoexpo" ));
 		$idlinea = $this->getRequestParameter( "idlinea" );		
 						
 		$this->forward404Unless( $transporte );
@@ -1186,6 +1121,7 @@ class pricingActions extends sfActions
         if( $idtrafico=="99-999" ){
             $q->addWhere("r.ca_idlinea = ?", $idlinea);
         }
+        $q->addOrderBy("r.ca_idlinea");
         $q->addOrderBy("t.ca_recargo");
         $recargos = $q->execute();
 		
@@ -1253,7 +1189,7 @@ class pricingActions extends sfActions
 	* Guarda los cambios realizados en los recargos generales
 	* @author: Andres Botero 
 	*/
-	public function executeObserveRecargosPorLinea(){
+	public function executeGuardarPanelRecargosPorLinea(){
 		
         $this->nivel = $this->getUser()->getNivelAcceso( pricingActions::RUTINA );
 
@@ -1354,7 +1290,7 @@ class pricingActions extends sfActions
 	* Elimina un recargo general
 	* @author: Andres Botero 
 	*/
-	public function executeEliminarRecargosPorLinea(){
+	public function executeEliminarPanelRecargosPorLinea(){
         $this->nivel = $this->getUser()->getNivelAcceso( pricingActions::RUTINA );
 
         if( $this->nivel<=0 ){
@@ -1388,6 +1324,79 @@ class pricingActions extends sfActions
 		}	
 		
 		$this->setTemplate("responseTemplate");	
+	}
+
+    /**
+	* Retorna un objeto JSON con la información de todas las lineas
+	*
+	* @param sfRequest $request A request object
+	*/
+	public function executeDatosEditorLineas($request)
+	{
+		$idtrafico = utf8_decode($request->getParameter("idtrafico"));
+        $impoexpo = utf8_decode($request->getParameter("impoexpo"));
+		$transporte = utf8_decode($request->getParameter("transporte"));
+        $modalidad = utf8_decode($request->getParameter("modalidad"));
+		$query = utf8_decode($request->getParameter("query"));
+
+		$q = Doctrine_Query::create()
+                  ->select("p.ca_idproveedor, id.ca_nombre, p.ca_transporte ")
+                  ->from("IdsProveedor p")
+                  ->innerJoin("p.Ids id")
+                  ->addOrderBy("id.ca_nombre");
+
+        if( $transporte ){
+            $q->where("p.ca_transporte = ?", $transporte );
+        }
+
+        if( $query ){
+            $q->addWhere("id.ca_nombre like ?", $query."%");
+        }
+        $q->addWhere("p.ca_activo = ?", true );
+
+        $q->fetchArray();
+
+        $lineas = $q->execute();
+
+
+        $q = Doctrine_Query::create()
+              ->select("p.ca_idproveedor, id.ca_nombre")
+              ->from("IdsProveedor p")
+              ->innerJoin("p.Trayecto t")
+              ->innerJoin("p.Ids id")
+              ->where("t.ca_impoexpo = ?", $impoexpo )
+              ->addWhere("t.ca_transporte = ?",  $transporte )
+              ->addWhere("t.ca_modalidad = ?", $modalidad )
+              ->addOrderBy("id.ca_nombre");
+
+        if( $impoexpo==Constantes::IMPO ){
+            $q->innerJoin("t.Origen c");
+        }else{
+            $q->innerJoin("t.Destino c");
+        }
+
+        if( $idtrafico != "99-999" ){
+            $q->addWhere("c.ca_idtrafico = ?",  $idtrafico );
+        }
+        $q->distinct();
+        $q->setHydrationMode(Doctrine::HYDRATE_SCALAR);
+        $lineas =  $q->execute();
+
+
+
+
+		$this->lineas = array();
+		foreach( $lineas as $linea ){
+			$this->lineas[] = array(  "idlinea"=>$linea['p_ca_idproveedor'],
+									  "linea"=>utf8_encode($linea['id_ca_nombre']),
+                                      "transporte"=>utf8_encode($transporte),
+								   );
+		}
+
+
+        $this->responseArray = array("root"=>$this->lineas, "total"=>count($this->lineas), "success"=>true);
+		$this->setTemplate("responseTemplate");
+
 	}
 	
 	

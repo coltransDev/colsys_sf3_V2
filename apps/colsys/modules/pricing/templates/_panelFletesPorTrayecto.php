@@ -26,8 +26,8 @@ PanelFletesPorTrayecto = function( config ){
         baseParams : {
             impoexpo: this.impoexpo,
             transporte: this.transporte,
-            modalidad: this.modalidad
-
+            modalidad: this.modalidad,
+            readOnly: this.readOnly
         },
         reader: new Ext.data.JsonReader(
             {

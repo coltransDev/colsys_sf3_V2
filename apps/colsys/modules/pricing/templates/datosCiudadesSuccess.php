@@ -58,7 +58,7 @@ foreach( $results as $modalidad=>$grupos ){
                         {
                             text:'<?=$linea['p_ca_sigla']?$linea['p_ca_sigla']:$linea["id_ca_nombre"]?>',                            
                             leaf:true,
-                            opcion: 'reclin',                            
+                            opcion: 'recnav',
                             impoexpo: '<?=$impoexpo?>',
                             transporte: '<?=$transporte?>',
                             modalidad: '<?=$modalidad?>',

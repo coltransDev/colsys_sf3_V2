@@ -18,7 +18,7 @@ include_component("pricing", "panelTrayecto", array("readOnly"=>$opcion=="consul
 
 include_component("pricing", "panelFletesPorTrayecto");
 include_component("pricing", "panelRecargosPorCiudad");
-//include_component("pricing", "panelRecargosPorLinea");
+include_component("pricing", "panelRecargosPorLinea");
 
 //Paneles laterales
 include_component("pricing","panelConsultaCiudades");
@@ -179,7 +179,7 @@ Ext.onReady(function(){
                     Ext.getCmp('tab-panel').add(newComponent);
                     Ext.getCmp('tab-panel').setActiveTab(newComponent);*/
 
-        /*var newComponent = new PanelRecargosPorCiudad({id:'idcomponent',
+        /*var newComponent = new PanelRecargosPorLinea({id:'idcomponent',
                                                                   impoexpo: "Importación",
                                                                   //idtrafico: "DO-809",
                                                                   idtrafico: "MX-052",

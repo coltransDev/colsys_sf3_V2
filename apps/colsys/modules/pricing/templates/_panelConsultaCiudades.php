@@ -85,7 +85,7 @@ Ext.extend(PanelConsultaCiudades, Ext.tree.TreePanel, {
             }
 
             
-            if( opcion!="reclin" ){
+            if( opcion!="recnav" ){
                 /*
                 * Todo debe quedar de esta manera
                 **/                
@@ -111,7 +111,8 @@ Ext.extend(PanelConsultaCiudades, Ext.tree.TreePanel, {
                                                                   transporte:transporte,
                                                                   modalidad: modalidad,
                                                                   title:"Trayectos "+impoexpo.substring(0, 4)+"»"+transporte+"»"+modalidad+"»"+trafico,
-                                                                  closable: true
+                                                                  closable: true,
+                                                                  readOnly: this.readOnly
                                                                  });
                             break;
                         case "recgen":
@@ -129,7 +130,22 @@ Ext.extend(PanelConsultaCiudades, Ext.tree.TreePanel, {
                                                                   transporte:transporte,
                                                                   modalidad: modalidad,
                                                                   title: titulo,
-                                                                  closable: true
+                                                                  closable: true,
+                                                                  readOnly: this.readOnly
+                                                                 });
+                            break;
+                        case "reclin":
+                            /*
+                            * Se muestran la administracion de trayectos para el pais seleccionado
+                            */
+                            var newComponent = new PanelRecargosPorLinea({id:idcomponent,
+                                                                  impoexpo: impoexpo,
+                                                                  idtrafico: idtrafico,
+                                                                  transporte:transporte,
+                                                                  modalidad: modalidad,
+                                                                  title: "Recargos x Linea "+impoexpo.substring(0, 4)+"»"+transporte+"»"+modalidad+"»"+trafico,
+                                                                  closable: true,
+                                                                  readOnly: this.readOnly
                                                                  });
                             break;
                         default:
@@ -162,7 +178,7 @@ Ext.extend(PanelConsultaCiudades, Ext.tree.TreePanel, {
             }else{
 
                 switch( opcion ){                                        
-                    case "reclin":
+                    case "recnav":
                         /*
                         * Se muestran los recargos generales para el pais seleccionado
                         */

@@ -56,7 +56,7 @@ PanelRecargosPorCiudad = function( config ){
     /*
     *Store que carga los conceptos
     */
-    this.storeConceptos = new Ext.data.Store({
+    this.storeRecargos = new Ext.data.Store({
         autoLoad : false,
         url: '<?=url_for("parametros/datosConceptos")?>',        
         baseParams : {
@@ -78,7 +78,7 @@ PanelRecargosPorCiudad = function( config ){
         )
     });
 
-    this.editorConceptos = new Ext.form.ComboBox({
+    this.editorRecargos = new Ext.form.ComboBox({
 
         typeAhead: true,
         forceSelection: true,
@@ -91,7 +91,7 @@ PanelRecargosPorCiudad = function( config ){
         valueField: 'idconcepto',
         lazyRender:true,
         listClass: 'x-combo-list-small',
-        store : this.storeConceptos
+        store : this.storeRecargos
 
     });
 
@@ -177,7 +177,7 @@ PanelRecargosPorCiudad = function( config ){
 			sortable: false,
 			hideable: false,
 			dataIndex: 'recargo',
-			editor: this.editorConceptos
+			editor: this.editorRecargos
 		},
         {
 			header: "Inicio",
@@ -360,16 +360,16 @@ Ext.extend(PanelRecargosPorCiudad, Ext.grid.EditorGridPanel, {
     actualizarEditores: function(){
         if( !this.readOnly ){
             if( this.idtrafico=="99-999" ){
-                this.storeConceptos.setBaseParam('modo', 'recargos');
-                this.storeConceptos.setBaseParam('tipo', '<?=Constantes::RECARGO_LOCAL?>');
+                this.storeRecargos.setBaseParam('modo', 'recargos');
+                this.storeRecargos.setBaseParam('tipo', '<?=Constantes::RECARGO_LOCAL?>');
             }else{
-                this.storeConceptos.setBaseParam('modo', 'recargos');
-                this.storeConceptos.setBaseParam('tipo', '<?=Constantes::RECARGO_EN_ORIGEN?>');
+                this.storeRecargos.setBaseParam('modo', 'recargos');
+                this.storeRecargos.setBaseParam('tipo', '<?=Constantes::RECARGO_EN_ORIGEN?>');
 
                 this.storeCiudades.load();
             }
 
-            this.storeConceptos.load();
+            this.storeRecargos.load();
         }
     },
     /*
