@@ -19,8 +19,8 @@ $i=1;
   <th>Sucursal</th>
   <th>Fecha Estado Anterior</th>
   <th>Estado Anterior</th>
-  <th>&Uacute;ltima Factura</th>
-  <th>Facturaci&oacute;n Periodo</th>
+  <th>&Uacute;ltimo Negocio</th>
+  <th>N&uacute;mero Negocios</th>
 </tr>
 </thead>
 <tbody>
@@ -36,8 +36,8 @@ $i=1;
       <td><?php echo $clienteEstado["ca_sucursal"] ?></td>
       <td><?php echo $clienteEstado["ca_fchestado_ant"] ?></td>
       <td><?php echo $clienteEstado["ca_estado_ant"] ?></td>
-      <td><?php echo $clienteEstado["ca_fchfactura"] ?></td>
-      <td align="right"><?php echo number_format($clienteEstado["ca_valor"],2) ?></td>
+      <td><?php echo $clienteEstado["ca_fchnegocio"] ?></td>
+      <td align="center"><?php echo "Perido: ".$clienteEstado["ca_numnegocios"]." Total: ".$clienteEstado["ca_totnegocios"] ?></td>
 
 </tr>
 <?php 
