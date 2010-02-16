@@ -629,7 +629,7 @@ class falabellaAduActions extends sfActions {
             $salida.= str_pad(number_format($valor_gas,2,'.',''), 15, "0", STR_PAD_LEFT); // 29
             $salida.= str_pad(number_format($valor_cif + $valor_gas,2,'.',''), 15, "0", STR_PAD_LEFT); // 30
             $salida.= str_pad(substr($row["ca_iddoc"],0,15),20, " "); // 31
-            $salida.= str_pad($row["ca_embarque"],2, " "); // 32                                   No de Embarque
+            $salida.= str_pad($row["ca_embarque"], 2, " "); // 32
 
             $factor = $row["ca_prorrateo_fob"] / $row["ca_valor_fob"];
 
@@ -672,7 +672,11 @@ class falabellaAduActions extends sfActions {
         $salida = '';
         $adicion= '';
         $acumula= array();
+        $valor_carpeta = 0;
+        $ctr_count = $chk_count = $stmt->rowCount();
+        $chk_sum = 0;
         while ( $row = $stmt->fetch() ) {
+            $chk_count--;
             if ($numdocumento != $row["ca_numdocumento"] and $numdocumento != null){
                 $filename = $directory.DIRECTORY_SEPARATOR.'FAC_'.$numdocumento.'.txt';
                 $handle = fopen($filename , 'w');
@@ -710,11 +714,16 @@ class falabellaAduActions extends sfActions {
             $salida.= str_pad($vlr_iva, 10, "0", STR_PAD_LEFT); // 14
             $salida.= str_pad("18",5, " "); // 15
             $salida.= str_pad(substr($row["ca_iddoc"],0,15),20, " "); // 16
-            $salida.= str_pad(floatval($row["ca_embarque"]), 2, "0", STR_PAD_LEFT); // 17
+            $salida.= str_pad($row["ca_embarque"], 2, " "); // 17
 
             $factor = $row["ca_prorrateo_fob"] / $row["ca_valor_fob"];
+            $valor_carpeta = round($vlr_total * $factor,0);
+            $chk_sum+= $valor_carpeta;
 
-            $salida.= str_pad(round($vlr_total * $factor,0), 10, "0", STR_PAD_LEFT); // 18
+            if ($chk_count == 0 and abs($chk_sum-$vlr_total) > 0 and abs($chk_sum-$vlr_total) <= 5 ){ // Tolerancia de 5 pesos de diferencia
+                $valor_carpeta-= $chk_sum-$vlr_total;
+            }
+            $salida.= str_pad($valor_carpeta, 10, "0", STR_PAD_LEFT); // 18
 
             $spaces = array(8,30,30,4,20,20,10); // Campos del 19 al 27
             foreach( $spaces as $space ) {
@@ -740,7 +749,7 @@ class falabellaAduActions extends sfActions {
                 $adicion.= "830003960"; // 2
                 $adicion.= "900017447 "; // 3
                 $adicion.= str_pad($row["ca_numdocumento"],10, " "); // 4
-                $adicion.= str_pad("003",50, " "); // 5 Concepto de Retención en la Fuente
+                $adicion.= str_pad("006",50, " "); // 5 Concepto de Retención en la Fuente
                 $adicion.= str_pad($vlr_afecto, 10, "0", STR_PAD_LEFT); // 6
                 $adicion.= "\r\n";
 
@@ -767,7 +776,6 @@ class falabellaAduActions extends sfActions {
             exit;
         }
 
-
         $stmt = FalaDeclaracionImpTable::notaAgenteNacionalizacion($referencia);
 
         $numdocumento = null;
@@ -775,7 +783,11 @@ class falabellaAduActions extends sfActions {
         $adicion = '';
         $salida= '';
         $acumula= array();
+        $chk_sum = 0;
+        $chk_count = 0;
+        $valor_carpeta = 0;
         while ( $row = $stmt->fetch() ) {
+            $chk_count++;
             if ($numdocumento != $row["ca_numdocumento"] and $numdocumento != null){
                 $filename = $directory.DIRECTORY_SEPARATOR.'Not_'.$numdocumento.'.txt';
                 $handle = fopen($filename , 'w');
@@ -795,7 +807,7 @@ class falabellaAduActions extends sfActions {
                 $adicion.= str_pad($row["ca_numdocumento"],7, " "); // 4
                 $adicion.= str_pad(1, 7, "0", STR_PAD_LEFT); // 5
                 $adicion.= str_pad(null,2, " "); // 6
-                $adicion.= str_pad(floatval($row["ca_embarque"]), 8, " "); // 7
+                $adicion.= str_pad($row["ca_embarque"], 8, " "); // 7
                 list($anno,$mes,$dia) = sscanf($row["ca_emision_fch"],"%d-%d-%d");
                 $emision = date("Ymd", mktime(0,0,0,$mes,$dia,$anno));
                 $adicion.= $emision; // 8
@@ -859,8 +871,18 @@ class falabellaAduActions extends sfActions {
             $salida.= str_pad($row["ca_tipo"],1, " "); // 16
             $salida.= str_pad(0, 10, "0", STR_PAD_LEFT); // 17
             $salida.= str_pad(substr($row["ca_iddoc"],0,15),20, " "); // 18
-            $salida.= str_pad(floatval($row["ca_embarque"]), 2, " "); // 19
-            $salida.= str_pad(round($tot_doc * $factor,0), 15, "0", STR_PAD_LEFT); // 20
+            $salida.= str_pad($row["ca_embarque"], 2, " "); // 19
+
+            $valor_carpeta = round($tot_doc * $factor,0);
+            $chk_sum+= $valor_carpeta;
+
+            if (($chk_count%$ctr_count)==0){
+                if (abs($chk_sum-$tot_doc) > 0 and abs($chk_sum-$tot_doc) <= 5){ // Tolerancia de 5 pesos de diferencia
+                    $valor_carpeta-= $chk_sum-$tot_doc;
+                }
+                $chk_sum = 0;
+            }
+            $salida.= str_pad($valor_carpeta, 15, "0", STR_PAD_LEFT); // 20
             $salida.= "\r\n";
         }
 

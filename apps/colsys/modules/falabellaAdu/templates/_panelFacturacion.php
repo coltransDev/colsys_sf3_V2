@@ -84,12 +84,12 @@ PanelFacturacion = function(){
         sortable:false,
         width: 90,
         align: 'right',
-        renderer: 'usMoney',
+        renderer: 'usMoney'/*,
         editor: new Ext.form.NumberField({
 				allowBlank: false ,
 				allowNegative: false,				
 				decimalPrecision :3
-			})
+			})*/
       },
       {
         header: "vlr. Exento",
@@ -162,8 +162,8 @@ PanelFacturacion = function(){
         
         ,listeners:{
             validateEdit: this.onValidateEdit,
-            rowContextMenu: this.onRowcontextMenu
-            //afteredit:this.onAfterEdit,
+            rowContextMenu: this.onRowcontextMenu,
+            afteredit:this.onAfterEdit
         }
 
     });
@@ -216,7 +216,6 @@ Ext.extend(PanelFacturacion, Ext.grid.EditorGridPanel, {
         }
     },
 
-
     eliminarItem: function(){
         var storeTransacciones = this.store;
 
@@ -254,6 +253,7 @@ Ext.extend(PanelFacturacion, Ext.grid.EditorGridPanel, {
         }
         
     },
+
     onValidateEdit : function(e){        
         if( e.field == "numdocumento" && e.value && e.record.data.orden=="Z" ){
             var rec = e.record;
@@ -287,7 +287,16 @@ Ext.extend(PanelFacturacion, Ext.grid.EditorGridPanel, {
 
         return true;
     },
-    
+
+    onAfterEdit : function(e){
+
+        if( e.field == "afecto_vlr" ){
+           var rec = e.record;
+           rec.set("iva_vlr",Math.round(rec.get("afecto_vlr")*0.16));
+        }
+
+    },
+
     onRowcontextMenu: function(grid, index, e){
         rec = this.store.getAt(index);
 

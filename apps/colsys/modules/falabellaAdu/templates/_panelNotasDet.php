@@ -114,13 +114,13 @@ PanelNotasDet = function(){
         sortable:false,
         width: 90,
         align: 'right',
-        renderer: 'usMoney',
+        renderer: 'usMoney' /*,
         editor: new Ext.form.NumberField({
 				allowBlank: false ,
 				allowNegative: false,
 				style: 'text-align:right',
 				decimalPrecision :2
-			})
+			})*/
       }
     ];
 
@@ -173,8 +173,8 @@ PanelNotasDet = function(){
 
         ,listeners:{
             validateEdit: this.onValidateEdit,
-            rowContextMenu: this.onRowcontextMenu
-            //afteredit:this.onAfterEdit,
+            rowContextMenu: this.onRowcontextMenu,
+            afteredit:this.onAfterEdit
         }
 
     });
@@ -216,7 +216,7 @@ Ext.extend(PanelNotasDet, Ext.grid.EditorGridPanel, {
                             var res = Ext.util.JSON.decode( response.responseText );
                             if( res.id && res.success){
                                 var rec = store.getById( res.id );
-                                rec.set("idconcepto", res.idconcepto );
+                                rec.set( "idconcepto", res.idconcepto );
 
                                 rec.commit();
                             }
@@ -226,7 +226,6 @@ Ext.extend(PanelNotasDet, Ext.grid.EditorGridPanel, {
             }
         }
     },
-
 
     eliminarItem: function(){
         var storeTransacciones = this.store;
@@ -270,6 +269,7 @@ Ext.extend(PanelNotasDet, Ext.grid.EditorGridPanel, {
         }
 
     },
+
     onValidateEdit : function(e){
         
         if( e.field == "concepto" && e.value && e.record.data.orden=="Z" ){
@@ -297,6 +297,17 @@ Ext.extend(PanelNotasDet, Ext.grid.EditorGridPanel, {
         }
 
         return true;
+    },
+    
+    onAfterEdit : function(e){
+    
+        if( e.field == "factura_vlr" ){
+           var rec = e.record;
+           if (rec.get("tipo")=="F"){
+               rec.set("factura_iva",Math.round(rec.get("factura_vlr")*0.16));
+           }
+        }
+
     },
 
     onRowcontextMenu: function(grid, index, e){
