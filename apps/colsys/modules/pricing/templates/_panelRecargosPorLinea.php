@@ -101,7 +101,6 @@ PanelRecargosPorLinea = function( config ){
             impoexpo: this.impoexpo,
             transporte: this.transporte,
             modalidad: this.modalidad
-
         },
         reader: new Ext.data.JsonReader(
             {
@@ -162,7 +161,8 @@ PanelRecargosPorLinea = function( config ){
             transporte: this.transporte,
             modalidad: this.modalidad,
             idtrafico: this.idtrafico,
-            idlinea: this.idlinea
+            idlinea: this.idlinea,
+            readOnly: this.readOnly
         },
         reader: new Ext.data.JsonReader(
             {

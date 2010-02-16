@@ -68,7 +68,8 @@ PanelRecargosLocalesParametros = function( config ){
             impoexpo: this.impoexpo,
             transporte: this.transporte,
             modalidad: this.modalidad,
-            idlinea: this.idlinea
+            idlinea: this.idlinea,
+            readOnly: this.readOnly
         },
         reader: new Ext.data.JsonReader(
             {
@@ -143,6 +144,28 @@ PanelRecargosLocalesParametros = function( config ){
         },
         tbar: tbar
     });
+    var storeRecargosLocalesParametros = this.store;
+    var readOnly = this.readOnly;
+    this.getColumnModel().isCellEditable = function(colIndex, rowIndex) {
+        if( readOnly ){
+            return false;
+        }else{
+            var record = storeRecargosLocalesParametros.getAt(rowIndex);
+            var field = this.getDataIndex(colIndex);
+
+
+            if( !record.data.concepto && field!="concepto" ){
+
+                return false;
+            }
+
+            if( record.data.concepto!="+" && field=="concepto" ){
+                return false;
+            }
+
+            return Ext.grid.ColumnModel.prototype.isCellEditable.call(this, colIndex, rowIndex);
+        }
+    }
 
 }
 

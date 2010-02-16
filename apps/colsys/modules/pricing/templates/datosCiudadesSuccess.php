@@ -24,24 +24,19 @@ foreach( $results as $modalidad=>$grupos ){
                 idtrafico: '99-999'
 
 			},
-			
 			<?
-			if( $transporte==Constantes::MARITIMO ){ 
-				$linea = "Naviera";
-			}elseif( $transporte==Constantes::AEREO ){
-				$linea = "Aérolinea";
-			}else{
-				$linea =  "linea";
-			}
-			?>
-			
-			<?
-			
+			if( $transporte==Constantes::MARITIMO && $modalidad=="FCL"){
+                if( $transporte==Constantes::MARITIMO ){ 
+                    $linea = "Naviera";
+                }elseif( $transporte==Constantes::AEREO ){
+                    $linea = "Aérolinea";
+                }else{
+                    $linea =  "linea";
+                }
 			?>
 			{
 				text:'Recargos locales x <?=$linea?>',                
-				leaf:false,
-                opcion: 'reclin',
+				leaf:false,                
                 impoexpo: '<?=$impoexpo?>',
                 transporte: '<?=$transporte?>',
                 modalidad: '<?=$modalidad?>',
@@ -64,6 +59,7 @@ foreach( $results as $modalidad=>$grupos ){
                             modalidad: '<?=$modalidad?>',
                             idtrafico: '99-999',                            
                             idlinea: '<?=$linea["p_ca_idproveedor"]?>'
+
                         }
                         <?
                         }
@@ -72,7 +68,7 @@ foreach( $results as $modalidad=>$grupos ){
 				]
 			},			
 			<?
-		
+            }
 			
 			$j=0;
 			foreach( $grupos as $grupo=>$paises){

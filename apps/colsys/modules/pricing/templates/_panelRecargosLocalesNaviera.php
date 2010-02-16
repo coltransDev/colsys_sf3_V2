@@ -35,6 +35,17 @@ PanelRecargosLocalesNaviera = function( config ){
                                           readOnly: this.readOnly
                                       });
 
+    this.panelRecargosPatios = new PanelRecargosLocalesPatios({
+                                          idtrafico: "99-999",
+                                          impoexpo: this.impoexpo,
+                                          transporte: this.transporte,
+                                          modalidad: this.modalidad,
+                                          idlinea: this.idlinea,
+                                          title: "Patios",
+                                          closable: false,
+                                          readOnly: this.readOnly
+                                      });
+
     PanelRecargosLocalesNaviera.superclass.constructor.call(this, {
         frame: true,
 		width: 540,
@@ -43,7 +54,8 @@ PanelRecargosLocalesNaviera = function( config ){
 		activeTab: 0,
         items: [
             this.panelRecargosParametros,
-            this.panelRecargos
+            this.panelRecargos,
+            this.panelRecargosPatios
         ]
     });
 

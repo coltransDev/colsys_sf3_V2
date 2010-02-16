@@ -144,13 +144,7 @@ class pricingComponents extends sfComponents
 	* @author: Andres Botero
 	*/
 	public function executePanelRecargosLocalesParametros(){
-
-		/*$this->transporte = utf8_decode($this->getRequestParameter( "transporte" ));
-		$this->modalidad = $this->getRequestParameter( "modalidad" );
-		$this->impoexpo = utf8_decode($this->getRequestParameter( "impoexpo" ));
-		$this->idlinea = $this->getRequestParameter( "idlinea" );
-		$this->nivel = $this->getUser()->getNivelAcceso( pricingActions::RUTINA );
-        */
+		
 		$this->parametros = ParametroTable::retrieveByCaso("CU071");
 
 	}
@@ -161,13 +155,8 @@ class pricingComponents extends sfComponents
 	* puede seleccionar una ciudad
 	* @author: Andres Botero 
 	*/
-	public function executePanelPatiosRecargosLocales(){
+	public function executePanelRecargosLocalesPatios(){
 		
-		$this->transporte = utf8_decode($this->getRequestParameter( "transporte" ));		
-		$this->modalidad = $this->getRequestParameter( "modalidad" );
-		$this->impoexpo = utf8_decode($this->getRequestParameter( "impoexpo" ));
-		$this->idlinea = $this->getRequestParameter( "idlinea" );
-		$this->nivel = $this->getUser()->getNivelAcceso( pricingActions::RUTINA );	
 	}
 
 

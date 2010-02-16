@@ -83,140 +83,111 @@ Ext.extend(PanelConsultaCiudades, Ext.tree.TreePanel, {
             if( impoexpo=="expo" ){
                 impoexpo = "<?=Constantes::EXPO?>";
             }
-
             
-            if( opcion!="recnav" ){
-                /*
-                * Todo debe quedar de esta manera
-                **/                
-                if( Ext.getCmp('tab-panel').findById(idcomponent) ){
-                    Ext.getCmp('tab-panel').setActiveTab(idcomponent);
-                }else{
-
-                    switch( opcion ){
-                        case "files":
-                            var folder = Base64.encode("Tarifario/"+impoexpo.substring(0, 1)+"_"+transporte.substring(0, 1)+"_"+modalidad+"_"+idtrafico);
-                            var newComponent = new PanelArchivos({id:idcomponent,
-                                                                 folder:folder,
-                                                                 title:"Archivos "+impoexpo.substring(0, 4)+"»"+transporte+"»"+modalidad+"»"+trafico,
-                                                                 closable: true});
-                            break;
-                        case "admtraf":
-                            /*
-                            * Se muestran la administracion de trayectos para el pais seleccionado
-                            */
-                            var newComponent = new PanelTrayecto({id:idcomponent,
-                                                                  impoexpo: impoexpo,
-                                                                  idtrafico: idtrafico,
-                                                                  transporte:transporte,
-                                                                  modalidad: modalidad,
-                                                                  title:"Trayectos "+impoexpo.substring(0, 4)+"»"+transporte+"»"+modalidad+"»"+trafico,
-                                                                  closable: true,
-                                                                  readOnly: this.readOnly
-                                                                 });
-                            break;
-                        case "recgen":
-                            /*
-                            * Se muestran la administracion de trayectos para el pais seleccionado
-                            */
-                            if( idtrafico=="99-999"){
-                                var titulo = "Recargos Locales "+impoexpo.substring(0, 4)+"»"+transporte+"»"+modalidad;
-                            }else{
-                                var titulo = "Recargos "+impoexpo.substring(0, 4)+"»"+transporte+"»"+modalidad+"»"+trafico;
-                            }
-                            var newComponent = new PanelRecargosPorCiudad({id:idcomponent,
-                                                                  impoexpo: impoexpo,
-                                                                  idtrafico: idtrafico,
-                                                                  transporte:transporte,
-                                                                  modalidad: modalidad,
-                                                                  title: titulo,
-                                                                  closable: true,
-                                                                  readOnly: this.readOnly
-                                                                 });
-                            break;
-                        case "reclin":
-                            /*
-                            * Se muestran la administracion de trayectos para el pais seleccionado
-                            */
-                            var newComponent = new PanelRecargosPorLinea({id:idcomponent,
-                                                                  impoexpo: impoexpo,
-                                                                  idtrafico: idtrafico,
-                                                                  transporte:transporte,
-                                                                  modalidad: modalidad,
-                                                                  title: "Recargos x Linea "+impoexpo.substring(0, 4)+"»"+transporte+"»"+modalidad+"»"+trafico,
-                                                                  closable: true,
-                                                                  readOnly: this.readOnly
-                                                                 });
-                            break;
-                        default:
-
-                            /*
-                            * Se muestran la administracion de trayectos para el pais seleccionado
-                            */                           
-                            var newComponent = new PanelFletesPorTrayecto({id:idcomponent,
-                                                                  impoexpo: impoexpo,
-                                                                  idtrafico: idtrafico,
-                                                                  trafico: trafico,
-                                                                  transporte:transporte,
-                                                                  modalidad: modalidad,
-                                                                  idciudad: idciudad,
-                                                                  idlinea: idlinea,
-                                                                  title: impoexpo.substring(0, 4)+"»"+transporte+"»"+modalidad+"»"+trafico,
-                                                                  closable: true,
-                                                                  readOnly: this.readOnly
-                                                                 });
-                            
-
-                            break;
-                    }
-
-                
-                    Ext.getCmp('tab-panel').add(newComponent);
-                    Ext.getCmp('tab-panel').setActiveTab(newComponent);
-                }
-                return 0;
+            /*
+            * Todo debe quedar de esta manera
+            **/
+            if( Ext.getCmp('tab-panel').findById(idcomponent) ){
+                Ext.getCmp('tab-panel').setActiveTab(idcomponent);
             }else{
 
-                switch( opcion ){                                        
+                switch( opcion ){
+                    case "files":
+                        var folder = Base64.encode("Tarifario/"+impoexpo.substring(0, 1)+"_"+transporte.substring(0, 1)+"_"+modalidad+"_"+idtrafico);
+                        var newComponent = new PanelArchivos({id:idcomponent,
+                                                             folder:folder,
+                                                             title:"Archivos "+impoexpo.substring(0, 4)+"»"+transporte+"»"+modalidad+"»"+trafico,
+                                                             closable: true});
+                        break;
+                    case "admtraf":
+                        /*
+                        * Se muestran la administracion de trayectos para el pais seleccionado
+                        */
+                        var newComponent = new PanelTrayecto({id:idcomponent,
+                                                              impoexpo: impoexpo,
+                                                              idtrafico: idtrafico,
+                                                              transporte:transporte,
+                                                              modalidad: modalidad,
+                                                              title:"Trayectos "+impoexpo.substring(0, 4)+"»"+transporte+"»"+modalidad+"»"+trafico,
+                                                              closable: true,
+                                                              readOnly: this.readOnly
+                                                             });
+                        break;
+                    case "recgen":
+                        /*
+                        * Se muestran la administracion de trayectos para el pais seleccionado
+                        */
+                        if( idtrafico=="99-999"){
+                            var titulo = "Recargos Locales "+impoexpo.substring(0, 4)+"»"+transporte+"»"+modalidad;
+                        }else{
+                            var titulo = "Recargos "+impoexpo.substring(0, 4)+"»"+transporte+"»"+modalidad+"»"+trafico;
+                        }
+                        var newComponent = new PanelRecargosPorCiudad({id:idcomponent,
+                                                              impoexpo: impoexpo,
+                                                              idtrafico: idtrafico,
+                                                              transporte:transporte,
+                                                              modalidad: modalidad,
+                                                              title: titulo,
+                                                              closable: true,
+                                                              readOnly: this.readOnly
+                                                             });
+                        break;
+                    case "reclin":
+                        /*
+                        * Se muestran la administracion de trayectos para el pais seleccionado
+                        */
+                        var newComponent = new PanelRecargosPorLinea({id:idcomponent,
+                                                              impoexpo: impoexpo,
+                                                              idtrafico: idtrafico,
+                                                              transporte:transporte,
+                                                              modalidad: modalidad,
+                                                              title: "Recargos x Linea "+impoexpo.substring(0, 4)+"»"+transporte+"»"+modalidad+"»"+trafico,
+                                                              closable: true,
+                                                              readOnly: this.readOnly
+                                                             });
+                        break;
                     case "recnav":
                         /*
-                        * Se muestran los recargos generales para el pais seleccionado
+                        * Se muestran la administracion de trayectos para el pais seleccionado
                         */
-                        <?
-                        $url = "pricing/recargosPorLinea";
-                        ?>
-                        var url = '<?=url_for( $url )?>';
+                        var newComponent = new PanelRecargosLocalesNaviera({id:idcomponent,
+                                                              impoexpo: impoexpo,
+                                                              idlinea: idlinea,
+                                                              transporte:transporte,
+                                                              modalidad: modalidad,
+                                                              title: "Recargos Locales x Linea "+impoexpo.substring(0, 4)+"»"+transporte+"»"+modalidad+"»"+n.attributes.text,
+                                                              closable: true,
+                                                              readOnly: this.readOnly
+                                                             });
+                        break;
+                    default:
+
+                        /*
+                        * Se muestran la administracion de trayectos para el pais seleccionado
+                        */
+                        var newComponent = new PanelFletesPorTrayecto({id:idcomponent,
+                                                              impoexpo: impoexpo,
+                                                              idtrafico: idtrafico,
+                                                              trafico: trafico,
+                                                              transporte:transporte,
+                                                              modalidad: modalidad,
+                                                              idciudad: idciudad,
+                                                              idlinea: idlinea,
+                                                              title: impoexpo.substring(0, 4)+"»"+transporte+"»"+modalidad+"»"+trafico,
+                                                              closable: true,
+                                                              readOnly: this.readOnly
+                                                             });
+
+
                         break;
                 }
 
-                if( Ext.getCmp('tab-panel').findById(idcomponent)!=null ){
-                    Ext.getCmp('tab-panel').activate(idcomponent);
-                    //Ext.getCmp('tab-panel').show();
-                    return 0;
-                }
-                
-                Ext.Ajax.request({
-                    url: url,
-                    params: {
-                        impoexpo: impoexpo,
-                        idtrafico: idtrafico,
-                        transporte:transporte,
-                        modalidad: modalidad,
-                        idlinea: idlinea,
-                        idciudad: idciudad
-                    },
-                    success: function(xhr) {
-                        //alert( xhr.responseText );
-                        var newComponent = eval(xhr.responseText);
-                        Ext.getCmp('tab-panel').add(newComponent);
-                        Ext.getCmp('tab-panel').setActiveTab(newComponent);
 
-                    },
-                    failure: function() {
-                        Ext.Msg.alert("Tab creation failed", "Server communication failure");
-                    }
-                });
-           }
+                Ext.getCmp('tab-panel').add(newComponent);
+                Ext.getCmp('tab-panel').setActiveTab(newComponent);
+            }
+            return 0;
+            
         }else{
             n.expand();
         }

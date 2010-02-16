@@ -20,6 +20,7 @@ include_component("pricing", "panelRecargosPorCiudad");
 include_component("pricing", "panelRecargosPorLinea");
 
 include_component("pricing", "panelRecargosLocalesParametros");
+include_component("pricing", "panelRecargosLocalesPatios");
 include_component("pricing", "panelRecargosLocalesNaviera");
 
 //Paneles laterales
@@ -181,7 +182,7 @@ Ext.onReady(function(){
                     Ext.getCmp('tab-panel').add(newComponent);
                     Ext.getCmp('tab-panel').setActiveTab(newComponent);*/
 
-        var newComponent = new PanelRecargosLocalesNaviera({id:'idcomponent',
+        /*var newComponent = new PanelRecargosLocalesNaviera({id:'idcomponent',
                                                                   impoexpo: "Importación",
                                                                   //idtrafico: "DO-809",
                                                                   idtrafico: "MX-052",
@@ -191,10 +192,10 @@ Ext.onReady(function(){
                                                                   modalidad: "FCL",
                                                                   title: "Recargos locales NAV",
                                                                   closable: true,
-                                                                  readOnly: false });
+                                                                  readOnly: true });
                                                               
         Ext.getCmp('tab-panel').add(newComponent);
-        Ext.getCmp('tab-panel').setActiveTab(newComponent); 
+        Ext.getCmp('tab-panel').setActiveTab(newComponent);*/
     });
 
 

@@ -1026,51 +1026,7 @@ class pricingActions extends sfActions
 	* Recargos x linea
 	*	
 	*********************************************************************/
-	
-	
-	/*
-	* Recargos x linea de un pais 
-	* @author: Andres Botero 
-	*/
-	public function executeRecargosPorLinea(){
-		
-		$this->nivel = $this->getUser()->getNivelAcceso( pricingActions::RUTINA );
-		
-		$this->opcion = "";
-		if( $this->nivel==-1 ){
-			$this->forward404();
-		}
-		
-		$transporte = utf8_decode($this->getRequestParameter( "transporte" ));
-		$idtrafico = $this->getRequestParameter( "idtrafico" );
-		$idlinea = $this->getRequestParameter( "idlinea" );
-		$modalidad = $this->getRequestParameter( "modalidad" );
-		$impoexpo = utf8_decode($this->getRequestParameter( "impoexpo" ));
-		
-		
-		if( $idtrafico=="99-999" ){
-			$this->forward404Unless( $idlinea );
-		}
-		
-		if( $idlinea ){
-			$this->linea = Doctrine::getTable("IdsProveedor")->find( $idlinea );
-		}
-		
-		$this->forward404Unless( $transporte );
-		$this->forward404Unless( $modalidad );
-		$this->forward404Unless( $impoexpo );
 			
-		
-		$this->modalidad = $modalidad;
-		$this->transporte = $transporte;
-		$this->idtrafico = $idtrafico;
-		$this->idlinea = $idlinea;
-		$this->impoexpo = $impoexpo;
-				
-		
-	}
-	
-		
 	/*
 	* Provee datos para los recargos por ciudad
 	* @author: Andres Botero 
@@ -1456,9 +1412,11 @@ class pricingActions extends sfActions
             $this->opcion = "consulta";
         }
 
-        if( $this->nivel>0 ){
+        if( $this->nivel<=0 ){
             $this->opcion = "consulta";
         }
+
+
 		
 		$transporte = utf8_decode($this->getRequestParameter( "transporte" ));
 		
@@ -1615,10 +1573,10 @@ class pricingActions extends sfActions
 	* Patios recargos locales x naviera
 	*	
 	*********************************************************************/
-	public function executeRecargosLocalesPatiosData(){
-		$transporte = $this->getRequestParameter( "transporte" );		
-		$modalidad = $this->getRequestParameter( "modalidad" );				
-		$impoexpo = $this->getRequestParameter( "impoexpo" );
+	public function executeDatosPanelRecargosLocalesPatios(){
+		$transporte = utf8_decode($this->getRequestParameter( "transporte" ));
+		$modalidad = utf8_decode($this->getRequestParameter( "modalidad" ));
+		$impoexpo = utf8_decode($this->getRequestParameter( "impoexpo" ));
 		$idlinea = $this->getRequestParameter( "idlinea" );		
 		
 		$this->nivel = $this->getUser()->getNivelAcceso( pricingActions::RUTINA );
@@ -1626,6 +1584,14 @@ class pricingActions extends sfActions
 		if( $this->nivel==-1 ){
 			$this->forward404();
 		}
+
+        if( $this->getRequestParameter( "readOnly" )=="true" ){
+            $this->opcion = "consulta";
+        }
+
+        if( $this->nivel<=0 ){
+            $this->opcion = "consulta";
+        }
 								
 		$this->forward404Unless( $transporte );
 		$this->forward404Unless( $modalidad );			
@@ -1665,7 +1631,7 @@ class pricingActions extends sfActions
 			}else{
 				$sel = false;
 				$observaciones = "";
-                if( $this->nivel==0 ){
+                if( $this->opcion == "consulta" ){
                     continue;
                 }
 			}
@@ -1693,16 +1659,16 @@ class pricingActions extends sfActions
 	* Administrador de trayectos, tiempos de transito y frecuencias
 	*	
 	*********************************************************************/
-	public function executeObserveRecargosLocalesPatios( $request ){
+	public function executeGuardarPanelRecargosLocalesPatios( $request ){
         $this->nivel = $this->getUser()->getNivelAcceso( pricingActions::RUTINA );
 
         if( $this->nivel<=0 ){
 			$this->forward404();
 		}
 
-		$transporte = $this->getRequestParameter( "transporte" );		
-		$modalidad = $this->getRequestParameter( "modalidad" );				
-		$impoexpo = $this->getRequestParameter( "impoexpo" );
+		$transporte = utf8_decode($this->getRequestParameter( "transporte" ));
+		$modalidad = utf8_decode($this->getRequestParameter( "modalidad" ));
+		$impoexpo = utf8_decode($this->getRequestParameter( "impoexpo" ));
 		$idlinea = $this->getRequestParameter( "idlinea" );		
 		$patios = $this->getRequestParameter( "patios" );		
 						
@@ -1761,46 +1727,7 @@ class pricingActions extends sfActions
 	* y frecuencia) 
 	* @author: Andres Botero
 	*/
-	/*public function executeAdminTrayectos( $request ){
 		
-		$this->nivel = $this->getUser()->getNivelAcceso( pricingActions::RUTINA );
-		
-		$this->opcion = "";
-		if( $this->nivel==-1 ){
-			$this->forward404();
-		}
-		
-		if( $this->nivel==0 ){
-			$this->opcion = "consulta";
-		}
-		
-		$transporte = utf8_decode($this->getRequestParameter( "transporte" ));
-		$idtrafico = $this->getRequestParameter( "idtrafico" );
-		$modalidad = $this->getRequestParameter( "modalidad" );
-		$impoexpo = utf8_decode($this->getRequestParameter( "impoexpo" ));
-		
-		
-		$this->forward404Unless( $modalidad );	
-		$this->forward404Unless( $impoexpo );
-		$this->forward404Unless( $idtrafico );	
-		$this->forward404Unless( $transporte );	
-		
-		
-		
-		$this->trafico = Doctrine::getTable("Trafico")->find($idtrafico);
-        $this->forward404Unless( $this->trafico );
-		$this->idcomponent = "admtraf_".$this->trafico->getCaIdtrafico()."_".$transporte."_".$modalidad;
-		
-		$this->titulo = "T.T. Freq. ".$this->trafico->getCaNombre()." ".$modalidad." ".substr($impoexpo,0,4);
-		
-		
-				
-		$this->impoexpo = $impoexpo;			
-		$this->modalidad = $modalidad;
-		$this->transporte = $transporte;
-		$this->idtrafico = $idtrafico;					
-		$this->linea = "";				
-	}*/
 	
 	/*
 	* Muestra los datos para la administración de trayectos
