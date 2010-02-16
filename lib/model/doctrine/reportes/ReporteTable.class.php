@@ -48,9 +48,9 @@ class ReporteTable extends Doctrine_Table
                 $q->addOrderBy("r.ca_orden_clie");				
 				break;
 			default:                
-                $q->leftJoin("r.Proveedor p ON r.ca_idproveedor=p.ca_idtercero");
+                /*$q->leftJoin("r.Proveedor p ON r.ca_idproveedor=p.ca_idtercero");
                 $q->addOrderBy("p.ca_nombre");
-                $q->addOrderBy("r.ca_orden_clie");
+                $q->addOrderBy("r.ca_orden_clie");*/
 				break;
 
 		}
@@ -73,7 +73,7 @@ class ReporteTable extends Doctrine_Table
 			$fecha = Utils::addDays( date("Y-m-d"), $add );
 		}
 
-        $q->addWhere("r.ca_fchultstatus>=? OR r.ca_idetapa!= ? OR r.ca_idetapa IS NULL", array($fecha, "99999"));
+        $q->addWhere("r.ca_fchultstatus>=? OR (r.ca_idetapa!= ? AND r.ca_idetapa!= ?) OR r.ca_idetapa IS NULL", array($fecha, "99999", "00000"));
 		
 		if( $query ){
 			return $q;
