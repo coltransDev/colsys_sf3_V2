@@ -1331,8 +1331,7 @@ class pricingActions extends sfActions
 	*
 	* @param sfRequest $request A request object
 	*/
-	public function executeDatosEditorLineas($request)
-	{
+	public function executeDatosEditorLineas($request){
 		$idtrafico = utf8_decode($request->getParameter("idtrafico"));
         $impoexpo = utf8_decode($request->getParameter("impoexpo"));
 		$transporte = utf8_decode($request->getParameter("transporte"));
@@ -1398,6 +1397,42 @@ class pricingActions extends sfActions
 		$this->setTemplate("responseTemplate");
 
 	}
+
+
+    /**
+	* Retorna un objeto JSON con la información de todas las conceptos
+	*
+	* @param sfRequest $request A request object
+	*/
+	public function executeDatosEditorConceptos($request){
+
+        $impoexpo = utf8_decode($request->getParameter("impoexpo"));
+		$transporte = utf8_decode($request->getParameter("transporte"));
+        $modalidad = utf8_decode($request->getParameter("modalidad"));
+
+        $conceptos = Doctrine::getTable("Concepto")
+                              ->createQuery("c")
+                              ->select("c.ca_idconcepto, c.ca_concepto")
+                              ->where("c.ca_transporte = ? AND c.ca_modalidad= ?", array($transporte, $modalidad))
+                              ->addOrderBy("c.ca_concepto")
+                              ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                              ->execute();
+
+
+        $this->conceptos = array();
+
+        $this->conceptos[] = array("idconcepto"=>'9999', "concepto"=>'Aplica para todos');
+		foreach( $conceptos as $concepto ){
+			$this->conceptos[] = array(  "idconcepto"=>$concepto['c_ca_idconcepto'],
+									     "concepto"=>utf8_encode($concepto['c_ca_concepto'])
+                                      );
+		}
+
+        $this->responseArray = array("root"=>$this->conceptos, "total"=>count($this->conceptos), "success"=>true);
+		$this->setTemplate("responseTemplate");
+
+        
+    }
 	
 	
 	/*********************************************************************
@@ -1410,17 +1445,25 @@ class pricingActions extends sfActions
 	* Datos para los parametros de los recargos locales x naviera
 	* @author: Andres Botero
 	*/
-	public function executeRecargosPorLineaParametrosData( $request ){
+	public function executeDatosPanelRecargosLocalesParametros( $request ){
 		$this->nivel = $this->getUser()->getNivelAcceso( pricingActions::RUTINA );
 			
 		if( $this->nivel==-1 ){
 			$this->forward404();
 		}
+        $this->opcion = "";
+        if( $this->getRequestParameter( "readOnly" )=="true" ){
+            $this->opcion = "consulta";
+        }
+
+        if( $this->nivel>0 ){
+            $this->opcion = "consulta";
+        }
 		
 		$transporte = utf8_decode($this->getRequestParameter( "transporte" ));
 		
-		$modalidad = $this->getRequestParameter( "modalidad" );				
-		$impoexpo = $this->getRequestParameter( "impoexpo" );
+		$modalidad = utf8_decode($this->getRequestParameter( "modalidad" ));
+		$impoexpo = utf8_decode($this->getRequestParameter( "impoexpo" ));
 		$idlinea = $this->getRequestParameter( "idlinea" );		
 						
 		$this->forward404Unless( $transporte );
@@ -1458,7 +1501,7 @@ class pricingActions extends sfActions
 		}
 		
 		
-		if( $this->nivel>0 ){
+		if( $this->opcion != "consulta" ){
 			/*
 			* Incluye una fila vacia que permite agregar datos
 			*/
@@ -1479,7 +1522,7 @@ class pricingActions extends sfActions
 	* Guarda los cambios de un parametro de los recargos locales
 	* @author: Andres Botero
 	*/
-	public function executeObserveRecargosParametros( $request ){
+	public function executeGuardarPanelRecargosLocalesParametros( $request ){
 		
         $this->nivel = $this->getUser()->getNivelAcceso( pricingActions::RUTINA );
 
@@ -1489,9 +1532,9 @@ class pricingActions extends sfActions
 
 		$idlinea = $this->getRequestParameter("idlinea");		
 		
-		$modalidad = $this->getRequestParameter("modalidad");
-		$transporte = $this->getRequestParameter("transporte");
-		$impoexpo = $this->getRequestParameter("impoexpo");
+		$modalidad = utf8_decode($this->getRequestParameter("modalidad"));
+		$transporte = utf8_decode($this->getRequestParameter("transporte"));
+		$impoexpo = utf8_decode($this->getRequestParameter("impoexpo"));
 		$concepto = utf8_decode($this->getRequestParameter("concepto"));
 								
 		$this->forward404Unless( $transporte );
@@ -1536,15 +1579,15 @@ class pricingActions extends sfActions
 	* y frecuencia) 
 	* @author: Andres Botero
 	*/
-	public function executeEliminarParametroRecargos( $request ){
+	public function executeEliminarPanelRecargosLocalesParametros( $request ){
         $this->nivel = $this->getUser()->getNivelAcceso( pricingActions::RUTINA );
 
         if( $this->nivel<=0 ){
 			$this->forward404();
 		}
-		$transporte = $this->getRequestParameter( "transporte" );		
-		$modalidad = $this->getRequestParameter( "modalidad" );				
-		$impoexpo = $this->getRequestParameter( "impoexpo" );
+		$transporte = utf8_decode($this->getRequestParameter( "transporte" ));
+		$modalidad = utf8_decode($this->getRequestParameter( "modalidad" ));
+		$impoexpo = utf8_decode($this->getRequestParameter( "impoexpo" ));
 		$idlinea = $this->getRequestParameter( "idlinea" );	
 		$concepto = utf8_decode($this->getRequestParameter( "concepto" ));
 		

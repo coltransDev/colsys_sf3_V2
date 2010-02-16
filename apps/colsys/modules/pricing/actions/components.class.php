@@ -55,23 +55,7 @@ class pricingComponents extends sfComponents
 	
 	
 	
-	/*
-	* Muestra información como deposito, liberacion o creditoen la parte 
-	* superior del panel de recargos locales
-	* puede seleccionar una ciudad
-	* @author: Andres Botero 
-	*/
-	public function executePanelParametrosRecargosLocales(){
-		
-		$this->transporte = utf8_decode($this->getRequestParameter( "transporte" ));		
-		$this->modalidad = $this->getRequestParameter( "modalidad" );
-		$this->impoexpo = utf8_decode($this->getRequestParameter( "impoexpo" ));
-		$this->idlinea = $this->getRequestParameter( "idlinea" );
-		$this->nivel = $this->getUser()->getNivelAcceso( pricingActions::RUTINA );
-		
-		$this->parametros = ParametroTable::retrieveByCaso("CU071");
-		
-	}
+	
 	
 	/*
 	* Permite colocar los valores de los recargos (Locales o en origen) por linea
@@ -151,7 +135,25 @@ class pricingComponents extends sfComponents
 		$this->impoexpo = $impoexpo;	
 		
 	}
-	
+
+
+    /*
+	* Muestra información como deposito, liberacion o creditoen la parte
+	* superior del panel de recargos locales
+	* puede seleccionar una ciudad
+	* @author: Andres Botero
+	*/
+	public function executePanelRecargosLocalesParametros(){
+
+		/*$this->transporte = utf8_decode($this->getRequestParameter( "transporte" ));
+		$this->modalidad = $this->getRequestParameter( "modalidad" );
+		$this->impoexpo = utf8_decode($this->getRequestParameter( "impoexpo" ));
+		$this->idlinea = $this->getRequestParameter( "idlinea" );
+		$this->nivel = $this->getUser()->getNivelAcceso( pricingActions::RUTINA );
+        */
+		$this->parametros = ParametroTable::retrieveByCaso("CU071");
+
+	}
 	
 	/*
 	* Muestra información como deposito, liberacion o creditoen la parte 
@@ -170,60 +172,15 @@ class pricingComponents extends sfComponents
 
 
     /*
-	* Tarifario de aduana x cliente
+	* Incorpora los paneles de recargos locales x naviera, parametros
+    * y patios en un TabPanel
 	* @author: Andres Botero
 	*/
-    public function executePanelCostosAduana(){
+	public function executePanelRecargosLocalesNaviera(){
 
-        //$this->nivel = $this->getUser()->getNivelAcceso( pricingActions::RUTINA );
+    }
 
-        if(!isset($this->modo)){
-            $this->modo = "";
-        }
-
-
-        $this->recargos = Doctrine::getTable("InoConcepto")
-                              ->createQuery("c")
-                              ->where("c.ca_tarifario_costos_cliente = ?", true)
-                              ->execute();
-        
-        
-	}
-
-
-    /*
-	* Muestra una ventana con la informacion de las columnas que se pueden
-    * desplegar
-	* @author: Andres Botero
-	*/
-    public function executePanelCostosAduanaWindow(){
-
-        //$this->nivel = $this->getUser()->getNivelAcceso( pricingActions::RUTINA );
-
-        
-	}
-
-
-    /*
-	* Muestra los recargos que estan en la ventana anterior
-    * desplegar
-	* @author: Andres Botero
-	*/
-    public function executePanelCostosAduanaRecargos(){
-
-        //$this->nivel = $this->getUser()->getNivelAcceso( pricingActions::RUTINA );
-        $this->recargos = Doctrine::getTable("InoConcepto")
-                              ->createQuery("c")
-                              ->select("c.ca_idconcepto, c.ca_concepto")
-                              ->where("c.ca_tarifario_costos_cliente = ?", true)
-                              ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
-                              ->execute();
-        foreach( $this->recargos as $key=>$val){
-            $this->recargos[$key]["sel"] = false;
-            $this->recargos[$key]["c_ca_concepto"] = utf8_encode( $this->recargos[$key]["c_ca_concepto"] );
-        }
-	}
-
+    
     /***************************************************************************
     *
     *   Creación y edición de trayectos
@@ -281,5 +238,69 @@ class pricingComponents extends sfComponents
 		$this->aplicacionesMaritimo = ParametroTable::retrieveByCaso("CU064", null, Constantes::MARITIMO );
         
     }
+
+
+    /***************************************************************************
+    *
+    *   Tarifario Aduana
+    *
+    ***************************************************************************/
+
+
+    /*
+	* Tarifario de aduana x cliente
+	* @author: Andres Botero
+	*/
+    public function executePanelCostosAduana(){
+
+        //$this->nivel = $this->getUser()->getNivelAcceso( pricingActions::RUTINA );
+
+        if(!isset($this->modo)){
+            $this->modo = "";
+        }
+
+
+        $this->recargos = Doctrine::getTable("InoConcepto")
+                              ->createQuery("c")
+                              ->where("c.ca_tarifario_costos_cliente = ?", true)
+                              ->execute();
+
+
+	}
+
+
+    /*
+	* Muestra una ventana con la informacion de las columnas que se pueden
+    * desplegar
+	* @author: Andres Botero
+	*/
+    public function executePanelCostosAduanaWindow(){
+
+        //$this->nivel = $this->getUser()->getNivelAcceso( pricingActions::RUTINA );
+
+
+	}
+
+
+    /*
+	* Muestra los recargos que estan en la ventana anterior
+    * desplegar
+	* @author: Andres Botero
+	*/
+    public function executePanelCostosAduanaRecargos(){
+
+        //$this->nivel = $this->getUser()->getNivelAcceso( pricingActions::RUTINA );
+        $this->recargos = Doctrine::getTable("InoConcepto")
+                              ->createQuery("c")
+                              ->select("c.ca_idconcepto, c.ca_concepto")
+                              ->where("c.ca_tarifario_costos_cliente = ?", true)
+                              ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                              ->execute();
+        foreach( $this->recargos as $key=>$val){
+            $this->recargos[$key]["sel"] = false;
+            $this->recargos[$key]["c_ca_concepto"] = utf8_encode( $this->recargos[$key]["c_ca_concepto"] );
+        }
+	}
+
 }
 ?>

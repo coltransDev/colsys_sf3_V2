@@ -81,15 +81,52 @@ PanelRecargosPorLinea = function( config ){
         typeAhead: true,
         forceSelection: true,
         triggerAction: 'all',
-        selectOnFocus: true,
-        name: 'recargo',
-        id: 'recargo',
+        selectOnFocus: true,        
         mode: 'local',
         displayField: 'concepto',
         valueField: 'idconcepto',
         lazyRender:true,
         listClass: 'x-combo-list-small',
         store : this.storeRecargos
+
+    });
+
+    /*
+    *Store que carga los conceptos
+    */
+    this.storeConceptos = new Ext.data.Store({
+        autoLoad : false,
+        url: '<?=url_for("pricing/datosEditorConceptos")?>',
+        baseParams : {
+            impoexpo: this.impoexpo,
+            transporte: this.transporte,
+            modalidad: this.modalidad
+
+        },
+        reader: new Ext.data.JsonReader(
+            {
+                root: 'root',
+                totalProperty: 'total',
+                successProperty: 'success'
+            },
+            Ext.data.Record.create([
+                {name: 'idconcepto'},
+                {name: 'concepto'}
+            ])
+        )
+    });
+
+    this.editorConceptos = new Ext.form.ComboBox({
+        typeAhead: true,
+        forceSelection: true,
+        triggerAction: 'all',
+        selectOnFocus: true,        
+        mode: 'local',
+        displayField: 'concepto',
+        valueField: 'idconcepto',
+        listClass: 'x-combo-list-small',
+        lazyRender:true,        
+        store : this.storeConceptos
 
     });
 
@@ -124,7 +161,8 @@ PanelRecargosPorLinea = function( config ){
             impoexpo: this.impoexpo,
             transporte: this.transporte,
             modalidad: this.modalidad,
-            idtrafico: this.idtrafico
+            idtrafico: this.idtrafico,
+            idlinea: this.idlinea
         },
         reader: new Ext.data.JsonReader(
             {
@@ -166,6 +204,7 @@ PanelRecargosPorLinea = function( config ){
 			sortable: false,
 			hideable: false,
 			dataIndex: 'linea',
+            hidden: !ocultarConcepto,
 			editor: this.editorLineas
 		},
 		{
@@ -183,8 +222,8 @@ PanelRecargosPorLinea = function( config ){
 			sortable: false,
 			hideable: false,
             hidden: ocultarConcepto,
-			dataIndex: 'concepto'			
-			//,editor: comboConceptos
+			dataIndex: 'concepto',
+			editor: this.editorConceptos
 			
 		},
 		
@@ -305,8 +344,7 @@ PanelRecargosPorLinea = function( config ){
         loadMask: {msg:'Cargando...'},
         stripeRows: true,   
         height: 500,
-        plugins: [this.checkColumn, this.expander],
-        closable: true,        
+        plugins: [this.checkColumn, this.expander],             
         tbar: this.tbar,
         view: new Ext.grid.GridView({
              forceFit :true
@@ -366,6 +404,8 @@ Ext.extend(PanelRecargosPorLinea, Ext.grid.EditorGridPanel, {
             if( this.idtrafico=="99-999" ){
                 this.storeRecargos.setBaseParam('modo', 'recargos');
                 this.storeRecargos.setBaseParam('tipo', '<?=Constantes::RECARGO_LOCAL?>');
+                
+                this.storeConceptos.load();
             }else{
                 this.storeRecargos.setBaseParam('modo', 'recargos');
                 this.storeRecargos.setBaseParam('tipo', '<?=Constantes::RECARGO_EN_ORIGEN?>');
@@ -460,11 +500,12 @@ Ext.extend(PanelRecargosPorLinea, Ext.grid.EditorGridPanel, {
             var rec = e.record;
             var ed = this.colModel.getCellEditor(e.column, e.row);
             var store = ed.field.store;
-            var idlinea = this.idlinea;
+            var idlinea = this.idlinea; 
+            var idtrafico = this.idtrafico;           
             store.each( function( r ){
                     if( r.data.idconcepto==e.value ){
                         
-                        if(this.idtrafico=="99-999"){
+                        if(idtrafico=="99-999"){
                         
                             if( !rec.data.idrecargo  ){
                                 /*
@@ -523,11 +564,11 @@ Ext.extend(PanelRecargosPorLinea, Ext.grid.EditorGridPanel, {
             var rec = e.record;
             var ed = this.colModel.getCellEditor(e.column, e.row);
             var store = ed.field.store;
-
+            var idtrafico = this.idtrafico;
             store.each( function( r ){
                     if( r.data.idlinea==e.value ){
                         
-                        if(this.idtrafico!="99-999"){
+                        if(idtrafico!="99-999"){
                         
                             if( !rec.data.idlinea  ){
                                 /*

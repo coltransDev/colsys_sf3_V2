@@ -15,10 +15,12 @@ include_component("pricing", "panelNoticias");
 
 include_component("pricing", "panelTrayectoWindow");
 include_component("pricing", "panelTrayecto", array("readOnly"=>$opcion=="consulta"));
-
 include_component("pricing", "panelFletesPorTrayecto");
 include_component("pricing", "panelRecargosPorCiudad");
 include_component("pricing", "panelRecargosPorLinea");
+
+include_component("pricing", "panelRecargosLocalesParametros");
+include_component("pricing", "panelRecargosLocalesNaviera");
 
 //Paneles laterales
 include_component("pricing","panelConsultaCiudades");
@@ -179,19 +181,20 @@ Ext.onReady(function(){
                     Ext.getCmp('tab-panel').add(newComponent);
                     Ext.getCmp('tab-panel').setActiveTab(newComponent);*/
 
-        /*var newComponent = new PanelRecargosPorLinea({id:'idcomponent',
+        var newComponent = new PanelRecargosLocalesNaviera({id:'idcomponent',
                                                                   impoexpo: "Importación",
                                                                   //idtrafico: "DO-809",
                                                                   idtrafico: "MX-052",
+                                                                  idlinea: 8,
                                                                   //idtrafico: "99-999",
                                                                   transporte: "Marítimo",
                                                                   modalidad: "FCL",
-                                                                  title: "MEX Marítimo FCL",
+                                                                  title: "Recargos locales NAV",
                                                                   closable: true,
                                                                   readOnly: false });
                                                               
         Ext.getCmp('tab-panel').add(newComponent);
-        Ext.getCmp('tab-panel').setActiveTab(newComponent); */
+        Ext.getCmp('tab-panel').setActiveTab(newComponent); 
     });
 
 
