@@ -10,9 +10,9 @@
  * @method string        getCaReferencia()  Returns the current record's "ca_referencia" value
  * @method InoMaestraAdu setCaReferencia()  Sets the current record's "ca_referencia" value
  * 
- * @package    ##PACKAGE##
- * @subpackage ##SUBPACKAGE##
- * @author     ##NAME## <##EMAIL##>
+ * @package    symfony
+ * @subpackage model
+ * @author     Your name here
  * @version    SVN: $Id: Builder.php 6820 2009-11-30 17:27:49Z jwage $
  */
 abstract class BaseInoMaestraAdu extends myDoctrineRecord

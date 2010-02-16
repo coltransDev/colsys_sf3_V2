@@ -12,6 +12,7 @@
  * @property Trafico $Trafico
  * @property Doctrine_Collection $CotProducto
  * @property Doctrine_Collection $CotContinuacion
+ * @property Doctrine_Collection $CotTrayectoAduana
  * @property Doctrine_Collection $IdsSucursal
  * @property Doctrine_Collection $InoMaestra
  * @property Doctrine_Collection $Trayecto
@@ -31,6 +32,7 @@
  * @method Trafico             getTrafico()              Returns the current record's "Trafico" value
  * @method Doctrine_Collection getCotProducto()          Returns the current record's "CotProducto" collection
  * @method Doctrine_Collection getCotContinuacion()      Returns the current record's "CotContinuacion" collection
+ * @method Doctrine_Collection getCotTrayectoAduana()    Returns the current record's "CotTrayectoAduana" collection
  * @method Doctrine_Collection getIdsSucursal()          Returns the current record's "IdsSucursal" collection
  * @method Doctrine_Collection getInoMaestra()           Returns the current record's "InoMaestra" collection
  * @method Doctrine_Collection getTrayecto()             Returns the current record's "Trayecto" collection
@@ -49,6 +51,7 @@
  * @method Ciudad              setTrafico()              Sets the current record's "Trafico" value
  * @method Ciudad              setCotProducto()          Sets the current record's "CotProducto" collection
  * @method Ciudad              setCotContinuacion()      Sets the current record's "CotContinuacion" collection
+ * @method Ciudad              setCotTrayectoAduana()    Sets the current record's "CotTrayectoAduana" collection
  * @method Ciudad              setIdsSucursal()          Sets the current record's "IdsSucursal" collection
  * @method Ciudad              setInoMaestra()           Sets the current record's "InoMaestra" collection
  * @method Ciudad              setTrayecto()             Sets the current record's "Trayecto" collection
@@ -117,6 +120,10 @@ abstract class BaseCiudad extends myDoctrineRecord
              'foreign' => 'ca_origen'));
 
         $this->hasMany('CotContinuacion', array(
+             'local' => 'ca_idciudad',
+             'foreign' => 'ca_origen'));
+
+        $this->hasMany('CotTrayectoAduana', array(
              'local' => 'ca_idciudad',
              'foreign' => 'ca_origen'));
 

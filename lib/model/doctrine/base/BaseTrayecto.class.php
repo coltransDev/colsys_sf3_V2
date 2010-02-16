@@ -18,7 +18,6 @@
  * @property integer $ca_idagente
  * @property boolean $ca_activo
  * @property timestamp $ca_fchcreado
- * @property boolean $ca_inpricing
  * @property Ciudad $Origen
  * @property Ciudad $Destino
  * @property IdsProveedor $IdsProveedor
@@ -37,7 +36,6 @@
  * @method integer      getCaIdagente()        Returns the current record's "ca_idagente" value
  * @method boolean      getCaActivo()          Returns the current record's "ca_activo" value
  * @method timestamp    getCaFchcreado()       Returns the current record's "ca_fchcreado" value
- * @method boolean      getCaInpricing()       Returns the current record's "ca_inpricing" value
  * @method Ciudad       getOrigen()            Returns the current record's "Origen" value
  * @method Ciudad       getDestino()           Returns the current record's "Destino" value
  * @method IdsProveedor getIdsProveedor()      Returns the current record's "IdsProveedor" value
@@ -55,7 +53,6 @@
  * @method Trayecto     setCaIdagente()        Sets the current record's "ca_idagente" value
  * @method Trayecto     setCaActivo()          Sets the current record's "ca_activo" value
  * @method Trayecto     setCaFchcreado()       Sets the current record's "ca_fchcreado" value
- * @method Trayecto     setCaInpricing()       Sets the current record's "ca_inpricing" value
  * @method Trayecto     setOrigen()            Sets the current record's "Origen" value
  * @method Trayecto     setDestino()           Sets the current record's "Destino" value
  * @method Trayecto     setIdsProveedor()      Sets the current record's "IdsProveedor" value
@@ -70,7 +67,7 @@ abstract class BaseTrayecto extends myDoctrineRecord
 {
     public function setTableDefinition()
     {
-        $this->setTableName('tb_trayectos');
+        $this->setTableName('pric.tb_trayectos');
         $this->hasColumn('ca_idtrayecto', 'integer', null, array(
              'type' => 'integer',
              'primary' => true,
@@ -119,9 +116,6 @@ abstract class BaseTrayecto extends myDoctrineRecord
              ));
         $this->hasColumn('ca_fchcreado', 'timestamp', null, array(
              'type' => 'timestamp',
-             ));
-        $this->hasColumn('ca_inpricing', 'boolean', null, array(
-             'type' => 'boolean',
              ));
 
 
