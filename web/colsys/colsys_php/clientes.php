@@ -1530,7 +1530,7 @@ require_once("menu.php");
 			 $tit_mem = array("ca_idcliente","ca_compania","ca_nombres","ca_papellido","ca_sapellido","ca_vendedor", "sdnm_uid","sdnm_firstname","sdnm_lastname","sdnm_title","sdnm_sdntype","sdnm_remarks","sdid_uid_id","sdid_idtype","sdid_idnumber","sdid_idcountry","sdid_issuedate","sdid_expirationdate","sdal_uid_aka","sdal_type","sdal_category","sdal_firstname","sdal_lastname","sdak_uid_aka","sdak_type","sdak_category","sdak_firstname","sdak_lastname");
 
              echo "<FORM METHOD=post NAME='ListaClinton' ACTION='clientes.php'>";  // Llena la forma con los datos actuales del registro
-			 echo "La siguiente es una relación de <b>SIMILITUDES</b>, hayadas entre el cliente consultado y la lista Clinton publicada el ".$dia.' de '.$meses[$mes-1].' de '.$anno.".<br />Tener en cuenta que se compara Número de Nit, Razón Social y Nombre del Representante Legal.<br /><br />";
+             echo "La siguiente es una relación de <b>SIMILITUDES</b>, halladas entre el cliente consultado y la lista Clinton publicada el ".$dia.' de '.$meses[$mes-1].' de '.$anno.".<br />Tener en cuenta que se compara Número de Nit, Razón Social y Nombre del Representante Legal.<br /><br />";
              echo "<TABLE CELLSPACING=1 WIDTH=400>";
              echo "<INPUT TYPE='HIDDEN' NAME='id' VALUE=".$id.">";              // Hereda el Id del registro que se esta eliminando
              echo "<TH Class=titulo COLSPAN=".count($tit_mem).">Consulta del Cliente en Lista Clinton</TH>";
