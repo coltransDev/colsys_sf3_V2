@@ -180,7 +180,31 @@ PanelRecargosPorLinea = function( config ){
         width: 15,
         tpl : new Ext.Template(
             '<p><div class=\'btnComentarios\' id=\'obs_{_id}\'>&nbsp; {observaciones}</div></p>'
-        )
+        ),
+        getRowClass : function(record, rowIndex, p, ds){
+            p.cols = p.cols-1;
+
+            var content = this.bodyContent[record.id];
+
+            //if(!content && !this.lazyRender){		//hace que los comentarios no se borren cuando se guarda
+                content = this.getBodyContent(record, rowIndex);
+            //}
+
+            if(content){
+               p.body = content;
+            }
+
+            var color;
+            if( record.data.style ){
+                color = "row_"+record.data.style;
+            }
+
+            if( record.data.observaciones!='' && record.data.tipo!='concepto' ){
+                this.state[record.id]=true;
+            }
+
+            return this.state[record.id] ? 'x-grid3-row-expanded '+color : 'x-grid3-row-collapsed '+color;
+        }
     });
 
     this.checkColumn = new Ext.grid.CheckColumn({header:' ', dataIndex:'sel', width:30, hideable: false});
