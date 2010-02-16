@@ -433,4 +433,30 @@ function cargarDatosLineas( lineas , transporte,  lineaFld, defaultVal){
 }
 
 
+function isMicrosoft(){
+    return (navigator.appName.indexOf("Microsoft") > -1) && !(navigator.userAgent.indexOf("Opera") > -1);
+}
 
+function isSafari(){
+    return (navigator.userAgent.indexOf("Safari") > 0);
+}
+
+function addListener( objElem, eventName, handler ){
+    
+    if (isMicrosoft())
+    {
+        if( eventName =="click" ){
+            objElem.attachEvent("onclick", handler);
+        }
+
+        if( eventName =="dblclick" ){
+            objElem.attachEvent("ondblclick", handler);
+        }
+    }
+    else
+    {
+        
+        objElem.addEventListener(eventName,handler, false);
+        
+    }
+}
