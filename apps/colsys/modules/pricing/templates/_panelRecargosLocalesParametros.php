@@ -394,24 +394,26 @@ Ext.extend(PanelRecargosLocalesParametros, Ext.grid.EditorGridPanel, {
     * Muestra una ventana donde se pueden editar las observaciones
     **/
     onDblclick: function(e) {
-        var btn = e.getTarget('.btnComentarios');
-        if (btn) {
-            var t = e.getTarget();
-            var v = this.view;
-            var rowIdx = v.findRowIndex(t);
-            store = this.getStore();
-            var record = this.getStore().getAt(rowIdx);
-            activeRow = rowIdx;
-            Ext.MessageBox.show({
-               title: 'Observaciones',
-               msg: 'Por favor coloque las observaciones:',
-               width:300,
-               buttons: Ext.MessageBox.OKCANCEL,
-               multiline: true,
-               fn: this.actualizarObservaciones,
-               animEl: 'mb3',
-               value: record.get("observaciones")
-           });
+        if( !this.readOnly ){
+            var btn = e.getTarget('.btnComentarios');
+            if (btn) {
+                var t = e.getTarget();
+                var v = this.view;
+                var rowIdx = v.findRowIndex(t);
+                store = this.getStore();
+                var record = this.getStore().getAt(rowIdx);
+                activeRow = rowIdx;
+                Ext.MessageBox.show({
+                   title: 'Observaciones',
+                   msg: 'Por favor coloque las observaciones:',
+                   width:300,
+                   buttons: Ext.MessageBox.OKCANCEL,
+                   multiline: true,
+                   fn: this.actualizarObservaciones,
+                   animEl: 'mb3',
+                   value: record.get("observaciones")
+               });
+            }
         }
     },
 
