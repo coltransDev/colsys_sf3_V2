@@ -26,7 +26,14 @@ include_component("pricing", "panelRecargosLocalesNaviera");
 //Paneles laterales
 include_component("pricing","panelConsultaCiudades");
 
-//$opcion="consulta";
+
+//Panel de parametros
+
+include_component("pricing","panelParametros" );
+include_component("pricing","modalidadWindow" );
+include_component("pricing","modalidadGrid");
+
+
 ?>
 <script type="text/javascript">
 
@@ -106,6 +113,10 @@ Ext.onReady(function(){
                 //,
                 <?
                 include_partial("formSeguros", array("opcion"=>$opcion));
+                ?>
+                ,
+                <?
+                include_partial("formParametros", array("opcion"=>$opcion));
                 ?>
                 ,
                 new PanelArchivos({
@@ -194,8 +205,16 @@ Ext.onReady(function(){
                                                                   closable: true,
                                                                   readOnly: true });
                                                               
+        */
+
+        var newComponent = new PanelParametros({
+                                                             closable: true,
+                                                             title: 'Def. de Conceptos',
+                                                             readOnly: <?=$opcion=="consulta"?"true":"false"?>
+                                                            });
         Ext.getCmp('tab-panel').add(newComponent);
-        Ext.getCmp('tab-panel').setActiveTab(newComponent);*/
+        Ext.getCmp('tab-panel').setActiveTab(newComponent);
+
     });
 
 

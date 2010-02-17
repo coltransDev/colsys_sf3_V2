@@ -18,10 +18,20 @@ class pricingActions extends sfActions
 	* Executes index action
 	*
 	*/
+
+
+    public function getNivel(){
+        $this->nivel = $this->getUser()->getNivelAcceso( pricingActions::RUTINA );
+        if( $this->nivel==-1 ){
+			$this->forward404();
+		}
+        return $this->nivel;
+    }
+
 	public function executeIndex()
 	{		
 		
-		$this->nivel = $this->getUser()->getNivelAcceso( pricingActions::RUTINA );
+		$this->nivel = $this->getNivel();
 		
 		$this->opcion = "";
 		if( $this->nivel==-1 ){
@@ -51,7 +61,7 @@ class pricingActions extends sfActions
 
 
 		
-		$this->nivel = $this->getUser()->getNivelAcceso( pricingActions::RUTINA );
+		$this->nivel = $this->getNivel();
 		
 		if( $this->nivel==-1 ){
 			$this->forward404();
@@ -71,7 +81,7 @@ class pricingActions extends sfActions
 	*/
 	public function executeDatosPanelFletesPorTrayecto(){
 		
-		$this->nivel = $this->getUser()->getNivelAcceso( pricingActions::RUTINA );
+		$this->nivel = $this->getNivel();
 		
 		$this->opcion = "";
 		if( $this->nivel==-1 ){
@@ -545,7 +555,7 @@ class pricingActions extends sfActions
 	*/
 	public function executeGuardarPanelFletesPorTrayecto(){
 
-        $this->nivel = $this->getUser()->getNivelAcceso( pricingActions::RUTINA );
+        $this->nivel = $this->getNivel();
 
         if( $this->nivel<=0 ){
 			$this->forward404();
@@ -716,7 +726,7 @@ class pricingActions extends sfActions
 	
 	public function executeEliminarPanelFletesPorTrayecto(){
 		
-        $this->nivel = $this->getUser()->getNivelAcceso( pricingActions::RUTINA );
+        $this->nivel = $this->getNivel();
 
         if( $this->nivel<=0 ){
 			$this->forward404();
@@ -776,7 +786,7 @@ class pricingActions extends sfActions
 	*/
 	public function executeDatosPanelRecargosPorCiudad(){
 		
-		$this->nivel = $this->getUser()->getNivelAcceso( pricingActions::RUTINA );
+		$this->nivel = $this->getNivel();
 		
 		$this->opcion = "";
 		if( $this->nivel==-1 ){
@@ -882,7 +892,7 @@ class pricingActions extends sfActions
 	* @author: Andres Botero 
 	*/
 	public function executeGuardarPanelRecargosPorCiudad(){
-		$this->nivel = $this->getUser()->getNivelAcceso( pricingActions::RUTINA );
+		$this->nivel = $this->getNivel();
 
         if( $this->nivel<=0 ){
 			$this->forward404();
@@ -971,7 +981,7 @@ class pricingActions extends sfActions
 	*/
 	public function executeEliminarPanelRecargosPorCiudad(){
         
-        $this->nivel = $this->getUser()->getNivelAcceso( pricingActions::RUTINA );
+        $this->nivel = $this->getNivel();
 
         if( $this->nivel<=0 ){
 			$this->forward404();
@@ -1033,7 +1043,7 @@ class pricingActions extends sfActions
 	*/
 	public function executeDatosPanelRecargosPorLinea(){
 		
-		$this->nivel = $this->getUser()->getNivelAcceso( pricingActions::RUTINA );
+		$this->nivel = $this->getNivel();
 		
 		$this->opcion = "";
 		if( $this->nivel==-1 ){
@@ -1147,7 +1157,7 @@ class pricingActions extends sfActions
 	*/
 	public function executeGuardarPanelRecargosPorLinea(){
 		
-        $this->nivel = $this->getUser()->getNivelAcceso( pricingActions::RUTINA );
+        $this->nivel = $this->getNivel();
 
         if( $this->nivel<=0 ){
 			$this->forward404();
@@ -1247,7 +1257,7 @@ class pricingActions extends sfActions
 	* @author: Andres Botero 
 	*/
 	public function executeEliminarPanelRecargosPorLinea(){
-        $this->nivel = $this->getUser()->getNivelAcceso( pricingActions::RUTINA );
+        $this->nivel = $this->getNivel();
 
         if( $this->nivel<=0 ){
 			$this->forward404();
@@ -1402,7 +1412,7 @@ class pricingActions extends sfActions
 	* @author: Andres Botero
 	*/
 	public function executeDatosPanelRecargosLocalesParametros( $request ){
-		$this->nivel = $this->getUser()->getNivelAcceso( pricingActions::RUTINA );
+		$this->nivel = $this->getNivel();
 			
 		if( $this->nivel==-1 ){
 			$this->forward404();
@@ -1482,7 +1492,7 @@ class pricingActions extends sfActions
 	*/
 	public function executeGuardarPanelRecargosLocalesParametros( $request ){
 		
-        $this->nivel = $this->getUser()->getNivelAcceso( pricingActions::RUTINA );
+        $this->nivel = $this->getNivel();
 
         if( $this->nivel<=0 ){
 			$this->forward404();
@@ -1538,7 +1548,7 @@ class pricingActions extends sfActions
 	* @author: Andres Botero
 	*/
 	public function executeEliminarPanelRecargosLocalesParametros( $request ){
-        $this->nivel = $this->getUser()->getNivelAcceso( pricingActions::RUTINA );
+        $this->nivel = $this->getNivel();
 
         if( $this->nivel<=0 ){
 			$this->forward404();
@@ -1579,7 +1589,7 @@ class pricingActions extends sfActions
 		$impoexpo = utf8_decode($this->getRequestParameter( "impoexpo" ));
 		$idlinea = $this->getRequestParameter( "idlinea" );		
 		
-		$this->nivel = $this->getUser()->getNivelAcceso( pricingActions::RUTINA );
+		$this->nivel = $this->getNivel();
 			
 		if( $this->nivel==-1 ){
 			$this->forward404();
@@ -1660,7 +1670,7 @@ class pricingActions extends sfActions
 	*	
 	*********************************************************************/
 	public function executeGuardarPanelRecargosLocalesPatios( $request ){
-        $this->nivel = $this->getUser()->getNivelAcceso( pricingActions::RUTINA );
+        $this->nivel = $this->getNivel();
 
         if( $this->nivel<=0 ){
 			$this->forward404();
@@ -1677,7 +1687,7 @@ class pricingActions extends sfActions
 		$this->forward404Unless( $impoexpo );
 		$this->forward404Unless( $idlinea );
 		
-		$this->nivel = $this->getUser()->getNivelAcceso( pricingActions::RUTINA );
+		$this->nivel = $this->getNivel();
 			
 		if( $this->nivel<1 ){
 			$this->forward404();
@@ -1734,7 +1744,7 @@ class pricingActions extends sfActions
 	*/
 	public function executeDatosPanelTrayecto(){
 		
-		$this->nivel = $this->getUser()->getNivelAcceso( pricingActions::RUTINA );
+		$this->nivel = $this->getNivel();
 		
 		$this->opcion = "";
 		if( $this->nivel==-1 ){
@@ -1806,7 +1816,7 @@ class pricingActions extends sfActions
 	* Guarda los cambios realizados en la grilla de administración de trayectos (TT, Freq)
 	*/
 	public function executeObserveAdminTrayectos(){
-        $this->nivel = $this->getUser()->getNivelAcceso( pricingActions::RUTINA );
+        $this->nivel = $this->getNivel();
 
         if( $this->nivel<=0 ){
 			$this->forward404();
@@ -1848,7 +1858,7 @@ class pricingActions extends sfActions
 	*********************************************************************/
 	public function executeGrillaSeguros(){
 		
-		$this->nivel = $this->getUser()->getNivelAcceso( pricingActions::RUTINA );
+		$this->nivel = $this->getNivel();
 		
 		$this->opcion = "";
 		if( $this->nivel==-1 ){
@@ -1893,7 +1903,7 @@ class pricingActions extends sfActions
 	* Guarda los datos de los seguros
 	*/
 	public function executeObserveGrillaSeguros(){
-        $this->nivel = $this->getUser()->getNivelAcceso( pricingActions::RUTINA );
+        $this->nivel = $this->getNivel();
 
         if( $this->nivel<=0 ){
 			$this->forward404();
@@ -1949,7 +1959,7 @@ class pricingActions extends sfActions
 	*/
     /*
 	public function executeArchivosPais(){
-		$this->nivel = $this->getUser()->getNivelAcceso( pricingActions::RUTINA );
+		$this->nivel = $this->getNivel();
 		
 		$this->opcion = "";
 		if( $this->nivel==-1 ){
@@ -2009,7 +2019,7 @@ class pricingActions extends sfActions
 
         
 		
-		$this->nivel = $this->getUser()->getNivelAcceso( pricingActions::RUTINA );
+		$this->nivel = $this->getNivel();
 		
 		if(substr($node,0,4)!="impo" && substr($node,0,4)!="expo"){ 	
 
@@ -2148,7 +2158,7 @@ class pricingActions extends sfActions
 	* @author: Andres Botero 
 	*/
 	public function executeGuardarNotificacion(){
-        $this->nivel = $this->getUser()->getNivelAcceso( pricingActions::RUTINA );
+        $this->nivel = $this->getNivel();
 
         if( $this->nivel<=0 ){
 			$this->forward404();
@@ -2195,7 +2205,7 @@ class pricingActions extends sfActions
 	* @author: Andres Botero 
 	*/
 	public function executeEliminarNotificacion(){
-         $this->nivel = $this->getUser()->getNivelAcceso( pricingActions::RUTINA );
+         $this->nivel = $this->getNivel();
 
         if( $this->nivel<=0 ){
 			$this->forward404();
@@ -2222,7 +2232,7 @@ class pricingActions extends sfActions
 	* @author: Andres Botero
 	*/
 	public function executeDatosPanelCostosAduana(){
-        $this->nivel = $this->getUser()->getNivelAcceso( pricingActions::RUTINA );
+        $this->nivel = $this->getNivel();
        
         
         //Clientes Activos en colmas + Sus recargos
@@ -2406,6 +2416,301 @@ class pricingActions extends sfActions
         $this->setTemplate("responseTemplate");
 
 	}
+
+
+    /*************************************************************************
+     *  Acciones panel parametros
+     *
+     *************************************************************************/
+
+
+    /**
+    * Datos de los conceptos para usar en pricing cotizaciones etc.
+    *
+    * @param sfRequest $request A request object
+    */
+    public function executeDatosPanelParametrosConceptos(sfWebRequest $request){
+        $readOnly = $request->getParameter("readOnly");
+        $nivel = $this->getNivel();
+
+        $idccosto = $request->getParameter("idccosto");
+
+        $q = Doctrine::getTable("InoConcepto")
+                         ->createQuery("c")
+                         ->select("c.*") //,
+                         ->addOrderBy( "c.ca_concepto" );
+
+        
+        $conceptos = $q->setHydrationMode(Doctrine::HYDRATE_SCALAR )->execute();
+
+        $k = 0;
+        foreach( $conceptos as $key=>$val ){
+            $conceptos[ $key ]["c_ca_concepto"]=utf8_encode( $conceptos[ $key ]["c_ca_concepto"] );
+            $conceptos[ $key ]["orden"]=str_pad($k,4, "0",STR_PAD_LEFT);
+            $k++;
+
+            
+            $modalidadesConcepto = Doctrine_Query::create()
+                                ->select("cm.ca_idmodalidad")
+                                ->from("InoConceptoModalidad cm")
+                                ->where("cm.ca_idconcepto = ? ", $conceptos[ $key ]["c_ca_idconcepto"] )
+                                ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
+                                ->execute();
+            $modalidades = array();
+
+            foreach( $modalidadesConcepto as $modalidadConcepto ){
+                $modalidades[]=$modalidadConcepto["ca_idmodalidad"];
+            }
+            $conceptos[ $key ]["modalidades"] = implode( "|", $modalidades );
+
+
+            
+
+        }
+
+        if( $readOnly=="false"){
+            $conceptos[] = array("ca_idconcepto"=>"", "ca_concepto"=>"", "orden"=>"Z");
+        }
+
+        $this->responseArray = array( "totalCount"=>count( $conceptos ), "root"=>$conceptos  );
+
+		$this->setTemplate("responseTemplate");
+    }
+
+
+
+    /*
+    * guarda el panel de conceptos
+    * @param sfRequest $request A request object
+    */
+    public function executeGuardarPanelParametros(sfWebRequest $request){
+        $id = $request->getParameter("id");
+        $this->responseArray=array("id"=>$id,  "success"=>false);
+
+        $modo = $request->getParameter("modo");
+
+        $tipo = $request->getParameter("tipo");
+
+        $idconcepto = $request->getParameter("idconcepto");
+
+        if( $idconcepto ){
+            $concepto = Doctrine::getTable("InoConcepto")->find($idconcepto);
+            $this->forward404Unless($concepto);
+        }else{
+            $concepto = new InoConcepto();
+            $concepto->setCaTipo( $request->getParameter("tipo") );
+        }
+
+        if( $request->getParameter("concepto")!==null ){
+            $concepto->setCaConcepto( $request->getParameter("concepto") );
+        }
+
+        if( $modo=="edicion" ){
+            if( $request->getParameter("recargoorigen")!==null ){
+                if( $request->getParameter("recargoorigen")=="true" ){
+                    $concepto->setCaRecargoorigen( true );
+                }else{
+                    $concepto->setCaRecargoorigen( false );
+                }
+            }
+
+            if( $request->getParameter("recargolocal")!==null ){
+                if( $request->getParameter("recargolocal")=="true" ){
+                    $concepto->setCaRecargolocal( true );
+                }else{
+                    $concepto->setCaRecargolocal( false );
+                }
+            }
+
+
+            if( $request->getParameter("observaciones")!==null ){
+                if( $request->getParameter("observaciones") ){
+                    $concepto->setCaDetalles( $request->getParameter("observaciones") );
+                }else{
+                    $concepto->setCaDetalles( null );
+                }
+            }
+
+            if( $concepto->getCaIdconcepto() ){
+                if( $request->getParameter("modalidades")!==null ){
+                    Doctrine_Query::create()
+                                    ->delete()
+                                    ->from("InoConceptoModalidad cm")
+                                    ->where("cm.ca_idconcepto = ? ", $concepto->getCaIdconcepto() )
+                                    ->execute();
+
+                    $modalidadesParam = explode("|",$request->getParameter("modalidades"));
+
+                    foreach( $modalidadesParam as $val ){
+                        $cm = new InoConceptoModalidad();
+                        $cm->setCaIdconcepto($concepto->getCaIdconcepto());
+                        $cm->setCaIdmodalidad($val);
+                        $cm->save();
+                    }
+                }
+            }
+
+        }
+
+        $concepto->save();
+
+        if( $modo=="fv" ){
+            //ca_idparametro
+            $idccosto = $request->getParameter("idccosto");
+            $parametro = Doctrine::getTable("InoParametroFacturacion")
+                                   ->createQuery("p")
+                                   ->where("p.ca_idconcepto = ? AND p.ca_idccosto = ?", array($concepto->getCaIdconcepto(), $idccosto) )
+                                   ->fetchOne();
+
+            if( !$parametro ){
+                $parametro = new InoParametroFacturacion();
+                $parametro->setCaIdconcepto( $concepto->getCaIdconcepto() );
+                $parametro->setCaIdccosto( $idccosto );
+            }
+            if( $request->getParameter("idcuenta")!==null ){
+                $parametro->setCaIdcuenta( $request->getParameter("idcuenta") );
+            }
+
+            if( $request->getParameter("ingreso_propio")!==null ){
+                $parametro->setCaIngreso_propio( $request->getParameter("ingreso_propio") );
+            }
+
+            if( $request->getParameter("iva")!==null ){
+                $parametro->setCaIva( $request->getParameter("iva")/100 );
+            }
+
+            if( $request->getParameter("baseretencion")!==null ){
+                $parametro->setCaBaseretencion( $request->getParameter("baseretencion") );
+            }
+
+            if( $request->getParameter("idcuentaretencion")!==null ){
+                $parametro->setCaIdcuentaretencion( $request->getParameter("idcuentaretencion") );
+            }
+
+            if( $request->getParameter("valor")!==null ){
+                $parametro->setCaValor( $request->getParameter("valor") );
+            }
+            $parametro->save();
+
+        }
+
+        if( $modo=="fc" ){
+            //ca_idparametro
+            $idccosto = $request->getParameter("idccosto");
+            $parametro = Doctrine::getTable("InoParametroCosto")
+                                   ->createQuery("p")
+                                   ->where("p.ca_idconcepto = ? AND p.ca_idccosto = ?", array($concepto->getCaIdconcepto(), $idccosto) )
+                                   ->fetchOne();
+
+            if( !$parametro ){
+                $parametro = new InoParametroCosto();
+                $parametro->setCaIdconcepto( $concepto->getCaIdconcepto() );
+                $parametro->setCaIdccosto( $idccosto );
+            }
+            if( $request->getParameter("idcuenta")!==null ){
+                $parametro->setCaIdcuenta( $request->getParameter("idcuenta") );
+            }
+
+            if( $request->getParameter("ingreso_propio")!==null ){
+                $parametro->setCaIngreso_propio( $request->getParameter("ingreso_propio") );
+            }
+
+            if( $request->getParameter("iva")!==null ){
+                $parametro->setCaIva( $request->getParameter("iva")/100 );
+            }
+
+            if( $request->getParameter("baseretencion")!==null ){
+                $parametro->setCaBaseretencion( $request->getParameter("baseretencion") );
+            }
+
+            if( $request->getParameter("idcuentaretencion")!==null ){
+                $parametro->setCaIdcuentaretencion( $request->getParameter("idcuentaretencion") );
+            }
+
+            if( $request->getParameter("valor")!==null ){
+                $parametro->setCaValor( $request->getParameter("valor") );
+            }
+            $parametro->save();
+
+        }
+
+
+        $this->responseArray["success"]=true;
+
+        $this->responseArray["idconcepto"]=$concepto->getCaIdconcepto();
+
+
+        $this->setTemplate("responseTemplate");
+    }
+
+
+    /*
+    * guarda el panel de conceptos
+    * @param sfRequest $request A request object
+    */
+    public function executeEliminarPanelParametros(sfWebRequest $request){
+
+
+        $id = $request->getParameter("id");
+        $this->responseArray=array("id"=>$id,  "success"=>false);
+        $nivel = $this->getNivel();
+        if( $nivel==1 ){
+            $idconcepto = $request->getParameter("idconcepto");
+
+            if( $idconcepto ){
+                $concepto = Doctrine::getTable("InoConcepto")->find($idconcepto);
+                $this->forward404Unless($concepto);
+                $concepto->delete();
+                $this->responseArray["success"]=true;
+            }
+        }
+        $this->setTemplate("responseTemplate");
+    }
+
+
+    /**
+    * Datos de los conceptos para usar en pricing cotizaciones etc.
+    *
+    * @param sfRequest $request A request object
+    */
+    public function executeDatosModalidadGrid(sfWebRequest $request){
+        $tipo = $request->getParameter("tipo");
+        $readOnly = $request->getParameter("readOnly");
+        $conceptos = array();
+        if( $request->getParameter("modalidades") ){
+
+            $modalidadesParam = explode("|", $request->getParameter("modalidades") );
+
+            if( count( $modalidadesParam ) >0 ){
+
+                $q = Doctrine::getTable("Modalidad")
+                         ->createQuery("m")
+                         ->select("m.ca_idmodalidad, m.ca_impoexpo, m.ca_transporte, m.ca_modalidad")
+                         ->whereIn("m.ca_idmodalidad", $modalidadesParam)
+                         ->addOrderBy( "m.ca_impoexpo" )
+                         ->addOrderBy( "m.ca_transporte" )
+                         ->addOrderBy( "m.ca_modalidad" );
+
+
+                $modalidades = $q->setHydrationMode(Doctrine::HYDRATE_ARRAY )->execute();
+
+                $k = 0;
+                foreach( $modalidades as $modalidad ){
+                    $conceptos[] = array("idmodalidad"=>$modalidad["ca_idmodalidad"], "modalidad"=>utf8_encode($modalidad["ca_impoexpo"]." ".$modalidad["ca_transporte"]." ".$modalidad["ca_modalidad"]), "orden"=>$k++);
+                }
+            }
+
+        }
+
+        $nivel = $this->getNivel();
+        if( $readOnly=="false"){
+            $conceptos[] = array("idmodalidad"=>"", "modalidad"=>"+", "orden"=>"Z");
+        }
+
+        $this->responseArray = array( "totalCount"=>count( $conceptos ), "root"=>$conceptos  );
+
+		$this->setTemplate("responseTemplate");
+    }
 
 
 }

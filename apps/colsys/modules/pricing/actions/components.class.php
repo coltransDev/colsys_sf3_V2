@@ -208,5 +208,33 @@ class pricingComponents extends sfComponents
         }
 	}
 
+
+    public function executePanelParametros()
+	{        
+
+	}
+
+    public function executeModalidadWindow()
+	{
+
+	}
+
+    public function executeModalidadGrid()
+	{
+        $modalidades = Doctrine::getTable("Modalidad")
+                  ->createQuery("m")
+                  ->where("m.ca_modalidad IS NOT NULL")
+                  ->addOrderBy("m.ca_impoexpo")
+                  ->execute();
+        $this->modalidades = array();
+        foreach( $modalidades as $modalidad ){
+            $this->modalidades[] = array("id"=>$modalidad->getCaIdmodalidad(),
+                                         "value"=>utf8_encode($modalidad->getCaImpoexpo()." ".$modalidad->getCaTransporte()." ".$modalidad->getCaModalidad())
+                                     );
+        }
+
+
+	}
+
 }
 ?>
