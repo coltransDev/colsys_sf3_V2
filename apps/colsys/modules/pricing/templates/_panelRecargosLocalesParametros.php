@@ -81,7 +81,40 @@ PanelRecargosLocalesParametros = function( config ){
         )        
     });
 
-    this.columns = [       
+    this.expander = new Ext.grid.RowExpander({
+        lazyRender : false,
+        width: 15,
+        tpl : new Ext.Template(
+            '<p><div class=\'btnComentarios\' id=\'obs_{_id}\'>&nbsp; {observaciones}</div></p>'
+        ),
+        getRowClass : function(record, rowIndex, p, ds){
+            p.cols = p.cols-1;
+
+            var content = this.bodyContent[record.id];
+
+            //if(!content && !this.lazyRender){		//hace que los comentarios no se borren cuando se guarda
+                content = this.getBodyContent(record, rowIndex);
+            //}
+
+            if(content){
+               p.body = content;
+            }
+
+            var color;
+            if( record.data.style ){
+                color = "row_"+record.data.style;
+            }
+
+            if( record.data.observaciones!='' && record.data.tipo!='concepto' ){
+                this.state[record.id]=true;
+            }
+
+            return this.state[record.id] ? 'x-grid3-row-expanded '+color : 'x-grid3-row-collapsed '+color;
+        }
+    });
+
+    this.columns = [
+        this.expander,
 		{
 			header: "Concepto",
 			width: 100,
@@ -98,19 +131,7 @@ PanelRecargosLocalesParametros = function( config ){
 			hideable: false,
 			dataIndex: 'valor',
 			editor: this.comboValores
-		},
-		{
-			header: "Observaciones",
-			width: 100,
-			sortable: false,
-			hideable: false,
-			dataIndex: 'observaciones',
-			editor: new Ext.form.TextField({
-
-			})
-
 		}
-
 
 	];
 
@@ -133,14 +154,16 @@ PanelRecargosLocalesParametros = function( config ){
         clicksToEdit: 1,
         stripeRows: true,
         height: 500,
-        width: '100',        
+        width: '100',
+        plugins: [this.expander],
         view: new Ext.grid.GridView({
             forceFit :true
         }),
         listeners:{
             rowcontextmenu: this.onRowContextMenu,
             validateedit: this.onValidateEdit,
-            beforeedit:this.onBeforeedit
+            beforeedit:this.onBeforeedit,
+            dblclick: this.onDblclick
         },
         tbar: tbar
     });
@@ -365,6 +388,42 @@ Ext.extend(PanelRecargosLocalesParametros, Ext.grid.EditorGridPanel, {
         if(this.ctxRow){
             Ext.fly(this.ctxRow).removeClass('x-node-ctx');
             this.ctxRow = null;
+        }
+    },
+    /**
+    * Muestra una ventana donde se pueden editar las observaciones
+    **/
+    onDblclick: function(e) {
+        var btn = e.getTarget('.btnComentarios');
+        if (btn) {
+            var t = e.getTarget();
+            var v = this.view;
+            var rowIdx = v.findRowIndex(t);
+            store = this.getStore();
+            var record = this.getStore().getAt(rowIdx);
+            activeRow = rowIdx;
+            Ext.MessageBox.show({
+               title: 'Observaciones',
+               msg: 'Por favor coloque las observaciones:',
+               width:300,
+               buttons: Ext.MessageBox.OKCANCEL,
+               multiline: true,
+               fn: this.actualizarObservaciones,
+               animEl: 'mb3',
+               value: record.get("observaciones")
+           });
+        }
+    },
+
+    /*
+    * Coloca las observaciones en pantalla y actualiza el datastore
+    */
+    actualizarObservaciones: function( btn, text ){
+        if( btn=="ok" ){
+            var record = store.getAt(activeRow);
+            record.set("observaciones", text);
+
+            //document.getElementById("obs_"+record.get("_id")).innerHTML  = "<b>Observaciones:</b> "+text;
         }
     }
 });
