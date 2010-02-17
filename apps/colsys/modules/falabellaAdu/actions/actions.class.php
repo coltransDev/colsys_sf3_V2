@@ -678,7 +678,7 @@ class falabellaAduActions extends sfActions {
         while ( $row = $stmt->fetch() ) {
             $chk_count--;
             if ($numdocumento != $row["ca_numdocumento"] and $numdocumento != null){
-                $filename = $directory.DIRECTORY_SEPARATOR.'FAC_'.$numdocumento.'.txt';
+                $filename = $directory.DIRECTORY_SEPARATOR.'Fac_'.$numdocumento.'.txt';
                 $handle = fopen($filename , 'w');
                 if (fwrite($handle, $salida) === FALSE) {
                     echo "No se puede escribir al archivo {filename}";
@@ -768,7 +768,7 @@ class falabellaAduActions extends sfActions {
             $salida.= $value;
         }
 
-        $filename = $directory.DIRECTORY_SEPARATOR.'FAC_'.$numdocumento.'.txt';
+        $filename = $directory.DIRECTORY_SEPARATOR.'Fac_'.$numdocumento.'.txt';
         $handle = fopen($filename , 'w');
 
         if (fwrite($handle, $salida) === FALSE) {
@@ -783,7 +783,7 @@ class falabellaAduActions extends sfActions {
         $adicion = '';
         $salida= '';
         $acumula= array();
-        $chk_sum = 0;
+        $chk_doc = $chk_sum = 0;
         $chk_count = 0;
         $valor_carpeta = 0;
         while ( $row = $stmt->fetch() ) {
@@ -831,7 +831,8 @@ class falabellaAduActions extends sfActions {
                     $adicion.= str_pad(0,$space, "0");
                 }
 
-                $adicion.= str_pad(floatval($row["ca_vlrdocumento"]), 10, "0", STR_PAD_LEFT); // 20
+                $total_documento = floatval($row["ca_vlrdocumento"]);
+                $adicion.= str_pad($total_documento, 10, "0", STR_PAD_LEFT); // 20
 
                 $spaces = array(10,10,3); // Campos del 21 al 23
                 foreach( $spaces as $space ) {
@@ -840,7 +841,17 @@ class falabellaAduActions extends sfActions {
 
                 $adicion.= str_pad(substr($row["ca_iddoc"],0,15),20, " "); // 24
 
-                $adicion.= str_pad(round(floatval($row["ca_vlrdocumento"]) * $factor,0), 10, "0", STR_PAD_LEFT); // 25
+                $valor_documento = round(floatval($row["ca_vlrdocumento"]) * $factor,0);
+                $chk_doc+= $valor_documento;
+
+                if (($chk_count%$ctr_cACount)==0){
+                    if (abs($chk_doc-$total_documento) > 0 and abs($chk_doc-$total_documento) <= 5){ // Tolerancia de 5 pesos de diferencia
+                        $valor_documento-= $chk_doc-$total_documento;
+                    }
+                    $chk_doc = 0;
+                }
+
+                $adicion.= str_pad($valor_documento, 10, "0", STR_PAD_LEFT); // 25
                 $adicion.= "\r\n";
 
                 $acumula[$row["ca_iddoc"]] = $adicion;
