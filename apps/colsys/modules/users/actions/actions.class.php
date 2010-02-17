@@ -289,7 +289,9 @@ class usersActions extends sfActions
 				}else{
 					$this->getUser()->signInAlternative( $username );					
 				}
-				$this->redirect("homepage/index");
+
+                unset($_COOKIE["menu"]);
+				$this->forward("homepage","index");
 				
 			}
 		}
