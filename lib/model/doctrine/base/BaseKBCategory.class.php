@@ -12,6 +12,7 @@
  * @property string $ca_icon
  * @property Doctrine_Collection $SubCategory
  * @property Doctrine_Collection $KBIssue
+ * @property Doctrine_Collection $KBTooltip
  * @property KBCategory $KBCategory
  * 
  * @method integer             getCaIdcategory()  Returns the current record's "ca_idcategory" value
@@ -21,6 +22,7 @@
  * @method string              getCaIcon()        Returns the current record's "ca_icon" value
  * @method Doctrine_Collection getSubCategory()   Returns the current record's "SubCategory" collection
  * @method Doctrine_Collection getKBIssue()       Returns the current record's "KBIssue" collection
+ * @method Doctrine_Collection getKBTooltip()     Returns the current record's "KBTooltip" collection
  * @method KBCategory          getKBCategory()    Returns the current record's "KBCategory" value
  * @method KBCategory          setCaIdcategory()  Sets the current record's "ca_idcategory" value
  * @method KBCategory          setCaParent()      Sets the current record's "ca_parent" value
@@ -29,6 +31,7 @@
  * @method KBCategory          setCaIcon()        Sets the current record's "ca_icon" value
  * @method KBCategory          setSubCategory()   Sets the current record's "SubCategory" collection
  * @method KBCategory          setKBIssue()       Sets the current record's "KBIssue" collection
+ * @method KBCategory          setKBTooltip()     Sets the current record's "KBTooltip" collection
  * @method KBCategory          setKBCategory()    Sets the current record's "KBCategory" value
  * 
  * @package    symfony
@@ -74,6 +77,10 @@ abstract class BaseKBCategory extends myDoctrineRecord
              'orderBy' => 'ca_order ASC'));
 
         $this->hasMany('KBIssue', array(
+             'local' => 'ca_idcategory',
+             'foreign' => 'ca_idcategory'));
+
+        $this->hasMany('KBTooltip', array(
              'local' => 'ca_idcategory',
              'foreign' => 'ca_idcategory'));
 
