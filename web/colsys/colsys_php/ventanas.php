@@ -2844,7 +2844,7 @@ else if (isset($opcion) and $opcion == 'Recargos_Org' and isset($i) and isset($i
     $mn =& DlRecordset::NewRecordset($conn);
     $co =& DlRecordset::NewRecordset($conn);
 	
-    if (!$rc->Open("select ca_idrecargo, ca_recargo from tb_tiporecargo where ca_tipo = 'Recargo en Origen' and ca_transporte = '".$rs->Value('ca_transporte')."' and fun_texttokencompare(ca_incoterms, '".$rs->Value('ca_incoterms')."','|') order by ca_recargo")) {   // Selecciona todos lo registros de la tabla Recargos
+    if (!$rc->Open("select ca_idrecargo, ca_recargo from tb_tiporecargo where ca_tipo = 'Recargo en Origen' and ca_transporte = '".$rs->Value('ca_transporte')."' order by ca_recargo")) {   // Selecciona todos lo registros de la tabla Recargos
         echo "<script>alert(\"".addslashes($rc->mErrMsg)."\");</script>";      // Muestra el mensaje de error
         echo "<script>document.location.href = 'reportenegocio.php';</script>";
         exit; }
@@ -3117,7 +3117,7 @@ else if (isset($opcion) and $opcion == 'Recargos_Loc' and isset($i) and isset($i
     $rc =& DlRecordset::NewRecordset($conn);
     $mn =& DlRecordset::NewRecordset($conn);
     $co =& DlRecordset::NewRecordset($conn);
-    if (!$rc->Open("select ca_idrecargo, ca_recargo from tb_tiporecargo where ca_tipo = 'Recargo Local' and ca_transporte = '".$rs->Value('ca_transporte')."' and ca_incoterms != '' and fun_texttokencompare(ca_incoterms, '".$rs->Value('ca_incoterms')."','|') order by ca_recargo")) {   // Selecciona todos lo registros de la tabla Recargos
+    if (!$rc->Open("select ca_idrecargo, ca_recargo from tb_tiporecargo where ca_tipo = 'Recargo Local' and ca_transporte = '".$rs->Value('ca_transporte')."' order by ca_recargo")) {   // Selecciona todos lo registros de la tabla Recargos
         echo "<script>alert(\"".addslashes($rc->mErrMsg)."\");</script>";      // Muestra el mensaje de error
         echo "<script>document.location.href = 'reportenegocio.php';</script>";
         exit; }
