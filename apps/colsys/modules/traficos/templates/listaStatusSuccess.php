@@ -105,12 +105,12 @@ use_helper("MimeType");
 <table width="100%" border="1" class="tableList" id="lista">
 	<tr>
 		<th width="10%" scope="col"><div align="left">Fecha Rep </div></th>
-		<th width="10%" scope="col"><div align="left">Reporte</div></th>
-		<th width="9%" scope="col"><div align="left">Origen</div></th>
-		<th width="9%" scope="col"><div align="left">Destino</div></th>
-		<th width="9%" scope="col">
+		<th width="8%" scope="col"><div align="left">Reporte</div></th>
+		<th width="8%" scope="col"><div align="left">Origen</div></th>
+		<th width="8%" scope="col"><div align="left">Destino</div></th>
+		<th width="8%" scope="col">
 			<div align="left">Modalidad</div>		</th>
-		<th width="36%" scope="col"><div align="left">
+		<th width="32%" scope="col"><div align="left">
 			<?
 				if( $modo=="expo" ){
 					echo "CCNE";
@@ -121,6 +121,7 @@ use_helper("MimeType");
 				
 			?>
 		</div></th>
+        <th width="10%" scope="col"><div align="left">Orden </div></th>
 		<th width="17%" scope="col"><div align="left">Etapa actual </div></th>
 	</tr>
 	<?
@@ -161,6 +162,9 @@ use_helper("MimeType");
 			
 			
 			?></td>
+        <td><div align="left">
+			<?=$reporte->getCaOrdenClie()?>
+		</div></td>
 		<td><div align="left">
 			<?
 			$etapa = $reporte->getTrackingEtapa();
@@ -171,7 +175,7 @@ use_helper("MimeType");
 		</div></td>
 	</tr>
 	<tr  style="display:none" id="infotr_<?=$reporte->getCaIdreporte()?>" >
-		<td colspan="7"  > 	
+		<td colspan="8"  >
 			<div id="info_<?=$reporte->getCaIdreporte()?>"></div>
 			<?
 			//include_component("traficos", "infoReporte", array( "reporte"=>$reporte, "nivel"=>$nivel ));
