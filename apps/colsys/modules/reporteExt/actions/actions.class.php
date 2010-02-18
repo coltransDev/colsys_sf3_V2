@@ -157,25 +157,14 @@ class reporteExtActions extends sfActions
 				/*
 				* Crea el reporte
 				*/
-							
-				$contenido ="<style type='text/css'>";
-				$contenido.="td {font-size:9px; font-family:verdana, arial, helvetica, serif; line-height:1.4; border:solid 0.5px; vertical-align:top;}";
-				$contenido.="</style>";
-		
-				$contenido.= nl2br($request->getParameter("introduccion"));
-				$contenido.= '<br /><table BORDER="0" WIDTH="600" CELLSPACING="0" CELLPADDING="0">';
-				$contenido.= "<tr><td>";
+                
 				
-				$request->setParameter('idreporte',$this->reporte->getCaIdreporte());
+		
+				
 				$request->setParameter('layout', "email");
-				$contenido.= sfContext::getInstance()->getController()->getPresentationFor( 'reporteExt', 'verReporte');
-						
-				$contenido.= "</td></tr>";
-				$contenido.= "</table>";
-				$contenido.= "<br /><b>Shipping Instructions :</b><br />";
-				$contenido.= nl2br($request->getParameter("instrucciones"));
-				$contenido.= "<br /><b>Notes :</b><br />";
-				$contenido.= nl2br($request->getParameter("notas"));
+
+				$contenido = sfContext::getInstance()->getController()->getPresentationFor( 'reporteExt', 'verReporte');
+							
 				//$contenido = AddSlashes($contenido);
 						
 				$user = $this->getUser();
@@ -288,6 +277,10 @@ class reporteExtActions extends sfActions
 		if( $this->getRequestParameter("layout") ){
 			$this->setLayout( $this->getRequestParameter("layout") );
 		}
+
+        $this->introduccion = $this->getRequestParameter("introduccion");
+        $this->instrucciones = $this->getRequestParameter("instrucciones");
+        $this->notas = $this->getRequestParameter("notas");
 		
 		
 	}
