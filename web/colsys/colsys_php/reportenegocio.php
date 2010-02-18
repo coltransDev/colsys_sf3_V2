@@ -1728,10 +1728,15 @@ elseif (isset($boton)) {                                                       /
                 $emails = explode(",", $emails);
                 for ($i=1; $i<=11; $i++) {
                     $contactos[$z] = trim($contactos[$z]);
+                    $read_only = "";
+                    $email = " ";
                     $cadena = (in_array($contactos[$z],$emails, false))?"VALUE='".$contactos[$z]."' CHECKED":"";
-                    $email = (strlen($contactos[$z])!=0)?trim($contactos[$z]):" ";
+                    if (strlen($contactos[$z])!=0){
+                        $email = $contactos[$z];
+                        $read_only = "READONLY ";
+                    }
                     echo "  <TR>";
-                    echo "    <TD Class=invertir style='vertical-align:bottom;' WIDTH=130><INPUT ID=conf_$z Class=field TYPE='TEXT' NAME='contactos[]' VALUE='$email' ONCHANGE='cambiar_email(this);' SIZE=40 MAXLENGTH=50></TD><TD Class=invertir><INPUT ID=email_$z TYPE='CHECKBOX' NAME='confirmar[]' WIDTH=10 ONCHANGE='asignar_email(this);' $cadena></TD>";
+                    echo "    <TD Class=invertir style='vertical-align:bottom;' WIDTH=130><INPUT ID=conf_$z Class=field TYPE='TEXT' NAME='contactos[]' VALUE='$email' $read_only ONCHANGE='cambiar_email(this);' SIZE=40 MAXLENGTH=50></TD><TD Class=invertir><INPUT ID=email_$z TYPE='CHECKBOX' NAME='confirmar[]' WIDTH=10 ONCHANGE='asignar_email(this);' $cadena></TD>";
                     echo "  </TR>";
                     $z++;
                 }
