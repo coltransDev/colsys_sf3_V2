@@ -365,7 +365,7 @@ if (true){
 
     $sub_mem = 'Recargo en Origen';
     $rg =& DlRecordset::NewRecordset($conn);
-    if (!$rg->Open("select * from vi_repgastos where ca_tiporecargo = '$sub_mem' and ca_idreporte = ".$rs->Value('ca_idreporte'))) {       // Selecciona todos lo registros de la tabla tb_repgastos
+    if (!$rg->Open("select * from vi_repgastos where ca_tiporecargo like '%$sub_mem%' and ca_idreporte = ".$rs->Value('ca_idreporte'))) {       // Selecciona todos lo registros de la tabla tb_repgastos
         echo "<script>alert(\"".addslashes($rg->mErrMsg)."\");</script>";      // Muestra el mensaje de error
         echo "<script>document.location.href = 'reportenegocio.php';</script>";
         exit; }
@@ -402,7 +402,7 @@ if (true){
 
     $sub_mem = 'Recargo Local';
     $pdf->Ln(3);
-    if (!$rg->Open("select * from vi_repgastos where ca_tiporecargo = '$sub_mem' and ca_idreporte = ".$rs->Value('ca_idreporte'))) {       // Selecciona todos lo registros de la tabla tb_repgastos
+    if (!$rg->Open("select * from vi_repgastos where ca_tiporecargo like '%$sub_mem%' and ca_idreporte = ".$rs->Value('ca_idreporte'))) {       // Selecciona todos lo registros de la tabla tb_repgastos
         echo "<script>alert(\"".addslashes($rg->mErrMsg)."\");</script>";      // Muestra el mensaje de error
         echo "<script>document.location.href = 'reportenegocio.php';</script>";
         exit; }

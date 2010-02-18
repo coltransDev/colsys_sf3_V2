@@ -1395,7 +1395,7 @@ else if (isset($opcion) and $opcion == 'Recargos' and $id != 0){
     $tipos = array("$","%");
 	$aplic = array("Aéreo" => array("", "x Kg ó 6 Dm³", "x Lb ó 166 Pul³", "x HAWB", "Sobre Flete", "Sobre Flete + Recargos"), "Marítimo" => array("", "x T/M³", "x Contenedor", "x HBL", "x Pieza", "Sobre Flete", "Sobre Flete + Recargos"));
 	$tm =& DlRecordset::NewRecordset($conn);
-	if (!$tm->Open("select ca_idrecargo, ca_recargo, r.ca_transporte from tb_tiporecargo r, vi_cotproductos p where r.ca_tipo = 'Recargo en Origen' and r.ca_transporte = p.ca_transporte and r.ca_tipo = '$tp' and ca_idproducto = '$pr' order by ca_recargo")) {       // Selecciona todos lo registros de la tabla Traficos
+	if (!$tm->Open("select ca_idrecargo, ca_recargo, r.ca_transporte from tb_tiporecargo r, vi_cotproductos p where r.ca_tipo like '%Recargo en Origen%' and r.ca_transporte = p.ca_transporte and r.ca_tipo = '$tp' and ca_idproducto = '$pr' order by ca_recargo")) {       // Selecciona todos lo registros de la tabla Traficos
 		echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
 		echo "<script>document.location.href = 'cotizaciones.php';</script>";
 		exit; }
@@ -1592,7 +1592,7 @@ else if (isset($opcion) and $opcion == 'Recargos' and $id != 0){
 else if (isset($opcion) and $opcion == 'RecargosLoc' and $id != 0){
     $tipos = array("$","%");
 	$tm =& DlRecordset::NewRecordset($conn);
-	if (!$tm->Open("select DISTINCT ca_idrecargo, ca_recargo, r.ca_transporte from tb_tiporecargo r, vi_cotproductos p where r.ca_tipo = 'Recargo Local' and p.ca_idcotizacion = $id and r.ca_transporte = p.ca_transporte and r.ca_incoterms != '' and fun_texttokencompare(r.ca_incoterms ,p.ca_incoterms, '|') order by ca_transporte, ca_recargo")) {       // Selecciona todos lo registros de la tabla tb_tiporecargo
+	if (!$tm->Open("select DISTINCT ca_idrecargo, ca_recargo, r.ca_transporte from tb_tiporecargo r, vi_cotproductos p where r.ca_tipo like '%Recargo Local%' and p.ca_idcotizacion = $id and r.ca_transporte = p.ca_transporte and r.ca_incoterms != '' and fun_texttokencompare(r.ca_incoterms ,p.ca_incoterms, '|') order by ca_transporte, ca_recargo")) {       // Selecciona todos lo registros de la tabla tb_tiporecargo
 		echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
 		echo "<script>document.location.href = 'cotizaciones.php';</script>";
 		exit; }
@@ -2844,7 +2844,7 @@ else if (isset($opcion) and $opcion == 'Recargos_Org' and isset($i) and isset($i
     $mn =& DlRecordset::NewRecordset($conn);
     $co =& DlRecordset::NewRecordset($conn);
 	
-    if (!$rc->Open("select ca_idrecargo, ca_recargo from tb_tiporecargo where ca_tipo = 'Recargo en Origen' and ca_transporte = '".$rs->Value('ca_transporte')."' order by ca_recargo")) {   // Selecciona todos lo registros de la tabla Recargos
+    if (!$rc->Open("select ca_idrecargo, ca_recargo from tb_tiporecargo where ca_tipo like '%Recargo en Origen%' and ca_transporte = '".$rs->Value('ca_transporte')."' order by ca_recargo")) {   // Selecciona todos lo registros de la tabla Recargos
         echo "<script>alert(\"".addslashes($rc->mErrMsg)."\");</script>";      // Muestra el mensaje de error
         echo "<script>document.location.href = 'reportenegocio.php';</script>";
         exit; }
@@ -3117,7 +3117,7 @@ else if (isset($opcion) and $opcion == 'Recargos_Loc' and isset($i) and isset($i
     $rc =& DlRecordset::NewRecordset($conn);
     $mn =& DlRecordset::NewRecordset($conn);
     $co =& DlRecordset::NewRecordset($conn);
-    if (!$rc->Open("select ca_idrecargo, ca_recargo from tb_tiporecargo where ca_tipo = 'Recargo Local' and ca_transporte = '".$rs->Value('ca_transporte')."' order by ca_recargo")) {   // Selecciona todos lo registros de la tabla Recargos
+    if (!$rc->Open("select ca_idrecargo, ca_recargo from tb_tiporecargo where ca_tipo like '%Recargo Local%' and ca_transporte = '".$rs->Value('ca_transporte')."' order by ca_recargo")) {   // Selecciona todos lo registros de la tabla Recargos
         echo "<script>alert(\"".addslashes($rc->mErrMsg)."\");</script>";      // Muestra el mensaje de error
         echo "<script>document.location.href = 'reportenegocio.php';</script>";
         exit; }

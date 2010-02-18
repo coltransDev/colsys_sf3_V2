@@ -2295,7 +2295,7 @@ elseif (isset($boton)) {                                                       /
                 echo "    <TH>T.Cobrar</TH>";
                 echo "    <TH>T.Mínimo</TH>";
                 echo "    <TH>Mnd</TH>";
-                if (!$tm->Open("select * from vi_repgastos where ca_tiporecargo = 'Recargo en Origen' and ca_idreporte = $id")) {       // Selecciona todos lo registros de la tabla Recargos
+                if (!$tm->Open("select * from vi_repgastos where ca_tiporecargo like '%Recargo en Origen%' and ca_idreporte = $id")) {       // Selecciona todos lo registros de la tabla Recargos
                     echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
                     echo "<script>document.location.href = 'reportenegocio.php';</script>";
                     exit; }
@@ -2349,7 +2349,7 @@ elseif (isset($boton)) {                                                       /
                 echo "    <TH>T.Cobrar</TH>";
                 echo "    <TH>T.Mínimo</TH>";
                 echo "    <TH>Mnd</TH>";
-                if (!$tm->Open("select * from vi_repgastos where ca_tiporecargo = 'Recargo Local' and ca_idreporte = $id")) {       // Selecciona todos lo registros de la tabla Recargos
+                if (!$tm->Open("select * from vi_repgastos where ca_tiporecargo like '%Recargo Local%' and ca_idreporte = $id")) {       // Selecciona todos lo registros de la tabla Recargos
                     echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
                     echo "<script>document.location.href = 'reportenegocio.php';</script>";
                     exit; }
