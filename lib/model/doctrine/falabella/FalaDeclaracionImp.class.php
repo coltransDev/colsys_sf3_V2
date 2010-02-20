@@ -12,4 +12,24 @@
  */
 class FalaDeclaracionImp extends BaseFalaDeclaracionImp
 {
+    public function getValorFobDeclaracion(){
+        $valor_fob = Doctrine::getTable("FalaDeclaracionDts")
+                       ->createQuery("d")
+                       ->select("sum(ca_valor_fob)")
+                       ->where("ca_referencia = ? ", $this->getCaReferencia())
+                       ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)
+                       ->execute();
+        return $valor_fob;
+    }
+
+    public function getValorFobSkus(){
+        $valor_fob = Doctrine::getTable("FalaDetailAdu")
+                       ->createQuery("d")
+                       ->innerJoin("d.FalaHeaderAdu h")
+                       ->select("sum(d.ca_valor_fob)")
+                       ->where("h.ca_referencia = ? ", $this->getCaReferencia())
+                       ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)
+                       ->execute();
+        return $valor_fob;
+    }
 }

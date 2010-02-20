@@ -13,14 +13,14 @@
 class FalaHeaderAdu extends BaseFalaHeaderAdu
 {
     public function getFalaShipmentInfo(){
-		return 	Doctrine::getTable("FalaShipmentInfo")->find( $this->getCaIddoc() );
-	}
+	return 	Doctrine::getTable("FalaShipmentInfo")->find( $this->getCaIddoc() );
+    }
 
-	public function getIdDocNeto(){
-		$doc_mem = $this->getCaIddoc();
-		$pos_mem = strrpos($doc_mem,"-");
-		$pos_mem = (($pos_mem===FALSE or $pos_mem<20)?strlen($doc_mem):$pos_mem-1);
-		$doc_mem = substr($doc_mem,0,$pos_mem);
-		return $doc_mem;
-	}
+    public function getIdDocNeto(){
+        $doc_mem = $this->getCaIddoc();
+        $pos_mem = strrpos($doc_mem,"-");
+        $pos_mem = (($pos_mem===FALSE or $pos_mem<20)?strlen($doc_mem):$pos_mem-1);
+        $doc_mem = substr($doc_mem,0,$pos_mem);
+        return $doc_mem;
+    }
 }
