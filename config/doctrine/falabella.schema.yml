@@ -236,7 +236,7 @@ FalaHeaderAdu:
     FalaInstructionAdu:
       local: ca_iddoc
       foreign: ca_iddoc
-      type: many
+      type: one
     FalaDeclaracionImp:
       local: ca_referencia
       foreign: ca_referencia
@@ -382,12 +382,6 @@ FalaDeclaracionImp:
       type: string
       primary: true
     ca_numinternacion: string
-    ca_emision_fch: date
-    ca_vencimiento_fch: date
-    ca_aceptacion_fch: date
-    ca_pago_fch: date
-    ca_moneda: string
-    ca_valor_trm: decimal
     ca_ano_trm: integer
     ca_semana_trm: integer
     ca_factor_trm: decimal
@@ -427,6 +421,12 @@ FalaDeclaracionDts:
       type: integer
       primary: true
     ca_numdeclaracion: string
+    ca_emision_fch: date
+    ca_vencimiento_fch: date
+    ca_aceptacion_fch: date
+    ca_pago_fch: date
+    ca_moneda: string
+    ca_valor_trm: decimal
     ca_subpartida: string
     ca_mod: string
     ca_cantidad: decimal
