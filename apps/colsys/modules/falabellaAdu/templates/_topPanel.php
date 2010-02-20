@@ -5,7 +5,7 @@
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
 
-$fala_declaracion = $sf_data->getRaw( "fala_declaracion" );
+$fala_declaracion = $sf_data->getRaw( 'fala_declaracion' );
 ?>
 <script type="text/javascript">
 
@@ -17,6 +17,22 @@ TopPanel = function(){
         dataIndex: 'referencia',
         sortable:false,
         width: 60
+      },
+      {
+        header: "Vlr. FOB según Declaración",
+        dataIndex: 'vlrfobdeclaracion',
+        sortable:false,
+        width: 90,
+        align: 'right',
+        renderer: 'usMoney'
+      },
+      {
+        header: "Vlr. FOB según SKU's",
+        dataIndex: 'vlrfobskus',
+        sortable:false,
+        width: 90,
+        align: 'right',
+        renderer: 'usMoney'
       },
       {
         header: "No.Internación",
@@ -34,6 +50,8 @@ TopPanel = function(){
 
     this.record = Ext.data.Record.create([
             {name: 'referencia', type: 'string', mapping: 'd_ca_referencia'},
+            {name: 'vlrfobdeclaracion', type: 'float', mapping: 'vlrFobDeclaracion'},
+            {name: 'vlrfobskus', type: 'float', mapping: 'vlrFobSkus'},
             {name: 'numinternacion', type: 'string', mapping: 'd_ca_numinternacion'}
         ]);
 

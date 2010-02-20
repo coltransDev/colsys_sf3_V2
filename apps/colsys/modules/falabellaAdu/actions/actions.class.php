@@ -59,13 +59,17 @@ class falabellaAduActions extends sfActions {
 	* Permite ver los detalles de la DIM y confirmar los datos para generar el archivo de salida
 	*/
     public function executeDeclaracion() {
-        
+        $fala_declaracion = Doctrine::getTable("FalaDeclaracionImp")->find ( base64_decode($this->getRequestParameter ( 'referencia' )) );
+        $this->forward404Unless($fala_declaracion);
+
         $this->fala_declaracion = Doctrine::getTable("FalaDeclaracionImp")
             -> createQuery("d")
             ->where ( "d.ca_referencia = ?",base64_decode($this->getRequestParameter ( 'referencia' )) )
             ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
             ->fetchOne();
-        
+        $this->fala_declaracion['vlrFobDeclaracion'] = $fala_declaracion->getValorFobDeclaracion();
+        $this->fala_declaracion['vlrFobSkus'] = $fala_declaracion->getValorFobSkus();
+
         $this->forward404Unless($this->fala_declaracion);
 
         $response = sfContext::getInstance()->getResponse();
