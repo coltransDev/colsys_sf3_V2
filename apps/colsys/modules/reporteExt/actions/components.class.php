@@ -43,7 +43,7 @@ class reporteExtComponents extends sfComponents
         if( $reporte->getCaIdconsignatario() ){
 
             $consignatario = Doctrine::getTable("Tercero")->find( $reporte->getCaIdconsignatario() );
-            $consignatario_final = $consignatario->getCaNombre()." Nit. ".$consignatario->getCaIdentificacion()."<br />Contacto: ".$consignatario->getCaContacto()."<br />Dirección: ".$consignatario->getCaDireccion()."<br />Teléfonos:".$consignatario->getCaTelefonos()." Fax:".$consignatario->getCaFax()."<br />Email: ".$consignatario->getCaEmail();
+            $consignatario_final = $consignatario->getCaNombre()." Nit. ".$consignatario->getCaIdentificacion()."<br />Dirección: ".$consignatario->getCaDireccion()."<br />Fax:".$consignatario->getCaFax()."<br />Email: ".$consignatario->getCaEmail();
 
         }else{
             $contacto = $reporte->getContacto();
