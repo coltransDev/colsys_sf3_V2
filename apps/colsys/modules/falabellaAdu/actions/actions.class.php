@@ -768,6 +768,7 @@ class falabellaAduActions extends sfActions {
             }
         }
 
+
         foreach($acumula as $key => $value){
             $salida.= $value;
         }
@@ -790,6 +791,7 @@ class falabellaAduActions extends sfActions {
         $chk_doc = $chk_sum = 0;
         $chk_count = 0;
         $valor_carpeta = 0;
+        $prorrateos = array();
         while ( $row = $stmt->fetch() ) {
             $chk_count++;
             if ($numdocumento != $row["ca_numdocumento"] and $numdocumento != null){
@@ -848,13 +850,13 @@ class falabellaAduActions extends sfActions {
                 $valor_documento = round(floatval($row["ca_vlrdocumento"]) * $factor,0);
                 $chk_doc+= $valor_documento;
 
-                if (($chk_count%$ctr_cACount)==0){
+                if (($chk_count%$ctr_count)==0){
                     if (abs($chk_doc-$total_documento) > 0 and abs($chk_doc-$total_documento) <= 5){ // Tolerancia de 5 pesos de diferencia
                         $valor_documento-= $chk_doc-$total_documento;
                     }
                     $chk_doc = 0;
                 }
-
+                $prorrateos[$row["ca_iddoc"]] = $valor_documento;
                 $adicion.= str_pad($valor_documento, 10, "0", STR_PAD_LEFT); // 25
                 $adicion.= "\r\n";
 
@@ -889,14 +891,12 @@ class falabellaAduActions extends sfActions {
             $salida.= str_pad($row["ca_embarque"], 2, " "); // 19
 
             $valor_carpeta = round($tot_doc * $factor,0);
-            $chk_sum+= $valor_carpeta;
+            $prorrateos[$row["ca_iddoc"]]-= $valor_carpeta;
 
-            if (($chk_count%$ctr_count)==0){
-                if (abs($chk_sum-$tot_doc) > 0 and abs($chk_sum-$tot_doc) <= 5){ // Tolerancia de 5 pesos de diferencia
-                    $valor_carpeta-= $chk_sum-$tot_doc;
-                }
-                $chk_sum = 0;
+            if ($prorrateos[$row["ca_iddoc"]] != 0 and $row["ca_idconcepto"] == 12){
+                $valor_carpeta+= $prorrateos[$row["ca_iddoc"]];
             }
+            
             $salida.= str_pad($valor_carpeta, 15, "0", STR_PAD_LEFT); // 20
             $salida.= "\r\n";
         }
@@ -904,7 +904,7 @@ class falabellaAduActions extends sfActions {
         foreach($acumula as $key => $value){
             $salida = $value.$salida;
         }
-
+        
         $filename = $directory.DIRECTORY_SEPARATOR.'Not_'.$numdocumento.'.txt';
         $handle = fopen($filename , 'w');
 
@@ -912,7 +912,7 @@ class falabellaAduActions extends sfActions {
             echo "No se puede escribir al archivo {filename}";
             exit;
         }
-
+        
         $this->redirect("falabellaAdu/list");
     }
 
