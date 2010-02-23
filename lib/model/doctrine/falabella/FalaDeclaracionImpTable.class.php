@@ -64,8 +64,8 @@ class FalaDeclaracionImpTable extends Doctrine_Table
 
             $query = "select fh.ca_iddoc, fh.ca_referencia, fi.ca_embarque, fnc.ca_numdocumento, fnc.ca_emision_fch, fnc.ca_vlrdocumento, fnc.ca_tipo_cambio, fnd.ca_idconcepto, fnd.ca_nit_ter, fnd.ca_tipo, fnd.ca_factura_ter, fnd.ca_factura_fch, fnd.ca_factura_vlr, fnd.ca_factura_iva, fdd.ca_valor_fob, fsp.* from tb_falaheader_adu fh ";
             $query.= "  inner join tb_falainstructions_adu fi on fi.ca_iddoc = fh.ca_iddoc ";
-            $query.= "  inner join (select * from tb_falanota_cab where ca_referencia = '$referencia') fnc on fnc.ca_referencia = fh.ca_referencia ";
-            $query.= "  inner join (select * from tb_falanota_det where ca_referencia = '$referencia') fnd on fnd.ca_referencia = fnc.ca_referencia and fnd.ca_numdocumento = fnc.ca_numdocumento";
+            $query.= "  inner join (select * from tb_falanota_cab where ca_referencia = '$referencia' order by ca_numdocumento) fnc on fnc.ca_referencia = fh.ca_referencia ";
+            $query.= "  inner join (select * from tb_falanota_det where ca_referencia = '$referencia' order by ca_numdocumento) fnd on fnd.ca_referencia = fnc.ca_referencia and fnd.ca_numdocumento = fnc.ca_numdocumento";
             $query.= "  inner join (select ca_referencia, sum(ca_valor_fob) as ca_valor_fob from tb_faladeclaracion_dts where ca_referencia = '$referencia' group by ca_referencia) fdd on fdd.ca_referencia = fh.ca_referencia ";
 
             $query.= "  inner join (select fh.ca_referencia, fh.ca_iddoc, sum(fd.ca_valor_fob) as ca_prorrateo_fob from ";
