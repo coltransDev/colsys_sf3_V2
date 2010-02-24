@@ -444,6 +444,7 @@ class idsActions extends sfActions
 			$bindValues["fax"] = $request->getParameter("fax");
 			$bindValues["email"] = trim($request->getParameter("email"));
 			$bindValues["cargo"] = $request->getParameter("cargo");
+            $bindValues["otro_cargo"] = $request->getParameter("otro_cargo");
 			$bindValues["sugerido"] = $request->getParameter("sugerido");
 			$bindValues["activo"] = $request->getParameter("activo");
 			$bindValues["detalles"] = $request->getParameter("detalles");
@@ -470,7 +471,11 @@ class idsActions extends sfActions
 				$contacto->setCaEmail( $bindValues["email"] );
 				$contacto->setCaImpoexpo( implode("|",$bindValues["impoexpo"]) );
 				$contacto->setCaTransporte( implode("|",$bindValues["transporte"]) );
-				$contacto->setCaCargo( $bindValues["cargo"] );
+                if( $bindValues["cargo"] ){
+                    $contacto->setCaCargo( $bindValues["cargo"] );
+                }else{
+                    $contacto->setCaCargo( $bindValues["otro_cargo"] );
+                }
                 if( $bindValues["codigoarea"] && $this->sucursal->getCiudad()->getCodigoarea() ){
                     $contacto->setCaCodigoarea( $bindValues["codigoarea"] );
                 }else{

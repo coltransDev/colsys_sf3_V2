@@ -1,3 +1,14 @@
+<script type="text/javascript">
+var verificarCargo = function(){
+    var cargoChk = document.getElementById("cargo_").checked;
+    if( cargoChk ){
+        document.getElementById("otro_cargo_div").style.display = "";
+    }else{
+        document.getElementById("otro_cargo_div").style.display = "none";
+    }
+
+}
+</script>
 <div class="content" align="center">
 	<h3>Maestra de Proveedores - Contactos</h3>
 	<br />
@@ -7,7 +18,7 @@
 	$form->setDefault('idsucursal', $sucursal->getCaIdsucursal() );
 	 echo $form['idsucursal']->render();
 	?>
-	<table cellspacing="1" width="50%" class="tableList">
+	<table cellspacing="1" width="50%" class="tableList alignLeft">
 		<tbody>
 			<tr>
 				<th colspan="4">Nuevos Datos para el Contacto</th>
@@ -158,16 +169,38 @@
 			<tr>
 				<td><b>Cargo:</b></td>
 				<td>
+                    <?
+                    $cargos = $form->getCargos();
 
-				<?
-				 echo $form['cargo']->renderError();
-				 if( $contacto ){
-					$form->setDefault('cargo', $contacto->getCaCargo() );
-				 }else{
-				 	$form->setDefault('cargo', 'Contacto Operativo' );
-				 }
-				 echo $form['cargo']->render();
-				 ?>				</td>
+                    $otro=false;
+                    echo $form['cargo']->renderError();
+                    if( $contacto ){
+                        $form->setDefault('cargo', $contacto->getCaCargo() );
+                        if( in_array($contacto->getCaCargo(), $cargos)){
+                            $form->setDefault('cargo', $contacto->getCaCargo() );
+                        }else{
+                            $form->setDefault('cargo', "" );
+                            $otro = true;
+                        }
+                    }else{
+                        $form->setDefault('cargo', $cargos[0] );
+                    }
+                    echo $form['cargo']->render();                    
+                    ?>
+                   
+                    <div id="otro_cargo_div" style="<?=!$otro?"display:none":""?>">
+                    <?
+                    echo $form['otro_cargo']->renderError();
+                    if( $contacto && $otro ){
+                        $form->setDefault('otro_cargo', $contacto->getCaCargo() );
+                    }else{
+                        $form->setDefault('otro_cargo', '' );
+                    }
+                    echo $form['otro_cargo']->render();
+                    ?>
+                    </div>
+
+                </td>
 
                  <td><b>Visibilidad:</b></td>
 				<td>
@@ -234,3 +267,7 @@
 
 
 </div>
+
+<script type="text/javascript">
+    verificarCargo();
+</script>

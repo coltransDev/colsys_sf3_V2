@@ -45,13 +45,13 @@
       ?>
       <tr class="<?=$class?>">
            <td><div align="left"><div class="qtip" title="<?=$contacto->getCaObservaciones()?>"><?=$contacto->getNombre()?> <?=!$contacto->getCaActivo()?"(INACTIVO)":""?></div></div></td>
-           <td><div align="left">(<?=$sucursal->getCiudad()->getTrafico()->getCodigoarea()?>)(<?=$contacto->getCodigoarea()?>)</div></td>
-           <td><div align="left"><?=$contacto->getCaTelefonos()?></div></td>
-           <td><div align="left"><?=$contacto->getCaFax()?></div></td>
-           <td><div align="left"><?=$contacto->getCaEmail()?></div></td>
-           <td><div align="left"><?=$contacto->getCaCargo()?></div></td>
-           <td><div align="left"><?=str_replace( "|", ",",$contacto->getCaImpoexpo())?></div></td>
-           <td><div align="left"><?=str_replace( "|", ",", $contacto->getCaTransporte())?></div></td>
+           <td><div align="left" class="qtip" title="<?=$contacto->getCaObservaciones()?>">(<?=$sucursal->getCiudad()->getTrafico()->getCodigoarea()?>)(<?=$contacto->getCodigoarea()?>)</div></td>
+           <td><div align="left" class="qtip" title="<?=$contacto->getCaObservaciones()?>"><?=$contacto->getCaTelefonos()?></div></td>
+           <td><div align="left" class="qtip" title="<?=$contacto->getCaObservaciones()?>"><?=$contacto->getCaFax()?></div></td>
+           <td><div align="left" class="qtip" title="<?=$contacto->getCaObservaciones()?>"><?=$contacto->getCaEmail()?></div></td>
+           <td><div align="left" class="qtip" title="<?=$contacto->getCaObservaciones()?>"><?=$contacto->getCaCargo()?></div></td>
+           <td><div align="left" class="qtip" title="<?=$contacto->getCaObservaciones()?>"><?=str_replace( "|", ",",$contacto->getCaImpoexpo())?></div></td>
+           <td><div align="left" class="qtip" title="<?=$contacto->getCaObservaciones()?>"><?=str_replace( "|", ",", $contacto->getCaTransporte())?></div></td>
            <td><div align="center">
             <?
             if( $nivel>=3 ){

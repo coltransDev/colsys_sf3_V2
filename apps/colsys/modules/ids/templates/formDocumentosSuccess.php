@@ -16,7 +16,7 @@
     }
     echo $form['iddocumento']->render();
     ?>
-<table class="tableList">
+<table class="tableList alignLeft">
     <tr>
 		<th colspan="6"><div align="left"><b>Nuevo Documento</b></div></th>
     </tr>

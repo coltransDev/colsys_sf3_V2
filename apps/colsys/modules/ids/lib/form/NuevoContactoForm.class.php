@@ -1,7 +1,13 @@
 <?
 class NuevoContactoForm extends BaseForm{
 	
-	
+	private $cargos = array('Jefe de Oficina'=>'Jefe de Oficina',
+													'Jefe Importación'=>'Jefe Importación',
+													'Jefe Exportación'=>'Jefe Exportación',
+													'Contacto Operativo'=>'Contacto Operativo',
+                                                    'Ventas'=>'Ventas',
+													''=>'Otro'
+												);
 	
 	
 	public function configure(){
@@ -31,14 +37,8 @@ class NuevoContactoForm extends BaseForm{
 													Constantes::TERRESTRE=>Constantes::TERRESTRE), 
 								 'expanded'=>true, "multiple"=>true)),
 		  'cargo'     => new sfWidgetFormChoice(array(
-  								'choices' => array('Jefe de Oficina'=>'Jefe de Oficina', 
-													'Jefe Importación'=>'Jefe Importación', 
-													'Jefe Exportación'=>'Jefe Exportación', 
-													'Contacto Operativo'=>'Contacto Operativo',
-                                                    'Ventas'=>'Ventas',
-													''=>'Otro'												
-												), 'expanded'=>true)),
-		  						
+  								'choices' => $this->cargos, 'expanded'=>true), array("onclick"=>"verificarCargo()", "maxlenght"=>40)),
+          'otro_cargo'      => new sfWidgetFormInputText(array(), array("maxlength"=>"60" ,"size"=>"60")),
           'visibilidad'     => new sfWidgetFormChoice(array(
   								'choices' => array('1'=>'Todos',													
 													'2'=>'Admon. Proveedores',
@@ -68,6 +68,7 @@ class NuevoContactoForm extends BaseForm{
 		  'transporte'     => new sfValidatorString(array('required' => true)),
 		  'visibilidad' => new sfValidatorString(array('required' => true)),
 		  'cargo' => new sfValidatorString(array('required' => false)),
+          'otro_cargo' => new sfValidatorString(array('required' => false)),
 		  'sugerido'      => new sfValidatorBoolean(array('required' => false)),
 		  'activo'      => new sfValidatorBoolean(array('required' => false)),
 		   'detalles'      => new sfValidatorString(array('required' => false)),
@@ -88,9 +89,19 @@ class NuevoContactoForm extends BaseForm{
 		if ($request->hasParameter(self::$CSRFFieldName)){
 			$taintedValues[self::$CSRFFieldName] = $request->getParameter(self::$CSRFFieldName);
 		}*/
+
+        if( $taintedValues["cargo"]=="" ){
+            $this->validatorSchema['cargo']->setOption('required', false);
+            $this->validatorSchema['otro_cargo']->setOption('required', true);
+        }
 		
 		parent::bind($taintedValues,  $taintedFiles);
 	}
+
+
+    public function getCargos(){
+        return $this->cargos;
+    }
 	
 	
 }

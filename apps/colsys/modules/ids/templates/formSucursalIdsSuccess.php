@@ -14,7 +14,7 @@ if( $sucursal ){
 }
 echo $form['idsucursal']->render();
 ?>
-<table class="tableList">
+<table class="tableList alignLeft">
     <tr>
 		<th colspan="6"><div align="left"><b>Nueva sucursal:</b></div></th>
     </tr>

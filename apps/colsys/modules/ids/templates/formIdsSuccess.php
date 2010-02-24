@@ -53,7 +53,7 @@
 
     <form action="<?=url_for("ids/formIds?modo=".$modo."" )?>" method="post" name="form1" >
 	<input type="hidden" name="id" value="<?=$ids->getCaId()?>" />
-    <table width="80%" border="0" class="tableList">
+    <table width="80%" border="0" class="tableList alignLeft">
 	<tr>		
         <th colspan="6"><div align="left"><b>Datos basicos</b></div> </th>
 	</tr>

@@ -22,7 +22,7 @@
         <?
     }
     ?>
-    <table class="tableList" width="50%">
+    <table class="tableList alignLeft" width="50%">
         <tr>
             <th colspan="2">&nbsp;</th>
         </tr>

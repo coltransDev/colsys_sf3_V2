@@ -14,7 +14,7 @@ use_helper("ExtCalendar");
 <div class="content" align="center">
     <form action="<?=url_for("ids/formEvaluacion?modo=".$modo."&tipo=".$tipo."&id=".$ids->getCaId())?>" method="post">
         <input type="hidden" name="idevaluacion" value="<?=$evaluacion->getCaIdevaluacion()?>">
-    <table class="tableList" width="50%">
+    <table class="tableList alignLeft" width="50%">
         <tr>
             <th colspan="2">&nbsp;</th>
         </tr>

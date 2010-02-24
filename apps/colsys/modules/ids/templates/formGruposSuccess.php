@@ -13,7 +13,7 @@
 	
     <input type="hidden" name="id" value="<?=$ids->getCaId()?>">
     
-	<table cellspacing="1" width="50%" class="tableList">
+	<table cellspacing="1" width="50%" class="tableList alignLeft">
 		<tbody>
 			<tr>
 				<th colspan="4">Nuevos Datos para el Transportista</th>
