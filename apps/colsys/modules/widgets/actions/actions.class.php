@@ -325,10 +325,11 @@ class widgetsActions extends sfActions
                                   c.ca_papellido, c.ca_sapellido, c.ca_cargo, 
                                   cl.ca_preferencias, cl.ca_confirmar, cl.ca_vendedor, cl.ca_coordinador,
                                   v.ca_nombre, cl.ca_listaclinton, cl.ca_fchcircular
-                                  ,cl.ca_status, cl.ca_vendedor
+                                  ,cl.ca_status, cl.ca_vendedor, lc.ca_cupo, lc.ca_diascredito
                                  ")
                         ->from("Contacto c")
                         ->innerJoin("c.Cliente cl")
+                        ->leftJoin("cl.LibCliente lc")
                         ->leftJoin("cl.Usuario v")
                         ->where("UPPER(cl.ca_compania) like ?", "%".strtoupper( $criterio )."%")
                         ->addOrderBy("cl.ca_compania ASC")
@@ -358,6 +359,8 @@ class widgetsActions extends sfActions
             $result["ca_status"]=$row["cl_ca_status"];
             $result["ca_vendedor"]=$row["cl_ca_vendedor"];
             $result["ca_coordinador"]=$row["cl_ca_coordinador"];
+            $result["ca_diascredito"]=$row["lc_ca_diascredito"];
+            $result["ca_cupo"]=$row["lc_ca_cupo"];
             $clientes[]=$result;
 			
 		}
