@@ -316,11 +316,11 @@ class Reporte extends BaseReporte
 		$q->addWhere("r.ca_idreporte = ? ", $this->getCaIdreporte());
 		if( $this->getCaImpoexpo()==Constantes::IMPO ){
 			if( $tipo == "local" ){
-                $q->addWhere("t.ca_tipo = ? ", Constantes::RECARGO_LOCAL);		
+                $q->addWhere("t.ca_tipo like ? ", "%".Constantes::RECARGO_LOCAL."%" );
 			}
             
 			if( $tipo == "origen" ){
-                 $q->addWhere("t.ca_tipo = ? ", Constantes::RECARGO_EN_ORIGEN);		
+                 $q->addWhere("t.ca_tipo like ? ", "%".Constantes::RECARGO_EN_ORIGEN."%");
 			}
 		}
 		
@@ -620,22 +620,54 @@ class Reporte extends BaseReporte
 
 
 	/*
-	* Retorna true si se ha hecho el reporte al exterior
+	* Retorna los reportes al exterior
 	* Author: Andres Botero
 	*/
 	public function getReporteExterior(){
-		$c = new Criteria();
-		$c->addJoin( EmailPeer::CA_IDCASO, ReportePeer::CA_IDREPORTE );
-
-		if( $this->getCaTransporte()==Constantes::MARITIMO ){
-			$c->add( EmailPeer::CA_TIPO, "Rep.MarítimoExterior");
-		}else{
-			$c->add( EmailPeer::CA_TIPO, "Rep.AéreoExterior");
+		if( $this->getCaImpoexpo()==Constantes::IMPO || $this->getCaImpoexpo()==Constantes::TRIANGULACION  ){
+			//Reportes al exterior
+			if( $this->getCaTransporte()==Constantes::MARITIMO ){
+				$tipo = 'Rep.MarítimoExterior';
+			}else{
+				$tipo = 'Rep.AéreoExterior';
+			}
+			 
+            return Doctrine::getTable("Email")
+                       ->createQuery("e")
+                       ->select("e.*")
+                       ->innerJoin("e.Reporte r")
+                       ->where( "r.ca_consecutivo = ?", $this->getCaConsecutivo() )
+                       ->addWhere("e.ca_tipo = ? ", $tipo)
+                       ->addOrderBy("e.ca_fchenvio DESC")
+                       ->execute();
 		}
+        return null;
+	}
 
-		$c->add( ReportePeer::CA_CONSECUTIVO, $this->getCaConsecutivo() );
-		$count = EmailPeer::doCount( $c );
-		return $count>0;
+
+    /*
+	* Retorna los reportes al exterior de la version actual
+	* Author: Andres Botero
+	*/
+	public function getReporteExteriorVersionActual(){
+        if( $this->getCaImpoexpo()==Constantes::IMPO || $this->getCaImpoexpo()==Constantes::TRIANGULACION  ){
+			//Reportes al exterior
+			if( $this->getCaTransporte()==Constantes::MARITIMO ){
+				$tipo = 'Rep.MarítimoExterior';
+			}else{
+				$tipo = 'Rep.AéreoExterior';
+			}
+
+			return Doctrine::getTable("Email")
+                           ->createQuery("e")
+                           ->select("e.*")
+                           ->where( "e.ca_idacaso = ?", $this->getCaIdreporte() )
+                           ->addWhere("e.ca_tipo = ? ", $tipo)
+                           ->addOrderBy("e.ca_fchenvio DESC")
+                           ->execute();
+		}
+        return null;
+
 	}
 
 	/*

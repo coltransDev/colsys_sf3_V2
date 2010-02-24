@@ -41,6 +41,48 @@ if( $reporte->getCaUsuanulado() ){
 					<b><?=$reporte->getCaTransporte()==Constantes::MARITIMO?"MN:":"Vuelo:"?></b> <?=$reporte->getIdnave()
 										
 					?><br />
+                    <?
+                     $equipos = $reporte->getRepEquipos();
+                    if( $reporte->getCaModalidad()=="FCL" && count($equipos)> 0 ){
+                    ?>
+
+                    <b>Relación de Contenedores:</b><br />
+                    <table width="100%" cellspacing="0" border="1" class="tableList">
+                        <tr>
+                            <th>Concepto</th>
+                            <th>Cantidad</th>
+                            <?
+                            if( $reporte->getCaImpoexpo()==Constantes::EXPO ){
+                            ?>
+                            <th>Serial</th>
+                            <?
+                            }
+                            ?>
+                            <th>Observaciones</th>
+                        </tr>
+                        <?
+                        foreach( $equipos as $equipo ){
+                        ?>
+                        <tr>
+                            <td><?=$equipo->getConcepto()->getCaConcepto()?></td>
+                            <td><?=$equipo->getCaCantidad()?></td>
+                            <?
+                            if( $reporte->getCaImpoexpo()==Constantes::EXPO ){
+                            ?>
+                            <td><?=$equipo->getCaIdequipo()?></td>
+                            <?
+                            }
+                            ?>
+                            <td><?=$equipo->getCaObservaciones()?$equipo->getCaObservaciones():"&nbsp;"?></td>
+                        </tr>
+                        <?
+                        }
+                        ?>
+                    </table>
+
+                    <?
+                    }
+                    ?>
 			
 		</div>
 		<br />

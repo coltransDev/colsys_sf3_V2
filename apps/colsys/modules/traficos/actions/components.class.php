@@ -25,15 +25,7 @@ class traficosComponents extends sfComponents
 				$tipo = 'Rep.AéreoExterior';
 			}
 			
-			$this->reportesExt = Doctrine::getTable("Email")
-                                           ->createQuery("e")
-                                           ->select("e.*")
-                                           ->innerJoin("e.Reporte r")
-                                           ->where( "r.ca_consecutivo = ?", $this->reporte->getCaConsecutivo() )
-                                           ->addWhere("e.ca_tipo = ? ", $tipo)
-                                           ->addOrderBy("e.ca_fchenvio DESC")
-                                           ->execute();
-           //$this->reportesExt = array();
+			$this->reportesExt = $this->reporte->getReporteExterior();
 		}		
 		
 	} 

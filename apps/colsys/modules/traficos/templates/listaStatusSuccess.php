@@ -156,11 +156,8 @@ use_helper("MimeType");
 			if( $modo=="expo" ){
 				echo $reporte->getConsignatario();
 			}else{	
-				echo $reporte->getProveedoresStr();
-				
-			}
-			
-			
+				echo $reporte->getProveedoresStr();				
+			}			
 			?></td>
         <td><div align="left">
 			<?=$reporte->getCaOrdenClie()?>
