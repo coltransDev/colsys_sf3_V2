@@ -43,13 +43,27 @@ class reporteExtComponents extends sfComponents
         if( $reporte->getCaIdconsignatario() ){
 
             $consignatario = Doctrine::getTable("Tercero")->find( $reporte->getCaIdconsignatario() );
-            $consignatario_final = $consignatario->getCaNombre()." Nit. ".$consignatario->getCaIdentificacion()."<br />Dirección: ".$consignatario->getCaDireccion()."<br />Fax:".$consignatario->getCaFax()."<br />Email: ".$consignatario->getCaEmail();
+            $consignatario_final = $consignatario->getCaNombre()." Nit. ".$consignatario->getCaIdentificacion();
+            if( $reporte->getCaMciaPeligrosa() ){
+                $consignatario_final .= "<br />Contacto: ".$consignatario->getCaContacto();
+            }
+            $consignatario_final .= "<br />Dirección: ".$consignatario->getCaDireccion();
+            if( $reporte->getCaMciaPeligrosa() ){
+                $consignatario_final .= "<br />Teléfonos:".$consignatario->getCaTelefonos()." Fax:".$consignatario->getCaFax()."<br />Email: ".$consignatario->getCaEmail();
+            }
 
         }else{
             $contacto = $reporte->getContacto();
             $cliente = $reporte->getContacto()->getCliente();
 
-            $consignatario_final = $cliente->getCaCompania()." Nit. ".number_format($cliente->getCaIdcliente(),0)."-".$cliente->getCaDigito()."<br />Contacto: ".$contacto->getCaNombres()." ".$contacto->getCaPapellido()." ".$contacto->getCaSapellido()."<br />Dirección: ".$cliente->getDireccion()." ".$cliente->getCiudad()->getCaCiudad()."<br />Teléfonos:".$contacto->getCaTelefonos()." Fax:".$contacto->getCaFax()."<br /> Email:".$contacto->getCaEmail();
+            $consignatario_final = $cliente->getCaCompania()." Nit. ".number_format($cliente->getCaIdcliente(),0)."-".$cliente->getCaDigito();
+            if( $reporte->getCaMciaPeligrosa() ){
+                $consignatario_final .= "<br />Contacto: ".$contacto->getCaNombres()." ".$contacto->getCaPapellido()." ".$contacto->getCaSapellido();
+            }
+            $consignatario_final .="<br />Dirección: ".$cliente->getDireccion()." ".$cliente->getCiudad()->getCaCiudad();
+            if( $reporte->getCaMciaPeligrosa() ){
+                $consignatario_final .="<br />Teléfonos:".$contacto->getCaTelefonos()." Fax:".$contacto->getCaFax()."<br /> Email:".$contacto->getCaEmail();
+            }
         }
 
 
