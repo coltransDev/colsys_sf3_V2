@@ -89,9 +89,17 @@ class HdeskTicket extends BaseHdeskTicket
 	* Devuelve la ubicacion del directorio donde se encuentran los archivos
 	* @author Andres Botero
 	*/
-	public function getDirectorio(){
-		return sfConfig::get("app_digitalFile_root").HdeskTicket::FOLDER.DIRECTORY_SEPARATOR.$this->getCaIdticket();
-	}
+    public function getDirectorio(){
+        $folder = HdeskProject::FOLDER;
+        return $directory = sfConfig::get('app_digitalFile_root').DIRECTORY_SEPARATOR.$this->getDirectorioBase();
+
+    }
+
+    public function getDirectorioBase(){
+        $folder = HdeskProject::FOLDER;
+        return $directory = $folder.DIRECTORY_SEPARATOR.$this->getCaIdticket();
+
+    }
 
 
     

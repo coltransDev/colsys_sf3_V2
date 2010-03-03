@@ -466,6 +466,9 @@ a.toolbar:active {
 .row_pink{
 	background-color: #FFCCCC !important;
 }
+.row_blue{
+	background-color: #F4F8FF !important;
+}
 
 /*
 * Thumbnails
@@ -574,6 +577,11 @@ a.toolbar:active {
 
 .information {
 	background: url('../images/fam/information.png') no-repeat 0 0 !important;
+}
+
+
+.calendar {
+	background: url('../images/fam/calendar.png') no-repeat 0 0 !important;
 }
 
 
@@ -805,4 +813,20 @@ div.box1 .body {
     top:0;
     width:100%;
     z-index:100;
+}
+
+
+
+
+
+.custom .x-progress-inner {
+    height:17px;
+    background: #fff;
+}
+.custom .x-progress-bar {
+    height:15px;
+    background:transparent url(images/custom-bar.gif) repeat-x 0 0;
+    border-top:1px solid #BEBEBE;
+    border-bottom:1px solid #EFEFEF;
+    border-right:0;
 }

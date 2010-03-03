@@ -12,5 +12,18 @@
  */
 class HdeskProject extends BaseHdeskProject
 {
+    const FOLDER = "Projects";
+    public function getDirectorio(){
+        $folder = HdeskProject::FOLDER;
+        return $directory = sfConfig::get('app_digitalFile_root').DIRECTORY_SEPARATOR.$this->getDirectorioBase();
+
+    }
+
+    public function getDirectorioBase(){
+        $folder = HdeskProject::FOLDER;
+        return $directory = $folder.DIRECTORY_SEPARATOR.$this->getCaIdproject();
+
+    }
+
 
 }

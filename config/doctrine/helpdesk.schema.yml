@@ -53,9 +53,7 @@ HdeskTicket:
     ca_responsetime: timestamp
     ca_idtarea: integer
     ca_idseguimiento: integer
-    ca_order: integer
-    ca_estimatedhours: integer
-    ca_percentage: integer
+    ca_idmilestone: integer
   relations:
     HdeskResponse:
       local: ca_idticket
@@ -70,6 +68,14 @@ HdeskTicket:
       foreign: ca_idproject
       type: one    
     HdeskTicketUser:
+      local: ca_idticket
+      foreign: ca_idticket
+      type: many
+    HdeskMilestone:
+      local: ca_idmilestone
+      foreign: ca_idmilestone
+      type: one
+    HdeskTask:
       local: ca_idticket
       foreign: ca_idticket
       type: many
@@ -126,8 +132,13 @@ HdeskProject:
     ca_name: string
     ca_description: string
     ca_active: boolean
+    ca_manager: string
   relations:
     HdeskGroup:
+      local: ca_idgroup
+      foreign: ca_idgroup
+      type: many
+    HdeskMilestone:
       local: ca_idgroup
       foreign: ca_idgroup
       type: many
@@ -203,4 +214,55 @@ HdeskDepartamentClasification:
       foreign: ca_iddepartamento
       type: one
 
+HdeskTask:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: helpdesk
+  tableName: helpdesk.tb_tasks
+  columns:
+    ca_idtask:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_idticket: integer
+    ca_task: string(25)
+    ca_weight: integer
+    ca_percentage: integer
+    ca_assigned_to: string
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+  relations:
+    HdeskTicket:
+      local: ca_idticket
+      foreign: ca_idticket
+      type: one
+    Usuario:
+      local: ca_assigned_to
+      foreign: ca_assigned_to
+      type: one
+
+HdeskMilestone:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: helpdesk
+  tableName: helpdesk.tb_milestones
+  columns:
+    ca_idmilestone:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_idproject: integer
+    ca_title: string(25)
+    ca_text: string(255)
+    ca_due: date
+    ca_end: date
+  relations:
+    HdeskProject:
+      local: ca_idproject
+      foreign: ca_idproject
+      type: one
 
