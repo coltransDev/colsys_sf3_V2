@@ -252,10 +252,10 @@ require_once("menu.php");
 
 	   $complemento = (($rs->Value('ca_oficina')!='')?" Oficina : ".$rs->Value('ca_oficina'):"").(($rs->Value('ca_torre')!='')?" Torre : ".$rs->Value('ca_torre'):"").(($rs->Value('ca_interior')!='')?" Interior : ".$rs->Value('ca_interior'):"").(($rs->Value('ca_complemento')!='')?" - ".$rs->Value('ca_complemento'):"");
 	   echo "<TR>";
-	   echo "  <TD Class=listar ROWSPAN=8 style='text-align: center; $vetado'></TD>";
+	   echo "  <TD Class=listar ROWSPAN=9 style='text-align: center; $vetado'></TD>";
 	   echo "  <TD Class=mostrar style='$vetado'>Dirección :</TD>";
 	   echo "  <TD Class=listar style='$vetado' COLSPAN=3>".str_replace ("|"," ",$rs->Value('ca_direccion')).$complemento."</TD>";
-	   echo "  <TD Class=listar style='$vetado' ROWSPAN=8 style='text-align: center;'>";
+	   echo "  <TD Class=listar style='$vetado' ROWSPAN=9 style='text-align: center;'>";
 	   echo "    <TABLE>";
 	   echo "      <TR><TD Class=mostrar style='text-align: center;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='elegir(\"Control Financiero\", ".$rs->Value('ca_idcliente').");' style='color=blue;'><BR><IMG src='graficos/vista.gif'><BR>Control Financiero</TD></TR>";
 	   echo "    </TABLE>";
@@ -286,14 +286,18 @@ require_once("menu.php");
 	   echo "  <TD Class=mostrar style='$vetado'>".$rs->Value('ca_calificacion')."</TD>";
 	   echo "</TR>";
 	   echo "<TR>";
-	   echo "  <TD Class=listar style='$vetado' rowspan=2>Sector :</TD>";
-	   echo "  <TD Class=listar style='$vetado' rowspan=2>".$rs->Value('ca_sectoreco')."</TD>";
+	   echo "  <TD Class=listar style='$vetado' rowspan=3>Sector :</TD>";
+	   echo "  <TD Class=listar style='$vetado' rowspan=3>".$rs->Value('ca_sectoreco')."</TD>";
 	   echo "  <TD Class=listar style='$vetado'>Vendedor :</TD>";
 	   echo "  <TD Class=listar style='$vetado'>".$rs->Value('ca_vendedor')."<BR>".$rs->Value('ca_sucursal')."</TD>";
 	   echo "</TR>";
 	   echo "<TR>";
 	   echo "  <TD Class=mostrar style='$vetado'>Coord. Colmas:</TD>";
 	   echo "  <TD Class=mostrar style='$vetado'>".$rs->Value('ca_coordinador')."</TD>";
+	   echo "</TR>";
+	   echo "<TR>";
+	   echo "  <TD Class=mostrar style='$vetado'>Tipo NIT:</TD>";
+	   echo "  <TD Class=mostrar style='$vetado'>".str_replace("|","<br>",$rs->Value('ca_tipo'))."</TD>";
 	   echo "</TR>";
 
 	   echo "<TR>";
@@ -372,6 +376,9 @@ elseif (isset($boton)) {                                                       /
                  echo "<script>document.location.href = 'clientes_financ.php';</script>";
                  exit;
                 }
+			 $tipos = explode("|", $rs->Value('ca_tipo'));
+			 print_r($tipos);
+			 
              echo "<HEAD>";
              echo "<script language='JavaScript' type='text/JavaScript'>";     // Código en JavaScript para validar las opciones de mantenimiento
              echo "function validar(){";
@@ -423,12 +430,17 @@ require_once("menu.php");
              echo "</TR>";
              echo "<TR>";
              echo "  <TD Class=captura>Lista Clinton:</TD>";
-			 echo "  <TD Class=invertir><TABLE CELLSPACING=1 WIDTH=105><TR>";
+			 echo "  <TD Class=invertir><TABLE CELLSPACING=1 WIDTH=425><TR>";
              echo "  <TD Class=mostrar>Reportado:<BR /><CENTER><SELECT NAME='listaclinton'>";
              echo "  	<OPTION VALUE='No' ".(($rs->Value('ca_listaclinton')=='No')?'SELECTED':'').">No";
              echo "  	<OPTION VALUE='Sí' ".(($rs->Value('ca_listaclinton')=='Sí')?'SELECTED':'').">Sí";
              echo "  </SELECT></CENTER></TD>";
-			 echo "  </TABLE><TD>";
+             echo "  <TD Class=captura>Tipo de NIT.:</TD>";
+			 echo "  <TD Class=invertir style='vertical-align: bottom;'>";
+			 echo "  	<INPUT TYPE='CHECKBOX' NAME='tipo_nit[]' ".((in_array("Agente",$tipos))?'CHECKED':'')." VALUE='Agente'> Agente<br/>";
+			 echo "  	<INPUT TYPE='CHECKBOX' NAME='tipo_nit[]' ".((in_array("Proveedor",$tipos))?'CHECKED':'')." VALUE='Proveedor'> Proveedor";
+             echo "  </TD>";
+			 echo "  </TR></TABLE></TD>";
              echo "</TR>";
              echo"</TABLE><BR>";
              echo "<TABLE CELLSPACING=10>";
@@ -449,7 +461,8 @@ elseif (isset($accion)) {                                                      /
     switch(trim($accion)) {                                                    // Switch que evalua cual botòn de comando fue pulsado por el usuario
         case 'Actualizar': {                                                   // El Botón Actualizar fue pulsado
 			 $fchcircular = (strlen($fchcircular)!=0)?"'".$fchcircular."'":'date(null)';
-             if (!$rs->Open("update tb_clientes set ca_fchcircular = $fchcircular, ca_nvlriesgo = '$nvlriesgo', ca_listaclinton = '$listaclinton', ca_leyinsolvencia = '$leyinsolvencia', ca_comentario = '$comentario', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usuactualizado = '$usuario' where ca_idcliente = $id")) {
+			 $tipo_nit = implode("|",$tipo_nit);
+             if (!$rs->Open("update tb_clientes set ca_fchcircular = $fchcircular, ca_nvlriesgo = '$nvlriesgo', ca_listaclinton = '$listaclinton', ca_leyinsolvencia = '$leyinsolvencia', ca_comentario = '$comentario', ca_tipo = '$tipo_nit', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usuactualizado = '$usuario' where ca_idcliente = $id")) {
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                  echo "<script>document.location.href = 'clientes_financ.php';</script>";
                  exit;
