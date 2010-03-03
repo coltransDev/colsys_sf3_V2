@@ -125,6 +125,16 @@ include_component("gestDocumental", "panelArchivos", array("readOnly"=>$ticket->
 		<?=$ticket->getCaAction()?> <?=$nivel>0&&$ticket->getCaAction()=="Abierto"?link_to("Cerrar","pm/cerrarTicket?id=".$ticket->getCaIdticket() ):""?>
 	</td>
   </tr>
+  <tr>
+    <td class="listar">
+		<b>Milestone: </b>
+		<?=$ticket->getHdeskMilestone()?$ticket->getHdeskMilestone()->getCaTitle():""?>
+	</td>
+    <td class="listar">
+		<b>Estimado: 	</b>
+		<?=$ticket->getHdeskMilestone()?Utils::fechaMes($ticket->getHdeskMilestone()->getCaDue()):""?>
+	</td>
+  </tr>
   <?
   $loginsGrupo = $sf_data->getRaw("loginsGrupo");
   if( in_array($user->getUserId(), $loginsGrupo ) ){

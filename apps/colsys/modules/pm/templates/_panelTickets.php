@@ -210,7 +210,7 @@ PanelTickets = function( config ){
             {name: 'project', type: 'integer', mapping: 'p_ca_name'},
             {name: 'idgroup', type: 'integer', mapping: 'h_ca_idgroup'},
             {name: 'milestone', type: 'string'},
-            {name: 'estimated', type: 'date', dateFormat:'Y-m-d'},
+            {name: 'estimated', type: 'date', dateFormat:'Y-m-d', mapping: 'm_ca_due'},
             {name: 'login', type: 'string', mapping: 'h_ca_login'},
             {name: 'tipo', type: 'string', mapping: 'h_ca_type'},
             {name: 'title', type: 'string', mapping: 'h_ca_title'},

@@ -50,6 +50,7 @@ var bloquearCampos = function(){
 	Ext.getCmp('type_id').setDisabled(true);
 	Ext.getCmp('actionTicket_id').setDisabled(true);
     Ext.getCmp('proyecto_id').setDisabled(true);
+    Ext.getCmp('milestone_id').setDisabled(true);
 }
 
 var desbloquearCampos = function(){
@@ -60,6 +61,7 @@ var desbloquearCampos = function(){
 	Ext.getCmp('type_id').setDisabled(false);
 	Ext.getCmp('actionTicket_id').setDisabled(false);
     Ext.getCmp('proyecto_id').setDisabled(false);
+    Ext.getCmp('milestone_id').setDisabled(false);
 }
 
 
@@ -159,7 +161,7 @@ var areas = new Ext.form.ComboBox({
 	listClass: 'x-combo-list-small',	
 	
 	store : new Ext.data.Store({
-		autoLoad : true ,
+		autoLoad : false ,
 		url: '<?=url_for("pm/datosAreas")?>',
 		reader: new Ext.data.JsonReader(
 			{
@@ -257,9 +259,53 @@ var projectos = new Ext.form.ComboBox({
 				{name: 'nombre'}
 			])
 		)							
-	})
+	}),
+    listeners:{select:function( field, record, index ){                       
+						milestone = Ext.getCmp('milestone_id');
+						milestone.store.baseParams = {
+							idproject: record.data.idproyecto
+						};
+						milestone.store.load();
+				  }
+	}
 });
 
+
+
+var milestones = new Ext.form.ComboBox({
+	fieldLabel: 'Milestone',
+	typeAhead: true,
+	forceSelection: true,
+	triggerAction: 'all',
+	emptyText:'',
+	selectOnFocus: true,
+	value: '',
+	id: 'milestone_id',
+	lazyRender:true,
+	allowBlank: true,
+	displayField: 'title',
+	valueField: 'idmilestone',
+	hiddenName: 'idmilestone',
+	listClass: 'x-combo-list-small',
+	mode: 'local',
+
+	store : new Ext.data.Store({
+		autoLoad : false ,
+		url: '<?=url_for("pm/datosMilestones")?>',
+		reader: new Ext.data.JsonReader(
+			{
+				
+				root: 'root',
+				totalProperty: 'total',
+				successProperty: 'success'
+			},
+			Ext.data.Record.create([
+				{name: 'idmilestone', mapping: 'h_ca_idmilestone'},
+				{name: 'title', mapping: 'h_ca_title'}
+			])
+		)
+	})
+});
 
 
 var asignaciones = new Ext.form.ComboBox({		
@@ -424,7 +470,8 @@ var mainPanel = new Ext.FormPanel({
 				}
 				<?
 				}
-				?>
+				?>,
+                milestones
 				
 				
 			
@@ -581,6 +628,14 @@ if( $proyecto ){
 	?>
 	form.findField("project").setValue('<?=$proyecto->getCaName()?>');
 	form.findField("project").hiddenField.value = '<?=$proyecto->getCaIdproject()?>';
+
+    form.findField("idmilestone").store.baseParams = {
+		idproject: '<?=$proyecto->getCaIdproject()?>'
+	};
+    form.findField("idmilestone").store.reload();
+
+    form.findField("idmilestone").setValue('<?=$ticket->getHdeskMilestone()?$ticket->getHdeskMilestone()->getCaTitle():""?>');
+    form.findField("idmilestone").hiddenField.value = '<?=$ticket->getCaIdmilestone()?>';
 	
 	<?
 }

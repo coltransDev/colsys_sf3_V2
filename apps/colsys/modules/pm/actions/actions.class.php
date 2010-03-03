@@ -74,7 +74,7 @@ class pmActions extends sfActions
         $this->forward404Unless( $request->getParameter("idgroup") || $request->getParameter("idproject") );
 
 		$q = Doctrine_Query::create()
-                    ->select("h.*, m.ca_end, m.ca_title, p.ca_name, tar.ca_fchterminada, (SELECT MAX(rr.ca_createdat) FROM HdeskResponse rr WHERE rr.ca_idticket = h.ca_idticket ) as ultseg")
+                    ->select("h.*, m.ca_due, m.ca_title, p.ca_name, tar.ca_fchterminada, (SELECT MAX(rr.ca_createdat) FROM HdeskResponse rr WHERE rr.ca_idticket = h.ca_idticket ) as ultseg")
                     ->from('HdeskTicket h');
 		$q->innerJoin("h.HdeskGroup g");
         $q->leftJoin("h.HdeskTicketUser hu  ");
@@ -154,7 +154,7 @@ class pmActions extends sfActions
 		$tickets = $q->execute();
 
         foreach( $tickets as $key=>$val){
-            $tickets[$key]["milestone"]=utf8_encode($tickets[$key]["m_ca_title"]." ".$tickets[$key]["m_ca_end"]);
+            $tickets[$key]["milestone"]=utf8_encode($tickets[$key]["m_ca_title"]." ".Utils::fechaMes($tickets[$key]["m_ca_due"]));
             $tickets[$key]["h_ca_title"]=utf8_encode($tickets[$key]["h_ca_title"]);
             $tickets[$key]["h_ca_text"]=utf8_encode($tickets[$key]["h_ca_text"]);
             $tickets[$key]["p_ca_name"]=$tickets[$key]["p_ca_name"]?utf8_encode($tickets[$key]["p_ca_name"]):"Sin proyecto";
@@ -403,6 +403,10 @@ class pmActions extends sfActions
 			$ticket->setCaAssignedto( $request->getParameter("assignedto") );
 		}
 
+        if( $request->getParameter("idmilestone") ){
+			$ticket->setCaIdmilestone( $request->getParameter("idmilestone") );
+		}
+
 		@$ticket->save();
 
 
@@ -617,6 +621,46 @@ class pmActions extends sfActions
 
 	}
 
+
+    /**
+	* Datos del ticket
+	*
+	* @param sfRequest $request A request object
+	*/
+	public function executeDatosMilestones(sfWebRequest $request){
+        $nivel = $this->getNivel();
+
+        $this->forward404Unless( $request->getParameter("idproject") );
+
+        $project = Doctrine::getTable("HdeskProject")->find( $request->getParameter("idproject") );
+
+        $this->forward404Unless( $project );
+
+		$q = Doctrine_Query::create()
+                    ->select("h.ca_idmilestone, h.ca_title")
+                    ->from('HdeskMilestone h')
+                    ->addWhere("h.ca_idproject = ?", $request->getParameter("idproject") )
+                    ->addOrderBy("h.ca_due ASC")
+                    ->addOrderBy("h.ca_title ASC");
+
+
+
+
+		//$q->distinct();
+        //exit($q->getSql());
+        $q->setHydrationMode(Doctrine::HYDRATE_SCALAR);
+        $q->limit(120);
+		$milestones = $q->execute();
+        $i= 0;
+        foreach( $milestones as $key=>$val){
+            $milestones[$key]["h_ca_title"]=utf8_encode($milestones[$key]["h_ca_title"]);            
+        }
+
+        
+        $this->responseArray = array("success"=>true, "root"=>$milestones);
+        $this->setTemplate("responseTemplate");
+    }
+
 	/**
 	* Datos de los usuarios de acuerdo al grupos
 	*
@@ -742,104 +786,7 @@ class pmActions extends sfActions
 
     }
 
-    /**
-	* Adjunta un archivo a un ticket
-	*
-	* @param sfRequest $request A request object
-	*/
-    public function executeAdjuntarArchivo(sfWebRequest $request){
-        $this->nivel = $this->getNivel();
-        $idticket = $request->getParameter("id");
-		$this->ticket = HdeskTicketTable::retrieveIdTicket($idticket, $this->nivel );
-		$this->forward404Unless( $this->ticket );
-
-        $directory =  $this->ticket->getDirectorio();
-
-        $this->form = new NuevoAdjuntoForm();
-
-
-
-        if ($request->isMethod('post')){
-			$bindValues = array();
-
-            $bindFiles["archivo"] = $_FILES["archivo"];
-
-			$this->form->bind( $bindValues, $bindFiles );
-
-			if( $this->form->isValid() ){
-
-                $directorio = $this->ticket->getDirectorio();
-
-                if( !is_dir($directorio) ){
-                    mkdir($directorio, 0777, true);
-                }
-                move_uploaded_file( $bindFiles["archivo"]["tmp_name"], $directorio.DIRECTORY_SEPARATOR. $bindFiles["archivo"]["name"]);
-
-
-
-                $this->redirect("pm/verTicket?id=".$this->ticket->getCaIdticket() );
-            }
-        }
-    }
-
-
-     /**
-	* Adjunta un archivo a un ticket
-	*
-	* @param sfRequest $request A request object
-	*/
-    public function executeVerArchivo(sfWebRequest $request){
-        $this->nivel = $this->getNivel();
-		$this->iddepartamento = $this->getUser()->getIddepartamento();
-
-
-		if( !$this->nivel ){
-			$this->nivel = 0;
-		}
-        $idticket = $request->getParameter("id");
-		$this->ticket = HdeskTicketTable::retrieveIdTicket($idticket, $this->nivel );
-		$this->forward404Unless( $this->ticket );
-
-        $directory =  $this->ticket->getDirectorio();
-
-        $filename = base64_decode( $request->getParameter("file") );
-        $this->file = $directory.DIRECTORY_SEPARATOR.$filename;
-
-        if( !file_exists($this->file) ){
-            $this->forward404();
-        }
-
-
-    }
-
-
-     /**
-	* Adjunta un archivo a un ticket
-	*
-	* @param sfRequest $request A request object
-	*/
-    public function executeEliminarArchivo(sfWebRequest $request){
-        $this->nivel = $this->getNivel();
-		$this->iddepartamento = $this->getUser()->getIddepartamento();
-
-
-        $idticket = $request->getParameter("id");
-		$this->ticket = HdeskTicketTable::retrieveIdTicket($idticket, $this->nivel );
-		$this->forward404Unless( $this->ticket );
-
-        $directory =  $this->ticket->getDirectorio();
-
-        $filename = base64_decode( $request->getParameter("file") );
-        $this->file = $directory.DIRECTORY_SEPARATOR.$filename;
-
-        if( !file_exists($this->file) ){
-            $this->forward404();
-        }
-
-        unlink( $this->file );
-        $this->redirect("pm/verTicket?id=".$this->ticket->getCaIdticket() );
-
-    }
+    
 
 
      /**
