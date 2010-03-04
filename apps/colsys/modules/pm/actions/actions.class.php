@@ -33,7 +33,10 @@ class pmActions extends sfActions
 	* @param sfRequest $request A request object
 	*/
 	public function executeIndex(sfWebRequest $request){
-        
+        $response = sfContext::getInstance()->getResponse();
+		
+		
+			
 	}
 	
 
@@ -127,7 +130,7 @@ class pmActions extends sfActions
 		$q->distinct();
         //exit($q->getSqlQuery());
         $q->setHydrationMode(Doctrine::HYDRATE_SCALAR);
-        $q->limit(9);
+        $q->limit(200);
 		$tickets = $q->execute();
 
         foreach( $tickets as $key=>$val){
@@ -1093,6 +1096,40 @@ class pmActions extends sfActions
                          ->where("d.ca_inhelpdesk = ?", true)
                          ->execute();
         $this->user = $this->getUser();
+    }
+
+
+    /*
+	* Asigna un milestone a un ticket
+	* @author: Andres Botero
+	*/
+    public function executeAsignarMilestone( $request ){
+
+        $this->forward404Unless( $request->getParameter("idmilestone") );
+        $this->forward404Unless( $request->getParameter("idticket") );
+
+        $idmilestone = $request->getParameter("idmilestone");
+        $idticket = $request->getParameter("idticket");
+
+        $milestone = Doctrine::getTable("HdeskMilestone")->find( $idmilestone );
+        $ticket = Doctrine::getTable("HdeskTicket")->find( $idticket );
+
+        $this->forward404Unless( $milestone );
+        $this->forward404Unless( $ticket );
+
+        $ticket->setCaIdmilestone( $milestone->getCaIdmilestone() );
+        $ticket->save();
+
+
+        $this->responseArray = array("success"=>true, 
+                                     "id"=>$request->getParameter("id"), 
+                                     "idmilestone"=>$milestone->getCaIdmilestone(),
+                                     "milestone"=>$milestone->getCaTitle()." ".Utils::fechaMes( $milestone->getCaDue() ),
+                                     "due"=>$milestone->getCaDue(),
+                                     "due_timestamp"=>strtotime($milestone->getCaDue())
+                                    );
+        $this->setTemplate("responseTemplate");
+
     }
 
 }

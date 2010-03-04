@@ -15,7 +15,7 @@ switch($action){
 		$button[2]["image"]="22x22/edit.gif"; 			
 		$button[2]["link"]= "pm/crearTicket?id=".$this->getRequestParameter("id")."&token=".md5(time());
 
-        $button[3]["name"]="Cerrar";
+        $button[3]["name"]="Cerrar Ventana";
 		$button[3]["tooltip"]="Cerrar esta ventanal";
 		$button[3]["image"]="22x22/window_nofullscreen.gif";
 		$button[3]["onClick"]= "window.close()";

@@ -101,8 +101,11 @@ PanelTickets = function( config ){
         ]
     });
 
+    this.checkColumn = new Ext.grid.CheckColumn({header:' ', dataIndex:'sel', width:30, hideable: false});
+
     this.columns = [
       this.expander,
+      this.checkColumn,
       {
         header: "Ticket #",
         dataIndex: 'idticket',
@@ -205,6 +208,7 @@ PanelTickets = function( config ){
 
 
     this.record = Ext.data.Record.create([
+            {name: 'sel', type: 'bool'},
             {name: 'idticket', type: 'integer', mapping: 'h_ca_idticket'},
             {name: 'idproject', type: 'integer', mapping: 'h_ca_idproject'},
             {name: 'project', type: 'integer', mapping: 'p_ca_name'},
@@ -262,6 +266,13 @@ PanelTickets = function( config ){
                 iconCls: 'calendar',  // reference to our css
                 scope: this,
                 handler: this.roadmap
+            },
+            {
+                text: 'Asignar milestone',
+                tooltip: 'Asigna un milestone a los elementos seleccionados',
+                iconCls: 'calendar',  // reference to our css
+                scope: this,
+                handler: this.asignarMilestone
             }
 
      ];
@@ -272,7 +283,8 @@ PanelTickets = function( config ){
        boxMinHeight: 300,       
        plugins: [
                     this.expander,
-                    this.filters
+                    this.filters,
+                    this.checkColumn
                 ],
        view: new Ext.grid.GroupingView({
 
@@ -306,6 +318,61 @@ Ext.extend(PanelTickets, Ext.grid.GridPanel, {
 
         this.store.sort("estimated","ASC");
         this.store.groupBy("milestone");
+    },
+
+    asignarMilestone: function(){
+        var win = new AsignarMilestoneWindow({idproject: this.idproject});
+        win.show();
+        win.grid.addListener("celldblclick", this.onMilestoneGridCelldblclick, this );
+    },
+
+
+    onMilestoneGridCelldblclick : function( grid, rowIndex, columnIndex, e ){
+
+        
+        var record = grid.getStore().getAt(rowIndex);  // Get the Record
+        var fieldName = grid.getColumnModel().getDataIndex(columnIndex); // Get field name
+        var idmilestone = record.get(fieldName);
+
+
+         
+         var records = this.store.getModifiedRecords();
+         var len = records.length;
+
+         //alert(len+" "+rowIndex+"  "+columnIndex)
+         var store = this.store;
+         for( var i=0; i<len; i++ ){
+             r = records[i];
+
+             if(r.data.sel){
+                 Ext.Ajax.request(
+                    {
+
+                        url: '<?=url_for("pm/asignarMilestone")?>',
+                        method: 'POST',
+                        //Solamente se envian los cambios
+                        params :	{
+                            id:r.id,
+                            idticket:r.data.idticket,
+                            idmilestone: idmilestone
+                        },
+
+                        callback :function(options, success, response){
+
+                            var res = Ext.util.JSON.decode( response.responseText );
+                            if( res.success ){
+                                var rec = store.getById(res.id);
+                                rec.set("milestone", res.milestone);
+                                rec.set("estimated", new Date(res.due_timestamp));
+                                rec.commit();
+                                Ext.getCmp("asignar-milestone-win").close();
+                            }
+                        }
+                     }
+                );
+             }
+         }
+
     },
 
     formatItem: function(value, p, record) {

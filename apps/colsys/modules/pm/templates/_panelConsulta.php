@@ -58,32 +58,35 @@ Ext.extend(PanelConsulta, Ext.tree.TreePanel, {
 
             var title = "";
             if( typeof(n.attributes.idgroup)!="undefined" ){
-                idcomponent+="_"+idgroup;
-                title += "Area » "+ n.attributes.group;
+                idcomponent+="_A"+idgroup;
+                title += "Area  "+ n.attributes.group;
             }
 
             if( typeof(n.attributes.idproject)!="undefined" ){
-                idcomponent+="_"+idproject;
-                title += "Proyecto » "+ n.attributes.project;
+                idcomponent+="_P"+idproject;
+                if( typeof(n.attributes.idgroup)!="undefined" ){
+                    title += " » ";
+                }
+                title += "Proyecto  "+ n.attributes.project;
             }
 
             
 
             if( typeof(n.attributes.assignedTo)!="undefined" ){
-                idcomponent+="_"+assignedTo;
-                title += " Asignados a » "+assignedTo;
+                idcomponent+="_AS"+assignedTo;
+                title += " » Asignados a  "+assignedTo;
             }
 
             if( typeof(n.attributes.reportedBy)!="undefined" ){
-                idcomponent+="_"+reportedBy;
+                idcomponent+="_R"+reportedBy;
 
-                title += " Reportador por » "+reportedBy;
+                title += " » Reportador por  "+reportedBy;
             }
 
 
             if( typeof(n.attributes.actionTicket)!="undefined" ){
-                idcomponent+="_"+actionTicket;
-                title+=" Estado: "+actionTicket;
+                idcomponent+="_E"+actionTicket;
+                title+=" » Estado  "+actionTicket;
             }
 
 

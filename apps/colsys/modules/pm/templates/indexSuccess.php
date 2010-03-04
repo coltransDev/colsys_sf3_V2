@@ -8,7 +8,9 @@
 include_component("pm", "panelTickets");
 include_component("pm", "panelProyectos");
 include_component("pm", "panelMilestones");
+include_component("pm", "asignarMilestoneWindow");
 include_component("gestDocumental", "panelArchivos");
+
 //include_component("pm", "mainPanel");
 
 //Paneles laterales
@@ -128,34 +130,17 @@ Ext.onReady(function(){
 <div style="height:100%"></div>
 <script type="text/javascript">
     Ext.onReady(function(){
-           /* var newComponent = new PanelCostosAduana({
+            var newComponent = new PanelTickets({
                                                              closable: true,
-                                                             title: 'Tarifario Aduana'
+                                                             idproject: 3,
+                                                             title: 'Panel prueba'
                                                             });
                     Ext.getCmp('tab-panel').add(newComponent);
-                    Ext.getCmp('tab-panel').setActiveTab(newComponent);*/
+                    Ext.getCmp('tab-panel').setActiveTab(newComponent);
 
-        /*var newComponent = new PanelRecargosLocalesNaviera({id:'idcomponent',
-                                                                  impoexpo: "Importación",
-                                                                  //idtrafico: "DO-809",
-                                                                  idtrafico: "MX-052",
-                                                                  idlinea: 8,
-                                                                  //idtrafico: "99-999",
-                                                                  transporte: "Marítimo",
-                                                                  modalidad: "FCL",
-                                                                  title: "Recargos locales NAV",
-                                                                  closable: true,
-                                                                  readOnly: true });
-
-        */
-
-        /*var newComponent = new PanelParametros({
-                                                             closable: true,
-                                                             title: 'Def. de Conceptos',
-                                                             readOnly: <?=$opcion=="consulta"?"true":"false"?>
-                                                            });
+        
         Ext.getCmp('tab-panel').add(newComponent);
-        Ext.getCmp('tab-panel').setActiveTab(newComponent);*/
+        Ext.getCmp('tab-panel').setActiveTab(newComponent);
 
     });
 

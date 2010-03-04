@@ -150,10 +150,19 @@ foreach( $departamentos as $departamento ){
                         ]
                     },
                     {
-                        text:'Tickets reportes por mi',
+                        text:'Tickets reportados por mi',
                         leaf:true,
                         action: 'tickets',
                         reportedBy: '<?=$user->getUserId()?>',
+                        idgroup: '<?=$grupo->getCaIdgroup()?>',
+                        group: '<?=$grupo->getCaName()?>'
+                    },
+                    {
+                        text:'Tickets asignados a mi',
+                        leaf:true,
+                        action: 'tickets',
+                        actionTicket: 'Abierto',
+                        assignedTo: '<?=$user->getUserId()?>',
                         idgroup: '<?=$grupo->getCaIdgroup()?>',
                         group: '<?=$grupo->getCaName()?>'
                     },

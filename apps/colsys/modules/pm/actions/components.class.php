@@ -73,6 +73,8 @@ class pmComponents extends sfComponents
 
         $response->addStyleSheet("extExtras/GridFilters",'last');
         $response->addStyleSheet("extExtras/RangeMenu",'last');
+
+        $response->addJavaScript("extExtras/CheckColumn",'last');
     }
 
 
@@ -123,6 +125,15 @@ class pmComponents extends sfComponents
 	*/
     public function executePanelConsulta( ){
         
+    }
+
+
+    /*
+	* Panel que muestra un arbol con opciones de busqueda
+	* @author: Andres Botero
+	*/
+    public function executeAsignarMilestoneWindow( ){
+
     }
 
 	
