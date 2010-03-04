@@ -28,7 +28,7 @@ AsignarMilestoneWindow = function( config ) {
 
     AsignarMilestoneWindow.superclass.constructor.call(this, {
         title: 'Seleccione el milestone',
-        id: 'asignar-milestone-win',
+        //id: 'asignar-milestone-win',
         autoHeight: true,
         width: 500,
         height: 400,
@@ -37,7 +37,7 @@ AsignarMilestoneWindow = function( config ) {
         modal: true,
         y: 100,
         autoScroll: true,
-        closeAction: 'close',
+        closeAction: 'hide',
         buttons: this.buttons,
                   
          
@@ -60,42 +60,8 @@ Ext.extend(AsignarMilestoneWindow, Ext.Window, {
         this.grid.store.load();
 
         AsignarMilestoneWindow.superclass.show.apply(this, arguments);
-    },
-
-    onUpdate: function() {
-        
-        var store = this.grid.store;
-        var records = store.getRange();
-
-        var lenght = records.length;
-        
-        var str = "";
-        for( var i=0; i< lenght; i++){
-
-            r = records[i];
-
-            if( r.data.idmodalidad ){
-                if( i!=0 ){
-                    str+="|";
-                }
-
-                str+=r.data.idmodalidad;
-            }
-
-            //alert(r.data.idmodalidad + " "+r.data.modalidad );
-            
-        }
-
-        this.ctxRecord.set( "modalidades",  str );
-
-        //Marca la columna como si no se hubiera guardado
-        var idconcepto = this.ctxRecord.get( "idconcepto" );
-        this.ctxRecord.set( "idconcepto",  "" );
-        this.ctxRecord.set( "idconcepto",  idconcepto );
-        
-        this.hide();
-        
     }
+    
 });
 
 </script>

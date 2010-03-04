@@ -203,7 +203,7 @@ PanelMilestones = function( config ){
        loadMask: {msg:'Cargando...'},       
        boxMinHeight: 400,
        height: 400,
-      
+       clicksToEdit: 1,
        plugins: [
                     this.expander,
                     this.filters

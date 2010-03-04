@@ -253,29 +253,48 @@ PanelTickets = function( config ){
 
     });
 
-    this.tbar = [{
-                text: 'Recargar',
-                tooltip: 'Actualiza losdatos del panel',
-                iconCls: 'refresh',  // reference to our css
-                scope: this,
-                handler: this.recargar
-            },
-            {
-                text: 'Roadmap',
-                tooltip: 'Permite ver el cronograma de entrega de los tickets',
-                iconCls: 'calendar',  // reference to our css
-                scope: this,
-                handler: this.roadmap
-            },
-            {
-                text: 'Asignar milestone',
-                tooltip: 'Asigna un milestone a los elementos seleccionados',
-                iconCls: 'calendar',  // reference to our css
-                scope: this,
-                handler: this.asignarMilestone
-            }
 
-     ];
+    if( this.idproject ){
+        this.tbar = [{
+                    text: 'Recargar',
+                    tooltip: 'Actualiza losdatos del panel',
+                    iconCls: 'refresh',  // reference to our css
+                    scope: this,
+                    handler: this.recargar
+                },
+                {
+                    text: 'Roadmap',
+                    tooltip: 'Permite ver el cronograma de entrega de los tickets',
+                    iconCls: 'calendar',  // reference to our css
+                    scope: this,
+                    handler: this.roadmap
+                },
+                {
+                    text: 'Asignar milestone',
+                    tooltip: 'Asigna un milestone a los elementos seleccionados',
+                    iconCls: 'calendar',  // reference to our css
+                    scope: this,
+                    handler: this.asignarMilestone
+                }
+         ];
+
+    }else{
+        this.tbar = [{
+                    text: 'Recargar',
+                    tooltip: 'Actualiza losdatos del panel',
+                    iconCls: 'refresh',  // reference to our css
+                    scope: this,
+                    handler: this.recargar
+                },
+                {
+                    text: 'Roadmap',
+                    tooltip: 'Permite ver el cronograma de entrega de los tickets',
+                    iconCls: 'calendar',  // reference to our css
+                    scope: this,
+                    handler: this.roadmap
+                }
+         ];
+    }
 
     
     PanelTickets.superclass.constructor.call(this, {
@@ -321,33 +340,30 @@ Ext.extend(PanelTickets, Ext.grid.GridPanel, {
     },
 
     asignarMilestone: function(){
-        var win = new AsignarMilestoneWindow({idproject: this.idproject});
-        win.show();
-        win.grid.addListener("celldblclick", this.onMilestoneGridCelldblclick, this );
+
+        if( !this.win ){
+            this.win = new AsignarMilestoneWindow({idproject: this.idproject});
+        }
+        this.win.show();
+        this.win.grid.addListener("celldblclick", this.onMilestoneGridCelldblclick, this );
     },
 
 
     onMilestoneGridCelldblclick : function( grid, rowIndex, columnIndex, e ){
-
-        
         var record = grid.getStore().getAt(rowIndex);  // Get the Record
         var fieldName = grid.getColumnModel().getDataIndex(columnIndex); // Get field name
         var idmilestone = record.get(fieldName);
 
+        var records = this.store.getModifiedRecords();
+        var len = records.length;
 
-         
-         var records = this.store.getModifiedRecords();
-         var len = records.length;
+        //alert(len+" "+rowIndex+"  "+columnIndex)
+        var store = this.store;
+        for( var i=0; i<len; i++ ){
+            r = records[i];
 
-         //alert(len+" "+rowIndex+"  "+columnIndex)
-         var store = this.store;
-         for( var i=0; i<len; i++ ){
-             r = records[i];
-
-             if(r.data.sel){
-                 Ext.Ajax.request(
-                    {
-
+            if(r.data.sel){
+                Ext.Ajax.request({
                         url: '<?=url_for("pm/asignarMilestone")?>',
                         method: 'POST',
                         //Solamente se envian los cambios
@@ -364,14 +380,15 @@ Ext.extend(PanelTickets, Ext.grid.GridPanel, {
                                 var rec = store.getById(res.id);
                                 rec.set("milestone", res.milestone);
                                 rec.set("estimated", new Date(res.due_timestamp));
-                                rec.commit();
-                                Ext.getCmp("asignar-milestone-win").close();
+                                rec.set("sel", false);
+                                rec.commit();                                
                             }
                         }
                      }
                 );
              }
          }
+         this.win.hide();
 
     },
 
