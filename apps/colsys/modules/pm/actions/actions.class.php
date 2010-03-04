@@ -33,30 +33,7 @@ class pmActions extends sfActions
 	* @param sfRequest $request A request object
 	*/
 	public function executeIndex(sfWebRequest $request){
-
-
-
-		$nivel = $this->getNivel( );
-		$opcion = $request->getParameter("opcion");
-		$criterio = $request->getParameter("criterio");
-
-
-		$this->nivel = $this->getNivel();
-
-
-        $departamentos = Doctrine::getTable("Departamento")
-                         ->createQuery("d")
-                         ->where("d.ca_inhelpdesk = ?", true)
-                         ->execute();
-
-		$this->departamentos = array();
-
-		foreach( $departamentos as $departamento ){
-			$this->departamentos[] = array("iddepartamento"=>$departamento->getCaIddepartamento(),
-										 "nombre"=>$departamento->getCaNombre()
-										);
-		}
-       
+        
 	}
 	
 
@@ -113,13 +90,13 @@ class pmActions extends sfActions
         }
 
 
-        if( $request->getParameter("assignedto") ){
-            $q->addWhere("h.ca_assignedto = ? ", $request->getParameter("assignedto") );
+        if( $request->getParameter("assignedTo") ){
+            $q->addWhere("h.ca_assignedto = ? ", $request->getParameter("assignedTo") );
         }
 
-        if( $request->getParameter("reportedby") ){
+        if( $request->getParameter("reportedBy") ){
 
-            $q->addWhere("(h.ca_login = ? or hu.ca_login = ?)", array($request->getParameter("reportedby"),$request->getParameter("reportedby")) );
+            $q->addWhere("(h.ca_login = ? or hu.ca_login = ?)", array($request->getParameter("reportedBy"),$request->getParameter("reportedBy")) );
         }
 
 
@@ -150,14 +127,14 @@ class pmActions extends sfActions
 		$q->distinct();
         //exit($q->getSqlQuery());
         $q->setHydrationMode(Doctrine::HYDRATE_SCALAR);
-        $q->limit(120);
+        $q->limit(9);
 		$tickets = $q->execute();
 
         foreach( $tickets as $key=>$val){
             $tickets[$key]["milestone"]=utf8_encode($tickets[$key]["m_ca_title"]." ".Utils::fechaMes($tickets[$key]["m_ca_due"]));
-            $tickets[$key]["h_ca_title"]=utf8_encode($tickets[$key]["h_ca_title"]);
-            $tickets[$key]["h_ca_text"]=utf8_encode($tickets[$key]["h_ca_text"]);
-            $tickets[$key]["p_ca_name"]=$tickets[$key]["p_ca_name"]?utf8_encode($tickets[$key]["p_ca_name"]):"Sin proyecto";
+            $tickets[$key]["h_ca_title"]=utf8_encode(str_replace('"', "'",$tickets[$key]["h_ca_title"]));
+            $tickets[$key]["h_ca_text"]=utf8_encode(str_replace("</style", "</style2",str_replace("<style", "<style2",str_replace('"', "'", $tickets[$key]["h_ca_text"]))));
+            $tickets[$key]["p_ca_name"]=$tickets[$key]["p_ca_name"]?utf8_encode(str_replace('"', "'",$tickets[$key]["p_ca_name"])):"Sin proyecto";
         }
 
         $this->responseArray = array("success"=>true, "root"=>$tickets);
@@ -962,6 +939,37 @@ class pmActions extends sfActions
         $this->project = Doctrine::getTable("HdeskProject")->find( $request->getParameter("id") );
         $this->forward404Unless( $this->project );
     }
+
+
+    /**
+	* Datos para la bbarra de progreso del panel
+	*
+	* @param sfRequest $request A request object
+	*/
+    public function executeEstadoPanelProyectos(sfWebRequest $request){
+        $this->responseArray = array("success"=>true);
+
+        $this->forward404Unless( $request->getParameter("idproject") );
+        
+        $numtickets = Doctrine::getTable("HdeskProject")
+                  ->createQuery("p")
+                  ->select("p.*, (SELECT COUNT(*) FROM HdeskTicket ta WHERE ta.ca_idproject = p.ca_idproject AND ta.ca_action ='Abierto') as ta, (SELECT COUNT(*) FROM HdeskTicket tc WHERE tc.ca_idproject = p.ca_idproject AND tc.ca_action ='Cerrado') as tc")
+                  ->where("p.ca_idproject = ? ", $request->getParameter("idproject") )
+                  ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                  ->fetchOne();
+
+
+        if( $numtickets["p_tc"]+$numtickets["p_ta"]>0 ){
+            $porcentaje =  $numtickets["p_tc"]/($numtickets["p_tc"]+$numtickets["p_ta"]);
+        }else{
+            $porcentaje = 0;
+        }
+        $this->responseArray["progress"] = $porcentaje;
+        $this->responseArray["text"] = $numtickets["p_ta"]." tickets abiertos/ ".$numtickets["p_tc"]." tickets cerrados ".(round($porcentaje*100,1))."% Terminado";
+        $this->setTemplate("responseTemplate");
+
+
+    }
     
     /**
 	* Datos del ticket
@@ -1071,6 +1079,20 @@ class pmActions extends sfActions
         }        
 
         $this->setTemplate("responseTemplate");
+    }
+
+
+
+     /*
+	* Panel que muestra un arbol con opciones de busqueda
+	* @author: Andres Botero
+	*/
+    public function executeDatosPanelConsulta( ){
+        $this->departamentos = Doctrine::getTable("Departamento")
+                         ->createQuery("d")
+                         ->where("d.ca_inhelpdesk = ?", true)
+                         ->execute();
+        $this->user = $this->getUser();
     }
 
 }

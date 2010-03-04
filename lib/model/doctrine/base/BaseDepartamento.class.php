@@ -56,7 +56,8 @@ abstract class BaseDepartamento extends myDoctrineRecord
         parent::setUp();
         $this->hasMany('HdeskGroup', array(
              'local' => 'ca_iddepartamento',
-             'foreign' => 'ca_iddepartament'));
+             'foreign' => 'ca_iddepartament',
+             'orderBy' => 'ca_name ASC'));
 
         $this->hasMany('HdeskDepartamentClasification', array(
              'local' => 'ca_iddepartamento',

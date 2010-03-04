@@ -543,7 +543,7 @@ var mainPanel = new Ext.FormPanel({
 					<?
 					}else{
 					?>
-						document.location='<?=url_for("pm/index")?>';
+						window.close();
 					<?
 					}
 					?>

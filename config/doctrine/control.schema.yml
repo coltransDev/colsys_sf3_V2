@@ -216,6 +216,13 @@ Departamento:
       autoincrement: true
     ca_nombre: string(30)
     ca_inhelpdesk: boolean
+  relations:
+    HdeskGroup:
+      local: ca_iddepartamento
+      foreign: ca_iddepartament
+      type: many
+      orderBy: ca_name ASC
+
 
 
 Sucursal:

@@ -10,7 +10,9 @@
  * @property string $ca_name
  * @property string $ca_description
  * @property boolean $ca_active
+ * @property string $ca_manager
  * @property Doctrine_Collection $HdeskGroup
+ * @property Doctrine_Collection $HdeskMilestone
  * @property Doctrine_Collection $HdeskTicket
  * 
  * @method integer             getCaIdproject()    Returns the current record's "ca_idproject" value
@@ -18,14 +20,18 @@
  * @method string              getCaName()         Returns the current record's "ca_name" value
  * @method string              getCaDescription()  Returns the current record's "ca_description" value
  * @method boolean             getCaActive()       Returns the current record's "ca_active" value
+ * @method string              getCaManager()      Returns the current record's "ca_manager" value
  * @method Doctrine_Collection getHdeskGroup()     Returns the current record's "HdeskGroup" collection
+ * @method Doctrine_Collection getHdeskMilestone() Returns the current record's "HdeskMilestone" collection
  * @method Doctrine_Collection getHdeskTicket()    Returns the current record's "HdeskTicket" collection
  * @method HdeskProject        setCaIdproject()    Sets the current record's "ca_idproject" value
  * @method HdeskProject        setCaIdgroup()      Sets the current record's "ca_idgroup" value
  * @method HdeskProject        setCaName()         Sets the current record's "ca_name" value
  * @method HdeskProject        setCaDescription()  Sets the current record's "ca_description" value
  * @method HdeskProject        setCaActive()       Sets the current record's "ca_active" value
+ * @method HdeskProject        setCaManager()      Sets the current record's "ca_manager" value
  * @method HdeskProject        setHdeskGroup()     Sets the current record's "HdeskGroup" collection
+ * @method HdeskProject        setHdeskMilestone() Sets the current record's "HdeskMilestone" collection
  * @method HdeskProject        setHdeskTicket()    Sets the current record's "HdeskTicket" collection
  * 
  * @package    symfony
@@ -55,6 +61,9 @@ abstract class BaseHdeskProject extends myDoctrineRecord
         $this->hasColumn('ca_active', 'boolean', null, array(
              'type' => 'boolean',
              ));
+        $this->hasColumn('ca_manager', 'string', null, array(
+             'type' => 'string',
+             ));
 
         $this->option('symfony', array(
              'form' => false,
@@ -66,6 +75,10 @@ abstract class BaseHdeskProject extends myDoctrineRecord
     {
         parent::setUp();
         $this->hasMany('HdeskGroup', array(
+             'local' => 'ca_idgroup',
+             'foreign' => 'ca_idgroup'));
+
+        $this->hasMany('HdeskMilestone', array(
              'local' => 'ca_idgroup',
              'foreign' => 'ca_idgroup'));
 

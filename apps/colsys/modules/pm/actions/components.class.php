@@ -82,18 +82,7 @@ class pmComponents extends sfComponents
 	* @author: Andres Botero
 	*/
     public function executePanelProyectos(  ){
-
-        if( !$this->project ){
-            throw new Exception("project es requerido en PanelProyectos");
-        }
-
-        $this->numtickets = Doctrine::getTable("HdeskProject")
-                  ->createQuery("p")
-                  ->select("p.*, (SELECT COUNT(*) FROM HdeskTicket ta WHERE ta.ca_idproject = p.ca_idproject AND ta.ca_action ='Abierto') as ta, (SELECT COUNT(*) FROM HdeskTicket tc WHERE tc.ca_idproject = p.ca_idproject AND tc.ca_action ='Cerrado') as tc")
-                  ->where("p.ca_idproject = ? ", $this->project->getCaIdproject() )
-                  ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
-                  ->fetchOne();
-
+    
     }
 
 
@@ -124,6 +113,16 @@ class pmComponents extends sfComponents
 										 "nombre"=>$departamento->getCaNombre()
 										);
 		}
+    }
+
+
+
+     /*
+	* Panel que muestra un arbol con opciones de busqueda
+	* @author: Andres Botero
+	*/
+    public function executePanelConsulta( ){
+        
     }
 
 	

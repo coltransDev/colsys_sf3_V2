@@ -202,7 +202,7 @@ PanelMilestones = function( config ){
     PanelMilestones.superclass.constructor.call(this, {
        loadMask: {msg:'Cargando...'},       
        boxMinHeight: 300,
-       height: 200,
+      
        plugins: [
                     this.expander,
                     this.filters

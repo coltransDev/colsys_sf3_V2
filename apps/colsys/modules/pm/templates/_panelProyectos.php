@@ -5,11 +5,6 @@
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
 
-if( $numtickets["p_tc"]+$numtickets["p_ta"]>0 ){
-    $porcentaje = round( $numtickets["p_tc"]*100/($numtickets["p_tc"]+$numtickets["p_ta"]), 1);
-}else{
-    $porcentaje = 0;
-}
 ?>
 <script type="text/javascript">
 
@@ -20,24 +15,26 @@ PanelProyectos = function( config ){
 
     this.panelTickets = new PanelTickets({
                                             title: 'Tickets',
-                                            idproject: '<?=$project->getCaIdproject()?>'
+                                            idproject: this.idproject
+                                            
                                         });
 
     this.panelMilestones = new PanelMilestones({
                                             title: 'Milestones',
-                                            idproject: '<?=$project->getCaIdproject()?>'
+                                            idproject: this.idproject                                            
                                         });
 
-    this.panelArchivos = new PanelArchivos({
-                                                folder:"<?=base64_encode($project->getDirectorioBase())?>",
-                                                closable:true,                                                
+    this.panelArchivos = new PanelArchivos({                                               
+                                                            
                                                 title:"Archivos",
-                                                closable:false,
-                                                boxMinHeight: 400
+                                                closable:false,                                                
+                                                idproject: this.idproject,
+                                                folder: this.folder
                                             });
     
     this.preview = new Ext.TabPanel({
-            activeTab: 0,
+            activeTab: 0,           
+            height: 500,
             items: [
                 this.panelTickets,
                 this.panelMilestones,
@@ -45,11 +42,10 @@ PanelProyectos = function( config ){
             ]
     });
 
-
+    var idcomponent = this.id;
     PanelProyectos.superclass.constructor.call(this, {
         
-        labelAlign: 'top',
-        title: 'Sistema de Administración de Proyectos: <?=$project->getCaName()?>',
+        labelAlign: 'top',        
         bodyStyle:'padding:1px',
 		//fileUpload: true,
         items: [
@@ -57,22 +53,47 @@ PanelProyectos = function( config ){
                     
                     layout:'form',
                     //defaults: {width: 470},
+                    
                     labelWidth: 140,
                     bodyStyle: 'padding: 10px',
                     items: [
                        new Ext.ProgressBar({
-                                        text:'<?=$numtickets["p_ta"]." Tickets Abiertos/".$numtickets["p_tc"]." Tickets Cerrados ".$porcentaje."% Terminado "?>',
-                                        value: <?=$porcentaje/100?>,
+                                        id: idcomponent+"-progressbar",
+                                        text:'',
+                                        value: '',
                                         fieldLabel: 'Estado del proyecto ',
                                         width: 450                                        
                                     })
                     ]
                     
                 },
-            this.preview
+                this.preview
         ]
 
     });
+
+    
+    Ext.Ajax.request({
+
+        url: '<?=url_for("pm/estadoPanelProyectos")?>',
+        method: 'POST',
+        //Solamente se envian los cambios
+        params :	{idproject:this.idproject},
+
+        callback :function(options, success, response){
+
+            var res = Ext.util.JSON.decode( response.responseText );
+            if( res.success ){   
+                pbar = Ext.getCmp(idcomponent+"-progressbar");
+                pbar.reset();
+                pbar.updateText( res.text );
+                pbar.updateProgress( res.progress );
+
+            }
+        }
+     });
+
+
 
     
 

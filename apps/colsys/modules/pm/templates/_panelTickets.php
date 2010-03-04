@@ -229,8 +229,11 @@ PanelTickets = function( config ){
         autoLoad : true,
         url: '<?=url_for("pm/datosPanelTickets")?>',
         baseParams : {
-
-            idproject: this.idproject
+            idproject: this.idproject,
+            idgroup: this.idgroup,
+            actionTicket: this.actionTicket,
+            assignedTo: this.assignedTo,
+            reportedBy: this.reportedBy
         },
         reader: new Ext.data.JsonReader(
             {
@@ -266,8 +269,7 @@ PanelTickets = function( config ){
     
     PanelTickets.superclass.constructor.call(this, {
        loadMask: {msg:'Cargando...'},       
-       boxMinHeight: 300,
-       height: 200,
+       boxMinHeight: 300,       
        plugins: [
                     this.expander,
                     this.filters

@@ -14,12 +14,17 @@ HdeskGroup:
     ca_iddepartament: integer
     ca_name: string
     ca_maxresponsetime: integer
-  relations:
-    Departamento:
-      local: ca_iddepartament
-      foreign: ca_iddepartament
-      type: one
+  relations:    
     HdeskTicket:
+      local: ca_idgroup
+      foreign: ca_idgroup
+      type: many
+    HdeskProject:
+      local: ca_idgroup
+      foreign: ca_idgroup
+      type: many
+      orderBy: ca_name ASC
+    HdeskUserGroup:
       local: ca_idgroup
       foreign: ca_idgroup
       type: many
