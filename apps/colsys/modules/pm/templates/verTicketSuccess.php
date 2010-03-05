@@ -270,10 +270,10 @@ include_component("gestDocumental", "panelArchivos", array("readOnly"=>$ticket->
     var mainPanel = new PanelDetalleTicket({
                                     activeTab: 0,
                                     items: [
-                                            {contentEl:'descripcion', title: 'Descripción', bodyStyle: bodyStyle},
-                                            {contentEl:'usuarios', title: 'Usuarios', bodyStyle: bodyStyle},
+                                            {contentEl:'descripcion', title: 'Descripción', bodyStyle: bodyStyle, boxMinHeight: 400},
+                                            {contentEl:'usuarios', title: 'Usuarios', bodyStyle: bodyStyle, boxMinHeight: 400},
                                             panelArchivos,
-                                            {contentEl:'respuestas', title: 'Respuestas', bodyStyle: bodyStyle}
+                                            {contentEl:'respuestas', title: 'Respuestas', bodyStyle: bodyStyle, boxMinHeight: 400}
                                             //,panelTareas
 
                                     ]

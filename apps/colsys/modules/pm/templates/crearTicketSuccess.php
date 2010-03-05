@@ -318,7 +318,7 @@ var asignaciones = new Ext.form.ComboBox({
 	triggerAction: 'all',
 	emptyText:'',
 	selectOnFocus: true,
-	value: '', 				
+	value: '',
 	id: 'assignedto_id',	
 	lazyRender:true,
 	allowBlank: true,
@@ -631,7 +631,12 @@ if( $grupo ){
 		idgrupo: '<?=$grupo->getCaIdgroup()?>'
 	};
 	assignedto.store.load();
-    assignedto.setValue("");
+    
+    if( '<?=$grupo->getCaIdgroup()?>'==form.findField("area").hiddenField.value  ){
+        assignedto.setValue("<?=$ticket->getCaAssignedto()?>");
+    }else{
+        assignedto.setValue("");
+    }
 
 
     Ext.getCmp('type_id').store.baseParams = {
