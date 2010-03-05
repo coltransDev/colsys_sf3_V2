@@ -1025,6 +1025,8 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
             fp.getForm().findField("idlinea").setRawValue(record.data.linea);
             fp.getForm().findField("idlinea").hiddenField.value = record.data.idlinea;
 
+            fp.getForm().findField("vigencia").setMinValue( record.data.vigencia?record.data.vigencia:new Date(<?=strtotime(date("Y-m-d"))?>) );
+
 
             //Verifica que no hayan concepto para poder editar los campos impoexpo, transporte y modalidad
             storeProductos.each( function( r ){
@@ -1078,6 +1080,10 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
             fp.getForm().findField("producto").setRawValue("");
             fp.getForm().findField("idproducto").setRawValue("");
 
+            //fp.getForm().findField("vigencia").setMinValue( null );
+            fp.getForm().findField("vigencia").setMinValue( new Date(<?=strtotime(date("Y-m-d"))*1000?>) );
+
+            
 
 
 
