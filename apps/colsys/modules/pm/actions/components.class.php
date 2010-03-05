@@ -75,6 +75,7 @@ class pmComponents extends sfComponents
         $response->addStyleSheet("extExtras/RangeMenu",'last');
 
         $response->addJavaScript("extExtras/CheckColumn",'last');
+        $response->addJavaScript("extExtras/GroupSummary",'last');
     }
 
 

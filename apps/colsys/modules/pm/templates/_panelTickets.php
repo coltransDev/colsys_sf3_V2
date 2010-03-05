@@ -101,6 +101,9 @@ PanelTickets = function( config ){
         ]
     });
 
+
+    this.summary = new Ext.ux.grid.GroupSummary();
+
     this.checkColumn = new Ext.grid.CheckColumn({header:' ', dataIndex:'sel', width:30, hideable: false});
 
     this.columns = [
@@ -120,7 +123,12 @@ PanelTickets = function( config ){
         dataIndex: 'title',
         //hideable: false,
         sortable: true,
-        width: 280
+        width: 280,
+        summaryType: 'count',
+        summaryRenderer: function(v, params, data){
+            return ((v === 0 || v > 1) ? '(' + v +' Tickets)' : '(1 Ticket)');
+        }
+
         
       },
       {
@@ -319,7 +327,8 @@ PanelTickets = function( config ){
        plugins: [
                     this.expander,
                     this.filters,
-                    this.checkColumn
+                    this.checkColumn,
+                    this.summary
                 ],
        view: new Ext.grid.GroupingView({
 
