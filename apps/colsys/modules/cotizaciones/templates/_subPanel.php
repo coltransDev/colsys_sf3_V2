@@ -72,7 +72,6 @@ SubPanel = function(){
             activeTab: 0,
             height:250,
             autoWidth : true,
-            defaults:{bodyStyle:'padding:10px'},
             items:[
                 <?
                 if( $cotizacion->getCaEmpresa() == Constantes::COLTRANS  ){
