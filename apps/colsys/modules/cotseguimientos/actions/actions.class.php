@@ -57,26 +57,25 @@ class cotseguimientosActions extends sfActions
 	public function executeEstadisticas($request){
 		$fechaInicial = Utils::parseDate($request->getParameter("fechaInicial"));
 		$fechaFinal = Utils::parseDate($request->getParameter("fechaFinal"));
-	
-		
-		$q = Doctrine_Query::create()
-                             ->select("count(*) as count, p.ca_etapa ")
-                             ->from("CotProducto p")
-                             ->innerJoin("p.Cotizacion c")
-                             ->innerJoin("c.Usuario u")
-                             ->addGroupBy("p.ca_etapa")
-                             ->where("c.ca_fchcreado BETWEEN ? AND ? AND p.ca_etapa IS NOT NULL", array($fechaInicial, $fechaFinal));
 
-		
-		$checkboxVendedor = $request->getParameter( "checkboxVendedor" );
+
+        $checkboxVendedor = $request->getParameter( "checkboxVendedor" );
 		$checkboxSucursal = $request->getParameter( "checkboxSucursal" );
 		$this->login = $request->getParameter( "login" );
-		
-		
+
+
 		$this->usuario = Doctrine::getTable("Usuario")->find( $this->login );
 		
-		if( $checkboxVendedor ){
-			
+		$q = Doctrine_Query::create()
+                             ->select("COUNT(p.ca_idproducto) as count, count(s.ca_idproducto) as conseg, p.ca_etapa")
+                             ->from("CotProducto p")                             
+                             ->innerJoin("p.Cotizacion c")
+                             ->innerJoin("c.Usuario u")
+                             ->leftJoin("p.CotSeguimiento s" )
+                             ->addGroupBy("p.ca_etapa")
+                             ->addWhere("c.ca_fchcreado BETWEEN ? AND ? AND p.ca_etapa IS NOT NULL", array($fechaInicial, $fechaFinal));
+		
+		if( $checkboxVendedor ){			
             $q->addWhere("c.ca_usuario = ?", $this->login );
 		}
 		
@@ -88,6 +87,34 @@ class cotseguimientosActions extends sfActions
 		}
 		
         $this->rows = $q->setHydrationMode(Doctrine::HYDRATE_SCALAR)->execute();
+
+
+
+        $q = Doctrine_Query::create()
+                             ->select("COUNT(c.ca_idcotizacion) as count, count(s.ca_idcotizacion) as conseg, c.ca_etapa")
+                             ->from("Cotizacion c")
+                             ->innerJoin("c.Usuario u")
+                             ->leftJoin("c.CotProducto p")                             
+                             ->leftJoin("c.CotSeguimiento s" )
+                             ->addGroupBy("c.ca_etapa")
+                             ->addWhere("c.ca_fchcreado BETWEEN ? AND ? AND c.ca_etapa IS NOT NULL", array($fechaInicial, $fechaFinal))
+                             ->addWhere("p.ca_idproducto IS NULL");
+
+
+		if( $checkboxVendedor ){
+            $q->addWhere("c.ca_usuario = ?", $this->login );
+		}
+
+		if( $checkboxSucursal ){
+			$this->sucursal = $request->getParameter( "sucursal_est" );
+            $q->addWhere("u.ca_idsucursal = ?", $this->sucursal );
+		}else{
+			$this->sucursal = "";
+		}
+
+        $this->rows2 = $q->setHydrationMode(Doctrine::HYDRATE_SCALAR)->execute();
+
+
 
 		$this->fechaInicial = $fechaInicial;
 		$this->fechaFinal = $fechaFinal;

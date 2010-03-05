@@ -14,31 +14,70 @@ if( $sucursal ){
 }
 ?>
 </h3>
-<br>
-<br>
-
+<br />
+<br />
+<h1>Cotizaciones con trayectos</h1>
+<br />
 <table width="300" border="1" class="tableList">
 	<tr>
 		<th scope="col">Estado</th>
 		<th scope="col">Cantidad de trayectos</th>
+        <th scope="col">Cantidad de trayectos con seguimientos</th>
 	</tr>
 	<?
 	$total = 0;
-	foreach( $rows as $row ){
-        
+    $total2 = 0;
+	foreach( $rows as $row ){        
 	?>	
 	<tr>
 		<td><?=$estados[$row["p_ca_etapa"]]?></td>
 		<td><?=$row["p_count"]?></td>
+        <td><?=$row["s_conseg"]?></td>
 	</tr>	
 	<?	
 	$total+=$row["p_count"];
+    $total2+=$row["s_conseg"];
 	}
 	?>
 	
 	<tr>
 		<td><b>Total</b></td>
 		<td><?=$total?></td>
+        <td><?=$total2?></td>
+	</tr>
+</table>
+
+
+<br />
+<br />
+<h1>Cotizaciones sin trayectos</h1>
+<br />
+<table width="300" border="1" class="tableList">
+	<tr>
+		<th scope="col">Estado</th>
+		<th scope="col">Cantidad de cotizaciones</th>
+        <th scope="col">Cantidad de cotizaciones con seguimientos</th>
+	</tr>
+	<?
+	$total = 0;
+    $total2 = 0;
+	foreach( $rows2 as $row ){
+	?>
+	<tr>
+		<td><?=$estados[$row["c_ca_etapa"]]?></td>
+		<td><?=$row["c_count"]?></td>
+        <td><?=$row["s_conseg"]?></td>
+	</tr>
+	<?
+	$total+=$row["c_count"];
+    $total2+=$row["s_conseg"];
+	}
+	?>
+
+	<tr>
+		<td><b>Total</b></td>
+		<td><?=$total?></td>
+        <td><?=$total2?></td>
 	</tr>
 </table>
 </div>

@@ -10,7 +10,7 @@ var tabs = new Ext.FormPanel({
 	labelWidth: 75,
 	border:true,
 	fame:true,
-	width: 450,
+	width: 650,    
 	standardSubmit: true,  
     id: 'formPanel',	
 	items: {
@@ -190,14 +190,14 @@ var tabs = new Ext.FormPanel({
 			layout:'form',			
 			defaultType: 'textfield',
 			id: 'estadisticas',
+            labelWidth: 75,
 			items: [				
 				{
 					xtype:'datefield',
 					checkboxToggle:true,
 					fieldLabel: 'Fecha Inicial',
 					autoHeight:true,
-					name : 'fechaInicial',
-					defaults: {width: 300},
+					name : 'fechaInicial',					
 					defaultType: 'textfield',
                     format: 'Y-m-d',
 					collapsed: true,
@@ -210,8 +210,7 @@ var tabs = new Ext.FormPanel({
 					checkboxToggle:true,
 					fieldLabel: 'Fecha final',
 					autoHeight:true,
-					name : 'fechaFinal',
-					defaults: {width: 300},
+					name : 'fechaFinal',					
 					defaultType: 'textfield',
                     format: 'Y-m-d',
 					collapsed: true,
@@ -224,7 +223,7 @@ var tabs = new Ext.FormPanel({
 				checkboxToggle:true,
 				title: 'Filtrar por vendedor',
 				autoHeight:true,
-				defaults: {width: 300},
+				labelWidth: 75,
 				defaultType: 'textfield',
 				collapsed: true,
 				checkboxName: "checkboxVendedor", 
@@ -237,7 +236,7 @@ var tabs = new Ext.FormPanel({
 							selectOnFocus: true,
 							name: 'vendedor',
 							hiddenName: 'login',
-																				
+							width: 200,
 							valueField:'login',
 							displayField:'nombre',
 							mode: 'local',	
@@ -268,7 +267,7 @@ var tabs = new Ext.FormPanel({
 				checkboxToggle:true,
 				title: 'Filtrar por sucursal',
 				autoHeight:true,
-				defaults: {width: 300},
+				
 				defaultType: 'textfield',
 				collapsed: true,
 				checkboxName: "checkboxSucursal", 
@@ -282,7 +281,7 @@ var tabs = new Ext.FormPanel({
 							emptyText:'Seleccione',
 							selectOnFocus: true,							
 							hiddenName: 'sucursal_est',
-													
+							width: 200,
 							lazyRender:true,
 							listClass: 'x-combo-list-small',	
 							store: [
