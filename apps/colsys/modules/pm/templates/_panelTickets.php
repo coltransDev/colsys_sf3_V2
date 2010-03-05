@@ -255,7 +255,15 @@ PanelTickets = function( config ){
 
 
     if( this.idproject ){
-        this.tbar = [{
+        this.tbar = [
+                {
+                    text: 'Nuevo ticket',
+                    tooltip: '',
+                    iconCls: 'add',  // reference to our css
+                    scope: this,
+                    handler: this.crearTicket
+                },
+                {
                     text: 'Recargar',
                     tooltip: 'Actualiza losdatos del panel',
                     iconCls: 'refresh',  // reference to our css
@@ -279,7 +287,15 @@ PanelTickets = function( config ){
          ];
 
     }else{
-        this.tbar = [{
+        this.tbar = [
+                {
+                    text: 'Nuevo ticket',
+                    tooltip: '',
+                    iconCls: 'add',  // reference to our css
+                    scope: this,
+                    handler: this.crearTicket
+                },
+                {
                     text: 'Recargar',
                     tooltip: 'Actualiza losdatos del panel',
                     iconCls: 'refresh',  // reference to our css
@@ -324,6 +340,10 @@ PanelTickets = function( config ){
 };
 
 Ext.extend(PanelTickets, Ext.grid.GridPanel, {
+
+    crearTicket: function(){
+        window.open("<?=url_for("pm/crearTicket")?>");
+    },
     recargar: function(){
 
         if(this.store.getModifiedRecords().length>0){

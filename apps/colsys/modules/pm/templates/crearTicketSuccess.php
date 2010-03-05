@@ -51,6 +51,8 @@ var bloquearCampos = function(){
 	Ext.getCmp('actionTicket_id').setDisabled(true);
     Ext.getCmp('proyecto_id').setDisabled(true);
     Ext.getCmp('milestone_id').setDisabled(true);
+    Ext.getCmp('reportedby_id').setDisabled(true);
+
 }
 
 var desbloquearCampos = function(){
@@ -62,6 +64,7 @@ var desbloquearCampos = function(){
 	Ext.getCmp('actionTicket_id').setDisabled(false);
     Ext.getCmp('proyecto_id').setDisabled(false);
     Ext.getCmp('milestone_id').setDisabled(false);
+    Ext.getCmp('reportedby_id').setDisabled(false);
 }
 
 
@@ -117,7 +120,7 @@ var departamentos = new Ext.form.ComboBox({
 
 
             <?
-            if( $nivel==2 ){
+            if( $nivel==2 || $nivel==3 ){
             ?>
             if( record.data.iddepartamento!=<?=$iddepartamento?> ){
                 bloquearCampos();
@@ -324,14 +327,6 @@ var asignaciones = new Ext.form.ComboBox({
 	hiddenName: 'assignedto', 
 	listClass: 'x-combo-list-small',	
 	mode: 'local',
-	<?
-	if(  false ){
-	?>
-		disabled:true, 
-	<?	
-	}
-	?>
-	
 	store : new Ext.data.Store({
 		autoLoad : true ,
 		url: '<?=url_for("pm/datosAsignaciones")?>',
@@ -343,9 +338,45 @@ var asignaciones = new Ext.form.ComboBox({
 				successProperty: 'success'
 			}, 
 			Ext.data.Record.create([
-				{name: 'login'}				
+				{name: 'login'}
+                
 			])
 		)							
+	})
+});
+
+
+var reportadoPor = new Ext.form.ComboBox({
+	fieldLabel: 'Reportado por',
+	typeAhead: true,
+	forceSelection: true,
+	triggerAction: 'all',
+	emptyText:'',
+	selectOnFocus: true,
+	value: '<?=$ticket->getCaLogin()?$ticket->getCaLogin():$user->getUserId()?>',
+	id: 'reportedby_id',
+	lazyRender:true,
+	allowBlank: true,
+	displayField: 'nombre',
+	valueField: 'login',
+	hiddenName: 'reportedby',
+	listClass: 'x-combo-list-small',
+	mode: 'local',
+	store : new Ext.data.Store({
+		autoLoad : true ,
+		url: '<?=url_for("pm/datosUsuarios")?>',
+		reader: new Ext.data.JsonReader(
+			{			
+				root: 'usuarios',
+				totalProperty: 'total',
+				successProperty: 'success'
+			},
+			Ext.data.Record.create([
+				{name: 'login'},
+                {name: 'nombre'}
+
+			])
+		)
 	})
 });
 
@@ -447,6 +478,7 @@ var mainPanel = new Ext.FormPanel({
 				projectos,
 				tipos,
 				asignaciones
+                
 			]
 		},{
 			columnWidth:.5,
@@ -471,7 +503,8 @@ var mainPanel = new Ext.FormPanel({
 				<?
 				}
 				?>,
-                milestones
+                milestones,
+                reportadoPor
 				
 				
 			
@@ -606,7 +639,7 @@ if( $grupo ){
 						};
     Ext.getCmp('type_id').store.load();
     <?
-    if( $nivel==2 &&  $departamento->getCaIddepartamento()!=$iddepartamento  ){
+    if( ($nivel==2 || $nivel==3 ) &&  $departamento->getCaIddepartamento()!=$iddepartamento  ){
     ?>
         bloquearCampos();
     <?

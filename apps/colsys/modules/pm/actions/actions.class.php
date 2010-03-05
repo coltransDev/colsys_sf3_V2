@@ -16,13 +16,16 @@
 */
 class pmActions extends sfActions
 {
-    const RUTINA = "39";
+    const RUTINA = "89";
 
     public function getNivel(){
         $this->nivel = $this->getUser()->getNivelAcceso( pmActions::RUTINA );
 		if( !$this->nivel ){
 			$this->nivel = 0;
 		}
+        
+		$this->forward404Unless($this->nivel!=-1);
+		
 
         return $this->nivel;
     }
@@ -121,10 +124,11 @@ class pmActions extends sfActions
 
                 $q->addWhere("(h.ca_login = ? OR uggg.ca_login = ?)", array($this->getUser()->getUserid(), $this->getUser()->getUserid()) );
                 break;
-			case 2:
-                $q->addWhere("(h.ca_login = ? OR g.ca_iddepartament = ?)", array($this->getUser()->getUserid(), $this->getUser()->getIddepartamento() ) );
-				break;
 		}
+
+        if( $nivel==2 || $nivel==3 ){
+            $q->addWhere("(h.ca_login = ? OR g.ca_iddepartament = ?)", array($this->getUser()->getUserid(), $this->getUser()->getIddepartamento() ) );
+        }
 
 
 		$q->distinct();
@@ -237,7 +241,7 @@ class pmActions extends sfActions
             $this->grupos[] = $usersGroup->getCaIdgroup();
         }
 
-
+        $this->user = $this->getuser();
         $response = sfContext::getInstance()->getResponse();
 		$response->addJavaScript("extExtras/FileUploadField",'last');
 
@@ -387,8 +391,12 @@ class pmActions extends sfActions
 			$ticket->setCaIdmilestone( $request->getParameter("idmilestone") );
 		}
 
-		@$ticket->save();
-
+        if( $request->getParameter("reportedby") ){
+			$ticket->setCaLogin( $request->getParameter("reportedby") );
+		}
+        
+		$ticket->save();
+        
 
         if( isset( $_FILES["archivo"] )){
 
@@ -660,6 +668,30 @@ class pmActions extends sfActions
 				$usuariosArray[] = array("login"=>$usuario->getCaLogin());
 			}
 		}
+
+		$this->responseArray = array("usuarios"=>$usuariosArray, "success"=>true);
+		$this->setTemplate("responseTemplate");
+
+	}
+
+
+    /**
+	* Datos de los usuarios de acuerdo al grupos
+	*
+	* @param sfRequest $request A request object
+	*/
+	public function executeDatosUsuarios(sfWebRequest $request){
+
+		$usuariosArray = array();
+        $usuarios = Doctrine::getTable("Usuario")
+                     ->createQuery("g")
+                     ->where("g.ca_activo = ?", true )
+                     ->addOrderBy("g.ca_login")
+                     ->execute();
+        foreach( $usuarios as $usuario ){
+            $usuariosArray[] = array("login"=>$usuario->getCaLogin(), "nombre"=>utf8_encode($usuario->getCaNombre()));
+        }
+
 
 		$this->responseArray = array("usuarios"=>$usuariosArray, "success"=>true);
 		$this->setTemplate("responseTemplate");

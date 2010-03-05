@@ -129,7 +129,7 @@ Ext.onReady(function(){
 
 <div style="height:100%"></div>
 <script type="text/javascript">
-    Ext.onReady(function(){
+    /*Ext.onReady(function(){
             var newComponent = new PanelTickets({
                                                              closable: true,
                                                              idproject: 3,
@@ -142,7 +142,7 @@ Ext.onReady(function(){
         Ext.getCmp('tab-panel').add(newComponent);
         Ext.getCmp('tab-panel').setActiveTab(newComponent);
 
-    });
+    });*/
 
 
 </script>
