@@ -11,7 +11,7 @@ switch($action){
 		$button[1]["link"]= "pm/index";
 
         $button[2]["name"]="Nuevo";
-		$button[2]["tooltip"]="Nuevo este ticket";
+		$button[2]["tooltip"]="Nuevo ticket";
 		$button[2]["image"]="22x22/edit_add.gif";
 		$button[2]["link"]= "pm/crearTicket";
 
