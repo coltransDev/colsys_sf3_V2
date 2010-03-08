@@ -50,7 +50,7 @@ EOF;
 						}
 						
 						$tarea->setCaIdlistatarea( 4 );
-						$tarea->setCaFchcreado( time() );								
+						$tarea->setCaFchcreado( date("Y-m-d H:i:s") );
 						$tarea->setTiempo( TimeUtils::getFestivos(), 57600); // dos días habiles
 						$tarea->setCaPrioridad( 1 );
 						$tarea->setCaUsucreado( "Administrador" );
