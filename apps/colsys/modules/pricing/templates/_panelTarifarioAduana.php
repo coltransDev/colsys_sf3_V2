@@ -1,0 +1,405 @@
+<?php
+/*
+ *  This file is part of the Colsys Project.
+ *
+ *  (c) Coltrans S.A. - Colmas Ltda.
+ */
+
+?>
+
+<script type="text/javascript">
+
+
+PanelTarifarioAduana = function( config ){
+
+    Ext.apply(this, config);
+
+    /*
+    * Crea el expander
+    */
+    this.expander = new Ext.grid.RowExpander({
+        lazyRender : false,
+        width: 15,
+        tpl : new Ext.Template(
+          '<p><div class=\'btnComentarios\' id=\'obs_{_id}\'>&nbsp; {observaciones}</div></p>'
+
+        )
+    });
+
+
+    /*
+    *Store que carga los conceptos
+    */
+    this.storeRecargos = new Ext.data.Store({
+        autoLoad : true,
+        url: '<?=url_for("parametros/datosConceptos")?>',
+        baseParams : {
+            impoexpo: this.impoexpo,
+            transporte: this.transporte,
+            modalidad: this.modalidad,
+            modo: "recargos"
+        },
+        reader: new Ext.data.JsonReader(
+            {
+                root: 'root',
+                totalProperty: 'total',
+                successProperty: 'success'
+            },
+            Ext.data.Record.create([
+                {name: 'idconcepto'},
+                {name: 'concepto'}
+            ])
+        )
+    });
+
+    this.editorRecargos = new Ext.form.ComboBox({
+        typeAhead: true,
+        forceSelection: true,
+        triggerAction: 'all',
+        selectOnFocus: true,
+        mode: 'local',
+        displayField: 'concepto',
+        valueField: 'idconcepto',
+        lazyRender:true,
+        listClass: 'x-combo-list-small',
+        store : this.storeRecargos
+
+    });
+        
+   
+    this.columns = [     
+       
+      {
+        header: "Concepto",
+        dataIndex: 'concepto',
+        hideable: false,
+        width: 170,
+        renderer: this.formatItem,
+        sortable: this.readOnly,
+        editor: this.editorRecargos
+      },
+      {
+        header: "Valor",
+        dataIndex: 'valor',
+        hideable: false,
+        width: 170,       
+        sortable: this.readOnly,
+        editor: new Ext.form.NumberField({
+                    allowBlank: false ,
+                    style: 'text-align:left'
+                })
+      }
+      
+     ];
+
+
+    this.record = Ext.data.Record.create([           
+            {name: 'idconcepto', type: 'int'},
+            {name: 'concepto', type: 'string'},
+            {name: 'valor', type: 'string'},
+            {name: 'orden', type: 'string'}
+            
+    ]);
+
+    this.store = new Ext.data.Store({
+
+        autoLoad : true,
+        url: '<?=url_for("pricing/datosPanelTarifarioAduana")?>',
+        baseParams : {
+            readOnly: this.readOnly
+        },
+        reader: new Ext.data.JsonReader(
+            {
+                root: 'root',
+                totalProperty: 'totalCount'
+            },
+            this.record
+        ),
+        sortInfo:{field: 'orden', direction: "ASC"}
+    });
+
+    if( !this.readOnly ){
+        this.tbar = [{
+                text:'Guardar',
+                iconCls: 'disk',
+                scope:this,
+                handler: this.guardarCambios
+              }
+             ];
+    }else{
+        this.tbar = null;
+    }
+    PanelTarifarioAduana.superclass.constructor.call(this, {
+       loadMask: {msg:'Cargando...'},
+       clicksToEdit: 2,
+       id: 'panel-parametros',
+       //plugins: [],
+       view: new Ext.grid.GridView({
+
+            forceFit:true,
+            enableRowBody:true,
+            showPreview:true//,
+            //getRowClass : this.applyRowClass
+       }),
+       listeners:{
+            validateedit: this.onValidateEdit,
+            rowcontextmenu: this.onRowcontextMenu,
+            dblclick:this.onDblClickHandler,
+            celldblclick: this.onCelldblclick
+            
+       },
+       tbar: this.tbar
+
+    });
+
+    var storePanelTarifarioAduana = this.store;
+    var readOnly = this.readOnly;
+    this.getColumnModel().isCellEditable = function(colIndex, rowIndex) {
+        if( readOnly ){
+            return false;
+        }else{
+            var record = storePanelTarifarioAduana.getAt(rowIndex);
+            var field = this.getDataIndex(colIndex);
+
+
+            if( !record.data.idconcepto && field!="concepto" ){
+                return false;
+            }
+            /*
+            if( record.data.idconcepto && field=="concepto" ){
+                return false;
+            }*/
+
+
+            return Ext.grid.ColumnModel.prototype.isCellEditable.call(this, colIndex, rowIndex);
+        }
+    }
+
+    actualizarObservaciones = function( btn, text, obj ){
+        if( btn=="ok" ){
+            var record = activeRow;
+            record.set("observaciones", text);
+        }
+    }
+
+
+
+};
+
+Ext.extend(PanelTarifarioAduana, Ext.grid.EditorGridPanel, {
+    guardarCambios: function(){
+
+        if( !this.readOnly ){
+            var store = this.store;
+            var records = store.getModifiedRecords();
+
+            var lenght = records.length;
+
+           
+            for( var i=0; i< lenght; i++){
+                r = records[i];
+
+                var changes = r.getChanges();
+
+                //Da formato a las fechas antes de enviarlas
+
+
+                changes['id']=r.id;               
+                changes['idconcepto']=r.data.idconcepto;
+
+
+                if( r.data.concepto ){
+                    //envia los datos al servidor
+                    Ext.Ajax.request(
+                        {
+                            waitMsg: 'Guardando cambios...',
+                            url: '<?=url_for("pricing/guardarPanelTarifarioAduana")?>', 						//method: 'POST',
+                            //Solamente se envian los cambios
+                            params :	changes,
+
+                            callback :function(options, success, response){
+
+                                var res = Ext.util.JSON.decode( response.responseText );
+                                if( res.id && res.success){
+                                    var rec = store.getById( res.id );
+                                    rec.set("idconcepto",res.idconcepto);
+                                    //rec.set("sel", false); //Quita la seleccion de todas las columnas
+                                    rec.commit();
+                                }
+                            }
+                         }
+                    );
+                }
+            }
+        }
+    }
+    ,
+    formatItem: function(value, p, record) {
+
+        return String.format(
+            '<b>{0}</b>',
+            value
+        );
+
+    },
+
+
+    onValidateEdit : function(e){
+
+        
+        if( e.field == "concepto" ){
+
+            var rec = e.record;
+            var recordConcepto = this.record;
+            var storeConcepto = this.store;
+
+            if( rec.data.orden=="Z"){
+
+
+                var rec = e.record;
+                var ed = this.colModel.getCellEditor(e.column, e.row);
+                var store = ed.field.store;
+
+                store.each( function( r ){
+                    if( r.data.idconcepto==e.value ){
+
+
+                        var newRec = new recordConcepto({
+                                       idconcepto: '',
+                                       concepto: '',
+                                       tipo: '',
+                                       modalidades: '',
+                                       orden: 'Z' // Se utiliza Z por que el orden es alfabetico
+                                    });
+
+                        rec.set("orden", "Y");
+
+                        rec.set("idconcepto", r.data.idconcepto);
+                        e.value = r.data.concepto;
+
+                        //guardarGridProductosRec( rec );
+
+                        //Inserta una columna en blanco al final
+                        storeConcepto.addSorted(newRec);
+                        storeConcepto.sort("orden", "ASC");
+                   }
+                });
+            }
+        }
+        return true;
+    }
+    ,
+
+    onRowcontextMenu: function(grid, index, e){
+        if( !this.readOnly ){
+            rec = this.store.getAt(index);
+
+            if(!this.menu){ // create context menu on first right click
+
+                this.menu = new Ext.menu.Menu({
+                id:'grid_productos-ctx',
+                enableScrolling : false,
+                items: [
+                        /*{
+                            text: 'Eliminar item',
+                            iconCls: 'delete',
+                            scope:this,
+                            handler: this.eliminarItem
+                        },*/
+                        {
+                            text: 'Observaciones',
+                            iconCls: 'page_white_edit',
+                            scope:this,
+                            handler: function(){
+                                if( this.ctxRecord.data.iditem  ){
+                                    activeRow = this.ctxRecord;
+                                    this.ventanaObservaciones( this.ctxRecord );
+                                }
+
+                            }
+                        }
+                        ]
+                });
+                this.menu.on('hide', this.onContextHide , this);
+            }
+            e.stopEvent();
+            if(this.ctxRow){
+                Ext.fly(this.ctxRow).removeClass('x-node-ctx');
+                this.ctxRow = null;
+            }
+            this.ctxRecord = rec;
+            this.ctxRow = this.view.getRow(index);
+            Ext.fly(this.ctxRow).addClass('x-node-ctx');
+            this.menu.showAt(e.getXY());
+        }
+    }    
+    ,
+    onContextHide: function(){
+        if(this.ctxRow){
+            Ext.fly(this.ctxRow).removeClass('x-node-ctx');
+            this.ctxRow = null;
+        }
+    }
+    ,
+    onDblClickHandler: function(e) {
+        if( !this.readOnly ){
+            var btn = e.getTarget('.btnComentarios');
+            if (btn) {
+                var t = e.getTarget();
+                var v = this.view;
+                var rowIdx = v.findRowIndex(t);
+                var record = this.getStore().getAt(rowIdx);
+
+                activeRow = record;
+                this.ventanaObservaciones( record );
+            }
+        }
+    },
+    ventanaObservaciones : function( record ){
+        var activeRow = record;
+        Ext.MessageBox.show({
+               title: 'Observaciones',
+               msg: 'Por favor coloque las observaciones:',
+               width:300,
+               buttons: Ext.MessageBox.OKCANCEL,
+               multiline: true,
+               fn: actualizarObservaciones,
+               animEl: 'mb3',
+               value: record.get("observaciones")
+           });
+    }
+
+
+    ,
+    onCelldblclick : function( grid, rowIndex, columnIndex, e ){
+        var record = grid.getStore().getAt(rowIndex);  // Get the Record
+
+        var fieldName = grid.getColumnModel().getDataIndex(columnIndex); // Get field name
+
+        var data = record.get(fieldName);
+
+        if( fieldName=="idconcepto" && data ){
+            this.showWindow( record );
+        }
+    },
+
+    showWindow : function( record ){
+        
+        if(!this.win){
+            this.win = new ModalidadWindow({
+                            readOnly: this.readOnly
+                        });
+            //this.win.on('validfeed', this.addFeed, this);
+        }
+        this.win.ctxRecord = record;
+        this.win.show();
+    }
+
+    
+
+
+
+
+});
+
+</script>

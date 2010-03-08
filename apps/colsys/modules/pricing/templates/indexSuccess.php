@@ -33,7 +33,8 @@ include_component("pricing","panelParametros" );
 include_component("pricing","modalidadWindow" );
 include_component("pricing","modalidadGrid");
 
-
+//Tarifario Colmas
+include_component("pricing","panelTarifarioAduana");
 ?>
 <script type="text/javascript">
 
@@ -108,9 +109,9 @@ Ext.onReady(function(){
                     }),
                     
                 <?
-                //include_partial("formAduana", array("opcion"=>$opcion));
+                include_partial("formAduana", array("opcion"=>$opcion));
                 ?>
-                //,
+                ,
                 <?
                 include_partial("formSeguros", array("opcion"=>$opcion));
                 ?>
@@ -207,11 +208,14 @@ Ext.onReady(function(){
                                                               
         */
 
-        var newComponent = new PanelParametros({
+        var newComponent = new PanelTarifarioAduana({
                                                              closable: true,
                                                              title: 'Def. de Conceptos',
-                                                             readOnly: <?=$opcion=="consulta"?"true":"false"?>
-                                                            });
+                                                             readOnly: <?=$opcion=="consulta"?"true":"false"?>,
+                                                             impoexpo: "<?=Constantes::IMPO?>",
+                                                             transporte: "<?=Constantes::MARITIMO?>",
+                                                             modalidad: "FCL"
+                                                         });
         Ext.getCmp('tab-panel').add(newComponent);
         Ext.getCmp('tab-panel').setActiveTab(newComponent);
 
