@@ -331,7 +331,7 @@ PanelParametros = function( config ){
 
     PanelParametros.superclass.constructor.call(this, {
        loadMask: {msg:'Cargando...'},
-       clicksToEdit: 1,
+       clicksToEdit: 2,
        id: 'panel-parametros',
        plugins: [this.expander, this.checkColumn
               <?

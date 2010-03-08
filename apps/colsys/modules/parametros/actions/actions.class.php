@@ -78,7 +78,7 @@ class parametrosActions extends sfActions
 			//$c->setLimit(3);
 			$q = Doctrine::getTable("TipoRecargo")
                          ->createQuery("c")
-                         ->addWhere("c.ca_transporte = ? AND ca_tipo = ? ", array($transporte, $tipo ))
+                         ->addWhere("c.ca_transporte = ? AND ca_tipo LIKE ? ", array($transporte, "%".$tipo."%" ))
                          ->innerJoin("c.InoConceptoModalidad cm")
                          ->innerJoin("cm.Modalidad m")
                          ->addWhere("m.ca_impoexpo like ? ", "%".$impoexpo."%" )
