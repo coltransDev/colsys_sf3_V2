@@ -704,12 +704,12 @@ elseif (isset($boton)) {                                                       /
                 }
 
                 $cambiar = ($nivel >= 1)?'':'DISABLED';
-                if (!$us->Open("select ca_login, ca_nombre from control.tb_usuarios where ca_login != 'Administrador' and (ca_cargo = 'Gerente Sucursal' or ca_cargo like '%Ventas%' or ca_departamento like '%Ventas%' or ca_departamento like '%Comercial%') order by ca_login")) {
+                if (!$us->Open("select ca_login, ca_nombre from control.tb_usuarios where ca_login != 'Administrador' and ca_activo = true and (ca_cargo = 'Gerente Sucursal' or ca_cargo like '%Ventas%' or ca_departamento like '%Ventas%' or ca_departamento like '%Comercial%') order by ca_login")) {
                     echo "<script>alert(\"".addslashes($us->mErrMsg)."\");</script>";
                     echo "<script>document.location.href = 'reportenegocio.php';</script>";
                     exit;
                 }
-                if (!$tm->Open("select ca_email, ca_login from vi_usuarios where ca_cargo like '%Operaciones Maritimas%'")) {          // Selecciona los correos de la tabla Parametros
+                if (!$tm->Open("select ca_email, ca_login from vi_usuarios where ca_activo = true and ca_cargo like '%Operaciones Maritimas%'")) {          // Selecciona los correos de la tabla Parametros
                     echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
                     echo "<script>document.location.href = 'reportenegocio.php';</script>";
                     exit; }
@@ -1111,7 +1111,7 @@ elseif (isset($boton)) {                                                       /
                 }
 
                 $cambiar = ($nivel >= 1)?'':'DISABLED';
-                if (!$us->Open("select ca_login, ca_nombre from control.tb_usuarios where ca_login != 'Administrador' and (ca_cargo = 'Gerente Sucursal' or ca_cargo like '%Ventas%' or ca_departamento like '%Ventas%' or ca_departamento like '%Comercial%') order by ca_login")) {
+                if (!$us->Open("select ca_login, ca_nombre from control.tb_usuarios where ca_login != 'Administrador' and ca_activo=true and (ca_cargo = 'Gerente Sucursal' or ca_cargo like '%Ventas%' or ca_departamento like '%Ventas%' or ca_departamento like '%Comercial%') order by ca_login")) {
                     echo "<script>alert(\"".addslashes($us->mErrMsg)."\");</script>";
                     echo "<script>document.location.href = 'reportenegocio.php';</script>";
                     exit;
@@ -1443,7 +1443,7 @@ elseif (isset($boton)) {                                                       /
                 $us =& DlRecordset::NewRecordset($conn);
                 carga_arreglos($tm);
 
-                if (!$us->Open("select ca_login, ca_nombre from control.tb_usuarios where ca_login != 'Administrador' and (ca_cargo = 'Gerente Sucursal' or ca_cargo like '%Ventas%' or ca_departamento like '%Ventas%' or ca_departamento like '%Comercial%') order by ca_login")) {
+                if (!$us->Open("select ca_login, ca_nombre from control.tb_usuarios where ca_login != 'Administrador' and ca_activo=true and (ca_cargo = 'Gerente Sucursal' or ca_cargo like '%Ventas%' or ca_departamento like '%Ventas%' or ca_departamento like '%Comercial%') order by ca_login")) {
                     echo "<script>alert(\"".addslashes($us->mErrMsg)."\");</script>";
                     echo "<script>document.location.href = 'reportenegocio.php';</script>";
                     exit;
