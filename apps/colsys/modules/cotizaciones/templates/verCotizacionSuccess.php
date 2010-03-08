@@ -3,6 +3,8 @@ use_helper( "MimeType");
 
 $enBlanco = $cotizacion->enBlanco();
 $dateFormat = new sfDateFormat();
+
+$festivos = TimeUtils::getFestivos();
 ?>
 
 <div align="center" class="content">  
@@ -126,16 +128,24 @@ if( !$cotizacion->getCaUsuanulado() ){
 			</tr>		
 			<tr>
 				<td><b>Fecha de solicitud:</b>
-                    <?=Utils::fechaMes($dateFormat->format($tarea->getCaFchcreado(), "yyyy-MM-dd") ) ?>
-                    <?=$dateFormat->format($tarea->getCaFchcreado(), "HH:mm:ss")?>
+                    <?=Utils::fechaMes($dateFormat->format($tarea->getCaFchcreado()) ) ?>                    
+                </td>
+			</tr>
+            <tr>
+				<td><b>Fecha de vencimiento:</b>
+                    <?=Utils::fechaMes($dateFormat->format($tarea->getCaFchvencimiento()) ) ?>
+                </td>
+			</tr>
+            <tr>
+				<td><b>Hora actual:</b>
+                    <?=Utils::fechaMes( date("Y-m-d H:i:s") ) ?>
                 </td>
 			</tr>
 			<tr>
 				<td>
 					Tiempo restante
-					<?			
-					$festivos = Utils::getFestivos();
-					$diff = $tarea->getTiempoRestante( $festivos );					
+					<?
+					$diff = $tarea->getTiempoRestante( $festivos );                   
 					if( substr($diff, 0,1)=="-" ){
 						echo "<span class='rojo'>".$diff."</span>";
 						?>
@@ -180,8 +190,7 @@ if( !$cotizacion->getCaUsuanulado() ){
 					<b>Fecha de presentaci&oacute;n:</b> <?=Utils::fechaMes( $dateFormat->format($tarea->getCaFchterminada(), "yyyy-MM-dd")) ?> <?=$dateFormat->format($tarea->getCaFchterminada(), "HH:mm:ss")?>
 					<br />
 					<b>Horas habiles:</b> 
-					<?
-					$festivos = Utils::getFestivos();
+					<?					
 					echo $tarea->getTiempo( $festivos );				
 					?>
 									
