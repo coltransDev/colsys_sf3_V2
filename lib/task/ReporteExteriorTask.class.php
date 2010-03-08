@@ -51,7 +51,7 @@ EOF;
 						
 						$tarea->setCaIdlistatarea( 4 );
 						$tarea->setCaFchcreado( time() );		
-						$festivos = Utils::getFestivos();	
+						$festivos = TimeUtils::getFestivos();	
 						$tarea->setCaFchvencimiento( Utils::addTimeWorkingHours( $festivos, date("Y-m-d H:i:s") , 57600)); // dos días habiles
 						$tarea->setCaPrioridad( 1 );
 						$tarea->setCaUsucreado( "Administrador" );
