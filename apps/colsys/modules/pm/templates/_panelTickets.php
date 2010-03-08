@@ -41,16 +41,20 @@ PanelTickets = function( config ){
             if( record.data.action=="Cerrado" ){                
                 color = "blue";
             }else{
-                switch( record.data.priority ){
-                    case "Media":
-                        color = "yellow";
-                        break;
-                    case "Alta":
-                        color = "pink";
-                        break;
-                    default:
-                        color = "";
-                        break;
+                if( record.data.tipo=="Defecto" ){
+                    color = "pink";
+                }else{
+                    switch( record.data.priority ){
+                        case "Media":
+                            color = "yellow";
+                            break;
+                        case "Alta":
+                            color = "pink";
+                            break;
+                        default:
+                            color = "";
+                            break;
+                    }
                 }
             }
             color = "row_"+color;
@@ -73,6 +77,11 @@ PanelTickets = function( config ){
         }, {
             type: 'string',
             dataIndex: 'title'
+
+        },
+        {
+            type: 'string',
+            dataIndex: 'tipo'
 
         }
         , {
@@ -172,6 +181,13 @@ PanelTickets = function( config ){
       },
       
       {
+        header: "Tipo",
+        dataIndex: 'tipo',
+        hideable: false,
+        width: 100,
+        sortable: true
+      },
+      {
         header: "Abierto",
         dataIndex: 'opened',
         hideable: false,
@@ -193,7 +209,7 @@ PanelTickets = function( config ){
         hideable: false,
         width: 100,
         sortable: true,
-        renderer: Ext.util.Format.dateRenderer('d/m/y H:i')
+        renderer: Ext.util.Format.dateRenderer('d/m/y')
       },
       {
         header: "Milestone",
