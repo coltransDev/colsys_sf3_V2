@@ -1024,8 +1024,8 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
             fp.getForm().findField("ciu_escala_id").hiddenField.value = record.data.ciu_escala;
             fp.getForm().findField("idlinea").setRawValue(record.data.linea);
             fp.getForm().findField("idlinea").hiddenField.value = record.data.idlinea;
-
-            fp.getForm().findField("vigencia").setMinValue( record.data.vigencia?record.data.vigencia:new Date(<?=strtotime(date("Y-m-d"))?>) );
+            var now = new Date(<?=strtotime(date("Y-m-d"))*1000?>);
+            fp.getForm().findField("vigencia").setMinValue( (record.data.vigencia&&record.data.vigencia<=now)?record.data.vigencia:now );
 
 
             //Verifica que no hayan concepto para poder editar los campos impoexpo, transporte y modalidad
