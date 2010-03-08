@@ -109,7 +109,7 @@ class widgetsActions extends sfActions
 		$query = utf8_decode($request->getParameter("query"));
 		
 		$q = Doctrine_Query::create()
-                  ->select("p.ca_idproveedor, id.ca_nombre, p.ca_transporte ")
+                  ->select("p.ca_idproveedor, p.ca_sigla, id.ca_nombre, p.ca_transporte ")
                   ->from("IdsProveedor p")
                   ->innerJoin("p.Ids id")                  
                   ->addOrderBy("id.ca_nombre");
@@ -130,7 +130,7 @@ class widgetsActions extends sfActions
 		$this->lineas = array();	
 		foreach( $lineas as $linea ){            
 			$this->lineas[] = array(  "idlinea"=>$linea['ca_idproveedor'],
-									  "linea"=>utf8_encode($linea['Ids']['ca_nombre']),
+									  "linea"=>utf8_encode($linea['ca_sigla']?$linea['ca_sigla']:$linea['Ids']['ca_nombre']),
                                       "transporte"=>utf8_encode($linea['ca_transporte']),
 								   );
 		}						
