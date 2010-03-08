@@ -646,10 +646,10 @@ class Reporte extends BaseReporte
 
 
     /*
-	* Retorna los reportes al exterior de la version actual
+	* Retorna true si existen reportes al exterior de la version actual
 	* Author: Andres Botero
 	*/
-	public function getReporteExteriorVersionActual(){
+	public function existeReporteExteriorVersionActual(){
         if( $this->getCaImpoexpo()==Constantes::IMPO || $this->getCaImpoexpo()==Constantes::TRIANGULACION  ){
 			//Reportes al exterior
 			if( $this->getCaTransporte()==Constantes::MARITIMO ){
@@ -658,13 +658,14 @@ class Reporte extends BaseReporte
 				$tipo = 'Rep.AéreoExterior';
 			}
 
-			return Doctrine::getTable("Email")
+			$numReportes = Doctrine::getTable("Email")
                            ->createQuery("e")
-                           ->select("e.*")
-                           ->where( "e.ca_idacaso = ?", $this->getCaIdreporte() )
-                           ->addWhere("e.ca_tipo = ? ", $tipo)
-                           ->addOrderBy("e.ca_fchenvio DESC")
+                           ->select("COUNT(*)")
+                           ->where( "e.ca_idcaso = ?", $this->getCaIdreporte() )
+                           ->addWhere("e.ca_tipo = ? ", $tipo)                           
+                           ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)
                            ->execute();
+            return $numReportes>0;
 		}
         return null;
 

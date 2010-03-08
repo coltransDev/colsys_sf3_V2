@@ -114,13 +114,34 @@ class TimeUtils{
 	/*
 	* Convierte y retorna segundos en horas:minutos:segundos
 	*/
-        public static function tiempoSegundos($segundos) {
-            $minutos=$segundos/60;
-            $horas=floor($minutos/60);
-            $minutos2=$minutos%60;
-            $segundos2=$segundos%60%60%60;
-            return substr(100+$horas,1,2).":".substr(100+$minutos2,1,2).":".substr(100+$segundos2,1,2);
-        }
+    public static function tiempoSegundos($segundos) {
+        $minutos=$segundos/60;
+        $horas=floor($minutos/60);
+        $minutos2=$minutos%60;
+        $segundos2=$segundos%60%60%60;
+        return substr(100+$horas,1,2).":".substr(100+$minutos2,1,2).":".substr(100+$segundos2,1,2);
+    }
+
+
+    /*
+	* Busca todos los dias festivos de un año en adelante
+	* @author: Andres Botero
+	*/
+	static function getFestivos( $aa=null ){
+        $q = Doctrine_Query::create()->from("Festivo f");
+
+		if( $aa ){
+            $q->where("f.ca_fchfestivo >= ?", $aa."-01-01" );
+		}
+		$festivos = $q->execute();
+		$result = array();
+		foreach( $festivos as $festivo ){
+			$result[]=$festivo->getCaFchfestivo();
+		}
+		return $result;
+
+
+	}
 
 
 }

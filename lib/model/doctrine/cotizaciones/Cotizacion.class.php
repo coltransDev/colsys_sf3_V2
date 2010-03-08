@@ -49,7 +49,7 @@ class Cotizacion extends BaseCotizacion
 			$tarea->setCaTexto( $texto );
 			$tarea->setCaFchcreado(  $fchCreado );
 			$tarea->setCaFchvisible( date("Y-m-d H:i:s", time()+3600) );
-			$tarea->setTiempo( Utils::getFestivos(), Cotizacion::TIEMPO_IDG_ENTREGA_OPORTUNA );
+			$tarea->setTiempo( TimeUtils::getFestivos(), Cotizacion::TIEMPO_IDG_ENTREGA_OPORTUNA );
 			$tarea->save();
 
 			$this->setCaIdgEnvioOportuno( $tarea->getCaIdtarea() );
@@ -58,7 +58,7 @@ class Cotizacion extends BaseCotizacion
 
 
 		$tarea->setCaFchcreado(  $fchCreado );
-		$tarea->setTiempo( Utils::getFestivos(), Cotizacion::TIEMPO_IDG_ENTREGA_OPORTUNA );
+		$tarea->setTiempo( TimeUtils::getFestivos(), Cotizacion::TIEMPO_IDG_ENTREGA_OPORTUNA );
 		$tarea->save();
 
 		if( $tarea ){
@@ -129,7 +129,7 @@ class Cotizacion extends BaseCotizacion
                         ->from("CotRecargo r")
                         ->innerJoin("r.TipoRecargo tr")
                         ->where("r.ca_idcotizacion = ?", $this->getcaIdcotizacion() )
-                        ->addWhere("tr.ca_tipo = ? ", $tipo)
+                        ->addWhere("tr.ca_tipo like ? ", "%".$tipo."%")
                         ->addOrderBy("r.ca_modalidad ASC");
                         
         if( $transporte ){
@@ -275,7 +275,7 @@ class Cotizacion extends BaseCotizacion
 
     }
 
-     public function getDirectorioBase(){
+    public function getDirectorioBase(){
         $folder = Cotizacion::FOLDER;
         return $directory = $folder.DIRECTORY_SEPARATOR.$this->getCaEmpresa().DIRECTORY_SEPARATOR.$this->getCaConsecutivo();
 

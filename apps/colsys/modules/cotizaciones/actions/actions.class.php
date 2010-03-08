@@ -1402,7 +1402,7 @@ class cotizacionesActions extends sfActions
                             ->from("CotRecargo p")
                             ->innerJoin("p.TipoRecargo tr")
                             ->where("p.ca_idcotizacion = ? ", $idcotizacion )
-                            ->addWhere("tr.ca_tipo = ? ", $tipo )
+                            ->addWhere("tr.ca_tipo like ? ", "%".$tipo."%" )
                             ->distinct()
                             ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
                             ->execute();
@@ -1450,7 +1450,7 @@ class cotizacionesActions extends sfActions
                                       ->where("r.ca_idcotizacion = ?", $idcotizacion )
                                       ->addWhere("r.ca_modalidad = ? ",$modalidad )
                                       ->addWhere("tr.ca_transporte = ? ",$transporte )
-                                      ->addWhere("tr.ca_tipo = ? OR tr.ca_tipo = ? ", array(Constantes::RECARGO_LOCAL, Constantes::RECARGO_OTM_DTA) )
+                                      ->addWhere("tr.ca_tipo like ? OR tr.ca_tipo like ? ", array("%".Constantes::RECARGO_LOCAL."%", Constantes::RECARGO_OTM_DTA."%") )
                                       ->addOrderBy("tr.ca_transporte ASC")
                                       ->addOrderBy("tr.ca_recargo ASC")
                                       ->execute();

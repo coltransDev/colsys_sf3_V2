@@ -456,7 +456,7 @@ class helpdeskActions extends sfActions
 			$tarea->setCaIdlistatarea( 1 );
 			$tarea->setCaFchcreado( date("Y-m-d h:i:s") );
 									
-			$tarea->setTiempo( Utils::getFestivos(), $grupo->getCaMaxresponsetime() );
+			$tarea->setTiempo( TimeUtils::getFestivos(), $grupo->getCaMaxresponsetime() );
 			
 			$tarea->setCaUsucreado( $this->getUser()->getUserId() );
 			$tarea->setCaTitulo( $titulo );		
