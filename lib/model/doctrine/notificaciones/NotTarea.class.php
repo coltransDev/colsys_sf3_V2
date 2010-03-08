@@ -98,14 +98,14 @@ class NotTarea extends BaseNotTarea
 	*/
 	public function getTiempoRestante( $festivos  ){
 		//echo "<br /> <b>Ini. ".date("Y-m-d H:i:s")." <br />Ven. ".$this->getCaFchvencimiento()."</b><br />";
-		return Utils::getHumanTime(Utils::diffTimeWorkingHours( $festivos, date("Y-m-d H:i:s"), $this->getCaFchvencimiento() ));
+		return TimeUtils::getHumanTime(TimeUtils::calcDiff( $festivos, time(), strtotime($this->getCaFchvencimiento()) ));
 	}
 
 	/*
 	* Tiempo restante para terminar la tarea
 	*/
 	public function getTiempo( $festivos  ){
-		return Utils::getHumanTime(Utils::diffTimeWorkingHours( $festivos, $this->getCaFchcreado(), $this->getCaFchterminada() ));
+		return TimeUtils::getHumanTime(TimeUtils::calcDiff( $festivos, strtotime($this->getCaFchcreado()), strtotime($this->getCaFchterminada()) ));
 	}
 
     /*
@@ -124,12 +124,8 @@ class NotTarea extends BaseNotTarea
 	* Tiempo restante para terminar la tarea
 	*/
 	public function setTiempo( $festivos, $seconds  ){
-		$fecha = Utils::addTimeWorkingHours( $festivos, $this->getCaFchcreado( ) , $seconds );
-
-		echo " Creado ".$this->getCaFchcreado( )." vencimiento ".date("Y-m-d H:i:s", $fecha);
-        
-		$this->setCaFchvencimiento( date("Y-m-d H:i:s",$fecha) );
-		exit();
+		$fecha = TimeUtils::addTimeWorkingHours( $festivos, $this->getCaFchcreado( ) , $seconds );
+		$this->setCaFchvencimiento( date("Y-m-d H:i:s",$fecha) );		
 	}
 
 	/*
