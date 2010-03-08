@@ -52,7 +52,7 @@ EOF;
 						$tarea->setCaIdlistatarea( 4 );
 						$tarea->setCaFchcreado( time() );		
 						$festivos = TimeUtils::getFestivos();	
-						$tarea->setCaFchvencimiento( Utils::addTimeWorkingHours( $festivos, date("Y-m-d H:i:s") , 57600)); // dos días habiles
+						$tarea->setTiempo( TimeUtils::getFestivos(), 57600); // dos días habiles
 						$tarea->setCaPrioridad( 1 );
 						$tarea->setCaUsucreado( "Administrador" );
 						$tarea->setCaTitulo( "Crear Reporte al Ext. RN ".$reporte->getCaConsecutivo() );		
