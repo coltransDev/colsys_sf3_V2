@@ -120,10 +120,11 @@ PanelRecargosLocalesPatios = function( config ){
     });
 
     var readOnly = this.readOnly;
-    this.getColumnModel().isCellEditable = function(colIndex, rowIndex) {
+    this.getColumnModel().isCellEditable = function(colIndex, rowIndex) {        
         if( readOnly ){
             return false;
         }
+        return Ext.grid.ColumnModel.prototype.isCellEditable.call(this, colIndex, rowIndex);
     }
 
 }

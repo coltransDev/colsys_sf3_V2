@@ -89,7 +89,7 @@ foreach( $results as $modalidad=>$grupos ){
 					?>
 					{
 						text:'<?=$pais['pais']?>',
-                        id: '<?=$impoexpo."_".$transporte."_".$modalidad."_".$pais['idtrafico']?>',
+                        id: 'traf_<?=$impoexpo."_".$transporte."_".$modalidad."_".$pais['idtrafico']?>',
 						leaf:false,                        
                         impoexpo: '<?=$impoexpo?>',
                         transporte: '<?=$transporte?>',

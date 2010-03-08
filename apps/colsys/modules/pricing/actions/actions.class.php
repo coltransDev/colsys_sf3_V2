@@ -24,7 +24,7 @@ class pricingActions extends sfActions
         $this->nivel = $this->getUser()->getNivelAcceso( pricingActions::RUTINA );
         if( $this->nivel==-1 ){
 			$this->forward404();
-		}
+		}       
         return $this->nivel;
     }
 
@@ -50,14 +50,10 @@ class pricingActions extends sfActions
 
 		$response = sfContext::getInstance()->getResponse();
 		$response->addJavaScript("extExtras/FileUploadField",'last');
-		$response->addJavaScript("extExtras/RowExpander",'last');
-		$response->addJavaScript("extExtras/myRowExpander",'last');
-		$response->addJavaScript("extExtras/NumberFieldMin",'last');
+		$response->addJavaScript("extExtras/RowExpander",'last');		
 		$response->addJavaScript("extExtras/CheckColumn",'last');	
-        $response->addJavaScript("extExtras/LockingGridView",'last');
-        $response->addStylesheet("extExtras/LockingGridView",'last');
-        $response->addJavaScript("extExtras/ColumnHeaderGroup",'last');
-        $response->addStylesheet("extExtras/ColumnHeaderGroup",'last');
+        /*$response->addJavaScript("extExtras/LockingGridView",'last');
+        $response->addJavaScript("extExtras/ColumnHeaderGroup",'last');        */
 
 
 		
@@ -207,7 +203,7 @@ class pricingActions extends sfActions
 			}            
 			$trayectoStr.=" (TT ".$trayecto["t_ca_tiempotransito"]." Freq. ".$trayecto["t_ca_frecuencia"].") ".$trayecto["t_ca_idtrayecto"];			
 			$trayectoStr = utf8_encode($trayectoStr);
-           
+            $trayectoStr = str_replace("&", "AND", $trayectoStr);
 
             $baseRow = array (
 					'idtrayecto' => $trayecto["t_ca_idtrayecto"],
@@ -2021,7 +2017,7 @@ class pricingActions extends sfActions
 		
 		$this->nivel = $this->getNivel();
 		
-		if(substr($node,0,4)!="impo" && substr($node,0,4)!="expo"){ 	
+		if(substr($node,0,4)!="traf" ){
 
             $q = Doctrine_Query::create()
                                  ->select("t.ca_modalidad, tg.ca_descripcion, tr.ca_nombre, tr.ca_idtrafico")
@@ -2087,9 +2083,11 @@ class pricingActions extends sfActions
 		}else{
 
 			$opciones = explode("_", $node);			
-			$modalidad = $opciones[2];
-			$idtrafico = $opciones[3];
-		
+			$modalidad = $opciones[3];
+			$idtrafico = $opciones[4];
+
+            $this->trafico=Doctrine::getTable("Trafico")->find($idtrafico);
+            $this->forward404Unless( $this->trafico );
             $q = Doctrine_Query::create()                                 
                                  ->distinct()
                                  ->from("Trayecto t");
@@ -2133,7 +2131,7 @@ class pricingActions extends sfActions
             $q->distinct();
             $q->setHydrationMode(Doctrine::HYDRATE_SCALAR);
 			$this->lineas = $q->execute();
-            $this->trafico=Doctrine::getTable("Trafico")->find($idtrafico);
+            
 			$this->idtrafico=$idtrafico;
 			$this->modalidad=$modalidad;			
 			
@@ -2377,7 +2375,7 @@ class pricingActions extends sfActions
         }else{
             $trayecto = new Trayecto();
         }        
-
+        
 		$transporte = utf8_decode($this->getRequestParameter("transporte"));
 		$impoexpo = utf8_decode($this->getRequestParameter("impoexpo"));
         $modalidad = utf8_decode($this->getRequestParameter("modalidad"));
@@ -2389,7 +2387,7 @@ class pricingActions extends sfActions
         $frecuencia = utf8_decode($this->getRequestParameter("frecuencia"));
         $ttransito = utf8_decode($this->getRequestParameter("ttransito"));
         $activo = utf8_decode($this->getRequestParameter("activo"));
-
+        
         $trayecto->setCaImpoexpo($impoexpo);
         $trayecto->setCaTransporte($transporte);
         $trayecto->setCaModalidad($impoexpo);
@@ -2409,9 +2407,9 @@ class pricingActions extends sfActions
             $trayecto->setCaFrecuencia($frecuencia);
         }
         $trayecto->setCaActivo($activo=="on");
-
+        
         $trayecto->save();
-
+        
 		$this->responseArray = array("success"=>true);
         $this->setTemplate("responseTemplate");
 
@@ -2438,6 +2436,7 @@ class pricingActions extends sfActions
         $q = Doctrine::getTable("InoConcepto")
                          ->createQuery("c")
                          ->select("c.*") //,
+                         ->addWhere("c.ca_recargoorigen=true OR c.ca_recargolocal=true")
                          ->addOrderBy( "c.ca_concepto" );
 
         
@@ -2454,6 +2453,7 @@ class pricingActions extends sfActions
                                 ->select("cm.ca_idmodalidad")
                                 ->from("InoConceptoModalidad cm")
                                 ->where("cm.ca_idconcepto = ? ", $conceptos[ $key ]["c_ca_idconcepto"] )
+
                                 ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
                                 ->execute();
             $modalidades = array();
@@ -2500,139 +2500,61 @@ class pricingActions extends sfActions
             $concepto = new InoConcepto();
             $concepto->setCaTipo( $request->getParameter("tipo") );
         }
-
+        
         if( $request->getParameter("concepto")!==null ){
-            $concepto->setCaConcepto( $request->getParameter("concepto") );
+            $concepto->setCaConcepto( utf8_decode($request->getParameter("concepto")) );
         }
 
-        if( $modo=="edicion" ){
-            if( $request->getParameter("recargoorigen")!==null ){
-                if( $request->getParameter("recargoorigen")=="true" ){
-                    $concepto->setCaRecargoorigen( true );
-                }else{
-                    $concepto->setCaRecargoorigen( false );
-                }
+        
+        if( $request->getParameter("recargoorigen")!==null ){
+            if( $request->getParameter("recargoorigen")=="true" ){
+                $concepto->setCaRecargoorigen( true );
+            }else{
+                $concepto->setCaRecargoorigen( false );
             }
-
-            if( $request->getParameter("recargolocal")!==null ){
-                if( $request->getParameter("recargolocal")=="true" ){
-                    $concepto->setCaRecargolocal( true );
-                }else{
-                    $concepto->setCaRecargolocal( false );
-                }
-            }
-
-
-            if( $request->getParameter("observaciones")!==null ){
-                if( $request->getParameter("observaciones") ){
-                    $concepto->setCaDetalles( $request->getParameter("observaciones") );
-                }else{
-                    $concepto->setCaDetalles( null );
-                }
-            }
-
-            if( $concepto->getCaIdconcepto() ){
-                if( $request->getParameter("modalidades")!==null ){
-                    Doctrine_Query::create()
-                                    ->delete()
-                                    ->from("InoConceptoModalidad cm")
-                                    ->where("cm.ca_idconcepto = ? ", $concepto->getCaIdconcepto() )
-                                    ->execute();
-
-                    $modalidadesParam = explode("|",$request->getParameter("modalidades"));
-
-                    foreach( $modalidadesParam as $val ){
-                        $cm = new InoConceptoModalidad();
-                        $cm->setCaIdconcepto($concepto->getCaIdconcepto());
-                        $cm->setCaIdmodalidad($val);
-                        $cm->save();
-                    }
-                }
-            }
-
         }
+
+        if( $request->getParameter("recargolocal")!==null ){
+            if( $request->getParameter("recargolocal")=="true" ){
+                $concepto->setCaRecargolocal( true );
+            }else{
+                $concepto->setCaRecargolocal( false );
+            }
+        }
+
+
+        if( $request->getParameter("observaciones")!==null ){
+            if( $request->getParameter("observaciones") ){
+                $concepto->setCaDetalles( $request->getParameter("observaciones") );
+            }else{
+                $concepto->setCaDetalles( null );
+            }
+        }
+
+        if( $concepto->getCaIdconcepto() ){
+            if( $request->getParameter("modalidades")!==null ){
+                Doctrine_Query::create()
+                                ->delete()
+                                ->from("InoConceptoModalidad cm")
+                                ->where("cm.ca_idconcepto = ? ", $concepto->getCaIdconcepto() )
+                                ->execute();
+
+                $modalidadesParam = explode("|",$request->getParameter("modalidades"));
+
+                foreach( $modalidadesParam as $val ){
+                    $cm = new InoConceptoModalidad();
+                    $cm->setCaIdconcepto($concepto->getCaIdconcepto());
+                    $cm->setCaIdmodalidad($val);
+                    $cm->save();
+                }
+            }
+        }
+
+        
 
         $concepto->save();
 
-        if( $modo=="fv" ){
-            //ca_idparametro
-            $idccosto = $request->getParameter("idccosto");
-            $parametro = Doctrine::getTable("InoParametroFacturacion")
-                                   ->createQuery("p")
-                                   ->where("p.ca_idconcepto = ? AND p.ca_idccosto = ?", array($concepto->getCaIdconcepto(), $idccosto) )
-                                   ->fetchOne();
-
-            if( !$parametro ){
-                $parametro = new InoParametroFacturacion();
-                $parametro->setCaIdconcepto( $concepto->getCaIdconcepto() );
-                $parametro->setCaIdccosto( $idccosto );
-            }
-            if( $request->getParameter("idcuenta")!==null ){
-                $parametro->setCaIdcuenta( $request->getParameter("idcuenta") );
-            }
-
-            if( $request->getParameter("ingreso_propio")!==null ){
-                $parametro->setCaIngreso_propio( $request->getParameter("ingreso_propio") );
-            }
-
-            if( $request->getParameter("iva")!==null ){
-                $parametro->setCaIva( $request->getParameter("iva")/100 );
-            }
-
-            if( $request->getParameter("baseretencion")!==null ){
-                $parametro->setCaBaseretencion( $request->getParameter("baseretencion") );
-            }
-
-            if( $request->getParameter("idcuentaretencion")!==null ){
-                $parametro->setCaIdcuentaretencion( $request->getParameter("idcuentaretencion") );
-            }
-
-            if( $request->getParameter("valor")!==null ){
-                $parametro->setCaValor( $request->getParameter("valor") );
-            }
-            $parametro->save();
-
-        }
-
-        if( $modo=="fc" ){
-            //ca_idparametro
-            $idccosto = $request->getParameter("idccosto");
-            $parametro = Doctrine::getTable("InoParametroCosto")
-                                   ->createQuery("p")
-                                   ->where("p.ca_idconcepto = ? AND p.ca_idccosto = ?", array($concepto->getCaIdconcepto(), $idccosto) )
-                                   ->fetchOne();
-
-            if( !$parametro ){
-                $parametro = new InoParametroCosto();
-                $parametro->setCaIdconcepto( $concepto->getCaIdconcepto() );
-                $parametro->setCaIdccosto( $idccosto );
-            }
-            if( $request->getParameter("idcuenta")!==null ){
-                $parametro->setCaIdcuenta( $request->getParameter("idcuenta") );
-            }
-
-            if( $request->getParameter("ingreso_propio")!==null ){
-                $parametro->setCaIngreso_propio( $request->getParameter("ingreso_propio") );
-            }
-
-            if( $request->getParameter("iva")!==null ){
-                $parametro->setCaIva( $request->getParameter("iva")/100 );
-            }
-
-            if( $request->getParameter("baseretencion")!==null ){
-                $parametro->setCaBaseretencion( $request->getParameter("baseretencion") );
-            }
-
-            if( $request->getParameter("idcuentaretencion")!==null ){
-                $parametro->setCaIdcuentaretencion( $request->getParameter("idcuentaretencion") );
-            }
-
-            if( $request->getParameter("valor")!==null ){
-                $parametro->setCaValor( $request->getParameter("valor") );
-            }
-            $parametro->save();
-
-        }
+        
 
 
         $this->responseArray["success"]=true;
@@ -2705,6 +2627,29 @@ class pricingActions extends sfActions
         $nivel = $this->getNivel();
         if( $readOnly=="false"){
             $conceptos[] = array("idmodalidad"=>"", "modalidad"=>"+", "orden"=>"Z");
+        }
+
+        $this->responseArray = array( "totalCount"=>count( $conceptos ), "root"=>$conceptos  );
+
+		$this->setTemplate("responseTemplate");
+    }
+
+
+
+
+    /**
+    * Datos de los conceptos para usar en pricing cotizaciones etc.
+    *
+    * @param sfRequest $request A request object
+    */
+    public function executeDatosPanelTarifarioAduana(sfWebRequest $request){
+        $tipo = $request->getParameter("tipo");
+        $readOnly = $request->getParameter("readOnly");
+
+
+        $nivel = $this->getNivel();
+        if( $readOnly=="false"){
+            $conceptos[] = array("idconcepto"=>"", "concepto"=>"+", "orden"=>"Z");
         }
 
         $this->responseArray = array( "totalCount"=>count( $conceptos ), "root"=>$conceptos  );

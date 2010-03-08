@@ -10,9 +10,9 @@
  /**
  * PanelTrayectoWindow object definition
  **/
-PanelTrayectoWindow = function() {
+PanelTrayectoWindow = function( config ) {
 
-
+    Ext.apply(this, config);
 
     PanelTrayectoWindow.superclass.constructor.call(this, {
         title: 'Ingrese los datos del trayecto',
@@ -124,6 +124,8 @@ Ext.extend(PanelTrayectoWindow, Ext.Window, {
             impoexpo = fp.getForm().findField("impoexpo").getValue();
             transporte = fp.getForm().findField("transporte").getValue();
 
+            
+            var node = this.node;
             if( ttransito=="" && frecuencia=="" && ((impoexpo=="<?=Constantes::IMPO?>" && transporte!="<?=Constantes::AEREO?>") || impoexpo=="<?=Constantes::EXPO?>" ) ){ // Solamente cuando es importación aérea se permite en blanco
                 Ext.MessageBox.alert('Trayectos - Error:', 'Por favor indique el tiempo de transito y la frecuencia');
             }else{
@@ -133,8 +135,13 @@ Ext.extend(PanelTrayectoWindow, Ext.Window, {
                     // standardSubmit: false,
 
                     success:function(form,action){
-                        Ext.Msg.alert( "","Se ha guardado correctamente, es necesario actualizar la pagina para ver los cambios." );
+                        //Ext.Msg.alert( "","Se ha guardado correctamente, es necesario actualizar la pagina para ver los cambios." );
                         win.close();
+                        if( node ){
+                            node.reload();
+                        }
+
+
                     },
                     failure:function(form,action){
                         Ext.MessageBox.alert('Error Message', "Se ha presentado un error: "+action.result.errorInfo+" \n Codigo HTTP "+action.response.status);

@@ -881,7 +881,7 @@ Ext.extend(PanelFletesPorTrayecto, Ext.grid.EditorGridPanel, {
         }else{
             var orden = 888+this.store.getCount();
         }
-
+        
         if( ctxRecord.get("tipo")=="concepto" ){
             idconcepto = ctxRecord.get("iditem");
         }
@@ -889,6 +889,7 @@ Ext.extend(PanelFletesPorTrayecto, Ext.grid.EditorGridPanel, {
             idconcepto = ctxRecord.get("idconcepto");
         }
 
+        //alert( ctxRecord.get("trayecto") );
         var rec = new this.record({trayecto:ctxRecord.get("trayecto"),
                               nconcepto:'',
                               iditem:'',

@@ -30,7 +30,8 @@ PanelConsultaCiudades = function( config ){
             dataUrl:'<?=url_for("pricing/datosCiudades")?>',
             baseParams : {
                 impoexpo: this.impoexpo,
-                transporte: this.transporte
+                transporte: this.transporte,
+                modalidad: this.modalidad
             }
         }),
 
@@ -193,30 +194,34 @@ Ext.extend(PanelConsultaCiudades, Ext.tree.TreePanel, {
         }
     },
 
-    onContextMenu: function( node,  e ) {        
-        if( !this.readOnly ){
-            if(!this.menu){ // create context menu on first right click
-                this.menu = new Ext.menu.Menu({
-                enableScrolling : false,
-                items: [{
-                            text: 'Agregar trayecto',
-                            iconCls: 'add',
-                            scope:this,
-                            handler: function(){
-                                  this.crearTrayecto( node );
-                            }
-                        }]
-                });
+    onContextMenu: function( node,  e ) {   
+        var id = node.id;        
+        if( id.substring(0,4) == "traf" ){
+            if( !this.readOnly ){
+
+                if(!this.menu){ // create context menu on first right click
+                    this.menu = new Ext.menu.Menu({
+                    enableScrolling : false,
+                    items: [{
+                                text: 'Agregar trayecto',
+                                iconCls: 'add',
+                                scope:this,
+                                handler: function(){
+                                      this.crearTrayecto( node );
+                                }
+                            }]
+                    });
+                }
+                e.stopEvent();
+                this.menu.showAt(e.getXY());
             }
-            e.stopEvent();
-            this.menu.showAt(e.getXY());
         }
     },
 
     crearTrayecto: function( n ){
 
         
-        this.win = new PanelTrayectoWindow();        
+        this.win = new PanelTrayectoWindow({node: n});
 
         this.win.show();
         var fp = Ext.getCmp("trayecto-form");
@@ -229,7 +234,8 @@ Ext.extend(PanelConsultaCiudades, Ext.tree.TreePanel, {
             fp.getForm().findField("impoexpo").setValue( '<?=Constantes::IMPO?>' );
         }
         fp.getForm().findField("transporte").setValue( n.attributes.transporte );
-        fp.getForm().findField("modalidad").setValue( n.attributes.modalidad );        
+        fp.getForm().findField("modalidad").setValue( n.attributes.modalidad );
+
     }
     
 });
