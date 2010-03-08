@@ -15,8 +15,7 @@ class reportesNegActions extends sfActions
     const RUTINA = 18;
 
     public function getNivel( ){
-        
-        return 2;
+                
 		$this->nivel = $this->getUser()->getNivelAcceso( reportesNegActions::RUTINA );
          
 		if( $this->nivel==-1 ){
@@ -95,7 +94,18 @@ class reportesNegActions extends sfActions
 		$response->addJavaScript("extExtras/RowExpander",'last');
 		$response->addJavaScript("extExtras/CheckColumn",'last');
         
+        if( ($reporte->isNew() || $reporte->getCaVersion() == $reporte->getUltVersion())
+                &&!$reporte->existeReporteExteriorVersionActual() ){
+            $this->editable = true;
+        }else{
+            $this->editable = false;
+        }
 
+        //No permite editar si el usuario no realizo el reporte
+        $user = $this->getUser();
+        if( !$reporte->isNew() && $user->getUserId()!=$reporte->getCaUsucreado() ){
+            $this->editable = false;
+        }
 
 
 	}
@@ -212,6 +222,8 @@ class reportesNegActions extends sfActions
         $this->idrepresentante = $request->getParameter("idrepresentante");
         $this->idmaster = $request->getParameter("idmaster");
         $this->ca_notify = $request->getParameter("repnotify");
+        @$this->ca_continuacion = $bindValues["ca_continuacion"];
+
 
         $this->seguro_conf = $request->getParameter("seguro_conf");
 
@@ -272,9 +284,9 @@ class reportesNegActions extends sfActions
                              ->execute();
         $this->agentes = array();
         foreach( $agentes as $agente ){
-            $this->agentes[ $agente["t_ca_idtrafico"] ]["idagente"] = $agente["a_ca_idagente"];
-            $this->agentes[ $agente["t_ca_idtrafico"] ]["nombre"] = utf8_encode($agente["i_ca_nombre"]) ;
-            $this->agentes[ $agente["t_ca_idtrafico"] ]["pais"] = utf8_encode($agente["t_ca_nombre"]) ;
+            $this->agentes[ $agente["t_ca_idtrafico"] ][]=array("idagente" => $agente["a_ca_idagente"],
+                                                                "nombre" => utf8_encode($agente["i_ca_nombre"]),
+                                                                "pais" => utf8_encode($agente["t_ca_nombre"]));
         }
 
 
@@ -489,17 +501,27 @@ class reportesNegActions extends sfActions
                     }else{
                         $reporte->setCaIncoterms( null );
                     }
-
-
-                    $reporte->setCaNotify( $this->ca_notify );
-
-
                 }else{
                     $reporte->setCaIdproveedor( null );
                     $reporte->setCaOrdenProv( null );
                     $reporte->setCaIncoterms( $bindValues["ca_incoterms"] );
                     $reporte->setCaNotify( null );
+                    $reporte->setCaIdnotify( null );
                 }
+
+                //Notify solo aplica para impo maritimo o expo
+                if( $bindValues["ca_transporte"]==Constantes::MARITIMO||$bindValues["ca_impoexpo"]==Constantes::EXPO ){
+                    if( $this->ca_notify ){
+                        $reporte->setCaNotify( $this->ca_notify );
+                    }
+                    if( $this->idnotify ){
+                        $reporte->setCaIdnotify( $this->idnotify );
+                    }
+                }else{
+                    $reporte->setCaNotify( null );
+                    $reporte->setCaIdnotify( null );
+                }
+                
 
                 if( $this->idconsignatario ){
                     $reporte->setCaIdconsignatario( $this->idconsignatario );
@@ -513,11 +535,7 @@ class reportesNegActions extends sfActions
                     $reporte->setCaIdmaster( null );
                 }
 
-                if( $this->idnotify ){
-                    $reporte->setCaIdnotify( $this->idnotify );
-                }else{
-                    $reporte->setCaIdnotify( null );
-                }
+                
 
                 if( $this->idrepresentante ){
                     $reporte->setCaIdrepresentante( $this->idrepresentante );
@@ -564,7 +582,12 @@ class reportesNegActions extends sfActions
                     $reporte->setCaIdproducto( null );
                 }
 
-                
+                if( $bindValues["ca_comodato"]=="Sí" ){
+                    $reporte->setCaComodato( "Sí" );
+
+                }else{
+                    $reporte->setCaComodato( "No" );
+                }
                 
                 if( $bindValues["ca_colmas"]=="Sí" ){
                     $reporte->setCaColmas( "Sí" );
@@ -581,7 +604,11 @@ class reportesNegActions extends sfActions
                 //Continuacion
                 $reporte->setCaContinuacion( $bindValues["ca_continuacion"] );
                 $reporte->setCaContinuacionDest( $bindValues["ca_continuacion_dest"] );
-                $reporte->setCaContinuacionConf( $bindValues["ca_continuacion_conf"] );
+                if( $bindValues["ca_transporte"]==Constantes::MARITIMO ){
+                    $reporte->setCaContinuacionConf( $bindValues["ca_continuacion_conf"] );
+                }else{
+                    $reporte->setCaContinuacionConf( null );
+                }
 
                 //Corte de documentos
                 if( $bindValues["ca_impoexpo"]==Constantes::EXPO ){
@@ -590,11 +617,24 @@ class reportesNegActions extends sfActions
                 }else{
                     $reporte->setCaIdconsignar( $bindValues["ca_idconsignar_impo"] );
                     $reporte->setCaIdbodega( $bindValues["ca_idbodega"] );
-                    $reporte->setCaMastersame( $bindValues["ca_mastersame"] );
+                    
                 }
 
-                $reporte->setCaLiberacion( 0 );
-                $reporte->setCaTiempocredito( 0 );
+                $reporte->setCaLiberacion( null );
+                $reporte->setCaTiempocredito( null );
+                $cliente = $reporte->getCliente();
+                if( $cliente ){
+                    $libCliente = $cliente->getLibCliente();
+                    if( $libCliente ){
+                        if( $libCliente->getCaCupo()!=0 || $libCliente->getCaDiascredito() ){
+                            $reporte->setCaLiberacion( "Sí" );
+                        }else{
+                            $reporte->setCaLiberacion( "No" );
+                        }
+                        $reporte->setCaTiempocredito( $libCliente->getCaDiascredito()." Días" );
+                    }
+                }
+
                 if( $opcion!=1 ){ //Al copiar el reporte ya se coloco el usuario y la fecha
                     $reporte->stopBlaming();
                 }
@@ -695,56 +735,22 @@ class reportesNegActions extends sfActions
         $this->formAduana = $formAduana;
         $this->formSeguro = $formSeguro;
         $this->formExpo = $formExpo;
-        
-        
-		/*
-			
-		$c=new Criteria();
-		$c->addAscendingOrderByColumn(AgentePeer::CA_NOMBRE);
-		$this->agentes = AgentePeer::doSelect( $c );
-		
-		$c=new Criteria();
-		$c->addAscendingOrderByColumn( SiaPeer::CA_NOMBRE );
-		$this->sias = SiaPeer::doSelect( $c );
-				
-		$this->incoterms =  ParametroPeer::retrieveByCaso( "CU021" );
-				
-		$this->modalidades = ParametroPeer::retrieveByCaso( "CU011" );		
-		
-		
-		$this->consignar = ParametroPeer::retrieveByCaso( "CU055" );
-		$this->consignarMaster = ParametroPeer::retrieveByCaso( "CU048" );	
-		
-			
-		
-		$this->subModMar = ParametroPeer::retrieveByCaso( "CU051", null, $reporteNegocio->getCaImpoexpo() );
-		$this->subModAer = ParametroPeer::retrieveByCaso( "CU052", null, $reporteNegocio->getCaImpoexpo() );
-		$this->subModTer = ParametroPeer::retrieveByCaso( "CU053", null, $reporteNegocio->getCaImpoexpo() );
-		
-					
-		$c = new Criteria();
-		$c->addAscendingOrderByColumn( UsuarioPeer::CA_NOMBRE );
-		$criterion = $c->getNewCriterion( UsuarioPeer::CA_CARGO ,'Gerente Sucursal' );								
-		$criterion->addOr($c->getNewCriterion( UsuarioPeer::CA_CARGO , '%Ventas%', Criteria::LIKE ));			
-		$criterion->addOr($c->getNewCriterion( UsuarioPeer::CA_DEPARTAMENTO , '%Ventas%', Criteria::LIKE ));			
-		$criterion->addOr($c->getNewCriterion( UsuarioPeer::CA_DEPARTAMENTO , '%Comercial%', Criteria::LIKE ));
-		$c->add($criterion);
-		$this->comerciales = UsuarioPeer::doSelect( $c );	
-			
-			
-			
-						
-		$c = new Criteria();
-		$this->monedas = MonedaPeer::doSelect($c);
-			
-			
-						
-		$this->user = $this->getUser();									
-		*/
-		
-/*		 */
 
 
+        if( ($reporte->isNew() || $reporte->getCaVersion() == $reporte->getUltVersion())
+                &&!$reporte->existeReporteExteriorVersionActual() ){
+            $this->editable = true;
+        }else{
+            $this->editable = false;
+        }
+        
+        //No permite editar si el usuario no realizo el reporte
+        $user = $this->getUser();
+        if( !$reporte->isNew() && $user->getUserId()!=$reporte->getCaUsucreado() ){
+            $this->editable = false;
+        }
+            
+       
         
 	}
 
@@ -818,7 +824,7 @@ class reportesNegActions extends sfActions
                              ->innerJoin("t.TipoRecargo tr")
                              ->where("t.ca_idreporte = ?", $reporte->getCaIdreporte())
                              ->addWhere("t.ca_idconcepto = ?", 9999 )
-                             ->addWhere("tr.ca_tipo = ?", Constantes::RECARGO_EN_ORIGEN )
+                             ->addWhere("tr.ca_tipo like ?", "%".Constantes::RECARGO_EN_ORIGEN."%" )
                              ->execute();
 
         if( count($recargos)>0){
@@ -1035,7 +1041,7 @@ class reportesNegActions extends sfActions
                                 ->from("RepGasto g")
                                 ->innerJoin("g.TipoRecargo t")
                                 ->where("g.ca_idreporte = ? AND g.ca_idconcepto = ?", array($idreporte, $idconcepto))
-                                ->addWhere("t.ca_tipo = ?", Constantes::RECARGO_EN_ORIGEN)                                
+                                ->addWhere("t.ca_tipo like ?", "%".Constantes::RECARGO_EN_ORIGEN."%")
                                 ->execute();
 
             foreach( $gastos as $gasto ){
@@ -1089,7 +1095,7 @@ class reportesNegActions extends sfActions
                              ->innerJoin("t.TipoRecargo tr")
                              ->where("t.ca_idreporte = ?", $reporte->getCaIdreporte())
                              ->addWhere("t.ca_idconcepto = ?", 9999 )
-                             ->addWhere("tr.ca_tipo = ?", Constantes::RECARGO_LOCAL )
+                             ->addWhere("tr.ca_tipo like ?", "%".Constantes::RECARGO_LOCAL."%" )
                              ->execute();
 
         
@@ -1475,8 +1481,9 @@ class reportesNegActions extends sfActions
 
                 $tarea->setCaIdlistatarea( 4 );
                 $tarea->setCaFchcreado( date("Y-m-d H:i:s") );
-                $festivos = Utils::getFestivos();
-                $tarea->setCaFchvencimiento( date("Y-m-d H:i:s",Utils::addTimeWorkingHours( $festivos, date("Y-m-d H:i:s") , 57600))); // dos días habiles
+                $festivos = TimeUtils::getFestivos();
+                $tarea->setTiempo( TimeUtils::getFestivos(), 57600); // dos días habiles
+                
                 $tarea->setCaPrioridad( 1 );
                 $tarea->setCaUsucreado( "Administrador" );
 
@@ -1513,8 +1520,8 @@ class reportesNegActions extends sfActions
             $tarea->setCaIdlistatarea( 6 );
             $tarea->setCaFchcreado( date("Y-m-d H:i:s") );
             $tarea->setCaPrioridad( 1 );
-            $festivos = Utils::getFestivos();
-            $tarea->setCaFchvencimiento( date("Y-m-d H:i:s", Utils::addTimeWorkingHours( $festivos, date("Y-m-d H:i:s") , 57600))); // dos días habiles
+            $festivos = TimeUtils::getFestivos();
+            $tarea->setTiempo( TimeUtils::getFestivos(), 57600); // dos días habiles
             $tarea->setCaUsucreado( "Administrador" );
             $titulo = "Se ha creado el RN".$reporte->getCaConsecutivo()." [".$reporte->getCaModalidad()." ".$reporte->getOrigen()->getCaCiudad()."->".$reporte->getDestino()->getCaCiudad()."]";
             $tarea->setCaTitulo( $titulo );
@@ -1547,7 +1554,32 @@ class reportesNegActions extends sfActions
     }
 	
 	
-	
+	/**
+	*
+	* @author Andres Botero
+	*/
+    public function executeUnificarReporte( $request ){
+        $this->forward404Unless( $request->getParameter( "id" ) );
+		$reporte = Doctrine::getTable("Reporte")->find($request->getParameter( "id" ));
+		$this->forward404Unless( $reporte );
+
+
+        $consecutivo = $request->getParameter( "reporte" );
+
+        if( $consecutivo ){
+            $reporte2 = Doctrine::getTable("Reporte")->retrieveByConsecutivo($consecutivo);
+            $this->forward404Unless( $reporte2 );
+            Doctrine::getTable("Reporte")
+                      ->createQuery("r")
+                      ->update()
+                      ->set("ca_idgrupo", $reporte->getCaIdreporte())
+                      ->where("ca_consecutivo = ?", $consecutivo)
+                      ->execute();
+           $this->redirect("reportesNeg/consultaReporte?id=".$reporte->getCaIdreporte());
+        }
+
+        $this->reporte = $reporte;
+    }
 	
 
 }
