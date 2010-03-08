@@ -148,8 +148,8 @@ class reportesActions extends sfActions
 
                 $tarea->setCaIdlistatarea( 4 );
                 $tarea->setCaFchcreado( date("Y-m-d H:i:s") );
-                $festivos = Utils::getFestivos();
-                $tarea->setCaFchvencimiento( date("Y-m-d H:i:s",Utils::addTimeWorkingHours( $festivos, date("Y-m-d H:i:s") , 57600))); // dos días habiles
+                $festivos = TimeUtils::getFestivos();
+                $tarea->setTiempo( TimeUtils::getFestivos(), 57600); // dos días habiles
                 $tarea->setCaPrioridad( 1 );
                 $tarea->setCaUsucreado( "Administrador" );
 
@@ -186,8 +186,8 @@ class reportesActions extends sfActions
             $tarea->setCaIdlistatarea( 6 );
             $tarea->setCaFchcreado( date("Y-m-d H:i:s") );
             $tarea->setCaPrioridad( 1 );
-            $festivos = Utils::getFestivos();
-            $tarea->setCaFchvencimiento( date("Y-m-d H:i:s", Utils::addTimeWorkingHours( $festivos, date("Y-m-d H:i:s") , 57600))); // dos días habiles
+            $festivos = TimeUtils::getFestivos();
+            $tarea->setTiempo( TimeUtils::getFestivos(), 57600); // dos días habiles
             $tarea->setCaUsucreado( "Administrador" );
             $titulo = "Se ha creado el RN".$reporte->getCaConsecutivo()." [".$reporte->getCaModalidad()." ".$reporte->getOrigen()->getCaCiudad()."->".$reporte->getDestino()->getCaCiudad()."]";
             $tarea->setCaTitulo( $titulo );
