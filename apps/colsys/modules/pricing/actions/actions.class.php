@@ -1185,8 +1185,7 @@ class pricingActions extends sfActions
 			$recargo->setCaIdrecargo( $idrecargo );
 			$recargo->setCaModalidad( $modalidad );
 			$recargo->setCaImpoexpo( utf8_decode($impoexpo) );
-			$recargo->setCaVlrrecargo( 0 );
-			//$recargo->setCaVlrminimo( 0 );
+			$recargo->setCaVlrrecargo( 0 );			
 		}
 		$user = $this->getUser();
 		$recargo->setCaUsucreado( $user->getUserId() );
