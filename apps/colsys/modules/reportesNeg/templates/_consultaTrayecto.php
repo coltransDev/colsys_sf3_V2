@@ -62,11 +62,17 @@ if( $reporte->getcaContinuacion()!="N/A" ){
 
 				</td>
                 <td width="67%" valign="top" >
+                <?
+                if( $reporte->getCaTransporte()==Constantes::MARITIMO){
+                ?>
                 <b>Notificar a:</b><br />
                 <?
-                $usuario = Doctrine::getTable("Usuario")->find( $reporte->getCaContinuacionConf() );
+                    if( $reporte->getCaContinuacionConf() ){
+                        $usuario = Doctrine::getTable("Usuario")->find( $reporte->getCaContinuacionConf() );
+                        echo $usuario->getCaNombre();
+                    }
+                }
                 ?>
-                <?=$usuario->getCaNombre()?>
         </td>
     </tr>
 </table>

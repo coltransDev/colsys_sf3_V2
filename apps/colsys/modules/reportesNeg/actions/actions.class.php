@@ -93,7 +93,17 @@ class reportesNegActions extends sfActions
         $response = sfContext::getInstance()->getResponse();
 		$response->addJavaScript("extExtras/RowExpander",'last');
 		$response->addJavaScript("extExtras/CheckColumn",'last');
+
+        $this->grupoReportes = Doctrine::getTable("Reporte")
+                      ->createQuery("r")
+                      ->innerJoin("r.GrupoReporte g")
+                      ->addWhere("g.ca_consecutivo = ?", $reporte->getCaConsecutivo())
+                      ->distinct()
+                      ->execute();
+
         
+        //exit();
+
         if( ($reporte->isNew() || $reporte->getCaVersion() == $reporte->getUltVersion())
                 &&!$reporte->existeReporteExteriorVersionActual() ){
             $this->editable = true;
@@ -106,6 +116,13 @@ class reportesNegActions extends sfActions
         if( !$reporte->isNew() && $user->getUserId()!=$reporte->getCaUsucreado() ){
             $this->editable = false;
         }
+        
+        //No permite editar reportes que se hayan agrupado 
+        if( $reporte->getCaIdgrupo()){
+            $this->editable = false;
+        }
+
+
 
 
 	}
@@ -736,7 +753,7 @@ class reportesNegActions extends sfActions
         $this->formSeguro = $formSeguro;
         $this->formExpo = $formExpo;
 
-
+        $this->nuevaVersion = true;
         if( ($reporte->isNew() || $reporte->getCaVersion() == $reporte->getUltVersion())
                 &&!$reporte->existeReporteExteriorVersionActual() ){
             $this->editable = true;
@@ -748,6 +765,12 @@ class reportesNegActions extends sfActions
         $user = $this->getUser();
         if( !$reporte->isNew() && $user->getUserId()!=$reporte->getCaUsucreado() ){
             $this->editable = false;
+        }
+
+        //No permite editar reportes que se hayan agrupado
+        if( $reporte->getCaIdgrupo()){
+            $this->editable = false;
+            $this->nuevaVersion = false;
         }
             
        
@@ -1472,13 +1495,8 @@ class reportesNegActions extends sfActions
 
             if( $reporte->getCaImpoexpo()==Constantes::IMPO ||  $reporte->getCaImpoexpo()==Constantes::TRIANGULACION ){
 
-                $tarea = new NotTarea();
-                if( $reporte->getCaTransporte()==Constantes::MARITIMO ){
-                    $tarea->setCaUrl( "/colsys_php/traficos_sea.php?boton=Consultar&id=".$reporte->getCaIdreporte() );
-                }else{
-                    $tarea->setCaUrl( "/colsys_php/traficos_air.php?boton=Consultar&id=".$reporte->getCaIdreporte() );
-                }
-
+                $tarea = new NotTarea();                
+                $tarea->setCaUrl( "reporteExt/crearReporte/idreporte/".$reporte->getCaIdreporte() );
                 $tarea->setCaIdlistatarea( 4 );
                 $tarea->setCaFchcreado( date("Y-m-d H:i:s") );
                 $festivos = TimeUtils::getFestivos();
@@ -1569,13 +1587,27 @@ class reportesNegActions extends sfActions
         if( $consecutivo ){
             $reporte2 = Doctrine::getTable("Reporte")->retrieveByConsecutivo($consecutivo);
             $this->forward404Unless( $reporte2 );
+            //Mueve los status al nuevo reporte
+            Doctrine::getTable("RepStatus")
+                      ->createQuery("s")                      
+                      ->update()
+                      ->set("s.ca_idreporte", $reporte->getCaIdreporte())
+                      ->where("s.ca_idreporte IN (SELECT r2.ca_idreporte FROM Reporte r2 WHERE r2.ca_consecutivo = ?)", $consecutivo)
+                      ->execute();
+
+            //Coloca el grupo a los reportes y los anula
             Doctrine::getTable("Reporte")
                       ->createQuery("r")
                       ->update()
                       ->set("ca_idgrupo", $reporte->getCaIdreporte())
+                      ->set("ca_usuanulado", "'".$this->getuser()->getUserId()."'")
+                      ->set("ca_fchanulado", "'".date("Y-m-d H:i:s")."'")
+                      ->set("ca_detanulado", "'Unificado con el reporte ".$reporte->getCaConsecutivo()."'")
                       ->where("ca_consecutivo = ?", $consecutivo)
                       ->execute();
-           $this->redirect("reportesNeg/consultaReporte?id=".$reporte->getCaIdreporte());
+
+            
+            $this->redirect("reportesNeg/consultaReporte?id=".$reporte->getCaIdreporte());
         }
 
         $this->reporte = $reporte;

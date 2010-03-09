@@ -50,7 +50,7 @@ class reportesNegComponents extends sfComponents
         $this->recargos = Doctrine::getTable("TipoRecargo")
                                      ->createQuery("c")
                                      ->select("ca_idrecargo as ca_idconcepto, ca_recargo as ca_concepto")
-                                     ->addWhere("c.ca_tipo = ? ", Constantes::RECARGO_EN_ORIGEN )
+                                     ->addWhere("c.ca_tipo like ? ", "%".Constantes::RECARGO_EN_ORIGEN."%" )
                                      /*->addWhere("c.ca_impoexpo LIKE ? ", $impoexpo )
                                      ->addWhere("c.ca_transporte LIKE ? ", $this->reporte->getCaTransporte() )*/
                                      ->addOrderBy("c.ca_recargo")
@@ -79,7 +79,7 @@ class reportesNegComponents extends sfComponents
         $this->recargos = Doctrine::getTable("TipoRecargo")
                                      ->createQuery("c")
                                      ->select("ca_idrecargo as ca_idconcepto, ca_recargo as ca_concepto")
-                                     ->addWhere("c.ca_tipo = ? ", Constantes::RECARGO_LOCAL )
+                                     ->addWhere("c.ca_tipo like ? ", "%".Constantes::RECARGO_LOCAL."%" )
                                      /*->addWhere("c.ca_impoexpo LIKE ? ", $impoexpo )
                                      ->addWhere("c.ca_transporte LIKE ? ", $this->reporte->getCaTransporte() )*/
                                      ->addOrderBy("c.ca_recargo")

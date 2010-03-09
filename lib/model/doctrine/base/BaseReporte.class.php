@@ -37,6 +37,7 @@
  * @property string $ca_seguro
  * @property string $ca_liberacion
  * @property string $ca_tiempocredito
+ * @property string $ca_comodato
  * @property string $ca_preferencias_clie
  * @property string $ca_instrucciones
  * @property integer $ca_idlinea
@@ -57,6 +58,7 @@
  * @property integer $ca_idseguimiento
  * @property string $ca_detanulado
  * @property boolean $ca_mcia_peligrosa
+ * @property integer $ca_idgrupo
  * @property timestamp $ca_fchcreado
  * @property string $ca_usucreado
  * @property timestamp $ca_fchactualizado
@@ -82,7 +84,9 @@
  * @property IdsAgente $IdsAgente
  * @property IdsProveedor $IdsProveedor
  * @property Tercero $Proveedor
+ * @property Reporte $GrupoReporte
  * @property Doctrine_Collection $Email
+ * @property Doctrine_Collection $Reporte
  * @property Doctrine_Collection $RepSeguro
  * @property Doctrine_Collection $RepAduana
  * @property Doctrine_Collection $RepExpo
@@ -121,6 +125,7 @@
  * @method string              getCaSeguro()             Returns the current record's "ca_seguro" value
  * @method string              getCaLiberacion()         Returns the current record's "ca_liberacion" value
  * @method string              getCaTiempocredito()      Returns the current record's "ca_tiempocredito" value
+ * @method string              getCaComodato()           Returns the current record's "ca_comodato" value
  * @method string              getCaPreferenciasClie()   Returns the current record's "ca_preferencias_clie" value
  * @method string              getCaInstrucciones()      Returns the current record's "ca_instrucciones" value
  * @method integer             getCaIdlinea()            Returns the current record's "ca_idlinea" value
@@ -141,6 +146,7 @@
  * @method integer             getCaIdseguimiento()      Returns the current record's "ca_idseguimiento" value
  * @method string              getCaDetanulado()         Returns the current record's "ca_detanulado" value
  * @method boolean             getCaMciaPeligrosa()      Returns the current record's "ca_mcia_peligrosa" value
+ * @method integer             getCaIdgrupo()            Returns the current record's "ca_idgrupo" value
  * @method timestamp           getCaFchcreado()          Returns the current record's "ca_fchcreado" value
  * @method string              getCaUsucreado()          Returns the current record's "ca_usucreado" value
  * @method timestamp           getCaFchactualizado()     Returns the current record's "ca_fchactualizado" value
@@ -166,7 +172,9 @@
  * @method IdsAgente           getIdsAgente()            Returns the current record's "IdsAgente" value
  * @method IdsProveedor        getIdsProveedor()         Returns the current record's "IdsProveedor" value
  * @method Tercero             getProveedor()            Returns the current record's "Proveedor" value
+ * @method Reporte             getGrupoReporte()         Returns the current record's "GrupoReporte" value
  * @method Doctrine_Collection getEmail()                Returns the current record's "Email" collection
+ * @method Doctrine_Collection getReporte()              Returns the current record's "Reporte" collection
  * @method Doctrine_Collection getRepSeguro()            Returns the current record's "RepSeguro" collection
  * @method Doctrine_Collection getRepAduana()            Returns the current record's "RepAduana" collection
  * @method Doctrine_Collection getRepExpo()              Returns the current record's "RepExpo" collection
@@ -204,6 +212,7 @@
  * @method Reporte             setCaSeguro()             Sets the current record's "ca_seguro" value
  * @method Reporte             setCaLiberacion()         Sets the current record's "ca_liberacion" value
  * @method Reporte             setCaTiempocredito()      Sets the current record's "ca_tiempocredito" value
+ * @method Reporte             setCaComodato()           Sets the current record's "ca_comodato" value
  * @method Reporte             setCaPreferenciasClie()   Sets the current record's "ca_preferencias_clie" value
  * @method Reporte             setCaInstrucciones()      Sets the current record's "ca_instrucciones" value
  * @method Reporte             setCaIdlinea()            Sets the current record's "ca_idlinea" value
@@ -224,6 +233,7 @@
  * @method Reporte             setCaIdseguimiento()      Sets the current record's "ca_idseguimiento" value
  * @method Reporte             setCaDetanulado()         Sets the current record's "ca_detanulado" value
  * @method Reporte             setCaMciaPeligrosa()      Sets the current record's "ca_mcia_peligrosa" value
+ * @method Reporte             setCaIdgrupo()            Sets the current record's "ca_idgrupo" value
  * @method Reporte             setCaFchcreado()          Sets the current record's "ca_fchcreado" value
  * @method Reporte             setCaUsucreado()          Sets the current record's "ca_usucreado" value
  * @method Reporte             setCaFchactualizado()     Sets the current record's "ca_fchactualizado" value
@@ -249,7 +259,9 @@
  * @method Reporte             setIdsAgente()            Sets the current record's "IdsAgente" value
  * @method Reporte             setIdsProveedor()         Sets the current record's "IdsProveedor" value
  * @method Reporte             setProveedor()            Sets the current record's "Proveedor" value
+ * @method Reporte             setGrupoReporte()         Sets the current record's "GrupoReporte" value
  * @method Reporte             setEmail()                Sets the current record's "Email" collection
+ * @method Reporte             setReporte()              Sets the current record's "Reporte" collection
  * @method Reporte             setRepSeguro()            Sets the current record's "RepSeguro" collection
  * @method Reporte             setRepAduana()            Sets the current record's "RepAduana" collection
  * @method Reporte             setRepExpo()              Sets the current record's "RepExpo" collection
@@ -369,6 +381,9 @@ abstract class BaseReporte extends myDoctrineRecord
         $this->hasColumn('ca_tiempocredito', 'string', null, array(
              'type' => 'string',
              ));
+        $this->hasColumn('ca_comodato', 'string', null, array(
+             'type' => 'string',
+             ));
         $this->hasColumn('ca_preferencias_clie', 'string', null, array(
              'type' => 'string',
              ));
@@ -428,6 +443,9 @@ abstract class BaseReporte extends myDoctrineRecord
              ));
         $this->hasColumn('ca_mcia_peligrosa', 'boolean', null, array(
              'type' => 'boolean',
+             ));
+        $this->hasColumn('ca_idgrupo', 'integer', null, array(
+             'type' => 'integer',
              ));
         $this->hasColumn('ca_fchcreado', 'timestamp', null, array(
              'type' => 'timestamp',
@@ -531,9 +549,17 @@ abstract class BaseReporte extends myDoctrineRecord
              'local' => 'ca_idproveedor',
              'foreign' => 'ca_idtercero'));
 
+        $this->hasOne('Reporte as GrupoReporte', array(
+             'local' => 'ca_idgrupo',
+             'foreign' => 'ca_idreporte'));
+
         $this->hasMany('Email', array(
              'local' => 'ca_idreporte',
              'foreign' => 'ca_idcaso'));
+
+        $this->hasMany('Reporte', array(
+             'local' => 'ca_idreporte',
+             'foreign' => 'ca_idgrupo'));
 
         $this->hasMany('RepSeguro', array(
              'local' => 'ca_idreporte',

@@ -21,8 +21,8 @@ if( $ca_notify ){
         <th colspan="4"><b>Datos del cliente</b></th>
     </tr>   
     <tr>
-        <td><b>Nombre:</b></td>
-        <td>
+        <td width="15%"><b>Nombre:</b></td>
+        <td width="45%">
             <?
             echo $form['ca_idconcliente']->renderError();
 
@@ -30,8 +30,8 @@ if( $ca_notify ){
             <input type="hidden" name="ca_idconcliente" id="ca_idconcliente"  value="<?=$ca_idconcliente?$ca_idconcliente:$reporte->getCaIdconcliente()?>">
             <input type="text" name="idconcliente" id="idconcliente">
         </td>
-        <td><b> Contacto: </b></td>
-        <td>&nbsp;
+        <td width="15%"><b> Contacto: </b></td>
+        <td width="25%">&nbsp;
             <div id="div_contacto" align="left">
                  <?
                 if( $reporte->getCaIdconcliente() ){
@@ -42,8 +42,8 @@ if( $ca_notify ){
         </td>
     </tr>
     <tr>
-        <td><b>Orden del Cliente:</b></td>
-        <td>
+        <td ><b>Orden del Cliente:</b></td>
+        <td >
             <?
             echo $form['ca_orden_clie']->renderError();
             if( $reporte ){
@@ -52,9 +52,13 @@ if( $ca_notify ){
             echo $form['ca_orden_clie']->render();
             ?>
         </td>
-        <td><b> Reportar como Notify: </b></td>
-        <td>
-            <input type="radio" name="repnotify" value="0" <?=$notify==0?"checked='checked'":""?> />
+        
+        <td colspan="2">
+
+            <div id="repnotify_0">
+                <b> Reportar como Notify: </b>
+                <input type="radio" name="repnotify" value="0" <?=$notify==0?"checked='checked'":""?> />
+            </div>
         </td>
     </tr>
     <tr id="incoterms-expo">
@@ -67,6 +71,58 @@ if( $ca_notify ){
             }
             echo $form['ca_incoterms']->render();
             ?>
+        </td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+    </tr>
+    <?
+    $cliente = $reporte->getCliente();
+    if( $cliente ){
+        $libCliente = $cliente->getLibCliente();
+    }else{
+        $libCliente = null;
+    }
+    ?>
+    <tr>
+        <td><b>Lib. Autom&aacute;tica:</b></td>
+        <td>
+            <div id="div_libautomatica">
+             <?
+             if( $libCliente ){
+
+                 if( $libCliente->getCaCupo()!=0 || $libCliente->getCaDiascredito() ){
+                    echo "S&iacute;";
+                 }else{
+                     echo "No";
+                 }
+             }
+             ?>
+            </div>
+        </td>
+        <td><b>Firma Contrato de Comodato</b></td>
+        <td>
+            <?
+            echo $form['ca_comodato']->renderError();
+            if( $reporte && $reporte->getCaComodato() ){
+                $form->setDefault('ca_comodato', $reporte->getCaComodato() );
+            }else{
+                $form->setDefault('ca_comodato', "No" );
+            }
+            echo $form['ca_comodato']->render();
+            ?>
+        </td>
+    </tr>
+    <tr>
+        
+        <td><b>Tiempo de Cr&eacute;dito:</b></td>
+        <td>
+            <div id="div_diascredito">
+             <?
+             if( $libCliente && $libCliente->getCaDiascredito() ){
+                 echo $libCliente->getCaDiascredito()." D&iacute;as";
+             }
+             ?>
+            </div>
         </td>
         <td>&nbsp;</td>
         <td>&nbsp;</td>

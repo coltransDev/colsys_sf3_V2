@@ -50,8 +50,9 @@ $usuarios = $sf_data->getRaw("usuarios");
                 ?>
                 &nbsp;
                 <?
+                echo $repseguro->getCaIdmonedaVlr();
                 echo $formSeguro['ca_idmoneda_vlr']->renderError();
-                if( $repseguro ){
+                if( $repseguro && $repseguro->getCaIdmonedaVlr()){
                     $formSeguro->setDefault('ca_idmoneda_vlr', $repseguro->getCaIdmonedaVlr() );
                 }else{
                     $formSeguro->setDefault('ca_idmoneda_vlr', "USD");
@@ -70,7 +71,7 @@ $usuarios = $sf_data->getRaw("usuarios");
             &nbsp;
             <?
             echo $formSeguro['ca_idmoneda_pol']->renderError();
-            if( $repseguro ){
+            if( $repseguro && $repseguro->getCaIdmonedaPol() ){
                 $formSeguro->setDefault('ca_idmoneda_pol', $repseguro->getCaIdmonedaPol() );
             }else{
                 $formSeguro->setDefault('ca_idmoneda_pol', "USD");
@@ -97,7 +98,7 @@ $usuarios = $sf_data->getRaw("usuarios");
             &nbsp;
             <?
             echo $formSeguro['ca_idmoneda_vta']->renderError();
-            if( $repseguro ){
+            if( $repseguro && $repseguro->getCaIdmonedaVta() ){
                 $formSeguro->setDefault('ca_idmoneda_vta', $repseguro->getCaIdmonedaVta() );
             }else{
                 $formSeguro->setDefault('ca_idmoneda_vta', "USD");

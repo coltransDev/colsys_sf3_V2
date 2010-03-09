@@ -46,7 +46,13 @@ switch($action){
 		$button[$i]["image"]="22x22/cancel.gif";
         $button[$i]["onClick"]="ventanaAnularReporte()";
 		$button[$i]["link"]= "#";
-        $i++;     
+        $i++;
+
+        $button[$i]["name"]="Unificar ";
+		$button[$i]["tooltip"]="Copia las comunicaciones existentes de un reporte a este reporte";
+		$button[$i]["image"]="22x22/copy_newv.gif";
+		$button[$i]["link"]= "reportesNeg/unificarReporte?id=".$this->getRequestParameter("id").$opcion;
+        $i++;
 
 		break;	
 	case "verReporte":		
@@ -63,7 +69,16 @@ switch($action){
 
         $i++;		
 		
-		break;		
+		break;
+    case "unificarReporte":
+		$button[$i]["name"]="Volver ";
+		$button[$i]["tooltip"]="Vuelve a la pagina anterior";
+		$button[$i]["image"]="22x22/1leftarrow.gif";
+		$button[$i]["link"]= "reportesNeg/consultaReporte?id=".$this->getRequestParameter("id").$opcion;
+		$i++;
+
+
+		break;
 }
 
 

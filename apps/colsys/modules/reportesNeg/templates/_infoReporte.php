@@ -14,6 +14,48 @@
     <?
     include_component("reportesNeg", "consultaTrayecto", array("reporte"=>$reporte));
     ?>
+    <?
+    if( count($grupoReportes)>0 ){
+    ?>
+    
+    <table class="tableList" width="100%">
+        <tr>
+            <th><b>Unificaci&oacute;n de reportes</b></th>
+        </tr>
+        
+        <?
+        foreach( $grupoReportes as $rep){
+            ?>
+            <tr>
+                <td>
+                <?=link_to($rep->getCaConsecutivo()." ".$rep->getCaVersion(), "reportesNeg/consultaReporte?id=".$rep->getCaIdreporte())."<br />";?>
+                </td>
+            </tr>
+            <?
+        }
+        ?>        
+   </table>    
+    <?
+    }
+    if( $reporte->getCaIdgrupo() ){
+        $reporteUnificado = $reporte->getGrupoReporte();
+
+    ?>
+    <table class="tableList" width="100%">
+        <tr>
+            <th><b>Este reporte se ha unificado con:</b></th>
+        </tr>
+       
+        <tr>
+            <td>
+            <?=link_to($reporteUnificado->getCaConsecutivo()." ".$reporteUnificado->getCaVersion(), "reportesNeg/consultaReporte?id=".$reporteUnificado->getCaIdreporte())."<br />";?>
+            </td>
+        </tr>
+       
+   </table>
+    <?
+    }
+    ?>
 </div>
 <div id="cliente" class="x-hide-display">
     <table class="tableList alignLeft" width="100%">
@@ -45,6 +87,29 @@
                         </tr>
                         <tr>
                             <td><b>Correo   Electr&oacute;nico: </b> <?=$contacto->getCaEmail()?></td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                        </tr>
+                        <?
+                        if( $reporte->getCaImpoexpo()!=Constantes::EXPO ){
+                        ?>
+                        <tr >
+                            <td><b>Lib. Autom&aacute;tica:</b>
+                                <?=$reporte->getCaLiberacion()?>
+                            </td>
+                            <td><b>Firma Contrato de Comodato:</b>
+                                <?=$reporte->getCaComodato()?>
+                            </td>
+                            <td>&nbsp;</td>
+                        </tr>
+                        <?
+                        }
+                        ?>
+                        <tr>
+
+                            <td><b>Tiempo de Cr&eacute;dito:</b>
+                                <?=$reporte->getCaTiempocredito()?>
+                            </td>
                             <td>&nbsp;</td>
                             <td>&nbsp;</td>
                         </tr>
@@ -152,6 +217,9 @@ if($reporte->getCaImpoexpo()==Constantes::EXPO){
 </div>
 <?
 }
+
+
+
 
 
 

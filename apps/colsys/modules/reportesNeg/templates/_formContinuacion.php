@@ -24,17 +24,17 @@
     </tr>
     <tr id="continuacion-row0">
         <td width="33%" valign="top" ><b>Destino Final:</b><br />
-                <?
-                echo $form['ca_continuacion_dest']->renderError();
-                if( $reporte ){
-                    $form->setDefault('ca_continuacion_dest', $reporte->getCaContinuacionDest() );
-                }
-                echo $form['ca_continuacion_dest']->render();
-                ?>
-                
-                
-				</td>
-                <td width="67%" valign="top" >
+            <?
+            echo $form['ca_continuacion_dest']->renderError();
+            if( $reporte ){
+                $form->setDefault('ca_continuacion_dest', $reporte->getCaContinuacionDest() );
+            }
+            echo $form['ca_continuacion_dest']->render();
+            ?>
+
+        </td>
+        <td width="67%" valign="top" >
+            <div id="notificar_otm">
                 <b>Notificar a:</b><br />
 
                 <?
@@ -42,8 +42,11 @@
                 if( $reporte ){
                     $form->setDefault('ca_continuacion_conf', $reporte->getCaContinuacionConf() );
                 }
+                               
+
                 echo $form['ca_continuacion_conf']->render();
                 ?>
+            </div>
         </td>
     </tr>
 </table>

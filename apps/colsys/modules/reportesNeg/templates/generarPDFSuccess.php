@@ -70,7 +70,7 @@ $pdf->SetWidths ( array (30, 85, 85 ) );
 $pdf->SetAligns ( array ("C", "C", "C" ) );
 $pdf->SetStyles ( array ("", "B", "B" ) );
 $pdf->SetFills ( array (1, 1, 1 ) );
-$pdf->Row ( array ('1. Impor/Exportación', '2. Origen', '3. Destino' ) );
+$pdf->Row ( array ('Clase', 'Origen', 'Destino' ) );
 $pdf->SetFills ( array (0, 0, 0 ) );
 
 
@@ -87,9 +87,9 @@ $pdf->SetAligns(array("L","L","L","L","L","L"));
 $pdf->SetFills(array(0,0,0,0,0,0));
 $pdf->SetStyles(array("B","","B","","B",""));
 if ($reporte->getCaImpoexpo () == Constantes::IMPO ) {
-    $pdf->Row(array('4. Fch.Despacho:',$reporte->getCaFchdespacho () ,'5. Agente:', $agente->getIds()->getCaNombre() ));
+    $pdf->Row(array('Fch.Despacho:',$reporte->getCaFchdespacho () ,'Agente:', $agente->getIds()->getCaNombre() ));
 }else{
-    $pdf->Row ( array ('4. Fch.Despacho:', $reporte->getCaFchdespacho (), '5. Incoterms:', $reporte->getCaIncoterms () ) );
+    $pdf->Row ( array ('Fch.Despacho:', $reporte->getCaFchdespacho (), 'Incoterms:', $reporte->getCaIncoterms () ) );
 }
 
 $pdf->SetWidths(array(200));
@@ -131,13 +131,13 @@ if ($reporte->getCaImpoexpo () == Constantes::EXPO ) {
         $pdf->SetWidths ( array (30, 25, 145 ) );
         $pdf->SetFills ( array (1, 0, 0, 0, 0 ) );
         $pdf->SetStyles ( array ("B", "B", "", "B", "" ) );
-        $pdf->Row ( array ('10. Agente:', '10.1 Nombre:', $agente->getCaNombre () ) );
+        $pdf->Row ( array ('Agente:', '10.1 Nombre:', $agente->getCaNombre () ) );
         $pdf->SetWidths ( array (5, 25, 170 ) );
-        $pdf->Row ( array ('', '10.2 Dirección:', str_replace ( "|", " ", $agente->getCaDireccion () . " " . $agente->getCaZipcode () ) ) );
+        $pdf->Row ( array ('', 'Dirección:', str_replace ( "|", " ", $agente->getCaDireccion () . " " . $agente->getCaZipcode () ) ) );
         $pdf->SetWidths ( array (5, 25, 40, 15, 30, 18, 67 ) );
         $pdf->SetFills ( array (1, 0, 0, 0, 0, 0, 0 ) );
         $pdf->SetStyles ( array ("B", "B", "", "B", "", "B", "" ) );
-        $pdf->Row ( array ('', '10.3 Teléfono:', $agente->getCaTelefonos (), '10.4 Fax:', $agente->getCaFax (), '10.5 E-mail:', $agente->getCaEmail () ) );
+        $pdf->Row ( array ('', 'Teléfono:', $agente->getCaTelefonos (), 'Fax:', $agente->getCaFax (), 'E-mail:', $agente->getCaEmail () ) );
     }
 
 
@@ -159,12 +159,12 @@ foreach( $idproveedores as $idprov ){
     $pdf->SetWidths(array(25,25,85,25,40));
     $pdf->SetFills(array(1,0,0,0,0,0,0));
     $pdf->SetStyles(array("B","B","","B",""));
-    $pdf->Row(array('Proveedor:','7. Nombre:',$tercero->getCaNombre(),'7.1 Orden:',$orden));
+    $pdf->Row(array('Proveedor:','Nombre:',$tercero->getCaNombre(),'Orden:',$orden));
     $pdf->SetWidths(array(5,20,70,25,80));
-    $pdf->Row(array('','7.2 Contacto:',$tercero->getCaContacto(),'7.3 Dirección:',$tercero->getCaDireccion()));
+    $pdf->Row(array('','Contacto:',$tercero->getCaContacto(),'Dirección:',$tercero->getCaDireccion()));
     $pdf->SetWidths(array(5,20,40,15,30,18,40,22,10));
     $pdf->SetStyles(array("B","B","","B","","B","","B",""));
-    $pdf->Row(array('','7.4 Teléfono:',$tercero->getCaTelefonos(),'7.5 Fax:',$tercero->getCaFax(),'7.6 E-mail:',$tercero->getCaEmail(),'7.7 Incoterms:',$termino));
+    $pdf->Row(array('','Teléfono:',$tercero->getCaTelefonos(),'Fax:',$tercero->getCaFax(),'E-mail:',$tercero->getCaEmail(),'Incoterms:',$termino));
     $pdf->Ln(1);
 }
 
@@ -176,13 +176,13 @@ $cliente = $contacto->getCliente();
 $pdf->SetWidths ( array (25, 25, 85, 25, 40 ) );
 $pdf->SetFills ( array (1, 0, 0, 0, 0 ) );
 $pdf->SetStyles ( array ("B", "B", "", "B", "" ) );
-$pdf->Row ( array ('Cliente:', '8. Nombre:', $cliente->getCaCompania (), $reporte->getCaOrdenClie () != "''" ? '8.1 Orden:' : ' ', $reporte->getCaOrdenClie () != "''" ? $reporte->getCaOrdenClie () : " " ) );
+$pdf->Row ( array ('Cliente:', 'Nombre:', $cliente->getCaCompania (), $reporte->getCaOrdenClie () != "''" ? 'Orden:' : ' ', $reporte->getCaOrdenClie () != "''" ? $reporte->getCaOrdenClie () : " " ) );
 $pdf->SetWidths ( array (5, 20, 70, 25, 80 ) );
-$pdf->Row ( array ('', '8.2 Contacto:', $contacto->getNombre (), '8.3 Dirección:', str_replace ( "|", " ", $cliente->getCaDireccion () ) . $cliente->getCaComplemento () ) );
+$pdf->Row ( array ('', 'Contacto:', $contacto->getNombre (), 'Dirección:', str_replace ( "|", " ", $cliente->getCaDireccion () ) . $cliente->getCaComplemento () ) );
 $pdf->SetWidths ( array (5, 20, 40, 15, 30, 18, 72 ) );
 $pdf->SetFills ( array (1, 0, 0, 0, 0, 0, 0 ) );
 $pdf->SetStyles ( array ("B", "B", "", "B", "", "B", "" ) );
-$pdf->Row ( array ('', '8.4 Teléfono:', $cliente->getCaTelefonos (), '8.5 Fax:', $cliente->getCaFax (), '8.6 E-mail:', $contacto->getCaEmail () ) );
+$pdf->Row ( array ('', 'Teléfono:', $cliente->getCaTelefonos (), 'Fax:', $cliente->getCaFax (), 'E-mail:', $contacto->getCaEmail () ) );
 
 
 
@@ -193,14 +193,14 @@ if ($consignatario) {
 	$pdf->SetWidths ( array (25, 25, 85, 40, 25 ) );
 	$pdf->SetFills ( array (1, 0, 0, 0, 0 ) );
 	$pdf->SetStyles ( array ("B", "B", "", "B", "" ) );
-	$pdf->Row ( array ('Consignatario:', '9.1 Nombre:', $consignatario->getCaNombre (), $reporte->getCaImpoexpo () == "Exportación" ? '9.1.1 Identificacion' : '9.1.1 Enviar Información:', $reporte->getCaImpoexpo () == "Exportación" ? $consignatario->getCaIdentificacion () : $reporte->getCaInformarCons () ) );
+	$pdf->Row ( array ('Consignatario:', 'Nombre:', $consignatario->getCaNombre (), $reporte->getCaImpoexpo () == "Exportación" ? 'Identificacion' : 'Enviar Información:', $reporte->getCaImpoexpo () == "Exportación" ? $consignatario->getCaIdentificacion () : $reporte->getCaInformarCons () ) );
 
 	$pdf->SetWidths ( array (5, 22, 68, 25, 80 ) );
-	$pdf->Row ( array ('', '9.1.2 Cont.:', $consignatario->getCaContacto (), '9.1.3 Dirección:', str_replace ( "|", " ", $consignatario->getCaDireccion () ) ) );
+	$pdf->Row ( array ('', 'Cont.:', $consignatario->getCaContacto (), 'Dirección:', str_replace ( "|", " ", $consignatario->getCaDireccion () ) ) );
 	$pdf->SetWidths ( array (5, 22, 38, 15, 30, 20, 70 ) );
 	$pdf->SetFills ( array (1, 0, 0, 0, 0, 0, 0 ) );
 	$pdf->SetStyles ( array ("B", "B", "", "B", "", "B", "" ) );
-	$pdf->Row ( array ('', '9.1.4 Tel.:', $consignatario->getCaTelefonos (), '9.1.5 Fax:', $consignatario->getCaFax (), '9.1.6 E-mail:', $consignatario->getCaEmail () ) );
+	$pdf->Row ( array ('', 'Tel.:', $consignatario->getCaTelefonos (), 'Fax:', $consignatario->getCaFax (), 'E-mail:', $consignatario->getCaEmail () ) );
 }
 
 $notify = $reporte->getNotify ();
@@ -210,14 +210,14 @@ if ($notify) {
 	$pdf->SetWidths ( array (25, 25, 85, 40, 25 ) );
 	$pdf->SetFills ( array (1, 0, 0, 0, 0 ) );
 	$pdf->SetStyles ( array ("B", "B", "", "B", "" ) );
-	$pdf->Row ( array ('Notify:', '9.2 Nombre:', $notify->getCaNombre (),  '9.1.1 Enviar Información:', $reporte->getCaInformarNoti() ) );
+	$pdf->Row ( array ('Notify:', 'Nombre:', $notify->getCaNombre (),  'Enviar Información:', $reporte->getCaInformarNoti() ) );
 
 	$pdf->SetWidths ( array (5, 22, 68, 25, 80 ) );
-	$pdf->Row ( array ('', '9.2.2 Cont.:', $notify->getCaContacto (), '9.2.3 Dirección:', str_replace ( "|", " ", $notify->getCaDireccion () ) ) );
+	$pdf->Row ( array ('', 'Cont.:', $notify->getCaContacto (), 'Dirección:', str_replace ( "|", " ", $notify->getCaDireccion () ) ) );
 	$pdf->SetWidths ( array (5, 22, 38, 15, 30, 20, 70 ) );
 	$pdf->SetFills ( array (1, 0, 0, 0, 0, 0, 0 ) );
 	$pdf->SetStyles ( array ("B", "B", "", "B", "", "B", "" ) );
-	$pdf->Row ( array ('', '9.2.4 Tel.:', $notify->getCaTelefonos (), '9.2.5 Fax:', $notify->getCaFax (), '9.2.6 E-mail:', $notify->getCaEmail () ) );
+	$pdf->Row ( array ('', 'Tel.:', $notify->getCaTelefonos (), 'Fax:', $notify->getCaFax (), 'E-mail:', $notify->getCaEmail () ) );
 }
 
 if( $reporte->getCaIdmaster() ){
@@ -270,17 +270,17 @@ $pdf->SetWidths(array(200));
 $pdf->SetStyles(array(""));
 $pdf->SetFills(array(0));
 
-$pdf->Row(array('11.1 Preferencias del Cliente:'."\n".$reporte->getCaPreferenciasClie ()));
+$pdf->Row(array('Preferencias del Cliente:'."\n".$reporte->getCaPreferenciasClie ()));
 
 $pdf->SetWidths(array(200));
 $pdf->SetStyles(array(""));
-$pdf->Row(array('11.2 Instrucciones Especiales para el Agente:'."\n".$reporte->getCaInstrucciones ()));
+$pdf->Row(array('Instrucciones Especiales para el Agente:'."\n".$reporte->getCaInstrucciones ()));
 
 $pdf->SetWidths(array(45,50,50,55));
 $pdf->SetStyles(array("B","","","",""));
 $emails = explode ( ",", $reporte->getCaConfirmarClie () );
 $z = 0;
-$cadena = "11.3 Copiar comunicaciones a:";
+$cadena = "Copiar comunicaciones a:";
 for($i = 0; $i < ceil ( count ( $emails ) / 3 ); $i ++) {
     for($j = 0; $j < 3; $j ++) {
         if (isset($emails [$z])) {
@@ -304,7 +304,7 @@ if ( $transportista ) {
 $pdf->SetWidths ( array (25, 25, 22, 23, 35, 70 ) );
 $pdf->SetFills ( array (0, 0, 0, 0, 0, 0 ) );
 $pdf->SetStyles ( array ("B", "", "B", "", "B", "", "B", "" ) );
-$pdf->Row ( array ('12. Transporte:', $reporte->getCaTransporte (), '13. Modalidad:', $reporte->getCaModalidad (), '14.1 Línea Transporte:', $nombreTransporte ) );
+$pdf->Row ( array ('Transporte:', $reporte->getCaTransporte (), 'Modalidad:', $reporte->getCaModalidad (), 'Línea Transporte:', $nombreTransporte ) );
 
 
 $tiempo_cred = ($reporte->getCaLiberacion()=='Sí')?" Tiempo de Crédito: ".$reporte->getCaTiempocredito():"";
@@ -316,10 +316,11 @@ $tiempo_cred = ($reporte->getCaLiberacion()=='Sí')?" Tiempo de Crédito: ".$repor
 
 if( $reporte->getCaImpoexpo()==Constantes::IMPO ){
     $pdf->SetWidths ( array (40, 10, 35, 10, 35, 70 ) );
-    $pdf->Row ( array ('15. Colmas Ltda:', $reporte->getCaColmas (), '16. Seguro:', $reporte->getCaSeguro () ,'17. Lib. Automática:' ,$reporte->getCaLiberacion().$tiempo_cred ) );
+    $pdf->Row ( array ('Colmas Ltda:', $reporte->getCaColmas (), 'Seguro:', $reporte->getCaSeguro () ,'Lib. Automática:' ,$reporte->getCaLiberacion().$tiempo_cred ) );
+    $pdf->Row ( array ('Firma Contrato Comodato', $reporte->getCaComodato(), '', '' ,'' ,'' ) );
 }else{
     $pdf->SetWidths ( array (40, 10, 35, 10, 105 ) );
-    $pdf->Row ( array ('15. Transporte terrestre Nal:', $reporte->getCaColmas (), '16. Seguro:', $reporte->getCaSeguro (), ''  ) );
+    $pdf->Row ( array ('Transporte terrestre Nal:', $reporte->getCaColmas (), 'Seguro:', $reporte->getCaSeguro (), "Tiempo de Crédito:", $reporte->getCaTiempocredito()  ) );
 }
 
 
@@ -339,7 +340,7 @@ if ($reporte->getCaContinuacion()!= "N/A") {
     $usuario = Doctrine::getTable("Usuario")->find($reporte->getCaContinuacionConf());
 
 
-    $pdf->Row(array('18.1 Continuación/Viaje:',$reporte->getCaContinuacion(),'18.2 Destino final:',$reporte->getDestinoCont()->getCaCiudad(),'18.3 Notificar C/Viaje al email:',$usuario->getCaEmail()));
+    $pdf->Row(array('Continuación/Viaje:',$reporte->getCaContinuacion(),'Destino final:',$reporte->getDestinoCont()->getCaCiudad(),'Notificar C/Viaje al email:',$usuario?$usuario->getCaEmail():""));
 }
 
 
@@ -348,7 +349,7 @@ if ($reporte->getCaContinuacion()!= "N/A") {
 
 if( $reporte->getCaImpoexpo()==Constantes::EXPO ){
     $pdf->SetWidths ( array (45, 50, 55, 50 ) );
-    $pdf->Row ( array ('19.1 Consignar MAWB/BL a :', $reporte->getConsignarmaster (),'19.2 Consignar HAWB/HBL a :', $reporte->getConsignar () ) );
+    $pdf->Row ( array ('Consignar MAWB/BL a :', $reporte->getConsignarmaster (),'Consignar HAWB/HBL a :', $reporte->getConsignar () ) );
 }else{
     $pdf->SetWidths(array(45,115,30,10));
     $consig = (($consignatario)?$consignatario->getCaNombre():$cliente->getCaCompania());
@@ -366,7 +367,7 @@ if( $reporte->getCaImpoexpo()==Constantes::EXPO ){
     }
 
 
-    $pdf->Row(array('19.1 Consignar HAWB/HBL a :',$cadena,'Igualar Master/Hijo:',$reporte->getCaMastersame()));
+    $pdf->Row(array('Consignar HAWB/HBL a :',$cadena));
 }
 
 if ($reporte->getCaSeguro () == "Sí") {
@@ -385,7 +386,7 @@ if ($reporte->getCaSeguro () == "Sí") {
     $pdf->SetFills(array(1,1,1,1));
     $pdf->SetAligns(array("C","C","C","C"));
     $pdf->SetStyles(array("B","B","B","B"));
-    $pdf->Row(array('20.1 Vlr.Asegurado:','20.2 Obtención Póliza:','20.3 Prima Venta:','20.4 Notificar Seguro:'));
+    $pdf->Row(array('Vlr.Asegurado:','Obtención Póliza:','Prima Venta:','Notificar Seguro:'));
     $pdf->SetStyles(array("","","",""));
     $pdf->SetFills(array(0,0,0,0));
     $pdf->SetAligns(array("C","C","C","L"));
@@ -414,21 +415,21 @@ if( ($reporte->getCaImpoexpo()==Constantes::IMPO && $reporte->getCaColmas()=="Sí
 	$pdf->SetAligns ( array ("C", "L" ) );
 	$pdf->SetStyles ( array ("B", "" ) );
     if ($reporte->getCaImpoexpo () == Constantes::IMPO) {
-        $pdf->Row ( array ('Transporte de carga nacionalizada', '21.3 Instrucciones Especiales para Colmas:' ) );
+        $pdf->Row ( array ('Transporte de carga nacionalizada', 'Instrucciones Especiales para Colmas:' ) );
     }else{
-        $pdf->Row ( array ('Transporte nacional', '21.3 Instrucciones Especiales para Colmas:' ) );
+        $pdf->Row ( array ('Transporte nacional', 'Instrucciones Especiales para Colmas:' ) );
     }
 	$pdf->SetWidths ( array (32, 26, 42, 100 ) );
 	$pdf->SetFills ( array (0, 0, 0, 0 ) );
 	$pdf->SetAligns ( array ("L", "L", "L", "L" ) );
 	$pdf->SetStyles ( array ("", "", "", "" ) );
     if ($reporte->getCaImpoexpo () == Constantes::IMPO) {
-        $titulo1 = "21.1 Con Coltrans:  ";
+        $titulo1 = "Con Coltrans:  ";
     }else{
-        $titulo1 = "21.1 Con Colmas:  ";
+        $titulo1 = "Con Colmas:  ";
     }
     $usuario = Doctrine::getTable("Usuario")->find( $repaduana->getCaCoordinador () );
-	$pdf->Row ( array ( $titulo1. $repaduana->getCaTransnacarga (), "21.2 Tipo:\n" . $repaduana->getCaTransnatipo(), "21.4 Coordinador:\n" . ($usuario?$usuario->getCaNombre():""), $repaduana->getCaInstrucciones () ) );
+	$pdf->Row ( array ( $titulo1. $repaduana->getCaTransnacarga (), "Tipo:\n" . $repaduana->getCaTransnatipo(), "Coordinador:\n" . ($usuario?$usuario->getCaNombre():""), $repaduana->getCaInstrucciones () ) );
 }
 
 

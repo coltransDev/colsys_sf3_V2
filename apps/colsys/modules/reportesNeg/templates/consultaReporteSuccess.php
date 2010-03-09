@@ -93,7 +93,7 @@
 
 
 
-include_component("reportesNeg","infoReporte", array("reporte"=>$reporte));
+include_component("reportesNeg","infoReporte", array("reporte"=>$reporte, "grupoReportes"=>$grupoReportes));
 
 include_component("reportesNeg","mainPanel", array("reporte"=>$reporte));
 if( !$reporte->esSoloAduana() ){
@@ -207,8 +207,11 @@ if( $reporte->getCaColmas()=="Sí" || $reporte->getCaTransporte() == Constantes::
     if( $panelConceptosFletes ){
     ?>
         var panelFletes = new PanelConceptosFletes({
-            title: 'Conceptos de fletes',
-            tbar: [
+            title: 'Conceptos de fletes'
+            <?
+            if( $editable ){
+            ?>
+            ,tbar: [
                 {
                     text:'Guardar',
                     iconCls: 'disk',
@@ -231,13 +234,20 @@ if( $reporte->getCaColmas()=="Sí" || $reporte->getCaTransporte() == Constantes::
                 }
                 ?>
             ]
+            <?
+            }
+            ?>
         });
     <?
     }
     if( $panelRecargos ){
     ?>
         var panelRecargosLocales = new PanelRecargos({
-            title: 'Recargos locales',
+            title: 'Recargos locales'
+            <?
+            if( $editable ){
+            ?>
+            ,
             tbar: [
                 {
                     text:'Guardar',
@@ -261,13 +271,20 @@ if( $reporte->getCaColmas()=="Sí" || $reporte->getCaTransporte() == Constantes::
                 }
                 ?>
             ]
+            <?
+            }
+            ?>
         });
     <?
     }
     if( $panelAduana ){
         ?>
         var panelRecargosAduana = new PanelRecargosAduana({
-            title: 'Recargos Aduana',
+            title: 'Recargos Aduana'
+            <?
+            if( $editable ){
+            ?>
+            ,
             tbar: [
                 {
                     text:'Guardar',
@@ -275,6 +292,9 @@ if( $reporte->getCaColmas()=="Sí" || $reporte->getCaTransporte() == Constantes::
                     scope:this,
                     handler: guardarCambios
                 }]
+            <?
+            }
+            ?>
         });
         <?
     }
@@ -285,7 +305,7 @@ if( $reporte->getCaColmas()=="Sí" || $reporte->getCaTransporte() == Constantes::
       var bodyStyle = 'padding: 5px 5px 5px 5px;';
 
       var mainPanel = new MainPanel({
-                            activeTab: 5,
+                            activeTab: 0,
                             items: [
                                     {contentEl:'trayecto', title: 'Trayecto', bodyStyle: bodyStyle},
                                     {contentEl:'cliente', title: 'Cliente', bodyStyle: bodyStyle},
@@ -311,8 +331,7 @@ if( $reporte->getCaColmas()=="Sí" || $reporte->getCaTransporte() == Constantes::
                                     {contentEl:'exportaciones', title: 'Exportaciones', bodyStyle: bodyStyle},
                                     <?
                                     }                                    
-                                    ?>
-                                    <?
+                                    
                                     $flag = false;
                                     if( $panelConceptosFletes ){
                                     ?>

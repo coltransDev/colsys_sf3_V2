@@ -91,21 +91,7 @@ if( $ca_notify ){
             ?>
            
         </td>
-    </tr>
-    <tr>
-         <td>
-             <b>Igualar Master/Hijo:</b>
-         </td>
-         <td >
-            <?
-            echo $form['ca_mastersame']->renderError();
-            if( $reporte ){
-                $form->setDefault('ca_mastersame', $reporte->getCaMastersame() );
-            }
-            echo $form['ca_mastersame']->render();
-            ?>
-        </td>
-    </tr>
+    </tr>    
 </table>
 
 <br />
@@ -140,9 +126,10 @@ if( $ca_notify ){
             ?>
         </td>
         <td valign="top">
-            <b> Reportar como Notify: </b><br />
-            <input type="radio" name="repnotify" value="1" <?=$notify==1?"checked='checked'":""?> />
-
+            <div id="repnotify_1">
+                <b> Reportar como Notify: </b><br />
+                <input type="radio" name="repnotify" value="1" <?=$notify==1?"checked='checked'":""?> />
+            </div>
         </td>
     </tr>
 
@@ -199,9 +186,10 @@ if( $ca_notify ){
             ?>
         </td>
         <td valign="top">
-            <b> Reportar como Notify: </b><br />
-            <input type="radio" name="repnotify" value="2" <?=$notify==2?"checked='checked'":""?> />
-
+            <div id="repnotify_2">
+                <b> Reportar como Notify: </b><br />
+                <input type="radio" name="repnotify" value="2" <?=$notify==2?"checked='checked'":""?> />
+            </div>
         </td>
     </tr>
 

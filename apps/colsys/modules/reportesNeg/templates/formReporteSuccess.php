@@ -125,15 +125,16 @@ $agentes = $sf_data->getRaw("agentes");
 
 
 
+
+
         cambiarTransporte();
     }
 
     var cambiarTransporte = function(){
         llenarModalidades('reporte_ca_impoexpo','reporte_ca_transporte', 'reporte_ca_modalidad', null, '<?=$reporte->getCaModalidad()?>');
         llenarLineas('reporte_ca_transporte', 'reporte_ca_idlinea', null, '<?=$reporte->getCaIdlinea()?>');
-        llenarContinuaciones('reporte_ca_transporte', 'reporte_ca_continuacion',  '<?=$reporte->getCaContinuacion()?>');
-        //llenarAgentes('reporte_ca_impoexpo','reporte_ca_transporte', 'reporte_ca_modalidad', null, '<?=$reporte->getCaModalidad()?>');
-
+        llenarContinuaciones('reporte_ca_transporte', 'reporte_ca_continuacion',  '<?=$ca_continuacion?$ca_continuacion:$reporte->getCaContinuacion()?>');
+        //llenarAgentes('reporte_ca_impoexpo','reporte_ca_transporte', 'reporte_ca_modalidad', null, '<?=$reporte->getCaModalidad()?>');        
         cambiarAduana();
         cambiarContinuacion();
 
@@ -146,12 +147,31 @@ $agentes = $sf_data->getRaw("agentes");
             document.getElementById("emisionbl").style.display = "";
             document.getElementById("cuantosbl").style.display = "";
 
+            document.getElementById("notificar_otm").style.display = "";
 
+            
         }else{
             document.getElementById("tipo_volumen_maritimo").style.display = "none";
             document.getElementById("tipo_volumen_aereo").style.display = "";
             document.getElementById("emisionbl").style.display = "none";
             document.getElementById("cuantosbl").style.display = "none";
+
+            document.getElementById("notificar_otm").style.display = "none";
+            
+        }
+        var clase = document.getElementById("reporte_ca_impoexpo").value;
+        if( transporte=="<?=Constantes::MARITIMO?>" || clase=="<?=Constantes::EXPO?>" ){
+            //El notify solo aplica para maritimo
+            document.getElementById("combo-notify").style.display="";
+            document.getElementById("repnotify_0").style.display="";
+            document.getElementById("repnotify_1").style.display="";
+            document.getElementById("repnotify_2").style.display="";
+
+        }else{
+            document.getElementById("combo-notify").style.display="none";
+            document.getElementById("repnotify_0").style.display="none";
+            document.getElementById("repnotify_1").style.display="none";
+            document.getElementById("repnotify_2").style.display="none";
         }
 
         llenarTipos();
@@ -176,7 +196,7 @@ $agentes = $sf_data->getRaw("agentes");
                 soloAduana = true;
             }
         }
- 
+       
         if( soloAduana ){
             document.getElementById("reporte_ca_colmas").value = "Sí";
             document.getElementById("reporte_ca_colmas").disabled = true;
@@ -185,8 +205,9 @@ $agentes = $sf_data->getRaw("agentes");
             document.getElementById("row-agente").style.display = "none";
             //oculta los otros paneles
 
-            document.getElementById("guias-div").style.display = "none";
+            document.getElementById("guias-div").style.display = "none";            
             document.getElementById("continuacion-div").style.display = "none";
+            Ext.getCmp("tab-corte-documentos").disable();
         }else{
             document.getElementById("reporte_ca_colmas").disabled = false;
 
@@ -198,6 +219,7 @@ $agentes = $sf_data->getRaw("agentes");
             }else{
                 document.getElementById("continuacion-div").style.display = "none";
             }
+            Ext.getCmp("tab-corte-documentos").enable();
         }
 
 
@@ -356,7 +378,7 @@ $agentes = $sf_data->getRaw("agentes");
         var target = document.getElementById("reporte_ca_idagente");
         var clase = document.getElementById("reporte_ca_impoexpo").value;
         
-
+        
         if( document.getElementById("listar_todos")!=null ){
             var listar_todos = document.getElementById("listar_todos").checked;
             if( clase=="<?=Constantes::EXPO?>" ){
@@ -367,17 +389,20 @@ $agentes = $sf_data->getRaw("agentes");
 
             target.length=0;
 
-            for( i in agentes ){
-                var selected = false;
-                var idagente = agentes[i]["idagente"];
-                if( typeof(idagente)!="undefined" ){
-
-                    if( agentes[i]["idagente"]=="<?=$reporte->getCaIdagente()?>" ){
-                        selected = true;
-                    }
-
-                    if( i== trafico || listar_todos || agentes[i]["idagente"]=="<?=$reporte->getCaIdagente()?>" ){
-                        target[target.length] = new Option(agentes[i]["pais"]+"-"+agentes[i]["nombre"],agentes[i]["idagente"],false,selected);
+            for( pais in agentes ){
+                               
+                for( agente in pais ){
+                    var selected = false;
+                    
+                    if( typeof(agentes[pais][agente])!="undefined" ){
+                        var idagente = agentes[pais][agente]["idagente"];
+                        if( idagente=="<?=$reporte->getCaIdagente()?>" ){
+                            selected = true;
+                        }
+                                                
+                        if( i== trafico || listar_todos || idagente=="<?=$reporte->getCaIdagente()?>" ){
+                            target[target.length] = new Option(agentes[pais][agente]["pais"]+"-"+agentes[pais][agente]["nombre"],idagente,false,selected);
+                        }
                     }
                 }
             }
@@ -526,14 +551,18 @@ include_partial("ventanaTercero", array("reporte"=>$reporte));
                 <td colspan="8">
                     <div align="center">
                         <?
-                        if( $reporte->isNew() || $reporte->getCaVersion() == $reporte->getUltVersion() ){
+                        if( $editable ){
                         ?>
                         <input type="button" value="Guardar" class="button" onClick="javascript:guardar(1)" />
                         <?
                         }
                         if( $reporte->getCaIdreporte() ){
+                            if( $nuevaVersion ){
+                            ?>
+                            <input type="button" value="Nueva versi&oacute;n" class="button" onClick="javascript:guardar(2)" />
+                            <?
+                            }
                         ?>
-                        <input type="button" value="Nueva versi&oacute;n" class="button" onClick="javascript:guardar(2)" />
                         <input type="button" value="Reporte nuevo" class="button" onClick="javascript:guardar(3)" />
                         <?
                         }
@@ -628,7 +657,7 @@ include_partial("ventanaTercero", array("reporte"=>$reporte));
             {contentEl:'preferencias', title: 'Preferencias', bodyStyle: bodyStyle},
             {contentEl:'aduana', title: 'Aduana', bodyStyle: bodyStyle},
             {contentEl:'seguros', title: 'Seguros', bodyStyle: bodyStyle},
-            {contentEl:'guias', title: 'Corte de Documentos', bodyStyle: bodyStyle},
+            {contentEl:'guias', title: 'Corte de Documentos', id: 'tab-corte-documentos', bodyStyle: bodyStyle},
             {contentEl:'exportaciones', title: 'Exportaciones', id: 'tab-expo', bodyStyle: bodyStyle}
         ]
     });
@@ -659,7 +688,9 @@ include_partial("ventanaTercero", array("reporte"=>$reporte));
                 {name: 'status', mapping: 'ca_status'},
                 {name: 'confirmar', mapping: 'ca_confirmar'},
                 {name: 'preferencias', mapping: 'ca_preferencias'},
-                {name: 'coordinador', mapping: 'ca_coordinador'}
+                {name: 'coordinador', mapping: 'ca_coordinador'},
+                {name: 'diascredito', mapping: 'ca_diascredito'},
+                {name: 'cupo', mapping: 'ca_cupo'}
 
             ])
         });
@@ -723,7 +754,17 @@ include_partial("ventanaTercero", array("reporte"=>$reporte));
                                 ?>
                                 document.getElementById("ca_idconcliente").value = record.get("idcontacto");
                                 document.getElementById("div_contacto").innerHTML = record.get("nombre")+' '+record.get("papellido")+' '+record.get("sapellido") ;
+                                if( record.get("diascredito") ){
+                                    document.getElementById("div_diascredito").innerHTML = record.get("diascredito")+" D&iacute;as";
+                                }else{
+                                    document.getElementById("div_diascredito").innerHTML = "";
+                                }
 
+                                if( record.get("cupo")!=0 || record.get("diascredito")!=0 ){
+                                    document.getElementById("div_libautomatica").innerHTML = "S&iacute;";
+                                }else{
+                                    document.getElementById("div_libautomatica").innerHTML = "No";
+                                }
 
                                 document.getElementById("reporte_ca_preferencias_clie").value=record.data.preferencias;
 

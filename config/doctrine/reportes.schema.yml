@@ -53,6 +53,7 @@ Reporte:
     ca_seguro: string
     ca_liberacion: string
     ca_tiempocredito: string
+    ca_comodato: string
     ca_preferencias_clie: string
     ca_instrucciones: string
     ca_idlinea: integer
@@ -73,6 +74,7 @@ Reporte:
     ca_idseguimiento: integer
     ca_detanulado: string
     ca_mcia_peligrosa: boolean
+    ca_idgrupo: integer
     ca_fchcreado: timestamp
     ca_usucreado: string
     ca_fchactualizado: timestamp
@@ -154,6 +156,11 @@ Reporte:
       foreign: ca_idtercero
       type: one
       class: Tercero
+    GrupoReporte:
+      local: ca_idgrupo
+      foreign: ca_idreporte
+      type: one
+      class: Reporte
 
 RepStatus:
   options:
@@ -190,6 +197,7 @@ RepStatus:
     ca_horallegada: string
     ca_idetapa: string
     ca_propiedades: string
+    ca_observaciones_idg: string
   relations:
     Reporte:
       local: ca_idreporte
