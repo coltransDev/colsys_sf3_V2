@@ -33,10 +33,12 @@
  * @property string $ca_listaclinton
  * @property date $ca_fchcircular
  * @property string $ca_status
+ * @property string $ca_propiedades
  * @property Doctrine_Collection $Contacto
  * @property Usuario $Usuario
  * @property Ciudad $Ciudad
  * @property Doctrine_Collection $StdCliente
+ * @property LibCliente $LibCliente
  * @property Doctrine_Collection $PricRecargoCliente
  * @property Doctrine_Collection $PricRecargoClienteBs
  * @property Doctrine_Collection $InoClientesSea
@@ -69,10 +71,12 @@
  * @method string              getCaListaclinton()       Returns the current record's "ca_listaclinton" value
  * @method date                getCaFchcircular()        Returns the current record's "ca_fchcircular" value
  * @method string              getCaStatus()             Returns the current record's "ca_status" value
+ * @method string              getCaPropiedades()        Returns the current record's "ca_propiedades" value
  * @method Doctrine_Collection getContacto()             Returns the current record's "Contacto" collection
  * @method Usuario             getUsuario()              Returns the current record's "Usuario" value
  * @method Ciudad              getCiudad()               Returns the current record's "Ciudad" value
  * @method Doctrine_Collection getStdCliente()           Returns the current record's "StdCliente" collection
+ * @method LibCliente          getLibCliente()           Returns the current record's "LibCliente" value
  * @method Doctrine_Collection getPricRecargoCliente()   Returns the current record's "PricRecargoCliente" collection
  * @method Doctrine_Collection getPricRecargoClienteBs() Returns the current record's "PricRecargoClienteBs" collection
  * @method Doctrine_Collection getInoClientesSea()       Returns the current record's "InoClientesSea" collection
@@ -104,10 +108,12 @@
  * @method Cliente             setCaListaclinton()       Sets the current record's "ca_listaclinton" value
  * @method Cliente             setCaFchcircular()        Sets the current record's "ca_fchcircular" value
  * @method Cliente             setCaStatus()             Sets the current record's "ca_status" value
+ * @method Cliente             setCaPropiedades()        Sets the current record's "ca_propiedades" value
  * @method Cliente             setContacto()             Sets the current record's "Contacto" collection
  * @method Cliente             setUsuario()              Sets the current record's "Usuario" value
  * @method Cliente             setCiudad()               Sets the current record's "Ciudad" value
  * @method Cliente             setStdCliente()           Sets the current record's "StdCliente" collection
+ * @method Cliente             setLibCliente()           Sets the current record's "LibCliente" value
  * @method Cliente             setPricRecargoCliente()   Sets the current record's "PricRecargoCliente" collection
  * @method Cliente             setPricRecargoClienteBs() Sets the current record's "PricRecargoClienteBs" collection
  * @method Cliente             setInoClientesSea()       Sets the current record's "InoClientesSea" collection
@@ -207,6 +213,9 @@ abstract class BaseCliente extends myDoctrineRecord
         $this->hasColumn('ca_status', 'string', null, array(
              'type' => 'string',
              ));
+        $this->hasColumn('ca_propiedades', 'string', null, array(
+             'type' => 'string',
+             ));
 
         $this->option('symfony', array(
              'form' => false,
@@ -230,6 +239,10 @@ abstract class BaseCliente extends myDoctrineRecord
              'foreign' => 'ca_idciudad'));
 
         $this->hasMany('StdCliente', array(
+             'local' => 'ca_idcliente',
+             'foreign' => 'ca_idcliente'));
+
+        $this->hasOne('LibCliente', array(
              'local' => 'ca_idcliente',
              'foreign' => 'ca_idcliente'));
 

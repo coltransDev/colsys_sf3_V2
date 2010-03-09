@@ -286,6 +286,7 @@ Cliente:
     ca_listaclinton: string
     ca_fchcircular: date
     ca_status: string
+    ca_propiedades: string
   relations:
     Contacto:
       local: ca_idcliente
@@ -303,6 +304,10 @@ Cliente:
       local: ca_idcliente
       foreign: ca_idcliente
       type: many
+    LibCliente:
+      local: ca_idcliente
+      foreign: ca_idcliente
+      type: one
 
 
 Contacto:
@@ -490,4 +495,9 @@ LibCliente:
     ca_usucreado: string
     ca_fchactualizado: timestamp
     ca_usuactualizado: string
+  relations:
+    Cliente:
+      local: ca_idcliente
+      foreign: ca_idcliente
+      type: one
 
