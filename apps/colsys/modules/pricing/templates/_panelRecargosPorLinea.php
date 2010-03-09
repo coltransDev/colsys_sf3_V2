@@ -214,11 +214,7 @@ PanelRecargosPorLinea = function( config ){
         ocultarConcepto = false;
     }
     
-    var ocultarMinimo = false;
-    if( this.modalidad=="FCL" ){
-        ocultarMinimo = true;
-    }
-
+    
     this.columns = [        
         this.expander,        
 		this.checkColumn,		
@@ -300,8 +296,7 @@ PanelRecargosPorLinea = function( config ){
 			header: "Mínimo",
 			width: 50,
 			sortable: true,
-			hideable: false,
-            hidden: ocultarMinimo,
+			hideable: false,            
 			dataIndex: 'vlrminimo',
 			editor: new Ext.form.NumberField({
 						name: 'valor_min',
@@ -314,8 +309,7 @@ PanelRecargosPorLinea = function( config ){
 			header: "Aplicación Mín.",
 			width: 80,
 			sortable: false,
-			hideable: false,
-            hidden: ocultarMinimo,
+			hideable: false,            
 			dataIndex: 'aplicacion_min',
 			editor: <?=include_component("widgets", "emptyCombo" ,array("id"=>""))?>
 			

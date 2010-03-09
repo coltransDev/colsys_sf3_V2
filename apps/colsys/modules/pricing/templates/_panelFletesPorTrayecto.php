@@ -201,12 +201,7 @@ PanelFletesPorTrayecto = function( config ){
 			,'</tpl>'
     );
 
-    
-    if( this.modalidad=="FCL"){
-        var mostrarMinima=true;
-    }else{
-        var mostrarMinima=false;
-    }
+        
 
     this.columns = [
 		this.expander,
@@ -324,8 +319,7 @@ PanelFletesPorTrayecto = function( config ){
 			sortable: false,
             hideable: false,
 			groupable: false,
-			dataIndex: 'minima',
-            hidden: mostrarMinima,
+			dataIndex: 'minima',            
 			editor: new Ext.form.NumberField()
 		},
 		{
@@ -333,8 +327,7 @@ PanelFletesPorTrayecto = function( config ){
 			width: 100,
 			sortable: false,
             hideable: false,
-			groupable: false,
-            hidden: mostrarMinima,
+			groupable: false,            
 			dataIndex: 'aplicacion_min',
 			editor: <?=include_component("widgets", "emptyCombo" ,array("id"=>""))?>
 
