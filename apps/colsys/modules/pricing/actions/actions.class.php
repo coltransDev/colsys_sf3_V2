@@ -1016,7 +1016,7 @@ class pricingActions extends sfActions
                                   ->addOrderBy("c.ca_ciudad")
                                   ->execute();
         $data = array();
-        $data[] = array("idciudad"=>"99-999",
+        $data[] = array("idciudad"=>"999-9999",
                         "ciudad"=>"Todas las ciudades");
         foreach( $ciudades as $ciudad){
             $data[] = array("idciudad"=>$ciudad->getCaIdciudad(), 
@@ -1186,7 +1186,7 @@ class pricingActions extends sfActions
 			$recargo->setCaModalidad( $modalidad );
 			$recargo->setCaImpoexpo( utf8_decode($impoexpo) );
 			$recargo->setCaVlrrecargo( 0 );
-			$recargo->setCaVlrminimo( 0 );			
+			//$recargo->setCaVlrminimo( 0 );
 		}
 		$user = $this->getUser();
 		$recargo->setCaUsucreado( $user->getUserId() );
