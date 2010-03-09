@@ -724,12 +724,17 @@ class Reporte extends BaseReporte
                           ->innerJoin("u.UsuarioPerfil p")
                           ->where("u.ca_activo = ?", true);
 
-       if( $this->getCaImpoexpo()==Constantes::IMPO ){
-			if( $this->getCaTransporte()==Constantes::MARITIMO ){
-                $q->addWhere("p.ca_perfil = ?", "operativo-traficos");
-			}else{
-                $q->addWhere("p.ca_perfil = ?", "operativo-aereo");
-			}
+        if( $this->getCaImpoexpo()==Constantes::IMPO ){
+            $global = $this->getCliente()->getProperty("cuentaglobal");
+            if( $global ){
+                $q->addWhere("p.ca_perfil = ?", "cuentas-globales");
+            }else{
+                if( $this->getCaTransporte()==Constantes::MARITIMO ){
+                    $q->addWhere("p.ca_perfil = ?", "operativo-traficos");
+                }else{
+                    $q->addWhere("p.ca_perfil = ?", "operativo-aereo");
+                }
+            }
             $q->addWhere("u.ca_idsucursal = ?", $usuario->getCaIdsucursal());	
 		}else{
             $q->addWhere("p.ca_perfil = ?", "operativo-expo");

@@ -29,64 +29,67 @@
  * @property string $ca_horallegada
  * @property string $ca_idetapa
  * @property string $ca_propiedades
+ * @property string $ca_observaciones_idg
  * @property Reporte $Reporte
  * @property Email $Email
  * @property TrackingEtapa $TrackingEtapa
  * 
- * @method integer       getCaIdstatus()         Returns the current record's "ca_idstatus" value
- * @method integer       getCaIdreporte()        Returns the current record's "ca_idreporte" value
- * @method integer       getCaIdemail()          Returns the current record's "ca_idemail" value
- * @method date          getCaFchstatus()        Returns the current record's "ca_fchstatus" value
- * @method string        getCaStatus()           Returns the current record's "ca_status" value
- * @method string        getCaComentarios()      Returns the current record's "ca_comentarios" value
- * @method timestamp     getCaFchrecibo()        Returns the current record's "ca_fchrecibo" value
- * @method timestamp     getCaFchenvio()         Returns the current record's "ca_fchenvio" value
- * @method string        getCaUsuenvio()         Returns the current record's "ca_usuenvio" value
- * @method string        getCaIntroduccion()     Returns the current record's "ca_introduccion" value
- * @method date          getCaFchsalida()        Returns the current record's "ca_fchsalida" value
- * @method date          getCaFchllegada()       Returns the current record's "ca_fchllegada" value
- * @method date          getCaFchcontinuacion()  Returns the current record's "ca_fchcontinuacion" value
- * @method string        getCaPiezas()           Returns the current record's "ca_piezas" value
- * @method string        getCaPeso()             Returns the current record's "ca_peso" value
- * @method string        getCaVolumen()          Returns the current record's "ca_volumen" value
- * @method string        getCaDoctransporte()    Returns the current record's "ca_doctransporte" value
- * @method string        getCaIdnave()           Returns the current record's "ca_idnave" value
- * @method string        getCaDocmaster()        Returns the current record's "ca_docmaster" value
- * @method string        getCaEquipos()          Returns the current record's "ca_equipos" value
- * @method string        getCaHorasalida()       Returns the current record's "ca_horasalida" value
- * @method string        getCaHorallegada()      Returns the current record's "ca_horallegada" value
- * @method string        getCaIdetapa()          Returns the current record's "ca_idetapa" value
- * @method string        getCaPropiedades()      Returns the current record's "ca_propiedades" value
- * @method Reporte       getReporte()            Returns the current record's "Reporte" value
- * @method Email         getEmail()              Returns the current record's "Email" value
- * @method TrackingEtapa getTrackingEtapa()      Returns the current record's "TrackingEtapa" value
- * @method RepStatus     setCaIdstatus()         Sets the current record's "ca_idstatus" value
- * @method RepStatus     setCaIdreporte()        Sets the current record's "ca_idreporte" value
- * @method RepStatus     setCaIdemail()          Sets the current record's "ca_idemail" value
- * @method RepStatus     setCaFchstatus()        Sets the current record's "ca_fchstatus" value
- * @method RepStatus     setCaStatus()           Sets the current record's "ca_status" value
- * @method RepStatus     setCaComentarios()      Sets the current record's "ca_comentarios" value
- * @method RepStatus     setCaFchrecibo()        Sets the current record's "ca_fchrecibo" value
- * @method RepStatus     setCaFchenvio()         Sets the current record's "ca_fchenvio" value
- * @method RepStatus     setCaUsuenvio()         Sets the current record's "ca_usuenvio" value
- * @method RepStatus     setCaIntroduccion()     Sets the current record's "ca_introduccion" value
- * @method RepStatus     setCaFchsalida()        Sets the current record's "ca_fchsalida" value
- * @method RepStatus     setCaFchllegada()       Sets the current record's "ca_fchllegada" value
- * @method RepStatus     setCaFchcontinuacion()  Sets the current record's "ca_fchcontinuacion" value
- * @method RepStatus     setCaPiezas()           Sets the current record's "ca_piezas" value
- * @method RepStatus     setCaPeso()             Sets the current record's "ca_peso" value
- * @method RepStatus     setCaVolumen()          Sets the current record's "ca_volumen" value
- * @method RepStatus     setCaDoctransporte()    Sets the current record's "ca_doctransporte" value
- * @method RepStatus     setCaIdnave()           Sets the current record's "ca_idnave" value
- * @method RepStatus     setCaDocmaster()        Sets the current record's "ca_docmaster" value
- * @method RepStatus     setCaEquipos()          Sets the current record's "ca_equipos" value
- * @method RepStatus     setCaHorasalida()       Sets the current record's "ca_horasalida" value
- * @method RepStatus     setCaHorallegada()      Sets the current record's "ca_horallegada" value
- * @method RepStatus     setCaIdetapa()          Sets the current record's "ca_idetapa" value
- * @method RepStatus     setCaPropiedades()      Sets the current record's "ca_propiedades" value
- * @method RepStatus     setReporte()            Sets the current record's "Reporte" value
- * @method RepStatus     setEmail()              Sets the current record's "Email" value
- * @method RepStatus     setTrackingEtapa()      Sets the current record's "TrackingEtapa" value
+ * @method integer       getCaIdstatus()           Returns the current record's "ca_idstatus" value
+ * @method integer       getCaIdreporte()          Returns the current record's "ca_idreporte" value
+ * @method integer       getCaIdemail()            Returns the current record's "ca_idemail" value
+ * @method date          getCaFchstatus()          Returns the current record's "ca_fchstatus" value
+ * @method string        getCaStatus()             Returns the current record's "ca_status" value
+ * @method string        getCaComentarios()        Returns the current record's "ca_comentarios" value
+ * @method timestamp     getCaFchrecibo()          Returns the current record's "ca_fchrecibo" value
+ * @method timestamp     getCaFchenvio()           Returns the current record's "ca_fchenvio" value
+ * @method string        getCaUsuenvio()           Returns the current record's "ca_usuenvio" value
+ * @method string        getCaIntroduccion()       Returns the current record's "ca_introduccion" value
+ * @method date          getCaFchsalida()          Returns the current record's "ca_fchsalida" value
+ * @method date          getCaFchllegada()         Returns the current record's "ca_fchllegada" value
+ * @method date          getCaFchcontinuacion()    Returns the current record's "ca_fchcontinuacion" value
+ * @method string        getCaPiezas()             Returns the current record's "ca_piezas" value
+ * @method string        getCaPeso()               Returns the current record's "ca_peso" value
+ * @method string        getCaVolumen()            Returns the current record's "ca_volumen" value
+ * @method string        getCaDoctransporte()      Returns the current record's "ca_doctransporte" value
+ * @method string        getCaIdnave()             Returns the current record's "ca_idnave" value
+ * @method string        getCaDocmaster()          Returns the current record's "ca_docmaster" value
+ * @method string        getCaEquipos()            Returns the current record's "ca_equipos" value
+ * @method string        getCaHorasalida()         Returns the current record's "ca_horasalida" value
+ * @method string        getCaHorallegada()        Returns the current record's "ca_horallegada" value
+ * @method string        getCaIdetapa()            Returns the current record's "ca_idetapa" value
+ * @method string        getCaPropiedades()        Returns the current record's "ca_propiedades" value
+ * @method string        getCaObservacionesIdg()   Returns the current record's "ca_observaciones_idg" value
+ * @method Reporte       getReporte()              Returns the current record's "Reporte" value
+ * @method Email         getEmail()                Returns the current record's "Email" value
+ * @method TrackingEtapa getTrackingEtapa()        Returns the current record's "TrackingEtapa" value
+ * @method RepStatus     setCaIdstatus()           Sets the current record's "ca_idstatus" value
+ * @method RepStatus     setCaIdreporte()          Sets the current record's "ca_idreporte" value
+ * @method RepStatus     setCaIdemail()            Sets the current record's "ca_idemail" value
+ * @method RepStatus     setCaFchstatus()          Sets the current record's "ca_fchstatus" value
+ * @method RepStatus     setCaStatus()             Sets the current record's "ca_status" value
+ * @method RepStatus     setCaComentarios()        Sets the current record's "ca_comentarios" value
+ * @method RepStatus     setCaFchrecibo()          Sets the current record's "ca_fchrecibo" value
+ * @method RepStatus     setCaFchenvio()           Sets the current record's "ca_fchenvio" value
+ * @method RepStatus     setCaUsuenvio()           Sets the current record's "ca_usuenvio" value
+ * @method RepStatus     setCaIntroduccion()       Sets the current record's "ca_introduccion" value
+ * @method RepStatus     setCaFchsalida()          Sets the current record's "ca_fchsalida" value
+ * @method RepStatus     setCaFchllegada()         Sets the current record's "ca_fchllegada" value
+ * @method RepStatus     setCaFchcontinuacion()    Sets the current record's "ca_fchcontinuacion" value
+ * @method RepStatus     setCaPiezas()             Sets the current record's "ca_piezas" value
+ * @method RepStatus     setCaPeso()               Sets the current record's "ca_peso" value
+ * @method RepStatus     setCaVolumen()            Sets the current record's "ca_volumen" value
+ * @method RepStatus     setCaDoctransporte()      Sets the current record's "ca_doctransporte" value
+ * @method RepStatus     setCaIdnave()             Sets the current record's "ca_idnave" value
+ * @method RepStatus     setCaDocmaster()          Sets the current record's "ca_docmaster" value
+ * @method RepStatus     setCaEquipos()            Sets the current record's "ca_equipos" value
+ * @method RepStatus     setCaHorasalida()         Sets the current record's "ca_horasalida" value
+ * @method RepStatus     setCaHorallegada()        Sets the current record's "ca_horallegada" value
+ * @method RepStatus     setCaIdetapa()            Sets the current record's "ca_idetapa" value
+ * @method RepStatus     setCaPropiedades()        Sets the current record's "ca_propiedades" value
+ * @method RepStatus     setCaObservacionesIdg()   Sets the current record's "ca_observaciones_idg" value
+ * @method RepStatus     setReporte()              Sets the current record's "Reporte" value
+ * @method RepStatus     setEmail()                Sets the current record's "Email" value
+ * @method RepStatus     setTrackingEtapa()        Sets the current record's "TrackingEtapa" value
  * 
  * @package    symfony
  * @subpackage model
@@ -170,6 +173,9 @@ abstract class BaseRepStatus extends myDoctrineRecord
              'type' => 'string',
              ));
         $this->hasColumn('ca_propiedades', 'string', null, array(
+             'type' => 'string',
+             ));
+        $this->hasColumn('ca_observaciones_idg', 'string', null, array(
              'type' => 'string',
              ));
 

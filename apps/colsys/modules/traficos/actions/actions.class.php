@@ -438,6 +438,11 @@ class traficosActions extends sfActions
 			$horaRecibo = implode(":", $horaRecibo );            
 			$status->setCaFchrecibo( Utils::parseDate($request->getParameter("fchrecibo"), "Y-m-d")." ".$horaRecibo );
 		}
+
+        if( $request->getParameter("observaciones_idg") ){
+            $status->setCaObservacionesIdg( $request->getParameter("observaciones_idg") );
+        }
+
 		$status->setCaFchenvio( date("Y-m-d H:i:s") );
 		$status->setCaUsuenvio( $user->getUserId() );
 			

@@ -119,7 +119,10 @@ class NuevoStatusForm extends BaseForm{
 				$validator[$name] = new sfValidatorString(array('required' => false ) ) ;			
 			}				
 		}
-		
+
+
+        $widgets['observaciones_idg'] = new sfWidgetFormInputText(array(), array("size"=>120 ));
+
 		//Seguimientos		
 		$widgets["prog_seguimiento"] = new sfWidgetFormInputCheckbox( array(), array("onClick"=>"crearSeguimiento()") );
 		$widgets["fchseguimiento"] = new sfWidgetFormExtDate();
@@ -215,7 +218,7 @@ class NuevoStatusForm extends BaseForm{
 		$validator['txtseguimiento'] = new sfValidatorString(array('required' => false ), 
 														array('required' => 'Por favor coloque un texto para el seguimiento'));
 														
-																												
+		$validator['observaciones_idg'] = new sfValidatorString(array('required' => false ));
 		
 		//echo isset($validator['fchdoctransporte'])."<br />";															
 		$this->setValidators( $validator );
