@@ -114,8 +114,7 @@ elseif (!isset($boton) and !isset($accion) and isset($traorigen)){
     $modulo = "00100000";                                                      // Identificación del módulo para la ayuda en línea
 //  include_once 'include/seguridad.php';                                      // Control de Acceso al módulo
 
-    $condicion= "where substr(ca_referencia,8,2) like '$mes' and substr(ca_referencia,15) = ".substr($ano, -1)." and ca_traorigen like '%$traorigen%' and ". str_replace("\"","'",$casos)." and ca_referencia in (select DISTINCT ca_referencia from vi_inoclientes_sea where ca_sucursal like '$sucursal') order by ca_traorigen, ca_referencia";
-
+    $condicion= "where ca_mes::text like '$mes' and ca_ano::text = '$ano' and ca_traorigen like '%$traorigen%' and ". str_replace("\"","'",$casos)." and ca_referencia in (select DISTINCT ca_referencia from vi_inoclientes_sea where ca_sucursal like '$sucursal') order by ca_traorigen, ca_referencia";
     if (!$rs->Open("select * from vi_inomaestra_sea $condicion")) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
         echo "<script>document.location.href = 'entrada.php';</script>";
@@ -360,12 +359,12 @@ require_once("menu.php");
     echo "</TABLE><BR><BR>";
 
     if ($sucursal != '%') {
-		if (!$rs->Open("select ca_estado, count(ca_estado) as ca_numero from vi_inomaestra_sea where substr(ca_referencia,8,2) like '$mes' and substr(ca_referencia,15) = ".substr($ano, -1)." and ca_traorigen like '%$traorigen%' and ca_referencia in (select DISTINCT ca_referencia from vi_inoclientes_sea where ca_sucursal like '$sucursal') group by ca_estado order by ca_estado")) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
+		if (!$rs->Open("select ca_estado, count(ca_estado) as ca_numero from vi_inomaestra_sea where substr(ca_referencia,8,2)::text like '$mes' and ca_ano::text = '$ano' and ca_traorigen like '%$traorigen%' and ca_referencia in (select DISTINCT ca_referencia from vi_inoclientes_sea where ca_sucursal like '$sucursal') group by ca_estado order by ca_estado")) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
 	        echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
 	        echo "<script>document.location.href = 'entrada.php';</script>";
 	        exit; }
     }else{
-		if (!$rs->Open("select ca_estado, count(ca_estado) as ca_numero from vi_inomaestra_sea where substr(ca_referencia,8,2) like '$mes' and substr(ca_referencia,15) = ".substr($ano, -1)." and ca_traorigen like '%$traorigen%' group by ca_estado order by ca_estado")) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
+		if (!$rs->Open("select ca_estado, count(ca_estado) as ca_numero from vi_inomaestra_sea where substr(ca_referencia,8,2)::text like '$mes' and ca_ano::text = '$ano' and ca_traorigen like '%$traorigen%' group by ca_estado order by ca_estado")) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
 	        echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
 	        echo "<script>document.location.href = 'entrada.php';</script>";
 	        exit; }

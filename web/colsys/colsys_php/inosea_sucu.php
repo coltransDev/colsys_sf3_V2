@@ -113,7 +113,7 @@ require_once("menu.php");
            echo "  <TD Class=imprimir COLSPAN=3></TD>";
            echo "</TR>";
            echo "<TR>";
-           echo "  <TD Class=titulo style='font-size: 11px; font-weight:bold;'>".($rs->Value('ca_ano')+2000)."</TD>";
+           echo "  <TD Class=titulo style='font-size: 11px; font-weight:bold;'>".($rs->Value('ca_ano'))."</TD>";
            echo "  <TD Class=titulo COLSPAN=2></TD>";
            echo "</TR>";
            $ano_mem = $rs->Value('ca_ano');

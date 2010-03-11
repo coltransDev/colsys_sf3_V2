@@ -158,7 +158,7 @@ elseif (!isset($boton) and !isset($accion) and isset($criterio)) {
             echo "  <TD Class=imprimir COLSPAN=3></TD>";
             echo "</TR>";
             echo "<TR>";
-            echo "  <TD Class=titulo style='font-size: 11px; font-weight:bold;'>".($rs->Value('ca_ano')+2000)."</TD>";
+            echo "  <TD Class=titulo style='font-size: 11px; font-weight:bold;'>".($rs->Value('ca_ano'))."</TD>";
             echo "  <TD Class=titulo COLSPAN=2></TD>";
             echo "</TR>";
             $ano_mem = $rs->Value('ca_ano');
@@ -912,8 +912,8 @@ elseif (isset($boton)) {                                                       /
                 echo "      alert('El campo Tasa de Cambio no puede ser igual a 0');";
                 echo "  else if (document.adicionar.neto.value == '' || document.adicionar.neto.value == 0)";
                 echo "      alert('El campo Valor Neto no puede ser igual a 0');";
-                echo "  else if (document.adicionar.venta.value == '' || document.adicionar.venta.value == 0)";
-                echo "      alert('El campo Venta en Pesos no puede ser igual a 0');";
+                echo "  else if (document.adicionar.venta.value == '')";
+                echo "      alert('El campo Venta en Pesos no ha sido diligenciado');";
                 echo "  else if (document.adicionar.utilidad.value !=  document.adicionar.total.value)";
                 echo "      alert('No concuerda la utilidad en Venta con la Distribución x Sobreventa');";
                 echo "  else if (document.adicionar.proveedor.value == '')";
@@ -1050,8 +1050,8 @@ elseif (isset($boton)) {                                                       /
                 echo "      alert('El campo Tasa de Cambio no puede ser igual a 0');";
                 echo "  else if (document.modificar.neto.value == '' || document.modificar.neto.value == 0)";
                 echo "      alert('El campo Valor Neto no puede ser igual a 0');";
-                echo "  else if (document.modificar.venta.value == '' || document.modificar.venta.value == 0)";
-                echo "      alert('El campo Venta en Pesos no puede ser igual a 0');";
+                echo "  else if (document.modificar.venta.value == '')";
+                echo "      alert('El campo Venta en Pesos no ha sido diligenciado');";
                 echo "  else if (document.modificar.utilidad.value !=  document.modificar.total.value)";
                 echo "      alert('No concuerda la utilidad en Venta con la Distribución x Sobreventa');";
                 echo "  else if (document.modificar.proveedor.value == '')";

@@ -269,7 +269,7 @@ elseif (isset($boton)) {                                                       /
 //          include_once 'include/seguridad.php';                              // Control de Acceso al módulo
 
             $annos_mem = '';
-			for ($i=8; $i<=$ano-2000; $i++){
+			for ($i=9; $i<=$ano-2000; $i++){
 				$annos_mem.="'".substr($i,-1)."',";
 			}
 			$annos_mem = substr($annos_mem,0,strlen($annos_mem)-1);

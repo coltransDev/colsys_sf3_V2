@@ -100,7 +100,7 @@ elseif (!isset($boton) and !isset($accion) and isset($traorigen)){
     $modulo = "00100000";                                                      // Identificación del módulo para la ayuda en línea
 //  include_once 'include/seguridad.php';                                      // Control de Acceso al módulo
 
-    $condicion= "where ca_mes like '".$mes.'-'.substr($ano, -1)."' and ca_trafico like '%$trafico%' and ca_traorigen like '%$traorigen%'";
+	$condicion = "where ca_mes::text like '$mes' and ca_ano::text = '$ano' and ca_trafico like '%$trafico%' and ca_traorigen like '%$traorigen%'";
     if (!$rs->Open("select distinct ca_nomtransportista, ca_nombre from vi_inomaestra_sea $condicion order by ca_nomtransportista, ca_nombre")) { // Selecciona todos lo registros de la tabla Ino-Marítimo
         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
         echo "<script>document.location.href = 'entrada.php';</script>";
@@ -150,14 +150,14 @@ require_once("menu.php");
                 echo "  <TD Class=invertir COLSPAN=3></TD>";
                 echo "</TR>";
                 echo "<TR>";
-                echo " <TD Class=valores>&nbsp</TD>";
-                echo " <TD Class=valores style='font-weight:bold;'>Gran Total Contenedores 20 pies:&nbsp&nbsp&nbsp$age_20</TD>";
-                echo " <TD Class=valores style='font-weight:bold;'>Gran Total Volumen CBM:&nbsp&nbsp&nbsp".number_format($age_vol,2)."</TD>";
+                echo " <TD Class=valores>&nbsp;</TD>";
+                echo " <TD Class=valores style='font-weight:bold;'>Gran Total Contenedores 20 pies:&nbsp;&nbsp;&nbsp;$age_20</TD>";
+                echo " <TD Class=valores style='font-weight:bold;'>Gran Total Volumen CBM:&nbsp;&nbsp;&nbsp;".number_format($age_vol,2)."</TD>";
                 echo "</TR>";
                 echo "<TR>";
-                echo " <TD Class=valores>&nbsp</TD>";
-                echo " <TD Class=valores style='font-weight:bold;'>Gran Total Contenedores 40 pies:&nbsp&nbsp&nbsp$age_40</TD>";
-                echo " <TD Class=valores>&nbsp</TD>";
+                echo " <TD Class=valores>&nbsp;</TD>";
+                echo " <TD Class=valores style='font-weight:bold;'>Gran Total Contenedores 40 pies:&nbsp;&nbsp;&nbsp;$age_40</TD>";
+                echo " <TD Class=valores>&nbsp;</TD>";
                 echo "</TR>";
                 echo "<TR HEIGHT=5>";
                 echo "  <TD Class=invertir COLSPAN=3></TD>";
@@ -175,7 +175,7 @@ require_once("menu.php");
           }
        if ($nom_nav != $rs->Value('ca_nombre')) {
            echo "<TR>";
-           echo "<TD Class=invertir COLSPAN=3 style='font-size: 11px;'>&nbsp&nbsp".$rs->Value('ca_nombre')."</TD>";
+           echo "<TD Class=invertir COLSPAN=3 style='font-size: 11px;'>&nbsp;&nbsp;".$rs->Value('ca_nombre')."</TD>";
            echo "</TR>";
            $nom_nav = $rs->Value('ca_nombre');
            $con_age++;
@@ -202,13 +202,13 @@ require_once("menu.php");
               echo "<TD Class=listar>".$fc->Value('ca_traorigen')."</TD>";
               $nom_tra = $rs->Value('ca_traorigen');
           }else {
-              echo "<TD Class=listar>&nbsp</TD>";
+              echo "<TD Class=listar>&nbsp;</TD>";
           }
           if ($nom_des != $fc->Value('ca_ciudestino')) {
               echo "<TD Class=listar>".$fc->Value('ca_ciudestino')."</TD>";
               $nom_des = $rs->Value('ca_ciudestino');
           }else {
-              echo "<TD Class=listar>&nbsp</TD>";
+              echo "<TD Class=listar>&nbsp;</TD>";
           }
           echo "<TD Class=listar>".$fc->Value('ca_capacidad')."</TD>";
           echo "<TD Class=valores>".number_format($fc->Value('ca_cantidad'))."</TD>";
@@ -255,13 +255,13 @@ require_once("menu.php");
               echo "<TD Class=listar>".$lc->Value('ca_traorigen')."</TD>";
               $nom_tra = $rs->Value('ca_traorigen');
           }else {
-              echo "<TD Class=listar>&nbsp</TD>";
+              echo "<TD Class=listar>&nbsp;</TD>";
           }
           if ($nom_des != $lc->Value('ca_ciudestino')) {
               echo "<TD Class=listar>".$lc->Value('ca_ciudestino')."</TD>";
               $nom_des = $rs->Value('ca_ciudestino');
           }else {
-              echo "<TD Class=listar>&nbsp</TD>";
+              echo "<TD Class=listar>&nbsp;</TD>";
           }
           echo "<TD Class=valores>".number_format($lc->Value('ca_volumen'),2)."</TD>";
           echo "</TR>";
@@ -286,14 +286,14 @@ require_once("menu.php");
     echo "  <TD Class=titulo COLSPAN=3></TD>";
     echo "</TR>";
     echo "<TR>";
-    echo " <TD Class=valores>&nbsp</TD>";
-    echo " <TD Class=valores style='font-weight:bold;'>Gran Total Contenedores 20 pies:&nbsp&nbsp&nbsp$tot_20</TD>";
-    echo " <TD Class=valores style='font-weight:bold;'>Gran Total Volumen CBM:&nbsp&nbsp&nbsp".number_format($tot_vol,2)."</TD>";
+    echo " <TD Class=valores>&nbsp;</TD>";
+    echo " <TD Class=valores style='font-weight:bold;'>Gran Total Contenedores 20 pies:&nbsp;&nbsp;&nbsp;$tot_20</TD>";
+    echo " <TD Class=valores style='font-weight:bold;'>Gran Total Volumen CBM:&nbsp;&nbsp;&nbsp;".number_format($tot_vol,2)."</TD>";
     echo "</TR>";
     echo "<TR>";
-    echo " <TD Class=valores>&nbsp</TD>";
-    echo " <TD Class=valores style='font-weight:bold;'>Gran Total Contenedores 40 pies:&nbsp&nbsp&nbsp$tot_40</TD>";
-    echo " <TD Class=valores>&nbsp</TD>";
+    echo " <TD Class=valores>&nbsp;</TD>";
+    echo " <TD Class=valores style='font-weight:bold;'>Gran Total Contenedores 40 pies:&nbsp;&nbsp;&nbsp;$tot_40</TD>";
+    echo " <TD Class=valores>&nbsp;</TD>";
     echo "</TR>";
     echo "</TABLE><BR>";
 

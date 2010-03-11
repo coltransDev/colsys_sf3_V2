@@ -105,9 +105,9 @@ require_once("menu.php");
     echo "<TR>";
     echo "  <TD Class=captura ROWSPAN=5></TD>";
     echo "  <TD Class=listar ROWSPAN=2>Año:<BR><SELECT NAME='ano[]' SIZE=5 MULTIPLE>";
-	$sel = "SELECTED";
+    $sel = "SELECTED";
     for ( $i=0; $i<5; $i++ ){
-          echo " <OPTION VALUE=".(date('Y')-$i-2000)." $sel>".(date('Y')-$i)."</OPTION>";
+          echo " <OPTION VALUE=".(date('Y')-$i)." $sel>".(date('Y')-$i)."</OPTION>";
 		  $sel = "";
         }
     echo "  </SELECT></TD>";
@@ -244,8 +244,8 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)){
 	$ano_mem = implode(',',$ano);
 	$mes_mem = implode(',',$mes);
 	
-	$ano = "substr(ca_referencia,15) ".((count($ano)==1)?"like '$ano[0]'":"in ('".implode("','",$ano)."')");
-	$mes = "substr(ca_referencia,8,2) ".((count($mes)==1)?"like '$mes[0]'":"in ('".implode("','",$mes)."')");
+	$ano = "ca_ano ".((count($ano)==1)?"like '$ano[0]'":"in ('".implode("','",$ano)."')");
+	$mes = "ca_mes ".((count($mes)==1)?"like '$mes[0]'":"in ('".implode("','",$mes)."')");
 	$sucursal = "ca_sucursal ".((count($sucursal)==1)?"like '$sucursal[0]'":"in ('".implode("','",$sucursal)."')");
 	$vendedor = "ca_vendedor ".((count($vendedor)==1)?"like '$vendedor[0]'":"in ('".implode("','",$vendedor)."')");
 	$cliente = ((strlen($cliente)!=0)?"and upper(ca_compania) like upper('%$cliente%')":"");
@@ -263,7 +263,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)){
 	$queries = "select $campos";
 	$queries.= ", count(ca_hbls) as ca_hbls, sum(ca_facturacion) as ca_facturacion, sum(ca_utilidad) as ca_utilidad, sum(ca_sobreventa) as ca_sobreventa, sum(ca_cbm) as ca_cbm, sum(ca_teus) as ca_teus ";
 	$queries.= "from vi_repgerencia_sea where $sucursal and $vendedor $cliente $nomlinea ";
-    $queries.= "and ca_referencia in (select ca_referencia from vi_inomaestra_sea where $ano and $mes and $sufijo and $traorigen and $modalidad and $ciudestino) ";
+	$queries.= "and ca_referencia in (select ca_referencia from vi_inomaestra_sea where $ano and $mes and $sufijo and $traorigen and $modalidad and $ciudestino) ";
 	$queries.= "group by $campos ";
 	$queries.= "order by $campos ";
 	// die ("$queries");
@@ -297,7 +297,7 @@ require_once("menu.php");
     echo "<TABLE CELLSPACING=1>";                                    // un boton de comando definido para hacer mantemientos
 
     $num_cols = $rs->GetColumnCount();
-	echo "<TR>";
+    echo "<TR>";
     echo "  <TH Class=titulo COLSPAN=$num_cols>COLTRANS S.A.<BR>$titulo<BR>$mes_mem / $ano_mem</TH>";
     echo "</TR>";
 	echo "<TR>";
@@ -331,7 +331,7 @@ require_once("menu.php");
 
 				echo "<TR>";
 				for($i=0; $i<$num_cols; $i++){
-					$campo = ($val=='ca_ano')?($rs->Value($val)+2000):(($val=='ca_mes')?($meses[$rs->Value($val)]):$rs->Value($val));
+					$campo = ($val=='ca_ano')?($rs->Value($val)):(($val=='ca_mes')?($meses[$rs->Value($val)]):$rs->Value($val));
 					if ($i == $clave){
 						$bold = false;
 						if ($i < count($agrupamiento)-1){

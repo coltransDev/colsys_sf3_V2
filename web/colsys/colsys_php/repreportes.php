@@ -1,6 +1,6 @@
 <?php
 /*================-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*\
-// Archivo:       REPCOMISIONES.PHP                                           \\
+// Archivo:       repreportes.PHP                                           \\
 // Creado:        2004-05-11                                                  \\
 // Autor:         Carlos Gilberto López M.                                    \\
 // Ver:           1.00                                                        \\
@@ -13,9 +13,9 @@
 /*================-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*\
 */
 
-$titulo = 'Informe de Comisiones para Vendedores';
+$titulo = 'Informe de Reportes de Negocio por Vendedores';
 $meses  = array( "%" => "Todos los Meses", "01" => "Enero", "02" => "Febrero", "03" => "Marzo", "04" => "Abril", "05" => "Mayo", "06" => "Junio", "07" => "Julio", "08" => "Agosto", "09" => "Septiembre", "10" => "Octubre", "11" => "Noviembre", "12" => "Diciembre" );
-$estados = array("Casos Cerrados" => "ca_estado <> \"Abierto\"","Cierre Provisional" => "ca_estado = \"Provisional\"","Casos Abiertos" => "ca_estado = \"Abierto\"","Todos los Casos" => "true");
+$transportes = array("%" => "Todos", "Aéreo" => "Aéreo", "Marítimo" => "Marítimo");
 
 include_once 'include/datalib.php';                                            // Incorpora la libreria de funciones, para accesar leer bases de datos
 require_once("checklogin.php");                                                               // Captura las variables de la sessión abierta
@@ -52,18 +52,18 @@ require_once("menu.php");
     echo "<STYLE>@import URL(\"Coltrans.css\");</STYLE>";             // Carga una hoja de estilo que estandariza las pantallas den sistema graficador
     echo "<CENTER>";
     echo "<H3>$titulo</H3>";
-    echo "<FORM METHOD=post NAME='menuform' ACTION='repcomisiones.php'>";
+    echo "<FORM METHOD=post NAME='menuform' ACTION='repreportes.php'>";
     echo "<TABLE WIDTH=530 BORDER=0 CELLSPACING=1 CELLPADDING=5>";
     echo "<TH COLSPAN=7 style='font-size: 12px; font-weight:bold;'><B>Ingrese los parámetros para el Reporte</TH>";
     $tm =& DlRecordset::NewRecordset($conn);
 	if (!$tm->Open("select ca_nombre as ca_sucursal from control.tb_sucursales order by ca_sucursal")) {       // Selecciona todos lo registros de la tabla Sucursales
         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
-        echo "<script>document.location.href = 'repcomisiones.php';</script>";
+        echo "<script>document.location.href = 'repreportes.php';</script>";
         exit; }
     $us =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
     if (!$us->Open("select ca_login, ca_nombre, ca_sucursal from vi_usuarios where ca_login != 'Administrador' and (ca_cargo = 'Gerente Sucursal' or ca_cargo like '%Ventas%' or ca_departamento like '%Ventas%' or ca_departamento like '%Comercial%') order by ca_login")) {
         echo "<script>alert(\"".addslashes($us->mErrMsg)."\");</script>";
-        echo "<script>document.location.href = 'repcomisiones.php';</script>";
+        echo "<script>document.location.href = 'repreportes.php';</script>";
         exit;
        }
     $us->MoveFirst();
@@ -101,9 +101,9 @@ require_once("menu.php");
     echo "  <TD Class=mostrar>Vendedor:<BR><SELECT NAME='login'>";                 // Llena el cuadro de lista con los valores de la tabla Vendedores
     echo "  <OPTION VALUE=%>Vendedores (Todos)</OPTION>";
     echo "  </SELECT></TD>";
-    echo "  <TD Class=listar ROWSPAN=2>Estado:<BR><SELECT NAME='casos'>";
-    while (list ($clave, $val) = each ($estados)) {
-        echo " <OPTION VALUE='".$val."'>".$clave;
+    echo "  <TD Class=listar ROWSPAN=2>Transporte:<BR><SELECT NAME='transporte'>";
+    while (list ($clave, $val) = each ($transportes)) {
+        echo " <OPTION VALUE='".$clave."'>".$val;
         }
     echo "  </SELECT></TD>";
     echo "  <TH style='vertical-align:bottom;'><INPUT Class=submit TYPE='SUBMIT' NAME='buscar' VALUE='  Buscar  ' ONCLIK='menuform.submit();'></TH>";
@@ -128,228 +128,122 @@ echo "</BODY>";
 elseif (!isset($boton) and !isset($accion) and isset($login)){
     $modulo = "00100000";                                                      // Identificación del módulo para la ayuda en línea
 //  include_once 'include/seguridad.php';                                      // Control de Acceso al módulo
-    $condicion = "where ca_mes::text like '$mes' and ca_ano::text = '$ano' and ca_sucursal like '%$sucursal%' and ca_login like '$login' and ".str_replace("\"","'",$casos);
-    if (!$rs->Open("select * from vi_inocomisiones_sea $condicion order by ca_mes, ca_login, ca_compania, ca_referencia, ca_hbls")) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
-        echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+
+    $rsi =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
+    $condicion = "where ca_impoexpo = 'Importación'";
+    $condicion.= " and ca_ano like '$ano'";
+    $condicion.= " and ca_mes like '$mes'";
+    if ($sucursal != "%")
+        $condicion.= " and ca_sucursal like '%$sucursal%'";
+
+    if ($login != "%")
+        $condicion.= " and ca_login like '%$login%'";
+
+    if ($transporte != "%")
+        $condicion.= " and ca_transporte like '%$transporte%'";
+
+    if (!$rsi->Open("select * from vi_repreportes $condicion")) {               // Selecciona todos lo registros de la vista Vi_Reportes Importación
+        echo "<script>alert(\"".addslashes($rsi->mErrMsg)."\");</script>";      // Muestra el mensaje de error
         echo "<script>document.location.href = 'entrada.php';</script>";
         exit; }
-    $us =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
-    $fc =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
+
+    $condicion = str_replace("Importación","Exportación",$condicion);
+    $rse =& DlRecordset::NewRecordset($conn);                                   // Apuntador que permite manejar la conexiòn a la base de datos
+    if (!$rse->Open("select * from vi_repreportes $condicion")) {               // Selecciona todos lo registros de la vista Vi_Reportes Importación
+        echo "<script>alert(\"".addslashes($rse->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+        echo "<script>document.location.href = 'entrada.php';</script>";
+        exit; }
 
     echo "<HTML>";
     echo "<HEAD>";
     echo "<TITLE>$titulo</TITLE>";
-    echo "<script language='JavaScript' type='text/JavaScript'>";              // Código en JavaScript para validar las opciones de mantenimiento
-    echo "function elegir(opcion, id, cl){";
-    echo "    document.location.href = 'repcomisiones.php?boton='+opcion+'\&id='+id+'\&cl='+cl;";
-    echo "}";
-    echo "function uno(src,color_entrada) {";
-    echo "    src.style.background=color_entrada;src.style.cursor='hand'";
-    echo "}";
-    echo "function dos(src,color_default) {";
-    echo "    src.style.background=color_default;src.style.cursor='default';";
-    echo "}";
-    echo "</script>";
     echo "</HEAD>";
     echo "<BODY>";
-require_once("menu.php");
+    require_once("menu.php");
     echo "<STYLE>@import URL(\"Coltrans.css\");</STYLE>";                      // Carga una hoja de estilo que estandariza las pantallas den sistema graficador
     echo "<CENTER>";
-    echo "<FORM METHOD=post NAME='informe' ACTION='repcomisiones.php'>";             // Hace una llamado nuevamente a este script pero con
-    echo "<TABLE WIDTH=680 CELLSPACING=1>";                                    // un boton de comando definido para hacer mantemientos
+    echo "<FORM METHOD=post NAME='informe' ACTION='repreportes.php'>";             // Hace una llamado nuevamente a este script pero con
+    echo "<TABLE WIDTH=900 CELLSPACING=1>";                                    // un boton de comando definido para hacer mantemientos
     echo "<TR>";
-    echo "  <TH Class=titulo COLSPAN=13>COLTRANS S.A.<BR>$titulo<BR>$meses[$mes]/$ano</TH>";
+    echo "  <TH Class=titulo COLSPAN=11>COLTRANS S.A.<BR>$titulo<BR>$meses[$mes]/$ano</TH>";
     echo "</TR>";
-    $log_ven = '';
-    $cia_mem = '';
-    $ref_mem = '';
-    $nom_cli = '';
-    $hbl_cli = '';
-    $ino_tot = 0;
-    $utl_tot = 0;
-    $sbr_tot = 0;
-    $sob_tot = 0;
-    $con_tot = 0;
-    $com_tot = 0;
-    while (!$rs->Eof() and !$rs->IsEmpty()) {                                                      // Lee la totalidad de los registros obtenidos en la instrucción Select
-       $utl_cbm = ($rs->Value('ca_facturacion_r') - $rs->Value('ca_deduccion_r') - $rs->Value('ca_utilidad_r')) / $rs->Value('ca_volumen_r');
-       if ($log_ven != $rs->Value('ca_login')) {
-           if (!$us->Open("select ca_nombre from control.tb_usuarios where ca_login = '".$rs->Value('ca_login')."'")) {
-               echo "<script>alert(\"".addslashes($us->mErrMsg)."\");</script>";
-               echo "<script>document.location.href = 'repcomisiones.php';</script>";
-               exit; }
-           echo "<TR>";
-           echo "  <TD Class=titulo COLSPAN=13 style='text-align:left; font-weight:bold; font-size: 10px;'>".strtoupper($us->Value('ca_nombre'))." «Comisiones por Cobrar <IMG style='visibility: $visible;' src='./graficos/details.gif' alt='Ver Comisiones Pendientes por Cobrar' border=0 onclick='elegir(\"ComisionesXC\",\"".$rs->Value('ca_login')."\",\"$mes|$ano|$sucursal|$login|".str_replace(chr(34),"¬",$casos)."\");'>»</TD>";
-           echo "</TR>";
-           echo "<TR>";
-           echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Cliente</TD>";
-           echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Referencia</TD>";
-           echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Facturas</TD>";
-           echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Vlr.Facturado</TD>";
-           echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Estado</TD>";
-           echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Vol.CMB</TD>";
-           echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Utilidad</TD>";
-           echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Comisiones</TD>";
-           echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;' COLSPAN=3>Comis/Sobreventa</TD>";
-           echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Comis/Cobradas</TD>";
-           echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Comprobantes</TD>";
-           echo "</TR>";
-           $cmb_ven = 0;
-           $utl_ven = 0;
-           $utl_con = 0;
-           $sob_utl = 0;
-           $sob_ven = 0;
-           $com_ven = 0;
-           $log_ven = $rs->Value('ca_login');
-           $nom_ven = $us->Value('ca_nombre'); }
-       $back_col= ($rs->Value('ca_estado')=='Provisional')?" background: #CCCC99":(($rs->Value('ca_estado')=='Abierto')?" background: #CCCCCC":" ");
-       $back_col= ($utl_cbm<=0)?" background: #FF6666":$back_col;
-       if (!$fc->Open("select ca_factura from vi_inoingresos_sea where ca_referencia = '".$rs->Value('ca_referencia')."' and ca_idcliente = ".$rs->Value('ca_idcliente')." and ca_hbls = '".$rs->Value('ca_hbls')."'")) {
-           echo "<script>alert(\"".addslashes($fc->mErrMsg)."\");</script>";
-           echo "<script>document.location.href = 'repcomisiones.php';</script>";
-           exit; }
-       $fc->MoveFirst();
-       $fac_mem = '';
-       while (!$fc->Eof() and !$fc->IsEmpty()) {
-          $fac_mem.= $fc->Value('ca_factura').'<BR>';
-          $fc->MoveNext();
-       }
-       $fac_mem = substr($fac_mem,0,strlen($fac_mem)-4);
-       
-       if (!$fc->Open("select DISTINCT ca_comprobante from tb_inocomisiones_sea where ca_referencia = '".$rs->Value('ca_referencia')."' and ca_idcliente = ".$rs->Value('ca_idcliente')." and ca_hbls = '".$rs->Value('ca_hbls')."'")) {
-           echo "<script>alert(\"".addslashes($fc->mErrMsg)."\");</script>";
-           echo "<script>document.location.href = 'repcomisiones.php';</script>";
-           exit; }
-       $fc->MoveFirst();
-       $arr_com = array();
-       while (!$fc->Eof() and !$fc->IsEmpty()) {
-          array_push($arr_com,$fc->Value('ca_comprobante'));
-          $fc->MoveNext();
-       }
-
-       if ($cia_mem != $rs->Value('ca_compania')) {
-           echo "<TR HEIGHT=5>";
-           echo "  <TD Class=invertir COLSPAN=13></TD>";
-           echo "</TR>";
-           echo "<TR>";
-           echo "  <TD Class=invertir style='font-weight:bold; font-size:10px;' COLSPAN=13>&nbsp;&nbsp;".substr(ucwords(strtolower($rs->Value('ca_compania'))),0,30)."</TD>";
-           echo "</TR>";
-           $cia_mem = $rs->Value('ca_compania');
-       }
-       $ref_mem = $rs->Value('ca_referencia');
-       $nom_cli = $rs->Value('ca_compania');
-       $hbl_cli = $rs->Value('ca_hbls');
-       $utl_cas = round($rs->Value('ca_volumen') * $utl_cbm * $rs->Value('ca_porcentaje') / 100, 0);
-       $utl_con+= $utl_cas;
-       $utl_par = round(($rs->Value('ca_facturacion_r')-$rs->Value('ca_deduccion_r')-$rs->Value('ca_utilidad_r'))/$rs->Value('ca_volumen_r')*$rs->Value('ca_volumen'),0);
-       $utl_ven+= $utl_par;
-       $cmb_ven+= $rs->Value('ca_volumen');
-       $com_cas = $rs->Value('ca_vlrcomisiones')+$rs->Value('ca_sbrcomisiones');
-       $com_ven+= $com_cas;
-
+    echo "<TR>";
+    echo "  <TD Class=partir COLSPAN=11 style='font-weight:bold'>IMPORTACIÓN</TD>";
+    echo "</TR>";
+    echo "<TR>";
+    echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Reporte</TD>";
+    echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Ver.</TD>";
+    echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Fch.Reporte</TD>";
+    echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Nit</TD>";
+    echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Cliente</TD>";
+    echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Tráfico</TD>";
+    echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Origen</TD>";
+    echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Destino</TD>";
+    echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Transporte</TD>";
+    echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Vendedor</TD>";
+    echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Sucursal</TD>";
+    echo "</TR>";
+    while (!$rsi->Eof() and !$rsi->IsEmpty()) {                                                      // Lee la totalidad de los registros obtenidos en la instrucción Select
        echo "<TR>";
-       echo "  <TD Class=listar></TD>";
-       echo "  <TD Class=listar  style='font-weight:bold; font-size: 9px;$back_col' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'".substr($back_col,14,6)."');\" onclick='javascript:window.open(\"inosea_gere.php?boton=Consultar\&id=".$rs->Value('ca_referencia')."\");'>".$rs->Value('ca_referencia')."</TD>";
-       echo "  <TD Class=listar  style='font-size: 9px;$back_col'>$fac_mem</TD>";
-       echo "  <TD Class=valores style='font-size: 9px;$back_col'>".number_format($rs->Value('ca_valor'))."</TD>";
-       echo "  <TD Class=listar  style='font-size: 9px;$back_col'>".$rs->Value('ca_estado')."</TD>";
-       echo "  <TD Class=valores style='font-size: 9px;$back_col'>".$rs->Value('ca_volumen')."</TD>";
-       echo "  <TD Class=valores style='font-size: 9px;$back_col'>".number_format($utl_par)."</TD>";
-       echo "  <TD Class=valores style='font-size: 9px;$back_col'>".number_format($utl_cas)."</TD>";
-       $mul_lin = false;
-       $arr_fac = array();
-       while ($ref_mem == $rs->Value('ca_referencia') and $nom_cli == $rs->Value('ca_compania') and $hbl_cli == $rs->Value('ca_hbls') and !$rs->Eof()) {
-           $imp_mem = (in_array($rs->Value('ca_factura_ded'),$arr_fac))?false:true;
-           if ($imp_mem and $mul_lin) {
-               echo "  <TD Class=listar>&nbsp;</TD>";
-               echo "  <TD Class=listar>&nbsp;</TD>";
-               echo "</TR>";
-               echo "<TR>";
-               echo "  <TD Class=listar COLSPAN=8>&nbsp;</TD>";
-           }
-           if ($imp_mem and $rs->Value('ca_valor_ded') != 0) {
-               $sob_cas = round($rs->Value('ca_valor_ded') * $rs->Value('ca_porcentaje') / 100, 0);
-               echo "  <TD Class=listar style='font-size: 9px;$back_col'>".str_replace(" ","&nbsp;","&nbsp;".$rs->Value('ca_costo_ded'))."</TD>";
-               echo "  <TD Class=valores style='font-size: 9px;$back_col'>".number_format($rs->Value('ca_valor_ded'))."</TD>";
-               echo "  <TD Class=valores style='font-size: 9px;$back_col'>".number_format($sob_cas)."</TD>";
-               $sob_utl+= $rs->Value('ca_valor_ded');
-               $sob_ven+= $sob_cas;
-               array_push($arr_fac,$rs->Value('ca_factura_ded'));
-               $mul_lin = true;
-              }
-           else if ($imp_mem) {
-               echo "  <TD Class=listar>&nbsp;</TD>";
-               echo "  <TD Class=listar>&nbsp;</TD>";
-               echo "  <TD Class=listar>&nbsp;</TD>";
-               array_push($arr_fac,$rs->Value('ca_factura_ded'));
-              }
-           $rs->MoveNext();
-          }
-       echo "  <TD Class=valores style='font-size: 9px;'>".number_format($com_cas)."</TD>";
-       echo "  <TD Class=valores  style='font-size: 9px;'>";
-       while (list ($clave, $val) = each ($arr_com)) {
-          echo "<A HREF='comision.php?id=$val' TARGET='_blank'>$val&nbsp;</A>";
-       }
-       echo "  </TD>";
+       echo "  <TD Class=listar style='font-weight:bold; font-size: 9px;'>".$rsi->Value('ca_consecutivo')."</TD>";
+       echo "  <TD Class=listar style='font-size: 9px;'>".$rsi->Value('ca_version')."</TD>";
+       echo "  <TD Class=listar style='font-size: 9px;'>".$rsi->Value('ca_fchreporte')."</TD>";
+       echo "  <TD Class=listar style='font-size: 9px;'>".$rsi->Value('ca_idcliente')."</TD>";
+       echo "  <TD Class=listar style='font-size: 9px;'>".$rsi->Value('ca_nombre_cli')."</TD>";
+       echo "  <TD Class=listar style='font-size: 9px;'>".$rsi->Value('ca_traorigen')."</TD>";
+       echo "  <TD Class=listar style='font-size: 9px;'>".$rsi->Value('ca_ciuorigen')."</TD>";
+       echo "  <TD Class=listar style='font-size: 9px;'>".$rsi->Value('ca_ciudestino')."</TD>";
+       echo "  <TD Class=listar style='font-size: 9px;'>".$rsi->Value('ca_transporte')."</TD>";
+       echo "  <TD Class=listar style='font-size: 9px;'>".$rsi->Value('ca_login')."</TD>";
+       echo "  <TD Class=listar style='font-size: 9px;'>".$rsi->Value('ca_sucursal')."</TD>";
        echo "</TR>";
-       if ($log_ven != $rs->Value('ca_login') or $rs->Eof()) {
-            echo "<TR HEIGHT=5>";
-            echo "  <TD Class=titulo COLSPAN=13></TD>";
-            echo "</TR>";
-            echo "<TR>";
-            echo "  <TD Class=Valores style='font-weight:bold;' COLSPAN=5>Totales por Vendedor :</TD>";
-            echo "  <TD Class=valores style='font-weight:bold;'>".number_format($cmb_ven,2)."</TD>";
-            echo "  <TD Class=valores>".number_format($utl_ven)."</TD>";
-            echo "  <TD Class=valores style='font-weight:bold;'>".number_format($utl_con)."</TD>";
-            echo "  <TD Class=listar style='font-weight:bold;'>&nbsp;Sobreventa :</TD>";
-            echo "  <TD Class=valores>&nbsp;&nbsp;".number_format($sob_utl)."</TD>";
-            echo "  <TD Class=valores style='font-weight:bold;'>&nbsp;&nbsp;".number_format($sob_ven)."</TD>";
-            echo "  <TD Class=listar style='font-weight:bold;'></TD>";
-            echo "  <TD Class=listar style='font-weight:bold;'></TD>";
-            echo "</TR>";
-            echo "<TR>";
-            echo "  <TD Class=Valores style='font-weight:bold;' COLSPAN=8>Gran Total para ".ucwords(strtolower($nom_ven))." :</TD>";
-            echo "  <TD Class=valores COLSPAN=2>Comision&nbsp;Causada:</TD>";
-            echo "  <TD Class=valores style='font-weight:bold;'>".number_format($utl_con+$sob_ven)."</TD>";
-            echo "  <TD Class=valores>Comision&nbsp;Cobrada:</TD>";
-            echo "  <TD Class=valores style='font-weight:bold;'>&nbsp;&nbsp;".number_format($com_ven)."</TD>";
-            echo "  <TD Class=valores style='font-weight:bold;'></TD>";
-            echo "</TR>";
-            echo "<TR HEIGHT=5>";
-            echo "  <TD Class=invertir COLSPAN=13></TD>";
-            echo "</TR>";
-            $ino_tot+= $utl_ven;
-            $cmb_tot+= $cmb_ven;
-            $utl_tot+= $utl_con;
-            $sbr_tot+= $sob_utl;
-            $sob_tot+= $sob_ven;
-            $com_tot+= $com_ven;
-           }
-       }
+       $rsi->MoveNext();
+    }
     echo "<TR HEIGHT=5>";
-    echo "  <TD Class=imprimir COLSPAN=13></TD>";
+    echo "  <TD Class=imprimir COLSPAN=11></TD>";
     echo "</TR>";
-    echo "<TR HEIGHT=5>";
-    echo "  <TD Class=titulo COLSPAN=13></TD>";
+    echo "</TABLE><BR><BR>";
+
+    echo "<TABLE WIDTH=900 CELLSPACING=1>";                                    // un boton de comando definido para hacer mantemientos
+    echo "<TR>";
+    echo "  <TD Class=partir COLSPAN=11 style='font-weight:bold'>EXPORTACIÓN</TD>";
     echo "</TR>";
     echo "<TR>";
-    echo "  <TD Class=Valores style='font-weight:bold;' COLSPAN=5>Totales del Informe:</TD>";
-    echo "  <TD Class=valores style='font-weight:bold;'>".number_format($cmb_tot,2)."</TD>";
-    echo "  <TD Class=valores>".number_format($ino_tot)."</TD>";
-    echo "  <TD Class=valores style='font-weight:bold;'>".number_format($utl_tot)."</TD>";
-    echo "  <TD Class=valores style='font-weight:bold;'>&nbsp;Tot.Sobreventa:</TD>";
-    echo "  <TD Class=valores>".number_format($sbr_tot)."</TD>";
-    echo "  <TD Class=valores style='font-weight:bold;'>".number_format($sob_tot)."</TD>";
-    echo "  <TD Class=valores>Causado:&nbsp;<b>".number_format($utl_tot + $sob_tot)."</b></TD>";
-    echo "  <TD Class=valores>Cobrado:&nbsp;<b>".number_format($com_tot)."</b></TD>";
+    echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Reporte</TD>";
+    echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Ver.</TD>";
+    echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Fch.Reporte</TD>";
+    echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Nit</TD>";
+    echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Cliente</TD>";
+    echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Tráfico</TD>";
+    echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Origen</TD>";
+    echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Destino</TD>";
+    echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Transporte</TD>";
+    echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Vendedor</TD>";
+    echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Sucursal</TD>";
     echo "</TR>";
+    while (!$rse->Eof() and !$rse->IsEmpty()) {                                                      // Lee la totalidad de los registros obtenidos en la instrucción Select
+       echo "<TR>";
+       echo "  <TD Class=listar style='font-weight:bold; font-size: 9px;'>".$rse->Value('ca_consecutivo')."</TD>";
+       echo "  <TD Class=listar style='font-size: 9px;'>".$rse->Value('ca_version')."</TD>";
+       echo "  <TD Class=listar style='font-size: 9px;'>".$rse->Value('ca_fchreporte')."</TD>";
+       echo "  <TD Class=listar style='font-size: 9px;'>".$rse->Value('ca_idcliente')."</TD>";
+       echo "  <TD Class=listar style='font-size: 9px;'>".$rse->Value('ca_nombre_cli')."</TD>";
+       echo "  <TD Class=listar style='font-size: 9px;'>".$rse->Value('ca_traorigen')."</TD>";
+       echo "  <TD Class=listar style='font-size: 9px;'>".$rse->Value('ca_ciuorigen')."</TD>";
+       echo "  <TD Class=listar style='font-size: 9px;'>".$rse->Value('ca_ciudestino')."</TD>";
+       echo "  <TD Class=listar style='font-size: 9px;'>".$rse->Value('ca_transporte')."</TD>";
+       echo "  <TD Class=listar style='font-size: 9px;'>".$rse->Value('ca_login')."</TD>";
+       echo "  <TD Class=listar style='font-size: 9px;'>".$rse->Value('ca_sucursal')."</TD>";
+       echo "</TR>";
+       $rse->MoveNext();
+    }
     echo "<TR HEIGHT=5>";
-    echo "  <TD Class=titulo COLSPAN=13></TD>";
+    echo "  <TD Class=imprimir COLSPAN=11></TD>";
     echo "</TR>";
     echo "</TABLE><BR>";
 
     echo "<TABLE CELLSPACING=10>";
-    echo "<TH><INPUT Class=button TYPE='BUTTON' NAME='boton' VALUE='Regresar' ONCLICK='javascript:document.location.href = \"repcomisiones.php\"'></TH>";  // Cancela la operación
+    echo "<TH><INPUT Class=button TYPE='BUTTON' NAME='boton' VALUE='Regresar' ONCLICK='javascript:document.location.href = \"repreportes.php\"'></TH>";  // Cancela la operación
     echo "</TABLE>";
     echo "</FORM>";
     echo "</CENTER>";
@@ -438,7 +332,7 @@ elseif (isset($boton)) {                                                      //
             echo "  return;";
             echo "}";
             echo "function elegir(opcion, id, cl) {";
-            echo "    document.location.href = 'repcomisiones.php?boton='+opcion+'\&id='+id+'\&cl='+cl;";
+            echo "    document.location.href = 'repreportes.php?boton='+opcion+'\&id='+id+'\&cl='+cl;";
             echo "}";
             echo "function uno(src,color_entrada) {";
             echo "    src.style.background=color_entrada;src.style.cursor='hand'";
@@ -453,7 +347,7 @@ elseif (isset($boton)) {                                                      //
 require_once("menu.php");
             echo "<STYLE>@import URL(\"Coltrans.css\");</STYLE>";                      // Carga una hoja de estilo que estandariza las pantallas den sistema graficador
             echo "<CENTER>";
-            echo "<FORM METHOD=post NAME='informe' ACTION='repcomisiones.php' ONSUBMIT='javascript:return confirm(\"¿Esta seguro de Registrar el Cobro de Comisiones?\")'>";             // Hace una llamado nuevamente a este script pero con
+            echo "<FORM METHOD=post NAME='informe' ACTION='repreportes.php' ONSUBMIT='javascript:return confirm(\"¿Esta seguro de Registrar el Cobro de Comisiones?\")'>";             // Hace una llamado nuevamente a este script pero con
             echo "<INPUT TYPE='HIDDEN' NAME='id'>";
             echo "<TABLE CELLSPACING=1>";                                              // un boton de comando definido para hacer mantemientos
             echo "<TR>";
@@ -559,7 +453,7 @@ require_once("menu.php");
             echo "</TABLE><BR>";
            
             echo "<TABLE CELLSPACING=10>";
-            echo "<TH><INPUT Class=button TYPE='BUTTON' NAME='accion' VALUE='Regresar' ONCLICK='javascript:document.location.href = \"repcomisiones.php?mes=$mes\&ano=$ano\&sucursal=$sucursal\&login=$login\&casos=".str_replace("¬",chr(92).chr(34),$casos)."\"'></TH>";  // Cancela la operación
+            echo "<TH><INPUT Class=button TYPE='BUTTON' NAME='accion' VALUE='Regresar' ONCLICK='javascript:document.location.href = \"repreportes.php?mes=$mes\&ano=$ano\&sucursal=$sucursal\&login=$login\&casos=".str_replace("¬",chr(92).chr(34),$casos)."\"'></TH>";  // Cancela la operación
             echo "</TABLE>";
             echo "</FORM>";
             echo "</CENTER>";

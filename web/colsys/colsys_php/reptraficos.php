@@ -100,7 +100,7 @@ elseif (!isset($boton) and !isset($accion) and isset($traorigen)){
     $modulo = "00100000";                                                      // Identificación del módulo para la ayuda en línea
 //  include_once 'include/seguridad.php';                                      // Control de Acceso al módulo
 
-    $condicion= "where ca_mes like '".$mes.'-'.substr($ano, -1)."' and ca_trafico like '%$trafico%'"." and ca_traorigen like '%$traorigen%'";
+    $condicion = "where ca_mes::text like '$mes' and ca_ano::text = '$ano' and ca_trafico like '%$trafico%' and ca_traorigen like '%$traorigen%'";
     if (!$rs->Open("select * from vi_traficos")) {            // Selecciona todos lo registros de la tabla Ino-Marítimo
         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
         echo "<script>document.location.href = 'entrada.php';</script>";
@@ -175,7 +175,7 @@ require_once("menu.php");
               echo "<TD Class=listar>".$fc->Value('ca_ciudestino')."</TD>";
               $fcl_nom_des = $fc->Value('ca_ciudestino');
           }else {
-              echo "<TD Class=listar>&nbsp</TD>";
+              echo "<TD Class=listar>&nbsp;</TD>";
           }
           echo "<TD Class=valores>".number_format($fc->Value('ca_20pies'))."</TD>";
           echo "<TD Class=valores>".number_format($fc->Value('ca_40pies'))."</TD>";
@@ -220,7 +220,7 @@ require_once("menu.php");
               echo "<TD Class=listar>".$lc->Value('ca_ciudestino')."</TD>";
               $lcl_nom_des = $lc->Value('ca_ciudestino');
           }else {
-              echo "<TD Class=listar>&nbsp</TD>";
+              echo "<TD Class=listar>&nbsp;</TD>";
           }
           echo "<TD Class=valores>".number_format($lc->Value('ca_volumen'),1)."</TD>";
           echo "<TD Class=valores>".number_format($lc->Value('ca_20pies'))."</TD>";

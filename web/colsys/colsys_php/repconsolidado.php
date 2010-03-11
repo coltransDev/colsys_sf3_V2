@@ -101,8 +101,7 @@ elseif (!isset($boton) and !isset($accion) and isset($traorigen)){
     $modulo = "00100000";                                                      // Identificación del módulo para la ayuda en línea
 //  include_once 'include/seguridad.php';                                      // Control de Acceso al módulo
 
-    $condicion= "where substr(ca_mes,1,2) like '$mes' and substr(ca_mes,4) = ".substr($ano, -1)." and ca_sufijo like '%$trafico%'"." and ca_traorigen like '$traorigen'";
-    
+	$condicion = "where ca_mes::text like '$mes' and ca_ano::text = '$ano' and ca_sufijo like '%$trafico%' and ca_traorigen like '%$traorigen%'";
     if (!$rs->Open("select * from vi_inotraficos_sea $condicion")) {        // Selecciona todos lo registros de la tabla Ino-Marítimo
         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
         echo "<script>document.location.href = 'entrada.php';</script>";
@@ -128,13 +127,14 @@ require_once("menu.php");
     echo "<TH>No. Hbls</TH>";
     echo "<TH>No. Clientes</TH>";
     echo "<TH WIDTH=100>Total Facturado</TH>";
-    $mes_mem = '';
+    $ano_mem = '';
+	$mes_mem = '';
     while (!$rs->Eof() and !$rs->IsEmpty()) {                                                      // Lee la totalidad de los registros obtenidos en la instrucción Select
-       if ($mes_mem != $rs->Value('ca_mes')) {
-           list($mes, $ano) = sscanf($rs->Value('ca_mes'), "%2s-%d");
-           echo "<TR>";
-           echo "  <TD Class=invertir style='font-weight:bold; font-size: 11px;' COLSPAN=7>".$meses[$mes]."/".(2000+$ano)."</TD>";
-           echo "</TR>";
+       if ($ano_mem != $rs->Value('ca_ano') or $mes_mem != $rs->Value('ca_mes')) {
+		   echo "<TR>";
+		   echo "  <TD Class=invertir style='font-weight:bold; font-size: 11px;' COLSPAN=7>".$meses[$rs->Value('ca_mes')]."/".$rs->Value('ca_ano')."</TD>";
+		   echo "</TR>";
+		   $ano_mem = $rs->Value('ca_ano');
            $mes_mem = $rs->Value('ca_mes');
            $num_ref = 1;
            $sub_ref = 0;

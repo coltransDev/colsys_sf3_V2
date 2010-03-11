@@ -158,9 +158,9 @@ elseif (!isset($boton) and !isset($accion) and isset($traorigen)){
 		$col_one = "Util.x CBM";
 		$col_two = "Utilidad";
 		if (isset($compania) and $compania != '') {
-			$condicion= "* from vi_inocomisiones_sea iu where upper(ca_compania) like upper('%".strtolower($compania)."%') and ";
+			$condicion = "* from vi_inocomisiones_sea iu where upper(ca_compania) like upper('%".strtolower($compania)."%') and ";
 		}else{
-			$condicion= "* from vi_inoutilidades_sea iu where";
+			$condicion = "* from vi_inoutilidades_sea iu where";
 			if (isset($comparable) and $comparable != 0) {
 				$condicion.= " ca_utilxcbm ".$signo." ".$comparable. " and";
 			}
@@ -178,7 +178,7 @@ elseif (!isset($boton) and !isset($accion) and isset($traorigen)){
 		$condicion.= "INNER JOIN (select ca_referencia, ca_deduccion, sum(ca_valor) as ca_recaudo_deduccion from tb_inodeduccion_sea id INNER JOIN tb_deducciones dd ON (id.ca_iddeduccion = dd.ca_iddeduccion and dd.ca_deduccion = '$concepto[$reportar]') ";
 		$condicion.= "group by ca_referencia, ca_deduccion) isv ON (iu.ca_referencia = isv.ca_referencia) where ";
 	}
-    $condicion.= " substr(iu.ca_referencia,8,2) like '$mes' and substr(iu.ca_referencia,15)::int = ".substr($ano, -1)." and iu.ca_traorigen like '%$traorigen%' and iu.ca_modalidad like '%$modalidad%' and ". str_replace("\"","'",$casos);
+    $condicion.= " ca_mes::text like '$mes' and ca_ano::text = '$ano' and iu.ca_traorigen like '%$traorigen%' and iu.ca_modalidad like '%$modalidad%' and ". str_replace("\"","'",$casos);
 
     $co =& DlRecordset::NewRecordset($conn);                                   // Apuntador que permite manejar la conexiòn a la base de datos
     if (!$rs->Open("select $condicion")) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
@@ -222,18 +222,19 @@ require_once("menu.php");
         echo "<TH>Clientes</TH>";
         echo "<TH>Referencia</TH>";
 		$gra_tot = 0;
-        $mes_mem = '';
+		$ano_mem = '';
+		$mes_mem = '';
         $nom_tra = '';
         $mod_mem = $rs->Value('ca_modalidad');
         while (!$rs->Eof() and !$rs->IsEmpty()) {                                                      // Lee la totalidad de los registros obtenidos en la instrucción Select
            $utl_cbm = $rs->Value('ca_utilcons');
            $back_col= ($rs->Value('ca_estado')=='Provisional')?" background: #CCCC99":(($rs->Value('ca_estado')=='Abierto')?" background: #CCCCCC":" background: #F0F0F0");
            $back_col= ($utl_cbm<=0)?" background: #FF6666":$back_col;
-           if ($mes_mem != $rs->Value('ca_mes')) {
-               list($mes, $ano) = sscanf($rs->Value('ca_mes'), "%2s-%d");
+           if ($ano_mem != $rs->Value('ca_ano') or $mes_mem != $rs->Value('ca_mes')) {
                echo "<TR>";
-               echo "  <TD Class=invertir style='font-weight:bold; font-size: 11px;' COLSPAN=8>".$meses[$mes]."/".(2000+$ano)."</TD>";
+               echo "  <TD Class=invertir style='font-weight:bold; font-size: 11px;' COLSPAN=8>".$meses[$rs->Value('ca_mes')]."/".$rs->Value('ca_ano')."</TD>";
                echo "</TR>";
+			   $ano_mem = $rs->Value('ca_ano');
                $mes_mem = $rs->Value('ca_mes');
                $num_ref = 1;
                $sub_hbl = 0;
@@ -368,11 +369,10 @@ require_once("menu.php");
 			   continue;
               }
 
-           $condicion.= " and substr(ca_referencia,8,2) like '$mes' and substr(ca_referencia,15) = ".substr($ano, -1);
-           if ($mes_mem != substr($rs->Value('ca_referencia'),7,2) or $ano_mem != substr($rs->Value('ca_referencia'),-1)){
-               $ano_mem = substr($rs->Value('ca_referencia'),-1);
-               $mes_mem = substr($rs->Value('ca_referencia'),7,2);
-               $dat_imp = $meses[$mes_mem]."/".(2000+$ano_mem);
+		   if ($mes_mem != $rs->Value('ca_mes') or $ano_mem != $rs->Value('ca_ano')){
+               $ano_mem = $rs->Value('ca_ano');
+               $mes_mem = $rs->Value('ca_mes');
+               $dat_imp = $meses[$rs->Value('ca_mes')]."/".$rs->Value('ca_ano');
            }else{
                $dat_imp = '';
            }
@@ -400,7 +400,7 @@ require_once("menu.php");
            $sub_utl+= ($rs->Value('ca_volumen') * $utl_cbm);
 		   $sub_sob+= $rs->Value('ca_valor_ded');
            $rs->MoveNext();
-           if ($mes_mem != substr($rs->Value('ca_referencia'),7,2) or $ano_mem != substr($rs->Value('ca_referencia'),-1) or $rs->Eof()){
+           if ($mes_mem != $rs->Value('ca_mes') or $ano_mem != $rs->Value('ca_ano') or $rs->Eof()){
                echo "<TR>";
                echo "  <TD Class=invertir style='text-align:right; font-weight:bold; font-size: 10px;' COLSPAN=6>Sub-Totales</TD>";
                echo "  <TD Class=invertir style='text-align:right; font-weight:bold; font-size: 10px;'>".number_format($sub_fac)."</TD>";
