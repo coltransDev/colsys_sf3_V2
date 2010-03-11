@@ -1848,12 +1848,6 @@ CREATE TABLE tb_faladeclaracion_imp
 (
   ca_referencia character varying(16),
   ca_numinternacion character varying(10),
-  ca_emision_fch date,
-  ca_vencimiento_fch date,
-  ca_aceptacion_fch date,
-  ca_pago_fch date,
-  ca_moneda character varying(3),
-  ca_valor_trm numeric(8,2),
   ca_ano_trm integer,
   ca_semana_trm integer,
   ca_factor_trm numeric(10,3),
@@ -1881,6 +1875,12 @@ CREATE TABLE tb_faladeclaracion_dts
   ca_referencia character varying(16),
   ca_item integer,
   ca_numdeclaracion character varying(30),
+  ca_emision_fch date,
+  ca_vencimiento_fch date,
+  ca_aceptacion_fch date,
+  ca_pago_fch date,
+  ca_moneda character varying(3),
+  ca_valor_trm numeric(8,2),
   ca_subpartida character varying(10),
   ca_mod character varying(6),
   ca_cantidad numeric(8,2),
@@ -2047,6 +2047,9 @@ alter table tb_fileimported add column ca_proceso varchar(15);
 update tb_fileimported set ca_proceso = 'Coltrans';
 
 alter table tb_falainstructionsadu add column ca_embarque varchar(2);
+
+=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
+alter table tb_clientes add column ca_tipo varchar (100);
 
 
 update tb_falaheader_adu set ca_reqd_delivery = '2010-01-19' where ca_fecha_carpeta in ('2010-01-04','2010-01-07');

@@ -2485,14 +2485,32 @@ GRANT ALL ON vi_repavisos TO "Administrador";
 GRANT ALL ON vi_repavisos TO GROUP "Usuarios";
 
 
+Drop view vi_repreportes;
+Create view vi_repreportes as
+select rp.ca_idreporte, substr(rp.ca_fchreporte::text,1,4) as ca_ano, substr(rp.ca_fchreporte::text,6,2) as ca_mes, rp.ca_fchreporte, rp.ca_consecutivo, rp.ca_version, cl.ca_idcliente, cl.ca_compania as ca_nombre_cli, replace(rp.ca_orden_clie,'|',', ') as ca_orden_clie, t1.ca_nombre as ca_traorigen, c1.ca_ciudad as ca_ciuorigen, t2.ca_nombre as ca_tradestino, c2.ca_ciudad as ca_ciudestino,
+    rp.ca_impoexpo, rp.ca_modalidad, rp.ca_transporte, rp.ca_login, us.ca_sucursal
+    from tb_reportes rp
+	INNER JOIN tb_concliente cc ON rp.ca_idconcliente = cc.ca_idcontacto
+	INNER JOIN tb_clientes cl ON cc.ca_idcliente = cl.ca_idcliente
+	INNER JOIN tb_ciudades c1 ON rp.ca_origen::text = c1.ca_idciudad::text
+	INNER JOIN tb_ciudades c2 ON rp.ca_destino::text = c2.ca_idciudad::text
+	INNER JOIN tb_traficos t1 ON c1.ca_idtrafico::text = t1.ca_idtrafico::text
+	INNER JOIN tb_traficos t2 ON c2.ca_idtrafico::text = t2.ca_idtrafico::text
+	INNER JOIN vi_usuarios us ON rp.ca_login = us.ca_login
+	INNER JOIN (select ca_consecutivo as ca_consecutivo_f, max(ca_version) as ca_version from tb_reportes where ca_usuanulado IS NULL and substr(ca_fchreporte::text,6,2) like '02' and substr(ca_fchreporte::text,1,4) = '2010'  group by ca_consecutivo_f) rx ON rp.ca_consecutivo = rx.ca_consecutivo_f and rp.ca_version = rx.ca_version
+where rp.ca_usuanulado IS NULL and rp.ca_fchanulado IS NULL
+order by us.ca_sucursal, rp.ca_login, rp.ca_transporte;
+REVOKE ALL ON vi_repreportes FROM PUBLIC;
+GRANT ALL ON vi_repreportes TO "Administrador";
+GRANT ALL ON vi_repreportes TO GROUP "Usuarios";
+
+
+
 /* Versión Original de Query */
 // Drop view vi_inomaestra_sea cascade;
 Create view vi_inomaestra_sea as
-Select
-
-substr(i.ca_referencia,15,1) as ca_ano
-
-, substr(i.ca_referencia,8,2)||'-'||substr(i.ca_referencia,15,1) as ca_mes, substr(i.ca_referencia,5,2) as ca_trafico, substr(i.ca_referencia,1,3) as ca_modal, i.ca_fchreferencia, i.ca_referencia, i.ca_impoexpo, i.ca_origen, c1.ca_ciudad as ca_ciuorigen, t1.ca_nombre as ca_traorigen, i.ca_destino,
+Select (CASE WHEN (string_to_array(i.ca_referencia::text, '.'::text))[5]::integer BETWEEN 0 AND 4 AND i.ca_fchreferencia > '2009-01-01' THEN ((string_to_array(i.ca_referencia::text, '.'::text))[5]::integer) + 2010 ELSE (string_to_array(i.ca_referencia::text, '.'::text))[5]::integer + 2000 END) as ca_ano,
+       (string_to_array(i.ca_referencia::text, '.'::text))[3] AS ca_mes, (string_to_array(i.ca_referencia::text, '.'::text))[2] as ca_trafico, substr(i.ca_referencia,1,3) as ca_modal, i.ca_fchreferencia, i.ca_referencia, i.ca_impoexpo, i.ca_origen, c1.ca_ciudad as ca_ciuorigen, t1.ca_nombre as ca_traorigen, i.ca_destino,
        c2.ca_ciudad as ca_ciudestino, t2.ca_nombre as ca_tradestino, i.ca_fchembarque, i.ca_fcharribo, i.ca_modalidad, i.ca_idlinea, t.ca_nombre, t.ca_sigla, t.ca_nomtransportista, i.ca_motonave, i.ca_ciclo, i.ca_mbls, i.ca_observaciones, i.ca_fchconfirmacion, i.ca_horaconfirmacion, i.ca_registroadu, i.ca_fchregistroadu, i.ca_registrocap,
        i.ca_bandera, i.ca_fchdesconsolidacion, i.ca_fchvaciado, i.ca_horavaciado, i.ca_mnllegada, i.ca_fchliberacion, i.ca_nroliberacion, i.ca_mensaje, i.ca_fchconfirmado, i.ca_usuconfirmado, i.ca_asunto_otm, i.ca_mensaje_otm, i.ca_fchllegada_otm, i.ca_ciudad_otm , i.ca_anulado, i.ca_fchcreado, i.ca_usucreado, i.ca_fchactualizado, i.ca_usuactualizado, i.ca_fchliquidado, i.ca_usuliquidado, i.ca_fchcerrado, i.ca_usucerrado, i.ca_provisional,
        (select sum(ie.ca_peso) from vi_inoequipos_sea ie where i.ca_referencia = ie.ca_referencia) as ca_peso_cap,
@@ -2518,7 +2536,8 @@ GRANT ALL ON vi_inomaestra_sea TO GROUP "Usuarios";
 /* Nueva Vista pero tiene problemas de Rendimiento */
 // Drop view vi_inomaestra_sea cascade;
 Create view vi_inomaestra_sea as
-Select substr(i.ca_referencia,15,1) as ca_ano, substr(i.ca_referencia,8,2)||'-'||substr(i.ca_referencia,15,1) as ca_mes, substr(i.ca_referencia,5,2) as ca_trafico, substr(i.ca_referencia,1,3) as ca_modal, i.ca_fchreferencia, i.ca_referencia, i.ca_impoexpo, i.ca_origen, c1.ca_ciudad as ca_ciuorigen, t1.ca_nombre as ca_traorigen, i.ca_destino,
+Select (CASE WHEN (string_to_array(bkm.ca_referencia::text, '.'::text))[5]::integer BETWEEN 0 AND 4 AND bkm.ca_fchreferencia > '2009-01-01' THEN ((string_to_array(bkm.ca_referencia::text, '.'::text))[5]::integer) + 2010 ELSE (string_to_array(bkm.ca_referencia::text, '.'::text))[5]::integer + 2000 END) as ca_ano,
+       substr(i.ca_referencia,8,2)||'-'||substr(i.ca_referencia,15,1) as ca_mes, substr(i.ca_referencia,5,2) as ca_trafico, substr(i.ca_referencia,1,3) as ca_modal, i.ca_fchreferencia, i.ca_referencia, i.ca_impoexpo, i.ca_origen, c1.ca_ciudad as ca_ciuorigen, t1.ca_nombre as ca_traorigen, i.ca_destino,
        c2.ca_ciudad as ca_ciudestino, t2.ca_nombre as ca_tradestino, i.ca_fchembarque, i.ca_fcharribo, i.ca_modalidad, i.ca_idlinea, t.ca_nombre, t.ca_sigla, t.ca_nomtransportista, i.ca_motonave, i.ca_ciclo, i.ca_mbls, i.ca_observaciones, i.ca_fchconfirmacion, i.ca_horaconfirmacion, i.ca_registroadu, i.ca_fchregistroadu, i.ca_registrocap,
        i.ca_bandera, i.ca_fchdesconsolidacion, i.ca_fchvaciado, i.ca_horavaciado, i.ca_mnllegada, i.ca_fchliberacion, i.ca_nroliberacion, i.ca_mensaje, i.ca_fchconfirmado, i.ca_usuconfirmado, i.ca_asunto_otm, i.ca_mensaje_otm, i.ca_fchllegada_otm, i.ca_ciudad_otm , i.ca_anulado, i.ca_fchcreado, i.ca_usucreado, i.ca_fchactualizado, i.ca_usuactualizado, i.ca_fchliquidado, i.ca_usuliquidado, i.ca_fchcerrado, i.ca_usucerrado, i.ca_provisional,
        ie.ca_peso_cap, ie.ca_volumen_cap, ic.ca_numpiezas, ic.ca_peso, ic.ca_volumen, ics.ca_costoneto, sicom.ca_comisionable, nocom.ca_nocomisionable, fc.ca_facturacion, dd.ca_deduccion, ut.ca_utilidad,
@@ -2546,7 +2565,8 @@ GRANT ALL ON vi_inomaestra_sea TO GROUP "Usuarios";
 
 // Drop view vi_inocontenedores_sea cascade;
 Create view vi_inocontenedores_sea as
-Select substr(i.ca_referencia,15,1) as ca_ano, substr(i.ca_referencia,8,2)||'-'||substr(i.ca_referencia,15,1) as ca_mes, substr(i.ca_referencia,5,2) as ca_trafico, substr(i.ca_referencia,1,3) as ca_modal, i.ca_fchreferencia, i.ca_referencia, i.ca_impoexpo, i.ca_origen, c1.ca_ciudad as ca_ciuorigen, t1.ca_nombre as ca_traorigen, i.ca_destino,
+Select (CASE WHEN (string_to_array(i.ca_referencia::text, '.'::text))[5]::integer BETWEEN 0 AND 4 AND i.ca_fchreferencia > '2009-01-01' THEN ((string_to_array(i.ca_referencia::text, '.'::text))[5]::integer) + 2010 ELSE (string_to_array(i.ca_referencia::text, '.'::text))[5]::integer + 2000 END) as ca_ano,
+       (string_to_array(i.ca_referencia::text, '.'::text))[3] AS ca_mes, (string_to_array(i.ca_referencia::text, '.'::text))[2] AS ca_trafico, substr(i.ca_referencia,1,3) as ca_modal, i.ca_fchreferencia, i.ca_referencia, i.ca_impoexpo, i.ca_origen, c1.ca_ciudad as ca_ciuorigen, t1.ca_nombre as ca_traorigen, i.ca_destino,
        c2.ca_ciudad as ca_ciudestino, t2.ca_nombre as ca_tradestino, i.ca_fchembarque, i.ca_fcharribo, i.ca_modalidad, i.ca_idlinea, t.ca_nombre, t.ca_sigla, t.ca_nomtransportista, i.ca_motonave, i.ca_ciclo, i.ca_mbls, i.ca_observaciones, i.ca_fchconfirmacion, i.ca_horaconfirmacion, i.ca_registroadu, i.ca_fchregistroadu, i.ca_registrocap,
        i.ca_bandera, i.ca_fchdesconsolidacion, i.ca_mnllegada, i.ca_fchliberacion, i.ca_nroliberacion, i.ca_mensaje, i.ca_fchconfirmado, i.ca_usuconfirmado, i.ca_asunto_otm, i.ca_mensaje_otm, i.ca_fchllegada_otm, i.ca_ciudad_otm, i.ca_anulado, i.ca_fchcreado, i.ca_usucreado, i.ca_fchactualizado, i.ca_usuactualizado, i.ca_fchliquidado, i.ca_usuliquidado, i.ca_fchcerrado, i.ca_usucerrado, i.ca_provisional,
        (select sum(ic.ca_numpiezas) from tb_inoclientes_sea ic where i.ca_referencia = ic.ca_referencia) as ca_numpiezas,
@@ -2566,6 +2586,7 @@ GRANT ALL ON vi_inocontenedores_sea TO "Administrador";
 GRANT ALL ON vi_inocontenedores_sea TO GROUP "Usuarios";
 
 
+
 Drop view vi_inoequipos_sea cascade;
 Create view vi_inoequipos_sea as
 Select e.oid as ca_oid, e.ca_referencia, e.ca_idconcepto, c.ca_concepto, c.ca_liminferior, (c.ca_volumen * e.ca_cantidad) as ca_volumen, (c.ca_peso * e.ca_cantidad) as ca_peso, e.ca_cantidad, e.ca_idequipo, e.ca_observaciones, e.ca_fchcreado, e.ca_usucreado, e.ca_fchactualizado, e.ca_usuactualizado,
@@ -2578,13 +2599,14 @@ GRANT ALL ON vi_inoequipos_sea TO GROUP "Usuarios";
 
 Drop view vi_inoclientes_sea cascade;
 Create view vi_inoclientes_sea as
-Select i.oid as ca_oid, i.ca_referencia, i.ca_idcliente, c.ca_compania, i.ca_idreporte, r.ca_consecutivo, i.ca_hbls, i.ca_idproveedor, i.ca_proveedor, i.ca_numpiezas, i.ca_peso, i.ca_volumen, i.ca_numorden, i.ca_confirmar, i.ca_mensaje, i.ca_login, i.ca_continuacion, i.ca_continuacion_dest, cu.ca_ciudad as ca_ciudad_dest, i.ca_idbodega, b.ca_nombre as ca_bodega, u.ca_sucursal, i.ca_observaciones, i.ca_fchliberacion, i.ca_notaliberacion,
+Select i.oid as ca_oid, (CASE WHEN (string_to_array(i.ca_referencia::text, '.'::text))[5]::integer BETWEEN 0 AND 4 AND im.ca_fchreferencia > '2009-01-01' THEN ((string_to_array(i.ca_referencia::text, '.'::text))[5]::integer) + 2010 ELSE (string_to_array(i.ca_referencia::text, '.'::text))[5]::integer + 2000 END) as ca_ano,
+       (string_to_array(i.ca_referencia::text, '.'::text))[3] AS ca_mes, i.ca_referencia, i.ca_idcliente, c.ca_compania, i.ca_idreporte, r.ca_consecutivo, i.ca_hbls, i.ca_idproveedor, i.ca_proveedor, i.ca_numpiezas, i.ca_peso, i.ca_volumen, i.ca_numorden, i.ca_confirmar, i.ca_mensaje, i.ca_login, i.ca_continuacion, i.ca_continuacion_dest, cu.ca_ciudad as ca_ciudad_dest, i.ca_idbodega, b.ca_nombre as ca_bodega, u.ca_sucursal, i.ca_observaciones, i.ca_contenedores, i.ca_fchliberacion, i.ca_notaliberacion,
        i.ca_fchcreado as ca_fchcreado_cl, i.ca_usucreado as ca_usucreado_cl, i.ca_fchactualizado as ca_fchactualizado_cl, i.ca_usuactualizado as ca_usuactualizado_cl, i.ca_usuliberado, i.ca_fchliberado, f.oid as ca_oid_fc, f.ca_factura, f.ca_fchfactura, f.ca_neto, f.ca_idmoneda, f.ca_valor, f.ca_reccaja, f.ca_fchpago, f.ca_tcambio, f.ca_observaciones as ca_observaciones_fact,
        (select sum(d.ca_valor) from tb_inodeduccion_sea d where f.ca_referencia = d.ca_referencia and f.ca_idcliente = d.ca_idcliente and f.ca_hbls = d.ca_hbls and f.ca_factura = d.ca_factura) as ca_deduccion,
        (select count(cl.ca_hbls) from tb_inoclientes_sea cl where cl.ca_referencia = i.ca_referencia) as ca_nrohbls,
        f.ca_fchcreado as ca_fchcreado_fc, f.ca_usucreado as ca_usucreado_fc, f.ca_fchactualizado as ca_fchactualizado_fc, f.ca_usuactualizado as ca_usuactualizado_fc,
        (select max(ca_fchvencimiento) as ca_fchvencimiento from tb_comcliente where i.ca_idcliente = ca_idcliente group by ca_idcliente) as ca_fchvencimiento
-       from tb_inoclientes_sea i LEFT OUTER JOIN tb_inoingresos_sea f ON (i.ca_referencia = f.ca_referencia and i.ca_idcliente = f.ca_idcliente and i.ca_hbls = f.ca_hbls) LEFT OUTER JOIN tb_clientes c ON (i.ca_idcliente = c.ca_idcliente) LEFT OUTER JOIN tb_ciudades cu ON (i.ca_continuacion_dest = cu.ca_idciudad) LEFT OUTER JOIN tb_bodegas b ON (i.ca_idbodega = b.ca_idbodega) LEFT OUTER JOIN tb_reportes r ON (i.ca_idreporte = r.ca_idreporte) LEFT OUTER JOIN control.tb_usuarios u ON (i.ca_login = u.ca_login)
+       from tb_inoclientes_sea i LEFT OUTER JOIN tb_inomaestra_sea im ON (i.ca_referencia = im.ca_referencia) LEFT OUTER JOIN tb_inoingresos_sea f ON (i.ca_referencia = f.ca_referencia and i.ca_idcliente = f.ca_idcliente and i.ca_hbls = f.ca_hbls) LEFT OUTER JOIN tb_clientes c ON (i.ca_idcliente = c.ca_idcliente) LEFT OUTER JOIN tb_ciudades cu ON (i.ca_continuacion_dest = cu.ca_idciudad) LEFT OUTER JOIN tb_bodegas b ON (i.ca_idbodega = b.ca_idbodega) LEFT OUTER JOIN tb_reportes r ON (i.ca_idreporte = r.ca_idreporte) LEFT OUTER JOIN control.tb_usuarios u ON (i.ca_login = u.ca_login)
        order by i.ca_referencia, c.ca_compania, i.ca_hbls, f.ca_factura;
 REVOKE ALL ON vi_inoclientes_sea FROM PUBLIC;
 GRANT ALL ON vi_inoclientes_sea TO "Administrador";
@@ -2593,8 +2615,9 @@ GRANT ALL ON vi_inoclientes_sea TO GROUP "Usuarios";
 
 // Drop view vi_inoconsulta_sea;
 Create view vi_inoconsulta_sea as
-Select substr(im.ca_referencia,15,1) as ca_ano, substr(im.ca_referencia,8,2)||'-'||substr(im.ca_referencia,15,1) as ca_mes, substr(im.ca_referencia,5,2) as ca_trafico, substr(im.ca_referencia,1,3) as ca_modal, im.ca_referencia, im.ca_mbls, im.ca_motonave, im.ca_observaciones, t.ca_nombre, t.ca_sigla, ie.ca_idequipo, im.ca_origen, c1.ca_ciudad as ca_ciuorigen, t1.ca_nombre as ca_traorigen, im.ca_destino,
-       c2.ca_ciudad as ca_ciudestino, t2.ca_nombre as ca_tradestino, im.ca_fchembarque, im.ca_fcharribo, ic.ca_hbls, ic.ca_idcliente, c.ca_compania, rp.ca_consecutivo, ii.ca_factura, it.ca_factura as ca_factura_prov, us.ca_sucursal, dm.ca_iddocactual, dm.ca_fchenvio, dm.ca_usuenvio,
+Select (CASE WHEN (string_to_array(im.ca_referencia::text, '.'::text))[5]::integer BETWEEN 0 AND 4 AND im.ca_fchreferencia > '2009-01-01' THEN ((string_to_array(im.ca_referencia::text, '.'::text))[5]::integer) + 2010 ELSE (string_to_array(im.ca_referencia::text, '.'::text))[5]::integer + 2000 END) as ca_ano,
+       (string_to_array(im.ca_referencia::text, '.'::text))[3] AS ca_mes, (string_to_array(im.ca_referencia::text, '.'::text))[2] AS ca_trafico, substr(im.ca_referencia,1,3) as ca_modal, im.ca_referencia, im.ca_mbls, im.ca_motonave, im.ca_observaciones, t.ca_nombre, t.ca_sigla, ie.ca_idequipo, im.ca_origen, c1.ca_ciudad as ca_ciuorigen,
+	   t1.ca_nombre as ca_traorigen, im.ca_destino, c2.ca_ciudad as ca_ciudestino, t2.ca_nombre as ca_tradestino, im.ca_fchembarque, im.ca_fcharribo, ic.ca_hbls, ic.ca_idcliente, c.ca_compania, rp.ca_consecutivo, ii.ca_factura, it.ca_factura as ca_factura_prov, us.ca_sucursal, dm.ca_iddocactual, dm.ca_fchenvio, dm.ca_usuenvio,
 	   (case when im.ca_provisional then 'Provisional' else (case when im.ca_usucerrado IS NOT NULL then 'Cerrado' else 'Abierto' end) end) as ca_estado
        from tb_inomaestra_sea im
        LEFT JOIN tb_ciudades c1 ON (im.ca_origen = c1.ca_idciudad)
@@ -2648,7 +2671,8 @@ GRANT ALL ON TABLE public.vi_inocomisiones_sea TO GROUP "Usuarios";
 
 Drop view vi_inoingresos_sea cascade;
 Create view vi_inoingresos_sea as
-Select DISTINCT i.oid as ca_oid, substr(i.ca_referencia,15,1) as ca_ano, substr(i.ca_referencia,8,2)||'-'||substr(i.ca_referencia,15,1) as ca_mes, i.ca_referencia, i.ca_idcliente, c.ca_compania, l.ca_hbls, l.ca_login, l.ca_volumen,
+Select DISTINCT i.oid as ca_oid, (CASE WHEN (string_to_array(i.ca_referencia::text, '.'::text))[5]::integer BETWEEN 0 AND 4 AND m.ca_fchreferencia > '2009-01-01' THEN ((string_to_array(i.ca_referencia::text, '.'::text))[5]::integer) + 2010 ELSE (string_to_array(i.ca_referencia::text, '.'::text))[5]::integer + 2000 END) as ca_ano,
+       (string_to_array(i.ca_referencia::text, '.'::text))[3] AS ca_mes, i.ca_referencia, i.ca_idcliente, c.ca_compania, l.ca_hbls, l.ca_login, l.ca_volumen,
        i.ca_factura, i.ca_fchfactura, i.ca_reccaja, i.ca_fchpago, i.ca_idmoneda, i.ca_neto, i.ca_valor, i.ca_observaciones, i.ca_fchcreado, i.ca_usucreado, i.ca_fchactualizado, i.ca_usuactualizado,
        (select fun_getcomision(c.ca_idcliente, i.ca_referencia, 'Coltrans')) as ca_porcentaje,
        (select sum(cm.ca_vlrcomision) from tb_inocomisiones_sea cm where l.ca_referencia = cm.ca_referencia and l.ca_hbls = cm.ca_hbls) as ca_vlrcomisiones,
@@ -2674,14 +2698,14 @@ GRANT ALL ON vi_inoingresos_sea TO GROUP "Usuarios";
 
 // Drop view vi_inocarga_fcl;
 Create view vi_inocarga_fcl as
-Select im.ca_mes, im.ca_trafico, im.ca_modalidad, im.ca_traorigen, im.ca_ciudestino, c.ca_liminferior as ca_capacidad, sum(round(c.ca_liminferior/20,0)*ic.ca_factor) as ca_teus, sum(ie.ca_cantidad*ic.ca_factor) as ca_cantidad, ca_sucursal from ( select inoc.ca_referencia, inoc.ca_idcliente, ca_login, sum(inoc.ca_volumen) / (case when max(inov.ca_granvol) <> 0 then max(inov.ca_granvol) else 1 end) as ca_factor from tb_inoclientes_sea inoc, (select ca_referencia, sum(ca_volumen) as ca_granvol from tb_inoclientes_sea group by ca_referencia) inov
+Select im.ca_ano, im.ca_mes, im.ca_trafico, im.ca_modalidad, im.ca_traorigen, im.ca_ciudestino, c.ca_liminferior as ca_capacidad, sum(round(c.ca_liminferior/20,0)*ic.ca_factor) as ca_teus, sum(ie.ca_cantidad*ic.ca_factor) as ca_cantidad, ca_sucursal from ( select inoc.ca_referencia, inoc.ca_idcliente, ca_login, sum(inoc.ca_volumen) / (case when max(inov.ca_granvol) <> 0 then max(inov.ca_granvol) else 1 end) as ca_factor from tb_inoclientes_sea inoc, (select ca_referencia, sum(ca_volumen) as ca_granvol from tb_inoclientes_sea group by ca_referencia) inov
        where inoc.ca_referencia = inov.ca_referencia group by inoc.ca_referencia, inoc.ca_idcliente, inoc.ca_login order by inoc.ca_referencia, inoc.ca_idcliente, inoc.ca_login ) ic
        LEFT OUTER JOIN vi_inocontenedores_sea im ON (ic.ca_referencia = im.ca_referencia)
        LEFT OUTER JOIN tb_inoequipos_sea ie ON (ic.ca_referencia = ie.ca_referencia)
        LEFT OUTER JOIN tb_conceptos c ON (ie.ca_idconcepto = c.ca_idconcepto), control.tb_usuarios u
        where im.ca_modalidad in ('FCL','PROYECTOS') and c.ca_unidad != 'Tonelada/Metro³' and ic.ca_login = u.ca_login
-       group by ca_mes, im.ca_modalidad, ca_liminferior, ca_trafico, ca_traorigen, ca_ciudestino, u.ca_sucursal
-       order by ca_mes, ca_sucursal, im.ca_modalidad, ca_traorigen, ca_ciudestino, ca_capacidad;
+       group by ca_ano, ca_mes, im.ca_modalidad, ca_liminferior, ca_trafico, ca_traorigen, ca_ciudestino, u.ca_sucursal
+       order by ca_ano, ca_mes, ca_sucursal, im.ca_modalidad, ca_traorigen, ca_ciudestino, ca_capacidad;
 REVOKE ALL ON vi_inocarga_fcl FROM PUBLIC;
 GRANT ALL ON vi_inocarga_fcl TO "Administrador";
 GRANT ALL ON vi_inocarga_fcl TO GROUP "Usuarios";
@@ -2689,11 +2713,11 @@ GRANT ALL ON vi_inocarga_fcl TO GROUP "Usuarios";
 
 // Drop view vi_inocarga_lcl;
 Create view vi_inocarga_lcl as
-Select i.ca_mes, u.ca_sucursal, i.ca_trafico, i.ca_traorigen, i.ca_ciudestino, sum(c.ca_volumen) as ca_volumen
+Select i.ca_ano, i.ca_mes, u.ca_sucursal, i.ca_trafico, i.ca_traorigen, i.ca_ciudestino, sum(c.ca_volumen) as ca_volumen
        from vi_inocontenedores_sea i, tb_inoclientes_sea c, control.tb_usuarios u
        where i.ca_modalidad not in ('FCL','PROYECTOS') and i.ca_referencia = c.ca_referencia and c.ca_login = u.ca_login
-       group by ca_mes, ca_sucursal, ca_trafico, ca_traorigen, ca_ciudestino
-       order by ca_mes, u.ca_sucursal, i.ca_traorigen, i.ca_ciudestino;
+       group by ca_ano, ca_mes, ca_sucursal, ca_trafico, ca_traorigen, ca_ciudestino
+       order by ca_ano, ca_mes, u.ca_sucursal, i.ca_traorigen, i.ca_ciudestino;
 REVOKE ALL ON vi_inocarga_lcl FROM PUBLIC;
 GRANT ALL ON vi_inocarga_lcl TO "Administrador";
 GRANT ALL ON vi_inocarga_lcl TO GROUP "Usuarios";
@@ -2701,11 +2725,11 @@ GRANT ALL ON vi_inocarga_lcl TO GROUP "Usuarios";
 
 // Drop view vi_inonaviera_fcl;
 Create view vi_inonaviera_fcl as
-Select i.ca_mes, i.ca_trafico, i.ca_nomtransportista, i.ca_nombre, i.ca_traorigen, i.ca_ciudestino, substr(e.ca_concepto,1,2) as ca_capacidad, sum(e.ca_cantidad) as ca_cantidad
+Select i.ca_ano, i.ca_mes, i.ca_trafico, i.ca_nomtransportista, i.ca_nombre, i.ca_traorigen, i.ca_ciudestino, substr(e.ca_concepto,1,2) as ca_capacidad, sum(e.ca_cantidad) as ca_cantidad
        from vi_inocontenedores_sea i, vi_inoequipos_sea e
        where i.ca_modalidad in ('FCL','PROYECTOS') and i.ca_referencia = e.ca_referencia
-       group by ca_mes, ca_nomtransportista, ca_nombre, ca_modalidad, substr(ca_concepto,1,2), ca_trafico, ca_traorigen, ca_ciudestino
-       order by ca_mes, ca_nomtransportista, ca_nombre, ca_modalidad, ca_traorigen, ca_ciudestino, ca_capacidad;
+       group by ca_ano, ca_mes, ca_nomtransportista, ca_nombre, ca_modalidad, substr(ca_concepto,1,2), ca_trafico, ca_traorigen, ca_ciudestino
+       order by ca_ano, ca_mes, ca_nomtransportista, ca_nombre, ca_modalidad, ca_traorigen, ca_ciudestino, ca_capacidad;
 REVOKE ALL ON vi_inonaviera_fcl FROM PUBLIC;
 GRANT ALL ON vi_inonaviera_fcl TO "Administrador";
 GRANT ALL ON vi_inonaviera_fcl TO GROUP "Usuarios";
@@ -2713,11 +2737,11 @@ GRANT ALL ON vi_inonaviera_fcl TO GROUP "Usuarios";
 
 -- Drop view vi_inonaviera_lcl;
 Create view vi_inonaviera_lcl as
-Select i.ca_mes, i.ca_trafico, i.ca_nomtransportista, i.ca_nombre, i.ca_traorigen, i.ca_ciudestino, sum(c.ca_numpiezas) as ca_numpiezas, sum(c.ca_peso) as ca_peso, sum(c.ca_volumen) as ca_volumen
+Select i.ca_ano, i.ca_mes, i.ca_trafico, i.ca_nomtransportista, i.ca_nombre, i.ca_traorigen, i.ca_ciudestino, sum(c.ca_numpiezas) as ca_numpiezas, sum(c.ca_peso) as ca_peso, sum(c.ca_volumen) as ca_volumen
        from vi_inocontenedores_sea i, tb_inoclientes_sea c
        where i.ca_modalidad not in ('FCL','PROYECTOS') and i.ca_referencia = c.ca_referencia
-       group by ca_mes, ca_nomtransportista, ca_nombre, ca_modalidad, ca_trafico, ca_traorigen, ca_ciudestino
-       order by ca_mes, ca_nomtransportista, ca_nombre, ca_traorigen, ca_ciudestino;
+       group by ca_ano, ca_mes, ca_nomtransportista, ca_nombre, ca_modalidad, ca_trafico, ca_traorigen, ca_ciudestino
+       order by ca_ano, ca_mes, ca_nomtransportista, ca_nombre, ca_traorigen, ca_ciudestino;
 REVOKE ALL ON vi_inonaviera_lcl FROM PUBLIC;
 GRANT ALL ON vi_inonaviera_lcl TO "Administrador";
 GRANT ALL ON vi_inonaviera_lcl TO GROUP "Usuarios";
@@ -2809,7 +2833,8 @@ GRANT ALL ON vi_inosufijos_sea TO GROUP "Usuarios";
 
 -- Drop view vi_inotraficos_sea;
 Create view vi_inotraficos_sea as
-Select substr(m.ca_referencia,8,2)||'-'||substr(m.ca_referencia,15,1) as ca_mes, t.ca_nombre as ca_traorigen, substr(m.ca_referencia,5,2) as ca_sufijo,
+Select (CASE WHEN (string_to_array(m.ca_referencia::text, '.'::text))[5]::integer BETWEEN 0 AND 4 AND m.ca_fchreferencia > '2009-01-01' THEN ((string_to_array(m.ca_referencia::text, '.'::text))[5]::integer) + 2010 ELSE (string_to_array(m.ca_referencia::text, '.'::text))[5]::integer + 2000 END) as ca_ano,
+       (string_to_array(m.ca_referencia::text, '.'::text))[3] AS ca_mes, t.ca_nombre as ca_traorigen, substr(m.ca_referencia,5,2) as ca_sufijo,
        count(DISTINCT m.ca_referencia) as ca_referencias,
        count(DISTINCT c.ca_referencia||'|'||c.ca_idcliente||'|'||c.ca_hbls) as ca_hbls,
        count(DISTINCT c.ca_idcliente) as ca_clientes,
@@ -2817,15 +2842,15 @@ Select substr(m.ca_referencia,8,2)||'-'||substr(m.ca_referencia,15,1) as ca_mes,
        from tb_inomaestra_sea m LEFT OUTER JOIN tb_inoclientes_sea c ON (c.ca_referencia = m.ca_referencia)
        LEFT OUTER JOIN (select ca_referencia, ca_idcliente, ca_hbls, sum(ca_valor) as ca_valor from tb_inoingresos_sea group by ca_referencia, ca_idcliente, ca_hbls) i ON (c.ca_referencia = i.ca_referencia and c.ca_idcliente = i.ca_idcliente and c.ca_hbls = i.ca_hbls), tb_ciudades p, tb_traficos t
        where m.ca_origen = p.ca_idciudad and p.ca_idtrafico = t.ca_idtrafico
-       group by ca_mes, ca_sufijo, ca_traorigen
-       order by ca_mes, ca_traorigen;
+       group by ca_ano, ca_mes, ca_sufijo, ca_traorigen
+       order by ca_ano, ca_mes, ca_traorigen;
 REVOKE ALL ON vi_inotraficos_sea FROM PUBLIC;
 GRANT ALL ON vi_inotraficos_sea TO "Administrador";
 GRANT ALL ON vi_inotraficos_sea TO GROUP "Usuarios";
 
 -- Drop view vi_inoutilidades_sea;
 Create view vi_inoutilidades_sea as
-select i.ca_mes, i.ca_trafico, i.ca_modal, i.ca_traorigen, i.ca_ciuorigen, i.ca_ciudestino, i.ca_modalidad, i.ca_referencia, i.ca_estado,
+select i.ca_ano, i.ca_mes, i.ca_trafico, i.ca_modal, i.ca_traorigen, i.ca_ciuorigen, i.ca_ciudestino, i.ca_modalidad, i.ca_referencia, i.ca_estado,
        (case when i.ca_facturacion <> 0 then i.ca_facturacion else 0 end) - (case when i.ca_deduccion <> 0 then i.ca_deduccion else 0 end) - (case when i.ca_utilidad <> 0 then i.ca_utilidad else 0 end) as ca_utilcons,
        (((case when i.ca_facturacion <> 0 then i.ca_facturacion else 0 end) - (case when i.ca_deduccion <> 0 then i.ca_deduccion else 0 end) - (case when i.ca_utilidad <> 0 then i.ca_utilidad else 0 end)) / case when i.ca_volumen <> 0 then i.ca_volumen else 1 end) as ca_utilxcbm
        from vi_inocontenedores_sea i order by ca_ano, ca_mes, ca_traorigen, ca_modalidad, ca_utilxcbm;
@@ -2851,7 +2876,7 @@ GRANT ALL ON vi_inoctrlcontenedores_sea TO GROUP "Usuarios";
 // Drop view vi_repgerencia_sea cascade;
 Create view vi_repgerencia_sea as
 select (CASE WHEN (string_to_array(im.ca_referencia::text, '.'::text))[5]::integer BETWEEN 0 AND 4 AND im.ca_fchreferencia > '2009-01-01' THEN ((string_to_array(im.ca_referencia::text, '.'::text))[5]::integer) + 2010 ELSE (string_to_array(im.ca_referencia::text, '.'::text))[5]::integer + 2000 END) as ca_ano,
- (string_to_array(im.ca_referencia::text, '.'::text))[3] AS ca_mes, substr(ic.ca_referencia,5,2) as ca_sufijo,
+	(string_to_array(im.ca_referencia::text, '.'::text))[3] AS ca_mes, substr(ic.ca_referencia,5,2) as ca_sufijo,
 	ic.ca_referencia, im.ca_modalidad, tr.ca_nombre as ca_traorigen, co.ca_ciudad as ca_ciuorigen, cd.ca_ciudad as ca_ciudestino, us.ca_sucursal, ic.ca_idcliente, cl.ca_compania, ic.ca_hbls,
 	ii.ca_facturacion, (round(iu.ca_utilidad_r / (case when iu.ca_volumen_r = 0 then 1 else iu.ca_volumen_r end) * ic.ca_volumen,0)) as ca_utilidad, iv.ca_sobreventa,
 	(case when im.ca_modalidad not in ('FCL','PROYECTOS') then ic.ca_volumen else 0 end) as ca_cbm,
