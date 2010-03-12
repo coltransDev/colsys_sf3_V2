@@ -45,10 +45,42 @@ PanelRecargosLocalesPatios = function( config ){
 
     this.checkColumn = new Ext.grid.CheckColumn({header:' ', dataIndex:'sel', width:30, hideable: false, hidden: this.readOnly});
 
-    
+    this.expander = new Ext.grid.RowExpander({
+        lazyRender : false,
+        width: 15,
+        tpl : new Ext.Template(
+            '<p><div class=\'btnComentarios\' id=\'obs_{_id}\'>&nbsp; {observaciones}</div></p>'
+        ),
+        getRowClass : function(record, rowIndex, p, ds){
+            p.cols = p.cols-1;
+
+            var content = this.bodyContent[record.id];
+
+            //if(!content && !this.lazyRender){		//hace que los comentarios no se borren cuando se guarda
+                content = this.getBodyContent(record, rowIndex);
+            //}
+
+            if(content){
+               p.body = content;
+            }
+
+            var color;
+            if( record.data.style ){
+                color = "row_"+record.data.style;
+            }
+
+            if( record.data.observaciones!='' ){
+                this.state[record.id]=true;
+            }
+
+            return this.state[record.id] ? 'x-grid3-row-expanded '+color : 'x-grid3-row-collapsed '+color;
+        }
+    });
 
 
     this.columns = [       
+        
+        this.expander,
         this.checkColumn,
 		{
 			header: "Patio",
@@ -72,17 +104,7 @@ PanelRecargosLocalesPatios = function( config ){
 			hideable: false,
 			dataIndex: 'ciudad'
 		}       
-		,
-		{
-			header: "Observaciones",
-			width: 200,
-			sortable: false,
-			hideable: false,            
-			dataIndex: 'observaciones',
-			editor: new Ext.form.TextField({
-	                    allowBlank:true
-			})
-		}        
+		
 
 	];
 
@@ -112,11 +134,14 @@ PanelRecargosLocalesPatios = function( config ){
         clicksToEdit: 1,
         stripeRows: true,
         height: 500,
-        plugins: [this.checkColumn],
+        plugins: [this.checkColumn,this.expander],
         tbar: tbar,
         view: new Ext.grid.GridView({
             forceFit :true
-        })
+        }),
+        listeners:{
+            dblclick: this.onDblclick
+        }
     });
 
     var readOnly = this.readOnly;
@@ -174,6 +199,45 @@ Ext.extend(PanelRecargosLocalesPatios, Ext.grid.EditorGridPanel, {
                 r.set("sel", true);
             }
         );
+    },
+
+    /**
+    * Muestra una ventana donde se pueden editar las observaciones
+    **/
+    onDblclick: function(e) {
+        if( !this.readOnly ){
+            var btn = e.getTarget('.btnComentarios');
+            if (btn) {
+                var t = e.getTarget();
+                var v = this.view;
+                var rowIdx = v.findRowIndex(t);
+                store = this.getStore();
+                var record = this.getStore().getAt(rowIdx);
+                activeRow = rowIdx;
+                Ext.MessageBox.show({
+                   title: 'Observaciones',
+                   msg: 'Por favor coloque las observaciones:',
+                   width:300,
+                   buttons: Ext.MessageBox.OKCANCEL,
+                   multiline: true,
+                   fn: this.actualizarObservaciones,
+                   animEl: 'mb3',
+                   value: record.get("observaciones")
+               });
+            }
+        }
+    },
+
+    /*
+    * Coloca las observaciones en pantalla y actualiza el datastore
+    */
+    actualizarObservaciones: function( btn, text ){
+        if( btn=="ok" ){
+            var record = store.getAt(activeRow);
+            record.set("observaciones", text);
+
+            //document.getElementById("obs_"+record.get("_id")).innerHTML  = "<b>Observaciones:</b> "+text;
+        }
     }
    
 });
