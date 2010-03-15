@@ -239,11 +239,7 @@ class pricingComponents extends sfComponents
 
 	}
 
-
-    public function executePanelConsultaAduana()
-	{
-
-	}
+   
 
     public function executePanelTarifarioAduana()
     {
