@@ -22,8 +22,42 @@ PanelTarifarioAduana = function( config ){
         width: 15,
         tpl : new Ext.Template(
           '<p><div class=\'btnComentarios\' id=\'obs_{_id}\'>&nbsp; {observaciones}</div></p>'
+        ),
+        getRowClass : function(record, rowIndex, p, ds){
+            p.cols = p.cols-1;
 
-        )
+            var content = this.bodyContent[record.id];
+
+            //if(!content && !this.lazyRender){		//hace que los comentarios no se borren cuando se guarda
+                content = this.getBodyContent(record, rowIndex);
+            //}
+
+            if(content){
+               p.body = content;
+            }
+
+            var color;
+
+            if( record.data.observaciones!='' ){
+                this.state[record.id]=true;
+            }
+
+            return this.state[record.id] ? 'x-grid3-row-expanded '+color : 'x-grid3-row-collapsed '+color;
+        },
+        getBodyContent : function(record, index){
+
+            if(!this.enableCaching){
+                return this.tpl.apply(record.data);
+            }
+            var content = this.bodyContent[record.id];
+            //if(!content){  //hace que los comentarios no se borren cuando se guarda
+                content = this.tpl.apply(record.data);
+
+                //alert( content.split("\n").join("<br />") );
+                this.bodyContent[record.id] = content;
+            //}
+            return content;
+        }
     });
 
 
@@ -63,12 +97,96 @@ PanelTarifarioAduana = function( config ){
         lazyRender:true,
         listClass: 'x-combo-list-small',
         store : this.storeRecargos
-
     });
+
+
+    this.storeParametros = new Ext.data.Store({
+        autoLoad : false,
+        url: '<?=url_for("pricing/datosParametros")?>',
+        reader: new Ext.data.JsonReader(
+            {
+                root: 'root',
+                totalProperty: 'total',
+                successProperty: 'success'
+            },
+            Ext.data.Record.create([                
+                {name: 'parametro'}
+            ])
+        )
+    });
+
+    this.editorParametros = new Ext.form.ComboBox({
+        typeAhead: true,
+        forceSelection: true,
+        triggerAction: 'all',
+        selectOnFocus: true,
+        mode: 'local',
+        displayField: 'parametro',
+        valueField: 'parametro',
+        lazyRender:true,
+        listClass: 'x-combo-list-small',
+        store : this.storeParametros
+    });
+
+/*
+    this.storeAplicacion = new Ext.data.Store({
         
-   
-    this.columns = [     
-       
+        reader: new Ext.data.JsonReader(
+            {
+                root: 'root',
+                totalProperty: 'total',
+                successProperty: 'success'
+            },
+            Ext.data.Record.create([
+                {name: 'aplicacion'},
+                {name: 'aplicacion'}
+            ])
+        )
+    });
+
+    this.editorAplicacion = new Ext.form.ComboBox({
+        typeAhead: true,
+        forceSelection: true,
+        triggerAction: 'all',
+        selectOnFocus: true,
+        mode: 'local',
+        displayField: 'aplicacion',
+        valueField: 'idaplicacion',
+        lazyRender:true,
+        listClass: 'x-combo-list-small',
+        store : this.storeAplicacion
+    });
+
+    this.storeAplicacionMin = new Ext.data.Store({
+        autoLoad : true,
+        url: '<?=url_for("pricing/datosAplicacion")?>',
+        reader: new Ext.data.JsonReader(
+            {
+                root: 'root',
+                totalProperty: 'total',
+                successProperty: 'success'
+            },
+            Ext.data.Record.create([
+                {name: 'aplicacionminimo'},
+                {name: 'idaplicacionminimo'}
+            ])
+        )
+    });
+    this.editorAplicacionMin = new Ext.form.ComboBox({
+        typeAhead: true,
+        forceSelection: true,
+        triggerAction: 'all',
+        selectOnFocus: true,
+        mode: 'local',
+        displayField: 'aplicacionminimo',
+        valueField: 'idaplicacionminimo',
+        lazyRender:true,
+        listClass: 'x-combo-list-small',
+        store : this.storeAplicacionMin
+    });
+*/
+    this.columns = [
+      this.expander,
       {
         header: "Concepto",
         dataIndex: 'concepto',
@@ -77,6 +195,15 @@ PanelTarifarioAduana = function( config ){
         renderer: this.formatItem,
         sortable: this.readOnly,
         editor: this.editorRecargos
+      },
+      {
+        header: "Parametro",
+        dataIndex: 'parametro',
+        hideable: false,
+        width: 170,
+        renderer: this.formatItem,
+        sortable: this.readOnly,
+        editor: this.editorParametros
       },
       {
         header: "Valor",
@@ -88,17 +215,73 @@ PanelTarifarioAduana = function( config ){
                     allowBlank: false ,
                     style: 'text-align:left'
                 })
+      },
+      {
+        header: "Aplicacion",
+        dataIndex: 'aplicacion',
+        hideable: false,
+        width: 170,        
+        sortable: this.readOnly,
+        editor: <?=include_component("widgets", "emptyCombo" ,array("id"=>""))?>
+      },
+      {
+        header: "Valor Minimo",
+        dataIndex: 'valorminimo',
+        hideable: false,
+        width: 170,
+        sortable: this.readOnly,
+        editor: new Ext.form.NumberField({
+                    allowBlank: false ,
+                    style: 'text-align:left'
+                })
+      },
+      {
+        header: "Aplicacion Min",
+        dataIndex: 'aplicacionminimo',
+        hideable: false,
+        width: 170,        
+        sortable: this.readOnly,
+        editor: <?=include_component("widgets", "emptyCombo" ,array("id"=>""))?>
+      },
+      {
+        header: "Fecha Inicial",
+        dataIndex: 'fchini',
+        hideable: false,
+        width: 170,       
+        sortable: this.readOnly,
+        renderer: Ext.util.Format.dateRenderer('Y/m/d'),
+        editor: new Ext.form.DateField({
+                format: 'Y/m/d'
+        })
+      },
+      {
+        header: "Fecha Final",
+        dataIndex: 'fchfin',
+        hideable: false,
+        width: 170,       
+        sortable: this.readOnly,
+        renderer: Ext.util.Format.dateRenderer('Y/m/d'),
+        editor: new Ext.form.DateField({
+                format: 'Y/m/d'
+        })
       }
       
      ];
 
 
     this.record = Ext.data.Record.create([           
+            {name: 'consecutivo', type: 'int'},
             {name: 'idconcepto', type: 'int'},
             {name: 'concepto', type: 'string'},
-            {name: 'valor', type: 'string'},
+            {name: 'parametro', type: 'string'},
+            {name: 'valor', type: 'string'},            
+            {name: 'aplicacion', type: 'string'},
+            {name: 'valorminimo', type: 'string'},            
+            {name: 'aplicacionminimo', type: 'string'},
+            {name: 'fchini', type: 'date'},
+            {name: 'fchfin', type: 'date'},
+            {name: 'observaciones', type: 'string'},
             {name: 'orden', type: 'string'}
-            
     ]);
 
     this.store = new Ext.data.Store({
@@ -133,7 +316,8 @@ PanelTarifarioAduana = function( config ){
        loadMask: {msg:'Cargando...'},
        clicksToEdit: 2,
        id: 'panel-parametros',
-       //plugins: [],
+       plugins: [ this.expander],
+        closable: true,
        view: new Ext.grid.GridView({
 
             forceFit:true,
@@ -143,13 +327,12 @@ PanelTarifarioAduana = function( config ){
        }),
        listeners:{
             validateedit: this.onValidateEdit,
+            beforeedit: this.onBeforeEdit,
             rowcontextmenu: this.onRowcontextMenu,
             dblclick:this.onDblClickHandler,
-            celldblclick: this.onCelldblclick
-            
+            celldblclick: this.onCelldblclick            
        },
        tbar: this.tbar
-
     });
 
     var storePanelTarifarioAduana = this.store;
@@ -165,25 +348,24 @@ PanelTarifarioAduana = function( config ){
             if( !record.data.idconcepto && field!="concepto" ){
                 return false;
             }
+            if( record.data.idconcepto && field=="concepto" ){
+                return false;
+            }
             /*
             if( record.data.idconcepto && field=="concepto" ){
                 return false;
             }*/
-
-
             return Ext.grid.ColumnModel.prototype.isCellEditable.call(this, colIndex, rowIndex);
         }
     }
 
-    actualizarObservaciones = function( btn, text, obj ){
+/*    actualizarObservaciones = function( btn, text, obj ){
         if( btn=="ok" ){
             var record = activeRow;
             record.set("observaciones", text);
         }
     }
-
-
-
+*/
 };
 
 Ext.extend(PanelTarifarioAduana, Ext.grid.EditorGridPanel, {
@@ -194,7 +376,6 @@ Ext.extend(PanelTarifarioAduana, Ext.grid.EditorGridPanel, {
             var records = store.getModifiedRecords();
 
             var lenght = records.length;
-
            
             for( var i=0; i< lenght; i++){
                 r = records[i];
@@ -202,12 +383,10 @@ Ext.extend(PanelTarifarioAduana, Ext.grid.EditorGridPanel, {
                 var changes = r.getChanges();
 
                 //Da formato a las fechas antes de enviarlas
-
-
                 changes['id']=r.id;               
                 changes['idconcepto']=r.data.idconcepto;
-
-
+                changes['parametro']=r.data.parametro;
+                changes['consecutivo']=r.data.consecutivo;
                 if( r.data.concepto ){
                     //envia los datos al servidor
                     Ext.Ajax.request(
@@ -218,11 +397,10 @@ Ext.extend(PanelTarifarioAduana, Ext.grid.EditorGridPanel, {
                             params :	changes,
 
                             callback :function(options, success, response){
-
                                 var res = Ext.util.JSON.decode( response.responseText );
                                 if( res.id && res.success){
                                     var rec = store.getById( res.id );
-                                    rec.set("idconcepto",res.idconcepto);
+                                    rec.set("consecutivo",res.consecutivo);
                                     //rec.set("sel", false); //Quita la seleccion de todas las columnas
                                     rec.commit();
                                 }
@@ -232,10 +410,35 @@ Ext.extend(PanelTarifarioAduana, Ext.grid.EditorGridPanel, {
                 }
             }
         }
+    },
+    onBeforeEdit: function(e){
+
+        if( e.field=="aplicacion" || e.field=="aplicacionminimo" ){
+            var data = [
+                <?
+                $i=0;
+                foreach( $aplicaciones as $aplicacion ){
+                    if( $i++!=0){
+                        echo ",";
+                    }
+                ?>
+                    ['<?=$aplicacion->getCaValor()?>']
+                <?
+                }
+                ?>
+            ];
+
+            var ed = this.colModel.getCellEditor(e.column, e.row);            
+            ed.field.store.loadData( data );            
+        }
+        else if( e.field == "parametro" ){
+            this.storeParametros.removeAll();
+            this.storeParametros.setBaseParam("idconcepto",e.record.data.idconcepto);
+            this.storeParametros.load();
+        }
     }
     ,
     formatItem: function(value, p, record) {
-
         return String.format(
             '<b>{0}</b>',
             value
@@ -243,32 +446,40 @@ Ext.extend(PanelTarifarioAduana, Ext.grid.EditorGridPanel, {
 
     },
 
-
-    onValidateEdit : function(e){
-
-        
+    onValidateEdit : function(e){        
         if( e.field == "concepto" ){
-
             var rec = e.record;
             var recordConcepto = this.record;
             var storeConcepto = this.store;
+            //alert(this.store.getCount()-1);
+/*            var store = this.store;
+            var lenght = this.store.data.length;
+            var records = store.getRange();
+//            alert(records.toSource());
 
+            for( var i=0; i< lenght; i++){
+                if(e.value==records[i].data.idconcepto)
+                {
+                    alert("Este concepto ya esta registrado,\n seleccione otro por favor");
+                    return false;
+                }
+            }
+            */
             if( rec.data.orden=="Z"){
-
-
                 var rec = e.record;
                 var ed = this.colModel.getCellEditor(e.column, e.row);
                 var store = ed.field.store;
 
                 store.each( function( r ){
                     if( r.data.idconcepto==e.value ){
-
-
                         var newRec = new recordConcepto({
                                        idconcepto: '',
                                        concepto: '',
-                                       tipo: '',
-                                       modalidades: '',
+                                       parametro: '',
+                                       valor: '',
+                                       valorminimo:'',
+                                       aplicacion:'',
+                                       aplicacionminimo:'',
                                        orden: 'Z' // Se utiliza Z por que el orden es alfabetico
                                     });
 
@@ -286,10 +497,30 @@ Ext.extend(PanelTarifarioAduana, Ext.grid.EditorGridPanel, {
                 });
             }
         }
+        else if( e.field == "parametro" ){            
+            var rec = e.record;
+            var recordConcepto = this.record;
+            var storeConcepto = this.store;
+            var store = this.store;
+            var lenght = this.store.data.length;
+            var records = store.getRange();
+//            alert(records.toSource());
+
+            for( var i=0; i< (lenght); i++){
+                if(e.record.data.idconcepto==records[i].data.idconcepto)
+                {
+                    if(e.value==records[i].data.parametro)
+                    {                        
+                        alert("Este concepto y parametro ya han asignados,\n seleccione otro por favor");
+                        return false;
+                    }
+                }
+            }
+
+        }
         return true;
     }
     ,
-
     onRowcontextMenu: function(grid, index, e){
         if( !this.readOnly ){
             rec = this.store.getAt(index);
@@ -300,12 +531,14 @@ Ext.extend(PanelTarifarioAduana, Ext.grid.EditorGridPanel, {
                 id:'grid_productos-ctx',
                 enableScrolling : false,
                 items: [
-                        /*{
-                            text: 'Eliminar item',
+                       {
+                            text: 'Eliminar',
                             iconCls: 'delete',
                             scope:this,
-                            handler: this.eliminarItem
-                        },*/
+                            handler: function(){
+                                this.eliminarFila(this.ctxRecord, index);
+                            }
+                        },/*,
                         {
                             text: 'Observaciones',
                             iconCls: 'page_white_edit',
@@ -317,7 +550,7 @@ Ext.extend(PanelTarifarioAduana, Ext.grid.EditorGridPanel, {
                                 }
 
                             }
-                        }
+                        }*/
                         ]
                 });
                 this.menu.on('hide', this.onContextHide , this);
@@ -355,6 +588,34 @@ Ext.extend(PanelTarifarioAduana, Ext.grid.EditorGridPanel, {
             }
         }
     },
+    eliminarFila: function(ctxRecord, index){
+        if( confirm("Esta seguro?") ){
+            var store = this.store;
+            var params = ctxRecord.getChanges();
+            params['consecutivo'] = ctxRecord.data.consecutivo;
+            params['id'] = ctxRecord.id;
+
+            Ext.Ajax.request(
+                {
+                    waitMsg: 'Eliminando...',
+                    url: '<?=url_for("pricing/eliminarPanelTarifarioAduana")?>',
+                    method: 'POST',
+                    //Solamente se envian los cambios
+                    params :	params,
+
+                    callback :function(options, success, response){
+
+                        var res = Ext.util.JSON.decode( response.responseText );
+                        if( res.success ){
+                                r = store.getById( res.id );
+                                store.remove( r );
+                        }
+                    }
+                 }
+            );
+
+        }
+    },
     ventanaObservaciones : function( record ){
         var activeRow = record;
         Ext.MessageBox.show({
@@ -363,13 +624,11 @@ Ext.extend(PanelTarifarioAduana, Ext.grid.EditorGridPanel, {
                width:300,
                buttons: Ext.MessageBox.OKCANCEL,
                multiline: true,
-               fn: actualizarObservaciones,
+               fn: this.actualizarObservaciones,
                animEl: 'mb3',
                value: record.get("observaciones")
            });
     }
-
-
     ,
     onCelldblclick : function( grid, rowIndex, columnIndex, e ){
         var record = grid.getStore().getAt(rowIndex);  // Get the Record
@@ -377,7 +636,6 @@ Ext.extend(PanelTarifarioAduana, Ext.grid.EditorGridPanel, {
         var fieldName = grid.getColumnModel().getDataIndex(columnIndex); // Get field name
 
         var data = record.get(fieldName);
-
         if( fieldName=="idconcepto" && data ){
             this.showWindow( record );
         }
@@ -393,13 +651,14 @@ Ext.extend(PanelTarifarioAduana, Ext.grid.EditorGridPanel, {
         }
         this.win.ctxRecord = record;
         this.win.show();
+    },
+    actualizarObservaciones: function( btn, text ){
+        if( btn=="ok" ){
+            //alert(activeRow +" : "+ text);
+            //registro = stroreG.getAt(activeRow);
+            activeRow.set("observaciones", text);
+        }
     }
-
-    
-
-
-
-
 });
 
 </script>
