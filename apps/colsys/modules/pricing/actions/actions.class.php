@@ -1,5 +1,5 @@
 <?php
-
+ 
 /**
  * pricing actions.
  *
@@ -2723,20 +2723,262 @@ class pricingActions extends sfActions
     * @param sfRequest $request A request object
     */
     public function executeDatosPanelTarifarioAduana(sfWebRequest $request){
-        $tipo = $request->getParameter("tipo");
-        $readOnly = $request->getParameter("readOnly");
+        $data = array();
+        $conceptos = Doctrine::getTable("ConceptoAduana")
+                                  ->createQuery("c")
+                                  ->innerJoin("c.InoConcepto")
+                                  ->execute();
 
-
-        $nivel = $this->getNivel();
-        if( $readOnly=="false"){
-            $conceptos[] = array("idconcepto"=>"", "concepto"=>"+", "orden"=>"Z");
+        foreach( $conceptos as $concepto){
+            $data[] = array("consecutivo"=>$concepto->getCaConsecutivo(),
+                            "idconcepto"=>$concepto->getCaIdconcepto(),
+                            "concepto"=>$concepto->getInoConcepto()->getCaConcepto(),
+                            "parametro"=>$concepto->getCaParametro(),
+                            "valor"=>$concepto->getCaValor(),
+                            "valorminimo"=>$concepto->getCaValorminimo(),
+                            "aplicacion"=>$concepto->getCaAplicacion(),
+                            "aplicacionminimo"=>$concepto->getCaAplicacionminimo(),
+                            "fchini"=>$concepto->getCaFchini(),
+                            "fchfin"=>$concepto->getCaFchfin(),
+                            "observaciones"=>$concepto->getCaObservaciones()
+                            );
         }
 
-        $this->responseArray = array( "totalCount"=>count( $conceptos ), "root"=>$conceptos  );
+        $data[] = array("idconcepto"=>"", "concepto"=>"+", "orden"=>"Z");
+        $this->responseArray = array( "totalCount"=>count( $conceptos ), "root"=>$data  );
+        $this->setTemplate("responseTemplate");
+    }
 
-		$this->setTemplate("responseTemplate");
+    public function executeDatosPanelTarifarioAduanaCliente(sfWebRequest $request)
+    {
+        $data = array();
+        $data1 = array();
+        $data2 = array();
+        $conceptos = Doctrine::getTable("ConceptoAduanaCliente")
+                                  ->createQuery("c")
+                                  ->innerJoin("c.InoConcepto")
+                                  ->where("c.ca_idcliente = ? ", $request->getParameter( "idcliente" ) )
+                                  ->execute();
+
+        foreach( $conceptos as $concepto){
+            $data1[] = array("consecutivo"=>$concepto->getCaConsecutivo(),
+                            "idconcepto"=>$concepto->getCaIdconcepto(),
+                            "concepto"=>$concepto->getInoConcepto()->getCaConcepto(),
+                            "parametro"=>$concepto->getCaParametro(),
+                            "valor"=>$concepto->getCaValor(),
+                            "valorminimo"=>$concepto->getCaValorminimo(),
+                            "aplicacion"=>$concepto->getCaAplicacion(),
+                            "aplicacionminimo"=>$concepto->getCaAplicacionminimo(),
+                            "fchini"=>$concepto->getCaFchini(),
+                            "fchfin"=>$concepto->getCaFchfin(),
+                            "observaciones"=>$concepto->getCaObservaciones(),
+                            "tipo"=>"2"
+                            );
+        }
+
+
+        
+        $conceptos2 = Doctrine::getTable("ConceptoAduana")
+                                  ->createQuery("c")
+                                  ->innerJoin("c.InoConcepto")
+                                  ->execute();
+
+        foreach( $conceptos2 as $concepto){
+            $encontro=false;
+            for($k=0;$k<count($data1) ; $k++)
+            {
+//                echo $data1[$k]["idconcepto"].":".$concepto->getCaIdconcepto()."---".$data1[$k]["parametro"].":".$concepto->getCaParametro()."<br>";
+                if( trim($data1[$k]["idconcepto"])==trim($concepto->getCaIdconcepto()) && trim($data1[$k]["parametro"])==trim($concepto->getCaParametro()) )
+                {
+                    $encontro=true;
+                    break;
+                }                
+            }
+            if($encontro==false)
+            {
+                    $data2[] = array("consecutivo"=>$concepto->getCaConsecutivo(),
+                            "idconcepto"=>$concepto->getCaIdconcepto(),
+                            "concepto"=>$concepto->getInoConcepto()->getCaConcepto(),
+                            "parametro"=>$concepto->getCaParametro(),
+                            "valor"=>$concepto->getCaValor(),
+                            "valorminimo"=>$concepto->getCaValorminimo(),
+                            "aplicacion"=>$concepto->getCaAplicacion(),
+                            "aplicacionminimo"=>$concepto->getCaAplicacionminimo(),
+                            "fchini"=>$concepto->getCaFchini(),
+                            "fchfin"=>$concepto->getCaFchfin(),
+                            "observaciones"=>$concepto->getCaObservaciones(),
+                            "tipo"=>"1"
+                            );
+            }
+        }
+        $data=array_merge($data2,$data1);
+
+        $data[] = array("idconcepto"=>"", "concepto"=>"+", "orden"=>"Z");
+        $this->responseArray = array( "totalCount"=>count( $conceptos ), "root"=>$data  );
+        $this->setTemplate("responseTemplate");
     }
 
 
+public function executeDatosParametros(sfWebRequest $request){
+        $data = array();
+        
+        $parametros = Doctrine::getTable("InoConcepto")
+                                  ->createQuery("c")
+                                  ->where("c.ca_idconcepto = ? ", $request->getParameter("idconcepto") )
+                                  ->execute();
+
+        foreach($parametros as $parametro)
+        {
+//            echo $parametro->getCaParametros();
+            $arrParametros=explode("|", $parametro->getCaParametros());
+        }
+        foreach($arrParametros as $parametro)
+        {
+            $data[]=array("parametro"=>$parametro);
+        }
+ 
+//        $this->responseArray["parametro"]=$data;
+        $this->responseArray = array( "root"=>$data  );
+        $this->setTemplate("responseTemplate");
+    }
+
+  /**
+    * Datos de los conceptos para usar en pricing cotizaciones etc.
+    *
+    * @param sfRequest $request A request object
+    */
+    public function executeGuardarPanelTarifarioAduana( )
+    {
+//if($this->getRequestParameter( "consecutivo" )!=null && $this->getRequestParameter( "consecutivo" )>0 )
+        $consecutivo = ($this->getRequestParameter( "consecutivo" )!=null && $this->getRequestParameter( "consecutivo" )>0 )?$this->getRequestParameter( "consecutivo" ):"0";
+        $conceptoaduana = Doctrine::getTable("ConceptoAduana")->find($consecutivo);
+
+        if(!$conceptoaduana)
+        {
+            $conceptoaduana = new ConceptoAduana();
+        }
+
+
+        $conceptoaduana->setCaParametro( $this->getRequestParameter("parametro") );
+        $conceptoaduana->setCaIdconcepto($this->getRequestParameter("idconcepto"));
+
+        if( $this->getRequestParameter("valor") ){
+                $conceptoaduana->setCaValor( $this->getRequestParameter("valor") );
+        }
+        if( $this->getRequestParameter("valorminimo") ){
+                $conceptoaduana->setCaValorminimo( $this->getRequestParameter("valorminimo") );
+        }
+
+        if( $this->getRequestParameter("aplicacion") ){
+                $conceptoaduana->setCaAplicacion( $this->getRequestParameter("aplicacion") );
+        }
+
+        if( $this->getRequestParameter("aplicacionminimo") ){
+                $conceptoaduana->setCaAplicacionminimo( $this->getRequestParameter("aplicacionminimo") );
+        }
+        if( $this->getRequestParameter("fchini") ){
+                $conceptoaduana->setCaFchini( $this->getRequestParameter("fchini") );
+        }
+        if( $this->getRequestParameter("fchfin") ){
+            $conceptoaduana->setCaFchfin( $this->getRequestParameter("fchfin") );
+        }
+        if( $this->getRequestParameter("observaciones") ){
+            $conceptoaduana->setCaObservaciones( $this->getRequestParameter("observaciones") );
+        }
+        $conceptoaduana->save();
+           
+        $id = $this->getRequestParameter("id");
+
+        $this->responseArray = array("id"=>$id,  "consecutivo"=>$conceptoaduana->getCaConsecutivo(), "success"=>true);
+        $this->setTemplate("responseTemplate");    
+    }
+
+    public function executeGuardarPanelTarifarioAduanaCliente( )
+    {
+//if($this->getRequestParameter( "consecutivo" )!=null && $this->getRequestParameter( "consecutivo" )>0 )
+        $consecutivo = ($this->getRequestParameter( "consecutivo" )!=null && $this->getRequestParameter( "consecutivo" )>0 )?$this->getRequestParameter( "consecutivo" ):"0";
+        $conceptoaduana = Doctrine::getTable("ConceptoAduanaCliente")->find($consecutivo);
+
+        if(!$conceptoaduana)
+        {
+            $conceptoaduana = new ConceptoAduanaCliente();
+        }
+
+
+        $conceptoaduana->setCaParametro( $this->getRequestParameter("parametro") );
+        $conceptoaduana->setCaIdconcepto($this->getRequestParameter("idconcepto"));
+        $conceptoaduana->setCaIdcliente($this->getRequestParameter("idcliente"));
+
+        if( $this->getRequestParameter("valor") ){
+                $conceptoaduana->setCaValor( $this->getRequestParameter("valor") );
+        }
+        if( $this->getRequestParameter("valorminimo") ){
+                $conceptoaduana->setCaValorminimo( $this->getRequestParameter("valorminimo") );
+        }
+
+        if( $this->getRequestParameter("aplicacion") ){
+                $conceptoaduana->setCaAplicacion( $this->getRequestParameter("aplicacion") );
+        }
+
+        if( $this->getRequestParameter("aplicacionminimo") ){
+                $conceptoaduana->setCaAplicacionminimo( $this->getRequestParameter("aplicacionminimo") );
+        }
+        if( $this->getRequestParameter("fchini") ){
+                $conceptoaduana->setCaFchini( $this->getRequestParameter("fchini") );
+        }
+        if( $this->getRequestParameter("fchfin") ){
+                $conceptoaduana->setCaFchfin( $this->getRequestParameter("fchfin") );
+        }
+        if( $this->getRequestParameter("observaciones") ){
+            $conceptoaduana->setCaObservaciones( $this->getRequestParameter("observaciones") );
+        }
+        $conceptoaduana->save();
+
+        $id = $this->getRequestParameter("id");
+
+        $this->responseArray = array("id"=>$id,  "consecutivo"=>$conceptoaduana->getCaConsecutivo(), "success"=>true);
+        $this->setTemplate("responseTemplate");
+    }
+
+    public function executeEliminarPanelTarifarioAduana()
+    {
+        $id = $this->getRequestParameter("id");
+        $consecutivo=$this->getRequestParameter("consecutivo");
+        $conceptoaduana = Doctrine::getTable("ConceptoAduana")->find($consecutivo);
+
+        if( $conceptoaduana ){
+            $conceptoaduana->delete();
+        }
+        $this->responseArray = array("id"=>$id, "success"=>true);
+        $this->setTemplate("responseTemplate");
+    }
+
+    public function executeEliminarPanelTarifarioAduanaCliente()
+    {
+        $id = $this->getRequestParameter("id");
+        $consecutivo=$this->getRequestParameter("consecutivo");
+        $conceptoaduana = Doctrine::getTable("ConceptoAduanaCliente")->find($consecutivo);
+
+        if( $conceptoaduana ){
+            $conceptoaduana->delete();
+        }
+        $this->responseArray = array("id"=>$id, "success"=>true);
+        $this->setTemplate("responseTemplate");
+    }
+
+    public function executeDatosAplicacion(sfWebRequest $request)
+    {
+        $this->aplicacion = ParametroTable::retrieveByCaso("CU082");        
+        $aplicaciones= array();
+
+
+        foreach( $this->aplicacion as $aplicacion )
+        {
+            $aplicaciones[]=$aplicacion->getData();
+        }
+
+        $this->responseArray = array( "totalCount"=>count( $aplicaciones ), "root"=>$aplicaciones  );
+	$this->setTemplate("responseTemplate");
+    }
 }
 ?>
