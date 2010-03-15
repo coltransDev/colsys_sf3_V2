@@ -35,6 +35,7 @@ include_component("pricing","modalidadGrid");
 
 //Tarifario Colmas
 include_component("pricing","panelTarifarioAduana");
+include_component("pricing","panelTarifarioAduanaCliente");
 ?>
 <script type="text/javascript">
 
@@ -108,10 +109,13 @@ Ext.onReady(function(){
                         "readOnly": <?=$opcion=="consulta"?"true":"false"?>
                     }),
                     
-                <?
-                include_partial("formAduana", array("opcion"=>$opcion));
-                ?>
-                ,
+                     new PanelConsultaCiudades({
+                        title: "Aduana",
+                        "impoexpo": "<?=(Constantes::IMPO)?>",
+                        "transporte": "<?=Constantes::ADUANA?>",
+                        "readOnly": <?=$opcion=="consulta"?"true":"false"?>
+                    }),
+                
                 <?
                 include_partial("formSeguros", array("opcion"=>$opcion));
                 ?>
@@ -208,7 +212,7 @@ Ext.onReady(function(){
                                                               
         */
 
-        var newComponent = new PanelFletesPorTrayecto({
+        /*var newComponent = new PanelFletesPorTrayecto({
                                                              closable: true,
                                                              title: 'OTM',
                                                              readOnly: <?=$opcion=="consulta"?"true":"false"?>,
@@ -218,7 +222,7 @@ Ext.onReady(function(){
                                                              idtrafico: "CO-057"
                                                          });
         Ext.getCmp('tab-panel').add(newComponent);
-        Ext.getCmp('tab-panel').setActiveTab(newComponent);
+        Ext.getCmp('tab-panel').setActiveTab(newComponent);*/
 
     });
 

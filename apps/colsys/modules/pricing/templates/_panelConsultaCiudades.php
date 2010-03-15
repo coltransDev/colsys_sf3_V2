@@ -161,6 +161,27 @@ Ext.extend(PanelConsultaCiudades, Ext.tree.TreePanel, {
                                                               readOnly: this.readOnly
                                                              });
                         break;
+
+                    case "tarifario-aduana":
+                        /*
+                        * Se muestran la administracion de trayectos para el pais seleccionado
+                        */
+                        var newComponent = new PanelTarifarioAduana({id:idcomponent,                                                             
+                                                              title: "Tarifario Aduana General",
+                                                              closable: true,
+                                                              readOnly: this.readOnly
+                                                             });
+                        break;
+                    case "tarifario-aduana-cliente":
+                        /*
+                        * Se muestran la administracion de trayectos para el pais seleccionado
+                        */
+                        var newComponent = new PanelTarifarioAduanaCliente({id:idcomponent,
+                                                              title: "Tarifario Aduana x Cliente",
+                                                              closable: true,
+                                                              readOnly: this.readOnly
+                                                             });
+                        break;
                     default:
 
                         /*
