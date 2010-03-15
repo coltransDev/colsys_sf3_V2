@@ -240,6 +240,11 @@ class pricingComponents extends sfComponents
 	}
 
 
+    public function executePanelConsultaAduana()
+	{
+
+	}
+
     public function executePanelTarifarioAduana()
     {
         $this->aplicaciones = ParametroTable::retrieveByCaso("CU082");
