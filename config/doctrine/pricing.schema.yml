@@ -170,55 +170,23 @@ PricFlete:
       form: false
       filter: false
   generatePath: pricing
-  tableName: tb_pricfletes
+  tableName: pric.tb_fletes
   attributes:
     export: tables
   columns:
-    ca_idtrayecto:
-      type: integer
-      primary: true      
-    ca_idconcepto: 
-      type: integer
-      primary: true
-    ca_vlrneto: decimal
-    ca_vlrsugerido: decimal
-    ca_fchinicio: date
-    ca_fchvencimiento: date
-    ca_idmoneda: string
-    ca_estado: string
-    ca_aplicacion: string
-    ca_consecutivo: integer
-    ca_fchcreado: timestamp
-    ca_usucreado: string
-    ca_fcheliminado: timestamp
-  relations:
-    Concepto:
-      local: ca_idconcepto
-      foreign: ca_idconcepto
-      type: one      
-
-PricFleteBs:
-  options:
-    symfony:
-      form: false
-      filter: false
-  generatePath: pricing
-  tableName: bs_pricfletes
-  attributes:
-    export: tables
-  columns:
-    ca_idtrayecto: integer
-    ca_idconcepto: integer
-    ca_vlrneto: decimal
-    ca_vlrsugerido: decimal
-    ca_fchinicio: date
-    ca_fchvencimiento: date
-    ca_idmoneda: string
-    ca_estado: string
-    ca_aplicacion: string
     ca_consecutivo:
       type: integer
       primary: true
+    ca_idtrayecto: integer
+    ca_idconcepto: integer
+    ca_idequipo: integer
+    ca_vlrneto: decimal
+    ca_vlrsugerido: decimal
+    ca_fchinicio: date
+    ca_fchvencimiento: date
+    ca_idmoneda: string
+    ca_estado: string
+    ca_aplicacion: string    
     ca_fchcreado: timestamp
     ca_usucreado: string
     ca_fcheliminado: timestamp
@@ -227,6 +195,48 @@ PricFleteBs:
       local: ca_idconcepto
       foreign: ca_idconcepto
       type: one
+    Equipo:
+      local: ca_idequipo
+      foreign: ca_idconcepto
+      type: one
+      class: Concepto
+
+PricFleteBs:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: pricing
+  tableName: pric.bs_fletes
+  attributes:
+    export: tables
+  columns:
+    ca_consecutivo:
+      type: integer
+      primary: true
+    ca_idtrayecto: integer
+    ca_idconcepto: integer
+    ca_idequipo: integer
+    ca_vlrneto: decimal
+    ca_vlrsugerido: decimal
+    ca_fchinicio: date
+    ca_fchvencimiento: date
+    ca_idmoneda: string
+    ca_estado: string
+    ca_aplicacion: string    
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fcheliminado: timestamp
+  relations:
+    Concepto:
+      local: ca_idconcepto
+      foreign: ca_idconcepto
+      type: one
+    Equipo:
+      local: ca_idequipo
+      foreign: ca_idconcepto
+      type: one
+      class: Concepto
 
 PricRecargoxConcepto:
   options:
@@ -234,19 +244,17 @@ PricRecargoxConcepto:
       form: false
       filter: false
   generatePath: pricing
-  tableName: tb_pricrecargosxconcepto
+  tableName: pric.tb_recargosxconcepto
   attributes:
     export: tables
   columns:
-    ca_idtrayecto:
+    ca_consecutivo:
       type: integer
       primary: true
-    ca_idconcepto:
-      type: integer
-      primary: true
-    ca_idrecargo:
-      type: integer
-      primary: true
+    ca_idtrayecto: integer
+    ca_idconcepto: integer
+    ca_idrecargo: integer
+    ca_idequipo: integer
     ca_vlrrecargo: decimal
     ca_aplicacion: string
     ca_vlrminimo: decimal
@@ -255,8 +263,7 @@ PricRecargoxConcepto:
     ca_fchinicio: date
     ca_fchvencimiento: date
     ca_idmoneda: string
-    ca_aplicacion: string
-    ca_consecutivo: integer
+    ca_aplicacion: string    
     ca_fchcreado: timestamp
     ca_usucreado: string
     ca_fcheliminado: timestamp
@@ -276,16 +283,17 @@ PricRecargoxConceptoBs:
       form: false
       filter: false
   generatePath: pricing
-  tableName: bs_pricrecargosxconcepto
+  tableName: pric.bs_recargosxconcepto
   attributes:
     export: tables
   columns:
-    ca_idtrayecto:
+    ca_consecutivo:
       type: integer
-    ca_idconcepto:
-      type: integer
-    ca_idrecargo:
-      type: integer
+      primary: true
+    ca_idtrayecto: integer
+    ca_idconcepto: integer
+    ca_idrecargo: integer
+    ca_idequipo: integer
     ca_vlrrecargo: decimal
     ca_aplicacion: string
     ca_vlrminimo: decimal
@@ -294,10 +302,7 @@ PricRecargoxConceptoBs:
     ca_fchinicio: date
     ca_fchvencimiento: date
     ca_idmoneda: string
-    ca_aplicacion: string
-    ca_consecutivo:
-      type: integer
-      primary: true
+    ca_aplicacion: string    
     ca_fchcreado: timestamp
     ca_usucreado: string
     ca_fcheliminado: timestamp
