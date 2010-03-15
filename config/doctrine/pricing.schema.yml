@@ -56,6 +56,114 @@ Trayecto:
       foreign: ca_idagente
       type: one
 
+ConceptoAduana:
+  options:
+    symfony:
+      form: true
+      filter: false
+  generatePath: pricing
+  tableName: pric.tb_conceptoaduana
+  attributes:
+    export: tables
+  columns:
+    ca_consecutivo:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_idconcepto:
+      type: integer
+      notnull: true
+    ca_valor:
+      type: numeric
+      notnull: true
+    ca_aplicacion:
+      type: string
+      notnull: true
+    ca_valorminimo:
+      type: numeric
+      notnull: true
+    ca_parametro:
+      type: string
+      notnull: true
+    ca_aplicacionminimo:
+      type: string
+      notnull: true
+    ca_parametro:
+      type: string
+      notnull: true
+    ca_fchini:
+      type: date
+    ca_fchfin:
+      type: date
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_observaciones:
+      type: string
+      notnull: true
+  relations:
+    InoConcepto:
+      local: ca_idconcepto
+      foreign: ca_idconcepto
+      type: one
+
+
+ConceptoAduanaCliente:
+  options:
+    symfony:
+      form: true
+      filter: false
+  generatePath: pricing
+  tableName: pric.tb_conceptoaduanaxcliente
+  attributes:
+    export: tables
+  columns:
+    ca_consecutivo:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_idconcepto:
+      type: integer
+      notnull: true
+    ca_idcliente:
+      type: numeric
+      notnull: true
+    ca_valor:
+      type: numeric
+      notnull: true
+    ca_aplicacion:
+      type: string
+      notnull: true
+    ca_valorminimo:
+      type: numeric
+      notnull: true
+    ca_parametro:
+      type: string
+      notnull: true
+    ca_aplicacionminimo:
+      type: string
+      notnull: true
+    ca_parametro:
+      type: string
+      notnull: true
+    ca_fchini:
+      type: date
+    ca_fchfin:
+      type: date
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_observaciones:
+      type: string
+      notnull: true
+  relations:
+    InoConcepto:
+      local: ca_idconcepto
+      foreign: ca_idconcepto
+      type: one
+    Cliente:
+      local: ca_idcliente
+      foreign: ca_idcliente
+      type: one
+
 PricFlete:
   options:
     symfony:
