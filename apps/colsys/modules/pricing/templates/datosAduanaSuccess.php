@@ -8,16 +8,11 @@
 		text:'Tarifario de aduana x cliente',
 		leaf:true,
         opcion: 'tarifario-aduana-cliente'
-	}
-]
-<?
-exit;
-/*
- * ,
+	},
 	{
 		text:'Transporte ',
 		leaf:false,
-        id: 'traf_<?="impo_".Constantes::TERRESTRE."_".Constantes::ADUANA.'CO-057'?>,
+        id: 'traf_<?="impo_".Constantes::TERRESTRE."_".Constantes::ADUANA."_CO-057"?>',
         impoexpo: '<?=Constantes::IMPO?>',
         transporte: '<?=Constantes::TERRESTRE?>',
         modalidad: '<?=Constantes::ADUANA?>',
@@ -26,6 +21,9 @@ exit;
 
 
 	}
- */
+]
+<?
+exit;
+
 ?>
 					

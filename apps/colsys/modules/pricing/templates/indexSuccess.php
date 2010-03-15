@@ -112,7 +112,9 @@ Ext.onReady(function(){
                      new PanelConsultaCiudades({
                         title: "Aduana",
                         "impoexpo": "<?=(Constantes::IMPO)?>",
-                        "transporte": "<?=Constantes::ADUANA?>",
+
+                        "transporte": '<?=Constantes::TERRESTRE?>',
+                        "modalidad": '<?=Constantes::ADUANA?>',
                         "readOnly": <?=$opcion=="consulta"?"true":"false"?>
                     }),
                 

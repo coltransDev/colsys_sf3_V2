@@ -2094,10 +2094,12 @@ class pricingActions extends sfActions
 		$node = $this->getRequestParameter("node");
 
         $this->nivel = $this->getNivel();
-        if( $transporte==Constantes::ADUANA ){
-            $this->setTemplate("datosAduana");
-        }else{
-            if(substr($node,0,4)!="traf" ){
+        
+        if(substr($node,0,4)!="traf" ){
+            $modalidad = utf8_decode($this->getRequestParameter("modalidad"));
+            if( $modalidad==Constantes::ADUANA ){
+                $this->setTemplate("datosAduana");
+            }else{
 
                 $q = Doctrine_Query::create()
                                      ->select("t.ca_modalidad, tg.ca_descripcion, tr.ca_nombre, tr.ca_idtrafico")
@@ -2159,66 +2161,66 @@ class pricingActions extends sfActions
                 $q->distinct();
                 $q->setHydrationMode(Doctrine::HYDRATE_SCALAR);
                 $this->lineas = $q->execute();
-
-            }else{
-
-                $opciones = explode("_", $node);
-                $modalidad = $opciones[3];
-                $idtrafico = $opciones[4];
-
-                $this->trafico=Doctrine::getTable("Trafico")->find($idtrafico);
-                $this->forward404Unless( $this->trafico );
-                $q = Doctrine_Query::create()
-                                     ->distinct()
-                                     ->from("Trayecto t");
-                if( $impoexpo==Constantes::IMPO ){
-                    $q->select("c.ca_idciudad, c.ca_ciudad, t.ca_origen");
-                    $q->innerJoin( "t.Origen c" );
-                }else{
-                    $q->select("c.ca_idciudad, c.ca_ciudad, t.ca_destino");
-                    $q->innerJoin( "t.Destino c" );
-                }
-
-                $q->where("c.ca_idtrafico = ? ", $idtrafico );
-                $q->addWhere("t.ca_impoexpo = ? ", $impoexpo );
-                $q->addWhere("t.ca_transporte = ? ", $transporte );
-                $q->addWhere("t.ca_modalidad = ? ", $modalidad );
-                $q->addWhere("t.ca_activo = ? ", true );
-                $q->addOrderBy("c.ca_ciudad ASC");
-                $q->distinct();
-                $q->setHydrationMode(Doctrine::HYDRATE_SCALAR);
-                $this->ciudades = $q->execute();
-
-                $q = Doctrine_Query::create()
-                                     ->distinct()
-                                     ->select("p.ca_idproveedor, p.ca_sigla, id.ca_nombre, t.ca_modalidad")
-                                     ->from("Trayecto t");
-                if( $impoexpo==Constantes::IMPO ){
-                    $q->innerJoin( "t.Origen c" );
-                }else{
-                    $q->innerJoin( "t.Destino c" );
-                }
-                $q->innerJoin( "t.IdsProveedor p" );
-                $q->innerJoin( "p.Ids id" );
-
-                $q->where("c.ca_idtrafico = ? ", $idtrafico );
-                $q->addWhere("t.ca_impoexpo = ? ", $impoexpo );
-                $q->addWhere("t.ca_transporte = ? ", $transporte );
-                $q->addWhere("t.ca_modalidad = ? ", $modalidad );
-                $q->addWhere("t.ca_activo = ? ", true );
-                $q->addWhere("p.ca_activo = ? ", true );
-                $q->addOrderBy("id.ca_nombre ASC");
-                $q->distinct();
-                $q->setHydrationMode(Doctrine::HYDRATE_SCALAR);
-                $this->lineas = $q->execute();
-
-                $this->idtrafico=$idtrafico;
-                $this->modalidad=$modalidad;
-
-                $this->setTemplate("datosCiudadesTrayectos");
-
             }
+        }else{
+
+            $opciones = explode("_", $node);
+            $modalidad = $opciones[3];
+            $idtrafico = $opciones[4];
+
+            $this->trafico=Doctrine::getTable("Trafico")->find($idtrafico);
+            $this->forward404Unless( $this->trafico );
+            $q = Doctrine_Query::create()
+                                 ->distinct()
+                                 ->from("Trayecto t");
+            if( $impoexpo==Constantes::IMPO ){
+                $q->select("c.ca_idciudad, c.ca_ciudad, t.ca_origen");
+                $q->innerJoin( "t.Origen c" );
+            }else{
+                $q->select("c.ca_idciudad, c.ca_ciudad, t.ca_destino");
+                $q->innerJoin( "t.Destino c" );
+            }
+
+            $q->where("c.ca_idtrafico = ? ", $idtrafico );
+            $q->addWhere("t.ca_impoexpo = ? ", $impoexpo );
+            $q->addWhere("t.ca_transporte = ? ", $transporte );
+            $q->addWhere("t.ca_modalidad = ? ", $modalidad );
+            $q->addWhere("t.ca_activo = ? ", true );
+            $q->addOrderBy("c.ca_ciudad ASC");
+            $q->distinct();
+            $q->setHydrationMode(Doctrine::HYDRATE_SCALAR);
+            $this->ciudades = $q->execute();
+
+            $q = Doctrine_Query::create()
+                                 ->distinct()
+                                 ->select("p.ca_idproveedor, p.ca_sigla, id.ca_nombre, t.ca_modalidad")
+                                 ->from("Trayecto t");
+            if( $impoexpo==Constantes::IMPO ){
+                $q->innerJoin( "t.Origen c" );
+            }else{
+                $q->innerJoin( "t.Destino c" );
+            }
+            $q->innerJoin( "t.IdsProveedor p" );
+            $q->innerJoin( "p.Ids id" );
+
+            $q->where("c.ca_idtrafico = ? ", $idtrafico );
+            $q->addWhere("t.ca_impoexpo = ? ", $impoexpo );
+            $q->addWhere("t.ca_transporte = ? ", $transporte );
+            $q->addWhere("t.ca_modalidad = ? ", $modalidad );
+            $q->addWhere("t.ca_activo = ? ", true );
+            $q->addWhere("p.ca_activo = ? ", true );
+            $q->addOrderBy("id.ca_nombre ASC");
+            $q->distinct();
+            $q->setHydrationMode(Doctrine::HYDRATE_SCALAR);
+            $this->lineas = $q->execute();
+
+            $this->idtrafico=$idtrafico;
+            $this->modalidad=$modalidad;
+
+            $this->setTemplate("datosCiudadesTrayectos");
+
         }
+        
 		$this->transporte = $transporte;
 		$this->impoexpo = strtolower(substr( $impoexpo,0 ,4 ));				
 		
