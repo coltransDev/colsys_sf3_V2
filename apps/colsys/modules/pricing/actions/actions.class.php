@@ -2093,131 +2093,132 @@ class pricingActions extends sfActions
 		
 		$node = $this->getRequestParameter("node");
 
-        
-		
-		$this->nivel = $this->getNivel();
-		
-		if(substr($node,0,4)!="traf" ){
+        $this->nivel = $this->getNivel();
+        if( $transporte==Constantes::ADUANA ){
+            $this->setTemplate("datosAduana");
+        }else{
+            if(substr($node,0,4)!="traf" ){
 
-            $q = Doctrine_Query::create()
-                                 ->select("t.ca_modalidad, tg.ca_descripcion, tr.ca_nombre, tr.ca_idtrafico")
+                $q = Doctrine_Query::create()
+                                     ->select("t.ca_modalidad, tg.ca_descripcion, tr.ca_nombre, tr.ca_idtrafico")
+                                     ->distinct()
+                                     ->from("Trayecto t");
+                if( $impoexpo==Constantes::IMPO ){
+                    $q->innerJoin( "t.Origen c" );
+                }else{
+                    $q->innerJoin( "t.Destino c" );
+                }
+                $q->innerJoin( "c.Trafico tr" );
+                $q->innerJoin( "tr.TraficoGrupo tg" );
+
+                $q->where("t.ca_impoexpo = ? ", $impoexpo );
+                $q->addWhere("t.ca_transporte = ? ", $transporte );
+                $q->addWhere("t.ca_activo = ? ", true );
+
+                $q->addOrderBy("t.ca_modalidad ASC");
+                $q->addOrderBy("tg.ca_descripcion ASC");
+                $q->addOrderBy("tr.ca_nombre ASC");
+                $q->setHydrationMode(Doctrine::HYDRATE_SCALAR);
+
+                $rows = $q->execute();
+
+                $this->results = array();
+                $modalidades = array();
+                foreach($rows as $row ){
+                    $modalidad = $row["t_ca_modalidad"];
+                    $grupo = $row["tg_ca_descripcion"];
+                    $pais = $row["tr_ca_nombre"];
+                    $idtrafico = $row["tr_ca_idtrafico"];
+
+
+                    $this->results[$modalidad][$grupo][]=array("idtrafico"=>$idtrafico, "pais"=>$pais);
+                    $modalidades[]=$modalidad;
+                }
+
+
+                $modalidades = array_unique( $modalidades );
+                $this->lineas = array();
+
+                $q = Doctrine_Query::create()
+                                  ->select("p.ca_idproveedor, p.ca_sigla, id.ca_nombre, t.ca_modalidad")
                                  ->distinct()
                                  ->from("Trayecto t");
-			if( $impoexpo==Constantes::IMPO ){
-                $q->innerJoin( "t.Origen c" );
-			}else{
-                $q->innerJoin( "t.Destino c" );
-			}
-            $q->innerJoin( "c.Trafico tr" );
-            $q->innerJoin( "tr.TraficoGrupo tg" );
+                if( $impoexpo==Constantes::IMPO ){
+                    $q->innerJoin( "t.Origen c" );
+                }else{
+                    $q->innerJoin( "t.Destino c" );
+                }
+                $q->innerJoin( "t.IdsProveedor p" );
+                $q->innerJoin( "p.Ids id" );
+                $q->addWhere("t.ca_impoexpo = ? ", $impoexpo );
+                $q->addWhere("t.ca_transporte = ? ", $transporte );
+                //$q->addWhere("t.ca_modalidad = ? ", $modalidad );
+                $q->addWhere("t.ca_activo = ? ", true );
+                $q->addWhere("p.ca_activo = ? ", true );
+                $q->addOrderBy("id.ca_nombre ASC");
+                $q->distinct();
+                $q->setHydrationMode(Doctrine::HYDRATE_SCALAR);
+                $this->lineas = $q->execute();
 
-            $q->where("t.ca_impoexpo = ? ", $impoexpo );
-            $q->addWhere("t.ca_transporte = ? ", $transporte );
-            $q->addWhere("t.ca_activo = ? ", true );
+            }else{
 
-            $q->addOrderBy("t.ca_modalidad ASC");
-            $q->addOrderBy("tg.ca_descripcion ASC");
-            $q->addOrderBy("tr.ca_nombre ASC");
-			$q->setHydrationMode(Doctrine::HYDRATE_SCALAR);
-			
-			$rows = $q->execute();
-            
-			$this->results = array();
-			$modalidades = array();
-			foreach($rows as $row ){
-				$modalidad = $row["t_ca_modalidad"];
-				$grupo = $row["tg_ca_descripcion"];
-				$pais = $row["tr_ca_nombre"];
-				$idtrafico = $row["tr_ca_idtrafico"];
-                
-				
-				$this->results[$modalidad][$grupo][]=array("idtrafico"=>$idtrafico, "pais"=>$pais);
-				$modalidades[]=$modalidad;
-			}
+                $opciones = explode("_", $node);
+                $modalidad = $opciones[3];
+                $idtrafico = $opciones[4];
 
+                $this->trafico=Doctrine::getTable("Trafico")->find($idtrafico);
+                $this->forward404Unless( $this->trafico );
+                $q = Doctrine_Query::create()
+                                     ->distinct()
+                                     ->from("Trayecto t");
+                if( $impoexpo==Constantes::IMPO ){
+                    $q->select("c.ca_idciudad, c.ca_ciudad, t.ca_origen");
+                    $q->innerJoin( "t.Origen c" );
+                }else{
+                    $q->select("c.ca_idciudad, c.ca_ciudad, t.ca_destino");
+                    $q->innerJoin( "t.Destino c" );
+                }
 
-            $modalidades = array_unique( $modalidades );
-			$this->lineas = array();
+                $q->where("c.ca_idtrafico = ? ", $idtrafico );
+                $q->addWhere("t.ca_impoexpo = ? ", $impoexpo );
+                $q->addWhere("t.ca_transporte = ? ", $transporte );
+                $q->addWhere("t.ca_modalidad = ? ", $modalidad );
+                $q->addWhere("t.ca_activo = ? ", true );
+                $q->addOrderBy("c.ca_ciudad ASC");
+                $q->distinct();
+                $q->setHydrationMode(Doctrine::HYDRATE_SCALAR);
+                $this->ciudades = $q->execute();
 
-            $q = Doctrine_Query::create()
-                              ->select("p.ca_idproveedor, p.ca_sigla, id.ca_nombre, t.ca_modalidad")
-                             ->distinct()
-                             ->from("Trayecto t");
-            if( $impoexpo==Constantes::IMPO ){                
-                $q->innerJoin( "t.Origen c" );
-            }else{                
-                $q->innerJoin( "t.Destino c" );
+                $q = Doctrine_Query::create()
+                                     ->distinct()
+                                     ->select("p.ca_idproveedor, p.ca_sigla, id.ca_nombre, t.ca_modalidad")
+                                     ->from("Trayecto t");
+                if( $impoexpo==Constantes::IMPO ){
+                    $q->innerJoin( "t.Origen c" );
+                }else{
+                    $q->innerJoin( "t.Destino c" );
+                }
+                $q->innerJoin( "t.IdsProveedor p" );
+                $q->innerJoin( "p.Ids id" );
+
+                $q->where("c.ca_idtrafico = ? ", $idtrafico );
+                $q->addWhere("t.ca_impoexpo = ? ", $impoexpo );
+                $q->addWhere("t.ca_transporte = ? ", $transporte );
+                $q->addWhere("t.ca_modalidad = ? ", $modalidad );
+                $q->addWhere("t.ca_activo = ? ", true );
+                $q->addWhere("p.ca_activo = ? ", true );
+                $q->addOrderBy("id.ca_nombre ASC");
+                $q->distinct();
+                $q->setHydrationMode(Doctrine::HYDRATE_SCALAR);
+                $this->lineas = $q->execute();
+
+                $this->idtrafico=$idtrafico;
+                $this->modalidad=$modalidad;
+
+                $this->setTemplate("datosCiudadesTrayectos");
+
             }
-            $q->innerJoin( "t.IdsProveedor p" );
-            $q->innerJoin( "p.Ids id" );
-            $q->addWhere("t.ca_impoexpo = ? ", $impoexpo );
-            $q->addWhere("t.ca_transporte = ? ", $transporte );
-            //$q->addWhere("t.ca_modalidad = ? ", $modalidad );
-            $q->addWhere("t.ca_activo = ? ", true );
-            $q->addWhere("p.ca_activo = ? ", true );
-            $q->addOrderBy("id.ca_nombre ASC");
-            $q->distinct();
-            $q->setHydrationMode(Doctrine::HYDRATE_SCALAR);
-            $this->lineas = $q->execute();
-
-		}else{
-
-			$opciones = explode("_", $node);			
-			$modalidad = $opciones[3];
-			$idtrafico = $opciones[4];
-
-            $this->trafico=Doctrine::getTable("Trafico")->find($idtrafico);
-            $this->forward404Unless( $this->trafico );
-            $q = Doctrine_Query::create()                                 
-                                 ->distinct()
-                                 ->from("Trayecto t");
-			if( $impoexpo==Constantes::IMPO ){
-                $q->select("c.ca_idciudad, c.ca_ciudad, t.ca_origen");
-                $q->innerJoin( "t.Origen c" );
-			}else{               
-                $q->select("c.ca_idciudad, c.ca_ciudad, t.ca_destino");
-                $q->innerJoin( "t.Destino c" );
-			}
-            
-            $q->where("c.ca_idtrafico = ? ", $idtrafico );
-            $q->addWhere("t.ca_impoexpo = ? ", $impoexpo );
-            $q->addWhere("t.ca_transporte = ? ", $transporte );
-            $q->addWhere("t.ca_modalidad = ? ", $modalidad );            
-            $q->addWhere("t.ca_activo = ? ", true );
-            $q->addOrderBy("c.ca_ciudad ASC");
-            $q->distinct();
-			$q->setHydrationMode(Doctrine::HYDRATE_SCALAR);			
-			$this->ciudades = $q->execute();
-
-            $q = Doctrine_Query::create()
-                                 ->distinct()
-                                 ->select("p.ca_idproveedor, p.ca_sigla, id.ca_nombre, t.ca_modalidad")
-                                 ->from("Trayecto t");
-            if( $impoexpo==Constantes::IMPO ){               
-                $q->innerJoin( "t.Origen c" );
-			}else{               
-                $q->innerJoin( "t.Destino c" );
-			}
-            $q->innerJoin( "t.IdsProveedor p" );
-            $q->innerJoin( "p.Ids id" );
-
-            $q->where("c.ca_idtrafico = ? ", $idtrafico );
-            $q->addWhere("t.ca_impoexpo = ? ", $impoexpo );
-            $q->addWhere("t.ca_transporte = ? ", $transporte );
-            $q->addWhere("t.ca_modalidad = ? ", $modalidad );
-            $q->addWhere("t.ca_activo = ? ", true );
-            $q->addWhere("p.ca_activo = ? ", true );
-            $q->addOrderBy("id.ca_nombre ASC");
-            $q->distinct();
-            $q->setHydrationMode(Doctrine::HYDRATE_SCALAR);
-			$this->lineas = $q->execute();
-            
-			$this->idtrafico=$idtrafico;
-			$this->modalidad=$modalidad;			
-			
-			$this->setTemplate("datosCiudadesTrayectos");
-			
-		}
+        }
 		$this->transporte = $transporte;
 		$this->impoexpo = strtolower(substr( $impoexpo,0 ,4 ));				
 		
