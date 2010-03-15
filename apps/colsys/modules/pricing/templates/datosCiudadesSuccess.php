@@ -12,7 +12,7 @@ foreach( $results as $modalidad=>$grupos ){
         impoexpo: '<?=$impoexpo?>',
         transporte: '<?=$transporte?>',
         modalidad: '<?=$modalidad?>',
-
+        id: 'root_<?=$impoexpo."_".$transporte."_".$modalidad?>',
 		children:[			
 			{
 				text:'Recargos locales',                

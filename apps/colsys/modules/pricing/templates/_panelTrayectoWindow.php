@@ -129,6 +129,9 @@ Ext.extend(PanelTrayectoWindow, Ext.Window, {
             if( ttransito=="" && frecuencia=="" && ((impoexpo=="<?=Constantes::IMPO?>" && transporte!="<?=Constantes::AEREO?>") || impoexpo=="<?=Constantes::EXPO?>" ) ){ // Solamente cuando es importación aérea se permite en blanco
                 Ext.MessageBox.alert('Trayectos - Error:', 'Por favor indique el tiempo de transito y la frecuencia');
             }else{
+                fp.getForm().findField("impoexpo").enable();
+                fp.getForm().findField("transporte").enable();
+                fp.getForm().findField("modalidad").enable();
                 var win = this;
                 fp.getForm().submit({url:'<?=url_for('pricing/panelTrayectoGuardar')?>',
                     waitMsg:'Salvando Datos de Productos...',

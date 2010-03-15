@@ -104,7 +104,7 @@ Ext.onReady(function(){
                     new PanelConsultaCiudades({
                         title: "OTM/DTA",
                         "impoexpo": "<?=(Constantes::IMPO)?>",
-                        "transporte": "<?=(Constantes::TERRESTRE)?>",
+                        "transporte": "<?=(Constantes::OTMDTA)?>",
                         "readOnly": <?=$opcion=="consulta"?"true":"false"?>
                     }),
                     
@@ -208,13 +208,14 @@ Ext.onReady(function(){
                                                               
         */
 
-        var newComponent = new PanelTarifarioAduana({
+        var newComponent = new PanelFletesPorTrayecto({
                                                              closable: true,
-                                                             title: 'Def. de Conceptos',
+                                                             title: 'OTM',
                                                              readOnly: <?=$opcion=="consulta"?"true":"false"?>,
                                                              impoexpo: "<?=Constantes::IMPO?>",
-                                                             transporte: "<?=Constantes::MARITIMO?>",
-                                                             modalidad: "FCL"
+                                                             transporte: "<?=Constantes::OTMDTA?>",
+                                                             modalidad: "FCL",
+                                                             idtrafico: "CO-057"
                                                          });
         Ext.getCmp('tab-panel').add(newComponent);
         Ext.getCmp('tab-panel').setActiveTab(newComponent);

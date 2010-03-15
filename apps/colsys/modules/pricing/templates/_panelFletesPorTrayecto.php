@@ -14,9 +14,6 @@
 PanelFletesPorTrayecto = function( config ){
     Ext.apply(this, config);
     
-    
-
-
     /*
     *Store que carga los conceptos
     */
@@ -44,7 +41,6 @@ PanelFletesPorTrayecto = function( config ){
     });
 
     this.editorConceptos = new Ext.form.ComboBox({
-
         typeAhead: true,
         forceSelection: true,
         triggerAction: 'all',
@@ -55,8 +51,45 @@ PanelFletesPorTrayecto = function( config ){
         valueField: 'idconcepto',
         lazyRender:true,
         listClass: 'x-combo-list-small',
-        store : this.storeConceptos
-        
+        store : this.storeConceptos        
+    });
+
+
+    this.storeEquipos = new Ext.data.Store({
+        autoLoad : true,
+        url: '<?=url_for("parametros/datosConceptos")?>',
+        baseParams : {
+            impoexpo: "<?=Constantes::IMPO?>",
+            transporte: "<?=Constantes::MARITIMO?>",
+            modalidad: "FCL",
+            readOnly: this.readOnly
+        },
+        reader: new Ext.data.JsonReader(
+            {
+                id: 'idconcepto',
+                root: 'root',
+                totalProperty: 'total',
+                successProperty: 'success'
+            },
+            Ext.data.Record.create([
+                {name: 'idconcepto'},
+                {name: 'concepto'}
+            ])
+        )
+    });
+
+    this.editorEquipos = new Ext.form.ComboBox({
+        typeAhead: true,
+        forceSelection: true,
+        triggerAction: 'all',
+        selectOnFocus: true,
+        name: 'recargo',
+        mode: 'local',
+        displayField: 'concepto',
+        valueField: 'idconcepto',
+        lazyRender:true,
+        listClass: 'x-combo-list-small',
+        store : this.storeEquipos
     });
 
     
@@ -66,6 +99,7 @@ PanelFletesPorTrayecto = function( config ){
     * Crea el Record
     */
     this.record = Ext.data.Record.create([
+        {name: 'consecutivo', type: 'int'},
         {name: 'idtrayecto', type: 'int'},
         {name: 'nconcepto', type: 'string'},
         {name: 'idlinea', type: 'string'},
@@ -77,6 +111,8 @@ PanelFletesPorTrayecto = function( config ){
         {name: 'moneda', type: 'string'},
         {name: 'iditem', type: 'int'},
         {name: 'idconcepto', type: 'int'},
+        {name: 'equipo', type: 'string'},
+        {name: 'idequipo', type: 'int'},
         {name: 'observaciones', type: 'string'},
         {name: 'aplicacion', type: 'string'},
         {name: 'aplicacion_min', type: 'string'},
@@ -90,7 +126,9 @@ PanelFletesPorTrayecto = function( config ){
         {name: 'sugerida', type: 'float'},
         {name: 'consecutivo', type: 'int'},
         {name: 'orden', type: 'string'},
-        {name: 'actualizado', type: 'string'}
+        {name: 'actualizado', type: 'string'},
+        {name: 'pkBlocked', type: 'bool'},
+
     ]);
 
 
@@ -193,15 +231,19 @@ PanelFletesPorTrayecto = function( config ){
     /*
     * Template to render tooltip
     */
-    this.qtipTpl=new Ext.XTemplate(
+    /*this.qtipTpl=new Ext.XTemplate(
 			 '<h3>Observaciones:</h3>'
 			,'<tpl for=".">'
 			,'<div>{observaciones}</div>'
-            ,'<div ><h3>Actualizado: </h3>{actualizado}</div>'
+            ,'<div ><h3>Actualicion #</h3> {consecutivo} {actualizado}</div>'
 			,'</tpl>'
-    );
+    );*/
 
         
+    this.mostrarEquipo = false;    
+    if( (this.transporte=="<?=Constantes::TERRESTRE?>"|| this.transporte=="<?=Constantes::OTMDTA?>") && this.modalidad=="FCL" ){
+        this.mostrarEquipo = true;
+    }
 
     this.columns = [
 		this.expander,
@@ -215,37 +257,21 @@ PanelFletesPorTrayecto = function( config ){
             hideable: false,
 			dataIndex: 'nconcepto',
 			hideable: false,
-			renderer: function(value, metaData, record){
-				var data = record.data;
-				// create tooltip
-                var qtipTpl=new Ext.XTemplate(
-                         '<h3>Observaciones:</h3>'
-                        ,'<tpl for=".">'
-                        ,'<div>{observaciones}</div>'
-                        ,'<div ><h3>Actualizado: </h3>{actualizado}</div>'
-                        ,'</tpl>'
-                );
-                    
-				var qtip = qtipTpl.apply(data);
-
-				switch(  record.data.tipo ){
-					case 'trayecto_obs':
-						return '<div qtip="' + qtip +'"><b>'+value+'</b></div>';
-						break;
-					case 'concepto':
-						return '<div qtip="' + qtip +'"><b>'+value+'</b></div>';
-						break;
-					case 'recargo':
-						return '<div qtip="' + qtip +'" class="recargo">'+value+'</div>';
-						break;
-					case 'recargoxciudad':
-						return '<div qtip="' + qtip +'" class="recargo">'+value+'</div>';
-						break;
-
-				}
-
-			} ,
+			renderer: this.renderConcepto ,
 			editor: this.editorConceptos
+		},
+        {
+			id: 'equipo', //para aplicar estilos a esta columna
+			header: "Equipo",
+			width: 200,
+			sortable: false,
+			groupable: false,
+            hideable: false,
+			dataIndex: 'equipo',
+			hideable: false,
+            hidden: !this.mostrarEquipo,
+			renderer: this.renderConcepto ,
+			editor: this.editorEquipos
 		},
 		{
 			id: 'trayecto',
@@ -417,9 +443,13 @@ PanelFletesPorTrayecto = function( config ){
             if( record.data.tipo=="concepto" && record.data.iditem=='9999' ){
                 return false;
             }
+
+            if( record.data.tipo=="concepto" && field=='equipo' && (record.data.consecutivo || record.data.pkBlocked ) ){
+                return false;
+            }
             
             if( record.data.tipo=="concepto"){
-                if( (field=='nconcepto' && record.data.iditem) || !(field=='nconcepto' || field=='neta' || field=='sugerida'||field=='inicio' || field=='vencimiento' || field=='moneda'|| field=='aplicacion')  ){
+                if( (field=='nconcepto' && record.data.iditem) || !(field=='nconcepto' || field=='equipo' || field=='neta' || field=='sugerida'||field=='inicio' || field=='vencimiento' || field=='moneda'|| field=='aplicacion')  ){
 
                     return false;
                 }
@@ -491,6 +521,22 @@ Ext.extend(PanelFletesPorTrayecto, Ext.grid.EditorGridPanel, {
                     if( r.data.idconcepto==e.value ){
                         e.value = r.data.concepto;
                         rec.set("iditem", r.data.idconcepto);                        
+                        return true;
+                    }
+                }
+            );
+        }
+
+
+        if( e.field == "equipo"){
+            var rec = e.record;
+            var ed = this.colModel.getCellEditor(e.column, e.row);
+
+            var store = ed.field.store;
+            store.each( function( r ){
+                    if( r.data.idconcepto==e.value ){
+                        e.value = r.data.concepto;
+                        rec.set("idequipo", r.data.idconcepto);
                         return true;
                     }
                 }
@@ -808,6 +854,37 @@ Ext.extend(PanelFletesPorTrayecto, Ext.grid.EditorGridPanel, {
 
     },
 
+    renderConcepto: function(value, metaData, record){
+        var data = record.data;
+        // create tooltip
+        var qtipTpl=new Ext.XTemplate(
+                 '<h3>Observaciones:</h3>'
+                ,'<tpl for=".">'
+                ,'<div>{observaciones}</div>'
+                ,'<div ><h3>Actualización # {consecutivo}: </h3>{actualizado}</div>'
+                ,'</tpl>'
+        );
+
+        var qtip = qtipTpl.apply(data);
+
+        switch(  record.data.tipo ){
+            case 'trayecto_obs':
+                return '<div qtip="' + qtip +'"><b>'+value+'</b></div>';
+                break;
+            case 'concepto':
+                return '<div qtip="' + qtip +'"><b>'+value+'</b></div>';
+                break;
+            case 'recargo':
+                return '<div qtip="' + qtip +'" class="recargo">'+value+'</div>';
+                break;
+            case 'recargoxciudad':
+                return '<div qtip="' + qtip +'" class="recargo">'+value+'</div>';
+                break;
+
+        }
+
+    },
+
     eliminarFila: function(ctxRecord, index){
         if( confirm("Esta seguro?") ){
             var store = this.store;
@@ -884,8 +961,11 @@ Ext.extend(PanelFletesPorTrayecto, Ext.grid.EditorGridPanel, {
 
         //alert( ctxRecord.get("trayecto") );
         var rec = new this.record({trayecto:ctxRecord.get("trayecto"),
+                              consecutivo:'',
                               nconcepto:'',
                               iditem:'',
+                              idequipo: ctxRecord.get("idequipo"),
+                              equipo:'',
                               idconcepto: idconcepto,
                               idtrayecto:ctxRecord.get("idtrayecto"),
                               trayecto:ctxRecord.get("trayecto"),
@@ -897,11 +977,13 @@ Ext.extend(PanelFletesPorTrayecto, Ext.grid.EditorGridPanel, {
                               aplicacion:'',
                               aplicacion_min:'',
                               tipo:tipo,
-                              orden:orden
+                              orden:orden,
+                              pkBlocked: false //Indica si ya se agrego un recargo, encaso que no se haya guardado evita inconsistencias
                             });
 
 
         this.store.addSorted(rec);
+        ctxRecord.set("pkBlocked", true);
     },
     
     guardar: function(){
@@ -940,8 +1022,10 @@ Ext.extend(PanelFletesPorTrayecto, Ext.grid.EditorGridPanel, {
 
             changes['id']=r.id;
             changes['tipo']=r.data.tipo;
+            changes['consecutivo']=r.data.consecutivo;
             changes['iditem']=r.data.iditem;
             changes['idconcepto']=r.data.idconcepto;
+            changes['idequipo']=r.data.idequipo;
             changes['idtrayecto']=r.data.idtrayecto;
             changes['moneda']=r.data.moneda;
             
@@ -956,7 +1040,8 @@ Ext.extend(PanelFletesPorTrayecto, Ext.grid.EditorGridPanel, {
                     var res = Ext.util.JSON.decode( response.responseText );
                     if( res.id ){
                         var rec = store.getById( res.id );
-
+                        rec.set("consecutivo", res.consecutivo);
+                        rec.set("actualizado", res.actualizado);
                         rec.set("sel", false); //Quita la seleccion de todas las columnas
                         rec.commit();
                     }

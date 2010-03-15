@@ -225,7 +225,10 @@ class pricingComponents extends sfComponents
                   ->createQuery("m")
                   ->where("m.ca_modalidad IS NOT NULL")
                   ->addOrderBy("m.ca_impoexpo")
+                  ->addOrderBy("m.ca_transporte")
+                  ->addOrderBy("m.ca_modalidad")
                   ->execute();
+        
         $this->modalidades = array();
         foreach( $modalidades as $modalidad ){
             $this->modalidades[] = array("id"=>$modalidad->getCaIdmodalidad(),

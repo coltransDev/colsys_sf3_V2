@@ -372,9 +372,12 @@ class pricingActions extends sfActions
                 $q = Doctrine_Query::create()->from("PricFlete f");
             }
             $q->innerJoin("f.Concepto c");
+            $q->leftJoin("f.Equipo e");
             $q->addWhere("f.ca_idtrayecto = ?", $trayecto["t_ca_idtrayecto"]);
             //$q->addWhere("(f.ca_fcheliminado >= ? OR f.ca_fcheliminado IS NULL )", $fchcorte );
            
+            
+            $q->addOrderBy("e.ca_concepto");
             $q->addOrderBy("c.ca_liminferior");
             $q->addOrderBy("c.ca_concepto");
             $pricConceptos = $q->execute();
@@ -420,8 +423,11 @@ class pricingActions extends sfActions
 					$sugerida=$pricConcepto->getCaVlrsugerido();
 				}
 
-				$row = array (					
-					'nconcepto' => utf8_encode($pricConcepto->getConcepto()->getCaConcepto()),                    
+				$row = array (
+                    'consecutivo' => $pricConcepto->getCaConsecutivo(),
+					'nconcepto' => utf8_encode($pricConcepto->getConcepto()->getCaConcepto()),
+                    'equipo' => utf8_encode($pricConcepto->getEquipo()?$pricConcepto->getEquipo()->getCaConcepto():""),
+                    'idequipo' => $pricConcepto->getCaIdequipo(),
 					'inicio' => $pricConcepto->getCaFchinicio(),
 					'vencimiento' => $pricConcepto->getCaFchvencimiento(),
 					'moneda' => $pricConcepto->getCaIdmoneda(),
@@ -450,6 +456,13 @@ class pricingActions extends sfActions
                 $q->addOrderBy("t.ca_recargo");
                 $q->innerJoin("r.TipoRecargo t");
                 $q->addWhere("r.ca_idtrayecto = ? AND r.ca_idconcepto = ?", array($trayecto["t_ca_idtrayecto"],$pricConcepto->getCaIdconcepto()));
+
+                if(  $pricConcepto->getCaIdequipo() ){
+                    $q->addWhere("r.ca_idequipo = ?", $pricConcepto->getCaIdequipo() );
+                }else{
+                    $q->addWhere("r.ca_idequipo IS NULL" );
+                }
+
                 $pricRecargos = $q->execute();
                 
 				if( $pricRecargos ){
@@ -557,6 +570,7 @@ class pricingActions extends sfActions
 			$this->forward404();
 		}
 
+
 		$trayecto = Doctrine::getTable("Trayecto")->find( $this->getRequestParameter( "idtrayecto" ) );
 		$this->forward404Unless( $trayecto );
 		
@@ -564,6 +578,9 @@ class pricingActions extends sfActions
 		$neta = $this->getRequestParameter("neta");		
 		$sugerida = $this->getRequestParameter("sugerida");
 		$id = $this->getRequestParameter("id");
+        $idequipo = $this->getRequestParameter("idequipo");
+
+        $this->responseArray = array("id"=>$id, "success"=>true);
 		
 		$user=$this->getUser();
 		
@@ -581,12 +598,25 @@ class pricingActions extends sfActions
 		if( $tipo=="concepto" ){			
 			
 			$idconcepto = $this->getRequestParameter("iditem");
+            
 
-			$flete  = Doctrine::getTable("PricFlete")->find(array($trayecto->getCaIdtrayecto(), $idconcepto ));
+			$q = Doctrine::getTable("PricFlete")->createQuery()
+                                                  ->addWhere("ca_idtrayecto = ?", $trayecto->getCaIdtrayecto() )
+                                                  ->addWhere("ca_idconcepto= ?", $idconcepto);
+            if( $idequipo ){
+                $q->addWhere("ca_idequipo= ?", $idequipo);
+            }else{
+                $q->addWhere("ca_idequipo IS NULL");
+            }
+            $flete  = $q->fetchOne();
+
 			if( !$flete ){
 				$flete = new PricFlete();
 				$flete->setCaIdtrayecto( $trayecto->getCaIdtrayecto() );
 				$flete->setCaIdconcepto( $idconcepto );
+                if( $idequipo ){
+                    $flete->setCaIdequipo( $idequipo );
+                }
 				$flete->setCaVlrneto( 0 );				
 			}
 			
@@ -637,6 +667,10 @@ class pricingActions extends sfActions
             $flete->setCaUsucreado( $user->getUserId() );
             $flete->setCaFchcreado( date("Y-m-d H:i:s") );
 			$flete->save();
+
+
+            $this->responseArray["consecutivo"] = $flete->getCaConsecutivo();
+            $this->responseArray["actualizado"] = $flete->getCaUsucreado()." ".Utils::fechaMes($flete->getCaFchcreado());
 		}
 		
 		if( $tipo=="recargo" ){
@@ -645,7 +679,17 @@ class pricingActions extends sfActions
 			$idconcepto = $this->getRequestParameter("idconcepto");
 			$idrecargo = $this->getRequestParameter("iditem");
 			if( $idconcepto!=9999 ){
-				$flete  = Doctrine::getTable("PricFlete")->find(array( $trayecto->getCaIdtrayecto(), $idconcepto ));
+				
+                $q = Doctrine::getTable("PricFlete")->createQuery()
+                                                  ->addWhere("ca_idtrayecto = ?", $trayecto->getCaIdtrayecto() )
+                                                  ->addWhere("ca_idconcepto = ?", $idconcepto);
+                if( $idequipo ){
+                    $q->addWhere("ca_idequipo= ?", $idequipo);
+                }else{
+                    $q->addWhere("ca_idequipo IS NULL");
+                }
+                $flete  = $q->fetchOne();
+
 				if( !$flete ){
 					$flete = new PricFlete();
 					$flete->setCaIdtrayecto( $trayecto->getCaIdtrayecto() );
@@ -656,18 +700,39 @@ class pricingActions extends sfActions
 			}
            
 			
-			$pricRecargo = Doctrine::getTable("PricRecargoxConcepto")->find(array( $trayecto->getCaIdtrayecto() , $idconcepto , $idrecargo));
+			//$pricRecargo = Doctrine::getTable("PricRecargoxConcepto")->find(array( $trayecto->getCaIdtrayecto() , $idconcepto , $idrecargo));
 			
+            $q = Doctrine::getTable("PricRecargoxConcepto")->createQuery()
+                                                  ->addWhere("ca_idtrayecto = ?", $trayecto->getCaIdtrayecto() )
+                                                  ->addWhere("ca_idconcepto = ?", $idconcepto)
+                                                  ->addWhere("ca_idrecargo = ?", $idrecargo);
+            if( $idequipo ){
+                $q->addWhere("ca_idequipo= ?", $idequipo);
+            }else{
+                $q->addWhere("ca_idequipo IS NULL");
+            }
+            $pricRecargo  = $q->fetchOne();
+
+
+
 			if( !$pricRecargo ){
 				$pricRecargo = new PricRecargoxConcepto();
 				$pricRecargo->setCaIdtrayecto( $trayecto->getCaIdtrayecto() );
 				$pricRecargo->setCaIdconcepto( $idconcepto );
+                if( $idequipo ){
+                    $pricRecargo->setCaIdequipo( $idequipo );
+                }
 				$pricRecargo->setCaIdrecargo( $idrecargo );
 				$pricRecargo->setCaVlrrecargo( 0 );
-				$pricRecargo->setCaVlrminimo( 0 );								
+				//$pricRecargo->setCaVlrminimo( 0 );
 				
 			}
-			if( $sugerida!==null ){
+
+
+
+
+
+            if( $sugerida!==null ){
 				$pricRecargo->setCaVlrrecargo( $sugerida );
 			}
 			
@@ -715,8 +780,12 @@ class pricingActions extends sfActions
             $pricRecargo->setCaUsucreado( $user->getUserId() );
             $pricRecargo->setCaFchcreado( date("Y-m-d H:i:s") );
 			$pricRecargo->save();
+
+
+            $this->responseArray["consecutivo"] = $pricRecargo->getCaConsecutivo();
+            $this->responseArray["actualizado"] = $pricRecargo->getCaUsucreado()." ".Utils::fechaMes($pricRecargo->getCaFchcreado());
 		}
-		$this->responseArray = array("id"=>$id, "success"=>true);	
+			
 		$this->setTemplate("responseTemplate");			
 	}
 	
@@ -731,6 +800,7 @@ class pricingActions extends sfActions
         $idtrayecto = $this->getRequestParameter("idtrayecto");
 		$idconcepto = $this->getRequestParameter("idconcepto");
 		$idrecargo = $this->getRequestParameter("idrecargo");
+        $idequipo = $this->getRequestParameter("idequipo");
         $tipo = $this->getRequestParameter("tipo");
 		$id = $this->getRequestParameter("id");
 
@@ -740,7 +810,18 @@ class pricingActions extends sfActions
         $this->responseArray = array("id"=>$id, "success"=>false);
         if( $tipo=="concepto" ){
 
-            $pricFlete = Doctrine::getTable("PricFlete")->find(array($idtrayecto , $idconcepto ));
+            $idequipo = $this->getRequestParameter("idequipo");
+
+
+            $q = Doctrine::getTable("PricFlete")->createQuery()
+                                                  ->addWhere("ca_idtrayecto = ?",$idtrayecto )
+                                                  ->addWhere("ca_idconcepto= ?", $idconcepto);
+            if( $idequipo ){
+                $q->addWhere("ca_idequipo= ?", $idequipo);
+            }else{
+                $q->addWhere("ca_idequipo IS NULL");
+            }
+            $pricFlete  = $q->fetchOne();
 
             if( $pricFlete ){
                 //Borra todos los recargos del concepto
@@ -1709,7 +1790,7 @@ class pricingActions extends sfActions
 				$patio = new PricPatioLinea();
 				$patio->setCaIdpatio( $idpatio );
 				if( $observaciones ){
-					$patio->setCaObservaciones( $observaciones );
+					$patio->setCaObservaciones( utf8_encode($observaciones) );
 				}else{
 					$patio->setCaObservaciones( null );	
 				}
@@ -2389,7 +2470,7 @@ class pricingActions extends sfActions
         
         $trayecto->setCaImpoexpo($impoexpo);
         $trayecto->setCaTransporte($transporte);
-        $trayecto->setCaModalidad($impoexpo);
+        $trayecto->setCaModalidad($modalidad);
         $trayecto->setCaOrigen($origen);
         $trayecto->setCaDestino($destino);
         $trayecto->setCaIdlinea($idlinea);

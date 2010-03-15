@@ -48,4 +48,31 @@ class PricFlete extends BasePricFlete
 				break;
 		}
 	}
+
+
+    /*
+	* Guarda el recargo y determina el # de actualizacion
+	* Author: Andres Botero
+	*/
+    public function save( Doctrine_Connection $con=null){
+
+
+        if( !$con ){
+            $con = $this->getTable()->getConnection();
+        }
+        $con->beginTransaction();
+
+        parent::save($con);
+
+        $sql = "SELECT currval('pric.tb_fletes_id') as next";
+
+       
+        $stmt = $con->execute($sql);
+        $row = $stmt->fetch();
+        $this->setCaConsecutivo($row['next']);
+
+        $con->commit();
+
+    }
+
 }
