@@ -13,9 +13,15 @@
     <form action="<?=url_for("ids/formEventos?modo=".$modo)?>" method="post">
     <?
     if( !$modo ){
+        if( $reporte ){
+        ?>
+        <input type="hidden" name="idreporte" value="<?=$reporte->getCaIdreporte()?>" />
+        <?
+        }else{
         ?>
         <input type="hidden" name="referencia" value="<?=$numreferencia?>" />
         <?
+        }
     }else{
         ?>
         <input type="hidden" name="idevento" value="<?=$evento->getCaIdevento()?>" />
@@ -55,7 +61,16 @@
                 ?>
                 <input type="hidden" name="id" value="<?=$ids->getCaId()?>">
                 <?
-                }else{
+                }elseif($idreporte){
+                ?>
+                <b>Agente:</b><br />
+                <?            
+                echo $agente->getIds()->getCaNombre();
+                ?>
+                <input type="hidden" name="id" value="<?=$agente->getCaIdagente()?>">
+                <?
+                }
+                else{
                     echo $form['id']->renderError();
                     echo $form['id']->render();
                 }

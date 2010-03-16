@@ -877,7 +877,11 @@ class idsActions extends sfActions
             $evento = new IdsEvento();
         }
 
+
+        $this->idreporte=$request->getParameter("idreporte");
         if( $this->modo ){ //Esta ingresando desde la maestra de proveedores
+
+            
             if( $request->getParameter("idevento") ){
                 $this->ids = $evento->getIds();
             }else{
@@ -886,40 +890,54 @@ class idsActions extends sfActions
             $this->url = "/ids/verIds?modo=".$this->modo."&id=".$this->ids->getCaId();
             $numreferencia = "";
             
-        }else{ // Esta ingresando desde la referencia
-            $numreferencia = str_replace("_",".",$request->getParameter("referencia"));
-            $this->forward404Unless(  $numreferencia );
-
-            $idproveedores = array();
-
-            if( substr($numreferencia,0,1)=="4" || substr($numreferencia,0,1)=="5" ){                
-                $referencia = Doctrine::getTable("InoMaestraSea")->find($numreferencia);
-                $linea = $referencia->getCaIdlinea();
-
-                $idproveedores[] = $linea;
-
-                $this->url = "/colsys_php/inosea.php?boton=Consultar&id=".$numreferencia;
-            }
-
-            if( substr($numreferencia,0,1)=="1"  ){
-                $referencia = Doctrine::getTable("InoMaestraAir")->find($numreferencia);
-
-                $linea = $referencia->getCaIdlinea();
-
-                $idproveedores[] = $linea;
-
-                $this->url = "/Coltrans/InoAir/ConsultaReferenciaAction.do?referencia=".$numreferencia;
-            }
-            $this->form->setIdproveedores($idproveedores);
             
-            $this->eventos = Doctrine::getTable("IdsEvento")
-                          ->createQuery("e")
-                          ->select("e.*")
-                          ->where("e.ca_referencia=?",$numreferencia)
-                          ->addOrderBy("e.ca_fchcreado ASC")
-                          ->execute();
+        }else{
 
-            $this->numreferencia = $numreferencia;
+            if( $this->idreporte ){ // Esta ingresando desde el reporte
+                $this->reporte = Doctrine::getTable("Reporte")->find( $this->idreporte );
+                $this->forward404Unless( $this->reporte );
+                $this->agente = $this->reporte->getIdsAgente();
+                $this->url = "/colsys_php/reportenegocio.php?boton=Consultar&id=".$this->idreporte;
+
+                $numreferencia = $this->reporte->getCaConsecutivo();
+            }else{// Esta ingresando desde la referencia
+                $numreferencia = str_replace("_",".",$request->getParameter("referencia"));
+                $this->forward404Unless(  $numreferencia );
+
+                $idproveedores = array();
+
+                if( substr($numreferencia,0,1)=="4" || substr($numreferencia,0,1)=="5" ){
+                    $referencia = Doctrine::getTable("InoMaestraSea")->find($numreferencia);
+                    $linea = $referencia->getCaIdlinea();
+
+                    $idproveedores[] = $linea;
+
+                    $this->url = "/colsys_php/inosea.php?boton=Consultar&id=".$numreferencia;
+                }
+
+                if( substr($numreferencia,0,1)=="1"  ){
+                    $referencia = Doctrine::getTable("InoMaestraAir")->find($numreferencia);
+
+                    $linea = $referencia->getCaIdlinea();
+
+                    $idproveedores[] = $linea;
+
+                    $this->url = "/Coltrans/InoAir/ConsultaReferenciaAction.do?referencia=".$numreferencia;
+                }
+
+                $this->form->setIdproveedores($idproveedores);
+
+                
+
+                $this->numreferencia = $numreferencia;
+            }
+
+            $this->eventos = Doctrine::getTable("IdsEvento")
+                              ->createQuery("e")
+                              ->select("e.*")
+                              ->where("e.ca_referencia=?",$numreferencia)
+                              ->addOrderBy("e.ca_fchcreado ASC")
+                              ->execute();
         }
 
         $this->form->configure();
