@@ -882,9 +882,7 @@ class pricingActions extends sfActions
             $this->opcion = "consulta";
         }
 
-
-
-
+        
 		$transporte = utf8_decode($this->getRequestParameter( "transporte" ));
 		$idtrafico = $this->getRequestParameter( "idtrafico" );
 		$modalidad = $this->getRequestParameter( "modalidad" );		
@@ -912,8 +910,7 @@ class pricingActions extends sfActions
 		$this->data = array();
 		$i=0;
 		foreach( $recargos as $recargo ){
-			$row = array(
-				'id'=>$i++,
+			$row = array(				
 				'idtrafico'=>$idtrafico,
 				'idciudad'=>$recargo->getCaIdciudad(),
 				'ciudad'=>utf8_encode($recargo->getCiudad()->getCaCiudad()),
@@ -931,7 +928,49 @@ class pricingActions extends sfActions
 			$this->data[]= $row;
 		}
 		
-		
+        
+        //Si se llama de una cotizacion se mezcla con los recargos por naviera
+        $idcotizacion = $this->getRequestParameter( "idcotizacion" );        
+        if( $idcotizacion ){
+            $cotizacion = Doctrine::getTable("Cotizacion")->find( $idcotizacion );
+            $trayectos = $cotizacion->getCotProductos();
+            $lineas = array();
+            foreach( $trayectos as $trayecto ){
+                if( $trayecto->getCaIdlinea() ){
+                    $lineas[] = $trayecto->getCaIdlinea();
+                }
+            }
+
+            if( count($lineas)>0 ){
+                $q = Doctrine_Query::create()->from("PricRecargoxLinea r");
+                $q->innerJoin("r.TipoRecargo t");
+                $q->where("t.ca_transporte= ? AND r.ca_modalidad= ? AND r.ca_impoexpo = ?", array($transporte , $modalidad, $impoexpo));
+                $q->addWhere("r.ca_idlinea IN ?", $lineas);
+                $q->addOrderBy("t.ca_recargo");
+                $recargos = $q->execute();
+
+                foreach( $recargos as $recargo ){
+                    $row = array(
+                        'idtrafico'=>$idtrafico,
+                        'idlinea'=>$recargo->getCaIdlinea(),
+                        'linea'=>utf8_encode($recargo->getIdsProveedor()->getCaSigla()?$recargo->getIdsProveedor()->getCaSigla():$recargo->getIdsProveedor()->getIds()->getCaNombre()),
+                        'idrecargo'=>$recargo->getCaIdrecargo(),
+                        'recargo'=>utf8_encode($recargo->getTipoRecargo()->getCaRecargo()),
+                        'inicio' => $recargo->getCaFchinicio(),
+                        'vencimiento' => $recargo->getCaFchvencimiento(),
+                        'vlrrecargo'=>$recargo->getCaVlrrecargo(),
+                        'vlrminimo'=>$recargo->getCaVlrminimo(),
+                        'aplicacion'=>utf8_encode($recargo->getCaAplicacion()),
+                        'aplicacion_min'=>utf8_encode($recargo->getCaAplicacionMin()),
+                        'idmoneda'=>$recargo->getCaIdmoneda(),
+                        'observaciones'=>utf8_encode(($recargo->getCaIdconcepto()!=9999?$recargo->getConcepto()->getCaConcepto():"").$recargo->getCaObservaciones())
+                    );
+                    $this->data[]= $row;
+                }
+            }            
+           
+        }
+
 		if( $this->opcion!="consulta" ){
 			/*
 			* Incluye una fila vacia que permite agregar datos

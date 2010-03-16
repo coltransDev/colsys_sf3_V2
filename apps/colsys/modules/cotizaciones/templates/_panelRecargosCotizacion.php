@@ -546,7 +546,7 @@ Ext.extend(PanelRecargosCotizacion, Ext.grid.EditorGridPanel, {
     * seleccionar las tarifas a importar
     */
     ventanaTarifarioRecargos: function( record ){
-        var url = '<?=url_for("pricing/recargosGenerales?opcion=consulta")?>';
+        
 
         activeRecordRec = record;
         var storeRecargosCot = this.store;
@@ -560,6 +560,7 @@ Ext.extend(PanelRecargosCotizacion, Ext.grid.EditorGridPanel, {
                                               idtrafico: '99-999',
                                               transporte:transporte,
                                               modalidad: modalidad,
+                                              idcotizacion: '<?=$cotizacion->getCaIdcotizacion()?>',
                                               title: "Recargos Locales "+impoexpo.substring(0, 4)+"»"+transporte+"»"+modalidad,
                                               closable: false,
                                               readOnly: true

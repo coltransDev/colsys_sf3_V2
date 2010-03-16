@@ -111,7 +111,9 @@ PanelRecargosPorCiudad = function( config ){
         {name: 'aplicacion', type: 'string'},
         {name: 'aplicacion_min', type: 'string'},
         {name: 'idmoneda', type: 'string'},
-        {name: 'observaciones', type: 'string'}
+        {name: 'observaciones', type: 'string'},
+        {name: 'idlinea', type: 'string'},
+        {name: 'linea', type: 'string'}
     ]);
 
 
@@ -133,6 +135,7 @@ PanelRecargosPorCiudad = function( config ){
             transporte: this.transporte,
             modalidad: this.modalidad,
             idtrafico: this.idtrafico,
+            idcotizacion: this.idcotizacion, //Si se llama de una cotizacion se mezcla con los recargos por naviera
             readOnly: this.readOnly
         },
         reader: new Ext.data.JsonReader(
@@ -153,8 +156,40 @@ PanelRecargosPorCiudad = function( config ){
         ocultarCiudad = true;
     }
 
-    
+    this.expander = new Ext.grid.RowExpander({
+        lazyRender : false,
+        width: 15,
+        tpl : new Ext.Template(
+            '<p><div class=\'btnComentarios\' id=\'obs_{_id}\'>&nbsp; {observaciones}</div></p>'
+        ),
+        getRowClass : function(record, rowIndex, p, ds){
+            p.cols = p.cols-1;
+
+            var content = this.bodyContent[record.id];
+
+            //if(!content && !this.lazyRender){		//hace que los comentarios no se borren cuando se guarda
+                content = this.getBodyContent(record, rowIndex);
+            //}
+
+            if(content){
+               p.body = content;
+            }
+
+            var color;
+            if( record.data.style ){
+                color = "row_"+record.data.style;
+            }
+
+            if( record.data.observaciones!='' && record.data.tipo!='concepto' ){
+                this.state[record.id]=true;
+            }
+
+            return this.state[record.id] ? 'x-grid3-row-expanded '+color : 'x-grid3-row-collapsed '+color;
+        }
+    });
+
     this.columns = [
+        this.expander,
 		this.checkColumn,
 		{
 			header: "Ciudad",
@@ -247,17 +282,15 @@ PanelRecargosPorCiudad = function( config ){
 			editor: <?=include_component("widgets", "monedas" ,array("id"=>""))?>
 			
 		},
-		{
-			id: 'observaciones',
-			header: "Observaciones",
+        {
+			id: 'linea',
+			header: "Linea",
 			width: 100,
 			sortable: false,
-			dataIndex: 'observaciones',
+			dataIndex: 'linea',
 			hideable: false,
-			editor: new Ext.form.TextField({
-						name: 'Detalles',
-	                    allowBlank:true
-			})
+            hidden: this.idcotizacion?false:true
+
 		}
 	];
 
@@ -295,7 +328,7 @@ PanelRecargosPorCiudad = function( config ){
         stripeRows: true,
         height: 400,
         width: 780,
-        plugins: [this.checkColumn], //expander,
+        plugins: [this.checkColumn, this.expander], //expander,
         closable: true,
         view: new Ext.grid.GridView({
              forceFit :true
@@ -304,7 +337,8 @@ PanelRecargosPorCiudad = function( config ){
             rowcontextmenu: this.onRowContextMenu,
             afteredit: this.onAfterEdit,            
             validateedit: this.onValidateEdit,
-            beforeedit: this.onBeforeEdit
+            beforeedit: this.onBeforeEdit,
+            dblclick: this.onDblclick
         },
         tbar: this.tbar
     });
@@ -690,6 +724,45 @@ Ext.extend(PanelRecargosPorCiudad, Ext.grid.EditorGridPanel, {
                 }
             }
         );
+    }
+    ,
+    /**
+    * Muestra una ventana donde se pueden editar las observaciones
+    **/
+    onDblclick: function(e) {
+        if( !this.readOnly ){
+            var btn = e.getTarget('.btnComentarios');
+            if (btn) {
+                var t = e.getTarget();
+                var v = this.view;
+                var rowIdx = v.findRowIndex(t);
+                store = this.getStore();
+                var record = this.getStore().getAt(rowIdx);
+                activeRow = rowIdx;
+                Ext.MessageBox.show({
+                   title: 'Observaciones',
+                   msg: 'Por favor coloque las observaciones:',
+                   width:300,
+                   buttons: Ext.MessageBox.OKCANCEL,
+                   multiline: true,
+                   fn: this.actualizarObservaciones,
+                   animEl: 'mb3',
+                   value: record.get("observaciones")
+               });
+            }
+        }
+    },
+
+    /*
+    * Coloca las observaciones en pantalla y actualiza el datastore
+    */
+    actualizarObservaciones: function( btn, text ){
+        if( btn=="ok" ){
+            var record = store.getAt(activeRow);
+            record.set("observaciones", text);
+
+            //document.getElementById("obs_"+record.get("_id")).innerHTML  = "<b>Observaciones:</b> "+text;
+        }
     }
 
 
