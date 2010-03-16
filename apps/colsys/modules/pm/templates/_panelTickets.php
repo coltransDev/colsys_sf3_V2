@@ -83,6 +83,16 @@ PanelTickets = function( config ){
             type: 'string',
             dataIndex: 'tipo'
 
+        },
+        {
+            type: 'string',
+            dataIndex: 'login'
+
+        },
+        {
+            type: 'string',
+            dataIndex: 'assignedto'
+
         }
         , {
             type: 'list',
