@@ -3122,7 +3122,7 @@ function datos_basicos(&$visible,&$rs,&$tm) {
     echo "</TR>";
     echo "<TR>";
     echo "  <TD Class=partir style='text-align:left; vertical-align:top;' ROWSPAN=2>4. Fecha Despacho:<BR><CENTER>".$rs->Value('ca_fchdespacho')."</CENTER></TD>";
-    echo "  <TD Class=mostrar COLSPAN=3><B>5. Agente:</B><BR>".$rs->Value('ca_agente')."</TD>";
+    echo "  <TD Class=mostrar COLSPAN=3><B>5. Agente: <a href='/ids/formEventos?idreporte=".$rs->Value('ca_idreporte')."'>Eventos</a></B><BR>".$rs->Value('ca_agente')."</TD>";
     echo "  <TD Class=listar ROWSPAN=2><TABLE CELLSPACING=1 WIDTH=100%>";
     echo "   <TR>";
     echo "  	<TD style='visibility: $visible;' Class=invertir style='text-align: right; vertical-align: bottom;' onclick='elegir(\"Editar\", \"".$rs->Value('ca_idreporte')."\");'>Editar Reporte:<br /><IMG src='./graficos/edit.gif' alt='Editar el Registro' border=0></TD>";
