@@ -180,6 +180,11 @@ class cotizacionesComponents extends sfComponents
 
 	}
 
+    public function executePanelTarifarioAduana()
+    {
+        $this->aplicaciones = ParametroTable::retrieveByCaso("CU082");
+    }
+
 
     /*
      * Ventana para crear un nuevo trayecto
