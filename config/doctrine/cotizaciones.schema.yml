@@ -66,6 +66,10 @@ Cotizacion:
       local: ca_idcotizacion
       foreign: ca_idcotizacion
       type: many
+    CotConceptoAduana:
+      local: ca_idcotizacion
+      foreign: ca_idcotizacion
+      type: many
       
 
 CotProducto:
@@ -392,3 +396,59 @@ CotTrayectoAduana:
       foreign: ca_idciudad
       type: one
       class: Ciudad
+
+
+CotConceptoAduana:
+  options:
+    symfony:
+      form: true
+      filter: false
+  generatePath: pricing
+  tableName: cot.tb_conceptoaduana
+  attributes:
+    export: tables
+  columns:
+    ca_consecutivo:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_idconcepto:
+      type: integer
+      notnull: true
+    ca_valor:
+      type: numeric
+      notnull: true
+    ca_aplicacion:
+      type: string
+      notnull: true
+    ca_valorminimo:
+      type: numeric
+      notnull: true
+    ca_parametro:
+      type: string
+      notnull: true
+    ca_aplicacionminimo:
+      type: string
+      notnull: true
+    ca_parametro:
+      type: string
+      notnull: true
+    ca_fchini:
+      type: date
+    ca_fchfin:
+      type: date
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_observaciones:
+      type: string
+      notnull: true
+    ca_idcotizacion: integer
+  relations:
+    InoConcepto:
+      local: ca_idconcepto
+      foreign: ca_idconcepto
+      type: one
+    Cotizacion:
+      local: ca_idcotizacion
+      foreign: ca_idcotizacion
+      type: one
