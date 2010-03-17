@@ -15,12 +15,18 @@ class Constantes{
 	const IMPO = "Importación";
 	const EXPO = "Exportación";
 	const TRIANGULACION = "Triangulación";    
-    const OTMDTA = "OTM/DTA";
+    const OTMDTA = "OTM-DTA";
+    const NACIONALIZACION = "Nacionalización";
 	
 	const AEREO = "Aéreo";
 	const MARITIMO = "Marítimo";
 	const TERRESTRE = "Terrestre";
     const ADUANA = "Aduana";
+
+    const FCL = "FCL";
+    const LCL = "LCL";
+    const ADUANAFCL = "ADUANA-FCL";
+    const ADUANALCL = "ADUANA-LCL";
 
 
     const FLETE = "Flete";
