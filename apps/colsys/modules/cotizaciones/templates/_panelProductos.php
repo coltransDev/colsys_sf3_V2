@@ -6,7 +6,8 @@
 */
 
 include_component("pricing", "panelFletesPorTrayecto");
-include_component("cotizaciones", "formTrayectoWindow", array("cotizacion"=>$cotizacion) );
+include_component("cotizaciones", "panelTrayectoWindow", array("cotizacion"=>$cotizacion) );
+include_component("cotizaciones", "panelTrayectoForm", array("cotizacion"=>$cotizacion) );
 ?>
 
 <script type="text/javascript">
@@ -998,9 +999,9 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
     crearVentanaTrayecto: function( record ){
         storeProductos = this.store;
         //crea una ventana
-        if( !this.win ){
-            this.win = new FormTrayectoWindow();
-        }
+        
+        this.win = new PanelTrayectoWindow();
+        
 
 
         this.win.show( );
@@ -1008,21 +1009,28 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
         if(typeof(record)!="undefined"){ // Coloca los datos en la ventana
             var fp = Ext.getCmp("producto-form");
             form = fp.getForm().loadRecord(record);
-            fp.getForm().findField("tra_origen_id").setRawValue(record.data.tra_origen_value);
+            fp.getForm().findField("tra_origen_id").setValue(record.data.tra_origen_value);
             fp.getForm().findField("tra_origen_id").hiddenField.value = record.data.tra_origen;
-            fp.getForm().findField("ciu_origen_id").setRawValue(record.data.ciu_origen_value);
+            fp.getForm().findField("ciu_origen_id").setValue(record.data.ciu_origen_value);
             fp.getForm().findField("ciu_origen_id").hiddenField.value = record.data.ciu_origen;
 
-            fp.getForm().findField("tra_destino_id").setRawValue(record.data.tra_destino_value);
+            
+
+            
+            fp.getForm().findField("tra_destino_id").setValue(record.data.tra_destino_value);
             fp.getForm().findField("tra_destino_id").hiddenField.value = record.data.tra_destino;
-            fp.getForm().findField("ciu_destino_id").setRawValue(record.data.ciu_destino_value);
+            fp.getForm().findField("ciu_destino_id").setValue(record.data.ciu_destino_value);
             fp.getForm().findField("ciu_destino_id").hiddenField.value = record.data.ciu_destino;
 
-            fp.getForm().findField("tra_escala_id").setRawValue(record.data.tra_escala_value);
+            /*fp.getForm().findField("ciu_destino_id").store.setBaseParam("idpais", record.data.tra_destino );
+            fp.getForm().findField("ciu_destino_id").store.load();*/
+
+
+            fp.getForm().findField("tra_escala_id").setValue(record.data.tra_escala_value);
             fp.getForm().findField("tra_escala_id").hiddenField.value = record.data.tra_escala;
-            fp.getForm().findField("ciu_escala_id").setRawValue(record.data.ciu_escala_value);
+            fp.getForm().findField("ciu_escala_id").setValue(record.data.ciu_escala_value);
             fp.getForm().findField("ciu_escala_id").hiddenField.value = record.data.ciu_escala;
-            fp.getForm().findField("idlinea").setRawValue(record.data.linea);
+            fp.getForm().findField("idlinea").setValue(record.data.linea);
             fp.getForm().findField("idlinea").hiddenField.value = record.data.idlinea;
             var now = new Date(<?=strtotime(date("Y-m-d"))*1000?>);
             fp.getForm().findField("vigencia").setMinValue( (record.data.vigencia&&record.data.vigencia<=now)?record.data.vigencia:now );
@@ -1041,53 +1049,8 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
 
 
         }else{
-            var recordProductos = this.record;
-            var newRec = new recordProductos({});
-            var fp = Ext.getCmp("producto-form");
-            form = fp.getForm().loadRecord(newRec);
-            
-            fp.getForm().findField("impoexpo").enable();
-            fp.getForm().findField("transporte").enable();
-            fp.getForm().findField("modalidad").enable();
-
-            fp.getForm().findField("impoexpo").setRawValue("");
-            fp.getForm().findField("transporte").setRawValue("");
-            fp.getForm().findField("modalidad").setRawValue("");
-            fp.getForm().findField("incoterms").setRawValue("");
-
-            fp.getForm().findField("tra_origen_id").setRawValue("");
-            fp.getForm().findField("tra_origen_id").hiddenField.value = "";
-            fp.getForm().findField("ciu_origen_id").setRawValue("");
-            fp.getForm().findField("ciu_origen_id").hiddenField.value = "";
-
-            fp.getForm().findField("tra_destino_id").setRawValue("");
-            fp.getForm().findField("tra_destino_id").hiddenField.value = "";
-            fp.getForm().findField("ciu_destino_id").setRawValue("");
-            fp.getForm().findField("ciu_destino_id").hiddenField.value = "";
-
-            fp.getForm().findField("tra_escala_id").setRawValue("");
-            fp.getForm().findField("tra_escala_id").hiddenField.value = "";
-            fp.getForm().findField("ciu_escala_id").setRawValue("");
-            fp.getForm().findField("ciu_escala_id").hiddenField.value = "";
-            fp.getForm().findField("idlinea").setRawValue("");
-            fp.getForm().findField("idlinea").hiddenField.value = "";
-
-            fp.getForm().findField("frecuencia").setRawValue("");
-            fp.getForm().findField("ttransito").setRawValue("");
-            fp.getForm().findField("imprimir").setRawValue("Por Item");
-            fp.getForm().findField("vigencia").setRawValue("");
-            fp.getForm().findField("observaciones").setRawValue("");
-            fp.getForm().findField("producto").setRawValue("");
-            fp.getForm().findField("idproducto").setRawValue("");
-
-            //fp.getForm().findField("vigencia").setMinValue( null );
-            fp.getForm().findField("vigencia").setMinValue( new Date(<?=strtotime(date("Y-m-d"))*1000?>) );
-
-            
-
-
-
-          
+            var fp = Ext.getCmp("producto-form");            
+            fp.getForm().findField("vigencia").setMinValue( new Date(<?=strtotime(date("Y-m-d"))*1000?>) );          
 
         }
 

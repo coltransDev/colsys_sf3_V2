@@ -143,7 +143,7 @@ if( !$cotizacion->getCaUsuanulado() ){
 			</tr>
 			<tr>
 				<td>
-					Tiempo restante
+					<b>Hora actual - Fecha de vencimiento:</b>
 					<?
 					$diff = $tarea->getTiempoRestante( $festivos );                   
 					if( substr($diff, 0,1)=="-" ){

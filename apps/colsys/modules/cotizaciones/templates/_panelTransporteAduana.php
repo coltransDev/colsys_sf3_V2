@@ -24,6 +24,13 @@ PanelTransporteAduana = function( config ){
     this.storeConceptos = new Ext.data.Store({
         autoLoad : false,
         url: '<?=url_for("parametros/datosConceptos")?>',
+        baseParams: {
+            impoexpo: '<?=Constantes::IMPO?>',
+            transporte: '<?=Constantes::TERRESTRE?>',
+            modalidad: '<?=Constantes::ADUANAFCL?>',
+            tipo: 'concepto'
+
+        },
         reader: new Ext.data.JsonReader(
             {
                 id: 'idconcepto',
@@ -667,11 +674,12 @@ Ext.extend(PanelTransporteAduana, Ext.grid.EditorGridPanel, {
             }
             var ed = this.colModel.getCellEditor(e.column, e.row);
             if( rec.data.tipo == "concepto" ){
-                this.storeConceptos.baseParams={transporte:rec.data.transporte, modalidad:rec.data.modalidad};
+                this.storeConceptos.setBaseParam("modo", "conceptos");
             }
 
             if( rec.data.tipo == "recargo" ){
-                this.storeConceptos.baseParams={transporte:rec.data.transporte, modalidad:rec.data.modalidad, tipo:'Recargo en Origen', impoexpo:rec.data.impoexpo , modo:'recargos'};
+                this.storeConceptos.setBaseParam("modo", "recargos");
+                this.storeConceptos.setBaseParam("tipo", "Recargo en Origen");
             }
             this.storeConceptos.load();
         }

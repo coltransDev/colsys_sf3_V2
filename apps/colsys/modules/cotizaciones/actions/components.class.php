@@ -38,7 +38,13 @@ class cotizacionesComponents extends sfComponents
     /*
      * Panel principal inferior
      */
-    public function executeFormTrayectoWindow()
+    public function executePanelTrayectoWindow()
+	{
+
+    }
+
+
+    public function executePanelTrayectoForm()
 	{
 
     }

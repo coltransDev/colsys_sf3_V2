@@ -5,29 +5,20 @@
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
 
+include_component("widgets", "widgetIncoterms");
+
+
 ?>
-
 <script type="text/javascript">
-    FormTrayectoWindow = function() {
-
-        
-
-        FormTrayectoWindow.superclass.constructor.call(this, {
-            width       : 500,
-            height      : 650,
-            closeAction :'hide',
-            plain       : true,
-            modal: true,
-            id: 'form-trayecto-window',
-            items       : new Ext.FormPanel({
-                id: 'producto-form',
+    PanelTrayectoForm = function( config ) {
+        Ext.apply(this,config);
+        PanelTrayectoForm.superclass.constructor.call(this, {                
                 layout: 'form',
                 frame: true,
                 title: 'Ingrese los datos del trayecto',
                 autoHeight: true,
                 bodyStyle: 'padding: 5px 5px 0 5px;',
                 labelWidth: 100,
-
                 items: [{
                             id: 'cotizacionId',
                             xtype:'hidden',
@@ -50,7 +41,7 @@
                             width: 300
                         }
                         ,<?=include_component("widgets", "impoexpo" ,array("id"=>"impoexpo", "label"=>"Impo/Expo"))?>
-                        ,<?=include_component("widgets", "incoterms" ,array("id"=>"incoterms"))?>
+                        , new WidgetIncoterms({name:"incoterms"})                        
                         ,<?=include_component("widgets", "transportes" ,array("id"=>"transporte", "allowBlank"=>"false"))?>
 
                         ,<?=include_component("widgets", "modalidades" ,array("id"=>"modalidad", "label"=>"Modalidad", "allowBlank"=>"false", "transporte"=>"transporte", "impoexpo"=>"impoexpo"))?>
@@ -120,83 +111,13 @@
                             value: '',
                             allowBlank:false
                         }
-                    ]
-
-
-
-            }),
-
-            buttons: [{
-                text     : 'Guardar',
-                handler: function(){
-                    Ext.getCmp('form-trayecto-window').guardar();
-                }
-            },{
-                text     : 'Cancelar',
-                handler: this.hide.createDelegate(this, [])
-            }]
-            
+                    ]            
 
         });
 
-        this.addEvents({add:true});
+        
     }
 
-    Ext.extend(FormTrayectoWindow, Ext.Window, {
-
-
-        show : function(){
-            if(this.rendered){
-                
-            }
-
-            FormTrayectoWindow.superclass.show.apply(this, arguments);
-        },
-
-
-
-        guardar: function() {
-            
-
-
-            var fp = Ext.getCmp("producto-form");
-            if( fp.getForm().isValid() ){
-                
-                ttransito = fp.getForm().findField("ttransito").getValue();
-                frecuencia = fp.getForm().findField("frecuencia").getValue();
-                impoexpo = fp.getForm().findField("impoexpo").getValue();
-                transporte = fp.getForm().findField("transporte").getValue();
-
-                if( ttransito=="" && frecuencia=="" && ((impoexpo=="<?=Constantes::IMPO?>" && transporte!="<?=Constantes::AEREO?>") || impoexpo=="<?=Constantes::EXPO?>" ) ){ // Solamente cuando es importación aérea se permite en blanco
-                    Ext.MessageBox.alert('Sistema de Cotizaciones - Error:', 'Por favor indique el tiempo de transito y la frecuencia');
-                }else{
-                    this.el.mask('Guardando...', 'x-mask-loading');
-                    var win = this;
-                    fp.getForm().submit({url:'<?=url_for('cotizaciones/formProductoGuardar')?>',
-                        waitMsg:'Salvando Datos de Productos...',
-                        // standardSubmit: false,
-
-                        success:function(form,action){
-                            storeProductos.reload();
-                            win.hide();
-                        },
-                        failure:function(form,action){
-                            Ext.MessageBox.alert('Error Message', "Se ha presentado un error: "+action.result.errorInfo+" \n Codigo HTTP "+action.response.status);
-                        }//end failure block
-
-                    });
-                    this.el.unmask();
-                    
-                }
-                
-            }else{
-                Ext.MessageBox.alert('Sistema de Cotizaciones - Error:', '¡Atención: La información del Producto no es válida o está incompleta!');
-            }
-
-            
-        }
-
-
-    });
+    Ext.extend(PanelTrayectoForm, Ext.FormPanel, {} );
 
 </script>
