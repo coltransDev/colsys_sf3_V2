@@ -53,16 +53,16 @@ class bavariaActions extends sfActions {
                 if (!$reporte->esUltimaVersion()){
                     continue;
                 }
-                $piezas_mem = (!is_null($reporte->getPiezas()) or $reporte->getPiezas()=="")?explode(" ",$reporte->getPiezas()):array(0,"");
-                $peso_mem = (!is_null($reporte->getPeso()) or $reporte->getPeso()=="")?explode(" ",$reporte->getPeso()):array(0,"");
-                $parametro = Doctrine::getTable("Parametro")
-                    ->createQuery("pr")
-                    ->where("ca_casouso = 'CU047'")
-                    ->andWhere("ca_valor = ?", $piezas_mem[1])
-                    ->execute();
-                $embalaje = (!is_null($parametro->getCaValor2()))?$parametro->getCaValor2():"";
+                $piezas_mem = ($reporte->getPiezas()!=NULL and $reporte->getPiezas()!="")?explode(" ",$reporte->getPiezas()):array(0,0);
+                $peso_mem = ($reporte->getPeso()!=NULL and $reporte->getPeso()!="")?explode(" ",$reporte->getPeso()):array(0,0);
+                $embalaje = "";
 
-                $num_factura = (!is_null($reporte->getProperty("numfactproveedor")))?$reporte->getProperty("numfactproveedor"):0;
+                $parametro = Doctrine::getTable("Parametro")->find(array("CU047",0,$piezas_mem[1]));
+                if ($parametro) {
+                    $embalaje = $parametro->getCaValor2();
+                }
+
+                $num_factura = ($reporte->getProperty("numfactproveedor")!=NULL)?$reporte->getProperty("numfactproveedor"):0;
                 $bavaria = new Bavaria();
 
                 $bavaria->setCaConsecutivo($reporte->getCaConsecutivo());
