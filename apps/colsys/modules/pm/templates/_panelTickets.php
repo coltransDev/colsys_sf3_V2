@@ -243,7 +243,7 @@ PanelTickets = function( config ){
         width: 100,
         sortable: true,
         renderer: function(v){
-            return v+"%";
+            return (v?v:0)+"%";
         }
       }
 
