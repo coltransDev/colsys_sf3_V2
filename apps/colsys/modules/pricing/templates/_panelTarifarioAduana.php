@@ -480,6 +480,8 @@ Ext.extend(PanelTarifarioAduana, Ext.grid.EditorGridPanel, {
                                        valorminimo:'',
                                        aplicacion:'',
                                        aplicacionminimo:'',
+                                       fchini:'',
+                                       fchfin:''
                                        orden: 'Z' // Se utiliza Z por que el orden es alfabetico
                                     });
 
