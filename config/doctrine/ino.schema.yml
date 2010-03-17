@@ -317,6 +317,9 @@ InoConcepto:
     ca_col1: string
     ca_col2: string
     ca_tarifario_costos_cliente: boolean
+    ca_parametros:
+      type: string
+      notnull: true
   relations:
     InoConceptoModalidad:
       local: ca_idconcepto
