@@ -10,7 +10,7 @@ if( $reporte->getCaUsuanulado() ){
 		 	<b>Informaci&oacute;n general</b><br />				
 			<?					
 					if( $reporte->getCaUsuanulado() ){
-						echo "<b>Anulado por:</b> ".$reporte->getCaUsuanulado()." ".$reporte->getCaFchAnulado()."<br />";
+						echo "<b>Anulado por:</b> ".$reporte->getCaUsuanulado()." ".$reporte->getCaFchanulado()."<br />";
 					}
 					?>					
 					<b>Transporte:</b> <?=$reporte->getCaTransporte()?><br />

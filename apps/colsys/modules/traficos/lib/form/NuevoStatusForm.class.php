@@ -11,6 +11,7 @@ class NuevoStatusForm extends BaseForm{
 	private $queryVolumen = null;
 	private $queryConcepto = null;
 	private $destinatarios = array();
+    private $destinatariosFijos = array();
 	private $widgetsClientes = array();
 	
 	public function configure(){
@@ -21,8 +22,13 @@ class NuevoStatusForm extends BaseForm{
 		$validator = array();	
 		
 		$destinatarios = $this->getDestinatarios();
+        $destinatariosFijos = $this->getDestinatariosFijos();
 		for( $i=0; $i< count($destinatarios) ; $i++ ){
 			$widgets["destinatarios_".$i] = new sfWidgetFormInputCheckbox(array(), array("size"=>60, "style"=>"margin-bottom:3px", "value"=>trim($destinatarios[$i])));
+		}
+
+        for( $i=0; $i< count($destinatariosFijos) ; $i++ ){
+			$widgets["destinatariosfijos_".$i] = new sfWidgetFormInputCheckbox(array(), array("size"=>60, "style"=>"margin-bottom:3px", "value"=>trim($destinatariosFijos[$i])));
 		}
 		
 		for( $i=0; $i< self::NUM_CC ; $i++ ){
@@ -131,14 +137,19 @@ class NuevoStatusForm extends BaseForm{
 		
 		$this->setWidgets( $widgets );
 		
-		for( $i=0; $i< count($destinatarios) ; $i++ ){
-			
-			$this->widgetSchema->setLabel("destinatarios_".$i, $destinatarios[$i]);
-		}
+		
 		
 		for( $i=0; $i< count($destinatarios) ; $i++ ){
 			$validator["destinatarios_".$i] =new sfValidatorEmail( array('required' => false ), 
 														array('invalid' => 'La dirección es invalida'));
+            $this->widgetSchema->setLabel("destinatarios_".$i, $destinatarios[$i]);
+		}
+
+
+        for( $i=0; $i< count($destinatariosFijos) ; $i++ ){
+			$validator["destinatariosfijos_".$i] =new sfValidatorEmail( array('required' => false ),
+														array('invalid' => 'La dirección es invalida'));
+            $this->widgetSchema->setLabel("destinatariosfijos_".$i, $destinatariosFijos[$i]);
 		}
 			
 		for( $i=0; $i< self::NUM_CC ; $i++ ){
@@ -286,6 +297,10 @@ class NuevoStatusForm extends BaseForm{
 	public function setDestinatarios( $c ){
 		$this->destinatarios = $c;			
 	}
+
+    public function setDestinatariosFijos( $c ){
+		$this->destinatariosFijos = $c;
+	}
 	
 	
 	public function setQueryConceptos( $c ){
@@ -298,6 +313,10 @@ class NuevoStatusForm extends BaseForm{
 	
 	public function getDestinatarios( ){
 		return $this->destinatarios;
+	}
+
+    public function getDestinatariosFijos( ){
+		return $this->destinatariosFijos;
 	}
 	
 	public function setWidgetsClientes( $parametros ){

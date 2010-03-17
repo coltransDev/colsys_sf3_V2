@@ -237,7 +237,6 @@ class traficosActions extends sfActions
 		}
 
 
-
 		/*
 		* Configuracion de la forma
 		*/		
@@ -245,6 +244,19 @@ class traficosActions extends sfActions
 		if( $reporte->getCaConfirmarClie() ){
 				$this->form->setDestinatarios( explode(",",$reporte->getCaConfirmarClie()) );
 		}
+
+        $cliente = $reporte->getCLiente();
+        $fijos = Doctrine::getTable("Contacto")
+                                   ->createQuery("c")
+                                   ->addWhere("c.ca_idcliente = ?", $cliente->getCaIdcliente() )
+                                   ->addWhere("ca_fijo = ?", true)
+                                   ->execute();
+        $fijosArr = array();
+        foreach( $fijos as $fijo  ){
+            $fijosArr[] = $fijo->getCaEmail();
+        }
+        $fijosArr = array_unique( $fijosArr );
+        $this->form->setDestinatariosFijos( $fijosArr );
 		//Etapas			
 
         $q = Doctrine::getTable("TrackingEtapa")->createQuery("t");
@@ -307,6 +319,12 @@ class traficosActions extends sfActions
 			for( $i=0; $i< count($destinatarios) ; $i++ ){	
 				if( $request->getParameter("destinatarios_".$i) ){	
 					$bindValues["destinatarios_".$i] = trim($request->getParameter("destinatarios_".$i));					 				}
+			}
+
+            $destinatariosFijos = $this->form->getDestinatariosFijos();
+			for( $i=0; $i< count($destinatariosFijos) ; $i++ ){
+				if( $request->getParameter("destinatariosfijos_".$i) ){
+					$bindValues["destinatariosfijos_".$i] = trim($request->getParameter("destinatariosfijos_".$i));					 				}
 			}
 
 			for( $i=0; $i<NuevoStatusForm::NUM_CC ; $i++ ){
@@ -557,8 +575,15 @@ class traficosActions extends sfActions
 					$address[] = trim($request->getParameter($key));					 
 				}
 			}
+
+            if( substr($key,0,19 )=="destinatariosfijos_" ){
+				if( $request->getParameter($key) ){
+					$address[] = trim($request->getParameter($key));
+				}
+			}
 		}
-		
+
+        
 		
 		$cc = array();
 		for( $i=0; $i<NuevoStatusForm::NUM_CC ; $i++ ){

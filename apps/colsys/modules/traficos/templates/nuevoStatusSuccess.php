@@ -27,9 +27,31 @@ if( date("G")<12 ){
 }*/
 
 
-
+$destinatariosFijos = $form->getDestinatariosFijos();
 ?>
 <script language="javascript" type="text/javascript">
+
+var enviarFormulario=function(){
+   // alert( document.form1 );
+   // var checkFld = document.form1.fijos;
+    
+    var numChecked = 0;
+    for(var i=0; i<<?=count($destinatariosFijos)?>; i++ ){
+       var checkFld = document.getElementById("destinatariosfijos_"+i);
+       if( checkFld.checked ){
+           numChecked++;
+       }
+    }
+
+    if( numChecked>0 ){
+        document.getElementById("form1").submit();
+    }else{
+        alert("debe seleccionar al menos un contacto fijo.");
+    }
+
+    
+    
+}
 
 var validarMensaje=function(){	
     document.getElementById("mensaje_dirty").value = "1";
@@ -167,7 +189,7 @@ var crearSeguimiento=function(){
 
 <div class="content" align="center">
 
-<form action="<?=url_for("traficos/nuevoStatus?modo=".$modo."&idreporte=".$reporte->getCaIdreporte() )?>" method="post" name="form1" >
+<form name="form1" id="form1" action="<?=url_for("traficos/nuevoStatus?modo=".$modo."&idreporte=".$reporte->getCaIdreporte() )?>" method="post" name="form1" >
 <?
 echo $form['mensaje_dirty']->render();
 echo $form['mensaje_mask']->render();
@@ -224,8 +246,30 @@ if( !sfConfig::get("app_smtp_user") ){
 	
 	<tr>
 		<td valign="top">
-			<div align="left"><b>Enviar a: </b><br />
-					<?		
+			<div align="left">
+            <?
+			
+            if( count($destinatariosFijos)>0 ){
+            ?>
+                <div class="qtip box1" title="Debe seleccionar al menos un contacto fijo" >
+                    <b>Destinatarios Fijos:</b><br />
+               <?
+               for( $i=0; $i< count($destinatariosFijos) ; $i++ ){
+                     echo $form['destinatariosfijos_'.$i]->renderError();
+                     $form->setDefault('destinatariosfijos_'.$i, 1 );
+                     echo $form['destinatariosfijos_'.$i]->render().$form['destinatariosfijos_'.$i]->renderLabel()."<br />";
+                }
+               ?>
+
+                </div>
+                <br />
+              
+                <?
+            }
+            ?>
+            <div class="qtip box1" title="Selecciones los destinatarios a los que les llegara el correo" >
+                <b>Destinatarios:</b><br />
+            <?
 			$destinatarios = $form->getDestinatarios();
 			for( $i=0; $i< count($destinatarios) ; $i++ ){					
 				 echo $form['destinatarios_'.$i]->renderError(); 
@@ -267,7 +311,8 @@ if( !sfConfig::get("app_smtp_user") ){
 					echo "- No se ha definido coordinador de aduana en Maestra de Clientes<br />";
 				}
 			}			
-			?>		
+			?>
+            </div>
 			</div></td>
 		<td valign="top">
 			<div align="left"><b>Copiar a: </b>
@@ -726,7 +771,7 @@ if( !sfConfig::get("app_smtp_user") ){
 		</tr>
 	<tr>
 		<td colspan="2"><div align="center">
-			<input type="submit" value="Enviar" class="button" />&nbsp;
+                <input type="button" value="Enviar" class="button" onclick="enviarFormulario()" />&nbsp;
 			
 			<input type="button" value="Cancelar" class="button" onClick="document.location='<?=url_for("traficos/listaStatus?modo=".$modo."&reporte=".$reporte->getCaConsecutivo())?>'" />
 		</div></td>
