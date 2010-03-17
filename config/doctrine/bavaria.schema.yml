@@ -1,0 +1,39 @@
+Bavaria:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: bavaria
+  tableName: tb_bavaria
+  columns:
+    ca_idbavaria:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_consecutivo: string
+    ca_orden_nro: string
+    ca_modalidad: string
+    ca_factura_nro: string
+    ca_factura_fch: date
+    ca_zarpe_fch: date
+    ca_doctransporte: string
+    ca_doctransporte_fch: string
+    ca_recibocarga_fch: date
+    ca_peso_bruto: decimal
+    ca_peso_neto: decimal
+    ca_tipo_embalaje: string
+    ca_piezas: integer
+    ca_transportadora: string
+    ca_bandera: string
+    ca_reportado: boolean
+    ca_fchreportado: timestamp
+    ca_usureportado: string
+    ca_fchanulado: timestamp
+    ca_usuanulado: string
+    ca_fcharchivado: timestamp
+    ca_usuarchivado: string
+  relations:
+    Reporte:
+      local: ca_consecutivo
+      foreign: ca_consecutivo
+      type: many
