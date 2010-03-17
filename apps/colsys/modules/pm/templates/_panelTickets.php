@@ -235,6 +235,16 @@ PanelTickets = function( config ){
         width: 100,
         sortable: true,
         renderer: Ext.util.Format.dateRenderer('d/m/y')
+      },
+      {
+        header: "%",
+        dataIndex: 'percentage',
+        hideable: true,
+        width: 100,
+        sortable: true,
+        renderer: function(v){
+            return v+"%";
+        }
       }
 
       
@@ -258,7 +268,8 @@ PanelTickets = function( config ){
             {name: 'opened', type: 'date', mapping: 'h_ca_opened', dateFormat:'Y-m-d H:i:s'},
             {name: 'action', type: 'string', mapping: 'h_ca_action'},
             {name: 'ultseg', type: 'date', mapping: 'h_ultseg', dateFormat:'Y-m-d H:i:s'},
-            {name: 'respuesta', type: 'date', mapping: 'tar_ca_fchterminada', dateFormat:'Y-m-d H:i:s'}
+            {name: 'respuesta', type: 'date', mapping: 'tar_ca_fchterminada', dateFormat:'Y-m-d H:i:s'},
+            {name: 'percentage', type: 'string', mapping: 'h_ca_percentage'},
             
     ]);
 

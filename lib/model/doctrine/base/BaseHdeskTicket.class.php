@@ -20,6 +20,7 @@
  * @property integer $ca_idtarea
  * @property integer $ca_idseguimiento
  * @property integer $ca_idmilestone
+ * @property integer $ca_percentage
  * @property Doctrine_Collection $HdeskResponse
  * @property HdeskGroup $HdeskGroup
  * @property HdeskProject $HdeskProject
@@ -44,6 +45,7 @@
  * @method integer             getCaIdtarea()        Returns the current record's "ca_idtarea" value
  * @method integer             getCaIdseguimiento()  Returns the current record's "ca_idseguimiento" value
  * @method integer             getCaIdmilestone()    Returns the current record's "ca_idmilestone" value
+ * @method integer             getCaPercentage()     Returns the current record's "ca_percentage" value
  * @method Doctrine_Collection getHdeskResponse()    Returns the current record's "HdeskResponse" collection
  * @method HdeskGroup          getHdeskGroup()       Returns the current record's "HdeskGroup" value
  * @method HdeskProject        getHdeskProject()     Returns the current record's "HdeskProject" value
@@ -67,6 +69,7 @@
  * @method HdeskTicket         setCaIdtarea()        Sets the current record's "ca_idtarea" value
  * @method HdeskTicket         setCaIdseguimiento()  Sets the current record's "ca_idseguimiento" value
  * @method HdeskTicket         setCaIdmilestone()    Sets the current record's "ca_idmilestone" value
+ * @method HdeskTicket         setCaPercentage()     Sets the current record's "ca_percentage" value
  * @method HdeskTicket         setHdeskResponse()    Sets the current record's "HdeskResponse" collection
  * @method HdeskTicket         setHdeskGroup()       Sets the current record's "HdeskGroup" value
  * @method HdeskTicket         setHdeskProject()     Sets the current record's "HdeskProject" value
@@ -137,6 +140,9 @@ abstract class BaseHdeskTicket extends myDoctrineRecord
              'type' => 'integer',
              ));
         $this->hasColumn('ca_idmilestone', 'integer', null, array(
+             'type' => 'integer',
+             ));
+        $this->hasColumn('ca_percentage', 'integer', null, array(
              'type' => 'integer',
              ));
 

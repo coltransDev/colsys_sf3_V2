@@ -196,6 +196,7 @@ class pmActions extends sfActions
 
 		$response = sfContext::getInstance()->getResponse();
 		$response->addJavaScript("extExtras/RowExpander",'last');
+        $response->addJavaScript("extExtras/SliderTip",'last');
 
 	}
 
@@ -1163,5 +1164,31 @@ class pmActions extends sfActions
         $this->setTemplate("responseTemplate");
 
     }
+
+    /*
+	* Asigna un milestone a un ticket
+	* @author: Andres Botero
+	*/
+    public function executeActualizarPorcentajeTicket( $request ){
+
+
+        $this->forward404Unless( $request->getParameter("idticket") );
+        $this->forward404Unless( $request->getParameter("percentage") );
+        $idticket = $request->getParameter("idticket");
+
+
+        $ticket = Doctrine::getTable("HdeskTicket")->find( $idticket );
+
+
+        $this->forward404Unless( $ticket );
+
+        $ticket->setCaPercentage( $request->getParameter("percentage")  );
+        $ticket->save();
+
+
+        $this->responseArray = array("success"=>true);
+        $this->setTemplate("responseTemplate");
+    }
+
 
 }
