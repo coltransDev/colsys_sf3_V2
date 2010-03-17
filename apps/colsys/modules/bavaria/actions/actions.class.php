@@ -46,7 +46,6 @@ class bavariaActions extends sfActions {
                 ->andWhere("rp.ca_fchreporte >= '2010-01-01'")
                 ->addOrderBy("rp.ca_fchreporte desc")
                 ->addOrderBy("rp.ca_consecutivo desc")
-                //->getSqlQuery();
                 ->execute();
 
             foreach($reportes as $reporte){
@@ -172,8 +171,6 @@ class bavariaActions extends sfActions {
             if( $this->getRequestParameter ( 'bandera' )!==null ) {
                 $bavaria->setCaBandera( $this->getRequestParameter ( 'bandera' ) );
             }
-            //print_r( $bavaria );
-            //exit();
             $bavaria->save();
 
             $this->responseArray["success"]=true;
