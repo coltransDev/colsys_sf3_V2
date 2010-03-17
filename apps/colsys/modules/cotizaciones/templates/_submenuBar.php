@@ -67,7 +67,7 @@ switch($action){
 			$button[$i]["name"]="PDF ";
 			$button[$i]["tooltip"]="Genera un archivo PDF para la impresión de la cotización";
 			$button[$i]["image"]="22x22/pdf.gif"; 			
-			$button[$i]["link"]= "cotizaciones/verCotizacion?id=".$this->getRequestParameter("id");
+			$button[$i]["link"]= "cotizaciones/generarPDF?id=".$this->getRequestParameter("id");
 			$i++;
 			
 			$button[$i]["name"]="Copiar ";
