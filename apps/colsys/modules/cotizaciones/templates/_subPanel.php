@@ -16,6 +16,7 @@ if( $cotizacion->getCaEmpresa() == Constantes::COLTRANS ){
 
 if( $cotizacion->getCaEmpresa() == Constantes::COLMAS ){
     include_component("cotizaciones","panelTransporteAduana",array("cotizacion"=>$cotizacion));
+    include_component("cotizaciones","panelTarifarioAduana",array("cotizacion"=>$cotizacion));
 }
 
 
@@ -49,6 +50,7 @@ SubPanel = function(){
     if( $cotizacion->getCaEmpresa() == Constantes::COLMAS ){
         ?>
         this.gridTransporte = new PanelTransporteAduana();
+        this.gridTarifarioAduana = new PanelTarifarioAduana();
         <?
     }
     ?>
@@ -86,6 +88,8 @@ SubPanel = function(){
                 if( $cotizacion->getCaEmpresa() == Constantes::COLMAS  ){
                 ?>
                    this.gridTransporte,
+                   this.gridTarifarioAduana,
+
                 <?
                 }
                 ?>
