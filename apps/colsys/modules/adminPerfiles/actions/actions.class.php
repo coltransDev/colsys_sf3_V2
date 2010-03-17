@@ -184,8 +184,8 @@ class adminPerfilesActions extends sfActions
 		$this->rutina = Doctrine::getTable("Rutina")->find( $rutina );
 		$this->forward404Unless( $this->rutina );
 
-
-
+        
+        
        $this->usuarios = Doctrine::getTable("Usuario")
                                    ->createQuery("u")
                                    ->leftJoin("u.UsuarioPerfil up")
@@ -200,16 +200,18 @@ class adminPerfilesActions extends sfActions
                                    ->addOrderBy("u.ca_nombre")
                                    ->distinct()
                                    ->execute();
-		
+       
 		$rutinasNivel = Doctrine::getTable("RutinaNivel")
                                   ->createQuery("rn")
-                                  ->where("rn.ca_rutina", $rutina )
-                                  ->addOrderBy("rn.ca_nivel")
+                                  ->select("rn.*")
+                                  ->where("rn.ca_rutina = ?", $rutina )
+                                  ->addOrderBy("rn.ca_nivel")                                 
                                   ->execute();
+        
 		$this->rutinasNivel = array("-1"=>"Sin acceso", 0=>"Con Acceso");
 		foreach( $rutinasNivel as $rutinaNivel ){
 			$this->rutinasNivel[ $rutinaNivel->getCaNivel() ] = $rutinaNivel->getCaValor();
-		}
+		}       
 	}
 	
 	
