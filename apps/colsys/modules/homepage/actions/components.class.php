@@ -20,8 +20,7 @@ class homepageComponents  extends sfComponents
         $this->novedades = Doctrine::getTable("ColNovedad")
                                      ->createQuery("n")
                                      ->where("n.ca_fcharchivar>=?", date("Y-m-d"))
-                                     ->addOrderBy("n.ca_fchpublicacion")
-                                     ->addOrderBy("n.ca_fcharchivar")
+                                     ->addOrderBy("n.ca_fchpublicacion DESC ")
                                      ->execute();
 		
 		
