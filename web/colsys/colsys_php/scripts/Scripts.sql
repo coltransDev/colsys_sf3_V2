@@ -1979,7 +1979,7 @@ GRANT ALL ON tb_bavaria_id TO GROUP "Usuarios";
 CREATE TABLE tb_bavaria
 (
   ca_idbavaria smallint DEFAULT nextval('tb_bavaria_id') UNIQUE NOT NULL,
-  ca_consecutivo varchar (10) NOT NULL,
+  ca_consecutivo varchar (12) NOT NULL,
   ca_orden_nro varchar (10) NOT NULL,
   ca_modalidad varchar (12) NOT NULL,
   ca_factura_nro varchar (15) NOT NULL,
@@ -1987,8 +1987,10 @@ CREATE TABLE tb_bavaria
   ca_zarpe_fch date,
   ca_doctransporte varchar (25),
   ca_doctransporte_fch date,
+  ca_recibocarga_fch date,
   ca_peso_bruto numeric(10,2),
   ca_peso_neto numeric(10,2),
+  ca_piezas decimal (6),
   ca_tipo_embalaje varchar (2),
   ca_transportadora varchar (10),
   ca_bandera varchar (3),
@@ -2001,7 +2003,10 @@ CREATE TABLE tb_bavaria
   ca_usucreado character varying(20),
   ca_fchactualizado timestamp without time zone,
   ca_usuactualizado character varying(20),
-  CONSTRAINT pk_bavaria PRIMARY KEY (ca_consecutivo, ca_orden_nro)
+  ca_fcharchivado timestamp without time zone,
+  ca_usuarchivado character varying(20),
+  CONSTRAINT pk_bavaria PRIMARY KEY (ca_consecutivo, ca_orden_nro),
+  CONSTRAINT fk_bavaria FOREIGN KEY (ca_consecutivo) REFERENCES tb_reportes (ca_consecutivo)
 )
 WITH (
   OIDS=FALSE
@@ -2489,7 +2494,8 @@ Drop view vi_repreportes;
 Create view vi_repreportes as
 select rp.ca_idreporte, substr(rp.ca_fchreporte::text,1,4) as ca_ano, substr(rp.ca_fchreporte::text,6,2) as ca_mes, rp.ca_fchreporte, rp.ca_consecutivo, rp.ca_version, cl.ca_idcliente, cl.ca_compania as ca_nombre_cli, replace(rp.ca_orden_clie,'|',', ') as ca_orden_clie, t1.ca_nombre as ca_traorigen, c1.ca_ciudad as ca_ciuorigen, t2.ca_nombre as ca_tradestino, c2.ca_ciudad as ca_ciudestino,
     rp.ca_impoexpo, rp.ca_modalidad, rp.ca_transporte, rp.ca_login, us.ca_sucursal
-    from tb_reportes rp
+    from (select ca_consecutivo, max(ca_version) as ca_version from tb_reportes where ca_usuanulado IS NULL and ca_fchanulado IS NULL group by ca_consecutivo) rx
+	INNER JOIN tb_reportes rp ON rx.ca_consecutivo = rp.ca_consecutivo and rx.ca_version = rp.ca_version
 	INNER JOIN tb_concliente cc ON rp.ca_idconcliente = cc.ca_idcontacto
 	INNER JOIN tb_clientes cl ON cc.ca_idcliente = cl.ca_idcliente
 	INNER JOIN tb_ciudades c1 ON rp.ca_origen::text = c1.ca_idciudad::text
@@ -2497,12 +2503,11 @@ select rp.ca_idreporte, substr(rp.ca_fchreporte::text,1,4) as ca_ano, substr(rp.
 	INNER JOIN tb_traficos t1 ON c1.ca_idtrafico::text = t1.ca_idtrafico::text
 	INNER JOIN tb_traficos t2 ON c2.ca_idtrafico::text = t2.ca_idtrafico::text
 	INNER JOIN vi_usuarios us ON rp.ca_login = us.ca_login
-	INNER JOIN (select ca_consecutivo as ca_consecutivo_f, max(ca_version) as ca_version from tb_reportes where ca_usuanulado IS NULL and substr(ca_fchreporte::text,6,2) like '02' and substr(ca_fchreporte::text,1,4) = '2010'  group by ca_consecutivo_f) rx ON rp.ca_consecutivo = rx.ca_consecutivo_f and rp.ca_version = rx.ca_version
-where rp.ca_usuanulado IS NULL and rp.ca_fchanulado IS NULL
 order by us.ca_sucursal, rp.ca_login, rp.ca_transporte;
 REVOKE ALL ON vi_repreportes FROM PUBLIC;
 GRANT ALL ON vi_repreportes TO "Administrador";
 GRANT ALL ON vi_repreportes TO GROUP "Usuarios";
+
 
 
 

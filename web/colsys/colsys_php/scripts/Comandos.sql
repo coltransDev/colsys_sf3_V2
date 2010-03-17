@@ -2145,3 +2145,18 @@ insert into tb_parametros values ('CU079',0,'Pesos Colombianos','COL');
 
 insert into tb_parametros values ('CU080',0,'Bodegajes','01');
 insert into tb_parametros values ('CU080',0,'Recargos en Destino','12');
+
+
+insert into tb_parametros values ('CU082',0,'Chipre','221');
+insert into tb_parametros values ('CU082',1,'Happag Lloyd','2759');
+insert into tb_parametros values ('CU082',2,'Frontier','4661');
+insert into tb_parametros values ('CU082',3,'CMA/CGM','4781');
+insert into tb_parametros values ('CU082',4,'CSAV','7235');
+insert into tb_parametros values ('CU082',5,'Hamburg Sud','5730');
+insert into tb_parametros values ('CU082',6,'MSC','6022');
+insert into tb_parametros values ('CU082',7,'King Ocean','2260');
+insert into tb_parametros values ('CU082',8,'Navemar','5730');
+
+insert into tb_parametros values ('CU083',1,'DE-049','023');
+insert into tb_parametros values ('CU083',1,'US-001','249');
+insert into tb_parametros values ('CU083',1,'IT-039','386');
