@@ -2050,6 +2050,9 @@ alter table tb_falainstructionsadu add column ca_embarque varchar(2);
 
 =*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
 alter table tb_clientes add column ca_tipo varchar (100);
+alter table tb_clientes add column ca_entidad varchar (15) NOT NULL DEFAULT 'Vigente'::character varying;
+alter table tb_clientes add column ca_fchfinanciero timestamp;
+alter table tb_clientes add column ca_usufinanciero varchar (20);
 
 
 update tb_falaheader_adu set ca_reqd_delivery = '2010-01-19' where ca_fecha_carpeta in ('2010-01-04','2010-01-07');

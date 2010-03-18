@@ -2006,7 +2006,6 @@ CREATE TABLE tb_bavaria
   ca_fcharchivado timestamp without time zone,
   ca_usuarchivado character varying(20),
   CONSTRAINT pk_bavaria PRIMARY KEY (ca_consecutivo, ca_orden_nro),
-  CONSTRAINT fk_bavaria FOREIGN KEY (ca_consecutivo) REFERENCES tb_reportes (ca_consecutivo)
 )
 WITH (
   OIDS=FALSE
@@ -2241,8 +2240,8 @@ GRANT ALL ON vi_liberaciones TO GROUP "Usuarios";
 // Drop view vi_clientes cascade;
 Create view vi_clientes as
 Select c.ca_idcliente, c.ca_digito, c.ca_compania, c.ca_papellido, c.ca_sapellido, c.ca_nombres, c.ca_nombres ||' '|| c.ca_papellido ||' '|| c.ca_sapellido as ca_ncompleto, c.ca_saludo, c.ca_sexo, c.ca_cumpleanos, c.ca_direccion, c.ca_oficina, c.ca_torre, c.ca_bloque, c.ca_interior, c.ca_localidad, c.ca_complemento, c.ca_telefonos, c.ca_fax, c.ca_idciudad, cd.ca_ciudad, tr.ca_nombre as ca_pais, c.ca_website, c.ca_email, c.ca_actividad, c.ca_sectoreco, c.ca_vendedor, tu.ca_sucursal, c.ca_confirmar,
-       c.ca_fchcircular, case when c.ca_tipo IS NOT NULL or length(c.ca_tipo) != 0 then 'Vigente'  else case when c.ca_fchcircular IS NULL then 'Sin'  else case when (c.ca_fchcircular+365<now()) then 'Vencido'  else 'Vigente' end end end as ca_stdcircular, c.ca_nvlriesgo, c.ca_fchcotratoag, case when c.ca_fchcotratoag IS NULL then 'Sin' else case when (c.ca_fchcotratoag+365<now()) then 'Vencido' else 'Vigente' end end as ca_stdcotratoag, c.ca_listaclinton, c.ca_leyinsolvencia, c.ca_comentario, c.ca_status, c.ca_tipo,
-       c.ca_calificacion, c.ca_coordinador, u.ca_nombre as ca_nombre_coor, c.ca_preferencias, (select max(e.ca_fchvisita) from vi_enccliente e where c.ca_idcliente = e.ca_idcliente) as ca_fchvisita, c.ca_fchcreado, c.ca_usucreado, c.ca_fchactualizado, c.ca_usuactualizado, cl.ca_diascredito, cl.ca_cupo, cl.ca_observaciones, cm.ca_fchfirmado, cm.ca_fchvencimiento, case when cm.ca_fchfirmado IS NULL then 'Sin' else case when (cm.ca_fchvencimiento<now()) then 'Vencido' else 'Vigente' end end as ca_stdcarta_gtia,
+       c.ca_fchcircular, case when c.ca_tipo IS NOT NULL or length(c.ca_tipo) != 0 then 'Vigente'  else case when c.ca_fchcircular IS NULL then 'Sin'  else case when (c.ca_fchcircular+365<now()) then 'Vencido'  else 'Vigente' end end end as ca_stdcircular, c.ca_nvlriesgo, c.ca_fchcotratoag, case when c.ca_fchcotratoag IS NULL then 'Sin' else case when (c.ca_fchcotratoag+365<now()) then 'Vencido' else 'Vigente' end end as ca_stdcotratoag, c.ca_listaclinton, c.ca_leyinsolvencia, c.ca_comentario, c.ca_status, c.ca_tipo, c.ca_entidad,
+       c.ca_calificacion, c.ca_coordinador, u.ca_nombre as ca_nombre_coor, c.ca_preferencias, (select max(e.ca_fchvisita) from vi_enccliente e where c.ca_idcliente = e.ca_idcliente) as ca_fchvisita, c.ca_fchcreado, c.ca_usucreado, c.ca_usufinanciero, c.ca_fchactualizado, c.ca_usuactualizado, c.ca_fchfinanciero, cl.ca_diascredito, cl.ca_cupo, cl.ca_observaciones, cm.ca_fchfirmado, cm.ca_fchvencimiento, case when cm.ca_fchfirmado IS NULL then 'Sin' else case when (cm.ca_fchvencimiento<now()) then 'Vencido' else 'Vigente' end end as ca_stdcarta_gtia,
        cl.ca_fchcreado as ca_fchcreado_lb, cl.ca_usucreado as ca_usucreado_lb, cl.ca_fchactualizado as ca_fchactualizado_lb, cl.ca_usuactualizado as ca_usuactualizado_lb,
        st1.ca_estado as ca_coltrans_std, st1.ca_fchestado as ca_coltrans_fch, st2.ca_estado as ca_colmas_std, st2.ca_fchestado as ca_colmas_fch
        from tb_clientes c
@@ -2260,7 +2259,7 @@ GRANT ALL ON vi_clientes TO GROUP "Usuarios";
 // Drop view vi_concliente cascade;
 Create view vi_concliente as
 Select cl.ca_idcliente, cl.ca_digito, cl.ca_compania, cl.ca_saludo as ca_saludo_cl, cl.ca_nombres ||' '|| cl.ca_papellido ||' '|| cl.ca_sapellido as ca_ncompleto_cl, cl.ca_direccion as ca_direccion_cl, cl.ca_oficina, cl.ca_torre, cl.ca_bloque, cl.ca_interior, cl.ca_localidad, cl.ca_complemento, cl.ca_telefonos as ca_telefonos_cl, cl.ca_fax as ca_fax_cl, cl.ca_vendedor, cl.ca_idciudad, cd.ca_ciudad, cl.ca_preferencias, cl.ca_confirmar,
-       cn.ca_idcontacto, cn.ca_papellido, cn.ca_sapellido, cn.ca_nombres, cn.ca_nombres ||' '|| cn.ca_papellido ||' '|| cn.ca_sapellido as ca_ncompleto_cn, cn.ca_saludo as ca_saludo_cn, cn.ca_cargo, cn.ca_departamento, cn.ca_telefonos, cn.ca_fax, cn.ca_cumpleanos, cn.ca_email, cn.ca_observaciones, cn.ca_fchcreado, cn.ca_usucreado, cn.ca_fchactualizado, cn.ca_usuactualizado, ca.ca_cupo, ca_diascredito
+       cn.ca_idcontacto, cn.ca_papellido, cn.ca_sapellido, cn.ca_nombres, cn.ca_nombres ||' '|| cn.ca_papellido ||' '|| cn.ca_sapellido as ca_ncompleto_cn, cn.ca_saludo as ca_saludo_cn, cn.ca_cargo, cn.ca_departamento, cn.ca_telefonos, cn.ca_fax, cn.ca_cumpleanos, cn.ca_email, cn.ca_fijo, cn.ca_observaciones, cn.ca_fchcreado, cn.ca_usucreado, cn.ca_fchactualizado, cn.ca_usuactualizado, ca.ca_cupo, ca_diascredito
        from tb_clientes cl LEFT OUTER JOIN tb_concliente cn ON (cn.ca_idcliente = cl.ca_idcliente) LEFT OUTER JOIN tb_libcliente ca ON (ca.ca_idcliente = cl.ca_idcliente) JOIN tb_ciudades cd ON (cl.ca_idciudad = cd.ca_idciudad)
        order by cl.ca_compania, ca_ncompleto_cn;
 REVOKE ALL ON vi_concliente FROM PUBLIC;
