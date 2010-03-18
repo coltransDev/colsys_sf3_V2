@@ -9,42 +9,86 @@ if( $modo=="otm" ){
     $bodegas = $sf_data->getRaw("bodegas");
 }
 ?>
-
+<a name="oid_<?=$inoCliente->getOid()?>" >&nbsp;</a>
 <table id="tb_<?=$inoCliente->getOid()?>" style='display:none' cellspacing="1" width="100%">
     <tr>
-        <td width="24%" class="listar"><b>Vendedor:</b><br />
+        <td width="20%" class="listar"><b>Vendedor:</b><br />
                 <?=$inoCliente->getCaLogin()?></td>
-        <td width="13%" class="listar"><b>HBL:</b><br />
+        <td width="10%" class="listar"><b>HBL:</b><br />
                 <?=$inoCliente->getCaHbls()?></td>
-        <td width="26%" class="listar"><b>No.Piezas:</b><br />
+        <td width="10%" class="listar"><b>No.Piezas:</b><br />
                 <?=Utils::formatNumber($inoCliente->getCaNumpiezas())?></td>
-        <td width="6%" class="listar"><b>Peso en Kilos:</b><br />
+        <td width="10%" class="listar"><b>Peso en Kilos:</b><br />
                 <?=Utils::formatNumber($inoCliente->getCaPeso())?></td>
-        <td width="31%" class="listar"><b>Volumen CMB:</b><br />
+        <td width="10%" class="listar"><b>Volumen CMB:</b><br />
                 <?=Utils::formatNumber($inoCliente->getCaVolumen())?></td>
+
+        <td width="40%" class="listar" colspan="2" valign="top" rowspan="<?=$modo=="otm"?6:4?>" ><b>Correos Electr&oacute;nicos a enviar Confirmaci&oacute;n:</b><br />
+            <?
+            $i=0;
+            if( count($fijos)>0 ){
+            ?>
+            <div class="box1 qtip" id="divfijos_<?=$inoCliente->getOid()?>" title="Debe seleccionar al menos un contacto fijo">
+               &nbsp;
+                <b>Contactos fijos</b><br />
+                <?
+                //Contactos fijos
+               
+                foreach( $fijos as $email ){
+                    if( $email ){
+                        $i++;
+                        ?>
+                        <input id="ar_<?=$inoCliente->getOid()?>_<?=$i?>" type='text' name='ar_<?=$inoCliente->getOid()?>_<?=$i?>' value='<?=isset($email)?$email:""?>' size="35" maxlength="50" readonly="true" />
+                        <input id="em_<?=$inoCliente->getOid()?>_<?=$i?>" type="checkbox" name='em_<?=$inoCliente->getOid()?>[]' value='<?=$i?>'  checked='checked' />
+                        <br />
+                        <?
+                    }
+                }
+                ?>
+            </div>
+            <?
+            }
+            ?>
+            <br />
+            <div class="box1 qtip" title="Seleccione un contacto">
+                <b>Otros contactos</b><br />
+                <?
+                //Contactos reporte y maestra cliente
+                $emailsReporte = $reporte?explode(",", $reporte->getCaConfirmarClie()):array();
+                $emailsCliente =explode(",", $cliente->getCaConfirmar());
+
+
+                $emails = array_unique(array_merge($emailsReporte, $emailsCliente));
+                $count = max( count($emails)+2, 8 );
+
+                foreach( $emails as $email ){
+                    $chequear = (isset($email) and in_array($email,$emailsReporte) and $email!="")?"checked='checked'":"";
+                    $i++;
+                    ?>
+                    <input id="ar_<?=$inoCliente->getOid()?>_<?=$i?>" type='text' name='ar_<?=$inoCliente->getOid()?>_<?=$i?>' value='<?=isset($email)?$email:""?>' size="35" maxlength="50" />
+                    <input id="em_<?=$inoCliente->getOid()?>_<?=$i?>" type="checkbox" name='em_<?=$inoCliente->getOid()?>[]' value='<?=$i?>'  <?=$chequear?> />
+                    <br />
+                    <?
+                }
+
+                for($j=$i; $j<$i+3; $j++){
+                ?>
+                    <input id="ar_<?=$inoCliente->getOid()?>_<?=$i?>" type='text' name='ar_<?=$inoCliente->getOid()?>_<?=$i?>' value='' size="35" maxlength="50" />
+                    <input id="em_<?=$inoCliente->getOid()?>_<?=$i?>" type="checkbox" name='em_<?=$inoCliente->getOid()?>[]' value='<?=$i?>'  />
+                    <br />
+                <?
+                }
+                ?>
+            </div>
+        </td>
+
     </tr>
     <tr>
         <td class="listar"><b>ID Proveedor:</b><br />
                 <?=$inoCliente->getCaIdproveedor()?></td>
-        <td class="listar" colspan="2"><b>Proveedor:</b><br />
+        <td class="listar" colspan="4"><b>Proveedor:</b><br />
                 <?=$inoCliente->getCaProveedor()?></td>
-        <td class="listar" colspan="2" valign="top" rowspan="<?=$modo=="otm"?4:2?>" ><b>Correos Electr&oacute;nicos a enviar Confirmaci&oacute;n:</b><br />
-                <?
-                    $confirmar = $reporte?explode(",", $reporte->getCaConfirmarClie()):array();
-                    $emails = explode(",", $cliente->getCaConfirmar());
-
-                    $count = max( count($confirmar)+2, 8 );
-                    for ($i= 0; $i< $count; $i++){
-                       $chequear = (isset($confirmar[$i]) and in_array($confirmar[$i],$emails) and $confirmar[$i]!="")?"checked='checked'":"";
-
-                    ?>
-                <input id="ar_<?=$inoCliente->getOid()?>_<?=$i?>" type='text' name='ar_<?=$inoCliente->getOid()?>_<?=$i?>' value='<?=isset($confirmar[$i])?$confirmar[$i]:""?>' size="35" maxlength="50" />
-                <input id="em_<?=$inoCliente->getOid()?>_<?=$i?>" type="checkbox" name='em_<?=$inoCliente->getOid()?>[]' value='<?=$i?>'  <?=$chequear?> />
-                <br />
-                <?
-                    }
-                    ?>
-        </td>
+        
     </tr>
     <?
             if( $modo=="otm" ){
@@ -75,7 +119,7 @@ if( $modo=="otm" ){
             Status						 </td>
         <td class="listar" style='vertical-align:bottom;'><b>Destino OTM:</b><br />
                 <?=$inoCliente->getDestinoCont()?$inoCliente->getDestinoCont()->getcaCiudad():""?></td>
-        <td class="listar" style='vertical-align:bottom;'>
+        <td class="listar" style='vertical-align:bottom;' colspan="3">
             <div id="divfchllegada_<?=$inoCliente->getOid()?>"> <b>Fecha llegada:</b><br />
 
                         <?
@@ -93,7 +137,7 @@ if( $modo=="otm" ){
               </td>
     </tr>
     <tr>
-        <td class="listar" colspan="3" style='vertical-align:bottom;'><div id="divbodega_<?=$inoCliente->getOid()?>"> <b>Bodega:</b><br />
+        <td class="listar" colspan="5" style='vertical-align:bottom;'><div id="divbodega_<?=$inoCliente->getOid()?>"> <b>Bodega:</b><br />
                         <select name='bodega_<?=$inoCliente->getOid()?>'>
                             <?
                             foreach($bodegas as $bodega){
@@ -132,14 +176,14 @@ if( $modo=="otm" ){
 
             ?>
     <tr>
-        <td class="listar" colspan="3"><b>Ingrese mensaje exclusivo para este cliente:</b><br />
+        <td class="listar" colspan="5"><b>Ingrese mensaje exclusivo para este cliente:</b><br />
                 <div id="divmessage_<?=$inoCliente->getOid()?>"></div>
             <textarea name='mensaje_<?=$inoCliente->getOid()?>' id='mensaje_<?=$inoCliente->getOid()?>' wrap="virtual" rows="5" cols="65"></textarea>
             <input type="hidden" id='mensajeOTM_<?=$inoCliente->getOid()?>' value="<?=$inoCliente->getCaMensaje().$mensaje?>" />
     </td>
     </tr>
     <tr>
-        <td class="invertir">Adjunto para Cliente : </td>
+        <td class="mostrar">Adjunto para Cliente : </td>
         <td class="mostrar" colspan="4"><input type='file' name='attachment_<?=$inoCliente->getOid()?>' size="75" /></td>
     </tr>
 </table>

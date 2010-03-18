@@ -26,8 +26,20 @@ class confirmacionesComponents extends sfComponents
                                        ->whereIn("b.ca_tipo", $tipos)
                                        ->addOrderBy("b.ca_tipo")
                                        ->addOrderBy("b.ca_nombre")                                       
-                                       ->execute();
+                                       ->execute();            
+            
 		}
+
+        $fijos = Doctrine::getTable("Contacto")
+                                   ->createQuery("c")
+                                   ->addWhere("c.ca_idcliente = ?", $this->cliente->getCaIdcliente() )
+                                   ->addWhere("ca_fijo = ?", true)
+                                   ->execute();
+        $this->fijos = array();
+        foreach( $fijos as $fijo  ){
+            $this->fijos[] = $fijo->getCaEmail();
+        }
+        $this->fijos = array_unique( $this->fijos );
 
 	}
 	

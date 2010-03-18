@@ -19,10 +19,7 @@ switch( $modo ){
 
 function validarFormConfirmacion(){	
 	
-	<?
-	if( $modo=="otm"){
-		?>
-		var oids = new Array (
+    var oids = new Array (
 		<?
 		$i = 0;
 		foreach( $inoClientes as $inoCliente ){
@@ -33,8 +30,36 @@ function validarFormConfirmacion(){
 		}
 		?>
 		);
+  
+    for( var i=0 ; i<oids.length ; i++ ){
+        var checkbox = document.getElementById("checkbox_"+oids[i]);
+        if( checkbox.checked ){
+            var divfijos =document.getElementById("divfijos_"+oids[i]);
+            if( divfijos && typeof(divfijos)!="undefined"){
+                var elements = divfijos.getElementsByTagName("input");
+                var numchecked = 0;
+
+                for( j=0; j<elements.length; j++ ){
+                    if( elements[j].type=="checkbox" && elements[j].checked ){
+                        numchecked++;
+                    }
+                }
+
+                if( numchecked==0 ){
+                    alert("Debe seleccionar al menos un contacto fijo. ");
+                    document.location.href = "#oid_"+oids[i];
+                    return false;
+                }
+            }
+        }
+    }
+    
+	<?
+	if( $modo=="otm"){
+		?>
 		
-		for( var i=0 ; i<oids.length ; i++ ){		
+		
+		for( var i=0 ; i<oids.length ; i++ ){
 			var checkbox = document.getElementById("checkbox_"+oids[i]);		
 			if( checkbox.checked ){					
 				if( document.getElementById("divmessage_"+oids[i]).innerHTML=="" && document.getElementById("mensaje_"+oids[i]).value=="" ){
@@ -51,45 +76,47 @@ function validarFormConfirmacion(){
 	}else{
 	?>
 	
-   if (document.getElementById('confirmacion_tbl').style.display == 'block'){
+    if (document.getElementById('confirmacion_tbl').style.display == 'block'){
    		
-	  if ( document.form1.fchconfirmacion.value == '')
-		  alert('Debe Especificar la Fecha de llegada de la Carga');
-	  else if (document.form1.horaconfirmacion.value == '')
-		  alert('Debe Especificar la Hora exacta de llegada de la Carga');
-	  else if (document.form1.registroadu.value == '')
-		  alert('Debe ingresar el Registro Aduanero');
-	  else if (document.form1.registrocap.value == '')
-		  alert('Ingrese el Número de Registro de Capitania');
-	  else if (document.form1.bandera.value == '')
-		  alert('Ingrese la Bandera del Buque');
-	  else if (document.form1.mnllegada.value == '')
-		  alert('Ingrese el nombre de la Motonoave de Llegada');
-	  else{		  
-		  return (true);		  
-	  }
-	  return (false);
+        if ( document.form1.fchconfirmacion.value == ''){
+            alert('Debe Especificar la Fecha de llegada de la Carga');
+            return false;
+        }
+        else if (document.form1.horaconfirmacion.value == ''){
+            alert('Debe Especificar la Hora exacta de llegada de la Carga');
+            return false;
+        }
+        else if (document.form1.registroadu.value == ''){
+            alert('Debe ingresar el Registro Aduanero');
+            return false;
+        }
+        else if (document.form1.registrocap.value == ''){
+            alert('Ingrese el Número de Registro de Capitania');
+            return false;
+        }
+        else if (document.form1.bandera.value == ''){
+            alert('Ingrese la Bandera del Buque');
+            return false;
+        }
+        else if (document.form1.mnllegada.value == ''){
+            alert('Ingrese el nombre de la Motonoave de Llegada');
+            return false;
+        }
+
    }else{
-	  if (document.form1.status_body.value == '')
+	  if (document.form1.status_body.value == ''){
 		  alert('Debe incluir un mensaje de status!');
-	  else
-		  return (true);
-	  return (false);
-   }
+          return false;
+      }	  
+    }
    <?
    }
-   ?>
+   ?>   
+   document.getElementById("form1").submit();
+   
 }
  
-/*function asignar_email(campo){
-   cadena = campo.getAttribute('ID');
-   indice = cadena.substring(cadena.indexOf('_') + 1, cadena.length);
-   objeto = document.getElementById('ar_' + indice);
-   if(campo.checked && objeto.value.length > 1) {
-	  campo.value = objeto.value; }
-   else {
-	  campo.value = '' };
-}*/
+
 function habilitar( oid ){
    objeto = document.getElementById('tb_' + oid);
    campo = document.getElementById('checkbox_' + oid);
@@ -229,7 +256,7 @@ function cambiarTipoMsg( value ){
 	}
 	?>
 
-	<form action='<?=url_for("confirmaciones/crearStatus?modo=".$modo)?>' method="post" enctype='multipart/form-data' name='form1' id="form1" onsubmit='return validarFormConfirmacion();'>
+	<form action='<?=url_for("confirmaciones/crearStatus?modo=".$modo)?>' method="post" enctype='multipart/form-data' name='form1' id="form1" onsubmit='return false;'>
 		<input type="hidden" name="referencia" value="<?=$referencia->getCaReferencia()?>" />
 		<table cellspacing="1" class="tableList" width="90%" >
 			<tr>
@@ -569,7 +596,7 @@ function cambiarTipoMsg( value ){
 		<br />
 		<table cellspacing="10">
 			<tr>
-				<th><input class="submit" type='submit' name='accion' value='Enviar Correo' /></th>
+				<th><input class="submit" type='button' name='accion' value='Enviar Correo' onClick="javascript:validarFormConfirmacion()" /></th>
 				<th><input class="button" type='button' name='boton' value=' Regresar ' onclick="javascript:document.location.href = '<?=url_for("confirmaciones/index?modo=".$modo)?>'" /></th>
 			</tr>
 		</table>
