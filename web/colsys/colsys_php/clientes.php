@@ -1,4 +1,4 @@
-<?
+c<?
 /*================-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*\
 // Archivo:       CLIENTES.PHP                                                \\
 // Creado:        2004-11-30                                                  \\
@@ -34,6 +34,7 @@ $sstatus = array("","Vetado");
 $empresas= array("Coltrans","Colmas");
 $circular=array("Sin","Vencido","Vigente");
 $presentacion=array("Detallado","Columnas");
+$entidades=array("Vigente","Fusionada","Disuelta","Liquidada");
 
 include_once 'include/datalib.php';                                                // Incorpora la libreria de funciones, para accesar leer bases de datos
 require("checklogin.php");                                                                 // Captura las variables de la sessión abierta
@@ -61,7 +62,7 @@ require_once("menu.php");
     echo "<TH COLSPAN=4 style='font-size: 12px; font-weight:bold;'><B>Ingrese un criterio para realizar las busqueda</TH>";
     echo "<TH><IMG src='./graficos/new.gif' alt='Crear un Nuevo Registro' border=0 onclick='elegir(\"Adicionar\", 0);'></TH>";  // Botón para la creación de un Registro Nuevo
     echo "<TR>";
-    echo "  <TH ROWSPAN=5>&nbsp</TH>";
+    echo "  <TH ROWSPAN=5>&nbsp;</TH>";
     echo "  <TD Class=listar ROWSPAN=3><B>Buscar por:</B><BR><SELECT NAME='modalidad' SIZE=8>";
 	$che_mem = "SELECTED";
     while (list ($clave, $val) = each ($campos)) {
@@ -93,7 +94,7 @@ require_once("menu.php");
     echo "  <TD Class=listar ROWSPAN=2><B>Reporte:</B>";
 	$che_mem = "CHECKED";
     for ($i=0; $i < count($presentacion); $i++) {
-         echo "<BR /><INPUT TYPE='RADIO' NAME='salida[]' VALUE='".$presentacion[$i]."' $che_mem>".$presentacion[$i]."&nbsp&nbsp";
+         echo "<BR /><INPUT TYPE='RADIO' NAME='salida[]' VALUE='".$presentacion[$i]."' $che_mem>".$presentacion[$i]."&nbsp;&nbsp;";
 		 $che_mem = "";
         }
     echo "  </TD>";
@@ -419,7 +420,7 @@ require_once("menu.php");
 
 		   $complemento = (($rs->Value('ca_oficina')!='')?" Oficina : ".$rs->Value('ca_oficina'):"").(($rs->Value('ca_torre')!='')?" Torre : ".$rs->Value('ca_torre'):"").(($rs->Value('ca_interior')!='')?" Interior : ".$rs->Value('ca_interior'):"").(($rs->Value('ca_complemento')!='')?" - ".$rs->Value('ca_complemento'):"");
 		   echo "<TR>";
-		   echo "  <TD Class=listar ROWSPAN=9 style='text-align: center; center; $vetado'>";
+		   echo "  <TD Class=listar ROWSPAN=10 style='text-align: center; center; $vetado'>";
 		   echo "    <TABLE>";
 		   echo "      <TR><TD Class=mostrar style='text-align: center;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='elegir(\"ListaClinton\", ".$rs->Value('ca_idcliente').");' style='color=blue;'><BR><IMG src='graficos/vista.gif'><BR>Consulta en<br>Lista Clinton</TD></TR>";
 		   echo "      <TR><TD style='visibility: $vista_3; text-align: center; color=blue;' Class=mostrar onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='elegir(\"Comisión\", ".$rs->Value('ca_idcliente').");'><BR><IMG src='graficos/Info.gif'><BR>Porcentaje de Comisión</TD></TR>";
@@ -429,12 +430,12 @@ require_once("menu.php");
 		   echo "  </TD>";
 		   echo "  <TD Class=mostrar style='$vetado'>Dirección :</TD>";
 		   echo "  <TD Class=listar style='$vetado' COLSPAN=3>".str_replace ("|"," ",$rs->Value('ca_direccion')).$complemento."</TD>";
-		   echo "  <TD Class=listar style='$vetado' ROWSPAN=9 style='text-align: center;'>";
+		   echo "  <TD Class=listar style='$vetado' ROWSPAN=10 style='text-align: center;'>";
 		   echo "    <TABLE>";
-		   echo "      <TR><TD Class=mostrar style='text-align: center;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:document.location.href = \"concliente.php?id=".$rs->Value('ca_idcliente')."\"' style='color=blue;'><BR><IMG src='graficos/contacto.gif'><BR>Contactos</TD></TR>";
-		   echo "      <TR><TD Class=mostrar style='text-align: center;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:document.location.href = \"enccliente.php?id=".$rs->Value('ca_idcliente')."\"' style='color=blue;'><BR><IMG src='graficos/encuesta.gif'><BR>Visitas<BR>".$rs->Value('ca_fchvisita')."</TD></TR>";
-		   echo "      <TR><TD style='visibility: $visible;' Class=mostrar style='text-align: center;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:liberar(".$rs->Value('ca_idcliente').");' style='color=blue;'><BR><IMG src='graficos/no.gif'><BR>Liberar Cliente</TD></TR>";
-		   echo "      <TR><TD Class=mostrar style='text-align: center;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:document.location.href = \"/clientes/clavesTracking?id=".$rs->Value('ca_idcliente')."\"' style='color=blue;'><BR><IMG src='graficos/tracking.gif'><BR>Tracking</TD></TR>";
+		   echo "      <TR><TD Class=mostrar style='text-align: center; color=blue;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:document.location.href = \"concliente.php?id=".$rs->Value('ca_idcliente')."\"'><BR><IMG src='graficos/contacto.gif'><BR>Contactos</TD></TR>";
+		   echo "      <TR><TD Class=mostrar style='text-align: center; color=blue;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:document.location.href = \"enccliente.php?id=".$rs->Value('ca_idcliente')."\"'><BR><IMG src='graficos/encuesta.gif'><BR>Visitas<BR>".$rs->Value('ca_fchvisita')."</TD></TR>";
+		   echo "      <TR><TD Class=mostrar style='visibility: $visible;' style='text-align: center; color=blue;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:liberar(".$rs->Value('ca_idcliente').");'><BR><IMG src='graficos/no.gif'><BR>Liberar Cliente</TD></TR>";
+		   echo "      <TR><TD Class=mostrar style='text-align: center; color=blue;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:document.location.href = \"/clientes/clavesTracking?id=".$rs->Value('ca_idcliente')."\"'><BR><IMG src='graficos/tracking.gif'><BR>Tracking</TD></TR>";
 		   echo "    </TABLE>";
 		   echo "  </TD>";
 		   echo "</TR>";
@@ -463,8 +464,8 @@ require_once("menu.php");
 		   echo "  <TD Class=mostrar style='$vetado'>".$rs->Value('ca_calificacion')."</TD>";
 		   echo "</TR>";
 		   echo "<TR>";
-		   echo "  <TD Class=listar style='$vetado' rowspan=3>Sector :</TD>";
-		   echo "  <TD Class=listar style='$vetado' rowspan=3>".$rs->Value('ca_sectoreco')."</TD>";
+		   echo "  <TD Class=listar style='$vetado' rowspan=4>Sector :</TD>";
+		   echo "  <TD Class=listar style='$vetado' rowspan=4>".$rs->Value('ca_sectoreco')."</TD>";
 		   echo "  <TD Class=listar style='$vetado'>Vendedor :</TD>";
 		   echo "  <TD Class=listar style='$vetado'>".$rs->Value('ca_vendedor')."<BR>".$rs->Value('ca_sucursal')."</TD>";
 		   echo "</TR>";
@@ -475,6 +476,10 @@ require_once("menu.php");
 		   echo "<TR>";
 		   echo "  <TD Class=mostrar style='$vetado'>Tipo NIT:</TD>";
 		   echo "  <TD Class=mostrar style='$vetado'>".str_replace("|","<br>",$rs->Value('ca_tipo'))."</TD>";
+		   echo "</TR>";
+		   echo "<TR>";
+		   echo "  <TD Class=mostrar style='$vetado'>Entidad:</TD>";
+		   echo "  <TD Class=mostrar style='$vetado'>".$rs->Value('ca_entidad')."</TD>";
 		   echo "</TR>";
 
 		   echo "<TR>";
@@ -497,8 +502,8 @@ require_once("menu.php");
 		   echo "<TR>";
 		   echo "  <TD Class=listar style='$vetado' COLSPAN=6><TABLE WIDTH=100% CELLSPACING=1 BORDER=1>";
 		   echo "  <TR>";
-		   echo "  	 <TD Class=listar COLSPAN=2 style='font-family: Arial, Helvetica, sans-serif; font-size: 9px; $vetado'><B>Actividad Económica:</B><BR>".$rs->Value('ca_actividad')."&nbsp</TD>";
-		   echo "    <TD Class=listar COLSPAN=2 style='font-family: Arial, Helvetica, sans-serif; font-size: 9px; $vetado'><B>Preferencias :</B><BR>".$rs->Value('ca_preferencias')."&nbsp</TD>";
+		   echo "  	 <TD Class=listar COLSPAN=2 style='font-family: Arial, Helvetica, sans-serif; font-size: 9px; $vetado'><B>Actividad Económica:</B><BR>".$rs->Value('ca_actividad')."&nbsp;</TD>";
+		   echo "    <TD Class=listar COLSPAN=2 style='font-family: Arial, Helvetica, sans-serif; font-size: 9px; $vetado'><B>Preferencias :</B><BR>".$rs->Value('ca_preferencias')."&nbsp;</TD>";
 		   echo "  </TR>";
 		   echo "  </TABLE></TD>";
 		   echo "</TR>";
@@ -519,7 +524,7 @@ require_once("menu.php");
 		   for ($i=0; $i<4; $i++){
 		   		echo "  <TR>";
 				for ($j=0; $j<3; $j++) {
-					$cadena = (strlen($emails[$z])==0)?"&nbsp":$emails[$z];
+					$cadena = (strlen($emails[$z])==0)?"&nbsp;":$emails[$z];
 					echo "<TD Class=mostrar style='$vetado'>$cadena</TD>";
 					$z++; }
 				echo "  </TR>";
@@ -535,18 +540,21 @@ require_once("menu.php");
 		   echo "  <TR>";
 		   echo "    <TD Class=titulo style='font-family: Arial, Helvetica, sans-serif; font-size: 9px;'>Creado</TD>";
 		   echo "    <TD Class=titulo style='font-family: Arial, Helvetica, sans-serif; font-size: 9px;'>Actualizado</TD>";
+		   echo "    <TD Class=titulo style='font-family: Arial, Helvetica, sans-serif; font-size: 9px;'>Financiero</TD>";
 		   echo "    <TD Class=titulo style='font-family: Arial, Helvetica, sans-serif; font-size: 9px;'>Coltrans</TD>";
 		   echo "    <TD Class=titulo style='font-family: Arial, Helvetica, sans-serif; font-size: 9px;'>Colmas</TD>";
 		   echo "  </TR>";
 		   echo "  <TR>";
 		   echo "    <TD Class=invertir style='font-family: Arial, Helvetica, sans-serif; font-size: 9px; text-align: center'>".$rs->Value('ca_usucreado')."</TD>";
 		   echo "    <TD Class=invertir style='font-family: Arial, Helvetica, sans-serif; font-size: 9px; text-align: center'>".$rs->Value('ca_usuactualizado')."</TD>";
+                   echo "    <TD Class=invertir style='font-family: Arial, Helvetica, sans-serif; font-size: 9px; text-align: center'>".$rs->Value('ca_usufinanciero')."</TD>";
 		   echo "    <TD Class=invertir style='font-family: Arial, Helvetica, sans-serif; font-size: 9px; text-align: center'>".$rs->Value('ca_coltrans_std')."$alerta</TD>";
 		   echo "    <TD Class=invertir style='font-family: Arial, Helvetica, sans-serif; font-size: 9px; text-align: center'>".$rs->Value('ca_colmas_std')."$alerta</TD>";
 		   echo "  </TR>";
 		   echo "  <TR>";
 		   echo "    <TD Class=invertir style='font-family: Arial, Helvetica, sans-serif; font-size: 9px; text-align: center'>".$rs->Value('ca_fchcreado')."</TD>";
-		   echo "    <TD Class=invertir style='font-family: Arial, Helvetica, sans-serif; font-size: 9px; text-align: center'>".$rs->Value('ca_fchactualizado')."&nbsp</TD>";
+		   echo "    <TD Class=invertir style='font-family: Arial, Helvetica, sans-serif; font-size: 9px; text-align: center'>".$rs->Value('ca_fchactualizado')."&nbsp;</TD>";
+                   echo "    <TD Class=invertir style='font-family: Arial, Helvetica, sans-serif; font-size: 9px; text-align: center'>".$rs->Value('ca_fchfinanciero')."&nbsp;</TD>";
 		   echo "    <TD Class=invertir style='font-family: Arial, Helvetica, sans-serif; font-size: 9px; text-align: center'>".$rs->Value('ca_coltrans_fch')."</TD>";
 		   echo "    <TD Class=invertir style='font-family: Arial, Helvetica, sans-serif; font-size: 9px; text-align: center'>".$rs->Value('ca_colmas_fch')."</TD>";
 		   echo "  </TR>";
@@ -615,7 +623,7 @@ require_once("menu.php");
 				echo "  <TD WIDTH=100 Class=listar style='letter-spacing:-1px;'>".$tm->Value('ca_asunto')."</TD>";
 				echo "  <TD WIDTH=170 Class=listar style='letter-spacing:-1px;'>".$tm->Value('ca_detalle')."<BR>Generó :".$tm->Value('ca_usuario')."</TD>";
 				echo "  <TD WIDTH=200 Class=listar style='letter-spacing:-1px;'>".$tm->Value('ca_compromisos')."<BR>Pazo :".$tm->Value('ca_fchcompromiso')."</TD>";
-				echo "  <TD WIDTH=10 Class=listar style='letter-spacing:-1px;'>&nbsp</TD>";
+				echo "  <TD WIDTH=10 Class=listar style='letter-spacing:-1px;'>&nbsp;</TD>";
 				echo "</TR>";
 				$tm->MoveNext();
 				}
@@ -902,7 +910,7 @@ require_once("menu.php");
              echo "</TR>";
              echo "<TR>";
              echo "  <TD Class=captura style='vertical-align: top;'>Fecha de Cumpleaños:</TD>";
-             echo "  <TD Class=mostrar COLSPAN=2><INPUT TYPE='TEXT' NAME='cumpleanos' SIZE=20 MAXLENGTH=30>&nbsp&nbsp&nbsp&nbsp&nbspSexo :&nbsp&nbsp<SELECT NAME='sexo'>";
+             echo "  <TD Class=mostrar COLSPAN=2><INPUT TYPE='TEXT' NAME='cumpleanos' SIZE=20 MAXLENGTH=30>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sexo :&nbsp;&nbsp;<SELECT NAME='sexo'>";
              for ($i=0; $i < count($sexos); $i++) {
                   echo " <OPTION VALUE='".$sexos[$i]."'>".$sexos[$i];
                   }
@@ -976,7 +984,7 @@ require_once("menu.php");
              echo "</TR>";
              echo "<TR>";
              echo "  <TD Class=captura>Localidad:</TD>";
-             echo "  <TD Class=mostrar COLSPAN=4><SELECT NAME='localidad'>";
+             echo "  <TD Class=mostrar COLSPAN=2><SELECT NAME='localidad'>";
              for ($i=0; $i < count($localidades); $i++) {
                   echo " <OPTION VALUE='".$localidades[$i]."'>".$localidades[$i];
                   }
@@ -1016,17 +1024,6 @@ require_once("menu.php");
              echo "  <TD Class=mostrar COLSPAN=2><INPUT TYPE='TEXT' NAME='sectoreco' SIZE=30 MAXLENGTH=30></TD>";
              echo "</TR>";
              echo "<TR>";
-             echo "  <TD Class=captura>Circular 170:</TD>";
-			 echo "  <TD Class=invertir COLSPAN=2><TABLE CELLSPACING=1 WIDTH=100%><TR>";
-             echo "  <TD Class=mostrar>Diligenciado: (aaaa/mm/dd)<BR /><CENTER><INPUT TYPE='TEXT' NAME='fchcircular' SIZE=12 VALUE='' ONKEYDOWN=\"chkDate(this)\" ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></CENTER></TD>";
-             echo "  <TD Class=mostrar>Nivel de Riesgo:<BR /><CENTER><SELECT NAME='nvlriesgo'>";
-             for ($i=0; $i < count($riesgos); $i++) {
-                  echo " <OPTION VALUE='".$riesgos[$i]."'>".$riesgos[$i];
-                  }
-             echo "  </SELECT></CENTER></TD>";
-			 echo "  </TABLE><TD>";
-             echo "</TR>";
-             echo "<TR>";
              echo "  <TD Class=captura>Ley Insolvencia Eco.:</TD>";
 			 echo "  <TD Class=invertir COLSPAN=2><TABLE CELLSPACING=1 WIDTH=100%><TR>";
              echo "  <TD Class=mostrar>Reportado en Ley Insolvencia Eco.:<BR /><CENTER><SELECT NAME='leyinsolvencia'>";
@@ -1059,7 +1056,12 @@ require_once("menu.php");
                   echo " <OPTION VALUE='".$calificaciones[$i]."'>".$calificaciones[$i];
                   }
              echo "  </SELECT></TD>";
-			 echo "  </TABLE><TD>";
+             echo "  <TD Class=mostrar>Entidad : <SELECT NAME='entidad'>";
+             for ($i=0; $i < count($entidades); $i++) {
+                  echo " <OPTION VALUE='".$entidades[$i]."'>".$entidades[$i];
+                  }
+             echo "  </SELECT></TD>";
+             echo "  </TABLE><TD>";
              echo "</TR>";
              echo "<TR>";
              echo "  <TD Class=captura style='vertical-align: top;'>Coordinador Colmas:</TD>";
@@ -1196,7 +1198,7 @@ require_once("menu.php");
              echo "</TR>";
              echo "<TR>";
              echo "  <TD Class=captura style='vertical-align: top;'>Fecha de Cumpleaños:</TD>";
-             echo "  <TD Class=mostrar COLSPAN=2><INPUT TYPE='TEXT' NAME='cumpleanos'  VALUE='".$rs->Value('ca_cumpleanos')."'SIZE=20 MAXLENGTH=30>&nbsp&nbsp&nbsp&nbsp&nbspSexo :&nbsp&nbsp<SELECT NAME='sexo'>";
+             echo "  <TD Class=mostrar COLSPAN=2><INPUT TYPE='TEXT' NAME='cumpleanos'  VALUE='".$rs->Value('ca_cumpleanos')."'SIZE=20 MAXLENGTH=30>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sexo :&nbsp;&nbsp;<SELECT NAME='sexo'>";
              for ($i=0; $i < count($sexos); $i++) {
                   echo " <OPTION VALUE='".$sexos[$i]."'";
                   if ($sexos[$i]==$rs->Value('ca_sexo')) {
@@ -1297,7 +1299,7 @@ require_once("menu.php");
              echo"<script>completar(modificar.elements[\"direccion[]\"])</script>";
              echo "<TR>";
              echo "  <TD Class=captura>Localidad:</TD>";
-             echo "  <TD Class=mostrar COLSPAN=4><SELECT NAME='localidad'>";
+             echo "  <TD Class=mostrar COLSPAN=2><SELECT NAME='localidad'>";
              for ($i=0; $i < count($localidades); $i++) {
                   echo " <OPTION VALUE='".$localidades[$i]."'";
                   if ($localidades[$i]==$rs->Value('ca_localidad')) {
@@ -1343,20 +1345,6 @@ require_once("menu.php");
              echo "  <TD Class=mostrar COLSPAN=2><INPUT TYPE='TEXT' NAME='sectoreco' VALUE='".$rs->Value('ca_sectoreco')."' SIZE=30 MAXLENGTH=30></TD>";
              echo "</TR>";
              echo "<TR>";
-             echo "  <TD Class=captura>Circular 170:</TD>";
-			 echo "  <TD Class=invertir COLSPAN=2><TABLE CELLSPACING=1 WIDTH=100%><TR>";
-             echo "  <TD Class=mostrar>Diligenciado: (aaaa/mm/dd)<BR /><CENTER><INPUT TYPE='TEXT' NAME='fchcircular' SIZE=12 VALUE='".$rs->Value('ca_fchcircular')."' ONKEYDOWN=\"chkDate(this)\" ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></CENTER></TD>";
-             echo "  <TD Class=mostrar>Nivel de Riesgo:<BR /><CENTER><SELECT NAME='nvlriesgo'>";
-             for ($i=0; $i < count($riesgos); $i++) {
-                  echo " <OPTION VALUE='".$riesgos[$i]."'";
-                  if ($riesgos[$i]==$rs->Value('ca_nvlriesgo')) {
-                      echo" SELECTED"; }
-				  echo ">".$riesgos[$i];
-                  }
-             echo "  </SELECT></CENTER></TD>";
-			 echo "  </TABLE><TD>";
-             echo "</TR>";
-             echo "<TR>";
              echo "  <TD Class=captura>Ley Insolvencia Eco.:</TD>";
 			 echo "  <TD Class=invertir COLSPAN=2><TABLE CELLSPACING=1 WIDTH=100%><TR>";
              echo "  <TD Class=mostrar>Reportado en Ley Insolvencia Eco.:<BR /><CENTER><SELECT NAME='leyinsolvencia'>";
@@ -1395,7 +1383,15 @@ require_once("menu.php");
                   echo " >".$calificaciones[$i];
                   }
              echo "  </SELECT></TD>";
-			 echo "  </TABLE><TD>";
+             echo "  <TD Class=mostrar>Entidad : <SELECT NAME='entidad'>";
+             for ($i=0; $i < count($entidades); $i++) {
+                  echo " <OPTION VALUE='".$entidades[$i]."'";
+                  if ($entidades[$i]==$rs->Value('ca_entidad')) {
+                      echo" SELECTED"; }
+                  echo ">".$entidades[$i];
+                  }
+             echo "  </SELECT></TD>";
+             echo "  </TABLE><TD>";
              echo "</TR>";
              echo "<TR>";
              echo "  <TD Class=captura style='vertical-align: top;'>Coordinador Colmas:</TD>";
@@ -1461,7 +1457,7 @@ require_once("menu.php");
 
              $complemento = (($rs->Value('ca_oficina')!='')?" Oficina : ".$rs->Value('ca_oficina'):"").(($rs->Value('ca_torre')!='')?" Torre : ".$rs->Value('ca_torre'):"").(($rs->Value('ca_interior')!='')?" Interior : ".$rs->Value('ca_interior'):"").(($rs->Value('ca_complemento')!='')?" - ".$rs->Value('ca_complemento'):"");
              echo "<TR>";
-             echo "  <TD WIDTH=500 Class=mostrar COLSPAN=3 style='font-size: 11px; text-align:left;'><B>N.i.t.: </B>".number_format($rs->Value('ca_idcliente'))."-".$rs->Value('ca_digito')."<BR><B>".$rs->Value('ca_compania')."<BR>Dirección: </B>".str_replace ("|"," ",$rs->Value('ca_direccion')).$complemento. "&nbsp&nbsp<B>Localidad: </B>" . $rs->Value('ca_localidad')."<BR><B>Teléfonos: </B>".$rs->Value('ca_telefonos')."&nbsp&nbsp&nbsp&nbsp<B>Fax: </B>".$rs->Value('ca_fax')."</TD>";
+             echo "  <TD WIDTH=500 Class=mostrar COLSPAN=3 style='font-size: 11px; text-align:left;'><B>N.i.t.: </B>".number_format($rs->Value('ca_idcliente'))."-".$rs->Value('ca_digito')."<BR><B>".$rs->Value('ca_compania')."<BR>Dirección: </B>".str_replace ("|"," ",$rs->Value('ca_direccion')).$complemento. "&nbsp;&nbsp;<B>Localidad: </B>" . $rs->Value('ca_localidad')."<BR><B>Teléfonos: </B>".$rs->Value('ca_telefonos')."&nbsp;&nbsp;&nbsp;&nbsp;<B>Fax: </B>".$rs->Value('ca_fax')."</TD>";
              echo "</TR>";
 
              echo "<TR>";
@@ -1470,7 +1466,7 @@ require_once("menu.php");
              for ($i=0; $i<4; $i++){
              	echo "  <TR>";
              	for ($j=0; $j<3; $j++) {
-             		$cadena = (strlen($emails[$z])==0)?"&nbsp":$emails[$z];
+             		$cadena = (strlen($emails[$z])==0)?"&nbsp;":$emails[$z];
 					echo "<TD Class=invertir WIDTH=130><INPUT TYPE='TEXT' NAME='contactos[]' VALUE='".$emails[$z]."' SIZE=40 MAXLENGTH=50></TD>";
              		$z++; }
              	echo "  </TR>";
@@ -1609,28 +1605,28 @@ require_once("menu.php");
              echo "</TR>";
              echo "<TR>";
              $complemento = (($rs->Value('ca_oficina')!='')?" Oficina : ".$rs->Value('ca_oficina'):"").(($rs->Value('ca_torre')!='')?" Torre : ".$rs->Value('ca_torre'):"").(($rs->Value('ca_interior')!='')?" Interior : ".$rs->Value('ca_interior'):"").(($rs->Value('ca_complemento')!='')?" - ".$rs->Value('ca_complemento'):"");
-             echo "  <TD Class=mostrar COLSPAN=2>&nbsp&nbsp<B>Dirección : </B>".str_replace ("|"," ",$rs->Value('ca_direccion')).$complemento."</TD>";
+             echo "  <TD Class=mostrar COLSPAN=2>&nbsp;&nbsp;<B>Dirección : </B>".str_replace ("|"," ",$rs->Value('ca_direccion')).$complemento."</TD>";
              echo "</TR>";
              echo "<TR>";
-             echo "  <TD Class=mostrar COLSPAN=2>&nbsp&nbsp<B>Teléfonos : </B>".$rs->Value('ca_telefonos')."</TD>";
+             echo "  <TD Class=mostrar COLSPAN=2>&nbsp;&nbsp;<B>Teléfonos : </B>".$rs->Value('ca_telefonos')."</TD>";
              echo "</TR>";
              echo "<TR>";
-             echo "  <TD Class=mostrar COLSPAN=2>&nbsp&nbsp<B>Fax : </B>".$rs->Value('ca_fax')."</TD>";
+             echo "  <TD Class=mostrar COLSPAN=2>&nbsp;&nbsp;<B>Fax : </B>".$rs->Value('ca_fax')."</TD>";
              echo "</TR>";
              echo "<TR>";
-             echo "  <TD Class=mostrar COLSPAN=2>&nbsp&nbsp<B>Ciudad : </B>".$rs->Value('ca_ciudad')."</TD>";
+             echo "  <TD Class=mostrar COLSPAN=2>&nbsp;&nbsp;<B>Ciudad : </B>".$rs->Value('ca_ciudad')."</TD>";
              echo "</TR>";
              echo "<TH Class=titulo COLSPAN=3>Datos para la Liberación Automática</TH>";
              echo "<TR>";
-             echo "  <TD Class=captura>No. de Días:&nbsp&nbsp&nbsp</TD>";
+             echo "  <TD Class=captura>No. de Días:&nbsp;&nbsp;&nbsp;</TD>";
              echo "  <TD Class=mostrar><INPUT TYPE='TEXT' NAME='diascredito' SIZE=5 VALUE='".$rs->Value('ca_diascredito')."' MAXLENGTH=5></TD>";
              echo "</TR>";
              echo "<TR>";
-             echo "  <TD Class=captura>Cupo Asignado:&nbsp&nbsp&nbsp</TD>";
+             echo "  <TD Class=captura>Cupo Asignado:&nbsp;&nbsp;&nbsp;</TD>";
              echo "  <TD Class=mostrar><INPUT TYPE='TEXT' NAME='cupo' SIZE=15 VALUE='".$rs->Value('ca_cupo')."' MAXLENGTH=12></TD>";
              echo "</TR>";
              echo "<TR>";
-             echo "  <TD Class=captura style='vertical-align: top;'>Observaciones:&nbsp&nbsp&nbsp</TD>";
+             echo "  <TD Class=captura style='vertical-align: top;'>Observaciones:&nbsp;&nbsp;&nbsp;</TD>";
              echo "  <TD Class=mostrar COLSPAN=2><TEXTAREA NAME='observaciones' WRAP=virtual ROWS=5 COLS=58>".$rs->Value('ca_observaciones')."</TEXTAREA></TD>";
              echo "</TR>";
              echo "</TABLE><BR>";
@@ -1695,16 +1691,16 @@ require_once("menu.php");
              echo "</TR>";
              echo "<TR>";
              $complemento = (($rs->Value('ca_oficina')!='')?" Oficina : ".$rs->Value('ca_oficina'):"").(($rs->Value('ca_torre')!='')?" Torre : ".$rs->Value('ca_torre'):"").(($rs->Value('ca_interior')!='')?" Interior : ".$rs->Value('ca_interior'):"").(($rs->Value('ca_complemento')!='')?" - ".$rs->Value('ca_complemento'):"");
-             echo "  <TD Class=mostrar COLSPAN=3>&nbsp&nbsp<B>Dirección : </B>".str_replace ("|"," ",$rs->Value('ca_direccion')).$complemento."</TD>";
+             echo "  <TD Class=mostrar COLSPAN=3>&nbsp;&nbsp;<B>Dirección : </B>".str_replace ("|"," ",$rs->Value('ca_direccion')).$complemento."</TD>";
              echo "</TR>";
              echo "<TR>";
-             echo "  <TD Class=mostrar COLSPAN=3>&nbsp&nbsp<B>Teléfonos : </B>".$rs->Value('ca_telefonos')."</TD>";
+             echo "  <TD Class=mostrar COLSPAN=3>&nbsp;&nbsp;<B>Teléfonos : </B>".$rs->Value('ca_telefonos')."</TD>";
              echo "</TR>";
              echo "<TR>";
-             echo "  <TD Class=mostrar COLSPAN=3>&nbsp&nbsp<B>Fax : </B>".$rs->Value('ca_fax')."</TD>";
+             echo "  <TD Class=mostrar COLSPAN=3>&nbsp;&nbsp;<B>Fax : </B>".$rs->Value('ca_fax')."</TD>";
              echo "</TR>";
              echo "<TR>";
-             echo "  <TD Class=mostrar COLSPAN=3>&nbsp&nbsp<B>Ciudad : </B>".$rs->Value('ca_ciudad')."</TD>";
+             echo "  <TD Class=mostrar COLSPAN=3>&nbsp;&nbsp;<B>Ciudad : </B>".$rs->Value('ca_ciudad')."</TD>";
              echo "</TR>";
              echo "<TH Class=titulo COLSPAN=4>Histórico de Vigencias Firmadas</TH>";
              echo "<TR>";
@@ -1784,16 +1780,16 @@ require_once("menu.php");
              echo "</TR>";
              echo "<TR>";
              $complemento = (($rs->Value('ca_oficina')!='')?" Oficina : ".$rs->Value('ca_oficina'):"").(($rs->Value('ca_torre')!='')?" Torre : ".$rs->Value('ca_torre'):"").(($rs->Value('ca_interior')!='')?" Interior : ".$rs->Value('ca_interior'):"").(($rs->Value('ca_complemento')!='')?" - ".$rs->Value('ca_complemento'):"");
-             echo "  <TD Class=mostrar COLSPAN=4>&nbsp&nbsp<B>Dirección : </B>".str_replace ("|"," ",$rs->Value('ca_direccion')).$complemento."</TD>";
+             echo "  <TD Class=mostrar COLSPAN=4>&nbsp;&nbsp;<B>Dirección : </B>".str_replace ("|"," ",$rs->Value('ca_direccion')).$complemento."</TD>";
              echo "</TR>";
              echo "<TR>";
-             echo "  <TD Class=mostrar COLSPAN=4>&nbsp&nbsp<B>Teléfonos : </B>".$rs->Value('ca_telefonos')."</TD>";
+             echo "  <TD Class=mostrar COLSPAN=4>&nbsp;&nbsp;<B>Teléfonos : </B>".$rs->Value('ca_telefonos')."</TD>";
              echo "</TR>";
              echo "<TR>";
-             echo "  <TD Class=mostrar COLSPAN=4>&nbsp&nbsp<B>Fax : </B>".$rs->Value('ca_fax')."</TD>";
+             echo "  <TD Class=mostrar COLSPAN=4>&nbsp;&nbsp;<B>Fax : </B>".$rs->Value('ca_fax')."</TD>";
              echo "</TR>";
              echo "<TR>";
-             echo "  <TD Class=mostrar COLSPAN=4>&nbsp&nbsp<B>Ciudad : </B>".$rs->Value('ca_ciudad')."</TD>";
+             echo "  <TD Class=mostrar COLSPAN=4>&nbsp;&nbsp;<B>Ciudad : </B>".$rs->Value('ca_ciudad')."</TD>";
              echo "</TR>";
              echo "<TH Class=titulo COLSPAN=5>Histórico de Porcentajes de Comisión</TH>";
              echo "<TR>";
@@ -1906,31 +1902,32 @@ require_once("menu.php");
              echo "</TR>";
              echo "<TR>";
              echo "  <TD Class=captura>Circular 170:</TD>";
-			 echo "  <TD Class=invertir COLSPAN=2><TABLE CELLSPACING=1 WIDTH=100%><TR>";
+             echo "  <TD Class=invertir COLSPAN=2><TABLE CELLSPACING=1 WIDTH=100%><TR>";
              echo "  <TD Class=mostrar>Diligenciado: (aaaa/mm/dd)<BR /><CENTER>".$rs->Value('ca_fchcircular')."</CENTER></TD>";
              echo "  <TD Class=mostrar>Nivel de Riesgo:<BR /><CENTER>".$rs->Value('ca_nvlriesgo')."</CENTER></TD>";
-			 echo "  </TABLE><TD>";
+             echo "  </TABLE><TD>";
              echo "</TR>";
              echo "<TR>";
              echo "  <TD Class=captura>Ley Insolvencia Eco.:</TD>";
-			 echo "  <TD Class=invertir COLSPAN=2><TABLE CELLSPACING=1 WIDTH=100%><TR>";
+             echo "  <TD Class=invertir COLSPAN=2><TABLE CELLSPACING=1 WIDTH=100%><TR>";
              echo "  <TD Class=mostrar>Reportado en Ley Insolvencia Eco.:<BR /><CENTER>".$rs->Value('ca_leyinsolvencia')."</CENTER></TD>";
-			 echo "  <TD Class=mostrar>Comentario:<BR /><CENTER>".$rs->Value('ca_comentario')."</CENTER></TD>";
-			 echo "  </TABLE><TD>";
+             echo "  <TD Class=mostrar>Comentario:<BR /><CENTER>".$rs->Value('ca_comentario')."</CENTER></TD>";
+             echo "  </TABLE><TD>";
              echo "</TR>";
              echo "<TR>";
              echo "  <TD Class=captura>Contrato/Agenciamiento:</TD>";
-			 echo "  <TD Class=invertir COLSPAN=2><TABLE CELLSPACING=1 WIDTH=100%><TR>";
+             echo "  <TD Class=invertir COLSPAN=2><TABLE CELLSPACING=1 WIDTH=100%><TR>";
              echo "  <TD Class=mostrar>Último Radicado: (aaaa/mm/dd)<BR /><CENTER>".$rs->Value('ca_fchcotratoag')."</CENTER></TD>";
              echo "  <TD Class=mostrar>Reportado en Lista Clinton:<BR /><CENTER>".$rs->Value('ca_listaclinton')."</CENTER></TD>";
-			 echo "  </TABLE><TD>";
+             echo "  </TABLE><TD>";
              echo "</TR>";
              echo "<TR>";
              echo "  <TD Class=captura>Status:</TD>";
-			 echo "  <TD Class=invertir COLSPAN=2><TABLE CELLSPACING=1 WIDTH=100%><TR>";
+             echo "  <TD Class=invertir COLSPAN=2><TABLE CELLSPACING=1 WIDTH=100%><TR>";
              echo "  <TD Class=mostrar>".$rs->Value('ca_status')."</TD>";
              echo "  <TD Class=mostrar>Calificación :".$rs->Value('ca_calificacion')."</TD>";
-			 echo "  </TABLE><TD>";
+             echo "  <TD Class=mostrar>Entidad :".$rs->Value('ca_entidad')."</TD>";
+             echo "  </TABLE><TD>";
              echo "</TR>";
              echo "<TR>";
              echo "  <TD Class=captura>Coord. Colmas:</TD>";
@@ -2031,10 +2028,9 @@ elseif (isset($accion)) {                                                      /
              $nombres = addslashes($nombres);
              $direccion = isset($direccion)?implode("|",$direccion):"";
              $vendedor = ($nivel >= 2)?"":$usuario;
-			 $fchcircular = (strlen($fchcircular)!=0)?"'".$fchcircular."'":'date(null)';
-			 $fchcotratoag = (strlen($fchcotratoag)!=0)?"'".$fchcotratoag."'":'date(null)';
-			 $status = ($listaclinton=='Sí')?"Vetado":$status;
-             if (!$rs->Open("insert into tb_clientes (ca_idcliente, ca_digito, ca_compania, ca_papellido, ca_sapellido, ca_nombres, ca_saludo, ca_sexo, ca_cumpleanos, ca_direccion, ca_oficina, ca_torre, ca_bloque, ca_interior, ca_localidad, ca_complemento, ca_telefonos, ca_fax, ca_idciudad, ca_website, ca_email, ca_actividad, ca_sectoreco, ca_vendedor, ca_fchcircular, ca_nvlriesgo, ca_fchcotratoag, ca_listaclinton, ca_leyinsolvencia, ca_comentario, ca_status, ca_calificacion, ca_coordinador, ca_preferencias, ca_idgrupo, ca_fchcreado, ca_usucreado) values($id, $digito, upper('".addslashes($compania)."'), '$papellido', '$sapellido', '$nombres', '$saludo', '$sexo', '$cumpleanos', '$direccion', '$oficina', '$torre', '$bloque', '$interior', '$localidad', '$complemento', '$telefonos', '$fax', '$idciudad', lower('$website'), lower('$email'), '$actividad', '$sectoreco', '$vendedor', $fchcircular, '$nvlriesgo', $fchcotratoag, '$listaclinton', '$leyinsolvencia', '$comentario', '$status', '$calificacion', '$coordinador', '$preferencias', $id, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
+             $fchcotratoag = (strlen($fchcotratoag)!=0)?"'".$fchcotratoag."'":'date(null)';
+             $status = ($listaclinton=='Sí')?"Vetado":$status;
+             if (!$rs->Open("insert into tb_clientes (ca_idcliente, ca_digito, ca_compania, ca_papellido, ca_sapellido, ca_nombres, ca_saludo, ca_sexo, ca_cumpleanos, ca_direccion, ca_oficina, ca_torre, ca_bloque, ca_interior, ca_localidad, ca_complemento, ca_telefonos, ca_fax, ca_idciudad, ca_website, ca_email, ca_actividad, ca_sectoreco, ca_vendedor, ca_fchcotratoag, ca_listaclinton, ca_leyinsolvencia, ca_comentario, ca_status, ca_calificacion, ca_entidad, ca_coordinador, ca_preferencias, ca_idgrupo, ca_fchcreado, ca_usucreado) values($id, $digito, upper('".addslashes($compania)."'), '$papellido', '$sapellido', '$nombres', '$saludo', '$sexo', '$cumpleanos', '$direccion', '$oficina', '$torre', '$bloque', '$interior', '$localidad', '$complemento', '$telefonos', '$fax', '$idciudad', lower('$website'), lower('$email'), '$actividad', '$sectoreco', '$vendedor', $fchcotratoag, '$listaclinton', '$leyinsolvencia', '$comentario', '$status', '$calificacion', '$entidad', '$coordinador', '$preferencias', $id, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                  echo "<script>document.location.href = 'clientes.php';</script>";
                  exit;
@@ -2048,10 +2044,9 @@ elseif (isset($accion)) {                                                      /
              $nombres = addslashes($nombres);
              $direccion = isset($direccion)?implode("|",$direccion):"";
              $vendedor = ($nivel >= 2)?$vendedor:$usuario;
-			 $fchcircular = (strlen($fchcircular)!=0)?"'".$fchcircular."'":'date(null)';
-			 $fchcotratoag= (strlen($fchcotratoag)!=0)?"'".$fchcotratoag."'":'date(null)';
-			 $status = ($listaclinton=='Sí')?"Vetado":$status;
-             if (!$rs->Open("update tb_clientes set ca_compania = upper('".addslashes($compania)."'), ca_papellido = '$papellido', ca_sapellido = '$sapellido', ca_nombres = '$nombres', ca_saludo = '$saludo', ca_sexo = '$sexo', ca_cumpleanos = '$cumpleanos', ca_direccion = '$direccion', ca_oficina = '$oficina', ca_torre = '$torre', ca_bloque = '$bloque', ca_interior = '$interior', ca_localidad = '$localidad', ca_complemento = '$complemento', ca_telefonos = '$telefonos', ca_fax = '$fax', ca_idciudad  ='$idciudad', ca_website = lower('$website'), ca_email = lower('$email'), ca_actividad = '$actividad', ca_sectoreco = '$sectoreco', ca_vendedor = '$vendedor', ca_fchcircular = $fchcircular, ca_nvlriesgo = '$nvlriesgo', ca_fchcotratoag = $fchcotratoag, ca_listaclinton = '$listaclinton', ca_leyinsolvencia = '$leyinsolvencia', ca_comentario = '$comentario', ca_status = '$status', ca_calificacion = '$calificacion', ca_preferencias = '$preferencias', ca_coordinador = '$coordinador', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usuactualizado = '$usuario' where ca_idcliente = $id")) {
+             $fchcotratoag= (strlen($fchcotratoag)!=0)?"'".$fchcotratoag."'":'date(null)';
+             $status = ($listaclinton=='Sí')?"Vetado":$status;
+             if (!$rs->Open("update tb_clientes set ca_compania = upper('".addslashes($compania)."'), ca_papellido = '$papellido', ca_sapellido = '$sapellido', ca_nombres = '$nombres', ca_saludo = '$saludo', ca_sexo = '$sexo', ca_cumpleanos = '$cumpleanos', ca_direccion = '$direccion', ca_oficina = '$oficina', ca_torre = '$torre', ca_bloque = '$bloque', ca_interior = '$interior', ca_localidad = '$localidad', ca_complemento = '$complemento', ca_telefonos = '$telefonos', ca_fax = '$fax', ca_idciudad  ='$idciudad', ca_website = lower('$website'), ca_email = lower('$email'), ca_actividad = '$actividad', ca_sectoreco = '$sectoreco', ca_vendedor = '$vendedor', ca_fchcotratoag = $fchcotratoag, ca_listaclinton = '$listaclinton', ca_leyinsolvencia = '$leyinsolvencia', ca_comentario = '$comentario', ca_status = '$status', ca_calificacion = '$calificacion', ca_entidad = '$entidad', ca_preferencias = '$preferencias', ca_coordinador = '$coordinador', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usuactualizado = '$usuario' where ca_idcliente = $id")) {
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                  echo "<script>document.location.href = 'clientes.php';</script>";
                  exit;

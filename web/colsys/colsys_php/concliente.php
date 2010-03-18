@@ -58,7 +58,7 @@ require_once("menu.php");
            $complemento = (($rs->Value('ca_oficina')!='')?" Oficina : ".$rs->Value('ca_oficina'):"").(($rs->Value('ca_torre')!='')?" Torre : ".$rs->Value('ca_torre'):"").(($rs->Value('ca_interior')!='')?" Interior : ".$rs->Value('ca_interior'):"").(($rs->Value('ca_complemento')!='')?" - ".$rs->Value('ca_complemento'):"");
            echo "<TR>";
            echo "<TD Class=mostrar style='vertical-align: top;'>".number_format($rs->Value('ca_idcliente'))."-".$rs->Value('ca_digito')."</TD>";
-           echo "<TD WIDTH=430 Class=mostrar COLSPAN=4 style='font-size: 11px; text-align:left;'><B>".$rs->Value('ca_compania')."<BR>Dirección: </B>".str_replace ("|"," ",$rs->Value('ca_direccion_cl')).$complemento. "&nbsp&nbsp<B>Localidad: </B>" . $rs->Value('ca_localidad')."<BR><B>Teléfonos: </B>".$rs->Value('ca_telefonos_cl')."&nbsp&nbsp&nbsp&nbsp<B>Fax: </B>".$rs->Value('ca_fax_cl')."</TD>";
+           echo "<TD WIDTH=430 Class=mostrar COLSPAN=4 style='font-size: 11px; text-align:left;'><B>".$rs->Value('ca_compania')."<BR>Dirección: </B>".str_replace ("|"," ",$rs->Value('ca_direccion_cl')).$complemento. "&nbsp;&nbsp;<B>Localidad: </B>" . $rs->Value('ca_localidad')."<BR><B>Teléfonos: </B>".$rs->Value('ca_telefonos_cl')."&nbsp;&nbsp;&nbsp;&nbsp;<B>Fax: </B>".$rs->Value('ca_fax_cl')."</TD>";
            echo "<TD Class=mostrar></TD>";
            echo "</TR>";
            $id_temp = $rs->Value('ca_idcliente');
@@ -88,8 +88,8 @@ require_once("menu.php");
               echo "<TD Class=mostrar>".$rs->Value('ca_fax')."</TD>";
               echo "</TR>";
               echo "<TR>";
-              echo "<TD Class=mostrar style='vertical-align: top;' COLSPAN=2>Email :<BR>".$rs->Value('ca_email')."&nbsp</TD>";
-              echo "<TD Class=mostrar style='vertical-align: top;' COLSPAN=2>Observaciones :<BR>".$rs->Value('ca_observaciones')."&nbsp</TD>";
+              echo "<TD Class=mostrar style='vertical-align: top;' COLSPAN=2>Email :<BR>".$rs->Value('ca_email')."&nbsp;</TD>";
+              echo "<TD Class=mostrar style='vertical-align: top;' COLSPAN=2>Observaciones :<BR>".$rs->Value('ca_observaciones')."&nbsp;".(($rs->Value('ca_fijo')=="t")?"<br/><b>Contacto Fijo en Comunicaciones</b>":"")."</TD>";
               echo "</TR>";
               $fch_mem = explode("-",$rs->Value('ca_cumpleanos'));
               echo "<TR>";
@@ -152,17 +152,17 @@ require_once("menu.php");
              echo "</TR>";
              echo "<TR>";
              $complemento = (($rs->Value('ca_oficina')!='')?" Oficina : ".$rs->Value('ca_oficina'):"").(($rs->Value('ca_torre')!='')?" Torre : ".$rs->Value('ca_torre'):"").(($rs->Value('ca_interior')!='')?" Interior : ".$rs->Value('ca_interior'):"").(($rs->Value('ca_complemento')!='')?" - ".$rs->Value('ca_complemento'):"");
-             echo "  <TD Class=mostrar COLSPAN=2>&nbsp&nbsp<B>Dirección : </B>".str_replace ("|"," ",$tm->Value('ca_direccion')).$complemento."</TD>";
+             echo "  <TD Class=mostrar COLSPAN=2>&nbsp;&nbsp;<B>Dirección : </B>".str_replace ("|"," ",$tm->Value('ca_direccion')).$complemento."</TD>";
              echo "</TR>";
              echo "<TR>";
-             echo "  <TD Class=mostrar COLSPAN=2>&nbsp&nbsp<B>Teléfonos : </B>".$tm->Value('ca_telefonos')."</TD>";
+             echo "  <TD Class=mostrar COLSPAN=2>&nbsp;&nbsp;<B>Teléfonos : </B>".$tm->Value('ca_telefonos')."</TD>";
              echo "</TR>";
              echo "<TR>";
-             echo "  <TD Class=mostrar COLSPAN=2>&nbsp&nbsp<B>Fax : </B>".$tm->Value('ca_fax')."</TD>";
+             echo "  <TD Class=mostrar COLSPAN=2>&nbsp;&nbsp;<B>Fax : </B>".$tm->Value('ca_fax')."</TD>";
              echo "</TR>";
              echo "<TH Class=titulo COLSPAN=3>Datos para el nuevo Contacto</TH>";
              echo "<TR>";
-             echo "  <TD Class=captura style='vertical-align: top;' ROWSPAN=10>Datos del Contacto :</TD>";
+             echo "  <TD Class=captura style='vertical-align: top;' ROWSPAN=11>Datos del Contacto :</TD>";
              echo "  <TD Class=mostrar>Saludo:</TD>";
              echo "  <TD Class=mostrar><SELECT NAME='saludo'>";
              while (list ($clave, $val) = each ($saludos)) {
@@ -205,11 +205,14 @@ require_once("menu.php");
              while (list ($clave, $val) = each ($meses)) {
                 echo " <OPTION VALUE=$clave>$val</OPTION>";
              }
-             echo "  </SELECT>&nbsp&nbspDía :<INPUT TYPE='TEXT' NAME='cumpleanos[]' SIZE=3 MAXLENGTH=2></TD>";
+             echo "  </SELECT>&nbsp;&nbsp;Día :<INPUT TYPE='TEXT' NAME='cumpleanos[]' SIZE=3 MAXLENGTH=2></TD>";
              echo "</TR>";
              echo "<TR>";
              echo "  <TD Class=mostrar>Correo Electrónico:</TD>";
              echo "  <TD Class=mostrar><INPUT TYPE='TEXT' NAME='email' SIZE=35 MAXLENGTH=50 style='text-transform: lowercase'></TD>";
+             echo "</TR>";
+             echo "<TR>";
+             echo "  <TD Class=mostrar COLSPAN='2'>Contacto Fijo en Comunicaciones :&nbsp;&nbsp;<INPUT TYPE='CHECKBOX' NAME='fijo'></TD>";
              echo "</TR>";
              echo "<TR>";
              echo "  <TD Class=captura style='vertical-align: top;'>Observaciones:</TD>";
@@ -268,17 +271,17 @@ require_once("menu.php");
              echo "  <TD Class=mostrar COLSPAN=2 style='font-size: 12px; font-weight:bold; text-align:left;'>".$tm->Value('ca_compania')."</TD>";
              echo "</TR>";
              echo "<TR>";
-             echo "  <TD Class=mostrar COLSPAN=2>&nbsp&nbsp<B>Dirección : </B>".$tm->Value('ca_direccion')."</TD>";
+             echo "  <TD Class=mostrar COLSPAN=2>&nbsp;&nbsp;<B>Dirección : </B>".$tm->Value('ca_direccion')."</TD>";
              echo "</TR>";
              echo "<TR>";
-             echo "  <TD Class=mostrar COLSPAN=2>&nbsp&nbsp<B>Teléfonos : </B>".$tm->Value('ca_telefonos')."</TD>";
+             echo "  <TD Class=mostrar COLSPAN=2>&nbsp;&nbsp;<B>Teléfonos : </B>".$tm->Value('ca_telefonos')."</TD>";
              echo "</TR>";
              echo "<TR>";
-             echo "  <TD Class=mostrar COLSPAN=2>&nbsp&nbsp<B>Fax : </B>".$tm->Value('ca_fax')."</TD>";
+             echo "  <TD Class=mostrar COLSPAN=2>&nbsp;&nbsp;<B>Fax : </B>".$tm->Value('ca_fax')."</TD>";
              echo "</TR>";
              echo "<TH Class=titulo COLSPAN=3>Datos para el nuevo Contacto</TH>";
              echo "<TR>";
-             echo "  <TD Class=captura style='vertical-align: top;' ROWSPAN=10>Datos del Contacto :</TD>";
+             echo "  <TD Class=captura style='vertical-align: top;' ROWSPAN=11>Datos del Contacto :</TD>";
              echo "  <TD Class=mostrar>Saludo:</TD>";
              echo "  <TD Class=mostrar><SELECT NAME='saludo'>";
              while (list ($clave, $val) = each ($saludos)) {
@@ -328,11 +331,14 @@ require_once("menu.php");
                     echo" SELECTED"; }
                 echo ">$val</OPTION>";
              }
-             echo "  </SELECT>&nbsp&nbspDía :<INPUT TYPE='TEXT' NAME='cumpleanos[]' VALUE='".$fch_mem[1]."' SIZE=3 MAXLENGTH=2></TD>";
+             echo "  </SELECT>&nbsp;&nbsp;Día :<INPUT TYPE='TEXT' NAME='cumpleanos[]' VALUE='".$fch_mem[1]."' SIZE=3 MAXLENGTH=2></TD>";
              echo "</TR>";
              echo "<TR>";
              echo "  <TD Class=mostrar>Correo Electrónico:</TD>";
              echo "  <TD Class=mostrar><INPUT TYPE='TEXT' NAME='email' VALUE='".$rs->Value('ca_email')."' SIZE=35 MAXLENGTH=50 style='text-transform: lowercase'></TD>";
+             echo "</TR>";
+             echo "<TR>";
+             echo "  <TD Class=mostrar COLSPAN='2'>Contacto Fijo en Comunicaciones :&nbsp;&nbsp;<INPUT TYPE='CHECKBOX' NAME='fijo' ".(($rs->Value('ca_fijo')=="t")?"CHECKED":"")."></TD>";
              echo "</TR>";
              echo "<TR>";
              echo "  <TD Class=captura style='vertical-align: top;'>Observaciones:</TD>";
@@ -385,13 +391,13 @@ require_once("menu.php");
              echo "  <TD Class=mostrar COLSPAN=2 style='font-size: 12px; font-weight:bold; text-align:left;'>".$tm->Value('ca_compania')."</TD>";
              echo "</TR>";
              echo "<TR>";
-             echo "  <TD Class=mostrar COLSPAN=2>&nbsp&nbsp<B>Dirección : </B>".$tm->Value('ca_direccion')."</TD>";
+             echo "  <TD Class=mostrar COLSPAN=2>&nbsp;&nbsp;<B>Dirección : </B>".$tm->Value('ca_direccion')."</TD>";
              echo "</TR>";
              echo "<TR>";
-             echo "  <TD Class=mostrar COLSPAN=2>&nbsp&nbsp<B>Teléfonos : </B>".$tm->Value('ca_telefonos')."</TD>";
+             echo "  <TD Class=mostrar COLSPAN=2>&nbsp;&nbsp;<B>Teléfonos : </B>".$tm->Value('ca_telefonos')."</TD>";
              echo "</TR>";
              echo "<TR>";
-             echo "  <TD Class=mostrar COLSPAN=2>&nbsp&nbsp<B>Fax : </B>".$tm->Value('ca_fax')."</TD>";
+             echo "  <TD Class=mostrar COLSPAN=2>&nbsp;&nbsp;<B>Fax : </B>".$tm->Value('ca_fax')."</TD>";
              echo "</TR>";
              echo "<TH Class=titulo COLSPAN=3>Datos para el nuevo Contacto</TH>";
              echo "<TR>";
@@ -454,10 +460,11 @@ echo "</BODY>";
       }
    }
 elseif (isset($accion)) {                                                      // Rutina que registra los cambios en la tabla de la base de datos
+    $fijo = (isset($fijo) and $fijo=="on")?"true":"false";
     switch(trim($accion)) {                                                    // Switch que evalua cual botòn de comando fue pulsado por el usuario
         case 'Guardar': {                                                      // El Botón Guardar fue pulsado
              $cumpleanos = isset($cumpleanos)?implode("-",$cumpleanos):"";
-             if (!$rs->Open("insert into tb_concliente (ca_idcliente, ca_papellido, ca_sapellido, ca_nombres, ca_saludo, ca_cargo, ca_departamento, ca_telefonos, ca_fax, ca_cumpleanos, ca_email, ca_observaciones, ca_fchcreado, ca_usucreado) values($id, '$papellido', '$sapellido', '$nombres', '$saludo', '$cargo', '$departamento', '$telefonos', '$fax', '$cumpleanos', lower('$email'), '$observaciones', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
+             if (!$rs->Open("insert into tb_concliente (ca_idcliente, ca_papellido, ca_sapellido, ca_nombres, ca_saludo, ca_cargo, ca_departamento, ca_telefonos, ca_fax, ca_cumpleanos, ca_email, ca_fijo, ca_observaciones, ca_fchcreado, ca_usucreado) values($id, '$papellido', '$sapellido', '$nombres', '$saludo', '$cargo', '$departamento', '$telefonos', '$fax', '$cumpleanos', lower('$email'), '$fijo','$observaciones', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                  echo "<script>document.location.href = 'concliente.php?id=$id';</script>";
                  exit;
@@ -466,7 +473,7 @@ elseif (isset($accion)) {                                                      /
              }
         case 'Actualizar': {                                                   // El Botón Actualizar fue pulsado
              $cumpleanos = isset($cumpleanos)?implode("-",$cumpleanos):"";
-             if (!$rs->Open("update tb_concliente set ca_papellido = '$papellido', ca_sapellido = '$sapellido', ca_nombres = '$nombres', ca_saludo = '$saludo', ca_cargo = '$cargo', ca_departamento = '$departamento', ca_telefonos = '$telefonos', ca_fax = '$fax', ca_cumpleanos = '$cumpleanos', ca_email = lower('$email'), ca_observaciones = '$observaciones', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usuactualizado = '$usuario' where ca_idcliente = $id and ca_idcontacto = $co")) {
+             if (!$rs->Open("update tb_concliente set ca_papellido = '$papellido', ca_sapellido = '$sapellido', ca_nombres = '$nombres', ca_saludo = '$saludo', ca_cargo = '$cargo', ca_departamento = '$departamento', ca_telefonos = '$telefonos', ca_fax = '$fax', ca_cumpleanos = '$cumpleanos', ca_email = lower('$email'), ca_fijo = '$fijo', ca_observaciones = '$observaciones', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usuactualizado = '$usuario' where ca_idcliente = $id and ca_idcontacto = $co")) {
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                  echo "<script>document.location.href = 'concliente.php?id=$id';</script>";
                  exit;
