@@ -43,7 +43,7 @@ var enviarFormulario=function(){
        }
     }
 
-    if( numChecked>0 ){
+    if( numChecked>0 || <?=count($destinatariosFijos)?>==0 ){
         document.getElementById("form1").submit();
     }else{
         alert("debe seleccionar al menos un contacto fijo.");
