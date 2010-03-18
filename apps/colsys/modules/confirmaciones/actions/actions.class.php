@@ -300,7 +300,10 @@ class confirmacionesActions extends sfActions
                         case "Conf":
                             $status->setCaIdetapa("IMCPD");
                             $status->setCaFchllegada( $referencia->getCaFchconfirmacion() );
-                            break;                        
+                            break;
+                        case "Desc":
+                                $status->setCaIdetapa("IMDES");
+                            break;
                         default:
                             $status->setCaIdetapa("88888");
                             break;

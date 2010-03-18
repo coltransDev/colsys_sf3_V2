@@ -211,10 +211,14 @@ function cambiarTextosOTM( value ){
     if( value=="Fact" ){
         var msg = "<?=str_replace("\n", "<br />",$textos['mensajeFact'])?>";
         document.getElementById('status_body').value= msg.split("<br />").join("\n");
+    }else if( value=="Desc" ){
+        var msg = "<?=str_replace("\n", "<br />",$textos['mensajeDesc'])?>";
+        document.getElementById('status_body').value= msg.split("<br />").join("\n");
     }else{
         var msg = "<?=str_replace("\n", "<br />",$textos['mensajeStatus'])?>";
         document.getElementById('status_body').value= msg.split("<br />").join("\n");
     }
+
     <?
     foreach( $inoClientes as $inoCliente ){
         ?>
@@ -390,7 +394,7 @@ function cambiarTipoMsg( value ){
                         <input name="tipo_msg" id="tipo_msg" value="Conf" checked="checked" onclick="cambiarTipoMsg(this.value)" type="radio">
                         Confirmaci&oacute;n:
                 </td>
-				<td class="mostrar" colspan="4" rowspan="3">
+				<td class="mostrar" colspan="4" rowspan="4">
 
                     <table id="confirmacion_tbl" style="display: block;" cellspacing="1" width="100%">
 						<tbody>
@@ -457,6 +461,11 @@ function cambiarTipoMsg( value ){
 				<td class="partir">&nbsp;</td>
 				<td class="partir"><input name="tipo_msg" id="tipo_msg" value="Fact" onclick="cambiarTipoMsg(this.value)" type="radio">
 					Factura Fletes:</td>
+			</tr>
+            <tr>
+				<td class="partir">&nbsp;</td>
+				<td class="partir"><input name="tipo_msg" id="tipo_msg" value="Desc" onclick="cambiarTipoMsg(this.value)" type="radio">
+					Desconsolidaci&oacute;n:</td>
 			</tr>
 			<?
 			}
