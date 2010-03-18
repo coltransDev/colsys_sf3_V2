@@ -197,6 +197,7 @@ class pmActions extends sfActions
 		$response = sfContext::getInstance()->getResponse();
 		$response->addJavaScript("extExtras/RowExpander",'last');
         $response->addJavaScript("extExtras/SliderTip",'last');
+        $response->addStylesheet("extExtras/slider",'last');
 
 	}
 
@@ -1173,7 +1174,7 @@ class pmActions extends sfActions
 
 
         $this->forward404Unless( $request->getParameter("idticket") );
-        $this->forward404Unless( $request->getParameter("percentage") );
+        $this->forward404Unless( $request->getParameter("percentage")!==null );
         $idticket = $request->getParameter("idticket");
 
 
