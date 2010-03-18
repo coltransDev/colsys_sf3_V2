@@ -2492,7 +2492,7 @@ GRANT ALL ON vi_repavisos TO GROUP "Usuarios";
 Drop view vi_repreportes;
 Create view vi_repreportes as
 select rp.ca_idreporte, substr(rp.ca_fchreporte::text,1,4) as ca_ano, substr(rp.ca_fchreporte::text,6,2) as ca_mes, rp.ca_fchreporte, rp.ca_consecutivo, rp.ca_version, cl.ca_idcliente, cl.ca_compania as ca_nombre_cli, replace(rp.ca_orden_clie,'|',', ') as ca_orden_clie, t1.ca_nombre as ca_traorigen, c1.ca_ciudad as ca_ciuorigen, t2.ca_nombre as ca_tradestino, c2.ca_ciudad as ca_ciudestino,
-    rp.ca_impoexpo, rp.ca_modalidad, rp.ca_transporte, rp.ca_login, us.ca_sucursal
+    rp.ca_impoexpo, rp.ca_modalidad, rp.ca_transporte, rp.ca_incoterms, rp.ca_login, us.ca_sucursal
     from (select ca_consecutivo, max(ca_version) as ca_version from tb_reportes where ca_usuanulado IS NULL and ca_fchanulado IS NULL group by ca_consecutivo) rx
 	INNER JOIN tb_reportes rp ON rx.ca_consecutivo = rp.ca_consecutivo and rx.ca_version = rp.ca_version
 	INNER JOIN tb_concliente cc ON rp.ca_idconcliente = cc.ca_idcontacto
