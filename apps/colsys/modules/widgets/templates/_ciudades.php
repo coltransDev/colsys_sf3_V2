@@ -3,7 +3,7 @@ new Ext.form.ComboBox({
 		typeAhead: true,
 		forceSelection: true,
 		triggerAction: 'all',
-		emptyText:'Seleccione',
+		emptyText:'',
 		selectOnFocus: true,	
 		mode: 'local',				
 		hiddenName: '<?=$id?>',
@@ -18,7 +18,7 @@ new Ext.form.ComboBox({
 							if( isset($link) ){
 							?>	
 								ciudad = Ext.getCmp('<?=$id?>_id');
-								var idpais = Ext.getCmp('<?=$link?>_id').getValue();
+								var idpais = Ext.getCmp('<?=$link?>_id').hiddenField.value;
 								ciudad.store.baseParams = {
 									idpais: idpais
 								};

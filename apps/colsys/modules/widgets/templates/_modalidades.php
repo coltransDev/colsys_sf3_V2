@@ -6,7 +6,7 @@ new Ext.form.ComboBox({
 	typeAhead: true,
 	forceSelection: true,
 	triggerAction: 'all',
-	emptyText:'Seleccione',
+	emptyText:'',
 	selectOnFocus: true,	
 	name: '<?=$id?>',
 	id: '<?=$id?>',

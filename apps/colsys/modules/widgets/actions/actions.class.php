@@ -260,6 +260,18 @@ class widgetsActions extends sfActions
                 $q->addWhere("r.ca_impoexpo = ?", array($impoexpo));
             }
 		}
+
+        if( $request->getParameter("origen") ){
+			$q->addWhere("r.ca_origen = ?", $request->getParameter("origen"));
+		}
+
+        if( $request->getParameter("destino") ){
+			$q->addWhere("r.ca_destino = ?", $request->getParameter("destino"));
+		}
+
+        if( $request->getParameter("estado")=="activo" ){
+            $q->addWhere("r.ca_idetapa != ?", "99999");
+        }
 		
 		$reportes = $q->fetchArray();
 		
