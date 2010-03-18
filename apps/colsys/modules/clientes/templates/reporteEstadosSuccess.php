@@ -19,7 +19,15 @@ $i=1;
   <th>Sucursal</th>
   <th>Fecha Estado Anterior</th>
   <th>Estado Anterior</th>
-  <th>&Uacute;ltimo Negocio</th>
+  <th>
+      <?php
+      if ($empresa == 'Coltrans'){
+            echo "&Uacute;ltimo Doc.Transporte";
+      }else {
+            echo "&Uacute;ltima Factura";
+      }
+      ?>
+  </th>
   <th>N&uacute;mero Negocios</th>
 </tr>
 </thead>

@@ -221,6 +221,7 @@ class clientesActions extends sfActions
             while($row = $ante->fetch()) {      // Calcula el número de Clientes Potenciales al inicio del periodo
                 $i++;
             }
+            $this->empresa = $empresa;
             $this->poblacion = $i;
             $this->inicio = $inicio;
             $this->final = $final;
