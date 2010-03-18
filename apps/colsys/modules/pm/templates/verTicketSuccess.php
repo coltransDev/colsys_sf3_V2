@@ -161,55 +161,60 @@ include_component("gestDocumental", "panelArchivos", array("readOnly"=>$ticket->
       ?>
 		
 	</td>
-    <td class="listar">&nbsp;
+    <td class="listar">
+        <b>Progreso:</b>
         <?
         if( $ticket->getCaAction()=="Abierto" && $nivel>0 ){
         ?>
-            <div id="slider"></div>
+            <div id="custom-slider"></div>
 
             <script type="text/javascript">
-                var tip = new Ext.ux.SliderTip({
-                    getText: function(slider){
-                        return String.format('<b>{0}% complete</b>', slider.getValue());
-                    }
-                });
+                Ext.onReady(function(){
 
-                var updatePercent = function(   slider,  newValue ){                    
-
-                    Ext.Ajax.request({
-                        url: '<?=url_for("pm/actualizarPorcentajeTicket")?>',
-                        method: 'POST',
-                        //Solamente se envian los cambios
-                        params :	{
-                            idticket: <?=$ticket->getCaIdticket()?>,
-                            percentage: newValue
-                        },
-
-                        failure :function(options, success, response){
-
-                            alert("Ha ocurrido un error");
+                    var tip = new Ext.ux.SliderTip({
+                        getText: function(slider){
+                            return String.format('<b>{0}% complete</b>', slider.getValue());
                         }
-                     }
-                    );
-                }
+                    });
 
-                new Ext.Slider({
-                    renderTo: 'slider',
-                    width: 214,
-                    increment: 1,
-                    value: <?=$ticket->getCaPercentage()?>,
-                    minValue: 0,
-                    maxValue: 100,
-                    plugins: tip,
-                    listeners: {
-                        changecomplete: updatePercent
+                    var updatePercent = function(   slider,  newValue ){
+
+                        Ext.Ajax.request({
+                            url: '<?=url_for("pm/actualizarPorcentajeTicket")?>',
+                            method: 'POST',
+                            //Solamente se envian los cambios
+                            params :	{
+                                idticket: <?=$ticket->getCaIdticket()?>,
+                                percentage: newValue
+                            },
+
+                            failure :function(options, success, response){
+
+                                alert("Ha ocurrido un error");
+                            }
+                         }
+                        );
                     }
+
+                    var slider = new Ext.Slider({
+                        renderTo: 'custom-slider',
+                        width: 214,
+                        increment: 1,
+                        value: <?=$ticket->getCaPercentage()?>,                        
+                        minValue: 0,
+                        maxValue: 100,
+                        plugins: tip,
+                        listeners: {
+                            changecomplete: updatePercent
+                        }
+                    });
                 });
+                
 
             </script>
         <?
         }else{
-            echo $ticket->getCaPercentage()." %Terminado";
+            echo $ticket->getCaPercentage()."% Terminado";
         }
         ?>
 	</td>
