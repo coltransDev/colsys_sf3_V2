@@ -97,7 +97,7 @@ class pmActions extends sfActions
 
 
         if( $request->getParameter("assignedTo") ){
-            $q->addWhere("h.ca_assignedto = ? ", $request->getParameter("assignedTo") );
+            $q->addWhere("h.ca_assignedto = ? OR h.ca_assignedto IS NULL", $request->getParameter("assignedTo") );
         }
 
         if( $request->getParameter("reportedBy") ){
