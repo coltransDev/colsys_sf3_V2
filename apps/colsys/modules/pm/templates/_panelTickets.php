@@ -269,7 +269,7 @@ PanelTickets = function( config ){
             {name: 'action', type: 'string', mapping: 'h_ca_action'},
             {name: 'ultseg', type: 'date', mapping: 'h_ultseg', dateFormat:'Y-m-d H:i:s'},
             {name: 'respuesta', type: 'date', mapping: 'tar_ca_fchterminada', dateFormat:'Y-m-d H:i:s'},
-            {name: 'percentage', type: 'string', mapping: 'h_ca_percentage'},
+            {name: 'percentage', type: 'integer', mapping: 'h_ca_percentage'},
             
     ]);
 
