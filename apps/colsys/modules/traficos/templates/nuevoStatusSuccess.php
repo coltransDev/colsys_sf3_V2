@@ -78,6 +78,10 @@ var mostrar=function( oid ){
             if( $etapa->getCaIdetapa()=="IMETA" && $count>0 ){
                 continue;
             }
+
+            if( $etapa->getCaIdetapa()=="IACAD" && $reporte->getCaContinuacion()=="CABOTAJE" ){
+                continue;
+            }
 		?>
 		case '<?=$etapa->getCaIdetapa()?>':
 			var val = '<?=str_replace("\n", "<br />", $etapa->getCaMessage())?>';			
