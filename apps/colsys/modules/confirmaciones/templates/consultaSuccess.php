@@ -19,19 +19,20 @@ switch( $modo ){
 
 function validarFormConfirmacion(){	
 	
-    var oids = new Array (
+    var oids = new Array ();
 		<?
 		$i = 0;
 		foreach( $inoClientes as $inoCliente ){
-			if( $i++!=0 ){
-				echo ",";
-			}
-			echo $inoCliente->getOid();
+            ?>
+			oids[<?=$i?>] = <?=$inoCliente->getOid()?>;
+            <?
 		}
-		?>
-		);
+        ?>
+		
+		
   
     for( var i=0 ; i<oids.length ; i++ ){
+        //alert( oids[i] +" "+i+" "+oids.length );
         var checkbox = document.getElementById("checkbox_"+oids[i]);
         if( checkbox.checked ){
             var divfijos =document.getElementById("divfijos_"+oids[i]);
@@ -69,7 +70,7 @@ function validarFormConfirmacion(){
 				}
 			}
 		}	
-		return true;
+		
 		
 		
 		<?	
@@ -623,14 +624,19 @@ function cambiarTipoMsg( value ){
 	habilitar( '<?=$inoCliente->getOid()?>' );	
 	<?
 	}
+
+    if( $modo!="otm" ){
 	?>
     
-    radioObj = document.form1.tipo_msg;
-	for(var i = 0; i < radioObj.length; i++) {
-		if(radioObj[i].checked) {
-            cambiarTipoMsg( radioObj[i].value )
-		}
-	}
+        radioObj = document.form1.tipo_msg;
+        for(var i = 0; i < radioObj.length; i++) {
+            if(radioObj[i].checked) {
+                cambiarTipoMsg( radioObj[i].value )
+            }
+        }
+    <?
+    }
+    ?>
 
     //;
 
