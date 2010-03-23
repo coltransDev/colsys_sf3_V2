@@ -131,7 +131,7 @@ class widgetsActions extends sfActions
 		$this->lineas = array();	
 		foreach( $lineas as $linea ){            
 			$this->lineas[] = array(  "idlinea"=>$linea['ca_idproveedor'],
-									  "linea"=>utf8_encode($linea['ca_sigla']?$linea['ca_sigla']:$linea['Ids']['ca_nombre']),
+									  "linea"=>utf8_encode(($linea['ca_sigla']?$linea['ca_sigla']." - ":"").$linea['Ids']['ca_nombre']),
                                       "transporte"=>utf8_encode($linea['ca_transporte']),
 								   );
 		}						
