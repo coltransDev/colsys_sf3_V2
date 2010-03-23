@@ -425,7 +425,7 @@ require_once("menu.php");
                     echo "    <TR>";
                     echo "     <TD Class=valores WIDTH=50 style='font-size: 9px;$back_col'>".number_format($com_cas-$rs->Value('ca_vlrcomisiones'))."</TD>";
                     echo "     <TD Class=valores WIDTH=50 style='font-size: 9px;$back_col'>".number_format($com_sbr-$rs->Value('ca_sbrcomisiones'))."</TD>";
-                    echo "     <TD Class=valores style='font-size: 9px;$back_col'><INPUT ID=CHK_$num_oid TYPE=CHECKBOX style='visibility:hidden;' NAME='hbls[$num_oid][oid]' VALUE=$num_oid ONCLICK='negativo(this);sumarizar(document.informe);'></TD>";
+                    echo "     <TD Class=valores style='font-size: 9px;$back_col'>".(($rs->Value('ca_stdcircular')!="Vigente")?"Circular 0170 Vencida":"<INPUT ID=CHK_$num_oid TYPE=CHECKBOX style='visibility:hidden;' NAME='hbls[$num_oid][oid]' VALUE=$num_oid ONCLICK='negativo(this);sumarizar(document.informe);'></TD>");
                     echo "    <TR>";
                     echo "    </TABLE>";
                     echo "    <INPUT ID=VLR_$num_oid TYPE='HIDDEN' NAME='hbls[$num_oid][comision]' VALUE=".($com_cas-$rs->Value('ca_vlrcomisiones')).">";
