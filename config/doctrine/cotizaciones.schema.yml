@@ -105,7 +105,7 @@ CotProducto:
     ca_usucreado: string(20)
     ca_fchcreado: timestamp
     ca_usuactualizado: string(20)
-    ca_fchactualizado: timestamp
+    ca_fchactualizado: timestamp    
   relations:
     Cotizacion:
       local: ca_idcotizacion
@@ -164,6 +164,7 @@ CotOpcion:
     ca_fchcreado: timestamp
     ca_usuactualizado: string(20)
     ca_fchactualizado: timestamp
+    ca_idequipo: integer
   relations:
     CotProducto:
       local: ca_idproducto
@@ -173,6 +174,11 @@ CotOpcion:
       local: ca_idconcepto
       foreign: ca_idconcepto
       type: one
+    Equipo:
+      local: ca_idequipo
+      foreign: ca_idconcepto
+      type: one
+      class: Concepto
 
 CotRecargo:
   options:
@@ -204,6 +210,7 @@ CotRecargo:
     ca_fchcreado: timestamp
     ca_usuactualizado: string(20)
     ca_fchactualizado: timestamp
+    ca_idequipo: integer
   relations:    
     Concepto:
       local: ca_idconcepto
@@ -213,6 +220,11 @@ CotRecargo:
       local: ca_idrecargo
       foreign: ca_idrecargo
       type: one
+    Equipo:
+      local: ca_idequipo
+      foreign: ca_idconcepto
+      type: one
+      class: Concepto
 
 
 CotContinuacion:
@@ -403,7 +415,7 @@ CotConceptoAduana:
     symfony:
       form: true
       filter: false
-  generatePath: pricing
+  generatePath: cotizaciones
   tableName: cot.tb_conceptoaduana
   attributes:
     export: tables
@@ -452,3 +464,38 @@ CotConceptoAduana:
       local: ca_idcotizacion
       foreign: ca_idcotizacion
       type: one
+
+CotRecargosAduana:
+  options:
+    symfony:
+      form: true
+      filter: false
+  generatePath: cotizaciones
+  tableName: cot.tb_conceptoaduana
+  attributes:
+    export: tables
+  columns:
+    ca_consecutivo:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_idpadre:
+      type: integer
+      notnull: true
+    ca_idtrayecto:
+      type: integer
+      notnull: true
+    ca_recargo: string
+    ca_contenedor: string
+    ca_valor: numeric
+    ca_aplicacion: string
+    ca_detalles: string
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string
+  relations:
+    CotTrayectoAduana:
+      local: ca_idcotizacion
+      foreign: ca_idcotizacion
+      type: many
