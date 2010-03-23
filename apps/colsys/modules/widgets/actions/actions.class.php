@@ -115,13 +115,14 @@ class widgetsActions extends sfActions
                   ->addOrderBy("id.ca_nombre");
         
         if( $transporte ){
-            $q->where("p.ca_transporte = ?", $transporte );
+            $q->addWhere("p.ca_transporte = ?", $transporte );
         }
 
         if( $query ){
             $q->addWhere("id.ca_nombre like ?", $query."%");
         }
         $q->addWhere("p.ca_activo = ?", true );
+        $q->addWhere("p.ca_fchaprobado IS NOT NULL" );
 
         $q->fetchArray();
 
