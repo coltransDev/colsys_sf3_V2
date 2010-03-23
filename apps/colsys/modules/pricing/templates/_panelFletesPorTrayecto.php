@@ -61,7 +61,7 @@ PanelFletesPorTrayecto = function( config ){
         baseParams : {
             impoexpo: "<?=Constantes::IMPO?>",
             transporte: "<?=Constantes::MARITIMO?>",
-            modalidad: "FCL",
+            modalidad: "<?=Constantes::FCL?>",
             readOnly: this.readOnly
         },
         reader: new Ext.data.JsonReader(
@@ -241,7 +241,7 @@ PanelFletesPorTrayecto = function( config ){
 
         
     this.mostrarEquipo = false;    
-    if( (this.transporte=="<?=Constantes::TERRESTRE?>"|| this.transporte=="<?=Constantes::OTMDTA?>") && this.modalidad=="FCL" ){
+    if( (this.transporte=="<?=Constantes::TERRESTRE?>"|| this.transporte=="<?=Constantes::OTMDTA?>") && (this.modalidad=="<?=Constantes::FCL?>"||this.modalidad=="<?=Constantes::ADUANAFCL?>")  ){
         this.mostrarEquipo = true;
     }
 
