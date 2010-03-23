@@ -3317,7 +3317,7 @@ function datos_basicos(&$visible,&$rs,&$tm) {
     $z=0;
     $emails = str_replace(" ", "", $rs->Value('ca_confirmar_clie'));
     $emails = explode(",", $emails);
-    for ($i=0; $i<5; $i++) {
+    for ($i=0; $i<ceil(count($emails)/3); $i++){
         echo "  <TR>";
         for ($j=0; $j<3; $j++) {
             $cadena = (strlen($emails[$z])==0)?"&nbsp;":$emails[$z];
