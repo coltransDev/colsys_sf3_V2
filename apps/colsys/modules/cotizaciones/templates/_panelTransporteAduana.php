@@ -5,7 +5,6 @@
 * @author: Andres Botero
 */
 
-
 include_component("cotizaciones", "formTrayectoAduanaWindow", array("cotizacion"=>$cotizacion) );
 ?>
 
@@ -234,10 +233,6 @@ PanelTransporteAduana = function( config ){
                 }*/
     ];
 
-       
-
-
-
     PanelTransporteAduana.superclass.constructor.call(this, {
        loadMask: {msg:'Cargando...'},
        clicksToEdit: 1,
@@ -258,7 +253,7 @@ PanelTransporteAduana = function( config ){
         ?>
         tbar: [
             {
-                text: 'Guardar Cambios',
+                text: 'Guardar Cambios ',
                 tooltip: 'Guarda los cambios hechos en la base de datos.',
                 iconCls: 'disk',  // reference to our css
                 handler: function(){
@@ -267,11 +262,11 @@ PanelTransporteAduana = function( config ){
                 id     : 'guardarbtn'
             },
             {
-                text: 'Agregar trayecto',
+                text: 'Agregar trayecto ',
                 tooltip: 'Agregar un nuevo producto a la Cotización',
                 iconCls: 'add',  // reference to our css
                 scope: this, 
-                handler: function(){
+                handler: function(){                   
                     this.agregarTrayecto();
                 }
             }
@@ -351,7 +346,10 @@ PanelTransporteAduana = function( config ){
 
 
 Ext.extend(PanelTransporteAduana, Ext.grid.EditorGridPanel, {
-    
+
+    guardarDatosPaneles: function (){
+       alert("guardar");
+    },
     guardarItems: function (){        
         var storeProductos = this.store;
         var success = true;
@@ -856,7 +854,7 @@ Ext.extend(PanelTransporteAduana, Ext.grid.EditorGridPanel, {
 
     
     nuevoRecargo: function(){
-        rec = this.ctxRecord;
+        rec = this.ctxRecord;        
         var recordProductos = this.record;
         var storeProductos = this.store;
         if( rec.data.iditem && rec.data.idopcion ){
