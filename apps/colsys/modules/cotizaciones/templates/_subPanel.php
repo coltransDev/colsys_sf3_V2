@@ -18,7 +18,6 @@ if( $cotizacion->getCaEmpresa() == Constantes::COLTRANS ){
 
 
 /*
-* ================  Panel de archivos adjuntos  =======================
 */
 if( $cotizacion->getCaIdcotizacion() ){
     include_component("gestDocumental", "panelArchivos");
