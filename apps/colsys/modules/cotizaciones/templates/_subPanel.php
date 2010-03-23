@@ -4,18 +4,14 @@
  *
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
-
 if( $cotizacion->getCaEmpresa() == Constantes::COLTRANS ){
     include_component("cotizaciones","panelProductos",array("cotizacion"=>$cotizacion));
     include_component("cotizaciones","panelRecargosCotizacion",array("cotizacion"=>$cotizacion,"tipo"=>"Recargo Local"));
     include_component("cotizaciones","panelContViajes",array("cotizacion"=>$cotizacion));
     include_component("cotizaciones","panelSeguros",array("cotizacion"=>$cotizacion));
     include_component("cotizaciones","panelAgentes",array("cotizacion"=>$cotizacion));
-}
-
-
-if( $cotizacion->getCaEmpresa() == Constantes::COLMAS ){
-    include_component("cotizaciones","panelTransporteAduana",array("cotizacion"=>$cotizacion));
+}else if( $cotizacion->getCaEmpresa() == Constantes::COLMAS ){
+    include_component("cotizaciones","panelProductos",array("cotizacion"=>$cotizacion));
     include_component("cotizaciones","panelTarifarioAduana",array("cotizacion"=>$cotizacion));
 }
 
@@ -38,18 +34,17 @@ SubPanel = function(){
     <?
     if( $cotizacion->getCaEmpresa() == Constantes::COLTRANS  ){
         ?>
-        this.gridProductos = new PanelProductos();
+        this.gridProductos = new PanelProductos({empresa:'<?=$cotizacion->getCaEmpresa()?>'});
         this.gridRecargos = new PanelRecargosCotizacion();
         this.gridContviajes = new PanelContViajes();
         this.gridSeguros = new PanelSeguros();
         this.gridAgentes = new PanelAgentes();
         
         <?
-    }
-
-    if( $cotizacion->getCaEmpresa() == Constantes::COLMAS ){
+    }else if( $cotizacion->getCaEmpresa() == Constantes::COLMAS ){
         ?>
-        this.gridTransporte = new PanelTransporteAduana();
+        //this.gridTransporte = new PanelTransporteAduana();
+        this.gridProductos = new PanelProductos({empresa:'<?=$cotizacion->getCaEmpresa()?>'});
         this.gridTarifarioAduana = new PanelTarifarioAduana();
         <?
     }
@@ -84,10 +79,10 @@ SubPanel = function(){
                    this.gridSeguros,
                    this.gridAgentes,                   
                 <?
-                }
-                if( $cotizacion->getCaEmpresa() == Constantes::COLMAS  ){
+                }else if( $cotizacion->getCaEmpresa() == Constantes::COLMAS  ){
                 ?>
-                   this.gridTransporte,
+                   //this.gridTransporte,
+                   this.gridProductos,
                    this.gridTarifarioAduana,
 
                 <?
@@ -112,6 +107,11 @@ Ext.extend(SubPanel, Ext.FormPanel, {
             this.gridContviajes.guardarItems();
             this.gridSeguros.guardarItems();
             this.gridAgentes.guardarItems();
+        <?
+        }else if($cotizacion->getCaEmpresa() == Constantes::COLMAS)
+        {
+        ?>
+            this.gridProductos.guardarItems();
         <?
         }
         ?>
