@@ -975,7 +975,8 @@ class cotizacionesActions extends sfActions
 		$aplica_tar = utf8_decode($this->getRequestParameter("aplica_tar"));
 		$aplica_min = utf8_decode($this->getRequestParameter("aplica_min"));
 		$observaciones = $this->getRequestParameter("detalles");
-		
+      $equipo = $this->getRequestParameter("idequipo");
+
 		$consecutivo = $this->getRequestParameter("consecutivo"); //Consecutivo tarifario
 		
 		$tipo = $this->getRequestParameter("tipo");
@@ -1025,7 +1026,11 @@ class cotizacionesActions extends sfActions
 			if( $aplica_min ){
 				$opcion->setCaAplicaMin( $aplica_min );
 			}
-			
+         
+			if( $equipo ){
+				$opcion->setCaIdequipo( $equipo );
+			}
+
 			if( $observaciones!==null ){
                 if( $observaciones ){
                     $opcion->setCaObservaciones( utf8_decode($observaciones) );
@@ -1101,7 +1106,11 @@ class cotizacionesActions extends sfActions
 				}else{
 					$recargo->setCaObservaciones( null );				
 				}
-			}	
+			}
+
+         if( $equipo ){
+				$recargo->setCaIdequipo( $equipo );
+			}
 			
 			if( $consecutivo ){
 				$recargo->setCaConsecutivo( $consecutivo );
@@ -1110,21 +1119,19 @@ class cotizacionesActions extends sfActions
 
             $this->responseArray["idcotrecargo"]=$recargo->getCaIdcotrecargo();
 		}
-		$this->setTemplate("responseTemplate");	
-		
+		$this->setTemplate("responseTemplate");
 	}
 	
 	/*
 	* Muestra los datos de la grilla de prooductos del componente grillaProductos
 	*/
-	public function executeGrillaProductosData(){
+	public function executeGrillaProductosData(){      
 		$id = $this->getRequestParameter("idcotizacion");
-        $idproducto = $this->getRequestParameter("idproducto");
+      $idproducto = $this->getRequestParameter("idproducto");
 		
-        $cotizacion = Doctrine::getTable("Cotizacion")->find( $id );
-
+      $cotizacion = Doctrine::getTable("Cotizacion")->find( $id );
+      
 		$cotProductos = $cotizacion->getCotProductos();
-
         $modo = $this->getRequestParameter("modo");
 				
 		$this->productos = array();
@@ -1203,7 +1210,10 @@ class cotizacionesActions extends sfActions
 				$row['idmoneda']=$opcion->getCaIdmoneda();
 				$row['detalles']=utf8_encode($opcion->getCaObservaciones());
 				$row['tipo']="concepto";				
-				$row['orden']=$opcion->getCaIdopcion();				
+				$row['orden']=$opcion->getCaIdopcion();
+            $row['idequipo']=$opcion->getCaIdequipo();
+            $row['equipo']=$opcion->getEquipo()->getCaConcepto();
+            
 								
 				$this->productos[] = $row;
 				 //Se muestran los recargos 
@@ -1213,11 +1223,11 @@ class cotizacionesActions extends sfActions
 					$tipoRecargo = $recargo->getTipoRecargo();
 					
 					$row = $baseRow;
-                    $row['idcotrecargo']=$recargo->getCaIdcotrecargo();
+               $row['idcotrecargo']=$recargo->getCaIdcotrecargo();
 					$row['idopcion']=$opcion->getCaIdopcion();
 					$row['iditem']=$tipoRecargo->getCaIdrecargo();
 					$row['item']=utf8_encode($tipoRecargo->getCaRecargo());
-					$row['idconcepto']=$recargo->getCaIdconcepto();
+					$row['idconcepto']=$recargo->getCaIdconcepto();               
 					$row['valor_tar']=$recargo->getCaValorTar();
 					$row['aplica_tar']=utf8_encode($recargo->getCaAplicaTar());
 					$row['valor_min']=$recargo->getCaValorMin();
@@ -1226,8 +1236,10 @@ class cotizacionesActions extends sfActions
 					$row['detalles']=utf8_encode($recargo->getCaObservaciones());
 					$row['tipo']="recargo";							
 					$row['orden']=$opcion->getCaIdopcion()."-".utf8_encode($tipoRecargo->getCaRecargo());
+               $row['idequipo']=$recargo->getCaIdequipo();
+               $row['equipo']=$recargo->getEquipo()->getCaConcepto();
 					$this->productos[] = $row;				
-				}					
+				}
 			}
 			
 			$recargos = $producto->getRecargosGenerales();		
@@ -1247,6 +1259,8 @@ class cotizacionesActions extends sfActions
 				$row['tipo']="concepto";
 				//$row['id']+=$j++;
 				$row['orden']="Y";
+            $row['idequipo']="";
+            $row['equipo']="";
 				//$parent = $row['id'];
 				$this->productos[] = $row;									
 			}
@@ -1265,7 +1279,10 @@ class cotizacionesActions extends sfActions
 				$row['aplica_min']=utf8_encode($recargo->getCaAplicaMin());
 				$row['idmoneda']=$recargo->getCaIdmoneda();
 				$row['detalles']=utf8_encode($recargo->getCaObservaciones());
-				$row['tipo']="recargo";			
+				$row['tipo']="recargo";
+            $row['idequipo']=$recargo->getCaIdEquipo();
+            $row['equipo']=$recargo->getEquipo()->getCaConcepto();
+
 				
 				$row['orden']="Y-".utf8_encode($tipoRecargo->getCaRecargo());
 				$this->productos[] = $row;					
@@ -1286,11 +1303,11 @@ class cotizacionesActions extends sfActions
                 $row['detalles']="";
                 $row['tipo']="concepto";
                 $row['orden']="Z";
+                $row['idequipo']="";
+                $row['equipo']="9999";
                 $this->productos[] = $row;
-           }
-			
+           }			
 		}
-
         $this->responseArray=array("productos"=>$this->productos, "total"=>count($this->productos));
         $this->setTemplate("responseTemplate");
 
@@ -1901,8 +1918,7 @@ class cotizacionesActions extends sfActions
 	*/
 	public function executeFormTrayectoAduanaGuardar(){
 
-		$user_id = $this->getUser()->getUserId();
-
+		$user_id = $this->getUser()->getUserId();      
         if( $this->getRequestParameter("idtrayecto") ){
 			$trayecto = Doctrine::getTable("CotTrayectoAduana")->find(  $this->getRequestParameter("idtrayecto") );
 			$this->forward404Unless( $trayecto );
@@ -1922,13 +1938,13 @@ class cotizacionesActions extends sfActions
             $trayecto->setCaVigencia( null );
         }
 
-		
 		$trayecto->setCaOrigen( $this->getRequestParameter("ciu_origen") );
 		$trayecto->setCaDestino( $this->getRequestParameter("ciu_destino") );
 		$trayecto->setCaObservaciones( utf8_decode($this->getRequestParameter("observaciones")) );
 		
 		$trayecto->save();
-
+//      echo $trayecto->getCa_Idtrayecto();
+//      print_r($trayecto);
         //Elimina el seguimiento por cotizacion y lo establece por trayecto
         if( $cotizacion->getCaEtapa() ){
             $cotizacion->setCaEtapa(null);
