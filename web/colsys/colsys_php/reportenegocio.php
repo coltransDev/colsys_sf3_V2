@@ -949,7 +949,7 @@ elseif (isset($boton)) {                                                       /
                 echo "  <TD Class=invertir COLSPAN=4>11.1 Preferencias del Cliente:<BR><TEXTAREA ID=preferencias_clie NAME='preferencias_clie' WRAP=virtual ROWS=9 COLS=80></TEXTAREA><BR><INPUT TYPE='CHECKBOX' NAME='actualizar_pref' VALUE='true'> Actualizar preferencias en maestra de clientes</TD>";
                 echo "  <TD Class=listar ROWSPAN=2>11.3 Informaciones a:<BR><TABLE WIDTH=100% CELLSPACING=1 CELLPADDING=0 BORDER=0>";
                 $z=0;
-                for ($i=1; $i<=12; $i++) {
+                for ($i=1; $i<=13; $i++) {
                     echo "  <TR>";
                     echo "    <TD Class=invertir style='vertical-align:bottom;' WIDTH=130><INPUT ID=conf_$z Class=field TYPE='TEXT' NAME='contactos[]' VALUE=' ' ONCHANGE='cambiar_email(this);' SIZE=40 MAXLENGTH=50></TD><TD Class=invertir><INPUT ID=email_$z TYPE='CHECKBOX' NAME='confirmar[]' WIDTH=10 ONCHANGE='asignar_email(this);'></TD>";
                     echo "  </TR>";
@@ -1726,7 +1726,7 @@ elseif (isset($boton)) {                                                       /
                 $z=0;
                 $emails = str_replace(" ", "", $rs->Value('ca_confirmar_clie'));
                 $emails = explode(",", $emails);
-                for ($i=1; $i<=12; $i++) {
+                for ($i=1; $i<=13; $i++) {
                     $contactos[$z] = trim($contactos[$z]);
                     $read_only = "";
                     $email = " ";
@@ -3317,7 +3317,7 @@ function datos_basicos(&$visible,&$rs,&$tm) {
     $z=0;
     $emails = str_replace(" ", "", $rs->Value('ca_confirmar_clie'));
     $emails = explode(",", $emails);
-    for ($i=0; $i<4; $i++) {
+    for ($i=0; $i<5; $i++) {
         echo "  <TR>";
         for ($j=0; $j<3; $j++) {
             $cadena = (strlen($emails[$z])==0)?"&nbsp;":$emails[$z];
