@@ -113,7 +113,7 @@ class widgetsActions extends sfActions
                   ->from("IdsProveedor p")
                   ->innerJoin("p.Ids id")                  
                   ->addOrderBy("id.ca_nombre");
-        
+        $q->addWhere("p.ca_tipo = ? OR p.ca_tipo = ?", array("TRI", "TRN") );
         if( $transporte ){
             $q->addWhere("p.ca_transporte = ?", $transporte );
         }
