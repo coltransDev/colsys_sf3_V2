@@ -9,9 +9,6 @@
 
 <script type="text/javascript">
     FormTrayectoAduanaWindow = function() {
-
-        
-
         FormTrayectoAduanaWindow.superclass.constructor.call(this, {
             width       : 500,            
             closeAction :'hide',
@@ -30,16 +27,53 @@
                 items: [{
                             id: 'idcotizacion',
                             xtype:'hidden',
-                            name: 'idcotizacion',
+                            name: 'cotizacionId',
                             value: '<?=$cotizacion->getCaIdcotizacion()?>',
                             allowBlank:false
-                        },{
+                        },
+                        {
+                            id: 'impoexpo',
+                            xtype:'hidden',
+                            name: 'impoexpo',
+                            value: '<?=Constantes::IMPO?>',
+                            allowBlank:false
+                        },
+                        {
+                            id: 'transporte',
+                            xtype:'hidden',
+                            name: 'transporte',
+                            value: '<?=Constantes::TERRESTRE?>',
+                            allowBlank:false
+                        },
+                        {
+                            id: 'modalidad',
+                            xtype:'hidden',
+                            name: 'modalidad',
+                            value: 'FCL',
+                            allowBlank:false
+                        },
+                        {
                             id: 'idtrayecto',
                             xtype:'hidden',
                             name: 'idtrayecto',
                             value: '',
                             allowBlank:false
-                        },{
+                        },
+                        {
+                            id: 'incoterms',
+                            xtype:'hidden',
+                            name: 'incoterms',
+                            value: 'FOB - Free On Board',
+                            allowBlank:false
+                        },
+                        {
+                            id: 'imprimir',
+                            xtype:'hidden',
+                            name: 'imprimir',
+                            value: 'Por Item',
+                            allowBlank:false
+                        },
+                        {
                             xtype:'textfield',
                             fieldLabel: 'Producto',
                             id: 'producto',
@@ -48,9 +82,6 @@
                             allowBlank:false,
                             width: 300
                         }
-                        
-                       
-                        
                         ,<?=include_component("widgets", "ciudades" ,array("id"=>"ciu_origen", "label"=>"Ciudad Origen", "idpais"=>"CO-057", "allowBlank"=>"false"))?>                        
                         ,<?=include_component("widgets", "ciudades" ,array("id"=>"ciu_destino", "label"=>"Ciudad Destino", "idpais"=>"CO-057", "allowBlank"=>"false"))?>
                        
@@ -114,9 +145,8 @@
             var fp = Ext.getCmp("producto-form");
             if( fp.getForm().isValid() ){
                 this.el.mask('Guardando...', 'x-mask-loading');
-                
 
-                fp.getForm().submit({url:'<?=url_for('cotizaciones/formTrayectoAduanaGuardar')?>',
+                fp.getForm().submit({url:'<?=url_for('cotizaciones/formProductoGuardar')?>',
                                         waitMsg:'Salvando Datos de Productos...',
                                         // standardSubmit: false,
 
