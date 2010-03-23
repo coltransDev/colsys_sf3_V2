@@ -1,9 +1,8 @@
 <?
 $seguros = $sf_data->getRaw("seguros");
+include_component("cotizaciones", "formTrayectoAduanaWindow", array("cotizacion"=>$cotizacion) );
 ?>
 <script type="text/javascript">
-
-
 PanelSeguros = function( config ){
     Ext.apply(this, config);
     
@@ -144,7 +143,7 @@ PanelSeguros = function( config ){
         clicksToEdit: 1,
         stripeRows: true,
         autoExpandColumn: 'seguro',
-        title: 'Tarifas para Seguro',
+        title: 'Tarifas para Seguro ',
         closable: false,
         id: 'grid_seguros',
 
