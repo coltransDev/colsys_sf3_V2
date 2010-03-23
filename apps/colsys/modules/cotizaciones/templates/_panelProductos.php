@@ -8,6 +8,9 @@
 include_component("pricing", "panelFletesPorTrayecto");
 include_component("cotizaciones", "panelTrayectoWindow", array("cotizacion"=>$cotizacion) );
 include_component("cotizaciones", "panelTrayectoForm", array("cotizacion"=>$cotizacion) );
+
+include_component("cotizaciones", "formTrayectoAduanaWindow", array("cotizacion"=>$cotizacion) );
+
 ?>
 
 <script type="text/javascript">
@@ -38,8 +41,30 @@ PanelProductos = function( config ){
             ])
         )
     });
+    this.storeEquipos = new Ext.data.Store({
+        autoLoad : true,
+        url: '<?=url_for("parametros/datosConceptos")?>',
+        baseParams:{
+               impoexpo:	'Exportación',
+               modalidad:	'FCL',
+               transporte:	'Marítimo'
+            },
+        reader: new Ext.data.JsonReader(
+            {
+                id: 'equipo',
+                root: 'root',
+                totalProperty: 'total',
+                successProperty: 'success'
+            },
+            
+            Ext.data.Record.create([
+                {name: 'idconcepto'},
+                {name: 'concepto'}
+            ])
+        )
+    });
 
-    this.editorConceptos = new Ext.form.ComboBox({
+this.editorConceptos = new Ext.form.ComboBox({
         fieldLabel: 'Concepto',
         typeAhead: true,
         forceSelection: true,
@@ -53,6 +78,22 @@ PanelProductos = function( config ){
         lazyRender:true,
         listClass: 'x-combo-list-small',
         store : this.storeConceptos
+    })
+
+    this.editorEquipos = new Ext.form.ComboBox({
+        fieldLabel: 'Equipo',
+        typeAhead: true,
+        forceSelection: true,
+        triggerAction: 'all',
+        selectOnFocus: true,
+        name: 'equipo',
+        id: 'idequipo',
+        mode: 'local',
+        displayField: 'concepto',
+        valueField: 'idconcepto',
+        lazyRender:true,
+        listClass: 'x-combo-list-small',
+        store : this.storeEquipos
     })
 
     /*
@@ -70,6 +111,8 @@ PanelProductos = function( config ){
         {name: 'item', type: 'string'},  //Texto de concepto o recargo
         {name: 'iditem', type: 'string'}, //Concepto o recargo
         {name: 'idconcepto', type: 'string'}, //Concepto al cual pertenece el recargo
+        {name: 'idequipo', type: 'string'}, //Concepto al cual pertenece el recargo
+        {name: 'equipo', type: 'string'}, //Concepto al cual pertenece el recargo
         {name: 'tra_origen', type: 'string'},
         {name: 'tra_origen_value', type: 'string'},
         {name: 'ciu_origen', type: 'string'},
@@ -164,6 +207,15 @@ PanelProductos = function( config ){
                     renderer: this.formatItem
                 },
                 {
+                    id: 'equipo',
+                    header: "Equipo",
+                    width: 200,
+                    sortable: false,
+                    dataIndex: 'equipo',
+                    hideable: false,
+                    editor:  <?=include_component("widgets", "concepto" ,array("id"=>"equipo", "transporte"=>Constantes::MARITIMO))?>
+                },
+                {
                     id: 'valor_tar',
                     header: "Valor",
                     width: 80,
@@ -248,11 +300,7 @@ PanelProductos = function( config ){
                     dataIndex: 'inSave'
                 }*/
     ];
-
-       
-
-
-
+    
     PanelProductos.superclass.constructor.call(this, {
        loadMask: {msg:'Cargando...'},
        clicksToEdit: 1,
@@ -373,14 +421,23 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
         var records = storeProductos.getModifiedRecords();
         var lenght = records.length;
 
+
         //Se hace la valida que se hayan colocado todos los datos
         for( var i=0; i< lenght; i++){
             r = records[i];
             //alert( r.data.iditem );
             if( !r.data.idmoneda && r.data.iditem!=9999 ){
-                Ext.MessageBox.alert('Warning','Por favor coloque la moneda en todos los items en la pestaña Tarifas de trayectos');
+                alert('Por favor coloque la moneda en todos los items en la pestaña Tarifas de trayectos','Warning');
                 return 0;
             }
+            
+//            return false;
+            if( !r.data.idequipo && r.data.modalidad =="FCL" && r.data.transporte=="<?=Constantes::TERRESTRE?>" )
+            {
+               alert('Por favor indique el equipo 1 del trayecto '+r.data.trayecto,'Alert');
+               return false;
+            }
+
         }
 
         var numResponses = 0;
@@ -392,6 +449,7 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
                 this.guardarGridProductosRec( records[i] );
             }
         }
+
 
         
         window.setTimeout(this.enableButton, 3000);
@@ -420,7 +478,8 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
             changes['idcotrecargo']=r.data.idcotrecargo;
             changes['iditem']=r.data.iditem;
             changes['modalidad']=r.data.modalidad;
-
+            changes['idequipo']=r.data.idequipo;
+            changes['equipo']=r.data.equipo;
             r.set("inSave", true);
             //envia los datos al servidor
             Ext.Ajax.request(
@@ -516,6 +575,8 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
                                transporte: rec.data.transporte,
                                modalidad: rec.data.modalidad,
                                idconcepto: rec.data.iditem,
+                               idequipo: '',
+                               equipo: '',
                                idopcion: rec.data.idopcion,
                                producto: rec.data.producto,
                                tra_origen: rec.data.tra_origen,
@@ -570,7 +631,16 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
                             storeProductos.addSorted(newRec);
                             storeProductos.sort("orden", "ASC");
 
-                        }else{
+                        }else if( e.field == "equipo"){
+                           store.each( function( r ){
+                                   if( r.data.idconcepto==e.value ){
+                                       rec.set("idequipo", r.data.idconcepto );
+                                       e.value = r.data.concepto;
+                                       return true;
+                                   }
+                               });
+                        }
+                        else{
                             rec.set("idmoneda", "USD");
                             rec.set("iditem", r.data.idconcepto);
                         }
@@ -697,6 +767,11 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
                 this.storeConceptos.baseParams={transporte:rec.data.transporte, modalidad:rec.data.modalidad, tipo:'Recargo en Origen', impoexpo:rec.data.impoexpo , modo:'recargos'};
             }
             this.storeConceptos.load();
+        }
+        if( e.field == "equipo"){
+             var ed = this.colModel.getCellEditor(e.column, e.row);
+             ed.field.store.baseParams = {transporte:"<?=Constantes::MARITIMO?>",modalidad:e.record.data.modalidad ,impoexpo:"Exportación"};
+             ed.field.store.reload();
         }
 
         if( e.field=="aplica_tar" || e.field=="aplica_min" ){
@@ -999,8 +1074,15 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
     crearVentanaTrayecto: function( record ){
         storeProductos = this.store;
         //crea una ventana
+        if(this.empresa=='<?=Constantes::COLTRANS?>')
+        {
+           this.win = new PanelTrayectoWindow();
+        }
+        else if(this.empresa=='<?=Constantes::COLMAS?>')
+        {
+           this.win = new FormTrayectoAduanaWindow();
+        }
         
-        this.win = new PanelTrayectoWindow();
         
 
 
