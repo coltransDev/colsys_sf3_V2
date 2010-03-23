@@ -62,6 +62,8 @@ PanelTarifarioAduanaCliente = function( config ){
         }
     });
 
+    this.checkColumn = new Ext.grid.CheckColumn({header:' ', dataIndex:'sel', width:30, hideable: false, hidden: !this.readOnly});
+
     this.storeClientes = new Ext.data.Store({
         proxy: new Ext.data.HttpProxy({
             url: '<?=url_for("widgets/datosComboClientes")?>'
@@ -79,16 +81,16 @@ PanelTarifarioAduanaCliente = function( config ){
     
     this.comboClientes = new Ext.form.ComboBox({
         store: this.storeClientes,
-	id:'idcliente',
+        id:'idcliente',
         displayField:'cliente',
         typeAhead: false,
         loadingText: 'Buscando...',
         width: 320,
         valueNotFoundText: 'No encontrado' ,
-	minChars: 1,
+        minChars: 1,
         hideTrigger:false,
-	hideLabel: true,        
-	allowBlank : false,
+        hideLabel: true,
+        allowBlank : false,
         //applyTo: 'cliente',
 		//renderTo:"comboClientes",
         //itemSelector: 'div.search-item',
@@ -117,10 +119,8 @@ PanelTarifarioAduanaCliente = function( config ){
         autoLoad : true,
         url: '<?=url_for("parametros/datosConceptos")?>',
         baseParams : {
-            impoexpo: this.impoexpo,
-            transporte: this.transporte,
-            modalidad: this.modalidad,
-            modo: "recargos"
+            impoexpo: "Aduanas", //[FIX-ME] Igual que el general
+            modo: "costos"
         },
         reader: new Ext.data.JsonReader(
             {
@@ -179,6 +179,7 @@ PanelTarifarioAduanaCliente = function( config ){
 
     this.columns = [
         this.expander,
+        this.checkColumn,
       {
         header: "Concepto",
         dataIndex: 'concepto',
@@ -277,7 +278,7 @@ PanelTarifarioAduanaCliente = function( config ){
             {name: 'observaciones', type: 'string'}
 
     ]);
-
+    
     this.store = new Ext.data.Store({
 
         autoLoad : false,
@@ -310,28 +311,34 @@ PanelTarifarioAduanaCliente = function( config ){
         this.tbar = null;
     }
     PanelTarifarioAduanaCliente.superclass.constructor.call(this, {
-       loadMask: {msg:'Cargando...'},
-       clicksToEdit: 2,
-       id: 'panel-tarifario-aduana-cliente',
-        plugins: [ this.expander],
+        loadMask: {msg:'Cargando...'},
+        clicksToEdit: 1,
+        id: 'panel-tarifario-aduana-cliente',
+        plugins: [ this.expander, this.checkColumn],
         closable: true,
-       //plugins: [],
-       view: new Ext.grid.GridView({
+        boxMinHeight: 400,
+        //plugins: [],
+        view: new Ext.grid.GridView({
 
             forceFit:true,
             enableRowBody:true,
             showPreview:true//,
             //getRowClass : this.applyRowClass
-       }),
-       listeners:{
+        }),
+        listeners:{
             validateedit: this.onValidateEdit,
             beforeedit: this.onBeforeEdit,
             rowcontextmenu: this.onRowcontextMenu,
             dblclick:this.onDblClickHandler,
             celldblclick: this.onCelldblclick            
-       },
-       tbar: this.tbar
+        },
+        tbar: this.tbar
     });
+
+    if( this.idcliente ){
+        this.store.setBaseParam("idcliente", this.idcliente);
+        this.store.load();
+    }
 
     var storePanelTarifarioAduanaCliente = this.store;
     var readOnly = this.readOnly;
@@ -569,8 +576,7 @@ Ext.extend(PanelTarifarioAduanaCliente, Ext.grid.EditorGridPanel, {
 
             if(!this.menu){ // create context menu on first right click
 
-                this.menu = new Ext.menu.Menu({
-                id:'grid_productos-ctx',
+                this.menu = new Ext.menu.Menu({                
                 enableScrolling : false,
                 items: [
                        {
@@ -580,19 +586,7 @@ Ext.extend(PanelTarifarioAduanaCliente, Ext.grid.EditorGridPanel, {
                             handler: function(){
                                 this.eliminarFila(this.ctxRecord, index);
                             }
-                        },/*,
-                        {
-                            text: 'Observaciones',
-                            iconCls: 'page_white_edit',
-                            scope:this,
-                            handler: function(){
-                                if( this.ctxRecord.data.iditem  ){
-                                    activeRow = this.ctxRecord;
-                                    this.ventanaObservaciones( this.ctxRecord );
-                                }
-
-                            }
-                        }*/
+                        }
                         ]
                 });
                 this.menu.on('hide', this.onContextHide , this);

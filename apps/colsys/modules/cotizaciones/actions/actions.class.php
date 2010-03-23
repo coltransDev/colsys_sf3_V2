@@ -2181,14 +2181,14 @@ class cotizacionesActions extends sfActions
         
         $conceptos = Doctrine::getTable("CotConceptoAduana")
                                   ->createQuery("c")
-                                  ->innerJoin("c.InoConcepto")
+                                  ->innerJoin("c.Costo")
                                   ->where("c.ca_idcotizacion = ?", $request->getParameter("idcotizacion"))
                                   ->execute();
 
         foreach( $conceptos as $concepto){
             $data[] = array("consecutivo"=>$concepto->getCaConsecutivo(),
                             "idconcepto"=>$concepto->getCaIdconcepto(),
-                            "concepto"=>$concepto->getInoConcepto()->getCaConcepto(),
+                            "concepto"=>utf8_encode($concepto->getCosto()->getCaCosto()),
                             "parametro"=>$concepto->getCaParametro(),
                             "valor"=>$concepto->getCaValor(),
                             "valorminimo"=>$concepto->getCaValorminimo(),
@@ -2284,108 +2284,6 @@ class cotizacionesActions extends sfActions
         $this->responseArray = array( "root"=>$data  );
         $this->setTemplate("responseTemplate");
     }
-
-    public function executeTarifarioAduana(){
-
-       
-       $data = array();
-        $data1 = array();
-        $data2 = array();
-
-        $cotizacion = Doctrine::getTable("Cotizacion")->find( $this->getRequestParameter( "idcotizacion" ) );
-
-        $contacto = Doctrine::getTable("Contacto")->find( $cotizacion->getCaIdcontacto() );
-        $cliente = Doctrine::getTable("Cliente")->find( $contacto->getCaIdcliente() );
-        $idcliente=$cliente->getCaIdcliente();
-
-        $conceptos = Doctrine::getTable("ConceptoAduanaCliente")
-                                  ->createQuery("c")
-                                  ->innerJoin("c.InoConcepto")
-                                  ->where("c.ca_idcliente = ? ", $idcliente )
-                                  ->execute();
-
-        foreach( $conceptos as $concepto){
-            $data1[] = array("consecutivo"=>$concepto->getCaConsecutivo(),
-                            "idconcepto"=>$concepto->getCaIdconcepto(),
-                            "concepto"=>$concepto->getInoConcepto()->getCaConcepto(),
-                            "parametro"=>$concepto->getCaParametro(),
-                            "valor"=>$concepto->getCaValor(),
-                            "valorminimo"=>$concepto->getCaValorminimo(),
-                            "aplicacion"=>$concepto->getCaAplicacion(),
-                            "aplicacionminimo"=>$concepto->getCaAplicacionminimo(),
-                            "fchini"=>$concepto->getCaFchini(),
-                            "fchfin"=>$concepto->getCaFchfin(),
-                            "observaciones"=>$concepto->getCaObservaciones(),
-                            "tipo"=>"2"
-                            );
-        }
-
-
-
-        $conceptos2 = Doctrine::getTable("ConceptoAduana")
-                                  ->createQuery("c")
-                                  ->innerJoin("c.InoConcepto")
-                                  ->execute();
-
-        foreach( $conceptos2 as $concepto){
-            $encontro=false;
-            for($k=0;$k<count($data1) ; $k++)
-            {
-//                echo $data1[$k]["idconcepto"].":".$concepto->getCaIdconcepto()."---".$data1[$k]["parametro"].":".$concepto->getCaParametro()."<br>";
-                if( trim($data1[$k]["idconcepto"])==trim($concepto->getCaIdconcepto()) && trim($data1[$k]["parametro"])==trim($concepto->getCaParametro()) )
-                {
-                    $encontro=true;
-                    break;
-                }
-            }
-            if($encontro==false)
-            {
-                    $data2[] = array("consecutivo"=>$concepto->getCaConsecutivo(),
-                            "idconcepto"=>$concepto->getCaIdconcepto(),
-                            "concepto"=>$concepto->getInoConcepto()->getCaConcepto(),
-                            "parametro"=>$concepto->getCaParametro(),
-                            "valor"=>$concepto->getCaValor(),
-                            "valorminimo"=>$concepto->getCaValorminimo(),
-                            "aplicacion"=>$concepto->getCaAplicacion(),
-                            "aplicacionminimo"=>$concepto->getCaAplicacionminimo(),
-                            "fchini"=>$concepto->getCaFchini(),
-                            "fchfin"=>$concepto->getCaFchfin(),
-                            "observaciones"=>$concepto->getCaObservaciones(),
-                            "tipo"=>"1"
-                            );
-            }
-        }
-
-        $this->data = array();
-        $this->data=array_merge($data2,$data1);
-
-  
-		$idcotizacion = $this->getRequestParameter("idcotizacion");
-		$this->idcomponent = "aduanas_".$idcotizacion;
-
-		
-
-  /*      $conceptos = Doctrine::getTable("ConceptoAduana")
-                                  ->createQuery("c")
-                                  ->innerJoin("c.InoConcepto")
-                                  ->execute();
-
-        foreach( $conceptos as $concepto){
-            $this->data[] = array("consecutivo"=>$concepto->getCaConsecutivo(),
-                            "idconcepto"=>$concepto->getCaIdconcepto(),
-                            "concepto"=>$concepto->getInoConcepto()->getCaConcepto(),
-                            "parametro"=>$concepto->getCaParametro(),
-                            "valor"=>$concepto->getCaValor(),
-                            "valorminimo"=>$concepto->getCaValorminimo(),
-                            "aplicacion"=>$concepto->getCaAplicacion(),
-                            "aplicacionminimo"=>$concepto->getCaAplicacionminimo(),
-                            "fchini"=>$concepto->getCaFchini(),
-                            "fchfin"=>$concepto->getCaFchfin(),
-                            "observaciones"=>$concepto->getCaObservaciones()
-                            );
-        }
-*/
-	}
-
+    
 }
 ?>

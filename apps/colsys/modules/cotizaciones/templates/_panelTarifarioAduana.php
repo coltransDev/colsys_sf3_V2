@@ -5,6 +5,8 @@
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
 
+
+include_component("pricing", "panelTarifarioAduanaCliente");
 ?>
 
 <script type="text/javascript">
@@ -68,10 +70,8 @@ PanelTarifarioAduana = function( config ){
         autoLoad : true,
         url: '<?=url_for("parametros/datosConceptos")?>',
         baseParams : {
-            impoexpo: '<?=Constantes::IMPO?>',
-            transporte: '<?=Constantes::MARITIMO?>',
-            modalidad: 'FCL',
-            modo: "recargos"
+            impoexpo: 'Aduanas',
+            modo: "costos"
         },
         reader: new Ext.data.JsonReader(
             {
@@ -248,10 +248,9 @@ PanelTarifarioAduana = function( config ){
     }
     PanelTarifarioAduana.superclass.constructor.call(this, {
        loadMask: {msg:'Cargando...'},
-       clicksToEdit: 2,
+       clicksToEdit: 1,
        id: 'panel-parametros',
-       plugins: [ this.expander],
-        closable: true,
+       plugins: [ this.expander],        
        title:'Conceptos Aduana',
        view: new Ext.grid.GridView({
 
@@ -582,103 +581,94 @@ Ext.extend(PanelTarifarioAduana, Ext.grid.EditorGridPanel, {
         var length = storeTarifaCot.data.length;
         
         
-        var url = '<?=url_for("cotizaciones/tarifarioAduana?idcotizacion=".$cotizacion->getcaIdcotizacion())?>';
+        var newComponent = new PanelTarifarioAduanaCliente({readOnly:true,
+                                                            idcliente: <?=$cotizacion->getCliente()->getCaIdcliente()?>,
+                                                            height: 400
+                                                           });
+
+            //Se crea la ventana
+
         
-        Ext.Ajax.request({
-            url: url,
-            params: {
+        winSeguros = new Ext.Window({
+            width       : 800,
+            height      : 460,
+            closeAction :'close',
+            plain       : true,
 
-            },
-            success: function(xhr) {
-                //alert( xhr.responseText );
-                var newComponent = eval(xhr.responseText);
-
-                //Se crea la ventana
-
-                winSeguros = new Ext.Window({
-                width       : 800,
-                height      : 460,
-                closeAction :'close',
-                plain       : true,
-
-                items       : [newComponent],
+            items       : [newComponent],
 
 
-                buttons: [
-                    {
-                        text     : 'Importar',
-                        handler  : function( ){
-                            storeTarifaAduana = newComponent.store;
-                            var index = 0;
+            buttons: [
+                {
+                    text     : 'Importar',
+                    handler  : function( ){
+                        storeTarifaAduana = newComponent.store;
+                        var index = 0;
 
-                            msg="";
-                //            alert(records.toSource());                            
-                           recor=records;
-                            storeTarifaAduana.each( function(r){
-                                if( r.data.sel==true ){
-                                    encontro=false;
-                                    for(i=0; i< (length-1); i++)
+                        msg="";
+            //            alert(records.toSource());
+                       recor=records;
+                        storeTarifaAduana.each( function(r){
+                            if( r.data.sel==true ){
+                                encontro=false;
+                                for(i=0; i< (length-1); i++)
+                                {
+                                    if(r.data.idconcepto==recor[i].data.idconcepto)
                                     {
-                                        if(r.data.idconcepto==recor[i].data.idconcepto)
+                                        if(r.data.parametro==recor[i].data.parametro)
                                         {
-                                            if(r.data.parametro==recor[i].data.parametro)
-                                            {
-                                                msg+=("Concepto:"+r.data.concepto+" - Parametro :"+r.data.parametro+"<br/> \n");
-                                                encontro=true;
-                                                break;
-                                            }
+                                            msg+=("Concepto:"+r.data.concepto+" - Parametro :"+r.data.parametro+"<br/> \n");
+                                            encontro=true;
+                                            break;
                                         }
                                     }
-                                    if(encontro==false)
-                                    {
-                                       var rec = new recordGrilla({idcotizacion:'<?=$cotizacion->getCaIdcotizacion()?>',
-                                                            idconcepto: '',
-                                                            concepto: '',
-                                                            parametro: '',
-                                                            valor: '',
-                                                            valorminimo:'',
-                                                            aplicacion:'',
-                                                            aplicacionminimo:'',
-                                                            orden: 'Z' // Se utiliza Z por que el orden es alfabetico
-                                                        });
-                                       records = [];
-                                       records.push( rec );                                       
-                                       storeTarifaCot.insert( 0, records );
-                                       rec = storeTarifaCot.getAt(0);
-                                       rec.set("idconcepto", r.data.idconcepto );
-                                       rec.set("concepto", r.data.concepto );
-                                       rec.set("parametro", r.data.parametro );
-                                       rec.set("valor", r.data.valor );
-                                       rec.set("valorminimo", r.data.valorminimo );
-                                       rec.set("aplicacion", r.data.aplicacion );
-                                       rec.set("aplicacionminimo", r.data.aplicacionminimo );
-                                       index++;
-                                    }
                                 }
-                            } );
-                            if(msg!="")
-                            {
-                              Ext.Msg.alert("Conceptos","No se ingresaron los siguientes conceptos porque ya se encuentran en la cotizacion <br/>"+msg);
+                                if(encontro==false)
+                                {
+                                   var rec = new recordGrilla({idcotizacion:'<?=$cotizacion->getCaIdcotizacion()?>',
+                                                        idconcepto: '',
+                                                        concepto: '',
+                                                        parametro: '',
+                                                        valor: '',
+                                                        valorminimo:'',
+                                                        aplicacion:'',
+                                                        aplicacionminimo:'',
+                                                        orden: 'Z' // Se utiliza Z por que el orden es alfabetico
+                                                    });
+                                   records = [];
+                                   records.push( rec );
+                                   storeTarifaCot.insert( 0, records );
+                                   rec = storeTarifaCot.getAt(0);
+                                   rec.set("idconcepto", r.data.idconcepto );
+                                   rec.set("concepto", r.data.concepto );
+                                   rec.set("parametro", r.data.parametro );
+                                   rec.set("valor", r.data.valor );
+                                   rec.set("valorminimo", r.data.valorminimo );
+                                   rec.set("aplicacion", r.data.aplicacion );
+                                   rec.set("aplicacionminimo", r.data.aplicacionminimo );
+                                   index++;
+                                }
                             }
+                        } );
+                        if(msg!="")
+                        {
+                          Ext.Msg.alert("Conceptos","No se ingresaron los siguientes conceptos porque ya se encuentran en la cotizacion <br/>"+msg);
+                        }
 
-                            winSeguros.close();
-                        }
-                    },
-                    {
-                        text     : 'Cancelar',
-                        handler  : function(){
-                            winSeguros.close();
-                        }
+                        winSeguros.close();
                     }
-                ]
-            });
-            winSeguros.show( );
-            },
-            failure: function() {
-                Ext.Msg.alert("Tab creation failed", "Server communication failure");
-            }
+                },
+                {
+                    text     : 'Cancelar',
+                    handler  : function(){
+                        winSeguros.close();
+                    }
+                }
+            ]
         });
+        winSeguros.show( );
     }
+            
 
 });
 

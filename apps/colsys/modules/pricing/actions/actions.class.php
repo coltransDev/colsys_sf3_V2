@@ -2768,13 +2768,13 @@ class pricingActions extends sfActions
         $data = array();
         $conceptos = Doctrine::getTable("ConceptoAduana")
                                   ->createQuery("c")
-                                  ->innerJoin("c.InoConcepto")
+                                  ->innerJoin("c.Costo")
                                   ->execute();
 
         foreach( $conceptos as $concepto){
             $data[] = array("consecutivo"=>$concepto->getCaConsecutivo(),
                             "idconcepto"=>$concepto->getCaIdconcepto(),
-                            "concepto"=>$concepto->getInoConcepto()->getCaConcepto(),
+                            "concepto"=>utf8_encode($concepto->getCosto()->getCaCosto()),
                             "parametro"=>$concepto->getCaParametro(),
                             "valor"=>$concepto->getCaValor(),
                             "valorminimo"=>$concepto->getCaValorminimo(),
@@ -2786,8 +2786,11 @@ class pricingActions extends sfActions
                             );
         }
 
-        $data[] = array("idconcepto"=>"", "concepto"=>"+", "orden"=>"Z");
-        $this->responseArray = array( "totalCount"=>count( $conceptos ), "root"=>$data  );
+        $readOnly = $request->getParameter("readOnly");
+        if( $readOnly!="true" ){
+            $data[] = array("idconcepto"=>"", "concepto"=>"+", "orden"=>"Z");
+        }
+        $this->responseArray = array( "totalCount"=>count( $data ), "root"=>$data  );
         $this->setTemplate("responseTemplate");
     }
 
@@ -2798,14 +2801,14 @@ class pricingActions extends sfActions
         $data2 = array();
         $conceptos = Doctrine::getTable("ConceptoAduanaCliente")
                                   ->createQuery("c")
-                                  ->innerJoin("c.InoConcepto")
+                                  ->innerJoin("c.Costo")
                                   ->where("c.ca_idcliente = ? ", $request->getParameter( "idcliente" ) )
                                   ->execute();
 
         foreach( $conceptos as $concepto){
             $data1[] = array("consecutivo"=>$concepto->getCaConsecutivo(),
                             "idconcepto"=>$concepto->getCaIdconcepto(),
-                            "concepto"=>$concepto->getInoConcepto()->getCaConcepto(),
+                            "concepto"=>utf8_encode($concepto->getCosto()->getCaCosto()),
                             "parametro"=>$concepto->getCaParametro(),
                             "valor"=>$concepto->getCaValor(),
                             "valorminimo"=>$concepto->getCaValorminimo(),
@@ -2822,7 +2825,7 @@ class pricingActions extends sfActions
         
         $conceptos2 = Doctrine::getTable("ConceptoAduana")
                                   ->createQuery("c")
-                                  ->innerJoin("c.InoConcepto")
+                                  ->innerJoin("c.Costo")
                                   ->execute();
 
         foreach( $conceptos2 as $concepto){
@@ -2840,7 +2843,7 @@ class pricingActions extends sfActions
             {
                     $data2[] = array("consecutivo"=>$concepto->getCaConsecutivo(),
                             "idconcepto"=>$concepto->getCaIdconcepto(),
-                            "concepto"=>$concepto->getInoConcepto()->getCaConcepto(),
+                            "concepto"=>utf8_encode($concepto->getCosto()->getCaCosto()),
                             "parametro"=>$concepto->getCaParametro(),
                             "valor"=>$concepto->getCaValor(),
                             "valorminimo"=>$concepto->getCaValorminimo(),
@@ -2854,9 +2857,11 @@ class pricingActions extends sfActions
             }
         }
         $data=array_merge($data2,$data1);
-
-        $data[] = array("idconcepto"=>"", "concepto"=>"+", "orden"=>"Z");
-        $this->responseArray = array( "totalCount"=>count( $conceptos ), "root"=>$data  );
+        $readOnly = $request->getParameter("readOnly");
+        if( $readOnly!="true" ){
+            $data[] = array("idconcepto"=>"", "concepto"=>"+", "orden"=>"Z");
+        }
+        $this->responseArray = array( "totalCount"=>count( $data ), "root"=>$data  );
         $this->setTemplate("responseTemplate");
     }
 

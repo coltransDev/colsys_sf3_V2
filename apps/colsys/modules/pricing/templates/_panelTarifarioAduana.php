@@ -68,10 +68,8 @@ PanelTarifarioAduana = function( config ){
         autoLoad : true,
         url: '<?=url_for("parametros/datosConceptos")?>',
         baseParams : {
-            impoexpo: this.impoexpo,
-            transporte: this.transporte,
-            modalidad: this.modalidad,
-            modo: "recargos"
+            impoexpo: "Aduanas", //[FIX-ME] Organizar todos los conceptos
+            modo: "costos"
         },
         reader: new Ext.data.JsonReader(
             {
@@ -314,7 +312,7 @@ PanelTarifarioAduana = function( config ){
     }
     PanelTarifarioAduana.superclass.constructor.call(this, {
        loadMask: {msg:'Cargando...'},
-       clicksToEdit: 2,
+       clicksToEdit: 1,
        id: 'panel-parametros',
        plugins: [ this.expander],
         closable: true,
@@ -481,7 +479,7 @@ Ext.extend(PanelTarifarioAduana, Ext.grid.EditorGridPanel, {
                                        aplicacion:'',
                                        aplicacionminimo:'',
                                        fchini:'',
-                                       fchfin:''
+                                       fchfin:'',
                                        orden: 'Z' // Se utiliza Z por que el orden es alfabetico
                                     });
 

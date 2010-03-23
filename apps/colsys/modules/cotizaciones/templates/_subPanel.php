@@ -49,8 +49,7 @@ SubPanel = function(){
     }
     ?>
     this.panelArchivos = new PanelArchivos({
-                                                folder:"<?=base64_encode($cotizacion->getDirectorioBase())?>",
-                                                closable:true,
+                                                folder:"<?=base64_encode($cotizacion->getDirectorioBase())?>",                                                
                                                 autoHeight:true,
                                                 title:"Archivos",
                                                 closable:false
