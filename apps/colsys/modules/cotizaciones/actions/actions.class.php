@@ -747,103 +747,114 @@ class cotizacionesActions extends sfActions
 	public function executeCopiarCotizacion(){
 		$cotizacion = Doctrine::getTable("Cotizacion")->find($this->getRequestParameter("idcotizacion"));
 		$this->forward404Unless($cotizacion);
-		
-		$newCotizacion = $cotizacion->copy( false ); //La copia recursiva se hace paso a paso por que las llaves son naturales 
-		$user = $this->getUser();		
-		$sig = CotizacionTable::siguienteConsecutivo( date("Y") );
-		$newCotizacion->setCaConsecutivo( $sig ); 		
-		$newCotizacion->setCaIdgEnvioOportuno(null);		
-		$newCotizacion->setCaFchcreado( date("Y-m-d H:i:s") );
-		$newCotizacion->setCaUsucreado( $user->getUserId() );
-		$newCotizacion->setCaFchactualizado( null );
-		$newCotizacion->setCaUsuactualizado( null );
-		$newCotizacion->setCaFchanulado( null );
-		$newCotizacion->setCaUsuanulado( null );	
-		$newCotizacion->save();
-		
-		$productos = $cotizacion->getCotProductos();
-                
-		foreach( $productos as $producto ){
-            
-			$newProducto = $producto->copy( false );
-			$newProducto->setCaIdcotizacion( $newCotizacion->getCaIdcotizacion() );
-            $newProducto->setCaEtapa( Cotizacion::EN_SEGUIMIENTO );
-            $newProducto->setCaIdtarea( null );
-			$newProducto->save();
 
-			$opciones = $producto->getCotOpciones();
-			foreach( $opciones as $opcion ){				
-				$newOpcion = $opcion->copy( false );
-				$newOpcion->setCaIdcotizacion( $newCotizacion->getCaIdcotizacion() );
-				$newOpcion->setCaIdproducto( $newProducto->getCaIdproducto() );
-				$newOpcion->save();
-				
-				$recargos = $opcion->getCotRecargos( );
-				foreach( $recargos as $recargo ){	
-					$newRecargo = $recargo->copy( false );
-					$newRecargo->setCaIdcotizacion( $newCotizacion->getCaIdcotizacion() );
-					$newRecargo->setCaIdproducto( $newProducto->getCaIdproducto() );
-					$newRecargo->setCaIdopcion( $newOpcion->getCaIdopcion() );
-					$newRecargo->setCaIdconcepto( $recargo->getCaIdconcepto() );
-					$newRecargo->setCaIdrecargo( $recargo->getCaIdrecargo() );
-					$newRecargo->setCaModalidad( $recargo->getCaModalidad() );
-					$newRecargo->save();
-				}		
-			}	
+        try{
+            $conn = $cotizacion->getTable()->getConnection();
+            $conn->beginTransaction();
 
-            
-			$recargos = $producto->getRecargosGenerales();            
-			foreach( $recargos as $recargo ){	
-				
-				$newRecargo = $recargo->copy( false );
-				$newRecargo->setCaIdcotizacion( $newCotizacion->getCaIdcotizacion() );
-				$newRecargo->setCaIdproducto(  $newProducto->getCaIdproducto() );
-				$newRecargo->setCaIdopcion( $recargo->getCaIdopcion() );
-				$newRecargo->setCaIdconcepto( $recargo->getCaIdconcepto() );
-				$newRecargo->setCaIdrecargo( $recargo->getCaIdrecargo() );
-				$newRecargo->setCaModalidad( $recargo->getCaModalidad() );
-				$newRecargo->save();
-                //echo $recargo->getCaIdcotrecargo()." ".$newCotizacion->getCaIdcotizacion()." ->antes:".$recargo->getCaIdproducto()." ->despues:".$newProducto->getCaIdproducto()." ".$recargo->getCaIdrecargo()."<br />";
-			}
-		}
-        
-		$recargos = $cotizacion->getRecargosLocales();
-		foreach( $recargos as $recargo ){	
-			$newRecargo = $recargo->copy( false );
-			$newRecargo->setCaIdcotizacion( $newCotizacion->getCaIdcotizacion() );
-			$newRecargo->setCaIdproducto( $recargo->getCaIdproducto() );
-			$newRecargo->setCaIdopcion( $recargo->getCaIdopcion() );
-			$newRecargo->setCaIdconcepto( $recargo->getCaIdconcepto() );
-			$newRecargo->setCaIdrecargo( $recargo->getCaIdrecargo() );
-			$newRecargo->setCaModalidad( $recargo->getCaModalidad() );
-			$newRecargo->save();
-		}	
-		
-			
-			
-		$seguros = $cotizacion->getCotSeguro();
-		foreach( $seguros as $seguro ){	
-			$newSeguro = $seguro->copy( false );
-			$newSeguro->setCaIdcotizacion( $newCotizacion->getCaIdcotizacion() );
-			$newSeguro->save();
-		}
-		
-		$continuaciones = $cotizacion->getCotContinuacion();
-		foreach( $continuaciones as $continuacion ){	
-			$newContinuacion = $continuacion->copy( false );			
-			$newContinuacion->setCaIdcotizacion( $newCotizacion->getCaIdcotizacion() );
-			$newContinuacion->save();	
-					
-		}
+            $newCotizacion = $cotizacion->copy( false ); //La copia recursiva se hace paso a paso por que las llaves son naturales
+            $user = $this->getUser();
+            $sig = CotizacionTable::siguienteConsecutivo( date("Y") );
+            $newCotizacion->setCaConsecutivo( $sig );
+            $newCotizacion->setCaIdgEnvioOportuno(null);
+            $newCotizacion->setCaFchcreado( date("Y-m-d H:i:s") );
+            $newCotizacion->setCaUsucreado( $user->getUserId() );
+            $newCotizacion->setCaFchactualizado( null );
+            $newCotizacion->setCaUsuactualizado( null );
+            $newCotizacion->setCaFchanulado( null );
+            $newCotizacion->setCaUsuanulado( null );
+            $newCotizacion->save( $conn );
+
+            $productos = $cotizacion->getCotProductos();
+
+            foreach( $productos as $producto ){
+
+                $newProducto = $producto->copy( false );
+                $newProducto->setCaIdcotizacion( $newCotizacion->getCaIdcotizacion() );
+                $newProducto->setCaEtapa( Cotizacion::EN_SEGUIMIENTO );
+                $newProducto->setCaIdtarea( null );
+                $newProducto->save( $conn );
+
+                $opciones = $producto->getCotOpciones();
+                foreach( $opciones as $opcion ){
+                    $newOpcion = $opcion->copy( false );
+                    $newOpcion->setCaIdcotizacion( $newCotizacion->getCaIdcotizacion() );
+                    $newOpcion->setCaIdproducto( $newProducto->getCaIdproducto() );
+                    $newOpcion->save( $conn );
+
+                    $recargos = $opcion->getCotRecargos( );
+                    foreach( $recargos as $recargo ){
+                        $newRecargo = $recargo->copy( false );
+                        $newRecargo->setCaIdcotizacion( $newCotizacion->getCaIdcotizacion() );
+                        $newRecargo->setCaIdproducto( $newProducto->getCaIdproducto() );
+                        $newRecargo->setCaIdopcion( $newOpcion->getCaIdopcion() );
+                        $newRecargo->setCaIdconcepto( $recargo->getCaIdconcepto() );
+                        $newRecargo->setCaIdrecargo( $recargo->getCaIdrecargo() );
+                        $newRecargo->setCaModalidad( $recargo->getCaModalidad() );
+                        $newRecargo->save( $conn );
+                    }
+                }
 
 
-        $contactos = $cotizacion->getCotContactoAg();
-		foreach( $contactos as $contacto ){
-			$newContacto = $contacto->copy( false );
-			$newContacto->setCaIdcotizacion( $newCotizacion->getCaIdcotizacion() );
-			$newContacto->save();
+                $recargos = $producto->getRecargosGenerales();
+                foreach( $recargos as $recargo ){
 
-		}
+                    $newRecargo = $recargo->copy( false );
+                    $newRecargo->setCaIdcotizacion( $newCotizacion->getCaIdcotizacion() );
+                    $newRecargo->setCaIdproducto(  $newProducto->getCaIdproducto() );
+                    $newRecargo->setCaIdopcion( $recargo->getCaIdopcion() );
+                    $newRecargo->setCaIdconcepto( $recargo->getCaIdconcepto() );
+                    $newRecargo->setCaIdrecargo( $recargo->getCaIdrecargo() );
+                    $newRecargo->setCaModalidad( $recargo->getCaModalidad() );
+                    $newRecargo->save( $conn );
+                    //echo $recargo->getCaIdcotrecargo()." ".$newCotizacion->getCaIdcotizacion()." ->antes:".$recargo->getCaIdproducto()." ->despues:".$newProducto->getCaIdproducto()." ".$recargo->getCaIdrecargo()."<br />";
+                }
+            }
+
+            $recargos = $cotizacion->getRecargosLocales();
+            foreach( $recargos as $recargo ){
+                $newRecargo = $recargo->copy( false );
+                $newRecargo->setCaIdcotizacion( $newCotizacion->getCaIdcotizacion() );
+                $newRecargo->setCaIdproducto( $recargo->getCaIdproducto() );
+                $newRecargo->setCaIdopcion( $recargo->getCaIdopcion() );
+                $newRecargo->setCaIdconcepto( $recargo->getCaIdconcepto() );
+                $newRecargo->setCaIdrecargo( $recargo->getCaIdrecargo() );
+                $newRecargo->setCaModalidad( $recargo->getCaModalidad() );
+                $newRecargo->save( $conn );
+            }
+
+
+
+            $seguros = $cotizacion->getCotSeguro();
+            foreach( $seguros as $seguro ){
+                $newSeguro = $seguro->copy( false );
+                $newSeguro->setCaIdcotizacion( $newCotizacion->getCaIdcotizacion() );
+                $newSeguro->save( $conn );
+            }
+
+            $continuaciones = $cotizacion->getCotContinuacion();
+            foreach( $continuaciones as $continuacion ){
+                $newContinuacion = $continuacion->copy( false );
+                $newContinuacion->setCaIdcotizacion( $newCotizacion->getCaIdcotizacion() );
+                $newContinuacion->save( $conn );
+
+            }
+
+
+            $contactos = $cotizacion->getCotContactoAg();
+            foreach( $contactos as $contacto ){
+                $newContacto = $contacto->copy( false );
+                $newContacto->setCaIdcotizacion( $newCotizacion->getCaIdcotizacion() );
+                $newContacto->save( $conn );
+
+            }
+            $conn->commit();
+        }
+        catch (Exception $e){
+
+            throw $e;
+            $conn->rollBack();
+        }
 				
 		$this->redirect("cotizaciones/consultaCotizacion?id=".$newCotizacion->getCaIdcotizacion());
 	}
