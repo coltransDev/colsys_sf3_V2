@@ -42,7 +42,7 @@ class helpdeskActions extends sfActions
 		$this->user = $this->getUser();
 		
 		$this->nivel = $this->getUser()->getNivelAcceso( helpdeskActions::RUTINA );
-		
+		//echo $this->getUser()->getUserId()." ".$this->nivel;
 		if( !$this->nivel ){
 			$this->nivel = 0;
 		}
