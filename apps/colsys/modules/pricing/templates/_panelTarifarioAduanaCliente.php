@@ -485,7 +485,54 @@ Ext.extend(PanelTarifarioAduanaCliente, Ext.grid.EditorGridPanel, {
         );
 
     },
-    onValidateEdit : function(e){        
+    onValidateEdit : function(e){
+
+   if( e.field == "parametro" || e.field == "concepto" ){
+
+            var rec = e.record;
+            var recordConcepto = this.record;
+            var storeConcepto = this.store;
+            var store = this.store;
+            var lenght = this.store.data.length;
+            var records = store.getRange();
+//            alert(records.toSource());
+            if(e.field == "concepto")
+            {
+               //alert(e.value)
+                for( var i=0; i< (lenght); i++){
+                    //if(records[i].data.tipo=="2")
+                    {
+                        //alert(e.record.data.idconcepto+":"+records[i].data.idconcepto)
+                        if(e.value==records[i].data.idconcepto )
+                        {
+                            //alert(records[i].data.parametro)
+                             if(!records[i].data.parametro)
+                            {
+                                alert("Este concepto y parametro ya han asignados,\n seleccione otro por favor");
+                                return false;
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                for( var i=0; i< (lenght); i++){
+                    //if(records[i].data.tipo=="2")
+                    {
+                        //alert(e.record.data.idconcepto+":"+records[i].data.idconcepto)
+                        if(e.record.data.idconcepto==records[i].data.idconcepto )
+                        {
+                             if(e.value==records[i].data.parametro)
+                            {
+                                alert("Este concepto y parametro ya han asignados,\n seleccione otro por favor");
+                                return false;
+                            }
+                        }
+                    }
+                }
+            }
+        }
         if( e.field == "concepto" ){
             var rec = e.record;
             var recordConcepto = this.record;
@@ -523,50 +570,7 @@ Ext.extend(PanelTarifarioAduanaCliente, Ext.grid.EditorGridPanel, {
             }
         }
 //        alert(e.field)
-        if( e.field == "parametro" || e.field == "concepto" ){
-            var rec = e.record;
-            var recordConcepto = this.record;
-            var storeConcepto = this.store;
-            var store = this.store;
-            var lenght = this.store.data.length;
-            var records = store.getRange();
-//            alert(records.toSource());
-            if(e.field == "concepto")
-            {
-                for( var i=0; i< (lenght-2); i++){
-                    //if(records[i].data.tipo=="2")
-                    {
-                        //alert(e.record.data.idconcepto+":"+records[i].data.idconcepto)
-                        if(e.record.data.idconcepto==records[i].data.idconcepto )
-                        {
-                            //alert(records[i].data.parametro)
-                             if(!records[i].data.parametro)
-                            {
-                                alert("Este concepto y parametro ya han asignados,\n seleccione otro por favor");
-                                return false;
-                            }
-                        }
-                    }
-                }
-            }
-            else
-            {
-                for( var i=0; i< (lenght); i++){
-                    //if(records[i].data.tipo=="2")
-                    {
-                        //alert(e.record.data.idconcepto+":"+records[i].data.idconcepto)
-                        if(e.record.data.idconcepto==records[i].data.idconcepto )
-                        {
-                             if(e.value==records[i].data.parametro)
-                            {
-                                alert("Este concepto y parametro ya han asignados,\n seleccione otro por favor");
-                                return false;
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        
         return true;
     }
     ,
