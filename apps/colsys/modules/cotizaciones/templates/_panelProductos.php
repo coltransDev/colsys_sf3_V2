@@ -29,8 +29,7 @@ PanelProductos = function( config ){
         autoLoad : false,
         url: '<?=url_for("parametros/datosConceptos")?>',
         reader: new Ext.data.JsonReader(
-            {
-                id: 'idconcepto',
+            {                
                 root: 'root',
                 totalProperty: 'total',
                 successProperty: 'success'
@@ -45,26 +44,24 @@ PanelProductos = function( config ){
         autoLoad : true,
         url: '<?=url_for("parametros/datosConceptos")?>',
         baseParams:{
-               impoexpo:	'Importación',
-               modalidad:	'FCL',
-               transporte:	'Marítimo'
-            },
-        reader: new Ext.data.JsonReader(
-            {
-                id: 'equipo',
-                root: 'root',
-                totalProperty: 'total',
-                successProperty: 'success'
-            },
+               transporte:"<?=Constantes::MARITIMO?>",
+               modalidad:"<?=Constantes::FCL?>",
+               impoexpo:"<?=Constantes::IMPO?>"
+        },
+        reader: new Ext.data.JsonReader({                
+                    root: 'root',
+                    totalProperty: 'total',
+                    successProperty: 'success'
+                },
 
-            Ext.data.Record.create([
-                {name: 'idconcepto'},
-                {name: 'concepto'}
-            ])
+                Ext.data.Record.create([
+                    {name: 'idconcepto'},
+                    {name: 'concepto'}
+                ])
         )
     });
 
-this.editorConceptos = new Ext.form.ComboBox({
+    this.editorConceptos = new Ext.form.ComboBox({
         fieldLabel: 'Concepto',
         typeAhead: true,
         forceSelection: true,
@@ -213,7 +210,7 @@ this.editorConceptos = new Ext.form.ComboBox({
                     sortable: false,
                     dataIndex: 'equipo',
                     hideable: false,
-                    editor:  <?=include_component("widgets", "concepto" ,array("id"=>"equipo", "transporte"=>Constantes::MARITIMO))?>
+                    editor: this.editorEquipos
                 },
                 {
                     id: 'valor_tar',
@@ -768,11 +765,8 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
             }
             this.storeConceptos.load();
         }
-        if( e.field == "equipo"){
-             var ed = this.colModel.getCellEditor(e.column, e.row);
-             ed.field.store.baseParams = {transporte:"<?=Constantes::MARITIMO?>",modalidad:e.record.data.modalidad ,impoexpo:"Exportación"};
-             ed.field.store.reload();
-        }
+        
+        
 
         if( e.field=="aplica_tar" || e.field=="aplica_min" ){
             var dataAereo = [
