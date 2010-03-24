@@ -13,7 +13,10 @@ foreach( $results as $modalidad=>$grupos ){
         transporte: '<?=$transporte?>',
         modalidad: '<?=$modalidad?>',
         id: 'root_<?=$impoexpo."_".$transporte."_".$modalidad?>',
-		children:[			
+		children:[
+            <?
+            if( $transporte!=Constantes::OTMDTA ){
+            ?>
 			{
 				text:'Recargos locales',                
 				leaf:true,
@@ -25,6 +28,7 @@ foreach( $results as $modalidad=>$grupos ){
 
 			},
 			<?
+            }
 			if( $transporte==Constantes::MARITIMO ){
                 if( $transporte==Constantes::MARITIMO ){ 
                     $linea = "Naviera";
