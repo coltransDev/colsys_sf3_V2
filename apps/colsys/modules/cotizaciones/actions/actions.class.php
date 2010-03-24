@@ -874,8 +874,8 @@ class cotizacionesActions extends sfActions
        
 		$user_id = $this->getUser()->getUserId();
 
-        if( $this->getRequestParameter("idproducto") ){
-			$producto = Doctrine::getTable("CotProducto")->find(  $this->getRequestParameter("idproducto") );
+        if( $this->getRequestParameter("idproducto") || $this->getRequestParameter("idtrayecto") ){
+			$producto = Doctrine::getTable("CotProducto")->find(  ($this->getRequestParameter("idproducto")==null)?$this->getRequestParameter("idtrayecto" ):$this->getRequestParameter("idproducto"));
 			$this->forward404Unless( $producto );
             $cotizacion = $producto->getCotizacion();
 		}else{
