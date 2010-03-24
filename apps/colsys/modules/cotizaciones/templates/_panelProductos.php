@@ -1132,12 +1132,12 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
         if(typeof(record)!="undefined"){ // Coloca los datos en la ventana
             var fp = Ext.getCmp("producto-form");
             form = fp.getForm().loadRecord(record);
+            
+            fp.getForm().findField("idtrayecto").setValue(record.data.idproducto);
             fp.getForm().findField("tra_origen_id").setValue(record.data.tra_origen_value);
             fp.getForm().findField("tra_origen_id").hiddenField.value = record.data.tra_origen;
             fp.getForm().findField("ciu_origen_id").setValue(record.data.ciu_origen_value);
             fp.getForm().findField("ciu_origen_id").hiddenField.value = record.data.ciu_origen;
-
-
 
 
             fp.getForm().findField("tra_destino_id").setValue(record.data.tra_destino_value);
