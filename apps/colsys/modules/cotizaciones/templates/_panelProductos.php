@@ -1332,7 +1332,7 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
                                            trayecto: activeRecord.data.trayecto,
                                            transporte: activeRecord.data.transporte,
                                            modalidad: activeRecord.data.modalidad,
-                                           idconcepto: activeRecord.data.iditem,
+                                           idconcepto: activeRecord.data.iditem,                                           
                                            idopcion: idopcion,
                                            producto: activeRecord.data.producto,
                                            tra_origen: activeRecord.data.tra_origen,
@@ -1378,7 +1378,9 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
                                         var newRec = storeProductos.getById( newRec.id );
 
                                         newRec.set("item", r.data.nconcepto );
-                                        newRec.set("idconcepto", r.data.idconcepto )
+                                        newRec.set("idconcepto", r.data.idconcepto );
+                                        newRec.set("idequipo", r.data.idequipo );
+                                        newRec.set("equipo", r.data.equipo );
 
                                         newRec.set("iditem", iditem );
 
