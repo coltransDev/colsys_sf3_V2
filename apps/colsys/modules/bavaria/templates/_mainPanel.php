@@ -94,14 +94,14 @@ MainPanel = function(){
       {
         header: "Reporte",
         dataIndex: 'consecutivo',
-        sortable:false,
+        sortable:true,
         width: 80,
         locked: true
       },
       {
         header: "Orden Número",
         dataIndex: 'orden_nro',
-        sortable:false,
+        sortable:true,
         width: 100,
         locked: true,
         editor: new Ext.form.TextField({
@@ -118,13 +118,11 @@ MainPanel = function(){
       {
         header: "Factura Prov.",
         dataIndex: 'factura_nro',
-        sortable:false,
+        sortable:true,
         width: 90,
-        editor: new Ext.form.NumberField({
-				allowBlank: false ,
-				allowNegative: false,
-				decimalPrecision :3
-			})
+        editor: new Ext.form.TextField({
+            allowBlank: false
+        })
       },
       {
         header: "Fch. Factura",
@@ -224,14 +222,14 @@ MainPanel = function(){
       {
         header: "Línea Naviera",
         dataIndex: 'transportadora',
-        sortable:false,
+        sortable:true,
         width: 100,
         editor: this.editorNavieras
       },
       {
         header: "Bandera",
         dataIndex: 'bandera',
-        sortable:false,
+        sortable:true,
         width: 100,
         editor: this.editorBanderas
       },
