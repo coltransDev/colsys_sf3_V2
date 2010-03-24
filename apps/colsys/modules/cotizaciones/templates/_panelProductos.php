@@ -1493,7 +1493,7 @@ PanelProductos = function( config ){
         autoLoad : true,
         url: '<?=url_for("parametros/datosConceptos")?>',
         baseParams:{
-               impoexpo:	'Exportación',
+               impoexpo:	'Importación',
                modalidad:	'FCL',
                transporte:	'Marítimo'
             },
