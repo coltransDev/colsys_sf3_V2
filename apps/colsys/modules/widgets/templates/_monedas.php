@@ -19,6 +19,7 @@ new Ext.form.ComboBox({
         triggerAction: 'all',
         lazyRender:true,
         listClass: 'x-combo-list-small',
+        forceSelection: true,
         store : [
         <?
         $i=0;
