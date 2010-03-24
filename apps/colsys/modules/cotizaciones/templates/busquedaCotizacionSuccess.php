@@ -94,9 +94,19 @@ $pagerLayout->display();
             <td width="35%" class="listar">
                 <?
                 echo isset($estados[$producto->getCaEtapa()])?$estados[$producto->getCaEtapa()]:"";
+
+                $seg = $producto->getUltSeguimiento();
                 if( $producto->getCaEtapa()==Cotizacion::EN_SEGUIMIENTO ){
                 ?>
-                <a onclick="window.open('<?=url_for("cotseguimientos/formSeguimiento?idcotizacion=".$cotizacion->getCaIdcotizacion()."&idproducto=".$producto->getCaIdproducto())?>')"><?=image_tag("16x16/todo.gif")?></a>
+                <a style="cursor:pointer" onclick="window.open('<?=url_for("cotseguimientos/formSeguimiento?idcotizacion=".$cotizacion->getCaIdcotizacion()."&idproducto=".$producto->getCaIdproducto())?>')" title="Haga click aca para crear un seguimiento. Se abrira una nueva ventana.">
+                        <?
+                        if( $seg ){
+                            echo image_tag("16x16/button_ok.gif")."  <br />Ult. seguimiento ".Utils::fechaMes($seg->getCaFchseguimiento());
+                        }else{
+                            echo image_tag("16x16/button_cancel.gif")." <br /> Sin seguimientos";
+                        }
+                        ?>
+                </a>
                 <?
                 }
                 ?>
@@ -116,8 +126,17 @@ $pagerLayout->display();
                     <?
                     echo isset($estados[$cotizacion->getCaEtapa()])?$estados[$cotizacion->getCaEtapa()]:"";
                     if( $cotizacion->getCaEtapa()==Cotizacion::EN_SEGUIMIENTO ){
+                        $seg = $cotizacion->getUltSeguimiento();
                     ?>
-                    <a onclick="window.open('<?=url_for("cotseguimientos/formSeguimiento?idcotizacion=".$cotizacion->getCaIdcotizacion())?>')"><?=image_tag("16x16/todo.gif")?></a>
+                    <a style="cursor:pointer"  onclick="window.open('<?=url_for("cotseguimientos/formSeguimiento?idcotizacion=".$cotizacion->getCaIdcotizacion())?>')" title="Haga click aca para crear un seguimiento. Se abrira una nueva ventana.">
+                            <?
+                            if( $seg ){
+                                echo image_tag("16x16/button_ok.gif")."  <br />Ult. seguimiento ".Utils::fechaMes($seg->getCaFchseguimiento());
+                            }else{
+                                echo image_tag("16x16/button_cancel.gif")." <br /> Sin seguimientos";
+                            }
+                            ?>
+                     </a>
                     <?
                     }
                     ?>
