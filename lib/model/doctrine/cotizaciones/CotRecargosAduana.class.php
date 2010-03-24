@@ -12,5 +12,4 @@
  */
 class CotRecargosAduana extends BaseCotRecargosAduana
 {
-
 }

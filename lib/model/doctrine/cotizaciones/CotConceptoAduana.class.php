@@ -12,5 +12,4 @@
  */
 class CotConceptoAduana extends BaseCotConceptoAduana
 {
-
 }
