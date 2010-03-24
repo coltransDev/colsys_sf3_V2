@@ -403,6 +403,11 @@ PanelProductos = function( config ){
         if( field!="item" && record.data.tipo=="concepto" && record.data.iditem =="9999"  ){
             return false;
         }
+        
+        if( field=="equipo" && (record.data.transporte!="<?=Constantes::TERRESTRE?>"&&record.data.transporte!="<?=Constantes::OTMDTA?>") ){
+
+            return false;
+        }
 
         return Ext.grid.ColumnModel.prototype.isCellEditable.call(this, colIndex, rowIndex);
     }
