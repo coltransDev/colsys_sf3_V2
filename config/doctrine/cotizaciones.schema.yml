@@ -70,6 +70,12 @@ Cotizacion:
       local: ca_idcotizacion
       foreign: ca_idcotizacion
       type: many
+    CotSeguimiento:
+      local: ca_idcotizacion
+      foreign: ca_idcotizacion
+      type: many
+      orderBy: ca_fchseguimiento DESC
+     
       
 
 CotProducto:
@@ -133,6 +139,11 @@ CotProducto:
       foreign: ca_idciudad
       type: one
       class: Ciudad
+    CotSeguimiento:
+      local: ca_idproducto
+      foreign: ca_idproducto
+      type: many
+      orderBy: ca_fchseguimiento DESC
     
     
 
