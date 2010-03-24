@@ -43,7 +43,7 @@ if( !$cotizacion->getCaUsuanulado() ){
 
     if( $trayectosVencidos>0 ){
     ?>
-    <div class="box1">
+    <div class="box1" style="width: 830px">
        <?=image_tag("22x22/agt_update_critical.gif")?> <b>Atencion:</b> <?=$trayectosVencidos?> trayectos tienen la vigencia vencida.
     </div>
     <br />
