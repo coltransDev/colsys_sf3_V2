@@ -556,13 +556,43 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
     * tambien inserta otra columna en blanco para que el usuario continue digitando
     */
     onValidateEdit: function(e){
+       //alert(e.toSource());
+       var rec = e.record;
+       var ed = this.colModel.getCellEditor(e.column, e.row);
+       var store = ed.field.store;
+       storeProductos = this.store;
+       recordProductos = this.record;
+       iditem="-1";
+       validate=true;
+
+       storeProductos.each( function( r ){
+          if(r.data.tipo=="concepto" && !r.data.iditem )
+          {
+             iditem=r.data.iditem;
+//             alert(iditem);
+          }
+          if(r.data.tipo=="recargo" && iditem )
+          {
+          //alert("concepto="+r.data.idconcepto+"-\niditem="+r.data.iditem +"-\ntipo="+ r.data.tipo+"-\nvalue="+e.value);
+             if(e.value==r.data.iditem )
+             {
+             //   alert("concepto="+r.data.idconcepto+"-\niditem="+r.data.iditem +"-\ntipo="+ r.data.tipo+"-\nvalue="+e.value);
+   //             alert(r.data.idconcepto+"=="+e.value)
+                alert("Este recargo ya se encuentra en el listado porfavor seleccion otro");
+                validate=false;
+                //alert("concepto="+r.data.idconcepto+"-\niditem="+r.data.iditem +"-\ntipo="+ r.data.tipo+"-\nvalue="+e.value);
+                //alert(r.data.idconcepto+"--"+e.value);
+                //alert(r.data.toSource());
+             }
+          }
+          //alert(r.data.idconcepto+"-"+r.data.iditem +"-"+ r.data.tipo+"-"+e.value);
+       });
+       if(validate==false)
+          return false;
+
         if( e.field == "item"){
-            var rec = e.record;
-            var ed = this.colModel.getCellEditor(e.column, e.row);
-            var store = ed.field.store;
-            storeProductos = this.store;
-            recordProductos = this.record;
-            store.each( function( r ){
+            
+            store.each( function( r ){               
                     if( r.data.idconcepto==e.value ){
                         if( !rec.data.iditem && rec.data.tipo=="concepto" ){
                             var newRec = new recordProductos({
@@ -648,6 +678,16 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
                 }
             )
         }
+        else if( e.field == "equipo"){
+           
+            store.each( function( r ){
+                    if( r.data.idconcepto==e.value ){
+                        rec.set("idequipo", r.data.idconcepto );
+                        e.value = r.data.concepto;
+                        return true;
+                    }
+                });
+         }
     },
 
     /*
@@ -938,6 +978,8 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
     },
     nuevoRecargo: function(){
         rec = this.ctxRecord;
+        //alert(rec.toSource());
+        //if( e.field == "item"){
         var recordProductos = this.record;
         var storeProductos = this.store;
         if( rec.data.iditem && rec.data.idopcion ){
