@@ -1291,8 +1291,8 @@ class cotizacionesActions extends sfActions
 				$row['idmoneda']=$recargo->getCaIdmoneda();
 				$row['detalles']=utf8_encode($recargo->getCaObservaciones());
 				$row['tipo']="recargo";
-            $row['idequipo']=$recargo->getCaIdEquipo();
-            $row['equipo']=$recargo->getEquipo()->getCaConcepto();
+                $row['idequipo']=$recargo->getCaIdequipo();
+                $row['equipo']=$recargo->getEquipo()->getCaConcepto();
 
 				
 				$row['orden']="Y-".utf8_encode($tipoRecargo->getCaRecargo());
