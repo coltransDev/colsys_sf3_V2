@@ -91,6 +91,7 @@ class bavariaActions extends sfActions {
             $this->ordenes = Doctrine::getTable("Bavaria")
                     ->createQuery("bv")
                     ->where("bv.ca_usureportado IS NULL")
+                    ->andwhere("bv.ca_usuarchivado IS NULL")
                     ->addOrderBy("bv.ca_orden_nro")
                     ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
                     ->execute();
