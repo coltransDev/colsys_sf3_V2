@@ -71,9 +71,10 @@ class parametrosActions extends sfActions
 		$tipo = utf8_decode($request->getParameter("tipo"));
 		$modo = $request->getParameter("modo");
 
-		$this->forward404Unless( $transporte );
 
-		if( $modo=="recargos" ){			
+		if( $modo=="recargos" ){
+            $this->forward404Unless( $impoexpo );
+            $this->forward404Unless( $transporte );
             //echo $tipo;
 			//$c->setLimit(3);
 			$q = Doctrine::getTable("TipoRecargo")
@@ -94,9 +95,36 @@ class parametrosActions extends sfActions
 				$this->conceptos[]=$row;
 
 			}
-		}else{
+		}elseif( $modo=="costos" ){
+            $this->forward404Unless( $impoexpo );
+            //echo $tipo;
+			//$c->setLimit(3);
+			$q = Doctrine::getTable("Costo")
+                         ->createQuery("c")
+                         ->addWhere("c.ca_impoexpo = ? ", $impoexpo )
+                         ->distinct()
+                         ->addOrderBy( "c.ca_costo" );
+
+            $costos = $q->execute();
+			$this->conceptos = array();
+			foreach( $costos as $costo ){
+				$row = array("idconcepto"=>$costo->getCaIdcosto(),
+							 "concepto"=>utf8_encode($costo->getCaCosto())
+							);
+				$this->conceptos[]=$row;
+
+			}
+
+        }else{
+            $this->forward404Unless( $transporte );
 			$this->forward404Unless( $modalidad );
-				
+			if( $transporte==Constantes::OTMDTA ){ //FIX-ME [Actualizar los registros de la tabla para que coincidan y arreglar las cotizaciones]
+                $transporte = Constantes::TERRESTRE;
+                $modalidad = Constantes::OTMDTA;
+            }
+            if( $modalidad==Constantes::ADUANAFCL || $modalidad==Constantes::ADUANALCL ){ //FIX-ME [Actualizar los registros de la tabla para que coincidan y arreglar las cotizaciones]
+                $modalidad = Constantes::OTMDTA;
+            }
 			$conceptos = Doctrine::getTable("Concepto")
                          ->createQuery("c")
                          ->where("c.ca_transporte = ? AND c.ca_modalidad = ?", array($transporte, $modalidad ))
