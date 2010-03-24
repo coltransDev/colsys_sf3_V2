@@ -152,6 +152,7 @@ PanelSeguros = function( config ){
             text: 'Guardar Cambios',
             tooltip: 'Guarda los cambios realizados en Seguros',
             iconCls: 'disk',  // reference to our css
+            id: 'guardarbtn-seguros',
             handler: function(){
                 Ext.getCmp("subpanel-cotizaciones").guardarDatosPaneles();
             }
@@ -270,6 +271,8 @@ Ext.extend(PanelSeguros, Ext.grid.EditorGridPanel, {
 
         var lenght = records.length;
 
+        
+
         //Validacion
         for( var i=0; i< lenght; i++){
             r = records[i];
@@ -305,6 +308,9 @@ Ext.extend(PanelSeguros, Ext.grid.EditorGridPanel, {
 
         }
 
+        Ext.getCmp('guardarbtn-seguros').disable();
+        window.setTimeout(this.enableButton, 3000);
+
         for( var i=0; i< lenght; i++){
             r = records[i];
 
@@ -331,6 +337,10 @@ Ext.extend(PanelSeguros, Ext.grid.EditorGridPanel, {
             );
             r.set("sel", false);//Quita la seleccion de todas las columnas
         }
+    },
+
+    enableButton: function(){
+        Ext.getCmp('guardarbtn-seguros').enable();
     },
 
     agregarFilaSeguros: function(){

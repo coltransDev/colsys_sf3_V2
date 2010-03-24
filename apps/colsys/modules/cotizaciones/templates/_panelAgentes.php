@@ -115,6 +115,7 @@ PanelAgentes = function( config ){
             text: 'Guardar Cambios',
             tooltip: 'Guarda los cambios realizados en Seguros',
             iconCls: 'disk',  // reference to our css
+            id: 'guardarbtn-agentes',
             handler: function(){
                 Ext.getCmp("grid_agentes").guardarItems();
             }
@@ -204,6 +205,8 @@ Ext.extend(PanelAgentes, Ext.grid.EditorGridPanel, {
             }
         }
 
+        Ext.getCmp('guardarbtn-agentes').disable();
+        window.setTimeout(this.enableButton, 3000);
 
         Ext.Ajax.request(
             {
@@ -221,6 +224,11 @@ Ext.extend(PanelAgentes, Ext.grid.EditorGridPanel, {
                 }
              }
         );
+    }
+
+    ,
+    enableButton: function(){
+        Ext.getCmp('guardarbtn-agentes').enable();
     }
 });
 

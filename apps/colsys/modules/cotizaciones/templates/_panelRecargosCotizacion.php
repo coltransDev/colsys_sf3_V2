@@ -229,6 +229,7 @@ PanelRecargosCotizacion = function( config ){
                 text: 'Guardar Cambios',
                 tooltip: 'Guarda los cambios realizados en Recargos',
                 iconCls: 'disk',  // reference to our css
+                id: 'guardarbtn-recargos',
                 handler: function(){
                     Ext.getCmp("subpanel-cotizaciones").guardarDatosPaneles();
                 }
@@ -682,6 +683,9 @@ Ext.extend(PanelRecargosCotizacion, Ext.grid.EditorGridPanel, {
             }
         }
 
+        Ext.getCmp('guardarbtn-recargos').disable();
+        window.setTimeout(this.enableButton, 3000);
+
         for( var i=0; i< lenght; i++){
             r = records[i];
             if( r.data.idrecargo ){
@@ -722,6 +726,11 @@ Ext.extend(PanelRecargosCotizacion, Ext.grid.EditorGridPanel, {
         }
 
     }
+    ,
+    enableButton: function(){
+        Ext.getCmp('guardarbtn-recargos').enable();
+    }
+
 
 
 

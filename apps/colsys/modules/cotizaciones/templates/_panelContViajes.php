@@ -226,6 +226,7 @@ PanelContViajes = function( config ){
             text: 'Guardar Cambios',
             tooltip: 'Guarda los cambios realizados en el Continuación de Viaje',
             iconCls: 'disk',  // reference to our css
+            id: 'guardarbtn-cont',
             handler: function(){
                 Ext.getCmp("subpanel-cotizaciones").guardarDatosPaneles();
             }
@@ -298,8 +299,7 @@ Ext.extend(PanelContViajes, Ext.grid.EditorGridPanel, {
         rec = this.store.getAt(index);
 
         if(!this.menu){ // create context menu on first right click
-            this.menu = new Ext.menu.Menu({
-            id:'grid_productos-ctx',
+            this.menu = new Ext.menu.Menu({            
             enableScrolling : false,
             items: [{
                         text: 'Observaciones',
@@ -494,6 +494,8 @@ Ext.extend(PanelContViajes, Ext.grid.EditorGridPanel, {
             }
         }
 
+        Ext.getCmp('guardarbtn-cont').disable();
+        window.setTimeout(this.enableButton, 3000);
 
         for( var i=0; i< lenght; i++){
             r = records[i];
@@ -528,6 +530,9 @@ Ext.extend(PanelContViajes, Ext.grid.EditorGridPanel, {
         }
     },
 
+    enableButton: function(){
+        Ext.getCmp('guardarbtn-cont').enable();
+    },
     observacionesHandler : function( rec ){
         //crea una ventana
         win = new Ext.Window({

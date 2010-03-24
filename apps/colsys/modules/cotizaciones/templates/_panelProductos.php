@@ -425,14 +425,14 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
             //alert( r.data.iditem );
             if( !r.data.idmoneda && r.data.iditem!=9999 ){
                 alert('Por favor coloque la moneda en todos los items en la pestaña Tarifas de trayectos','Warning');
-                return 0;
+                //return 0;
             }
 
 //            return false;
             if( !r.data.idequipo && r.data.modalidad =="FCL" && r.data.transporte=="<?=Constantes::TERRESTRE?>" )
             {
                alert('Por favor indique el equipo 1 del trayecto '+r.data.trayecto,'Alert');
-               return false;
+               //return false;
             }
 
         }
