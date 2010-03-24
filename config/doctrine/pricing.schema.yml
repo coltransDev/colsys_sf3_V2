@@ -323,7 +323,7 @@ PricRecargoxCiudad:
       form: false
       filter: false
   generatePath: pricing
-  tableName: tb_pricrecargosxciudad
+  tableName: pric.tb_recargosxciudad
   attributes:
     export: tables
   columns:
@@ -375,7 +375,7 @@ PricRecargoxCiudadBs:
       form: false
       filter: false
   generatePath: pricing
-  tableName: bs_pricrecargosxciudad
+  tableName: pric.bs_recargosxciudad
   attributes:
     export: tables
   columns:
@@ -428,7 +428,7 @@ PricRecargoxLinea:
       form: false
       filter: false
   generatePath: pricing
-  tableName: tb_pricrecargosxlinea
+  tableName: pric.tb_recargosxlinea
   attributes:
     export: tables
   columns:
@@ -487,7 +487,7 @@ PricRecargoxLineaBs:
       form: false
       filter: false
   generatePath: pricing
-  tableName: bs_pricrecargosxlinea
+  tableName: pric.bs_recargosxlinea
   attributes:
     export: tables
   columns:
