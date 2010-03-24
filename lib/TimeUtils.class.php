@@ -209,7 +209,7 @@ class TimeUtils{
 		$segundos = $segundos%60;
         
 		while ( $time>0 ){
-           echo "$ano, $mes, $dia, $hor, $min, $seg <br />";
+           //echo "$ano, $mes, $dia, $hor, $min, $seg <br />";
 		   list($ano, $mes, $dia, $hor, $min, $seg) = sscanf(date("Y-m-d H:i:s", $start), "%d-%d-%d %d:%d:%d");
 
             if (!is_null($festiv) and date("N", $start)> 5) {               // Evalua si es un fin de semana
