@@ -202,13 +202,9 @@ Ext.extend(PanelSeguros, Ext.grid.EditorGridPanel, {
     onRowcontextMenu: function(grid, index, e){
         var storeSegurosCot = this.store;
         rec = this.store.getAt(index);
-        if( typeof(this.menu) !="undefined" ){
-            this.menu.removeAll( true );
-        }
-
+        
         if(!this.menu){ // create context menu on first right click
-            this.menu = new Ext.menu.Menu({
-            id:'grid_recargos-ctx',
+            this.menu = new Ext.menu.Menu({            
             enableScrolling : false,
             items: [
                     {
