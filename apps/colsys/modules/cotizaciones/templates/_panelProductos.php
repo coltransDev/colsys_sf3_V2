@@ -21,7 +21,7 @@ var activeRecord = null;
 PanelProductos = function( config ){
 
     Ext.apply(this, config);
-
+    
     /*
     *Store que carga los conceptos
     */
@@ -330,9 +330,9 @@ PanelProductos = function( config ){
                 text: 'Agregar trayecto',
                 tooltip: 'Agregar un nuevo producto a la Cotización',
                 iconCls: 'add',  // reference to our css
-
-                handler: function(){
-                    Ext.getCmp("grid_productos").agregarTrayecto();
+                scope: this,
+                handler: function(){                   
+                    this.agregarTrayecto();
                 }
             }
         ],
@@ -1067,7 +1067,7 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
     */
     crearVentanaTrayecto: function( record ){
         storeProductos = this.store;
-        //crea una ventana
+        //crea una ventana        
         if(this.empresa=='<?=Constantes::COLTRANS?>')
         {
            this.win = new PanelTrayectoWindow();

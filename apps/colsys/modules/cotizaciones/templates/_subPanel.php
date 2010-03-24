@@ -30,10 +30,10 @@ if( $cotizacion->getCaIdcotizacion() ){
 
 
 SubPanel = function(){
+    this.gridProductos = new PanelProductos({empresa:'<?=$cotizacion->getCaEmpresa()?>'});
     <?
     if( $cotizacion->getCaEmpresa() == Constantes::COLTRANS  ){
-        ?>
-        this.gridProductos = new PanelProductos({empresa:'<?=$cotizacion->getCaEmpresa()?>'});
+        ?>        
         this.gridRecargos = new PanelRecargosCotizacion();
         this.gridContviajes = new PanelContViajes();
         this.gridSeguros = new PanelSeguros();
@@ -42,8 +42,6 @@ SubPanel = function(){
         <?
     }else if( $cotizacion->getCaEmpresa() == Constantes::COLMAS ){
         ?>
-        //this.gridTransporte = new PanelTransporteAduana();
-        this.gridProductos = new PanelProductos({empresa:'<?=$cotizacion->getCaEmpresa()?>'});
         this.gridTarifarioAduana = new PanelTarifarioAduana();
         <?
     }
@@ -68,19 +66,18 @@ SubPanel = function(){
             height:250,
             autoWidth : true,
             items:[
+                this.gridProductos,
                 <?
                 if( $cotizacion->getCaEmpresa() == Constantes::COLTRANS  ){
-                ?>
-                   this.gridProductos,
+                ?>                   
                    this.gridRecargos,
                    this.gridContviajes,
                    this.gridSeguros,
                    this.gridAgentes,                   
                 <?
                 }else if( $cotizacion->getCaEmpresa() == Constantes::COLMAS  ){
-                ?>
-                   //this.gridTransporte,
-                   this.gridProductos,
+                ?>                   
+                   
                    this.gridTarifarioAduana,
 
                 <?
