@@ -944,8 +944,9 @@ class pricingActions extends sfActions
             if( count($lineas)>0 ){
                 $q = Doctrine_Query::create()->from("PricRecargoxLinea r");
                 $q->innerJoin("r.TipoRecargo t");
-                $q->where("t.ca_transporte= ? AND r.ca_modalidad= ? AND r.ca_impoexpo = ?", array($transporte , $modalidad, $impoexpo));
+                $q->addWhere("t.ca_transporte= ? AND r.ca_modalidad= ? AND r.ca_impoexpo = ?", array($transporte , $modalidad, $impoexpo));
                 $q->addWhere("r.ca_idlinea IN ?", $lineas);
+                $q->addWhere("t.ca_tipo = ?", Constantes::RECARGO_LOCAL );
                 $q->addOrderBy("t.ca_recargo");
                 $recargos = $q->execute();
 
