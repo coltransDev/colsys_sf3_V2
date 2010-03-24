@@ -49,7 +49,7 @@
                             id: 'modalidad',
                             xtype:'hidden',
                             name: 'modalidad',
-                            value: 'FCL',
+                            value: '<?=Constantes::ADUANAFCL?>',
                             allowBlank:false
                         },
                         {
