@@ -1260,7 +1260,7 @@ class cotizacionesActions extends sfActions
 				$row['idopcion']=999;
 				$row['iditem']=9999;
 				$row['item']="Recargos generales del trayecto";
-				$row['idconcepto']=9999;
+				$row['idconcepto']='9999';
 				$row['valor_tar']='';
 				$row['aplica_tar']='';
 				$row['valor_min']='';
@@ -1315,7 +1315,7 @@ class cotizacionesActions extends sfActions
                 $row['tipo']="concepto";
                 $row['orden']="Z";
                 $row['idequipo']="";
-                $row['equipo']="9999";
+                $row['equipo']="";
                 $this->productos[] = $row;
            }			
 		}
