@@ -59,6 +59,7 @@ HdeskTicket:
     ca_idtarea: integer
     ca_idseguimiento: integer
     ca_idmilestone: integer
+    ca_percentage: integer
   relations:
     HdeskResponse:
       local: ca_idticket

@@ -101,9 +101,9 @@ ConceptoAduana:
       type: string
       notnull: true
   relations:
-    InoConcepto:
+    Costo:
       local: ca_idconcepto
-      foreign: ca_idconcepto
+      foreign: ca_idcosto
       type: one
 
 
@@ -154,10 +154,10 @@ ConceptoAduanaCliente:
     ca_observaciones:
       type: string
       notnull: true
-  relations:
-    InoConcepto:
+  relations:    
+    Costo:
       local: ca_idconcepto
-      foreign: ca_idconcepto
+      foreign: ca_idcosto
       type: one
     Cliente:
       local: ca_idcliente

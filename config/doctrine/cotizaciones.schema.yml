@@ -456,9 +456,9 @@ CotConceptoAduana:
       notnull: true
     ca_idcotizacion: integer
   relations:
-    InoConcepto:
+    Costo:
       local: ca_idconcepto
-      foreign: ca_idconcepto
+      foreign: ca_idcosto
       type: one
     Cotizacion:
       local: ca_idcotizacion

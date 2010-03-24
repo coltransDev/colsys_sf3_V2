@@ -333,6 +333,7 @@ Contacto:
     ca_fax: string
     ca_email: string
     ca_observaciones: string
+    ca_fijo: boolean
     ca_fchcreado: string
     ca_fchcreado: string
   relations:

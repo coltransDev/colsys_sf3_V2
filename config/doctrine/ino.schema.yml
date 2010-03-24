@@ -314,9 +314,9 @@ InoConcepto:
     ca_recargoorigen: boolean
     ca_recargootmdta: boolean
     ca_costo: boolean
-    ca_col1: string
-    ca_col2: string
-    ca_tarifario_costos_cliente: boolean
+#    ca_col1: string
+#    ca_col2: string
+#    ca_tarifario_costos_cliente: boolean
     ca_parametros:
       type: string
       notnull: true
