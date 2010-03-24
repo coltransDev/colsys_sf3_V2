@@ -33,7 +33,23 @@ $festivos = TimeUtils::getFestivos();
 </script>
 <?
 if( !$cotizacion->getCaUsuanulado() ){
-?>
+    $productos = $cotizacion->getCotProductos();
+    $trayectosVencidos = 0;
+    foreach( $productos as $producto ){
+        if( $producto->getCaVigencia()<date("Y-m-d") ){
+            $trayectosVencidos++;
+        }
+    }
+
+    if( $trayectosVencidos>0 ){
+    ?>
+    <div class="box1">
+       <?=image_tag("22x22/agt_update_critical.gif")?> <b>Atencion:</b> <?=$trayectosVencidos?> trayectos tienen la vigencia vencida.
+    </div>
+    <br />
+    <?
+    }
+    ?>
 <div id="emailForm"  style="display:<?=$enBlanco?"inline":"none"?>;">
 	<form name="form1" id="form1" method="post" action="<?=url_for("cotizaciones/enviarCotizacionEmail?id=".$cotizacion->getCaIdcotizacion())?>" onsubmit="return verificarInfo()">
 		<input type="hidden" name="checkObservaciones" id="checkObservaciones" value="" />
