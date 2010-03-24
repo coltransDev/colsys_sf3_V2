@@ -66,13 +66,11 @@ class cotseguimientosActions extends sfActions
 
 		$this->usuario = Doctrine::getTable("Usuario")->find( $this->login );
 		
-		$q = Doctrine_Query::create()
-                             ->select("COUNT(p.ca_idproducto) as count, count(s.ca_idproducto) as conseg, p.ca_etapa")
+		$q = Doctrine_Query::create()                             
                              ->from("CotProducto p")                             
                              ->innerJoin("p.Cotizacion c")
                              ->innerJoin("c.Usuario u")
-                             ->leftJoin("p.CotSeguimiento s" )
-                             ->addGroupBy("p.ca_etapa")
+                             ->leftJoin("p.CotSeguimiento s" )                             
                              ->addWhere("c.ca_fchcreado BETWEEN ? AND ? AND p.ca_etapa IS NOT NULL", array($fechaInicial, $fechaFinal));
 		
 		if( $checkboxVendedor ){			
@@ -85,8 +83,22 @@ class cotseguimientosActions extends sfActions
 		}else{
 			$this->sucursal = "";
 		}
-		
-        $this->rows = $q->setHydrationMode(Doctrine::HYDRATE_SCALAR)->execute();
+
+
+        $cotizaciones = $q->select("p.ca_idcotizacion")
+                        ->distinct()
+                        ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                        ->execute();
+        $this->numcotizaciones = count($cotizaciones);
+
+
+
+        $this->rows = $q->select("COUNT(p.ca_idproducto) as count, count(s.ca_idproducto) as conseg, p.ca_etapa")
+                        ->addGroupBy("p.ca_etapa")
+                        ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                        ->execute();
+
+        
 
 
 

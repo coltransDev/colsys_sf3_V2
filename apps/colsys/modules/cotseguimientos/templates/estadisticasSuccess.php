@@ -17,8 +17,9 @@ if( $sucursal ){
 <br />
 <br />
 <h1>Cotizaciones con trayectos</h1>
+Datos basados en <?=$numcotizaciones?> cotizaciones
 <br />
-<table width="300" border="1" class="tableList">
+<table width="350" border="1" class="tableList">
 	<tr>
 		<th scope="col">Estado</th>
 		<th scope="col">Cantidad de trayectos</th>
@@ -38,8 +39,7 @@ if( $sucursal ){
 	$total+=$row["p_count"];
     $total2+=$row["s_conseg"];
 	}
-	?>
-	
+	?>	
 	<tr>
 		<td><b>Total</b></td>
 		<td><?=$total?></td>
@@ -52,7 +52,7 @@ if( $sucursal ){
 <br />
 <h1>Cotizaciones sin trayectos</h1>
 <br />
-<table width="300" border="1" class="tableList">
+<table width="350" border="1" class="tableList">
 	<tr>
 		<th scope="col">Estado</th>
 		<th scope="col">Cantidad de cotizaciones</th>
