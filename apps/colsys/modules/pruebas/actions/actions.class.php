@@ -2524,7 +2524,7 @@ where (column_name like 'ca_login%' ) and table_name like 'tb_%' and table_schem
 			$tarea->setCaUrl( "/helpdesk/verTicket?id=".$ticket->getCaIdticket() );
 			$tarea->setCaIdlistatarea( 1 );
 			$tarea->setCaFchcreado( $ticket->getCaOpened() );									
-			$tarea->setTiempo( Utils::getFestivos(), $grupo->getCaMaxresponsetime() );	
+			$tarea->setTiempo( TimeUtils::getFestivos(), $grupo->getCaMaxresponsetime() );	
 						
 			if( $ticket->getCaResponsetime() ){
 				$tarea->setCaFchterminada( $ticket->getCaResponsetime() );
@@ -3622,6 +3622,93 @@ ORDER BY ca_idtrayecto,ca_idconcepto,log_pricrecargosxconcepto.ca_idrecargo, ca_
 
         $this->setTemplate("blank");
 
+    }
+
+
+
+    public function executeBuscarRecargosRepetidos(){
+        $q = Doctrine_Manager::getInstance()->connection();
+
+        $sql = "SELECT DISTINCT ca_idconcepto,ca_concepto FROM ino.tb_conceptos
+                WHERE ca_concepto In
+                (SELECT ca_concepto FROM ino.tb_conceptos AS TMP
+                where ca_recargolocal=true
+                GROUP BY ca_concepto HAVING Count(*) > 1 )
+                AND ca_recargolocal=true
+                ORDER BY ca_concepto, ca_idconcepto  ";
+        $stmt = $q->execute($sql);
+
+        $lastConcepto = null;
+
+        while( $row = $stmt->fetch(PDO::FETCH_ASSOC) ){
+
+            if( $lastConcepto!=$row['ca_concepto'] ){
+               $lastConcepto=$row['ca_concepto']; 
+               $idconceptoOrigen = $row['ca_idconcepto'];
+            }
+            $idconceptoDestino = $row['ca_idconcepto'];
+            echo $row['ca_idconcepto']." ".$row['ca_concepto']."<br />";
+
+            if( $idconceptoOrigen!=$idconceptoDestino){
+                echo "Se unificara: ".$idconceptoOrigen." con ".$idconceptoDestino."<br />";
+
+                /*$recargoOrigen = Doctrine::getTable("InoConcepto")->find($idconceptoOrigen);
+                $recargoDestino = Doctrine::getTable("InoConcepto")->find($idconceptoDestino);
+
+                if( $recargoDestino->getCaRecargolocal() ){
+                    $recargoOrigen->setCaRecargolocal(true);
+                }
+
+                if( $recargoDestino->getCaRecargoorigen() ){
+                    $recargoOrigen->setCaRecargoorigen(true);
+                }*/
+
+                //$recargoOrigen->save();
+                
+                
+                
+                
+                
+                $sql = "UPDATE  tb_repgastos SET ca_idrecargo = $idconceptoOrigen WHERE ca_idrecargo=$idconceptoDestino;";
+                echo $sql."<br />";
+                //$stmt = $q->execute($sql);
+
+                $sql = "UPDATE  tb_cotrecargos SET ca_idrecargo = $idconceptoOrigen WHERE ca_idrecargo=$idconceptoDestino;";
+                echo $sql."<br />";
+                //$stmt = $q->execute($sql);
+
+                $sql = "UPDATE  bs_pricrecargosxciudad SET ca_idrecargo = $idconceptoOrigen WHERE ca_idrecargo=$idconceptoDestino;";
+                echo $sql."<br />";
+                //$stmt = $q->execute($sql);
+
+                $sql = "UPDATE  bs_pricrecargosxconcepto SET ca_idrecargo = $idconceptoOrigen WHERE ca_idrecargo=$idconceptoDestino;";
+                echo $sql."<br />";
+                //$stmt = $q->execute($sql);
+
+                $sql = "UPDATE  bs_pricrecargosxlinea SET ca_idrecargo = $idconceptoOrigen WHERE ca_idrecargo=$idconceptoDestino;";
+                echo $sql."<br />";
+                //$stmt = $q->execute($sql);
+
+                $sql = "UPDATE  ino.tb_conceptos_modalidades SET ca_idconcepto = $idconceptoOrigen WHERE ca_idconcepto=$idconceptoDestino;";
+                echo $sql."<br />";
+                //$stmt = $q->execute($sql);
+
+                $sql = "DELETE FROM  ino.tb_conceptos  WHERE ca_idconcepto=$idconceptoDestino;";
+                echo $sql."<br />";
+                //$stmt = $q->execute($sql);
+
+                
+                
+
+                //echo " <b>OK</b> <br />";
+                 //break;
+            }
+
+           
+            
+        }
+
+        $this->setTemplate("blank");
     }
 
 		

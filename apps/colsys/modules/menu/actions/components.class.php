@@ -49,8 +49,8 @@ class menuComponents extends sfComponents
 
         //setcookie("menu", "", time()-3600 );
 		if( $usuario ){
-            if( !isset($_COOKIE["menu"]) ){
-            //if(true){
+            //if( !isset($_COOKIE["menu"]) ){
+            if(true){
             
                 $rutinas = Doctrine::getTable("Rutina")
                           ->createQuery("r")
@@ -83,7 +83,7 @@ class menuComponents extends sfComponents
                     $str.="\n";
                 }
                 
-                setcookie("menu", (utf8_encode($str)) , time()+3600 );
+                //setcookie("menu", (utf8_encode($str)) , time()+3600 );
             }else{
                 
                 $menu = explode("\n",(utf8_decode($_COOKIE["menu"])));                

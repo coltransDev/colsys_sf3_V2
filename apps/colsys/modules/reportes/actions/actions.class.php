@@ -140,12 +140,7 @@ class reportesActions extends sfActions
             if( $reporte->getCaImpoexpo()==Constantes::IMPO ||  $reporte->getCaImpoexpo()==Constantes::TRIANGULACION ){
 
                 $tarea = new NotTarea();
-                if( $reporte->getCaTransporte()==Constantes::MARITIMO ){
-                    $tarea->setCaUrl( "/colsys_php/traficos_sea.php?boton=Consultar&id=".$reporte->getCaIdreporte() );
-                }else{
-                    $tarea->setCaUrl( "/colsys_php/traficos_air.php?boton=Consultar&id=".$reporte->getCaIdreporte() );
-                }
-
+                $tarea->setCaUrl( "reporteExt/crearReporte/idreporte/".$reporte->getCaIdreporte() );
                 $tarea->setCaIdlistatarea( 4 );
                 $tarea->setCaFchcreado( date("Y-m-d H:i:s") );
                 $festivos = TimeUtils::getFestivos();

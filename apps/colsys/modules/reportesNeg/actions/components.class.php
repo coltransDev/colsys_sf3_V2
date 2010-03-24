@@ -17,6 +17,7 @@ class reportesNegComponents extends sfComponents
 
 
 	}
+    
 	/*
 	* Muestra los conceptos del reporte y un formulario para agregar un nuevo registro, tambien 
 	* permite editar un campo haciendo doble click en el.
@@ -104,6 +105,7 @@ class reportesNegComponents extends sfComponents
                                      ->createQuery("c")
                                      ->select("ca_idcosto as ca_idconcepto, ca_costo as ca_concepto")
                                      //->addWhere("c.ca_tipo = ? ", Constantes::RECARGO_LOCAL )
+                                     ->addWhere("c.ca_impoexpo = ? ", "Aduanas")
                                      ->addWhere("c.ca_transporte LIKE ? ", $this->reporte->getCaTransporte() )
                                      ->addOrderBy("c.ca_costo")
                                      ->setHydrationMode(Doctrine::HYDRATE_ARRAY)

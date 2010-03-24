@@ -1,6 +1,6 @@
 <?
 
-$festivos = Utils::getFestivos();
+$festivos = TimeUtils::getFestivos();
 
 if( count($listaTareas)>0 ){
 	foreach( $listaTareas as $lista ){

@@ -132,7 +132,7 @@ PanelTickets = function( config ){
         header: "Ticket #",
         dataIndex: 'idticket',
         //hideable: false,
-        width: 43,
+        width: 63,
         sortable: true,
         renderer: this.formatItem 
         
