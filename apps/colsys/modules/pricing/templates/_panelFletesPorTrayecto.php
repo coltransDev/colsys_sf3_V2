@@ -654,6 +654,10 @@ Ext.extend(PanelFletesPorTrayecto, Ext.grid.EditorGridPanel, {
                             iconCls: 'add',
                             scope:this,
                             handler: function(){
+                                if( this.ctxRecord.data.tipo=="trayecto_obs" ){
+                                    Ext.MessageBox.alert("Atención","No puede agregar un concepto sobre las observaciones");
+                                    return 0;
+                                }
                                 this.agregarFila(this.ctxRecord, index, 'concepto');
                             }
                         },
@@ -662,6 +666,10 @@ Ext.extend(PanelFletesPorTrayecto, Ext.grid.EditorGridPanel, {
                             iconCls: 'add',
                             scope:this,
                             handler: function(){
+                                if( this.ctxRecord.data.tipo=="trayecto_obs" ){
+                                    Ext.MessageBox.alert("Atención","No puede agregar un recargo sobre las observaciones");
+                                    return 0;
+                                }
                                 this.agregarFila(this.ctxRecord, index, 'recargo');
                             }
                         },
@@ -951,6 +959,7 @@ Ext.extend(PanelFletesPorTrayecto, Ext.grid.EditorGridPanel, {
         }else{
             var orden = 888+this.store.getCount();
         }
+        idconcepto = null;
         
         if( ctxRecord.get("tipo")=="concepto" ){
             idconcepto = ctxRecord.get("iditem");
