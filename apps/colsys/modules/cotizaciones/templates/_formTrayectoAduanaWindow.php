@@ -11,7 +11,7 @@
     FormTrayectoAduanaWindow = function() {
         FormTrayectoAduanaWindow.superclass.constructor.call(this, {
             width       : 500,            
-            closeAction :'hide',
+            closeAction :'close',
             plain       : true,
             modal: true,
             id: 'form-trayecto-window',
@@ -116,7 +116,7 @@
                 }
             },{
                 text     : 'Cancelar',
-                handler: this.hide.createDelegate(this, [])
+                handler: this.close.createDelegate(this, [])
             }]
             
 
@@ -144,7 +144,8 @@
 
             var fp = Ext.getCmp("producto-form");
             if( fp.getForm().isValid() ){
-                this.el.mask('Guardando...', 'x-mask-loading');
+
+                var win = this.win;
 
                 fp.getForm().submit({url:'<?=url_for('cotizaciones/formProductoGuardar')?>',
                                         waitMsg:'Salvando Datos de Productos...',
@@ -157,12 +158,12 @@
                                         },
                                         failure:function(response,options){
                                             Ext.Msg.alert( "Error "+response.responseText );
-                                            win.close();
+                                            //win.close();
                                         }//end failure block
                                     });
                 
-                this.el.unmask();
-                this.hide();
+                
+                
             }else{
                 Ext.MessageBox.alert('Sistema de Cotizaciones - Error:', '¡Atención: La información del Producto no es válida o está incompleta!');
             }
