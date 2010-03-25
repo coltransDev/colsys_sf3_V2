@@ -810,7 +810,7 @@ class pricingActions extends sfActions
         $this->responseArray = array("id"=>$id, "success"=>false);
         if( $tipo=="concepto" ){
 
-            $idequipo = $this->getRequestParameter("idequipo");
+            
 
 
             $q = Doctrine::getTable("PricFlete")->createQuery()
@@ -840,7 +840,20 @@ class pricingActions extends sfActions
 
         if( $tipo=="recargo" ){
             $this->forward404unless($idconcepto);
-            $pricRecargo = Doctrine::getTable("PricRecargoxConcepto")->find(array($idtrayecto , $idconcepto , $idrecargo));
+            //$pricRecargo = Doctrine::getTable("PricRecargoxConcepto")->find(array($idtrayecto , $idconcepto , $idrecargo));
+
+            $q = Doctrine::getTable("PricRecargoxConcepto")->createQuery()
+                                                  ->addWhere("ca_idtrayecto = ?",$idtrayecto )
+                                                  ->addWhere("ca_idconcepto= ?", $idconcepto)
+                                                  ->addWhere("ca_idrecargo= ?", $idrecargo);
+            if( $idequipo ){
+                $q->addWhere("ca_idequipo= ?", $idequipo);
+            }else{
+                $q->addWhere("ca_idequipo IS NULL");
+            }
+            $pricRecargo  = $q->fetchOne();
+
+
             if( $pricRecargo ){
                 $pricRecargo->delete();
             }
