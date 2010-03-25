@@ -403,6 +403,7 @@ Costo:
     ca_impoexpo: string
     ca_modalidad: string
     ca_comisionable: string
+    ca_parametros: string
 
 
 ColNovedad:

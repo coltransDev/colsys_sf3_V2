@@ -11,22 +11,34 @@
  * @property string $ca_impoexpo
  * @property string $ca_modalidad
  * @property string $ca_comisionable
+ * @property string $ca_parametros
+ * @property Doctrine_Collection $CotConceptoAduana
+ * @property Doctrine_Collection $ConceptoAduana
+ * @property Doctrine_Collection $ConceptoAduanaCliente
  * @property Doctrine_Collection $RepCosto
  * 
- * @method integer             getCaIdcosto()       Returns the current record's "ca_idcosto" value
- * @method string              getCaCosto()         Returns the current record's "ca_costo" value
- * @method string              getCaTransporte()    Returns the current record's "ca_transporte" value
- * @method string              getCaImpoexpo()      Returns the current record's "ca_impoexpo" value
- * @method string              getCaModalidad()     Returns the current record's "ca_modalidad" value
- * @method string              getCaComisionable()  Returns the current record's "ca_comisionable" value
- * @method Doctrine_Collection getRepCosto()        Returns the current record's "RepCosto" collection
- * @method Costo               setCaIdcosto()       Sets the current record's "ca_idcosto" value
- * @method Costo               setCaCosto()         Sets the current record's "ca_costo" value
- * @method Costo               setCaTransporte()    Sets the current record's "ca_transporte" value
- * @method Costo               setCaImpoexpo()      Sets the current record's "ca_impoexpo" value
- * @method Costo               setCaModalidad()     Sets the current record's "ca_modalidad" value
- * @method Costo               setCaComisionable()  Sets the current record's "ca_comisionable" value
- * @method Costo               setRepCosto()        Sets the current record's "RepCosto" collection
+ * @method integer             getCaIdcosto()             Returns the current record's "ca_idcosto" value
+ * @method string              getCaCosto()               Returns the current record's "ca_costo" value
+ * @method string              getCaTransporte()          Returns the current record's "ca_transporte" value
+ * @method string              getCaImpoexpo()            Returns the current record's "ca_impoexpo" value
+ * @method string              getCaModalidad()           Returns the current record's "ca_modalidad" value
+ * @method string              getCaComisionable()        Returns the current record's "ca_comisionable" value
+ * @method string              getCaParametros()          Returns the current record's "ca_parametros" value
+ * @method Doctrine_Collection getCotConceptoAduana()     Returns the current record's "CotConceptoAduana" collection
+ * @method Doctrine_Collection getConceptoAduana()        Returns the current record's "ConceptoAduana" collection
+ * @method Doctrine_Collection getConceptoAduanaCliente() Returns the current record's "ConceptoAduanaCliente" collection
+ * @method Doctrine_Collection getRepCosto()              Returns the current record's "RepCosto" collection
+ * @method Costo               setCaIdcosto()             Sets the current record's "ca_idcosto" value
+ * @method Costo               setCaCosto()               Sets the current record's "ca_costo" value
+ * @method Costo               setCaTransporte()          Sets the current record's "ca_transporte" value
+ * @method Costo               setCaImpoexpo()            Sets the current record's "ca_impoexpo" value
+ * @method Costo               setCaModalidad()           Sets the current record's "ca_modalidad" value
+ * @method Costo               setCaComisionable()        Sets the current record's "ca_comisionable" value
+ * @method Costo               setCaParametros()          Sets the current record's "ca_parametros" value
+ * @method Costo               setCotConceptoAduana()     Sets the current record's "CotConceptoAduana" collection
+ * @method Costo               setConceptoAduana()        Sets the current record's "ConceptoAduana" collection
+ * @method Costo               setConceptoAduanaCliente() Sets the current record's "ConceptoAduanaCliente" collection
+ * @method Costo               setRepCosto()              Sets the current record's "RepCosto" collection
  * 
  * @package    symfony
  * @subpackage model
@@ -58,6 +70,9 @@ abstract class BaseCosto extends myDoctrineRecord
         $this->hasColumn('ca_comisionable', 'string', null, array(
              'type' => 'string',
              ));
+        $this->hasColumn('ca_parametros', 'string', null, array(
+             'type' => 'string',
+             ));
 
         $this->option('symfony', array(
              'form' => false,
@@ -68,6 +83,18 @@ abstract class BaseCosto extends myDoctrineRecord
     public function setUp()
     {
         parent::setUp();
+        $this->hasMany('CotConceptoAduana', array(
+             'local' => 'ca_idcosto',
+             'foreign' => 'ca_idconcepto'));
+
+        $this->hasMany('ConceptoAduana', array(
+             'local' => 'ca_idcosto',
+             'foreign' => 'ca_idconcepto'));
+
+        $this->hasMany('ConceptoAduanaCliente', array(
+             'local' => 'ca_idcosto',
+             'foreign' => 'ca_idconcepto'));
+
         $this->hasMany('RepCosto', array(
              'local' => 'ca_idcosto',
              'foreign' => 'ca_idcosto'));

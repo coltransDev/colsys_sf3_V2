@@ -2265,16 +2265,13 @@ class cotizacionesActions extends sfActions
     public function executeDatosParametros(sfWebRequest $request){
         $data = array();
 
-        $parametros = Doctrine::getTable("InoConcepto")
-                                  ->createQuery("c")
-                                  ->where("c.ca_idconcepto = ? ", $request->getParameter("idconcepto") )
-                                  ->execute();
+        $parametro = Doctrine::getTable("Costo")->find(  $request->getParameter("idconcepto") );
+                                 
 
-        foreach($parametros as $parametro)
-        {
+       
 //            echo $parametro->getCaParametros();
-            $arrParametros=explode("|", $parametro->getCaParametros());
-        }
+        $arrParametros=explode("|", $parametro->getCaParametros());
+        
         foreach($arrParametros as $parametro)
         {
             $data[]=array("parametro"=>$parametro);
