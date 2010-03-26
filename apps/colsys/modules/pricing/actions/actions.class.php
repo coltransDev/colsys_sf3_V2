@@ -856,8 +856,9 @@ class pricingActions extends sfActions
 
             if( $pricRecargo ){
                 $pricRecargo->delete();
+                $this->responseArray["success"]=true;
             }
-            $this->responseArray["success"]=true;
+            
         }
 		
 		
