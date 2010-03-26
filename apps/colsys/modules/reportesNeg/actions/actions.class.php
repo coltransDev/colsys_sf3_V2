@@ -368,14 +368,17 @@ class reportesNegActions extends sfActions
             }
             
             $bindValues["ca_idconcliente"] = $request->getParameter("ca_idconcliente");
-            
-            $form->bind( $bindValues );
 
+            $reporte->getCaIdconcliente( $bindValues["ca_idconcliente"] );
             //Coloca el Rep. Comercial
             if( $this->nivel<2 ){
                 $cliente = $reporte->getCliente();
                 $bindValues["ca_login"] = $cliente->getCaVendedor();
             }
+
+            $form->bind( $bindValues );
+
+            
 
             if( $bindValues["ca_colmas"]=="Sí" ){
                 $bindValuesAduana = $request->getParameter( $formAduana->getName() );
