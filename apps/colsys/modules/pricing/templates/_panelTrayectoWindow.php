@@ -92,6 +92,7 @@ PanelTrayectoWindow = function( config ) {
                         fieldLabel: 'Activo',
                         name: 'activo',
                         value: '',
+                        checked: true,
                         allowBlank:false
                     }
                 ]
