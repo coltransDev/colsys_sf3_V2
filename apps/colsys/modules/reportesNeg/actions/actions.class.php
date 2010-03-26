@@ -369,10 +369,11 @@ class reportesNegActions extends sfActions
             
             $bindValues["ca_idconcliente"] = $request->getParameter("ca_idconcliente");
 
-            $reporte->getCaIdconcliente( $bindValues["ca_idconcliente"] );
+            
             //Coloca el Rep. Comercial
             if( $this->nivel<2 ){
-                $cliente = $reporte->getCliente();
+                $contancto = Doctrine::getTable("Contacto")->find( $bindValues["ca_idconcliente"] );
+                $cliente = $contancto->getCliente();
                 $bindValues["ca_login"] = $cliente->getCaVendedor();
             }
 
