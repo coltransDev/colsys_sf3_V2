@@ -583,8 +583,8 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
              {
              //   alert("concepto="+r.data.idconcepto+"-\niditem="+r.data.iditem +"-\ntipo="+ r.data.tipo+"-\nvalue="+e.value);
    //             alert(r.data.idconcepto+"=="+e.value)
-                alert("Este recargo ya se encuentra en el listado porfavor seleccion otro");
-                validate=false;
+                //alert("Este recargo ya se encuentra en el listado porfavor seleccion otro");
+                //validate=false;
                 //alert("concepto="+r.data.idconcepto+"-\niditem="+r.data.iditem +"-\ntipo="+ r.data.tipo+"-\nvalue="+e.value);
                 //alert(r.data.idconcepto+"--"+e.value);
                 //alert(r.data.toSource());
@@ -1133,7 +1133,7 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
             var fp = Ext.getCmp("producto-form");
             form = fp.getForm().loadRecord(record);
             
-            fp.getForm().findField("idtrayecto").setValue(record.data.idproducto);
+            fp.getForm().findField("idproducto").setValue(record.data.idproducto);
             fp.getForm().findField("tra_origen_id").setValue(record.data.tra_origen_value);
             fp.getForm().findField("tra_origen_id").hiddenField.value = record.data.tra_origen;
             fp.getForm().findField("ciu_origen_id").setValue(record.data.ciu_origen_value);
