@@ -116,24 +116,34 @@ $numYears = $actualYear-$initialYear+1;
             $evaluaciones = $ids->getCalificaciones();
             
             $evaluacionAnt=null;
-            
+            $evaluacionAct=null;
+            $evaluacion = null;
             for( $year=$initialYear;$year<=$actualYear; $year++ ){
-                $evaluacionAnt = $evaluacion;
-                $evaluacion=null;
+                
+                $evaluacion = null;
                 if( isset( $evaluaciones[$year] )){
                     $evaluacion = $evaluaciones[$year];
+                    if(isset($evaluaciones[$year-1]) ){
+                        $evaluacionAct = $evaluacion;
+                        $evaluacionAnt = $evaluaciones[$year-1];
+                    }else{
+                        $evaluacionAct = null;
+                        $evaluacionAnt = null;
+                    }
                 }
+
                 if( !$evaluacion && $year!=$actualYear){
                     $evaluacion = "N/A";
                 }
+
                 ?>
                 <td><div align="left"><?=$evaluacion?$evaluacion:"&nbsp;"?></div></td>
                 <?
             }
             ?>
-            <td><div align="center"><?=$evaluacionAnt&&$evaluacionAnt<$evaluacion?"X":"&nbsp;"?></div></td>
-            <td><div align="center"><?=$evaluacionAnt&&$evaluacionAnt==$evaluacion?"X":"&nbsp;"?></div></td>
-            <td><div align="center"><?=$evaluacionAnt&&$evaluacionAnt>$evaluacion?"X":"&nbsp;"?></div></td>
+            <td><div align="center"><?=$evaluacionAct&&$evaluacionAnt<$evaluacionAct?"X":"&nbsp;"?></div></td>
+            <td><div align="center"><?=$evaluacionAct&&$evaluacionAnt==$evaluacionAct?"X":"&nbsp;"?></div></td>
+            <td><div align="center"><?=$evaluacionAct&&$evaluacionAnt>$evaluacionAct?"X":"&nbsp;"?></div></td>
         </tr>
         <?
         }
