@@ -543,7 +543,7 @@ PricPatio:
       form: false
       filter: false
   generatePath: pricing
-  tableName: tb_pricpatios
+  tableName: pric.tb_patios
   attributes:
     export: tables
   columns:
@@ -566,7 +566,7 @@ PricPatioLinea:
       form: false
       filter: false
   generatePath: pricing
-  tableName: tb_pricpatioslinea
+  tableName: pric.tb_patioslinea
   attributes:
     export: tables
   columns:
@@ -603,7 +603,7 @@ PricRecargoParametro:
       form: false
       filter: false
   generatePath: pricing
-  tableName: tb_pricrecargosparametros
+  tableName: pric.tb_recargosparametros
   attributes:
     export: tables
   columns:
@@ -638,7 +638,7 @@ PricSeguro:
       form: false
       filter: false
   generatePath: pricing
-  tableName: tb_pricseguros
+  tableName: pric.tb_seguros
   attributes:
     export: tables
   columns:
@@ -662,7 +662,7 @@ PricNotificacion:
       form: false
       filter: false
   generatePath: pricing
-  tableName: tb_pricnotificaciones
+  tableName: pric.tb_notificaciones
   attributes:
     export: tables
   columns:
