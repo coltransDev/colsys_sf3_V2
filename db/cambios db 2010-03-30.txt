@@ -1,0 +1,16 @@
+Se agrego la funcion FUNCTION fun_cotizacioncon(text, text);  para el consecutivo de cotizaciones por empresa.
+
+
+
+Tabla tb_repaduanadet
+
+quitar la propiedad de NOT NULL de los campos:
+	ca_tipo
+	ca_netcosto
+	ca_idmoneda
+
+y se  agregaron los siguientes campos
+
+	ca_parametro character varying(200),
+	ca_aplicacion character varying(50),
+	ca_aplicacionminimo character varying(50),
