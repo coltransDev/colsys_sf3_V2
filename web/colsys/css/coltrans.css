@@ -570,6 +570,10 @@ a.toolbar:active {
 .page_white_magnify{
     background: url('../images/fam/page_white_magnify.png') no-repeat 0 0 !important;
 }
+.page_white_params{
+    background: url('../images/fam/basket_put.png') no-repeat 0 0 !important;
+}
+
 
 .page_white_acrobat{
     background: url('../images/fam/page_white_acrobat.png') no-repeat 0 0 !important;
