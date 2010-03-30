@@ -1,13 +1,6 @@
-<?
-
-
-?>
-
 <div class="content" >
     <div id="panel"></div> 
 </div>
-
-
 
 <div id="header" class="x-hide-display">
     <table cellspacing="1" width="100%" class="tableList">        
@@ -87,11 +80,7 @@
 
 </div>
 
-
-
 <?
-
-
 
 include_component("reportesNeg","infoReporte", array("reporte"=>$reporte, "grupoReportes"=>$grupoReportes));
 
@@ -106,20 +95,26 @@ if( !$reporte->esSoloAduana() ){
         $panelRecargos = false;
     }
 }else{
-    $panelConceptosFletes = false;
-    $panelRecargos = false;
+   $panelConceptosFletes = false;
+   $panelRecargos = false;
 }
-
 if( $reporte->getCaColmas()=="Sí" || $reporte->getCaTransporte() == Constantes::ADUANA ){
-    include_component("reportesNeg","panelRecargosAduana", array("reporte"=>$reporte));
-    $panelAduana = true;
+   include_component("reportesNeg","panelRecargosAduana", array("reporte"=>$reporte));
+//   include_component("cotizaciones","panelTarifarioAduana",array("cotizacion"=>$cotizacion));
+   $panelAduana = true;
 }else{
-    $panelAduana = false;
+   $panelAduana = false;
 }
-
 ?>
 <script language="javascript">
-
+   Ext.onReady(function(){
+/*      window.alert = function(texto,titulo)
+     {
+        titulo=(titulo!="undefined")?titulo:'Alerta';
+        Ext.MessageBox.alert(titulo, texto );
+     }
+*/
+   });
 
     var anularReporte = function(btn, text){
         if( btn == "ok"){
@@ -134,8 +129,7 @@ if( $reporte->getCaColmas()=="Sí" || $reporte->getCaTransporte() == Constantes::
                     //Solamente se envian los cambios
                     params :	{
                         motivo: text.trim()
-                    },
-                    
+                    },                    
                     //Ejecuta esta accion cuando el resultado es exitoso
                     callback :function(options, success, response){
                         var res = Ext.util.JSON.decode( response.responseText );                        
@@ -149,11 +143,7 @@ if( $reporte->getCaColmas()=="Sí" || $reporte->getCaTransporte() == Constantes::
         }
     };
 
-
     var ventanaAnularReporte = function(){
-
-
-
         Ext.MessageBox.show({
            title: 'Anular Reporte',
            msg: 'por favor coloque el motivo por el que anula el reporte:',
@@ -200,6 +190,10 @@ if( $reporte->getCaColmas()=="Sí" || $reporte->getCaTransporte() == Constantes::
 
     var importarRecargosLocales = function(){
         panelRecargosLocales.importarCotizacion();
+    }
+
+    var importarRecargosAduanas = function(){
+        panelRecargosAduana.importarCotizacion();
     }
 
 
@@ -291,7 +285,23 @@ if( $reporte->getCaColmas()=="Sí" || $reporte->getCaTransporte() == Constantes::
                     iconCls: 'disk',
                     scope:this,
                     handler: guardarCambios
-                }]
+                }
+              <?
+                if( $reporte->getCaIdcotizacion() ){
+                ?>
+                ,
+                '-',
+
+                 {
+                    text:'Importar de la Cotizacion',
+                    iconCls: 'import',
+                    scope:this,
+                    handler: importarRecargosAduanas
+                }
+                <?
+                }
+                ?>
+                ]
             <?
             }
             ?>
