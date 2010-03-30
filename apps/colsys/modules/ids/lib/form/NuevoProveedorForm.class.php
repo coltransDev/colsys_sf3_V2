@@ -35,7 +35,8 @@ class NuevoProveedorForm extends BaseForm{
         $widgets['transporte'] = new sfWidgetFormChoice(array('choices' => array( ""=>"",
                                                                                   Constantes::AEREO=>Constantes::AEREO,
                                                                                  Constantes::MARITIMO=>Constantes::MARITIMO,
-                                                                                 Constantes::TERRESTRE=>Constantes::TERRESTRE
+                                                                                 Constantes::TERRESTRE=>Constantes::TERRESTRE,
+                                                                                 "Agencia"=>"Agencia"
                                                                                 )));
 
         $widgets['empresa'] = new sfWidgetFormChoice(array('choices' => array( ""=>"Ambas",
