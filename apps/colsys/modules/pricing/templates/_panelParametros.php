@@ -4,11 +4,8 @@
  *
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
-
 ?>
-
 <script type="text/javascript">
-
 
 PanelParametros = function( config ){
 
@@ -22,7 +19,6 @@ PanelParametros = function( config ){
         width: 15,
         tpl : new Ext.Template(
           '<p><div class=\'btnComentarios\' id=\'obs_{_id}\'>&nbsp; {observaciones}</div></p>'
-
         )
     });
 
@@ -288,6 +284,32 @@ Ext.extend(PanelParametros, Ext.grid.EditorGridPanel, {
                                 }
 
                             }
+                        },
+                        {
+                            text: 'Parametros',
+                            iconCls: 'page_white_edit',
+                            scope:this,
+                            handler: function(){
+                                
+                                var record = rec;//grid.getStore().getAt(index);  // Get the Record
+
+                                var fieldName = grid.getColumnModel().getDataIndex(0); // Get field name
+
+                                var data = record.get(fieldName);                                
+                                if( fieldName=="idconcepto" && data ){
+
+                                    //if(!this.win)
+                                    {
+                                        this.win = new ParametroWindow({
+                                                        readOnly: this.readOnly,
+                                                        idconcepto:data
+
+                                                    });
+                                    }
+                                    this.win.ctxRecord = record;
+                                    this.win.show();
+                                }
+                            }
                         }
                         ]
                 });
@@ -313,6 +335,7 @@ Ext.extend(PanelParametros, Ext.grid.EditorGridPanel, {
     }
     ,
     onDblClickHandler: function(e) {
+        
         if( !this.readOnly ){
             var btn = e.getTarget('.btnComentarios');
             if (btn) {
@@ -326,7 +349,7 @@ Ext.extend(PanelParametros, Ext.grid.EditorGridPanel, {
             }
         }
     },
-    ventanaObservaciones : function( record ){
+    ventanaObservaciones : function( record ){        
         var activeRow = record;
         Ext.MessageBox.show({
                title: 'Observaciones',
@@ -356,7 +379,8 @@ Ext.extend(PanelParametros, Ext.grid.EditorGridPanel, {
 
     showWindow : function( record ){
         
-        if(!this.win){
+        //if(!this.win)
+        {
             this.win = new ModalidadWindow({
                             readOnly: this.readOnly
                         });
