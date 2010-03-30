@@ -2642,6 +2642,10 @@ class pricingActions extends sfActions
             $concepto->setCaConcepto( utf8_decode($request->getParameter("concepto")) );
         }
 
+        if( $request->getParameter("parametros")!==null ){
+            $concepto->setCaParametros( utf8_decode($request->getParameter("parametros")) );
+        }
+
         
         if( $request->getParameter("recargoorigen")!==null ){
             if( $request->getParameter("recargoorigen")=="true" ){
@@ -2883,7 +2887,7 @@ class pricingActions extends sfActions
 
 public function executeDatosParametros(sfWebRequest $request){
         $data = array();
-        
+        $arrParametros = array();        
         $parametros = Doctrine::getTable("InoConcepto")
                                   ->createQuery("c")
                                   ->where("c.ca_idconcepto = ? ", $request->getParameter("idconcepto") )
@@ -2900,6 +2904,11 @@ public function executeDatosParametros(sfWebRequest $request){
         }
  
 //        $this->responseArray["parametro"]=$data;
+        $readOnly = $request->getParameter("readOnly");
+
+        if( $readOnly=="false"){
+            $data[] = array( "parametro"=>"+", "orden"=>"Z");
+        }
         $this->responseArray = array( "root"=>$data  );
         $this->setTemplate("responseTemplate");
     }
