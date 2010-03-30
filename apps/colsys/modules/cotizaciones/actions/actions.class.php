@@ -204,7 +204,7 @@ class cotizacionesActions extends sfActions
 			$this->forward404Unless( $cotizacion );
 		}else{		
 			$cotizacion = new Cotizacion();
-			$sig = CotizacionTable::siguienteConsecutivo( date("Y") );
+			$sig = CotizacionTable::siguienteConsecutivo( date("Y"),$this->getRequestParameter( "empresa" ) );
 			$cotizacion->setCaConsecutivo( $sig ); 			
 		}
 		if( $this->getRequestParameter( "empresa" ) ){
@@ -304,7 +304,7 @@ class cotizacionesActions extends sfActions
 				$tarea->setCaFchterminada( date("Y-m-d H:i:s") );
 				$tarea->save();
 			}
-		}		
+		}
 		$this->redirect("cotizaciones/consultaCotizacion?id=".$cotizacion->getCaIdcotizacion());
 	}
 	
@@ -848,6 +848,14 @@ class cotizacionesActions extends sfActions
                 $newContacto->save( $conn );
 
             }
+
+            $tarifas = $cotizacion->getCotConceptoAduana();
+            foreach( $tarifas as $tarifa ){
+                $newTarifa = $tarifa->copy( false );
+                $newTarifa->setCaIdcotizacion( $newCotizacion->getCaIdcotizacion() );
+                $newTarifa->save( $conn );
+            }
+
             $conn->commit();
         }
         catch (Exception $e){
@@ -1426,6 +1434,7 @@ class cotizacionesActions extends sfActions
 		$idcotizacion = $this->getRequestParameter("idcotizacion");
         $idproducto = $this->getRequestParameter("idproducto");
         $modo = $this->getRequestParameter("modo");
+        
 		$this->forward404unless( $idcotizacion );
 		$tipo = Constantes::RECARGO_LOCAL;
 		
