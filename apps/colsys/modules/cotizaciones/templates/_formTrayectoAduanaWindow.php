@@ -53,9 +53,9 @@
                             allowBlank:false
                         },
                         {
-                            id: 'idtrayecto',
+                            id: 'idproducto',
                             xtype:'hidden',
-                            name: 'idtrayecto',
+                            name: 'idproducto',
                             value: '',
                             allowBlank:false
                         },
@@ -82,9 +82,9 @@
                             allowBlank:false,
                             width: 300
                         }
-                        ,<?=include_component("widgets", "ciudades" ,array("id"=>"ciu_origen", "label"=>"Ciudad Origen", "idpais"=>"CO-057", "allowBlank"=>"false"))?>                        
+                        ,<?=include_component("widgets", "ciudades" ,array("id"=>"ciu_origen", "label"=>"Ciudad Origen", "idpais"=>"CO-057", "allowBlank"=>"false"))?>
                         ,<?=include_component("widgets", "ciudades" ,array("id"=>"ciu_destino", "label"=>"Ciudad Destino", "idpais"=>"CO-057", "allowBlank"=>"false"))?>
-                       
+                       ,<?=include_component("widgets", "lineas" ,array("id"=>"idlinea", "label"=>"Linea", "allowBlank"=>"true", "link"=>"transporte" ))?>
                         ,{
                             xtype: 'textarea',
                             width: 310,
