@@ -33,6 +33,10 @@ include_component("pricing","panelParametros" );
 include_component("pricing","modalidadWindow" );
 include_component("pricing","modalidadGrid");
 
+include_component("pricing","parametroWindow" );
+include_component("pricing","parametroGrid");
+
+
 //Tarifario Colmas
 include_component("pricing","panelTarifarioAduana");
 include_component("pricing","panelTarifarioAduanaCliente");
@@ -42,7 +46,13 @@ include_component("pricing","panelTarifarioAduanaCliente");
 
 
 Ext.onReady(function(){
-        
+
+/*     window.alert = function(texto,titulo)
+     {
+        titulo=(titulo!="undefined")?titulo:'Alerta';
+        Ext.MessageBox.alert(titulo, texto );
+     }
+*/
     /* Inicializa los tooltips
     */
     Ext.QuickTips.init();
@@ -223,7 +233,7 @@ Ext.onReady(function(){
                                                              modalidad: "FCL",
                                                              idtrafico: "CO-057"
                                                          });
-        Ext.getCmp('tab-panel').add(newComponent);
+        Ext.getCmp('tab-panel').add(newComponent);    
         Ext.getCmp('tab-panel').setActiveTab(newComponent);*/
 
     });
