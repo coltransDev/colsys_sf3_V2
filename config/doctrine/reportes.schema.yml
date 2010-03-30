@@ -545,6 +545,9 @@ RepCosto:
     ca_netcosto: decimal
     ca_idmoneda: string
     ca_detalles: string
+    ca_aplicacion: string
+    ca_aplicacionminimo: string
+    ca_parametro: string
   relations:
     Reporte:
       local: ca_idreporte
