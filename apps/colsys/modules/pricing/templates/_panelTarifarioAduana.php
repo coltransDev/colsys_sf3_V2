@@ -209,9 +209,14 @@ PanelTarifarioAduana = function( config ){
         hideable: false,
         width: 170,       
         sortable: this.readOnly,
+        decimalPrecision  :2,
+        renderer: this.formatNumber,
+
         editor: new Ext.form.NumberField({
                     allowBlank: false ,
-                    style: 'text-align:left'
+                    style: 'text-align:left',
+                    allowNegative: false,
+                    decimalPrecision :2
                 })
       },
       {
@@ -228,9 +233,12 @@ PanelTarifarioAduana = function( config ){
         hideable: false,
         width: 170,
         sortable: this.readOnly,
+        decimalPrecision  :2,
+        renderer: this.formatNumber,
         editor: new Ext.form.NumberField({
                     allowBlank: false ,
-                    style: 'text-align:left'
+                    style: 'text-align:left',
+                    decimalPrecision :2
                 })
       },
       {
@@ -283,7 +291,6 @@ PanelTarifarioAduana = function( config ){
     ]);
 
     this.store = new Ext.data.Store({
-
         autoLoad : true,
         url: '<?=url_for("pricing/datosPanelTarifarioAduana")?>',
         baseParams : {
@@ -313,7 +320,7 @@ PanelTarifarioAduana = function( config ){
     PanelTarifarioAduana.superclass.constructor.call(this, {
        loadMask: {msg:'Cargando...'},
        clicksToEdit: 1,
-       id: 'panel-parametros',
+       id: 'panel-tarifario-aduana',
        plugins: [ this.expander],
         closable: true,
        view: new Ext.grid.GridView({
@@ -443,6 +450,11 @@ Ext.extend(PanelTarifarioAduana, Ext.grid.EditorGridPanel, {
         );
 
     },
+    formatNumber: function(value, p, record) {
+        return Ext.util.Format.round(value,2);
+
+    },
+
 
     onValidateEdit : function(e){        
         if( e.field == "concepto" ){
