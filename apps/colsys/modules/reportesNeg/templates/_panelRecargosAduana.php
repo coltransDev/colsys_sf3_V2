@@ -8,8 +8,12 @@
 
 
 $recargos = $sf_data->getRaw("recargos");
-
+//print_r($sf_data);
+//exit;
 $aplicaciones = array("Valor Fijo","Sobre Flete","Sobre Flete + Recargos","Unitario x Peso/Volumen","Unitario x Pieza","Unitario x BLs/HAWBs");
+
+include_component("reportesNeg","cotizacionRecargosAduanasWindow", array("reporte"=>$reporte));
+
 ?>
 <script type="text/javascript">
 
@@ -51,44 +55,68 @@ PanelRecargosAduana = function( config ){
         store : this.storeConceptos
     });
 
-    this.editorTipoAplicaciones = new Ext.form.ComboBox({
 
-        typeAhead: true,
-        forceSelection: true,
-        triggerAction: 'all',
-        selectOnFocus: true,
-        mode: 'local',        
-        lazyRender:true,
-        listClass: 'x-combo-list-small',
-        store : [["$","$"],["%","%"]]
+    this.storeRecargos = new Ext.data.Store({
+        autoLoad : true,
+        url: '<?=url_for("parametros/datosConceptos")?>',
+        baseParams : {
+            impoexpo: 'Aduanas',
+            modo: "costos"
+        },
+        reader: new Ext.data.JsonReader(
+            {
+                root: 'root',
+                totalProperty: 'total',
+                successProperty: 'success'
+            },
+            Ext.data.Record.create([
+                {name: 'idconcepto'},
+                {name: 'concepto'}
+            ])
+        )
     });
 
-    this.editorAplicaciones = new Ext.form.ComboBox({
-
+    this.editorRecargos = new Ext.form.ComboBox({
         typeAhead: true,
         forceSelection: true,
         triggerAction: 'all',
         selectOnFocus: true,
         mode: 'local',
+        displayField: 'concepto',
+        valueField: 'idconcepto',
         lazyRender:true,
         listClass: 'x-combo-list-small',
-        store : [
-                    <?
-                    $i=0;
-                    foreach( $aplicaciones as $aplicacion ){
-                        if($i++!=0){
-                            echo ",";
-                        }
-
-                    ?>
-                    ['<?=$aplicacion?>','<?=$aplicacion?>']
-                    <?
-                    }
-                    ?>
-                ]
+        store : this.storeRecargos
     });
 
 
+
+this.storeParametros = new Ext.data.Store({
+        autoLoad : false,
+        url: '<?=url_for("cotizaciones/datosParametros")?>',
+        reader: new Ext.data.JsonReader(
+            {
+                root: 'root',
+                totalProperty: 'total',
+                successProperty: 'success'
+            },
+            Ext.data.Record.create([
+                {name: 'parametro'}
+            ])
+        )
+    });
+    this.editorParametros = new Ext.form.ComboBox({
+        typeAhead: true,
+        forceSelection: true,
+        triggerAction: 'all',
+        selectOnFocus: true,
+        mode: 'local',
+        displayField: 'parametro',
+        valueField: 'parametro',
+        lazyRender:true,
+        listClass: 'x-combo-list-small',
+        store : this.editorRecargos
+    });
     /*
     * Crea el expander
     */
@@ -112,27 +140,14 @@ PanelRecargosAduana = function( config ){
         renderer: this.formatItem,
         editor: this.editorConceptos
       },
-     
       {
-        header: "Tipo",
-        dataIndex: 'tipo_app',
-        width: 35,
+        header: "Parametro",
+        dataIndex: 'parametro',
         hideable: false,
-        sortable:false,
-        editor: this.editorTipoAplicaciones
-      },     
-      {
-        header: "Neto",
-        dataIndex: 'netcosto',
-        width: 50,
-        hideable: false,
-        sortable:false,
-        editor: new Ext.form.NumberField({
-				allowBlank: false ,
-				allowNegative: false,
-				style: 'text-align:left',
-				decimalPrecision :3
-			})
+        width: 170,
+        renderer: this.formatItem,
+        sortable: this.readOnly,
+        editor: this.editorParametros
       },
       {
         header: "Valor",
@@ -147,7 +162,14 @@ PanelRecargosAduana = function( config ){
 				decimalPrecision :3
 			})
       },
-
+{
+        header: "Aplicacion",
+        dataIndex: 'aplicacion',
+        hideable: false,
+        width: 170,
+        sortable: this.readOnly,
+        editor: <?=include_component("widgets", "emptyCombo" ,array("id"=>""))?>
+      },
       {
         header: "Minimo",
         dataIndex: 'mincosto',
@@ -162,20 +184,15 @@ PanelRecargosAduana = function( config ){
 			})
       },
       {
-        header: "Moneda",
-        dataIndex: 'idmoneda',
-        width: 50,
+        header: "Aplicacion Min",
+        dataIndex: 'aplicacionminimo',
         hideable: false,
-        sortable:false,
-        editor: <?=include_component("widgets", "monedas" ,array("id"=>""))?>
+        width: 170,
+        sortable: this.readOnly,
+        editor: <?=include_component("widgets", "emptyCombo" ,array("id"=>""))?>
       },
-      {
-        header: "Orden",
-        dataIndex: 'orden',
-        width: 50,
-        sortable:true
 
-      }
+
      ];
 
 
@@ -183,14 +200,15 @@ PanelRecargosAduana = function( config ){
             {name: 'idreporte', type: 'int'},
             {name: 'iditem', type: 'int'},
             {name: 'idconcepto', type: 'int'},
-            {name: 'aplicacion', type: 'string'},
-            {name: 'tipo_app', type: 'string'},
+            {name: 'parametro', type: 'string'},
+            {name: 'tipo', type: 'string'},
             {name: 'item', type: 'string'},
                   
             {name: 'vlrcosto', type: 'float'},
+            {name: 'aplicacion', type: 'string'},
             {name: 'mincosto', type: 'float'},
-            {name: 'netcosto', type: 'float'},
-            {name: 'idmoneda', type: 'string'},
+            {name: 'aplicacionminimo', type: 'string'},           
+            
             {name: 'observaciones', type: 'string'},
             {name: 'tipo', type: 'string'},
             {name: 'orden', type: 'string'}
@@ -220,6 +238,7 @@ PanelRecargosAduana = function( config ){
     PanelRecargosAduana.superclass.constructor.call(this, {
        loadMask: {msg:'Cargando...'},
        clicksToEdit: 1,
+       id: 'panel-recargos-aduana',
 
        plugins: [this.expander],
        view: new Ext.grid.GridView({
@@ -357,28 +376,28 @@ Ext.extend(PanelRecargosAduana, Ext.grid.EditorGridPanel, {
 
                                idreporte: '<?=$reporte->getCaIdreporte()?>',
 
-                               item: '+',
-                               iditem: '',                               
-                               tipo: 'costo',
-                               vlrcosto: '',
-                               mincosto: '',
-                               netcosto: '',
-                               idmoneda: '',
-                               detalles: '',
-                               orden: 'Z' // Se utiliza Z por que el orden es alfabetico
+                                item: '+',
+                                iditem: '',
+                                tipo: 'costo',
+                                parametro: '',
+                                vlrcosto: '',
+                                aplicacion: '',
+                                mincosto: '',
+                                aplicacionminimo: '',
+                                orden: 'Z' // Se utiliza Z por que el orden es alfabetico
                             });
-
-
                                                       
                             rec.set("iditem", r.data.idconcepto);
                             rec.set("idconcepto", r.data.idconcepto);
-                            rec.set("tipo_app", "$");
+                            rec.set("item", r.data.concepto);
+                            rec.set("parametro", r.data.parametro);
+                            rec.set("tipo", "costo");
+
+                            rec.set("vlrcosto", r.data.valor);
+                            rec.set("aplicacion", r.data.aplicacion);
+                            rec.set("mincosto", r.data.valorminimo);
+                            rec.set("aplicacionminimo", r.data.aplicacionminimo);
                             
-                            rec.set("vlrcosto", 0);
-                            rec.set("mincosto", 0);
-                            rec.set("netcosto", 0);
-                            rec.set("idmoneda", "USD");
-                            rec.set("orden", "Y-Z");
                                 //guardarGridProductosRec( rec );
                             
 
@@ -386,8 +405,7 @@ Ext.extend(PanelRecargosAduana, Ext.grid.EditorGridPanel, {
                             storeGrid.addSorted(newRec);
                             storeGrid.sort("orden", "ASC");
 
-                        }else{
-                            rec.set("idmoneda", "USD");
+                        }else{                            
                             rec.set("iditem", r.data.idconcepto);
                         }
                         e.value = r.data.concepto;
@@ -472,20 +490,14 @@ Ext.extend(PanelRecargosAduana, Ext.grid.EditorGridPanel, {
                     success = false;
                 },
 
-
-
                 //Ejecuta esta accion cuando el resultado es exitoso
                 success:function(response,options){
                     var res = Ext.util.JSON.decode( response.responseText );
                     if( res.success ){
                         record = storeConceptosFletes.getById( res.id );
-                        storeConceptosFletes.remove(record);
-                        
+                        storeConceptosFletes.remove(record);                        
                     }
                 }
-
-
-
             });
             
         }
@@ -528,9 +540,13 @@ Ext.extend(PanelRecargosAduana, Ext.grid.EditorGridPanel, {
                animEl: 'mb3',
                value: record.get("observaciones")
            });
+    },
+    importarCotizacion: function(){
+        if( !this.win ){
+            this.win = new CotizacionRecargosAduanasWindow();
+        }
+        this.win.show();
     }
-    
-
 });
 
 </script>
