@@ -303,6 +303,7 @@ class reportesNegComponents extends sfComponents
      */
     public function executeCotizacionRecargosWindow()
 	{
+        $this->aplicaciones = ParametroTable::retrieveByCaso("CU082");
         if( $this->reporte->getCaIdproducto() ){
             $this->producto = Doctrine::getTable("CotProducto")->find( $this->reporte->getCaIdproducto() );
             $this->cotizacion = $this->producto->getCotizacion();
@@ -311,8 +312,31 @@ class reportesNegComponents extends sfComponents
             $this->cotizacion = null;
 
         }
-	}
+	 }
 
+   public function executeCotizacionRecargosAduanasWindow()
+   {
+//      echo "numero de cotizacion:".($this->reporte->getCaIdcotizacion());
+//      exit;
+        if( $this->reporte->getCaIdcotizacion() )
+        {
+            $this->cotizacion = Doctrine::getTable("Cotizacion")
+                                  ->createQuery("c")
+                                  ->where("c.ca_consecutivo = ? ", "4682-2010" )
+                                  ->fetchOne();
+        }else{
+          $this->cotizacion = null;
+        }
+      $this->aplicaciones = ParametroTable::retrieveByCaso("CU082");
+/*      if( $this->reporte->getCaIdproducto() ){
+          $this->producto = Doctrine::getTable("CotProducto")->find( $this->reporte->getCaIdproducto() );
+          $this->cotizacion = $this->producto->getCotizacion();
+       }else{
+          $this->producto = null;
+          $this->cotizacion = null;
+      }
+*/
+   }
 	
 		
 }
