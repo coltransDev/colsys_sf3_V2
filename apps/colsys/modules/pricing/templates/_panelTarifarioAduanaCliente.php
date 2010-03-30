@@ -204,9 +204,12 @@ PanelTarifarioAduanaCliente = function( config ){
         hideable: false,
         width: 170,       
         sortable: this.readOnly,
+        decimalPrecision  :2,
+        renderer: this.formatNumber,
         editor: new Ext.form.NumberField({
                     allowBlank: false ,
-                    style: 'text-align:left'
+                    style: 'text-align:left',
+                    decimalPrecision :2
                 })
       },
       {
@@ -223,9 +226,12 @@ PanelTarifarioAduanaCliente = function( config ){
         hideable: false,
         width: 170,
         sortable: this.readOnly,
+        decimalPrecision  :2,
+        renderer: this.formatNumber,
         editor: new Ext.form.NumberField({
                     allowBlank: false ,
-                    style: 'text-align:left'
+                    style: 'text-align:left',
+                    decimalPrecision :2
                 })
       },
       {
@@ -483,6 +489,9 @@ Ext.extend(PanelTarifarioAduanaCliente, Ext.grid.EditorGridPanel, {
             '<b>{0}</b>',
             value
         );
+    },
+    formatNumber: function(value, p, record) {
+        return Ext.util.Format.round(value,2);
 
     },
     onValidateEdit : function(e){
