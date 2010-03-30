@@ -5,12 +5,14 @@
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
 
-
+if(!isset($modo) || $modo!="consulta")
+{
 include_component("pricing", "panelTarifarioAduanaCliente");
+$modo="";
+}
 ?>
 
 <script type="text/javascript">
-
 
 PanelTarifarioAduana = function( config ){
 
@@ -19,6 +21,8 @@ PanelTarifarioAduana = function( config ){
     /*
     * Crea el expander
     */
+   this.checkColumn = new Ext.grid.CheckColumn({header:' ', dataIndex:'sel', width:30});
+   
     this.expander = new Ext.grid.RowExpander({
         lazyRender : false,
         width: 15,
@@ -130,6 +134,13 @@ PanelTarifarioAduana = function( config ){
 
 
     this.columns = [
+       <?
+        if($modo=="consulta"){
+        ?>
+        this.checkColumn,
+        <?
+        }
+        ?>
       this.expander,
       {
         header: "Concepto",
@@ -195,6 +206,7 @@ PanelTarifarioAduana = function( config ){
 
 
     this.record = Ext.data.Record.create([
+            {name: 'sel', type: 'bool'},
             {name: 'consecutivo', type: 'int'},
             {name: 'idconcepto', type: 'int'},
             {name: 'concepto', type: 'string'},
@@ -227,6 +239,9 @@ PanelTarifarioAduana = function( config ){
     });
 
     if( !this.readOnly ){
+    <?
+        if( $modo!="consulta" ){
+        ?>
         this.tbar = [{
                 text:'Guardar',
                 iconCls: 'disk',
@@ -243,6 +258,9 @@ PanelTarifarioAduana = function( config ){
                 }
                }
              ];
+        <?
+        }
+        ?>
     }else{
         this.tbar = null;
     }
@@ -259,13 +277,25 @@ PanelTarifarioAduana = function( config ){
             showPreview:true//,
             //getRowClass : this.applyRowClass
        }),
+       <?
+        if($modo!="consulta"){
+        ?>
        listeners:{
             validateedit: this.onValidateEdit,
             beforeedit: this.onBeforeEdit,
             rowcontextmenu: this.onRowcontextMenu,
             dblclick:this.onDblClickHandler,
             celldblclick: this.onCelldblclick
-       },
+       }
+<?
+        }else{
+        ?>
+        boxMinHeight: 400,
+        plugins: [this.checkColumn]
+        <?
+        }
+?>
+       ,
        tbar: this.tbar
     });
 
@@ -574,21 +604,26 @@ Ext.extend(PanelTarifarioAduana, Ext.grid.EditorGridPanel, {
             activeRow.set("observaciones", text);
         }
     },
+
     ventanaTarifarioAduana: function( ){
         var recordGrilla = this.record;
         var storeTarifaCot = this.store;
         var records = storeTarifaCot.getRange();
         var length = storeTarifaCot.data.length;
         
-        
+      <?
+    if($modo!="consulta"){
+    ?>
         var newComponent = new PanelTarifarioAduanaCliente({readOnly:true,
                                                             idcliente: <?=$cotizacion->getCliente()->getCaIdcliente()?>,
                                                             height: 400
                                                            });
-
+<?
+    }
+?>
             //Se crea la ventana
 
-        
+
         winSeguros = new Ext.Window({
             width       : 800,
             height      : 460,
