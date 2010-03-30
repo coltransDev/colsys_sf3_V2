@@ -779,8 +779,8 @@ class reportesNegActions extends sfActions
             
        
         
-	}
-
+        }
+            
     /*
     * Datos para el panel de conceptos
     * @param sfRequest $request A request object
@@ -1200,6 +1200,9 @@ class reportesNegActions extends sfActions
             $row["mincosto"] = $recargo->getCaMincosto();
             $row["netcosto"] = $recargo->getCaNetcosto();
             $row["idmoneda"] = $recargo->getCaIdmoneda();
+            $row["aplicacion"] = $recargo->getCaAplicacion();
+            $row["aplicacionminimo"] = $recargo->getCaAplicacionminimo();
+
             $row["observaciones"] = $recargo->getCaDetalles();
             $row['tipo']="costo";
             $row['orden']="Y-".$recargo->getCosto()->getCaCosto();
@@ -1227,10 +1230,7 @@ class reportesNegActions extends sfActions
         $id = $request->getParameter("id");
         $this->responseArray=array("id"=>$id,  "success"=>false);
 
-
         $tipo = $request->getParameter("tipo");
-
-
 
         if( $tipo=="costo" ){
             $idreporte = $request->getParameter("idreporte");            
@@ -1239,11 +1239,8 @@ class reportesNegActions extends sfActions
             if( !$tarifa ){
                 $tarifa = new RepCosto();
                 $tarifa->setCaIdreporte( $idreporte );
-                $tarifa->setCaIdcosto( $idcosto );
-               
+                $tarifa->setCaIdcosto( $idcosto );               
             }
-
-            
 
             if( $request->getParameter("tipo_app")!==null ){
                 $tarifa->setCaTipo( $request->getParameter("tipo_app") );
@@ -1275,6 +1272,19 @@ class reportesNegActions extends sfActions
                     $tarifa->setCaDetalles( null );
                 }
             }
+
+            if( $request->getParameter("parametro")!==null ){
+                $tarifa->setCaParametro( $request->getParameter("parametro") );
+            }
+
+            if( $request->getParameter("aplicacion")!==null ){
+                $tarifa->setCaAplicacion( $request->getParameter("aplicacion") );
+            }
+
+            if( $request->getParameter("aplicacionminimo")!==null ){
+                $tarifa->setCaAplicacionminimo( $request->getParameter("aplicacionminimo") );
+            }
+
 
             $tarifa->save();
             $this->responseArray["success"]=true;
