@@ -140,6 +140,21 @@ Ext.extend(ModalidadGrid, Ext.grid.EditorGridPanel, {
 
             var recordModalidad = this.record;
             var storeGrid = this.store;
+
+
+            var lenght = storeGrid.data.length;
+            var records = storeGrid.getRange();
+
+            for( var i=0; i< lenght; i++){
+                
+                if(e.value==records[i].data.idmodalidad)
+                {
+                    alert("Esta modalidad ya esta registrada,\n seleccione otra por favor");
+                    return false;
+                }
+            }
+
+
             store.each( function( r ){
 
                     if( r.data.id==e.value ){
