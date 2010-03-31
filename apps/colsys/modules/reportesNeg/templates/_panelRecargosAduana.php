@@ -115,7 +115,7 @@ this.storeParametros = new Ext.data.Store({
         valueField: 'parametro',
         lazyRender:true,
         listClass: 'x-combo-list-small',
-        store : this.editorRecargos
+        store : this.storeParametros
     });
     /*
     * Crea el expander
@@ -250,6 +250,7 @@ this.storeParametros = new Ext.data.Store({
        }),
        listeners:{
             validateedit: this.onValidateEdit,
+            beforeedit: this.onBeforeEdit,
             rowcontextmenu: this.onRowcontextMenu,           
             dblclick:this.onDblClickHandler
         },
@@ -347,6 +348,32 @@ Ext.extend(PanelRecargosAduana, Ext.grid.EditorGridPanel, {
                 );
             }
         }
+    },
+    onBeforeEdit: function(e){
+
+        if( e.field=="aplicacion" || e.field=="aplicacionminimo" ){
+            var data = [
+                <?
+                $i=0;
+                foreach( $aplicaciones as $aplicacion ){
+                    if( $i++!=0){
+                        echo ",";
+                    }
+                ?>
+                    ['<? //=$aplicacion->getCaValor()?>']
+                <?
+                }
+                ?>
+            ];
+
+            var ed = this.colModel.getCellEditor(e.column, e.row);
+            ed.field.store.loadData( data );
+        }
+        else if( e.field == "parametro" ){
+            this.storeParametros.removeAll();
+            this.storeParametros.setBaseParam("idconcepto",e.record.data.iditem);
+            this.storeParametros.load();
+        }
     }
     ,
     formatItem: function(value, p, record) {
@@ -360,7 +387,28 @@ Ext.extend(PanelRecargosAduana, Ext.grid.EditorGridPanel, {
 
     
     onValidateEdit : function(e){
-        if( e.field == "item"){
+        if( e.field == "parametro" ){
+            var rec = e.record;
+            var recordConcepto = this.record;
+            var storeConcepto = this.store;
+            var store = this.store;
+            var lenght = this.store.data.length;
+            var records = store.getRange();
+//            alert(records.toSource());
+
+            for( var i=0; i< (lenght); i++){
+                if(e.record.data.idconcepto==records[i].data.idconcepto)
+                {
+                    if(e.value==records[i].data.parametro)
+                    {
+                        alert("Este concepto y parametro ya han asignados,\n seleccione otro por favor");
+                        return false;
+                    }
+                }
+            }
+
+        }
+        else if( e.field == "item"){
             
             var rec = e.record;
             var ed = this.colModel.getCellEditor(e.column, e.row);
@@ -390,13 +438,13 @@ Ext.extend(PanelRecargosAduana, Ext.grid.EditorGridPanel, {
                             rec.set("iditem", r.data.idconcepto);
                             rec.set("idconcepto", r.data.idconcepto);
                             rec.set("item", r.data.concepto);
-                            rec.set("parametro", r.data.parametro);
+                            rec.set("parametro", '');
                             rec.set("tipo", "costo");
 
-                            rec.set("vlrcosto", r.data.valor);
-                            rec.set("aplicacion", r.data.aplicacion);
-                            rec.set("mincosto", r.data.valorminimo);
-                            rec.set("aplicacionminimo", r.data.aplicacionminimo);
+                            rec.set("vlrcosto", '');
+                            rec.set("aplicacion", '');
+                            rec.set("mincosto", '');
+                            rec.set("aplicacionminimo", '');
                             
                                 //guardarGridProductosRec( rec );
                             
