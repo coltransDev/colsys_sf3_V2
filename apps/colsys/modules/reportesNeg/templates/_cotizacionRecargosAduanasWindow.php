@@ -77,7 +77,7 @@ if( $cotizacion )
             var records = store.getRange();
 
             var lenght = records.length;
-
+            msg="";
 //            var gridAduanas = Ext.getCmp("panel-recargos-aduana");
 //            var recordAduanas = gridAduanas.record;
 
@@ -98,9 +98,11 @@ if( $cotizacion )
                 {
 //                    alert(r.data.idconcepto+":"+recordsConceptos[j].data.iditem);
                     
-//                    if( recordsConceptos[j].data.iditem==r.data.idrecargo){
-//                        existe=true;
-//                    }
+                    if(recordsConceptos[j].data.iditem==r.data.idconcepto){
+                        msg+=("Concepto:"+r.data.concepto+" - Parametro :"+r.data.parametro+"<br/> \n");
+                        
+                        existe=true;
+                    }
 
                 }                
                 if( !existe ){
@@ -141,6 +143,10 @@ if( $cotizacion )
                 }
 
             }
+             if(msg!="")
+                        {
+                          Ext.Msg.alert("Conceptos","No se ingresaron los siguientes conceptos porque ya se encuentran en el Reporte de negocios <br/>"+msg);
+                        }
             //alert(r.data.idmodalidad + " "+r.data.modalidad );
 
             
