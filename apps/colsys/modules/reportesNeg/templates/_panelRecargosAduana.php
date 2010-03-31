@@ -406,16 +406,35 @@ Ext.extend(PanelRecargosAduana, Ext.grid.EditorGridPanel, {
                     }
                 }
             }
-
         }
         else if( e.field == "item"){
-            
+
+
+
             var rec = e.record;
             var ed = this.colModel.getCellEditor(e.column, e.row);
             var store = ed.field.store;
 
             var recordConcepto = this.record;
             var storeGrid = this.store;
+
+
+            var lenght = storeGrid.data.length;
+            var records = storeGrid.getRange();
+//            alert(records.toSource());
+
+            for( var i=0; i< (lenght); i++){
+                if(e.record.data.iditem==records[i].data.iditem)
+                {
+                    if(e.record.data.iditem==records[i].data.parametro)
+                    {
+                        alert("Este concepto y parametro ya han asignados,\n seleccione otro por favor");
+                        return false;
+                    }
+                }
+            }
+
+
             store.each( function( r ){
                    
                     if( r.data.idconcepto==e.value ){                        
