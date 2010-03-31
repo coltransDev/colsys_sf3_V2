@@ -7,8 +7,8 @@
 
 if(!isset($modo) || $modo!="consulta")
 {
-include_component("pricing", "panelTarifarioAduanaCliente");
-$modo="";
+    include_component("pricing", "panelTarifarioAduanaCliente");
+    $modo="";
 }
 ?>
 
@@ -225,7 +225,7 @@ PanelTarifarioAduana = function( config ){
         autoLoad : true,
         url: '<?=url_for("cotizaciones/datosPanelTarifarioAduana")?>',
         baseParams : {
-            readOnly: this.readOnly,
+            readOnly: '<?=$modo?>' ,
             idcotizacion:'<?=$cotizacion->getCaIdcotizacion()?>'
         },
         reader: new Ext.data.JsonReader(
