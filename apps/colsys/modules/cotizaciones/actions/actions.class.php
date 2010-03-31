@@ -2183,9 +2183,6 @@ class cotizacionesActions extends sfActions
     */
     public function executeDatosPanelTarifarioAduana(sfWebRequest $request){
 
-        
-
-        
         $data = array();
         
         $conceptos = Doctrine::getTable("CotConceptoAduana")
@@ -2209,8 +2206,9 @@ class cotizacionesActions extends sfActions
                             "idcotizacion"=>$concepto->getCaIdcotizacion()
                             );
         }
-
-        $data[] = array("idconcepto"=>"", "concepto"=>"+", "orden"=>"Z");
+        $readOnly=$request->getParameter("readOnly");
+        if($readOnly=="" )
+            $data[] = array("idconcepto"=>"", "concepto"=>"+", "orden"=>"Z");
         $this->responseArray = array( "totalCount"=>count( $conceptos ), "root"=>$data  );
  
  
