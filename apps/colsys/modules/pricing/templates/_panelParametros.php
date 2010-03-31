@@ -287,7 +287,7 @@ Ext.extend(PanelParametros, Ext.grid.EditorGridPanel, {
                         },
                         {
                             text: 'Parametros',
-                            iconCls: 'page_white_edit',
+                            iconCls: 'page_white_params',
                             scope:this,
                             handler: function(){
                                 
