@@ -462,19 +462,21 @@ Ext.extend(PanelTarifarioAduana, Ext.grid.EditorGridPanel, {
             var recordConcepto = this.record;
             var storeConcepto = this.store;
             //alert(this.store.getCount()-1);
-/*            var store = this.store;
+            var store = this.store;
             var lenght = this.store.data.length;
             var records = store.getRange();
 //            alert(records.toSource());
 
-            for( var i=0; i< lenght; i++){
+            for( var i=0; i< (lenght); i++){
                 if(e.value==records[i].data.idconcepto)
                 {
-                    alert("Este concepto ya esta registrado,\n seleccione otro por favor");
-                    return false;
+                    if(e.record.data.parametro==records[i].data.parametro)
+                    {
+                        alert("Este concepto y parametro ya han asignados,\n seleccione otro por favor");
+                        return false;
+                    }
                 }
             }
-            */
             if( rec.data.orden=="Z"){
                 var rec = e.record;
                 var ed = this.colModel.getCellEditor(e.column, e.row);
@@ -509,7 +511,7 @@ Ext.extend(PanelTarifarioAduana, Ext.grid.EditorGridPanel, {
                 });
             }
         }
-        else if( e.field == "parametro" ){            
+        else if( e.field == "parametro" ){
             var rec = e.record;
             var recordConcepto = this.record;
             var storeConcepto = this.store;
