@@ -3711,6 +3711,36 @@ ORDER BY ca_idtrayecto,ca_idconcepto,log_pricrecargosxconcepto.ca_idrecargo, ca_
         $this->setTemplate("blank");
     }
 
+
+
+    public function executeAnalizarCorreos(){
+
+
+        $dir = "/home/abotero/Desktop/CORREOS";
+
+        $dstDir = "/home/abotero/Desktop/CORREOS/BAD";
+        if ($handle = opendir($dir)) {
+            echo "Directory handle: $handle\n";
+            echo "Files:\n";
+
+            /* This is the correct way to loop over the directory. */
+            while (false !== ($file = readdir($handle))) {
+                echo "$file<br />";
+
+                $fileContent = strtolower(file_get_contents($dir."/".$file));
+
+                if(strpos($fileContent, "aquiroga@bancosantander.com.co")!==false ){
+                    rename($dir."/".$file, $dstDir."/".$file );
+                }
+
+            }
+            
+            closedir($handle);
+        }
+
+
+        $this->setTemplate("blank");
+    }
 		
 }
 
