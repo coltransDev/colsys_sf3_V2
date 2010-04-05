@@ -254,7 +254,7 @@ class reportesNegActions extends sfActions
         $modalidadesAduana = Doctrine::getTable("Modalidad")
                                              ->createQuery("m")
                                              ->select("m.ca_idmodalidad")
-                                             ->where("m.ca_modalidad = ? OR m.ca_modalidad = ?", array("NACIONALIZACION", "ADUANA"))
+                                             ->where("m.ca_modalidad LIKE ?", array("ADUANA%"))
                                              ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
                                              ->execute();
         foreach( $modalidadesAduana as $row ){

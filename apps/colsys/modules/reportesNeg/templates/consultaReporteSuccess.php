@@ -98,7 +98,9 @@ if( !$reporte->esSoloAduana() ){
    $panelConceptosFletes = false;
    $panelRecargos = false;
 }
-if( $reporte->getCaColmas()=="Sí" || $reporte->getCaTransporte() == Constantes::ADUANA ){
+
+
+if( $reporte->getCaColmas()=="Sí" || substr($reporte->getCaModalidad(),0,6) == "ADUANA" ){
    include_component("reportesNeg","panelRecargosAduana", array("reporte"=>$reporte));
 //   include_component("cotizaciones","panelTarifarioAduana",array("cotizacion"=>$cotizacion));
    $panelAduana = true;
