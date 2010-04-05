@@ -475,6 +475,10 @@ CotConceptoAduana:
       local: ca_idcotizacion
       foreign: ca_idcotizacion
       type: one
+    InoConcepto:
+      local: ca_idconcepto
+      foreign: ca_idconcepto
+      type: one
 
 CotRecargosAduana:
   options:
