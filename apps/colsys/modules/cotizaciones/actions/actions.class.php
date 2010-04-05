@@ -1108,7 +1108,11 @@ class cotizacionesActions extends sfActions
 			}
 			
 			if( $valor_min!==null ){
-				$recargo->setCaValorMin( $valor_min );
+                if( $valor_min ){
+                    $recargo->setCaValorMin( $valor_min );
+                }else{
+                    $recargo->setCaValorMin( null );
+                }
 			}
 			
 			if( $aplica_tar ){
@@ -1127,7 +1131,7 @@ class cotizacionesActions extends sfActions
 				}
 			}
 
-         if( $equipo ){
+            if( $equipo ){
 				$recargo->setCaIdequipo( $equipo );
 			}
 			
