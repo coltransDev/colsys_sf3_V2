@@ -124,6 +124,8 @@ class ReporteForm extends BaseReporteForm
         $this->widgetSchema['ca_idcotizacion']=new sfWidgetFormInputText();
         $this->widgetSchema['ca_idproducto']=new sfWidgetFormInputText();
 
+        $this->widgetSchema['ca_comodato']=new sfWidgetFormChoice( array( "choices" => array("Sí"=>"Sí", "No"=>"No" ) ) );
+
         //Expo
         //$consignar = ParametroPeer::retrieveByCaso( "CU055" );
 
@@ -164,6 +166,11 @@ class ReporteForm extends BaseReporteForm
 			$this->validatorSchema['ca_idproveedor']->setOption('required', true);
             $this->validatorSchema['ca_orden_prov']->setOption('required', true);
 		}
+
+        
+        if( $taintedValues["ca_continuacion"]!="N/A" && $taintedValues["ca_impoexpo"]==Constantes::IMPO && $taintedValues["ca_transporte"]==Constantes::MARITIMO ){
+            $this->validatorSchema['ca_continuacion_conf']->setOption('required', true);
+        }
 
         //varia si es AG
         $this->validatorSchema['ca_modalidad']->setOption('required', true);

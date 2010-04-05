@@ -28,7 +28,6 @@ abstract class BaseTrayectoForm extends BaseFormDoctrine
       'ca_idagente'       => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('IdsAgente'), 'add_empty' => true)),
       'ca_activo'         => new sfWidgetFormInputCheckbox(),
       'ca_fchcreado'      => new sfWidgetFormDateTime(),
-      'ca_inpricing'      => new sfWidgetFormInputCheckbox(),
     ));
 
     $this->setValidators(array(
@@ -45,7 +44,6 @@ abstract class BaseTrayectoForm extends BaseFormDoctrine
       'ca_idagente'       => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('IdsAgente'), 'required' => false)),
       'ca_activo'         => new sfValidatorBoolean(array('required' => false)),
       'ca_fchcreado'      => new sfValidatorDateTime(array('required' => false)),
-      'ca_inpricing'      => new sfValidatorBoolean(array('required' => false)),
     ));
 
     $this->widgetSchema->setNameFormat('trayecto[%s]');
