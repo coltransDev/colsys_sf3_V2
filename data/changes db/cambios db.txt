@@ -1,0 +1,47 @@
+2010-03-30
+
+Se agrego la funcion FUNCTION fun_cotizacioncon(text, text);  para el consecutivo de cotizaciones por empresa.
+
+
+
+Tabla tb_repaduanadet
+
+quitar la propiedad de NOT NULL de los campos:
+	ca_tipo
+	ca_netcosto
+	ca_idmoneda
+
+y se  agregaron los siguientes campos
+
+	ca_parametro character varying(200),
+	ca_aplicacion character varying(50),
+	ca_aplicacionminimo character varying(50),
+
+
+
+
+2010-03-31
+
+CREATE SEQUENCE pric.tb_conceptoaduana_id
+  INCREMENT 1
+  MINVALUE 1
+  MAXVALUE 9223372036854775807
+  START 1
+  CACHE 1;
+ALTER TABLE pric.tb_conceptoaduana_id OWNER TO postgres;
+GRANT ALL ON TABLE pric.tb_conceptoaduana_id TO postgres;
+GRANT ALL ON TABLE pric.tb_conceptoaduana_id TO "Administrador";
+GRANT ALL ON TABLE pric.tb_conceptoaduana_id TO "Usuarios";
+
+
+
+CREATE SEQUENCE pric.tb_conceptoaduanaxcliente_id
+  INCREMENT 1
+  MINVALUE 1
+  MAXVALUE 9223372036854775807
+  START 1
+  CACHE 1;
+ALTER TABLE pric.tb_conceptoaduanaxcliente_id OWNER TO postgres;
+GRANT ALL ON TABLE pric.tb_conceptoaduanaxcliente_id TO postgres;
+GRANT ALL ON TABLE pric.tb_conceptoaduanaxcliente_id TO "Administrador";
+GRANT ALL ON TABLE pric.tb_conceptoaduanaxcliente_id TO "Usuarios";
