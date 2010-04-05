@@ -396,7 +396,7 @@ Ext.extend(PanelRecargosAduana, Ext.grid.EditorGridPanel, {
             var records = store.getRange();
 //            alert(records.toSource());
 
-            for( var i=0; i< (lenght); i++){
+            /*for( var i=0; i< (lenght); i++){
                 if(e.record.data.idconcepto==records[i].data.idconcepto)
                 {
                     if(e.value==records[i].data.parametro)
@@ -405,7 +405,7 @@ Ext.extend(PanelRecargosAduana, Ext.grid.EditorGridPanel, {
                         return false;
                     }
                 }
-            }
+            }*/
         }
         else if( e.field == "item"){
 
@@ -422,17 +422,17 @@ Ext.extend(PanelRecargosAduana, Ext.grid.EditorGridPanel, {
             var lenght = storeGrid.data.length;
             var records = storeGrid.getRange();
 //            alert(records.toSource());
-
-            for( var i=0; i< (lenght); i++){
-                if(e.record.data.iditem==records[i].data.iditem)
+            //alert( lenght );
+            /*for( var i=0; i< (lenght); i++){
+                if(e.record.data.iditem==records[i].data.iditem && e.record.id!=records[i].id)
                 {
                     if(e.record.data.iditem==records[i].data.parametro)
                     {
-                        alert("Este concepto y parametro ya han asignados,\n seleccione otro por favor");
+                        alert("Este concepto y parametro ya han asignados,\n seleccione otro por favor2");
                         return false;
                     }
                 }
-            }
+            }*/
 
 
             store.each( function( r ){

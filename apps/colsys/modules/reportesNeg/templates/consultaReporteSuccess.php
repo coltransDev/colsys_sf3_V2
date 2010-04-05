@@ -288,8 +288,8 @@ if( $reporte->getCaColmas()=="Sí" || substr($reporte->getCaModalidad(),0,6) == "
                     scope:this,
                     handler: guardarCambios
                 }
-              <?
-                if( $reporte->getCaIdcotizacion() ){
+                <?
+                /*if( $reporte->getCaIdcotizacion() ){
                 ?>
                 ,
                 '-',
@@ -301,7 +301,7 @@ if( $reporte->getCaColmas()=="Sí" || substr($reporte->getCaModalidad(),0,6) == "
                     handler: importarRecargosAduanas
                 }
                 <?
-                }
+                }*/
                 ?>
                 ]
             <?
