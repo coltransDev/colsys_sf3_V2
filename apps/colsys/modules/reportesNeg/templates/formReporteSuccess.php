@@ -771,6 +771,7 @@ include_partial("ventanaTercero", array("reporte"=>$reporte));
                                 for(i=0; i< <?=ReporteForm::NUM_CC?>; i++){
                                     document.getElementById("reporte_contactos_"+i).value="";
                                     document.getElementById("reporte_confirmar_"+i).checked=false;
+                                    document.getElementById("reporte_contactos_"+i).readOnly=false;
                                 }
 
 
@@ -780,6 +781,7 @@ include_partial("ventanaTercero", array("reporte"=>$reporte));
                                 for(i=0; i<brokenconfirmar.length; i++){
                                     document.getElementById("reporte_contactos_"+i).value=brokenconfirmar[i];
                                     document.getElementById("reporte_confirmar_"+i).checked=true;
+                                    document.getElementById("reporte_contactos_"+i).readOnly=true;
                                 }
 
                                 document.getElementById("rep_aduana_ca_coordinador").value=record.data.coordinador;

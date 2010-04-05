@@ -54,8 +54,16 @@ $reporte = $sf_data->getRaw("reporte");
                                 $form->setDefault('contactos_'.$i, $correos[$i] );
                             }
                             echo $form['contactos_'.$i]->render();
-                            // input_tag("contactos[]", ?:"", "size=40 maxlength=50 class=field id=contactos_{$i}");
+
+                            if( isset($correos[$i])&&$correos[$i] ){
                             ?>
+                            <script type="text/javascript">
+                                document.getElementById("reporte_contactos_<?=$i?>").readOnly=true;
+                            </script>
+                            <?
+                            }
+                            ?>
+                           
                         </td>
                         <td width="20" >
                             <?                            
