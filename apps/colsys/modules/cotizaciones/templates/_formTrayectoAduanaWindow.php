@@ -145,7 +145,7 @@
             var fp = Ext.getCmp("producto-form");
             if( fp.getForm().isValid() ){
 
-                var win = this.win;
+                var win = this;
 
                 fp.getForm().submit({url:'<?=url_for('cotizaciones/formProductoGuardar')?>',
                                         waitMsg:'Salvando Datos de Productos...',
