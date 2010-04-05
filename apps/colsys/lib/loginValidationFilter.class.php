@@ -19,7 +19,7 @@ class loginValidationFilter extends sfFilter
                 }
                 $filterChain->execute();
             }else{
-                sfContext::getInstance()->getController()->redirect("users/login");
+                sfContext::getInstance()->getController()->forward("users","login");
                 //header("Location: /users/login");
                 exit();
             }

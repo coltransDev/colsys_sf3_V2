@@ -124,8 +124,18 @@ class reportesActions extends sfActions
 		//Le informa al vendedor
 		$logins[] = $reporte->getCaLogin(); 
 		
-		
-		
+
+        $operativos = $reporte->getUsuariosOperativos();
+
+        foreach( $operativos as $operativo ){
+            $logins[] = $operativo->getCaLogin();
+        }
+        
+        $logins[] = $status->getCaUsuenvio();
+
+
+        $logins = array_unique($logins);
+        
 		/*
 		Notifica a todas las personas de Coltrans  y Colmas
 		*/			
@@ -135,7 +145,7 @@ class reportesActions extends sfActions
 		$email->setCaTipo( "Respuesta a Status" ); 	
 		
 		$email->setCaIdcaso( $respuesta->getCaIdrepstatusrespuestas() ); //
-		$email->setCaFrom( "colsys_notificaciones" );
+		$email->setCaFrom( "no-reply@coltrans.com.co" );
 		$email->setCaFromname( "Respuesta a status desde pagina Web" );
 											
 		if( is_array($logins) ){
@@ -190,12 +200,12 @@ class reportesActions extends sfActions
 		
 		$email->setCaBody( $txt.$link );
 		$email->setCaBodyHtml( Utils::replace($txt).$linkHtml );		
-		$email->save(); 		
+		$email->save();
 		$email->send();
 		
-		$email->setCaAddress("abotero@coltrans.com.co");	
+		/*$email->setCaAddress("abotero@coltrans.com.co");
 		$email->setCaCc("abotero@coltrans.com.co");				
-		$email->send();
+		$email->send();*/
 		
 		
 		/*
@@ -208,7 +218,7 @@ class reportesActions extends sfActions
 			$email->setCaTipo( "Respuesta a Status" ); 	
 			
 			$email->setCaIdcaso( $respuesta->getCaIdrepstatusrespuestas() ); //
-			$email->setCaFrom( "colsys_notificaciones" );
+			$email->setCaFrom( "no-reply@coltrans.com.co" );
 			$email->setCaFromname( "Respuesta a status desde pagina Web" );
 			
 			foreach( $correosCliente as $recip ){			
@@ -219,12 +229,12 @@ class reportesActions extends sfActions
 			$email->setCaBody( $txt.$link );
 			$email->setCaBodyHtml( Utils::replace($txt).$linkHtml );
 				
-			$email->save(); 			
+			$email->save();
 			$email->send();
 			
-			$email->setCaAddress("abotero@coltrans.com.co");	
+			/*$email->setCaAddress("abotero@coltrans.com.co");
 			$email->setCaCc("abotero@coltrans.com.co");				
-			$email->send();
+			$email->send();*/
 			
 		}
 		
