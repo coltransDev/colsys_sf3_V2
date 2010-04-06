@@ -152,7 +152,7 @@ class pricingActions extends sfActions
 
         
 
-        if( $impoexpo==Constantes::IMPO ){
+        if( $impoexpo==Constantes::IMPO || $this->getRequestParameter( "fechacambio" )  ){ // La fecha de cambio permite que salga el historico de exportaciones
             if( $idciudad ){
                 $q->addWhere("t.ca_origen = ? ", $idciudad );
             }
@@ -191,7 +191,7 @@ class pricingActions extends sfActions
 
         $ultCiudad = null;
         $ultLinea = null;
-
+        //echo count( $trayectos );
 		foreach( $trayectos as $trayecto ){
             //Por este campo se agrupan los conceptos
 			$trayectoStr = strtoupper($trayecto["o_ca_ciudad"])."»".strtoupper($trayecto["d_ca_ciudad"])." - ";
