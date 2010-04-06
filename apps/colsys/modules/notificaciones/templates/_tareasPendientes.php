@@ -17,11 +17,12 @@ if( count($listaTareas)>0 ){
 	<div id="taskListBody_<?=$lista->getCaIdlistatarea()?>" style="display:<?=count($listaTareas)==1?"inline":"none"?>">
 	<table width="100%" border="1" class="tableList" >	
 		<tr>
-			<th width="42%" >Tarea</th>
-			<th width="9%" >Enlace</th>
-			<th width="23%" >Creada</th>
-			<th width="18%" >Tiempo restante *</th>
-			<th width="8%" >Prioridad</th>
+			<th width="40%" >Tarea</th>
+			<th width="8%" >Enlace</th>
+			<th width="20%" >Creada</th>
+            <th width="20%" >Vencimiento</th>
+			<th width="12%" >Diferencia *</th>
+			
 		</tr>
 		<?
 		
@@ -30,17 +31,19 @@ if( count($listaTareas)>0 ){
 		<tr>
 			<td><div class="qtip" title="<?=$tarea->getCaTexto()?>"><?=$tarea->getCaTitulo()?></div></td>
 			<td><a href="<?=url_for("notificaciones/realizarTarea?id=".$tarea->getCaIdtarea())?>">Click aca</a></td>
-			<td><?=Utils::fechaMes($tarea->getCaFchcreado("Y-m-d"))." ".$tarea->getCaFchcreado("H:i:s")?></td>
+			<td><?=Utils::fechaMes($tarea->getCaFchcreado())?></td>
+            <td><?=Utils::fechaMes($tarea->getCaFchvencimiento())?></td>
 			<td>
 				<?			
-				/*$diff = $tarea->getTiempoRestante( $festivos  );
+				$diff = $tarea->getTiempoRestante( $festivos  );
 				if( substr($diff, 0,1)=="-" ){
 					echo "<span class='rojo'>".$diff."</span>";
 				}else{
 					echo $diff;			
-				}*/
-				?></td>
-			<td><?=$tarea->getPrioridad()?></td>
+				}
+				?>
+            </td>
+			
 		</tr>
 		<?
 		}
@@ -52,7 +55,7 @@ if( count($listaTareas)>0 ){
 	?>
 	<br />
 	<br />
-	<div class="nota">* Tiempo restante teniendo en cuenta las horas habiles.</div>    
+	<div class="nota">* Diferencia con la hora actual teniendo en cuenta las horas habiles, el color rojo indica que sobrepaso la hora.</div>
 	<?
 }else{
 ?>
