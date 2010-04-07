@@ -564,6 +564,15 @@ class falabellaAduActions extends sfActions {
         $directory=sfConfig::get('app_falabella_output_adu');
         $numdeclaracion = null;
         $salida = '';
+        $ctr_count = $stmt->rowCount();
+        $sum_array = $sub_array = array();
+        $sum_array['vlr_fob'] = 0;
+        $sum_array['vlr_iva'] = 0;
+        $sum_array['arancel'] = 0;
+        $sum_array['compensa'] = 0;
+        $sum_array['otros'] = 0;
+        $sum_array['antidump'] = 0;
+        $sum_array['salvaguarda'] = 0;
         while ( $row = $stmt->fetch() ) {
             if ($numdeclaracion != $row["ca_numdeclaracion"] and $numdeclaracion != null){
                 $filename = $directory.DIRECTORY_SEPARATOR.'DI_'.$numdeclaracion.'.txt';
@@ -616,40 +625,88 @@ class falabellaAduActions extends sfActions {
             $salida.= str_pad(number_format($valor_otr,2,'.',''), 15, "0", STR_PAD_LEFT); // 21
             $salida.= str_pad(number_format(floatval($row["ca_antidump"]),2,'.',''), 15, "0", STR_PAD_LEFT); // 22
             $salida.= str_pad(number_format(floatval($row["ca_salvaguarda"]),2,'.',''), 15, "0", STR_PAD_LEFT); // 23
-            $salida.= str_pad(null,30, " "); // 24
+            $salida.= str_pad(number_format(0,2,'.',''), 15, "0", STR_PAD_LEFT); // 24
+            $salida.= str_pad(null,15, " "); // 25
 
             $valor_fob = floatval($row["ca_valor_fob"]) + floatval($row["ca_gastos_despacho"]) + floatval($row["ca_ajuste_valor"]);
             $valor_fle = floatval($row["ca_flete"]);
             $valor_seg = floatval($row["ca_seguro"]);
             $valor_gas = floatval($row["ca_gastos_embarque"]);
 
-            $salida.= str_pad(number_format($valor_fob,2,'.',''), 15, "0", STR_PAD_LEFT); // 25
-            $salida.= str_pad(number_format($valor_fle,2,'.',''), 15, "0", STR_PAD_LEFT); // 26
-            $salida.= str_pad(number_format($valor_seg,2,'.',''), 15, "0", STR_PAD_LEFT); // 27
+            $salida.= str_pad(number_format($valor_fob,2,'.',''), 15, "0", STR_PAD_LEFT); // 26
+            $salida.= str_pad(number_format($valor_fle,2,'.',''), 15, "0", STR_PAD_LEFT); // 27
+            $salida.= str_pad(number_format($valor_seg,2,'.',''), 15, "0", STR_PAD_LEFT); // 28
 
             $valor_cif = ($valor_fob + $valor_fle + $valor_seg);
 
-            $salida.= str_pad(number_format($valor_cif,2,'.',''), 15, "0", STR_PAD_LEFT); // 28
-            $salida.= str_pad(number_format($valor_gas,2,'.',''), 15, "0", STR_PAD_LEFT); // 29
-            $salida.= str_pad(number_format($valor_cif + $valor_gas,2,'.',''), 15, "0", STR_PAD_LEFT); // 30
-            $salida.= str_pad(substr($row["ca_iddoc"],0,15),20, " "); // 31
-            $salida.= str_pad($row["ca_embarque"], 2, " "); // 32
+            $salida.= str_pad(number_format($valor_cif,2,'.',''), 15, "0", STR_PAD_LEFT); // 29
+            $salida.= str_pad(number_format($valor_gas,2,'.',''), 15, "0", STR_PAD_LEFT); // 30
+            $salida.= str_pad(number_format($valor_cif + $valor_gas,2,'.',''), 15, "0", STR_PAD_LEFT); // 31
+            $salida.= str_pad(substr($row["ca_iddoc"],0,15),20, " "); // 32
+            $salida.= str_pad($row["ca_embarque"], 2, " "); // 33
 
             $factor = $row["ca_prorrateo_fob"] / $row["ca_valor_fob"];
 
-            $salida.= str_pad(number_format(round($valor_tot * $factor, 0),2,'.',''), 15, "0", STR_PAD_LEFT); // 33
-            $salida.= str_pad(number_format(round(floatval($row["ca_iva"]) * $factor, 0),2,'.',''), 15, "0", STR_PAD_LEFT); // 34
-            $salida.= str_pad(number_format(round(floatval($row["ca_arancel"]) * $factor, 0),2,'.',''), 15, "0", STR_PAD_LEFT); // 35
-            $salida.= str_pad(number_format(round(floatval($row["ca_compensa"]) * $factor, 0),2,'.',''), 15, "0", STR_PAD_LEFT); // 36
-            $salida.= str_pad(number_format(round($valor_otr * $factor, 0),2,'.',''), 15, "0", STR_PAD_LEFT); // 37
-            $salida.= str_pad(number_format(round(floatval($row["ca_antidump"]) * $factor, 0),2,'.',''), 15, "0", STR_PAD_LEFT); // 38
-            $salida.= str_pad(number_format(round(floatval($row["ca_salvaguarda"]) * $factor, 0),2,'.',''), 15, "0", STR_PAD_LEFT); // 39
-            $salida.= str_pad(null,30, " "); // 40
+            $sub_array['vlr_fob'] = round($valor_tot * $factor, 0);
+            $sub_array['vlr_iva'] = round(floatval($row["ca_iva"]) * $factor, 0);
+            $sub_array['arancel'] = round(floatval($row["ca_arancel"]) * $factor, 0);
+            $sub_array['compensa'] = round(floatval($row["ca_compensa"]) * $factor, 0);
+            $sub_array['otros'] = round($valor_otr * $factor, 0);
+            $sub_array['antidump'] = round(floatval($row["ca_antidump"]) * $factor, 0);
+            $sub_array['salvaguarda'] = round(floatval($row["ca_salvaguarda"]) * $factor, 0);
+
+            foreach($sum_array as $key => $value){  // Acumula valores parciales en totales
+                $sum_array[$key]+= $sub_array[$key];
+            }
+
+            if ($ctr_count == 1){
+                if ($sum_array['vlr_fob']!=$valor_tot and abs($sum_array['vlr_fob']-$valor_tot)<=5){
+                    $sub_array['vlr_fob']-= $sum_array['vlr_fob']-$valor_tot;
+                }
+                if ($sum_array['vlr_iva']!=$row["ca_iva"] and abs($sum_array['vlr_iva']-$row["ca_iva"])<=5){
+                    $sub_array['vlr_iva']-= $sum_array['vlr_iva']-$row["ca_iva"];
+                }
+                if ($sum_array['arancel']!=$row["ca_arancel"] and abs($sum_array['arancel']-$row["ca_arancel"])<=5){
+                    $sub_array['arancel']-= $sum_array['arancel']-$row["ca_arancel"];
+                }
+                if ($sum_array['compensa']!=$row["ca_compensa"] and abs($sum_array['compensa']-$row["ca_arancel"])<=5){
+                    $sub_array['compensa']-= $sum_array['arancel']-$row["ca_arancel"];
+                }
+                if ($sum_array['otros']!=$valor_otr and abs($sum_array['otros']-$valor_otr)<=5){
+                    $sub_array['otros']-= $sum_array['otros']-$valor_otr;
+                }
+                if ($sum_array['antidump']!=$row["ca_antidump"] and abs($sum_array['antidump']-$row["ca_antidump"])<=5){
+                    $sub_array['antidump']-= $sum_array['antidump']-$row["ca_antidump"];
+                }
+                if ($sum_array['salvaguarda']!=$row["ca_salvaguarda"] and abs($sum_array['salvaguarda']-$row["ca_salvaguarda"])<=5){
+                    $sub_array['salvaguarda']-= $sum_array['salvaguarda']-$row["ca_salvaguarda"];
+                }
+            }
+
+            $salida.= str_pad(number_format($sub_array['vlr_fob'],2,'.',''), 15, "0", STR_PAD_LEFT); // 34
+            $salida.= str_pad(number_format($sub_array['vlr_iva'],2,'.',''), 15, "0", STR_PAD_LEFT); // 35
+            $salida.= str_pad(number_format($sub_array['arancel'],2,'.',''), 15, "0", STR_PAD_LEFT); // 36
+            $salida.= str_pad(number_format($sub_array['compensa'],2,'.',''), 15, "0", STR_PAD_LEFT); // 37
+
+            $salida.= str_pad(number_format($sub_array['otros'],2,'.',''), 15, "0", STR_PAD_LEFT); // 38
+            $salida.= str_pad(number_format($sub_array['antidump'],2,'.',''), 15, "0", STR_PAD_LEFT); // 39
+            $salida.= str_pad(number_format($sub_array['salvaguarda'],2,'.',''), 15, "0", STR_PAD_LEFT); // 40
+            $salida.= str_pad(number_format(0,2,'.',''), 15, "0", STR_PAD_LEFT); // 41
+            $salida.= str_pad(null,15, " "); // 42
+            $salida.= str_pad(null,20, " "); // 43
+
+            $spaces = array(15,15,15,15); // Campos del 42 al 47
+            foreach( $spaces as $space ){
+                    $salida.= str_pad(number_format(0,2,'.',''), $space, "0", STR_PAD_LEFT);
+            }
+            unset($space);
+            $salida.= str_pad($row["ca_aceptacion_nro"],17, " "); // 48
             $salida.= "\r\n";
 
             $falaHeaderAdu = Doctrine::getTable("FalaHeaderAdu")->find ( $row["ca_iddoc"] );
             $falaHeaderAdu->setCaProcesado(TRUE);
             $falaHeaderAdu->save();
+            $ctr_count--;
         }
 
         $filename = $directory.DIRECTORY_SEPARATOR.'DI_'.$numdeclaracion.'.txt';
@@ -1090,6 +1147,10 @@ class falabellaAduActions extends sfActions {
 
             if( $this->getRequestParameter ( 'vencimiento_fch' )!==null ) {
                 $declaracionDts->setCaVencimientoFch( $this->getRequestParameter ( 'vencimiento_fch' ) );
+            }
+
+            if( $this->getRequestParameter ( 'aceptacion_nro' )!==null ) {
+                $declaracionDts->setCaAceptacionNro( $this->getRequestParameter ( 'aceptacion_nro' ) );
             }
 
             if( $this->getRequestParameter ( 'aceptacion_fch' )!==null ) {
