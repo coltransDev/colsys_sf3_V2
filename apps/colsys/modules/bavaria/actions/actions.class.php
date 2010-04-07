@@ -283,7 +283,7 @@ class bavariaActions extends sfActions {
                 foreach( $spaces as $space ){
                         $salida.= str_pad(null,$space, " ")."|";
                 }
-                $salida.= "\r";
+                $salida.= "\r\n";
                 unset($space);
 /*
                 $salida.= "2|";  // 1
