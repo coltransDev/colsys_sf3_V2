@@ -423,6 +423,7 @@ FalaDeclaracionDts:
     ca_numdeclaracion: string
     ca_emision_fch: date
     ca_vencimiento_fch: date
+    ca_aceptacion_nro: string
     ca_aceptacion_fch: date
     ca_pago_fch: date
     ca_moneda: string
