@@ -10,7 +10,7 @@ class FalaDeclaracionImpTable extends Doctrine_Table
 
             $query = "select fdi.ca_referencia, fdi.ca_numinternacion, ";
             $query.= "  fdd.ca_numdeclaracion, fdd.ca_arancel, fdd.ca_iva, fdd.ca_compensa, fdd.ca_antidump, fdd.ca_salvaguarda, fdd.ca_sancion, fdd.ca_rescate, fdd.ca_valor_fob, fdd.ca_gastos_despacho, fdd.ca_flete, fdd.ca_seguro, fdd.ca_gastos_embarque, fdd.ca_valor_aduana, fdd.ca_ajuste_valor, fdd.ca_valor_aduana, ";
-            $query.= "  fsp.ca_iddoc, fsp.ca_embarque, fdd.ca_emision_fch, fdd.ca_vencimiento_fch, fdd.ca_aceptacion_fch, fdd.ca_pago_fch, fdd.ca_moneda, fdd.ca_valor_trm, fsp.ca_subpartida, fsp.ca_prorrateo_fob from tb_faladeclaracion_imp fdi "; // fvf.ca_subtotal_fob,
+            $query.= "  fsp.ca_iddoc, fsp.ca_embarque, fdd.ca_emision_fch, fdd.ca_vencimiento_fch, fdd.ca_aceptacion_nro, fdd.ca_aceptacion_fch, fdd.ca_pago_fch, fdd.ca_moneda, fdd.ca_valor_trm, fsp.ca_subpartida, fsp.ca_prorrateo_fob from tb_faladeclaracion_imp fdi "; // fvf.ca_subtotal_fob,
             $query.= "  inner join (select * from tb_faladeclaracion_dts where ca_referencia = '$referencia') fdd on fdd.ca_referencia = fdi.ca_referencia ";
 
             $query.= "  inner join (select fh.ca_referencia, fh.ca_iddoc, fi.ca_embarque, fd.ca_subpartida, sum(fd.ca_valor_fob) as ca_prorrateo_fob from ";
