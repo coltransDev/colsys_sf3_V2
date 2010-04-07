@@ -42,6 +42,15 @@ PanelDeclaracion = function(){
                         })
       },
       {
+        header: "No.Aceptación",
+        dataIndex: 'aceptacion_nro',
+        sortable:false,
+        width: 100,
+        editor: new Ext.form.TextField({
+            allowBlank: false
+        }),
+      },
+      {
         header: "Fch.Aceptación",
         dataIndex: 'aceptacion_fch',
         sortable:false,
@@ -267,6 +276,7 @@ PanelDeclaracion = function(){
             {name: 'item', type: 'string', mapping: 'd_ca_item'},
             {name: 'numdeclaracion', type: 'string', mapping: 'd_ca_numdeclaracion'},
             {name: 'emision_fch', type: 'date', dateFormat: 'Y-m-d', mapping: 'd_ca_emision_fch'},
+            {name: 'aceptacion_nro', type: 'string', mapping: 'd_ca_aceptacion_nro'},
             {name: 'aceptacion_fch', type: 'date', dateFormat: 'Y-m-d', mapping: 'd_ca_aceptacion_fch'},
             {name: 'pago_fch', type: 'date', dateFormat: 'Y-m-d', mapping: 'd_ca_pago_fch'},
             {name: 'moneda', type: 'string', mapping: 'd_ca_moneda'},
