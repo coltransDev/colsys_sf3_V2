@@ -639,7 +639,7 @@ elseif (isset($boton)) {                                                       /
                 echo "</TABLE><BR>";
 
                 $tm =& DlRecordset::NewRecordset($conn);
-                if (!$tm->Open("select * from vi_emails where ca_tipo = 'Rep.MarítimoExterior' and ca_idcaso in (select ca_idreporte from tb_reportes where ca_consecutivo in (select ca_consecutivo from tb_reportes where ca_idreporte = '$id')) order by ca_fchenvio DESC")) { // Selecciona todos lo registros de la tabla Emails
+                /*if (!$tm->Open("select * from vi_emails where ca_tipo = 'Rep.MarítimoExterior' and ca_idcaso in (select ca_idreporte from tb_reportes where ca_consecutivo in (select ca_consecutivo from tb_reportes where ca_idreporte = '$id')) order by ca_fchenvio DESC")) { // Selecciona todos lo registros de la tabla Emails
                     echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
                     echo "<script>document.location.href = 'reportenegocio.php';</script>";
                     exit; }
@@ -663,7 +663,7 @@ elseif (isset($boton)) {                                                       /
                 echo "<TR HEIGHT=5>";
                 echo "  <TD Class=captura COLSPAN=6></TD>";
                 echo "</TR>";
-                echo "</TABLE><BR>";
+                echo "</TABLE><BR>";*/
 
 
                 echo "<TABLE WIDTH=620 CELLSPACING=1>";                                   // un boton de comando definido para hacer mantemientos
