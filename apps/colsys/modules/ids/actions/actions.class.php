@@ -642,11 +642,14 @@ class idsActions extends sfActions
                     $documento->setCaFchinicio( Utils::parseDate($request->getParameter("inicio")));
                 }
 
-                
-
-                if( $request->getParameter("vencimiento") ){                    
-                    $documento->setCaFchvencimiento( Utils::parseDate($request->getParameter("vencimiento")));
+                if( $request->getParameter("vencimiento")!==null ){
+                    if( $request->getParameter("vencimiento") ){
+                        $documento->setCaFchvencimiento( Utils::parseDate($request->getParameter("vencimiento")));
+                    }else{
+                         $documento->setCaFchvencimiento( null );
+                    }
                 }
+                
                 $documento->save();
 
                 if( $bindFiles["archivo"] ){
