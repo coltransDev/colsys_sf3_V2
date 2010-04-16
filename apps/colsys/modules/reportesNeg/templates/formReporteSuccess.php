@@ -5,6 +5,8 @@
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
 
+include_component("reportesNeg","mainPanel");
+
 $traficos = $sf_data->getRaw("traficos");
 $reporte = $sf_data->getRaw("reporte");
 $modalidadesAduana = $sf_data->getRaw("modalidadesAduana");
@@ -378,7 +380,7 @@ $agentes = $sf_data->getRaw("agentes");
         var target = document.getElementById("reporte_ca_idagente");
         var clase = document.getElementById("reporte_ca_impoexpo").value;
         
-        
+       
         if( document.getElementById("listar_todos")!=null ){
             var listar_todos = document.getElementById("listar_todos").checked;
             if( clase=="<?=Constantes::EXPO?>" ){
@@ -388,29 +390,31 @@ $agentes = $sf_data->getRaw("agentes");
             }
 
             target.length=0;
-
-            for( pais in agentes ){
-                               
-                for( agente in pais ){
-                    var selected = false;
+            
+            var i = 0;
+            for( idx in agentes ){
+                if( typeof(agentes[idx]["idagente"])!="undefined" ){
+                    var selected = false;              
                     
-                    if( typeof(agentes[pais][agente])!="undefined" ){
-                        var idagente = agentes[pais][agente]["idagente"];
-                        if( idagente=="<?=$reporte->getCaIdagente()?>" ){
-                            selected = true;
-                        }
-                                                
-                        if( i== trafico || listar_todos || idagente=="<?=$reporte->getCaIdagente()?>" ){
-                            target[target.length] = new Option(agentes[pais][agente]["pais"]+"-"+agentes[pais][agente]["nombre"],idagente,false,selected);
-                        }
+                    var idagente = agentes[idx]["idagente"];
+                    if( idagente=="<?=$reporte->getCaIdagente()?>" ){
+                        selected = true;
                     }
+
+                    if( agentes[idx]["idtrafico"]== trafico || listar_todos || idagente=="<?=$reporte->getCaIdagente()?>" ){ //
+                        target[target.length] = new Option(agentes[idx]["pais"]+"-"+agentes[idx]["nombre"],idagente,false,selected);                        
+                    }
+
                 }
             }
+            
         }
     }
     
 
-    
+   
+
+
 
 </script>
 
@@ -418,48 +422,45 @@ $agentes = $sf_data->getRaw("agentes");
 include_partial("ventanaTercero", array("reporte"=>$reporte));
 ?>
 <form name="form1" action="<?=url_for("reportesNeg/formReporte")?>" method="post">
-    <input type="hidden" name="opcion" id="opcion" value="" />
+<input type="hidden" name="opcion" id="opcion" value="" />
 <div align="center" class="content">
-    <h1>Reporte de Negocio
+   
+
+
+    <div id="panel"></div>
+
+</div>
+
+<?
+echo $form->renderHiddenFields();
+
+if( $reporte->getCaIdreporte() ){
+?>
+<input type="hidden" name="id" value="<?=$reporte->getCaIdreporte()?>">
+<?
+}
+
+?>
+<div style="display:none" >
     <?
-    if( $reporte->getCaIdreporte() ){
-        
-        echo $reporte->getCaConsecutivo()." ".$reporte->getCaVersion()."/".$reporte->numVersiones();
+    echo $form['ca_idcotizacion']->renderError();
+    if( $reporte ){
+        $form->setDefault('ca_idcotizacion', $reporte->getCaIdcotizacion() );
     }
+    echo $form['ca_idcotizacion']->render();
+
+    echo $form['ca_idproducto']->renderError();
+    if( $reporte ){
+        $form->setDefault('ca_idproducto', $reporte->getCaIdproducto() );
+    }
+    echo $form['ca_idproducto']->render();
     ?>
-    </h1>
-    <br />    
-        <?
 
-        echo $form->renderHiddenFields();
+</div>
 
-        if( $reporte->getCaIdreporte() ){
-        ?>
-        <input type="hidden" name="id" value="<?=$reporte->getCaIdreporte()?>">
-        <?
-        }
-
-        ?>
-        <div style="display:none" >
-            <?
-            echo $form['ca_idcotizacion']->renderError();
-            if( $reporte ){
-                $form->setDefault('ca_idcotizacion', $reporte->getCaIdcotizacion() );
-            }
-            echo $form['ca_idcotizacion']->render();
-
-            echo $form['ca_idproducto']->renderError();
-            if( $reporte ){
-                $form->setDefault('ca_idproducto', $reporte->getCaIdproducto() );
-            }
-            echo $form['ca_idproducto']->render();
-            ?>
-
-        </div>
-        <table class="tableList alignLeft" width="80%">
-            <tr>
-                <th colspan="8">Datos para el reporte</th>
-            </tr>
+<div id="header"  class="x-hide-display">
+<table class="tableList alignLeft" >
+           
              <?
             if( $form->hasErrors() || $formAduana->hasErrors() || $formSeguro->hasErrors() || $formExpo->hasErrors() ){
             ?>
@@ -490,20 +491,16 @@ include_partial("ventanaTercero", array("reporte"=>$reporte));
             }
 
 
-            if( $idcotizacion ){
-                $value = $idcotizacion;
-            }else{
-                $value = $reporte->getCaIdcotizacion();
-            }
+           
             ?>
             <tr>
                 <td width="16%"><b>Cotizaci&oacute;n</b></td>
                 <td width="16%">
-                    <?=include_component("widgets", "comboCotizaciones", array("value"=>$value ) )?>
+                   <input type="text" name="cotizacion" id="cotizacion" value="" size="10" Autocomplete="off" />	
                 </td>
                 <td width="16%"><b>Clase</b></td>
                 <td width="16%">
-                    
+
 
                     <?
                     echo $form['ca_impoexpo']->renderError();
@@ -539,15 +536,17 @@ include_partial("ventanaTercero", array("reporte"=>$reporte));
                     }
                     ?>
                 </td>
-                
+
             </tr>
-            
-            <tr >
-                <td colspan="8">
-                    <div id="tab-panel"></div>
-                </td>
-            </tr>   
-            <tr>
+</table>
+
+
+</div>
+
+
+<div id="footer"  class="x-hide-display">
+    <table class="tableList alignLeft" >
+         <tr>
                 <td colspan="8">
                     <div align="center">
                         <?
@@ -577,15 +576,8 @@ include_partial("ventanaTercero", array("reporte"=>$reporte));
                 </td>
             </tr>
         </table>
+
 </div>
-
-
-
-
-
-
-
-
 <div id="trayecto"  class="x-hide-display">
     
     <?
@@ -645,27 +637,8 @@ include_partial("ventanaTercero", array("reporte"=>$reporte));
 </form>
 
 <script type="text/javascript">
-     var bodyStyle = 'padding: 5px 5px 5px 5px;';
-     tabpanel = new Ext.TabPanel({       
-        width:850,
-        activeTab: 0,
-        frame:false,
-        defaults:{autoHeight: true},
-        items:[
-            {contentEl:'trayecto', title: 'Trayecto',  bodyStyle: bodyStyle},
-            {contentEl:'cliente', title: 'Cliente',  bodyStyle: bodyStyle},
-            {contentEl:'preferencias', title: 'Preferencias', bodyStyle: bodyStyle},
-            {contentEl:'aduana', title: 'Aduana', bodyStyle: bodyStyle},
-            {contentEl:'seguros', title: 'Seguros', bodyStyle: bodyStyle},
-            {contentEl:'guias', title: 'Corte de Documentos', id: 'tab-corte-documentos', bodyStyle: bodyStyle},
-            {contentEl:'exportaciones', title: 'Exportaciones', id: 'tab-expo', bodyStyle: bodyStyle}
-        ]
-    });
-
-    tabpanel.render('tab-panel');
-    tabpanel.setWidth(Ext.getBody().getWidth()-250);
-
     Ext.onReady(function(){
+            
         var ds = new Ext.data.Store({
             proxy: new Ext.data.HttpProxy({
                 url: '<?=url_for('widgets/listaContactosClientesJSON')?>'
@@ -809,7 +782,76 @@ include_partial("ventanaTercero", array("reporte"=>$reporte));
                             }
                         });
 
-    var comboCotizacion = Ext.getCmp("combo-cotizacion").addListener("select", function(combo, record, index){ ;
+
+    var storeCotizaciones = new Ext.data.Store({
+        proxy: new Ext.data.HttpProxy({
+            url: '<?=url_for("widgets/listaCotizacionesJSON")?>'
+        }),
+        reader: new Ext.data.JsonReader({
+            root: 'root',
+            totalProperty: 'total'
+        }, [
+            {name: 'idcotizacion', mapping: 'c_ca_idcotizacion'},
+            {name: 'consecutivo', mapping: 'c_ca_consecutivo'},
+            {name: 'idproducto', mapping: 'p_ca_idproducto'},
+            {name: 'producto', mapping: 'p_ca_producto'},
+            {name: 'impoexpo', mapping: 'p_ca_impoexpo'},
+            {name: 'transporte', mapping: 'p_ca_transporte'},
+            {name: 'modalidad', mapping: 'p_ca_modalidad'},
+            {name: 'idlinea', mapping: 'p_ca_idlinea'},
+            {name: 'idmodalidad'},
+            {name: 'tra_origen', mapping: 'o_ca_idtrafico'},
+            {name: 'tra_destino', mapping: 'd_ca_idtrafico'},
+			{name: 'origen', mapping: 'o_ca_ciudad'},
+            {name: 'destino', mapping: 'd_ca_ciudad'},
+            {name: 'idorigen', mapping: 'o_ca_idciudad'},
+			{name: 'iddestino', mapping: 'd_ca_idciudad'},
+			{name: 'idcontacto', mapping: 'con_ca_idcontacto'},
+            {name: 'compania', mapping: 'cl_ca_compania'},
+			{name: 'cargo', mapping: 'con_ca_cargo'},
+			{name: 'nombre', mapping: 'con_ca_nombres'},
+			{name: 'papellido', mapping: 'con_ca_papellido'},
+			{name: 'sapellido', mapping: 'con_ca_sapellido'},
+			{name: 'preferencias', mapping: 'cl_ca_preferencias'},
+			{name: 'confirmar', mapping: 'cl_ca_confirmar'},
+            {name: 'vendedor', mapping: 'c_ca_usuario'},
+            {name: 'coordinador', mapping: 'cl_ca_coordinador'}
+        ])
+    });
+
+	var resultTplCotizaciones = new Ext.XTemplate(
+        '<tpl for="."><div class="search-item"><strong>{consecutivo}</strong><br /><span><br />{origen} - {destino}</span> </div></tpl>'
+
+    );
+    <?
+    if( $idcotizacion ){
+        $value = $idcotizacion;
+    }else{
+        $value = $reporte->getCaIdcotizacion();
+    }
+    ?>
+    comboCotizacion = new Ext.form.ComboBox({
+        id: 'combo-cotizacion',
+        store: storeCotizaciones,
+        displayField:'consecutivo',
+        typeAhead: false,
+        loadingText: 'Buscando...',
+        width: 100,
+        valueNotFoundText: 'No encontrado' ,
+		minChars: 3,
+        hideTrigger:true,
+        tpl: resultTplCotizaciones,
+        applyTo: 'cotizacion',
+        itemSelector: 'div.search-item',
+	    emptyText:'numero...',
+	    forceSelection:true,
+		selectOnFocus:true
+        <?=isset($value)?",value: '".$value."'":""?>
+
+
+    });
+
+    comboCotizacion.addListener("select", function(combo, record, index){ ;
 
         //alert(record.data.consecutivo);
         document.getElementById("reporte_ca_idcotizacion").value=record.data.consecutivo;
@@ -870,17 +912,48 @@ include_partial("ventanaTercero", array("reporte"=>$reporte));
 
 
     });
+
+
+    var bodyStyle = 'padding: 5px 5px 5px 5px;';
+    tabpanel = new Ext.TabPanel({
+        activeTab: 0,
+        frame:false,
+        defaults:{autoHeight: true},
+        items:[
+            {contentEl:'trayecto', title: 'Trayecto',  bodyStyle: bodyStyle},
+            {contentEl:'cliente', title: 'Cliente',  bodyStyle: bodyStyle},
+            {contentEl:'preferencias', title: 'Preferencias', bodyStyle: bodyStyle},
+            {contentEl:'aduana', title: 'Aduana', bodyStyle: bodyStyle},
+            {contentEl:'seguros', title: 'Seguros', bodyStyle: bodyStyle},
+            {contentEl:'guias', title: 'Corte de Documentos', id: 'tab-corte-documentos', bodyStyle: bodyStyle},
+            {contentEl:'exportaciones', title: 'Exportaciones', id: 'tab-expo', bodyStyle: bodyStyle}
+        ]
+    });
+
+    //tabpanel.render("panel");
+    //tabpanel.setWidth(Ext.getBody().getWidth()-250);
+   
+    var panel = new Ext.Panel({
+        title: "Reportes de Negocio <?=$reporte->getCaIdreporte()?$reporte->getCaConsecutivo()." ".$reporte->getCaVersion()."/".$reporte->numVersiones():""?>",
+        items: [
+            {contentEl:'header'},
+            tabpanel,
+            {contentEl:'footer'}
+        ]
+    });
+
+    panel.render("panel");
+
+
+
+
+    cambiarImpoexpo();
+    cambiarAduana();
+    cambiarSeguros();
 });
 </script>
 
 
-<script language="javascript">
-    cambiarImpoexpo();
-    cambiarAduana();
-    cambiarSeguros();
-   
-
-</script>
 
 <?
 include_component("kbase","tooltipById", array("idcategory"=>18));

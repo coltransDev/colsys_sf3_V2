@@ -131,13 +131,16 @@ if ($reporte->getCaImpoexpo () == Constantes::EXPO ) {
         $pdf->SetWidths ( array (30, 25, 145 ) );
         $pdf->SetFills ( array (1, 0, 0, 0, 0 ) );
         $pdf->SetStyles ( array ("B", "B", "", "B", "" ) );
-        $pdf->Row ( array ('Agente:', '10.1 Nombre:', $agente->getCaNombre () ) );
+        $pdf->Row ( array ('Agente:', '10.1 Nombre:', $agente->getIds()->getCaNombre() ) );
+
+        $sucAgente = $agente->getIds()->getSucursalPrincipal();
+
         $pdf->SetWidths ( array (5, 25, 170 ) );
-        $pdf->Row ( array ('', 'Dirección:', str_replace ( "|", " ", $agente->getCaDireccion () . " " . $agente->getCaZipcode () ) ) );
+        $pdf->Row ( array ('', 'Dirección:', str_replace ( "|", " ", $sucAgente->getCaDireccion () . " " . $sucAgente->getCaZipcode () ) ) );
         $pdf->SetWidths ( array (5, 25, 40, 15, 30, 18, 67 ) );
         $pdf->SetFills ( array (1, 0, 0, 0, 0, 0, 0 ) );
         $pdf->SetStyles ( array ("B", "B", "", "B", "", "B", "" ) );
-        $pdf->Row ( array ('', 'Teléfono:', $agente->getCaTelefonos (), 'Fax:', $agente->getCaFax (), 'E-mail:', $agente->getCaEmail () ) );
+        $pdf->Row ( array ('', 'Teléfono:', $sucAgente->getCaTelefonos (), 'Fax:', $sucAgente->getCaFax (), 'E-mail:', $sucAgente->getCaEmail () ) );
     }
 
 
@@ -555,9 +558,9 @@ if( !$soloAduana ){
             }
 
             if ($gasto->getCaTipo () == "$") {
-                $pdf->Row ( array ($des_rec, $gasto->getCaAplicacion (), $gasto->getCaCobrarTar () . " " . $gasto->getCaIdmoneda (), $gasto->getCaCobrarMin () . " " . $gasto->getCaIdmoneda () ) );
+                $pdf->Row ( array ($des_rec, $gasto->getCaAplicacion (),Utils::formatNumber (  $gasto->getCaCobrarTar (), 3) . " " . $gasto->getCaIdmoneda (), Utils::formatNumber ( $gasto->getCaCobrarMin (), 3) . " " . $gasto->getCaIdmoneda () ) );
             } else {
-                $pdf->Row ( array ($des_rec, $gasto->getCaAplicacion (), $gasto->getCaTipo () . " " . $gasto->getCaCobrarTar (), $gasto->getCaCobrarMin () . " " . $gasto->getCaIdmoneda () ) );
+                $pdf->Row ( array ($des_rec, $gasto->getCaAplicacion (), $gasto->getCaTipo () . " " . Utils::formatNumber ( $gasto->getCaCobrarTar (), 3 ), Utils::formatNumber ( $gasto->getCaCobrarMin () ,3) . " " . $gasto->getCaIdmoneda () ) );
             }
             if ($gasto->getCaDetalles ()) {
                 $pdf->SetWidths ( array (200 ) );
