@@ -946,43 +946,37 @@ class pricingActions extends sfActions
         //Si se llama de una cotizacion se mezcla con los recargos por naviera
         $idcotizacion = $this->getRequestParameter( "idcotizacion" );        
         if( $idcotizacion ){
-            $cotizacion = Doctrine::getTable("Cotizacion")->find( $idcotizacion );
-            $trayectos = $cotizacion->getCotProductos();
-            $lineas = array();
-            foreach( $trayectos as $trayecto ){
-                if( $trayecto->getCaIdlinea() ){
-                    $lineas[] = $trayecto->getCaIdlinea();
-                }
+
+            $q = Doctrine_Query::create()->from("PricRecargoxLinea r");
+            $q->innerJoin("r.TipoRecargo t");
+            $q->addWhere("t.ca_transporte= ? AND r.ca_modalidad= ? AND r.ca_impoexpo = ?", array($transporte , $modalidad, $impoexpo));
+            $q->addWhere("r.ca_idlinea IN (SELECT DISTINCT p.ca_idlinea FROM CotProducto p WHERE p.ca_idcotizacion=? AND ca_idlinea IS NOT NULL)", $idcotizacion);
+            $q->addWhere("t.ca_tipo = ?", Constantes::RECARGO_LOCAL );
+            $q->addOrderBy("r.ca_idlinea");
+            $q->addOrderBy("t.ca_recargo");                    
+            $recargos = $q->execute();
+
+
+
+            foreach( $recargos as $recargo ){
+                $row = array(
+                    'idtrafico'=>$idtrafico,
+                    'idlinea'=>$recargo->getCaIdlinea(),
+                    'linea'=>utf8_encode($recargo->getIdsProveedor()->getCaSigla()?$recargo->getIdsProveedor()->getCaSigla():$recargo->getIdsProveedor()->getIds()->getCaNombre()),
+                    'idrecargo'=>$recargo->getCaIdrecargo(),
+                    'recargo'=>utf8_encode($recargo->getTipoRecargo()->getCaRecargo()),
+                    'inicio' => $recargo->getCaFchinicio(),
+                    'vencimiento' => $recargo->getCaFchvencimiento(),
+                    'vlrrecargo'=>$recargo->getCaVlrrecargo(),
+                    'vlrminimo'=>$recargo->getCaVlrminimo(),
+                    'aplicacion'=>utf8_encode($recargo->getCaAplicacion()),
+                    'aplicacion_min'=>utf8_encode($recargo->getCaAplicacionMin()),
+                    'idmoneda'=>$recargo->getCaIdmoneda(),
+                    'observaciones'=>utf8_encode(($recargo->getCaIdconcepto()!=9999?$recargo->getConcepto()->getCaConcepto():"").$recargo->getCaObservaciones())
+                );
+                $this->data[]= $row;
             }
-
-            if( count($lineas)>0 ){
-                $q = Doctrine_Query::create()->from("PricRecargoxLinea r");
-                $q->innerJoin("r.TipoRecargo t");
-                $q->addWhere("t.ca_transporte= ? AND r.ca_modalidad= ? AND r.ca_impoexpo = ?", array($transporte , $modalidad, $impoexpo));
-                $q->addWhere("r.ca_idlinea IN ?", $lineas);
-                $q->addWhere("t.ca_tipo = ?", Constantes::RECARGO_LOCAL );
-                $q->addOrderBy("t.ca_recargo");
-                $recargos = $q->execute();
-
-                foreach( $recargos as $recargo ){
-                    $row = array(
-                        'idtrafico'=>$idtrafico,
-                        'idlinea'=>$recargo->getCaIdlinea(),
-                        'linea'=>utf8_encode($recargo->getIdsProveedor()->getCaSigla()?$recargo->getIdsProveedor()->getCaSigla():$recargo->getIdsProveedor()->getIds()->getCaNombre()),
-                        'idrecargo'=>$recargo->getCaIdrecargo(),
-                        'recargo'=>utf8_encode($recargo->getTipoRecargo()->getCaRecargo()),
-                        'inicio' => $recargo->getCaFchinicio(),
-                        'vencimiento' => $recargo->getCaFchvencimiento(),
-                        'vlrrecargo'=>$recargo->getCaVlrrecargo(),
-                        'vlrminimo'=>$recargo->getCaVlrminimo(),
-                        'aplicacion'=>utf8_encode($recargo->getCaAplicacion()),
-                        'aplicacion_min'=>utf8_encode($recargo->getCaAplicacionMin()),
-                        'idmoneda'=>$recargo->getCaIdmoneda(),
-                        'observaciones'=>utf8_encode(($recargo->getCaIdconcepto()!=9999?$recargo->getConcepto()->getCaConcepto():"").$recargo->getCaObservaciones())
-                    );
-                    $this->data[]= $row;
-                }
-            }            
+                        
            
         }
 
