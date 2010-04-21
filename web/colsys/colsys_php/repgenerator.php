@@ -244,8 +244,8 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)){
 	$ano_mem = implode(',',$ano);
 	$mes_mem = implode(',',$mes);
 	
-	$ano = "ca_ano ".((count($ano)==1)?"like '$ano[0]'":"in ('".implode("','",$ano)."')");
-	$mes = "ca_mes ".((count($mes)==1)?"like '$mes[0]'":"in ('".implode("','",$mes)."')");
+	$ano = "ca_ano::text ".((count($ano)==1)?"like '$ano[0]'":"in ('".implode("','",$ano)."')");
+	$mes = "ca_mes::text ".((count($mes)==1)?"like '$mes[0]'":"in ('".implode("','",$mes)."')");
 	$sucursal = "ca_sucursal ".((count($sucursal)==1)?"like '$sucursal[0]'":"in ('".implode("','",$sucursal)."')");
 	$vendedor = "ca_vendedor ".((count($vendedor)==1)?"like '$vendedor[0]'":"in ('".implode("','",$vendedor)."')");
 	$cliente = ((strlen($cliente)!=0)?"and upper(ca_compania) like upper('%$cliente%')":"");

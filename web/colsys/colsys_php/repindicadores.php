@@ -309,7 +309,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
         foreach($ano as $tmp)
             $ano_mem[] = "'".substr($tmp, -1)."'";
     }
-    $ano = "ca_ano ".((count($ano)==1)?"like '$ano[0]'":"in ('".implode("','",$ano)."')");
+    $ano = "ca_ano::text ".((count($ano)==1)?"like '$ano[0]'":"in ('".implode("','",$ano)."')");
     $mes_fes = "to_char(ca_fchfestivo,'MM') ".((count($mes)==1)?"like '$mes[0]'":"in ('".implode("','",$mes)."')");
     $mes_mem = "'".implode("','",$mes)."'";
     $mes = "ca_mes ".((count($mes)==1)?"like '$mes[0]'":"in ('".implode("','",$mes)."')");

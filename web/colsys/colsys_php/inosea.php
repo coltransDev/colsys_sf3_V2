@@ -3379,7 +3379,7 @@ elseif (isset($boton)) {                                                       /
                 echo "</TR>";
 
                 echo "<TR>";
-                if (!$cu->Open("select ca_idtransportista, ca_nombre from vi_transportistas where ca_idtransportista in (select ca_valor::int from tb_parametros where ca_casouso = 'CU073' and ca_identificacion = 10 and ca_valor2 like '%".$rs->Value("ca_destino")."%') order by ca_nombre")) {
+                if (!$cu->Open("select ca_idtransportista, ca_nombre from vi_transportistas where ca_idtransportista in (select ca_valor::text from tb_parametros where ca_casouso = 'CU073' and ca_identificacion = 10 and ca_valor2 like '%".$rs->Value("ca_destino")."%') order by ca_nombre")) {
                     echo "<script>alert(\"".addslashes($cu->mErrMsg)."\");</script>";      // Muestra el mensaje de error
                     echo "<script>document.location.href = 'inosea.php';</script>";
                     exit; }
@@ -3925,7 +3925,7 @@ elseif (isset($boton)) {                                                       /
                     echo "<script>document.location.href = 'inosea.php';</script>";
                     exit;
                 }
-                if (!$tm->Open("select * from vi_agentes where ca_idagente = '".$tm->Value("ca_idagente")."'")) {    // Calcula a partir de los reportes de Negocio quien es el Agente
+                if (!$tm->Open("select * from vi_agentes where ca_idagente = ".$tm->Value("ca_idagente"))) {    // Calcula a partir de los reportes de Negocio quien es el Agente
                     echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";     // Muestra el mensaje de error
                     echo "<script>document.location.href = 'inosea.php';</script>";
                     exit;
@@ -4059,7 +4059,7 @@ elseif (isset($boton)) {                                                       /
                         $nit = explode("-",$nit);
                         $nit = $nit[0];
 
-                        if (!$tm->Open("select * from vi_transportistas where ca_idtransportista = $nit")) {    // Trae la información del Operador Multimodal de la Tabla Transportistas.
+                        if (!$tm->Open("select * from vi_transportistas where ca_idtransportista::text = '".trim($nit)."'")) {    // Trae la información del Operador Multimodal de la Tabla Transportistas.
                             echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";     // Muestra el mensaje de error
                             echo "<script>document.location.href = 'inosea.php';</script>";
                             exit;
