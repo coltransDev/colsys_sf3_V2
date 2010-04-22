@@ -464,8 +464,11 @@ elseif (isset($accion)) {                                                      /
     switch(trim($accion)) {                                                    // Switch que evalua cual botòn de comando fue pulsado por el usuario
         case 'Actualizar': {                                                   // El Botón Actualizar fue pulsado
              $fchcircular = (strlen($fchcircular)!=0)?"'".$fchcircular."'":'date(null)';
+
              $tipo_nit = implode("|",$tipo_nit);
-             if (!$rs->Open("update tb_clientes set ca_fchcircular = $fchcircular, ca_nvlriesgo = '$nvlriesgo', ca_listaclinton = '$listaclinton', ca_leyinsolvencia = '$leyinsolvencia', ca_comentario = '$comentario', ca_tipo = '$tipo_nit', ca_fchfinanciero = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usufinanciero = '$usuario' where ca_idcliente = $id")) {
+             $tipo_nit = ((strlen(trim($tipo_nit))==0)?'NULL':"'$tipo_nit'");
+             
+             if (!$rs->Open("update tb_clientes set ca_fchcircular = $fchcircular, ca_nvlriesgo = '$nvlriesgo', ca_listaclinton = '$listaclinton', ca_leyinsolvencia = '$leyinsolvencia', ca_comentario = '$comentario', ca_tipo = $tipo_nit, ca_fchfinanciero = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usufinanciero = '$usuario' where ca_idcliente = $id")) {
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                  echo "<script>document.location.href = 'clientes_financ.php';</script>";
                  exit;
