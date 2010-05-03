@@ -232,6 +232,63 @@ class clientesActions extends sfActions
             }
         }
 
+        public function executeValidaEstados( $request ){
+            set_time_limit(0);              // Estas rutina busca y elimina los registros adicionales de un mismo estado para cada cliente
+
+            $stdclientes = Doctrine::getTable("StdCliente")
+                    ->createQuery("s")
+                    ->addOrderBy("s.ca_empresa")
+                    ->addOrderBy("s.ca_idcliente")
+                    ->addOrderBy("s.ca_fchestado")
+                    ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                    // ->getSqlQuery();
+                    ->execute();
+             // echo $stdclientes;
+
+
+             $old_id = null;
+             $old_std= null;
+             $old_fch= null;
+             $old_emp= null;
+
+             echo "<table>";
+             foreach($stdclientes as $stdcliente){
+                if ($stdcliente['s_ca_empresa'] == $old_emp and $stdcliente['s_ca_idcliente'] == $old_id and $stdcliente['s_ca_estado'] == $old_std){
+                    $mark = "*";
+                    $clienteStd = Doctrine::getTable("StdCliente")
+                        ->createQuery("s")
+                        ->where("s.ca_idcliente = ?", $stdcliente['s_ca_idcliente'])
+                        ->andWhere("s.ca_estado = ?", $stdcliente['s_ca_estado'])
+                        ->andWhere("s.ca_fchestado = ?", $stdcliente['s_ca_fchestado'])
+                        ->andWhere("s.ca_empresa = ?", $stdcliente['s_ca_empresa'])
+                        // ->getSqlQuery();
+                        ->fetchOne();
+
+                    if ($clienteStd){
+                        // $clienteStd->setCaEmpresa($stdcliente['s_ca_empresa']." *");
+                        // $clienteStd->delete();
+                    }
+                }else{
+                    $mark = "";
+                }
+                $old_id  = $stdcliente['s_ca_idcliente'];
+                $old_std = $stdcliente['s_ca_estado'];
+                $old_fch = $stdcliente['s_ca_fchestado'];
+                $old_emp = $stdcliente['s_ca_empresa'];
+                echo "<tr>";
+                    echo "<td>".$stdcliente['s_ca_idcliente']."</td>";
+                    echo "<td>".$stdcliente['s_ca_fchestado']."</td>";
+                    echo "<td>".$stdcliente['s_ca_estado']."</td>";
+                    echo "<td>".$stdcliente['s_ca_empresa']."</td>";
+                    echo "<td>".$mark."</td>";
+                echo "</tr>";
+
+             }
+             echo "</table>";
+
+             exit();
+        }
+
         public function executeReporteCircular( $request ) {
             set_time_limit(0);
             $inicio =  $this->getRequestParameter("fchStart");
