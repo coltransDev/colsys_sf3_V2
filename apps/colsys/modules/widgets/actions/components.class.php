@@ -213,6 +213,10 @@ class widgetsComponents extends sfComponents
 		if(!isset( $this->allowBlank )){
 			$this->allowBlank="true";
 		}
+
+        if(!isset( $this->noaprob )){
+			$this->noaprob=false;
+		}
 	}
 	
 	/**
@@ -277,5 +281,93 @@ class widgetsComponents extends sfComponents
 	}
 
 
+
+
+    /*
+    *
+    */
+    public function executeWidgetImpoexpo(){
+		$this->data = array();
+
+        $this->data[] = array( "valor"=>utf8_encode(Constantes::IMPO ));
+        $this->data[] = array( "valor"=>utf8_encode(Constantes::TRIANGULACION ));
+        $this->data[] = array( "valor"=>utf8_encode(Constantes::EXPO ));
+
+	}
+
+
+    public function executeWidgetTransporte(){
+		$this->data = array();
+
+        $this->data[] = array( "valor"=>utf8_encode(Constantes::AEREO ));
+        $this->data[] = array( "valor"=>utf8_encode(Constantes::MARITIMO ));
+        $this->data[] = array( "valor"=>utf8_encode(Constantes::TERRESTRE ));
+
+	}
+
+    public function executeWidgetModalidad(){
+		$this->data = array();
+
+        /*$this->data[] = array( "valor"=>utf8_encode(Constantes::AEREO ));
+        $this->data[] = array( "valor"=>utf8_encode(Constantes::MARITIMO ));
+        $this->data[] = array( "valor"=>utf8_encode(Constantes::TERRESTRE ));*/
+
+	}
+
+
+    public function executeWidgetLinea(){
+		$this->data = array();
+
+        /*$this->data[] = array( "valor"=>utf8_encode(Constantes::AEREO ));
+        $this->data[] = array( "valor"=>utf8_encode(Constantes::MARITIMO ));
+        $this->data[] = array( "valor"=>utf8_encode(Constantes::TERRESTRE ));*/
+
+	}
+
+    public function executeWidgetPais(){
+		$this->data = array();
+
+        /*$this->data[] = array( "valor"=>utf8_encode(Constantes::AEREO ));
+        $this->data[] = array( "valor"=>utf8_encode(Constantes::MARITIMO ));
+        $this->data[] = array( "valor"=>utf8_encode(Constantes::TERRESTRE ));*/
+
+	}
+
+    public function executeWidgetCiudad(){
+		$this->data = array();
+
+        /*$this->data[] = array( "valor"=>utf8_encode(Constantes::AEREO ));
+        $this->data[] = array( "valor"=>utf8_encode(Constantes::MARITIMO ));
+        $this->data[] = array( "valor"=>utf8_encode(Constantes::TERRESTRE ));*/
+
+	}
+
+    public function executeWidgetAgente(){
+		$this->data = array();
+
+        /*$this->data[] = array( "valor"=>utf8_encode(Constantes::AEREO ));
+        $this->data[] = array( "valor"=>utf8_encode(Constantes::MARITIMO ));
+        $this->data[] = array( "valor"=>utf8_encode(Constantes::TERRESTRE ));*/
+
+	}
+
+    public function executeWidgetCliente(){
+		$this->data = array();
+
+        /*$this->data[] = array( "valor"=>utf8_encode(Constantes::AEREO ));
+        $this->data[] = array( "valor"=>utf8_encode(Constantes::MARITIMO ));
+        $this->data[] = array( "valor"=>utf8_encode(Constantes::TERRESTRE ));*/
+
+	}
+
+
+    public function executeWidgetTercero(){
+		$this->data = array();
+
+        /*$this->data[] = array( "valor"=>utf8_encode(Constantes::AEREO ));
+        $this->data[] = array( "valor"=>utf8_encode(Constantes::MARITIMO ));
+        $this->data[] = array( "valor"=>utf8_encode(Constantes::TERRESTRE ));*/
+
+	}
 }
 ?>

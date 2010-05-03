@@ -1,3 +1,10 @@
+<?
+$url = "widgets/datosLineas";
+
+if($noaprob){
+    $url .= "?noaprob=true";
+}
+?>
 new Ext.form.ComboBox({		
 		fieldLabel: '<?=$label?>',
 		typeAhead: true,
@@ -29,7 +36,7 @@ new Ext.form.ComboBox({
 		},
 		store : new Ext.data.Store({
 			autoLoad : <?=isset( $idlinea )?"true":"false"?>,
-			url: '<?=url_for("widgets/datosLineas")?>',
+			url: '<?=url_for($url)?>',
 			reader: new Ext.data.JsonReader(
 				{
 					id: 'idlinea',
