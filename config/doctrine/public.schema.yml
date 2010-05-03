@@ -474,9 +474,18 @@ StdCliente:
     ca_idcliente:
       type: integer
       primary: true
-    ca_fchestado: timestamp
+    ca_fchestado:
+      type: timestamp
+      primary: true
     ca_estado: string
-    ca_empresa: string
+    ca_empresa:
+      type: string
+      primary: true
+  relations:
+    Cliente:
+      local: ca_idcliente
+      foreign: ca_idcliente
+      type: one
 
 
 LibCliente:
