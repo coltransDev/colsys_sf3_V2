@@ -343,11 +343,29 @@ class widgetsComponents extends sfComponents
 	}
 
     public function executeWidgetAgente(){
-		$this->data = array();
+		
+        $agentes = Doctrine_Query::create()
+                             ->select("a.*, i.ca_nombre, t.ca_idtrafico, t.ca_nombre")
+                             ->from("IdsAgente a")
+                             ->innerJoin("a.Ids i")
+                             ->innerJoin("i.IdsSucursal s")
+                             ->innerJoin("s.Ciudad c")
+                             ->innerJoin("c.Trafico t")
+                             ->where("s.ca_principal = ?", true)
+                             ->addWhere("a.ca_activo = ?", true)
+                             ->addOrderBy("t.ca_nombre")
+                             ->addOrderBy("i.ca_nombre")
+                             ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                             ->execute();
+        $this->agentes = array();
+        foreach( $agentes as $agente ){       
+            $this->agentes[]=array("idagente" => $agente["a_ca_idagente"],
+                                                                "nombre" => utf8_encode($agente["t_ca_nombre"]." ".$agente["i_ca_nombre"]),
+                                                                "pais" => utf8_encode($agente["t_ca_nombre"]),
+                                                                "idtrafico" => $agente["t_ca_idtrafico"]);
+        }
 
-        /*$this->data[] = array( "valor"=>utf8_encode(Constantes::AEREO ));
-        $this->data[] = array( "valor"=>utf8_encode(Constantes::MARITIMO ));
-        $this->data[] = array( "valor"=>utf8_encode(Constantes::TERRESTRE ));*/
+       
 
 	}
 
