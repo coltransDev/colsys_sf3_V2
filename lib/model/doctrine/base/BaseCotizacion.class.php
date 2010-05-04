@@ -33,6 +33,7 @@
  * @property Doctrine_Collection $CotSeguro
  * @property Doctrine_Collection $CotContactoAg
  * @property Doctrine_Collection $CotTrayectoAduana
+ * @property Doctrine_Collection $CotConceptoAduana
  * @property Doctrine_Collection $CotSeguimiento
  * 
  * @method integer             getCaIdcotizacion()        Returns the current record's "ca_idcotizacion" value
@@ -63,6 +64,7 @@
  * @method Doctrine_Collection getCotSeguro()             Returns the current record's "CotSeguro" collection
  * @method Doctrine_Collection getCotContactoAg()         Returns the current record's "CotContactoAg" collection
  * @method Doctrine_Collection getCotTrayectoAduana()     Returns the current record's "CotTrayectoAduana" collection
+ * @method Doctrine_Collection getCotConceptoAduana()     Returns the current record's "CotConceptoAduana" collection
  * @method Doctrine_Collection getCotSeguimiento()        Returns the current record's "CotSeguimiento" collection
  * @method Cotizacion          setCaIdcotizacion()        Sets the current record's "ca_idcotizacion" value
  * @method Cotizacion          setCaIdcontacto()          Sets the current record's "ca_idcontacto" value
@@ -92,6 +94,7 @@
  * @method Cotizacion          setCotSeguro()             Sets the current record's "CotSeguro" collection
  * @method Cotizacion          setCotContactoAg()         Sets the current record's "CotContactoAg" collection
  * @method Cotizacion          setCotTrayectoAduana()     Sets the current record's "CotTrayectoAduana" collection
+ * @method Cotizacion          setCotConceptoAduana()     Sets the current record's "CotConceptoAduana" collection
  * @method Cotizacion          setCotSeguimiento()        Sets the current record's "CotSeguimiento" collection
  * 
  * @package    symfony
@@ -208,6 +211,10 @@ abstract class BaseCotizacion extends myDoctrineRecord
              'foreign' => 'ca_idcotizacion'));
 
         $this->hasMany('CotTrayectoAduana', array(
+             'local' => 'ca_idcotizacion',
+             'foreign' => 'ca_idcotizacion'));
+
+        $this->hasMany('CotConceptoAduana', array(
              'local' => 'ca_idcotizacion',
              'foreign' => 'ca_idcotizacion'));
 

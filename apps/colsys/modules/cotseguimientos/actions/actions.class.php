@@ -111,6 +111,7 @@ class cotseguimientosActions extends sfActions
                              ->addGroupBy("c.ca_etapa")
                              ->addWhere("c.ca_fchcreado BETWEEN ? AND ? AND c.ca_etapa IS NOT NULL", array($fechaInicial, $fechaFinal))
                              ->addWhere("p.ca_idproducto IS NULL");
+                             //->orderBy("c.ca_etapa");
 
 
 		if( $checkboxVendedor ){
