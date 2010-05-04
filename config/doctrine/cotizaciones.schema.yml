@@ -74,8 +74,7 @@ Cotizacion:
       local: ca_idcotizacion
       foreign: ca_idcotizacion
       type: many
-      orderBy: ca_fchseguimiento DESC
-     
+      
       
 
 CotProducto:
