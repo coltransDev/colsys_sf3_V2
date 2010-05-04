@@ -2527,10 +2527,16 @@ class pricingActions extends sfActions
         $trayecto->setCaIdlinea($idlinea);
         if( $idagente ){
             $trayecto->setCaIdagente($idagente);
+        }else{
+            $trayecto->setCaIdagente(null);
         }
+
         if( $observaciones ){
             $trayecto->setCaObservaciones($observaciones);
+        }else{
+            $trayecto->setCaObservaciones(null);
         }
+
         if( $ttransito ){
             $trayecto->setCaTiempotransito($ttransito);
         }

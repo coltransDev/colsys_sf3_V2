@@ -5,6 +5,7 @@
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
 
+include_component("widgets", "widgetAgente");
 ?>
 <script type="text/javascript">
  /**
@@ -61,6 +62,25 @@ PanelTrayectoWindow = function( config ) {
                     ,<?=include_component("widgets", "ciudades" ,array("id"=>"ciu_origen", "label"=>"Ciudad Origen", "link"=>"tra_origen", "allowBlank"=>"false"))?>
                     ,<?=include_component("widgets", "paises" ,array("id"=>"tra_destino", "label"=>" Pais Destino", "value"=>"C0-057", "allowBlank"=>"false"))?>
                     ,<?=include_component("widgets", "ciudades" ,array("id"=>"ciu_destino", "label"=>"Ciudad Destino", "link"=>"tra_destino", "allowBlank"=>"false"))?>
+                    ,
+                    new WidgetAgente({
+                        fieldLabel: "Agente",
+                        linkImpoExpo: "impoexpo",
+                        linkOrigen: "tra_origen_id",
+                        linkDestino: "tra_destino_id",
+                        linkListarTodos: "listar_todos",
+                        hiddenName: "idagente",
+                        name: "idagente"
+                    }),
+                    {
+                        xtype: 'checkbox',
+                        width: 100,
+                        fieldLabel: 'Listar Todos',
+                        id: 'listar_todos',
+                        value: '',
+                        checked: false,
+                        allowBlank:false
+                    }
                     ,{
                         xtype: 'textarea',
                         width: 310,
@@ -95,6 +115,7 @@ PanelTrayectoWindow = function( config ) {
                         checked: true,
                         allowBlank:false
                     }
+
                 ]
         })
 
