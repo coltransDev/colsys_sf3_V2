@@ -18,57 +18,57 @@ switch( $modo ){
 <script language="javascript" type="text/javascript">
 
 function validarFormConfirmacion(){	
-	
-    var oids = new Array ();
-		<?
-		$i = 0;
-		foreach( $inoClientes as $inoCliente ){
-            ?>
-			oids[<?=$i?>] = <?=$inoCliente->getOid()?>;
-            <?
-		}
-        ?>
-		
-		
-  
-    for( var i=0 ; i<oids.length ; i++ ){
-        //alert( oids[i] +" "+i+" "+oids.length );
-        var checkbox = document.getElementById("checkbox_"+oids[i]);
-        if( checkbox.checked ){
-            var divfijos =document.getElementById("divfijos_"+oids[i]);
-            if( divfijos && typeof(divfijos)!="undefined"){
-                var elements = divfijos.getElementsByTagName("input");
-                var numchecked = 0;
 
-                for( j=0; j<elements.length; j++ ){
-                    if( elements[j].type=="checkbox" && elements[j].checked ){
-                        numchecked++;
+    <?
+    $oids = array();
+    foreach( $inoClientes as $inoCliente ){
+        $oids[] = $inoCliente->getOid();
+    }
+    ?>
+
+    var oids = <?=json_encode($oids);?>;
+				
+    for( i in oids ){        
+        if(  typeof(oids[i])=="number" ){
+            var checkbox = document.getElementById("checkbox_"+oids[i]);            
+            if( checkbox.checked ){
+                var numchecked = 0;
+                var divfijos =document.getElementById("divfijos_"+oids[i]);
+                if( divfijos && typeof(divfijos)!="undefined"){
+                    var elements = divfijos.getElementsByTagName("input");
+                    for( var j=0; j<elements.length; j++ ){
+                        if( elements[j].type=="checkbox" && elements[j].checked ){
+                            numchecked++;
+                        }
                     }
                 }
 
-                if( numchecked==0 ){
-                    alert("Debe seleccionar al menos un contacto fijo. ");
+                var consolidar_comunicaciones = document.getElementById("consolidar_comunicaciones_"+oids[i]).value;
+                if( numchecked==0 && !consolidar_comunicaciones ){
+                    alert("Debe seleccionar al menos un contacto fijo para el cliente: "+document.getElementById("nombre_cliente_"+oids[i]).value);
                     document.location.href = "#oid_"+oids[i];
                     return false;
                 }
             }
         }
     }
-    
+   
 	<?
 	if( $modo=="otm"){
 		?>
 		
 		
-		for( var i=0 ; i<oids.length ; i++ ){
-			var checkbox = document.getElementById("checkbox_"+oids[i]);		
-			if( checkbox.checked ){					
-				if( document.getElementById("divmessage_"+oids[i]).innerHTML=="" && document.getElementById("mensaje_"+oids[i]).value=="" ){
-					alert("Por favor coloque un mensaje para el status");
-					document.getElementById("mensaje_"+oids[i]).focus();
-					return false;
-				}
-			}
+		for( i in oids ){
+            if(  typeof(oids[i])=="number" ){
+                var checkbox = document.getElementById("checkbox_"+oids[i]);
+                if( checkbox.checked ){
+                    if( document.getElementById("divmessage_"+oids[i]).innerHTML=="" && document.getElementById("mensaje_"+oids[i]).value=="" ){
+                        alert("Por favor coloque un mensaje para el status");
+                        document.getElementById("mensaje_"+oids[i]).focus();
+                        return false;
+                    }
+                }
+            }
 		}	
 		
 		
@@ -534,7 +534,10 @@ function cambiarTipoMsg( value ){
 			?>
 			<tr>
 				<td class="listar" style='font-size: 11px; vertical-align:bottom'><b>Reporte:</b><br />
-					<?=$reporte?$reporte->getCaConsecutivo():"&nbsp;"?></td>
+					<?=$reporte?$reporte->getCaConsecutivo():"&nbsp;"?>
+                    <input type="hidden" id='consolidar_comunicaciones_<?=$inoCliente->getOid()?>' value="<?=$cliente->getProperty("consolidar_comunicaciones")?>" />
+                    <input type="hidden" id='nombre_cliente_<?=$inoCliente->getOid()?>' value="<?=$cliente->getCaCompania()?>" />
+                </td>
 				<td class="listar" style='font-size: 11px; vertical-align:bottom'><span class="listar" style="font-size: 11px; vertical-align:bottom"><b>Id Cliente:</b><br />
 					<?=number_format($inoCliente->getCaIdcliente())?>
 					</span></td>
@@ -543,7 +546,7 @@ function cambiarTipoMsg( value ){
 				<td class="listar" >
 					<div align="right">
 					<?
-					if( $reporte ){
+					if( $reporte ){                        
 					?>					
 						<input type="checkbox" name='oid[]' onclick="habilitar('<?=$inoCliente->getOid()?>');" id="checkbox_<?=$inoCliente->getOid()?>"  value="<?=$inoCliente->getOid()?>" />                        
                         <input type="hidden" name='idcliente_<?=$inoCliente->getOid()?>' value="<?=$inoCliente->getCaIdcliente()?>" />

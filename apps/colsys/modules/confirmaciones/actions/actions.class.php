@@ -39,7 +39,7 @@ class confirmacionesActions extends sfActions
                        ->createQuery("m")
                        ->select("m.*")
                        ->innerJoin("m.InoClientesSea c")
-                       ->addOrderBy("m.ca_referencia")
+                       ->addOrderBy("m.ca_fchreferencia DESC")
                        ->distinct()
                        ->limit(200);
         
