@@ -90,11 +90,22 @@ class RepStatus extends BaseRepStatus
 
 		if( $etapa && $count==0){
 			$template = $etapa->getCaMessage();
-			if( $template ){
+			if( $template ){                
+                if( $this->getCaIdetapa()=="IACAD" ){
+                    /*
+                    * Si es un cabotaje el destino debe ser el final
+                    */
+                    $reporte = $this->getReporte();
+                    if( $reporte->getCaContinuacion()=="CABOTAJE" ){
+                        $template = "Nos permitimos informar que la carga en referencia llegó a {reporte_destinoCont_caCiudad} el {caFchcontinuacion}";
+                    }
+
+                }
+
+
 				$txt = $this->applyTemplate( $template )."\n\n";
 			}
-		}
-
+		}        
 		return $txt;
 	}
 
