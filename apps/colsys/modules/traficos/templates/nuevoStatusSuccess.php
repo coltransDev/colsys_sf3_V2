@@ -42,8 +42,9 @@ var enviarFormulario=function(){
            numChecked++;
        }
     }
-
-    if( numChecked>0 || <?=count($destinatariosFijos)?>==0 ){
+    //|| <?=count($destinatariosFijos)?>==0
+    //document.getElementById("form1").submit();
+    if( numChecked>0 || <?=$reporte->getCliente()->getProperty("consolidar_comunicaciones")?"true":"false"?>  ){
         document.getElementById("form1").submit();
     }else{
         alert("debe seleccionar al menos un contacto fijo.");
@@ -651,6 +652,16 @@ if( !sfConfig::get("app_smtp_user") ){
 							echo $form['datosbl']->render();
 							
 							?>								
+					</div></td>
+				</tr>
+                <tr>
+					<td colspan="2"><div align="left"><b>Inspección Fisica:</b><br />
+							<?
+							echo $form['inspeccion_fisica']->renderError();
+							$form->setDefault('inspeccion_fisica',$repexpo->getCaInspeccionFisica() );
+							echo $form['inspeccion_fisica']->render();
+
+							?>
 					</div></td>
 				</tr>
 				<?

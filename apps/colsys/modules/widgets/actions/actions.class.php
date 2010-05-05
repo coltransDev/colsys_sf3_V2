@@ -107,7 +107,13 @@ class widgetsActions extends sfActions
 		$idlinea = utf8_decode($request->getParameter("idlinea"));
 		$transporte = utf8_decode($request->getParameter("transporte"));
 		$query = utf8_decode($request->getParameter("query"));
-		
+
+        if( $transporte==Constantes::OTMDTA ){ //FIX-ME [Actualizar los registros de la tabla para que coincidan y arreglar las cotizaciones]
+            $transporte = Constantes::TERRESTRE;
+            $modalidad = Constantes::OTMDTA;
+        }
+
+
 		$q = Doctrine_Query::create()
                   ->select("p.ca_idproveedor, p.ca_sigla, id.ca_nombre, p.ca_transporte ")
                   ->from("IdsProveedor p")
@@ -122,7 +128,10 @@ class widgetsActions extends sfActions
             $q->addWhere("id.ca_nombre like ?", $query."%");
         }
         $q->addWhere("p.ca_activo = ?", true );
-        $q->addWhere("p.ca_fchaprobado IS NOT NULL" );
+
+        if($request->getParameter("noaprob")!="true"){
+            $q->addWhere("p.ca_fchaprobado IS NOT NULL" );
+        }
 
         $q->fetchArray();
 
@@ -513,17 +522,17 @@ class widgetsActions extends sfActions
                        ->createQuery("c")
                        ->select("c.ca_idcotizacion, c.ca_consecutivo, p.ca_idproducto, o.ca_ciudad, d.ca_ciudad, o.ca_idciudad, d.ca_idciudad,o.ca_idtrafico, d.ca_idtrafico, p.ca_producto
                                 , p.ca_impoexpo, p.ca_transporte, p.ca_modalidad, con.ca_idcontacto, con.ca_nombres, con.ca_papellido, con.ca_sapellido, con.ca_cargo
-                                ,cl.ca_idcliente, cl.ca_compania, cl.ca_preferencias, cl.ca_confirmar, cl.ca_coordinador, c.ca_usuario, p.ca_idlinea ")
+                                ,cl.ca_idcliente, cl.ca_compania, cl.ca_preferencias, cl.ca_confirmar, cl.ca_coordinador, c.ca_usuario, p.ca_idlinea ")                       
                        ->leftJoin("c.CotProducto p")
                        ->leftJoin("p.Origen o")
                        ->leftJoin("p.Destino d")
                        ->leftJoin("c.Contacto con")
                        ->leftJoin("con.Cliente cl")
-                       ->where("c.ca_consecutivo LIKE ?", $criterio."%")
-                       ->limit(40);
+                       ->addWhere("c.ca_consecutivo LIKE ?", $criterio."%");
+                       
 
         $cotizaciones = $q->setHydrationMode(Doctrine::HYDRATE_SCALAR)->execute();
-
+        
         foreach( $cotizaciones as $key=>$val ){
             $cotizaciones[$key]["o_ca_ciudad"] = utf8_encode($cotizaciones[$key]["o_ca_ciudad"]);
             $cotizaciones[$key]["d_ca_ciudad"] = utf8_encode($cotizaciones[$key]["d_ca_ciudad"]);

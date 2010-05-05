@@ -32,8 +32,7 @@ Ext.onReady(function(){
 			{name: 'papellido', mapping: 'con_ca_papellido'},
 			{name: 'sapellido', mapping: 'con_ca_sapellido'},
 			{name: 'preferencias', mapping: 'cl_ca_preferencias'},
-			{name: 'confirmar', mapping: 'cl_ca_confirmar'},
-			{name: 'idorigen', mapping: 'ca_idorigen'},
+			{name: 'confirmar', mapping: 'cl_ca_confirmar'},			
             {name: 'vendedor', mapping: 'c_ca_usuario'},
             {name: 'coordinador', mapping: 'cl_ca_coordinador'}
         ])

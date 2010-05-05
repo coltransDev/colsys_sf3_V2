@@ -124,7 +124,17 @@ $cliente = $reporte->getCliente();
 		<td><b>Referencia</b></td>
 		<td colspan="5"><?=$inoCliente->getCaReferencia()?></td>	
 	</tr>
-	<?		
+    <?
+    }
+    if($reporte->getCaImpoexpo()==Constantes::EXPO){
+        $repexpo = $reporte->getRepexpo();
+    ?>
+    <tr>
+		<td><b>Inspección Fisica</b></td>
+		<td colspan="5"><?=$repexpo->getCaInspeccionFisica()?"Sí":"No"?></td>
+	</tr>
+
+	<?
 	}
 	$bodega =  $status->getBodega();
 	if($bodega){

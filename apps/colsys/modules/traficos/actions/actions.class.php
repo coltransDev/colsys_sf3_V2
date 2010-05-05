@@ -559,7 +559,13 @@ class traficosActions extends sfActions
 			$repExpo = $reporte->getRepexpo();		
 			if( $request->getParameter("datosbl") ){
 				$repExpo->setCaDatosbl( $request->getParameter("datosbl") );
-			}	
+			}
+
+            if( $request->getParameter("inspeccion_fisica") ){
+				$repExpo->setCaInspeccionFisica( true );
+			}else{
+                $repExpo->setCaInspeccionFisica( false );
+            }
 			$repExpo->save();	
 		}			
 		
@@ -661,6 +667,25 @@ class traficosActions extends sfActions
 		$this->forward404Unless( $this->getRequestParameter("idreporte") );
 		$this->reporte = Doctrine::getTable("Reporte")->find( $this->getRequestParameter("idreporte") );
 		$this->forward404Unless( $this->reporte );
+	}
+
+
+    /*
+	* Muestra un resumen de los status enviados al cliente
+	*/
+	public function executeCerrarCaso( $request ){
+		$this->forward404Unless( $this->getRequestParameter("idreporte") );
+		$reporte = Doctrine::getTable("Reporte")->find( $this->getRequestParameter("idreporte") );
+		$this->forward404Unless( $reporte );
+
+        $this->modo = $this->getRequestParameter("modo");
+		$this->forward404unless( $this->modo );
+
+        $reporte->setCaIdetapa("99999");
+        $reporte->save();
+
+        $this->redirect("traficos/listaStatus?modo=".$this->modo."&reporte=".$reporte->getCaConsecutivo());
+
 	}
 	
 	

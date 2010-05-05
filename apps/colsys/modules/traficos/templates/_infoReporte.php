@@ -133,9 +133,7 @@ if( $reporte->getCaUsuanulado() ){
 		<?
 		}
 		?>
-		
-		<a href="#" onClick="actualizar(<?=$reporte->getCaIdreporte()?>)">Actualizar</a>
-		
+        
 		</td>
 		<td width="46%" valign="top">
 			<div class="post-info" align="left">
@@ -187,7 +185,14 @@ if( $reporte->getCaUsuanulado() ){
 			
 		</div>
 		<br />
-		
+		<div class="post-info" align="left">
+		<b>Acciones</b><br />
+		<a href="#" onClick="actualizar(<?=$reporte->getCaIdreporte()?>)"><?=image_tag("16x16/reload.png")?> Actualizar</a>
+        <br />        
+        <div class="qtip" title="Cierra el caso para que no aparezca en los reportes activos">
+        <?=link_to(image_tag("16x16/endturn.png")." Cerrar", "traficos/cerrarCaso?idreporte=".$reporte->getCaIdreporte()."&modo=".$modo, array("confirm"=>"Esta seguro que desea cerrar el caso?") )?>
+        </div>
+        </div>
 		
 		</td>
 	</tr>

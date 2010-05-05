@@ -135,6 +135,8 @@ class NuevoStatusForm extends BaseForm{
 		$widgets['txtseguimiento'] = new sfWidgetFormTextarea(array(), array("rows"=>3, "cols"=>140 ));
 		
 		
+        $widgets['inspeccion_fisica'] = new sfWidgetFormInputCheckbox();
+
 		$this->setWidgets( $widgets );
 		
 		
@@ -230,7 +232,9 @@ class NuevoStatusForm extends BaseForm{
 														array('required' => 'Por favor coloque un texto para el seguimiento'));
 														
 		$validator['observaciones_idg'] = new sfValidatorString(array('required' => false ));
-		
+
+        $validator['ca_inspeccion_fisica'] = new sfValidatorBoolean(array('required' => false ));
+
 		//echo isset($validator['fchdoctransporte'])."<br />";															
 		$this->setValidators( $validator );
 		
@@ -330,5 +334,7 @@ class NuevoStatusForm extends BaseForm{
 			$this->widgetsClientes[$name] = array("type"=>$type, "label"=>$parametro->getCaValor2());		 
 		}				
 	}
+
+
 }
 ?>
