@@ -485,7 +485,8 @@ RepExpo:
     ca_motonave: string(50)
     ca_emisionbl: string(10)
     ca_datosbl: string
-    ca_numbl: integer    
+    ca_numbl: integer
+    ca_inspeccion_fisica: boolean
   relations:
     Reporte:
       local: ca_idreporte
