@@ -128,6 +128,7 @@ $cliente = $reporte->getCliente();
     }
     if($reporte->getCaImpoexpo()==Constantes::EXPO){
         $repexpo = $reporte->getRepexpo();
+        if( $repexpo->getCaInspeccionFisica()!==null ){
     ?>
     <tr>
 		<td><b>Inspección Fisica</b></td>
@@ -135,6 +136,7 @@ $cliente = $reporte->getCliente();
 	</tr>
 
 	<?
+        }
 	}
 	$bodega =  $status->getBodega();
 	if($bodega){

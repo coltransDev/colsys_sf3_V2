@@ -155,10 +155,15 @@ if( $repexpo->getCaDatosbl() && $reporte->getCaTransporte()=="Marítimo"){
 	<?=nl2br($repexpo->getCaDatosbl())?>
 	<br />	
 	<br />
-
-    <strong>Inspeccion Fisica:<br /></strong>
-	<?=$repexpo->getCaInspeccionFisica()?"Sí":"No"?>
-	<br />
+    <?
+    if( $repexpo->getCaInspeccionFisica()!==null ){
+        ?>
+        <strong>Inspeccion Fisica:<br /></strong>
+        <?=$repexpo->getCaInspeccionFisica()?"Sí":"No"?>
+        <?
+    }
+    ?>
+    <br />
 	<br />
 	
 <?

@@ -560,11 +560,12 @@ class traficosActions extends sfActions
 			if( $request->getParameter("datosbl") ){
 				$repExpo->setCaDatosbl( $request->getParameter("datosbl") );
 			}
-
-            if( $request->getParameter("inspeccion_fisica") ){
-				$repExpo->setCaInspeccionFisica( true );
-			}else{
-                $repExpo->setCaInspeccionFisica( false );
+            if( $request->getParameter("inspeccion_fisica")!==null ){
+                if( $request->getParameter("inspeccion_fisica") ){
+                    $repExpo->setCaInspeccionFisica( true );
+                }else{
+                    $repExpo->setCaInspeccionFisica( false );
+                }
             }
 			$repExpo->save();	
 		}			

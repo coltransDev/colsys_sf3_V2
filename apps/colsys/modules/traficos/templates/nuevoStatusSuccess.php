@@ -650,6 +650,9 @@ if( !sfConfig::get("app_smtp_user") ){
 							?>								
 					</div></td>
 				</tr>
+                <?
+                if( $repexpo->getCaIdsia()==17|| $repexpo->getCaIdsia()==9 ){ //Solamente cuan colmas maneja la carga
+                ?>
                 <tr>
 					<td colspan="2"><div align="left"><b>Inspección Fisica:</b><br />
 							<?
@@ -661,7 +664,7 @@ if( !sfConfig::get("app_smtp_user") ){
 					</div></td>
 				</tr>
 				<?
-				//}
+				}
 			}
 			?>
 	
