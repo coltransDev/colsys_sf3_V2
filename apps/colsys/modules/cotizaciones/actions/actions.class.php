@@ -1440,6 +1440,9 @@ class cotizacionesActions extends sfActions
         $modo = $this->getRequestParameter("modo");
         
 		$this->forward404unless( $idcotizacion );
+
+        $cotizacion = Doctrine::getTable("Cotizacion")->find( $idcotizacion );
+
 		$tipo = Constantes::RECARGO_LOCAL;
 		
 		/*
@@ -1469,9 +1472,9 @@ class cotizacionesActions extends sfActions
             /*
             * Incluye grupos para los recargos que ya se han creado
             */
+            //Por esto aparece a veces Aéreo FCL, se debe al cambio que se le hicieron a los recargos
 
-
-            $rows = Doctrine_Query::create()
+            /*$rows = Doctrine_Query::create()
                             ->select("tr.ca_transporte, p.ca_modalidad")
                             ->from("CotRecargo p")
                             ->innerJoin("p.TipoRecargo tr")
@@ -1481,11 +1484,11 @@ class cotizacionesActions extends sfActions
                             ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
                             ->execute();
 
-
+                            
             foreach ( $rows as $row ) {
                 $grupos[$row["TipoRecargo"]["ca_transporte"]][]=$row["ca_modalidad"];
                 $grupos[$row["TipoRecargo"]["ca_transporte"]] = array_unique( $grupos[$row["TipoRecargo"]["ca_transporte"]] );
-            }
+            }*/
 
 		
             //Recargos de OTM-DTA
@@ -1518,7 +1521,7 @@ class cotizacionesActions extends sfActions
 				
 				$agrupamiento = utf8_encode($transporte." ".$modalidad);
 				
-				$recargos = Doctrine::getTable("CotRecargo")
+				/*$recargos = Doctrine::getTable("CotRecargo")
                                       ->createQuery("r")
                                       ->innerJoin("r.TipoRecargo tr")
                                       ->where("r.ca_idcotizacion = ?", $idcotizacion )
@@ -1527,7 +1530,9 @@ class cotizacionesActions extends sfActions
                                       ->addWhere("tr.ca_tipo like ? OR tr.ca_tipo like ? ", array("%".Constantes::RECARGO_LOCAL."%", Constantes::RECARGO_OTM_DTA."%") )
                                       ->addOrderBy("tr.ca_transporte ASC")
                                       ->addOrderBy("tr.ca_recargo ASC")
-                                      ->execute();
+                                      ->execute();*/
+                //echo $transporte;
+                $recargos = $cotizacion->getRecargosLocales($transporte, $modalidad);
 				$j=0;
 				foreach( $recargos as $recargo ){
 							 
@@ -1629,8 +1634,12 @@ class cotizacionesActions extends sfActions
 			$continuacion->setCaValorTar( $this->getRequestParameter("valor_tar") );
 		}
 
-		if( $this->getRequestParameter("valor_min") ){
-			$continuacion->setCaValorMin( $this->getRequestParameter("valor_min") );
+		if( $this->getRequestParameter("valor_min")!==null ){
+            if( $this->getRequestParameter("valor_min") ){
+                $continuacion->setCaValorMin( $this->getRequestParameter("valor_min") );
+            }else{
+                $continuacion->setCaValorMin( null );
+            }
 		}
 		
 		if( $this->getRequestParameter("idmoneda") ){
