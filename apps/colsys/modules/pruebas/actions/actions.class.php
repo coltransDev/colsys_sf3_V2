@@ -3720,16 +3720,19 @@ ORDER BY ca_idtrayecto,ca_idconcepto,log_pricrecargosxconcepto.ca_idrecargo, ca_
 
         $dstDir = "/home/abotero/Desktop/CORREOS/BAD";
         if ($handle = opendir($dir)) {
-            echo "Directory handle: $handle\n";
+            //echo "Directory handle: $handle\n";
             echo "Files:\n";
-
+            $i=0;
             /* This is the correct way to loop over the directory. */
             while (false !== ($file = readdir($handle))) {
-                echo "$file<br />";
+               
 
                 $fileContent = strtolower(file_get_contents($dir."/".$file));
-
-                if(strpos($fileContent, "aquiroga@bancosantander.com.co")!==false ){
+                if( $i++<5 ){
+                    echo $fileContent;
+                }
+                if(strpos($fileContent, strtolower("Produced By Microsoft MimeOLE"))!==false ){
+                     echo "$file<br />";
                     rename($dir."/".$file, $dstDir."/".$file );
                 }
 

@@ -119,6 +119,7 @@ if ( $reporte->getCaIdlinea() ){
 	<td colspan="3"><?=$hijo?></td>
 </tr>
 <?
+/*
 if (strlen($consignatario_h) != 0){
 ?>
 <tr>
@@ -126,7 +127,7 @@ if (strlen($consignatario_h) != 0){
 	<td colspan="3"><?=$consignatario_h?></td>
 </tr>
 <?
-}
+}*/
 
 if ( $reporte->getCaContinuacion() != 'N/A' ){
 ?>

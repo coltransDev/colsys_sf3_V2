@@ -77,6 +77,16 @@ class parametrosActions extends sfActions
             $this->forward404Unless( $transporte );
             //echo $tipo;
 			//$c->setLimit(3);
+
+            if( $transporte==Constantes::OTMDTA ){ //FIX-ME [Actualizar los registros de la tabla para que coincidan y arreglar las cotizaciones]
+                $transporte = Constantes::TERRESTRE;
+                $modalidad = Constantes::OTMDTA;
+            }
+            if( $modalidad==Constantes::ADUANAFCL || $modalidad==Constantes::ADUANALCL ){ //FIX-ME [Actualizar los registros de la tabla para que coincidan y arreglar las cotizaciones]
+                $modalidad = Constantes::OTMDTA;
+            }
+
+            
 			$q = Doctrine::getTable("TipoRecargo")
                          ->createQuery("c")
                          ->addWhere("c.ca_transporte = ? AND ca_tipo LIKE ? ", array($transporte, "%".$tipo."%" ))
