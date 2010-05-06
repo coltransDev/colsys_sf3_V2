@@ -994,7 +994,7 @@ class cotizacionesActions extends sfActions
 		$aplica_tar = utf8_decode($this->getRequestParameter("aplica_tar"));
 		$aplica_min = utf8_decode($this->getRequestParameter("aplica_min"));
 		$observaciones = $this->getRequestParameter("detalles");
-      $equipo = $this->getRequestParameter("idequipo");
+        $equipo = $this->getRequestParameter("idequipo");
 
 		$consecutivo = $this->getRequestParameter("consecutivo"); //Consecutivo tarifario
 		
@@ -1541,8 +1541,10 @@ class cotizacionesActions extends sfActions
 												'idcotizacion'=>$idcotizacion,
 												'agrupamiento'=>$agrupamiento,
 												'transporte'=>utf8_encode($transporte),
-												'idrecargo'=>$recargo->getCaIdrecargo(),												
-												'recargo'=>utf8_encode($tipoRecargo->getCaRecargo()),      
+												'idrecargo'=>$recargo->getCaIdrecargo(),
+												'recargo'=>utf8_encode($tipoRecargo->getCaRecargo()),
+                                                'idequipo'=>$recargo->getCaIdequipo(),
+                                                'equipo'=>$recargo->getEquipo()->getCaConcepto(),
 												'valor_tar'=>$recargo->getCaValorTar(),
 												'aplica_tar'=>utf8_encode($recargo->getCaAplicaTar()),
 												'valor_min'=>$recargo->getCaValorMin(),
@@ -2286,9 +2288,9 @@ class cotizacionesActions extends sfActions
         $data = array();
 
         $parametro = Doctrine::getTable("Costo")->find(  $request->getParameter("idconcepto") );
-                                 
 
-       
+
+
 //            echo $parametro->getCaParametros();
         $arrParametros=explode("|", $parametro->getCaParametros());
         
