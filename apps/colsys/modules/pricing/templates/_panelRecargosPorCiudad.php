@@ -104,6 +104,8 @@ PanelRecargosPorCiudad = function( config ){
         {name: 'ciudad', type: 'string'},
         {name: 'idrecargo', type: 'string'},
         {name: 'recargo', type: 'string'},
+        {name: 'idconcepto', type: 'string'},
+        {name: 'concepto', type: 'string'},
         {name: 'inicio', type: 'date', dateFormat:'Y-m-d'},
         {name: 'vencimiento', type: 'date', dateFormat:'Y-m-d'},
         {name: 'vlrrecargo', type: 'float'},
@@ -147,6 +149,41 @@ PanelRecargosPorCiudad = function( config ){
             this.record
         )
         //,sortInfo:{field: 'id', direction: "ASC"}
+    });
+
+    this.storeConceptos = new Ext.data.Store({
+        autoLoad : false,
+        url: '<?=url_for("pricing/datosEditorConceptos")?>',
+        baseParams : {
+            impoexpo: this.impoexpo,
+            transporte: this.transporte,
+            modalidad: this.modalidad
+        },
+        reader: new Ext.data.JsonReader(
+            {
+                root: 'root',
+                totalProperty: 'total',
+                successProperty: 'success'
+            },
+            Ext.data.Record.create([
+                {name: 'idconcepto'},
+                {name: 'concepto'}
+            ])
+        )
+    });
+
+    this.editorConceptos = new Ext.form.ComboBox({
+        typeAhead: true,
+        forceSelection: true,
+        triggerAction: 'all',
+        selectOnFocus: true,
+        mode: 'local',
+        displayField: 'concepto',
+        valueField: 'idconcepto',
+        listClass: 'x-combo-list-small',
+        lazyRender:true,
+        store : this.storeConceptos
+
     });
 
 
@@ -207,7 +244,20 @@ PanelRecargosPorCiudad = function( config ){
 			hideable: false,
 			dataIndex: 'recargo',
 			editor: this.editorRecargos
-		},
+		}
+        ,
+
+        {
+			header: "Concepto",
+			width: 100,
+			sortable: false,
+			hideable: false,
+            hidden: <?=$ocultarConcepto?>,
+			dataIndex: 'concepto',
+			editor: this.editorConceptos
+
+		}
+      ,
         {
 			header: "Inicio",
 			width: 80,
