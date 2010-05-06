@@ -944,7 +944,7 @@ class pricingActions extends sfActions
 		
         
         //Si se llama de una cotizacion se mezcla con los recargos por naviera
-        $idcotizacion = $this->getRequestParameter( "idcotizacion" );        
+        $idcotizacion = $this->getRequestParameter( "idcotizacion" );
         if( $idcotizacion ){
 
             $q = Doctrine_Query::create()->from("PricRecargoxLinea r");
@@ -956,27 +956,29 @@ class pricingActions extends sfActions
             $q->addOrderBy("t.ca_recargo");                    
             $recargos = $q->execute();
 
-
-
-            foreach( $recargos as $recargo ){
-                $row = array(
-                    'idtrafico'=>$idtrafico,
-                    'idlinea'=>$recargo->getCaIdlinea(),
-                    'linea'=>utf8_encode($recargo->getIdsProveedor()->getCaSigla()?$recargo->getIdsProveedor()->getCaSigla():$recargo->getIdsProveedor()->getIds()->getCaNombre()),
-                    'idrecargo'=>$recargo->getCaIdrecargo(),
-                    'recargo'=>utf8_encode($recargo->getTipoRecargo()->getCaRecargo()),
-                    'inicio' => $recargo->getCaFchinicio(),
-                    'vencimiento' => $recargo->getCaFchvencimiento(),
-                    'vlrrecargo'=>$recargo->getCaVlrrecargo(),
-                    'vlrminimo'=>$recargo->getCaVlrminimo(),
-                    'aplicacion'=>utf8_encode($recargo->getCaAplicacion()),
-                    'aplicacion_min'=>utf8_encode($recargo->getCaAplicacionMin()),
-                    'idmoneda'=>$recargo->getCaIdmoneda(),
-                    'observaciones'=>utf8_encode(($recargo->getCaIdconcepto()!=9999?$recargo->getConcepto()->getCaConcepto():"").$recargo->getCaObservaciones())
-                );
-                $this->data[]= $row;
-            }
-                        
+//           echo count($recargos);
+//            exit;
+                foreach( $recargos as $recargo ){
+                    $row = array(
+                        'idtrafico'=>$idtrafico,
+                        'idlinea'=>$recargo->getCaIdlinea(),
+                        'linea'=>utf8_encode($recargo->getIdsProveedor()->getCaSigla()?$recargo->getIdsProveedor()->getCaSigla():$recargo->getIdsProveedor()->getIds()->getCaNombre()),
+                        'idrecargo'=>$recargo->getCaIdrecargo(),
+                        'recargo'=>utf8_encode($recargo->getTipoRecargo()->getCaRecargo()),
+                        'idconcepto'=>$recargo->getCaIdconcepto(),
+                        'concepto'=>utf8_encode($recargo->getConcepto()->getCaConcepto()),
+                        'inicio' => $recargo->getCaFchinicio(),
+                        'vencimiento' => $recargo->getCaFchvencimiento(),
+                        'vlrrecargo'=>$recargo->getCaVlrrecargo(),
+                        'vlrminimo'=>$recargo->getCaVlrminimo(),
+                        'aplicacion'=>utf8_encode($recargo->getCaAplicacion()),
+                        'aplicacion_min'=>utf8_encode($recargo->getCaAplicacionMin()),
+                        'idmoneda'=>$recargo->getCaIdmoneda(),
+                        'observaciones'=>utf8_encode(($recargo->getCaIdconcepto()!=9999?$recargo->getConcepto()->getCaConcepto():"").$recargo->getCaObservaciones())
+                    );
+                    $this->data[]= $row;
+                }
+            }            
            
         }
 
