@@ -4,7 +4,7 @@
 * @author: Andres Botero
 */
 if($modo!="consulta"){
-    include_component("pricing", "panelRecargosPorCiudad");
+    include_component("pricing", "panelRecargosPorCiudad",array("ocultarConcepto"=>"false"));
 }
 ?>
 <script type="text/javascript">
@@ -38,6 +38,45 @@ PanelRecargosCotizacion = function( config ){
                 })
 
     });
+
+this.storeEquipos = new Ext.data.Store({
+        autoLoad : true,
+        url: '<?=url_for("parametros/datosConceptos")?>',
+        baseParams:{
+               transporte:"<?=Constantes::MARITIMO?>",
+               modalidad:"<?=Constantes::FCL?>",
+               impoexpo:"<?=Constantes::IMPO?>"
+        },
+        reader: new Ext.data.JsonReader({
+                    root: 'root',
+                    totalProperty: 'total',
+                    successProperty: 'success'
+                },
+
+                Ext.data.Record.create([
+                    {name: 'idconcepto'},
+                    {name: 'concepto'}
+                ])
+        )
+    });
+
+
+    this.editorEquipos = new Ext.form.ComboBox({
+        fieldLabel: 'Equipo',
+        typeAhead: true,
+        forceSelection: true,
+        triggerAction: 'all',
+        selectOnFocus: true,
+        name: 'equipo',
+        id: 'idequipo',
+        mode: 'local',
+        displayField: 'concepto',
+        valueField: 'idconcepto',
+        lazyRender:true,
+        listClass: 'x-combo-list-small',
+        store : this.storeEquipos
+    })
+
 
 
     this.columns = [
@@ -74,6 +113,15 @@ PanelRecargosCotizacion = function( config ){
 			hideable: false,
 			editor: this.comboRecargos
 		},
+        {
+            id: 'equipo',
+            header: "Equipo",
+            width: 60,
+            sortable: false,
+            dataIndex: 'equipo',
+            hideable: false,
+            editor: this.editorEquipos
+        },
 		{
 			id: 'valor_tar',
 			header: "Valor Recargo",
@@ -134,7 +182,7 @@ PanelRecargosCotizacion = function( config ){
 			editor: <?=include_component("widgets", "monedas" ,array("id"=>""))?>
 		},
 		{
-			id: 'observaciones',
+			id: 'detalles',
 			header: "Observaciones",
 			width: 100,
 			sortable: true,
@@ -172,7 +220,10 @@ PanelRecargosCotizacion = function( config ){
         {name: 'idmoneda', type: 'string'},
         {name: 'modalidad', type: 'string'},
         {name: 'detalles', type: 'string'},
-        {name: 'orden', type: 'string'}
+        {name: 'orden', type: 'string'},
+        {name: 'idequipo', type: 'string'}, //Concepto al cual pertenece el recargo
+        {name: 'equipo', type: 'string'}, //Concepto al cual pertenece el recargo
+
     ]);
 
     <?
@@ -226,7 +277,7 @@ PanelRecargosCotizacion = function( config ){
         tbar: [
             
             {
-                text: 'Guardar Cambios',
+                text: 'Guardar Cambios ',
                 tooltip: 'Guarda los cambios realizados en Recargos',
                 iconCls: 'disk',  // reference to our css
                 id: 'guardarbtn-recargos',
@@ -309,6 +360,11 @@ Ext.extend(PanelRecargosCotizacion, Ext.grid.EditorGridPanel, {
     */
     onBeforeedit: function( e ){
 
+        if( e.field=="equipo" ){
+            if(e.record.data.modalidad!="FCL")
+                return false;
+
+        }
         if( e.field=="recargo" ){
             var recargosMaritimo = [
                 <?
@@ -446,6 +502,19 @@ Ext.extend(PanelRecargosCotizacion, Ext.grid.EditorGridPanel, {
                     }
                 }
             )
+        }
+        else if( e.field == "equipo"){
+            var rec = e.record;
+            var ed = this.colModel.getCellEditor(e.column, e.row);
+            var store = ed.field.store;
+            var recordGrilla = this.record;
+            store.each( function( r ){
+                if( r.data.idconcepto==e.value ){
+                    rec.set("idequipo", r.data.idconcepto );
+                    e.value = r.data.concepto;
+                    return true;
+                 }
+            });
         }
     },
 
@@ -617,12 +686,13 @@ Ext.extend(PanelRecargosCotizacion, Ext.grid.EditorGridPanel, {
                                         id: newId,
                                         agrupamiento: activeRecordRec.data.agrupamiento,
                                         recargo: '',
+                                        equipo: '',
                                         valor_tar: 0,
                                         valor_min: 0,
                                         aplica_tar: '',
                                         aplica_min: '',
                                         idmoneda: '',
-                                        observaciones: '',
+                                        detalles: '',
                                         transporte: activeRecordRec.data.transporte,
                                         modalidad: activeRecordRec.data.modalidad
                                     });
@@ -634,14 +704,17 @@ Ext.extend(PanelRecargosCotizacion, Ext.grid.EditorGridPanel, {
                                     //Es necesario buscar de nuevo el record dentro del store
                                     //para que se activen los eventos de edición del store
                                     var newRec = storeRecargosCot.getById( newId );
-
+                                    //alert(r.data.observaciones)
                                     newRec.set("idrecargo", r.data.idrecargo );
                                     newRec.set("recargo", r.data.recargo );
+                                    newRec.set("idequipo", r.data.idconcepto );
+                                    newRec.set("equipo", r.data.concepto );
                                     newRec.set("valor_tar", r.data.vlrrecargo );
                                     newRec.set("valor_min", r.data.vlrminimo );
                                     newRec.set("aplica_tar", r.data.aplicacion );
                                     newRec.set("aplica_min", r.data.aplicacion_min );
                                     newRec.set("idmoneda", r.data.idmoneda );
+                                    newRec.set("detalles", r.data.observaciones );
                                     //newRec.set("observaciones", r.data.observaciones ); //No se ha definido las observaciones para cliente
 
                                 }
