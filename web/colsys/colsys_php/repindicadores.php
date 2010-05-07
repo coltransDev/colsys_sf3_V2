@@ -565,6 +565,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
         $source = "vi_repindicador_exp";
         $etapa = ($tra_mem == 'Aéreo')?"EECEM":"EEETA";
         $subque = "LEFT OUTER JOIN (select ca_consecutivo as ca_consecutivo_sub, ca_fchsalida, ca_horasalida from tb_repstatus rps LEFT OUTER JOIN ( select max(srps.ca_idstatus) as ca_idstatus, srpt.ca_consecutivo from tb_repstatus srps LEFT OUTER JOIN tb_reportes srpt ON (srps.ca_idreporte = srpt.ca_idreporte) where srps.ca_idetapa = '$etapa'  and srpt.ca_impoexpo = 'Exportación'  group by ca_consecutivo) rpf ON (rps.ca_idstatus = rpf.ca_idstatus)) rs ON (rs.ca_consecutivo_sub = vi_repindicador_exp.ca_consecutivo) ";
+        $subque = "LEFT OUTER JOIN (select ca_consecutivo as ca_consecutivo_sub, ca_fchsalida, ca_horasalida from tb_repstatus rps LEFT OUTER JOIN ( select max(srps.ca_idstatus) as ca_idstatus, srpt.ca_consecutivo from tb_repstatus srps LEFT OUTER JOIN tb_reportes srpt ON (srps.ca_idreporte = srpt.ca_idreporte) where srpt.ca_impoexpo = 'Exportación'  group by ca_consecutivo) rpf ON (rps.ca_idstatus = rpf.ca_idstatus)) rs ON (rs.ca_consecutivo_sub = vi_repindicador_exp.ca_consecutivo) ";
         if ($tra_mem == 'Marítimo') {
             $subque.= "LEFT OUTER JOIN (select exm.ca_referencia_exm, ext.ca_idevento, ext.ca_fchevento, pre.ca_valor from (select ca_referencia as ca_referencia_exm, ca_tipoexpo, ca_consecutivo from tb_expo_maestra) exm ";
             $subque.= "LEFT OUTER JOIN (select ca_referencia as ca_referencia_ext, ca_idevento, ca_fchevento from tb_expo_tracking where ca_realizado = 1) ext ON (ext.ca_referencia_ext = exm.ca_referencia_exm) ";
@@ -1251,6 +1252,8 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
 
                 $matriz_eventos = array();
                 if ($tra_mem == 'Aéreo') {
+//                    echo "<pre>";print_r($rs);echo "</pre>";
+//                    exit;
                     $matriz_eventos["intervalo_1"]['Fch.Carga Embarcada'] = $rs->Value('ca_fchsalida');
                 } else if ($tra_mem == 'Marítimo') {
                     if (strlen($rs->Value('ca_fchevento')) != 0 and strlen($rs->Value('ca_fchsalida')) != 0) {
