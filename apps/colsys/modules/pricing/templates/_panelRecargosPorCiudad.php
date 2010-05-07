@@ -252,7 +252,7 @@ PanelRecargosPorCiudad = function( config ){
 			width: 100,
 			sortable: false,
 			hideable: false,
-            hidden: <?=$ocultarConcepto?>,
+            hidden: <?=(isset($ocultarConcepto) && $ocultarConcepto!="" )?$ocultarConcepto:"false"?>,
 			dataIndex: 'concepto',
 			editor: this.editorConceptos
 
