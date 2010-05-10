@@ -9,6 +9,10 @@ class CotizacionTable extends Doctrine_Table
 	*/
 	public static function siguienteConsecutivo( $yy , $company){
 		if( $yy ){
+            if(!$company)
+            {
+                $company="Coltrans";
+            }
             $sql =  "SELECT fun_cotizacioncon('".$yy."','".$company."') as next";
             $q = Doctrine_Manager::getInstance()->connection();
             $stmt = $q->execute($sql);
