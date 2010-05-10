@@ -571,6 +571,35 @@ class cotizacionesActions extends sfActions
 		$this->grupos = $grupos;
 	}
 
+    public function executeGenerarPDFColtrans(){
+
+
+		$this->cotizacion =  Doctrine::getTable("Cotizacion")->find( $this->getRequestParameter("id") );
+		$this->forward404Unless( $this->cotizacion );
+
+		$this->filename=$this->getRequestParameter("filename");
+		$this->notas = sfYaml::load(sfConfig::get('sf_app_module_dir').DIRECTORY_SEPARATOR."cotizaciones".DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."notas.yml");
+
+		$grupos = array();
+
+		$rows = Doctrine::getTable("CotProducto")
+                                ->createQuery("p")
+                                ->select("p.ca_transporte, p.ca_modalidad")
+                                ->where("p.ca_idcotizacion=?", $this->cotizacion->getCaIdcotizacion())
+                                ->distinct()
+                                ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
+                                ->execute();
+
+		foreach( $rows as $row ) {
+			$grupos[$row["ca_transporte"]][]=$row["ca_modalidad"];
+			$grupos[$row["ca_transporte"]] = array_unique( $grupos[$row["ca_transporte"]] );
+		}
+
+
+        $this->setTemplate("generarPDF".$this->cotizacion->getCaEmpresa());
+
+		$this->grupos = $grupos;
+	}
 
    public function executeGenerarPDF(){
 
