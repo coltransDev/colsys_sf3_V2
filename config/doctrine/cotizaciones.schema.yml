@@ -387,7 +387,7 @@ CotTrayectoAduana:
       form: false
       filter: false
   generatePath: cotizaciones
-  tableName: cot.tb_trayectos_aduana
+  tableName: cot.tb_cotproductos
   columns:
     ca_idtrayecto:
       type: integer
