@@ -1208,12 +1208,14 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
             idciudad = record.data.ciu_origen;
             idciudad2 = record.data.ciu_destino;
             idtrafico = record.data.tra_origen;
-        }
-
-        if(record.data.impoexpo=="<?=Constantes::EXPO?>"){
+        }else if(record.data.impoexpo=="<?=Constantes::EXPO?>"){
             idciudad2 = record.data.ciu_origen;
             idciudad = record.data.ciu_destino;
             idtrafico = record.data.tra_destino;
+        }
+        else
+        {
+            idtrafico='CO-057';
         }
 
         impoexpo = record.data.impoexpo;
