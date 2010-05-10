@@ -1204,6 +1204,9 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
         var url = '<?=url_for("pricing/grillaPorTrafico?opcion=consulta")?>';
 
         activeRecord = record;
+        if(record.data.impoexpo=="")
+            record.data.impoexpo="<?=Constantes::IMPO?>";
+
         if(record.data.impoexpo=="<?=Constantes::IMPO?>"){
             idciudad = record.data.ciu_origen;
             idciudad2 = record.data.ciu_destino;
@@ -1215,6 +1218,8 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
         }
         else
         {
+            idciudad = record.data.ciu_origen;
+            idciudad2 = record.data.ciu_destino;
             idtrafico='CO-057';
         }
 
