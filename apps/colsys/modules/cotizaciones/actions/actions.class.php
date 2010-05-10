@@ -754,7 +754,7 @@ class cotizacionesActions extends sfActions
 
             $newCotizacion = $cotizacion->copy( false ); //La copia recursiva se hace paso a paso por que las llaves son naturales
             $user = $this->getUser();
-            $sig = CotizacionTable::siguienteConsecutivo( date("Y") );
+            $sig = CotizacionTable::siguienteConsecutivo( date("Y"),$cotizacion->getCaEmpresa() );
             $newCotizacion->setCaConsecutivo( $sig );
             $newCotizacion->setCaIdgEnvioOportuno(null);
             $newCotizacion->setCaFchcreado( date("Y-m-d H:i:s") );
