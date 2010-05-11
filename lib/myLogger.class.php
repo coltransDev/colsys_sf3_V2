@@ -11,8 +11,8 @@ class myLogger extends sfFileLogger
     protected function doLog($message, $priority)
     {
         
-        $id = " [".sfContext::getinstance()->getUser()->getUserId()." ".$_SERVER["REQUEST_METHOD"]." ".$_SERVER["REQUEST_URI"];
-        
+        $id = " [".(sfContext::getinstance()->getUser()?sfContext::getinstance()->getUser()->getUserId():"")." ".$_SERVER["REQUEST_METHOD"]." ".$_SERVER["REQUEST_URI"];
+
         if( $_SERVER["QUERY_STRING"] ){
             $id .=" query: ".$_SERVER["QUERY_STRING"];
         }
@@ -26,6 +26,7 @@ class myLogger extends sfFileLogger
         }
 
         $id .="]\n";
+        
 
         parent::doLog($message.$id, $priority);
     }
