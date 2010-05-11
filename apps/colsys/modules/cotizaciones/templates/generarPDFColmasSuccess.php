@@ -1120,12 +1120,14 @@ if ( count($tarifas)>0 ) {
 	$pdf->SetFills(array_fill(0, count($width_mem), 1));
 	$pdf->Row($titu_mem);
 	foreach( $tarifas as $tarifa ){
-      $concepto=$tarifa->getInoConcepto();
+      $concepto=$tarifa->getCosto();
+//      if(!$concepto)
+//          exit;
 		$pdf->SetAligns(array_fill(0, count($width_mem), "L"));
 		$pdf->SetStyles(array_fill(0, count($width_mem), ""));
 		$pdf->SetFills(array_fill(0, count($width_mem), 0));
 		$row = array(
-					$concepto->getCaConcepto(),$tarifa->getCaParametro(),$tarifa->getCaValor(),
+					$concepto->getCaCosto(),$tarifa->getCaParametro(),$tarifa->getCaValor(),
                $tarifa->getCaAplicacion(),$tarifa->getCaValorminimo(),$tarifa->getCaAplicacionminimo()
 		 );
       if( $imprimirObservaciones ){
