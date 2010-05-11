@@ -153,7 +153,7 @@ elseif (!isset($boton) and !isset($accion) and isset($criterio)){
         $condicion.= " and ca_vendedor = '".$usuario."'"; }
     else if ($buscaren == 'Clientes Libres') {
         $condicion.= " and ca_vendedor = ''"; }
-	if (isset($login)){
+	if (isset($login) and $login != '%'){
 		$condicion.= " and ca_vendedor like '$login'";
 		}
 	if (isset($estados_sel)){
@@ -171,6 +171,7 @@ elseif (!isset($boton) and !isset($accion) and isset($criterio)){
 	$registros = (!$rs->IsEmpty())?"ca_idcliente = ".$rs->Value('ca_idcliente'):"false";
 	$cn =& DlRecordset::NewRecordset($conn);
 	$tm =& DlRecordset::NewRecordset($conn);
+
 	if (!$tm->Open("select * from vi_evecliente where $registros")) {          // Selecciona todos lo registros de la tabla Eventos de Clientes
 		echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
 		echo "<script>document.location.href = 'clientes_financ.php';</script>";
