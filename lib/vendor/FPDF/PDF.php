@@ -1,40 +1,36 @@
 <?
 class PDF extends FPDF {
     //Variables para manejo de Tablas
-   private $widths;
-	private $height;
-   private $aligns;
-   private $sucursal;
-	private $repeat;
-	private $coltransFooter=false;
-	private $coltransHeader=false;
-	private $colmasFooter=false;
-	private $colmasHeader=false;
-   private $linerepeat;
-	private $grouping = false;
-	private $bufferGroup = array();
-   private $empresa=1;
-	const COLTRANS=1;
-   const COLMAS=2;
+    private $widths;
+    private $height;
+    private $aligns;
+    private $sucursal;
+    private $repeat;
+    private $coltransFooter=false;
+    private $coltransHeader=false;
+    private $colmasFooter=false;
+    private $colmasHeader=false;
+    private $linerepeat;
+    private $grouping = false;
+    private $bufferGroup = array();
+    private $empresa=1;
+    const COLTRANS=1;
+    const COLMAS=2;
 	
 	
 	//Cabecera de página
     function Header() {
-		if( !$this->coltransHeader ){
-			 $this->Ln(5);
-		}if( !$this->colmasHeader ){
-			 $this->Ln(5);          
-		}else{
-         if($this->colmasHeader)
-         {
-            $this->empresa=self::COLMAS;
-            $image="Colmas.jpg";
-         }
-         else
-         {
-            $this->empresa=self::COLTRANS;
-            $image="ColtransSA.jpg";
-         }
+        //echo "--->".$this->empresa;
+        
+		if( $this->coltransHeader||$this->colmasHeader ){
+            if($this->colmasHeader){
+                $this->empresa=self::COLMAS;
+                $image="Colmas.jpg";
+            }
+            else{
+                $this->empresa=self::COLTRANS;
+                $image="ColtransSA.jpg";
+            }
 			//Posición: a 1,6 cm del final
 			$this->SetY(16);
 			//Arial italic 8
@@ -47,7 +43,9 @@ class PDF extends FPDF {
 			/*$this->Image(sfConfig::get('sf_web_dir').DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'pdf'.DIRECTORY_SEPARATOR.'20y.jpg', 170, 8, 18, 14, 'JPG');*/
 			//Salto de línea
 			$this->Ln(10);
-		}
+		}else{
+             $this->Ln(5);
+        }
     }
 
     //Pie de página
