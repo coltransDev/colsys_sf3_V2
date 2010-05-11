@@ -34,7 +34,7 @@ WidgetPais = function( config ){
 			})
 
     WidgetPais.superclass.constructor.call(this, {
-        valorField: 'idtrafico',
+        valueField: 'idtrafico',
         displayField: 'nombre',
         typeAhead: true,
         forceSelection: true,

@@ -46,9 +46,13 @@ include_component("widgets", "widgetAgente");
                             border:false,
                             defaultType: 'textfield',
                             items: [
-                                new WidgetImpoexpo({fieldLabel: 'Clase'}),
+                                new WidgetImpoexpo({fieldLabel: 'Clase',
+                                                    id: 'impoexpo'
+                                                    }),
                                 new WidgetTransporte({fieldLabel: 'Transporte'}),
-                                new WidgetPais({fieldLabel: 'País Origen'}),
+                                new WidgetPais({fieldLabel: 'País Origen',
+                                                id: 'tra_origen_id'
+                                               }),
                                 new WidgetCiudad({fieldLabel: 'Ciudad Origen'}),
                                 new WidgetAgente({fieldLabel: 'Agente',
                                                   linkImpoExpo: "impoexpo",
@@ -77,7 +81,9 @@ include_component("widgets", "widgetAgente");
                             items: [
                                 new WidgetModalidad({fieldLabel: 'Modalidad'}),
                                 new WidgetLinea({fieldLabel: 'Linea'}),                                
-                                new WidgetPais({fieldLabel: 'País Destino'}),
+                                new WidgetPais({fieldLabel: 'País Destino',
+                                                id: 'tra_destino_id'
+                                                }),
                                 new WidgetCiudad({fieldLabel: 'Ciudad Destino'})
                                 
                             ]

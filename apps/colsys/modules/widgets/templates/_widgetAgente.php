@@ -63,8 +63,7 @@ Ext.extend(WidgetAgente, Ext.form.ComboBox, {
         }else{
             var link = e.combo.linkOrigen;
         }        
-        var trafico =  Ext.getCmp(link).getValue();
-
+        var trafico =  Ext.getCmp(link).getValue();        
         var agentList = new Array();
         var listarTodos = false;
         if( Ext.getCmp(e.combo.linkListarTodos) && Ext.getCmp(e.combo.linkListarTodos)){
