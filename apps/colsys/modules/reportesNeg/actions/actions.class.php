@@ -303,7 +303,8 @@ class reportesNegActions extends sfActions
         foreach( $agentes as $agente ){
             $this->agentes[ $agente["t_ca_idtrafico"] ][]=array("idagente" => $agente["a_ca_idagente"],
                                                                 "nombre" => utf8_encode($agente["i_ca_nombre"]),
-                                                                "pais" => utf8_encode($agente["t_ca_nombre"]));
+                                                                "pais" => utf8_encode($agente["t_ca_nombre"]),
+                                                                "idtrafico" => $agente["t_ca_idtrafico"]);
         }
 
 
@@ -562,6 +563,12 @@ class reportesNegActions extends sfActions
                     $reporte->setCaIdrepresentante( $this->idrepresentante );
                 }else{
                     $reporte->setCaIdrepresentante( null );
+                }
+
+                if( $bindValues["ca_idagente"] ){
+                    $reporte->setCaIdagente( $bindValues["ca_idagente"] );
+                }else{
+                    $reporte->setCaIdagente( null );
                 }
 
 

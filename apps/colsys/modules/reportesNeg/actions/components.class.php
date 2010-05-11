@@ -131,7 +131,7 @@ class reportesNegComponents extends sfComponents
 	* Edita la informacion basica del trayecto
 	* @author: Andres Botero
 	*/
-	public function executeFormCliente()
+	public function executeFormClientePanel()
 	{
         $this->incotermsVals = Doctrine::getTable("Parametro")
                                      ->createQuery("p")
@@ -144,7 +144,7 @@ class reportesNegComponents extends sfComponents
 	* Edita la informacion basica del trayecto
 	* @author: Andres Botero
 	*/
-	public function executeFormTrayecto()
+	public function executeFormTrayectoPanel()
 	{
         
     }
@@ -153,7 +153,7 @@ class reportesNegComponents extends sfComponents
 	* Edita la informacion basica del cliente
 	* @author: Andres Botero
 	*/
-	public function executeFormPreferenciasCliente()
+	public function executeFormPreferenciasPanel()
 	{
 
     }
