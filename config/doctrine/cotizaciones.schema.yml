@@ -387,7 +387,7 @@ CotTrayectoAduana:
       form: false
       filter: false
   generatePath: cotizaciones
-  tableName: cot.tb_cotproductos
+  tableName: tb_cotproductos
   columns:
     ca_idtrayecto:
       type: integer
@@ -473,11 +473,7 @@ CotConceptoAduana:
     Cotizacion:
       local: ca_idcotizacion
       foreign: ca_idcotizacion
-      type: one
-    InoConcepto:
-      local: ca_idconcepto
-      foreign: ca_idconcepto
-      type: one
+      type: one    
 
 CotRecargosAduana:
   options:
