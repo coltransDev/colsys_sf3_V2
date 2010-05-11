@@ -325,12 +325,21 @@ class widgetsComponents extends sfComponents
 	}
 
     public function executeWidgetPais(){
-		$this->data = array();
+		
 
-        /*$this->data[] = array( "valor"=>utf8_encode(Constantes::AEREO ));
-        $this->data[] = array( "valor"=>utf8_encode(Constantes::MARITIMO ));
-        $this->data[] = array( "valor"=>utf8_encode(Constantes::TERRESTRE ));*/
+        $traficos = Doctrine::getTable('Trafico')->createQuery('t')
+                            ->where('t.ca_idtrafico != ?', '99-999')
+                            ->addOrderBy('t.ca_nombre ASC')
+                            ->execute();
 
+        $this->data = array();
+        foreach( $traficos as $trafico ){
+           $this->data[] = array("nombre"=>utf8_encode($trafico->getCaNombre()),
+                                 "idtrafico"=>$trafico->getCaIdtrafico()
+                                );
+        }
+
+        
 	}
 
     public function executeWidgetCiudad(){

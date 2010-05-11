@@ -130,7 +130,7 @@ class widgetsActions extends sfActions
         $q->addWhere("p.ca_activo = ?", true );
 
         if($request->getParameter("noaprob")!="true"){
-            $q->addWhere("p.ca_fchaprobado IS NOT NULL" );
+            //$q->addWhere("p.ca_fchaprobado IS NOT NULL" ); //Ver Ticket # 3577
         }
 
         $q->fetchArray();

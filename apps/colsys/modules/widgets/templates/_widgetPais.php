@@ -26,15 +26,16 @@ WidgetPais = function( config ){
 						successProperty: 'success'
 					},
 					Ext.data.Record.create([
-						{name: 'valor'}
+						{name: 'idtrafico'},
+                        {name: 'nombre'}
 					])
 				),
 				proxy: new Ext.data.MemoryProxy( <?=json_encode(array("root"=>$data, "total"=>count($data), "success"=>true) )?> )
 			})
 
     WidgetPais.superclass.constructor.call(this, {
-        valorField: 'valor',
-        displayField: 'valor',
+        valorField: 'idtrafico',
+        displayField: 'nombre',
         typeAhead: true,
         forceSelection: true,
         triggerAction: 'all',
