@@ -16,7 +16,11 @@ $issues = $sf_data->getRaw("issues");
         var info = "<?=$info?>";
         target = document.getElementById("<?=$issue["t_ca_field_id"]?>");
         if( target ){
-            target.className="help";
+            if( target.className ){
+                target.className=target.className+" help";
+            }else{
+                target.className="help";
+            }
             target.title=info;
         }
         <?
