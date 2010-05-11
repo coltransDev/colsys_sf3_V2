@@ -311,7 +311,7 @@ elseif (isset($boton)) {                                                       /
                     echo "  <TH COLSPAN=3>Contratos de Comodato</TH>";
                     $arr_equ = array();
                     list($mod, $tra, $mes, $con, $ano) = sscanf($rs->Value('ca_referencia'), "%d.%d.%d.%d.%d");
-                    $ver = ($rs->Value('ca_modalidad') == 'FCL' and $cl->Value('ca_fchvencimiento') >= date("Y-m-d",mktime(0,0,0,$mes,$dia,$ano+2000)))?"visible":"hidden";
+                    $ver = ($rs->Value('ca_modalidad') == 'FCL' and $cl->Value('ca_fchvencimiento') >= date("Y-m-d",mktime(0,0,0,$mes,$dia,$ano+2000)))?"block":"none";
                     while (!$co->Eof() and !$co->IsEmpty()) {                                      // Lee la totalidad de los registros obtenidos en la instrucción Select
                         echo "<TR>";
                         echo "  <TD WIDTH=100 Class=listar>".$co->Value('ca_concepto')."</TD>";
@@ -320,7 +320,7 @@ elseif (isset($boton)) {                                                       /
                         echo "  <TD WIDTH=85 Class=listar>".$co->Value('ca_numprecinto')."</TD>";
                         echo "  <TD WIDTH=90 Class=listar>".$co->Value('ca_idcontrato')." ".((strlen($co->Value('ca_observaciones_con')))?"<IMG src='graficos/admira.gif' alt='".$co->Value('ca_observaciones_con')."'>":"")."</TD>";
                         echo "  <TD WIDTH=85 Class=listar>".$co->Value('ca_fchcontrato')."</TD>";
-                        if ($ver == 'visible') {
+                        if ($ver == 'block') {
                             echo "  <TD WIDTH=25 Class=listar onclick='elegir(\"Contrato\", \"".$co->Value('ca_referencia')."\", \"".$co->Value('ca_idequipo')."\");'><IMG src='graficos/contrato.gif' alt='Contrato de Comodato'></TD>";
                         }else {
                             echo "  <TD WIDTH=25 Class=listar></TD>";
@@ -447,7 +447,7 @@ elseif (isset($boton)) {                                                       /
                     }
                     if ($rs->Value('ca_usucerrado')=='') {
                         echo "  <TD Class=invertir style='text-align: center; vertical-align: middle;'><INPUT Class=submit onMouseOver=\"this.style.cursor='hand'\" onMouseOut=\"this.style.cursor='default'\" TYPE='SUBMIT' NAME='accion' VALUE='Cerrar Caso'></TD>";
-                        echo "  <TD Class=invertir style='text-align: center; vertical-align: middle;'>Provisional:<BR><INPUT TYPE=CHECKBOX style='visibility=$ver;' NAME='provisional'></TD>";
+                        echo "  <TD Class=invertir style='text-align: center; vertical-align: middle;'><div style='display:$ver;'>Provisional:<BR><INPUT TYPE=CHECKBOX NAME='provisional'></div></TD>";
                     }else {
                         echo "  <TD Class=listar><B>Cierre:</B>&nbsp;".$rs->Value('ca_usucerrado')."<BR>".$rs->Value('ca_fchcerrado')."</TD>";
                         echo "  <TD Class=listar style='font-weight:bold; text-align: center; vertical-align: middle;'><B>".(($rs->Value('ca_provisional')=="t")?"Cierre<br>Provisional":"")."</TD>";
@@ -471,7 +471,13 @@ elseif (isset($boton)) {                                                       /
                             echo "</TR>";
                             echo "<TR>";
                             echo "  <TD Class=listar style='font-size: 11px; vertical-align:bottom'><B>Id Cliente:</B><BR>".number_format($cl->Value('ca_idcliente'))."</TD>";
-                            echo "  <TD Class=listar style='font-size: 11px;' COLSPAN=4><B>Nombre del Cliente:</B><BR>".$cl->Value('ca_compania')."</TD>";
+                            if ($rs->Value('ca_modalidad')=='FCL'){
+                                echo "  <TD Class=listar style='font-size: 11px;' COLSPAN=3><B>Nombre del Cliente:</B><BR>".$cl->Value('ca_compania')."</TD>";
+                                echo "  <TD Class=listar><B>Vence Comodato:</B><BR>".$cl->Value('ca_fchvencimiento')."</TD>";
+                            }else{
+                                echo "  <TD Class=listar style='font-size: 11px;' COLSPAN=4><B>Nombre del Cliente:</B><BR>".$cl->Value('ca_compania')."</TD>";
+                            }
+
                             echo "  <TD ROWSPAN=3 WIDTH=80 Class=listar style='text-align: center;'>";                                              // Botones para hacer Mantenimiento a la Tabla
                             echo "    <IMG style='visibility: $visible;' src='./graficos/edit.gif' alt='Editar el Registro' border=0 onclick='elegir(\"ModificarCl\", \"".$rs->Value('ca_referencia')."\", \"".$cl->Value('ca_idcliente')."\", \"".urlencode($cl->Value('ca_hbls'))."\");'>";
                             echo "   <IMG style='visibility: $visible;' src='./graficos/del.gif'  alt='Eliminar el Registro' border=0 onclick='elegir(\"EliminarCl\", \"".$rs->Value('ca_referencia')."\", \"".$cl->Value('ca_idcliente')."\", \"".urlencode($cl->Value('ca_hbls'))."\");'><BR><BR>";
