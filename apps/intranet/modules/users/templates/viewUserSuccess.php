@@ -1,0 +1,1 @@
+Esta es el perfil del usuario <?=$user->getCaNombre() ?>
