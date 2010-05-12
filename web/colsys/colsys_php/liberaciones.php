@@ -114,7 +114,7 @@ require_once("menu.php");
            echo "</TR>";
            $nom_suc = $rs->Value('ca_sucursal');
        }
-       $beneficios = ($rs->Value('ca_diascredito')==0 or $rs->Value('ca_cupo')==0)?'background-color:#FFb2b2;':'';
+       $beneficios = ($rs->Value('ca_diascredito')==0)?'background-color:#FFb2b2;':'';
        echo "<TR>";
        echo "  <TD Class=listar style='$beneficios'>".$rs->Value('ca_idcliente')."</TD>";
        echo "  <TD Class=listar style='$beneficios' WIDTH=260>".$rs->Value('ca_compania').((strlen($rs->Value('ca_observaciones')) != 0)?"<br />".$rs->Value('ca_observaciones'):"")."</TD>";
