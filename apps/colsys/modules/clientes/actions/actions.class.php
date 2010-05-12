@@ -166,6 +166,19 @@ class clientesActions extends sfActions
                           ->execute();
             }
 
+            $sql =  "delete from tb_libcliente where ca_idcliente in ";
+            $sql.=  "(";
+            $sql.=  "	select st0.ca_idcliente ";
+            $sql.=  "	from tb_stdcliente st0 ";
+            $sql.=  "	       LEFT OUTER JOIN (select * from tb_stdcliente where OID IN (select max(sc.OID) from tb_stdcliente sc where ca_empresa = 'Coltrans' group by ca_idcliente)) as st1 ON (st0.ca_idcliente = st1.ca_idcliente) ";
+            $sql.=  "	       LEFT OUTER JOIN (select * from tb_stdcliente where OID IN (select max(sc.OID) from tb_stdcliente sc where ca_empresa = 'Colmas' group by ca_idcliente)) as st2 ON (st0.ca_idcliente = st2.ca_idcliente) ";
+            $sql.=  "	where st1.ca_estado = 'Potencial' and st2.ca_estado  = 'Potencial' ";
+            $sql.=  ")";
+
+            $q = Doctrine_Manager::getInstance()->connection();
+            $stmt = $q->execute($sql);
+
+
             $layout =  $this->getRequestParameter("layout");
             if( $layout ) {
                 $this->setLayout($layout);
