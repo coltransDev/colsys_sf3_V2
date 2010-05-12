@@ -1,0 +1,329 @@
+@charset "UTF-8";
+/* CSS Document */
+
+body{
+	font-family: Myriad pro, Arial, Helvetica, sans-serif;
+	font-size: 73.1%;
+	color: #333;
+	margin: 0px;
+	padding: 0px;
+	line-height:1.9em;
+}
+
+.out {
+float:left;
+width:969px;
+}
+
+img {
+border:none;
+}
+
+input {
+border:1px solid #e4e4e4;
+}
+
+.wrapper {
+background-image:url(../images/sideshadow.jpg);
+background-position:top right;
+background-repeat:no-repeat;
+width:100%;
+float:left;
+}
+.wrapperinx {
+background-image:url(../images/sideshadowleft.jpg);
+background-position:top left;
+background-repeat:no-repeat;
+float:left;
+width:100%;
+}
+
+.maincomponent {
+float:left;
+width:100%;
+}
+.int {
+width:938px;
+}
+
+.top {
+width:100%;
+float:left;
+background-image:url(../images/topshadow.jpg);
+background-position:bottom;
+background-repeat:repeat-x;
+height: 80px;
+}
+
+.logo {
+float:left;
+width:auto;
+margin: 0px 0px 0px 30px;
+}
+
+.topmenu {
+float:right;
+width:600px;
+margin:12px 0 0 0;
+color:#000000;
+font-family:Arial, Helvetica, sans-serif;
+font-size:10px;
+height:25px;
+
+}
+
+.search {
+float:right;
+width:180px;
+}
+
+.searchint {
+float:left;
+padding:12px 24px;
+}
+
+.search input {
+color:#999;
+}
+a:link, a:visited {color:#1C3A56;
+}
+
+a:hover {
+text-decoration:none;
+}
+
+.topcontent, .bottomcontent {
+background-image:url(../images/topshadow.jpg);
+background-position:bottom;
+background-repeat:repeat-x;
+width:90%;
+padding:0 5% 12px 5%;
+float:left;
+}
+
+.topcontent {
+margin-bottom:12px;
+}
+
+.bottomcontent {
+margin-top:12px;
+}
+
+.topmenu ul {
+float:left;
+width:auto;
+}
+
+.topmenu ul, .topmenu ul li {
+padding:0;
+margin: 0;
+list-style:none;
+}
+
+.topmenu ul li {
+float:left;
+}
+
+.topmenu ul li a:link, .topmenu ul li a:visited {
+color:#333;
+text-decoration:none;
+border-left:1px solid #e4e4e4;
+padding:6px 18px;
+}
+
+.topmenu ul li a:hover {
+background-color:#fff;
+}
+
+.mainmenu ul, .mainmenu ul li, ul.menu, ul.menu li {
+color:#ccc;
+list-style:none;
+padding:0;
+margin:0;
+}
+
+.mainmenu ul li a, ul.menu li a {
+padding:8px 0 8px 8px;
+background-image:url(../images/arrow.png);
+background-position:left;
+background-repeat:no-repeat;
+border-bottom:1px solid #e4e4e4;
+display:block;
+text-decoration:none;
+color:#666;
+}
+.left {
+float:left;
+width:170px;
+padding-left:10px;
+}
+
+.center {
+float:left;
+width:470px;
+padding:0 10px;
+margin:0 10px;
+border-right:1px solid #e4e4e4;
+border-left:1px solid #e4e4e4;
+}
+
+.centerleft {
+float:left;
+width:710px;
+padding:0 0 0 10px;
+margin:0 0 0 10px;
+border-left:1px solid #e4e4e4;
+}
+
+.centerright {
+float:left;
+width:640px;
+padding:0 10px 0 10px;
+margin:0 10px 0 10px;
+border-right:1px solid #e4e4e4;
+}
+
+.center100 {
+float:left;
+width:95%;
+padding:0 2.5%;
+}
+
+.right {
+float:left;
+width:220px;
+}
+.content {
+padding-top:24px;
+float:left;
+width:100%;
+}
+
+h1 {
+font-size:2.8em;
+padding:22px 0;
+margin:0;
+letter-spacing:2px;
+}
+
+.contentheading {
+padding:8px 0;
+margin: 0 0 14px 0;
+border-bottom:1px solid #e4e4e4;
+font-size:2.3em;
+color: #1C3A56;
+}
+
+h2, .componentheading {
+padding:6px 0;
+margin:0;
+color:#1C3A56;
+font-size:2.2em;
+line-height:1.4em;
+font-weight:lighter;
+}
+
+h3 {
+color:#6a5f4b;
+padding:5px 0;
+margin: 4px 0 4px 0;
+font-weight:lighter;
+font-size:1.5em;
+}
+
+.headerleft h3, .headerright h3 {
+color:#fff;
+}
+
+.header{
+padding-top:26px;
+width:100%;
+float:left;
+background-color:#2E4B66;
+}
+
+.header_foot{
+
+width:100%;
+float:left;
+background-color:#2E4B66;
+height:12px;
+}
+
+h4, .subcontent h3 {
+padding:3px 0;
+margin:0;
+font-size:1.2em;
+font-weight:bold;
+color:#222;
+}
+
+strong {
+color:#222;
+}
+
+.footer {
+border-top:1px solid #e4e4e4;
+padding:12px 0;
+margin:12px 0;
+float:left;
+width:100%;
+color:#666;
+font-size:.88em;
+text-align:center;
+background-image:url(../images/footershadow.jpg);
+background-position:top;
+background-repeat:repeat-x;
+}
+
+img.image {
+border:1px solid #e4e4e4;
+padding:6px;
+margin:0 10px 0 0;
+}
+
+.small, .modifydate {
+font-size:.88em;
+color:#888;
+}
+
+blockquote {
+padding:0;
+margin:8px 0;
+color:#999;
+font-family:Georgia, "Times New Roman", Times, serif;
+font-size:1.2em;
+font-weight:lighter;
+}
+
+
+
+/*
+* Estilos tabla sucursales
+*/
+.tableMap{
+	border: #E4E4E4 1px solid;
+}
+
+.tableMap th{
+	text-align:left;
+	color:#FFFFFF;
+	background-color:#2E4B66;
+	padding: 0 4px 0 4px;
+}
+
+.tableMap td{
+	text-align:left;
+	color:#666666;
+	background-color:#FFFFFF;
+	padding: 0 4px 0 4px;
+}
+
+.article_column{
+
+	width:100%;
+}
+
+#oziocssgallery{
+	display:none;
+}
