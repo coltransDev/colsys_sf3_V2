@@ -16,6 +16,9 @@ include_component("reportesNeg", "formClientePanel");
 include_component("reportesNeg", "formPreferenciasPanel");
 
 
+include_component("widgets", "widgetTercero");
+
+
 ?>
 <div class="content">
     <div id="panel"></div>
