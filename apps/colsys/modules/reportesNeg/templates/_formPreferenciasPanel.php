@@ -5,8 +5,7 @@
  *  (c) Coltrans S.A. - Colmas Ltda.
 */
 
-include_component("widgets", "widgetCliente");
-include_component("widgets", "widgetTercero");
+
 ?>
 <script type="text/javascript">
 

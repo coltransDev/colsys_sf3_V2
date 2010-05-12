@@ -13,6 +13,7 @@ include_component("widgets", "widgetPais");
 include_component("widgets", "widgetCiudad");
 include_component("widgets", "widgetAgente");
 
+include_component("widgets", "widgetContinuacion");
 ?>
 <script type="text/javascript">
 
@@ -47,20 +48,31 @@ include_component("widgets", "widgetAgente");
                             defaultType: 'textfield',
                             items: [
                                 new WidgetImpoexpo({fieldLabel: 'Clase',
-                                                    id: 'impoexpo'
+                                                    id: 'impoexpo',
+                                                    name: 'impoexpo'
                                                     }),
-                                new WidgetTransporte({fieldLabel: 'Transporte'}),
+                                new WidgetModalidad({fieldLabel: 'Modalidad',
+                                                    id: 'modalidad',
+                                                    name: 'modalidad',
+                                                    linkTransporte: "transporte",
+                                                    linkImpoexpo: "impoexpo"
+                                                    }),
+                                
                                 new WidgetPais({fieldLabel: 'País Origen',
-                                                id: 'tra_origen_id'
+                                                id: 'tra_origen_id',
+                                                linkCiudad: 'origen'
                                                }),
-                                new WidgetCiudad({fieldLabel: 'Ciudad Origen'}),
+                                new WidgetCiudad({fieldLabel: 'Ciudad Origen',
+                                                  linkPais: 'tra_origen_id',
+                                                  name: 'origen',
+                                                  id: 'origen'
+                                                }),
                                 new WidgetAgente({fieldLabel: 'Agente',
                                                   linkImpoExpo: "impoexpo",
                                                   linkOrigen: "tra_origen_id",
                                                   linkDestino: "tra_destino_id",
                                                   linkListarTodos: "listar_todos",
-                                                  name:"idagente",
-
+                                                  name:"idagente"
                                                 }),
                                 {
                                     xtype: "checkbox",
@@ -79,12 +91,21 @@ include_component("widgets", "widgetAgente");
                             border:false,
                             defaultType: 'textfield',
                             items: [
-                                new WidgetModalidad({fieldLabel: 'Modalidad'}),
-                                new WidgetLinea({fieldLabel: 'Linea'}),                                
+                                
+                                new WidgetTransporte({fieldLabel: 'Transporte',
+                                                      id: 'transporte'
+                                                    }),
+                                new WidgetLinea({fieldLabel: 'Linea',
+                                                 linkTransporte: "transporte"
+                                                }),
                                 new WidgetPais({fieldLabel: 'País Destino',
                                                 id: 'tra_destino_id'
                                                 }),
-                                new WidgetCiudad({fieldLabel: 'Ciudad Destino'})
+                                new WidgetCiudad({fieldLabel: 'Ciudad Destino',
+                                                  linkPais: 'tra_destino_id',
+                                                  name: 'destino',
+                                                  id: 'destino'
+                                                })
                                 
                             ]
                         }
@@ -94,7 +115,21 @@ include_component("widgets", "widgetAgente");
                 {
                     xtype:'fieldset',
                     title: 'Continuación de viaje',
-                    autoHeight:true
+                    autoHeight:true,
+                    items: [
+
+                        new WidgetContinuacion({fieldLabel: 'Continuación',
+                                                    id: 'continuacion',
+                                                    name: 'continuacion',
+                                                    linkTransporte: "transporte",
+                                                    linkImpoexpo: "impoexpo"
+                                                    }),
+                        new WidgetCiudad({fieldLabel: 'Destino Final',
+                                                  name: 'continuacion_dest',
+                                                  id: 'continuacion_dest',
+                                                  idtrafico: 'CO-057'
+                                                }),
+                    ]
                 },
                 {
                     xtype:'fieldset',
