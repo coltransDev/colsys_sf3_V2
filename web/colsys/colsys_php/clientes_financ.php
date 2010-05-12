@@ -20,6 +20,7 @@ $bdatos = array("Mestra Clientes", "Mis Clientes", "Clientes Libres");  // Arreg
 $estados = array("Potencial","Activo","Vetado");
 $empresas= array("Coltrans","Colmas");
 $circular=array("Sin","Vencido","Vigente");
+$tiposnits=array("","Agente","Proveedor");
 
 include_once 'include/datalib.php';                                                // Incorpora la libreria de funciones, para accesar leer bases de datos
 require_once("checklogin.php");                                                                     // Captura las variables de la sessión abierta
@@ -66,14 +67,23 @@ require_once("menu.php");
         exit;
        }
     $us->MoveFirst();
-    echo "  <TD Class=listar COLSPAN=2><B>Buscar en:</B><BR><SELECT NAME='buscaren'>";
-	$che_mem = "SELECTED";
+    echo "  <TD Class=listar><B>Buscar en:</B><BR><SELECT NAME='buscaren'>";
+    $che_mem = "SELECTED";
     for ($i=0; $i < count($bdatos); $i++) {
          echo " <OPTION VALUE='".$bdatos[$i]."' $che_mem>".$bdatos[$i];
 		 $che_mem = "";
         }
     echo "  </SELECT>";
     echo "  </TD>";
+    echo "  <TD Class=listar><B>Tipo de Nit:</B><BR><SELECT NAME='tiponit'>";
+    $che_mem = "SELECTED";
+    for ($i=0; $i < count($tiposnits); $i++) {
+         echo " <OPTION VALUE='".$tiposnits[$i]."' $che_mem>".$tiposnits[$i];
+		 $che_mem = "";
+        }
+    echo "  </SELECT>";
+    echo "  </TD>";
+    echo "</TR>";
 
     echo "<TR>";
     echo "  <TD Class=mostrar COLSPAN=2><B>Vendedor:</B><BR><SELECT NAME='login'>";                 // Llena el cuadro de lista con los valores de la tabla Vendedores
@@ -164,6 +174,9 @@ elseif (!isset($boton) and !isset($accion) and isset($criterio)){
 		$est_mem = substr($est_mem,0,strlen($est_mem)-2);
 		$condicion.= " and ca_".$empresa."_std in ($est_mem)";
 		}
+        if ($tiponit != ""){
+            $condicion.= " and ca_tipo like '%$tiponit%'";
+        }
 	if (!$rs->Open("select * from vi_clientes $condicion")) {                  // Selecciona todos lo registros de la tabla Trasportistas
 		echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
 		echo "<script>document.location.href = 'entrada.php';</script>";
