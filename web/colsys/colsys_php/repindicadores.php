@@ -1299,9 +1299,17 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
         $rs->MoveNext();
     }
 
+    if ($format_avg=="d"){
+         $promedio_general = array_avg($array_avg);
+    } else if ($array_avg < "24:00:00") {
+         $promedio_general = date($format_avg,array_avg($array_avg));
+    } else {
+         $promedio_general = date("d, H:m:s",array_avg($array_avg));
+    }
+
     echo "<TR HEIGHT=5>";
     echo "  <TH Class=titulo COLSPAN=".($tot_cols+$add_cols-1)." style='font-size: 9px; text-align:right;'>Promedio Ponderado :</TH>";
-    echo "  <TH Class=titulo>".(($format_avg=="H:i:s")?date($format_avg,array_avg($array_avg)):array_avg($array_avg))."</TH>";
+    echo "  <TH Class=titulo>$promedio_general</TH>";
     echo "</TR>";
     echo "</TABLE>";
 
@@ -1321,7 +1329,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
     echo "<TR>";
     echo "  <TD Class=listar>Promedio Ponderado:</TD>";
     echo "  <TD Class=listar>No. Casos ".count($array_avg)."</TD>";
-    echo "  <TD Class=listar style='font-size: 9px; text-align:right; font-weight:bold;'>".(($format_avg=="H:i:s")?date($format_avg,array_avg($array_avg)):array_avg($array_avg))."</TD>";
+    echo "  <TD Class=listar style='font-size: 9px; text-align:right; font-weight:bold;'>".$promedio_general."</TD>";
     echo "  <TD Class=listar>LC:</TD>";
     echo "  <TD Class=listar style='font-size: 9px; text-align:right; font-weight:bold;'>".$lc_var."</TD>";
     echo "</TR>";
