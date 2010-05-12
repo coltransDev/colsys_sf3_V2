@@ -24,8 +24,19 @@
             <select name="criterio" size="7">
 						<option selected="selected" value="numero_de_reporte">N&uacute;mero de reporte</option>
 						<option value="cliente">Cliente</option>
-
+                        <option value="">Nombre del Consignatario </option>
+                        <option value="login">Mis Reportes </option>
+                        <option value="proveedor">Nombre del Proveedor </option>
+                        <option value="orden_proveedor">No.Orden Proveedor </option>
+                        <option value="orden_cliente">No.Orden Cliente </option>
+                        <option value="cotizacion">No. Cotización </option>
+                        <option value="mercancia_desc">Descripción Mercancia </option>
+                        <option value="vendedor">Vendedor </option>
+                        <option value="">Borradores </option>
+                        <option value="">Tráficos </option>
+                        <option value="ciudadorigen">Puerto  </option>
 					</select>
+
 		</td>
 		<td  ><div id="visible" style="visibility:visible"><b>Que contenga la cadena:</b><br />
 			<input type="text"  name="cadena" size="60" />
