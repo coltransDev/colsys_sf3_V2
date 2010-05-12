@@ -35,6 +35,7 @@ $empresas= array("Coltrans","Colmas");
 $circular=array("Sin","Vencido","Vigente");
 $presentacion=array("Detallado","Columnas");
 $entidades=array("Vigente","Fusionada","Disuelta","Liquidada");
+$tiposnits=array("","Agente","Proveedor");
 
 include_once 'include/datalib.php';                                                // Incorpora la libreria de funciones, para accesar leer bases de datos
 require("checklogin.php");                                                                 // Captura las variables de la sessión abierta
@@ -91,10 +92,10 @@ require_once("menu.php");
     echo "  </SELECT>";
     echo "  </TD>";
 
-    echo "  <TD Class=listar ROWSPAN=2><B>Reporte:</B>";
+    echo "  <TD Class=listar><B>Reporte:</B><BR />";
 	$che_mem = "CHECKED";
     for ($i=0; $i < count($presentacion); $i++) {
-         echo "<BR /><INPUT TYPE='RADIO' NAME='salida[]' VALUE='".$presentacion[$i]."' $che_mem>".$presentacion[$i]."&nbsp;&nbsp;";
+         echo "<INPUT TYPE='RADIO' NAME='salida[]' VALUE='".$presentacion[$i]."' $che_mem>".$presentacion[$i]."&nbsp;&nbsp;";
 		 $che_mem = "";
         }
     echo "  </TD>";
@@ -108,6 +109,14 @@ require_once("menu.php");
            $us->MoveNext();
           }
     echo "  </SELECT></TD>";
+    echo "  <TD Class=listar><B>Tipo de Nit:</B><BR><SELECT NAME='tiponit'>";
+    $che_mem = "SELECTED";
+    for ($i=0; $i < count($tiposnits); $i++) {
+         echo " <OPTION VALUE='".$tiposnits[$i]."' $che_mem>".$tiposnits[$i];
+		 $che_mem = "";
+        }
+    echo "  </SELECT>";
+    echo "  </TD>";
     echo "</TR>";
 
     echo "<TR>";
@@ -274,6 +283,9 @@ elseif (!isset($boton) and !isset($accion) and isset($criterio)){
 	if (isset($leyinsolvencia)){
 		$condicion.= " and ca_leyinsolvencia = '$leyinsolvencia'";
 	}
+        if ($tiponit != ""){
+            $condicion.= " and ca_tipo like '%$tiponit%'";
+        }
 	if (!$rs->Open("select * from vi_clientes $condicion")) {                  // Selecciona todos lo registros de la tabla Trasportistas
 		echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
 		echo "<script>document.location.href = 'clientes.php';</script>";
