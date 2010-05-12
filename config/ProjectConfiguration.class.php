@@ -1,6 +1,6 @@
 <?php
 
-$sf_symfony_lib_dir  = '/home/abotero/Desarrollo/symfony1.4/lib';
+$sf_symfony_lib_dir  = 'C:/Desarrollo/htdocs/symfony1.4/lib';
 
 require_once $sf_symfony_lib_dir .'/autoload/sfCoreAutoload.class.php';
 sfCoreAutoload::register();

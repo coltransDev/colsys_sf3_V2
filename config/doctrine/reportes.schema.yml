@@ -293,20 +293,20 @@ RepEquipo:
       type: one
 
 Bodega:
-  options:
-    symfony:
-      form: false
-      filter: false
   generatePath: reportes
   tableName: tb_bodegas
   columns:
     ca_idbodega:
       type: integer
       primary: true
-      autoincrement: true    
-    ca_nombre: string
+      autoincrement: true
+    ca_nombre: string(80)
     ca_tipo: string
     ca_transporte: string
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string
 
 RepTarifa:
   options:
