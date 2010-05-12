@@ -57,7 +57,6 @@ class reportesNegActions extends sfActions
                        ->distinct()
                        ->limit(200)
                        ->addOrderBy("r.ca_consecutivo");
-
 		switch( $criterio ){
 			case "numero_de_reporte":
                 $q->addWhere("r.ca_consecutivo like ?", $cadena."%");
@@ -66,7 +65,37 @@ class reportesNegActions extends sfActions
                 $q->innerJoin("r.Contacto con");
                 $q->innerJoin("con.Cliente cl");
                 $q->addWhere("UPPER(cl.ca_compania) LIKE ?",strtoupper( $cadena )."%");
-				break;					
+				break;
+            case "login":
+                $q->innerJoin("r.Usuario usu");
+                $q->addWhere("usu.ca_login = ?",$this->getUser()->getUserId());
+  //              echo "usuario:<b>".$this->getUser()->getCaLogin()."</b><br>";
+               break;
+           case "proveedor":
+                //$q->innerJoin("r.Proveedor prov");
+                //$q->addWhere("UPPER(prov.ca_nombre) LIKE ? ",strtoupper( $cadena )."%");
+               break;
+           case "orden_proveedor":
+               $q->addWhere("r.ca_orden_prov LIKE ?",( $cadena )."%");
+               break;
+           case "orden_cliente":
+               $q->addWhere("r.ca_orden_clie LIKE ?",( $cadena )."%");
+               break;
+           case "cotizacion":
+               $q->addWhere("r.ca_idcotizacion LIKE ?",( $cadena )."%");
+               break;
+           case "mercancia_desc":
+               $q->addWhere("r.ca_mercancia_desc LIKE ?",( $cadena )."%");
+               break;
+           case "vendedor":
+               case "login":
+                $q->innerJoin("r.Usuario usu");
+                $q->addWhere("usu.ca_nombre LIKE ?",( $cadena )."%");               
+               break;
+           case "ciudadorigen":
+                $q->innerJoin("r.Origen ori");
+                $q->addWhere("UPPER(ori.ca_ciudad) LIKE ?",strtoupper( $cadena )."%");
+                break;
 		}	
 		
 			
