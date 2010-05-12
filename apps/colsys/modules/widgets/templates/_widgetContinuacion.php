@@ -14,11 +14,11 @@ $data = $sf_data->getRaw("data");
 <script type="text/javascript">
 
 
-WidgetModalidad = function( config ){
+WidgetContinuacion = function( config ){
     Ext.apply(this, config);
     this.data = <?=json_encode($data)?>;
     this.store = new Ext.data.Store({
-				autoLoad : true,
+				autoLoad : false,
 				reader: new Ext.data.JsonReader(
 					{
 						root: 'root',
@@ -26,16 +26,14 @@ WidgetModalidad = function( config ){
 						successProperty: 'success'
 					},
 					Ext.data.Record.create([
-                        {name: 'idmodalidad'},
+						{name: 'modalidad'},
                         {name: 'impoexpo'},
-                        {name: 'transporte'},
-						{name: 'modalidad'}
+                        {name: 'transporte'}
 					])
 				)
-				,proxy: new Ext.data.MemoryProxy( <?=json_encode(array("root"=>$data, "total"=>count($data), "success"=>true) )?> )
 			})
 
-    WidgetModalidad.superclass.constructor.call(this, {
+    WidgetContinuacion.superclass.constructor.call(this, {
         valueField: 'modalidad',
         displayField: 'modalidad',
         typeAhead: true,
@@ -45,7 +43,7 @@ WidgetModalidad = function( config ){
         selectOnFocus: true,        
         lazyRender:true,
         mode: 'local',
-        listClass: 'x-combo-list-small',
+        listClass: 'x-combo-list-small'  ,
         listeners: {
             focus: this.onFocusWdg
         }
@@ -53,23 +51,24 @@ WidgetModalidad = function( config ){
 }
 
 
-Ext.extend(WidgetModalidad, Ext.form.ComboBox, {
+Ext.extend(WidgetContinuacion, Ext.form.ComboBox, {
     onFocusWdg: function( field, newVal, oldVal ){
-        
+
         var cmp = Ext.getCmp(this.linkTransporte);
         if( cmp ){
             var cmp2 = Ext.getCmp(this.linkImpoexpo);
-            if( cmp2 ){                
+            if( cmp2 ){
                 var list = new Array();
                 var transporte = Ext.getCmp(this.linkTransporte).getValue();
-                var impoexpo = Ext.getCmp(this.linkImpoexpo).getValue();                
+                var impoexpo = Ext.getCmp(this.linkImpoexpo).getValue();
+                list.push( {modalidad:"N/A"} );
                 for( k in this.data ){
                     var rec = this.data[k];
                     if( transporte && impoexpo && rec.transporte==transporte && rec.impoexpo==impoexpo ){
                         list.push( rec );
                     }
                 }
-                
+
                 var data = new Object();
                 data.root = list;
 

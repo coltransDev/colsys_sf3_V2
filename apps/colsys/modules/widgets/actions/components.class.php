@@ -308,9 +308,21 @@ class widgetsComponents extends sfComponents
     public function executeWidgetModalidad(){
 		$this->data = array();
 
-        /*$this->data[] = array( "valor"=>utf8_encode(Constantes::AEREO ));
-        $this->data[] = array( "valor"=>utf8_encode(Constantes::MARITIMO ));
-        $this->data[] = array( "valor"=>utf8_encode(Constantes::TERRESTRE ));*/
+        $modalidades = Doctrine::getTable("Modalidad")
+                  ->createQuery("m")
+                  ->orderBy("m.ca_impoexpo")
+                  ->orderBy("m.ca_transporte")
+                  ->orderBy("m.ca_modalidad")
+                  ->execute();
+
+        $this->data = array();
+		foreach( $modalidades as $modalidad ){
+			$this->data[] = array(  "idmodalidad"=>$modalidad->getCaIdmodalidad(),
+                                    "impoexpo"=>utf8_encode($modalidad->getCaImpoexpo()),
+									"transporte"=>utf8_encode($modalidad->getCaTransporte()),
+                                    "modalidad"=>utf8_encode($modalidad->getCaModalidad())
+								   );
+		}
 
 	}
 
@@ -318,10 +330,30 @@ class widgetsComponents extends sfComponents
     public function executeWidgetLinea(){
 		$this->data = array();
 
-        /*$this->data[] = array( "valor"=>utf8_encode(Constantes::AEREO ));
-        $this->data[] = array( "valor"=>utf8_encode(Constantes::MARITIMO ));
-        $this->data[] = array( "valor"=>utf8_encode(Constantes::TERRESTRE ));*/
+        
+		$q = Doctrine_Query::create()
+                  ->select("p.ca_idproveedor, p.ca_sigla, id.ca_nombre, p.ca_transporte ")
+                  ->from("IdsProveedor p")
+                  ->innerJoin("p.Ids id")
+                  ->addOrderBy("id.ca_nombre");
+        $q->addWhere("p.ca_tipo = ? OR p.ca_tipo = ?", array("TRI", "TRN") );
+        
+        $q->addWhere("p.ca_activo = ?", true );
+        
+        $q->fetchArray();
 
+        $lineas = $q->execute();
+
+		$this->data = array();
+		foreach( $lineas as $linea ){
+			$this->data[] = array(  "idlinea"=>$linea['ca_idproveedor'],
+									  "linea"=>utf8_encode(($linea['ca_sigla']?$linea['ca_sigla']." - ":"").$linea['Ids']['ca_nombre']),
+                                      "transporte"=>utf8_encode($linea['ca_transporte']),
+								   );
+		}
+
+
+        
 	}
 
     public function executeWidgetPais(){
@@ -345,10 +377,17 @@ class widgetsComponents extends sfComponents
     public function executeWidgetCiudad(){
 		$this->data = array();
 
-        /*$this->data[] = array( "valor"=>utf8_encode(Constantes::AEREO ));
-        $this->data[] = array( "valor"=>utf8_encode(Constantes::MARITIMO ));
-        $this->data[] = array( "valor"=>utf8_encode(Constantes::TERRESTRE ));*/
-
+        $ciudades = Doctrine::getTable('Ciudad')->createQuery('c')
+                            //->where('c.ca_idtrafico = ?', $ciudad->getCaIdtrafico())
+                            ->addOrderBy('c.ca_ciudad ASC')
+                            ->execute();
+        $this->data = array();
+        foreach( $ciudades as $ciudad ){
+            $this->data[] = array( "idciudad"=>$ciudad->getCaIdciudad(),
+                                   "ciudad"=>utf8_encode($ciudad->getCaCiudad()),
+                                   "idtrafico"=>$ciudad->getCaIdtrafico(),
+                                 );
+        }
 	}
 
     public function executeWidgetAgente(){
@@ -378,7 +417,22 @@ class widgetsComponents extends sfComponents
 
 	}
 
-    public function executeWidgetCliente(){
+    public function executeWidgetContinuacion(){
+		$this->data = array();
+
+        $this->data[] = array(  "impoexpo"=>utf8_encode(Constantes::IMPO ),
+                                "transporte"=>utf8_encode(Constantes::AEREO ),
+                                "modalidad"=>"CABOTAJE");
+        $this->data[] = array(  "impoexpo"=>utf8_encode(Constantes::IMPO ),
+                                "transporte"=>utf8_encode(Constantes::MARITIMO ),
+                                "modalidad"=>"OTM");
+        $this->data[] = array(  "impoexpo"=>utf8_encode(Constantes::IMPO ),
+                                "transporte"=>utf8_encode(Constantes::MARITIMO ),
+                                "modalidad"=>"DTA");
+	}
+
+
+    public function executeWidgetContactoCliente(){
 		$this->data = array();
 
         /*$this->data[] = array( "valor"=>utf8_encode(Constantes::AEREO ));

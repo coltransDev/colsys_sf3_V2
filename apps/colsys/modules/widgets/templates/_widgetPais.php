@@ -43,13 +43,28 @@ WidgetPais = function( config ){
         selectOnFocus: true,        
         lazyRender:true,
         mode: 'local',
-        listClass: 'x-combo-list-small'        
+        listClass: 'x-combo-list-small',
+        listeners: {
+            //change: this.onChange
+        }
     });
 }
 
 
 Ext.extend(WidgetPais, Ext.form.ComboBox, {
+    /*onChange :function( field,  newValue,  oldValue ){
+        
+        
+        if( this.linkCiudad ){
+            var cmp = this.getCmp(this.linkCiudad);
+            if( cmp ){
+                cmp.reload(newValue);
+            }else{
+                alert("El componente "+this.linkCiudad+" No existe");
+            }
+        }
 
+    }*/
 });
 
 	

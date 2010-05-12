@@ -15,10 +15,13 @@ $data = $sf_data->getRaw("data");
 
 
 WidgetCiudad = function( config ){
-    Ext.apply(this, config);
     
+    Ext.apply(this, config);
+
+    this.data = <?=json_encode($data)?>;
+
     this.store = new Ext.data.Store({
-				autoLoad : true,
+				autoLoad : false,
 				reader: new Ext.data.JsonReader(
 					{
 						root: 'root',
@@ -26,15 +29,16 @@ WidgetCiudad = function( config ){
 						successProperty: 'success'
 					},
 					Ext.data.Record.create([
-						{name: 'valor'}
+						{name: 'idciudad'},
+                        {name: 'ciudad'},
+                        {name: 'idtrafico'}
 					])
-				),
-				proxy: new Ext.data.MemoryProxy( <?=json_encode(array("root"=>$data, "total"=>count($data), "success"=>true) )?> )
+				)				
 			})
 
     WidgetCiudad.superclass.constructor.call(this, {
-        valorField: 'valor',
-        displayField: 'valor',
+        valueField: 'idciudad',
+        displayField: 'ciudad',
         typeAhead: true,
         forceSelection: true,
         triggerAction: 'all',
@@ -42,13 +46,49 @@ WidgetCiudad = function( config ){
         selectOnFocus: true,        
         lazyRender:true,
         mode: 'local',
-        listClass: 'x-combo-list-small'        
+        listClass: 'x-combo-list-small',
+        listeners: {
+            focus: this.onFocusWdg
+        }
     });
+
+    this.reload();
 }
 
 
 Ext.extend(WidgetCiudad, Ext.form.ComboBox, {
+    reload: function( parameter ){
+        if( typeof(this.idtrafico)!="undefined" && this.idtrafico ){
+            var list = new Array();
+            for( k in this.data ){
+                var rec = this.data[k];
 
+                if( rec.idtrafico==this.idtrafico ){
+                    list.push( rec );
+                }
+            }
+            var data = new Object();
+            data.root = list;
+            
+            this.store.loadData(data);
+        }
+    }
+    ,
+    onFocusWdg: function( field, newVal, oldVal ){
+        if( typeof(this.linkPais)!="undefined" && this.linkPais ){
+            var cmp = Ext.getCmp(this.linkPais);
+            if( cmp ){
+
+               
+                this.idtrafico = Ext.getCmp(this.linkPais).getValue();
+                this.reload();
+
+            }else{
+                alert( "arrrrg: No existe el componente id: "+e.combo.linkPais+"!");
+            }
+        }
+
+    }
 });
 
 	

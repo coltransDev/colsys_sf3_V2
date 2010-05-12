@@ -14,11 +14,11 @@ $data = $sf_data->getRaw("data");
 <script type="text/javascript">
 
 
-WidgetModalidad = function( config ){
+WidgetLinea = function( config ){
     Ext.apply(this, config);
-    
+    this.data = <?=json_encode($data)?>;
     this.store = new Ext.data.Store({
-				autoLoad : true,
+				autoLoad : false,
 				reader: new Ext.data.JsonReader(
 					{
 						root: 'root',
@@ -26,15 +26,15 @@ WidgetModalidad = function( config ){
 						successProperty: 'success'
 					},
 					Ext.data.Record.create([
-						{name: 'valor'}
+						{name: 'idlinea'},
+                        {name: 'linea'}
 					])
-				),
-				proxy: new Ext.data.MemoryProxy( <?=json_encode(array("root"=>$data, "total"=>count($data), "success"=>true) )?> )
+				)
 			})
 
-    WidgetModalidad.superclass.constructor.call(this, {
-        valorField: 'valor',
-        displayField: 'valor',
+    WidgetLinea.superclass.constructor.call(this, {
+        valueField: 'idlinea',
+        displayField: 'linea',
         typeAhead: true,
         forceSelection: true,
         triggerAction: 'all',
@@ -42,13 +42,39 @@ WidgetModalidad = function( config ){
         selectOnFocus: true,        
         lazyRender:true,
         mode: 'local',
-        listClass: 'x-combo-list-small'        
+        listClass: 'x-combo-list-small'  ,
+        listeners: {
+            focus: this.onFocusWdg
+        }
     });
 }
 
 
-Ext.extend(WidgetModalidad, Ext.form.ComboBox, {
+Ext.extend(WidgetLinea, Ext.form.ComboBox, {
+    onFocusWdg: function( field, newVal, oldVal ){
+        var cmp = Ext.getCmp(this.linkTransporte);
+        if( cmp ){
 
+            var list = new Array();
+            var transporte = Ext.getCmp(this.linkTransporte).getValue();           
+            for( k in this.data ){
+                var rec = this.data[k];
+
+                if( transporte && rec.transporte==transporte ){
+                    list.push( rec );
+                }
+            }
+            var data = new Object();
+            data.root = list;
+
+            this.store.loadData(data);
+        }else{
+            alert( "arrrrg: No existe el componente id: "+e.combo.linkTransporte+"!");
+        }
+
+
+
+    }
 });
 
 	
