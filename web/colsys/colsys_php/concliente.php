@@ -129,6 +129,8 @@ elseif (isset($boton)) {                                                       /
              echo "      alert('El campo Identificación no es válido');";
              echo "  else if (document.adicionar.nombre.value == '')";
              echo "      alert('El campo Nombre no es válido');";
+             echo "  else if (document.adicionar.email.value == '')";
+             echo "      alert('El campo Correo Electrónico no es válido');";
              echo "  else if (document.adicionar.direccion.value == '' && document.adicionar.telefonos.value == '' && document.adicionar.email.value == '')";
              echo "      alert('Debe ingresar por lo menos uno de los datos de contacto: Dirección, Teléfono o Correo Electrónico');";
              echo "  else";
@@ -250,6 +252,8 @@ echo "</BODY>";
              echo "function validar(){";
              echo "  if (document.modificar.direccion.value == '' && document.modificar.telefonos.value == '' && document.modificar.email.value == '')";
              echo "      alert('Debe ingresar por lo menos uno de los datos de contacto: Dirección, Teléfono o Correo Electrónico');";
+             echo "  else if (document.modificar.email.value == '')";
+             echo "      alert('El campo Correo Electrónico no es válido');";
              echo "  else";
              echo "      return (true);";
              echo "  return (false);";
