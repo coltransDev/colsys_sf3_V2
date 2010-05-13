@@ -42,6 +42,11 @@ if( $modo=="otm" ){
                         <input id="em_<?=$inoCliente->getOid()?>_<?=$i?>" type="checkbox" name='em_<?=$inoCliente->getOid()?>[]' value='<?=$i?>'  checked='checked' />
                         <br />
                         <?
+                    }else{
+                        ?>
+                        <b>Contacto fijo sin e-mail</b>
+                        <br />
+                        <?
                     }
                 }
                 ?>
@@ -62,19 +67,22 @@ if( $modo=="otm" ){
                 $count = max( count($emails)+2, 8 );
 
                 foreach( $emails as $email ){
-                    $chequear = (isset($email) and in_array($email,$emailsReporte) and $email!="")?"checked='checked'":"";
-                    $i++;
-                    ?>
-                    <input id="ar_<?=$inoCliente->getOid()?>_<?=$i?>" type='text' name='ar_<?=$inoCliente->getOid()?>_<?=$i?>' value='<?=isset($email)?$email:""?>' size="35" maxlength="50" />
-                    <input id="em_<?=$inoCliente->getOid()?>_<?=$i?>" type="checkbox" name='em_<?=$inoCliente->getOid()?>[]' value='<?=$i?>'  <?=$chequear?> />
-                    <br />
-                    <?
+                    if( $email ){
+                        $chequear = (isset($email) and in_array($email,$emailsReporte) and $email!="")?"checked='checked'":"";
+                        $i++;
+                        ?>
+                        <input id="ar_<?=$inoCliente->getOid()?>_<?=$i?>" type='text' name='ar_<?=$inoCliente->getOid()?>_<?=$i?>' value='<?=isset($email)?$email:""?>' size="35" maxlength="50" />
+                        <input id="em_<?=$inoCliente->getOid()?>_<?=$i?>" type="checkbox" name='em_<?=$inoCliente->getOid()?>[]' value='<?=$i?>'  <?=$chequear?> />
+                        <br />
+                        <?
+                    }
                 }
 
+                $i++;
                 for($j=$i; $j<$i+3; $j++){
                 ?>
-                    <input id="ar_<?=$inoCliente->getOid()?>_<?=$i?>" type='text' name='ar_<?=$inoCliente->getOid()?>_<?=$i?>' value='' size="35" maxlength="50" />
-                    <input id="em_<?=$inoCliente->getOid()?>_<?=$i?>" type="checkbox" name='em_<?=$inoCliente->getOid()?>[]' value='<?=$i?>'  />
+                    <input id="ar_<?=$inoCliente->getOid()?>_<?=$j?>" type='text' name='ar_<?=$inoCliente->getOid()?>_<?=$j?>' value='' size="35" maxlength="50" />
+                    <input id="em_<?=$inoCliente->getOid()?>_<?=$j?>" type="checkbox" name='em_<?=$inoCliente->getOid()?>[]' value='<?=$j?>'  />
                     <br />
                 <?
                 }
