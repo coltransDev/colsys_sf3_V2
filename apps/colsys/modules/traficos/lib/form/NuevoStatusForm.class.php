@@ -28,7 +28,9 @@ class NuevoStatusForm extends BaseForm{
 		}
 
         for( $i=0; $i< count($destinatariosFijos) ; $i++ ){
-			$widgets["destinatariosfijos_".$i] = new sfWidgetFormInputCheckbox(array(), array("size"=>60, "style"=>"margin-bottom:3px", "value"=>trim($destinatariosFijos[$i])));
+            
+            $widgets["destinatariosfijos_".$i] = new sfWidgetFormInputCheckbox(array(), array("size"=>60, "style"=>"margin-bottom:3px", "value"=>trim($destinatariosFijos[$i])));
+            
 		}
 		
 		for( $i=0; $i< self::NUM_CC ; $i++ ){
@@ -149,9 +151,16 @@ class NuevoStatusForm extends BaseForm{
 
 
         for( $i=0; $i< count($destinatariosFijos) ; $i++ ){
-			$validator["destinatariosfijos_".$i] =new sfValidatorEmail( array('required' => false ),
-														array('invalid' => 'La dirección es invalida'));
-            $this->widgetSchema->setLabel("destinatariosfijos_".$i, $destinatariosFijos[$i]);
+			
+            
+            $validator["destinatariosfijos_".$i] =new sfValidatorEmail( array('required' => false ),
+                                                    array('invalid' => 'La dirección es invalida'));
+            if( $destinatariosFijos[$i] ){
+                $this->widgetSchema->setLabel("destinatariosfijos_".$i, $destinatariosFijos[$i]);
+            }else{
+                $this->widgetSchema->setLabel("destinatariosfijos_".$i, "Destinatario sin e-mail");
+            }
+            
 		}
 			
 		for( $i=0; $i< self::NUM_CC ; $i++ ){
@@ -277,7 +286,10 @@ class NuevoStatusForm extends BaseForm{
 			$this->validatorSchema['fchseguimiento']->setOption('required', true);
 			$this->validatorSchema['txtseguimiento']->setOption('required', true);
 		}
-		
+
+
+        $destinatariosFijos = $this->getDestinatariosFijos();
+        		
 		parent::bind($taintedValues,  $taintedFiles);
 	}
 	
