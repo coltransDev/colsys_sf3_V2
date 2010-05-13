@@ -34,6 +34,13 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
     echo "<HEAD>";
     echo "<TITLE>$titulo</TITLE>";
     echo "<script language='JavaScript' type='text/JavaScript'>";              // Código en JavaScript para validar las opciones de mantenimiento
+    echo "function validar(){";
+    echo "  if (document.menuform.criterio.value == '')";
+    echo "      alert('Debe ingresar por lo menos un criterio de busqueda!');";
+    echo "  else";
+    echo "      return (true);";
+    echo "  return (false);";
+    echo "}";
     echo "function elegir(opcion, id, cl){";
     echo "    document.location.href = 'reportenegocio.php?boton='+opcion+'\&id='+id+'\&cl='+cl;";
     echo "}";
@@ -67,7 +74,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
     echo "<STYLE>@import URL(\"Coltrans.css\");</STYLE>";             // Carga una hoja de estilo que estandariza las pantallas den sistema graficador
     echo "<CENTER>";
     echo "<H3>$titulo</H3>";
-    echo "<FORM METHOD=post NAME='menuform' ACTION='reportenegocio.php' >";
+    echo "<FORM METHOD=post NAME='menuform' ACTION='reportenegocio.php' ONSUBMIT='return validar();'>";
     echo "<TABLE WIDTH=550 BORDER=0 CELLSPACING=1 CELLPADDING=5>";
     echo "<TH COLSPAN=5 style='font-size: 12px; font-weight:bold;'><B>Ingrese un criterio para realizar las busqueda</TH>";
     $vista_1 = ($nivel >= 0)?'visible':'hidden'; 					// Habilita la opción para creación de reportes AG
