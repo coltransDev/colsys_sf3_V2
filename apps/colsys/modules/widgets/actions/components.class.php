@@ -443,12 +443,12 @@ class widgetsComponents extends sfComponents
 
 
     public function executeWidgetTercero(){
-		$this->data = array();
-
-        /*$this->data[] = array( "valor"=>utf8_encode(Constantes::AEREO ));
-        $this->data[] = array( "valor"=>utf8_encode(Constantes::MARITIMO ));
-        $this->data[] = array( "valor"=>utf8_encode(Constantes::TERRESTRE ));*/
+		
 
 	}
+
+    public function executeWidgetTerceroWindow(){
+        
+    }
 }
 ?>

@@ -98,7 +98,10 @@ include_component("widgets", "widgetContactoCliente");
                     items: [
                         new WidgetTercero({fieldLabel:"Proveedor",
                                             tipo: 'Proveedor',
-                                            width: 600})
+                                            width: 600,
+                                            name: "idproveedor",
+                                            hiddenName: "prov"
+                                           })
                     ]
                 }
             ]

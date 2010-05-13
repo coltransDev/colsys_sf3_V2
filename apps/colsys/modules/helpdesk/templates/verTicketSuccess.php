@@ -105,8 +105,8 @@ $ticket = $sf_data->getRaw("ticket");
 			if( $asignado ){
 				echo $asignado->getCaNombre()."&nbsp;&nbsp;&nbsp;&nbsp;";
                 if( $ticket->getCaIdgroup()==2 ){
-                    echo link_to(image_tag("22x22/inline_table.gif")." Estimaciones",
-                                      "helpdesk/listaTicketsPrioridades?area=".$ticket->getCaIdgroup()."&user=".$asignado->getCaLogin());
+                    //echo link_to(image_tag("22x22/inline_table.gif")." Estimaciones",
+                    //                  "helpdesk/listaTicketsPrioridades?area=".$ticket->getCaIdgroup()."&user=".$asignado->getCaLogin());
                 }
 
 			}

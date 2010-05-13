@@ -5,8 +5,8 @@
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
 
-$data = $sf_data->getRaw("data");
 
+include_component("widgets", "widgetTerceroWindow");
 ?>
 
 
@@ -25,10 +25,9 @@ WidgetTercero = function( config ){
         baseParams: {tipo: this.tipo},
         reader: new Ext.data.JsonReader({
             root: 'terceros',
-            totalProperty: 'totalCount',
-            id: 'id'
+            totalProperty: 'totalCount'           
         }, [
-            {name: 'id', mapping: 't_ca_idtercero'},
+            {name: 'idtercero', mapping: 't_ca_idtercero'},
             {name: 'nombre', mapping: 't_ca_nombre'},
 			{name: 'ciudad', mapping: 'c_ca_ciudad'},
 			{name: 'pais', mapping: 'p_ca_nombre'}
@@ -41,7 +40,8 @@ WidgetTercero = function( config ){
         '<tpl for="."><div class="search-item"><strong>{nombre}</strong><br /><span><br />{ciudad} - {pais}</span> </div></tpl>'
     );
 
-    WidgetTercero.superclass.constructor.call(this, {        
+    WidgetTercero.superclass.constructor.call(this, {
+        valueField:'idtercero',
         displayField:'nombre',
         typeAhead: false,
         loadingText: 'Buscando...',
@@ -57,50 +57,76 @@ WidgetTercero = function( config ){
 }
 
 
-Ext.extend(WidgetTercero, Ext.form.TwinTriggerField, {
-    initComponent : function(){
+Ext.extend(WidgetTercero, Ext.form.ComboBox, {
+    getTrigger : Ext.form.TwinTriggerField.prototype.getTrigger,
+    initTrigger : Ext.form.TwinTriggerField.prototype.initTrigger,
+    trigger1Class : 'x-form-clear-trigger',
+    trigger2Class : 'x-form-search-trigger',
+    trigger3Class : 'x-form-select-trigger',
+    hideTrigger1 : true,
+    //hideTrigger2 : true,
+
+    initComponent : function() {
         WidgetTercero.superclass.initComponent.call(this);
-        this.on('specialkey', function(f, e){
-            if(e.getKey() == e.ENTER){
-                this.onTrigger2Click();
-            }
-        }, this);
-    },
 
-    validationEvent:false,
-    validateOnBlur:false,
-    trigger1Class:'x-form-clear-trigger',
-    trigger2Class:'x-form-search-trigger',
-    hideTrigger1:true,
-    width:180,
-    hasSearch : false,
-    paramName : 'query',
-
-    onTrigger1Click : function(){
-        if(this.hasSearch){
-            this.el.dom.value = '';
-            var o = {start: 0};
-            this.store.baseParams = this.store.baseParams || {};
-            this.store.baseParams[this.paramName] = '';
-            this.store.reload({params:o});
-            this.triggers[0].hide();
-            this.hasSearch = false;
+        this.triggerConfig = {
+        tag : 'span',
+        cls : 'x-form-twin-triggers',
+        cn : [{
+            tag : 'img',
+            src : Ext.BLANK_IMAGE_URL,
+            cls : 'x-form-trigger ' + this.trigger1Class
+        }, {
+            tag : 'img',
+            src : Ext.BLANK_IMAGE_URL,
+            cls : 'x-form-trigger ' + this.trigger2Class
+        },
+        {
+            tag : 'img',
+            src : Ext.BLANK_IMAGE_URL,
+            cls : 'x-form-trigger ' + this.trigger3Class
         }
-    },
+      ]
+    };
+  },
 
-    onTrigger2Click : function(){
-        var v = this.getRawValue();
-        if(v.length < 1){
-            this.onTrigger1Click();
-            return;
-        }
-        var o = {start: 0};
-        this.store.baseParams = this.store.baseParams || {};
-        this.store.baseParams[this.paramName] = v;
-        this.store.reload({params:o});
-        this.hasSearch = true;
-        this.triggers[0].show();
+  reset : Ext.form.Field.prototype.reset.createSequence(function() {
+    this.triggers[0].hide();    
+  }),
+
+  onViewClick : Ext.form.ComboBox.prototype.onViewClick.createSequence(function() {
+    this.triggers[0].show();    
+  }),
+
+ 
+  onTrigger1Click : function() {
+    this.clearValue();
+    this.triggers[0].hide();   
+    this.fireEvent('clear', this);
+  },
+  onTrigger2Click : function() {
+
+    var titulo = "";
+    if( this.getValue() ){
+        titulo = "Editar ";
+    }else{
+        titulo = "Nuevo ";
     }
+    titulo+=this.tipo;
+
+    idtercero = this.hiddenField?this.hiddenField.value:this.getValue();
+
+    this.win = new WidgetTerceroWindow({idcomponent: this.id,
+                                        title: titulo,
+                                        idtercero: idtercero,
+                                        tipo: this.tipo
+                                       });
+    
+    this.win.show();
+  },
+  onTrigger3Click : function() {
+    this.onTriggerClick();
+  }
 
 });
 

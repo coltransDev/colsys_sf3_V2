@@ -24,6 +24,7 @@
 					<li><b>Bogotá:</b> 804 11 + Ext.</li>
 					<li><b>Cali:</b> 804 22 + Ext.</li>
 					<li><b>B/quilla.:</b> 804 55 + Ext.</li>
+                    <li><b>Buenaventura:</b> 804 33 + Ext.</li>
 				</ul>
 		</div></td>
 	</tr>
@@ -33,6 +34,7 @@
 					<li><b>Bogotá:</b> 84 11 + Ext.</li>
 					<li><b>Medellín:</b> 84 44 + Ext.</li>
 					<li><b>B/quilla.:</b> 84 55 + Ext.</li>
+                    <li><b>Buenaventura:</b> 804 33 + Ext.</li>
 				</ul>
 
 		</div></td>
@@ -48,6 +50,8 @@
 		<td><div align="left">Para llamar desde <b>Buenaventura</b> a <br>
 				<ul>
 					<li><b>Bogotá:</b> 87 11 + Ext.</li>
+                    <li><b>Cali:</b> 87 33 + Ext.</li>
+                    <li><b>Medell&iacute;n:</b> 87 44 + Ext.</li>
 				</ul>
 
 		</div></td>

@@ -460,7 +460,7 @@ class widgetsActions extends sfActions
 		$this->tipo=$this->getRequestParameter("tipo");
 		$this->forward404unless($this->tipo);
 
-        $fldId = $this->getRequestParameter("fldId");
+        $idcomponent = $this->getRequestParameter("idcomponent");
 
 		if($this->getRequestParameter("nombre")){
 			$idtercero = $this->getRequestParameter("idtercero");
@@ -475,14 +475,14 @@ class widgetsActions extends sfActions
 			$tercero->setCaFax( $this->getRequestParameter("fax") );
 			$tercero->setCaEmail( $this->getRequestParameter("email") );
 			$tercero->setCaContacto( $this->getRequestParameter("contacto") );
-			$tercero->setCaIdciudad( $this->getRequestParameter("ciudad") );
+			$tercero->setCaIdciudad( $this->getRequestParameter("idciudad") );
 			$tercero->setCaIdentificacion( $this->getRequestParameter("identificacion") );
 			$tercero->setCaVendedor( $this->getRequestParameter( "vendedor") );
 			$tercero->setCaTipo( $this->tipo );
 			$tercero->save();
 		}
 
-		$this->responseArray = array("success"=>true, "nombre"=>$this->getRequestParameter("nombre"), "idtercero"=>$tercero->getCaIdtercero() , "tipo"=>$this->tipo, "fldId"=>$fldId);
+		$this->responseArray = array("success"=>true, "nombre"=>$this->getRequestParameter("nombre"), "idtercero"=>$tercero->getCaIdtercero() , "tipo"=>$this->tipo, "idcomponent"=>$idcomponent);
 		$this->setTemplate("responseTemplate");
 	}
 
@@ -506,7 +506,9 @@ class widgetsActions extends sfActions
 									"identificacion"=>$tercero->getCaIdentificacion(),
 									//"ciudad"=>$tercero->getCaCiudad(),
 									"idciudad"=>$tercero->getCaIdciudad(),
-                                    "idtrafico"=>$tercero->getCiudad()->getCaIdtrafico()
+                                    "ciudad"=>utf8_encode($tercero->getCiudad()->getCaCiudad()),
+                                    "idtrafico"=>$tercero->getCiudad()->getCaIdtrafico(),
+                                    "trafico"=>utf8_encode($tercero->getCiudad()->getTrafico()->getCaNombre())
 
 									);
 		$this->setTemplate("responseTemplate");

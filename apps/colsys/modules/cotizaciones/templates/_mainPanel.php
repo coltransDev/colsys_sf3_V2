@@ -188,51 +188,7 @@ MainPanel = function(){
 							Ext.getCmp("listaclinton").setValue(record.get("listaclinton"));
 							Ext.getCmp("status").setValue(record.get("status"));
 
-							if( record.get("status")=="Vetado" ){
-								if( mensaje!=""){
-									mensaje+="<br />";
-								}
-								mensaje += "Este cliente se encuentra vetado";
-							}
-
-							if( record.get("listaclinton")=="Sí" ){
-								//Ext.MessageBox.alert("Alerta","Este cliente se encuentra en lista clinton");
-								if( mensaje!=""){
-									mensaje+="<br />";
-								}
-								mensaje += "Este cliente se encuentra en lista clinton";
-							}
-
-							var fchcircular = record.get("fchcircular");
-							//alert( fchcircular);
-							if( !fchcircular ){
-								//Ext.MessageBox.alert("Alerta","El cliente no tiene circular 170");
-								if( mensaje!=""){
-									mensaje+="<br />";
-								}
-								mensaje += "El cliente no tiene circular 170";
-
-							}else{
-								if( fchcircular+(86400*365)<=<?=time()?> ){
-									if( mensaje!=""){
-										mensaje+="<br />";
-									}
-									mensaje += "La circular 170 se encuentra vencida";
-									//Ext.MessageBox.alert("Alerta","La circular 170 se encuentra vencida");
-								}else{
-									if( fchcircular+(86400*335)<=<?=time()?> ){
-										//Ext.MessageBox.alert("Alerta","La circular 170 se vencera en menos de 30 dias");
-										if( mensaje!=""){
-											mensaje+="<br />";
-										}
-										mensaje += "La circular 170 se vencera en menos de 30 dias";
-									}
-								}
-							}
-
-							if( mensaje!=""){
-								Ext.MessageBox.alert("Alerta", mensaje);
-							}
+							
 
 						}
 					})

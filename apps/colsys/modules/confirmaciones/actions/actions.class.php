@@ -360,6 +360,7 @@ class confirmacionesActions extends sfActions
                     $destinatarios[]=$request->getParameter("ar_".$oid."_".$check);
                 }
             }
+           
 							
 			$status->save();			
 			$status->send($destinatarios, array(), $attachments );		
