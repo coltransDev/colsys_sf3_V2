@@ -38,11 +38,11 @@ var enviarFormulario=function(){
     var numChecked = 0;
     for(var i=0; i<<?=count($destinatariosFijos)?>; i++ ){
        var checkFld = document.getElementById("destinatariosfijos_"+i);    
-       if( checkFld.checked && checkFld.value!="" ){           
+       if( checkFld.checked && checkFld.value.trim()!="" ){
            numChecked++;
        }
 
-       if( checkFld.checked && checkFld.value=="" ){
+       if( checkFld.checked && checkFld.value.trim()=="" ){
            alert("Un contacto fijo seleccionado no tiene e-mail, por favor seleccione otro");
            return 0;
        }
