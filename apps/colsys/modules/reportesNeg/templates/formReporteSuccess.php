@@ -28,7 +28,7 @@ include_component("widgets", "widgetTercero");
 
     var bodyStyle = 'padding: 5px 5px 5px 5px;';
     tabpanel = new Ext.TabPanel({
-        activeTab: 0,
+        activeTab: 1,
         frame:true,
         defaults:{autoHeight: true},
         buttonAlign: 'center',
