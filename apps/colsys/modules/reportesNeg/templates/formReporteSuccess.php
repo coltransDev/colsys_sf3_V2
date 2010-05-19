@@ -26,7 +26,10 @@ Ext.onReady(function(){
     
 
     var formPanel = new FormReportePanel({
-        title: "Reportes de Negocio <?=$reporte->getCaIdreporte()?$reporte->getCaConsecutivo()." ".$reporte->getCaVersion()."/".$reporte->numVersiones():""?>"
+        title: "Reportes de Negocio <?=$reporte->getCaIdreporte()?$reporte->getCaConsecutivo()." ".$reporte->getCaVersion()."/".$reporte->numVersiones():""?>",
+        editable: <?=$editable?"true":"false"?>,
+        nuevaVersion: <?=$nuevaVersion?"true":"false"?>,
+        copiar: <?=$copiar?"true":"false"?>
     });
 
     formPanel.render("panel");

@@ -209,6 +209,53 @@ class reportesNegActions extends sfActions
 
         $this->nivel = $this->getNivel();
         $this->opcion = $this->getRequestParameter("opcion");
+        
+        /*
+        * Se inicializa el objeto
+        */
+		if( $this->getRequestParameter("id") ){
+			$reporte = Doctrine::getTable("Reporte")->find( $request->getParameter("id") );
+			$this->forward404Unless( $reporte );
+		}else{
+			$reporte = new Reporte();
+		}
+        
+        $this->nuevaVersion = true;
+        if( ($reporte->isNew() || $reporte->getCaVersion() == $reporte->getUltVersion())
+                &&!$reporte->existeReporteExteriorVersionActual() ){
+            $this->editable = true;
+        }else{
+            $this->editable = false;
+        }
+
+        //No permite editar si el usuario no realizo el reporte
+        $user = $this->getUser();
+        if( !$reporte->isNew() && $user->getUserId()!=$reporte->getCaUsucreado() ){
+            $this->editable = false;
+        }
+
+        //No permite editar reportes que se hayan agrupado
+        if( $reporte->getCaIdgrupo()){
+            $this->editable = false;
+            $this->nuevaVersion = false;
+        }
+
+        //No permite copiar ni generar nuevas versiones de nuevos reportes
+        if( !$reporte->getCaIdreporte()){
+            $this->editable = true;
+            $this->nuevaVersion = false;
+            $this->copiar = false;
+        }else{
+            $this->copiar = true;
+        }
+        
+        $this->reporte=$reporte;
+       
+        
+   }
+
+
+   public function executeGuaradReporte( sfWebRequest $request ){
 
         /*
         * Parametros que se mantienen en caso de que ocurra un error
@@ -335,8 +382,6 @@ class reportesNegActions extends sfActions
                                                                 "pais" => utf8_encode($agente["t_ca_nombre"]),
                                                                 "idtrafico" => $agente["t_ca_idtrafico"]);
         }
-
-
         /*
         * Se inicializan los formularios
         */
@@ -346,22 +391,8 @@ class reportesNegActions extends sfActions
         $formSeguro = new RepSeguroForm();
         $formExpo = new RepExpoForm();
 
-        /*
-        * Se inicializa el objeto
-        */
 
-		if( $this->getRequestParameter("id") ){
-			$reporte = Doctrine::getTable("Reporte")->find( $request->getParameter("id") );
-			$this->forward404Unless( $reporte );
-
-		}else{
-			$reporte = new Reporte();
-		}
-
-
-
-
-        /*
+       /*
         * Se procesa la forma
         */
         if ($request->isMethod('post')){
@@ -784,36 +815,6 @@ class reportesNegActions extends sfActions
                 $this->redirect("reportesNeg/consultaReporte?id=".$reporte->getCaIdreporte().($this->opcion?"&opcion=".$this->opcion:""));
             }
         }
-
-
-
-        $this->reporte=$reporte;
-        $this->form = $form;
-        $this->formAduana = $formAduana;
-        $this->formSeguro = $formSeguro;
-        $this->formExpo = $formExpo;
-
-        $this->nuevaVersion = true;
-        if( ($reporte->isNew() || $reporte->getCaVersion() == $reporte->getUltVersion())
-                &&!$reporte->existeReporteExteriorVersionActual() ){
-            $this->editable = true;
-        }else{
-            $this->editable = false;
-        }
-
-        //No permite editar si el usuario no realizo el reporte
-        $user = $this->getUser();
-        if( !$reporte->isNew() && $user->getUserId()!=$reporte->getCaUsucreado() ){
-            $this->editable = false;
-        }
-
-        //No permite editar reportes que se hayan agrupado
-        if( $reporte->getCaIdgrupo()){
-            $this->editable = false;
-            $this->nuevaVersion = false;
-        }            
-       
-        
    }
 
    /*

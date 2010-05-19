@@ -23,6 +23,40 @@ include_component("reportesNeg", "formSegurosPanel");
 
         var bodyStyle = 'padding: 5px 5px 5px 5px;';
 
+        this.buttons = [];
+
+        if( this.editable ){
+            this.buttons.push( {
+                text   : 'Guardar',
+                formBind:true,
+                scope:this,
+                handler: this.onSave
+            } );
+        }
+
+        if( this.nuevaVersion ){
+            this.buttons.push( {
+                text   : 'Nueva Version',
+                formBind:true,
+                scope:this,
+                handler: this.onSave
+            } );
+        }
+
+        if( this.copiar ){
+            this.buttons.push( {
+                text   : 'Copiar en nuevo reporte',
+                formBind:true,
+                scope:this,
+                handler: this.onSave
+            } );
+        }
+
+        this.buttons.push( {
+                text   : 'Cancelar',
+                 handler: this.onCancel
+            } );
+
         FormReportePanel.superclass.constructor.call(this, {
            //border:false,
             //frame:true,
@@ -51,17 +85,7 @@ include_component("reportesNeg", "formSegurosPanel");
                         new FormSegurosPanel({bodyStyle:bodyStyle})
                     ]
             }],
-            buttons: [
-                {
-                    text   : 'Guardar',
-                    formBind:true,
-                    scope:this,
-                    handler: this.onSave
-                },
-                {
-                    text   : 'Cancelar'
-                }
-            ]
+            buttons: this.buttons
         });
     };
 
@@ -87,6 +111,9 @@ include_component("reportesNeg", "formSegurosPanel");
             }else{
                 Ext.MessageBox.alert('Error Message', "Por favor complete todos los datos");
             }
+        },
+        onCancel: function(){
+
         },
         /**
         * Form onRender override
