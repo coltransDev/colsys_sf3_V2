@@ -20,6 +20,7 @@
             activeTab: 0,
             title: 'Aduanas',
             buttonAlign: 'center',
+            autoHeight: true,
             items: [
                 {
 

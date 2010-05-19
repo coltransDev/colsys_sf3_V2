@@ -15,6 +15,7 @@
             activeTab: 0,
             title: 'Seguros',
             buttonAlign: 'center',
+            autoHeight: true,
             items: [
                 {
                     xtype:'fieldset',

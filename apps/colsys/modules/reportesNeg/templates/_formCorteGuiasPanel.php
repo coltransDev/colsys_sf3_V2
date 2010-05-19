@@ -26,6 +26,7 @@ include_component("widgets", "widgetBodega");
             buttonAlign: 'center',
             autoHeight:true,
             deferredRender:false,
+            defaults: {labelWidth: 120},
             items: [
                 /*
                  *========================= Información del Proveedor =========================
@@ -35,7 +36,7 @@ include_component("widgets", "widgetBodega");
                     xtype:'fieldset',
                     title: 'Instrucciones',
                     autoHeight:true,
-                    //defaults: {width: 210},
+                    
                     items: [                        
                         new WidgetConsignar({fieldLabel:"Consignar a",                                                                                        
                                             name: "idconsignar",
@@ -75,8 +76,8 @@ include_component("widgets", "widgetBodega");
                                             name: "idconsignatario",
                                             hiddenName: "consig"
                                            }),
-                        new WidgetTercero({fieldLabel:"Consigna. Master",
-                                            tipo: 'Consignatario',
+                        new WidgetTercero({fieldLabel:"Consig. Master",
+                                            tipo: 'Master',
                                             width: 600,
                                             name: "idmaster",
                                             hiddenName: "consigmaster"
@@ -88,7 +89,7 @@ include_component("widgets", "widgetBodega");
                                             hiddenName: "notify"
                                            }),
                         new WidgetTercero({fieldLabel:"Representante",
-                                            tipo: 'Consignatario',
+                                            tipo: 'Representante',
                                             width: 600,
                                             name: "idmaster",
                                             hiddenName: "consigmaster"
