@@ -249,13 +249,15 @@ class reportesNegActions extends sfActions
             $this->copiar = true;
         }
         
-        $this->reporte=$reporte;
-       
-        
+        $this->reporte=$reporte;       
    }
 
-
-   public function executeGuaradReporte( sfWebRequest $request ){
+   /*
+	* Valida y guarda el reporte
+	* @author Andres Botero
+    * @param sfRequest $request A request object
+    */
+   public function executeGuardarReporte( sfWebRequest $request ){
 
         /*
         * Parametros que se mantienen en caso de que ocurra un error
@@ -815,19 +817,15 @@ class reportesNegActions extends sfActions
                 $this->redirect("reportesNeg/consultaReporte?id=".$reporte->getCaIdreporte().($this->opcion?"&opcion=".$this->opcion:""));
             }
         }
-   }
 
-   /*
-	* Valida y guarda el reporte
-	* @author Andres Botero
-    * @param sfRequest $request A request object
-    */
-    public function executeGuardarReporte(sfWebRequest $request){
+
+
         $this->responseArray=array("success"=>true);
         $this->setTemplate("responseTemplate");
-    }
+   }
 
-
+   
+    
     /*
     * Datos para el panel de conceptos
     * @param sfRequest $request A request object
