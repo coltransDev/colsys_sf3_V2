@@ -12,8 +12,6 @@
 include_component("reportesNeg", "formReportePanel");
 
 
-
-
 include_component("widgets", "widgetTercero");
 
 
