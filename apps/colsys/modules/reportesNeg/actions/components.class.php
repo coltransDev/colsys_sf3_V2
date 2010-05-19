@@ -140,6 +140,25 @@ class reportesNegComponents extends sfComponents
                                      ->execute();
     }
 
+    public function executeFormAduanasPanel()
+	{
+        $this->usuarios = Doctrine::getTable("Usuario")
+                                   ->createQuery("u")
+                                   ->innerJoin("u.UsuarioPerfil up")
+                                   ->where("u.ca_activo=? AND up.ca_perfil=? ", array('TRUE','analista-de-aduana'))
+                                   ->addOrderBy("u.ca_idsucursal")
+                                   ->addOrderBy("u.ca_nombre")
+                                   ->execute();
+    }
+
+    public function executeFormSegurosPanel()
+	{
+
+        $this->monedas = Doctrine::getTable("Moneda")
+                   ->createQuery("m")
+                   ->orderBy("m.ca_idmoneda")
+                   ->execute();
+    }
     /*
 	* Edita la informacion basica del trayecto
 	* @author: Andres Botero
@@ -303,7 +322,7 @@ class reportesNegComponents extends sfComponents
      */
     public function executeCotizacionRecargosWindow()
 	{
-        $this->aplicaciones = ParametroTable::retrieveByCaso("CU082");
+        $this->aplicaciones = ParametroTable::retrieveByCaso("CU082");        
         if( $this->reporte->getCaIdproducto() ){
             $this->producto = Doctrine::getTable("CotProducto")->find( $this->reporte->getCaIdproducto() );
             $this->cotizacion = $this->producto->getCotizacion();
