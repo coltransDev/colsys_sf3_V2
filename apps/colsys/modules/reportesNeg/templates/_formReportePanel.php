@@ -25,20 +25,16 @@ include_component("reportesNeg", "formSegurosPanel");
 
         FormReportePanel.superclass.constructor.call(this, {
            //border:false,
-        //frame:true,
-        labelWidth:80,
-        frame: true,
-        buttonAlign: 'center',
-        layout:'fit',
-        id: "test",
-        //standardSubmit: true,
-
-
-        items: [{
+            //frame:true,
+            labelWidth:80,
+            frame: true,
+            buttonAlign: 'center',
+            layout:'fit',            
+            //standardSubmit: true,
+            
+            items: [{
                     xtype:'tabpanel',
-                    activeTab: 2,
-                    //defaults:{autoHeight: true},
-                    //deferredRender:false,
+                    activeTab: 2,                    
                     autoHeight: true,
                     defaults:{
                         layout:'form',
@@ -54,52 +50,56 @@ include_component("reportesNeg", "formSegurosPanel");
                         new FormAduanasPanel({bodyStyle:bodyStyle}),
                         new FormSegurosPanel({bodyStyle:bodyStyle})
                     ]
-        }],        
-        buttons: [
-            {
-                text   : 'Guardar',
-                formBind:true,
-                scope:this,
-                handler: function(){
-                             var form  = Ext.getCmp("test").getForm();
-
-                             if( form.isValid() ){
-                                  form.submit({
-                                    url: "<?=url_for("reportesNeg/guardarReporte")?>",
-                                    //scope:this,
-                                    waitMsg:'Guardando...',
-                                    waitTitle:'Por favor espere...',
-                                    success:function(response,options){
-
-                                       alert("OK");
-
-                                       //Ext.Msg.alert( "Msg "+response.responseText );
-                                    },
-                                    // standardSubmit: false,
-                                    failure:function(form,action){
-                                        Ext.MessageBox.alert('Error Message', "Se ha presentado un error"+(action.result?": "+action.result.errorInfo:"")+" "+(action.response?"\n Codigo HTTP "+action.response.status:""));
-                                    }//end failure block
-                                });
-                             }else{
-                                 Ext.MessageBox.alert('Error Message', "Por favor complete todos los datos");
-
-                             }
-
+            }],
+            buttons: [
+                {
+                    text   : 'Guardar',
+                    formBind:true,
+                    scope:this,
+                    handler: this.onSave
+                },
+                {
+                    text   : 'Cancelar'
                 }
-            },
-            {
-                text   : 'Cancelar'
-            }
-        ]
-
-
+            ]
         });
-
-
     };
 
-    Ext.extend(FormReportePanel, Ext.Panel, {
-       
+    Ext.extend(FormReportePanel, Ext.form.FormPanel, {
+        onSave: function(){            
+            var form  = this.getForm();
+
+            if( form.isValid() ){
+                form.submit({
+                    url: "<?=url_for("reportesNeg/guardarReporte")?>",
+                    //scope:this,
+                    waitMsg:'Guardando...',
+                    waitTitle:'Por favor espere...',
+                    success:function(response,options){
+                        alert("OK");
+                        //Ext.Msg.alert( "Msg "+response.responseText );
+                    },
+                    // standardSubmit: false,
+                    failure:function(form,action){
+                        Ext.MessageBox.alert('Error Message', "Se ha presentado un error"+(action.result?": "+action.result.errorInfo:"")+" "+(action.response?"\n Codigo HTTP "+action.response.status:""));
+                    }//end failure block
+                });
+            }else{
+                Ext.MessageBox.alert('Error Message', "Por favor complete todos los datos");
+            }
+        },
+        /**
+        * Form onRender override
+        */
+        onRender:function() {
+
+            // call parent
+            Example.Form.superclass.onRender.apply(this, arguments);
+
+            // set wait message target
+            this.getForm().waitMsgTarget = this.getEl();
+
+        } // eo function onRender
 
     });
 
