@@ -35,6 +35,9 @@
  * @property Ciudad $Origen
  * @property Ciudad $Destino
  * @property Doctrine_Collection $CotSeguimiento
+ * @property Cotizacion1 $Cotizacion1
+ * @property Doctrine_Collection $CotOpcion1
+ * @property Doctrine_Collection $CotSeguimiento1
  * 
  * @method integer             getCaIdproducto()      Returns the current record's "ca_idproducto" value
  * @method integer             getCaIdcotizacion()    Returns the current record's "ca_idcotizacion" value
@@ -66,6 +69,9 @@
  * @method Ciudad              getOrigen()            Returns the current record's "Origen" value
  * @method Ciudad              getDestino()           Returns the current record's "Destino" value
  * @method Doctrine_Collection getCotSeguimiento()    Returns the current record's "CotSeguimiento" collection
+ * @method Cotizacion1         getCotizacion1()       Returns the current record's "Cotizacion1" value
+ * @method Doctrine_Collection getCotOpcion1()        Returns the current record's "CotOpcion1" collection
+ * @method Doctrine_Collection getCotSeguimiento1()   Returns the current record's "CotSeguimiento1" collection
  * @method CotProducto         setCaIdproducto()      Sets the current record's "ca_idproducto" value
  * @method CotProducto         setCaIdcotizacion()    Sets the current record's "ca_idcotizacion" value
  * @method CotProducto         setCaTransporte()      Sets the current record's "ca_transporte" value
@@ -96,6 +102,9 @@
  * @method CotProducto         setOrigen()            Sets the current record's "Origen" value
  * @method CotProducto         setDestino()           Sets the current record's "Destino" value
  * @method CotProducto         setCotSeguimiento()    Sets the current record's "CotSeguimiento" collection
+ * @method CotProducto         setCotizacion1()       Sets the current record's "Cotizacion1" value
+ * @method CotProducto         setCotOpcion1()        Sets the current record's "CotOpcion1" collection
+ * @method CotProducto         setCotSeguimiento1()   Sets the current record's "CotSeguimiento1" collection
  * 
  * @package    symfony
  * @subpackage model
@@ -215,6 +224,18 @@ abstract class BaseCotProducto extends myDoctrineRecord
              'foreign' => 'ca_idciudad'));
 
         $this->hasMany('CotSeguimiento', array(
+             'local' => 'ca_idproducto',
+             'foreign' => 'ca_idproducto'));
+
+        $this->hasOne('Cotizacion1', array(
+             'local' => 'ca_idcotizacion',
+             'foreign' => 'ca_idcotizacion'));
+
+        $this->hasMany('CotOpcion1', array(
+             'local' => 'ca_idproducto',
+             'foreign' => 'ca_idproducto'));
+
+        $this->hasMany('CotSeguimiento1', array(
              'local' => 'ca_idproducto',
              'foreign' => 'ca_idproducto'));
     }
