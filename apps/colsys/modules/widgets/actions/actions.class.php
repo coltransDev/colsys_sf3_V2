@@ -441,7 +441,7 @@ class widgetsActions extends sfActions
 		$terceros = array();
 
    		foreach ( $rows as $row ) {            
-			$row["t_ca_nombre"]=utf8_encode($row["t_ca_nombre"]);
+			//$row["t_ca_nombre"]=utf8_encode($row["t_ca_nombre"]);
             $row["c_ca_ciudad"]=utf8_encode($row["c_ca_ciudad"]);
             $row["p_ca_nombre"]=utf8_encode($row["p_ca_nombre"]);
             $terceros[]=$row;

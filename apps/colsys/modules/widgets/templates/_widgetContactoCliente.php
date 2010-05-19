@@ -36,7 +36,12 @@ WidgetContactoCliente = function( config ){
             {name: 'nombre_ven', mapping: 'ca_nombre'},
 			{name: 'listaclinton', mapping: 'ca_listaclinton'},
 			{name: 'fchcircular', mapping: 'ca_fchcircular', type:'int'},
-			{name: 'status', mapping: 'ca_status'}
+			{name: 'status', mapping: 'ca_status'},
+            {name: 'confirmar', mapping: 'ca_confirmar'},
+            {name: 'preferencias', mapping: 'ca_preferencias'},
+            {name: 'coordinador', mapping: 'ca_coordinador'},
+            {name: 'diascredito', mapping: 'ca_diascredito'},
+            {name: 'cupo', mapping: 'ca_cupo'}
         ])
     });
 

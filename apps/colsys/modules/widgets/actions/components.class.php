@@ -450,5 +450,60 @@ class widgetsComponents extends sfComponents
     public function executeWidgetTerceroWindow(){
         
     }
+
+
+    public function executeWidgetConsignar(){
+        $this->data = Doctrine::getTable("Bodega")
+                                             ->createQuery("b")
+                                             ->select("b.*")
+                                             ->addOrderBy("b.ca_tipo ASC")
+                                             ->addOrderBy("b.ca_nombre ASC")
+                                             ->where( "b.ca_tipo = ? OR b.ca_tipo = ?", array('Coordinador Logístico', 'Operador Multimodal'))
+                                             ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                                             ->execute();
+
+        foreach( $this->data as $key=>$val ){
+            $this->data[$key]["b_ca_tipo"] = utf8_encode($this->data[$key]["b_ca_tipo"]);
+            $this->data[$key]["b_ca_transporte"] = utf8_encode($this->data[$key]["b_ca_transporte"]);
+            $this->data[$key]["b_ca_nombre"] = utf8_encode($this->data[$key]["b_ca_nombre"]);
+        }
+
+	}
+
+    public function executeWidgetTipoBodega(){
+        $this->data = Doctrine::getTable("Bodega")
+                                             ->createQuery("b")
+                                             ->select("b.ca_tipo, b.ca_transporte")
+                                             ->addOrderBy("b.ca_tipo ASC")
+                                             ->where( "b.ca_tipo != ? AND b.ca_tipo != ?", array('Coordinador Logístico', 'Operador Multimodal'))
+                                             ->distinct()
+                                             ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                                             ->execute();
+
+        foreach( $this->data as $key=>$val ){
+            $this->data[$key]["b_ca_tipo"] = utf8_encode($this->data[$key]["b_ca_tipo"]);
+            $this->data[$key]["b_ca_transporte"] = utf8_encode($this->data[$key]["b_ca_transporte"]);
+        }
+
+	}
+
+
+    public function executeWidgetBodega(){
+        $this->data = Doctrine::getTable("Bodega")
+                                             ->createQuery("b")
+                                             ->select("b.*")
+                                             ->addOrderBy("b.ca_tipo ASC")
+                                             ->addOrderBy("b.ca_nombre ASC")
+                                             ->distinct()
+                                             ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                                             ->execute();
+
+        foreach( $this->data as $key=>$val ){
+            $this->data[$key]["b_ca_tipo"] = utf8_encode($this->data[$key]["b_ca_tipo"]);
+            $this->data[$key]["b_ca_nombre"] = utf8_encode($this->data[$key]["b_ca_nombre"]);
+            $this->data[$key]["b_ca_transporte"] = utf8_encode($this->data[$key]["b_ca_transporte"]);
+        }
+
+	}
 }
 ?>
