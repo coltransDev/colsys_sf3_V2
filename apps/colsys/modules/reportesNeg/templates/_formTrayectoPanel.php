@@ -23,11 +23,10 @@ include_component("widgets", "widgetContinuacion");
         Ext.apply(this, config);
 
 
-        FormTrayectoPanel.superclass.constructor.call(this, {
-            activeTab: 0,
-            title: 'General',
-            
-            
+        FormTrayectoPanel.superclass.constructor.call(this, {            
+            title: 'General',            
+            //deferredRender:false,
+            //layout:'form',
             items: [{
                     xtype:'fieldset',                    
                     title: 'Información del trayecto',

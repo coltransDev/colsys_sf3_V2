@@ -19,7 +19,7 @@
             activeTab: 0,
             title: 'Preferencias',
             buttonAlign: 'center',
-
+            
             items: [
                 /*
                  *========================= Información del Proveedor =========================
@@ -53,16 +53,71 @@
                     xtype:'fieldset',
                     title: 'Informaciones a:',
                     autoHeight:true,
-                    //defaults: {width: 210},
-                    items: [                        
+                    layout:'column',
+                    columns: 2,
+                    
+                    items: [
+                        /*
+                         * =========================Column 1 =========================
+                         **/
                         {
-                            xtype: "textfield",
-                            fieldLabel: "Contacto",
-                            name: "contacto",
-                            id: "contacto1",
-                            readOnly: true,
-                            width: 600
-                        }                        
+                            columnWidth:.5,
+                            layout: 'form',
+                            border:false,
+                            defaultType: 'textfield',
+                            labelWidth: 5,
+                            items: [
+                            //defaults: {width: 210},
+
+                                <?
+                                for( $i=0; $i<14; $i++ ):
+                                    if( $i!=0){
+                                        echo ",";
+                                    }
+                                ?>
+                                {
+                                    xtype: "textfield",
+                                    fieldLabel: "",
+                                    name: "contacto_<?=$i?>",
+                                    id: "contacto_<?=$i?>",
+                                    readOnly: true,
+                                    width: 550
+                                }
+                                <?
+                                endfor;
+                                ?>
+                            ]
+                        },
+                        /*
+                         * =========================Column 2 =========================
+                         **/
+                        {
+                            columnWidth:.5,
+                            layout: 'form',
+                            border:false,
+                            defaultType: 'textfield',
+                            labelWidth: 5,
+                            items: [
+                            //defaults: {width: 210},
+
+                                <?
+                                for( $i=0; $i<14; $i++ ):
+                                    if( $i!=0){
+                                        echo ",";
+                                    }
+                                ?>
+                                {
+                                    xtype: "checkbox",
+                                    fieldLabel: "",
+                                    name: "chkcontacto_<?=$i?>",
+                                    id: "chkcontacto_<?=$i?>"                                   
+                                   
+                                }
+                                <?
+                                endfor;
+                                ?>
+                            ]
+                        }
                     ]
                 }
             ]

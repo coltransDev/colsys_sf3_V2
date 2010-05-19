@@ -811,11 +811,21 @@ class reportesNegActions extends sfActions
         if( $reporte->getCaIdgrupo()){
             $this->editable = false;
             $this->nuevaVersion = false;
-        }
-            
+        }            
        
         
-        }
+   }
+
+   /*
+	* Valida y guarda el reporte
+	* @author Andres Botero
+    * @param sfRequest $request A request object
+    */
+    public function executeGuardarReporte(sfWebRequest $request){
+        $this->responseArray=array("success"=>true);
+        $this->setTemplate("responseTemplate");
+    }
+
             
     /*
     * Datos para el panel de conceptos
