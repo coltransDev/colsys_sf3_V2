@@ -128,6 +128,14 @@ class reportesNegComponents extends sfComponents
 
 
     /*
+	* Panel principal que contiene los demas paneles
+	* @author: Andres Botero
+	*/
+	public function executeFormReportePanel()
+	{
+
+    }
+    /*
 	* Edita la informacion basica del trayecto
 	* @author: Andres Botero
 	*/
