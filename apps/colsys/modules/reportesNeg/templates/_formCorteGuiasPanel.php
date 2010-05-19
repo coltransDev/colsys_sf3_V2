@@ -24,6 +24,8 @@ include_component("widgets", "widgetBodega");
             activeTab: 0,
             title: 'Corte Guias',
             buttonAlign: 'center',
+            autoHeight:true,
+            deferredRender:false,
             items: [
                 /*
                  *========================= Información del Proveedor =========================

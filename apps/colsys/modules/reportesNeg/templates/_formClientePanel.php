@@ -27,7 +27,8 @@ include_component("widgets", "widgetContactoCliente");
             activeTab: 0,
             title: 'Cliente',
             buttonAlign: 'center',
-
+            autoHeight:true,
+            deferredRender:false,
             items: [
                 /*
                  *========================= Información del Proveedor =========================

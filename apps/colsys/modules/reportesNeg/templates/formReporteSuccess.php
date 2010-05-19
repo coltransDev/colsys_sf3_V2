@@ -34,27 +34,30 @@ Ext.onReady(function(){
         //border:false,
         //frame:true,
         labelWidth:80,
+        frame: true,
         buttonAlign: 'center',
-        
+        layout:'fit',
         id: "test",
         //standardSubmit: true,
-        
+       
+
         items: [{
                     xtype:'tabpanel',
-                    activeTab: 0,                    
+                    activeTab: 2,
                     //defaults:{autoHeight: true},
                     //deferredRender:false,
+                    autoHeight: true,
                     defaults:{
-                        layout:'form'
+                        layout:'form',
                         // as we use deferredRender:false we mustn't
                         // render tabs into display:none containers
-                        //hideMode:'offsets'
+                        hideMode:'offsets'
                     },
                     items:[
-                        new FormTrayectoPanel() ,
-                        new FormClientePanel(),
-                        new FormPreferenciasPanel(),
-                        new FormCorteGuiasPanel()
+                        new FormTrayectoPanel({bodyStyle:bodyStyle}) ,
+                        new FormClientePanel({bodyStyle:bodyStyle}),
+                        new FormPreferenciasPanel({bodyStyle:bodyStyle}),
+                        new FormCorteGuiasPanel({bodyStyle:bodyStyle})
                     ]
         }],
         title: "Reportes de Negocio <?=$reporte->getCaIdreporte()?$reporte->getCaConsecutivo()." ".$reporte->getCaVersion()."/".$reporte->numVersiones():""?>",

@@ -25,8 +25,10 @@ include_component("widgets", "widgetContinuacion");
 
         FormTrayectoPanel.superclass.constructor.call(this, {            
             title: 'General',            
-            //deferredRender:false,
+            deferredRender:false,
             //layout:'form',
+            autoHeight:true,
+            
             items: [{
                     xtype:'fieldset',                    
                     title: 'Información del trayecto',
@@ -35,6 +37,12 @@ include_component("widgets", "widgetContinuacion");
 
                     layout:'column',
                     columns: 2,
+                    defaults:{
+                        columnWidth:0.5,
+                        layout:'form',                        
+                        border:false,
+                        bodyStyle:'padding:4px'
+                    },
                     items :
                         [
                         /*
@@ -43,7 +51,7 @@ include_component("widgets", "widgetContinuacion");
                         {
                             columnWidth:.5,
                             layout: 'form',
-                            border:false,
+                            border:false,                            
                             defaultType: 'textfield',
                             items: [
                                 new WidgetImpoexpo({fieldLabel: 'Clase',

@@ -19,7 +19,8 @@
             activeTab: 0,
             title: 'Preferencias',
             buttonAlign: 'center',
-            
+            autoHeight:true,
+            deferredRender:false,            
             items: [
                 /*
                  *========================= Información del Proveedor =========================
@@ -53,24 +54,30 @@
                     xtype:'fieldset',
                     title: 'Informaciones a:',
                     autoHeight:true,
-                    layout:'column',
+                    layout:'table',
                     columns: 2,
                     
+                    defaults:{
+                        columnWidth:0.5,
+                        layout:'form',
+                        border:false,
+                        bodyStyle:'padding:4px',
+                        hideLabels:true,
+                        border:true
+                    },
                     items: [
                         /*
                          * =========================Column 1 =========================
                          **/
                         {
-                            columnWidth:.5,
-                            layout: 'form',
-                            border:false,
-                            defaultType: 'textfield',
-                            labelWidth: 5,
+                            //columnWidth:0.2,
+                            layout: 'form',                            
+                            defaultType: 'textfield',                            
                             items: [
                             //defaults: {width: 210},
 
                                 <?
-                                for( $i=0; $i<14; $i++ ):
+                                for( $i=0; $i<15; $i++ ):
                                     if( $i!=0){
                                         echo ",";
                                     }
@@ -92,25 +99,25 @@
                          * =========================Column 2 =========================
                          **/
                         {
-                            columnWidth:.5,
-                            layout: 'form',
-                            border:false,
+                            //columnWidth:0.2,
+                            layout: 'form',                            
                             defaultType: 'textfield',
-                            labelWidth: 5,
+                            defaults: {width: 20},
                             items: [
-                            //defaults: {width: 210},
+
 
                                 <?
-                                for( $i=0; $i<14; $i++ ):
+                                for( $i=0; $i<15; $i++ ):
                                     if( $i!=0){
                                         echo ",";
                                     }
                                 ?>
                                 {
                                     xtype: "checkbox",
-                                    fieldLabel: "",
+                                    fieldLabel: "",                                    
                                     name: "chkcontacto_<?=$i?>",
-                                    id: "chkcontacto_<?=$i?>"                                   
+                                    id: "chkcontacto_<?=$i?>",
+                                    width: 20
                                    
                                 }
                                 <?
