@@ -94,7 +94,7 @@ include_component("reportesNeg", "formSegurosPanel");
         onRender:function() {
 
             // call parent
-            Example.Form.superclass.onRender.apply(this, arguments);
+            FormReportePanel.superclass.onRender.apply(this, arguments);
 
             // set wait message target
             this.getForm().waitMsgTarget = this.getEl();
