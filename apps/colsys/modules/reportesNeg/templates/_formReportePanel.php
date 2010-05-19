@@ -34,7 +34,7 @@ include_component("reportesNeg", "formSegurosPanel");
             
             items: [{
                     xtype:'tabpanel',
-                    activeTab: 2,                    
+                    activeTab: 0,
                     autoHeight: true,
                     defaults:{
                         layout:'form',

@@ -5,6 +5,8 @@
  *  (c) Coltrans S.A. - Colmas Ltda.
 */
 
+include_component("widgets", "widgetCotizacion");
+
 include_component("widgets", "widgetImpoexpo");
 include_component("widgets", "widgetTransporte");
 include_component("widgets", "widgetModalidad");
@@ -22,7 +24,11 @@ include_component("widgets", "widgetContinuacion");
 
         Ext.apply(this, config);
 
-
+        this.widgetCotizacion = new WidgetCotizacion({
+                                                      fieldLabel: "Cotización",
+                                                      });
+        this.widgetCotizacion.addListener("select", this.onSelectCotizacion, this );
+        
         FormTrayectoPanel.superclass.constructor.call(this, {            
             title: 'General',            
             deferredRender:false,
@@ -30,11 +36,35 @@ include_component("widgets", "widgetContinuacion");
             autoHeight:true,
             
             items: [{
+                        xtype:'fieldset',
+                        title: 'General',
+                        autoHeight:true,                       
+
+                        layout:'form',
+                        defaults: {width: 200},
+                        items :
+                        [
+                            this.widgetCotizacion,
+                            {
+                                xtype: "datefield",
+                                fieldLabel: "Fecha de Despacho",
+                                id: "fchdespacho",
+                                name: "fchdespacho"
+                            },
+                            {
+                                xtype: "textfield",
+                                fieldLabel: "Vendedor",
+                                id: "vendedor",
+                                name: "vendedor"
+                            }
+                        ]
+                    },
+
+                    {
                     xtype:'fieldset',                    
                     title: 'Información del trayecto',
                     autoHeight:true,
-                    //defaults: {width: 210},
-
+                   
                     layout:'column',
                     columns: 2,
                     defaults:{
@@ -172,7 +202,12 @@ include_component("widgets", "widgetContinuacion");
     };
 
     Ext.extend(FormTrayectoPanel, Ext.Panel, {
-
+        /*
+         * Completa los datos del reporte con la cotización seleccionada.
+         **/
+        onSelectCotizacion: function( combo, record, index){
+            alert("OK");
+        }
 
     });
 

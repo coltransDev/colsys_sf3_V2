@@ -505,5 +505,10 @@ class widgetsComponents extends sfComponents
         }
 
 	}
+
+    public function executeWidgetCotizacion(){
+
+
+	}
 }
 ?>
