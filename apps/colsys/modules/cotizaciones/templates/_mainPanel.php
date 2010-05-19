@@ -415,7 +415,7 @@ Ext.extend(MainPanel, Ext.FormPanel, {
                                     },
                                     // standardSubmit: false,
                                     failure:function(form,action){
-                                        Ext.MessageBox.alert('Error Message', "Se ha presentado un error: "+action.result.errorInfo+" \n Codigo HTTP "+action.response.status);
+                                        Ext.MessageBox.alert('Error Message', "Se ha presentado un error"+(action.result?": "+action.result.errorInfo:"")+" "+(action.response?"\n Codigo HTTP "+action.response.status:""));
                                     }//end failure block
                                 });
         }else{
