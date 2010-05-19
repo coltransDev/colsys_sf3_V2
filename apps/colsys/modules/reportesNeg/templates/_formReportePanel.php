@@ -10,6 +10,9 @@ include_component("reportesNeg", "formClientePanel");
 include_component("reportesNeg", "formPreferenciasPanel");
 include_component("reportesNeg", "formCorteGuiasPanel");
 
+include_component("reportesNeg", "formAduanasPanel");
+include_component("reportesNeg", "formSegurosPanel");
+
 ?>
 <script type="text/javascript">
 
@@ -47,7 +50,9 @@ include_component("reportesNeg", "formCorteGuiasPanel");
                         new FormTrayectoPanel({bodyStyle:bodyStyle}) ,
                         new FormClientePanel({bodyStyle:bodyStyle}),
                         new FormPreferenciasPanel({bodyStyle:bodyStyle}),
-                        new FormCorteGuiasPanel({bodyStyle:bodyStyle})
+                        new FormCorteGuiasPanel({bodyStyle:bodyStyle}),
+                        new FormAduanasPanel({bodyStyle:bodyStyle}),
+                        new FormSegurosPanel({bodyStyle:bodyStyle})
                     ]
         }],        
         buttons: [
