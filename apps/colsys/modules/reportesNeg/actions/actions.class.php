@@ -15,18 +15,18 @@ class reportesNegActions extends sfActions
     const RUTINA = 18;
 
     public function getNivel( ){
-                
+
 		$this->nivel = $this->getUser()->getNivelAcceso( reportesNegActions::RUTINA );
-         
+
 		if( $this->nivel==-1 ){
 			$this->forward404();
 		}
         return $this->nivel;
-        
+
     }
 
 	/**
-	* Pantalla de bienvenida para el modulo de reportes 
+	* Pantalla de bienvenida para el modulo de reportes
 	* @author Andres Botero
 	*/
 	public function executeIndex()
@@ -35,19 +35,19 @@ class reportesNegActions extends sfActions
 		/*$this->modo = $this->getRequestParameter("modo");
 		$this->forward404Unless( $this->modo );*/
 	}
-	
-	
-	
+
+
+
 	/*
-	* Muestra los resultados de la busqueda del reporte de negocios 
+	* Muestra los resultados de la busqueda del reporte de negocios
 	* @author Andres Botero
-	*/	
+	*/
 	public function executeBusquedaReporte()
 	{
         $this->opcion = $this->getRequestParameter("opcion");
 
 
-		
+
 		$criterio = $this->getRequestParameter("criterio");
 		$cadena = $this->getRequestParameter("cadena");
 
@@ -60,7 +60,7 @@ class reportesNegActions extends sfActions
 		switch( $criterio ){
 			case "numero_de_reporte":
                 $q->addWhere("r.ca_consecutivo like ?", $cadena."%");
-				break;	
+				break;
 			case "cliente":
                 $q->innerJoin("r.Contacto con");
                 $q->innerJoin("con.Cliente cl");
@@ -90,16 +90,16 @@ class reportesNegActions extends sfActions
            case "vendedor":
                case "login":
                 $q->innerJoin("r.Usuario usu");
-                $q->addWhere("usu.ca_nombre LIKE ?",( $cadena )."%");               
+                $q->addWhere("usu.ca_nombre LIKE ?",( $cadena )."%");
                break;
            case "ciudadorigen":
                 $q->innerJoin("r.Origen ori");
                 $q->addWhere("UPPER(ori.ca_ciudad) LIKE ?",strtoupper( $cadena )."%");
                 break;
-		}	
-		
-			
-		
+		}
+
+
+
 		$this->reportes = $q->execute();
 	}
 
@@ -117,7 +117,7 @@ class reportesNegActions extends sfActions
             $this->redirect( "reportesNeg/verReporte?id=".$reporte->getCaIdreporte().($this->opcion?"&opcion=".$this->opcion:"") );
         }
 		$this->reporte = $reporte;
-        
+
 
         $response = sfContext::getInstance()->getResponse();
 		$response->addJavaScript("extExtras/RowExpander",'last');
@@ -130,7 +130,7 @@ class reportesNegActions extends sfActions
                       ->distinct()
                       ->execute();
 
-        
+
         //exit();
 
         if( ($reporte->isNew() || $reporte->getCaVersion() == $reporte->getUltVersion())
@@ -145,8 +145,8 @@ class reportesNegActions extends sfActions
         if( !$reporte->isNew() && $user->getUserId()!=$reporte->getCaUsucreado() ){
             $this->editable = false;
         }
-        
-        //No permite editar reportes que se hayan agrupado 
+
+        //No permite editar reportes que se hayan agrupado
         if( $reporte->getCaIdgrupo()){
             $this->editable = false;
         }
@@ -163,7 +163,7 @@ class reportesNegActions extends sfActions
 	public function executeVerReporte(){
 
         $this->opcion = $this->getRequestParameter("opcion");
-        
+
 		$reporte = Doctrine::getTable("Reporte")->find( $this->getRequestParameter("id") );
 		$this->forward404Unless( $reporte );
         $this->user = $this->getUser();
@@ -196,16 +196,16 @@ class reportesNegActions extends sfActions
 		}
 
 		$this->asignaciones = $reporte->getRepAsignacion();
-		$this->reporte = $reporte;	
-		
+		$this->reporte = $reporte;
+
 	}
-    
+
 	/*
-	* Permite crear y editar el encabezado de un reporte de negocios 
+	* Permite crear y editar el encabezado de un reporte de negocios
 	* @author Andres Botero
     * @param sfRequest $request A request object
     */
-    public function executeFormReporte(sfWebRequest $request){           
+    public function executeFormReporte(sfWebRequest $request){
 
         $this->nivel = $this->getNivel();
         $this->opcion = $this->getRequestParameter("opcion");
@@ -223,7 +223,7 @@ class reportesNegActions extends sfActions
         $country_reporte = $request->getParameter("country_reporte");
         $this->ca_traorigen = $country_reporte["ca_origen"];
         $this->ca_tradestino = $country_reporte["ca_destino"];
-        
+
         $this->ca_origen = $bindValues["ca_origen"];
         $this->ca_destino = $bindValues["ca_destino"];
 
@@ -353,19 +353,19 @@ class reportesNegActions extends sfActions
 		if( $this->getRequestParameter("id") ){
 			$reporte = Doctrine::getTable("Reporte")->find( $request->getParameter("id") );
 			$this->forward404Unless( $reporte );
-			
-		}else{		
+
+		}else{
 			$reporte = new Reporte();
 		}
 
-        
 
-        
+
+
         /*
         * Se procesa la forma
         */
-        if ($request->isMethod('post')){                    
-            
+        if ($request->isMethod('post')){
+
             /**********************************************
             * Validaciones los datos
             ***********************************************/
@@ -376,7 +376,7 @@ class reportesNegActions extends sfActions
             $bindValues["ca_modalidad"] = $modalidad->getCaModalidad();
             $bindValues["ca_transporte"] = $modalidad->getCaTransporte();
             $bindValues["ca_impoexpo"] = $modalidad->getCaImpoexpo();
-            
+
             if( $bindValues["ca_impoexpo"] ){
                 $reporte->setCaImpoexpo( $bindValues["ca_impoexpo"] );
             }
@@ -396,10 +396,10 @@ class reportesNegActions extends sfActions
                 $bindValues["ca_colmas"]="Sí";
                 $bindValues["ca_continuacion"]="N/A";
             }
-            
+
             $bindValues["ca_idconcliente"] = $request->getParameter("ca_idconcliente");
 
-            
+
             //Coloca el Rep. Comercial
             if( $this->nivel<2 ){
                 $contancto = Doctrine::getTable("Contacto")->find( $bindValues["ca_idconcliente"] );
@@ -409,7 +409,7 @@ class reportesNegActions extends sfActions
 
             $form->bind( $bindValues );
 
-            
+
 
             if( $bindValues["ca_colmas"]=="Sí" ){
                 $bindValuesAduana = $request->getParameter( $formAduana->getName() );
@@ -437,7 +437,7 @@ class reportesNegActions extends sfActions
             }else{
                 $seguroValido = true;
             }
-            
+
             if( $bindValues["ca_impoexpo"]==Constantes::EXPO ){
                 $bindValuesExpo = $request->getParameter( $formExpo->getName() );
                 $formExpo->bind( $bindValuesExpo );
@@ -456,7 +456,7 @@ class reportesNegActions extends sfActions
                 * Guarda los datos
                 ***********************************************/
                 $opcion = $request->getParameter("opcion");
-                
+
                 switch( $opcion ){
                     case 1:
                         if( !$reporte->getCaIdreporte() ){
@@ -466,18 +466,18 @@ class reportesNegActions extends sfActions
                         }
                         break;
                     case 2:
-                        $reporte = $reporte->copiar(2);                        
+                        $reporte = $reporte->copiar(2);
                         break;
                     case 3:
                         $reporte = $reporte->copiar(1);
                         break;
                 }
-                
+
 
                 if( $this->ca_idconcliente ){
                     $reporte->setCaIdconcliente( $this->ca_idconcliente );
                 }
-                
+
                 if( $bindValues["ca_idlinea"]!==null ){
                     $reporte->setCaIdlinea( $bindValues["ca_idlinea"] );
                 }
@@ -497,11 +497,11 @@ class reportesNegActions extends sfActions
                 if( $bindValues["ca_fchdespacho"] ){
                     $reporte->setCaFchdespacho( $bindValues["ca_fchdespacho"] );
                 }
-                
+
                 if( $bindValues["ca_login"] ){
                     $reporte->setCaLogin( $bindValues["ca_login"] );
                 }
-                
+
                 if( $bindValues["ca_mercancia_desc"] ){
                     $reporte->setCaMercanciaDesc( $bindValues["ca_mercancia_desc"] );
                 }
@@ -511,7 +511,7 @@ class reportesNegActions extends sfActions
                 }else{
                     $reporte->setCaMciaPeligrosa( false );
                 }
-                
+
                 if( $bindValues["ca_preferencias_clie"]!==null ){
                     $reporte->setCaPreferenciasClie( $bindValues["ca_preferencias_clie"] );
                 }
@@ -525,7 +525,7 @@ class reportesNegActions extends sfActions
                         $contactos[] = $bindValues["contactos_".$i];
                     }
                 }
-                
+
                 if( count( $contactos )>0 ){
                     $reporte->setCaConfirmarClie( implode(",",$contactos) );
 
@@ -540,7 +540,7 @@ class reportesNegActions extends sfActions
                     }else{
                         $reporte->setCaIdproveedor( null );
                     }
-                    
+
                     if( $this->orden_prov ){
                         $reporte->setCaOrdenProv( $this->orden_prov );
                     }else{
@@ -572,7 +572,7 @@ class reportesNegActions extends sfActions
                     $reporte->setCaNotify( null );
                     $reporte->setCaIdnotify( null );
                 }
-                
+
 
                 if( $this->idconsignatario ){
                     $reporte->setCaIdconsignatario( $this->idconsignatario );
@@ -586,7 +586,7 @@ class reportesNegActions extends sfActions
                     $reporte->setCaIdmaster( null );
                 }
 
-                
+
 
                 if( $this->idrepresentante ){
                     $reporte->setCaIdrepresentante( $this->idrepresentante );
@@ -606,19 +606,19 @@ class reportesNegActions extends sfActions
                 }else{
                     $reporte->setCaInformarNoti( null );
                 }
-                
+
                 if( $bindValues["ca_informar_cons"] ){
                     $reporte->setCaInformarCons( $bindValues["ca_informar_cons"] );
                 }else{
                     $reporte->setCaInformarCons( null );
                 }
-                
+
                 if( $bindValues["ca_informar_repr"] ){
                     $reporte->setCaInformarRepr( $bindValues["ca_informar_repr"] );
                 }else{
                     $reporte->setCaInformarRepr( null );
                 }
-                
+
                 if( $bindValues["ca_informar_mast"] ){
                     $reporte->setCaInformarMast( $bindValues["ca_informar_mast"] );
                 }else{
@@ -627,9 +627,9 @@ class reportesNegActions extends sfActions
 
 
                 if( $bindValues["ca_idcotizacion"] ){
-                    $reporte->setCaIdcotizacion( $bindValues["ca_idcotizacion"] );                
+                    $reporte->setCaIdcotizacion( $bindValues["ca_idcotizacion"] );
                 }else{
-                    $reporte->setCaIdcotizacion( null );                
+                    $reporte->setCaIdcotizacion( null );
                 }
 
 
@@ -645,14 +645,14 @@ class reportesNegActions extends sfActions
                 }else{
                     $reporte->setCaComodato( "No" );
                 }
-                
+
                 if( $bindValues["ca_colmas"]=="Sí" ){
                     $reporte->setCaColmas( "Sí" );
-                    
+
                 }else{
                     $reporte->setCaColmas( "No" );
                 }
-                
+
 
                 if( $bindValues["ca_seguro"]!==null ){
                     $reporte->setCaSeguro( $bindValues["ca_seguro"] );
@@ -674,7 +674,7 @@ class reportesNegActions extends sfActions
                 }else{
                     $reporte->setCaIdconsignar( $bindValues["ca_idconsignar_impo"] );
                     $reporte->setCaIdbodega( $bindValues["ca_idbodega"] );
-                    
+
                 }
 
                 $reporte->setCaLiberacion( null );
@@ -697,11 +697,11 @@ class reportesNegActions extends sfActions
                 }
                 $reporte->save();
                 $repaduana = Doctrine::getTable("RepAduana")->find( $reporte->getCaIdreporte() );
-                if( $bindValues["ca_colmas"]=="Sí" ){                    
+                if( $bindValues["ca_colmas"]=="Sí" ){
                     if( !$repaduana ){
                         $repaduana = new RepAduana();
                         $repaduana->setCaIdreporte( $reporte->getCaIdreporte() );
-                    }                    
+                    }
                     $repaduana->setCaInstrucciones( $bindValuesAduana["ca_instrucciones"] );
                     if( $reporte->getCaImpoexpo()!=Constantes::EXPO ){
                         $repaduana->setCaTransnacarga( $bindValuesAduana["ca_transnacarga"] );
@@ -747,7 +747,7 @@ class reportesNegActions extends sfActions
                         $repexpo = new RepExpo();
                         $repexpo->setCaIdreporte( $reporte->getCaIdreporte() );
                     }
-                    
+
                     $repexpo->setCaPiezas( $bindValuesExpo["ca_piezas"]."|".$bindValuesExpo["tipo_piezas"] );
                     $repexpo->setCaPeso( $bindValuesExpo["ca_peso"] );
                     $repexpo->setCaVolumen( $bindValuesExpo["ca_volumen"] );
@@ -772,9 +772,9 @@ class reportesNegActions extends sfActions
                     $repexpo->setCaTipoexpo( $bindValuesExpo["ca_tipoexpo"] );
                     $repexpo->setCaMotonave( $bindValuesExpo["ca_motonave"] );
                     $repexpo->setCaAnticipo( $bindValuesExpo["ca_anticipo"] );
-                    $repexpo->save();                  
-                    
-                    
+                    $repexpo->save();
+
+
                 }else{
                     if( $repexpo ){
                         $repexpo->delete();
@@ -785,8 +785,8 @@ class reportesNegActions extends sfActions
             }
         }
 
-        
-        
+
+
         $this->reporte=$reporte;
         $this->form = $form;
         $this->formAduana = $formAduana;
@@ -800,7 +800,7 @@ class reportesNegActions extends sfActions
         }else{
             $this->editable = false;
         }
-        
+
         //No permite editar si el usuario no realizo el reporte
         $user = $this->getUser();
         if( !$reporte->isNew() && $user->getUserId()!=$reporte->getCaUsucreado() ){
@@ -826,7 +826,7 @@ class reportesNegActions extends sfActions
         $this->setTemplate("responseTemplate");
     }
 
-            
+
     /*
     * Datos para el panel de conceptos
     * @param sfRequest $request A request object
@@ -879,9 +879,9 @@ class reportesNegActions extends sfActions
                 $row["tipo_app"] = $recargo->getCaTipo();
                 $row["aplicacion"] = $recargo->getCaAplicacion();
                 $row["neta_tar"] = $recargo->getCaNetaTar();
-                $row["neta_min"] = $recargo->getCaNetaMin();                
+                $row["neta_min"] = $recargo->getCaNetaMin();
                 $row["reportar_tar"] = $recargo->getCaReportarTar();
-                $row["reportar_min"] = $recargo->getCaReportarMin();                
+                $row["reportar_min"] = $recargo->getCaReportarMin();
                 $row["cobrar_tar"] = $recargo->getCaCobrarTar();
                 $row["cobrar_min"] = $recargo->getCaCobrarMin();
                 $row["cobrar_idm"] = $recargo->getCaIdmoneda();
@@ -931,9 +931,9 @@ class reportesNegActions extends sfActions
             }
         }
 
-        $row = $baseRow;		
+        $row = $baseRow;
         $row['iditem']="";
-        $row['item']="+";       
+        $row['item']="+";
         $row['tipo']="concepto";
         $row['orden']="Z";
         $conceptos[] = $row;
@@ -1039,7 +1039,7 @@ class reportesNegActions extends sfActions
             if( $request->getParameter("tipo_app")!==null ){
                 $tarifa->setCaTipo( $request->getParameter("tipo_app") );
             }
-            
+
             if( $request->getParameter("neta_tar")!==null ){
                 $tarifa->setCaNetaTar( $request->getParameter("neta_tar") );
             }else{
@@ -1065,7 +1065,7 @@ class reportesNegActions extends sfActions
             }else{
                 $tarifa->setCaReportarMin( 0 ); //[TODO] permitir null
             }
-            
+
 
             if( $request->getParameter("cobrar_tar")!==null ){
                 $tarifa->setCaCobrarTar( $request->getParameter("cobrar_tar") );
@@ -1121,7 +1121,7 @@ class reportesNegActions extends sfActions
                 $gasto->delete();
             }
 
-            if( $tarifa ){               
+            if( $tarifa ){
 
                 $tarifa->delete();
             }
@@ -1171,8 +1171,8 @@ class reportesNegActions extends sfActions
                              ->addWhere("tr.ca_tipo like ?", "%".Constantes::RECARGO_LOCAL."%" )
                              ->execute();
 
-        
-            
+
+
         foreach( $recargos as $recargo ){
             $row = $baseRow;
             $row["iditem"] = $recargo->getCaIdrecargo();
@@ -1192,7 +1192,7 @@ class reportesNegActions extends sfActions
             $row['orden']="Y-".$recargo->getTipoRecargo()->getCaRecargo();
             $conceptos[] = $row;
         }
-        
+
 
         $row = $baseRow;
         $row['iditem']="";
@@ -1205,10 +1205,10 @@ class reportesNegActions extends sfActions
 
         $this->responseArray=array("items"=>$conceptos, "total"=>count($conceptos), "success"=>true);
         $this->setTemplate("responseTemplate");
-        
+
 
     }
-    
+
 
     /*
     * Datos para el panel de recargos de aduana
@@ -1239,9 +1239,9 @@ class reportesNegActions extends sfActions
 
         foreach( $recargos as $recargo ){
             $row = $baseRow;
-            $row["iditem"] = $recargo->getCaIdcosto();           
+            $row["iditem"] = $recargo->getCaIdcosto();
             $row["item"] = utf8_encode($recargo->getCosto()->getCaCosto());
-            $row["tipo_app"] = $recargo->getCaTipo();           
+            $row["tipo_app"] = $recargo->getCaTipo();
             $row["vlrcosto"] = $recargo->getCaVlrcosto();
             $row["mincosto"] = $recargo->getCaMincosto();
             $row["netcosto"] = $recargo->getCaNetcosto();
@@ -1279,13 +1279,13 @@ class reportesNegActions extends sfActions
         $tipo = $request->getParameter("tipo");
 
         if( $tipo=="costo" ){
-            $idreporte = $request->getParameter("idreporte");            
+            $idreporte = $request->getParameter("idreporte");
             $idcosto = $request->getParameter("iditem");
             $tarifa = Doctrine::getTable("RepCosto")->find(array($idreporte, $idcosto ));
             if( !$tarifa ){
                 $tarifa = new RepCosto();
                 $tarifa->setCaIdreporte( $idreporte );
-                $tarifa->setCaIdcosto( $idcosto );               
+                $tarifa->setCaIdcosto( $idcosto );
             }
 
             if( $request->getParameter("tipo_app")!==null ){
@@ -1304,7 +1304,7 @@ class reportesNegActions extends sfActions
                 $tarifa->setCaNetcosto( $request->getParameter("netcosto") );
             }
 
-            
+
 
             if( $request->getParameter("idmoneda")!==null ){
                 $tarifa->setCaIdmoneda( $request->getParameter("idmoneda") );
@@ -1352,7 +1352,7 @@ class reportesNegActions extends sfActions
             $idreporte = $request->getParameter("idreporte");
             $idcosto = $request->getParameter("iditem");
             $tarifa = Doctrine::getTable("RepCosto")->find(array($idreporte, $idcosto));
-            
+
             if( $tarifa ){
                 $tarifa->delete();
             }
@@ -1368,10 +1368,10 @@ class reportesNegActions extends sfActions
 
 
 
-	
-	
-	
-	
+
+
+
+
 	/**
 	* Genera un archivo PDF con el reporte de negocio
 	* @author Andres Botero
@@ -1383,10 +1383,10 @@ class reportesNegActions extends sfActions
 		$this->forward404Unless($this->reporte);
 		$this->filename = $this->getrequestparameter("filename");
 	}
-	
+
 	/*
-	* Anula un reporte 
-	* @author: Andres Botero 
+	* Anula un reporte
+	* @author: Andres Botero
 	*/
 	public function executeAnularReporte( $request ){
         $this->opcion = $this->getRequestParameter("opcion");
@@ -1411,7 +1411,7 @@ class reportesNegActions extends sfActions
 	*/
 	public function executeRevivirReporte( $request ){
         $this->opcion = $this->getRequestParameter("opcion");
-        $this->forward404Unless( $request->getParameter("id") );        
+        $this->forward404Unless( $request->getParameter("id") );
 		$reporte = Doctrine::getTable("Reporte")->find( $request->getParameter("id") );
 		$this->forward404Unless($reporte);
 
@@ -1423,11 +1423,11 @@ class reportesNegActions extends sfActions
 
         $this->redirect( "reportesNeg/verReporte?id=".$reporte->getCaIdreporte().($this->opcion?"&opcion=".$this->opcion:"") );
 	}
-	
-	
-	
+
+
+
 	/*
-	* Envia un reporte por correo 	
+	* Envia un reporte por correo
 	*/
 	public function executeEnviarReporteEmail(){
         $this->opcion = $this->getRequestParameter("opcion");
@@ -1435,59 +1435,59 @@ class reportesNegActions extends sfActions
 		$fileName = sfConfig::get('sf_root_dir').DIRECTORY_SEPARATOR."tmp".DIRECTORY_SEPARATOR."reporte".$this->getRequestParameter("reporteId").".pdf" ;
 		if(file_exists($fileName)){
 			@unlink( $fileName );
-		}	 		
-		$this->getRequest()->setParameter('filename',$fileName); 
+		}
+		$this->getRequest()->setParameter('filename',$fileName);
 		sfContext::getInstance()->getController()->getPresentationFor( 'reportesNeg', 'generarPDF') ;
 		$this->setLayout("ajax");
-		
-						
+
+
 		$user = $this->getUser();
-					
+
 		//Crea el correo electronico
 		$email = new Email();
 		$email->setCaFchenvio( date("Y-m-d H:i:s") );
 		$email->setCaUsuenvio( $user->getUserId() );
-		$email->setCaTipo( "Envío de reportes" ); 		
+		$email->setCaTipo( "Envío de reportes" );
 		$email->setCaIdcaso( $this->getRequestParameter("reporteId") );
 		$email->setCaFrom( $user->getEmail() );
 		$email->setCaFromname( $user->getNombre() );
-		
+
 		if( $this->getRequestParameter("readreceipt") ){
 			$email->setCaReadReceipt( $this->getRequestParameter("readreceipt") );
 		}
 
 		$email->setCaReplyto( $user->getEmail() );
-				
-		$recips = explode(",",$this->getRequestParameter("destinatario"));									
+
+		$recips = explode(",",$this->getRequestParameter("destinatario"));
 		if( is_array($recips) ){
-			foreach( $recips as $recip ){			
-				$recip = str_replace(" ", "", $recip );			
+			foreach( $recips as $recip ){
+				$recip = str_replace(" ", "", $recip );
 				if( $recip ){
-					$email->addTo( $recip ); 
-				}
-			}	
-		}
-				
-		$recips =  explode(",",$this->getRequestParameter("cc")) ;
-		if( is_array($recips) ){
-			foreach( $recips as $recip ){			
-				$recip = str_replace(" ", "", $recip );			
-				if( $recip ){
-					$email->addCc( $recip ); 
+					$email->addTo( $recip );
 				}
 			}
 		}
-				
-		$email->addCc( $this->getUser()->getEmail() );					
-		$email->setCaSubject( $this->getRequestParameter("asunto") );		
-		$email->setCaBody( $this->getRequestParameter("mensaje") );	
+
+		$recips =  explode(",",$this->getRequestParameter("cc")) ;
+		if( is_array($recips) ){
+			foreach( $recips as $recip ){
+				$recip = str_replace(" ", "", $recip );
+				if( $recip ){
+					$email->addCc( $recip );
+				}
+			}
+		}
+
+		$email->addCc( $this->getUser()->getEmail() );
+		$email->setCaSubject( $this->getRequestParameter("asunto") );
+		$email->setCaBody( $this->getRequestParameter("mensaje") );
 		$email->addAttachment( $fileName );
 		$email->save(); //guarda el cuerpo del mensaje
-		$this->error = $email->send();	
+		$this->error = $email->send();
 		if($this->error){
 			$this->getRequest()->setError("mensaje", "no se ha enviado correctamente");
 		}
-		@unlink( $fileName );		
+		@unlink( $fileName );
 	}
 
 
@@ -1555,13 +1555,13 @@ class reportesNegActions extends sfActions
 
             if( $reporte->getCaImpoexpo()==Constantes::IMPO ||  $reporte->getCaImpoexpo()==Constantes::TRIANGULACION ){
 
-                $tarea = new NotTarea();                
+                $tarea = new NotTarea();
                 $tarea->setCaUrl( "reporteExt/crearReporte/idreporte/".$reporte->getCaIdreporte() );
                 $tarea->setCaIdlistatarea( 4 );
                 $tarea->setCaFchcreado( date("Y-m-d H:i:s") );
                 $festivos = TimeUtils::getFestivos();
                 $tarea->setTiempo( TimeUtils::getFestivos(), 57600); // dos días habiles
-                
+
                 $tarea->setCaPrioridad( 1 );
                 $tarea->setCaUsucreado( "Administrador" );
 
@@ -1630,8 +1630,8 @@ class reportesNegActions extends sfActions
         $this->grupos = $grupos;
         $this->reporte = $reporte;
     }
-	
-	
+
+
 	/**
 	*
 	* @author Andres Botero
@@ -1649,7 +1649,7 @@ class reportesNegActions extends sfActions
             $this->forward404Unless( $reporte2 );
             //Mueve los status al nuevo reporte
             Doctrine::getTable("RepStatus")
-                      ->createQuery("s")                      
+                      ->createQuery("s")
                       ->update()
                       ->set("s.ca_idreporte", $reporte->getCaIdreporte())
                       ->where("s.ca_idreporte IN (SELECT r2.ca_idreporte FROM Reporte r2 WHERE r2.ca_consecutivo = ?)", $consecutivo)
@@ -1666,13 +1666,13 @@ class reportesNegActions extends sfActions
                       ->where("ca_consecutivo = ?", $consecutivo)
                       ->execute();
 
-            
+
             $this->redirect("reportesNeg/consultaReporte?id=".$reporte->getCaIdreporte());
         }
 
         $this->reporte = $reporte;
     }
-	
+
 
 }
 
