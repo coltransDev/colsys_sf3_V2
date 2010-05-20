@@ -198,6 +198,54 @@ class bavariaActions extends sfActions {
 
 
 	/*
+	* Recargar Información de la Orden
+	*/
+        public function executeRecargarOrden() {
+            $bavaria = Doctrine::getTable("Bavaria")->find($this->getRequestParameter ( 'idbavaria' ) ) ;
+            $this->forward404Unless($bavaria);
+
+            $this->responseArray=array("id"=>$this->getRequestParameter ( 'id' ),  "success"=>false);
+
+            $reportes = Doctrine::getTable("Reporte")
+                        ->createQuery("r")
+                        ->where("r.ca_consecutivo like ?", $bavaria->getCaConsecutivo())
+                        ->addWhere("r.ca_usuanulado IS NULL")
+                        ->execute();
+            foreach($reportes as $reporte){
+                if(!$reporte->esUltimaVersion()){
+                    continue;
+                }
+
+                $piezas_mem = ($reporte->getPiezas()!=NULL and $reporte->getPiezas()!="")?explode(" ",$reporte->getPiezas()):array(0,0);
+                $peso_mem = ($reporte->getPeso()!=NULL and $reporte->getPeso()!="")?explode(" ",$reporte->getPeso()):array(0,0);
+                $embalaje = "";
+
+                $parametro = Doctrine::getTable("Parametro")->find(array("CU047",0,$piezas_mem[1]));
+                if ($parametro) {
+                    $embalaje = $parametro->getCaValor2();
+                }
+
+                $num_factura = ($reporte->getProperty("numfactproveedor")!=NULL)?$reporte->getProperty("numfactproveedor"):0;
+
+                $this->responseArray["orden_nro"]=substr($reporte->getCaOrdenClie(),0,10);
+                $this->responseArray["modalidad"]=$reporte->getCaModalidad();
+                $this->responseArray["factura_nro"]=substr($num_factura,0,15);
+                $this->responseArray["factura_fch"]=$reporte->getProperty("fchfactproveedor");
+                $this->responseArray["recibocarga_fch"]=$reporte->getProperty("fchrecibocarga");
+                $this->responseArray["zarpe_fch"]=$reporte->getETS();
+                $this->responseArray["doctransporte"]=$reporte->getDoctransporte();
+                $this->responseArray["doctransporte_fch"]=$reporte->getProperty("fchdoctransporte");
+                $this->responseArray["peso_bruto"]=$peso_mem[0];
+                $this->responseArray["peso_neto"]=round($peso_mem[0]*90/100,0);
+                $this->responseArray["tipo_embalaje"]=$embalaje;
+                $this->responseArray["piezas"]=$piezas_mem[0];
+            }
+            $this->responseArray["success"]=true;
+            $this->setTemplate("responseTemplate");
+        }
+
+
+	/*
 	* Elimina la Orden para nuevamente ser procesada
 	*/
         public function executeEliminarOrden() {
@@ -285,36 +333,7 @@ class bavariaActions extends sfActions {
                 }
                 $salida.= "\r\n";
                 unset($space);
-/*
-                $salida.= "2|";  // 1
-                $salida.= "BA00|";  // 2
-                $salida.= str_pad(substr($notify->getCaOrdenClie(),0,10),10, " ")."|"; // 3
-                $salida.= str_pad($notify->getProperty("numfactproveedor"),15, " ")."|"; // 4
-                $salida.= str_pad(null,15, " ")."|"; // 5 -> Facturas Adicionales
-                $fchfactProveedor = Utils::transformDate($notify->getProperty("fchfactproveedor"), $format="Ymd");
-                $salida.= str_pad($fchfactProveedor,8, " ")."|"; // 6
-                $salida.= str_pad(number_format($notify->getProperty("vlrfactproveedor")*100, 0, '', ''),13, " ")."|"; // 7
-                $salida.= "\r";
-                unset($space);
 
-                foreach( $equipos as $equipo ){
-                        $salida.= "3|";  // 1
-                        $salida.= "BA00|";  // 2
-                        $salida.= str_pad(substr($notify->getCaOrdenClie(),0,10),10, " ")."|"; // 3
-                        $salida.= str_pad($notify->getProperty("numfactproveedor"),15, " ")."|"; // 4
-                        $salida.= str_pad($equipo->getCaIdequipo(),25, " ")."|"; // 5
-                        $fchLlegada = Utils::transformDate($status->getCaFchllegada(), $format="Ymd");
-                        $salida.= str_pad($fchLlegada,8, " ")."|"; // 6
-                        $spaces = array(13,8,13,8); // Campos del 7 al 10
-                        foreach( $spaces as $space ){
-                                $salida.= str_pad(null,$space, " ")."|";
-                        }
-                        $salida.= str_pad($tipo_contenedor[$equipo->getCaIdconcepto()], 1, " " )."|"; // 11
-                        $salida.= str_pad(null,1, " ")."|"; // 12
-                        $salida.= "\r";
-                        unset($space);
-                }
- */
                 $notify->setCaFchreportado(date("d M Y H:i:s"));
                 $notify->setCaUsureportado($this->getUser()->getUserId());
                 $notify->save();
