@@ -2017,6 +2017,70 @@ GRANT ALL ON TABLE tb_bavaria TO "Usuarios";
 
 
 
+/* Generador de Id para la tabla tb_clariant */;
+
+create sequence tb_clariant_id
+minvalue     1
+maxvalue 32767
+increment    1
+start        1;
+REVOKE ALL ON tb_clariant_id FROM PUBLIC;
+GRANT ALL ON tb_clariant_id TO "Administrador";
+GRANT ALL ON tb_clariant_id TO GROUP "Usuarios";
+
+
+/* Tabla de clariant */;
+
+-- Table: tb_clariant
+-- DROP TABLE tb_clariant;
+create table tb_clariant
+( ca_idclariant numeric(9) DEFAULT nextval('tb_clariant_id') UNIQUE NOT NULL
+, ca_pais varchar (2) NOT NULL
+, ca_proveedor varchar (100) NOT NULL
+, ca_orden varchar (10) NOT NULL
+, ca_documento_fch date NOT NULL
+, ca_incoterm varchar (20) NOT NULL
+, ca_consecutivo varchar (20)
+, ca_fchanulado timestamp
+, ca_usuanulado varchar (20)
+, ca_fcharchivado timestamp
+, ca_usuarchivado varchar (20)
+, constraint pk_tb_clariant PRIMARY KEY (ca_idclariant)
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE tb_clariant OWNER TO postgres;
+GRANT ALL ON TABLE tb_clariant TO postgres;
+GRANT ALL ON TABLE tb_clariant TO "Administrador";
+GRANT ALL ON TABLE tb_clariant TO "Usuarios";
+
+
+-- Table: tb_clardetails
+-- DROP TABLE tb_clardetails;
+create table tb_clardetails
+( ca_idclariant numeric(9) NOT NULL
+, ca_posicion integer NOT NULL
+, ca_material varchar (20) NOT NULL
+, ca_descripcion varchar (250) NOT NULL
+, ca_cantidad numeric(10,2) NOT NULL
+, ca_despacho numeric(10,2) NOT NULL
+, ca_unidad varchar (2) NOT NULL
+, constraint pk_tb_clardetails PRIMARY KEY (ca_idclariant,ca_posicion)
+, constraint fk_tb_clardetails FOREIGN KEY (ca_idclariant) REFERENCES tb_clariant (ca_idclariant)
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE tb_clardetails OWNER TO postgres;
+GRANT ALL ON TABLE tb_clardetails TO postgres;
+GRANT ALL ON TABLE tb_clardetails TO "Administrador";
+GRANT ALL ON TABLE tb_clardetails TO "Usuarios";
+
+
+
+
+
 /* Vistas de la Base de Datos */
 
 // Drop view vi_usuarios;
@@ -2331,11 +2395,10 @@ GRANT ALL ON vi_terceros TO GROUP "Usuarios";
 
 
 // DROP VIEW vi_reportes;
-
 CREATE OR REPLACE VIEW vi_reportes AS
  SELECT r.ca_idreporte, r.ca_version, ( SELECT max(rr.ca_version) AS max
            FROM tb_reportes rr
-          WHERE r.ca_consecutivo::text = rr.ca_consecutivo::text) AS ca_versiones, r.ca_fchreporte, r.ca_consecutivo, r.ca_idcotizacion, r.ca_origen, c1.ca_ciudad AS ca_ciuorigen, t1.ca_idtrafico AS ca_idtraorigen, t1.ca_nombre AS ca_traorigen, r.ca_destino, c2.ca_ciudad AS ca_ciudestino, t2.ca_idtrafico AS ca_idtradestino, t2.ca_nombre AS ca_tradestino, r.ca_impoexpo, r.ca_fchdespacho, r.ca_idagente, a.ca_nombre AS ca_agente, r.ca_incoterms, r.ca_mercancia_desc, r.ca_mcia_peligrosa, r.ca_idproveedor, r.ca_orden_prov, r.ca_idconcliente, r.ca_orden_clie, r.ca_confirmar_clie, r.ca_idconsignatario, r.ca_informar_cons, r.ca_idnotify, r.ca_informar_noti, r.ca_idmaster, r.ca_informar_mast, r.ca_notify, r.ca_idrepresentante, r.ca_informar_repr, r.ca_transporte, r.ca_modalidad, r.ca_colmas, r.ca_seguro, r.ca_liberacion, r.ca_tiempocredito, r.ca_preferencias_clie, r.ca_instrucciones, r.ca_idconsignar, b1.ca_nombre AS ca_consignar, r.ca_idbodega, b2.ca_nombre AS ca_bodega, b2.ca_tipo AS ca_tipobodega, r.ca_mastersame, r.ca_continuacion, r.ca_continuacion_dest, c3.ca_ciudad AS ca_final_dest, r.ca_continuacion_conf, r.ca_etapa_actual, r.ca_idlinea, r.ca_idetapa, r.ca_fchultstatus, r.ca_idtarea_rext, r.ca_idseguimiento, l.ca_nombre, r.ca_propiedades, r.ca_fchcreado, r.ca_usucreado, r.ca_fchactualizado, r.ca_usuactualizado, r.ca_fchanulado, r.ca_usuanulado, r.ca_detanulado, r.ca_fchcerrado, r.ca_usucerrado, tr1.ca_nombre AS ca_nombre_pro, tr1.ca_contacto AS ca_contacto_pro, tr1.ca_direccion AS ca_direccion_pro, tr1.ca_telefonos AS ca_telefonos_pro, tr1.ca_fax AS ca_fax_pro, tr1.ca_email AS ca_email_pro, tr2.ca_compania AS ca_nombre_cli, tr2.ca_idcliente, tr2.ca_digito, tr2.ca_ncompleto_cn AS ca_contacto_cli, tr2.ca_telefonos AS ca_telefonos_cli, tr2.ca_fax AS ca_fax_cli, tr2.ca_email AS ca_email_cli, ((((((replace(tr2.ca_direccion_cl::text, '|'::text, ' '::text) ||
+          WHERE r.ca_consecutivo::text = rr.ca_consecutivo::text) AS ca_versiones, r.ca_fchreporte, r.ca_consecutivo, r.ca_idcotizacion, r.ca_origen, c1.ca_ciudad AS ca_ciuorigen, t1.ca_idtrafico AS ca_idtraorigen, t1.ca_nombre AS ca_traorigen, r.ca_destino, c2.ca_ciudad AS ca_ciudestino, t2.ca_idtrafico AS ca_idtradestino, t2.ca_nombre AS ca_tradestino, r.ca_impoexpo, r.ca_fchdespacho, r.ca_idagente, a.ca_nombre AS ca_agente, r.ca_incoterms, r.ca_mercancia_desc, r.ca_mcia_peligrosa, r.ca_idproveedor, r.ca_orden_prov, r.ca_idconcliente, r.ca_orden_clie, r.ca_confirmar_clie, r.ca_idconsignatario, r.ca_informar_cons, r.ca_idnotify, r.ca_informar_noti, r.ca_idmaster, r.ca_informar_mast, r.ca_notify, r.ca_idrepresentante, r.ca_informar_repr, r.ca_transporte, r.ca_modalidad, r.ca_colmas, r.ca_seguro, r.ca_liberacion, r.ca_tiempocredito, r.ca_preferencias_clie, r.ca_instrucciones, r.ca_idconsignar, b1.ca_nombre AS ca_consignar, r.ca_idbodega, b2.ca_nombre AS ca_bodega, b2.ca_tipo AS ca_tipobodega, r.ca_mastersame, r.ca_continuacion, r.ca_continuacion_dest, c3.ca_ciudad AS ca_final_dest, r.ca_continuacion_conf, r.ca_etapa_actual, r.ca_idlinea, r.ca_idetapa, r.ca_fchultstatus, r.ca_idtarea_rext, r.ca_idseguimiento, l.ca_nombre, r.ca_propiedades, r.ca_fchcreado, r.ca_usucreado, r.ca_fchactualizado, r.ca_usuactualizado, r.ca_fchanulado, r.ca_usuanulado, r.ca_detanulado, r.ca_fchcerrado, r.ca_usucerrado, tr1.ca_nombre AS ca_nombre_pro, tr1.ca_contacto AS ca_contacto_pro, tr1.ca_direccion AS ca_direccion_pro, tr1.ca_telefonos AS ca_telefonos_pro, tr1.ca_fax AS ca_fax_pro, tr1.ca_email AS ca_email_pro, tr2.ca_compania AS ca_nombre_cli, tr2.ca_idcliente, tr2.ca_digito, tr2.ca_ncompleto_cn AS ca_contacto_cli, tr2.ca_telefonos AS ca_telefonos_cli, tr2.ca_fax AS ca_fax_cli, tr2.ca_email AS ca_email_cli, (((((("replace"(tr2.ca_direccion_cl::text, '|'::text, ' '::text) ||
         CASE
             WHEN tr2.ca_oficina::text <> ''::text THEN ' Of. '::text || tr2.ca_oficina::text
             ELSE ''::text
@@ -2359,59 +2422,62 @@ CREATE OR REPLACE VIEW vi_reportes AS
    FROM tb_reportes r
    LEFT JOIN vi_transporlineas l ON r.ca_idlinea = l.ca_idlinea
    LEFT JOIN tb_terceros tr1 ON tr1.ca_idtercero::text = array_to_string(string_to_array(r.ca_idproveedor::text, '|'::text), ','::text)
-   LEFT JOIN (
-	   SELECT cl.ca_compania, cl.ca_idcliente, cl.ca_digito, cn.ca_idcontacto, (((cn.ca_nombres::text || ' '::text) || cn.ca_papellido::text) || ' '::text) || cn.ca_sapellido::text AS ca_ncompleto_cn, cn.ca_telefonos, cn.ca_fax, cn.ca_email, cl.ca_direccion AS ca_direccion_cl, cl.ca_oficina, cl.ca_torre, cl.ca_bloque, cl.ca_interior, cl.ca_complemento, cd.ca_ciudad
-		   FROM tb_clientes cl
-		   LEFT JOIN tb_concliente cn ON cn.ca_idcliente = cl.ca_idcliente
-		   LEFT JOIN tb_libcliente ca ON ca.ca_idcliente = cl.ca_idcliente
-		   JOIN tb_ciudades cd ON cl.ca_idciudad::text = cd.ca_idciudad::text
-	   ) tr2 ON r.ca_idconcliente = tr2.ca_idcontacto
-   LEFT JOIN (
-	   SELECT t.ca_idtercero, t.ca_nombre, t.ca_contacto, t.ca_direccion, t.ca_telefonos, t.ca_fax, t.ca_email, t.ca_vendedor, t.ca_tipo, t.ca_idciudad, cd.ca_ciudad, cd.ca_idtrafico, tr.ca_nombre AS ca_nomtrafico
-			FROM tb_terceros t, tb_ciudades cd, tb_traficos tr
-			WHERE t.ca_idciudad::text = cd.ca_idciudad::text AND cd.ca_idtrafico::text = tr.ca_idtrafico::text
-			ORDER BY t.ca_nombre, t.ca_contacto
-		) tr3 ON r.ca_idrepresentante::smallint = tr3.ca_idtercero
-   LEFT JOIN (
-	   SELECT t.ca_idtercero, t.ca_nombre, t.ca_identificacion, t.ca_contacto, t.ca_direccion, t.ca_telefonos, t.ca_fax, t.ca_email, t.ca_vendedor, t.ca_tipo, t.ca_idciudad, cd.ca_ciudad, cd.ca_idtrafico, tr.ca_nombre AS ca_nomtrafico
-			FROM tb_terceros t, tb_ciudades cd, tb_traficos tr
-			WHERE t.ca_idciudad::text = cd.ca_idciudad::text AND cd.ca_idtrafico::text = tr.ca_idtrafico::text
-			ORDER BY t.ca_nombre, t.ca_contacto
-	  ) tr4 ON r.ca_idconsignatario::smallint = tr4.ca_idtercero
-   LEFT JOIN (
-		SELECT t.ca_idtercero, t.ca_nombre, t.ca_contacto, t.ca_direccion, t.ca_telefonos, t.ca_fax, t.ca_email, t.ca_vendedor, t.ca_tipo, t.ca_idciudad, cd.ca_ciudad, cd.ca_idtrafico, tr.ca_nombre AS ca_nomtrafico
-			FROM tb_terceros t, tb_ciudades cd, tb_traficos tr
-			WHERE t.ca_idciudad::text = cd.ca_idciudad::text AND cd.ca_idtrafico::text = tr.ca_idtrafico::text
-			ORDER BY t.ca_nombre, t.ca_contacto
-  ) tr5 ON r.ca_idnotify::smallint = tr5.ca_idtercero
-   LEFT JOIN (
-		SELECT t.ca_idtercero, t.ca_nombre, t.ca_contacto, t.ca_direccion, t.ca_telefonos, t.ca_fax, t.ca_email, t.ca_vendedor, t.ca_tipo, t.ca_idciudad, cd.ca_ciudad, cd.ca_idtrafico, tr.ca_nombre AS ca_nomtrafico
-			FROM tb_terceros t, tb_ciudades cd, tb_traficos tr
-			WHERE t.ca_idciudad::text = cd.ca_idciudad::text AND cd.ca_idtrafico::text = tr.ca_idtrafico::text
-			ORDER BY t.ca_nombre, t.ca_contacto
-  ) tr6 ON r.ca_idmaster::smallint = tr6.ca_idtercero
+
+   LEFT JOIN
+    ( SELECT cl.ca_compania, cl.ca_idcliente, cl.ca_digito, cn.ca_idcontacto, (((cn.ca_nombres::text || ' '::text) || cn.ca_papellido::text) || ' '::text) || cn.ca_sapellido::text AS ca_ncompleto_cn, cn.ca_telefonos, cn.ca_fax, cn.ca_email, cl.ca_direccion AS ca_direccion_cl, cl.ca_oficina, cl.ca_torre, cl.ca_bloque, cl.ca_interior, cl.ca_complemento, cd.ca_ciudad
+        FROM tb_clientes cl
+            INNER JOIN tb_concliente cn ON cn.ca_idcliente::text = cl.ca_idcliente::text
+            INNER JOIN tb_ciudades cd ON cl.ca_idciudad::text = cd.ca_idciudad::text
+            LEFT JOIN tb_libcliente ca ON ca.ca_idcliente::text = cl.ca_idcliente::text
+    ) tr2 ON r.ca_idconcliente = tr2.ca_idcontacto
+
+   LEFT JOIN
+    ( SELECT t.ca_idtercero, t.ca_nombre, t.ca_contacto, t.ca_direccion, t.ca_telefonos, t.ca_fax, t.ca_email, t.ca_vendedor, t.ca_tipo, t.ca_idciudad, cd.ca_ciudad, cd.ca_idtrafico, tr.ca_nombre AS ca_nomtrafico
+        FROM tb_terceros t, tb_ciudades cd, tb_traficos tr
+            WHERE t.ca_idciudad::text = cd.ca_idciudad::text AND cd.ca_idtrafico::text = tr.ca_idtrafico::text
+        ORDER BY t.ca_nombre, t.ca_contacto
+    ) tr3 ON r.ca_idrepresentante::smallint = tr3.ca_idtercero
+
+   LEFT JOIN
+    ( SELECT t.ca_idtercero, t.ca_nombre, t.ca_identificacion, t.ca_contacto, t.ca_direccion, t.ca_telefonos, t.ca_fax, t.ca_email, t.ca_vendedor, t.ca_tipo, t.ca_idciudad, cd.ca_ciudad, cd.ca_idtrafico, tr.ca_nombre AS ca_nomtrafico
+        FROM tb_terceros t, tb_ciudades cd, tb_traficos tr
+            WHERE t.ca_idciudad::text = cd.ca_idciudad::text AND cd.ca_idtrafico::text = tr.ca_idtrafico::text
+        ORDER BY t.ca_nombre, t.ca_contacto
+    ) tr4 ON r.ca_idconsignatario::smallint = tr4.ca_idtercero
+
+   LEFT JOIN
+    ( SELECT t.ca_idtercero, t.ca_nombre, t.ca_contacto, t.ca_direccion, t.ca_telefonos, t.ca_fax, t.ca_email, t.ca_vendedor, t.ca_tipo, t.ca_idciudad, cd.ca_ciudad, cd.ca_idtrafico, tr.ca_nombre AS ca_nomtrafico
+        FROM tb_terceros t, tb_ciudades cd, tb_traficos tr
+            WHERE t.ca_idciudad::text = cd.ca_idciudad::text AND cd.ca_idtrafico::text = tr.ca_idtrafico::text
+        ORDER BY t.ca_nombre, t.ca_contacto
+    ) tr5 ON r.ca_idnotify::smallint = tr5.ca_idtercero
+
+   LEFT JOIN
+    ( SELECT t.ca_idtercero, t.ca_nombre, t.ca_contacto, t.ca_direccion, t.ca_telefonos, t.ca_fax, t.ca_email, t.ca_vendedor, t.ca_tipo, t.ca_idciudad, cd.ca_ciudad, cd.ca_idtrafico, tr.ca_nombre AS ca_nomtrafico
+        FROM tb_terceros t, tb_ciudades cd, tb_traficos tr
+            WHERE t.ca_idciudad::text = cd.ca_idciudad::text AND cd.ca_idtrafico::text = tr.ca_idtrafico::text
+        ORDER BY t.ca_nombre, t.ca_contacto
+    ) tr6 ON r.ca_idmaster::smallint = tr6.ca_idtercero
+
    LEFT JOIN tb_repseguro s ON r.ca_idreporte = s.ca_idreporte
    LEFT JOIN tb_repaduana ra ON r.ca_idreporte = ra.ca_idreporte
    LEFT JOIN control.tb_usuarios u2 ON ra.ca_coordinador::text = u2.ca_login::text
-
-   INNER JOIN vi_agentes a ON r.ca_idagente = a.ca_idagente::numeric
-   INNER JOIN tb_ciudades c1 ON r.ca_origen::text = c1.ca_idciudad::text
-   INNER JOIN tb_ciudades c2 ON r.ca_destino::text = c2.ca_idciudad::text
-   INNER JOIN tb_ciudades c3 ON r.ca_continuacion_dest::text = c3.ca_idciudad::text
-   INNER JOIN tb_traficos t1 ON c1.ca_idtrafico::text = t1.ca_idtrafico::text
-   INNER JOIN tb_traficos t2 ON c2.ca_idtrafico::text = t2.ca_idtrafico::text
-   INNER JOIN tb_bodegas b1 ON r.ca_idconsignar = b1.ca_idbodega
-   INNER JOIN tb_bodegas b2 ON r.ca_idbodega = b2.ca_idbodega
-   INNER JOIN control.tb_usuarios u ON r.ca_login::text = u.ca_login::text
-
-  WHERE  r.ca_usuanulado IS NULL
-
-  ORDER BY date_part('year'::text, r.ca_fchreporte) DESC, to_number(substr(r.ca_consecutivo::text, 0, "position"(r.ca_consecutivo::text, '-'::text)), '99999999'::text) DESC, r.ca_version DESC;
+   JOIN vi_agentes a ON r.ca_idagente::numeric = a.ca_idagente::numeric
+   JOIN tb_ciudades c1 ON r.ca_origen::text = c1.ca_idciudad::text
+   JOIN tb_ciudades c2 ON r.ca_destino::text = c2.ca_idciudad::text
+   JOIN tb_ciudades c3 ON r.ca_continuacion_dest::text = c3.ca_idciudad::text
+   JOIN tb_traficos t1 ON c1.ca_idtrafico::text = t1.ca_idtrafico::text
+   JOIN tb_traficos t2 ON c2.ca_idtrafico::text = t2.ca_idtrafico::text
+   JOIN tb_bodegas b1 ON r.ca_idconsignar = b1.ca_idbodega
+   JOIN tb_bodegas b2 ON r.ca_idbodega = b2.ca_idbodega
+   JOIN control.tb_usuarios u ON r.ca_login::text = u.ca_login::text
+  WHERE r.ca_usuanulado IS NULL
+  ORDER BY substr(r.ca_fchreporte::text,0,4) DESC, to_number(substr(r.ca_consecutivo::text, 0, "position"(r.ca_consecutivo::text, '-'::text)), '99999999'::text) DESC, r.ca_version DESC;
 
 ALTER TABLE vi_reportes OWNER TO postgres;
-GRANT ALL ON TABLE vi_reportes TO postgres;
 GRANT ALL ON TABLE vi_reportes TO "Administrador";
 GRANT ALL ON TABLE vi_reportes TO "Usuarios";
+GRANT ALL ON TABLE vi_reportes TO postgres;
 
 
 
@@ -2422,11 +2488,11 @@ CREATE OR REPLACE VIEW vi_repconsulta AS
    FROM tb_reportes rp
    LEFT JOIN tb_ciudades cd1 ON rp.ca_origen::text = cd1.ca_idciudad::text
    LEFT JOIN tb_ciudades cd2 ON rp.ca_destino::text = cd2.ca_idciudad::text
-   LEFT JOIN tb_concliente cc ON rp.ca_idconcliente = cc.ca_idcontacto
-   LEFT JOIN tb_clientes cl ON cc.ca_idcliente = cl.ca_idcliente
+   LEFT JOIN tb_concliente cc ON rp.ca_idconcliente::text = cc.ca_idcontacto::text
+   LEFT JOIN tb_clientes cl ON cc.ca_idcliente::text = cl.ca_idcliente::text
    LEFT JOIN tb_terceros tr ON rp.ca_idproveedor::integer = tr.ca_idtercero::integer
   WHERE rp.ca_modalidad::text = ''::text AND rp.ca_incoterms::text !~~ 'CIF%'::text AND rp.ca_incoterms::text !~~ 'CIP%'::text AND rp.ca_incoterms::text !~~ 'CPT%'::text AND rp.ca_incoterms::text !~~ 'CFR%'::text AND rp.ca_usuanulado IS NULL
-  ORDER BY date_part('year'::text, rp.ca_fchreporte) DESC, to_number(substr(rp.ca_consecutivo::text, 0, "position"(rp.ca_consecutivo::text, '-'::text)), '99999999'::text) DESC, rp.ca_version DESC;
+  ORDER BY substr(rp.ca_fchreporte::text,0,4) DESC, to_number(substr(rp.ca_consecutivo::text, 0, "position"(rp.ca_consecutivo::text, '-'::text)), '99999999'::text) DESC, rp.ca_version DESC;
 
 ALTER TABLE vi_repconsulta OWNER TO postgres;
 GRANT ALL ON TABLE vi_repconsulta TO postgres;
@@ -2622,7 +2688,7 @@ Create view vi_inoconsulta_sea as
 Select (CASE WHEN (string_to_array(im.ca_referencia::text, '.'::text))[5]::integer BETWEEN 0 AND 4 AND im.ca_fchreferencia > '2009-01-01' THEN ((string_to_array(im.ca_referencia::text, '.'::text))[5]::integer) + 2010 ELSE (string_to_array(im.ca_referencia::text, '.'::text))[5]::integer + 2000 END) as ca_ano,
        (string_to_array(im.ca_referencia::text, '.'::text))[3] AS ca_mes, (string_to_array(im.ca_referencia::text, '.'::text))[2] AS ca_trafico, substr(im.ca_referencia,1,3) as ca_modal, im.ca_referencia, im.ca_mbls, im.ca_motonave, im.ca_observaciones, t.ca_nombre, t.ca_sigla, ie.ca_idequipo, im.ca_origen, c1.ca_ciudad as ca_ciuorigen,
 	   t1.ca_nombre as ca_traorigen, im.ca_destino, c2.ca_ciudad as ca_ciudestino, t2.ca_nombre as ca_tradestino, im.ca_fchembarque, im.ca_fcharribo, ic.ca_hbls, ic.ca_idcliente, c.ca_compania, rp.ca_consecutivo, ii.ca_factura, it.ca_factura as ca_factura_prov, us.ca_sucursal, dm.ca_iddocactual, dm.ca_fchenvio, dm.ca_usuenvio,
-	   (case when im.ca_provisional then 'Provisional' else (case when im.ca_usucerrado IS NOT NULL then 'Cerrado' else 'Abierto' end) end) as ca_estado
+	   (case when im.ca_provisional::text then 'Provisional' else (case when im.ca_usucerrado::text IS NOT NULL then 'Cerrado' else 'Abierto' end) end) as ca_estado
        from tb_inomaestra_sea im
        LEFT JOIN tb_ciudades c1 ON (im.ca_origen = c1.ca_idciudad)
        LEFT JOIN tb_ciudades c2 ON (im.ca_destino = c2.ca_idciudad)
@@ -2636,7 +2702,7 @@ Select (CASE WHEN (string_to_array(im.ca_referencia::text, '.'::text))[5]::integ
        LEFT JOIN tb_inoingresos_sea ii ON (im.ca_referencia = ii.ca_referencia and ic.ca_idcliente = ii.ca_idcliente and ic.ca_hbls = ii.ca_hbls)
        LEFT JOIN tb_inocostos_sea it ON (im.ca_referencia = it.ca_referencia)
        LEFT JOIN tb_dianmaestra dm ON im.ca_referencia::text = dm.ca_referencia::text
-       LEFT OUTER JOIN control.tb_usuarios us ON (im.ca_usucreado = us.ca_login);
+       LEFT JOIN control.tb_usuarios us ON (im.ca_usucreado = us.ca_login);
 REVOKE ALL ON vi_inoconsulta_sea FROM PUBLIC;
 GRANT ALL ON vi_inoconsulta_sea TO "Administrador";
 GRANT ALL ON vi_inoconsulta_sea TO GROUP "Usuarios";
