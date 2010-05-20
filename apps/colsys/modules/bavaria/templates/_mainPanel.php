@@ -369,7 +369,7 @@ Ext.extend(MainPanel, Ext.grid.EditorGridPanel, {
 
             Ext.Ajax.request(
             {
-                waitMsg: 'Eliminando...',
+                waitMsg: 'Archivando...',
                 url: '<?=url_for("bavaria/archivarOrden")?>',
                 //method: 'POST',
                 //Solamente se envian los cambios
@@ -445,12 +445,83 @@ Ext.extend(MainPanel, Ext.grid.EditorGridPanel, {
 
     }
     ,
+    recargarOrden : function(){
+        var storeTransacciones = this.store;
+
+        if( this.ctxRecord &&  confirm("Desea continuar?") ){
+
+            var id = this.ctxRecord.id;
+            idx = null;
+
+            Ext.Ajax.request(
+            {
+                waitMsg: 'Recargando...',
+                url: '<?=url_for("bavaria/recargarOrden")?>',
+                //method: 'POST',
+                //Solamente se envian los cambios
+                params :	{
+                    id: id,
+                    idbavaria: this.ctxRecord.data.idbavaria
+                },
+
+                //Ejecuta esta accion en caso de fallo
+                //(404 error etc, ***NOT*** success=false)
+                failure:function(response,options){
+                    alert( response.responseText );
+                    success = false;
+                },
+
+                //Ejecuta esta accion cuando el resultado es exitoso
+                success:function(response,options){
+                    var res = Ext.util.JSON.decode( response.responseText );
+                    if( res.success ){
+                        record = storeTransacciones.getById( res.id );
+                        record.set("orden_nro", res.orden_nro);
+                        record.set("modalidad", res.modalidad);
+                        if (res.factura_nro != null){
+                            record.set("factura_nro", res.factura_nro);
+                        }
+                        if (res.factura_fch != null){
+                            record.set("factura_fch", res.factura_fch);
+                        }
+                        if (res.recibocarga_fch != null){
+                            record.set("recibocarga_fch", res.recibocarga_fch);
+                        }
+                        if (res.zarpe_fch != null){
+                            record.set("zarpe_fch", res.zarpe_fch);
+                        }
+                        if (res.doctransporte != null){
+                            record.set("doctransporte", res.doctransporte);
+                        }
+                        if (res.doctransporte_fch != null){
+                            record.set("doctransporte_fch", res.doctransporte_fch);
+                        }
+                        if (res.peso_bruto != null){
+                            record.set("peso_bruto", res.peso_bruto);
+                        }
+                        if (res.peso_neto != null){
+                            record.set("peso_neto", res.peso_neto);
+                        }
+                        if (res.tipo_embalaje != null){
+                            record.set("tipo_embalaje", res.tipo_embalaje);
+                        }
+                        if (res.piezas != null){
+                            record.set("piezas", res.piezas);
+                        }
+                    }
+                }
+            });
+        }
+
+    }
+    ,
     eliminarOrden : function(){
         var storeTransacciones = this.store;
 
         if( this.ctxRecord &&  confirm("Desea continuar?") ){
 
             var id = this.ctxRecord.id;
+            idx = null;
 
             Ext.Ajax.request(
             {
@@ -502,6 +573,11 @@ Ext.extend(MainPanel, Ext.grid.EditorGridPanel, {
                         iconCls: '',
                         scope:this,
                         handler: this.duplicarOrden
+                    },{
+                        text: 'Recargar Orden',
+                        iconCls: '',
+                        scope:this,
+                        handler: this.recargarOrden
                     },{
                         text: 'Archivar Orden',
                         iconCls: '',
