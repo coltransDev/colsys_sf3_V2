@@ -214,6 +214,95 @@ class reportesActions extends sfActions
         $this->reporte = $reporte;
     }
 
+
+    /**
+    *
+    * @author Carlos G. López M.
+    */
+    public function executeReportesNegCliente( $request ){
+        if( $request->getParameter( "idcliente" ) ){
+            $clientes = Doctrine::getTable("Cliente")
+                            ->createQuery("c")
+                            ->where("c.ca_idgrupo = ? ", $request->getParameter( "idcliente" ))
+                            ->execute();
+        }
+
+        $idcontactos = array();
+
+        foreach ($clientes as $cliente){
+            $contactos = $cliente->getContacto();
+            foreach ($contactos as $contacto){
+                $idcontactos[] = $contacto->getCaIdcontacto();
+            }
+        }
+
+        $reportes = Doctrine::getTable("Reporte")
+                    ->createQuery("r")
+                    ->innerJoin("r.Contacto c")
+                    ->addOrderBy("c.ca_idcliente")
+                    ->addOrderBy("r.ca_origen")
+                    ->addOrderBy("r.ca_idreporte")
+                    ->whereIn("r.ca_idconcliente", $idcontactos)
+                    ->addWhere("r.ca_consecutivo like ?", "%-2010")
+                    ->addWhere("r.ca_impoexpo = ?", "Importación")
+                    ->addWhere("r.ca_usuanulado IS NULL")
+                    ->execute();
+
+        $lastCliente = null;
+        echo "<table border='1'>";
+        echo "<tr>";
+        echo "  <th>Reporte</th>";
+        echo "  <th>Fch.Rep.</th>";
+        echo "  <th>Vía</th>";
+        echo "  <th>Origen</th>";
+        echo "  <th>Nro.Orden</th>";
+        echo "  <th>Peso</th>";
+        echo "  <th>Volumen</th>";
+        echo "  <th>Piezas</th>";
+        echo "  <th>ETS</th>";
+        echo "  <th>ETA</th>";
+        echo "  <th>Proveedor</th>";
+        echo "  <th>Incoterms</th>";
+
+        foreach ($reportes as $reporte){
+            if(!$reporte->esUltimaVersion()){
+                continue;
+            }
+            if ($lastCliente != $reporte->getCliente()){
+                echo "<tr>";
+                echo "  <td colspan='13'><strong>".$reporte->getCliente()."</strong></td>";
+                echo "</tr>";
+                $lastCliente = $reporte->getCliente();
+            }
+            echo "<tr>";
+            echo "  <td>".$reporte->getCaConsecutivo()."</td>";
+            echo "  <td>".$reporte->getCaFchreporte()."</td>";
+            echo "  <td>".$reporte->getCaTransporte()."</td>";
+            echo "  <td>".$reporte->getOrigen()."</td>";
+            echo "  <td>".$reporte->getCaOrdenClie()."</td>";
+
+            $status = $reporte->getUltimoStatus();
+            if ($status){
+                echo "  <td>&nbsp;".str_replace("|"," ",$status->getCaPeso())."</td>";
+                echo "  <td>&nbsp;".str_replace("|"," ",$status->getCaVolumen())."</td>";
+                echo "  <td>&nbsp;".str_replace("|"," ",$status->getCaPiezas())."</td>";
+                echo "  <td>&nbsp;".$status->getCaFchsalida()."</td>";
+                echo "  <td>&nbsp;".$status->getCaFchllegada()."</td>";
+            }else{
+                echo "  <td>&nbsp;</td>";
+                echo "  <td>&nbsp;</td>";
+                echo "  <td>&nbsp;</td>";
+                echo "  <td>&nbsp;</td>";
+                echo "  <td>&nbsp;</td>";
+            }
+            echo "  <td>".$reporte->getProveedoresStr()."</td>";
+            echo "  <td>&nbsp;".str_replace("|","<br />",$reporte->getCaIncoterms())."</td>";
+
+            echo "</tr>";
+        }
+        echo "</table>";
+    }
+
 }
 
 ?>
