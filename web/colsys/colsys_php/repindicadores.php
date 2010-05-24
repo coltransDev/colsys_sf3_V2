@@ -1304,7 +1304,12 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
     } else if ($array_avg < "24:00:00") {
          $promedio_general = date($format_avg,array_avg($array_avg));
     } else {
-         $promedio_general = date("d, H:m:s",array_avg($array_avg));
+         list($dia, $hor, $min, $seg) = sscanf(date("d, H:i:s",array_avg($array_avg)), "%d, %d:%d:%d");
+         if ($dia == 30){
+            $promedio_general = date("H:i:s",array_avg($array_avg));
+         }else{
+            $promedio_general = date("d, H:i:s",array_avg($array_avg));
+         }
     }
 
     echo "<TR HEIGHT=5>";
