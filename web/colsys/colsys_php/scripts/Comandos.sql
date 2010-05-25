@@ -510,11 +510,8 @@ alter table tb_repgastos add column ca_usucreado varchar (20);
 alter table tb_repgastos add column ca_fchactualizado timestamp;
 alter table tb_repgastos add column ca_usuactualizado varchar (20);
 
-
 alter table tb_falaheader_adu add column ca_fchanulado timestamp;
 alter table tb_falaheader_adu add column ca_usuanulado varchar (20);
-
-
 
 ================== Migración Tablas de Fletes a Tabla unificada para Impo Expo / Aereo - Maritimo ==================
 
@@ -2163,3 +2160,40 @@ insert into tb_parametros values ('CU082',8,'Navemar','5730');
 insert into tb_parametros values ('CU083',1,'DE-049','023');
 insert into tb_parametros values ('CU083',1,'US-001','249');
 insert into tb_parametros values ('CU083',1,'IT-039','386');
+
+
+ALTER TABLE tb_falaheader ADD COLUMN ca_fcharchivado timestamp without time zone;
+ALTER TABLE tb_falaheader ADD COLUMN ca_usuarchivado character varying(20);
+ALTER TABLE tb_falaheader ALTER COLUMN ca_fcharchivado SET STORAGE PLAIN;
+ALTER TABLE tb_falaheader ALTER COLUMN ca_usuarchivado SET STORAGE EXTENDED;
+
+ALTER TABLE tb_falaheader_adu ADD COLUMN ca_fcharchivado timestamp without time zone;
+ALTER TABLE tb_falaheader_adu ADD COLUMN ca_usuarchivado character varying(20);
+ALTER TABLE tb_falaheader_adu ALTER COLUMN ca_fcharchivado SET STORAGE PLAIN;
+ALTER TABLE tb_falaheader_adu ALTER COLUMN ca_usuarchivado SET STORAGE EXTENDED;
+
+
+insert into tb_parametros values ('CU083',10,'Air France','2423');
+insert into tb_parametros values ('CU083',11,'American Airlines','2414');
+insert into tb_parametros values ('CU083',12,'Arrow Air','3637');
+insert into tb_parametros values ('CU083',13,'Cargolux','2463');
+insert into tb_parametros values ('CU083',14,'Centurion','4035');
+insert into tb_parametros values ('CU083',15,'Iberia','2414');
+insert into tb_parametros values ('CU083',16,'KLM','2526');
+insert into tb_parametros values ('CU083',17,'L.T.U.','2415');
+insert into tb_parametros values ('CU083',18,'Lan Chile','2425');
+insert into tb_parametros values ('CU083',19,'Martin Air','2466');
+insert into tb_parametros values ('CU083',20,'Tampa / Avianca','2259');
+insert into tb_parametros values ('CU083',21,'Tampa Cargo','2076');
+
+
+insert into tb_parametros values ('CU084',1,'LCL','LCL');
+insert into tb_parametros values ('CU084',2,'CY/CY','CY/CY');
+insert into tb_parametros values ('CU084',3,'CFS/CFS','CFS/CFS');
+insert into tb_parametros values ('CU084',4,'CFS/CY','CFS/CY');
+
+alter table tb_falaheader add column ca_numero_invoice varchar (20);
+
+insert into tb_parametros values ('CU085',1,'yacgarzon@Falabella.com.co',null);
+insert into tb_parametros values ('CU085',2,'smrodriguez@Falabella.com.co',null);
+
