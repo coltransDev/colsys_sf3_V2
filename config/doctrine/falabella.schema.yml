@@ -33,6 +33,7 @@ FalaHeader:
     ca_lsd: date
     ca_incoterms: string
     ca_payment_terms: string
+    ca_numero_invoice: string
     ca_proforma_number: string
     ca_origin: string
     ca_destination: string
@@ -42,6 +43,8 @@ FalaHeader:
     ca_manufacturer_contact: string
     ca_manufacturer_phone: string
     ca_manufacturer_fax: string
+    ca_fcharchivado: timestamp
+    ca_usuarchivado: string
     ca_fchanulado: timestamp
     ca_usuanulado: string
   relations:
