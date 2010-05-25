@@ -22,6 +22,7 @@ class falabellaAduComponents extends sfComponents {
                                    ->where("d.ca_iddoc = ? ", $this->fala_header->getCaIddoc())
                                    ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
                                    ->execute();
+            
             $this->unidades = ParametroTable::retrieveByCaso("CU078");
 	}
 
