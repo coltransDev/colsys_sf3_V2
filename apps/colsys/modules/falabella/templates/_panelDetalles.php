@@ -6,10 +6,10 @@
  */
 
 $details = $sf_data->getRaw( "details" );
+$container = $sf_data->getRaw( "container" );
 
 ?>
 <script type="text/javascript">
-
 
 PanelDetalles = function(){
 
@@ -85,21 +85,15 @@ PanelDetalles = function(){
       {
         header: "SKU",
         dataIndex: 'sku',
-        sortable:false,
+        sortable:true,
         width: 30,
-        renderer: this.formatItem,
-        editor: new Ext.form.TextField({
-				allowBlank: false 				
-			})        
+        renderer: this.formatItem
       },
       {
         header: "Descripción",
         dataIndex: 'descripcion_item',
-        sortable:false,
-        width: 100,
-        editor: new Ext.form.TextField({
-            allowBlank: false
-        })
+        sortable:true,
+        width: 100
       },
       {
         header: "#U. Pedidas",
@@ -195,7 +189,7 @@ PanelDetalles = function(){
       {
         header: "Contenedor",
         dataIndex: 'num_cont_part2',
-        sortable:false,
+        sortable:true,
         width: 40,
         editor: new Ext.form.TextField({
 				allowBlank: false
@@ -204,7 +198,7 @@ PanelDetalles = function(){
       {
         header: "#Sello",
         dataIndex: 'num_cont_sell',
-        sortable:false,
+        sortable:true,
         width: 50,
         editor: new Ext.form.TextField({
 				allowBlank: false
@@ -213,7 +207,7 @@ PanelDetalles = function(){
       {
         header: "Tipo Contenedor",
         dataIndex: 'container_iso',
-        sortable:false,
+        sortable:true,
         width: 80,
         editor: this.editorTipoContenedor
       }
@@ -256,8 +250,10 @@ PanelDetalles = function(){
 
 
     PanelDetalles.superclass.constructor.call(this, {
+       id:'panel-detalle',
        loadMask: {msg:'Cargando...'},
        clicksToEdit: 1,
+       autoHeight: true,
        plugins: [this.checkColumn],
        view: new Ext.grid.GridView({
        
@@ -270,14 +266,7 @@ PanelDetalles = function(){
             rowcontextmenu: this.onRowcontextMenu,
             afterEdit: this.onAfterEdit
             
-        },
-        tbar: [{
-            text:'Guardar',
-            iconCls: 'disk',
-            scope:this,
-            handler: this.guardarCambios
         }
-      ]
 
     });
 
@@ -342,6 +331,11 @@ Ext.extend(PanelDetalles, Ext.grid.EditorGridPanel, {
             enableScrolling : false,
             items: [                   
                     {
+                        text: 'Seleccionar todo',
+                        iconCls: '',
+                        scope:this,
+                        handler: this.seleccionarTodo
+                    },{
                         text: 'Duplicar item',
                         iconCls: '',
                         scope:this,
@@ -375,7 +369,6 @@ Ext.extend(PanelDetalles, Ext.grid.EditorGridPanel, {
 
     ,
     formatItem: function(value, p, record) {
-
         return String.format(
             '<b>{0}</b>',
             value
@@ -399,6 +392,15 @@ Ext.extend(PanelDetalles, Ext.grid.EditorGridPanel, {
                 }
             }
         }
+    },
+
+    seleccionarTodo: function() {
+        var grid = Ext.getCmp("panel-detalle");
+        var store = grid.getStore();
+
+        store.each( function( r ){
+           r.set("sel", true);
+        });
     }
 
 });

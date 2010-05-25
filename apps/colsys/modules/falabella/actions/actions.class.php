@@ -21,9 +21,9 @@ class falabellaActions extends sfActions {
 	* Lista los PO disponibles
 	*/
 	public function executeList() {
-		
 		$this->fala_headers = Doctrine::getTable("FalaHeader")
                                         ->createQuery("f")
+                                        ->addWhere("f.ca_fcharchivado is null")
                                         ->addOrderBy("f.ca_fecha_carpeta")
                                         ->execute();
 	}
@@ -36,6 +36,14 @@ class falabellaActions extends sfActions {
 		$this->forward404Unless($this->header);
 		$this->instructions = $this->header->getFalaInstruction();
 		$this->info = $this->header->getFalaShipmentInfo();
+
+                $this->emails = ParametroTable::retrieveByCaso("CU085");
+
+                $contactos = '';
+                foreach($this->emails as $email){
+                    $contactos.= $email->getCaValor().",";
+                }
+                $this->contactos = substr($contactos, 0, strlen($contactos)-1);
 	}
 
 
@@ -45,8 +53,6 @@ class falabellaActions extends sfActions {
 	public function executeDetails(){
 		$this->fala_header = Doctrine::getTable("FalaHeader")->find ( base64_decode($this->getRequestParameter ( 'iddoc' )) );
 		$this->forward404Unless($this->fala_header);
-		
-		$this->container = ParametroTable::retrieveByCaso("CU057");
 
                 $response = sfContext::getInstance()->getResponse();
 		$response->addJavaScript("extExtras/CheckColumn",'last');
@@ -58,6 +64,12 @@ class falabellaActions extends sfActions {
 	public function executeObserveHeader(){
 		$fala_header = Doctrine::getTable("FalaHeader")->find ( $this->getRequestParameter ( 'iddoc' ) );
 		$this->forward404Unless($fala_header);
+
+                $this->responseArray=array("id"=>$this->getRequestParameter('id'), "success"=>false);
+
+		if( $this->getRequestParameter ( 'reporte' )!==null ){
+			$fala_header->setCaReporte( $this->getRequestParameter ( 'reporte' ) );
+		}
 
 		if( $this->getRequestParameter ( 'num_viaje' )!==null ){
 			$fala_header->setCaNumViaje( $this->getRequestParameter ( 'num_viaje' ) );
@@ -75,13 +87,14 @@ class falabellaActions extends sfActions {
 			$fala_header->setCaNumeroInvoice( $this->getRequestParameter ( 'numero_invoice' ) );
 		}
 
-		if( $this->getRequestParameter ( 'monto_invoice' )!==null ){
-			$fala_header->setCaMontoInvoiceMiles( $this->getRequestParameter ( 'monto_invoice' ) );
+		if( $this->getRequestParameter ( 'monto_invoice_miles' )!==null ){
+			$fala_header->setCaMontoInvoiceMiles( $this->getRequestParameter ( 'monto_invoice_miles' ) );
 		}
 
 		$fala_header->save();
-		return sfView::NONE;
 
+                $this->responseArray["success"]=true;
+                $this->setTemplate("responseTemplate");
 	}
 
 	/*
@@ -91,58 +104,58 @@ class falabellaActions extends sfActions {
 		$faladetail = Doctrine::getTable("FalaDetail")->find(array( $this->getRequestParameter ( 'iddoc' ), $this->getRequestParameter ( 'sku' ) ) ) ;
 		$this->forward404Unless($faladetail);
 
-        $this->responseArray=array("id"=>$this->getRequestParameter ( 'id' ),  "success"=>false);
+                $this->responseArray=array("id"=>$this->getRequestParameter ( 'id' ),  "success"=>false);
 
-		if( $this->getRequestParameter ( 'num_unidades' )!==null ){
-			$faladetail->setCaCantidadMiles( $this->getRequestParameter ( 'num_unidades' ) );
+		if( $this->getRequestParameter ( 'cantidad_miles' )!==null ){
+			$faladetail->setCaCantidadMiles( $this->getRequestParameter ( 'cantidad_miles' ) );
 		}
 
-		if( $this->getRequestParameter ( 'uni_unidades' ) ){
-			$faladetail->setCaUnidadMedidadCantidad( $this->getRequestParameter ( 'uni_unidades' ) );
+		if( $this->getRequestParameter ( 'unidad_medidad_cantidad' ) ){
+			$faladetail->setCaUnidadMedidadCantidad( $this->getRequestParameter ( 'unidad_medidad_cantidad' ) );
 		}
 
-		if( $this->getRequestParameter ( 'num_paquetes' ) ){
-			$faladetail->setCaCantidadPaquetesMiles( $this->getRequestParameter ( 'num_paquetes' ) );
+		if( $this->getRequestParameter ( 'cantidad_paquetes_miles' ) ){
+			$faladetail->setCaCantidadPaquetesMiles( $this->getRequestParameter ( 'cantidad_paquetes_miles' ) );
 		}
 
-		if( $this->getRequestParameter ( 'paq_unidades' ) ){
-			$faladetail->setCaUnidadMedidaPaquetes( $this->getRequestParameter ( 'paq_unidades' ) );
+		if( $this->getRequestParameter ( 'unidad_medida_paquetes' ) ){
+			$faladetail->setCaUnidadMedidaPaquetes( $this->getRequestParameter ( 'unidad_medida_paquetes' ) );
 		}
 
-		if( $this->getRequestParameter ( 'peso' ) ){
-			$faladetail->setCaCantidadPesoMiles( $this->getRequestParameter ( 'peso' ) );
+		if( $this->getRequestParameter ( 'cantidad_volumen_miles' ) ){
+			$faladetail->setCaCantidadVolumenMiles( $this->getRequestParameter ( 'cantidad_volumen_miles' ) );
 		}
 
-		if( $this->getRequestParameter ( 'pes_unidades' ) ){
-			$faladetail->setCaUnidadMedidaPeso( $this->getRequestParameter ( 'pes_unidades' ) );
+		if( $this->getRequestParameter ( 'unidad_medida_volumen' ) ){
+			$faladetail->setCaUnidadMedidaVolumen( $this->getRequestParameter ( 'unidad_medida_volumen' ) );
 		}
 
-		if( $this->getRequestParameter ( 'volumen' ) ){
-			$faladetail->setCaCantidadVolumenMiles( $this->getRequestParameter ( 'volumen' ) );
+		if( $this->getRequestParameter ( 'cantidad_peso_miles' ) ){
+			$faladetail->setCaCantidadPesoMiles( $this->getRequestParameter ( 'cantidad_peso_miles' ) );
 		}
 
-		if( $this->getRequestParameter ( 'vol_unidades' ) ){
-			$faladetail->setCaUnidadMedidaVolumen( $this->getRequestParameter ( 'vol_unidades' ) );
+		if( $this->getRequestParameter ( 'unidad_medida_peso' ) ){
+			$faladetail->setCaUnidadMedidaPeso( $this->getRequestParameter ( 'unidad_medida_peso' ) );
 		}
 
-		if( $this->getRequestParameter ( 'cont_part1' ) ){
-			$faladetail->setCaNumContPart1( $this->getRequestParameter ( 'cont_part1' ) );
+		if( $this->getRequestParameter ( 'num_cont_part1' ) ){
+			$faladetail->setCaNumContPart1( $this->getRequestParameter ( 'num_cont_part1' ) );
 		}
 
-		if( $this->getRequestParameter ( 'cont_part2' ) ){
-			$faladetail->setCaNumContPart2( $this->getRequestParameter ( 'cont_part2' ) );
+		if( $this->getRequestParameter ( 'num_cont_part2' ) ){
+			$faladetail->setCaNumContPart2( $this->getRequestParameter ( 'num_cont_part2' ) );
 		}
 
-		if( $this->getRequestParameter ( 'cont_sell' ) ){
-			$faladetail->setCaNumContSell( $this->getRequestParameter ( 'cont_sell' ) );
+		if( $this->getRequestParameter ( 'num_cont_sell' ) ){
+			$faladetail->setCaNumContSell( $this->getRequestParameter ( 'num_cont_sell' ) );
 		}
 
 		if( $this->getRequestParameter ( 'container_iso' ) ){
 			$faladetail->setCaContainerIso( $this->getRequestParameter ( 'container_iso' ) );
 		}
-        $faladetail->save();
-        
-        $this->responseArray["success"]=true;		
+                $faladetail->save();
+
+                $this->responseArray["success"]=true;
 		$this->setTemplate("responseTemplate");
 	}
 
@@ -164,6 +177,18 @@ class falabellaActions extends sfActions {
 			return sfView::ERROR;
 		}
 
+	}
+
+	/*
+	* Permite archivar la Orden de Pedido
+	*/
+	public function executeArchivarOrden(){
+		$fala_header = Doctrine::getTable("FalaHeader")->find ( base64_decode($this->getRequestParameter ( 'iddoc' )) );
+		$this->forward404Unless($fala_header);
+		$fala_header->setCaFcharchivado(date("d M Y H:i:s"));
+		$fala_header->setCaUsuarchivado($this->getUser()->getUserId());
+		$fala_header->save();
+		$this->redirect("falabella/list");
 	}
 
 	/*
@@ -478,23 +503,24 @@ class falabellaActions extends sfActions {
 
 	public function executeEnviarEmail(){
 
-		$this->setLayout("ajax");
+		// $this->setLayout("ajax");
 		$content  = sfContext::getInstance()->getController()->getPresentationFor( 'falabella', 'shippingInstructions', 'email') ;
 
 		$user = $this->getUser();
 
 		//Crea el correo electronico
 		$email = new Email();
-		$email->setCaFchenvio( date("Y-m-d H:i:s") );
 		$email->setCaUsuenvio( $user->getUserId() );
 		$email->setCaTipo( "Fal Shipping Inst." );
-		$email->setCaIdcaso( substr(-20,20,base64_decode($this->getRequestParameter('iddoc'))) );
+		$email->setCaIdcaso( substr(base64_decode($this->getRequestParameter('iddoc')),-5) );
 		$email->setCaFrom( $user->getEmail() );
 		$email->setCaFromname( $user->getNombre() );
 
-		if( $this->getRequestParameter("readreceipt") ){
-			$email->setCaReadReceipt( $this->getRequestParameter("readreceipt") );
-		}
+                if( $this->getRequestParameter("readreceipt") ) {
+                    $email->setCaReadreceipt( true );
+                }else {
+                    $email->setCaReadreceipt( false );
+                }
 
 		$email->setCaReplyto( $user->getEmail() );
 
@@ -523,12 +549,9 @@ class falabellaActions extends sfActions {
 		$email->setCaBody( $this->getRequestParameter("mensaje")."<br />".$content );
 
 		$email->save(); //guarda el cuerpo del mensaje
-		$this->error = $email->send();
-		if($this->error){
-			$this->getRequest()->setError("mensaje", "no se ha enviado correctamente");
-		}
-
-
+                $email->send(); //envía el mensaje
+                
+        $this->redirect("falabella/list");
 	}
 }
 ?>

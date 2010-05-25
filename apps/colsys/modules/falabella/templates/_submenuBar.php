@@ -24,11 +24,16 @@ switch($action){
 		$button[2]["image"]="22x22/kexi_kexi.gif"; 			
 		$button[2]["link"]= "#";
 		$button[2]["onClick"]= "factura_file()";				
-		
-		$button[3]["name"]="Anular";
-		$button[3]["tooltip"]="Anular la Orden de Pedido";
-		$button[3]["image"]="22x22/cancel.gif"; 			
-		$button[3]["link"]= "falabella/anularOrden?iddoc=".$this->getRequestParameter("iddoc");				
+
+		$button[3]["name"]="Archivar";
+		$button[3]["tooltip"]="Archivar la Orden de Pedido";
+		$button[3]["image"]="22x22/attach.gif";
+		$button[3]["link"]= "falabella/archivarOrden?iddoc=".$this->getRequestParameter("iddoc");
+
+		$button[4]["name"]="Anular";
+		$button[4]["tooltip"]="Anular la Orden de Pedido";
+		$button[4]["image"]="22x22/cancel.gif";
+		$button[4]["link"]= "falabella/anularOrden?iddoc=".$this->getRequestParameter("iddoc");
 		
 		break;	
 	case "shippingInstructions":	

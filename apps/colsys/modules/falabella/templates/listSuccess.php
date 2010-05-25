@@ -19,9 +19,9 @@
   <th>C&oacute;digo puerto pickup</th>
   <th>C&oacute;digo puerto descarga</th>
   <th>Container mode</th>
-  <th>Proveedor</th>
   <th>Codigo proveedor</th>
-  <th>Monto invoice miles</th>
+  <th>Proveedor</th>
+  <th>ProformaNumber</th>
   <th>Numero invoice</th>
   </tr>
 </thead>
@@ -36,10 +36,10 @@
       <td><?php echo $fala_header->getCaCodigoPuertoPickup() ?></td>
       <td><?php echo $fala_header->getCaCodigoPuertoDescarga() ?></td>
       <td><?php echo $fala_header->getCaContainerMode() ?></td>
-      <td><?php echo $fala_header->getCaNombreProveedor() ?></td>
       <td><?php echo $fala_header->getCaCodigoProveedor() ?></td>
-      <td><?php echo $fala_header->getCaMontoInvoiceMiles() ?></td>
+      <td><?php echo $fala_header->getCaNombreProveedor() ?></td>
       <td><?php echo $fala_header->getCaProformaNumber() ?></td>
+      <td><?php echo $fala_header->getCaNumeroInvoice() ?></td>
       </tr>
 <?php 
 	endforeach; 
