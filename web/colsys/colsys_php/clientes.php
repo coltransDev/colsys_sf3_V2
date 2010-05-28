@@ -1475,7 +1475,7 @@ require_once("menu.php");
              echo "<TR>";
              $z=0;
              $emails = explode(",", $rs->Value('ca_confirmar'));
-             for ($i=0; $i<4; $i++){
+             for ($i=0; $i<5; $i++){
              	echo "  <TR>";
              	for ($j=0; $j<3; $j++) {
              		$cadena = (strlen($emails[$z])==0)?"&nbsp;":$emails[$z];
