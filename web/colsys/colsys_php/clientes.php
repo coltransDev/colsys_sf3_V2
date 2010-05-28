@@ -533,7 +533,7 @@ require_once("menu.php");
 		   echo "      <TABLE WIDTH=100% CELLSPACING=1 CELLPADDING=0 BORDER=0>";
 		   $z=0;
 		   $emails = explode(",", $rs->Value('ca_confirmar'));
-		   for ($i=0; $i<4; $i++){
+		   for ($i=0; $i<5; $i++){
 		   		echo "  <TR>";
 				for ($j=0; $j<3; $j++) {
 					$cadena = (strlen($emails[$z])==0)?"&nbsp;":$emails[$z];
