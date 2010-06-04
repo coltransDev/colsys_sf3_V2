@@ -2301,23 +2301,72 @@ GRANT ALL ON vi_liberaciones TO "Administrador";
 GRANT ALL ON vi_liberaciones TO GROUP "Usuarios";
 
 
-// Drop view vi_clientes cascade;
-Create view vi_clientes as
-Select c.ca_idcliente, c.ca_digito, c.ca_compania, c.ca_papellido, c.ca_sapellido, c.ca_nombres, c.ca_nombres ||' '|| c.ca_papellido ||' '|| c.ca_sapellido as ca_ncompleto, c.ca_saludo, c.ca_sexo, c.ca_cumpleanos, c.ca_direccion, c.ca_oficina, c.ca_torre, c.ca_bloque, c.ca_interior, c.ca_localidad, c.ca_complemento, c.ca_telefonos, c.ca_fax, c.ca_idciudad, cd.ca_ciudad, tr.ca_nombre as ca_pais, c.ca_website, c.ca_email, c.ca_actividad, c.ca_sectoreco, c.ca_vendedor, tu.ca_sucursal, c.ca_confirmar,
-       c.ca_fchcircular, case when c.ca_tipo IS NOT NULL or length(c.ca_tipo) != 0 then 'Vigente'  else case when c.ca_fchcircular IS NULL then 'Sin'  else case when (c.ca_fchcircular+365<now()) then 'Vencido'  else 'Vigente' end end end as ca_stdcircular, c.ca_nvlriesgo, c.ca_fchcotratoag, case when c.ca_fchcotratoag IS NULL then 'Sin' else case when (c.ca_fchcotratoag+365<now()) then 'Vencido' else 'Vigente' end end as ca_stdcotratoag, c.ca_listaclinton, c.ca_leyinsolvencia, c.ca_comentario, c.ca_status, c.ca_tipo, c.ca_entidad,
-       c.ca_calificacion, c.ca_coordinador, u.ca_nombre as ca_nombre_coor, c.ca_preferencias, (select max(e.ca_fchvisita) from vi_enccliente e where c.ca_idcliente = e.ca_idcliente) as ca_fchvisita, c.ca_fchcreado, c.ca_usucreado, c.ca_usufinanciero, c.ca_fchactualizado, c.ca_usuactualizado, c.ca_fchfinanciero, cl.ca_diascredito, cl.ca_cupo, cl.ca_observaciones, cm.ca_fchfirmado, cm.ca_fchvencimiento, case when cm.ca_fchfirmado IS NULL then 'Sin' else case when (cm.ca_fchvencimiento<now()) then 'Vencido' else 'Vigente' end end as ca_stdcarta_gtia,
-       cl.ca_fchcreado as ca_fchcreado_lb, cl.ca_usucreado as ca_usucreado_lb, cl.ca_fchactualizado as ca_fchactualizado_lb, cl.ca_usuactualizado as ca_usuactualizado_lb,
-       st1.ca_estado as ca_coltrans_std, st1.ca_fchestado as ca_coltrans_fch, st2.ca_estado as ca_colmas_std, st2.ca_fchestado as ca_colmas_fch
-       from tb_clientes c
-       LEFT OUTER JOIN (select * from tb_stdcliente where OID IN (select max(sc.OID) from tb_stdcliente sc where ca_empresa = 'Coltrans' group by ca_idcliente)) as st1 ON (c.ca_idcliente = st1.ca_idcliente)
-       LEFT OUTER JOIN (select * from tb_stdcliente where OID IN (select max(sc.OID) from tb_stdcliente sc where ca_empresa = 'Colmas' group by ca_idcliente)) as st2 ON (c.ca_idcliente = st2.ca_idcliente)
-       LEFT OUTER JOIN tb_libcliente cl ON (c.ca_idcliente = cl.ca_idcliente) LEFT OUTER JOIN control.tb_usuarios u ON (c.ca_coordinador = u.ca_login)
-       LEFT OUTER JOIN (select cf.ca_idcliente, cf.ca_fchfirmado, ca_fchvencimiento from (select ca_idcliente, max(ca_fchfirmado) as ca_fchfirmado from tb_comcliente group by ca_idcliente) as cf INNER JOIN (select ca_idcliente, ca_fchfirmado, ca_fchvencimiento from tb_comcliente) as cm ON (cf.ca_idcliente = cm.ca_idcliente and cf.ca_fchfirmado = cm.ca_fchfirmado)) as cm ON (c.ca_idcliente = cm.ca_idcliente)
-       LEFT OUTER JOIN control.tb_usuarios tu ON (c.ca_vendedor = tu.ca_login)
-       JOIN tb_ciudades cd ON (c.ca_idciudad = cd.ca_idciudad) JOIN tb_traficos tr ON (cd.ca_idtrafico = tr.ca_idtrafico) order by c.ca_compania, ca_ncompleto;
-REVOKE ALL ON vi_clientes FROM PUBLIC;
-GRANT ALL ON vi_clientes TO "Administrador";
-GRANT ALL ON vi_clientes TO GROUP "Usuarios";
+// -- View: vi_clientes
+
+-- DROP VIEW vi_clientes;
+CREATE OR REPLACE VIEW vi_clientes AS
+ SELECT c.ca_idcliente, c.ca_digito, c.ca_compania, c.ca_papellido, c.ca_sapellido, c.ca_nombres, (((c.ca_nombres::text || ' '::text) || c.ca_papellido::text) || ' '::text) || c.ca_sapellido::text AS ca_ncompleto, c.ca_saludo, c.ca_sexo, c.ca_cumpleanos, c.ca_direccion, c.ca_oficina, c.ca_torre, c.ca_bloque, c.ca_interior, c.ca_localidad, c.ca_complemento, c.ca_telefonos, c.ca_fax, c.ca_idciudad, cd.ca_ciudad, tr.ca_nombre AS ca_pais, c.ca_website, c.ca_email, c.ca_actividad, c.ca_sectoreco, c.ca_vendedor, tu.ca_sucursal, c.ca_confirmar, c.ca_fchcircular,
+        CASE
+            WHEN c.ca_tipo IS NOT NULL OR length(c.ca_tipo::text) <> 0 THEN 'Vigente'::text
+            ELSE
+            CASE
+                WHEN c.ca_fchcircular IS NULL THEN 'Sin'::text
+                ELSE
+                CASE
+                    WHEN (c.ca_fchcircular + 365) < now() THEN 'Vencido'::text
+                    ELSE 'Vigente'::text
+                END
+            END
+        END AS ca_stdcircular, c.ca_nvlriesgo, c.ca_fchcotratoag,
+        CASE
+            WHEN c.ca_fchcotratoag IS NULL THEN 'Sin'::text
+            ELSE
+            CASE
+                WHEN (c.ca_fchcotratoag + 365) < now() THEN 'Vencido'::text
+                ELSE 'Vigente'::text
+            END
+        END AS ca_stdcotratoag, c.ca_listaclinton, c.ca_leyinsolvencia, c.ca_comentario, c.ca_status, c.ca_tipo, c.ca_entidad, c.ca_calificacion, c.ca_coordinador, u.ca_nombre AS ca_nombre_coor, c.ca_preferencias, ( SELECT max(e.ca_fchvisita) AS max
+           FROM vi_enccliente e
+          WHERE c.ca_idcliente = e.ca_idcliente) AS ca_fchvisita, c.ca_fchcreado, c.ca_usucreado, c.ca_usufinanciero, c.ca_fchactualizado, c.ca_usuactualizado, c.ca_fchfinanciero, cl.ca_diascredito, cl.ca_cupo, cl.ca_observaciones, cm.ca_fchfirmado, cm.ca_fchvencimiento,
+        CASE
+            WHEN cm.ca_fchfirmado IS NULL THEN 'Sin'::text
+            ELSE
+            CASE
+                WHEN cm.ca_fchvencimiento < now() THEN 'Vencido'::text
+                ELSE 'Vigente'::text
+            END
+        END AS ca_stdcarta_gtia, cl.ca_fchcreado AS ca_fchcreado_lb, cl.ca_usucreado AS ca_usucreado_lb, cl.ca_fchactualizado AS ca_fchactualizado_lb, cl.ca_usuactualizado AS ca_usuactualizado_lb, st1.ca_estado AS ca_coltrans_std, st1.ca_fchestado AS ca_coltrans_fch, st2.ca_estado AS ca_colmas_std, st2.ca_fchestado AS ca_colmas_fch
+   FROM tb_clientes c
+   LEFT JOIN ( SELECT tb_stdcliente.ca_idcliente, tb_stdcliente.ca_fchestado, tb_stdcliente.ca_estado, tb_stdcliente.ca_empresa
+           FROM tb_stdcliente
+      JOIN ( SELECT sc.ca_idcliente, max(sc.ca_fchestado) AS ca_fchestado, sc.ca_empresa
+                   FROM tb_stdcliente sc
+                  WHERE sc.ca_empresa::text = 'Coltrans'::text
+                  GROUP BY sc.ca_idcliente, sc.ca_empresa) max ON tb_stdcliente.ca_idcliente = max.ca_idcliente AND tb_stdcliente.ca_fchestado = max.ca_fchestado AND tb_stdcliente.ca_empresa::text = max.ca_empresa::text) st1 ON c.ca_idcliente = st1.ca_idcliente::numeric
+   LEFT JOIN ( SELECT tb_stdcliente.ca_idcliente, tb_stdcliente.ca_fchestado, tb_stdcliente.ca_estado, tb_stdcliente.ca_empresa
+      FROM tb_stdcliente
+   JOIN ( SELECT sc.ca_idcliente, max(sc.ca_fchestado) AS ca_fchestado, sc.ca_empresa
+              FROM tb_stdcliente sc
+             WHERE sc.ca_empresa::text = 'Colmas'::text
+             GROUP BY sc.ca_idcliente, sc.ca_empresa) max ON tb_stdcliente.ca_idcliente = max.ca_idcliente AND tb_stdcliente.ca_fchestado = max.ca_fchestado AND tb_stdcliente.ca_empresa::text = max.ca_empresa::text) st2 ON c.ca_idcliente = st2.ca_idcliente::numeric
+   LEFT JOIN tb_libcliente cl ON c.ca_idcliente = cl.ca_idcliente::numeric
+   LEFT JOIN control.tb_usuarios u ON c.ca_coordinador::text = u.ca_login::text
+   LEFT JOIN ( SELECT cf.ca_idcliente, cf.ca_fchfirmado, cm.ca_fchvencimiento
+   FROM ( SELECT tb_comcliente.ca_idcliente, max(tb_comcliente.ca_fchfirmado) AS ca_fchfirmado
+           FROM tb_comcliente
+          GROUP BY tb_comcliente.ca_idcliente) cf
+   JOIN ( SELECT tb_comcliente.ca_idcliente, tb_comcliente.ca_fchfirmado, tb_comcliente.ca_fchvencimiento
+           FROM tb_comcliente) cm ON cf.ca_idcliente = cm.ca_idcliente AND cf.ca_fchfirmado = cm.ca_fchfirmado) cm ON c.ca_idcliente = cm.ca_idcliente
+   LEFT JOIN control.tb_usuarios tu ON c.ca_vendedor = tu.ca_login::text
+   JOIN tb_ciudades cd ON c.ca_idciudad::text = cd.ca_idciudad::text
+   JOIN tb_traficos tr ON cd.ca_idtrafico::text = tr.ca_idtrafico::text
+  ORDER BY c.ca_compania, (((c.ca_nombres::text || ' '::text) || c.ca_papellido::text) || ' '::text) || c.ca_sapellido::text;
+
+ALTER TABLE vi_clientes OWNER TO postgres;
+GRANT ALL ON TABLE vi_clientes TO postgres;
+GRANT ALL ON TABLE vi_clientes TO "Administrador";
+GRANT ALL ON TABLE vi_clientes TO "Usuarios";
+
 
 
 // Drop view vi_concliente cascade;
@@ -2667,20 +2716,37 @@ GRANT ALL ON vi_inoequipos_sea TO "Administrador";
 GRANT ALL ON vi_inoequipos_sea TO GROUP "Usuarios";
 
 
-Drop view vi_inoclientes_sea cascade;
-Create view vi_inoclientes_sea as
-Select i.oid as ca_oid, (CASE WHEN (string_to_array(i.ca_referencia::text, '.'::text))[5]::integer BETWEEN 0 AND 4 AND im.ca_fchreferencia > '2009-01-01' THEN ((string_to_array(i.ca_referencia::text, '.'::text))[5]::integer) + 2010 ELSE (string_to_array(i.ca_referencia::text, '.'::text))[5]::integer + 2000 END) as ca_ano,
-       (string_to_array(i.ca_referencia::text, '.'::text))[3] AS ca_mes, i.ca_referencia, i.ca_idcliente, c.ca_compania, i.ca_idreporte, r.ca_consecutivo, i.ca_hbls, i.ca_idproveedor, i.ca_proveedor, i.ca_numpiezas, i.ca_peso, i.ca_volumen, i.ca_numorden, i.ca_confirmar, i.ca_mensaje, i.ca_login, i.ca_continuacion, i.ca_continuacion_dest, cu.ca_ciudad as ca_ciudad_dest, i.ca_idbodega, b.ca_nombre as ca_bodega, u.ca_sucursal, i.ca_observaciones, i.ca_contenedores, i.ca_fchliberacion, i.ca_notaliberacion,
-       i.ca_fchcreado as ca_fchcreado_cl, i.ca_usucreado as ca_usucreado_cl, i.ca_fchactualizado as ca_fchactualizado_cl, i.ca_usuactualizado as ca_usuactualizado_cl, i.ca_usuliberado, i.ca_fchliberado, f.oid as ca_oid_fc, f.ca_factura, f.ca_fchfactura, f.ca_neto, f.ca_idmoneda, f.ca_valor, f.ca_reccaja, f.ca_fchpago, f.ca_tcambio, f.ca_observaciones as ca_observaciones_fact,
-       (select sum(d.ca_valor) from tb_inodeduccion_sea d where f.ca_referencia = d.ca_referencia and f.ca_idcliente = d.ca_idcliente and f.ca_hbls = d.ca_hbls and f.ca_factura = d.ca_factura) as ca_deduccion,
-       (select count(cl.ca_hbls) from tb_inoclientes_sea cl where cl.ca_referencia = i.ca_referencia) as ca_nrohbls,
-       f.ca_fchcreado as ca_fchcreado_fc, f.ca_usucreado as ca_usucreado_fc, f.ca_fchactualizado as ca_fchactualizado_fc, f.ca_usuactualizado as ca_usuactualizado_fc,
-       (select max(ca_fchvencimiento) as ca_fchvencimiento from tb_comcliente where i.ca_idcliente = ca_idcliente group by ca_idcliente) as ca_fchvencimiento
-       from tb_inoclientes_sea i LEFT OUTER JOIN tb_inomaestra_sea im ON (i.ca_referencia = im.ca_referencia) LEFT OUTER JOIN tb_inoingresos_sea f ON (i.ca_referencia = f.ca_referencia and i.ca_idcliente = f.ca_idcliente and i.ca_hbls = f.ca_hbls) LEFT OUTER JOIN tb_clientes c ON (i.ca_idcliente = c.ca_idcliente) LEFT OUTER JOIN tb_ciudades cu ON (i.ca_continuacion_dest = cu.ca_idciudad) LEFT OUTER JOIN tb_bodegas b ON (i.ca_idbodega = b.ca_idbodega) LEFT OUTER JOIN tb_reportes r ON (i.ca_idreporte = r.ca_idreporte) LEFT OUTER JOIN control.tb_usuarios u ON (i.ca_login = u.ca_login)
-       order by i.ca_referencia, c.ca_compania, i.ca_hbls, f.ca_factura;
-REVOKE ALL ON vi_inoclientes_sea FROM PUBLIC;
-GRANT ALL ON vi_inoclientes_sea TO "Administrador";
-GRANT ALL ON vi_inoclientes_sea TO GROUP "Usuarios";
+-- View: vi_inoclientes_sea
+
+-- DROP VIEW vi_inoclientes_sea;
+
+CREATE OR REPLACE VIEW vi_inoclientes_sea AS
+ SELECT i.oid AS ca_oid,
+        CASE
+            WHEN (string_to_array(i.ca_referencia::text, '.'::text))[5]::integer >= 0 AND (string_to_array(i.ca_referencia::text, '.'::text))[5]::integer <= 4 AND im.ca_fchreferencia > '2009-01-01'::date THEN (string_to_array(i.ca_referencia::text, '.'::text))[5]::integer + 2010
+            ELSE (string_to_array(i.ca_referencia::text, '.'::text))[5]::integer + 2000
+        END AS ca_ano, (string_to_array(i.ca_referencia::text, '.'::text))[3] AS ca_mes, i.ca_referencia, i.ca_idcliente, c.ca_compania, i.ca_idreporte, r.ca_consecutivo, i.ca_hbls, i.ca_idproveedor, i.ca_proveedor, i.ca_numpiezas, i.ca_peso, i.ca_volumen, i.ca_numorden, i.ca_confirmar, i.ca_mensaje, i.ca_login, i.ca_continuacion, i.ca_continuacion_dest, cu.ca_ciudad AS ca_ciudad_dest, i.ca_idbodega, b.ca_nombre AS ca_bodega, u.ca_sucursal, i.ca_observaciones, i.ca_contenedores, i.ca_fchliberacion, i.ca_notaliberacion, i.ca_fchantecedentes, i.ca_fchcreado AS ca_fchcreado_cl, i.ca_usucreado AS ca_usucreado_cl, i.ca_fchactualizado AS ca_fchactualizado_cl, i.ca_usuactualizado AS ca_usuactualizado_cl, i.ca_usuliberado, i.ca_fchliberado, f.oid AS ca_oid_fc, f.ca_factura, f.ca_fchfactura, f.ca_neto, f.ca_idmoneda, f.ca_valor, f.ca_reccaja, f.ca_fchpago, f.ca_tcambio, f.ca_observaciones AS ca_observaciones_fact, ( SELECT sum(d.ca_valor) AS sum
+           FROM tb_inodeduccion_sea d
+          WHERE f.ca_referencia::text = d.ca_referencia::text AND f.ca_idcliente = d.ca_idcliente AND f.ca_hbls::text = d.ca_hbls::text AND f.ca_factura::text = d.ca_factura::text) AS ca_deduccion, ( SELECT count(cl.ca_hbls) AS count
+           FROM tb_inoclientes_sea cl
+          WHERE cl.ca_referencia::text = i.ca_referencia::text) AS ca_nrohbls, f.ca_fchcreado AS ca_fchcreado_fc, f.ca_usucreado AS ca_usucreado_fc, f.ca_fchactualizado AS ca_fchactualizado_fc, f.ca_usuactualizado AS ca_usuactualizado_fc, ( SELECT max(tb_comcliente.ca_fchvencimiento) AS ca_fchvencimiento
+           FROM tb_comcliente
+          WHERE i.ca_idcliente = tb_comcliente.ca_idcliente
+          GROUP BY tb_comcliente.ca_idcliente) AS ca_fchvencimiento
+   FROM tb_inoclientes_sea i
+   LEFT JOIN tb_inomaestra_sea im ON i.ca_referencia::text = im.ca_referencia::text
+   LEFT JOIN tb_inoingresos_sea f ON i.ca_referencia::text = f.ca_referencia::text AND i.ca_idcliente = f.ca_idcliente AND i.ca_hbls::text = f.ca_hbls::text
+   LEFT JOIN tb_clientes c ON i.ca_idcliente = c.ca_idcliente
+   LEFT JOIN tb_ciudades cu ON i.ca_continuacion_dest::text = cu.ca_idciudad::text
+   LEFT JOIN tb_bodegas b ON i.ca_idbodega = b.ca_idbodega
+   LEFT JOIN tb_reportes r ON i.ca_idreporte = r.ca_idreporte
+   LEFT JOIN control.tb_usuarios u ON i.ca_login::text = u.ca_login::text
+  ORDER BY i.ca_referencia, c.ca_compania, i.ca_hbls, f.ca_factura;
+
+ALTER TABLE vi_inoclientes_sea OWNER TO postgres;
+GRANT ALL ON TABLE vi_inoclientes_sea TO "Administrador";
+GRANT ALL ON TABLE vi_inoclientes_sea TO "Usuarios";
+GRANT ALL ON TABLE vi_inoclientes_sea TO postgres;
 
 
 // Drop view vi_inoconsulta_sea;
