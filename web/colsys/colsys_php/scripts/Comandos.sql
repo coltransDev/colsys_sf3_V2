@@ -2197,3 +2197,26 @@ alter table tb_falaheader add column ca_numero_invoice varchar (20);
 insert into tb_parametros values ('CU085',1,'yacgarzon@Falabella.com.co',null);
 insert into tb_parametros values ('CU085',2,'smrodriguez@Falabella.com.co',null);
 
+
+
+ALTER TABLE tb_inoclientes_sea ADD COLUMN ca_fchantecedentes date;
+
+
+insert into tb_parametros values ('CU086',1,'ES-034','6');
+insert into tb_parametros values ('CU086',2,'GB-044','5');
+insert into tb_parametros values ('CU086',3,'FR-033','4');
+insert into tb_parametros values ('CU086',4,'MX-052','2');
+insert into tb_parametros values ('CU086',5,'BE-032','5');
+insert into tb_parametros values ('CU086',6,'BR-055','5');
+insert into tb_parametros values ('CU086',7,'CL-056','5');
+insert into tb_parametros values ('CU086',8,'TW-886','10');
+insert into tb_parametros values ('CU086',9,'PA-507','-1');
+insert into tb_parametros values ('CU086',10,'NL-031','5');
+insert into tb_parametros values ('CU086',11,'DE-049','9');
+insert into tb_parametros values ('CU086',12,'IT-039','5');
+insert into tb_parametros values ('CU086',13,'US-001','2');
+insert into tb_parametros values ('CU086',14,'AR-054','5');
+insert into tb_parametros values ('CU086',14,'PE-051','0');
+insert into tb_parametros values ('CU086',15,'CN-086','15');
+insert into tb_parametros values ('CU086',16,'HK-852','15');
+insert into tb_parametros values ('CU086',17,'KR-082','15');
