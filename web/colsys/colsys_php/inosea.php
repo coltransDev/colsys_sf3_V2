@@ -478,7 +478,7 @@ elseif (isset($boton)) {                                                       /
                                 echo "  <TD Class=listar style='font-size: 11px;' COLSPAN=4><B>Nombre del Cliente:</B><BR>".$cl->Value('ca_compania')."</TD>";
                             }
 
-                            echo "  <TD ROWSPAN=3 WIDTH=80 Class=listar style='text-align: center;'>";                                              // Botones para hacer Mantenimiento a la Tabla
+                            echo "  <TD ROWSPAN=2 WIDTH=80 Class=listar style='text-align: center;'>";                                              // Botones para hacer Mantenimiento a la Tabla
                             echo "    <IMG style='visibility: $visible;' src='./graficos/edit.gif' alt='Editar el Registro' border=0 onclick='elegir(\"ModificarCl\", \"".$rs->Value('ca_referencia')."\", \"".$cl->Value('ca_idcliente')."\", \"".urlencode($cl->Value('ca_hbls'))."\");'>";
                             echo "   <IMG style='visibility: $visible;' src='./graficos/del.gif'  alt='Eliminar el Registro' border=0 onclick='elegir(\"EliminarCl\", \"".$rs->Value('ca_referencia')."\", \"".$cl->Value('ca_idcliente')."\", \"".urlencode($cl->Value('ca_hbls'))."\");'><BR><BR>";
                             echo "    <IMG style='visibility: $visible;' src='./graficos/muisca.gif'  alt='Informacion Muisca' border=0 onclick='elegir(\"MuiscaCl\", \"".$rs->Value('ca_referencia')."\", \"".$cl->Value('ca_idcliente')."\", \"".urlencode($cl->Value('ca_hbls'))."\");'><BR>";
@@ -497,6 +497,7 @@ elseif (isset($boton)) {                                                       /
                             echo "  <TD Class=listar><B>ID Proveedor:</B><BR>".$cl->Value('ca_idproveedor')."</TD>";
                             echo "  <TD Class=listar COLSPAN=2><B>Proveedor:</B><BR>".$cl->Value('ca_proveedor')."</TD>";
                             echo "  <TD Class=listar><B>Utilidad x Cliente:</B><BR>".number_format($utl_cbm * $cl->Value('ca_volumen'))."</TD>";
+                            echo "  <TD Class=listar><B>Rec/Antec.:&nbsp;&nbsp;&nbsp;</B><BR>".$cl->Value('ca_fchantecedentes')."</TD>";
                             echo "</TR>";
                             echo "<TR HEIGHT=5>";
                             echo "  <TD Class=invertir COLSPAN=6></TD>";
@@ -1601,7 +1602,9 @@ elseif (isset($boton)) {                                                       /
                     $us->MoveNext();
                 }
                 echo "  </SELECT></TD>";
-
+                echo "  </TR>";
+                echo "  <TR>";
+                echo "    <TD COLSPAN=5>Fecha Recibo Antecedentes:&nbsp;<INPUT TYPE='TEXT' NAME='fchantecedentes' SIZE=12 VALUE='' ONKEYDOWN=\"chkDate(this)\" ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\">&nbsp;<IMG SRC='./graficos/nuevo.gif' border=0 ALT=''></TD>";
                 echo "  </TR>";
                 echo "  </TABLE>";
                 echo " </TD>";
@@ -2033,6 +2036,9 @@ elseif (isset($boton)) {                                                       /
                 echo "  </SELECT></TD>";
                 echo "  <script>cambiar(document.getElementById('continuacion'));</script>";
                 echo "  </TR>";
+                echo "  <TR>";
+                echo "    <TD COLSPAN=5>Fecha Recibo Antecedentes:&nbsp;<INPUT TYPE='TEXT' NAME='fchantecedentes' SIZE=12 VALUE='".$rs->Value('ca_fchantecedentes')."' ONKEYDOWN=\"chkDate(this)\" ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\">&nbsp;<IMG SRC='./graficos/nuevo.gif' border=0 ALT=''></TD>";
+                echo "  </TR>";
                 echo "  </TABLE>";
                 echo " </TD>";
                 echo " <TD Class=invertir COLSPAN=3>";
@@ -2129,6 +2135,7 @@ elseif (isset($boton)) {                                                       /
                 }
                 echo "  </SELECT></TD>";
                 echo "</TR>";
+
                 echo "  </TABLE></TD>";
 
                 echo "</TR>";
@@ -2277,6 +2284,9 @@ elseif (isset($boton)) {                                                       /
                 echo "  </TR>";
                 echo "  <TR>";
                 echo "  <TD Class=mostrar COLSPAN=5>Operador:<BR>".$rs->Value('ca_bodega')."</TD>";
+                echo "  <TR>";
+                echo "  <TD Class=mostrar COLSPAN=5>Fecha Recibo Antecedentes:<BR>".$rs->Value('ca_fchantecedentes')."</TD>";
+                echo "  </TR>";
 
                 echo "  </TR>";
                 echo "  </TABLE>";
@@ -2645,7 +2655,7 @@ elseif (isset($boton)) {                                                       /
                 echo "  <TD Class=listar>No.Ciclo-Rumbo:<BR><DIV ID='viaje'><INPUT ID='ciclo' TYPE='TEXT' NAME='ciclo[]' SIZE=5 MAXLENGTH=4 style='text-transform: uppercase'>-<INPUT ID='rumbo' TYPE='TEXT' NAME='ciclo[]' SIZE=3 MAXLENGTH=2 style='text-transform: uppercase'></DIV></TD>";
                 echo "</TR>";
                 echo "<TR>";
-                echo "  <TD Class=listar COLSPAN=3>MBL: Sólo debe ingresar un Master por cada Referencia<IMG SRC='./graficos/nuevo.gif' border=0 ALT=''><BR><INPUT ID=mbls_1 NAME='mbls[]' TYPE='TEXT' SIZE=50 MAXLENGTH=50></TD>";
+                echo "  <TD Class=listar COLSPAN=3>MBL: Sólo debe ingresar un Master por cada Referencia<BR><INPUT ID=mbls_1 NAME='mbls[]' TYPE='TEXT' SIZE=50 MAXLENGTH=50></TD>";
                 echo "  <TD Class=listar>Fecha MBL:<BR><INPUT ID=mbls_2 NAME='mbls[]' TYPE='TEXT' SIZE=12 VALUE='".date("Y-m-d")."' ONKEYDOWN=\"chkDate(this)\" ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
                 echo "</TR>";
                 echo "<TR>";
@@ -2985,7 +2995,7 @@ elseif (isset($boton)) {                                                       /
                 echo "</TR>";
                 echo "<TR>";
                 $mbls = explode("|",$rs->Value('ca_mbls'));
-                echo "  <TD Class=listar COLSPAN=3>MBL: Sólo debe ingresar un Master por cada Referencia<IMG SRC='./graficos/nuevo.gif' border=0 ALT=''><BR><INPUT ID=mbls_1 NAME='mbls[]' VALUE='$mbls[0]' TYPE='TEXT' SIZE=50 MAXLENGTH=50></TD>";
+                echo "  <TD Class=listar COLSPAN=3>MBL: Sólo debe ingresar un Master por cada Referencia<BR><INPUT ID=mbls_1 NAME='mbls[]' VALUE='$mbls[0]' TYPE='TEXT' SIZE=50 MAXLENGTH=50></TD>";
                 echo "  <TD Class=listar>Fecha MBL:<BR><INPUT ID=mbls_2 NAME='mbls[]' TYPE='TEXT' SIZE=12 VALUE='$mbls[1]' ONKEYDOWN=\"chkDate(this)\" ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
                 echo "</TR>";
                 echo "<TR>";
@@ -4767,7 +4777,7 @@ elseif (isset($accion)) {                                                      /
                     $cadena.= implode(";",$contenedor)."|";
                 }
                 $contenedores = substr($cadena,0,strlen($cadena)-1);
-                if (!$rs->Open("insert into tb_inoclientes_sea (ca_referencia, ca_idcliente, ca_idreporte, ca_hbls, ca_fchhbls, ca_idproveedor, ca_proveedor, ca_numpiezas, ca_peso, ca_volumen, ca_numorden, ca_login, ca_continuacion, ca_continuacion_dest, ca_idbodega, ca_observaciones, ca_contenedores, ca_fchcreado, ca_usucreado) values('$referencia', $idcliente, $idreporte, '$hbls', '$fchhbls', $idproveedor, '$proveedor', $numpiezas, $peso, $volumen, '$numorden', '$login', '$continuacion', '$continuacion_dest', '$idbodega', '', '$contenedores', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
+                if (!$rs->Open("insert into tb_inoclientes_sea (ca_referencia, ca_idcliente, ca_idreporte, ca_hbls, ca_fchhbls, ca_idproveedor, ca_proveedor, ca_numpiezas, ca_peso, ca_volumen, ca_numorden, ca_login, ca_continuacion, ca_continuacion_dest, ca_idbodega, ca_observaciones, ca_contenedores, ca_fchantecedentes, ca_fchcreado, ca_usucreado) values('$referencia', $idcliente, $idreporte, '$hbls', '$fchhbls', $idproveedor, '$proveedor', $numpiezas, $peso, $volumen, '$numorden', '$login', '$continuacion', '$continuacion_dest', '$idbodega', '', '$contenedores', '$fchantecedentes', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
                     echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                     echo "<script>document.location.href = 'inosea.php';</script>";
                     exit;
@@ -4805,13 +4815,13 @@ elseif (isset($accion)) {                                                      /
                 }
                 $contenedores = substr($cadena,0,strlen($cadena)-1);
                 if ( $hbl != $hbls ) {
-                    if (!$rs->Open("insert into tb_inoclientes_sea (ca_referencia, ca_idcliente, ca_idreporte, ca_hbls, ca_fchhbls, ca_idproveedor, ca_proveedor, ca_numpiezas, ca_peso, ca_volumen, ca_numorden, ca_login, ca_continuacion, ca_continuacion_dest, ca_idbodega, ca_observaciones, ca_contenedores, ca_fchcreado, ca_usucreado) values('$referencia', $idcliente, $idreporte, '$hbls', '$fchhbls', $idproveedor, '$proveedor', $numpiezas, $peso, $volumen, '$numorden', '$login', '$continuacion', '$continuacion_dest', '$idbodega', '', '$contenedores', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
+                    if (!$rs->Open("insert into tb_inoclientes_sea (ca_referencia, ca_idcliente, ca_idreporte, ca_hbls, ca_fchhbls, ca_idproveedor, ca_proveedor, ca_numpiezas, ca_peso, ca_volumen, ca_numorden, ca_login, ca_continuacion, ca_continuacion_dest, ca_idbodega, ca_observaciones, ca_contenedores, ca_fchantecedentes, ca_fchcreado, ca_usucreado) values('$referencia', $idcliente, $idreporte, '$hbls', '$fchhbls', $idproveedor, '$proveedor', $numpiezas, $peso, $volumen, '$numorden', '$login', '$continuacion', '$continuacion_dest', '$idbodega', '', '$contenedores', '$fchantecedentes', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
                         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                         echo "<script>document.location.href = 'inosea.php';</script>";
                         exit;
                     }
                 }else {
-                    if (!$rs->Open("update tb_inoclientes_sea set ca_idreporte = $idreporte, ca_idcliente = '$idcliente', ca_hbls = '$hbls', ca_fchhbls = '$fchhbls', ca_idproveedor = $idproveedor, ca_proveedor = '$proveedor', ca_numpiezas = $numpiezas, ca_peso = $peso, ca_volumen = $volumen, ca_numorden = '$numorden', ca_login = '$login', ca_continuacion = '$continuacion', ca_continuacion_dest = '$continuacion_dest', ca_idbodega = '$idbodega', ca_observaciones = '', ca_contenedores = '$contenedores', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usuactualizado = '$usuario' where oid = '$oid'")) {
+                    if (!$rs->Open("update tb_inoclientes_sea set ca_idreporte = $idreporte, ca_idcliente = '$idcliente', ca_hbls = '$hbls', ca_fchhbls = '$fchhbls', ca_idproveedor = $idproveedor, ca_proveedor = '$proveedor', ca_numpiezas = $numpiezas, ca_peso = $peso, ca_volumen = $volumen, ca_numorden = '$numorden', ca_login = '$login', ca_continuacion = '$continuacion', ca_continuacion_dest = '$continuacion_dest', ca_idbodega = '$idbodega', ca_observaciones = '', ca_contenedores = '$contenedores', ca_fchantecedentes = '$fchantecedentes', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usuactualizado = '$usuario' where oid = '$oid'")) {
                         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                         echo "<script>document.location.href = 'inosea.php';</script>";
                         exit;
