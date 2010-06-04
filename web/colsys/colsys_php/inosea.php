@@ -4772,12 +4772,13 @@ elseif (isset($accion)) {                                                      /
                 settype($peso,"double");
                 settype($volumen,"double");
                 settype($idbodega,"integer");
+                $fchantecedentes = (strlen($fchantecedentes)==0)?'null':$fchantecedentes;
                 $cadena = "";
                 foreach($contenedores as $contenedor) {
                     $cadena.= implode(";",$contenedor)."|";
                 }
                 $contenedores = substr($cadena,0,strlen($cadena)-1);
-                if (!$rs->Open("insert into tb_inoclientes_sea (ca_referencia, ca_idcliente, ca_idreporte, ca_hbls, ca_fchhbls, ca_idproveedor, ca_proveedor, ca_numpiezas, ca_peso, ca_volumen, ca_numorden, ca_login, ca_continuacion, ca_continuacion_dest, ca_idbodega, ca_observaciones, ca_contenedores, ca_fchantecedentes, ca_fchcreado, ca_usucreado) values('$referencia', $idcliente, $idreporte, '$hbls', '$fchhbls', $idproveedor, '$proveedor', $numpiezas, $peso, $volumen, '$numorden', '$login', '$continuacion', '$continuacion_dest', '$idbodega', '', '$contenedores', '$fchantecedentes', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
+                if (!$rs->Open("insert into tb_inoclientes_sea (ca_referencia, ca_idcliente, ca_idreporte, ca_hbls, ca_fchhbls, ca_idproveedor, ca_proveedor, ca_numpiezas, ca_peso, ca_volumen, ca_numorden, ca_login, ca_continuacion, ca_continuacion_dest, ca_idbodega, ca_observaciones, ca_contenedores, ca_fchantecedentes, ca_fchcreado, ca_usucreado) values('$referencia', $idcliente, $idreporte, '$hbls', '$fchhbls', $idproveedor, '$proveedor', $numpiezas, $peso, $volumen, '$numorden', '$login', '$continuacion', '$continuacion_dest', '$idbodega', '', '$contenedores', $fchantecedentes, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
                     echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                     echo "<script>document.location.href = 'inosea.php';</script>";
                     exit;
@@ -4809,19 +4810,20 @@ elseif (isset($accion)) {                                                      /
                 settype($peso,"double");
                 settype($volumen,"double");
                 settype($idbodega,"integer");
+                $fchantecedentes = (strlen($fchantecedentes)==0)?'null':$fchantecedentes;
                 $cadena = "";
                 foreach($contenedores as $contenedor) {
                     $cadena.= implode(";",$contenedor)."|";
                 }
                 $contenedores = substr($cadena,0,strlen($cadena)-1);
                 if ( $hbl != $hbls ) {
-                    if (!$rs->Open("insert into tb_inoclientes_sea (ca_referencia, ca_idcliente, ca_idreporte, ca_hbls, ca_fchhbls, ca_idproveedor, ca_proveedor, ca_numpiezas, ca_peso, ca_volumen, ca_numorden, ca_login, ca_continuacion, ca_continuacion_dest, ca_idbodega, ca_observaciones, ca_contenedores, ca_fchantecedentes, ca_fchcreado, ca_usucreado) values('$referencia', $idcliente, $idreporte, '$hbls', '$fchhbls', $idproveedor, '$proveedor', $numpiezas, $peso, $volumen, '$numorden', '$login', '$continuacion', '$continuacion_dest', '$idbodega', '', '$contenedores', '$fchantecedentes', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
+                    if (!$rs->Open("insert into tb_inoclientes_sea (ca_referencia, ca_idcliente, ca_idreporte, ca_hbls, ca_fchhbls, ca_idproveedor, ca_proveedor, ca_numpiezas, ca_peso, ca_volumen, ca_numorden, ca_login, ca_continuacion, ca_continuacion_dest, ca_idbodega, ca_observaciones, ca_contenedores, ca_fchantecedentes, ca_fchcreado, ca_usucreado) values('$referencia', $idcliente, $idreporte, '$hbls', '$fchhbls', $idproveedor, '$proveedor', $numpiezas, $peso, $volumen, '$numorden', '$login', '$continuacion', '$continuacion_dest', '$idbodega', '', '$contenedores', $fchantecedentes, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
                         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                         echo "<script>document.location.href = 'inosea.php';</script>";
                         exit;
                     }
                 }else {
-                    if (!$rs->Open("update tb_inoclientes_sea set ca_idreporte = $idreporte, ca_idcliente = '$idcliente', ca_hbls = '$hbls', ca_fchhbls = '$fchhbls', ca_idproveedor = $idproveedor, ca_proveedor = '$proveedor', ca_numpiezas = $numpiezas, ca_peso = $peso, ca_volumen = $volumen, ca_numorden = '$numorden', ca_login = '$login', ca_continuacion = '$continuacion', ca_continuacion_dest = '$continuacion_dest', ca_idbodega = '$idbodega', ca_observaciones = '', ca_contenedores = '$contenedores', ca_fchantecedentes = '$fchantecedentes', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usuactualizado = '$usuario' where oid = '$oid'")) {
+                    if (!$rs->Open("update tb_inoclientes_sea set ca_idreporte = $idreporte, ca_idcliente = '$idcliente', ca_hbls = '$hbls', ca_fchhbls = '$fchhbls', ca_idproveedor = $idproveedor, ca_proveedor = '$proveedor', ca_numpiezas = $numpiezas, ca_peso = $peso, ca_volumen = $volumen, ca_numorden = '$numorden', ca_login = '$login', ca_continuacion = '$continuacion', ca_continuacion_dest = '$continuacion_dest', ca_idbodega = '$idbodega', ca_observaciones = '', ca_contenedores = '$contenedores', ca_fchantecedentes = $fchantecedentes, ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usuactualizado = '$usuario' where oid = '$oid'")) {
                         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                         echo "<script>document.location.href = 'inosea.php';</script>";
                         exit;
