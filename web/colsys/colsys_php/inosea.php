@@ -4772,7 +4772,7 @@ elseif (isset($accion)) {                                                      /
                 settype($peso,"double");
                 settype($volumen,"double");
                 settype($idbodega,"integer");
-                $fchantecedentes = (strlen($fchantecedentes)==0)?'null':$fchantecedentes;
+                $fchantecedentes = (strlen($fchantecedentes)==0)?'null':"'".$fchantecedentes."'";
                 $cadena = "";
                 foreach($contenedores as $contenedor) {
                     $cadena.= implode(";",$contenedor)."|";
@@ -4810,7 +4810,7 @@ elseif (isset($accion)) {                                                      /
                 settype($peso,"double");
                 settype($volumen,"double");
                 settype($idbodega,"integer");
-                $fchantecedentes = (strlen($fchantecedentes)==0)?'null':$fchantecedentes;
+                $fchantecedentes = (strlen($fchantecedentes)==0)?'null':"'".$fchantecedentes."'";
                 $cadena = "";
                 foreach($contenedores as $contenedor) {
                     $cadena.= implode(";",$contenedor)."|";
