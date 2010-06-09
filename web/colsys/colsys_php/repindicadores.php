@@ -860,12 +860,16 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
                     exit; }
                 $first_date = true;
                 $fch_eta = $fch_llegada = null;
+                $tm->MoveFirst();
+                
                 while (!$tm->Eof() and !$tm->IsEmpty()) {
                     if ($first_date and strlen($tm->Value('ca_fchllegada'))!= 0) {
                         $fch_eta = $tm->Value('ca_fchllegada');
                         $first_date = false;
                     }
-                    $fch_llegada = $tm->Value('ca_fchllegada');
+                    if (strlen($tm->Value('ca_fchllegada'))!= 0) {
+                        $fch_llegada = $tm->Value('ca_fchllegada');
+                    }
                     $tm->MoveNext();
                 }
                 $dif_mem = dateDiff($fch_eta,$fch_llegada);
