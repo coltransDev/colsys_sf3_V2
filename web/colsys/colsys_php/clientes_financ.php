@@ -394,7 +394,6 @@ elseif (isset($boton)) {                                                       /
                  exit;
                 }
 			 $tipos = explode("|", $rs->Value('ca_tipo'));
-			 print_r($tipos);
 			 
              echo "<HEAD>";
              echo "<script language='JavaScript' type='text/JavaScript'>";     // Código en JavaScript para validar las opciones de mantenimiento
