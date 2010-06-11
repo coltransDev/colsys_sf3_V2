@@ -367,7 +367,11 @@ elseif (isset($boton)) {                                                       /
 
                     $ext_mem = $rs->Value('ca_comisionable') + $rs->Value('ca_nocomisionable');
                     $utl_mem = $rs->Value('ca_facturacion') - $rs->Value('ca_deduccion') - $rs->Value('ca_costoneto') - $ext_mem;
-                    $utl_cbm = ($rs->Value('ca_facturacion') - $rs->Value('ca_deduccion') - $rs->Value('ca_utilidad')) / $rs->Value('ca_volumen');
+                    //presentaba error division cero
+                    if($rs->Value('ca_volumen')>0)
+                        $utl_cbm = ($rs->Value('ca_facturacion') - $rs->Value('ca_deduccion') - $rs->Value('ca_utilidad')) / $rs->Value('ca_volumen');
+                    else
+                        $utl_cbm = 0;
                     $col_mem = ($utl_mem <= 0)? 'background: #FF0000; color: #FFFFFF;':'';
                     echo "<TR>";
                     echo "  <TD Class=partir ROWSPAN=9>Balance:</TD>";
