@@ -141,8 +141,7 @@ elseif (!isset($boton) and !isset($accion) and isset($login)){
     echo "<TITLE>$titulo</TITLE>";
     echo "<script language='JavaScript' type='text/JavaScript'>";              // Código en JavaScript para validar las opciones de mantenimiento
     echo "function elegir(opcion, id, cl){";
-    echo "    alert(cl);";
-    echo "    document.location.href = '/colsys_php/repcomisiones.php?boton='+opcion+'\&id='+id+'\&cl='+cl;";
+    echo "    document.location.href = 'repcomisiones.php?boton='+opcion+'\&id='+id+'\&cl='+cl;";
     echo "}";
     echo "function uno(src,color_entrada) {";
     echo "    src.style.background=color_entrada;src.style.cursor='hand'";
@@ -361,14 +360,10 @@ echo "</BODY>";
     }
 elseif (isset($boton)) {                                                      // Rutina que registra los cambios en la tabla de la base de datos
     switch(trim($boton)) {                                                    // Switch que evalua cual botòn de comando fue pulsado por el usuario
-
-        echo $cl;
-        exit();
-        
         case 'ComisionesXC': {                                                 // El Botón ComisionesXC fue pulsado
 		$modulo = "00100100";                                              // Identificación del módulo para la ayuda en línea
 //          include_once 'include/seguridad.php';                              // Control de Acceso al módulo
-			list($mes, $ano, $sucursal, $login, $casos) = sscanf($cl, "%d|%d|%s|%s|%s"); //split('[|]', $cl); //
+			list($mes, $ano, $sucursal, $login, $casos) = split('[|]', $cl); // sscanf($cl, "%d|%d|%s|%s|%s");
 			$nmeses = '';
 			$mes = ($mes=='%')?12:$mes;
 			for ($i=1; $i<=$mes; $i++){
