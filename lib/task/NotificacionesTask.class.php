@@ -27,14 +27,26 @@ EOF;
 	$databaseManager = new sfDatabaseManager($this->configuration);
 	$databaseManager->loadConfiguration();
 	
-	$c = new Criteria();	
+	/*$c = new Criteria();
 	$c->addJoin( NotTareaPeer::CA_IDTAREA, NotificacionPeer::CA_IDTAREA, Criteria::LEFT_JOIN );	
-	$c->add( NotTareaPeer::CA_FCHCREADO, '2010-01-10 00:00:00', Criteria::GREATER_EQUAL );
-	$c->add( NotTareaPeer::CA_FCHVISIBLE, date("Y-m-d H:i:s"), Criteria::LESS_EQUAL );	
+	$c->add( NotTareaPeer::CA_FCHCREADO, '2010-06-20 00:00:00', Criteria::GREATER_EQUAL );
+	$c->add( NotTareaPeer::CA_FCHVISIBLE, , Criteria::LESS_EQUAL );	
 	$c->add( NotTareaPeer::CA_FCHTERMINADA, null, Criteria::ISNULL );
 	$c->add( NotificacionPeer::CA_IDEMAIL, null, Criteria::ISNULL );	
-	$c->setDistinct();					
-	$tareas = NotTareaPeer::doSelect( $c );
+	$c->setDistinct();			*/
+
+    $q = Doctrine::getTable("NotTarea")->createQuery("t");
+    $q->select("t.*");
+    $q->leftJoin("t.Notificacion n");
+    $q->addWhere("t.ca_fchcreado >= ?", "2010-06-20 00:00:00");
+    $q->addWhere("t.ca_fchvisible <= ?", date("Y-m-d H:i:s"));
+    $q->addWhere("t.ca_fchterminada IS NULL");
+    $q->addWhere("n.ca_idemail IS NULL");
+    $q->distinct();
+
+    $tareas = $q->execute();
+
+	//$tareas = NotTareaPeer::doSelect( $c );
 	
 	foreach( $tareas as $tarea ){
 		$tarea->notificar();

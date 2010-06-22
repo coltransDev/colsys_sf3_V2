@@ -55,8 +55,8 @@ class NotTarea extends BaseNotTarea
 		$email->setCaFrom( "no-reply@coltrans.com.co" );
 		$email->setCaFromname( "Colsys Notificaciones" );
 
-        if( $this->getCaNotificar() ){
-            $email->addTo( $usuario->getCaEmail() );
+        if( $this->getCaNotificar() ){            
+            $email->addTo( $this->getCaNotificar() );
         }
 
         $usuariosAsignacion = array();
