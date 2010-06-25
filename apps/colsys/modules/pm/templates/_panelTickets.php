@@ -328,6 +328,15 @@ PanelTickets = function( config ){
                     iconCls: 'calendar',  // reference to our css
                     scope: this,
                     handler: this.asignarMilestone
+                },
+                {
+                    text: 'Asignaciones',
+                    tooltip: 'Agrupa los tickets por usuario',
+                    iconCls: 'tux',  // reference to our css
+                    scope: this,
+                    handler: function(){
+                        this.agruparPor('assignedto');
+                    }
                 }
          ];
 
@@ -353,7 +362,18 @@ PanelTickets = function( config ){
                     iconCls: 'calendar',  // reference to our css
                     scope: this,
                     handler: this.roadmap
+                },
+                {
+                    text: 'Asignaciones',
+                    tooltip: 'Agrupa los tickets por usuario',
+                    iconCls: 'tux',  // reference to our css
+                    scope: this,
+                    handler: function(){
+                        this.agruparPor('assignedto');
+                    }
                 }
+
+
          ];
     }
 
@@ -403,6 +423,10 @@ Ext.extend(PanelTickets, Ext.grid.GridPanel, {
 
         this.store.sort("estimated","ASC");
         this.store.groupBy("milestone");
+    },
+
+    agruparPor: function( a ){
+        this.store.groupBy( a );
     },
 
     asignarMilestone: function(){

@@ -588,6 +588,10 @@ a.toolbar:active {
 	background: url('../images/fam/calendar.png') no-repeat 0 0 !important;
 }
 
+.tux {
+	background: url('../images/fam/tux.png') no-repeat 0 0 !important;
+}
+
 
 
 .topic {
@@ -599,6 +603,8 @@ a.toolbar:active {
     padding-left:20px;
     background:transparent url('../images/16x16/elbow-end.gif') no-repeat 0 2px !important;
 }
+
+
 
 .btnComentarios{
 	padding-left:50px;
