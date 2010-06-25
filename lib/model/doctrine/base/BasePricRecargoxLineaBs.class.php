@@ -23,6 +23,7 @@
  * @property timestamp $ca_fchcreado
  * @property string $ca_usucreado
  * @property timestamp $ca_fcheliminado
+ * @property Concepto $Concepto
  * @property TipoRecargo $TipoRecargo
  * @property Trafico $Trafico
  * @property IdsProveedor $IdsProveedor
@@ -45,6 +46,7 @@
  * @method timestamp           getCaFchcreado()       Returns the current record's "ca_fchcreado" value
  * @method string              getCaUsucreado()       Returns the current record's "ca_usucreado" value
  * @method timestamp           getCaFcheliminado()    Returns the current record's "ca_fcheliminado" value
+ * @method Concepto            getConcepto()          Returns the current record's "Concepto" value
  * @method TipoRecargo         getTipoRecargo()       Returns the current record's "TipoRecargo" value
  * @method Trafico             getTrafico()           Returns the current record's "Trafico" value
  * @method IdsProveedor        getIdsProveedor()      Returns the current record's "IdsProveedor" value
@@ -66,6 +68,7 @@
  * @method PricRecargoxLineaBs setCaFchcreado()       Sets the current record's "ca_fchcreado" value
  * @method PricRecargoxLineaBs setCaUsucreado()       Sets the current record's "ca_usucreado" value
  * @method PricRecargoxLineaBs setCaFcheliminado()    Sets the current record's "ca_fcheliminado" value
+ * @method PricRecargoxLineaBs setConcepto()          Sets the current record's "Concepto" value
  * @method PricRecargoxLineaBs setTipoRecargo()       Sets the current record's "TipoRecargo" value
  * @method PricRecargoxLineaBs setTrafico()           Sets the current record's "Trafico" value
  * @method PricRecargoxLineaBs setIdsProveedor()      Sets the current record's "IdsProveedor" value
@@ -79,7 +82,7 @@ abstract class BasePricRecargoxLineaBs extends myDoctrineRecord
 {
     public function setTableDefinition()
     {
-        $this->setTableName('bs_pricrecargosxlinea');
+        $this->setTableName('pric.bs_recargosxlinea');
         $this->hasColumn('ca_idtrafico', 'string', null, array(
              'type' => 'string',
              'primary' => true,
@@ -153,6 +156,10 @@ abstract class BasePricRecargoxLineaBs extends myDoctrineRecord
     public function setUp()
     {
         parent::setUp();
+        $this->hasOne('Concepto', array(
+             'local' => 'ca_idconcepto',
+             'foreign' => 'ca_idconcepto'));
+
         $this->hasOne('TipoRecargo', array(
              'local' => 'ca_idrecargo',
              'foreign' => 'ca_idrecargo'));

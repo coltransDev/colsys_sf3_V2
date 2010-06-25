@@ -162,7 +162,9 @@ PanelRecargosPorLinea = function( config ){
             modalidad: this.modalidad,
             idtrafico: this.idtrafico,
             idlinea: this.idlinea,
-            readOnly: this.readOnly
+            readOnly: this.readOnly,
+            fechacambio: this.fechacambio,
+            horacambio: this.horacambio
         },
         reader: new Ext.data.JsonReader(
             {
@@ -343,6 +345,13 @@ PanelRecargosPorLinea = function( config ){
                 iconCls:'tick',  // reference to our css
                 scope: this,
                 handler: this.seleccionarTodo
+            },
+            {
+                text: 'Recargar',
+                tooltip: 'Actualiza los datos',
+                iconCls:'refresh',  // reference to our css
+                scope: this,
+                handler: this.recargar
             }
         ];
     }else{
@@ -353,6 +362,13 @@ PanelRecargosPorLinea = function( config ){
                 iconCls:'tick',  // reference to our css
                 scope: this,
                 handler: this.seleccionarTodo
+            },
+            {
+                text: 'Recargar',
+                tooltip: 'Actualiza los datos',
+                iconCls:'refresh',  // reference to our css
+                scope: this,
+                handler: this.recargar
             }
         ];
     }
@@ -740,6 +756,15 @@ Ext.extend(PanelRecargosPorLinea, Ext.grid.EditorGridPanel, {
                                     }
                                 }
                             }
+                        },
+
+                        {
+                            text: 'Control de cambios',
+                            iconCls: '',
+                            scope:this,
+                            handler: function(){
+                                    this.ventanaControlCambios(this.ctxRecord, index);
+                            }
                         }
                         ]
                 });
@@ -765,6 +790,10 @@ Ext.extend(PanelRecargosPorLinea, Ext.grid.EditorGridPanel, {
                 }
             }
         );
+    },
+
+    recargar: function(){
+        this.store.reload();
     },
 
 
@@ -805,6 +834,98 @@ Ext.extend(PanelRecargosPorLinea, Ext.grid.EditorGridPanel, {
 
             //document.getElementById("obs_"+record.get("_id")).innerHTML  = "<b>Observaciones:</b> "+text;
         }
-    }
+    },
+
+    /*
+    * Muestra todos los cambios realizados en el trayecto
+    */
+    ventanaControlCambios: function( record , index ){
+
+        if( this.trafico ){
+            var title = "Recargos x linea "+this.impoexpo.substring(0, 4)+"»"+this.transporte+"»"+this.modalidad+"»"+this.trafico+"»";
+        }else{
+            var title = "Recargos Locales x linea "+this.impoexpo.substring(0, 4)+"»"+this.transporte+"»"+this.modalidad+"»"+"»";
+        }
+
+        var params = {
+                        impoexpo: this.impoexpo,
+                        idtrafico: this.idtrafico,
+                        transporte: this.transporte,
+                        modalidad: this.modalidad,
+                        idlinea: record.data.idlinea,
+                        idciudad: record.data.origen,
+                        idciudad2: record.data.destino,
+                        title: title,
+                        readOnly: true,
+                        closable: true
+                     };
+        win = new Ext.Window({
+            width       : 400,
+            height      : 200,
+            closeAction :'close',
+            plain       : true,
+
+            items       : [new Ext.FormPanel({
+                id: 'historial-form',
+                layout: 'form',
+                frame: true,
+                title: 'Historial del Tarifario',
+                autoHeight: true,
+                labelWidth: 100,
+
+                items: [{
+                            xtype:'datefield',
+                            fieldLabel: 'Fecha',
+                            id: 'fecha-cambio',
+                            name: 'fecha-cambio',
+                            value: '',
+                            format: 'Y-m-d',
+                            allowBlank:false,
+                            width: 150
+                        },
+                        {
+                            xtype:'timefield',
+                            fieldLabel: 'Hora',
+                            id: 'hora-cambio',
+                            name: 'hora-cambio',
+                            value: '',
+                            format: "H:i:s",
+                            allowBlank:false,
+                            width: 150
+                        }
+                    ]
+            })],
+
+            buttons: [{
+                text     : 'Continuar',
+                handler: function(){
+                    var fp = Ext.getCmp("historial-form");
+                    var fechacambio = fp.getForm().findField("fecha-cambio").getRawValue().split("-").join("|");;
+                    var horacambio = fp.getForm().findField("hora-cambio").getValue();
+
+                    if( fp.getForm().isValid() ){
+                        params["title"]+=fp.getForm().findField("fecha-cambio").getRawValue()+" "+horacambio;
+                        params["fechacambio"] = fechacambio;
+                        params["horacambio"] = horacambio;
+                        var newComponent = new PanelRecargosPorLinea(
+                                                                    params
+                                                                    );
+                        Ext.getCmp('tab-panel').add(newComponent);
+                        Ext.getCmp('tab-panel').setActiveTab(newComponent);
+                        win.close();
+
+                    }else{
+                        Ext.MessageBox.alert('Error:', '¡Atención: La información no es válida o está incompleta!');
+                    }
+                }
+            },{
+                text     : 'Cancelar',
+                handler  : function(){
+                    win.close();
+                }
+            }]
+        });
+        win.show();
+     }
 });
 </script>

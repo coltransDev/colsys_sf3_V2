@@ -1072,7 +1072,7 @@ Ext.extend(PanelFletesPorTrayecto, Ext.grid.EditorGridPanel, {
                         idlinea: record.data.idlinea,
                         idciudad: record.data.origen,
                         idciudad2: record.data.destino,
-                        title: this.impoexpo.substring(0, 4)+"»"+this.transporte+"»"+this.modalidad+"»"+this.trafico+"»",
+                        title: this.title,
                         readOnly: true,
                         closable: true
                      };

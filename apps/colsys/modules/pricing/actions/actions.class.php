@@ -978,7 +978,6 @@ class pricingActions extends sfActions
                     );
                     $this->data[]= $row;
                 }
-            }            
            
         }
 
@@ -1208,7 +1207,32 @@ class pricingActions extends sfActions
 		}
 
 
-        $q = Doctrine_Query::create()->from("PricRecargoxLinea r");
+        if( $this->getRequestParameter( "fechacambio" ) ){
+            $fechacambio = str_replace("|","-", $this->getRequestParameter( "fechacambio" ) );
+            $timestamp = strtotime($fechacambio." ".$this->getRequestParameter( "horacambio" ));
+            $this->opcion = "consulta";
+        }else{
+            $timestamp = null;
+        }
+
+
+		if( $timestamp ){
+			$fchcorte = date( "Y-m-d H:i:s", $timestamp );
+		}else{
+			$fchcorte = date( "Y-m-d H:i:s" );
+		}
+
+        if( $timestamp ){
+            $q = Doctrine_Query::create()->from("PricRecargoxLineaBs r");
+            $q->addWhere("r.ca_fchcreado IN (SELECT rh.ca_fchcreado FROM PricRecargoxLineaBs rh WHERE rh.ca_fchcreado<= ?
+                    AND r.ca_idtrafico = rh.ca_idtrafico AND r.ca_idlinea = rh.ca_idlinea AND r.ca_modalidad = rh.ca_modalidad AND r.ca_impoexpo = rh.ca_impoexpo AND r.ca_idrecargo = rh.ca_idrecargo
+                     ORDER BY rh.ca_consecutivo DESC LIMIT 1 )", $fchcorte );
+        }else{
+            $q = Doctrine_Query::create()->from("PricRecargoxLinea r");
+
+        }
+
+        //$q = Doctrine_Query::create()->from("PricRecargoxLinea r");
         $q->innerJoin("r.TipoRecargo t");
         $q->where("r.ca_idtrafico = ? AND t.ca_transporte= ? AND r.ca_modalidad= ? AND r.ca_impoexpo = ?", array($idtrafico, $transporte, $modalidad, $impoexpo));
         if( $idtrafico=="99-999" ){
@@ -2648,7 +2672,6 @@ class pricingActions extends sfActions
             $concepto->setCaParametros( utf8_decode($request->getParameter("parametros")) );
         }
 
-        
         if( $request->getParameter("recargoorigen")!==null ){
             if( $request->getParameter("recargoorigen")=="true" ){
                 $concepto->setCaRecargoorigen( true );
@@ -2664,7 +2687,6 @@ class pricingActions extends sfActions
                 $concepto->setCaRecargolocal( false );
             }
         }
-
 
         if( $request->getParameter("observaciones")!==null ){
             if( $request->getParameter("observaciones") ){
@@ -2693,22 +2715,14 @@ class pricingActions extends sfActions
             }
         }
 
-        
-
         $concepto->save();
-
-        
-
 
         $this->responseArray["success"]=true;
 
         $this->responseArray["idconcepto"]=$concepto->getCaIdconcepto();
 
-
         $this->setTemplate("responseTemplate");
     }
-
-
     /*
     * guarda el panel de conceptos
     * @param sfRequest $request A request object

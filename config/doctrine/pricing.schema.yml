@@ -523,6 +523,10 @@ PricRecargoxLineaBs:
     ca_usucreado: string
     ca_fcheliminado: timestamp
   relations:
+    Concepto:
+      local: ca_idconcepto
+      foreign: ca_idconcepto
+      type: one
     TipoRecargo:
       local: ca_idrecargo
       foreign: ca_idrecargo
