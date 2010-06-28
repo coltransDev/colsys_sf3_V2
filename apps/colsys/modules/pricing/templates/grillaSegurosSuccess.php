@@ -1,7 +1,3 @@
-<?
-
-?>
-
 /*
 * Crea el Record 
 */
@@ -13,6 +9,7 @@ var recordSeguros = Ext.data.Record.create([
 	{name: 'vlrminima', type: 'float'},	
 	{name: 'vlrobtencionpoliza', type: 'float'},
 	{name: 'idmoneda', type: 'string'},
+    {name: 'idmonedaobtencion', type: 'string'},
 	{name: 'observaciones', type: 'string'}	
 ]);
    		
@@ -79,6 +76,22 @@ var colModelSeguros = new Ext.grid.ColumnModel({
 						allowBlank:false,
 						allowNegative: false
 			})  
+		},
+        {
+			id: 'idmoneda',
+			header: "Moneda",
+			width: 40,
+			sortable: false,
+			dataIndex: 'idmoneda',
+			hideable: false
+			<?
+			if( $opcion!="consulta" ){
+			?>
+			,
+			editor: <?=include_component("widgets", "monedas")?>
+			<?
+			}
+			?>
 		}
 		,
 		{
@@ -94,11 +107,11 @@ var colModelSeguros = new Ext.grid.ColumnModel({
 			})  
 		},
 		{
-			id: 'idmoneda',
+			id: 'idmonedaobtencion',
 			header: "Moneda",
 			width: 40,
 			sortable: false,
-			dataIndex: 'idmoneda',
+			dataIndex: 'idmonedaobtencion',
 			hideable: false
 			<?
 			if( $opcion!="consulta" ){
@@ -125,8 +138,6 @@ var colModelSeguros = new Ext.grid.ColumnModel({
 	]	
 });
 
-
-
 /*
 * Actualiza los datos de la base de datos usando Ajax.
 */
@@ -134,9 +145,6 @@ var colModelSeguros = new Ext.grid.ColumnModel({
 /*
 * Handlers de los eventos y botones de la grilla 
 */
-
-
-
 
 /*
 * Handler que se dispara despues de editar una celda
@@ -153,19 +161,12 @@ var gridAfterEditHandler = function(e) {
 				
 		for( var i=0; i< lenght; i++){
 			r = records[i];			
-			if(r.data.sel){
-				
-				r.set(field,e.value);
-				
-					
-				
+			if(r.data.sel){				
+				r.set(field,e.value);				
 			}
 		}
 	}	
 }
-
-
-
 
 function updateModel(){
 	var success = true;
@@ -187,12 +188,15 @@ function updateModel(){
 			Ext.MessageBox.alert("Error", "Por favor coloque el valor de obtención de poliza en todos los campos");
 			return 0;
 		}
-		if( !r.data.idmoneda ){			
+        if( !r.data.idmoneda ){
 			Ext.MessageBox.alert("Error", "Por favor coloque la moneda en todos los campos");
 			return 0;
 		}
+		if( !r.data.idmonedaobtencion ){
+			Ext.MessageBox.alert("Error", "Por favor coloque la moneda de obtencion en todos los campos");
+			return 0;
+		}
 	}
-			
 	
 	for( var i=0; i< lenght; i++){
 		r = records[i];
@@ -203,7 +207,6 @@ function updateModel(){
 		changes['idgrupo']=r.data.idgrupo;
 		changes['transporte']='<?=$transporte?>';	
 										
- 	   
 		//envia los datos al servidor 
 		Ext.Ajax.request( 
 			{   
@@ -228,14 +231,9 @@ function updateModel(){
 					}
 				}
 			 }
-		); 
-		
+		);
 	}
-	
-		
 }
-
-
 
 var seleccionarTodo = function(){	
 	storeSeguros.each( function(r){
@@ -243,8 +241,6 @@ var seleccionarTodo = function(){
 		} 
 	);
 }
-
-
 	
 /*
 * Crea la grilla 
@@ -282,12 +278,10 @@ new Ext.grid.<?=$opcion!="consulta"?"Editor":""?>GridPanel({
 	}
 	?>	
 	view: new Ext.grid.GridView({
-		 forceFit :true
-		
+		 forceFit :true		
 	}),		
 	listeners:{		
 		afteredit: gridAfterEditHandler
 		
-	}	
-
+	}
 });
