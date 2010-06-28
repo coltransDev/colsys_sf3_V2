@@ -656,6 +656,7 @@ PricSeguro:
     ca_vlrminima: decimal
     ca_vlrobtencionpoliza: decimal
     ca_idmoneda: string
+    ca_idmonedaobtencion: string
     ca_observaciones: string
     ca_fchcreado: timestamp
     ca_usucreado: string
