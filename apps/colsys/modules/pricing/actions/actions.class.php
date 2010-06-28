@@ -2041,6 +2041,7 @@ class pricingActions extends sfActions
 				$row['vlrminima']=$seguro->getCaVlrminima();
 				$row['vlrobtencionpoliza']=$seguro->getCaVlrobtencionpoliza();
 				$row['idmoneda']=$seguro->getCaIdmoneda();
+                $row['idmonedaobtencion']=$seguro->getCaIdmonedaobtencion();
 				$row['observaciones']=$seguro->getCaObservaciones();
 				
 			}
@@ -2086,6 +2087,9 @@ class pricingActions extends sfActions
 		
 		if( $this->getRequestParameter("idmoneda") ){
 			$seguro->setCaIdmoneda( $this->getRequestParameter("idmoneda") );
+		}
+        if( $this->getRequestParameter("idmonedaobtencion") ){
+			$seguro->setCaIdmonedaobtencion( $this->getRequestParameter("idmonedaobtencion") );
 		}
 		
 		if( $this->getRequestParameter("observaciones")!==null ){
