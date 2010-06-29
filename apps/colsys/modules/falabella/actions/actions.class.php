@@ -24,7 +24,7 @@ class falabellaActions extends sfActions {
 		$this->fala_headers = Doctrine::getTable("FalaHeader")
                                         ->createQuery("f")
                                         ->addWhere("f.ca_fcharchivado is null")
-                                        ->addOrderBy("f.ca_fecha_carpeta")
+                                        ->addOrderBy("f.ca_fecha_carpeta DESC")
                                         ->execute();
 	}
 
@@ -56,6 +56,7 @@ class falabellaActions extends sfActions {
 
                 $response = sfContext::getInstance()->getResponse();
 		$response->addJavaScript("extExtras/CheckColumn",'last');
+                $response->addJavaScript("extExtras/StatusBar",'last');
 	}
 
 	/*
@@ -276,12 +277,14 @@ class falabellaActions extends sfActions {
 	*/
 	public function executeGenerarArchivo(){
 		$fala_header = Doctrine::getTable("FalaHeader")->find ( base64_decode($this->getRequestParameter ( 'iddoc' )) );
-		$this->forward404Unless($fala_header);
-		$c = new Criteria();
-		$c->addAscendingOrderByColumn( FalaDetailPeer::CA_SKU );
-		$details = $fala_header->getFalaDetails($c);
 
-		$reporte = ReportePeer::retrieveByConsecutivo( $fala_header->getcaReporte() );
+                $details = Doctrine::getTable("FalaDetail") // Elimina los registros anteriores
+                               ->createQuery("d")
+                               ->where("d.ca_iddoc = ?", base64_decode($this->getRequestParameter ( 'iddoc' )) )
+                               ->addOrderBy("d.ca_sku")
+                               ->execute();
+
+		$reporte = ReporteTable::retrieveByConsecutivo( $fala_header->getcaReporte() );
 		$this->forward404unless( $reporte );
 
 		$status = $reporte->getUltimoStatus();
@@ -323,7 +326,7 @@ class falabellaActions extends sfActions {
 			$salida.= $detail->getCaNumContSell()."|"; // Sello de Cont Car  30
 			$salida.= $detail->getCaContainerIso()."|"; // Cod ISO 31
 			$salida.= (($reporte->getcaTransporte() != "Aéreo")?$fala_header->getCaContainerMode():"")."|"; // Container Mode 32
-			$salida.= (($reporte->getcaTransporte() == "Aéreo")?"AIR":"")."|"; // Vessel 33
+			$salida.= (($reporte->getcaTransporte() == "Aéreo")?$reporte->getDoctransporte():"")."|"; // Vessel 33
 			$salida.= "|"; // 34
 			$salida.= "|"; // 35
 			$salida.= "|"; // 36
@@ -350,19 +353,19 @@ class falabellaActions extends sfActions {
 			$salida.= "UN|"; // Vessel 57
 			$salida.= $fala_header->getCaCodigoPuertoDescarga()."|"; // 58
 			$salida.= $fala_header->getCaNombreProveedor()."|"; // 59
-			$salida.= $fala_header->getCaCampo59()."|";// 60
+			$salida.= $fala_header->getCaCampo_59()."|";// 60
 			$salida.= $fala_header->getCaCodigoProveedor()."|"; // 61
-			$salida.= $fala_header->getCaCampo61()."|";// 62
+			$salida.= $fala_header->getCaCampo_61()."|";// 62
 			$salida.= number_format($fala_header->getCaMontoInvoiceMiles()*10000, 0, '', '')."|";// 63
 			$salida.= $fala_header->getCaProformaNumber();// 64
 			$salida.= "\r\n";
 		}
-		$directory=sfConfig::get('app_falabella_outputfac');
+		$directory=sfConfig::get('app_falabella_output');
 		$filename = $directory.DIRECTORY_SEPARATOR.'ASN'.date('ymdHis').'.txt';
 		$handle = fopen($filename , 'w');
 
 		if (fwrite($handle, $salida) === FALSE) {
-			echo "No se puede escribir al archivo {filename}";
+			echo "No se puede escribir al archivo {$filename}";
 			exit;
 		}else{
 			$fala_header->setCaProcesado(true);
@@ -375,57 +378,37 @@ class falabellaActions extends sfActions {
 	* Genera el archivo de facturacion
 	*/
 	public function executeGenerarFactura(){
-
 		$fala_header = Doctrine::getTable("FalaHeader")->find ( base64_decode($this->getRequestParameter ( 'iddoc' )) );
 		$this->forward404Unless($fala_header);
 
-		$reporte = ReportePeer::retrieveByConsecutivo( $fala_header->getcaReporte() );
+		$reporte = ReporteTable::retrieveByConsecutivo( $fala_header->getCaReporte() );
 		$this->forward404unless( $reporte );
 
-		$c = new Criteria();
+		// $c = new Criteria();
 
 		if ($reporte->getcaTransporte() == 'Marítimo'){
-			$c->addSelectColumn(InoClientesSeaPeer::CA_REFERENCIA );
-			$c->addSelectColumn(InoClientesSeaPeer::CA_IDCLIENTE );
-			$c->addSelectColumn(InoClientesSeaPeer::CA_HBLS );
-			$c->addSelectColumn(InoClientesSeaPeer::CA_IDREPORTE );
-			$c->addSelectColumn(ReportePeer::CA_CONSECUTIVO );
+                    $query = "select ic.ca_referencia, ic.ca_idcliente, ic.ca_hbls, ic.ca_idreporte, rp.ca_consecutivo, ii.ca_factura, ii.ca_fchfactura, ii.ca_tcambio, ii.ca_idmoneda, ii.ca_valor ";
+                    $query.= "  from tb_inoclientes_sea ic ";
+                    $query.= "      inner join tb_reportes rp on (ic.ca_idreporte = rp.ca_idreporte) ";
+                    $query.= "      inner join tb_inoingresos_sea ii on (ic.ca_referencia = ii.ca_referencia and ic.ca_idcliente = ii.ca_idcliente and ic.ca_hbls = ii.ca_hbls) ";
+                    $query.= "  where rp.ca_consecutivo = '".$reporte->getCaConsecutivo()."'";
+                    $query.= "  order by ic.ca_referencia, ic.ca_idcliente, ic.ca_hbls";
 
-			$c->addSelectColumn(InoIngresosSeaPeer::CA_FACTURA );
-			$c->addSelectColumn(InoIngresosSeaPeer::CA_FCHFACTURA );
-			$c->addSelectColumn(InoIngresosSeaPeer::CA_TCAMBIO );
-			$c->addSelectColumn(InoIngresosSeaPeer::CA_IDMONEDA );
-			$c->addSelectColumn(InoIngresosSeaPeer::CA_VALOR );
-			$c->setDistinct();
+                    // echo "<br />".$query."<br />";
+                    $q = Doctrine_Manager::getInstance()->connection();
+                    $stmt = $q->execute($query);
 
-			$c->addJoin( ReportePeer::CA_IDREPORTE, InoClientesSeaPeer::CA_IDREPORTE );
-			$c->addJoin( InoClientesSeaPeer::CA_REFERENCIA, InoIngresosSeaPeer::CA_REFERENCIA );
-			$c->addJoin( InoClientesSeaPeer::CA_IDCLIENTE, InoIngresosSeaPeer::CA_IDCLIENTE );
-			$c->addJoin( InoClientesSeaPeer::CA_HBLS, InoIngresosSeaPeer::CA_HBLS );
-
-			$c->add( ReportePeer::CA_CONSECUTIVO, ReportePeer::CA_CONSECUTIVO." = '".$reporte->getcaConsecutivo()."'" , Criteria::CUSTOM );
-			$stmt = InoClientesSeaPeer::doSelectStmt( $c );
 		}else if ($reporte->getcaTransporte() == 'Aéreo'){
-			$c->addSelectColumn(InoClientesAirPeer::CA_REFERENCIA );
-			$c->addSelectColumn(InoClientesAirPeer::CA_IDCLIENTE );
-			$c->addSelectColumn(InoClientesAirPeer::CA_HAWB );
-			$c->addSelectColumn(InoClientesAirPeer::CA_IDREPORTE );
-			$c->addSelectColumn(ReportePeer::CA_CONSECUTIVO );
+                    $query = "select ic.ca_referencia, ic.ca_idcliente, ic.ca_hawb, ic.ca_idreporte, rp.ca_consecutivo, ii.ca_factura, ii.ca_fchfactura, 'USD' as ca_tcambio, ii.ca_tcalaico as ca_idmoneda, ii.ca_valor ";
+                    $query.= "  from tb_inoclientes_air ic ";
+                    $query.= "      inner join tb_reportes rp on (ic.ca_idreporte = rp.ca_consecutivo) ";
+                    $query.= "      inner join tb_inoingresos_air ii on (ic.ca_referencia = ii.ca_referencia and ic.ca_idcliente = ii.ca_idcliente and ic.ca_hawb = ii.ca_hawb) ";
+                    $query.= "  where rp.ca_consecutivo = '".$reporte->getCaConsecutivo()."'";
+                    $query.= "  order by ic.ca_referencia, ic.ca_idcliente, ic.ca_hawb";
 
-			$c->addSelectColumn(InoIngresosAirPeer::CA_FACTURA );
-			$c->addSelectColumn(InoIngresosAirPeer::CA_FCHFACTURA );
-			$c->addAsColumn("CA_TCAMBIO",InoIngresosAirPeer::CA_TCALAICO);
-			$c->addAsColumn("CA_IDMONEDA", "'USD'::TEXT");
-			$c->addSelectColumn(InoIngresosAirPeer::CA_VALOR );
-			$c->setDistinct();
-
-			$c->addJoin( ReportePeer::CA_CONSECUTIVO, InoClientesAirPeer::CA_IDREPORTE );
-			$c->addJoin( InoClientesAirPeer::CA_REFERENCIA, InoIngresosAirPeer::CA_REFERENCIA );
-			$c->addJoin( InoClientesAirPeer::CA_IDCLIENTE, InoIngresosAirPeer::CA_IDCLIENTE );
-			$c->addJoin( InoClientesAirPeer::CA_HAWB, InoIngresosAirPeer::CA_HAWB );
-
-			$c->add( ReportePeer::CA_CONSECUTIVO, ReportePeer::CA_CONSECUTIVO." = '".$reporte->getcaConsecutivo()."'" , Criteria::CUSTOM );
-			$stmt = InoClientesSeaPeer::doSelectStmt( $c );
+                    // echo "<br />".$query."<br />";
+                    $q = Doctrine_Manager::getInstance()->connection();
+                    $stmt = $q->execute($query);
 		}
 
 		$salida = '';
@@ -485,8 +468,6 @@ class falabellaActions extends sfActions {
 			$salida.= str_pad("002",50, " "); // 5 Concepto del IVA
 			$salida.= str_pad($vlr_iva, 10, "0", STR_PAD_LEFT); // 6
 			$salida.= "\r\n";
-
-                        
 
 			$directory=sfConfig::get('app_falabella_output');
 			$filename = $directory.DIRECTORY_SEPARATOR.'FAC_'.$row["ca_factura"].'.txt';
