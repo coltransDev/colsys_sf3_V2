@@ -32,8 +32,6 @@ $modulo = "00100000";                                                          /
 
 $rs =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
 
-
-if (true){
     if (!$rs->Open("select * from vi_cotizaciones where ca_idcotizacion = ".$id)) {    // Mueve el apuntador al registro que se desea consultar
         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";     // Muestra el mensaje de error
         echo "<script>document.location.href = 'cotizaciones.php';</script>";
@@ -834,11 +832,10 @@ if (true){
        $pdf->MultiCell(0, 4, $contents, 0,'J',0);
     }
     $pdf->Output();
-}
 
 
 function print_agent(&$ag, &$age_mem, &$pdf){
-	if (!$ag->Open("select * from vi_agentesxcont where ca_idcontacto in ("."'".implode('\',\'',explode("|",$age_mem))."'".") order by ca_transporte, ca_nomtrafico_ag, ca_nombre_ag, ca_nombre_co")) {
+	if (!$ag->Open("select * from vi_agentesxcont where ca_idcontacto::text in ("."'".implode('\',\'',explode("|",$age_mem))."'".") order by ca_transporte, ca_nomtrafico_ag, ca_nombre_ag, ca_nombre_co")) {
 	   echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";
 	   echo "<script>document.location.href = 'cotizaciones.php';</script>";
 	   exit;
