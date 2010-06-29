@@ -313,6 +313,7 @@ PanelFletesPorTrayecto = function( config ){
             hideable: false,
 			groupable: false,
 			dataIndex: 'neta',
+            renderer: this.renderNumber,
 			editor: new Ext.form.NumberField( {decimalPrecision :3} )
 		}
 		,
@@ -324,6 +325,7 @@ PanelFletesPorTrayecto = function( config ){
             hideable: false,
 			groupable: false,
 			dataIndex: 'sugerida',
+            renderer: this.renderNumber,
 			editor: new Ext.form.NumberField( {decimalPrecision :3} )
 		}
 		,
@@ -345,8 +347,9 @@ PanelFletesPorTrayecto = function( config ){
 			sortable: false,
             hideable: false,
 			groupable: false,
-			dataIndex: 'minima',            
-			editor: new Ext.form.NumberField()
+			dataIndex: 'minima',
+            renderer: this.renderNumber,
+			editor: new Ext.form.NumberField({decimalPrecision :3})
 		},
 		{
 			header: "Aplicación Min.",
@@ -1143,6 +1146,19 @@ Ext.extend(PanelFletesPorTrayecto, Ext.grid.EditorGridPanel, {
             }]
         });
         win.show();
+     },
+
+
+     /*
+     *
+     */
+     renderNumber: function( v ){        
+        if( v!=0 ){
+            return v;
+        }else{
+            return "";
+        }
+
      }
 
 
