@@ -43,21 +43,30 @@ class dataImportActions extends sfActions
                 }
                 fclose($handle);
 
-                $fileImported = new FileImported();
-                $fileImported->setCaIdfileheader( $header->getCaIdfileheader() );
-                $fileImported->setCaFchimportacion( date("Y-m-d H:i:s") );
-                $fileImported->setCaContent( $content );
-                $fileImported->setCaProcesado( false );
-                $fileImported->setCaNombre( basename($filename) );
-                $fileImported->setCaUsuario( $this->getUser()->getUserId() );
-                $fileImported->setCaProceso( $this->getRequestParameter("proceso") );
-                $fileImported->save();
-                if( $fileImported->process() ) {
-                    if ($this->getRequestParameter("proceso") == "Coltrans") {
-                        rename($filename, $directory.DIRECTORY_SEPARATOR.$processed.DIRECTORY_SEPARATOR.basename($filename));
-                    }else if ($this->getRequestParameter("proceso") == "Colmas") {
-                        rename($filename, $directory.DIRECTORY_SEPARATOR.$processed.DIRECTORY_SEPARATOR.basename($filename));
+                try{
+                    $conn = Doctrine::getTable("FileHeader")->getConnection();
+                    $conn->beginTransaction();
+                    $fileImported = new FileImported();
+                    $fileImported->setCaIdfileheader( $header->getCaIdfileheader() );
+                    $fileImported->setCaFchimportacion( date("Y-m-d H:i:s") );
+                    $fileImported->setCaContent( $content );
+                    $fileImported->setCaProcesado( false );
+                    $fileImported->setCaNombre( basename($filename) );
+                    $fileImported->setCaUsuario( $this->getUser()->getUserId() );
+                    $fileImported->setCaProceso( $this->getRequestParameter("proceso") );
+                    $fileImported->save( $conn );
+                    if( $fileImported->process( $conn ) ) {
+                        if ($this->getRequestParameter("proceso") == "Coltrans") {
+                            rename($filename, $directory.DIRECTORY_SEPARATOR.$processed.DIRECTORY_SEPARATOR.basename($filename));
+                        }else if ($this->getRequestParameter("proceso") == "Colmas") {
+                            rename($filename, $directory.DIRECTORY_SEPARATOR.$processed.DIRECTORY_SEPARATOR.basename($filename));
+                        }
                     }
+                    $conn->commit();
+                }  catch (Exception $e){
+                    //echo $e->getMessage();
+                    throw $e;
+                    //$conn->rollBack();
                 }
             }
 
