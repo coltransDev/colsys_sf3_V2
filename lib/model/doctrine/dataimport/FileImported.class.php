@@ -15,7 +15,7 @@ class FileImported extends BaseFileImported
     private $row = array();
 
 
-	public function process(){
+	public function process( $conn=null ){
 		$header = $this->getFileHeader();
 		
 		$registros = Doctrine::getTable("FileColumn")
@@ -52,7 +52,7 @@ class FileImported extends BaseFileImported
 
 					}
 
-                                        if(!$this->processFalabella($num_iddocs)){
+                                        if(!$this->processFalabella($num_iddocs, $conn)){
 						return false;
 					}
 				}
@@ -61,7 +61,7 @@ class FileImported extends BaseFileImported
 		return true;
 	}
 
-	public function processFalabella(&$num_iddocs){
+	public function processFalabella(&$num_iddocs, $conn=null){
 
                 $table = ($this->getCaProceso() == 'Coltrans')?'FalaHeader':($this->getCaProceso() == 'Colmas')?'FalaHeaderAdu':'';
 
@@ -109,7 +109,7 @@ class FileImported extends BaseFileImported
 				$falaHeader->setCaManufacturerContact( trim($this->row['manufacturer_contact']) );
 				$falaHeader->setCaManufacturerPhone( trim($this->row['manufacturer_phone']) );
 				$falaHeader->setCaManufacturerFax( trim($this->row['manufacturer_fax']) );
-				$falaHeader->save();
+				$falaHeader->save( $conn );
 			}else{
 				return false;
 			}
@@ -166,7 +166,7 @@ class FileImported extends BaseFileImported
 				$falaShip->setCaAlterPort( trim($this->row['alter_port']) );
 				$falaShip->setCaFinalPort( trim($this->row['final_port']) );
 				$falaShip->setCaLimitDate( trim($this->row['limit_date']) );
-				$falaShip->save();
+				$falaShip->save( $conn );
 			}
 		}
 
@@ -181,7 +181,7 @@ class FileImported extends BaseFileImported
 				$falaInst->setCaIddoc( trim($this->row['po_number']).$num_iddocs );
 				$falaInst->setCaInstructions( trim($this->row['instructions']) );
                                 $falaInst->setCaEmbarque( trim($this->row['embarque']) );
-				$falaInst->save();
+				$falaInst->save( $conn );
 			}
 		}
 
@@ -211,7 +211,7 @@ class FileImported extends BaseFileImported
 				$falaDetail->setCaUnidadMedidaVolumen( substr($this->row['long'],0,2) );
 				$falaDetail->setCaCantidadPesoMiles( floatval($this->row['kgs_net']) );
 				$falaDetail->setCaUnidadMedidaPeso( $this->row['unit_measure'] );
-				$falaDetail->save();
+				$falaDetail->save( $conn );
 			}
 		}
 		return true;
