@@ -4,15 +4,15 @@
  *
  *  (c) Coltrans S.A. - Colmas Ltda.
 */
-
-include_component("reportesNeg", "formTrayectoPanel");
+include_component("reportesNeg", "formTrayectoPanel",array("modo"=>$modo,"impoexpo"=>$impoexpo));
 include_component("reportesNeg", "formClientePanel");
-include_component("reportesNeg", "formPreferenciasPanel");
+include_component("reportesNeg", "formPreferenciasPanel",array("modo"=>$modo,"impoexpo"=>$impoexpo));
 include_component("reportesNeg", "formCorteGuiasPanel");
 
 include_component("reportesNeg", "formAduanasPanel");
 include_component("reportesNeg", "formSegurosPanel");
 
+//echo $idcategory;
 ?>
 <script type="text/javascript">
 
@@ -22,6 +22,7 @@ include_component("reportesNeg", "formSegurosPanel");
         Ext.apply(this, config);
 
         var bodyStyle = 'padding: 5px 5px 5px 5px;';
+        this.res="";
 
         this.buttons = [];
 
@@ -32,23 +33,24 @@ include_component("reportesNeg", "formSegurosPanel");
                 scope:this,
                 handler: this.onSave
             } );
-        }
+        }       
 
         if( this.nuevaVersion ){
             this.buttons.push( {
                 text   : 'Nueva Version',
                 formBind:true,
                 scope:this,
-                handler: this.onSave
+                handler: this.onNuevaVersion
             } );
         }
+
 
         if( this.copiar ){
             this.buttons.push( {
                 text   : 'Copiar en nuevo reporte',
                 formBind:true,
                 scope:this,
-                handler: this.onSave
+                handler: this.onCopiar
             } );
         }
 
@@ -57,15 +59,17 @@ include_component("reportesNeg", "formSegurosPanel");
                  handler: this.onCancel
             } );
 
+
         FormReportePanel.superclass.constructor.call(this, {
            //border:false,
             //frame:true,
             labelWidth:80,
             frame: true,
             buttonAlign: 'center',
-            layout:'fit',            
+            layout:'fit',           
             //standardSubmit: true,
-            
+
+            monitorValid:true,            
             items: [{
                     xtype:'tabpanel',
                     activeTab: 0,
@@ -85,27 +89,45 @@ include_component("reportesNeg", "formSegurosPanel");
                         new FormSegurosPanel({bodyStyle:bodyStyle})
                     ]
             }],
-            buttons: this.buttons
+            buttons: this.buttons,
+            listeners:{
+                afterrender:this.onAfterload
+            }
         });
     };
 
     Ext.extend(FormReportePanel, Ext.form.FormPanel, {
-        onSave: function(){            
+        onNuevaVersion: function(){
+            this.onSave("2");
+        },
+
+        onCopiar: function(){
+            this.onSave("1");
+        },
+
+        onSave: function(opt){
+            if(opt!="1" || opt!="2")
+                opt=0;
             var form  = this.getForm();
 
             if( form.isValid() ){
                 form.submit({
-                    url: "<?=url_for("reportesNeg/guardarReporte")?>",
+                    url: "<?=url_for("reportesNeg/guardarReporte?idreporte=".$idreporte)?>",
                     //scope:this,
                     waitMsg:'Guardando...',
                     waitTitle:'Por favor espere...',
-                    success:function(response,options){
-                        alert("OK");
-                        //Ext.Msg.alert( "Msg "+response.responseText );
-                    },
+                    params: {opcion:opt},                    
+                    success: function(gridForm, action) {
+                        var res = Ext.util.JSON.decode( action.response.responseText );
+                        Ext.MessageBox.alert("Mensaje",'Se guardo correctamente el reporte');
+                        if(res.redirect)                            
+                            location.href="/reportesNeg/consultaReporte/id/"+res.idreporte+"/idcategory/<?=$idcategory?>";
+                    }
+
+                    ,
                     // standardSubmit: false,
                     failure:function(form,action){
-                        Ext.MessageBox.alert('Error Message', "Se ha presentado un error"+(action.result?": "+action.result.errorInfo:"")+" "+(action.response?"\n Codigo HTTP "+action.response.status:""));
+                        Ext.MessageBox.alert("Mensaje",'No es posible crear un reporte ya que posee errores en la digitacion, verifique');
                     }//end failure block
                 });
             }else{
@@ -118,13 +140,47 @@ include_component("reportesNeg", "formSegurosPanel");
         /**
         * Form onRender override
         */
+       onAfterload:function()
+       {
+<?
+                foreach( $issues as $issue ){
+                    $info = str_replace("\"", "'",str_replace("\n", "<br />",$issue["t_ca_title"].":<br />".$issue["t_ca_info"]));
+                    ?>
+                    info = "<?=$info?>";
+
+                    target = $('#<?=$issue["t_ca_field_id"]?>').addClass("help").attr("title",info);
+<?
+                }
+?>
+                $('.help').tooltip({track: true, fade: 250, opacity: 1, top: -15, extraClass: "pretty fancy" });
+                //$("#idcliente").val("sdfsdfsd");
+
+
+       }
+       ,
         onRender:function() {
 
             // call parent
             FormReportePanel.superclass.onRender.apply(this, arguments);
 
             // set wait message target
-            this.getForm().waitMsgTarget = this.getEl();
+            this.getForm().waitMsgTarget = this.getEl();            
+            if(this.idreporte!="undefined" && this.idreporte!="" )
+            {
+                this.load({
+                    url:'<?=url_for("reportesNeg/datosReporte")?>',
+                    waitMsg:'cargando...',
+                    params:{idreporte:this.idreporte},
+
+                    success:function(response,options){
+                        this.res = Ext.util.JSON.decode( options.response.responseText );
+                        Ext.getCmp('aduanas').collapsed=(Ext.getCmp('ca_colmas').getValue()=="Sí")?false:true;
+                        Ext.getCmp('seguros').collapsed=(Ext.getCmp('ca_seguro').getValue()=="Sí")?false:true;
+                        $("#cliente").attr("value",res.data.idcliente);                    }
+                    
+                });
+            }
+
 
         } // eo function onRender
 
