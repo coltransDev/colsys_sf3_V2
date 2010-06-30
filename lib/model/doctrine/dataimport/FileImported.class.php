@@ -62,8 +62,12 @@ class FileImported extends BaseFileImported
 	}
 
 	public function processFalabella(&$num_iddocs, $conn=null){
-
-                $table = ($this->getCaProceso() == 'Coltrans')?'FalaHeader':($this->getCaProceso() == 'Colmas')?'FalaHeaderAdu':'';
+                $table = '';
+                if ($this->getCaProceso() == 'Coltrans'){
+                    $table = 'FalaHeader';
+                }elseif ($this->getCaProceso() == 'Colmas'){
+                    $table = 'FalaHeaderAdu';
+                }
 
 		if(isset($this->row['FALPOH01'])){ //REGISTRO TIPO 1
                         $header = Doctrine::getTable($table)
@@ -118,6 +122,7 @@ class FileImported extends BaseFileImported
 
 		if(isset($this->row['FALPOH02'])){
 			if( Doctrine::getTable($table)->find(trim($this->row['po_number']).$num_iddocs) ){
+                                
                                 if ($this->getCaProceso() == 'Coltrans'){
                                     $falaShip = new FalaShipmentInfo();
                                 }else if ($this->getCaProceso() == 'Colmas'){
