@@ -143,6 +143,7 @@ class cotizacionesComponents extends sfComponents
       									'prima_min'=>$seguro->getCaPrimaMin(),
       									'obtencion'=>$seguro->getCaObtencion(),
       									'idmoneda'=>$seguro->getCaIdmoneda(),
+                                        'idmonedaobtencion'=>$seguro->getCaIdmonedaobtencion(),
 										'observaciones'=>utf8_encode($seguro->getCaObservaciones()),
 										'transporte'=>utf8_encode($seguro->getCaTransporte())
       		);
