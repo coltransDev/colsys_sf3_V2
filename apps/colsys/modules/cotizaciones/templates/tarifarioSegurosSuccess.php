@@ -16,6 +16,7 @@ var recordSeguros = Ext.data.Record.create([
 	{name: 'vlrminima', type: 'float'},	
 	{name: 'vlrobtencionpoliza', type: 'float'},
 	{name: 'idmoneda', type: 'string'},
+    {name: 'idmonedaobtencion', type: 'string'},
 	{name: 'transporte', type: 'string'},
 	{name: 'observaciones', type: 'string'}	
 ]);
@@ -92,8 +93,15 @@ var colModelSeguros = new Ext.grid.ColumnModel({
 			sortable: false,	
 			hideable: false,		
 			dataIndex: 'vlrminima'
-		}
-		,
+		},
+        {
+			id: 'idmoneda',
+			header: "Moneda",
+			width: 40,
+			sortable: false,
+			dataIndex: 'idmoneda',
+			hideable: false
+		},		
 		{
 			header: "Obtencion",
 			width: 30,
@@ -102,11 +110,11 @@ var colModelSeguros = new Ext.grid.ColumnModel({
 			dataIndex: 'vlrobtencionpoliza'
 		},
 		{
-			id: 'idmoneda',
+			id: 'idmonedaobtencion',
 			header: "Moneda",
 			width: 40,
 			sortable: false,
-			dataIndex: 'idmoneda',
+			dataIndex: 'idmonedaobtencion',
 			hideable: false
 			
 		},
@@ -117,14 +125,9 @@ var colModelSeguros = new Ext.grid.ColumnModel({
 			sortable: false,
 			dataIndex: 'observaciones',
 			hideable: false
-		}
-				
+		}				
 	]	
 });
-
-
-
-
 
 
 /*
@@ -181,10 +184,8 @@ new Ext.grid.GridPanel({
 			iconCls:'tick',  // reference to our css
 			handler: seleccionarTodo
 		}
-	],		
+	],
 	view: new Ext.grid.GridView({
-		 forceFit :true
-		
+		 forceFit :true		
 	})
-
 });
