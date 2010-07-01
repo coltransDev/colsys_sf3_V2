@@ -1855,6 +1855,10 @@ class cotizacionesActions extends sfActions
 			$seguro->setCaIdmoneda($this->getRequestParameter("idmoneda"));
 		}
 
+		if( $this->getRequestParameter("idmonedaobtencion") ){
+			$seguro->setCaIdmonedaobtencion($this->getRequestParameter("idmonedaobtencion"));
+		}
+
 		if( $this->getRequestParameter("observaciones")){
 			$seguro->setCaObservaciones($this->getRequestParameter("observaciones"));
 		}
@@ -1928,6 +1932,7 @@ class cotizacionesActions extends sfActions
 				$row['vlrminima']=$seguro->getCaVlrminima();
 				$row['vlrobtencionpoliza']=$seguro->getCaVlrobtencionpoliza();
 				$row['idmoneda']=$seguro->getCaIdmoneda();
+                $row['idmonedaobtencion']=$seguro->getCaIdmonedaobtencion();
 				$row['observaciones']=$seguro->getCaObservaciones();
 				$row['transporte']=utf8_encode($seguro->getCaTransporte());
 				$this->data[] = $row;
