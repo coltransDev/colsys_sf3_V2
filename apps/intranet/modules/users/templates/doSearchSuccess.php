@@ -3,11 +3,20 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
 */
-foreach ($usuarios as $usuario) {
-
-    ?>
-<p><b><a href="<?=url_for('users/viewUser?login='.$usuario->getCaLogin()) ?>"><?=$usuario->getCaNombre()?></a></b> </p>
-
-<br/>
-    <?}
 ?>
+
+<br />
+<br />
+<table border="1" class="tableList">
+<?php
+foreach ($usuarios as $usuario) {
+?>
+	<tr>
+        <td><b><a href="<?=url_for('users/viewUser?login='.$usuario->getCaLogin()) ?>"><?=utf8_encode($usuario->getCaNombre())?></a></b></td>
+		<td><?=utf8_encode($usuario->getSucursal()->getCaNombre())?></td>
+        <td><?=utf8_encode($usuario->getCaDepartamento())?></td>
+	</tr>
+<?
+}
+?>
+</table>

@@ -4,7 +4,17 @@
 rendering: ~
 security:  ~
 
+loginValidation:                 # Filters need a unique name
+  class: loginValidationFilter
+  param:
+    cookie_name: coltranscookie
 # insert your own filters here
+
+
+localeValidation:                 # Filters need a unique name
+  class: localeFilter
+  param:
+    culture: es_ES
 
 cache:     ~
 execution: ~

@@ -32,7 +32,9 @@
                                 <div class="moduletable">
 
                                 </div>
+                                <?include_component('users','loginInformation')?>
                             </div>
+                            
                         </div>
 
                         <div class="topmenu">
@@ -64,7 +66,6 @@
                                 <?include_component('homepage','mainMenu')?>
                             </div>
                             <br />
-
                         </div>
                         <!--Center Column Start-->
 
@@ -83,8 +84,8 @@
 
 
                                                 <div class="article-content">
-                                                     <?include_component('homepage','noticias')?>
-
+                                                     <?//include_component('homepage','noticias')?>
+                                                     <?php echo $sf_content ?>
                                                 </div>
                                             </div>
 
