@@ -1,8 +1,8 @@
 <?php
 
-/* 
+/*
  *  This file is part of the Colsys Project.
- * 
+ *
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
 
@@ -50,7 +50,7 @@ class cotizacionesComponents extends sfComponents
     }
 
 	/*
-	* Muestra los Productos de una Cotizacion y un formulario para agregar un nuevo registro, tambien 
+	* Muestra los Productos de una Cotizacion y un formulario para agregar un nuevo registro, tambien
 	* permite editar un campo haciendo doble click en el.
 	* @author: Carlos G. López M.
 	*/
@@ -60,8 +60,8 @@ class cotizacionesComponents extends sfComponents
 		$this->editable = $this->getRequestParameter("editable");
 	}
 
-	
-	
+
+
 	/*
 	* Grilla que muestra los trayectos y sus respectivos conceptos
 	* @author: Andres Botero
@@ -75,7 +75,7 @@ class cotizacionesComponents extends sfComponents
         }
 
 	}
-	
+
 	/*
 	* Permite crear recargos locales
 	* @author: Andres Botero
@@ -83,7 +83,7 @@ class cotizacionesComponents extends sfComponents
 	public function executePanelRecargosCotizacion(){
 		$id = $this->cotizacion->getCaIdcotizacion();
 		$tipo = $this->tipo;
-		
+
 		$this->aplicacionesAereo = ParametroTable::retrieveByCaso("CU064", null, Constantes::AEREO );
 		$this->aplicacionesMaritimo = ParametroTable::retrieveByCaso("CU064", null, Constantes::MARITIMO );
 
@@ -98,43 +98,43 @@ class cotizacionesComponents extends sfComponents
                                   ->where("t.ca_transporte = ? and t.ca_tipo = ?", array(Constantes::TERRESTRE, Constantes::RECARGO_OTM_DTA ))
                                   ->addOrderBy("t.ca_recargo ASC")
                                   ->execute();
-						
+
 		$this->recargosAereo = Doctrine::getTable("TipoRecargo")
                                   ->createQuery("t")
                                   ->where("t.ca_transporte = ? and t.ca_tipo = ?", array(Constantes::AEREO, $tipo ))
                                   ->addOrderBy("t.ca_recargo ASC")
                                   ->execute();
 
-       
+
         if(!isset($this->modo)){
             $this->modo = "";
         }
 
-					
+
 	}
 
 	/*
-	* 
-	*/	
+	*
+	*/
 	public function executePanelContViajes(){
 		$id = $this->cotizacion->getCaIdcotizacion();
-		
+
 	}
-	
+
 	/*
-	* 
-	*/	
+	*
+	*/
 	public function executePanelSeguros(){
 		$id = $this->cotizacion->getCaIdcotizacion();
-		
-				
+
+
 		$seguros = Doctrine::getTable("CotSeguro")
                 ->createQuery("s")
                 ->where("s.ca_idcotizacion = ? ", $id)
                 ->execute();
-						
+
 		$this->seguros = array();
-		
+
    		foreach( $seguros as $seguro ){
       		$this->seguros[] = array('oid'=>$seguro->getCaIdseguro() ,
       									'idcotizacion'=>$seguro->getCaIdcotizacion(),
@@ -148,24 +148,24 @@ class cotizacionesComponents extends sfComponents
       		);
 		}
 	}
-	
+
 	/*
-	* 
-	*/	
+	*
+	*/
 	public function executePanelAgentes(){
-		
+
 		$response = sfContext::getInstance()->getResponse();
 		$response->addJavaScript("extExtras/CheckColumn",'last');
-				
-		
-			
+
+
+
 	}
 
     /*
 	*  Cotizaciones de Colmas
 	* */
-	
-    
+
+
     /*
 	* Grilla que muestra los trayectos y sus respectivos conceptos
 	* @author: Andres Botero
