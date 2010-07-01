@@ -13,6 +13,7 @@ PanelSeguros = function( config ){
     this.record = Ext.data.Record.create([
         {name: 'idcotizacion', type: 'string'},
         {name: 'idmoneda', type: 'string'},
+        {name: 'idmonedaobtencion', type: 'string'},
         {name: 'prima_tip', type: 'string'},
         {name: 'prima_vlr', type: 'string'},
         {name: 'prima_min', type: 'string'},
@@ -101,7 +102,17 @@ PanelSeguros = function( config ){
                             allowBlank:false,
                             allowNegative: false
                 })
-            },{
+            },
+            {
+                id: 'idmoneda',
+                header: "Moneda",
+                width: 15,
+                sortable: true,
+                dataIndex: 'idmoneda',
+                hideable: false,
+                editor: <?=include_component("widgets", "monedas" ,array("id"=>""))?>
+            }
+            ,{
                 id: 'obtencion',
                 header: "Obtención Póliza",
                 width: 25,
@@ -115,11 +126,11 @@ PanelSeguros = function( config ){
                             allowNegative: false
                 })
             },{
-                id: 'idmoneda',
+                id: 'idmonedaobtencion',
                 header: "Moneda",
                 width: 15,
                 sortable: true,
-                dataIndex: 'idmoneda',
+                dataIndex: 'idmonedaobtencion',
                 hideable: false,
                 editor: <?=include_component("widgets", "monedas" ,array("id"=>""))?>
             },{
@@ -276,7 +287,7 @@ Ext.extend(PanelSeguros, Ext.grid.EditorGridPanel, {
         //Validacion
         for( var i=0; i< lenght; i++){
             r = records[i];
-            if( !r.data.idmoneda ){
+            if( !r.data.idmoneda || r.data.idmonedaobtencion ){
                 Ext.Msg.alert( "","Por favor coloque la moneda en todos los items en la pestaña seguros" );
                 return 0;
             }
@@ -353,6 +364,7 @@ Ext.extend(PanelSeguros, Ext.grid.EditorGridPanel, {
                               prima_min:0,
                               obtencion: 0 ,
                               idmoneda:'',
+                              idmonedaobtencion:'',
                               observaciones:'',
                               transporte:''
 
@@ -363,6 +375,8 @@ Ext.extend(PanelSeguros, Ext.grid.EditorGridPanel, {
         rec = storeSegurosCot.getAt(0);
         rec.set("prima_tip", "%");
         rec.set("idmoneda", "USD");
+        rec.set("idmonedaobtencion", "USD");
+
 
     },
 
@@ -412,6 +426,7 @@ Ext.extend(PanelSeguros, Ext.grid.EditorGridPanel, {
                                                           prima_min:0,
                                                           obtencion:'',
                                                           idmoneda:'',
+                                                          idmonedaobtencion:'',
                                                           observaciones:'',
                                                           transporte:''
                                                         });
@@ -425,6 +440,8 @@ Ext.extend(PanelSeguros, Ext.grid.EditorGridPanel, {
                                     rec.set("prima_min", r.data.vlrminima );
                                     rec.set("obtencion", r.data.vlrobtencionpoliza );
                                     rec.set("idmoneda", r.data.idmoneda );
+                                    rec.set("idmonedaobtencion", r.data.idmonedaobtencion );
+                                    
                                     rec.set("transporte", r.data.transporte );
                                     index++;
                                 }
