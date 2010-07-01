@@ -824,7 +824,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
                     $dif_mem = calc_dif($festi, $tstamp_recibido, $tstamp_enviado);
                     $color = analizar_dif("T", $lci_var, $lcs_var, $dif_mem, $array_avg, $array_pnc, $array_pmc, $array_null); // Función que retorna un Arreglo con el resultado de Dif
                     echo "  <TD Class=$color style='font-size: 9px; text-align:left;'>".$rs->Value('ca_fchrecibo')."</TD>";
-                    echo "  <TD Class=$color style='font-size: 9px; text-align:left;'>".$rs->Value('ca_fchenvio')."</TD>";                     
+                    echo "  <TD Class=$color style='font-size: 9px; text-align:left;'>".$rs->Value('ca_fchenvio')."</TD>";
                     echo "  <TD Class=$color style='font-size: 9px; text-align:right;'>".$dif_mem."</TD>";
                     echo "  <TD Class=mostrar style='font-size: 9px; text-align:left;'>".$rs->Value('ca_observaciones_idg')."</TD>";
                     if ($adicionales) {
@@ -861,7 +861,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
                 $first_date = true;
                 $fch_eta = $fch_llegada = null;
                 $tm->MoveFirst();
-                
+
                 while (!$tm->Eof() and !$tm->IsEmpty()) {
                     if ($first_date and strlen($tm->Value('ca_fchllegada'))!= 0) {
                         $fch_eta = $tm->Value('ca_fchllegada');
@@ -1312,7 +1312,14 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
          if ($dia == 30){
             $promedio_general = date("H:i:s",array_avg($array_avg));
          }else{
-            $promedio_general = date("d, H:i:s",array_avg($array_avg));
+            $tmp = $dia * 24 + $hor;
+
+            $dia = floor($tmp / 9);
+            $min+= ($tmp % 9) * 60;
+            $time_aju = mktime(0, $min, $seg, 1, $dia, 2000);
+            $promedio_general = date("d, H:i:s",$time_aju);
+
+            // $promedio_general = date("d, H:i:s",array_avg($array_avg));
          }
     }
 
