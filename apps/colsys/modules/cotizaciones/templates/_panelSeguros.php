@@ -56,7 +56,6 @@ PanelSeguros = function( config ){
                 dataIndex: 'transporte',
                 hideable: false,
                 editor: <?=include_component("widgets", "transportes" ,array("id"=>"transporte", "allowBlank"=>"false"))?>
-
             },{
                 id: 'prima_tip',
                 header: "Tipo",
@@ -75,7 +74,6 @@ PanelSeguros = function( config ){
                         listClass: 'x-combo-list-small',
                         store: [['$', '$'],['%', '%']]
                     })
-
             },{
                 id: 'prima_vlr',
                 header: "Prima",
@@ -287,7 +285,7 @@ Ext.extend(PanelSeguros, Ext.grid.EditorGridPanel, {
         //Validacion
         for( var i=0; i< lenght; i++){
             r = records[i];
-            if( !r.data.idmoneda || r.data.idmonedaobtencion ){
+            if( !r.data.idmoneda || !r.data.idmonedaobtencion ){
                 Ext.Msg.alert( "","Por favor coloque la moneda en todos los items en la pestaña seguros" );
                 return 0;
             }
