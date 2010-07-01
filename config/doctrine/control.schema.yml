@@ -24,6 +24,18 @@ Usuario:
     ca_forcechange: boolean
     ca_sucursal: string(40)
     ca_cumpleanos: date
+    ca_empresa: string(40)
+    ca_fchingreso: date
+    ca_manager: string(15)
+    ca_nombres: string(30)
+    ca_apellidos: string(30)
+    ca_teloficina: string(30)
+    ca_telparticular: string(30)
+    ca_telfamiliar: string(30)
+    ca_nombrefamiliar: string (250)
+    ca_movil: string(30)
+    ca_direccion: string(80)
+    ca_tiposangre: string(15)
   relations:
     AccesoUsuario:
       local: ca_login
