@@ -5,7 +5,7 @@ include_component("cotizaciones", "formTrayectoAduanaWindow", array("cotizacion"
 <script type="text/javascript">
 PanelSeguros = function( config ){
     Ext.apply(this, config);
-    
+
     this.data = <?=json_encode( array("seguros"=>$seguros, "total"=>count($seguros)) )?>;
     /*
     * Crea el Record
@@ -21,7 +21,7 @@ PanelSeguros = function( config ){
         {name: 'transporte', type: 'string'},
         {name: 'oid', type: 'string'}
     ]);
-    
+
     /*
     * Crea el store
     */
@@ -137,8 +137,8 @@ PanelSeguros = function( config ){
 
 
     PanelSeguros.superclass.constructor.call(this, {
-        
-        master_column_id : 'seguro',        
+
+        master_column_id : 'seguro',
         loadMask: {msg:'Cargando...'},
         clicksToEdit: 1,
         stripeRows: true,
@@ -203,9 +203,9 @@ Ext.extend(PanelSeguros, Ext.grid.EditorGridPanel, {
     onRowcontextMenu: function(grid, index, e){
         var storeSegurosCot = this.store;
         rec = this.store.getAt(index);
-        
+
         if(!this.menu){ // create context menu on first right click
-            this.menu = new Ext.menu.Menu({            
+            this.menu = new Ext.menu.Menu({
             enableScrolling : false,
             items: [
                     {
@@ -264,14 +264,14 @@ Ext.extend(PanelSeguros, Ext.grid.EditorGridPanel, {
     * Lanza lan función de actualización de registros modificados
     */
     guardarItems: function(){
-        
+
         var storeSegurosCot = this.store;
         var success = true;
         var records = storeSegurosCot.getModifiedRecords();
 
         var lenght = records.length;
 
-        
+
 
         //Validacion
         for( var i=0; i< lenght; i++){
@@ -373,9 +373,9 @@ Ext.extend(PanelSeguros, Ext.grid.EditorGridPanel, {
     ventanaTarifarioSeguros: function( ){
         var recordGrilla = this.record;
         var storeSegurosCot = this.store;
-        
+
         var url = '<?=url_for("cotizaciones/tarifarioSeguros?idcotizacion=".$cotizacion->getcaIdcotizacion())?>';
-        
+
         Ext.Ajax.request({
             url: url,
             params: {
