@@ -53,6 +53,10 @@ Usuario:
       local: ca_login
       foreign: ca_usuario
       type: many
+    NotTareaAsignacion:
+      local: ca_login
+      foreign: ca_login
+      type: many
 
 AccesoPerfil:
   options:
@@ -229,6 +233,12 @@ Departamento:
       autoincrement: true
     ca_nombre: string(30)
     ca_inhelpdesk: boolean
+  relations:
+    HdeskGroup:
+      local: ca_iddepartamento
+      foreign: ca_iddepartament
+      orderBy: ca_name ASC
+      type: many
 
 
 Sucursal:
@@ -294,3 +304,18 @@ UsuarioLog:
       foreign: ca_login
       type: one
 
+
+Session:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: control
+  tableName: control.tb_sessions
+  columns:
+    sess_id:
+      type: string
+      primary: true      
+    sess_data: string
+    sess_time: integer
+    max_inactive: integer

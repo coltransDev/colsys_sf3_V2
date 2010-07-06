@@ -353,6 +353,41 @@ class usersActions extends sfActions
     }
 
 
+    public function executeLoggedInUsers(){
+        
+        Doctrine::getTable("Session")
+                                    ->createQuery("s")
+                                    ->delete()
+                                    ->where("(s.sess_time+s.max_inactive)<?", time())
+                                    ->execute();
+
+
+        
+
+        $this->sessions = Doctrine::getTable("Session")
+                                    ->createQuery("s")
+                                    ->select("s.*")
+                                    ->addOrderBy("s.sess_time DESC")
+                                    ->execute();
+    }
+
+    public function executeKickUser( $request ){
+        $id = $request->getParameter("id");
+        $this->forward404Unless( $id );
+        $sess = Doctrine::getTable("Session")
+                             ->find( $id );
+        if( $sess ){
+            $sess->delete();
+        }
+        $this->redirect("users/loggedInUsers");
+    }
+
+
+
+
 		
 }
+
+
+
 ?>
