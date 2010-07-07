@@ -5,6 +5,8 @@
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
 $sessions = $sf_data->getRaw("sessions");
+
+
 ?>
 <div class="content" align="center" >
     <table class="tableList" width="90%" >
@@ -14,6 +16,7 @@ $sessions = $sf_data->getRaw("sessions");
             <th>Inactivo desde</th>
             <th>Tiempo de Inactividad</th>
             <th>Max Tiempo de Inactividad</th>
+            <th>IP</th>
             <th>Acciones</th>
 
         </tr>
@@ -41,9 +44,10 @@ $sessions = $sf_data->getRaw("sessions");
                     <td><?=$session->getSessId()?></td>
                     <td><?=$usuario?></td>
                     <td><?=Utils::fechaMes(date("Y-m-d H:i:s",$session->getSessTime()))?></td>
-                    <td><?=time()-$session->getSessTime()?></td>
-                    <td><?=$session->getMaxInactive()?></td>
-                    <td><?=link_to("Cerrar","users/kickUser?id=".$session->getSessId())?></td>
+                    <td><?=time()-$session->getSessTime()?> seg</td>
+                    <td><?=$session->getMaxInactive()?> seg</td>
+                    <td><?=$session->getIpAddress()?></td>
+                    <td><?=link_to("Kick","users/kickUser?id=".$session->getSessId())?></td>
                 </tr>
                 <?
                 }

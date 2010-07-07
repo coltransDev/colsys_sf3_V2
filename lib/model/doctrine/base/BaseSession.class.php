@@ -9,15 +9,18 @@
  * @property string $sess_data
  * @property integer $sess_time
  * @property integer $max_inactive
+ * @property string $ip_address
  * 
  * @method string  getSessId()       Returns the current record's "sess_id" value
  * @method string  getSessData()     Returns the current record's "sess_data" value
  * @method integer getSessTime()     Returns the current record's "sess_time" value
  * @method integer getMaxInactive()  Returns the current record's "max_inactive" value
+ * @method string  getIpAddress()    Returns the current record's "ip_address" value
  * @method Session setSessId()       Sets the current record's "sess_id" value
  * @method Session setSessData()     Sets the current record's "sess_data" value
  * @method Session setSessTime()     Sets the current record's "sess_time" value
  * @method Session setMaxInactive()  Sets the current record's "max_inactive" value
+ * @method Session setIpAddress()    Sets the current record's "ip_address" value
  * 
  * @package    symfony
  * @subpackage model
@@ -32,7 +35,6 @@ abstract class BaseSession extends myDoctrineRecord
         $this->hasColumn('sess_id', 'string', null, array(
              'type' => 'string',
              'primary' => true,
-             'autoincrement' => true,
              ));
         $this->hasColumn('sess_data', 'string', null, array(
              'type' => 'string',
@@ -42,6 +44,9 @@ abstract class BaseSession extends myDoctrineRecord
              ));
         $this->hasColumn('max_inactive', 'integer', null, array(
              'type' => 'integer',
+             ));
+        $this->hasColumn('ip_address', 'string', null, array(
+             'type' => 'string',
              ));
 
         $this->option('symfony', array(

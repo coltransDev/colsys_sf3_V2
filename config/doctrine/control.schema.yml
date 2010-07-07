@@ -319,3 +319,5 @@ Session:
     sess_data: string
     sess_time: integer
     max_inactive: integer
+    ip_address: string
+
