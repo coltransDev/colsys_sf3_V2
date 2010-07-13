@@ -4,7 +4,6 @@
  * 
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
-
 ?>
 <script type="text/javascript">
 /**
@@ -127,7 +126,7 @@ PanelFletesPorTrayecto = function( config ){
         {name: 'consecutivo', type: 'int'},
         {name: 'orden', type: 'string'},
         {name: 'actualizado', type: 'string'},
-        {name: 'pkBlocked', type: 'bool'},
+        {name: 'pkBlocked', type: 'bool'}
 
     ]);
 
@@ -224,7 +223,7 @@ PanelFletesPorTrayecto = function( config ){
             }
             p.cellAttr = 'rowspan="2"';
             return '<div class="x-grid3-row-expander">&#160;</div>';
-        }
+        }        
     });
 
 
@@ -651,7 +650,47 @@ Ext.extend(PanelFletesPorTrayecto, Ext.grid.EditorGridPanel, {
                 this.menu = new Ext.menu.Menu({
                     enableScrolling : false,
                     items: [
+                    <?
+                    if($nivel=="1")
+                    {
+                    ?>
+                    {
+                            text: 'Editar Trayecto',
+                            iconCls: 'add',
+                            scope:this,
+                            handler: function(){
+                                //alert(this.ctxRecord.toSource())
+                                record=this.ctxRecord;
+                                panelTrayecto= new PanelTrayectoWindow({idtrayecto:record.data.idtrayecto});
+                                panelTrayecto.show();
 
+                                fp= Ext.getCmp("trayecto-form");
+                                fp.getForm().load(
+                                {
+                                    url:'<?=url_for("pricing/datosTrayecto")?>',
+                                    waitMsg:'cargando...',
+                                    params:{idtrayecto:record.data.idtrayecto},
+                                    success:function(response,options){
+                                        this.res = Ext.util.JSON.decode( options.response.responseText );
+                                        $("#tra_origen").val(res.data.tra_origen);
+                                        $("#tra_origen_id").val(res.data.pais_origen);
+                                        $("#tra_destino").val(res.data.tra_destino);
+                                        $("#tra_destino_id").val(res.data.pais_destino);
+                                        $("#ciu_origen").val(res.data.ciu_origen);
+                                        $("#ciu_origen_id").val(res.data.ciudad_origen);
+                                        $("#ciu_destino").val(res.data.ciu_destino);
+                                        $("#ciu_destino_id").val(res.data.ciudad_destino);
+                                        $("#idlinea").val(res.data.idlinea);
+                                        $("#idlinea_id").val(res.data.linea);
+                                        $("#idagente").val(res.data.idagente);
+                                        $("#idagente_id").val(res.data.pais_origen+" "+res.data.agente);
+                                    }
+                                });                                
+                            }
+                        },
+                    <?
+                    }
+                    ?>
                         {
                             text: 'Nuevo concepto',
                             iconCls: 'add',
