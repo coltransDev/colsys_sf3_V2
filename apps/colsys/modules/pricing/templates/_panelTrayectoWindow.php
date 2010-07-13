@@ -27,7 +27,6 @@ PanelTrayectoWindow = function( config ) {
         y: 100,
         autoScroll: true,
         closeAction: 'close',
-
         buttons:[
              {
                 text: 'Guardar',
@@ -41,7 +40,7 @@ PanelTrayectoWindow = function( config ) {
         ],
         items: new Ext.FormPanel({
             id: 'trayecto-form',
-            layout: 'form',
+            //layout: 'form',
             frame: true,
             autoHeight: true,
             bodyStyle: 'padding: 5px 5px 0 5px;',
@@ -70,7 +69,8 @@ PanelTrayectoWindow = function( config ) {
                         linkDestino: "tra_destino_id",
                         linkListarTodos: "listar_todos",
                         hiddenName: "idagente",
-                        name: "idagente"
+                        name: "idagente_id",
+                        id: "idagente_id"
                     }),
                     {
                         xtype: 'checkbox',
@@ -87,6 +87,7 @@ PanelTrayectoWindow = function( config ) {
                         height: 40,
                         fieldLabel: 'Observaciones',
                         name: 'observaciones',
+                        id: 'observaciones',
                         value: '',
                         allowBlank:true
                     }
@@ -95,6 +96,7 @@ PanelTrayectoWindow = function( config ) {
                         width: 100,
                         fieldLabel: 'Frecuencia',
                         name: 'frecuencia',
+                        id: 'frecuencia',
                         value: '',
                         allowBlank:true
                     }
@@ -103,6 +105,7 @@ PanelTrayectoWindow = function( config ) {
                         width: 100,
                         fieldLabel: 'T/Transito',
                         name: 'ttransito',
+                        id: 'ttransito',
                         value: '',
                         allowBlank:true
                     },
@@ -177,9 +180,6 @@ Ext.extend(PanelTrayectoWindow, Ext.Window, {
         }else{
             Ext.MessageBox.alert('Trayectos - Error:', '¡Atención: La información no es válida o está incompleta!');
         }
-
-
-
     }
 
 
