@@ -214,6 +214,7 @@ class pricingActions extends sfActions
 
 				);
 
+
             $recargosGenerales = array();
 
 
@@ -2042,11 +2043,12 @@ class pricingActions extends sfActions
 				$row['vlrobtencionpoliza']=$seguro->getCaVlrobtencionpoliza();
 				$row['idmoneda']=$seguro->getCaIdmoneda();
                 $row['idmonedaobtencion']=$seguro->getCaIdmonedaobtencion();
-				$row['observaciones']=$seguro->getCaObservaciones();
-				
+				$row['observaciones']=$seguro->getCaObservaciones();				
 			}
+
 			$this->data[] = $row;		
-		}		
+		}
+        //print_r($this->data);
 		
 	}
 	
@@ -3070,6 +3072,46 @@ public function executeDatosParametros(sfWebRequest $request){
 
         $this->responseArray = array( "totalCount"=>count( $aplicaciones ), "root"=>$aplicaciones  );
 	$this->setTemplate("responseTemplate");
+    }
+    public function executeDatosTrayecto()
+    {
+        $idtrayecto = $this->getRequestParameter("idtrayecto");
+        $trayecto = Doctrine::getTable("Trayecto")->find( $idtrayecto );
+        if($trayecto)
+        {
+            $data=array();
+            $data["idtrayecto"]=$idtrayecto;
+            $data["impoexpo"]=utf8_encode($trayecto->getCaImpoexpo());
+            $data["transporte"]=utf8_encode($trayecto->getCaTransporte());
+            $data["modalidad"]=$trayecto->getCaModalidad();
+            $data["idlinea"]=$trayecto->getCaIdlinea();
+            $data["linea"]=utf8_encode($trayecto->getIdsProveedor()->getCaSigla()?$trayecto->getIdsProveedor()->getCaSigla():$trayecto->getIdsProveedor()->getIds()->getCaNombre());
+
+            $data["tra_origen"]=utf8_encode($trayecto->getOrigen()->getTrafico()->getCaIdtrafico());
+            $data["pais_origen"]=utf8_encode($trayecto->getOrigen()->getTrafico()->getCaNombre());
+            $data["ciu_origen"]=$trayecto->getCaOrigen();
+            $data["ciudad_origen"]=utf8_encode($trayecto->getOrigen()->getCaCiudad());
+            $data["tra_destino"]=utf8_encode($trayecto->getDestino()->getTrafico()->getCaIdtrafico());
+            $data["pais_destino"]=utf8_encode($trayecto->getDestino()->getTrafico()->getCaNombre());
+            $data["ciu_destino"]=$trayecto->getCaDestino();
+            $data["ciudad_destino"]=utf8_encode($trayecto->getDestino()->getCaCiudad());
+            $data["idagente"]=$trayecto->getCaIdagente();
+            
+            $idag=$trayecto->getIdsAgente();
+            $ids=$idag->getIds();
+            $data["agente"]=utf8_encode(/*$ids->getIdsSucursal()->getCiudad()->getCaCiudad() ." ".*/$ids->getCaNombre());
+            $data["observaciones"]=utf8_encode($trayecto->getCaObservaciones());
+            $data["frecuencia"]=utf8_encode($trayecto->getCaFrecuencia());
+            $data["ttransito"]=utf8_encode($trayecto->getCaTiempotransito());
+
+            $this->responseArray = array("data"=>$data,"success"=>true);
+        }
+        else
+        {
+            $this->responseArray = array("success"=>false);
+
+        }
+        $this->setTemplate("responseTemplate");
     }
 }
 ?>
