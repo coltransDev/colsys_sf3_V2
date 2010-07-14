@@ -408,9 +408,11 @@ PanelRecargosPorLinea = function( config ){
                 if( !record.data.idlinea && field!="linea" ){
                     return false;
                 }
+/*
                 if( record.data.idlinea && field=="linea" ){
                     return false;
                 }
+*/
             }else{
                 if( !record.data.idrecargo && field!="recargo" ){
                     return false;
