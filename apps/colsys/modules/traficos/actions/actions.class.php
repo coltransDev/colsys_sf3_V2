@@ -942,17 +942,19 @@ class traficosActions extends sfActions
 		
 		$idreporte = $this->getRequestParameter( "idreporte" );
 		if( $idreporte ){
+            
 			$reporte = Doctrine::getTable("Reporte")->find( $idreporte );
 			$this->forward404Unless( $reporte );			
 			
 			$directory = $reporte->getDirectorio();
+            
 			
 			$this->idreporte = $idreporte;
 						
 			if( !is_dir($directory) ){			
-				@mkdir($directory, 0777);			
+				mkdir($directory, 0777);
 			}	
-					
+			
 			$destPath = $directory.DIRECTORY_SEPARATOR.$_FILES['file']['name']; 
 			//mueve el archivo
 			move_uploaded_file($_FILES['file']['tmp_name'], $destPath);

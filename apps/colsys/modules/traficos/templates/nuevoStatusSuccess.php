@@ -155,7 +155,7 @@ var mostrar=function( oid ){
 				var val = '<?=str_replace("\n", "<br />", $saludoAviso)?>';
 				document.form1.introduccion.value = val.split("<br />").join("\n");			
 				break;
-		case 'EEETA':
+		case 'EEETD':
 				var val = '<?=str_replace("\n", "<br />", $saludoAviso)?>';
 				document.form1.introduccion.value = val.split("<br />").join("\n");				
 				break;
@@ -336,9 +336,9 @@ if( !sfConfig::get("app_smtp_user") ){
 			<div align="left"><b>Etapa:</b><br />
 					<?
 			 echo $form['idetapa']->renderError(); 
-			 if( $tipo=="aviso" ){
-			 	if( $reporte->getCaImpoexpo()==Constantes::EXPO ){
-				 	$form->setDefault('idetapa', "EEETA" ); 	
+			 if( $tipo=="aviso" ){                
+			 	if( $reporte->getCaImpoexpo()==Constantes::EXPO ){                   
+				 	$form->setDefault('idetapa', "EEETD" );
 				}else{
 				 	$form->setDefault('idetapa', "IMETA" ); 	
 				}
