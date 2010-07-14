@@ -65,7 +65,7 @@ $cliente = $reporte->getCliente();
 	<tr>
 		<td><b>Destino:</b></td>
 		<td><?=$reporte->getDestino()->getCaCiudad()?></td>
-		<td><b>Fch.Llegada:</b></td>
+		<td><b><?=$etapa->getCaDepartamento()=="Tráficos"?"Fch. Estimada de Llegada:":"Fch.Llegada:" //ticket #4032?></b></td>
 		<td><?=$status->getCaFchllegada()?$status->getCaFchllegada():"&nbsp;"?></td>		
 		<td>&nbsp;</td>		
 		<td>&nbsp;</td>
@@ -76,7 +76,7 @@ $cliente = $reporte->getCliente();
 	<tr>
 		<td><b>Destino:</b></td>
 		<td><?=$reporte->getCaContinuacion()." -> ".$reporte->getDestinoCont()?>	</td>
-		<td><b>Fch.Llegada:</b></td>
+		<td><b><?=$etapa->getCaDepartamento()=="Tráficos"?"Fch. Estimada de Llegada:":"Fch.Llegada:"?></b></td>
 		<td><?=$status->getCaFchcontinuacion()?$status->getCaFchcontinuacion():"&nbsp;"?></td>		
 		<td>&nbsp;</td>		
 		<td>&nbsp;</td>
