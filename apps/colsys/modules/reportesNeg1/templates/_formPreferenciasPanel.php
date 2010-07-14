@@ -70,6 +70,13 @@ include_component("reportesNeg", "gridPanelInstruccionesWindow",array("modo"=>$m
                                             id: "idrepresentante",
                                             hiddenName: "idrepres"
                                            })
+                         ,
+                        {
+                            xtype       :   'checkbox',
+                            fieldLabel  :   'Notificar',
+                            id          :   'ca_informar_repr',
+                            name        :   'ca_informar_repr'
+                        }
                         ]
                 },
                 {

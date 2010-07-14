@@ -71,7 +71,6 @@ switch($action){
 		$button[$i]["tooltip"]="Envia una notificación a las personas relacionadas en el reporte para que lo revisen";
 		$button[$i]["image"]="22x22/email.gif";
 		$button[$i]["link"]= "/reportesNeg/enviarNotificacion/idreporte/".$this->getRequestParameter("id")."/token/".md5(time());
-
         $i++;		
 		
 		break;
@@ -81,8 +80,6 @@ switch($action){
 		$button[$i]["image"]="22x22/1leftarrow.gif";
 		$button[$i]["link"]= "reportesNeg/consultaReporte?id=".$this->getRequestParameter("id").$opcion.$modo;
 		$i++;
-
-
 		break;
 }
 

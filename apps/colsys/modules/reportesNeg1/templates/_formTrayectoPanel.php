@@ -14,22 +14,40 @@ include_component("widgets", "widgetLinea");
 include_component("widgets", "widgetPais");
 include_component("widgets", "widgetCiudad");
 include_component("widgets", "widgetAgente");
-include_component("widgets", "widgetContinuacion");
+
+include_component("widgets", "widgetIncoterms");
+if($impoexpo=="Triangulación")
+{
+//include_component("widgets", "widgetImpoexpo");
+include_component("widgets", "widgetTransporte");
+}
+else
+{
+    include_component("widgets", "widgetContinuacion");
+}
+
 ?>
 <script type="text/javascript">
 
 
     FormTrayectoPanel = function( config ){
-
         Ext.apply(this, config);
-
         this.widgetCotizacion = new WidgetCotizacion({
                                                       fieldLabel: "Cotización",
                                                       id:"cotizacion",
                                                       hiddenName: "idcotizacion"
                                                       });
         this.widgetCotizacion.addListener("select", this.onSelectCotizacion, this );
-        
+        this.wgContinuacion=new WidgetContinuacion({fieldLabel: 'Continuación',
+                                                    id: 'continuacion',
+                                                    name: 'continuacion',
+                                                    linkTransporte: "transporte",
+                                                    linkImpoexpo: "impoexpo"
+
+                                                    })
+        this.wgContinuacion.addListener("select", this.onSelectContinuacion, this );
+
+
         FormTrayectoPanel.superclass.constructor.call(this, {
             title: 'General',
             deferredRender:false,
@@ -94,7 +112,7 @@ include_component("widgets", "widgetContinuacion");
                                     xtype:"hidden",
                                     id: 'impoexpo',
                                     name: 'impoexpo',
-                                    value:'Importación'
+                                    value:'<?=$impoexpo?>'
                                 },
                                 /*new WidgetImpoexpo({fieldLabel: 'Clase',
                                                     id: 'impoexpo',
@@ -110,7 +128,8 @@ include_component("widgets", "widgetContinuacion");
                                 new WidgetPais({fieldLabel: 'País Origen',
                                                 id: 'tra_origen_id',
                                                 linkCiudad: 'origen',
-                                                hiddenName:'idtra_origen_id'
+                                                hiddenName:'idtra_origen_id',
+                                                pais:'<?=$pais1?>'
                                                }),
                                  
                                 new WidgetCiudad({fieldLabel: 'Ciudad Origen',
@@ -143,18 +162,30 @@ include_component("widgets", "widgetContinuacion");
                             layout: 'form',
                             border:false,
                             defaultType: 'textfield',
-                            items: [                                
-                                /*new WidgetTransporte({fieldLabel: 'Transporte',
+                            items: [
+                                <?
+                                if($impoexpo=="Triangulación")
+                                {
+                                ?>
+                                new WidgetTransporte({fieldLabel: 'Transporte',
                                                       id: 'transporte',
                                                       name:'transporte',                                                      
                                                       listeners:{select:this.onSelectTransporte}
-                                                    }),*/
+                                                    }),
+                            <?
+                                }
+                                else
+                                {
+                            ?>
                                 {
                                     xtype:"hidden",
                                     id: 'transporte',
                                     name: 'transporte',
                                     value:'<?=$modo?>'
                                 },
+                                <?
+                                }
+                                ?>
                                 new WidgetLinea({fieldLabel: '<?=$nomLinea?>',
                                                  linkTransporte: "transporte",
                                                  id:"linea",
@@ -168,30 +199,34 @@ include_component("widgets", "widgetContinuacion");
                                 new WidgetPais({fieldLabel: 'País Destino',
                                                 id: 'tra_destino_id',
                                                 linkCiudad: 'destino',
-                                                hiddenName:'idtra_destino_id'
+                                                hiddenName:'idtra_destino_id',
+                                                pais:'<?=$pais2?>'
                                                 }),
                                 new WidgetCiudad({fieldLabel: 'Ciudad Destino',
                                                   linkPais: 'tra_destino_id',                                                  
                                                   id: 'destino',
                                                   idciudad:"destino",
                                                   hiddenName:"iddestino"
+                                                }),
+                                new WidgetIncoterms({fieldLabel: 'Terminos',
+                                                  id: 'terminos',
+                                                  hiddenName:"incoterms"
                                                 })
                             ]
                         }
                     ]
                 },
+                <?
+                if($impoexpo!="Triangulación")
+                {
+                ?>
                 {
                     xtype:'fieldset',
                     title: 'Continuación de viaje',
                     autoHeight:true,
                     id:'Pcontinuacion',
                     items: [
-                        new WidgetContinuacion({fieldLabel: 'Continuación',
-                                                    id: 'continuacion',
-                                                    name: 'continuacion',
-                                                    linkTransporte: "transporte",
-                                                    linkImpoexpo: "impoexpo"
-                                                    }),
+                        this.wgContinuacion,
                         new WidgetCiudad({fieldLabel: 'Destino Final',
                                                   name: 'continuacion_dest',
                                                   id: 'continuacion_dest',
@@ -199,6 +234,9 @@ include_component("widgets", "widgetContinuacion");
                                                 })
                     ]
                 },
+                <?
+                }
+                ?>
                 {
                     xtype:'fieldset',
                     title: 'Información de la Mercancia',
@@ -234,6 +272,33 @@ include_component("widgets", "widgetContinuacion");
                 Ext.getCmp("Pca_comodato").show();
         }
         ,
+        onSelectContinuacion: function( combo, record, index){
+//            alert(b.toSource())
+            if(record)
+            {
+                if(record.data.modalidad!=" " && record.data.modalidad!="")
+                {
+                    Ext.getCmp('idconsignatario').allowBlank=false;
+                    Ext.getCmp('bodega_consignar').allowBlank=false;
+                }
+                else
+                {
+                    Ext.getCmp('idconsignatario').allowBlank=true;
+                    Ext.getCmp('bodega_consignar').allowBlank=true;
+                }
+            }
+            else
+            {
+                Ext.getCmp('idconsignatario').allowBlank=true;
+                Ext.getCmp('bodega_consignar').allowBlank=true;
+            }
+/*            if(record.data.valor=="Aéreo")
+                Ext.getCmp("Pca_comodato").hide();
+            else
+                Ext.getCmp("Pca_comodato").show();
+*/
+        }
+        ,
         onSelectClase: function( combo, record, index){
             if(record.data.valor=="Importación")
                 Ext.getCmp("Pcontinuacion").show();
@@ -252,6 +317,7 @@ include_component("widgets", "widgetContinuacion");
             Ext.getCmp("modalidad").setValue(record.data.modalidad);
 
             Ext.getCmp("linea").setValue(record.data.idlinea);
+            $("#linea").val(record.data.linea);
             //Ext.getCmp('linea').setText(A)
             //$("#linea").val(record.data.linea);
             Ext.getCmp("tra_origen_id").setValue(record.data.tra_origen);
@@ -280,39 +346,20 @@ include_component("widgets", "widgetContinuacion");
             Ext.getCmp("cliente").setValue(record.data.idcliente);
             $("#cliente").attr("value",record.data.compania);
 
-            //alert(record.data.compania);
+            Ext.getCmp("terminos").setValue(record.data.incoterms);
 
-//            alert(a.length);
-//           $("#idcliente").attr("value",record.data.compania);
-//            alert(record.data.compania);
-//            alert($("#cliente").val());
+            Ext.getCmp("ca_obtencionpoliza").setValue(record.data.obtencion);
+            Ext.getCmp("ca_idmoneda_vta").setValue(record.data.idmoneda);
+            Ext.getCmp("ca_idmoneda_vta").setValue(record.data.idmonedaobtencion);
 
-            /*
+            Ext.getCmp("ca_primaventa").setValue(record.data.prima_vlr);
+            Ext.getCmp("ca_minimaventa").setValue(record.data.prima_min);
 
+            if(record.data.obtencion || record.data.idmoneda || record.data.idmonedaobtencion || record.data.prima_vlr || record.data.prima_min)
+                Ext.getCmp('seguros').collapsed=false;
 
-            {name: 'idproducto', mapping: 'p_ca_idproducto'},
-            {name: 'producto', mapping: 'p_ca_producto'},
-            {name: 'idlinea', mapping: 'p_ca_idlinea'},
-            {name: 'idmodalidad'},
-            {name: 'tra_origen', mapping: 'o_ca_idtrafico'},
-            {name: 'tra_destino', mapping: 'd_ca_idtrafico'},
-			{name: 'origen', mapping: 'o_ca_ciudad'},
-            {name: 'destino', mapping: 'd_ca_ciudad'},
-            {name: 'idorigen', mapping: 'o_ca_idciudad'},
-			{name: 'iddestino', mapping: 'd_ca_idciudad'},
-			{name: 'idcontacto', mapping: 'con_ca_idcontacto'},
-            {name: 'compania', mapping: 'cl_ca_compania'},
-			{name: 'cargo', mapping: 'con_ca_cargo'},
-			{name: 'nombre', mapping: 'con_ca_nombres'},
-			{name: 'papellido', mapping: 'con_ca_papellido'},
-			{name: 'sapellido', mapping: 'con_ca_sapellido'},
-			
-			
-            {name: 'vendedor', mapping: 'c_ca_usuario'},
-            {name: 'coordinador', mapping: 'cl_ca_coordinador'}
-            */
-
+            Ext.getCmp("ca_liberacion").setValue(record.data.prima_min);
+            Ext.getCmp("ca_tiempocredito").setValue(record.data.prima_min);
         }
     });
-
 </script>

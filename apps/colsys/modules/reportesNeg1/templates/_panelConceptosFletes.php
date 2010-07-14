@@ -316,11 +316,13 @@ PanelConceptosFletes = function( config ){
             beforeedit:this.onBeforeEdit,
             dblclick:this.onDblClickHandler
         },
-        boxMinHeight: 400
-        
-
-
-
+        boxMinHeight: 400,
+        tbar:[{
+                        text:'Guardar',
+                        iconCls:'disk',
+                        handler: this.guardarCambios
+                    }
+            ]
     });
 
     var storePanelConceptosFletes = this.store;
@@ -365,10 +367,13 @@ PanelConceptosFletes = function( config ){
 };
 
 Ext.extend(PanelConceptosFletes, Ext.grid.EditorGridPanel, {
-    guardarCambios: function(){
-
-
-        var store = this.store;
+    guardarCambios: function(a,b){
+//        alert(Ext.getCmp('panel-conceptos-fletes').store.toSource())
+//        alert(a.toSource())
+//        alert(storeConceptos.toSource())
+//        alert(a.storeConceptos.toSource())
+        
+        var store = Ext.getCmp('panel-conceptos-fletes').store;
         var records = store.getModifiedRecords();
 			
         var lenght = records.length;

@@ -77,21 +77,23 @@ include_component("widgets", "widgetContactoCliente");
                             id: "ca_tiempocredito",
                             readOnly: true,
                             width: 100
-                        },
-                        {
-                            xtype:'fieldset',
-                            id:'Pca_comodato',
-                            items: [
-                                {
-                                xtype: "textfield",
-                                fieldLabel: "Contrato de Comodato",
-                                name: "ca_comodato",
-                                id: "ca_comodato",
-                                readOnly: true,
-                                width: 100
-                                }
-                            ]
                         }
+                        <?
+                        if($modo=="Marítimo")
+                        {
+                        ?>
+                        ,
+                        {
+                        xtype: "textfield",
+                        fieldLabel: "Contrato de Comodato",
+                        name: "ca_comodato",
+                        id: "ca_comodato",
+                        readOnly: true,
+                        width: 100
+                        }
+                        <?
+                        }
+                        ?>
                     ]
                 },
                 /*
@@ -146,6 +148,12 @@ include_component("widgets", "widgetContactoCliente");
                     Ext.getCmp("chkcontacto_"+i).setValue( false );
                 }
             }
+            
+            diascredito=(record.get("diascredito")!="")?record.get("diascredito")+" dias":"0";
+            Ext.getCmp("ca_tiempocredito").setValue(diascredito);
+            cupo=(record.get("cupo")!="")?"Sí":"No";
+            //alert(cupo);
+            Ext.getCmp("ca_liberacion").setValue(cupo);
 
             /*
              * <?

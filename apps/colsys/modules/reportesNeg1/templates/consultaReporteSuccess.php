@@ -85,7 +85,7 @@
 include_component("reportesNeg","infoReporte", array("reporte"=>$reporte, "grupoReportes"=>$grupoReportes));
 
 include_component("reportesNeg","mainPanel");
-if( !$reporte->esSoloAduana() ){
+if( !$reporte->esSoloAduana() ){    
     include_component("reportesNeg","panelConceptosFletes", array("reporte"=>$reporte));
     $panelConceptosFletes = true;
     if( $reporte->getCaImpoexpo()!=Constantes::EXPO ){

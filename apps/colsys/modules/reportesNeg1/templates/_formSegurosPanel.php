@@ -37,7 +37,9 @@
                                 name: "ca_seguro",
                                 id: "ca_seguro"
                             },
-                         {
+                            
+/*
+                          {
                                 xtype: 'fieldset',
                                 autoHeight: true,
                                 defaultType: 'radio', // each item will be a radio button
@@ -69,8 +71,8 @@
                                     inputValue: 'Natalia Guisao H',
                                     
                                 }]
-                            }
-                           ,
+                            },
+*/
                             {
                                 xtype:'fieldset',
                                 title: '',

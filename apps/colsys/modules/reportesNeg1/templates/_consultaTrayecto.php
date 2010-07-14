@@ -31,7 +31,7 @@
 
         <td ><b>Modalidad</b></td>
         <td ><?=$reporte->getCaModalidad()?></td>
-        <td ><b>Agente:</b></td>
+        <td ><b>Agente: </b><a href="/ids/formEventos?idreporte=<?=$reporte->getCaIdreporte()?>">Eventos</a></td>
         <td ><?=$reporte->getIdsAgente()?$reporte->getIdsAgente()->getIds()->getCaNombre():"Directo"?></td>
         <td >&nbsp;</td>
         <td >&nbsp;</td>

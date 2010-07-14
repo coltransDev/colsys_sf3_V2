@@ -1,17 +1,15 @@
 <?
 /**
 * Pantalla de bienvenida para el modulo de reportes
-* @author Andres Botero
+* @author Andres Botero, Mauricio Quinche
 */
-//echo ":".$modo.":";
-
 ?>
 <div align="center">
 
 <br />
 <br />
 
-<form action="<?=url_for( "reportesNeg/busquedaReporte?idcategory=".(isset($idcategory)? $idcategory:"22").($opcion?"&opcion=".$opcion:""))?>" method="post">
+<form action="<?=url_for( "reportesNeg/busquedaReporte?modo=".($modo)."&impoexpo=".($impoexpo).($opcion?"&opcion=".$opcion:""))?>" method="post">
 <table width="550px" align="center" border="0" cellpadding="5px" cellspacing="1px" class="tableList alignLeft">
 	<tr>
 		<th colspan="3" style='font-size: 12px; font-weight:bold;'><b>Sistema Reporte de negocios </b>		</th>

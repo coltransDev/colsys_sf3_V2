@@ -87,7 +87,6 @@ PanelRecargos = function( config ){
                 ]
     });
 
-
     /*
     * Crea el expander
     */
@@ -101,75 +100,73 @@ PanelRecargos = function( config ){
     });
 
     this.columns = [
-       this.expander,
-       {
-        header: "Concepto ",
-        dataIndex: 'item',
-        hideable: false,
-        sortable:false,
-        width: 170,
-        renderer: this.formatItem,
-        editor: this.editorConceptos
-      },
-      {
-        header: "Aplicacion",
-        dataIndex: 'aplicacion',
-        width: 80,
-        hideable: false,
-        sortable:false,
-        editor: this.editorAplicaciones
-      },
-      {
-        header: "Tipo",
-        dataIndex: 'tipo_app',
-        width: 35,
-        hideable: false,
-        sortable:false,
-        editor: this.editorTipoAplicaciones
-      },     
-      {
-        header: "Cobrar",
-        dataIndex: 'cobrar_tar',
-        width: 50,
-        hideable: false,
-        sortable:false,
-        editor: new Ext.form.NumberField({
-				allowBlank: false ,
-				allowNegative: false,
-				style: 'text-align:left',
-				decimalPrecision :3
-			})
-      },
-      {
-        header: "Minima",
-        dataIndex: 'cobrar_min',
-        width: 50,
-        hideable: false,
-        sortable:false,
-        editor: new Ext.form.NumberField({
-				allowBlank: false ,
-				allowNegative: false,
-				style: 'text-align:left',
-				decimalPrecision :3
-			})
-      },
-      {
-        header: "Moneda",
-        dataIndex: 'cobrar_idm',
-        width: 50,
-        hideable: false,
-        sortable:false,
-        editor: <?=include_component("widgets", "monedas" ,array("id"=>""))?>
-      },
-      {
-        header: "Orden",
-        dataIndex: 'orden',
-        width: 50,
-        sortable:true
-
-      }
-     ];
-
+        this.expander,
+        {
+            header: "Concepto ",
+            dataIndex: 'item',
+            hideable: false,
+            sortable:false,
+            width: 170,
+            renderer: this.formatItem,
+            editor: this.editorConceptos
+        },
+        {
+            header: "Aplicacion",
+            dataIndex: 'aplicacion',
+            width: 80,
+            hideable: false,
+            sortable:false,
+            editor: this.editorAplicaciones
+        },
+        {
+            header: "Tipo",
+            dataIndex: 'tipo_app',
+            width: 35,
+            hideable: false,
+            sortable:false,
+            editor: this.editorTipoAplicaciones
+        },
+        {
+            header: "Cobrar",
+            dataIndex: 'cobrar_tar',
+            width: 50,
+            hideable: false,
+            sortable:false,
+            editor: new Ext.form.NumberField({
+                    allowBlank: false ,
+                    allowNegative: false,
+                    style: 'text-align:left',
+                    decimalPrecision :3
+                })
+        },
+        {
+            header: "Minima",
+            dataIndex: 'cobrar_min',
+            width: 50,
+            hideable: false,
+            sortable:false,
+            editor: new Ext.form.NumberField({
+                    allowBlank: false ,
+                    allowNegative: false,
+                    style: 'text-align:left',
+                    decimalPrecision :3
+                })
+        },
+        {
+            header: "Moneda",
+            dataIndex: 'cobrar_idm',
+            width: 50,
+            hideable: false,
+            sortable:false,
+            editor: <?=include_component("widgets", "monedas" ,array("id"=>""))?>
+        },
+        {
+            header: "Orden",
+            dataIndex: 'orden',
+            width: 50,
+            sortable:true
+        }
+    ];
 
     this.record = Ext.data.Record.create([
             {name: 'idreporte', type: 'int'},
@@ -225,7 +222,13 @@ PanelRecargos = function( config ){
             rowcontextmenu: this.onRowcontextMenu,           
             dblclick:this.onDblClickHandler
         },
-        boxMinHeight: 400     
+        boxMinHeight: 400,
+        tbar:[{
+                        text:'Guardar',
+                        iconCls:'disk',
+                        handler: this.guardarCambios
+                    }
+            ]
 
 
 
@@ -265,7 +268,9 @@ Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
     guardarCambios: function(){
 
 
-        var store = this.store;
+        var store = Ext.getCmp('panel-recargos').store;
+
+        //var store = this.store;
         var records = store.getModifiedRecords();
 			
         var lenght = records.length;

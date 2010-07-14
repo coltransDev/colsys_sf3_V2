@@ -57,6 +57,25 @@
 	}
 ?>
     <tr><td colspan="2" ><b>Triangulaci&oacute;n</b></td></tr>
+    <tr style="padding: 10px">
+<?
+	if( $nivelAereo>=0 ){
+?>
+        <td align="left">
+			<?=link_to("Aéreo", "reportesNeg/index?modo=Aéreo&impoexpo=Triangulación" )?>
+		</td>
+<?
+	}
+
+	if( $nivelMaritimo>=0 ){
+?>
+        <td><div align="left">
+			<?=link_to("Marítimo", "reportesNeg/index?modo=Marítimo&impoexpo=Triangulación")?>
+		</div></td>
+<?
+	}
+?>
+	</tr>
 	
 </table>
 

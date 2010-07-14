@@ -1,31 +1,22 @@
 <?php
-/*
- *  This file is part of the Colsys Project.
- *
- *  (c) Coltrans S.A. - Colmas Ltda.
-*/
 include_component("reportesNeg", "formTrayectoPanel",array("modo"=>$modo,"impoexpo"=>$impoexpo));
-include_component("reportesNeg", "formClientePanel");
-include_component("reportesNeg", "formPreferenciasPanel",array("modo"=>$modo));
-include_component("reportesNeg", "formCorteGuiasPanel");
+include_component("reportesNeg", "formClientePanel",array("modo"=>$modo,"impoexpo"=>$impoexpo));
+include_component("reportesNeg", "formPreferenciasPanel",array("modo"=>$modo,"impoexpo"=>$impoexpo));
+include_component("reportesNeg", "formCorteGuiasPanel",array("modo"=>$modo,"impoexpo"=>$impoexpo));
 
+if($impoexpo!="Triangulación")
+{
 include_component("reportesNeg", "formAduanasPanel");
+}
 include_component("reportesNeg", "formSegurosPanel");
 
-//echo $idcategory;
 ?>
 <script type="text/javascript">
-
-
     FormReportePanel = function( config ){
-
         Ext.apply(this, config);
-
         var bodyStyle = 'padding: 5px 5px 5px 5px;';
         this.res="";
-
         this.buttons = [];
-
         if( this.editable ){
             this.buttons.push( {
                 text   : 'Guardar',
@@ -43,8 +34,6 @@ include_component("reportesNeg", "formSegurosPanel");
                 handler: this.onNuevaVersion
             } );
         }
-
-
         if( this.copiar ){
             this.buttons.push( {
                 text   : 'Copiar en nuevo reporte',
@@ -53,22 +42,15 @@ include_component("reportesNeg", "formSegurosPanel");
                 handler: this.onCopiar
             } );
         }
-
         this.buttons.push( {
                 text   : 'Cancelar',
                  handler: this.onCancel
             } );
-
-
         FormReportePanel.superclass.constructor.call(this, {
-           //border:false,
-            //frame:true,
             labelWidth:80,
             frame: true,
             buttonAlign: 'center',
-            layout:'fit',           
-            //standardSubmit: true,
-
+            layout:'fit',
             monitorValid:true,            
             items: [{
                     xtype:'tabpanel',
@@ -76,8 +58,6 @@ include_component("reportesNeg", "formSegurosPanel");
                     autoHeight: true,
                     defaults:{
                         layout:'form',
-                        // as we use deferredRender:false we mustn't
-                        // render tabs into display:none containers
                         hideMode:'offsets'
                     },
                     items:[
@@ -85,7 +65,14 @@ include_component("reportesNeg", "formSegurosPanel");
                         new FormClientePanel({bodyStyle:bodyStyle}),
                         new FormPreferenciasPanel({bodyStyle:bodyStyle}),
                         new FormCorteGuiasPanel({bodyStyle:bodyStyle}),
+                        <?
+                        if($impoexpo!="Triangulación")
+                        {
+                        ?>
                         new FormAduanasPanel({bodyStyle:bodyStyle}),
+                        <?
+                        }
+                        ?>
                         new FormSegurosPanel({bodyStyle:bodyStyle})
                     ]
             }],
@@ -113,7 +100,6 @@ include_component("reportesNeg", "formSegurosPanel");
             if( form.isValid() ){
                 form.submit({
                     url: "<?=url_for("reportesNeg/guardarReporte?idreporte=".$idreporte)?>",
-                    //scope:this,
                     waitMsg:'Guardando...',
                     waitTitle:'Por favor espere...',
                     params: {opcion:opt},                    
@@ -123,9 +109,7 @@ include_component("reportesNeg", "formSegurosPanel");
                         if(res.redirect)                            
                             location.href="/reportesNeg/consultaReporte/id/"+res.idreporte+"/idcategory/<?=$idcategory?>";
                     }
-
                     ,
-                    // standardSubmit: false,
                     failure:function(form,action){
                         Ext.MessageBox.alert("Mensaje",'No es posible crear un reporte ya que posee errores en la digitacion, verifique');
                     }//end failure block
@@ -135,11 +119,7 @@ include_component("reportesNeg", "formSegurosPanel");
             }
         },
         onCancel: function(){
-
         },
-        /**
-        * Form onRender override
-        */
        onAfterload:function()
        {
 <?
@@ -153,17 +133,10 @@ include_component("reportesNeg", "formSegurosPanel");
                 }
 ?>
                 $('.help').tooltip({track: true, fade: 250, opacity: 1, top: -15, extraClass: "pretty fancy" });
-                //$("#idcliente").val("sdfsdfsd");
-
-
        }
        ,
         onRender:function() {
-
-            // call parent
             FormReportePanel.superclass.onRender.apply(this, arguments);
-
-            // set wait message target
             this.getForm().waitMsgTarget = this.getEl();            
             if(this.idreporte!="undefined" && this.idreporte!="" )
             {
@@ -173,35 +146,13 @@ include_component("reportesNeg", "formSegurosPanel");
                     params:{idreporte:this.idreporte},
 
                     success:function(response,options){
-                        //document.write("<pre>"+response.toSource()+"</pre>");
-                        //document.write(response.toSource());
-                        //alert(response.responseText.toSource())
-                        //alert(options.response.responseText.data.toSource())
                         this.res = Ext.util.JSON.decode( options.response.responseText );
-
                         Ext.getCmp('aduanas').collapsed=(Ext.getCmp('ca_colmas').getValue()=="Sí")?false:true;
                         Ext.getCmp('seguros').collapsed=(Ext.getCmp('ca_seguro').getValue()=="Sí")?false:true;
                         $("#cliente").attr("value",res.data.idcliente);
-                        //Ext.getCmp('aduanas').setText(A)
-                        //idlinea
-//                        if($("#idcliente"))
-//                            $("#idcliente").val("sdfsdfsd");
-                            //alert("1")
-//                        alert(res.data.idcliente);
-                        //alert($("#idcliente").val());
-//                        $("#idcliente").val(res.data.idcliente);
-//                        alert($("#idcliente").val());
-
-
-                    }
-                    
+                    }                    
                 });
             }
-
-
-        } // eo function onRender
-
+        }
     });
-
-
 </script>

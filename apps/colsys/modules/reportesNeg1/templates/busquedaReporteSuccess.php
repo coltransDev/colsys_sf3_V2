@@ -15,11 +15,10 @@
 	foreach( $reportes as $reporte ){		
 		$origen = $reporte->getOrigen();
 		$destino = $reporte->getDestino();
-
-        $url = "reportesNeg/consultaReporte?id=".$reporte->getCaIdreporte()."&idcategory=".(isset($idcategory)? $idcategory:"22").($opcion?"&opcion=".$opcion:"");
+        $url = "reportesNeg/consultaReporte?id=".$reporte->getCaIdreporte()."&modo=".$modo."&impoexpo=".$impoexpo.($opcion?"&opcion=".$opcion:"");
 	?>
 	<tr>
-		<td rowspan="2"  ><?=link_to($reporte->getCaConsecutivo()." V".$reporte->getCaVersion(), $url )?></td>
+		<td rowspan="2"><?=link_to($reporte->getCaConsecutivo()." V".$reporte->getCaVersion(), $url )?></td>
 		<td  >
 			<?="<b>".$reporte->getCliente()."</b> (".$reporte->getCaTransporte()." ".$reporte->getCaModalidad().")"?>
 			</td>
