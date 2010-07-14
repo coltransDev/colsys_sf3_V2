@@ -98,6 +98,7 @@ PanelRecargosPorCiudad = function( config ){
     this.record = Ext.data.Record.create([
         {name: 'sel', type: 'string'},
         {name: 'id', type: 'int'},
+        {name: 'consecutivo', type: 'int'},
         {name: 'idtrafico', type: 'string'},
         {name: 'idciudad', type: 'string'},
         {name: 'impoexpo', type: 'string'},
@@ -232,7 +233,7 @@ PanelRecargosPorCiudad = function( config ){
 			header: "Ciudad",
 			width: 100,
 			sortable: false,
-            hidden: ocultarCiudad,
+                        hidden: ocultarCiudad,
 			hideable: false,
 			dataIndex: 'ciudad',
 			editor: this.editorCiudades
@@ -359,6 +360,13 @@ PanelRecargosPorCiudad = function( config ){
                 iconCls:'tick',  // reference to our css
                 scope: this,
                 handler: this.seleccionarTodo
+            },
+            {
+                text: 'Recargar',
+                tooltip: 'Actualiza los datos',
+                iconCls:'refresh',  // reference to our css
+                scope: this,
+                handler: this.recargar
             }
         ];
     }else{
@@ -410,9 +418,11 @@ PanelRecargosPorCiudad = function( config ){
                 if( !record.data.idciudad && field!="ciudad" ){
                     return false;
                 }
+/*
                 if( record.data.idciudad && field=="ciudad" ){
                     return false;
                 }
+*/
             }else{
                 if( !record.data.idrecargo && field!="recargo" ){
                     return false;
@@ -607,9 +617,7 @@ Ext.extend(PanelRecargosPorCiudad, Ext.grid.EditorGridPanel, {
                                 });                                
                                 //Inserta una columna en blanco al final
                                 storeRecargos.addSorted(newRec);
-
-                            }
-                        
+                            }                        
                         }
                         
                         rec.set("idciudad", r.data.idciudad);
@@ -638,6 +646,7 @@ Ext.extend(PanelRecargosPorCiudad, Ext.grid.EditorGridPanel, {
                 if( r.data.idrecargo ){
                     var changes = r.getChanges();
                     changes['id']=r.id;
+                    changes['consecutivo']=r.data.consecutivo;
                     changes['idtrafico']=this.idtrafico;
                     changes['modalidad']=this.modalidad;
                     changes['impoexpo']=this.impoexpo;
@@ -813,6 +822,9 @@ Ext.extend(PanelRecargosPorCiudad, Ext.grid.EditorGridPanel, {
 
             //document.getElementById("obs_"+record.get("_id")).innerHTML  = "<b>Observaciones:</b> "+text;
         }
+    },
+    recargar: function(){
+        this.store.reload();
     }
 
 
