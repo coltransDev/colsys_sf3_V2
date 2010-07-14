@@ -135,6 +135,7 @@ PanelRecargosPorLinea = function( config ){
     this.record = Ext.data.Record.create([
         {name: 'sel', type: 'string'},
         {name: 'id', type: 'int'},
+        {name: 'consecutivo', type: 'int'},
         {name: 'idtrafico', type: 'string'},
         {name: 'idlinea', type: 'string'},
         {name: 'impoexpo', type: 'string'},
@@ -226,7 +227,7 @@ PanelRecargosPorLinea = function( config ){
 			sortable: false,
 			hideable: false,
 			dataIndex: 'linea',
-            hidden: !ocultarConcepto,
+                        hidden: !ocultarConcepto,
 			editor: this.editorLineas
 		},
 		{
@@ -243,7 +244,7 @@ PanelRecargosPorLinea = function( config ){
 			width: 100,
 			sortable: false,
 			hideable: false,
-            hidden: ocultarConcepto,
+                        hidden: ocultarConcepto,
 			dataIndex: 'concepto',
 			editor: this.editorConceptos
 			
@@ -654,6 +655,7 @@ Ext.extend(PanelRecargosPorLinea, Ext.grid.EditorGridPanel, {
                 var changes = r.getChanges();
 
                 changes['id']=r.id;
+                changes['consecutivo']=r.data.consecutivo;
                 changes['idtrafico']=this.idtrafico;
                 changes['modalidad']=this.modalidad;
                 changes['impoexpo']=this.impoexpo;
