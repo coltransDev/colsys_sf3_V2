@@ -565,11 +565,11 @@ class pricingActions extends sfActions
 	*/
 	public function executeGuardarPanelFletesPorTrayecto(){
 
-        $this->nivel = $this->getNivel();
+            $this->nivel = $this->getNivel();
 
-        if( $this->nivel<=0 ){
-			$this->forward404();
-		}
+            if( $this->nivel<=0 ){
+                $this->forward404();
+            }
 
 
 		$trayecto = Doctrine::getTable("Trayecto")->find( $this->getRequestParameter( "idtrayecto" ) );
@@ -579,9 +579,9 @@ class pricingActions extends sfActions
 		$neta = $this->getRequestParameter("neta");		
 		$sugerida = $this->getRequestParameter("sugerida");
 		$id = $this->getRequestParameter("id");
-        $idequipo = $this->getRequestParameter("idequipo");
+                $idequipo = $this->getRequestParameter("idequipo");
 
-        $this->responseArray = array("id"=>$id, "success"=>true);
+                $this->responseArray = array("id"=>$id, "success"=>true);
 		
 		$user=$this->getUser();
 		
@@ -597,55 +597,52 @@ class pricingActions extends sfActions
 		}
 		
 		if( $tipo=="concepto" ){			
-			
-			$idconcepto = $this->getRequestParameter("iditem");
-            
+                    $idconcepto = $this->getRequestParameter("iditem");
+                    $q = Doctrine::getTable("PricFlete")->createQuery()
+                                              ->addWhere("ca_idtrayecto = ?", $trayecto->getCaIdtrayecto() )
+                                              ->addWhere("ca_idconcepto= ?", $idconcepto);
+                    if( $idequipo ){
+                        $q->addWhere("ca_idequipo= ?", $idequipo);
+                    }else{
+                        $q->addWhere("ca_idequipo IS NULL");
+                    }
+                    $flete  = $q->fetchOne();
 
-			$q = Doctrine::getTable("PricFlete")->createQuery()
-                                                  ->addWhere("ca_idtrayecto = ?", $trayecto->getCaIdtrayecto() )
-                                                  ->addWhere("ca_idconcepto= ?", $idconcepto);
-            if( $idequipo ){
-                $q->addWhere("ca_idequipo= ?", $idequipo);
-            }else{
-                $q->addWhere("ca_idequipo IS NULL");
-            }
-            $flete  = $q->fetchOne();
+                    if( !$flete ){
+                            $flete = new PricFlete();
+                            $flete->setCaIdtrayecto( $trayecto->getCaIdtrayecto() );
+                            $flete->setCaIdconcepto( $idconcepto );
+                        if( $idequipo ){
+                            $flete->setCaIdequipo( $idequipo );
+                        }
+                        $flete->setCaVlrneto( 0 );
+                    }
+			
+                    if( $neta!==null ){
+                            $flete->setCaVlrneto( $neta );
+                    }
 
-			if( !$flete ){
-				$flete = new PricFlete();
-				$flete->setCaIdtrayecto( $trayecto->getCaIdtrayecto() );
-				$flete->setCaIdconcepto( $idconcepto );
-                if( $idequipo ){
-                    $flete->setCaIdequipo( $idequipo );
-                }
-				$flete->setCaVlrneto( 0 );				
-			}
-			
-			if( $neta!==null ){
-				$flete->setCaVlrneto( $neta );
-			} 
-			
-			if( $sugerida!==null ){
-				$flete->setCaVlrsugerido( $sugerida );
-			}
+                    if( $sugerida!==null ){
+                            $flete->setCaVlrsugerido( $sugerida );
+                    }
 			
 			
-			if( $this->getRequestParameter("style")!==null){
-				if( $this->getRequestParameter("style") ){
-					$flete->setEstilo($this->getRequestParameter("style"));			
-				}else{
-					$flete->setEstilo(null);					
-				}
-			}
+                    if( $this->getRequestParameter("style")!==null){
+                            if( $this->getRequestParameter("style") ){
+                                    $flete->setEstilo($this->getRequestParameter("style"));
+                            }else{
+                                    $flete->setEstilo(null);
+                            }
+                    }
 			
 
-            if( $this->getRequestParameter("inicio")!==null ){
-				if( $this->getRequestParameter("inicio") ){
-					$flete->setCaFchinicio($this->getRequestParameter("inicio"));
-				}else{
-					$flete->setCaFchinicio( null );
-				}
-			}
+                    if( $this->getRequestParameter("inicio")!==null ){
+                        if( $this->getRequestParameter("inicio") ){
+                                $flete->setCaFchinicio($this->getRequestParameter("inicio"));
+                        }else{
+                                $flete->setCaFchinicio( null );
+                        }
+                    }
 
 			if( $this->getRequestParameter("vencimiento")!==null ){
 				if( $this->getRequestParameter("vencimiento") ){
@@ -664,22 +661,25 @@ class pricingActions extends sfActions
 				$flete->setCaAplicacion(utf8_decode($this->getRequestParameter("aplicacion")));
 			}			
 
-            $user = $this->getUser();
-            $flete->setCaUsucreado( $user->getUserId() );
-            $flete->setCaFchcreado( date("Y-m-d H:i:s") );
-			$flete->save();
+                    $user = $this->getUser();
+                    $flete->setCaUsucreado( $user->getUserId() );
+                    $flete->setCaFchcreado( date("Y-m-d H:i:s") );
+                                $flete->save();
 
 
-            $this->responseArray["consecutivo"] = $flete->getCaConsecutivo();
-            $this->responseArray["actualizado"] = $flete->getCaUsucreado()." ".Utils::fechaMes($flete->getCaFchcreado());
+                    $this->responseArray["consecutivo"] = $flete->getCaConsecutivo();
+                    $this->responseArray["actualizado"] = $flete->getCaUsucreado()." ".Utils::fechaMes($flete->getCaFchcreado());
 		}
 		
 		if( $tipo=="recargo" ){
-            
+
 			$minima = $this->getRequestParameter("minima");
 			$idconcepto = $this->getRequestParameter("idconcepto");
 			$idrecargo = $this->getRequestParameter("iditem");
-			if( $idconcepto!=9999 ){
+
+                    if($idconcepto=='')
+                        $idconcepto=9999;
+			if( $idconcepto!=9999  ){
 				
                 $q = Doctrine::getTable("PricFlete")->createQuery()
                                                   ->addWhere("ca_idtrayecto = ?", $trayecto->getCaIdtrayecto() )
