@@ -49,6 +49,10 @@ class reportesNegActions extends sfActions
 			$this->nivel = $this->getUser()->getNivelAcceso( reportesNegActions::RUTINA_EXPO );
 		}
 
+        if( $this->modo=="Triangulación" ){
+			$this->nivel = $this->getUser()->getNivelAcceso( reportesNegActions::RUTINA_AEREO );
+		}
+
 
 		if( $this->nivel==-1 ){
 			$this->forward404();
@@ -73,6 +77,7 @@ class reportesNegActions extends sfActions
 	{
         $this->nivel = $this->getNivel();
         $this->opcion = $this->getRequestParameter("opcion");
+        $this->modo = $this->getRequestParameter("modo");
         $this->impoexpo = $this->getRequestParameter("impoexpo");
         $this->load_category();
 
@@ -91,7 +96,8 @@ class reportesNegActions extends sfActions
 	public function executeBusquedaReporte()
 	{
         $this->opcion = $this->getRequestParameter("opcion");
-
+        $this->modo = $this->getRequestParameter("modo");
+        $this->impoexpo = $this->getRequestParameter("impoexpo");
 
 
 		$criterio = $this->getRequestParameter("criterio");
@@ -392,27 +398,29 @@ class reportesNegActions extends sfActions
 
             if($request->getParameter("fchdespacho") )
             {
-                //$reporte->setCaFchdespacho($request->getParameter("ca_fchdespacho"));
-                $reporte->setCaFchdespacho('09/06/2010');
-
+                $reporte->setCaFchdespacho($request->getParameter("fchdespacho"));
             }else
             {
                 $errors["fchdespacho"]="Debe seleccionar una fecha de despacho";
             }
 
             if($request->getParameter("incoterms") )
-            {
-                //$reporte->setCaFchdespacho($request->getParameter("ca_fchdespacho"));
+            {                
                 $reporte->setCaIncoterms($request->getParameter("incoterms"));
 
             }else
             {
                 $errors["incoterms"]="Debe seleccionar un termino";
             }
-            //revisar falta este campo            
-            $reporte->setCaIdconcliente(6888);
 
+            if($request->getParameter("idconcliente") )
+            {
+                $reporte->setCaIdconcliente($request->getParameter("idconcliente"));
 
+            }else
+            {
+                $errors["idconcliente"]="Debe seleccionar un termino";
+            }
 
             if($request->getParameter("idagente") && $request->getParameter("idagente")!="")
             {
@@ -431,7 +439,6 @@ class reportesNegActions extends sfActions
             {
                 $errors["ca_mercancia_desc"]="Debe colocar un texto de descripcion de la mercacia";
             }
-    //    ca_incoterms:
             if($request->getParameter("prov") )
             {
                 $reporte->setCaIdproveedor($request->getParameter("prov"));
@@ -464,8 +471,17 @@ class reportesNegActions extends sfActions
             {
                 $reporte->setCaIdrepresentante($request->getParameter("idrepres"));
             }
-    //ca_idrepresentante:
-    //ca_informar_repr
+            
+            if($request->getParameter("idrepres") )
+            {
+                $reporte->setCaIdrepresentante($request->getParameter("idrepres"));
+            }
+
+            if($request->getParameter("ca_informar_repr") )
+            {
+                $reporte->setCaInformarRepr( (($request->getParameter("ca_informar_repr")=="on")?"Sí":"No") );
+            }
+
             if($request->getParameter("consig") )
             {
                 $reporte->setCaIdconsignatario($request->getParameter("consig"));
@@ -535,9 +551,10 @@ class reportesNegActions extends sfActions
             {
                 $errors["linea"]="Debe seleccionar un linea";
             }
+
             if($request->getParameter("consignar") && $request->getParameter("consignar")>0  )
             {
-                $reporte->setCaIdconsignar($request->getParameter("idlinea"));
+                $reporte->setCaIdconsignar($request->getParameter("consignar"));
             }
             else
             {
@@ -603,7 +620,6 @@ class reportesNegActions extends sfActions
                 $reporte->setCaMciaPeligrosa(false);
             }
         }
-//        $reporte->save();
 
         if(count($errors)>0)
             $this->responseArray=array("success"=>false,"idreporte"=>$idreporte,"redirect"=>$redirect,"errors"=>$errors);

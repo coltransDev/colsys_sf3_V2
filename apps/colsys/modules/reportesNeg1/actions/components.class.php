@@ -192,11 +192,29 @@ class reportesNegComponents extends sfComponents
 	{
         $this->load_category();
         if($this->modo=="Aéreo")
+        {
             $this->nomLinea="Aerolinea";
+        }
         else if($this->modo=="Marítimo")
+        {
             $this->nomLinea="Naviera";
+        }
         else
             $this->nomLinea="Linea";
+
+        if($this->impoexpo=="Importación")
+        {
+            $this->pais2="CO-057";
+            $this->pais1="todos";
+        }else if($this->impoexpo=="Exportación")
+        {
+            $this->pais2="todos";
+            $this->pais1="CO-057";
+        }else if($this->impoexpo=="Triangulación")
+        {
+            $this->pais1="todos";
+            $this->pais2="todos";
+        }
     }
 
     /*
@@ -206,7 +224,7 @@ class reportesNegComponents extends sfComponents
 	public function executeFormPreferenciasPanel()
 	{
 
-    }
+        }
 
     /*
 	* Edita la informacion aduana
@@ -248,8 +266,24 @@ class reportesNegComponents extends sfComponents
 	*/
 	public function executeFormCorteGuiasPanel()
 	{
+        $this->nomGuiasH="";
+        if($this->modo=="Aéreo")
+        {
+            $this->nomGuiasH="HAWB";
+            $this->nomGuiasM="MAWB";
+        }
+        else if($this->modo=="Marítimo")
+        {
+            $this->nomGuiasH="HBL";
+            $this->nomGuiasM="BL";
+        }
+        else if($this->impoexpo=="Triangulación")
+        {
+            $this->nomGuiasH="AWB";
+            $this->nomGuiasM="AWB";
+        }
 
-		
+
     }
 
 
