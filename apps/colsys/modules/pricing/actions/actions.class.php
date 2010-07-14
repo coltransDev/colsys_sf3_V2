@@ -1176,7 +1176,7 @@ class pricingActions extends sfActions
 		if( $this->nivel==-1 ){
 			$this->forward404();
 		}
-		
+
 		if( $this->nivel==0 ){
 			$this->opcion = "consulta";
 		}
@@ -1249,6 +1249,7 @@ class pricingActions extends sfActions
 		foreach( $recargos as $recargo ){
 			$row = array(
 				'id'=>$i++,
+                                'consecutivo'=>$recargo->getCaConsecutivo(),
 				'idtrafico'=>$idtrafico,
 				'idlinea'=>$recargo->getCaIdlinea(),
 				'linea'=>$recargo->getIdsProveedor()->getIds()->getCaNombre(),
@@ -1256,8 +1257,8 @@ class pricingActions extends sfActions
 				'recargo'=>utf8_encode($recargo->getTipoRecargo()->getCaRecargo()),
 				'idconcepto'=>$recargo->getCaIdconcepto(),
 				'concepto'=>$recargo->getCaIdconcepto()==9999?"Aplica para todos":utf8_encode($recargo->getConcepto()->getCaConcepto()),
-                'inicio' => $recargo->getCaFchinicio(),
-                'vencimiento' => $recargo->getCaFchvencimiento(),
+                                'inicio' => $recargo->getCaFchinicio(),
+                                'vencimiento' => $recargo->getCaFchvencimiento(),
 				'vlrrecargo'=>$recargo->getCaVlrrecargo(),
 				'vlrminimo'=>$recargo->getCaVlrminimo(),
 				'aplicacion'=>utf8_encode($recargo->getCaAplicacion()),
@@ -1309,12 +1310,14 @@ class pricingActions extends sfActions
 	*/
 	public function executeGuardarPanelRecargosPorLinea(){
 		
-        $this->nivel = $this->getNivel();
+                $this->nivel = $this->getNivel();
 
-        if( $this->nivel<=0 ){
-			$this->forward404();
+                if( $this->nivel<=0 ){
+                                $this->forward404();
 		}
 
+                $delete=false;
+                $consecutivo = $this->getRequestParameter("consecutivo");
 		$idtrafico = $this->getRequestParameter("idtrafico");
 		$idlinea = $this->getRequestParameter("idlinea");		
 		$idrecargo = $this->getRequestParameter("idrecargo");
@@ -1341,7 +1344,11 @@ class pricingActions extends sfActions
 			$recargo->setCaIdrecargo( $idrecargo );
 			$recargo->setCaModalidad( $modalidad );
 			$recargo->setCaImpoexpo( utf8_decode($impoexpo) );
-			$recargo->setCaVlrrecargo( 0 );			
+			$recargo->setCaVlrrecargo( 0 );
+//                        echo $consecutivo;
+                        if($consecutivo>0)
+                            $delete=true;
+
 		}
 		$user = $this->getUser();
 		$recargo->setCaUsucreado( $user->getUserId() );
@@ -1352,32 +1359,32 @@ class pricingActions extends sfActions
 			$recargo->setCaIdconcepto( $this->getRequestParameter("idconcepto") );
 		}
 
-        if( $this->getRequestParameter("inicio")!==null ){
-            if( $this->getRequestParameter("inicio") ){
-                $recargo->setCaFchinicio($this->getRequestParameter("inicio"));
-            }else{
-                $recargo->setCaFchinicio( null );
-            }
-        }
+                if( $this->getRequestParameter("inicio")!==null ){
+                    if( $this->getRequestParameter("inicio") ){
+                        $recargo->setCaFchinicio($this->getRequestParameter("inicio"));
+                    }else{
+                        $recargo->setCaFchinicio( null );
+                    }
+                }
 
-        if( $this->getRequestParameter("vencimiento")!==null ){
-            if( $this->getRequestParameter("vencimiento") ){
-                $recargo->setCaFchvencimiento($this->getRequestParameter("vencimiento"));
-            }else{
-                $recargo->setCaFchvencimiento( null );
-            }
-        }
+                if( $this->getRequestParameter("vencimiento")!==null ){
+                    if( $this->getRequestParameter("vencimiento") ){
+                        $recargo->setCaFchvencimiento($this->getRequestParameter("vencimiento"));
+                    }else{
+                        $recargo->setCaFchvencimiento( null );
+                    }
+                }
 					
 		if( $this->getRequestParameter("vlrrecargo")!==null ){
 			$recargo->setCaVlrrecargo( $this->getRequestParameter("vlrrecargo") );
 		}
 		
 		if( $this->getRequestParameter("vlrminimo")!==null ){
-            if( $this->getRequestParameter("vlrminimo") ){
-                $recargo->setCaVlrminimo( $this->getRequestParameter("vlrminimo") );
-            }else{
-                $recargo->setCaVlrminimo( null );
-            }
+                    if( $this->getRequestParameter("vlrminimo") ){
+                        $recargo->setCaVlrminimo( $this->getRequestParameter("vlrminimo") );
+                    }else{
+                        $recargo->setCaVlrminimo( null );
+                    }
 		}		
 		
 		if( $this->getRequestParameter("idmoneda") ){
@@ -1398,6 +1405,15 @@ class pricingActions extends sfActions
 								
 		$recargo->save();	
 		$id = $this->getRequestParameter("id");
+
+                if($delete)
+                {   //echo $consecutivo;
+                    $recargo = Doctrine::getTable("PricRecargoxLinea")->findOneBy("ca_consecutivo", $consecutivo );
+                    if( $recargo ){
+                      //  echo $recargo->getCaConsecutivo();
+                        $recargo->delete();
+                    }
+                }
 		$this->responseArray = array("id"=>$id, "success"=>true);	
 		$this->setTemplate("responseTemplate");		
 	}
