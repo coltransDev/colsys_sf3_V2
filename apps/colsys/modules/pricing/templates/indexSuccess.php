@@ -15,7 +15,7 @@ include_component("pricing", "panelNoticias");
 
 include_component("pricing", "panelTrayectoWindow");
 include_component("pricing", "panelTrayecto", array("readOnly"=>$opcion=="consulta"));
-include_component("pricing", "panelFletesPorTrayecto");
+include_component("pricing", "panelFletesPorTrayecto",array("nivel"=>$nivel));
 include_component("pricing", "panelRecargosPorCiudad");
 include_component("pricing", "panelRecargosPorLinea");
 
