@@ -927,12 +927,13 @@ class pricingActions extends sfActions
 		foreach( $recargos as $recargo ){
 			$row = array(				
 				'idtrafico'=>$idtrafico,
+                                'consecutivo'=>$recargo->getCaConsecutivo(),
 				'idciudad'=>$recargo->getCaIdciudad(),
 				'ciudad'=>utf8_encode($recargo->getCiudad()->getCaCiudad()),
 				'idrecargo'=>$recargo->getCaIdrecargo(),
 				'recargo'=>utf8_encode($recargo->getTipoRecargo()->getCaRecargo()),
-                'inicio' => $recargo->getCaFchinicio(),
-                'vencimiento' => $recargo->getCaFchvencimiento(),
+                                'inicio' => $recargo->getCaFchinicio(),
+                                'vencimiento' => $recargo->getCaFchvencimiento(),
 				'vlrrecargo'=>$recargo->getCaVlrrecargo(),
 				'vlrminimo'=>$recargo->getCaVlrminimo(),
 				'aplicacion'=>utf8_encode($recargo->getCaAplicacion()),
@@ -1024,7 +1025,9 @@ class pricingActions extends sfActions
         if( $this->nivel<=0 ){
 			$this->forward404();
 		}
-        
+                $delete=false;
+                $consecutivo = $this->getRequestParameter("consecutivo");
+
 		$idtrafico = $this->getRequestParameter("idtrafico");
 		$idciudad = $this->getRequestParameter("idciudad");		
 		$idrecargo = $this->getRequestParameter("idrecargo");
@@ -1045,7 +1048,9 @@ class pricingActions extends sfActions
 			$recargo->setCaModalidad( $modalidad );
 			$recargo->setCaImpoexpo( utf8_decode($impoexpo) );
 			$recargo->setCaVlrrecargo( 0 );
-			$recargo->setCaVlrminimo( 0 );			
+			$recargo->setCaVlrminimo( 0 );
+                       if($consecutivo>0)
+                            $delete=true;
 		}
 
         $user = $this->getUser();
@@ -1098,6 +1103,15 @@ class pricingActions extends sfActions
 								
 		$recargo->save();	
 		$id = $this->getRequestParameter("id");
+
+                if($delete)
+                {   //echo $consecutivo;
+                    $recargo = Doctrine::getTable("PricRecargoxCiudad")->findOneBy("ca_consecutivo", $consecutivo );
+                    if( $recargo ){
+                      //  echo $recargo->getCaConsecutivo();
+                        $recargo->delete();
+                    }
+                }
 		$this->responseArray = array("id"=>$id, "success"=>true);	
 		$this->setTemplate("responseTemplate");		
 	}
