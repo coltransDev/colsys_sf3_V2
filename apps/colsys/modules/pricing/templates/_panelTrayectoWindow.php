@@ -18,8 +18,7 @@ PanelTrayectoWindow = function( config ) {
     PanelTrayectoWindow.superclass.constructor.call(this, {
         title: 'Ingrese los datos del trayecto',
         //id: 'costos-aduana-win',
-        autoHeight: true,
-        width: 800,
+        autoHeight: true,        
         //height: 600,
         resizable: true,
         plain:true,
@@ -70,7 +69,8 @@ PanelTrayectoWindow = function( config ) {
                         linkListarTodos: "listar_todos",
                         hiddenName: "idagente",
                         name: "idagente_id",
-                        id: "idagente_id"
+                        id: "idagente_id",
+                        width: 350
                     }),
                     {
                         xtype: 'checkbox',
