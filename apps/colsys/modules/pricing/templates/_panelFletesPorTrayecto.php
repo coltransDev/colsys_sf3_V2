@@ -683,7 +683,8 @@ Ext.extend(PanelFletesPorTrayecto, Ext.grid.EditorGridPanel, {
                                         $("#idlinea").val(res.data.idlinea);
                                         $("#idlinea_id").val(res.data.linea);
                                         $("#idagente").val(res.data.idagente);
-                                        $("#idagente_id").val(res.data.pais_origen+" "+res.data.agente);
+                                        if(res.data.agente)
+                                            $("#idagente_id").val(res.data.pais_origen+" "+res.data.agente);
                                     }
                                 });                                
                             }
