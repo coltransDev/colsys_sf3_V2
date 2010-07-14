@@ -672,6 +672,7 @@ Ext.extend(PanelFletesPorTrayecto, Ext.grid.EditorGridPanel, {
                                     params:{idtrayecto:record.data.idtrayecto},
                                     success:function(response,options){
                                         this.res = Ext.util.JSON.decode( options.response.responseText );
+
                                         $("#tra_origen").val(res.data.tra_origen);
                                         $("#tra_origen_id").val(res.data.pais_origen);
                                         $("#tra_destino").val(res.data.tra_destino);
@@ -685,6 +686,13 @@ Ext.extend(PanelFletesPorTrayecto, Ext.grid.EditorGridPanel, {
                                         $("#idagente").val(res.data.idagente);
                                         if(res.data.agente)
                                             $("#idagente_id").val(res.data.pais_origen+" "+res.data.agente);
+
+                                        Ext.getCmp("tra_origen_id").disabled=true;
+                                        Ext.getCmp("tra_destino_id").disabled=true;
+                                        Ext.getCmp("ciu_origen_id").disabled=true;
+                                        Ext.getCmp("ciu_destino_id").disabled=true;
+                                        Ext.getCmp("impoexpo").disabled=true;
+                                        Ext.getCmp("modalidad").disabled=true;
                                     }
                                 });                                
                             }
