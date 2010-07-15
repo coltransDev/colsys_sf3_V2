@@ -149,7 +149,7 @@ for( $k=0; $k<count($transportes); $k++ ):
 	$pdf->SetFont($font,'B',9);
 
 	foreach( $productos as $producto ):
-                if( $producto->getCaProducto()!="OTM-DTA" )
+                if( $producto->getCaTransporte()=="OTM-DTA" )
                 {
                     if( $producto->getCaProducto()!=$transporte )
                     {
