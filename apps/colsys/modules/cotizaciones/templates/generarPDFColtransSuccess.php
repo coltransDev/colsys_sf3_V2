@@ -111,11 +111,17 @@ $transportes = array();
 //Busca todos los medios de transporte
 foreach( $productos as $producto ){
         if($producto->getCaTransporte()=="OTM-DTA")
-            continue;
-	if(!in_array($producto->getCaTransporte(), $transportes) ){
-
-                    $transportes[] = $producto->getCaTransporte();
-	}
+        {
+            if(!in_array($producto->getCaProducto(), $transportes) ){
+                        $transportes[] = $producto->getCaProducto();
+            }
+        }
+        else
+        {
+            if(!in_array($producto->getCaTransporte(), $transportes) ){
+                        $transportes[] = $producto->getCaTransporte();
+            }
+        }
 }
 
 
@@ -130,17 +136,33 @@ for( $k=0; $k<count($transportes); $k++ ):
 	$pdf->Ln(4);
 	$pdf->SetFont($font,'B',9);
 
-        $pdf->Cell(0, 4, 'TRANSPORTE DE CARGA INTERNACIONAL '.strtoupper($transporte), 0, 1, 'L');
+        if(strtoupper($transporte)=="OTM")
+        {
+            $pdf->Cell(0, 4, '   OTM – OPERACIÓN DE TRANSPORTE MULTIMODAL', 0, 1, 'L', 0);
+        }
+        else if(strtoupper($transporte)=="DTA")
+            $pdf->Cell(0, 4, '   DTA – DECLARACIÓN DE TRÁNSITO ADUANERO', 0, 1, 'L', 0);
+        else
+            $pdf->Cell(0, 4, 'TRANSPORTE DE CARGA INTERNACIONAL '.strtoupper($transporte), 0, 1, 'L');
 	$pdf->Ln(2);
 	$age_imp = true;
 	$pdf->SetFont($font,'B',9);
 
 	foreach( $productos as $producto ):
-                if( $producto->getCaTransporte()!=$transporte )
+                if( $producto->getCaProducto()!="OTM-DTA" )
                 {
-                    continue;
+                    if( $producto->getCaProducto()!=$transporte )
+                    {
+                        continue;
+                    }
                 }
-
+                else
+                {
+                    if( $producto->getCaTransporte()!=$transporte )
+                    {
+                        continue;
+                    }
+                }
 		$imprimirObservaciones = false;
 		$imprimirRecargos = false;
 		if ($producto->getCaImpoexpo()==Constantes::IMPO){
@@ -838,7 +860,7 @@ for( $k=0; $k<count($transportes); $k++ ):
 	}
 
 endfor; //transportes
-/*
+
 if(in_array("OTM",$transportes) || in_array("DTA",$transportes))
 {
 $pdf->beginGroup();
@@ -850,10 +872,8 @@ La Poliza del Importador deberá incluir los tributos aduaneros. El OTM no se hac
 
 	$pdf->flushGroup();
 }
- *
- */
 // ======================== Continuación de viaje ======================== //
-
+/*
 $continuaciones = $cotizacion->getCotContinuacions();
 
 
@@ -1018,7 +1038,7 @@ La Poliza del Importador deberá incluir los tributos aduaneros. El OTM no se hac
 
 	$pdf->flushGroup();
 }
-
+*/
 // ======================== Seguros ======================== //
 
 
@@ -1298,7 +1318,7 @@ Nos es muy grato ofrecer los servicios de nuestra empresa, para contribuir con e
 
 $pdf->Ln(2);
 
-	
+
 $pdf->Output ( $filename);
 if( !$filename ){ //Para evitar que salga la barra de depuracion
 	exit();
