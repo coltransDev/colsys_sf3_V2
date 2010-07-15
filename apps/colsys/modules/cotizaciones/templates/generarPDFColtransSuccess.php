@@ -173,7 +173,7 @@ for( $k=0; $k<count($transportes); $k++ ):
 		}
 
 		// ======================== Impresión por Item ======================== //
-		if ($producto->getCaImprimir() == 'Por Item'):
+		if ($producto->getCaImprimir() == 'Por Item' || $producto->getCaTransporte()=="OTM-DTA"):
 			// Control Impresión
 
 			if( $i++!=0 ){
