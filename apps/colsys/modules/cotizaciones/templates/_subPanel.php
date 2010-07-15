@@ -7,7 +7,7 @@
 if( $cotizacion->getCaEmpresa() == Constantes::COLTRANS ){
     include_component("cotizaciones","panelProductos",array("cotizacion"=>$cotizacion));
     include_component("cotizaciones","panelRecargosCotizacion",array("cotizacion"=>$cotizacion,"tipo"=>"Recargo Local"));
-    include_component("cotizaciones","panelContViajes",array("cotizacion"=>$cotizacion));
+//    include_component("cotizaciones","panelContViajes",array("cotizacion"=>$cotizacion));
     include_component("cotizaciones","panelSeguros",array("cotizacion"=>$cotizacion));
     include_component("cotizaciones","panelAgentes",array("cotizacion"=>$cotizacion));
 }else if( $cotizacion->getCaEmpresa() == Constantes::COLMAS ){
@@ -30,15 +30,16 @@ if( $cotizacion->getCaIdcotizacion() ){
 
 
 SubPanel = function(){
-    this.gridProductos = new PanelProductos({empresa:'<?=$cotizacion->getCaEmpresa()?>'});
+    this.gridProductos = new PanelProductos({tipo:'Trayecto',empresa:'<?=$cotizacion->getCaEmpresa()?>',id:'grid_productos',title:'Tarifas de trayectos'});
     <?
     if( $cotizacion->getCaEmpresa() == Constantes::COLTRANS  ){
-        ?>        
+        ?>
         this.gridRecargos = new PanelRecargosCotizacion();
-        this.gridContviajes = new PanelContViajes();
+        this.gridContviajes = new PanelProductos({tipo:'OTM/DTA',empresa:'<?=$cotizacion->getCaEmpresa()?>',id:'grid_productos1',title:'Tarifas para OTM/DTA'});
+//        this.gridContviajes = new PanelContViajes();
         this.gridSeguros = new PanelSeguros();
         this.gridAgentes = new PanelAgentes();
-        
+
         <?
     }else if( $cotizacion->getCaEmpresa() == Constantes::COLMAS ){
         ?>
@@ -47,12 +48,12 @@ SubPanel = function(){
     }
     ?>
     this.panelArchivos = new PanelArchivos({
-                                                folder:"<?=base64_encode($cotizacion->getDirectorioBase())?>",                                                
+                                                folder:"<?=base64_encode($cotizacion->getDirectorioBase())?>",
                                                 autoHeight:true,
                                                 title:"Archivos",
                                                 closable:false
                                             });
-    
+
 
     MainPanel.superclass.constructor.call(this, {
         labelAlign: 'top',
@@ -69,15 +70,15 @@ SubPanel = function(){
                 this.gridProductos,
                 <?
                 if( $cotizacion->getCaEmpresa() == Constantes::COLTRANS  ){
-                ?>                   
+                ?>
                    this.gridRecargos,
                    this.gridContviajes,
                    this.gridSeguros,
-                   this.gridAgentes,                   
+                   this.gridAgentes,
                 <?
                 }else if( $cotizacion->getCaEmpresa() == Constantes::COLMAS  ){
-                ?>                   
-                   
+                ?>
+
                    this.gridTarifarioAduana,
 
                 <?
@@ -88,7 +89,7 @@ SubPanel = function(){
         }]
 
     });
-    
+
 
 };
 //alert( panelArchivos );
