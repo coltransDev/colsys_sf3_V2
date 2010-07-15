@@ -8,17 +8,17 @@
 ?>
 
 <script type="text/javascript">
-    PanelTrayectoWindow = function() {
-
+    PanelTrayectoWindow = function( config ) {
+        Ext.apply(this,config);
         
 
         PanelTrayectoWindow.superclass.constructor.call(this, {
             width       : 500,
-            height      : 650,
+            autoHeight  : true,
             closeAction :'close',
             plain       : true,
             modal: true,            
-            items       : new PanelTrayectoForm({id: 'producto-form'}),
+            items       : new PanelTrayectoForm({id: 'producto-form',tipo:this.tipo}),
             buttons: [{
                 text     : 'Guardar',
                 scope: this,
@@ -45,27 +45,46 @@
             PanelTrayectoWindow.superclass.show.apply(this, arguments);
         },*/
 
-
+        /*show:function(){alert(this.tipo)},*/
         guardar: function() {
             
 
-
             var fp = Ext.getCmp("producto-form");
             if( fp.getForm().isValid() ){
-                
-                ttransito = fp.getForm().findField("ttransito").getValue();
-                frecuencia = fp.getForm().findField("frecuencia").getValue();
-                impoexpo = fp.getForm().findField("impoexpo").getValue();
-                transporte = fp.getForm().findField("transporte").getValue();
+                if(this.tipo=="Trayecto")
+                {
+                    ttransito = fp.getForm().findField("ttransito").getValue();
+                    frecuencia = fp.getForm().findField("frecuencia").getValue();
+                    impoexpo = fp.getForm().findField("impoexpo").getValue();
+                    transporte = fp.getForm().findField("transporte").getValue();
 
-                if( ttransito=="" && frecuencia=="" && ((impoexpo=="<?=Constantes::IMPO?>" && transporte!="<?=Constantes::AEREO?>") || impoexpo=="<?=Constantes::EXPO?>" ) ){ // Solamente cuando es importación aérea se permite en blanco
-                    Ext.MessageBox.alert('Sistema de Cotizaciones - Error:', 'Por favor indique el tiempo de transito y la frecuencia');
-                }else{
+                    if( ttransito=="" && frecuencia=="" && ((impoexpo=="<?=Constantes::IMPO?>" && transporte!="<?=Constantes::AEREO?>") || impoexpo=="<?=Constantes::EXPO?>" ) ){ // Solamente cuando es importación aérea se permite en blanco
+                        Ext.MessageBox.alert('Sistema de Cotizaciones - Error:', 'Por favor indique el tiempo de transito y la frecuencia');
+                    }else{
+                        this.el.mask('Guardando...', 'x-mask-loading');
+                        var win = this;
+                        fp.getForm().submit({url:'<?=url_for('cotizaciones/formProductoGuardar')?>',
+                            waitMsg:'Salvando Datos de Productos...',
+                            // standardSubmit: false,
+
+                            success:function(form,action){
+                                storeProductos.reload();
+                                win.close();
+                            },
+                            failure:function(form,action){
+                                Ext.MessageBox.alert('Error Message', "Se ha presentado un error: "+action.result.errorInfo+" \n Codigo HTTP "+action.response.status);
+                            }//end failure block
+
+                        });
+                        this.el.unmask();
+                    }
+                }
+                else if(this.tipo=="OTM/DTA")
+                {
                     this.el.mask('Guardando...', 'x-mask-loading');
                     var win = this;
                     fp.getForm().submit({url:'<?=url_for('cotizaciones/formProductoGuardar')?>',
                         waitMsg:'Salvando Datos de Productos...',
-                        // standardSubmit: false,
 
                         success:function(form,action){
                             storeProductos.reload();
@@ -77,7 +96,6 @@
 
                     });
                     this.el.unmask();
-                    
                 }
                 
             }else{
