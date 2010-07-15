@@ -4,24 +4,19 @@
 * opciones de fletes y recargos
 * @author: Andres Botero
 */
-
 include_component("pricing", "panelFletesPorTrayecto");
 include_component("cotizaciones", "panelTrayectoWindow", array("cotizacion"=>$cotizacion) );
 include_component("cotizaciones", "panelTrayectoForm", array("cotizacion"=>$cotizacion) );
-
 include_component("cotizaciones", "formTrayectoAduanaWindow", array("cotizacion"=>$cotizacion) );
-
 ?>
-
 <script type="text/javascript">
 
-
 var activeRecord = null;
-
+var tipo=null;
+var id=null;
 PanelProductos = function( config ){
 
-    Ext.apply(this, config);
-    
+    Ext.apply(this, config);    
     /*
     *Store que carga los conceptos
     */
@@ -146,23 +141,24 @@ PanelProductos = function( config ){
         {name: 'parent', type: 'int'},
         {name: 'inSave', type: 'bool'}
     ]);
-
-    <?
+<?    
+    $url1="cotizaciones/grillaProductosData?tipo=OTM-DTA&idcotizacion=".$cotizacion->getCaIdcotizacion();
     $url = "cotizaciones/grillaProductosData?idcotizacion=".$cotizacion->getCaIdcotizacion();
     if($modo=="consulta"){
         $url.="&modo=consulta";
+        $url1.="&modo=consulta";
     }
-
     if( isset($producto) ){
         $url.="&idproducto=".$producto->getCaIdproducto();
+        $url1.="&idproducto=".$producto->getCaIdproducto();
     }
-    ?>
+?>
     /*
     * Crea el store
     */
     this.store = new Ext.data.GroupingStore({
         autoLoad : true,
-        url: '<?=url_for($url)?>',
+        url: (this.tipo=="OTM/DTA")?'<?=url_for($url1)?>':'<?=url_for($url)?>',
         reader: new Ext.data.JsonReader(
             {
                 //id: 'id',
@@ -280,39 +276,19 @@ PanelProductos = function( config ){
                         allowBlank: true
                     })
                 }
-                /*,{
-                    header: "Orden",
-                    width: 100,
-                    dataIndex: 'orden'
-
-                }
-                ,{
-                    header: "Opcion",
-                    width: 100,
-                    dataIndex: 'idopcion'
-                }*/
-                 /*,{
-                    header: "save",
-                    width: 100,
-                    dataIndex: 'inSave'
-                }*/
     ];
 
     PanelProductos.superclass.constructor.call(this, {
        loadMask: {msg:'Cargando...'},
        clicksToEdit: 1,
-       //store: storeProductos,
-        //master_column_id : 'producto',
 
-        //sm: selModel,
         stripeRows: true,
         autoExpandColumn: 'producto',
-        title: 'Tarifas de trayectos',
+        /*title: 'Tarifas de trayectos',*/
         height: 400,
 
         root_title: 'impoexpo',
         closable: false,
-        id: 'grid_productos',
         <?
         if($modo!="consulta"){
         ?>
@@ -320,20 +296,28 @@ PanelProductos = function( config ){
             {
                 text: 'Guardar Cambios',
                 tooltip: 'Guarda los cambios hechos en la base de datos.',
-                iconCls: 'disk',  // reference to our css
+                iconCls: 'disk', 
                 handler: function(){
                     Ext.getCmp("subpanel-cotizaciones").guardarDatosPaneles();
                 },
-                id     : 'guardarbtn'
+                id:'guardarbtn'+this.tipo
             },
             {
-                text: 'Agregar trayecto',
+                text: 'Agregar '+this.tipo,
                 tooltip: 'Agregar un nuevo producto a la Cotización',
-                iconCls: 'add',  // reference to our css
+                iconCls: 'add', 
                 scope: this,
                 handler: function(){                   
                     this.agregarTrayecto();
-                }
+                }                
+            },
+            {
+                text: 'Recargar',
+                tooltip: 'Recarga los datos de la base de datos',
+                iconCls: 'refresh',  // reference to our css
+                scope: this,
+                handler: this.recargar
+
             }
         ],
         <?
@@ -377,11 +361,6 @@ PanelProductos = function( config ){
         <?
         }
         ?>
-
-
-
-
-
     });
 
     var storeProductos = this.store;
@@ -399,30 +378,36 @@ PanelProductos = function( config ){
         if( !record.data.iditem && field!="item" ){
             return false;
         }
-
         if( field!="item" && record.data.tipo=="concepto" && record.data.iditem =="9999"  ){
             return false;
-        }
-        
+        }        
         if( field=="equipo" && (record.data.transporte!="<?=Constantes::TERRESTRE?>"&&record.data.transporte!="<?=Constantes::OTMDTA?>") ){
-
             return false;
         }
-
         return Ext.grid.ColumnModel.prototype.isCellEditable.call(this, colIndex, rowIndex);
     }
-
 }
 
-
 Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
-
+     recargar: function(){
+         if(this.tipo=="OTM/DTA")
+             id_new="grid_productos1";
+         else
+             id_new="grid_productos";
+        if(Ext.getCmp(id_new).store.getModifiedRecords().length>0){
+            if(!confirm("Se perderan los cambios no guardados en los recargos locales unicamente, desea continuar?")){
+                return 0;
+            }
+        }
+        Ext.getCmp(id_new).store.reload();
+    },
     guardarItems: function (){
+
+        tipo=this.tipo;
         var storeProductos = this.store;
         var success = true;
         var records = storeProductos.getModifiedRecords();
         var lenght = records.length;
-
 
         //Se hace la valida que se hayan colocado todos los datos
         for( var i=0; i< lenght; i++){
@@ -430,36 +415,28 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
             //alert( r.data.iditem );
             if( !r.data.idmoneda && r.data.iditem!=9999 ){
                 alert('Por favor coloque la moneda en todos los items en la pestaña Tarifas de trayectos','Warning');
-                //return 0;
             }
 
-//            return false;
             if( !r.data.idequipo && r.data.modalidad =="FCL" && r.data.transporte=="<?=Constantes::TERRESTRE?>" )
             {
                alert('Por favor indique el equipo 1 del trayecto '+r.data.trayecto,'Alert');
-               //return false;
             }
-
         }
-
         var numResponses = 0;
 
-        Ext.getCmp('guardarbtn').disable();
+        Ext.getCmp('guardarbtn'+tipo).disable();
 
         for( var i=0; i< lenght; i++){
             if( records[i].data.tipo=="concepto" || (records[i].data.tipo=="recargo" && records[i].data.idopcion )){
                 this.guardarGridProductosRec( records[i] );
             }
         }
-
-
-
         window.setTimeout(this.enableButton, 3000);
-
     },
 
     enableButton: function(){
-        Ext.getCmp('guardarbtn').enable();
+//        alert(this.tipo)
+        Ext.getCmp('guardarbtn'+tipo).enable();
     },
 
     /*
@@ -468,6 +445,8 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
     guardarGridProductosRec: function( r ){
         var storeProductos = this.store;
         var changes = r.getChanges();
+
+        tipo=this.tipo;
 
         if( r.data.iditem && !r.data.inSave ){
             //alert( r.data.id );
@@ -488,18 +467,11 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
                 {
                     waitMsg: 'Guardando cambios...',
                     url: '<?=url_for("cotizaciones/observeItemsOpciones?idcotizacion=".$cotizacion->getCaIdcotizacion())?>',
-                    //method: 'POST',
-                    //Solamente se envian los cambios
                     params :	changes,
-
-                    //Ejecuta esta accion en caso de fallo
-                    //(404 error etc, ***NOT*** success=false)
                     failure:function(response,options){
-                        //alert( response.responseText );
                         success = false;
                         r.set("inSave", false);
                     },
-                    //Ejecuta esta accion cuando el resultado es exitoso
                     callback :function(options, success, response){
                         r.set("inSave", false);
                         var res = Ext.util.JSON.decode( response.responseText );
@@ -511,7 +483,6 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
                             }else{
                                 rec.set("orden", "Y" );
                             }
-                             //Se coloca el id del padre en la bd
                             storeProductos.each( function(r){
                                 if(r.data.parent && r.data.parent == rec.data.parent && r.data.tipo=="recargo"  ){
                                     r.data.idopcion = res.idopcion;
@@ -520,19 +491,19 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
                                     }else{
                                         r.data.orden = res.idopcion+"-"+r.data.item;
                                     }
-
                                     if( r.dirty ){
-                                        Ext.getCmp("grid_productos").guardarGridProductosRec( r );
+                                        if(tipo=="OTM/DTA")
+                                            Ext.getCmp("grid_productos1").guardarGridProductosRec( r );
+                                        else
+                                            Ext.getCmp("grid_productos").guardarGridProductosRec( r );
                                     }
                                 }
                             } );
-
                         }
 
                         if( rec.data.tipo=="recargo" ){
                             rec.set("idcotrecargo", res.idcotrecargo );
                         }
-
                         //rec.set("inSave", false);
                         rec.commit();
                         storeProductos.sort("orden", "ASC");
@@ -555,7 +526,6 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
             );
         }
     },
-
     /*
     * Cambia el valor que se toma de los combobox y copia el valor em otra columna,
     * tambien inserta otra columna en blanco para que el usuario continue digitando
@@ -570,42 +540,24 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
        iditem="-1";
        validate=true;
 
+       tipo=this.tipo;
        storeProductos.each( function( r ){
-
-/*         if(r.data.tipo=="concepto"  )
-          {
-             alert(r.data.toSource());
-          }
-*/
-            
           if(r.data.tipo=="concepto" && r.data.iditem )
-          {//             alert(r.data.tipo+"==" + r.data.iditem);
-               
+          {               
              iditem=r.data.iditem;
-//             alert(iditem);
           }
-           //alert("Item"+iditem)
           if(r.data.tipo=="recargo" && iditem==rec.data.idconcepto)
           {
-          //alert("concepto="+r.data.idconcepto+"-\niditem="+r.data.iditem +"-\ntipo="+ r.data.tipo+"-\nvalue="+e.value);
              if(e.value==r.data.iditem )
              {
-             //   alert("concepto="+r.data.idconcepto+"-\niditem="+r.data.iditem +"-\ntipo="+ r.data.tipo+"-\nvalue="+e.value);
-   //             alert(r.data.idconcepto+"=="+e.value)
-                //alert("Este recargo ya se encuentra en el listado porfavor seleccion otro");
-                //validate=false;
-                //alert("concepto="+r.data.idconcepto+"-\niditem="+r.data.iditem +"-\ntipo="+ r.data.tipo+"-\nvalue="+e.value);
-                //alert(r.data.idconcepto+"--"+e.value);
-                //alert(r.data.toSource());
+
              }
           }
-          //alert(r.data.idconcepto+"-"+r.data.iditem +"-"+ r.data.tipo+"-"+e.value);
        });
        if(validate==false)
           return false;
 
-        if( e.field == "item"){
-            
+        if( e.field == "item"){            
             store.each( function( r ){               
                     if( r.data.idconcepto==e.value ){
                         if( !rec.data.iditem && rec.data.tipo=="concepto" ){
@@ -665,9 +617,11 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
                                 rec.set("iditem", r.data.idconcepto);
                                 rec.set("idconcepto", r.data.idconcepto);
                                 rec.set("orden", "X");
-                                Ext.getCmp("grid_productos").guardarGridProductosRec( rec );
+                                if(tipo=="OTM/DTA")
+                                    Ext.getCmp("grid_productos1").guardarGridProductosRec( rec );
+                                else
+                                    Ext.getCmp("grid_productos").guardarGridProductosRec( rec );
                             }
-
                             //Inserta una columna en blanco al final
                             storeProductos.addSorted(newRec);
                             storeProductos.sort("orden", "ASC");
@@ -737,9 +691,10 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
                         iconCls: 'import',
                         scope:this,
                         handler: function(){
-                            if( this.ctxRecord ){
-                                this.ventanaTarifario( this.ctxRecord );
-                            }
+                                if( this.ctxRecord ){
+                                    this.ventanaTarifario( this.ctxRecord );
+                                }
+
                         }
                     }
                     /*,
@@ -780,7 +735,6 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
                             if( this.ctxRecord.data.iditem  ){
                                 this.observacionesHandler( this.ctxRecord );
                             }
-
                         }
                     }
                     ]
@@ -797,7 +751,6 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
         Ext.fly(this.ctxRow).addClass('x-node-ctx');
         this.menu.showAt(e.getXY());
     },
-
 
     /*
     * Determina que store se debe utilizar dependiendo si es un concepto o recargo
@@ -818,9 +771,7 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
                 this.storeConceptos.baseParams={transporte:rec.data.transporte, modalidad:rec.data.modalidad, tipo:'Recargo en Origen', impoexpo:rec.data.impoexpo , modo:'recargos'};
             }
             this.storeConceptos.load();
-        }
-        
-        
+        }        
 
         if( e.field=="aplica_tar" || e.field=="aplica_min" ){
             var dataAereo = [
@@ -836,7 +787,6 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
                 }
                 ?>
             ];
-
             var dataMaritimo = [
                 <?
                 $i=0;
@@ -850,7 +800,6 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
                 }
                 ?>
             ];
-
             var ed = this.colModel.getCellEditor(e.column, e.row);
             if( e.record.data.transporte=="<?=Constantes::AEREO?>" ){
                 ed.field.store.loadData( dataAereo );
@@ -858,7 +807,6 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
                 ed.field.store.loadData( dataMaritimo );
             }
         }
-
     },
 
     eliminarItem: function(){
@@ -871,8 +819,6 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
                 var idconcepto = this.ctxRecord.data.idconcepto;
                 var idrecargo = this.ctxRecord.data.iditem;
             }
-
-
 
             var id = this.ctxRecord.id;
             var tipo = this.ctxRecord.data.tipo;
@@ -898,7 +844,6 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
                 return 0;
             }
 
-
             if( idopcion ){
                 Ext.Ajax.request(
                 {
@@ -922,9 +867,6 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
                         alert( response.responseText );
                         success = false;
                     },
-
-
-
                     //Ejecuta esta accion cuando el resultado es exitoso
                     success:function(response,options){
                         var res = Ext.util.JSON.decode( response.responseText );
@@ -933,7 +875,6 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
                             storeProductos.remove(record);
                             if(tipo=="concepto"){
                                 storeProductos.remove(record);
-
                                 /*
                                 * Se deben eliminar los recargos del concepto que se elimino ya que al enviar la
                                 * petición son borrados de la base de datos.
@@ -946,9 +887,6 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
                             }
                         }
                     }
-
-
-
                 });
             }
         }
@@ -963,14 +901,10 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
             {
                 waitMsg: 'Guardando cambios...',
                 url: '<?=url_for("cotizaciones/eliminarProducto?idcotizacion=".$cotizacion->getCaIdcotizacion())?>',
-                //method: 'POST',
-                //Solamente se envian los cambios
                 params :	{
                     idproducto: idproducto
                 },
 
-                //Ejecuta esta accion en caso de fallo
-                //(404 error etc, ***NOT*** success=false)
                 failure:function(response,options){
                     alert( response.responseText );
                     success = false;
@@ -992,7 +926,6 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
     },
     nuevoRecargo: function(){
         rec = this.ctxRecord;
-        //alert(rec.toSource());
         //if( e.field == "item"){
         var recordProductos = this.record;
         var storeProductos = this.store;
@@ -1116,25 +1049,21 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
     editarTrayecto: function( rec ){
         this.crearVentanaTrayecto( rec );
     },
-
-
     /*
     * Muestra una ventana enla que se puede crear o editar un trayecto
     */
     crearVentanaTrayecto: function( record ){
         storeProductos = this.store;
-        //crea una ventana        
+        //crea una ventana
+
         if(this.empresa=='<?=Constantes::COLTRANS?>')
         {
-           this.win = new PanelTrayectoWindow();
+           this.win = new PanelTrayectoWindow({tipo:this.tipo});
         }
         else if(this.empresa=='<?=Constantes::COLMAS?>')
         {
            this.win = new FormTrayectoAduanaWindow();
         }
-
-
-
 
         this.win.show( );
 
@@ -1159,9 +1088,6 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
             fp.getForm().findField("ciu_destino_id").setValue(record.data.ciu_destino_value);
             fp.getForm().findField("ciu_destino_id").hiddenField.value = record.data.ciu_destino;
 
-            /*fp.getForm().findField("ciu_destino_id").store.setBaseParam("idpais", record.data.tra_destino );
-            fp.getForm().findField("ciu_destino_id").store.load();*/
-
             if(fp.getForm().findField("tra_escala_id"))
             {
                 fp.getForm().findField("tra_escala_id").setValue(record.data.tra_escala_value);
@@ -1172,8 +1098,11 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
                 fp.getForm().findField("ciu_escala_id").setValue(record.data.ciu_escala_value);
                 fp.getForm().findField("ciu_escala_id").hiddenField.value = record.data.ciu_escala;
             }
-            fp.getForm().findField("idlinea").setValue(record.data.linea);
-            fp.getForm().findField("idlinea").hiddenField.value = record.data.idlinea;
+            if(fp.getForm().findField("idlinea"))
+            {
+                fp.getForm().findField("idlinea").setValue(record.data.linea);
+                fp.getForm().findField("idlinea").hiddenField.value = record.data.idlinea;
+            }
             var now = new Date(<?=strtotime(date("Y-m-d"))*1000?>);
             fp.getForm().findField("vigencia").setMinValue( (record.data.vigencia&&record.data.vigencia<=now)?record.data.vigencia:now );
 
@@ -1189,10 +1118,8 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
         }else{
             var fp = Ext.getCmp("producto-form");
             fp.getForm().findField("vigencia").setMinValue( new Date(<?=strtotime(date("Y-m-d"))*1000?>) );
-
         }
     },
-
     /*
     * Muestra una ventana con la informacion del tarifario y le permite al usuario
     * seleccionar las tarifas a importar
@@ -1227,21 +1154,18 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
         transporte = record.data.transporte;
         modalidad = record.data.modalidad;
         idlinea = record.data.idlinea;
-
         var newComponent = new PanelFletesPorTrayecto({
-                                                          impoexpo: impoexpo,
-                                                          idtrafico: idtrafico,
-                                                          trafico: idtrafico,
-                                                          transporte: transporte,
-                                                          modalidad: modalidad,
-                                                          idciudad: idciudad,
-                                                          idciudad2: idciudad2,
-                                                          idlinea: idlinea,
-                                                          closable: false,
-                                                          readOnly: true
-                                                      });
-
-
+                                                      impoexpo: impoexpo,
+                                                      idtrafico: idtrafico,
+                                                      trafico: idtrafico,
+                                                      transporte: transporte,
+                                                      modalidad: modalidad,
+                                                      idciudad: idciudad,
+                                                      idciudad2: idciudad2,
+                                                      idlinea: idlinea,
+                                                      closable: false,
+                                                      readOnly: true
+                                                  });
         //Se crea la ventana
         win = new Ext.Window({
             width       : 800,
@@ -1250,7 +1174,6 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
             plain       : true,
             title       : "Por favor seleccion las tarifas que desea importar",
             items       : [newComponent],
-
 
             buttons: [{
 
@@ -1282,16 +1205,12 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
                                                         }
                                                     }
                                                 });
-
                             /*
                             * Busca el ultimo elemento para insertar al final del grupo
                             */
-
                             index =  storeProductos.indexOf(activeRecord);
                             var j = 0;
                             var idconcepto = null;
-
-
                             storePricing.each( function(r){
 
                                 if(r.data.tipo=="recargoxciudad" || r.data.tipo=="recargoxlinea"){
@@ -1330,8 +1249,6 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
                                             var orden = "W"+j;
                                         }
                                     }
-
-
 
                                     //Esto es importante
                                     if(tipo=="recargo"){
@@ -1395,7 +1312,6 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
                                         });
 
                                         newRec.set("trayecto", activeRecord.data.trayecto );
-
                                         storeProductos.addSorted( newRec );
 
                                         //Es necesario buscar de nuevo el record dentro del store
@@ -1406,10 +1322,7 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
                                         newRec.set("idconcepto", r.data.idconcepto );
                                         newRec.set("idequipo", r.data.idequipo );
                                         newRec.set("equipo", r.data.equipo );
-
                                         newRec.set("iditem", iditem );
-
-
                                         newRec.set("tipo", tipo );
                                         newRec.set("valor_tar", valor_tar );
                                         newRec.set("aplica_tar", r.data.aplicacion );
@@ -1434,9 +1347,7 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
                 ]
             });
             win.show( );
-
     },
-
     /*
     * Muestra una ventana con la informacion de los archivos tarifario del trafico
     */
@@ -1461,7 +1372,6 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
                 modalidad: record.data.modalidad
             },
             success: function(xhr) {
-                //alert( xhr.responseText );
                 var newComponent = eval(xhr.responseText);
 
                 //Se crea la ventana
@@ -1479,13 +1389,5 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
             }
         });
     }
-
-
-
-
 });
-
-
-
-
 </script>
