@@ -1178,190 +1178,208 @@ class cotizacionesActions extends sfActions
 	* Muestra los datos de la grilla de prooductos del componente grillaProductos
 	*/
 	public function executeGrillaProductosData(){
-		$id = $this->getRequestParameter("idcotizacion");
-      $idproducto = $this->getRequestParameter("idproducto");
 
-      $cotizacion = Doctrine::getTable("Cotizacion")->find( $id );
+            $id = $this->getRequestParameter("idcotizacion");
+            $idproducto = $this->getRequestParameter("idproducto");
+            $tipo=$this->getRequestParameter("tipo");
+            $cotizacion = Doctrine::getTable("Cotizacion")->find( $id );
 
-		$cotProductos = $cotizacion->getCotProductos();
-        $modo = $this->getRequestParameter("modo");
+            $cotProductos = $cotizacion->getCotProductos();
+            $modo = $this->getRequestParameter("modo");
 
-		$this->productos = array();
+            $this->productos = array();
 
-		foreach( $cotProductos as $producto ){
+            foreach( $cotProductos as $producto ){
 
-            if( $idproducto && $idproducto!=$producto->getCaIdproducto()){//Se desea uno solo
-                continue;
+                if($tipo=="OTM-DTA")
+                {
+                    if($producto->getCaTransporte()!="OTM-DTA")
+                        continue;
+                }
+                else
+                {
+                    if($producto->getCaTransporte()=="OTM-DTA")
+                        continue;
+                }
+
+
+                if( $idproducto && $idproducto!=$producto->getCaIdproducto()){//Se desea uno solo
+                    continue;
+                }
+                $j=0;
+                $origen = $producto->getOrigen();
+                $destino = $producto->getDestino();
+                $escala = $producto->getEscala();
+
+                $linea = $producto->getTransportador();
+                $lineaStr = "";
+                $trayecto="";
+                if($tipo!="OTM-DTA")
+                {
+                    if( $linea ){
+                            $lineaStr = $linea->getIds()->getCaNombre();
+                    }else{
+                            $lineaStr = "";
+                    }
+
+                    $trayecto = utf8_encode($producto->getCaImpoexpo())." ".utf8_encode($producto->getCaTransporte())." ".utf8_encode($producto->getCaModalidad())." [".utf8_encode( $origen->getCaCiudad() )." - ".utf8_encode($origen->getTrafico()->getCaNombre()." » ");
+                }
+                else
+                {
+                    $trayecto = $producto->getCaProducto()." ".utf8_encode($producto->getCaModalidad())." [".utf8_encode( $origen->getCaCiudad() )." - ".utf8_encode($origen->getTrafico()->getCaNombre()." » ");
+                }
+                if( $escala ){
+                        $trayecto .= utf8_encode($escala->getCaCiudad())." - ".utf8_encode($escala->getTrafico()->getCaNombre()." » ");
+                }
+
+                $trayecto .= utf8_encode($destino->getCaCiudad())." - ".utf8_encode($destino->getTrafico()->getCaNombre())."]  ".$lineaStr." ".$producto->getCaIdproducto();
+
+                //Se envian las opciones existentes
+                $opciones = $producto->getCotOpciones();
+
+                $baseRow = array(
+                     'trayecto'=>$trayecto,
+                     'idproducto'=>$producto->getCaIdproducto(),
+                     'producto'=>utf8_encode($producto->getCaProducto()),
+                     'idcotizacion'=>$producto->getCaIdcotizacion(),
+                     'tra_origen'=>$origen->getCaIdtrafico(),
+                     'tra_origen_value'=>utf8_encode($origen->getTrafico()->getCaNombre()),
+                     'ciu_origen'=>$origen->getCaIdciudad(),
+                     'ciu_origen_value'=>utf8_encode($origen->getCaCiudad()),
+                     'tra_destino'=>$destino->getCaIdtrafico(),
+                     'tra_destino_value'=>utf8_encode($destino->getTrafico()->getCaNombre()),
+                     'ciu_destino'=>$destino->getCaIdciudad(),
+                     'ciu_destino_value'=>utf8_encode($destino->getCaCiudad()),
+                     'tra_escala'=>$escala?$escala->getCaIdtrafico():"",
+                     'tra_escala_value'=>$escala?utf8_encode($escala->getTrafico()->getCaNombre()):"",
+                     'ciu_escala'=>$escala?$escala->getCaIdciudad():"",
+                     'ciu_escala_value'=>$escala?utf8_encode($escala->getCaCiudad()):"",
+                     'transporte'=>utf8_encode($producto->getCaTransporte()),
+                     'modalidad'=>utf8_encode($producto->getCaModalidad()),
+                     'impoexpo'=>utf8_encode($producto->getCaImpoexpo()),
+                     'incoterms'=>utf8_encode($producto->getCaIncoterms()),
+                     'frecuencia'=>utf8_encode($producto->getCaFrecuencia()),
+                     'ttransito'=>utf8_encode($producto->getCaTiempotransito()),
+                     'imprimir'=>utf8_encode($producto->getCaImprimir()),
+                     'observaciones'=>utf8_encode($producto->getCaObservaciones()),
+                     'idlinea'=>$producto->getCaIdlinea(),
+                     'linea'=>utf8_encode($lineaStr),
+                     'postular_linea'=>	$producto->getCaPostularlinea(),
+                     'vigencia'=>$producto->getCaVigencia(),
+                                        );
+
+                foreach( $opciones as $opcion ){
+                        $concepto = $opcion->getConcepto();
+                        $row = $baseRow;
+                        $row['idopcion']=$opcion->getCaIdopcion();
+                        $row['iditem']=$opcion->getCaIdconcepto();
+                        $row['item']=utf8_encode($concepto->getCaConcepto());
+                        $row['valor_tar']=$opcion->getCaValorTar();
+                        $row['aplica_tar']=utf8_encode($opcion->getCaAplicaTar());
+                        $row['valor_min']=$opcion->getCaValorMin();
+                        $row['aplica_min']=utf8_encode($opcion->getCaAplicaMin());
+                        $row['idmoneda']=$opcion->getCaIdmoneda();
+                        $row['detalles']=utf8_encode($opcion->getCaObservaciones());
+                        $row['tipo']="concepto";
+                        $row['orden']=$opcion->getCaIdopcion();
+                        $row['idequipo']=$opcion->getCaIdequipo();
+                        $row['equipo']=$opcion->getEquipo()->getCaConcepto();
+
+
+                        $this->productos[] = $row;
+                         //Se muestran los recargos
+                        $recargos = $opcion->getCotRecargos();
+
+                        foreach( $recargos as $recargo ){
+                            $tipoRecargo = $recargo->getTipoRecargo();
+                                $row = $baseRow;
+                                $row['idcotrecargo']=$recargo->getCaIdcotrecargo();
+                                $row['idopcion']=$opcion->getCaIdopcion();
+                                $row['iditem']=$tipoRecargo->getCaIdrecargo();
+                                $row['item']=utf8_encode($tipoRecargo->getCaRecargo());
+                                $row['idconcepto']=$recargo->getCaIdconcepto();
+                                $row['valor_tar']=$recargo->getCaValorTar();
+                                $row['aplica_tar']=utf8_encode($recargo->getCaAplicaTar());
+                                $row['valor_min']=$recargo->getCaValorMin();
+                                $row['aplica_min']=utf8_encode($recargo->getCaAplicaMin());
+                                $row['idmoneda']=$recargo->getCaIdmoneda();
+                                $row['detalles']=utf8_encode($recargo->getCaObservaciones());
+                                $row['tipo']="recargo";
+                                $row['orden']=$opcion->getCaIdopcion()."-".utf8_encode($tipoRecargo->getCaRecargo());
+                                $row['idequipo']=$recargo->getCaIdequipo();
+                                $row['equipo']=$recargo->getEquipo()->getCaConcepto();
+                                $this->productos[] = $row;
+                        }
+                }
+
+                $recargos = $producto->getRecargosGenerales();
+
+                if( count($recargos)>0 ){
+                        $row = $baseRow;
+                        $row['idopcion']=999;
+                        $row['iditem']=9999;
+                        $row['item']="Recargos generales del trayecto";
+                        $row['idconcepto']='9999';
+                        $row['valor_tar']='';
+                        $row['aplica_tar']='';
+                        $row['valor_min']='';
+                        $row['aplica_min']='';
+                        $row['idmoneda']='';
+                        $row['detalles']='';
+                        $row['tipo']="concepto";
+                        //$row['id']+=$j++;
+                        $row['orden']="Y";
+                        $row['idequipo']="";
+                        $row['equipo']="";
+                        //$parent = $row['id'];
+                        $this->productos[] = $row;
+                }
+
+                foreach( $recargos as $recargo ){
+                        $tipoRecargo = $recargo->getTipoRecargo();
+                        $row = $baseRow;
+                        $row['idcotrecargo']=$recargo->getCaIdcotrecargo();
+                        $row['idopcion']=999;
+                        $row['iditem']=$tipoRecargo->getCaIdrecargo();
+                        $row['item']=utf8_encode($tipoRecargo->getCaRecargo());
+                        $row['idconcepto']=$recargo->getCaIdconcepto();
+                        $row['valor_tar']=$recargo->getCaValorTar();
+                        $row['aplica_tar']=utf8_encode($recargo->getCaAplicaTar());
+                        $row['valor_min']=$recargo->getCaValorMin();
+                        $row['aplica_min']=utf8_encode($recargo->getCaAplicaMin());
+                        $row['idmoneda']=$recargo->getCaIdmoneda();
+                        $row['detalles']=utf8_encode($recargo->getCaObservaciones());
+                        $row['tipo']="recargo";
+                        $row['idequipo']=$recargo->getCaIdequipo();
+                        $row['equipo']=$recargo->getEquipo()->getCaConcepto();
+
+
+                        $row['orden']="Y-".utf8_encode($tipoRecargo->getCaRecargo());
+                        $this->productos[] = $row;
+                }
+
+                if( $modo!="consulta" ){
+                    //Se envia una fila vacia por cada grupo para agregar una nueva opción
+                    $row = $baseRow;
+                    $row['idopcion']="";
+                    $row['iditem']="";
+                    $row['item']="+";
+                    $row['idconcepto']="";
+                    $row['valor_tar']="";
+                    $row['aplica_tar']="";
+                    $row['valor_min']="";
+                    $row['aplica_min']="";
+                    $row['idmoneda']="";
+                    $row['detalles']="";
+                    $row['tipo']="concepto";
+                    $row['orden']="Z";
+                    $row['idequipo']="";
+                    $row['equipo']="";
+                    $this->productos[] = $row;
+               }
             }
-
-			$j=0;
-			$origen = $producto->getOrigen();
-			$destino = $producto->getDestino();
-			$escala = $producto->getEscala();
-
-			$linea = $producto->getTransportador();
-
-			if( $linea ){
-				$lineaStr = $linea->getIds()->getCaNombre();
-			}else{
-				$lineaStr = "";
-			}
-
-			$trayecto = utf8_encode($producto->getCaImpoexpo())." ".utf8_encode($producto->getCaTransporte())." ".utf8_encode($producto->getCaModalidad())." [".utf8_encode( $origen->getCaCiudad() )." - ".utf8_encode($origen->getTrafico()->getCaNombre()." » ");
-
-			if( $escala ){
-				$trayecto .= utf8_encode($escala->getCaCiudad())." - ".utf8_encode($escala->getTrafico()->getCaNombre()." » ");
-			}
-
-			$trayecto .= utf8_encode($destino->getCaCiudad())." - ".utf8_encode($destino->getTrafico()->getCaNombre())."]  ".$lineaStr." ".$producto->getCaIdproducto();
-
-			//Se envian las opciones existentes
-			$opciones = $producto->getCotOpciones();
-
-			$baseRow = array(
-		 					 'trayecto'=>$trayecto,
-							 'idproducto'=>$producto->getCaIdproducto(),
-							 'producto'=>utf8_encode($producto->getCaProducto()),
-							 'idcotizacion'=>$producto->getCaIdcotizacion(),
-							 'tra_origen'=>$origen->getCaIdtrafico(),
-							 'tra_origen_value'=>utf8_encode($origen->getTrafico()->getCaNombre()),
-							 'ciu_origen'=>$origen->getCaIdciudad(),
-							 'ciu_origen_value'=>utf8_encode($origen->getCaCiudad()),
-							 'tra_destino'=>$destino->getCaIdtrafico(),
-							 'tra_destino_value'=>utf8_encode($destino->getTrafico()->getCaNombre()),
-							 'ciu_destino'=>$destino->getCaIdciudad(),
-							 'ciu_destino_value'=>utf8_encode($destino->getCaCiudad()),
-							 'tra_escala'=>$escala?$escala->getCaIdtrafico():"",
-							 'tra_escala_value'=>$escala?utf8_encode($escala->getTrafico()->getCaNombre()):"",
-							 'ciu_escala'=>$escala?$escala->getCaIdciudad():"",
-							 'ciu_escala_value'=>$escala?utf8_encode($escala->getCaCiudad()):"",
-							 'transporte'=>utf8_encode($producto->getCaTransporte()),
-							 'modalidad'=>utf8_encode($producto->getCaModalidad()),
-							 'impoexpo'=>utf8_encode($producto->getCaImpoexpo()),
-							 'incoterms'=>utf8_encode($producto->getCaIncoterms()),
-							 'frecuencia'=>utf8_encode($producto->getCaFrecuencia()),
-							 'ttransito'=>utf8_encode($producto->getCaTiempotransito()),
-							 'imprimir'=>utf8_encode($producto->getCaImprimir()),
-							 'observaciones'=>utf8_encode($producto->getCaObservaciones()),
-							 'idlinea'=>$producto->getCaIdlinea(),
-							 'linea'=>utf8_encode($lineaStr),
-							 'postular_linea'=>	$producto->getCaPostularlinea(),
-                             'vigencia'=>$producto->getCaVigencia(),
-						);
-
-			foreach( $opciones as $opcion ){
-				$concepto = $opcion->getConcepto();
-				$row = $baseRow;
-				$row['idopcion']=$opcion->getCaIdopcion();
-				$row['iditem']=$opcion->getCaIdconcepto();
-				$row['item']=utf8_encode($concepto->getCaConcepto());
-				$row['valor_tar']=$opcion->getCaValorTar();
-				$row['aplica_tar']=utf8_encode($opcion->getCaAplicaTar());
-				$row['valor_min']=$opcion->getCaValorMin();
-				$row['aplica_min']=utf8_encode($opcion->getCaAplicaMin());
-				$row['idmoneda']=$opcion->getCaIdmoneda();
-				$row['detalles']=utf8_encode($opcion->getCaObservaciones());
-				$row['tipo']="concepto";
-				$row['orden']=$opcion->getCaIdopcion();
-            $row['idequipo']=$opcion->getCaIdequipo();
-            $row['equipo']=$opcion->getEquipo()->getCaConcepto();
-
-
-				$this->productos[] = $row;
-				 //Se muestran los recargos
-				$recargos = $opcion->getCotRecargos();
-
-				foreach( $recargos as $recargo ){
-					$tipoRecargo = $recargo->getTipoRecargo();
-
-					$row = $baseRow;
-               $row['idcotrecargo']=$recargo->getCaIdcotrecargo();
-					$row['idopcion']=$opcion->getCaIdopcion();
-					$row['iditem']=$tipoRecargo->getCaIdrecargo();
-					$row['item']=utf8_encode($tipoRecargo->getCaRecargo());
-					$row['idconcepto']=$recargo->getCaIdconcepto();
-					$row['valor_tar']=$recargo->getCaValorTar();
-					$row['aplica_tar']=utf8_encode($recargo->getCaAplicaTar());
-					$row['valor_min']=$recargo->getCaValorMin();
-					$row['aplica_min']=utf8_encode($recargo->getCaAplicaMin());
-					$row['idmoneda']=$recargo->getCaIdmoneda();
-					$row['detalles']=utf8_encode($recargo->getCaObservaciones());
-					$row['tipo']="recargo";
-					$row['orden']=$opcion->getCaIdopcion()."-".utf8_encode($tipoRecargo->getCaRecargo());
-               $row['idequipo']=$recargo->getCaIdequipo();
-               $row['equipo']=$recargo->getEquipo()->getCaConcepto();
-					$this->productos[] = $row;
-				}
-			}
-
-			$recargos = $producto->getRecargosGenerales();
-
-			if( count($recargos)>0 ){
-				$row = $baseRow;
-				$row['idopcion']=999;
-				$row['iditem']=9999;
-				$row['item']="Recargos generales del trayecto";
-				$row['idconcepto']='9999';
-				$row['valor_tar']='';
-				$row['aplica_tar']='';
-				$row['valor_min']='';
-				$row['aplica_min']='';
-				$row['idmoneda']='';
-				$row['detalles']='';
-				$row['tipo']="concepto";
-				//$row['id']+=$j++;
-				$row['orden']="Y";
-            $row['idequipo']="";
-            $row['equipo']="";
-				//$parent = $row['id'];
-				$this->productos[] = $row;
-			}
-
-			foreach( $recargos as $recargo ){
-				$tipoRecargo = $recargo->getTipoRecargo();
-				$row = $baseRow;
-                $row['idcotrecargo']=$recargo->getCaIdcotrecargo();
-				$row['idopcion']=999;
-				$row['iditem']=$tipoRecargo->getCaIdrecargo();
-				$row['item']=utf8_encode($tipoRecargo->getCaRecargo());
-				$row['idconcepto']=$recargo->getCaIdconcepto();
-				$row['valor_tar']=$recargo->getCaValorTar();
-				$row['aplica_tar']=utf8_encode($recargo->getCaAplicaTar());
-				$row['valor_min']=$recargo->getCaValorMin();
-				$row['aplica_min']=utf8_encode($recargo->getCaAplicaMin());
-				$row['idmoneda']=$recargo->getCaIdmoneda();
-				$row['detalles']=utf8_encode($recargo->getCaObservaciones());
-				$row['tipo']="recargo";
-                $row['idequipo']=$recargo->getCaIdequipo();
-                $row['equipo']=$recargo->getEquipo()->getCaConcepto();
-
-
-				$row['orden']="Y-".utf8_encode($tipoRecargo->getCaRecargo());
-				$this->productos[] = $row;
-			}
-
-            if( $modo!="consulta" ){
-                //Se envia una fila vacia por cada grupo para agregar una nueva opción
-                $row = $baseRow;
-                $row['idopcion']="";
-                $row['iditem']="";
-                $row['item']="+";
-                $row['idconcepto']="";
-                $row['valor_tar']="";
-                $row['aplica_tar']="";
-                $row['valor_min']="";
-                $row['aplica_min']="";
-                $row['idmoneda']="";
-                $row['detalles']="";
-                $row['tipo']="concepto";
-                $row['orden']="Z";
-                $row['idequipo']="";
-                $row['equipo']="";
-                $this->productos[] = $row;
-           }
-		}
-        $this->responseArray=array("productos"=>$this->productos, "total"=>count($this->productos));
-        $this->setTemplate("responseTemplate");
+            $this->responseArray=array("productos"=>$this->productos, "total"=>count($this->productos));
+            $this->setTemplate("responseTemplate");
 
 	}
 
@@ -1463,16 +1481,17 @@ class cotizacionesActions extends sfActions
 	* Muestra los datos de los recargos locales
 	* @author Andres Botero
 	*/
-	public function executeDatosGrillaRecargos(){
-		$idcotizacion = $this->getRequestParameter("idcotizacion");
-        $idproducto = $this->getRequestParameter("idproducto");
-        $modo = $this->getRequestParameter("modo");
+	public function executeDatosGrillaRecargos()
+        {
+            $idcotizacion = $this->getRequestParameter("idcotizacion");
+            $idproducto = $this->getRequestParameter("idproducto");
+            $modo = $this->getRequestParameter("modo");
 
-		$this->forward404unless( $idcotizacion );
+            $this->forward404unless( $idcotizacion );
 
-        $cotizacion = Doctrine::getTable("Cotizacion")->find( $idcotizacion );
+            $cotizacion = Doctrine::getTable("Cotizacion")->find( $idcotizacion );
 
-		$tipo = Constantes::RECARGO_LOCAL;
+            $tipo = Constantes::RECARGO_LOCAL;
 
 		/*
 		* Es necesario determinar cuales son los grupos que se deben mostrar de acuerdo
@@ -1895,8 +1914,6 @@ class cotizacionesActions extends sfActions
 		$this->setTemplate("responseTemplate");
 
 	}
-
-
 	/*
 	* Muestra las tarifas de seguros de acuerdo a los productos cotizados
 	*/
@@ -2338,5 +2355,75 @@ class cotizacionesActions extends sfActions
         $this->setTemplate("responseTemplate");
     }
 
+    public function executeMigrarContinuacion()
+    {
+        $q = Doctrine_Query::create()
+                            //->select("ca_idcotizacion,ca_modalidad,ca_frecuencia,ca_tiempotransito,ca_tipo")
+                            ->select("ca_idcotizacion,ca_modalidad,ca_tipo")
+                            ->from('CotContinuacion c')
+                            ->groupBy("ca_idcotizacion")
+                            ->addGroupBy("ca_modalidad")
+//                            ->addGroupBy("ca_frecuencia")
+//                            ->addGroupBy("ca_tiempotransito")
+                            ->addGroupBy("ca_tipo")
+                            ->limit(1000)
+                            ->offset(4000)
+                            ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                            ->execute();
+        $i=1;
+        foreach($q as $r)
+        {
+            $h = Doctrine_Query::create()
+                    ->select("*")
+                    ->from('CotContinuacion c')
+                    ->where("ca_idcotizacion=? and ca_modalidad=? and ca_tipo=?", array($r["c_ca_idcotizacion"],$r["c_ca_modalidad"],$r["c_ca_tipo"]))
+                    ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                    ->execute();
+            echo "<br>Numero:".$i++."<br><pre>"; print_r($h);echo "</pre>";
+//            continue;
+            $prod=true;
+            $idproducto="";
+            foreach($h as $s)
+            {
+                if($prod==true)
+                {
+                    $producto=new CotProducto();
+                    $producto->setCaIdcotizacion($s["c_ca_idcotizacion"]);
+                    $producto->setCaProducto($s["c_ca_tipo"]);
+                    $producto->setCaModalidad($s["c_ca_modalidad"]);
+                    $producto->setCaOrigen($s["c_ca_origen"]);
+                    $producto->setCaDestino($s["c_ca_destino"]);
+                    $producto->setCaFrecuencia($s["c_ca_frecuencia"]);
+                    $producto->setCaTiempotransito($s["c_ca_tiempotransito"]);
+                    $producto->setCaUsucreado($s["c_ca_usucreado"]);
+                    $producto->setCaFchcreado($s["c_ca_fchcreado"]);
+                    $producto->setCaTransporte("OTM-DTA");
+                    $producto->setCaIncoterms(" ");
+                    $producto->setCaImpoexpo(Constantes::IMPO);
+                    $producto->setCaImprimir("Por Item");
+                    $producto->save();
+
+                    $idproducto=$producto->getCaIdproducto();
+                    $prod=false;
+                    flush();
+                }
+                $opcion=new CotOpcion();
+                $opcion->setCaIdproducto($idproducto);
+                $opcion->setCaIdcotizacion($s["c_ca_idcotizacion"]);
+                $opcion->setCaIdconcepto($s["c_ca_idconcepto"]);
+                $opcion->setCaIdmoneda($s["c_ca_idmoneda"]);
+                $opcion->setCaValorTar($s["c_ca_valor_tar"]);
+                $opcion->setCaValorMin($s["c_ca_valor_min"]);
+                $opcion->setCaUsucreado($s["c_ca_usucreado"]);
+                $opcion->setCaFchcreado($s["c_ca_fchcreado"]);
+                $opcion->setCaIdequipo($s["c_ca_idequipo"]);
+                $opcion->setCaObservaciones($s["c_ca_observaciones"]);
+                $opcion->save();
+                flush();
+            }
+        }
+    }
+
+    
 }
 ?>

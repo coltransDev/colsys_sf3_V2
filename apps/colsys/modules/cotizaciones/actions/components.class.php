@@ -186,6 +186,11 @@ class cotizacionesComponents extends sfComponents
         $this->aplicaciones = ParametroTable::retrieveByCaso("CU082");
     }
 
+    public function executeGridPanelContinuacionWindow()
+    {
+        
+    }
+
 
     /*
      * Ventana para crear un nuevo trayecto
