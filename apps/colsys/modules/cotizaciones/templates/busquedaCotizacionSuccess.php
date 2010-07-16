@@ -39,7 +39,7 @@ $pagerLayout->display();
 ?>
 <br />
 <br />
-
+<form id="formProducto" name="formProducto" >
 <table class="tableList" width="800px" border="1" id="mainTable">
 	<tr>
 		<th width="57" scope="col">Consecutivo</th>
@@ -107,6 +107,8 @@ $pagerLayout->display();
                         }
                         ?>
                 </a>
+            </td><td width="50" style="width: 50px; padding: 15px">
+                <input type="checkbox" name="idproducto[]" value="<?=$producto->getCaIdproducto()?>">
                 <?
                 }
                 ?>
@@ -160,11 +162,43 @@ $pagerLayout->display();
 		<td  colspan="5" scope="col"><div align="center">No hay resultados</div></td>
 	</tr>
 	<?
-	}
+	}else
+        {
+        ?>
+        <tr><td colspan="4"></td><td align="right"><input value="Aprobar" type="button" onclick="validar()"  ></td></tr>
+        <?
+        }
 	?>
 	
 	
 </table>
+</form>
+<script type="text/javascript">
+    function validar()
+    {
+        Ext.Ajax.request(
+        {
+            waitMsg: 'Guardando cambios...',
+            url: '<?=url_for("cotseguimientos/aprobarSeguimientos")?>',
+            method: 'POST',
+            form: 'formProducto',
+            success: function(a,b){
+                if(a.responseText.search(/error/i)==-1)
+                {                    
+                    alert("Se Actualizo Correctamente");
+                    location.href='<?=url_for("$url")?>';
+                }
+                else
+                    alert("Error:"+a.responseText.replace(/<br \/>/gi ,"\n"));
+           },
+           failure: function(a,b){
+               alert("Error:"+a.responseText.toString());
+
+           }
+
+        });
+    }
+</script>
 <br />
 <br />
 </div>
