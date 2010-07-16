@@ -171,7 +171,6 @@ for( $k=0; $k<count($transportes); $k++ ):
 		if ($producto->getCaImpoexpo()==Constantes::EXPO){
 			$imprimirNotas[]="anexoExpo";
 		}
-
 		// ======================== Impresión por Item ======================== //
 		if ($producto->getCaImprimir() == 'Por Item' || $producto->getCaTransporte()=="OTM-DTA"):
 			// Control Impresión
