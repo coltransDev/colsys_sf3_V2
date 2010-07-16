@@ -434,9 +434,9 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
         window.setTimeout(this.enableButton, 3000);
     },
 
-    enableButton: function(){
-//        alert(this.tipo)
-        Ext.getCmp('guardarbtn'+tipo).enable();
+    enableButton: function(){        
+        Ext.getCmp('guardarbtnTrayecto').enable();
+        Ext.getCmp('guardarbtnOTM/DTA').enable();
     },
 
     /*
