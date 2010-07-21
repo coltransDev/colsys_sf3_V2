@@ -78,6 +78,8 @@ $pagerLayout->display();
 	  	
         <? 
             foreach( $productos as $producto ){
+                if($producto->getCaTransporte()=="OTM-DTA")
+                    continue;
                 $origen = $producto->getOrigen();
                 $destino = $producto->getDestino();
             ?>

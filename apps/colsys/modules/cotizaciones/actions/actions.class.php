@@ -56,44 +56,45 @@ class cotizacionesActions extends sfActions
         $q = Doctrine_Query::create()
                             ->select("c.*")
                             ->from('Cotizacion c');
-        $q->where("c.ca_consecutivo IS NOT NULL");
+        $q->where("c.ca_consecutivo IS NOT NULL ");
+
 
 
 
 		switch( $criterio ){
 			case "mis_cotizaciones":
-				$q->where("c.ca_usuario = ? OR c.ca_usucreado = ?", array($user->getUserId(), $user->getUserId()) );
+				$q->addWhere("c.ca_usuario = ? OR c.ca_usucreado = ?", array($user->getUserId(), $user->getUserId()) );
                 break;
 			case "consecutivo":
                 $cadena = str_replace("C", "", $cadena);
-                $q->where("c.ca_consecutivo like ?", "".$cadena."%" );
+                $q->addWhere("c.ca_consecutivo like ?", "".$cadena."%" );
 				break;
 			case "nombre_del_cliente":
                 $q->innerJoin("c.Contacto con");
                 $q->innerJoin("con.Cliente cl");
-                $q->where("UPPER(cl.ca_compania) like ?", "%".strtoupper($cadena)."%" );
+                $q->addWhere("UPPER(cl.ca_compania) like ?", "%".strtoupper($cadena)."%" );
 
 				break;
 			case "nombre_del_contacto":
                 $q->innerJoin("c.Contacto con");
-                $q->where("LOWER(CONCAT(con.ca_nombres, ' ', con.ca_papellido,' ', con.ca_sapellido)) like ?", "%".strtolower($cadena)."%" );
+                $q->addWhere("LOWER(CONCAT(con.ca_nombres, ' ', con.ca_papellido,' ', con.ca_sapellido)) like ?", "%".strtolower($cadena)."%" );
 				break;
 			case "asunto":
-                $q->where("LOWER(c.ca_asunto) like ?", "%".strtolower($cadena)."%" );
+                $q->addWhere("LOWER(c.ca_asunto) like ?", "%".strtolower($cadena)."%" );
 				break;
 			case "vendedor":
-                $q->where("c.ca_usuario  = ?", $login );
+                $q->addWhere("c.ca_usuario  = ?", $login );
 				break;
 			case "numero_de_cotizacion":
-                $q->where("c.ca_idcotizacion = ?",  intval($cadena)  );
+                $q->addWhere("c.ca_idcotizacion = ?",  intval($cadena)  );
 				break;
 			case "sucursal":
                 $q->innerJoin("c.Usuario u");
                 $q->innerJoin("u.Sucursal s");
-                $q->where("LOWER(s.ca_nombre) like  ?", "%".strtolower( $cadena )."%" );
+                $q->addWhere("LOWER(s.ca_nombre) like  ?", "%".strtolower( $cadena )."%" );
 				break;
              case "seguimiento":
-                $q->where("c.ca_usuario = ? OR c.ca_usucreado = ?", array($user->getUserId(), $user->getUserId()) );
+                $q->addWhere("c.ca_usuario = ? OR c.ca_usucreado = ?", array($user->getUserId(), $user->getUserId()) );
                 $q->addWhere("c.ca_usuanulado IS NULL");
 				$q->leftJoin("c.CotProducto p");
                 $q->addWhere("(p.ca_etapa=? AND p.ca_etapa IS NOT NULL) OR (c.ca_etapa = ? AND p.ca_etapa IS NULL)", array($seguimiento, $seguimiento) );
