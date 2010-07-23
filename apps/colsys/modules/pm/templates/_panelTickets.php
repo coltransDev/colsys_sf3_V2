@@ -5,6 +5,10 @@
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
 
+
+
+
+
 ?>
 
 <script type="text/javascript">
@@ -270,6 +274,7 @@ PanelTickets = function( config ){
             {name: 'ultseg', type: 'date', mapping: 'h_ultseg', dateFormat:'Y-m-d H:i:s'},
             {name: 'respuesta', type: 'date', mapping: 'tar_ca_fchterminada', dateFormat:'Y-m-d H:i:s'},
             {name: 'percentage', type: 'integer', mapping: 'h_ca_percentage'},
+            {name: 'folder', type: 'string'}
             
     ]);
 
@@ -408,7 +413,8 @@ PanelTickets = function( config ){
 Ext.extend(PanelTickets, Ext.grid.GridPanel, {
 
     crearTicket: function(){
-        window.open("<?=url_for("pm/crearTicket")?>");
+        this.win = new EditarTicketWindow();
+        this.win.show();
     },
     recargar: function(){
 
@@ -502,13 +508,16 @@ Ext.extend(PanelTickets, Ext.grid.GridPanel, {
                 items: [
                         
                         {
-                            text: 'Ver Proyecto',
+                            text: 'Editar',
                             iconCls: 'page_white_edit',
                             scope:this,
                             handler: function(){
-                                if( this.ctxRecord.data.iditem  ){
-                                    activeRow = this.ctxRecord;
-                                    this.ventanaObservaciones( this.ctxRecord );
+                                if( this.ctxRecord.data.idticket  ){
+                                    
+                                    var win = new EditarTicketWindow({idticket: this.ctxRecord.data.idticket,
+                                                                  folder: this.ctxRecord.data.folder
+                                                                });
+                                    win.show();
                                 }
 
                             }
@@ -537,7 +546,7 @@ Ext.extend(PanelTickets, Ext.grid.GridPanel, {
     },
 
     onRowDblclick: function( grid , rowIndex, e ){
-		record =  this.store.getAt( rowIndex );
+		record =  this.store.getAt( rowIndex );        
 		if( typeof(record)!="undefined" ){
 			var url = "<?=url_for("pm/verTicket")?>/id/"+record.data.idticket;
 			window.open( url );

@@ -137,6 +137,49 @@ class pmComponents extends sfComponents
 
     }
 
+    /*
+	* Muestra una ventana para editar el ticket
+	* @author: Andres Botero
+	*/
+    public function executeEditarTicketWindow( ){
+        
+
+
+    }
+
+
+    /*
+	* Formulario con lo datos del ticket
+	* @author: Andres Botero
+	*/
+    public function executeEditarTicketPropiedadesPanel( ){
+        $departamentos = Doctrine::getTable("Departamento")
+                         ->createQuery("d")
+                         ->where("d.ca_inhelpdesk = ?", true)
+                         ->execute();
+        $this->departamentos = array();
+
+		foreach( $departamentos as $departamento ){
+			$this->departamentos[] = array("iddepartamento"=>$departamento->getCaIddepartamento(),
+										 "nombre"=>$departamento->getCaNombre()
+										);
+		}
+
+
+		$this->iddepartamento = $this->getUser()->getIddepartamento();
+
+        $user = sfContext::getInstance()->getUser();
+
+        $usersGroup = Doctrine::getTable("HdeskUserGroup")
+                         ->createQuery("d")
+                         ->where("d.ca_login = ?", $user->getUserId())
+                         ->execute();
+        $this->grupos = array();
+        foreach( $usersGroup as $usersGroup ){
+            $this->grupos[] = $usersGroup->getCaIdgroup();
+        }
+    }
+
 	
 	
 }

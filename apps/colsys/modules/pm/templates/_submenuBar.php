@@ -13,12 +13,12 @@ switch($action){
         $button[2]["name"]="Nuevo";
 		$button[2]["tooltip"]="Nuevo ticket";
 		$button[2]["image"]="22x22/edit_add.gif";
-		$button[2]["link"]= "pm/crearTicket";
+		$button[2]["onClick"]= "crearTicket()";
 
 		$button[3]["name"]="Editar";
 		$button[3]["tooltip"]="Editar este ticket";
 		$button[3]["image"]="22x22/edit.gif";
-		$button[3]["link"]= "pm/crearTicket?id=".$this->getRequestParameter("id")."&token=".md5(time());
+        $button[3]["onClick"]= "editarTicket(".$this->getRequestParameter("id").")";
 
         $button[4]["name"]="Cerrar Ventana";
 		$button[4]["tooltip"]="Cerrar esta ventanal";

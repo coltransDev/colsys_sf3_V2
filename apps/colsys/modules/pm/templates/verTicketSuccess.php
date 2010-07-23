@@ -10,6 +10,7 @@ include_component("pm","panelDetalleTicket");
 include_component("gestDocumental", "panelArchivos", array("readOnly"=>$ticket->getCaAction()=="Cerrado" ));
 //include_component("pm","panelTareas");
 
+include_component("pm", "editarTicketWindow", array("nivel"=>$nivel));
 ?>
 <script language="javascript">
 	function comentar(  ){		
@@ -42,6 +43,21 @@ include_component("gestDocumental", "panelArchivos", array("readOnly"=>$ticket->
 		); 				
 		
 	}
+
+
+
+    var crearTicket = function( ){
+        win = new EditarTicketWindow();
+        win.show();
+    }
+
+    var editarTicket = function( idticket ){
+        win = new EditarTicketWindow({idticket: idticket});
+        win.show();
+    }
+
+
+    
 		
 </script>
 

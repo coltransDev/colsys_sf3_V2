@@ -5,19 +5,23 @@
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
 
+
 include_component("pm", "panelTickets");
 include_component("pm", "panelProyectos");
 include_component("pm", "panelMilestones");
 include_component("pm", "asignarMilestoneWindow");
 include_component("gestDocumental", "panelArchivos");
-
+include_component("pm", "editarTicketWindow", array("nivel"=>$nivel));
 //include_component("pm", "mainPanel");
+include_component("gestDocumental", "panelArchivos", array("readOnly"=>false) );
 
 //Paneles laterales
 include_component("pm","panelConsulta");
 
 ?>
 <script type="text/javascript">
+
+
 
 
 
@@ -90,6 +94,8 @@ Ext.onReady(function(){
     });
 });
 
+
+
 </script>
 
 <!-- use class="x-hide-display" to prevent a brief flicker of the content -->
@@ -111,7 +117,7 @@ Ext.onReady(function(){
 
         <div style="float:left;">
             <div class="icon">
-                <a href="#" onClick="window.open('<?=url_for("pm/crearTicket")?>')">
+                <a href="#" onClick="crearTicket()">
                     <?=image_tag("48x48/edit_add.png")?>
                     <span>Nuevo Ticket</span>
                 </a>

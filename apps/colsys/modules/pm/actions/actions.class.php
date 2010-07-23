@@ -26,7 +26,7 @@ class pmActions extends sfActions
         
 		$this->forward404Unless($this->nivel!=-1);
 		
-
+        return 1;
         return $this->nivel;
     }
 
@@ -37,7 +37,7 @@ class pmActions extends sfActions
 	*/
 	public function executeIndex(sfWebRequest $request){
         $response = sfContext::getInstance()->getResponse();
-		
+		$this->nivel = $this->getNivel();
 		
 			
 	}
@@ -136,12 +136,13 @@ class pmActions extends sfActions
         $q->setHydrationMode(Doctrine::HYDRATE_SCALAR);
         $q->limit(200);
 		$tickets = $q->execute();
-
+        
         foreach( $tickets as $key=>$val){
             $tickets[$key]["milestone"]=utf8_encode($tickets[$key]["m_ca_title"]." ".Utils::fechaMes($tickets[$key]["m_ca_due"]));
             $tickets[$key]["h_ca_title"]=utf8_encode(str_replace('"', "'",$tickets[$key]["h_ca_title"]));
             $tickets[$key]["h_ca_text"]=utf8_encode(str_replace("</style", "</style2",str_replace("<style", "<style2",str_replace('"', "'", $tickets[$key]["h_ca_text"]))));
             $tickets[$key]["p_ca_name"]=$tickets[$key]["p_ca_name"]?utf8_encode(str_replace('"', "'",$tickets[$key]["p_ca_name"])):"Sin proyecto";
+            $tickets[$key]["folder"]=base64_encode( HdeskProject::FOLDER.DIRECTORY_SEPARATOR.$tickets[$key]["h_ca_idticket"]);
         }
 
         $this->responseArray = array("success"=>true, "root"=>$tickets);
@@ -452,7 +453,11 @@ class pmActions extends sfActions
 			$tarea->notificar();
 		}
 
-		$this->redirect("pm/verTicket?id=".$ticket->getCaIdticket());
+        $this->responseArray = array("success"=>true, "idticket"=>$ticket->getCaIdticket());
+        $this->setTemplate("responseTemplate");
+        $this->setLayout("none");
+
+		
 	}
 
 
@@ -1128,9 +1133,13 @@ class pmActions extends sfActions
         $this->departamentos = Doctrine::getTable("Departamento")
                          ->createQuery("d")
                          ->where("d.ca_inhelpdesk = ?", true)
+                         ->addOrderBy("d.ca_nombre ASC")
                          ->execute();
         $this->user = $this->getUser();
     }
+
+
+
 
 
     /*
@@ -1186,5 +1195,45 @@ class pmActions extends sfActions
         $this->setTemplate("responseTemplate");
     }
 
+
+     /*
+	* Panel que muestra un arbol con opciones de busqueda
+	* @author: Andres Botero
+	*/
+    public function executeDatosTicket( $request ){
+
+        $this->forward404Unless( $request->getParameter("idticket") );        
+        $idticket = $request->getParameter("idticket");
+        $ticket = Doctrine::getTable("HdeskTicket")->find( $idticket );
+        $this->forward404Unless( $ticket );
+
+
+        $group = $ticket->getHdeskGroup();
+        
+        $data = array();
+
+        $data["iddepartament"] = $group->getCaIddepartament();
+        $data["departamento"] = $group->getDepartamento()->getCaNombre();
+        $data["idticket"] = $ticket->getCaIdticket();
+        $data["title"] = utf8_encode($ticket->getCaTitle());
+        $data["text"] = utf8_encode($ticket->getCaText());
+        $data["idgroup"] = $ticket->getCaIdgroup();
+        $data["group"] = utf8_encode($group->getCaName());
+        $data["idproject"] = $ticket->getCaIdproject();
+        $data["project"] = utf8_encode($ticket->getHdeskProject()->getCaName());
+        $data["loginName"] = utf8_encode($ticket->getReportedBy()->getCaNombre());
+        $data["login"] = $ticket->getCaLogin();
+        $data["priority"] = $ticket->getCaPriority();
+        $data["opened"] = $ticket->getCaOpened();
+        $data["type"] = $ticket->getCaType();
+        $data["assignedto"] = $ticket->getCaAssignedto();
+        $data["action"] = $ticket->getCaAction();
+        $data["idmilestone"] = $ticket->getCaIdmilestone();
+        $data["percentage"] = $ticket->getCaPercentage();
+
+
+        $this->responseArray = array("success"=>true, "data"=>$data);
+        $this->setTemplate("responseTemplate");
+    }
 
 }
