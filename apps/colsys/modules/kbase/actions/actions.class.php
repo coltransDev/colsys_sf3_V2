@@ -29,70 +29,20 @@ class kbaseActions extends sfActions
 	{
 	
 		$this->nivel = $this->getNivel();
-					
-		$this->categorias = Doctrine::getTable("KBCategory")
-                                      ->createQuery("c")
-                                      ->addOrderBy("c.ca_parent")
-                                      ->addOrderBy("c.ca_order")
-                                      ->addOrderBy("c.ca_name")
-                                      ->where("c.ca_parent IS NULL")
-                                      ->execute();
-			
-	}
 
-    /**
-	*
-	* @param sfRequest $request A request object
-	*/
-	public function executeViewSubcategory(sfWebRequest $request)
-	{
-
-		$this->nivel = $this->getNivel();
-
-		$this->categoria = Doctrine::getTable("KBCategory")->find( $request->getParameter("id"));
-
-        $response = sfContext::getInstance()->getResponse();
-		$response->addStylesheet("kb",'last');
-
-	}
-	
-	/**
-	* Muestra el detalle de un item de la base de datos
-	*
-	* @param sfRequest $request A request object
-	*/
-	public function executeViewIssue(sfWebRequest $request)
-	{
-		$this->nivel = $this->getNivel();
+        
 		
-
-		$this->issue = Doctrine::getTable("KBIssue")->find( $request->getParameter("id") );
-		$this->forward404Unless( $this->issue );
-
-        $this->category = $this->issue->getKBCategory();
-
-        $q = Doctrine::getTable("KBCategory")
-                            ->createQuery("c")
-                            ->select("c.*");
-        
-        if( $this->category->getCaParent() ){
-            $q->where("c.ca_parent = ?", $this->category->getCaParent());
-        }else{
-            $q->where("c.ca_parent = IS NULL");
-        }
-
-        //$q->addOrderBy("c.ca_");
-
-        $this->categories = $q->execute();
-
-        $response = sfContext::getInstance()->getResponse();
-		$response->addStylesheet("kb",'last');
-        
 			
 	}
-	
+
 	public function executeFormIssue( $request ){
 		$this->nivel = $this->getNivel();
+
+
+        if( $this->nivel <=0 ){
+            $this->forward404();
+        }
+
 
         if(  $request->getParameter("id") ){
             $issue = Doctrine::getTable("KBIssue")->find( $request->getParameter("id") );
@@ -104,14 +54,17 @@ class kbaseActions extends sfActions
 
         if ($request->isMethod('post')){
             $issue->setCaIdcategory( $request->getParameter("idcategory") );
-            $issue->setCaInfo( $request->getParameter("info") );
+            $info = $request->getParameter("info");
+            $info = str_replace("<strong>", "<b>", $info);
+            $info = str_replace("</strong>", "</b>", $info);
+            $issue->setCaInfo( $info );
             $issue->setCaSummary( $request->getParameter("summary") );
             $issue->setCaTitle( $request->getParameter("title") );
 
             $issue->save();
             //echo $request->getParameter("info");
             //exit();
-            $this->redirect("kbase/viewIssue?id=".$issue->getCaIdissue());
+            $this->message = "Se ha guardado correctamente";
 
 
 
@@ -172,6 +125,101 @@ class kbaseActions extends sfActions
         
         $this->setTemplate("responseTemplate");
     }
-	
+
+
+    public function executeUploadImage(){
+        /*
+
+
+        header("content-type: text/html"); // the return type must be text/html
+        //if file has been sent successfully:
+        if (isset($_FILES['image']['tmp_name'])) {
+         // open the file
+         $img = $_FILES['image']['tmp_name'];
+         $himage = fopen ( $img, "r"); // read the temporary file into a buffer
+         $image = fread ( $himage, filesize($img) );
+         fclose($himage);
+         //if image can't be opened, either its not a valid format or even an image:
+         if ($image === FALSE) {
+          echo "{status:'Error Reading Uploaded File.'}";
+          return;
+         }
+         // create a new random numeric name to avoid rewriting other images already on the server...
+         $ran = rand ();
+         $ran2 = $ran.".";
+         // define the uploading dir
+         $path = "editor_images/";
+         // join path and name
+         $path = $path . $ran2.'jpg';
+         // copy the image to the server, alert on fail
+         $hout=fopen($path,"w");
+         fwrite($hout,$image);
+         fclose($hout);
+         //you'll need to modify the path here to reflect your own server.
+         $path = "/wp-content/uploads/2007/12/" . $path;
+         echo "{status:'UPLOADED', image_url:'$path'}";
+        } else {
+         echo "{status:'No file was submitted'}";
+        }
+        
+         */
+    }
+
+
+    /*
+     * 
+     */
+    public function executeDatosPanelCategorias( $request ){
+        $q  = Doctrine::getTable("KBCategory")
+                                      ->createQuery("c")
+                                      ->addOrderBy("c.ca_parent")
+                                      ->addOrderBy("c.ca_order")
+                                      ->addOrderBy("c.ca_name");
+        $idcategoria = intval($request->getParameter("node"));
+        $namespace = $request->getParameter("namespace");
+
+        $q->addWhere("c.ca_namespace = ?", $namespace );
+
+        if( $idcategoria ){
+            $q->addWhere("c.ca_parent = ?", $idcategoria );
+        }else{
+            $q->addWhere("c.ca_parent IS NULL");
+        }
+        $this->categorias = $q->execute();
+    }
+
+    /*
+     *
+     */
+    public function executeDatosPanelIssues( $request ){
+        $idcategory = $request->getParameter("idcategory");
+        $this->forward404Unless( $idcategory );
+
+        $q  = Doctrine::getTable("KBIssue")
+                                      ->createQuery("i");
+
+        $q->addWhere("i.ca_idcategory = ?", $idcategory );
+        //$q->setHydrationMode(Doctrine::HYDRATE_SCALAR);
+        $q->limit(200);
+		$issues = $q->execute();
+        $result = array();
+        foreach( $issues as $issue){
+            $row = array();
+            $row["idissue"]=utf8_encode($issue->getCaIdissue());
+            $row["idcategory"]=utf8_encode($issue->getCaIdcategory());
+            $row["title"]=utf8_encode($issue->getCaTitle());
+            $row["summary"]=utf8_encode($issue->getCaSummary()?$issue->getCaSummary():substr($issue->getCaInfo(),0,500)."...");
+            $row["info"]=utf8_encode($issue->getCaInfo());
+            $row["level"]=utf8_encode($issue->getCaLevel());
+            $row["author"]=utf8_encode($issue->getCaUsuactualizado()?$issue->getCaUsuactualizado():$issue->getCaUsucreado());
+            $row["pubDate"]=utf8_encode($issue->getCaFchactualizado()?$issue->getCaFchactualizado():$issue->getCaFchcreado());
+            $result[]=$row;
+        }
+
+        $this->responseArray = array("success"=>true, "root"=>$result);
+
+        $this->setTemplate("responseTemplate");
+    }
+
 }
 ?>

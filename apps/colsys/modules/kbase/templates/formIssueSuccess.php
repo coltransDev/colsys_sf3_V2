@@ -1,9 +1,29 @@
-<script type="text/javascript" src="/js/ckeditor/ckeditor.js"></script>
-<script type="text/javascript" src="/js/ckfinder/ckfinder.js"></script>
+<!-- Skin CSS file -->
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.1/build/assets/skins/sam/skin.css">
+<!-- Utility Dependencies -->
+<script type="text/javascript" src="http://yui.yahooapis.com/2.8.1/build/yahoo-dom-event/yahoo-dom-event.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/2.8.1/build/element/element-min.js"></script>
+<!-- Needed for Menus, Buttons and Overlays used in the Toolbar -->
+<script src="http://yui.yahooapis.com/2.8.1/build/container/container_core-min.js"></script>
+<script src="http://yui.yahooapis.com/2.8.1/build/menu/menu-min.js"></script>
+<script src="http://yui.yahooapis.com/2.8.1/build/button/button-min.js"></script>
+<!-- Source file for Rich Text Editor-->
+<script src="http://yui.yahooapis.com/2.8.1/build/editor/editor-min.js"></script>
+<script src="http://yui.yahooapis.com/2.8.1/build/connection/connection-min.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/2.8.1/build/logger/logger-min.js"></script>
+
+
+<script src="/js/yui-image-uploader26.js"></script>
+
 
 
 <?
 $issue = $sf_data->getRaw("issue");
+
+$info = str_replace("\"", "'",str_replace("\n", "<br />",str_replace("\r\n", "<br />", $issue->getCaInfo())));
+$info = str_replace("<b>", "<strong>", $info);
+$info = str_replace("</b>", "</strong>", $info);
+
 ?>
 <div class="content" align="center">
 
@@ -11,12 +31,11 @@ $issue = $sf_data->getRaw("issue");
 
     <br />
 
-        <!--there is no custom header content for this example-->
-
-          
-        <!--BEGIN SOURCE CODE FOR EXAMPLE =============================== -->
-
-       
+       <?
+       if( $message ){
+           echo "<span class='rojo'>".$message."</span><br /><br />";
+       }
+       ?>
         <form action="<?=url_for("kbase/formIssue")?>" method="post">
             <input type="hidden" name="id" value="<?=$issue->getCaIdissue()?>"/>
             <input type="hidden" name="idcategory" value="<?=$idcategory?$idcategory:$issue->getCaIdcategory()?>"/>
@@ -36,11 +55,9 @@ $issue = $sf_data->getRaw("issue");
                 </tr>
                 <tr>
                     <td>
-                       
-
-
-                            <textarea id="info" name="info" rows="10" cols="80"></textarea>
-                         
+                        <div class="yui-skin-sam">
+                            <textarea id="info" name="info" rows="20" cols="75"><?=$info?></textarea>
+                        </div>
                     </td>
                 </tr>
                 <tr>
@@ -57,36 +74,21 @@ $issue = $sf_data->getRaw("issue");
 
 
 <script type="text/javascript">
+YAHOO.widget.Logger.enableBrowserConsole();
+var myEditor = new YAHOO.widget.Editor('info', {
+	    height: '300px',
+	    width: '522px',
+        handleSubmit: true,
 
-// This is a check for the CKEditor class. If not defined, the paths must be checked.
-if ( typeof CKEDITOR == 'undefined' )
-{
-	document.write(
-		'<strong><span style="color: #ff0000">Error</span>: CKEditor not found</strong>.' +
-		'This sample assumes that CKEditor (not included with CKFinder) is installed in' +
-		'the "/ckeditor/" path. If you have it installed in a different place, just edit' +
-		'this file, changing the wrong paths in the &lt;head&gt; (line 5) and the "BasePath"' +
-		'value (line 32).' ) ;
-}
-else
-{
-	var editor = CKEDITOR.replace( 'info' );
-    CKFinder.SetupCKEditor( editor, { BasePath : '/ckfinder/'} );
-
-    var text = '<?=str_replace("'", "\'", str_replace("\r", "", str_replace("\n", "<br />",$issue->getCaInfo())))?>';
-    text = text.split("<br />").join("\n");
-	editor.setData( text );
+	    dompath: true,
+	    animate: true
+	});
+yuiImgUploader(myEditor, 'info', '/wp-content/uploads/2007/12/yui_img_uploader.php','image');
+	myEditor.render();
+    
+</script>
 
 
-	// Just call CKFinder.SetupCKEditor and pass the CKEditor instance as the first argument.
-	// The second parameter (optional), is the path for the CKFinder installation (default = "/ckfinder/").
-	
-
-	// It is also possible to pass an object with selected CKFinder properties as a second argument.
-	// CKFinder.SetupCKEditor( editor, { BasePath : '../../', RememberLastFolder : false } ) ;
-}
-
-		</script>
 
 
 
