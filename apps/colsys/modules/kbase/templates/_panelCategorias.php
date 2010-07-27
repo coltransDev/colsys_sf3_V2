@@ -23,7 +23,9 @@ PanelCategorias = function( config ){
         lines: false,
         singleExpand: true,
         useArrows: true,
-        //iconCls:'settings',
+        //iconCls:'settings',       
+        enableDrop:true,
+        ddGroup : 'TreeDD',
         animate:true,
         loader: new Ext.tree.TreeLoader({
             dataUrl:'<?=url_for("kbase/datosPanelCategorias")?>',
@@ -36,7 +38,8 @@ PanelCategorias = function( config ){
         ,
         listeners:  {
              click : this.onClick,
-             contextmenu: this.onContextMenu             
+             contextmenu: this.onContextMenu ,
+             beforenodedrop : this.onBeforeNodeDrop
         }
     });
 }
@@ -52,7 +55,7 @@ Ext.extend(PanelCategorias, Ext.tree.TreePanel, {
          
 
             //Coloca un identificador unico para evitar que el componente se cree dos veces
-            var idcomponent = action;
+            var idcomponent = "panel-caegorias"+n.attributes.idcategoria;
             var title = n.attributes.text;
             /*
             * Todo debe quedar de esta manera
@@ -70,7 +73,7 @@ Ext.extend(PanelCategorias, Ext.tree.TreePanel, {
                         var newComponent = new PanelReading({
                              id:idcomponent,
                              closable: true,
-                             idcategory: 17,
+                             idcategory: n.attributes.idcategoria,
                              title: title
                             });
                         break;
@@ -130,7 +133,47 @@ Ext.extend(PanelCategorias, Ext.tree.TreePanel, {
         }
        
     },
+    onBeforeNodeDrop: function( e ){
+        var ddSource = e.source;
+        var selectedRecord = ddSource.dragData.selections[0];
+        var node = e.target;
+        var idissue = selectedRecord.data.idissue;
+        var idcategoria = node.attributes.idcategoria;
+        //alert( selectedRecord.data.idissue+" "+node.attributes.idcategoria );
+        
+        var grid = ddSource.grid;
+        if(node.leaf){
+            Ext.Ajax.request(
+            {
+                waitMsg: 'Guardando...',
+                url: '<?=url_for("kbase/cambiarCategoria")?>',
+                //method: 'POST',
+                //Solamente se envian los cambios
+                params :	{
+                    idissue: idissue,
+                    idcategory: idcategoria
+                },
 
+                //Ejecuta esta accion en caso de fallo
+                //(404 error etc, ***NOT*** success=false)
+                failure:function(response,options){
+                    Ext.MessageBox.alert("Error", "Ha ocurrido un error" );
+                },
+                //Ejecuta esta accion cuando el resultado es exitoso
+                success:function(response,options){
+                    var res = Ext.util.JSON.decode( response.responseText );
+                    if( res.success ){
+                        grid.store.remove(selectedRecord);
+                    }else{
+                        Ext.MessageBox.alert("Error", "Ha ocurrido un error: "+res.errorInfo );
+                    }
+                }
+            });
+        }else{
+            Ext.MessageBox.alert("Error", "No es posible mover la categoria aca");
+        }
+
+    },
     crear: function( ){
         var n = this.ctxNode;       
         if( !n.attributes.leaf ){

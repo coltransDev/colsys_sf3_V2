@@ -22,6 +22,7 @@
         idcategoria: '<?=$categoria->getCaIdcategory()?>',
         parentNode: '<?=$categoria->getCaParent()?>',
         main: <?=$categoria->getCaMain()?"true":"false"?>
+       
     }
     <?
     }

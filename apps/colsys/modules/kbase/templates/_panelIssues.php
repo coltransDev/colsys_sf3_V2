@@ -157,7 +157,8 @@ PanelIssues = function( config ){
        sm: new Ext.grid.RowSelectionModel({
             singleSelect:true
        }),
-         
+       enableDragDrop   : true,
+       ddGroup : 'TreeDD',
        view: new Ext.grid.GroupingView({
             forceFit:true,
             enableRowBody:true,
@@ -169,7 +170,7 @@ PanelIssues = function( config ){
        }),
        listeners:{            
             rowcontextmenu: this.onRowcontextMenu,
-            rowdblclick : this.onRowDblclick
+            rowdblclick : this.onRowDblclick        
             
        }
     });
@@ -270,6 +271,7 @@ Ext.extend(PanelIssues, Ext.grid.GridPanel, {
 		}
 	},
 
+    
 
     applyRowClass: function(record, rowIndex, p, ds) {
         
@@ -285,6 +287,8 @@ Ext.extend(PanelIssues, Ext.grid.GridPanel, {
                 value, record.data.author
                 );
     }
+
+
 
     
     

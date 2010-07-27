@@ -83,7 +83,7 @@ var myEditor = new YAHOO.widget.Editor('info', {
 	    dompath: true,
 	    animate: true
 	});
-yuiImgUploader(myEditor, 'info', '/wp-content/uploads/2007/12/yui_img_uploader.php','image');
+yuiImgUploader(myEditor, 'info', '<?=url_for("gestDocumental/uploadImage?folder=KBase&idissue=".$issue->getCaIdissue())?>','image');
 	myEditor.render();
     
 </script>

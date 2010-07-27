@@ -151,7 +151,7 @@ Ext.onReady(function(){
 
 <div style="height:100%"></div>
 <script type="text/javascript">
-    /*Ext.onReady(function(){
+    Ext.onReady(function(){
             var newComponent = new PanelReading({
                                                              closable: true,
                                                              idcategory: 17,
@@ -164,7 +164,7 @@ Ext.onReady(function(){
         Ext.getCmp('tab-panel').add(newComponent);
         Ext.getCmp('tab-panel').setActiveTab(newComponent);
 
-    });*/
+    });
 
 
 </script>

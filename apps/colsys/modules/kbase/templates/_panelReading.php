@@ -48,7 +48,7 @@ PanelReading = function( config ){
 
     var idcategory = this.idcategory;
     PanelReading.superclass.constructor.call(this, {
-        id:'main-tabs',
+        //id:'main-tabs',
         activeTab:0,
         //region:'center',
         margins:'0 5 5 0',
