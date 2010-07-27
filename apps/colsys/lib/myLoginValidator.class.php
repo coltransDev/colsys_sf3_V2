@@ -18,7 +18,9 @@ class myLoginValidator extends sfValidatorBase
 		if( $username && $passwd ){
 			
 			$usuario = Doctrine::getTable("Usuario")->find( $username );
-			if( $usuario && $usuario->checkPasswd( $passwd ) ){
+            $error = "";
+            $errorno = "";
+			if( $usuario && $usuario->checkPasswd( $passwd, $error , $errorno) ){
 				if( $usuario->getCaAuthmethod()=="ldap" ){
                     sfContext::getInstance()->getUser()->signInLDAP( $username );
                     return $values;					
@@ -28,8 +30,21 @@ class myLoginValidator extends sfValidatorBase
                     sfContext::getInstance()->getUser()->signInAlternative( $username );
                     return $values;                    
 				}				
-			}
-		}		
+			}           
+		}
+        
+        switch( $errorno ){
+            case 49:
+                $this->setMessage('invalid', 'Las entradas de gracias para este usuario se acabaron, debe cambiar su clave de NOVELL');
+                break;
+            case 53:
+                $this->setMessage('invalid', 'La cuenta de NOVELL se encuentra bloqueada');
+                break;
+            default :
+                $this->setMessage('invalid', 'El usuario o la clave es invalida, error: '.$errorno);
+                break;
+        }
+        
 		throw new sfValidatorErrorSchema($this, array($this->getOption('username_field') => new sfValidatorError($this, 'invalid')));	
 	}
 }
