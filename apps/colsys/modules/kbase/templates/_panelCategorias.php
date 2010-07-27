@@ -171,16 +171,15 @@ Ext.extend(PanelCategorias, Ext.tree.TreePanel, {
                 //Ejecuta esta accion en caso de fallo
                 //(404 error etc, ***NOT*** success=false)
                 failure:function(response,options){
-                    alert( "Ha ocurrido un error: ".response.responseText );
+                    Ext.MessageBox.alert("Error", "Ha ocurrido un error" );
                 },
-
-
-
                 //Ejecuta esta accion cuando el resultado es exitoso
                 success:function(response,options){
                     var res = Ext.util.JSON.decode( response.responseText );
                     if( res.success ){
                         n.remove();
+                    }else{
+                        Ext.MessageBox.alert("Error", "Ha ocurrido un error: "+res.errorInfo );
                     }
                 }
             });

@@ -241,10 +241,14 @@ class kbaseActions extends sfActions
         }else{
             $categoria->setCaParent(null);
         }
-
-        $categoria->save();
-
-		$this->responseArray = array("success"=>true);
+        
+        try{
+            $categoria->save();
+            $this->responseArray = array("success"=>true);
+        }catch( Exception $e ){
+            $this->responseArray = array("success"=>false, "errorInfo"=>$e->getMessage());
+        }
+		
         $this->setTemplate("responseTemplate");
     }
 
@@ -258,8 +262,14 @@ class kbaseActions extends sfActions
         if( $idcategory ){
             $categoria = Doctrine::getTable("KBCategory")->find($idcategory);
             $this->forward404Unless( $categoria );
-            $categoria->delete();
-            $this->responseArray = array("success"=>true);
+            
+            try{
+                $categoria->delete();
+                $this->responseArray = array("success"=>true);
+            }catch( Exception $e ){
+                $this->responseArray = array("success"=>false, "errorInfo"=>$e->getMessage());
+            }
+            
 
         }else{
             $this->responseArray = array("success"=>false);
