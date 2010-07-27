@@ -193,7 +193,7 @@ for( $k=0; $k<count($transportes); $k++ ):
 
             $titulos = array( 'Términos' ,'Origen', 'Destino');
             if( $producto->getCaVigencia() ){
-                array_push($titulos, "Vigencia");
+                array_push($titulos, "Valida Hasta");
             }
 
 			$pdf->SetFont($font,'B',8);
@@ -408,7 +408,7 @@ for( $k=0; $k<count($transportes); $k++ ):
 			}
 
             if( $producto->getCaVigencia() ){
-                $tabla[$producto->getOrigen()->getCaCiudad()][$producto->getDestino()->getCaCiudad()].=" Vigencia: ".Utils::fechaMes( $producto->getCaVigencia() );
+                $tabla[$producto->getOrigen()->getCaCiudad()][$producto->getDestino()->getCaCiudad()].=" Valida Hasta: ".Utils::fechaMes( $producto->getCaVigencia() );
             }
 
 			$recgen = $producto->getRecargosGenerales();
@@ -593,7 +593,7 @@ for( $k=0; $k<count($transportes); $k++ ):
                         if($tablaConceptos[ $trayecto ][ "observaciones" ]!=""){
 							$tablaConceptos[ $trayecto ][ "observaciones" ] .= "\n";
 						}
-						$tablaConceptos[ $trayecto ][ "observaciones" ] .= "Vigencia: ".Utils::fechaMes($producto->getCaVigencia());
+						$tablaConceptos[ $trayecto ][ "observaciones" ] .= "Valida Hasta: ".Utils::fechaMes($producto->getCaVigencia());
                     }
 
 					if( $producto->getCaObservaciones() ){
