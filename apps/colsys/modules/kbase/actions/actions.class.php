@@ -84,10 +84,9 @@ class kbaseActions extends sfActions
         $response->addJavaScript("yui/editor/editor-min.js",'last');
         $response->addJavaScript("yui/connection/connection-min.js",'last');
         $response->addJavaScript("yui/logger/logger-min.js",'last');
-
         
-
         $response->addJavaScript("yui-image-uploader26.js",'last');
+
         $response->addStyleSheet("yui/assets/skins/sam/skin.css",'last');
 
         

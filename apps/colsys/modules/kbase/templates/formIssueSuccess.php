@@ -1,13 +1,5 @@
-<!-- Skin CSS file -->
-
-
-
-
-
-
-
-
 <?
+$folder = "KBaseWeb";
 $issue = $sf_data->getRaw("issue");
 
 $info = str_replace("\"", "'",str_replace("\n", "<br />",str_replace("\r\n", "<br />", $issue->getCaInfo())));
@@ -67,13 +59,13 @@ $info = str_replace("</b>", "</strong>", $info);
 YAHOO.widget.Logger.enableBrowserConsole();
 var myEditor = new YAHOO.widget.Editor('info', {
 	    height: '300px',
-	    width: '522px',
+	    width: '800px',
         handleSubmit: true,
 
 	    dompath: true,
 	    animate: true
 	});
-yuiImgUploader(myEditor, 'info', '<?=url_for("gestDocumental/uploadImage?folder=KBase&idissue=".$issue->getCaIdissue())?>','image');
+yuiImgUploader(myEditor, 'info', '<?=url_for("gestDocumental/uploadImage?folder=".$folder."&idissue=".$issue->getCaIdissue())?>','image');
 	myEditor.render();
     
 </script>
