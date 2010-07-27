@@ -106,7 +106,7 @@ Ext.extend(PanelCategoriaWindow, Ext.Window, {
 
             var win = this;
             var node = this.node;
-            var action = this.action;
+            var act = this.action;
             var name = fp.getForm().findField("name").getValue();
             fp.getForm().submit({url:'<?=url_for('kbase/panelCategoriaGuardar')?>',
                 waitMsg:'Salvando Datos...',
@@ -115,8 +115,8 @@ Ext.extend(PanelCategoriaWindow, Ext.Window, {
                 success:function(form,action){
                     //Ext.Msg.alert( "","Se ha guardado correctamente, es necesario actualizar la pagina para ver los cambios." );
                     win.close();
-                    if( node ){
-                        if( action=="add"){
+                    if( node ){                        
+                        if( act=="add"){
                             node.reload();
                         }else{
                             node.setText(name);
