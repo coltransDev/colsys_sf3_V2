@@ -72,6 +72,24 @@ class kbaseActions extends sfActions
         //if( !is_dir($sf_config::get("sf_web_dir").DIRECTORY_SEPARATOR."ckfinder".DIRECTORY_SEPARATOR."userfiles".DIRECTORY_SEPARATOR."images".DIRECTORY_SEPARATOR.)){
 
 
+        $response = sfContext::getInstance()->getResponse();
+        //Utility Dependencies
+        $response->addJavaScript("yui/yahoo-dom-event/yahoo-dom-event.js",'last');
+		$response->addJavaScript("yui/element/element-min.js",'last');
+        //Needed for Menus, Buttons and Overlays used in the Toolbar
+        $response->addJavaScript("yui/container/container_core-min.js",'last');
+        $response->addJavaScript("yui/menu/menu-min.js",'last');
+        $response->addJavaScript("yui/button/button-min.js",'last');
+        //Source file for Rich Text Editor
+        $response->addJavaScript("yui/editor/editor-min.js",'last');
+        $response->addJavaScript("yui/connection/connection-min.js",'last');
+        $response->addJavaScript("yui/logger/logger-min.js",'last');
+
+        
+
+        $response->addJavaScript("yui-image-uploader26.js",'last');
+        $response->addStyleSheet("yui/assets/skins/sam/skin.css",'last');
+
         
         $this->issue = $issue;
 
@@ -255,6 +273,7 @@ class kbaseActions extends sfActions
 
             try{
                 $issue->setCaIdcategory($idcategory);
+                $issue->stopBlaming();
                 $issue->save();
                 $this->responseArray = array("success"=>true);
             }catch( Exception $e ){

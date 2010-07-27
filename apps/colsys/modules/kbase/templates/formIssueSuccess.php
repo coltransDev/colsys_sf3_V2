@@ -1,19 +1,9 @@
 <!-- Skin CSS file -->
-<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.1/build/assets/skins/sam/skin.css">
-<!-- Utility Dependencies -->
-<script type="text/javascript" src="http://yui.yahooapis.com/2.8.1/build/yahoo-dom-event/yahoo-dom-event.js"></script>
-<script type="text/javascript" src="http://yui.yahooapis.com/2.8.1/build/element/element-min.js"></script>
-<!-- Needed for Menus, Buttons and Overlays used in the Toolbar -->
-<script src="http://yui.yahooapis.com/2.8.1/build/container/container_core-min.js"></script>
-<script src="http://yui.yahooapis.com/2.8.1/build/menu/menu-min.js"></script>
-<script src="http://yui.yahooapis.com/2.8.1/build/button/button-min.js"></script>
-<!-- Source file for Rich Text Editor-->
-<script src="http://yui.yahooapis.com/2.8.1/build/editor/editor-min.js"></script>
-<script src="http://yui.yahooapis.com/2.8.1/build/connection/connection-min.js"></script>
-<script type="text/javascript" src="http://yui.yahooapis.com/2.8.1/build/logger/logger-min.js"></script>
 
 
-<script src="/js/yui-image-uploader26.js"></script>
+
+
+
 
 
 
