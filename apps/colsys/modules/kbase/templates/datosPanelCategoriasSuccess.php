@@ -9,16 +9,19 @@
         
 
         $text = $categoria->getCaName();
-        if( $categoria->getCaMain() ){
+        /*if( $categoria->getCaMain() ){
             $subcategorias = $categoria->getSubCategory();
             $text.=" (".count($subcategorias).")";
-        }
+        }*/
     ?>
     {
         text:'<?=$text?> ',
         leaf: <?=$categoria->getCaMain()?"false":"true"?>,
+        name:'<?=$categoria->getCaName()?> ',
         id: '<?=$categoria->getCaIdcategory()?>',
-        idcategoria: '<?=$categoria->getCaIdcategory()?>'
+        idcategoria: '<?=$categoria->getCaIdcategory()?>',
+        parentNode: '<?=$categoria->getCaParent()?>',
+        main: <?=$categoria->getCaMain()?"true":"false"?>
     }
     <?
     }

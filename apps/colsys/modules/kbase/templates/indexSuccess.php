@@ -8,7 +8,7 @@
 include_component("kbase", "panelCategorias");
 include_component("kbase", "panelIssues");
 include_component("kbase", "panelReading");
-
+include_component("kbase", "panelCategoriaWindow");
 
 ?>
 <script type="text/javascript">

@@ -83,6 +83,16 @@ class kbaseComponents extends sfComponents
     }
 
 
+    /*
+	* Panel que muestra un arbol con opciones de busqueda
+	* @author: Andres Botero
+	*/
+    public function executePanelCategoriaWindow( ){
+
+    }
+
+
+
 
 }
 ?>

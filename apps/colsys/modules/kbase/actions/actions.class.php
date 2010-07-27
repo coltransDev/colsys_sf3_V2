@@ -176,10 +176,7 @@ class kbaseActions extends sfActions
                                       ->addOrderBy("c.ca_order")
                                       ->addOrderBy("c.ca_name");
         $idcategoria = intval($request->getParameter("node"));
-        $namespace = $request->getParameter("namespace");
-
-        $q->addWhere("c.ca_namespace = ?", $namespace );
-
+            
         if( $idcategoria ){
             $q->addWhere("c.ca_parent = ?", $idcategoria );
         }else{
@@ -217,6 +214,57 @@ class kbaseActions extends sfActions
         }
 
         $this->responseArray = array("success"=>true, "root"=>$result);
+
+        $this->setTemplate("responseTemplate");
+    }
+
+
+    /*
+     *
+     */
+    public function executePanelCategoriaGuardar( $request ){
+        $idcategory = $request->getParameter("idcategory");
+
+        if( $idcategory ){
+            $categoria = Doctrine::getTable("KBCategory")->find($idcategory);
+            $this->forward404Unless( $categoria );
+        }else{
+            $categoria = new KBCategory();
+            $main = $this->getRequestParameter("main");
+            $categoria->setCaMain($main=="on");
+        }
+
+        
+        $categoria->setCaName(utf8_decode($this->getRequestParameter("name")));
+        if( $this->getRequestParameter("parent") ){
+            $categoria->setCaParent(utf8_decode($this->getRequestParameter("parent")));
+        }else{
+            $categoria->setCaParent(null);
+        }
+
+        $categoria->save();
+
+		$this->responseArray = array("success"=>true);
+        $this->setTemplate("responseTemplate");
+    }
+
+
+    /*
+     *
+     */
+    public function executeEliminarCategoria( $request ){
+        $idcategory = $request->getParameter("idcategory");
+
+        if( $idcategory ){
+            $categoria = Doctrine::getTable("KBCategory")->find($idcategory);
+            $this->forward404Unless( $categoria );
+            $categoria->delete();
+            $this->responseArray = array("success"=>true);
+
+        }else{
+            $this->responseArray = array("success"=>false);
+        }
+
 
         $this->setTemplate("responseTemplate");
     }
