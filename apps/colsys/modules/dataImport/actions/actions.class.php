@@ -153,7 +153,7 @@ class dataImportActions extends sfActions
                                                     $falaDeclaracionDts->setCaIvaPorctj($val);
                                                 }else if($i==15){
                                                     $falaDeclaracionDts->setCaIva($val);
-                                                }else if($i==16){
+/*                                              }else if($i==16){
                                                     $falaDeclaracionDts->setCaSalvaguardaPorcntj($val);
                                                 }else if($i==17){
                                                     $falaDeclaracionDts->setCaSalvaguarda($val);
@@ -165,13 +165,13 @@ class dataImportActions extends sfActions
                                                     $falaDeclaracionDts->setCaAntidumpPorcntj($val);
                                                 }else if($i==21){
                                                     $falaDeclaracionDts->setCaAntidump($val);
-                                                }else if($i==22){
+*/                                              }else if($i==20){
                                                     $falaDeclaracionDts->setCaSancion($val);
-                                                }else if($i==23){
+                                                }else if($i==21){
                                                     $falaDeclaracionDts->setCaRescate($val);
-                                                }else if($i==25){
+                                                }else if($i==23){
                                                     $falaDeclaracionDts->setCaPesoBruto($val);
-                                                }else if($i==26){
+                                                }else if($i==24){
                                                     $falaDeclaracionDts->setCaPesoNeto($val);
                                                 }
                                                 $i++;
