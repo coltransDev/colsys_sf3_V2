@@ -609,19 +609,7 @@
                         //Ext.Msg.alert( "Información" );
                         Ext.getCmp("editar-ticket-win").close();
 
-                        Ext.Msg.show({
-                            title:'Información',
-                            msg: 'El ticket se ha enviado al área correspondiente, el numero de ticket es: '+action.result.idticket+"<br />Desea ver los detalles del ticket",
-                            buttons: Ext.Msg.YESNO,
-                            fn: function( buttonId ){                               
-                                if( buttonId=="yes" ){
-                                    this.win = new EditarTicketWindow({idticket: action.result.idticket});
-                                    this.win.show();
-                                }
-                            },
-                            //animEl: 'elId',
-                            icon: Ext.MessageBox.QUESTION
-                        });
+                        Ext.MessageBox.alert('Mensaje', 'El ticket se ha enviado al área correspondiente, el numero de ticket es: '+action.result.idticket);
                     },
                     // standardSubmit: false,
                     failure:function(form,action){

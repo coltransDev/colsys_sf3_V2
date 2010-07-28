@@ -262,13 +262,12 @@ class pmActions extends sfActions
         $ticket = HdeskTicketTable::retrieveIdTicket($idticket, $this->nivel );
 		$this->forward404Unless( $ticket );
 
-
-
+        
 		$user = $this->getUser();
 
 		$respuesta = new HdeskResponse();
 		$respuesta->setCaIdticket( $request->getParameter("idticket") );
-		$respuesta->setCaText( utf8_decode($request->getParameter("comentario")) );
+		$respuesta->setCaText( utf8_decode($request->getParameter("respuesta")) );
 		$respuesta->setCaLogin( $user->getUserId() );
 		$respuesta->setCaCreatedat( date("Y-m-d H:i:s") );
 		$respuesta->save();
@@ -334,10 +333,28 @@ class pmActions extends sfActions
 		$email->save();
 		//$email->send();
 
-		$this->ticket = $ticket;
+		//$this->ticket = $ticket;
+
+        $texto = sfContext::getInstance()->getController()->getPresentationFor( 'pm', 'verRespuestas');
+        
+        $this->responseArray = array("success"=>true, "idticket"=>$ticket->getCaIdticket(), "info"=>utf8_encode($texto));
+        $this->setTemplate("responseTemplate");
+
 
 	}
 
+
+    /**
+	* Respuestas de un ticket en formato HTML
+	*
+	* @param sfRequest $request A request object
+	*/
+	public function executeVerRespuestas(sfWebRequest $request){
+        $this->forward404Unless($request->getParameter("idticket"));
+        $ticket = Doctrine::getTable("HdeskTicket")->find( $request->getParameter("idticket") );
+        $this->forward404Unless($ticket);
+        $this->ticket = $ticket;
+    }
 
 	/**
 	* Guarda los datos de un ticket
@@ -1235,5 +1252,44 @@ class pmActions extends sfActions
         $this->responseArray = array("success"=>true, "data"=>$data);
         $this->setTemplate("responseTemplate");
     }
+
+
+    /*
+	* Panel que muestra un arbol con opciones de busqueda
+	* @author: Andres Botero
+	*/
+    public function executeDatosUsuarioTicket( $request ){
+
+        $this->forward404Unless( $request->getParameter("idticket") );
+        $idticket = $request->getParameter("idticket");
+
+
+        $usuarios = Doctrine::getTable("Usuario")->createQuery("u")
+                    ->innerJoin("u.HdeskTicketUser ug")
+                    ->where("ug.ca_idticket = ?", $idticket)
+                    ->addOrderBy("u.ca_nombre")
+                    ->execute();
+
+
+
+        $data = array();
+
+        foreach( $usuarios as $usuario ){
+            $row = array();
+            $row["login"]=$usuario->getCaLogin();
+            $row["name"]=$usuario->getCaNombre();
+            if( file_exists($usuario->getImagen("60x80") ) ){
+                $row["icon"]="/gestDocumental/verArchivo/folder/".base64_encode($usuario->getDirectorioBase())."/idarchivo/".base64_encode("foto60x80.jpg");
+            }else{
+                $row["icon"]="/gestDocumental/verArchivo/folder/".base64_encode(Usuario::FOLDER)."/idarchivo/".base64_encode("nologin60x80.jpg");
+            }
+            $data[] = $row;
+        }
+
+
+        $this->responseArray = array("success"=>true, "root"=>$data);
+        $this->setTemplate("responseTemplate");
+    }
+
 
 }

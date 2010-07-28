@@ -27,43 +27,8 @@ PanelTickets = function( config ){
         tpl : new Ext.Template(
           '<p><div class=\'btnComentarios\' id=\'obs_{_id}\'>&nbsp; {text}</div></p>'
 
-        ),
-        getRowClass : function(record, rowIndex, p, ds){
-            p.cols = p.cols-1;
-
-            var content = this.bodyContent[record.id];
-
-            //if(!content && !this.lazyRender){		//hace que los comentarios no se borren cuando se guarda
-                content = this.getBodyContent(record, rowIndex);
-            //}
-
-            if(content){
-               p.body = content;
-            }
-
-            var color;
-            if( record.data.action=="Cerrado" ){                
-                color = "blue";
-            }else{
-                if( record.data.tipo=="Defecto" ){
-                    color = "pink";
-                }else{
-                    switch( record.data.priority ){
-                        case "Media":
-                            color = "yellow";
-                            break;
-                        case "Alta":
-                            color = "pink";
-                            break;
-                        default:
-                            color = "";
-                            break;
-                    }
-                }
-            }
-            color = "row_"+color;
-            return this.state[record.id] ? 'x-grid3-row-expanded '+color : 'x-grid3-row-collapsed '+color;
-        }
+        )
+        
     });
 
 
@@ -130,7 +95,7 @@ PanelTickets = function( config ){
     this.checkColumn = new Ext.grid.CheckColumn({header:' ', dataIndex:'sel', width:30, hideable: false});
 
     this.columns = [
-      this.expander,
+      //this.expander,
       this.checkColumn,
       {
         header: "Ticket #",
@@ -400,6 +365,7 @@ PanelTickets = function( config ){
             //showPreview:true,
             //hideGroupedColumn: true,
             
+            
        }),
        listeners:{            
             rowcontextmenu: this.onRowcontextMenu,
@@ -407,6 +373,7 @@ PanelTickets = function( config ){
        },
        tbar: this.tbar
     });
+    this.getView().getRowClass = this.getRowClass;
 
 };
 
@@ -552,7 +519,33 @@ Ext.extend(PanelTickets, Ext.grid.GridPanel, {
 			window.open( url );
 		}
 	}
-    
+    ,
+    getRowClass : function(record, rowIndex, p, ds){
+        p.cols = p.cols-1;
+
+        var color;
+        if( record.data.action=="Cerrado" ){
+            color = "blue";
+        }else{
+            if( record.data.tipo=="Defecto" ){
+                color = "pink";
+            }else{
+                switch( record.data.priority ){
+                    case "Media":
+                        color = "yellow";
+                        break;
+                    case "Alta":
+                        color = "pink";
+                        break;
+                    default:
+                        color = "";
+                        break;
+                }
+            }
+        }
+        color = "row_"+color;
+        return this.state[record.id] ? 'x-grid3-row-expanded '+color : 'x-grid3-row-collapsed '+color;
+    }
     
 
 

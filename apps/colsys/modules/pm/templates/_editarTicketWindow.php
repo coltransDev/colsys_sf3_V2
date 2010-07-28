@@ -21,7 +21,7 @@ EditarTicketWindow = function( config ) {
                                              nivel: <?=isset($nivel)?$nivel:0?>
                                             })
     ];
-
+    /*
     if( this.idticket ){        
         this.items.push( new PanelArchivos({
                                 folder: this.folder,
@@ -31,7 +31,7 @@ EditarTicketWindow = function( config ) {
                                 
                             })
                        );
-    }
+    }*/
 
     this.subpanel = new Ext.TabPanel({
        readOnly: this.readOnly,

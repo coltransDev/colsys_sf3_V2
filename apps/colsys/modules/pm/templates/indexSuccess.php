@@ -10,13 +10,19 @@ include_component("pm", "panelTickets");
 include_component("pm", "panelProyectos");
 include_component("pm", "panelMilestones");
 include_component("pm", "asignarMilestoneWindow");
-include_component("gestDocumental", "panelArchivos");
+//include_component("gestDocumental", "panelArchivos");
 include_component("pm", "editarTicketWindow", array("nivel"=>$nivel));
 //include_component("pm", "mainPanel");
 include_component("gestDocumental", "panelArchivos", array("readOnly"=>false) );
 
 //Paneles laterales
 include_component("pm","panelConsulta");
+
+include_component("pm","panelReading");
+
+include_component("pm","nuevaRespuestaWindow");
+
+include_component("users","panelUsers");
 
 ?>
 <script type="text/javascript">
@@ -133,10 +139,25 @@ Ext.onReady(function(){
 </div>
 
 
+<!-- Template used for ticket preview -->
+<div id="preview-tpl" style="display:none;">
+    <div class="post-data">
+
+        <span class="post-date">{opened:date("M j, Y, g:i a")}</span>
+        <h3 class="post-title">Ticket # {idticket} {title}</h3>
+        <h4 class="post-author">by {login:defaultValue("Unknown")}</h4>
+    </div>
+    <div class="post-body">{text:this.getBody}</div>
+</div>
+
+
+
+
+
 <div style="height:100%"></div>
 <script type="text/javascript">
-    /*Ext.onReady(function(){
-            var newComponent = new PanelTickets({
+    Ext.onReady(function(){
+            var newComponent = new PanelReading({           id: 'adad',
                                                              closable: true,
                                                              idproject: 3,
                                                              title: 'Panel prueba'
@@ -148,7 +169,6 @@ Ext.onReady(function(){
         Ext.getCmp('tab-panel').add(newComponent);
         Ext.getCmp('tab-panel').setActiveTab(newComponent);
 
-    });*/
-
+    });
 
 </script>

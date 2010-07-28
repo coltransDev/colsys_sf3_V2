@@ -180,6 +180,23 @@ class pmComponents extends sfComponents
         }
     }
 
+
+    /*
+	* Panel que muestra un panel dividido en dos partes, una con datos y otra con vista previa.
+	* @author: Andres Botero
+	*/
+    public function executePanelReading( ){
+
+    }
+
+    /*
+	* Ventana donde se crea una nueva respuesta
+	* @author: Andres Botero
+	*/
+    public function executeNuevaRespuestaWindow( ){
+
+    }
+
 	
 	
 }
