@@ -1,0 +1,19 @@
+Noticia:
+  options:
+    symfony:
+      form: true
+      filter: true
+  generatePath: intranet
+  tableName: intranet.tb_noticias
+  columns:
+    ca_idnoticia:
+      type: integer(2)
+      primary: true
+    ca_autor: string(40)
+    ca_titulo: string(80)
+    ca_categoria: string(12)
+    ca_fchcreado: date
+    ca_fcharchivar: date
+    ca_idsucursal: string(3)
+    ca_noticia: string(255)
+  

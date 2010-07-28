@@ -1,0 +1,11 @@
+</td><td class="tabSelected" nowrap="true"><a class="tabSelected">Información</a></td>
+<td class="tabSelected" valign="top" width="14" height="4"><img src="/eGuide/look/default/browser/1px_spacer.gif" alt="" width="10" border="0" height="4">
+	<img src="/eGuide/look/default/browser/tab_right.gif" alt="" width="4" border="0" height="4">
+</td>
+<td width="0" bgcolor="#ffffff"><img src="/eGuide/look/default/browser/1px_spacer.gif" alt="" width="2" border="0" height="1"></td>
+<td id="Organigrama_Left" class="" valign="top" width="14" height="4"><img src="/eGuide/look/default/browser/tab_left.gif" alt="" width="4" border="0" height="4">
+	<img src="/eGuide/look/default/browser/1px_spacer.gif" alt="" width="10" border="0" height="4">
+</td>
+<td id="Organigrama_Middle" class="tabUnselected" nowrap="true"><a onmouseout="rollOffTab('Organigrama')" onmouseover="rollOnTab('Organigrama')" href="eGuide?User.context=hmmnVhljnjHi&amp;Action=Org.Chart&amp;Directory.uid=New_Data_Source&amp;User.dn=cn%3dgalvarez%2co%3dcoltrans%5fbog&amp;Object.uid=USER&amp;Search.attributes=GIVENNAME,INITIALS,LASTNAME,EMAIL,TITLE,ORGCHARTPARENTDN,ORGCHARTISPARENT,PHOTOAGREE&amp;attr1=ORGCHARTPARENTDN&amp;crit1=eq&amp;Manager.dn=cn%3dmpulido%2co%3dcoltrans%5fbog&amp;val1=cn%3dmpulido%2co%3dcoltrans%5fbog" class="tabUnSelected">Organigrama</a></td>
+<td id="Organigrama_Right" class="" valign="top" width="14" height="4"><img src="/eGuide/look/default/browser/1px_spacer.gif" alt="" width="10" border="0" height="4"><img src="/eGuide/look/default/browser/tab_right.gif" alt="" width="4" border="0" height="4"></td>
+<td valign="bottom" width="100%" align="right" bgcolor="#ffffff" nowrap="true">

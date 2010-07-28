@@ -16,6 +16,31 @@ class usersActions extends sfActions {
      */
     public function executeViewUser(sfWebRequest $request) {
         $this->user=Doctrine::getTable('Usuario')->find($request->getParameter('login'));
+
+        $this->manager=Doctrine::getTable('Usuario')->find($request->getParameter('login'));
+        $this->manager = $this->manager->getManager();
+     
+    }
+
+    public function executeViewOrganigrama(sfWebRequest $request) {
+        $this->manager=Doctrine::getTable('Usuario')->find($request->getParameter('login'));
+        $this->forward404Unless( $this->manager );
+        
+        $this->usuarios = $this->manager->getSubordinado();
+
+        if(count($this->usuarios)==0){
+            $this->manager = $this->manager->getManager();
+            $this->usuarios = $this->manager->getSubordinado();
+        }
+
+                    /*Doctrine::getTable('Usuario')
+                    ->createQuery('u')
+                    ->where("u.ca_manager= ? ", $this->user->getCaLogin())
+                    ->execute();*/
+
+      
+
+
     }
 
     public function executeDirectory(sfWebRequest $request) {

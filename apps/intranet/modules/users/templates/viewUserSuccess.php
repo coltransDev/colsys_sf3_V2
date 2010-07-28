@@ -7,9 +7,10 @@ Este es el perfil del usuario
             <td width="220" valign="top">
                 <b><?=utf8_encode(strtoupper($user->getCaNombre())) ?></b><br/>
                 <b><?=$user->getCaCargo() ?></b><br />
+                <b><a href="<?=url_for('users/viewOrganigrama?login='.$user->getCaLogin()) ?>">Organigrama</a></b>
             </td>
             <td width="100" align="right">
-                <img src="<?=url_for('users/traerImagen?username='.$user->getCaLogin())?>" width="120" height="150"/>
+                <img src="<?=url_for('users/traerImagen?username='.$user->getCaLogin())?>" />
             </td>
         </tr>
     </table>
@@ -42,10 +43,13 @@ Este es el perfil del usuario
             <td  width="120">Tel. Particular:</td><td width="300"><b><?=utf8_encode($user->getCa_Telparticular())?></b></td>
         </tr>
         <tr>
-            <td  width="120">Jefe Inmediato:</td><td width="300"><b><?=utf8_encode($user->getCa_Manager())?></b></td>
+            <td  width="120">Jefe Inmediato:</td><td width="300"><b><a href="<?=url_for('users/viewUser?login='.$manager->getCaLogin()) ?>"><?=utf8_encode($manager->getCaNombre())?></a></b></td>
         </tr>
         <tr>
             <td  width="120">Tipo de Sangre:</td><td width="300"><b><?=utf8_encode($user->getCa_Tiposangre())?></b></td>
+        </tr>
+        <tr>
+            <td  width="120">Fch. Cumplea&ntilde;os:</td><td width="300"><b><?=utf8_encode(Utils::parseDate($user->getCaCumpleanos(), 'm-d'))?></b></td>
         </tr>
         <tr>
             <td  width="120">Tel. Familiar:</td><td width="300"><b><?=utf8_encode($user->getCa_Telfamiliar())?></b></td>
@@ -53,9 +57,7 @@ Este es el perfil del usuario
         <tr>
             <td  width="120">Nombre Familiar:</td><td width="300"><b><?=utf8_encode($user->getCa_Nombrefamiliar())?></b></td>
         </tr>
-        <tr>
-            <td  width="120">Fch. Cumplea&ntilde;os:</td><td width="300"><b><?=utf8_encode(Utils::parseDate($user->getCaCumpleanos(), 'm-d'))?></b></td>
-        </tr>
+        
 
 
     </table>
