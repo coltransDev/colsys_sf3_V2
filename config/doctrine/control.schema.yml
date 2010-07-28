@@ -57,6 +57,16 @@ Usuario:
       local: ca_login
       foreign: ca_login
       type: many
+    Manager:
+      local: ca_login
+      foreign: ca_manager
+      type: one
+      class: Usuario
+    SubOrdinado:
+      local: ca_manager
+      foreign: ca_login
+      type: many
+      class: Usuario
 
 AccesoPerfil:
   options:
