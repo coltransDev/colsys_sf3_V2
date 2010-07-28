@@ -21,16 +21,16 @@ PanelReading = function( config ){
         region: 'center'
     });
 
-
+    var idcategory = this.idcategory;
     this.preview = new Ext.Panel({
-        id: 'preview',
+        //id: 'preview',
         region: 'south',
         cls:'preview',
         autoScroll: true,
         //listeners: FeedViewer.LinkInterceptor,
 
         tbar: [{
-            id:'tab',
+            id:'tab-'+idcategory,
             text: 'Ver en nuevo Tab',
             iconCls: 'new-tab',
             disabled:true,
@@ -41,12 +41,12 @@ PanelReading = function( config ){
         clear: function(){
             this.body.update('');
             var items = this.topToolbar.items;
-            items.get('tab').disable();
-            items.get('win').disable();
+            items.get('tab-'+idcategory).disable();
+            //items.get('win').disable();
         }
     });
 
-    var idcategory = this.idcategory;
+    
     PanelReading.superclass.constructor.call(this, {
         //id:'main-tabs',
         activeTab:0,
@@ -82,7 +82,7 @@ PanelReading = function( config ){
                     iconCls: 'preview-bottom',
                     handler: this.movePreview.createDelegate(this, []),
                     menu:{
-                        id:'reading-menu',
+                        id:'reading-menu-'+idcategory,
                         cls:'reading-menu',
                         width:100,
                         items: [{
@@ -111,7 +111,7 @@ PanelReading = function( config ){
                 }
         ],
         items: {
-            id:'main-view',
+            //id:'main-view',
             layout:'border',
             //title:'Loading...',
             hideMode:'offsets',
@@ -119,7 +119,7 @@ PanelReading = function( config ){
                 this.grid,
             {
 
-                id:'bottom-preview',
+                id:'bottom-preview-'+idcategory,
                 layout:'fit',
                 items:this.preview,
                 height: 250,
@@ -127,7 +127,7 @@ PanelReading = function( config ){
                 border:false,
                 region:'south'
             }, {
-                id:'right-preview',
+                id:'right-preview-'+idcategory,
                 layout:'fit',
                 border:false,
                 region:'east',
@@ -156,7 +156,7 @@ PanelReading = function( config ){
     this.gsm.on('rowselect', function(sm, index, record){
         this.tpl.overwrite(this.preview.body, record.data);
         var items = this.preview.topToolbar.items;
-        items.get('tab').enable();
+        items.get('tab-'+idcategory).enable();
         //items.get('win').enable();
     }, this, {buffer:250});
 
@@ -165,8 +165,10 @@ PanelReading = function( config ){
 
 Ext.extend(PanelReading, Ext.Panel, {
     movePreview:  function(m, pressed){
+        var idcategory = this.idcategory;
+        
         if(!m){ // cycle if not a menu item click
-            var items = Ext.menu.MenuMgr.get('reading-menu').items.items;
+            var items = Ext.menu.MenuMgr.get('reading-menu-'+idcategory).items.items;
             var b = items[0], r = items[1], h = items[2];
             if(b.checked){
                 r.setChecked(true);
@@ -179,8 +181,8 @@ Ext.extend(PanelReading, Ext.Panel, {
         }
         if(pressed){
             var preview = this.preview;
-            var right = Ext.getCmp('right-preview');
-            var bot = Ext.getCmp('bottom-preview');
+            var right = Ext.getCmp('right-preview-'+idcategory);
+            var bot = Ext.getCmp('bottom-preview-'+idcategory);
             var btn = this.getTopToolbar().items.get(2);
             switch(m.text){
                 case 'Abajo':

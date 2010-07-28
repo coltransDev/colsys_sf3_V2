@@ -21,7 +21,7 @@ PanelCategorias = function( config ){
         // tree-specific configs:
         rootVisible: false,
         lines: false,
-        singleExpand: true,
+        singleExpand: false,
         useArrows: true,
         //iconCls:'settings',       
         enableDrop:true,
@@ -55,7 +55,7 @@ Ext.extend(PanelCategorias, Ext.tree.TreePanel, {
          
 
             //Coloca un identificador unico para evitar que el componente se cree dos veces
-            var idcomponent = "panel-caegorias"+n.attributes.idcategoria;
+            var idcomponent = "panel-categorias-"+n.attributes.idcategoria;
             var title = n.attributes.text;
             /*
             * Todo debe quedar de esta manera
