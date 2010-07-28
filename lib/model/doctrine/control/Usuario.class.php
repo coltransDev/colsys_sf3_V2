@@ -12,6 +12,7 @@
  */
 class Usuario extends BaseUsuario
 {
+    const FOLDER = "Usuarios";
     public function __toString(){
         $result = $this->getCaNombre();
         if( !$this->getCaActivo() ){
@@ -113,5 +114,33 @@ class Usuario extends BaseUsuario
             }
         }
         return false;
-	}   
+	}
+    public function getDirectorio(){
+        $folder = self::FOLDER;
+        return $directory = sfConfig::get('app_digitalFile_root').DIRECTORY_SEPARATOR.$this->getDirectorioBase();
+
+    }
+
+    public function getDirectorioBase(){
+        $folder = self::FOLDER;
+        return $directory = $folder.DIRECTORY_SEPARATOR.$this->getCaLogin();
+
+    }
+     public function getImagen($tamano='120x150'){
+         switch($tamano){
+             case '120x150':
+                 $imagen = $this->getDirectorio().DIRECTORY_SEPARATOR.'foto120x150.jpg';
+                 break;
+             case '60x80':
+                 $imagen = $this->getDirectorio().DIRECTORY_SEPARATOR.'foto60x80.jpg';
+                 break;
+             default:
+                 $imagen = $this->getDirectorio().DIRECTORY_SEPARATOR.'foto120x150.jpg';
+                 break;
+         }
+        
+        return $imagen;
+    }
+
+
 }
