@@ -126,7 +126,7 @@ class Usuario extends BaseUsuario
         return $directory = $folder.DIRECTORY_SEPARATOR.$this->getCaLogin();
 
     }
-     public function getImagen($tamano='120x150'){
+    public function getImagen($tamano='120x150'){
          switch($tamano){
              case '120x150':
                  $imagen = $this->getDirectorio().DIRECTORY_SEPARATOR.'foto120x150.jpg';
@@ -141,6 +141,18 @@ class Usuario extends BaseUsuario
         
         return $imagen;
     }
+    
+    public function getImagenUrl($tamano='120x150'){
+         
+        if( file_exists($this->getImagen($tamano) ) ){
+            $imagen="/gestDocumental/verArchivo/folder/".base64_encode($this->getDirectorioBase())."/idarchivo/".base64_encode("foto".$tamano.".jpg");
+        }else{
+            $imagen="/gestDocumental/verArchivo/folder/".base64_encode(Usuario::FOLDER)."/idarchivo/".base64_encode("nologin".$tamano.".jpg");
+        }
+        
+        return $imagen;
+    }
+
 
 
 }
