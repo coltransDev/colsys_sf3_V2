@@ -80,14 +80,18 @@
 		<td class="mostrar" colspan="2">
 			<b>Puede ver informaci&oacute;n de:<br /></b>
 			<?
-			$cns = Doctrine::getTable("Contacto")
-                             ->createQuery("c")
-                             ->where("c.ca_email = ?", $contacto->getCaEmail())
-                             ->execute();
+            if( $contacto->getCaEmail() ){
+                $cns = Doctrine::getTable("Contacto")
+                                 ->createQuery("c")
+                                 ->where("c.ca_email = ?", $contacto->getCaEmail())
+                                 ->execute();
 
-			foreach( $cns as $cn ){
-				echo $cn->getCliente()?$cn->getCliente()->getCaCompania()."<br />":"";
-			}
+                foreach( $cns as $cn ){
+                    echo $cn->getCliente()?$cn->getCliente()->getCaCompania()."<br />":"";
+                }
+            }else{
+                echo "&nbsp;";
+            }
 			?>
 
 		</td>
