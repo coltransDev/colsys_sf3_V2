@@ -269,88 +269,12 @@ PanelTickets = function( config ){
     });
 
 
-    if( this.idproject ){
-        this.tbar = [
-                {
-                    text: 'Nuevo ticket',
-                    tooltip: '',
-                    iconCls: 'add',  // reference to our css
-                    scope: this,
-                    handler: this.crearTicket
-                },
-                {
-                    text: 'Recargar',
-                    tooltip: 'Actualiza losdatos del panel',
-                    iconCls: 'refresh',  // reference to our css
-                    scope: this,
-                    handler: this.recargar
-                },
-                {
-                    text: 'Roadmap',
-                    tooltip: 'Permite ver el cronograma de entrega de los tickets',
-                    iconCls: 'calendar',  // reference to our css
-                    scope: this,
-                    handler: this.roadmap
-                },
-                {
-                    text: 'Asignar milestone',
-                    tooltip: 'Asigna un milestone a los elementos seleccionados',
-                    iconCls: 'calendar',  // reference to our css
-                    scope: this,
-                    handler: this.asignarMilestone
-                },
-                {
-                    text: 'Asignaciones',
-                    tooltip: 'Agrupa los tickets por usuario',
-                    iconCls: 'tux',  // reference to our css
-                    scope: this,
-                    handler: function(){
-                        this.agruparPor('assignedto');
-                    }
-                }
-         ];
-
-    }else{
-        this.tbar = [
-                {
-                    text: 'Nuevo ticket',
-                    tooltip: '',
-                    iconCls: 'add',  // reference to our css
-                    scope: this,
-                    handler: this.crearTicket
-                },
-                {
-                    text: 'Recargar',
-                    tooltip: 'Actualiza losdatos del panel',
-                    iconCls: 'refresh',  // reference to our css
-                    scope: this,
-                    handler: this.recargar
-                },
-                {
-                    text: 'Roadmap',
-                    tooltip: 'Permite ver el cronograma de entrega de los tickets',
-                    iconCls: 'calendar',  // reference to our css
-                    scope: this,
-                    handler: this.roadmap
-                },
-                {
-                    text: 'Asignaciones',
-                    tooltip: 'Agrupa los tickets por usuario',
-                    iconCls: 'tux',  // reference to our css
-                    scope: this,
-                    handler: function(){
-                        this.agruparPor('assignedto');
-                    }
-                }
-
-
-         ];
-    }
+    
 
     
     PanelTickets.superclass.constructor.call(this, {
        loadMask: {msg:'Cargando...'},       
-       boxMinHeight: 300,       
+       //boxMinHeight: 300,
        plugins: [
                     this.expander,
                     this.filters,
@@ -370,8 +294,8 @@ PanelTickets = function( config ){
        listeners:{            
             rowcontextmenu: this.onRowcontextMenu,
             rowdblclick : this.onRowDblclick
-       },
-       tbar: this.tbar
+       }
+       
     });
     this.getView().getRowClass = this.getRowClass;
 

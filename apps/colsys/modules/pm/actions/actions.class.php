@@ -836,56 +836,48 @@ class pmActions extends sfActions
 
         $this->nivel = $this->getNivel();
 
-        $idticket = $request->getParameter("id");
+        $idticket = $request->getParameter("idticket");
 		$this->ticket = HdeskTicketTable::retrieveIdTicket($idticket, $this->nivel );
 		$this->forward404Unless( $this->ticket );
+        
+        $bindValues = array();
+        $bindValues["ca_login"]=$request->getParameter("login");
+        $bindValues["ca_idticket"]=$request->getParameter("idticket");
 
-        $this->form = new AdjuntarUsuarioForm();
-
-
-
-        if ($request->isMethod('post')){
-			$bindValues = array();
-
-            $bindValues["ca_login"]=$request->getParameter("ca_login");
-            $bindValues["ca_idticket"]=$request->getParameter("id");
-
-			$this->form->bind( $bindValues );
-
-			if( $this->form->isValid() ){
-
-                $usuarioTicket = Doctrine::getTable("HdeskTicketUser")->find(array($this->ticket->getCaIdticket(),$bindValues["ca_login"] ));
-                if( !$usuarioTicket ){
-                    $usuarioTicket = new HdeskTicketUser();
-                    $usuarioTicket->setCaLogin($bindValues["ca_login"]);
-                    $usuarioTicket->setCaIdticket($this->ticket->getCaIdticket());
-                    $usuarioTicket->save();
+        $usuarioTicket = Doctrine::getTable("HdeskTicketUser")->find(array($this->ticket->getCaIdticket(),$bindValues["ca_login"] ));
+        if( !$usuarioTicket ){
+            $usuarioTicket = new HdeskTicketUser();
+            $usuarioTicket->setCaLogin($bindValues["ca_login"]);
+            $usuarioTicket->setCaIdticket($this->ticket->getCaIdticket());
+            $usuarioTicket->save();
+            
+            $email = new Email();
+            $email->setCaUsuenvio( $this->getUser()->getUserId() );
+            $email->setCaTipo( "Notificación" );
+            $email->setCaIdcaso( $this->ticket->getCaIdticket() );
+            $email->setCaFrom( "no-reply@coltrans.com.co" );
+            $email->setCaFromname( "Colsys Notificaciones" );
 
 
-                    $email = new Email();
-                    $email->setCaUsuenvio( $this->getUser()->getUserId() );
-                    $email->setCaTipo( "Notificación" );
-                    $email->setCaIdcaso( $this->ticket->getCaIdticket() );
-                    $email->setCaFrom( "no-reply@coltrans.com.co" );
-                    $email->setCaFromname( "Colsys Notificaciones" );
+            $email->setCaSubject( "Ha sido involucrado en el Ticket #".$this->ticket->getCaIdticket()." [".$this->ticket->getCaTitle()."]" );
 
+            $texto = "Ha sido involucrado en el Ticket \n\n<br /><br />" ;
+            $request->setParameter("id", $this->ticket->getCaIdticket() );
+            $request->setParameter("format", "email" );
+            $texto.= sfContext::getInstance()->getController()->getPresentationFor( 'helpdesk', 'verTicket');
 
-                    $email->setCaSubject( "Ha sido involucrado en el Ticket #".$this->ticket->getCaIdticket()." [".$this->ticket->getCaTitle()."]" );
-
-                    $texto = "Ha sido involucrado en el Ticket \n\n<br /><br />" ;
-                    $request->setParameter("id", $this->ticket->getCaIdticket() );
-                    $request->setParameter("format", "email" );
-                    $texto.= sfContext::getInstance()->getController()->getPresentationFor( 'helpdesk', 'verTicket');
-
-                    $email->setCaBodyhtml( $texto );
-                    $usuario = Doctrine::getTable("Usuario")->find($bindValues["ca_login"]);
-                    $email->addTo( $usuario->getCaEmail() );
-                    $email->save();
-                }
-                $this->redirect("pm/verTicket?id=".$this->ticket->getCaIdticket() );
-
-            }
+            $email->setCaBodyhtml( $texto );
+            $usuario = Doctrine::getTable("Usuario")->find($bindValues["ca_login"]);
+            $email->addTo( $usuario->getCaEmail() );
+            $email->save();
         }
+
+
+        $this->responseArray = array("success"=>true, "idticket"=>$this->ticket->getCaIdticket());
+        $this->setTemplate("responseTemplate");
+
+        
+        
 
     }
 
@@ -1277,12 +1269,8 @@ class pmActions extends sfActions
         foreach( $usuarios as $usuario ){
             $row = array();
             $row["login"]=$usuario->getCaLogin();
-            $row["name"]=$usuario->getCaNombre();
-            if( file_exists($usuario->getImagen("60x80") ) ){
-                $row["icon"]="/gestDocumental/verArchivo/folder/".base64_encode($usuario->getDirectorioBase())."/idarchivo/".base64_encode("foto60x80.jpg");
-            }else{
-                $row["icon"]="/gestDocumental/verArchivo/folder/".base64_encode(Usuario::FOLDER)."/idarchivo/".base64_encode("nologin60x80.jpg");
-            }
+            $row["name"]=$usuario->getCaNombre();           
+            $row["icon"]=$usuario->getImagenUrl("60x80");           
             $data[] = $row;
         }
 

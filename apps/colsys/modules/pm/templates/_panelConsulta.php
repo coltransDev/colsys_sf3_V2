@@ -120,7 +120,7 @@ Ext.extend(PanelConsulta, Ext.tree.TreePanel, {
                         /*
                         * Se muestran el panel de tickets de acuerdop al criterio
                         */
-                        var newComponent = new PanelTickets({id:idcomponent,
+                        var newComponent = new PanelReading({id:idcomponent,
                                                               idgroup: idgroup,
                                                               idproject: idproject,
                                                               actionTicket: actionTicket,

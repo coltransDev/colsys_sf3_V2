@@ -13,10 +13,15 @@ PanelReading = function( config ){
 
     Ext.apply(this, config);
     
-    this.grid = new PanelTickets({        
-        idproject: this.idproject,
-        region: 'center'
-    });
+    this.grid = new PanelTickets({id:idcomponent,
+                      idgroup: this.idgroup,
+                      idproject: this.idproject,
+                      actionTicket: this.actionTicket,
+                      assignedTo: this.assignedTo,
+                      reportedBy: this.reportedBy,                      
+                      readOnly: this.readOnly,
+                      region: 'center'                      
+                     });
 
     var idcomponent = this.id;
    
@@ -78,17 +83,22 @@ PanelReading = function( config ){
                             });
 
     this.usersPanel = new PanelUsers({
-                                //folder: this.folder,
+                                id: 'user-panel-'+idcomponent,
+                                idticket: null,
                                 closable: false,
                                 title: "Usuarios",
                                 height: 400
                             });
 
+    this.usersPanel.wgUsuario.on("select", this.onSelectUser );
+    this.usersPanel.wgUsuario.disable();
+    this.usersPanel.wgUsuario.idcomponent = idcomponent;
+
     this.tabPanel = new Ext.TabPanel({
             region: 'south',
             deferredRender: false,
-            activeTab: 1,     // first tab initially active
-            enableTabScroll:true,
+            activeTab: 3,     // first tab initially active
+            enableTabScroll:true,            
             items: [
                 this.preview,
                 this.responses,
@@ -96,35 +106,9 @@ PanelReading = function( config ){
                 this.usersPanel
             ]
     });
-    
-    PanelReading.superclass.constructor.call(this, {
-        //id:'main-tabs',
-        activeTab:0,
-        //region:'center',
-        margins:'0 5 5 0',
-        resizeTabs:true,
-        tabWidth:150,
-        minTabWidth: 120,
-        enableTabScroll: true,        
-        layout: 'fit',
-        height: 200,
-        tbar: [
-          {
-                    text: 'Nuevo',
-                    tooltip: '',
-                    iconCls: 'add',  // reference to our css
-                    scope: this,
-                    handler: function(){
-                        //window.open( "<?=url_for("kbase/formIssue")?>?idcategory="+idcategory );
-                    }
-                },
-                {
-                    text: 'Recargar',
-                    tooltip: 'Actualiza losdatos del panel',
-                    iconCls: 'refresh',  // reference to our css
-                    scope: this,
-                    handler: this.recargar
-                },
+
+    this.tbar = [
+
                 {
                     split:true,
                     text:'Panel Lectura',
@@ -158,8 +142,60 @@ PanelReading = function( config ){
                             iconCls:'preview-hide'
                         }]
                     }
+                },
+                {
+                    text: 'Nuevo ticket',
+                    tooltip: '',
+                    iconCls: 'add',  // reference to our css
+                    scope: this,
+                    handler: this.crearTicket
+                },
+                {
+                    text: 'Recargar',
+                    tooltip: 'Actualiza losdatos del panel',
+                    iconCls: 'refresh',  // reference to our css
+                    scope: this,
+                    handler: this.recargar
+                },
+                {
+                    text: 'Roadmap',
+                    tooltip: 'Permite ver el cronograma de entrega de los tickets',
+                    iconCls: 'calendar',  // reference to our css
+                    scope: this,
+                    handler: this.roadmap
+                },
+
+                {
+                    text: 'Asignaciones',
+                    tooltip: 'Agrupa los tickets por usuario',
+                    iconCls: 'tux',  // reference to our css
+                    scope: this,
+                    handler: function(){
+                        this.agruparPor('assignedto');
+                    }
                 }
-        ],
+    ]
+
+    if( this.idproject ){
+        this.tbar.push(  {
+                    text: 'Asignar milestone',
+                    tooltip: 'Asigna un milestone a los elementos seleccionados',
+                    iconCls: 'calendar',  // reference to our css
+                    scope: this,
+                    handler: this.asignarMilestone
+                } )
+    }
+
+    
+    PanelReading.superclass.constructor.call(this, {        
+        activeTab:0,        
+        margins:'0 5 5 0',
+        resizeTabs:true,
+        tabWidth:150,
+        minTabWidth: 120,
+        enableTabScroll: true,        
+        layout: 'fit',        
+        tbar: this.tbar,
         items: {
             //id:'main-view',
             layout:'border',
@@ -172,7 +208,7 @@ PanelReading = function( config ){
                 id:'bottom-preview-'+idcomponent,
                 layout:'fit',
                 items: this.tabPanel,
-                height: 250,
+                height: 400,
                 split: true,
                 border:false,
                 region:'south'
@@ -181,7 +217,7 @@ PanelReading = function( config ){
                 layout:'fit',
                 border:false,
                 region:'east',
-                width:350,
+                width: 400,
                 split: true,
                 hidden:true
             }]
@@ -294,8 +330,26 @@ Ext.extend(PanelReading, Ext.Panel, {
     recargar: function(){
         this.grid.recargar();
     },
+
+    crearTicket: function(){
+        this.grid.crearTicket();
+    },
+
+    roadmap: function(){
+        this.grid.roadmap();
+    },
+
+    agruparPor: function( val ){
+        this.grid.agruparPor( val );
+    },
+
+    asignarMilestone: function( val ){
+        this.grid.asignarMilestone( val );
+    },
+
     
     onRowSelect: function(sm, index, record){
+        this.idticket = record.data.idticket;
         var idcomponent = this.id;
         this.tpl.overwrite(this.preview.body, record.data);
         this.filePanel.folder = record.data.folder;
@@ -305,7 +359,8 @@ Ext.extend(PanelReading, Ext.Panel, {
         this.usersPanel.setDataUrl("<?=url_for("pm/datosUsuarioTicket")?>");
         this.usersPanel.store.setBaseParam("idticket",record.data.idticket );
         this.usersPanel.store.reload();
-
+        this.usersPanel.idticket = record.data.idticket;     
+        
         responsePanel = this.responses;
 
         responsePanel.body.update(" ");
@@ -328,7 +383,30 @@ Ext.extend(PanelReading, Ext.Panel, {
 
         var items = this.responses.topToolbar.items;
         items.get('response-'+idcomponent).enable();
+
+        this.usersPanel.wgUsuario.enable();
         
+    },
+
+    onSelectUser: function( combo, record, index){ // override default onSelect to do redirect
+
+        var panel = Ext.getCmp('user-panel-'+this.idcomponent);
+        
+        Ext.Ajax.request({
+            url: '<?=url_for("pm/agregarUsuario")?>',
+            method: 'POST',
+            //Solamente se envian los cambios
+            params :	{
+                login:record.data.login,
+                idticket: panel.idticket
+            },
+
+            callback :function(options, success, response){
+                panel.store.reload();
+                combo.setValue("");
+            }
+         });
+
     }
 
    
