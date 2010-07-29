@@ -251,7 +251,7 @@ class pmActions extends sfActions
 	}
 
 	/**
-	* Executes index action
+	* Guarda un seguimiento a un ticket
 	*
 	* @param sfRequest $request A request object
 	*/
