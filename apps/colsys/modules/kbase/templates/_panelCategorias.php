@@ -170,7 +170,7 @@ Ext.extend(PanelCategorias, Ext.tree.TreePanel, {
                 }
             });
         }else{
-            Ext.MessageBox.alert("Error", "No es posible mover la categoria aca");
+            Ext.MessageBox.alert("Error", "No es posible mover el elemento aca");
         }
 
     },
