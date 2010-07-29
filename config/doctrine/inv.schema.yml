@@ -1,0 +1,105 @@
+
+    
+
+InvCategory:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: inv
+  tableName: inv.tb_kbcategories
+  columns:
+    ca_idcategory:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_parent: integer
+    ca_name: string
+    ca_order: integer
+    ca_main: boolean
+  relations:
+    SubCategory:
+      local: ca_idcategory
+      foreign: ca_parent
+      type: many
+      class: InvCategory
+      orderBy: ca_order ASC
+    InvActivo:
+      local: ca_idcategory
+      foreign: ca_idcategory
+      type: many
+    
+
+InvActivo:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: inv
+  tableName: inv.tb_activos
+  columns:
+    ca_idactivo:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_idcategory: integer
+    ca_fchcompra: date
+    ca_proveedor: string
+    ca_marca: string
+    ca_modelo: string
+    ca_ubicacion: string
+    ca_ipaddress: string
+    ca_procesador: string
+    ca_memoria: string
+    ca_disco: string
+    ca_optica: string
+    ca_serial: string
+    ca_noinventario: string
+    ca_version: string
+    ca_factura: string
+    ca_reposicion: float
+    ca_observaciones: string
+    ca_contrato: string
+    ca_so: string
+    ca_empresa: string
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string
+  relations:
+    InvCategory:
+      local: ca_idcategory
+      foreign: ca_idcategory
+      type: one
+    InvSeguimiento:
+      local: ca_idactivo
+      foreign: ca_idactivo
+      type: many
+
+
+
+InvSeguimiento:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: inv
+  tableName: inv.tb_seguimientos
+  columns:
+    ca_idseguimiento:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_idactivo: integer
+    ca_text: string
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+  relations:
+    InvActivo:
+      local: ca_idactivo
+      foreign: ca_idactivo
+      type: one
+    Usuario:
+      local: ca_usucreado
+      foreign: ca_login
+      type: one
