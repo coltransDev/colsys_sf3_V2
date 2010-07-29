@@ -447,6 +447,11 @@ class widgetsComponents extends sfComponents
 
 	}
 
+    public function executeWidgetUsuario(){
+
+
+	}
+
     public function executeWidgetTerceroWindow(){
         
     }
