@@ -88,8 +88,20 @@ PanelUsers = function( config ){
 		});
 
     this.wgUsuario = new WidgetUsuario({width:300});
-
-    
+    if( !this.readOnly ){
+        this.tbar = [
+               this.wgUsuario,
+               {
+                    text: 'Borrar',
+                    tooltip: 'Elimina el usuario seleccionado',
+                    iconCls:'delete',  // reference to our css
+                    idcomponent: this.idcomponent, 
+                    scope: this
+                }
+        ];
+    }else{
+        this.tbar = null;
+    }
 
     PanelUsers.superclass.constructor.call(this, {
         //id: 'panel-archivos',
@@ -100,9 +112,7 @@ PanelUsers = function( config ){
         autoScroll: true,
 		layout:'fit',	
 		items: this.dataView,
-        tbar: [
-           this.wgUsuario
-		]
+        tbar: this.tbar
     });
 }
 
@@ -120,35 +130,7 @@ Ext.extend(PanelUsers, Ext.Panel, {
             //document.location.href = "?folder="+this.folder+"&idarchivo="+records[i].data.idarchivo;
         }
     },
-    eliminarArchivo: function(){
-        var fv = this.dataView;
-        records =  fv.getSelectedRecords();
-        var storeFileView = this.store;
-        for( var i=0;i< records.length; i++){
-            if( confirm( 'Esta seguro que desea borrar el archivo seleccionado?') ){
-
-                Ext.Ajax.request({
-                    url: '<?=url_for($deleteUrl)?>',
-                    params: {
-                        idarchivo: records[i].data.idarchivo,
-                        id: records[i].id,
-                        folder: this.folder
-                    },
-
-                    callback :function(options, success, response){
-                        var res = Ext.util.JSON.decode( response.responseText );
-                        storeFileView.each(function(r){
-                            if(r.id==res.id){
-                                storeFileView.remove(r);
-                                Ext.Msg.alert("Success", "Se ha eliminado el archivo");
-                            }
-                        });
-
-                    }
-                });
-            }
-        }
-    },
+   
 
     setDataUrl: function(url){
         this.dataUrl = url;

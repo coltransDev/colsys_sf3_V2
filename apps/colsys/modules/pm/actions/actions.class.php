@@ -894,18 +894,23 @@ class pmActions extends sfActions
 		if( !$this->nivel ){
 			$this->nivel = 0;
 		}
-        $idticket = $request->getParameter("id");
+        $idticket = $request->getParameter("idticket");
         $this->ticket = HdeskTicketTable::retrieveIdTicket($idticket, $this->nivel );
 
 
          $usuario = Doctrine::getTable("HdeskTicketUser")->createQuery("ug")
                     ->where("ug.ca_idticket = ?",$this->ticket->getCaIdticket())
-                    ->addWhere("ug.ca_login = ?", $request->getParameter("usuario") )
+                    ->addWhere("ug.ca_login = ?", $request->getParameter("login") )
                     ->fetchOne();
          if( $usuario ){
             $usuario->delete();
+            $this->responseArray = array("success"=>true, "idticket"=>$this->ticket->getCaIdticket(), "id"=>$request->getParameter("id"));
+         }else{
+            $this->responseArray = array("success"=>false);
          }
-         $this->redirect("pm/verTicket?id=".$this->ticket->getCaIdticket() );
+
+         
+         $this->setTemplate("responseTemplate");
     }
 
 

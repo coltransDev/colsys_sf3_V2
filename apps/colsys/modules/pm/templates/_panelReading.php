@@ -87,12 +87,16 @@ PanelReading = function( config ){
                                 idticket: null,
                                 closable: false,
                                 title: "Usuarios",
-                                height: 400
+                                height: 400,
+                                deleteUrl: "<?=url_for("pm/eliminarUsuario")?>"
                             });
 
     this.usersPanel.wgUsuario.on("select", this.onSelectUser );
     this.usersPanel.wgUsuario.disable();
     this.usersPanel.wgUsuario.idcomponent = idcomponent;
+
+    var btn = this.usersPanel.getTopToolbar().items.get(1);    
+    btn.handler = this.onDeleteUser;
 
     this.tabPanel = new Ext.TabPanel({
             region: 'south',
@@ -407,6 +411,35 @@ Ext.extend(PanelReading, Ext.Panel, {
             }
          });
 
+    },
+    onDeleteUser: function(){
+        
+        var fv = this.dataView;
+        records =  fv.getSelectedRecords();
+        var storeView = this.store;
+        for( var i=0;i< records.length; i++){
+            if( confirm( 'Esta seguro que desea borrar el archivo seleccionado?') ){                
+                Ext.Ajax.request({
+                    url: this.deleteUrl,
+                    params: {
+                        login: records[i].data.login,
+                        idticket: this.idticket,
+                        id: records[i].id
+                    },
+
+                    callback :function(options, success, response){
+                        var res = Ext.util.JSON.decode( response.responseText );
+                        storeView.each(function(r){
+                            if(r.id==res.id){
+                                storeView.remove(r);
+                                Ext.Msg.alert("Success", "Se ha eliminado el usuario");
+                            }
+                        });
+
+                    }
+                });
+            }
+        }
     }
 
    
