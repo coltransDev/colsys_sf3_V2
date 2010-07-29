@@ -25,16 +25,7 @@ EditarActivoWindow = function( config ) {
                                          })
     ];
 
-    if( this.idactivo ){
-        this.items.push( new PanelArchivos({
-                                folder: this.folder,
-                                closable: false,
-                                title: "Archivos",                                
-                                height: 300
-                            })
-                       );
-    }
-
+    
 
     this.subpanel = new Ext.TabPanel({
        readOnly: this.readOnly,

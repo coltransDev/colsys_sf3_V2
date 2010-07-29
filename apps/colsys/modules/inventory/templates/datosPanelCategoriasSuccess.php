@@ -17,8 +17,11 @@
     {
         text:'<?=$text?> ',
         leaf: <?=$categoria->getCaMain()?"false":"true"?>,
+        name:'<?=$categoria->getCaName()?> ',
         id: '<?=$categoria->getCaIdcategory()?>',
-        idcategoria: '<?=$categoria->getCaIdcategory()?>'
+        idcategoria: '<?=$categoria->getCaIdcategory()?>',
+        parentNode: '<?=$categoria->getCaParent()?>',
+        main: <?=$categoria->getCaMain()?"true":"false"?>
     }
     <?
     }

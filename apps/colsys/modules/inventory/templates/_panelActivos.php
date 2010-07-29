@@ -125,13 +125,11 @@ PanelActivos = function( config ){
     });
 
 
-    this.summary = new Ext.ux.grid.GroupSummary();
+   
 
-    this.checkColumn = new Ext.grid.CheckColumn({header:' ', dataIndex:'sel', width:30, hideable: false});
+    
 
     this.columns = [
-      this.expander,
-      this.checkColumn,
       {
         header: "Activo",
         dataIndex: 'noinventario',
@@ -212,7 +210,18 @@ PanelActivos = function( config ){
             {name: 'procesador', type: 'string'},
             {name: 'memoria', type: 'string'},
             {name: 'disco', type: 'string'},
+            {name: 'optica', type: 'string'},
             {name: 'serial', type: 'string'},
+            {name: 'contrato', type: 'string'},
+            {name: 'observaciones', type: 'string'},
+            {name: 'fchcompra', type: 'date' , dateFormat:'Y-m-d'},
+            {name: 'version', type: 'string'},
+            {name: 'ipaddress', type: 'string'},
+            {name: 'reposicion', type: 'string'},
+            {name: 'so', type: 'string'},
+            {name: 'factura', type: 'string'},
+            {name: 'empresa', type: 'string'},
+            {name: 'proveedor', type: 'string'},
             {name: 'folder', type: 'string'}
 
     ]);
@@ -259,12 +268,11 @@ PanelActivos = function( config ){
     
     PanelActivos.superclass.constructor.call(this, {
        loadMask: {msg:'Cargando...'},       
-       boxMinHeight: 300,       
-       plugins: [
-                    this.expander,
-                    this.filters,
-                    this.checkColumn,
-                    this.summary
+       boxMinHeight: 300,
+       ddGroup : 'TreeDD',
+       enableDragDrop   : true,
+       plugins: [                   
+                    this.filters
                 ],
        view: new Ext.grid.GroupingView({
 

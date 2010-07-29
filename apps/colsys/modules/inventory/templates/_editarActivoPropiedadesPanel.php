@@ -98,6 +98,13 @@
                                     fieldLabel: 'Factura',
                                     name: 'factura',
                                     allowBlank: true
+                                },
+                                {
+                                    xtype:'datefield',
+                                    fieldLabel: 'Fch. Compra',
+                                    name: 'fchcompra',
+                                    format: 'Y-m-d',
+                                    allowBlank: true
                                 }
                                 
 

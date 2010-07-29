@@ -85,7 +85,14 @@ class inventoryActions extends sfActions
             $row["ubicacion"]=utf8_encode($activo->getCaUbicacion());
             $row["fchcompra"]=utf8_encode($activo->getCaFchcompra());
             $row["observaciones"]=utf8_encode($activo->getCaObservaciones());
+            $row["contrato"]=utf8_encode($activo->getCaContrato());
             $row["folder"] = utf8_encode(base64_encode($activo->getDirectorioBase()));
+            $row["ipaddress"]=utf8_encode($activo->getCaIpaddress());
+            $row["empresa"]=utf8_encode($activo->getCaEmpresa());
+            $row["proveedor"]=utf8_encode($activo->getCaProveedor());
+            $row["factura"]=utf8_encode($activo->getCaFactura());
+            $row["reposicion"]=utf8_encode($activo->getCaReposicion());
+            $row["so"]=utf8_encode($activo->getCaSo());
             $result[]=$row;
         }
 
@@ -124,6 +131,7 @@ class inventoryActions extends sfActions
         $data["empresa"] = utf8_encode($activo->getCaEmpresa());
         $data["proveedor"] = utf8_encode($activo->getCaProveedor());
         $data["factura"] = utf8_encode($activo->getCaFactura());
+        $data["fchcompra"] = utf8_encode($activo->getCaFchcompra());
         $data["reposicion"] = utf8_encode($activo->getCaReposicion());
         $data["contrato"] = utf8_encode($activo->getCaContrato());
         $data["observaciones"] = utf8_encode($activo->getCaObservaciones());        
@@ -165,6 +173,11 @@ class inventoryActions extends sfActions
         $activo->setCaEmpresa( $request->getParameter("empresa") );
         $activo->setCaProveedor( $request->getParameter("proveedor") );
         $activo->setCaFactura( $request->getParameter("factura") );
+        if( $request->getParameter("fchcompra") ){
+            $activo->setCaFchcompra( $request->getParameter("fchcompra") );
+        }else{
+            $activo->setCaFchcompra( null );
+        }
         if( floatval($request->getParameter("reposicion")) ){
             $activo->setCaReposicion( floatval($request->getParameter("reposicion")) );
         }else{
@@ -183,6 +196,147 @@ class inventoryActions extends sfActions
         
         $this->setTemplate("responseTemplate");
     }
+    
+    
+    /**
+	* Guarda un seguimiento a un activo
+	*
+	* @param sfRequest $request A request object
+	*/
+	public function executeGuardarSeguimiento(sfWebRequest $request){
+
+        $this->nivel = $this->getNivel();
+        $idactivo = $request->getParameter("idactivo");
+		$this->forward404Unless( $idactivo );
+
+        
+
+		$seguimiento = new InvSeguimiento();
+		$seguimiento->setCaIdactivo( $idactivo );
+		$seguimiento->setCaText( utf8_decode($request->getParameter("text")) );
+		$seguimiento->save();
+
+		
+
+        $texto = sfContext::getInstance()->getController()->getPresentationFor( 'inventory', 'verSeguimientos');
+        
+        $this->responseArray = array("success"=>true, "idactivo"=>$idactivo, "info"=>utf8_encode($texto));
+        $this->setTemplate("responseTemplate");
+
+
+	}
+
+    /**
+	* Guarda un seguimiento a un activo
+	*
+	* @param sfRequest $request A request object
+	*/
+	public function executeVerSeguimientos(sfWebRequest $request){
+
+        $this->nivel = $this->getNivel();
+        $idactivo = $request->getParameter("idactivo");
+		$this->forward404Unless( $idactivo );
+
+        $this->seguimientos = Doctrine::getTable("InvSeguimiento")
+                              ->createQuery("s")
+                              ->addWhere("s.ca_idactivo = ? ", $idactivo)
+                              ->addOrderBy("s.ca_fchcreado ASC")
+                              ->execute();
+
+	}
+
+
+    /*
+     *
+     */
+    public function executePanelCategoriaGuardar( $request ){
+        $idcategory = $request->getParameter("idcategory");
+
+        if( $idcategory ){
+            $categoria = Doctrine::getTable("InvCategory")->find($idcategory);
+            $this->forward404Unless( $categoria );
+        }else{
+            $categoria = new InvCategory();
+            $main = $this->getRequestParameter("main");
+            $categoria->setCaMain($main=="on");
+        }
+
+
+        $categoria->setCaName(utf8_decode($this->getRequestParameter("name")));
+        if( $this->getRequestParameter("parent") ){
+            $categoria->setCaParent(utf8_decode($this->getRequestParameter("parent")));
+        }else{
+            $categoria->setCaParent(null);
+        }
+
+        try{
+            $categoria->save();
+            $this->responseArray = array("success"=>true);
+        }catch( Exception $e ){
+            $this->responseArray = array("success"=>false, "errorInfo"=>$e->getMessage());
+        }
+
+        $this->setTemplate("responseTemplate");
+    }
+
+
+    /*
+     *
+     */
+    public function executeEliminarCategoria( $request ){
+        $idcategory = $request->getParameter("idcategory");
+
+        if( $idcategory ){
+            $categoria = Doctrine::getTable("InvCategory")->find($idcategory);
+            $this->forward404Unless( $categoria );
+
+            try{
+                $categoria->delete();
+                $this->responseArray = array("success"=>true);
+            }catch( Exception $e ){
+                $this->responseArray = array("success"=>false, "errorInfo"=>$e->getMessage());
+            }
+
+
+        }else{
+            $this->responseArray = array("success"=>false);
+        }
+
+
+        $this->setTemplate("responseTemplate");
+    }
+    /*
+     *
+     */
+    public function executeCambiarCategoria( $request ){
+        $idactivo = $request->getParameter("idactivo");
+        $idcategory = $request->getParameter("idcategory");
+
+        if( $idactivo ){
+            $activo = Doctrine::getTable("InvActivo")->find($idactivo);
+            $this->forward404Unless( $activo );
+
+            try{
+                $activo->setCaIdcategory($idcategory);
+                $activo->stopBlaming();
+                $activo->save();
+                $this->responseArray = array("success"=>true);
+            }catch( Exception $e ){
+                $this->responseArray = array("success"=>false, "errorInfo"=>$e->getMessage());
+            }
+
+
+        }else{
+            $this->responseArray = array("success"=>false);
+        }
+
+
+        $this->setTemplate("responseTemplate");
+    }
+
+
+
+
 
 }
 ?>

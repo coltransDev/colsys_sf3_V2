@@ -6,9 +6,12 @@
  */
 
 include_component("inventory", "panelCategorias");
+include_component("inventory", "panelCategoriaWindow");
 include_component("inventory", "panelActivos");
 include_component("inventory", "editarActivoWindow");
+include_component("inventory", "panelReading");
 
+include_component("inventory", "nuevoSeguimientoWindow");
 
 ?>
 <script type="text/javascript">
@@ -127,10 +130,88 @@ Ext.onReady(function(){
 </div>
 
 
+<!-- Template used for ticket preview -->
+<div id="preview-tpl" style="display:none;">
+    <div class="post-data">
+
+        <h3 class="post-title">Activo # {idactivo} {noinventario}</h3>
+        <h4 class="post-author">{marca} {modelo} {version}</h4>
+    </div>
+    <br />
+    <div class="post-body">
+        <table class="tableList" align="center" width="80%">
+            <tr>
+                <th><b>No Inventario<b></th>
+                <td>{noinventario}</td>
+                <th><b>Serial</b></th>
+                <td>{serial}</td>
+            </tr>
+            <tr>
+                <th><b>Marca<b></th>
+                <td>{marca}</td>
+                <th><b>Modelo</b></th>
+                <td>{modelo}</td>
+            </tr>
+            <tr>
+                <th><b>Versi&oacute;n<b></th>
+                <td>{version}</td>
+                <th><b>Direcci&oacute;n IP</b></th>
+                <td>{ipaddress}</td>
+            </tr>
+            <tr>
+                <th><b>Procesador<b></th>
+                <td>{procesador}</td>
+                <th><b>Memoria</b></th>
+                <td>{memoria}</td>
+            </tr>
+            <tr>
+                <th><b>Disco</b></th>
+                <td>{disco}</td>
+                <th><b>Unidad Optica</b></th>
+                <td>{optica}</td>
+            </tr>            
+            <tr>
+                <th><b>Ubicaci&oacute;n</b></th>
+                <td>{ubicacion}</td>
+                <th><b>Sistema Operativo</b></th>
+                <td>{so}</td>
+            </tr>
+            <tr>
+                <th><b>Empresa</b></th>
+                <td>{empresa}</td>
+                <th><b>Proveedor</b></th>
+                <td>{proveedor}</td>
+            </tr>
+            <tr>
+                <th><b>Factura</b></th>
+                <td>{factura}</td>
+                <th><b>Vlr. Repocisi&oacute;n</b></th>
+                <td>{reposicion}</td>
+            </tr>
+            <tr>
+                <th><b>Fecha de Compra</b></th>
+                <td>{fchcompra:date("M j, Y")}</td>
+                <th>&nbsp;</th>
+                <td>&nbsp;</td>
+            </tr>
+            <tr>
+                <th><b>Contrato</b></th>            
+                <td colspan="3">{contrato}</td>
+            </tr>
+            <tr>
+                <th ><b>Observaciones</b>
+                <td colspan="3">{observaciones}</td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+
 <div style="height:100%"></div>
 <script type="text/javascript">
     Ext.onReady(function(){
-            var newComponent = new PanelActivos({
+            var newComponent = new PanelReading({
+                                                             id: 'asdad',
                                                              closable: true,
                                                              idcategory: 2,
                                                              title: 'Panel prueba'
@@ -146,3 +227,4 @@ Ext.onReady(function(){
 
 
 </script>
+

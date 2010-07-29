@@ -42,8 +42,7 @@ class inventoryComponents extends sfComponents
         $response->addStyleSheet("extExtras/GridFilters",'last');
         $response->addStyleSheet("extExtras/RangeMenu",'last');
 
-        $response->addJavaScript("extExtras/CheckColumn",'last');
-        $response->addJavaScript("extExtras/GroupSummary",'last');
+        
     }
 
     /*
@@ -59,6 +58,30 @@ class inventoryComponents extends sfComponents
 	* @author: Andres Botero
 	*/
     public function executeEditarActivoPropiedadesPanel( ){
+
+    }
+
+    /*
+	* Panel de vista previa
+	* @author: Andres Botero
+	*/
+    public function executePanelReading( ){
+
+    }
+
+    /*
+	* Ventana que permite agregar un nuevo seguimiento
+	* @author: Andres Botero
+	*/
+    public function executeNuevoSeguimientoWindow( ){
+
+    }
+
+    /*
+	* Ventana que permite  editar las categorias
+	* @author: Andres Botero
+	*/
+    public function executePanelCategoriaWindow( ){
 
     }
 
