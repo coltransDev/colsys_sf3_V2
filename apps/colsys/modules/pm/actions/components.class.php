@@ -197,6 +197,15 @@ class pmComponents extends sfComponents
 
     }
 
+
+    /*
+	* Cornograma de trabajo de un miembro del equipo
+	* @author: Andres Botero
+	*/
+    public function executePanelCronogramaUsuario( ){
+
+    }
+
 	
 	
 }

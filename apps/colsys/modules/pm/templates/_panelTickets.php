@@ -405,8 +405,7 @@ Ext.extend(PanelTickets, Ext.grid.GridPanel, {
                             handler: function(){
                                 if( this.ctxRecord.data.idticket  ){
                                     
-                                    var win = new EditarTicketWindow({idticket: this.ctxRecord.data.idticket,
-                                                                  folder: this.ctxRecord.data.folder
+                                    var win = new EditarTicketWindow({idticket: this.ctxRecord.data.idticket
                                                                 });
                                     win.show();
                                 }
@@ -439,8 +438,10 @@ Ext.extend(PanelTickets, Ext.grid.GridPanel, {
     onRowDblclick: function( grid , rowIndex, e ){
 		record =  this.store.getAt( rowIndex );        
 		if( typeof(record)!="undefined" ){
-			var url = "<?=url_for("pm/verTicket")?>/id/"+record.data.idticket;
-			window.open( url );
+
+            var win = new EditarTicketWindow({idticket: record.data.idticket
+                                        });
+            win.show();
 		}
 	}
     ,

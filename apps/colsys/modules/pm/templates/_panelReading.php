@@ -95,13 +95,15 @@ PanelReading = function( config ){
     this.usersPanel.wgUsuario.disable();
     this.usersPanel.wgUsuario.idcomponent = idcomponent;
 
-    var btn = this.usersPanel.getTopToolbar().items.get(1);    
-    btn.handler = this.onDeleteUser;
-
+    var btn = this.usersPanel.getTopToolbar().items.get(1);
+    if( btn ){
+        btn.handler = this.onDeleteUser;
+    }
     this.tabPanel = new Ext.TabPanel({
             region: 'south',
             deferredRender: false,
-            activeTab: 3,     // first tab initially active
+            activeTab: 0,     // first tab initially active
+            height: 400,
             enableTabScroll:true,            
             items: [
                 this.preview,
@@ -113,7 +115,7 @@ PanelReading = function( config ){
 
     this.tbar = [
 
-                {
+                /*{
                     split:true,
                     text:'Panel Lectura',
                     tooltip: {title:'Reading Pane',text:'Show, move or hide the Reading Pane'},
@@ -146,7 +148,7 @@ PanelReading = function( config ){
                             iconCls:'preview-hide'
                         }]
                     }
-                },
+                },*/
                 {
                     text: 'Nuevo ticket',
                     tooltip: '',
@@ -207,7 +209,8 @@ PanelReading = function( config ){
             hideMode:'offsets',
             items:[
                 this.grid,
-            {
+                this.tabPanel
+            /*{
 
                 id:'bottom-preview-'+idcomponent,
                 layout:'fit',
@@ -224,7 +227,7 @@ PanelReading = function( config ){
                 width: 400,
                 split: true,
                 hidden:true
-            }]
+            }*/]
         }
 
       
@@ -249,50 +252,7 @@ PanelReading = function( config ){
 };
 
 Ext.extend(PanelReading, Ext.Panel, {
-    movePreview:  function(m, pressed){
-        var idcomponent = this.idcomponent;
-        
-        if(!m){ // cycle if not a menu item click
-            var items = Ext.menu.MenuMgr.get('reading-menu-'+idcomponent).items.items;
-            var b = items[0], r = items[1], h = items[2];
-            if(b.checked){
-                r.setChecked(true);
-            }else if(r.checked){
-                h.setChecked(true);
-            }else if(h.checked){
-                b.setChecked(true);
-            }
-            return;
-        }
-        if(pressed){
-            var tabPanel = this.tabPanel;
-            var right = Ext.getCmp('right-preview-'+idcomponent);
-            var bot = Ext.getCmp('bottom-preview-'+idcomponent);
-            var btn = this.getTopToolbar().items.get(2);
-            switch(m.text){
-                case 'Abajo':
-                    right.hide();
-                    bot.add(tabPanel);
-                    bot.show();
-                    bot.ownerCt.doLayout();
-                    btn.setIconClass('preview-bottom');
-                    break;
-                case 'Derecha':
-                    bot.hide();
-                    right.add(tabPanel);
-                    right.show();
-                    right.ownerCt.doLayout();
-                    btn.setIconClass('preview-right');
-                    break;
-                case 'Ocultar':
-                    tabPanel.ownerCt.hide();
-                    tabPanel.ownerCt.ownerCt.doLayout();
-                    btn.setIconClass('preview-hide');
-                    break;
-            }
-        }
-    },
-
+    
     getTemplate: function(){
         return this.tpl;
     },
@@ -356,8 +316,8 @@ Ext.extend(PanelReading, Ext.Panel, {
         this.idticket = record.data.idticket;
         var idcomponent = this.id;
         this.tpl.overwrite(this.preview.body, record.data);
-        this.filePanel.folder = record.data.folder;
-        this.filePanel.store.setBaseParam("folder",record.data.folder );
+        
+        this.filePanel.setFolder( record.data.folder );        
         this.filePanel.store.reload();
 
         this.usersPanel.setDataUrl("<?=url_for("pm/datosUsuarioTicket")?>");
