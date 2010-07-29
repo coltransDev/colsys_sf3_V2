@@ -75,7 +75,7 @@ class kbaseComponents extends sfComponents
     }
 
     /*
-	* Panel que muestra un arbol con opciones de busqueda
+	* Panel que muestra un panel dividido en dos partes, una con datos y otra con vista previa.
 	* @author: Andres Botero
 	*/
     public function executePanelReading( ){
@@ -84,7 +84,7 @@ class kbaseComponents extends sfComponents
 
 
     /*
-	* Panel que muestra un arbol con opciones de busqueda
+	* Panel que que permite editar las opciones del arbol de categorias.
 	* @author: Andres Botero
 	*/
     public function executePanelCategoriaWindow( ){
