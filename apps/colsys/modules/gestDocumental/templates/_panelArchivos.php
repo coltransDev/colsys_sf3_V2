@@ -34,9 +34,10 @@ PanelArchivos = function( config ){
         url: '<?=url_for($dataUrl)?>'
         
     });
-
-    this.store.setBaseParam('folder', this.folder );
-    this.store.load();
+    if( this.folder ){
+        this.store.setBaseParam('folder', this.folder );
+        this.store.load();
+    }
 
     this.dataView = new Ext.DataView({
 			store: this.store,
@@ -78,7 +79,7 @@ PanelArchivos = function( config ){
                         //var panel = Ext.getCmp("panel-archivos");
                         //var fv = panel.dataView;
                         var fv = this;
-                        var folder = this.folder;
+                        var folder = this.folder;                        
 						records =  fv.getSelectedRecords();
 						for( var i=0;i< records.length; i++){							
 							document.location.href = "<?=url_for($viewUrl)?>?folder="+folder+"&idarchivo="+records[i].data.idarchivo;
@@ -232,7 +233,7 @@ Ext.extend(PanelArchivos, Ext.Panel, {
 
     abrirArchivo: function(){       
         var fv = this.dataView;
-        records =  fv.getSelectedRecords();
+        records =  fv.getSelectedRecords();       
         for( var i=0;i< records.length; i++){            
             document.location.href = "<?=url_for($viewUrl)?>?folder="+this.folder+"&idarchivo="+records[i].data.idarchivo;
         }
@@ -265,6 +266,11 @@ Ext.extend(PanelArchivos, Ext.Panel, {
                 });
             }
         }
+    },
+    setFolder: function( folder ){
+        this.folder = folder;
+        this.dataView.folder = folder;
+        this.store.setBaseParam("folder",folder );
     }
 });
 

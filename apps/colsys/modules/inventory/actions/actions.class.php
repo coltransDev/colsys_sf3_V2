@@ -160,19 +160,19 @@ class inventoryActions extends sfActions
         $activo->setCaIdcategory( $request->getParameter("idcategory") );
         $activo->setCaNoinventario( $request->getParameter("noinventario") );
         $activo->setCaSerial( $request->getParameter("serial") );
-        $activo->setCaMarca( $request->getParameter("marca") );
-        $activo->setCaModelo( $request->getParameter("modelo") );
-        $activo->setCaVersion( $request->getParameter("version") );
+        $activo->setCaMarca( utf8_decode($request->getParameter("marca")) );
+        $activo->setCaModelo( utf8_decode($request->getParameter("modelo")) );
+        $activo->setCaVersion( utf8_decode($request->getParameter("version")) );
         $activo->setCaIpaddress( $request->getParameter("ipaddress") );
-        $activo->setCaProcesador( $request->getParameter("procesador") );
-        $activo->setCaMemoria( $request->getParameter("memoria") );
-        $activo->setCaDisco( $request->getParameter("disco") );
-        $activo->setCaOptica( $request->getParameter("optica") );
-        $activo->setCaSo( $request->getParameter("so") );
-        $activo->setCaUbicacion( $request->getParameter("ubicacion") );
-        $activo->setCaEmpresa( $request->getParameter("empresa") );
-        $activo->setCaProveedor( $request->getParameter("proveedor") );
-        $activo->setCaFactura( $request->getParameter("factura") );
+        $activo->setCaProcesador( utf8_decode($request->getParameter("procesador")) );
+        $activo->setCaMemoria( utf8_decode($request->getParameter("memoria")) );
+        $activo->setCaDisco( utf8_decode($request->getParameter("disco")) );
+        $activo->setCaOptica( utf8_decode($request->getParameter("optica")) );
+        $activo->setCaSo( utf8_decode($request->getParameter("so")) );
+        $activo->setCaUbicacion( utf8_decode($request->getParameter("ubicacion")) );
+        $activo->setCaEmpresa( utf8_decode($request->getParameter("empresa")) );
+        $activo->setCaProveedor( utf8_decode($request->getParameter("proveedor")) );
+        $activo->setCaFactura( utf8_decode($request->getParameter("factura")) );
         if( $request->getParameter("fchcompra") ){
             $activo->setCaFchcompra( $request->getParameter("fchcompra") );
         }else{
@@ -183,8 +183,8 @@ class inventoryActions extends sfActions
         }else{
             $activo->setCaReposicion( null );
         }
-        $activo->setCaContrato( $request->getParameter("contrato") );
-        $activo->setCaObservaciones( $request->getParameter("observaciones") );
+        $activo->setCaContrato( utf8_decode($request->getParameter("contrato")) );
+        $activo->setCaObservaciones( utf8_decode($request->getParameter("observaciones")) );
 
 
         try{

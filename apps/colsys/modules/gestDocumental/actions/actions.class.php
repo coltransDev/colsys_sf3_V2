@@ -91,7 +91,7 @@ class gestDocumentalActions extends sfActions
         $directory = sfConfig::get('app_digitalFile_root').DIRECTORY_SEPARATOR.$folder.DIRECTORY_SEPARATOR;
 
         $this->archivo = $directory.$archivo;
-        
+       
         if(!file_exists($this->archivo)){
             $this->forward404("No se encuentra el archivo especificado");
         }

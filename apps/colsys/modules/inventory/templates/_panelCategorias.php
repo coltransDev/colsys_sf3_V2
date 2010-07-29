@@ -53,7 +53,7 @@ Ext.extend(PanelCategorias, Ext.tree.TreePanel, {
             
             
             //Coloca un identificador unico para evitar que el componente se cree dos veces
-            var idcomponent = action;
+            var idcomponent = 'categoria-'+idcategory;
             var title =  n.attributes.name;
             /*
             * Todo debe quedar de esta manera
