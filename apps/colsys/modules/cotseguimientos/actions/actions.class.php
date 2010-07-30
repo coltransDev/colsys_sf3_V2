@@ -362,7 +362,7 @@ class cotseguimientosActions extends sfActions
             {
                 if(!isset($this->emails[$seguimiento["c_ca_usuario"]]))
                 {
-                        $this->emails[$seguimiento["c_ca_usuario"]]["html"]="<tr><td>Cotizaci&oacute;n</td><td>Cliente</td><td>Transporte</td><td>Trayecto</td></tr>";
+                        $this->emails[$seguimiento["c_ca_usuario"]]["html"]="<tr bgcolor='#EAEAEA'><td colspan='4'>Usuario : ".$seguimiento["c_ca_usuario"]."</td></tr><tr bgcolor='#EAEAEA' ><td>Cotizaci&oacute;n</td><td>Cliente</td><td>Transporte</td><td>Trayecto</td></tr>";
                         $this->emails[$seguimiento["c_ca_usuario"]]["email"]=$seguimiento["u_ca_email"];
                 }
                 $this->emails[$seguimiento["c_ca_usuario"]]["html"].="<tr><td>".$seguimiento["c_ca_consecutivo"]."</td><td>".$seguimiento["cli_ca_compania"]."</td><td>".$seguimiento["p_ca_transporte"]."</td><td>".$seguimiento["o_ca_ciudad"]."-".$seguimiento["d_ca_ciudad"]."::".$seguimiento["p_ca_idproducto"]."</td></tr>";
@@ -371,11 +371,24 @@ class cotseguimientosActions extends sfActions
 
             foreach($keys as $key)
             {
-                $this->emails[$key]["html"]="<table>".$this->emails[$key]["html"]."</table>";
+                $this->emails[$key]["html"]="<table width='90%' cellspacing='1' border='1'>".$this->emails[$key]["html"]."</table>";
+                $email = new Email();
+                $email->setCaUsuenvio( "Administrador" );
+                $email->setCaTipo( "SDNList Compair" );
+                $email->setCaIdcaso( "1" );
+                $email->setCaFrom( "admin@coltrans.com.co" );
+                $email->setCaFromname( "Administrador Sistema Colsys" );
+                $email->setCaReplyto( "admin@coltrans.com.co" );
+                $email->setCaSubject( "Seguimientos de Cotizaciones de $first_day a $last_day" );
+                $email->setCaBodyhtml( $this->emails[$key]["html"] );
+                $email->addTo( $this->emails[$key]["email"] );
+                //$email->addTo( "maquinche@coltrans.com.co" );
+                $email->save(); //guarda el cuerpo del mensaje
+                $email->send(); //envia el mensaje de correo
+                //break;
             }
-            print_r($this->emails);
-  
+//            print_r($this->emails);
+    //$email->save();  
         }
-
 }
 ?>
