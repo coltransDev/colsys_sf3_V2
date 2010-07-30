@@ -1,54 +1,7 @@
-//Funcion que hace visible la pagina de busqueda de clientes
-/*function cuadro_busqueda( url ){
-	var findcliente = document.getElementById('cuadroBusqueda');
-	var cuadroBusquedaClienteFrame = document.getElementById('frameBusqueda');	
-	cuadroBusquedaClienteFrame.src = url; 	
-    findcliente.style.display = 'inline';
-    findcliente.style.left = eval((document.body.clientWidth/2)-(600/2));
-    //findcliente.style.top = document.body.clientHeight-180;	
-}
 
-
-
-
-//
-
-
-
-//Funcion que hace visible la pagina de busqueda de clientes
-function cuadro_seleccion( url ){
-	var cuadroSeleccion = document.getElementById('cuadroSeleccion');
-	var cuadroSeleccionFrame = document.getElementById('cuadroSeleccionFrame');
-    cuadroSeleccion.style.display = 'inline';
-    cuadroSeleccionFrame.src = url; 
-	
-	cuadroSeleccion.style.left = eval((document.body.clientWidth/2)-(800/2));
-	
-    cuadroSeleccion.style.top = document.body.clientHeight-250;
-	
-	
-}
-
-
-function seleccionCotizacion(formName, idCotizacion, idproducto ){
-	switch( formName ){
-		case "expoReporteForm":		
-			window.parent.document.expoReporteForm.id_producto.value=idproducto;
-			window.parent.document.expoReporteForm.id_cotizacion.value=idCotizacion;
-			//;
-			//window.parent.document.expoReporteForm.cliente.value=cliente; 
-			//window.parent.document.expoReporteForm.vendedor.value=vendedor;
-			//window.parent.document.expoReporteForm.preferencias_clie.value=preferencias;
-			
-			window.parent.document.expoReporteForm.cliente.focus();
-			break;
-	}
-	 window.parent.frames.cuadroBusqueda.style.display = 'none';
-}
-*/
-
-
-
+/*
+ * Abre un popup.
+ **/
 function popup(url, width, height){
 	
 	var mine = window.open (url, "mywindow","menubar=0,location=0,resizable=1,status=1,scrollbars=1, width="+width+",height="+height);	
@@ -66,39 +19,6 @@ function popup(url, width, height){
 	}
 	return popUpsBlocked;	
 }
-
-/*
-* Funcion utilizada para editar un campo en una grilla
-*/
-/*
-function editarGrilla( fieldname){
-		
-	var field1 = document.getElementById(fieldname+"_div");		
-	var field2 = document.getElementById(fieldname+"_div_hd");		
-					
-	field1.style.display = 'none';
-	field2.style.display = 'inline';		
-	//document.getElementById(fieldname).focus();
-}*/
-
-/*
-* Funcion utilizada para actualizar un campo en una grilla
-*/
-/*
-function actualizarGrilla( fielname ){
-	var field = document.getElementById(fielname);
-	var div1 = document.getElementById( fielname+"_div");
-	var div2 = document.getElementById( fielname+"_div_hd");
-	if( field.value=="%25"){
-		div1.innerHTML = "%";
-	}else{	
-		div1.innerHTML = field.value;
-	}
-	
-	div2.style.display = 'none';
-	div1.style.display = 'inline';	
-}
-*/
 
 
 /*
@@ -167,7 +87,6 @@ function autoGrow( field ){
 	}
 	field.rows=rows;		
 }
-
 
 function d_verificacion(nit) {
              ceros = '000000000000000';
@@ -274,20 +193,65 @@ function actualizarContenido( id , url, params ){
     });
 }
 
+
+
+function isMicrosoft(){
+    return (navigator.appName.indexOf("Microsoft") > -1) && !(navigator.userAgent.indexOf("Opera") > -1);
+}
+
+function isSafari(){
+    return (navigator.userAgent.indexOf("Safari") > 0);
+}
+
+/*
+ * Añade on evento a un objeto
+ **/
+function addListener( objElem, eventName, handler ){
+    
+    if (isMicrosoft())
+    {
+        if( eventName =="click" ){
+            objElem.attachEvent("onclick", handler);
+        }
+
+        if( eventName =="dblclick" ){
+            objElem.attachEvent("ondblclick", handler);
+        }
+    }
+    else
+    {
+        objElem.addEventListener(eventName,handler, false);
+        
+    }
+}
+
+
+/*
+ * Enlace dos combos HTML de tal manera que uno dependa del otro, p.e. Pais y Ciudad
+ **/
+function linkField( idLinkedFld, idDependantFld, includeBlank , defaultVal ){
+    
+}
+
+
+
+
+/*
+ *
  var ciudades = [];
- function llenarCiudades( idtraficoFld, idciudadFld, includeBlank , defaultVal){   
+ function llenarCiudades( idtraficoFld, idciudadFld, includeBlank , defaultVal){
     var idtrafico = document.getElementById(idtraficoFld).value;
     var fldCiudades = document.getElementById(idciudadFld);
-    
+
     fldCiudades.length=0;
     if( typeof(includeBlank)!="undefined" && includeBlank ){
         fldCiudades[fldCiudades.length] = new Option('','',false,false);
     }
 
 
-    
+
     if( ciudades.length == 0 ){
-        
+
         Ext.Ajax.request(
             {
                 waitMsg: '',
@@ -340,7 +304,7 @@ function llenarModalidades( impoexpoFldId, transporteFldId, modalidadFldId, incl
         modalidadFld[modalidadFld.length] = new Option('','',false,false);
     }
 
-    
+
     if( modalidades.length == 0 ){
 
         Ext.Ajax.request(
@@ -353,21 +317,21 @@ function llenarModalidades( impoexpoFldId, transporteFldId, modalidadFldId, incl
                     var res = Ext.util.JSON.decode( response.responseText );
                     if(res.success){
                         modalidades = res.root;
-                        
+
                         cargarModalidades( modalidades, impoexpo, transporte, modalidadFld, defaultVal )
                     }
                 }
              }
             );
-     }else{        
+     }else{
            cargarModalidades( modalidades, impoexpo, transporte, modalidadFld, defaultVal )
-     }    
+     }
 }
 
 function cargarModalidades( modalidades, impoexpo, transporte, modalidadFld, defaultVal ){
     for( i in modalidades ){
             if( typeof(modalidades[i]['modalidad'])!="undefined" ){
-               
+
                 if( impoexpo == modalidades[i]['impoexpo'] && transporte == modalidades[i]['transporte'] ){
                     if( defaultVal == modalidades[i]['modalidad'] ){
                         var selected = true;
@@ -431,32 +395,4 @@ function cargarDatosLineas( lineas , transporte,  lineaFld, defaultVal){
     }
 
 }
-
-
-function isMicrosoft(){
-    return (navigator.appName.indexOf("Microsoft") > -1) && !(navigator.userAgent.indexOf("Opera") > -1);
-}
-
-function isSafari(){
-    return (navigator.userAgent.indexOf("Safari") > 0);
-}
-
-function addListener( objElem, eventName, handler ){
-    
-    if (isMicrosoft())
-    {
-        if( eventName =="click" ){
-            objElem.attachEvent("onclick", handler);
-        }
-
-        if( eventName =="dblclick" ){
-            objElem.attachEvent("ondblclick", handler);
-        }
-    }
-    else
-    {
-        
-        objElem.addEventListener(eventName,handler, false);
-        
-    }
-}
+ **/
