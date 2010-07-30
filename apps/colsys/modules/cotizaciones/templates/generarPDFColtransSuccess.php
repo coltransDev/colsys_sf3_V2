@@ -196,7 +196,7 @@ for( $k=0; $k<count($transportes); $k++ ):
                 array_push($titulos, "Valida Hasta");
             }
 
-			$pdf->SetFont($font,'B',8);
+            $pdf->SetFont($font,'B',8);
             if( count( $titulos ) == 3 ){
                 $pdf->SetWidths(array( 50, 60, 60));
             }
@@ -234,7 +234,7 @@ for( $k=0; $k<count($transportes); $k++ ):
 				$concepto = $opcion->getConcepto();
 
 				$tabla[$opcion->getCaIdopcion()]["flete"] = $concepto->getCaConcepto();
-				$tabla[$opcion->getCaIdopcion()]["tarifas"] = $opcion->getTextoFlete()."\n";
+				$tabla[$opcion->getCaIdopcion()]["tarifas"] = $opcion->getTextoFlete()." ".$opcion->getEquipo()->getCaConcepto()."\n";
 				if( $textoRecargos ){
 					$tabla[$opcion->getCaIdopcion()]["recargos"] = $textoRecargos;
 					$imprimirRecargos = true;
