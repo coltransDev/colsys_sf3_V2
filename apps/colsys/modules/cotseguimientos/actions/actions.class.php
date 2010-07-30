@@ -320,10 +320,14 @@ class cotseguimientosActions extends sfActions
                 $param["etapa"]=$etapa[$i];
                 if($seguimientos[$i]!="")
                     $param["seguimiento"]=$seguimientos[$i];
+                else
+                    $param["seguimiento"]="";
                 //if($prog_seguimientos[$i]!="")
                     //$param["prog_seguimiento"]=$prog_seguimientos[$i];
                 if($fchseguimientos[$i]!="")
                     $param["fchseguimiento"]=$fchseguimientos[$i];
+                else
+                    $param["fchseguimiento"]="";
                 //echo "<pre>";print_r($param);echo "</pre>";
                 $this->executeAprobarSeguimiento( $param );
             }
