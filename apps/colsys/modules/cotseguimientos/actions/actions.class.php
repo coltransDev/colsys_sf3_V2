@@ -379,6 +379,7 @@ class cotseguimientosActions extends sfActions
                 $email->setCaFrom( "admin@coltrans.com.co" );
                 $email->setCaFromname( "Administrador Sistema Colsys" );
                 $email->setCaReplyto( "admin@coltrans.com.co" );
+                $email->setCaCc( "maquinche@coltrans.com.co" );
                 $email->setCaSubject( "Seguimientos de Cotizaciones de $first_day a $last_day" );
                 $email->setCaBodyhtml( $this->emails[$key]["html"] );
                 $email->addTo( $this->emails[$key]["email"] );
