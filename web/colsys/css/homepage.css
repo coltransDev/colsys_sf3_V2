@@ -1,270 +1,366 @@
-/* 
-* Estilos para la página principal
-*/
 
 
-#manual-wrap {
-    
-    background-color: #c0c0c0;
-    
-    width: 80%;
-	min-width: 700px;
-    background: transparent url(../images/layout/homepage/bd-bg2.jpg) repeat scroll 0 0;
-    
-}
 
-#manual {
-    margin: auto;    
-    text-align: left;    
-    padding: 0 20px 0 20px;
-    margin-top: 0;
-    margin-bottom: 0;
-	min-width: 600px;
-}
 
-#corner-manual-topleft, #corner-manual-bottomleft{
-	float:left;	
-}
-
-#corner-manual-topright, #corner-manual-bottomright{
-	float:right;	
-}
-
-#manual-top {	
-	background-color: #062A7D;	
-	height: 8px;   
-	width: 80%;
-	min-width: 700px;
-	
-	
-	
-}
-
-#manual-bottom {	
-	background-color: #062A7D;	
-	height: 8px;   
-	width: 80%;
-	min-width: 700px;
+.content-hp{
+	margin-top: 20px;
+    margin-bottom: 20px;
+    margin-left: 80px;
+    margin-right: 80px;
 }
 
 
-#manual-nav {
-    width: 25%;
+
+
+/* Products page */
+
+div.productnav {
+    background: url(../images/layout/homepage/bg-y-fade-ul.png) no-repeat 100% 0;
     float: left;
-    padding: 20px 0;
-    margin:  0 0 0 0;
-	/*border:#FF0000 1px solid;*/
-	
-	
+    height: 444px;
+    width: 188px;
 }
 
-/* main group styling */
-#manual-nav li.group {
-    padding: 6px 0;
-    position: relative;
-    line-height: 0;
-    float: left;
-    clear: left;
-    width: 100%;
-}
-
-#manual-nav li.group.group-active {
-    
-	background: #fff url(../images/layout/homepage/li_left.jpg) no-repeat left ;
-}
-
-/* navigation subitems styling */
-#manual-nav ul.group-sections {
-    display: none;
-}
-
-#manual-nav li.group-expanded ul.group-sections {
+div.productnav li {
     display: block;
+    width: 187px;
 }
 
-#manual-nav ul.group-sections li {
-    height: 14px;
-    margin: 0 0 5px 0;
-}
-
-/* navigation link styling */
-#manual-nav a {
-    overflow: hidden;
-    white-space: nowrap;
+div.productnav li a:link,
+div.productnav li a:visited {
+    background: #f9f9f9;
+    border: 1px solid;
+    border-width: 1px 0;
+    border-color: #fff #fff #ddd;
+    color: #555;
     display: block;
-    color: #fffff0;
-    font-family: tahoma, arial, sans-serif;
-    text-decoration: none;
-    cursor: pointer;
-}
-
-#manual-nav a.group-title {
     font-size: 13px;
+    font-weight: bold;
+/*     height: 16px; */
     line-height: 16px;
-    margin-bottom: 5px;
-    margin-left: 24px;    
-    font-weight: bold;
+    padding: 15px 20px 12px 12px;
+    text-decoration: none;
+    -webkit-text-shadow: 0 1px 0 rgba(255,255,255,0.9);
+    -moz-text-shadow:    0 1px 0 rgba(255,255,255,0.9);
+    text-shadow:         0 1px 0 rgba(255,255,255,0.9);
 }
 
-#manual-nav a.section-title {
-    font-size: 12px;
-    font-weight: normal;   
-    padding: 2px 0 2px 30px;
-    line-height: 14px;
+.ext-ie7 div.productnav li a:link,
+.ext-ie7 div.productnav li a:visited {
+    height: 20px;
 }
 
-
-
-#manual-nav li.group-active a {
-    color: #4a4a4a;
-	
+div.productnav li a:hover,
+div.productnav li a:focus,
+div.productnav li a:active,
+div.productnav li a.active,
+div.productnav li.last a.active {
+    color: #0464BB;
 }
 
-#manual-nav li.section-active a{
-    background: transparent url(../images/section-title-active.gif) no-repeat scroll left center;
-    color: #4870a5;
-    font-weight: bold;
-}
-/* the group expand button styling */
-#manual-nav a.group-expand-btn {
-    background: url('../images/elbow-plus-nl.gif') no-repeat;
-    width: 16px;
-    height: 16px;
-    position: absolute;
-    left: 6px;
-    top: 4px;
-    text-indent: -5000px;
-    overflow: hidden;
+div.productnav li a.active {
+    background: #dfdfdf;
+    border-bottom-color: #ccc;
 }
 
-#manual-nav li.group-expanded a.group-expand-btn {
-	background-image: url('../images/elbow-minus-nl.gif');
+div.productnav li.last a {
+    color: #659608;
 }
 
-/* content area styling */
-#content-wrap {
-    /*min-width: 350px;*/
-	width: 75%;
-    float: right;
+div#touch.product h3#producttitle {
+    border-bottom: 1px solid #ddd;
+    color: black;
+    font-size: 40px;
+    font-weight: 400;
+    letter-spacing: -1px;
+    margin: 0;
+    padding: 36px 0 12px;
     position: relative;
-    /*padding: 10px;*/
-    background-color: #fff;		
 }
 
-#content-homepage-top {
-	background-color:#FFFFFF;  
-	height: 6px;
-	float: right;   
-	width: 75%;
-	margin-top: 10px;
+div#touch.product h3#producttitle a {
+    color: black;
+    text-decoration: none;
 }
 
-#content-homepage-bottom {
- background-color:#FFFFFF;  
-  height: 6px;   
-  float: right;
-  width: 75%;   
-  margin-bottom: 10px;
-}
-
-
-#content-homepage {
-    overflow: auto;
-    height: 300px;
-    padding: 15px ;	
-}
-
-
-#corner-content-topright, #corner-content-bottomright{
-	float:right;
-}
-
-
-#corner-content-topleft, #corner-content-bottomleft{
-	float:left;
-}
-
-
-
-
-/* primary headings */
-#content-homepage h1 {
-	color: #bbb;
-	font-weight: bolder;
-	float: right;
-	font-size: 18px;
-}
-
-/* subheaders for sections */
-#content-homepage .sect h2 {
-	color: #789030;
-	font-weight: bolder;
-	border-bottom: 1px solid #b7b09a;
-	padding-top: 5px;
-	font-size: 14px;	
-}
-
-/* sub sub headings */
-#content-homepage .sect h3 {
-	color: #3E5C05;
-}
-
-/* typical paragraph markup */
-#content-homepage .sect p {
-    padding: 5px 0;
-}
-
-/* for pasting source code */
-#content-homepage .sect pre {
-	background-color: #f7f6e9;
-	border: solid 1px #bfb9a6;
-	padding: 5px;
-}
-
-#content-homepage .sect pre .keyword {
-	color: #234567;
-}
-
-#content-homepage .sect pre .string {
-	color: #882288;
-}
-
-#content-homepage .sect pre .comment {
-	color: #cc2233;
-}
-
-/* some utility classes */
-.clear-fix {
-    clear: both;
-    height: 0;
-    font-size: 0;
-    line-height: 0;
+div#touch.product h3#producttitle a.buttonimg {
+    background: url(/assets/images/20100616buttons.png) no-repeat 0 0;
+    display: block;
+    float: right;
+    height: 25px;
     overflow: hidden;
+    position: absolute;
+    bottom: 10px;
+    right: 0;
+    text-indent: 150%;
+    white-space: nowrap;
+    width: 120px;
+}
+
+.ext-ie7 div#touch.product h3#producttitle a.buttonimg {
+    bottom: 20px;
+}
+
+div#touch.product h3#producttitle a.buttonimg:hover,
+div#touch.product h3#producttitle a.buttonimg:focus,
+div#touch.product h3#producttitle a.buttonimg:active {
+    background-position: 0 -40px;
+}
+
+div#touch.product h3#producttitle a.buttonimg:active {
+    bottom: 9px;
 }
 
 
 
+div#touch.product h3#producttitle a.button {
+    background: #0464BB;
+    -webkit-border-radius: 10px;
+    -moz-border-radius:    10px;
+    border-radius:         10px;
+    color: #fff;
+    display: block;
+    float: right;
+    font-size: 13px;
+    line-height: 13px;
+    padding: 6px 12px 1px;
+    position: absolute;
+    bottom: 10px;
+    right: 0;
+    text-decoration: none;
+    text-shadow: 0 1px 0 rgba(0,0,0,0.9);
+}
+
+div#touch.product h3#producttitle a#secondary.button {
+    background: #ddd;
+    color: #555;
+    text-shadow: 0 1px 0 rgba(255,255,255,0.9);
+}
+
+div#touch.product #hero {
+    background: #fff url(/assets/images/20100616family.png) no-repeat 50% 0;
+    margin-top: 24px;
+    margin-left: 188px;
+    padding-top: 330px;
+    /* text-align: center; */
+}
+
+div#touch.product #hero h1,
+div#touch.product #hero h2 {
+    color: #111;
+    font: bold 32px/1 "Helvetica Neue", Helvetica, Arial, sans-serif;
+    margin: 0.67em 0 0 36px;
+    padding: 0;
+    -webkit-text-shadow: 0 2px 0 rgba(255,255,255,0.9);
+    -moz-text-shadow:    0 2px 0 rgba(255,255,255,0.9);
+    text-shadow:         0 2px 0 rgba(255,255,255,0.9);
+
+}
+
+div#touch.product #hero h2 {
+    width: 675px;
+}
+
+div#touch.product h3 {
+    -webkit-text-shadow: 0 1px 0 rgba(255,255,255,0.9);
+    -moz-text-shadow:    0 1px 0 rgba(255,255,255,0.9);
+    text-shadow:         0 1px 0 rgba(255,255,255,0.9);
+}
+
+div#touch.product #hero h2 {
+    color: #555;
+    font-size: 18px;
+    font-weight: normal;
+    line-height: 1.18em;
+    margin: 0 0 1em 36px;
+    width: 600px;
+}
+
+div#touch.product #content-homepage {
+/*     border-top: 1px solid #ddd; */
+/*     margin-left: 198px; For homepage */
+    margin-left: 212px; /* for subpages */
+    padding: 18px 10px 0 0;
+}
+
+div#touch.product #content-homepage div.section {
+    border-bottom: 1px solid transparent;
+/*     clear: both; */
+    min-height: 202px;
+/*     margin: 0 50px 36px; */
+    margin: 0 0 12px;
+    overflow: auto;
+    padding: 12px 0 24px;
+}
+
+div#touch.product #content-homepage div.section img {
+    float: left;
+/*     width: 300px; */
+}
+
+div#touch.product #content-homepage div.section h3,
+div#touch.product #content-homepage div.section p,
+div#touch.product #content-homepage div.section ul {
+    margin-left: 350px;
+}
+
+div#touch.product #content-homepage div.section h3 {
+    font-size: 20px;
+    margin-bottom: 6px;
+
+}
+
+div#touch.product #content-homepage div.section p {
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+div#touch.product #content-homepage div#icons.section ul {
+    list-style: square;
+    list-style-position: inside;
+}
+
+div#touch.product #content-homepage div#icons.section ul li {
+    float: left;
+    font-size: 12px;
+    width: 25%;
+    color: #999;
+}
+
+div#touch.product #content-homepage div.section.alt img {
+    float: right;
+}
+
+div#touch.product #content-homepage div.section.alt h3,
+div#touch.product #content-homepage div.section.alt p,
+div#touch.product #content-homepage div.section.alt ul {
+    margin-right: 350px;
+    margin-left: 0;
+    margin-bottom: 6px;
+}
 
 /*
-* Estilos para la lista de tareas
+div#touch.product #content-homepage div#resolution.section h3,
+div#touch.product #content-homepage div#resolution.section p {
+    margin-right: 550px;
+}
 */
 
-.taskListHead_expanded{
-	padding: 2px 2px 2px 15px;	
-	border-bottom:#333333 3px solid;
-	cursor:pointer;
-	background: transparent url(../images/group-expand-sprite.gif) no-repeat scroll 3px -49px;
+div#touch.product div#css3sass.section div.callout {
+    background: #f2f2f2;
+    -webkit-border-radius: 10px;
+    -moz-border-radius:    10px;
+    border-radius:         10px;
+    margin-left: 350px;
+    padding: 12px;
 }
 
-.taskListHead_collapsed{
-	padding: 2px 2px 2px 15px;	
-	border-bottom:#333333 3px solid;
-	cursor:pointer;
-	background: transparent url(../images/group-expand-sprite.gif) no-repeat scroll 3px 0px;
-	
-	
+div#touch.product div#content-homepage div#css3sass.section div.callout p,
+div#touch.product div#content-homepage div#css3sass.section div.callout ul {
+    margin: 0;
+    padding: 0;
 }
 
-.nota{
-	font-size: 9px;
+div#touch.product div#content-homepage div#css3sass.section div.callout ul {
+    list-style: none;
+    margin: 0 auto;
+    overflow: auto;
+    padding: 12px 6px 6px;
+    width: 300px;
 }
+
+div#touch.product div#content-homepage div.section div.callout ul li {
+    float: left;
+}
+
+div#touch.product div#content-homepage div.section div.callout ul li a {
+    display: block;
+    margin-right: 16px;
+    text-align: center;
+    text-decoration: none;
+    width: 86px;
+}
+
+div#touch.product div#content-homepage div.section div.callout ul li.last a {
+    margin-right: 0;
+}
+
+div#touch.product div#content-homepage div.section div.callout ul li a span {
+    color: #999;
+    display: block;
+    font-size: 11px;
+}
+
+div#touch.product div#content-homepage div.section div.callout ul li a:hover span {
+    color: #0464BB;
+}
+
+div#touch.product div#content-homepage div.section div.callout ul li a img {
+    background: white;
+    border: 3px solid white;
+
+    -webkit-box-shadow: 0 1px 2px rgba(0,0,0,0.75);
+    -moz-box-shadow:    0 1px 2px rgba(0,0,0,0.75);
+    box-shadow:         0 1px 2px rgba(0,0,0,0.75);
+
+    display: block;
+    height: 50px;
+    margin-bottom: 5px;
+    padding: 1px;
+    width: 80px;
+
+    -webkit-transition: border-color 0.3s ease-in-out;
+}
+
+div#touch.product div#content-homepage div.section div.callout ul li a:hover img {
+    border-color: #0464BB;
+}
+
+
+
+/* Testimonials */
+div#touch.product div#content-homepage.testimonials div.section {
+    overflow: hidden;
+    width: 618px;
+}
+
+div#touch.product div#content-homepage.testimonials div.section * {
+    margin-right: 0;
+    margin-left: 0;
+}
+
+div#touch.product div#content-homepage.testimonials div.section {
+    margin-right: 100px;
+    margin-left: 0;
+    min-height: 120px;
+}
+
+/*
+div#touch.product div#content-homepage.testimonials div.section.alt {
+    margin-right: 0;
+    margin-left: 100px;
+}
+*/
+
+div#touch.product div#content-homepage.testimonials div.section blockquote p {
+    font-size: 18px;
+    line-height: 24px;
+}
+
+div#touch.product div#content-homepage.testimonials div.section blockquote cite {
+    font-size: 14px;
+}
+
+div#touch.product div#content-homepage.testimonials div.section img {
+    background: #fff;
+    border: 1px solid #ddd;
+    float: right;
+    margin: 0 0 25px 25px;
+    padding: 3px;
+}
+
+div#touch.product div#content-homepage.testimonials div.section.alt img {
+    float: left;
+    margin: 0 25px 25px 0;
+}
+

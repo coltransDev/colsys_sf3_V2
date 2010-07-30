@@ -485,6 +485,15 @@ a.toolbar:active {
 	height: 32px;
 	width: 40px;
 }
+
+.file-view .userthumb{
+	/*background: #dddddd;*/
+	padding: 3px;
+}
+.file-view .userthumb img{
+	height: 64px;
+	width: 60px;
+}
 .file-view .thumb-wrap{
 	float: left;
 	margin: 4px;
@@ -495,6 +504,10 @@ a.toolbar:active {
 	display: block;
 	overflow: hidden;
 	text-align: center;
+}
+
+.file-view .x-view-selected .thumb{
+	background:transparent;
 }
 
 .file-view .x-view-over{
@@ -508,9 +521,7 @@ a.toolbar:active {
 	border:1px solid #99bbe8;
 	padding: 4px;
 }
-.file-view .x-view-selected .thumb{
-	background:transparent;
-}
+
 
 .file-view .loading-indicator {
 	font-size:11px;
@@ -591,6 +602,24 @@ a.toolbar:active {
 .tux {
 	background: url('../images/fam/tux.png') no-repeat 0 0 !important;
 }
+
+.preview-right {
+	background: url('../images/16x16/preview-right.gif') no-repeat 0 0 !important;
+}
+
+.preview-bottom {
+	background: url('../images/16x16/preview-bottom.gif') no-repeat 0 0 !important;
+}
+
+.preview-hide {
+	background: url('../images/16x16/preview-hide.gif') no-repeat 0 0 !important;
+}
+
+.new-tab {
+    background: url('../images/16x16/new_tab.gif') no-repeat 0 0 !important;
+}
+
+
 
 
 

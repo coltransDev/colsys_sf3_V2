@@ -1,0 +1,46 @@
+/* 
+    Document   : blog
+    Created on : Jul 28, 2010, 2:07:52 PM
+    Author     : abotero
+    Description:
+        Purpose of the stylesheet follows.
+*/
+.commentlist{
+    margin:20px;
+}
+.entry {
+    border-bottom: 1px solid #DDDDDD;
+	clear:both;	
+	padding: 0 0 10px;
+}
+
+
+.entry-even {
+    
+   
+    
+    background-color:#F6F6F6;
+    border-color:#CCCCCC;
+    border-style:dotted;
+    border-width:1px ;
+    margin:12px 0 0;
+    padding:12px 12px 24px;
+
+}
+
+.entry-odd {
+   
+    border-color:#CCCCCC;
+    border-style:dotted;
+    border-width:1px;
+    margin:12px 0 0;
+    padding:12px 12px 24px;
+}
+
+
+
+
+.entry-date{
+    float: right;
+    color: #0464BB;
+}
