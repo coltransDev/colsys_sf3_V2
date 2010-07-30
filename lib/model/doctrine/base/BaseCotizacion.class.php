@@ -25,6 +25,7 @@
  * @property timestamp $ca_fchactualizado
  * @property string $ca_usuanulado
  * @property timestamp $ca_fchanulado
+ * @property integer $ca_version
  * @property Usuario $Usuario
  * @property Contacto $Contacto
  * @property NotTarea $NotTarea
@@ -35,6 +36,13 @@
  * @property Doctrine_Collection $CotTrayectoAduana
  * @property Doctrine_Collection $CotConceptoAduana
  * @property Doctrine_Collection $CotSeguimiento
+ * @property Doctrine_Collection $CotProducto1
+ * @property Doctrine_Collection $CotContinuacion1
+ * @property Doctrine_Collection $CotContactoAg1
+ * @property Doctrine_Collection $CotSeguro1
+ * @property Doctrine_Collection $CotSeguimiento1
+ * @property Doctrine_Collection $CotTrayectoAduana1
+ * @property Doctrine_Collection $CotConceptoAduana1
  * 
  * @method integer             getCaIdcotizacion()        Returns the current record's "ca_idcotizacion" value
  * @method integer             getCaIdcontacto()          Returns the current record's "ca_idcontacto" value
@@ -56,6 +64,7 @@
  * @method timestamp           getCaFchactualizado()      Returns the current record's "ca_fchactualizado" value
  * @method string              getCaUsuanulado()          Returns the current record's "ca_usuanulado" value
  * @method timestamp           getCaFchanulado()          Returns the current record's "ca_fchanulado" value
+ * @method integer             getCaVersion()             Returns the current record's "ca_version" value
  * @method Usuario             getUsuario()               Returns the current record's "Usuario" value
  * @method Contacto            getContacto()              Returns the current record's "Contacto" value
  * @method NotTarea            getNotTarea()              Returns the current record's "NotTarea" value
@@ -66,6 +75,13 @@
  * @method Doctrine_Collection getCotTrayectoAduana()     Returns the current record's "CotTrayectoAduana" collection
  * @method Doctrine_Collection getCotConceptoAduana()     Returns the current record's "CotConceptoAduana" collection
  * @method Doctrine_Collection getCotSeguimiento()        Returns the current record's "CotSeguimiento" collection
+ * @method Doctrine_Collection getCotProducto1()          Returns the current record's "CotProducto1" collection
+ * @method Doctrine_Collection getCotContinuacion1()      Returns the current record's "CotContinuacion1" collection
+ * @method Doctrine_Collection getCotContactoAg1()        Returns the current record's "CotContactoAg1" collection
+ * @method Doctrine_Collection getCotSeguro1()            Returns the current record's "CotSeguro1" collection
+ * @method Doctrine_Collection getCotSeguimiento1()       Returns the current record's "CotSeguimiento1" collection
+ * @method Doctrine_Collection getCotTrayectoAduana1()    Returns the current record's "CotTrayectoAduana1" collection
+ * @method Doctrine_Collection getCotConceptoAduana1()    Returns the current record's "CotConceptoAduana1" collection
  * @method Cotizacion          setCaIdcotizacion()        Sets the current record's "ca_idcotizacion" value
  * @method Cotizacion          setCaIdcontacto()          Sets the current record's "ca_idcontacto" value
  * @method Cotizacion          setCaConsecutivo()         Sets the current record's "ca_consecutivo" value
@@ -86,6 +102,7 @@
  * @method Cotizacion          setCaFchactualizado()      Sets the current record's "ca_fchactualizado" value
  * @method Cotizacion          setCaUsuanulado()          Sets the current record's "ca_usuanulado" value
  * @method Cotizacion          setCaFchanulado()          Sets the current record's "ca_fchanulado" value
+ * @method Cotizacion          setCaVersion()             Sets the current record's "ca_version" value
  * @method Cotizacion          setUsuario()               Sets the current record's "Usuario" value
  * @method Cotizacion          setContacto()              Sets the current record's "Contacto" value
  * @method Cotizacion          setNotTarea()              Sets the current record's "NotTarea" value
@@ -96,6 +113,13 @@
  * @method Cotizacion          setCotTrayectoAduana()     Sets the current record's "CotTrayectoAduana" collection
  * @method Cotizacion          setCotConceptoAduana()     Sets the current record's "CotConceptoAduana" collection
  * @method Cotizacion          setCotSeguimiento()        Sets the current record's "CotSeguimiento" collection
+ * @method Cotizacion          setCotProducto1()          Sets the current record's "CotProducto1" collection
+ * @method Cotizacion          setCotContinuacion1()      Sets the current record's "CotContinuacion1" collection
+ * @method Cotizacion          setCotContactoAg1()        Sets the current record's "CotContactoAg1" collection
+ * @method Cotizacion          setCotSeguro1()            Sets the current record's "CotSeguro1" collection
+ * @method Cotizacion          setCotSeguimiento1()       Sets the current record's "CotSeguimiento1" collection
+ * @method Cotizacion          setCotTrayectoAduana1()    Sets the current record's "CotTrayectoAduana1" collection
+ * @method Cotizacion          setCotConceptoAduana1()    Sets the current record's "CotConceptoAduana1" collection
  * 
  * @package    symfony
  * @subpackage model
@@ -172,6 +196,9 @@ abstract class BaseCotizacion extends myDoctrineRecord
         $this->hasColumn('ca_fchanulado', 'timestamp', null, array(
              'type' => 'timestamp',
              ));
+        $this->hasColumn('ca_version', 'integer', null, array(
+             'type' => 'integer',
+             ));
 
         $this->option('symfony', array(
              'form' => false,
@@ -219,6 +246,34 @@ abstract class BaseCotizacion extends myDoctrineRecord
              'foreign' => 'ca_idcotizacion'));
 
         $this->hasMany('CotSeguimiento', array(
+             'local' => 'ca_idcotizacion',
+             'foreign' => 'ca_idcotizacion'));
+
+        $this->hasMany('CotProducto1', array(
+             'local' => 'ca_idcotizacion',
+             'foreign' => 'ca_idcotizacion'));
+
+        $this->hasMany('CotContinuacion1', array(
+             'local' => 'ca_idcotizacion',
+             'foreign' => 'ca_idcotizacion'));
+
+        $this->hasMany('CotContactoAg1', array(
+             'local' => 'ca_idcotizacion',
+             'foreign' => 'ca_idcotizacion'));
+
+        $this->hasMany('CotSeguro1', array(
+             'local' => 'ca_idcotizacion',
+             'foreign' => 'ca_idcotizacion'));
+
+        $this->hasMany('CotSeguimiento1', array(
+             'local' => 'ca_idcotizacion',
+             'foreign' => 'ca_idcotizacion'));
+
+        $this->hasMany('CotTrayectoAduana1', array(
+             'local' => 'ca_idcotizacion',
+             'foreign' => 'ca_idcotizacion'));
+
+        $this->hasMany('CotConceptoAduana1', array(
              'local' => 'ca_idcotizacion',
              'foreign' => 'ca_idcotizacion'));
     }
