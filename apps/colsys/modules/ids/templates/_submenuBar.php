@@ -62,6 +62,13 @@ if( $this->getRequestParameter("modo")=="prov" && $action!="listadoProveedoresAp
     $button[$i]["link"]= "ids/listadoProveedoresAprobados?modo=".$this->getRequestParameter("modo");
     $i++;
 
+    $button[$i]["name"]="Prov. Inactivos ";
+    $button[$i]["tooltip"]="Listado de proveedores inactivos";
+    $button[$i]["image"]="22x22/gohome.gif";
+    $button[$i]["link"]= "ids/listadoProveedoresInactivos?modo=".$this->getRequestParameter("modo");
+    $i++;
+
+
     @$nivel = idsActions::getNivel();
     if( $nivel>=2 ){
         $button[$i]["name"]="Vencimientos";
@@ -70,7 +77,7 @@ if( $this->getRequestParameter("modo")=="prov" && $action!="listadoProveedoresAp
         $button[$i]["link"]= "ids/alertasDocumentos?modo=".$this->getRequestParameter("modo");
         $i++;
     }
-
+    
 
 }
 

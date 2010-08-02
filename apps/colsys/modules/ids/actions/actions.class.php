@@ -1000,11 +1000,21 @@ class idsActions extends sfActions
                              ->addOrderBy("t.ca_nombre ASC")
                              ->addOrderBy("p.ca_transporte ASC")
                              ->addOrderBy("i.ca_nombre ASC")                             
-                             ->execute();
-
-        
+                             ->execute();      
     }
-    
+	
+    public function executeListadoProveedoresInactivos(sfWebRequest $request){
+		$this->proveedores = Doctrine::getTable("IdsProveedor")
+                             ->createQuery("p")
+							 ->innerJoin("p.Ids i")
+                             ->innerJoin("i.IdsSucursal s")
+                             ->innerJoin("s.Ciudad c")
+                             ->innerJoin("p.IdsTipo t")
+                             ->where("p.ca_fchaprobado IS NOT NULL")
+                             ->addWhere("p.ca_activo = false")
+							 ->addOrderBy("i.ca_nombre ASC")
+                             ->execute();
+    }
     
     /*
     * Permite agregar grupos a una cabeza de grupo
