@@ -1285,4 +1285,40 @@ class pmActions extends sfActions
     }
 
 
+    /*
+	* Panel que muestra un arbol con opciones de busqueda
+	* @author: Andres Botero
+	*/
+    public function executeCalendar( $request ){
+    
+
+       
+
+    }
+
+    /*
+	* Panel que muestra un arbol con opciones de busqueda
+	* @author: Andres Botero
+	*/
+    public function executeDatosPanelCalendar( $request ){
+
+
+        $q = Doctrine::getTable("HdeskMilestone")
+                       ->createQuery("m");
+
+        $milestones = $q->execute();
+
+        $data = array();
+        foreach( $milestones as $milestone ){
+            $row = array();
+            $row["idmilestone"] = $milestone->getCaIdmilestone();
+            $row["title"] = $milestone->getCaTitle();
+            $data[] = $row;
+        }
+
+        $this->responseArray = array("success"=>true, "root"=>$data);
+        $this->setTemplate("responseTemplate");
+
+    }
+
 }

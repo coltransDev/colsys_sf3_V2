@@ -104,7 +104,8 @@ PanelReading = function( config ){
             deferredRender: false,
             activeTab: 0,     // first tab initially active
             height: 400,
-            enableTabScroll:true,            
+            enableTabScroll:true,
+            
             items: [
                 this.preview,
                 this.responses,
@@ -201,7 +202,8 @@ PanelReading = function( config ){
         minTabWidth: 120,
         enableTabScroll: true,        
         layout: 'fit',        
-        tbar: this.tbar,
+        tbar: this.tbar,        
+        
         items: {
             //id:'main-view',
             layout:'border',
@@ -209,17 +211,17 @@ PanelReading = function( config ){
             hideMode:'offsets',
             items:[
                 this.grid,
-                this.tabPanel
-            /*{
+                //this.tabPanel
+            {
 
-                id:'bottom-preview-'+idcomponent,
+                //id:'bottom-preview-'+idcomponent,
                 layout:'fit',
                 items: this.tabPanel,
                 height: 400,
                 split: true,
                 border:false,
                 region:'south'
-            }, {
+            }/*, {
                 id:'right-preview-'+idcomponent,
                 layout:'fit',
                 border:false,

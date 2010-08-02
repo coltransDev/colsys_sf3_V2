@@ -114,7 +114,22 @@ Ext.extend(PanelConsulta, Ext.tree.TreePanel, {
                                                               closable: true,
                                                               readOnly: this.readOnly
                                                              });
-                        break;  
+                        break;
+                    case "calendar":
+                        /*
+                        * Se muestran la administracion de proyectos
+                        */
+                        var newComponent = new PanelProyectos({id:idcomponent,
+                                                              idgroup: idgroup,
+                                                              idproject: idproject,
+                                                              actionTicket: actionTicket,
+                                                              assignedTo: assignedTo,
+                                                              reportedBy: reportedBy,
+                                                              title: "Admin "+title,
+                                                              closable: true,
+                                                              readOnly: this.readOnly
+                                                             });
+                        break;
                     default:
 
                         /*

@@ -141,6 +141,14 @@ foreach( $departamentos as $departamento ){
                                         assignedTo: '<?=$usuario->getCaLogin()?>',
                                         idgroup: '<?=$grupo->getCaIdgroup()?>',
                                         group: '<?=$grupo->getCaName()?>'
+                                    },
+                                    {
+                                        text: 'Calendario',
+                                        leaf: true,
+                                        action: 'calendar',
+                                        user: '<?=$usuario->getCaLogin()?>',
+                                        idgroup: '<?=$grupo->getCaIdgroup()?>',
+                                        group: '<?=$grupo->getCaName()?>'
                                     }
                                 ]
                             }

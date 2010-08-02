@@ -119,7 +119,7 @@ Ext.onReady(function(){
     <br />
 	<h3>&nbsp;&nbsp;&nbsp;Bienvenido al sistema de administracion de proyectos. </h3><br />
 	<hr />
-	&nbsp;&nbsp;&nbsp;Para comenzar a trabajar por favor seleccione una opci&oacute; del panel lateral.
+	&nbsp;&nbsp;&nbsp;Para comenzar a trabajar por favor seleccione una opci&oacute;n del panel lateral.
 	
 	<br />
 	&nbsp;&nbsp;&nbsp;<a id="hideit" href="#">Ocultar panel lateral</a>
