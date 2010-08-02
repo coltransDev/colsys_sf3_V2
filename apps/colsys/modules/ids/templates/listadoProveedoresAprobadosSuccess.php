@@ -9,6 +9,10 @@ $initialYear = 2007;
 $actualYear = date("Y");
 $numYears = $actualYear-$initialYear+1;
 
+
+$totals = array();
+$counts = array();
+
 ?>
 <div class="content" align="center">
     <table border="1" class="tableList" width="90%">
@@ -66,7 +70,7 @@ $numYears = $actualYear-$initialYear+1;
             }
         ?>
         <tr>
-            <td><div align="left"><?=$ids->getcaNombre()?></div></td>
+            <td><div align="left"><?=link_to($ids->getCaNombre(), "ids/verIds?modo=prov&id=".$ids->getCaId())?></div></td>
             <td><div align="left"><?=Utils::fechaMes($proovedor->getCaFchaprobado())?></div></td>
             <td><div align="left"><?=$proovedor->getCaActivo()?"Activo":"Inactivo"?></div></td>
             <td>
@@ -122,6 +126,9 @@ $numYears = $actualYear-$initialYear+1;
                 
                 $evaluacion = null;
                 if( isset( $evaluaciones[$year] )){
+
+
+
                     $evaluacion = $evaluaciones[$year];
                     if(isset($evaluaciones[$year-1]) ){
                         $evaluacionAct = $evaluacion;
@@ -130,6 +137,13 @@ $numYears = $actualYear-$initialYear+1;
                         $evaluacionAct = null;
                         $evaluacionAnt = null;
                     }
+
+                    if( !isset($totals[$year]) ){
+                        $totals[$year] = 0;
+                        $counts[$year] = 0;
+                    }
+                    $totals[$year]+= $evaluacion;
+                    $counts[$year]++;
                 }
 
                 if( !$evaluacion && $year!=$actualYear){
@@ -148,7 +162,21 @@ $numYears = $actualYear-$initialYear+1;
         <?
         }
         ?>
-       
+
+        <tr class="row0" >
+
+            <td colspan="8"><b>Promedio</b></td>
+            <?
+            for( $year=$initialYear;$year<=$actualYear; $year++ ){
+            ?>
+            <td><div align="center"><?=isset($totals[$year])&&$counts[$year]>0?round($totals[$year]/$counts[$year],2):"&nbsp;"?></div></td>
+            <?
+            }
+            ?>
+            <td colspan="3">&nbsp;</td>
+            
+        </tr>
     </tbody>
 </table>
 </div>
+

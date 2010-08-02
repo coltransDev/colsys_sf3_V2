@@ -992,6 +992,8 @@ class idsActions extends sfActions
        $this->proveedores = Doctrine::getTable("IdsProveedor")
                              ->createQuery("p")
                              ->innerJoin("p.Ids i")
+                             ->innerJoin("i.IdsSucursal s")
+                             ->innerJoin("s.Ciudad c")
                              ->innerJoin("p.IdsTipo t")
                              ->where("p.ca_fchaprobado IS NOT NULL")
                              ->addWhere("p.ca_controladoporsig = true")
