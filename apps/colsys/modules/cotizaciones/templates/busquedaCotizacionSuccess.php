@@ -16,16 +16,9 @@ if( $login ){
 if( $seguimiento ){
 	$url.="&seguimiento=".$seguimiento;
 }
-$pagerLayout = new Doctrine_Pager_Layout(
-      $pager,
-      new Doctrine_Pager_Range_Sliding(array(
-            'chunk' => 5
-      )),
-      url_for($url)."?page={%page_number}"
-);
+$pagerLayout = new Doctrine_Pager_Layout($pager,new Doctrine_Pager_Range_Sliding(array('chunk' => 5)),url_for($url)."?page={%page_number}");
 $pagerLayout->setTemplate('<a href="{%url}">{%page}</a> ');
 $pagerLayout->setSelectedTemplate('{%page}');
-
 $idsList = $pager->execute();
 
 $pagerLayout->display();
@@ -67,13 +60,9 @@ $pagerLayout->display();
             <table class="tableList" width="100%" border="1">
         <?
         $productos = $cotizacion->getCotProductos();
-
         if( count($productos)>0 ){
-        ?>
-	  	
-        <? 
             foreach( $productos as $producto ){
-                if($producto->getCaTransporte()=="OTM-DTA")
+                if($producto->getCaTransporte()=="OTM-DTA" && (Utils::compararFechas($producto->getCaFchcreado(), "2010-07-31")<1 ) )
                     continue;
                 $origen = $producto->getOrigen();
                 $destino = $producto->getDestino();
@@ -262,7 +251,7 @@ $pagerLayout->display();
                 if(a.responseText.search(/error/i)==-1)
                 {                    
                     alert("Se Actualizo Correctamente");
-                    location.href='<?=url_for("$url")?>';
+                    //location.href='<?=url_for("$url")?>';
                 }
                 else
                     alert("Error:"+a.responseText.replace(/<br \/>/gi ,"\n"));
