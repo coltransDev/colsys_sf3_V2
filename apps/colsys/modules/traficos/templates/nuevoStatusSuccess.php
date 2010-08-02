@@ -15,6 +15,8 @@ if( $reporte->getCaImpoexpo()==Constantes::EXPO ){
 	$saludo .= 'Apreciado/a '.$contacto->getCaSaludo().':';
 	
 	$saludoAviso = $saludo.'\n\nPor medio de la presente estamos confirmando la salida  de la carga de los señores  '.$reporte->getConsignatario().' como  sigue:';
+
+    $saludoAviso = str_replace("'", "\\'", $saludoAviso);
 }
 
 /*$saludo = $textos['saludo'];	
