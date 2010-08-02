@@ -169,7 +169,7 @@ $counts = array();
             <?
             for( $year=$initialYear;$year<=$actualYear; $year++ ){
             ?>
-            <td><div align="center"><?=isset($totals[$year])&&$counts[$year]>0?round($totals[$year]/$counts[$year],2):"&nbsp;"?></div></td>
+            <td><div align="center"><b><?=isset($totals[$year])&&$counts[$year]>0?round($totals[$year]/$counts[$year],2):"&nbsp;"?></b></div></td>
             <?
             }
             ?>

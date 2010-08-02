@@ -1114,7 +1114,54 @@ class idsActions extends sfActions
         return sfView::NONE;
     }
 
-    
+
+
+    public function executeVerificarListaClinton(sfWebRequest $request){
+        $id = $request->getParameter("id");
+
+        $this->ids = Doctrine::getTable("Ids")->find($request->getParameter("id"));
+        $this->forward404Unless( $this->ids );
+        $this->modo = $request->getParameter("modo");
+
+        $q = Doctrine_Manager::getInstance()->connection();
+
+        
+        $query = "select * from tb_parametros where ca_casouso = 'CU065' and ca_identificacion = 1";
+        $stmt = $q->execute($query);
+        $row =  $stmt->fetch();
+        $this->fechaActualizacion = $row["ca_valor2"];
+        
+
+
+
+        $query = "select 	cl.ca_idalterno, cl.ca_nombre, sdnm.*, sdid.*, sdal.* "; //, sdak.*
+        $query.= "		from (select * from ids.tb_ids where ca_id = $id) cl ";
+        $query.= "		LEFT OUTER JOIN tb_sdn sdnm ";
+        $query.= "		ON ( fun_similarpercent(cl.ca_nombre, textcat(case when nullvalue(sdnm.ca_firstname) then '' else sdnm.ca_firstname end, case when nullvalue(sdnm.ca_lastname) then '' else sdnm.ca_lastname end)) >90 ) ";
+        $query.= "		LEFT OUTER JOIN tb_sdnid sdid ";
+        $query.= "		ON ( fun_similarpercent(cl.ca_idalterno::text, sdid.ca_idnumber) >90 ) ";
+        $query.= "		LEFT OUTER JOIN tb_sdnaka sdal ";
+        $query.= "		ON ( fun_similarpercent(cl.ca_nombre, textcat(case when nullvalue(sdal.ca_firstname) then '' else sdal.ca_firstname end, case when nullvalue(sdal.ca_lastname) then '' else sdal.ca_lastname end)) >90 ) ";
+        //$query.= "		LEFT OUTER JOIN tb_sdnaka sdak ";
+        //$query.= "		ON ( fun_similarpercent(cl.ca_nombres||' '||cl.ca_papellido||' '||cl.ca_sapellido, textcat(case when nullvalue(sdak.ca_firstname) then '' else sdak.ca_firstname end, case when nullvalue(sdak.ca_lastname) then '' else sdak.ca_lastname end)) >90 ) ";
+        //$query.= "		LEFT OUTER JOIN tb_ciudades ciu ";
+        //$query.= "		ON (cl.ca_idciudad = ciu.ca_idciudad) ";
+        //$query.= "		where NOT nullvalue(sdnm.ca_uid) or NOT nullvalue(sdid.ca_uid) or NOT nullvalue(sdak.ca_uid) ";
+        $query.= "     order by cl.ca_nombre";
+
+        $stmt = $q->prepare($query, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+        @$stmt->execute();
+        $this->stmt = $stmt;
+
+
+        
+
+        
+
+
+        
+
+    }
 
 
 
