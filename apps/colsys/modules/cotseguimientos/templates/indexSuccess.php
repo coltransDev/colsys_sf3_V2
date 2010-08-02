@@ -217,7 +217,12 @@ var tabs = new Ext.FormPanel({
 					value: '<?=date("Y-m-d")?>',
 					allowBlank: false					 
 					
-				},
+				}
+                <? 
+                if($nivel=="1") 
+                {
+                ?>
+                ,
 				{
 				xtype:'fieldset',
 				checkboxToggle:true,
@@ -300,6 +305,22 @@ var tabs = new Ext.FormPanel({
 						})
 				]
 			}
+<?
+                }
+                else
+                {
+?>
+                    ,{
+					xtype:'textfield',
+					fieldLabel: 'Usuario',
+					autoHeight:true,
+					name : 'login',
+					value: '<?=$vendedor?>',
+                    readOnly :true
+				}
+<?
+                }
+?>
 			]
 		}]
 	},
