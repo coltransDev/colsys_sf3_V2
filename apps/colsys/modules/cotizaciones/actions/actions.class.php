@@ -3,9 +3,7 @@
  *  This file is part of the Colsys Project.
  *
  *  (c) Coltrans S.A. - Colmas Ltda.
- */
 
-/**
  * cotizaciones actions.
  *
  * @package    colsys
@@ -16,13 +14,11 @@
 //$this->redirect("/users/logout");
 class cotizacionesActions extends sfActions
 {
-
 	const RUTINA = 12;
 	/*************************************************************************
 	* OPCIONES GENERALES
 	*
 	**************************************************************************/
-
 	/**
 	* Pantalla de bienvenida para el modulo de Cotizaciones
 	* @author Andres Botero
@@ -38,7 +34,6 @@ class cotizacionesActions extends sfActions
 		}
 		$this->estados = ParametroTable::retrieveByCaso( "CU074" );
 	}
-
 	/*
 	* Muestra los resultados de la busqueda del reporte de negocios
 	* @aut
@@ -46,151 +41,136 @@ class cotizacionesActions extends sfActions
 	*/
 	public function executeBusquedaCotizacion()
 	{
-		$user = $this->getUser();
-		$criterio = $this->getRequestParameter("criterio");
-		$cadena = $this->getRequestParameter("cadena");
-		$login = $this->getRequestParameter("login");
-		$seguimiento = $this->getRequestParameter("seguimiento");
+            $user = $this->getUser();
+            $criterio = $this->getRequestParameter("criterio");
+            $cadena = $this->getRequestParameter("cadena");
+            $login = $this->getRequestParameter("login");
+            $seguimiento = $this->getRequestParameter("seguimiento");
 
+            $q = Doctrine_Query::create()
+                                ->select("c.*,EXTRACT(YEAR FROM c.ca_fchcreado),to_number(SUBSTR(c.ca_consecutivo , 1 , (POSITION('-' in c.ca_consecutivo)-1) ),'999999')")
+                                ->from('Cotizacion c');
+            $q->where("c.ca_consecutivo IS NOT NULL ");
+            $q->orderBy("EXTRACT(YEAR FROM c.ca_fchcreado) DESC  ");
+            $q->addOrderBy("to_number(SUBSTR(c.ca_consecutivo , 1 , (POSITION('-' in c.ca_consecutivo)-1) ),'999999')  desc");
+            $q->addOrderBy("c.ca_version  desc");
 
-        $q = Doctrine_Query::create()
-                            ->select("c.*")
-                            ->from('Cotizacion c');
-        $q->where("c.ca_consecutivo IS NOT NULL ");
-
-
-
-
-		switch( $criterio ){
-			case "mis_cotizaciones":
-				$q->addWhere("c.ca_usuario = ? OR c.ca_usucreado = ?", array($user->getUserId(), $user->getUserId()) );
+            switch( $criterio ){
+                case "mis_cotizaciones":
+                    $q->addWhere("c.ca_usuario = ? OR c.ca_usucreado = ?", array($user->getUserId(), $user->getUserId()) );
                 break;
-			case "consecutivo":
-                $cadena = str_replace("C", "", $cadena);
-                $q->addWhere("c.ca_consecutivo like ?", "".$cadena."%" );
-				break;
-			case "nombre_del_cliente":
-                $q->innerJoin("c.Contacto con");
-                $q->innerJoin("con.Cliente cl");
-                $q->addWhere("UPPER(cl.ca_compania) like ?", "%".strtoupper($cadena)."%" );
-
-				break;
-			case "nombre_del_contacto":
-                $q->innerJoin("c.Contacto con");
-                $q->addWhere("LOWER(CONCAT(con.ca_nombres, ' ', con.ca_papellido,' ', con.ca_sapellido)) like ?", "%".strtolower($cadena)."%" );
-				break;
-			case "asunto":
-                $q->addWhere("LOWER(c.ca_asunto) like ?", "%".strtolower($cadena)."%" );
-				break;
-			case "vendedor":
-                $q->addWhere("c.ca_usuario  = ?", $login );
-				break;
-			case "numero_de_cotizacion":
-                $q->addWhere("c.ca_idcotizacion = ?",  intval($cadena)  );
-				break;
-			case "sucursal":
-                $q->innerJoin("c.Usuario u");
-                $q->innerJoin("u.Sucursal s");
-                $q->addWhere("LOWER(s.ca_nombre) like  ?", "%".strtolower( $cadena )."%" );
-				break;
-             case "seguimiento":
-                $q->addWhere("c.ca_usuario = ? OR c.ca_usucreado = ?", array($user->getUserId(), $user->getUserId()) );
-                $q->addWhere("c.ca_usuanulado IS NULL");
-				$q->leftJoin("c.CotProducto p");
-                $q->addWhere("(p.ca_etapa=? AND p.ca_etapa IS NOT NULL) OR (c.ca_etapa = ? AND p.ca_etapa IS NULL)", array($seguimiento, $seguimiento) );
-
-
-				break;
-		}
-        $q->addOrderBy("c.ca_idcotizacion DESC");
-        $q->limit(200);
-        $q->distinct();
-
+                case "consecutivo":
+                    $cadena = str_replace("C", "", $cadena);
+                    $q->addWhere("c.ca_consecutivo like ?", "".$cadena."%" );
+                break;
+                case "nombre_del_cliente":
+                    $q->innerJoin("c.Contacto con");
+                    $q->innerJoin("con.Cliente cl");
+                    $q->addWhere("UPPER(cl.ca_compania) like ?", "%".strtoupper($cadena)."%" );
+                break;
+                case "nombre_del_contacto":
+                    $q->innerJoin("c.Contacto con");
+                    $q->addWhere("LOWER(CONCAT(con.ca_nombres, ' ', con.ca_papellido,' ', con.ca_sapellido)) like ?", "%".strtolower($cadena)."%" );
+                break;
+                case "asunto":
+                    $q->addWhere("LOWER(c.ca_asunto) like ?", "%".strtolower($cadena)."%" );
+                break;
+                case "vendedor":
+                    $q->addWhere("c.ca_usuario  = ?", $login );
+                break;
+                case "numero_de_cotizacion":
+                    $q->addWhere("c.ca_idcotizacion = ?",  intval($cadena)  );
+                break;
+                case "sucursal":
+                    $q->innerJoin("c.Usuario u");
+                    $q->innerJoin("u.Sucursal s");
+                    $q->addWhere("LOWER(s.ca_nombre) like  ?", "%".strtolower( $cadena )."%" );
+                break;
+                case "seguimiento":
+                    $q->addWhere("c.ca_usuario = ? OR c.ca_usucreado = ?", array($user->getUserId(), $user->getUserId()) );
+                    $q->addWhere("c.ca_usuanulado IS NULL");
+                    $q->leftJoin("c.CotProducto p");
+                    $q->addWhere("(p.ca_etapa=? AND p.ca_etapa IS NOT NULL) OR (c.ca_etapa = ? AND p.ca_etapa IS NULL)", array($seguimiento, $seguimiento) );
+                break;
+            }
+            //$q->addOrderBy("c.ca_idcotizacion DESC");
+            $q->limit(200);
+            $q->distinct();
 
         // Defining initial variables
-        $currentPage = $this->getRequestParameter('page', 1);
-        $resultsPerPage = 30;
+            $currentPage = $this->getRequestParameter('page', 1);
+            $resultsPerPage = 30;
 
         // Creating pager object
-        $this->pager = new Doctrine_Pager(
-              $q,
-              $currentPage,
-              $resultsPerPage
-        );
+            $this->pager = new Doctrine_Pager(
+                  $q,
+                  $currentPage,
+                  $resultsPerPage
+            );
 
-        $this->cotizaciones = $this->pager->execute();
-		if( $this->pager->getResultsInPage()==1 && $this->pager->getPage()==1 ){
-            $cotizaciones = $this->cotizaciones;
-			$this->redirect("cotizaciones/consultaCotizacion?id=".$cotizaciones[0]->getCaIdcotizacion());
-		}
-
-		$this->criterio = $criterio;
-		$this->cadena = $cadena;
-		$this->login = $login;
-        $this->seguimiento = $seguimiento;
-
-        $estados = ParametroTable::retrieveByCaso( "CU074" );
-        $this->estados = array();
-        foreach( $estados as $estado ){
-            $this->estados[$estado->getCaValor()] = $estado->getCaValor2();
-        }
-
+            $this->cotizaciones = $this->pager->execute();
+            if( $this->pager->getResultsInPage()==1 && $this->pager->getPage()==1 ){
+                $cotizaciones = $this->cotizaciones;
+		$this->redirect("cotizaciones/consultaCotizacion?id=".$cotizaciones[0]->getCaIdcotizacion());
+            }
+            $this->criterio = $criterio;
+            $this->cadena = $cadena;
+            $this->login = $login;
+            $this->seguimiento = $seguimiento;
+            $estados = ParametroTable::retrieveByCaso( "CU074" );
+            $this->estados = array();
+            foreach( $estados as $estado ){
+                $this->estados[$estado->getCaValor()] = $estado->getCaValor2();
+            }
 	}
-
 	/**
 	* Permite consultar una cotizacion ya creada y permite
 	* agregar nuevas
 	* @author Carlos G. López M., Andres Botero
 	*/
-	public function executeConsultaCotizacion(){
+	public function executeConsultaCotizacion()
+        {
+            $response = sfContext::getInstance()->getResponse();
+            $response->addJavaScript("extExtras/RowExpander",'last');
+            $response->addJavaScript("extExtras/myRowExpander",'last');
+            $response->addJavaScript("extExtras/CheckColumn",'last');
+
+            if( !is_null($this->getRequestParameter("id")) ) {
+                $id_cotizacion = $this->getRequestParameter("id");
+                $cotizacion = Doctrine::getTable("Cotizacion")->find( $id_cotizacion );
+                $this->forward404Unless( $cotizacion );
+                $this->editable = $this->getRequestParameter("editable");
+                $this->option = $this->getRequestParameter("option");
+
+                $this->tarea = $cotizacion->getTareaIDGEnvioOportuno();
+                if( $this->tarea && $this->tarea->getCaFchterminada() ){
+                        $this->redirect("cotizaciones/verCotizacion?id=".$cotizacion->getCaIdcotizacion());
+                }
 
 
-		$response = sfContext::getInstance()->getResponse();
-		$response->addJavaScript("extExtras/RowExpander",'last');
-		$response->addJavaScript("extExtras/myRowExpander",'last');
-		$response->addJavaScript("extExtras/CheckColumn",'last');
+                if($cotizacion->getCaUsuanulado()){
+                        $this->redirect("cotizaciones/verCotizacion?id=".$cotizacion->getCaIdcotizacion());
+                }
 
-		if( !is_null($this->getRequestParameter("id")) ) {
-			$id_cotizacion = $this->getRequestParameter("id");
-			$cotizacion = Doctrine::getTable("Cotizacion")->find( $id_cotizacion );
-			$this->forward404Unless( $cotizacion );
-			$this->editable = $this->getRequestParameter("editable");
-			$this->option = $this->getRequestParameter("option");
-
-			$this->tarea = $cotizacion->getTareaIDGEnvioOportuno();
-			if( $this->tarea && $this->tarea->getCaFchterminada() ){
-				$this->redirect("cotizaciones/verCotizacion?id=".$cotizacion->getCaIdcotizacion());
-			}
-
-
-			if($cotizacion->getCaUsuanulado()){
-				$this->redirect("cotizaciones/verCotizacion?id=".$cotizacion->getCaIdcotizacion());
-			}
-
-			$this->cotizacion = $cotizacion;
-		}else {
-			$config = sfConfig::get('sf_app_module_dir').DIRECTORY_SEPARATOR."cotizaciones".DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."textos.yml";
-			$textos = sfYaml::load($config);
-			$user = $this->getUser()->getUserId();
-			$this->cotizacion = new Cotizacion();
-			$this->cotizacion->setCaAsunto($textos['asunto']);
-			$this->cotizacion->setCaSaludo($textos['saludo']);
-			$this->cotizacion->setCaEntrada( $textos['entrada'] );
-			$this->cotizacion->setCaDespedida( $textos['despedida'] );
-			$this->cotizacion->setCaAnexos( $textos['anexos'] );
-			$this->cotizacion->setCaUsuario($user);
-
-			$this->tarea = $this->cotizacion->getTareaIDGEnvioOportuno();
-
-
-		}
-		$this->user = $this->getUser();
-		$this->nivel = $this->getUser()->getNivelAcceso( cotizacionesActions::RUTINA );
-		if( $this->nivel==-1 ){
-			$this->forward404();
-		}
-
-
+		$this->cotizacion = $cotizacion;
+            }else {
+                $config = sfConfig::get('sf_app_module_dir').DIRECTORY_SEPARATOR."cotizaciones".DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."textos.yml";
+                $textos = sfYaml::load($config);
+                $user = $this->getUser()->getUserId();
+                $this->cotizacion = new Cotizacion();
+                $this->cotizacion->setCaAsunto($textos['asunto']);
+                $this->cotizacion->setCaSaludo($textos['saludo']);
+                $this->cotizacion->setCaEntrada( $textos['entrada'] );
+                $this->cotizacion->setCaDespedida( $textos['despedida'] );
+                $this->cotizacion->setCaAnexos( $textos['anexos'] );
+                $this->cotizacion->setCaUsuario($user);
+		$this->tarea = $this->cotizacion->getTareaIDGEnvioOportuno();
+            }
+            $this->user = $this->getUser();
+            $this->nivel = $this->getUser()->getNivelAcceso( cotizacionesActions::RUTINA );
+            if( $this->nivel==-1 ){
+                    $this->forward404();
+            }
 	}
 
 	/*
@@ -198,115 +178,105 @@ class cotizacionesActions extends sfActions
 	* @author Carlos G. López M.
 	*/
 	public function executeFormCotizacionGuardar(){
-		$user_id = $this->getUser()->getUserId();
+            $user_id = $this->getUser()->getUserId();
 
-		if( $this->getRequestParameter("cotizacionId") ){
-			$cotizacion = Doctrine::getTable("Cotizacion")->find( $this->getRequestParameter("cotizacionId") );
-			$this->forward404Unless( $cotizacion );
-		}else{
-			$cotizacion = new Cotizacion();
-			$sig = CotizacionTable::siguienteConsecutivo( date("Y"),$this->getRequestParameter( "empresa" ) );
-			$cotizacion->setCaConsecutivo( $sig );
-		}
-		if( $this->getRequestParameter( "empresa" ) ){
-			$cotizacion->setCaEmpresa( $this->getRequestParameter( "empresa" ) );
-		}
+            if( $this->getRequestParameter("cotizacionId") ){
+                    $cotizacion = Doctrine::getTable("Cotizacion")->find( $this->getRequestParameter("cotizacionId") );
+                    $this->forward404Unless( $cotizacion );
+            }else{
+                    $cotizacion = new Cotizacion();
+                    $sig = CotizacionTable::siguienteConsecutivo( date("Y"),$this->getRequestParameter( "empresa" ) );
+                    $cotizacion->setCaConsecutivo( $sig );
+            }
+            if( $this->getRequestParameter( "empresa" ) ){
+                    $cotizacion->setCaEmpresa( $this->getRequestParameter( "empresa" ) );
+            }
 
+            if( $this->getRequestParameter( "vendedor" ) ){
+                    $cotizacion->setCaUsuario( $this->getRequestParameter( "vendedor" ) );
+            }else{
+                    if( $this->getUser()->getIddepartamento()==5 ){ // Si es comercial le coloca la cotizacion
+                            $cotizacion->setCaUsuario( $this->getUser()->getUserid() );
 
-		if( $this->getRequestParameter( "vendedor" ) ){
-			$cotizacion->setCaUsuario( $this->getRequestParameter( "vendedor" ) );
-		}else{
-			if( $this->getUser()->getIddepartamento()==5 ){ // Si es comercial le coloca la cotizacion
-				$cotizacion->setCaUsuario( $this->getUser()->getUserid() );
+                    }elseif(!$cotizacion->getCaUsuario() || $cotizacion->getCaIdcontacto()!=$this->getRequestParameter( "idconcliente" ) ){
+                            $contacto = Doctrine::getTable("Contacto")->find( $this->getRequestParameter( "idconcliente" ) );
+                            $vendedor = $contacto->getCliente()->getCaVendedor();
+                            if(!$vendedor){
+                                    $vendedor = "Comercial";
+                            }
+                            $cotizacion->setCaUsuario( $vendedor );
+                    }
+            }
 
-			}elseif(!$cotizacion->getCaUsuario() || $cotizacion->getCaIdcontacto()!=$this->getRequestParameter( "idconcliente" ) ){
-				$contacto = Doctrine::getTable("Contacto")->find( $this->getRequestParameter( "idconcliente" ) );
-				$vendedor = $contacto->getCliente()->getCaVendedor();
-				if(!$vendedor){
-					$vendedor = "Comercial";
-				}
-				$cotizacion->setCaUsuario( $vendedor );
-			}
-		}
+            $cotizacion->setCaIdcontacto( $this->getRequestParameter( "idconcliente" ) );
+            $cotizacion->setCaAsunto( utf8_decode($this->getRequestParameter( "asunto" )) );
+            $cotizacion->setCaSaludo( utf8_decode($this->getRequestParameter( "saludo" )) );
+            $cotizacion->setCaEntrada( utf8_decode($this->getRequestParameter( "entrada" )) );
+            $cotizacion->setCaDespedida( utf8_decode($this->getRequestParameter( "despedida" )) );
+            $cotizacion->setCaAnexos( utf8_decode($this->getRequestParameter( "anexos" )) );
 
+            if( $this->getRequestParameter( "fuente" ) ){
+                    $cotizacion->setCaFuente( $this->getRequestParameter( "fuente" ) );
+            }
 
-		$cotizacion->setCaIdcontacto( $this->getRequestParameter( "idconcliente" ) );
-		$cotizacion->setCaAsunto( utf8_decode($this->getRequestParameter( "asunto" )) );
-		$cotizacion->setCaSaludo( utf8_decode($this->getRequestParameter( "saludo" )) );
-		$cotizacion->setCaEntrada( utf8_decode($this->getRequestParameter( "entrada" )) );
-		$cotizacion->setCaDespedida( utf8_decode($this->getRequestParameter( "despedida" )) );
-		$cotizacion->setCaAnexos( utf8_decode($this->getRequestParameter( "anexos" )) );
+            if( !$cotizacion->getCaIdcotizacion() ){
+                    $cotizacion->setCaFchcreado( date("Y-m-d H:i:s") );
+                    $cotizacion->setCaUsucreado( $user_id );
+            }else{
+                    $cotizacion->setCaFchactualizado( date("Y-m-d H:i:s") );
+                    $cotizacion->setCaUsuactualizado( $user_id );
+            }
+            $cotizacion->save();
+            if( $this->getRequestParameter( "fchSolicitud" ) ){
+                    $cotizacion->crearTareaIDGEnvioOportuno( $this->getRequestParameter( "fchSolicitud" )." ".$this->getRequestParameter( "horaSolicitud" ));
+            }
 
-		if( $this->getRequestParameter( "fuente" ) ){
-			$cotizacion->setCaFuente( $this->getRequestParameter( "fuente" ) );
-		}
+            if( $this->getRequestParameter( "fchPresentacion" ) ){
+                    $cotizacion->setFchpresentacion( $this->getRequestParameter( "fchPresentacion" )." ".$this->getRequestParameter( "horaPresentacion" ) );
 
-		if( !$cotizacion->getCaIdcotizacion() ){
-			$cotizacion->setCaFchcreado( date("Y-m-d H:i:s") );
-			$cotizacion->setCaUsucreado( $user_id );
-		}else{
-			$cotizacion->setCaFchactualizado( date("Y-m-d H:i:s") );
-			$cotizacion->setCaUsuactualizado( $user_id );
-		}
-		$cotizacion->save();
-		if( $this->getRequestParameter( "fchSolicitud" ) ){
-			$cotizacion->crearTareaIDGEnvioOportuno( $this->getRequestParameter( "fchSolicitud" )." ".$this->getRequestParameter( "horaSolicitud" ));
-		}
+            }
 
+            if( $this->getRequestParameter( "observaciones_idg" )!==null ){
+                    $tarea = $cotizacion->getTareaIDGEnvioOportuno();
+                    $tarea->setCaObservaciones( $this->getRequestParameter( "observaciones_idg" ) );
+                    $tarea->save();
+            }
 
-		if( $this->getRequestParameter( "fchPresentacion" ) ){
-			$cotizacion->setFchpresentacion( $this->getRequestParameter( "fchPresentacion" )." ".$this->getRequestParameter( "horaPresentacion" ) );
-
-		}
-
-		if( $this->getRequestParameter( "observaciones_idg" )!==null ){
-			$tarea = $cotizacion->getTareaIDGEnvioOportuno();
-			$tarea->setCaObservaciones( $this->getRequestParameter( "observaciones_idg" ) );
-			$tarea->save();
-		}
-
-		if( !$this->getRequestParameter("cotizacionId") ){
-			$tarea = $cotizacion->getTareaIDGEnvioOportuno(); //Crea la tarea si no existe
-			//$tarea->notificar();
-		}
-
-		$this->responseArray = array();
-		$this->responseArray['idcotizacion']=$cotizacion->getCaIdcotizacion();
-		$this->responseArray['success']=true;
-
-		$this->setTemplate("responseTemplate");
-
+            if( !$this->getRequestParameter("cotizacionId") ){
+                    $tarea = $cotizacion->getTareaIDGEnvioOportuno(); //Crea la tarea si no existe
+                    //$tarea->notificar();
+            }
+            $this->responseArray = array();
+            $this->responseArray['idcotizacion']=$cotizacion->getCaIdcotizacion();
+            $this->responseArray['success']=true;
+            $this->setTemplate("responseTemplate");
 	}
-
 
 	/*
 	* Anula una cotizacion
 	* @author Andres Botero
 	*/
-
 	public function executeAnularCotizacion(){
-		$cotizacion = Doctrine::getTable("Cotizacion")->find( $this->getRequestParameter("idcotizacion") );
-		$this->forward404Unless($cotizacion);
-		$cotizacion->setCaFchanulado(date("Y-m-d H:i:s"));
-		$cotizacion->setCaUsuanulado($this->getUser()->getUserId());
-		$cotizacion->save();
+            $cotizacion = Doctrine::getTable("Cotizacion")->find( $this->getRequestParameter("idcotizacion") );
+            $this->forward404Unless($cotizacion);
+            $cotizacion->setCaFchanulado(date("Y-m-d H:i:s"));
+            $cotizacion->setCaUsuanulado($this->getUser()->getUserId());
+            $cotizacion->save();
 
-		$tarea = $cotizacion->getTareaIDGEnvioOportuno();
-		if( $tarea ){
-			$tarea->delete();
-		}
+            $tarea = $cotizacion->getTareaIDGEnvioOportuno();
+            if( $tarea ){
+                    $tarea->delete();
+            }
+            $productos = $cotizacion->getCotProductos();
 
-
-		$productos = $cotizacion->getCotProductos();
-
-		foreach( $productos as $producto ){
-			if( $producto->getCaIdtarea() ){
-				$tarea  = Doctrine::getTable("NotTarea")->find( $producto->getCaIdtarea() );
-				$tarea->setCaFchterminada( date("Y-m-d H:i:s") );
-				$tarea->save();
-			}
-		}
-		$this->redirect("cotizaciones/consultaCotizacion?id=".$cotizacion->getCaIdcotizacion());
+            foreach( $productos as $producto ){
+                    if( $producto->getCaIdtarea() ){
+                            $tarea  = Doctrine::getTable("NotTarea")->find( $producto->getCaIdtarea() );
+                            $tarea->setCaFchterminada( date("Y-m-d H:i:s") );
+                            $tarea->save();
+                    }
+            }
+            $this->redirect("cotizaciones/consultaCotizacion?id=".$cotizacion->getCaIdcotizacion());
 	}
 
 	/*
@@ -314,31 +284,29 @@ class cotizacionesActions extends sfActions
 	* @author Andres Botero
 	*/
 	public function executeGuardarAgentes(){
-		$cotizacion = Doctrine::getTable("Cotizacion")->find( $this->getRequestParameter("idcotizacion") );
-		$this->forward404Unless($cotizacion);
-		$datosag = $this->getRequestParameter( "datosag" );
-		$this->forward404Unless($datosag!==null);
-        if( $datosag!==null ){
+            $cotizacion = Doctrine::getTable("Cotizacion")->find( $this->getRequestParameter("idcotizacion") );
+            $this->forward404Unless($cotizacion);
+            $datosag = $this->getRequestParameter( "datosag" );
+            $this->forward404Unless($datosag!==null);
+            if( $datosag!==null ){
+                Doctrine_Query::create()
+                               ->delete()
+                               ->from("CotContactoAg ct")
+                               ->where("ct.ca_idcotizacion = ?", $cotizacion->getCaIdcotizacion())
+                               ->execute();
 
-            Doctrine_Query::create()
-                           ->delete()
-                           ->from("CotContactoAg ct")
-                           ->where("ct.ca_idcotizacion = ?", $cotizacion->getCaIdcotizacion())
-                           ->execute();
-
-            if( $datosag ){
-                $idcontactos = array_unique(explode("|", $datosag ));
-                foreach($idcontactos as $idcontacto ){
-                    $contactoAg = new CotContactoAg();
-                    $contactoAg->setCaIdcotizacion($cotizacion->getCaIdcotizacion());
-                    $contactoAg->setCaIdcontacto( $idcontacto );
-                    $contactoAg->save();
+                if( $datosag ){
+                    $idcontactos = array_unique(explode("|", $datosag ));
+                    foreach($idcontactos as $idcontacto ){
+                        $contactoAg = new CotContactoAg();
+                        $contactoAg->setCaIdcotizacion($cotizacion->getCaIdcotizacion());
+                        $contactoAg->setCaIdcontacto( $idcontacto );
+                        $contactoAg->save();
+                    }
                 }
             }
-        }
-		$this->responseArray = array("success"=>true);
-		$this->setTemplate("responseTemplate");
-
+            $this->responseArray = array("success"=>true);
+            $this->setTemplate("responseTemplate");
 	}
 
 	/*
@@ -346,7 +314,6 @@ class cotizacionesActions extends sfActions
 	* @author Andres Botero
 	*/
 	public function executeDatosAgentes(){
-
 
 		$cotizacion = Doctrine::getTable("Cotizacion")->find( $this->getRequestParameter("idcotizacion") );
 		$this->forward404Unless( $cotizacion );
@@ -414,7 +381,6 @@ class cotizacionesActions extends sfActions
             }else{
                 $q->andWhereIn("s.ca_idciudad", $ciudades );
             }
-
             /*
              *  Contactos de los traficos seleccionados
              */
@@ -424,17 +390,13 @@ class cotizacionesActions extends sfActions
             $contactos1 = array();
 
         }
-
 		/*
 		* Muestra todos los contactos de ASW
 		*/
 		//FIX-ME Usar el registro idgrupo de la tabla Ids
-
 		if( $lejanoOriente ){
 
-
-
-            $contactos3 = Doctrine_Query::create()
+                $contactos3 = Doctrine_Query::create()
                              ->from("IdsContacto c")
                              ->innerJoin("c.IdsSucursal s")
                              ->innerJoin("s.Ids i")
@@ -448,15 +410,11 @@ class cotizacionesActions extends sfActions
                              ->execute();
 
             $contactos1 = array_merge($contactos1, $contactos3);
-
-
 		}
-
 
         /*
         *  Contactos que estan en la cotizacion actualmente
         */
-
         $contactos2 = Doctrine_Query::create()
                                 ->from("IdsContacto c")
                                 ->innerJoin("c.IdsSucursal s")
@@ -478,7 +436,7 @@ class cotizacionesActions extends sfActions
 
 		$agentes = array();
 		//$contactos = array_unique($contactos);
-        $incluido = array();
+            $incluido = array();
    		foreach ( $contactos as $contacto ) {
 
 			if( in_array( $contacto["ca_idcontacto"] ,  $datosag ) ){
@@ -486,8 +444,6 @@ class cotizacionesActions extends sfActions
 			}else{
 				$sel = false;
 			}
-
-
             if(!in_array( $contacto["ca_idcontacto"] ,  $incluido )){
 
 
@@ -504,11 +460,8 @@ class cotizacionesActions extends sfActions
             }
             $incluido[] = $contacto["ca_idcontacto"];
 		}
-
 		$this->responseArray = array("agentes"=>$agentes, "total"=>count($this->agentes), "success"=>true);
 		$this->setTemplate("responseTemplate");
-
-
 	}
 
 	/*
@@ -530,21 +483,16 @@ class cotizacionesActions extends sfActions
 		$textos = sfYaml::load($config);
 		$this->asunto = sprintf( $textos['asuntoEmail'], $this->cotizacion->getCaConsecutivo() );
 		$this->mensaje = sprintf( $textos['mensajeEmail'], $this->cotizacion->getContacto()->getNombre(), $this->cotizacion->getCaConsecutivo() );
-
 		$this->tarea = $this->cotizacion->getTareaIDGEnvioOportuno();
 
-        $this->observacionesIdg = ParametroTable::retrieveByCaso("CU076");
-
-        $this->notas = sfYaml::load(sfConfig::get('sf_app_module_dir').DIRECTORY_SEPARATOR."cotizaciones".DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."notas.yml");
-
+            $this->observacionesIdg = ParametroTable::retrieveByCaso("CU076");
+            $this->notas = sfYaml::load(sfConfig::get('sf_app_module_dir').DIRECTORY_SEPARATOR."cotizaciones".DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."notas.yml");
 	}
 	/*
 	* Genera un archivo PDF a partir de una cotización
 	* @author
 	*/
 	public function executeGenerarPDFColmas(){
-
-
 		$this->cotizacion =  Doctrine::getTable("Cotizacion")->find( $this->getRequestParameter("id") );
 		$this->forward404Unless( $this->cotizacion );
 
@@ -565,16 +513,11 @@ class cotizacionesActions extends sfActions
 			$grupos[$row["ca_transporte"]][]=$row["ca_modalidad"];
 			$grupos[$row["ca_transporte"]] = array_unique( $grupos[$row["ca_transporte"]] );
 		}
-
-
-        $this->setTemplate("generarPDF".$this->cotizacion->getCaEmpresa());
-
-		$this->grupos = $grupos;
+            $this->setTemplate("generarPDF".$this->cotizacion->getCaEmpresa());
+            $this->grupos = $grupos;
 	}
 
     public function executeGenerarPDFColtrans(){
-
-
 		$this->cotizacion =  Doctrine::getTable("Cotizacion")->find( $this->getRequestParameter("id") );
 		$this->forward404Unless( $this->cotizacion );
 
@@ -595,16 +538,12 @@ class cotizacionesActions extends sfActions
 			$grupos[$row["ca_transporte"]][]=$row["ca_modalidad"];
 			$grupos[$row["ca_transporte"]] = array_unique( $grupos[$row["ca_transporte"]] );
 		}
-
-
-        $this->setTemplate("generarPDF".$this->cotizacion->getCaEmpresa());
+            $this->setTemplate("generarPDF".$this->cotizacion->getCaEmpresa());
 
 		$this->grupos = $grupos;
 	}
 
    public function executeGenerarPDF(){
-
-
 		$this->cotizacion =  Doctrine::getTable("Cotizacion")->find( $this->getRequestParameter("id") );
 		$this->forward404Unless( $this->cotizacion );
 
@@ -625,21 +564,14 @@ class cotizacionesActions extends sfActions
 			$grupos[$row["ca_transporte"]][]=$row["ca_modalidad"];
 			$grupos[$row["ca_transporte"]] = array_unique( $grupos[$row["ca_transporte"]] );
 		}
-
-
-        $this->setTemplate("generarPDF".$this->cotizacion->getCaEmpresa());
-
+                $this->setTemplate("generarPDF".$this->cotizacion->getCaEmpresa());
 		$this->grupos = $grupos;
 	}
-
-
     /*
 	* Genera un archivo PDF con las notas unicamente
 	* @author Andres Botero
 	*/
 	public function executeGenerarPDFNotas(){
-
-
 		$this->cotizacion =  Doctrine::getTable("Cotizacion")->find( $this->getRequestParameter("id") );
 		$this->forward404Unless( $this->cotizacion );
 
@@ -648,8 +580,6 @@ class cotizacionesActions extends sfActions
 
 		$this->imprimirNotas = $this->getRequestParameter("notas");
 	}
-
-
 	/*
 	* Envia una cotización por correo
 	*/
@@ -657,7 +587,6 @@ class cotizacionesActions extends sfActions
 		$this->cotizacion =  Doctrine::getTable("Cotizacion")->find( $this->getRequestParameter("id") );
 
 		$user = $this->getUser();
-
 		//Crea el correo electronico
 		$email = new Email();
 		$email->setCaUsuenvio( $user->getUserId() );
@@ -703,10 +632,10 @@ class cotizacionesActions extends sfActions
 		$email->setCaBody( $mensaje.$usuario->getFirma() );
 		$email->setCaBodyhtml( Utils::replace($mensaje).$usuario->getFirmaHTML() );
 
-        $email->save(); //guarda el cuerpo del mensaje
+                $email->save(); //guarda el cuerpo del mensaje
 		$incluirPDF = $this->getRequestParameter("incluirPDF");
 		if( $incluirPDF ){
-            $directory = $email->getDirectorio();
+                $directory = $email->getDirectorio();
 			if( !is_dir($directory) ){
                 @mkdir($directory, 0777, true);
             }
@@ -769,7 +698,6 @@ class cotizacionesActions extends sfActions
 		//}
 	}
 
-
 	/*
 	* Copia una cotización existente en una nueva
 	* @author: Andres Botero
@@ -784,8 +712,18 @@ class cotizacionesActions extends sfActions
 
             $newCotizacion = $cotizacion->copy( false ); //La copia recursiva se hace paso a paso por que las llaves son naturales
             $user = $this->getUser();
-            $sig = CotizacionTable::siguienteConsecutivo( date("Y"),$cotizacion->getCaEmpresa() );
-            $newCotizacion->setCaConsecutivo( $sig );
+            $nv=$this->getRequestParameter("nv");
+            if(isset($nv) && $nv=="true")
+            {
+                //$sig=
+                $newCotizacion->setCaVersion( $cotizacion->setCaVersion()+1 );
+            }
+            else
+            {
+                $sig = CotizacionTable::siguienteConsecutivo( date("Y"),$cotizacion->getCaEmpresa() );
+                $newCotizacion->setCaConsecutivo( $sig );
+            }
+            //$newCotizacion->setCaConsecutivo( $sig );
             $newCotizacion->setCaIdgEnvioOportuno(null);
             $newCotizacion->setCaFchcreado( date("Y-m-d H:i:s") );
             $newCotizacion->setCaUsucreado( $user->getUserId() );
@@ -825,7 +763,6 @@ class cotizacionesActions extends sfActions
                     }
                 }
 
-
                 $recargos = $producto->getRecargosGenerales();
                 foreach( $recargos as $recargo ){
 
@@ -853,8 +790,6 @@ class cotizacionesActions extends sfActions
                 $newRecargo->save( $conn );
             }
 
-
-
             $seguros = $cotizacion->getCotSeguro();
             foreach( $seguros as $seguro ){
                 $newSeguro = $seguro->copy( false );
@@ -870,7 +805,6 @@ class cotizacionesActions extends sfActions
 
             }
 
-
             $contactos = $cotizacion->getCotContactoAg();
             foreach( $contactos as $contacto ){
                 $newContacto = $contacto->copy( false );
@@ -878,7 +812,6 @@ class cotizacionesActions extends sfActions
                 $newContacto->save( $conn );
 
             }
-
             $tarifas = $cotizacion->getCotConceptoAduana();
             foreach( $tarifas as $tarifa ){
                 $newTarifa = $tarifa->copy( false );
@@ -901,7 +834,6 @@ class cotizacionesActions extends sfActions
 	* GRILLA PRODUCTOS (TRAYECTOS)
 	*
 	**************************************************************************/
-
 	/*
 	* Guarda los cambios realizados a Productos
 	* @author Andres Botero
@@ -2381,7 +2313,6 @@ class cotizacionesActions extends sfActions
                     ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
                     ->execute();
             echo "<br>Numero:".$i++."<br><pre>"; print_r($h);echo "</pre>";
-//            continue;
             $prod=true;
             $idproducto="";
             foreach($h as $s)
@@ -2425,6 +2356,31 @@ class cotizacionesActions extends sfActions
         }
     }
 
+    public function executeInformes()
+    {
+
+    }
+
+    public function executeInforme()
+    {
+
+    }
     
+    public function executeDatosChart()
+    {
+        
+        $data[]=array("season"=>"Summer","total"=>200);
+        $data[]=array("season"=>"Summer2","total"=>500);
+        $data[]=array("season"=>"otro","total"=>1200);
+        
+        $this->responseArray = array("success"=>true, "data"=>$data  );
+        $this->setTemplate("responseTemplate");
+/*        {
+            season: 'Summer',
+            total: 150
+        }
+ *
+ */
+    }
 }
 ?>
