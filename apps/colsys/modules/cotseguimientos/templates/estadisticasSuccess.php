@@ -24,16 +24,19 @@ Datos basados en <?=$numcotizaciones?> cotizaciones
 		<th scope="col">Estado</th>
 		<th scope="col">Cantidad de trayectos</th>
         <th scope="col">Cantidad de trayectos con seguimientos</th>
+        <th scope="col">Seguimiento</th>
 	</tr>
 	<?
 	$total = 0;
     $total2 = 0;
-	foreach( $rows as $row ){        
+    echo count($rows);
+	foreach( $rows as $row ){
 	?>	
 	<tr>
 		<td><?=$estados[$row["p_ca_etapa"]]?></td>
 		<td><?=$row["p_count"]?></td>
         <td><?=$row["s_conseg"]?></td>
+        <td><?=$row["s_seguimiento"]?></td>
 	</tr>	
 	<?	
 	$total+=$row["p_count"];

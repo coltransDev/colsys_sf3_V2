@@ -311,7 +311,7 @@ var tabs = new Ext.FormPanel({
                 {
 ?>
                     ,{
-					xtype:'textfield',
+					xtype:'hidden',
 					fieldLabel: 'Usuario',
 					autoHeight:true,
 					name : 'login',

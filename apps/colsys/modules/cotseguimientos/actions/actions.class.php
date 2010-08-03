@@ -10,7 +10,6 @@
  */
 class cotseguimientosActions extends sfActions
 {
-
 	const RUTINA = 19;
 	/**
 	* Executes index action
@@ -37,12 +36,8 @@ class cotseguimientosActions extends sfActions
                                     ->createQuery("s")
                                     ->orderBy("s.ca_nombre")
                                     ->execute();
-
 		$this->estados = ParametroTable::retrieveByCaso( "CU074" );
-
 	}
-
-
 
 	/**
 	* Muestra las estadisticas por sucurrsal o por usuario
@@ -94,15 +89,35 @@ class cotseguimientosActions extends sfActions
                         ->execute();
         $this->numcotizaciones = count($cotizaciones);
 
-        $this->rows = $q->select("COUNT(p.ca_idproducto) as count, count(s.ca_idproducto) as conseg, p.ca_etapa")
+        $segNA = ParametroTable::retrieveByCaso( "CU087" );
+//         print_r($segNA);
+/*        foreach( $segNA as $estado ){
+            $this->estados[$estado->getCaValor()]=$estado->getCaValor2();
+        }
+        exit;
+ *
+ */
+        if(count($segNA)>0)
+        {
+            $case="CASE";
+            foreach($segNA as $s)
+            {
+                $case .=" WHEN s.ca_seguimiento='".$s->getCaValor()."' and p.ca_etapa='NAP' THEN '".$s->getCaValor()."' ";
+            }
+            $case.=" ELSE ''
+                END";
+        }
+//                    ELSE 'other'
+//       END
+
+        $this->rows = $q->select("COUNT(p.ca_idproducto) as count, count(s.ca_idproducto) as conseg, p.ca_etapa,(".$case.") as seguimiento")
                         ->addGroupBy("p.ca_etapa")
+                        ->addGroupBy("seguimiento")
                         ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
                         ->execute();
-
-
-
-
-
+                
+        //print_r($this->rows);
+        //exit;
         $q = Doctrine_Query::create()
                              ->select("COUNT(c.ca_idcotizacion) as count, count(s.ca_idcotizacion) as conseg, c.ca_etapa")
                              ->from("Cotizacion c")
@@ -113,7 +128,6 @@ class cotseguimientosActions extends sfActions
                              ->addWhere("c.ca_fchcreado BETWEEN ? AND ? AND c.ca_etapa IS NOT NULL", array($fechaInicial, $fechaFinal))
                              ->addWhere("p.ca_idproducto IS NULL");
                              //->orderBy("c.ca_etapa");
-
 
 		if( $checkboxVendedor ){
             $q->addWhere("c.ca_usuario = ?", $this->login );
@@ -128,8 +142,6 @@ class cotseguimientosActions extends sfActions
 
         $this->rows2 = $q->setHydrationMode(Doctrine::HYDRATE_SCALAR)->execute();
 
-
-
 		$this->fechaInicial = $fechaInicial;
 		$this->fechaFinal = $fechaFinal;
 
@@ -139,22 +151,13 @@ class cotseguimientosActions extends sfActions
         foreach( $estados as $estado ){
             $this->estados[$estado->getCaValor()]=$estado->getCaValor2();
         }
-
 	}
-
-
 
 	public function executeVerSeguimiento( $request ){
 		$this->cotizacion = Doctrine::gettable("Cotizacion")->find( $request->getParameter("idcotizacion") );
 		$this->forward404Unless( $this->cotizacion );
-
-
 		$this->productos = $this->cotizacion->getCotProductos();
-
-		/*
-		*/
 	}
-
 
 	public function executeFormSeguimiento( $request ){
 		$this->cotizacion = Doctrine::gettable("Cotizacion")->find( $request->getParameter("idcotizacion") );
@@ -163,20 +166,14 @@ class cotseguimientosActions extends sfActions
         if( $request->getParameter("idproducto") ){
             $this->producto = Doctrine::gettable("CotProducto")->find( $request->getParameter("idproducto") );
             $this->forward404Unless( $this->producto );
-            //$this->ultSeguimiento = $this->producto->getUltSeguimiento();
             $this->seguimientos = $this->producto->getSeguimientos();
         }else{
-            //$this->ultSeguimiento = $this->cotizacion->getUltSeguimiento();
-
             $this->seguimientos = $this->cotizacion->getSeguimientos();
         }
 
-
 		$this->form = new SeguimientoForm();
 
-
 		if ($request->isMethod('post')){
-
 			$bindValues = array();
 			$bindValues["seguimiento"] = $request->getParameter("seguimiento");
 			$bindValues["etapa"] = $request->getParameter("etapa");
@@ -186,7 +183,6 @@ class cotseguimientosActions extends sfActions
 			}
 
 			$this->form->bind( $bindValues );
-
 			if( $this->form->isValid() ){
 				$this->executeGuardarSeguimiento( $request );
 				return sfView::SUCCESS;
@@ -195,76 +191,73 @@ class cotseguimientosActions extends sfActions
 	}
 
 	public function executeGuardarSeguimiento( $request ){
+        $cotizacion = Doctrine::gettable("Cotizacion")->find( $request->getParameter("idcotizacion") );
+                $this->forward404Unless( $cotizacion );
 
-            $cotizacion = Doctrine::gettable("Cotizacion")->find( $request->getParameter("idcotizacion") );
-                    $this->forward404Unless( $cotizacion );
+        if( $request->getParameter("idproducto") ){
+            $producto = Doctrine::gettable("CotProducto")->find( $request->getParameter("idproducto") );
+            $this->forward404Unless( $producto );
 
-            if( $request->getParameter("idproducto") ){
-                $producto = Doctrine::gettable("CotProducto")->find( $request->getParameter("idproducto") );
-                $this->forward404Unless( $producto );
-
-                if( $producto->getCaIdtarea() ){
-                    $tarea  =  Doctrine::gettable("NotTarea")->find( $producto->getCaIdtarea() );
-                    $tarea->setCaFchterminada( date("Y-m-d H:i:s") );
-                    $tarea->save();
-                }
-            }else{
-                 if( $cotizacion->getCaIdtarea() ){
-                    $tarea  =  Doctrine::gettable("NotTarea")->find( $cotizacion->getCaIdtarea() );
-                    $tarea->setCaFchterminada( date("Y-m-d H:i:s") );
-                    $tarea->save();
-                }
+            if( $producto->getCaIdtarea() ){
+                $tarea  =  Doctrine::gettable("NotTarea")->find( $producto->getCaIdtarea() );
+                $tarea->setCaFchterminada( date("Y-m-d H:i:s") );
+                $tarea->save();
             }
+        }else{
+             if( $cotizacion->getCaIdtarea() ){
+                $tarea  =  Doctrine::gettable("NotTarea")->find( $cotizacion->getCaIdtarea() );
+                $tarea->setCaFchterminada( date("Y-m-d H:i:s") );
+                $tarea->save();
+            }
+        }
 
-            $seguimiento = new CotSeguimiento();
+        $seguimiento = new CotSeguimiento();
+        if( $request->getParameter("idproducto") ){
+            $seguimiento->setCaIdproducto( $request->getParameter("idproducto") );
+            $producto->setCaEtapa( $request->getParameter("etapa") );
+            $producto->save();
+        }else{
+            $seguimiento->setCaIdcotizacion( $request->getParameter("idcotizacion") );
+            $cotizacion->setCaEtapa( $request->getParameter("etapa") );
+            $cotizacion->save();
+        }
+        $seguimiento->setCaLogin( $this->getUser()->getUserId() );
+        $seguimiento->setCaFchseguimiento( date("Y-m-d H:i:s") );
+        $seguimiento->setCaSeguimiento( $request->getParameter("seguimiento") );
+        $seguimiento->setCaEtapa( $request->getParameter("etapa") );
+        $seguimiento->save();
+
+        if( $request->getParameter("prog_seguimiento") ){
+            $titulo = "Seguimiento Cotización ".$cotizacion->getCaConsecutivo()." ".$cotizacion->getCliente()->getCaCompania()."";
+            $texto = "Ha programado un seguimiento para una cotización, por favor haga click en el link para realizar esta tarea";
+            $tarea = new NotTarea();
+            $tarea->setCaUrl( "/cotseguimientos/verSeguimiento/idcotizacion/".$cotizacion->getCaIdcotizacion() );
+            $tarea->setCaIdlistatarea( 7 );
+            $tarea->setCaFchvencimiento( $request->getParameter("fchseguimiento")." 23:59:59" );
+            $tarea->setCaFchvisible( $request->getParameter("fchseguimiento")." 00:00:00" );
+            $tarea->setCaUsucreado( $this->getUser()->getUserId() );
+            $tarea->setCaTitulo( $titulo );
+            $tarea->setCaTexto( $texto );
+            $tarea->save();
+            $loginsAsignaciones = array( $this->getUser()->getUserId(), $cotizacion->getCaUsuario() );
+            $loginsAsignaciones = array_unique( $loginsAsignaciones );
+            $tarea->setAsignaciones( $loginsAsignaciones );
+
             if( $request->getParameter("idproducto") ){
-                $seguimiento->setCaIdproducto( $request->getParameter("idproducto") );
-                $producto->setCaEtapa( $request->getParameter("etapa") );
+                $producto->setCaIdtarea( $tarea->getCaIdtarea() );
                 $producto->save();
             }else{
-                $seguimiento->setCaIdcotizacion( $request->getParameter("idcotizacion") );
-                $cotizacion->setCaEtapa( $request->getParameter("etapa") );
+                $cotizacion->setCaIdtarea( $tarea->getCaIdtarea() );
                 $cotizacion->save();
             }
-            $seguimiento->setCaLogin( $this->getUser()->getUserId() );
-            $seguimiento->setCaFchseguimiento( date("Y-m-d H:i:s") );
-            $seguimiento->setCaSeguimiento( $request->getParameter("seguimiento") );
-            $seguimiento->setCaEtapa( $request->getParameter("etapa") );
-            $seguimiento->save();
-
-            if( $request->getParameter("prog_seguimiento") ){
-                $titulo = "Seguimiento Cotización ".$cotizacion->getCaConsecutivo()." ".$cotizacion->getCliente()->getCaCompania()."";
-                $texto = "Ha programado un seguimiento para una cotización, por favor haga click en el link para realizar esta tarea";
-                $tarea = new NotTarea();
-                $tarea->setCaUrl( "/cotseguimientos/verSeguimiento/idcotizacion/".$cotizacion->getCaIdcotizacion() );
-                $tarea->setCaIdlistatarea( 7 );
-                $tarea->setCaFchvencimiento( $request->getParameter("fchseguimiento")." 23:59:59" );
-                $tarea->setCaFchvisible( $request->getParameter("fchseguimiento")." 00:00:00" );
-                $tarea->setCaUsucreado( $this->getUser()->getUserId() );
-                $tarea->setCaTitulo( $titulo );
-                $tarea->setCaTexto( $texto );
-                $tarea->save();
-                $loginsAsignaciones = array( $this->getUser()->getUserId(), $cotizacion->getCaUsuario() );
-                $loginsAsignaciones = array_unique( $loginsAsignaciones );
-                $tarea->setAsignaciones( $loginsAsignaciones );
-
-                if( $request->getParameter("idproducto") ){
-                    $producto->setCaIdtarea( $tarea->getCaIdtarea() );
-                    $producto->save();
-                }else{
-                    $cotizacion->setCaIdtarea( $tarea->getCaIdtarea() );
-                    $cotizacion->save();
-                }
-            }
-
-            $this->redirect( "cotseguimientos/verSeguimiento?idcotizacion=".$cotizacion->getCaIdcotizacion() );
+        }
+        $this->redirect( "cotseguimientos/verSeguimiento?idcotizacion=".$cotizacion->getCaIdcotizacion() );
 	}
 
     public function executeAprobarSeguimiento( $param ){
         $idproducto=$param["idproducto"];
         $etapa=$param["etapa"];
         $seguimientos=(isset($param["seguimiento"])?$param["seguimiento"]:"");
-        //$prog_seguimiento=(isset($param["prog_seguimiento"])?$param["prog_seguimiento"]:"");
         $fchseguimiento=(isset($param["fchseguimiento"])?$param["fchseguimiento"]:"");
 
         if( $idproducto ){
@@ -322,8 +315,7 @@ class cotseguimientosActions extends sfActions
     public function executeAprobarSeguimientos( $request){
         $idproductos=$request->getParameter("idproducto");
         $etapa=$request->getParameter("etapa");
-        $seguimientos=$request->getParameter("seguimiento");
-        //$prog_seguimientos=$request->getParameter("prog_seguimiento");
+        $seguimientos=$request->getParameter("seguimiento");        
         $fchseguimientos=$request->getParameter("fchseguimiento");
         for($i=0;$i<count($idproductos);$i++)
         {
@@ -400,7 +392,6 @@ class cotseguimientosActions extends sfActions
             $email->send(); //envia el mensaje de correo
             //break;
         }
-
     }
 }
 ?>
