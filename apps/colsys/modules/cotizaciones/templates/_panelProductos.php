@@ -427,7 +427,9 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
         Ext.getCmp('guardarbtn'+tipo).disable();
 
         for( var i=0; i< lenght; i++){
-            if( records[i].data.tipo=="concepto" || (records[i].data.tipo=="recargo" && records[i].data.idopcion )){
+            if( records[i].data.tipo=="concepto" || (records[i].data.tipo=="recargo" && records[i].data.idopcion ))
+            {
+                //alert(records[i].data.tipo + " "+ records[i].data.idconcepto)
                 this.guardarGridProductosRec( records[i] );
             }
         }
@@ -445,8 +447,9 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
     guardarGridProductosRec: function( r ){
         var storeProductos = this.store;
         var changes = r.getChanges();
-
+//        alert("1"+tipo +" : "+this.tipo)
         tipo=this.tipo;
+//        alert("2"+tipo +" : "+this.tipo)
 
         if( r.data.iditem && !r.data.inSave ){
             //alert( r.data.id );
@@ -492,7 +495,7 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
                                         r.data.orden = res.idopcion+"-"+r.data.item;
                                     }
                                     if( r.dirty ){
-                                        if(tipo=="OTM/DTA")
+                                        if(r.data.transporte=="OTM-DTA")
                                             Ext.getCmp("grid_productos1").guardarGridProductosRec( r );
                                         else
                                             Ext.getCmp("grid_productos").guardarGridProductosRec( r );
@@ -504,7 +507,7 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
                         if( rec.data.tipo=="recargo" ){
                             rec.set("idcotrecargo", res.idcotrecargo );
                         }
-                        //rec.set("inSave", false);
+                        //rec.set("inSave", false);                        
                         rec.commit();
                         storeProductos.sort("orden", "ASC");
                     }
