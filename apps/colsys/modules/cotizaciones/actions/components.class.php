@@ -199,5 +199,15 @@ class cotizacionesComponents extends sfComponents
 	{
 
     }
+
+    public function executeFormFiltrosPanel()
+	{
+
+    }
+
+    public function executeChart()
+	{
+
+    }
 }
 ?>
