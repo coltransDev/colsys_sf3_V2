@@ -142,7 +142,9 @@ class widgetsComponents extends sfComponents
 				
 		if(!isset( $this->allowBlank )){
 			$this->allowBlank="true";
-		}	
+		}
+
+                
 	}
 	
 	/**
@@ -356,9 +358,8 @@ class widgetsComponents extends sfComponents
         
 	}
 
-    public function executeWidgetPais(){
-		
-
+    public function executeWidgetPais(){		
+        
         $traficos = Doctrine::getTable('Trafico')->createQuery('t')
                             ->where('t.ca_idtrafico != ?', '99-999')
                             ->addOrderBy('t.ca_nombre ASC')
@@ -389,6 +390,18 @@ class widgetsComponents extends sfComponents
                                  );
         }
 	}
+    public function executeUsuarios()
+    {
+        //echo $this->getRequestParameter("perfil");
+
+        $this->usuarios = Doctrine::getTable("Usuario")
+                                   ->createQuery("u")
+                                   ->innerJoin("u.UsuarioPerfil up")
+                                   ->where("u.ca_activo=? AND up.ca_perfil=? ", array('TRUE',$this->perfil))
+                                   ->addOrderBy("u.ca_idsucursal")
+                                   ->addOrderBy("u.ca_nombre")
+                                   ->execute();
+    }
 
     public function executeWidgetAgente(){
 		
@@ -429,6 +442,12 @@ class widgetsComponents extends sfComponents
         $this->data[] = array(  "impoexpo"=>utf8_encode(Constantes::IMPO ),
                                 "transporte"=>utf8_encode(Constantes::MARITIMO ),
                                 "modalidad"=>"DTA");
+        $this->data[] = array(  "impoexpo"=>utf8_encode(Constantes::IMPO ),
+                                "transporte"=>utf8_encode(Constantes::AEREO ),
+                                "modalidad"=>"DTA");
+        $this->data[] = array(  "impoexpo"=>utf8_encode(Constantes::IMPO ),
+                                "transporte"=>utf8_encode(Constantes::MARITIMO ),
+                                "modalidad"=>"TRASLADO");
 	}
 
 
