@@ -107,6 +107,7 @@ TraficoUsers:
       type: string(6)
       primary: true
       notnull: true
+    ca_impo: boolean
     ca_login:
       type: string(15)
       notnull: true
