@@ -23,6 +23,22 @@ class cotseguimientosActions extends sfActions
 		if( $this->nivel==-1 ){
 		//	$this->forward404();
 		}
+		if($this->nivel=="1")
+		{
+			$origenes = Doctrine::getTable("TraficoUsers")
+                                    ->createQuery("tu")
+                                    ->select("tu.*")
+									->where("tu.ca_login=?",array($this->getUser()->getUserId()) )
+                                    ->execute();
+
+			$this->pais_origen="";
+			foreach($origenes as $origen)
+			{
+				$this->pais_origen.=($this->pais_origen!="")?",".$origen->getCaIdtrafico():$origen->getCaIdtrafico();
+
+			}
+			$this->pais_destino="CO-057";
+		}
 
 		$this->usuarios = Doctrine::getTable("Usuario")
                                     ->createQuery("u")
@@ -48,14 +64,20 @@ class cotseguimientosActions extends sfActions
 		$fechaInicial = Utils::parseDate($request->getParameter("fechaInicial"));
 		$fechaFinal = Utils::parseDate($request->getParameter("fechaFinal"));
 
+		$origen = $request->getParameter("origen");
+		$destino = $request->getParameter("destino");
+
         $this->nivel = $this->getUser()->getNivelAcceso( cotseguimientosActions::RUTINA );
 
-        if($this->nivel=="1")
+		$checkboxVendedor=false;
+        $checkboxSucursal=false;
+		
+        if($this->nivel=="2")
         {
             $checkboxVendedor = $request->getParameter( "checkboxVendedor" );
             $checkboxSucursal = $request->getParameter( "checkboxSucursal" );
         }
-        else
+        else if($this->nivel=="0")
         {
             $checkboxVendedor=true;
             $checkboxSucursal=false;
@@ -66,8 +88,12 @@ class cotseguimientosActions extends sfActions
 		$this->usuario = Doctrine::getTable("Usuario")->find( $this->login );
 
 		$q = Doctrine_Query::create()
-                             ->from("CotProducto p")
-                             ->innerJoin("p.Cotizacion c")
+                             ->from("CotProducto p")							
+							 ->innerJoin("p.Cotizacion c")
+							 ->innerJoin("p.Origen o")
+							 ->innerJoin("o.Trafico t")
+							 ->innerJoin("p.Origen d")
+							 ->innerJoin("d.Trafico td")
                              ->innerJoin("c.Usuario u")
                              ->leftJoin("p.CotSeguimiento s" )
                              ->addWhere("c.ca_fchcreado BETWEEN ? AND ? AND p.ca_etapa IS NOT NULL", array($fechaInicial, $fechaFinal));
@@ -81,6 +107,19 @@ class cotseguimientosActions extends sfActions
             $q->addWhere("u.ca_idsucursal = ?", $this->sucursal );
 		}else{
 			$this->sucursal = "";
+		}
+
+		if( $origen ){
+            $q->addWhere("t.ca_idtrafico = ?", $origen );
+			$origen1 = Doctrine::getTable("Trafico")->findBy("ca_idtrafico", $origen);
+			if($origen1)				
+				$this->origen=$origen1[0]->getCaNombre();
+		}
+		if( $destino ){
+            $q->addWhere("td.ca_idtrafico = ?", $destino );
+			$destino1 = Doctrine::getTable("Trafico")->findBy("ca_idtrafico", $destino);
+			if($destino1)
+				$this->destino=$destino1[0]->getCaNombre();
 		}
 
         $cotizaciones = $q->select("p.ca_idcotizacion")
