@@ -8,17 +8,13 @@
 $data = $sf_data->getRaw("data");
 
 ?>
-
-
-
 <script type="text/javascript">
-
 
 WidgetPais = function( config ){
     Ext.apply(this, config);
-    
+    this.data = <?=json_encode($data)?>;
     this.store = new Ext.data.Store({
-				autoLoad : true,
+				autoLoad : false,
 				reader: new Ext.data.JsonReader(
 					{
 						root: 'root',
@@ -29,8 +25,8 @@ WidgetPais = function( config ){
 						{name: 'idtrafico'},
                         {name: 'nombre'}
 					])
-				),
-				proxy: new Ext.data.MemoryProxy( <?=json_encode(array("root"=>$data, "total"=>count($data), "success"=>true) )?> )
+				)
+                //,proxy: new Ext.data.MemoryProxy( <?=json_encode(array("root"=>$data, "total"=>count($data), "success"=>true) )?> )
 			})
 
     WidgetPais.superclass.constructor.call(this, {
@@ -45,13 +41,62 @@ WidgetPais = function( config ){
         mode: 'local',
         listClass: 'x-combo-list-small',
         listeners: {
-            //change: this.onChange
+            render  : function(a ){
+                if( this.pais && this.pais!="todos" ){
+					pais=this.pais.split(",");
+
+
+                    var list = new Array();
+                    for( k in this.data ){
+                        var rec = this.data[k];
+
+                        //if( rec.idtrafico==this.pais )
+						if(jQuery.inArray(rec.idtrafico, pais)>=0)
+						{
+                            list.push( rec );
+                        }
+                    }
+                    var data = new Object();
+                    data.root = list;                    
+                    this.store.loadData(data);
+                }
+                else if( this.pais=="todos" )
+                {
+                    var data = new Object();
+                    data.root = this.data;
+                    this.store.loadData(data);
+                }
+            }
         }
     });
 }
 
 
 Ext.extend(WidgetPais, Ext.form.ComboBox, {
+    
+/*
+    onRender: function(){
+
+    }
+*/
+       //alert(this.pais)
+
+/*        if( typeof(this.idtrafico)!="undefined" && this.idtrafico ){
+            var list = new Array();
+            for( k in this.data ){
+                var rec = this.data[k];
+
+                if( rec.idtrafico==this.idtrafico ){
+                    list.push( rec );
+                }
+            }
+            var data = new Object();
+            data.root = list;
+
+            this.store.loadData(data);
+        }
+*/
+    
     /*onChange :function( field,  newValue,  oldValue ){
         
         
