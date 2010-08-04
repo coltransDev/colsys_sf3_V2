@@ -520,18 +520,27 @@ class widgetsActions extends sfActions
      */
     public function executeListaCotizacionesJSON(){
 		$criterio =  $this->getRequestParameter("query");
+        $transporte =  $this->getRequestParameter("transporte");
+        
         $q = Doctrine::getTable("Cotizacion")
                        ->createQuery("c")
                        ->select("c.ca_idcotizacion, c.ca_consecutivo, p.ca_idproducto, o.ca_ciudad, d.ca_ciudad, o.ca_idciudad, d.ca_idciudad,o.ca_idtrafico, d.ca_idtrafico, p.ca_producto
-                                , p.ca_impoexpo, p.ca_transporte, p.ca_modalidad, con.ca_idcontacto, con.ca_nombres, con.ca_papellido, con.ca_sapellido, con.ca_cargo
-                                ,cl.ca_idcliente, cl.ca_compania, cl.ca_preferencias, cl.ca_confirmar, cl.ca_coordinador, c.ca_usuario, p.ca_idlinea ")                       
+                                , p.ca_impoexpo, p.ca_transporte, p.ca_modalidad, p.ca_incoterms, con.ca_idcontacto, con.ca_nombres, con.ca_papellido, con.ca_sapellido, con.ca_cargo
+                                ,cl.ca_idcliente, cl.ca_compania, cl.ca_preferencias, cl.ca_confirmar, cl.ca_coordinador, c.ca_usuario, p.ca_idlinea,usu.ca_nombre,libcli.ca_cupo, libcli.ca_diascredito,
+                                s.ca_idmoneda,s.ca_prima_tip,s.ca_prima_vlr,s.ca_prima_min,s.ca_obtencion,s.ca_idmonedaobtencion")
                        ->leftJoin("c.CotProducto p")
                        ->leftJoin("p.Origen o")
                        ->leftJoin("p.Destino d")
+                        ->leftJoin("c.CotSeguro s")
                        ->leftJoin("c.Contacto con")
                        ->leftJoin("con.Cliente cl")
+                       ->leftJoin("cl.LibCliente libcli")
+                       ->leftJoin("c.Usuario usu")
                        ->addWhere("c.ca_consecutivo LIKE ?", $criterio."%");
-                       
+        if($transporte!="")
+        {
+            $q->addWhere("p.ca_transporte = ?", utf8_decode($transporte));
+        }
 
         $cotizaciones = $q->setHydrationMode(Doctrine::HYDRATE_SCALAR)->execute();
         
@@ -542,6 +551,35 @@ class widgetsActions extends sfActions
             $cotizaciones[$key]["p_ca_impoexpo"] = utf8_encode($cotizaciones[$key]["p_ca_impoexpo"]);
             $cotizaciones[$key]["p_ca_transporte"] = utf8_encode($cotizaciones[$key]["p_ca_transporte"]);
             $cotizaciones[$key]["cl_ca_compania"] = utf8_encode($cotizaciones[$key]["cl_ca_compania"]);
+            $cotizaciones[$key]["con_ca_idcontacto"] = utf8_encode($cotizaciones[$key]["con_ca_idcontacto"]);
+            $cotizaciones[$key]["con_ca_nombres"] = utf8_encode($cotizaciones[$key]["con_ca_nombres"]);
+            $cotizaciones[$key]["con_ca_papellido"] = utf8_encode($cotizaciones[$key]["con_ca_papellido"]);
+            $cotizaciones[$key]["con_ca_sapellido"] = utf8_encode($cotizaciones[$key]["con_ca_sapellido"]);
+            $cotizaciones[$key]["con_ca_cargo"] = utf8_encode($cotizaciones[$key]["con_ca_cargo"]);
+            $cotizaciones[$key]["cl_ca_preferencias"] = utf8_encode($cotizaciones[$key]["cl_ca_preferencias"]);
+            $cotizaciones[$key]["usu_ca_nombre"] = utf8_encode($cotizaciones[$key]["usu_ca_nombre"]);
+
+            $cotizaciones[$key]["p_ca_modalidad"] = utf8_encode($cotizaciones[$key]["p_ca_modalidad"]);
+
+            $cotizaciones[$key]["p_ca_idlinea"] = utf8_encode($cotizaciones[$key]["p_ca_idlinea"]);
+            $cotizaciones[$key]["p_ca_linea"]="";
+
+            if($cotizaciones[$key]["p_ca_idlinea"]!="")
+            {
+                $q = Doctrine_Query::create()
+                      ->select("p.ca_idproveedor, p.ca_sigla, id.ca_nombre, p.ca_transporte ")
+                      ->from("IdsProveedor p")
+                      ->innerJoin("p.Ids id")
+                      ->addOrderBy("id.ca_nombre");
+                 $q->addWhere("p.ca_idproveedor=?", $cotizaciones[$key]["p_ca_idlinea"] );
+                 $lineas = $q->execute();
+                 if(count($lineas)>0)
+                 {
+                    $cotizaciones[$key]["p_ca_linea"]=utf8_encode(($lineas[0]['ca_sigla']?$lineas[0]['ca_sigla']." - ":"").utf8_encode($lineas[0]['Ids']['ca_nombre']));
+                 }                 
+            }
+
+            $cotizaciones[$key]["cl_ca_confirmar"] = utf8_encode($cotizaciones[$key]["cl_ca_confirmar"]);
 
             $idmodalidad = Doctrine::getTable("Modalidad")
                                              ->createQuery("m")
@@ -553,10 +591,9 @@ class widgetsActions extends sfActions
                                              ->execute();
            $cotizaciones[$key]["idmodalidad"] = $idmodalidad;
         }
-
+        //print_r($cotizaciones);
         $this->responseArray = array("root"=>$cotizaciones, "total"=>count($cotizaciones), "success"=>true);
 		$this->setTemplate("responseTemplate");
-
 
 	}
 
