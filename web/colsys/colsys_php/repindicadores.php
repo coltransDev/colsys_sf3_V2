@@ -1294,7 +1294,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
                     echo "</TR>";
                 }
                 echo "  </TABLE></TD>";
-                $dif_mem = ($rs->Value("ca_observaciones") == 'Cierre contable' or $rs->Value("ca_observaciones") == 'Error de Factura')?null:$dif_mem;
+                $dif_mem = ($rs->Value("ca_observaciones") == 'Cierre contable' or $rs->Value("ca_observaciones") == 'Error de Factura' or $rs->Value("ca_observaciones") == 'Faltantes Soportes Agente')?null:$dif_mem;
                 $color = analizar_dif($tipo, $lci_var, $lcs_var, $dif_mem, $array_avg, $array_pnc, $array_pmc, $array_null); // Función que retorna un Arreglo con el resultado de Dif
                 echo "  <TD Class=$color style='font-size: 9px; text-align:right;'>".$dif_mem."</TD>";
                 continue;
