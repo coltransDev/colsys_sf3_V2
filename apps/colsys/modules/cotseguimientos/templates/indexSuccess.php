@@ -1,3 +1,6 @@
+<?
+include_component("widgets", "widgetPais");
+?>
 <div align="center" >
 <br />
 <h3> Modulo de seguimiento de cotizaciones </h3>
@@ -18,174 +21,7 @@ var tabs = new Ext.FormPanel({
 		activeTab: 0,
 		defaults:{autoHeight:true, bodyStyle:'padding:10px'},
 		id: 'tab-panel', 
-		items:[/*{
-			title:'Consultas',
-			layout:'form',			
-			defaultType: 'textfield',
-			id: 'consultas',
-
-			items: [
-			{
-				xtype:'datefield',
-				checkboxToggle:true,
-				fieldLabel: 'Fecha Inicial',
-				autoHeight:true,
-				name : 'fechaInicialCons',
-				defaults: {width: 300},
-				defaultType: 'textfield',
-				collapsed: true,
-				value: '<?=date("Y-m-")."01"?>',
-				allowBlank: false		 
-				
-			},
-			{
-				xtype:'datefield',
-				checkboxToggle:true,
-				fieldLabel: 'Fecha final',
-				autoHeight:true,
-				name : 'fechaFinalCons',
-				defaults: {width: 300},
-				defaultType: 'textfield',
-				collapsed: true,
-				value: '<?=date("Y-m-d")?>',
-				allowBlank: false					 
-				
-			},
-			new Ext.form.ComboBox({								
-						typeAhead: true,
-						forceSelection: true,
-						triggerAction: 'all',
-						fieldLabel: 'Estado',
-						emptyText:'',
-						selectOnFocus: true,																									
-						listClass: 'x-combo-list-small',
-						mode: 'local',
-						valueField:'etapa',
-						displayField:'valor',
-						hiddenName:'estadoCons',
-						name:'estadoCons',
-						store :  new Ext.data.SimpleStore({
-								fields: ['etapa', 'valor'],
-								data : [
-									<?
-									$i = 0;								
-									foreach( $estados as $estado ){
-										if($i++!=0){
-											echo ",";
-										}
-									?>
-										['<?=$estado->getCaValor()?>', '<?=$estado->getCaValor2()?>']
-									<?
-									}
-									?>
-									]
-							})
-						
-						
-						
-					})
-			
-			,
-			{
-				xtype:'fieldset',
-				checkboxToggle:true,
-				title: 'Consulta por consecutivo',
-				autoHeight:true,
-				defaults: {width: 300},
-				defaultType: 'textfield',
-				collapsed: true,
-				checkboxName: "checkboxConsecutivo", 
-				items :[{
-						fieldLabel: 'Consecutivo',
-						name: 'consecutivo',
-						allowBlank:true
-						
-					}
-				]
-			}
-			,
-			{
-				xtype:'fieldset',
-				checkboxToggle:true,
-				title: 'Consulta por vendedor',
-				autoHeight:true,
-				defaults: {width: 300},
-				defaultType: 'textfield',
-				collapsed: true,
-				checkboxName: "checkboxVendedor", 
-				items :[new Ext.form.ComboBox({		
-							fieldLabel: 'Vendedor',
-							typeAhead: true,
-							forceSelection: true,
-							triggerAction: 'all',
-							emptyText:'Seleccione',
-							selectOnFocus: true,
-							name: 'vendedor',
-							hiddenName: 'login',
-							id: 'vendedor',														
-							valueField:'login',
-							displayField:'nombre',
-							mode: 'local',	
-							listClass: 'x-combo-list-small',
-							store :  new Ext.data.SimpleStore({
-								fields: ['login', 'nombre'],
-								data : [
-									<?
-									$i = 0;								
-									foreach( $usuarios as $usuario ){
-										if($i++!=0){
-											echo ",";
-										}
-									?>
-										['<?=$usuario->getCaLogin()?>', '<?=$usuario->getCaNombre()?>']
-									<?
-									}
-									?>
-									]
-							})	
-							
-						})
-				]
-			}
-			,
-			{
-				xtype:'fieldset',
-				checkboxToggle:true,
-				title: 'Consulta por sucursal',
-				autoHeight:true,
-				defaults: {width: 300},
-				defaultType: 'textfield',
-				collapsed: true,
-				checkboxName: "checkboxSucursal", 
-				items :[new Ext.form.ComboBox({		
-							fieldLabel: 'Nombre',
-							typeAhead: true,
-							forceSelection: true,
-							triggerAction: 'all',
-							emptyText:'Seleccione',
-							selectOnFocus: true,
-							hiddenName: 'sucursal',
-							id: 'sucursal_id',							
-							lazyRender:true,
-							listClass: 'x-combo-list-small',	
-							store: [
-								<?
-								$i = 0;								
-								foreach( $sucursales as $sucursal ){
-									if($i++!=0){
-										echo ",";
-									}
-								?>
-									['<?=$sucursal->getCaIdsucursal()?>', '<?=$sucursal->getCaNombre()?>']
-								<?
-								}
-								?>
-								]
-						})
-				]
-			}
-			]
-		},*/{
+		items:[{
 			title:'Estadisticas',
 			layout:'form',			
 			defaultType: 'textfield',
@@ -218,11 +54,41 @@ var tabs = new Ext.FormPanel({
 					allowBlank: false					 
 					
 				}
+				<?
+				if($nivel==1)
+				{
+				?>
+				,
+				new WidgetPais({fieldLabel: 'País Origen',
+                                                id: 'idorigen',
+                                                hiddenName:'origen',
+                                                pais:'<?=$pais_origen?>'
+                                               }),
+                new WidgetPais({fieldLabel: 'País Destino',
+                                                id: 'iddestino',
+                                                hiddenName:'destino',
+                                                pais:'<?=$pais_destino?>'
+                                               })
+				<?
+				}
+				?>
                 <? 
-                if($nivel=="1") 
+                if($nivel>="2")
                 {
                 ?>
                 ,
+				new WidgetPais({fieldLabel: 'País Origen',
+                                                id: 'tra_origen_id',
+                                                linkCiudad: 'origen',
+                                                hiddenName:'idtra_origen_id',
+                                                pais:'todos'
+                                               }),
+                new WidgetPais({fieldLabel: 'País Destino',
+                                                id: 'tra_destino_id',
+                                                hiddenName:'idtra_destino_id',
+                                                pais:'todos'
+                                               })
+				,
 				{
 				xtype:'fieldset',
 				checkboxToggle:true,
