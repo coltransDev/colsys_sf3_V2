@@ -95,6 +95,43 @@ Trafico:
       type: many
 
 
+TraficoUsers:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: public
+  tableName: tb_traficos_users
+  columns:
+    ca_idtrafico:
+      type: string(6)
+      primary: true
+      notnull: true
+    ca_login:
+      type: string(15)
+      notnull: true
+      primary: false
+    ca_ciudad:
+      type: string(15)
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string
+  relations:
+    Trafico:
+      local: ca_idtrafico
+      foreign: ca_idtrafico
+      type: one
+    Usuario:
+      local: ca_login
+      foreign: ca_login
+      type: one
+    Ciudad:
+      local: ca_ciudad
+      foreign: ca_idciudad
+      type: one
+
+
 TraficoGrupo:
   options:
     symfony:
