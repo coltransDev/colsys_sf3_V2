@@ -1,122 +1,179 @@
 
-<div >
-    <div id="touch" class="product">
-
-        <h3 id="producttitle">
-            <a href="#"><?=image_tag("logo_colsys_small.gif");?></a>
-            
-        </h3>
-
-
-        <div class="productnav" id="manual-nav">
-            <ul>
-                <li id="li_intro"><a id="a_intro" href="#" onclick="mostrarGrupo('intro')">Introducci&oacute;n</a></li>
-
-                <li id="li_tareas"><a id="a_tareas" href="#" onclick="mostrarGrupo('tareas')">Tareas pendientes</a></li>
-               
-                <li id="li_directorio"><a id="a_directorio" href="#" onclick="mostrarGrupo('directorio')">Directorio</a></li>
-                <!--<li id="li_programas"><a id="a_programas" href="#" onclick="mostrarGrupo('programas')">Programas</a></li>-->
-                <li id="li_blog"><a id="a_blog" href="#" onclick="mostrarGrupo('blog')">Blog</a></li>
-            </ul>
-        </div>
-
-        <div id="content-homepage" class="testimonials">
-            
-        </div>
-
-    </div>
-</div>
+<link rel="stylesheet" type="text/css" href="http://www.sencha.com/assets/css/sview2.css" />
 
 
 
-
-<div id="intro" style="display:none" >
-
+<div class="content">
 
 
-            <div id="widgetbox" class="section">
-                
-                                
-                <blockquote>
-                    <p>Las politicas, normas y procedimientos sobre el manejo de la información establecen que el responsable de la información es la persona que la genera y la usa, y es responsabilidad de quien produce la información clasificarla de acuerdo con su valor, teniendo en cuenta su confidencialidad, integridad y disponibilidad.
+    <div id="products" class="extjs">
+        <h1 class="pagetitle">Ext JS <span>Cross-Browser Rich Internet Application Framework</span> <a href="download.php" class="download">Download</a></h1>
 
-
-        Para mas información consulte el documento POLITICAS GENERALES SOBRE MANEJO DE LA INFORMACION EN COLTRANS S.A. y AGENCIA DE ADUANAS COLMAS LTDA. en ISO Q.C.S.</p>
-
-                    <cite>  </cite>
-                </blockquote>
+        <div id="samples">
+            <div id="samples-cb">
+                <img src="/s.gif" class="normal-view" title="Full view with descriptions"/>
+                <img src="/s.gif" class="condensed-view" title="Condensed view" />
+                <img src="/s.gif" class="mini-view" title="Mini view" />
             </div>
-        
-    
+
+            <div id="sample-menu"><div id="sample-menu-inner"></div></div>
+            <div id="sample-box"><div id="sample-box-inner">
+
+            </div></div>
+
+        </div>
+    </div>
+</div><!-- end viewport -->
 
 
-</div>
 
+<script type="text/javascript">
+Ext.onReady(function(){
 
-<div id="tareas" style="display:none">
-	<h1>Tareas</h1>
+	var catalog = [
 
-	<?
-    //include_component("notificaciones","tareasPendientes");
-    ?>
-</div>
+            <?
+            $i = 0;
+            foreach( $grupos as $key=>$grupo ){
 
-<div id="directorio" style="display:none">
-	<?=include_partial("homepage/directorio")?>
-</div>
-
-<div id="programas" style="display:none">
-	<h1>Programas</h1>
-    <? //include_component("homepage","programas")?>
-	
-</div>
-
-<div id="blog" style="display:none">
-	<h1>Blog</h1>
-
-
-</div>
-
-<script language="javascript" type="text/javascript">
-	function mostrarGrupo( idgrupo ){
-		//alert(idgrupo);
-		var childs = document.getElementById("manual-nav" ).getElementsByTagName("li");
-
-		for( var i = 0; i < childs.length; i++ )
-		{
-			childs[i].className = "group";            
-		}
-
-        var childs = document.getElementById("manual-nav" ).getElementsByTagName("a");
-
-		for( var i = 0; i < childs.length; i++ )
-		{
-			childs[i].className = "";
-		}
-
-
-		document.getElementById("li_"+idgrupo ).className = "group group-active";
-        document.getElementById("a_"+idgrupo ).className = "active";
-		document.getElementById("content-homepage" ).innerHTML = document.getElementById( idgrupo ).innerHTML;
-
-        if( idgrupo=="tareas" ){
-            Ext.Ajax.request(
-			{
-				url: '<?=url_for("homepage/getTareas" )?>',
-
-                success: function(xhr) {
-                    document.getElementById("content-homepage" ).innerHTML = xhr.responseText;
-                    $('.qtip').tooltip();
-                },
-                failure: function() {
-                    Ext.Msg.alert("Error", "Server communication failure");
+                if( $i++>0 ){
+                    echo ",";
                 }
+            ?>
+            {
+                title: '<?=$key?>',
+                iconCls:'icon-apps',
+                cls:'active',
+                samples: [
+                    <?
+                    $j=0;
+                    foreach( $grupo as $rutina ){
+                        if( $j++>0 ){
+                            echo ",";
+                        }
+                    
+                    ?>
+                    {
+                    text: '<?=$rutina["ca_opcion"]?>',
+                    url: '<?=$rutina["ca_programa"]?>',
+                    icon: 'feeds.gif',
+                    desc: '<?=$rutina["ca_descripcion"]?>',
+                    status: 'new'
+                    }
+                    <?
+                    }
+                    ?>
+                ]
+            }
+            <?
+            }
+            ?>
 
-			 }
-            );
-        }
-	}
+    ];
     
-	mostrarGrupo("intro");
-	//mostrarGrupo("programas");
+
+    for(var i = 0, c; c = catalog[i]; i++){
+        c.id = 'sample-' + i;
+    }
+
+	var menu = Ext.get('sample-menu-inner'),
+		ct = Ext.get('sample-box-inner');
+
+	var tpl = new Ext.XTemplate(
+        '<div id="sample-ct">',
+            '<tpl for=".">',
+            '<div><a name="{id}" id="{id}"></a><h2><div unselectable="on">{title}</div></h2>',
+            '<dl>',
+                '<tpl for="samples">',
+                    '<dd ext:url="{url}"><img title="{text}" src="/deploy/dev/examples/shared/screens/{icon}"/>',
+                        '<div><h4>{text}</h4><p>{desc}</p></div>',
+                    '</dd>',
+                '</tpl>',
+            '<div style="clear:left"></div></dl></div>',
+            '</tpl>',
+        '</div>'
+    );
+
+	tpl.overwrite(ct, catalog);
+
+
+	var tpl2 = new Ext.XTemplate(
+        '<tpl for="."><a href="#{id}" hidefocus="on" class="{cls}" id="a4{id}"><img src="http://extjs.com/s.gif" class="{iconCls}">{title}</a></tpl>'
+    );
+    tpl2.overwrite(menu, catalog);
+
+
+	function calcScrollPosition(){
+		var found = false, last;
+		ct.select('a[name]', true).each(function(el){
+			last = el;
+			if(el.getOffsetsTo(ct)[1] > -5){
+				activate(el.id)
+				found = true;
+				return false;
+			}
+		});
+		if(!found){
+			activate(last.id);
+		}
+	}
+
+	var bound;
+	function bindScroll(){
+		ct.on('scroll', calcScrollPosition, ct, {buffer:250});
+		bound = true;
+	}
+	function unbindScroll(){
+		ct.un('scroll', calcScrollPosition, ct);
+		bound = false;
+	}
+	function activate(id){
+		Ext.get('a4' + id).radioClass('active');
+	}
+
+	ct.on('mouseover', function(e, t){
+        if(t = e.getTarget('dd')){
+            Ext.fly(t).addClass('over');
+        }
+    });
+    ct.on('mouseout', function(e, t){
+        if((t = e.getTarget('dd')) && !e.within(t, true)){
+            Ext.fly(t).removeClass('over');
+        }
+    });
+	ct.on('click', function(e, t){
+        if((t = e.getTarget('dd', 5)) && !e.getTarget('a', 3)){
+            var url = Ext.fly(t).getAttributeNS('ext', 'url');
+			if(url){
+				window.open(url.indexOf('http') === 0 ? url : ('/deploy/dev/examples/' + url));
+			}
+        }else if(t = e.getTarget('h2', 3, true)){
+			t.up('div').toggleClass('collapsed');
+		}
+    });
+
+	menu.on('click', function(e, t){
+		e.stopEvent();
+		if((t = e.getTarget('a', 2)) && bound){
+			var id = t.href.split('#')[1];
+			var top = Ext.getDom(id).offsetTop;
+			Ext.get(t).radioClass('active');
+			unbindScroll();
+			ct.scrollTo('top', top, {callback:bindScroll});
+		}
+	});
+
+	Ext.get('samples-cb').on('click', function(e){
+		var img = e.getTarget('img', 2);
+		if(img){
+			Ext.getDom('samples').className = img.className;
+			calcScrollPosition.defer(10);
+		}
+	});
+
+	bindScroll();
+});
+
 </script>
+
+
