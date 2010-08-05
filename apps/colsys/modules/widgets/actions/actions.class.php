@@ -339,6 +339,43 @@ class widgetsActions extends sfActions
 
     }
 
+
+    /*
+	*
+	*/
+	public function executeDatosComboUsuario(){
+		$criterio =  $this->getRequestParameter("query");
+
+       
+
+        $q = Doctrine::getTable("Usuario")
+                             ->createQuery("u")
+                             //->where("(u.ca_cargo='Gerente Sucursal' OR u.ca_cargo like '%Ventas%' OR u.ca_departamento='Comercial')")
+                             ->addWhere("u.ca_activo = true")
+                             ->addOrderBy("u.ca_nombre");
+
+        if( $criterio ){
+            $q->addWhere("LOWER(u.ca_nombre) LIKE ?", "%".strtolower($criterio)."%");
+        }
+
+        $usuarios = $q->execute();
+        $data = array();
+        foreach( $usuarios as $usuario ){
+            $row = array();
+            $row["login"]=utf8_encode($usuario->getCaLogin());
+            $row["nombre"]=utf8_encode($usuario->getCaNombre());
+            $row["cargo"]=utf8_encode($usuario->getCaCargo());
+            $row["sucursal"]=utf8_encode($usuario->getSucursal()->getCaNombre());
+            $row["icon"]=$row["icon"]=$usuario->getImagenUrl("60x80");                
+            $data[] = $row;
+
+        }
+
+        $this->responseArray = array( "total"=>count( $data ), "root"=>$data, "success"=>true  );
+        $this->setTemplate("responseTemplate");
+
+    }
+
 	public function executeListaContactosClientesJSON(){
 		$criterio =  $this->getRequestParameter("query");
 

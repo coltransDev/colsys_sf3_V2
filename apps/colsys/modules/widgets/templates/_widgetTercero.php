@@ -19,7 +19,7 @@ WidgetTercero = function( config ){
     
     this.store = new Ext.data.Store({
         proxy: new Ext.data.HttpProxy({
-            url: '<?=url_for("widgets/listaTercerosJSON")?>',
+            url: '<?=url_for("widgets/listaTercerosJSON")?>'
             
         }),
         baseParams: {tipo: this.tipo},
