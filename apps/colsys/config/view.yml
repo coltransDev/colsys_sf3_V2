@@ -9,7 +9,7 @@ default:
     keywords:     colsys
     language:     en	
 
-  stylesheets:    [coltrans, print: { media: print }, jquery/jquery.tooltip.css, ext/css/ext-all, ext/css/xtheme-gray, menu/menu]
+  stylesheets:    [coltrans, print: { media: print }, jquery/jquery.tooltip.css, ext/css/ext-all, ext/css/xtheme-gray, menu/menu, blog]
 
   javascripts:    [comunes,  jquery/jquery.js, jquery/jquery.tooltip.js, jquery/jquery.dimensions.js ,ext/adapter/ext/ext-base, ext/ext-all-debug, ext/src/locale/ext-lang-es.js , menu/menu, Base64]
 
