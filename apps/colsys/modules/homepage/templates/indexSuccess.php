@@ -1,27 +1,41 @@
 
-<link rel="stylesheet" type="text/css" href="http://www.sencha.com/assets/css/sview2.css" />
 
 
-
-<div class="content">
-
-
-    <div id="products" class="extjs">
-        <h1 class="pagetitle">Ext JS <span>Cross-Browser Rich Internet Application Framework</span> <a href="download.php" class="download">Download</a></h1>
-
-        <div id="samples">
-            <div id="samples-cb">
-                <img src="/s.gif" class="normal-view" title="Full view with descriptions"/>
-                <img src="/s.gif" class="condensed-view" title="Condensed view" />
-                <img src="/s.gif" class="mini-view" title="Mini view" />
+<div id="viewport">
+    <div class="content">
+        <div id="bd">
+            <div id="products" class="extjs">
+                <h1 class="pagetitle">COLSYS <span>Sistema de Informaci&oacute;n</span> <a href="download.php" class="download">Download</a></h1>
+                <div id="samples">
+                    <div id="samples-cb">
+                        <img src="/s.gif" class="normal-view" title="Full view with descriptions"/>
+                        <img src="/s.gif" class="condensed-view" title="Condensed view" />
+                        <img src="/s.gif" class="mini-view" title="Mini view" />
+                    </div>
+                    <div id="sample-menu"><div id="sample-menu-inner"></div></div>
+                    <div id="sample-box">
+                        <div id="sample-box-inner"></div>
+                    </div>
+                </div>
             </div>
-
-            <div id="sample-menu"><div id="sample-menu-inner"></div></div>
-            <div id="sample-box"><div id="sample-box-inner">
-
-            </div></div>
-
-        </div>
+            <div style="padding:10px 0 0;">
+                <div class="left-column">
+                    <div class="content-box">
+                        <h5>Novedades</h5><?=link_to(image_tag("16x16/edit.gif"),"homepage/editarNovedad?idnovedad=".$novedad->getCaIdnovedad())?>Nuevo
+                        <div class="box">
+                                 <?include_component("homepage","novedades")?>
+                        </div>
+                    </div>
+                    <div class="content-box">
+                        <h5>TAREAS PENDIENTES</h5>
+                        <div class="content-box">
+                            <p>Usted tiene las siguientes tareas:</p>
+                            <?include_component("notificaciones","tareasPendientes")?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+          </div>
     </div>
 </div><!-- end viewport -->
 
@@ -36,14 +50,14 @@ Ext.onReady(function(){
             $i = 0;
             foreach( $grupos as $key=>$grupo ){
 
-                if( $i++>0 ){
+                if( $i>0 ){
                     echo ",";
                 }
             ?>
             {
                 title: '<?=$key?>',
                 iconCls:'icon-apps',
-                cls:'active',
+                <?=($i++==0)?"cls:'active',":""?>
                 samples: [
                     <?
                     $j=0;
@@ -56,7 +70,7 @@ Ext.onReady(function(){
                     {
                     text: '<?=$rutina["ca_opcion"]?>',
                     url: '<?=$rutina["ca_programa"]?>',
-                    icon: 'feeds.gif',
+                    icon: '<?=$rutina["ca_icon"]?>',
                     desc: '<?=$rutina["ca_descripcion"]?>',
                     status: 'new'
                     }
@@ -85,7 +99,7 @@ Ext.onReady(function(){
             '<div><a name="{id}" id="{id}"></a><h2><div unselectable="on">{title}</div></h2>',
             '<dl>',
                 '<tpl for="samples">',
-                    '<dd ext:url="{url}"><img title="{text}" src="/deploy/dev/examples/shared/screens/{icon}"/>',
+                    '<dd url="{url}"><img title="{text}" src="{icon}"/>',
                         '<div><h4>{text}</h4><p>{desc}</p></div>',
                     '</dd>',
                 '</tpl>',
