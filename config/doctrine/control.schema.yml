@@ -58,13 +58,13 @@ Usuario:
       foreign: ca_login
       type: many
     Manager:
-      local: ca_login
-      foreign: ca_manager
-      type: one
-      class: Usuario
-    SubOrdinado:
       local: ca_manager
       foreign: ca_login
+      type: one
+      class: Usuario
+    Subordinado:
+      local: ca_login
+      foreign: ca_manager
       type: many
       class: Usuario
 
@@ -215,6 +215,7 @@ Rutina:
     ca_descripcion: string(250)
     ca_programa: string(100)
     ca_grupo: string(21)
+    ca_icon: string
   relations:
     AccesoPerfil:
       local: ca_rutina

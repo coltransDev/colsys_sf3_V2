@@ -463,8 +463,9 @@ ColNovedad:
     ca_extension: string
     ca_header_file: string
     ca_content: string
-    ca_fchpublicado: timestamp
-    ca_usupublicado: string
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_icon: string
 
 
 Sia:
