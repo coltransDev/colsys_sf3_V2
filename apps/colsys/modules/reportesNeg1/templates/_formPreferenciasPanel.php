@@ -10,9 +10,7 @@ include_component("reportesNeg", "gridPanelInstruccionesWindow",array("modo"=>$m
 ?>
 <script type="text/javascript">
     FormPreferenciasPanel = function( config ){
-
         Ext.apply(this, config);
-
 
         FormPreferenciasPanel.superclass.constructor.call(this, {
             activeTab: 0,

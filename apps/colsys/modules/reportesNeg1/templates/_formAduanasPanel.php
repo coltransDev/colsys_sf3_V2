@@ -36,12 +36,12 @@
                         autoHeight:true,
                         defaults: {width: 210},
                         defaultType: 'textfield',
-                        collapsed: false,
+                        collapsed: true,
                         id:"aduanas",
                         name:"aduanas",
                         items :[
                             {
-                                xtype: "hidden",                                
+                                xtype: "hidden",
                                 name: "ca_colmas",
                                 id: "ca_colmas"
                             },
@@ -49,7 +49,7 @@
                                 xtype: "combo",
                                 fieldLabel: "Coordinador",
                                 name: "ca_coordinador",
-                                id: "ca_coordinador",                               
+                                id: "ca_coordinador",
                                 mode:           'local',
                                 displayField:   'name',
                                 valueField:     'value',

@@ -34,45 +34,16 @@
                         items: [
                             {
                                 xtype: "hidden",
+                                name: "ca_seguro_conf",
+                                id: "ca_seguro_conf",
+                                value: '<?=$seguro_conf?>'
+
+                            },
+                            {
+                                xtype: "hidden",
                                 name: "ca_seguro",
                                 id: "ca_seguro"
                             },
-                            
-/*
-                          {
-                                xtype: 'fieldset',
-                                autoHeight: true,
-                                defaultType: 'radio', // each item will be a radio button
-                                title:"Notificar Seguro",
-                                id:"notificar",
-                                name:"notificar",
-                                items: [{
-                                    hideLabel:true,
-                                    checked: true,
-                                    fieldLabel: '',
-                                    boxLabel: 'Alejandra M. Quintero G.',
-                                    name: 'ca_seguro_conf',
-                                    inputValue: 'Alejandra M. Quintero G.',
-                                    
-                                }, {
-                                    hideLabel:true,
-                                    fieldLabel: '',
-                                    labelSeparator: '',
-                                    boxLabel: 'Leanis A. Yepes C',
-                                    name: 'ca_seguro_conf',
-                                    inputValue: 'Leanis A. Yepes C',
-                                    
-                                }, {
-                                    hideLabel:true,
-                                    fieldLabel: '',
-                                    labelSeparator: '',
-                                    boxLabel: 'Natalia Guisao H',
-                                    name: 'ca_seguro_conf',
-                                    inputValue: 'Natalia Guisao H',
-                                    
-                                }]
-                            },
-*/
                             {
                                 xtype:'fieldset',
                                 title: '',

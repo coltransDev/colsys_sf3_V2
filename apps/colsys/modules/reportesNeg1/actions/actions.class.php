@@ -273,7 +273,10 @@ class reportesNegActions extends sfActions
         * Se inicializa el objeto
         */
 		if( $this->getRequestParameter("id") ){
-			$reporte = Doctrine::getTable("Reporte")->find( $request->getParameter("id") );
+//                        echo $this->getRequestParameter("id");
+			$reporte = Doctrine::getTable("Reporte")->findOneBy("ca_idreporte", $this->getRequestParameter("id")) ;
+//                        print_r($reporte);
+//                        exit;
 			$this->forward404Unless( $reporte );
 		}else{
 			$reporte = new Reporte();
@@ -597,7 +600,12 @@ class reportesNegActions extends sfActions
                 if($request->getParameter("vendedor") && $request->getParameter("vendedor")=="")
                 $errors["vendedor"]="Debe asignar una cotizacion con vendedor";
             }
-    //    ca_continuacion_conf:
+
+            if($request->getParameter("ca_continuacion_conf") )
+            {
+                $reporte->setCaContinuacionConf($request->getParameter("ca_continuacion_conf"));
+            }
+    //    ca_continuacion_conf
     //    ca_etapa_actual:
 
             if($request->getParameter("aduanas-checkbox") && $request->getParameter("aduanas-checkbox")=="on"  )
@@ -1342,10 +1350,39 @@ class reportesNegActions extends sfActions
             $data["bodega_consignar"]=utf8_encode($reporte->getBodega()->getCaNombre());
 
             $data["idconsignatario"]=$reporte->getCaIdconsignatario();
+            if($reporte->getCaIdconsignatario())
+            {
+                $tercero = Doctrine::getTable("Tercero")->find($reporte->getCaIdconsignatario());
+                if($tercero)
+                    $data["consignatario"] =utf8_encode($tercero->getCaNombre());
+            }
+            else
+                $data["consignatario"]="";
+
+
             $data["idconsigmaster"]=$reporte->getCaIdmaster();
+            if($reporte->getCaIdmaster())
+            {
+                $tercero = Doctrine::getTable("Tercero")->find($reporte->getCaIdmaster());
+                if($tercero)
+                    $data["consigmaster"] =utf8_encode($tercero->getCaNombre());
+            }
+            else
+                $data["consigmaster"]="";
+
             $data["idnotify"]=$reporte->getCaIdnotify();
+            if($reporte->getCaIdnotify())
+            {
+                $tercero = Doctrine::getTable("Tercero")->find($reporte->getCaIdnotify());
+                if($tercero)
+                    $data["notify"] =utf8_encode($tercero->getCaNombre());
+            }
+            else
+                $data["notify"]="";
             $data["idrepresentante"]=$reporte->getCaIdrepresentante();
 
+
+            
 /*            $aduana = Doctrine::getTable("RepAduana")->find( $reporte->getCaIdreporte() );
             if($aduana)
             {

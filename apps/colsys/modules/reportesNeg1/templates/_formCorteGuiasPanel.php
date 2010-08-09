@@ -8,6 +8,7 @@ include_component("widgets", "widgetConsignar");
 include_component("widgets", "widgetTipoBodega");
 include_component("widgets", "widgetBodega");
 //echo $impoexpo.".".$modo;
+
 ?>
 <script type="text/javascript">
     FormCorteGuiasPanel = function( config ){
@@ -16,15 +17,14 @@ include_component("widgets", "widgetBodega");
                                             tipo: 'Consignatario',
                                             width: 600,
                                             hiddenName: "consig",
-                                            id:"idconsignatario"
+                                            id:"idconsignatario"                                            
                                            });
         this.wgBodega=new WidgetBodega({fieldLabel:"",
                                             id: "bodega_consignar",
                                             hiddenName: "idbodega_hd",
                                             width: 600,
                                             linkTransporte: "transporte"
-                                           })
-                                           
+                                           })                                           
         var camposHija = new Array();
         <?
         if($impoexpo=="Importación"  && $modo=="Marítimo")
@@ -33,6 +33,13 @@ include_component("widgets", "widgetBodega");
             this.wgBodega.fieldLabel="Usuario";
             camposHija.push( this.wgBodega );
             camposHija.push( this.wgTercero );
+            this.wgNotify=new WidgetTercero({fieldLabel:"Notify",
+                                            tipo: 'Notify',
+                                            width: 600,
+                                            hiddenName: "notify",
+                                            id:"idnotify"
+                                           });
+            camposHija.push( this.wgNotify );
         <?
         }
         else
@@ -78,10 +85,19 @@ include_component("widgets", "widgetBodega");
                 <?
                 }
                 ?>
-            ]
+            ],
+            listeners:{
+                afterrender:this.onAfterload
+            }
         });
     };
 
     Ext.extend(FormCorteGuiasPanel, Ext.Panel, {
+        onAfterload:function()
+        {
+//            $("#idconsignatario").val('<?=$reporte->getCaIdconsignatario()?>')
+//            alert($("#idconsignatario").val());
+            
+        }
     });
 </script>

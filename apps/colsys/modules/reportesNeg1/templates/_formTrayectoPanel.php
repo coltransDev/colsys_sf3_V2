@@ -14,12 +14,12 @@ include_component("widgets", "widgetLinea");
 include_component("widgets", "widgetPais");
 include_component("widgets", "widgetCiudad");
 include_component("widgets", "widgetAgente");
-
 include_component("widgets", "widgetIncoterms");
+$usuarios = $sf_data->getRaw("usuarios");
 if($impoexpo=="Triangulación")
 {
 //include_component("widgets", "widgetImpoexpo");
-include_component("widgets", "widgetTransporte");
+//include_component("widgets", "widgetTransporte");
 }
 else
 {
@@ -38,17 +38,23 @@ else
                                                       hiddenName: "idcotizacion"
                                                       });
         this.widgetCotizacion.addListener("select", this.onSelectCotizacion, this );
-        this.wgContinuacion=new WidgetContinuacion({fieldLabel: 'Continuación',
+<?
+        if($impoexpo!="Triangulación")
+        {
+?>
+            this.wgContinuacion=new WidgetContinuacion({fieldLabel: 'Continuación',
                                                     id: 'continuacion',
                                                     name: 'continuacion',
                                                     linkTransporte: "transporte",
                                                     linkImpoexpo: "impoexpo"
-
                                                     })
+
         this.wgContinuacion.addListener("select", this.onSelectContinuacion, this );
-
-
+        <?
+        }
+        ?>
         FormTrayectoPanel.superclass.constructor.call(this, {
+			labelWidth: 100,
             title: 'General',
             deferredRender:false,
             //layout:'form',
@@ -144,7 +150,8 @@ else
                                                   linkDestino: "tra_destino_id",
                                                   linkListarTodos: "listar_todos",
                                                   id:"agente",
-                                                  hiddenName:"idagente"
+                                                  hiddenName:"idagente",
+												  width:350
                                                 }),
                                 {
                                     xtype: "checkbox",
@@ -163,33 +170,19 @@ else
                             border:false,
                             defaultType: 'textfield',
                             items: [
-                                <?
-                                if($impoexpo=="Triangulación")
-                                {
-                                ?>
-                                new WidgetTransporte({fieldLabel: 'Transporte',
-                                                      id: 'transporte',
-                                                      name:'transporte',                                                      
-                                                      listeners:{select:this.onSelectTransporte}
-                                                    }),
-                            <?
-                                }
-                                else
-                                {
-                            ?>
+
                                 {
                                     xtype:"hidden",
                                     id: 'transporte',
                                     name: 'transporte',
                                     value:'<?=$modo?>'
                                 },
-                                <?
-                                }
-                                ?>
+                                
                                 new WidgetLinea({fieldLabel: '<?=$nomLinea?>',
                                                  linkTransporte: "transporte",
                                                  id:"linea",
-                                                 hiddenName: "idlinea"
+                                                 hiddenName: "idlinea",
+												 width:350
                                                 }),
                                 {
                                     xtype: "hidden",
@@ -210,7 +203,8 @@ else
                                                 }),
                                 new WidgetIncoterms({fieldLabel: 'Terminos',
                                                   id: 'terminos',
-                                                  hiddenName:"incoterms"
+                                                  hiddenName:"incoterms",
+												  width:250
                                                 })
                             ]
                         }
@@ -219,6 +213,9 @@ else
                 <?
                 if($impoexpo!="Triangulación")
                 {
+                    //print_r($usuarios);
+                    $keys=array_keys($usuarios);
+                    $conta=count($keys);
                 ?>
                 {
                     xtype:'fieldset',
@@ -231,7 +228,54 @@ else
                                                   name: 'continuacion_dest',
                                                   id: 'continuacion_dest',
                                                   idtrafico: 'CO-057'
-                                                })
+                                                }),
+                        {
+                            xtype:'fieldset',
+                            title: 'Informar A',
+                            autoHeight:true,                            
+                            layout:'column',
+                            columns: 2,
+                            defaults:{
+                                columnWidth:'<?=(1/$conta)?>',
+                                layout:'form',                        
+                                border:false                                
+                            },
+                            items :[
+<?
+                            $i=0;
+
+                            for($i=0;$i<$conta;$i++  )
+                            {
+?>
+                            {
+                            columnWidth:'<?=(1/$conta)?>',
+                            layout: 'form',
+                            border:false,
+                            defaultType: 'textfield',
+                            items: [
+                                {
+                                    xtype: "radio",
+                                    fieldLabel: "<?=$usuarios[$keys[$i]]?>",
+                                    labelStyle: 'width:150px',
+                                    name: "ca_continuacion_conf",
+                                    id: "ca_continuacion_conf_<?=$i?>",
+                                    inputValue:"<?=$keys[$i]?>"
+                                }
+                            ]
+                            },
+<?
+                            }
+                        $i++;
+?>
+                                {
+                                    xtype: "hidden",
+                                    fieldLabel: "",
+                                    name: "ss",
+                                    id: "ss",
+                                    value:""
+                                }
+                            ]
+                        }
                     ]
                 },
                 <?
@@ -361,5 +405,8 @@ else
             Ext.getCmp("ca_liberacion").setValue(record.data.prima_min);
             Ext.getCmp("ca_tiempocredito").setValue(record.data.prima_min);
         }
+
+		
+
     });
 </script>

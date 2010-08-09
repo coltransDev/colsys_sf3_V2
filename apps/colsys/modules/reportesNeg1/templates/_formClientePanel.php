@@ -9,8 +9,6 @@ include_component("widgets", "widgetContactoCliente");
 
 ?>
 <script type="text/javascript">
-
-
     FormClientePanel = function( config ){
 
         Ext.apply(this, config);
@@ -28,7 +26,7 @@ include_component("widgets", "widgetContactoCliente");
             title: 'Cliente',
             buttonAlign: 'center',
             autoHeight:true,
-            deferredRender:false,
+//            deferredRender:false,
             items: [
                 /*
                  *========================= Información del Proveedor =========================

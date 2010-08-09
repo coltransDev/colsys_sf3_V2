@@ -165,6 +165,12 @@ class reportesNegComponents extends sfComponents
                                      ->execute();
     }
 
+	public function executeFormFacturacionPanel()
+	{
+		
+	}
+
+
     public function executeFormAduanasPanel()
 	{
         $this->usuarios = Doctrine::getTable("Usuario")
@@ -177,19 +183,37 @@ class reportesNegComponents extends sfComponents
     }
 
     public function executeFormSegurosPanel()
-	{
+    {
 
         $this->monedas = Doctrine::getTable("Moneda")
                    ->createQuery("m")
                    ->orderBy("m.ca_idmoneda")
                    ->execute();
+        
+        $usuarios = Doctrine::getTable("Usuario")
+               ->createQuery("u")
+               ->select("u.ca_login")
+               ->innerJoin("u.UsuarioPerfil up")
+               ->where("u.ca_activo=? AND up.ca_perfil=? ", array('TRUE','tramitador-de-pólizas'))
+               ->addOrderBy("u.ca_nombre")
+               //->fetchOne();
+               ->execute();
+
+            $conta=count($usuarios);
+            for($i=0;$i<$conta;$i++ )
+            {
+                $coma=($i==($conta-1))?"":",";
+                $this->seguro_conf.=$usuarios[$i]->getCaLogin().$coma;
+            }
+
+
     }
     /*
 	* Edita la informacion basica del trayecto
 	* @author: Andres Botero
 	*/
-	public function executeFormTrayectoPanel()
-	{
+    public function executeFormTrayectoPanel()
+    {
         $this->load_category();
         if($this->modo=="Aéreo")
         {
@@ -215,6 +239,23 @@ class reportesNegComponents extends sfComponents
             $this->pais1="todos";
             $this->pais2="todos";
         }
+        $usuarios = Doctrine::getTable("Usuario")
+               ->createQuery("u")
+               ->select("u.ca_login,u.ca_nombre,u.ca_email,ca_sucursal")
+               ->innerJoin("u.UsuarioPerfil up")
+               ->where("u.ca_activo=? AND up.ca_perfil=? ", array('TRUE','cordinador-de-otm'))
+               ->addOrderBy("u.ca_idsucursal")
+               ->addOrderBy("u.ca_nombre")
+               ->execute();
+        //echo count($usuarios);
+        $this->usuarios=array();
+        foreach($usuarios as $usuario)
+        {
+            if(!isset($this->usuarios[$usuario->getCaSucursal()]))
+                $this->usuarios[$usuario->getCaSucursal()]="";
+            $this->usuarios[$usuario->getCaSucursal()].=$usuario->getCaEmail();
+        }
+        //print_r($this->usuarios);
     }
 
     /*
