@@ -13,8 +13,9 @@
  * @property string $ca_extension
  * @property string $ca_header_file
  * @property string $ca_content
- * @property timestamp $ca_fchpublicado
- * @property string $ca_usupublicado
+ * @property timestamp $ca_fchcreado
+ * @property string $ca_usucreado
+ * @property string $ca_icon
  * 
  * @method integer    getCaIdnovedad()       Returns the current record's "ca_idnovedad" value
  * @method date       getCaFchpublicacion()  Returns the current record's "ca_fchpublicacion" value
@@ -24,8 +25,9 @@
  * @method string     getCaExtension()       Returns the current record's "ca_extension" value
  * @method string     getCaHeaderFile()      Returns the current record's "ca_header_file" value
  * @method string     getCaContent()         Returns the current record's "ca_content" value
- * @method timestamp  getCaFchpublicado()    Returns the current record's "ca_fchpublicado" value
- * @method string     getCaUsupublicado()    Returns the current record's "ca_usupublicado" value
+ * @method timestamp  getCaFchcreado()       Returns the current record's "ca_fchcreado" value
+ * @method string     getCaUsucreado()       Returns the current record's "ca_usucreado" value
+ * @method string     getCaIcon()            Returns the current record's "ca_icon" value
  * @method ColNovedad setCaIdnovedad()       Sets the current record's "ca_idnovedad" value
  * @method ColNovedad setCaFchpublicacion()  Sets the current record's "ca_fchpublicacion" value
  * @method ColNovedad setCaAsunto()          Sets the current record's "ca_asunto" value
@@ -34,8 +36,9 @@
  * @method ColNovedad setCaExtension()       Sets the current record's "ca_extension" value
  * @method ColNovedad setCaHeaderFile()      Sets the current record's "ca_header_file" value
  * @method ColNovedad setCaContent()         Sets the current record's "ca_content" value
- * @method ColNovedad setCaFchpublicado()    Sets the current record's "ca_fchpublicado" value
- * @method ColNovedad setCaUsupublicado()    Sets the current record's "ca_usupublicado" value
+ * @method ColNovedad setCaFchcreado()       Sets the current record's "ca_fchcreado" value
+ * @method ColNovedad setCaUsucreado()       Sets the current record's "ca_usucreado" value
+ * @method ColNovedad setCaIcon()            Sets the current record's "ca_icon" value
  * 
  * @package    symfony
  * @subpackage model
@@ -73,10 +76,13 @@ abstract class BaseColNovedad extends myDoctrineRecord
         $this->hasColumn('ca_content', 'string', null, array(
              'type' => 'string',
              ));
-        $this->hasColumn('ca_fchpublicado', 'timestamp', null, array(
+        $this->hasColumn('ca_fchcreado', 'timestamp', null, array(
              'type' => 'timestamp',
              ));
-        $this->hasColumn('ca_usupublicado', 'string', null, array(
+        $this->hasColumn('ca_usucreado', 'string', null, array(
+             'type' => 'string',
+             ));
+        $this->hasColumn('ca_icon', 'string', null, array(
              'type' => 'string',
              ));
 
