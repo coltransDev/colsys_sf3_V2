@@ -2,25 +2,43 @@
 class loginValidationFilter extends sfFilter
 {
 	public function execute($filterChain)
-	{	
-		$module = sfContext::getInstance()->getModuleName ();				
+	{
+        //$filterChain->execute();
+		$module = sfContext::getInstance()->getModuleName ();
 		$action = sfContext::getInstance()->getActionName ();
 				//$filterChain->execute();	
-		if( ($module=="users" && $action=="login") || ($module=="users" && $action=="checkLogin") ||  ($module=="users" && $action=="validateLogin") || sfContext::getInstance()->getConfiguration()->getEnvironment()=="cli" ){
+		if( ($module=="users" && $action=="login") || ($module=="users" && $action=="checkLogin") ||  ($module=="users" && $action=="validateLogin") || sfContext::getInstance()->getConfiguration()->getEnvironment()=="cli" ){            
 			$filterChain->execute();
             
 		}else{
-            if( sfContext::getInstance()->getUser()->isAuthenticated() ){
-                $module = sfContext::getInstance()->getModuleName ();
-                $action = sfContext::getInstance()->getActionName ();
 
-                if( sfContext::getInstance()->getUser()->getAttribute("forcechange")==true && $module!="adminUsers" && $action!="changePasswd" ){
-                    sfContext::getInstance()->getController()->redirect("/adminUsers/changePasswd");
+            
+            $cache = myCache::getInstance();
+
+
+            $cookie = $_COOKIE["colsys"];
+            list($session_id, $signature) = explode(':', $cookie, 2);
+            $time = $cache->get($session_id."_lr", "");           
+
+            if( $time+sfConfig::get("app_session_maxinactive")>time() ){
+
+                if( sfContext::getInstance()->getUser()->isAuthenticated() ){
+                    $module = sfContext::getInstance()->getModuleName ();
+                    $action = sfContext::getInstance()->getActionName ();
+
+                    if( sfContext::getInstance()->getUser()->getAttribute("forcechange")==true && $module!="adminUsers" && $action!="changePasswd" ){
+                        sfContext::getInstance()->getController()->redirect("/adminUsers/changePasswd");
+                    }
+
+                    $filterChain->execute();
+                }else{
+                    sfContext::getInstance()->getController()->forward("users","login");
+                    //header("Location: /users/login");
+                    exit();
                 }
-                $filterChain->execute();
             }else{
-                sfContext::getInstance()->getController()->forward("users","login");
-                //header("Location: /users/login");
+                sfContext::getInstance()->getUser()->signOut();
+                sfContext::getInstance()->getController()->redirect("/");
                 exit();
             }
 		}

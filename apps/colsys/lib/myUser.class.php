@@ -33,7 +33,9 @@ class myUser extends sfBasicSecurityUser
 			if( $departamento ){
 				$this->setAttribute('iddepartamento', $departamento->getCaIddepartamento() );
 			}
-		}				
+		}
+
+        
 	}
 	
 	public function getUserId(){
@@ -271,8 +273,7 @@ class myUser extends sfBasicSecurityUser
 			}									
 
             $this->log("Login LDAP");
-            setcookie("menu", false, time()+3600);
-            unset($_COOKIE["menu"]);
+            
 		}
 			
 	}
@@ -313,8 +314,7 @@ class myUser extends sfBasicSecurityUser
 				$this->setAttribute('iddepartamento', $departamento->getCaIddepartamento() );
 			}
             $this->log("Login SHA1");
-            setcookie("menu", false, time()+3600);
-            unset($_COOKIE["menu"]);
+            
 		}
 	}
 	
@@ -324,7 +324,7 @@ class myUser extends sfBasicSecurityUser
 	public function signOut()
 	{
 		
-        setcookie("menu", false, time()+3600);
+        //setcookie("menu", false, time()+3600);
         
         
 		
@@ -340,15 +340,68 @@ class myUser extends sfBasicSecurityUser
         $this->setAttribute('menu', null);
 
         
-        
+        $this->setAttribute('menu',  null );
 		
 		//setcookie("JSESSIONID", "" );	
-		
+		$cache = myCache::getInstance();
+        $cookie = $_COOKIE["colsys"];
+        list($session_id, $signature) = explode(':', $cookie, 2);
+        $cache->set($session_id."_menu", "");
 			
 		$this->setAuthenticated(false);		
 		$this->clearCredentials();
-		//session_destroy();
+		session_destroy();
 	}
+
+
+    /*
+     * Recrea el menu y lo almacena en cache
+     */
+
+    private function buildMenu(){
+                
+        $rutinas = Doctrine::getTable("Rutina")
+                          ->createQuery("r")
+                          ->select('r.*')
+                          ->leftJoin("r.AccesoPerfil ap")
+                          ->leftJoin("ap.UsuarioPerfil up")
+                          ->leftJoin("r.AccesoUsuario au")
+                          ->where(" (up.ca_login = ? or au.ca_login = ? )", array($this->getUserId(), $this->getUserId()) )
+                          ->addWhere(" (ap.ca_acceso >= ? or ap.ca_acceso IS NULL )", 0 )
+                          ->addWhere(" (au.ca_acceso >= ? or au.ca_acceso IS NULL )", 0 )
+                          ->addOrderBy("r.ca_grupo ASC")
+                          ->addOrderBy("r.ca_opcion ASC")
+                          ->distinct()
+                          ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
+                          ->execute();
+
+        $grupos = array();
+        foreach( $rutinas as $rutina ){
+            if( !isset( $grupos[$rutina["ca_grupo"]] )){
+                $grupos[$rutina["ca_grupo"]]=array();
+            }
+            $grupos[$rutina["ca_grupo"]][]=$rutina;
+        }
+       
+
+        $cache = myCache::getInstance();
+        $cookie = $_COOKIE["colsys"];
+        list($session_id, $signature) = explode(':', $cookie, 2);
+        $cache->set($session_id."_menu", $grupos);        
+        return $grupos;
+       
+    }
+
+    public function getMenu(){
+        $cache = myCache::getInstance();
+        $cookie = $_COOKIE["colsys"];
+        list($session_id, $signature) = explode(':', $cookie, 2);
+        $menu = $cache->get($session_id."_menu", null);        
+        if( !$menu ){
+            $menu = $this->buildMenu();
+        }        
+        return $menu;
+    }
 	
 }
 
