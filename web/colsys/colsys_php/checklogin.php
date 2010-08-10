@@ -61,13 +61,7 @@ while(list($key,$value)=each($_REQUEST)) {
 
 $memcacheHost = $appConfig["all"]["memcache"]["host"];
 $memcachePort = $appConfig["all"]["memcache"]["port"];
-
 $memServers = array("localserver"=>array("host"=>$memcacheHost." port: ".$memcachePort.""));
-//Array ( [storeCacheInfo] => 1 [lifetime] => 86400 [prefix] => ?s_? [servers] => Array ( [localserver] => Array ( [host] => 10.192.1.62 port: 11211# class: mySessionStorage ) ) )
-//Array (                                                            [servers] => Array ( [localserver] => Array ( [host] => 10.192.1.62 port: 11211 ) ) )
-
-
-
 $cache = new sfMemcacheCache(  array( "servers"=>$memServers, "prefix"=>"colsess" ) );
 
 
@@ -94,6 +88,7 @@ if($conn->Open()){
             $attributes = $data["symfony/user/sfUser/attributes"]["symfony/user/sfUser/attributes"];           
             $usuario = $attributes["user_id"];            
             $cache->set($session_id."_lr", time());
+            
             if( isset($programa) ){
                 $sql = "SELECT control.tb_accesos_user.CA_ACCESO FROM  control.tb_accesos_user WHERE control.tb_accesos_user.CA_RUTINA='$programa' AND control.tb_accesos_user.CA_LOGIN = '$usuario'";
 
@@ -119,13 +114,13 @@ if($conn->Open()){
                     }
                 }
 
-
-            }else{
-                //No se ha autenticado
-                header( "Location: /index.php" );
-                exit("No login");
             }
+        }else{
+            //No se ha autenticado
+            header( "Location: /index.php" );
+            exit("No login");
         }
+        
     }else{
         //Timeout
         header( "Location: /users/logout" );
