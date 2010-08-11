@@ -23,7 +23,7 @@ if( $string ){
 
 */
 
-if (!in_array(@$_SERVER['REMOTE_ADDR'], array('127.0.0.1', '10.192.1.87')))
+if (!in_array(@$_SERVER['REMOTE_ADDR'], array('127.0.0.1', '10.192.1.104')))
 {
   die('Your are not allowed to access this file. Check '.basename(__FILE__).' for more information.');
 }
