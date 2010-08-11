@@ -425,15 +425,20 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
         var numResponses = 0;
 
         Ext.getCmp('guardarbtn'+tipo).disable();
-
+		habilita=false;
         for( var i=0; i< lenght; i++){
+			if(i==(length-1))
+				habilita=true;
             if( records[i].data.tipo=="concepto" || (records[i].data.tipo=="recargo" && records[i].data.idopcion ))
             {
                 //alert(records[i].data.tipo + " "+ records[i].data.idconcepto)
-                this.guardarGridProductosRec( records[i] );
+                this.guardarGridProductosRec( records[i],habilita );
+				habilita=false;
             }
+			if(i==(length-1) && habilita==true)
+				window.setTimeout(this.enableButton, 5000);
         }
-        window.setTimeout(this.enableButton, 3000);
+        
     },
 
     enableButton: function(){        
@@ -444,7 +449,7 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
     /*
     * Guarda un record en la Base de datos
     */
-    guardarGridProductosRec: function( r ){
+    guardarGridProductosRec: function( r, habilita ){
         var storeProductos = this.store;
         var changes = r.getChanges();
 //        alert("1"+tipo +" : "+this.tipo)
@@ -496,9 +501,9 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
                                     }
                                     if( r.dirty ){
                                         if(r.data.transporte=="OTM-DTA")
-                                            Ext.getCmp("grid_productos1").guardarGridProductosRec( r );
+                                            Ext.getCmp("grid_productos1").guardarGridProductosRec( r,false );
                                         else
-                                            Ext.getCmp("grid_productos").guardarGridProductosRec( r );
+                                            Ext.getCmp("grid_productos").guardarGridProductosRec( r,false );
                                     }
                                 }
                             } );
@@ -510,6 +515,8 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
                         //rec.set("inSave", false);                        
                         rec.commit();
                         storeProductos.sort("orden", "ASC");
+						if(habilita==true)
+							window.setTimeout(this.enableButton, 5000);
                     }
                  }
             );
