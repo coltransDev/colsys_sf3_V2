@@ -60,6 +60,10 @@ NotTarea:
       local: ca_idtarea
       foreign: ca_idseguimiento
       type: one
+    NotTareaAsignacion:
+      local: ca_idtarea
+      foreign: ca_idtarea
+      type: one
 
 NotListaTareas:
   options:

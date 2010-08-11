@@ -30,7 +30,7 @@ HdeskGroup:
       type: many
     Departamento:
       local: ca_iddepartament
-      foreign: ca_iddepartamento
+      foreign: ca_iddepartamento      
       type: one
     
 HdeskTicket:
@@ -93,6 +93,11 @@ HdeskTicket:
       local: ca_login
       foreign: ca_login
       type: one
+    ReportedBy:
+      local: ca_login
+      foreign: ca_login
+      type: one
+      class: Usuario
 
 
 HdeskResponse:

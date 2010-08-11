@@ -10,8 +10,14 @@ InoMaestra:
     ca_fchreferencia:
       type: date      
     ca_referencia: string
-    ca_idmodalidad:
-      type: integer
+    ca_impoexpo:
+      type: string
+      notnull: true
+    ca_transporte:
+      type: string
+      notnull: true
+    ca_modalidad:
+      type: string
       notnull: true
     ca_origen:
       type: string
@@ -48,11 +54,7 @@ InoMaestra:
     InoCliente:
       local: ca_idmaestra
       foreign: ca_idmaestra
-      type: many
-    Modalidad:
-      local: ca_idmodalidad
-      foreign: ca_idmodalidad
-      type: one
+      type: many    
     Origen:
       local: ca_origen
       foreign: ca_idciudad
