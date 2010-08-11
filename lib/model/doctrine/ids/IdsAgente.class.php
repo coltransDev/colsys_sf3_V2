@@ -17,4 +17,5 @@ class IdsAgente extends BaseIdsAgente
         return $ids->getCaNombre();
 
     }
+
 }
