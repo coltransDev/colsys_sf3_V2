@@ -20,7 +20,7 @@ include_once 'include/functions.php';                                          /
 header("Cache-Control: no-store, must-revalidate");
 session_cache_limiter('private_expire');
 
-require_once("checklogin.php");                                                       
+require_once("checklogin.php");
 
 $rs =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
 if (isset($suf) and $suf == 'findDianDeposito'){
@@ -2396,7 +2396,7 @@ else if (isset($opcion) and $opcion == 'Liberar' and isset($oid)){
 else if (isset($opcion) and $opcion == 'Concepto' and isset($i) and isset($id)){
     if (!$rs->Open("select ca_transporte, ca_modalidad from vi_reportes where ca_idreporte = $id")) {    // Selecciona todos lo registros de la tabla Reportes
         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
-        echo "<script>document.location.href = 'entrada.php';</script>";
+        //echo "<script>document.location.href = 'entrada.php';</script>";
         exit; }
 
     $co =& DlRecordset::NewRecordset($conn);
@@ -2404,12 +2404,12 @@ else if (isset($opcion) and $opcion == 'Concepto' and isset($i) and isset($id)){
     $modalidad = ($rs->Value('ca_modalidad')=='COLOADING')?'LCL':$rs->Value('ca_modalidad');
     if (!$co->Open("select ca_idconcepto, substr(ca_concepto,1,25) as ca_concepto from vi_conceptos where ca_transporte = '".$rs->Value('ca_transporte')."' and ca_modalidad = '$modalidad'")) {   // Selecciona todos lo registros de la tabla Conceptos
         echo "<script>alert(\"".addslashes($co->mErrMsg)."\");</script>";      // Muestra el mensaje de error
-        echo "<script>document.location.href = 'reportenegocio.php';</script>";
+        //echo "<script>document.location.href = 'reportenegocio.php';</script>";
         exit; }
     $co->MoveFirst();
     if (!$mn->Open("select ca_idmoneda, ca_nombre from tb_monedas order by ca_nombre")) {       // Selecciona todos lo registros de la tabla Monedas
         echo "<script>alert(\"".addslashes($mn->mErrMsg)."\");</script>";      // Muestra el mensaje de error
-        echo "<script>document.location.href = 'reportenegocio.php';</script>";
+        //echo "<script>document.location.href = 'reportenegocio.php';</script>";
         exit; }
 
     echo "<HTML>";
