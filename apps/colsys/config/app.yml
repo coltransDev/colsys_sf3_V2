@@ -6,24 +6,30 @@ all:
 #    root:  C:\Desarrollo\digitalFile\
 
   smtp:
-    host: 10.192.1.30
+    host: smtp.coltrans.com.co
     user:  tasas_cambios
     passwd:  tasas_cambios
 #    host: smtp.colmas.com.co
 #    user: bogota-aduana@colmas.com.co
 #    passwd:  gbvFR5
     port: 25
-    debugAddress: alramirez@coltrans.com.co
+    debugAddress: abotero@coltrans.com.co
 #    debugAddress: botero82@gmail.com
 #    public_ip: 200.14.235.62
 
   ldap:
     host: 10.192.1.2
-    user: colsys
-    passwd: $tlco5903Am
+    auth_enabled: true
+#    user: colsys
+#    passwd: $tlco5903Am
 
-  ip:
-    trusted: 127.0.0.1 10.192.1 10.192.2
+  memcache:
+    host: 10.192.1.62
+    port: 11211
+    prefix: colsess
+
+  session:
+    maxinactive: 1800
 #archivos de falabella
   falabella:
     input:  /home/falabella/OUT

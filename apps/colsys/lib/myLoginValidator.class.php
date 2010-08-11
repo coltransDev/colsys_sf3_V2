@@ -34,14 +34,14 @@ class myLoginValidator extends sfValidatorBase
 		}
         
         switch( $errorno ){
-            case 49:
+            /*case 49:
                 $this->setMessage('invalid', 'Las entradas de gracias para este usuario se acabaron, debe cambiar su clave de NOVELL');
-                break;
+                break;*/
             case 53:
                 $this->setMessage('invalid', 'La cuenta de NOVELL se encuentra bloqueada');
                 break;
             default :
-                $this->setMessage('invalid', 'El usuario o la clave es invalida, error: '.$errorno);
+                $this->setMessage('invalid', 'El usuario o la clave es invalida, Cod: '.$errorno);
                 break;
         }
         

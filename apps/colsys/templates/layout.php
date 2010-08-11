@@ -18,8 +18,21 @@
     <script type="text/javascript" src="/js/loginWindow.js"></script>
 
 
+
+    <link type="text/css" href="/css/jx/jx.bar.css" rel="stylesheet" />
+    
+    <script type="text/javascript" src="/js/jixedbar-0.0.3-dev.js"></script>
+    <script type="text/javascript">
+        /*$(document).ready(function() {
+            $("#demo-bar").jixedbar({
+                roundedCorners: true
+            });
+        });*/
+    </script>
+
 </head>
 <body >
+    
 	<div align="center">
 		<div class="header" align="center" >	
 			
@@ -36,7 +49,9 @@
 		
 		
 	</div>
-
+    <?
+    //include_component("menu", "menubar");
+    ?>
     <div id="mask"></div>
 
 
@@ -47,11 +62,11 @@ include_component("menu", "submenubar");
 
 <?php echo $sf_content ?>
 
-
-
 <div class="footer">	
 	<div class="copyright">
 		Coltrans S.A. - Colmas LTDA. Todos los derechos reservados
+        <br />        
+        colsys@<?=$_SERVER["SERVER_ADDR"]?>
 	</div>
 </div>	
 
@@ -87,6 +102,23 @@ include_component("menu", "submenubar");
 		}
 	});*/
 </script>
+
+<!---
+
+----------------------------------------------------------------------------------------------------
+-->
+
+
+
+
+
+
+	
+<!---
+
+----------------------------------------------------------------------------------------------------
+-->
+
 
 
 

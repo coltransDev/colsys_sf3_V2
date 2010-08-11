@@ -67,17 +67,24 @@ all:
 #      session_name: colsys  
   
 
+
+
+          
   storage:
     class: mySessionStorage
     param:
       session_name: colsys
-      db_table:     control.tb_sessions
-      database:     doctrine
-      db_id_col:    sess_id
-      db_data_col:  sess_data
-      db_time_col:  sess_time
-      db_maxinactive_col:  max_inactive
-      db_ip_address_col: ip_address
+      cache:
+        class: sfMemcacheCache
+        param:
+          storeCacheInfo: true
+          lifetime: 86400
+          prefix: <?=sfConfig::get("app_memcache_prefix")?> 
+          servers:
+            localserver:
+              host: <?=sfConfig::get("app_memcache_host")?>
+              port: <?=sfConfig::get("app_memcache_port")?>
+
 
   routing:
     class: sfPatternRouting
