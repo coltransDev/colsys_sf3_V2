@@ -34,7 +34,7 @@ abstract class BasePricNotificacion extends myDoctrineRecord
 {
     public function setTableDefinition()
     {
-        $this->setTableName('tb_pricnotificaciones');
+        $this->setTableName('pric.tb_notificaciones');
         $this->hasColumn('ca_idnotificacion', 'integer', null, array(
              'type' => 'integer',
              'primary' => true,

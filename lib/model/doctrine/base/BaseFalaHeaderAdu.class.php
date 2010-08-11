@@ -43,7 +43,7 @@
  * @property string $ca_usuanulado
  * @property Doctrine_Collection $FalaDetailAdu
  * @property FalaShipmentInfoAdu $FalaShipmentInfoAdu
- * @property Doctrine_Collection $FalaInstructionAdu
+ * @property FalaInstructionAdu $FalaInstructionAdu
  * @property FalaDeclaracionImp $FalaDeclaracionImp
  * 
  * @method string              getCaIddoc()                   Returns the current record's "ca_iddoc" value
@@ -84,7 +84,7 @@
  * @method string              getCaUsuanulado()              Returns the current record's "ca_usuanulado" value
  * @method Doctrine_Collection getFalaDetailAdu()             Returns the current record's "FalaDetailAdu" collection
  * @method FalaShipmentInfoAdu getFalaShipmentInfoAdu()       Returns the current record's "FalaShipmentInfoAdu" value
- * @method Doctrine_Collection getFalaInstructionAdu()        Returns the current record's "FalaInstructionAdu" collection
+ * @method FalaInstructionAdu  getFalaInstructionAdu()        Returns the current record's "FalaInstructionAdu" value
  * @method FalaDeclaracionImp  getFalaDeclaracionImp()        Returns the current record's "FalaDeclaracionImp" value
  * @method FalaHeaderAdu       setCaIddoc()                   Sets the current record's "ca_iddoc" value
  * @method FalaHeaderAdu       setCaFechaCarpeta()            Sets the current record's "ca_fecha_carpeta" value
@@ -124,7 +124,7 @@
  * @method FalaHeaderAdu       setCaUsuanulado()              Sets the current record's "ca_usuanulado" value
  * @method FalaHeaderAdu       setFalaDetailAdu()             Sets the current record's "FalaDetailAdu" collection
  * @method FalaHeaderAdu       setFalaShipmentInfoAdu()       Sets the current record's "FalaShipmentInfoAdu" value
- * @method FalaHeaderAdu       setFalaInstructionAdu()        Sets the current record's "FalaInstructionAdu" collection
+ * @method FalaHeaderAdu       setFalaInstructionAdu()        Sets the current record's "FalaInstructionAdu" value
  * @method FalaHeaderAdu       setFalaDeclaracionImp()        Sets the current record's "FalaDeclaracionImp" value
  * 
  * @package    symfony
@@ -265,7 +265,7 @@ abstract class BaseFalaHeaderAdu extends myDoctrineRecord
              'local' => 'ca_iddoc',
              'foreign' => 'ca_iddoc'));
 
-        $this->hasMany('FalaInstructionAdu', array(
+        $this->hasOne('FalaInstructionAdu', array(
              'local' => 'ca_iddoc',
              'foreign' => 'ca_iddoc'));
 

@@ -76,7 +76,7 @@ abstract class BasePricRecargoxCiudad extends myDoctrineRecord
 {
     public function setTableDefinition()
     {
-        $this->setTableName('tb_pricrecargosxciudad');
+        $this->setTableName('pric.tb_recargosxciudad');
         $this->hasColumn('ca_idtrafico', 'string', null, array(
              'type' => 'string',
              'primary' => true,

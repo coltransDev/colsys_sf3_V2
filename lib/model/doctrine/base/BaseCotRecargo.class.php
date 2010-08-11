@@ -23,8 +23,10 @@
  * @property timestamp $ca_fchcreado
  * @property string $ca_usuactualizado
  * @property timestamp $ca_fchactualizado
+ * @property integer $ca_idequipo
  * @property Concepto $Concepto
  * @property TipoRecargo $TipoRecargo
+ * @property Concepto $Equipo
  * 
  * @method integer     getCaIdcotrecargo()    Returns the current record's "ca_idcotrecargo" value
  * @method integer     getCaIdcotizacion()    Returns the current record's "ca_idcotizacion" value
@@ -44,8 +46,10 @@
  * @method timestamp   getCaFchcreado()       Returns the current record's "ca_fchcreado" value
  * @method string      getCaUsuactualizado()  Returns the current record's "ca_usuactualizado" value
  * @method timestamp   getCaFchactualizado()  Returns the current record's "ca_fchactualizado" value
+ * @method integer     getCaIdequipo()        Returns the current record's "ca_idequipo" value
  * @method Concepto    getConcepto()          Returns the current record's "Concepto" value
  * @method TipoRecargo getTipoRecargo()       Returns the current record's "TipoRecargo" value
+ * @method Concepto    getEquipo()            Returns the current record's "Equipo" value
  * @method CotRecargo  setCaIdcotrecargo()    Sets the current record's "ca_idcotrecargo" value
  * @method CotRecargo  setCaIdcotizacion()    Sets the current record's "ca_idcotizacion" value
  * @method CotRecargo  setCaIdproducto()      Sets the current record's "ca_idproducto" value
@@ -64,8 +68,10 @@
  * @method CotRecargo  setCaFchcreado()       Sets the current record's "ca_fchcreado" value
  * @method CotRecargo  setCaUsuactualizado()  Sets the current record's "ca_usuactualizado" value
  * @method CotRecargo  setCaFchactualizado()  Sets the current record's "ca_fchactualizado" value
+ * @method CotRecargo  setCaIdequipo()        Sets the current record's "ca_idequipo" value
  * @method CotRecargo  setConcepto()          Sets the current record's "Concepto" value
  * @method CotRecargo  setTipoRecargo()       Sets the current record's "TipoRecargo" value
+ * @method CotRecargo  setEquipo()            Sets the current record's "Equipo" value
  * 
  * @package    symfony
  * @subpackage model
@@ -135,6 +141,9 @@ abstract class BaseCotRecargo extends myDoctrineRecord
         $this->hasColumn('ca_fchactualizado', 'timestamp', null, array(
              'type' => 'timestamp',
              ));
+        $this->hasColumn('ca_idequipo', 'integer', null, array(
+             'type' => 'integer',
+             ));
 
         $this->option('symfony', array(
              'form' => false,
@@ -152,5 +161,9 @@ abstract class BaseCotRecargo extends myDoctrineRecord
         $this->hasOne('TipoRecargo', array(
              'local' => 'ca_idrecargo',
              'foreign' => 'ca_idrecargo'));
+
+        $this->hasOne('Concepto as Equipo', array(
+             'local' => 'ca_idequipo',
+             'foreign' => 'ca_idconcepto'));
     }
 }

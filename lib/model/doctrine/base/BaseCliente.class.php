@@ -39,84 +39,87 @@
  * @property Ciudad $Ciudad
  * @property Doctrine_Collection $StdCliente
  * @property LibCliente $LibCliente
+ * @property Doctrine_Collection $ConceptoAduanaCliente
  * @property Doctrine_Collection $PricRecargoCliente
  * @property Doctrine_Collection $PricRecargoClienteBs
  * @property Doctrine_Collection $InoClientesSea
  * 
- * @method integer             getCaIdcliente()          Returns the current record's "ca_idcliente" value
- * @method integer             getCaDigito()             Returns the current record's "ca_digito" value
- * @method string              getCaCompania()           Returns the current record's "ca_compania" value
- * @method string              getCaPapellido()          Returns the current record's "ca_papellido" value
- * @method string              getCaSapellido()          Returns the current record's "ca_sapellido" value
- * @method string              getCaNombres()            Returns the current record's "ca_nombres" value
- * @method string              getCaSaludo()             Returns the current record's "ca_saludo" value
- * @method string              getCaSexo()               Returns the current record's "ca_sexo" value
- * @method string              getCaCumpleanos()         Returns the current record's "ca_cumpleanos" value
- * @method string              getCaOficina()            Returns the current record's "ca_oficina" value
- * @method string              getCaEmail()              Returns the current record's "ca_email" value
- * @method string              getCaVendedor()           Returns the current record's "ca_vendedor" value
- * @method string              getCaCoordinador()        Returns the current record's "ca_coordinador" value
- * @method string              getCaDireccion()          Returns the current record's "ca_direccion" value
- * @method string              getCaTorre()              Returns the current record's "ca_torre" value
- * @method string              getCaBloque()             Returns the current record's "ca_bloque" value
- * @method string              getCaInterior()           Returns the current record's "ca_interior" value
- * @method string              getCaLocalidad()          Returns the current record's "ca_localidad" value
- * @method string              getCaComplemento()        Returns the current record's "ca_complemento" value
- * @method string              getCaTelefonos()          Returns the current record's "ca_telefonos" value
- * @method string              getCaFax()                Returns the current record's "ca_fax" value
- * @method string              getCaPreferencias()       Returns the current record's "ca_preferencias" value
- * @method string              getCaConfirmar()          Returns the current record's "ca_confirmar" value
- * @method string              getCaIdciudad()           Returns the current record's "ca_idciudad" value
- * @method string              getCaIdgrupo()            Returns the current record's "ca_idgrupo" value
- * @method string              getCaListaclinton()       Returns the current record's "ca_listaclinton" value
- * @method date                getCaFchcircular()        Returns the current record's "ca_fchcircular" value
- * @method string              getCaStatus()             Returns the current record's "ca_status" value
- * @method string              getCaPropiedades()        Returns the current record's "ca_propiedades" value
- * @method Doctrine_Collection getContacto()             Returns the current record's "Contacto" collection
- * @method Usuario             getUsuario()              Returns the current record's "Usuario" value
- * @method Ciudad              getCiudad()               Returns the current record's "Ciudad" value
- * @method Doctrine_Collection getStdCliente()           Returns the current record's "StdCliente" collection
- * @method LibCliente          getLibCliente()           Returns the current record's "LibCliente" value
- * @method Doctrine_Collection getPricRecargoCliente()   Returns the current record's "PricRecargoCliente" collection
- * @method Doctrine_Collection getPricRecargoClienteBs() Returns the current record's "PricRecargoClienteBs" collection
- * @method Doctrine_Collection getInoClientesSea()       Returns the current record's "InoClientesSea" collection
- * @method Cliente             setCaIdcliente()          Sets the current record's "ca_idcliente" value
- * @method Cliente             setCaDigito()             Sets the current record's "ca_digito" value
- * @method Cliente             setCaCompania()           Sets the current record's "ca_compania" value
- * @method Cliente             setCaPapellido()          Sets the current record's "ca_papellido" value
- * @method Cliente             setCaSapellido()          Sets the current record's "ca_sapellido" value
- * @method Cliente             setCaNombres()            Sets the current record's "ca_nombres" value
- * @method Cliente             setCaSaludo()             Sets the current record's "ca_saludo" value
- * @method Cliente             setCaSexo()               Sets the current record's "ca_sexo" value
- * @method Cliente             setCaCumpleanos()         Sets the current record's "ca_cumpleanos" value
- * @method Cliente             setCaOficina()            Sets the current record's "ca_oficina" value
- * @method Cliente             setCaEmail()              Sets the current record's "ca_email" value
- * @method Cliente             setCaVendedor()           Sets the current record's "ca_vendedor" value
- * @method Cliente             setCaCoordinador()        Sets the current record's "ca_coordinador" value
- * @method Cliente             setCaDireccion()          Sets the current record's "ca_direccion" value
- * @method Cliente             setCaTorre()              Sets the current record's "ca_torre" value
- * @method Cliente             setCaBloque()             Sets the current record's "ca_bloque" value
- * @method Cliente             setCaInterior()           Sets the current record's "ca_interior" value
- * @method Cliente             setCaLocalidad()          Sets the current record's "ca_localidad" value
- * @method Cliente             setCaComplemento()        Sets the current record's "ca_complemento" value
- * @method Cliente             setCaTelefonos()          Sets the current record's "ca_telefonos" value
- * @method Cliente             setCaFax()                Sets the current record's "ca_fax" value
- * @method Cliente             setCaPreferencias()       Sets the current record's "ca_preferencias" value
- * @method Cliente             setCaConfirmar()          Sets the current record's "ca_confirmar" value
- * @method Cliente             setCaIdciudad()           Sets the current record's "ca_idciudad" value
- * @method Cliente             setCaIdgrupo()            Sets the current record's "ca_idgrupo" value
- * @method Cliente             setCaListaclinton()       Sets the current record's "ca_listaclinton" value
- * @method Cliente             setCaFchcircular()        Sets the current record's "ca_fchcircular" value
- * @method Cliente             setCaStatus()             Sets the current record's "ca_status" value
- * @method Cliente             setCaPropiedades()        Sets the current record's "ca_propiedades" value
- * @method Cliente             setContacto()             Sets the current record's "Contacto" collection
- * @method Cliente             setUsuario()              Sets the current record's "Usuario" value
- * @method Cliente             setCiudad()               Sets the current record's "Ciudad" value
- * @method Cliente             setStdCliente()           Sets the current record's "StdCliente" collection
- * @method Cliente             setLibCliente()           Sets the current record's "LibCliente" value
- * @method Cliente             setPricRecargoCliente()   Sets the current record's "PricRecargoCliente" collection
- * @method Cliente             setPricRecargoClienteBs() Sets the current record's "PricRecargoClienteBs" collection
- * @method Cliente             setInoClientesSea()       Sets the current record's "InoClientesSea" collection
+ * @method integer             getCaIdcliente()           Returns the current record's "ca_idcliente" value
+ * @method integer             getCaDigito()              Returns the current record's "ca_digito" value
+ * @method string              getCaCompania()            Returns the current record's "ca_compania" value
+ * @method string              getCaPapellido()           Returns the current record's "ca_papellido" value
+ * @method string              getCaSapellido()           Returns the current record's "ca_sapellido" value
+ * @method string              getCaNombres()             Returns the current record's "ca_nombres" value
+ * @method string              getCaSaludo()              Returns the current record's "ca_saludo" value
+ * @method string              getCaSexo()                Returns the current record's "ca_sexo" value
+ * @method string              getCaCumpleanos()          Returns the current record's "ca_cumpleanos" value
+ * @method string              getCaOficina()             Returns the current record's "ca_oficina" value
+ * @method string              getCaEmail()               Returns the current record's "ca_email" value
+ * @method string              getCaVendedor()            Returns the current record's "ca_vendedor" value
+ * @method string              getCaCoordinador()         Returns the current record's "ca_coordinador" value
+ * @method string              getCaDireccion()           Returns the current record's "ca_direccion" value
+ * @method string              getCaTorre()               Returns the current record's "ca_torre" value
+ * @method string              getCaBloque()              Returns the current record's "ca_bloque" value
+ * @method string              getCaInterior()            Returns the current record's "ca_interior" value
+ * @method string              getCaLocalidad()           Returns the current record's "ca_localidad" value
+ * @method string              getCaComplemento()         Returns the current record's "ca_complemento" value
+ * @method string              getCaTelefonos()           Returns the current record's "ca_telefonos" value
+ * @method string              getCaFax()                 Returns the current record's "ca_fax" value
+ * @method string              getCaPreferencias()        Returns the current record's "ca_preferencias" value
+ * @method string              getCaConfirmar()           Returns the current record's "ca_confirmar" value
+ * @method string              getCaIdciudad()            Returns the current record's "ca_idciudad" value
+ * @method string              getCaIdgrupo()             Returns the current record's "ca_idgrupo" value
+ * @method string              getCaListaclinton()        Returns the current record's "ca_listaclinton" value
+ * @method date                getCaFchcircular()         Returns the current record's "ca_fchcircular" value
+ * @method string              getCaStatus()              Returns the current record's "ca_status" value
+ * @method string              getCaPropiedades()         Returns the current record's "ca_propiedades" value
+ * @method Doctrine_Collection getContacto()              Returns the current record's "Contacto" collection
+ * @method Usuario             getUsuario()               Returns the current record's "Usuario" value
+ * @method Ciudad              getCiudad()                Returns the current record's "Ciudad" value
+ * @method Doctrine_Collection getStdCliente()            Returns the current record's "StdCliente" collection
+ * @method LibCliente          getLibCliente()            Returns the current record's "LibCliente" value
+ * @method Doctrine_Collection getConceptoAduanaCliente() Returns the current record's "ConceptoAduanaCliente" collection
+ * @method Doctrine_Collection getPricRecargoCliente()    Returns the current record's "PricRecargoCliente" collection
+ * @method Doctrine_Collection getPricRecargoClienteBs()  Returns the current record's "PricRecargoClienteBs" collection
+ * @method Doctrine_Collection getInoClientesSea()        Returns the current record's "InoClientesSea" collection
+ * @method Cliente             setCaIdcliente()           Sets the current record's "ca_idcliente" value
+ * @method Cliente             setCaDigito()              Sets the current record's "ca_digito" value
+ * @method Cliente             setCaCompania()            Sets the current record's "ca_compania" value
+ * @method Cliente             setCaPapellido()           Sets the current record's "ca_papellido" value
+ * @method Cliente             setCaSapellido()           Sets the current record's "ca_sapellido" value
+ * @method Cliente             setCaNombres()             Sets the current record's "ca_nombres" value
+ * @method Cliente             setCaSaludo()              Sets the current record's "ca_saludo" value
+ * @method Cliente             setCaSexo()                Sets the current record's "ca_sexo" value
+ * @method Cliente             setCaCumpleanos()          Sets the current record's "ca_cumpleanos" value
+ * @method Cliente             setCaOficina()             Sets the current record's "ca_oficina" value
+ * @method Cliente             setCaEmail()               Sets the current record's "ca_email" value
+ * @method Cliente             setCaVendedor()            Sets the current record's "ca_vendedor" value
+ * @method Cliente             setCaCoordinador()         Sets the current record's "ca_coordinador" value
+ * @method Cliente             setCaDireccion()           Sets the current record's "ca_direccion" value
+ * @method Cliente             setCaTorre()               Sets the current record's "ca_torre" value
+ * @method Cliente             setCaBloque()              Sets the current record's "ca_bloque" value
+ * @method Cliente             setCaInterior()            Sets the current record's "ca_interior" value
+ * @method Cliente             setCaLocalidad()           Sets the current record's "ca_localidad" value
+ * @method Cliente             setCaComplemento()         Sets the current record's "ca_complemento" value
+ * @method Cliente             setCaTelefonos()           Sets the current record's "ca_telefonos" value
+ * @method Cliente             setCaFax()                 Sets the current record's "ca_fax" value
+ * @method Cliente             setCaPreferencias()        Sets the current record's "ca_preferencias" value
+ * @method Cliente             setCaConfirmar()           Sets the current record's "ca_confirmar" value
+ * @method Cliente             setCaIdciudad()            Sets the current record's "ca_idciudad" value
+ * @method Cliente             setCaIdgrupo()             Sets the current record's "ca_idgrupo" value
+ * @method Cliente             setCaListaclinton()        Sets the current record's "ca_listaclinton" value
+ * @method Cliente             setCaFchcircular()         Sets the current record's "ca_fchcircular" value
+ * @method Cliente             setCaStatus()              Sets the current record's "ca_status" value
+ * @method Cliente             setCaPropiedades()         Sets the current record's "ca_propiedades" value
+ * @method Cliente             setContacto()              Sets the current record's "Contacto" collection
+ * @method Cliente             setUsuario()               Sets the current record's "Usuario" value
+ * @method Cliente             setCiudad()                Sets the current record's "Ciudad" value
+ * @method Cliente             setStdCliente()            Sets the current record's "StdCliente" collection
+ * @method Cliente             setLibCliente()            Sets the current record's "LibCliente" value
+ * @method Cliente             setConceptoAduanaCliente() Sets the current record's "ConceptoAduanaCliente" collection
+ * @method Cliente             setPricRecargoCliente()    Sets the current record's "PricRecargoCliente" collection
+ * @method Cliente             setPricRecargoClienteBs()  Sets the current record's "PricRecargoClienteBs" collection
+ * @method Cliente             setInoClientesSea()        Sets the current record's "InoClientesSea" collection
  * 
  * @package    symfony
  * @subpackage model
@@ -243,6 +246,10 @@ abstract class BaseCliente extends myDoctrineRecord
              'foreign' => 'ca_idcliente'));
 
         $this->hasOne('LibCliente', array(
+             'local' => 'ca_idcliente',
+             'foreign' => 'ca_idcliente'));
+
+        $this->hasMany('ConceptoAduanaCliente', array(
              'local' => 'ca_idcliente',
              'foreign' => 'ca_idcliente'));
 

@@ -10,6 +10,7 @@
  * @property string $ca_name
  * @property integer $ca_order
  * @property string $ca_icon
+ * @property boolean $ca_main
  * @property Doctrine_Collection $SubCategory
  * @property Doctrine_Collection $KBIssue
  * @property Doctrine_Collection $KBTooltip
@@ -20,6 +21,7 @@
  * @method string              getCaName()        Returns the current record's "ca_name" value
  * @method integer             getCaOrder()       Returns the current record's "ca_order" value
  * @method string              getCaIcon()        Returns the current record's "ca_icon" value
+ * @method boolean             getCaMain()        Returns the current record's "ca_main" value
  * @method Doctrine_Collection getSubCategory()   Returns the current record's "SubCategory" collection
  * @method Doctrine_Collection getKBIssue()       Returns the current record's "KBIssue" collection
  * @method Doctrine_Collection getKBTooltip()     Returns the current record's "KBTooltip" collection
@@ -29,6 +31,7 @@
  * @method KBCategory          setCaName()        Sets the current record's "ca_name" value
  * @method KBCategory          setCaOrder()       Sets the current record's "ca_order" value
  * @method KBCategory          setCaIcon()        Sets the current record's "ca_icon" value
+ * @method KBCategory          setCaMain()        Sets the current record's "ca_main" value
  * @method KBCategory          setSubCategory()   Sets the current record's "SubCategory" collection
  * @method KBCategory          setKBIssue()       Sets the current record's "KBIssue" collection
  * @method KBCategory          setKBTooltip()     Sets the current record's "KBTooltip" collection
@@ -60,6 +63,9 @@ abstract class BaseKBCategory extends myDoctrineRecord
              ));
         $this->hasColumn('ca_icon', 'string', null, array(
              'type' => 'string',
+             ));
+        $this->hasColumn('ca_main', 'boolean', null, array(
+             'type' => 'boolean',
              ));
 
         $this->option('symfony', array(

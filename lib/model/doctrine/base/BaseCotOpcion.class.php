@@ -20,8 +20,10 @@
  * @property timestamp $ca_fchcreado
  * @property string $ca_usuactualizado
  * @property timestamp $ca_fchactualizado
+ * @property integer $ca_idequipo
  * @property CotProducto $CotProducto
  * @property Concepto $Concepto
+ * @property Concepto $Equipo
  * 
  * @method integer     getCaIdopcion()        Returns the current record's "ca_idopcion" value
  * @method integer     getCaIdproducto()      Returns the current record's "ca_idproducto" value
@@ -38,8 +40,10 @@
  * @method timestamp   getCaFchcreado()       Returns the current record's "ca_fchcreado" value
  * @method string      getCaUsuactualizado()  Returns the current record's "ca_usuactualizado" value
  * @method timestamp   getCaFchactualizado()  Returns the current record's "ca_fchactualizado" value
+ * @method integer     getCaIdequipo()        Returns the current record's "ca_idequipo" value
  * @method CotProducto getCotProducto()       Returns the current record's "CotProducto" value
  * @method Concepto    getConcepto()          Returns the current record's "Concepto" value
+ * @method Concepto    getEquipo()            Returns the current record's "Equipo" value
  * @method CotOpcion   setCaIdopcion()        Sets the current record's "ca_idopcion" value
  * @method CotOpcion   setCaIdproducto()      Sets the current record's "ca_idproducto" value
  * @method CotOpcion   setCaIdcotizacion()    Sets the current record's "ca_idcotizacion" value
@@ -55,8 +59,10 @@
  * @method CotOpcion   setCaFchcreado()       Sets the current record's "ca_fchcreado" value
  * @method CotOpcion   setCaUsuactualizado()  Sets the current record's "ca_usuactualizado" value
  * @method CotOpcion   setCaFchactualizado()  Sets the current record's "ca_fchactualizado" value
+ * @method CotOpcion   setCaIdequipo()        Sets the current record's "ca_idequipo" value
  * @method CotOpcion   setCotProducto()       Sets the current record's "CotProducto" value
  * @method CotOpcion   setConcepto()          Sets the current record's "Concepto" value
+ * @method CotOpcion   setEquipo()            Sets the current record's "Equipo" value
  * 
  * @package    symfony
  * @subpackage model
@@ -117,6 +123,9 @@ abstract class BaseCotOpcion extends myDoctrineRecord
         $this->hasColumn('ca_fchactualizado', 'timestamp', null, array(
              'type' => 'timestamp',
              ));
+        $this->hasColumn('ca_idequipo', 'integer', null, array(
+             'type' => 'integer',
+             ));
 
         $this->option('symfony', array(
              'form' => false,
@@ -133,6 +142,10 @@ abstract class BaseCotOpcion extends myDoctrineRecord
 
         $this->hasOne('Concepto', array(
              'local' => 'ca_idconcepto',
+             'foreign' => 'ca_idconcepto'));
+
+        $this->hasOne('Concepto as Equipo', array(
+             'local' => 'ca_idequipo',
              'foreign' => 'ca_idconcepto'));
     }
 }

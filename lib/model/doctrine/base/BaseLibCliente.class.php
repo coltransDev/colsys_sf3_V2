@@ -13,6 +13,7 @@
  * @property string $ca_usucreado
  * @property timestamp $ca_fchactualizado
  * @property string $ca_usuactualizado
+ * @property Cliente $Cliente
  * 
  * @method integer    getCaIdcliente()       Returns the current record's "ca_idcliente" value
  * @method integer    getCaDiascredito()     Returns the current record's "ca_diascredito" value
@@ -22,6 +23,7 @@
  * @method string     getCaUsucreado()       Returns the current record's "ca_usucreado" value
  * @method timestamp  getCaFchactualizado()  Returns the current record's "ca_fchactualizado" value
  * @method string     getCaUsuactualizado()  Returns the current record's "ca_usuactualizado" value
+ * @method Cliente    getCliente()           Returns the current record's "Cliente" value
  * @method LibCliente setCaIdcliente()       Sets the current record's "ca_idcliente" value
  * @method LibCliente setCaDiascredito()     Sets the current record's "ca_diascredito" value
  * @method LibCliente setCaCupo()            Sets the current record's "ca_cupo" value
@@ -30,6 +32,7 @@
  * @method LibCliente setCaUsucreado()       Sets the current record's "ca_usucreado" value
  * @method LibCliente setCaFchactualizado()  Sets the current record's "ca_fchactualizado" value
  * @method LibCliente setCaUsuactualizado()  Sets the current record's "ca_usuactualizado" value
+ * @method LibCliente setCliente()           Sets the current record's "Cliente" value
  * 
  * @package    symfony
  * @subpackage model
@@ -76,6 +79,8 @@ abstract class BaseLibCliente extends myDoctrineRecord
     public function setUp()
     {
         parent::setUp();
-        
+        $this->hasOne('Cliente', array(
+             'local' => 'ca_idcliente',
+             'foreign' => 'ca_idcliente'));
     }
 }

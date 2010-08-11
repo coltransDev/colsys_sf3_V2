@@ -14,9 +14,7 @@
  * @property boolean $ca_recargoorigen
  * @property boolean $ca_recargootmdta
  * @property boolean $ca_costo
- * @property string $ca_col1
- * @property string $ca_col2
- * @property boolean $ca_tarifario_costos_cliente
+ * @property string $ca_parametros
  * @property Doctrine_Collection $InoConceptoModalidad
  * @property Doctrine_Collection $InoParametroFacturacion
  * @property Doctrine_Collection $InoParametroCosto
@@ -24,42 +22,38 @@
  * @property Doctrine_Collection $PricRecargoCliente
  * @property Doctrine_Collection $PricRecargoClienteBs
  * 
- * @method integer             getCaIdconcepto()                Returns the current record's "ca_idconcepto" value
- * @method string              getCaConcepto()                  Returns the current record's "ca_concepto" value
- * @method string              getCaTipo()                      Returns the current record's "ca_tipo" value
- * @method integer             getCaLiminferior()               Returns the current record's "ca_liminferior" value
- * @method boolean             getCaFlete()                     Returns the current record's "ca_flete" value
- * @method boolean             getCaRecargolocal()              Returns the current record's "ca_recargolocal" value
- * @method boolean             getCaRecargoorigen()             Returns the current record's "ca_recargoorigen" value
- * @method boolean             getCaRecargootmdta()             Returns the current record's "ca_recargootmdta" value
- * @method boolean             getCaCosto()                     Returns the current record's "ca_costo" value
- * @method string              getCaCol1()                      Returns the current record's "ca_col1" value
- * @method string              getCaCol2()                      Returns the current record's "ca_col2" value
- * @method boolean             getCaTarifarioCostosCliente()    Returns the current record's "ca_tarifario_costos_cliente" value
- * @method Doctrine_Collection getInoConceptoModalidad()        Returns the current record's "InoConceptoModalidad" collection
- * @method Doctrine_Collection getInoParametroFacturacion()     Returns the current record's "InoParametroFacturacion" collection
- * @method Doctrine_Collection getInoParametroCosto()           Returns the current record's "InoParametroCosto" collection
- * @method Doctrine_Collection getInoTransaccion()              Returns the current record's "InoTransaccion" collection
- * @method Doctrine_Collection getPricRecargoCliente()          Returns the current record's "PricRecargoCliente" collection
- * @method Doctrine_Collection getPricRecargoClienteBs()        Returns the current record's "PricRecargoClienteBs" collection
- * @method InoConcepto         setCaIdconcepto()                Sets the current record's "ca_idconcepto" value
- * @method InoConcepto         setCaConcepto()                  Sets the current record's "ca_concepto" value
- * @method InoConcepto         setCaTipo()                      Sets the current record's "ca_tipo" value
- * @method InoConcepto         setCaLiminferior()               Sets the current record's "ca_liminferior" value
- * @method InoConcepto         setCaFlete()                     Sets the current record's "ca_flete" value
- * @method InoConcepto         setCaRecargolocal()              Sets the current record's "ca_recargolocal" value
- * @method InoConcepto         setCaRecargoorigen()             Sets the current record's "ca_recargoorigen" value
- * @method InoConcepto         setCaRecargootmdta()             Sets the current record's "ca_recargootmdta" value
- * @method InoConcepto         setCaCosto()                     Sets the current record's "ca_costo" value
- * @method InoConcepto         setCaCol1()                      Sets the current record's "ca_col1" value
- * @method InoConcepto         setCaCol2()                      Sets the current record's "ca_col2" value
- * @method InoConcepto         setCaTarifarioCostosCliente()    Sets the current record's "ca_tarifario_costos_cliente" value
- * @method InoConcepto         setInoConceptoModalidad()        Sets the current record's "InoConceptoModalidad" collection
- * @method InoConcepto         setInoParametroFacturacion()     Sets the current record's "InoParametroFacturacion" collection
- * @method InoConcepto         setInoParametroCosto()           Sets the current record's "InoParametroCosto" collection
- * @method InoConcepto         setInoTransaccion()              Sets the current record's "InoTransaccion" collection
- * @method InoConcepto         setPricRecargoCliente()          Sets the current record's "PricRecargoCliente" collection
- * @method InoConcepto         setPricRecargoClienteBs()        Sets the current record's "PricRecargoClienteBs" collection
+ * @method integer             getCaIdconcepto()            Returns the current record's "ca_idconcepto" value
+ * @method string              getCaConcepto()              Returns the current record's "ca_concepto" value
+ * @method string              getCaTipo()                  Returns the current record's "ca_tipo" value
+ * @method integer             getCaLiminferior()           Returns the current record's "ca_liminferior" value
+ * @method boolean             getCaFlete()                 Returns the current record's "ca_flete" value
+ * @method boolean             getCaRecargolocal()          Returns the current record's "ca_recargolocal" value
+ * @method boolean             getCaRecargoorigen()         Returns the current record's "ca_recargoorigen" value
+ * @method boolean             getCaRecargootmdta()         Returns the current record's "ca_recargootmdta" value
+ * @method boolean             getCaCosto()                 Returns the current record's "ca_costo" value
+ * @method string              getCaParametros()            Returns the current record's "ca_parametros" value
+ * @method Doctrine_Collection getInoConceptoModalidad()    Returns the current record's "InoConceptoModalidad" collection
+ * @method Doctrine_Collection getInoParametroFacturacion() Returns the current record's "InoParametroFacturacion" collection
+ * @method Doctrine_Collection getInoParametroCosto()       Returns the current record's "InoParametroCosto" collection
+ * @method Doctrine_Collection getInoTransaccion()          Returns the current record's "InoTransaccion" collection
+ * @method Doctrine_Collection getPricRecargoCliente()      Returns the current record's "PricRecargoCliente" collection
+ * @method Doctrine_Collection getPricRecargoClienteBs()    Returns the current record's "PricRecargoClienteBs" collection
+ * @method InoConcepto         setCaIdconcepto()            Sets the current record's "ca_idconcepto" value
+ * @method InoConcepto         setCaConcepto()              Sets the current record's "ca_concepto" value
+ * @method InoConcepto         setCaTipo()                  Sets the current record's "ca_tipo" value
+ * @method InoConcepto         setCaLiminferior()           Sets the current record's "ca_liminferior" value
+ * @method InoConcepto         setCaFlete()                 Sets the current record's "ca_flete" value
+ * @method InoConcepto         setCaRecargolocal()          Sets the current record's "ca_recargolocal" value
+ * @method InoConcepto         setCaRecargoorigen()         Sets the current record's "ca_recargoorigen" value
+ * @method InoConcepto         setCaRecargootmdta()         Sets the current record's "ca_recargootmdta" value
+ * @method InoConcepto         setCaCosto()                 Sets the current record's "ca_costo" value
+ * @method InoConcepto         setCaParametros()            Sets the current record's "ca_parametros" value
+ * @method InoConcepto         setInoConceptoModalidad()    Sets the current record's "InoConceptoModalidad" collection
+ * @method InoConcepto         setInoParametroFacturacion() Sets the current record's "InoParametroFacturacion" collection
+ * @method InoConcepto         setInoParametroCosto()       Sets the current record's "InoParametroCosto" collection
+ * @method InoConcepto         setInoTransaccion()          Sets the current record's "InoTransaccion" collection
+ * @method InoConcepto         setPricRecargoCliente()      Sets the current record's "PricRecargoCliente" collection
+ * @method InoConcepto         setPricRecargoClienteBs()    Sets the current record's "PricRecargoClienteBs" collection
  * 
  * @package    symfony
  * @subpackage model
@@ -101,14 +95,9 @@ abstract class BaseInoConcepto extends myDoctrineRecord
         $this->hasColumn('ca_costo', 'boolean', null, array(
              'type' => 'boolean',
              ));
-        $this->hasColumn('ca_col1', 'string', null, array(
+        $this->hasColumn('ca_parametros', 'string', null, array(
              'type' => 'string',
-             ));
-        $this->hasColumn('ca_col2', 'string', null, array(
-             'type' => 'string',
-             ));
-        $this->hasColumn('ca_tarifario_costos_cliente', 'boolean', null, array(
-             'type' => 'boolean',
+             'notnull' => true,
              ));
 
         $this->option('symfony', array(

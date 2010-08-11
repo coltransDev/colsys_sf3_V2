@@ -13,29 +13,38 @@
  * @property decimal $ca_netcosto
  * @property string $ca_idmoneda
  * @property string $ca_detalles
+ * @property string $ca_aplicacion
+ * @property string $ca_aplicacionminimo
+ * @property string $ca_parametro
  * @property Reporte $Reporte
  * @property Costo $Costo
  * 
- * @method integer  getCaIdreporte()  Returns the current record's "ca_idreporte" value
- * @method integer  getCaIdcosto()    Returns the current record's "ca_idcosto" value
- * @method string   getCaTipo()       Returns the current record's "ca_tipo" value
- * @method decimal  getCaVlrcosto()   Returns the current record's "ca_vlrcosto" value
- * @method decimal  getCaMincosto()   Returns the current record's "ca_mincosto" value
- * @method decimal  getCaNetcosto()   Returns the current record's "ca_netcosto" value
- * @method string   getCaIdmoneda()   Returns the current record's "ca_idmoneda" value
- * @method string   getCaDetalles()   Returns the current record's "ca_detalles" value
- * @method Reporte  getReporte()      Returns the current record's "Reporte" value
- * @method Costo    getCosto()        Returns the current record's "Costo" value
- * @method RepCosto setCaIdreporte()  Sets the current record's "ca_idreporte" value
- * @method RepCosto setCaIdcosto()    Sets the current record's "ca_idcosto" value
- * @method RepCosto setCaTipo()       Sets the current record's "ca_tipo" value
- * @method RepCosto setCaVlrcosto()   Sets the current record's "ca_vlrcosto" value
- * @method RepCosto setCaMincosto()   Sets the current record's "ca_mincosto" value
- * @method RepCosto setCaNetcosto()   Sets the current record's "ca_netcosto" value
- * @method RepCosto setCaIdmoneda()   Sets the current record's "ca_idmoneda" value
- * @method RepCosto setCaDetalles()   Sets the current record's "ca_detalles" value
- * @method RepCosto setReporte()      Sets the current record's "Reporte" value
- * @method RepCosto setCosto()        Sets the current record's "Costo" value
+ * @method integer  getCaIdreporte()         Returns the current record's "ca_idreporte" value
+ * @method integer  getCaIdcosto()           Returns the current record's "ca_idcosto" value
+ * @method string   getCaTipo()              Returns the current record's "ca_tipo" value
+ * @method decimal  getCaVlrcosto()          Returns the current record's "ca_vlrcosto" value
+ * @method decimal  getCaMincosto()          Returns the current record's "ca_mincosto" value
+ * @method decimal  getCaNetcosto()          Returns the current record's "ca_netcosto" value
+ * @method string   getCaIdmoneda()          Returns the current record's "ca_idmoneda" value
+ * @method string   getCaDetalles()          Returns the current record's "ca_detalles" value
+ * @method string   getCaAplicacion()        Returns the current record's "ca_aplicacion" value
+ * @method string   getCaAplicacionminimo()  Returns the current record's "ca_aplicacionminimo" value
+ * @method string   getCaParametro()         Returns the current record's "ca_parametro" value
+ * @method Reporte  getReporte()             Returns the current record's "Reporte" value
+ * @method Costo    getCosto()               Returns the current record's "Costo" value
+ * @method RepCosto setCaIdreporte()         Sets the current record's "ca_idreporte" value
+ * @method RepCosto setCaIdcosto()           Sets the current record's "ca_idcosto" value
+ * @method RepCosto setCaTipo()              Sets the current record's "ca_tipo" value
+ * @method RepCosto setCaVlrcosto()          Sets the current record's "ca_vlrcosto" value
+ * @method RepCosto setCaMincosto()          Sets the current record's "ca_mincosto" value
+ * @method RepCosto setCaNetcosto()          Sets the current record's "ca_netcosto" value
+ * @method RepCosto setCaIdmoneda()          Sets the current record's "ca_idmoneda" value
+ * @method RepCosto setCaDetalles()          Sets the current record's "ca_detalles" value
+ * @method RepCosto setCaAplicacion()        Sets the current record's "ca_aplicacion" value
+ * @method RepCosto setCaAplicacionminimo()  Sets the current record's "ca_aplicacionminimo" value
+ * @method RepCosto setCaParametro()         Sets the current record's "ca_parametro" value
+ * @method RepCosto setReporte()             Sets the current record's "Reporte" value
+ * @method RepCosto setCosto()               Sets the current record's "Costo" value
  * 
  * @package    symfony
  * @subpackage model
@@ -71,6 +80,15 @@ abstract class BaseRepCosto extends myDoctrineRecord
              'type' => 'string',
              ));
         $this->hasColumn('ca_detalles', 'string', null, array(
+             'type' => 'string',
+             ));
+        $this->hasColumn('ca_aplicacion', 'string', null, array(
+             'type' => 'string',
+             ));
+        $this->hasColumn('ca_aplicacionminimo', 'string', null, array(
+             'type' => 'string',
+             ));
+        $this->hasColumn('ca_parametro', 'string', null, array(
              'type' => 'string',
              ));
 

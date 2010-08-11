@@ -38,12 +38,14 @@ abstract class BaseStdCliente extends myDoctrineRecord
              ));
         $this->hasColumn('ca_fchestado', 'timestamp', null, array(
              'type' => 'timestamp',
+             'primary' => true,
              ));
         $this->hasColumn('ca_estado', 'string', null, array(
              'type' => 'string',
              ));
         $this->hasColumn('ca_empresa', 'string', null, array(
              'type' => 'string',
+             'primary' => true,
              ));
 
         $this->option('symfony', array(

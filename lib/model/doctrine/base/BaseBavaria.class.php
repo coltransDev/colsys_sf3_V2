@@ -79,9 +79,9 @@
  * @method Bavaria             setCaUsuarchivado()       Sets the current record's "ca_usuarchivado" value
  * @method Bavaria             setReporte()              Sets the current record's "Reporte" collection
  * 
- * @package    ##PACKAGE##
- * @subpackage ##SUBPACKAGE##
- * @author     ##NAME## <##EMAIL##>
+ * @package    symfony
+ * @subpackage model
+ * @author     Your name here
  * @version    SVN: $Id: Builder.php 6820 2009-11-30 17:27:49Z jwage $
  */
 abstract class BaseBavaria extends myDoctrineRecord

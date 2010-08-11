@@ -9,18 +9,30 @@
  * @property string $ca_nombre
  * @property string $ca_tipo
  * @property string $ca_transporte
+ * @property timestamp $ca_fchcreado
+ * @property string $ca_usucreado
+ * @property timestamp $ca_fchactualizado
+ * @property string $ca_usuactualizado
  * @property Doctrine_Collection $Reporte
  * 
- * @method integer             getCaIdbodega()    Returns the current record's "ca_idbodega" value
- * @method string              getCaNombre()      Returns the current record's "ca_nombre" value
- * @method string              getCaTipo()        Returns the current record's "ca_tipo" value
- * @method string              getCaTransporte()  Returns the current record's "ca_transporte" value
- * @method Doctrine_Collection getReporte()       Returns the current record's "Reporte" collection
- * @method Bodega              setCaIdbodega()    Sets the current record's "ca_idbodega" value
- * @method Bodega              setCaNombre()      Sets the current record's "ca_nombre" value
- * @method Bodega              setCaTipo()        Sets the current record's "ca_tipo" value
- * @method Bodega              setCaTransporte()  Sets the current record's "ca_transporte" value
- * @method Bodega              setReporte()       Sets the current record's "Reporte" collection
+ * @method integer             getCaIdbodega()        Returns the current record's "ca_idbodega" value
+ * @method string              getCaNombre()          Returns the current record's "ca_nombre" value
+ * @method string              getCaTipo()            Returns the current record's "ca_tipo" value
+ * @method string              getCaTransporte()      Returns the current record's "ca_transporte" value
+ * @method timestamp           getCaFchcreado()       Returns the current record's "ca_fchcreado" value
+ * @method string              getCaUsucreado()       Returns the current record's "ca_usucreado" value
+ * @method timestamp           getCaFchactualizado()  Returns the current record's "ca_fchactualizado" value
+ * @method string              getCaUsuactualizado()  Returns the current record's "ca_usuactualizado" value
+ * @method Doctrine_Collection getReporte()           Returns the current record's "Reporte" collection
+ * @method Bodega              setCaIdbodega()        Sets the current record's "ca_idbodega" value
+ * @method Bodega              setCaNombre()          Sets the current record's "ca_nombre" value
+ * @method Bodega              setCaTipo()            Sets the current record's "ca_tipo" value
+ * @method Bodega              setCaTransporte()      Sets the current record's "ca_transporte" value
+ * @method Bodega              setCaFchcreado()       Sets the current record's "ca_fchcreado" value
+ * @method Bodega              setCaUsucreado()       Sets the current record's "ca_usucreado" value
+ * @method Bodega              setCaFchactualizado()  Sets the current record's "ca_fchactualizado" value
+ * @method Bodega              setCaUsuactualizado()  Sets the current record's "ca_usuactualizado" value
+ * @method Bodega              setReporte()           Sets the current record's "Reporte" collection
  * 
  * @package    symfony
  * @subpackage model
@@ -37,8 +49,9 @@ abstract class BaseBodega extends myDoctrineRecord
              'primary' => true,
              'autoincrement' => true,
              ));
-        $this->hasColumn('ca_nombre', 'string', null, array(
+        $this->hasColumn('ca_nombre', 'string', 80, array(
              'type' => 'string',
+             'length' => '80',
              ));
         $this->hasColumn('ca_tipo', 'string', null, array(
              'type' => 'string',
@@ -46,10 +59,17 @@ abstract class BaseBodega extends myDoctrineRecord
         $this->hasColumn('ca_transporte', 'string', null, array(
              'type' => 'string',
              ));
-
-        $this->option('symfony', array(
-             'form' => false,
-             'filter' => false,
+        $this->hasColumn('ca_fchcreado', 'timestamp', null, array(
+             'type' => 'timestamp',
+             ));
+        $this->hasColumn('ca_usucreado', 'string', null, array(
+             'type' => 'string',
+             ));
+        $this->hasColumn('ca_fchactualizado', 'timestamp', null, array(
+             'type' => 'timestamp',
+             ));
+        $this->hasColumn('ca_usuactualizado', 'string', null, array(
+             'type' => 'string',
              ));
     }
 

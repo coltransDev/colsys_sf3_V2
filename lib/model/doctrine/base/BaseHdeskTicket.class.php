@@ -29,6 +29,7 @@
  * @property Doctrine_Collection $HdeskTask
  * @property NotTarea $NotTarea
  * @property Usuario $Usuario
+ * @property Usuario $ReportedBy
  * 
  * @method integer             getCaIdticket()       Returns the current record's "ca_idticket" value
  * @method integer             getCaIdgroup()        Returns the current record's "ca_idgroup" value
@@ -54,6 +55,7 @@
  * @method Doctrine_Collection getHdeskTask()        Returns the current record's "HdeskTask" collection
  * @method NotTarea            getNotTarea()         Returns the current record's "NotTarea" value
  * @method Usuario             getUsuario()          Returns the current record's "Usuario" value
+ * @method Usuario             getReportedBy()       Returns the current record's "ReportedBy" value
  * @method HdeskTicket         setCaIdticket()       Sets the current record's "ca_idticket" value
  * @method HdeskTicket         setCaIdgroup()        Sets the current record's "ca_idgroup" value
  * @method HdeskTicket         setCaIdproject()      Sets the current record's "ca_idproject" value
@@ -78,6 +80,7 @@
  * @method HdeskTicket         setHdeskTask()        Sets the current record's "HdeskTask" collection
  * @method HdeskTicket         setNotTarea()         Sets the current record's "NotTarea" value
  * @method HdeskTicket         setUsuario()          Sets the current record's "Usuario" value
+ * @method HdeskTicket         setReportedBy()       Sets the current record's "ReportedBy" value
  * 
  * @package    symfony
  * @subpackage model
@@ -184,6 +187,10 @@ abstract class BaseHdeskTicket extends myDoctrineRecord
              'foreign' => 'ca_idtarea'));
 
         $this->hasOne('Usuario', array(
+             'local' => 'ca_login',
+             'foreign' => 'ca_login'));
+
+        $this->hasOne('Usuario as ReportedBy', array(
              'local' => 'ca_login',
              'foreign' => 'ca_login'));
     }

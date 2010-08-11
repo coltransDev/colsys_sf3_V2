@@ -46,7 +46,7 @@ abstract class BasePricRecargoParametro extends myDoctrineRecord
 {
     public function setTableDefinition()
     {
-        $this->setTableName('tb_pricrecargosparametros');
+        $this->setTableName('pric.tb_recargosparametros');
         $this->hasColumn('ca_idlinea', 'integer', null, array(
              'type' => 'integer',
              'primary' => true,

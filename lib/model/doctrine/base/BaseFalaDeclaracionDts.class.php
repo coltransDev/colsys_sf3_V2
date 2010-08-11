@@ -8,6 +8,13 @@
  * @property string $ca_referencia
  * @property integer $ca_item
  * @property string $ca_numdeclaracion
+ * @property date $ca_emision_fch
+ * @property date $ca_vencimiento_fch
+ * @property string $ca_aceptacion_nro
+ * @property date $ca_aceptacion_fch
+ * @property date $ca_pago_fch
+ * @property string $ca_moneda
+ * @property decimal $ca_valor_trm
  * @property string $ca_subpartida
  * @property string $ca_mod
  * @property decimal $ca_cantidad
@@ -42,6 +49,13 @@
  * @method string             getCaReferencia()           Returns the current record's "ca_referencia" value
  * @method integer            getCaItem()                 Returns the current record's "ca_item" value
  * @method string             getCaNumdeclaracion()       Returns the current record's "ca_numdeclaracion" value
+ * @method date               getCaEmisionFch()           Returns the current record's "ca_emision_fch" value
+ * @method date               getCaVencimientoFch()       Returns the current record's "ca_vencimiento_fch" value
+ * @method string             getCaAceptacionNro()        Returns the current record's "ca_aceptacion_nro" value
+ * @method date               getCaAceptacionFch()        Returns the current record's "ca_aceptacion_fch" value
+ * @method date               getCaPagoFch()              Returns the current record's "ca_pago_fch" value
+ * @method string             getCaMoneda()               Returns the current record's "ca_moneda" value
+ * @method decimal            getCaValorTrm()             Returns the current record's "ca_valor_trm" value
  * @method string             getCaSubpartida()           Returns the current record's "ca_subpartida" value
  * @method string             getCaMod()                  Returns the current record's "ca_mod" value
  * @method decimal            getCaCantidad()             Returns the current record's "ca_cantidad" value
@@ -75,6 +89,13 @@
  * @method FalaDeclaracionDts setCaReferencia()           Sets the current record's "ca_referencia" value
  * @method FalaDeclaracionDts setCaItem()                 Sets the current record's "ca_item" value
  * @method FalaDeclaracionDts setCaNumdeclaracion()       Sets the current record's "ca_numdeclaracion" value
+ * @method FalaDeclaracionDts setCaEmisionFch()           Sets the current record's "ca_emision_fch" value
+ * @method FalaDeclaracionDts setCaVencimientoFch()       Sets the current record's "ca_vencimiento_fch" value
+ * @method FalaDeclaracionDts setCaAceptacionNro()        Sets the current record's "ca_aceptacion_nro" value
+ * @method FalaDeclaracionDts setCaAceptacionFch()        Sets the current record's "ca_aceptacion_fch" value
+ * @method FalaDeclaracionDts setCaPagoFch()              Sets the current record's "ca_pago_fch" value
+ * @method FalaDeclaracionDts setCaMoneda()               Sets the current record's "ca_moneda" value
+ * @method FalaDeclaracionDts setCaValorTrm()             Sets the current record's "ca_valor_trm" value
  * @method FalaDeclaracionDts setCaSubpartida()           Sets the current record's "ca_subpartida" value
  * @method FalaDeclaracionDts setCaMod()                  Sets the current record's "ca_mod" value
  * @method FalaDeclaracionDts setCaCantidad()             Sets the current record's "ca_cantidad" value
@@ -126,6 +147,27 @@ abstract class BaseFalaDeclaracionDts extends myDoctrineRecord
              ));
         $this->hasColumn('ca_numdeclaracion', 'string', null, array(
              'type' => 'string',
+             ));
+        $this->hasColumn('ca_emision_fch', 'date', null, array(
+             'type' => 'date',
+             ));
+        $this->hasColumn('ca_vencimiento_fch', 'date', null, array(
+             'type' => 'date',
+             ));
+        $this->hasColumn('ca_aceptacion_nro', 'string', null, array(
+             'type' => 'string',
+             ));
+        $this->hasColumn('ca_aceptacion_fch', 'date', null, array(
+             'type' => 'date',
+             ));
+        $this->hasColumn('ca_pago_fch', 'date', null, array(
+             'type' => 'date',
+             ));
+        $this->hasColumn('ca_moneda', 'string', null, array(
+             'type' => 'string',
+             ));
+        $this->hasColumn('ca_valor_trm', 'decimal', null, array(
+             'type' => 'decimal',
              ));
         $this->hasColumn('ca_subpartida', 'string', null, array(
              'type' => 'string',

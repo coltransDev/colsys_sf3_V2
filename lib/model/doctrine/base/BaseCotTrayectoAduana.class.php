@@ -19,6 +19,7 @@
  * @property Cotizacion $Cotizacion
  * @property Ciudad $Origen
  * @property Ciudad $Destino
+ * @property CotRecargosAduana $CotRecargosAduana
  * 
  * @method integer           getCaIdtrayecto()      Returns the current record's "ca_idtrayecto" value
  * @method integer           getCaIdcotizacion()    Returns the current record's "ca_idcotizacion" value
@@ -34,6 +35,7 @@
  * @method Cotizacion        getCotizacion()        Returns the current record's "Cotizacion" value
  * @method Ciudad            getOrigen()            Returns the current record's "Origen" value
  * @method Ciudad            getDestino()           Returns the current record's "Destino" value
+ * @method CotRecargosAduana getCotRecargosAduana() Returns the current record's "CotRecargosAduana" value
  * @method CotTrayectoAduana setCaIdtrayecto()      Sets the current record's "ca_idtrayecto" value
  * @method CotTrayectoAduana setCaIdcotizacion()    Sets the current record's "ca_idcotizacion" value
  * @method CotTrayectoAduana setCaOrigen()          Sets the current record's "ca_origen" value
@@ -48,6 +50,7 @@
  * @method CotTrayectoAduana setCotizacion()        Sets the current record's "Cotizacion" value
  * @method CotTrayectoAduana setOrigen()            Sets the current record's "Origen" value
  * @method CotTrayectoAduana setDestino()           Sets the current record's "Destino" value
+ * @method CotTrayectoAduana setCotRecargosAduana() Sets the current record's "CotRecargosAduana" value
  * 
  * @package    symfony
  * @subpackage model
@@ -58,7 +61,7 @@ abstract class BaseCotTrayectoAduana extends myDoctrineRecord
 {
     public function setTableDefinition()
     {
-        $this->setTableName('cot.tb_trayectos_aduana');
+        $this->setTableName('tb_cotproductos');
         $this->hasColumn('ca_idtrayecto', 'integer', null, array(
              'type' => 'integer',
              'primary' => true,
@@ -117,5 +120,9 @@ abstract class BaseCotTrayectoAduana extends myDoctrineRecord
         $this->hasOne('Ciudad as Destino', array(
              'local' => 'ca_destino',
              'foreign' => 'ca_idciudad'));
+
+        $this->hasOne('CotRecargosAduana', array(
+             'local' => 'ca_idcotizacion',
+             'foreign' => 'ca_idcotizacion'));
     }
 }

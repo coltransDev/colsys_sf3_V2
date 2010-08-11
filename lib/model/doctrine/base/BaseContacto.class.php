@@ -17,6 +17,7 @@
  * @property string $ca_fax
  * @property string $ca_email
  * @property string $ca_observaciones
+ * @property boolean $ca_fijo
  * @property string $ca_fchcreado
  * @property Cliente $Cliente
  * @property Doctrine_Collection $Cotizacion
@@ -35,6 +36,7 @@
  * @method string              getCaFax()            Returns the current record's "ca_fax" value
  * @method string              getCaEmail()          Returns the current record's "ca_email" value
  * @method string              getCaObservaciones()  Returns the current record's "ca_observaciones" value
+ * @method boolean             getCaFijo()           Returns the current record's "ca_fijo" value
  * @method string              getCaFchcreado()      Returns the current record's "ca_fchcreado" value
  * @method Cliente             getCliente()          Returns the current record's "Cliente" value
  * @method Doctrine_Collection getCotizacion()       Returns the current record's "Cotizacion" collection
@@ -52,6 +54,7 @@
  * @method Contacto            setCaFax()            Sets the current record's "ca_fax" value
  * @method Contacto            setCaEmail()          Sets the current record's "ca_email" value
  * @method Contacto            setCaObservaciones()  Sets the current record's "ca_observaciones" value
+ * @method Contacto            setCaFijo()           Sets the current record's "ca_fijo" value
  * @method Contacto            setCaFchcreado()      Sets the current record's "ca_fchcreado" value
  * @method Contacto            setCliente()          Sets the current record's "Cliente" value
  * @method Contacto            setCotizacion()       Sets the current record's "Cotizacion" collection
@@ -105,6 +108,9 @@ abstract class BaseContacto extends myDoctrineRecord
              ));
         $this->hasColumn('ca_observaciones', 'string', null, array(
              'type' => 'string',
+             ));
+        $this->hasColumn('ca_fijo', 'boolean', null, array(
+             'type' => 'boolean',
              ));
         $this->hasColumn('ca_fchcreado', 'string', null, array(
              'type' => 'string',

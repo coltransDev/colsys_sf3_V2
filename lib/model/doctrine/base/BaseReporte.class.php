@@ -85,6 +85,7 @@
  * @property IdsProveedor $IdsProveedor
  * @property Tercero $Proveedor
  * @property Reporte $GrupoReporte
+ * @property Bavaria $Bavaria
  * @property Doctrine_Collection $Email
  * @property Doctrine_Collection $Reporte
  * @property Doctrine_Collection $RepSeguro
@@ -173,6 +174,7 @@
  * @method IdsProveedor        getIdsProveedor()         Returns the current record's "IdsProveedor" value
  * @method Tercero             getProveedor()            Returns the current record's "Proveedor" value
  * @method Reporte             getGrupoReporte()         Returns the current record's "GrupoReporte" value
+ * @method Bavaria             getBavaria()              Returns the current record's "Bavaria" value
  * @method Doctrine_Collection getEmail()                Returns the current record's "Email" collection
  * @method Doctrine_Collection getReporte()              Returns the current record's "Reporte" collection
  * @method Doctrine_Collection getRepSeguro()            Returns the current record's "RepSeguro" collection
@@ -260,6 +262,7 @@
  * @method Reporte             setIdsProveedor()         Sets the current record's "IdsProveedor" value
  * @method Reporte             setProveedor()            Sets the current record's "Proveedor" value
  * @method Reporte             setGrupoReporte()         Sets the current record's "GrupoReporte" value
+ * @method Reporte             setBavaria()              Sets the current record's "Bavaria" value
  * @method Reporte             setEmail()                Sets the current record's "Email" collection
  * @method Reporte             setReporte()              Sets the current record's "Reporte" collection
  * @method Reporte             setRepSeguro()            Sets the current record's "RepSeguro" collection
@@ -552,6 +555,10 @@ abstract class BaseReporte extends myDoctrineRecord
         $this->hasOne('Reporte as GrupoReporte', array(
              'local' => 'ca_idgrupo',
              'foreign' => 'ca_idreporte'));
+
+        $this->hasOne('Bavaria', array(
+             'local' => 'ca_consecutivo',
+             'foreign' => 'ca_consecutivo'));
 
         $this->hasMany('Email', array(
              'local' => 'ca_idreporte',

@@ -34,7 +34,7 @@ abstract class BasePricPatio extends myDoctrineRecord
 {
     public function setTableDefinition()
     {
-        $this->setTableName('tb_pricpatios');
+        $this->setTableName('pric.tb_patios');
         $this->hasColumn('ca_idpatio', 'integer', null, array(
              'type' => 'integer',
              'primary' => true,

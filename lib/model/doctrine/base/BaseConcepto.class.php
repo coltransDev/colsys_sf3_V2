@@ -19,6 +19,7 @@
  * @property Doctrine_Collection $PricRecargoxConcepto
  * @property Doctrine_Collection $PricRecargoxConceptoBs
  * @property Doctrine_Collection $PricRecargoxLinea
+ * @property Doctrine_Collection $PricRecargoxLineaBs
  * @property Doctrine_Collection $RepEquipo
  * @property Doctrine_Collection $RepTarifa
  * @property Doctrine_Collection $RepGasto
@@ -38,6 +39,7 @@
  * @method Doctrine_Collection getPricRecargoxConcepto()   Returns the current record's "PricRecargoxConcepto" collection
  * @method Doctrine_Collection getPricRecargoxConceptoBs() Returns the current record's "PricRecargoxConceptoBs" collection
  * @method Doctrine_Collection getPricRecargoxLinea()      Returns the current record's "PricRecargoxLinea" collection
+ * @method Doctrine_Collection getPricRecargoxLineaBs()    Returns the current record's "PricRecargoxLineaBs" collection
  * @method Doctrine_Collection getRepEquipo()              Returns the current record's "RepEquipo" collection
  * @method Doctrine_Collection getRepTarifa()              Returns the current record's "RepTarifa" collection
  * @method Doctrine_Collection getRepGasto()               Returns the current record's "RepGasto" collection
@@ -56,6 +58,7 @@
  * @method Concepto            setPricRecargoxConcepto()   Sets the current record's "PricRecargoxConcepto" collection
  * @method Concepto            setPricRecargoxConceptoBs() Sets the current record's "PricRecargoxConceptoBs" collection
  * @method Concepto            setPricRecargoxLinea()      Sets the current record's "PricRecargoxLinea" collection
+ * @method Concepto            setPricRecargoxLineaBs()    Sets the current record's "PricRecargoxLineaBs" collection
  * @method Concepto            setRepEquipo()              Sets the current record's "RepEquipo" collection
  * @method Concepto            setRepTarifa()              Sets the current record's "RepTarifa" collection
  * @method Concepto            setRepGasto()               Sets the current record's "RepGasto" collection
@@ -130,6 +133,10 @@ abstract class BaseConcepto extends myDoctrineRecord
              'foreign' => 'ca_idconcepto'));
 
         $this->hasMany('PricRecargoxLinea', array(
+             'local' => 'ca_idconcepto',
+             'foreign' => 'ca_idconcepto'));
+
+        $this->hasMany('PricRecargoxLineaBs', array(
              'local' => 'ca_idconcepto',
              'foreign' => 'ca_idconcepto'));
 

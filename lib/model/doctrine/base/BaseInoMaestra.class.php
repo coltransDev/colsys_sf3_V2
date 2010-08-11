@@ -8,7 +8,9 @@
  * @property integer $ca_idmaestra
  * @property date $ca_fchreferencia
  * @property string $ca_referencia
- * @property integer $ca_idmodalidad
+ * @property string $ca_impoexpo
+ * @property string $ca_transporte
+ * @property string $ca_modalidad
  * @property string $ca_origen
  * @property string $ca_destino
  * @property integer $ca_idlinea
@@ -30,7 +32,6 @@
  * @property timestamp $ca_fchanulado
  * @property string $ca_usuanulado
  * @property Doctrine_Collection $InoCliente
- * @property Modalidad $Modalidad
  * @property Ciudad $Origen
  * @property Ciudad $Destino
  * @property IdsProveedor $IdsProveedor
@@ -44,7 +45,9 @@
  * @method integer             getCaIdmaestra()       Returns the current record's "ca_idmaestra" value
  * @method date                getCaFchreferencia()   Returns the current record's "ca_fchreferencia" value
  * @method string              getCaReferencia()      Returns the current record's "ca_referencia" value
- * @method integer             getCaIdmodalidad()     Returns the current record's "ca_idmodalidad" value
+ * @method string              getCaImpoexpo()        Returns the current record's "ca_impoexpo" value
+ * @method string              getCaTransporte()      Returns the current record's "ca_transporte" value
+ * @method string              getCaModalidad()       Returns the current record's "ca_modalidad" value
  * @method string              getCaOrigen()          Returns the current record's "ca_origen" value
  * @method string              getCaDestino()         Returns the current record's "ca_destino" value
  * @method integer             getCaIdlinea()         Returns the current record's "ca_idlinea" value
@@ -66,7 +69,6 @@
  * @method timestamp           getCaFchanulado()      Returns the current record's "ca_fchanulado" value
  * @method string              getCaUsuanulado()      Returns the current record's "ca_usuanulado" value
  * @method Doctrine_Collection getInoCliente()        Returns the current record's "InoCliente" collection
- * @method Modalidad           getModalidad()         Returns the current record's "Modalidad" value
  * @method Ciudad              getOrigen()            Returns the current record's "Origen" value
  * @method Ciudad              getDestino()           Returns the current record's "Destino" value
  * @method IdsProveedor        getIdsProveedor()      Returns the current record's "IdsProveedor" value
@@ -79,7 +81,9 @@
  * @method InoMaestra          setCaIdmaestra()       Sets the current record's "ca_idmaestra" value
  * @method InoMaestra          setCaFchreferencia()   Sets the current record's "ca_fchreferencia" value
  * @method InoMaestra          setCaReferencia()      Sets the current record's "ca_referencia" value
- * @method InoMaestra          setCaIdmodalidad()     Sets the current record's "ca_idmodalidad" value
+ * @method InoMaestra          setCaImpoexpo()        Sets the current record's "ca_impoexpo" value
+ * @method InoMaestra          setCaTransporte()      Sets the current record's "ca_transporte" value
+ * @method InoMaestra          setCaModalidad()       Sets the current record's "ca_modalidad" value
  * @method InoMaestra          setCaOrigen()          Sets the current record's "ca_origen" value
  * @method InoMaestra          setCaDestino()         Sets the current record's "ca_destino" value
  * @method InoMaestra          setCaIdlinea()         Sets the current record's "ca_idlinea" value
@@ -101,7 +105,6 @@
  * @method InoMaestra          setCaFchanulado()      Sets the current record's "ca_fchanulado" value
  * @method InoMaestra          setCaUsuanulado()      Sets the current record's "ca_usuanulado" value
  * @method InoMaestra          setInoCliente()        Sets the current record's "InoCliente" collection
- * @method InoMaestra          setModalidad()         Sets the current record's "Modalidad" value
  * @method InoMaestra          setOrigen()            Sets the current record's "Origen" value
  * @method InoMaestra          setDestino()           Sets the current record's "Destino" value
  * @method InoMaestra          setIdsProveedor()      Sets the current record's "IdsProveedor" value
@@ -134,8 +137,16 @@ abstract class BaseInoMaestra extends myDoctrineRecord
              'type' => 'string',
              'length' => '15',
              ));
-        $this->hasColumn('ca_idmodalidad', 'integer', null, array(
-             'type' => 'integer',
+        $this->hasColumn('ca_impoexpo', 'string', null, array(
+             'type' => 'string',
+             'notnull' => true,
+             ));
+        $this->hasColumn('ca_transporte', 'string', null, array(
+             'type' => 'string',
+             'notnull' => true,
+             ));
+        $this->hasColumn('ca_modalidad', 'string', null, array(
+             'type' => 'string',
              'notnull' => true,
              ));
         $this->hasColumn('ca_origen', 'string', null, array(
@@ -211,10 +222,6 @@ abstract class BaseInoMaestra extends myDoctrineRecord
         $this->hasMany('InoCliente', array(
              'local' => 'ca_idmaestra',
              'foreign' => 'ca_idmaestra'));
-
-        $this->hasOne('Modalidad', array(
-             'local' => 'ca_idmodalidad',
-             'foreign' => 'ca_idmodalidad'));
 
         $this->hasOne('Ciudad as Origen', array(
              'local' => 'ca_origen',

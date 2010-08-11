@@ -82,7 +82,7 @@ abstract class BasePricRecargoxLinea extends myDoctrineRecord
 {
     public function setTableDefinition()
     {
-        $this->setTableName('tb_pricrecargosxlinea');
+        $this->setTableName('pric.tb_recargosxlinea');
         $this->hasColumn('ca_idtrafico', 'string', null, array(
              'type' => 'string',
              'primary' => true,

@@ -9,20 +9,17 @@
  * @property string $ca_impoexpo
  * @property string $ca_transporte
  * @property string $ca_modalidad
- * @property Doctrine_Collection $InoMaestra
  * @property Doctrine_Collection $InoConceptoModalidad
  * 
  * @method integer             getCaIdmodalidad()        Returns the current record's "ca_idmodalidad" value
  * @method string              getCaImpoexpo()           Returns the current record's "ca_impoexpo" value
  * @method string              getCaTransporte()         Returns the current record's "ca_transporte" value
  * @method string              getCaModalidad()          Returns the current record's "ca_modalidad" value
- * @method Doctrine_Collection getInoMaestra()           Returns the current record's "InoMaestra" collection
  * @method Doctrine_Collection getInoConceptoModalidad() Returns the current record's "InoConceptoModalidad" collection
  * @method Modalidad           setCaIdmodalidad()        Sets the current record's "ca_idmodalidad" value
  * @method Modalidad           setCaImpoexpo()           Sets the current record's "ca_impoexpo" value
  * @method Modalidad           setCaTransporte()         Sets the current record's "ca_transporte" value
  * @method Modalidad           setCaModalidad()          Sets the current record's "ca_modalidad" value
- * @method Modalidad           setInoMaestra()           Sets the current record's "InoMaestra" collection
  * @method Modalidad           setInoConceptoModalidad() Sets the current record's "InoConceptoModalidad" collection
  * 
  * @package    symfony
@@ -59,10 +56,6 @@ abstract class BaseModalidad extends myDoctrineRecord
     public function setUp()
     {
         parent::setUp();
-        $this->hasMany('InoMaestra', array(
-             'local' => 'ca_idmodalidad',
-             'foreign' => 'ca_idmodalidad'));
-
         $this->hasMany('InoConceptoModalidad', array(
              'local' => 'ca_idmodalidad',
              'foreign' => 'ca_idmodalidad'));

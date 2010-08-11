@@ -43,7 +43,7 @@ abstract class BasePricSeguro extends myDoctrineRecord
 {
     public function setTableDefinition()
     {
-        $this->setTableName('tb_pricseguros');
+        $this->setTableName('pric.tb_seguros');
         $this->hasColumn('ca_idgrupo', 'integer', null, array(
              'type' => 'integer',
              'primary' => true,

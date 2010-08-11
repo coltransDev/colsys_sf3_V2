@@ -7,12 +7,6 @@
  * 
  * @property string $ca_referencia
  * @property string $ca_numinternacion
- * @property date $ca_emision_fch
- * @property date $ca_vencimiento_fch
- * @property date $ca_aceptacion_fch
- * @property date $ca_pago_fch
- * @property string $ca_moneda
- * @property decimal $ca_valor_trm
  * @property integer $ca_ano_trm
  * @property integer $ca_semana_trm
  * @property decimal $ca_factor_trm
@@ -27,12 +21,6 @@
  * 
  * @method string              getCaReferencia()       Returns the current record's "ca_referencia" value
  * @method string              getCaNuminternacion()   Returns the current record's "ca_numinternacion" value
- * @method date                getCaEmisionFch()       Returns the current record's "ca_emision_fch" value
- * @method date                getCaVencimientoFch()   Returns the current record's "ca_vencimiento_fch" value
- * @method date                getCaAceptacionFch()    Returns the current record's "ca_aceptacion_fch" value
- * @method date                getCaPagoFch()          Returns the current record's "ca_pago_fch" value
- * @method string              getCaMoneda()           Returns the current record's "ca_moneda" value
- * @method decimal             getCaValorTrm()         Returns the current record's "ca_valor_trm" value
  * @method integer             getCaAnoTrm()           Returns the current record's "ca_ano_trm" value
  * @method integer             getCaSemanaTrm()        Returns the current record's "ca_semana_trm" value
  * @method decimal             getCaFactorTrm()        Returns the current record's "ca_factor_trm" value
@@ -46,12 +34,6 @@
  * @method Doctrine_Collection getFalaNotaCab()        Returns the current record's "FalaNotaCab" collection
  * @method FalaDeclaracionImp  setCaReferencia()       Sets the current record's "ca_referencia" value
  * @method FalaDeclaracionImp  setCaNuminternacion()   Sets the current record's "ca_numinternacion" value
- * @method FalaDeclaracionImp  setCaEmisionFch()       Sets the current record's "ca_emision_fch" value
- * @method FalaDeclaracionImp  setCaVencimientoFch()   Sets the current record's "ca_vencimiento_fch" value
- * @method FalaDeclaracionImp  setCaAceptacionFch()    Sets the current record's "ca_aceptacion_fch" value
- * @method FalaDeclaracionImp  setCaPagoFch()          Sets the current record's "ca_pago_fch" value
- * @method FalaDeclaracionImp  setCaMoneda()           Sets the current record's "ca_moneda" value
- * @method FalaDeclaracionImp  setCaValorTrm()         Sets the current record's "ca_valor_trm" value
  * @method FalaDeclaracionImp  setCaAnoTrm()           Sets the current record's "ca_ano_trm" value
  * @method FalaDeclaracionImp  setCaSemanaTrm()        Sets the current record's "ca_semana_trm" value
  * @method FalaDeclaracionImp  setCaFactorTrm()        Sets the current record's "ca_factor_trm" value
@@ -80,24 +62,6 @@ abstract class BaseFalaDeclaracionImp extends myDoctrineRecord
              ));
         $this->hasColumn('ca_numinternacion', 'string', null, array(
              'type' => 'string',
-             ));
-        $this->hasColumn('ca_emision_fch', 'date', null, array(
-             'type' => 'date',
-             ));
-        $this->hasColumn('ca_vencimiento_fch', 'date', null, array(
-             'type' => 'date',
-             ));
-        $this->hasColumn('ca_aceptacion_fch', 'date', null, array(
-             'type' => 'date',
-             ));
-        $this->hasColumn('ca_pago_fch', 'date', null, array(
-             'type' => 'date',
-             ));
-        $this->hasColumn('ca_moneda', 'string', null, array(
-             'type' => 'string',
-             ));
-        $this->hasColumn('ca_valor_trm', 'decimal', null, array(
-             'type' => 'decimal',
              ));
         $this->hasColumn('ca_ano_trm', 'integer', null, array(
              'type' => 'integer',
