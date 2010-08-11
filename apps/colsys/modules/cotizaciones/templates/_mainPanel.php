@@ -133,7 +133,9 @@ MainPanel = function(){
 							value: '<?=$tarea?$dateFormat->format($tarea->getCaFchcreado(), "yyyy-MM-dd"):""?>',
 							format: "Y-m-d",
 							allowBlank:false,
-							width: 120
+							width: 120,
+							maxValue:'<?=date("Y-m-d")?>'
+
 		                }]
 				    },{
 		                layout: 'form',
@@ -144,7 +146,9 @@ MainPanel = function(){
 							value: '<?=$tarea?$dateFormat->format($tarea->getCaFchcreado(),"HH:mm:ss"):""?>',
 							format: "H:i:s",
 							allowBlank:false,
-							width: 140
+							width: 140,
+							maxValue: '<?=date("H:i")?>'
+
 		                }]
 				    }]
                 },
