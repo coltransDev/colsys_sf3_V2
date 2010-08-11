@@ -4,15 +4,15 @@
 class InoMaestraTable extends Doctrine_Table
 {
 
-    public static function getNumReferencia( $idmodalidad, $origen, $destino, $mes, $ano  ){
+    public static function getNumReferencia( $impoexpo, $transporte, $modalidad, $origen, $destino, $mes, $ano  ){
 
-        $modalidad = Doctrine::getTable("Modalidad")->find($idmodalidad);
+        
         $referencia = array();
-
-        if( $modalidad->getCaImpoexpo() == Constantes::IMPO ){
-            if( $modalidad->getCaTransporte()==Constantes::MARITIMO ){
-
-                switch( $modalidad->getCaModalidad() ){
+        
+        if( $impoexpo == Constantes::IMPO ){
+            
+            if( $transporte==Constantes::MARITIMO ){               
+                switch( $modalidad ){
                     case "FCL":
                          $referencia[0] = '4';
                          break;
@@ -29,7 +29,7 @@ class InoMaestraTable extends Doctrine_Table
                          $referencia[0] = '8';
                          break;
                 }
-
+               
 
                 $parametros = ParametroTable::retrieveByCaso("CU010", $destino);
 
@@ -51,7 +51,7 @@ class InoMaestraTable extends Doctrine_Table
 
             }
             //OTM DTA
-            if( $modalidad->getCaTransporte()==Constantes::TERRESTRE ){
+            if( $modalidad==Constantes::OTMDTA ){
                 
                 $referencia[0] = '7';
 
@@ -75,24 +75,25 @@ class InoMaestraTable extends Doctrine_Table
 
         $referencia[3] = str_pad($mes, 2, "0", STR_PAD_LEFT);
         $referencia[4] = "%";
-        $referencia[5] = $ano;
-
+        $referencia[5] = $ano%10;
+        
         $ref = Doctrine::getTable("InoMaestra")
                          ->createQuery("m")
-                         ->select( "MAX(m.ca_referencia)" )
+                         ->select( "m.ca_referencia" )
                          ->where("m.ca_referencia LIKE ?", implode(".", $referencia) )
+                         ->orderBy("m.ca_referencia DESC")
+                         ->limit(1)
                          ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)
                          ->execute();
-
-
+        
         if( $ref ){
              $ref = explode('.', $ref);
-             $val = intval( $ref[3] )+1;
+             $val = intval( isset($ref[3])?$ref[3]:0 )+1;
              $referencia[4] = str_pad($val, 3, "0", STR_PAD_LEFT);
         }else{
              $referencia[4] = '001';
         }
-
+        
         return implode(".", $referencia);
             /*
 

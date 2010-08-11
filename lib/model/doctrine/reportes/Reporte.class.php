@@ -14,6 +14,7 @@ class Reporte extends BaseReporte
 {
     private $ultimoStatus=null;
 	private $inoClientesSea=null;
+    private $proveedoresStr=null;
 
 
     /*
@@ -107,17 +108,21 @@ class Reporte extends BaseReporte
 	* Author: Andres Botero
 	*/
 	public function getProveedoresStr(){
-		$proveedoresStr="";
-		$proveedores = $this->getProveedores();
-		if( $proveedores ){
-			foreach( $proveedores as $proveedor ){
-				if( $proveedoresStr ){
-					$proveedoresStr.=" - ";
-				}
-				$proveedoresStr.= $proveedor->getCaNombre();
-			}
-		}
-		return $proveedoresStr;
+
+        if( $this->proveedoresStr==null ){
+            $proveedoresStr="";
+            $proveedores = $this->getProveedores();
+            if( $proveedores ){
+                foreach( $proveedores as $proveedor ){
+                    if( $proveedoresStr ){
+                        $proveedoresStr.=" - ";
+                    }
+                    $proveedoresStr.= $proveedor->getCaNombre();
+                }
+            }
+            $this->proveedoresStr = $proveedoresStr;
+        }
+		return $this->proveedoresStr;
 	}
 
 

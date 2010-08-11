@@ -42,15 +42,17 @@ class ReporteTable extends Doctrine_Table
             $q->addWhere("r.ca_transporte = ? ", $transporte );
         }
 
-		
+		$defaultOrder = false;
 		switch( $order ){
 			case "orden":
                 $q->addOrderBy("r.ca_orden_clie");				
 				break;
 			default:                
                 /*$q->leftJoin("r.Proveedor p ON r.ca_idproveedor=p.ca_idtercero");
-                $q->addOrderBy("p.ca_nombre");
-                $q->addOrderBy("r.ca_orden_clie");*/
+                $q->addOrderBy("p.ca_nombre");*/
+                $q->addOrderBy("r.ca_idproveedor");
+                $q->addOrderBy("r.ca_orden_clie");
+                $defaultOrder = true;
 				break;
 
 		}
@@ -78,7 +80,22 @@ class ReporteTable extends Doctrine_Table
 		if( $query ){
 			return $q;
 		}else{
-			return $q->execute();
+            $results = $q->execute();
+            if( $defaultOrder ){
+                $k=count($results);
+                for( $i=1; $i<$k; $i++){
+                    for( $j=0; $j<$k-1; $j++){
+                       $prov1 = $results[$j]->getProveedoresStr();
+                       $prov2 = $results[$j+1]->getProveedoresStr();
+                       if( $prov1>$prov2 ){
+                           $tmp = $results[$j];
+                           $results[$j] = $results[$j+1];
+                           $results[$j+1] = $tmp;
+                       }
+                    }
+                }
+            }
+			return $results;
 		}
 	}
 

@@ -101,11 +101,5 @@ class HdeskTicket extends BaseHdeskTicket
 
     }
 
-
-    
-
-
-	
-
 	
 }
