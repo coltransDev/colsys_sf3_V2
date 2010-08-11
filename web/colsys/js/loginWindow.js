@@ -175,7 +175,7 @@ var checkAccess = function(){
          }
 
     );
-    window.setTimeout(checkAccess, 60000 );
+    window.setTimeout(checkAccess, 180000 );
     //window.setTimeout(checkAccess, 3000 );
 
 }
