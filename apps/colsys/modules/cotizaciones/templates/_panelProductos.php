@@ -427,21 +427,26 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
         Ext.getCmp('guardarbtn'+tipo).disable();
 		habilita=false;
         for( var i=0; i< lenght; i++){
-			if(i==(length-1))
+			
+			if(i==(lenght-1))
 				habilita=true;
             if( records[i].data.tipo=="concepto" || (records[i].data.tipo=="recargo" && records[i].data.idopcion ))
             {
                 //alert(records[i].data.tipo + " "+ records[i].data.idconcepto)
+				//alert(i+" = "+(lenght-1))
                 this.guardarGridProductosRec( records[i],habilita );
-				habilita=false;
+				habilita="S";
             }
-			if(i==(length-1) && habilita==true)
-				window.setTimeout(this.enableButton, 5000);
+			if(i==(lenght-1) && habilita!="S")
+			{
+				Ext.getCmp('guardarbtnTrayecto').enable();
+				Ext.getCmp('guardarbtnOTM/DTA').enable();
+			}
         }
         
     },
 
-    enableButton: function(){        
+    enableButton: function(){	
         Ext.getCmp('guardarbtnTrayecto').enable();
         Ext.getCmp('guardarbtnOTM/DTA').enable();
     },
@@ -516,7 +521,10 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
                         rec.commit();
                         storeProductos.sort("orden", "ASC");
 						if(habilita==true)
-							window.setTimeout(this.enableButton, 5000);
+						{
+							Ext.getCmp('guardarbtnTrayecto').enable();
+							Ext.getCmp('guardarbtnOTM/DTA').enable();
+						}
                     }
                  }
             );
