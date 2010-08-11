@@ -7,7 +7,7 @@
 
 include_component("pm", "editarTicketPropiedadesPanel");
 
-
+    
 ?>
 
 <script type="text/javascript">
@@ -33,7 +33,7 @@ NuevaRespuestaWindow = function( config ) {
                                 xtype:'htmleditor',
                                 name:'respuesta',
                                 hideLabel: true,
-                                height:200,
+                                height:450,
                                 anchor:'98%',
                                 enableFont: false,
                                 enableFontSize: false,

@@ -15,7 +15,7 @@ class kbaseActions extends sfActions
     public function getNivel(){        
         $this->nivel = $this->getUser()->getNivelAcceso( kbaseActions::RUTINA );
 		if( $this->nivel==-1 ){
-			$this->forward404();
+			//$this->forward404();
 		}
 
         return $this->nivel;
@@ -40,7 +40,7 @@ class kbaseActions extends sfActions
 
 
         if( $this->nivel <=0 ){
-            $this->forward404();
+            //$this->forward404();
         }
 
 

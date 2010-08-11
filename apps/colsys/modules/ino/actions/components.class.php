@@ -16,6 +16,15 @@
 
 class inoComponents extends sfComponents
 {
+
+    public function executeFormMasterPanel(){
+        
+    }
+
+    public function executeFormClientePanel(){
+
+    }
+
     
     public function executeClientes(){
         $this->inoClientes = Doctrine::getTable("InoCliente")

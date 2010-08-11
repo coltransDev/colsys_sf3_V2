@@ -25,7 +25,7 @@ if( $reporte->getCaUsuanulado() ){
 					<?
 					if( $reporte->getETS() ){
 					?>	
-					<b>ETS:</b> <?=Utils::fechaMes($reporte->getETS("Y-m-d"))?><br />
+					<b>ETD:</b> <?=Utils::fechaMes($reporte->getETS("Y-m-d"))?><br />
 					<?
 					}
 					if( $reporte->getETA() ){

@@ -31,22 +31,22 @@
             </td>
         </tr>
         <?
-        $modalidad = $referencia->getModalidad();
+        
         ?>
         <tr class="row0">
             <td colspan="4"><b>Datos del trayecto</b></td>
         </tr>
         <tr>
                 <td><b>Clase</b></td>
-                <td><?=$modalidad->getCaImpoexpo()?></td>
+                <td><?=$referencia->getCaImpoexpo()?></td>
                 <td>&nbsp;</td>
                 <td>&nbsp;</td>
             </tr>
             <tr>
                 <td><b>Transporte</b></td>
-                <td><?=$modalidad->getCaTransporte()?></td>
+                <td><?=$referencia->getCaTransporte()?></td>
                 <td><b>Modalidad</b></td>
-                <td><?=$modalidad->getCaModalidad()?></td>
+                <td><?=$referencia->getCaModalidad()?></td>
             </tr>
         <tr>
             <td><b>Origen:</b></td>

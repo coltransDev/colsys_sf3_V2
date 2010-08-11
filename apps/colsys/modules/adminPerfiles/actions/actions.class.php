@@ -185,15 +185,16 @@ class adminPerfilesActions extends sfActions
 		$this->forward404Unless( $this->rutina );
 
         
-        
+       
        $this->usuarios = Doctrine::getTable("Usuario")
                                    ->createQuery("u")
                                    ->leftJoin("u.UsuarioPerfil up")
                                    ->leftJoin("up.AccesoPerfil ap")
                                    ->leftJoin("u.AccesoUsuario au")
                                    ->where("ap.ca_rutina = ? OR au.ca_rutina = ?", array($rutina, $rutina))
-                                   ->addWhere("au.ca_acceso = 0 OR au.ca_acceso IS NULL")
-                                   ->addWhere("ap.ca_acceso = 0 OR ap.ca_acceso IS NULL")
+                                   ->addWhere("au.ca_acceso >= 0 OR au.ca_acceso IS NULL")
+                                   ->addWhere("ap.ca_acceso >= 0 OR ap.ca_acceso IS NULL")
+                                    ->addWhere("u.ca_activo = true")
                                    ->addOrderBy("u.ca_idsucursal")
                                    ->addOrderBy("u.ca_departamento")
                                    ->addOrderBy("u.ca_cargo")

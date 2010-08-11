@@ -82,21 +82,22 @@ class gestDocumentalActions extends sfActions
 	* @author: Andres Botero
 	*/
 	public function executeVerArchivo(){
-
+        
         $archivo = base64_decode( $this->getRequestParameter("idarchivo") );
         
         $this->forward404Unless( $archivo );
-
+                
         $folder = base64_decode($this->getRequestParameter("folder"));
         $directory = sfConfig::get('app_digitalFile_root').DIRECTORY_SEPARATOR.$folder.DIRECTORY_SEPARATOR;
-
+        
         $this->archivo = $directory.$archivo;
-       
+        
+        
         if(!file_exists($this->archivo)){
             $this->forward404("No se encuentra el archivo especificado");
         }
-		
-    	session_cache_limiter('public');
+        
+    	//session_cache_limiter('public');
 	}
 
 	/*

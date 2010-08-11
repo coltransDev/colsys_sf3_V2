@@ -10,7 +10,7 @@
 <table class="tableList" width="100%">
     <tr>
         <th colspan="9">Cuadro de clientes de la referencia</th>
-        <th><div align="center" ><?=link_to(image_tag("16x16/add_user.gif"), "ino/formClientes?modo=".$modo."&id=".$referencia->getCaIdmaestra())?></div></th>
+        <th><div align="center" ><?=link_to(image_tag("16x16/add_user.gif"), "ino/formClientes?id=".$referencia->getCaIdmaestra())?></div></th>
     </tr>
     <tr class="row0">
         <td><b>Id Cliente</b></td>

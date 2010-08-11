@@ -3744,6 +3744,64 @@ ORDER BY ca_idtrayecto,ca_idconcepto,log_pricrecargosxconcepto.ca_idrecargo, ca_
 
         $this->setTemplate("blank");
     }
+
+
+    public function executeImportLdif( $request ){
+
+        $file = "/home/abotero/Desktop/prueba.ldif";
+
+
+        $content = readfile( $file );
+
+        $contentArray = explode("\n");
+        
+
+        $this->setTemplate("blank");
+    }
+
+
+    public function executeMemcacheTest( $request ){
+
+        $memcache = new Memcache();
+        $memcache->addServer( "10.192.1.62" ,11211 );
+        $list = array();
+	    $allSlabs = $memcache->getExtendedStats('slabs');
+	    $items = $memcache->getExtendedStats('items');
+	    foreach($allSlabs as $server => $slabs) {
+    	    foreach($slabs AS $slabId => $slabMeta) {                
+               
+    	        $cdump = $memcache->getExtendedStats('cachedump',(int)$slabId);
+                
+    	        foreach($cdump AS $server => $entries) {
+    	            if($entries) {
+        	            foreach($entries AS $eName => $eData) {
+        	                $list[$eName] = array(
+        	                     'key' => $eName,
+        	                     'server' => $server,
+        	                     'slabId' => $slabId,
+        	                     'detail' => $eData,
+        	                     'age' => $items[$server]['items'][$slabId]['age'],
+        	                     );
+        	            }
+    	            }
+    	        }
+    	    }
+	    }
+	    ksort($list);
+
+
+        foreach( $list as $row ){
+
+            echo "<b>".$row["key"]."</b>";
+            print_r($row["detail"]);
+            echo " age: ".$row["age"]."<br />";
+
+        }
+        
+        $this->setTemplate("blank");
+    }
+
+
 		
 }
 

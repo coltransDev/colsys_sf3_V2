@@ -21,7 +21,7 @@
             <div style="padding:10px 0 0;">
                 <div class="left-column">
                     <div class="content-box">
-                        <h5>Novedades</h5><?=link_to(image_tag("16x16/edit.gif"),"homepage/editarNovedad?idnovedad=".$novedad->getCaIdnovedad())?>Nuevo
+                        <h5>Novedades</h5><?=link_to(image_tag("16x16/edit.gif"),"homepage/editarNovedad")?>Nuevo
                         <div class="box">
                                  <?include_component("homepage","novedades")?>
                         </div>
@@ -70,7 +70,7 @@ Ext.onReady(function(){
                     {
                     text: '<?=$rutina["ca_opcion"]?>',
                     url: '<?=$rutina["ca_programa"]?>',
-                    icon: '<?=$rutina["ca_icon"]?>',
+                    icon: '<?=isset($rutina["ca_icon"])?$rutina["ca_icon"]:""?>',
                     desc: '<?=$rutina["ca_descripcion"]?>',
                     status: 'new'
                     }

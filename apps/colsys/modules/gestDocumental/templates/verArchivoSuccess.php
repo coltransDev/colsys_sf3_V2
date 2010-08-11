@@ -5,7 +5,6 @@ header('content-type: "'.Utils::mimetype(basename($archivo)).'"');
 header('Content-Length: '.filesize($archivo));
 
 
-
 readfile($archivo);
 exit();
 

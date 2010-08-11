@@ -20,9 +20,9 @@ class inoActions extends sfActions
         $this->modo = $this->getRequestParameter("modo");
 
         $this->nivel = -1;
-		if( !$this->modo ){
+		/*if( !$this->modo ){
 			$this->forward( "ino", "seleccionModo" );
-		}
+		}*/
 
 		if( $this->modo=="aereo" ){
 			$this->nivel = $this->getUser()->getNivelAcceso( inoActions::RUTINA_AEREO );
@@ -88,13 +88,13 @@ class inoActions extends sfActions
 
 
         $q = Doctrine_Query::create()->from('InoMaestra m');
-        $q->innerJoin( "m.Modalidad mod" );
+        //$q->innerJoin( "m.Modalidad mod" );
         switch( $this->modo ){
             case "aereo":
-                $q->addWhere( "mod.ca_impoexpo = ? and mod.ca_transporte = ?", array(Constantes::IMPO, Constantes::AEREO) );
+                $q->addWhere( "m.ca_impoexpo = ? and m.ca_transporte = ?", array(Constantes::IMPO, Constantes::AEREO) );
                 break;
             case "maritimo":
-                $q->addWhere( "mod.ca_impoexpo = ? and mod.ca_transporte = ?", array(Constantes::IMPO, Constantes::MARITIMO) );
+                $q->addWhere( "m.ca_impoexpo = ? and m.ca_transporte = ?", array(Constantes::IMPO, Constantes::MARITIMO) );
                 break;
         }
 
@@ -141,63 +141,65 @@ class inoActions extends sfActions
     */
     public function executeFormIno(sfWebRequest $request)
     {
+        $this->nivel = $this->getNivel();        
+        $this->modo = $request->getParameter("modo");        
+    }
 
-        $this->nivel = $this->getNivel();
-        
+
+    /**
+    *
+    *
+    * @param sfRequest $request A request object
+    */
+    public function executeGuardarMaster(sfWebRequest $request)
+    {
+        //$this->nivel = $this->getNivel();
         $this->modo = $request->getParameter("modo");
+        //----------------------- Validación ---------------------------
+        $errors = array();
 
-        switch( $this->modo ){
-            case "maritimo":
-                $this->transporte = Constantes::MARITIMO;
-                break;
-        }
-        
-        $referencia = Doctrine::getTable("InoMaestra")->find($request->getParameter("id"));
-        if( !$referencia ){
-            $referencia = new InoMaestra();
+        //$errors["idagente"]="El agente es requerido";
+        if( count($errors)>0 ){
+            $this->responseArray = array("success"=>false, "errors"=>$errors);
         }
 
-        $form = new InoMaestraForm(  );
-        
+        //----------------------- Guarda los datos ---------------------------
+        try{
 
-        
+            $impoexpo = utf8_decode($request->getParameter("impoexpo"));
+            $transporte = utf8_decode($request->getParameter("transporte"));
+            $modalidad = utf8_decode($request->getParameter("modalidad"));
+            $idorigen = $request->getParameter("idorigen");
+            $iddestino = $request->getParameter("iddestino");
+            $fchreferencia  = $request->getParameter("fchreferencia");
+            $fchreferenciaTm = strtotime($fchreferencia);
 
-        $this->origen = $request->getParameter("origen");
-        $this->destino = $request->getParameter("destino");
-        if ($request->isMethod('post')){
+            $ino = new InoMaestra();
+            $numRef = InoMaestraTable::getNumReferencia( $impoexpo, $transporte, $modalidad, $idorigen, $iddestino, date("m", $fchreferenciaTm), date("Y", $fchreferenciaTm)  );           
+            $ino->setCaReferencia( $numRef );
+            $ino->setCaImpoexpo( $impoexpo );
+            $ino->setCaTransporte( $transporte );
+            $ino->setCaModalidad( $modalidad );
+            $ino->setCaFchreferencia( $fchreferencia );           
+            $ino->setCaOrigen( $idorigen );
+            $ino->setCaDestino( $iddestino );
+            $ino->setCaIdlinea( $request->getParameter("idlinea") );
+            $ino->setCaIdagente( $request->getParameter("idagente") );
+
+            $ino->setCaMaster( $request->getParameter("ca_master") );
+            $ino->setCaFchmaster( $request->getParameter("ca_fchmaster") );
+
             
 
-            $ref = $request->getParameter($form->getName());            
-            $form->bind( $ref );
-
-			if( $form->isValid() ){
-                if( !$request->getParameter("id") ){
-                    $referencia->setCaReferencia( InoMaestraTable::getNumReferencia( $ref["ca_idmodalidad"], $ref["ca_origen"], $ref["ca_destino"], "01", "9" ) );
-                    $referencia->setCaFchreferencia( date("Y-m-d") );
-                }
-
-                $referencia->setCaOrigen( $ref["ca_origen"] );
-                $referencia->setCaDestino( $ref["ca_destino"] );
-                $referencia->setCaIdlinea( $ref["ca_idlinea"] );
-                $referencia->setCaMaster( $ref["ca_master"] );
-                $referencia->setCaFchmaster( $ref["ca_fchmaster"] );
-                $referencia->setCaIdmodalidad( $ref["ca_idmodalidad"] );
-                
-
-                if( $ref["ca_idagente"] ){
-                    $referencia->setCaIdagente( $ref["ca_idagente"] );
-                }else{
-                    $referencia->setCaIdagente( null );
-                }
-
-                $referencia->save();
-                echo $referencia->getCaIdmaestra();
-                $this->redirect("ino/verReferencia?modo=".$this->modo."&id=".$referencia->getCaIdmaestra());
-            }
+            $ino->save();            
+            $this->responseArray = array("success"=>true, "idmaestra"=>$ino->getCaIdmaestra());
+        }catch (Exception $e){
+            $this->responseArray = array("success"=>false, "errorInfo"=>$e->getMessage());
         }
 
-        $this->form = $form;
-        $this->referencia = $referencia;
+        
+
+        $this->setTemplate("responseTemplate");
         
     }
 
@@ -210,7 +212,7 @@ class inoActions extends sfActions
     public function executeVerReferencia(sfWebRequest $request)
     {
         $this->modo = $request->getParameter("modo");
-        $this->nivel = $this->getNivel();
+       // $this->nivel = $this->getNivel();
 
         $this->forward404Unless( $request->getParameter("id") );
         $this->referencia = Doctrine::getTable("InoMaestra")->find($request->getParameter("id"));
@@ -232,13 +234,14 @@ class inoActions extends sfActions
     public function executeFormClientes(sfWebRequest $request)
     {
         $this->modo = $request->getParameter("modo");
-        $this->nivel = $this->getNivel();
+        //$this->nivel = $this->getNivel();
 
         $this->forward404Unless( $request->getParameter("id") );
         $this->referencia = Doctrine::getTable("InoMaestra")->find($request->getParameter("id"));
 
         $this->inoCliente = Doctrine::getTable("InoCliente")->find($request->getParameter("idinocliente"));
 
+        /*
 
         $form = new InoClienteForm( $this->inoCliente );
         
@@ -257,7 +260,7 @@ class inoActions extends sfActions
             }
         }
 
-        $this->form = $form;
+        $this->form = $form;*/
 
     }
 
