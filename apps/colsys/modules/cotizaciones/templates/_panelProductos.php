@@ -395,11 +395,14 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
          else
              id_new="grid_productos";
         if(Ext.getCmp(id_new).store.getModifiedRecords().length>0){
+
             if(!confirm("Se perderan los cambios no guardados en los recargos locales unicamente, desea continuar?")){
                 return 0;
             }
         }
         Ext.getCmp(id_new).store.reload();
+		Ext.getCmp('guardarbtnTrayecto').enable();
+		Ext.getCmp('guardarbtnOTM/DTA').enable();
     },
     guardarItems: function (){
 
@@ -437,12 +440,12 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
                 this.guardarGridProductosRec( records[i],habilita );
 				habilita="S";
             }
-			if(i==(lenght-1) && habilita!="S")
-			{
-				Ext.getCmp('guardarbtnTrayecto').enable();
-				Ext.getCmp('guardarbtnOTM/DTA').enable();
-			}
         }
+		if(habilita!="S")
+		{
+			Ext.getCmp('guardarbtnTrayecto').enable();
+			Ext.getCmp('guardarbtnOTM/DTA').enable();
+		}
         
     },
 
@@ -484,6 +487,11 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
                     failure:function(response,options){
                         success = false;
                         r.set("inSave", false);
+						if(habilita==true)
+						{
+							Ext.getCmp('guardarbtnTrayecto').enable();
+							Ext.getCmp('guardarbtnOTM/DTA').enable();
+						}
                     },
                     callback :function(options, success, response){
                         r.set("inSave", false);
