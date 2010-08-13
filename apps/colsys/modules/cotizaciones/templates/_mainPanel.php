@@ -66,10 +66,7 @@ anexos = anexos.split("<br />").join("\n");
 
 MainPanel = function(){
     this.preview = new Ext.Panel({
-        id: 'preview', 
-        
-
-        
+        id: 'preview',        
 
         items: [{
             xtype:'tabpanel',
@@ -87,7 +84,7 @@ MainPanel = function(){
             items:[{
                 title:'Información General',
                 layout:'form',
-                defaults: {width: 420},
+                defaults: {width: 440},
 
                 items: [{
 				    layout:'table',
@@ -135,7 +132,6 @@ MainPanel = function(){
 							allowBlank:false,
 							width: 120,
 							maxValue:'<?=date("Y-m-d")?>'
-
 		                }]
 				    },{
 		                layout: 'form',
@@ -143,12 +139,11 @@ MainPanel = function(){
 							xtype:'timefield',
 							fieldLabel: 'Hora de Solicitud',
 							name: 'horaSolicitud',
+							id: 'horaSolicitud',
 							value: '<?=$tarea?$dateFormat->format($tarea->getCaFchcreado(),"HH:mm:ss"):""?>',
 							format: "H:i:s",
 							allowBlank:false,
-							width: 140,
-							maxValue: '<?=date("H:i")?>'
-
+							width: 140
 		                }]
 				    }]
                 },
@@ -305,6 +300,7 @@ MainPanel = function(){
 							xtype:'datefield',
 							fieldLabel: 'Fecha de Presentación',
 							name: 'fchPresentacion',
+							id: 'fchPresentacion',
 							value: '<?=$dateFormat->format($cotizacion->getFchpresentacion(), "yyyy-MM-dd")?>',
 							format: "Y-m-d",
 							allowBlank:true,
@@ -402,6 +398,10 @@ Ext.extend(MainPanel, Ext.FormPanel, {
             Ext.MessageBox.alert("Alerta","Este cliente se encuentra vetado");
             return 0;
         }
+//		alert(Ext.getCmp("fchPresentacion").getValue())
+//		return 0;
+//		if(Ext.getCmp("fchPresentacion").getValue()==)
+//			return 0;
 
         if( this.getForm().isValid() ){
 
