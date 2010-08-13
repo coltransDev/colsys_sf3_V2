@@ -179,7 +179,7 @@ class cotizacionesActions extends sfActions
 	*/
 	public function executeFormCotizacionGuardar(){
             $user_id = $this->getUser()->getUserId();
-
+			$errors=array();
             if( $this->getRequestParameter("cotizacionId") ){
                     $cotizacion = Doctrine::getTable("Cotizacion")->find( $this->getRequestParameter("cotizacionId") );
                     $this->forward404Unless( $cotizacion );
@@ -226,29 +226,52 @@ class cotizacionesActions extends sfActions
                     $cotizacion->setCaFchactualizado( date("Y-m-d H:i:s") );
                     $cotizacion->setCaUsuactualizado( $user_id );
             }
-            $cotizacion->save();
-            if( $this->getRequestParameter( "fchSolicitud" ) ){
-                    $cotizacion->crearTareaIDGEnvioOportuno( $this->getRequestParameter( "fchSolicitud" )." ".$this->getRequestParameter( "horaSolicitud" ));
-            }
 
-            if( $this->getRequestParameter( "fchPresentacion" ) ){
-                    $cotizacion->setFchpresentacion( $this->getRequestParameter( "fchPresentacion" )." ".$this->getRequestParameter( "horaPresentacion" ) );
+			$this->responseArray = array();
+			$diff=Utils::compararFechas( $this->getRequestParameter( "fchSolicitud" )." ".$this->getRequestParameter( "horaSolicitud" ) , date("Y-m-d H:i:s"));
+			//$diff=Utils::diffTime( $this->getRequestParameter( "fchPresentacion" )." ".$this->getRequestParameter( "horaPresentacion" ));
+			//$errors["diff"]=$diff;
 
-            }
+			if($diff==1 )
+			{
+				if($this->getRequestParameter( "fchSolicitud" )==date("Y-m-d"))
+					$errors["horaSolicitud"]="La hora de solicitud no pueden ser mayor a la actual";
+				else
+					$errors["fchSolicitud"]="La fecha de solicitud no pueden ser mayor a la actual";
+			}
+			//$errors["fchSolicitud"]="La fecha y hora de solicitud no pueden ser mayor a las actuales";
+			if(count($errors)==0)
+			{
+				$cotizacion->save();
+				if( $this->getRequestParameter( "fchSolicitud" ) ){
+						$cotizacion->crearTareaIDGEnvioOportuno( $this->getRequestParameter( "fchSolicitud" )." ".$this->getRequestParameter( "horaSolicitud" ));
+				}
 
-            if( $this->getRequestParameter( "observaciones_idg" )!==null ){
-                    $tarea = $cotizacion->getTareaIDGEnvioOportuno();
-                    $tarea->setCaObservaciones( $this->getRequestParameter( "observaciones_idg" ) );
-                    $tarea->save();
-            }
+				if( $this->getRequestParameter( "fchPresentacion" ) ){
+						$cotizacion->setFchpresentacion( $this->getRequestParameter( "fchPresentacion" )." ".$this->getRequestParameter( "horaPresentacion" ) );
 
-            if( !$this->getRequestParameter("cotizacionId") ){
-                    $tarea = $cotizacion->getTareaIDGEnvioOportuno(); //Crea la tarea si no existe
-                    //$tarea->notificar();
-            }
-            $this->responseArray = array();
+				}
+
+				if( $this->getRequestParameter( "observaciones_idg" )!==null ){
+						$tarea = $cotizacion->getTareaIDGEnvioOportuno();
+						$tarea->setCaObservaciones( $this->getRequestParameter( "observaciones_idg" ) );
+						$tarea->save();
+				}
+
+				if( !$this->getRequestParameter("cotizacionId") ){
+						$tarea = $cotizacion->getTareaIDGEnvioOportuno(); //Crea la tarea si no existe
+						//$tarea->notificar();
+				}
+				$success=true;
+			}
+			else
+			{
+				$success=false;
+				$this->responseArray['errors']=$errors;
+			}
+            
             $this->responseArray['idcotizacion']=$cotizacion->getCaIdcotizacion();
-            $this->responseArray['success']=true;
+            $this->responseArray['success']=$success;
             $this->setTemplate("responseTemplate");
 	}
 
@@ -2369,9 +2392,9 @@ class cotizacionesActions extends sfActions
     public function executeDatosChart()
     {
         
-        $data[]=array("season"=>"Summer","total"=>200);
-        $data[]=array("season"=>"Summer2","total"=>500);
-        $data[]=array("season"=>"otro","total"=>1200);
+        $data[]=array("opcion"=>"Summer","total"=>200);
+        $data[]=array("opcion"=>"Summer2","total"=>500);
+        $data[]=array("opcion"=>"otro","total"=>1200);
         
         $this->responseArray = array("success"=>true, "data"=>$data  );
         $this->setTemplate("responseTemplate");
