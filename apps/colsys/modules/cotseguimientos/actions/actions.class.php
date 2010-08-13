@@ -475,6 +475,7 @@ class cotseguimientosActions extends sfActions
                                     ->innerJoin("u.Cotizacion")
                                     ->distinct()
                                     ->orderBy("u.ca_nombre")
+									->where("u.ca_departamento='Comercial' and u.ca_activo=true")
                                     ->execute();
 
 		$this->sucursales = Doctrine::getTable("Sucursal")
