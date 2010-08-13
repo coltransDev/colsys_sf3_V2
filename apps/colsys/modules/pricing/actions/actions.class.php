@@ -390,14 +390,34 @@ class pricingActions extends sfActions
 
             $groupStyle = array_unique($groupStyle);
             //Se incluye una fila antes de los conceptos que contiene las observaciones del trayecto
+			if($timestamp)
+			{
+				$con = Doctrine_Manager::getInstance()->connection();
+				$sql="select ca_observaciones
+					from pric.log_trayectos t
+					WHERE
+						t.ca_fchcreado<= '".$fchcorte."' limit 1";
+				$st = $con->execute($sql);
+		//recuperamos las tuplas de resultados
+				$obs_tmp = $st->fetchAll();
+				if(count($obs_tmp)>0)
+					$observaciones=$obs_tmp[0]["ca_observaciones"];
+				else
+					$observaciones='';
+			}
+			else
+			{
+				$observaciones=$trayecto["t_ca_observaciones"];
+			}
+
             $row = array (
-				'nconcepto' => "Observaciones",				
+				'nconcepto' => "Observaciones",
 				'inicio' => '',
 				'vencimiento' => '',
 				'moneda' => '',
 				'aplicacion' => '',
 				'style' => implode("|", $groupStyle),
-				'observaciones' => utf8_encode(str_replace("\"", "'",$trayecto["t_ca_observaciones"])),
+				'observaciones' => utf8_encode(str_replace("\"", "'",$observaciones)),
 				'iditem'=>'',
 				'tipo'=>"trayecto_obs",
 				'neta'=>'',
@@ -406,8 +426,6 @@ class pricingActions extends sfActions
 				'orden'=>'000'
 			);
 			$data[] = array_merge($baseRow, $row);
-
-
            
             // Se incluyen las filas de cada concepto y sus respectivos recargos
 			foreach( $pricConceptos as $pricConcepto ){
