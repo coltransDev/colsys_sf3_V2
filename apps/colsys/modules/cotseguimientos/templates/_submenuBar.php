@@ -2,12 +2,23 @@
 
 $i=0;
 
-if( $action!="index" ){
-	$button[$i]["name"]="Inicio ";
-	$button[$i]["tooltip"]="Pagina inicial del módulo ";
-	$button[$i]["image"]="22x22/gohome.gif"; 			
-	$button[$i]["link"]= "cotseguimientos/index";
-	$i++;
+if( $action!="index" && $action!="busquedaAuditoria" ){
+	if($action=="auditoria")
+	{
+		$button[$i]["name"]="Inicio ";
+		$button[$i]["tooltip"]="Pagina inicial del módulo ";
+		$button[$i]["image"]="22x22/gohome.gif";
+		$button[$i]["link"]= "cotseguimientos/busquedaAuditoria";
+		$i++;
+	}
+	else if($action=="estadisticas")
+	{
+		$button[$i]["name"]="Inicio ";
+		$button[$i]["tooltip"]="Pagina inicial del módulo ";
+		$button[$i]["image"]="22x22/gohome.gif";
+		$button[$i]["link"]= "cotseguimientos/index";
+		$i++;
+	}
 }
 
 
