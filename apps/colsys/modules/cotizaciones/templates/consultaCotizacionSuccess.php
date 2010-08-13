@@ -28,11 +28,14 @@ include_component("cotizaciones", "subPanel", array("cotizacion"=>$cotizacion, "
 ?>
 <script type="text/javascript">
 Ext.onReady(function(){
+	Ext.QuickTips.init();
+	Ext.form.Field.prototype.msgTarget = 'side';
      window.alert = function(texto,titulo)
      {
         titulo=(titulo!="undefined")?titulo:'Alerta';
         Ext.MessageBox.alert(titulo, texto );
      }
+
      var mainPanel = new MainPanel();
      mainPanel.render("panel1");
 
