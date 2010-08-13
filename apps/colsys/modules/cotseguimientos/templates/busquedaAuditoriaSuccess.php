@@ -29,29 +29,27 @@ var tabs = new Ext.FormPanel({
             labelWidth: 75,
 			items: [				
 				{
-					xtype:'datefield',
-					//checkboxToggle:true,
+					xtype:'datefield',					
 					fieldLabel: 'Fecha Inicial',
-					autoHeight:true,
+					//autoHeight:true,
 					name : 'fechaInicial',					
-					defaultType: 'textfield',
+					//defaultType: 'textfield',
                     format: 'Y-m-d',
 					//collapsed: true,
 					value: '<?=date("Y-m-")."01"?>',
-					allowBlank: false		 
-					
+					//allowBlank: false
 				},
 				{
 					xtype:'datefield',
 					//checkboxToggle:true,
 					fieldLabel: 'Fecha final',
-					autoHeight:true,
+					//autoHeight:true,
 					name : 'fechaFinal',					
-					defaultType: 'textfield',
+					//defaultType: 'textfield',
                     format: 'Y-m-d',
 					//collapsed: true,
 					value: '<?=date("Y-m-d")?>',
-					allowBlank: false					 
+					//allowBlank: false
 					
 				}
 				
