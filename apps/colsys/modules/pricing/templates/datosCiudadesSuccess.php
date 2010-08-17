@@ -30,8 +30,11 @@ foreach( $results as $modalidad=>$grupos ){
 			<?
             }
 			if( $transporte==Constantes::MARITIMO ){
-                if( $transporte==Constantes::MARITIMO ){ 
-                    $linea = "Naviera";
+                if( $transporte==Constantes::MARITIMO ){
+					if($modalidad=="LCL")
+						$linea = "coloaders";
+					else
+						$linea = "Naviera";
                 }elseif( $transporte==Constantes::AEREO ){
                     $linea = "Aérolinea";
                 }else{
