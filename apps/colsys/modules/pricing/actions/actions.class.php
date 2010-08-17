@@ -403,7 +403,7 @@ class pricingActions extends sfActions
 				if(count($obs_tmp)>0)
 					$observaciones=$obs_tmp[0]["ca_observaciones"];
 				else
-					$observaciones='';
+					$observaciones=$trayecto["t_ca_observaciones"];
 			}
 			else
 			{
@@ -2223,7 +2223,7 @@ class pricingActions extends sfActions
 
         $this->nivel = $this->getNivel();
         
-        if(substr($node,0,4)!="traf" ){
+        if(substr($node,0,4)!="traf" ){			
             $modalidad = utf8_decode($this->getRequestParameter("modalidad"));
             if( $modalidad==Constantes::ADUANA ){
                 $this->setTemplate("datosAduana");
@@ -2251,7 +2251,6 @@ class pricingActions extends sfActions
                 $q->setHydrationMode(Doctrine::HYDRATE_SCALAR);
 
                 $rows = $q->execute();
-
                 $this->results = array();
                 $modalidades = array();
                 foreach($rows as $row ){
@@ -2260,13 +2259,13 @@ class pricingActions extends sfActions
                     $pais = $row["tr_ca_nombre"];
                     $idtrafico = $row["tr_ca_idtrafico"];
 
-
                     $this->results[$modalidad][$grupo][]=array("idtrafico"=>$idtrafico, "pais"=>$pais);
                     $modalidades[]=$modalidad;
                 }
 
 
                 $modalidades = array_unique( $modalidades );
+				//print_r($modalidades);
                 $this->lineas = array();
 
                 $q = Doctrine_Query::create()
@@ -2290,8 +2289,7 @@ class pricingActions extends sfActions
                 $q->setHydrationMode(Doctrine::HYDRATE_SCALAR);
                 $this->lineas = $q->execute();
             }
-        }else{
-
+        }else{			
             $opciones = explode("_", $node);
             $modalidad = $opciones[3];
             $idtrafico = $opciones[4];
@@ -2344,15 +2342,12 @@ class pricingActions extends sfActions
 
             $this->idtrafico=$idtrafico;
             $this->modalidad=$modalidad;
-
             $this->setTemplate("datosCiudadesTrayectos");
-
         }
-        
+//		print_r($this->lineas);
+//		exit;
 		$this->transporte = $transporte;
-		$this->impoexpo = strtolower(substr( $impoexpo,0 ,4 ));				
-		
-		
+		$this->impoexpo = strtolower(substr( $impoexpo,0 ,4 ));		
 	}
 	
 	
