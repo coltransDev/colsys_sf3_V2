@@ -58,9 +58,9 @@ class Email extends BaseEmail
 	public function send( ){
 
 
-		require_once(sfConfig::get('sf_lib_dir').'/vendor/Swift/swift_init.php'); # needed due to symfony autoloader
+		//require_once(sfConfig::get('sf_lib_dir').'/vendor/Swift/swift_init.php'); # needed due to symfony autoloader
 
-
+        $result = false;
 		$logFile = sfConfig::get('sf_root_dir').DIRECTORY_SEPARATOR."log".DIRECTORY_SEPARATOR."mail_error.log";
 		$logHeader= date("Y-m-d H:i:s")." email_id: ".$this->getCaIdemail()." >> ";
 		$logHeader.= "Subject: ".$this->getCaSubject()." >> ";
@@ -89,6 +89,7 @@ class Email extends BaseEmail
             Utils::writeLog($logFile , $event );
         }
 
+        $badAddresses = array();
 
 
 		if( sfConfig::get("app_smtp_debugAddress") ){
@@ -115,6 +116,8 @@ class Email extends BaseEmail
 						$event.= $e->getMessage();
 
 						Utils::writeLog($logFile , $event );
+
+                        $badAddresses[] = $recip;
 					}
 				}
 			}
@@ -135,6 +138,8 @@ class Email extends BaseEmail
                             $event.= $e->getMessage();
 
                             Utils::writeLog( $logFile , $event );
+
+                            $badAddresses[] = $recip;
                         }
                     }
 				}
@@ -218,18 +223,47 @@ class Email extends BaseEmail
                 }
 				$event.="]";
 				Utils::writeLog($logFile , $event );
+
+                
 			}
 
 			$this->setCaFchenvio( date("Y-m-d H:i:s") );
 			$this->save();
-			return true;
+			$result = true;
 		}catch (Exception $e) {
 			echo 'Caught exception: ',  $e->getMessage(), "\n";
 			$event= $logHeader;
 			$event.= $logger->dump();
 			Utils::writeLog($logFile , $event );
 		}
-		return false;
+
+
+        if( $failures || $badAddresses ){
+
+            $txt = "Ha ocurrido un error al enviar el mensaje a los siguientes destinatarios: ";
+
+            if( $failures ){
+                $txt.= " ".implode(",", $failures );
+            }
+
+            if( $badAddresses ){
+                $txt.= " ".implode(",", $badAddresses );
+            }
+            
+            $txt.= " \n>>>>>>> Mensaje Original".$this->getCaBody();
+            $message = Swift_Message::newInstance( "Error al enviar mensaje" );
+            $message->setFrom(array( "no-reply@coltrans.com.co" => "no-reply@coltrans.com.co" ));
+            $message->addTo( $this->getCaFrom() );
+            $message->addPart( $txt , 'text/plain', 'iso-8859-1');
+            $mailer->send($message);            
+           
+        }
+
+        return $result;
+
+
+
+
 	}
 
 
