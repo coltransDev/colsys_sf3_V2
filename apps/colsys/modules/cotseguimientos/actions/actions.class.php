@@ -502,9 +502,9 @@ class cotseguimientosActions extends sfActions
 		$sql="select c.ca_usuario,c.ca_consecutivo,u.ca_idsucursal,to_char(c.ca_fchcreado,'yyyy-mm-dd') as ca_fchcreado from tb_cotizaciones c
 			INNER JOIN control.tb_usuarios u ON c.ca_usuario = u.ca_login
 			WHERE
-			( c.ca_idcotizacion IN ( SELECT ca_idcotizacion FROM tb_cotProductos  WHERE ca_etapa='SEG' )
-			and  c.ca_idcotizacion  NOT IN ( SELECT ca_idcotizacion FROM tb_cotProductos  WHERE ca_etapa<>'SEG' )
-			or  c.ca_idcotizacion  IN ( SELECT ca_idcotizacion FROM tb_cotProductos  )  )
+			( c.ca_idcotizacion IN ( SELECT ca_idcotizacion FROM tb_cotProductos  WHERE ca_etapa='SEG'  )
+			and  c.ca_idcotizacion  NOT IN ( SELECT ca_idcotizacion FROM tb_cotProductos  WHERE ca_etapa='NAP' or ca_etapa='APR' )
+			or  c.ca_idcotizacion  NOT IN ( SELECT ca_idcotizacion FROM tb_cotProductos  )  )
 			and 
 			( ca_usuanulado is  null or ca_usuanulado='' ) and c.ca_fchcreado between '".$this->fechaInicial."' and '".$this->fechaFinal."'
 		";
