@@ -155,6 +155,8 @@ for( $k=0; $k<count($transportes); $k++ ):
                     {
                         continue;
                     }
+					$imprimirNotas[]="anexoImpo";
+					$imprimirNotas[]="OTM_".$producto->getCaModalidad();
                 }
                 else
                 {
