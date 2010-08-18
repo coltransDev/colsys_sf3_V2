@@ -15,15 +15,21 @@ include_component("widgets", "widgetContactoCliente");
 
         Ext.apply(this, config);
 
-        this.wgContactoCliente = new WidgetContactoCliente({fieldLabel: 'Cliente <?=$impoexpo?>',
+        this.wgContactoCliente = new WidgetContactoCliente({fieldLabel: 'Agente ',
+                                                   width: 600,
+                                                   id: "agente-impoexpo",
+                                                   hiddenName: "idagente-impoexpo"
+                                                  });
+
+        this.wgContactoCliente1 = new WidgetContactoCliente({fieldLabel: 'Cliente ',
                                                    width: 600,
                                                    id: "cliente-impoexpo",
                                                    hiddenName: "idcliente-impoexpo"
                                                   });
-        this.wgContactoCliente1 = new WidgetContactoCliente({fieldLabel: 'Cliente Aduana',
+        this.wgContactoCliente2 = new WidgetContactoCliente({fieldLabel: 'Otro ',
                                                    width: 600,
-                                                   id: "cliente-aduana",
-                                                   hiddenName: "idcliente-aduana"
+                                                   id: "otro-aduana",
+                                                   hiddenName: "idotro-aduana"
                                                   });
 
         this.wgContactoCliente.addListener("select", this.onSelectContactoCliente, this);
@@ -47,7 +53,8 @@ include_component("widgets", "widgetContactoCliente");
                     //defaults: {width: 210},
                     items: [                        
                         this.wgContactoCliente,
-						this.wgContactoCliente1
+						this.wgContactoCliente1,
+						this.wgContactoCliente2
                     ]
                 }
 

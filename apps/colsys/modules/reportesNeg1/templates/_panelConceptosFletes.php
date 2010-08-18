@@ -318,10 +318,19 @@ PanelConceptosFletes = function( config ){
         },
         boxMinHeight: 400,
         tbar:[{
-                        text:'Guardar',
-                        iconCls:'disk',
-                        handler: this.guardarCambios
-                    }
+				text:'Guardar',
+				iconCls:'disk',
+				handler: this.guardarCambios
+			},{
+                text: 'Recargar',
+                tooltip: 'Recarga los datos de la base de datos',
+                iconCls: 'refresh',  // reference to our css
+                scope: this,
+                handler: function(){
+					Ext.getCmp('panel-conceptos-fletes').store.reload();
+				}
+
+            }
             ]
     });
 
@@ -331,7 +340,7 @@ PanelConceptosFletes = function( config ){
         var record = storePanelConceptosFletes.getAt(rowIndex);
         var field = this.getDataIndex(colIndex);
 
-
+//		alert(record.data.iditem + ":::"+field)
         if( !record.data.iditem && field!="item" ){
             return false;
         }

@@ -500,6 +500,10 @@ class reportesNegActions extends sfActions
                 $reporte->setCaIdmaster($request->getParameter("consigmaster"));
             }
     //ca_informar_mast:
+			if($request->getParameter("ca_informar_mast") )
+            {
+                $reporte->setCaInformarMast($request->getParameter("ca_informar_mast"));
+            }
     //ca_notify:
             if($request->getParameter("transporte") )
             {
@@ -1397,7 +1401,6 @@ class reportesNegActions extends sfActions
         $this->setTemplate("responseTemplate");
     }
 
-
     /*
     * Datos para el panel de conceptos
     * @param sfRequest $request A request object
@@ -1408,15 +1411,12 @@ class reportesNegActions extends sfActions
 
         $conceptos = array();
 
-        $baseRow = array(
-	 					 'idreporte'=>$reporte->getCaIdreporte()
-						);
+        $baseRow = array('idreporte'=>$reporte->getCaIdreporte());
 
         $tarifas = Doctrine::getTable("RepTarifa")
                              ->createQuery("t")
                              ->where("t.ca_idreporte = ?", $reporte->getCaIdreporte())
                              ->execute();
-
 
         foreach( $tarifas as $tarifa ){
             $row = $baseRow;
@@ -1509,8 +1509,6 @@ class reportesNegActions extends sfActions
         $row['orden']="Z";
         $conceptos[] = $row;
 
-
-
         $this->responseArray=array("items"=>$conceptos, "total"=>count($conceptos), "success"=>true);
         $this->setTemplate("responseTemplate");
     }
@@ -1523,7 +1521,6 @@ class reportesNegActions extends sfActions
     public function executeObservePanelConceptoFletes(sfWebRequest $request){
         $id = $request->getParameter("id");
         $this->responseArray=array("id"=>$id,  "success"=>false);
-
 
         $tipo = $request->getParameter("tipo");
 
@@ -1728,21 +1725,15 @@ class reportesNegActions extends sfActions
 
         $conceptos = array();
 
-        $baseRow = array(
-	 					 'idreporte'=>$reporte->getCaIdreporte()
-						);
-
-
+        $baseRow = array('idreporte'=>$reporte->getCaIdreporte());
 
         $recargos = Doctrine::getTable("RepGasto")
                              ->createQuery("t")
                              ->innerJoin("t.TipoRecargo tr")
                              ->where("t.ca_idreporte = ?", $reporte->getCaIdreporte())
-                             ->addWhere("t.ca_idconcepto = ?", 9999 )
+                             //->addWhere("t.ca_idconcepto = ?", 9999 )
                              ->addWhere("tr.ca_tipo like ?", "%".Constantes::RECARGO_LOCAL."%" )
                              ->execute();
-
-
 
         foreach( $recargos as $recargo ){
             $row = $baseRow;
@@ -1764,7 +1755,6 @@ class reportesNegActions extends sfActions
             $conceptos[] = $row;
         }
 
-
         $row = $baseRow;
         $row['iditem']="";
         $row['item']="+";
@@ -1772,11 +1762,8 @@ class reportesNegActions extends sfActions
         $row['orden']="Z";
         $conceptos[] = $row;
 
-
-
         $this->responseArray=array("items"=>$conceptos, "total"=>count($conceptos), "success"=>true);
         $this->setTemplate("responseTemplate");
-
 
     }
 

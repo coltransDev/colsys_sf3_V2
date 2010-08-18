@@ -10,11 +10,8 @@
  */
 class reportesNegComponents extends sfComponents
 {
-
-
     public function executeMainPanel()
 	{
-
 
 	}
 
@@ -33,8 +30,7 @@ class reportesNegComponents extends sfComponents
 	* @author: Andres Botero
 	*/
 	public function executePanelConceptosFletes()
-	{
-		
+	{		
 		$this->conceptos = Doctrine::getTable("Concepto")
                                      ->createQuery("c")
                                      ->select("ca_idconcepto, ca_concepto")
@@ -81,7 +77,6 @@ class reportesNegComponents extends sfComponents
 	*/
 	public function executePanelRecargos()
 	{
-
         $impoexpo = $this->reporte->getCaImpoexpo();
         if( $impoexpo==Constantes::TRIANGULACION ){
             $impoexpo=Constantes::IMPO;
@@ -170,6 +165,30 @@ class reportesNegComponents extends sfComponents
 		
 	}
 
+	public function executeFormContinuacionPanel()
+	{
+		$impoexpo=$this->getRequestParameter("impoexpo");
+
+		$this->title=($impoexpo== Constantes::IMPO)?"Continuaci&oacute;n de viaje":"DTA";
+		$usuarios = Doctrine::getTable("Usuario")
+               ->createQuery("u")
+               ->select("u.ca_login,u.ca_nombre,u.ca_email,ca_sucursal")
+               ->innerJoin("u.UsuarioPerfil up")
+               ->where("u.ca_activo=? AND up.ca_perfil=? ", array('TRUE','cordinador-de-otm'))
+               ->addOrderBy("u.ca_idsucursal")
+               ->addOrderBy("u.ca_nombre")
+               ->execute();
+        //echo count($usuarios);
+        $this->usuarios=array();
+        foreach($usuarios as $usuario)
+        {
+            if(!isset($this->usuarios[$usuario->getCaSucursal()]))
+                $this->usuarios[$usuario->getCaSucursal()]="";
+            $this->usuarios[$usuario->getCaSucursal()].=$usuario->getCaEmail();
+        }
+
+	}
+
 
     public function executeFormAduanasPanel()
 	{
@@ -205,8 +224,6 @@ class reportesNegComponents extends sfComponents
                 $coma=($i==($conta-1))?"":",";
                 $this->seguro_conf.=$usuarios[$i]->getCaLogin().$coma;
             }
-
-
     }
     /*
 	* Edita la informacion basica del trayecto
@@ -323,8 +340,6 @@ class reportesNegComponents extends sfComponents
             $this->nomGuiasH="AWB";
             $this->nomGuiasM="AWB";
         }
-
-
     }
 
 

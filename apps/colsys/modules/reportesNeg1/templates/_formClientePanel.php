@@ -10,9 +10,7 @@ include_component("widgets", "widgetContactoCliente");
 ?>
 <script type="text/javascript">
     FormClientePanel = function( config ){
-
         Ext.apply(this, config);
-
         this.wgContactoCliente = new WidgetContactoCliente({fieldLabel: 'Cliente',
                                                    width: 600,                                                   
                                                    id: "cliente",
@@ -28,9 +26,6 @@ include_component("widgets", "widgetContactoCliente");
             autoHeight:true,
 //            deferredRender:false,
             items: [
-                /*
-                 *========================= Información del Proveedor =========================
-                 **/
                 {
 
                     xtype:'fieldset',
@@ -93,7 +88,12 @@ include_component("widgets", "widgetContactoCliente");
                         }
                         ?>
                     ]
-                },
+                }
+				<?
+				if($impoexpo== Constantes::IMPO)
+				{
+				?>
+				,
                 /*
                  *========================= Información del Proveedor =========================
                  **/
@@ -113,6 +113,9 @@ include_component("widgets", "widgetContactoCliente");
                                            })
                     ]
                 }
+				<?
+				}
+				?>
             ]
 
 
@@ -130,28 +133,32 @@ include_component("widgets", "widgetContactoCliente");
 
 
             var confirmar =  record.get("confirmar") ;
-            var brokenconfirmar=confirmar.split(",");
-            var i=0;
-            for(i=0; i<brokenconfirmar.length; i++){
-                Ext.getCmp("contacto_"+i).setValue(brokenconfirmar[i]);
-                Ext.getCmp("contacto_"+i).setReadOnly( true );
-                Ext.getCmp("chkcontacto_"+i).setValue( true );                
-            }
-
-
-            for( i=brokenconfirmar.length; i<20; i++ ){
-                if( Ext.getCmp("contacto_"+i) ){
-                    Ext.getCmp("contacto_"+i).setValue("");
-                    Ext.getCmp("contacto_"+i).setReadOnly( false );
-                    Ext.getCmp("chkcontacto_"+i).setValue( false );
-                }
-            }
-            
+			var brokenconfirmar="";
+			if(confirmar)
+			{
+				brokenconfirmar=confirmar.split(",");
+				var i=0;
+				for(i=0; i<brokenconfirmar.length; i++){
+					Ext.getCmp("contacto_"+i).setValue(brokenconfirmar[i]);
+					Ext.getCmp("contacto_"+i).setReadOnly( true );
+					Ext.getCmp("chkcontacto_"+i).setValue( true );
+				}
+			}
+			for( i=brokenconfirmar.length; i<20; i++ ){
+				if( Ext.getCmp("contacto_"+i) ){
+					Ext.getCmp("contacto_"+i).setValue("");
+					Ext.getCmp("contacto_"+i).setReadOnly( false );
+					Ext.getCmp("chkcontacto_"+i).setValue( false );
+				}
+			}
+			
             diascredito=(record.get("diascredito")!="")?record.get("diascredito")+" dias":"0";
             Ext.getCmp("ca_tiempocredito").setValue(diascredito);
             cupo=(record.get("cupo")!="")?"Sí":"No";
             //alert(cupo);
             Ext.getCmp("ca_liberacion").setValue(cupo);
+
+			Ext.getCmp("preferencias").setValue(record.get("preferencias"));
 
             /*
              * <?

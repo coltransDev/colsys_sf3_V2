@@ -27,6 +27,7 @@ include_component("reportesNeg", "gridPanelInstruccionesWindow",array("modo"=>$m
                     xtype:'fieldset',
                     title: 'Preferencias',
                     autoHeight:true,
+					labelWidth: 120,
                     //defaults: {width: 210},
                     items: [                        
                         {
@@ -39,7 +40,7 @@ include_component("reportesNeg", "gridPanelInstruccionesWindow",array("modo"=>$m
                         },
                         {
                             xtype: "textarea",
-                            fieldLabel: "Instrucciones especiales",
+                            fieldLabel: "Instrucciones especiales (Agente)",
                             name: "instrucciones",
                             id: "instrucciones",
                             width: 600,

@@ -224,10 +224,19 @@ PanelRecargos = function( config ){
         },
         boxMinHeight: 400,
         tbar:[{
-                        text:'Guardar',
-                        iconCls:'disk',
-                        handler: this.guardarCambios
-                    }
+				text:'Guardar',
+				iconCls:'disk',
+				handler: this.guardarCambios
+			},{
+                text: 'Recargar',
+                tooltip: 'Recarga los datos de la base de datos',
+                iconCls: 'refresh',  // reference to our css
+                scope: this,
+                handler: function(){
+					Ext.getCmp('panel-recargos').store.reload();
+				}
+
+            }
             ]
 
 

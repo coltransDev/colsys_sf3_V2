@@ -15,7 +15,8 @@ include_component("widgets", "widgetPais");
 include_component("widgets", "widgetCiudad");
 include_component("widgets", "widgetAgente");
 include_component("widgets", "widgetIncoterms");
-$usuarios = $sf_data->getRaw("usuarios");
+
+//$usuarios = $sf_data->getRaw("usuarios");
 if($impoexpo=="Triangulación")
 {
 //include_component("widgets", "widgetImpoexpo");
@@ -23,7 +24,7 @@ if($impoexpo=="Triangulación")
 }
 else
 {
-    include_component("widgets", "widgetContinuacion");
+	include_component("reportesNeg", "formContinuacionPanel",array("modo"=>$modo,"impoexpo"=>$impoexpo));
 }
 
 ?>
@@ -38,21 +39,22 @@ else
                                                       hiddenName: "idcotizacion"
                                                       });
         this.widgetCotizacion.addListener("select", this.onSelectCotizacion, this );
-<?
-        if($impoexpo!="Triangulación")
-        {
-?>
-            this.wgContinuacion=new WidgetContinuacion({fieldLabel: 'Continuación',
-                                                    id: 'continuacion',
-                                                    name: 'continuacion',
+
+
+		this.wgModalidad=new WidgetModalidad({fieldLabel: 'Tipo Envio',
+                                                    id: 'modalidad',
+                                                    hiddenName: "idmodalidad",
                                                     linkTransporte: "transporte",
                                                     linkImpoexpo: "impoexpo"
-                                                    })
-
-        this.wgContinuacion.addListener("select", this.onSelectContinuacion, this );
+                                                    });
         <?
-        }
-        ?>
+		if($impoexpo== Constantes::EXPO)
+		{
+		?>
+		this.wgModalidad.addListener("select", this.onSelectModalidad, this );
+		<?
+		}
+		?>
         FormTrayectoPanel.superclass.constructor.call(this, {
 			labelWidth: 100,
             title: 'General',
@@ -125,12 +127,8 @@ else
                                                     name: 'impoexpo',                                                    
                                                     listeners:{select:this.onSelectClase}
                                                     }),*/
-                                new WidgetModalidad({fieldLabel: 'Tipo Envio',
-                                                    id: 'modalidad',
-                                                    hiddenName: "idmodalidad",
-                                                    linkTransporte: "transporte",
-                                                    linkImpoexpo: "impoexpo"
-                                                    }),     
+
+                                this.wgModalidad,
                                 new WidgetPais({fieldLabel: 'País Origen',
                                                 id: 'tra_origen_id',
                                                 linkCiudad: 'origen',
@@ -213,71 +211,10 @@ else
                 <?
                 if($impoexpo!="Triangulación")
                 {
-                    //print_r($usuarios);
-                    $keys=array_keys($usuarios);
-                    $conta=count($keys);
-                ?>
-                {
-                    xtype:'fieldset',
-                    title: 'Continuación de viaje',
-                    autoHeight:true,
-                    id:'Pcontinuacion',
-                    items: [
-                        this.wgContinuacion,
-                        new WidgetCiudad({fieldLabel: 'Destino Final',
-                                                  name: 'continuacion_dest',
-                                                  id: 'continuacion_dest',
-                                                  idtrafico: 'CO-057'
-                                                }),
-                        {
-                            xtype:'fieldset',
-                            title: 'Informar A',
-                            autoHeight:true,                            
-                            layout:'column',
-                            columns: 2,
-                            defaults:{
-                                columnWidth:'<?=(1/$conta)?>',
-                                layout:'form',                        
-                                border:false                                
-                            },
-                            items :[
-<?
-                            $i=0;
 
-                            for($i=0;$i<$conta;$i++  )
-                            {
-?>
-                            {
-                            columnWidth:'<?=(1/$conta)?>',
-                            layout: 'form',
-                            border:false,
-                            defaultType: 'textfield',
-                            items: [
-                                {
-                                    xtype: "radio",
-                                    fieldLabel: "<?=$usuarios[$keys[$i]]?>",
-                                    labelStyle: 'width:150px',
-                                    name: "ca_continuacion_conf",
-                                    id: "ca_continuacion_conf_<?=$i?>",
-                                    inputValue:"<?=$keys[$i]?>"
-                                }
-                            ]
-                            },
-<?
-                            }
-                        $i++;
-?>
-                                {
-                                    xtype: "hidden",
-                                    fieldLabel: "",
-                                    name: "ss",
-                                    id: "ss",
-                                    value:""
-                                }
-                            ]
-                        }
-                    ]
-                },
+                ?>
+				new FormContinuacionPanel()				
+                ,
                 <?
                 }
                 ?>
@@ -309,47 +246,6 @@ else
     };
 
     Ext.extend(FormTrayectoPanel, Ext.Panel, {
-        onSelectTransporte: function( combo, record, index){
-            if(record.data.valor=="Aéreo")
-                Ext.getCmp("Pca_comodato").hide();
-            else
-                Ext.getCmp("Pca_comodato").show();
-        }
-        ,
-        onSelectContinuacion: function( combo, record, index){
-//            alert(b.toSource())
-            if(record)
-            {
-                if(record.data.modalidad!=" " && record.data.modalidad!="")
-                {
-                    Ext.getCmp('idconsignatario').allowBlank=false;
-                    Ext.getCmp('bodega_consignar').allowBlank=false;
-                }
-                else
-                {
-                    Ext.getCmp('idconsignatario').allowBlank=true;
-                    Ext.getCmp('bodega_consignar').allowBlank=true;
-                }
-            }
-            else
-            {
-                Ext.getCmp('idconsignatario').allowBlank=true;
-                Ext.getCmp('bodega_consignar').allowBlank=true;
-            }
-/*            if(record.data.valor=="Aéreo")
-                Ext.getCmp("Pca_comodato").hide();
-            else
-                Ext.getCmp("Pca_comodato").show();
-*/
-        }
-        ,
-        onSelectClase: function( combo, record, index){
-            if(record.data.valor=="Importación")
-                Ext.getCmp("Pcontinuacion").show();
-            else
-                Ext.getCmp("Pcontinuacion").hide();
-
-        },
         /*
          * Completa los datos del reporte con la cotización seleccionada.
          **/
@@ -405,8 +301,25 @@ else
             Ext.getCmp("ca_liberacion").setValue(record.data.prima_min);
             Ext.getCmp("ca_tiempocredito").setValue(record.data.prima_min);
         }
+        <?
+		if($impoexpo== Constantes::EXPO)
+		{
+		?>
+		,
+        onSelectModalidad: function( combo, record, index){
+			if(record.data.modalidad=="CONSOLIDADO")
+			{
+				alert(record.data.modalidad);
+			}
+			else if(record.data.modalidad=="DIRECTO")
+			{
+				alert(record.data.modalidad);
+			}
+        }
+		<?
+		}
+		?>
 
-		
 
     });
 </script>

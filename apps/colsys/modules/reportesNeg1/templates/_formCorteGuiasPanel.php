@@ -5,7 +5,7 @@
  *  (c) Coltrans S.A. - Colmas Ltda.
 */
 include_component("widgets", "widgetConsignar");
-include_component("widgets", "widgetTipoBodega");
+//include_component("widgets", "widgetTipoBodega");
 include_component("widgets", "widgetBodega");
 //echo $impoexpo.".".$modo;
 
@@ -24,7 +24,13 @@ include_component("widgets", "widgetBodega");
                                             hiddenName: "idbodega_hd",
                                             width: 600,
                                             linkTransporte: "transporte"
-                                           })                                           
+                                           })
+		this.wgNotify=new WidgetTercero({fieldLabel:"Notificar a",
+                                            tipo: 'Notify',
+                                            width: 600,
+                                            hiddenName: "notify",
+                                            id:"idnotify"
+                                           });
         var camposHija = new Array();
         <?
         if($impoexpo=="Importación"  && $modo=="Marítimo")
@@ -32,16 +38,17 @@ include_component("widgets", "widgetBodega");
         ?>
             this.wgBodega.fieldLabel="Usuario";
             camposHija.push( this.wgBodega );
-            camposHija.push( this.wgTercero );
-            this.wgNotify=new WidgetTercero({fieldLabel:"Notify",
-                                            tipo: 'Notify',
-                                            width: 600,
-                                            hiddenName: "notify",
-                                            id:"idnotify"
-                                           });
+            camposHija.push( this.wgTercero );            
             camposHija.push( this.wgNotify );
         <?
         }
+		else if($impoexpo=="Exportación"  && $modo=="Aéreo")
+		{
+		?>
+            camposHija.push( this.wgTercero );
+            camposHija.push( this.wgNotify );
+        <?
+		}
         else
         {
         ?>
@@ -65,7 +72,7 @@ include_component("widgets", "widgetBodega");
                     items: camposHija
                 }
                 <?
-                if($impoexpo=="Importación"  && $modo!="Aéreo")
+                if(($impoexpo=="Importación"  && $modo!="Aéreo") || ($impoexpo=="Exportación"  && $modo=="Aéreo"))
                 {
                 ?>
                 ,
@@ -80,6 +87,20 @@ include_component("widgets", "widgetBodega");
                                             id: "idconsigmaster",
                                             hiddenName: "consigmaster"
                                            })
+					<?
+						if($impoexpo=="Exportación" && $modo=="Aéreo")
+						{
+					?>
+						,
+						new WidgetTercero({fieldLabel:"Notificar a",
+                                            tipo: 'Notify',
+                                            width: 600,
+                                            hiddenName: "ca_informar_mast",
+                                            id:"idnotify_mast"
+                                           })
+					<?
+						}
+					?>
                     ]
                 }
                 <?
