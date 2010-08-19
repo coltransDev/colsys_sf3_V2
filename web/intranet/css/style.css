@@ -327,3 +327,186 @@ font-weight:lighter;
 #oziocssgallery{
 	display:none;
 }
+
+div.box1 {
+	background: #F0F0F0 url(../images/bg_newsitem.png) repeat-x;
+	border: 1px solid #EEE;
+	border-color: #EEE #EEE #DDD #EEE;
+	clear: both;
+	color: #333;
+	line-height: 1.5;
+	padding: 10px;
+}
+
+
+div.box1 .title {
+	color: #2A337C;
+	font: bold 1.2em Tahoma,sans-serif;
+	padding: 3px 4px;
+}
+div.box1 .body {
+	font-family: "Trebuchet MS",Tahoma,sans-serif;
+	font-size: 0.9em;
+	text-align: justify;
+}
+table.tableList {
+	background-color: #FFFFFF;
+	padding: 0px;
+	border: 1px solid #CCCCCC;
+	border-spacing: 0px;
+	border-collapse: collapse;
+}
+
+table.tableList th {
+	margin: 0px;
+	padding: 6px 4px 2px 4px;
+
+
+
+	/*
+	height: 25px;
+	font-size: 10px;
+	color: #FFFFFF;
+	background: #2E4B66;
+	*/
+	background: transparent url( ../images/layout/panel/white-top-bottom.gif) repeat-x scroll 0 -1px;
+	border:1px solid #D0D0D0;
+	color:#333333;
+
+
+}
+
+/*
+* Colores que puede tomar una fila de acuerdo al status en que se encuentre
+*/
+
+
+
+table.tableList tr.yellow{
+	background-color:#FFFFCC;
+}
+
+table.tableList tr.green{
+	background-color:#CEFFCE;
+}
+
+table.tableList tr.blue{
+	background-color:#CEE7FF;
+}
+
+table.tableList tr.orange{
+	background-color:#FFE4AE;
+}
+
+
+table.tableList tr.purple{
+	background-color:#9999CC;
+}
+
+table.tableList tr.pink{
+	background-color:#FFCCCC;
+}
+
+table.tableList tr.rowt {
+	background-color: #E6E6E6;
+}
+
+table.tableList tr.row0 {
+	background-color: #F5F5F5;
+}
+table.tableList tr.row1 {
+	background-color: #FFF;
+}
+
+table.tableList tr.row2 {
+	background-color: #D2D2D2;
+}
+
+table.tableList tr.row0:hover {
+	background-color: #f1f1f1;
+}
+table.tableList tr.row1:hover {
+	background-color: #f1f1f1;
+}
+
+
+table.tableList td {
+	border-bottom: 1px solid #e5e5e5;
+	padding: 4px;
+	color:#333333;
+}
+
+
+table.tableList td.captura {
+   text-align:left;
+   vertical-align:top;
+   background:#1D3F99;
+   color:#FFFFFF;
+}
+table.tableList td.destacar {
+   text-align:left;
+   background:#FFFFC0;
+   color:#1D3F99;
+   vertical-align:top;
+}
+table.tableList td.divisor {
+   text-align:center;
+   background:#000000;
+   color:#FFFFFF;
+}
+table.tableList td.imprimir {
+   text-align:left;
+   background:#FFFFFF;
+   color:#000000;
+}
+table.tableList td.invertir {
+   text-align:left;
+   background:#D2D2D2;
+   color:#000000;
+
+}
+table.tableList td.listar {
+   text-align:left;
+   background:#F0F0F0;
+   color:#000000;
+}
+table.tableList td.mostrar {
+   text-align: left;
+   background: #F0F0F0;
+   color: #000000;
+}
+table.tableList td.partir {
+   font-weight:bold;
+   text-align:left;
+   vertical-align:top;
+   background:#1D3F99;
+   color:#FFFFFF;
+}
+table.tableList td.periodo {
+   text-align:left;
+   background:#CCCCCC;
+   color:#000000;
+   vertical-align:top;
+}
+table.tableList td.resaltar {
+   text-align:left;
+   background:#9999CC;
+   color:#000000;
+   vertical-align:top;
+}
+table.tableList td.titulo {
+   text-align:center;
+   background:#1D3F99;
+   color:#FFFFFF;
+}
+table.tableList td.valores {
+   text-align: right;
+   vertical-align: top;
+   background: #F0F0F0;
+   color: #000000;
+}
+table.tableList th.imprimir {
+   text-align:center;
+   background:#FFFFFF;
+   color:#000000;
+}
