@@ -702,23 +702,23 @@ class cotizacionesActions extends sfActions
             }
         }
 		$email->save();
-		$this->error = $email->send();
-		//if(!$this->error){
-			$tarea  = $this->cotizacion->getTareaIDGEnvioOportuno();
+		//$email->send();
+		
+        $tarea  = $this->cotizacion->getTareaIDGEnvioOportuno();
 
-			if( $tarea ){
-				$observaciones_idg = $this->getRequestParameter("observaciones_idg");
+        if( $tarea ){
+            $observaciones_idg = $this->getRequestParameter("observaciones_idg");
 
-				if( $observaciones_idg!==null ){
-					$tarea->setCaObservaciones( $observaciones_idg );
-				}
+            if( $observaciones_idg!==null ){
+                $tarea->setCaObservaciones( $observaciones_idg );
+            }
 
-				if( !$tarea->getCaFchterminada() ){
-					$tarea->setCaFchterminada( date("Y-m-d H:i:s") );
-				}
-				$tarea->save();
-			}
-		//}
+            if( !$tarea->getCaFchterminada() ){
+                $tarea->setCaFchterminada( date("Y-m-d H:i:s") );
+            }
+            $tarea->save();
+        }
+		
 	}
 
 	/*
