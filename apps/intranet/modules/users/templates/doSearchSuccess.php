@@ -12,9 +12,9 @@
 foreach ($usuarios as $usuario) {
 ?>
 	<tr>
-        <td><b><a href="<?=url_for('users/viewUser?login='.$usuario->getCaLogin()) ?>"><?=utf8_encode($usuario->getCaNombre())?></a></b></td>
-		<td><?=utf8_encode($usuario->getSucursal()->getCaNombre())?></td>
-        <td><?=utf8_encode($usuario->getCaDepartamento())?></td>
+        <td><b><a href="<?=url_for('users/viewUser?login='.$usuario->getCaLogin()) ?>"><?=($usuario->getCaNombre())?></a></b></td>
+		<td><?=($usuario->getSucursal()->getCaNombre())?></td>
+        <td><?=($usuario->getCaDepartamento())?></td>
 	</tr>
 <?
 }

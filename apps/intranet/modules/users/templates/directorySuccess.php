@@ -3,7 +3,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
+//phpinfo();
 ?>
 <script type="text/javascript">
     var buscar=function(){

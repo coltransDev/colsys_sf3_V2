@@ -5,7 +5,7 @@
  */
 ?>
 <b>Organigrama</b><br/>
-<?=utf8_encode($manager->getCaDepartamento()) ?><br/>
+<?=($manager->getCaDepartamento()) ?><br/>
 <br/>
 
 <div class="box1">
@@ -14,7 +14,7 @@
         <tr>
             <td width="150" align="center">
                 <font size="2">
-                    <b><a href="<?=url_for('users/viewUser?login='.$manager->getCaLogin()) ?>"><?=utf8_encode($manager->getCaNombre())?></a></b>
+                    <b><a href="<?=url_for('users/viewUser?login='.$manager->getCaLogin()) ?>"><?=($manager->getCaNombre())?></a></b>
                 </font>
             </td>
         </tr>
@@ -59,12 +59,12 @@
 							<tr>
 								<td width="150" align="center">
 									<font size="2">
-										<b><a href="<?=url_for('users/viewUser?login='.$usuario->getCaLogin()) ?>"><?=utf8_encode($usuario->getCaNombre())?></a></b>
+										<b><a href="<?=url_for('users/viewUser?login='.$usuario->getCaLogin()) ?>"><?=($usuario->getCaNombre())?></a></b>
 									</font>
 								</td>
 							</tr>
 							<tr>
-								<td width="150" align="center"><font size="1"><?=utf8_encode($usuario->getCaCargo())?></font></td>
+								<td width="150" align="center"><font size="1"><?=($usuario->getCaCargo())?></font></td>
 							</tr>
 							<?
 							$subs = $usuario->getSubordinado();

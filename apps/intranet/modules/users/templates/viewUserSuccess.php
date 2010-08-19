@@ -12,8 +12,8 @@
 				</div>
 			</td>
 			<td valign="top" align="left">
-				<b><?=utf8_encode(strtoupper($user->getCaNombre())) ?></b><br/>
-				<b><?=utf8_encode($user->getCaCargo()) ?></b><br />
+				<b><?=(strtoupper($user->getCaNombre())) ?></b><br/>
+				<b><?=($user->getCaCargo()) ?></b><br />
 			</td>
 			<td>&nbsp;</td>
 		</tr>
@@ -24,43 +24,43 @@
 <div class="box1">
     <table width="700" border="0" class="tableList">
         <tr>
-            <td>Nombre Completo:</td><td><b><?=utf8_encode($user->getCaNombres())?> <?=utf8_encode($user->getCaApellidos())?></b></td>
+            <td>Nombre Completo:</td><td><b><?=($user->getCaNombres())?> <?=($user->getCaApellidos())?></b></td>
         </tr>
         <tr>
-            <td>Empresa:</td><td><b><?=utf8_encode($user->getCaEmpresa())?></b></td>
+            <td>Empresa:</td><td><b><?=($user->getCaEmpresa())?></b></td>
         </tr>
         <tr>
-            <td>Tel. Oficina:</td><td><b><?=utf8_encode($user->getCaTeloficina().' '.$user->getCaExtension())?></b></td>
+            <td>Tel. Oficina:</td><td><b><?=($user->getCaTeloficina().' '.$user->getCaExtension())?></b></td>
         </tr>
         <tr>
-            <td>Departamento:</td><td><b><?=utf8_encode($user->getCaDepartamento())?></b></td>
+            <td>Departamento:</td><td><b><?=($user->getCaDepartamento())?></b></td>
         </tr>
         <tr>
-            <td>Sucursal:</td><td><b><?=utf8_encode($user->getSucursal()->getCa_Nombre())?></b></td>
+            <td>Sucursal:</td><td><b><?=($user->getSucursal()->getCa_Nombre())?></b></td>
         </tr>
         <tr>
-            <td>Email:</td><td><b><?=utf8_encode($user->getCa_Email())?></b></td>
+            <td>Email:</td><td><b><?=($user->getCa_Email())?></b></td>
         </tr>
         <tr>
-            <td>M&oacute;vil:</td><td><b><?=utf8_encode($user->getCa_Movil())?></b></td>
+            <td>M&oacute;vil:</td><td><b><?=($user->getCa_Movil())?></b></td>
         </tr>
         <tr>
-            <td>Tel. Particular:</td><td><b><?=utf8_encode($user->getCa_Telparticular())?></b></td>
+            <td>Tel. Particular:</td><td><b><?=($user->getCa_Telparticular())?></b></td>
         </tr>
         <tr>
-            <td>Jefe Inmediato:</td><td><b><a href="<?=url_for('users/viewUser?login='.$manager->getCaLogin()) ?>"><?=utf8_encode($manager->getCaNombre())?></a></b></td>
+            <td>Jefe Inmediato:</td><td><b><a href="<?=url_for('users/viewUser?login='.$manager->getCaLogin()) ?>"><?=($manager->getCaNombre())?></a></b></td>
         </tr>
         <tr>
-            <td>Tipo de Sangre:</td><td><b><?=utf8_encode($user->getCa_Tiposangre())?></b></td>
+            <td>Tipo de Sangre:</td><td><b><?=($user->getCa_Tiposangre())?></b></td>
         </tr>
         <tr>
-            <td>Fch. Cumplea&ntilde;os:</td><td><b><?=utf8_encode(Utils::parseDate($user->getCaCumpleanos(), 'm-d'))?></b></td>
+            <td>Fch. Cumplea&ntilde;os:</td><td><b><?=(Utils::parseDate($user->getCaCumpleanos(), 'm-d'))?></b></td>
         </tr>
         <tr>
-            <td>Tel. Familiar:</td><td><b><?=utf8_encode($user->getCa_Telfamiliar())?></b></td>
+            <td>Tel. Familiar:</td><td><b><?=($user->getCa_Telfamiliar())?></b></td>
         </tr>
         <tr>
-            <td>Nombre Familiar:</td><td><b><?=utf8_encode($user->getCa_Nombrefamiliar())?></b></td>
+            <td>Nombre Familiar:</td><td><b><?=($user->getCa_Nombrefamiliar())?></b></td>
         </tr>
         
 

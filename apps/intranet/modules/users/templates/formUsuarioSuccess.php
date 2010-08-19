@@ -15,8 +15,8 @@ use_helper('ExtCalendar');
 				</div>
 			</td>
 			<td valign="top" align="left">
-				<b><?=utf8_encode(strtoupper($usuario->getCaNombre())) ?></b><br/>
-				<b><?=utf8_encode($usuario->getCaCargo()) ?></b><br />
+				<b><?=(strtoupper($usuario->getCaNombre())) ?></b><br/>
+				<b><?=($usuario->getCaCargo()) ?></b><br />
 			</td>
 		</tr>
 	</table>
@@ -86,7 +86,7 @@ use_helper('ExtCalendar');
                                                 <?
                                                 foreach( $empresas as $empresa ){
                                                 ?>
-                                                <option value="<?=$empresa['ca_empresa']?>"<?=$usuario->getCaEmpresa()==$empresa['ca_empresa']?'selected="selected"':''?> > <?=utf8_encode($empresa['ca_empresa'])?></option>
+                                                <option value="<?=$empresa['ca_empresa']?>"<?=$usuario->getCaEmpresa()==$empresa['ca_empresa']?'selected="selected"':''?> > <?=($empresa['ca_empresa'])?></option>
                                                 <?
                                                 }
                                                 ?>
@@ -108,7 +108,7 @@ use_helper('ExtCalendar');
                                                 foreach( $sucursales as $sucursal ){
                                                 ?>
                                                 <option value="<?=$sucursal->getCaIdsucursal()?>" <?=$usuario->getCaIdsucursal()==$sucursal->getCaIdsucursal()?'selected="selected"':''?>  >
-                                                    <?=utf8_encode($sucursal->getCaNombre())?>
+                                                    <?=($sucursal->getCaNombre())?>
                                                     </option>
                                                 <?
                                                 }
@@ -130,7 +130,7 @@ use_helper('ExtCalendar');
                                                         foreach( $departamentos as $departamento ){
                                                     ?>
                                                     <option value="<?=$departamento->getCaNombre()?>" <?=$usuario->getCaDepartamento()==$departamento->getCaNombre()?'selected="selected"':''?>  >
-                                                        <?=utf8_encode($departamento->getCaNombre())?>
+                                                        <?=($departamento->getCaNombre())?>
                                                     </option>
                                                     <?
                                                     }
@@ -159,7 +159,7 @@ use_helper('ExtCalendar');
                                     </td>
                                     <td>
                                         <div align="left">
-                                            <input disabled="disabled" type="text" name="manager" value="<?=utf8_encode($manager->getCaNombre())?>"/>
+                                            <input disabled="disabled" type="text" name="manager" value="<?=($manager->getCaNombre())?>"/>
                                         </div>
                                     </td>
                                 </tr>
