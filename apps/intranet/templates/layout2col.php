@@ -34,7 +34,7 @@
                                 </div>
                                 <?include_component('users','loginInformation')?>
                             </div>
-                            
+
                         </div>
 
                         <div class="topmenu">
@@ -69,7 +69,7 @@
                         </div>
                         <!--Center Column Start-->
 
-                        <div class="center">
+                        <div class="centerleft">
 
                             <table class="blog" cellpadding="0" cellspacing="0">
                                 <tr>
@@ -101,27 +101,7 @@
                         </div>
                         <!--Center Column End End-->
 
-                        <!--right Column Start-->
-
-                        <div class="right">
-                            <div class="jamod module" id="Mod19">
-                                <div>
-
-                                    <div>
-                                        <div>
-
-                                            <?
-                                            include_component('homepage','birthday');
-                                            ?>
-
-
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-
-                        </div>
+                        
 
                         <!--Right Column End-->
 
