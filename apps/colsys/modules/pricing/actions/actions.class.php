@@ -1,5 +1,4 @@
-<?php
- 
+<?php 
 /**
  * pricing actions.
  *
@@ -8,17 +7,9 @@
  * @author     Andres Botero
  * @version    SVN: $Id: actions.class.php 2692 2006-11-15 21:03:55Z fabien $
  */
-//$this->redirect("/users/logout");
-
 class pricingActions extends sfActions
 {
-
 	const RUTINA = "61";
-	/**
-	* Executes index action
-	*
-	*/
-
 
     public function getNivel(){
         $this->nivel = $this->getUser()->getNivelAcceso( pricingActions::RUTINA );
@@ -30,9 +21,7 @@ class pricingActions extends sfActions
 
 	public function executeIndex()
 	{		
-		
-		$this->nivel = $this->getNivel();
-		
+		$this->nivel = $this->getNivel();		
 		$this->opcion = "";
 		if( $this->nivel==-1 ){
 			$this->forward404();
@@ -41,37 +30,28 @@ class pricingActions extends sfActions
 		if( $this->nivel==0 ){
 			$this->opcion = "consulta";
 		}
-		
 
 		$this->modalidades_mar = ParametroTable::retrieveByCaso( "CU051" );
 		$this->modalidades_aer = ParametroTable::retrieveByCaso( "CU052" );
 		$this->modalidades_ter = ParametroTable::retrieveByCaso( "CU053" );
-		
 
 		$response = sfContext::getInstance()->getResponse();
 		$response->addJavaScript("extExtras/FileUploadField",'last');
 		$response->addJavaScript("extExtras/RowExpander",'last');		
 		$response->addJavaScript("extExtras/CheckColumn",'last');	
         /*$response->addJavaScript("extExtras/LockingGridView",'last');
-        $response->addJavaScript("extExtras/ColumnHeaderGroup",'last');        */
-
-
-		
+        $response->addJavaScript("extExtras/ColumnHeaderGroup",'last');        */		
 		$this->nivel = $this->getNivel();
 		
 		if( $this->nivel==-1 ){
 			$this->forward404();
-		}	
-		
+		}		
 		$this->directory = sfConfig::get("app_digitalFile_pricing");
-	}	
-	
+	}
 	/*********************************************************************
 	* Acciones del PanelFletesPorTrayecto
 	*
-	*********************************************************************/
-	
-		
+	*********************************************************************/		
 	/*
 	* Muestra los trayectos
 	*/
@@ -100,15 +80,13 @@ class pricingActions extends sfActions
 		$impoexpo = utf8_decode($this->getRequestParameter( "impoexpo" ));
 		$this->forward404Unless( $impoexpo );
 		
-		$idciudad2 = $this->getRequestParameter( "idciudad2" );
-		
+		$idciudad2 = $this->getRequestParameter( "idciudad2" );		
 		$start = $this->getRequestParameter( "start" );
 		$limit = $this->getRequestParameter( "limit" );
-				
+
 		$this->trafico = Doctrine::getTable("Trafico")->find($idtrafico);
         
         $this->forward404Unless($this->trafico);
-
 
         if( $this->getRequestParameter( "fechacambio" ) ){
             $fechacambio = str_replace("|","-", $this->getRequestParameter( "fechacambio" ) );
@@ -117,7 +95,6 @@ class pricingActions extends sfActions
         }else{
             $timestamp = null;
         }
-
         
 		if( $timestamp ){
 			$fchcorte = date( "Y-m-d H:i:s", $timestamp );			
@@ -149,8 +126,6 @@ class pricingActions extends sfActions
         }else{
             $q->addWhere("d.ca_idtrafico = ? ", $this->trafico->getCaIdtrafico() );
         }
-
-        
 
         if( $impoexpo==Constantes::IMPO || $this->getRequestParameter( "fechacambio" )  ){ // La fecha de cambio permite que salga el historico de exportaciones
             if( $idciudad ){
@@ -188,7 +163,6 @@ class pricingActions extends sfActions
 		
 		$i=0;
 
-
         $ultCiudad = null;
         $ultLinea = null;
         //echo count( $trayectos );
@@ -210,13 +184,10 @@ class pricingActions extends sfActions
 					'trayecto' =>$trayectoStr,					
 					'origen' => $trayecto["t_ca_origen"],
                     'destino' => $trayecto["t_ca_destino"],
-                    'idlinea' => $trayecto["t_ca_idlinea"]					
-
+                    'idlinea' => $trayecto["t_ca_idlinea"]
 				);
 
-
             $recargosGenerales = array();
-
 
             if( $timestamp ){
                 $q = Doctrine_Query::create()->from("PricRecargoxConceptoBs r");
@@ -255,7 +226,6 @@ class pricingActions extends sfActions
                         'aplicacion_min' => utf8_encode($pricRecargo->getCaAplicacionMin()),
                         'consecutivo' => $pricRecargo->getCaConsecutivo(),
                         'actualizado'=>$pricRecargo->getCaUsucreado()." ".Utils::fechaMes($pricRecargo->getCaFchcreado())
-
                     );
                     $recargosGenerales[] = array_merge($baseRow, $row);
                 }
@@ -266,7 +236,6 @@ class pricingActions extends sfActions
             }else{
                 $idciudad = $trayecto["t_ca_destino"];
             }
-
 
             if( $idciudad!=$ultCiudad ){ //Se evita calcular los recargos x ciudad si corresponden al anterior
                 $ultCiudad = $idciudad;
@@ -307,7 +276,6 @@ class pricingActions extends sfActions
                         'aplicacion_min' => utf8_encode($pricRecargo->getCaAplicacionMin()),
                         'consecutivo' => $pricRecargo->getCaConsecutivo(),
                         'actualizado'=>$pricRecargo->getCaUsucreado()." ".Utils::fechaMes($pricRecargo->getCaFchcreado())
-
                     );
                     $recargosGenerales[] = array_merge($baseRow, $row);
                 }
@@ -322,11 +290,9 @@ class pricingActions extends sfActions
                              ORDER BY rh.ca_consecutivo DESC LIMIT 1 )", $fchcorte );
                 }else{
                     $q = Doctrine_Query::create()->from("PricRecargoxLinea r");
-
                 }
                 $q->innerJoin("r.TipoRecargo t");
                 $q->addWhere("r.ca_idtrafico = ? AND r.ca_idlinea = ? AND t.ca_transporte= ? AND r.ca_modalidad= ? AND r.ca_impoexpo = ?", array($this->trafico->getCaIdtrafico(), $trayecto["t_ca_idlinea"], $trayecto["t_ca_transporte"], $trayecto["t_ca_modalidad"], $trayecto["t_ca_impoexpo"]));
-                
                 
                 $q->addOrderBy("t.ca_recargo");
                 $PricRecargoxLinea = $q->execute();
@@ -355,13 +321,11 @@ class pricingActions extends sfActions
                         'aplicacion_min' => utf8_encode($pricRecargo->getCaAplicacionMin()),
                         'consecutivo' => $pricRecargo->getCaConsecutivo(),
                         'actualizado'=>$pricRecargo->getCaUsucreado()." ".Utils::fechaMes($pricRecargo->getCaFchcreado())
-
                     );
                     $recargosGenerales[] = array_merge($baseRow, $row);
                 }
             }            
             //Fin recargos generales
-
 
              //Trae los conceptos hasta una fecha de corte
             if( $timestamp ){
@@ -375,9 +339,7 @@ class pricingActions extends sfActions
             $q->innerJoin("f.Concepto c");
             $q->leftJoin("f.Equipo e");
             $q->addWhere("f.ca_idtrayecto = ?", $trayecto["t_ca_idtrayecto"]);
-            //$q->addWhere("(f.ca_fcheliminado >= ? OR f.ca_fcheliminado IS NULL )", $fchcorte );
-           
-            
+            //$q->addWhere("(f.ca_fcheliminado >= ? OR f.ca_fcheliminado IS NULL )", $fchcorte );            
             $q->addOrderBy("e.ca_concepto");
             $q->addOrderBy("c.ca_liminferior");
             $q->addOrderBy("c.ca_concepto");
@@ -409,7 +371,6 @@ class pricingActions extends sfActions
 			{
 				$observaciones=$trayecto["t_ca_observaciones"];
 			}
-
             $row = array (
 				'nconcepto' => "Observaciones",
 				'inicio' => '',
@@ -433,7 +394,6 @@ class pricingActions extends sfActions
                 if( $pricConcepto->getCaFcheliminado() ){
                     continue;
                 }
-
 				if( $this->opcion=="consulta" && $pricConcepto->getCaEstado()==2){//Las tarifas en mantenimiento no se muestran en consulta
 					$neta=0;
 					$sugerida=0;
@@ -459,7 +419,6 @@ class pricingActions extends sfActions
 					'consecutivo' => $pricConcepto->getCaConsecutivo(),
 					'orden'=>str_pad($i, 3, "0", STR_PAD_LEFT),
                     'actualizado'=>$pricConcepto->getCaUsucreado()." ".Utils::fechaMes($pricConcepto->getCaFchcreado())
-
 				);
 
 				$data[] = array_merge($baseRow, $row);
@@ -532,11 +491,9 @@ class pricingActions extends sfActions
                 $i++;
             }
 
-
 			//$this->opcion!="consulta" se hace para que el usuario pueda 
 			// hacer click con el boton derecho y agregar un recargo general 
-			if( $this->opcion!="consulta" || ( count($recargosGenerales)>0  ) ){ 
-				
+			if( $this->opcion!="consulta" || ( count($recargosGenerales)>0  ) ){ 				
 				//Se incluye una fila antes de los recargos generales del trayecto
 				$row = array (					
 					'nconcepto' => "Recargos generales del trayecto",					
@@ -552,8 +509,7 @@ class pricingActions extends sfActions
 					'minima'=>'',
 					'orden'=>'ZZZ'
 				);
-				$data[] = array_merge($baseRow, $row);		
-                
+				$data[] = array_merge($baseRow, $row);
 			}			
 			
 			if( $this->opcion!="consulta" || ( count($recargosGenerales)>0 && !($trayecto["t_ca_transporte"]==Constantes::MARITIMO && $trayecto["t_ca_modalidad"]=="FCL")) ){
@@ -562,9 +518,7 @@ class pricingActions extends sfActions
 					$data[] = $rec;	
 				}	
 			}
-
-            $i++;
-								
+            $i++;								
 		}
         
 		$this->responseArray = array(
@@ -573,22 +527,18 @@ class pricingActions extends sfActions
             'data' => $data
         );
         $this->setTemplate("responseTemplate");
-		
 	}
-
 
 	/*
 	* Observa los cambios realizados en grillaPorTraficos
 	* @author: Andres Botero
 	*/
 	public function executeGuardarPanelFletesPorTrayecto(){
+		$this->nivel = $this->getNivel();
 
-            $this->nivel = $this->getNivel();
-
-            if( $this->nivel<=0 ){
-                $this->forward404();
-            }
-
+		if( $this->nivel<=0 ){
+			$this->forward404();
+		}
 
 		$trayecto = Doctrine::getTable("Trayecto")->find( $this->getRequestParameter( "idtrayecto" ) );
 		$this->forward404Unless( $trayecto );
@@ -597,28 +547,26 @@ class pricingActions extends sfActions
 		$neta = $this->getRequestParameter("neta");		
 		$sugerida = $this->getRequestParameter("sugerida");
 		$id = $this->getRequestParameter("id");
-                $idequipo = $this->getRequestParameter("idequipo");
-
-                $this->responseArray = array("id"=>$id, "success"=>true);
-		
+		$idequipo = $this->getRequestParameter("idequipo");
+		$this->responseArray = array("id"=>$id, "success"=>true);
 		$user=$this->getUser();
 		
-		if( $tipo=="trayecto_obs" ){									
-			if( $this->getRequestParameter("observaciones")!==null){	
-				if( $this->getRequestParameter("observaciones") ){			
-					$trayecto->setCaObservaciones($this->getRequestParameter("observaciones"));				
+		if( $tipo=="trayecto_obs" ){
+			if( $this->getRequestParameter("observaciones")!==null){
+				if( $this->getRequestParameter("observaciones") ){
+					$trayecto->setCaObservaciones($this->getRequestParameter("observaciones"));
 				}else{
-					$trayecto->setCaObservaciones(null);				
-				}				
-			}					
+					$trayecto->setCaObservaciones(null);
+				}
+			}
 			$trayecto->save();
 		}
 		
 		if( $tipo=="concepto" ){			
                     $idconcepto = $this->getRequestParameter("iditem");
                     $q = Doctrine::getTable("PricFlete")->createQuery()
-                                              ->addWhere("ca_idtrayecto = ?", $trayecto->getCaIdtrayecto() )
-                                              ->addWhere("ca_idconcepto= ?", $idconcepto);
+								  ->addWhere("ca_idtrayecto = ?", $trayecto->getCaIdtrayecto() )
+								  ->addWhere("ca_idconcepto= ?", $idconcepto);
                     if( $idequipo ){
                         $q->addWhere("ca_idequipo= ?", $idequipo);
                     }else{
@@ -639,12 +587,9 @@ class pricingActions extends sfActions
                     if( $neta!==null ){
                             $flete->setCaVlrneto( $neta );
                     }
-
                     if( $sugerida!==null ){
                             $flete->setCaVlrsugerido( $sugerida );
-                    }
-			
-			
+                    }			
                     if( $this->getRequestParameter("style")!==null){
                             if( $this->getRequestParameter("style") ){
                                     $flete->setEstilo($this->getRequestParameter("style"));
@@ -652,7 +597,6 @@ class pricingActions extends sfActions
                                     $flete->setEstilo(null);
                             }
                     }
-			
 
                     if( $this->getRequestParameter("inicio")!==null ){
                         if( $this->getRequestParameter("inicio") ){
@@ -670,23 +614,19 @@ class pricingActions extends sfActions
 				}
 			}
 
-
 			if( $this->getRequestParameter("moneda") ){
 				$flete->setCaIdmoneda($this->getRequestParameter("moneda"));
 			}
 			
 			if( $this->getRequestParameter("aplicacion")!==null ){
 				$flete->setCaAplicacion(utf8_decode($this->getRequestParameter("aplicacion")));
-			}			
-
-                    $user = $this->getUser();
-                    $flete->setCaUsucreado( $user->getUserId() );
-                    $flete->setCaFchcreado( date("Y-m-d H:i:s") );
-                                $flete->save();
-
-
-                    $this->responseArray["consecutivo"] = $flete->getCaConsecutivo();
-                    $this->responseArray["actualizado"] = $flete->getCaUsucreado()." ".Utils::fechaMes($flete->getCaFchcreado());
+			}
+			$user = $this->getUser();
+			$flete->setCaUsucreado( $user->getUserId() );
+			$flete->setCaFchcreado( date("Y-m-d H:i:s") );
+			$flete->save();
+			$this->responseArray["consecutivo"] = $flete->getCaConsecutivo();
+			$this->responseArray["actualizado"] = $flete->getCaUsucreado()." ".Utils::fechaMes($flete->getCaFchcreado());
 		}
 		
 		if( $tipo=="recargo" ){
@@ -695,8 +635,8 @@ class pricingActions extends sfActions
 			$idconcepto = $this->getRequestParameter("idconcepto");
 			$idrecargo = $this->getRequestParameter("iditem");
 
-                    if($idconcepto=='')
-                        $idconcepto=9999;
+			if($idconcepto=='')
+				$idconcepto=9999;
 			if( $idconcepto!=9999  ){
 				
                 $q = Doctrine::getTable("PricFlete")->createQuery()
@@ -716,9 +656,7 @@ class pricingActions extends sfActions
 					$flete->setCaVlrneto( 0 );					
 					$flete->save();
 				}
-			}
-           
-			
+			}			
 			//$pricRecargo = Doctrine::getTable("PricRecargoxConcepto")->find(array( $trayecto->getCaIdtrayecto() , $idconcepto , $idrecargo));
 			
             $q = Doctrine::getTable("PricRecargoxConcepto")->createQuery()
@@ -732,8 +670,6 @@ class pricingActions extends sfActions
             }
             $pricRecargo  = $q->fetchOne();
 
-
-
 			if( !$pricRecargo ){
 				$pricRecargo = new PricRecargoxConcepto();
 				$pricRecargo->setCaIdtrayecto( $trayecto->getCaIdtrayecto() );
@@ -743,13 +679,8 @@ class pricingActions extends sfActions
                 }
 				$pricRecargo->setCaIdrecargo( $idrecargo );
 				$pricRecargo->setCaVlrrecargo( 0 );
-				//$pricRecargo->setCaVlrminimo( 0 );
-				
+				//$pricRecargo->setCaVlrminimo( 0 );				
 			}
-
-
-
-
 
             if( $sugerida!==null ){
 				$pricRecargo->setCaVlrrecargo( $sugerida );
@@ -799,17 +730,13 @@ class pricingActions extends sfActions
             $pricRecargo->setCaUsucreado( $user->getUserId() );
             $pricRecargo->setCaFchcreado( date("Y-m-d H:i:s") );
 			$pricRecargo->save();
-
-
             $this->responseArray["consecutivo"] = $pricRecargo->getCaConsecutivo();
             $this->responseArray["actualizado"] = $pricRecargo->getCaUsucreado()." ".Utils::fechaMes($pricRecargo->getCaFchcreado());
 		}
-			
 		$this->setTemplate("responseTemplate");			
 	}
 	
-	public function executeEliminarPanelFletesPorTrayecto(){
-		
+	public function executeEliminarPanelFletesPorTrayecto(){		
         $this->nivel = $this->getNivel();
 
         if( $this->nivel<=0 ){
@@ -828,10 +755,6 @@ class pricingActions extends sfActions
 
         $this->responseArray = array("id"=>$id, "success"=>false);
         if( $tipo=="concepto" ){
-
-            
-
-
             $q = Doctrine::getTable("PricFlete")->createQuery()
                                                   ->addWhere("ca_idtrayecto = ?",$idtrayecto )
                                                   ->addWhere("ca_idconcepto= ?", $idconcepto);
@@ -860,7 +783,6 @@ class pricingActions extends sfActions
         if( $tipo=="recargo" ){
             $this->forward404unless($idconcepto);
             //$pricRecargo = Doctrine::getTable("PricRecargoxConcepto")->find(array($idtrayecto , $idconcepto , $idrecargo));
-
             $q = Doctrine::getTable("PricRecargoxConcepto")->createQuery()
                                                   ->addWhere("ca_idtrayecto = ?",$idtrayecto )
                                                   ->addWhere("ca_idconcepto= ?", $idconcepto)
@@ -872,30 +794,22 @@ class pricingActions extends sfActions
             }
             $pricRecargo  = $q->fetchOne();
 
-
             if( $pricRecargo ){
                 $pricRecargo->delete();
                 $this->responseArray["success"]=true;
-            }
-            
+            }            
         }
-		
-		
 		$this->setTemplate("responseTemplate");
-	}
-	
+	}	
 	/*********************************************************************
 	* Acciones del PanelRecargosPorCiudad
 	*	
-	*********************************************************************/
-		
-	
+	*********************************************************************/	
 	/*
 	* Provee datos para los recargos por ciudad
 	* @author: Andres Botero 
 	*/
-	public function executeDatosPanelRecargosPorCiudad(){
-		
+	public function executeDatosPanelRecargosPorCiudad(){		
 		$this->nivel = $this->getNivel();
 		
 		$this->opcion = "";
@@ -914,8 +828,6 @@ class pricingActions extends sfActions
         if( $this->getRequestParameter( "readOnly" )=="true" ){
             $this->opcion = "consulta";
         }
-
-        
 		$transporte = utf8_decode($this->getRequestParameter( "transporte" ));
 		$idtrafico = $this->getRequestParameter( "idtrafico" );
 		$modalidad = $this->getRequestParameter( "modalidad" );		
@@ -923,35 +835,30 @@ class pricingActions extends sfActions
 		
 		$this->forward404Unless( $transporte );
 		$this->forward404Unless( $modalidad );			
-		$this->forward404Unless( $impoexpo );
-		
-				
+		$this->forward404Unless( $impoexpo );				
 		//$this->trafico = TraficoPeer::retrieveByPk( $idtrafico );
 		
         if( !$idtrafico ){
 			$idtrafico = "99-999"; 
 		}
-
 		$q = Doctrine_Query::create()->from("PricRecargoxCiudad r");
         $q->innerJoin("r.TipoRecargo t");
         $q->where("r.ca_idtrafico = ? AND t.ca_transporte= ? AND r.ca_modalidad= ? AND r.ca_impoexpo = ?", array($idtrafico, $transporte , $modalidad, $impoexpo));
         $q->addOrderBy("t.ca_recargo");
         $recargos = $q->execute();
 
-        
-		
 		$this->data = array();
 		$i=0;
 		foreach( $recargos as $recargo ){
 			$row = array(				
 				'idtrafico'=>$idtrafico,
-                                'consecutivo'=>$recargo->getCaConsecutivo(),
+                'consecutivo'=>$recargo->getCaConsecutivo(),
 				'idciudad'=>$recargo->getCaIdciudad(),
 				'ciudad'=>utf8_encode($recargo->getCiudad()->getCaCiudad()),
 				'idrecargo'=>$recargo->getCaIdrecargo(),
 				'recargo'=>utf8_encode($recargo->getTipoRecargo()->getCaRecargo()),
-                                'inicio' => $recargo->getCaFchinicio(),
-                                'vencimiento' => $recargo->getCaFchvencimiento(),
+				'inicio' => $recargo->getCaFchinicio(),
+				'vencimiento' => $recargo->getCaFchvencimiento(),
 				'vlrrecargo'=>$recargo->getCaVlrrecargo(),
 				'vlrminimo'=>$recargo->getCaVlrminimo(),
 				'aplicacion'=>utf8_encode($recargo->getCaAplicacion()),
@@ -960,13 +867,10 @@ class pricingActions extends sfActions
 				'observaciones'=>utf8_encode($recargo->getCaObservaciones())								
 			);
 			$this->data[]= $row;
-		}
-		
-        
+		}        
         //Si se llama de una cotizacion se mezcla con los recargos por naviera
         $idcotizacion = $this->getRequestParameter( "idcotizacion" );
         if( $idcotizacion ){
-
             $q = Doctrine_Query::create()->from("PricRecargoxLinea r");
             $q->innerJoin("r.TipoRecargo t");
             $q->addWhere("t.ca_transporte= ? AND r.ca_modalidad= ? AND r.ca_impoexpo = ?", array($transporte , $modalidad, $impoexpo));
@@ -975,7 +879,6 @@ class pricingActions extends sfActions
             $q->addOrderBy("r.ca_idlinea");
             $q->addOrderBy("t.ca_recargo");                    
             $recargos = $q->execute();
-
 //           echo count($recargos);
 //            exit;
                 foreach( $recargos as $recargo ){
@@ -997,8 +900,7 @@ class pricingActions extends sfActions
                         'observaciones'=>utf8_encode(($recargo->getCaIdconcepto()!=9999?$recargo->getConcepto()->getCaConcepto():"").$recargo->getCaObservaciones())
                     );
                     $this->data[]= $row;
-                }
-           
+                }           
         }
 
 		if( $this->opcion!="consulta" ){
@@ -1028,11 +930,7 @@ class pricingActions extends sfActions
             'data' => $this->data
         );
         $this->setTemplate("responseTemplate");
-
-		
-		
-	}
-	
+	}	
 	/*
 	* Guarda los cambios realizados en los recargos generales
 	* @author: Andres Botero 
@@ -1043,8 +941,8 @@ class pricingActions extends sfActions
         if( $this->nivel<=0 ){
 			$this->forward404();
 		}
-                $delete=false;
-                $consecutivo = $this->getRequestParameter("consecutivo");
+		$delete=false;
+		$consecutivo = $this->getRequestParameter("consecutivo");
 
 		$idtrafico = $this->getRequestParameter("idtrafico");
 		$idciudad = $this->getRequestParameter("idciudad");		
@@ -1067,8 +965,8 @@ class pricingActions extends sfActions
 			$recargo->setCaImpoexpo( utf8_decode($impoexpo) );
 			$recargo->setCaVlrrecargo( 0 );
 			$recargo->setCaVlrminimo( 0 );
-                       if($consecutivo>0)
-                            $delete=true;
+			if($consecutivo>0)
+				$delete=true;
 		}
 
         $user = $this->getUser();
@@ -1132,14 +1030,12 @@ class pricingActions extends sfActions
                 }
 		$this->responseArray = array("id"=>$id, "success"=>true);	
 		$this->setTemplate("responseTemplate");		
-	}
-	
+	}	
 	/*
 	* Elimina un recargo general
 	* @author: Andres Botero 
 	*/
-	public function executeEliminarPanelRecargosPorCiudad(){
-        
+	public function executeEliminarPanelRecargosPorCiudad(){        
         $this->nivel = $this->getNivel();
 
         if( $this->nivel<=0 ){
@@ -1162,12 +1058,9 @@ class pricingActions extends sfActions
 		if( $recargo ){
 			$recargo->delete();
             $this->responseArray["success"]=true;
-		}	
-		
-			
+		}
 		$this->setTemplate("responseTemplate");	
 	}
-
 
     public function executeDatosEditorCiudades( $request ){
 
@@ -1190,12 +1083,10 @@ class pricingActions extends sfActions
         $this->setTemplate("responseTemplate");	
     }
 	
-	
 	/*********************************************************************
 	* Recargos x linea
 	*	
-	*********************************************************************/
-			
+	*********************************************************************/			
 	/*
 	* Provee datos para los recargos por ciudad
 	* @author: Andres Botero 
@@ -1225,21 +1116,14 @@ class pricingActions extends sfActions
 						
 		$this->forward404Unless( $transporte );
 		$this->forward404Unless( $modalidad );			
-		$this->forward404Unless( $impoexpo );
-		
-				
+		$this->forward404Unless( $impoexpo );				
 		//$this->trafico = TraficoPeer::retrieveByPk( $idtrafico );
-		
 		if( !$idtrafico ){
 			$idtrafico = "99-999"; 
-		}
-		
-		
+		}		
 		if( $idtrafico=="99-999" ){
 			$this->forward404Unless( $idlinea );
 		}
-
-
         if( $this->getRequestParameter( "fechacambio" ) ){
             $fechacambio = str_replace("|","-", $this->getRequestParameter( "fechacambio" ) );
             $timestamp = strtotime($fechacambio." ".$this->getRequestParameter( "horacambio" ));
@@ -1247,8 +1131,6 @@ class pricingActions extends sfActions
         }else{
             $timestamp = null;
         }
-
-
 		if( $timestamp ){
 			$fchcorte = date( "Y-m-d H:i:s", $timestamp );
 		}else{
@@ -1322,19 +1204,13 @@ class pricingActions extends sfActions
 			);
 			$this->data[]= $row;
 		}
-					
-
-
          $this->responseArray = array(
             'success' => true,
             'total' => count($this->data),
             'data' => $this->data
         );
-        $this->setTemplate("responseTemplate");
-		
-		
-	}
-	
+        $this->setTemplate("responseTemplate");		
+	}	
 	
 	/*
 	* Guarda los cambios realizados en los recargos generales
@@ -1342,14 +1218,13 @@ class pricingActions extends sfActions
 	*/
 	public function executeGuardarPanelRecargosPorLinea(){
 		
-                $this->nivel = $this->getNivel();
-
-                if( $this->nivel<=0 ){
-                                $this->forward404();
+		$this->nivel = $this->getNivel();
+		if( $this->nivel<=0 ){
+						$this->forward404();
 		}
 
-                $delete=false;
-                $consecutivo = $this->getRequestParameter("consecutivo");
+		$delete=false;
+		$consecutivo = $this->getRequestParameter("consecutivo");
 		$idtrafico = $this->getRequestParameter("idtrafico");
 		$idlinea = $this->getRequestParameter("idlinea");		
 		$idrecargo = $this->getRequestParameter("idrecargo");
@@ -1378,8 +1253,8 @@ class pricingActions extends sfActions
 			$recargo->setCaImpoexpo( utf8_decode($impoexpo) );
 			$recargo->setCaVlrrecargo( 0 );
 //                        echo $consecutivo;
-                        if($consecutivo>0)
-                            $delete=true;
+			if($consecutivo>0)
+				$delete=true;
 
 		}
 		$user = $this->getUser();
@@ -1391,22 +1266,20 @@ class pricingActions extends sfActions
 			$recargo->setCaIdconcepto( $this->getRequestParameter("idconcepto") );
 		}
 
-                if( $this->getRequestParameter("inicio")!==null ){
-                    if( $this->getRequestParameter("inicio") ){
-                        $recargo->setCaFchinicio($this->getRequestParameter("inicio"));
-                    }else{
-                        $recargo->setCaFchinicio( null );
-                    }
-                }
-
-                if( $this->getRequestParameter("vencimiento")!==null ){
-                    if( $this->getRequestParameter("vencimiento") ){
-                        $recargo->setCaFchvencimiento($this->getRequestParameter("vencimiento"));
-                    }else{
-                        $recargo->setCaFchvencimiento( null );
-                    }
-                }
-					
+		if( $this->getRequestParameter("inicio")!==null ){
+			if( $this->getRequestParameter("inicio") ){
+				$recargo->setCaFchinicio($this->getRequestParameter("inicio"));
+			}else{
+				$recargo->setCaFchinicio( null );
+			}
+		}
+		if( $this->getRequestParameter("vencimiento")!==null ){
+			if( $this->getRequestParameter("vencimiento") ){
+				$recargo->setCaFchvencimiento($this->getRequestParameter("vencimiento"));
+			}else{
+				$recargo->setCaFchvencimiento( null );
+			}
+		}
 		if( $this->getRequestParameter("vlrrecargo")!==null ){
 			$recargo->setCaVlrrecargo( $this->getRequestParameter("vlrrecargo") );
 		}
@@ -1448,9 +1321,7 @@ class pricingActions extends sfActions
                 }
 		$this->responseArray = array("id"=>$id, "success"=>true);	
 		$this->setTemplate("responseTemplate");		
-	}
-	
-	
+	}	
 	/*
 	* Elimina un recargo general
 	* @author: Andres Botero 
@@ -1481,16 +1352,13 @@ class pricingActions extends sfActions
 		$id = $this->getRequestParameter("id");
 		$this->responseArray = array("id"=>$id, "success"=>true);
 		$recargo = Doctrine::getTable("PricRecargoxLinea")->find( array($idtrafico, $idlinea, $idrecargo, $idconcepto , $modalidad, $impoexpo) );
-				
-		
+
 		if( $recargo ){
 			$recargo->delete();
             $this->responseArray["success"]=true;
-		}	
-		
+		}		
 		$this->setTemplate("responseTemplate");	
 	}
-
     /**
 	* Retorna un objeto JSON con la información de todas las lineas
 	*
@@ -1519,10 +1387,7 @@ class pricingActions extends sfActions
         $q->addWhere("p.ca_activo = ?", true );
 
         $q->fetchArray();
-
         $lineas = $q->execute();
-
-
         $q = Doctrine_Query::create()
               ->select("p.ca_idproveedor, id.ca_nombre")
               ->from("IdsProveedor p")
@@ -1545,10 +1410,6 @@ class pricingActions extends sfActions
         $q->distinct();
         $q->setHydrationMode(Doctrine::HYDRATE_SCALAR);
         $lineas =  $q->execute();
-
-
-
-
 		$this->lineas = array();
 		foreach( $lineas as $linea ){
 			$this->lineas[] = array(  "idlinea"=>$linea['p_ca_idproveedor'],
@@ -1557,13 +1418,9 @@ class pricingActions extends sfActions
 								   );
 		}
 
-
         $this->responseArray = array("root"=>$this->lineas, "total"=>count($this->lineas), "success"=>true);
 		$this->setTemplate("responseTemplate");
-
 	}
-
-
     /**
 	* Retorna un objeto JSON con la información de todas las conceptos
 	*
@@ -1582,30 +1439,20 @@ class pricingActions extends sfActions
                               ->addOrderBy("c.ca_concepto")
                               ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
                               ->execute();
-
-
         $this->conceptos = array();
-
         $this->conceptos[] = array("idconcepto"=>'9999', "concepto"=>'Aplica para todos');
 		foreach( $conceptos as $concepto ){
 			$this->conceptos[] = array(  "idconcepto"=>$concepto['c_ca_idconcepto'],
 									     "concepto"=>utf8_encode($concepto['c_ca_concepto'])
                                       );
 		}
-
         $this->responseArray = array("root"=>$this->conceptos, "total"=>count($this->conceptos), "success"=>true);
-		$this->setTemplate("responseTemplate");
-
-        
-    }
-	
-	
+		$this->setTemplate("responseTemplate");        
+    }	
 	/*********************************************************************
 	* Parametros recargos locales naviera
 	*	
-	*********************************************************************/
-	
-	
+	*********************************************************************/	
 	/*
 	* Datos para los parametros de los recargos locales x naviera
 	* @author: Andres Botero
@@ -1623,10 +1470,7 @@ class pricingActions extends sfActions
 
         if( $this->nivel<=0 ){
             $this->opcion = "consulta";
-        }
-
-
-		
+        }		
 		$transporte = utf8_decode($this->getRequestParameter( "transporte" ));
 		
 		$modalidad = utf8_decode($this->getRequestParameter( "modalidad" ));
@@ -1636,27 +1480,20 @@ class pricingActions extends sfActions
 		$this->forward404Unless( $transporte );
 		$this->forward404Unless( $modalidad );			
 		$this->forward404Unless( $impoexpo );
-		$this->forward404Unless( $idlinea );
-				
-		
+		$this->forward404Unless( $idlinea );		
 		//Se determina la identificacion del parametro para determinar en la vista que 
 		//editor se va a usar
 		$conceptos = array();
 		$param = ParametroTable::retrieveByCaso("CU071");
 		foreach( $param as $p ){
 			$conceptos[ $p->getCaIdentificacion() ]=$p->getCaValor();
-		}
-		
-				
-				
+		}				
 		$parametros = Doctrine::getTable("PricRecargoParametro")
                                 ->createQuery("p")
                                 ->where("p.ca_impoexpo = ? AND p.ca_transporte = ? AND p.ca_idlinea = ? and p.ca_modalidad = ? ", array($impoexpo, $transporte, $idlinea, $modalidad))
-                                ->execute();
-					
+                                ->execute();					
 		$data = array();
-		$i=0;
-		
+		$i=0;		
 		foreach( $parametros as $parametro ){
 			$row = array(
 				'idconcepto'=>array_search($parametro->getCaConcepto(),$conceptos ),
@@ -1666,8 +1503,6 @@ class pricingActions extends sfActions
 			);
 			$data[]= $row;
 		}
-		
-		
 		if( $this->opcion != "consulta" ){
 			/*
 			* Incluye una fila vacia que permite agregar datos
@@ -1678,32 +1513,26 @@ class pricingActions extends sfActions
 				'observaciones'=>''					
 			);
 			$data[]= $row;
-		}
-		
+		}		
 		$this->responseArray = array("total"=>count($data), "data"=>$data ,"success"=>true);	
-		$this->setTemplate("responseTemplate");		
-				
-	}
-	
+		$this->setTemplate("responseTemplate");
+	}	
 	/*
 	* Guarda los cambios de un parametro de los recargos locales
 	* @author: Andres Botero
 	*/
-	public function executeGuardarPanelRecargosLocalesParametros( $request ){
-		
+	public function executeGuardarPanelRecargosLocalesParametros( $request ){		
         $this->nivel = $this->getNivel();
-
         if( $this->nivel<=0 ){
 			$this->forward404();
 		}
 
 		$idlinea = $this->getRequestParameter("idlinea");		
-		
 		$modalidad = utf8_decode($this->getRequestParameter("modalidad"));
 		$transporte = utf8_decode($this->getRequestParameter("transporte"));
 		$impoexpo = utf8_decode($this->getRequestParameter("impoexpo"));
 		$concepto = utf8_decode($this->getRequestParameter("concepto"));
-								
+
 		$this->forward404Unless( $transporte );
 		$this->forward404Unless( $idlinea );
 		$this->forward404Unless( $modalidad );
@@ -1711,8 +1540,6 @@ class pricingActions extends sfActions
 		$this->forward404Unless( $concepto );
 		
 		$parametro = Doctrine::getTable("PricRecargoParametro")->find(array($idlinea, $transporte, $modalidad,$impoexpo, $concepto));
-		
-	
 				
 		if( !$parametro ){			
 			$parametro = new PricRecargoParametro();	
@@ -1724,23 +1551,18 @@ class pricingActions extends sfActions
 						
 			$parametro->setCaUsucreado( $this->getUser()->getUserId() );
 			$parametro->setCaFchcreado( time() );			
-		}
-		
-							
+		}							
 		if( $this->getRequestParameter("valor") ){
 			$parametro->setCaValor( utf8_decode($this->getRequestParameter("valor")) );
 		}
-		
 		if( $this->getRequestParameter("observaciones")!==null ){
 			$parametro->setCaObservaciones( utf8_decode($this->getRequestParameter("observaciones")) );
-		}		
-						
+		}
 		$parametro->save();	
 		$id = $this->getRequestParameter("id");
 		$this->responseArray = array("id"=>$id, "success"=>true);	
 		$this->setTemplate("responseTemplate");	
 	}
-	
 	/*
 	* Permite la administración y consulta de los trayectos (tiempos de transito 
 	* y frecuencia) 
@@ -1769,15 +1591,11 @@ class pricingActions extends sfActions
 		if( $parametro ){
 			$parametro->delete();
 			$success = true;
-		}
-		
-		
+		}		
 		$id = $this->getRequestParameter("id");
 		$this->responseArray = array("id"=>$id, "success"=>$success);	
 		$this->setTemplate("responseTemplate");	
 	}
-	
-	
 	/*********************************************************************
 	* Patios recargos locales x naviera
 	*	
@@ -1812,7 +1630,6 @@ class pricingActions extends sfActions
                                 ->where("p.ca_impoexpo = ? AND p.ca_transporte = ? AND p.ca_idlinea = ? and p.ca_modalidad = ? ", array($impoexpo, $transporte, $idlinea, $modalidad))
                                 ->distinct()
                                 ->execute();
-
 		
 		$patiosLineaArray = array(); 
 		
@@ -1826,11 +1643,9 @@ class pricingActions extends sfActions
                                 ->addOrderBy("c.ca_ciudad")
                                 ->addOrderBy("p.ca_nombre")
                                 ->distinct()
-                                ->execute();
-					
+                                ->execute();					
 		$data = array();
-		$i=0;
-		
+		$i=0;		
 		foreach( $patios as $patio ){
 			
 			if( array_key_exists( $patio->getCaIdpatio(), $patiosLineaArray) ){
@@ -1855,12 +1670,8 @@ class pricingActions extends sfActions
 			);
 			$data[]= $row;
 		}
-				
-		
 		$this->responseArray = array("total"=>count($data), "data"=>$data ,"success"=>true);	
 		$this->setTemplate("responseTemplate");		
-			
-		
 	}	
 	
 	
@@ -1890,8 +1701,7 @@ class pricingActions extends sfActions
 			
 		if( $this->nivel<1 ){
 			$this->forward404();
-		}
-		
+		}		
 		//Borra todo
         Doctrine_Query::create()
                         ->delete()
@@ -1899,9 +1709,6 @@ class pricingActions extends sfActions
                         ->where("p.ca_impoexpo = ? AND p.ca_transporte = ? AND p.ca_idlinea = ? and p.ca_modalidad = ? ", array($impoexpo, $transporte, $idlinea, $modalidad))
                         ->distinct()
                         ->execute();
-		
-		
-		
 		if( $patios ){
 		
 			$patios = explode("|", $patios );
@@ -1923,21 +1730,16 @@ class pricingActions extends sfActions
 				$patio->setCaIdlinea( $idlinea );
 				$patio->save();
 			}		
-		}
-				
-				
+		}				
 		$this->responseArray = array("success"=>true);	
-		$this->setTemplate("responseTemplate");	
-								
+		$this->setTemplate("responseTemplate");								
 	}
 		 
 	/*
 	* Permite la administración y consulta de los trayectos (tiempos de transito 
 	* y frecuencia) 
 	* @author: Andres Botero
-	*/
-		
-	
+	*/	
 	/*
 	* Muestra los datos para la administración de trayectos
 	*/
@@ -1959,12 +1761,9 @@ class pricingActions extends sfActions
 		$modalidad = $this->getRequestParameter( "modalidad" );	
 		$impoexpo = utf8_decode($this->getRequestParameter( "impoexpo" ));	
 		$start = $this->getRequestParameter( "start" );
-		$limit = $this->getRequestParameter( "limit" );
-				
-		
+		$limit = $this->getRequestParameter( "limit" );		
 		
 		$this->trafico = Doctrine::getTable("Trafico")->find( $idtrafico );
-
 
         $q = Doctrine::getTable("Trayecto")
                                ->createQuery("t")
@@ -1984,10 +1783,6 @@ class pricingActions extends sfActions
             $q->addWhere("o.ca_idtrafico = ?", $idtrafico );
         } 
 		$trayectos = $q->setHydrationMode(Doctrine::HYDRATE_SCALAR)->execute();
-
-		
-			
-
 		$data=array();
 		$transportador_id = null;
 		foreach( $trayectos as $trayecto ){
@@ -2004,9 +1799,6 @@ class pricingActions extends sfActions
 			);						
 			$data[] = $row;			
 		}
-		
-		 
-
         $this->responseArray = array("total"=>count($data), "data"=>$data ,"success"=>true);	
 		$this->setTemplate("responseTemplate");
 	}
@@ -2039,16 +1831,12 @@ class pricingActions extends sfActions
 				$trayecto->setCaActivo( true );
 			}else{
 				$trayecto->setCaActivo( false );
-				
 			}
-		}	
-		
-		$trayecto->save();
-		
+		}
+		$trayecto->save();		
         $id = $this->getRequestParameter("id");
 		$this->responseArray = array("id"=>$id, "success"=>true);	
 		$this->setTemplate("responseTemplate");	
-
 	}
 	
 	/*********************************************************************
@@ -2093,13 +1881,10 @@ class pricingActions extends sfActions
                 $row['idmonedaobtencion']=$seguro->getCaIdmonedaobtencion();
 				$row['observaciones']=$seguro->getCaObservaciones();				
 			}
-
 			$this->data[] = $row;		
 		}
-        //print_r($this->data);
-		
-	}
-	
+        //print_r($this->data);		
+	}	
 	/*
 	* Guarda los datos de los seguros
 	*/
@@ -2109,7 +1894,6 @@ class pricingActions extends sfActions
         if( $this->nivel<=0 ){
 			$this->forward404();
 		}
-        
 		$transporte = utf8_decode($this->getRequestParameter("transporte"));
 		$idgrupo = utf8_decode($this->getRequestParameter("idgrupo"));
         $id = $this->getRequestParameter("id");
@@ -2200,12 +1984,10 @@ class pricingActions extends sfActions
 		$this->modalidad = $modalidad;
 	}
 	*/
-
 	/*********************************************************************
 	* Datos panelCiudades
 	*
-	*********************************************************************/
-	
+	*********************************************************************/	
 	/*
 	* Muestra las ciudades y las devuelve en forma de arbol, el cliente 
 	* toma los datos y los coloca en un objeto Ext.tree.TreePanel
@@ -2262,7 +2044,6 @@ class pricingActions extends sfActions
                     $this->results[$modalidad][$grupo][]=array("idtrafico"=>$idtrafico, "pais"=>$pais);
                     $modalidades[]=$modalidad;
                 }
-
 
                 $modalidades = array_unique( $modalidades );
 				//print_r($modalidades);
@@ -2348,10 +2129,7 @@ class pricingActions extends sfActions
 //		exit;
 		$this->transporte = $transporte;
 		$this->impoexpo = strtolower(substr( $impoexpo,0 ,4 ));		
-	}
-	
-	
-	
+	}	
 	/*********************************************************************
 	* Notificaciones
 	*	
@@ -2400,8 +2178,6 @@ class pricingActions extends sfActions
 									"success"=>true,
                                     "id"=>$id);
 		$this->setTemplate("responseTemplate");
-		
-			
 	}
 	
 	/*
@@ -2424,9 +2200,7 @@ class pricingActions extends sfActions
 
 		$this->setTemplate("responseTemplate");
 	}
-	
-	
-				
+
 	/*
     * Tarifario Aduana
     */
@@ -2436,11 +2210,8 @@ class pricingActions extends sfActions
 	* @author: Andres Botero
 	*/
 	public function executeDatosPanelCostosAduana(){
-        $this->nivel = $this->getNivel();
-       
-        
+        $this->nivel = $this->getNivel();        
         //Clientes Activos en colmas + Sus recargos
-
         $cl = Doctrine::getTable("Cliente")
                            ->createQuery("c")
                            ->select("c.ca_compania, c.ca_idcliente, e.ca_estado")
@@ -2481,10 +2252,6 @@ class pricingActions extends sfActions
             $recargos[$rec["r_ca_idcliente"]][$rec["r_ca_idconcepto"]]["col1"]= $rec["r_ca_vlr1"];
             $recargos[$rec["r_ca_idcliente"]][$rec["r_ca_idconcepto"]]["col2"]= $rec["r_ca_vlr2"];
         }
-
-
-
-
         
         $datos = array();
         $k = 0;
@@ -2492,8 +2259,6 @@ class pricingActions extends sfActions
 
             $datos[$k]["compania"] = utf8_encode( $clientes[$key]["compania"] );
             $datos[$k]["idcliente"] =  $clientes[$key]["idcliente"];
-
-
             if( isset($recargos[ $clientes[$key]["idcliente"] ] )){
                 $recargos = $recargos[ $clientes[$key]["idcliente"] ];
 
@@ -2503,17 +2268,11 @@ class pricingActions extends sfActions
                     }
                 }                
             }
-
             $k++;
-
         }
         $this->responseArray = array("root"=>$datos, "total",count($datos));
-
-
         $this->setTemplate("responseTemplate");
-
     }
-
     /*
 	* Guarda los cambios del panelss
 	* @author: Andres Botero
@@ -2542,9 +2301,7 @@ class pricingActions extends sfActions
                     $concepto->setCaIdconcepto($idconcepto);
                     $concepto->setCaIdmoneda("COP");                    
 
-                }
-
-                
+                }                
                 //exit();
                 if( $col=="col1" ){
                    //echo $col." ".$val;
@@ -2555,17 +2312,11 @@ class pricingActions extends sfActions
                    //echo $col." ".$val;
                    $concepto->setCaVlr2($val);
                 }
-
                 $concepto->save();
             }
         }
-
 		$this->setTemplate("responseTemplate");
     }
-
-
-
-
     /*
 	* Guarda un trayecto
 	* @author: Andres Botero
@@ -2618,22 +2369,15 @@ class pricingActions extends sfActions
         if( $frecuencia ){
             $trayecto->setCaFrecuencia($frecuencia);
         }
-        $trayecto->setCaActivo($activo=="on");
-        
-        $trayecto->save();
-        
+        $trayecto->setCaActivo($activo=="on");        
+        $trayecto->save();        
 		$this->responseArray = array("success"=>true);
         $this->setTemplate("responseTemplate");
-
 	}
-
-
     /*************************************************************************
      *  Acciones panel parametros
      *
      *************************************************************************/
-
-
     /**
     * Datos de los conceptos para usar en pricing cotizaciones etc.
     *
@@ -2674,23 +2418,15 @@ class pricingActions extends sfActions
                 $modalidades[]=$modalidadConcepto["ca_idmodalidad"];
             }
             $conceptos[ $key ]["modalidades"] = implode( "|", $modalidades );
-
-
-            
-
         }
 
         if( $readOnly=="false"){
             $conceptos[] = array("ca_idconcepto"=>"", "ca_concepto"=>"", "orden"=>"Z");
         }
-
         $this->responseArray = array( "totalCount"=>count( $conceptos ), "root"=>$conceptos  );
 
 		$this->setTemplate("responseTemplate");
     }
-
-
-
     /*
     * guarda el panel de conceptos
     * @param sfRequest $request A request object
@@ -2763,13 +2499,9 @@ class pricingActions extends sfActions
                 }
             }
         }
-
         $concepto->save();
-
         $this->responseArray["success"]=true;
-
         $this->responseArray["idconcepto"]=$concepto->getCaIdconcepto();
-
         $this->setTemplate("responseTemplate");
     }
     /*
@@ -2777,14 +2509,11 @@ class pricingActions extends sfActions
     * @param sfRequest $request A request object
     */
     public function executeEliminarPanelParametros(sfWebRequest $request){
-
-
         $id = $request->getParameter("id");
         $this->responseArray=array("id"=>$id,  "success"=>false);
         $nivel = $this->getNivel();
         if( $nivel==1 ){
             $idconcepto = $request->getParameter("idconcepto");
-
             if( $idconcepto ){
                 $concepto = Doctrine::getTable("InoConcepto")->find($idconcepto);
                 $this->forward404Unless($concepto);
@@ -2794,8 +2523,6 @@ class pricingActions extends sfActions
         }
         $this->setTemplate("responseTemplate");
     }
-
-
     /**
     * Datos de los conceptos para usar en pricing cotizaciones etc.
     *
@@ -2808,41 +2535,29 @@ class pricingActions extends sfActions
         if( $request->getParameter("modalidades") ){
 
             $modalidadesParam = explode("|", $request->getParameter("modalidades") );
-
             if( count( $modalidadesParam ) >0 ){
-
                 $q = Doctrine::getTable("Modalidad")
                          ->createQuery("m")
                          ->select("m.ca_idmodalidad, m.ca_impoexpo, m.ca_transporte, m.ca_modalidad")
                          ->whereIn("m.ca_idmodalidad", $modalidadesParam)
-                         ->addOrderBy( "m.ca_impoexpo" )
-                         ->addOrderBy( "m.ca_transporte" )
+                         ->addOrderBy( "m.ca_impoexpo")
+                         ->addOrderBy( "m.ca_transporte")
                          ->addOrderBy( "m.ca_modalidad" );
-
-
                 $modalidades = $q->setHydrationMode(Doctrine::HYDRATE_ARRAY )->execute();
-
                 $k = 0;
                 foreach( $modalidades as $modalidad ){
                     $conceptos[] = array("idmodalidad"=>$modalidad["ca_idmodalidad"], "modalidad"=>utf8_encode($modalidad["ca_impoexpo"]." ".$modalidad["ca_transporte"]." ".$modalidad["ca_modalidad"]), "orden"=>$k++);
                 }
             }
-
         }
-
         $nivel = $this->getNivel();
         if( $readOnly=="false"){
             $conceptos[] = array("idmodalidad"=>"", "modalidad"=>"+", "orden"=>"Z");
         }
-
         $this->responseArray = array( "totalCount"=>count( $conceptos ), "root"=>$conceptos  );
 
 		$this->setTemplate("responseTemplate");
     }
-
-
-
-
     /**
     * Datos de los conceptos para usar en pricing cotizaciones etc.
     *
@@ -2904,8 +2619,6 @@ class pricingActions extends sfActions
                             "tipo"=>"2"
                             );
         }
-
-
         
         $conceptos2 = Doctrine::getTable("ConceptoAduana")
                                   ->createQuery("c")
@@ -2949,8 +2662,7 @@ class pricingActions extends sfActions
         $this->setTemplate("responseTemplate");
     }
 
-
-public function executeDatosParametros(sfWebRequest $request){
+	public function executeDatosParametros(sfWebRequest $request){
         $data = array();
         $arrParametros = array();        
         $parametros = Doctrine::getTable("InoConcepto")
@@ -2966,8 +2678,7 @@ public function executeDatosParametros(sfWebRequest $request){
         foreach($arrParametros as $parametro)
         {
             $data[]=array("parametro"=>$parametro);
-        }
- 
+        } 
 //        $this->responseArray["parametro"]=$data;
         $readOnly = $request->getParameter("readOnly");
 
@@ -2977,7 +2688,6 @@ public function executeDatosParametros(sfWebRequest $request){
         $this->responseArray = array( "root"=>$data  );
         $this->setTemplate("responseTemplate");
     }
-
   /**
     * Datos de los conceptos para usar en pricing cotizaciones etc.
     *
@@ -2993,7 +2703,6 @@ public function executeDatosParametros(sfWebRequest $request){
         {
             $conceptoaduana = new ConceptoAduana();
         }
-
 
         $conceptoaduana->setCaParametro( $this->getRequestParameter("parametro") );
         $conceptoaduana->setCaIdconcepto($this->getRequestParameter("idconcepto"));
@@ -3039,8 +2748,6 @@ public function executeDatosParametros(sfWebRequest $request){
         {
             $conceptoaduana = new ConceptoAduanaCliente();
         }
-
-
         $conceptoaduana->setCaParametro( $this->getRequestParameter("parametro") );
         $conceptoaduana->setCaIdconcepto($this->getRequestParameter("idconcepto"));
         $conceptoaduana->setCaIdcliente($this->getRequestParameter("idcliente"));
@@ -3071,7 +2778,6 @@ public function executeDatosParametros(sfWebRequest $request){
         $conceptoaduana->save();
 
         $id = $this->getRequestParameter("id");
-
         $this->responseArray = array("id"=>$id,  "consecutivo"=>$conceptoaduana->getCaConsecutivo(), "success"=>true);
         $this->setTemplate("responseTemplate");
     }
@@ -3106,13 +2812,10 @@ public function executeDatosParametros(sfWebRequest $request){
     {
         $this->aplicacion = ParametroTable::retrieveByCaso("CU082");        
         $aplicaciones= array();
-
-
         foreach( $this->aplicacion as $aplicacion )
         {
             $aplicaciones[]=$aplicacion->getData();
         }
-
         $this->responseArray = array( "totalCount"=>count( $aplicaciones ), "root"=>$aplicaciones  );
 	$this->setTemplate("responseTemplate");
     }
@@ -3152,7 +2855,6 @@ public function executeDatosParametros(sfWebRequest $request){
         else
         {
             $this->responseArray = array("success"=>false);
-
         }
         $this->setTemplate("responseTemplate");
     }
