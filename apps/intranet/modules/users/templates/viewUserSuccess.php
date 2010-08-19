@@ -42,6 +42,9 @@
             <td>Email:</td><td><b><?=($user->getCa_Email())?></b></td>
         </tr>
         <tr>
+            <td>Fch. Ingreso:</td><td><b><?=(Utils::parseDate($user->getCa_Fchingreso(), 'Y-m-d'))?></b></td>
+        </tr>
+        <tr>
             <td>M&oacute;vil:</td><td><b><?=($user->getCa_Movil())?></b></td>
         </tr>
         <tr>
@@ -54,7 +57,7 @@
             <td>Tipo de Sangre:</td><td><b><?=($user->getCa_Tiposangre())?></b></td>
         </tr>
         <tr>
-            <td>Fch. Cumplea&ntilde;os:</td><td><b><?=(Utils::parseDate($user->getCaCumpleanos(), 'm-d'))?></b></td>
+            <td>Fch. Cumplea&ntilde;os:</td><td><b><?=(Utils::getMonth(Utils::parseDate($user->getCaCumpleanos(), 'm'))."-".Utils::parseDate($user->getCaCumpleanos(), 'd'))?></b></td>
         </tr>
         <tr>
             <td>Tel. Familiar:</td><td><b><?=($user->getCa_Telfamiliar())?></b></td>
