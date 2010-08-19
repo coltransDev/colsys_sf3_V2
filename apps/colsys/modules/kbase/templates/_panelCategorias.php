@@ -70,7 +70,7 @@ Ext.extend(PanelCategorias, Ext.tree.TreePanel, {
                         /*
                         * Se muestran el panel de tickets de acuerdop al criterio
                         */
-                        var newComponent = new PanelReading({
+                        var newComponent = new PanelReadingKBase({
                              id:idcomponent,
                              closable: true,
                              idcategory: n.attributes.idcategoria,

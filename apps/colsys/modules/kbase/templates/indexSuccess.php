@@ -7,8 +7,12 @@
 
 include_component("kbase", "panelCategorias");
 include_component("kbase", "panelIssues");
-include_component("kbase", "panelReading");
+include_component("kbase", "panelReadingKBase");
 include_component("kbase", "panelCategoriaWindow");
+
+
+include_component("gestDocumental", "panelArchivos", array("readOnly"=>false) );
+include_component("users","panelUsers");
 
 ?>
 <script type="text/javascript">
@@ -51,12 +55,7 @@ Ext.onReady(function(){
             },
             items: [
                 new PanelCategorias({
-                        title: "Documentos",
-                        namespace: "Documentos"
-                    }),
-                new PanelCategorias({
-                        title: "Activos",
-                        namespace: "Activos"
+                        title: "Documentos"
                     })
 
             ]
@@ -138,7 +137,7 @@ Ext.onReady(function(){
 </div>
 
 <!-- Template used for Feed Items -->
-<div id="preview-tpl" style="display:none;">
+<div id="preview-tpl-kb" style="display:none;">
     <div class="post-data">
 
         <span class="post-date">{pubDate:date("M j, Y, g:i a")}</span>

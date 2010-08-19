@@ -26,7 +26,7 @@ class pmActions extends sfActions
         
 		$this->forward404Unless($this->nivel!=-1);
 		
-        return 1;
+        //return 1;
         return $this->nivel;
     }
 
@@ -190,7 +190,8 @@ class pmActions extends sfActions
 
         $this->usuarios = Doctrine::getTable("Usuario")->createQuery("u")
                     ->innerJoin("u.HdeskTicketUser ug")
-                    ->where("ug.ca_idticket = ?", $this->ticket->getCaIdticket())
+                    ->addWhere("ug.ca_idticket = ?", $this->ticket->getCaIdticket())
+                    ->addWhere("u.ca_activo = ?", true)
                     ->addOrderBy("u.ca_nombre")
                     ->execute();
 
@@ -262,12 +263,28 @@ class pmActions extends sfActions
         $ticket = HdeskTicketTable::retrieveIdTicket($idticket, $this->nivel );
 		$this->forward404Unless( $ticket );
 
-        
+        $idissue = $request->getParameter("idissue");
+
 		$user = $this->getUser();
 
 		$respuesta = new HdeskResponse();
 		$respuesta->setCaIdticket( $request->getParameter("idticket") );
-		$respuesta->setCaText( utf8_decode($request->getParameter("respuesta")) );
+
+        if( $idissue ){
+            $issue = Doctrine::getTable("KBIssue")->find( $idissue );
+            $this->forward404Unless( $issue );
+            $respuesta->setCaIdissue( $idissue );
+            $url = "https://www.coltrans.com.co/kbase/viewIssue/idissue/".$idissue;
+            $txt = "Adjunto encontrara una soluci&oacute;n al problema reportado.\n<br />";
+            $txt .= "Tambien es posible verlo desde el siguiente vinculo: <br />";
+            $txt .= "<b><a href='$url'>$url</a></b> <br /> <br />";
+
+
+            $respuesta->setCaText( utf8_decode($txt) );
+
+        }else{
+            $respuesta->setCaText( utf8_decode($request->getParameter("respuesta")) );
+        }
 		$respuesta->setCaLogin( $user->getUserId() );
 		$respuesta->setCaCreatedat( date("Y-m-d H:i:s") );
 		$respuesta->save();
@@ -315,11 +332,20 @@ class pmActions extends sfActions
 
 		$email->setCaSubject( "Nueva respuesta Ticket #".$ticket->getCaIdticket()." [".$ticket->getCaTitle()."]" );
 
-		$texto = "Se ha creado una respuesta \n\n<br /><br />" ;
+		
 		$request->setParameter("id", $ticket->getCaIdticket() );
 		$request->setParameter("format", "email" );
-		$texto.= sfContext::getInstance()->getController()->getPresentationFor( 'helpdesk', 'verTicket');
+        if( $idissue ){
+            $texto  = $txt;
+            $texto .=sfContext::getInstance()->getController()->getPresentationFor( 'kbase', 'viewIssue');
 
+            $texto = str_replace('src="/', 'src="https://www.coltrans.com.co/',  $texto);
+            //$texto = str_replace('src="/', 'src="https://localhost/',  $texto);
+        }else{
+            $texto = sfContext::getInstance()->getController()->getPresentationFor( 'pm', 'verTicket');
+        }
+        
+        
 		$email->setCaBodyhtml( $texto );
 
 		foreach( $logins as $login ){
@@ -484,16 +510,24 @@ class pmActions extends sfActions
 	* @param sfRequest $request A request object
 	*/
 	public function executeTomarAsignacion(sfWebRequest $request){
-		if( $request->getParameter("id") ){
-			$ticket = Doctrine::getTable("HdeskTicket")->find( $request->getParameter("id") );
+		if( $request->getParameter("idticket") ){
+			$ticket = Doctrine::getTable("HdeskTicket")->find( $request->getParameter("idticket") );
 			$ticket->setCaAssignedto( $this->getUser()->getUserId() );
 			$ticket->save();
 			$tarea = $ticket->getNotTarea();
 			if( $tarea ){
 				$tarea->setAsignaciones( array( $this->getUser()->getUserId() ) );
 			}
-		}
-		$this->redirect("pm/verTicket?id=".$request->getParameter("id"));
+
+            $this->responseArray = array("success"=>true, "idticket"=>$ticket->getCaIdticket(), "assignedto"=>$this->getUser()->getUserId());
+		}else{
+            $this->responseArray = array("success"=>false );
+        }
+
+
+        $this->setTemplate("responseTemplate");
+
+		
 
 	}
 
@@ -503,9 +537,10 @@ class pmActions extends sfActions
 	* @param sfRequest $request A request object
 	*/
 	public function executeCerrarTicket(sfWebRequest $request){
-		if( $request->getParameter("id") ){
-			$ticket = Doctrine::getTable("HdeskTicket")->find( $request->getParameter("id") );
+		if( $request->getParameter("idticket") ){
+			$ticket = Doctrine::getTable("HdeskTicket")->find( $request->getParameter("idticket") );
 			$ticket->setCaAction( "Cerrado" );
+            $ticket->setCaPercentage( 100 );
 			$ticket->save();
 
 			$tarea = $ticket->getTareaSeguimiento();
@@ -515,7 +550,12 @@ class pmActions extends sfActions
 				$tarea->save();
 			}
 		}
-		$this->redirect("pm/verTicket?id=".$request->getParameter("id"));
+
+
+        $this->responseArray = array("success"=>true,"idticket"=>$request->getParameter("idticket"));
+
+		$this->setTemplate("responseTemplate");
+
 
 	}
 

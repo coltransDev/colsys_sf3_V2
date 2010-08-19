@@ -194,7 +194,12 @@ class pmComponents extends sfComponents
 	* @author: Andres Botero
 	*/
     public function executeNuevaRespuestaWindow( ){
+        $parametros = ParametroTable::retrieveByCaso("CU088");
 
+        $this->data = array();
+        foreach($parametros as $parametro){
+            $this->data[]=array("texto"=>  utf8_encode($parametro->getCaValor()));
+        }
     }
 
 

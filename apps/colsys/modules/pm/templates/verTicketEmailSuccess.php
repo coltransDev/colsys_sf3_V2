@@ -1,78 +1,206 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional //EN">
+<?
+
+use_helper("MimeType");
+
+$ticket = $sf_data->getRaw("ticket");
+
+
+$ticket = $sf_data->getRaw("ticket");
+?>
 <html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-        <title>Coltrans</title>
-    </head>
-    <body style="margin: 0; padding: 0;" dir="ltr">
-        <table width="98%" border="0" cellspacing="0" cellpadding="40">
-            <tr>
-                <td bgcolor="#f7f7f7" width="100%" style="font-family: 'lucida grande', tahoma, verdana,arial, sans-serif;">
-                    <table cellpadding="0" cellspacing="0" border="0" width="620">
-                        <tr>
-                            <td style="background: #3b5998; color: #fff; font-weight: bold; font-family: 'lucida grande', tahoma, verdana,arial, sans-serif; padding: 4px 8px; vertical-align: middle; font-size: 16px; letter-spacing: -0.03em; text-align: left;">COLTRANS S.A.</td>
-                            <td style="background: #3b5998; color: #fff; font-weight: bold; font-family: 'lucida grande', tahoma, verdana, arial, sans-serif; padding: 4px 8px; vertical-align: middle;font-size: 12px; text-align: right;">
+    <body>
+    <style type="text/css" >
 
-                            </td></tr><tr><td colspan="2" style="background-color: #fff; border-bottom: 1px solid #3b5998; border-left: 1px solid #ccc; border-right: 1px solid #ccc;font-family: 'lucida grande', tahoma, verdana, arial, sans-serif; padding: 15px;" valign="top">
-                                <table width="100%">
+        img.img{
+            border: 0px;
+        }
+
+
+
+        a.link:link {
+           text-decoration:none;
+           color:#0000FF;
+        }
+        a.link:active {
+           text-decoration:none;
+           color:#0000FF;
+        }
+        a.link:visited {
+           text-decoration: none;
+           color: #062A7D;
+        }
+
+        .entry {
+            border-bottom: 1px solid #DDDDDD;
+            clear:both;
+            padding: 0 0 10px;
+        }
+
+
+        .entry-even {
+            background-color:#F6F6F6;
+            border-color:#CCCCCC;
+            border-style:dotted;
+            border-width:1px ;
+            margin:12px 0 0;
+            padding:12px 12px 24px;
+            font-size: 12px;
+            font-family: arial, helvetica, sans-serif;
+
+        }
+
+        .entry-odd {
+            border-color:#CCCCCC;
+            border-style:dotted;
+            border-width:1px;
+            margin:12px 0 0;
+            padding:12px 12px 24px;
+            font-size: 12px;
+            font-family: arial, helvetica, sans-serif;
+        }
+        .entry-date{
+            float: right;
+            color: #0464BB;
+        }
+    </style>
+        <!-- GREY BORDER -->
+        <table width="100%" border="0" cellspacing="15" cellpadding="0" bgcolor="#E1E1E1"><tr><td>
+                    <!-- WHITE BACKGROUND -->
+                    <table width="100%" border="0" cellspacing="15" cellpadding="0" bgcolor="#FFFFFF"><tr><td>
+                                <!-- MAIN CONTENT TABLE -->
+                                <table width="100%" border="0" cellspacing="5" cellpadding="0">
+                                    <!-- LOGO -->
+                                    <tr><td colspan="3"><table><tr><td width="135"><img src="https://www.coltrans.com.co/images/logo_colsys.gif" width="178" height="30" alt="COLSYS"></td>
+                                                    <td><font size="4" face="arial, helvetica, sans-serif" color="#D99324">Sistema de tickets</font></td></tr></table></td></tr>
+                                    <tr><td width="25"><img src="https://www.coltrans.com.co/images/spacer.gif" width="25" height="1" alt=""></td><td colspan="2"><hr noshade size="1"></td></tr>
+                                    <!-- INTRO -->
                                     <tr>
-                                        <td width="440px" style="font-size: 12px;"valign="top" align="left">
-                                            <div style="margin-bottom: 15px; font-size: 13px;">Hi Andres,</div>
-                                            <div style="margin-bottom: 15px;">Daniel Salazar wants to be friends with you on Facebook.</div>
-                                            <div style="margin-bottom: 15px;">
-                                                <div style="border-bottom: 1px solid #ccc; line-height:5px;">&nbsp;</div>
-                                                <br />
-                                                <table cellpadding="0" style="margin-top: 5px;">
-                                                    <tr valign="top"><td style="padding: 0px 3px 10px 0px;">
-                                                            <a href="http://www.facebook.com/n/?reqs.php&amp;mid=2b=a611dG209d337bG4e9cfe8G2&amp;n_m=botero82%40gmail.com">
-                                                           </a></td><td width="95"
-                                                                                                  style="font-size: 11px; color: #999; padding: 0px 0px 10px 0px;"><span
-                                                                style="font-size: 11px; color: #3B5998;"><a href="http://www.facebook.=
-                                                                                                        com/n/?reqs.php&amp;mid=2ba611dG209d337bG4e9cfe8G2&amp;n_m=botero82%40=
-                                                                                                        gmail.com" style="color: #3B5998; text-decoration: none; font-size:
-                                                                                                        11px; font-weight: bold;">Daniel Salazar</a></span><br /></tr></table><div
-                                                    style="border-bottom: 1px solid #ccc; line-height:5px;">&nbsp;</div><br
-                                                    /></div><div style="margin-bottom: 15px; margin: 0;">Thanks,<br />
-                                                The Facebook Team</div></td><td valign="top" width="180"
-                                                                        style="padding-left: 15px;" align="left">
+                                        <td>&nbsp;</td><td>
+                                            <img src="https://www.coltrans.com.co/images/spacer.gif" width="1" height="1" alt="">
+                                            <p><font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Ticket # <?=$ticket->getCaIdticket().": ".$ticket->getCaTitle() ?></b></font><br>
+                                            <p><font size="2" face="arial, helvetica, sans-serif" color="#000000"> <b>Reportado por:</b> <?=$ticket->getUsuario()?$ticket->getUsuario()->getCaNombre():$ticket->getCaLogin()?></font><br>
+                                            
+                                            <div class="entry-even">
+                                            <?=$ticket->getCaText()?>
+                                            </div>
+                                        </td><td width="50"><img src="https://www.coltrans.com.co/images/spacer.gif" width="75" height="1" alt=""></td></tr>
+                                    <tr><td>&nbsp;</td><td colspan="2"><hr noshade size="1"></td></tr>
+                                    <tr>
+                                        <td>&nbsp;</td>
+                                        <td>
+                                            <img src="https://www.coltrans.com.co/images/spacer.gif" width="1" height="1" alt="">
+                                            <p><font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Respuestas</b></font><br>
+
+                                            <div class="commentlist">
+                                            <?
+                                            $responses = $ticket->getHdeskResponse();
+
+                                            $i=0;
+                                            foreach( $responses as $response ){
+                                                ?>
+                                                    <div class="entry-<?=$i++%2==0?"even":"odd"?>">
+                                                    <div class="entry-date"><?=Utils::fechaMes($response->getCaCreatedat())?></div>
+                                                    <b><?=($response->getUsuario()?$response->getUsuario()->getCaNombre():$response->getCaLogin())?></b>
+
+
+                                                    <br /><br />
+                                                    <?=str_replace("\n","<br />",$response->getCaText())?>
+
+                                                </div>
+                                                <?
+
+
+                                            }
+                                            ?>
+                                            </div>
+                                         </td>
+                                    </tr>
+                                    <?
+                                    if( count($usuarios)>0 ){
+                                    ?>
+                                    <tr><td>&nbsp;</td><td colspan="2"><hr noshade size="1"></td></tr>
+                                    <tr>
+                                        <td>&nbsp;</td>
+                                        <td>
+                                            <img src="https://www.coltrans.com.co/images/spacer.gif" width="1" height="1" alt="">
+                                            <p><font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Usuarios</b></font><br>
+
+                                            <div class="entry-even">
+                                              
+                                                    <ul style="margin-top: 0;">
+                                                    <?
                                                     
-                                                    <table cellspacing="0"
-                                                                                        cellpadding="0" style="border-collapse:collapse;"><tr><td
-                                                        style="padding:10px;background-color:#fff9d7;border-left:1px solid
-                                                        #e2c822;border-right:1px solid #e2c822;border-top:1px solid
-                                                        #e2c822;border-bottom:1px solid #e2c822;"><div style="margin-bottom:
-                                                           15px; font-size: 12px;">Respond now:</div><table cellspacing="0"
-                                                           cellpadding="0" style="border-collapse:collapse;"><tr><td
-                                                                    style="border-width: 1px; border-style: solid; border-color: #3b6e22
-                                                                    #3b6e22 #2c5115; background-color: #69a74e;"><table cellspacing="0"
-                                                                         cellpadding="0" style="border-collapse:collapse;"><tr><td
-                                                                                style="padding: 4px 10px 5px; border-top: 1px solid #95bf82;"><a
-                                                                                    href="http://www.facebook.com/n/?reqs.php&amp;fcode=1b4502ebf&amp;f==
-                                                                                    753012081&amp;mid=2ba611dG209d337bG4e9cfe8G2&amp;n_m=botero82%40gmail.=
-                                                                                    com" style="color:#fff;text-decoration:none;font-weight:bold;font-size:1=
-                                                                                    3px;">Responder Ticket</a></td></tr></table></td></tr></table></td></tr></ta=
-                                                ble></td></tr></table><table cellspacing="0" cellpadding="0"
-                                                             style="border-collapse:collapse;margin-top:20px;"><tr><td
-                                            style="padding:10px;background-color:#fff9d7;border-left:1px solid
-                                            #e2c822;border-right:1px solid #e2c822;border-top:1px solid
-                                            #e2c822;border-bottom:1px solid #e2c822;"><div style="font-weight: bold;
-                                               margin-bottom: 2px; font-size: 11px;">To confirm (or quietly ignore) this
-                                                request, go to:</div><a href="http://www.facebook.com/n/?reqs.php&amp;mi=
-                                                                    d=2ba611dG209d337bG4e9cfe8G2&amp;n_m=botero82%40gmail.com"
-                                                                    style="color:#3b5998;text-decoration:none;font-size:11px;">http://www.fa=
-                                                cebook.com/n/?reqs.php&amp;fcode=1b4502ebf&amp;f=753012081&amp;mid=2=
-                                                ba611dG209d337bG4e9cfe8G2&amp;n_m=botero82%40gmail.com</a></td></tr></ta=
-                                    ble><img src="http://www.facebook.com/email_open_log_pic.php?k=m_pvhd1=
-                                             m&amp;t=11&amp;mid=2ba611dG209d337bG4e9cfe8G2" alt=""
-                                             style="border: 0; height:1px; width:1px; " /></td></tr><tr><td
-                                colspan="2" style="color: #999; padding: 10px; font-size: 11px;
-                                font-family: 'lucida grande', tahoma, verdana, arial, sans-serif;">This
-                                message was intended for botero82@gmail.com. If you do not wish to receive
-                                this type of email from Facebook in the future, please click on the link
-                                below to unsubscribe.
-                                http://www.facebook.com/o.php?k=cb0221&u=547173243&mid=2ba611dG209d3=
-                                37bG4e9cfe8G2
-                                Facebook, Inc. P.O. Box 10005, Palo Alto, CA
-                                94303</td></tr></table></td></tr></table></body></html>
+
+                                                    $i=0;
+                                                    foreach( $usuarios as $usuario ){
+                                                        ?>
+                                                           <li><?=$usuario->getCaNombre()?></li>
+                                                        <?
 
 
+                                                    }
+                                                    ?>
+                                                    </ul>
+                                            </div>
+                                         </td>
+                                    </tr>
+                                    <?
+                                    }
+                                    if( count($files)>0 ){
+                                    ?>
+                                    <tr><td>&nbsp;</td><td colspan="2"><hr noshade size="1"></td></tr>
+                                    <tr>
+                                        <td>&nbsp;</td>
+                                        <td>
+                                            <img src="https://www.coltrans.com.co/images/spacer.gif" width="1" height="1" alt="">
+                                            <p><font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Archivos</b></font><br>
+
+                                            <div class="entry-even">
+
+                                                    <ul style="margin-top: 0;">
+                                                    <?
+                                                    
+    
+                                                    foreach( $files as $file ){
+                                                        ?>
+                                                           <li>
+                                                        
+                                                           <a class="link" href="<?=url_for("gestDocumental/verArchivo?folder=".base64_encode($ticket->getDirectorioBase())."&idarchivo=".base64_encode(basename($file)))?>">
+                                                                <b><?=mime_type_icon(basename($file), "22", array("class"=>"img") )?> <?=basename($file)?></b>
+                                                            </a>
+
+                                                           </li>
+                                                        <?
+
+
+                                                    }
+                                                    ?>
+                                                    </ul>
+                                            </div>
+                                         </td>
+                                    </tr>
+                                    <?
+                                    }
+                                    ?>
+                                    <tr><td>&nbsp;</td><td colspan="2"><hr noshade size="1"></td></tr>
+
+
+
+
+                                    <tr><td>&nbsp;</td><td>
+                                            <font size="1" face="arial, helvetica, sans-serif" color="#000000"> Si los links no estan funcionando, copie y pegue esta dirección en el navegador:<br>https://www.coltrans.com.co<?=url_for("/pm/verTicket?id=".$ticket->getCaIdticket())?> <br><br> Gracias por utilizar el sistema de tickets!<br><br>Coltrans S.A. - Colmas Ltda. Agencia de Aduanas Nivel 1<br>
+                                                <a href="https://www.coltrans.com.co/">http://www.coltrans.com.co/</a>
+                                            </font>
+                                        </td>
+                                        <td>&nbsp;</td>
+                                    </tr>
+                                </table>
+                            </td></tr>
+                    </table>
+                </td></tr>
+            <!-- COPYRIGHT -->
+            <tr><td><font size="1" face="arial, helvetica, sans-serif" color="#666666">&copy; Coltrans S.A. Colmas Ltda. Agencia de Aduanas Nivel 1</font></td></tr>
+        </table>
+
+        <img src="http://www.linkedin.com/emimp/qhppgm-gc831vsq-6r.gif" style="width:1px; height:1px;"/></body>
+</html>

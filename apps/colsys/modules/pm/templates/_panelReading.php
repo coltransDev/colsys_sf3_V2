@@ -39,12 +39,22 @@ PanelReading = function( config ){
             disabled:true,
             handler : this.openTab,
             scope: this
-        }],
+        },
+        {
+            id:'print-'+idcomponent,
+            text: 'Vista de impresión',
+            iconCls: 'printer',
+            disabled:true,
+            handler : this.viewPrinter,
+            scope: this
+        }
+        ],
 
         clear: function(){
             this.body.update('');
             var items = this.topToolbar.items;
             items.get('tab-'+idcomponent).disable();
+            items.get('print-'+idcomponent).disable();
             //items.get('win').disable();
         }
     });
@@ -63,13 +73,23 @@ PanelReading = function( config ){
             disabled:true,
             handler : this.newResponse,
             scope: this
-        }],
+        },
+        {
+            id:'kb-'+idcomponent,
+            text: 'Buscar una solución',
+            iconCls: 'search',
+            disabled:true,
+            handler : this.searchKb,
+            scope: this
+        }
+        ],
 
         clear: function(){
             this.body.update('');
             var items = this.topToolbar.items;
             items.get('tab-'+idcomponent).disable();
             items.get('response-'+idcomponent).disable();
+            items.get('kb-'+idcomponent).disable();
             //items.get('win').disable();
         }
     });
@@ -217,7 +237,7 @@ PanelReading = function( config ){
                 //id:'bottom-preview-'+idcomponent,
                 layout:'fit',
                 items: this.tabPanel,
-                height: 400,
+                height: 300,
                 split: true,
                 border:false,
                 region:'south'
@@ -284,6 +304,13 @@ Ext.extend(PanelReading, Ext.Panel, {
         tabPanel.setActiveTab(tab);
     },
 
+    viewPrinter : function(record){
+        record = (record && record.data) ? record : this.gsm.getSelected();
+        var d = record.data;
+        window.open("<?=url_for("pm/verTicket?format=email")?>"+"/id/"+d.idticket);
+        
+    },
+
     newResponse: function(record){
        record = (record && record.data) ? record : this.gsm.getSelected();
        //alert( record.data.idticket);       
@@ -346,10 +373,11 @@ Ext.extend(PanelReading, Ext.Panel, {
 
         var items = this.preview.topToolbar.items;
         items.get('tab-'+idcomponent).enable();
+        items.get('print-'+idcomponent).enable();
 
         var items = this.responses.topToolbar.items;
         items.get('response-'+idcomponent).enable();
-
+        items.get('kb-'+idcomponent).enable();
         this.usersPanel.wgUsuario.enable();
         
     },
@@ -402,6 +430,16 @@ Ext.extend(PanelReading, Ext.Panel, {
                 });
             }
         }
+    },
+
+    searchKb: function( record ){
+       record = (record && record.data) ? record : this.gsm.getSelected();
+       //alert( record.data.idticket);
+       
+       var win = new BusquedaIssueWindow( {idticket: record.data.idticket,
+                                           opener: this.responses.id } );
+       win.show();
+    
     }
 
    

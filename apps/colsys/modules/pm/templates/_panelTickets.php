@@ -261,9 +261,9 @@ PanelTickets = function( config ){
             },
             this.record
         ),
-        sortInfo:{field: 'project', direction: "ASC"},
+        sortInfo:{field: 'idticket', direction: "ASC"},
         //groupOnSort: true,
-        groupField: 'project'
+        groupField: 'action'
         
 
     });
@@ -411,6 +411,18 @@ Ext.extend(PanelTickets, Ext.grid.GridPanel, {
                                 }
 
                             }
+                        },
+                        {
+                            text: 'Tomar Asignación',
+                            iconCls: 'tux',
+                            scope:this,
+                            handler: this.tomarAsignacion
+                        },
+                        {
+                            text: 'Cerrar',
+                            iconCls: 'tick',
+                            scope:this,
+                            handler: this.cerrarTicket
                         }
                         ]
                 });
@@ -422,6 +434,7 @@ Ext.extend(PanelTickets, Ext.grid.GridPanel, {
                 this.ctxRow = null;
             }
             this.ctxRecord = rec;
+            this.ctxGridId = this.id;
             this.ctxRow = this.view.getRow(index);
             Ext.fly(this.ctxRow).addClass('x-node-ctx');
             this.menu.showAt(e.getXY());
@@ -432,6 +445,7 @@ Ext.extend(PanelTickets, Ext.grid.GridPanel, {
         if(this.ctxRow){
             Ext.fly(this.ctxRow).removeClass('x-node-ctx');
             this.ctxRow = null;
+            this.ctxGridId = null;
         }
     },
 
@@ -470,9 +484,80 @@ Ext.extend(PanelTickets, Ext.grid.GridPanel, {
         }
         color = "row_"+color;
         return this.state[record.id] ? 'x-grid3-row-expanded '+color : 'x-grid3-row-collapsed '+color;
+    },
+
+    cerrarTicket: function(){
+        if( this.ctxRecord.data.idticket  ){
+            if( !this.ctxRecord.data.project || !this.ctxRecord.data.tipo ){
+                var win = new EditarTicketWindow({idticket: this.ctxRecord.data.idticket
+                                            });
+                win.show();
+            }else{
+
+                var idticket = this.ctxRecord.data.idticket;
+                var gridId = this.ctxGridId;
+
+                
+                Ext.Ajax.request({
+                    url: "<?=url_for("pm/cerrarTicket")?>",
+                    params: {                        
+                        idticket: idticket
+                    },
+
+                    callback :function(options, success, response){
+                        var res = Ext.util.JSON.decode( response.responseText );
+                        var store = Ext.getCmp(gridId).store;
+                        store.each(function(r){
+                            if(r.data.idticket==res.idticket){
+                                //storeView.remove(r);
+                                r.set("action", "Cerrado");
+                                r.set("percentage", 100);
+                                r.commit();
+                                Ext.Msg.alert("Success", "Se ha cerrado el ticket");
+                            }
+                        });
+
+                    }
+                });
+            }
+        }
+
     }
     
+    ,
 
+    tomarAsignacion: function(){
+        if( this.ctxRecord.data.idticket  ){
+
+            var idticket = this.ctxRecord.data.idticket;
+            var gridId = this.ctxGridId;
+
+
+            Ext.Ajax.request({
+                url: "<?=url_for("pm/tomarAsignacion")?>",
+                params: {
+                    idticket: idticket
+                },
+
+                callback :function(options, success, response){
+                    var res = Ext.util.JSON.decode( response.responseText );
+                    var store = Ext.getCmp(gridId).store;
+                    store.each(function(r){
+                        if(r.data.idticket==res.idticket){
+                            //storeView.remove(r);
+                            r.set("assignedto", res.assignedto);
+
+                            r.commit();
+                            Ext.Msg.alert("Success", "Se le ha asignado el ticket a usted");
+                        }
+                    });
+
+                }
+            });
+
+        }
+
+    }
 
 
 

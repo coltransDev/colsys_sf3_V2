@@ -21,7 +21,7 @@ PanelConsulta = function( config ){
         // tree-specific configs:
         rootVisible: false,
         lines: false,
-        singleExpand: true,
+        singleExpand: false,
         useArrows: true,
         //iconCls:'settings',
         animate:true,

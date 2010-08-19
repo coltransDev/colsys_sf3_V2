@@ -26,6 +26,14 @@ include_component("pm","nuevaRespuestaWindow");
 include_component("users","panelUsers");
 
 
+include_component("kbase", "panelCategorias");
+include_component("kbase", "panelIssues");
+include_component("kbase", "panelReadingKBase");
+include_component("kbase", "panelCategoriaWindow");
+
+include_component("kbase", "busquedaIssueWindow");
+
+
 
 ?>
 <script type="text/javascript">
@@ -36,6 +44,10 @@ var crearTicket = function(){
     win.show();
 }
 
+var buscarSolucion = function(){
+    var win = new BusquedaIssueWindow();
+    win.show();
+}
 
 
 Ext.onReady(function(){
@@ -75,7 +87,10 @@ Ext.onReady(function(){
             },
             items: [
                 new PanelConsulta({
-                        title: "Consultas"
+                        title: "Tickets"
+                    }),
+                new PanelCategorias({
+                        title: "Base Conocimiento"
                     })
 
             ]
@@ -136,6 +151,24 @@ Ext.onReady(function(){
                 </a>
             </div>
         </div>
+        <!--
+        <div style="float:left;">
+            <div class="icon">
+                <a href="#" onClick="crearTicket()">
+                    <?=image_tag("48x48/kviewshell.png")?>
+                    <span>Buscar Ticket</span>
+                </a>
+            </div>
+        </div>
+        -->
+        <div style="float:left;">
+            <div class="icon">
+                <a href="#" onClick="buscarSolucion()">
+                    <?=image_tag("48x48/testbed_protocol.png")?>
+                    <span>Buscar una soluci&oacute;n</span>
+                </a>
+            </div>
+        </div>
 
    </div>
 
@@ -159,6 +192,16 @@ Ext.onReady(function(){
 
 
 
+<!-- Template used for KB Items -->
+<div id="preview-tpl-kb" style="display:none;">
+    <div class="post-data">
+
+        <span class="post-date">{pubDate:date("M j, Y, g:i a")}</span>
+        <h3 class="post-title">{title}</h3>
+        <h4 class="post-author">by {author:defaultValue("Unknown")}</h4>
+    </div>
+    <div class="post-body">{info:this.getBody}</div>
+</div>
 
 
 <div style="height:100%"></div>
@@ -170,8 +213,8 @@ Ext.onReady(function(){
                                                              title: 'Panel prueba'
                                                             });
                     Ext.getCmp('tab-panel').add(newComponent);
-                    Ext.getCmp('tab-panel').setActiveTab(newComponent);
-        */
+                    Ext.getCmp('tab-panel').setActiveTab(newComponent);*/
+        
 
         /*var newComponent = new PanelCronogramaUsuario({    id: 'adad',
                                                  closable: true,

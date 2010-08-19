@@ -78,18 +78,34 @@ class kbaseComponents extends sfComponents
 	* Panel que muestra un panel dividido en dos partes, una con datos y otra con vista previa.
 	* @author: Andres Botero
 	*/
-    public function executePanelReading( ){
+    public function executePanelReadingKBase( ){
 
     }
 
 
     /*
-	* Panel que que permite editar las opciones del arbol de categorias.
+	* Panel que permite editar las opciones del arbol de categorias.
 	* @author: Andres Botero
 	*/
     public function executePanelCategoriaWindow( ){
 
     }
+
+
+    /*
+	* Panel que permite realizar una busqueda general
+	* @author: Andres Botero
+	*/
+    public function executeBusquedaIssueWindow( ){
+
+    }
+
+    public function executeWidgetBusquedaKB( ){
+
+    }
+
+
+
 
 
 

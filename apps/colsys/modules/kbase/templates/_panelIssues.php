@@ -126,7 +126,8 @@ PanelIssues = function( config ){
             {name: 'author', type: 'string'},
             {name: 'info', type: 'string'},
             {name: 'level', type: 'integer'},
-            {name: 'pubDate', type: 'date', dateFormat:'Y-m-d H:i:s'}
+            {name: 'pubDate', type: 'date', dateFormat:'Y-m-d H:i:s'},
+            {name: 'folder', type: 'string'}
     ]);
     
     this.store = new Ext.data.GroupingStore({
@@ -179,11 +180,7 @@ PanelIssues = function( config ){
 
 Ext.extend(PanelIssues, Ext.grid.GridPanel, {
 
-    crearActivo: function(){        
-        this.win = new EditarActivoWindow( {idcategory:this.idcategory,
-                                            gridopener: this.id} );
-        this.win.show();
-    },
+    
     recargar: function(){
 
         if(this.store.getModifiedRecords().length>0){
@@ -216,23 +213,34 @@ Ext.extend(PanelIssues, Ext.grid.GridPanel, {
 
             if(!this.menu){ // create context menu on first right click
 
-                this.menu = new Ext.menu.Menu({
-                
-                enableScrolling : false,
-                items: [
-                        
-                        {
+                var items = [{
                             text: 'Editar',
                             iconCls: 'page_white_edit',
                             scope:this,
                             handler: function(){
                                 if( this.ctxRecord.data.idissue  ){
                                     window.open( "<?=url_for("kbase/formIssue")?>?id="+this.ctxRecord.data.idissue );
-                                    
+
                                 }
 
                             }
-                        }
+                        }];
+
+                if( this.idticket ){
+                    items.push({
+                            text: 'Solución ticket '+this.idticket,
+                            iconCls: 'tick',
+                            scope:this,
+                            handler: this.solucionarTicket
+                    });
+                }
+
+                this.menu = new Ext.menu.Menu({
+                
+                enableScrolling : false,
+                items: [
+                        items
+                        
                         ]
                 });
                 this.menu.on('hide', this.onContextHide , this);
@@ -260,12 +268,38 @@ Ext.extend(PanelIssues, Ext.grid.GridPanel, {
 		record =  this.store.getAt( rowIndex );
         
 		if( typeof(record)!="undefined" ){			
-            var win = new EditarActivoWindow({
-                idactivo: record.data.idactivo,
-                idcategory: record.data.idcategory,
-                folder: record.data.folder,
-                gridopener: grid.id
+           
+            var d = record.data;
+
+
+            var tpl = Ext.Template.from('preview-tpl-kb', {
+                compiled:true,
+                getBody : function(v, all){
+                    return Ext.util.Format.stripScripts(v || all.description);
+                }
             });
+
+
+
+            var panel = new Ext.Panel({
+                cls:'preview single-preview',                                
+                html: tpl.apply(d),
+                closable:true,
+                //listeners: FeedViewer.LinkInterceptor,
+                autoScroll:true,
+                border:true,
+                height: 500
+            });
+
+            var win = new Ext.Window({
+                items: panel,
+                title: d.title,
+                closeAction: 'close',
+                
+                width: 600
+            });
+
+
             win.show();
             
 		}
@@ -280,14 +314,51 @@ Ext.extend(PanelIssues, Ext.grid.GridPanel, {
         return 'x-grid3-row-expanded';
     },
 
-
     formatTitle: function(value, p, record) {
         return String.format(
                 '<div class="topic"><b>{0}</b><br /><span class="author">{1}</span></div>',
                 value, record.data.author
                 );
-    }
+    },
+    
+    solucionarTicket: function(){
+        
+        var idissue = this.ctxRecord.data.idissue;
+        var opener = this.opener;
+        Ext.Ajax.request(
+			{
+				waitMsg: 'Cargando...',
+				url: '<?=url_for("pm/guardarRespuestaTicket")?>',
+                
+				//Solamente se envian los cambios
+				params :	{
+                    idissue: idissue,
+                    idticket: this.idticket
+                },
 
+				callback :function(options, success, response){
+
+					var res = Ext.util.JSON.decode( response.responseText );
+
+
+					if( res.success ){
+                        if( opener ){
+                            var cmp = Ext.getCmp(opener);
+                            if( cmp ){
+                                cmp.body.update(res.info);
+                            }
+                        }
+					}
+				}
+			 }
+		);
+
+
+        var win = Ext.getCmp("kbase-search-win");
+        if( win ){
+            win.close();
+        }
+    }
 
 
     

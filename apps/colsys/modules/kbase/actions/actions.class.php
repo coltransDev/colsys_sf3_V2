@@ -171,12 +171,26 @@ class kbaseActions extends sfActions
      */
     public function executeDatosPanelIssues( $request ){
         $idcategory = $request->getParameter("idcategory");
-        $this->forward404Unless( $idcategory );
+
+        $query = $request->getParameter("query");
+
+        $this->forward404Unless( $idcategory || $query );
 
         $q  = Doctrine::getTable("KBIssue")
                                       ->createQuery("i");
+        if( $idcategory ){
+            $q->addWhere("i.ca_idcategory = ?", $idcategory );
+        }
 
-        $q->addWhere("i.ca_idcategory = ?", $idcategory );
+
+        if( $query ){
+            $q->addWhere("i.ca_idissue = ?", intval($query) );
+            $q->orWhere("LOWER(i.ca_title) LIKE ?", "%".strtolower($query)."%" );
+            $q->orWhere("LOWER(i.ca_summary) LIKE ?", "%".strtolower($query)."%" );
+            $q->orWhere("LOWER(i.ca_info) LIKE ?", "%".strtolower($query)."%" );
+        }
+
+
         //$q->setHydrationMode(Doctrine::HYDRATE_SCALAR);
         $q->limit(200);
 		$issues = $q->execute();
@@ -191,6 +205,7 @@ class kbaseActions extends sfActions
             $row["level"]=utf8_encode($issue->getCaLevel());
             $row["author"]=utf8_encode($issue->getCaUsuactualizado()?$issue->getCaUsuactualizado():$issue->getCaUsucreado());
             $row["pubDate"]=utf8_encode($issue->getCaFchactualizado()?$issue->getCaFchactualizado():$issue->getCaFchcreado());
+            $row["folder"]=base64_encode( $issue->getDirectorioBase());
             $result[]=$row;
         }
 
@@ -288,6 +303,21 @@ class kbaseActions extends sfActions
         $this->setTemplate("responseTemplate");
     }
 
+
+
+    /*
+     *
+     */
+    public function executeViewIssue( $request ){
+        $idissue = $request->getParameter("idissue");
+        $this->issue = Doctrine::getTable("KBIssue")->find($idissue);
+        $this->forward404Unless( $this->issue );
+
+        $this->filename = $request->getParameter("filename");
+
+    }
+
+   
 
 
 

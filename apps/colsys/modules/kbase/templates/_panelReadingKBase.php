@@ -9,7 +9,7 @@
 <script type="text/javascript">
 
 
-PanelReading = function( config ){
+PanelReadingKBase = function( config ){
 
     Ext.apply(this, config);
     
@@ -27,6 +27,7 @@ PanelReading = function( config ){
         region: 'south',
         cls:'preview',
         autoScroll: true,
+        title: 'Vista previa',
         //listeners: FeedViewer.LinkInterceptor,
 
         tbar: [{
@@ -46,8 +47,30 @@ PanelReading = function( config ){
         }
     });
 
+    this.filePanel = new PanelArchivos({
+                                //folder: this.folder,
+                                closable: false,
+                                title: "Archivos",
+                                height: 400
+
+                            });
+
+
+    this.tabPanel = new Ext.TabPanel({
+            region: 'south',
+            deferredRender: false,
+            activeTab: 0,     // first tab initially active
+            height: 400,
+            enableTabScroll:true,
+
+            items: [
+                this.preview,                
+                this.filePanel
+                //this.usersPanel*/
+            ]
+    });
     
-    PanelReading.superclass.constructor.call(this, {
+    PanelReadingKBase.superclass.constructor.call(this, {
         //id:'main-tabs',
         activeTab:0,
         //region:'center',
@@ -121,7 +144,7 @@ PanelReading = function( config ){
 
                 id:'bottom-preview-'+idcategory,
                 layout:'fit',
-                items:this.preview,
+                items:this.tabPanel,
                 height: 250,
                 split: true,
                 border:false,
@@ -143,7 +166,7 @@ PanelReading = function( config ){
     });
 
 
-    this.tpl = Ext.Template.from('preview-tpl', {
+    this.tpl = Ext.Template.from('preview-tpl-kb', {
         compiled:true,
         getBody : function(v, all){
             return Ext.util.Format.stripScripts(v || all.description);
@@ -156,6 +179,11 @@ PanelReading = function( config ){
     this.gsm.on('rowselect', function(sm, index, record){
         this.tpl.overwrite(this.preview.body, record.data);
         var items = this.preview.topToolbar.items;
+
+        this.filePanel.setFolder( record.data.folder );
+        this.filePanel.store.reload();
+
+
         items.get('tab-'+idcategory).enable();
         //items.get('win').enable();
     }, this, {buffer:250});
@@ -163,7 +191,7 @@ PanelReading = function( config ){
 
 };
 
-Ext.extend(PanelReading, Ext.Panel, {
+Ext.extend(PanelReadingKBase, Ext.Panel, {
     movePreview:  function(m, pressed){
         var idcategory = this.idcategory;
         

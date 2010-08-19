@@ -18,5 +18,12 @@ foreach( $responses as $response ){
 
     
 }
+
+
+if( count($responses)==0 ){
+?>
+    <h2>No hay respuestas para este ticket</h2>
+<?
+}
 ?>
 </div>

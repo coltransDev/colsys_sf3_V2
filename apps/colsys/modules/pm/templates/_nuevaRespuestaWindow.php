@@ -7,6 +7,7 @@
 
 include_component("pm", "editarTicketPropiedadesPanel");
 
+$data = $sf_data->getRaw("data");
     
 ?>
 
@@ -16,8 +17,36 @@ NuevaRespuestaWindow = function( config ) {
     this.ctxRecord = null;
 
 
-    
+    this.combo = new Ext.form.ComboBox({
+        fieldLabel: 'Mensaje',
+        typeAhead: true,
+        width: 600,
+        forceSelection: true,
+        triggerAction: 'all',
+        emptyText:'Seleccione',
+        selectOnFocus: true,
+        lazyRender:true,
+        displayField: 'texto',
+		valueField: 'texto',
+        listClass: 'x-combo-list-small',
+        store : new Ext.data.Store({
+				autoLoad : true,
+				reader: new Ext.data.JsonReader(
+					{
+						root: 'root',
+						totalProperty: 'total',
+						successProperty: 'success'
+					},
+					Ext.data.Record.create([
+						{name: 'texto'}
+					])
+				),
+				proxy: new Ext.data.MemoryProxy( <?=json_encode(array("root"=>$data, "success"=>true) )?> )
+			})
+        
 
+    });
+    this.combo.on("select", this.completarTextos);
     this.subpanel = new Ext.FormPanel({
                             id: "respuesta-ticket-panel",
                             url: '<?=url_for('pm/guardarRespuestaTicket')?>',
@@ -73,7 +102,8 @@ NuevaRespuestaWindow = function( config ) {
         autoScroll: true,
         closeAction: 'close',
         buttons: this.buttons,
-        items: this.subpanel
+        items: this.subpanel,
+        tbar: [this.combo]
     });
 
     this.addEvents({add:true});
@@ -126,6 +156,14 @@ Ext.extend(NuevaRespuestaWindow, Ext.Window, {
             Ext.MessageBox.alert('Sistema de Tickets:', '¡Por favor complete los campos subrayados!');
         }
         
+    },
+
+    completarTextos: function(combo,  record, index){ // override default onSelect to do redirect	
+
+        var panel = Ext.getCmp("respuesta-ticket-panel");
+        var res = panel.getForm().findField("respuesta").getValue();
+        panel.getForm().findField("respuesta").setValue(res+"\n<br />"+record.data.texto);
+        combo.setValue("");
     }
 
 });
