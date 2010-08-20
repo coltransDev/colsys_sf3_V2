@@ -204,7 +204,20 @@ class pmComponents extends sfComponents
 
 
     /*
-	* Cornograma de trabajo de un miembro del equipo
+	* Muestra los ultimos eventos dentro del programa
+	* @author: Andres Botero
+	*/
+    public function executePanelEventos( ){
+
+
+
+        
+
+
+    }
+
+    /*
+	* Cronograma de trabajo de un miembro del equipo
 	* @author: Andres Botero
 	*/
     public function executePanelCalendar( ){

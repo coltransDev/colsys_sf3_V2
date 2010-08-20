@@ -115,7 +115,7 @@ PanelMilestones = function( config ){
         sortable: false,
         width: 280,
         editor: new Ext.form.TextField({allowBlank: false,
-                                        maxLength: 25
+                                        maxLength: 100
                                         })
         
       },

@@ -1361,4 +1361,75 @@ class pmActions extends sfActions
 
     }
 
+
+    /*
+	*
+    *
+	* @author: Andres Botero
+	*/
+    public function executeDatosPanelEventos( $request ){
+        $data = array();
+
+        $results = Doctrine::getTable("HdeskResponse")
+                            ->createQuery("r")
+                            ->innerJoin("r.HdeskTicket t")
+                            ->innerJoin("t.HdeskGroup g")
+                            ->select("r.ca_text, t.ca_idticket, t.ca_title, r.ca_createdat, r.ca_login, g.ca_name")
+                            ->addWhere("g.ca_iddepartament = 13")
+                            ->orderBy("r.ca_createdat DESC")
+                            ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                            ->limit(100)
+                            ->execute();
+
+        $lastDate = null;
+        foreach( $results as $result ){
+            $row = array();
+            $row["idticket"] = $result["t_ca_idticket"];
+            $row["text"] = utf8_encode($result["r_ca_text"]);
+            $row["idticket"] = $result["t_ca_idticket"];
+            $row["fchevento"] = $result["r_ca_createdat"];
+            $row["title"] = utf8_encode($result["t_ca_title"]);
+            $row["login"] = $result["r_ca_login"];
+            $row["group"] = utf8_encode($result["g_ca_name"]);
+           
+            $data[  ] = $row;
+
+            $lastDate = $result["r_ca_createdat"];
+        }
+
+
+
+
+        $q = Doctrine::getTable("HdeskTicket")
+                            ->createQuery("t")
+                            ->innerJoin("t.HdeskGroup g")
+                            ->select("t.ca_idticket, t.ca_title, t.ca_opened, t.ca_login, g.ca_name")
+                            ->orderBy("t.ca_opened DESC")
+                            ->addWhere("g.ca_iddepartament = 13")
+                            ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
+
+        if( $lastDate ){           
+            $time = strtotime($lastDate);
+            $lastDate = date("Y-m-d H:i:s", $time-86400);
+            $q->addWhere("t.ca_opened>=?", $lastDate);
+        }
+
+        $results = $q->execute();
+
+        foreach( $results as $result ){
+            $row = array();
+            $row["idticket"] = $result["t_ca_idticket"];
+            $row["text"] = utf8_encode("Se abrió el ticket");
+            $row["idticket"] = $result["t_ca_idticket"];
+            $row["fchevento"] = $result["t_ca_opened"];
+            $row["title"] = utf8_encode($result["t_ca_title"]);
+            $row["login"] = $result["t_ca_login"];
+            $row["group"] = utf8_encode($result["g_ca_name"]);
+            $row["color"] = "yellow";
+            $data[  ] = $row;            
+        }
+        $this->responseArray = array("success"=>true, "root"=>$data);
+        $this->setTemplate("responseTemplate");
+    }
 }
+

@@ -34,6 +34,8 @@ include_component("kbase", "panelCategoriaWindow");
 include_component("kbase", "busquedaIssueWindow");
 
 
+include_component("pm","panelEventos");
+
 
 ?>
 <script type="text/javascript">
@@ -47,6 +49,17 @@ var crearTicket = function(){
 var buscarSolucion = function(){
     var win = new BusquedaIssueWindow();
     win.show();
+}
+
+var registroEventos = function(){
+    
+
+    var newComponent = new PanelEventos({
+                                             closable: true,                                             
+                                             title: 'Eventos'
+                                            });
+    Ext.getCmp('tab-panel').add(newComponent);
+    Ext.getCmp('tab-panel').setActiveTab(newComponent);
 }
 
 
@@ -166,6 +179,15 @@ Ext.onReady(function(){
                 <a href="#" onClick="buscarSolucion()">
                     <?=image_tag("48x48/testbed_protocol.png")?>
                     <span>Buscar una soluci&oacute;n</span>
+                </a>
+            </div>
+        </div>
+
+        <div style="float:left;">
+            <div class="icon">
+                <a href="#" onClick="registroEventos()">
+                    <?=image_tag("48x48/knode.png")?>
+                    <span>Eventos</span>
                 </a>
             </div>
         </div>
