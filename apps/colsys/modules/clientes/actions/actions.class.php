@@ -869,6 +869,8 @@ class clientesActions extends sfActions
         public function executeReporteLiberaciones(sfWebRequest $request){
 
             $inicio =  $this->getRequestParameter("fchStart");
+            list($day, $month, $year) = sscanf($inicio, "%d-%d-%d");
+            
             $final =  $this->getRequestParameter("fchEnd");
             $sucursal =  $this->getRequestParameter("sucursal");
 
