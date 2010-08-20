@@ -413,6 +413,12 @@ Ext.extend(PanelTickets, Ext.grid.GridPanel, {
                             }
                         },
                         {
+                            text: 'Porcentaje',
+                            iconCls: 'shape_align_left',
+                            scope:this,
+                            handler: this.actualizarPorcentaje
+                        },
+                        {
                             text: 'Tomar Asignación',
                             iconCls: 'tux',
                             scope:this,
@@ -557,10 +563,72 @@ Ext.extend(PanelTickets, Ext.grid.GridPanel, {
 
         }
 
+    },
+    actualizarPorcentaje: function(){
+        if( this.ctxRecord.data.idticket  ){
+
+            var idticket = this.ctxRecord.data.idticket;
+            var percentage = this.ctxRecord.data.percentage;
+
+            var rec = this.store.getById( this.ctxRecord.id );
+
+            /*var tip = new Ext.ux.SliderTip({
+                getText: function(slider){
+                    return String.format('<b>{0}% complete</b>', slider.getValue());
+                }
+            });*/
+
+            var updatePercent = function(   slider,  newValue ){
+
+                Ext.Ajax.request({
+                    url: '<?=url_for("pm/actualizarPorcentajeTicket")?>',
+                    method: 'POST',
+                    //Solamente se envian los cambios
+                    params :	{
+                        idticket: idticket,
+                        percentage: newValue
+                    },
+
+                    failure :function(options, success, response){
+
+                        alert("Ha ocurrido un error");
+                    },
+                    
+                    success :function(options, success, response){
+                        rec.set("percentage", newValue);
+                    }
+
+
+                 }
+                );
+            }
+
+            var slider = new Ext.Slider({
+                width: 214,
+                increment: 1,
+                value: percentage,
+                minValue: 0,
+                maxValue: 100,
+                //plugins: tip,
+                listeners: {
+                    changecomplete: updatePercent
+                }
+            });
+
+            win = new Ext.Window({
+                modal: true,
+                title: "Actualizar Porcentaje Ticket #"+idticket,
+                items:[
+                    new Ext.FormPanel({
+                        items: [
+                            slider
+                        ]
+                    })
+                ]
+            });
+            win.show();
+        }
     }
-
-
-
 
 });
 

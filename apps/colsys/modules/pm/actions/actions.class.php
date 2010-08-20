@@ -36,9 +36,12 @@ class pmActions extends sfActions
 	* @param sfRequest $request A request object
 	*/
 	public function executeIndex(sfWebRequest $request){
-        $response = sfContext::getInstance()->getResponse();
+        
 		$this->nivel = $this->getNivel();
-		
+		$response = sfContext::getInstance()->getResponse();
+        $response->addJavaScript("extExtras/RowExpander",'last');
+        $response->addJavaScript("extExtras/SliderTip",'last');
+        $response->addStylesheet("extExtras/slider",'last');
 			
 	}
 	

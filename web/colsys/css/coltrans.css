@@ -593,6 +593,10 @@ a.toolbar:active {
     background: url('../images/fam/page_white_acrobat.png') no-repeat 0 0 !important;
 }
 
+.printer{
+    background: url('../images/fam/printer.png') no-repeat 0 0 !important;
+}
+
 .information {
 	background: url('../images/fam/information.png') no-repeat 0 0 !important;
 }
@@ -604,6 +608,14 @@ a.toolbar:active {
 
 .tux {
 	background: url('../images/fam/tux.png') no-repeat 0 0 !important;
+}
+
+.clock {
+	background: url('../images/fam/clock.png') no-repeat 0 0 !important;
+}
+
+.shape_align_left {
+    background: url('../images/fam/shape_align_left.png') no-repeat 0 0 !important;
 }
 
 .preview-right {
