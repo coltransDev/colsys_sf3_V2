@@ -307,6 +307,23 @@ class widgetsComponents extends sfComponents
 
 	}
 
+    public function executeWidgetSucursales(){
+		$this->data = array();
+        $sucursales = Doctrine::getTable("Sucursal")
+                      ->createQuery("s")
+                      ->select("s.ca_nombre")
+                      ->addOrderBy("s.ca_nombre")
+                      ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                      ->execute();
+
+        foreach($sucursales as $sucursal){
+            $this->data[] = array( "valor"=>utf8_encode($sucursal["s_ca_nombre"]));
+
+        }
+
+        
+	}
+
     public function executeWidgetModalidad(){
 		$this->data = array();
 
