@@ -152,7 +152,7 @@ Ext.onReady(function(){
             id:'tab-panel',
             region: 'center', // a center region is ALWAYS required for border layout
             deferredRender: false,
-            activeTab: 0,     // first tab initially active
+            activeTab: 1,     // first tab initially active
             enableTabScroll:true,
             items: [ {
                 contentEl: 'center1',
