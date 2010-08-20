@@ -460,6 +460,11 @@ class widgetsComponents extends sfComponents
 
 	}
 
+    public function executeWidgetCliente(){
+		
+
+	}
+
 
     public function executeWidgetTercero(){
 		
@@ -531,6 +536,16 @@ class widgetsComponents extends sfComponents
 	}
 
     public function executeWidgetCotizacion(){
+
+
+	}
+
+    public function executeWidgetReporte(){
+
+
+	}
+
+    public function executeWidgetTicket(){
 
 
 	}

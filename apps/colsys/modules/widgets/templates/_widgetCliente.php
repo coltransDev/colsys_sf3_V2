@@ -5,28 +5,28 @@
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
 
-
 ?>
+
+
+
 <script type="text/javascript">
 
 
-WidgetContactoCliente = function( config ){
+WidgetCliente = function( config ){
     Ext.apply(this, config);
     
     this.store = new Ext.data.Store({
         proxy: new Ext.data.HttpProxy({
-            url: '<?=url_for('widgets/listaContactosClientesJSON')?>'
+            url: '<?=url_for('widgets/listaClientesJSON')?>'
         }),
         reader: new Ext.data.JsonReader({
             root: 'clientes',
             totalProperty: 'totalCount',
             id: 'id'
-        }, [
-            {name: 'idcontacto', mapping: 'ca_idcontacto'},
+        }, [            
             {name: 'idcliente', mapping: 'ca_idcliente'},
             {name: 'compania', mapping: 'ca_compania'},
-			{name: 'cargo', mapping: 'ca_cargo'},
-			{name: 'nombre', mapping: 'ca_nombres'},
+			{name: 'cargo', mapping: 'ca_cargo'},			
             {name: 'vendedor', mapping: 'ca_vendedor'},
             {name: 'nombre_ven', mapping: 'ca_nombre'},
 			{name: 'listaclinton', mapping: 'ca_listaclinton'},
@@ -39,23 +39,18 @@ WidgetContactoCliente = function( config ){
             {name: 'cupo', mapping: 'ca_cupo'}
         ])
     });
-
-    this.resultTpl = new Ext.XTemplate(
-            '<tpl for="."><div class="search-item"><b>{compania}</b><br /><span>{nombre} {papellido} {sapellido} <br />{cargo}</span> </div></tpl>'
-    );
-    WidgetContactoCliente.superclass.constructor.call(this, {
-        valueField: 'idcontacto',
-        displayField:'nombre',
+    
+    WidgetCliente.superclass.constructor.call(this, {
+        valueField: 'idcliente',
+        displayField:'compania',
         loadingText: 'Buscando...',
         typeAhead: true,
         forceSelection: true,
-        minChars: 3,
-        tpl: this.resultTpl,
+        minChars: 3,        
         triggerAction: 'all',
         emptyText:'',
         selectOnFocus: true,        
-        lazyRender:true,        
-        itemSelector: 'div.search-item',
+        lazyRender:true,                
         emptyText: 'Escriba el nombre del cliente...',
         allowBlank:false
 
@@ -66,7 +61,7 @@ WidgetContactoCliente = function( config ){
 }
 
 
-Ext.extend(WidgetContactoCliente, Ext.form.ComboBox, {
+Ext.extend(WidgetCliente, Ext.form.ComboBox, {
     alertaCliente: function( record ){
         var mensaje = "";
         if( record.get("status")=="Vetado" ){

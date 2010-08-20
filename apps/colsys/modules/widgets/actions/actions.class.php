@@ -346,87 +346,139 @@ class widgetsActions extends sfActions
 	public function executeDatosComboUsuario(){
 		$criterio =  $this->getRequestParameter("query");
 
-       
+       if( $criterio ){
 
-        $q = Doctrine::getTable("Usuario")
-                             ->createQuery("u")
-                             //->where("(u.ca_cargo='Gerente Sucursal' OR u.ca_cargo like '%Ventas%' OR u.ca_departamento='Comercial')")
-                             ->addWhere("u.ca_activo = true")
-                             ->addOrderBy("u.ca_nombre");
+            $q = Doctrine::getTable("Usuario")
+                                 ->createQuery("u")
+                                 //->where("(u.ca_cargo='Gerente Sucursal' OR u.ca_cargo like '%Ventas%' OR u.ca_departamento='Comercial')")
+                                 ->addWhere("u.ca_activo = true")
+                                 ->addOrderBy("u.ca_nombre");
 
-        if( $criterio ){
-            $q->addWhere("LOWER(u.ca_nombre) LIKE ?", "%".strtolower($criterio)."%");
+            if( $criterio ){
+                $q->addWhere("LOWER(u.ca_nombre) LIKE ?", "%".strtolower($criterio)."%");
+            }
+
+            $usuarios = $q->execute();
+            $data = array();
+            foreach( $usuarios as $usuario ){
+                $row = array();
+                $row["login"]=utf8_encode($usuario->getCaLogin());
+                $row["nombre"]=utf8_encode($usuario->getCaNombre());
+                $row["cargo"]=utf8_encode($usuario->getCaCargo());
+                $row["sucursal"]=utf8_encode($usuario->getSucursal()->getCaNombre());
+                $row["icon"]=$row["icon"]=$usuario->getImagenUrl("60x80");
+                $data[] = $row;
+
+            }
+
+            $this->responseArray = array( "total"=>count( $data ), "root"=>$data, "success"=>true  );
+        }else{
+            $this->responseArray = array( "total"=>0, "root"=>array(), "success"=>true  );
         }
-
-        $usuarios = $q->execute();
-        $data = array();
-        foreach( $usuarios as $usuario ){
-            $row = array();
-            $row["login"]=utf8_encode($usuario->getCaLogin());
-            $row["nombre"]=utf8_encode($usuario->getCaNombre());
-            $row["cargo"]=utf8_encode($usuario->getCaCargo());
-            $row["sucursal"]=utf8_encode($usuario->getSucursal()->getCaNombre());
-            $row["icon"]=$row["icon"]=$usuario->getImagenUrl("60x80");                
-            $data[] = $row;
-
-        }
-
-        $this->responseArray = array( "total"=>count( $data ), "root"=>$data, "success"=>true  );
         $this->setTemplate("responseTemplate");
 
     }
 
 	public function executeListaContactosClientesJSON(){
 		$criterio =  $this->getRequestParameter("query");
+        if( $criterio ){
+            $rows = Doctrine_Query::create()
+                            ->select("c.ca_idcontacto, cl.ca_idcliente, cl.ca_compania, c.ca_nombres,
+                                      c.ca_papellido, c.ca_sapellido, c.ca_cargo,
+                                      cl.ca_preferencias, cl.ca_confirmar, cl.ca_vendedor, cl.ca_coordinador,
+                                      v.ca_nombre, cl.ca_listaclinton, cl.ca_fchcircular
+                                      ,cl.ca_status, cl.ca_vendedor, lc.ca_cupo, lc.ca_diascredito
+                                     ")
+                            ->from("Contacto c")
+                            ->innerJoin("c.Cliente cl")
+                            ->leftJoin("cl.LibCliente lc")
+                            ->leftJoin("cl.Usuario v")
+                            ->where("UPPER(cl.ca_compania) like ?", "%".strtoupper( $criterio )."%")
+                            ->addOrderBy("cl.ca_compania ASC")
+                            ->addOrderBy("c.ca_nombres ASC")
+                            ->setHydrationMode( Doctrine::HYDRATE_SCALAR )
+                            ->limit(40)
+                            ->execute();
 
-        $rows = Doctrine_Query::create()
-                        ->select("c.ca_idcontacto, cl.ca_compania, c.ca_nombres,
-                                  c.ca_papellido, c.ca_sapellido, c.ca_cargo, 
-                                  cl.ca_preferencias, cl.ca_confirmar, cl.ca_vendedor, cl.ca_coordinador,
-                                  v.ca_nombre, cl.ca_listaclinton, cl.ca_fchcircular
-                                  ,cl.ca_status, cl.ca_vendedor, lc.ca_cupo, lc.ca_diascredito
-                                 ")
-                        ->from("Contacto c")
-                        ->innerJoin("c.Cliente cl")
-                        ->leftJoin("cl.LibCliente lc")
-                        ->leftJoin("cl.Usuario v")
-                        ->where("UPPER(cl.ca_compania) like ?", "%".strtoupper( $criterio )."%")
-                        ->addOrderBy("cl.ca_compania ASC")
-                        ->addOrderBy("c.ca_nombres ASC")
-                        ->setHydrationMode( Doctrine::HYDRATE_SCALAR )
-                        ->limit(40)
-                        ->execute();
-      
-                        
 
-		$clientes = array();
 
-   		foreach ( $rows as $row ) {
-            $result = array();
-            $result["ca_idcontacto"]=$row["c_ca_idcontacto"];
-			$result["ca_compania"]=utf8_encode($row["cl_ca_compania"]);
-			$result["ca_nombres"]=utf8_encode($row["c_ca_nombres"]);
-			$result["ca_papellido"]=utf8_encode($row["c_ca_papellido"]);
-			$result["ca_sapellido"]=utf8_encode($row["c_ca_sapellido"]);
-			$result["ca_preferencias"]=utf8_encode($row["cl_ca_preferencias"]);
-			$result["ca_nombre"]=utf8_encode($row["v_ca_nombre"]);
-			$result["ca_cargo"]=utf8_encode($row["c_ca_cargo"]);
-			$result["ca_listaclinton"]=utf8_encode($row["cl_ca_listaclinton"]);
-			$result["ca_fchcircular"]=strtotime($row["cl_ca_fchcircular"]);
-            $result["ca_confirmar"]=$row["cl_ca_confirmar"];
-            $result["ca_idcontacto"]=$row["c_ca_idcontacto"];
-            $result["ca_status"]=$row["cl_ca_status"];
-            $result["ca_vendedor"]=$row["cl_ca_vendedor"];
-            $result["ca_coordinador"]=$row["cl_ca_coordinador"];
-            $result["ca_diascredito"]=$row["lc_ca_diascredito"];
-            $result["ca_cupo"]=$row["lc_ca_cupo"];
-            $clientes[]=$result;
-			
-		}
-        $this->responseArray = array( "totalCount"=>count( $clientes ), "clientes"=>$clientes  );
+            $clientes = array();
+
+            foreach ( $rows as $row ) {
+                $result = array();
+                $result["ca_idcontacto"]=$row["c_ca_idcontacto"];
+                $result["ca_idcliente"]=utf8_encode($row["cl_ca_idcliente"]);
+                $result["ca_compania"]=utf8_encode($row["cl_ca_compania"]);
+                $result["ca_nombres"]=utf8_encode($row["c_ca_nombres"]." ".$row["c_ca_papellido"]." ".$row["c_ca_sapellido"]);
+                $result["ca_preferencias"]=utf8_encode($row["cl_ca_preferencias"]);
+                $result["ca_nombre"]=utf8_encode($row["v_ca_nombre"]);
+                $result["ca_cargo"]=utf8_encode($row["c_ca_cargo"]);
+                $result["ca_listaclinton"]=utf8_encode($row["cl_ca_listaclinton"]);
+                $result["ca_fchcircular"]=strtotime($row["cl_ca_fchcircular"]);
+                $result["ca_confirmar"]=$row["cl_ca_confirmar"];
+                $result["ca_idcontacto"]=$row["c_ca_idcontacto"];
+                $result["ca_status"]=$row["cl_ca_status"];
+                $result["ca_vendedor"]=$row["cl_ca_vendedor"];
+                $result["ca_coordinador"]=$row["cl_ca_coordinador"];
+                $result["ca_diascredito"]=$row["lc_ca_diascredito"];
+                $result["ca_cupo"]=$row["lc_ca_cupo"];
+                $clientes[]=$result;
+
+            }
+            $this->responseArray = array( "totalCount"=>count( $clientes ), "clientes"=>$clientes  );
+        }else{
+            $this->responseArray = array( "totalCount"=>0, "clientes"=>array()  );
+        }
         $this->setTemplate("responseTemplate");
 	}
 
+
+
+    public function executeListaClientesJSON(){
+		$criterio =  $this->getRequestParameter("query");
+        if( $criterio ){
+            $rows = Doctrine_Query::create()
+                            ->select(" cl.ca_idcliente, cl.ca_compania, 
+                                      cl.ca_preferencias, cl.ca_confirmar, cl.ca_vendedor, cl.ca_coordinador,
+                                      v.ca_nombre, cl.ca_listaclinton, cl.ca_fchcircular
+                                      ,cl.ca_status, cl.ca_vendedor, lc.ca_cupo, lc.ca_diascredito
+                                     ")
+                            ->from("Cliente cl")
+                            ->leftJoin("cl.LibCliente lc")
+                            ->leftJoin("cl.Usuario v")
+                            ->where("UPPER(cl.ca_compania) like ?", "%".strtoupper( $criterio )."%")
+                            ->addOrderBy("cl.ca_compania ASC")                            
+                            ->setHydrationMode( Doctrine::HYDRATE_SCALAR )
+                            ->limit(40)
+                            ->execute();
+
+
+
+            $clientes = array();
+
+            foreach ( $rows as $row ) {
+                $result = array();                
+                $result["ca_idcliente"]=utf8_encode($row["cl_ca_idcliente"]);
+                $result["ca_compania"]=utf8_encode($row["cl_ca_compania"]);                
+                $result["ca_preferencias"]=utf8_encode($row["cl_ca_preferencias"]);
+                $result["ca_nombre"]=utf8_encode($row["v_ca_nombre"]);                
+                $result["ca_listaclinton"]=utf8_encode($row["cl_ca_listaclinton"]);
+                $result["ca_fchcircular"]=strtotime($row["cl_ca_fchcircular"]);
+                $result["ca_confirmar"]=$row["cl_ca_confirmar"];               
+                $result["ca_status"]=$row["cl_ca_status"];
+                $result["ca_vendedor"]=$row["cl_ca_vendedor"];
+                $result["ca_coordinador"]=$row["cl_ca_coordinador"];
+                $result["ca_diascredito"]=$row["lc_ca_diascredito"];
+                $result["ca_cupo"]=$row["lc_ca_cupo"];
+                $clientes[]=$result;
+
+            }
+            $this->responseArray = array( "totalCount"=>count( $clientes ), "clientes"=>$clientes  );
+        }else{
+            $this->responseArray = array( "totalCount"=>0, "clientes"=>array()  );
+        }
+        $this->setTemplate("responseTemplate");
+	}
 
     public function executeListaIdsJSON(){
 		$criterio =  $this->getRequestParameter("query");
@@ -664,25 +716,105 @@ class widgetsActions extends sfActions
 	}
 
 
-        /*
+    /*
 	* Buscar una referencia de Aduana para el módulo de Falabella
 	*/
-        public function executeDatosComboReferenciaAduana(){
-            $criterio =  $this->getRequestParameter("query");
+    public function executeDatosComboReferenciaAduana(){
+        $criterio =  $this->getRequestParameter("query");
 
-            $referencias = Doctrine_Query::create()
-                        ->select("m.ca_referencia")
-                        ->from("InoMaestraAdu m")
-                        ->addWhere("m.ca_referencia like ?", $criterio."%")
-                        ->addOrderBy("m.ca_referencia ASC")
-                        ->setHydrationMode( Doctrine::HYDRATE_ARRAY )
-                        ->limit(40)
-                        ->execute();
+        $referencias = Doctrine_Query::create()
+                    ->select("m.ca_referencia")
+                    ->from("InoMaestraAdu m")
+                    ->addWhere("m.ca_referencia like ?", $criterio."%")
+                    ->addOrderBy("m.ca_referencia ASC")
+                    ->setHydrationMode( Doctrine::HYDRATE_ARRAY )
+                    ->limit(40)
+                    ->execute();
 
-            $this->responseArray = array( "totalCount"=>count( $referencias ), "root"=>$referencias, "success"=>true  );
-            $this->setTemplate("responseTemplate");
+        $this->responseArray = array( "totalCount"=>count( $referencias ), "root"=>$referencias, "success"=>true  );
+        $this->setTemplate("responseTemplate");
 
+    }
+
+
+    /*
+	* Buscar una referencia de Aduana para el módulo de Falabella
+	*/
+    public function executeListaReportesJSON(){
+        $criterio =  $this->getRequestParameter("query");
+        if( $criterio ){
+            
+            $transporte =  $this->getRequestParameter("transporte");
+
+            $q = Doctrine::getTable("Reporte")
+                           ->createQuery("r")
+                           ->select("r.ca_idreporte, r.ca_consecutivo, o.ca_ciudad, d.ca_ciudad, o.ca_idciudad, d.ca_idciudad,o.ca_idtrafico, d.ca_idtrafico, r.ca_mercancia_desc,
+                                    r.ca_idlinea, r.ca_impoexpo, r.ca_transporte, r.ca_modalidad, r.ca_incoterms, con.ca_idcontacto, con.ca_nombres, con.ca_papellido, con.ca_sapellido, con.ca_cargo
+                                    ,cl.ca_idcliente, cl.ca_compania, cl.ca_preferencias, cl.ca_confirmar, cl.ca_coordinador, c.ca_usuario, p.ca_idlinea,usu.ca_nombre,libcli.ca_cupo, libcli.ca_diascredito,
+                                    s.ca_idmoneda,s.ca_prima_tip,s.ca_prima_vlr,s.ca_prima_min,s.ca_obtencion,s.ca_idmonedaobtencion")
+                           ->leftJoin("r.Origen o")
+                           ->leftJoin("r.Destino d")
+                           ->leftJoin("r.Contacto con")
+                           ->leftJoin("con.Cliente cl")
+                           ->leftJoin("cl.LibCliente libcli")
+                           ->leftJoin("r.Usuario usu")
+                           ->addWhere("r.ca_consecutivo LIKE ?", $criterio."%")
+                           ->addWhere("r.ca_usuanulado IS NULL");
+            if($transporte!="")
+            {
+                $q->addWhere("r.ca_transporte = ?", utf8_decode($transporte));
+            }
+
+            $reportes = $q->setHydrationMode(Doctrine::HYDRATE_SCALAR)->limit(50)->execute();
+
+            foreach( $reportes as $key=>$val ){
+                $reportes[$key]["o_ca_ciudad"] = utf8_encode($reportes[$key]["o_ca_ciudad"]);
+                $reportes[$key]["d_ca_ciudad"] = utf8_encode($reportes[$key]["d_ca_ciudad"]);
+                $reportes[$key]["r_ca_mercancia_desc"] = utf8_encode($reportes[$key]["r_ca_mercancia_desc"]);
+                $reportes[$key]["r_ca_impoexpo"] = utf8_encode($reportes[$key]["r_ca_impoexpo"]);
+                $reportes[$key]["r_ca_transporte"] = utf8_encode($reportes[$key]["r_ca_transporte"]);
+                $reportes[$key]["cl_ca_compania"] = utf8_encode($reportes[$key]["cl_ca_compania"]);
+                $reportes[$key]["con_ca_idcontacto"] = utf8_encode($reportes[$key]["con_ca_idcontacto"]);
+                $reportes[$key]["con_ca_nombres"] = utf8_encode($reportes[$key]["con_ca_nombres"]);
+                $reportes[$key]["con_ca_papellido"] = utf8_encode($reportes[$key]["con_ca_papellido"]);
+                $reportes[$key]["con_ca_sapellido"] = utf8_encode($reportes[$key]["con_ca_sapellido"]);
+                $reportes[$key]["con_ca_cargo"] = utf8_encode($reportes[$key]["con_ca_cargo"]);
+                $reportes[$key]["cl_ca_preferencias"] = utf8_encode($reportes[$key]["cl_ca_preferencias"]);
+                $reportes[$key]["usu_ca_nombre"] = utf8_encode($reportes[$key]["usu_ca_nombre"]);
+
+                $reportes[$key]["r_ca_modalidad"] = utf8_encode($reportes[$key]["r_ca_modalidad"]);
+
+                $reportes[$key]["r_ca_idlinea"] = utf8_encode($reportes[$key]["r_ca_idlinea"]);
+
+
+                if($reportes[$key]["r_ca_idlinea"]!="")
+                {
+                    $q = Doctrine_Query::create()
+                          ->select("p.ca_idproveedor, p.ca_sigla, id.ca_nombre, p.ca_transporte ")
+                          ->from("IdsProveedor p")
+                          ->innerJoin("p.Ids id")
+                          ->addOrderBy("id.ca_nombre");
+                     $q->addWhere("p.ca_idproveedor=?", $reportes[$key]["r_ca_idlinea"] );
+                     $lineas = $q->execute();
+                     if(count($lineas)>0)
+                     {
+                        $reportes[$key]["p_ca_linea"]=utf8_encode(($lineas[0]['ca_sigla']?$lineas[0]['ca_sigla']." - ":"").utf8_encode($lineas[0]['Ids']['ca_nombre']));
+                     }
+                }
+
+                $reportes[$key]["cl_ca_confirmar"] = utf8_encode($reportes[$key]["cl_ca_confirmar"]);
+
+
+            }
+            $this->responseArray = array("root"=>$reportes, "total"=>count($reportes), "success"=>true);
+        }else{
+            $this->responseArray = array("root"=>array(), "total"=>0, "success"=>true);
         }
+        //print_r($reportes);
+        
+		$this->setTemplate("responseTemplate");
+
+	}
 
 }
 ?>
