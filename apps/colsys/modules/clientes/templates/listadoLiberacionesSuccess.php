@@ -70,7 +70,7 @@ include_component('widgets', 'widgetSucursales');
                     id: 'fchEnd',
                     name: 'fchEnd',
                     fieldLabel: 'Fecha final',
-                    //value: '<?=date('Y-m-d')?>'
+                    value: '<?=date('Y-m-d')?>'
 
                 }
                 
