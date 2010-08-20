@@ -3,55 +3,93 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
-use_helper('ExtCalendar');
+include_component('widgets', 'widgetCliente');
+include_component('widgets', 'widgetSucursales');
 ?>
-<form action="<?=url_for( "clientes/reporteLiberaciones" )?>">
 
-<table class="tableList" width="550px" align="center" border="0" cellpadding="5px" cellspacing="1px" id="mainTable">
-	<tr>
-		<th colspan="7" style='font-size: 12px; font-weight:bold;'>Reporte Liberaciones de Clientes</th>
-	</tr>
-	<tr>
-		<td colspan="7" style='font-size: 10px;'>Ingrese la fechas del periodo a consultar</td>
-	</tr>
-	<tr>
-		<td rowspan="2">&nbsp;</td>
+<div class="content" align="center">
 
-		<td>
-			<span class="captura"><b>Fecha Inicial :</b> <br />
-				<?=extDatePicker("fchStart", date("Y-m-d", mktime(0, 0, 0, date("m"), 1, date("Y"))) )?>
-			</span>
-  		</td>
+    <table align="center" width="500">
+        <tr>
+            <td><div id="panel" ></div></td>
+        </tr>
+    </table>
+</div>
+<script language="javascript" type="text/javascript">
+	Ext.onReady(function(){
 
-		<td>
-			<span ><b>Fecha Final :</b> <br />
-				<?=extDatePicker("fchEnd", date("Y-m-d") )?>
-			</span>
-  		</td>
+        var comboClientes = new WidgetCliente(
+            {
+                fieldLabel:'Cliente',
+                hiddenName: 'idcliente',
+                width: 330
+               
+            }
+        );
 
-		<td>
+        var comboSucursales = new WidgetSucursales(
+            {
+                fieldLabel:'Sucursal',
+                hiddenName: 'idsucursal',
+                width: 150
+                      
 
-			<span ><b>Sucursal :</b> <br />
-                <select name="sucursal">
+            }
+        );
 
-                    <?
-                    foreach( $sucursales as $sucursal ){
-                    ?>
-                    <option value="<?=$sucursal['s_ca_nombre']?>"><?=$sucursal['s_ca_nombre']?></option>
-                    <?
+
+
+        var mainPanel = new Ext.FormPanel({
+
+            frame:true,
+            title: 'Modulo de Liberaciones',
+            bodyStyle:'padding:5px 5px 0',
+            width: 500,
+            defaultType: 'textfield',
+            standardSubmit: true,
+            url: "<?=url_for("clientes/reporteLiberaciones")?>",
+            
+
+
+            items: [
+                
+                comboClientes,
+                comboSucursales,
+                {
+                    width: 150,
+                    xtype:'datefield',
+                    id: 'fchStart',
+                    name: 'fchStart',
+                    fieldLabel: 'Fecha Inicial',
+                    value: '<?=date("Y-m-d")?>'
+
+                },
+                {
+                    width: 150,
+                    xtype:'datefield',
+                    id: 'fchEnd',
+                    name: 'fchEnd',
+                    fieldLabel: 'Fecha final',
+                    //value: '<?=date('Y-m-d')?>'
+
+                }
+                
+            ],
+
+           buttons: [{
+                    text: 'Continuar',
+                    handler: function(){
+
+                        if( mainPanel.getForm().isValid() ){
+                            mainPanel.getForm().submit();
+                        }else{
+                            Ext.MessageBox.alert('Error:', '¡Atención: La información está incompleta!');
+                        }
                     }
-                    ?>
+                }
+                ]
+        });
 
-                </select>
-
-			</span>
-  		</td>
-
-		<td><input class="submit" type='submit' name='buscar' value=' Buscar' /></td>
-	</tr>
-        <tr style="HEIGHT:5">
-		<td  colspan="3"></td>
-	</tr>
-   </table>
-</form>
+        mainPanel.render("panel");
+});
+</script>
