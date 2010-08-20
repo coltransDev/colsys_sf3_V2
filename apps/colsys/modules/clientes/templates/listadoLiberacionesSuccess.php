@@ -61,7 +61,8 @@ include_component('widgets', 'widgetSucursales');
                     id: 'fchStart',
                     name: 'fchStart',
                     fieldLabel: 'Fecha Inicial',
-                    value: '<?=date("Y-m-d")?>'
+                    value: '<?=date("Y-m-d")?>',
+                    format:'Y-m-d'
 
                 },
                 {
@@ -70,7 +71,8 @@ include_component('widgets', 'widgetSucursales');
                     id: 'fchEnd',
                     name: 'fchEnd',
                     fieldLabel: 'Fecha final',
-                    value: '<?=date('Y-m-d')?>'
+                    value: '<?=date('Y-m-d')?>',
+                    format:'Y-m-d'
 
                 }
                 
