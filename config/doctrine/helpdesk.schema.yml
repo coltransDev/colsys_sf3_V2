@@ -116,6 +116,7 @@ HdeskResponse:
     ca_login: string(15)
     ca_createdat: timestamp
     ca_text: string
+    ca_idissue: integer
   relations:
     HdeskTicket:
       local: ca_idticket
@@ -124,6 +125,10 @@ HdeskResponse:
     Usuario:
       local: ca_login
       foreign: ca_login
+      type: one
+    KBIssue:
+      local: ca_idissue
+      foreign: ca_idissue
       type: one
 
 
