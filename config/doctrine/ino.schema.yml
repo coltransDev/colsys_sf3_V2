@@ -1,9 +1,9 @@
 
-InoMaestra:
+InoMaster:
   generatePath: ino
-  tableName: ino.tb_maestra
+  tableName: ino.tb_master
   columns:
-    ca_idmaestra:
+    ca_idmaster:
       type: integer
       autoincrement: true
       primary: true
@@ -51,9 +51,9 @@ InoMaestra:
     ca_fchanulado: timestamp
     ca_usuanulado: string
   relations:
-    InoCliente:
-      local: ca_idmaestra
-      foreign: ca_idmaestra
+    InoHouse:
+      local: ca_idmaster
+      foreign: ca_idmaster
       type: many    
     Origen:
       local: ca_origen
@@ -97,15 +97,15 @@ InoMaestra:
 
 
 
-InoCliente:
+InoHouse:
   generatePath: ino
-  tableName: ino.tb_clientes
+  tableName: ino.tb_house
   columns:
-    ca_idinocliente:
+    ca_idhouse:
       type: integer
       autoincrement: true
       primary: true
-    ca_idmaestra:
+    ca_idmaster:
       type: integer
       notnull: true
     ca_idcliente:
@@ -151,23 +151,27 @@ InoCliente:
     ca_fchactualizado: timestamp
     ca_usuactualizado: string
   relations:
-    Ids:
+    Cliente:
       local: ca_idcliente
-      foreign: ca_id
+      foreign: ca_idcliente
       type: one
-    InoMaestra:
-      local: ca_idmaestra
-      foreign: ca_idmaestra
+    InoMaster:
+      local: ca_idmaster
+      foreign: ca_idmaster
       type: one
     InoComprobante:
-      local: ca_idinocliente
-      foreign: ca_idinocliente
+      local: ca_idhouse
+      foreign: ca_idhouse
       type: many
     Proveedor:
       local: ca_idproveedor
       foreign: ca_idtercero
       type: one
       class: Tercero
+    Reporte:
+      local: ca_idreporte
+      foreign: ca_idreporte
+      type: one
     Vendedor:
       local: ca_vendedor
       foreign: ca_login
@@ -183,6 +187,7 @@ InoCliente:
       foreign: ca_login
       type: one
       class: Usuario
+
 
 InoComprobante:
   options:
@@ -200,8 +205,8 @@ InoComprobante:
     ca_idtipo: integer    
     ca_consecutivo: integer
     ca_fchcomprobante: date
-#    ca_idmaestra: integer
-    ca_idinocliente: integer
+#    ca_idmaster: integer
+    ca_idhouse: integer
     ca_plazo: integer
     ca_tasacambio: decimal
     ca_observaciones: string
@@ -225,9 +230,9 @@ InoComprobante:
       foreign: ca_login
       type: one
       class: Usuario
-    InoCliente:
-      local: ca_idinocliente
-      foreign: ca_idinocliente
+    InoHouse:
+      local: ca_idhouse
+      foreign: ca_idhouse
       type: one
     InoTransaccion:
       local: ca_idcomprobante
@@ -255,7 +260,7 @@ InoTransaccion:
     ca_idcuenta: integer
     ca_idconcepto: integer
     ca_idccosto: integer
-    ca_idmaestra: integer
+    ca_idmaster: integer
     ca_id: integer
     ca_db: boolean
     ca_valor: decimal
@@ -264,9 +269,9 @@ InoTransaccion:
     ca_fchcreado: timestamp
     ca_usucreado: string
   relations:
-    InoCliente:
-      local: ca_idinocliente
-      foreign: ca_idinocliente
+    InoHouse:
+      local: ca_idhouse
+      foreign: ca_idhouse
       type: one
     InoCentroCosto:
       local: ca_idccosto
@@ -289,9 +294,9 @@ InoTransaccion:
       local: ca_idconcepto
       foreign: ca_idconcepto
       type: one
-    InoMaestra:
-      local: ca_idmaestra
-      foreign: ca_idmaestra
+    InoMaster:
+      local: ca_idmaster
+      foreign: ca_idmaster
       type: one
 
 InoConcepto:

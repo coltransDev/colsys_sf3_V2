@@ -45,7 +45,7 @@ $pagerLayout->display();
 	?>
 	<tr>
 	  <td rowspan="2"  >
-        <?=link_to($referencia->getCaReferencia(), "ino/verReferencia?modo=".$modo."&id=".$referencia->getCaIdmaestra())?>
+        <?=link_to($referencia->getCaReferencia(), "ino/verReferencia?modo=".$modo."&id=".$referencia->getCaIdmaster())?>
           <?=$referencia->getCaFchanulado()?"<br />Anulada":""?>
       </td>
 	  <td ><b>Fch :</b><br />

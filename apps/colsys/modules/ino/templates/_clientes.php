@@ -10,7 +10,7 @@
 <table class="tableList" width="100%">
     <tr>
         <th colspan="9">Cuadro de clientes de la referencia</th>
-        <th><div align="center" ><?=link_to(image_tag("16x16/add_user.gif"), "ino/formClientes?id=".$referencia->getCaIdmaestra())?></div></th>
+        <th><div align="center" ><a href="#" onclick="newHouse( <?=$referencia->getCaIdmaster()?> )"><?=image_tag("16x16/add_user.gif")?></a></div></th>
     </tr>
     <tr class="row0">
         <td><b>Id Cliente</b></td>
@@ -25,19 +25,20 @@
         <td>&nbsp;</td>
     </tr>
     <?
-    foreach( $inoClientes as $inoCliente ){
+    
+    foreach( $inoHouses as $inoHouse ){
         ?>        
         <tr >
-            <td><?=$inoCliente->getIds()->getCaIdalterno()?></td>
-            <td><?=$inoCliente->getIds()->getCaNombre()?></td>
-            <td><?=$inoCliente->getCaVendedor()?></td>
-            <td><?=$inoCliente->getCaIdreporte()?></td>
-            <td><?=$inoCliente->getCaDoctransporte()?></td>
-            <td><?=$inoCliente->getCaNumpiezas()?></td>
-            <td><?=$inoCliente->getCaPeso()?></td>
-            <td><?=$inoCliente->getCaVolumen()?></td>
-            <td><?=$inoCliente->getProveedor()->getCaNombre()?></td>
-            <td> <?=link_to(image_tag("16x16/edit.gif"), "ino/formClientes?modo=".$modo."&id=".$referencia->getCaIdmaestra()."&idinocliente=".$inoCliente->getCaIdinocliente())?> </td>
+            <td><?=$inoHouse->getCliente()->getCaIdcliente()?></td>
+            <td><?=$inoHouse->getCliente()->getCaCompania()?></td>
+            <td><?=$inoHouse->getCaVendedor()?></td>
+            <td><?=$inoHouse->getCaIdreporte()?></td>
+            <td><?=$inoHouse->getCaDoctransporte()?></td>
+            <td><?=$inoHouse->getCaNumpiezas()?></td>
+            <td><?=$inoHouse->getCaPeso()?></td>
+            <td><?=$inoHouse->getCaVolumen()?></td>
+            <td><?=$inoHouse->getProveedor()->getCaNombre()?></td>
+            <td> <a href="#" onclick="editHouse( <?=$referencia->getCaIdmaster()?>, <?=$inoHouse->getCaIdhouse()?> )" ><?=image_tag("16x16/edit.gif")?></a> </td>
         </tr>
         <?
     }

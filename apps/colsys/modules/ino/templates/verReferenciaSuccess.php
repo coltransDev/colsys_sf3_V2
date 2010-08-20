@@ -6,32 +6,24 @@
  */
 
 
-/*echo "--->".InoMaestraTable::getNumReferencia($referencia->getCaIdmodalidad(), $referencia->getCaOrigen()
-                                        , $referencia->getcaDestino(), "08", "9");*/
+include_component("ino", "mainPanel", array("referencia"=>$referencia));
+
 ?>
 
 
-<div align="center">
-    <h1>Sistema Administrador de Referencias</h1>
-    <br />
+<div class="content">  
 
-    <table class="tableList" width="80%">
-        <tr>
-            <th colspan="8">Datos para la referencia</th>
-        </tr>
+    <div id="main-panel"></div>
+</div>
+
+
+<div id="general" class="x-hide-display">
+
+    <table class="tableList" width="100%">
         
-        <tr>
-            <td><b>Referencia</b></td>
-            <td>
-                <?=$referencia->getCaReferencia()?>
-            </td>            
-            <td><b>Fecha de registro</b></td>
-            <td>
-                <?=$referencia->getCaFchreferencia()?>
-            </td>
-        </tr>
+       
         <?
-        
+
         ?>
         <tr class="row0">
             <td colspan="4"><b>Datos del trayecto</b></td>
@@ -54,8 +46,8 @@
             <td><b>Destino:</b></td>
             <td><?=$referencia->getDestino()->getTrafico()->getCaNombre()?> <?=$referencia->getDestino()->getCaCiudad()?></td>
 
-        </tr>        
-        
+        </tr>
+
          <tr>
              <td><b>Linea</b></td>
             <td>
@@ -65,7 +57,7 @@
             <td>
                 <? //=$trayecto->getCaModalidad()?>
             </td>
-            
+
         </tr>
         <tr class="row0">
                 <td colspan="4"><b>Datos de la guia</b></td>
@@ -78,38 +70,75 @@
             <td><b>Fch Master</b></td>
             <td>
                  <?=$referencia->getCaFchmaster()?>
-            </td>            
-        </tr>
-
-        <tr>
-            <td colspan="8">
-                <div class="tab-pane" id="tab-pane-1">
-
-                   <div class="tab-page">
-                      <h2 class="tab">Clientes</h2>
-                        <?=include_component("ino", "clientes", array("referencia"=>$referencia, "modo"=>$modo))?>
-                       </div>
-                       
-                       <div class="tab-page">
-                           <h2 class="tab">Facturaci&oacute;n</h2>
-                           <?=include_component("ino", "ingresos", array("referencia"=>$referencia, "modo"=>$modo))?>
-                       </div>
-                       <div class="tab-page">
-                           <h2 class="tab">Costos</h2>
-                           <?=include_component("ino", "costos", array("referencia"=>$referencia, "modo"=>$modo))?>
-                       </div>
-                       <div class="tab-page">
-                           <h2 class="tab">Balance</h2>
-                       </div>
-                       <div class="tab-page">
-                           <h2 class="tab">Documentos</h2>
-                       </div>
-                       <div class="tab-page">
-                           <h2 class="tab">Auditoria</h2>
-                           <?=include_component("ino", "auditoria", array("referencia"=>$referencia, "modo"=>$modo))?>
-                       </div>
-                    </div>
             </td>
         </tr>        
-    </table>  
+    </table>
+
 </div>
+
+<div id="header" class="x-hide-display">
+    <table cellspacing="1" width="100%" class="tableList">
+        <tr>
+
+            <td width="25%">
+                <div align="center">
+                      <b>Referencia:</b><br />
+                       <?=$referencia->getCaReferencia()?>
+                </div>
+            </td>
+            <td width="25%">
+                <div align="center" class="help" id="fchreporte"><span ><b>Fecha</b></span><br />
+                <?=Utils::fechaMes($referencia->getCaFchreferencia())?>
+            </div></td>
+            <td width="50%">&nbsp;</td>
+
+        </tr>
+
+
+   </table>
+
+</div>
+
+
+<div id="footer" class="x-hide-display">
+    
+    <table cellspacing="0" width="100%" class="tableList alignLeft">
+        <tbody>
+            <tr class="row0">
+                
+                <td width="25%">
+                    <div align="left">
+                        <b>Elaborado por:</b><br />
+                        <?=$referencia->getCaUsucreado()?> <?=Utils::fechaMes($referencia->getCaFchcreado())?>
+                    </div>
+                </td>
+                <td width="25%">
+                    <div align="left">
+                        <b>Actualizado por:</b><br />
+                        <?=$referencia->getCaUsuactualizado()?$referencia->getCaUsuactualizado()." ".Utils::fechaMes( $referencia->getCaFchactualizado() ):"&nbsp;"?>
+                    </div>
+                </td>
+                <td width="50%">&nbsp;</td>
+            </tr>
+            </tbody>
+        </table>
+
+</div>
+
+
+<script type="text/javascript">
+    var mainPanel = new MainPanel();
+
+
+
+    var panel = new Ext.FormPanel({
+        title: "Sistema de referencias",
+        items: [
+            {contentEl:'header'},
+            mainPanel,
+            {contentEl:'footer'}
+        ]
+      });
+     panel.render("main-panel");
+
+</script>

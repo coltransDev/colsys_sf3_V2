@@ -1,17 +1,15 @@
 <?php
-/**
- */
-class InoMaestraTable extends Doctrine_Table
-{
 
+class InoMasterTable extends Doctrine_Table
+{
     public static function getNumReferencia( $impoexpo, $transporte, $modalidad, $origen, $destino, $mes, $ano  ){
 
-        
+
         $referencia = array();
-        
+
         if( $impoexpo == Constantes::IMPO ){
-            
-            if( $transporte==Constantes::MARITIMO ){               
+
+            if( $transporte==Constantes::MARITIMO ){
                 switch( $modalidad ){
                     case "FCL":
                          $referencia[0] = '4';
@@ -29,7 +27,7 @@ class InoMaestraTable extends Doctrine_Table
                          $referencia[0] = '8';
                          break;
                 }
-               
+
 
                 $parametros = ParametroTable::retrieveByCaso("CU010", $destino);
 
@@ -52,7 +50,7 @@ class InoMaestraTable extends Doctrine_Table
             }
             //OTM DTA
             if( $modalidad==Constantes::OTMDTA ){
-                
+
                 $referencia[0] = '7';
 
                 $parametros = ParametroTable::retrieveByCaso("CU010", $origen);
@@ -76,7 +74,7 @@ class InoMaestraTable extends Doctrine_Table
         $referencia[3] = str_pad($mes, 2, "0", STR_PAD_LEFT);
         $referencia[4] = "%";
         $referencia[5] = $ano%10;
-        
+
         $ref = Doctrine::getTable("InoMaestra")
                          ->createQuery("m")
                          ->select( "m.ca_referencia" )
@@ -85,7 +83,7 @@ class InoMaestraTable extends Doctrine_Table
                          ->limit(1)
                          ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)
                          ->execute();
-        
+
         if( $ref ){
              $ref = explode('.', $ref);
              $val = intval( isset($ref[3])?$ref[3]:0 )+1;
@@ -93,7 +91,7 @@ class InoMaestraTable extends Doctrine_Table
         }else{
              $referencia[4] = '001';
         }
-        
+
         return implode(".", $referencia);
             /*
 
@@ -105,7 +103,7 @@ class InoMaestraTable extends Doctrine_Table
                     $parametro = null;
                 }
 
-                                
+
 
                 if( $parametro ){
                     $referencia .= ''.str_pad($parametro->getCaIdentificacion(), 2, "0", STR_PAD_LEFT).".";
@@ -147,18 +145,18 @@ class InoMaestraTable extends Doctrine_Table
             }*/
 
         /*$referencia.=$mes.'.';
-        
+
         $ref = Doctrine::getTable("InoMaestra")
                          ->createQuery("m")
                          ->select( "MAX(m.ca_referencia)" )
                          ->where("m.ca_referencia LIKE ?", $referencia."%.".$ano )
                          ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)
                          ->execute();
-        
-        
+
+
         if( $ref ){
              $ref = explode('.', $ref);
-             $val = intval( $ref[3] )+1;             
+             $val = intval( $ref[3] )+1;
              $referencia .= str_pad($val, 3, "0", STR_PAD_LEFT).'.';
         }else{
              $referencia .= '001.';
@@ -166,14 +164,14 @@ class InoMaestraTable extends Doctrine_Table
 
         $referencia.=$ano;
 
-        
+
 
         */
 
 
 
     /*
-	
+
   CREATE OR REPLACE FUNCTION fun_referencia(text, text, text, text, text)
   RETURNS text AS
 $BODY$

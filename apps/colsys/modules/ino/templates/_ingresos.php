@@ -22,8 +22,8 @@
         <td>&nbsp;</td>
     </tr>
     <?
-    foreach( $inoClientes as $inoCliente ){
-        $comprobantes = $inoCliente->getInoComprobante();
+    foreach( $InoHouses as $InoHouse ){
+        $comprobantes = $InoHouse->getInoComprobante();
         $k = 0;
         if( count($comprobantes)>0 ){
 
@@ -34,8 +34,8 @@
                     <?
                     if( $k==0 ){
                     ?>
-                    <td rowspan="<?=count($comprobantes)?>" valign="top"><?=$inoCliente->getIds()->getCaNombre()?></td>
-                    <td rowspan="<?=count($comprobantes)?>" valign="top"><?=$inoCliente->getCaDoctransporte()?></td>
+                    <td rowspan="<?=count($comprobantes)?>" valign="top"><?=$InoHouse->getIds()->getCaNombre()?></td>
+                    <td rowspan="<?=count($comprobantes)?>" valign="top"><?=$InoHouse->getCaDoctransporte()?></td>
                     <?
                     }
                     $k++;
@@ -51,9 +51,9 @@
                     </td>
                     <td>
                         <?                        
-                        echo link_to(image_tag("16x16/edit.gif"), "ino/formComprobante?modo=".$modo."&idinocliente=".$inoCliente->getCaIdinocliente()."&idcomprobante=".$comprobante->getCaIdcomprobante());
+                        echo link_to(image_tag("16x16/edit.gif"), "ino/formComprobante?modo=".$modo."&idInoHouse=".$InoHouse->getCaIdInoHouse()."&idcomprobante=".$comprobante->getCaIdcomprobante());
                         if( $k==count($comprobantes) ){
-                            echo "&nbsp;".link_to(image_tag("16x16/edit_add.gif"), "ino/formComprobante?modo=".$modo."&idinocliente=".$inoCliente->getCaIdinocliente());
+                            echo "&nbsp;".link_to(image_tag("16x16/edit_add.gif"), "ino/formComprobante?modo=".$modo."&idInoHouse=".$InoHouse->getCaIdInoHouse());
                         }
                         ?>
                     </td>
@@ -63,13 +63,13 @@
         }else{
         ?>
         <tr >
-            <td><?=$inoCliente->getIds()->getCaNombre()?></td>
-            <td><?=$inoCliente->getCaDoctransporte()?></td>
+            <td><?=$InoHouse->getIds()->getCaNombre()?></td>
+            <td><?=$InoHouse->getCaDoctransporte()?></td>
             <td><span class="rojo">Sin facturar</span></td>
             <td>&nbsp;</td>
             <td>&nbsp;</td>
             <td>
-                <?=link_to(image_tag("16x16/edit_add.gif"), "ino/formComprobante?modo=".$modo."&idinocliente=".$inoCliente->getCaIdinocliente())?>
+                <?=link_to(image_tag("16x16/edit_add.gif"), "ino/formComprobante?modo=".$modo."&idInoHouse=".$InoHouse->getCaIdInoHouse())?>
             </td>
         </tr>
 

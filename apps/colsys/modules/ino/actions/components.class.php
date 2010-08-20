@@ -17,34 +17,46 @@
 class inoComponents extends sfComponents
 {
 
+    /*
+     * Este panel contiene todos los tabs de la aplicación.
+     */
+    public function executeMainPanel(){
+
+    }
+
+
+    /*
+     * Formulario para ingresar los datos del master
+     */
     public function executeFormMasterPanel(){
         
     }
 
-    public function executeFormClientePanel(){
+    /*
+     * Formulario para ingresar los datos del house
+     */
+    public function executeFormHousePanel(){
 
     }
 
-    
-    public function executeClientes(){
-        $this->inoClientes = Doctrine::getTable("InoCliente")
-                                 ->createQuery("c")
-                                 ->select("c.*")
-                                 ->innerJoin("c.Ids cl")
-                                 ->where("c.ca_idmaestra = ?", $this->referencia->getCaIdmaestra())
-                                 ->addOrderBy( "cl.ca_nombre" )
-                                 ->execute();
+    /*
+     * Grid que muestra los house de la referencia
+     */
+    public function executeGridHousePanel(){
+
+       
     }
 
     public function executeIngresos(){
 
-        $this->inoClientes = Doctrine::getTable("InoCliente")
+        /*$this->InoHouses = Doctrine::getTable("InoHouse")
                                  ->createQuery("c")
-                                 ->select("c.*")
-                                 ->innerJoin("c.Ids cl")
-                                 ->where("c.ca_idmaestra = ?", $this->referencia->getCaIdmaestra())
-                                 ->addOrderBy( "cl.ca_nombre" )
-                                 ->execute();
+                                 ->select("c.*, cl.*")
+                                 //->innerJoin("c.Ids cl")
+                                 ->innerJoin("c.Cliente cl")
+                                 ->where("c.ca_idmaster = ?", $this->referencia->getCaIdmaster())
+                                 ->addOrderBy( "cl.ca_compania" )
+                                 ->execute();*/
                                  
     }
 
@@ -56,7 +68,7 @@ class inoComponents extends sfComponents
                                  ->innerJoin("c.InoTipoComprobante tp")
                                  ->innerJoin("t.InoConcepto con")
                                  ->innerJoin("c.Ids id")
-                                 ->where("t.ca_idmaestra = ?", $this->referencia->getCaIdmaestra())
+                                 ->where("t.ca_idmaster = ?", $this->referencia->getCaIdmaster())
                                  //->addWhere("c.ca_estado = ?", InoComprobante::TRANSFERIDO)
                                  ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
                                  ->execute();
@@ -71,7 +83,7 @@ class inoComponents extends sfComponents
                                  ->innerJoin("c.InoTipoComprobante tp")
                                  ->innerJoin("t.InoConcepto con")
                                  ->innerJoin("c.Ids id")
-                                 ->where("t.ca_idmaestra = ?", $this->referencia->getCaIdmaestra())
+                                 ->where("t.ca_idmaster = ?", $this->referencia->getCaIdmaster())
                                  //->addWhere("c.ca_estado = ?", InoComprobante::TRANSFERIDO)
                                  ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
                                  ->execute();*/

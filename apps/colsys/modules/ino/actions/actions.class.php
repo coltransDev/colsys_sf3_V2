@@ -87,7 +87,7 @@ class inoActions extends sfActions
         $cadena = $request->getParameter("cadena");
 
 
-        $q = Doctrine_Query::create()->from('InoMaestra m');
+        $q = Doctrine_Query::create()->from('InoMaster m');
         //$q->innerJoin( "m.Modalidad mod" );
         switch( $this->modo ){
             case "aereo":
@@ -122,7 +122,7 @@ class inoActions extends sfActions
         $this->refList = $this->pager->execute();
 		if( $this->pager->getResultsInPage()==1 && $this->pager->getPage()==1 ){
             $refs = $this->refList;
-			$this->redirect("ino/verReferencia?modo=".$this->modo."&id=".$refs[0]->getCaIdmaestra());
+			$this->redirect("ino/verReferencia?modo=".$this->modo."&id=".$refs[0]->getCaIdmaster());
 		}
 		$this->criterio = $criterio;
 		$this->cadena = $cadena;
@@ -174,8 +174,8 @@ class inoActions extends sfActions
             $fchreferencia  = $request->getParameter("fchreferencia");
             $fchreferenciaTm = strtotime($fchreferencia);
 
-            $ino = new InoMaestra();
-            $numRef = InoMaestraTable::getNumReferencia( $impoexpo, $transporte, $modalidad, $idorigen, $iddestino, date("m", $fchreferenciaTm), date("Y", $fchreferenciaTm)  );           
+            $ino = new InoMaster();
+            $numRef = InoMasterTable::getNumReferencia( $impoexpo, $transporte, $modalidad, $idorigen, $iddestino, date("m", $fchreferenciaTm), date("Y", $fchreferenciaTm)  );
             $ino->setCaReferencia( $numRef );
             $ino->setCaImpoexpo( $impoexpo );
             $ino->setCaTransporte( $transporte );
@@ -192,7 +192,7 @@ class inoActions extends sfActions
             
 
             $ino->save();            
-            $this->responseArray = array("success"=>true, "idmaestra"=>$ino->getCaIdmaestra());
+            $this->responseArray = array("success"=>true, "idmaestra"=>$ino->getCaIdmaster());
         }catch (Exception $e){
             $this->responseArray = array("success"=>false, "errorInfo"=>$e->getMessage());
         }
@@ -215,14 +215,141 @@ class inoActions extends sfActions
        // $this->nivel = $this->getNivel();
 
         $this->forward404Unless( $request->getParameter("id") );
-        $this->referencia = Doctrine::getTable("InoMaestra")->find($request->getParameter("id"));
+        $this->referencia = Doctrine::getTable("InoMaster")->find($request->getParameter("id"));
 
         $this->forward404Unless( $this->referencia );
 
-        $response = sfContext::getInstance()->getResponse();
-		$response->addJavaScript("tabpane/tabpane",'last');
-        $response->addStylesheet("tabpane/luna/tab",'last');
+     
         
+    }
+
+
+    /**
+    * Guarda los datos desde la ventana de creación de House
+    *
+    * @param sfRequest $request A request object
+    */
+    public function executeFormHouseGuardar(sfWebRequest $request)
+    {
+        //print_r( $_POST );
+        
+        try{
+            if( $request->getParameter("idhouse") ){
+                $house = Doctrine::getTable("InoHouse")->find($request->getParameter("idhouse"));
+                $this->forward404Unless( $house );
+            }else{
+                $house = new InoHouse();
+                $house->setCaIdmaster( $request->getParameter("idmaster") );
+            }
+            $house->setCaIdreporte( $request->getParameter("idreporte"));
+            $house->setCaIdcliente( $request->getParameter("idcliente"));
+            $house->setCaVendedor( $request->getParameter("vendedor"));
+            $house->setCaIdproveedor( $request->getParameter("idproveedor"));
+            $house->setCaNumorden( $request->getParameter("numorden"));
+            $house->setCaNumpiezas( $request->getParameter("numpiezas"));
+            $house->setCaPeso( $request->getParameter("peso"));
+            $house->setCaVolumen( $request->getParameter("volumen"));
+            $house->setCaDoctransporte( $request->getParameter("doctransporte"));
+            $house->setCaFchdoctransporte( $request->getParameter("fchdoctransporte"));
+            $house->save();
+            $this->responseArray = array("success"=>true);
+
+        }catch (Exception $e){
+            $this->responseArray = array("success"=>false, "errorInfo"=>$e->getMessage());
+        }
+
+        $this->setTemplate( "responseTemplate" );
+    }
+
+    /**
+    *
+    *
+    * @param sfRequest $request A request object
+    */
+    public function executeDatosGridHousePanel(sfWebRequest $request)
+    {
+        $idmaster = $request->getParameter("idmaster");
+        $this->forward404Unless( $idmaster );
+        $inoHouses = Doctrine::getTable("InoHouse")
+                             ->createQuery("c")
+                             ->select("c.*, cl.*")
+                             //->innerJoin("c.Ids cl")
+                             ->innerJoin("c.Cliente cl")
+                             ->where("c.ca_idmaster = ?", $idmaster)
+                             ->addOrderBy( "cl.ca_compania" )
+                             ->execute();
+
+        $data = array();
+
+        foreach( $inoHouses as $inoHouse ){
+            $row = array();
+            $row["idmaster"] = $inoHouse->getCaIdmaster();
+            $row["idhouse"] = $inoHouse->getCaIdhouse();
+            $row["doctransporte"] = utf8_encode($inoHouse->getCaDoctransporte());
+            $row["fchdoctransporte"] = $inoHouse->getCaFchdoctransporte();
+            $row["numorden"] = utf8_encode($inoHouse->getCaNumorden());
+            $row["idcliente"] = $inoHouse->getCliente()->getCaIdcliente();
+            $row["cliente"] = utf8_encode($inoHouse->getCliente()->getCaCompania());
+            $row["vendedor"] = $inoHouse->getCaVendedor();            
+            $row["idreporte"] = $inoHouse->getCaIdreporte();
+            $row["reporte"] = $inoHouse->getReporte()->getCaConsecutivo();
+            $row["numpiezas"] = $inoHouse->getCaNumpiezas();
+            $row["peso"] = $inoHouse->getCaPeso();
+            $row["volumen"] = $inoHouse->getCaVolumen();
+            $row["idproveedor"] = $inoHouse->getCaIdproveedor();
+            $row["proveedor"] = utf8_encode($inoHouse->getProveedor()->getCaNombre());
+            $data[] = $row;
+        }
+
+
+        $this->responseArray = array("success"=>true, "root"=>$data, "total"=>count($data));
+
+        $this->setTemplate( "responseTemplate" );
+
+
+
+    }
+
+
+
+    /**
+    *
+    *
+    * @param sfRequest $request A request object
+    */
+    public function executeDatosFormHousePanel(sfWebRequest $request)
+    {
+
+
+        $this->forward404Unless( $request->getParameter("idhouse") );
+        $idhouse = $request->getParameter("idhouse");
+        $inoHouse = Doctrine::getTable("InoHouse")->find( $idhouse );
+        $this->forward404Unless( $inoHouse );
+
+
+        $data = array();
+
+        $data["idmaster"] = $inoHouse->getCaIdmaster();
+        $data["idhouse"] = $inoHouse->getCaIdhouse();
+        $data["doctransporte"] = utf8_encode($inoHouse->getCaDoctransporte());
+        $data["fchdoctransporte"] = $inoHouse->getCaFchdoctransporte();
+        $data["numorden"] = utf8_encode($inoHouse->getCaNumorden());
+        $data["idcliente"] = $inoHouse->getCliente()->getCaIdcliente();
+        $data["cliente"] = utf8_encode($inoHouse->getCliente()->getCaCompania());
+        $data["vendedor"] = $inoHouse->getCaVendedor();
+        $data["nombreVendedor"] = utf8_encode($inoHouse->getVendedor()->getCaNombre());
+        $data["idreporte"] = $inoHouse->getCaIdreporte();
+        $data["reporte"] = $inoHouse->getReporte()->getCaConsecutivo();
+        $data["numpiezas"] = $inoHouse->getCaNumpiezas();
+        $data["peso"] = $inoHouse->getCaPeso();
+        $data["volumen"] = $inoHouse->getCaVolumen();
+        $data["idproveedor"] = $inoHouse->getCaIdproveedor();
+        $data["proveedor"] = utf8_encode($inoHouse->getProveedor()->getCaNombre());
+        
+
+
+        $this->responseArray = array("success"=>true, "data"=>$data);
+        $this->setTemplate("responseTemplate");
     }
 
 
@@ -231,37 +358,24 @@ class inoActions extends sfActions
     *
     * @param sfRequest $request A request object
     */
-    public function executeFormClientes(sfWebRequest $request)
+    public function executeEliminarGridHousePanel(sfWebRequest $request)
     {
-        $this->modo = $request->getParameter("modo");
-        //$this->nivel = $this->getNivel();
 
-        $this->forward404Unless( $request->getParameter("id") );
-        $this->referencia = Doctrine::getTable("InoMaestra")->find($request->getParameter("id"));
+        $this->forward404Unless( $request->getParameter("idhouse") );
+        $idhouse = $request->getParameter("idhouse");
+        $inoHouse = Doctrine::getTable("InoHouse")->find( $idhouse );
+        $this->forward404Unless( $inoHouse );
 
-        $this->inoCliente = Doctrine::getTable("InoCliente")->find($request->getParameter("idinocliente"));
+        try{
+            $inoHouse->delete();
+            $this->responseArray = array("success"=>true);
 
-        /*
-
-        $form = new InoClienteForm( $this->inoCliente );
-        
-        if ($request->isMethod('post')){            
-            $bindValues = $request->getParameter($form->getName());
-            $bindValues["ca_idmaestra"] = $this->referencia->getCaIdmaestra();
-            $form->bind( $bindValues );
-
-            $this->reporte = Doctrine::getTable("Reporte")->find($bindValues["ca_idreporte"]);
-
-			if( $form->isValid() ){
-
-                $inocliente = $form->save();
-
-                $this->redirect("ino/verReferencia?modo=".$this->modo."&id=".$inocliente->getCaIdmaestra());
-            }
+        }catch (Exception $e){
+            $this->responseArray = array("success"=>false, "errorInfo"=>$e->getMessage());
         }
 
-        $this->form = $form;*/
 
+        $this->setTemplate("responseTemplate");
     }
 
 
