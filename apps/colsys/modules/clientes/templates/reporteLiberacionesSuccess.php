@@ -6,7 +6,7 @@
 ?>
 <div class="content" align="center">
     Listado de Liberaciones <b><?=strtoupper($cliente)?></b><br />
-    Periodo: <b><?=$inicio?></b> a <b><?=$final?></b><br />
+    Periodo: <b><?=$fchinicial?></b> a <b><?=$fchfinal?></b><br />
     <table border="1" class="tableList" width="70%">
         <thead>
             <tr>
