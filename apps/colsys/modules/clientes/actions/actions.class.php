@@ -870,8 +870,14 @@ class clientesActions extends sfActions
 
             $inicio =  $this->getRequestParameter("fchStart");
             $final =  $this->getRequestParameter("fchEnd");
-			$sucursal =  $this->getRequestParameter("sucursal");
-            list($year, $month, $day) = sscanf($inicio, "%d-%d-%d");
+            $sucursal =  $this->getRequestParameter("sucursal");
+
+            $this->idCliente = $this->getRequestParameter("idcliente");
+			$this->cliente = Doctrine::getTable("Cliente")->find( $this->idCliente );
+			$cliente = $this->cliente;
+
+            
+			$this->forward404unless( $this->cliente );
 			
 
             $q = Doctrine_Manager::getInstance()->connection();
@@ -880,10 +886,14 @@ class clientesActions extends sfActions
             $query.= "		INNER JOIN tb_clientes cl ON ic.ca_idcliente = cl.ca_idcliente";
             $query.= "		INNER JOIN tb_inoingresos_sea ii ON ic.ca_referencia = ii.ca_referencia and ic.ca_idcliente = ii.ca_idcliente and ic.ca_hbls=ii.ca_hbls";
 			$query.= "		INNER JOIN control.tb_usuarios u ON u.ca_login = ic.ca_usuliberado";				
-            $query.= "		where substr(ic.ca_referencia,15) = '0' and ic.ca_fchliberacion IS NOT NULL and ic.ca_fchliberacion BETWEEN '$inicio' and '$final' and u.ca_sucursal='$sucursal'";
-            $query.= "     order by ic.ca_fchliberacion DESC";
+            $query.= "		where ic.ca_fchliberacion IS NOT NULL and ic.ca_fchliberacion BETWEEN '$inicio' and '$final'";
+			$query.= "		and cl.ca_compania='$cliente'";
+			$query.= "      order by ic.ca_fchliberacion DESC";
 
             $this->listado = $q->execute($query);
+            $this->cliente=$cliente;
+            $this->inicio = $inicio;
+            $this->final = $final;
     }
 }
 ?>
