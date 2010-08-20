@@ -868,12 +868,10 @@ class clientesActions extends sfActions
 	}
         public function executeReporteLiberaciones(sfWebRequest $request){
 
-            $inicio =  $this->getRequestParameter("fchStart");
-            list($day, $month, $year) = sscanf($inicio, "%d-%d-%d");
+            $fchinicial = $this->getRequestParameter("fchStart");
+                       
+            $fchfinal =  $this->getRequestParameter("fchEnd");
             
-            $final =  $this->getRequestParameter("fchEnd");
-            $sucursal =  $this->getRequestParameter("sucursal");
-
             $this->idCliente = $this->getRequestParameter("idcliente");
 			$this->cliente = Doctrine::getTable("Cliente")->find( $this->idCliente );
 			$cliente = $this->cliente;
@@ -888,14 +886,14 @@ class clientesActions extends sfActions
             $query.= "		INNER JOIN tb_clientes cl ON ic.ca_idcliente = cl.ca_idcliente";
             $query.= "		INNER JOIN tb_inoingresos_sea ii ON ic.ca_referencia = ii.ca_referencia and ic.ca_idcliente = ii.ca_idcliente and ic.ca_hbls=ii.ca_hbls";
 			$query.= "		INNER JOIN control.tb_usuarios u ON u.ca_login = ic.ca_usuliberado";				
-            $query.= "		where ic.ca_fchliberacion IS NOT NULL and ic.ca_fchliberacion BETWEEN '$inicio' and '$final'";
+            $query.= "		where ic.ca_fchliberacion IS NOT NULL and ic.ca_fchliberacion BETWEEN '$fchinicial' and '$fchfinal'";
 			$query.= "		and cl.ca_compania='$cliente'";
 			$query.= "      order by ic.ca_fchliberacion DESC";
 
             $this->listado = $q->execute($query);
             $this->cliente=$cliente;
-            $this->inicio = $inicio;
-            $this->final = $final;
+            $this->fchinicial = $fchinicial;
+            $this->fchfinal = $fchfinal;
     }
 }
 ?>
