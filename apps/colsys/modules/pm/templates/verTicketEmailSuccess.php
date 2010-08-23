@@ -91,28 +91,10 @@ $ticket = $sf_data->getRaw("ticket");
                                             <img src="https://www.coltrans.com.co/images/spacer.gif" width="1" height="1" alt="">
                                             <p><font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Respuestas</b></font><br>
 
-                                            <div class="commentlist">
                                             <?
-                                            $responses = $ticket->getHdeskResponse();
-
-                                            $i=0;
-                                            foreach( $responses as $response ){
-                                                ?>
-                                                    <div class="entry-<?=$i++%2==0?"even":"odd"?>">
-                                                    <div class="entry-date"><?=Utils::fechaMes($response->getCaCreatedat())?></div>
-                                                    <b><?=($response->getUsuario()?$response->getUsuario()->getCaNombre():$response->getCaLogin())?></b>
-
-
-                                                    <br /><br />
-                                                    <?=str_replace("\n","<br />",$response->getCaText())?>
-
-                                                </div>
-                                                <?
-
-
-                                            }
+                                            include_component("pm", "listaRespuestasTicket", array("idticket"=>$ticket->getCaIdticket(), "opener"=>"", "format"=>$format) );
                                             ?>
-                                            </div>
+                                            
                                          </td>
                                     </tr>
                                     <?

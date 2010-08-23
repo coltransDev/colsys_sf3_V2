@@ -51,6 +51,20 @@ var buscarSolucion = function(){
     win.show();
 }
 
+
+var newResponse = function( idticket , idresponse, opener ){
+    var win = Ext.getCmp("nueva-respuesta-ticket");
+    if( win ){
+        win.close();
+    }
+
+    var win = new NuevaRespuestaWindow({idticket: idticket,
+                                        idresponse: idresponse,
+                                        opener: opener
+                                      });
+    win.show();
+}
+
 var registroEventos = function(){
     
 
@@ -229,13 +243,13 @@ Ext.onReady(function(){
 <div style="height:100%"></div>
 <script type="text/javascript">
     Ext.onReady(function(){
-        /*var newComponent = new PanelReading({           id: 'adad',
+        var newComponent = new PanelReading({           id: 'adad',
                                                              closable: true,
                                                              idproject: 3,
                                                              title: 'Panel prueba'
                                                             });
                     Ext.getCmp('tab-panel').add(newComponent);
-                    Ext.getCmp('tab-panel').setActiveTab(newComponent);*/
+                    Ext.getCmp('tab-panel').setActiveTab(newComponent);
         
 
         /*var newComponent = new PanelCronogramaUsuario({    id: 'adad',

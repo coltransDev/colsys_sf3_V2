@@ -58,12 +58,17 @@ NuevaRespuestaWindow = function( config ) {
                                 value: this.idticket
                               },
                               {
+                                xtype:'hidden',
+                                name: 'idresponse',
+                                value: this.idresponse
+                              },
+                              {
 
                                 xtype:'htmleditor',
                                 name:'respuesta',
                                 hideLabel: true,
                                 height:450,
-                                anchor:'98%',
+                                anchor:'100%',
                                 enableFont: false,
                                 enableFontSize: false,
                                 enableLinks:  false,
@@ -72,7 +77,22 @@ NuevaRespuestaWindow = function( config ) {
                                 enableLists: false,
                                 allowBlank: false
 
-                            }]
+                            }/*,
+                            {
+                                xtype:'datefield',
+                                name:'fchseguimiento',
+                                fieldLabel: "Seguimiento",
+                                format: "Y-m-d",
+                                hideLabel: false,
+                                enableFont: false,
+                                enableFontSize: false,
+                                enableLinks:  false,
+                                enableSourceEdit : false,
+                                enableColors : false,
+                                enableLists: false,
+                                allowBlank: true
+                            }*/
+                        ]
                     })
 
 
@@ -92,12 +112,13 @@ NuevaRespuestaWindow = function( config ) {
 
     NuevaRespuestaWindow.superclass.constructor.call(this, {
         title: 'Nueva respuesta Ticket# '+this.idticket,
+        id: "nueva-respuesta-ticket",
         autoHeight: true,
         width: 800,
         //height: 400,
         resizable: false,
         plain:true,
-        modal: true,        
+        //modal: true,
         y: 100,
         autoScroll: true,
         closeAction: 'close',

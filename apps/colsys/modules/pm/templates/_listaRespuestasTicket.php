@@ -5,16 +5,45 @@ $responses = $sf_data->getRaw("responses");
 $i=0;
 foreach( $responses as $response ){
     ?>
-        <div class="entry-<?=$i++%2==0?"even":"odd"?>">
+        <div class="entry-<?=$i%2==0?"even":"odd"?>">
         <div class="entry-date"><?=Utils::fechaMes($response->getCaCreatedat())?></div>
         <b><?=($response->getUsuario()?$response->getUsuario()->getCaNombre():$response->getCaLogin())?></b>
 
 
-        <br /><br />
+        <br />
         <?=str_replace("\n","<br />",$response->getCaText())?>
-        
+
+
+        <?
+
+        $subResponses = $response->getResponse();        
+        foreach( $subResponses as $subResponse ){
+        ?>
+            <div class="entry-<?=$i%2==0?"odd":"even"?>">
+                <div class="entry-date"><?=Utils::fechaMes($subResponse->getCaCreatedat())?></div>
+                <b><?=($subResponse->getUsuario()?$subResponse->getUsuario()->getCaNombre():$subResponse->getCaLogin())?></b>
+
+
+                <br /><br />
+                <?=str_replace("\n","<br />",$subResponse->getCaText())?>
+            </div>
+            <br />
+        <?
+
+        }
+
+
+
+        if( $format!="email"){
+        ?>
+        <br />
+        <div style="float:right;"><a href="#" onClick="newResponse(<?=$response->getCaIdticket()?>, <?=$response->getCaIdresponse()?> <?=isset($opener)&&$opener?", '".$opener."'":""?>)">Respuesta</a></div>
+        <?
+        }
+        ?>
     </div>
     <?
+    $i++;
 
     
 }

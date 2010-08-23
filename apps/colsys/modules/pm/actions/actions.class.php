@@ -166,6 +166,7 @@ class pmActions extends sfActions
 
 
 		$idticket = $request->getParameter("id");
+        $this->format = $request->getParameter("format");
 		$this->ticket = HdeskTicketTable::retrieveIdTicket($idticket, $this->nivel );
 		$this->forward404Unless( $this->ticket );
 
@@ -273,6 +274,12 @@ class pmActions extends sfActions
 		$respuesta = new HdeskResponse();
 		$respuesta->setCaIdticket( $request->getParameter("idticket") );
 
+        $idresponse = $request->getParameter("idresponse");
+
+        if( $idresponse ){
+            $respuesta->setCaResponseto( $idresponse );
+        }
+
         if( $idissue ){
             $issue = Doctrine::getTable("KBIssue")->find( $idissue );
             $this->forward404Unless( $issue );
@@ -363,7 +370,7 @@ class pmActions extends sfActions
 		//$email->send();
 
 		//$this->ticket = $ticket;
-
+        $request->setParameter("format", "" );
         $texto = sfContext::getInstance()->getController()->getPresentationFor( 'pm', 'verRespuestas');
         
         $this->responseArray = array("success"=>true, "idticket"=>$ticket->getCaIdticket(), "info"=>utf8_encode($texto));
@@ -383,6 +390,9 @@ class pmActions extends sfActions
         $ticket = Doctrine::getTable("HdeskTicket")->find( $request->getParameter("idticket") );
         $this->forward404Unless($ticket);
         $this->ticket = $ticket;
+
+        $this->opener = $request->getParameter("opener");
+        $this->format = $request->getParameter("format");
     }
 
 	/**

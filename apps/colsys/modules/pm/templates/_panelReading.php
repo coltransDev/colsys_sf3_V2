@@ -313,11 +313,9 @@ Ext.extend(PanelReading, Ext.Panel, {
 
     newResponse: function(record){
        record = (record && record.data) ? record : this.gsm.getSelected();
-       //alert( record.data.idticket);       
-       var win = new NuevaRespuestaWindow({idticket: record.data.idticket,
-                                           opener: this.responses.id
-                                          });
-       win.show();
+       //alert( record.data.idticket);
+
+        newResponse(record.data.idticket, null, this.responses.id );
     },
 
     recargar: function(){
@@ -362,7 +360,8 @@ Ext.extend(PanelReading, Ext.Panel, {
             method: 'POST',
             //Solamente se envian los cambios
             params :	{
-                idticket:record.data.idticket
+                idticket:record.data.idticket,
+                opener: responsePanel.id
             },
 
             callback :function(options, success, response){

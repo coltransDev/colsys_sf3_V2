@@ -19,6 +19,7 @@ class pmComponents extends sfComponents
         $this->responses = Doctrine::getTable("HdeskResponse")
                            ->createQuery("r")
                            ->where("r.ca_idticket = ? ", $this->idticket )
+                           ->addWhere("r.ca_responseto IS NULL " )
                            ->addOrderBy("r.ca_createdat ASC")
                            ->addOrderBy("r.ca_idresponse ASC")
                            ->execute();
