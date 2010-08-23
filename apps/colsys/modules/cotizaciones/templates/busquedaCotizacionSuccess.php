@@ -278,28 +278,20 @@ $pagerLayout->display();
     function chseguimiento(id)
     {
         tipo=$("#etapa_"+id).attr("value");
-        $("#NAP_"+id).hide();
-        //$("#NAP_"+id+">input,#NAP_"+id+">textaera,#NAP_"+id+">select").attr("disabled",true);
+        $("#NAP_"+id).hide();        
         $("#NAP_"+id+">*,#NAP_"+id+">*>*,#NAP_"+id+">*>*>*").attr("disabled",true);
-
-        $("#SEG_"+id).hide();
-        //$("#SEG_"+id+">input,#SEG_"+id+">textaera,#SEG_"+id+">select").attr("disabled",true);
-        $("#SEG_"+id+">*,#SEG_"+id+">*>*,#SEG_"+id+">*>*>*").attr("disabled",true);
-        //$("#fchseguimiento_"+id).attr("disabled",true);
+        $("#SEG_"+id).hide();        
+        $("#SEG_"+id+">*,#SEG_"+id+">*>*,#SEG_"+id+">*>*>*").attr("disabled",true);        
         
         if(tipo=="NAP")
         {            
-            $("#NAP_"+id).show();
-            //$("#NAP_"+id+">input,#NAP_"+id+">textaera,#NAP_"+id+">select").attr("disabled",false);
+            $("#NAP_"+id).show();            
             $("#NAP_"+id+">*,#NAP_"+id+">*>*,#NAP_"+id+">*>*>*").attr("disabled",false);
         }
         else if(tipo=="SEG")
         {         
-            //seg=$("#SEG_"+id);
+
             $("#SEG_"+id).show();
-            //seg.show();
-            //seg.children().attr("disabled",false);
-            //$("#fchseguimiento_"+id).attr("disabled",false);
             $("#SEG_"+id+">*,#SEG_"+id+">*>*,#SEG_"+id+">*>*>*").attr("disabled",false);
         }
     }
