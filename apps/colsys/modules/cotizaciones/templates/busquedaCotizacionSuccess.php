@@ -42,7 +42,7 @@ $pagerLayout->display();
         <td rowspan="2"  >
             <?=link_to("C".$cotizacion->getCaConsecutivo(), "cotizaciones/consultaCotizacion?id=".$cotizacion->getCaIdcotizacion())?>
             <br>V-<?=$cotizacion->getCaVersion()?>
-            <?=$cotizacion->getCaFchanulado()?"<br />Anulada":""?>
+				<?=$cotizacion->getCaFchanulado()?"<br />Anulada":""?>
         </td>
         <td ><b>Fch.Cotizacion:</b><br />
             <?=$cotizacion->getCaFchcreado()?></td>
@@ -188,7 +188,7 @@ $pagerLayout->display();
         ?>
         <tr>
             <td colspan="5"></td>
-            <td align="right"><input value="Guardar Seguimientos" type="button" onclick="validar()" ></td>
+            <td align="right"><input id="bguardar" value="Guardar Seguimientos" type="button" onclick="validar()" ></td>
         </tr>
         <?
         }
@@ -198,6 +198,7 @@ $pagerLayout->display();
 <script type="text/javascript">
     function validar()
     {
+        $("#bguardar").attr("disabled",true);
         objs=$(".idproducto");
         $.each(objs, function(i,item){
             if($("#etapa_"+item.value).val()!="")
@@ -205,8 +206,8 @@ $pagerLayout->display();
                  //$("#NAP_"+item.value+">input,#NAP_"+item.value+">textaera,#NAP_"+item.value+">select").attr("disabled",false);
                  //$("#SEG_"+item.value+">input,#SEG_"+item.value+">textaera,#SEG_"+item.value+">select").attr("disabled",false);
 
-        $("#NAP_"+id+">*,#NAP_"+id+">*>*,#NAP_"+id+">*>*>*").attr("disabled",false);
-        $("#SEG_"+id+">*,#SEG_"+id+">*>*,#SEG_"+id+">*>*>*").attr("disabled",false);
+                $("#NAP_"+id+">*,#NAP_"+id+">*>*,#NAP_"+id+">*>*>*").attr("disabled",false);
+                $("#SEG_"+id+">*,#SEG_"+id+">*>*,#SEG_"+id+">*>*>*").attr("disabled",false);
 
                  //$("#fchseguimiento_"+item.value).attr("disabled",false);
 
@@ -251,13 +252,17 @@ $pagerLayout->display();
                 if(a.responseText.search(/error/i)==-1)
                 {                    
                     alert("Se Actualizo Correctamente");
-                    //location.href='<?=url_for("$url")?>';
+                    location.href='<?=url_for("$url")?>';
                 }
                 else
+                {
                     alert("Error:"+a.responseText.replace(/<br \/>/gi ,"\n"));
+                    $("#bguardar").attr("disabled",false);
+                }
            },
            failure: function(a,b){
                alert("Error:"+a.responseText.toString());
+               $("#bguardar").attr("disabled",false);
            }
         });
     }
