@@ -16,9 +16,11 @@ class adminPerfilesActions extends sfActions
 	* @param sfRequest $request A request object
 	*/
 	public function executeIndex(sfWebRequest $request)
-	{		
+	{
+        $app =  sfContext::getInstance()->getConfiguration()->getApplication();
 		$this->perfiles = Doctrine::getTable("Perfil")
                           ->createQuery("p")
+                          ->addWhere("p.ca_aplicacion = ?", $app)
                           ->addOrderBy("p.ca_departamento")
                           ->addOrderBy("p.ca_nombre")
                           ->execute();
@@ -45,14 +47,17 @@ class adminPerfilesActions extends sfActions
 	*/
 	public function executeGuardarPerfil( $request ){
 		$perfil = Doctrine::getTable("Perfil")->find( $request->getParameter("perfil") );
+        $app =  sfContext::getInstance()->getConfiguration()->getApplication();
 		if( !$perfil ){
-			$perfil = new Perfil();
-			$idperfil = str_replace(" ", "-", strtolower( $request->getParameter("nombre") ));
-			$perfil->setCaPerfil( $idperfil );
+			$perfil = new Perfil();			
+            $idperfil = Utils::slugify( $request->getParameter("nombre") );
+			$perfil->setCaPerfil( $idperfil."-".$app );
 		}
-						
+
+
 		$perfil->setCaNombre( $request->getParameter("nombre") );		
-		$perfil->setCaDescripcion( $request->getParameter("descripcion") );	
+		$perfil->setCaDescripcion( $request->getParameter("descripcion") );
+        $perfil->setCaAplicacion( $app );
 		if( $request->getParameter("departamento") ){	
 			$perfil->setCaDepartamento( $request->getParameter("departamento") );		
 		}else{
