@@ -388,12 +388,9 @@ class reportesNegActions extends sfActions
                 $errors["iddestino"]="Debe seleccionar un destino";
             }
 
-            if($request->getParameter("impoexpo") && $request->getParameter("impoexpo")!="")
+            if($request->getParameter("impoexpo"))
             {
-                //$reporte->setCaImpoexpo(utf8_encode($request->getParameter("impoexpo")));
-                //revisar
-                $reporte->setCaImpoexpo('Importación');
-
+                $reporte->setCaImpoexpo($request->getParameter("impoexpo"));
             }
             else
             {
@@ -462,12 +459,12 @@ class reportesNegActions extends sfActions
             {
                 $reporte->setCaIdproveedor($request->getParameter("prov"));
             }
-        //ca_orden_prov:
-            if($request->getParameter("idconcliente") )
+        //ca_orden_prov:  No aplica
+/*            if($request->getParameter("idconcliente") )
             {
                 $reporte->setCaIdconcliente($request->getParameter("idconcliente"));
             }
-
+*/
             if($request->getParameter("orden_clie") )
             {
                 $reporte->setCaOrdenClie($request->getParameter("orden_clie"));
@@ -486,11 +483,7 @@ class reportesNegActions extends sfActions
             {
                 $reporte->setCaConfirmarClie($ca_confirmar_clie);
             }
-            if($request->getParameter("idrepres") )
-            {
-                $reporte->setCaIdrepresentante($request->getParameter("idrepres"));
-            }
-            
+
             if($request->getParameter("idrepres") )
             {
                 $reporte->setCaIdrepresentante($request->getParameter("idrepres"));
@@ -599,7 +592,7 @@ class reportesNegActions extends sfActions
             else
             {
                 //revisar
-                $reporte->setCaIdbodega(81);
+//                $reporte->setCaIdbodega(81);
             }
     //ca_mastersame:
             if($request->getParameter("continuacion")   )
@@ -658,10 +651,43 @@ class reportesNegActions extends sfActions
 			{
 				$repExpo= new RepExpo();
 				$repExpo->setCaIdreporte($reporte->getCaIdreporte());
-				//$repExpo->set
-				if($request->getParameter("ca_continuacion_conf") )
+				if($request->getParameter("npiezas") && $request->getParameter("mpiezas") )
 				{
-					$reporte->setCaContinuacionConf($request->getParameter("ca_continuacion_conf"));
+					$reporte->setCaPiezas($request->getParameter("npiezas")." ".$request->getParameter("mpiezas"));
+				}
+                
+				if($request->getParameter("npeso") && $request->getParameter("mpeso") )
+				{
+					$reporte->setCaPeso($request->getParameter("npeso")." ".$request->getParameter("mpeso"));
+				}
+                
+				if($request->getParameter("nvolumen") && $request->getParameter("mvolumen") )
+				{
+					$reporte->setCaVolumen($request->getParameter("nvolumen")." ".$request->getParameter("mvolumen"));
+				}
+                
+				if($request->getParameter("dimensiones") )
+				{
+					$reporte->setCaDimensiones($request->getParameter("dimensiones"));
+				}
+                
+				if($request->getParameter("valor_carga") )
+				{
+					$reporte->setCaValorcarga($request->getParameter("valor_carga"));
+				}
+				if($request->getParameter("sia") )
+				{
+					$reporte->setCaIdsia($request->getParameter("sia"));
+				}
+                
+				if($request->getParameter("tipoexpo") )
+				{
+					$reporte->setCaTipoexpo($request->getParameter("tipoexpo"));
+				}
+                
+				if($request->getParameter("motonave") )
+				{
+					$reporte->setCaMotonave($request->getParameter("motonave"));
 				}
 
 				$repExpo->save();
