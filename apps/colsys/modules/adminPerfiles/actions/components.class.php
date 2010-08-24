@@ -13,8 +13,11 @@ class adminPerfilesComponents extends sfComponents
 	
 	public function executeFormPermisos()
 	{
+
+        $app =  sfContext::getInstance()->getConfiguration()->getApplication();       
 		$this->opciones = Doctrine::getTable("Rutina")
                                     ->createQuery("r")
+                                    ->addWhere("r.ca_aplicacion = ?", $app)
                                     ->addOrderBy("r.ca_grupo")
                                     ->execute();
 		

@@ -71,10 +71,12 @@ class adminPerfilesActions extends sfActions
 	public function executeFormPermisos( $request ){
 		$this->perfil = Doctrine::getTable("Perfil")->find( $request->getParameter("perfil") );
 		$this->forward404Unless( $this->perfil );
-	 
+        $app =  sfContext::getInstance()->getConfiguration()->getApplication();
 		$accesos = Doctrine::getTable("AccesoPerfil")
                             ->createQuery("a")
+                            ->innerJoin("a.Rutina r")
                             ->where("a.ca_perfil= ? ", $this->perfil->getCaPerfil())
+                            ->addWhere("r.ca_aplicacion = ?", $app)
                             ->execute();
 		
 		$this->accesos = array();

@@ -26,6 +26,7 @@ class adminUsersActions extends sfActions
 	
 	/*
 	*
+	
 	*/
 	public function executeFormUsuario( $request ){
 		$this->usuario = Doctrine::getTable("Usuario")->find( $request->getParameter("login") );
@@ -42,6 +43,8 @@ class adminUsersActions extends sfActions
                           ->createQuery("s")
                           ->addOrderBy("s.ca_nombre")
                           ->execute();
+
+
 		
 	}
 	
@@ -108,7 +111,44 @@ class adminUsersActions extends sfActions
 		}else{
 			$usuario->setCaActivo( false );
 		}
-		
+
+        if (is_uploaded_file($_FILES['foto']['tmp_name'])) {
+            $nombre_archivo=$usuario->getDirectorio().DIRECTORY_SEPARATOR.'foto.jpg';
+            if (move_uploaded_file($_FILES['foto']['tmp_name'],$nombre_archivo)){
+
+                // Obtener nuevos tamaños
+                list($ancho, $alto) = getimagesize($nombre_archivo);
+                $nuevo_ancho = 120;
+                $nuevo_alto = 150;
+
+                // Cargar
+                $thumb = imagecreatetruecolor($nuevo_ancho, $nuevo_alto);
+                $origen = imagecreatefromjpeg($nombre_archivo);
+
+                // Cambiar el tamaño
+                imagecopyresized($thumb, $origen, 0, 0, 0, 0, $nuevo_ancho, $nuevo_alto, $ancho, $alto);
+
+                // Imprimir
+                imagejpeg($thumb,$usuario->getDirectorio().DIRECTORY_SEPARATOR.'foto120x150.jpg',100);
+
+                $nuevo_ancho = 60;
+                $nuevo_alto = 80;
+
+                // Cargar
+                $thumb = imagecreatetruecolor($nuevo_ancho, $nuevo_alto);
+                $origen = imagecreatefromjpeg($nombre_archivo);
+
+                // Cambiar el tamaño
+                imagecopyresized($thumb, $origen, 0, 0, 0, 0, $nuevo_ancho, $nuevo_alto, $ancho, $alto);
+
+                // Imprimir
+                imagejpeg($thumb,$usuario->getDirectorio().DIRECTORY_SEPARATOR.'foto60x80.jpg',100);
+            }
+        if( $request->getParameter("nombres") ){
+			$usuario->setCaNombres( $request->getParameter("nombres") );
+		}
+
+        }
 		$usuario->save();		
 	 
 	}
@@ -151,10 +191,13 @@ class adminUsersActions extends sfActions
 	public function executeFormPermisos( $request ){
 		$this->usuario = Doctrine::getTable("Usuario")->find( $request->getParameter("login") );
 		$this->forward404Unless( $this->usuario );
-	 
+
+        $app =  sfContext::getInstance()->getConfiguration()->getApplication();
         $accesos = Doctrine::getTable("AccesoUsuario")
                             ->createQuery("a")
+                            ->innerJoin("a.Rutina r")
                             ->where("a.ca_login= ? ", $this->usuario->getCaLogin())
+                            ->addWhere("r.ca_aplicacion = ?", $app)
                             ->execute();
 		$this->accesos = array();
 		foreach( $accesos as $acceso ){
@@ -164,7 +207,9 @@ class adminUsersActions extends sfActions
         $accesos = Doctrine::getTable("AccesoPerfil")
                             ->createQuery("a")
                             ->innerJoin("a.UsuarioPerfil up")
+                            ->innerJoin("a.Rutina r")
                             ->where("up.ca_login= ? ", $this->usuario->getCaLogin())
+                            ->addWhere("r.ca_aplicacion = ?", $app)
                             ->addOrderBy("a.ca_acceso")
                             ->execute();
 
