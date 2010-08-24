@@ -886,7 +886,7 @@ class traficosActions extends sfActions
 			}
 		}
 		$email->save();
-		$email->send();
+		//$email->send();
 	}
 
 	

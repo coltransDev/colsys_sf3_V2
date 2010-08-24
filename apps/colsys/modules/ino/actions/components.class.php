@@ -47,18 +47,15 @@ class inoComponents extends sfComponents
        
     }
 
-    public function executeIngresos(){
 
-        /*$this->InoHouses = Doctrine::getTable("InoHouse")
-                                 ->createQuery("c")
-                                 ->select("c.*, cl.*")
-                                 //->innerJoin("c.Ids cl")
-                                 ->innerJoin("c.Cliente cl")
-                                 ->where("c.ca_idmaster = ?", $this->referencia->getCaIdmaster())
-                                 ->addOrderBy( "cl.ca_compania" )
-                                 ->execute();*/
-                                 
+    /*
+     * Grid que muestra las facturas de la referencia
+     */
+    public function executeGridFacturacionPanel(){
+        
     }
+
+    
 
     public function executeCostos(){
         $this->costos = Doctrine::getTable("InoTransaccion")

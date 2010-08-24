@@ -48,9 +48,9 @@ class inocomprobantesActions extends sfActions
 
         }
 
-        if( $this->comprobante->getCaEstado()!=InoComprobante::ABIERTO ){
+        /*if( $this->comprobante->getCaEstado()!=InoComprobante::ABIERTO ){
             $this->redirect("inocomprobantes/verComprobante?id=".$this->comprobante->getCaIdcomprobante());
-        }
+        }*/
 
 
     }

@@ -224,6 +224,12 @@ class inoActions extends sfActions
     }
 
 
+    /*************************************************************************
+    *
+    *   Acciones para las guias hijas
+    *
+    ***************************************************************************/
+
     /**
     * Guarda los datos desde la ventana de creación de House
     *
@@ -305,9 +311,6 @@ class inoActions extends sfActions
         $this->responseArray = array("success"=>true, "root"=>$data, "total"=>count($data));
 
         $this->setTemplate( "responseTemplate" );
-
-
-
     }
 
 
@@ -377,6 +380,99 @@ class inoActions extends sfActions
 
         $this->setTemplate("responseTemplate");
     }
+
+
+    /*************************************************************************
+    *
+    *   Acciones para las facturas
+    *
+    ***************************************************************************/
+
+
+    /**
+    *
+    *
+    * @param sfRequest $request A request object
+    */
+    public function executeDatosGridFacturacionPanel(sfWebRequest $request)
+    {
+        $idmaster = $request->getParameter("idmaster");
+        $this->forward404Unless( $idmaster );
+        $inoHouses = Doctrine::getTable("InoHouse")
+                             ->createQuery("c")
+                             ->select("c.*, cl.*")
+                             //->innerJoin("c.Ids cl")
+                             ->innerJoin("c.Cliente cl")
+                             ->leftJoin( "c.InoComprobante comp" )
+                             ->leftJoin( "comp.InoTipoComprobante tcomp" )
+                             ->where("c.ca_idmaster = ?", $idmaster)
+                             ->addOrderBy( "cl.ca_compania" )
+                             ->execute();
+                            
+
+        $data = array();
+
+        foreach( $inoHouses as $inoHouse ){
+
+
+            $comprobantes = $inoHouse->getInoComprobante();
+            $k = 0;
+            if( count($comprobantes)>0 ){
+                foreach( $comprobantes as $comprobante ){
+                    $tipo = $comprobante->getInoTipoComprobante();
+
+                    $row = array();
+                    $row["idmaster"] = $inoHouse->getCaIdmaster();
+                    $row["idhouse"] = $inoHouse->getCaIdhouse();
+                    $row["doctransporte"] = utf8_encode($inoHouse->getCaDoctransporte());
+                    $row["idcliente"] = $inoHouse->getCliente()->getCaIdcliente();
+                    $row["cliente"] = utf8_encode($inoHouse->getCliente()->getCaCompania());
+                    $row["comprobante"] = utf8_encode( $tipo." ".str_pad($comprobante->getCaConsecutivo(), 6, "0", STR_PAD_LEFT));
+                    $row["fchcomprobante"] = utf8_encode( $comprobante->getCaFchcomprobante());
+                    $row["valor"] = $comprobante->getValor();
+                    $row["color"] = "";
+
+                    $data[] = $row;
+                }
+            }else{
+                $row = array();
+                $row["idmaster"] = $inoHouse->getCaIdmaster();
+                $row["idhouse"] = $inoHouse->getCaIdhouse();
+                $row["doctransporte"] = utf8_encode($inoHouse->getCaDoctransporte());
+                $row["idcliente"] = $inoHouse->getCliente()->getCaIdcliente();
+                $row["cliente"] = utf8_encode($inoHouse->getCliente()->getCaCompania());
+                $row["comprobante"] = "";
+                $row["fchcomprobante"] = "";
+                $row["valor"] = 0;
+                $row["color"] = "pink";
+                $data[] = $row;
+            }
+
+            
+            
+        }
+
+
+        $this->responseArray = array("success"=>true, "root"=>$data, "total"=>count($data));
+
+        $this->setTemplate( "responseTemplate" );
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     /**

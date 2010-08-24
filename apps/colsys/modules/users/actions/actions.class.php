@@ -311,7 +311,16 @@ class usersActions extends sfActions
 	*/
 	public function executeCheckLogin( $request ){
         if( $this->getUser()->isAuthenticated() ){
-           $this->responseArray = array( "success"=>true, "login"=>true );
+            $cache = myCache::getInstance();
+            $cookie = $_COOKIE["colsys"];
+            list($session_id, $signature) = explode(':', $cookie, 2);
+            $time = $cache->get($session_id."_lr", "");
+
+            if( $time+sfConfig::get("app_session_maxinactive")>time() ){
+                $this->responseArray = array( "success"=>true, "login"=>true );
+            }else{
+                $this->responseArray = array( "success"=>true, "login"=>f );
+            }
         }else{
            $this->responseArray = array( "success"=>true, "login"=>false );
         }
@@ -355,30 +364,92 @@ class usersActions extends sfActions
 
     public function executeLoggedInUsers(){
         
-        Doctrine::getTable("Session")
-                                    ->createQuery("s")
-                                    ->delete()
-                                    ->where("(s.sess_time+s.max_inactive)<?", time())
-                                    ->execute();
+        $sfMemcache = myCache::getInstance();
+        $memcache = $sfMemcache->getBackend();
 
-
+        $sessions = array();
+        $i = 0;
         
+	    $allSlabs = $memcache->getExtendedStats('slabs');
+	    $items = $memcache->getExtendedStats('items');
+	    foreach($allSlabs as $server => $slabs) {
+    	    foreach($slabs AS $slabId => $slabMeta) {                
+                if( is_int($slabId) ){
+                    $cdump = $memcache->getExtendedStats('cachedump',(int)$slabId);
 
-        $this->sessions = Doctrine::getTable("Session")
-                                    ->createQuery("s")
-                                    ->select("s.*")
-                                    ->addOrderBy("s.sess_time DESC")
-                                    ->execute();
+                    foreach($cdump AS $server => $entries) {
+                        if($entries) {
+                            foreach($entries AS $eName => $eData) {
+                                if( substr($eName, 0, 7) == "colsess" && strpos($eName, "_menu")===false && strpos($eName, "_lr")===false ){
+                                    /*$list[$eName] = array(
+                                         'key' => $eName,
+                                         'server' => $server,
+                                         'slabId' => $slabId,
+                                         'detail' => $eData,
+                                         'age' => $items[$server]['items'][$slabId]['age'],
+                                     );*/
+
+                                    $session["id"] = substr($eName, 8);
+                                    $session["userdata"] = $memcache->get( $eName );
+                                    $session["lastRequest"] = $memcache->get( $eName."_lr" );
+                                    $session["ipAddress"] = $memcache->get( $eName."_ip", null );
+
+                                    if( isset($session["userdata"]["symfony/user/sfUser/authenticated"]) && is_array($session["userdata"]) && $session["userdata"]["symfony/user/sfUser/authenticated"] ){
+                                        if( time()-$session["lastRequest"]<=sfConfig::get("app_session_maxinactive")  ){
+                                            $sessions[] = $session;
+                                        }else{
+                                            //$sfMemcache->remove( $eName );
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+    	    }
+	    }
+        //print_r( $data );
+        //ksort($sessions);
+
+        $k=count($sessions);
+        for( $i=1; $i<$k; $i++){
+            for( $j=0; $j<$k-1; $j++){
+               $prov1 = $sessions[$j]["userdata"]["symfony/user/sfUser/attributes"]["symfony/user/sfUser/attributes"]["user_id"];
+               $prov2 = $sessions[$j+1]["userdata"]["symfony/user/sfUser/attributes"]["symfony/user/sfUser/attributes"]["user_id"];
+               if( $prov1>$prov2 ){
+                   $tmp = $sessions[$j];
+                   $sessions[$j] = $sessions[$j+1];
+                   $sessions[$j+1] = $tmp;
+               }
+            }
+        }
+
+
+
+        $this->sessions = $sessions;
+        /*
+	    ksort($list);
+
+
+        foreach( $list as $row ){
+
+            echo "<b>".$row["key"]."</b>";
+            print_r($row["detail"]);
+            echo " age: ".$row["age"]."<br />";
+
+        }*/
+
     }
 
     public function executeKickUser( $request ){
         $id = $request->getParameter("id");
         $this->forward404Unless( $id );
-        $sess = Doctrine::getTable("Session")
-                             ->find( $id );
-        if( $sess ){
-            $sess->delete();
-        }
+
+
+        $sfMemcache = myCache::getInstance();
+        //echo $id;
+        $sfMemcache->remove( $id );
+        
         $this->redirect("users/loggedInUsers");
     }
 
