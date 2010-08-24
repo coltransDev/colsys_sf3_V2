@@ -72,7 +72,8 @@ include_component("widgets", "widgetIncoterms");
                             fieldLabel: 'Frecuencia',
                             name: 'frecuencia',
                             value: '',
-                            allowBlank:true
+                            allowBlank:true,
+                            maxLength:40
                         }
                         ,{
                             xtype: 'textfield',
@@ -80,7 +81,8 @@ include_component("widgets", "widgetIncoterms");
                             fieldLabel: 'T/Transito',
                             name: 'ttransito',
                             value: '',
-                            allowBlank:true
+                            allowBlank:true,
+                            maxLength:25
                         }
                         ,
                         new Ext.form.ComboBox({
