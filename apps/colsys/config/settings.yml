@@ -106,3 +106,9 @@ all:
 #
 #    # i18n
 #    default_culture:        en        # Default user culture
+    enabled_modules:
+      - default
+      - adminUsers
+      - adminPerfiles
+      - gestDocumental
+      - email

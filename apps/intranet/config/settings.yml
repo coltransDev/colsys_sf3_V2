@@ -11,7 +11,7 @@ dev:
     error_reporting:        <?php echo (E_ALL | E_STRICT)."\n" ?>
     web_debug:              true
     cache:                  false
-    no_script_name:         false
+    no_script_name:         true
     etag:                   false
 
 test:
@@ -25,7 +25,7 @@ test:
 all:
   .settings:
     # Form security secret (CSRF protection)
-    csrf_secret:            89fc4692b57ee7b47f93a24c805c61109768d832
+    csrf_secret:            89fc4692b57ee7b47f9s324c805c61109768d832
 
     # Output escaping settings
     escaping_strategy:      true
@@ -34,3 +34,8 @@ all:
 
     # Enable the database manager
     use_database:           true
+    enabled_modules:
+      - default
+      - adminUsers
+      - adminPerfiles
+      - gestDocumental
