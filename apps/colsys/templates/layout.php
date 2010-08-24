@@ -15,8 +15,9 @@
 
     <?php include_stylesheets() ?>
     <?php include_javascripts() ?>
-    <script type="text/javascript" src="/js/loginWindow.js"></script>
 
+    <script type="text/javascript" src="/js/loginWindow.js"></script>
+<!--
 
 
     <link type="text/css" href="/css/jx/jx.bar.css" rel="stylesheet" />
@@ -29,6 +30,7 @@
             });
         });*/
     </script>
+-->
 
 </head>
 <body >
