@@ -73,7 +73,8 @@ include_component("widgets", "widgetIncoterms");
                             name: 'frecuencia',
                             value: '',
                             allowBlank:true,
-                            maxLength:40
+                            maxLength:40,
+                            maxLengthText:'Por favor verifique que el campo frecuencia tenga maximo 40 caracteres'
                         }
                         ,{
                             xtype: 'textfield',
@@ -82,7 +83,8 @@ include_component("widgets", "widgetIncoterms");
                             name: 'ttransito',
                             value: '',
                             allowBlank:true,
-                            maxLength:25
+                            maxLength:25,
+                            maxLengthText:'Por favor verifique que el campo T/Transito tenga maximo 25 caracteres'
                         }
                         ,
                         new Ext.form.ComboBox({
