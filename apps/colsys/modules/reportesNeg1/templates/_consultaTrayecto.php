@@ -68,8 +68,9 @@ if( $reporte->getcaContinuacion()!="N/A" ){
                 <b>Notificar a:</b><br />
                 <?
                     if( $reporte->getCaContinuacionConf() ){
-                        $usuario = Doctrine::getTable("Usuario")->find( $reporte->getCaContinuacionConf() );
-                        echo $usuario->getCaNombre();
+                        echo $reporte->getCaContinuacionConf();
+                        //$usuario = Doctrine::getTable("Usuario")->find( $reporte->getCaContinuacionConf() );
+                        //echo $usuario->getCaNombre();
                     }
                 }
                 ?>

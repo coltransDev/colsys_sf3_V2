@@ -46,11 +46,10 @@
                             },
                             {
                                 xtype:'fieldset',
-                                title: '',
                                 autoHeight:true,
                                 layout:'column',
                                 columns: 3,
-
+                                columnWidth: '100%',
                                 items :[
                                 {
                                     layout:'column',
@@ -75,7 +74,6 @@
                                         displayField:   'name',
                                         valueField:     'value',
                                         width:          70,
-
                                         store : [
                                         <?
                                         echo "['','...']";

@@ -61,8 +61,9 @@ include_component("widgets", "widgetBodega");
 						?>
                         this.wgContinuacion,
                         new WidgetCiudad({fieldLabel: 'Destino Final',
-                                                  name: 'continuacion_dest',
-                                                  id: 'continuacion_dest',
+                                                  name: 'continuacion_destino',
+                                                  id: 'continuacion_destino',
+                                                  hiddenName:'continuacion_dest',
                                                   idtrafico: 'CO-057'
                                                 })
 						,

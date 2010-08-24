@@ -1,9 +1,9 @@
 <?php
-include_component("reportesNeg", "formTrayectoPanel",array("modo"=>$modo,"impoexpo"=>$impoexpo));
-include_component("reportesNeg", "formClientePanel",array("modo"=>$modo,"impoexpo"=>$impoexpo));
-include_component("reportesNeg", "formFacturacionPanel",array("modo"=>$modo,"impoexpo"=>$impoexpo));
-include_component("reportesNeg", "formPreferenciasPanel",array("modo"=>$modo,"impoexpo"=>$impoexpo));
-include_component("reportesNeg", "formCorteGuiasPanel",array("modo"=>$modo,"impoexpo"=>$impoexpo,"reporte"=>$reporte));
+include_component("reportesNeg", "formTrayectoPanel",array("modo"=>$modo,"impoexpo"=>$impoexpo,"permiso"=>$permiso));
+include_component("reportesNeg", "formClientePanel",array("modo"=>$modo,"impoexpo"=>$impoexpo,"permiso"=>$permiso));
+include_component("reportesNeg", "formFacturacionPanel",array("modo"=>$modo,"impoexpo"=>$impoexpo,"permiso"=>$permiso));
+include_component("reportesNeg", "formPreferenciasPanel",array("modo"=>$modo,"impoexpo"=>$impoexpo,"permiso"=>$permiso));
+include_component("reportesNeg", "formCorteGuiasPanel",array("modo"=>$modo,"impoexpo"=>$impoexpo,"reporte"=>$reporte,"permiso"=>$permiso));
 
 if($impoexpo!="Triangulación")
 {
@@ -55,6 +55,7 @@ include_component("reportesNeg", "formSegurosPanel");
             monitorValid:true,            
             items: [{
                     xtype:'tabpanel',
+                    deferredRender : false,
                     activeTab: 0,
                     autoHeight: true,
                     defaults:{
@@ -62,11 +63,11 @@ include_component("reportesNeg", "formSegurosPanel");
                         hideMode:'offsets'
                     },
                     items:[
-                        new FormTrayectoPanel({bodyStyle:bodyStyle}) ,
-                        new FormClientePanel({bodyStyle:bodyStyle}),
-						new FormFacturacionPanel({bodyStyle:bodyStyle}),
-                        new FormPreferenciasPanel({bodyStyle:bodyStyle}),
-                        new FormCorteGuiasPanel({bodyStyle:bodyStyle}),
+                        new FormTrayectoPanel({bodyStyle:bodyStyle,lazyRender:true}) ,
+                        new FormClientePanel({bodyStyle:bodyStyle,lazyRender:true}),
+						new FormFacturacionPanel({bodyStyle:bodyStyle,lazyRender:true}),
+                        new FormPreferenciasPanel({bodyStyle:bodyStyle,lazyRender:true}),
+                        new FormCorteGuiasPanel({bodyStyle:bodyStyle,lazyRender:true}),
                         <?
                         if($impoexpo!="Triangulación")
                         {

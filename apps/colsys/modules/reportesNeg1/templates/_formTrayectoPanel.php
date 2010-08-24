@@ -15,9 +15,9 @@ include_component("widgets", "widgetPais");
 include_component("widgets", "widgetCiudad");
 include_component("widgets", "widgetAgente");
 include_component("widgets", "widgetIncoterms");
-
+include_component("reportesNeg", "formMercanciaPanel",array("modo"=>$modo,"impoexpo"=>$impoexpo));
 //$usuarios = $sf_data->getRaw("usuarios");
-if($impoexpo=="Triangulación")
+if($impoexpo== Constantes::TRIANGULACION)
 {
 //include_component("widgets", "widgetImpoexpo");
 //include_component("widgets", "widgetTransporte");
@@ -25,6 +25,11 @@ if($impoexpo=="Triangulación")
 else
 {
 	include_component("reportesNeg", "formContinuacionPanel",array("modo"=>$modo,"impoexpo"=>$impoexpo));
+}
+
+if($permiso>=2)
+{
+    include_component("widgets", "widgetComerciales");
 }
 
 ?>
@@ -78,6 +83,10 @@ else
                                 id: "fchdespacho",
                                 name: "fchdespacho"
                             },
+                            <?
+                            if($permiso<2)
+                            {
+                            ?>
                             {
                                 xtype: "hidden",
                                 id: "idvendedor",
@@ -90,6 +99,19 @@ else
                                 id: "vendedor",
                                 name: "vendedor"
                             }
+                            <?
+                            }
+                            else
+                            {
+                            ?>
+                            new WidgetComerciales({fieldLabel: 'Vendedor',
+                                                    id: 'vendedor',
+                                                    name: 'vendedor',
+                                                    hiddenName: "idvendedor"
+                                                    })
+                            <?
+                            }
+                            ?>
                         ]
                     },
                     {
@@ -182,19 +204,15 @@ else
                                                  hiddenName: "idlinea",
 												 width:350
                                                 }),
-                                {
-                                    xtype: "hidden",
-                                    name: "idtra_destino_id",
-                                    id: "idtra_destino_id"
-                                },
                                 new WidgetPais({fieldLabel: 'País Destino',
                                                 id: 'tra_destino_id',
                                                 linkCiudad: 'destino',
                                                 hiddenName:'idtra_destino_id',
                                                 pais:'<?=$pais2?>'
-                                                }),
+                                               }),
+
                                 new WidgetCiudad({fieldLabel: 'Ciudad Destino',
-                                                  linkPais: 'tra_destino_id',                                                  
+                                                  linkPais: 'tra_destino_id',
                                                   id: 'destino',
                                                   idciudad:"destino",
                                                   hiddenName:"iddestino"
@@ -213,34 +231,12 @@ else
                 {
 
                 ?>
-				new FormContinuacionPanel()				
+				new FormContinuacionPanel()
                 ,
                 <?
                 }
                 ?>
-                {
-                    xtype:'fieldset',
-                    title: 'Información de la Mercancia',
-                    autoHeight:true,
-                    layout:'form',
-                    labelWidth: 200,
-                    items: [
-                        {
-                            xtype: 'textarea',
-                            fieldLabel: 'Descripción',
-                            hideLabel: true,
-                            name: 'ca_mercancia_desc',
-                            width: 600,
-                            grow: true,
-                            id:"ca_mercancia_desc"
-                        },
-                        {
-                            xtype: "checkbox",
-                            fieldLabel: "¿Es mercancía peligrosa?",
-                            id: "ca_mcia_peligrosa"
-                        }
-                    ]
-                }
+                new FormMercanciaPanel()
             ]
         });
     };
@@ -263,13 +259,31 @@ else
             Ext.getCmp("tra_origen_id").setValue(record.data.tra_origen);
             Ext.getCmp("origen").setValue(record.data.idorigen);
             $("#origen").val(record.data.origen);
+
             Ext.getCmp("tra_destino_id").setValue(record.data.tra_destino);
             Ext.getCmp("destino").setValue(record.data.iddestino);
             $("#destino").val(record.data.destino);
+            //alert(record.data.tra_destino);
+            //alert(record.data.destino);
 
-            Ext.getCmp("vendedor").setValue(record.data.vendedor);
+
+/*            Ext.getCmp("vendedor").setValue(record.data.idvendedor);
+            idvendedor=Ext.getCmp("idvendedor");
+            if(idvendedor)
+                Ext.getCmp("idvendedor").setValue(record.data.idvendedor);
+            else
+            {
+                $("#vendedor").val(record.data.vendedor);
+            }
+*/
+            Ext.getCmp("vendedor").setValue(record.data.idvendedor);
+            $("#vendedor").val(record.data.vendedor);
+
+            //Ext.getCmp("vendedor").setValue(record.data.cliente);
+            //$("#cliente").attr("value",record.data.compania);
+            //$("#vendedor").val(record.data.vendedor);
 //            alert(record.data.idvendedor);
-            Ext.getCmp("idvendedor").setValue(record.data.idvendedor);
+//            Ext.getCmp("idvendedor").setValue(record.data.idvendedor);
 //            alert(Ext.getCmp("idvendedor").getValue());
             //c_ca_usuario
 
@@ -300,6 +314,7 @@ else
 
             Ext.getCmp("ca_liberacion").setValue(record.data.prima_min);
             Ext.getCmp("ca_tiempocredito").setValue(record.data.prima_min);
+            $("#destino").val(record.data.destino);
         }
         <?
 		if($impoexpo== Constantes::EXPO)
@@ -315,11 +330,13 @@ else
 			{
 				alert(record.data.modalidad);
 			}
+
+
         }
 		<?
 		}
 		?>
-
+        
 
     });
 </script>

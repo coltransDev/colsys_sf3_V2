@@ -14,7 +14,8 @@ include_component("widgets", "widgetContactoCliente");
         this.wgContactoCliente = new WidgetContactoCliente({fieldLabel: 'Cliente',
                                                    width: 600,                                                   
                                                    id: "cliente",
-                                                   hiddenName: "idcliente"
+                                                   hiddenName: "idcliente",
+                                                   allowBlank:false
                                                   });
 
         this.wgContactoCliente.addListener("select", this.onSelectContactoCliente, this);
@@ -90,7 +91,7 @@ include_component("widgets", "widgetContactoCliente");
                     ]
                 }
 				<?
-				if($impoexpo== Constantes::IMPO)
+				if($impoexpo ==Constantes::IMPO)
 				{
 				?>
 				,

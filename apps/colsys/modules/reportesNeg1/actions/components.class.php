@@ -165,6 +165,35 @@ class reportesNegComponents extends sfComponents
 		
 	}
 
+	public function executeFormMercanciaPanel()
+	{
+//		$this->tiposexpo = ParametroTable::retrieveByCaso( "CU011" );
+		//$this->tipo_piezas = ParametroTable::retrieveByCaso( "CU047" );
+		
+
+		//$this->tipo_pesos = ParametroTable::retrieveByCaso( "CU049" );
+
+//		$this->tipo_volumen_maritimo = ParametroTable::retrieveByCaso( "CU050" );
+//		$this->tipo_volumen_aereo = ParametroTable::retrieveByCaso( "CU058" );
+//		$this->tipo_volumen = ParametroTable::retrieveByCaso( "CU058" );
+
+		//$this->repexpo = $this->reporteNegocio->getRepExpo();
+		$this->sia = Doctrine::getTable("Sia")
+                                     ->createQuery("s")
+                                     ->select("s.ca_idsia,s.ca_nombre")
+                                     ->addOrderBy("s.ca_nombre")                                     
+                                     ->execute();
+
+/*		
+		$c=new Criteria();
+		$c->addAscendingOrderByColumn( SiaPeer::CA_NOMBRE );
+		$this->sias = SiaPeer::doSelect( $c );
+ *
+ *
+ */
+
+	}
+
 	public function executeFormContinuacionPanel()
 	{
 		$impoexpo=$this->getRequestParameter("impoexpo");
@@ -341,15 +370,13 @@ class reportesNegComponents extends sfComponents
             $this->nomGuiasM="AWB";
         }
     }
-
-
     /*
 	* Continuacion de viaje (OTM, DTA, CABOTAJE)
 	* @author: Andres Botero
 	*/
 	public function executeFormContinuacion()
 	{
-        
+
     }
 
     /*
@@ -367,9 +394,8 @@ class reportesNegComponents extends sfComponents
     
     public function executeInfoReporte()
 	{
-        
-    }
 
+    }
 
     public function executeConsultaTrayecto(){
         
@@ -396,10 +422,7 @@ class reportesNegComponents extends sfComponents
         if( !$this->repaduana ){
             $this->repaduana = new RepAduana();
         }
-
-
     }
-
     /*
 	* Consulta la informacion seguro
 	* @author: Andres Botero
@@ -411,15 +434,12 @@ class reportesNegComponents extends sfComponents
             $this->repseguro = new RepSeguro();
         }
     }
-
-
     /*
 	* Instrucciones para el corte de la guia
 	* @author: Andres Botero
 	*/
 	public function executeConsultaCorteGuias()
 	{
-
 
     }
 
@@ -433,11 +453,9 @@ class reportesNegComponents extends sfComponents
             $this->cotizacion = $this->producto->getCotizacion();             
         }else{
             $this->producto = null;
-            $this->cotizacion = null;
-           
+            $this->cotizacion = null;           
         }
 	}
-
     /*
      *
      */
@@ -450,7 +468,6 @@ class reportesNegComponents extends sfComponents
         }else{
             $this->producto = null;
             $this->cotizacion = null;
-
         }
 	 }
 

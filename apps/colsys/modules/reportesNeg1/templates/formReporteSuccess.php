@@ -4,8 +4,7 @@
  *
  *  (c) Coltrans S.A. - Colmas Ltda.
 */
-
-include_component("reportesNeg", "formReportePanel",array("reporte"=>$reporte,"idreporte"=>$reporte->getCaIdreporte(),"modo"=>$modo,"impoexpo"=>$impoexpo));
+include_component("reportesNeg", "formReportePanel",array("reporte"=>$reporte,"idreporte"=>$reporte->getCaIdreporte(),"modo"=>$modo,"impoexpo"=>$impoexpo,"permiso"=>$permiso));
 include_component("widgets", "widgetTercero");
 
 ?>
@@ -16,7 +15,6 @@ include_component("widgets", "widgetTercero");
 <script type="text/javascript">
 Ext.onReady(function(){
 Ext.QuickTips.init();
-
     var formPanel = new FormReportePanel({
         title: "Reportes de Negocio <?=$reporte->getCaIdreporte()?$reporte->getCaConsecutivo()." ".$reporte->getCaVersion()."/".$reporte->numVersiones():""?>",
         editable: <?=$editable?"true":"false"?>,

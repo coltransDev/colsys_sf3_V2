@@ -12,7 +12,7 @@
 */
 class reportesNegActions extends sfActions
 {
-    const RUTINA = 18;
+    const RUTINA = 87;
     const RUTINA_AEREO = 15;
     const RUTINA_MARITIMO = 15;
     const RUTINA_ADUANA = 15;
@@ -52,6 +52,9 @@ class reportesNegActions extends sfActions
         if( $this->modo=="Triangulación" ){
 			$this->nivel = $this->getUser()->getNivelAcceso( reportesNegActions::RUTINA_AEREO );
 		}
+
+        $this->permiso = $this->getUser()->getNivelAcceso( reportesNegActions::RUTINA );
+
 
 
 		if( $this->nivel==-1 ){
@@ -254,7 +257,7 @@ class reportesNegActions extends sfActions
 
 	/*
 	* Permite crear y editar el encabezado de un reporte de negocios
-	* @author Andres Botero
+	* @author Mauricio Quinche
     * @param sfRequest $request A request object
     */
     public function executeFormReporte(sfWebRequest $request){
@@ -316,7 +319,7 @@ class reportesNegActions extends sfActions
 
    /*
 	* Valida y guarda el reporte
-	* @author Andres Botero
+	* @author Mauricio Quinche
     * @param sfRequest $request A request object
     */
 
@@ -368,9 +371,8 @@ class reportesNegActions extends sfActions
             }
 
             if($request->getParameter("idorigen") && $request->getParameter("idorigen")!="")
-            {
-                if(is_numeric($request->getParameter("idorigen")))
-                    $reporte->setCaOrigen($request->getParameter("idorigen"));
+            {                
+                $reporte->setCaOrigen($request->getParameter("idorigen"));
             }
             else
             {
@@ -378,9 +380,8 @@ class reportesNegActions extends sfActions
             }
 
             if($request->getParameter("iddestino") && $request->getParameter("iddestino")!="")
-            {
-                if(is_numeric($request->getParameter("iddestino")))
-                    $reporte->setCaDestino($request->getParameter("iddestino"));
+            {                
+                $reporte->setCaDestino($request->getParameter("iddestino"));
             }
             else
             {
@@ -401,7 +402,7 @@ class reportesNegActions extends sfActions
 
             if($request->getParameter("fchdespacho") )
             {
-                $reporte->setCaFchdespacho($request->getParameter("fchdespacho"));
+                $reporte->setCaFchdespacho(Utils::parseDate($request->getParameter("fchdespacho")));
             }else
             {
                 $errors["fchdespacho"]="Debe seleccionar una fecha de despacho";
@@ -423,6 +424,21 @@ class reportesNegActions extends sfActions
             }else
             {
                 $errors["idconcliente"]="Debe seleccionar un termino";
+            }
+
+			if($request->getParameter("idclientefac") )
+            {
+                $reporte->setCaIdclientefac($request->getParameter("idclientefac"));
+            }
+
+			if($request->getParameter("idclienteag") )
+            {
+                $reporte->setCaIdclienteag($request->getParameter("idclienteag"));
+            }
+
+			if($request->getParameter("idclienteotro") )
+            {
+                $reporte->setCaIdclienteotro($request->getParameter("idclienteotro"));
             }
 
             if($request->getParameter("idagente") && $request->getParameter("idagente")!="")
@@ -529,7 +545,7 @@ class reportesNegActions extends sfActions
             }
             if($request->getParameter("ca_liberacion") )
             {
-                $reporte->setCaLiberacion($request->getParameter("ca_liberacion"));
+                $reporte->setCaLiberacion(utf8_decode($request->getParameter("ca_liberacion")));
             }
             if($request->getParameter("ca_tiempocredito") )
             {
@@ -638,6 +654,19 @@ class reportesNegActions extends sfActions
         else
         {
             $reporte->save();
+			if($reporte->getCaModalidad()== Constantes::EXPO)
+			{
+				$repExpo= new RepExpo();
+				$repExpo->setCaIdreporte($reporte->getCaIdreporte());
+				//$repExpo->set
+				if($request->getParameter("ca_continuacion_conf") )
+				{
+					$reporte->setCaContinuacionConf($request->getParameter("ca_continuacion_conf"));
+				}
+
+				$repExpo->save();
+
+			}
             $this->responseArray=array("success"=>true,"idreporte"=>$reporte->getCaIdreporte(),"redirect"=>$redirect);
         }
 
