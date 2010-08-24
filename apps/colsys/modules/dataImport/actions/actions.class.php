@@ -43,30 +43,21 @@ class dataImportActions extends sfActions
                 }
                 fclose($handle);
 
-                try{
-                    $conn = Doctrine::getTable("FileHeader")->getConnection();
-                    $conn->beginTransaction();
-                    $fileImported = new FileImported();
-                    $fileImported->setCaIdfileheader( $header->getCaIdfileheader() );
-                    $fileImported->setCaFchimportacion( date("Y-m-d H:i:s") );
-                    $fileImported->setCaContent( $content );
-                    $fileImported->setCaProcesado( false );
-                    $fileImported->setCaNombre( basename($filename) );
-                    $fileImported->setCaUsuario( $this->getUser()->getUserId() );
-                    $fileImported->setCaProceso( $this->getRequestParameter("proceso") );
-                    $fileImported->save( $conn );
-                    if( $fileImported->process( $conn ) ) {
-                        if ($this->getRequestParameter("proceso") == "Coltrans") {
-                            rename($filename, $directory.DIRECTORY_SEPARATOR.$processed.DIRECTORY_SEPARATOR.basename($filename));
-                        }else if ($this->getRequestParameter("proceso") == "Colmas") {
-                            rename($filename, $directory.DIRECTORY_SEPARATOR.$processed.DIRECTORY_SEPARATOR.basename($filename));
-                        }
+                $fileImported = new FileImported();
+                $fileImported->setCaIdfileheader( $header->getCaIdfileheader() );
+                $fileImported->setCaFchimportacion( date("Y-m-d H:i:s") );
+                $fileImported->setCaContent( $content );
+                $fileImported->setCaProcesado( false );
+                $fileImported->setCaNombre( basename($filename) );
+                $fileImported->setCaUsuario( $this->getUser()->getUserId() );
+                $fileImported->setCaProceso( $this->getRequestParameter("proceso") );
+                $fileImported->save();
+                if( $fileImported->process() ) {
+                    if ($this->getRequestParameter("proceso") == "Coltrans") {
+                        rename($filename, $directory.DIRECTORY_SEPARATOR.$processed.DIRECTORY_SEPARATOR.basename($filename));
+                    }else if ($this->getRequestParameter("proceso") == "Colmas") {
+                        rename($filename, $directory.DIRECTORY_SEPARATOR.$processed.DIRECTORY_SEPARATOR.basename($filename));
                     }
-                    $conn->commit();
-                }  catch (Exception $e){
-                    //echo $e->getMessage();
-                    throw $e;
-                    //$conn->rollBack();
                 }
             }
 
@@ -78,9 +69,167 @@ class dataImportActions extends sfActions
         }
 
 
+
+	/*
+	* Carga el archivo Generado por Opencomex
+	*/
+	public function executeLoadFile( $request ){
+            if ($request->isMethod('post')){
+                $referencia = substr($_FILES['archivo']['name'],0,3).".".substr($_FILES['archivo']['name'],3,2).".".substr($_FILES['archivo']['name'],5,2).".".substr($_FILES['archivo']['name'],7,3).".".substr($_FILES['archivo']['name'],10,1);
+
+                $ref_mem = NULL;
+                $file = $_FILES['archivo']['tmp_name'];
+
+                $doc = new DOMDocument();
+                $doc->loadHTMLFile($file);
+
+                $elements = $doc->getElementsByTagName('table');
+
+                // Elimina importaciones de Archivo Anteriores
+                $this->data = Doctrine::getTable("FalaDeclaracionDts")
+                        ->createQuery("d")
+                        ->delete()
+                        ->where("d.ca_referencia = ?", $referencia)
+                        ->execute();
+                $this->data = Doctrine::getTable("FalaDeclaracionImp")
+                        ->createQuery("d")
+                        ->delete()
+                        ->where("d.ca_referencia = ?", $referencia)
+                        ->execute();
+
+                $falaDeclaracionImp = new FalaDeclaracionImp();
+                $falaDeclaracionImp->setCaReferencia($referencia);
+                $falaDeclaracionImp->save();
+
+                $j = 1;
+                $is_the_table = false;
+                if (!is_null($elements)) {
+                    foreach ($elements as $element) {
+                        $nodes = $element->childNodes;
+                        foreach ($nodes as $node) {
+
+                            if( $node->nodeName=="tr" ) {
+                                $vals = explode( "\n",$node->nodeValue);
+                                $this->depurar_arreglo($vals);
+                                
+                                if (count($vals) != 0 and $vals[0] != 'SUBPARTIDA'){
+                                    if ($falaDeclaracionImp->getCaReferencia()){
+                                        $falaDeclaracionDts = new FalaDeclaracionDts();
+                                        $falaDeclaracionDts->setCaReferencia($falaDeclaracionImp->getCaReferencia());
+
+                                        $this->depurar_arreglo($vals);
+                                        $i = 0;
+                                        foreach($vals as $val) {
+                                            if ($i>=4 and $i!=21){
+                                                $val = floatval(str_replace(",",".",$val));
+                                            }
+                                            if($i==0){
+                                                $val = ($val==null)?"":$val;
+                                                $falaDeclaracionDts->setCaItem($j++);
+                                                $falaDeclaracionDts->setCaSubpartida($val);
+                                            }else if($i==1){
+                                                $falaDeclaracionDts->setCaMod($val);
+                                            }else if($i==2){
+                                                $falaDeclaracionDts->setCaCantidad($val);
+                                            }else if($i==3){
+                                                $falaDeclaracionDts->setCaUnidad($val);
+                                            }else if($i==4){
+                                                $falaDeclaracionDts->setCaValorFob($val);
+//                                          }else if($i==___){
+//                                              $falaDeclaracionDts->setCaGastosDespacho($val);
+                                            }else if($i==5){
+                                                $falaDeclaracionDts->setCaFlete($val);
+                                            }else if($i==6){
+                                                $falaDeclaracionDts->setCaSeguro($val);
+                                            }else if($i==7){
+                                                $falaDeclaracionDts->setCaGastosEmbarque($val);
+                                            }else if($i==8){
+                                                $falaDeclaracionDts->setCaAjusteValor($val);
+                                            }else if($i==9){
+                                                $falaDeclaracionDts->setCaValorAduana($val);
+                                            }else if($i==10){
+                                                $falaDeclaracionDts->setCaArancelPorcntj($val);
+                                            }else if($i==11){
+                                                $falaDeclaracionDts->setCaArancel($val);
+                                            }else if($i==12){
+                                                $falaDeclaracionDts->setCaIvaPorctj($val);
+                                            }else if($i==13){
+                                                $falaDeclaracionDts->setCaIva($val);
+/*                                          }else if($i==16){
+                                                $falaDeclaracionDts->setCaSalvaguardaPorcntj($val);
+                                            }else if($i==17){
+                                                $falaDeclaracionDts->setCaSalvaguarda($val);
+                                            }else if($i==18){
+                                                $falaDeclaracionDts->setCaCompensaPorcntj($val);
+                                            }else if($i==19){
+                                                $falaDeclaracionDts->setCaCompensa($val);
+                                            }else if($i==20){
+                                                $falaDeclaracionDts->setCaAntidumpPorcntj($val);
+*/                                          }else if($i==17){
+                                                $falaDeclaracionDts->setCaAntidump($val);
+                                            }else if($i==15){
+                                                $falaDeclaracionDts->setCaSancion($val);
+                                            }else if($i==16){
+                                                $falaDeclaracionDts->setCaRescate($val);
+                                            }else if($i==19){
+                                                $falaDeclaracionDts->setCaPesoBruto($val);
+                                            }else if($i==20){
+                                                $falaDeclaracionDts->setCaPesoNeto($val);
+                                            }else if($i==21){
+                                                $falaDeclaracionDts->setCaMoneda($val);
+                                            }else if($i==22){
+                                                $falaDeclaracionDts->setCaValorTrm($val);
+                                            }
+                                            $i++;
+                                        }
+                                        $falaDeclaracionDts->save();
+                                    }
+                                }
+/*
+                                foreach($vals as $val) {
+                                    if ($val == 'D.O. Nro') {
+                                        $val = trim(current($vals));
+                                        $falaDeclaracionImp->setCaReferencia($val);
+                                        // Elimina importaciones de Archivo Anteriores
+                                        $this->data = Doctrine::getTable("FalaDeclaracionDts")
+                                                ->createQuery("d")
+                                                ->delete()
+                                                ->where("d.ca_referencia = ?", $val)
+                                                ->execute();
+                                        $this->data = Doctrine::getTable("FalaDeclaracionImp")
+                                                ->createQuery("d")
+                                                ->delete()
+                                                ->where("d.ca_referencia = ?", $val)
+                                                ->execute();
+                                    }elseif($val == 'Moneda de Negociación :') {         //ca_moneda
+                                        $val = current($vals);
+                                        $parametro = Doctrine::getTable("Parametro")->find(array("CU079",0,$val));
+                                        $moneda_mem = $parametro->getCaValor2();
+                                    }elseif($val == 'Tasa Representativa') {         //ca_valor_trm
+                                        $valortrm_mem = floatval(str_replace(",","",current($vals)));
+                                    }elseif($val == 'Año') {         //ca_ano_trm
+                                        $falaDeclaracionImp->setCaAnoTrm(intval(current($vals)));
+                                    }elseif($val == 'Semana') {         //ca_semana_trm
+                                        $falaDeclaracionImp->setCaSemanaTrm(intval(current($vals)));
+                                    }elseif($val == 'Factor') {         //ca_factor_trm
+                                        $falaDeclaracionImp->setCaFactorTrm(floatval(current($vals)));
+                                    }
+
+                                }
+*/
+                            }
+                        }
+                    }
+                }
+                $this->redirect("falabellaAdu/declaracion?referencia=".base64_encode($falaDeclaracionImp->getCaReferencia()));
+            }
+        }
+
+
 	/*
 	* Carga el archivo Generado por Aprocom
 	*/
+        /*
 	public function executeLoadFile( $request ){
             if ($request->isMethod('post')){
                 $ref_mem = NULL;
@@ -112,7 +261,7 @@ class dataImportActions extends sfActions
                                             $falaDeclaracionDts->setCaReferencia($falaDeclaracionImp->getCaReferencia());
                                             $falaDeclaracionDts->setCaMoneda($moneda_mem);
                                             $falaDeclaracionDts->setCaValorTrm($valortrm_mem);
-                                            
+
                                             $vals = explode( "\n",$node->nodeValue);
                                             $this->depurar_arreglo($vals);
                                             $i = 0;
@@ -153,19 +302,19 @@ class dataImportActions extends sfActions
                                                     $falaDeclaracionDts->setCaIvaPorctj($val);
                                                 }else if($i==15){
                                                     $falaDeclaracionDts->setCaIva($val);
-/*                                              }else if($i==16){
-                                                    $falaDeclaracionDts->setCaSalvaguardaPorcntj($val);
-                                                }else if($i==17){
-                                                    $falaDeclaracionDts->setCaSalvaguarda($val);
-                                                }else if($i==18){
-                                                    $falaDeclaracionDts->setCaCompensaPorcntj($val);
-                                                }else if($i==19){
-                                                    $falaDeclaracionDts->setCaCompensa($val);
+                                                //}else if($i==16){
+                                                //    $falaDeclaracionDts->setCaSalvaguardaPorcntj($val);
+                                                //}else if($i==17){
+                                                //    $falaDeclaracionDts->setCaSalvaguarda($val);
+                                                //}else if($i==18){
+                                                //    $falaDeclaracionDts->setCaCompensaPorcntj($val);
+                                                //}else if($i==19){
+                                                //    $falaDeclaracionDts->setCaCompensa($val);
+                                                //}else if($i==20){
+                                                //    $falaDeclaracionDts->setCaAntidumpPorcntj($val);
+                                                //}else if($i==21){
+                                                //    $falaDeclaracionDts->setCaAntidump($val);
                                                 }else if($i==20){
-                                                    $falaDeclaracionDts->setCaAntidumpPorcntj($val);
-                                                }else if($i==21){
-                                                    $falaDeclaracionDts->setCaAntidump($val);
-*/                                              }else if($i==20){
                                                     $falaDeclaracionDts->setCaSancion($val);
                                                 }else if($i==21){
                                                     $falaDeclaracionDts->setCaRescate($val);
@@ -218,6 +367,8 @@ class dataImportActions extends sfActions
                 $this->redirect("falabellaAdu/declaracion?referencia=".base64_encode($falaDeclaracionImp->getCaReferencia()));
             }
         }
+        *
+        */
 
 
 	/*
