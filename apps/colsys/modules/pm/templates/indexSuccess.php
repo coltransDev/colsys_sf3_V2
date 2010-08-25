@@ -35,7 +35,7 @@ include_component("kbase", "busquedaIssueWindow");
 
 
 include_component("pm","panelEventos");
-
+include_component("pm","panelPreviewTicket");
 
 ?>
 <script type="text/javascript">
@@ -243,13 +243,13 @@ Ext.onReady(function(){
 <div style="height:100%"></div>
 <script type="text/javascript">
     Ext.onReady(function(){
-        /*var newComponent = new PanelReading({           id: 'adad',
+        var newComponent = new PanelReading({           id: 'adad',
                                                              closable: true,
                                                              idproject: 3,
                                                              title: 'Panel prueba'
                                                             });
                     Ext.getCmp('tab-panel').add(newComponent);
-                    Ext.getCmp('tab-panel').setActiveTab(newComponent);*/
+                    Ext.getCmp('tab-panel').setActiveTab(newComponent);
         
 
         /*var newComponent = new PanelCronogramaUsuario({    id: 'adad',
@@ -260,7 +260,22 @@ Ext.onReady(function(){
         Ext.getCmp('tab-panel').add(newComponent);
         Ext.getCmp('tab-panel').setActiveTab(newComponent);
         */
-
+       <?
+       if( $idticket ){
+       ?>
+            var newComponent = new Ext.Panel({
+                                                closable: true,
+                                                title: 'Ticket # <?=$idticket?>',
+                                                //autoHeight: true,
+                                                items: new PanelPreviewTicket({
+                                                     idticket: <?=$idticket?>
+                                                    })
+                                              });
+            Ext.getCmp('tab-panel').add(newComponent);
+            Ext.getCmp('tab-panel').setActiveTab(newComponent);
+       <?
+       }
+       ?>
 
 
     });

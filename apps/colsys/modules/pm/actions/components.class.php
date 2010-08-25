@@ -143,10 +143,17 @@ class pmComponents extends sfComponents
 	* @author: Andres Botero
 	*/
     public function executeEditarTicketWindow( ){
-        
-
 
     }
+
+    /*
+	* Muestra un tabpanel con los datos de los tickets
+	* @author: Andres Botero
+	*/
+    public function executePanelPreviewTicket( ){
+
+    }
+
 
 
     /*

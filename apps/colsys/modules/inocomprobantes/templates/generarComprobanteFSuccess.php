@@ -9,8 +9,8 @@ $comprobante = $sf_data->getRaw("comprobante");
 $tipo = $comprobante->getInoTipoComprobante();
 $idsSucursal = $tipo->getIdsSucursal();
 $ids = $idsSucursal->getIds();
-$inoCliente = $comprobante->getInoCliente();
-$inoMaestra = $inoCliente->getInoMaestra();
+$inoHouse = $comprobante->getInoHouse();
+$inoMaestra = $inoHouse->getInoMaster();
 
 $cuentaCierre = Doctrine::getTable("InoCuenta")->find($tipo->getCaIdctaCierre());
 $cuentaIva = Doctrine::getTable("InoCuenta")->find($tipo->getCaIdctaIva());
@@ -185,20 +185,20 @@ $pdf->Cell(0, 4, "DETALLE  : ".$comprobante->getCaObservaciones()  ,0,1, "L");
 
 $y+=$space;
 $pdf->SetXY($x+10,$y);
-$pdf->Cell(0, 4, "BL Hijo  : ".$inoCliente->getCaDoctransporte()  ,0,1, "L");
+$pdf->Cell(0, 4, "BL Hijo  : ".$inoHouse->getCaDoctransporte()  ,0,1, "L");
 
 $y+=$space;
 $pdf->SetXY($x+10,$y);
-$pdf->Cell(0, 4, "Nave  : "  ,0,1, "L"); //.$inoCliente->getCaIdnave()
+$pdf->Cell(0, 4, "Nave  : "  ,0,1, "L"); //.$inoHouse->getCaIdnave()
 
 $pdf->SetXY($x+60,$y);
-$pdf->Cell(0, 4, "Piezas  : ".$inoCliente->getCaNumpiezas()  ,0,1, "L");
+$pdf->Cell(0, 4, "Piezas  : ".$inoHouse->getCaNumpiezas()  ,0,1, "L");
 
 $pdf->SetXY($x+90,$y);
-$pdf->Cell(0, 4, "Peso  : ".$inoCliente->getCaPeso()  ,0,1, "L");
+$pdf->Cell(0, 4, "Peso  : ".$inoHouse->getCaPeso()  ,0,1, "L");
 
 $pdf->SetXY($x+120,$y);
-$pdf->Cell(0, 4, "CMB  : ".$inoCliente->getCaVolumen()  ,0,1, "L");
+$pdf->Cell(0, 4, "CMB  : ".$inoHouse->getCaVolumen()  ,0,1, "L");
 
 $y+=$space;
 $pdf->SetXY($x+10,$y);

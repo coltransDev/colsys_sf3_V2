@@ -42,6 +42,8 @@ class pmActions extends sfActions
         $response->addJavaScript("extExtras/RowExpander",'last');
         $response->addJavaScript("extExtras/SliderTip",'last');
         $response->addStylesheet("extExtras/slider",'last');
+
+        $this->idticket = $request->getParameter("idticket");
 			
 	}
 	

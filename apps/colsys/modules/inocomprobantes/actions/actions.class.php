@@ -111,7 +111,7 @@ class inocomprobantesActions extends sfActions
 
         $tipo = $comprobante->getInoTipoComprobante();
 
-        $baseRow = array( "idinocliente"=>$comprobante->getCaIdinocliente(),
+        $baseRow = array( "idinocliente"=>$comprobante->getCaIdhouse(),
                           "idcomprobante"=>$comprobante->getCaIdcomprobante(),
                         );
         $items = array();
@@ -120,11 +120,11 @@ class inocomprobantesActions extends sfActions
                        ->createQuery("t")
                        ->select("t.ca_idtransaccion, t.ca_idconcepto, t.ca_db, t.ca_valor,
                                 c.ca_idconcepto,c.ca_concepto, cc.ca_idccosto, cc.ca_centro,
-                                cc.ca_subcentro, cc.ca_nombre, cu.ca_cuenta, m.ca_referencia, m.ca_idmaestra")
+                                cc.ca_subcentro, cc.ca_nombre, cu.ca_cuenta, m.ca_referencia, m.ca_idmaster")
                        ->innerJoin("t.InoConcepto c")
                        ->leftJoin("t.InoCentroCosto cc")
                        ->leftJoin("t.InoCuenta cu")
-                       ->leftJoin("t.InoMaestra m")
+                       ->leftJoin("t.InoMaster m")
                        ->where("t.ca_idcomprobante = ? ", $comprobante->getCaIdcomprobante() )
                        ->setHydrationMode(Doctrine::HYDRATE_SCALAR );
 
@@ -158,7 +158,7 @@ class inocomprobantesActions extends sfActions
                             "db"=>$db,
                             "valor"=>$transaccion["t_ca_valor"],
                             "referencia"=>$transaccion["m_ca_referencia"],
-                            "idmaestra"=>$transaccion["m_ca_idmaestra"]
+                            "idmaestra"=>$transaccion["m_ca_idmaster"]
                      ));
 
         }
