@@ -1,20 +1,18 @@
 <?php
-/* 
+/*
  *  This file is part of the Colsys Project.
- * 
+ *
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
-
-$data = $sf_data->getRaw("data");
-
+$comercialesJson = $sf_data->getRaw("comercialesJson");
 ?>
 <script type="text/javascript">
 
-WidgetPais = function( config ){
+WidgetComerciales = function( config ){
     Ext.apply(this, config);
-    this.data = <?=json_encode($data)?>;
+
     this.store = new Ext.data.Store({
-				autoLoad : false,
+				autoLoad : true,
 				reader: new Ext.data.JsonReader(
 					{
 						root: 'root',
@@ -22,58 +20,29 @@ WidgetPais = function( config ){
 						successProperty: 'success'
 					},
 					Ext.data.Record.create([
-						{name: 'idtrafico'},
+						{name: 'login'},
                         {name: 'nombre'}
 					])
-				)
-                //,proxy: new Ext.data.MemoryProxy( <?=json_encode(array("root"=>$data, "total"=>count($data), "success"=>true) )?> )
+				),
+				proxy: new Ext.data.MemoryProxy( <?=json_encode(array("root"=>$comercialesJson, "total"=>count($comercialesJson), "success"=>true) )?> )
 			})
 
-    WidgetPais.superclass.constructor.call(this, {
-        valueField: 'idtrafico',
+    WidgetComerciales.superclass.constructor.call(this, {
+        valueField: 'login',
         displayField: 'nombre',
         typeAhead: true,
         forceSelection: true,
         triggerAction: 'all',
         emptyText:'',
-        selectOnFocus: true,        
+        selectOnFocus: true,
         lazyRender:true,
         mode: 'local',
-        listClass: 'x-combo-list-small',
-        listeners: {
-            render  : function(a ){
-                if( this.pais && this.pais!="todos" ){
-					pais=this.pais.split(",");
-
-
-                    var list = new Array();
-                    for( k in this.data ){
-                        var rec = this.data[k];
-
-                        //if( rec.idtrafico==this.pais )
-						if(jQuery.inArray(rec.idtrafico, pais)>=0)
-						{
-                            list.push( rec );
-                        }
-                    }
-                    var data = new Object();
-                    data.root = list;                    
-                    this.store.loadData(data);
-                }
-                else if( this.pais=="todos" )
-                {
-                    var data = new Object();
-                    data.root = this.data;
-                    this.store.loadData(data);
-                }
-            }
-        }
+        listClass: 'x-combo-list-small'
+       
     });
 }
 
-
-Ext.extend(WidgetPais, Ext.form.ComboBox, {
-    
+Ext.extend(WidgetComerciales, Ext.form.ComboBox, {
 	getTrigger : Ext.form.TwinTriggerField.prototype.getTrigger,
     initTrigger : Ext.form.TwinTriggerField.prototype.initTrigger,
     trigger1Class : 'x-form-clear-trigger',
@@ -83,7 +52,7 @@ Ext.extend(WidgetPais, Ext.form.ComboBox, {
     hideTrigger2 : true,
 
     initComponent : function() {
-        WidgetPais.superclass.initComponent.call(this);
+        WidgetComerciales.superclass.initComponent.call(this);
 
         this.triggerConfig = {
 			tag : 'span',
@@ -123,6 +92,4 @@ Ext.extend(WidgetPais, Ext.form.ComboBox, {
 		this.onTriggerClick();
 	}
 });
-
-	
 </script>

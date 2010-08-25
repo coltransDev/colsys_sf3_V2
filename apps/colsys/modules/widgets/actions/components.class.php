@@ -342,13 +342,13 @@ class widgetsComponents extends sfComponents
                                     "modalidad"=>utf8_encode($modalidad->getCaModalidad())
 								   );
 		}
+//		echo "<pre>";print_r($this->data);echo "</pre>";
 
 	}
 
 
     public function executeWidgetLinea(){
 		$this->data = array();
-
         
 		$q = Doctrine_Query::create()
                   ->select("p.ca_idproveedor, p.ca_sigla, id.ca_nombre, p.ca_transporte ")
@@ -367,7 +367,7 @@ class widgetsComponents extends sfComponents
 		foreach( $lineas as $linea ){
 			$this->data[] = array(  "idlinea"=>$linea['ca_idproveedor'],
 									  "linea"=>utf8_encode(($linea['ca_sigla']?$linea['ca_sigla']." - ":"").$linea['Ids']['ca_nombre']),
-                                      "transporte"=>utf8_encode($linea['ca_transporte']),
+                                      "transporte"=>utf8_encode($linea['ca_transporte'])
 								   );
 		}
 
@@ -442,10 +442,20 @@ class widgetsComponents extends sfComponents
                                                                 "pais" => utf8_encode($agente["t_ca_nombre"]),
                                                                 "idtrafico" => $agente["t_ca_idtrafico"]);
         }
-
-       
-
 	}
+
+    public function executeWidgetComerciales()
+    {
+        $comerciales = UsuarioTable::getComerciales();
+		$this->comercialesJson = array();
+		foreach( $comerciales as $comercial ){
+			$this->comercialesJson[]= array("login"=>$comercial->getCaLogin(),
+											"nombre"=>utf8_encode($comercial->getCaNombre())
+										);
+		}
+	}
+
+
 
     public function executeWidgetContinuacion(){
 		$this->data = array();
@@ -465,6 +475,9 @@ class widgetsComponents extends sfComponents
         $this->data[] = array(  "impoexpo"=>utf8_encode(Constantes::IMPO ),
                                 "transporte"=>utf8_encode(Constantes::MARITIMO ),
                                 "modalidad"=>"TRASLADO");
+		$this->data[] = array(  "impoexpo"=>utf8_encode(Constantes::EXPO ),
+                                "transporte"=>utf8_encode(Constantes::AEREO ),
+                                "modalidad"=>"DTA");
 	}
 
 
@@ -530,19 +543,17 @@ class widgetsComponents extends sfComponents
             $this->data[$key]["b_ca_tipo"] = utf8_encode($this->data[$key]["b_ca_tipo"]);
             $this->data[$key]["b_ca_transporte"] = utf8_encode($this->data[$key]["b_ca_transporte"]);
         }
-
 	}
-
 
     public function executeWidgetBodega(){
         $this->data = Doctrine::getTable("Bodega")
-                                             ->createQuery("b")
-                                             ->select("b.*")
-                                             ->addOrderBy("b.ca_tipo ASC")
-                                             ->addOrderBy("b.ca_nombre ASC")
-                                             ->distinct()
-                                             ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
-                                             ->execute();
+						 ->createQuery("b")
+						 ->select("b.*")
+						 ->addOrderBy("b.ca_tipo ASC")
+						 ->addOrderBy("b.ca_nombre ASC")
+						 ->distinct()
+						 ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+						 ->execute();
 
         foreach( $this->data as $key=>$val ){
             $this->data[$key]["b_ca_tipo"] = utf8_encode($this->data[$key]["b_ca_tipo"]);
@@ -557,6 +568,20 @@ class widgetsComponents extends sfComponents
 
 	}
 
+    public function executeWidgetParametros()
+    {
+        $this->data = array();
+        //echo $this->getRequestParameter("caso_uso");
+        $casos=explode(",", $this->caso_uso);
+        foreach($casos as $caso)
+        {
+            $datos = ParametroTable::retrieveByCaso( $caso );
+            foreach( $datos as $dato ){
+                $this->data[]=array("id"=>utf8_encode($dato->getCaValor()),"name"=>  utf8_encode($dato->getCaValor()),"caso_uso"=>$dato->getCaCasouso());
+            }
+        }
+	}
+
     public function executeWidgetReporte(){
 
 
@@ -566,5 +591,6 @@ class widgetsComponents extends sfComponents
 
 
 	}
+
 }
 ?>

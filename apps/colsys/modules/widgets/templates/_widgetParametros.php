@@ -1,16 +1,14 @@
 <?php
-/* 
+/*
  *  This file is part of the Colsys Project.
- * 
+ *
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
-
 $data = $sf_data->getRaw("data");
-
+//print_r($data);
 ?>
 <script type="text/javascript">
-
-WidgetPais = function( config ){
+WidgetParametros = function( config ){
     Ext.apply(this, config);
     this.data = <?=json_encode($data)?>;
     this.store = new Ext.data.Store({
@@ -22,58 +20,49 @@ WidgetPais = function( config ){
 						successProperty: 'success'
 					},
 					Ext.data.Record.create([
-						{name: 'idtrafico'},
-                        {name: 'nombre'}
+						{name: 'id'},
+                        {name: 'name'}
 					])
 				)
-                //,proxy: new Ext.data.MemoryProxy( <?=json_encode(array("root"=>$data, "total"=>count($data), "success"=>true) )?> )
 			})
 
-    WidgetPais.superclass.constructor.call(this, {
-        valueField: 'idtrafico',
-        displayField: 'nombre',
+    WidgetParametros.superclass.constructor.call(this, {
+        mode: 'local',
+        displayField: 'name',
+        valueField: 'id',
         typeAhead: true,
         forceSelection: true,
         triggerAction: 'all',
         emptyText:'',
-        selectOnFocus: true,        
+        selectOnFocus: true,
         lazyRender:true,
-        mode: 'local',
         listClass: 'x-combo-list-small',
         listeners: {
-            render  : function(a ){
-                if( this.pais && this.pais!="todos" ){
-					pais=this.pais.split(",");
-
-
-                    var list = new Array();
-                    for( k in this.data ){
-                        var rec = this.data[k];
-
-                        //if( rec.idtrafico==this.pais )
-						if(jQuery.inArray(rec.idtrafico, pais)>=0)
-						{
-                            list.push( rec );
-                        }
-                    }
-                    var data = new Object();
-                    data.root = list;                    
-                    this.store.loadData(data);
-                }
-                else if( this.pais=="todos" )
-                {
-                    var data = new Object();
-                    data.root = this.data;
-                    this.store.loadData(data);
-                }
-            }
+            focus: this.onFocusWdg
+            //focus: this.onRender
         }
     });
 }
 
+Ext.extend(WidgetParametros, Ext.form.ComboBox, {
+    onFocusWdg: function( field, newVal, oldVal ){
+        var list = new Array();
+        //alert(this.caso_uso)
+        if( this.caso_uso ){
+        //alert(this.data[0].toSource())
+            for( k in this.data ){
+                var rec = this.data[k];
+                if( rec.caso_uso==this.caso_uso ){
+                    list.push( rec );
+                }
+            }
+//                alert(list.toSource());
+            var data = new Object();
+            data.root = list;
+            this.store.loadData(data);
+        }
+    },
 
-Ext.extend(WidgetPais, Ext.form.ComboBox, {
-    
 	getTrigger : Ext.form.TwinTriggerField.prototype.getTrigger,
     initTrigger : Ext.form.TwinTriggerField.prototype.initTrigger,
     trigger1Class : 'x-form-clear-trigger',
@@ -83,7 +72,7 @@ Ext.extend(WidgetPais, Ext.form.ComboBox, {
     hideTrigger2 : true,
 
     initComponent : function() {
-        WidgetPais.superclass.initComponent.call(this);
+        WidgetParametros.superclass.initComponent.call(this);
 
         this.triggerConfig = {
 			tag : 'span',
@@ -122,7 +111,8 @@ Ext.extend(WidgetPais, Ext.form.ComboBox, {
 	onTrigger3Click : function() {
 		this.onTriggerClick();
 	}
+
 });
 
-	
+
 </script>

@@ -400,16 +400,13 @@ class widgetsActions extends sfActions
                             ->limit(40)
                             ->execute();
 
-
-
-            $clientes = array();
-
             foreach ( $rows as $row ) {
                 $result = array();
                 $result["ca_idcontacto"]=$row["c_ca_idcontacto"];
-                $result["ca_idcliente"]=utf8_encode($row["cl_ca_idcliente"]);
                 $result["ca_compania"]=utf8_encode($row["cl_ca_compania"]);
-                $result["ca_nombres"]=utf8_encode($row["c_ca_nombres"]." ".$row["c_ca_papellido"]." ".$row["c_ca_sapellido"]);
+                $result["ca_nombres"]=utf8_encode($row["c_ca_nombres"]);
+                $result["ca_papellido"]=utf8_encode($row["c_ca_papellido"]);
+                $result["ca_sapellido"]=utf8_encode($row["c_ca_sapellido"]);
                 $result["ca_preferencias"]=utf8_encode($row["cl_ca_preferencias"]);
                 $result["ca_nombre"]=utf8_encode($row["v_ca_nombre"]);
                 $result["ca_cargo"]=utf8_encode($row["c_ca_cargo"]);
@@ -423,18 +420,14 @@ class widgetsActions extends sfActions
                 $result["ca_diascredito"]=$row["lc_ca_diascredito"];
                 $result["ca_cupo"]=$row["lc_ca_cupo"];
                 $clientes[]=$result;
-
             }
-            $this->responseArray = array( "totalCount"=>count( $clientes ), "clientes"=>$clientes  );
-        }else{
-            $this->responseArray = array( "totalCount"=>0, "clientes"=>array()  );
         }
+        $this->responseArray = array( "totalCount"=>count( $clientes ), "clientes"=>$clientes  );
         $this->setTemplate("responseTemplate");
 	}
 
-
-
-    public function executeListaClientesJSON(){
+    public function executeListaClientesJSON()
+    {
 		$criterio =  $this->getRequestParameter("query");
         if( $criterio ){
             $rows = Doctrine_Query::create()

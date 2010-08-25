@@ -4,12 +4,8 @@
  * 
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
-
-
 ?>
 <script type="text/javascript">
-
-
 WidgetContactoCliente = function( config ){
     Ext.apply(this, config);
     
@@ -54,15 +50,11 @@ WidgetContactoCliente = function( config ){
         triggerAction: 'all',
         emptyText:'',
         selectOnFocus: true,        
-        lazyRender:true,        
+        lazyRender:true,
         itemSelector: 'div.search-item',
-        emptyText: 'Escriba el nombre del cliente...',
-        allowBlank:false
+        emptyText: 'Escriba el nombre del cliente...'        
 
     });
-
-
-
 }
 
 
@@ -83,8 +75,6 @@ Ext.extend(WidgetContactoCliente, Ext.form.ComboBox, {
             }
             mensaje += "Este cliente se encuentra en lista clinton";
         }
-
-
 
         var fchcircular = record.get("fchcircular");
         //alert( fchcircular);

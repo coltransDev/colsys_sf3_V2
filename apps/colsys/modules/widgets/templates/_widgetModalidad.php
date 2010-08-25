@@ -4,12 +4,8 @@
  * 
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
-
 $data = $sf_data->getRaw("data");
-
 ?>
-
-
 
 <script type="text/javascript">
 
@@ -59,12 +55,13 @@ Ext.extend(WidgetModalidad, Ext.form.ComboBox, {
         var cmp = Ext.getCmp(this.linkTransporte);
         if( cmp ){
             var cmp2 = Ext.getCmp(this.linkImpoexpo);
-            if( cmp2 ){                
+            if( cmp2 ){
+				// alert(this.linkTransporte);
                 var list = new Array();
                 var transporte = Ext.getCmp(this.linkTransporte).getValue();
                 var impoexpo = Ext.getCmp(this.linkImpoexpo).getValue();                
                 for( k in this.data ){
-                    var rec = this.data[k];
+                    var rec = this.data[k];					
                     if( transporte && impoexpo && rec.transporte==transporte && rec.impoexpo==impoexpo ){
                         list.push( rec );
                     }
@@ -80,10 +77,55 @@ Ext.extend(WidgetModalidad, Ext.form.ComboBox, {
         }else{
             alert( "arrrrg: No existe el componente id: "+e.combo.linkTransporte+"!");
         }
+    },
+	getTrigger : Ext.form.TwinTriggerField.prototype.getTrigger,
+    initTrigger : Ext.form.TwinTriggerField.prototype.initTrigger,
+    trigger1Class : 'x-form-clear-trigger',
+    trigger2Class : 'x-form-search-trigger',
+    trigger3Class : 'x-form-select-trigger',
+    hideTrigger1 : true,
+    hideTrigger2 : true,
 
+    initComponent : function() {
+        WidgetModalidad.superclass.initComponent.call(this);
 
+        this.triggerConfig = {
+			tag : 'span',
+			cls : 'x-form-twin-triggers',
+			cn : [{
+				tag : 'img',
+				src : Ext.BLANK_IMAGE_URL,
+				cls : 'x-form-trigger ' + this.trigger1Class
+			}, {
+				tag : 'img',
+				src : Ext.BLANK_IMAGE_URL,
+				cls : 'x-form-trigger ' + this.trigger2Class
+			},
+			{
+				tag : 'img',
+				src : Ext.BLANK_IMAGE_URL,
+				cls : 'x-form-trigger ' + this.trigger3Class
+			}]
+		};
+	},
+	reset : Ext.form.Field.prototype.reset.createSequence(function() {
+		this.triggers[0].hide();
+	}),
 
-    }
+	onViewClick : Ext.form.ComboBox.prototype.onViewClick.createSequence(function() {
+		this.triggers[0].show();
+	}),
+	onTrigger1Click : function(a,b,c) {
+		this.clearValue();
+		this.triggers[0].hide();
+		this.fireEvent('clear', this);
+		this.fireEvent('select', this);
+	},
+	onTrigger2Click : function() {
+	},
+	onTrigger3Click : function() {
+		this.onTriggerClick();
+	}
 });
 
 	

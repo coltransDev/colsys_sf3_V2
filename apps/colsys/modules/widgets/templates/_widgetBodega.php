@@ -60,32 +60,80 @@ Ext.extend(WidgetBodega, Ext.form.ComboBox, {
 
             var cmp2 = Ext.getCmp(this.linkTipo);
 
-            if( cmp2 ){
+            //if( cmp2 ){
                      
                 var list = new Array();
                 var transporte = Ext.getCmp(this.linkTransporte).getValue();
-                var tipo = Ext.getCmp(this.linkTipo).getValue();
+              //  var tipo = Ext.getCmp(this.linkTipo).getValue();
                 
                 for( k in this.data ){
                     var rec = this.data[k];
 
-                    if( transporte && rec.b_ca_transporte==transporte && rec.b_ca_tipo==tipo ){
+//                    if( transporte && rec.b_ca_transporte==transporte && rec.b_ca_tipo==tipo ){
                         list.push( rec );
-                    }
+//                    }
                 }
 
                 var data = new Object();
                 data.root = list;
 
                 this.store.loadData(data);
-            }else{
+/*            }else{
                 alert( "arrrrg: No existe el componente id: "+e.combo.linkTipo+"!");
             }
-
+*/
         }else{
             alert( "arrrrg: No existe el componente id: "+e.combo.linkTransporte+"!");
         }
-    }
+    },
+	getTrigger : Ext.form.TwinTriggerField.prototype.getTrigger,
+    initTrigger : Ext.form.TwinTriggerField.prototype.initTrigger,
+    trigger1Class : 'x-form-clear-trigger',
+    trigger2Class : 'x-form-search-trigger',
+    trigger3Class : 'x-form-select-trigger',
+    hideTrigger1 : true,
+    hideTrigger2 : true,
+
+    initComponent : function() {
+        WidgetBodega.superclass.initComponent.call(this);
+
+        this.triggerConfig = {
+			tag : 'span',
+			cls : 'x-form-twin-triggers',
+			cn : [{
+				tag : 'img',
+				src : Ext.BLANK_IMAGE_URL,
+				cls : 'x-form-trigger ' + this.trigger1Class
+			}, {
+				tag : 'img',
+				src : Ext.BLANK_IMAGE_URL,
+				cls : 'x-form-trigger ' + this.trigger2Class
+			},
+			{
+				tag : 'img',
+				src : Ext.BLANK_IMAGE_URL,
+				cls : 'x-form-trigger ' + this.trigger3Class
+			}]
+		};
+	},
+	reset : Ext.form.Field.prototype.reset.createSequence(function() {
+		this.triggers[0].hide();
+	}),
+
+	onViewClick : Ext.form.ComboBox.prototype.onViewClick.createSequence(function() {
+		this.triggers[0].show();
+	}),
+	onTrigger1Click : function(a,b,c) {
+		this.clearValue();
+		this.triggers[0].hide();
+		this.fireEvent('clear', this);
+		this.fireEvent('select', this);
+	},
+	onTrigger2Click : function() {
+	},
+	onTrigger3Click : function() {
+		this.onTriggerClick();
+	}
 });
 
 	

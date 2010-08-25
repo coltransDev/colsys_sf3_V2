@@ -21,6 +21,7 @@ new Ext.form.ComboBox({
 		mode : 'local',
 		lazyRender:true,
 		listClass: 'x-combo-list-small',
+		width: 250,
 		listeners:{focus:function( field, newVal, oldVal ){                            
 							<?
 							if( isset($link) ){

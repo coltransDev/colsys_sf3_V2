@@ -39,16 +39,63 @@ WidgetIncoterms = function( config ){
         forceSelection: true,
         triggerAction: 'all',
         emptyText:'',
-        selectOnFocus: true,        
+        selectOnFocus: true,
         lazyRender:true,
         mode: 'local',
-        listClass: 'x-combo-list-small'        
+        listClass: 'x-combo-list-small'
     });
 }
 
 
 Ext.extend(WidgetIncoterms, Ext.form.ComboBox, {
+	getTrigger : Ext.form.TwinTriggerField.prototype.getTrigger,
+    initTrigger : Ext.form.TwinTriggerField.prototype.initTrigger,
+    trigger1Class : 'x-form-clear-trigger',
+    trigger2Class : 'x-form-search-trigger',
+    trigger3Class : 'x-form-select-trigger',
+    hideTrigger1 : true,
+    hideTrigger2 : true,
 
+    initComponent : function() {
+        WidgetIncoterms.superclass.initComponent.call(this);
+
+        this.triggerConfig = {
+			tag : 'span',
+			cls : 'x-form-twin-triggers',
+			cn : [{
+				tag : 'img',
+				src : Ext.BLANK_IMAGE_URL,
+				cls : 'x-form-trigger ' + this.trigger1Class
+			}, {
+				tag : 'img',
+				src : Ext.BLANK_IMAGE_URL,
+				cls : 'x-form-trigger ' + this.trigger2Class
+			},
+			{
+				tag : 'img',
+				src : Ext.BLANK_IMAGE_URL,
+				cls : 'x-form-trigger ' + this.trigger3Class
+			}]
+		};
+	},
+	reset : Ext.form.Field.prototype.reset.createSequence(function() {
+		this.triggers[0].hide();
+	}),
+
+	onViewClick : Ext.form.ComboBox.prototype.onViewClick.createSequence(function() {
+		this.triggers[0].show();
+	}),
+	onTrigger1Click : function(a,b,c) {
+		this.clearValue();
+		this.triggers[0].hide();
+		this.fireEvent('clear', this);
+		this.fireEvent('select', this);
+	},
+	onTrigger2Click : function() {
+	},
+	onTrigger3Click : function() {
+		this.onTriggerClick();
+	}
 });
 
 	
