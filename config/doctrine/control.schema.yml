@@ -111,6 +111,7 @@ Perfil:
       type: string(30)
     ca_descripcion:
       type: string(255)
+    ca_aplicacion: string
   relations:
     AccesoPerfil:
       local: ca_perfil
@@ -216,6 +217,7 @@ Rutina:
     ca_programa: string(100)
     ca_grupo: string(21)
     ca_icon: string
+    ca_aplicacion: string
   relations:
     AccesoPerfil:
       local: ca_rutina
