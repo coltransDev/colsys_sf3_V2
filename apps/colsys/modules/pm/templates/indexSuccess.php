@@ -34,9 +34,12 @@ include_component("kbase", "panelCategoriaWindow");
 include_component("kbase", "busquedaIssueWindow");
 
 
-include_component("pm","panelEventos");
+include_component("pm","panelBusquedaTicket");
 include_component("pm","panelPreviewTicket");
 
+
+
+include_component("pm", "busquedaTicketWindow");
 ?>
 <script type="text/javascript">
 
@@ -48,6 +51,12 @@ var crearTicket = function(){
 
 var buscarSolucion = function(){
     var win = new BusquedaIssueWindow();
+    win.show();
+}
+
+
+var buscarTicket = function(){
+    var win = new BusquedaTicketWindow();
     win.show();
 }
 
@@ -68,9 +77,10 @@ var newResponse = function( idticket , idresponse, opener ){
 var registroEventos = function(){
     
 
-    var newComponent = new PanelEventos({
+    var newComponent = new PanelBusquedaTicket({
                                              closable: true,                                             
-                                             title: 'Eventos'
+                                             title: 'Eventos',
+                                             autoload: true
                                             });
     Ext.getCmp('tab-panel').add(newComponent);
     Ext.getCmp('tab-panel').setActiveTab(newComponent);
@@ -178,16 +188,16 @@ Ext.onReady(function(){
                 </a>
             </div>
         </div>
-        <!--
+        
         <div style="float:left;">
             <div class="icon">
-                <a href="#" onClick="crearTicket()">
+                <a href="#" onClick="buscarTicket()">
                     <?=image_tag("48x48/kviewshell.png")?>
                     <span>Buscar Ticket</span>
                 </a>
             </div>
         </div>
-        -->
+
         <div style="float:left;">
             <div class="icon">
                 <a href="#" onClick="buscarSolucion()">
@@ -243,13 +253,13 @@ Ext.onReady(function(){
 <div style="height:100%"></div>
 <script type="text/javascript">
     Ext.onReady(function(){
-        var newComponent = new PanelReading({           id: 'adad',
+        /*var newComponent = new PanelReading({           id: 'adad',
                                                              closable: true,
                                                              idproject: 3,
                                                              title: 'Panel prueba'
                                                             });
                     Ext.getCmp('tab-panel').add(newComponent);
-                    Ext.getCmp('tab-panel').setActiveTab(newComponent);
+                    Ext.getCmp('tab-panel').setActiveTab(newComponent);*/
         
 
         /*var newComponent = new PanelCronogramaUsuario({    id: 'adad',

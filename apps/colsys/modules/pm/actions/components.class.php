@@ -212,15 +212,11 @@ class pmComponents extends sfComponents
 
 
     /*
-	* Muestra los ultimos eventos dentro del programa
+	* Muestra los ultimos eventos dentro del programa o muestra
+    * los resultados de las busquedas
 	* @author: Andres Botero
 	*/
-    public function executePanelEventos( ){
-
-
-
-        
-
+    public function executePanelBusquedaTicket( ){
 
     }
 
@@ -232,6 +228,24 @@ class pmComponents extends sfComponents
 
     }
 
+
+
+    /*
+	* Busqueda de tickets
+	* @author: Andres Botero
+	*/
+    public function executeBusquedaTicketWindow( ){
+
+    }
+
+
+    /*
+	* 
+	* @author: Andres Botero
+	*/
+    public function executeWidgetBusquedaTicket( ){
+
+    }
 	
 	
 }

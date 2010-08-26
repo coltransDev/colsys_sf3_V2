@@ -14,7 +14,7 @@
 <script type="text/javascript">
 
 
-PanelEventos = function( config ){
+PanelBusquedaTicket = function( config ){
 
     Ext.apply(this, config);
 
@@ -184,8 +184,8 @@ PanelEventos = function( config ){
 
     this.store = new Ext.data.GroupingStore({
 
-        autoLoad : true,
-        url: '<?=url_for("pm/datosPanelEventos")?>',
+        autoLoad : this.autoload,
+        url: '<?=url_for("pm/datosPanelBusquedaTicket")?>',
         baseParams : {
             
         },
@@ -207,7 +207,7 @@ PanelEventos = function( config ){
     
 
     
-    PanelEventos.superclass.constructor.call(this, {
+    PanelBusquedaTicket.superclass.constructor.call(this, {
        loadMask: {msg:'Cargando...'},       
        //boxMinHeight: 300,
        plugins: [
@@ -228,7 +228,7 @@ PanelEventos = function( config ){
        }),
        listeners:{            
             //rowcontextmenu: this.onRowcontextMenu,
-            //rowdblclick : this.onRowDblclick
+            rowdblclick : this.onRowDblclick
        }
        
     });
@@ -236,7 +236,7 @@ PanelEventos = function( config ){
 
 };
 
-Ext.extend(PanelEventos, Ext.grid.GridPanel, {
+Ext.extend(PanelBusquedaTicket, Ext.grid.GridPanel, {
 
     
     recargar: function(){
@@ -254,7 +254,32 @@ Ext.extend(PanelEventos, Ext.grid.GridPanel, {
             '<b>{0}</b>',
             value
         );
-    }
+    },
+
+    onRowDblclick: function( grid , rowIndex, e ){
+		record =  this.store.getAt( rowIndex );
+		if( typeof(record)!="undefined" ){
+
+            var idticket = record.data.idticket;
+
+            var newComponent = new Ext.Panel({
+                                                closable: true,
+                                                title: 'Ticket # '+idticket,
+                                                //autoHeight: true,
+                                                items: new PanelPreviewTicket({
+                                                     idticket: idticket
+                                                    })
+                                              });
+            Ext.getCmp('tab-panel').add(newComponent);
+            Ext.getCmp('tab-panel').setActiveTab(newComponent);
+
+
+            var win = Ext.getCmp('ticket-search-win');
+            if( win ){
+                win.close();
+            }
+		}
+	}
 
 
 

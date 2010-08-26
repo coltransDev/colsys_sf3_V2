@@ -27,7 +27,7 @@ PanelReading = function( config ){
    
     
     this.previewTicketPanel = new PanelPreviewTicket({
-           
+            idcomponent:idcomponent,
             region: 'south',
             deferredRender: false,
             activeTab: 0,     // first tab initially active
@@ -169,38 +169,8 @@ Ext.extend(PanelReading, Ext.Panel, {
     getTemplate: function(){
         return this.tpl;
     },
-    openTab : function(record){
-        
-        record = (record && record.data) ? record : this.gsm.getSelected();
-        var d = record.data;
-        var id = !d.link ? Ext.id() : d.link.replace(/[^A-Z0-9-_]/gi, '');
-        var tab;
-        var tabPanel = Ext.getCmp('tab-panel');
-        if(!(tab = tabPanel.getItem(id))){
-            tab = new Ext.Panel({
-                id: id,
-                cls:'preview single-preview',
-                title: d.title,
-                tabTip: d.title,
-                html: this.getTemplate().apply(d),
-                closable:true,
-                //listeners: FeedViewer.LinkInterceptor,
-                autoScroll:true,
-                border:true
-
-               
-            });
-            tabPanel.add(tab);
-        }
-        tabPanel.setActiveTab(tab);
-    },
-
-    viewPrinter : function(record){
-        record = (record && record.data) ? record : this.gsm.getSelected();
-        var d = record.data;
-        window.open("<?=url_for("pm/verTicket?format=email")?>"+"/id/"+d.idticket);
-        
-    },
+    
+    
 
     newResponse: function(record){
        record = (record && record.data) ? record : this.gsm.getSelected();

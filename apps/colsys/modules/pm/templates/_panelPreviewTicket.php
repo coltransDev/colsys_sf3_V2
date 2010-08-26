@@ -29,36 +29,14 @@ PanelPreviewTicket = function( config ){
     }else{
         var idcomponent = this.id;
     }
-
-    this.record = Ext.data.Record.create([
-            {name: 'sel', type: 'bool'},
-            {name: 'idticket', type: 'integer', mapping: 'h_ca_idticket'},
-            {name: 'idproject', type: 'integer', mapping: 'h_ca_idproject'},
-            {name: 'project', type: 'string', mapping: 'p_ca_name'},
-            {name: 'idgroup', type: 'integer', mapping: 'h_ca_idgroup'},
-            {name: 'milestone', type: 'string'},
-            {name: 'estimated', type: 'date', dateFormat:'Y-m-d', mapping: 'm_ca_due'},
-            {name: 'login', type: 'string', mapping: 'h_ca_login'},
-            {name: 'tipo', type: 'string', mapping: 'h_ca_type'},
-            {name: 'title', type: 'string', mapping: 'h_ca_title'},
-            {name: 'text', type: 'string', mapping: 'h_ca_text'},
-            {name: 'priority', type: 'string', mapping: 'h_ca_priority'},
-            {name: 'assignedto', type: 'string', mapping: 'h_ca_assignedto'},
-            {name: 'opened', type: 'date', mapping: 'h_ca_opened', dateFormat:'Y-m-d H:i:s'},
-            {name: 'action', type: 'string', mapping: 'h_ca_action'},
-            {name: 'ultseg', type: 'date', mapping: 'h_ultseg', dateFormat:'Y-m-d H:i:s'},
-            {name: 'respuesta', type: 'date', mapping: 'tar_ca_fchterminada', dateFormat:'Y-m-d H:i:s'},
-            {name: 'percentage', type: 'integer', mapping: 'h_ca_percentage'},
-            {name: 'folder', type: 'string'}
-
-    ]);
-
+    
     
     this.preview = new Ext.Panel({
         //id: 'preview',
         title: "Vista Previa",
         cls:'preview',
         autoScroll: true,
+        height: 600,
         //listeners: FeedViewer.LinkInterceptor,
 
         tbar: [{
@@ -173,14 +151,8 @@ PanelPreviewTicket = function( config ){
 
             callback :function(options, success, response){
                 var res = Ext.util.JSON.decode( response.responseText );
-                //alert( res.data.idticket );
-                var rec = new panel.record(
-                    res.data
-                );
-                
-
-
-                panel.loadRecord( rec );
+                res.data.opened = Date.parseDate( res.data.opened, "Y-m-d H:i:s" );                
+                panel.loadRecord( res );
 
             }
         });
@@ -254,7 +226,7 @@ Ext.extend(PanelPreviewTicket, Ext.TabPanel, {
 
         this.idticket = record.data.idticket;
 
-        //this.tpl.overwrite(this.preview.body, record.data);
+        this.tpl.overwrite(this.preview.body, record.data);
 
         this.filePanel.setFolder( record.data.folder );
         this.filePanel.store.reload();
@@ -290,7 +262,30 @@ Ext.extend(PanelPreviewTicket, Ext.TabPanel, {
         items.get('response-'+idcomponent).enable();
         items.get('kb-'+idcomponent).enable();
         this.usersPanel.wgUsuario.enable();
+    },
+
+    viewPrinter : function(){
+        var idticket = this.idticket;        
+        window.open("<?=url_for("pm/verTicket?format=email")?>"+"/id/"+idticket);
+
+    },
+
+    openTab : function(){
+        
+        var idticket = this.idticket;
+
+        var newComponent = new Ext.Panel({
+                                            closable: true,
+                                            title: 'Ticket # '+idticket,
+                                            //autoHeight: true,
+                                            items: new PanelPreviewTicket({
+                                                 idticket: idticket
+                                                })
+                                          });
+        Ext.getCmp('tab-panel').add(newComponent);
+        Ext.getCmp('tab-panel').setActiveTab(newComponent);
     }
+   
 
    
 
