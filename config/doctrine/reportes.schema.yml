@@ -83,6 +83,9 @@ Reporte:
     ca_usuanulado: string
     ca_fchcerrado: timestamp
     ca_usucerrado: string
+    ca_idclientefac: numeric
+    ca_idclienteag: numeric
+    ca_idclienteotro: numeric
   relations:
     RepStatus:
       local: ca_idreporte
@@ -161,6 +164,21 @@ Reporte:
       foreign: ca_idreporte
       type: one
       class: Reporte
+    ClienteFac:
+      local: ca_idclientefac
+      foreign: ca_idcliente
+      type: one
+      class: Cliente
+    ClienteAg:
+      local: ca_idclienteag
+      foreign: ca_idcliente
+      type: one
+      class: Cliente
+    ClienteOtro:
+      local: ca_idclienteotro
+      foreign: ca_idcliente
+      type: one
+      class: Cliente
 
 RepStatus:
   options:
@@ -419,11 +437,12 @@ RepSeguro:
     ca_idmoneda_vta: string
     ca_obtencionpoliza:
       type: decimal
-      notnull: true
+      notnull: true    
     ca_idmoneda_pol: string
     ca_seguro_conf:
       type: string
       notnull: true
+    ca_idmonedaventa: string
   relations:
     Reporte:
       local: ca_idreporte
@@ -471,11 +490,11 @@ RepExpo:
     ca_idreporte:
       type: integer
       primary: true
-    ca_peso: decimal
-    ca_volumen: decimal
+    ca_peso: string
+    ca_volumen: string
     ca_piezas: string
     ca_dimensiones: string
-    ca_valorcarga: decimal
+    ca_valorcarga: numeric
     ca_anticipo: string
     ca_idsia:
       type: integer
