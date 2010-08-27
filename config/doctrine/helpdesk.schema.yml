@@ -60,15 +60,15 @@ HdeskTicket:
     ca_idseguimiento: integer
     ca_idmilestone: integer
     ca_percentage: integer
-  relations:
-    HdeskResponse:
-      local: ca_idticket
-      foreign: ca_idticket
-      type: many
+  relations:    
     HdeskGroup:
       local: ca_idgroup
       foreign: ca_idgroup
       type: one
+    HdeskResponse:
+      local: ca_idticket
+      foreign: ca_idticket
+      type: many
     HdeskProject:
       local: ca_idproject
       foreign: ca_idproject
@@ -117,11 +117,10 @@ HdeskResponse:
     ca_createdat: timestamp
     ca_text: string
     ca_idissue: integer
+    ca_responseto: integer
+    ca_idtarea: integer
   relations:
-    HdeskTicket:
-      local: ca_idticket
-      foreign: ca_idticket
-      type: one
+    
     Usuario:
       local: ca_login
       foreign: ca_login
@@ -130,6 +129,16 @@ HdeskResponse:
       local: ca_idissue
       foreign: ca_idissue
       type: one
+    Response:
+      local: ca_idresponse
+      foreign: ca_responseto
+      type: many
+      class: HdeskResponse
+    NotTarea:
+      local: ca_idtarea
+      foreign: ca_idtarea
+      type: one
+
 
 
 HdeskProject:

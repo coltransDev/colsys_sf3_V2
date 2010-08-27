@@ -10,23 +10,44 @@
  * @property string $ca_login
  * @property timestamp $ca_createdat
  * @property string $ca_text
- * @property HdeskTicket $HdeskTicket
+ * @property integer $ca_idissue
+ * @property integer $ca_responseto
+ * @property integer $ca_idtarea
  * @property Usuario $Usuario
+ * @property KBIssue $KBIssue
+ * @property Doctrine_Collection $Response
+ * @property NotTarea $NotTarea
+ * @property HdeskTicket $HdeskTicket
+ * @property HdeskResponse $HdeskResponse
  * 
- * @method integer       getCaIdresponse()  Returns the current record's "ca_idresponse" value
- * @method integer       getCaIdticket()    Returns the current record's "ca_idticket" value
- * @method string        getCaLogin()       Returns the current record's "ca_login" value
- * @method timestamp     getCaCreatedat()   Returns the current record's "ca_createdat" value
- * @method string        getCaText()        Returns the current record's "ca_text" value
- * @method HdeskTicket   getHdeskTicket()   Returns the current record's "HdeskTicket" value
- * @method Usuario       getUsuario()       Returns the current record's "Usuario" value
- * @method HdeskResponse setCaIdresponse()  Sets the current record's "ca_idresponse" value
- * @method HdeskResponse setCaIdticket()    Sets the current record's "ca_idticket" value
- * @method HdeskResponse setCaLogin()       Sets the current record's "ca_login" value
- * @method HdeskResponse setCaCreatedat()   Sets the current record's "ca_createdat" value
- * @method HdeskResponse setCaText()        Sets the current record's "ca_text" value
- * @method HdeskResponse setHdeskTicket()   Sets the current record's "HdeskTicket" value
- * @method HdeskResponse setUsuario()       Sets the current record's "Usuario" value
+ * @method integer             getCaIdresponse()  Returns the current record's "ca_idresponse" value
+ * @method integer             getCaIdticket()    Returns the current record's "ca_idticket" value
+ * @method string              getCaLogin()       Returns the current record's "ca_login" value
+ * @method timestamp           getCaCreatedat()   Returns the current record's "ca_createdat" value
+ * @method string              getCaText()        Returns the current record's "ca_text" value
+ * @method integer             getCaIdissue()     Returns the current record's "ca_idissue" value
+ * @method integer             getCaResponseto()  Returns the current record's "ca_responseto" value
+ * @method integer             getCaIdtarea()     Returns the current record's "ca_idtarea" value
+ * @method Usuario             getUsuario()       Returns the current record's "Usuario" value
+ * @method KBIssue             getKBIssue()       Returns the current record's "KBIssue" value
+ * @method Doctrine_Collection getResponse()      Returns the current record's "Response" collection
+ * @method NotTarea            getNotTarea()      Returns the current record's "NotTarea" value
+ * @method HdeskTicket         getHdeskTicket()   Returns the current record's "HdeskTicket" value
+ * @method HdeskResponse       getHdeskResponse() Returns the current record's "HdeskResponse" value
+ * @method HdeskResponse       setCaIdresponse()  Sets the current record's "ca_idresponse" value
+ * @method HdeskResponse       setCaIdticket()    Sets the current record's "ca_idticket" value
+ * @method HdeskResponse       setCaLogin()       Sets the current record's "ca_login" value
+ * @method HdeskResponse       setCaCreatedat()   Sets the current record's "ca_createdat" value
+ * @method HdeskResponse       setCaText()        Sets the current record's "ca_text" value
+ * @method HdeskResponse       setCaIdissue()     Sets the current record's "ca_idissue" value
+ * @method HdeskResponse       setCaResponseto()  Sets the current record's "ca_responseto" value
+ * @method HdeskResponse       setCaIdtarea()     Sets the current record's "ca_idtarea" value
+ * @method HdeskResponse       setUsuario()       Sets the current record's "Usuario" value
+ * @method HdeskResponse       setKBIssue()       Sets the current record's "KBIssue" value
+ * @method HdeskResponse       setResponse()      Sets the current record's "Response" collection
+ * @method HdeskResponse       setNotTarea()      Sets the current record's "NotTarea" value
+ * @method HdeskResponse       setHdeskTicket()   Sets the current record's "HdeskTicket" value
+ * @method HdeskResponse       setHdeskResponse() Sets the current record's "HdeskResponse" value
  * 
  * @package    symfony
  * @subpackage model
@@ -56,6 +77,15 @@ abstract class BaseHdeskResponse extends myDoctrineRecord
         $this->hasColumn('ca_text', 'string', null, array(
              'type' => 'string',
              ));
+        $this->hasColumn('ca_idissue', 'integer', null, array(
+             'type' => 'integer',
+             ));
+        $this->hasColumn('ca_responseto', 'integer', null, array(
+             'type' => 'integer',
+             ));
+        $this->hasColumn('ca_idtarea', 'integer', null, array(
+             'type' => 'integer',
+             ));
 
         $this->option('symfony', array(
              'form' => false,
@@ -66,12 +96,28 @@ abstract class BaseHdeskResponse extends myDoctrineRecord
     public function setUp()
     {
         parent::setUp();
+        $this->hasOne('Usuario', array(
+             'local' => 'ca_login',
+             'foreign' => 'ca_login'));
+
+        $this->hasOne('KBIssue', array(
+             'local' => 'ca_idissue',
+             'foreign' => 'ca_idissue'));
+
+        $this->hasMany('HdeskResponse as Response', array(
+             'local' => 'ca_idresponse',
+             'foreign' => 'ca_responseto'));
+
+        $this->hasOne('NotTarea', array(
+             'local' => 'ca_idtarea',
+             'foreign' => 'ca_idtarea'));
+
         $this->hasOne('HdeskTicket', array(
              'local' => 'ca_idticket',
              'foreign' => 'ca_idticket'));
 
-        $this->hasOne('Usuario', array(
-             'local' => 'ca_login',
-             'foreign' => 'ca_login'));
+        $this->hasOne('HdeskResponse', array(
+             'local' => 'ca_responseto',
+             'foreign' => 'ca_idresponse'));
     }
 }
