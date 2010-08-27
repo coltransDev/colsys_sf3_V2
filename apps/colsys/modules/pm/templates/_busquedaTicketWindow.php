@@ -17,7 +17,7 @@ BusquedaTicketWindow = function( config ) {
 
     this.items = [
         new PanelBusquedaTicket({height:400,
-                        id: 'ticket-search-win',
+                        id: 'ticket-search-grid',
                         opener: this.opener,
                         autoload: false
                         })

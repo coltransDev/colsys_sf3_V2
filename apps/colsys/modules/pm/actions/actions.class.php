@@ -1388,34 +1388,42 @@ class pmActions extends sfActions
 
         $option = $request->getParameter("option");
         $query = $request->getParameter("query");
-
-
-        $q = Doctrine::getTable("HdeskResponse")
-                            ->createQuery("r")
-                            ->innerJoin("r.HdeskTicket t")
-                            ->innerJoin("t.HdeskGroup g")
-                            ->select("r.ca_text, t.ca_idticket, t.ca_title, r.ca_createdat, r.ca_login, g.ca_name")                            
+        Doctrine::getTable("HdeskGroup")
+                            ->setAttribute(Doctrine_Core::ATTR_QUERY_LIMIT, Doctrine_Core::LIMIT_ROWS);
+        
+        $q = Doctrine_Query::create()
+                            ->select("r.ca_text, t.ca_idticket, t.ca_title, r.ca_createdat, r.ca_login, g.ca_name")
+                            ->from("HdeskGroup g")                            
+                            ->leftJoin("g.HdeskTicket t")
+                            ->leftJoin("t.HdeskResponse r")
+                            ->limit(100)
                             ->orderBy("r.ca_createdat DESC")
-                            ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
-                            ->limit(100);
+                            ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
 
+        
+                            
+                            
 
          switch( $option ){
              case "idticket":
                  $q->addWhere("t.ca_idticket = ?", intval($query));
                  break;
              case "texto":
-                 $q->addWhere("LOWER(t.ca_title) LIKE ? OR LOWER(t.ca_text) LIKE ? OR LOWER(r.ca_text) LIKE ?", array("%".strtolower($query)."%","%".strtolower($query)."%","%".strtolower($query)."%"));
+                 $q->addWhere("LOWER(t.ca_title) LIKE ? ", "%".strtolower($query)."%");
+                 $q->orWhere("LOWER(t.ca_text) LIKE ? ", "%".strtolower($query)."%");
+                 $q->orWhere("LOWER(r.ca_text) LIKE ? ", "%".strtolower($query)."%");
+                 //$q->addWhere("(LOWER(t.ca_title) LIKE ? OR LOWER(t.ca_text) LIKE ? OR LOWER(r.ca_text) LIKE ?)", array("%".strtolower($query)."%","%".strtolower($query)."%","%".strtolower($query)."%"));
+
                  break;
              case "reportedBy":
                  $q->innerJoin("t.Usuario u");
-                 $q->addWhere("LOWER(u.ca_nombre) LIKE ? OR LOWER(u.ca_login) LIKE ?", array("%".strtolower($query)."%","%".strtolower($query)."%"));
+                 $q->addWhere("(LOWER(u.ca_nombre) LIKE ? OR LOWER(u.ca_login) LIKE ?)", array("%".strtolower($query)."%","%".strtolower($query)."%"));
                  break;
              default:
                  $q->addWhere("g.ca_iddepartament = 13"); //Eventos de sistemas
                  break;
-         }
-                 
+        }
+                                 
         $results = $q->execute();
 
         $lastDate = null;
