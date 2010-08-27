@@ -1392,11 +1392,12 @@ class pmActions extends sfActions
                             ->setAttribute(Doctrine_Core::ATTR_QUERY_LIMIT, Doctrine_Core::LIMIT_ROWS);
         
         $q = Doctrine_Query::create()
-                            ->select("r.ca_text, t.ca_idticket, t.ca_title, r.ca_createdat, r.ca_login, g.ca_name")
+                            ->select("r.ca_text, t.ca_text, t.ca_idticket, t.ca_title, r.ca_createdat, r.ca_login, g.ca_name")
                             ->from("HdeskGroup g")                            
                             ->leftJoin("g.HdeskTicket t")
                             ->leftJoin("t.HdeskResponse r")
                             ->limit(100)
+                            ->distinct()
                             ->orderBy("r.ca_createdat DESC")
                             ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
 
@@ -1408,12 +1409,8 @@ class pmActions extends sfActions
              case "idticket":
                  $q->addWhere("t.ca_idticket = ?", intval($query));
                  break;
-             case "texto":
-                 $q->addWhere("LOWER(t.ca_title) LIKE ? ", "%".strtolower($query)."%");
-                 $q->orWhere("LOWER(t.ca_text) LIKE ? ", "%".strtolower($query)."%");
-                 $q->orWhere("LOWER(r.ca_text) LIKE ? ", "%".strtolower($query)."%");
-                 //$q->addWhere("(LOWER(t.ca_title) LIKE ? OR LOWER(t.ca_text) LIKE ? OR LOWER(r.ca_text) LIKE ?)", array("%".strtolower($query)."%","%".strtolower($query)."%","%".strtolower($query)."%"));
-
+             case "texto":                 
+                 $q->addWhere("(LOWER(t.ca_title) LIKE ? OR LOWER(t.ca_text) LIKE ? OR LOWER(r.ca_text) LIKE ?)", array("%".strtolower($query)."%","%".strtolower($query)."%","%".strtolower($query)."%"));
                  break;
              case "reportedBy":
                  $q->innerJoin("t.Usuario u");
@@ -1427,19 +1424,54 @@ class pmActions extends sfActions
         $results = $q->execute();
 
         $lastDate = null;
+        $lastIdticket = false;
         foreach( $results as $result ){
+
             $row = array();
             $row["idticket"] = $result["t_ca_idticket"];
             $row["text"] = utf8_encode($result["r_ca_text"]);
+            
+            
+            if( $option=="texto" && (strpos(strtolower($result["r_ca_text"]), strtolower($query))===false &&  (strpos(strtolower($result["t_ca_title"]), strtolower($query))===false &&  strpos(strtolower($result["t_ca_text"]), strtolower($query))===false) ) ){
+                continue;
+            }
+            
+            if( $option=="texto" && $lastIdticket==$result["t_ca_idticket"] && (strpos(strtolower($result["t_ca_title"]), strtolower($query))!==false || strpos(strtolower($result["t_ca_text"]), strtolower($query))!==false)  ){
+                continue;                
+            }else{
+                if( strpos(strtolower($result["t_ca_title"]), strtolower($query))!==false ){
+                    $row["text"] = utf8_encode($result["t_ca_title"]);                    
+                }
+
+                if( strpos(strtolower($result["t_ca_text"]), strtolower($query))!==false ){
+                    $row["text"] = utf8_encode($result["t_ca_text"]);
+                }
+            }
+
+            $row["title"] = utf8_encode($result["t_ca_title"]);
+
+            if( $query && $option=="texto" ){ //Resalta la busqueda
+                if( strpos(strtolower($result["text"]), strtolower($query))!==false ){
+                    $origText = substr( $row["text"], stripos($row["text"], $query), strlen( $query ) );
+                    $row["text"] = str_ireplace($origText, "<span style='background-color: #88AAEE'>".$origText."</span>", $row["text"]);
+                }
+                if( strpos(strtolower($result["title"]), strtolower($query))!==false ){
+                    $origText = substr( $row["title"], stripos($row["title"], $query), strlen( $query ) );
+                    $row["title"] = str_ireplace($origText, "<span style='background-color: #88AAEE'>".$origText."</span>", $row["title"]);
+                }
+            }
+
+            
             $row["idticket"] = $result["t_ca_idticket"];
             $row["fchevento"] = $result["r_ca_createdat"];
-            $row["title"] = utf8_encode($result["t_ca_title"]);
+            
             $row["login"] = $result["r_ca_login"];
             $row["group"] = utf8_encode($result["g_ca_name"]);
            
             $data[  ] = $row;
 
             $lastDate = $result["r_ca_createdat"];
+            $lastIdticket = $row["idticket"];
         }
 
         //Muestra eventos abrio y cerro ticket
