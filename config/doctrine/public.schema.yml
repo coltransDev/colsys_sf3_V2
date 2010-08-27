@@ -399,8 +399,8 @@ Concepto:
     ca_transporte: string
     ca_modalidad: string
     ca_liminferior: integer
-
-
+    ca_fcheliminado: timestamp
+    ca_usueliminado: string
 TipoRecargo:
   options:
     symfony:
