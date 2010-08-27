@@ -118,6 +118,7 @@ TraficoUsers:
     ca_usucreado: string
     ca_fchactualizado: timestamp
     ca_usuactualizado: string
+    ca_expo: boolean
   relations:
     Trafico:
       local: ca_idtrafico
