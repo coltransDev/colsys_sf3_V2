@@ -77,7 +77,7 @@ NuevaRespuestaWindow = function( config ) {
                                 enableLists: false,
                                 allowBlank: false
 
-                            }/*,
+                            },
                             {
                                 xtype:'datefield',
                                 name:'fchseguimiento',
@@ -91,7 +91,7 @@ NuevaRespuestaWindow = function( config ) {
                                 enableColors : false,
                                 enableLists: false,
                                 allowBlank: true
-                            }*/
+                            }
                         ]
                     })
 

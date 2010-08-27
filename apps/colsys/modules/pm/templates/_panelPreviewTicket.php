@@ -130,7 +130,7 @@ PanelPreviewTicket = function( config ){
 
     PanelPreviewTicket.superclass.constructor.call(this, {
         
-        activeTab:0,        
+        activeTab:0,
         enableTabScroll: true,
         deferredRender: false,
         

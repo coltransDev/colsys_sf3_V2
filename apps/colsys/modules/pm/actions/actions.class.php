@@ -334,6 +334,52 @@ class pmActions extends sfActions
 			}
 		}
 
+
+        /*
+         * Termina seguimientos previos
+         */
+        if( $idresponse ){
+            $res = Doctrine::getTable("HDeskResponse")->find( $idresponse );
+            if( $res->getCaIdtarea() ){
+                $tarea = $res->getNotTarea();
+                if( $tarea && !$tarea->getCaFchterminada()){
+                    $tarea->setCaFchterminada(date("Y-m-d H:i:s"));
+                    $tarea->save();
+                }
+
+            }
+        }
+
+        /*
+         * Crea un seguimiento
+         */
+        if( $request->getParameter("fchseguimiento") ){
+            $titulo = "Seg. Ticket #".$ticket->getCaIdticket()." [".$ticket->getCaTitle()."]";
+            $texto = "<b>Seguimiento:</b> \n<br />";
+            $texto .= $respuesta->getCaText();
+            /*
+			* Se crea la tarea para los miembros del grupo.
+			*/
+			$tarea = new NotTarea();
+			$tarea->setCaUrl( "/pm/index?idticket=".$ticket->getCaIdticket() );
+			$tarea->setCaIdlistatarea( 5 );
+			$tarea->setCaFchcreado( date("Y-m-d h:i:s") );
+
+            $tarea->setCaFchvisible( $request->getParameter("fchseguimiento")." 00:00:00" );
+			$tarea->setCaFchvencimiento( $request->getParameter("fchseguimiento")." 23:59:59" );
+
+			$tarea->setCaUsucreado( $this->getUser()->getUserId() );
+			$tarea->setCaTitulo( $titulo );
+			$tarea->setCaTexto( $texto );
+			$tarea->save();
+
+            $tarea->setAsignaciones( array( $this->getUser()->getUserId() ) );
+            
+            $respuesta->setCaIdtarea( $tarea->getCaIdtarea() );
+            $respuesta->save();
+        }
+
+
 		$email = new Email();
 		$email->setCaUsuenvio( $this->getUser()->getUserId() );
 		$email->setCaTipo( "Notificación" );
@@ -1319,6 +1365,7 @@ class pmActions extends sfActions
         $usuarios = Doctrine::getTable("Usuario")->createQuery("u")
                     ->innerJoin("u.HdeskTicketUser ug")
                     ->where("ug.ca_idticket = ?", $idticket)
+                    ->addWhere("u.ca_activo = ?", true )
                     ->addOrderBy("u.ca_nombre")
                     ->execute();
 

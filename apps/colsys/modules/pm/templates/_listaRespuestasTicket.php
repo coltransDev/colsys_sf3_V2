@@ -11,6 +11,16 @@ foreach( $responses as $response ){
 
 
         <br />
+        <?
+        $tarea = $response->getNotTarea();
+        if( $tarea && $tarea->getCaFchvencimiento() ){
+        ?>
+        <b>Seguimiento programado:</b> <?=Utils::fechaMes(Utils::parseDate($tarea->getCaFchvencimiento(), "Y-m-d"))?>
+        <br />
+        <?
+        }
+        ?>
+
         <?=str_replace("\n","<br />",$response->getCaText())?>
 
 
