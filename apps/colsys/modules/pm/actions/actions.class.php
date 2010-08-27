@@ -1450,12 +1450,12 @@ class pmActions extends sfActions
 
             $row["title"] = utf8_encode($result["t_ca_title"]);
 
-            if( $query && $option=="texto" ){ //Resalta la busqueda
-                if( strpos(strtolower($result["text"]), strtolower($query))!==false ){
+            if( $query && $option=="texto" ){ //Resalta la busqueda               
+                if( strpos(strtolower($row["text"]), strtolower($query))!==false ){
                     $origText = substr( $row["text"], stripos($row["text"], $query), strlen( $query ) );
-                    $row["text"] = str_ireplace($origText, "<span style='background-color: #88AAEE'>".$origText."</span>", $row["text"]);
+                    $row["text"] = str_ireplace($origText, "<span style='background-color: #88AAEE'>".$origText."</span>", $row["text"]);                    
                 }
-                if( strpos(strtolower($result["title"]), strtolower($query))!==false ){
+                if( strpos(strtolower($row["title"]), strtolower($query))!==false ){
                     $origText = substr( $row["title"], stripos($row["title"], $query), strlen( $query ) );
                     $row["title"] = str_ireplace($origText, "<span style='background-color: #88AAEE'>".$origText."</span>", $row["title"]);
                 }
