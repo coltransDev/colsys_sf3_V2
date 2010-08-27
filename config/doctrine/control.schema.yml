@@ -36,6 +36,7 @@ Usuario:
     ca_movil: string(30)
     ca_direccion: string(80)
     ca_tiposangre: string(15)
+    ca_parentesco: string(10)
   relations:
     AccesoUsuario:
       local: ca_login
