@@ -572,12 +572,7 @@ Ext.extend(PanelTickets, Ext.grid.GridPanel, {
 
             var rec = this.store.getById( this.ctxRecord.id );
 
-            /*var tip = new Ext.ux.SliderTip({
-                getText: function(slider){
-                    return String.format('<b>{0}% complete</b>', slider.getValue());
-                }
-            });*/
-
+           
             var updatePercent = function(   slider,  newValue ){
 
                 Ext.Ajax.request({
@@ -609,7 +604,7 @@ Ext.extend(PanelTickets, Ext.grid.GridPanel, {
                 value: percentage,
                 minValue: 0,
                 maxValue: 100,
-                //plugins: tip,
+                plugins: new Ext.slider.Tip(),
                 listeners: {
                     changecomplete: updatePercent
                 }
