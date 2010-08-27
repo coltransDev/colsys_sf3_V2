@@ -29,6 +29,7 @@ Cotizacion:
     ca_fchactualizado: timestamp
     ca_usuanulado: string(20)
     ca_fchanulado: timestamp
+    ca_version: integer
   relations:
     Usuario:
       local: ca_usuario
@@ -142,8 +143,7 @@ CotProducto:
       local: ca_idproducto
       foreign: ca_idproducto
       type: many
-      orderBy: ca_fchseguimiento DESC
-    
+          
     
 
 CotOpcion:
@@ -334,6 +334,7 @@ CotSeguro:
     ca_prima_vlr: decimal
     ca_prima_min: decimal
     ca_obtencion: decimal
+    ca_idmonedaobtencion: string
     ca_observaciones: string
     ca_transporte: string
     ca_usucreado: string(20)
