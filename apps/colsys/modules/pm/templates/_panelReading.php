@@ -172,12 +172,7 @@ Ext.extend(PanelReading, Ext.Panel, {
     
     
 
-    newResponse: function(record){
-       record = (record && record.data) ? record : this.gsm.getSelected();
-       //alert( record.data.idticket);
-
-        newResponse(record.data.idticket, null, this.responses.id );
-    },
+    
 
     recargar: function(){
         this.grid.recargar();

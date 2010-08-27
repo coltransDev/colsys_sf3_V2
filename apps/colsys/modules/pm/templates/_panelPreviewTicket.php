@@ -285,7 +285,12 @@ Ext.extend(PanelPreviewTicket, Ext.TabPanel, {
         Ext.getCmp('tab-panel').add(newComponent);
         Ext.getCmp('tab-panel').setActiveTab(newComponent);
     }
-   
+    ,
+    newResponse: function(record){
+       var idticket = this.idticket;
+
+        newResponse(idticket, null, this.responses.id );
+    }
 
    
 
