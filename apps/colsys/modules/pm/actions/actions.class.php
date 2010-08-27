@@ -1486,12 +1486,14 @@ class pmActions extends sfActions
             if( $option=="texto" && $lastIdticket==$result["t_ca_idticket"] && (strpos(strtolower($result["t_ca_title"]), strtolower($query))!==false || strpos(strtolower($result["t_ca_text"]), strtolower($query))!==false)  ){
                 continue;                
             }else{
-                if( strpos(strtolower($result["t_ca_title"]), strtolower($query))!==false ){
-                    $row["text"] = utf8_encode($result["t_ca_title"]);                    
-                }
+                if( $query ){
+                    if( strpos(strtolower($result["t_ca_title"]), strtolower($query))!==false ){
+                        $row["text"] = utf8_encode($result["t_ca_title"]);
+                    }
 
-                if( strpos(strtolower($result["t_ca_text"]), strtolower($query))!==false ){
-                    $row["text"] = utf8_encode($result["t_ca_text"]);
+                    if( strpos(strtolower($result["t_ca_text"]), strtolower($query))!==false ){
+                        $row["text"] = utf8_encode($result["t_ca_text"]);
+                    }
                 }
             }
 
