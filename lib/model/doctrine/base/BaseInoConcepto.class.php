@@ -15,6 +15,8 @@
  * @property boolean $ca_recargootmdta
  * @property boolean $ca_costo
  * @property string $ca_parametros
+ * @property timestamp $ca_fcheliminado
+ * @property string $ca_usueliminado
  * @property Doctrine_Collection $InoConceptoModalidad
  * @property Doctrine_Collection $InoParametroFacturacion
  * @property Doctrine_Collection $InoParametroCosto
@@ -32,6 +34,8 @@
  * @method boolean             getCaRecargootmdta()         Returns the current record's "ca_recargootmdta" value
  * @method boolean             getCaCosto()                 Returns the current record's "ca_costo" value
  * @method string              getCaParametros()            Returns the current record's "ca_parametros" value
+ * @method timestamp           getCaFcheliminado()          Returns the current record's "ca_fcheliminado" value
+ * @method string              getCaUsueliminado()          Returns the current record's "ca_usueliminado" value
  * @method Doctrine_Collection getInoConceptoModalidad()    Returns the current record's "InoConceptoModalidad" collection
  * @method Doctrine_Collection getInoParametroFacturacion() Returns the current record's "InoParametroFacturacion" collection
  * @method Doctrine_Collection getInoParametroCosto()       Returns the current record's "InoParametroCosto" collection
@@ -48,6 +52,8 @@
  * @method InoConcepto         setCaRecargootmdta()         Sets the current record's "ca_recargootmdta" value
  * @method InoConcepto         setCaCosto()                 Sets the current record's "ca_costo" value
  * @method InoConcepto         setCaParametros()            Sets the current record's "ca_parametros" value
+ * @method InoConcepto         setCaFcheliminado()          Sets the current record's "ca_fcheliminado" value
+ * @method InoConcepto         setCaUsueliminado()          Sets the current record's "ca_usueliminado" value
  * @method InoConcepto         setInoConceptoModalidad()    Sets the current record's "InoConceptoModalidad" collection
  * @method InoConcepto         setInoParametroFacturacion() Sets the current record's "InoParametroFacturacion" collection
  * @method InoConcepto         setInoParametroCosto()       Sets the current record's "InoParametroCosto" collection
@@ -98,6 +104,12 @@ abstract class BaseInoConcepto extends myDoctrineRecord
         $this->hasColumn('ca_parametros', 'string', null, array(
              'type' => 'string',
              'notnull' => true,
+             ));
+        $this->hasColumn('ca_fcheliminado', 'timestamp', null, array(
+             'type' => 'timestamp',
+             ));
+        $this->hasColumn('ca_usueliminado', 'string', null, array(
+             'type' => 'string',
              ));
 
         $this->option('symfony', array(
