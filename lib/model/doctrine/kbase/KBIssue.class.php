@@ -12,4 +12,22 @@
  */
 class KBIssue extends BaseKBIssue
 {
+
+    const FOLDER = "KBase";
+
+    /*
+	* Devuelve la ubicacion del directorio donde se encuentran los archivos
+	* @author Andres Botero
+	*/
+    public function getDirectorio(){
+        $folder = HdeskProject::FOLDER;
+        return $directory = sfConfig::get('app_digitalFile_root').DIRECTORY_SEPARATOR.$this->getDirectorioBase();
+
+    }
+
+    public function getDirectorioBase(){
+        $folder = HdeskProject::FOLDER;
+        return $directory = $folder.DIRECTORY_SEPARATOR.$this->getCaIdissue();
+
+    }
 }
