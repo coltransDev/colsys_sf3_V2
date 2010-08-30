@@ -17,7 +17,7 @@
  * @property string $ca_tipo
  * @property string $ca_identificacion
  * @property Ciudad $Ciudad
- * @property Doctrine_Collection $InoCliente
+ * @property Doctrine_Collection $InoHouse
  * @property Doctrine_Collection $Reporte
  * @property Doctrine_Collection $InoClientesSea
  * 
@@ -33,7 +33,7 @@
  * @method string              getCaTipo()            Returns the current record's "ca_tipo" value
  * @method string              getCaIdentificacion()  Returns the current record's "ca_identificacion" value
  * @method Ciudad              getCiudad()            Returns the current record's "Ciudad" value
- * @method Doctrine_Collection getInoCliente()        Returns the current record's "InoCliente" collection
+ * @method Doctrine_Collection getInoHouse()          Returns the current record's "InoHouse" collection
  * @method Doctrine_Collection getReporte()           Returns the current record's "Reporte" collection
  * @method Doctrine_Collection getInoClientesSea()    Returns the current record's "InoClientesSea" collection
  * @method Tercero             setCaIdtercero()       Sets the current record's "ca_idtercero" value
@@ -48,7 +48,7 @@
  * @method Tercero             setCaTipo()            Sets the current record's "ca_tipo" value
  * @method Tercero             setCaIdentificacion()  Sets the current record's "ca_identificacion" value
  * @method Tercero             setCiudad()            Sets the current record's "Ciudad" value
- * @method Tercero             setInoCliente()        Sets the current record's "InoCliente" collection
+ * @method Tercero             setInoHouse()          Sets the current record's "InoHouse" collection
  * @method Tercero             setReporte()           Sets the current record's "Reporte" collection
  * @method Tercero             setInoClientesSea()    Sets the current record's "InoClientesSea" collection
  * 
@@ -111,7 +111,7 @@ abstract class BaseTercero extends myDoctrineRecord
              'local' => 'ca_idciudad',
              'foreign' => 'ca_idciudad'));
 
-        $this->hasMany('InoCliente', array(
+        $this->hasMany('InoHouse', array(
              'local' => 'ca_idtercero',
              'foreign' => 'ca_idproveedor'));
 

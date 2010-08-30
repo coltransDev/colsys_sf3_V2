@@ -10,7 +10,7 @@
  * @property integer $ca_idcuenta
  * @property integer $ca_idconcepto
  * @property integer $ca_idccosto
- * @property integer $ca_idmaestra
+ * @property integer $ca_idmaster
  * @property integer $ca_id
  * @property boolean $ca_db
  * @property decimal $ca_valor
@@ -18,20 +18,20 @@
  * @property timestamp $ca_observaciones
  * @property timestamp $ca_fchcreado
  * @property string $ca_usucreado
- * @property InoCliente $InoCliente
+ * @property InoHouse $InoHouse
  * @property InoCentroCosto $InoCentroCosto
  * @property Usuario $UsuCreado
  * @property InoComprobante $InoComprobante
  * @property InoCuenta $InoCuenta
  * @property InoConcepto $InoConcepto
- * @property InoMaestra $InoMaestra
+ * @property InoMaster $InoMaster
  * 
  * @method integer        getCaIdtransaccion()  Returns the current record's "ca_idtransaccion" value
  * @method integer        getCaIdcomprobante()  Returns the current record's "ca_idcomprobante" value
  * @method integer        getCaIdcuenta()       Returns the current record's "ca_idcuenta" value
  * @method integer        getCaIdconcepto()     Returns the current record's "ca_idconcepto" value
  * @method integer        getCaIdccosto()       Returns the current record's "ca_idccosto" value
- * @method integer        getCaIdmaestra()      Returns the current record's "ca_idmaestra" value
+ * @method integer        getCaIdmaster()       Returns the current record's "ca_idmaster" value
  * @method integer        getCaId()             Returns the current record's "ca_id" value
  * @method boolean        getCaDb()             Returns the current record's "ca_db" value
  * @method decimal        getCaValor()          Returns the current record's "ca_valor" value
@@ -39,19 +39,19 @@
  * @method timestamp      getCaObservaciones()  Returns the current record's "ca_observaciones" value
  * @method timestamp      getCaFchcreado()      Returns the current record's "ca_fchcreado" value
  * @method string         getCaUsucreado()      Returns the current record's "ca_usucreado" value
- * @method InoCliente     getInoCliente()       Returns the current record's "InoCliente" value
+ * @method InoHouse       getInoHouse()         Returns the current record's "InoHouse" value
  * @method InoCentroCosto getInoCentroCosto()   Returns the current record's "InoCentroCosto" value
  * @method Usuario        getUsuCreado()        Returns the current record's "UsuCreado" value
  * @method InoComprobante getInoComprobante()   Returns the current record's "InoComprobante" value
  * @method InoCuenta      getInoCuenta()        Returns the current record's "InoCuenta" value
  * @method InoConcepto    getInoConcepto()      Returns the current record's "InoConcepto" value
- * @method InoMaestra     getInoMaestra()       Returns the current record's "InoMaestra" value
+ * @method InoMaster      getInoMaster()        Returns the current record's "InoMaster" value
  * @method InoTransaccion setCaIdtransaccion()  Sets the current record's "ca_idtransaccion" value
  * @method InoTransaccion setCaIdcomprobante()  Sets the current record's "ca_idcomprobante" value
  * @method InoTransaccion setCaIdcuenta()       Sets the current record's "ca_idcuenta" value
  * @method InoTransaccion setCaIdconcepto()     Sets the current record's "ca_idconcepto" value
  * @method InoTransaccion setCaIdccosto()       Sets the current record's "ca_idccosto" value
- * @method InoTransaccion setCaIdmaestra()      Sets the current record's "ca_idmaestra" value
+ * @method InoTransaccion setCaIdmaster()       Sets the current record's "ca_idmaster" value
  * @method InoTransaccion setCaId()             Sets the current record's "ca_id" value
  * @method InoTransaccion setCaDb()             Sets the current record's "ca_db" value
  * @method InoTransaccion setCaValor()          Sets the current record's "ca_valor" value
@@ -59,13 +59,13 @@
  * @method InoTransaccion setCaObservaciones()  Sets the current record's "ca_observaciones" value
  * @method InoTransaccion setCaFchcreado()      Sets the current record's "ca_fchcreado" value
  * @method InoTransaccion setCaUsucreado()      Sets the current record's "ca_usucreado" value
- * @method InoTransaccion setInoCliente()       Sets the current record's "InoCliente" value
+ * @method InoTransaccion setInoHouse()         Sets the current record's "InoHouse" value
  * @method InoTransaccion setInoCentroCosto()   Sets the current record's "InoCentroCosto" value
  * @method InoTransaccion setUsuCreado()        Sets the current record's "UsuCreado" value
  * @method InoTransaccion setInoComprobante()   Sets the current record's "InoComprobante" value
  * @method InoTransaccion setInoCuenta()        Sets the current record's "InoCuenta" value
  * @method InoTransaccion setInoConcepto()      Sets the current record's "InoConcepto" value
- * @method InoTransaccion setInoMaestra()       Sets the current record's "InoMaestra" value
+ * @method InoTransaccion setInoMaster()        Sets the current record's "InoMaster" value
  * 
  * @package    symfony
  * @subpackage model
@@ -94,7 +94,7 @@ abstract class BaseInoTransaccion extends myDoctrineRecord
         $this->hasColumn('ca_idccosto', 'integer', null, array(
              'type' => 'integer',
              ));
-        $this->hasColumn('ca_idmaestra', 'integer', null, array(
+        $this->hasColumn('ca_idmaster', 'integer', null, array(
              'type' => 'integer',
              ));
         $this->hasColumn('ca_id', 'integer', null, array(
@@ -128,9 +128,9 @@ abstract class BaseInoTransaccion extends myDoctrineRecord
     public function setUp()
     {
         parent::setUp();
-        $this->hasOne('InoCliente', array(
-             'local' => 'ca_idinocliente',
-             'foreign' => 'ca_idinocliente'));
+        $this->hasOne('InoHouse', array(
+             'local' => 'ca_idhouse',
+             'foreign' => 'ca_idhouse'));
 
         $this->hasOne('InoCentroCosto', array(
              'local' => 'ca_idccosto',
@@ -152,8 +152,8 @@ abstract class BaseInoTransaccion extends myDoctrineRecord
              'local' => 'ca_idconcepto',
              'foreign' => 'ca_idconcepto'));
 
-        $this->hasOne('InoMaestra', array(
-             'local' => 'ca_idmaestra',
-             'foreign' => 'ca_idmaestra'));
+        $this->hasOne('InoMaster', array(
+             'local' => 'ca_idmaster',
+             'foreign' => 'ca_idmaster'));
     }
 }

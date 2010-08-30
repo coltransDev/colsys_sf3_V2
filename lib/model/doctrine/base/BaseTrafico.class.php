@@ -20,6 +20,7 @@
  * @property Doctrine_Collection $PricRecargoxCiudadBs
  * @property Doctrine_Collection $PricRecargoxLinea
  * @property Doctrine_Collection $PricRecargoxLineaBs
+ * @property Doctrine_Collection $TraficoUsers
  * 
  * @method string              getCaIdtrafico()          Returns the current record's "ca_idtrafico" value
  * @method string              getCaNombre()             Returns the current record's "ca_nombre" value
@@ -36,6 +37,7 @@
  * @method Doctrine_Collection getPricRecargoxCiudadBs() Returns the current record's "PricRecargoxCiudadBs" collection
  * @method Doctrine_Collection getPricRecargoxLinea()    Returns the current record's "PricRecargoxLinea" collection
  * @method Doctrine_Collection getPricRecargoxLineaBs()  Returns the current record's "PricRecargoxLineaBs" collection
+ * @method Doctrine_Collection getTraficoUsers()         Returns the current record's "TraficoUsers" collection
  * @method Trafico             setCaIdtrafico()          Sets the current record's "ca_idtrafico" value
  * @method Trafico             setCaNombre()             Sets the current record's "ca_nombre" value
  * @method Trafico             setCaBandera()            Sets the current record's "ca_bandera" value
@@ -51,6 +53,7 @@
  * @method Trafico             setPricRecargoxCiudadBs() Sets the current record's "PricRecargoxCiudadBs" collection
  * @method Trafico             setPricRecargoxLinea()    Sets the current record's "PricRecargoxLinea" collection
  * @method Trafico             setPricRecargoxLineaBs()  Sets the current record's "PricRecargoxLineaBs" collection
+ * @method Trafico             setTraficoUsers()         Sets the current record's "TraficoUsers" collection
  * 
  * @package    symfony
  * @subpackage model
@@ -152,6 +155,10 @@ abstract class BaseTrafico extends myDoctrineRecord
              'foreign' => 'ca_idtrafico'));
 
         $this->hasMany('PricRecargoxLineaBs', array(
+             'local' => 'ca_idtrafico',
+             'foreign' => 'ca_idtrafico'));
+
+        $this->hasMany('TraficoUsers', array(
              'local' => 'ca_idtrafico',
              'foreign' => 'ca_idtrafico'));
     }

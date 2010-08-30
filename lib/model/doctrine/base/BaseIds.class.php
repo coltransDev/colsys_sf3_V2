@@ -25,7 +25,6 @@
  * @property Doctrine_Collection $IdsDocumento
  * @property Doctrine_Collection $IdsEvento
  * @property Doctrine_Collection $IdsEvaluacion
- * @property Doctrine_Collection $InoCliente
  * @property Doctrine_Collection $InoComprobante
  * 
  * @method integer             getCaId()                  Returns the current record's "ca_id" value
@@ -48,7 +47,6 @@
  * @method Doctrine_Collection getIdsDocumento()          Returns the current record's "IdsDocumento" collection
  * @method Doctrine_Collection getIdsEvento()             Returns the current record's "IdsEvento" collection
  * @method Doctrine_Collection getIdsEvaluacion()         Returns the current record's "IdsEvaluacion" collection
- * @method Doctrine_Collection getInoCliente()            Returns the current record's "InoCliente" collection
  * @method Doctrine_Collection getInoComprobante()        Returns the current record's "InoComprobante" collection
  * @method Ids                 setCaId()                  Sets the current record's "ca_id" value
  * @method Ids                 setCaDv()                  Sets the current record's "ca_dv" value
@@ -70,7 +68,6 @@
  * @method Ids                 setIdsDocumento()          Sets the current record's "IdsDocumento" collection
  * @method Ids                 setIdsEvento()             Sets the current record's "IdsEvento" collection
  * @method Ids                 setIdsEvaluacion()         Sets the current record's "IdsEvaluacion" collection
- * @method Ids                 setInoCliente()            Sets the current record's "InoCliente" collection
  * @method Ids                 setInoComprobante()        Sets the current record's "InoComprobante" collection
  * 
  * @package    symfony
@@ -167,10 +164,6 @@ abstract class BaseIds extends myDoctrineRecord
         $this->hasMany('IdsEvaluacion', array(
              'local' => 'ca_id',
              'foreign' => 'ca_id'));
-
-        $this->hasMany('InoCliente', array(
-             'local' => 'ca_id',
-             'foreign' => 'ca_idcliente'));
 
         $this->hasMany('InoComprobante', array(
              'local' => 'ca_id',

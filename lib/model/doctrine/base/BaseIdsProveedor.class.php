@@ -19,7 +19,7 @@
  * @property Ids $Ids
  * @property IdsTipo $IdsTipo
  * @property Doctrine_Collection $CotProducto
- * @property Doctrine_Collection $InoMaestra
+ * @property Doctrine_Collection $InoMaster
  * @property Doctrine_Collection $Trayecto
  * @property Doctrine_Collection $PricRecargoxLinea
  * @property Doctrine_Collection $PricRecargoxLineaBs
@@ -42,7 +42,7 @@
  * @method Ids                 getIds()                  Returns the current record's "Ids" value
  * @method IdsTipo             getIdsTipo()              Returns the current record's "IdsTipo" value
  * @method Doctrine_Collection getCotProducto()          Returns the current record's "CotProducto" collection
- * @method Doctrine_Collection getInoMaestra()           Returns the current record's "InoMaestra" collection
+ * @method Doctrine_Collection getInoMaster()            Returns the current record's "InoMaster" collection
  * @method Doctrine_Collection getTrayecto()             Returns the current record's "Trayecto" collection
  * @method Doctrine_Collection getPricRecargoxLinea()    Returns the current record's "PricRecargoxLinea" collection
  * @method Doctrine_Collection getPricRecargoxLineaBs()  Returns the current record's "PricRecargoxLineaBs" collection
@@ -64,7 +64,7 @@
  * @method IdsProveedor        setIds()                  Sets the current record's "Ids" value
  * @method IdsProveedor        setIdsTipo()              Sets the current record's "IdsTipo" value
  * @method IdsProveedor        setCotProducto()          Sets the current record's "CotProducto" collection
- * @method IdsProveedor        setInoMaestra()           Sets the current record's "InoMaestra" collection
+ * @method IdsProveedor        setInoMaster()            Sets the current record's "InoMaster" collection
  * @method IdsProveedor        setTrayecto()             Sets the current record's "Trayecto" collection
  * @method IdsProveedor        setPricRecargoxLinea()    Sets the current record's "PricRecargoxLinea" collection
  * @method IdsProveedor        setPricRecargoxLineaBs()  Sets the current record's "PricRecargoxLineaBs" collection
@@ -143,7 +143,7 @@ abstract class BaseIdsProveedor extends myDoctrineRecord
              'local' => 'ca_idproveedor',
              'foreign' => 'ca_idlinea'));
 
-        $this->hasMany('InoMaestra', array(
+        $this->hasMany('InoMaster', array(
              'local' => 'ca_idproveedor',
              'foreign' => 'ca_idlinea'));
 

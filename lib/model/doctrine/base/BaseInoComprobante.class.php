@@ -10,7 +10,7 @@
  * @property integer $ca_idtipo
  * @property integer $ca_consecutivo
  * @property date $ca_fchcomprobante
- * @property integer $ca_idinocliente
+ * @property integer $ca_idhouse
  * @property integer $ca_plazo
  * @property decimal $ca_tasacambio
  * @property string $ca_observaciones
@@ -22,7 +22,7 @@
  * @property Ids $Ids
  * @property Usuario $UsuCreado
  * @property Usuario $UsuActualizado
- * @property InoCliente $InoCliente
+ * @property InoHouse $InoHouse
  * @property Doctrine_Collection $InoTransaccion
  * @property InoTipoComprobante $InoTipoComprobante
  * 
@@ -31,7 +31,7 @@
  * @method integer             getCaIdtipo()           Returns the current record's "ca_idtipo" value
  * @method integer             getCaConsecutivo()      Returns the current record's "ca_consecutivo" value
  * @method date                getCaFchcomprobante()   Returns the current record's "ca_fchcomprobante" value
- * @method integer             getCaIdinocliente()     Returns the current record's "ca_idinocliente" value
+ * @method integer             getCaIdhouse()          Returns the current record's "ca_idhouse" value
  * @method integer             getCaPlazo()            Returns the current record's "ca_plazo" value
  * @method decimal             getCaTasacambio()       Returns the current record's "ca_tasacambio" value
  * @method string              getCaObservaciones()    Returns the current record's "ca_observaciones" value
@@ -43,7 +43,7 @@
  * @method Ids                 getIds()                Returns the current record's "Ids" value
  * @method Usuario             getUsuCreado()          Returns the current record's "UsuCreado" value
  * @method Usuario             getUsuActualizado()     Returns the current record's "UsuActualizado" value
- * @method InoCliente          getInoCliente()         Returns the current record's "InoCliente" value
+ * @method InoHouse            getInoHouse()           Returns the current record's "InoHouse" value
  * @method Doctrine_Collection getInoTransaccion()     Returns the current record's "InoTransaccion" collection
  * @method InoTipoComprobante  getInoTipoComprobante() Returns the current record's "InoTipoComprobante" value
  * @method InoComprobante      setCaIdcomprobante()    Sets the current record's "ca_idcomprobante" value
@@ -51,7 +51,7 @@
  * @method InoComprobante      setCaIdtipo()           Sets the current record's "ca_idtipo" value
  * @method InoComprobante      setCaConsecutivo()      Sets the current record's "ca_consecutivo" value
  * @method InoComprobante      setCaFchcomprobante()   Sets the current record's "ca_fchcomprobante" value
- * @method InoComprobante      setCaIdinocliente()     Sets the current record's "ca_idinocliente" value
+ * @method InoComprobante      setCaIdhouse()          Sets the current record's "ca_idhouse" value
  * @method InoComprobante      setCaPlazo()            Sets the current record's "ca_plazo" value
  * @method InoComprobante      setCaTasacambio()       Sets the current record's "ca_tasacambio" value
  * @method InoComprobante      setCaObservaciones()    Sets the current record's "ca_observaciones" value
@@ -63,7 +63,7 @@
  * @method InoComprobante      setIds()                Sets the current record's "Ids" value
  * @method InoComprobante      setUsuCreado()          Sets the current record's "UsuCreado" value
  * @method InoComprobante      setUsuActualizado()     Sets the current record's "UsuActualizado" value
- * @method InoComprobante      setInoCliente()         Sets the current record's "InoCliente" value
+ * @method InoComprobante      setInoHouse()           Sets the current record's "InoHouse" value
  * @method InoComprobante      setInoTransaccion()     Sets the current record's "InoTransaccion" collection
  * @method InoComprobante      setInoTipoComprobante() Sets the current record's "InoTipoComprobante" value
  * 
@@ -94,7 +94,7 @@ abstract class BaseInoComprobante extends myDoctrineRecord
         $this->hasColumn('ca_fchcomprobante', 'date', null, array(
              'type' => 'date',
              ));
-        $this->hasColumn('ca_idinocliente', 'integer', null, array(
+        $this->hasColumn('ca_idhouse', 'integer', null, array(
              'type' => 'integer',
              ));
         $this->hasColumn('ca_plazo', 'integer', null, array(
@@ -143,9 +143,9 @@ abstract class BaseInoComprobante extends myDoctrineRecord
              'local' => 'ca_usuactualizado',
              'foreign' => 'ca_login'));
 
-        $this->hasOne('InoCliente', array(
-             'local' => 'ca_idinocliente',
-             'foreign' => 'ca_idinocliente'));
+        $this->hasOne('InoHouse', array(
+             'local' => 'ca_idhouse',
+             'foreign' => 'ca_idhouse'));
 
         $this->hasMany('InoTransaccion', array(
              'local' => 'ca_idcomprobante',

@@ -30,6 +30,7 @@
  * @property date $ca_lsd
  * @property string $ca_incoterms
  * @property string $ca_payment_terms
+ * @property string $ca_numero_invoice
  * @property string $ca_proforma_number
  * @property string $ca_origin
  * @property string $ca_destination
@@ -39,6 +40,8 @@
  * @property string $ca_manufacturer_contact
  * @property string $ca_manufacturer_phone
  * @property string $ca_manufacturer_fax
+ * @property timestamp $ca_fcharchivado
+ * @property string $ca_usuarchivado
  * @property timestamp $ca_fchanulado
  * @property string $ca_usuanulado
  * @property Doctrine_Collection $FalaDetail
@@ -70,6 +73,7 @@
  * @method date                getCaLsd()                     Returns the current record's "ca_lsd" value
  * @method string              getCaIncoterms()               Returns the current record's "ca_incoterms" value
  * @method string              getCaPaymentTerms()            Returns the current record's "ca_payment_terms" value
+ * @method string              getCaNumeroInvoice()           Returns the current record's "ca_numero_invoice" value
  * @method string              getCaProformaNumber()          Returns the current record's "ca_proforma_number" value
  * @method string              getCaOrigin()                  Returns the current record's "ca_origin" value
  * @method string              getCaDestination()             Returns the current record's "ca_destination" value
@@ -79,6 +83,8 @@
  * @method string              getCaManufacturerContact()     Returns the current record's "ca_manufacturer_contact" value
  * @method string              getCaManufacturerPhone()       Returns the current record's "ca_manufacturer_phone" value
  * @method string              getCaManufacturerFax()         Returns the current record's "ca_manufacturer_fax" value
+ * @method timestamp           getCaFcharchivado()            Returns the current record's "ca_fcharchivado" value
+ * @method string              getCaUsuarchivado()            Returns the current record's "ca_usuarchivado" value
  * @method timestamp           getCaFchanulado()              Returns the current record's "ca_fchanulado" value
  * @method string              getCaUsuanulado()              Returns the current record's "ca_usuanulado" value
  * @method Doctrine_Collection getFalaDetail()                Returns the current record's "FalaDetail" collection
@@ -109,6 +115,7 @@
  * @method FalaHeader          setCaLsd()                     Sets the current record's "ca_lsd" value
  * @method FalaHeader          setCaIncoterms()               Sets the current record's "ca_incoterms" value
  * @method FalaHeader          setCaPaymentTerms()            Sets the current record's "ca_payment_terms" value
+ * @method FalaHeader          setCaNumeroInvoice()           Sets the current record's "ca_numero_invoice" value
  * @method FalaHeader          setCaProformaNumber()          Sets the current record's "ca_proforma_number" value
  * @method FalaHeader          setCaOrigin()                  Sets the current record's "ca_origin" value
  * @method FalaHeader          setCaDestination()             Sets the current record's "ca_destination" value
@@ -118,6 +125,8 @@
  * @method FalaHeader          setCaManufacturerContact()     Sets the current record's "ca_manufacturer_contact" value
  * @method FalaHeader          setCaManufacturerPhone()       Sets the current record's "ca_manufacturer_phone" value
  * @method FalaHeader          setCaManufacturerFax()         Sets the current record's "ca_manufacturer_fax" value
+ * @method FalaHeader          setCaFcharchivado()            Sets the current record's "ca_fcharchivado" value
+ * @method FalaHeader          setCaUsuarchivado()            Sets the current record's "ca_usuarchivado" value
  * @method FalaHeader          setCaFchanulado()              Sets the current record's "ca_fchanulado" value
  * @method FalaHeader          setCaUsuanulado()              Sets the current record's "ca_usuanulado" value
  * @method FalaHeader          setFalaDetail()                Sets the current record's "FalaDetail" collection
@@ -210,6 +219,9 @@ abstract class BaseFalaHeader extends myDoctrineRecord
         $this->hasColumn('ca_payment_terms', 'string', null, array(
              'type' => 'string',
              ));
+        $this->hasColumn('ca_numero_invoice', 'string', null, array(
+             'type' => 'string',
+             ));
         $this->hasColumn('ca_proforma_number', 'string', null, array(
              'type' => 'string',
              ));
@@ -235,6 +247,12 @@ abstract class BaseFalaHeader extends myDoctrineRecord
              'type' => 'string',
              ));
         $this->hasColumn('ca_manufacturer_fax', 'string', null, array(
+             'type' => 'string',
+             ));
+        $this->hasColumn('ca_fcharchivado', 'timestamp', null, array(
+             'type' => 'timestamp',
+             ));
+        $this->hasColumn('ca_usuarchivado', 'string', null, array(
              'type' => 'string',
              ));
         $this->hasColumn('ca_fchanulado', 'timestamp', null, array(
