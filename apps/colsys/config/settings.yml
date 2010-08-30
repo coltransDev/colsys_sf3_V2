@@ -112,3 +112,4 @@ all:
       - adminPerfiles
       - gestDocumental
       - email
+      - menu
