@@ -18,8 +18,9 @@ class menuComponents extends sfComponents
 		$filename=sfConfig::get("sf_app_module_dir").DIRECTORY_SEPARATOR.$module.DIRECTORY_SEPARATOR."templates".DIRECTORY_SEPARATOR."_submenuBar.php";
 		if( file_exists($filename) ){
 			include($filename);
-		}elseif ($pluginDirs = glob(sfConfig::get('sf_plugins_dir').DIRECTORY_SEPARATOR."*".DIRECTORY_SEPARATOR."modules".DIRECTORY_SEPARATOR.$module.DIRECTORY_SEPARATOR."templates".DIRECTORY_SEPARATOR))
-        {
+		}else{
+          $pluginDirs = array(sfConfig::get('sf_plugins_dir').DIRECTORY_SEPARATOR."sfSharedApplicationsPlugin".DIRECTORY_SEPARATOR."modules".DIRECTORY_SEPARATOR.$module.DIRECTORY_SEPARATOR."templates".DIRECTORY_SEPARATOR);
+        
           foreach ($pluginDirs as $dir)
           {
              $filename = $dir."_submenuBar.php";        
