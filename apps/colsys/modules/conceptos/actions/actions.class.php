@@ -234,6 +234,7 @@ class conceptosActions extends sfActions
                          ->innerJoin("c.InoConceptoModalidad cm")
                          ->innerJoin("cm.Modalidad m")
                          ->addWhere("m.ca_impoexpo like ? ", "%".$impoexpo."%" )
+                         ->addWhere("c.ca_usueliminado IS NULL" )
                          ->distinct()
                          ->addOrderBy( "c.ca_recargo" );
 

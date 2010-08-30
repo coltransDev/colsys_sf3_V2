@@ -417,6 +417,8 @@ TipoRecargo:
     ca_tipo: string
     ca_transporte: string
     ca_incoterms: string
+    ca_fcheliminado: timestamp
+    ca_usueliminado: string
 #    ca_impoexpo: string
   relations:
     InoConceptoModalidad:

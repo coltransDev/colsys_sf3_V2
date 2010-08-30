@@ -10,6 +10,8 @@
  * @property string $ca_tipo
  * @property string $ca_transporte
  * @property string $ca_incoterms
+ * @property timestamp $ca_fcheliminado
+ * @property string $ca_usueliminado
  * @property InoConceptoModalidad $InoConceptoModalidad
  * @property Doctrine_Collection $CotRecargo
  * @property Doctrine_Collection $PricRecargoxConcepto
@@ -25,6 +27,8 @@
  * @method string               getCaTipo()                 Returns the current record's "ca_tipo" value
  * @method string               getCaTransporte()           Returns the current record's "ca_transporte" value
  * @method string               getCaIncoterms()            Returns the current record's "ca_incoterms" value
+ * @method timestamp            getCaFcheliminado()         Returns the current record's "ca_fcheliminado" value
+ * @method string               getCaUsueliminado()         Returns the current record's "ca_usueliminado" value
  * @method InoConceptoModalidad getInoConceptoModalidad()   Returns the current record's "InoConceptoModalidad" value
  * @method Doctrine_Collection  getCotRecargo()             Returns the current record's "CotRecargo" collection
  * @method Doctrine_Collection  getPricRecargoxConcepto()   Returns the current record's "PricRecargoxConcepto" collection
@@ -39,6 +43,8 @@
  * @method TipoRecargo          setCaTipo()                 Sets the current record's "ca_tipo" value
  * @method TipoRecargo          setCaTransporte()           Sets the current record's "ca_transporte" value
  * @method TipoRecargo          setCaIncoterms()            Sets the current record's "ca_incoterms" value
+ * @method TipoRecargo          setCaFcheliminado()         Sets the current record's "ca_fcheliminado" value
+ * @method TipoRecargo          setCaUsueliminado()         Sets the current record's "ca_usueliminado" value
  * @method TipoRecargo          setInoConceptoModalidad()   Sets the current record's "InoConceptoModalidad" value
  * @method TipoRecargo          setCotRecargo()             Sets the current record's "CotRecargo" collection
  * @method TipoRecargo          setPricRecargoxConcepto()   Sets the current record's "PricRecargoxConcepto" collection
@@ -74,6 +80,12 @@ abstract class BaseTipoRecargo extends myDoctrineRecord
              'type' => 'string',
              ));
         $this->hasColumn('ca_incoterms', 'string', null, array(
+             'type' => 'string',
+             ));
+        $this->hasColumn('ca_fcheliminado', 'timestamp', null, array(
+             'type' => 'timestamp',
+             ));
+        $this->hasColumn('ca_usueliminado', 'string', null, array(
              'type' => 'string',
              ));
 
