@@ -353,6 +353,7 @@ class reportesNegActions extends sfActions
         $redirect=true;
         $opcion=$request->getParameter("opcion");
         //$redirect=false;
+        $errors =  array();
         switch( $opcion ){
             case 0:
                 if( !$reporte->getCaIdreporte() ){
@@ -378,8 +379,7 @@ class reportesNegActions extends sfActions
         {
             $reporte->stopBlaming();
         }else
-        {
-            $errors =  array();
+        {           
 
             if($request->getParameter("idcotizacion") && $request->getParameter("idcotizacion")>0)
             {
@@ -661,13 +661,12 @@ class reportesNegActions extends sfActions
                 $reporte->setCaMciaPeligrosa(false);
             }
         }
-
         if(count($errors)>0)
             $this->responseArray=array("success"=>false,"idreporte"=>$idreporte,"redirect"=>$redirect,"errors"=>$errors);
         else
         {
-            $reporte->save();
-			
+
+            $reporte->save();			
             if($request->getParameter("seguros-checkbox")== "on")
 			{
                 $repSeguro = Doctrine::getTable("RepSeguro")->findOneBy("ca_idreporte", $reporte->getCaIdreporte() );
@@ -769,8 +768,6 @@ class reportesNegActions extends sfActions
 				$repExpo->save();
 
 			}
-
-
             $this->responseArray=array("success"=>true,"idreporte"=>$reporte->getCaIdreporte(),"redirect"=>$redirect);
         }
 

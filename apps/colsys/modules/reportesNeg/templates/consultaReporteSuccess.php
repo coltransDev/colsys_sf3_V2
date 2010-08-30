@@ -341,7 +341,7 @@ if( $reporte->getCaColmas()=="Sí" || substr($reporte->getCaModalidad(),0,6) == "
                                     {contentEl:'guias', title: 'Corte de Documentos', bodyStyle: bodyStyle},
                                     <?
                                     }
-                                    if($reporte->getCaImpoexpo()==Constantes::EXPO){
+                                    if($reporte->getCaImpoexpo()==Constantes::EXPO && 1==2){
                                     ?>
                                     {contentEl:'exportaciones', title: 'Exportaciones', bodyStyle: bodyStyle},
                                     <?

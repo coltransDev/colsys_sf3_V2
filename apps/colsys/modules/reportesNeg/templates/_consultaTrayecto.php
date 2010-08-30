@@ -41,11 +41,10 @@
     </tr>
     <?
     if( $reporte->getCaImpoexpo()==Constantes::EXPO  ){
-        
+        //echo $reporte->getCaIdreporte();
         $repExpo = Doctrine::getTable("RepExpo")->findOneBy("ca_idreporte", $reporte->getCaIdreporte() );
         if($repExpo)
-        {                   
-
+        {
         //$repExpo= new RepExpo();
             $repExpo->setCaIdreporte($reporte->getCaIdreporte());
             $reporteExp=array("piezas"=>"","peso"=>"","volumen"=>"","dimensiones"=>"","valorcarga"=>"","sia"=>"","tipoexpo"=>"","motonave"=>"");

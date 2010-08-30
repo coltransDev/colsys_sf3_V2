@@ -164,13 +164,13 @@
         ?>
         <tr>
             <td  colspan="6">
-                <b>Cliente:</b><br />
+                <b>Agente:</b><br />
                 <?=Utils::replace($reporte->getClienteAg()->getCaCompania())?>
                 </td>
         </tr>
         <tr>
             <td  colspan="6">
-                <b>Cliente:</b><br />
+                <b>Otro:</b><br />
                 <?=Utils::replace($reporte->getClienteOtro()->getCaCompania())?>
                 </td>
         </tr>        

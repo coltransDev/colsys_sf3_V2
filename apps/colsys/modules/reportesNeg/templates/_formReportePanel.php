@@ -96,7 +96,7 @@ include_component("reportesNeg", "formSegurosPanel");
         },
 
         onSave: function(opt){
-            if(opt!="1" || opt!="2")
+            if(opt!="1" && opt!="2")
                 opt=0;
             var form  = this.getForm();
 
@@ -164,7 +164,7 @@ include_component("reportesNeg", "formSegurosPanel");
 
                         Ext.getCmp("destino").setValue(res.data.iddestino);
                         $("#destino").attr("value",res.data.destino);
-
+                        
                         Ext.getCmp("cliente-impoexpo").setValue(res.data.idclientefac);
                         $("#cliente-impoexpo").attr("value",res.data.clientefac);
 
