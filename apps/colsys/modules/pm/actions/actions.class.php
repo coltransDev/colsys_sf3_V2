@@ -1345,6 +1345,7 @@ class pmActions extends sfActions
         $data["action"] = $ticket->getCaAction();
         $data["idmilestone"] = $ticket->getCaIdmilestone();
         $data["percentage"] = $ticket->getCaPercentage();
+        $data["folder"] = base64_encode($ticket->getDirectorioBase());
 
 
         $this->responseArray = array("success"=>true, "data"=>$data);
