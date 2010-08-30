@@ -29,9 +29,9 @@
     </tr>
     <tr>
 
-        <td ><b>Modalidad</b></td>
+        <td ><b>Tipo Envio</b></td>
         <td ><?=$reporte->getCaModalidad()?></td>
-        <td ><b>Agente: </b><a href="/ids/formEventos?idreporte=<?=$reporte->getCaIdreporte()?>">Eventos</a></td>
+        <td ><b>Agente: </b><a href="/ids/formEventosNew?idreporte=<?=$reporte->getCaIdreporte()?>">Eventos</a></td>
         <td ><?=$reporte->getIdsAgente()?$reporte->getIdsAgente()->getIds()->getCaNombre():"Directo"?></td>
         <td >&nbsp;</td>
         <td >&nbsp;</td>
@@ -42,7 +42,7 @@
     </tr>
 </table>
 <?
-if( $reporte->getcaContinuacion()!="N/A" ){
+if( $reporte->getcaContinuacion()!="N/A" && $reporte->getcaContinuacion()!="" ){
     
 
 ?>

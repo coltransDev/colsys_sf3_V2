@@ -636,7 +636,7 @@ class reportesNegActions extends sfActions
 
             if($request->getParameter("ca_continuacion_conf") )
             {
-                $reporte->setCaContinuacionConf($request->getParameter("ca_continuacion_conf"));
+                $reporte->setCaContinuacionConf(utf8_decode($request->getParameter("ca_continuacion_conf")));
             }
     //    ca_continuacion_conf
     //    ca_etapa_actual:
@@ -1374,8 +1374,10 @@ class reportesNegActions extends sfActions
             $data["cotizacion"]=$reporte->getCaIdcotizacion();
             $data["continuacion"]=$reporte->getCaContinuacion();
             $data["continuacion_dest"]=$reporte->getCaContinuacionDest();
-            $data["idlinea"]=$reporte->getCaIdlinea();
+            $data["ca_continuacion_conf_".utf8_encode($reporte->getCaContinuacionConf())]= utf8_encode( $reporte->getCaContinuacionConf() );
+            //$reporte->setCaContinuacionConf
 
+            $data["idlinea"]=$reporte->getCaIdlinea();
             $data["linea"]=utf8_encode($reporte->getIdsProveedor()->getIds()->getCaNombre());
 
             $data["idtra_origen_id"]=utf8_encode($reporte->getOrigen()->getTrafico()->getCaIdtrafico());
@@ -1483,6 +1485,7 @@ class reportesNegActions extends sfActions
 
             $data["ca_mercancia_desc"]=utf8_encode($reporte->getCaMercanciaDesc());
             $data["ca_mcia_peligrosa"]=$reporte->getCaMciaPeligrosa();
+
 
             
             $data["instrucciones"]=utf8_encode($reporte->getCaInstrucciones());

@@ -153,6 +153,9 @@ include_component("reportesNeg", "formSegurosPanel");
                         Ext.getCmp('aduanas').collapsed=(Ext.getCmp('ca_colmas').getValue()=="Sí")?false:true;
                         Ext.getCmp('seguros').collapsed=(Ext.getCmp('ca_seguro').getValue()=="Sí")?false:true;
 
+                        Ext.getCmp("linea").setValue(res.data.idlinea);
+                        $("#linea").attr("value",res.data.linea);
+
                         Ext.getCmp("cliente").setValue(res.data.idcliente);                        
                         $("#cliente").attr("value",res.data.cliente);
                         

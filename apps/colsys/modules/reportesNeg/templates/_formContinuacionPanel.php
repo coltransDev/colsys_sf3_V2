@@ -96,7 +96,7 @@ include_component("widgets", "widgetBodega");
                                     fieldLabel: "<?=$usuarios[$keys[$i]]?>",
                                     labelStyle: 'width:150px',
                                     name: "ca_continuacion_conf",
-                                    id: "ca_continuacion_conf_<?=$i?>",
+                                    id: "ca_continuacion_conf_<?=$keys[$i]?>",
                                     inputValue:"<?=$keys[$i]?>"
                                 }
                             ]
