@@ -19,6 +19,7 @@ WidgetCliente = function( config ){
         proxy: new Ext.data.HttpProxy({
             url: '<?=url_for('widgets/listaClientesJSON')?>'
         }),
+        baseParams:{tipo:(config.tipo)?config.tipo:''},
         reader: new Ext.data.JsonReader({
             root: 'clientes',
             totalProperty: 'totalCount',
@@ -51,8 +52,7 @@ WidgetCliente = function( config ){
         emptyText:'',
         selectOnFocus: true,        
         lazyRender:true,                
-        emptyText: 'Escriba el nombre del cliente...',
-        allowBlank:false
+        emptyText: 'Escriba el nombre del cliente...'        
 
     });
 
@@ -113,6 +113,4 @@ Ext.extend(WidgetCliente, Ext.form.ComboBox, {
         }
     }
 });
-
-	
 </script>
