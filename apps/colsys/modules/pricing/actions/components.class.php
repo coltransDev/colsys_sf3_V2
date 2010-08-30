@@ -210,61 +210,8 @@ class pricingComponents extends sfComponents
 	}
 
 
-    public function executePanelParametros()
-	{        
 
-	}
-
-    public function executeModalidadWindow()
-	{
-
-	}
-
-    public function executeParametroWindow()
-	{
-
-	}
-
-    public function executeModalidadGrid()
-	{
-        $modalidades = Doctrine::getTable("Modalidad")
-                  ->createQuery("m")
-                  ->where("m.ca_modalidad IS NOT NULL")
-                  ->addOrderBy("m.ca_impoexpo")
-                  ->addOrderBy("m.ca_transporte")
-                  ->addOrderBy("m.ca_modalidad")
-                  ->execute();
-        
-        $this->modalidades = array();
-        foreach( $modalidades as $modalidad ){
-            $this->modalidades[] = array("id"=>$modalidad->getCaIdmodalidad(),
-                                         "value"=>utf8_encode($modalidad->getCaImpoexpo()." ".$modalidad->getCaTransporte()." ".$modalidad->getCaModalidad())
-                                     );
-        }
-
-
-	}
-
-    public function executeParametroGrid()
-	{
-        $modalidades = Doctrine::getTable("Modalidad")
-                  ->createQuery("m")
-                  ->where("m.ca_modalidad IS NOT NULL")
-                  ->addOrderBy("m.ca_impoexpo")
-                  ->addOrderBy("m.ca_transporte")
-                  ->addOrderBy("m.ca_modalidad")
-                  ->execute();
-
-        $this->modalidades = array();
-        foreach( $modalidades as $modalidad ){
-            $this->modalidades[] = array("id"=>$modalidad->getCaIdmodalidad(),
-                                         "value"=>utf8_encode($modalidad->getCaImpoexpo()." ".$modalidad->getCaTransporte()." ".$modalidad->getCaModalidad())
-                                     );
-        }
-
-
-	}
-
+    
    
 
     public function executePanelTarifarioAduana()
