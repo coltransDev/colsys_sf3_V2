@@ -288,7 +288,7 @@ class RepStatus extends BaseRepStatus
 		$this->setCaIdemail( $email->getCaIdemail() );
 		$this->save();
 
-		$email->send();
+		//$email->send();
 
 	}
 }
