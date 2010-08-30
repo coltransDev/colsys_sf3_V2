@@ -670,7 +670,10 @@ class reportesNegActions extends sfActions
 			
             if($request->getParameter("seguros-checkbox")== "on")
 			{
-				$repSeguro= new RepSeguro();
+                $repSeguro = Doctrine::getTable("RepSeguro")->findOneBy("ca_idreporte", $reporte->getCaIdreporte() );
+                if(!$repSeguro)
+                    $repSeguro= new RepSeguro();
+
 				$repSeguro->setCaIdreporte($reporte->getCaIdreporte());
 
                 if($request->getParameter("ca_seguro_conf") )
@@ -1366,6 +1369,7 @@ class reportesNegActions extends sfActions
             $data["impoexpo"]=utf8_encode($reporte->getCaImpoexpo());
             $data["transporte"]=utf8_encode($reporte->getCaTransporte());
             $data["idmodalidad"]=$reporte->getCaModalidad();
+            $data["incoterms"]=$reporte->getCaIncoterms();
 
             $data["cotizacion"]=$reporte->getCaIdcotizacion();
             $data["continuacion"]=$reporte->getCaContinuacion();
@@ -1377,21 +1381,64 @@ class reportesNegActions extends sfActions
             $data["idtra_origen_id"]=utf8_encode($reporte->getOrigen()->getTrafico()->getCaIdtrafico());
             $data["tra_origen_id"]=utf8_encode($reporte->getOrigen()->getTrafico()->getCaNombre());
             $data["origen"]=utf8_encode($reporte->getOrigen()->getCaCiudad());
+            $data["idorigen"]=$reporte->getCaOrigen();
 
             $data["idtra_destino_id"]=utf8_encode($reporte->getDestino()->getTrafico()->getCaIdtrafico());
             $data["tra_destino_id"]=utf8_encode($reporte->getDestino()->getTrafico()->getCaNombre());
             $data["destino"]=utf8_encode($reporte->getDestino()->getCaCiudad());
+            $data["iddestino"]=$reporte->getCaDestino();
 
             $ids=$reporte->getIdsAgente()->getIds();
-            $data["idagente"]=utf8_encode(/*$ids->getIdsSucursal()->getCiudad()->getCaCiudad() .*/" ".$ids->getCaNombre());
+            $data["idagente"]=$reporte->getCaIdagente();
+            $data["agente"]=utf8_encode(/*$ids->getIdsSucursal()->getCiudad()->getCaCiudad() .*/" ".$ids->getCaNombre());
 
 
             $data["idcliente"]=$reporte->getContacto()->getCaIdcliente();
             $data["cliente"]=$reporte->getContacto()->getCliente()->getCaCompania();
 
 
+            $data["idconcliente"]=$reporte->getCaIdconcliente();
             $data["contacto"]=$reporte->getContacto()->getCaNombres(). " ".$reporte->getContacto()->getCaPapellido()." ".$reporte->getContacto()->getCaSapellido();
+
             $data["orden_clie"]=$reporte->getCaOrdenClie();
+
+            $clienteFac = $reporte->getClienteFac();
+            if($clienteFac)
+            {
+                $data["idclientefac"]=$clienteFac->getCaIdcliente();
+                $data["clientefac"]=$clienteFac->getCaCompania();
+                
+            }
+            else
+            {
+                $data["clientefac"]="";
+                $data["idclientefac"]="";
+            }
+
+            $clienteAg = $reporte->getClienteAg();
+            if($clienteAg)
+            {
+                $data["clienteag"]=$clienteFac->getCaCompania();
+                $data["idclienteag"]=$clienteFac->getCaIdcliente();
+            }
+            else
+            {
+                $data["clienteag"]="";
+                $data["idclienteag"]="";
+            }
+
+            $clienteOtro = $reporte->getClienteOtro();
+            if($clienteOtro)
+            {
+                $data["clienteotro"]=$clienteFac->getCaCompania();
+                $data["idclienteotro"]=$clienteFac->getCaIdcliente();
+            }
+            else
+            {
+                $data["clienteotro"]="";
+                $data["idclienteotro"]="";
+            }
+
             //$cliente = new Cliente();
             $cliente=$reporte->getContacto()->getCliente();
 
@@ -1430,6 +1477,7 @@ class reportesNegActions extends sfActions
 
 
             $data["fchdespacho"]=$reporte->getCaFchdespacho();
+            $data["idvendedor"]=utf8_encode($reporte->getCaLogin());
             $data["vendedor"]=utf8_encode($reporte->getUsuario()->getCaNombre());
             
 

@@ -144,6 +144,42 @@
     </table>
 </div>
 
+<div id="facturacion" class="x-hide-display">
+    
+    <table class="tableList alignLeft" width="100%">
+        <tr>
+            <th colspan="6"><b>Facturaci&oacute;n</b></th>
+        </tr>
+        <tr>
+            <td  colspan="6">
+                <b>Cliente:</b><br />
+                <?=Utils::replace($reporte->getClienteFac()->getCaCompania())?>
+                </td>
+        </tr>
+        <?
+        if($reporte->getCaImpoexpo()==Constantes::EXPO)
+        {
+        ?>
+        <tr>
+            <td  colspan="6">
+                <b>Cliente:</b><br />
+                <?=Utils::replace($reporte->getClienteAg()->getCaCompania())?>
+                </td>
+        </tr>
+        <tr>
+            <td  colspan="6">
+                <b>Cliente:</b><br />
+                <?=Utils::replace($reporte->getClienteOtro()->getCaCompania())?>
+                </td>
+        </tr>        
+        <?
+        }
+        ?>
+        
+     </table>
+</div>
+
+
 
 <div id="preferencias" class="x-hide-display">
     

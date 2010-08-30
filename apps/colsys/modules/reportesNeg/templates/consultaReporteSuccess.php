@@ -323,6 +323,7 @@ if( $reporte->getCaColmas()=="Sí" || substr($reporte->getCaModalidad(),0,6) == "
                             items: [
                                     {contentEl:'trayecto', title: 'Trayecto', bodyStyle: bodyStyle},
                                     {contentEl:'cliente', title: 'Cliente', bodyStyle: bodyStyle},
+                                    {contentEl:'facturacion', title: 'Facturación', bodyStyle: bodyStyle},
                                     {contentEl:'preferencias', title: 'Preferencias', bodyStyle: bodyStyle},
                                     <?
                                     if($reporte->getCaColmas()=="Sí"){

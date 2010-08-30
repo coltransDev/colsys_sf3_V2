@@ -75,7 +75,7 @@ if( $reporte->getCaImpoexpo()==Constantes::EXPO){
     </tr>
     <tr>
         <td colspan="2" align="center">
-            <input type="button" value="Ver rep. al exterior" onclick="popup('<?=url_for("reporteExt/verReporte?idreporte=".$reporte->getCaIdreporte()."&layout=popup")?>')" class="button" />
+            <input type="button" value="Ver rep. al exterior" onclick="popup('<?=url_for("reporteExt/verReporteNew?idreporte=".$reporte->getCaIdreporte()."&layout=popup")?>')" class="button" />
          </td>
 
     </tr>

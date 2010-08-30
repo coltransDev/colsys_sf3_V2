@@ -241,6 +241,8 @@ class reportesNegComponents extends sfComponents
         {
             if(!isset($this->usuarios[$usuario->getCaSucursal()]))
                 $this->usuarios[$usuario->getCaSucursal()]="";
+            else
+                $this->usuarios[$usuario->getCaSucursal()].="<br>";
             $this->usuarios[$usuario->getCaSucursal()].=$usuario->getCaEmail();
         }
 

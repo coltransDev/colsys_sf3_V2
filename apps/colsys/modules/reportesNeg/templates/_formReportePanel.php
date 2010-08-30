@@ -152,7 +152,40 @@ include_component("reportesNeg", "formSegurosPanel");
                         this.res = Ext.util.JSON.decode( options.response.responseText );
                         Ext.getCmp('aduanas').collapsed=(Ext.getCmp('ca_colmas').getValue()=="Sí")?false:true;
                         Ext.getCmp('seguros').collapsed=(Ext.getCmp('ca_seguro').getValue()=="Sí")?false:true;
-                        $("#cliente").attr("value",res.data.idcliente);
+
+                        Ext.getCmp("cliente").setValue(res.data.idcliente);                        
+                        $("#cliente").attr("value",res.data.cliente);
+                        
+                        Ext.getCmp("origen").setValue(res.data.idorigen);
+                        $("#origen").attr("value",res.data.origen);
+
+                        Ext.getCmp("destino").setValue(res.data.iddestino);
+                        $("#destino").attr("value",res.data.destino);
+
+                        Ext.getCmp("cliente-impoexpo").setValue(res.data.idclientefac);
+                        $("#cliente-impoexpo").attr("value",res.data.clientefac);
+
+                        if(Ext.getCmp("agente-impoexpo"))
+                        {
+                            Ext.getCmp("agente-impoexpo").setValue(res.data.idclienteag);
+                            $("#agente-impoexpo").attr("value",res.data.clienteag);
+                        }
+
+                        if(Ext.getCmp("otro-aduana"))
+                        {
+                            Ext.getCmp("otro-aduana").setValue(res.data.idclienteotro);
+                            $("#otro-aduana").attr("value",res.data.clienteotro);
+                        }
+                        if(!Ext.getCmp("idvendedor"))
+                        {                            
+                            Ext.getCmp("vendedor").setValue(res.data.idvendedor);
+                            $("#vendedor").attr("value",res.data.vendedor);
+                        }
+
+                        Ext.getCmp("agente").setValue(res.data.idagente);
+                        $("#agente").attr("value",res.data.agente);
+
+                        //$("#cliente").attr("value",res.data.idcliente);
                         $("#notify").val(res.data.notify);
 
                         //alert(res.data.consignatario);

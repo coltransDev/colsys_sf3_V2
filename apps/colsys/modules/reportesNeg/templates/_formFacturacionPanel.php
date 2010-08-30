@@ -4,7 +4,7 @@
  *
  *  (c) Coltrans S.A. - Colmas Ltda.
 */
-include_component("widgets", "widgetContactoCliente");
+include_component("widgets", "widgetCliente");
 ?>
 <script type="text/javascript">
     FormFacturacionPanel = function( config ){
@@ -12,33 +12,34 @@ include_component("widgets", "widgetContactoCliente");
         Ext.apply(this, config);
 		var campos = new Array();
 
-			this.wgContactoCliente1 = new WidgetContactoCliente({fieldLabel: 'Cliente ',
+			this.wgCliente1 = new WidgetCliente({fieldLabel: 'Cliente ',
                                                    width: 600,
                                                    id: "cliente-impoexpo",
                                                    hiddenName: "idclientefac"
                                                   });
-		this.wgContactoCliente1.addListener("select", this.onSelectContactoCliente, this);
-		campos.push( this.wgContactoCliente1 );
+		this.wgCliente1.addListener("select", this.onSelectCliente, this);
+		campos.push( this.wgCliente1 );
 		<?
 		if($impoexpo== Constantes::EXPO)
 		{
 		?>
-			this.wgContactoCliente = new WidgetContactoCliente({fieldLabel: 'Agente ',
+			this.wgCliente = new WidgetCliente({fieldLabel: 'Agente ',
                                                    width: 600,
                                                    id: "agente-impoexpo",
-                                                   hiddenName: "idclienteag"
+                                                   hiddenName: "idclienteag",
+                                                   tipo:"Agente"
                                                   });
         
-			this.wgContactoCliente2 = new WidgetContactoCliente({fieldLabel: 'Otro ',
+			this.wgCliente2 = new WidgetCliente({fieldLabel: 'Otro ',
                                                    width: 600,
                                                    id: "otro-aduana",
                                                    hiddenName: "idclienteotro"
                                                   });
-			this.wgContactoCliente.addListener("select", this.onSelectContactoCliente, this);
-			this.wgContactoCliente2.addListener("select", this.onSelectContactoCliente, this);
-			campos[0]= this.wgContactoCliente ;
-			campos.push( this.wgContactoCliente1 );
-			campos.push( this.wgContactoCliente2 );
+			this.wgCliente.addListener("select", this.onSelectCliente, this);
+			this.wgCliente2.addListener("select", this.onSelectCliente, this);
+			campos[0]= this.wgCliente ;
+			campos.push( this.wgCliente1 );
+			campos.push( this.wgCliente2 );
 		<?
 		}
 		?>
@@ -75,7 +76,7 @@ include_component("widgets", "widgetContactoCliente");
     };
 
     Ext.extend(FormFacturacionPanel, Ext.Panel, {
-		onSelectContactoCliente: function( combo, record, index){
+		onSelectCliente: function( combo, record, index){
             combo.alertaCliente(record);
         }
     });
