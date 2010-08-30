@@ -84,7 +84,7 @@ class myUser extends sfBasicSecurityUser
 	
 		
 	/*
-	* Añade un archivo en la lista de archivos del usuario para enviar por correo 
+	* Aï¿½ade un archivo en la lista de archivos del usuario para enviar por correo 
 	* o realizar otras tareas
 	*/		
 	public function addFile($file){				
@@ -359,7 +359,7 @@ class myUser extends sfBasicSecurityUser
      */
 
     private function buildMenu(){
-                
+        $app =  sfContext::getInstance()->getConfiguration()->getApplication();        
         $rutinas = Doctrine::getTable("Rutina")
                           ->createQuery("r")
                           ->select('r.*')
@@ -369,6 +369,7 @@ class myUser extends sfBasicSecurityUser
                           ->where(" (up.ca_login = ? or au.ca_login = ? )", array($this->getUserId(), $this->getUserId()) )
                           ->addWhere(" (ap.ca_acceso >= ? or ap.ca_acceso IS NULL )", 0 )
                           ->addWhere(" (au.ca_acceso >= ? or au.ca_acceso IS NULL )", 0 )
+                          ->addWhere("r.ca_aplicacion =  ? ", $app )
                           ->addOrderBy("r.ca_grupo ASC")
                           ->addOrderBy("r.ca_opcion ASC")
                           ->distinct()

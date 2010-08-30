@@ -17,8 +17,15 @@ class mySessionStorage  extends sfCacheSessionStorage
     // only update cache if session has changed
     if($this->dataChanged === true)
     {
+      $module = sfContext::getInstance()->getModuleName ();
+   	  $action = sfContext::getInstance()->getActionName ();
       //store last request time.
-      $this->cache->set($this->id."_lr", time());      
+      if( !($module=="users" && $action=="checkLogin") ){         
+        $this->cache->set($this->id."_lr", time());
+      }
+      $this->cache->set($this->id."_ip", $_SERVER["SERVER_ADDR"]);
+      
+
       parent::shutdown();
     }
   }

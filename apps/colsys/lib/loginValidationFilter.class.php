@@ -11,6 +11,18 @@ class loginValidationFilter extends sfFilter
 			$filterChain->execute();
             
 		}else{
+            if($module=="gestDocumental" && $action=="verArchivo"){
+                $config = sfConfig::get('sf_app_module_dir').DIRECTORY_SEPARATOR."gestDocumental".DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."access.yml";
+                $configYaml = sfYaml::load($config);
+
+                $folders = explode(",",$configYaml["trusted"]);
+
+                $folder = base64_decode(sfContext::getInstance()->getRequest()->getParameter("folder"));
+
+                if( in_array($folder, $folders) ){
+                    $filterChain->execute();
+                }
+            }
 
             
             $cache = myCache::getInstance();
@@ -18,7 +30,7 @@ class loginValidationFilter extends sfFilter
 
             $cookie = $_COOKIE["colsys"];
             list($session_id, $signature) = explode(':', $cookie, 2);
-            $time = $cache->get($session_id."_lr", "");           
+            $time = $cache->get($session_id."_lr", "");
 
             if( $time+sfConfig::get("app_session_maxinactive")>time() ){
 
@@ -41,7 +53,8 @@ class loginValidationFilter extends sfFilter
                 sfContext::getInstance()->getController()->redirect("/");
                 exit();
             }
-		}
+        }
+		
 	}
 }
 
