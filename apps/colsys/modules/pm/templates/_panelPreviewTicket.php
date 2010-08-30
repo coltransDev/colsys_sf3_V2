@@ -40,6 +40,14 @@ PanelPreviewTicket = function( config ){
         //listeners: FeedViewer.LinkInterceptor,
 
         tbar: [{
+            id:'edit-'+idcomponent,
+            text: 'Editar Ticket',
+            iconCls: 'page_white_edit',
+            disabled:true,
+            handler : this.editTicket,
+            scope: this
+        },
+        {
             id:'tab-'+idcomponent,
             text: 'Ver en nuevo Tab',
             iconCls: 'new-tab',
@@ -60,6 +68,7 @@ PanelPreviewTicket = function( config ){
         clear: function(){
             this.body.update('');
             var items = this.topToolbar.items;
+            tems.get('edit-'+idcomponent).disable();
             items.get('tab-'+idcomponent).disable();
             items.get('print-'+idcomponent).disable();
             //items.get('win').disable();
@@ -255,6 +264,7 @@ Ext.extend(PanelPreviewTicket, Ext.TabPanel, {
 
 
         var items = this.preview.topToolbar.items;
+        items.get('edit-'+idcomponent).enable();
         items.get('tab-'+idcomponent).enable();
         items.get('print-'+idcomponent).enable();
 
@@ -287,9 +297,23 @@ Ext.extend(PanelPreviewTicket, Ext.TabPanel, {
     }
     ,
     newResponse: function(record){
-       var idticket = this.idticket;
+        var idticket = this.idticket;
 
         newResponse(idticket, null, this.responses.id );
+    },
+
+    editTicket: function(){
+        var idticket = this.idticket;
+        
+        if( idticket ){
+            var win = Ext.getCmp("editar-ticket-win");
+            if( win ){
+                win.close();
+            }
+            var win = new EditarTicketWindow({idticket: idticket
+                                        });
+            win.show();
+        }
     }
 
    

@@ -458,7 +458,10 @@ Ext.extend(PanelTickets, Ext.grid.GridPanel, {
     onRowDblclick: function( grid , rowIndex, e ){
 		record =  this.store.getAt( rowIndex );        
 		if( typeof(record)!="undefined" ){
-
+            var win = Ext.getCmp("editar-ticket-win");
+            if( win ){
+                win.close();
+            }
             var win = new EditarTicketWindow({idticket: record.data.idticket
                                         });
             win.show();
