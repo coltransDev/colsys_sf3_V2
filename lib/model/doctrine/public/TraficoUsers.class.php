@@ -12,4 +12,5 @@
  */
 class TraficoUsers extends BaseTraficoUsers
 {
+
 }
