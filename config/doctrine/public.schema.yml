@@ -326,6 +326,7 @@ Cliente:
     ca_fchcircular: date
     ca_status: string
     ca_propiedades: string
+    ca_tipo: string
   relations:
     Contacto:
       local: ca_idcliente
