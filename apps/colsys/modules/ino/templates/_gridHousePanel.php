@@ -222,36 +222,38 @@ Ext.extend(GridHousePanel, Ext.grid.GridPanel, {
 
     deleteHouse: function(idhouse){
        if( !this.readOnly ){
-           var store = this.store;
-           Ext.Ajax.request({
+           if( confirm("Esta seguro que desea eliminar este item?") ){
+               var store = this.store;
+               Ext.Ajax.request({
 
-                waitMsg: 'Eliminando...',
-                url: '<?=url_for("ino/eliminarGridHousePanel")?>',
-                //method: 'POST',
-                //Solamente se envian los cambios
-                params :	{
-                    idhouse: idhouse
-                },
+                    waitMsg: 'Eliminando...',
+                    url: '<?=url_for("ino/eliminarGridHousePanel")?>',
+                    //method: 'POST',
+                    //Solamente se envian los cambios
+                    params :	{
+                        idhouse: idhouse
+                    },
 
-                //Ejecuta esta accion en caso de fallo
-                //(404 error etc, ***NOT*** success=false)
-                failure:function(response,options){
-                    var res = Ext.util.JSON.decode( response.responseText );
-                    Ext.MessageBox.alert('Error Message', "Se ha presentado un error"+(res.errorInfo?": "+res.errorInfo:"")+" - "+(response.status?"\n Codigo HTTP "+response.status:""));
-                },
-
-                //Ejecuta esta accion cuando el resultado es exitoso
-                success:function(response,options){
-                    var res = Ext.util.JSON.decode( response.responseText );
-                    if( res.success ){
-                        store.reload();
-                    }else{
+                    //Ejecuta esta accion en caso de fallo
+                    //(404 error etc, ***NOT*** success=false)
+                    failure:function(response,options){
+                        var res = Ext.util.JSON.decode( response.responseText );
                         Ext.MessageBox.alert('Error Message', "Se ha presentado un error"+(res.errorInfo?": "+res.errorInfo:"")+" - "+(response.status?"\n Codigo HTTP "+response.status:""));
+                    },
+
+                    //Ejecuta esta accion cuando el resultado es exitoso
+                    success:function(response,options){
+                        var res = Ext.util.JSON.decode( response.responseText );
+                        if( res.success ){
+                            store.reload();
+                        }else{
+                            Ext.MessageBox.alert('Error Message', "Se ha presentado un error"+(res.errorInfo?": "+res.errorInfo:"")+" - "+(response.status?"\n Codigo HTTP "+response.status:""));
+                        }
                     }
-                }
 
 
-            });
+                });
+            }
        }
     },
 
