@@ -22,60 +22,32 @@ class inoparametrosActions extends sfActions
     }
 
     /**
-	 * Permite seleccionar el modo de operacion del programa
-	 * @author: Andres Botero
-	 */
-	public function executeSeleccionModo()
-	{
-		//$this->nivelAereo = $this->getUser()->getNivelAcceso( inoActions::RUTINA_AEREO );
-
-	}
-
-    /**
     * Executes index action
     *
     * @param sfRequest $request A request object
     */
-    public function executeIndex(){
-
-        $this->modo = $this->getRequestParameter("modo");
-
-        $response = sfContext::getInstance()->getResponse();
-		$response->addJavaScript("extExtras/RowExpander",'last');
-		$response->addJavaScript("extExtras/CheckColumn",'last');
-
-        $this->nivel = $this->getNivel();
-    }
-
-
-    /**
-    * Executes index action
-    *
-    * @param sfRequest $request A request object
-    */
-    public function executeBusqueda(){
+    public function executeCuentas(){
         
     }
 
 
-    
-
-     /**
+    /**
     * Datos de los conceptos para usar en pricing cotizaciones etc.
     *
     * @param sfRequest $request A request object
     */
-    public function executeDatosPanelParametrosConceptos(sfWebRequest $request){
+    public function executeDatosPanelParametrosCuentas(sfWebRequest $request){
         $modo = $request->getParameter("modo");
-        $nivel = $this->getNivel();
+        //$nivel = $this->getNivel();
+        $nivel = 5;
 
         $idccosto = $request->getParameter("idccosto");
 
         $q = Doctrine::getTable("InoConcepto")
                          ->createQuery("c")
-                         ->select("c.*") //,                                                                      
+                         ->select("c.*, cu.ca_idcuenta, cu.ca_cuenta") //,
                          ->addOrderBy( "c.ca_concepto" );
-        
+        $modo = "fv";
         if( $modo == "fv" ){
             $q->leftJoin("c.InoParametroFacturacion p")
               ->leftJoin("p.InoCuenta cu")
@@ -94,11 +66,13 @@ class inoparametrosActions extends sfActions
               ->addWhere("p.ca_idccosto = ? OR p.ca_idccosto IS NULL", $idccosto )
               ->addWhere("c.ca_costo = ? ", array(true));
         }
+        
 
         $conceptos = $q->setHydrationMode(Doctrine::HYDRATE_SCALAR )->execute();
-        
+
         $k = 0;
-        foreach( $conceptos as $key=>$val ){           
+        foreach( $conceptos as $key=>$val ){
+            //echo $conceptos[ $key ]["c_ca_idconcepto"]." -> ".$conceptos[ $key ]["cu_ca_idcuenta"]."<br >";
             $conceptos[ $key ]["c_ca_concepto"]=utf8_encode( $conceptos[ $key ]["c_ca_concepto"] );
             $conceptos[ $key ]["orden"]=str_pad($k,4, "0",STR_PAD_LEFT);
             $k++;
@@ -107,7 +81,7 @@ class inoparametrosActions extends sfActions
                 $conceptos[ $key ]["idccosto"]=$idccosto;
             }
 
-            $modalidadesConcepto = Doctrine_Query::create()
+            /*$modalidadesConcepto = Doctrine_Query::create()
                                 ->select("cm.ca_idmodalidad")
                                 ->from("InoConceptoModalidad cm")
                                 ->where("cm.ca_idconcepto = ? ", $conceptos[ $key ]["c_ca_idconcepto"] )
@@ -118,7 +92,7 @@ class inoparametrosActions extends sfActions
             foreach( $modalidadesConcepto as $modalidadConcepto ){
                 $modalidades[]=$modalidadConcepto["ca_idmodalidad"];
             }
-            $conceptos[ $key ]["modalidades"] = implode( "|", $modalidades );
+            $conceptos[ $key ]["modalidades"] = implode( "|", $modalidades );*/
 
 
             if( $modo == "fv" && $conceptos[ $key ]["p_ca_iva"] ){
@@ -126,7 +100,7 @@ class inoparametrosActions extends sfActions
             }
 
         }
-        
+
         if( $nivel>=1 && $this->modo=="edicion" ){
             $conceptos[] = array("ca_idconcepto"=>"", "ca_concepto"=>"", "orden"=>"Z");
         }
@@ -142,7 +116,7 @@ class inoparametrosActions extends sfActions
     * guarda el panel de conceptos
     * @param sfRequest $request A request object
     */
-    public function executeObservePanelParametros(sfWebRequest $request){
+    public function executeGuardarPanelParametrosCuentas(sfWebRequest $request){
         $id = $request->getParameter("id");
         $this->responseArray=array("id"=>$id,  "success"=>false);
 
@@ -163,7 +137,7 @@ class inoparametrosActions extends sfActions
         if( $request->getParameter("concepto")!==null ){
             $concepto->setCaConcepto( $request->getParameter("concepto") );
         }
-        
+
         if( $modo=="edicion" ){
             if( $request->getParameter("recargoorigen")!==null ){
                 if( $request->getParameter("recargoorigen")=="true" ){
@@ -212,7 +186,7 @@ class inoparametrosActions extends sfActions
         }
 
         $concepto->save();
-       
+
         if( $modo=="fv" ){
             //ca_idparametro
             $idccosto = $request->getParameter("idccosto");
@@ -252,7 +226,7 @@ class inoparametrosActions extends sfActions
             $parametro->save();
 
         }
-         
+
         if( $modo=="fc" ){
             //ca_idparametro
             $idccosto = $request->getParameter("idccosto");
@@ -301,6 +275,52 @@ class inoparametrosActions extends sfActions
 
         $this->setTemplate("responseTemplate");
     }
+
+
+
+
+
+
+
+   
+
+    /**
+	 * Permite seleccionar el modo de operacion del programa
+	 * @author: Andres Botero
+	 */
+	public function executeSeleccionModo()
+	{
+		//$this->nivelAereo = $this->getUser()->getNivelAcceso( inoActions::RUTINA_AEREO );
+
+	}
+
+    /**
+    * Executes index action
+    *
+    * @param sfRequest $request A request object
+    */
+    public function executeIndex(){
+
+        $this->modo = $this->getRequestParameter("modo");
+
+        $response = sfContext::getInstance()->getResponse();
+		$response->addJavaScript("extExtras/RowExpander",'last');
+		$response->addJavaScript("extExtras/CheckColumn",'last');
+
+        $this->nivel = $this->getNivel();
+    }
+
+
+    
+
+
+    
+
+     
+
+
+
+    
 
 
     /*
