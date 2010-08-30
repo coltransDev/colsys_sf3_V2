@@ -360,8 +360,14 @@ class usersActions extends sfActions
         $this->setLayout("none");
         sfConfig::set('sf_web_debug', false) ;			
     }
+    public function executeTraerImagen($request)
+    {
+        $username=$request->getParameter('username');
+        $tamano=$request->getParameter('tamano');
 
-
+        $user=Doctrine::getTable('Usuario')->find($username);
+        $this->imagen=$user->getImagen($tamano);
+    }
     public function executeLoggedInUsers(){
         
         $sfMemcache = myCache::getInstance();
