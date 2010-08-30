@@ -4,19 +4,19 @@
  * 
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
+
 ?>
 <script type="text/javascript">
 
 
 WidgetCotizacion = function( config ){
     Ext.apply(this, config);
-
-        
+    
     this.store = new Ext.data.Store({
         proxy: new Ext.data.HttpProxy({
             url: '<?=url_for("widgets/listaCotizacionesJSON")?>'            
         }),
-        baseParams:{transporte:this.transporte},
+        baseParams:{transporte:config.modo,impoexpo:config.impoexpo},
         reader: new Ext.data.JsonReader({
             root: 'root',
             totalProperty: 'total'           
@@ -83,12 +83,8 @@ WidgetCotizacion = function( config ){
 
     });
 }
-
-
 Ext.extend(WidgetCotizacion, Ext.form.ComboBox, {
     
 
 });
-
-	
 </script>
