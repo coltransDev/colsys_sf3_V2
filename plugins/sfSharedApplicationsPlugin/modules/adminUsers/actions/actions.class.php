@@ -15,25 +15,70 @@ class adminUsersActions extends sfActions
 	*
 	* @param sfRequest $request A request object
 	*/
-	public function executeIndex(sfWebRequest $request)
-	{
-        $this->usuarios = Doctrine::getTable("Usuario")
-                          ->createQuery("u")
-                          ->addOrderBy("u.ca_activo DESC")
-                          ->addOrderBy("u.ca_nombre")
-                          ->execute();
-	}
-	
-	/*
-	*
-	
-	*/
-	public function executeFormUsuario( $request ){
+
+    const RUTINA = 94;
+
+    public function getNivel() {
+        $this->nivel = $this->getUser()->getNivelAcceso(adminUsersActions::RUTINA);
+        if (!$this->nivel) {
+            $this->nivel = 0;
+        }
+
+        $this->forward404Unless($this->nivel != -1);
+
+        return $this->nivel;
+    }
+    
+    public function executeDirectory(sfWebRequest $request) {
+
+    }
+
+    public function executeDoSearch(sfWebRequest $request) {
+        $criterio = '%'.strtolower($request->getParameter('criterio')).'%';
+        $opcion = $request->getParameter("opcion");
+        $sangre = $request->getParameter("type");
+
+        $q=Doctrine::getTable('Usuario')
+                    ->createQuery('u')
+                    ->addWhere('u.ca_activo = ?', true);
+
+        $this->opcion = $opcion;
+        switch($opcion){
+            case "nombre":
+                $q->addWhere('(LOWER(u.ca_nombre) LIKE ? OR LOWER(u.ca_nombres) LIKE ? OR LOWER(u.ca_apellidos) LIKE ? )', array($criterio,$criterio,$criterio));
+                break;
+            case "apellido":
+                $q->addWhere('(LOWER(u.ca_apellidos) LIKE ?)', $criterio);
+                break;
+
+            case "correo":
+                $q->addWhere('LOWER(u.ca_email) LIKE ?', $criterio);
+                break;
+            case "tiposangre":
+                $q->addWhere('LOWER(u.ca_tiposangre) LIKE ?', $criterio);
+
+                break;
+        }
+        $q->distinct();
+        $this->usuarios = $q->execute();
+
+     }
+
+     public function executeFormUsuario( $request ){
+		//$this->setLayout("layout2col");
+        $this->nivel = $this->getNivel();
+
+        if( !($this->nivel==0 and $request->getParameter("login")==$this->getUser()->getUserId())){
+            if(!($this->nivel>1)){
+                   $this->forward("users", "noAccess");
+            }
+        }
+
 		$this->usuario = Doctrine::getTable("Usuario")->find( $request->getParameter("login") );
 		if( !$this->usuario ){
 			$this->usuario = new Usuario();
 		}
-	 
+
 	 	$this->departamentos = Doctrine::getTable("Departamento")
                           ->createQuery("d")
                           ->addOrderBy("d.ca_nombre")
@@ -44,76 +89,119 @@ class adminUsersActions extends sfActions
                           ->addOrderBy("s.ca_nombre")
                           ->execute();
 
+		$q = Doctrine_Manager::getInstance()->connection();
+			$query = "SELECT DISTINCT ca_empresa";
+			$query.= "	from control.tb_usuarios";
+            $query.= "  order by ca_empresa ASC";
 
-		
+        $this->empresas = $q->execute($query);
+
+        $p = Doctrine_Manager::getInstance()->connection();
+			$query = "SELECT DISTINCT ca_tiposangre";
+			$query.= "	from control.tb_usuarios";
+            $query.= "  order by ca_tiposangre ASC";
+
+        $this->tiposangre = $p->execute($query);
+
+        $r = Doctrine_Manager::getInstance()->connection();
+			$query = "SELECT DISTINCT ca_parentesco";
+			$query.= "	from control.tb_usuarios";
+            $query.= "  order by ca_parentesco ASC";
+
+        $this->parentescos = $r->execute($query);
+
+		$this->manager=Doctrine::getTable('Usuario')->find($request->getParameter('login'));
+        //$this->manager = $this->manager->getManager();
+
+
+        $response = sfContext::getInstance()->getResponse();
+		$response->addJavaScript("tabpane/tabpane",'last');
+        $response->addStylesheet("tabpane/luna/tab",'last');
 	}
-	
-	/*
-	*
-	*/
-	public function executeGuardarUsuario( $request ){
+
+	public function executeIndex(sfWebRequest $request)	{
+        $this->usuarios = Doctrine::getTable("Usuario")
+                          ->createQuery("u")
+                          ->addOrderBy("u.ca_activo DESC")
+                          ->addOrderBy("u.ca_nombre")
+                          ->execute();
+	}
+
+    public function executeGuardarUsuario( $request ){
 		$usuario = Doctrine::getTable("Usuario")->find( $request->getParameter("login") );
+        $this->nivel = $this->getNivel();
+
+        if( !($this->nivel==0 and $request->getParameter("login")==$this->getUser()->getUserId())){
+           if(!($this->nivel>1)){
+               $this->forward("users", "noAccess");
+            }
+        }
 		if( !$usuario ){
 			$usuario = new Usuario();
 			$usuario->setCaLogin( $request->getParameter("login") );
 		}
-		
-		
+
 		if( $request->getParameter("nombre") ){
 			$usuario->setCaNombre( $request->getParameter("nombre") );
 		}
-		
+
 		if( $request->getParameter("extension") ){
 			$usuario->setCaExtension( $request->getParameter("extension") );
 		}
-		
+
 		if( $request->getParameter("email") ){
 			$usuario->setCaEmail( $request->getParameter("email") );
 		}
-		
+
 		if( $request->getParameter("cargo") ){
 			$usuario->setCaCargo( $request->getParameter("cargo") );
 		}
-						
+
 		if( $request->getParameter("departamento") ){
 			$usuario->setCaDepartamento( $request->getParameter("departamento") );
 		}
-		
+
 		if( $request->getParameter("idsucursal") ){
 			$usuario->setCaIdsucursal( $request->getParameter("idsucursal") );
-			
+
 			/*
-			* FIX-ME: Se deben arreglar las opciones del prrograma donde se use el nombre de la sucursal
-			*/			
+			* FIX-ME: Se deben arreglar las opciones del prrograma donde se use el nombre de la sucursal*/
+
 			$sucursal = Doctrine::getTable("Sucursal")->find( $request->getParameter("idsucursal") );
 			$usuario->setCaSucursal( $sucursal->getCaNombre() );
-			
+
 		}
-		
+
 		if( $request->getParameter("auth_method") ){
 			$usuario->setCaAuthmethod( $request->getParameter("auth_method") );
 		}
-		
+
 		if( $request->getParameter("passwd1") && $request->getParameter("passwd1")==$request->getParameter("passwd2") ){
 			$usuario->setPasswd( $request->getParameter("passwd1") );
 		}
-		
-		
+
+
 		if( $request->getParameter("forcechange") ){
 			$usuario->setCaForcechange( true );
 		}else{
 			$usuario->setCaForcechange( false );
 		}
-		
-		
+
+
 		if( $request->getParameter("activo") ){
 			$usuario->setCaActivo( true );
 		}else{
 			$usuario->setCaActivo( false );
 		}
 
+
         if (is_uploaded_file($_FILES['foto']['tmp_name'])) {
-            $nombre_archivo=$usuario->getDirectorio().DIRECTORY_SEPARATOR.'foto.jpg';
+            $directory=$usuario->getDirectorio().DIRECTORY_SEPARATOR;
+
+            if(!is_dir($directory)){
+               @mkdir($directory, 0777, true);
+            }
+            $nombre_archivo=$directory.'foto.jpg';
             if (move_uploaded_file($_FILES['foto']['tmp_name'],$nombre_archivo)){
 
                 // Obtener nuevos tamaños
@@ -144,13 +232,61 @@ class adminUsersActions extends sfActions
                 // Imprimir
                 imagejpeg($thumb,$usuario->getDirectorio().DIRECTORY_SEPARATOR.'foto60x80.jpg',100);
             }
-        if( $request->getParameter("nombres") ){
+        }
+        if( $request->getParameter("cumpleanos") ){
+			$usuario->setCaCumpleanos( $request->getParameter("cumpleanos") );
+		}
+
+        if( $request->getParameter("empresa") ){
+			$usuario->setCaEmpresa( $request->getParameter("empresa") );
+		}
+
+		if( $request->getParameter("fchingreso") ){
+			$usuario->setCaFchingreso( $request->getParameter("fchingreso") );
+		}
+
+		if( $request->getParameter("nombres") ){
 			$usuario->setCaNombres( $request->getParameter("nombres") );
 		}
 
-        }
-		$usuario->save();		
-	 
+		if( $request->getParameter("apellidos") ){
+			$usuario->setCaApellidos( $request->getParameter("apellidos") );
+		}
+
+		if( $request->getParameter("teloficina") ){
+			$usuario->setCaTeloficina( $request->getParameter("teloficina") );
+		}
+
+		if( $request->getParameter("telparticular") ){
+			$usuario->setCaTelparticular( $request->getParameter("telparticular") );
+		}
+
+		if( $request->getParameter("telfamiliar") ){
+			$usuario->setCaTelfamiliar( $request->getParameter("telfamiliar") );
+		}
+
+		if( $request->getParameter("nombrefamiliar") ){
+			$usuario->setCaNombrefamiliar( $request->getParameter("nombrefamiliar") );
+		}
+
+		if( $request->getParameter("movil") ){
+			$usuario->setCaMovil( $request->getParameter("movil") );
+		}
+
+		if( $request->getParameter("direccion") ){
+			$usuario->setCaDireccion( $request->getParameter("direccion") );
+		}
+
+		if( $request->getParameter("tiposangre") ){
+			$usuario->setCaTiposangre( $request->getParameter("tiposangre") );
+		}
+        if( $request->getParameter("parentesco") ){
+			$usuario->setCaTiposangre( $request->getParameter("parentesco") );
+		}
+        $usuario->save();
+
+        $this->usuario=$usuario;
+
 	}
 	
 	/*
@@ -312,8 +448,79 @@ class adminUsersActions extends sfActions
 		
 		
 	}
-	
-	
-	
+
+    public function executeLogin($request){
+        //header("Location: /users/login");
+        //exit();
+		//echo "login".session_id();
+		//$response = sfContext::getInstance()->getResponse();
+		//$response->addStylesheet("login");
+
+		if($this->getUser()->isAuthenticated()){
+			$this->redirect("homepage/index");
+		}
+
+		$this->form = new LoginForm();
+		if ($request->isMethod('post')){
+			$this->form->bind(
+				array(
+						'username' => $request->getParameter('username'),
+						'passwd' => $request->getParameter('passwd')
+					)
+				);
+			if( $this->form->isValid() ){
+				//Se valido correctamente
+				$this->redirect("homepage/index");
+				//echo "OK";
+			}
+		}
+
+		$this->setLayout("login");
+	}
+
+	public function executeLogout($request){
+		$this->getUser()->signOut();
+		$this->redirect("users/login");
+	}
+
+    public function executeNoAccess( $request ){
+
+    }
+
+    public function executeTraerImagen($request){
+        $username=$request->getParameter('username');
+        $user=Doctrine::getTable('Usuario')->find($username);
+
+        $this->imagen=$user->getImagen();
+    }
+
+    public function executeViewOrganigrama(sfWebRequest $request) {
+        $this->manager=Doctrine::getTable('Usuario')->find($request->getParameter('login'));
+        $this->forward404Unless( $this->manager );
+
+        $this->usuarios = $this->manager->getSubordinado();
+
+        if(count($this->usuarios)==0){
+            $this->manager = $this->manager->getManager();
+            $this->usuarios = $this->manager->getSubordinado();
+        }
+
+                    /*Doctrine::getTable('Usuario')
+                    ->createQuery('u')
+                    ->where("u.ca_manager= ? ", $this->user->getCaLogin())
+                    ->execute();*/
+        }
+
+    public function executeViewUser(sfWebRequest $request) {
+
+        $this->setLayout("layout2col");
+        $this->userinicio = sfContext::getInstance()->getUser();
+        $this->nivel = $this->getNivel();
+
+        $this->user=Doctrine::getTable('Usuario')->find($request->getParameter('login'));
+
+        $this->manager=Doctrine::getTable('Usuario')->find($request->getParameter('login'));
+        $this->manager = $this->manager->getManager();
+    }
 }
 ?>
