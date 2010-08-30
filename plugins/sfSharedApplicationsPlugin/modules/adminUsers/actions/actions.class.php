@@ -78,8 +78,15 @@ class adminUsersActions extends sfActions
      }
 
      public function executeFormUsuario( $request ){
-		//$this->setLayout("layout2col");
-         
+
+        $app =  sfContext::getInstance()->getConfiguration()->getApplication();
+        //return 5;
+        switch( $app ){
+            case "intranet":
+                $this->setLayout("layout2col");
+                break;
+        }
+		 
         $this->nivel = $this->getNivel();
 
         if( !($this->nivel==0 and $request->getParameter("login")==$this->getUser()->getUserId())){
@@ -494,7 +501,7 @@ class adminUsersActions extends sfActions
 
 	public function executeLogout($request){
 		$this->getUser()->signOut();
-		$this->redirect("users/login");
+		$this->redirect("adminUsers/login");
 	}
 
     public function executeNoAccess( $request ){
