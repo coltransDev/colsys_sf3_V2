@@ -115,10 +115,15 @@ elseif (!isset($boton) and !isset($accion) and isset($criterio)) {
     $modulo = "00100000";                                                      // Identificación del módulo para la ayuda en línea
     //  include_once 'include/seguridad.php';                                      // Control de Acceso al módulo
 
-    $condicion= "where lower($opcion) like lower('%".$criterio."%')";
+    if ($opcion == 'ca_idcliente'){
+        $condicion= "where $opcion = $criterio";
+    }else{
+        $condicion= "where lower($opcion) like lower('%".$criterio."%')";
+    }
     if (isset($sucursal)) {
         $condicion.= " and (ca_fcharribo between '$fchinicial' and '$fchfinal') and ca_sucursal like '$sucursal'";
     }
+
     if (!$rs->Open("select DISTINCT ca_ano, ca_mes, ca_trafico, ca_modal, ca_referencia, ca_sigla, ca_nombre, ca_ciuorigen, ca_traorigen, ca_ciudestino, ca_tradestino, ca_fchembarque, ca_fcharribo, ca_motonave from vi_inoconsulta_sea $condicion order by ca_ano DESC, ca_mes, ca_trafico, ca_modal, ca_referencia")) {           // Selecciona todos lo registros de la tabla Ino-Marítimo
         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
         echo "<script>document.location.href = 'entrada.php';</script>";
