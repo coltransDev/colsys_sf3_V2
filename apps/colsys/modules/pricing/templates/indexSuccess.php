@@ -29,12 +29,12 @@ include_component("pricing","panelConsultaCiudades");
 
 //Panel de parametros
 
-include_component("pricing","panelParametros" );
-include_component("pricing","modalidadWindow" );
-include_component("pricing","modalidadGrid");
+include_component("conceptos","panelParametros" );
+include_component("conceptos","modalidadWindow" );
+include_component("conceptos","modalidadGrid");
 
-include_component("pricing","parametroWindow" );
-include_component("pricing","parametroGrid");
+include_component("conceptos","parametroWindow" );
+include_component("conceptos","parametroGrid");
 
 
 //Tarifario Colmas
