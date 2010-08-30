@@ -26,6 +26,7 @@ class Usuario extends BaseUsuario
                         ->createQuery("a")
                         ->where('a.ca_login = ?', $this->getCaLogin())
                         ->addWhere('a.ca_rutina = ?', $rutina)
+                        ->addOrderBy('a.ca_acceso DESC')
                         ->fetchOne();
 
 		if( $acceso ){
@@ -37,6 +38,7 @@ class Usuario extends BaseUsuario
                         ->innerJoin("p.UsuarioPerfil up")
                         ->where('up.ca_login = ?', $this->getCaLogin())
                         ->addWhere('a.ca_rutina = ?', $rutina)
+                        ->addOrderBy('a.ca_acceso DESC')
                         ->fetchOne();            
 			if( $acceso ){
 				return $acceso->getCaAcceso();
