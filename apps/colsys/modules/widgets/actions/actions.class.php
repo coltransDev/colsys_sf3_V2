@@ -603,6 +603,7 @@ class widgetsActions extends sfActions
     public function executeListaCotizacionesJSON(){
 		$criterio =  $this->getRequestParameter("query");
         $transporte =  $this->getRequestParameter("transporte");
+        $impoexpo =  $this->getRequestParameter("impoexpo");
         
         $q = Doctrine::getTable("Cotizacion")
                        ->createQuery("c")
@@ -622,6 +623,11 @@ class widgetsActions extends sfActions
         if($transporte!="")
         {
             $q->addWhere("p.ca_transporte = ?", utf8_decode($transporte));
+        }
+
+        if($impoexpo!="")
+        {
+            $q->addWhere("p.ca_impoexpo = ?", utf8_decode($impoexpo));
         }
 
         $cotizaciones = $q->setHydrationMode(Doctrine::HYDRATE_SCALAR)->execute();
@@ -645,6 +651,8 @@ class widgetsActions extends sfActions
 
             $cotizaciones[$key]["p_ca_idlinea"] = utf8_encode($cotizaciones[$key]["p_ca_idlinea"]);
             $cotizaciones[$key]["p_ca_linea"]="";
+
+            $cotizaciones[$key]["libcli_ca_cupo"]=utf8_encode($cotizaciones[$key]["libcli_ca_cupo"]);
 
             if($cotizaciones[$key]["p_ca_idlinea"]!="")
             {
