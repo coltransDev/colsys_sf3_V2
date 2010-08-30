@@ -12,4 +12,5 @@
  */
 class Session extends BaseSession
 {
+
 }
