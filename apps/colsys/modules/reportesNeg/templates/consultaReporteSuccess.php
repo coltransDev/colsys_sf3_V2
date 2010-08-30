@@ -5,7 +5,6 @@
 <div id="header" class="x-hide-display">
     <table cellspacing="1" width="100%" class="tableList">
         <tr>
-
             <td width="122" >
                 <div align="center">
                       <b>Reporte No.:</b><br />

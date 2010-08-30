@@ -66,11 +66,31 @@ class reportesNegActions extends sfActions
 
     public function load_category()
     {
-        $this->modo=$this->getRequestParameter("modo");
-        if($this->modo=="Aéreo")
-            $this->idcategory="22";
-        else if($this->modo=="Marítimo")
-            $this->idcategory="23";
+        $this->impoexpo=$this->getRequestParameter("impoexpo");
+        if($this->impoexpo==Constantes::IMPO)
+        {
+            $this->modo=$this->getRequestParameter("modo");
+            if($this->modo==Constantes::AEREO)
+                $this->idcategory="31";
+            else if($this->modo==Constantes::MARITIMO)
+                $this->idcategory="32";
+        }
+        else if($this->impoexpo==Constantes::EXPO)
+        {
+            $this->modo=$this->getRequestParameter("modo");
+            if($this->modo==Constantes::AEREO)
+                $this->idcategory="34";
+            else if($this->modo==Constantes::MARITIMO)
+                $this->idcategory="35";
+        }
+        else
+        {
+            $this->modo=$this->getRequestParameter("modo");
+            if($this->modo==Constantes::AEREO)
+                $this->idcategory="37";
+            else if($this->modo==Constantes::MARITIMO)
+                $this->idcategory="38";
+        }
     }
 	/**
 	* Pantalla de bienvenida para el modulo de reportes
@@ -262,10 +282,10 @@ class reportesNegActions extends sfActions
     */
     public function executeFormReporte(sfWebRequest $request){
 
-        $this->nivel = $this->getNivel();
-        $this->opcion = $this->getRequestParameter("opcion");
+        $this->nivel = $this->getNivel();        
         $this->impoexpo = $this->getRequestParameter("impoexpo");
         $this->load_category();
+        
         if($this->modo=="Aéreo")
             $this->nomLinea="Aerolinea";
         else if($this->modo=="Marítimo")
@@ -390,7 +410,7 @@ class reportesNegActions extends sfActions
 
             if($request->getParameter("impoexpo"))
             {
-                $reporte->setCaImpoexpo($request->getParameter("impoexpo"));
+                $reporte->setCaImpoexpo(utf8_decode($request->getParameter("impoexpo")));
             }
             else
             {
@@ -647,51 +667,52 @@ class reportesNegActions extends sfActions
         else
         {
             $reporte->save();
-			if($reporte->getCaModalidad()== Constantes::EXPO)
+			
+            if($request->getParameter("seguros-checkbox")== "on")
 			{
-				$repExpo= new RepExpo();
-				$repExpo->setCaIdreporte($reporte->getCaIdreporte());
-				if($request->getParameter("npiezas") && $request->getParameter("mpiezas") )
+				$repSeguro= new RepSeguro();
+				$repSeguro->setCaIdreporte($reporte->getCaIdreporte());
+
+                if($request->getParameter("ca_seguro_conf") )
 				{
-					$reporte->setCaPiezas($request->getParameter("npiezas")." ".$request->getParameter("mpiezas"));
-				}
-                
-				if($request->getParameter("npeso") && $request->getParameter("mpeso") )
-				{
-					$reporte->setCaPeso($request->getParameter("npeso")." ".$request->getParameter("mpeso"));
-				}
-                
-				if($request->getParameter("nvolumen") && $request->getParameter("mvolumen") )
-				{
-					$reporte->setCaVolumen($request->getParameter("nvolumen")." ".$request->getParameter("mvolumen"));
-				}
-                
-				if($request->getParameter("dimensiones") )
-				{
-					$reporte->setCaDimensiones($request->getParameter("dimensiones"));
-				}
-                
-				if($request->getParameter("valor_carga") )
-				{
-					$reporte->setCaValorcarga($request->getParameter("valor_carga"));
-				}
-				if($request->getParameter("sia") )
-				{
-					$reporte->setCaIdsia($request->getParameter("sia"));
-				}
-                
-				if($request->getParameter("tipoexpo") )
-				{
-					$reporte->setCaTipoexpo($request->getParameter("tipoexpo"));
-				}
-                
-				if($request->getParameter("motonave") )
-				{
-					$reporte->setCaMotonave($request->getParameter("motonave"));
+					$repSeguro->setCaSeguroConf($request->getParameter("ca_seguro_conf"));
 				}
 
-				$repExpo->save();
+				if($request->getParameter("ca_vlrasegurado") )
+				{
+					$repSeguro->setCaVlrasegurado($request->getParameter("ca_vlrasegurado"));
+				}
 
+                if($request->getParameter("ca_idmoneda_vlr") )
+				{
+					$repSeguro->setCaIdmonedaVlr($request->getParameter("ca_idmoneda_vlr"));
+				}
+
+                if($request->getParameter("ca_obtencionpoliza") )
+				{
+					$repSeguro->setCaObtencionpoliza($request->getParameter("ca_obtencionpoliza"));
+				}
+
+                if($request->getParameter("ca_idmoneda_pol") )
+				{
+					$repSeguro->setCaIdmonedaPol($request->getParameter("ca_idmoneda_pol"));
+				}
+
+                if($request->getParameter("ca_primaventa") )
+				{
+					$repSeguro->setCaPrimaventa($request->getParameter("ca_primaventa"));
+				}
+
+                if($request->getParameter("ca_minimaventa") )
+				{
+					$repSeguro->setCaMinimaventa($request->getParameter("ca_minimaventa"));
+				}
+                
+                if($request->getParameter("ca_idmoneda_vta") )
+				{
+					$repSeguro->setCaIdmonedaVta($request->getParameter("ca_idmoneda_vta"));
+				}
+				$repSeguro->save();
 			}
 
             if($reporte->getCaModalidad()== Constantes::EXPO)
@@ -700,41 +721,41 @@ class reportesNegActions extends sfActions
 				$repExpo->setCaIdreporte($reporte->getCaIdreporte());
 				if($request->getParameter("npiezas") && $request->getParameter("mpiezas") )
 				{
-					$reporte->setCaPiezas($request->getParameter("npiezas")." ".$request->getParameter("mpiezas"));
+					$repExpo->setCaPiezas($request->getParameter("npiezas")." ".$request->getParameter("mpiezas"));
 				}
 
 				if($request->getParameter("npeso") && $request->getParameter("mpeso") )
 				{
-					$reporte->setCaPeso($request->getParameter("npeso")." ".$request->getParameter("mpeso"));
+					$repExpo->setCaPeso($request->getParameter("npeso")." ".$request->getParameter("mpeso"));
 				}
 
 				if($request->getParameter("nvolumen") && $request->getParameter("mvolumen") )
 				{
-					$reporte->setCaVolumen($request->getParameter("nvolumen")." ".$request->getParameter("mvolumen"));
+					$repExpo->setCaVolumen($request->getParameter("nvolumen")." ".$request->getParameter("mvolumen"));
 				}
 
 				if($request->getParameter("dimensiones") )
 				{
-					$reporte->setCaDimensiones($request->getParameter("dimensiones"));
+					$repExpo->setCaDimensiones($request->getParameter("dimensiones"));
 				}
 
 				if($request->getParameter("valor_carga") )
 				{
-					$reporte->setCaValorcarga($request->getParameter("valor_carga"));
+					$repExpo->setCaValorcarga($request->getParameter("valor_carga"));
 				}
 				if($request->getParameter("sia") )
 				{
-					$reporte->setCaIdsia($request->getParameter("sia"));
+					$repExpo->setCaIdsia($request->getParameter("sia"));
 				}
 
 				if($request->getParameter("tipoexpo") )
 				{
-					$reporte->setCaTipoexpo($request->getParameter("tipoexpo"));
+					$repExpo->setCaTipoexpo($request->getParameter("tipoexpo"));
 				}
 
 				if($request->getParameter("motonave") )
 				{
-					$reporte->setCaMotonave($request->getParameter("motonave"));
+					$repExpo->setCaMotonave($request->getParameter("motonave"));
 				}
 
 				$repExpo->save();

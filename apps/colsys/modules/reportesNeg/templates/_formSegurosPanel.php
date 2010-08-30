@@ -15,61 +15,61 @@
             activeTab: 0,
             title: 'Seguros',
             buttonAlign: 'center',
-            autoHeight: true,
+            autoHeight: true,            
             items: [
                 {
                     xtype:'fieldset',
                     title: 'Información de Seguros',
                     autoHeight:true,
                     //defaults: {width: 210},
-                    items: [{
+                    items: [
+                        {
+                            xtype: "hidden",
+                            name: "ca_seguro_conf",
+                            id: "ca_seguro_conf",
+                            value: '<?=$seguro_conf?>'
+
+                        },
+                        {
+                            xtype: "hidden",
+                            name: "ca_seguro",
+                            id: "ca_seguro"
+                        },
+                        {
                         xtype:'fieldset',
                         checkboxToggle:true,
                         title: 'Seguros',
                         autoHeight:true,                        
-                        defaultType: 'textfield',
-                        collapsed: true,
+                        //defaultType: 'textfield',
+                        //collapsed: true,
+                        width:'100%',
                         id:"seguros",
                         name:"seguros",
                         items: [
-                            {
-                                xtype: "hidden",
-                                name: "ca_seguro_conf",
-                                id: "ca_seguro_conf",
-                                value: '<?=$seguro_conf?>'
-
-                            },
-                            {
-                                xtype: "hidden",
-                                name: "ca_seguro",
-                                id: "ca_seguro"
-                            },
                             {
                                 xtype:'fieldset',
                                 autoHeight:true,
                                 layout:'column',
                                 columns: 3,
-                                columnWidth: '100%',
+                                columnWidth: .33,
                                 items :[
                                 {
                                     layout:'column',
                                     border:false,
                                     title: "Valor Asegurado ",
                                     columns: 2,
-                                    columnWidth: .33,
+                                    columnWidth: .3,
                                     fieldLabel: "Valor Asegurado ",
                                     items: [
                                     {
-                                        xtype: "numberfield",
-                                        fieldLabel: "Valor Asegurado ",
+                                        xtype: "numberfield",                                        
                                         name: "ca_vlrasegurado",
-                                        id: "ca_vlrasegurado"
+                                        id: "ca_vlrasegurado",
+                                        width:50
                                     },{
-                                        xtype: "combo",
-                                        hideLabel:false,
-                                        fieldLabel: "",
-                                        name: "ca_idmoneda_vlr2",
-                                        id: "ca_idmoneda_vlr2",
+                                        xtype: "combo",                                       
+                                        name: "ca_idmoneda_vlr",
+                                        id: "ca_idmoneda_vlr",
                                         mode:           'local',
                                         displayField:   'name',
                                         valueField:     'value',
@@ -103,15 +103,12 @@
                                     title: "Obtención Póliza ",
                                     items: [
                                     {
-                                        xtype: "numberfield",
-                                        fieldLabel: "Obtención Póliza ",
+                                        xtype: "numberfield",                                        
                                         name: "ca_obtencionpoliza",
                                         id: "ca_obtencionpoliza",
                                         width: 120
                                     },{
-                                        xtype: "combo",
-                                        hideLabel:false,
-                                        fieldLabel: "",
+                                        xtype: "combo",                                        
                                         name: "ca_idmoneda_pol",
                                         id: "ca_idmoneda_pol",
                                         mode:           'local',
@@ -147,8 +144,7 @@
                                     title:"Prima Venta",
                                     items: [
                                     {
-                                        xtype: "numberfield",
-                                        fieldLabel: "Prima Venta ",
+                                        xtype: "numberfield",                                       
                                         name: "ca_primaventa",
                                         id: "ca_primaventa",
                                         width: 120
@@ -163,16 +159,13 @@
                                     title:"Min",
                                     items: [
                                     {
-                                        xtype: "numberfield",
-                                        fieldLabel: "Min ",
+                                        xtype: "numberfield",                                        
                                         name: "ca_minimaventa",
                                         id: "ca_minimaventa",
                                         width: 120
                                     },
                                     {
-                                        xtype: "combo",
-                                        hideLabel:false,
-                                        fieldLabel: "",
+                                        xtype: "combo",                                        
                                         name: "ca_idmoneda_vta",
                                         id: "ca_idmoneda_vta",
                                         mode:           'local',
@@ -204,7 +197,7 @@
                         ]
                     }]
 
-///////////////////////
+
                 }
             ]
         });

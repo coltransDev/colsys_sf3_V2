@@ -41,7 +41,9 @@ if($permiso>=2)
         this.widgetCotizacion = new WidgetCotizacion({
                                                       fieldLabel: "Cotización",
                                                       id:"cotizacion",
-                                                      hiddenName: "idcotizacion"
+                                                      hiddenName: "idcotizacion",
+                                                      modo:"<?=$modo?>",
+                                                      impoexpo:"<?=$impoexpo?>"
                                                       });
         this.widgetCotizacion.addListener("select", this.onSelectCotizacion, this );
 
@@ -81,7 +83,8 @@ if($permiso>=2)
                                 xtype: "datefield",
                                 fieldLabel: "Fecha de Despacho",
                                 id: "fchdespacho",
-                                name: "fchdespacho"
+                                name: "fchdespacho",
+                                format: 'Y-m-d'
                             },
                             <?
                             if($permiso<2)
@@ -304,7 +307,7 @@ if($permiso>=2)
 
             Ext.getCmp("ca_obtencionpoliza").setValue(record.data.obtencion);
             Ext.getCmp("ca_idmoneda_vta").setValue(record.data.idmoneda);
-            Ext.getCmp("ca_idmoneda_vta").setValue(record.data.idmonedaobtencion);
+            Ext.getCmp("ca_idmoneda_pol").setValue(record.data.idmonedaobtencion);
 
             Ext.getCmp("ca_primaventa").setValue(record.data.prima_vlr);
             Ext.getCmp("ca_minimaventa").setValue(record.data.prima_min);
@@ -312,16 +315,30 @@ if($permiso>=2)
             if(record.data.obtencion || record.data.idmoneda || record.data.idmonedaobtencion || record.data.prima_vlr || record.data.prima_min)
                 Ext.getCmp('seguros').collapsed=false;
 
-            Ext.getCmp("ca_liberacion").setValue(record.data.prima_min);
-            Ext.getCmp("ca_tiempocredito").setValue(record.data.prima_min);
+//            Ext.getCmp("ca_liberacion").setValue(record.data.prima_min);
+//            Ext.getCmp("ca_tiempocredito").setValue(record.data.prima_min);
             $("#destino").val(record.data.destino);
+
+
+//            dias_credito
+            //alert(record.data.diascredito);
+            diascredito=0;
+            if(record.data.diascredito)
+                diascredito=(record.get("diascredito")!="")?record.get("diascredito")+" dias":"0";
+
+            Ext.getCmp("ca_tiempocredito").setValue(diascredito);
+            cupo=(record.get("cupo")!="")?"Sí":"No";
+            //alert(cupo);
+            Ext.getCmp("ca_liberacion").setValue(cupo);
+
         }
         <?
 		if($impoexpo== Constantes::EXPO)
 		{
 		?>
 		,
-        onSelectModalidad: function( combo, record, index){
+        onSelectModalidad: function( combo, record, index)
+        {
 			if(record.data.modalidad=="CONSOLIDADO")
 			{
 				alert(record.data.modalidad);

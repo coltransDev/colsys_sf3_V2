@@ -6,7 +6,6 @@
 */
 include_component("reportesNeg", "formReportePanel",array("reporte"=>$reporte,"idreporte"=>$reporte->getCaIdreporte(),"modo"=>$modo,"impoexpo"=>$impoexpo,"permiso"=>$permiso));
 include_component("widgets", "widgetTercero");
-
 ?>
 <div class="content">
     <div id="panel"></div>
@@ -29,7 +28,7 @@ Ext.QuickTips.init();
 /*
 * Modulos de Tooltips
 */
-if( $opcion=="ayudas" ) {
+if( $permiso=="3" ) {
     include_component("kbase","tooltipCreator", array("idcategory"=>$idcategory));
 }
 ?>

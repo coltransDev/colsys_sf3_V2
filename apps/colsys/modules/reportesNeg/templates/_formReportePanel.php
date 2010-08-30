@@ -110,7 +110,7 @@ include_component("reportesNeg", "formSegurosPanel");
                         var res = Ext.util.JSON.decode( action.response.responseText );
                         Ext.MessageBox.alert("Mensaje",'Se guardo correctamente el reporte');
                         if(res.redirect)                            
-                            location.href="/reportesNeg/consultaReporte/id/"+res.idreporte+"/idcategory/<?=$idcategory?>";
+                            location.href="/reportesNeg/consultaReporte/id/"+res.idreporte+"/impoexpo/<?=$impoexpo?>/modo/<?=$modo?>";
                     }
                     ,
                     failure:function(form,action){
@@ -154,6 +154,7 @@ include_component("reportesNeg", "formSegurosPanel");
                         Ext.getCmp('seguros').collapsed=(Ext.getCmp('ca_seguro').getValue()=="Sí")?false:true;
                         $("#cliente").attr("value",res.data.idcliente);
                         $("#notify").val(res.data.notify);
+
                         //alert(res.data.consignatario);
                         //alert(Ext.getCmp('notify').toSource())
                         //Ext.getCmp('idconsignatario').hiddenField.value=res.data.consignatario
@@ -161,8 +162,12 @@ include_component("reportesNeg", "formSegurosPanel");
                         //alert($("#consig").val())
                         //alert($("#idconsignatario").val())
                         $("#idconsigmaster").val(res.data.consigmaster);
-                    }                    
+                    }
                 });
+            }
+            else
+            {
+                //Ext.getCmp('seguros').collapsed=true;
             }
         }
     });

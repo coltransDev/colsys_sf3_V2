@@ -17,11 +17,32 @@ class reportesNegComponents extends sfComponents
 
     public function load_category()
     {
-        $this->modo=$this->getRequestParameter("modo");
-        if($this->modo=="Aéreo")
-            $this->idcategory="22";
-        else if($this->modo=="Marítimo")
-            $this->idcategory="23";
+        $this->impoexpo=$this->getRequestParameter("impoexpo");
+        if($this->impoexpo==Constantes::IMPO)
+        {
+            $this->modo=$this->getRequestParameter("modo");
+            if($this->modo==Constantes::AEREO)
+                $this->idcategory="31";
+            else if($this->modo==Constantes::MARITIMO)
+                $this->idcategory="32";
+        }
+        else if($this->impoexpo==Constantes::EXPO)
+        {
+            $this->modo=$this->getRequestParameter("modo");
+            if($this->modo==Constantes::AEREO)
+                $this->idcategory="34";
+            else if($this->modo==Constantes::MARITIMO)
+                $this->idcategory="35";
+        }
+        else
+        {
+            $this->modo=$this->getRequestParameter("modo");
+            if($this->modo==Constantes::AEREO)
+                $this->idcategory="37";
+            else if($this->modo==Constantes::MARITIMO)
+                $this->idcategory="38";
+        }
+
     }
     
 	/*
@@ -36,6 +57,7 @@ class reportesNegComponents extends sfComponents
                                      ->select("ca_idconcepto, ca_concepto")
                                      ->where("c.ca_transporte = ?", $this->reporte->getCaTransporte() )
                                      ->addWhere("c.ca_modalidad = ?", $this->reporte->getCaModalidad() )
+                                     ->addWhere("c.ca_fcheliminado is null " )
                                      ->addOrderBy("c.ca_liminferior")
                                      ->addOrderBy("c.ca_concepto")
                                      ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
@@ -137,15 +159,21 @@ class reportesNegComponents extends sfComponents
 	*/
 	public function executeFormReportePanel()
 	{
-//        echo "categoria:".$this->getRequestParameter("idcategory")."<br>";        
-        $this->load_category();
-        
-        $this->issues = Doctrine::getTable("KBTooltip")
-                            ->createQuery("t")
-                            ->select("t.ca_idcategory, t.ca_title, t.ca_info, t.ca_field_id")
-                            ->where("t.ca_idcategory = ?", $this->idcategory)
-                            ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
-                            ->execute();
+//        echo "categoria:".$this->getRequestParameter("idcategory")."<br>";
+        $this->permiso = $this->getUser()->getNivelAcceso( "87" );
+
+        if($this->permiso=="3")
+        {
+            $this->load_category();
+//            echo $this->idcategory;
+            $this->issues = Doctrine::getTable("KBTooltip")
+                                ->createQuery("t")
+                                ->select("t.ca_idcategory, t.ca_title, t.ca_info, t.ca_field_id")
+                                ->where("t.ca_idcategory = ?", $this->idcategory)
+                                ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                                ->execute();
+        }
+
     }
     /*
 	* Edita la informacion basica del trayecto
