@@ -22,7 +22,7 @@ PanelProductos = function( config ){
     */
     this.storeConceptos = new Ext.data.Store({
         autoLoad : false,
-        url: '<?=url_for("parametros/datosConceptos")?>',
+        url: '<?=url_for("conceptos/datosConceptos")?>',
         reader: new Ext.data.JsonReader(
             {                
                 root: 'root',
@@ -37,7 +37,7 @@ PanelProductos = function( config ){
     });
     this.storeEquipos = new Ext.data.Store({
         autoLoad : true,
-        url: '<?=url_for("parametros/datosConceptos")?>',
+        url: '<?=url_for("conceptos/datosConceptos")?>',
         baseParams:{
                transporte:"<?=Constantes::MARITIMO?>",
                modalidad:"<?=Constantes::FCL?>",

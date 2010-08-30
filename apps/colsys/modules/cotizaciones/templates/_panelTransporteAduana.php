@@ -22,7 +22,7 @@ PanelTransporteAduana = function( config ){
     */
     this.storeConceptos = new Ext.data.Store({
         autoLoad : false,
-        url: '<?=url_for("parametros/datosConceptos")?>',
+        url: '<?=url_for("conceptos/datosConceptos")?>',
         baseParams: {
             impoexpo: '<?=Constantes::IMPO?>',
             transporte: '<?=Constantes::TERRESTRE?>',

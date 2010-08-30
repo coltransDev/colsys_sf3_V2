@@ -57,7 +57,7 @@ PanelRecargosPorLinea = function( config ){
     */
     this.storeRecargos = new Ext.data.Store({
         autoLoad : false,
-        url: '<?=url_for("parametros/datosConceptos")?>',
+        url: '<?=url_for("conceptos/datosConceptos")?>',
         baseParams : {
             impoexpo: this.impoexpo,
             transporte: this.transporte,

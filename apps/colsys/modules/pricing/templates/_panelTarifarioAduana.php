@@ -66,7 +66,7 @@ PanelTarifarioAduana = function( config ){
     */
     this.storeRecargos = new Ext.data.Store({
         autoLoad : true,
-        url: '<?=url_for("parametros/datosConceptos")?>',
+        url: '<?=url_for("conceptos/datosConceptos")?>',
         baseParams : {
             impoexpo: "Aduanas", //[FIX-ME] Organizar todos los conceptos
             modo: "costos"
