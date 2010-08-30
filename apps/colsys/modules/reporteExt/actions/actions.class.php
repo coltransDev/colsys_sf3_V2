@@ -284,7 +284,23 @@ class reporteExtActions extends sfActions
 		
 		
 	}
-	
+
+
+	public function executeVerReporteNew( sfWebRequest $request ){
+		$this->forward404Unless( $this->getRequestParameter("idreporte") );
+		$this->reporte = Doctrine::getTable("Reporte")->find( $this->getRequestParameter("idreporte") );
+		$this->forward404Unless( $this->reporte );
+
+		$this->forward404Unless( $this->reporte->getCaImpoexpo()==Constantes::IMPO||$this->reporte->getCaImpoexpo()==Constantes::TRIANGULACION );
+
+		if( $this->getRequestParameter("layout") ){
+			$this->setLayout( $this->getRequestParameter("layout") );
+		}
+
+        $this->introduccion = $this->getRequestParameter("introduccion");
+        $this->instrucciones = $this->getRequestParameter("instrucciones");
+        $this->notas = $this->getRequestParameter("notas");
+	}
 	
 	
 	/*
