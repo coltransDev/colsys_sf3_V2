@@ -90,21 +90,23 @@
                             <td>&nbsp;</td>
                             <td>&nbsp;</td>
                         </tr>
-                        <?
-                        if( $reporte->getCaImpoexpo()!=Constantes::EXPO ){
-                        ?>
+
                         <tr >
                             <td><b>Lib. Autom&aacute;tica:</b>
                                 <?=$reporte->getCaLiberacion()?>
                             </td>
+                        <?
+                        if( $reporte->getCaImpoexpo()!=Constantes::EXPO && $reporte->getCaTransporte()==Constantes::MARITIMO && $reporte->getCaComodato()!="" ){
+                        ?>
                             <td><b>Firma Contrato de Comodato:</b>
                                 <?=$reporte->getCaComodato()?>
                             </td>
-                            <td>&nbsp;</td>
-                        </tr>
                         <?
                         }
                         ?>
+                            <td>&nbsp;</td>
+                        </tr>
+
                         <tr>
 
                             <td><b>Tiempo de Cr&eacute;dito:</b>

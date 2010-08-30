@@ -73,7 +73,7 @@ include_component("widgets", "widgetContactoCliente");
                             width: 100
                         }
                         <?
-                        if($modo=="Marítimo")
+                        if($modo==Constantes::MARITIMO)
                         {
                         ?>
                         ,

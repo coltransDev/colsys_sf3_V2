@@ -720,7 +720,12 @@ class reportesNegActions extends sfActions
 
             if($reporte->getCaModalidad()== Constantes::EXPO)
 			{
-				$repExpo= new RepExpo();
+
+                $repExpo = Doctrine::getTable("RepExpo")->findOneBy("ca_idreporte", $reporte->getCaIdreporte() );
+                if(!$repExpo)
+                    $repExpo= new RepExpo();
+
+				//$repExpo= new RepExpo();
 				$repExpo->setCaIdreporte($reporte->getCaIdreporte());
 				if($request->getParameter("npiezas") && $request->getParameter("mpiezas") )
 				{
@@ -1560,6 +1565,8 @@ class reportesNegActions extends sfActions
             else
                 $data["notify"]="";
             $data["idrepresentante"]=$reporte->getCaIdrepresentante();
+
+
 
 
             
