@@ -7,11 +7,7 @@
         <link rel="shortcut icon" href="/favicon.ico" />
         <?php include_stylesheets() ?>
         <?php include_javascripts() ?>
-        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-        <title>Intranet</title>
-        <meta name="keywords" content="" />
-        <meta name="description" content="" />
-        <link href="style.css" rel="stylesheet" type="text/css" media="screen" />
+        
     </head>
     <body>
         <div class="out">
@@ -32,7 +28,7 @@
                                 <div class="moduletable">
 
                                 </div>
-                                <?include_component('users','loginInformation')?>
+                                <?include_component('adminUsers','loginInformation')?>
                             </div>
                             
                         </div>

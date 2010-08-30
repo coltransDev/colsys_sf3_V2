@@ -19,6 +19,15 @@ class myUser extends sfBasicSecurityUser
 		$this->clearCredentials();
 		//session_destroy();
 	}
+
+    public function getNivelAcceso( $rutina ){
+		$usuario = Doctrine::getTable('Usuario')->createQuery('u')->where('u.ca_login = ? ', $this->getUserId() )->fetchOne();
+        return $usuario->getNivelAcceso( $rutina );
+	}
+
+    public function getMenu( ){
+        
+    }
 }
 
 

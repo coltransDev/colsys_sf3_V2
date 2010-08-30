@@ -33,7 +33,7 @@
 
                                 </div>
                             </div>
-                            <?include_component('users','loginInformation')?>
+                            <?include_component('adminUsers','loginInformation')?>
                         </div>
 
                         <div class="topmenu">

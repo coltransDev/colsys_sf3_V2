@@ -24,7 +24,7 @@ if (count($usuarios)>0):
             $day=Utils::parseDate($usuario->getCaCumpleanos(), 'm-d');
         }
         ?>
-    <p><b><a href="<?=url_for('users/viewUser?login='.$usuario->getCaLogin()) ?>"><?=$usuario->getCaNombre()?></a></b> <?=$usuario->getCaIdsucursal().' '.$day?></p>
+    <p><b><a href="<?=url_for('adminUsers/viewUser?login='.$usuario->getCaLogin()) ?>"><?=$usuario->getCaNombre()?></a></b> <?=$usuario->getCaIdsucursal().' '.$day?></p>
 
     <br/>
     <?} ?>
