@@ -16,10 +16,23 @@ class adminUsersActions extends sfActions
 	* @param sfRequest $request A request object
 	*/
 
-    const RUTINA = 94;
+    const RUTINA_COLSYS = 73;
+    const RUTINA_INTRANET = 98;
 
     public function getNivel() {
-        $this->nivel = $this->getUser()->getNivelAcceso(adminUsersActions::RUTINA);
+
+        $app =  sfContext::getInstance()->getConfiguration()->getApplication();
+        return 5;
+        switch( $app ){
+            case "colsys":
+                $rutina = adminUsersActions::RUTINA_COLSYS;
+                break;
+            case "intranet":
+                $rutina = adminUsersActions::RUTINA_INTRANET;
+                break;
+        }
+
+        $this->nivel = $this->getUser()->getNivelAcceso($rutina);
         if (!$this->nivel) {
             $this->nivel = 0;
         }
@@ -66,6 +79,7 @@ class adminUsersActions extends sfActions
 
      public function executeFormUsuario( $request ){
 		//$this->setLayout("layout2col");
+         
         $this->nivel = $this->getNivel();
 
         if( !($this->nivel==0 and $request->getParameter("login")==$this->getUser()->getUserId())){
