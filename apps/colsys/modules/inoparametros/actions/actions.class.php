@@ -8,7 +8,7 @@
  * @author     Andres Botero
  * @version    SVN: $Id: actions.class.php 12479 2008-10-31 10:54:40Z fabien $
  */
-class parametrosActions extends sfActions
+class inoparametrosActions extends sfActions
 {
 
     public function getNivel(){
