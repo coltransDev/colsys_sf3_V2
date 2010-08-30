@@ -429,9 +429,10 @@ class widgetsActions extends sfActions
     public function executeListaClientesJSON()
     {
 		$criterio =  $this->getRequestParameter("query");
+        $tipo   =   $this->getRequestParameter("tipo");
         if( $criterio ){
-            $rows = Doctrine_Query::create()
-                            ->select(" cl.ca_idcliente, cl.ca_compania, 
+            $q = Doctrine_Query::create()
+                            ->select(" cl.ca_idcliente, cl.ca_compania,cl.ca_tipo,
                                       cl.ca_preferencias, cl.ca_confirmar, cl.ca_vendedor, cl.ca_coordinador,
                                       v.ca_nombre, cl.ca_listaclinton, cl.ca_fchcircular
                                       ,cl.ca_status, cl.ca_vendedor, lc.ca_cupo, lc.ca_diascredito
@@ -442,8 +443,10 @@ class widgetsActions extends sfActions
                             ->where("UPPER(cl.ca_compania) like ?", "%".strtoupper( $criterio )."%")
                             ->addOrderBy("cl.ca_compania ASC")                            
                             ->setHydrationMode( Doctrine::HYDRATE_SCALAR )
-                            ->limit(40)
-                            ->execute();
+                            ->limit(40);
+            if($tipo!="")
+                $q->addWhere("cl.ca_tipo like ?", "%". $tipo ."%");
+            $rows=$q->execute();
 
 
 

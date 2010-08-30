@@ -491,7 +491,7 @@ class widgetsComponents extends sfComponents
 	}
 
     public function executeWidgetCliente(){
-		
+		$this->data = array();
 
 	}
 
