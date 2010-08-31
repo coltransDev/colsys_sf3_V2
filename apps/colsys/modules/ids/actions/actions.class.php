@@ -692,7 +692,7 @@ class idsActions extends sfActions
     public function executeFormEvaluacion(sfWebRequest $request){
         $this->nivel = $this->getNivel();
         
-        if( $this->nivel<2 ){
+        if( $this->nivel<6 ){
             $this->forward404(); 
         }
 
@@ -831,7 +831,7 @@ class idsActions extends sfActions
         $this->nivel = $this->getNivel();
         $this->user = $this->getUser();
 
-        if( $this->nivel<=2 ){
+        if( $this->nivel<6 ){
             $this->forward404();
         }
 
