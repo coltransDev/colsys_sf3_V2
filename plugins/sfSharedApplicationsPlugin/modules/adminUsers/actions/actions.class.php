@@ -346,6 +346,15 @@ class adminUsersActions extends sfActions
 	*
 	*/
 	public function executeFormPermisos( $request ){
+
+        $app =  sfContext::getInstance()->getConfiguration()->getApplication();
+       
+        switch( $app ){
+            case "intranet":
+                $this->setLayout("layout2col");
+                break;
+        }
+        
 		$this->usuario = Doctrine::getTable("Usuario")->find( $request->getParameter("login") );
 		$this->forward404Unless( $this->usuario );
 
@@ -525,13 +534,8 @@ class adminUsersActions extends sfActions
             $this->manager = $this->manager->getManager();
             $this->usuarios = $this->manager->getSubordinado();
         }
-
-                    /*Doctrine::getTable('Usuario')
-                    ->createQuery('u')
-                    ->where("u.ca_manager= ? ", $this->user->getCaLogin())
-                    ->execute();*/
-        }
-
+    }
+    
     public function executeViewUser(sfWebRequest $request) {
 
         $this->setLayout("layout2col");
@@ -542,6 +546,8 @@ class adminUsersActions extends sfActions
 
         $this->manager=Doctrine::getTable('Usuario')->find($request->getParameter('login'));
         $this->manager = $this->manager->getManager();
+
+        
     }
 }
 ?>

@@ -35,7 +35,11 @@
 <br />
 
 <div class="box1">
+    <?//echo $nivel;?>
     <table width="700" border="0" class="tableList">
+        <tr>
+            <td>Login:</td><td><b><?=$user->getCaLogin()?></b></td>
+        </tr>
         <tr>
             <td>Nombre Completo:</td><td><b><?=($user->getCaNombres())?> <?=($user->getCaApellidos())?></b></td>
         </tr>
@@ -46,41 +50,47 @@
             <td>Tel. Oficina:</td><td><b><?=($user->getCaTeloficina().' '.$user->getCaExtension())?></b></td>
         </tr>
         <tr>
-            <td>Departamento:</td><td><b><?=($user->getCaDepartamento())?></b></td>
+            <td>Departamento:</td><td><b><?=$user->getCaDepartamento()?></b></td>
         </tr>
         <tr>
-            <td>Sucursal:</td><td><b><?=($user->getSucursal()->getCa_Nombre())?></b></td>
+            <td>Sucursal:</td><td><b><?=$user->getSucursal()->getCa_Nombre()?></b></td>
         </tr>
         <tr>
-            <td>Email:</td><td><b><?=($user->getCa_Email())?></b></td>
+            <td>Email:</td><td><b><?=$user->getCa_Email()?></b></td>
         </tr>
         <tr>
-            <td>Fch. Ingreso:</td><td><b><?if(($userinicio->getUserId()==$user->getCaLogin()) or $nivel>=1 ){echo (Utils::parseDate($user->getCa_Fchingreso(), 'Y-m-d'));}?></b></td>
-        </tr>
-        <tr>
-            <td>M&oacute;vil:</td><td><b><?=($user->getCa_Movil())?></b></td>
-        </tr>
-        <tr>
-            <td>Tel. Particular:</td><td><b><?if($userinicio->getUserId()==$user->getCaLogin()or $nivel>=1){echo $user->getCa_Telparticular();}?></b></td>
+            <td>M&oacute;vil:</td><td><b><?=$user->getCa_Movil()?></b></td>
         </tr>
         <tr>
             <td>Jefe Inmediato:</td><td><b><a href="<?=url_for('adminUsers/viewUser?login='.$manager->getCaLogin()) ?>"><?=($manager->getCaNombres())?> <?=($manager->getCaApellidos())?></a></b></td>
         </tr>
         <tr>
-            <td>Tipo de Sangre:</td><td><b><?if($userinicio->getUserId()==$user->getCaLogin()or $nivel>=1){echo $user->getCa_Tiposangre();}?></b></td>
-        </tr>
-        <tr>
             <td>Fch. Cumplea&ntilde;os:</td><td><b><?=(Utils::getMonth(Utils::parseDate($user->getCaCumpleanos(), 'm'))."-".Utils::parseDate($user->getCaCumpleanos(), 'd'))?></b></td>
         </tr>
+        <?
+        if( $user->getEsJefe( $userinicio->getUserId() ) or $userinicio->getUserId()==$user->getCaLogin() ){
+        ?>
         <tr>
-            <td>Nombre Familiar:</td><td><b><?if($userinicio->getUserId()==$user->getCaLogin()or $nivel>=1){echo $user->getCa_Nombrefamiliar();}?></b></td>
+            <td>Fch. Ingreso:</td><td><b><?=(Utils::parseDate($user->getCa_Fchingreso(), 'Y-m-d'))?></b></td>
         </tr>
         <tr>
-            <td>Tel. Familiar:</td><td><b><?if($userinicio->getUserId()==$user->getCaLogin()or $nivel>=1){echo $user->getCa_Telfamiliar();}?></b></td>
+            <td>Tel. Particular:</td><td><b><?=$user->getCa_Telparticular()?></b></td>
         </tr>
         <tr>
-            <td>Parentesco:</td><td><b><?if($userinicio->getUserId()==$user->getCaLogin()or $nivel>=1){echo $user->getCa_Parentesco();}?></b></td>
+            <td>Tipo de Sangre:</td><td><b><?=$user->getCa_Tiposangre()?></b></td>
         </tr>
+        <tr>
+            <td>Familiar de Contacto:</td><td><b><?=$user->getCa_Nombrefamiliar()?></b></td>
+        </tr>
+        <tr>
+            <td>Tel. Familiar:</td><td><b><?=$user->getCa_Telfamiliar()?></b></td>
+        </tr>
+        <tr>
+            <td>Parentesco:</td><td><b><?=$user->getCa_Parentesco()?></b></td>
+        </tr>
+        <?
+        }
+        ?>
 
 
 
