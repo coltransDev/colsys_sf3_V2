@@ -131,11 +131,7 @@ Ext.extend(TooltipWindow, Ext.Window, {
             });
 
             this.hide();
-            
-        }
-
-       
-        
+        }        
     },
 
     load: function( elemId ){
@@ -162,7 +158,6 @@ Ext.extend(TooltipWindow, Ext.Window, {
                         fp.getForm().findField("titulo").setValue(res.titulo);
                         fp.getForm().findField("contenido").enable();
                         fp.getForm().findField("titulo").enable();
-
                         
 					}
 				}	
@@ -179,5 +174,4 @@ Ext.extend(TooltipWindow, Ext.Window, {
         this.elemId = val;
     }
 });
-
 </script>
