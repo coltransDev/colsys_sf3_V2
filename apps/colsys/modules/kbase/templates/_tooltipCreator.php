@@ -4,68 +4,31 @@
  * 
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
-
-
-
 include_component("kbase", "tooltipWindow");
 ?>
-
-
-<script language="javascript">
-   
-
+<script type="text/javascript">
     function crearAyuda( e ){
         if (isMicrosoft()){
             strElemId = e.srcElement.id;
         }else{
             strElemId = e.target.id;
+        }        
+        if(!strElemId)
+            return;
+        else if (strElemId.indexOf("form-el")>-1 )
+        {
+            return;
         }
-
-        //alert( strElemId );
+//        else
+//            return;
+        
         if( typeof(winTooltip)=="undefined" ){
             winTooltip = new TooltipWindow();
         }
-
         winTooltip.setIdcategory( <?=$idcategory?> );
         winTooltip.setElemid( strElemId );
         winTooltip.show();
-        winTooltip.load( strElemId );        
+        winTooltip.load( strElemId );
     }
-
-    var elements = document.getElementsByTagName("input");
-    for( i=0; i<elements.length; i++ ){
-        var elem = elements[i];        
-        if(elem.id){
-            addListener(elem, "click", crearAyuda);
-        }        
-    }
-
-    var elements = document.getElementsByTagName("select");
-    for( i=0; i<elements.length; i++ ){
-        var elem = elements[i];        
-        if(elem.id){
-            addListener(elem, "click", crearAyuda);
-        }
-    }
-
-    var elements = document.getElementsByTagName("textarea");
-    for( i=0; i<elements.length; i++ ){
-        var elem = elements[i];
-        if(elem.id){
-            addListener(elem, "click", crearAyuda);
-        }
-    }
-
-    var elements = document.getElementsByTagName("div");
-    for( i=0; i<elements.length; i++ ){
-        var elem = elements[i];        
-        if(elem.id && elem.className=="help"){           
-            addListener(elem, "click", crearAyuda);
-        }
-    }
-
-
-
-
-
+    $("input,select,textarea,div").dblclick(crearAyuda);
 </script>
