@@ -154,7 +154,28 @@ class Usuario extends BaseUsuario
         
         return $imagen;
     }
+    
+    public function getEsJefe( $login ){
 
+        if( $this->getCaManager()==$login ){
+            return true;
+        }
+        
+        if( !$this->getCaManager() && $login!=$this->getCaLogin()  ){
+            return false;
+        }
+        
+        $manager = $this->getManager();
 
-
+        if( !$manager ){
+            return true;
+        }
+        
+        return $manager->getEsJefe( $login );
+    }   
 }
+
+
+
+
+
