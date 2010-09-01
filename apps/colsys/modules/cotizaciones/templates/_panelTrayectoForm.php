@@ -5,6 +5,10 @@
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
 
+include_component("widgets", "widgetImpoexpo");
+include_component("widgets", "widgetTransporte");
+include_component("widgets", "widgetModalidad");
+include_component("widgets", "widgetLinea");
 include_component("widgets", "widgetIncoterms");
 //include_component("widgets", "widgetPais");
 //include_component("widgets", "widgetCiudad");
@@ -37,12 +41,19 @@ include_component("widgets", "widgetIncoterms");
                             allowBlank:false,
                             width: 300
                         }
-                        ,<?=include_component("widgets", "impoexpo" ,array("id"=>"impoexpo", "label"=>"Impo/Expo"))?>
+                        , new WidgetImpoexpo({fieldLabel: "Impo/Expo",id:"impoexpo", allowBlank:false})
                         , new WidgetIncoterms({name:"incoterms"})
-                        ,<?=include_component("widgets", "transportes" ,array("id"=>"transporte", "allowBlank"=>"false"))?>
+                        , new WidgetTransporte({fieldLabel: "Transporte",id:"transporte", allowBlank:false})
 
-                        ,<?=include_component("widgets", "modalidades" ,array("id"=>"modalidad", "label"=>"Modalidad", "allowBlank"=>"false", "transporte"=>"transporte", "impoexpo"=>"impoexpo"))?>
-                        ,<?=include_component("widgets", "lineas" ,array("id"=>"idlinea", "label"=>"Linea", "allowBlank"=>"true", "link"=>"transporte" ))?>
+                        , new WidgetModalidad({fieldLabel: "Modalidad",id:"modalidad", allowBlank:false, linkTransporte: "transporte", linkImpoexpo: "impoexpo"})
+                        , new WidgetLinea({fieldLabel: 'Linea',
+                                           linkTransporte: "transporte",
+                                           linkImpoexpo: "impoexpo",
+                                           id:"linea",
+                                           hiddenName:"idlinea",
+                                           //allowBlank:false,
+                                           width:300
+                                          })                       
                         ,{
                             xtype:'checkbox',
                             fieldLabel: 'Postular nombre de Linea',
