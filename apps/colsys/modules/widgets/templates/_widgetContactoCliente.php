@@ -23,6 +23,8 @@ WidgetContactoCliente = function( config ){
             {name: 'compania', mapping: 'ca_compania'},
 			{name: 'cargo', mapping: 'ca_cargo'},
 			{name: 'nombre', mapping: 'ca_nombres'},
+            {name: 'papellido', mapping: 'ca_papellido'},
+            {name: 'sapellido', mapping: 'ca_sapellido'},
             {name: 'vendedor', mapping: 'ca_vendedor'},
             {name: 'nombre_ven', mapping: 'ca_nombre'},
 			{name: 'listaclinton', mapping: 'ca_listaclinton'},
@@ -40,8 +42,8 @@ WidgetContactoCliente = function( config ){
             '<tpl for="."><div class="search-item"><b>{compania}</b><br /><span>{nombre} {papellido} {sapellido} <br />{cargo}</span> </div></tpl>'
     );
     WidgetContactoCliente.superclass.constructor.call(this, {
-        valueField: 'idcontacto',
-        displayField:'nombre',
+        valueField: (config.valueField)?config.valueField:'idcontacto',
+        displayField: (config.displayField)?config.displayField:'nombre',
         loadingText: 'Buscando...',
         typeAhead: true,
         forceSelection: true,
