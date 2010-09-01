@@ -52,7 +52,6 @@ WidgetCotizacion = function( config ){
             {name: 'idvendedor', mapping: 'c_ca_usuario'},
             {name: 'coordinador', mapping: 'cl_ca_coordinador'},
             {name: 'vendedor', mapping: 'usu_ca_nombre'},
-
             {name: 'idmoneda', mapping: 's_ca_idmoneda'},
             {name: 'idmonedaobtencion', mapping: 's_ca_idmonedaobtencion'},
             {name: 'prima_vlr', mapping: 's_ca_prima_vlr'},
@@ -68,7 +67,7 @@ WidgetCotizacion = function( config ){
     );
 
     WidgetCotizacion.superclass.constructor.call(this, {
-        valueField:'idcotizacion',
+        valueField:(config.valueField)?config.valueField:'idcotizacion',
         displayField:'consecutivo',
         typeAhead: false,
         loadingText: 'Buscando...',
