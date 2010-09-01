@@ -73,8 +73,8 @@ $counts = array();
         <tr>
             <td><div align="left"><?=link_to($ids->getCaNombre(), "ids/verIds?modo=prov&id=".$ids->getCaId())?></div></td>
             <td><div align="left"><?=Utils::fechaMes($proovedor->getCaFchaprobado())?></div></td>
-            <td><div align="left"><?=$proovedor->getCaActivoImpo()?"Activo":"Inactivo"?></div></td>
-            <td><div align="left"><?=$proovedor->getCaActivoExpo()?"Activo":"Inactivo"?></div></td>
+            <td><div align="left"><?=$proovedor->getCaActivoImpo()?"Activo":"<span class='rojo'>Inactivo</span>"?></div></td>
+            <td><div align="left"><?=$proovedor->getCaActivoExpo()?"Activo":"<span class='rojo'>Inactivo</span>"?></div></td>
             <td>
                 <div align="left">
                     <?
