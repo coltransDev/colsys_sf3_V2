@@ -2391,7 +2391,7 @@ elseif (isset($boton)) {                                                       /
                     echo "<INPUT TYPE='HIDDEN' NAME='nomlocales' VALUE='".$tm->Value('ca_ciudad')."'>";
                     $tm->MoveNext();
                 }
-                if (!$tm->Open("select ca_idlinea, ca_nombre, ca_transporte from vi_transporlineas where ca_transporte = 'Marítimo' order by ca_nombre")) { // Selecciona todos lo registros de la tabla Ciudades
+                if (!$tm->Open("select ca_idlinea, ca_nombre, ca_transporte from vi_transporlineas where ca_transporte = 'Marítimo' and ca_activo_impo=true order by ca_nombre")) { // Selecciona todos lo registros de la tabla Ciudades
                     echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
                     echo "<script>document.location.href = 'inosea.php';</script>";
                     exit; }
@@ -2763,7 +2763,7 @@ elseif (isset($boton)) {                                                       /
                     echo "<script>document.location.href = 'entrada.php';</script>";
                     exit; }
                 $li =& DlRecordset::NewRecordset($conn);                                   // Apuntador que permite manejar la conexiòn a la base de datos
-                if (!$li->Open("select ca_idlinea, ca_nombre, ca_transporte from vi_transporlineas where ca_transporte = 'Marítimo' order by ca_nombre")) { // Selecciona todos lo registros de la tabla Ciudades
+                if (!$li->Open("select ca_idlinea, ca_nombre, ca_transporte from vi_transporlineas where ca_transporte = 'Marítimo' and ca_activo_impo=true order by ca_nombre")) { // Selecciona todos lo registros de la tabla Ciudades
                     echo "<script>alert(\"".addslashes($li->mErrMsg)."\");</script>";      // Muestra el mensaje de error
                     echo "<script>document.location.href = 'inosea.php';</script>";
                     exit; }
