@@ -25,7 +25,9 @@ WidgetLinea = function( config ){
 					},
 					Ext.data.Record.create([
 						{name: 'idlinea'},
-                        {name: 'linea'}
+                        {name: 'linea'},
+                        {name: 'activo_impo'},
+                        {name: 'activo_expo'}
 					])
 				)
 			})
@@ -46,19 +48,44 @@ WidgetLinea = function( config ){
             focus: this.onFocusWdg            
         }
     });
+        
 }
 
 Ext.extend(WidgetLinea, Ext.form.ComboBox, {
+    trigger1Class : 'x-form-clear-trigger',
+    trigger2Class : 'x-form-select-trigger',
+    hideTrigger1 : true,
+    getTrigger : Ext.form.TwinTriggerField.prototype.getTrigger,
+    initTrigger : Ext.form.TwinTriggerField.prototype.initTrigger,
+
     onFocusWdg: function( field, newVal, oldVal ){
         var cmp = Ext.getCmp(this.linkTransporte);
         if( cmp ){
 
+
+            var cmp2 = Ext.getCmp(this.linkImpoexpo);
+            if( cmp2 ){
+                var impoexpo = cmp2.getValue();
+            }else{
+                var impoexpo = null;
+            }
+            
             var list = new Array();
             var transporte = Ext.getCmp(this.linkTransporte).getValue();           
             for( k in this.data ){
                 var rec = this.data[k];
-                if( transporte && rec.transporte==transporte ){
-                    list.push( rec );
+                if( transporte && rec.transporte==transporte ){                    
+                    if( this.linkImpoexpo ){
+                        if( impoexpo=="<?=Constantes::IMPO?>" && rec.activo_impo ){
+                            list.push( rec );
+                        }
+
+                        if( impoexpo=="<?=Constantes::EXPO?>" && rec.activo_expo ){
+                            list.push( rec );
+                        }
+                    }else{
+                        list.push( rec );
+                    }
                 }
             }
             var data = new Object();
@@ -70,13 +97,7 @@ Ext.extend(WidgetLinea, Ext.form.ComboBox, {
         }
     },
 
-	getTrigger : Ext.form.TwinTriggerField.prototype.getTrigger,
-    initTrigger : Ext.form.TwinTriggerField.prototype.initTrigger,
-    trigger1Class : 'x-form-clear-trigger',
-    trigger2Class : 'x-form-search-trigger',
-    trigger3Class : 'x-form-select-trigger',
-    hideTrigger1 : true,
-    hideTrigger2 : true,
+	
 
     initComponent : function() {
         WidgetLinea.superclass.initComponent.call(this);
@@ -88,17 +109,17 @@ Ext.extend(WidgetLinea, Ext.form.ComboBox, {
 				tag : 'img',
 				src : Ext.BLANK_IMAGE_URL,
 				cls : 'x-form-trigger ' + this.trigger1Class
-			}, {
-				tag : 'img',
-				src : Ext.BLANK_IMAGE_URL,
-				cls : 'x-form-trigger ' + this.trigger2Class
-			},
+			}, 
 			{
 				tag : 'img',
 				src : Ext.BLANK_IMAGE_URL,
-				cls : 'x-form-trigger ' + this.trigger3Class
+				cls : 'x-form-trigger ' + this.trigger2Class
 			}]
 		};
+
+        if(this.getValue()){
+            this.triggers[0].show();
+        }
 	},
 	reset : Ext.form.Field.prototype.reset.createSequence(function() {
 		this.triggers[0].hide();
@@ -114,9 +135,7 @@ Ext.extend(WidgetLinea, Ext.form.ComboBox, {
 		this.fireEvent('select', this);
 	},
 	onTrigger2Click : function() {
-	},
-	onTrigger3Click : function() {
-		this.onTriggerClick();
+        this.onTriggerClick();
 	}
 
 });
