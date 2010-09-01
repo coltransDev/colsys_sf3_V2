@@ -149,16 +149,30 @@
             </tr>
              <tr>
                 <td>
-                    <div align="left"><b>Activo</b></div>
+                    <div align="left"><b>Activo Impo</b></div>
                </td>
                <td>
-                   <div align="left"><?=$proveedor->getCaActivo()?"S&iacute;":"<span class='rojo'>No</span>"?></div>
+                   <div align="left"><?=$proveedor->getCaActivoImpo()?"S&iacute;":"<span class='rojo'>No</span>"?></div>
                </td>
                <td>
                    <div align="left"><b>Esporadico</b></div>
                </td>
                <td>
                    <div align="left"><div align="left"><?=$proveedor->getCaEsporadico()?"S&iacute;":"No"?></div></div>
+               </td>
+            </tr>
+            <tr>
+                <td>
+                    <div align="left"><b>Activo Expo</b></div>
+               </td>
+               <td>
+                   <div align="left"><?=$proveedor->getCaActivoExpo()?"S&iacute;":"<span class='rojo'>No</span>"?></div>
+               </td>
+               <td>
+                   <div align="left">&nbsp;</div>
+               </td>
+               <td>
+                   <div align="left">&nbsp;</div>
                </td>
             </tr>
             <?

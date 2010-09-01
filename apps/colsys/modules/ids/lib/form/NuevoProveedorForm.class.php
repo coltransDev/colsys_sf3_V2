@@ -30,7 +30,8 @@ class NuevoProveedorForm extends BaseForm{
         $widgets['esporadico'] = new sfWidgetFormInputCheckbox();
         $widgets['controladoporsig'] = new sfWidgetFormInputCheckbox();
         $widgets['aprobado'] = new sfWidgetFormExtDate();
-        $widgets['activo'] = new sfWidgetFormInputCheckbox();
+        $widgets['activo_impo'] = new sfWidgetFormInputCheckbox();
+        $widgets['activo_expo'] = new sfWidgetFormInputCheckbox();
         $widgets['sigla'] = new sfWidgetFormInputText();
         $widgets['transporte'] = new sfWidgetFormChoice(array('choices' => array( ""=>"",
                                                                                   Constantes::AEREO=>Constantes::AEREO,
@@ -63,7 +64,8 @@ class NuevoProveedorForm extends BaseForm{
 														array('required' => 'Este campo es requerido'));
 
        
-        $validator["activo"] =new sfValidatorBoolean( array('required' => false ) );
+        $validator["activo_impo"] =new sfValidatorBoolean( array('required' => false ) );
+        $validator["activo_expo"] =new sfValidatorBoolean( array('required' => false ) );
 
         $validator["transporte"] =new sfValidatorString( array('required' => false ),
 														array('required' => 'El transporte es requerido'));

@@ -199,22 +199,40 @@
             ?>
             </div>
         </td>
-        <td> <div align="left"><b>Activo:</b></div></td>
+        <td> <div align="left"><b>Activo Impo:</b></div></td>
 		<td colspan="3">
                 <div align="left">
            <?
-            echo $form['activo']->renderError();
+            echo $form['activo_impo']->renderError();
             if( $proveedor ){
-                $form->setDefault('activo', $proveedor->getCaActivo() );
+                $form->setDefault('activo_impo', $proveedor->getCaActivoImpo() );
             }else{
-                $form->setDefault('activo', true );
+                $form->setDefault('activo_impo', true );
             }
-            echo $form['activo']->render();
+            echo $form['activo_impo']->render();
             ?>
             </div>
            
         </td>
 	</tr>
+    <tr >
+        <td colspan="2">&nbsp;</td>
+        <td> <div align="left"><b>Activo Expo:</b></div></td>
+		<td colspan="3">
+                <div align="left">
+           <?
+            echo $form['activo_expo']->renderError();
+            if( $proveedor ){
+                $form->setDefault('activo_expo', $proveedor->getCaActivoExpo() );
+            }else{
+                $form->setDefault('activo_expo', true );
+            }
+            echo $form['activo_expo']->render();
+            ?>
+            </div>
+
+        </td>
+    </tr>
     <tr >
         <td> <div align="left"><b>Empresa:</b></div></td>
 		<td >

@@ -227,7 +227,8 @@ class idsActions extends sfActions
                 $bindValues["critico"] = $request->getParameter("critico");
                 $bindValues["esporadico"] = $request->getParameter("esporadico");
                 $bindValues["aprobado"] = $request->getParameter("aprobado");
-                $bindValues["activo"] = $request->getParameter("activo");
+                $bindValues["activo_impo"] = $request->getParameter("activo_impo");
+                $bindValues["activo_expo"] = $request->getParameter("activo_expo");
                 $bindValues["empresa"] = $request->getParameter("empresa");
 
                
@@ -284,10 +285,16 @@ class idsActions extends sfActions
 
                     $proveedor->setCaTipo( $bindValues["tipo_proveedor"] );
 
-                    if( $bindValues["activo"] ){
-                        $proveedor->setCaActivo( true );
+                    if( $bindValues["activo_impo"] ){
+                        $proveedor->setCaActivoImpo( true );
                     }else{
-                        $proveedor->setCaActivo( false );
+                        $proveedor->setCaActivoImpo( false );
+                    }
+
+                    if( $bindValues["activo_expo"] ){
+                        $proveedor->setCaActivoExpo( true );
+                    }else{
+                        $proveedor->setCaActivoExpo( false );
                     }
                     
                    
@@ -1112,7 +1119,7 @@ class idsActions extends sfActions
                              ->innerJoin("s.Ciudad c")
                              ->innerJoin("p.IdsTipo t")
                              ->where("p.ca_fchaprobado IS NOT NULL")
-                             ->addWhere("p.ca_activo = false")
+                             ->addWhere("p.ca_activo_impo = false OR p.ca_activo_expo=false")
 							 ->addOrderBy("i.ca_nombre ASC")
                              ->execute();
     }

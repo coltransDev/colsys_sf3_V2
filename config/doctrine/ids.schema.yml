@@ -165,8 +165,7 @@ IdsProveedor:
     ca_idproveedor:
       type: integer
       primary: true
-    ca_tipo: string(5)
-    ca_activo: boolean
+    ca_tipo: string(5)    
     ca_critico: boolean
     ca_controladoporsig: boolean
     ca_fchaprobado: timestamp
@@ -175,6 +174,8 @@ IdsProveedor:
     ca_transporte: string(10)
     ca_empresa: string
     ca_esporadico: boolean
+    ca_activo_impo: boolean
+    ca_activo_expo: boolean
   relations:
     Ids:
       local: ca_idproveedor

@@ -20,7 +20,8 @@ $counts = array();
         <tr>
             <th rowspan="2">Nombre</th>
             <th rowspan="2">Fch. Aprobaci&oacute;n</th>
-            <th rowspan="2">Estado</th>
+            <th rowspan="2">Estado Impo</th>
+            <th rowspan="2">Estado Expo</th>
             <th rowspan="2">Vencimiento <br />Polizas</th>
             <th rowspan="2">Vencimiento <br />BASC</th>
             <th rowspan="2">Ciudad</th>
@@ -72,7 +73,8 @@ $counts = array();
         <tr>
             <td><div align="left"><?=link_to($ids->getCaNombre(), "ids/verIds?modo=prov&id=".$ids->getCaId())?></div></td>
             <td><div align="left"><?=Utils::fechaMes($proovedor->getCaFchaprobado())?></div></td>
-            <td><div align="left"><?=$proovedor->getCaActivo()?"Activo":"Inactivo"?></div></td>
+            <td><div align="left"><?=$proovedor->getCaActivoImpo()?"Activo":"Inactivo"?></div></td>
+            <td><div align="left"><?=$proovedor->getCaActivoExpo()?"Activo":"Inactivo"?></div></td>
             <td>
                 <div align="left">
                     <?
