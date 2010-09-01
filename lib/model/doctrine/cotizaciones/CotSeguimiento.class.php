@@ -19,4 +19,67 @@ class CotSeguimiento extends BaseCotSeguimiento
 			return $parametro[0]->getCaValor2();
 		}
     }
+
+
+    public function aprobarSeguimiento( $param ){
+        
+        $idproducto=$param["idproducto"];
+        $etapa=$param["etapa"];
+        $user=$param["user"];
+        $seguimientos=(isset($param["seguimiento"])?$param["seguimiento"]:"");
+        $fchseguimiento=(isset($param["fchseguimiento"])?$param["fchseguimiento"]:"");
+
+        if( $idproducto ){
+            $producto = Doctrine::gettable("CotProducto")->find( $idproducto );
+            if(!$producto)
+                return 0;
+
+            if( $producto->getCaIdtarea() ){
+                $tarea  =  Doctrine::gettable("NotTarea")->find( $producto->getCaIdtarea() );
+                $tarea->setCaFchterminada( date("Y-m-d H:i:s") );
+                $tarea->save();
+            }
+        }
+
+        $cotizacion = Doctrine::gettable("Cotizacion")->find( $producto->getCaIdcotizacion() );
+        if(!$cotizacion)
+            return 0;
+
+        $seguimiento = new CotSeguimiento();
+        if( $idproducto ){
+            $seguimiento->setCaIdproducto( $idproducto );
+            $producto->setCaEtapa( $etapa );
+            $producto->save();
+        }
+
+        $seguimiento->setCaLogin( $user );
+        $seguimiento->setCaFchseguimiento( date("Y-m-d H:i:s") );
+        $seguimiento->setCaSeguimiento( $seguimientos );
+        $seguimiento->setCaEtapa( $etapa );
+        $seguimiento->save();
+
+        if( $fchseguimiento )
+        {
+            $titulo = "Seguimiento Cotización ".$cotizacion->getCaConsecutivo()." ".$cotizacion->getCliente()->getCaCompania()."";
+            $texto = "Ha programado un seguimiento para una cotización, por favor haga click en el link para realizar esta tarea";
+            $tarea = new NotTarea();
+            $tarea->setCaUrl( "/cotseguimientos/verSeguimiento/idcotizacion/".$cotizacion->getCaIdcotizacion() );
+            $tarea->setCaIdlistatarea( 7 );
+
+            $tarea->setCaFchvencimiento( $fchseguimiento." 23:59:59" );
+            $tarea->setCaFchvisible( $fchseguimiento." 00:00:00" );
+            $tarea->setCaUsucreado( $user );
+            $tarea->setCaTitulo( $titulo );
+            $tarea->setCaTexto( $texto );
+            $tarea->save();
+            $loginsAsignaciones = array( $user, $cotizacion->getCaUsuario() );
+            $loginsAsignaciones = array_unique( $loginsAsignaciones );
+            $tarea->setAsignaciones( $loginsAsignaciones );
+
+            if( $idproducto ){
+                $producto->setCaIdtarea( $tarea->getCaIdtarea() );
+                $producto->save();
+            }
+        }
+	}
 }
