@@ -3437,7 +3437,7 @@ function carga_arreglos(&$tm) {
         echo "<INPUT TYPE='HIDDEN' NAME='idtraficoags' VALUE='".$tm->Value('ca_idtrafico')."'>";
         $tm->MoveNext();
     }
-    if (!$tm->Open("select ca_idlinea, ca_nombre, ca_transporte from vi_transporlineas and ca_activo_impo=true order by ca_nombre")) { // Selecciona todos lo registros de la tabla Ciudades
+    if (!$tm->Open("select ca_idlinea, ca_nombre, ca_transporte from vi_transporlineas where ca_activo_impo=true order by ca_nombre")) { // Selecciona todos lo registros de la tabla Ciudades
         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
         echo "<script>document.location.href = 'reportenegocio.php';</script>";
         exit; }
