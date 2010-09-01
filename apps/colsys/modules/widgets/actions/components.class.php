@@ -351,7 +351,7 @@ class widgetsComponents extends sfComponents
 		$this->data = array();
         
 		$q = Doctrine_Query::create()
-                  ->select("p.ca_idproveedor, p.ca_sigla, id.ca_nombre, p.ca_transporte ")
+                  ->select("p.ca_idproveedor, p.ca_sigla, id.ca_nombre, p.ca_transporte, p.ca_activo_impo, p.ca_activo_expo ")
                   ->from("IdsProveedor p")
                   ->innerJoin("p.Ids id")
                   ->addOrderBy("id.ca_nombre");
@@ -367,7 +367,9 @@ class widgetsComponents extends sfComponents
 		foreach( $lineas as $linea ){
 			$this->data[] = array(  "idlinea"=>$linea['ca_idproveedor'],
 									  "linea"=>utf8_encode(($linea['ca_sigla']?$linea['ca_sigla']." - ":"").$linea['Ids']['ca_nombre']),
-                                      "transporte"=>utf8_encode($linea['ca_transporte'])
+                                      "transporte"=>utf8_encode($linea['ca_transporte']),
+                                      "activo_impo"=>$linea['ca_activo_impo'],
+                                      "activo_expo"=>$linea['ca_activo_expo']
 								   );
 		}
 

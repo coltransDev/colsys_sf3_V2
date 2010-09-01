@@ -98,7 +98,7 @@ Ext.extend(WidgetLinea, Ext.form.ComboBox, {
     },
 
 	
-
+    
     initComponent : function() {
         WidgetLinea.superclass.initComponent.call(this);
 
@@ -117,9 +117,7 @@ Ext.extend(WidgetLinea, Ext.form.ComboBox, {
 			}]
 		};
 
-        if(this.getValue()){
-            this.triggers[0].show();
-        }
+        
 	},
 	reset : Ext.form.Field.prototype.reset.createSequence(function() {
 		this.triggers[0].hide();
