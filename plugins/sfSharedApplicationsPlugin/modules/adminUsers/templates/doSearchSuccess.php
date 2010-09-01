@@ -5,19 +5,29 @@
 */
 ?>
 
-<br />
-<br />
-<table border="1" class="tableList">
-<?php
-
-foreach ($usuarios as $usuario) {
-?>
-	<tr>
-        <td><b><a href="<?=url_for('adminUsers/viewUser?login='.$usuario->getCaLogin()) ?>"><?=$usuario->getCaNombre()?></a></b></td>
-		<td><?=($usuario->getSucursal()->getCaNombre())?></td>
-        <td><?=($usuario->getCaDepartamento())?></td>
-	</tr>
-<?
-}
-?>
-</table>
+<div class="content" align="center">
+<div class="box1">
+    <table border="1" class="tableList" width="680">
+        <thead>
+            <tr>
+                <th>Nombre de Usuario</th>
+                <th>Sucursal</th>
+                <th>Departamento</th>
+                <th>Empresa</th>
+            </tr>
+            <?
+        foreach ($usuarios as $usuario) {
+            ?>
+            <tr>
+                <td><b><a href="<?=url_for('adminUsers/viewUser?login='.$usuario->getCaLogin()) ?>"><?=$usuario->getCaNombre()?></a></b></td>
+                <td><?=($usuario->getSucursal()->getCaNombre())?></td>
+                <td><?=($usuario->getCaDepartamento())?></td>
+                <td><?=($usuario->getCaEmpresa())?></td>
+            </tr>
+        <?
+        }
+        ?>
+        </thead>
+    </table>
+</div>
+</div>

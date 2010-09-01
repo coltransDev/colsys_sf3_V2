@@ -43,10 +43,12 @@ class adminUsersActions extends sfActions
     }
     
     public function executeDirectory(sfWebRequest $request) {
+        $this->setLayout("layout2col");
 
     }
 
     public function executeDoSearch(sfWebRequest $request) {
+        
         $criterio = '%'.strtolower($request->getParameter('criterio')).'%';
         $opcion = $request->getParameter("opcion");
         $sangre = $request->getParameter("type");
@@ -512,6 +514,12 @@ class adminUsersActions extends sfActions
 		$this->getUser()->signOut();
 		$this->redirect("adminUsers/login");
 	}
+
+    public function executeMainUsers(sfWebRequest $request) {
+
+        $this->userinicio = sfContext::getInstance()->getUser();
+    }
+
 
     public function executeNoAccess( $request ){
 

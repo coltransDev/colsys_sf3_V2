@@ -29,19 +29,21 @@ var buscar=function(){
 
 
 </script>
-
-<tr>Buscar Personas</tr><br />
-<tr>
-            <select name="opcion" id="opcion">
-                <option value="nombre" selected="selected">Nombre</option>
-                <option value="apellido">Apellido</option>
-                <option value="correo">Correo</option>
-                <option value="tiposangre">Tipo de Sangre</option>
-            </select>
+<div class="content" align="center">
     
-        <input type="text" name="criterio" id="criterio"/>
-        <input type="button" value="Buscar" OnClick="buscar()">
- </tr>
+        <tr>Buscar Personas</tr><br />
+        <tr>
+                    <select name="opcion" id="opcion">
+                        <option value="nombre" selected="selected">Nombre</option>
+                        <option value="apellido">Apellido</option>
+                        <option value="correo">Correo</option>
+                        <option value="tiposangre">Tipo de Sangre</option>
+                    </select>
 
-        <div id="resultados"></div>
+        <tr><input type="text" name="criterio" id="criterio"/></tr>
+        <tr><input type="button" value="Buscar" OnClick="buscar()"></tr>
+         </tr>
+    
+<div id="resultados"></div>
+</div>
 
