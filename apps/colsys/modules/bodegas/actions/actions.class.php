@@ -218,7 +218,9 @@ class bodegasActions extends sfActions {
                                         ->addwhere("b.ca_tipo=?",utf8_decode($this->getRequestParameter("tipo")))
                                         ->addwhere("b.ca_transporte=?",utf8_decode($this->getRequestParameter("transporte")))
                                         ->execute();
-            if ($bodega){
+            
+            if (count($bodega)>0)
+            {
                 $error = "La bodega ya existe";
             }
             else {

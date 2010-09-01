@@ -88,7 +88,7 @@ $tbodegaJ = $sf_data->getRaw("tbodegas");
 			},
 			{
                 text: 'Guardar Cambios',
-                tooltip: 'He verificado que la bodega NO EXISTE y no exite alguna parecida.',
+                tooltip: 'He verificado que la bodega NO EXISTE y no existe alguna parecida.',
                 iconCls: 'disk',  // reference to our css
                 handler: this.submit,
 				disabled: true,
