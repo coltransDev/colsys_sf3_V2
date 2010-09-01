@@ -59,6 +59,8 @@ class adminUsersActions extends sfActions
 
         $this->opcion = $opcion;
         switch($opcion){
+            case "login":
+                $q->addWhere('LOWER(u.ca_login) LIKE ?', $criterio);
             case "nombre":
                 $q->addWhere('(LOWER(u.ca_nombre) LIKE ? OR LOWER(u.ca_nombres) LIKE ? OR LOWER(u.ca_apellidos) LIKE ? )', array($criterio,$criterio,$criterio));
                 break;
@@ -143,10 +145,18 @@ class adminUsersActions extends sfActions
 	}
 
 	public function executeIndex(sfWebRequest $request)	{
+        $app =  sfContext::getInstance()->getConfiguration()->getApplication();
+
+        switch( $app ){
+            case "intranet":
+                $this->setLayout("layout2col");
+                break;
+        }
+        
         $this->usuarios = Doctrine::getTable("Usuario")
                           ->createQuery("u")
                           ->addOrderBy("u.ca_activo DESC")
-                          ->addOrderBy("u.ca_nombre")
+                          ->addOrderBy("u.ca_login")
                           ->execute();
 	}
 
@@ -304,7 +314,7 @@ class adminUsersActions extends sfActions
 			$usuario->setCaTiposangre( $request->getParameter("tiposangre") );
 		}
         if( $request->getParameter("parentesco") ){
-			$usuario->setCaTiposangre( $request->getParameter("parentesco") );
+			$usuario->setCaParentesco( $request->getParameter("parentesco") );
 		}
         $usuario->save();
 
@@ -518,6 +528,7 @@ class adminUsersActions extends sfActions
     public function executeMainUsers(sfWebRequest $request) {
 
         $this->userinicio = sfContext::getInstance()->getUser();
+        $this->nivel = $this->getNivel();
     }
 
 

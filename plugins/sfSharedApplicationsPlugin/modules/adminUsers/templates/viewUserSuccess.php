@@ -20,7 +20,7 @@
 	     </tr>
         <tr>
 			<td width="150">
-				<div class="box1">
+				<div class="box1" align="center">
 					<img src="<?=url_for('adminUsers/traerImagen?username='.$user->getCaLogin().'&tamano=120x150')?>" />
 				</div>
 			</td>
@@ -68,7 +68,7 @@
             <td>Fch. Cumplea&ntilde;os:</td><td><b><?=(Utils::getMonth(Utils::parseDate($user->getCaCumpleanos(), 'm'))."-".Utils::parseDate($user->getCaCumpleanos(), 'd'))?></b></td>
         </tr>
         <?
-        if( $user->getEsJefe( $userinicio->getUserId() ) or $userinicio->getUserId()==$user->getCaLogin() ){
+        if( $user->getEsJefe( $userinicio->getUserId() ) or $userinicio->getUserId()==$user->getCaLogin() or $nivel>=1 ){
         ?>
         <tr>
             <td>Fch. Ingreso:</td><td><b><?=(Utils::parseDate($user->getCa_Fchingreso(), 'Y-m-d'))?></b></td>
@@ -77,7 +77,7 @@
             <td>Tel. Particular:</td><td><b><?=$user->getCa_Telparticular()?></b></td>
         </tr>
         <tr>
-            <td>Tipo de Sangre:</td><td><b><?=$user->getCa_Tiposangre()?></b></td>
+            <td>Tipo de Sangre:</td><td><b><?=$user->getCaTiposangre()?></b></td>
         </tr>
         <tr>
             <td>Familiar de Contacto:</td><td><b><?=$user->getCa_Nombrefamiliar()?></b></td>

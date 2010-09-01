@@ -36,6 +36,7 @@ var buscar=function(){
                     <select name="opcion" id="opcion">
                         <option value="nombre" selected="selected">Nombre</option>
                         <option value="apellido">Apellido</option>
+                        <option value="login">Login</option>
                         <option value="correo">Correo</option>
                         <option value="tiposangre">Tipo de Sangre</option>
                     </select>
