@@ -15,7 +15,8 @@ include_component("widgets", "widgetContactoCliente");
                                                    width: 600,                                                   
                                                    id: "cliente",
                                                    hiddenName: "idcliente",
-                                                   allowBlank:false
+                                                   allowBlank:false,                                                   
+                                                   displayField:"compania"
                                                   });
 
         this.wgContactoCliente.addListener("select", this.onSelectContactoCliente, this);
@@ -160,55 +161,9 @@ include_component("widgets", "widgetContactoCliente");
             Ext.getCmp("ca_liberacion").setValue(cupo);
 
 			Ext.getCmp("preferencias").setValue(record.get("preferencias"));
-
-            /*
-             * <?
-                                if($nivel>=2){
-                                ?>
-                                    document.getElementById("reporte_ca_login").value=record.data.vendedor;
-                                <?
-                                }else{
-                                ?>
-                                    document.getElementById("comercial").innerHTML=record.data.vendedor;
-                                <?
-                                }
-                                ?>
-                                document.getElementById("ca_idconcliente").value = record.get("idcontacto");
-                                document.getElementById("div_contacto").innerHTML = record.get("nombre")+' '+record.get("papellido")+' '+record.get("sapellido") ;
-                                if( record.get("diascredito") ){
-                                    document.getElementById("div_diascredito").innerHTML = record.get("diascredito")+" D&iacute;as";
-                                }else{
-                                    document.getElementById("div_diascredito").innerHTML = "";
-                                }
-
-                                if( record.get("cupo")!=0 || record.get("diascredito")!=0 ){
-                                    document.getElementById("div_libautomatica").innerHTML = "S&iacute;";
-                                }else{
-                                    document.getElementById("div_libautomatica").innerHTML = "No";
-                                }
-
-                                document.getElementById("reporte_ca_preferencias_clie").value=record.data.preferencias;
-
-                                for(i=0; i< <?=ReporteForm::NUM_CC?>; i++){
-                                    document.getElementById("reporte_contactos_"+i).value="";
-                                    document.getElementById("reporte_confirmar_"+i).checked=false;
-                                    document.getElementById("reporte_contactos_"+i).readOnly=false;
-                                }
-
-
-
-
-                                document.getElementById("rep_aduana_ca_coordinador").value=record.data.coordinador;
-
-                                if( record.data.ca_listaclinton=="Sí" ){
-                                    alert("Este cliente se encuentra en lista Clinton");
-                                }
-             */
-
+   
             combo.alertaCliente(record);
-
         }
-
     });
 
 

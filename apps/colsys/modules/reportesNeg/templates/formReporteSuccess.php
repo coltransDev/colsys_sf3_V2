@@ -28,6 +28,7 @@ Ext.QuickTips.init();
 /*
 * Modulos de Tooltips
 */
+//echo $permiso;
 if( $permiso=="3" ) {
     include_component("kbase","tooltipCreator", array("idcategory"=>$idcategory));
 }

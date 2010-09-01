@@ -29,8 +29,15 @@ switch($action){
 		$button[$i]["image"]="22x22/new.gif";
 		$button[$i]["link"]= "reportesNeg/formReporte?token=".md5(time()).$opcion.$modo;
         $i++;
-		break;	
-	case "consultaReporte":		
+		break;
+    case "indexAg":
+		$button[$i]["name"]="Nuevo";
+		$button[$i]["tooltip"]="Crear un nuevo reporte de negocios";
+		$button[$i]["image"]="22x22/new.gif";
+		$button[$i]["link"]= "reportesNeg/formReporteAg?token=".md5(time()).$opcion.$modo;
+        $i++;
+        break;
+	case "consultaReporte":
 		
 
         $button[$i]["name"]="Editar ";

@@ -149,9 +149,12 @@ include_component("reportesNeg", "formSegurosPanel");
                     params:{idreporte:this.idreporte},
 
                     success:function(response,options){
-                        this.res = Ext.util.JSON.decode( options.response.responseText );
+                        res = Ext.util.JSON.decode( options.response.responseText );
                         Ext.getCmp('aduanas').collapsed=(Ext.getCmp('ca_colmas').getValue()=="Sí")?false:true;
                         Ext.getCmp('seguros').collapsed=(Ext.getCmp('ca_seguro').getValue()=="Sí")?false:true;
+
+                        Ext.getCmp("cotizacion").setValue(res.data.cotizacion);
+//                        $("#cotizacion").val(res.data.cotizacion);
 
                         Ext.getCmp("linea").setValue(res.data.idlinea);
                         $("#linea").attr("value",res.data.linea);

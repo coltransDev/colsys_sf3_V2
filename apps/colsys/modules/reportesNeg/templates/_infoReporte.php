@@ -6,10 +6,6 @@
  */
 
 ?>
-
-
-
-
 <div id="trayecto" class="x-hide-display">
     <?
     include_component("reportesNeg", "consultaTrayecto", array("reporte"=>$reporte));

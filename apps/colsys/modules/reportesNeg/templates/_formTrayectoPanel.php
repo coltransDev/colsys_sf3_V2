@@ -34,8 +34,6 @@ if($permiso>=2)
 
 ?>
 <script type="text/javascript">
-
-
     FormTrayectoPanel = function( config ){
         Ext.apply(this, config);
         this.widgetCotizacion = new WidgetCotizacion({
@@ -43,10 +41,10 @@ if($permiso>=2)
                                                       id:"cotizacion",
                                                       hiddenName: "idcotizacion",
                                                       modo:"<?=$modo?>",
-                                                      impoexpo:"<?=$impoexpo?>"
+                                                      impoexpo:"<?=$impoexpo?>",
+                                                      valueField:"consecutivo"
                                                       });
         this.widgetCotizacion.addListener("select", this.onSelectCotizacion, this );
-
 
 		this.wgModalidad=new WidgetModalidad({fieldLabel: 'Tipo Envio',
                                                     id: 'modalidad',
@@ -78,6 +76,12 @@ if($permiso>=2)
                         defaults: {width: 200},
                         items :
                         [
+                        {
+                            xtype: "hidden",
+                            id: "idproducto",
+                            name: "idproducto"
+                        }
+                        ,
                             this.widgetCotizacion,
                             {
                                 xtype: "datefield",
@@ -249,8 +253,13 @@ if($permiso>=2)
          * Completa los datos del reporte con la cotización seleccionada.
          **/
         onSelectCotizacion: function( combo, record, index){
-
-            $("#idcotizacion").val(record.data.idcotizacion);
+            
+//            Ext.getCmp("cotizacion").setValue(record.data.consecutivo);
+//            $("#idcotizacion").val(record.data.consecutivo);
+/*            alert(record.data.toSource())
+            alert(record.data.consecutivo)
+            $("#idcotizacion").val(record.data.consecutivo);
+*/
             Ext.getCmp("impoexpo").setValue(record.data.impoexpo);
             Ext.getCmp("transporte").setValue(record.data.transporte);
             Ext.getCmp("modalidad").setValue(record.data.modalidad);
@@ -266,29 +275,9 @@ if($permiso>=2)
             Ext.getCmp("tra_destino_id").setValue(record.data.tra_destino);
             Ext.getCmp("destino").setValue(record.data.iddestino);
             $("#destino").val(record.data.destino);
-            //alert(record.data.tra_destino);
-            //alert(record.data.destino);
 
-
-/*            Ext.getCmp("vendedor").setValue(record.data.idvendedor);
-            idvendedor=Ext.getCmp("idvendedor");
-            if(idvendedor)
-                Ext.getCmp("idvendedor").setValue(record.data.idvendedor);
-            else
-            {
-                $("#vendedor").val(record.data.vendedor);
-            }
-*/
             Ext.getCmp("vendedor").setValue(record.data.idvendedor);
             $("#vendedor").val(record.data.vendedor);
-
-            //Ext.getCmp("vendedor").setValue(record.data.cliente);
-            //$("#cliente").attr("value",record.data.compania);
-            //$("#vendedor").val(record.data.vendedor);
-//            alert(record.data.idvendedor);
-//            Ext.getCmp("idvendedor").setValue(record.data.idvendedor);
-//            alert(Ext.getCmp("idvendedor").getValue());
-            //c_ca_usuario
 
 
             confirmaciones=record.data.confirmar.split(",");
@@ -318,6 +307,8 @@ if($permiso>=2)
 //            Ext.getCmp("ca_liberacion").setValue(record.data.prima_min);
 //            Ext.getCmp("ca_tiempocredito").setValue(record.data.prima_min);
             $("#destino").val(record.data.destino);
+            Ext.getCmp("idproducto").setValue(record.data.idproducto);
+
 
 
 //            dias_credito

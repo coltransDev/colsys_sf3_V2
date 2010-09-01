@@ -110,6 +110,44 @@ class reportesNegActions extends sfActions
 		$this->forward404Unless( $this->modo );*/
 	}
 
+    public function executeIndexAg()
+	{
+        $this->permiso = $this->getUser()->getNivelAcceso( reportesNegActions::RUTINA );
+        if($this->permiso==-1)
+            $this->forward404();
+
+        $con = Doctrine_Manager::getInstance()->connection();
+		$sql="select * from vi_repconsulta where ca_colmas = '' and ca_idetapa !='99999' and ca_incoterms NOT LIKE 'CIF%' and ca_incoterms NOT LIKE 'CIP%' and ca_incoterms NOT LIKE 'CPT%' and ca_incoterms NOT LIKE 'CFR%' ";
+        if($this->permiso<2)
+            $sql.="ca_login='".$this->getUser()->getUserId()."'";
+
+		$st = $con->execute($sql);
+	//recuperamos las tuplas de resultados
+		$this->reportesAg = $st->fetchAll();
+
+
+
+
+/*        $q=Doctrine::getTable("Reporte")
+                       ->createQuery("r")
+                       ->distinct()
+                       ->limit(200)
+                       ->addOrderBy("r.ca_idreporte desc")
+                       ->where("r.ca_incoterms is null or r.ca_incoterms=''");
+        if($this->permiso<2)
+            $q->addWhere("ca_login=?",$this->getUser()->getUserId());
+        $this->reportesAg=$q->execute();
+ * 
+ */
+        //echo count($this->reportesAg);
+	}
+
+    public function executeIndexOs()
+	{
+        $this->permiso = $this->getUser()->getNivelAcceso( reportesNegActions::RUTINA );
+        if($this->permiso==-1)
+            $this->forward404();
+	}
 
 
 	/*
@@ -122,10 +160,8 @@ class reportesNegActions extends sfActions
         $this->modo = $this->getRequestParameter("modo");
         $this->impoexpo = $this->getRequestParameter("impoexpo");
 
-
 		$criterio = $this->getRequestParameter("criterio");
 		$cadena = $this->getRequestParameter("cadena");
-
 
         $q = Doctrine::getTable("Reporte")
                        ->createQuery("r")
@@ -172,8 +208,6 @@ class reportesNegActions extends sfActions
                 $q->addWhere("UPPER(ori.ca_ciudad) LIKE ?",strtoupper( $cadena )."%");
                 break;
 		}
-
-
 
 		$this->reportes = $q->execute();
 	}
@@ -305,36 +339,65 @@ class reportesNegActions extends sfActions
 			$reporte = new Reporte();
 		}
         
-        $this->nuevaVersion = true;
+        $this->nuevaVersion = true;        
+
         if( ($reporte->isNew() || $reporte->getCaVersion() == $reporte->getUltVersion())
-                &&!$reporte->existeReporteExteriorVersionActual() ){
-            $this->editable = true;
-        }else{
-            $this->editable = false;
-        }
+                    &&!$reporte->existeReporteExteriorVersionActual() ){
+                $this->editable = true;
+            }else{
+                $this->editable = false;
+            }
 
+        //echo $this->editable;
         //No permite editar si el usuario no realizo el reporte
-        $user = $this->getUser();
-        if( !$reporte->isNew() && $user->getUserId()!=$reporte->getCaUsucreado() ){
-            $this->editable = false;
-        }
+        if($this->permiso<2)
+        {
 
-        //No permite editar reportes que se hayan agrupado
-        if( $reporte->getCaIdgrupo()){
-            $this->editable = false;
-            $this->nuevaVersion = false;
-        }
 
-        //No permite copiar ni generar nuevas versiones de nuevos reportes
-        if( !$reporte->getCaIdreporte()){
-            $this->editable = true;
-            $this->nuevaVersion = false;
-            $this->copiar = false;
-        }else{
-            $this->copiar = true;
+            $user = $this->getUser();
+            if( !$reporte->isNew() && $user->getUserId()!=$reporte->getCaUsucreado() ){
+                $this->editable = false;
+            }
+
+            //No permite editar reportes que se hayan agrupado
+            if( $reporte->getCaIdgrupo()){
+                $this->editable = false;
+                $this->nuevaVersion = false;
+            }
+
+            //No permite copiar ni generar nuevas versiones de nuevos reportes
+            if( !$reporte->getCaIdreporte()){
+                $this->editable = true;
+                $this->nuevaVersion = false;
+                $this->copiar = false;
+            }else{
+                $this->copiar = true;
+            }
         }
-        
+        else
+        {
+            if( !$reporte->getCaIdreporte()){
+                $this->editable = true;
+                $this->nuevaVersion = false;
+                $this->copiar = false;
+            }else{
+                $this->copiar = true;
+            }
+        }
         $this->reporte=$reporte;       
+   }
+
+
+    public function executeFormReporteAg(sfWebRequest $request){
+
+        $this->nivel = $this->getNivel();
+        $this->impoexpo = Constantes::IMPO;
+        $this->load_category();
+
+		$reporte = new Reporte();
+
+
+        $this->reporte=$reporte;
    }
 
    /*
@@ -347,8 +410,11 @@ class reportesNegActions extends sfActions
     {
         $idreporte=($request->getParameter("idreporte")!="")?$request->getParameter("idreporte"):"0";
         $reporte = Doctrine::getTable("Reporte")->find( $idreporte );
+        $nuevo=true;
         if(!$reporte)
-            $reporte = new Reporte();        
+            $reporte = new Reporte();
+        else
+            $nuevo=false;
 
         $redirect=true;
         $opcion=$request->getParameter("opcion");
@@ -665,8 +731,18 @@ class reportesNegActions extends sfActions
             $this->responseArray=array("success"=>false,"idreporte"=>$idreporte,"redirect"=>$redirect,"errors"=>$errors);
         else
         {
-
-            $reporte->save();			
+            $reporte->save();
+            if($request->getParameter("idproducto"))
+            {
+                $param=array();
+                $param["idproducto"]=$request->getParameter("idproducto");
+                $param["etapa"]="APR";
+                $param["seguimiento"]="";
+                $param["fchseguimiento"]="";
+                $param["user"]=$this->getUser()->getUserId();
+                $cotseguimientos = new CotSeguimiento();
+                $cotseguimientos->aprobarSeguimiento($param);
+            }
             if($request->getParameter("seguros-checkbox")== "on")
 			{
                 $repSeguro = Doctrine::getTable("RepSeguro")->findOneBy("ca_idreporte", $reporte->getCaIdreporte() );
@@ -1372,7 +1448,7 @@ class reportesNegActions extends sfActions
             $data["transporte"]=utf8_encode($reporte->getCaTransporte());
             $data["idmodalidad"]=$reporte->getCaModalidad();
             $data["incoterms"]=$reporte->getCaIncoterms();
-
+            
             $data["cotizacion"]=$reporte->getCaIdcotizacion();
             $data["continuacion"]=$reporte->getCaContinuacion();
             $data["continuacion_dest"]=$reporte->getCaContinuacionDest();
@@ -1875,7 +1951,6 @@ class reportesNegActions extends sfActions
             }
         }
 
-
         if( $tipo=="recargo" ){
             $idreporte = $request->getParameter("idreporte");
             $idconcepto = $request->getParameter("idconcepto");
@@ -2102,12 +2177,6 @@ class reportesNegActions extends sfActions
         $this->responseArray=array("id"=>$id,  "success"=>true);
 
     }
-
-
-
-
-
-
 
 
 	/**

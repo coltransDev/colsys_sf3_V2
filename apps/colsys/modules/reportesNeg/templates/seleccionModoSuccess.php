@@ -76,6 +76,15 @@
 	}
 ?>
 	</tr>
+     <tr><td colspan="2" ><b>Otros</b></td></tr>
+    <tr>
+        <td><div align="left">
+			<?=link_to("Ag", "reportesNeg/indexAg")?>
+		</div></td>
+        <td><div align="left">
+			<?=link_to("Otros Servicios", "reportesNeg/indexOs")?>
+		</div></td>
+    </tr>
 	
 </table>
 

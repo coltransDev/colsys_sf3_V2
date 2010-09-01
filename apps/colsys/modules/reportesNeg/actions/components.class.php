@@ -175,6 +175,25 @@ class reportesNegComponents extends sfComponents
         }
 
     }
+
+    public function executeFormReportePanelAg()
+	{
+//        echo "categoria:".$this->getRequestParameter("idcategory")."<br>";
+        $this->permiso = $this->getUser()->getNivelAcceso( "87" );
+
+        if($this->permiso=="3")
+        {
+            $this->load_category();
+//            echo $this->idcategory;
+            $this->issues = Doctrine::getTable("KBTooltip")
+                                ->createQuery("t")
+                                ->select("t.ca_idcategory, t.ca_title, t.ca_info, t.ca_field_id")
+                                ->where("t.ca_idcategory = ?", $this->idcategory)
+                                ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                                ->execute();
+        }
+
+    }
     /*
 	* Edita la informacion basica del trayecto
 	* @author: Andres Botero
