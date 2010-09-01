@@ -357,7 +357,7 @@ class widgetsComponents extends sfComponents
                   ->addOrderBy("id.ca_nombre");
         $q->addWhere("p.ca_tipo = ? OR p.ca_tipo = ?", array("TRI", "TRN") );
         
-        $q->addWhere("p.ca_activo = ?", true );
+        //$q->addWhere("p.ca_activo = ?", true );
         
         $q->fetchArray();
 

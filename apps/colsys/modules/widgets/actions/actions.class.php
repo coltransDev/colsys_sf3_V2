@@ -127,7 +127,7 @@ class widgetsActions extends sfActions
         if( $query ){
             $q->addWhere("id.ca_nombre like ?", $query."%");
         }
-        $q->addWhere("p.ca_activo = ?", true );
+        //$q->addWhere("p.ca_activo = ?", true );
 
         if($request->getParameter("noaprob")!="true"){
             //$q->addWhere("p.ca_fchaprobado IS NOT NULL" ); //Ver Ticket # 3577
