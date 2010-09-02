@@ -15,7 +15,7 @@ $tbodegaJ = $sf_data->getRaw("tbodegas");
 <div class="content" align="center">
 <h1>Nueva Bodega</h1>
 
-<table align="center" width="500">
+<table align="center" width="700">
     <tr>
         <td><div id="formulario_bodegas" ></div></td>
     </tr>
@@ -64,7 +64,8 @@ $tbodegaJ = $sf_data->getRaw("tbodegas");
                 store: store,
                 id: "nombre",
                 name: "nombre",
-                width: 300
+                maxLength: 80,
+                width: 540
              });
         
         FormBodegaPanel.superclass.constructor.call(this, {
