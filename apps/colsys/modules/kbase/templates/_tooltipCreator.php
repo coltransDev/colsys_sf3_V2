@@ -19,6 +19,11 @@ include_component("kbase", "tooltipWindow");
         {
             return;
         }
+        //alert($("#"+strElemId).type)
+        if($("#"+strElemId)[0].tagName=="div")
+            return;
+
+        //if() strElemId
 //        else
 //            return;
         
