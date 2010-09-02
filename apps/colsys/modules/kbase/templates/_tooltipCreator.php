@@ -19,21 +19,24 @@ include_component("kbase", "tooltipWindow");
         {
             return;
         }
-        //alert($("#"+strElemId).type)
-        if($("#"+strElemId)[0].tagName=="div")
-            return;
+        target=$("#"+strElemId)[0].tagName;
 
+/*        if($("#"+strElemId)[0].tagName=="div")
+            return;
+*/
         //if() strElemId
 //        else
 //            return;
-        
-        if( typeof(winTooltip)=="undefined" ){
-            winTooltip = new TooltipWindow();
+        if(target=="INPUT" || target=="SELECT" || target=="TEXTAREA" )
+        {
+            if( typeof(winTooltip)=="undefined" ){
+                winTooltip = new TooltipWindow();
+            }
+            winTooltip.setIdcategory( <?=$idcategory?> );
+            winTooltip.setElemid( strElemId );
+            winTooltip.show();
+            winTooltip.load( strElemId );
         }
-        winTooltip.setIdcategory( <?=$idcategory?> );
-        winTooltip.setElemid( strElemId );
-        winTooltip.show();
-        winTooltip.load( strElemId );
     }
     $("input,select,textarea,div").dblclick(crearAyuda);
 </script>
