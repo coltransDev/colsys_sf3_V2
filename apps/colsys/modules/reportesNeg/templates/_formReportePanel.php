@@ -161,6 +161,9 @@ include_component("reportesNeg", "formSegurosPanel");
 
                         Ext.getCmp("cliente").setValue(res.data.idcliente);                        
                         $("#cliente").attr("value",res.data.cliente);
+
+                        Ext.getCmp("proveedor").setValue(res.data.idproveedor);
+                        $("#proveedor").attr("value",res.data.proveedor);
                         
                         Ext.getCmp("origen").setValue(res.data.idorigen);
                         $("#origen").attr("value",res.data.origen);

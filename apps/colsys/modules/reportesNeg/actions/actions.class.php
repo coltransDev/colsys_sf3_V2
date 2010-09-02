@@ -152,7 +152,7 @@ class reportesNegActions extends sfActions
 
 	/*
 	* Muestra los resultados de la busqueda del reporte de negocios
-	* @author Andres Botero
+	* @author Mauricio Quinche
 	*/
 	public function executeBusquedaReporte()
 	{
@@ -208,6 +208,8 @@ class reportesNegActions extends sfActions
                 $q->addWhere("UPPER(ori.ca_ciudad) LIKE ?",strtoupper( $cadena )."%");
                 break;
 		}
+        $q->addWhere("r.ca_transporte = ?", $this->modo);
+        $q->addWhere("r.ca_impoexpo = ?", $this->impoexpo);
 
 		$this->reportes = $q->execute();
 	}
@@ -215,7 +217,7 @@ class reportesNegActions extends sfActions
     /**
 	* Permite consultar un reporte de negocio ya creado y permite
 	* agregar nuevas
-	* @author Andres Botero
+	* @author Mauricio Quinche
 	*/
 	public function executeConsultaReporte(){
         $this->opcion = $this->getRequestParameter("opcion");
@@ -1536,7 +1538,10 @@ class reportesNegActions extends sfActions
                 {
                     $tercero = Doctrine::getTable("Tercero")->find($values[0]);
                     if($tercero)
+                    {
+                        $data["idproveedor"]=$values[0];
                         $data["proveedor"] =Utils::replace($tercero->getCaNombre());
+                    }
 
                 }
             }
@@ -2181,7 +2186,7 @@ class reportesNegActions extends sfActions
 
 	/**
 	* Genera un archivo PDF con el reporte de negocio
-	* @author Andres Botero
+	* @author Mauricio Quinche
 	*/
 	public function executeGenerarPDF( $request ){
         $this->opcion = $this->getRequestParameter("opcion");
@@ -2193,7 +2198,7 @@ class reportesNegActions extends sfActions
 
 	/*
 	* Anula un reporte
-	* @author: Andres Botero
+	* @author: Mauricio Quinche
 	*/
 	public function executeAnularReporte( $request ){
         $this->opcion = $this->getRequestParameter("opcion");
@@ -2214,7 +2219,7 @@ class reportesNegActions extends sfActions
 
     /*
 	* Revive un reporte anulado
-	* @author: Andres Botero
+	* @author: Mauricio Quinche
 	*/
 	public function executeRevivirReporte( $request ){
         $this->opcion = $this->getRequestParameter("opcion");
@@ -2300,7 +2305,7 @@ class reportesNegActions extends sfActions
 
     /**
 	* Envia una notificacion a los usuarios relacionados en el reporte
-	* @author Andres Botero
+	* @author Mauricio Quinche
 	*/
 
     public function executeEnviarNotificacion( $request ){
@@ -2441,13 +2446,12 @@ class reportesNegActions extends sfActions
 
 	/**
 	*
-	* @author Andres Botero
+	* @author Mauricio Quinche
 	*/
     public function executeUnificarReporte( $request ){
         $this->forward404Unless( $request->getParameter( "id" ) );
 		$reporte = Doctrine::getTable("Reporte")->find($request->getParameter( "id" ));
 		$this->forward404Unless( $reporte );
-
 
         $consecutivo = $request->getParameter( "reporte" );
 
@@ -2472,7 +2476,6 @@ class reportesNegActions extends sfActions
                       ->set("ca_detanulado", "'Unificado con el reporte ".$reporte->getCaConsecutivo()."'")
                       ->where("ca_consecutivo = ?", $consecutivo)
                       ->execute();
-
 
             $this->redirect("reportesNeg/consultaReporte?id=".$reporte->getCaIdreporte());
         }

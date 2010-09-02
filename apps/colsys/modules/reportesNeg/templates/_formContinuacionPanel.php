@@ -39,12 +39,9 @@ include_component("widgets", "widgetBodega");
 		?>
 
         FormContinuacionPanel.superclass.constructor.call(this, {
-			
-//            deferredRender:false,
+
             items: [
-                /*
-                 *========================= Información del Proveedor =========================
-                 **/
+
                 {
                     xtype:'fieldset',
                     title: '<?=$title?>',
@@ -53,7 +50,7 @@ include_component("widgets", "widgetBodega");
                     items: [
 
 						<?
-						if($impoexpo==Constantes::IMPO)
+						if($impoexpo==Constantes::IMPO )
 						{
 							$keys=array_keys($usuarios);
 							$conta=count($keys);
@@ -66,6 +63,10 @@ include_component("widgets", "widgetBodega");
                                                   hiddenName:'continuacion_dest',
                                                   idtrafico: 'CO-057'
                                                 })
+                        <?
+                        if($modo==Constantes::MARITIMO )
+                        {
+                        ?>
 						,
                         {
                             xtype:'fieldset',
@@ -115,6 +116,7 @@ include_component("widgets", "widgetBodega");
                             ]
                         }
 						<?
+                        }
 						}
 						else
 						{
