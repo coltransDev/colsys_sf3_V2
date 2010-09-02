@@ -510,3 +510,126 @@ table.tableList th.imprimir {
    background:#FFFFFF;
    color:#000000;
 }
+
+/** cpanel settings **/
+
+#cpanel div.icon {
+	text-align: center;
+	margin-right: 5px;
+	float: left;
+	margin-bottom: 5px;
+}
+
+#cpanel div.icon a {
+	display: block;
+	float: left;
+	border: 1px solid #f0f0f0;
+	height: 107px;
+	width: 108px;
+	color: #666;
+	vertical-align: middle;
+	text-decoration: none;
+}
+
+#cpanel div.icon a:hover {
+	border-left: 1px solid #eee;
+	border-top: 1px solid #eee;
+	border-right: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
+	background: #f9f9f9;
+	color: #0B55C4;
+}
+
+#cpanel img  { padding: 10px 0; margin: 0 auto; }
+#cpanel span { display: block; text-align: center; font-size:11px; }
+
+table.table1 {
+	background-color: #FFFFFF;
+	padding: 0px;
+	border: 1px solid #CCCCCC;
+	border-spacing: 0px;
+	border-collapse: collapse;
+}
+
+table.table1 th {
+	margin: 0px;
+	padding: 6px 4px 2px 4px;
+	height: 25px;
+	background: #2E4B66;
+	font-size: 11px;
+	color: #FFFFFF;
+}
+
+/*
+* Colores que puede tomar una fila de acuerdo al status en que se encuentre
+*/
+
+table.table1 tr.yellow{
+	background-color:#FFFFCC;
+}
+
+table.table1 tr.green{
+	background-color:#CEFFCE;
+}
+
+table.table1 tr.blue{
+	background-color:#CEE7FF;
+}
+
+table.table1 tr.orange{
+	background-color:#FFE4AE;
+}
+
+table.table1 tr.purple{
+	background-color:#9999CC;
+}
+
+table.table1 tr.pink{
+	background-color:#FFCCCC;
+}
+
+table.table1 tr.rowt {
+	background-color: #E6E6E6;
+}
+
+table.table1 tr.row0 {
+	background-color: #F5F5F5;
+}
+table.table1 tr.row1 {
+	background-color: #FFF;
+}
+
+table.table1 tr.row0:hover {
+	background-color: #f1f1f1;
+}
+table.table1 tr.row1:hover {
+	background-color: #f1f1f1;
+}
+
+
+table.table1 td {
+	border-bottom: 1px solid #e5e5e5;
+	padding: 4px;
+	color:#333333;
+}
+div.box1 {
+	background: #F0F0F0 url(../images/bg_newsitem.png) repeat-x;
+	border: 1px solid #EEE;
+	border-color: #EEE #EEE #DDD #EEE;
+	clear: both;
+	color: #333;
+	line-height: 1.5;
+	padding: 10px;
+}
+
+
+div.box1 .title {
+	color: #2A337C;
+	font: bold 1.2em Tahoma,sans-serif;
+	padding: 3px 4px;
+}
+div.box1 .body {
+	font-family: "Trebuchet MS",Tahoma,sans-serif;
+	font-size: 0.9em;
+	text-align: justify;
+}
