@@ -22,7 +22,7 @@ class adminUsersActions extends sfActions
     public function getNivel() {
 
         $app =  sfContext::getInstance()->getConfiguration()->getApplication();
-        return 5;
+        //return 5;
         switch( $app ){
             case "colsys":
                 $rutina = adminUsersActions::RUTINA_COLSYS;
@@ -84,7 +84,7 @@ class adminUsersActions extends sfActions
      public function executeFormUsuario( $request ){
 
         $app =  sfContext::getInstance()->getConfiguration()->getApplication();
-        //return 5;
+        
         switch( $app ){
             case "intranet":
                 $this->setLayout("layout2col");
@@ -559,7 +559,12 @@ class adminUsersActions extends sfActions
     
     public function executeViewUser(sfWebRequest $request) {
 
-        $this->setLayout("layout2col");
+        $app =  sfContext::getInstance()->getConfiguration()->getApplication();
+        switch( $app ){
+            case "intranet":
+                $this->setLayout("layout2col");
+                break;
+        }
         $this->userinicio = sfContext::getInstance()->getUser();
         $this->nivel = $this->getNivel();
 
