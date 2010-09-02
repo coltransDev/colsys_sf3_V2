@@ -58,9 +58,7 @@
                         <!--Left Column Start-->
 
                         <div class="left">
-                            <div class="moduletable_menu">
                                 <?include_component('homepage','mainMenu')?>
-                            </div>
                             <br />
                         </div>
                         <!--Center Column Start-->
