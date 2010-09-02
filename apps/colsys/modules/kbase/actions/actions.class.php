@@ -138,7 +138,8 @@ class kbaseActions extends sfActions
         $tooltip->save();
 
         $this->responseArray["titulo"] = utf8_encode($tooltip->getCaTitle());
-        $this->responseArray["contenido"] = utf8_encode($tooltip->getCaInfo());
+        $info = str_replace("\"", "'",str_replace("\n", "<br />",utf8_encode($tooltip->getCaInfo())));
+        $this->responseArray["contenido"] = $info;
         
         $this->setTemplate("responseTemplate");
     }
