@@ -538,9 +538,11 @@ class adminUsersActions extends sfActions
 
     public function executeTraerImagen($request){
         $username=$request->getParameter('username');
+        $tamano=$request->getParameter('tamano');
+
         $user=Doctrine::getTable('Usuario')->find($username);
 
-        $this->imagen=$user->getImagen();
+        $this->imagen=$user->getImagen($tamano);
     }
 
     public function executeViewOrganigrama(sfWebRequest $request) {
