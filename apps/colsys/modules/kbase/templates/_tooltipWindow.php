@@ -16,7 +16,7 @@ TooltipWindow = function() {
         title: 'Edicion de tooltips',
         id: 'tooltip-win',
         autoHeight: true,
-        width: 400,
+        width: 450,
         
         resizable: true,
         plain:true,
@@ -55,12 +55,12 @@ TooltipWindow = function() {
                         allowBlank:false
                     },{
                         xtype: 'textarea',
-                        width: 200,
-                        height: 100,
+                        width: 250,
+                        height: 150,
                         fieldLabel: 'Tooltip',
                         name: 'contenido',
                         id: 'contenido',
-                        maxLength : 255,
+                        maxLength : 1000,
                         value: '',
                         allowBlank:false
                     }
