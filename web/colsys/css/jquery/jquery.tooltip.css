@@ -53,3 +53,47 @@
     padding-top: 2.5em;
     height: 150px;
 }
+
+
+
+
+
+
+#tooltip.prettyL {
+	font-family: Arial;
+	border: none;
+	width: 270px;
+	padding:15px;
+	height: 180px;
+	opacity: 0.8;
+	background: url('shadow.png');
+}
+#tooltip.prettyL h3 {
+	margin-bottom: 0.75em;
+	font-size: 9px;
+	width: 260px;
+	text-align: justify;
+
+}
+#tooltip.prettyL div { width: 270px; text-align: left; }
+
+#tooltip.fancyL {
+	background: url('shadow2L.png');
+	padding-top: 10em;
+	height: 200px;
+    border: none;
+    font-size: 8px;
+}
+#tooltip.fancyL.viewport-right {
+	background: url('shadow2L-reverse.png');
+    padding-top: 10em;
+	height: 230px;
+    border: none;
+}
+
+#tooltip.fancyL.viewport-bottom {
+	background: url('shadow2LV.png');
+    border: none;
+    padding-top: 4.5em;
+    height: 250px;
+}
