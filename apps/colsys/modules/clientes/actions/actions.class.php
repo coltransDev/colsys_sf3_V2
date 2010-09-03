@@ -779,6 +779,18 @@ class clientesActions extends sfActions
                             }
                         }else{
                             $email->addTo( $user->getCaEmail() );
+                            $sucursal = $user->getSucursal();
+                            $empleados = $sucursal->getUsuario();
+                            foreach($empleados as $empleado){
+                                if ($empleado->getCaCargo() == "Jefe Departamento Administrativo" and ($empleado->getCaSucursal() == "Barranquilla" or $empleado->getCaSucursal() == "Cali" or $empleado->getCaSucursal() == "Medellín")){
+                                    $email->addCc( $user->getCaEmail() );
+                                }else if ($empleado->getCaCargo() == "Asistente Administrativo" and $empleado->getCaSucursal() == "Bucaramanga"){
+                                    $email->addCc( $user->getCaEmail() );
+                                }else if ($empleado->getCaCargo() == "Gerente Sucursal" and $empleado->getCaSucursal() == "Pereira"){
+                                    $email->addCc( $user->getCaEmail() );
+                                }
+                            }
+                            $email->addCc( $val );
                         }
                         $ven_mem = $row["ca_vendedor"];
                         $msn_mem = "El sistema ha encontrado algunas similitudes en su listado de Clientes, comparado con la Lista Clinton del día $nueva_fecha. Favor hacer la respectivas verificaciones y tomar acción en caso de que un cliente haya sido reportado.";
