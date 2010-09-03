@@ -198,7 +198,7 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047,CU049,C
 								{
 									layout:'column',
 									border:false,
-									title: "MotoNave/Vuelo",
+									title: "<?=$nave?>",
 
 									columnWidth: .25,
 									items: [

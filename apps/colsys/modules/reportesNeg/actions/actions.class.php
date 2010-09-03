@@ -410,6 +410,7 @@ class reportesNegActions extends sfActions
 
     public function executeGuardarReporte( sfWebRequest $request )
     {
+        $this->permiso = $this->getUser()->getNivelAcceso( reportesNegActions::RUTINA );
         $idreporte=($request->getParameter("idreporte")!="")?$request->getParameter("idreporte"):"0";
         $reporte = Doctrine::getTable("Reporte")->find( $idreporte );
         $nuevo=true;
@@ -447,13 +448,12 @@ class reportesNegActions extends sfActions
         {
             $reporte->stopBlaming();
         }else
-        {           
-
+        {
             if($request->getParameter("idcotizacion") && $request->getParameter("idcotizacion")>0)
             {
                 $reporte->setCaIdcotizacion($request->getParameter("idcotizacion"));
             }
-            else
+            else if($this->permiso<2)
             {
                 $errors["cotizacion"]="Debe asignar un cotizacion";
             }

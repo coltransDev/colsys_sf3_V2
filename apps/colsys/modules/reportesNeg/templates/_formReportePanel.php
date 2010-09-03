@@ -131,11 +131,25 @@ include_component("reportesNeg", "formSegurosPanel");
                     ?>
                     info = "<?=$info?>";
 
+                    <?
+                    if(strlen($info)<400)
+                    {
+                    ?>
                     target = $('#<?=$issue["t_ca_field_id"]?>').addClass("help").attr("title",info);
+                    <?
+                    }
+                    else
+                    {
+                    ?>
+                    target = $('#<?=$issue["t_ca_field_id"]?>').addClass("helpL").attr("title",info);
+                    <?
+                    }
+                    ?>
 <?
                 }
 ?>
                 $('.help').tooltip({track: true, fade: 250, opacity: 1, top: -15, extraClass: "pretty fancy" });
+                $('.helpL').tooltip({track: true, fade: 250, opacity: 1, top: -15, extraClass: "prettyL fancyL" });
        }
        ,
         onRender:function() {

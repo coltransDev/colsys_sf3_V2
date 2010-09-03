@@ -214,31 +214,27 @@ class reportesNegComponents extends sfComponents
 
 	public function executeFormMercanciaPanel()
 	{
-//		$this->tiposexpo = ParametroTable::retrieveByCaso( "CU011" );
-		//$this->tipo_piezas = ParametroTable::retrieveByCaso( "CU047" );
-		
 
-		//$this->tipo_pesos = ParametroTable::retrieveByCaso( "CU049" );
-
-//		$this->tipo_volumen_maritimo = ParametroTable::retrieveByCaso( "CU050" );
-//		$this->tipo_volumen_aereo = ParametroTable::retrieveByCaso( "CU058" );
-//		$this->tipo_volumen = ParametroTable::retrieveByCaso( "CU058" );
-
-		//$this->repexpo = $this->reporteNegocio->getRepExpo();
 		$this->sia = Doctrine::getTable("Sia")
                                      ->createQuery("s")
                                      ->select("s.ca_idsia,s.ca_nombre")
                                      ->addOrderBy("s.ca_nombre")                                     
                                      ->execute();
 
-/*		
-		$c=new Criteria();
-		$c->addAscendingOrderByColumn( SiaPeer::CA_NOMBRE );
-		$this->sias = SiaPeer::doSelect( $c );
- *
- *
- */
+        if($this->impoexpo==constantes::EXPO)
+        {
+            $this->nave="";
+            if($this->modo==constantes::AEREO)
+            {
+                $this->nave="Vuelo";
 
+            }
+            else if($this->modo==constantes::MARITIMO)
+            {
+                $this->nave="Motonave";
+            }
+
+        }
 	}
 
 	public function executeFormContinuacionPanel()
