@@ -73,6 +73,7 @@ class inventoryActions extends sfActions
             $row = array();
             $row["idactivo"]=utf8_encode($activo->getCaIdactivo());
             $row["idcategory"]=utf8_encode($activo->getCaIdcategory());
+            $row["identificador"]=utf8_encode($activo->getCaIdentificador());
             $row["marca"]=utf8_encode($activo->getCaMarca());
             $row["modelo"]=utf8_encode($activo->getCaModelo());
             $row["version"]=utf8_encode($activo->getCaVersion());
@@ -114,6 +115,7 @@ class inventoryActions extends sfActions
 
 
         $data = array();
+        $data["identificador"] = $activo->getCaIdentificador();
         $data["idactivo"] = $activo->getCaIdactivo();
         $data["idcategory"] = $activo->getCaIdcategory();
         $data["noinventario"] = $activo->getCaNoinventario();
@@ -159,6 +161,7 @@ class inventoryActions extends sfActions
         
         $activo->setCaIdcategory( $request->getParameter("idcategory") );
         $activo->setCaNoinventario( $request->getParameter("noinventario") );
+        $activo->setCaIdentificador( utf8_decode($request->getParameter("identificador")) );
         $activo->setCaSerial( $request->getParameter("serial") );
         $activo->setCaMarca( utf8_decode($request->getParameter("marca")) );
         $activo->setCaModelo( utf8_decode($request->getParameter("modelo")) );

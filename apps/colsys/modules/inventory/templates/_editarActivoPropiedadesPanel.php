@@ -115,8 +115,8 @@
                             items: [
                                 {
                                     xtype:'textfield',
-                                    fieldLabel: 'Serial',
-                                    name: 'serial',
+                                    fieldLabel: 'Identificador',
+                                    name: 'identificador',
                                     allowBlank: true
                                 },
                                 {
@@ -159,6 +159,12 @@
                                     xtype:'textfield',
                                     fieldLabel: 'Vlr. Reposición',
                                     name: 'reposicion',
+                                    allowBlank: true
+                                },
+                                {
+                                    xtype:'textfield',
+                                    fieldLabel: 'Serial',
+                                    name: 'serial',
                                     allowBlank: true
                                 }
 

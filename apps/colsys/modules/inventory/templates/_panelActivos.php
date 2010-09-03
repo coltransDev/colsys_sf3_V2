@@ -130,6 +130,15 @@ PanelActivos = function( config ){
     
 
     this.columns = [
+        {
+        header: "Identificador",
+        dataIndex: 'identificador',
+        //hideable: false,
+        width: 63,
+        sortable: true,
+        renderer: this.formatItem
+
+      },
       {
         header: "Activo",
         dataIndex: 'noinventario',
@@ -200,6 +209,7 @@ PanelActivos = function( config ){
 
     this.record = Ext.data.Record.create([
             {name: 'sel', type: 'bool'},
+            {name: 'identificador', type: 'string'},
             {name: 'noinventario', type: 'string'},
             {name: 'idactivo', type: 'integer'},
             {name: 'idcategory', type: 'integer'},
