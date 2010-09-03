@@ -504,7 +504,8 @@ Modalidad:
     ca_impoexpo: string
     ca_transporte: string
     ca_modalidad: string
-
+    ca_fcheliminado: timestamp
+    ca_usueliminado: string
 
 StdCliente:
   options:
