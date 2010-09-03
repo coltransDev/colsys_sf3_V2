@@ -186,8 +186,18 @@ class inventoryActions extends sfActions
         }else{
             $activo->setCaReposicion( null );
         }
-        $activo->setCaContrato( utf8_decode($request->getParameter("contrato")) );
-        $activo->setCaObservaciones( utf8_decode($request->getParameter("observaciones")) );
+        
+        if( $request->getParameter("contrato") ){
+            $activo->setCaContrato( utf8_decode($request->getParameter("contrato")) );
+        }else{
+            $activo->setCaContrato( null);
+        }
+
+        if( $request->getParameter("observaciones") ){
+            $activo->setCaObservaciones( utf8_decode($request->getParameter("observaciones")) );
+        }else{
+            $activo->setCaObservaciones( null);
+        }
 
 
         try{
