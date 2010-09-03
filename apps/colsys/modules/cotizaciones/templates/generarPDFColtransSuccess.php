@@ -795,6 +795,14 @@ for( $k=0; $k<count($transportes); $k++ ):
 
 endfor; //transportes
 
+    $pdf->beginGroup();
+    $pdf->SetFont($font,'B',8);
+    $pdf->Ln(2);
+    $pdf->MultiCell(0, 4, "Nota Importante: En caso de aceptación de nuestros servicios, estos se prestaran basados en nuestras condiciones generales de Contrato de Agenciamiento de carga el cual se encuentra  en la pagina web www.coltrans.com.co", 0,'J',0);
+    $pdf->Ln(2);
+	$pdf->flushGroup();
+
+
 if(in_array("OTM",$transportes) || in_array("DTA",$transportes))
 {
 $pdf->beginGroup();
