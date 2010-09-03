@@ -122,11 +122,11 @@ Ext.extend(TooltipWindow, Ext.Window, {
                         target.title=action.result.titulo+":<br />"+action.result.contenido;
                         $('.help').tooltip({track: true, fade: 250, opacity: 1, top: -15, extraClass: "pretty fancy" });
                     }
-                    this.close();
+                    TooltipWindow.close();
                 },
                 failure:function(response,options){
                     Ext.Msg.alert( "Error "+response.responseText );
-                    this.close();
+                    TooltipWindow.close();
                 }//end failure block
             });
 
