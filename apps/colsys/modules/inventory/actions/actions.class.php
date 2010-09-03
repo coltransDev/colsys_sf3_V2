@@ -160,8 +160,8 @@ class inventoryActions extends sfActions
         }
         
         $activo->setCaIdcategory( $request->getParameter("idcategory") );
-        $activo->setCaNoinventario( $request->getParameter("noinventario") );
-        $activo->setCaIdentificador( utf8_decode($request->getParameter("identificador")) );
+        $activo->setCaNoinventario( strtoupper($request->getParameter("noinventario")) );
+        $activo->setCaIdentificador( utf8_decode(strtoupper($request->getParameter("identificador"))) );
         $activo->setCaSerial( $request->getParameter("serial") );
         $activo->setCaMarca( utf8_decode($request->getParameter("marca")) );
         $activo->setCaModelo( utf8_decode($request->getParameter("modelo")) );

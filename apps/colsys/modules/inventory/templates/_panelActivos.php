@@ -134,7 +134,7 @@ PanelActivos = function( config ){
         header: "Identificador",
         dataIndex: 'identificador',
         //hideable: false,
-        width: 63,
+        width: 110,
         sortable: true,
         renderer: this.formatItem
 
