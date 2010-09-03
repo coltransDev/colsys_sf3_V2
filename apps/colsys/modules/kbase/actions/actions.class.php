@@ -132,7 +132,8 @@ class kbaseActions extends sfActions
             $tooltip->setCaIdcategory( $idcategory );
             $tooltip->setCaFieldId( $elemId );
         }
-        $info = str_replace("\"", "'",str_replace("\n", "<br />",$request->getParameter("contenido")));
+        //$info = str_replace("\"", "'",str_replace("\n", "<br/>",$request->getParameter("contenido")));
+        $info = utf8_decode($request->getParameter("contenido"));
         $tooltip->setCaTitle( utf8_decode($request->getParameter("titulo")));
         $tooltip->setCaInfo( $info );
         $tooltip->save();
