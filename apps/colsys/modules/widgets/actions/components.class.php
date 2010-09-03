@@ -349,6 +349,22 @@ class widgetsComponents extends sfComponents
 	}
 
 
+    public function executeWidgetMoneda(){
+		$this->data = array();
+
+        $monedas = Doctrine::getTable("Moneda")
+                   ->createQuery("m")
+                   ->orderBy("m.ca_idmoneda")
+                   ->execute();
+
+        
+//        echo count($monedas);
+		foreach( $monedas as $moneda ){
+			$this->data[] = array(  "valor"=>$moneda->getCaIdmoneda());
+		}
+	}
+
+
     public function executeWidgetLinea(){
 		$this->data = array();
         
