@@ -43,6 +43,7 @@ InvActivo:
       primary: true
       autoincrement: true
     ca_idcategory: integer
+    ca_identificador: string
     ca_fchcompra: date
     ca_proveedor: string
     ca_marca: string
