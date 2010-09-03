@@ -168,7 +168,6 @@ include_component("reportesNeg", "formSegurosPanel");
                         Ext.getCmp('seguros').collapsed=(Ext.getCmp('ca_seguro').getValue()=="Sí")?false:true;
 
                         Ext.getCmp("cotizacion").setValue(res.data.cotizacion);
-//                        $("#cotizacion").val(res.data.cotizacion);
 
                         Ext.getCmp("linea").setValue(res.data.idlinea);
                         $("#linea").attr("value",res.data.linea);
@@ -176,8 +175,11 @@ include_component("reportesNeg", "formSegurosPanel");
                         Ext.getCmp("cliente").setValue(res.data.idcliente);                        
                         $("#cliente").attr("value",res.data.cliente);
 
-                        Ext.getCmp("proveedor").setValue(res.data.idproveedor);
-                        $("#proveedor").attr("value",res.data.proveedor);
+                        if(Ext.getCmp("proveedor"))
+                        {
+                            Ext.getCmp("proveedor").setValue(res.data.idproveedor);
+                            $("#proveedor").attr("value",res.data.proveedor);
+                        }
                         
                         Ext.getCmp("origen").setValue(res.data.idorigen);
                         $("#origen").attr("value",res.data.origen);
@@ -211,13 +213,28 @@ include_component("reportesNeg", "formSegurosPanel");
                         //$("#cliente").attr("value",res.data.idcliente);
                         $("#notify").val(res.data.notify);
 
-                        //alert(res.data.consignatario);
-                        //alert(Ext.getCmp('notify').toSource())
-                        //Ext.getCmp('idconsignatario').hiddenField.value=res.data.consignatario
+
                         $("#idconsignatario").val(res.data.consignatario);
-                        //alert($("#consig").val())
-                        //alert($("#idconsignatario").val())
+
                         $("#idconsigmaster").val(res.data.consigmaster);
+                       
+                        if(res.data.idmodalidad=="CONSOLIDADO")
+                        {
+                            if(Ext.getCmp("PCorteMaster"))
+                                Ext.getCmp("PCorteMaster").hide();
+                            if(Ext.getCmp("PCorteHija"))
+                                Ext.getCmp("PCorteHija").show();
+                        }
+                        else if(res.data.idmodalidad=="DIRECTO")
+                        {
+                            if(Ext.getCmp("PCorteHija"))
+                                Ext.getCmp("PCorteHija").hide();
+                            if(Ext.getCmp("PCorteMaster"))
+                                Ext.getCmp("PCorteMaster").show();
+                        }
+
+
+
                     }
                 });
             }

@@ -69,6 +69,7 @@ include_component("widgets", "widgetBodega");
                     xtype:'fieldset',
                     title: '<?=$nomGuiasH?>',
                     autoHeight:true,
+                    id:'PCorteHija',
                     items: camposHija
                 }
                 <?
@@ -80,6 +81,7 @@ include_component("widgets", "widgetBodega");
                     xtype:'fieldset',
                     title: '<?=$nomGuiasM?>',
                     autoHeight:true,
+                    id:'PCorteMaster',
                     items: [
                         new WidgetTercero({fieldLabel:"Consig. Master",
                                             tipo: 'Master',

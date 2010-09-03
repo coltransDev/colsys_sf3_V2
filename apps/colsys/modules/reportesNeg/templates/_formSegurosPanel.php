@@ -6,7 +6,7 @@
 */
 
 //include_component("widgets", "widgetContactoCliente");
-
+include_component("widgets", "widgetMoneda");
 ?>
 <script type="text/javascript">
     FormSegurosPanel = function( config ){
@@ -66,32 +66,11 @@
                                         name: "ca_vlrasegurado",
                                         id: "ca_vlrasegurado",
                                         width:50
-                                    },{
-                                        xtype: "combo",                                       
-                                        name: "ca_idmoneda_vlr",
-                                        id: "ca_idmoneda_vlr",
-                                        mode:           'local',
-                                        displayField:   'name',
-                                        valueField:     'value',
-                                        width:          70,
-                                        store : [
-                                        <?
-                                        echo "['','...']";
-                                        $i=0;
-                                        foreach( $monedas as $moneda ){
-
-                                           echo ",";
-
-                                            echo "['".$moneda->getCaIdmoneda()."','".$moneda->getCaIdmoneda()."']";
-                                        }
-                                        ?>
-                                        ],
-                                        typeAhead: true,
-                                        forceSelection: true,
-                                        triggerAction: 'all',
-                                        selectOnFocus:true,
-                                        lazyRender:true
-                                    }
+                                    },
+                                    new WidgetMoneda({
+                                                    id: 'ca_idmoneda_vlr',                                                    
+                                                    width:          90
+                                                    })
                                     ]
                                 },
                                 {
@@ -107,33 +86,11 @@
                                         name: "ca_obtencionpoliza",
                                         id: "ca_obtencionpoliza",
                                         width: 120
-                                    },{
-                                        xtype: "combo",                                        
-                                        name: "ca_idmoneda_pol",
-                                        id: "ca_idmoneda_pol",
-                                        mode:           'local',
-                                        displayField:   'name',
-                                        valueField:     'value',
-                                        width:          70,
-
-                                        store : [
-                                        <?
-                                        echo "['','...']";
-                                        $i=0;
-                                        foreach( $monedas as $moneda ){
-
-                                           echo ",";
-
-                                            echo "['".$moneda->getCaIdmoneda()."','".$moneda->getCaIdmoneda()."']";
-                                        }
-                                        ?>
-                                        ],
-                                        typeAhead: true,
-                                        forceSelection: true,
-                                        triggerAction: 'all',
-                                        selectOnFocus:true,
-                                        lazyRender:true
-                                    }
+                                    },
+                                    new WidgetMoneda({
+                                                    id: 'ca_idmoneda_pol',
+                                                    width:          90
+                                                    })
                                     ]
                                 },
                                 {
@@ -164,77 +121,22 @@
                                         id: "ca_minimaventa",
                                         width: 120
                                     },
-                                    {
-                                        xtype: "combo",                                        
-                                        name: "ca_idmoneda_vta",
-                                        id: "ca_idmoneda_vta",
-                                        mode:           'local',
-                                        displayField:   'name',
-                                        valueField:     'value',
-                                        width:          70,
-
-                                        store : [
-                                        <?
-                                        echo "['','...']";
-                                        $i=0;
-                                        foreach( $monedas as $moneda ){
-
-                                           echo ",";
-
-                                            echo "['".$moneda->getCaIdmoneda()."','".$moneda->getCaIdmoneda()."']";
-                                        }
-                                        ?>
-                                        ],
-                                        typeAhead: true,
-                                        forceSelection: true,
-                                        triggerAction: 'all',
-                                        selectOnFocus:true,
-                                        lazyRender:true
-                                    }]
+                                    new WidgetMoneda({
+                                                    id: 'ca_idmoneda_vta',                                                    
+                                                    width:          90
+                                                    })
+                                    ]
                                 }
                                 ]
                             }
                         ]
                     }]
-
-
                 }
             ]
         });
-
-
     };
 
     Ext.extend(FormSegurosPanel, Ext.Panel, {
-        onSelectContactoCliente: function( combo, record, index){ // override default onSelect to do redirect
-
-            /*if(this.fireEvent('beforeselect', this, record, index) !== false){
-                this.setValue(record.data[this.valueField || this.displayField]);
-                this.collapse();
-                this.fireEvent('select', this, record, index);
-            }*/
-
-//            Ext.getCmp("idconcliente").setValue(record.get("idcontacto"));
-//            Ext.getCmp("contacto").setValue(record.get("nombre")+' '+record.get("papellido")+' '+record.get("sapellido") );
-
-            /*Ext.getCmp("usuario").setValue(record.get("vendedor"));
-            Ext.getCmp("vendedor_id").setValue(record.get("nombre_ven"));*/
-            <?
-            /*if( $user->getIddepartamento()!=5 ){
-            ?>
-                //Ext.getCmp("vendedor_id").setRawValue(record.get("nombre_ven"));
-                //Ext.getCmp("vendedor_id").hiddenField.value = record.get("vendedor");
-            <?
-            }*/
-            ?>
-
-            //Ext.getCmp("listaclinton").setValue(record.get("listaclinton"));
-            //Ext.getCmp("status").setValue(record.get("status"));
-
-//            combo.alertaCliente(record);
-
-        }
-
     });
 
 

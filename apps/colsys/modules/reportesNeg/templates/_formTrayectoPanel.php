@@ -53,7 +53,7 @@ if($permiso>=2)
                                                     linkImpoexpo: "impoexpo"
                                                     });
         <?
-		if($impoexpo== Constantes::EXPO)
+		if($impoexpo== Constantes::EXPO || ($impoexpo== Constantes::IMPO && $modo== Constantes::AEREO))
 		{
 		?>
 		this.wgModalidad.addListener("select", this.onSelectModalidad, this );
@@ -324,27 +324,49 @@ if($permiso>=2)
 
         }
         <?
-		if($impoexpo== Constantes::EXPO)
+		if($impoexpo== Constantes::EXPO || ($impoexpo== Constantes::IMPO && $modo== Constantes::AEREO))
 		{
 		?>
 		,
         onSelectModalidad: function( combo, record, index)
         {
-			if(record.data.modalidad=="CONSOLIDADO")
-			{
-				alert(record.data.modalidad);
-			}
-			else if(record.data.modalidad=="DIRECTO")
-			{
-				alert(record.data.modalidad);
-			}
+            if(record)
+            {
 
+                if(record.data.modalidad=="CONSOLIDADO")
+                {
+                    if(Ext.getCmp("PCorteMaster"))
+                        Ext.getCmp("PCorteMaster").hide();
+                    if(Ext.getCmp("PCorteHija"))
+                        Ext.getCmp("PCorteHija").show();
+                    Ext.getCmp("linea").allowBlank=true;
+                }
+                else if(record.data.modalidad=="DIRECTO")
+                {
+                    if(Ext.getCmp("PCorteHija"))
+                        Ext.getCmp("PCorteHija").hide();
+                    if(Ext.getCmp("PCorteMaster"))
+                        Ext.getCmp("PCorteMaster").show();
+                    Ext.getCmp("linea").allowBlank=true;
+                }
+                else if(record.data.modalidad=="BACK TO BACK")
+                {
+                    Ext.getCmp("linea").allowBlank=false;
 
+                }
+
+            }
+            else
+            {
+                if(Ext.getCmp("PCorteHija"))
+                    Ext.getCmp("PCorteHija").show();
+                if(Ext.getCmp("PCorteMaster"))
+                    Ext.getCmp("PCorteMaster").show();
+                Ext.getCmp("linea").allowBlank=true;
+            }
         }
 		<?
 		}
 		?>
-        
-
     });
 </script>
