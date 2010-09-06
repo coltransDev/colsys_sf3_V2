@@ -565,7 +565,7 @@ class widgetsComponents extends sfComponents
 						 ->addOrderBy("b.ca_tipo ASC")
 						 ->addOrderBy("b.ca_nombre ASC")
 						 ->distinct()
-                        ->where("b.ca_transporte like ? and b_ca_nombre<>'-'","%".$this->modo."%")
+                        ->where("b.ca_transporte like ? and b.ca_nombre<>'-'","%".$this->modo."%")
 						 ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
 						 ->execute();
 
