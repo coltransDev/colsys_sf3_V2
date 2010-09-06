@@ -67,11 +67,12 @@ Ext.extend(WidgetBodega, Ext.form.ComboBox, {
               //  var tipo = Ext.getCmp(this.linkTipo).getValue();
                 
                 for( k in this.data ){
-                    var rec = this.data[k];
+                        var rec = this.data[k];
 
-//                    if( transporte && rec.b_ca_transporte==transporte && rec.b_ca_tipo==tipo ){
+                    if( transporte && rec.b_ca_transporte==transporte /* && rec.b_ca_tipo==tipo*/ ){
                         list.push( rec );
-//                    }
+                    }
+
                 }
 
                 var data = new Object();

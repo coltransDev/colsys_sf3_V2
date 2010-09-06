@@ -67,14 +67,11 @@ class widgetsComponents extends sfComponents
     }
 
     public function executeTransportes(){
-
         $this->transportes = ParametroTable::retrieveByCaso( "CU063" );
-
         if(!isset( $this->allowBlank )){
 			$this->allowBlank="true";
 		}
     }
-
 
     /*
 	* Muestra un campo que permite autocompletar el numero de reporte.
@@ -93,11 +90,9 @@ class widgetsComponents extends sfComponents
         }
 	}
 
-
     /*
      * Sin probar con doctrine 
      */
-
 
 
 	/**
@@ -143,10 +138,8 @@ class widgetsComponents extends sfComponents
 		if(!isset( $this->allowBlank )){
 			$this->allowBlank="true";
 		}
-
-                
 	}
-	
+
 	/**
 	* Muestra un select con todas las ciudades y las encadena con los paises
 	*/
@@ -162,14 +155,13 @@ class widgetsComponents extends sfComponents
 			$this->allowBlank="true";
 		}
 	}
-	
+
 	/**
 	* Muestra un select con las empresas Coltrans, Colmas  
 	*/
 	public function executeEmpresa(){
-		
+
 	}
-	
 	
 	/**
 	* Muestra un select vacio cuyos datos son alimentados manualmente
@@ -356,7 +348,6 @@ class widgetsComponents extends sfComponents
                    ->createQuery("m")
                    ->orderBy("m.ca_idmoneda")
                    ->execute();
-
         
 //        echo count($monedas);
 		foreach( $monedas as $moneda ){
@@ -576,9 +567,22 @@ class widgetsComponents extends sfComponents
 						 ->execute();
 
         foreach( $this->data as $key=>$val ){
-            $this->data[$key]["b_ca_tipo"] = utf8_encode($this->data[$key]["b_ca_tipo"]);
-            $this->data[$key]["b_ca_nombre"] = utf8_encode($this->data[$key]["b_ca_nombre"]);
-            $this->data[$key]["b_ca_transporte"] = utf8_encode($this->data[$key]["b_ca_transporte"]);
+            $arrTransporte=explode("|",$this->data[$key]["b_ca_transporte"]);
+            if(count($arrTransporte)<2)
+            {
+                $this->data[$key]["b_ca_tipo"] = utf8_encode($this->data[$key]["b_ca_tipo"]);
+                $this->data[$key]["b_ca_nombre"] = utf8_encode($this->data[$key]["b_ca_nombre"]);
+                $this->data[$key]["b_ca_transporte"] = utf8_encode($this->data[$key]["b_ca_transporte"]);
+            }
+            else
+            {
+                foreach($arrTransporte as $t)
+                {
+                    $this->data[$key]["b_ca_tipo"] = utf8_encode($this->data[$key]["b_ca_tipo"]);
+                    $this->data[$key]["b_ca_nombre"] = utf8_encode($this->data[$key]["b_ca_nombre"]);
+                    $this->data[$key]["b_ca_transporte"] = utf8_encode($t);
+                }
+            }
         }
 
 	}
