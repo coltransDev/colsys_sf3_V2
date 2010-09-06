@@ -253,21 +253,14 @@ if($permiso>=2)
          * Completa los datos del reporte con la cotización seleccionada.
          **/
         onSelectCotizacion: function( combo, record, index){
-            
-//            Ext.getCmp("cotizacion").setValue(record.data.consecutivo);
-//            $("#idcotizacion").val(record.data.consecutivo);
-/*            alert(record.data.toSource())
-            alert(record.data.consecutivo)
-            $("#idcotizacion").val(record.data.consecutivo);
-*/
+
             Ext.getCmp("impoexpo").setValue(record.data.impoexpo);
             Ext.getCmp("transporte").setValue(record.data.transporte);
             Ext.getCmp("modalidad").setValue(record.data.modalidad);
 
             Ext.getCmp("linea").setValue(record.data.idlinea);
             $("#linea").val(record.data.linea);
-            //Ext.getCmp('linea').setText(A)
-            //$("#linea").val(record.data.linea);
+
             Ext.getCmp("tra_origen_id").setValue(record.data.tra_origen);
             Ext.getCmp("origen").setValue(record.data.idorigen);
             $("#origen").val(record.data.origen);
@@ -314,10 +307,10 @@ if($permiso>=2)
 //            dias_credito
             //alert(record.data.diascredito);
             diascredito=0;
-            if(record.data.diascredito)
+            if(record.data.diascredito && record.data.diascredito!="null")
                 diascredito=(record.get("diascredito")!="")?record.get("diascredito")+" dias":"0";
 
-            Ext.getCmp("ca_tiempocredito").setValue(diascredito);
+            Ext.getCmp("ca_tiempocredito").setValue(diascredito);            
             cupo=(record.get("cupo")!="")?"Sí":"No";
             //alert(cupo);
             Ext.getCmp("ca_liberacion").setValue(cupo);

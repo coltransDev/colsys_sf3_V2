@@ -153,8 +153,13 @@ include_component("widgets", "widgetContactoCliente");
 					Ext.getCmp("chkcontacto_"+i).setValue( false );
 				}
 			}
-			
-            diascredito=(record.get("diascredito")!="")?record.get("diascredito")+" dias":"0";
+
+/*            diascredito=0;
+            if(record.data.diascredito && record.data.diascredito!="null")
+                diascredito=(record.get("diascredito")!="")?record.get("diascredito")+" dias":"0";
+            Ext.getCmp("ca_tiempocredito").setValue(diascredito);
+  */
+            diascredito=(record.get("diascredito"))?record.get("diascredito")+" dias":"0";
             Ext.getCmp("ca_tiempocredito").setValue(diascredito);
             cupo=(record.get("cupo")!="")?"Sí":"No";
             //alert(cupo);

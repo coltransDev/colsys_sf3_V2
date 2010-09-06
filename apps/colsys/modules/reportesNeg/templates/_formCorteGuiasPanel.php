@@ -6,7 +6,7 @@
 */
 include_component("widgets", "widgetConsignar");
 //include_component("widgets", "widgetTipoBodega");
-include_component("widgets", "widgetBodega");
+include_component("widgets", "widgetBodega",array("modo"=>$modo,"impoexpo"=>$impoexpo,"permiso"=>$permiso));
 //echo $impoexpo.".".$modo;
 
 ?>
@@ -19,7 +19,7 @@ include_component("widgets", "widgetBodega");
                                             hiddenName: "consig",
                                             id:"idconsignatario"                                            
                                            });
-        this.wgBodega=new WidgetBodega({fieldLabel:"",
+        this.wgBodega=new WidgetBodega({fieldLabel:"Trasladar a",
                                             id: "bodega_consignar",
                                             hiddenName: "idbodega_hd",
                                             width: 600,

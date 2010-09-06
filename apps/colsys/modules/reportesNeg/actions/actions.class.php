@@ -558,7 +558,7 @@ class reportesNegActions extends sfActions
                 $reporte->setCaOrdenClie($request->getParameter("orden_clie"));
             }
             $ca_confirmar_clie="";
-            for($i=0;$i<15;$i++)
+            for($i=0;$i<20;$i++)
             {
                 if($request->getParameter("contacto_".$i))
                 {

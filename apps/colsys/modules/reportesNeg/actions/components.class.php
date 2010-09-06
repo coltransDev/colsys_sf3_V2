@@ -278,11 +278,11 @@ class reportesNegComponents extends sfComponents
     public function executeFormSegurosPanel()
     {
 
-        $this->monedas = Doctrine::getTable("Moneda")
+/*        $this->monedas = Doctrine::getTable("Moneda")
                    ->createQuery("m")
                    ->orderBy("m.ca_idmoneda")
                    ->execute();
-        
+  */
         $usuarios = Doctrine::getTable("Usuario")
                ->createQuery("u")
                ->select("u.ca_login")
