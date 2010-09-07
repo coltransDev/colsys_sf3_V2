@@ -487,7 +487,6 @@ class cotseguimientosActions extends sfActions
 
 	public function executeAuditoria($request)
 	{
-
 		$this->fechaInicial = Utils::parseDate($request->getParameter("fechaInicial"));
 		$this->fechaFinal = Utils::parseDate($request->getParameter("fechaFinal"));
 		$checkboxVendedor = $request->getParameter( "checkboxVendedor" );
@@ -496,15 +495,14 @@ class cotseguimientosActions extends sfActions
 		$this->usuario = Doctrine::getTable("Usuario")->find( $this->login );
 
  
-	//recuperamos el singleton de la conexión
 		$con = Doctrine_Manager::getInstance()->connection();
-		//ejecutamos la consulta
 		$sql="select c.ca_usuario,c.ca_consecutivo,u.ca_idsucursal,to_char(c.ca_fchcreado,'yyyy-mm-dd') as ca_fchcreado from tb_cotizaciones c
 			INNER JOIN control.tb_usuarios u ON c.ca_usuario = u.ca_login
 			WHERE
 			( c.ca_idcotizacion IN ( SELECT p.ca_idcotizacion FROM tb_cotProductos p left join tb_cotseguimientos s on p.ca_idproducto=s.ca_idproducto where p.ca_etapa='SEG' and s.ca_idproducto is null  )
 
 			and  c.ca_idcotizacion  NOT IN ( SELECT ca_idcotizacion FROM tb_cotProductos  WHERE ca_etapa='NAP' or ca_etapa='APR' )
+            and c.ca_idcotizacion NOT IN ( SELECT distinct(p.ca_idcotizacion) FROM  tb_cotProductos p inner join tb_cotseguimientos s on p.ca_idproducto=s.ca_idproducto )
 			or  c.ca_idcotizacion  NOT IN ( SELECT ca_idcotizacion FROM tb_cotProductos  )  )
 			and 
 			( ca_usuanulado is  null or ca_usuanulado='' ) and c.ca_fchcreado between '".$this->fechaInicial."' and '".$this->fechaFinal."'
@@ -526,8 +524,7 @@ class cotseguimientosActions extends sfActions
 		$st = $con->execute($sql);
 	//recuperamos las tuplas de resultados
 		$this->seguimientos = $st->fetchAll();
-		$this->numcotizaciones=count($this->seguimientos);
-//	print_r($rs);
+		$this->numcotizaciones=count($this->seguimientos);	
 //exit;
 /*				->where(" ( c.ca_idcotizacion IN ( SELECT p.ca_idcotizacion FROM CotProducto p WHERE p.ca_etapa='SEG' ) )
 					and ( c.ca_idcotizacion  NOT IN ( SELECT p1.ca_idcotizacion FROM CotProducto p1 WHERE p1.ca_etapa<>'SEG' ) )
