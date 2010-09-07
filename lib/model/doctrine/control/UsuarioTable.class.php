@@ -7,7 +7,9 @@ class UsuarioTable extends Doctrine_Table
 
         return Doctrine::getTable("Usuario")
                              ->createQuery("u")
-                             ->where("(u.ca_cargo='Gerente Sucursal' OR u.ca_cargo like '%Ventas%' OR u.ca_departamento='Comercial')")
+                             ->select("u.*")
+                             ->innerJoin("u.UsuarioPerfil up")
+                             ->where("up.ca_perfil = ?", 'comercial')
                              ->addWhere("u.ca_activo = true")
                              ->addOrderBy("u.ca_nombre")
                              ->execute();
@@ -17,7 +19,9 @@ class UsuarioTable extends Doctrine_Table
 
         return Doctrine::getTable("Usuario")
                              ->createQuery("u")
-                             ->where("( u.ca_cargo like '%Pólizas%')")
+                             ->select("u.*")
+                             ->innerJoin("u.UsuarioPerfil up")
+                             ->where("up.ca_perfil = ?", 'tramitador-de-polizas')
                              ->addWhere("u.ca_activo = true")
                              ->addOrderBy("u.ca_nombre")
                              ->execute();
@@ -27,9 +31,12 @@ class UsuarioTable extends Doctrine_Table
 
         return Doctrine::getTable("Usuario")
                              ->createQuery("u")
-                             ->where("( u.ca_cargo like '%Coordinador%Aduana%')")
+                             ->select("u.*")
+                             ->innerJoin("u.UsuarioPerfil up")
+                             ->where("up.ca_perfil = ?", 'coordinador-de-servicio-al-cliente-aduana')
                              ->addWhere("u.ca_activo = true")
                              ->addOrderBy("u.ca_nombre")
                              ->execute();
+        
     }
 }
