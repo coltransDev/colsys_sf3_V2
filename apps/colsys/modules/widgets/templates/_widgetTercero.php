@@ -52,7 +52,9 @@ WidgetTercero = function( config ){
         selectOnFocus: true,        
         lazyRender:true,
         tpl: this.resultTpl,
-        itemSelector: 'div.search-item'
+        itemSelector: 'div.search-item',
+        listeners: {
+        }
     });
 }
 
@@ -115,14 +117,13 @@ Ext.extend(WidgetTercero, Ext.form.ComboBox, {
     titulo+=this.tipo;
 
     idtercero = this.hiddenField?this.hiddenField.value:this.getValue();
-
-    this.win = new WidgetTerceroWindow({idcomponent: this.id,
+    win = new WidgetTerceroWindow({idcomponent: this.id,
                                         title: titulo,
-                                        idtercero: idtercero,
+                                        idtercero: (idtercero)?idtercero:"",
                                         tipo: this.tipo
                                        });
     
-    this.win.show();
+    win.show();
   },
   onTrigger3Click : function() {
     this.onTriggerClick();

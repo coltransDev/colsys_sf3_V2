@@ -91,10 +91,7 @@ WidgetTerceroWindow = function( config ){
                                           hiddenName: 'idciudad',
                                           id: 'ciudad',
                                           allowBlank:false
-                                        }),
-
-                        
-
+                                        })
                 ]
             }),
         
@@ -129,7 +126,7 @@ Ext.extend(WidgetTerceroWindow, Ext.Window, {
             var contacto = fp.getForm().findField("contacto").getValue();
             var fldCiudad = fp.getForm().findField("ciudad");
             var idciudad = fldCiudad.hiddenField?fldCiudad.hiddenField.value:fldCiudad.getValue();
-            win = this;
+            WidgetTerceroWindow = this;
             Ext.Ajax.request(
             {
                 waitMsg: 'Guardando cambios...',
@@ -160,7 +157,7 @@ Ext.extend(WidgetTerceroWindow, Ext.Window, {
                                 Ext.getCmp(res.idcomponent).hiddenField.value = res.idtercero;
                             }
                         }
-                        win.close();
+                        WidgetTerceroWindow.close();
                         
                     }else{
                         alert("Ha ocurrido un error al guardar el registro");
@@ -173,7 +170,7 @@ Ext.extend(WidgetTerceroWindow, Ext.Window, {
     },
 
     show : function(){
-                
+//        alert("173");
         if( this.idtercero ){
             
 			Ext.Ajax.request(
@@ -209,8 +206,9 @@ Ext.extend(WidgetTerceroWindow, Ext.Window, {
 			});
 
 		}
-        
+//        alert("209");
         WidgetTerceroWindow.superclass.show.apply(this, arguments);
+//        alert("211");
     }
 });
 	
