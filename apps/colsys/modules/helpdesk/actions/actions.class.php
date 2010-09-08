@@ -353,7 +353,7 @@ class helpdeskActions extends sfActions
 		$texto = "Se ha creado una respuesta \n\n<br /><br />" ;					
 		$request->setParameter("id", $ticket->getCaIdticket() );
 		$request->setParameter("format", "email" );			
-		$texto.= sfContext::getInstance()->getController()->getPresentationFor( 'helpdesk', 'verTicket');
+		$texto.= sfContext::getInstance()->getController()->getPresentationFor( 'pm', 'verTicket');
 		
 		$email->setCaBodyhtml( $texto );
 			
@@ -445,7 +445,7 @@ class helpdeskActions extends sfActions
 			$titulo = "Nuevo Ticket #".$ticket->getCaIdticket()." [".$ticket->getCaTitle()."]";		
 				
 			$texto = "Se ha creado un nuevo ticket \n\n<br /><br />" ;			
-			$texto.= sfContext::getInstance()->getController()->getPresentationFor( 'helpdesk', 'verTicket');	
+			$texto.= sfContext::getInstance()->getController()->getPresentationFor( 'pm', 'verTicket');
 			
 			$grupo = $ticket->getHdeskGroup();
 			/*
@@ -930,7 +930,7 @@ class helpdeskActions extends sfActions
                     $texto = "Ha sido involucrado en el Ticket \n\n<br /><br />" ;
                     $request->setParameter("id", $this->ticket->getCaIdticket() );
                     $request->setParameter("format", "email" );
-                    $texto.= sfContext::getInstance()->getController()->getPresentationFor( 'helpdesk', 'verTicket');
+                    $texto.= sfContext::getInstance()->getController()->getPresentationFor( 'pm', 'verTicket');
 
                     $email->setCaBodyhtml( $texto );
                     $usuario = Doctrine::getTable("Usuario")->find($bindValues["ca_login"]);
