@@ -90,7 +90,8 @@ NuevaRespuestaWindow = function( config ) {
                                 enableSourceEdit : false,
                                 enableColors : false,
                                 enableLists: false,
-                                allowBlank: true
+                                allowBlank: true,
+                                disabled: this.idresponse?true:false
                             }
                         ]
                     })
