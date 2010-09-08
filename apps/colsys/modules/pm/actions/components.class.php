@@ -254,6 +254,15 @@ class pmComponents extends sfComponents
     public function executeWidgetBusquedaTicket( ){
 
     }
+
+
+    /*
+	* Actualiza el porcentaje a un ticket
+	* @author: Andres Botero
+	*/
+    public function executePorcentajeTicketWindow( ){
+
+    }
 	
 	
 }

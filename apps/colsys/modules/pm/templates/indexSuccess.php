@@ -21,7 +21,7 @@ include_component("pm","panelConsulta");
 include_component("pm","panelReading");
 
 include_component("pm","nuevaRespuestaWindow");
-
+include_component("pm","porcentajeTicketWindow");
 
 include_component("users","panelUsers");
 
@@ -231,9 +231,46 @@ Ext.onReady(function(){
 
         <span class="post-date">{opened:date("M j, Y, g:i a")}</span>
         <h3 class="post-title">Ticket # {idticket} {title}</h3>
-        <h4 class="post-author">by {login:defaultValue("Unknown")}</h4>
+        <h4 class="post-author">by {loginName:defaultValue("Unknown")}</h4>
     </div>
-    <div class="post-body">{text:this.getBody}</div>
+    <div class="post-body">
+        <table width="100%"  border="0" class="tableList">
+            <tr>
+            <td width="50%" ><b>Contacto:</b> {contact}</td>
+            <td width="50%" >&nbsp; </td>
+          </tr>
+
+           <tr>
+            <td ><b>Asignado a:</b>
+                {assignedto}
+            </td>
+            <td ><b>Area: </b>
+               {group}
+            </td>
+          </tr>
+
+          <tr>
+            <td >
+                <b>Proyecto:</b>
+                {project}
+            </td>
+            <td >
+                <b>Prioridad:</b>
+                {priority}
+            </td>
+          </tr>
+          <tr>
+            <td >
+                <b>Tipo:</b> {tipo} {type}
+            </td>
+            <td >
+                <b>Estado:</b> {action}
+            </td>
+          </tr>                   
+        </table>        
+        <br />
+        {text:this.getBody}
+    </div>
 </div>
 
 
@@ -253,13 +290,13 @@ Ext.onReady(function(){
 <div style="height:100%"></div>
 <script type="text/javascript">
     Ext.onReady(function(){
-        /*var newComponent = new PanelReading({           id: 'adad',
+        var newComponent = new PanelReading({           id: 'adad',
                                                              closable: true,
                                                              idproject: 3,
                                                              title: 'Panel prueba'
                                                             });
                     Ext.getCmp('tab-panel').add(newComponent);
-                    Ext.getCmp('tab-panel').setActiveTab(newComponent);*/
+                    Ext.getCmp('tab-panel').setActiveTab(newComponent);
         
 
         /*var newComponent = new PanelCronogramaUsuario({    id: 'adad',

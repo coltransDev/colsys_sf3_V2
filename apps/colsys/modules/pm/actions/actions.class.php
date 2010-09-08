@@ -62,13 +62,15 @@ class pmActions extends sfActions
         $this->forward404Unless( $request->getParameter("idgroup") || $request->getParameter("idproject") );
 
 		$q = Doctrine_Query::create()
-                    ->select("h.*, m.ca_due, m.ca_title, p.ca_name, tar.ca_fchterminada, (SELECT MAX(rr.ca_createdat) FROM HdeskResponse rr WHERE rr.ca_idticket = h.ca_idticket ) as ultseg")
+                    ->select("h.*, g.ca_name, u.ca_nombre, u.ca_extension, s.ca_nombre, m.ca_due, m.ca_title, p.ca_name, tar.ca_fchterminada, (SELECT MAX(rr.ca_createdat) FROM HdeskResponse rr WHERE rr.ca_idticket = h.ca_idticket ) as ultseg")
                     ->from('HdeskTicket h');
 		$q->innerJoin("h.HdeskGroup g");
         $q->leftJoin("h.HdeskTicketUser hu  ");
         $q->leftJoin("h.HdeskProject p");
         $q->leftJoin("h.HdeskMilestone m");
-        $q->leftJoin("h.NotTarea tar");		
+        $q->leftJoin("h.NotTarea tar");
+        $q->leftJoin("h.Usuario u");
+        $q->leftJoin("u.Sucursal s");
 
         if( $request->getParameter("iddepartament") ){
 
@@ -143,11 +145,14 @@ class pmActions extends sfActions
 		$tickets = $q->execute();
         
         foreach( $tickets as $key=>$val){
+            $tickets[$key]["g_ca_name"]=utf8_encode($tickets[$key]["g_ca_name"]);
             $tickets[$key]["milestone"]=utf8_encode($tickets[$key]["m_ca_title"]." ".Utils::fechaMes($tickets[$key]["m_ca_due"]));
             $tickets[$key]["h_ca_title"]=utf8_encode(str_replace('"', "'",$tickets[$key]["h_ca_title"]));
             $tickets[$key]["h_ca_text"]=utf8_encode(str_replace("</style", "</style2",str_replace("<style", "<style2",str_replace('"', "'", $tickets[$key]["h_ca_text"]))));
             $tickets[$key]["p_ca_name"]=$tickets[$key]["p_ca_name"]?utf8_encode(str_replace('"', "'",$tickets[$key]["p_ca_name"])):"Sin proyecto";
             $tickets[$key]["folder"]=base64_encode( HdeskProject::FOLDER.DIRECTORY_SEPARATOR.$tickets[$key]["h_ca_idticket"]);
+            $tickets[$key]["contact"]=utf8_encode($tickets[$key]["s_ca_nombre"]." ".$tickets[$key]["u_ca_extension"]);
+            $tickets[$key]["u_ca_nombre"]=utf8_encode($tickets[$key]["u_ca_nombre"]);
         }
 
         $this->responseArray = array("success"=>true, "root"=>$tickets);
@@ -1346,6 +1351,7 @@ class pmActions extends sfActions
         $data["idmilestone"] = $ticket->getCaIdmilestone();
         $data["percentage"] = $ticket->getCaPercentage();
         $data["folder"] = base64_encode($ticket->getDirectorioBase());
+        $data["contact"] = utf8_encode($ticket->getUsuario()?$ticket->getUsuario()->getSucursal()->getCaNombre()." ".$ticket->getUsuario()->getCaExtension():"");
 
 
         $this->responseArray = array("success"=>true, "data"=>$data);

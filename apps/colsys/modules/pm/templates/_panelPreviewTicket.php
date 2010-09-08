@@ -62,6 +62,14 @@ PanelPreviewTicket = function( config ){
             disabled:true,
             handler : this.viewPrinter,
             scope: this
+        },
+        {
+            id:'percent-'+idcomponent,
+            text: 'Porcentaje',
+            iconCls: 'shape_align_left',
+            disabled:true,
+            handler : this.actualizarPorcentaje,
+            scope: this
         }
         ],
 
@@ -71,6 +79,7 @@ PanelPreviewTicket = function( config ){
             tems.get('edit-'+idcomponent).disable();
             items.get('tab-'+idcomponent).disable();
             items.get('print-'+idcomponent).disable();
+            items.get('percent-'+idcomponent).disable();
             //items.get('win').disable();
         }
     });
@@ -232,7 +241,7 @@ Ext.extend(PanelPreviewTicket, Ext.TabPanel, {
 
         var idcomponent = this.idcomponent;
 
-
+        this.record = record;
         this.idticket = record.data.idticket;
 
         this.tpl.overwrite(this.preview.body, record.data);
@@ -267,6 +276,7 @@ Ext.extend(PanelPreviewTicket, Ext.TabPanel, {
         items.get('edit-'+idcomponent).enable();
         items.get('tab-'+idcomponent).enable();
         items.get('print-'+idcomponent).enable();
+        items.get('percent-'+idcomponent).enable();
 
         var items = this.responses.topToolbar.items;
         items.get('response-'+idcomponent).enable();
@@ -313,6 +323,21 @@ Ext.extend(PanelPreviewTicket, Ext.TabPanel, {
             var win = new EditarTicketWindow({idticket: idticket
                                         });
             win.show();
+        }
+    },
+
+    actualizarPorcentaje: function(){
+        var idticket = this.idticket;
+        if( idticket  ){
+            win = new PorcentajeTicketWindow({
+                modal: true,
+                title: "Actualizar Porcentaje Ticket #"+idticket,            
+                idticket: idticket,
+                percentage: this.record.data.percentage
+            });
+            win.show();
+
+
         }
     }
 

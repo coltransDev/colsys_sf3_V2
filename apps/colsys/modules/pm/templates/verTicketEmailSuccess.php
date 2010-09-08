@@ -48,25 +48,30 @@ $ticket = $sf_data->getRaw("ticket");
             font-family: arial, helvetica, sans-serif;
 
         }
-        
+
         .entry-odd {
             background-color:#FFFFFF;
             border-color:#CCCCCC;
             border-style:dotted;
-            border-width:1px;
+            border-width:1px ;
             margin:12px 0 0;
             padding:12px 12px 24px;
+            font-size: 12px;
+            font-family: arial, helvetica, sans-serif;
+
         }
 
         .entry-yellow {
             background-color:#FFFFCC;
             border-color:#CCCCCC;
             border-style:dotted;
-            border-width:1px;
+            border-width:1px ;
             margin:12px 0 0;
             padding:12px 12px 24px;
-        }
+            font-size: 12px;
+            font-family: arial, helvetica, sans-serif;
 
+        }
         .entry-date{
             float: right;
             color: #0464BB;
@@ -85,9 +90,13 @@ $ticket = $sf_data->getRaw("ticket");
                                     <!-- INTRO -->
                                     <tr>
                                         <td>&nbsp;</td><td>
-                                            <img src="https://www.coltrans.com.co/images/spacer.gif" width="1" height="1" alt="">
-                                            <p><font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Ticket # <?=$ticket->getCaIdticket().": ".$ticket->getCaTitle() ?></b></font><br>
-                                            <p><font size="2" face="arial, helvetica, sans-serif" color="#000000"> <b>Reportado por:</b> <?=$ticket->getUsuario()?$ticket->getUsuario()->getCaNombre():$ticket->getCaLogin()?></font><br>
+                                            
+                                            <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Ticket # <?=$ticket->getCaIdticket().": ".$ticket->getCaTitle() ?></b></font><br />
+                                            <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Reportado por:</b> <?=$ticket->getUsuario()?$ticket->getUsuario()->getCaNombre():$ticket->getCaLogin()?></font><br />
+                                            <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Asignado a:</b> <?=$ticket->getAssignedTo()?></font><br />
+                                            <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Tipo:</b> <?=$ticket->getCaType()?></font><br />
+                                            <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Prioridad:</b> <?=$ticket->getCaPriority()?></font><br />
+                                            <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Porcentaje:</b> <?=$ticket->getCaPercentage()?>%</font><br />
                                             
                                             <div class="entry-even">
                                             <?=$ticket->getCaText()?>

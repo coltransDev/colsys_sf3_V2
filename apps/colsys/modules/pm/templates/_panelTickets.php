@@ -226,6 +226,7 @@ PanelTickets = function( config ){
             {name: 'idproject', type: 'integer', mapping: 'h_ca_idproject'},
             {name: 'project', type: 'string', mapping: 'p_ca_name'},
             {name: 'idgroup', type: 'integer', mapping: 'h_ca_idgroup'},
+            {name: 'group', type: 'string', mapping: 'g_ca_name'},
             {name: 'milestone', type: 'string'},
             {name: 'estimated', type: 'date', dateFormat:'Y-m-d', mapping: 'm_ca_due'},
             {name: 'login', type: 'string', mapping: 'h_ca_login'},
@@ -239,7 +240,9 @@ PanelTickets = function( config ){
             {name: 'ultseg', type: 'date', mapping: 'h_ultseg', dateFormat:'Y-m-d H:i:s'},
             {name: 'respuesta', type: 'date', mapping: 'tar_ca_fchterminada', dateFormat:'Y-m-d H:i:s'},
             {name: 'percentage', type: 'integer', mapping: 'h_ca_percentage'},
-            {name: 'folder', type: 'string'}
+            {name: 'folder', type: 'string'},
+            {name: 'contact', type: 'string'},
+            {name: 'loginName', type: 'string', mapping: 'u_ca_nombre'}
             
     ]);
 
@@ -569,62 +572,20 @@ Ext.extend(PanelTickets, Ext.grid.GridPanel, {
     },
     actualizarPorcentaje: function(){
         if( this.ctxRecord.data.idticket  ){
-
             var idticket = this.ctxRecord.data.idticket;
-            var percentage = this.ctxRecord.data.percentage;
 
             var rec = this.store.getById( this.ctxRecord.id );
 
-           
-            var updatePercent = function(   slider,  newValue ){
-
-                Ext.Ajax.request({
-                    url: '<?=url_for("pm/actualizarPorcentajeTicket")?>',
-                    method: 'POST',
-                    //Solamente se envian los cambios
-                    params :	{
-                        idticket: idticket,
-                        percentage: newValue
-                    },
-
-                    failure :function(options, success, response){
-
-                        alert("Ha ocurrido un error");
-                    },
-                    
-                    success :function(options, success, response){
-                        rec.set("percentage", newValue);
-                    }
-
-
-                 }
-                );
-            }
-
-            var slider = new Ext.Slider({
-                width: 214,
-                increment: 1,
-                value: percentage,
-                minValue: 0,
-                maxValue: 100,
-                plugins: new Ext.slider.Tip(),
-                listeners: {
-                    changecomplete: updatePercent
-                }
-            });
-
-            win = new Ext.Window({
+            win = new PorcentajeTicketWindow({
                 modal: true,
                 title: "Actualizar Porcentaje Ticket #"+idticket,
-                items:[
-                    new Ext.FormPanel({
-                        items: [
-                            slider
-                        ]
-                    })
-                ]
+                rec: rec,
+                idticket: idticket,
+                percentage: this.ctxRecord.data.percentage
             });
             win.show();
+
+            
         }
     }
 
