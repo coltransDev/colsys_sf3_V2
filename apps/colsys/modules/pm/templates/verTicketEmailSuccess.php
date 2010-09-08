@@ -48,16 +48,25 @@ $ticket = $sf_data->getRaw("ticket");
             font-family: arial, helvetica, sans-serif;
 
         }
-
+        
         .entry-odd {
+            background-color:#FFFFFF;
             border-color:#CCCCCC;
             border-style:dotted;
             border-width:1px;
             margin:12px 0 0;
             padding:12px 12px 24px;
-            font-size: 12px;
-            font-family: arial, helvetica, sans-serif;
         }
+
+        .entry-yellow {
+            background-color:#FFFFCC;
+            border-color:#CCCCCC;
+            border-style:dotted;
+            border-width:1px;
+            margin:12px 0 0;
+            padding:12px 12px 24px;
+        }
+
         .entry-date{
             float: right;
             color: #0464BB;

@@ -4,8 +4,13 @@
 $responses = $sf_data->getRaw("responses");
 $i=0;
 foreach( $responses as $response ){
-    ?>
-        <div class="entry-<?=$i%2==0?"even":"odd"?>">
+    if( $idLastResponse==$response->getCaIdresponse() ){
+        $class = "yellow";
+    }else{
+        $class = $i%2==0?"even":"odd";
+    }
+    ?>     
+        <div class="entry-<?=$class?>">
         <div class="entry-date"><?=Utils::fechaMes($response->getCaCreatedat())?></div>
         <b><?=($response->getUsuario()?$response->getUsuario()->getCaNombre():$response->getCaLogin())?></b>
 
@@ -28,8 +33,14 @@ foreach( $responses as $response ){
 
         $subResponses = $response->getResponse();        
         foreach( $subResponses as $subResponse ){
+
+            if( $idLastResponse==$subResponse->getCaIdresponse() ){
+                $class = "yellow";
+            }else{
+                $class = $i%2!=0?"even":"odd";
+            }
         ?>
-            <div class="entry-<?=$i%2==0?"odd":"even"?>">
+            <div class="entry-<?=$class?>">               
                 <div class="entry-date"><?=Utils::fechaMes($subResponse->getCaCreatedat())?></div>
                 <b><?=($subResponse->getUsuario()?$subResponse->getUsuario()->getCaNombre():$subResponse->getCaLogin())?></b>
 

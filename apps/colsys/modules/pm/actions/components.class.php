@@ -23,6 +23,14 @@ class pmComponents extends sfComponents
                            ->addOrderBy("r.ca_createdat ASC")
                            ->addOrderBy("r.ca_idresponse ASC")
                            ->execute();
+
+        $this->idLastResponse = Doctrine::getTable("HdeskResponse")
+                           ->createQuery("r")
+                           ->select("r.ca_idresponse")
+                           ->where("r.ca_idticket = ? ", $this->idticket )
+                           ->addOrderBy("r.ca_createdat DESC")
+                           ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)
+                           ->execute();
 	}
 
     /*
