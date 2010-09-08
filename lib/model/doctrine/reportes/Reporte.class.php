@@ -16,6 +16,8 @@ class Reporte extends BaseReporte
 	private $inoClientesSea=null;
     private $proveedoresStr=null;
 
+    const IDLISTASEG = 3;
+    const IDLISTACONS = 6;
 
     /*
 	* Retorna el objeto Contacto asociado al reporte
@@ -895,6 +897,25 @@ class Reporte extends BaseReporte
         
 
         return $reporte;
+    }
+
+
+
+    public function getTareas( $idlista=null ){
+        $q = Doctrine::getTable("NotTarea")
+                 ->createQuery("t")
+                 ->innerJoin("t.RepAsignacion a")
+                 ->innerJoin("a.Reporte r")
+                 ->where("r.ca_consecutivo = ?", $this->getCaConsecutivo() )
+                 ->addOrderBy("t.ca_fchvencimiento ASC");
+
+        if( $idlista ){
+            $q->addWhere("t.ca_idlistatarea = ?", $idlista );
+        }
+
+        return $q->execute();
+
+
     }
 
 

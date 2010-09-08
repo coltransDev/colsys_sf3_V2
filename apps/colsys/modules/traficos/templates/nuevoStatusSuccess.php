@@ -757,7 +757,7 @@ if( !sfConfig::get("app_smtp_user") ){
 	$tarea = $reporte->getNotTarea();
 	?>
 	<tr>
-		<td colspan="2"><div align="left"><b>Programar seguimiento:</b>
+		<td colspan="2"><div align="left"><b>Programar recordatorio:</b>
 			<?
 			 echo $form['prog_seguimiento']->renderError(); 
 			 if( $tarea && $tarea->getCaIdtarea() && !$tarea->getCaFchterminada() ){
@@ -769,7 +769,7 @@ if( !sfConfig::get("app_smtp_user") ){
 			 </div></td>
 	</tr>
 	<tr>
-		<td colspan="2" id="row_seguimiento"><div align="left"><b>Fecha seguimiento:</b>
+		<td colspan="2" id="row_seguimiento"><div align="left"><b>Fecha:</b>
 				<?
 			 echo $form['fchseguimiento']->renderError();
 			 if( $tarea && $tarea->getCaIdtarea() && !$tarea->getCaFchterminada() ){

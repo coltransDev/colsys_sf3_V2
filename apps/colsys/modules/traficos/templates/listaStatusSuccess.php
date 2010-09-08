@@ -46,9 +46,10 @@ use_helper("MimeType");
 				histContent.innerHTML = xhr.responseText;
 				
 			},
-			failure: function() {
-				Ext.Msg.alert("Error", "Server communication failure");
-			}
+			failure:function(response,options){
+                var res = Ext.util.JSON.decode( response.responseText );
+                Ext.MessageBox.alert('Error Message', "Se ha presentado un error"+(res.errorInfo?": "+res.errorInfo:"")+" - "+(response.status?"\n Codigo HTTP "+response.status:""));
+            }
 		});	
 		
 	}
@@ -94,6 +95,38 @@ use_helper("MimeType");
 			});	
 		}
 	}
+
+
+    function terminarTarea( reporte, idtarea ){
+
+        if( confirm("Esta seguro que desea terminar esta tarea?") ){
+			Ext.Ajax.request({
+				url: '<?=url_for("traficos/terminarSeguimiento");?>',
+				params: {
+					reporte: reporte,
+					idtarea: idtarea,
+                    modo: "<?=$modo?>"
+				},
+				failure:function(response,options){
+                    var res = Ext.util.JSON.decode( response.responseText );
+                    Ext.MessageBox.alert('Error Message', "Se ha presentado un error"+(res.errorInfo?": "+res.errorInfo:"")+" - "+(response.status?"\n Codigo HTTP "+response.status:""));
+                },
+
+                //Ejecuta esta accion cuando el resultado es exitoso
+                success:function(response,options){
+                    var res = Ext.util.JSON.decode( response.responseText );
+                    if( res.success ){
+                        document.getElementById("res_"+idtarea).innerHTML = " <b>OK</b>";
+                    }else{
+                        Ext.MessageBox.alert('Error Message', "Se ha presentado un error"+(res.errorInfo?": "+res.errorInfo:"")+" - "+(response.status?"\n Codigo HTTP "+response.status:""));
+                    }
+                }
+			});
+		}
+
+    }
+	
+
 </script>
 
 
@@ -141,6 +174,7 @@ use_helper("MimeType");
 			<?=$reporte->getCaFchreporte()?>
 		</div></td>
 		<td><div align="left">
+            <a name="sec_<?=$reporte->getCaConsecutivo()?>">&nbsp;</a>
 			<?=$reporte->getCaConsecutivo()." V".$reporte->getCaVersion()?>
 		</div></td>
 		<td><div align="left">

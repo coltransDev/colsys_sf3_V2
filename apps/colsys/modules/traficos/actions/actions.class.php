@@ -645,14 +645,29 @@ class traficosActions extends sfActions
 			$loginsAsignaciones = array( $this->getUser()->getUserId() );
 			$tarea->setAsignaciones( $loginsAsignaciones );	
 			
-			$reporte->setCaIdseguimiento( $tarea->getCaIdtarea() );
+			/*$reporte->setCaIdseguimiento( $tarea->getCaIdtarea() );
             $reporte->stopBlaming();
-			$reporte->save();				
+			$reporte->save();		*/
+
+            $asignacion = Doctrine::getTable("RepAsignacion")->find(array($reporte->getCaIdreporte(), $tarea->getCaIdtarea()));
+            if( !$asignacion ){
+                $asignacion = new RepAsignacion();
+            }
+            $asignacion->setCaIdreporte( $reporte->getCaIdreporte() );
+            $asignacion->setCaIdtarea( $tarea->getCaIdtarea() );
+            $asignacion->save();
+
+
+            		
 		}else{
-			if( $tarea && $tarea->getCaIdtarea()){
-				$tarea->setCaFchterminada( date("Y-m-d H:i:s") );
-				$tarea->setCaUsuterminada( $this->getUser()->getUserId()  );									
-				$tarea->save();
+            //Se lee de la base de datos ya que la etapa es actualizada por los triggers
+            $reporte = Doctrine::getTable("Reporte")->find( $reporte->getCaIdreporte() );
+			if( $reporte->getCaIdetapa()=="IMETA" || $reporte->getCaIdetapa()=="99999" ){//Quita todas las tareas
+                $tareas = $reporte->getTareas( Reporte::IDLISTASEG );
+                foreach( $tareas as $tarea ){
+                    $tarea->setCaFchterminada( date("Y-m-d H:i:s") );
+                    $tarea->save();
+                }
 			}	
 		}				
 		$this->redirect("traficos/listaStatus?modo=".$this->modo."&reporte=".$reporte->getCaConsecutivo());
@@ -684,6 +699,12 @@ class traficosActions extends sfActions
 
         $reporte->setCaIdetapa("99999");
         $reporte->save();
+
+        $tareas = $reporte->getTareas( Reporte::IDLISTASEG );
+        foreach( $tareas as $tarea ){
+            $tarea->setCaFchterminada( date("Y-m-d H:i:s") );
+            $tarea->save();
+        }
 
         $this->redirect("traficos/listaStatus?modo=".$this->modo."&reporte=".$reporte->getCaConsecutivo());
 
@@ -1027,7 +1048,7 @@ class traficosActions extends sfActions
 	}
 	
 	/***********************************************************************************
-	* Formulariode seguimientos
+	* Formulario de seguimientos
 	************************************************************************************/
 	
 	/*
@@ -1039,22 +1060,21 @@ class traficosActions extends sfActions
 		$reporte = $this->getRequestParameter( "reporte" );
 		$this->forward404Unless( $reporte );
 		$reporte = ReporteTable::retrieveByConsecutivo( $reporte );
-		
+		$this->forward404Unless( $reporte );
+
 		$this->modo = $this->getRequestParameter("modo");		
 		if( !$this->modo ){
 			$this->forward( "traficos", "seleccionModo" );	
 		}
-		
-		$this->forward404Unless( $reporte );
 
-        $tarea = $reporte->getNotTarea();
-        if( !$tarea || ($tarea && $tarea->getCaFchterminada()) ){
+        if( $this->getRequestParameter( "idtarea" ) ){
+            $tarea = Doctrine::getTable("NotTarea")->find( $this->getRequestParameter( "idtarea" ) );
+            $this->forward404Unless( $tarea );
+        }else{
             $tarea = new NotTarea();
             $tarea->setCaFchcreado( date("Y-m-d H:i:s") );
             $tarea->setCaUsucreado( $this->getUser()->getUserId() );
         }
-
-        
 		
 		if ($request->isMethod('post')){           
 			$bindValues = array();			
@@ -1077,10 +1097,13 @@ class traficosActions extends sfActions
 				$loginsAsignaciones = array( $this->getUser()->getUserId() );
 				$tarea->setAsignaciones( $loginsAsignaciones );	
 				
-				$reporte->setCaIdseguimiento( $tarea->getCaIdtarea() );
-                $reporte->stopBlaming();
-				$reporte->save();
-                
+                $asignacion = Doctrine::getTable("RepAsignacion")->find(array($reporte->getCaIdreporte(), $tarea->getCaIdtarea()));
+                if( !$asignacion ){
+                    $asignacion = new RepAsignacion();
+                }
+                $asignacion->setCaIdreporte( $reporte->getCaIdreporte() );
+                $asignacion->setCaIdtarea( $tarea->getCaIdtarea() );
+                $asignacion->save();
 				
 				$this->redirect( "traficos/listaStatus?modo=".$this->modo."&reporte=".$reporte->getCaConsecutivo() );
 			}				
@@ -1099,18 +1122,29 @@ class traficosActions extends sfActions
 		$reporte = $this->getRequestParameter( "reporte" );
 		$this->forward404Unless( $reporte );
 		$reporte = ReporteTable::retrieveByConsecutivo( $reporte );
+        $this->forward404Unless( $reporte );
+
+        $tarea = Doctrine::getTable("NotTarea")->find( $this->getRequestParameter( "idtarea" ) );
+        $this->forward404Unless( $tarea );
+
+        $asignacion = Doctrine::getTable("RepAsignacion")->find(array($reporte->getCaIdreporte(), $tarea->getCaIdtarea()));
 
 		$this->modo = $this->getRequestParameter("modo");
 		if( !$this->modo ){
 			$this->forward( "traficos", "seleccionModo" );
 		}
 
-		$this->forward404Unless( $reporte );
-        $tarea = $reporte->getNotTarea();
+		
+        $tarea = $asignacion->getNotTarea();
         $tarea->setCaFchterminada(date("Y-m-d H:i:s"));
         $tarea->save();
+        if ($request->isXmlHttpRequest()){
+            $this->responseArray = array("success"=>true);
+            $this->setTemplate("responseTemplate");
 
-        $this->redirect( "traficos/listaStatus?modo=".$this->modo."&reporte=".$reporte->getCaConsecutivo() );
+        }else{
+            $this->redirect( "traficos/listaStatus?modo=".$this->modo."&reporte=".$reporte->getCaConsecutivo() );
+        }
     }
 	
 }

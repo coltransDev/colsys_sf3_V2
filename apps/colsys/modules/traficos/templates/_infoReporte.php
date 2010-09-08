@@ -87,21 +87,34 @@ if( $reporte->getCaUsuanulado() ){
 		</div>
 		<br />
 		<div class="post-info" align="left">
-		<b>Seguimientos</b><br />	
+		<b>Recordatorios</b><br />
 		<?
-		$tarea = $reporte->getNotTarea();
-		
-		$url = "traficos/formSeguimiento?modo=".$modo."&reporte=".$reporte->getCaConsecutivo();
-		
-		if( $tarea && $tarea->getCaIdtarea() && !$tarea->getCaFchterminada() ){
-			echo Utils::fechaMes(Utils::parseDate($tarea->getCaFchvencimiento(),"Y-m-d"))."<br />";
-			echo $tarea->getCaTexto()."<br />";
-			echo link_to(image_tag("22x22/todo.gif")." Editar", $url);		
-		}else{
-			echo "No se ha creado ning&uacute;n seguimiento.<br />";
-			echo link_to(image_tag("22x22/todo.gif")." Nuevo", $url);
-		}
-			
+        $url = "traficos/formSeguimiento?modo=".$modo."&reporte=".$reporte->getCaConsecutivo();
+        $tareas = $reporte->getTareas( Reporte::IDLISTASEG );
+        if( count($tareas)>0 ){
+            foreach( $tareas as $tarea ){
+                
+
+                //if( $tarea && $tarea->getCaIdtarea() && !$tarea->getCaFchterminada() ){
+                    echo link_to(Utils::fechaMes(Utils::parseDate($tarea->getCaFchvencimiento(),"Y-m-d")),$url."&idtarea=".$tarea->getCaIdtarea());
+                    if( !$tarea->getCaFchterminada() ){
+                    ?>
+                    <span id="res_<?=$tarea->getCaIdtarea()?>">
+                        <a href="#sec_<?=$reporte->getCaConsecutivo()?>" onClick="terminarTarea('<?=$reporte->getCaConsecutivo()?>', '<?=$tarea->getCaIdtarea()?>')">(Terminar)</a>
+                    </span>
+                    <?
+                    }else{
+                        echo " <b>OK</b>";
+                    }
+
+                    echo "<br />".$tarea->getCaTexto()."<br />";
+                    //echo link_to(image_tag("22x22/todo.gif")." Editar", )."<br />";
+                //}
+            }
+        }else{
+            echo "No se ha creado ning&uacute;n seguimiento.<br />";
+        }
+        echo link_to(image_tag("22x22/todo.gif")." Nuevo", $url);
 		?>	
 		</div>
 		<br />
