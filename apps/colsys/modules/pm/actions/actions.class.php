@@ -508,6 +508,10 @@ class pmActions extends sfActions
 		}
         
 		$ticket->save();
+
+        if( $request->getParameter("actionTicket")=="Cerrado" ){
+            $ticket->cerrarSeguimientos();
+        }
         
 
         if( isset( $_FILES["archivo"] )){
@@ -609,12 +613,15 @@ class pmActions extends sfActions
             $ticket->setCaPercentage( 100 );
 			$ticket->save();
 
+            //Solo por compatibilidad
 			$tarea = $ticket->getTareaSeguimiento();
 			if( $tarea ){
 				$tarea->setCaFchterminada(date("Y-m-d H:i:s"));
 				$tarea->setCaUsuterminada( $this->getUser()->getUserId() );
 				$tarea->save();
 			}
+
+            $ticket->cerrarSeguimientos();
 		}
 
 

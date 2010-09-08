@@ -22,6 +22,24 @@ class HdeskTicket extends BaseHdeskTicket
                                            ->fetchOne();
 	}
 
+    public function cerrarSeguimientos(){
+
+        $responses = Doctrine::getTable("HdeskResponse")->createQuery("r")
+                                           ->where("r.ca_idticket = ?", $this->getCaIdticket() )
+                                           ->addWhere("r.ca_idtarea IS NOT NULL")                                           
+                                           ->execute();
+        
+        foreach( $responses as $response ){
+            $tarea = $response->getNotTarea();
+            if( $tarea ){
+                $tarea->setCaFchterminada(date("Y-m-d H:i:s"));
+                $tarea->save();
+            }
+        }
+	}
+
+
+
     /*
 	*
 	*/
