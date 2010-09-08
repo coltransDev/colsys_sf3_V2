@@ -98,6 +98,12 @@ HdeskTicket:
       foreign: ca_login
       type: one
       class: Usuario
+    AssignedTo:
+      local: ca_assignedto
+      foreign: ca_login
+      type: one
+      class: Usuario
+
 
 
 HdeskResponse:

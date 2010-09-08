@@ -15,24 +15,15 @@ EditarTicketWindow = function( config ) {
     Ext.apply(this, config);
     this.ctxRecord = null;
 
-
+    
     this.items = [
         new EditarTicketPropiedadesPanel({idticket: this.idticket,
-                                             nivel: <?=isset($nivel)?$nivel:0?>
+                                             nivel: <?=isset($nivel)?$nivel:0?>,
+                                             gridId: this.gridId,
+                                             actionTicket: this.actionTicket
                                             })
     ];
-    /*
-    if( this.idticket ){        
-        this.items.push( new PanelArchivos({
-                                folder: this.folder,
-                                closable: false,
-                                title: "Archivos",
-                                height: 400
-                                
-                            })
-                       );
-    }*/
-
+    
     this.subpanel = new Ext.TabPanel({
        readOnly: this.readOnly,
        idticket: this.idticket,
@@ -80,19 +71,7 @@ EditarTicketWindow = function( config ) {
 }
 
 Ext.extend(EditarTicketWindow, Ext.Window, {
-
-
-    show : function(){
-        if(this.rendered){
-            //this.feedUrl.setValue('');
-        }
-
-        //this.grid.store.setBaseParam( "idproject", this.idproject);
-        //this.grid.store.load();
-
-        EditarTicketWindow.superclass.show.apply(this, arguments);
-    },
-
+    
     enviarTicket: function(){
         var panel = Ext.getCmp("form-ticket-panel");
         panel.guardar();

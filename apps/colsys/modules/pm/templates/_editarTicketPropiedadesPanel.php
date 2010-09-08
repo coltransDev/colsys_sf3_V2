@@ -559,6 +559,7 @@
             // set wait message target
             this.getForm().waitMsgTarget = this.getEl();
             this.validarVigencia();
+            var actionTicket =  this.actionTicket;
             if(this.idticket!="undefined" && this.idticket!="" )
             {
                 this.load({
@@ -586,6 +587,11 @@
                         Ext.getCmp('assignedto_id').setValue( this.res.data.assignedto );
                         Ext.getCmp('reportedby_id').setValue( this.res.data.loginName );
                         Ext.getCmp('reportedby_id').hiddenField.value = this.res.data.login;
+                        if( actionTicket ){
+                            Ext.getCmp('actionTicket_id').setValue( actionTicket );
+                        }else{
+                            Ext.getCmp('actionTicket_id').setValue( this.res.data.action );
+                        }
                         
                         Ext.getCmp('type_id').setValue( this.res.data.type );
 
@@ -599,23 +605,34 @@
         },
 
         guardar: function(){
+            var gridId = this.gridId;
             var panel = Ext.getCmp("form-ticket-panel");
-            var form = panel.getForm()
-            if( form.isValid() ){
-                
-                form.submit({
-                    success:function(form,action){
-                        
-                        //Ext.Msg.alert( "Información" );
-                        Ext.getCmp("editar-ticket-win").close();
+            var form = panel.getForm();
 
-                        Ext.MessageBox.alert('Mensaje', 'El ticket se ha enviado al área correspondiente, el numero de ticket es: '+action.result.idticket);
-                    },
-                    // standardSubmit: false,
-                    failure:function(form,action){
-                        Ext.MessageBox.alert('Error Message', "Se ha presentado un error"+(action.result?": "+action.result.errorInfo:"")+" "+(action.response?"\n Codigo HTTP "+action.response.status:""));
-                    }//end failure block
-                });
+            var idticket = this.idticket;
+
+            if( form.isValid() ){
+                if( (!Ext.getCmp('proyecto_id').getValue() || !Ext.getCmp('type_id').getValue()) && Ext.getCmp('actionTicket_id').getValue()=="Cerrado" ){
+                    Ext.MessageBox.alert('Error Message', "Es necesario clasificar el ticket antes de cerrarlo");
+                }else{
+                    form.submit({
+                        success:function(form,action){
+
+                            //Ext.Msg.alert( "Información" );
+                            Ext.getCmp("editar-ticket-win").close();
+                            if( !idticket ){
+                                Ext.MessageBox.alert('Mensaje', 'El ticket se ha enviado al área correspondiente, el numero de ticket es: '+action.result.idticket);
+                            }
+                            if( gridId ){
+                                Ext.getCmp(gridId).store.reload();
+                            }
+                        },
+                        // standardSubmit: false,
+                        failure:function(form,action){
+                            Ext.MessageBox.alert('Error Message', "Se ha presentado un error"+(action.result?": "+action.result.errorInfo:"")+" "+(action.response?"\n Codigo HTTP "+action.response.status:""));
+                        }//end failure block
+                    });
+                }
             }else{
                 Ext.MessageBox.alert('Sistema de Tickets:', '¡Por favor complete los campos subrayados!');
             }

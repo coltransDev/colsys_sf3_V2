@@ -408,7 +408,8 @@ Ext.extend(PanelTickets, Ext.grid.GridPanel, {
                             handler: function(){
                                 if( this.ctxRecord.data.idticket  ){
                                     
-                                    var win = new EditarTicketWindow({idticket: this.ctxRecord.data.idticket
+                                    var win = new EditarTicketWindow({idticket: this.ctxRecord.data.idticket,
+                                                                        gridId: this.ctxGridId
                                                                 });
                                     win.show();
                                 }
@@ -500,14 +501,17 @@ Ext.extend(PanelTickets, Ext.grid.GridPanel, {
 
     cerrarTicket: function(){
         if( this.ctxRecord.data.idticket  ){
+            var gridId = this.ctxGridId;
             if( !this.ctxRecord.data.project || !this.ctxRecord.data.tipo ){
-                var win = new EditarTicketWindow({idticket: this.ctxRecord.data.idticket
+                var win = new EditarTicketWindow({idticket: this.ctxRecord.data.idticket,
+                                                  gridId: gridId,
+                                                  actionTicket: "Cerrado"
                                             });
                 win.show();
             }else{
 
                 var idticket = this.ctxRecord.data.idticket;
-                var gridId = this.ctxGridId;
+                
 
                 
                 Ext.Ajax.request({
