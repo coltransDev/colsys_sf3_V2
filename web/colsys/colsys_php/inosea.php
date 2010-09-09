@@ -1544,7 +1544,7 @@ elseif (isset($boton)) {                                                       /
                 echo "  <TD Class=mostrar>ID Reporte:<BR><INPUT TYPE='TEXT' NAME='consecutivo' SIZE=12 MAXLENGTH=10 READONLY>&nbsp;<a><IMG ID=report_lupa src='graficos/lupa.gif' onclick='buscar_reporte();' alt='Buscar' hspace='0' vspace='0'></a></TD>";
                 echo "  <TD Class=listar>Vendedor:<BR><SELECT NAME='login'>";  // Llena el cuadro de lista con los valores de la tabla Vendedores
                 echo "  <OPTION VALUE=''></OPTION>";
-                if (!$us->Open("select ca_login, ca_nombre from control.tb_usuarios where ca_login != 'Administrador' and (ca_cargo = 'Gerente Sucursal' or ca_cargo like '%Ventas%' or ca_departamento like '%Ventas%' or ca_departamento like '%Comercial%') order by ca_login")) {
+                if (!$us->Open("select ca_login, ca_nombre from control.tb_usuarios where ca_login != 'Administrador' and (ca_cargo = 'Gerente Regional' or ca_cargo like '%Ventas%' or ca_departamento like '%Ventas%' or ca_departamento like '%Comercial%') order by ca_login")) {
                     echo "<script>alert(\"".addslashes($us->mErrMsg)."\");</script>";
                     echo "<script>document.location.href = 'inosea.php';</script>";
                     exit;
@@ -1963,7 +1963,7 @@ elseif (isset($boton)) {                                                       /
                 echo "  <TD Class=mostrar>ID Reporte:<BR><INPUT TYPE='TEXT' NAME='consecutivo' VALUE='".$rs->Value('ca_consecutivo')."' SIZE=12 MAXLENGTH=10 READONLY>&nbsp;<a><IMG ID=report_lupa src='graficos/lupa.gif' onclick='buscar_reporte();' alt='Buscar' hspace='0' vspace='0'></a></TD>";
                 echo "  <TD Class=listar>Vendedor:<BR><SELECT NAME='login' DISABLED>";  // Llena el cuadro de lista con los valores de la tabla Vendedores
                 echo"<OPTION VALUE=''></OPTION>";
-                if (!$us->Open("select ca_login, ca_nombre from control.tb_usuarios where ca_login != 'Administrador' and (ca_cargo = 'Gerente Sucursal' or ca_cargo like '%Ventas%' or ca_departamento like '%Ventas%' or ca_departamento like '%Comercial%') order by ca_login")) {
+                if (!$us->Open("select ca_login, ca_nombre from control.tb_usuarios where ca_login != 'Administrador' and (ca_cargo = 'Gerente Regional' or ca_cargo like '%Ventas%' or ca_departamento like '%Ventas%' or ca_departamento like '%Comercial%') order by ca_login")) {
                     echo "<script>alert(\"".addslashes($us->mErrMsg)."\");</script>";
                     echo "<script>document.location.href = 'inosea.php';</script>";
                     exit;

@@ -77,7 +77,7 @@ require_once("menu.php");
 
     echo "<TR>";
     $us =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
-    if (!$us->Open("select ca_login, ca_nombre from vi_usuarios where ca_cargo = 'Gerente Sucursal' or ca_cargo like '%Ventas%' or ca_departamento like '%Ventas%' or ca_departamento like '%Comercial%'")) {
+    if (!$us->Open("select ca_login, ca_nombre from vi_usuarios where ca_cargo = 'Gerente Regional' or ca_cargo like '%Ventas%' or ca_departamento like '%Ventas%' or ca_departamento like '%Comercial%'")) {
         echo "<script>alert(\"".addslashes($us->mErrMsg)."\");</script>";
         echo "<script>document.location.href = 'repcomisiones.php';</script>";
         exit;
