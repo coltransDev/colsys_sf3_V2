@@ -782,11 +782,11 @@ class clientesActions extends sfActions
                             $sucursal = $user->getSucursal();
                             $empleados = $sucursal->getUsuario();
                             foreach($empleados as $empleado){
-                                if ($empleado->getCaCargo() == "Jefe Departamento Administrativo" and ($empleado->getCaSucursal() == "Barranquilla" or $empleado->getCaSucursal() == "Cali" or $empleado->getCaSucursal() == "Medellín")){
+                                if ($empleado->getCaCargo() == "Jefe Dpto. Administrativo" and ($empleado->getCaSucursal() == "Barranquilla" or $empleado->getCaSucursal() == "Cali" or $empleado->getCaSucursal() == "Medellín")){
                                     $email->addCc( $user->getCaEmail() );
-                                }else if ($empleado->getCaCargo() == "Asistente Administrativo" and $empleado->getCaSucursal() == "Bucaramanga"){
+                                }else if ($empleado->getCaCargo() == "Asistente Dpto. Administrativo" and $empleado->getCaSucursal() == "Bucaramanga"){
                                     $email->addCc( $user->getCaEmail() );
-                                }else if ($empleado->getCaCargo() == "Gerente Sucursal" and $empleado->getCaSucursal() == "Pereira"){
+                                }else if ($empleado->getCaCargo() == "Gerente Regional" and $empleado->getCaSucursal() == "Pereira"){
                                     $email->addCc( $user->getCaEmail() );
                                 }
                             }
