@@ -16,7 +16,12 @@ class PDF extends FPDF {
     private $empresa=1;
     const COLTRANS=1;
     const COLMAS=2;
-	
+
+    private $B;
+    private $I;
+    private $U;
+    private $HREF;
+
 	
 	//Cabecera de página
     function Header() {
@@ -367,7 +372,115 @@ class PDF extends FPDF {
 		}	
 		$this->bufferGroup=array();	
 	}
-	
+
+
+    function WriteHTML($html)
+    {
+        //HTML parser
+        $html=str_replace("\n",' ',$html);
+        $a=preg_split('/<(.*)>/U',$html,-1,PREG_SPLIT_DELIM_CAPTURE);
+        foreach($a as $i=>$e)
+        {
+            if($i%2==0)
+            {
+                //Text
+                if($this->HREF)
+                    $this->PutLink($this->HREF,$e);
+                else
+                    $this->Write(5,$e);
+            }
+            else
+            {
+                //Tag
+                if($e[0]=='/')
+                    $this->CloseTag(strtoupper(substr($e,1)));
+                else
+                {
+                    //Extract attributes
+                    $a2=explode(' ',$e);
+                    $tag=strtoupper(array_shift($a2));
+                    $attr=array();
+                    foreach($a2 as $v)
+                    {
+                        if(preg_match('/([^=]*)=["\']?([^"\']*)/',$v,$a3))
+                            $attr[strtoupper($a3[1])]=$a3[2];
+                    }
+                    $this->OpenTag($tag,$attr);
+                }
+            }
+        }
+        exit();
+    }
+
+    function OpenTag($tag,$attr)
+    {
+        //Opening tag
+        if($tag=='B' || $tag=='I' || $tag=='U'){
+            $this->SetStyle($tag,true);
+        }
+        if($tag=='A'){
+            $this->HREF=$attr['HREF'];
+        }
+        if($tag=='BR'){
+            $this->Ln(5);            
+        }
+        if($tag=='IMG'){
+            $src = $attr["SRC"];
+            if(strpos($src, "/gestDocumental/verArchivo/")!==false){
+                $params = explode("/", $src);
+                //print_r( $params );
+                for($i=0; $i<count($params) ; $i++ ){
+                    if( $params[$i]=="folder"){
+                        $folder = base64_decode($params[$i+1]);
+                    }
+
+                    if( $params[$i]=="idarchivo"){
+                        $idarchivo = base64_decode($params[$i+1]);
+                    }
+                }
+            }
+
+            $file = sfConfig::get("app_digitalFile_root").DIRECTORY_SEPARATOR.$folder.DIRECTORY_SEPARATOR.$idarchivo;
+            if( file_exists($file) ){
+                $x = $this->GetX();
+                $y = $this->GetY();
+                $this->Image($file, $x, $y, 20);
+            }
+        }
+    }
+
+    function CloseTag($tag)
+    {
+        //Closing tag
+        if($tag=='B' || $tag=='I' || $tag=='U')
+            $this->SetStyle($tag,false);
+        if($tag=='A')
+            $this->HREF='';
+    }
+
+    function SetStyle($tag,$enable)
+    {
+        //Modify style and select corresponding font
+        $this->$tag+=($enable ? 1 : -1);
+        $style='';
+        foreach(array('B','I','U') as $s)
+        {
+            if($this->$s>0)
+                $style.=$s;
+        }
+        $this->SetFont('',$style);
+    }
+
+    function PutLink($URL,$txt)
+    {
+        //Put a hyperlink
+        $this->SetTextColor(0,0,255);
+        $this->SetStyle('U',true);
+        $this->Write(5,$txt,$URL);
+        $this->SetStyle('U',false);
+        $this->SetTextColor(0);
+    }
+
 	
 	
 }
