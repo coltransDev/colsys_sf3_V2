@@ -5,9 +5,8 @@
  *  (c) Coltrans S.A. - Colmas Ltda.
 */
 include_component("widgets", "widgetConsignar");
-//include_component("widgets", "widgetTipoBodega");
 include_component("widgets", "widgetBodega",array("modo"=>$modo,"impoexpo"=>$impoexpo,"permiso"=>$permiso));
-//echo $impoexpo.".".$modo;
+
 
 ?>
 <script type="text/javascript">
@@ -42,7 +41,7 @@ include_component("widgets", "widgetBodega",array("modo"=>$modo,"impoexpo"=>$imp
             camposHija.push( this.wgNotify );
         <?
         }
-		else if($impoexpo=="Exportación"  && $modo=="Aéreo")
+		else if($impoexpo==Constantes::EXPO  && $modo==Constantes::AEREO)
 		{
 		?>
             camposHija.push( this.wgTercero );
@@ -53,10 +52,56 @@ include_component("widgets", "widgetBodega",array("modo"=>$modo,"impoexpo"=>$imp
         {
         ?>
             camposHija.push( this.wgTercero );
+            <?
+            if($impoexpo!=Constantes::TRIANGULACION )
+            ?>
             camposHija.push( this.wgBodega );
         <?
         }
         ?>
+
+        var camposForm = new Array();
+        obj = new Object();
+        obj1 = null;
+
+        obj.xtype='fieldset';
+        obj.title='<?=$nomGuiasH?>';
+        obj.autoHeight=true;
+        obj.id='PCorteHija';
+        obj.items=camposHija;
+        
+
+    <?
+    if(($impoexpo==Constantes::IMPO  && $modo!=Constantes::AEREO) || ($impoexpo==Constantes::EXPO  && $modo==Constantes::AEREO) || ($impoexpo==Constantes::TRIANGULACION  && $modo==Constantes::AEREO))
+    {
+    ?>
+        obj1 = new Object();
+        obj1.xtype='fieldset';
+        obj1.title='<?=$nomGuiasM?>';
+        obj1.autoHeight=true;
+        obj1.id='PCorteMaster';
+        obj1.items=new Array();
+        obj1.items.push(new WidgetTercero({fieldLabel:"Consig. Master",tipo: 'Master',width: 600, id: "idconsigmaster",hiddenName: "consigmaster"}));
+
+        <?
+        if(($impoexpo==Constantes::EXPO && $modo==Constantes::AEREO) || ($impoexpo==Constantes::TRIANGULACION && $modo==Constantes::AEREO))
+        {
+        ?>
+        obj1.items.push(new WidgetTercero({fieldLabel:"Notificar a",tipo: 'Notify',width: 600,hiddenName: "ca_informar_mast",id:"idnotify_mast"}));
+        <?
+        } 
+    }
+
+    if( $impoexpo==Constantes::EXPO || $impoexpo==Constantes::TRIANGULACION )
+    {
+    ?>
+        if(obj1)
+            camposForm.push(obj1);
+    <?
+    }
+    ?>
+    camposForm.push(obj);
+ 
         FormCorteGuiasPanel.superclass.constructor.call(this, {
             activeTab: 0,
             title: 'Corte Documentos',
@@ -64,63 +109,11 @@ include_component("widgets", "widgetBodega",array("modo"=>$modo,"impoexpo"=>$imp
             autoHeight:true,
             deferredRender:false,
             defaults: {labelWidth: 120},
-            items: [
-                {
-                    xtype:'fieldset',
-                    title: '<?=$nomGuiasH?>',
-                    autoHeight:true,
-                    id:'PCorteHija',
-                    items: camposHija
-                }
-                <?
-                if(($impoexpo=="Importación"  && $modo!="Aéreo") || ($impoexpo=="Exportación"  && $modo=="Aéreo"))
-                {
-                ?>
-                ,
-                {
-                    xtype:'fieldset',
-                    title: '<?=$nomGuiasM?>',
-                    autoHeight:true,
-                    id:'PCorteMaster',
-                    items: [
-                        new WidgetTercero({fieldLabel:"Consig. Master",
-                                            tipo: 'Master',
-                                            width: 600,
-                                            id: "idconsigmaster",
-                                            hiddenName: "consigmaster"
-                                           })
-					<?
-						if($impoexpo=="Exportación" && $modo=="Aéreo")
-						{
-					?>
-						,
-						new WidgetTercero({fieldLabel:"Notificar a",
-                                            tipo: 'Notify',
-                                            width: 600,
-                                            hiddenName: "ca_informar_mast",
-                                            id:"idnotify_mast"
-                                           })
-					<?
-						}
-					?>
-                    ]
-                }
-                <?
-                }
-                ?>
-            ],
-            listeners:{
-                afterrender:this.onAfterload
-            }
+            items: camposForm
         });
     };
 
     Ext.extend(FormCorteGuiasPanel, Ext.Panel, {
-        onAfterload:function()
-        {
-//            $("#idconsignatario").val('<?=$reporte->getCaIdconsignatario()?>')
-//            alert($("#idconsignatario").val());
-            
-        }
+
     });
 </script>

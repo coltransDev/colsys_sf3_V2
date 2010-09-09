@@ -4,7 +4,6 @@
  *
  *  (c) Coltrans S.A. - Colmas Ltda.
 */
-
 //include_component("widgets", "widgetContactoCliente");
 include_component("widgets", "widgetMoneda");
 ?>
@@ -20,7 +19,7 @@ include_component("widgets", "widgetMoneda");
                 {
                     xtype:'fieldset',
                     title: 'Información de Seguros',
-                    autoHeight:true,
+                    autoHeight:true,                    
                     //defaults: {width: 210},
                     items: [
                         {
@@ -35,21 +34,15 @@ include_component("widgets", "widgetMoneda");
                             name: "ca_seguro",
                             id: "ca_seguro"
                         },
-                        {
-                        xtype:'fieldset',
-                        checkboxToggle:true,
-                        title: 'Seguros',
-                        autoHeight:true,                        
-                        //defaultType: 'textfield',
-                        //collapsed: true,
-                        width:'100%',
-                        id:"seguros",
-                        name:"seguros",
-                        items: [
+                        
                             {
                                 xtype:'fieldset',
+                                checkboxToggle:true,
+                                title: 'Seguros',
                                 autoHeight:true,
-                                layout:'column',
+                                layout:'column',                                
+                                id:"seguros",
+                                name:"seguros",
                                 columns: 3,
                                 columnWidth: .33,
                                 items :[
@@ -61,16 +54,16 @@ include_component("widgets", "widgetMoneda");
                                     columnWidth: .3,
                                     fieldLabel: "Valor Asegurado ",
                                     items: [
-                                    {
-                                        xtype: "numberfield",                                        
-                                        name: "ca_vlrasegurado",
-                                        id: "ca_vlrasegurado",
-                                        width:50
-                                    },
-                                    new WidgetMoneda({
-                                                    id: 'ca_idmoneda_vlr',                                                    
-                                                    width:          90
-                                                    })
+                                        {
+                                            xtype: "numberfield",
+                                            name: "ca_vlrasegurado",
+                                            id: "ca_vlrasegurado",
+                                            width:100
+                                        },
+                                        new WidgetMoneda({
+                                                        id: 'ca_idmoneda_vlr',
+                                                        width:          80
+                                                        })
                                     ]
                                 },
                                 {
@@ -78,33 +71,33 @@ include_component("widgets", "widgetMoneda");
                                     border:false,
                                     defaultType: 'textfield',
                                     columns: 3,
-                                    columnWidth: .33,
+                                    columnWidth: .3,
                                     title: "Obtención Póliza ",
                                     items: [
                                     {
                                         xtype: "numberfield",                                        
                                         name: "ca_obtencionpoliza",
                                         id: "ca_obtencionpoliza",
-                                        width: 120
+                                        width: 100
                                     },
                                     new WidgetMoneda({
                                                     id: 'ca_idmoneda_pol',
-                                                    width:          90
+                                                    width:          80
                                                     })
                                     ]
                                 },
                                 {
                                     layout: 'column',
                                     border:false,
-                                    defaultType: 'textfield',
-                                    columns:3,
+                                    defaultType: 'textfield',                                    
                                     title:"Prima Venta",
+                                    columnWidth: .1,
                                     items: [
                                     {
                                         xtype: "numberfield",                                       
                                         name: "ca_primaventa",
                                         id: "ca_primaventa",
-                                        width: 120
+                                        width: 100
                                     }
                                     ]
                                 },
@@ -113,24 +106,25 @@ include_component("widgets", "widgetMoneda");
                                     border:false,
                                     defaultType: 'textfield',
                                     columns:2,
+                                    columnWidth: .3,
                                     title:"Min",
                                     items: [
                                     {
                                         xtype: "numberfield",                                        
                                         name: "ca_minimaventa",
                                         id: "ca_minimaventa",
-                                        width: 120
+                                        width: 100
                                     },
                                     new WidgetMoneda({
                                                     id: 'ca_idmoneda_vta',                                                    
-                                                    width:          90
+                                                    width:          80
                                                     })
                                     ]
                                 }
                                 ]
                             }
-                        ]
-                    }]
+                        
+                    ]
                 }
             ]
         });

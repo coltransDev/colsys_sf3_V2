@@ -9,7 +9,7 @@ if($impoexpo!="Triangulación")
 {
 include_component("reportesNeg", "formAduanasPanel");
 }
-include_component("reportesNeg", "formSegurosPanel");
+include_component("reportesNeg", "formSegurosPanel",array("modo"=>$modo,"impoexpo"=>$impoexpo));
 
 ?>
 <script type="text/javascript">

@@ -74,11 +74,18 @@ include_component("widgets", "widgetContactoCliente");
                             width: 100
                         }
                         <?
-                        if($modo==Constantes::MARITIMO)
+                        if($modo==Constantes::MARITIMO && $impoexpo!=constantes::TRIANGULACION)
                         {
                         ?>
                         ,
                         {
+                            xtype       :   'checkbox',
+                            fieldLabel  :   'Contrato de Comodato',
+                            id          :   'ca_comodato',
+                            name        :   'ca_comodato'
+
+                        }
+/*                        {
                         xtype: "textfield",
                         fieldLabel: "Contrato de Comodato",
                         name: "ca_comodato",
@@ -86,13 +93,14 @@ include_component("widgets", "widgetContactoCliente");
                         readOnly: true,
                         width: 100
                         }
+*/
                         <?
                         }
                         ?>
                     ]
                 }
 				<?
-				if($impoexpo ==Constantes::IMPO)
+				if($impoexpo != Constantes::EXPO)
 				{
 				?>
 				,
@@ -161,8 +169,12 @@ include_component("widgets", "widgetContactoCliente");
   */
             diascredito=(record.get("diascredito"))?record.get("diascredito")+" dias":"0";
             Ext.getCmp("ca_tiempocredito").setValue(diascredito);
-            cupo=(record.get("cupo")!="")?"Sí":"No";
-            //alert(cupo);
+
+            if(record.data.cupo && record.data.cupo!="null")
+                cupo=(record.get("cupo")!="")?"Sí":"No";
+            else
+                cupo="No";
+            
             Ext.getCmp("ca_liberacion").setValue(cupo);
 
 			Ext.getCmp("preferencias").setValue(record.get("preferencias"));

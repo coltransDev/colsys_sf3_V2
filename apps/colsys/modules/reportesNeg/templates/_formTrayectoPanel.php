@@ -53,7 +53,7 @@ if($permiso>=2)
                                                     linkImpoexpo: "impoexpo"
                                                     });
         <?
-		if($impoexpo== Constantes::EXPO || ($impoexpo== Constantes::IMPO && $modo== Constantes::AEREO))
+		if($impoexpo== Constantes::EXPO || ($impoexpo== Constantes::IMPO && $modo== Constantes::AEREO) || ($impoexpo== Constantes::TRIANGULACION && $modo== Constantes::AEREO))
 		{
 		?>
 		this.wgModalidad.addListener("select", this.onSelectModalidad, this );
@@ -162,10 +162,11 @@ if($permiso>=2)
                                                 id: 'tra_origen_id',
                                                 linkCiudad: 'origen',
                                                 hiddenName:'idtra_origen_id',
-                                                pais:'<?=$pais1?>'
+                                                pais:'<?=$pais1?>',
+                                                excluidos:'C0-057'
                                                }),
                                  
-                                new WidgetCiudad({fieldLabel: 'Ciudad Origen',
+                                new WidgetCiudad({fieldLabel: '<?=$origen?>',
                                                   linkPais: 'tra_origen_id',
                                                   id: 'origen',
                                                   idciudad:"origen",
@@ -218,7 +219,7 @@ if($permiso>=2)
                                                 pais:'<?=$pais2?>'
                                                }),
 
-                                new WidgetCiudad({fieldLabel: 'Ciudad Destino',
+                                new WidgetCiudad({fieldLabel: '<?=$destino?>',
                                                   linkPais: 'tra_destino_id',
                                                   id: 'destino',
                                                   idciudad:"destino",
@@ -310,14 +311,18 @@ if($permiso>=2)
             if(record.data.diascredito && record.data.diascredito!="null")
                 diascredito=(record.get("diascredito")!="")?record.get("diascredito")+" dias":"0";
 
-            Ext.getCmp("ca_tiempocredito").setValue(diascredito);            
-            cupo=(record.get("cupo")!="")?"Sí":"No";
+            Ext.getCmp("ca_tiempocredito").setValue(diascredito);
+            
+            if(record.data.cupo && record.data.cupo!="null")
+                cupo=(record.get("cupo")!="")?"Sí":"No";
+            else
+                cupo="No";
             //alert(cupo);
             Ext.getCmp("ca_liberacion").setValue(cupo);
 
         }
         <?
-		if($impoexpo== Constantes::EXPO || ($impoexpo== Constantes::IMPO && $modo== Constantes::AEREO))
+		//if($impoexpo== Constantes::EXPO || ($impoexpo== Constantes::IMPO ))
 		{
 		?>
 		,
@@ -325,7 +330,7 @@ if($permiso>=2)
         {
             if(record)
             {
-
+                
                 if(record.data.modalidad=="CONSOLIDADO")
                 {
                     if(Ext.getCmp("PCorteMaster"))
@@ -345,8 +350,28 @@ if($permiso>=2)
                 else if(record.data.modalidad=="BACK TO BACK")
                 {
                     Ext.getCmp("linea").allowBlank=false;
-
+                    <?
+                    if($impoexpo== Constantes::TRIANGULACION )
+                    {
+                    ?>
+                        if(Ext.getCmp("PCorteHija"))
+                            Ext.getCmp("PCorteHija").show();
+                        if(Ext.getCmp("PCorteMaster"))
+                            Ext.getCmp("PCorteMaster").show();
+                    <?
+                    }
+                    ?>
                 }
+                else if(record.data.modalidad=="FCL")
+                {
+                    Ext.getCmp("linea").allowBlank=false;
+                }
+                else if(record.data.modalidad=="COLOADING")
+                {
+                    Ext.getCmp("linea").allowBlank=false;
+                }
+                else
+                    Ext.getCmp("linea").allowBlank=true;
 
             }
             else

@@ -82,24 +82,24 @@ include_component("reportesNeg", "gridPanelInstruccionesWindow",array("modo"=>$m
                     xtype:'fieldset',
                     title: 'Informaciones a:',
                     autoHeight:true,
-                    layout:'table',
+                    layout:'column',
                     columns: 2,
                     
                     defaults:{
                         columnWidth:0.5,
                         layout:'form',
                         border:false,
-                        bodyStyle:'padding:4px',
+                       /* bodyStyle:'padding:4px',*/
                         hideLabels:true,
                         border:true
                     },
                     items: [
                         {
-                            layout: 'form',
-                            defaultType: 'textfield',
+                            defaultType: 'textfield',                            
                             items: [
                                 <?
-                                for( $i=0; $i<20; $i++ ):
+                                for( $i=0; $i<20; $i++ )
+                                {
                                     if( $i!=0){
                                         echo ",";
                                     }
@@ -111,15 +111,14 @@ include_component("reportesNeg", "gridPanelInstruccionesWindow",array("modo"=>$m
                                     id: "contacto_<?=$i?>",
                                     readOnly: true,
                                     width: 550,
-                                    height :20
+                                    height :(navigator.appName=="Netscape")?20:22
                                 }
                                 <?
-                                endfor;
+                                }
                                 ?>
                             ]
                         },
                         {
-                            layout: 'form',                            
                             defaults: {width: 20},
                             items: [
                                 <?
@@ -151,6 +150,4 @@ include_component("reportesNeg", "gridPanelInstruccionesWindow",array("modo"=>$m
     Ext.extend(FormPreferenciasPanel, Ext.Panel, {
 
     });
-
-
 </script>

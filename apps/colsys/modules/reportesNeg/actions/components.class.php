@@ -266,10 +266,12 @@ class reportesNegComponents extends sfComponents
 
     public function executeFormAduanasPanel()
 	{
+        echo $this->impoexpo;
+        $perfil=($this->impoexpo==Constantes::EXPO)?"coordinador-de-servicio-al-cliente-aduana":"coordinador-aduana-expo";
         $this->usuarios = Doctrine::getTable("Usuario")
                                    ->createQuery("u")
                                    ->innerJoin("u.UsuarioPerfil up")
-                                   ->where("u.ca_activo=? AND up.ca_perfil=? ", array('TRUE','analista-de-aduana'))
+                                   ->where("u.ca_activo=? AND up.ca_perfil =? ", array('TRUE',$perfil))
                                    ->addOrderBy("u.ca_idsucursal")
                                    ->addOrderBy("u.ca_nombre")
                                    ->execute();
@@ -306,6 +308,8 @@ class reportesNegComponents extends sfComponents
     public function executeFormTrayectoPanel()
     {
         $this->load_category();
+        $this->origen="Ciudad Origen";
+        $this->destino="Ciudad Destino";
         if($this->modo=="Aéreo")
         {
             $this->nomLinea="Aerolinea";
@@ -313,6 +317,8 @@ class reportesNegComponents extends sfComponents
         else if($this->modo=="Marítimo")
         {
             $this->nomLinea="Naviera";
+            $this->origen="Puerto Origen";
+            $this->destino="Puerto Destino";
         }
         else
             $this->nomLinea="Linea";
