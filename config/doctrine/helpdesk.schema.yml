@@ -125,8 +125,7 @@ HdeskResponse:
     ca_idissue: integer
     ca_responseto: integer
     ca_idtarea: integer
-  relations:
-    
+  relations:    
     Usuario:
       local: ca_login
       foreign: ca_login
@@ -140,6 +139,7 @@ HdeskResponse:
       foreign: ca_responseto
       type: many
       class: HdeskResponse
+      orderBy: ca_createdat ASC
     NotTarea:
       local: ca_idtarea
       foreign: ca_idtarea
