@@ -53,7 +53,7 @@ if($permiso>=2)
                                                     linkImpoexpo: "impoexpo"
                                                     });
         <?
-		if($impoexpo== Constantes::EXPO || ($impoexpo== Constantes::IMPO && $modo== Constantes::AEREO) || ($impoexpo== Constantes::TRIANGULACION && $modo== Constantes::AEREO))
+		if($impoexpo== Constantes::EXPO || ($impoexpo== Constantes::IMPO && $modo== Constantes::AEREO) || ($impoexpo== Constantes::TRIANGULACION ))
 		{
 		?>
 		this.wgModalidad.addListener("select", this.onSelectModalidad, this );
@@ -329,8 +329,19 @@ if($permiso>=2)
         onSelectModalidad: function( combo, record, index)
         {
             if(record)
-            {
-                
+            {   
+                <?
+                    if($impoexpo== Constantes::TRIANGULACION )
+                    {
+                    ?>
+                        if(Ext.getCmp("PCorteHija"))
+                            Ext.getCmp("PCorteHija").show();
+                        if(Ext.getCmp("PCorteMaster"))
+                            Ext.getCmp("PCorteMaster").show();
+                    <?
+                    }
+                    ?>
+
                 if(record.data.modalidad=="CONSOLIDADO")
                 {
                     if(Ext.getCmp("PCorteMaster"))
@@ -350,17 +361,7 @@ if($permiso>=2)
                 else if(record.data.modalidad=="BACK TO BACK")
                 {
                     Ext.getCmp("linea").allowBlank=false;
-                    <?
-                    if($impoexpo== Constantes::TRIANGULACION )
-                    {
-                    ?>
-                        if(Ext.getCmp("PCorteHija"))
-                            Ext.getCmp("PCorteHija").show();
-                        if(Ext.getCmp("PCorteMaster"))
-                            Ext.getCmp("PCorteMaster").show();
-                    <?
-                    }
-                    ?>
+                    
                 }
                 else if(record.data.modalidad=="FCL")
                 {

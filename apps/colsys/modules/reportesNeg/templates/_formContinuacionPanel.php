@@ -177,6 +177,4 @@ include_component("widgets", "widgetBodega");
 */
         }
     });
-
-
 </script>

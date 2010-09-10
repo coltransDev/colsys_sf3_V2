@@ -72,7 +72,7 @@ include_component("widgets", "widgetBodega",array("modo"=>$modo,"impoexpo"=>$imp
         
 
     <?
-    if(($impoexpo==Constantes::IMPO  && $modo!=Constantes::AEREO) || ($impoexpo==Constantes::EXPO  && $modo==Constantes::AEREO) || ($impoexpo==Constantes::TRIANGULACION  && $modo==Constantes::AEREO))
+    if(($impoexpo==Constantes::IMPO  && $modo!=Constantes::AEREO) || ($impoexpo==Constantes::EXPO  && $modo==Constantes::AEREO) || ($impoexpo==Constantes::TRIANGULACION ))
     {
     ?>
         obj1 = new Object();
@@ -84,7 +84,7 @@ include_component("widgets", "widgetBodega",array("modo"=>$modo,"impoexpo"=>$imp
         obj1.items.push(new WidgetTercero({fieldLabel:"Consig. Master",tipo: 'Master',width: 600, id: "idconsigmaster",hiddenName: "consigmaster"}));
 
         <?
-        if(($impoexpo==Constantes::EXPO && $modo==Constantes::AEREO) || ($impoexpo==Constantes::TRIANGULACION && $modo==Constantes::AEREO))
+        if(($impoexpo==Constantes::EXPO && $modo==Constantes::AEREO) || ($impoexpo==Constantes::TRIANGULACION ))
         {
         ?>
         obj1.items.push(new WidgetTercero({fieldLabel:"Notificar a",tipo: 'Notify',width: 600,hiddenName: "ca_informar_mast",id:"idnotify_mast"}));

@@ -21,7 +21,7 @@ if( $action!="index" ){
 	$button[$i]["link"]= "reportesNeg/index?token=".md5(time()).$opcion;
 	$i++;
 }
-
+//echo $action;
 switch($action){
 	case "index":		
 		$button[$i]["name"]="Nuevo";
@@ -88,6 +88,13 @@ switch($action){
 		$button[$i]["link"]= "reportesNeg/consultaReporte?id=".$this->getRequestParameter("id").$opcion.$modo;
 		$i++;
 		break;
+    case "seleccionModo":
+        $buttonHelp = array();
+		$buttonHelp["tooltip"]="Vuelve a la pagina anterior";
+		$buttonHelp["image"]="22x22/help.png";
+		$buttonHelp["link"]= "kbase/viewIssue?idissue=46";
+//        print_r($buttonHelp);
+        break;
 }
 
 

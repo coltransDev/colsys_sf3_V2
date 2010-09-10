@@ -37,7 +37,8 @@ include_component("widgets", "widgetContactoCliente");
                                                    width: 600,
                                                    id: "cliente",
                                                    hiddenName: "idcliente",
-                                                   allowBlank:false
+                                                   allowBlank:false,
+                                                   displayField:"compania"
                                                   });
 
         this.wgContactoCliente.addListener("select", this.onSelectContactoCliente, this);
@@ -50,6 +51,7 @@ include_component("widgets", "widgetContactoCliente");
             buttonAlign: 'center',
             layout:'fit',
             monitorValid:true,
+            fileUpload : true,
             items: [
                 {
                     xtype:'fieldset',
@@ -227,7 +229,29 @@ include_component("widgets", "widgetContactoCliente");
                                                     hiddenName: "idrepres"
                                                    })
                     ]
+                },
+                {
+
+                    xtype:'fieldset',
+                    title: 'Documentos',
+                    autoHeight:true,
+                    //defaults: {width: 210},
+                    items: [
+                        {
+                            xtype: 'fileuploadfield',
+                            id: 'archivo',
+                            width: 250,
+                            fieldLabel: 'Adjuntar',
+                            emptyText: 'Seleccione un archivo',
+                            buttonCfg: {
+                                text: '',
+                                iconCls: 'upload-icon'
+                            }
+                        }
+
+                    ]
                 }
+
 
             ],
             buttons: this.buttons,
@@ -259,7 +283,7 @@ include_component("widgets", "widgetContactoCliente");
             var form  = this.getForm();
             if( form.isValid() ){
                 form.submit({
-                    url: "<?=url_for("reportesNeg/guardarReporteAg?idreporte=".$idreporte)?>",
+                    url: "<?=url_for("reportesNeg/guardarReporteAg")?>",
                     waitMsg:'Guardando...',
                     waitTitle:'Por favor espere...',                    
                     success: function(gridForm, action) {
@@ -297,14 +321,40 @@ include_component("widgets", "widgetContactoCliente");
 
             Ext.getCmp("idconcliente").setValue(record.get("idcontacto"));
             Ext.getCmp("contacto").setValue(record.get("nombre")+' '+record.get("papellido")+' '+record.get("sapellido") );
-            Ext.getCmp("cliente").setValue(record.get("idcliente"));
-            ("#cliente").setValue(record.get("compania"));
 
-            diascredito=(record.get("diascredito")!="")?record.get("diascredito")+" dias":"0";
+
+/*            var confirmar =  record.get("confirmar") ;
+			var brokenconfirmar="";
+			if(confirmar)
+			{
+				brokenconfirmar=confirmar.split(",");
+				var i=0;
+				for(i=0; i<brokenconfirmar.length; i++){
+					Ext.getCmp("contacto_"+i).setValue(brokenconfirmar[i]);
+					Ext.getCmp("contacto_"+i).setReadOnly( true );
+					Ext.getCmp("chkcontacto_"+i).setValue( true );
+				}
+			}
+			for( i=brokenconfirmar.length; i<20; i++ ){
+				if( Ext.getCmp("contacto_"+i) ){
+					Ext.getCmp("contacto_"+i).setValue("");
+					Ext.getCmp("contacto_"+i).setReadOnly( false );
+					Ext.getCmp("chkcontacto_"+i).setValue( false );
+				}
+			}
+*/
+            diascredito=(record.get("diascredito"))?record.get("diascredito")+" dias":"0";
             Ext.getCmp("ca_tiempocredito").setValue(diascredito);
-            cupo=(record.get("cupo")!="")?"Sí":"No";
-            //alert(cupo);
+
+            if(record.data.cupo && record.data.cupo!="null")
+                cupo=(record.get("cupo")!="")?"Sí":"No";
+            else
+                cupo="No";
+
             Ext.getCmp("ca_liberacion").setValue(cupo);
+
+//			Ext.getCmp("preferencias").setValue(record.get("preferencias"));
+
             combo.alertaCliente(record);
 
         }

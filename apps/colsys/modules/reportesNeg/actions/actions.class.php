@@ -604,7 +604,7 @@ class reportesNegActions extends sfActions
     //ca_notify:
             if($request->getParameter("transporte") )
             {
-                $reporte->setCaTransporte("Marítimo");
+                $reporte->setCaTransporte(utf8_decode($request->getParameter("transporte")));
                 //$reporte->setCaTransporte($request->getParameter("transporte"));
             }
             else
@@ -690,6 +690,16 @@ class reportesNegActions extends sfActions
             if($request->getParameter("continuacion_dest")   )
             {
                 $reporte->setCaContinuacionDest($request->getParameter("continuacion_dest"));
+            }
+            
+            if($request->getParameter("cont-origen") )
+            {
+                $reporte->setCaContOrigen($request->getParameter("cont-origen"));
+            }
+            
+            if($request->getParameter("cont-destino") )
+            {
+                $reporte->setCaContDestino($request->getParameter("cont-destino"));
             }
 
             if($request->getParameter("idvendedor") && $request->getParameter("idvendedor")!="")
@@ -853,10 +863,212 @@ class reportesNegActions extends sfActions
         //cuando se seleccion una cotizacion se debe marcar el campo aprobado, etapa='APR';
     }
 
+    public function executeGuardarReporteAG( sfWebRequest $request )
+    {
+        
+        $reporte = new Reporte();        
+        $reporte->setCaFchreporte( date("Y-m-d") );
+        $reporte->setCaConsecutivo( ReporteTable::siguienteConsecutivo(date("Y")) );
+        $reporte->setCaVersion( 1 );
+
+
+        if($request->getParameter("idorigen") && $request->getParameter("idorigen")!="")
+        {
+            $reporte->setCaOrigen($request->getParameter("idorigen"));
+        }
+        else
+        {
+            $errors["idorigen"]="Debe seleccionar un origen";
+        }
+
+        if($request->getParameter("iddestino") && $request->getParameter("iddestino")!="")
+        {
+            $reporte->setCaDestino($request->getParameter("iddestino"));
+        }
+        else
+        {
+            $errors["iddestino"]="Debe seleccionar un destino";
+        }
+
+        if($request->getParameter("impoexpo"))
+        {
+            $reporte->setCaImpoexpo(utf8_decode($request->getParameter("impoexpo")));
+        }
+        else
+        {
+            $errors["iddestino"]="Debe seleccionar una clase";
+        }
+
+        if($request->getParameter("idconcliente") )
+        {
+            $reporte->setCaIdconcliente($request->getParameter("idconcliente"));
+
+        }else
+        {
+            $errors["idconcliente"]="Debe seleccionar un termino";
+        }
+
+        if($request->getParameter("idclientefac") )
+        {
+            $reporte->setCaIdclientefac($request->getParameter("idclientefac"));
+        }
+
+        if($request->getParameter("idclienteag") )
+        {
+            $reporte->setCaIdclienteag($request->getParameter("idclienteag"));
+        }
+
+        if($request->getParameter("idclienteotro") )
+        {
+            $reporte->setCaIdclienteotro($request->getParameter("idclienteotro"));
+        }
+
+        if($request->getParameter("idagente") && $request->getParameter("idagente")!="")
+        {
+            if(is_numeric($request->getParameter("idagente")))
+                $reporte->setCaIdagente($request->getParameter("idagente"));
+        }
+        else
+        {
+            $errors["idagente"]="Debe seleccionar un agente";
+        }
+
+        if($request->getParameter("ca_mercancia_desc") && $request->getParameter("ca_mercancia_desc")!="" )
+        {
+            $reporte->setCaMercanciaDesc($request->getParameter("ca_mercancia_desc"));
+        }else
+        {
+            $errors["ca_mercancia_desc"]="Debe colocar un texto de descripcion de la mercacia";
+        }
+
+    //ca_orden_prov:  No aplica
+/*            if($request->getParameter("idconcliente") )
+        {
+            $reporte->setCaIdconcliente($request->getParameter("idconcliente"));
+        }
+*/
+        if($request->getParameter("orden_clie") )
+        {
+            $reporte->setCaOrdenClie($request->getParameter("orden_clie"));
+        }
+/*            $ca_confirmar_clie="";
+        for($i=0;$i<20;$i++)
+        {
+            if($request->getParameter("contacto_".$i))
+            {
+                $ca_confirmar_clie=($ca_confirmar_clie!="")?",":"";
+                $ca_confirmar_clie=$request->getParameter("contacto_".$i);
+            }
+        }
+*/
+
+        if($request->getParameter("consig") )
+        {
+            $reporte->setCaIdconsignatario($request->getParameter("consig"));
+        }
+
+        if($request->getParameter("notify") )
+        {
+            $reporte->setCaIdnotify($request->getParameter("notify"));
+        }
+
+        if($request->getParameter("consigmaster") )
+        {
+            $reporte->setCaIdmaster($request->getParameter("consigmaster"));
+        }
+
+        if($request->getParameter("transporte") )
+        {
+
+            $reporte->setCaTransporte(utf8_decode($request->getParameter("transporte")));
+        }
+        else
+        {
+            $errors["transporte"]="Debe seleccionar un agente";
+        }
+
+        if($request->getParameter("seguros-checkbox") && $request->getParameter("seguros-checkbox")=="on"  )
+        {
+            $reporte->setCaSeguro("Sí");
+        }
+        else
+        {
+            $reporte->setCaSeguro("No");
+        }
+        if($request->getParameter("ca_liberacion") )
+        {
+            $reporte->setCaLiberacion(utf8_decode($request->getParameter("ca_liberacion")));
+        }
+        if($request->getParameter("ca_tiempocredito") )
+        {
+            $reporte->setCaTiempocredito($request->getParameter("ca_tiempocredito"));
+        }
+
+
+
+
+        if($request->getParameter("consignar") && $request->getParameter("consignar")>0  )
+        {
+            $reporte->setCaIdconsignar($request->getParameter("consignar"));
+        }
+        else
+        {
+            //revisar
+            $reporte->setCaIdconsignar(1);
+        }
+
+        if($request->getParameter("idconsigmaster") && $request->getParameter("idconsigmaster")>0  )
+        {
+            $reporte->setCaIdconsignarmaster($request->getParameter("idconsigmaster"));
+        }
+        else
+            $reporte->setCaIdconsignarmaster(0);
+
+        if($request->getParameter("idbodega_hd") && $request->getParameter("idbodega_hd")>0  )
+        {
+            $reporte->setCaIdbodega($request->getParameter("idbodega_hd"));
+        }
+        else
+        {
+            //revisar
+//                $reporte->setCaIdbodega(81);
+        }
+
+
+        if($request->getParameter("idvendedor") && $request->getParameter("idvendedor")!="")
+        {
+            $reporte->setCaLogin($request->getParameter("idvendedor"));
+        }
+        else
+        {
+            if($request->getParameter("vendedor") && $request->getParameter("vendedor")=="")
+            $errors["vendedor"]="Debe asignar una cotizacion con vendedor";
+        }
+
+        if($request->getParameter("ca_mcia_peligrosa") && $request->getParameter("ca_mcia_peligrosa")=="on"  )
+        {
+            $reporte->setCaMciaPeligrosa(true);
+        }
+        else
+        {
+            $reporte->setCaMciaPeligrosa(false);
+        }
+
+        if(count($errors)>0)
+            $this->responseArray=array("success"=>false,"idreporte"=>$idreporte,"redirect"=>$redirect,"errors"=>$errors);
+        else
+        {
+            $reporte->save();            
+            $this->responseArray=array("success"=>true,"idreporte"=>$reporte->getCaIdreporte(),"redirect"=>true);
+        }
+
+        $this->setTemplate("responseTemplate");
+        //cuando se seleccion una cotizacion se debe marcar el campo aprobado, etapa='APR';
+    }
+
+
 
    public function executeGuardarReporte1( sfWebRequest $request ){
-
-
         /*
         * Parametros que se mantienen en caso de que ocurra un error
         */
@@ -1419,20 +1631,6 @@ class reportesNegActions extends sfActions
             }
         }
 
-
-
-
-        
-/*
-        $errors =  array();
-        $errors["ca_liberacion"]="Last Name has to have at least 2 characters";
-        $errors["impoexpo"]="Last Name has to have at least 2 characters";
-
-        $this->responseArray=array("success"=>false,"errors"=>$errors);
-        $this->setTemplate("responseTemplate");
- *
- */
-
 //        $this->responseArray=array("success"=>true,"errors"=>$errors);
         $this->responseArray=array("success"=>true);
         $this->setTemplate("responseTemplate");
@@ -1455,6 +1653,10 @@ class reportesNegActions extends sfActions
             $data["continuacion"]=$reporte->getCaContinuacion();
             $data["continuacion_dest"]=$reporte->getCaContinuacionDest();
             $data["ca_continuacion_conf_".utf8_encode($reporte->getCaContinuacionConf())]= utf8_encode( $reporte->getCaContinuacionConf() );
+
+           $data["cont-origen"]=$reporte->getCaContOrigen();
+            $data["cont-destino"]=$reporte->getCaContDestino();
+
             //$reporte->setCaContinuacionConf
 
             $data["idlinea"]=$reporte->getCaIdlinea();
@@ -1474,10 +1676,8 @@ class reportesNegActions extends sfActions
             $data["idagente"]=$reporte->getCaIdagente();
             $data["agente"]=utf8_encode(/*$ids->getIdsSucursal()->getCiudad()->getCaCiudad() .*/" ".$ids->getCaNombre());
 
-
             $data["idcliente"]=$reporte->getContacto()->getCaIdcliente();
             $data["cliente"]=$reporte->getContacto()->getCliente()->getCaCompania();
-
 
             $data["idconcliente"]=$reporte->getCaIdconcliente();
             $data["contacto"]=$reporte->getContacto()->getCaNombres(). " ".$reporte->getContacto()->getCaPapellido()." ".$reporte->getContacto()->getCaSapellido();
@@ -1488,8 +1688,7 @@ class reportesNegActions extends sfActions
             if($clienteFac)
             {
                 $data["idclientefac"]=$clienteFac->getCaIdcliente();
-                $data["clientefac"]=$clienteFac->getCaCompania();
-                
+                $data["clientefac"]=$clienteFac->getCaCompania();                
             }
             else
             {
@@ -1521,7 +1720,6 @@ class reportesNegActions extends sfActions
                 $data["idclienteotro"]="";
             }
 
-            //$cliente = new Cliente();
             $cliente=$reporte->getContacto()->getCliente();
 
             $data["ca_liberacion"] =($cliente->getLibCliente()->getCaDiascredito()>0)?"Si":"No";
@@ -1542,7 +1740,6 @@ class reportesNegActions extends sfActions
                         $data["idproveedor"]=$values[0];
                         $data["proveedor"] =Utils::replace($tercero->getCaNombre());
                     }
-
                 }
             }
             
@@ -1554,25 +1751,18 @@ class reportesNegActions extends sfActions
                     {
                         $data["contacto_".$i] =utf8_encode($values[$i]);
                         $data["chkcontacto_".$i] =true;
-
                     }
                 }
             }
 
-
-
             $data["fchdespacho"]=$reporte->getCaFchdespacho();
             $data["idvendedor"]=utf8_encode($reporte->getCaLogin());
-            $data["vendedor"]=utf8_encode($reporte->getUsuario()->getCaNombre());
-            
+            $data["vendedor"]=utf8_encode($reporte->getUsuario()->getCaNombre());            
 
             $data["ca_mercancia_desc"]=utf8_encode($reporte->getCaMercanciaDesc());
             $data["ca_mcia_peligrosa"]=$reporte->getCaMciaPeligrosa();
-
-
             
             $data["instrucciones"]=utf8_encode($reporte->getCaInstrucciones());
-
 
             $data["ca_colmas"]=utf8_encode($reporte->getCaColmas());
             $repaduana = Doctrine::getTable("RepAduana")->find( $reporte->getCaIdreporte());
@@ -1588,7 +1778,6 @@ class reportesNegActions extends sfActions
             if( !$this->repseguro ){
                 $this->repseguro = new RepSeguro();
             }
-
 //            
 //            $usuario = Doctrine::getTable("Usuario")->find( $repseguro->getCaSeguroConf() );
             $data["ca_seguro"]=utf8_encode($reporte->getCaSeguro());
@@ -1605,8 +1794,6 @@ class reportesNegActions extends sfActions
             $data["ca_primaventa"]=Utils::formatNumber($repseguro->getCaPrimaventa(), 3);
             $data["ca_minimaventa"]=Utils::formatNumber($repseguro->getCaMinimaventa(), 3);
             $data["ca_idmoneda_vta"]=$repseguro->getCaIdmonedaVta();
-
-
 
             $data["consignarmaster"]=$reporte->getConsignarmaster();
             $data["tipobodega"]=utf8_encode($reporte->getBodega()->getCaTipo());

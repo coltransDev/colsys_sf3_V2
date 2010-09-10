@@ -51,9 +51,3 @@
 <br />
 </div>
 
-<?
-include_component("kbase","tooltipById", array("idcategory"=>18));
-if( $opcion=="ayudas" ){
-    include_component("kbase","tooltipCreator", array("idcategory"=>18));
-}
-?>

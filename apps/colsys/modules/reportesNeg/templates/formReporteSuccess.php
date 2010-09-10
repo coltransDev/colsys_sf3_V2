@@ -15,7 +15,7 @@ include_component("widgets", "widgetTercero");
 Ext.onReady(function(){
 Ext.QuickTips.init();
     var formPanel = new FormReportePanel({
-        title: "Reportes de Negocio <?=$reporte->getCaIdreporte()?$reporte->getCaConsecutivo()." ".$reporte->getCaVersion()."/".$reporte->numVersiones():""?>",
+        title: "Reportes de Negocio <?=$reporte->getCaIdreporte()?$reporte->getCaConsecutivo()." ".$reporte->getCaVersion()."/".$reporte->numVersiones():""?> - <?=$impoexpo?> - <?=$modo?>    ",
         editable: <?=$editable?"true":"false"?>,
         nuevaVersion: <?=$nuevaVersion?"true":"false"?>,
         copiar: <?=$copiar?"true":"false"?>,

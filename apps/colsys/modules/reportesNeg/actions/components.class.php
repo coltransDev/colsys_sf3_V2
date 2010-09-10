@@ -90,8 +90,6 @@ class reportesNegComponents extends sfComponents
 
          }
 	}
-
-
     /*
 	* Muestra los conceptos del reporte y un formulario para agregar un nuevo registro, tambien
 	* permite editar un campo haciendo doble click en el.
@@ -118,8 +116,6 @@ class reportesNegComponents extends sfComponents
 
          }
 	}
-
-
     /*
 	* Muestra los conceptos del reporte y un formulario para agregar un nuevo registro, tambien
 	* permite editar un campo haciendo doble click en el.
@@ -214,7 +210,6 @@ class reportesNegComponents extends sfComponents
 
 	public function executeFormMercanciaPanel()
 	{
-
 		$this->sia = Doctrine::getTable("Sia")
                                      ->createQuery("s")
                                      ->select("s.ca_idsia,s.ca_nombre")
@@ -260,9 +255,7 @@ class reportesNegComponents extends sfComponents
                 $this->usuarios[$usuario->getCaSucursal()].="<br>";
             $this->usuarios[$usuario->getCaSucursal()].=$usuario->getCaEmail();
         }
-
 	}
-
 
     public function executeFormAduanasPanel()
 	{
@@ -279,12 +272,6 @@ class reportesNegComponents extends sfComponents
 
     public function executeFormSegurosPanel()
     {
-
-/*        $this->monedas = Doctrine::getTable("Moneda")
-                   ->createQuery("m")
-                   ->orderBy("m.ca_idmoneda")
-                   ->execute();
-  */
         $usuarios = Doctrine::getTable("Usuario")
                ->createQuery("u")
                ->select("u.ca_login")
@@ -303,7 +290,7 @@ class reportesNegComponents extends sfComponents
     }
     /*
 	* Edita la informacion basica del trayecto
-	* @author: Andres Botero
+	* @author:
 	*/
     public function executeFormTrayectoPanel()
     {
