@@ -88,7 +88,12 @@ elseif (isset($boton)) {                                                       /
     switch(trim($boton)) {
         case 'Buscar':{
              if (isset($criterio) and !isset($condicion)) {
-                 $condicion= "where lower($modalidad) like lower('%".$criterio."%')"; }
+                 if ($modalidad == 'ca_idcliente'){
+                    $condicion= "where $modalidad = ".$criterio;
+                 }else{
+                    $condicion= "where lower($modalidad) like lower('%".$criterio."%')";
+                 }
+             }
              if (!$rs->Open("select ca_idcliente, ca_compania, ca_idcontacto, ca_ncompleto_cn, ca_cargo, ca_direccion_cl, ca_oficina, ca_torre, ca_interior, ca_complemento, ca_telefonos, ca_fax, ca_email, ca_preferencias, ca_confirmar, ca_cupo, ca_diascredito, ca_vendedor from vi_concliente $condicion")) {               // Selecciona todos lo registros de la tabla de Contactos
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
                  echo "<script>location.href = 'entrada.php';</script>";
