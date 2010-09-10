@@ -355,7 +355,12 @@ div.grey{
 .toolbarbtnWraper{
   float:left;
   margin-left: 5px;
-  padding: 2px 2px 2px 2px;
+  padding: 2px ;
+}
+
+.toolbarbtnhelp{
+    float: right; right: 20px; padding: 2px
+
 }
 
 .toolbar a.toolbarBtn{
