@@ -52,6 +52,12 @@ switch($action){
 		$button[$i]["image"]="22x22/copy.gif"; 		
 		$button[$i]["link"]= "cotizaciones/copiarCotizacion?idcotizacion=".$this->getRequestParameter("id");
 		$i++;
+
+                $button[$i]["name"]="Nueva Version ";
+		$button[$i]["tooltip"]="Crea una nueva versi&oacute;n con los datos de la cotizaci&oacute;n anterior";
+		$button[$i]["image"]="22x22/copy.gif";
+		$button[$i]["link"]= "cotizaciones/copiarCotizacion?idcotizacion=".$this->getRequestParameter("id")."&nv=true";
+		$i++;
 		
 		$button[$i]["name"]="Anular ";
 		$button[$i]["tooltip"]="Anula la cotizaci&oacute;n";
@@ -93,4 +99,5 @@ if( $action!="ayuda" ){
 	$button[$i]["link"]= "cotizaciones/ayuda";
 	$i++;*/
 }
+
 ?>
