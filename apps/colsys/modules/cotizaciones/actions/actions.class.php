@@ -153,7 +153,7 @@ class cotizacionesActions extends sfActions
                 }
 
 		$this->cotizacion = $cotizacion;
-            }else {
+            }else {                
                 $config = sfConfig::get('sf_app_module_dir').DIRECTORY_SEPARATOR."cotizaciones".DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."textos.yml";
                 $textos = sfYaml::load($config);
                 $user = $this->getUser()->getUserId();
