@@ -511,4 +511,37 @@ InoCentroCosto:
       notnull: true
 
 
-    
+InoAuditor:
+  generatePath: ino
+  tableName: ino.tb_auditor
+  columns:
+    ca_idevento:
+      type: integer
+      autoincrement: true
+      primary: true
+    ca_referencia: string
+    ca_fchevento: datetime
+    ca_tipo : string
+    ca_asunto: string
+    ca_detalle : string
+    ca_compromisos: string
+    ca_fchcompromiso : date
+    ca_idantecedente: integer
+    ca_usuario: string
+    ca_sucursal: string
+    ca_modulo: integer
+    ca_estado: char
+  relations:
+    InoMaestra:
+      local: ca_referencia
+      foreign: ca_referencia
+      type: many
+    UsuCreado:
+      local: ca_usuario
+      foreign: ca_login
+      type: one
+      class: Usuario
+    InoAuditor:
+      local: ca_idevento
+      foreign: ca_idantecedente
+      type: many
