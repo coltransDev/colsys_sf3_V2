@@ -86,6 +86,8 @@ Reporte:
     ca_idclientefac: numeric
     ca_idclienteag: numeric
     ca_idclienteotro: numeric
+    ca_cont_origen: integer
+    ca_cont_destino: integer
   relations:
     RepStatus:
       local: ca_idreporte
@@ -179,6 +181,16 @@ Reporte:
       foreign: ca_idcliente
       type: one
       class: Cliente
+    ContOrigen:
+      local: ca_cont_origen
+      foreign: ca_idbodega
+      type: one
+      class: Bodega
+    ContDestino:
+      local: ca_cont_destino
+      foreign: ca_idbodega
+      type: one
+      class: Bodega
 
 RepStatus:
   options:
@@ -441,8 +453,7 @@ RepSeguro:
     ca_idmoneda_pol: string
     ca_seguro_conf:
       type: string
-      notnull: true
-    ca_idmonedaventa: string
+      notnull: true    
   relations:
     Reporte:
       local: ca_idreporte
