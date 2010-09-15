@@ -63,7 +63,7 @@ WidgetCotizacion = function( config ){
     });
 
     this.resultTpl = new Ext.XTemplate(
-        '<tpl for="."><div class="search-item"><strong>{consecutivo}</strong><br /><span><br />{origen} - {destino}</span> </div></tpl>'
+        '<tpl for="."><div class="search-item"><strong>{consecutivo}</strong><br /><span><br />{modalidad} {origen} - {destino}</span> </div></tpl>'
     );
 
     WidgetCotizacion.superclass.constructor.call(this, {
