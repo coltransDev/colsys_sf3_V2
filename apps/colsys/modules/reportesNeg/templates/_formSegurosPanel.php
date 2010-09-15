@@ -40,6 +40,7 @@ include_component("widgets", "widgetMoneda");
                                 checkboxToggle:true,
                                 title: 'Seguros',
                                 autoHeight:true,
+                                collapsed: true,
                                 layout:'column',                                
                                 id:"seguros",
                                 name:"seguros",

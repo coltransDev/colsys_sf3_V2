@@ -1,4 +1,5 @@
 <?php
+
 include_component("reportesNeg", "formTrayectoPanel",array("modo"=>$modo,"impoexpo"=>$impoexpo,"permiso"=>$permiso));
 include_component("reportesNeg", "formClientePanel",array("modo"=>$modo,"impoexpo"=>$impoexpo,"permiso"=>$permiso));
 include_component("reportesNeg", "formFacturacionPanel",array("modo"=>$modo,"impoexpo"=>$impoexpo,"permiso"=>$permiso));
@@ -7,7 +8,7 @@ include_component("reportesNeg", "formCorteGuiasPanel",array("modo"=>$modo,"impo
 
 if($impoexpo!="Triangulación")
 {
-include_component("reportesNeg", "formAduanasPanel");
+include_component("reportesNeg", "formAduanasPanel",array("modo"=>$modo,"impoexpo"=>$impoexpo));
 }
 include_component("reportesNeg", "formSegurosPanel",array("modo"=>$modo,"impoexpo"=>$impoexpo));
 

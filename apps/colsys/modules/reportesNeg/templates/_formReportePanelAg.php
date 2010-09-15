@@ -6,7 +6,7 @@ include_component("widgets", "widgetPais");
 include_component("widgets", "widgetCiudad");
 include_component("widgets", "widgetAgente");
 include_component("widgets", "widgetComerciales");
-
+include_component("widgets", "widgetIncoterms");
 include_component("widgets", "widgetTransporte");
 include_component("widgets", "widgetImpoexpo");
 include_component("reportesNeg", "formMercanciaPanel",array("modo"=>$modo,"impoexpo"=>$impoexpo));
@@ -46,13 +46,33 @@ include_component("widgets", "widgetContactoCliente");
 
 
         FormReportePanelAg.superclass.constructor.call(this, {
-            labelWidth:80,
+            labelWidth:120,
             frame: true,
             buttonAlign: 'center',
             layout:'fit',
             monitorValid:true,
             fileUpload : true,
             items: [
+                {
+                    xtype:'fieldset',
+                    title: 'General',
+                    autoHeight:true,
+
+                    layout:'form',
+                    defaults: {width: 200},
+                    items :
+                    [
+                        {
+                            xtype: "datefield",
+                            fieldLabel: "Fecha de Despacho",
+                            id: "fchdespacho",
+                            name: "fchdespacho",
+                            format: 'Y-m-d',
+                            value:'<?=date('Y-m-d')?>'
+                        }
+                        
+                    ]
+                },
                 {
                     xtype:'fieldset',
                     title: 'Información del trayecto',
@@ -66,13 +86,8 @@ include_component("widgets", "widgetContactoCliente");
                         bodyStyle:'padding:4px'
                     },
                     items :
-                        [
-                            {
-                                xtype:"hidden",
-                                id: 'impoexpo',
-                                name: 'impoexpo',
-                                value:'<?=$impoexpo?>'
-                            },                            
+                        [                           
+                                                
                         /*
                          * =========================Column 1 =========================
                          **/
@@ -86,6 +101,12 @@ include_component("widgets", "widgetContactoCliente");
                                                 id: 'transporte',
                                                 name:'transporte'
                                                }),
+                                new WidgetModalidad({fieldLabel: 'Tipo Envio',
+                                                    id: 'modalidad',
+                                                    hiddenName: "idmodalidad",
+                                                    linkTransporte: "transporte",
+                                                    linkImpoexpo: "impoexpo"
+                                                    }),
                                 new WidgetPais({fieldLabel: 'País Origen',
                                                 id: 'tra_origen_id',
                                                 linkCiudad: 'origen',
@@ -126,10 +147,14 @@ include_component("widgets", "widgetContactoCliente");
                             defaultType: 'textfield',
                             items: [
                                 new WidgetImpoexpo({fieldLabel: 'Impoexpo',
-                                                id: 'impo_expo',
+                                                id: 'impoexpo',
                                                 name:'impoexpo'
                                                }),
-                                
+                                new WidgetIncoterms({fieldLabel: 'Terminos',
+                                                  id: 'terminos',
+                                                  hiddenName:"incoterms",
+												  width:250
+                                                }),
                                 new WidgetPais({fieldLabel: 'País Destino',
                                                 id: 'tra_destino_id',
                                                 linkCiudad: 'destino',
@@ -142,7 +167,8 @@ include_component("widgets", "widgetContactoCliente");
                                                   id: 'destino',
                                                   idciudad:"destino",
                                                   hiddenName:"iddestino"
-                                                })                                
+                                                })
+                                 
                             ]
                         }
                     ]
@@ -193,12 +219,20 @@ include_component("widgets", "widgetContactoCliente");
                             readOnly: true,
                             width: 100
                         },
-                         new WidgetComerciales({fieldLabel: 'Vendedor',
+                        new WidgetTercero({fieldLabel:"Proveedor",
+                                            tipo: 'Proveedor',
+                                            width: 600,
+                                            name: "idproveedor",
+                                            hiddenName: "prov",
+                                            id:"proveedor",
+                                            name:"proveedor"
+                                           }),
+                                           new WidgetComerciales({fieldLabel: 'Vendedor',
                                                     id: 'vendedor',
                                                     name: 'vendedor',
                                                     hiddenName: "idvendedor"
                                                     })
-
+                         
                     ]
                 },
                 {
@@ -233,13 +267,22 @@ include_component("widgets", "widgetContactoCliente");
                 {
 
                     xtype:'fieldset',
-                    title: 'Documentos',
+                    title: 'Mensaje para el Representante Comercial',
                     autoHeight:true,
                     //defaults: {width: 210},
                     items: [
                         {
+                            xtype: 'textarea',
+                            fieldLabel: 'Mensaje adicional',                            
+                            name: 'mensaje_comercial',
+                            width: 600,
+                            grow: true,
+                            id:"mensaje_comercial"
+                        },                    
+                        {
                             xtype: 'fileuploadfield',
                             id: 'archivo',
+                            name:'archivo',
                             width: 250,
                             fieldLabel: 'Adjuntar',
                             emptyText: 'Seleccione un archivo',
@@ -249,6 +292,72 @@ include_component("widgets", "widgetContactoCliente");
                             }
                         }
 
+                    ]
+                }
+                ,
+                {
+                    xtype:'fieldset',
+                    title: 'Informaciones a:',
+                    autoHeight:true,
+                    layout:'column',
+                    columns: 2,
+
+                    defaults:{
+                        columnWidth:0.5,
+                        layout:'form',
+                        border:false,
+                       /* bodyStyle:'padding:4px',*/
+                        hideLabels:true,
+                        border:true
+                    },
+                    items: [
+                        {
+                            defaultType: 'textfield',
+                            items: [
+                                <?
+                                for( $i=0; $i<20; $i++ )
+                                {
+                                    if( $i!=0){
+                                        echo ",";
+                                    }
+                                ?>
+                                {
+                                    xtype: "textfield",
+                                    fieldLabel: "",
+                                    name: "contacto_<?=$i?>",
+                                    id: "contacto_<?=$i?>",
+                                    readOnly: true,
+                                    width: 550,
+                                    height :(navigator.appName=="Netscape")?20:22
+                                }
+                                <?
+                                }
+                                ?>
+                            ]
+                        },
+                        {
+                            defaults: {width: 20},
+                            items: [
+                                <?
+                                for( $i=0; $i<20; $i++ ):
+                                    if( $i!=0){
+                                        echo ",";
+                                    }
+                                ?>
+                                {
+                                    xtype: "checkbox",
+                                    fieldLabel: "",
+                                    name: "chkcontacto_<?=$i?>",
+                                    id: "chkcontacto_<?=$i?>",
+                                    width: 20,
+                                    height :20
+
+                                }
+                                <?
+                                endfor;
+                                ?>
+                            ]
+                        }
                     ]
                 }
 
@@ -288,9 +397,18 @@ include_component("widgets", "widgetContactoCliente");
                     waitTitle:'Por favor espere...',                    
                     success: function(gridForm, action) {
                         var res = Ext.util.JSON.decode( action.response.responseText );
-                        Ext.MessageBox.alert("Mensaje",'Se guardo correctamente el reporte');
-                        if(res.redirect)                            
-                            location.href="/reportesNeg/consultaReporte/id/"+res.idreporte+"/impoexpo/<?=$impoexpo?>/modo/<?=$modo?>";
+                        alert('Se guardo correctamente el reporte');
+                        if(window.confirm('Desea enviar status inmediatamente?'))
+                        {
+                            if(res.transporte=='<?=Constantes::AEREO?>')
+                                location.href="/traficos/listaStatus/modo/maritimo?reporte="+res.consecutivo;
+                            else
+                                location.href="/traficos/listaStatus/modo/aereo?reporte="+res.consecutivo;
+                        }
+                        else
+                        {
+                            location.href="/verReporte/id/"+res.idreporte+"/modo/"+res.transporte+"/impoexpo/"+res.impoexpo;
+                        }
                     }
                     ,
                     failure:function(form,action){
@@ -322,8 +440,10 @@ include_component("widgets", "widgetContactoCliente");
             Ext.getCmp("idconcliente").setValue(record.get("idcontacto"));
             Ext.getCmp("contacto").setValue(record.get("nombre")+' '+record.get("papellido")+' '+record.get("sapellido") );
 
+            Ext.getCmp("vendedor").setValue(record.data.vendedor);
+            $("#vendedor").val(record.data.nombre_ven);
 
-/*            var confirmar =  record.get("confirmar") ;
+            var confirmar =  record.get("confirmar") ;
 			var brokenconfirmar="";
 			if(confirmar)
 			{
@@ -342,7 +462,7 @@ include_component("widgets", "widgetContactoCliente");
 					Ext.getCmp("chkcontacto_"+i).setValue( false );
 				}
 			}
-*/
+
             diascredito=(record.get("diascredito"))?record.get("diascredito")+" dias":"0";
             Ext.getCmp("ca_tiempocredito").setValue(diascredito);
 

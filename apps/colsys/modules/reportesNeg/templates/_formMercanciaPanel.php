@@ -19,8 +19,7 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047,CU049,C
                     items: [
                         {
                             xtype: 'textarea',
-                            fieldLabel: 'Descripción',
-                            hideLabel: true,
+                            fieldLabel: 'Descripción',                            
                             name: 'ca_mercancia_desc',
                             width: 600,
                             grow: true,

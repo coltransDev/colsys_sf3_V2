@@ -285,6 +285,8 @@ if($permiso>=2)
 
             Ext.getCmp("cliente").setValue(record.data.idcliente);
             $("#cliente").attr("value",record.data.compania);
+            $("#idconcliente").attr("value",record.data.idcontacto);
+
 
             Ext.getCmp("terminos").setValue(record.data.incoterms);
 

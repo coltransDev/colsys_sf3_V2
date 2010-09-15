@@ -179,7 +179,7 @@ $cliente = $contacto->getCliente();
 $pdf->SetWidths ( array (25, 25, 85, 25, 40 ) );
 $pdf->SetFills ( array (1, 0, 0, 0, 0 ) );
 $pdf->SetStyles ( array ("B", "B", "", "B", "" ) );
-$pdf->Row ( array ('Cliente:', 'Nombre:', $cliente->getCaCompania (), $reporte->getCaOrdenClie () != "''" ? 'Orden:' : ' ', $reporte->getCaOrdenClie () != "''" ? $reporte->getCaOrdenClie () : " " ) );
+$pdf->Row ( array ('Cliente:', 'Nombre:', $cliente->getCaCompania ()." Nit : ".$cliente->getCaIdcliente()."-".$cliente->getCaDigito(), $reporte->getCaOrdenClie () != "''" ? 'Orden:' : ' ', $reporte->getCaOrdenClie () != "''" ? $reporte->getCaOrdenClie () : " " ) );
 $pdf->SetWidths ( array (5, 20, 70, 25, 80 ) );
 $pdf->Row ( array ('', 'Contacto:', $contacto->getNombre (), 'Dirección:', str_replace ( "|", " ", $cliente->getCaDireccion () ) . $cliente->getCaComplemento () ) );
 $pdf->SetWidths ( array (5, 20, 40, 15, 30, 18, 72 ) );
@@ -320,6 +320,7 @@ $tiempo_cred = ($reporte->getCaLiberacion()=='Sí')?" Tiempo de Crédito: ".$repor
 if( $reporte->getCaImpoexpo()==Constantes::IMPO ){
     $pdf->SetWidths ( array (40, 10, 35, 10, 35, 70 ) );
     $pdf->Row ( array ('Colmas Ltda:', $reporte->getCaColmas (), 'Seguro:', $reporte->getCaSeguro () ,'Lib. Automática:' ,$reporte->getCaLiberacion().$tiempo_cred ) );
+//    if( $reporte->getCaTransporte()==Constantes::MARITIMO )
     $pdf->Row ( array ('Firma Contrato Comodato', $reporte->getCaComodato(), '', '' ,'' ,'' ) );
 }else{
     $pdf->SetWidths ( array (40, 10, 35, 10, 105 ) );

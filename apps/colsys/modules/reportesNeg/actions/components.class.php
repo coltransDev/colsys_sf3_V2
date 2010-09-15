@@ -18,29 +18,50 @@ class reportesNegComponents extends sfComponents
     public function load_category()
     {
         $this->impoexpo=$this->getRequestParameter("impoexpo");
-        if($this->impoexpo==Constantes::IMPO)
+
+        if($this->impoexpo==Constantes::IMPO || utf8_decode($this->impoexpo)==Constantes::IMPO)
         {
+            $this->impoexpo=Constantes::IMPO;
             $this->modo=$this->getRequestParameter("modo");
-            if($this->modo==Constantes::AEREO)
+            if($this->modo==Constantes::AEREO || utf8_decode($this->modo)==Constantes::AEREO)
+            {
+                $this->modo=Constantes::AEREO;
                 $this->idcategory="31";
-            else if($this->modo==Constantes::MARITIMO)
+            }
+            else if($this->modo==Constantes::MARITIMO || utf8_decode($this->modo)==Constantes::MARITIMO)
+            {
+                $this->modo=Constantes::MARITIMO;
                 $this->idcategory="32";
+            }
         }
-        else if($this->impoexpo==Constantes::EXPO)
+        else if($this->impoexpo==Constantes::EXPO || utf8_decode($this->impoexpo)==Constantes::EXPO)
         {
+            $this->impoexpo=Constantes::EXPO;
             $this->modo=$this->getRequestParameter("modo");
-            if($this->modo==Constantes::AEREO)
+            if($this->modo==Constantes::AEREO || utf8_decode($this->modo)==Constantes::AEREO)
+            {
+                $this->modo=Constantes::AEREO;
                 $this->idcategory="34";
-            else if($this->modo==Constantes::MARITIMO)
+            }
+            else if($this->modo==Constantes::MARITIMO || utf8_decode($this->modo)==Constantes::MARITIMO)
+            {
+                $this->modo=Constantes::MARITIMO;
                 $this->idcategory="35";
+            }
         }
         else
         {
             $this->modo=$this->getRequestParameter("modo");
-            if($this->modo==Constantes::AEREO)
+            if($this->modo==Constantes::AEREO || utf8_decode($this->modo)==Constantes::AEREO)
+            {
+                $this->modo=Constantes::AEREO;
                 $this->idcategory="37";
-            else if($this->modo==Constantes::MARITIMO)
+            }
+            else if($this->modo==Constantes::MARITIMO || utf8_decode($this->modo)==Constantes::MARITIMO)
+            {
+                $this->modo=Constantes::MARITIMO;
                 $this->idcategory="38";
+            }
         }
 
     }
@@ -157,10 +178,10 @@ class reportesNegComponents extends sfComponents
 	{
 //        echo "categoria:".$this->getRequestParameter("idcategory")."<br>";
         $this->permiso = $this->getUser()->getNivelAcceso( "87" );
-
+        $this->load_category();
         if($this->permiso=="3")
         {
-            $this->load_category();
+        //    $this->load_category();
 //            echo $this->idcategory;
             $this->issues = Doctrine::getTable("KBTooltip")
                                 ->createQuery("t")
@@ -259,8 +280,8 @@ class reportesNegComponents extends sfComponents
 
     public function executeFormAduanasPanel()
 	{
-        echo $this->impoexpo;
-        $perfil=($this->impoexpo==Constantes::EXPO)?"coordinador-de-servicio-al-cliente-aduana":"coordinador-aduana-expo";
+        //echo $this->impoexpo;
+        $perfil=($this->impoexpo==Constantes::IMPO)?"coordinador-de-servicio-al-cliente-aduana":"coordinador-aduana-expo";
         $this->usuarios = Doctrine::getTable("Usuario")
                                    ->createQuery("u")
                                    ->innerJoin("u.UsuarioPerfil up")

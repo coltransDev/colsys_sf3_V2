@@ -37,19 +37,23 @@ class reportesNegActions extends sfActions
 			$this->forward( "reportesNeg", "seleccionModo" );
 		}
 
-		if( $this->modo=="Aéreo" ){
+		if( $this->modo==Constantes::AEREO  || utf8_decode($this->modo) == Constantes::AEREO ){
+            $this->modo=Constantes::AEREO;
 			$this->nivel = $this->getUser()->getNivelAcceso( reportesNegActions::RUTINA_AEREO );
 		}
 
-		if( $this->modo=="Marítimo" ){
+		if( $this->modo==Constantes::MARITIMO || utf8_decode($this->modo)==Constantes::MARITIMO  ){
+            $this->modo=Constantes::MARITIMO;
 			$this->nivel = $this->getUser()->getNivelAcceso( reportesNegActions::RUTINA_MARITIMO );
 		}
 		
-        if( $this->modo=="Exportación" ){
+        if( $this->modo==Constantes::EXPO || utf8_decode($this->modo)==Constantes::EXPO ){
+            $this->modo=Constantes::EXPO;
 			$this->nivel = $this->getUser()->getNivelAcceso( reportesNegActions::RUTINA_EXPO );
 		}
 
-        if( $this->modo=="Triangulación" ){
+        if( $this->modo==Constantes::TRIANGULACION || utf8_decode($this->modo)==Constantes::TRIANGULACION ){
+            $this->modo=Constantes::TRIANGULACION;
 			$this->nivel = $this->getUser()->getNivelAcceso( reportesNegActions::RUTINA_AEREO );
 		}
 
@@ -67,29 +71,50 @@ class reportesNegActions extends sfActions
     public function load_category()
     {
         $this->impoexpo=$this->getRequestParameter("impoexpo");
-        if($this->impoexpo==Constantes::IMPO)
+
+        if($this->impoexpo==Constantes::IMPO || utf8_decode($this->impoexpo)==Constantes::IMPO)
         {
+            $this->impoexpo=Constantes::IMPO;
             $this->modo=$this->getRequestParameter("modo");
-            if($this->modo==Constantes::AEREO)
+            if($this->modo==Constantes::AEREO || utf8_decode($this->modo)==Constantes::AEREO)
+            {
+                $this->modo=Constantes::AEREO;
                 $this->idcategory="31";
-            else if($this->modo==Constantes::MARITIMO)
+            }
+            else if($this->modo==Constantes::MARITIMO || utf8_decode($this->modo)==Constantes::MARITIMO)
+            {
+                $this->modo=Constantes::MARITIMO;
                 $this->idcategory="32";
+            }
         }
-        else if($this->impoexpo==Constantes::EXPO)
+        else if($this->impoexpo==Constantes::EXPO || utf8_decode($this->impoexpo)==Constantes::EXPO)
         {
+            $this->impoexpo=Constantes::EXPO;
             $this->modo=$this->getRequestParameter("modo");
-            if($this->modo==Constantes::AEREO)
+            if($this->modo==Constantes::AEREO || utf8_decode($this->modo)==Constantes::AEREO)
+            {
+                $this->modo=Constantes::AEREO;
                 $this->idcategory="34";
-            else if($this->modo==Constantes::MARITIMO)
+            }
+            else if($this->modo==Constantes::MARITIMO || utf8_decode($this->modo)==Constantes::MARITIMO)
+            {
+                $this->modo=Constantes::MARITIMO;
                 $this->idcategory="35";
+            }
         }
         else
         {
             $this->modo=$this->getRequestParameter("modo");
-            if($this->modo==Constantes::AEREO)
+            if($this->modo==Constantes::AEREO || utf8_decode($this->modo)==Constantes::AEREO)
+            {
+                $this->modo=Constantes::AEREO;
                 $this->idcategory="37";
-            else if($this->modo==Constantes::MARITIMO)
+            }
+            else if($this->modo==Constantes::MARITIMO || utf8_decode($this->modo)==Constantes::MARITIMO)
+            {
+                $this->modo=Constantes::MARITIMO;
                 $this->idcategory="38";
+            }
         }
     }
 	/**
@@ -117,9 +142,9 @@ class reportesNegActions extends sfActions
             $this->forward404();
 
         $con = Doctrine_Manager::getInstance()->connection();
-		$sql="select * from vi_repconsulta where ca_colmas = '' and ca_idetapa !='99999' and ca_incoterms NOT LIKE 'CIF%' and ca_incoterms NOT LIKE 'CIP%' and ca_incoterms NOT LIKE 'CPT%' and ca_incoterms NOT LIKE 'CFR%' ";
+		$sql="select * from vi_repconsultaAg  ";
         if($this->permiso<2)
-            $sql.="ca_login='".$this->getUser()->getUserId()."'";
+            $sql.="where ca_login='".$this->getUser()->getUserId()."'";
 
 		$st = $con->execute($sql);
 	//recuperamos las tuplas de resultados
@@ -271,7 +296,8 @@ class reportesNegActions extends sfActions
 	/*
 	* Permite ver una cotización en formato PDF
 	*/
-	public function executeVerReporte(){
+	public function executeVerReporte(){        
+        $this->load_category();
 
         $this->opcion = $this->getRequestParameter("opcion");
 
@@ -357,7 +383,7 @@ class reportesNegActions extends sfActions
 
 
             $user = $this->getUser();
-            if( !$reporte->isNew() && $user->getUserId()!=$reporte->getCaUsucreado() ){
+            if( !$reporte->isNew() && ($user->getUserId()!=$reporte->getCaUsucreado() && $user->getUserId()!=$reporte->getCaLogin() ) ){
                 $this->editable = false;
             }
 
@@ -391,7 +417,8 @@ class reportesNegActions extends sfActions
 
 
     public function executeFormReporteAg(sfWebRequest $request){
-
+        $response = sfContext::getInstance()->getResponse();
+		$response->addJavaScript("extExtras/FileUploadField",'last');
         $this->nivel = $this->getNivel();
         $this->impoexpo = Constantes::IMPO;
         $this->load_category();
@@ -457,6 +484,10 @@ class reportesNegActions extends sfActions
             {
                 $errors["cotizacion"]="Debe asignar un cotizacion";
             }
+            else if($this->permiso>=2)
+            {
+                $reporte->setCaIdcotizacion(0);
+            }
 
             if($request->getParameter("idorigen") && $request->getParameter("idorigen")!="")
             {                
@@ -508,7 +539,7 @@ class reportesNegActions extends sfActions
 
             }else
             {
-                $errors["idconcliente"]="Debe seleccionar un termino";
+                $errors["idconcliente"]="Debe seleccionar un cliente";
             }
 
 			if($request->getParameter("idclientefac") )
@@ -560,10 +591,10 @@ class reportesNegActions extends sfActions
             $ca_confirmar_clie="";
             for($i=0;$i<20;$i++)
             {
-                if($request->getParameter("contacto_".$i))
+                if($request->getParameter("chkcontacto_".$i)=="on")
                 {
-                    $ca_confirmar_clie=($ca_confirmar_clie!="")?",":"";
-                    $ca_confirmar_clie=$request->getParameter("contacto_".$i);
+                    $ca_confirmar_clie.=($ca_confirmar_clie!="")?",":"";
+                    $ca_confirmar_clie.=$request->getParameter("contacto_".$i);
                 }
             }
 
@@ -615,6 +646,10 @@ class reportesNegActions extends sfActions
             {
                 $reporte->setCaModalidad($request->getParameter("idmodalidad"));
             }
+            else
+            {
+                $errors["idmodalidad"]="Debe seleccionar un tipo de envio";
+            }
 
             if($request->getParameter("seguros-checkbox") && $request->getParameter("seguros-checkbox")=="on"  )
             {
@@ -647,13 +682,13 @@ class reportesNegActions extends sfActions
 
 
             if($request->getParameter("idlinea") && $request->getParameter("idlinea")!="")
-            {
-                if(is_numeric($request->getParameter("idlinea")))
-                    $reporte->setCaIdlinea($request->getParameter("idlinea"));
+            {                
+                $reporte->setCaIdlinea($request->getParameter("idlinea"));
             }
             else
             {
-                $errors["linea"]="Debe seleccionar un linea";
+                $reporte->setCaIdlinea(0);
+//                $errors["linea"]="Debe seleccionar un linea";
             }
 
             if($request->getParameter("consignar") && $request->getParameter("consignar")>0  )
@@ -673,23 +708,34 @@ class reportesNegActions extends sfActions
             else
                 $reporte->setCaIdconsignarmaster(0);
 
-            if($request->getParameter("idbodega_hd") && $request->getParameter("idbodega_hd")>0  )
+            if($request->getParameter("idbodega_hd") )
             {
                 $reporte->setCaIdbodega($request->getParameter("idbodega_hd"));
             }
             else
             {
-                //revisar
-//                $reporte->setCaIdbodega(81);
+                if($reporte->getCaIdbodega()!="")
+                    $reporte->setCaIdbodega(1);
             }
     //ca_mastersame:
             if($request->getParameter("continuacion")   )
             {
                 $reporte->setCaContinuacion($request->getParameter("continuacion"));
             }
+            else
+            {
+                if($reporte->getCaContinuacion()!="")
+                    $reporte->setCaContinuacion(1);
+                $reporte->setCaContinuacion("N/A");
+            }
+
             if($request->getParameter("continuacion_dest")   )
             {
                 $reporte->setCaContinuacionDest($request->getParameter("continuacion_dest"));
+            }
+            else
+            {
+                $reporte->setCaContinuacionDest($request->getParameter("iddestino"));
             }
             
             if($request->getParameter("cont-origen") )
@@ -755,7 +801,7 @@ class reportesNegActions extends sfActions
                 $cotseguimientos = new CotSeguimiento();
                 $cotseguimientos->aprobarSeguimiento($param);
             }
-            if($request->getParameter("seguros-checkbox")== "on")
+            if($request->getParameter("seguros-checkbox")== "on" && $request->getParameter("ca_vlrasegurado")!="")
 			{
                 $repSeguro = Doctrine::getTable("RepSeguro")->findOneBy("ca_idreporte", $reporte->getCaIdreporte() );
                 if(!$repSeguro)
@@ -863,14 +909,32 @@ class reportesNegActions extends sfActions
         //cuando se seleccion una cotizacion se debe marcar el campo aprobado, etapa='APR';
     }
 
-    public function executeGuardarReporteAG( sfWebRequest $request )
+    public function executeGuardarReporteAg( sfWebRequest $request )
     {
+
+        $errors =  array();
         
         $reporte = new Reporte();        
         $reporte->setCaFchreporte( date("Y-m-d") );
         $reporte->setCaConsecutivo( ReporteTable::siguienteConsecutivo(date("Y")) );
         $reporte->setCaVersion( 1 );
 
+        $reporte->setCaIdconsignar(1);
+        $reporte->setCaIdbodega(1);
+        $reporte->setCaIdconsignarmaster(0);
+        $reporte->setCaIdlinea(0);
+
+        $reporte->setCaContinuacion("N/A");
+
+        $reporte->setCaContinuacionDest($request->getParameter("iddestino"));
+
+        if($request->getParameter("fchdespacho") )
+        {
+            $reporte->setCaFchdespacho(Utils::parseDate($request->getParameter("fchdespacho")));
+        }else
+        {
+            $errors["fchdespacho"]="Debe seleccionar una fecha de despacho";
+        }
 
         if($request->getParameter("idorigen") && $request->getParameter("idorigen")!="")
         {
@@ -892,7 +956,7 @@ class reportesNegActions extends sfActions
 
         if($request->getParameter("impoexpo"))
         {
-            $reporte->setCaImpoexpo(utf8_decode($request->getParameter("impoexpo")));
+            $reporte->setCaImpoexpo(($request->getParameter("impoexpo")));
         }
         else
         {
@@ -908,21 +972,6 @@ class reportesNegActions extends sfActions
             $errors["idconcliente"]="Debe seleccionar un termino";
         }
 
-        if($request->getParameter("idclientefac") )
-        {
-            $reporte->setCaIdclientefac($request->getParameter("idclientefac"));
-        }
-
-        if($request->getParameter("idclienteag") )
-        {
-            $reporte->setCaIdclienteag($request->getParameter("idclienteag"));
-        }
-
-        if($request->getParameter("idclienteotro") )
-        {
-            $reporte->setCaIdclienteotro($request->getParameter("idclienteotro"));
-        }
-
         if($request->getParameter("idagente") && $request->getParameter("idagente")!="")
         {
             if(is_numeric($request->getParameter("idagente")))
@@ -933,13 +982,23 @@ class reportesNegActions extends sfActions
             $errors["idagente"]="Debe seleccionar un agente";
         }
 
+        if($request->getParameter("idmodalidad") )
+        {
+            $reporte->setCaModalidad($request->getParameter("idmodalidad"));
+        }
+        else
+        {
+            $reporte->setCaModalidad(" ");
+        }
+
         if($request->getParameter("ca_mercancia_desc") && $request->getParameter("ca_mercancia_desc")!="" )
         {
             $reporte->setCaMercanciaDesc($request->getParameter("ca_mercancia_desc"));
         }else
         {
-            $errors["ca_mercancia_desc"]="Debe colocar un texto de descripcion de la mercacia";
+            $errors["ca_mercancia_desc"]="Debe colocar un texto de descripcion de la mercancia";
         }
+
 
     //ca_orden_prov:  No aplica
 /*            if($request->getParameter("idconcliente") )
@@ -951,16 +1010,44 @@ class reportesNegActions extends sfActions
         {
             $reporte->setCaOrdenClie($request->getParameter("orden_clie"));
         }
-/*            $ca_confirmar_clie="";
+        else
+        {
+            $errors["orden_clie"]="Debe colocar un un numero de orden del cliente";
+        }
+
+        if($request->getParameter("prov") )
+        {
+            $reporte->setCaIdproveedor($request->getParameter("prov"));
+        }else
+        {
+            $errors["proveedor"]="Debe seleecionar un proveedor";
+
+        }
+
+        $ca_confirmar_clie="";
+        $cc="";
         for($i=0;$i<20;$i++)
         {
-            if($request->getParameter("contacto_".$i))
+            if($request->getParameter("chkcontacto_".$i)=="on")
             {
-                $ca_confirmar_clie=($ca_confirmar_clie!="")?",":"";
-                $ca_confirmar_clie=$request->getParameter("contacto_".$i);
+                $ca_confirmar_clie.=($ca_confirmar_clie!="")?",":"";
+
+                $ca_confirmar_clie.=$request->getParameter("contacto_".$i);
+                if (stripos(strtolower($request->getParameter("contacto_".$i)), '@coltrans.com.co') !== false) {
+                    $cc.=($cc!="")?",":"";
+                    $cc.= $request->getParameter("contacto_".$i);
+                }
             }
         }
-*/
+
+        if($ca_confirmar_clie!="" )
+        {
+            $reporte->setCaConfirmarClie($ca_confirmar_clie);
+        }
+        else
+        {
+            $errors["contacto_0"]="Debe seleccionar un contacto";
+        }
 
         if($request->getParameter("consig") )
         {
@@ -979,32 +1066,23 @@ class reportesNegActions extends sfActions
 
         if($request->getParameter("transporte") )
         {
-
-            $reporte->setCaTransporte(utf8_decode($request->getParameter("transporte")));
+            //echo utf8_decode($request->getParameter("transporte"));
+            $reporte->setCaTransporte($request->getParameter("transporte"));
         }
         else
         {
             $errors["transporte"]="Debe seleccionar un agente";
         }
 
-        if($request->getParameter("seguros-checkbox") && $request->getParameter("seguros-checkbox")=="on"  )
-        {
-            $reporte->setCaSeguro("Sí");
-        }
-        else
-        {
-            $reporte->setCaSeguro("No");
-        }
+
         if($request->getParameter("ca_liberacion") )
         {
-            $reporte->setCaLiberacion(utf8_decode($request->getParameter("ca_liberacion")));
+            $reporte->setCaLiberacion(($request->getParameter("ca_liberacion")));
         }
         if($request->getParameter("ca_tiempocredito") )
         {
             $reporte->setCaTiempocredito($request->getParameter("ca_tiempocredito"));
         }
-
-
 
 
         if($request->getParameter("consignar") && $request->getParameter("consignar")>0  )
@@ -1023,17 +1101,6 @@ class reportesNegActions extends sfActions
         }
         else
             $reporte->setCaIdconsignarmaster(0);
-
-        if($request->getParameter("idbodega_hd") && $request->getParameter("idbodega_hd")>0  )
-        {
-            $reporte->setCaIdbodega($request->getParameter("idbodega_hd"));
-        }
-        else
-        {
-            //revisar
-//                $reporte->setCaIdbodega(81);
-        }
-
 
         if($request->getParameter("idvendedor") && $request->getParameter("idvendedor")!="")
         {
@@ -1054,14 +1121,167 @@ class reportesNegActions extends sfActions
             $reporte->setCaMciaPeligrosa(false);
         }
 
+
         if(count($errors)>0)
-            $this->responseArray=array("success"=>false,"idreporte"=>$idreporte,"redirect"=>$redirect,"errors"=>$errors);
+            $this->responseArray=array("success"=>false,"redirect"=>false,"errors"=>$errors);
         else
         {
-            $reporte->save();            
-            $this->responseArray=array("success"=>true,"idreporte"=>$reporte->getCaIdreporte(),"redirect"=>true);
-        }
+            $reporte->save();
 
+            $mail = new Email();
+            $asunto="Se ha creado un Reporte Nuevo con el numero ".$reporte->getCaConsecutivo();
+             if( isset( $_FILES["archivo"] )){
+                $archivo = $_FILES["archivo"];
+
+                $directorio = $mail->getDirectorio();
+
+                if( !is_dir($directorio) ){
+                    mkdir($directorio, 0777, true);
+                }
+                $adjunto=$directorio.DIRECTORY_SEPARATOR."Rep".$reporte->getCaIdreporte()."-".$archivo["name"];
+                move_uploaded_file( $archivo["tmp_name"], $adjunto);
+            }
+
+            $mail->setCaAttachment("Attachements/Rep".$reporte->getCaIdreporte()."-".$archivo["name"]);
+
+            $mail->setCaSubject($asunto);
+            $mail->setCaIdcaso($reporte->getCaIdreporte());
+            $mail->setCaTipo("Reporte Negocios AG");
+
+            $ids=$reporte->getIdsAgente()->getIds();
+            $agente=$ids->getCaNombre();
+            $trayecto=$reporte->getOrigen()->getTrafico()->getCaNombre()."-".$reporte->getOrigen()->getCaCiudad()."&raquo;".$reporte->getDestino()->getTrafico()->getCaNombre()."-".$reporte->getDestino()->getCaCiudad();
+
+
+            $html='<html>
+    <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<body>
+    <style type="text/css" >
+
+img.img{
+    border: 0px;
+}
+span{
+    font-size: 12px;
+    font-family: Arial;
+    color: #000000;
+}
+a.link:link {
+   text-decoration:none;
+   color:#0000FF;
+}
+a.link:active {
+   text-decoration:none;
+   color:#0000FF;
+}
+a.link:visited {
+   text-decoration: none;
+   color: #062A7D;
+}
+.entry {
+    border-bottom: 1px solid #DDDDDD;
+    clear:both;
+    padding: 0 0 10px;
+}
+.entry-even {
+    background-color:#F6F6F6;
+    border-color:#CCCCCC;
+    border-style:dotted;
+    border-width:1px ;
+    margin:12px 0 0;
+    padding:12px 12px 24px;
+    font-size: 12px;
+    font-family: arial, helvetica, sans-serif;
+}
+.entry-odd {
+    background-color:#FFFFFF;
+    border-color:#CCCCCC;
+    border-style:dotted;
+    border-width:1px ;
+    margin:12px 0 0;
+    padding:12px 12px 24px;
+    font-size: 12px;
+    font-family: arial, helvetica, sans-serif;
+}
+span{
+font-size: 12px;
+font-family: arial, helvetica, sans-serif;
+color="#000000";
+}
+.entry-yellow {
+    background-color:#FFFFCC;
+    border-color:#CCCCCC;
+    border-style:dotted;
+    border-width:1px ;
+    margin:12px 0 0;
+    padding:12px 12px 24px;
+    font-size: 12px;
+    font-family: arial, helvetica, sans-serif;
+}
+.entry-date{
+    float: right;
+    color: #0464BB;
+}
+</style>
+        <!-- GREY BORDER -->
+        <table width="100%" border="0" cellspacing="15" cellpadding="0" bgcolor="#E1E1E1"><tr><td>
+                    <!-- WHITE BACKGROUND -->
+                    <table width="100%" border="0" cellspacing="15" cellpadding="0" bgcolor="#FFFFFF"><tr><td>
+                                <!-- MAIN CONTENT TABLE -->
+
+                                <table width="100%" border="0" cellspacing="5" cellpadding="0">
+                                    <!-- LOGO -->
+                                    <tr><td colspan="3"><table><tr><td width="135"><img src="https://www.coltrans.com.co/images/logo_colsys.gif" width="178" height="30" alt="COLSYS"></td>
+                                                    <td><font size="4" face="arial, helvetica, sans-serif" color="#D99324"></font></td></tr></table></td></tr>
+                                    <tr><td width="25"><img src="https://www.coltrans.com.co/images/spacer.gif" width="25" height="1" alt=""></td><td colspan="2"><hr noshade size="1"></td></tr>
+                                    <!-- INTRO -->
+                                    <tr>
+                                        <td>&nbsp;</td>
+                                        <td>
+                                            <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>No:'.$reporte->getCaConsecutivo().'</b></font><br />
+                                            <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Agente:</b>'.$agente.'</font><br />
+                                            <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Trayecto:</b>'.$trayecto.'</font><br />                                            
+                                            <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Cliente:</b>'.$reporte->getContacto()->getCliente()->getCaCompania().'</font><br />
+                                            <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Mercancia:</b>'.$reporte->getCaMercanciaDesc().'</font><br />
+                                         </td>
+                                    </tr>
+                                    <tr>
+                                        <td><font size="2" face="arial, helvetica, sans-serif" color="#000000">'.$request->getParameter("mensaje_comercial").'</font></td>
+                                    </tr>
+                                    <tr><td>&nbsp;</td><td colspan="2"><hr noshade size="1"></td></tr>
+                                    <tr><td>&nbsp;</td><td>
+                                            <font size="1" face="arial, helvetica, sans-serif" color="#000000"> Si los links no estan funcionando, copie y pegue esta dirección en el navegador:<br>https://www.coltrans.com.co/pm/verTicket?id=2935 <br><br> Gracias por utilizar el sistema de tickets!<br><br>Coltrans S.A. - Colmas Ltda. Agencia de Aduanas Nivel 1<br>
+                                                <a href="https://www.coltrans.com.co/">http://www.coltrans.com.co/</a>
+                                            </font>
+                                        </td>
+
+                                        <td>&nbsp;</td>
+                                    </tr>
+                                </table>
+                            </td></tr>
+                    </table>
+                </td></tr>
+            <!-- COPYRIGHT -->
+            <tr><td><font size="1" face="arial, helvetica, sans-serif" color="#666666">&copy; Coltrans S.A. Colmas Ltda. Agencia de Aduanas Nivel 1</font></td></tr>
+
+        </table>
+        </body>
+</html>
+';
+            $mail->setCaBodyhtml($html);
+            
+            $mail->setCaFromname($this->getUser()->getNombre());
+            $mail->setCaUsuenvio($this->getUser()->getUserId());
+            $mail->setCaFrom($this->getUser()->getEmail());
+            $mail->setCaReplyto($this->getUser()->getEmail());
+            $mail->setCaAddress($cc);
+            $mail->setCaCc($this->getUser()->getEmail().",".$cc);
+            $mail->save();
+
+
+            $this->responseArray=array("success"=>true,"idreporte"=>$reporte->getCaIdreporte(),"consecutivo"=>$reporte->getCaConsecutivo(),"transporte"=>utf8_encode($request->getParameter("transporte")),"impoexpo"=>$request->getParameter("impoexpo"));
+        }
+        
         $this->setTemplate("responseTemplate");
         //cuando se seleccion una cotizacion se debe marcar el campo aprobado, etapa='APR';
     }
@@ -1655,7 +1875,7 @@ class reportesNegActions extends sfActions
             $data["ca_continuacion_conf_".utf8_encode($reporte->getCaContinuacionConf())]= utf8_encode( $reporte->getCaContinuacionConf() );
 
            $data["cont-origen"]=$reporte->getCaContOrigen();
-            $data["cont-destino"]=$reporte->getCaContDestino();
+           $data["cont-destino"]=$reporte->getCaContDestino();
 
             //$reporte->setCaContinuacionConf
 
@@ -1747,7 +1967,7 @@ class reportesNegActions extends sfActions
                 $values = explode(",", $reporte->getCaConfirmarClie() );
                 if(count($values)>0)
                 {
-                    for($i=0;$i<count($values) && $i<15;$i++)
+                    for($i=0;$i<count($values) && $i<20;$i++)
                     {
                         $data["contacto_".$i] =utf8_encode($values[$i]);
                         $data["chkcontacto_".$i] =true;
@@ -1809,7 +2029,6 @@ class reportesNegActions extends sfActions
             else
                 $data["consignatario"]="";
 
-
             $data["idconsigmaster"]=$reporte->getCaIdmaster();
             if($reporte->getCaIdmaster())
             {
@@ -1831,19 +2050,7 @@ class reportesNegActions extends sfActions
                 $data["notify"]="";
             $data["idrepresentante"]=$reporte->getCaIdrepresentante();
 
-
-
-
-            
-/*            $aduana = Doctrine::getTable("RepAduana")->find( $reporte->getCaIdreporte() );
-            if($aduana)
-            {
-
-            }
-*/
-
         }
-
 
         $this->responseArray=array("success"=>true,"data"=>$data);
         $this->setTemplate("responseTemplate");

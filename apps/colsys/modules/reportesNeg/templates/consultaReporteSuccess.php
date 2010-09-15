@@ -377,9 +377,6 @@ if( $reporte->getCaColmas()=="Sí" || substr($reporte->getCaModalidad(),0,6) == "
 
 
                       });
-//      mainPanel.render("panel");
-//      mainPanel.setWidth(Ext.getBody().getWidth()-250);
-
 
       var panel = new Ext.FormPanel({
         title: "Reportes de Negocio",
@@ -393,9 +390,3 @@ if( $reporte->getCaColmas()=="Sí" || substr($reporte->getCaModalidad(),0,6) == "
       panel.render("panel");
 </script>
 
-<?
-include_component("kbase","tooltipById", array("idcategory"=>18));
-if( $opcion=="ayudas" ){
-    include_component("kbase","tooltipCreator", array("idcategory"=>18));
-}
-?>

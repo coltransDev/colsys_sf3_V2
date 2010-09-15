@@ -23,8 +23,7 @@ MainPanel = function( config ){
 
 };
 
-Ext.extend(MainPanel, Ext.TabPanel, {        
-
+Ext.extend(MainPanel, Ext.TabPanel, {
 
 });
 
