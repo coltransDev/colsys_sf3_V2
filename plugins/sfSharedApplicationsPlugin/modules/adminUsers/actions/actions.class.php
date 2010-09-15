@@ -22,7 +22,7 @@ class adminUsersActions extends sfActions
     public function getNivel() {
 
         $app =  sfContext::getInstance()->getConfiguration()->getApplication();
-        //return 5;
+               //    return 5;
         switch( $app ){
             case "colsys":
                 $rutina = adminUsersActions::RUTINA_COLSYS;
@@ -44,82 +44,176 @@ class adminUsersActions extends sfActions
     
     public function executeDirectory(sfWebRequest $request) {
         $this->setLayout("layout2col");
+		
+		$this->empresas = Doctrine::getTable("Empresa")
+                          ->createQuery("e")
+						  ->addWhere('e.ca_activo=?', true)
+                          ->addOrderBy("e.ca_nombre")
+                          ->execute();		
+		
+		$this->departamentos = Doctrine::getTable("Departamento")
+                          ->createQuery("d")
+                          ->select("d.ca_idempresa, d.ca_nombre")
+						  ->innerJoin('d.Empresa e')
+						  ->addOrderBy("d.ca_nombre")
+                          ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
+                          ->execute();
+						  
+		// Cambiar los campos NULOS que están con tílde a campos codificados.						  
+        foreach( $this->departamentos as $key=>$val){
+            $this->departamentos[$key]["ca_nombre"] = utf8_encode($this->departamentos[$key]["ca_nombre"]);
+        }
+
+        $this->sucursales = Doctrine::getTable("Sucursal")
+                          ->createQuery("s")
+                          ->select("s.ca_idsucursal, s.ca_idempresa, s.ca_nombre")
+						  ->innerJoin('s.Empresa e')						  
+						  ->addOrderBy("s.ca_nombre")
+                          ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
+                          ->execute();
+						  
+        // Cambiar los campos NULOS que están con tílde a campos codificados.						  
+        foreach( $this->sucursales as $key=>$val){
+            $this->sucursales[$key]["ca_nombre"] = utf8_encode($this->sucursales[$key]["ca_nombre"]);
+        }
 
     }
 
     public function executeDoSearch(sfWebRequest $request) {
         
-        $criterio = '%'.strtolower($request->getParameter('criterio')).'%';
+        $criterio = ('%'.strtolower($request->getParameter('criterio')).'%');
         $opcion = $request->getParameter("opcion");
+        $departamento = utf8_decode($request->getParameter("departamento"));
+        $sucursal = utf8_decode($request->getParameter("sucursal"));
+		$empresa = utf8_decode($request->getParameter("empresa"));
         $sangre = $request->getParameter("type");
-
+        
         $q=Doctrine::getTable('Usuario')
                     ->createQuery('u')
+					->innerJoin('u.Sucursal s')
+					->innerJoin('s.Empresa e')
                     ->addWhere('u.ca_activo = ?', true);
-
-        $this->opcion = $opcion;
-        switch($opcion){
-            case "login":
-                $q->addWhere('LOWER(u.ca_login) LIKE ?', $criterio);
-            case "nombre":
-                $q->addWhere('(LOWER(u.ca_nombre) LIKE ? OR LOWER(u.ca_nombres) LIKE ? OR LOWER(u.ca_apellidos) LIKE ? )', array($criterio,$criterio,$criterio));
-                break;
-            case "apellido":
-                $q->addWhere('(LOWER(u.ca_apellidos) LIKE ?)', $criterio);
-                break;
-
-            case "correo":
-                $q->addWhere('LOWER(u.ca_email) LIKE ?', $criterio);
-                break;
-            case "tiposangre":
-                $q->addWhere('LOWER(u.ca_tiposangre) LIKE ?', $criterio);
-
-                break;
+        if( $criterio ){
+            switch($opcion){
+                case "login":
+                    $q->addWhere('LOWER(u.ca_login) LIKE ?', $criterio);
+                    break;
+                case "nombre":
+                    $q->addWhere('(LOWER(u.ca_nombre) LIKE ? OR LOWER(u.ca_nombres) LIKE ? OR LOWER(u.ca_apellidos) LIKE ? )', array($criterio,$criterio,$criterio));
+                    break;
+                case "apellido":
+                    $q->addWhere('(LOWER(u.ca_apellidos) LIKE ?)', $criterio);
+                    break;
+                case "correo":
+                    $q->addWhere('LOWER(u.ca_email) LIKE ?', $criterio);
+                    break;
+                case "tiposangre":
+                    $q->addWhere('LOWER(u.ca_tiposangre) LIKE ?', $criterio);
+                    break;
+                case "cargo":
+                    $q->addWhere('LOWER(u.ca_cargo) LIKE ?', $criterio);
+                    break;
+            }
+        }
+        if( $departamento ){
+            $q->addWhere('LOWER(u.ca_departamento) LIKE ?', strtolower($departamento));
+        }
+        if( $sucursal ){			
+            $q->addWhere('u.ca_idsucursal = ?', $sucursal);
+        }
+		if( $empresa ){
+			$q->addWhere('s.ca_idempresa = ?', $empresa);
         }
         $q->distinct();
         $this->usuarios = $q->execute();
 
+
+
+      
      }
 
      public function executeFormUsuario( $request ){
 
-        $app =  sfContext::getInstance()->getConfiguration()->getApplication();
+        $app =  sfContext::getInstance()->getConfiguration()->getApplication();	
+        $this->usuario = Doctrine::getTable("Usuario")->find( $request->getParameter("login") );
+		$this->userinicio = sfContext::getInstance()->getUser();
+        $this->nivel = $this->getNivel();
         
-        switch( $app ){
+		switch( $app ){
             case "intranet":
                 $this->setLayout("layout2col");
                 break;
         }
-		 
-        $this->nivel = $this->getNivel();
-
-        if( !($this->nivel==0 and $request->getParameter("login")==$this->getUser()->getUserId())){
+		if( !($this->nivel==0 and $request->getParameter("login")==$this->getUser()->getUserId())){
             if(!($this->nivel>1)){
-                   $this->forward("users", "noAccess");
+				$this->forward("adminUsers", "noAccess");
             }
         }
 
-		$this->usuario = Doctrine::getTable("Usuario")->find( $request->getParameter("login") );
 		if( !$this->usuario ){
 			$this->usuario = new Usuario();
 		}
 
 	 	$this->departamentos = Doctrine::getTable("Departamento")
                           ->createQuery("d")
-                          ->addOrderBy("d.ca_nombre")
+                          ->select("d.ca_idempresa, d.ca_nombre")
+						  ->innerJoin('d.Empresa e')
+						  ->addOrderBy("d.ca_nombre")
+                          ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
                           ->execute();
+						  
+		// Cambiar los campos NULOS que están con tílde a campos codificados.						  
+        foreach( $this->departamentos as $key=>$val){
+            $this->departamentos[$key]["ca_nombre"] = utf8_encode($this->departamentos[$key]["ca_nombre"]);
+        }
 
         $this->sucursales = Doctrine::getTable("Sucursal")
                           ->createQuery("s")
-                          ->addOrderBy("s.ca_nombre")
+                          ->select("s.ca_idsucursal, s.ca_idempresa, s.ca_nombre")
+						  ->innerJoin('s.Empresa e')						  
+						  ->addOrderBy("s.ca_nombre")
+                          ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
+                          ->execute();
+						  
+        // Cambiar los campos NULOS que están con tílde a campos codificados.						  
+        foreach( $this->sucursales as $key=>$val){
+            $this->sucursales[$key]["ca_nombre"] = utf8_encode($this->sucursales[$key]["ca_nombre"]);
+        }
+
+        $this->cargos = Doctrine::getTable("Cargo")
+                          ->createQuery("c")
+						  ->select('c.ca_cargo, c.ca_idempresa')
+						  ->innerJoin('c.Empresa e')
+                          ->addWhere('c.ca_activo = ?', true)
+                          ->addOrderBy("c.ca_cargo")
+                          ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
+                          ->execute();
+						  
+		// Cambiar los campos NULOS que están con tílde a campos codificados.						  
+        foreach( $this->cargos as $key=>$val){
+            $this->cargos[$key]["ca_cargo"] = utf8_encode($this->cargos[$key]["ca_cargo"]);
+        }
+						  
+		$this->jefes = Doctrine::getTable("Usuario")
+					      ->createQuery("j")
+						  ->innerJoin('j.Cargo c')
+						  ->addWhere('j.ca_activo = ?', true)
+						  ->addWhere('c.ca_manager= ?', true)
+						  ->addOrderBy("j.ca_nombre")
+						  ->distinct()
+						  ->execute();
+
+        $this->empresas = Doctrine::getTable("Empresa")
+                          ->createQuery("e")
+						  ->addWhere('e.ca_activo=?', true)
+                          ->addOrderBy("e.ca_nombre")
                           ->execute();
 
-		$q = Doctrine_Manager::getInstance()->connection();
-			$query = "SELECT DISTINCT ca_empresa";
-			$query.= "	from control.tb_usuarios";
-            $query.= "  order by ca_empresa ASC";
-
-        $this->empresas = $q->execute($query);
+        $m=Doctrine::getTable('Usuario')
+					      ->createQuery('u')
+						  ->addWhere('u.ca_activo = ?', true);
+			
+		$this->users = $m->execute();
 
         $p = Doctrine_Manager::getInstance()->connection();
 			$query = "SELECT DISTINCT ca_tiposangre";
@@ -135,14 +229,26 @@ class adminUsersActions extends sfActions
 
         $this->parentescos = $r->execute($query);
 
-		$this->manager=Doctrine::getTable('Usuario')->find($request->getParameter('login'));
+        $s = Doctrine_Manager::getInstance()->connection();
+			$query = "SELECT DISTINCT ca_teloficina";
+			$query.= "	from control.tb_usuarios";
+            $query.= "	where ca_activo = 'true'";
+            $query.= "  order by ca_teloficina ASC";
+
+        $this->teloficinas = $s->execute($query);
+
+		//$this->manager=Doctrine::getTable('Usuario')->find($request->getParameter('login'));
+        //$this->manager = $this->manager->getManager();
+        
+		//$this->usuarios = $this->manager->getSubordinado();
         //$this->manager = $this->manager->getManager();
 
 
         $response = sfContext::getInstance()->getResponse();
 		$response->addJavaScript("tabpane/tabpane",'last');
         $response->addStylesheet("tabpane/luna/tab",'last');
-	}
+
+   }
 
 	public function executeIndex(sfWebRequest $request)	{
         $app =  sfContext::getInstance()->getConfiguration()->getApplication();
@@ -155,6 +261,9 @@ class adminUsersActions extends sfActions
         
         $this->usuarios = Doctrine::getTable("Usuario")
                           ->createQuery("u")
+                          ->innerJoin('u.Sucursal s')
+                          ->innerJoin('s.Empresa e')
+                          ->addWhere('e.ca_activo = ?', true)
                           ->addOrderBy("u.ca_activo DESC")
                           ->addOrderBy("u.ca_login")
                           ->execute();
@@ -163,13 +272,34 @@ class adminUsersActions extends sfActions
     public function executeGuardarUsuario( $request ){
 		$usuario = Doctrine::getTable("Usuario")->find( $request->getParameter("login") );
         $this->nivel = $this->getNivel();
-
+        $cambiodireccion = 0;
+        $nuevo=0;
+		
+		if($usuario){
+	        $direccion = $usuario->getCaDireccion();
+			
+			$suc = $usuario->getSucursal()->getCaNombre();
+			
+	        $this->direccion = $direccion;
+	        $this->suc = $suc;
+	                
+			$recips=Doctrine::getTable("Usuario")        			
+	        			->createQuery('r')
+						->innerJoin('r.Sucursal s')
+						->addWhere('s.ca_nombre = ?', $suc)
+						->addWhere('r.ca_activo=?', true)
+						->addWhere('r.ca_cargo=?', 'Jefe Dpto. Administrativo')
+						->execute();
+						
+			$this->recips = $recips;
+		}	
         if( !($this->nivel==0 and $request->getParameter("login")==$this->getUser()->getUserId())){
            if(!($this->nivel>1)){
                $this->forward("users", "noAccess");
             }
         }
 		if( !$usuario ){
+			$nuevo = 1;
 			$usuario = new Usuario();
 			$usuario->setCaLogin( $request->getParameter("login") );
 		}
@@ -223,58 +353,53 @@ class adminUsersActions extends sfActions
 
 		if( $request->getParameter("activo") ){
 			$usuario->setCaActivo( true );
-		}else{
-			$usuario->setCaActivo( false );
 		}
 
-
-        if (is_uploaded_file($_FILES['foto']['tmp_name'])) {
-            $directory=$usuario->getDirectorio().DIRECTORY_SEPARATOR;
-
-            if(!is_dir($directory)){
-               @mkdir($directory, 0777, true);
-            }
-            $nombre_archivo=$directory.'foto.jpg';
-            if (move_uploaded_file($_FILES['foto']['tmp_name'],$nombre_archivo)){
-
-                // Obtener nuevos tamaños
-                list($ancho, $alto) = getimagesize($nombre_archivo);
-                $nuevo_ancho = 120;
-                $nuevo_alto = 150;
-
-                // Cargar
-                $thumb = imagecreatetruecolor($nuevo_ancho, $nuevo_alto);
-                $origen = imagecreatefromjpeg($nombre_archivo);
-
-                // Cambiar el tamaño
-                imagecopyresized($thumb, $origen, 0, 0, 0, 0, $nuevo_ancho, $nuevo_alto, $ancho, $alto);
-
-                // Imprimir
-                imagejpeg($thumb,$usuario->getDirectorio().DIRECTORY_SEPARATOR.'foto120x150.jpg',100);
-
-                $nuevo_ancho = 60;
-                $nuevo_alto = 80;
-
-                // Cargar
-                $thumb = imagecreatetruecolor($nuevo_ancho, $nuevo_alto);
-                $origen = imagecreatefromjpeg($nombre_archivo);
-
-                // Cambiar el tamaño
-                imagecopyresized($thumb, $origen, 0, 0, 0, 0, $nuevo_ancho, $nuevo_alto, $ancho, $alto);
-
-                // Imprimir
-                imagejpeg($thumb,$usuario->getDirectorio().DIRECTORY_SEPARATOR.'foto60x80.jpg',100);
-            }
-        }
+		
+		if($request->getParameter("foto") ){
+	        if (is_uploaded_file($_FILES['foto']['tmp_name'])) {
+	            $directory=$usuario->getDirectorio().DIRECTORY_SEPARATOR;
+	            if(!is_dir($directory)){
+	               @mkdir($directory, 0777, true);
+	            }
+	            $nombre_archivo=$directory.'foto.jpg';
+	            if (move_uploaded_file($_FILES['foto']['tmp_name'],$nombre_archivo)){
+	
+	                // Obtener nuevos tamaños
+	                list($ancho, $alto) = getimagesize($nombre_archivo);
+	                $nuevo_ancho = 120;
+	                $nuevo_alto = 150;
+	
+	                // Cargar
+	                $thumb = imagecreatetruecolor($nuevo_ancho, $nuevo_alto);
+	                $origen = imagecreatefromjpeg($nombre_archivo);
+	
+	                // Cambiar el tamaño
+	                imagecopyresized($thumb, $origen, 0, 0, 0, 0, $nuevo_ancho, $nuevo_alto, $ancho, $alto);
+	
+	                // Imprimir
+	                imagejpeg($thumb,$usuario->getDirectorio().DIRECTORY_SEPARATOR.'foto120x150.jpg',100);
+	
+	                $nuevo_ancho = 60;
+	                $nuevo_alto = 80;
+	
+	                // Cargar
+	                $thumb = imagecreatetruecolor($nuevo_ancho, $nuevo_alto);
+	                $origen = imagecreatefromjpeg($nombre_archivo);
+	
+	                // Cambiar el tamaño
+	                imagecopyresized($thumb, $origen, 0, 0, 0, 0, $nuevo_ancho, $nuevo_alto, $ancho, $alto);
+	
+	                // Imprimir
+	                imagejpeg($thumb,$usuario->getDirectorio().DIRECTORY_SEPARATOR.'foto60x80.jpg',100);
+	            }
+        	}
+		}
         if( $request->getParameter("cumpleanos") ){
 			$usuario->setCaCumpleanos( $request->getParameter("cumpleanos") );
 		}
 
-        if( $request->getParameter("empresa") ){
-			$usuario->setCaEmpresa( $request->getParameter("empresa") );
-		}
-
-		if( $request->getParameter("fchingreso") ){
+        if( $request->getParameter("fchingreso") ){
 			$usuario->setCaFchingreso( $request->getParameter("fchingreso") );
 		}
 
@@ -306,6 +431,7 @@ class adminUsersActions extends sfActions
 			$usuario->setCaMovil( $request->getParameter("movil") );
 		}
 
+        $this->direccion = $request->getParameter("direccion");
 		if( $request->getParameter("direccion") ){
 			$usuario->setCaDireccion( $request->getParameter("direccion") );
 		}
@@ -319,7 +445,41 @@ class adminUsersActions extends sfActions
         $usuario->save();
 
         $this->usuario=$usuario;
-
+		
+        if($nuevo==0){
+			if($direccion!=$usuario->getCaDireccion()){
+				$user = Doctrine::getTable('Usuario')->find( $this->getUser()->getUserId());
+				
+				$email = new Email();
+			    $email->setCaUsuenvio( $this->getUser()->getUserId() );
+				$email->setCaTipo( "Cambio de Direccion" ); //Envío de Avisos
+				$email->setCaIdcaso( null );
+	
+				$email->setCaFrom( $user->getCaEmail() );
+				
+				$email->setCaFromname( $user->getCaNombre() );
+	
+				$email->setCaReplyto( $user->getCaEmail() );
+				
+				foreach( $recips as $recip ){
+					if( $recip->getCaEmail() ){
+						$email->addTo( str_replace(" ", "", $recip->getCaEmail() ) );
+					}
+				}
+	            			
+				$texto='El usuario '.$usuario->getCaNombre().' cambió de dirección. Direccion Antigua: '.$direccion.'   Direccion nueva: '.$usuario->getCaDireccion();
+				$email->setCaSubject( 'Cambio de Direccion' );
+				$email->setCaBody( $texto);
+				$email->setCaBodyhtml( Utils::replace($texto)) ;
+				$email->save();
+				
+				$cambiodireccion = $cambiodireccion + 1;
+				
+				//$email->send();
+			}
+		}
+		$this->cambiodireccion = $cambiodireccion;
+		
 	}
 	
 	/*
@@ -491,6 +651,52 @@ class adminUsersActions extends sfActions
 		
 	}
 
+    public function executeListaExtensiones(sfWebRequest $request) {
+        $this->setLayout("layout2col");
+        $this->user=Doctrine::getTable('Usuario')->find($request->getParameter('login'));
+        $this->nivel = $this->getNivel();
+        $criterio = $request->getParameter('criterio');
+        $empresa = $request->getParameter('empresa');
+        $sucursal = utf8_decode($request->getParameter("idsucursal"));
+        $departamento = $request->getParameter("departamento");
+
+        $q=Doctrine::getTable('Usuario')
+                    ->createQuery('u')
+                    ->innerJoin('u.Sucursal s')
+					->innerJoin('s.Empresa e')
+                    ->addWhere('u.ca_activo = ?', true);
+        
+        if( $criterio ){
+            switch($criterio){
+                 case "buttondirnal":
+                    $q->addOrderBy("e.ca_nombre");
+                    $q->addOrderBy("u.ca_idsucursal");
+                    $q->addOrderBy("u.ca_departamento");
+                    $q->addOrderBy("u.ca_nombres");
+                    break;
+                case "buttoncom":
+                    $q->addWhere('e.ca_idempresa = ?', $empresa);
+                    $q->addOrderBy("u.ca_idsucursal");
+                    $q->addOrderBy("u.ca_departamento");
+                    break;
+                case "buttonsuc":
+                    $q->addWhere('e.ca_idempresa = ?', $empresa);
+                    $q->addWhere('(u.ca_idsucursal) LIKE ?', $sucursal);
+                    $q->addOrderBy("u.ca_departamento");
+                    break;
+                case "buttondep":
+                    $q->addWhere('e.ca_idempresa = ?', $empresa);
+                    $q->addWhere('(u.ca_idsucursal) LIKE ?', '%'.$sucursal.'%');
+                    $q->addWhere('(u.ca_departamento) LIKE ?', $departamento);
+                    $q->addOrderBy("u.ca_sucursal");
+                    break;
+            }
+            $q->distinct();
+	        $this->usuarios = $q->execute();
+	        $this->criterio = $criterio;
+        }
+    }
+
     public function executeLogin($request){
         //header("Location: /users/login");
         //exit();
@@ -526,9 +732,46 @@ class adminUsersActions extends sfActions
 	}
 
     public function executeMainUsers(sfWebRequest $request) {
-
         $this->userinicio = sfContext::getInstance()->getUser();
         $this->nivel = $this->getNivel();
+    }
+
+    public function executePhoneBook(sfWebRequest $request) {
+
+        $this->setLayout("layout2col");
+        $this->criterio = $request->getParameter('criterio');
+        
+        $this->sucursales = Doctrine::getTable("Sucursal")
+                          ->createQuery("s")
+                          ->select("s.ca_idsucursal, s.ca_idempresa, s.ca_nombre")
+						  ->innerJoin('s.Empresa e')
+						  ->addOrderBy("s.ca_nombre")
+                          ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
+                          ->execute();
+
+        foreach( $this->sucursales as $key=>$val){
+            $this->sucursales[$key]["ca_nombre"] = utf8_encode($this->sucursales[$key]["ca_nombre"]);
+        }
+
+        $this->departamentos = Doctrine::getTable("Departamento")
+                          ->createQuery("d")
+                          ->select("d.ca_idempresa, d.ca_nombre")
+						  ->innerJoin('d.Empresa e')
+						  ->addOrderBy("d.ca_nombre")
+                          ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
+                          ->execute();
+
+		// Cambiar los campos NULOS que están con tílde a campos codificados.
+        foreach( $this->departamentos as $key=>$val){
+            $this->departamentos[$key]["ca_nombre"] = utf8_encode($this->departamentos[$key]["ca_nombre"]);
+        }
+
+        $this->empresas = Doctrine::getTable("Empresa")
+                          ->createQuery("e")
+						  ->addWhere('e.ca_activo=?', true)
+                          ->addOrderBy("e.ca_nombre")
+                          ->execute();
+
     }
 
 
