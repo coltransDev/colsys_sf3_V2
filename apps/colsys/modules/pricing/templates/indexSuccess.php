@@ -33,8 +33,8 @@ include_component("conceptos","panelParametros" );
 include_component("conceptos","modalidadWindow" );
 include_component("conceptos","modalidadGrid");
 
-include_component("conceptos","parametroWindow" );
-include_component("conceptos","parametroGrid");
+include_component("conceptos","AKAWindow" );
+include_component("conceptos","AKAGrid");
 
 
 //Tarifario Colmas
@@ -234,6 +234,14 @@ Ext.onReady(function(){
                                                              idtrafico: "CO-057"
                                                          });
         Ext.getCmp('tab-panel').add(newComponent);    
+        Ext.getCmp('tab-panel').setActiveTab(newComponent);*/
+
+        /*var newComponent = new PanelParametros({
+                                                             closable: true,
+                                                             title: 'Parametros'
+
+                                                         });
+        Ext.getCmp('tab-panel').add(newComponent);
         Ext.getCmp('tab-panel').setActiveTab(newComponent);*/
 
     });
