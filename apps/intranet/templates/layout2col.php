@@ -129,7 +129,7 @@
 
 
                         <div class="copyright">
-                            <div>Copyright &#169; 2010 Colmas Ltda. Agencia de Aduanas Nivel 1. Todos los derechos reservados.<br /></div>
+                            <div>Copyright &#169; 2010. Todos los derechos reservados.<br /></div>
                             <br />
                         </div>
 

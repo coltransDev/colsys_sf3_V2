@@ -12,8 +12,25 @@
         <meta name="keywords" content="" />
         <meta name="description" content="" />
         <link href="style.css" rel="stylesheet" type="text/css" media="screen" />
+    
+    <script language="Javascript" type="text/javascript">
+		mis_imagenes = new Array("https://localhost/intranet/images/logos/coltrans_logo.jpg","https://localhost/intranet/images/logos/colmas_logo.jpg","https://localhost/intranet/images/logos/consolcargo1.png","https://localhost/intranet/images/logos/coltrans_usa1.png")
+		mi_imagen = 0
+		imgCt = mis_imagenes.length
+		function rotacion() {
+			if (document.images) {
+				mi_imagen++
+				if (mi_imagen == imgCt) {
+					mi_imagen = 0
+				}
+				document.anuncio.src=mis_imagenes[mi_imagen]
+				setTimeout("rotacion()", 5 * 500)
+			}
+		}
+	</script>
+    
     </head>
-    <body>
+    <body onload="rotacion()">
         <div class="out">
             <div class="wrapper">
                 <div class="int">
@@ -23,7 +40,8 @@
                         <div class="logo">
 
                             <a href="index.php" title="">
-                                <? echo image_tag('colmas_logo.jpg',array('border'=>'none')) ?>
+                            	<img src="http://illiweb.com/fa/empty.gif" name="anuncio" alt="Anuncios" />
+                                <?// echo image_tag('colmas_logo.jpg',array('border'=>'none')) ?>
                             </a>
                         </div>
 
@@ -79,7 +97,7 @@
                                             <div class="contentpaneopen">
 
                                                 <h2 class="contentheading">
-			Inicio de Sesi&oacute;n</h2>
+			Bienvenido a Intranet</h2>
 
 
 
@@ -135,7 +153,7 @@
 
 
                         <div class="copyright">
-                            <div>Copyright &#169; 2010 Colmas Ltda. Agencia de Aduanas Nivel 1. Todos los derechos reservados.<br /></div>
+                            <div>Copyright &#169; 2010. Todos los derechos reservados.<br /></div>
                             <br />
                         </div>
 

@@ -7,11 +7,10 @@
         <link rel="shortcut icon" href="/favicon.ico" />
         <?php include_stylesheets() ?>
         <?php include_javascripts() ?>
-        <link rel="stylesheet" type="text/css" media="screen" href="/intranet/css/intranet.css" />
-
-        
+    
     </head>
     <body>
+
         <div class="out">
             <div class="wrapper">
                 <div class="int">
@@ -32,7 +31,6 @@
                                 </div>
                                 <?include_component('adminUsers','loginInformation')?>
                             </div>
-                            
                         </div>
 
                         <div class="topmenu">
@@ -107,18 +105,22 @@
 
                                     <div>
                                         <div>
-
                                             <?
                                             include_component('homepage','birthday');
                                             ?>
-
-
+                                        </div><br />
+                                        	
+                                        	<div class="box1" align="center">
+                                        		<font size="3"><b></>Nuevos Colaboradores</b></font></div></td></tr>                                        		
+                        					</div><br/>
+                   						<div>
+                                            <?
+                                            include_component('homepage','incomeLast');
+                                            ?>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-
-
                         </div>
 
                         <!--Right Column End-->
@@ -153,7 +155,7 @@
 
 
                         <div class="copyright">
-                            <div>Copyright &#169; 2010 Colmas Ltda. Agencia de Aduanas Nivel 1. Todos los derechos reservados.<br /></div>
+                            <div>Copyright &#169;. Todos los derechos reservados.<br /></div>
                             <br />
                         </div>
 
