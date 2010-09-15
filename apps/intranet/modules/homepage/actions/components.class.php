@@ -16,23 +16,36 @@ class homepageComponents extends sfComponents {
      */
     public function executeBirthday() {
 
-
-
         $inicial=date('m-d');
-        $final=date('m-d',time()+ 86400*4);
-
+        $final=date('m-d',time()+ 86400*3);
 
         $this->usuarios= Doctrine::getTable('Usuario')
                 ->createQuery('u')
                 ->where('substring(ca_cumpleanos::text, 6,5) BETWEEN ? and ?', array($inicial, $final))
                 ->addOrderBy('substring(ca_cumpleanos::text, 6,5)  ASC')
                 ->execute();
-
-
     }
 
     public function executeMainMenu() {
     }
+    
+	public function executeIncomeLast() {
 
+        $final=date('Y-m-d');
+        $inicial=date('Y-m-d',time()- 86400*45);
+
+        $this->usuarios= Doctrine::getTable('Usuario')
+                ->createQuery('u')
+                ->where('ca_fchingreso BETWEEN ? and ?', array($inicial, $final))
+                ->addOrderBy('ca_fchingreso ASC')
+                ->execute();
+    }
+    
+  public function executeLogos()
+  {
+    // $this->forward('default', 'module');
+    $this->user = sfContext::getInstance()->getUser();
+	
+  }
 }
 
