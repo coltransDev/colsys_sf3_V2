@@ -118,7 +118,7 @@ class pricingActions extends sfActions
         $q->addWhere("t.ca_transporte = ? ", $transporte );
         $q->addWhere("t.ca_modalidad = ? ", $modalidad );
         $q->addWhere("t.ca_activo = ? ", true );
-        $q->addWhere("p.ca_activo = ? ", true );
+        //$q->addWhere("p.ca_activo = ? ", true );
         $q->addWhere("(a.ca_activo = ? OR a.ca_activo IS NULL)", true );
 
         if( $impoexpo==Constantes::IMPO ){
@@ -1384,7 +1384,7 @@ class pricingActions extends sfActions
         if( $query ){
             $q->addWhere("id.ca_nombre like ?", $query."%");
         }
-        $q->addWhere("p.ca_activo = ?", true );
+        //$q->addWhere("p.ca_activo = ?", true );
 
         $q->fetchArray();
         $lineas = $q->execute();
@@ -2064,7 +2064,7 @@ class pricingActions extends sfActions
                 $q->addWhere("t.ca_transporte = ? ", $transporte );
                 //$q->addWhere("t.ca_modalidad = ? ", $modalidad );
                 $q->addWhere("t.ca_activo = ? ", true );
-                $q->addWhere("p.ca_activo = ? ", true );
+                //$q->addWhere("p.ca_activo = ? ", true );
                 $q->addOrderBy("id.ca_nombre ASC");
                 $q->distinct();
                 $q->setHydrationMode(Doctrine::HYDRATE_SCALAR);
@@ -2115,7 +2115,7 @@ class pricingActions extends sfActions
             $q->addWhere("t.ca_transporte = ? ", $transporte );
             $q->addWhere("t.ca_modalidad = ? ", $modalidad );
             $q->addWhere("t.ca_activo = ? ", true );
-            $q->addWhere("p.ca_activo = ? ", true );
+            //$q->addWhere("p.ca_activo = ? ", true );
             $q->addOrderBy("id.ca_nombre ASC");
             $q->distinct();
             $q->setHydrationMode(Doctrine::HYDRATE_SCALAR);
