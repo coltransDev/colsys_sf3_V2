@@ -57,7 +57,8 @@ PanelParametros = function( config ){
             {name: 'recargolocal', type: 'bool', mapping: 'c_ca_recargolocal'},
             {name: 'recargoorigen', type: 'bool', mapping: 'c_ca_recargoorigen'},
             {name: 'flete', type: 'bool', mapping: 'c_ca_flete'},
-            {name: 'costo', type: 'bool', mapping: 'c_ca_costo'}
+            {name: 'costo', type: 'bool', mapping: 'c_ca_costo'},
+            {name: 'aka', type: 'string', mapping: 'c_ca_aka'}
     ]);
 
     this.store = new Ext.data.Store({
@@ -276,29 +277,23 @@ Ext.extend(PanelParametros, Ext.grid.EditorGridPanel, {
                             }
                         },
                         {
-                            text: 'Parametros',
+                            text: 'Alias',
                             iconCls: 'page_white_params',
                             scope:this,
                             handler: function(){
                                 
-                                var record = rec;//grid.getStore().getAt(index);  // Get the Record
-
-                                var fieldName = grid.getColumnModel().getDataIndex(0); // Get field name
-
-                                var data = record.get(fieldName);                                
-                                if( fieldName=="idconcepto" && data ){
-
-                                    //if(!this.win)
-                                    {
-                                        this.win = new ParametroWindow({
-                                                        readOnly: this.readOnly,
-                                                        idconcepto:data
-
-                                                    });
-                                    }
-                                    this.win.ctxRecord = record;
-                                    this.win.show();
-                                }
+                                var record = this.ctxRecord;
+                                var aka = record.get("aka");                                
+                                               
+                                
+                                this.win = new AKAWindow({
+                                                readOnly: this.readOnly,
+                                                aka:aka
+                                            });
+                                
+                                this.win.ctxRecord = record;
+                                this.win.show();
+                                
                             }
                         }
                         ]

@@ -8,14 +8,17 @@
 ?>
 
 <script type="text/javascript">
-ParametroWindow = function( config ) {
+AKAWindow = function( config ) {
     Ext.apply(this, config);
     this.ctxRecord = null;
     
-    this.grid = new ParametroGrid({
+    this.grid = new AKAGrid({
        readOnly: this.readOnly,
        idconcepto: this.idconcepto
     });
+
+
+    
 
     if( !this.readOnly ){
         this.buttons = [
@@ -38,8 +41,8 @@ ParametroWindow = function( config ) {
         ]
     }
 
-    ParametroWindow.superclass.constructor.call(this, {
-        title: 'Ingrese los parametros',
+    AKAWindow.superclass.constructor.call(this, {
+        title: 'Ingrese los posibles Alias',
         autoHeight: true,
         width: 500,
         height: 300,
@@ -59,18 +62,28 @@ ParametroWindow = function( config ) {
     this.addEvents({add:true});
 }
 
-Ext.extend(ParametroWindow, Ext.Window, {
+Ext.extend(AKAWindow, Ext.Window, {
     
 
     show : function(){
         if(this.rendered){
             //this.feedUrl.setValue('');
         }
+        var data = new Array();
+        if( this.aka ){
+            var akaArray = this.aka.split("|");
+            
+            var i;
+            for( i=0; i<akaArray.length; i++ ){
+                var row = [ akaArray[i], i];
+                data.push(row);
+            }
+        }
 
-        this.grid.store.setBaseParam( "parametros", this.ctxRecord.data.parametros);
-        this.grid.store.load();
+        data.push(['+','Z']);
+        this.grid.store.loadData( data );
 
-        ParametroWindow.superclass.show.apply(this, arguments);
+        AKAWindow.superclass.show.apply(this, arguments);
     },
 
     onUpdate: function() {        
@@ -84,15 +97,15 @@ Ext.extend(ParametroWindow, Ext.Window, {
 
             rec = records[i];
 
-            if( rec.data.parametro && rec.data.parametro!="+" ){
+            if( rec.data.alias && rec.data.alias!="+" ){
                 if( str!="" ){
                     str+="|";
                 }
-                str+=rec.data.parametro;
+                str+=rec.data.alias;
             }            
         }
 
-        this.ctxRecord.set( "parametros",  str );
+        this.ctxRecord.set( "aka",  str );
 
         //Marca la columna como si no se hubiera guardado
         var idconcepto = this.ctxRecord.get( "idconcepto" );

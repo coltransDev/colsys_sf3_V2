@@ -115,6 +115,14 @@ class conceptosActions extends sfActions
             }
         }
 
+        if( $request->getParameter("aka")!==null ){
+            if( $request->getParameter("aka") ){
+                $concepto->setCaAka( $request->getParameter("aka") );
+            }else{
+                $concepto->setCaAka( null );
+            }
+        }
+
         if( $concepto->getCaIdconcepto() ){
             if( $request->getParameter("modalidades")!==null ){
                 Doctrine_Query::create()

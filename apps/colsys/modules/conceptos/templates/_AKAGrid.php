@@ -9,15 +9,15 @@ $parametros = $sf_data->getRaw("parametros");
 ?>
 
 <script type="text/javascript">
-ParametroGrid = function( config ){
+AKAGrid = function( config ){
 
     Ext.apply(this, config);
 
     
     this.columns = [
       {
-        header: "Parametro",
-        dataIndex: 'parametro',
+        header: "Alias",
+        dataIndex: 'alias',
         hideable: false,
         sortable:false,
         width: 170,
@@ -31,27 +31,21 @@ ParametroGrid = function( config ){
      ];
 
 
-    this.record = Ext.data.Record.create([
-            {name: 'idconcepto', type: 'int'},
-            {name: 'idparametro', type: 'string'},
-            {name: 'parametro', type: 'string'},
-            {name: 'orden', type: 'string'}
-           
-
+    this.record = Ext.data.Record.create([               
+            {name: 'alias', mapping: 0},
+            {name: 'orden', mapping: 1}
         ]);
     
     this.store = new Ext.data.Store({
 
-        autoLoad : false,
-        url: '<?=url_for("conceptos/datosParametros")?>',
+        autoLoad : false,        
         baseParams : {
             readOnly: this.readOnly,
             idconcepto: this.idconcepto
         },
-        reader: new Ext.data.JsonReader(
+        reader:  new Ext.data.ArrayReader(
             {
-                root: 'root',
-                totalProperty: 'totalCount'
+               idIndex: 0
             },
             this.record
         )
@@ -61,7 +55,7 @@ ParametroGrid = function( config ){
 
 
 
-    ParametroGrid.superclass.constructor.call(this, {
+    AKAGrid.superclass.constructor.call(this, {
        loadMask: {msg:'Cargando...'},
        clicksToEdit: 1,
        height: 250,
@@ -77,12 +71,12 @@ ParametroGrid = function( config ){
        
     });
 
-    var storeParametroGrid = this.store;
+    var storeAKAGrid = this.store;
     this.getColumnModel().isCellEditable = function(colIndex, rowIndex) {
         if( this.readOnly ){
             return false
         }else{
-            var record = storeParametroGrid.getAt(rowIndex);
+            var record = storeAKAGrid.getAt(rowIndex);
             var field = this.getDataIndex(colIndex);
             if( record.data.orden!="Z"  ){
                 return false;
@@ -93,7 +87,7 @@ ParametroGrid = function( config ){
 
 };
 
-Ext.extend(ParametroGrid, Ext.grid.EditorGridPanel, {
+Ext.extend(AKAGrid, Ext.grid.EditorGridPanel, {
     
     
     formatItem: function(value, p, record) {
@@ -107,7 +101,7 @@ Ext.extend(ParametroGrid, Ext.grid.EditorGridPanel, {
 
 
     onValidateEdit : function(e){        
-        if( e.field == "parametro"){
+        if( e.field == "alias"){
             var rec = e.record;
             var ed = this.colModel.getCellEditor(e.column, e.row);
             var store = ed.field.store;
@@ -119,39 +113,36 @@ Ext.extend(ParametroGrid, Ext.grid.EditorGridPanel, {
                 //alert(r.data.parametro)
                 if( r.data.parametro==e.value )
                 {
-                    alert("El parametro ya se encuentra en los datos");
+                    alert("El alias ya se encuentra en los datos");
                     insertar=false;
                 }
             });
             if(insertar==true)
             {
-                    //if( r.data.parametro==e.value )
-                    {
-                        
-                            var newRec = new recordParametro({
-                               parametro: '+',
-                               idparametro: '',
-                               orden: 'Z' // Se utiliza Z por que el orden es alfabetico
-                            });
+               
+                var newRec = new recordParametro({
+                   alias: '+',
+                   idparametro: '',
+                   orden: 'Z' // Se utiliza Z por que el orden es alfabetico
+                });
 
-                            
-                            rec.set("idparametro", e.value);
-                            rec.set("parametro", e.value);
-                            rec.set("orden", "X");
-                            //guardarGridProductosRec( rec );
 
-                            //Inserta una columna en blanco al final
-                            storeGrid.addSorted(newRec);
-                            storeGrid.sort("orden", "ASC");
-                        
-                        //e.value = r.data.value;
-                        return true;
-                    }
-                }
-                else
-                    return false;
+                rec.set("alias", e.value);
+                rec.set("orden", "X");
+                //guardarGridProductosRec( rec );
 
-            //)
+                //Inserta una columna en blanco al final
+                storeGrid.addSorted(newRec);
+                storeGrid.sort("orden", "ASC");
+
+                //e.value = r.data.value;
+                return true;
+                
+            }
+            else{
+                return false;
+            }
+
         }
     }
     ,
@@ -201,7 +192,7 @@ Ext.extend(ParametroGrid, Ext.grid.EditorGridPanel, {
                 Ext.Ajax.request(
                 {
                     waitMsg: 'Eliminando...',
-                    url: '<?=url_for("parametros/eliminarParametroGrid?modo=")?>',
+                    url: '<?=url_for("parametros/eliminarAKAGrid?modo=")?>',
                     //method: 'POST',
                     //Solamente se envian los cambios
                     params :	{

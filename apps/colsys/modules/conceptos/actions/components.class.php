@@ -220,7 +220,7 @@ class conceptosComponents extends sfComponents
 
 	}
 
-    public function executeParametroWindow()
+    public function executeAKAWindow()
 	{
 
 	}
@@ -245,7 +245,7 @@ class conceptosComponents extends sfComponents
 
 	}
 
-    public function executeParametroGrid()
+    public function executeAKAGrid()
 	{
         $modalidades = Doctrine::getTable("Modalidad")
                   ->createQuery("m")
