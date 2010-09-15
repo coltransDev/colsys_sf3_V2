@@ -13,6 +13,7 @@
 class Usuario extends BaseUsuario
 {
     const FOLDER = "Usuarios";
+    
     public function __toString(){
         $result = $this->getCaNombre();
         if( !$this->getCaActivo() ){
@@ -20,6 +21,7 @@ class Usuario extends BaseUsuario
         }
         return $result;
     }
+    
     public function getNivelAcceso( $rutina ){
         
         $acceso = Doctrine::getTable("AccesoUsuario")
@@ -44,9 +46,7 @@ class Usuario extends BaseUsuario
 				return $acceso->getCaAcceso();
 			}
 		}
-
 		return -1;
-        
     }
 
     public function getFirmaHTML(){
@@ -82,7 +82,6 @@ class Usuario extends BaseUsuario
 		$salt = hash("md5", uniqid(rand(), true));
 		$this->setCaPasswd( sha1( $passwd.$salt ) );
 		$this->setCaSalt( $salt );
-
 	}
 
 	public function checkPasswd( $passwd, &$error="", &$errorno="" ){
@@ -136,6 +135,9 @@ class Usuario extends BaseUsuario
              case '60x80':
                  $imagen = $this->getDirectorio().DIRECTORY_SEPARATOR.'foto60x80.jpg';
                  break;
+             case '30x40':
+                 $imagen = $this->getDirectorio().DIRECTORY_SEPARATOR.'foto30x40.jpg';
+                 break;
              default:
                  $imagen = $this->getDirectorio().DIRECTORY_SEPARATOR.'foto120x150.jpg';
                  break;
@@ -172,7 +174,60 @@ class Usuario extends BaseUsuario
         }
         
         return $manager->getEsJefe( $login );
-    }   
+    }
+    
+	public function updateLuceneIndex(){
+
+		$index = UsuarioTable::getLuceneIndex();
+ 
+  	    // remove an existing entry
+	    if ($hit = $index->find('pk:'.$this->getCaLogin())){
+	    		$index->delete($hit->id);
+	    }
+	 
+	    // don't index expired and non-activated jobs
+	    if ($this->getCaActivo()){
+	    	return;
+	  	}
+	 
+	  	$doc = new Zend_Search_Lucene_Document();
+	 
+	 	// store job primary key URL to identify it in the search results
+	  	$doc->addField(Zend_Search_Lucene_Field::UnIndexed('pk', $this->getCaLogin()));
+	 
+	 	 // index job fields
+	    $doc->addField(Zend_Search_Lucene_Field::UnStored('ca_nombres', $this->getCaNombres(), 'utf-8'));
+	    $doc->addField(Zend_Search_Lucene_Field::UnStored('ca_apellidos', $this->CaApellidos(), 'utf-8'));
+	    $doc->addField(Zend_Search_Lucene_Field::UnStored('ca_cargo', $this->getCaCargo(), 'utf-8'));
+	    $doc->addField(Zend_Search_Lucene_Field::UnStored('ca_sucursal', $this->CaSucursal(), 'utf-8'));
+	 
+	    // add job to the index
+	    $index->addDocument($doc);
+	    $index->commit();
+	}
+
+    public function save(Doctrine_Connection $conn = null)
+    {
+      // ...
+
+      $conn = $conn ? $conn : JobeetJobTable::getConnection();
+      $conn->beginTransaction();
+      try
+      {
+        $ret = parent::save($conn);
+
+        $this->updateLuceneIndex();
+
+        $conn->commit();
+
+        return $ret;
+      }
+      catch (Exception $e)
+      {
+        $conn->rollBack();
+        throw $e;
+      }
+    }
 }
 
 
