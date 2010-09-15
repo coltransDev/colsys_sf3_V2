@@ -5,13 +5,6 @@
             <?
                 if(($userinicio->getUserId()==$user->getCaLogin()) or $nivel>=1 ){
             ?>
-            <th width="5" style="border:none; border-bottom: 1px solid #D0D0D0;text-align:right" title="Nuevo"><?=link_to(image_tag("new.png"),"adminUsers/formUsuario")?></th>
-            <?
-            }
-            ?>
-            <?
-                if(($userinicio->getUserId()==$user->getCaLogin()) or $nivel>=1 ){
-            ?>
             <th width="5" style="border:none; border-bottom: 1px solid #D0D0D0;text-align:right" title="Editar"><?=link_to(image_tag("page_white_edit.png"),"adminUsers/formUsuario?login=".$user->getCaLogin())?></th>
             <?
             }
@@ -31,7 +24,7 @@
 			<td>&nbsp;</td>
 		</tr>
     </table>
-</div>
+
 <br />
 
 <div class="box1">
@@ -44,7 +37,7 @@
             <td>Nombre Completo:</td><td><b><?=($user->getCaNombres())?> <?=($user->getCaApellidos())?></b></td>
         </tr>
         <tr>
-            <td>Empresa:</td><td><b><?=($user->getCaEmpresa())?></b></td>
+            <td>Empresa:</td><td><b><?=($user->getSucursal()->getEmpresa()->getCaNombre())?></b></td>
         </tr>
         <tr>
             <td>Tel. Oficina:</td><td><b><?=($user->getCaTeloficina().' '.$user->getCaExtension())?></b></td>
@@ -74,6 +67,9 @@
             <td>Fch. Ingreso:</td><td><b><?=(Utils::parseDate($user->getCa_Fchingreso(), 'Y-m-d'))?></b></td>
         </tr>
         <tr>
+            <td>Direcci&oacute;n:</td><td><b><?=$user->getCa_Direccion()?></b></td>
+        </tr>
+        <tr>
             <td>Tel. Particular:</td><td><b><?=$user->getCa_Telparticular()?></b></td>
         </tr>
         <tr>
@@ -92,4 +88,5 @@
         }
         ?>
 </table>
+</div>
 </div>

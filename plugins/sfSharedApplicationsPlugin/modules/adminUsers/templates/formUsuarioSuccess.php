@@ -1,5 +1,9 @@
 <?
 use_helper('ExtCalendar');
+
+$sucursales = $sf_data->getRaw("sucursales");
+$departamentos = $sf_data->getRaw("departamentos");
+$cargos = $sf_data->getRaw("cargos");
 ?>
 <script language="javascript" type="text/javascript">
 	Ext.onReady(function(){
@@ -12,15 +16,27 @@ use_helper('ExtCalendar');
         });
     });
 
+    Ext.onReady(function(){
+        new Ext.form.DateField({
+            applyTo: 'cumpleanos',
+            value: '<?=$usuario->getCaCumpleanos()?>',
+            width: 100,
+            format: 'Y-m-d',
+            disabled: <?if($nivel==0){echo 'true';}else{echo 'false';}?>
+        });
+    });
+
 	function lockFields( field ){
-		if( field.value=="ldap" ){
-			document.getElementById("passwd1").disabled=true;
-			document.getElementById("passwd2").disabled=true;
-			document.getElementById("forcechange").disabled=true;
-		}else{
-			document.getElementById("passwd1").disabled=false;
-			document.getElementById("passwd2").disabled=false;
-			document.getElementById("forcechange").disabled=false;
+		if(field&&typeof(field)!='undefined'){
+			if( field.value=="ldap" ){
+				document.getElementById("passwd1").disabled=true;
+				document.getElementById("passwd2").disabled=true;
+				document.getElementById("forcechange").disabled=true;
+			}else{
+				document.getElementById("passwd1").disabled=false;
+				document.getElementById("passwd2").disabled=false;
+				document.getElementById("forcechange").disabled=false;
+			}
 		}
 	}
 
@@ -33,10 +49,73 @@ use_helper('ExtCalendar');
 		}
 		return true;
 	}
+
+
+    function cambiarValores(defaultValSuc, defaultValDep, defaultValCar){
+        //Actualizamos sucursales
+        var idempresa = document.getElementById("empresa").value;       
+
+        var sucursales = <?=json_encode($sucursales)?>;
+        var sucursalesFld = document.getElementById("idsucursal");
+        sucursalesFld.length=0;
+        for( i in sucursales ){
+            
+            if( typeof(sucursales[i]['ca_idsucursal'])!="undefined" ){
+                if( idempresa == sucursales[i]['ca_idempresa'] ){                   
+                    if( defaultValSuc == sucursales[i]["ca_idsucursal"] ){
+                        var selected = true;
+                    }else{
+                        var selected = false;
+                    }
+                    
+                    sucursalesFld[sucursalesFld.length] = new Option(sucursales[i]['ca_nombre'],sucursales[i]['ca_idsucursal'], selected);
+                }
+            }
+        }
+
+        var departamentos = <?=json_encode($departamentos)?>;
+//        alert(departamentos.toSource());
+        var departamentosFld = document.getElementById("departamento");
+        departamentosFld.length=0;
+        for( i in departamentos ){
+
+            if( typeof(departamentos[i]['ca_nombre'])!="undefined" ){
+                if( idempresa == departamentos[i]['ca_idempresa'] ){
+                    if( defaultValDep == departamentos[i]["ca_nombre"] ){
+                        var selected = true;
+                    }else{
+                        var selected = false;
+                    }
+
+                    departamentosFld[departamentosFld.length] = new Option(departamentos[i]['ca_nombre'],departamentos[i]['ca_nombre'], selected);
+                }
+            }
+        }
+		
+		var cargos = <?=json_encode($cargos)?>;
+        var cargosFld = document.getElementById("cargo");
+        cargosFld.length=0;
+        for( i in cargos ){
+
+            if( typeof(cargos[i]['ca_cargo'])!="undefined" ){
+                if( idempresa == cargos[i]['ca_idempresa'] ){
+                    if( defaultValCar == cargos[i]["ca_cargo"] ){
+                        var selected = true;
+                    }else{
+                        var selected = false;
+                    }
+
+                    cargosFld[cargosFld.length] = new Option(cargos[i]['ca_cargo'],cargos[i]['ca_cargo'], selected);
+                }
+            }
+        }
+
+    }
 </script>
 
 <form name="form1" action="<?=url_for("adminUsers/guardarUsuario")?>" method="post" onsubmit="return checkForm()" enctype="multipart/form-data" >
 <div align="center">
+    
     <table width="700" border="0" class="tableList">
         <tr>
             <th colspan="4" scope="col"><?=$usuario?"Edici&oacute;n de ":"Creaci&oacute;n de "?>usuario</th>
@@ -50,7 +129,7 @@ use_helper('ExtCalendar');
 			<td valign="top" align="left">
 				<b><?=(strtoupper($usuario->getCaNombre())) ?></b><br/>
 				<b><?=($usuario->getCaCargo()) ?></b><br />
-			</td>
+            </td>
 		</tr>
 	</table>
 
@@ -92,7 +171,7 @@ use_helper('ExtCalendar');
 								</td>
 								<td>
 									<div align="left">
-										<input type="text" name="nombres" value="<?=$usuario->getCaNombres()?>"/>
+										<input type="text" size="30" name="nombres" <?if($nivel==0){?>disabled="disabled"<?}?> value="<?=$usuario->getCaNombres()?>"/>
 									</div>
 								</td>
 							</tr>
@@ -104,7 +183,7 @@ use_helper('ExtCalendar');
 								</td>
 								<td>
 									<div align="left">
-										<input type="text" name="apellidos" value="<?=$usuario->getCaApellidos()?>" />
+										<input type="text" size="30" name="apellidos" <?if($nivel==0){?>disabled="disabled"<?}?> value="<?=$usuario->getCaApellidos()?>" />
 									</div>
 								</td>
 							</tr>
@@ -116,7 +195,7 @@ use_helper('ExtCalendar');
 								</td>
 								<td>
 									<div align="left">
-										<input type="text" name="nombre" <?if($nivel==0){?>disabled="disabled"<?}?> value="<?=$usuario->getCaNombre()?>" />
+										<input type="text" size="30" name="nombre" <?if($nivel==0){?>disabled="disabled"<?}?> value="<?=$usuario->getCaNombre()?>" />
 									</div>
 								</td>
 							</tr>
@@ -128,11 +207,15 @@ use_helper('ExtCalendar');
 								</td>
 								<td>
 									<div align="left">
-										<select name="empresa" <?if($nivel==0){?>disabled="disabled"<?}?> >
+										<select name="empresa" id="empresa" <?if($nivel==0){?>disabled="disabled"<?}?> onChange="cambiarValores('<?=$usuario->getCaIdsucursal()?>','<?=$usuario->getCaDepartamento()?>','<?=$usuario->getCaCargo()?>')">
 											<?
 											foreach( $empresas as $empresa ){
+                                               
+                                            
 											?>
-											<option value="<?=$empresa['ca_empresa']?>"<?=$usuario->getCaEmpresa()==$empresa['ca_empresa']?'selected="selected"':''?> > <?=($empresa['ca_empresa'])?></option>
+											<option value="<?=$empresa->getCaIdempresa()?>" <?=$usuario->getSucursal()->getEmpresa()->getCaNombre()==$empresa->getCaNombre()?'selected="selected"':''?> >
+                                                    <?=$empresa->getCaNombre()?>
+                                            </option>
 											<?
 											}
 											?>
@@ -149,16 +232,7 @@ use_helper('ExtCalendar');
 								</td>
 								<td>
 									<div align="left">
-										<select name="idsucursal" <?if($nivel==0){?>disabled="disabled"<?}?>>
-											<?
-											foreach( $sucursales as $sucursal ){
-											?>
-											<option value="<?=$sucursal->getCaIdsucursal()?>" <?=$usuario->getCaIdsucursal()==$sucursal->getCaIdsucursal()?'selected="selected"':''?>  >
-												<?=($sucursal->getCaNombre())?>
-												</option>
-											<?
-											}
-											?>
+										<select name="idsucursal" id="idsucursal" <?if($nivel==0){?>disabled="disabled"<?}?>>
 										</select>
 									</div>
 								</td>
@@ -171,16 +245,8 @@ use_helper('ExtCalendar');
 								</td>
 								<td>
 									<div align="left">
-										<select name="departamento" <?if($nivel==0){?>disabled="disabled"<?}?>>
-												<?
-													foreach( $departamentos as $departamento ){
-												?>
-												<option value="<?=$departamento->getCaNombre()?>" <?=$usuario->getCaDepartamento()==$departamento->getCaNombre()?'selected="selected"':''?>  >
-													<?=($departamento->getCaNombre())?>
-												</option>
-												<?
-												}
-												?>
+										<select name="departamento" id="departamento" <?if($nivel==0){?>disabled="disabled"<?}?>>
+												
 										</select>
 									</div>
 								</td>
@@ -193,7 +259,8 @@ use_helper('ExtCalendar');
 								</td>
 								<td>
 									<div align="left">
-										<input <?if($nivel==0){?>disabled="disabled"<?}?> type="text" name="cargo" value="<?=$usuario->getCaCargo()?>" size="40"/>
+										<select name="cargo" id="cargo" <?if($nivel==0){?>disabled="disabled"<?}?>>												
+										</select>
 									</div>
 								</td>
 							</tr>
@@ -204,10 +271,20 @@ use_helper('ExtCalendar');
 									</div>
 								</td>
 								<td>
-									<div align="left">
-										<input <?if($nivel==0){?>disabled="disabled"<?}?> type="text" name="manager" value="<?=($usuario->getCaManager())?>"/>
+                                    <div align="left">
+										<select name="manager" <?if($nivel==0){?>disabled="disabled"<?}?>>
+												<?
+													foreach( $jefes as $jefe ){
+												?>
+												<option value="<?=$jefe->getCaLogin()?>" <?=$jefe->getCaLogin()==$usuario->getCaManager()?'selected="selected"':''?>  >
+													<?=($jefe->getCaNombre())?>
+												</option>
+												<?
+												}
+												?>
+										</select>
 									</div>
-								</td>
+                                </td>
 							</tr>
 							<tr class="row0">
 								<td>
@@ -239,7 +316,15 @@ use_helper('ExtCalendar');
 								</td>
 								<td>
 									<div align="left">
-										<input <?if($nivel==0){?>disabled="disabled"<?}?> type="text" name="teloficina" value="<?=$usuario->getCaTeloficina()?>"/>
+										<select name="teloficina" <?if($nivel==0){?>disabled="disabled"<?}?>>                   >
+											<?
+											foreach( $teloficinas as $teloficina ){
+											?>
+											<option value="<?=$teloficina['ca_teloficina']?>"<?=$usuario->getCaTeloficina()==$teloficina['ca_teloficina']?'selected="selected"':''?> > <?=($teloficina['ca_teloficina'])?></option>
+											<?
+											}
+											?>
+										</select>
 									</div>
 								</td>
 							</tr>
@@ -255,6 +340,9 @@ use_helper('ExtCalendar');
 									</div>
 								</td>
 							</tr>
+                            <?
+                            if(!$nivel==0){
+                            ?>
 							<tr class="row0">
 								<td>
 									<div align="left">
@@ -263,10 +351,13 @@ use_helper('ExtCalendar');
 								</td>
 								<td>
 									<div align="left">
-										<input <?if($nivel==0){?>disabled="disabled"<?}?> type="file" name="foto" id="foto"  />
+										<input type="file" name="foto" id="foto"  />
 									</div>
 								</td>
 							</tr>
+                            <?
+                            }
+                            ?>
 						</table>
                     </div>
                     <div class="tab-page">
@@ -291,9 +382,7 @@ use_helper('ExtCalendar');
 									</div>
 								</td>
 								<td>
-									<div align="left">
-										 <?echo extDatePicker("cumpleanos", ($usuario?$usuario->getCaCumpleanos("Y-m-d"):date("Y-m-d")));?>
-									</div>
+                                    <input style="width: 75px;" class=" x-form-text x-form-field " id="cumpleanos" name="cumpleanos" type="text" />
 								</td>
 							</tr>
 							<tr class="row0">
@@ -304,7 +393,7 @@ use_helper('ExtCalendar');
 								</td>
 								<td>
 									<div align="left">
-									   <select name="tiposangre"                    >
+									   <select name="tiposangre" <?if($nivel==0){?>disabled="disabled"<?}?>>
 											<?
 											foreach( $tiposangre as $sangre ){
 											?>
@@ -402,7 +491,7 @@ use_helper('ExtCalendar');
 									<div align="left">
 										<select name="auth_method" id="auth_method" onchange='lockFields(this)' <?if(!($nivel==3)){?>disabled="disabled"<?}?>  >
 											<option value="ldap" <?=$usuario->getCaAuthmethod()=="ldap"?'selected="selected"':''?>>LDAP con Perfiles</option>
-                                            <option value="sha1" <?if($usuario->getCaAuthmethod()=="sha1" or !($usuario->getCaAuthmethod()=="ldap")){echo 'selected="selected"';}?>>Base de datos</option>
+                                            <option value="sha1" <?=$usuario->getCaAuthmethod()=="sha1"?'selected="selected"':''?>>Base de datos</option>
                                         </select>
 									</div>
 								</td>
@@ -467,7 +556,7 @@ use_helper('ExtCalendar');
             <td colspan="2">
                 <div align="center">
                     <input type="submit" value="Guardar" class="button" />&nbsp;
-                    <input type="button" value="Cancelar" class="button" onclick="document.location='<?=url_for("users/directory")?>'" />&nbsp;
+                    <input type="button" value="Cancelar" class="button" onclick="document.location='<?=url_for("adminUsers/directory")?>'" />&nbsp;
                 </div>
             </td>
         </tr>
@@ -476,4 +565,5 @@ use_helper('ExtCalendar');
 </form>
 <script language="javascript" type="text/javascript">
 	lockFields(document.getElementById('auth_method'));
+    cambiarValores('<?=$usuario->getCaIdsucursal()?>','<?=$usuario->getCaDepartamento()?>','<?=$usuario->getCaCargo()?>');
 </script>

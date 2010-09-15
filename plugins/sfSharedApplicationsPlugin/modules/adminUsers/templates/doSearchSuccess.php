@@ -22,7 +22,7 @@
                 <td><b><a href="<?=url_for('adminUsers/viewUser?login='.$usuario->getCaLogin()) ?>"><?=$usuario->getCaNombre()?></a></b></td>
                 <td><?=($usuario->getSucursal()->getCaNombre())?></td>
                 <td><?=($usuario->getCaDepartamento())?></td>
-                <td><?=($usuario->getCaEmpresa())?></td>
+                <td><?=($usuario->getSucursal()->getEmpresa()->getCaNombre())?></td>
             </tr>
         <?
         }
