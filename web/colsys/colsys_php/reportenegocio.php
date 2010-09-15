@@ -130,7 +130,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
     echo "</TABLE><BR>";
 
     $filtro = (($nivel==0)?" and ca_vendedor = '$usuario'":"");
-    if (!$rs->Open("select * from vi_repconsulta where ca_colmas = '' and ca_idetapa !='99999' and ca_incoterms NOT LIKE 'CIF%' and ca_incoterms NOT LIKE 'CIP%' and ca_incoterms NOT LIKE 'CPT%' and ca_incoterms NOT LIKE 'CFR%' $filtro")) {                       // Selecciona todos lo registros AG de la tabla Reportes
+    if (!$rs->Open("select * from vi_repconsulta where ca_idetapa !='99999'  and ( (ca_incoterms NOT LIKE 'CIF%' and ca_incoterms NOT LIKE 'CIP%' and ca_incoterms NOT LIKE 'CPT%'  and ca_incoterms NOT LIKE 'CFR%' ) or ca_incoterms is null) $filtro")) {                       // Selecciona todos lo registros AG de la tabla Reportes
         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
         echo "<script>document.location.href = 'entrada.php';</script>";
         exit; }

@@ -29,6 +29,9 @@ $programa = 56;
       <TD Class=mostrar><A HREF='/Coltrans/Reportes/RepInoAereoEntradaAction.do'; class='mudacor'>Cuadro INO</A></TD><TD Class=mostrar>Informe para Gerencia Cuadro INO</TD>
     </TR>
     <TR>
+      <TD Class=mostrar><A HREF='repgeneratorair.php'; class='mudacor'>Generador de Informes</A></TD><TD Class=mostrar>Módulo Contructor de Informes multimples opciones</TD>
+    </TR>
+    <TR>
       <TD Class=mostrar><A HREF='/Coltrans/Reportes/ReporteComisionAction.do?comision=1'; class='mudacor'>Comisiones</A></TD><TD Class=mostrar>Informe de Comisiones para Vendedores</TD>
   </TR>
   <TR>
