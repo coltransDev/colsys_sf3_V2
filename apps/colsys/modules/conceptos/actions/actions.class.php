@@ -262,7 +262,8 @@ class conceptosActions extends sfActions
 			$this->conceptos = array();
 			foreach( $recargos as $recargo ){
 				$row = array("idconcepto"=>$recargo->getCaIdconcepto(),
-							 "concepto"=>utf8_encode($recargo->getCaConcepto())
+							 "concepto"=>utf8_encode($recargo->getCaConcepto()),
+                             "aka"=>utf8_encode(str_replace("|",",",$recargo->getCaAka()) )
 							);
 				$this->conceptos[]=$row;
 

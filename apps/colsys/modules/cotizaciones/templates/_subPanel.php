@@ -6,7 +6,7 @@
  */
 if( $cotizacion->getCaEmpresa() == Constantes::COLTRANS ){
     include_component("cotizaciones","panelProductos",array("cotizacion"=>$cotizacion));
-    include_component("cotizaciones","panelRecargosCotizacion",array("cotizacion"=>$cotizacion,"tipo"=>"Recargo Local"));
+    include_component("cotizaciones","panelRecargosCotizacion",array("cotizacion"=>$cotizacion));
 //    include_component("cotizaciones","panelContViajes",array("cotizacion"=>$cotizacion));
     include_component("cotizaciones","panelSeguros",array("cotizacion"=>$cotizacion));
     include_component("cotizaciones","panelAgentes",array("cotizacion"=>$cotizacion));

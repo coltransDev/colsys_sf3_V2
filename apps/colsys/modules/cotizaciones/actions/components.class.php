@@ -87,23 +87,48 @@ class cotizacionesComponents extends sfComponents
 		$this->aplicacionesAereo = ParametroTable::retrieveByCaso("CU064", null, Constantes::AEREO );
 		$this->aplicacionesMaritimo = ParametroTable::retrieveByCaso("CU064", null, Constantes::MARITIMO );
 
-		$this->recargosMaritimo = Doctrine::getTable("TipoRecargo")
-                                  ->createQuery("t")
-                                  ->where("t.ca_transporte = ? and t.ca_tipo = ?", array(Constantes::MARITIMO, $tipo ))
-                                  ->addOrderBy("t.ca_recargo ASC")
-                                  ->execute();
+		$this->recargosMaritimo = Doctrine::getTable("InoConcepto")
+                                  ->createQuery("c")
+                                 ->innerJoin("c.InoConceptoModalidad cm")
+                                 ->innerJoin("cm.Modalidad m")
+                                 ->addWhere("m.ca_impoexpo like ? ", "%".Constantes::IMPO."%" )
+                                 ->addWhere("m.ca_transporte = ? ", Constantes::MARITIMO )
+                                 ->addWhere("c.ca_recargolocal = ? ", true )
+                                 ->addWhere("c.ca_usueliminado IS NULL" )
+                                 ->distinct()
+                                 ->addOrderBy( "c.ca_concepto" )
+                                 ->execute();
 
-        $this->recargosTerrestreOTM = Doctrine::getTable("TipoRecargo")
-                                  ->createQuery("t")
-                                  ->where("t.ca_transporte = ? and t.ca_tipo = ?", array(Constantes::TERRESTRE, Constantes::RECARGO_OTM_DTA ))
-                                  ->addOrderBy("t.ca_recargo ASC")
-                                  ->execute();
+        $this->recargosAereo = Doctrine::getTable("InoConcepto")
+                                  ->createQuery("c")
+                                 ->innerJoin("c.InoConceptoModalidad cm")
+                                 ->innerJoin("cm.Modalidad m")
+                                 ->addWhere("m.ca_impoexpo like ? ", "%".Constantes::IMPO."%" )
+                                 ->addWhere("m.ca_transporte = ? ", Constantes::AEREO )
+                                 ->addWhere("c.ca_recargolocal = ? ", true )
+                                 ->addWhere("c.ca_usueliminado IS NULL" )
+                                 ->distinct()
+                                 ->addOrderBy( "c.ca_concepto" )
+                                 ->execute();
 
-		$this->recargosAereo = Doctrine::getTable("TipoRecargo")
-                                  ->createQuery("t")
-                                  ->where("t.ca_transporte = ? and t.ca_tipo = ?", array(Constantes::AEREO, $tipo ))
-                                  ->addOrderBy("t.ca_recargo ASC")
-                                  ->execute();
+
+
+
+
+
+        $this->recargosTerrestreOTM = Doctrine::getTable("InoConcepto")
+                                  ->createQuery("c")
+                                 ->innerJoin("c.InoConceptoModalidad cm")
+                                 ->innerJoin("cm.Modalidad m")                                 
+                                 ->addWhere("m.ca_transporte = ? ", Constantes::TERRESTRE )
+                                 ->addWhere("c.ca_recargootmdta = ? ", true )
+                                 ->addWhere("c.ca_usueliminado IS NULL" )
+                                 ->distinct()
+                                 ->addOrderBy( "c.ca_concepto" )
+                                 ->execute();
+
+                
+		
 
 
         if(!isset($this->modo)){

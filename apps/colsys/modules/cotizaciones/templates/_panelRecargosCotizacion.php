@@ -20,6 +20,10 @@ PanelRecargosCotizacion = function( config ){
     */
     this.checkColumn = new Ext.grid.CheckColumn({header:' ', dataIndex:'sel', width:30});
 
+    this.resultTpl = new Ext.XTemplate(
+            '<tpl for="."><div class="search-item"><b>{recargo}</b><br /><span>{aka}</span> </div></tpl>'
+    );
+
     this.comboRecargos = new Ext.form.ComboBox({
         typeAhead: true,
         forceSelection: true,
@@ -32,8 +36,10 @@ PanelRecargosCotizacion = function( config ){
         valueField:'idrecargo',
         displayField:'recargo',
         mode: 'local',
+        tpl: this.resultTpl,
+        itemSelector: 'div.search-item',
         store :  new Ext.data.SimpleStore({
-                    fields: ['idrecargo', 'recargo'],
+                    fields: ['idrecargo', 'recargo', 'aka'],
                     data : []
                 })
 
@@ -374,7 +380,7 @@ Ext.extend(PanelRecargosCotizacion, Ext.grid.EditorGridPanel, {
                         echo ",";
                     }
                 ?>
-                    ['<?=$recargo->getCaIdrecargo()?>','<?=$recargo->getCaRecargo()?>']
+                    ['<?=$recargo->getCaIdconcepto()?>','<?=$recargo->getCaConcepto()?>','<?=$recargo->getCaAka()?>']
                 <?
                 }
                 ?>
@@ -388,7 +394,7 @@ Ext.extend(PanelRecargosCotizacion, Ext.grid.EditorGridPanel, {
                         echo ",";
                     }
                 ?>
-                    ['<?=$recargo->getCaIdrecargo()?>','<?=$recargo->getCaRecargo()?>']
+                    ['<?=$recargo->getCaIdconcepto()?>','<?=$recargo->getCaConcepto()?>','<?=$recargo->getCaAka()?>']
                 <?
                 }
                 ?>
@@ -402,7 +408,7 @@ Ext.extend(PanelRecargosCotizacion, Ext.grid.EditorGridPanel, {
                         echo ",";
                     }
                 ?>
-                    ['<?=$recargo->getCaIdrecargo()?>','<?=$recargo->getCaRecargo()?>']
+                    ['<?=$recargo->getCaIdconcepto()?>','<?=$recargo->getCaConcepto()?>','<?=$recargo->getCaAka()?>']
                 <?
                 }
                 ?>

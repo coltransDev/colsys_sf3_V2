@@ -31,7 +31,8 @@ PanelProductos = function( config ){
             },
             Ext.data.Record.create([
                 {name: 'idconcepto'},
-                {name: 'concepto'}
+                {name: 'concepto'},
+                {name: 'aka'}
             ])
         )
     });
@@ -52,9 +53,14 @@ PanelProductos = function( config ){
                 Ext.data.Record.create([
                     {name: 'idconcepto'},
                     {name: 'concepto'}
+                    
                 ])
         )
     });
+
+    this.resultTpl = new Ext.XTemplate(
+            '<tpl for="."><div class="search-item"><b>{concepto}</b><br /><span>{aka}</span> </div></tpl>'
+    );
 
     this.editorConceptos = new Ext.form.ComboBox({
         fieldLabel: 'Concepto',
@@ -68,9 +74,11 @@ PanelProductos = function( config ){
         displayField: 'concepto',
         valueField: 'idconcepto',
         lazyRender:true,
-        listClass: 'x-combo-list-small',
+       
+        tpl: this.resultTpl,
+        itemSelector: 'div.search-item',
         store : this.storeConceptos
-    })
+    });
 
     this.editorEquipos = new Ext.form.ComboBox({
         fieldLabel: 'Equipo',
