@@ -178,7 +178,7 @@ function llenar_continuaciones(){
 		  document.adicionar.continuacion[document.adicionar.continuacion.length] = new Option('N/A','N/A',false,false);
 		  document.adicionar.continuacion[document.adicionar.continuacion.length] = new Option('CABOTAJE','CABOTAJE',false,false);
 		 }
-	  else if (document.adicionar.transporte.value=='Marítimo'){
+	  else if (document.adicionar.transporte.value=='Marítimo' || document.adicionar.transporte.value=='Terrestre'){
 		  document.adicionar.continuacion[document.adicionar.continuacion.length] = new Option('N/A','N/A',false,false);
 		  document.adicionar.continuacion[document.adicionar.continuacion.length] = new Option('OTM','OTM',false,false);
 		  document.adicionar.continuacion[document.adicionar.continuacion.length] = new Option('DTA','DTA',false,false);
@@ -203,6 +203,10 @@ function llenar_modalidades(){
 	  document.adicionar.modalidad[document.adicionar.modalidad.length] = new Option('COLOADING','COLOADING',false,false);
 	  document.adicionar.modalidad[document.adicionar.modalidad.length] = new Option('PROYECTOS','PROYECTOS',false,false);
 	  document.adicionar.modalidad[document.adicionar.modalidad.length] = new Option('PARTICULARES','PARTICULARES',false,false);
+	 }
+  else if (document.adicionar.transporte.value=='Terrestre'){
+	  document.adicionar.modalidad[document.adicionar.modalidad.length] = new Option('LCL','LCL',false,false);
+	  document.adicionar.modalidad[document.adicionar.modalidad.length] = new Option('FCL','FCL',false,false);
 	 }
   if (adicionar.accion.value != 'Crear Reporte AG'){
 	  llenar_lineas();
