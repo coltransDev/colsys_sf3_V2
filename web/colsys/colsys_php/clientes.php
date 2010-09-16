@@ -573,20 +573,24 @@ require_once("menu.php");
 		   echo "  </TABLE></TD>";
 		   echo "</TR>";
 		   if ($rs->Value('ca_diascredito') != 0 or $rs->Value('ca_cupo') != 0){
+                           $liberac = ($rs->Value('ca_stdcircular') != 'Vigente')?"negativo":"destacar";
 			   echo "<TR>";
-			   echo "  <TD Class=destacar><B>Liberación Automática:</B></TD>";
-			   echo "  <TD Class=destacar COLSPAN=4><TABLE WIDTH=100% CELLSPACING=1 BORDER=1>";
+			   echo "  <TD Class='$liberac'><B>Liberación Automática:</B></TD>";
+			   echo "  <TD Class='$liberac' COLSPAN=4><TABLE WIDTH=100% CELLSPACING=1 BORDER=1>";
 			   echo "  <TR>";
-			   echo "    <TD Class=destacar><B>Días/Crédito : </B>".$rs->Value('ca_diascredito')."</TD>";
-			   echo "    <TD Class=destacar><B>Cupo Asignado : </B>".number_format($rs->Value('ca_cupo'))."</TD>";
+			   echo "    <TD Class='$liberac'><B>Días/Crédito : </B><BR />".$rs->Value('ca_diascredito')."</TD>";
+			   echo "    <TD Class='$liberac'><B>Cupo Asignado : </B><BR />".number_format($rs->Value('ca_cupo'))."</TD>";
+                           echo "    <TD Class='$liberac'><B>Creado : </B>".$rs->Value('ca_usucreado_lb')."<BR />".$rs->Value('ca_fchcreado_lb')."</TD>";
+                           echo "    <TD Class='$liberac'><B>Actualizado : </B>".$rs->Value('ca_usuactualizado_lb')."<BR />".$rs->Value('ca_fchactualizado_lb')."</TD>";
 			   echo "  </TR>";
 			   echo "  <TR>";
-			   echo "    <TD Class=destacar COLSPAN=2><B>Observaciones : </B>".$rs->Value('ca_observaciones')."</TD>";
+			   echo "    <TD Class='$liberac' COLSPAN=4><B>Observaciones : </B>".$rs->Value('ca_observaciones')."</TD>";
 			   echo "  </TR>";
 			   echo "  </TABLE></TD>";
-			   echo "  <TD Class=destacar></TD>";
+			   echo "  <TD Class='$liberac'>".(($rs->Value('ca_stdcircular') != 'Vigente')?"Circular 0170<BR/>Vencida":"")."</TD>";
 			   echo "</TR>";
 			   }
+
 		   if ($rs->Value('ca_fchfirmado') != '' or $rs->Value('ca_fchvencimiento') != ''){
 			   list($anno, $mes, $dia) = sscanf($rs->Value('ca_fchvencimiento'),"%d-%d-%d");
 			   $col_mem = (date("Y-m-d",mktime(0,0,0,$mes,$dia,$anno)) >= date("Y-m-d"))?'#00A040':'#FF6666';

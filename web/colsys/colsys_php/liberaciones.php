@@ -73,7 +73,7 @@ elseif (!isset($boton) and !isset($accion) and isset($criterio)){
         $columnas = array("Nombre del Cliente"=>"ca_compania", "Vendedor"=>"ca_vendedor", "Ciudad"=>"ca_ciudad", "Observaciones"=>"ca_observaciones");
         $condicion.= "where lower($columnas[$modalidad]) like lower('%".addslashes($criterio)."%')";
        }
-    if (!$rs->Open("select cl.ca_idcliente, cl.ca_compania, cl.ca_vendedor, us.ca_sucursal, lc.ca_cupo, lc.ca_diascredito, lc.ca_usucreado, lc.ca_fchcreado, lc.ca_usuactualizado, lc.ca_fchactualizado, lc.ca_observaciones from tb_libcliente lc INNER JOIN tb_clientes cl ON lc.ca_idcliente = cl.ca_idcliente LEFT OUTER JOIN vi_usuarios us ON cl.ca_vendedor = us.ca_login $condicion order by ca_sucursal, ca_compania")) {  // Selecciona todos lo registros de la tabla tb_libcliente
+    if (!$rs->Open("select cl.ca_idcliente, cl.ca_compania, cl.ca_vendedor, us.ca_sucursal, lc.ca_cupo, lc.ca_diascredito, lc.ca_usucreado, lc.ca_fchcreado, lc.ca_usuactualizado, lc.ca_fchactualizado, lc.ca_observaciones, CASE WHEN cl.ca_tipo IS NOT NULL OR length(cl.ca_tipo::text) <> 0 THEN 'Vigente'::text ELSE CASE WHEN cl.ca_fchcircular IS NULL THEN 'Sin'::text ELSE CASE WHEN (cl.ca_fchcircular + 365) < now() THEN 'Vencido'::text ELSE 'Vigente'::text END END END AS ca_stdcircular from tb_libcliente lc INNER JOIN tb_clientes cl ON lc.ca_idcliente = cl.ca_idcliente LEFT OUTER JOIN vi_usuarios us ON cl.ca_vendedor = us.ca_login $condicion order by ca_sucursal, ca_compania")) {  // Selecciona todos lo registros de la tabla tb_libcliente
         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";                   // Muestra el mensaje de error
         echo "<script>document.location.href = 'entrada.php';</script>";
         exit; }
@@ -95,13 +95,14 @@ require_once("menu.php");
     echo "<INPUT TYPE='HIDDEN' NAME='modalidad' VALUE=".$modalidad.">";        
     echo "<TABLE CELLSPACING=1>";                                    // un boton de comando definido para hacer mantemientos
     echo "<TR>";
-    echo "  <TH Class=titulo COLSPAN=9>SISTEMA COLTRANS S.A.<BR>$titulo</TH>";
+    echo "  <TH Class=titulo COLSPAN=10>SISTEMA COLTRANS S.A.<BR>$titulo</TH>";
     echo "</TR>";
     echo "<TH>ID</TH>";
     echo "<TH>Cliente</TH>";
     echo "<TH>Vendedor</TH>";
     echo "<TH>Días<BR>de Crédito</TH>";
     echo "<TH>Cupo Asignado</TH>";
+    echo "<TH>Circular 0170</TH>";
     echo "<TH>Usu.Creación</TH>";
     echo "<TH>Fch.Creación</TH>";
     echo "<TH>Usu.Actualizado</TH>";
@@ -110,17 +111,20 @@ require_once("menu.php");
     while (!$rs->Eof() and !$rs->IsEmpty()) {                                                      // Lee la totalidad de los registros obtenidos en la instrucción Select
        if ($rs->Value('ca_sucursal') != $nom_suc) {
            echo "<TR>";
-           echo "<TD Class=invertir COLSPAN=9 style='font-size: 13px; font-weight:bold;'>".$rs->Value('ca_sucursal')."</TD>";
+           echo "<TD Class=invertir COLSPAN=10 style='font-size: 13px; font-weight:bold;'>".$rs->Value('ca_sucursal')."</TD>";
            echo "</TR>";
            $nom_suc = $rs->Value('ca_sucursal');
        }
-       $beneficios = ($rs->Value('ca_diascredito')==0)?'background-color:#FFb2b2;':'';
+
+       $beneficios = ($rs->Value('ca_diascredito')==0 or $rs->Value('ca_stdcircular') != 'Vigente')?'background-color:#FFb2b2;':'';
+
        echo "<TR>";
        echo "  <TD Class=listar style='$beneficios'>".$rs->Value('ca_idcliente')."</TD>";
        echo "  <TD Class=listar style='$beneficios' WIDTH=260>".$rs->Value('ca_compania').((strlen($rs->Value('ca_observaciones')) != 0)?"<br />".$rs->Value('ca_observaciones'):"")."</TD>";
        echo "  <TD Class=listar style='text-align:center;$beneficios'>".$rs->Value('ca_vendedor')."</TD>";
        echo "  <TD Class=listar style='text-align:center;$beneficios'>".$rs->Value('ca_diascredito')."</TD>";
        echo "  <TD Class=listar style='text-align:right;$beneficios'>".number_format($rs->Value('ca_cupo'),0)."</TD>";
+       echo "  <TD Class=listar style='text-align:center;$beneficios'>".$rs->Value('ca_stdcircular')."</TD>";
        echo "  <TD Class=listar style='text-align:center;$beneficios'>".$rs->Value('ca_usucreado')."</TD>";
        echo "  <TD Class=listar style='text-align:center;$beneficios'>".$rs->Value('ca_fchcreado')."</TD>";
        echo "  <TD Class=listar style='text-align:center;$beneficios'>".$rs->Value('ca_usuactualizado')."</TD>";
@@ -129,7 +133,7 @@ require_once("menu.php");
        $rs->MoveNext();
        }
     echo "<TR HEIGHT=5>";
-    echo "  <TD Class=invertir COLSPAN=9></TD>";
+    echo "  <TD Class=invertir COLSPAN=10></TD>";
     echo "</TR>";
     echo "</TABLE><BR><BR>";
 

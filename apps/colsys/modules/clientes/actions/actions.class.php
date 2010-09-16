@@ -144,7 +144,7 @@ class clientesActions extends sfActions
 
                 $stdcliente->save();
             }
-
+/*
             $idClientesSinBeneficio = array();
             $stmt = LibClienteTable::liberacionEstado(null);
 
@@ -165,19 +165,18 @@ class clientesActions extends sfActions
                           ->addWhere("ca_diascredito != 0 OR ca_cupo != 0")
                           ->execute();
             }
-
+*/
             $sql =  "delete from tb_libcliente where ca_idcliente in ";
             $sql.=  "(";
-            $sql.=  "	select st0.ca_idcliente ";
-            $sql.=  "	from tb_stdcliente st0 ";
-            $sql.=  "	       LEFT OUTER JOIN (select * from tb_stdcliente where OID IN (select max(sc.OID) from tb_stdcliente sc where ca_empresa = 'Coltrans' group by ca_idcliente)) as st1 ON (st0.ca_idcliente = st1.ca_idcliente) ";
-            $sql.=  "	       LEFT OUTER JOIN (select * from tb_stdcliente where OID IN (select max(sc.OID) from tb_stdcliente sc where ca_empresa = 'Colmas' group by ca_idcliente)) as st2 ON (st0.ca_idcliente = st2.ca_idcliente) ";
+            $sql.=  "	select lb.ca_idcliente ";
+            $sql.=  "	from tb_libcliente lb  ";
+            $sql.=  "	       LEFT OUTER JOIN (select st.ca_idcliente, st.ca_estado from tb_stdcliente st INNER JOIN (select sc.ca_idcliente, max(sc.ca_fchestado) as ca_fchestado, sc.ca_empresa from tb_stdcliente sc where ca_empresa = 'Coltrans' group by ca_idcliente, ca_empresa) ul ON (st.ca_idcliente = ul.ca_idcliente and st.ca_fchestado = ul.ca_fchestado and st.ca_empresa = ul.ca_empresa)) as st1 ON (lb.ca_idcliente = st1.ca_idcliente) ";
+            $sql.=  "	       LEFT OUTER JOIN (select st.ca_idcliente, st.ca_estado from tb_stdcliente st INNER JOIN (select sc.ca_idcliente, max(sc.ca_fchestado) as ca_fchestado, sc.ca_empresa from tb_stdcliente sc where ca_empresa = 'Colmas' group by ca_idcliente, ca_empresa) ul ON (st.ca_idcliente = ul.ca_idcliente and st.ca_fchestado = ul.ca_fchestado and st.ca_empresa = ul.ca_empresa)) as st2 ON (lb.ca_idcliente = st2.ca_idcliente) ";
             $sql.=  "	where st1.ca_estado = 'Potencial' and st2.ca_estado  = 'Potencial' ";
             $sql.=  ")";
-
+			
             $q = Doctrine_Manager::getInstance()->connection();
             $stmt = $q->execute($sql);
-
 
             $layout =  $this->getRequestParameter("layout");
             if( $layout ) {
