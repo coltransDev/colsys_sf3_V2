@@ -563,26 +563,38 @@ class falabellaAduActions extends sfActions {
 
         $directory=sfConfig::get('app_falabella_output_adu');
         $numdeclaracion = null;
+        $reportar = true;
         $salida = '';
-        $ctr_count = $stmt->rowCount();
         $sum_array = $sub_array = array();
-        $sum_array['vlr_fob'] = 0;
-        $sum_array['vlr_iva'] = 0;
-        $sum_array['arancel'] = 0;
-        $sum_array['compensa'] = 0;
-        $sum_array['otros'] = 0;
-        $sum_array['antidump'] = 0;
-        $sum_array['salvaguarda'] = 0;
         while ( $row = $stmt->fetch() ) {
+            $valor_trm = floatval($row["ca_valor_trm"]);
+            $valor_otr = floatval($row["ca_sancion"]) + floatval($row["ca_rescate"]);
+            $valor_tot = floatval($row["ca_iva"]) + floatval($row["ca_arancel"]) + floatval($row["ca_compensa"]) + floatval($row["ca_antidump"]) + floatval($row["ca_salvaguarda"]) + $valor_otr;
+
+            if ($numdeclaracion != $row["ca_numdeclaracion"]){
+                $sum_array['vlr_fob'] = round($valor_tot, 0);
+                $sum_array['vlr_iva'] = round(floatval($row["ca_iva"]), 0);
+                $sum_array['arancel'] = round(floatval($row["ca_arancel"]), 0);
+                $sum_array['compensa'] = round(floatval($row["ca_compensa"]), 0);
+                $sum_array['otros'] = round($valor_otr, 0);
+                $sum_array['antidump'] = round(floatval($row["ca_antidump"]), 0);
+                $sum_array['salvaguarda'] = round(floatval($row["ca_salvaguarda"]), 0);
+                $ctr_count = $row["ca_registros"];
+            }
             if ($numdeclaracion != $row["ca_numdeclaracion"] and $numdeclaracion != null){
-                $filename = $directory.DIRECTORY_SEPARATOR.'DI_'.$numdeclaracion.'.txt';
-                $handle = fopen($filename , 'w');
-                if (fwrite($handle, $salida) === FALSE) {
-                    echo "No se puede escribir al archivo {filename}";
-                    exit;
+                if ($reportar){
+                    $filename = $directory.DIRECTORY_SEPARATOR.'DI_'.$numdeclaracion.'.txt';
+                    $handle = fopen($filename , 'w');
+                    if (fwrite($handle, $salida) === FALSE) {
+                        echo "No se puede escribir al archivo {filename}";
+                        exit;
+                    }
                 }
+                $reportar = true;
                 $salida = '';
             }
+            $ctr_count--;
+            $orderComments = null;
             $numdeclaracion = $row["ca_numdeclaracion"];
             $salida.= "51"; // 1
             $salida.= str_pad(null,10, " "); // 2
@@ -613,10 +625,6 @@ class falabellaAduActions extends sfActions {
 
             $salida.= str_pad("COP",3, " "); // 15
             $salida.= str_pad(1, 15, "0", STR_PAD_LEFT); // 16
-
-            $valor_trm = floatval($row["ca_valor_trm"]);
-            $valor_otr = floatval($row["ca_sancion"]) + floatval($row["ca_rescate"]);
-            $valor_tot = floatval($row["ca_iva"]) + floatval($row["ca_arancel"]) + floatval($row["ca_compensa"]) + floatval($row["ca_antidump"]) + floatval($row["ca_salvaguarda"]) + $valor_otr;
 
             $salida.= str_pad(number_format($valor_tot,2,'.',''), 15, "0", STR_PAD_LEFT); // 17
             $salida.= str_pad(number_format(floatval($row["ca_iva"]),2,'.',''), 15, "0", STR_PAD_LEFT); // 18
@@ -655,31 +663,59 @@ class falabellaAduActions extends sfActions {
             $sub_array['antidump'] = round(floatval($row["ca_antidump"]) * $factor, 0);
             $sub_array['salvaguarda'] = round(floatval($row["ca_salvaguarda"]) * $factor, 0);
 
-            foreach($sum_array as $key => $value){  // Acumula valores parciales en totales
-                $sum_array[$key]+= $sub_array[$key];
+            foreach($sum_array as $key => $value){  // Descuenta los valores parciales del Valor Total
+                $sum_array[$key]-= $sub_array[$key];
             }
 
-            if ($ctr_count == 1){
-                if ($sum_array['vlr_fob']!=$valor_tot and abs($sum_array['vlr_fob']-$valor_tot)<=5){
-                    $sub_array['vlr_fob']-= $sum_array['vlr_fob']-$valor_tot;
+            if ($ctr_count == 0){
+                if ($sum_array['vlr_fob']!=0 and abs($sum_array['vlr_fob'])<=5){
+                    $sub_array['vlr_fob']+= $sum_array['vlr_fob'];
+                    $orderComments.= "Ajuste en Total :".$sum_array['vlr_fob']."\r\n";
+                }else if (abs($sum_array['vlr_fob'])>5){
+                    $reportar = false;
+                    $orderComments.= "Diferencia en Total :".$sum_array['vlr_fob']."\r\n";
                 }
-                if ($sum_array['vlr_iva']!=$row["ca_iva"] and abs($sum_array['vlr_iva']-$row["ca_iva"])<=5){
-                    $sub_array['vlr_iva']-= $sum_array['vlr_iva']-$row["ca_iva"];
+                if ($sum_array['vlr_iva']!=0 and abs($sum_array['vlr_iva'])<=5){
+                    $sub_array['vlr_iva']+= $sum_array['vlr_iva'];
+                    $orderComments.= "Ajuste en IVA :".$sum_array['vlr_iva']."\r\n";
+                }else if (abs($sum_array['vlr_iva'])>5){
+                    $reportar = false;
+                    $orderComments.= "Diferencia en IVA :".$sum_array['vlr_iva']."\r\n";
                 }
-                if ($sum_array['arancel']!=$row["ca_arancel"] and abs($sum_array['arancel']-$row["ca_arancel"])<=5){
-                    $sub_array['arancel']-= $sum_array['arancel']-$row["ca_arancel"];
+                if ($sum_array['arancel']!=0 and abs($sum_array['arancel'])<=5){
+                    $sub_array['arancel']+= $sum_array['arancel'];
+                    $orderComments.= "Ajuste en Arancel :".$sum_array['arancel']."\r\n";
+                }else if (abs($sum_array['arancel'])>5){
+                    $reportar = false;
+                    $orderComments.= "Diferencia en Arancel :".$sum_array['arancel']."\r\n";
                 }
-                if ($sum_array['compensa']!=$row["ca_compensa"] and abs($sum_array['compensa']-$row["ca_arancel"])<=5){
-                    $sub_array['compensa']-= $sum_array['arancel']-$row["ca_arancel"];
+                if ($sum_array['compensa']!=0 and abs($sum_array['compensa'])<=5){
+                    $sub_array['compensa']+= $sum_array['compensa'];
+                    $orderComments.= "Ajuste en Compesancion :".$sum_array['compensa']."\r\n";
+                }else if (abs($sum_array['compensa'])>5){
+                    $reportar = false;
+                    $orderComments.= "Diferencia en Compensacion :".$sum_array['compensa']."\r\n";
                 }
-                if ($sum_array['otros']!=$valor_otr and abs($sum_array['otros']-$valor_otr)<=5){
-                    $sub_array['otros']-= $sum_array['otros']-$valor_otr;
+                if ($sum_array['otros']!=0 and abs($sum_array['otros'])<=5){
+                    $sub_array['otros']+= $sum_array['otros'];
+                    $orderComments.= "Ajuste en Otros :".$sum_array['otros']."\r\n";
+                }elseif (abs($sum_array['otros'])>5){
+                    $reportar = false;
+                    $orderComments.= "Diferencia en Otros :".$sum_array['otros']."\r\n";
                 }
-                if ($sum_array['antidump']!=$row["ca_antidump"] and abs($sum_array['antidump']-$row["ca_antidump"])<=5){
-                    $sub_array['antidump']-= $sum_array['antidump']-$row["ca_antidump"];
+                if ($sum_array['antidump']!=0 and abs($sum_array['antidump'])<=5){
+                    $sub_array['antidump']+= $sum_array['antidump'];
+                    $orderComments.= "Ajuste en Antidumping :".$sum_array['antidump']."\r\n";
+                }else if (abs($sum_array['antidump'])>5){
+                    $reportar = false;
+                    $orderComments.= "Diferencia en Antidumping :".$sum_array['antidump']."\r\n";
                 }
-                if ($sum_array['salvaguarda']!=$row["ca_salvaguarda"] and abs($sum_array['salvaguarda']-$row["ca_salvaguarda"])<=5){
-                    $sub_array['salvaguarda']-= $sum_array['salvaguarda']-$row["ca_salvaguarda"];
+                if ($sum_array['salvaguarda']!=0 and abs($sum_array['salvaguarda'])<=5){
+                    $sub_array['salvaguarda']+= $sum_array['salvaguarda'];
+                    $orderComments.= "Ajuste en Salvaguarda :".$sum_array['salvaguarda']."\r\n";
+                }else if (abs($sum_array['salvaguarda'])>5){
+                    $reportar = false;
+                    $orderComments.= "Diferencia en Salvaguarda :".$sum_array['salvaguarda']."\r\n";
                 }
             }
 
@@ -703,18 +739,20 @@ class falabellaAduActions extends sfActions {
             $salida.= str_pad($row["ca_aceptacion_nro"],17, " "); // 48
             $salida.= "\r\n";
 
-            $falaHeaderAdu = Doctrine::getTable("FalaHeaderAdu")->find ( $row["ca_iddoc"] );
+            $orderComments = ($orderComments==null)?"Archivo DI OK  ":$orderComments;
+            $falaHeaderAdu = Doctrine::getTable("FalaHeaderAdu")->find ( $row["ca_iddoc"]);
+            $falaHeaderAdu->setCaOrdenComments(substr($orderComments,0,strlen($orderComments)-2));
             $falaHeaderAdu->setCaProcesado(TRUE);
             $falaHeaderAdu->save();
-            $ctr_count--;
         }
 
-        $filename = $directory.DIRECTORY_SEPARATOR.'DI_'.$numdeclaracion.'.txt';
-        $handle = fopen($filename , 'w');
-
-        if (fwrite($handle, $salida) === FALSE) {
-            echo "No se puede escribir al archivo {filename}";
-            exit;
+        if ($reportar){
+            $filename = $directory.DIRECTORY_SEPARATOR.'DI_'.$numdeclaracion.'.txt';
+            $handle = fopen($filename , 'w');
+            if (fwrite($handle, $salida) === FALSE) {
+                echo "No se puede escribir al archivo {filename}";
+                exit;
+            }
         }
         $this->redirect("falabellaAdu/list");
 
@@ -796,6 +834,7 @@ class falabellaAduActions extends sfActions {
             $salida.= "\r\n";
 
             if(!isset($acumula[$row["ca_numdocumento"]])){
+/*
                 if($vlr_exento != 0){
                     $adicion.= "11"; // 1
                     $adicion.= "830003960"; // 2
@@ -811,9 +850,9 @@ class falabellaAduActions extends sfActions {
                 $adicion.= "900017447 "; // 3
                 $adicion.= str_pad($row["ca_numdocumento"],10, " "); // 4
                 $adicion.= str_pad("006",50, " "); // 5 Concepto de Retención en la Fuente
-                $adicion.= str_pad($vlr_afecto, 10, "0", STR_PAD_LEFT); // 6
+                $adicion.= str_pad(0, 10, "0", STR_PAD_LEFT); // 6  $vlr_afecto Se deja en 0 por ser autoretenedores
                 $adicion.= "\r\n";
-
+*/
                 $adicion.= "13"; // 1
                 $adicion.= "830003960"; // 2
                 $adicion.= "900017447 "; // 3
@@ -1159,6 +1198,30 @@ class falabellaAduActions extends sfActions {
 
             if( $this->getRequestParameter ( 'pago_fch' )!==null ) {
                 $declaracionDts->setCaPagoFch( $this->getRequestParameter ( 'pago_fch' ) );
+            }
+
+            if( $this->getRequestParameter ( 'salvaguarda_porcntj' )!==null ) {
+                $declaracionDts->setCaSalvaguardaPorcntj( $this->getRequestParameter ( 'salvaguarda_porcntj' ) );
+            }
+
+            if( $this->getRequestParameter ( 'salvaguarda' )!==null ) {
+                $declaracionDts->setCaSalvaguarda( $this->getRequestParameter ( 'salvaguarda' ) );
+            }
+
+            if( $this->getRequestParameter ( 'compensa_porcntj' )!==null ) {
+                $declaracionDts->setCaCompensaPorcntj( $this->getRequestParameter ( 'compensa_porcntj' ) );
+            }
+
+            if( $this->getRequestParameter ( 'compensa' )!==null ) {
+                $declaracionDts->setCaCompensa( $this->getRequestParameter ( 'compensa' ) );
+            }
+
+            if( $this->getRequestParameter ( 'antidump_porcntj' )!==null ) {
+                $declaracionDts->setCaAntidumpPorcntj( $this->getRequestParameter ( 'antidump_porcntj' ) );
+            }
+
+            if( $this->getRequestParameter ( 'antidump' )!==null ) {
+                $declaracionDts->setCaAntidump( $this->getRequestParameter ( 'antidump' ) );
             }
 
             $declaracionDts->save();

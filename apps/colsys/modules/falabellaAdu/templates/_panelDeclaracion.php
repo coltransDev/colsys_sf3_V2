@@ -48,7 +48,7 @@ PanelDeclaracion = function(){
         width: 100,
         editor: new Ext.form.TextField({
             allowBlank: false
-        }),
+        })
       },
       {
         header: "Fch.Aceptación",
@@ -181,7 +181,7 @@ PanelDeclaracion = function(){
       },
       {
         header: "%I",
-        dataIndex: 'iva_porcntj',
+        dataIndex: 'iva_porctj',
         sortable:false,
         width: 30,
         align: 'right'
@@ -199,7 +199,13 @@ PanelDeclaracion = function(){
         dataIndex: 'salvaguarda_porcntj',
         sortable:false,
         width: 30,
-        align: 'right'
+        align: 'right',
+        editor: new Ext.form.NumberField({
+				allowBlank: false ,
+				allowNegative: false,
+				style: 'text-align:right',
+				decimalPrecision :2
+			})
       },
       {
         header: "Tot.Salvaguarda",
@@ -207,14 +213,26 @@ PanelDeclaracion = function(){
         sortable:false,
         width: 90,
         align: 'right',
-        renderer: 'usMoney'
+        renderer: 'usMoney',
+        editor: new Ext.form.NumberField({
+				allowBlank: false ,
+				allowNegative: false,
+				style: 'text-align:right',
+				decimalPrecision :2
+			})
       },
       {
         header: "%C",
         dataIndex: 'compensa_porcntj',
         sortable:false,
         width: 30,
-        align: 'right'
+        align: 'right',
+        editor: new Ext.form.NumberField({
+				allowBlank: false ,
+				allowNegative: false,
+				style: 'text-align:right',
+				decimalPrecision :2
+			})
       },
       {
         header: "Tot.Compensa",
@@ -222,14 +240,26 @@ PanelDeclaracion = function(){
         sortable:false,
         width: 90,
         align: 'right',
-        renderer: 'usMoney'
+        renderer: 'usMoney',
+        editor: new Ext.form.NumberField({
+				allowBlank: false ,
+				allowNegative: false,
+				style: 'text-align:right',
+				decimalPrecision :2
+			})
       },
       {
         header: "%A",
         dataIndex: 'antidump_porcntj',
         sortable:false,
         width: 30,
-        align: 'right'
+        align: 'right',
+        editor: new Ext.form.NumberField({
+				allowBlank: false ,
+				allowNegative: false,
+				style: 'text-align:right',
+				decimalPrecision :2
+			})
       },
       {
         header: "Tot.Antidump",
@@ -237,7 +267,13 @@ PanelDeclaracion = function(){
         sortable:false,
         width: 90,
         align: 'right',
-        renderer: 'usMoney'
+        renderer: 'usMoney',
+        editor: new Ext.form.NumberField({
+				allowBlank: false ,
+				allowNegative: false,
+				style: 'text-align:right',
+				decimalPrecision :2
+			})
       },
       {
         header: "Sanción",

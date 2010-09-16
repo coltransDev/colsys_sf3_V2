@@ -18,7 +18,7 @@
   <th>Numero Embarque</th>
   <th>C&oacute;digo puerto pickup</th>
   <th>C&oacute;digo puerto descarga</th>
-  <th>Container mode</th>
+  <th>Resultado FTP</th>
   <th>Proveedor</th>
   <th>Codigo proveedor</th>
   <th>Monto invoice miles</th>
@@ -45,7 +45,7 @@
       <td><?php echo $fala_header->getFalaInstructionAdu()->getCaEmbarque() ?></td>
       <td><?php echo $fala_header->getCaCodigoPuertoPickup() ?></td>
       <td><?php echo $fala_header->getCaCodigoPuertoDescarga() ?></td>
-      <td><?php echo $fala_header->getCaContainerMode() ?></td>
+      <td><?php echo $fala_header->getCaOrdenComments() ?></td>
       <td><?php echo $fala_header->getCaNombreProveedor() ?></td>
       <td><?php echo $fala_header->getCaCodigoProveedor() ?></td>
       <td><?php echo $fala_header->getCaMontoInvoiceMiles() ?></td>
