@@ -3053,6 +3053,33 @@ GRANT ALL ON vi_repgerencia_sea TO GROUP "Usuarios";
 
 		order by ca_ano, ca_mes, ca_sufijo, ca_traorigen, ca_ciuorigen, ca_ciudestino;
 
+// Drop view vi_repgerencia_air cascade;
+Create view vi_repgerencia_air as
+select (CASE WHEN (string_to_array(im.ca_referencia::text, '.'::text))[5]::integer BETWEEN 0 AND 4 AND im.ca_fchreferencia > '2009-01-01' THEN ((string_to_array(im.ca_referencia::text, '.'::text))[5]::integer) + 2010 ELSE (string_to_array(im.ca_referencia::text, '.'::text))[5]::integer + 2000 END) as ca_ano,
+	(string_to_array(im.ca_referencia::text, '.'::text))[3] AS ca_mes, substr(ic.ca_referencia,5,2) as ca_sufijo,
+	ic.ca_referencia, im.ca_modalidad, tr.ca_nombre as ca_traorigen, co.ca_ciudad as ca_ciuorigen, cd.ca_ciudad as ca_ciudestino, us.ca_sucursal, ic.ca_idcliente, cl.ca_compania, ic.ca_hawb,
+	ic.ca_numpiezas as ca_piezas, ic.ca_peso, ic.ca_volumen, ii.ca_facturacion, iu.ca_utilidad, case when im.ca_usucerrado IS NOT NULL then 'Cerrado' else 'Abierto' end as ca_estado,
+	al.ca_nombre as ca_nomlinea, ic.ca_loginvendedor, us.ca_nombre as ca_vendedor
+
+	from tb_inoclientes_air ic
+		LEFT OUTER JOIN (select ca_referencia, ca_hawb, ca_idcliente, sum(round(to_number(ca_valor::text,'9999999999.99') * ca_tcalaico,0)) as ca_facturacion from tb_inoingresos_air group by ca_referencia, ca_hawb, ca_idcliente) ii ON (ic.ca_referencia = ii.ca_referencia and ic.ca_idcliente = ii.ca_idcliente and ic.ca_hawb = ii.ca_hawb)
+
+		LEFT OUTER JOIN (select ca_referencia, ca_hawb, ca_idcliente, sum(ca_valor) as ca_utilidad from tb_inoutilidad_air group by ca_referencia, ca_hawb, ca_idcliente) iu ON (ic.ca_referencia = iu.ca_referencia and ic.ca_idcliente = iu.ca_idcliente and ic.ca_hawb = iu.ca_hawb)
+
+		LEFT OUTER JOIN tb_inomaestra_air im ON (ic.ca_referencia = im.ca_referencia)
+		LEFT OUTER JOIN tb_clientes cl ON (ic.ca_idcliente = cl.ca_idcliente)
+		LEFT OUTER JOIN tb_ciudades co ON (im.ca_origen = co.ca_idciudad)
+		LEFT OUTER JOIN tb_ciudades cd ON (im.ca_destino = cd.ca_idciudad)
+		LEFT OUTER JOIN tb_traficos tr ON (co.ca_idtrafico = tr.ca_idtrafico)
+		LEFT OUTER JOIN vi_transporlineas al ON (im.ca_idlinea = al.ca_idlinea)
+		LEFT OUTER JOIN control.tb_usuarios us ON (ic.ca_loginvendedor = us.ca_login)
+		order by ca_referencia;
+REVOKE ALL ON vi_repgerencia_air FROM PUBLIC;
+GRANT ALL ON vi_repgerencia_air TO "Administrador";
+GRANT ALL ON vi_repgerencia_air TO GROUP "Usuarios";
+
+
+
 //     Instrucción para crear un campo con el resultado de un select
 //     (select '|' || e.ca_referencia || ',' || e.ca_concepto || ',' || sum(e.ca_cantidad) || '|' as ca_cantidad from vi_inoequipos_sea e where e.ca_referencia = i.ca_referencia group by ca_referencia, ca_concepto)::text as ca_equipos
 
