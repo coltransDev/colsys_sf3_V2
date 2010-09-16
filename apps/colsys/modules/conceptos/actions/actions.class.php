@@ -236,21 +236,33 @@ class conceptosActions extends sfActions
             }
 
 
-			$q = Doctrine::getTable("TipoRecargo")
-                         ->createQuery("c")
-                         ->addWhere("c.ca_transporte = ? AND ca_tipo LIKE ? ", array($transporte, "%".$tipo."%" ))
+			$q = Doctrine::getTable("InoConcepto")
+                         ->createQuery("c")                        
                          ->innerJoin("c.InoConceptoModalidad cm")
                          ->innerJoin("cm.Modalidad m")
                          ->addWhere("m.ca_impoexpo like ? ", "%".$impoexpo."%" )
+                         ->addWhere("m.ca_transporte = ? ", $transporte )
                          ->addWhere("c.ca_usueliminado IS NULL" )
                          ->distinct()
-                         ->addOrderBy( "c.ca_recargo" );
+                         ->addOrderBy( "c.ca_concepto" );
+            
+            if( $tipo ){
+                if( $tipo==Constantes::RECARGO_EN_ORIGEN ){
+                    $q->addWhere("c.ca_recargoorigen = ? ", true );
+                }
+                if( $tipo==Constantes::RECARGO_LOCAL ){
+                    $q->addWhere("c.ca_recargolocal = ? ", true );
+                }
+                if( $tipo==Constantes::RECARGO_OTM_DTA ){
+                    $q->addWhere("c.ca_recargootmdta = ? ", true );
+                }
+            }
 
             $recargos = $q->execute();
 			$this->conceptos = array();
 			foreach( $recargos as $recargo ){
-				$row = array("idconcepto"=>$recargo->getCaIdrecargo(),
-							 "concepto"=>utf8_encode($recargo->getCaRecargo())
+				$row = array("idconcepto"=>$recargo->getCaIdconcepto(),
+							 "concepto"=>utf8_encode($recargo->getCaConcepto())
 							);
 				$this->conceptos[]=$row;
 
