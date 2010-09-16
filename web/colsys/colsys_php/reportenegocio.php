@@ -2647,7 +2647,7 @@ elseif (isset($accion)) {                                                       
                     }
                 while (list ($clave, $val) = each ($recargos_org)) {
                     if ($val[roidr] == '' and $val[ridrc] != 0) {
-                        if (!$rs->Open("insert into tb_repgastos (ca_idreporte, ca_idrecargo, ca_aplicacion, ca_tipo, ca_neta_tar, ca_neta_min, ca_reportar_tar, ca_reportar_min, ca_cobrar_tar, ca_cobrar_min, ca_idmoneda, ca_idconcepto, ca_detalles, ca_fchcreado, ca_usucreado) values($idreporte, $val[ridrc], '$val[rapli]', '$val[rtipo]', $val[rntar], $val[rnmin], $val[rrtar], $val[rrmin], $val[rctar], $val[rcmin], '$val[ridmn]', $val[ridco], '".AddSlashes($val[rdets])."', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
+                        if (!$rs->Open("insert into tb_repgastos (ca_idreporte, ca_idrecargo, ca_aplicacion, ca_tipo, ca_neta_tar, ca_neta_min, ca_reportar_tar, ca_reportar_min, ca_cobrar_tar, ca_cobrar_min, ca_idmoneda, ca_idconcepto, ca_detalles, ca_fchcreado, ca_usucreado, ca_recargoorigen) values($idreporte, $val[ridrc], '$val[rapli]', '$val[rtipo]', $val[rntar], $val[rnmin], $val[rrtar], $val[rrmin], $val[rctar], $val[rcmin], '$val[ridmn]', $val[ridco], '".AddSlashes($val[rdets])."', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario', true)")) {
                             echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                             echo "<script>document.location.href = 'reportenegocio.php';</script>";
                             exit; }
@@ -2665,7 +2665,7 @@ elseif (isset($accion)) {                                                       
                 }
                 while (list ($clave, $val) = each ($recargos_loc)) {
                     if ($val[loidr] == '' and $val[lidrc] != 0) {
-                        if (!$rs->Open("insert into tb_repgastos (ca_idreporte, ca_idrecargo, ca_aplicacion, ca_tipo, ca_neta_tar, ca_neta_min, ca_reportar_tar, ca_reportar_min, ca_cobrar_tar, ca_cobrar_min, ca_idmoneda, ca_idconcepto, ca_detalles, ca_fchcreado, ca_usucreado) values($idreporte, $val[lidrc], '$val[lapli]', '$val[ltipo]', 0, 0, 0, 0, $val[lctar], $val[lcmin], '$val[lidmn]', $val[lidco], '".AddSlashes($val[ldets])."', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
+                        if (!$rs->Open("insert into tb_repgastos (ca_idreporte, ca_idrecargo, ca_aplicacion, ca_tipo, ca_neta_tar, ca_neta_min, ca_reportar_tar, ca_reportar_min, ca_cobrar_tar, ca_cobrar_min, ca_idmoneda, ca_idconcepto, ca_detalles, ca_fchcreado, ca_usucreado, ca_recargoorigen) values($idreporte, $val[lidrc], '$val[lapli]', '$val[ltipo]', 0, 0, 0, 0, $val[lctar], $val[lcmin], '$val[lidmn]', $val[lidco], '".AddSlashes($val[ldets])."', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario', false)")) {
                             echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                             echo "<script>document.location.href = 'reportenegocio.php';</script>";
                             exit; }
