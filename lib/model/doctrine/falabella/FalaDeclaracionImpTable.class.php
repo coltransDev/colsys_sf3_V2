@@ -10,7 +10,7 @@ class FalaDeclaracionImpTable extends Doctrine_Table
 
             $query = "select fdi.ca_referencia, fdi.ca_numinternacion, ";
             $query.= "  fdd.ca_numdeclaracion, fdd.ca_arancel, fdd.ca_iva, fdd.ca_compensa, fdd.ca_antidump, fdd.ca_salvaguarda, fdd.ca_sancion, fdd.ca_rescate, fdd.ca_valor_fob, fdd.ca_gastos_despacho, fdd.ca_flete, fdd.ca_seguro, fdd.ca_gastos_embarque, fdd.ca_valor_aduana, fdd.ca_ajuste_valor, fdd.ca_valor_aduana, ";
-            $query.= "  fsp.ca_iddoc, fsp.ca_embarque, fdd.ca_emision_fch, fdd.ca_vencimiento_fch, fdd.ca_aceptacion_nro, fdd.ca_aceptacion_fch, fdd.ca_pago_fch, fdd.ca_moneda, fdd.ca_valor_trm, fsp.ca_subpartida, fsp.ca_prorrateo_fob from tb_faladeclaracion_imp fdi "; // fvf.ca_subtotal_fob,
+            $query.= "  fsp.ca_iddoc, fsp.ca_embarque, fdd.ca_emision_fch, fdd.ca_vencimiento_fch, fdd.ca_aceptacion_nro, fdd.ca_aceptacion_fch, fdd.ca_pago_fch, fdd.ca_moneda, fdd.ca_valor_trm, fsp.ca_subpartida, fsp.ca_prorrateo_fob, fcn.ca_registros from tb_faladeclaracion_imp fdi "; // fvf.ca_subtotal_fob,
             $query.= "  inner join (select * from tb_faladeclaracion_dts where ca_referencia = '$referencia') fdd on fdd.ca_referencia = fdi.ca_referencia ";
 
             $query.= "  inner join (select fh.ca_referencia, fh.ca_iddoc, fi.ca_embarque, fd.ca_subpartida, sum(fd.ca_valor_fob) as ca_prorrateo_fob from ";
@@ -21,10 +21,17 @@ class FalaDeclaracionImpTable extends Doctrine_Table
             $query.= "      group by fh.ca_referencia, fh.ca_iddoc, fi.ca_embarque, fd.ca_subpartida ";
             $query.= "      order by fh.ca_referencia, fd.ca_subpartida, fh.ca_iddoc) fsp on fsp.ca_referencia = fdd.ca_referencia and fsp.ca_subpartida = fdd.ca_subpartida ";
 
+            $query.= "  inner join (select ca_referencia, ca_numdeclaracion, count(ca_iddoc) as ca_registros from ";
+            $query.= "      (select distinct fha.ca_referencia, fdd.ca_numdeclaracion, fda.ca_subpartida, fda.ca_iddoc ";
+            $query.= "          from tb_falaheader_adu fha ";
+            $query.= "          inner join tb_faladetails_adu fda on fha.ca_iddoc = fda.ca_iddoc ";
+            $query.= "          inner join tb_faladeclaracion_dts fdd on fha.ca_referencia = fdd.ca_referencia and fda.ca_subpartida = fdd.ca_subpartida ";
+            $query.= "          where fha.ca_referencia = '$referencia' ";
+            $query.= "          order by fha.ca_referencia, fdd.ca_numdeclaracion, fda.ca_subpartida) cnt group by ca_referencia, ca_numdeclaracion) fcn on fcn.ca_referencia = fdd.ca_referencia and fcn.ca_numdeclaracion = fdd.ca_numdeclaracion ";
+
             $query.= "where fdi.ca_referencia = '$referencia' order by fdd.ca_numdeclaracion, fsp.ca_subpartida ";
 
-            //echo "<br />".$query."<br />";
-            
+            // echo "<br />".$query."<br />";
             $q = Doctrine_Manager::getInstance()->connection();
             $stmt = $q->execute($query);
             return $stmt;
