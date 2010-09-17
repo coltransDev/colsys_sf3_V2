@@ -302,7 +302,7 @@ include_component("widgets", "widgetContactoCliente");
                             enableLinks:  false,
                             enableSourceEdit : false,
                             enableColors : false,
-                            enableLists: false,
+                            enableLists: false
                         },                    
                         {
                             xtype: 'fileuploadfield',
