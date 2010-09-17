@@ -509,7 +509,7 @@ class widgetsActions extends sfActions
         $tipo =  $this->getRequestParameter("tipo");
 
         $rows = Doctrine_Query::create()
-                        ->select("t.ca_idtercero, t.ca_nombre, c.ca_ciudad, p.ca_nombre")
+                        ->select("t.ca_idtercero, t.ca_nombre, c.ca_ciudad, p.ca_nombre,t.ca_direccion")
                         ->from("Tercero t")
                         ->innerJoin("t.Ciudad c")
                         ->innerJoin("c.Trafico p")
@@ -527,8 +527,9 @@ class widgetsActions extends sfActions
 
    		foreach ( $rows as $row ) {            
 			//$row["t_ca_nombre"]=utf8_encode($row["t_ca_nombre"]);
-            $row["c_ca_ciudad"]=utf8_encode($row["c_ca_ciudad"]);
-            $row["p_ca_nombre"]=utf8_encode($row["p_ca_nombre"]);
+            $row["c_ca_ciudad"]=($row["c_ca_ciudad"]!="Todas las Ciudades")?utf8_encode($row["c_ca_ciudad"]):"";
+            $row["p_ca_nombre"]=($row["p_ca_nombre"]!="Todos los Tráficos del Mundo")?utf8_encode($row["p_ca_nombre"]):"";
+            $row["t_ca_direccion"]=utf8_encode($row["t_ca_direccion"]);
             $terceros[]=$row;
 
 		}
