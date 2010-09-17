@@ -205,12 +205,12 @@ class Usuario extends BaseUsuario
 	    $index->addDocument($doc);
 	    $index->commit();
 	}
-
+/*
     public function save(Doctrine_Connection $conn = null)
     {
       // ...
 
-      $conn = $conn ? $conn : JobeetJobTable::getConnection();
+      $conn = $conn ? $conn : UsuarioTable::getConnection();
       $conn->beginTransaction();
       try
       {
@@ -227,7 +227,7 @@ class Usuario extends BaseUsuario
         $conn->rollBack();
         throw $e;
       }
-    }
+    }*/
 }
 
 
