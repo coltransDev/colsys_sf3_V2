@@ -83,7 +83,9 @@ WidgetTerceroWindow = function( config ){
                         },
                         new WidgetPais({fieldLabel: 'País',
                                         id: 'tra_ciudad_id',
-                                        hiddenName: 'tra_ciudad'
+                                        hiddenName: 'tra_ciudad',
+                                        pais:'todos',
+                                        todos:true
                                        }),
                         new WidgetCiudad({fieldLabel: 'Ciudad',
                                           linkPais: 'tra_ciudad_id',
