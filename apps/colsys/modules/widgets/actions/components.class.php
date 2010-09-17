@@ -387,7 +387,7 @@ class widgetsComponents extends sfComponents
 	}
 
     public function executeWidgetPais(){		
-        
+        //echo $this->excluidos;
         $traficos = Doctrine::getTable('Trafico')->createQuery('t')
                             ->where('t.ca_idtrafico != ?', '99-999')
                             ->addOrderBy('t.ca_nombre ASC')
