@@ -44,7 +44,7 @@ WidgetPais = function( config ){
             render  : function(a ){
                 if( this.pais && this.pais!="todos" ){
 					pais=this.pais.split(",");
-
+                    
 
                     var list = new Array();
                     for( k in this.data ){
@@ -63,7 +63,26 @@ WidgetPais = function( config ){
                 else if( this.pais=="todos" )
                 {
                     var data = new Object();
-                    data.root = this.data;
+
+                    if(this.todos)
+                    {
+                        //alert(this.data)
+                        var data1 = new Object();
+                        data1.idtrafico="99-999";
+                        data1.nombre="Todos los Tráficos del Mundo";
+
+                        var list = new Array();
+                        list.push( data1 );
+                        for( k in this.data ){
+                            var rec = this.data[k];
+                            list.push( rec );
+                        }
+                        data.root = list;
+                    }
+                    else
+                    {
+                        data.root = this.data;
+                    }
                     this.store.loadData(data);
                 }
             }
