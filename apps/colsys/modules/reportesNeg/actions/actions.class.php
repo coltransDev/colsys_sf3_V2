@@ -2314,6 +2314,14 @@ color="#000000";
                 }
             }
 
+            if( $request->getParameter("enorigen")!==null ){
+                if( $request->getParameter("enorigen") ){
+                    $tarifa->setCaRecargoorigen( true );
+                }else{
+                    $tarifa->setCaRecargoorigen( false );
+                }
+            }
+
             $tarifa->save();
             $this->responseArray["success"]=true;
         }

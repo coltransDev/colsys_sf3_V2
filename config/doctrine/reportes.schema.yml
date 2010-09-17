@@ -404,6 +404,7 @@ RepGasto:
     ca_cobrar_min: decimal
     ca_idmoneda: string
     ca_detalles: string
+    ca_recargoorigen: bool
     ca_fchcreado: timestamp
     ca_usucreado: string
     ca_fchactualizado: timestamp

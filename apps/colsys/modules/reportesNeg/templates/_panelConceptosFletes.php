@@ -275,6 +275,7 @@ PanelConceptosFletes = function( config ){
             {name: 'observaciones', type: 'string'},
             {name: 'tipo', type: 'string'},
             {name: 'orden', type: 'string'}
+
         ]);
 
     this.store = new Ext.data.Store({
@@ -411,7 +412,7 @@ Ext.extend(PanelConceptosFletes, Ext.grid.EditorGridPanel, {
             changes['iditem']=r.data.iditem;
             changes['idconcepto']=r.data.idconcepto;
             changes['idreporte']=r.data.idreporte;
-            
+            changes['enorigen']=true;
             if( r.data.iditem ){
                 //envia los datos al servidor
                 Ext.Ajax.request(

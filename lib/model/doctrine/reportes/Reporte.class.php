@@ -323,11 +323,11 @@ class Reporte extends BaseReporte
 		$q->addWhere("r.ca_idreporte = ? ", $this->getCaIdreporte());
 		if( $this->getCaImpoexpo()==Constantes::IMPO ){
 			if( $tipo == "local" ){
-                $q->addWhere("t.ca_tipo like ? ", "%".Constantes::RECARGO_LOCAL."%" );
+                $q->addWhere("r.ca_recargoorigen = ?", false );
 			}
             
 			if( $tipo == "origen" ){
-                 $q->addWhere("t.ca_tipo like ? ", "%".Constantes::RECARGO_EN_ORIGEN."%");
+                $q->addWhere("r.ca_recargoorigen = ?", true );
 			}
 		}
 		
