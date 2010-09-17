@@ -317,8 +317,8 @@ class Reporte extends BaseReporte
 	*/
 	public function getRecargos( $tipo=null ){
         $q = Doctrine::getTable("RepGasto")
-                       ->createQuery("r")
-                       ->innerJoin("r.TipoRecargo t");
+                       ->createQuery("r");
+                       
 		
 		$q->addWhere("r.ca_idreporte = ? ", $this->getCaIdreporte());
 		if( $this->getCaImpoexpo()==Constantes::IMPO ){
