@@ -285,19 +285,24 @@ include_component("widgets", "widgetContactoCliente");
                             xtype: "textfield",
                             fieldLabel: "Asunto",
                             name: "asunto",
-                            id: "asunto",
-                            readOnly: true,
+                            id: "asunto",                            
                             width: 200,
                             value:"Nuevo Reporte AG"
                         }
                         ,
                         {
-                            xtype: 'textarea',
+                            xtype: 'htmleditor',
                             fieldLabel: 'Mensaje adicional',                            
                             name: 'mensaje_comercial',
                             width: 600,
                             grow: true,
-                            id:"mensaje_comercial"
+                            id:"mensaje_comercial",
+                            enableFont: false,
+                            enableFontSize: false,
+                            enableLinks:  false,
+                            enableSourceEdit : false,
+                            enableColors : false,
+                            enableLists: false,
                         },                    
                         {
                             xtype: 'fileuploadfield',
