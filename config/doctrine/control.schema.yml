@@ -24,7 +24,6 @@ Usuario:
     ca_forcechange: boolean
     ca_sucursal: string(40)
     ca_cumpleanos: date
-    ca_empresa: string(40)
     ca_fchingreso: date
     ca_manager: string(15)
     ca_nombres: string(30)
@@ -68,7 +67,13 @@ Usuario:
       foreign: ca_manager
       type: many
       class: Usuario
+    Cargo:
+      local: ca_cargo
+      foreign: ca_cargo
+      type: one
 
+
+      
 AccesoPerfil:
   options:
     symfony:
@@ -247,13 +252,50 @@ Departamento:
       autoincrement: true
     ca_nombre: string(30)
     ca_inhelpdesk: boolean
+    ca_idempresa: string
   relations:
     HdeskGroup:
       local: ca_iddepartamento
       foreign: ca_iddepartament
       orderBy: ca_name ASC
       type: many
+    Empresa:
+      local: ca_idempresa
+      foreign: ca_idempresa
+      type: one
 
+Cargo:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: control
+  tableName: control.tb_cargos
+  columns:
+    ca_cargo:
+      type: string(50)
+      primary: true
+    ca_activo: boolean
+    ca_manager: boolean
+  relations:
+    Empresa:
+      local: ca_idempresa
+      foreign: ca_idempresa
+      type: one
+
+Empresa:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: control
+  tableName: control.tb_empresas
+  columns:
+    ca_idempresa:
+      type: string(3)
+      primary: true
+    ca_nombre: string(15)
+    ca_activo: boolean
 
 Sucursal:
   options:
@@ -271,6 +313,13 @@ Sucursal:
     ca_telefono: string
     ca_fax: string
     ca_direccion: string
+    ca_idempresa: string
+  relations:
+    Empresa:
+      local: ca_idempresa
+      foreign: ca_idempresa
+      type: one
+
 
 RutinaNivel:
   options:
