@@ -2555,7 +2555,7 @@ elseif (isset($accion)) {                                                       
                         echo "<script>document.location.href = 'reportenegocio.php';</script>";
                         exit;
                     }
-                    if (!$rs->Open("insert into tb_repgastos select $id, ca_idrecargo, ca_aplicacion, ca_tipo, ca_neta_tar, ca_neta_min, ca_reportar_tar, ca_reportar_min, ca_cobrar_tar, ca_cobrar_min, ca_idmoneda, ca_detalles, ca_idconcepto from tb_repgastos where ca_idreporte = $nw")) {
+                    if (!$rs->Open("insert into tb_repgastos (ca_idreporte, ca_idrecargo, ca_aplicacion, ca_tipo, ca_neta_tar, ca_neta_min, ca_reportar_tar, ca_reportar_min, ca_cobrar_tar, ca_cobrar_min, ca_idmoneda, ca_detalles, ca_idconcepto, ca_recargoorigen) select $id, ca_idrecargo, ca_aplicacion, ca_tipo, ca_neta_tar, ca_neta_min, ca_reportar_tar, ca_reportar_min, ca_cobrar_tar, ca_cobrar_min, ca_idmoneda, ca_detalles, ca_idconcepto, ca_recargoorigen from tb_repgastos where ca_idreporte = $nw")) {
                         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                         echo "<script>document.location.href = 'reportenegocio.php';</script>";
                         exit;
@@ -2976,7 +2976,7 @@ elseif (isset($accion)) {                                                       
                         echo "<script>document.location.href = 'reportenegocio.php';</script>";
                         exit;
                     }
-                    if (!$rs->Open("insert into tb_repgastos (ca_idreporte, ca_idrecargo, ca_aplicacion, ca_tipo, ca_neta_tar, ca_neta_min, ca_reportar_tar, ca_reportar_min, ca_cobrar_tar, ca_cobrar_min, ca_idmoneda, ca_idconcepto, ca_detalles) select $id, ca_idrecargo, ca_aplicacion, ca_tipo, ca_neta_tar, ca_neta_min, ca_reportar_tar, ca_reportar_min, ca_cobrar_tar, ca_cobrar_min, ca_idmoneda, ca_idconcepto, ca_detalles from tb_repgastos where ca_idreporte = $id_old")) {
+                    if (!$rs->Open("insert into tb_repgastos (ca_idreporte, ca_idrecargo, ca_aplicacion, ca_tipo, ca_neta_tar, ca_neta_min, ca_reportar_tar, ca_reportar_min, ca_cobrar_tar, ca_cobrar_min, ca_idmoneda, ca_idconcepto, ca_detalles, ca_recargoorigen) select $id, ca_idrecargo, ca_aplicacion, ca_tipo, ca_neta_tar, ca_neta_min, ca_reportar_tar, ca_reportar_min, ca_cobrar_tar, ca_cobrar_min, ca_idmoneda, ca_idconcepto, ca_detalles, ca_recargoorigen from tb_repgastos where ca_idreporte = $id_old")) {
                         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                         echo "<script>document.location.href = 'reportenegocio.php';</script>";
                         exit;
