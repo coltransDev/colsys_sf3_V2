@@ -7,9 +7,25 @@
         <link rel="shortcut icon" href="/favicon.ico" />
         <?php include_stylesheets() ?>
         <?php include_javascripts() ?>
+
+    <script language="Javascript" type="text/javascript">
+		mis_imagenes = new Array("https://localhost/intranet/images/birthday/birthday1.gif","https://localhost/intranet/images/birthday/birthday2.gif","https://localhost/intranet/images/birthday/birthday3.gif")
+		mi_imagen = 0
+		imgCt = mis_imagenes.length
+		function rotacion() {
+			if (document.images) {
+				mi_imagen++
+				if (mi_imagen == imgCt) {
+					mi_imagen = 0
+				}
+				document.anuncio.src=mis_imagenes[mi_imagen]
+				setTimeout("rotacion()", 86400 * 1000)
+			}
+		}
+    </script>
     
     </head>
-    <body>
+    <body onload="rotacion()">
 
         <div class="out">
             <div class="wrapper">
@@ -105,6 +121,12 @@
 
                                     <div>
                                         <div>
+                                            <h1 class="show"><span>CUMPLEA&Ntilde;OS</span></h1><br />
+                                            <tr>
+                                                <td width="150" align="center">
+                                                    <img src="http://illiweb.com/fa/empty.gif" name="anuncio" alt="Anuncios" />
+                                                </td>
+                                            </tr><br />
                                             <?
                                             include_component('homepage','birthday');
                                             ?>
