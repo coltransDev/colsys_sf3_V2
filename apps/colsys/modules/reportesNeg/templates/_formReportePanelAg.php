@@ -119,22 +119,8 @@ include_component("widgets", "widgetContactoCliente");
                                                   id: 'origen',
                                                   idciudad:"origen",
                                                   hiddenName:"idorigen"
-                                                }),
-                                new WidgetAgente({fieldLabel: 'Agente',
-                                                  linkImpoExpo: "impoexpo",
-                                                  linkOrigen: "tra_origen_id",
-                                                  linkDestino: "tra_destino_id",
-                                                  linkListarTodos: "listar_todos",
-                                                  id:"agente",
-                                                  hiddenName:"idagente",
-												  width:350
-                                                }),
-                                {
-                                    xtype: "checkbox",
-                                    fieldLabel: "Listar todos",
-                                    id: "listar_todos",
-                                    name:"listar_todos"
-                                }
+                                                })
+                                
                             ]
                         },
                         /*
@@ -153,13 +139,13 @@ include_component("widgets", "widgetContactoCliente");
                                 new WidgetIncoterms({fieldLabel: 'Terminos',
                                                   id: 'terminos',
                                                   hiddenName:"incoterms",
-												  width:250
+												  width:220
                                                 }),
                                 new WidgetPais({fieldLabel: 'País Destino',
                                                 id: 'tra_destino_id',
                                                 linkCiudad: 'destino',
-                                                hiddenName:'idtra_destino_id',
-                                                pais:'CO-057'
+                                                hiddenName:'idtra_destino_id',                                                
+                                                pais:'todos'
                                                }),
 
                                 new WidgetCiudad({fieldLabel: 'Ciudad Destino',
@@ -169,6 +155,30 @@ include_component("widgets", "widgetContactoCliente");
                                                   hiddenName:"iddestino"
                                                 })
                                  
+                            ]
+                        }
+                        ,
+                        {
+                            columnWidth:1,
+                            layout: 'form',
+                            border:false,
+                            defaultType: 'textfield',
+                            items: [
+                                new WidgetAgente({fieldLabel: 'Agente',
+                                                          linkImpoExpo: "impoexpo",
+                                                          linkOrigen: "tra_origen_id",
+                                                          linkDestino: "tra_destino_id",
+                                                          linkListarTodos: "listar_todos",
+                                                          id:"agente",
+                                                          hiddenName:"idagente",
+                                                          width:350
+                                                        }),
+                                        {
+                                            xtype: "checkbox",
+                                            fieldLabel: "Listar todos",
+                                            id: "listar_todos",
+                                            name:"listar_todos"
+                                        }
                             ]
                         }
                     ]
@@ -271,6 +281,16 @@ include_component("widgets", "widgetContactoCliente");
                     autoHeight:true,
                     //defaults: {width: 210},
                     items: [
+                        {
+                            xtype: "textfield",
+                            fieldLabel: "Asunto",
+                            name: "asunto",
+                            id: "asunto",
+                            readOnly: true,
+                            width: 200,
+                            value:"Nuevo Reporte AG"
+                        }
+                        ,
                         {
                             xtype: 'textarea',
                             fieldLabel: 'Mensaje adicional',                            
@@ -401,13 +421,13 @@ include_component("widgets", "widgetContactoCliente");
                         if(window.confirm('Desea enviar status inmediatamente?'))
                         {
                             if(res.transporte=='<?=Constantes::AEREO?>')
-                                location.href="/traficos/listaStatus/modo/maritimo?reporte="+res.consecutivo;
+                                location.href="/traficos/listaStatus/modo/maritimo/reporte/"+res.consecutivo;
                             else
-                                location.href="/traficos/listaStatus/modo/aereo?reporte="+res.consecutivo;
+                                location.href="/traficos/listaStatus/modo/aereo/reporte/"+res.consecutivo;
                         }
                         else
                         {
-                            location.href="/verReporte/id/"+res.idreporte+"/modo/"+res.transporte+"/impoexpo/"+res.impoexpo;
+                            location.href="/reportesNeg/verReporte/id/"+res.idreporte+"/modo/"+res.transporte+"/impoexpo/"+res.impoexpo;
                         }
                     }
                     ,

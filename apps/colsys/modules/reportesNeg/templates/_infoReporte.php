@@ -104,7 +104,6 @@
                         </tr>
 
                         <tr>
-
                             <td><b>Tiempo de Cr&eacute;dito:</b>
                                 <?=$reporte->getCaTiempocredito()?>
                             </td>

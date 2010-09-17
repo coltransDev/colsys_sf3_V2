@@ -21,6 +21,7 @@
             title: 'Aduanas',
             buttonAlign: 'center',
             autoHeight: true,
+            id:'id-form-aduanas-panel',
             items: [
                 {
 

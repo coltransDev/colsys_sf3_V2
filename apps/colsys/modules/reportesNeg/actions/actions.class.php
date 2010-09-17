@@ -528,10 +528,10 @@ class reportesNegActions extends sfActions
             {                
                 $reporte->setCaIncoterms($request->getParameter("incoterms"));
 
-            }else
+            }else if($this->permiso<2)
             {
                 $errors["incoterms"]="Debe seleccionar un termino";
-            }
+            }            
 
             if($request->getParameter("idconcliente") )
             {
@@ -559,10 +559,9 @@ class reportesNegActions extends sfActions
 
             if($request->getParameter("idagente") && $request->getParameter("idagente")!="")
             {
-                if(is_numeric($request->getParameter("idagente")))
                     $reporte->setCaIdagente($request->getParameter("idagente"));
             }
-            else
+            else if($this->permiso<2)
             {
                 $errors["idagente"]="Debe seleccionar un agente";
             }
@@ -646,9 +645,13 @@ class reportesNegActions extends sfActions
             {
                 $reporte->setCaModalidad($request->getParameter("idmodalidad"));
             }
-            else
+            else if($this->permiso<2)
             {
                 $errors["idmodalidad"]="Debe seleccionar un tipo de envio";
+            }
+            else
+            {
+                $reporte->SetCaModalidad(" ");
             }
 
             if($request->getParameter("seguros-checkbox") && $request->getParameter("seguros-checkbox")=="on"  )
@@ -724,8 +727,8 @@ class reportesNegActions extends sfActions
             }
             else
             {
-                if($reporte->getCaContinuacion()!="")
-                    $reporte->setCaContinuacion(1);
+//                if($reporte->getCaContinuacion()!="")
+//                    $reporte->setCaContinuacion(1);
                 $reporte->setCaContinuacion("N/A");
             }
 
@@ -911,7 +914,9 @@ class reportesNegActions extends sfActions
 
     public function executeGuardarReporteAg( sfWebRequest $request )
     {
+    echo html_entity_decode($request->getParameter("mensaje_comercial"));
 
+exit;
         $errors =  array();
         
         $reporte = new Reporte();        
@@ -1129,7 +1134,7 @@ class reportesNegActions extends sfActions
             $reporte->save();
 
             $mail = new Email();
-            $asunto="Se ha creado un Reporte Nuevo con el numero ".$reporte->getCaConsecutivo();
+            $asunto=$request->getParameter("asunto")." - ".$reporte->getCaConsecutivo();
              if( isset( $_FILES["archivo"] )){
                 $archivo = $_FILES["archivo"];
 
@@ -1275,11 +1280,10 @@ color="#000000";
             $mail->setCaFrom($this->getUser()->getEmail());
             $mail->setCaReplyto($this->getUser()->getEmail());
             $mail->setCaAddress($cc);
-            $mail->setCaCc($this->getUser()->getEmail().",".$cc);
+            $mail->setCaCc($this->getUser()->getEmail().",".$reporte->getUsuario()->getCaEmail().",".$cc);
             $mail->save();
 
-
-            $this->responseArray=array("success"=>true,"idreporte"=>$reporte->getCaIdreporte(),"consecutivo"=>$reporte->getCaConsecutivo(),"transporte"=>utf8_encode($request->getParameter("transporte")),"impoexpo"=>$request->getParameter("impoexpo"));
+            $this->responseArray=array("success"=>true,"idreporte"=>$reporte->getCaIdreporte(),"consecutivo"=>$reporte->getCaConsecutivo(),"transporte"=>utf8_encode($request->getParameter("transporte")),"impoexpo"=>utf8_encode($request->getParameter("impoexpo")));
         }
         
         $this->setTemplate("responseTemplate");

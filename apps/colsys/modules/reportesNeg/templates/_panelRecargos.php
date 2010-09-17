@@ -235,12 +235,8 @@ PanelRecargos = function( config ){
                 handler: function(){
 					Ext.getCmp('panel-recargos').store.reload();
 				}
-
             }
             ]
-
-
-
     });
 
     var storePanelRecargos = this.store;
@@ -257,7 +253,6 @@ PanelRecargos = function( config ){
         if( record.data.iditem && field=="item" ){
             return false;
         }
-
         
         return Ext.grid.ColumnModel.prototype.isCellEditable.call(this, colIndex, rowIndex);
     }
@@ -268,14 +263,10 @@ PanelRecargos = function( config ){
             record.set("observaciones", text);
         }
     }
-   
-
-
 };
 
 Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
     guardarCambios: function(){
-
 
         var store = Ext.getCmp('panel-recargos').store;
 
@@ -532,9 +523,6 @@ Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
                         }
                     }
                 }
-
-
-
             });
             
         }
@@ -585,8 +573,5 @@ Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
         }
         this.win.show();
     }
-    
-
 });
-
 </script>
