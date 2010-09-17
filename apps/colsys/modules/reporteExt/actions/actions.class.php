@@ -23,6 +23,13 @@ class reporteExtActions extends sfActions
         
 		$this->reporte = Doctrine::getTable("Reporte")->find( $this->getRequestParameter("idreporte") );
 		$this->forward404Unless( $this->reporte );
+
+
+        //Busca la ultima versión. Ver ticket 4633.
+        $rep = ReporteTable::retrieveByConsecutivo( $this->reporte->getCaConsecutivo() );
+        if( $rep->getCaIdreporte()!=$this->reporte->getCaIdreporte() ){
+            $this->redirect("reporteExt/crearReporte?idreporte=".$rep->getCaIdreporte());
+        }
 		
 		$this->forward404Unless( $this->reporte->getCaImpoexpo()==Constantes::IMPO || $this->reporte->getCaImpoexpo()==Constantes::TRIANGULACION );
 		
