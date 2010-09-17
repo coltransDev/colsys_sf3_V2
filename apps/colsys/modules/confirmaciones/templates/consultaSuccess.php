@@ -116,7 +116,18 @@ function validarFormConfirmacion(){
    document.getElementById("form1").submit();
    
 }
- 
+
+function modFcharribo(){
+    campo = document.getElementById('mod_fcharribo');
+    objeto = document.getElementById('mod_fcharribo_id');
+
+    if(campo.checked) {
+	  objeto.style.display = "inline";
+   }
+   else {
+	  objeto.style.display = "none";
+	}
+}
 
 function habilitar( oid ){
    objeto = document.getElementById('tb_' + oid);
@@ -128,7 +139,6 @@ function habilitar( oid ){
 	  objeto.style.display = "none"; 
 	}
 }
-
 
 function mostrar(oid){
 	
@@ -448,6 +458,15 @@ function cambiarTipoMsg( value ){
 								<td class="mostrar" colspan="4"><b>Mensaje de Status:</b><br>
 									<textarea name="status_body" id="status_body" wrap="virtual" rows="3" cols="93"></textarea></td>
 							</tr>
+                            <tr>
+								<td class="mostrar" colspan="4"><b>Fecha de arribo</b><br>
+                                    Modificar Fch. Arribo: <input type="checkbox" name="mod_fcharribo" id="mod_fcharribo" onClick="modFcharribo()" />
+                                    <div id="mod_fcharribo_id">
+                                    <?
+                                    echo extDatePicker('fcharribo', $referencia->getCaFcharribo());
+                                    ?>
+                                    </div>
+							</tr>
 						</tbody>
 					</table>
                 </td>
@@ -640,7 +659,7 @@ function cambiarTipoMsg( value ){
     <?
     }
     ?>
-
+    modFcharribo();
     //;
 
 </script>

@@ -315,7 +315,12 @@ class confirmacionesActions extends sfActions
 					}else{
 						$status->setCaIdnave( $referencia->getCaMotonave() );
 					}
-										
+                    
+                    if( $request->getParameter("mod_fcharribo") ){
+                        $referencia->setCaFcharribo( $request->getParameter("fcharribo") );
+                        $referencia->save();
+                        $status->setCaFchllegada( $request->getParameter("fcharribo") );
+                    }
 					
 					
 					break;
