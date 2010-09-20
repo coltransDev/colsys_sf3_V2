@@ -235,7 +235,12 @@ PanelRecargos = function( config ){
                 handler: function(){
 					Ext.getCmp('panel-recargos').store.reload();
 				}
-            }
+            },
+            {
+				text:'Importar',
+				iconCls: 'import',
+				handler: this.importarCotizacion
+			}
             ]
     });
 

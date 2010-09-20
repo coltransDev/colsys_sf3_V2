@@ -14,6 +14,7 @@ include_component("widgets", "widgetTercero");
 <script type="text/javascript">
 Ext.onReady(function(){
 Ext.QuickTips.init();
+Ext.form.Field.prototype.msgTarget = 'side';
     var formPanel = new FormReportePanel({
         title: "Reportes de Negocio <?=$reporte->getCaIdreporte()?$reporte->getCaConsecutivo()." ".$reporte->getCaVersion()."/".$reporte->numVersiones():""?> - <?=$impoexpo?> - <?=$modo?>    ",
         editable: <?=$editable?"true":"false"?>,

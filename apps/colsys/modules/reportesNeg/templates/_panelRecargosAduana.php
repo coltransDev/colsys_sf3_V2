@@ -238,7 +238,7 @@ this.storeParametros = new Ext.data.Store({
     PanelRecargosAduana.superclass.constructor.call(this, {
        loadMask: {msg:'Cargando...'},
        clicksToEdit: 1,
-       id: 'panel-recargos-aduana',
+       id: 'idPanelRecargosAduana',
 
        plugins: [this.expander],
        view: new Ext.grid.GridView({
@@ -255,10 +255,6 @@ this.storeParametros = new Ext.data.Store({
             dblclick:this.onDblClickHandler
         },
         boxMinHeight: 400
-        
-
-
-
     });
 
     var storePanelRecargosAduana = this.store;
@@ -267,7 +263,6 @@ this.storeParametros = new Ext.data.Store({
         var record = storePanelRecargosAduana.getAt(rowIndex);
         var field = this.getDataIndex(colIndex);
 
-
         if( !record.data.iditem && field!="item" ){
             return false;
         }
@@ -275,7 +270,6 @@ this.storeParametros = new Ext.data.Store({
         if( record.data.iditem && field=="item" ){
             return false;
         }
-
         
         return Ext.grid.ColumnModel.prototype.isCellEditable.call(this, colIndex, rowIndex);
     }
@@ -286,14 +280,11 @@ this.storeParametros = new Ext.data.Store({
             record.set("observaciones", text);
         }
     }
-   
-
 
 };
 
 Ext.extend(PanelRecargosAduana, Ext.grid.EditorGridPanel, {
     guardarCambios: function(){
-
 
         var store = this.store;
         var records = store.getModifiedRecords();
@@ -360,7 +351,7 @@ Ext.extend(PanelRecargosAduana, Ext.grid.EditorGridPanel, {
                         echo ",";
                     }
                 ?>
-                    ['<? //=$aplicacion->getCaValor()?>']
+                    ['<?//  =$aplicacion->getCaValor()?>']
                 <?
                 }
                 ?>
@@ -382,7 +373,6 @@ Ext.extend(PanelRecargosAduana, Ext.grid.EditorGridPanel, {
             '<b>{0}</b>',
             value
         );
-        
     },
 
     
@@ -408,8 +398,6 @@ Ext.extend(PanelRecargosAduana, Ext.grid.EditorGridPanel, {
             }*/
         }
         else if( e.field == "item"){
-
-
 
             var rec = e.record;
             var ed = this.colModel.getCellEditor(e.column, e.row);

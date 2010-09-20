@@ -176,6 +176,9 @@ include_component("reportesNeg", "formSegurosPanel",array("modo"=>$modo,"impoexp
                         Ext.getCmp("cliente").setValue(res.data.idcliente);                        
                         $("#cliente").attr("value",res.data.cliente);
 
+                        Ext.getCmp("bodega_consignar").setValue(res.data.idbodega_hd);
+                        $("#bodega_consignar").attr("value",res.data.bodega_consignar);
+
                         if(Ext.getCmp("proveedor"))
                         {
                             Ext.getCmp("proveedor").setValue(res.data.idproveedor);

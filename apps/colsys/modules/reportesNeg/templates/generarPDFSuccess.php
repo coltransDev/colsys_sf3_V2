@@ -320,14 +320,12 @@ $tiempo_cred = ($reporte->getCaLiberacion()=='Sí')?" Tiempo de Crédito: ".$repor
 if( $reporte->getCaImpoexpo()==Constantes::IMPO ){
     $pdf->SetWidths ( array (40, 10, 35, 10, 35, 70 ) );
     $pdf->Row ( array ('Colmas Ltda:', $reporte->getCaColmas (), 'Seguro:', $reporte->getCaSeguro () ,'Lib. Automática:' ,$reporte->getCaLiberacion().$tiempo_cred ) );
-//    if( $reporte->getCaTransporte()==Constantes::MARITIMO )
-    $pdf->Row ( array ('Firma Contrato Comodato', $reporte->getCaComodato(), '', '' ,'' ,'' ) );
+    if( $reporte->getCaTransporte()==Constantes::MARITIMO )
+        $pdf->Row ( array ('Firma Contrato Comodato', $reporte->getCaComodato(), '', '' ,'' ,'' ) );
 }else{
     $pdf->SetWidths ( array (40, 10, 35, 10, 105 ) );
     $pdf->Row ( array ('Transporte terrestre Nal:', $reporte->getCaColmas (), 'Seguro:', $reporte->getCaSeguro (), "Tiempo de Crédito:", $reporte->getCaTiempocredito()  ) );
 }
-
-
 
 if ($reporte->getCaContinuacion()!= "N/A") {
     $pdf->Ln(3);

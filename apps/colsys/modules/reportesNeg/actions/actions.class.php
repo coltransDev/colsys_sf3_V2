@@ -792,7 +792,11 @@ class reportesNegActions extends sfActions
             $this->responseArray=array("success"=>false,"idreporte"=>$idreporte,"redirect"=>$redirect,"errors"=>$errors);
         else
         {
+            if($request->getParameter("idproducto"))
+                $reporte->setCaIdproducto($request->getParameter("idproducto"));
+
             $reporte->save();
+
             if($request->getParameter("idproducto"))
             {
                 $param=array();
@@ -914,9 +918,6 @@ class reportesNegActions extends sfActions
 
     public function executeGuardarReporteAg( sfWebRequest $request )
     {
-    echo html_entity_decode($request->getParameter("mensaje_comercial"));
-
-exit;
         $errors =  array();
         
         $reporte = new Reporte();        
@@ -979,8 +980,7 @@ exit;
 
         if($request->getParameter("idagente") && $request->getParameter("idagente")!="")
         {
-            if(is_numeric($request->getParameter("idagente")))
-                $reporte->setCaIdagente($request->getParameter("idagente"));
+            $reporte->setCaIdagente($request->getParameter("idagente"));
         }
         else
         {
@@ -994,6 +994,12 @@ exit;
         else
         {
             $reporte->setCaModalidad(" ");
+        }
+        
+        if($request->getParameter("incoterms") )
+        {
+            $reporte->setCaIncoterms($request->getParameter("incoterms"));
+
         }
 
         if($request->getParameter("ca_mercancia_desc") && $request->getParameter("ca_mercancia_desc")!="" )
@@ -1156,7 +1162,18 @@ exit;
             $ids=$reporte->getIdsAgente()->getIds();
             $agente=$ids->getCaNombre();
             $trayecto=$reporte->getOrigen()->getTrafico()->getCaNombre()."-".$reporte->getOrigen()->getCaCiudad()."&raquo;".$reporte->getDestino()->getTrafico()->getCaNombre()."-".$reporte->getDestino()->getCaCiudad();
-
+            $proveedor="";
+            if( $reporte->getCaIdproveedor() ){
+                $values = explode("|", $reporte->getCaIdproveedor() );
+                if(count($values)>0)
+                {
+                    $tercero = Doctrine::getTable("Tercero")->find($values[0]);
+                    if($tercero)
+                    {
+                        $proveedor =Utils::replace($tercero->getCaNombre());
+                    }
+                }
+            }
 
             $html='<html>
     <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
@@ -1242,18 +1259,20 @@ color="#000000";
                                     <!-- INTRO -->
                                     <tr>
                                         <td>&nbsp;</td>
-                                        <td>
+                                        <td >
                                             <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>No:'.$reporte->getCaConsecutivo().'</b></font><br />
                                             <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Agente:</b>'.$agente.'</font><br />
-                                            <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Trayecto:</b>'.$trayecto.'</font><br />                                            
+                                            <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Trayecto:</b>'.$trayecto.'</font><br />
+                                                <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Proveedor:</b>'.$proveedor.'</font><br />
                                             <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Cliente:</b>'.$reporte->getContacto()->getCliente()->getCaCompania().'</font><br />
                                             <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Mercancia:</b>'.$reporte->getCaMercanciaDesc().'</font><br />
                                          </td>
                                     </tr>
                                     <tr>
-                                        <td><font size="2" face="arial, helvetica, sans-serif" color="#000000">'.$request->getParameter("mensaje_comercial").'</font></td>
+                                        <td>&nbsp;</td>
+                                        <td ><font size="2" face="arial, helvetica, sans-serif" color="#000000">'.$request->getParameter("mensaje_comercial").'</font></td>
                                     </tr>
-                                    <tr><td>&nbsp;</td><td colspan="2"><hr noshade size="1"></td></tr>
+                                    <tr><td colspan="2"><hr noshade size="1"></td></tr>
                                     <tr><td>&nbsp;</td><td>
                                             <font size="1" face="arial, helvetica, sans-serif" color="#000000"> Si los links no estan funcionando, copie y pegue esta dirección en el navegador:<br>https://www.coltrans.com.co/pm/verTicket?id=2935 <br><br> Gracias por utilizar el sistema de tickets!<br><br>Coltrans S.A. - Colmas Ltda. Agencia de Aduanas Nivel 1<br>
                                                 <a href="https://www.coltrans.com.co/">http://www.coltrans.com.co/</a>
@@ -2021,6 +2040,7 @@ color="#000000";
 
             $data["consignarmaster"]=$reporte->getConsignarmaster();
             $data["tipobodega"]=utf8_encode($reporte->getBodega()->getCaTipo());
+            $data["idbodega_hd"]=$reporte->getCaIdbodega();
             $data["bodega_consignar"]=utf8_encode($reporte->getBodega()->getCaNombre());
 
             $data["idconsignatario"]=$reporte->getCaIdconsignatario();

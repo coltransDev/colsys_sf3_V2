@@ -254,9 +254,9 @@ class reportesNegComponents extends sfComponents
 	}
 
 	public function executeFormContinuacionPanel()
-	{
-		$impoexpo=$this->getRequestParameter("impoexpo");
-
+	{        
+		$impoexpo=$this->impoexpo;
+        
 		$this->title=($impoexpo== Constantes::IMPO)?"Continuación de viaje":"DTA";
 		$usuarios = Doctrine::getTable("Usuario")
                ->createQuery("u")
@@ -507,12 +507,14 @@ class reportesNegComponents extends sfComponents
      */
     public function executeCotizacionWindow()
 	{
+        //echo "::".$this->reporte->getCaIdproducto()."::<BR>";
         if( $this->reporte->getCaIdproducto() ){
             $this->producto = Doctrine::getTable("CotProducto")->find( $this->reporte->getCaIdproducto() );
-            $this->cotizacion = $this->producto->getCotizacion();             
+            $this->cotizacion = $this->producto->getCotizacion();
         }else{
             $this->producto = null;
-            $this->cotizacion = null;           
+            //$this->cotizacion = $this->reporte->getCaIdcotizacion();
+            $this->cotizacion = null;
         }
 	}
     /*

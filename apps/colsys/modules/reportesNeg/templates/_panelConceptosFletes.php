@@ -11,7 +11,6 @@ $recargos = $sf_data->getRaw("recargos");
 
 $aplicaciones = array("Valor Fijo","Sobre Flete","Sobre Flete + Recargos","Unitario x Peso/Volumen","Unitario x Pieza","Unitario x BLs/HAWBs");
 
-
 include_component("reportesNeg","cotizacionWindow", array("reporte"=>$reporte));
 ?>
 <script type="text/javascript">
@@ -330,8 +329,12 @@ PanelConceptosFletes = function( config ){
                 handler: function(){
 					Ext.getCmp('panel-conceptos-fletes').store.reload();
 				}
-
-            }
+            },
+            {
+				text:'Importar',
+				iconCls: 'import',
+				handler: this.importarCotizacion
+			}
             ]
     });
 

@@ -102,7 +102,7 @@ if( !$reporte->esSoloAduana() ){
 if( $reporte->getCaColmas()=="Sí" || substr($reporte->getCaModalidad(),0,6) == "ADUANA" ){
    include_component("reportesNeg","panelRecargosAduana", array("reporte"=>$reporte));
 //   include_component("cotizaciones","panelTarifarioAduana",array("cotizacion"=>$cotizacion));
-   $panelAduana = true;
+   $panelAduana = false;
 }else{
    $panelAduana = false;
 }
@@ -193,10 +193,10 @@ if( $reporte->getCaColmas()=="Sí" || substr($reporte->getCaModalidad(),0,6) == "
         panelRecargosLocales.importarCotizacion();
     }
 
-    var importarRecargosAduanas = function(){
+/*    var importarRecargosAduanas = function(){
         panelRecargosAduana.importarCotizacion();
     }
-
+*/
 
     <?
     if( $panelConceptosFletes ){

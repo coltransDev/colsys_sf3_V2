@@ -44,8 +44,9 @@ include_component("widgets", "widgetMoneda");
                                 layout:'column',                                
                                 id:"seguros",
                                 name:"seguros",
-                                columns: 3,
-                                columnWidth: .33,
+                                columns: 4,
+                                frame:true,
+
                                 items :[
                                 {
                                     layout:'column',
@@ -59,11 +60,14 @@ include_component("widgets", "widgetMoneda");
                                             xtype: "numberfield",
                                             name: "ca_vlrasegurado",
                                             id: "ca_vlrasegurado",
-                                            width:100
+                                            width:100,
+                                            columnWidth: .3
+
                                         },
                                         new WidgetMoneda({
                                                         id: 'ca_idmoneda_vlr',
-                                                        width:          80
+                                                        width:          80,
+                                                        columnWidth: .2
                                                         })
                                     ]
                                 },
@@ -79,11 +83,13 @@ include_component("widgets", "widgetMoneda");
                                         xtype: "numberfield",                                        
                                         name: "ca_obtencionpoliza",
                                         id: "ca_obtencionpoliza",
-                                        width: 100
+                                        width: 100,
+                                        columnWidth: .3
                                     },
                                     new WidgetMoneda({
                                                     id: 'ca_idmoneda_pol',
-                                                    width:          80
+                                                    width:          80,
+                                                    columnWidth: .2
                                                     })
                                     ]
                                 },
@@ -114,11 +120,13 @@ include_component("widgets", "widgetMoneda");
                                         xtype: "numberfield",                                        
                                         name: "ca_minimaventa",
                                         id: "ca_minimaventa",
-                                        width: 100
+                                        width: 100,
+                                        columnWidth: .3
                                     },
                                     new WidgetMoneda({
                                                     id: 'ca_idmoneda_vta',                                                    
-                                                    width:          80
+                                                    width:          80,
+                                                    columnWidth: .2
                                                     })
                                     ]
                                 }
