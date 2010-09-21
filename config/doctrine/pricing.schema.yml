@@ -35,7 +35,8 @@ Trayecto:
     ca_observaciones: string
     ca_idagente: integer
     ca_activo: boolean
-    ca_fchcreado: timestamp    
+    ca_fchcreado: timestamp
+    ca_usucreado: string
   relations:
     Origen:
       local: ca_origen
