@@ -847,6 +847,8 @@ class Reporte extends BaseReporte
                 $newGasto->setCaIdconcepto( $gasto->getCaIdconcepto() );
                 $newGasto->setCaIdrecargo( $gasto->getCaIdrecargo() );
                 $newGasto->setCaIdreporte( $reporte->getCaIdreporte() );
+                if(!$gasto->getCaRecargoorigen())
+                    $newGasto->setCaRecargoorigen( false );
                 $newGasto->save( $conn );
             }
 
@@ -855,7 +857,7 @@ class Reporte extends BaseReporte
             foreach($costos as $costo ){
                 $newCosto = $costo->copy();
                 $newCosto->setCaIdcosto( $costo->getCaIdcosto() );
-                $newCosto->setCaIdreporte( $reporte->getCaIdreporte() );
+                $newCosto->setCaIdreporte( $reporte->getCaIdreporte() );                
                 $newCosto->save();
             }
 
