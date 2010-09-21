@@ -847,8 +847,11 @@ class Reporte extends BaseReporte
                 $newGasto->setCaIdconcepto( $gasto->getCaIdconcepto() );
                 $newGasto->setCaIdrecargo( $gasto->getCaIdrecargo() );
                 $newGasto->setCaIdreporte( $reporte->getCaIdreporte() );
-                if(!$gasto->getCaRecargoorigen())
-                    $newGasto->setCaRecargoorigen( false );
+                if($gasto->getCaRecargoorigen()==false)
+                    $newGasto->setCaRecargoorigen( "false" );
+                if($gasto->getCaRecargoorigen()==true)
+                    $newGasto->setCaRecargoorigen( "true" );
+               
                 $newGasto->save( $conn );
             }
 
