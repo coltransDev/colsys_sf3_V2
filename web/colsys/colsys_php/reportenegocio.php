@@ -716,7 +716,7 @@ elseif (isset($boton)) {                                                       /
                     echo "<script>document.location.href = 'reportenegocio.php';</script>";
                     exit;
                 }
-                if (!$tm->Open("select ca_email, ca_login from vi_usuarios where ca_activo = true and ca_cargo like '%Operaciones Marítimas%'")) {          // Selecciona los correos de la tabla Parametros
+                if (!$tm->Open("select ca_email, ca_login from vi_usuarios where ca_activo = true and ca_cargo like '%OTM%'")) {          // Selecciona los correos de la tabla Parametros
                     echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
                     echo "<script>document.location.href = 'reportenegocio.php';</script>";
                     exit; }
@@ -1808,7 +1808,7 @@ elseif (isset($boton)) {                                                       /
                 echo "    <TR>";
                 echo "      <TD Class=listar>18.3 Notificar C/Viaje al email:";
                 echo "      <TD Class=listar COLSPAN=3><TABLE WIDTH=100% CELLSPACING=1 BORDER=1>";
-                if (!$tm->Open("select ca_email, ca_login from vi_usuarios where ca_cargo like '%Operaciones Marítimas%'")) { // Hace un Select a la vista e uncluye un registro vacio
+                if (!$tm->Open("select ca_email, ca_login from vi_usuarios where ca_cargo like '%OTM%'")) { // Hace un Select a la vista e uncluye un registro vacio
                     echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";     // Muestra el mensaje de error
                     echo "<script>document.location.href = 'reportenegocio.php';</script>";
                     exit;
