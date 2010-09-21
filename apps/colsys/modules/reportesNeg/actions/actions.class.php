@@ -142,7 +142,7 @@ class reportesNegActions extends sfActions
             $this->forward404();
 
         $con = Doctrine_Manager::getInstance()->connection();
-		$sql="select * from vi_repconsultaAg  ";
+		$sql="select * from vi_repconsulta  ";
         if($this->permiso<2)
             $sql.="where ca_login='".$this->getUser()->getUserId()."'";
 
@@ -474,7 +474,8 @@ class reportesNegActions extends sfActions
         if( $opcion!=0 ) //Al copiar el reporte ya se coloco el usuario y la fecha
         {
             $reporte->stopBlaming();
-        }else
+        }
+        //else
         {
             if($request->getParameter("idcotizacion") && $request->getParameter("idcotizacion")>0)
             {
@@ -585,7 +586,7 @@ class reportesNegActions extends sfActions
 */
             if($request->getParameter("orden_clie") )
             {
-                $reporte->setCaOrdenClie($request->getParameter("orden_clie"));
+                $reporte->setCaOrdenClie(utf8_decode($request->getParameter("orden_clie")));
             }
             $ca_confirmar_clie="";
             for($i=0;$i<20;$i++)
