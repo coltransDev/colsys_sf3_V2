@@ -191,6 +191,10 @@ Reporte:
       foreign: ca_idbodega
       type: one
       class: Bodega
+    RepExpo:
+      local: ca_idreporte
+      foreign: ca_idreporte
+      type: one
 
 RepStatus:
   options:
