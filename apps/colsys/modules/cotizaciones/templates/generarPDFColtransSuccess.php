@@ -78,7 +78,7 @@ if($cotizacion->getCaUsuanulado()){
 }
 $pdf->SetFont($font,'',10);
 $pdf->Ln(8);
-$pdf->Cell(0, 4, 'Asunto : '.$cotizacion->getCaAsunto()." ".$cotizacion->getCaConsecutivo(),0,1);
+$pdf->Cell(0, 4, 'Asunto : '.$cotizacion->getCaAsunto()." ".$cotizacion->getCaConsecutivo()." (V-".$cotizacion->getCaVersion().")",0,1);
 //    $pdf->Cell(0, 0, 'Comunicación No. '.$rs->Value('ca_idcotizacion').'/'.$rs->Value('ca_usuario').str_pad(" ",7),0,0,'R');
 
 $pdf->SetFont($font,'',10);
