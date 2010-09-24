@@ -53,6 +53,8 @@ Ext.extend(WidgetParametros, Ext.form.ComboBox, {
             for( k in this.data ){
                 var rec = this.data[k];
                 if( rec.caso_uso==this.caso_uso ){
+                    if(this.idvalor=="valor")
+                        rec.id=rec.valor;
                     list.push( rec );
                 }
             }
