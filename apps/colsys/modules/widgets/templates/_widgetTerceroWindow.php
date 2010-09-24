@@ -91,8 +91,7 @@ WidgetTerceroWindow = function( config ){
                                           linkPais: 'tra_ciudad_id',
                                           name: 'ciudad',
                                           hiddenName: 'idciudad',
-                                          id: 'ciudad',
-                                          allowBlank:false
+                                          id: 'ciudad'                                          
                                         })
                 ]
             }),
