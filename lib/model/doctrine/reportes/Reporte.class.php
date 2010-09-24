@@ -829,6 +829,8 @@ class Reporte extends BaseReporte
             $reporte->setCaUsucreado( null );
             $reporte->setCaFchactualizado( null );
             $reporte->setCaUsuactualizado( null);
+            $reporte->setCaFchcerrado( null );
+            $reporte->setCaUsucerrado( null);
             $reporte->save( $conn );
 
             //Copia los conceptos
