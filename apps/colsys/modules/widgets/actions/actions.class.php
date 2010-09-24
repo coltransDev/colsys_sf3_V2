@@ -412,7 +412,7 @@ class widgetsActions extends sfActions
                 $result["ca_cargo"]=utf8_encode($row["c_ca_cargo"]);
                 $result["ca_listaclinton"]=utf8_encode($row["cl_ca_listaclinton"]);
                 $result["ca_fchcircular"]=strtotime($row["cl_ca_fchcircular"]);
-                $result["ca_confirmar"]=$row["cl_ca_confirmar"];
+                $result["ca_confirmar"]=utf8_encode($row["cl_ca_confirmar"]);
                 $result["ca_idcontacto"]=$row["c_ca_idcontacto"];
                 $result["ca_status"]=$row["cl_ca_status"];
                 $result["ca_vendedor"]=$row["cl_ca_vendedor"];
@@ -561,7 +561,7 @@ class widgetsActions extends sfActions
 			$tercero->setCaFax( $this->getRequestParameter("fax") );
 			$tercero->setCaEmail( $this->getRequestParameter("email") );
 			$tercero->setCaContacto( $this->getRequestParameter("contacto") );
-			$tercero->setCaIdciudad( $this->getRequestParameter("idciudad") );
+			$tercero->setCaIdciudad( ($this->getRequestParameter("idciudad")!="")?$this->getRequestParameter("idciudad"):"999-9999" );
 			$tercero->setCaIdentificacion( $this->getRequestParameter("identificacion") );
 			$tercero->setCaVendedor( $this->getRequestParameter( "vendedor") );
 			$tercero->setCaTipo( $this->tipo );
