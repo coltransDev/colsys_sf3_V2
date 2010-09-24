@@ -604,7 +604,7 @@ class widgetsComponents extends sfComponents
         {
             $datos = ParametroTable::retrieveByCaso( $caso );
             foreach( $datos as $dato ){
-                $this->data[]=array("id"=>utf8_encode($dato->getCaValor()),"name"=>  utf8_encode($dato->getCaValor()),"caso_uso"=>$dato->getCaCasouso());
+                $this->data[]=array("id"=>utf8_encode($dato->getCaIdentificacion()),"name"=>  utf8_encode($dato->getCaValor()),"caso_uso"=>$dato->getCaCasouso());
             }
         }
 	}
