@@ -262,13 +262,13 @@ function cambiarTipoMsg( value ){
 <div align="center">
 
 	<?
-	if( !sfConfig::get("app_smtp_user") ){
+	/*if( !sfConfig::get("app_smtp_user") ){
 	?>
 	<?=image_tag("22x22/alert.gif")?>La autenticación SMTP se encuentra desactivada, es posible que sus mensajes no lleguen al destinatario.
 	<br />
 	<br />
 	<?
-	}
+	}*/
 	?>
 
 	<form action='<?=url_for("confirmaciones/crearStatus?modo=".$modo)?>' method="post" enctype='multipart/form-data' name='form1' id="form1" onsubmit='return false;'>

@@ -201,16 +201,13 @@ var crearSeguimiento=function(){
 echo $form['mensaje_dirty']->render();
 echo $form['mensaje_mask']->render();
 
-if( !sfConfig::get("app_smtp_user") ){
+/*if( !sfConfig::get("app_smtp_user") ){
 ?>
-
 <?=image_tag("22x22/alert.gif")?>La autenticación SMTP se encuentra desactivada, es posible que sus mensajes no lleguen al destinatario.
 <br />
 <br />
-
-
 <?
-}
+}*/
 ?>
 
 
