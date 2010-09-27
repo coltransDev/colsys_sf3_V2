@@ -13,7 +13,7 @@
     <form action="<?=url_for("ids/formEventos?modo=".$modo)?>" method="post">
     <?
     if( !$modo ){
-        if( $reporte ){
+        if( isset($reporte) && $reporte ){
         ?>
         <input type="hidden" name="idreporte" value="<?=$reporte->getCaIdreporte()?>" />
         <?

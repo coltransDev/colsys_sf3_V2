@@ -25,12 +25,7 @@ class NuevaEvaluacionForm extends BaseForm{
 
 
 
-		$widgets['concepto'] = new sfWidgetFormChoice(array(
-  								'choices' => array( ''=>'',
-                                                    Constantes::IMPO=>Constantes::IMPO,
-													Constantes::EXPO=>Constantes::EXPO
-												  )
-								 ));
+		$widgets['concepto'] = new sfWidgetFormInputHidden();
         $widgets['fchevaluacion'] = new sfWidgetFormExtDate();
         $widgets['ano'] = new sfWidgetFormInputText(array(), array("size"=>10 ));
         $criterios = $this->getCriterios();

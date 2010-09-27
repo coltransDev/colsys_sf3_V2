@@ -167,7 +167,7 @@ $counts = array();
 
         <tr class="row0" >
 
-            <td colspan="8"><b>Promedio</b></td>
+            <td colspan="9"><b>Promedio</b></td>
             <?
             for( $year=$initialYear;$year<=$actualYear; $year++ ){
             ?>

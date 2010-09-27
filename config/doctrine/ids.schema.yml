@@ -366,6 +366,8 @@ IdsCriterio:
     ca_ponderacion: integer(4)
     ca_tipocriterio: string(30)
     ca_activo: boolean
+    ca_impoexpo: string
+    ca_transporte: string
     ca_usucreado: string(20)
     ca_fchcreado: timestamp
     ca_usuactualizado: string(20)

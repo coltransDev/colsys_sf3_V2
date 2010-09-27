@@ -85,9 +85,22 @@ $numYears = $actualYear-$initialYear+1;
                 <option value="seleccion">Selecci&oacute;n</option>
                 <?
                 }
+
+
+                if( $ids->getIdsProveedor()->getCaTipo()=="TRI" ){
+                ?>
+                <option value="desempeno_impo" selected="selected">Desempe&ntilde;o Impo</option>
+                <option value="desempeno_expo" selected="selected">Desempe&ntilde;o Expo</option>
+                <option value="reevaluacion_impo">Reevaluaci&oacute;n:Desempe&ntilde;o Impo</option>
+                <option value="reevaluacion_expo">Reevaluaci&oacute;n:Desempe&ntilde;o Expo</option>
+                <?
+                }else{
                 ?>
                 <option value="desempeno" selected="selected">Desempe&ntilde;o</option>
                 <option value="reevaluacion">Reevaluaci&oacute;n:Desempe&ntilde;o</option>
+                <?
+                }
+                ?>
 
             </select>
            <?

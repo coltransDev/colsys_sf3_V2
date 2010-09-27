@@ -14,7 +14,10 @@
 
 class NuevoEventoForm extends BaseForm{
 
-    private $idproveedores;
+    private $idproveedor;
+    private $tipo;
+    private $criterios;
+    
 	public function configure(){
 
 		sfValidatorBase::setCharset('ISO-8859-1');
@@ -23,20 +26,28 @@ class NuevoEventoForm extends BaseForm{
 		$validator = array();
 
         
+        $criterios = $this->getCriterios();
+        $choices = array();
+        if( count($criterios)>0 ){
+            foreach( $criterios as $criterio ){
+                $choices[$criterio->getCaIdcriterio()] = $criterio->getCaCriterio();
+            }
+        }
         
-        $q = Doctrine::getTable("IdsCriterio")->createQuery("c")->where("c.ca_tipocriterio = 'desempeno'" );
-
-        $widgets['tipo_evento'] = new sfWidgetFormDoctrineChoice(array('model' => 'IdsCriterio', 'add_empty' => false, 'query' => $q));
+        $widgets['tipo_evento'] = new sfWidgetFormChoice(array(
+															  'choices' => $choices,
+															)
+                                                    );
 
         $widgets['evento'] = new sfWidgetFormTextarea(array(), array("rows"=>3, "cols"=>80 ) );
 		
-        $idproveedores = $this->getIdproveedores();
-        if( $idproveedores ){
+        $idproveedor = $this->getIdproveedor();
+        if( $idproveedor ){
             $choices = array();
-            foreach( $idproveedores as $idproveedor ){
-                $proveedor = Doctrine::getTable("Ids")->find( $idproveedor );
-                $choices[ $proveedor->getCaId() ]=$proveedor->getCaNombre();
-            }
+            
+            $proveedor = Doctrine::getTable("Ids")->find( $idproveedor );
+            $choices[ $proveedor->getCaId() ]=$proveedor->getCaNombre();
+            
 
             $widgets['id'] = new sfWidgetFormChoice(array(
 															  'choices' => $choices,
@@ -67,15 +78,32 @@ class NuevoEventoForm extends BaseForm{
 	}
 
 
-    public function setIdproveedores( array $v ){
-        $this->idproveedores = $v;
+    public function setIdproveedor( $v ){
+        $this->idproveedor = $v;
     }
 
 
-    public function getIdproveedores( ){
-        return $this->idproveedores;
+    public function getIdproveedor( ){
+        return $this->idproveedor;
     }
 
+    public function setTipo(  $v ){
+        $this->tipo = $v;
+    }
+
+
+    public function getTipo( ){
+        return $this->tipo;
+    }
+
+    public function getCriterios(){
+        return $this->criterios;
+    }
+
+    public function setCriterios( $v ){
+        $this->criterios = $v;
+
+    }
 
 }
 ?>

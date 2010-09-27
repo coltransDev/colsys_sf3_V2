@@ -14,6 +14,21 @@ use_helper("ExtCalendar");
 <div class="content" align="center">
     <form action="<?=url_for("ids/formEvaluacion?modo=".$modo."&tipo=".$tipo."&id=".$ids->getCaId())?>" method="post">
         <input type="hidden" name="idevaluacion" value="<?=$evaluacion->getCaIdevaluacion()?>">
+        <?
+        echo $form["concepto"]->renderError();
+        if( $evaluacion->getCaConcepto() ){
+            $form->setDefault('concepto', $evaluacion->getCaConcepto() );
+        }else{
+            if( $tipo=="desempeno_impo" || $tipo=="reevaluacion_impo" ){
+                $form->setDefault('concepto', Constantes::IMPO );
+            }
+
+            if( $tipo=="desempeno_expo" || $tipo=="reevaluacion_expo" ){
+                $form->setDefault('concepto', Constantes::EXPO );
+            }
+        }
+        echo $form["concepto"]->render();
+        ?>
     <table class="tableList alignLeft" width="50%">
         <tr>
             <th colspan="2">&nbsp;</th>
@@ -73,22 +88,7 @@ use_helper("ExtCalendar");
 
             </td>
         </tr>
-        <tr>
-            <td>
-                <b>Concepto:</b><br />
-                <?
-                echo $form["concepto"]->renderError();
-                if( $evaluacion->getCaConcepto() ){
-                    $form->setDefault('concepto', $evaluacion->getCaConcepto() );
-                }
-                echo $form["concepto"]->render();
-                ?>
-
-            </td>
-            <td>
-                &nbsp;
-            </td>
-        </tr>
+        
         <tr>
             <td colspan="2">
                 <table class="tablerList" width="100%" cellspacing="0">

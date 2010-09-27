@@ -698,17 +698,16 @@ class idsActions extends sfActions
     */
     public function executeFormEvaluacion(sfWebRequest $request){
         $this->nivel = $this->getNivel();
-        
-        if( $this->nivel<6 ){
-            $this->forward404(); 
-        }
-
 
         if( $request->getParameter("idevaluacion") ){
             $evaluacion = Doctrine::getTable("IdsEvaluacion")->find( $request->getParameter("idevaluacion") );
             $this->ids = $evaluacion->getIds();
             $this->tipo = $evaluacion->getCaTipo();
             $this->proveedor = $evaluacion->getIds()->getIdsProveedor();
+            //Solo permite editar evaluaciones con un privilegio alto
+            if( $this->nivel<6 ){
+                $this->forward404();
+            }
         }else{
             $this->ids = Doctrine::getTable("Ids")->find( $request->getParameter("id") );
             $evaluacion = new IdsEvaluacion();
@@ -720,22 +719,56 @@ class idsActions extends sfActions
         if( $this->nivel<=3 &&  $this->tipo=="seleccion" ){
             $this->forward404();
         }
-
+        
         $this->modo = $request->getParameter("modo");
 		$this->forward404Unless( $this->ids );
         
         $q = Doctrine::getTable("IdsCriterio")->createQuery("c");
-        
-        if( $this->tipo=="reevaluacion" ){
-            $q->where("c.ca_tipocriterio = ?", "desempeno");
-        }else{
-            $q->where("c.ca_tipocriterio = ?", $this->tipo);            
-        }
-        
-        if( $this->proveedor && $this->tipo!="desempeno" && $this->tipo!="reevaluacion" ){            
-            $q->addWhere("c.ca_tipo = ?", $this->proveedor->getCaTipo());
-        }
+        if( $request->getParameter("idevaluacion") ){
+            $q->innerJoin("c.IdsEvaluacionxCriterio ec");
+            $q->addWhere("ec.ca_idevaluacion = ?", $request->getParameter("idevaluacion"));
+        }else{            
+            switch( $this->tipo ){
+                case "reevaluacion":
+                    $q->where("c.ca_tipocriterio = ?", "desempeno");
+                    break;
+                case "reevaluacion_impo":
+                    $q->where("c.ca_tipocriterio = ?", "desempeno");
+                    $q->addWhere("c.ca_impoexpo = ?", Constantes::IMPO);
+                    $q->addWhere("c.ca_transporte = ?", $this->proveedor->getCaTransporte());
+                    break;
+                case "reevaluacion_expo":
+                    $q->where("c.ca_tipocriterio = ?", "desempeno");
+                    $q->addWhere("c.ca_impoexpo = ?", Constantes::EXPO);
+                    $q->addWhere("c.ca_transporte = ?", $this->proveedor->getCaTransporte());
+                    break;
+                case "desempeno_impo":
+                    $q->where("c.ca_tipocriterio = ?", "desempeno");
+                    $q->addWhere("c.ca_impoexpo = ?", Constantes::IMPO);
+                    $q->addWhere("c.ca_transporte = ?", $this->proveedor->getCaTransporte());
+                    break;
+                case "desempeno_expo":
+                    $q->where("c.ca_tipocriterio = ?", "desempeno");
+                    $q->addWhere("c.ca_impoexpo = ?", Constantes::EXPO);
+                    $q->addWhere("c.ca_transporte = ?", $this->proveedor->getCaTransporte());
+                    break;
+                default:
+                    $q->where("c.ca_tipocriterio = ?", $this->tipo);
+                    break;
+            }            
 
+            if( $this->modo=="prov" ){
+                $q->addWhere("c.ca_tipo = ? or c.ca_tipo IS NULL", $this->proveedor->getCaTipo());
+                if( $this->proveedor->getCaTipo() ){
+
+                }
+            }else{
+                if( $this->modo=="agentes" ){
+                    $q->addWhere("c.ca_tipo = ? or c.ca_tipo IS NULL", "AGE" );
+                }
+            }
+        }
+        $q->addWhere("c.ca_activo = ?", true );
         $this->criterios = $q->execute();
 
         
@@ -865,9 +898,7 @@ class idsActions extends sfActions
 
 
     }
-
     
-
     /*
     * Permite registrar eventos por referencia
     *
@@ -887,22 +918,29 @@ class idsActions extends sfActions
             $evento = new IdsEvento();
         }
 
+        $q = Doctrine::getTable("IdsCriterio")->createQuery("c")->select("c.*");
 
         $this->idreporte=$request->getParameter("idreporte");
         if( $this->modo ){ //Esta ingresando desde la maestra de proveedores
-
             
             if( $request->getParameter("idevento") ){
                 $this->ids = $evento->getIds();
+                $q->addWhere("c.ca_impoexpo = ?", $evento->getIdsCriterio()->getCaImpoexpo());
             }else{
                 $this->ids = Doctrine::getTable("Ids")->find($request->getParameter("id"));
+                $q->addWhere("c.ca_impoexpo = ?", $request->getParameter("impoexpo"));
             }
+
+            $this->form->setTipo($this->ids->getIdsProveedor()->getCaTipo());
             $this->url = "/ids/verIds?modo=".$this->modo."&id=".$this->ids->getCaId();
-            $numreferencia = "";
+            $numreferencia = "";            
+            $q->where("c.ca_tipocriterio = ?", "desempeno");
+            
+            $q->addWhere("c.ca_transporte = ?", $this->ids->getIdsProveedor()->getCaTransporte());
             
             
         }else{
-
+          
             if( $this->idreporte ){ // Esta ingresando desde el reporte
                 $this->reporte = Doctrine::getTable("Reporte")->find( $this->idreporte );
                 $this->forward404Unless( $this->reporte );
@@ -910,34 +948,42 @@ class idsActions extends sfActions
                 $this->url = "/colsys_php/reportenegocio.php?boton=Consultar&id=".$this->idreporte;
 
                 $numreferencia = $this->reporte->getCaConsecutivo();
+
+                $q->where("c.ca_tipocriterio = ?", "desempeno");
+                $q->addWhere("c.ca_tipo = ?", "AGE" );
             }else{// Esta ingresando desde la referencia
                 $numreferencia = str_replace("_",".",$request->getParameter("referencia"));
                 $this->forward404Unless(  $numreferencia );
-
-                $idproveedores = array();
+                
+               
 
                 if( substr($numreferencia,0,1)=="4" || substr($numreferencia,0,1)=="5" ){
                     $referencia = Doctrine::getTable("InoMaestraSea")->find($numreferencia);
-                    $linea = $referencia->getCaIdlinea();
-
-                    $idproveedores[] = $linea;
+                    $linea = $referencia->getCaIdlinea();              
 
                     $this->url = "/colsys_php/inosea.php?boton=Consultar&id=".$numreferencia;
+
+                    $q->where("c.ca_tipocriterio = ?", "desempeno");
+                    $q->addWhere("c.ca_impoexpo = ?", Constantes::IMPO);
+                    $q->addWhere("c.ca_transporte = ?", Constantes::MARITIMO);
                 }
 
                 if( substr($numreferencia,0,1)=="1"  ){
                     $referencia = Doctrine::getTable("InoMaestraAir")->find($numreferencia);
 
-                    $linea = $referencia->getCaIdlinea();
-
-                    $idproveedores[] = $linea;
+                    $linea = $referencia->getCaIdlinea();                    
 
                     $this->url = "/Coltrans/InoAir/ConsultaReferenciaAction.do?referencia=".$numreferencia;
+
+                    $q->where("c.ca_tipocriterio = ?", "desempeno");
+                    $q->addWhere("c.ca_impoexpo = ?", Constantes::IMPO);
+                    $q->addWhere("c.ca_transporte = ?", Constantes::AEREO);
                 }
-
-                $this->form->setIdproveedores($idproveedores);
-
                 
+                $q->addWhere("c.ca_tipo = ? or c.ca_tipo IS NULL", "TRI");
+
+                $this->form->setIdproveedor($linea);
+
 
                 $this->numreferencia = $numreferencia;
             }
@@ -949,7 +995,9 @@ class idsActions extends sfActions
                               ->addOrderBy("e.ca_fchcreado ASC")
                               ->execute();
         }
-
+        $q->addWhere("c.ca_activo = ?", true );
+        $criterios = $q->execute();
+        $this->form->setCriterios($criterios);
         $this->form->configure();
         
 
@@ -982,106 +1030,6 @@ class idsActions extends sfActions
 
     }
 
-
-    public function executeFormEventosNew(sfWebRequest $request){
-        //Se debe verificar que la referencia exista y determinar el proveedor.
-
-        $this->modo=$request->getParameter("modo");
-        $this->form = new NuevoEventoForm();
-
-        if( $request->getParameter("idevento") ){
-            $evento = Doctrine::getTable("IdsEvento")->find( $request->getParameter("idevento") );
-            $this->forward404Unless($evento);
-
-        }else{
-            $evento = new IdsEvento();
-        }
-
-
-        $this->idreporte=$request->getParameter("idreporte");
-        if( $this->modo ){ //Esta ingresando desde la maestra de proveedores
-
-
-            if( $request->getParameter("idevento") ){
-                $this->ids = $evento->getIds();
-            }else{
-                $this->ids = Doctrine::getTable("Ids")->find($request->getParameter("id"));
-            }
-            $this->url = "/ids/verIds?modo=".$this->modo."&id=".$this->ids->getCaId();
-            $numreferencia = "";
-            
-
-        }else{
-
-            if( $this->idreporte ){ // Esta ingresando desde el reporte
-                $this->reporte = Doctrine::getTable("Reporte")->find( $this->idreporte );
-                $this->forward404Unless( $this->reporte );
-                $this->agente = $this->reporte->getIdsAgente();
-                $this->url = "/reportesNeg/consultaReporte/id/".$this->idreporte."/impoexpo/".$this->reporte->getCaImpoexpo()."/modo/".$this->reporte->getCaTransporte();
-
-                $numreferencia = $this->reporte->getCaConsecutivo();
-            }else{// Esta ingresando desde la referencia
-                $numreferencia = str_replace("_",".",$request->getParameter("referencia"));
-                $this->forward404Unless(  $numreferencia );
-
-                $idproveedores = array();
-
-                if( substr($numreferencia,0,1)=="4" || substr($numreferencia,0,1)=="5" ){
-                    $referencia = Doctrine::getTable("InoMaestraSea")->find($numreferencia);
-                    $linea = $referencia->getCaIdlinea();
-
-                    $idproveedores[] = $linea;
-
-                    $this->url = "/colsys_php/inosea.php?boton=Consultar&id=".$numreferencia;
-                }
-
-                if( substr($numreferencia,0,1)=="1"  ){
-                    $referencia = Doctrine::getTable("InoMaestraAir")->find($numreferencia);
-
-                    $linea = $referencia->getCaIdlinea();
-
-                    $idproveedores[] = $linea;
-
-                    $this->url = "/Coltrans/InoAir/ConsultaReferenciaAction.do?referencia=".$numreferencia;
-                }
-                $this->form->setIdproveedores($idproveedores);
-
-                $this->numreferencia = $numreferencia;
-            }
-
-            $this->eventos = Doctrine::getTable("IdsEvento")
-                              ->createQuery("e")
-                              ->select("e.*")
-                              ->where("e.ca_referencia=?",$numreferencia)
-                              ->addOrderBy("e.ca_fchcreado ASC")
-                              ->execute();
-        }
-
-        $this->form->configure();
-
-        if ($request->isMethod('post')){
-
-			$bindValues = array();
-            $bindValues["id"] = $request->getParameter("id");
-            $bindValues["tipo_evento"] = $request->getParameter("tipo_evento");
-            $bindValues["evento"] = $request->getParameter("evento");
-
-            $this->form->bind( $bindValues );
-			if( $this->form->isValid() ){
-
-                $evento->setCaId( $bindValues["id"] );
-                $evento->setCaEvento( $bindValues["evento"] );
-                if( $numreferencia ){
-                    $evento->setCaReferencia( $numreferencia );
-                }
-                $evento->setCaIdcriterio( $bindValues["tipo_evento"] );
-                $evento->save();
-
-                $this->redirect($this->url);
-            }
-        }
-        $this->evento = $evento;
-    }
 
 
      /*
