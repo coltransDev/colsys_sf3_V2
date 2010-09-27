@@ -802,14 +802,12 @@ class Reporte extends BaseReporte
     * @param $opcion 1 indica que es un nuevo reporte 2 indica una nueva version
 	*/
 	public function copiar( $opcion ){
-        $reporte = $this->copy(  );        
-
-
+        $reporte = $this->copy(  );
         
         try{
             $conn = $this->getTable()->getConnection();
             $conn->beginTransaction();
-            
+
             if( $opcion==1 ){
                 //echo ReporteTable::siguienteConsecutivo(date("Y"));
                 //exit();
@@ -852,17 +850,15 @@ class Reporte extends BaseReporte
                 if($gasto->getCaRecargoorigen()==false)
                     $newGasto->setCaRecargoorigen( "false" );
                 if($gasto->getCaRecargoorigen()==true)
-                    $newGasto->setCaRecargoorigen( "true" );
-               
+                    $newGasto->setCaRecargoorigen( "true" );               
                 $newGasto->save( $conn );
             }
-
 
             $costos = $this->getCostos( );
             foreach($costos as $costo ){
                 $newCosto = $costo->copy();
                 $newCosto->setCaIdcosto( $costo->getCaIdcosto() );
-                $newCosto->setCaIdreporte( $reporte->getCaIdreporte() );                
+                $newCosto->setCaIdreporte( $reporte->getCaIdreporte() );
                 $newCosto->save();
             }
 
@@ -885,7 +881,7 @@ class Reporte extends BaseReporte
                 $repSeguroNew = $repSeguro->copy();
                 $repSeguroNew->setCaIdreporte( $reporte->getCaIdreporte() );
                 $repSeguroNew->save();
-            }            
+            }
             $conn->commit();
         }
         catch (Exception $e){
@@ -893,17 +889,180 @@ class Reporte extends BaseReporte
             throw $e;
             $conn->rollBack();
         }
-        /*
-        
-		
-
-		
-
-		
-         */
-        
-
         return $reporte;
+    }
+
+    public function importar( $reporteNew ){
+        try{
+            $conn = $this->getTable()->getConnection();
+            $conn->beginTransaction();
+
+            if( $reporteNew)
+            {  
+                //$reporte->getCa()=$reporteNew->getCa();
+
+                $this->setCaOrigen($reporteNew->getCaOrigen());
+                $this->setCaDestino($reporteNew->getCaDestino());
+                //$reporte->setCaImpoexpo($reporteNew->getCaImpoexpo());
+                //$reporte->setCaFchdespacho($reporteNew->getCaFchdespacho());
+                $this->setCaIdconcliente($reporteNew->getCaIdconcliente());
+                $this->setCaIdclientefac($reporteNew->getCaIdclientefac());
+                $this->setCaIdclienteag($reporteNew->getCaIdclienteag());
+                $this->setCaIdclienteotro($reporteNew->getCaIdclientefac());
+                $this->setCaIdagente($reporteNew->getCaIdagente());
+                $this->setCaMercanciaDesc($reporteNew->getCaMercanciaDesc());
+                $this->setCaIdproveedor($reporteNew->getCaIdproveedor());
+                $this->setCaIncoterms($reporteNew->getCaIncoterms());
+
+                $this->setCaOrdenProv($reporteNew->getCaOrdenProv());
+                $this->setCaOrdenClie($reporteNew->getCaOrdenClie());
+                $this->setCaConfirmarClie($reporteNew->getCaConfirmarClie());
+
+                $this->setCaIdrepresentante($reporteNew->getCaIdrepresentante());
+
+                $this->setCaInformarRepr( $reporteNew->getCaInformarRepr() );
+
+                $this->setCaIdconsignatario($reporteNew->getCaIdconsignatario());
+
+                $this->setCaIdnotify($reporteNew->getCaIdnotify());
+
+                $this->setCaIdmaster($reporteNew->getCaIdmaster());
+
+
+                $this->setCaInformarMast($reporteNew->getCaInformarMast());
+
+                //$reporte->setCaTransporte($reporteNew->getCaTransporte());
+
+                //$reporte->setCaModalidad($reporteNew->getCaModalidad());
+
+                $this->setCaSeguro($reporteNew->getCaSeguro());
+
+                $this->setCaLiberacion($reporteNew->getCaLiberacion());
+
+                $this->setCaTiempocredito($reporteNew->getCaTiempocredito());
+                $this->setCaComodato($reporteNew->getCaComodato());
+                $this->setCaPreferenciasClie($reporteNew->getCaPreferenciasClie());
+                $this->setCaInstrucciones($reporteNew->getCaInstrucciones());
+
+                $this->setCaIdlinea($reporteNew->getCaIdlinea());
+                $this->setCaIdconsignar($reporteNew->getCaIdconsignar());
+
+                $this->setCaIdconsignarmaster($reporteNew->getCaIdconsignarmaster());
+                $this->setCaIdbodega($reporteNew->getCaIdbodega());
+                $this->setCaContinuacion($reporteNew->getCaContinuacion());
+
+                $this->setCaContinuacionDest($reporteNew->getCaContinuacionDest());
+                $this->setCaContOrigen($reporteNew->getCaContOrigen());
+                $this->setCaContDestino($reporteNew->getCaContDestino());
+
+
+//                $reporte->setCaLogin($reporteNew->getCaLogin());
+
+                $this->setCaContinuacionConf($reporteNew->getCaContinuacionConf());
+
+                $this->setCaColmas($reporteNew->getCaColmas());
+                $this->setCaMciaPeligrosa($reporteNew->getCaMciaPeligrosa());
+
+                $this->save( $conn );
+
+                $conceptos = $this->getRepTarifa();
+                foreach( $conceptos as $concepto ){                    
+                    $concepto->delete();
+                }
+
+                $conceptos = $reporteNew->getRepTarifa();
+                foreach( $conceptos as $concepto ){
+                    $newConcepto = $concepto->copy();
+                    $newConcepto->setCaIdconcepto( $concepto->getCaIdconcepto() );
+                    $newConcepto->setCaIdreporte( $this->getCaIdreporte() );
+                    $newConcepto->save( $conn );
+                }
+
+                $gastos =   $this->getRecargos( );
+                foreach($gastos as $gasto ){
+                    $gasto->delete();
+                }
+                //Copia los gastos
+                $gastos =   $reporteNew->getRecargos( );
+                foreach($gastos as $gasto ){
+                    $newGasto = $gasto->copy();
+                    $newGasto->setCaIdconcepto( $gasto->getCaIdconcepto() );
+                    $newGasto->setCaIdrecargo( $gasto->getCaIdrecargo() );
+                    $newGasto->setCaIdreporte( $this->getCaIdreporte() );
+                    if($gasto->getCaRecargoorigen()==false)
+                        $newGasto->setCaRecargoorigen( "false" );
+                    if($gasto->getCaRecargoorigen()==true)
+                        $newGasto->setCaRecargoorigen( "true" );
+                    $newGasto->save( $conn );
+                }
+
+                $costos = $this->getCostos( );
+                foreach($costos as $costo ){
+                    $costo->delete();
+                }
+
+                $costos = $reporteNew->getCostos( );
+                foreach($costos as $costo ){
+                    $newCosto = $costo->copy();
+                    $newCosto->setCaIdcosto( $costo->getCaIdcosto() );
+                    $newCosto->setCaIdreporte( $this->getCaIdreporte() );
+                    $newCosto->save($conn);
+                }
+
+                if( $reporteNew->getCaImpoexpo()==Constantes::EXPO ){
+                    $repExpo = $this->getRepExpo();
+                    $repExpo->delete();
+                    $repExpo = $reporteNew->getRepExpo();
+                    $repExpoNew = $repExpo->copy();
+                    $repExpoNew->setCaIdreporte( $this->getCaIdreporte() );
+                    $repExpoNew->save($conn);
+                }
+
+                if( $reporteNew->getCaColmas()=="Sí" ){
+                    $repAduana = $this->getRepAduana();
+                    $repAduana->delete();
+                    $repAduana = $reporteNew->getRepAduana();
+                    $repAduanaNew = $repAduana->copy();
+                    $repAduanaNew->setCaIdreporte( $this->getCaIdreporte() );
+                    $repAduanaNew->save($conn);
+                }
+
+                if( $reporteNew->getCaSeguro() =="Sí" ){
+                    $repSeguro = $this->getRepSeguro();
+                    $repSeguro->delete();
+                    
+                    $repSeguro = $reporteNew->getRepSeguro();
+                    if($repSeguro)
+                    {
+                        $repSeguroNew = $repSeguro->copy();
+                        //echo "ss".$repSeguroNew->getCaSeguroConf();
+                        //exit;
+                        $repSeguroNew->setCaIdreporte( $this->getCaIdreporte() );
+                        $repSeguroNew->save($conn);
+                    }
+                }
+                //$reporte = $reporte->importar($idreportenew);
+                $conn->commit();
+               return true;
+            }
+            else
+            {
+                $conn->rollBack();
+                return false;
+            }
+
+
+            //Copia los conceptos
+
+            
+        }
+        catch (Exception $e){
+
+            throw $e;
+            $conn->rollBack();
+            return false;
+        }
+        //return $reporte;
     }
 
 
