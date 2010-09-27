@@ -58,7 +58,7 @@ class Email extends BaseEmail
 	public function send( ){
 
 
-		require_once(sfConfig::get('sf_lib_dir').'/vendor/Swift/swift_init.php'); # needed due to symfony autoloader
+		require_once(sfConfig::get('sf_lib_dir').'/vendor/Swift/lib/swift_init.php'); # needed due to symfony autoloader
 
         $result = false;
 		$logFile = sfConfig::get('sf_root_dir').DIRECTORY_SEPARATOR."log".DIRECTORY_SEPARATOR."mail_error.log";
@@ -67,10 +67,11 @@ class Email extends BaseEmail
 		$logHeader.= "To: ".$this->getCaAddress()." >> ";
 		$logHeader.= "CC: ".$this->getCaCc()." >> ";
 
-		$transport = Swift_SmtpTransport::newInstance(sfConfig::get("app_smtp_host"), sfConfig::get("app_smtp_port"))
-	  ->setUsername(sfConfig::get("app_smtp_user"))
-	  ->setPassword(sfConfig::get("app_smtp_passwd"));
-
+		$transport = Swift_SmtpTransport::newInstance(sfConfig::get("app_smtp_host"), sfConfig::get("app_smtp_port"));
+        if( sfConfig::get("app_smtp_user") ){
+            $transport->setUsername(sfConfig::get("app_smtp_user"))
+                      ->setPassword(sfConfig::get("app_smtp_passwd"));
+        }
 		Swift_Preferences::getInstance()->setCharset('iso-8859-1');
 
 		$mailer = Swift_Mailer::newInstance( $transport );
@@ -145,7 +146,7 @@ class Email extends BaseEmail
 				}
 			}
 		}
-
+        $message->setMaxLineLength(1000);
 		if( $this->getCaBodyhtml() ){
 			$message->setBody($this->getCaBodyhtml(), 'text/html', 'iso-8859-1' );
 		}
@@ -153,9 +154,13 @@ class Email extends BaseEmail
 		if( $this->getCaBody() ){
 			$message->addPart( $this->getCaBody() , 'text/plain', 'iso-8859-1');
 		}else{
-			$message->addPart( "<< Este mensaje está en formato HTML pero su equipo no está configurado para mostrarlo automáticamente. Active la opción HTML del menú Ver en su cliente de correo electrónico para una correcta visualización>>" , 'text/plain', 'iso-8859-1');
-		}
+            if( !$this->getCaBodyhtml() ){
+                $message->addPart( "<< Este mensaje está en formato HTML pero su equipo no está configurado para mostrarlo automáticamente. Active la opción HTML del menú Ver en su cliente de correo electrónico para una correcta visualización>>" , 'text/plain', 'iso-8859-1');
+            }
 
+		}
+        
+        
 		//acuse de recibo
 		if( $this->getCaReadreceipt() ){
 			try{
@@ -257,13 +262,8 @@ class Email extends BaseEmail
             $message->addPart( $txt , 'text/plain', 'iso-8859-1');
             $mailer->send($message);            
            
-        }
-
+        }        
         return $result;
-
-
-
-
 	}
 
 
