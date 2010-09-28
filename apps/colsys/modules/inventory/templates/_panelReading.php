@@ -17,7 +17,9 @@ PanelReading = function( config ){
                      {id:idcomponent,
                       idcategory: this.idcategory,
                       readOnly: this.readOnly,
-                      region: 'center'                      
+                      region: 'center'
+                     
+
                      });
 
     var idcomponent = this.id;
@@ -79,23 +81,10 @@ PanelReading = function( config ){
 
                             });
 
-    /*this.usersPanel = new PanelUsers({
-                                id: 'user-panel-'+idcomponent,
-                                idticket: null,
-                                closable: false,
-                                title: "Usuarios",
-                                height: 400,
-                                deleteUrl: "<?=url_for("pm/eliminarUsuario")?>"
-                            });
-
-    this.usersPanel.wgUsuario.on("select", this.onSelectUser );
-    this.usersPanel.wgUsuario.disable();
-    this.usersPanel.wgUsuario.idcomponent = idcomponent;
-
-    var btn = this.usersPanel.getTopToolbar().items.get(1);
-    if( btn ){
-        btn.handler = this.onDeleteUser;
-    }*/
+    this.asignacionesPanel = new PanelAsignaciones({
+                                    closable: false,
+                                    title: "Asignaciones"                                   
+                                 });
 
     this.tabPanel = new Ext.TabPanel({
             region: 'south',
@@ -106,8 +95,8 @@ PanelReading = function( config ){
             items: [
                 this.preview,
                 this.responses,
-                this.filePanel
-                //this.usersPanel
+                this.filePanel,
+                this.asignacionesPanel
             ]
     });
 
@@ -132,7 +121,15 @@ PanelReading = function( config ){
             hideMode:'offsets',
             items:[
                 this.grid,
-                this.tabPanel
+                {
+                    layout:'fit',
+                    items:this.tabPanel,
+                    height: 250,
+                    split: true,
+                    border:false,
+                    region:'south'
+                }
+
             ]
         }
 
@@ -220,12 +217,15 @@ Ext.extend(PanelReading, Ext.Panel, {
 
     
     onRowSelect: function(sm, index, record){
-        this.idticket = record.data.idticket;
+        this.idactivo = record.data.idactivo;
         var idcomponent = this.id;
         this.tpl.overwrite(this.preview.body, record.data);
         this.filePanel.setFolder( record.data.folder ); 
         this.filePanel.store.setBaseParam("folder",record.data.folder );
         this.filePanel.store.reload();
+
+        this.asignacionesPanel.store.setBaseParam("idactivo",record.data.idactivo );
+        this.asignacionesPanel.store.reload();
 
        
         
@@ -251,7 +251,8 @@ Ext.extend(PanelReading, Ext.Panel, {
 
         var items = this.responses.topToolbar.items;
         items.get('response-'+idcomponent).enable();
-
+        
+        
         
         
     },

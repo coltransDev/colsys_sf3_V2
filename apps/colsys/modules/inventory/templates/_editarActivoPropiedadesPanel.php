@@ -105,7 +105,11 @@
                                     name: 'fchcompra',
                                     format: 'Y-m-d',
                                     allowBlank: true
-                                }
+                                },
+                                new WidgetUsuario({fieldLabel: 'Asignado a',
+                                                   name: 'asignadoa',
+                                                   hiddenName: 'asignadoa'
+                                                  })
                                 
 
                             ]
@@ -249,7 +253,8 @@
             EditarActivoPropiedadesPanel.superclass.onRender.apply(this, arguments);
 
             // set wait message target
-            this.getForm().waitMsgTarget = this.getEl();            
+            this.getForm().waitMsgTarget = this.getEl();
+            var form = this.getForm();
             if(this.idactivo!="undefined" && this.idactivo )
             {
                 this.load({
@@ -258,9 +263,10 @@
                     params:{idactivo:this.idactivo},
 
                     success:function(response,options){
-                        this.res = Ext.util.JSON.decode( options.response.responseText );                                                
-                        /*Ext.getCmp("departamento_id").setRawValue(this.res.data.departamento);
-                        Ext.getCmp("departamento_id").hiddenField.value = this.res.data.iddepartament;*/                        
+                        this.res = Ext.util.JSON.decode( options.response.responseText );
+                        var fld = form.findField("asignadoa");
+                        fld.setRawValue(this.res.data.asignadoaNombre);
+                        fld.hiddenField.value = this.res.data.asignadoa;
                     }
 
                 });                

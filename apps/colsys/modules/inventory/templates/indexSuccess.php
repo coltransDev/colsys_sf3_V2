@@ -10,9 +10,11 @@ include_component("inventory", "panelCategoriaWindow");
 include_component("inventory", "panelActivos");
 include_component("inventory", "editarActivoWindow");
 include_component("inventory", "panelReading");
+include_component("inventory", "panelAsignaciones");
+
 
 include_component("inventory", "nuevoSeguimientoWindow");
-
+include_component("widgets", "widgetUsuario");
 ?>
 <script type="text/javascript">
 
@@ -169,12 +171,18 @@ Ext.onReady(function(){
                 <td>{disco}</td>
                 <th><b>Unidad Optica</b></th>
                 <td>{optica}</td>
-            </tr>            
+            </tr>   
+            <tr>
+                <th><b>Sistema Operativo</b></th>
+                <td colspan="3">{so}</td>
+               
+            </tr>
+
             <tr>
                 <th><b>Ubicaci&oacute;n</b></th>
                 <td>{ubicacion}</td>
-                <th><b>Sistema Operativo</b></th>
-                <td>{so}</td>
+                <th><b>Asignado a</b></th>
+                <td>{asignadoaNombre}</td>
             </tr>
             <tr>
                 <th><b>Empresa</b></th>
@@ -190,9 +198,8 @@ Ext.onReady(function(){
             </tr>
             <tr>
                 <th><b>Fecha de Compra</b></th>
-                <td>{fchcompra:date("M j, Y")}</td>
-                <th>&nbsp;</th>
-                <td>&nbsp;</td>
+                <td colspan="3">{fchcompra:date("M j, Y")}</td>
+               
             </tr>
             <tr>
                 <th><b>Contrato</b></th>            
@@ -209,8 +216,8 @@ Ext.onReady(function(){
 
 <div style="height:100%"></div>
 <script type="text/javascript">
-    /*Ext.onReady(function(){
-            var newComponent = new PanelReading({
+    Ext.onReady(function(){
+          /*  var newComponent = new PanelReading({
                                                              id: 'asdad',
                                                              closable: true,
                                                              idcategory: 2,
@@ -221,9 +228,9 @@ Ext.onReady(function(){
 
 
         Ext.getCmp('tab-panel').add(newComponent);
-        Ext.getCmp('tab-panel').setActiveTab(newComponent);
+        Ext.getCmp('tab-panel').setActiveTab(newComponent);*/
 
-    });*/
+    });
 
 
 </script>

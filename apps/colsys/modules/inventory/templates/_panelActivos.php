@@ -95,7 +95,7 @@ PanelActivos = function( config ){
         },
         {
             type: 'string',
-            dataIndex: 'assignedto'
+            dataIndex: 'asignadoaNombre'
 
         }
         , {
@@ -201,6 +201,13 @@ PanelActivos = function( config ){
         hideable: false,
         width: 100,
         sortable: true
+      },
+      {
+        header: "Asignado a",
+        dataIndex: 'asignadoaNombre',
+        hideable: false,
+        width: 100,
+        sortable: true
       }
 
       
@@ -232,7 +239,10 @@ PanelActivos = function( config ){
             {name: 'factura', type: 'string'},
             {name: 'empresa', type: 'string'},
             {name: 'proveedor', type: 'string'},
-            {name: 'folder', type: 'string'}
+            {name: 'asignadoa', type: 'string'},
+            {name: 'asignadoaNombre', type: 'string'},
+            {name: 'folder', type: 'string'},
+
 
     ]);
     
@@ -278,9 +288,10 @@ PanelActivos = function( config ){
     
     PanelActivos.superclass.constructor.call(this, {
        loadMask: {msg:'Cargando...'},       
-       boxMinHeight: 300,
+       //boxMinHeight: 300,
        ddGroup : 'TreeDD',
        enableDragDrop   : true,
+       autoScroll:true,
        plugins: [                   
                     this.filters
                 ],

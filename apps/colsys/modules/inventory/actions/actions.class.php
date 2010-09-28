@@ -94,6 +94,8 @@ class inventoryActions extends sfActions
             $row["factura"]=utf8_encode($activo->getCaFactura());
             $row["reposicion"]=utf8_encode($activo->getCaReposicion());
             $row["so"]=utf8_encode($activo->getCaSo());
+            $row["asignadoa"] = utf8_encode($activo->getCaAsignadoa());
+            $row["asignadoaNombre"] = utf8_encode($activo->getUsuario()->getCaNombre());
             $result[]=$row;
         }
 
@@ -136,7 +138,9 @@ class inventoryActions extends sfActions
         $data["fchcompra"] = utf8_encode($activo->getCaFchcompra());
         $data["reposicion"] = utf8_encode($activo->getCaReposicion());
         $data["contrato"] = utf8_encode($activo->getCaContrato());
-        $data["observaciones"] = utf8_encode($activo->getCaObservaciones());        
+        $data["observaciones"] = utf8_encode($activo->getCaObservaciones());
+        $data["asignadoa"] = utf8_encode($activo->getCaAsignadoa());
+        $data["asignadoaNombre"] = utf8_encode($activo->getUsuario()->getCaNombre());
         
         $this->responseArray = array("success"=>true, "data"=>$data);
 
@@ -176,6 +180,8 @@ class inventoryActions extends sfActions
         $activo->setCaEmpresa( utf8_decode($request->getParameter("empresa")) );
         $activo->setCaProveedor( utf8_decode($request->getParameter("proveedor")) );
         $activo->setCaFactura( utf8_decode($request->getParameter("factura")) );
+        $activo->setCaAsignadoa( $request->getParameter("asignadoa") );
+
         if( $request->getParameter("fchcompra") ){
             $activo->setCaFchcompra( $request->getParameter("fchcompra") );
         }else{
@@ -337,6 +343,45 @@ class inventoryActions extends sfActions
             }catch( Exception $e ){
                 $this->responseArray = array("success"=>false, "errorInfo"=>$e->getMessage());
             }
+
+
+        }else{
+            $this->responseArray = array("success"=>false);
+        }
+
+
+        $this->setTemplate("responseTemplate");
+    }
+
+     /*
+     *
+     */
+    public function executeDatosPanelAsignaciones( $request ){
+        $idactivo = $request->getParameter("idactivo");
+        $idcategory = $request->getParameter("idcategory");
+
+        if( $idactivo ){
+            $asignaciones = Doctrine::getTable("InvAsignacion")
+                            ->createQuery("a")
+                            ->addWhere("a.ca_idactivo = ? ", $idactivo)
+                            ->execute();
+
+            
+            $data = array();
+
+            foreach( $asignaciones as $asignacion ){
+                $row = array();
+                $row["idactivo"] = $asignacion->getCaIdactivo();
+                $row["login"] = $asignacion->getCaLogin();
+                $row["fchasignacion"] = $asignacion->getCaFchasignacion();
+
+                $data[] = $row;
+
+            }
+
+            $this->responseArray = array("success"=>true, "root"=>$data);
+
+            
 
 
         }else{

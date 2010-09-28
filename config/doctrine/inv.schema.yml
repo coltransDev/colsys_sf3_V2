@@ -63,6 +63,7 @@ InvActivo:
     ca_contrato: string
     ca_so: string
     ca_empresa: string
+    ca_asignadoa: string
     ca_fchcreado: timestamp
     ca_usucreado: string
     ca_fchactualizado: timestamp
@@ -76,6 +77,14 @@ InvActivo:
       local: ca_idactivo
       foreign: ca_idactivo
       type: many
+    InvAsignacion:
+      local: ca_idactivo
+      foreign: ca_idactivo
+      type: many
+    Usuario:
+      local: ca_asignadoa
+      foreign: ca_login
+      type: one
 
 
 
@@ -102,5 +111,30 @@ InvSeguimiento:
       type: one
     Usuario:
       local: ca_usucreado
+      foreign: ca_login
+      type: one
+
+InvAsignacion:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: inv
+  tableName: inv.tb_asignaciones
+  columns:
+    ca_idasignacion:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_idactivo: integer
+    ca_login: string
+    ca_fchasignacion: timestamp
+  relations:
+    InvActivo:
+      local: ca_idactivo
+      foreign: ca_idactivo
+      type: one
+    Usuario:
+      local: ca_login
       foreign: ca_login
       type: one

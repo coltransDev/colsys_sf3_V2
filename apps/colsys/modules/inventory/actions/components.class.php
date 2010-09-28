@@ -86,6 +86,16 @@ class inventoryComponents extends sfComponents
     }
 
 
+    /*
+	* Panel que permite asignar un activo a un suario
+	* @author: Andres Botero
+	*/
+    public function executePanelAsignaciones( ){
+
+    }
+
+
+
 
 }
 ?>
