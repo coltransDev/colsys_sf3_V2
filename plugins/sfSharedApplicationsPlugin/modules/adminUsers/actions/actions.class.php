@@ -22,7 +22,7 @@ class adminUsersActions extends sfActions
     public function getNivel() {
 
         $app =  sfContext::getInstance()->getConfiguration()->getApplication();
-               //    return 5;
+                //   return 5;
         switch( $app ){
             case "colsys":
                 $rutina = adminUsersActions::RUTINA_COLSYS;
@@ -195,13 +195,19 @@ class adminUsersActions extends sfActions
         }
 						  
 		$this->jefes = Doctrine::getTable("Usuario")
-					      ->createQuery("j")
+                          ->createQuery("j")
+					      ->select('j.ca_nombre, j.ca_cargo, c.ca_idempresa')
 						  ->innerJoin('j.Cargo c')
+                          ->innerJoin('c.Empresa e')
 						  ->addWhere('j.ca_activo = ?', true)
 						  ->addWhere('c.ca_manager= ?', true)
-						  ->addOrderBy("j.ca_nombre")
-						  ->distinct()
-						  ->execute();
+                          ->addOrderBy("j.ca_nombre")
+						  ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                          ->execute();
+
+        foreach( $this->jefes as $key=>$val){
+            $this->jefes[$key]["j_ca_nombre"] = utf8_encode($this->jefes[$key]["j_ca_nombre"]);
+        }
 
         $this->empresas = Doctrine::getTable("Empresa")
                           ->createQuery("e")
@@ -229,14 +235,19 @@ class adminUsersActions extends sfActions
 
         $this->parentescos = $r->execute($query);
 
-        $s = Doctrine_Manager::getInstance()->connection();
-			$query = "SELECT DISTINCT ca_teloficina";
-			$query.= "	from control.tb_usuarios";
-            $query.= "	where ca_activo = 'true'";
-            $query.= "  order by ca_teloficina ASC";
+        $this->teloficinas = Doctrine::getTable("Usuario")
+                          ->createQuery("u")
+                          ->select('u.ca_idsucursal, s.ca_telefono')
+                          ->innerJoin('u.Sucursal s')
+                          ->innerJoin('s.Empresa e')
+                          ->addWhere('e.ca_activo = ?', true)
+                          ->addOrderBy("u.ca_activo DESC")
+                          ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                          ->execute();
 
-        $this->teloficinas = $s->execute($query);
-
+        foreach( $this->teloficinas as $key=>$val){
+            $this->teloficinas[$key]["s_ca_telefono"] = utf8_encode($this->teloficinas[$key]["s_ca_telefono"]);
+        }
 		//$this->manager=Doctrine::getTable('Usuario')->find($request->getParameter('login'));
         //$this->manager = $this->manager->getManager();
         
@@ -732,6 +743,7 @@ class adminUsersActions extends sfActions
 	}
 
     public function executeMainUsers(sfWebRequest $request) {
+        $this->setLayout("layout2col");
         $this->userinicio = sfContext::getInstance()->getUser();
         $this->nivel = $this->getNivel();
     }

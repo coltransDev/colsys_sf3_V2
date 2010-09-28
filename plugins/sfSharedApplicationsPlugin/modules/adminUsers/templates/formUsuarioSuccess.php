@@ -4,6 +4,8 @@ use_helper('ExtCalendar');
 $sucursales = $sf_data->getRaw("sucursales");
 $departamentos = $sf_data->getRaw("departamentos");
 $cargos = $sf_data->getRaw("cargos");
+$jefes = $sf_data->getRaw("jefes");
+$teloficinas = $sf_data->getRaw("teloficinas");
 ?>
 <script language="javascript" type="text/javascript">
 	Ext.onReady(function(){
@@ -51,15 +53,15 @@ $cargos = $sf_data->getRaw("cargos");
 	}
 
 
-    function cambiarValores(defaultValSuc, defaultValDep, defaultValCar){
+    function cambiarValores(defaultValSuc, defaultValDep, defaultValCar, defaultValJef){
         //Actualizamos sucursales
         var idempresa = document.getElementById("empresa").value;       
 
         var sucursales = <?=json_encode($sucursales)?>;
+        
         var sucursalesFld = document.getElementById("idsucursal");
         sucursalesFld.length=0;
         for( i in sucursales ){
-            
             if( typeof(sucursales[i]['ca_idsucursal'])!="undefined" ){
                 if( idempresa == sucursales[i]['ca_idempresa'] ){                   
                     if( defaultValSuc == sucursales[i]["ca_idsucursal"] ){
@@ -106,6 +108,46 @@ $cargos = $sf_data->getRaw("cargos");
                     }
 
                     cargosFld[cargosFld.length] = new Option(cargos[i]['ca_cargo'],cargos[i]['ca_cargo'], selected);
+                }
+            }
+        }
+
+        var jefes = <?=json_encode($jefes)?>;
+        var jefesFld = document.getElementById("manager");
+        jefesFld.length=0;
+        for( i in jefes ){
+            if( typeof(jefes[i]['j_ca_cargo'])!="undefined" ){
+                //alert(jefes[i]['c2_ca_idempresa']);
+                if( idempresa == jefes[i]['c_ca_idempresa'] ){
+                    //alert("aaaaa");
+                
+                    if( defaultValJef == jefes[i]["j_ca_nombre"]){
+                        var selected = true;
+                    }else{
+                        var selected = false;
+                    }
+
+                    jefesFld[jefesFld.length] = new Option(jefes[i]['j_ca_nombre'],jefes[i]['j_ca_nombre'], selected);
+                }
+            }
+        }
+
+        var teloficinas = <?=json_encode($teloficinas)?>;
+        var teloficinasFld = document.getElementById("teloficina");
+        teloficinasFld.length=0;
+        for( i in teloficinas ){
+            if( typeof(teloficinas[i]['u_ca_idsucursal'])!="undefined" ){
+                //alert(jefes[i]['c2_ca_idempresa']);
+                if( idempresa == jefes[i]['s_ca_idempresa'] ){
+                    //alert("aaaaa");
+
+                    if( defaultValTel == jefes[i]["s_ca_telefono"]){
+                        var selected = true;
+                    }else{
+                        var selected = false;
+                    }
+
+                    teloficinasFld[teloficinasFld.length] = new Option(teloficinas[i]['s_ca_telefono'],jefes[i]['s_ca_telefono'], selected);
                 }
             }
         }
@@ -272,16 +314,7 @@ $cargos = $sf_data->getRaw("cargos");
 								</td>
 								<td>
                                     <div align="left">
-										<select name="manager" <?if($nivel==0){?>disabled="disabled"<?}?>>
-												<?
-													foreach( $jefes as $jefe ){
-												?>
-												<option value="<?=$jefe->getCaLogin()?>" <?=$jefe->getCaLogin()==$usuario->getCaManager()?'selected="selected"':''?>  >
-													<?=($jefe->getCaNombre())?>
-												</option>
-												<?
-												}
-												?>
+										<select name="manager" id="manager" <?if($nivel==0){?>disabled="disabled"<?}?>>
 										</select>
 									</div>
                                 </td>
@@ -316,14 +349,8 @@ $cargos = $sf_data->getRaw("cargos");
 								</td>
 								<td>
 									<div align="left">
-										<select name="teloficina" <?if($nivel==0){?>disabled="disabled"<?}?>>                   >
-											<?
-											foreach( $teloficinas as $teloficina ){
-											?>
-											<option value="<?=$teloficina['ca_teloficina']?>"<?=$usuario->getCaTeloficina()==$teloficina['ca_teloficina']?'selected="selected"':''?> > <?=($teloficina['ca_teloficina'])?></option>
-											<?
-											}
-											?>
+										<select name="teloficina" id="teloficina" <?if($nivel==0){?>disabled="disabled"<?}?>>                   >
+											
 										</select>
 									</div>
 								</td>
@@ -565,5 +592,5 @@ $cargos = $sf_data->getRaw("cargos");
 </form>
 <script language="javascript" type="text/javascript">
 	lockFields(document.getElementById('auth_method'));
-    cambiarValores('<?=$usuario->getCaIdsucursal()?>','<?=$usuario->getCaDepartamento()?>','<?=$usuario->getCaCargo()?>');
+    cambiarValores('<?=$usuario->getCaIdsucursal()?>','<?=$usuario->getCaDepartamento()?>','<?=$usuario->getCaCargo()?>','<?=$usuario->getCaNombre()?>');
 </script>
