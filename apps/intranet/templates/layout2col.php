@@ -1,6 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
     <head>
+
         <?php include_http_metas() ?>
         <?php include_metas() ?>
         <?php include_title() ?>
@@ -65,26 +66,13 @@
 
                         <div class="centerleft">
 
-                            <table class="blog" cellpadding="0" cellspacing="0">
+                            <table >
                                 <tr>
                                     <td valign="top">
-                                        <div>
-
-                                            <div class="contentpaneopen">
-
-                                                <h2 class="contentheading">
-			<!--COLMAS LTDA.-->	</h2>
-
-
-
-                                                <div class="article-content">
+                                        
                                                      <?//include_component('homepage','noticias')?>
                                                      <?php echo $sf_content ?>
-                                                </div>
-                                            </div>
-
-                                            <span class="article_separator">&nbsp;</span>
-                                        </div>
+                                        
                                     </td>
                                 </tr>
 
