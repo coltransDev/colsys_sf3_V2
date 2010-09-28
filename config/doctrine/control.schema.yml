@@ -26,7 +26,7 @@ Usuario:
     ca_cumpleanos: date
     ca_fchingreso: date
     ca_manager: string(15)
-    ca_nombres: string(30)
+    ca_nombres: string(30)car
     ca_apellidos: string(30)
     ca_teloficina: string(30)
     ca_telparticular: string(30)
@@ -277,6 +277,7 @@ Cargo:
       primary: true
     ca_activo: boolean
     ca_manager: boolean
+    ca_idempresa: string(3)
   relations:
     Empresa:
       local: ca_idempresa
