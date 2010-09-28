@@ -7,13 +7,17 @@ Noticia:
   tableName: intranet.tb_noticias
   columns:
     ca_idnoticia:
-      type: integer(2)
+      type: integer
       primary: true
-    ca_autor: string(40)
-    ca_titulo: string(80)
+      autoincrement: true
     ca_categoria: string(12)
-    ca_fchcreado: date
+    ca_fchpublicacion: date
+    ca_asunto: string
+    ca_detalle: string
     ca_fcharchivar: date
-    ca_idsucursal: string(3)
-    ca_noticia: string(255)
-  
+    ca_extension: string
+    ca_header_file: string
+    ca_content: string
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_icon: string
