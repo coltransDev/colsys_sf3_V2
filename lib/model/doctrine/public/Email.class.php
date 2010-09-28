@@ -1,4 +1,4 @@
-<?php
+8<?php
 
 /**
  * Email
@@ -72,7 +72,7 @@ class Email extends BaseEmail
             $transport->setUsername(sfConfig::get("app_smtp_user"))
                       ->setPassword(sfConfig::get("app_smtp_passwd"));
         }
-		Swift_Preferences::getInstance()->setCharset('iso-8859-1');
+		Swift_Preferences::getInstance()->setCharset('utf-8');
 
 		$mailer = Swift_Mailer::newInstance( $transport );
 
@@ -148,11 +148,11 @@ class Email extends BaseEmail
 		}
         $message->setMaxLineLength(1000);
 		if( $this->getCaBodyhtml() ){
-			$message->setBody($this->getCaBodyhtml(), 'text/html', 'iso-8859-1' );
+			$message->setBody(utf8_encode($this->getCaBodyhtml()), 'text/html', 'utf-8' );
 		}
 
 		if( $this->getCaBody() ){
-			$message->addPart( $this->getCaBody() , 'text/plain', 'iso-8859-1');
+			$message->addPart( utf8_encode($this->getCaBody()) , 'text/plain', 'utf-8');
 		}else{
             if( !$this->getCaBodyhtml() ){
                 $message->addPart( "<< Este mensaje está en formato HTML pero su equipo no está configurado para mostrarlo automáticamente. Active la opción HTML del menú Ver en su cliente de correo electrónico para una correcta visualización>>" , 'text/plain', 'iso-8859-1');
@@ -262,7 +262,8 @@ class Email extends BaseEmail
             $message->addPart( $txt , 'text/plain', 'iso-8859-1');
             $mailer->send($message);            
            
-        }        
+        }
+        
         return $result;
 	}
 
