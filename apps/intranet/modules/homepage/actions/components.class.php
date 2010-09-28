@@ -14,6 +14,8 @@ class homepageComponents extends sfComponents {
      *
      *
      */
+   
+    
     public function executeBirthday() {
 
         $inicial=date('m-d');
@@ -47,5 +49,18 @@ class homepageComponents extends sfComponents {
     $this->user = sfContext::getInstance()->getUser();
 	
   }
+
+  public function executeNoticias()
+	{
+
+        $this->noticias = Doctrine::getTable("Noticia")
+                                     ->createQuery("n")
+                                     ->where("n.ca_fcharchivar>=?", date("Y-m-d"))
+                                     ->addOrderBy("n.ca_fchpublicacion DESC ")
+                                     ->execute();
+        
+
+
+	}
 }
 

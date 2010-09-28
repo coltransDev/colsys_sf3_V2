@@ -12,9 +12,9 @@ default:
     #language:     en
     #robots:       index, follow
 
-  stylesheets:    [style.css, ext/css/ext-all, ext/css/xtheme-gray]
+  stylesheets:    [style.css, ext/css/ext-all, ext/css/xtheme-gray, ext/css/ext-all, ext/css/xtheme-gray, menu/menu, blog]
 
-  javascripts:    [ext/adapter/ext/ext-base, ext/ext-all-debug, ext/src/locale/ext-lang-es.js]
+  javascripts:    [comunes,  jquery/jquery.js, jquery/jquery.tooltip.js, jquery/jquery.dimensions.js ,ext/adapter/ext/ext-base, ext/ext-all-debug, ext/src/locale/ext-lang-es.js , menu/menu, Base64]
 
   has_layout:     true
   layout:         layout

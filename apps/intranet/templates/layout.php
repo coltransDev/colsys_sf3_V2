@@ -19,40 +19,32 @@
 					mi_imagen = 0
 				}
 				document.anuncio.src=mis_imagenes[mi_imagen]
-				setTimeout("rotacion()", 86400 * 1000)
+				setTimeout("rotacion()", 60 * 1000)
 			}
 		}
     </script>
     
     </head>
     <body onload="rotacion()">
-
         <div class="out">
             <div class="wrapper">
                 <div class="int">
-
                     <!--Top Area Start-->
                     <div class="top">
                         <div class="logo">
-
                             <a href="index.php" title="">
                                 <? echo image_tag('colmas_logo.jpg',array('border'=>'none')) ?>
                             </a>
                         </div>
-
                         <div class="search">
                             <div class="searchint">
                                 <div class="moduletable">
-
                                 </div>
                                 <?include_component('adminUsers','loginInformation')?>
                             </div>
                         </div>
-
                         <div class="topmenu">
-
                         </div>
-
                     </div>
                     <!--Top Area End-->
 
@@ -96,7 +88,7 @@
 
 
                                                 <div class="article-content">
-                                                     <?//include_component('homepage','noticias')?>
+                                                     <?include_component('homepage','noticias')?>
                                                      <?php echo $sf_content ?>
                                                 </div>
                                             </div>
