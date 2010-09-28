@@ -19,6 +19,7 @@ foreach($buttons as $button){
 	<?			
 	echo image_tag("");
 	if( isset($button['onClick']) ){
+            $button['id']=isset($button['id'])?$button['id']:"";
 		?>
 		<a onclick="<?=$button['onClick']?>" class="toolbarBtn" <?=$button['id']?'id="'.$button['id'].'"':""?>><?=image_tag( $button["image"] ) ." ".$button["name"] ?></a>
 		<?
@@ -30,12 +31,21 @@ foreach($buttons as $button){
 	</div>
 <?php 
 }
-?> 
 
+if(count($buttonHelp)>0)
+{
+
+
+?>
+    <div class="toolbarbtnhelp">
+        <? echo link_to( image_tag( $buttonHelp["image"] ) , $buttonHelp["link"] ,array('target' => '_blank') );?>
+    </div>
+<?
+}
+?>
 </div>
 </div>
 
 <?
 }
-?>	
-			
+?>
