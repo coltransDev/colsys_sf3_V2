@@ -135,12 +135,7 @@ include_component("widgets", "widgetContactoCliente");
                                 new WidgetImpoexpo({fieldLabel: 'Impoexpo',
                                                 id: 'impoexpo',
                                                 name:'impoexpo'
-                                               }),
-                                new WidgetIncoterms({fieldLabel: 'Terminos',
-                                                  id: 'terminos',
-                                                  hiddenName:"incoterms",
-												  width:220
-                                                }),
+                                               }),                                
                                 new WidgetPais({fieldLabel: 'País Destino',
                                                 id: 'tra_destino_id',
                                                 linkCiudad: 'destino',
@@ -183,6 +178,69 @@ include_component("widgets", "widgetContactoCliente");
                         }
                     ]
                 },
+                {
+                    xtype:'fieldset',
+                    title: 'Información del Proveedor',
+                    autoHeight:true,
+                    id:'panel-proveedor',
+                    //defaults: {width: 210},
+                    items: [
+                        {
+                           xtype:'button',
+                           text: "Agregar",
+                           handler:this.agregarProv
+                        },
+                        {
+                            xtype:'fieldset',
+                            border:false,
+                            layout:'column',
+
+                            items: [
+                                {
+                                    layout:'column',
+                                    border:false,
+                                    title: "Proveedor ",
+                                    items: [
+                                        new WidgetTercero({
+                                            tipo: 'Proveedor',
+                                            width: 400,
+                                            name: "idproveedor0",
+                                            hiddenName: "prov0",
+                                            id:"proveedor0"
+                                           })
+                                    ]
+                                },
+                                {
+                                    layout:'column',
+                                    border:false,
+                                    title: "Incoterms ",
+                                    items: [
+                                       new WidgetIncoterms(
+                                               {
+                                                  id: 'terminos0',
+                                                  hiddenName:"incoterms0",
+												  width:200
+                                                })
+                                    ]
+                                },
+                                {
+                                    layout:'column',
+                                    border:false,
+                                    title: "Orden",
+                                    items: [
+                                    {
+                                        xtype: "textfield",
+                                        name: "orden_pro0",
+                                        id: "orden_pro0",
+                                        width:200
+                                    }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+                ,
                 new FormMercanciaPanel(),
                 {
 
@@ -229,19 +287,11 @@ include_component("widgets", "widgetContactoCliente");
                             readOnly: true,
                             width: 100
                         },
-                        new WidgetTercero({fieldLabel:"Proveedor",
-                                            tipo: 'Proveedor',
-                                            width: 600,
-                                            name: "idproveedor",
-                                            hiddenName: "prov",
-                                            id:"proveedor",
-                                            name:"proveedor"
-                                           }),
-                                           new WidgetComerciales({fieldLabel: 'Vendedor',
-                                                    id: 'vendedor',
-                                                    name: 'vendedor',
-                                                    hiddenName: "idvendedor"
-                                                    })
+                           new WidgetComerciales({fieldLabel: 'Vendedor',
+                                    id: 'vendedor',
+                                    name: 'vendedor',
+                                    hiddenName: "idvendedor"
+                                    })
                          
                     ]
                 },
@@ -324,66 +374,65 @@ include_component("widgets", "widgetContactoCliente");
                     xtype:'fieldset',
                     title: 'Informaciones a:',
                     autoHeight:true,
-                    layout:'column',
-                    columns: 2,
-
-                    defaults:{
-                        columnWidth:0.5,
-                        layout:'form',
-                        border:false,
-                       /* bodyStyle:'padding:4px',*/
-                        hideLabels:true,
-                        border:true
-                    },
                     items: [
-                        {
-                            defaultType: 'textfield',
-                            items: [
-                                <?
-                                for( $i=0; $i<20; $i++ )
-                                {
-                                    if( $i!=0){
-                                        echo ",";
-                                    }
-                                ?>
-                                {
-                                    xtype: "textfield",
-                                    fieldLabel: "",
-                                    name: "contacto_<?=$i?>",
-                                    id: "contacto_<?=$i?>",
-                                    readOnly: true,
-                                    width: 550,
-                                    height :(navigator.appName=="Netscape")?20:22
-                                }
-                                <?
-                                }
-                                ?>
-                            ]
-                        },
-                        {
-                            defaults: {width: 20},
-                            items: [
-                                <?
-                                for( $i=0; $i<20; $i++ ):
-                                    if( $i!=0){
-                                        echo ",";
-                                    }
-                                ?>
-                                {
-                                    xtype: "checkbox",
-                                    fieldLabel: "",
-                                    name: "chkcontacto_<?=$i?>",
-                                    id: "chkcontacto_<?=$i?>",
-                                    width: 20,
-                                    height :20
-
-                                }
-                                <?
-                                endfor;
-                                ?>
-                            ]
+                    <?
+                    for( $i=0; $i<20; $i++ )
+                    {
+                        if( $i!=0){
+                            echo ",";
                         }
+                    ?>
+                    {
+                       border:false,
+                        title: '',
+                        autoHeight:true,
+                        layout:'column',
+                        columns: 2,
+                        defaults:{
+                            columnWidth:0.5,
+                            layout:'form',
+                            border:false,
+                           /* bodyStyle:'padding:4px',*/
+                            hideLabels:true,
+                            border:true
+                        },
+                        items: [
+                            {
+                                defaultType: 'textfield',
+                                items: [                                    
+                                    {
+                                        xtype: "textfield",
+                                        fieldLabel: "",
+                                        name: "contacto_<?=$i?>",
+                                        id: "contacto_<?=$i?>",
+                                        readOnly: true,
+                                        width: 550,
+                                        height :(navigator.appName=="Netscape")?20:22
+                                    }
+
+                                ]
+                            },
+                            {
+                                defaults: {width: 20},
+                                items: [
+                                    {
+                                        xtype: "checkbox",
+                                        fieldLabel: "",
+                                        name: "chkcontacto_<?=$i?>",
+                                        id: "chkcontacto_<?=$i?>",
+                                        width: 20,
+                                        height :20
+                                    }
+                                    
+                                ]
+                            }
+                        ]
+                    }
+                    <?                    
+                    }
+                    ?>
                     ]
+
                 }
 
 
@@ -411,7 +460,7 @@ include_component("widgets", "widgetContactoCliente");
 
 
     };
-
+var i=0;
     Ext.extend(FormReportePanelAg, Ext.form.FormPanel, {
         onSave: function(){            
             var form  = this.getForm();
@@ -445,6 +494,7 @@ include_component("widgets", "widgetContactoCliente");
             }
         },
         onCancel: function(){
+            location.href="/reportesNeg/index";
         },
        onAfterload:function()
        {
@@ -502,6 +552,37 @@ include_component("widgets", "widgetContactoCliente");
 
             combo.alertaCliente(record);
 
+        },
+        agregarProv:function()
+        {
+           tb=new Ext.Panel( {
+                            border:false,
+                            xtype:'fieldset',
+                            layout:'column',
+                            bodyCssClass:'x-fieldset',
+                            items: [
+                                new WidgetTercero({
+                                            tipo: 'Proveedor',
+                                            width: 400,
+                                            name: "idproveedor"+(++i),
+                                            hiddenName: "prov"+i,
+                                            id:"proveedor"+i
+                                           }),
+                                new WidgetIncoterms({
+                                      id: 'terminos'+i,
+                                      hiddenName:"incoterms"+i,
+                                      width:200
+                                    }),
+                                 {
+                                    xtype: "textfield",
+                                    name: "orden_pro"+i,
+                                    id: "orden_pro"+i,
+                                    width:200
+                                }
+
+                            ]
+                        });
+            tb.render('panel-proveedor');  // toolbar is rendered
         }
     });
 </script>

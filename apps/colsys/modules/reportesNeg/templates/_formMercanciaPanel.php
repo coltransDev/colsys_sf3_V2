@@ -1,4 +1,4 @@
-    <?php
+<?php
 /*
  *  This file is part of the Colsys Project.
  *
@@ -59,7 +59,8 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047,CU049,C
                                                     id: 'mpiezas',
                                                     name: 'mpiezas',
                                                     caso_uso: "CU047",
-                                                    width:80
+                                                    width:80,
+                                                    idvalor:"valor"
                                                     })
 
 
@@ -83,7 +84,8 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047,CU049,C
                                                     id: 'mpeso',
                                                     name: 'mpeso',
                                                     caso_uso: "CU049",
-                                                    width:80
+                                                    width:80,
+                                                    idvalor:"valor"
                                                     })
                                     ]
                                 },                                
@@ -104,8 +106,9 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047,CU049,C
                                         new WidgetParametros({
                                                     id: 'mvolumen',
                                                     name: 'mvolumen',
-                                                    caso_uso: "CU058",
-                                                    width:80
+                                                    caso_uso: "<?=($modo==Constantes::AEREO)?"CU058":"CU050"?>",
+                                                    width:80,
+                                                    idvalor:"valor"
                                                     })
                                     ]
                                 },
@@ -154,9 +157,9 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047,CU049,C
 									columnWidth: .35,
 									items: [
 										{
-											xtype: "combo",
-											name: "sia",
+											xtype: "combo",											
 											id: "sia",
+                                            hiddenName:"idsia",
 											mode:'local',
 											width:350,
 											store : [
@@ -186,10 +189,11 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047,CU049,C
 									columnWidth: .25,
 									items: [
                                         new WidgetParametros({
-                                                    id: 'tipoexpo',
-                                                    name: 'tipoexpo',
+                                                    id: 'tipoexpo',                                                    
                                                     caso_uso: "CU011",
-                                                    width:230
+                                                    width:230,
+                                                    hiddenName:"idtipoexpo"
+
                                                     })
 										
 									]
@@ -203,7 +207,7 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047,CU049,C
 									items: [
 									{
 										xtype: "textfield",
-										name: "notonave",
+										name: "motonave",
 										id: "motonave"
 									}
 									]

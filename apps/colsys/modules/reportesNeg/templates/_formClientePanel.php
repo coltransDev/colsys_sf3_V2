@@ -6,7 +6,7 @@
 */
 
 include_component("widgets", "widgetContactoCliente");
-
+//echo $nprov;
 ?>
 <script type="text/javascript">
     FormClientePanel = function( config ){
@@ -28,7 +28,7 @@ include_component("widgets", "widgetContactoCliente");
             autoHeight:true,
 //            deferredRender:false,
             items: [
-                {
+                    {
 
                     xtype:'fieldset',
                     title: 'Información del Cliente',
@@ -83,17 +83,8 @@ include_component("widgets", "widgetContactoCliente");
                             fieldLabel  :   'Contrato de Comodato',
                             id          :   'ca_comodato',
                             name        :   'ca_comodato'
+                        }
 
-                        }
-/*                        {
-                        xtype: "textfield",
-                        fieldLabel: "Contrato de Comodato",
-                        name: "ca_comodato",
-                        id: "ca_comodato",
-                        readOnly: true,
-                        width: 100
-                        }
-*/
                         <?
                         }
                         ?>
@@ -111,30 +102,106 @@ include_component("widgets", "widgetContactoCliente");
                     xtype:'fieldset',
                     title: 'Información del Proveedor',
                     autoHeight:true,
+                    id:'panel-proveedor',
                     //defaults: {width: 210},
                     items: [
-                        new WidgetTercero({fieldLabel:"Proveedor",
+                        {
+                           xtype:'button',
+                           text: "Agregar",
+                           handler:this.agregarProv
+                        },
+                        {
+                            xtype:'fieldset',
+                            border:false,
+                            layout:'column',
+
+                            items: [
+                                {
+                                    layout:'column',
+                                    border:false,
+                                    title: "Proveedor ",
+                                    items: [
+                                        new WidgetTercero({
                                             tipo: 'Proveedor',
-                                            width: 600,
-                                            name: "idproveedor",
-                                            hiddenName: "prov",
-                                            id:"proveedor",
-                                            name:"proveedor"
+                                            width: 400,
+                                            name: "idproveedor0",
+                                            hiddenName: "prov0",
+                                            id:"proveedor0"
                                            })
+                                    ]
+                                },
+                                {
+                                    layout:'column',
+                                    border:false,
+                                    title: "Incoterms ",
+                                    items: [
+                                       new WidgetIncoterms(
+                                               {
+                                                  id: 'terminos0',
+                                                  hiddenName:"incoterms0",
+												  width:200
+                                                })
+                                    ]
+                                },
+                                {
+                                    layout:'column',
+                                    border:false,
+                                    title: "Orden",
+                                    items: [
+                                    {
+                                        xtype: "textfield",                                        
+                                        name: "orden_pro0",
+                                        id: "orden_pro0",
+                                        width:200
+                                    }
+                                    ]
+                                }
+                            ]
+                        }
+                        <?
+                        if($nprov>1)
+                        {
+                            for($i=1;$i<$nprov;$i++)
+                            {
+                        ?>
+                                ,{
+                                    xtype:'fieldset',
+                                    border:false,
+                                    layout:'column',
+                                    items: [
+                                        new WidgetTercero({
+                                                    tipo: 'Proveedor',
+                                                    width: 400,                                                    
+                                                    hiddenName: "prov<?=$i?>",
+                                                    id:"proveedor<?=$i?>"
+                                                   }),
+                                            new WidgetIncoterms({
+                                              id: 'terminos<?=$i?>',
+                                              hiddenName:"incoterms<?=$i?>",
+                                              width:200
+                                            }),
+                                             {
+                                                xtype: "textfield",
+                                                name: "orden_pro<?=$i?>",
+                                                id: "orden_pro<?=$i?>",
+                                                width:200
+                                            }
+                                    ]
+                                }
+                        <?
+                            }
+                        }
+                        ?>
+                        
                     ]
                 }
 				<?
 				}
 				?>
             ]
-
-
-
         });
-
-
     };
-
+var i=<?=($nprov>0)?($nprov-1):"1"?>;
     Ext.extend(FormClientePanel, Ext.Panel, {
         onSelectContactoCliente: function( combo, record, index){ // override default onSelect to do redirect
                        
@@ -180,8 +247,41 @@ include_component("widgets", "widgetContactoCliente");
 			Ext.getCmp("preferencias").setValue(record.get("preferencias"));
    
             combo.alertaCliente(record);
+
+        },
+        agregarProv:function()
+        {
+           tb=new Ext.Panel( {
+                            border:false,
+                            xtype:'fieldset',
+                            layout:'column',
+                            bodyCssClass:'x-fieldset',
+                            items: [
+                                new WidgetTercero({
+                                            tipo: 'Proveedor',
+                                            width: 400,
+                                            name: "idproveedor"+(++i),
+                                            hiddenName: "prov"+i,
+                                            id:"proveedor"+i
+                                           }),
+                                new WidgetIncoterms({
+                                      id: 'terminos'+i,
+                                      hiddenName:"incoterms"+i,
+                                      width:200
+                                    }),
+                                 {
+                                    xtype: "textfield",
+                                    name: "orden_pro"+i,
+                                    id: "orden_pro"+i,
+                                    width:200
+                                }
+
+                            ]
+                        });
+            tb.render('panel-proveedor');  // toolbar is rendered
         }
     });
+
 
 
 </script>

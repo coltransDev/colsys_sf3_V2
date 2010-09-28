@@ -224,12 +224,22 @@ if($permiso>=2)
                                                   id: 'destino',
                                                   idciudad:"destino",
                                                   hiddenName:"iddestino"
-                                                }),
-                                new WidgetIncoterms({fieldLabel: 'Terminos',
-                                                  id: 'terminos',
-                                                  hiddenName:"incoterms",
+                                                })
+<?
+                                if($impoexpo==constantes::EXPO)
+                                {
+?>
+                                    ,new WidgetIncoterms({title: 'Terminos',
+                                                  fieldLabel:"Terminos",
+                                                  id: 'terminos0',
+                                                  hiddenName:"incoterms0",
 												  width:250
                                                 })
+
+<?
+                                }
+?>
+                                
                             ]
                         }
                     ]
@@ -270,8 +280,11 @@ if($permiso>=2)
             Ext.getCmp("destino").setValue(record.data.iddestino);
             $("#destino").val(record.data.destino);
 
+            $("#idvendedor").val(record.data.idvendedor);
+
             Ext.getCmp("vendedor").setValue(record.data.idvendedor);
             $("#vendedor").val(record.data.vendedor);
+
 
 
             confirmaciones=record.data.confirmar.split(",");
@@ -287,8 +300,8 @@ if($permiso>=2)
             $("#cliente").attr("value",record.data.compania);
             $("#idconcliente").attr("value",record.data.idcontacto);
 
-
-            Ext.getCmp("terminos").setValue(record.data.incoterms);
+            if(Ext.getCmp("terminos"))
+                Ext.getCmp("terminos").setValue(record.data.incoterms);
 
             Ext.getCmp("ca_obtencionpoliza").setValue(record.data.obtencion);
             Ext.getCmp("ca_idmoneda_vta").setValue(record.data.idmoneda);
@@ -297,8 +310,10 @@ if($permiso>=2)
             Ext.getCmp("ca_primaventa").setValue(record.data.prima_vlr);
             Ext.getCmp("ca_minimaventa").setValue(record.data.prima_min);
 
-            if(record.data.obtencion || record.data.idmoneda || record.data.idmonedaobtencion || record.data.prima_vlr || record.data.prima_min)
-                Ext.getCmp('seguros').collapsed=false;
+            if(record.data.obtencion!="" || record.data.idmoneda!="" || record.data.idmonedaobtencion!="" || record.data.prima_vlr!="" || record.data.prima_min!="")
+            {
+                Ext.getCmp('seguros').expand();
+            }
 
 //            Ext.getCmp("ca_liberacion").setValue(record.data.prima_min);
 //            Ext.getCmp("ca_tiempocredito").setValue(record.data.prima_min);

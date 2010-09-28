@@ -248,7 +248,8 @@ PanelConceptosFletes = function( config ){
         header: "Orden",
         dataIndex: 'orden',
         width: 50,
-        sortable:true
+        sortable:true,
+        hideable: true
 
       }*/
      ];
@@ -317,11 +318,20 @@ PanelConceptosFletes = function( config ){
             dblclick:this.onDblClickHandler
         },
         boxMinHeight: 400,
-        tbar:[{
+        tbar:[
+            <?
+            if($editable)
+            {
+            ?>
+            {
 				text:'Guardar',
 				iconCls:'disk',
 				handler: this.guardarCambios
-			},{
+			},
+            <?
+            }
+            ?>
+            {
                 text: 'Recargar',
                 tooltip: 'Recarga los datos de la base de datos',
                 iconCls: 'refresh',  // reference to our css
@@ -329,12 +339,20 @@ PanelConceptosFletes = function( config ){
                 handler: function(){
 					Ext.getCmp('panel-conceptos-fletes').store.reload();
 				}
-            },
+            }
+            <?            
+            if($reporte->getCaIdproducto())
+            {            
+            ?>
+            ,
             {
 				text:'Importar',
 				iconCls: 'import',
 				handler: this.importarCotizacion
 			}
+            <?
+            }
+            ?>
             ]
     });
 
@@ -415,7 +433,7 @@ Ext.extend(PanelConceptosFletes, Ext.grid.EditorGridPanel, {
             changes['iditem']=r.data.iditem;
             changes['idconcepto']=r.data.idconcepto;
             changes['idreporte']=r.data.idreporte;
-            changes['enorigen']=true;
+            changes['ca_recargoorigen']="true";
             if( r.data.iditem ){
                 //envia los datos al servidor
                 Ext.Ajax.request(
@@ -633,6 +651,7 @@ Ext.extend(PanelConceptosFletes, Ext.grid.EditorGridPanel, {
 
             var id = this.ctxRecord.id;
             var tipo = this.ctxRecord.data.tipo;
+            var idreporte = this.ctxRecord.data.idreporte;
             
             var storeConceptosFletes = this.store;
             Ext.Ajax.request(
@@ -645,8 +664,8 @@ Ext.extend(PanelConceptosFletes, Ext.grid.EditorGridPanel, {
                     id: id,
                     idconcepto: idconcepto,
                     idrecargo: idrecargo,
-                    tipo: tipo
-                    
+                    tipo: tipo,
+                    idreporte: idreporte
                     
                 },
 

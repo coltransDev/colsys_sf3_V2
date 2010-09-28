@@ -2,7 +2,6 @@
 
 /**
  * clientes components.
- *
  * @package    colsys
  * @subpackage reportes
  * @author     Andres Botero
@@ -110,6 +109,14 @@ class reportesNegComponents extends sfComponents
              $this->recargos[$key]['ca_concepto'] = utf8_encode($this->recargos[$key]['ca_concepto']);
 
          }
+         $reporte=$this->reporte;
+         if( ($reporte->isNew() || $reporte->getCaVersion() == $reporte->getUltVersion())
+                    &&!$reporte->existeReporteExteriorVersionActual() ){
+                $this->editable = true;
+            }else{
+                $this->editable = false;
+            }
+
 	}
     /*
 	* Muestra los conceptos del reporte y un formulario para agregar un nuevo registro, tambien
@@ -136,6 +143,14 @@ class reportesNegComponents extends sfComponents
              $this->recargos[$key]['ca_concepto'] = utf8_encode($this->recargos[$key]['ca_concepto']);
 
          }
+        $reporte=$this->reporte;
+         if( ($reporte->isNew() || $reporte->getCaVersion() == $reporte->getUltVersion())
+                    &&!$reporte->existeReporteExteriorVersionActual() ){
+                $this->editable = true;
+            }else{
+                $this->editable = false;
+            }
+
 	}
     /*
 	* Muestra los conceptos del reporte y un formulario para agregar un nuevo registro, tambien

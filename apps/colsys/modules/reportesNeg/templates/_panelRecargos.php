@@ -159,13 +159,14 @@ PanelRecargos = function( config ){
             hideable: false,
             sortable:false,
             editor: <?=include_component("widgets", "monedas" ,array("id"=>""))?>
-        },
+        }/*,
         {
             header: "Orden",
             dataIndex: 'orden',
             width: 50,
-            sortable:true
-        }
+            sortable:true,
+            hideable: true
+        }*/
     ];
 
     this.record = Ext.data.Record.create([
@@ -223,11 +224,20 @@ PanelRecargos = function( config ){
             dblclick:this.onDblClickHandler
         },
         boxMinHeight: 400,
-        tbar:[{
+        tbar:[
+            <?
+            if($editable)
+            {
+            ?>
+            {
 				text:'Guardar',
 				iconCls:'disk',
 				handler: this.guardarCambios
-			},{
+			},
+            <?
+            }
+            ?>
+            {
                 text: 'Recargar',
                 tooltip: 'Recarga los datos de la base de datos',
                 iconCls: 'refresh',  // reference to our css
@@ -235,12 +245,20 @@ PanelRecargos = function( config ){
                 handler: function(){
 					Ext.getCmp('panel-recargos').store.reload();
 				}
-            },
+            }
+            <?
+            if($reporte->getCaIdproducto())
+            {
+            ?>
+            ,
             {
 				text:'Importar',
 				iconCls: 'import',
 				handler: this.importarCotizacion
 			}
+            <?
+            }
+            ?>
             ]
     });
 
@@ -304,6 +322,8 @@ Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
             changes['iditem']=r.data.iditem;
             changes['idconcepto']=r.data.idconcepto;
             changes['idreporte']=r.data.idreporte;
+            changes['ca_recargoorigen']="false";
+
             
             if( r.data.iditem ){
                 //envia los datos al servidor
@@ -480,6 +500,7 @@ Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
 
             var id = this.ctxRecord.id;
             var tipo = this.ctxRecord.data.tipo;
+            var idreporte = this.ctxRecord.data.idreporte;
             
             var storeConceptosFletes = this.store;
             Ext.Ajax.request(
@@ -492,20 +513,15 @@ Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
                     id: id,
                     idconcepto: idconcepto,
                     idrecargo: idrecargo,
-                    tipo: tipo
-                    
-                    
+                    tipo: tipo,
+                    idreporte: idreporte
                 },
-
                 //Ejecuta esta accion en caso de fallo
                 //(404 error etc, ***NOT*** success=false)
                 failure:function(response,options){
                     alert( response.responseText );
                     success = false;
                 },
-
-
-
                 //Ejecuta esta accion cuando el resultado es exitoso
                 success:function(response,options){
                     var res = Ext.util.JSON.decode( response.responseText );

@@ -19,7 +19,8 @@ include_component("widgets", "widgetMoneda");
                 {
                     xtype:'fieldset',
                     title: 'Información de Seguros',
-                    autoHeight:true,                    
+                    autoHeight:true,
+                    id:"panel-seguros",
                     //defaults: {width: 210},
                     items: [
                         {
