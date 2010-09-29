@@ -448,8 +448,8 @@ class widgetsComponents extends sfComponents
                              ->execute();
         $this->agentes = array();
         foreach( $agentes as $agente ){       
-            $this->agentes[]=array("idagente" => $agente["a_ca_idagente"],
-                                                                "nombre" => utf8_encode($agente["t_ca_nombre"]." ".$agente["i_ca_nombre"]),
+            $this->agentes[]=array("idagente" => $agente["a_ca_idagente"],                                                                
+                                                                "nombre" => utf8_encode($agente["i_ca_nombre"]),
                                                                 "pais" => utf8_encode($agente["t_ca_nombre"]),
                                                                 "idtrafico" => $agente["t_ca_idtrafico"]);
         }
