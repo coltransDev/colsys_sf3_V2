@@ -56,7 +56,7 @@ require_once("menu.php");
     echo "<TABLE WIDTH=530 BORDER=0 CELLSPACING=1 CELLPADDING=5>";
     echo "<TH COLSPAN=7 style='font-size: 12px; font-weight:bold;'><B>Ingrese los parámetros para el Reporte</TH>";
     $tm =& DlRecordset::NewRecordset($conn);
-	if (!$tm->Open("select ca_nombre as ca_sucursal from control.tb_sucursales order by ca_sucursal")) {       // Selecciona todos lo registros de la tabla Sucursales
+	if (!$tm->Open("select distinct ca_nombre as ca_sucursal from control.tb_sucursales order by ca_sucursal")) {       // Selecciona todos lo registros de la tabla Sucursales
         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
         echo "<script>document.location.href = 'repcomisiones.php';</script>";
         exit; }
@@ -371,7 +371,7 @@ elseif (isset($boton)) {                                                      //
 			}
 			$nmeses = substr($nmeses,0,strlen($nmeses)-1);
 			
-            $condicion = "ca_ano like '$ano' and ca_mes in ($nmeses) and ca_login like '$id' and ca_estado <> 'Abierto'";
+            $condicion = "ca_ano::text like '$ano' and ca_mes::text in ($nmeses) and ca_login like '$id' and ca_estado <> 'Abierto'";
             if (!$rs->Open("select * from vi_inoingresos_sea where $condicion")) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
                 echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
                 echo "<script>document.location.href = 'entrada.php';</script>";

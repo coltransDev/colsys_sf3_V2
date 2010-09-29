@@ -65,7 +65,7 @@ require_once("menu.php");
             $tm->MoveNext();
           }
     echo "  </TD>";
-    if (!$tm->Open("select ca_sucursal from vi_usuarios where ca_login = '$usuario'")) {       // Selecciona todos lo registros de la tabla Traficos
+    if (!$tm->Open("select distinct ca_sucursal from vi_usuarios where ca_login = '$usuario'")) {       // Selecciona todos lo registros de la tabla Traficos
         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
         echo "<script>document.location.href = 'repcomisiones.php';</script>";
         exit; }
