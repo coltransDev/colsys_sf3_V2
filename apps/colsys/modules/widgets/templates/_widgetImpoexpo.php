@@ -8,8 +8,6 @@ $data = $sf_data->getRaw("data");
 
 ?>
 
-
-
 <script type="text/javascript">
 
 
