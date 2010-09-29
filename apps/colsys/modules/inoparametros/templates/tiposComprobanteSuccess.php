@@ -4,17 +4,19 @@
  * 
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
-
-include_component("inoparametros","panelCuentas");
+include_component("inoparametros","panelTiposComprobante");
 ?>
-
 <div class="content">
     <div id="panel"></div>
 </div>
 
 <script type="text/javascript">
     Ext.onReady(function(){
-        var panel = new PanelCuentas({autoHeight:true});
+        var panel = new PanelTiposComprobante({height:600});
         panel.render("panel");
     });
 </script>
+
+
+
+

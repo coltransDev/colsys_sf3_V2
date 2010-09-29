@@ -21,12 +21,19 @@ class inoparametrosActions extends sfActions
         return 1;
     }
 
+
+    /*****************************************************************************
+    *
+    *   PARAMETRIZACION DE CONCEPTOS
+    *
+    *****************************************************************************/
+
     /**
-    * Executes index action
+    * Asocia los conceptos a cuentas contables
     *
     * @param sfRequest $request A request object
     */
-    public function executeCuentas(){
+    public function executeConceptos(){
         
     }
 
@@ -126,66 +133,11 @@ class inoparametrosActions extends sfActions
 
         $idconcepto = $request->getParameter("idconcepto");
 
-        if( $idconcepto ){
-            $concepto = Doctrine::getTable("InoConcepto")->find($idconcepto);
-            $this->forward404Unless($concepto);
-        }else{
-            $concepto = new InoConcepto();
-            $concepto->setCaTipo( $request->getParameter("tipo") );
-        }
+        $this->forward404unless( $idconcepto );
 
-        if( $request->getParameter("concepto")!==null ){
-            $concepto->setCaConcepto( $request->getParameter("concepto") );
-        }
-
-        if( $modo=="edicion" ){
-            if( $request->getParameter("recargoorigen")!==null ){
-                if( $request->getParameter("recargoorigen")=="true" ){
-                    $concepto->setCaRecargoorigen( true );
-                }else{
-                    $concepto->setCaRecargoorigen( false );
-                }
-            }
-
-            if( $request->getParameter("recargolocal")!==null ){
-                if( $request->getParameter("recargolocal")=="true" ){
-                    $concepto->setCaRecargolocal( true );
-                }else{
-                    $concepto->setCaRecargolocal( false );
-                }
-            }
-
-
-            if( $request->getParameter("observaciones")!==null ){
-                if( $request->getParameter("observaciones") ){
-                    $concepto->setCaDetalles( $request->getParameter("observaciones") );
-                }else{
-                    $concepto->setCaDetalles( null );
-                }
-            }
-
-            if( $concepto->getCaIdconcepto() ){
-                if( $request->getParameter("modalidades")!==null ){
-                    Doctrine_Query::create()
-                                    ->delete()
-                                    ->from("InoConceptoModalidad cm")
-                                    ->where("cm.ca_idconcepto = ? ", $concepto->getCaIdconcepto() )
-                                    ->execute();
-
-                    $modalidadesParam = explode("|",$request->getParameter("modalidades"));
-
-                    foreach( $modalidadesParam as $val ){
-                        $cm = new InoConceptoModalidad();
-                        $cm->setCaIdconcepto($concepto->getCaIdconcepto());
-                        $cm->setCaIdmodalidad($val);
-                        $cm->save();
-                    }
-                }
-            }
-
-        }
-
-        $concepto->save();
+        $concepto = Doctrine::getTable("InoConcepto")->find($idconcepto);
+        $this->forward404Unless($concepto);
+                
 
         if( $modo=="fv" ){
             //ca_idparametro
@@ -200,7 +152,7 @@ class inoparametrosActions extends sfActions
                 $parametro->setCaIdconcepto( $concepto->getCaIdconcepto() );
                 $parametro->setCaIdccosto( $idccosto );
             }
-            if( $request->getParameter("idcuenta")!==null ){
+            if( $request->getParameter("idcuenta") ){
                 $parametro->setCaIdcuenta( $request->getParameter("idcuenta") );
             }
 
@@ -277,118 +229,106 @@ class inoparametrosActions extends sfActions
     }
 
 
-
-
-
-
-
-   
-
+    /*****************************************************************************
+    *
+    *   PARAMETRIZACION DE CUENTAS
+    *
+    *****************************************************************************/
     /**
-	 * Permite seleccionar el modo de operacion del programa
-	 * @author: Andres Botero
-	 */
-	public function executeSeleccionModo()
-	{
-		//$this->nivelAereo = $this->getUser()->getNivelAcceso( inoActions::RUTINA_AEREO );
-
-	}
-
-    /**
-    * Executes index action
+    * Parametrización del PUC
     *
     * @param sfRequest $request A request object
     */
-    public function executeIndex(){
+    public function executeCuentas(){
 
-        $this->modo = $this->getRequestParameter("modo");
-
-        $response = sfContext::getInstance()->getResponse();
-		$response->addJavaScript("extExtras/RowExpander",'last');
-		$response->addJavaScript("extExtras/CheckColumn",'last');
-
-        $this->nivel = $this->getNivel();
     }
 
-
-    
-
-
-    
-
-     
-
-
-
-    
-
-
-    /*
-    * guarda el panel de conceptos
+    /**
+    * Datos para el panel de parametros. 
+    *
     * @param sfRequest $request A request object
     */
-    public function executeEliminarPanelParametros(sfWebRequest $request){
-        
+    public function executeDatosPanelCuentas(){
+        $q = Doctrine::getTable("InoCuenta")
+                       ->createQuery("c")
+                       ->addOrderBy("c.ca_cuenta");
 
-        $id = $request->getParameter("id");
-        $this->responseArray=array("id"=>$id,  "success"=>false);
-        $nivel = $this->getNivel();
-        if( $nivel==1 ){
-            $idconcepto = $request->getParameter("idconcepto");
+        $cuentas = $q->execute();
 
-            if( $idconcepto ){
-                $concepto = Doctrine::getTable("InoConcepto")->find($idconcepto);
-                $this->forward404Unless($concepto);
-                $concepto->delete();
-                $this->responseArray["success"]=true;
-            }
+        $data = array();
+
+        foreach( $cuentas as $cuenta ){
+            $row = array();
+            $row["idcuenta"]=$cuenta->getCaIdcuenta();
+            $row["cuenta"]=$cuenta->getCaCuenta();
+            $row["descripcion"]=utf8_encode($cuenta->getCaDescripcion());
+            $row["naturaleza"]=utf8_encode($cuenta->getCaNaturaleza());
+            $row["grupo"]=substr($cuenta->getCaCuenta(), 0, 1 );
+            $data[] = $row;
         }
+
+        $this->responseArray = array("root"=>$data, "total"=>count($data), "success"=>true );
+
         $this->setTemplate("responseTemplate");
     }
 
 
+    /*****************************************************************************
+    *
+    *   PARAMETRIZACION DE COMPROBANTES
+    *
+    *****************************************************************************/
     /**
-    * Datos de los conceptos para usar en pricing cotizaciones etc.
+    * Parametrización de tipos de documentos
     *
     * @param sfRequest $request A request object
     */
-    public function executeDatosModalidadGrid(sfWebRequest $request){
-        $tipo = $request->getParameter("tipo");
-        $modo = $request->getParameter("modo");
-        $conceptos = array();
-        if( $request->getParameter("modalidades") ){
-            
-            $modalidadesParam = explode("|", $request->getParameter("modalidades") );
+    public function executeTiposComprobante(){
 
-            if( count( $modalidadesParam ) >0 ){
-                
-                $q = Doctrine::getTable("Modalidad")
-                         ->createQuery("m")
-                         ->select("m.ca_idmodalidad, m.ca_impoexpo, m.ca_transporte, m.ca_modalidad")
-                         ->whereIn("m.ca_idmodalidad", $modalidadesParam)
-                         ->addOrderBy( "m.ca_impoexpo" )
-                         ->addOrderBy( "m.ca_transporte" )
-                         ->addOrderBy( "m.ca_modalidad" );
-                
-
-                $modalidades = $q->setHydrationMode(Doctrine::HYDRATE_ARRAY )->execute();
-
-                $k = 0;
-                foreach( $modalidades as $modalidad ){
-                    $conceptos[] = array("idmodalidad"=>$modalidad["ca_idmodalidad"], "modalidad"=>utf8_encode($modalidad["ca_impoexpo"]." ".$modalidad["ca_transporte"]." ".$modalidad["ca_modalidad"]), "orden"=>$k++);
-                }
-            }
-
-        }
-
-        $nivel = $this->getNivel();
-        if( $nivel>=1 && $modo=="edicion" ){
-            $conceptos[] = array("idmodalidad"=>"", "modalidad"=>"+", "orden"=>"Z");
-        }
-
-        $this->responseArray = array( "totalCount"=>count( $conceptos ), "root"=>$conceptos  );
-
-		$this->setTemplate("responseTemplate");
     }
+
+
+    /**
+    * Datos para el panel de tipos de comprobante.
+    *
+    * @param sfRequest $request A request object
+    */
+    public function executeDatosPanelTiposComprobante(){
+        $q = Doctrine::getTable("InoTipoComprobante")
+                       ->createQuery("t");
+                       
+
+        $tipos = $q->execute();
+
+        $data = array();
+
+        foreach( $tipos as $tipo ){
+            $row = array();
+            $row["idtipo"]=$tipo->getCaIdtipo();
+            $row["tipo"]=$tipo->getCaTipo();
+            $row["comprobante"]=utf8_encode($tipo->getCaComprobante());
+            $row["descripcion"]=utf8_encode($tipo->getCaDescripcion());
+            $row["titulo"]=utf8_encode($tipo->getCaTitulo());
+            $data[] = $row;
+        }
+
+        $this->responseArray = array("root"=>$data, "total"=>count($data), "success"=>true );
+
+        $this->setTemplate("responseTemplate");
+    }
+
+
+
+    /*****************************************************************************
+    *
+    *   PARAMETRIZACION DE CENTROS DE COSTOS
+    *
+    *****************************************************************************/
+   
+
+    
+
+
+    
 
 }

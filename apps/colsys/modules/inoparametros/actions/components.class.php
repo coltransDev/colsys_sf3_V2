@@ -10,10 +10,30 @@
  */
 class inoparametrosComponents extends sfComponents
 {
+    /*
+     * Permite crear cuentas contables dentro del sistema.
+     *
+     */
+    public function executePanelCuentas(){
+        $response = sfContext::getInstance()->getResponse();
+		$response->addJavascript('extExtras/treegrid/TreeGridSorter');
+        $response->addJavascript('extExtras/treegrid/TreeGridColumnResizer');
+        $response->addJavascript('extExtras/treegrid/TreeGridNodeUI');
+        $response->addJavascript('extExtras/treegrid/TreeGridLoader');
+        $response->addJavascript('extExtras/treegrid/TreeGridColumns');
+        $response->addJavascript('extExtras/treegrid/TreeGrid');
+
+        $response->addStylesheet('extExtras/treegrid.css');
 
 
-    public function executePanelParametrosCuentas()
-	{
+    }
+
+    /*
+     * Permite asociar los conceptos de colsys con cuentas de SIIGO.
+     * 
+     */
+    public function executePanelParametrosCuentas(){
+	
         $response = sfContext::getInstance()->getResponse();
 		$response->addJavaScript("extExtras/CheckColumn",'last');
 
@@ -60,9 +80,15 @@ class inoparametrosComponents extends sfComponents
 
     }
 
-   
-    
-		
-		
+
+    /*
+     * Permite parametrizar los tipos de comprobantes del sistema
+     *
+     */
+    public function executePanelTiposComprobante(){
+
+        
+
+    }		
 }
 ?>

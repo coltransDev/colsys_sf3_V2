@@ -238,7 +238,7 @@ PanelParametrosCuentas = function( config ){
 
     this.store = new Ext.data.Store({
 
-        autoLoad : true,
+        autoLoad : false,
         url: '<?=url_for("inoparametros/datosPanelParametrosCuentas")?>',
         baseParams : {
             readOnly: this.readOnly
