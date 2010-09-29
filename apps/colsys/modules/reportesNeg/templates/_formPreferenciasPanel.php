@@ -35,7 +35,7 @@ include_component("reportesNeg", "gridPanelInstruccionesWindow",array("modo"=>$m
                             fieldLabel: "Preferencias del cliente",
                             name: "preferencias",
                             id: "preferencias",                            
-                            width: 600,
+                            width: 500,
                             grow: true
                         },
                         {
@@ -43,7 +43,7 @@ include_component("reportesNeg", "gridPanelInstruccionesWindow",array("modo"=>$m
                             fieldLabel: "Instrucciones especiales (Agente)",
                             name: "instrucciones",
                             id: "instrucciones",
-                            width: 600,
+                            width: 500,
                             grow: true
                         },
                         {

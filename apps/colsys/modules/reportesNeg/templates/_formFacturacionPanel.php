@@ -13,7 +13,7 @@ include_component("widgets", "widgetCliente");
 		var campos = new Array();
 
 			this.wgCliente1 = new WidgetCliente({fieldLabel: 'Cliente ',
-                                                   width: 600,
+                                                   width: 500,
                                                    id: "cliente-impoexpo",
                                                    hiddenName: "idclientefac"
                                                   });
@@ -24,14 +24,14 @@ include_component("widgets", "widgetCliente");
 		{
 		?>
 			this.wgCliente = new WidgetCliente({fieldLabel: 'Agente ',
-                                                   width: 600,
+                                                   width: 500,
                                                    id: "agente-impoexpo",
                                                    hiddenName: "idclienteag",
                                                    tipo:"Agente"
                                                   });
         
 			this.wgCliente2 = new WidgetCliente({fieldLabel: 'Otro ',
-                                                   width: 600,
+                                                   width: 500,
                                                    id: "otro-aduana",
                                                    hiddenName: "idclienteotro"
                                                   });

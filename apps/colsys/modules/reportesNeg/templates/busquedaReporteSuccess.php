@@ -12,10 +12,11 @@
 		<th width="668" scope="col">Trayecto</th>
 	</tr>
 	<?
+    $consecutivo="";
 	foreach( $reportes as $reporte ){		
 		$origen = $reporte->getOrigen();
 		$destino = $reporte->getDestino();
-        $url = "reportesNeg/consultaReporte?id=".$reporte->getCaIdreporte()."&modo=".$modo."&impoexpo=".$impoexpo.($opcion?"&opcion=".$opcion:"");
+        $url = "reportesNeg/consultaReporte?id=".$reporte->getCaIdreporte()."&modo=".$reporte->getCaTransporte()."&impoexpo=".$reporte->getCaImpoexpo().($opcion?"&opcion=".$opcion:"");
 	?>
 	<tr>
 		<td rowspan="2"><?=link_to($reporte->getCaConsecutivo()." V".$reporte->getCaVersion(), $url )?></td>
@@ -46,6 +47,7 @@
 			</table></td>
 	</tr>
 	<?
+    $consecutivo=$reporte->getCaConsecutivo();
 	}
 	?>
 </table>

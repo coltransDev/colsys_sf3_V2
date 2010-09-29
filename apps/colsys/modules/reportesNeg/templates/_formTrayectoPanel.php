@@ -17,12 +17,7 @@ include_component("widgets", "widgetAgente");
 include_component("widgets", "widgetIncoterms");
 include_component("reportesNeg", "formMercanciaPanel",array("modo"=>$modo,"impoexpo"=>$impoexpo));
 //$usuarios = $sf_data->getRaw("usuarios");
-if($impoexpo== Constantes::TRIANGULACION)
-{
-//include_component("widgets", "widgetImpoexpo");
-//include_component("widgets", "widgetTransporte");
-}
-else
+if($impoexpo!= Constantes::TRIANGULACION)
 {
 	include_component("reportesNeg", "formContinuacionPanel",array("modo"=>$modo,"impoexpo"=>$impoexpo));
 }
@@ -53,7 +48,7 @@ if($permiso>=2)
                                                     linkImpoexpo: "impoexpo"
                                                     });
         <?
-		if($impoexpo== Constantes::EXPO || ($impoexpo== Constantes::IMPO && $modo== Constantes::AEREO) || ($impoexpo== Constantes::TRIANGULACION ))
+		if($impoexpo == Constantes::EXPO || ($impoexpo== Constantes::IMPO && $modo== Constantes::AEREO) || ($impoexpo== Constantes::TRIANGULACION ))
 		{
 		?>
 		this.wgModalidad.addListener("select", this.onSelectModalidad, this );
@@ -76,12 +71,12 @@ if($permiso>=2)
                         defaults: {width: 200},
                         items :
                         [
-                        {
-                            xtype: "hidden",
-                            id: "idproducto",
-                            name: "idproducto"
-                        }
-                        ,
+                            {
+                                xtype: "hidden",
+                                id: "idproducto",
+                                name: "idproducto"
+                            }
+                            ,
                             this.widgetCotizacion,
                             {
                                 xtype: "datefield",
@@ -122,140 +117,135 @@ if($permiso>=2)
                         ]
                     },
                     {
-                    xtype:'fieldset',
-                    title: 'Información del trayecto',
-                    autoHeight:true,
-                   
-                    layout:'column',
-                    columns: 2,
-                    defaults:{
-                        columnWidth:0.5,
-                        layout:'form',                        
-                        border:false,
-                        bodyStyle:'padding:4px'
-                    },
-                    items :
+                        xtype:'fieldset',
+                        title: 'Información del trayecto',
+                        autoHeight : true,
+                        layout : 'column',
+                        columns : 2,
+                        defaults:{
+                            columnWidth:0.5,
+                            layout:'form',
+                            border:false,
+                            bodyStyle:'padding:4px'
+                        },
+                        items :
                         [
                         /*
                          * =========================Column 1 =========================
                          **/
-                        {
-                            columnWidth:.5,
-                            layout: 'form',
-                            border:false,
-                            defaultType: 'textfield',
-                            items: [
-                                {
-                                    xtype:"hidden",
-                                    id: 'impoexpo',
-                                    name: 'impoexpo',
-                                    value:'<?=$impoexpo?>'
-                                },
-                                /*new WidgetImpoexpo({fieldLabel: 'Clase',
-                                                    id: 'impoexpo',
-                                                    name: 'impoexpo',                                                    
-                                                    listeners:{select:this.onSelectClase}
-                                                    }),*/
+                            {
+                                columnWidth:.4,                                
+                                border:false,                                
+                                items:
+                                [
+                                    {
+                                        xtype:"hidden",
+                                        id: 'impoexpo',
+                                        name: 'impoexpo',
+                                        value:'<?=$impoexpo?>'
+                                    },
+                                    this.wgModalidad,
+                                    new WidgetPais({fieldLabel: 'País Origen',
+                                                    id: 'tra_origen_id',
+                                                    linkCiudad: 'origen',
+                                                    hiddenName:'idtra_origen_id',
+                                                    pais:'<?=$pais1?>',
+                                                    excluidos:'C0-057'
+                                                   }),
 
-                                this.wgModalidad,
-                                new WidgetPais({fieldLabel: 'País Origen',
-                                                id: 'tra_origen_id',
-                                                linkCiudad: 'origen',
-                                                hiddenName:'idtra_origen_id',
-                                                pais:'<?=$pais1?>',
-                                                excluidos:'C0-057'
-                                               }),
-                                 
-                                new WidgetCiudad({fieldLabel: '<?=$origen?>',
-                                                  linkPais: 'tra_origen_id',
-                                                  id: 'origen',
-                                                  idciudad:"origen",
-                                                  hiddenName:"idorigen"
-                                                }),
-                                new WidgetAgente({fieldLabel: 'Agente',
-                                                  linkImpoExpo: "impoexpo",
-                                                  linkOrigen: "tra_origen_id",
-                                                  linkDestino: "tra_destino_id",
-                                                  linkListarTodos: "listar_todos",
-                                                  id:"agente",
-                                                  hiddenName:"idagente",
-												  width:350
-                                                }),
-                                {
-                                    xtype: "checkbox",
-                                    fieldLabel: "Listar todos",
-                                    id: "listar_todos",
-                                    name:"listar_todos"
-                                }                                
-                            ]
-                        },
+                                    new WidgetCiudad({fieldLabel: '<?=$origen?>',
+                                                      linkPais: 'tra_origen_id',
+                                                      id: 'origen',
+                                                      idciudad:"origen",
+                                                      hiddenName:"idorigen"
+                                                    })
+
+                                ]
+                            },
                         /*
                          * =========================Column 2 =========================
                          **/
-                        {
-                            columnWidth:.5,
-                            layout: 'form',
-                            border:false,
-                            defaultType: 'textfield',
-                            items: [
-
-                                {
-                                    xtype:"hidden",
-                                    id: 'transporte',
-                                    name: 'transporte',
-                                    value:'<?=$modo?>'
-                                },
-                                
-                                new WidgetLinea({fieldLabel: '<?=$nomLinea?>',
-                                                 linkTransporte: "transporte",
-                                                 id:"linea",
-                                                 hiddenName: "idlinea",
-												 width:350
-                                                }),
-                                new WidgetPais({fieldLabel: 'País Destino',
-                                                id: 'tra_destino_id',
-                                                linkCiudad: 'destino',
-                                                hiddenName:'idtra_destino_id',
-                                                pais:'<?=$pais2?>'
-                                               }),
-
-                                new WidgetCiudad({fieldLabel: '<?=$destino?>',
-                                                  linkPais: 'tra_destino_id',
-                                                  id: 'destino',
-                                                  idciudad:"destino",
-                                                  hiddenName:"iddestino"
-                                                })
-<?
-                                if($impoexpo==constantes::EXPO)
-                                {
-?>
-                                    ,new WidgetIncoterms({title: 'Terminos',
-                                                  fieldLabel:"Terminos",
-                                                  id: 'terminos0',
-                                                  hiddenName:"incoterms0",
-												  width:250
-                                                })
-
-<?
-                                }
-?>
-                                
-                            ]
-                        }
-                    ]
-                },
+                            {
+                                columnWidth : .6,
+                                layout : 'form',
+                                border : false,
+                                items:
+                                [
+                                    {
+                                        xtype:"hidden",
+                                        id: 'transporte',
+                                        name: 'transporte',
+                                        value:'<?=$modo?>'
+                                    },
+                                    new WidgetLinea({fieldLabel: '<?=$nomLinea?>',
+                                                     linkTransporte: "transporte",
+                                                     id:"linea",
+                                                     hiddenName: "idlinea",
+                                                     width:300
+                                                    }),
+                                    new WidgetPais({fieldLabel: 'País Destino',
+                                                    id: 'tra_destino_id',
+                                                    linkCiudad: 'destino',
+                                                    hiddenName:'idtra_destino_id',
+                                                    pais:'<?=$pais2?>'
+                                                   }),
+                                    new WidgetCiudad({fieldLabel: '<?=$destino?>',
+                                                      linkPais: 'tra_destino_id',
+                                                      id: 'destino',
+                                                      idciudad:"destino",
+                                                      hiddenName:"iddestino"
+                                                    })
+    <?
+                                    if($impoexpo==constantes::EXPO)
+                                    {
+    ?>
+                                        ,new WidgetIncoterms({title: 'Terminos',
+                                                      fieldLabel:"Terminos",
+                                                      id: 'terminos0',
+                                                      hiddenName:"incoterms0",
+                                                      width:250
+                                                    })
+    <?
+                                    }
+    ?>
+                                ]
+                            },
+                            {
+                                columnWidth : 1,
+                                layout : 'form',
+                                border : false,
+                                items:
+                                [
+                                    new WidgetAgente({fieldLabel: 'Agente',
+                                                              linkImpoExpo: "impoexpo",
+                                                              linkOrigen: "tra_origen_id",
+                                                              linkDestino: "tra_destino_id",
+                                                              linkListarTodos: "listar_todos",
+                                                              id:"agente",
+                                                              hiddenName:"idagente",
+                                                              width:350
+                                                            }),
+                                    {
+                                        xtype: "checkbox",
+                                        fieldLabel: "Listar todos",
+                                        id: "listar_todos",
+                                        name:"listar_todos"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
                 <?
                 if($impoexpo!="Triangulación")
                 {
 
                 ?>
-				new FormContinuacionPanel()
-                ,
+                    new FormContinuacionPanel(),
                 <?
                 }
                 ?>
-                new FormMercanciaPanel()
-            ]
+                    new FormMercanciaPanel()
+                ]
         });
     };
 
@@ -285,11 +275,12 @@ if($permiso>=2)
             Ext.getCmp("vendedor").setValue(record.data.idvendedor);
             $("#vendedor").val(record.data.vendedor);
 
-
+            Ext.getCmp("ca_mercancia_desc").setValue(record.data.producto);
 
             confirmaciones=record.data.confirmar.split(",");
-            for(i=0;i<confirmaciones.length || i<15;i++)
+            for(i=0;i<confirmaciones.length || i<20;i++)
             {
+                if(confirmaciones[i]!="")
                 Ext.getCmp("contacto_"+i).setValue(confirmaciones[i]);
             }
             Ext.getCmp("destino").setValue(record.data.iddestino);
@@ -337,11 +328,7 @@ if($permiso>=2)
             //alert(cupo);
             Ext.getCmp("ca_liberacion").setValue(cupo);
 
-        }
-        <?
-		//if($impoexpo== Constantes::EXPO || ($impoexpo== Constantes::IMPO ))
-		{
-		?>
+        } 
 		,
         onSelectModalidad: function( combo, record, index)
         {
@@ -390,7 +377,6 @@ if($permiso>=2)
                 }
                 else
                     Ext.getCmp("linea").allowBlank=true;
-
             }
             else
             {
@@ -401,8 +387,5 @@ if($permiso>=2)
                 Ext.getCmp("linea").allowBlank=true;
             }
         }
-		<?
-		}
-		?>
     });
 </script>

@@ -43,17 +43,17 @@ gridPanelInstruccionesWindow = function( config ){
             },
             columns: [
                 sm,
-                {id:'instruccion',header: "instruccion",  dataIndex: 'instruccion',width:550}
+                {id:'instruccion',header: "instruccion",  dataIndex: 'instruccion',width:550,resizable: true}
             ]
         }),
         sm: sm,
         columnLines: true,
-        width:600,
+        width:480,
         height:300,
         title:'Instrucciones para Agentes',
         iconCls:'icon-grid',
         boxMinHeight: 400,
-        id:'instructiones-grid'        
+        id:'instructiones-grid'
 
     });
 }
@@ -69,10 +69,12 @@ gridWindow = function( config ){
     Ext.apply(this, config);
 
     gridWindow.superclass.constructor.call(this, {
-            width       : 600,
+            width       : 500,
             id          :"gridWindow-instrucciones",
 			closeAction :'close',
 			plain       : true,
+            height      : 460,
+            resizable   : true,
 			items       : new gridPanelInstruccionesWindow(),
             tbar:[{
                         text:'Importar',

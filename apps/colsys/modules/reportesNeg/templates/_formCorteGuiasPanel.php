@@ -14,19 +14,19 @@ include_component("widgets", "widgetBodega",array("modo"=>$modo,"impoexpo"=>$imp
         Ext.apply(this, config);
         this.wgTercero=new WidgetTercero({fieldLabel:"Consignatario",
                                             tipo: 'Consignatario',
-                                            width: 600,
+                                            width: 500,
                                             hiddenName: "consig",
                                             id:"idconsignatario"                                            
                                            });
         this.wgBodega=new WidgetBodega({fieldLabel:"Trasladar a",
                                             id: "bodega_consignar",
                                             hiddenName: "idbodega_hd",
-                                            width: 600,
+                                            width: 500,
                                             linkTransporte: "transporte"
                                            })
 		this.wgNotify=new WidgetTercero({fieldLabel:"Notificar a",
                                             tipo: 'Notify',
-                                            width: 600,
+                                            width: 500,
                                             hiddenName: "notify",
                                             id:"idnotify"
                                            });

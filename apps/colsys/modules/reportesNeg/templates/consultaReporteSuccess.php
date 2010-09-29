@@ -145,7 +145,7 @@ if( $reporte->getCaColmas()=="Sí" || substr($reporte->getCaModalidad(),0,6) == "
     };
 
     var ventanaAnularReporte = function(){
-/*        Ext.MessageBox.show({
+        Ext.MessageBox.show({
            title: 'Anular Reporte',
            msg: 'por favor coloque el motivo por el que anula el reporte:',
            width:300,
@@ -154,49 +154,7 @@ if( $reporte->getCaColmas()=="Sí" || substr($reporte->getCaModalidad(),0,6) == "
            fn: anularReporte,
            animEl: 'anular-reporte',
            modal: true
-*/
-
-        win = new Ext.Window({
-                width       : 230,
-                height      : 150,
-                closeAction :'close',
-                plain       : true,
-                title       : "Importar reporte",
-                items       : [
-                    Ext.Panel(
-                    {
-                        border:false,
-                        xtype:'fieldset',
-                        layout:'column',
-                        bodyCssClass:'x-fieldset',
-                        items:[                        
-                            {
-                                xtype: "checkbox",
-                                fieldLabel: "anular todos",
-                                id: "anular_todos",
-                                name:"anular_todos"
-                            }
-                        ]
-                    }
-                )
-                ],
-                buttons: [
-                    {
-                        text     : 'Importar',
-                        scope    : this,
-                        handler  : function( ){
-                            
-                        }
-                    },
-                    {
-                        text     : 'Cancelar',
-                        handler  : function(){                            
-                        }
-                    }
-                ]
-            });
-            win.show( );
-
+        });
     }
 
     //tabpanel.render('panel-info');

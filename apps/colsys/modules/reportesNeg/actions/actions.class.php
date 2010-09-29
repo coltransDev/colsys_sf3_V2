@@ -33,9 +33,9 @@ class reportesNegActions extends sfActions
         $this->modo = $this->getRequestParameter("modo");
 
         $this->nivel = -1;
-		if( !$this->modo){
+		/*if( !$this->modo){
 			$this->forward( "reportesNeg", "seleccionModo" );
-		}
+		}*/
 
 		if( $this->modo==Constantes::AEREO  || utf8_decode($this->modo) == Constantes::AEREO ){
             $this->modo=Constantes::AEREO;
@@ -61,10 +61,10 @@ class reportesNegActions extends sfActions
 
 
 
-		if( $this->nivel==-1 ){
+/*		if( $this->nivel==-1 ){
 			$this->forward404();
 		}
- 
+ */
         return $this->nivel;
     }
 
@@ -230,8 +230,9 @@ class reportesNegActions extends sfActions
                 $q->addWhere("UPPER(ori.ca_ciudad) LIKE ?",strtoupper( $cadena )."%");
                 break;
 		}
-        $q->addWhere("r.ca_transporte = ?", $this->modo);
-        $q->addWhere("r.ca_impoexpo = ?", $this->impoexpo);
+        //$q->addWhere("r.ca_transporte = ?", $this->modo);
+        //$q->addWhere("r.ca_impoexpo = ?", $this->impoexpo);
+        $q->addWhere("r.ca_fchanulado is null");
         $q->orderBy("ca_idreporte desc");
 
 		$this->reportes = $q->execute();
@@ -253,7 +254,7 @@ class reportesNegActions extends sfActions
                 $this->redirect( "reportesNeg/verReporte?id=".$reporte->getCaIdreporte().($this->opcion?"&opcion=".$this->opcion:"") );
             }
         }else{
-            $this->redirect( "reportesNeg/verReporte?id=".$reporte->getCaIdreporte().($this->opcion?"&opcion=".$this->opcion:"") );
+           // $this->redirect( "reportesNeg/verReporte?id=".$reporte->getCaIdreporte().($this->opcion?"&opcion=".$this->opcion:"") );
         }
         
 		$this->reporte = $reporte;
@@ -595,6 +596,11 @@ class reportesNegActions extends sfActions
             {
                 $reporte->setCaIdproveedor($prov);
             }
+            else if($reporte->getCaImpoexpo()!= Constantes::EXPO)
+            {
+                $errors["proveedor0"]="Debe colocar un proveedor";
+                $texto.="Proveedor<br>";
+            }
 
             for($i=0;$i<10;$i++)
             {
@@ -621,7 +627,6 @@ class reportesNegActions extends sfActions
             {
                 $reporte->setCaOrdenProv($orden);
             }
-
 
 
 /*            if($request->getParameter("idconcliente") )

@@ -68,7 +68,7 @@ include_component("widgets", "widgetMoneda");
                                         new WidgetMoneda({
                                                         id: 'ca_idmoneda_vlr',
                                                         width:          80,
-                                                        columnWidth: .2
+                                                        columnWidth: .35
                                                         })
                                     ]
                                 },
@@ -90,7 +90,7 @@ include_component("widgets", "widgetMoneda");
                                     new WidgetMoneda({
                                                     id: 'ca_idmoneda_pol',
                                                     width:          80,
-                                                    columnWidth: .2
+                                                    columnWidth: .35
                                                     })
                                     ]
                                 },
@@ -99,7 +99,7 @@ include_component("widgets", "widgetMoneda");
                                     border:false,
                                     defaultType: 'textfield',                                    
                                     title:"Prima Venta",
-                                    columnWidth: .1,
+                                    columnWidth: .15,
                                     items: [
                                     {
                                         xtype: "numberfield",                                       
@@ -114,7 +114,7 @@ include_component("widgets", "widgetMoneda");
                                     border:false,
                                     defaultType: 'textfield',
                                     columns:2,
-                                    columnWidth: .3,
+                                    columnWidth: .25,
                                     title:"Min",
                                     items: [
                                     {
@@ -127,7 +127,7 @@ include_component("widgets", "widgetMoneda");
                                     new WidgetMoneda({
                                                     id: 'ca_idmoneda_vta',                                                    
                                                     width:          80,
-                                                    columnWidth: .2
+                                                    columnWidth: .35
                                                     })
                                     ]
                                 }

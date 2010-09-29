@@ -3,16 +3,14 @@
  *  This file is part of the Colsys Project.
  *
  *  (c) Coltrans S.A. - Colmas Ltda.
-*/
-
+*/    
 include_component("widgets", "widgetContactoCliente");
-//echo $nprov;
 ?>
 <script type="text/javascript">
     FormClientePanel = function( config ){
         Ext.apply(this, config);
         this.wgContactoCliente = new WidgetContactoCliente({fieldLabel: 'Cliente',
-                                                   width: 600,                                                   
+                                                   width: 500,
                                                    id: "cliente",
                                                    hiddenName: "idcliente",
                                                    allowBlank:false,                                                   
@@ -40,7 +38,6 @@ include_component("widgets", "widgetContactoCliente");
                             xtype: "hidden",
                             id: "idconcliente",
                             name: "idconcliente"
-
                         },
                         {
                             xtype: "textfield",
@@ -48,7 +45,7 @@ include_component("widgets", "widgetContactoCliente");
                             name: "contacto",
                             id: "contacto",
                             readOnly: true,
-                            width: 600
+                            width: 500
                         },
                         {
                             xtype: "textfield",
@@ -123,7 +120,7 @@ include_component("widgets", "widgetContactoCliente");
                                     items: [
                                         new WidgetTercero({
                                             tipo: 'Proveedor',
-                                            width: 400,
+                                            width: 300,
                                             name: "idproveedor0",
                                             hiddenName: "prov0",
                                             id:"proveedor0"
@@ -139,7 +136,7 @@ include_component("widgets", "widgetContactoCliente");
                                                {
                                                   id: 'terminos0',
                                                   hiddenName:"incoterms0",
-												  width:200
+												  width:180
                                                 })
                                     ]
                                 },
@@ -148,12 +145,12 @@ include_component("widgets", "widgetContactoCliente");
                                     border:false,
                                     title: "Orden",
                                     items: [
-                                    {
-                                        xtype: "textfield",                                        
-                                        name: "orden_pro0",
-                                        id: "orden_pro0",
-                                        width:200
-                                    }
+                                        {
+                                            xtype: "textfield",
+                                            name: "orden_pro0",
+                                            id: "orden_pro0",
+                                            width:150
+                                        }
                                     ]
                                 }
                             ]
@@ -171,20 +168,20 @@ include_component("widgets", "widgetContactoCliente");
                                     items: [
                                         new WidgetTercero({
                                                     tipo: 'Proveedor',
-                                                    width: 400,                                                    
+                                                    width: 300,
                                                     hiddenName: "prov<?=$i?>",
                                                     id:"proveedor<?=$i?>"
                                                    }),
                                             new WidgetIncoterms({
                                               id: 'terminos<?=$i?>',
                                               hiddenName:"incoterms<?=$i?>",
-                                              width:200
+                                              width:180
                                             }),
                                              {
                                                 xtype: "textfield",
                                                 name: "orden_pro<?=$i?>",
                                                 id: "orden_pro<?=$i?>",
-                                                width:200
+                                                width:150
                                             }
                                     ]
                                 }
@@ -259,7 +256,7 @@ var i=<?=($nprov>0)?($nprov-1):"1"?>;
                             items: [
                                 new WidgetTercero({
                                             tipo: 'Proveedor',
-                                            width: 400,
+                                            width: 300,
                                             name: "idproveedor"+(++i),
                                             hiddenName: "prov"+i,
                                             id:"proveedor"+i
@@ -267,13 +264,13 @@ var i=<?=($nprov>0)?($nprov-1):"1"?>;
                                 new WidgetIncoterms({
                                       id: 'terminos'+i,
                                       hiddenName:"incoterms"+i,
-                                      width:200
+                                      width:180
                                     }),
                                  {
                                     xtype: "textfield",
                                     name: "orden_pro"+i,
                                     id: "orden_pro"+i,
-                                    width:200
+                                    width:150
                                 }
 
                             ]
@@ -281,7 +278,4 @@ var i=<?=($nprov>0)?($nprov-1):"1"?>;
             tb.render('panel-proveedor');  // toolbar is rendered
         }
     });
-
-
-
 </script>

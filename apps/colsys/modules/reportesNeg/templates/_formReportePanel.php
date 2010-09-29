@@ -174,7 +174,7 @@ if($idreporte!="")
                             Ext.Ajax.request(
                             {
                                 waitMsg: 'Guardando cambios...',
-                                url: '<?=url_for("reportesneg/importarReporte")?>',
+                                url: '<?=url_for("reportesNeg/importarReporte")?>',
                                 params :	{
                                     idreportenew: idnew,
                                     idreporte: <?=$reporte->getCaIdreporte()?>

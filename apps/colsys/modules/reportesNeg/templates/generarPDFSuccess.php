@@ -1,6 +1,5 @@
 <?
 $reporte = $sf_data->getRaw("reporte");
-
 $pdf = new PDF ( $orientation = 'P', $unit = 'mm', $format = 'letter' );
 $pdf->Open ();
 $pdf->AliasNbPages ();
@@ -101,6 +100,9 @@ $pdf->Ln(3);
 if ($reporte->getCaImpoexpo () == Constantes::EXPO ) {
 	$repexpo = $reporte->getRepExpo ();
 
+    if(!$repexpo)
+        $repexpo=new $repExpo();
+
 	$pdf->Ln ( 3 );
 	$pdf->SetWidths ( array (200 ) );
 	$pdf->SetFills ( array (1 ) );
@@ -132,18 +134,19 @@ if ($reporte->getCaImpoexpo () == Constantes::EXPO ) {
         $pdf->SetFills ( array (1, 0, 0, 0, 0 ) );
         $pdf->SetStyles ( array ("B", "B", "", "B", "" ) );
         $pdf->Row ( array ('Agente:', '10.1 Nombre:', $agente->getIds()->getCaNombre() ) );
-
+        $ids = new Ids();
+//        $ids->getSucursalPrincipal();
         $sucAgente = $agente->getIds()->getSucursalPrincipal();
+//        IdsContacto
+        $tercero = Doctrine::getTable("Tercero")->find($idprov);
 
         $pdf->SetWidths ( array (5, 25, 170 ) );
         $pdf->Row ( array ('', 'Dirección:', str_replace ( "|", " ", $sucAgente->getCaDireccion () . " " . $sucAgente->getCaZipcode () ) ) );
         $pdf->SetWidths ( array (5, 25, 40, 15, 30, 18, 67 ) );
         $pdf->SetFills ( array (1, 0, 0, 0, 0, 0, 0 ) );
         $pdf->SetStyles ( array ("B", "B", "", "B", "", "B", "" ) );
-        $pdf->Row ( array ('', 'Teléfono:', $sucAgente->getCaTelefonos (), 'Fax:', $sucAgente->getCaFax (), 'E-mail:', $sucAgente->getCaEmail () ) );
+        $pdf->Row ( array ('', 'Teléfono:', $sucAgente->getCaTelefonos (), 'Fax:', $sucAgente->getCaFax ()/*, 'E-mail:', $sucAgente->getCaEmail ()*/ ) );
     }
-
-
 }
 
 
@@ -155,6 +158,8 @@ $terminos= array_combine(explode("|",$reporte->getCaIdproveedor()), explode("|",
 $idproveedores = explode("|",$reporte->getCaIdproveedor());
 
 foreach( $idproveedores as $idprov ){
+    if($idprov=="")
+        continue;
     $tercero = Doctrine::getTable("Tercero")->find($idprov);
 
     $orden = $ordenes[$idprov];
@@ -398,7 +403,7 @@ if ($reporte->getCaSeguro () == "Sí") {
 }
 
 
-if( ($reporte->getCaImpoexpo()==Constantes::IMPO && $reporte->getCaColmas()=="Sí") || ($reporte->getCaImpoexpo()==Constantes::EXPO && ($repexpo->getCaIdSia()==17 || $repexpo->getCaIdSia()==9) ) ){
+if( ($reporte->getCaImpoexpo()==Constantes::IMPO && $reporte->getCaColmas()=="Sí") || ($reporte->getCaImpoexpo()==Constantes::EXPO && ($repexpo->getCaIdsia()==17 || $repexpo->getCaIdsia()==9) ) ){
 	$pdf->Ln ( 3 );
 	$repaduana = $reporte->getRepAduana ();
 
@@ -575,7 +580,7 @@ if( !$soloAduana ){
 
 
 
-if( ($reporte->getCaImpoexpo()=="Importación" && $reporte->getCaColmas()=="Sí") || ($reporte->getCaImpoexpo()=="Exportación" && ($repexpo->getCaIdSia()==17 || $repexpo->getCaIdSia()==9 ) ) ){
+if( ($reporte->getCaImpoexpo()=="Importación" && $reporte->getCaColmas()=="Sí") || ($reporte->getCaImpoexpo()=="Exportación" && ($repexpo->getCaIdsia()==17 || $repexpo->getCaIdsia()==9 ) ) ){
 
 	$costosAduana = $reporte->getCostos ( "aduana" );
 	if (count ( $costosAduana )) {
@@ -628,24 +633,6 @@ $fch_mem = $reporte->getCaFchactualizado()?$reporte->getCaFchactualizado():$repo
 $usu_mem = $reporte->getCaFchactualizado()?$reporte->getCaUsuactualizado():$reporte->getCaUsucreado();
 $pdf->Row(array('Ciudad :',$vendedor->getSucursal()->getCaNombre(), 'Elaboró :',$usu_mem,'Fecha:',Utils::fechaMes( $fch_mem ),'Rep. Comercial:', $vendedor->getCaNombre() ));
 //,$rs->Value('ca_vendedor')));*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

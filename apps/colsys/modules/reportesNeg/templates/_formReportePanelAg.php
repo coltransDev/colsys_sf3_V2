@@ -34,7 +34,7 @@ include_component("widgets", "widgetContactoCliente");
             } );
 
         this.wgContactoCliente = new WidgetContactoCliente({fieldLabel: 'Cliente',
-                                                   width: 600,
+                                                   width: 500,
                                                    id: "cliente",
                                                    hiddenName: "idcliente",
                                                    allowBlank:false,
@@ -475,9 +475,9 @@ var i=0;
                         if(window.confirm('Desea enviar status inmediatamente?'))
                         {
                             if(res.transporte=='<?=Constantes::AEREO?>')
-                                location.href="/traficos/listaStatus/modo/maritimo/reporte/"+res.consecutivo;
-                            else
                                 location.href="/traficos/listaStatus/modo/aereo/reporte/"+res.consecutivo;
+                            else
+                                location.href="/traficos/listaStatus/modo/maritimo/reporte/"+res.consecutivo;
                         }
                         else
                         {

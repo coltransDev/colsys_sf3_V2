@@ -24,12 +24,15 @@ if( $action!="index" ){
 //echo $action;
 switch($action){
 	case "index":		
-		$button[$i]["name"]="Nuevo";
+/*		$button[$i]["name"]="Nuevo";
 		$button[$i]["tooltip"]="Crear un nuevo reporte de negocios";
 		$button[$i]["image"]="22x22/new.gif";
 		$button[$i]["link"]= "reportesNeg/formReporte?token=".md5(time()).$opcion.$modo;
         $i++;
 		break;
+ * 
+ */
+        break;
     case "indexAg":
 		$button[$i]["name"]="Nuevo";
 		$button[$i]["tooltip"]="Crear un nuevo reporte de negocios";

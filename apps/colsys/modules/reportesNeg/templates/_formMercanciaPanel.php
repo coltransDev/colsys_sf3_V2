@@ -21,7 +21,7 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047,CU049,C
                             xtype: 'textarea',
                             fieldLabel: 'Descripción',                            
                             name: 'ca_mercancia_desc',
-                            width: 600,
+                            width: 500,
                             grow: true,
                             id:"ca_mercancia_desc"
                         },
@@ -193,7 +193,6 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047,CU049,C
                                                     caso_uso: "CU011",
                                                     width:230,
                                                     hiddenName:"idtipoexpo"
-
                                                     })
 										
 									]
