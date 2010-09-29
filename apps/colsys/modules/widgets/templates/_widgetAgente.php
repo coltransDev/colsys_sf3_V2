@@ -20,26 +20,30 @@ WidgetAgente = function( config ){
 					},
 					Ext.data.Record.create([
 						{name: 'idagente'},
-                        {name: 'nombre'}
+                        {name: 'nombret'},
+                        {name: 'nombrei'},
+                        {name: 'pais'}
 					])
 				)//,
 				//proxy: new Ext.data.MemoryProxy( <?=json_encode(array("root"=>$agentes, "total"=>count($agentes), "success"=>true) )?> )
 			})
+    
 
     WidgetAgente.superclass.constructor.call(this, {
+        valueField: 'idagente',
+        displayField: 'nombrei',
         typeAhead: true,
         forceSelection: true,
         triggerAction: 'all',
         emptyText:'',
-        selectOnFocus: true,        
+        selectOnFocus: true,
         lazyRender:true,
         mode: 'local',
-        displayField: 'nombre',
-        valueField: 'idagente',
         listClass: 'x-combo-list-small',
         listeners: {
             beforequery: this.onBeforeQuery
         }
+
     });
 }
 
@@ -67,7 +71,10 @@ Ext.extend(WidgetAgente, Ext.form.ComboBox, {
         var data = new Object();
         data.root = agentList;
        
-        e.combo.store.loadData(data);        
+       
+        e.combo.store.loadData(data);
+        //this.resultTpl.overwrite(this.id, e.combo.store.data);
+        //this.resultTpl.o
     },
 	getTrigger : Ext.form.TwinTriggerField.prototype.getTrigger,
     initTrigger : Ext.form.TwinTriggerField.prototype.initTrigger,
