@@ -4,8 +4,8 @@
 # default values
 all:
   digitalFile:
-    root:  /home/alramirez/Desarrollo/digitalFile/
-    #root:  /srv/www/digitalFile/
+    #root:  /home/alramirez/Desarrollo/digitalFile/
+    root:  /srv/www/digitalFile/
   ldap:
     host: 10.192.1.2
  

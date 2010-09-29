@@ -9,7 +9,7 @@
         <?php include_javascripts() ?>
 
     <script language="Javascript" type="text/javascript">
-		mis_imagenes = new Array("https://localhost/intranet/images/birthday/birthday1.gif","https://localhost/intranet/images/birthday/birthday2.gif","https://localhost/intranet/images/birthday/birthday3.gif")
+		mis_imagenes = new Array("images/birthday/birthday3.gif","images/birthday/birthday1.gif","images/birthday/birthday4.gif")
 		mi_imagen = 0
 		imgCt = mis_imagenes.length
 		function rotacion() {
@@ -19,7 +19,7 @@
 					mi_imagen = 0
 				}
 				document.anuncio.src=mis_imagenes[mi_imagen]
-				setTimeout("rotacion()", 60 * 1000)
+				setTimeout("rotacion()", 360 * 1000)
 			}
 		}
     </script>
