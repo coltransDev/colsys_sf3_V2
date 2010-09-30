@@ -384,7 +384,7 @@ class widgetsActions extends sfActions
         if( $criterio ){
             $rows = Doctrine_Query::create()
                             ->select("c.ca_idcontacto, cl.ca_idcliente, cl.ca_compania, c.ca_nombres,
-                                      c.ca_papellido, c.ca_sapellido, c.ca_cargo,
+                                      c.ca_papellido, c.ca_sapellido, c.ca_cargo,c.ca_fijo,c.ca_email,
                                       cl.ca_preferencias, cl.ca_confirmar, cl.ca_vendedor, cl.ca_coordinador,
                                       v.ca_nombre, cl.ca_listaclinton, cl.ca_fchcircular
                                       ,cl.ca_status, cl.ca_vendedor, lc.ca_cupo, lc.ca_diascredito
@@ -403,6 +403,8 @@ class widgetsActions extends sfActions
             foreach ( $rows as $row ) {
                 $result = array();
                 $result["ca_idcontacto"]=$row["c_ca_idcontacto"];
+                $result["ca_fijo"]=$row["c_ca_fijo"];
+                $result["ca_email"]=$row["c_ca_email"];
                 $result["ca_compania"]=utf8_encode($row["cl_ca_compania"]);
                 $result["ca_nombres"]=utf8_encode($row["c_ca_nombres"]);
                 $result["ca_papellido"]=utf8_encode($row["c_ca_papellido"]);
@@ -635,7 +637,7 @@ class widgetsActions extends sfActions
         }
 
         $cotizaciones = $q->setHydrationMode(Doctrine::HYDRATE_SCALAR)->execute();
-        
+
         foreach( $cotizaciones as $key=>$val ){
             $cotizaciones[$key]["o_ca_ciudad"] = utf8_encode($cotizaciones[$key]["o_ca_ciudad"]);
             $cotizaciones[$key]["d_ca_ciudad"] = utf8_encode($cotizaciones[$key]["d_ca_ciudad"]);
@@ -684,6 +686,21 @@ class widgetsActions extends sfActions
                                              ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)
                                              ->execute();
            $cotizaciones[$key]["idmodalidad"] = $idmodalidad;
+           $cfijos = Doctrine::getTable("Contacto")
+                                ->createQuery("c")
+                                ->select("c.ca_fijo,c.ca_email")
+                                ->where("c.ca_idcliente=? and c.ca_fijo=true", array($cotizaciones[$key]["cl_ca_idcliente"]))
+                                ->execute();
+           $cotizaciones[$key]["cfijo"]="";
+            foreach($cfijos as $cfijo)
+            {
+                if($cfijo->getCaEmail()!="")
+                {
+                    if($cotizaciones[$key]["cfijo"]!="")
+                        $cotizaciones[$key]["cfijo"].=",";
+                    $cotizaciones[$key]["cfijo"].=$cfijo->getCaEmail();
+                }
+            }
         }
         //print_r($cotizaciones);
         $this->responseArray = array("root"=>$cotizaciones, "total"=>count($cotizaciones), "success"=>true);
