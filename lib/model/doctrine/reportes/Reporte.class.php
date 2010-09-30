@@ -422,7 +422,7 @@ class Reporte extends BaseReporte
 	* @author Andres Botero
 	*/
 	public function getConsignar(){
-		if(  $this->getCaImpoexpo() =="Exportación" ){			
+		if(  $this->getCaImpoexpo() == constantes::EXPO ){
 
             $consignar = ParametroTable::retrieveByCaso( "CU048", null, null, $this->getCaIdconsignar()   );
 
@@ -438,7 +438,7 @@ class Reporte extends BaseReporte
 	* @author Andres Botero
 	*/
 	public function getConsignarmaster(){
-		if(  $this->getCaImpoexpo() =="Exportación" ){			
+		if(  $this->getCaImpoexpo() == constantes::EXPO ){
 			$consignar = ParametroTable::retrieveByCaso( "CU048", null, null, $this->getCaIdconsignarmaster()   );
 
 			if( $consignar ){
