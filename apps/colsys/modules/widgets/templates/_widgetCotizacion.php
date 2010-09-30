@@ -56,7 +56,8 @@ WidgetCotizacion = function( config ){
             {name: 'idmonedaobtencion', mapping: 's_ca_idmonedaobtencion'},
             {name: 'prima_vlr', mapping: 's_ca_prima_vlr'},
             {name: 'prima_min', mapping: 's_ca_prima_min'},
-            {name: 'obtencion', mapping: 's_ca_obtencion'}
+            {name: 'obtencion', mapping: 's_ca_obtencion'},
+            {name: 'cfijo', mapping: 'cfijo'}
         ])
     });
 
