@@ -34,7 +34,9 @@ WidgetContactoCliente = function( config ){
             {name: 'preferencias', mapping: 'ca_preferencias'},
             {name: 'coordinador', mapping: 'ca_coordinador'},
             {name: 'diascredito', mapping: 'ca_diascredito'},
-            {name: 'cupo', mapping: 'ca_cupo'}
+            {name: 'cupo', mapping: 'ca_cupo'},
+            {name: 'fijo', mapping: 'ca_fijo'},
+            {name: 'email', mapping: 'ca_email'}
         ])
     });
 
