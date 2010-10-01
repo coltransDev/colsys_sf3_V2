@@ -60,7 +60,23 @@
             sortInfo:{field: 'tipo', direction: "ASC"}
         });
 
-    
+
+        this.tbar = [
+            {
+                text:'Nuevo',
+                iconCls: 'add',
+                scope:this,
+                handler: this.nuevo
+            },
+            {
+                text:'Recargar',
+                iconCls: 'refresh',
+                scope:this,
+                handler: this.recargar
+            }
+        ]
+
+
         PanelTiposComprobante.superclass.constructor.call(this, {
             view: new Ext.grid.GridView({
                 forceFit:true,
@@ -74,6 +90,16 @@
     };
 
     Ext.extend(PanelTiposComprobante, Ext.grid.GridPanel, {
+
+        nuevo: function(){
+            this.win = new EditarTiposComprobanteWindow();
+            this.win.show();
+
+        },
+
+        recargar: function(){
+            this.store.reload();
+        }
 
    
     });

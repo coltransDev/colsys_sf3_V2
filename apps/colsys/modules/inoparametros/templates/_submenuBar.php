@@ -17,19 +17,16 @@ if( $action!="index" ){
 }
 
 switch($action){
-	case "index":
-        
-		
-		break;	
-
-	case "verConcepto":
-		$button[$i]["name"]="Editar";
+	case "cuentas":
+        $button[$i]["name"]="Importar";
 		$button[$i]["tooltip"]="Edita los valores de este concepto";
-		$button[$i]["image"]="22x22/edit.gif";
-		$button[$i]["link"]= "parametros/formConcepto?id=".$this->getRequestParameter("id")."&token=".md5(time());
+		$button[$i]["image"]="22x22/up.gif";
+		$button[$i]["link"]= "inoparametros/importarCuentas";
 		$i++;
 		
 		break;	
+
+	
 
 				
 }

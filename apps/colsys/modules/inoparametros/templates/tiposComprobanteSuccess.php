@@ -5,6 +5,8 @@
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
 include_component("inoparametros","panelTiposComprobante");
+
+include_component("inoparametros","editarTiposComprobanteWindow");
 ?>
 <div class="content">
     <div id="panel"></div>

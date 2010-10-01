@@ -52,6 +52,8 @@ class inoparametrosComponents extends sfComponents
 
         $this->centros = array();
 
+
+        //TODO Crear widgets independientas para estos dos items
         $centros = Doctrine::getTable("InoCentroCosto")
                              ->createQuery("c")
                              ->where("c.ca_subcentro IS NOT NULL")
@@ -67,18 +69,34 @@ class inoparametrosComponents extends sfComponents
         }
 
 
-        $this->cuentas = Doctrine::getTable("InoCuenta")
+        $cuentas = Doctrine::getTable("InoCuenta")
                                 ->createQuery("c")
-                                ->select("c.ca_idcuenta, c.ca_cuenta")
+                                ->select("c.ca_idcuenta, c.ca_cuenta, c.ca_descripcion")
                                 ->addOrderBy("c.ca_cuenta")
                                 ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
                                 ->execute();
 
-        foreach( $this->cuentas as $key=>$val ){
-            $this->cuentas[$key]["ca_cuenta"] = utf8_encode($this->cuentas[$key]["ca_cuenta"]);
+        $last = null;
+        $lastKey = null;
+        foreach( $cuentas as $key=>$val ){
+            //Evita que se cree movimiento en una cuenta que posee subcuentas
+            if( $last && strpos($cuentas[$key]["ca_cuenta"], $last)!==false  ){ 
+                unset( $cuentas[$lastKey] );
+            }
+            $cuentas[$key]["ca_cuenta"] = utf8_encode($cuentas[$key]["ca_cuenta"]);
+            $cuentas[$key]["ca_descripcion"] = utf8_encode($cuentas[$key]["ca_descripcion"]);
+            
+            $lastKey = $key;
+            $last = $cuentas[$key]["ca_cuenta"];
         }
 
+        //Es necesario que la llave sea consecutivo o la funcion json_encode devolvera un valor incorrecto
+        $this->cuentas = array();
+        foreach( $cuentas as $cuenta ){
+            $this->cuentas[] = $cuenta;
+        }
     }
+
 
 
     /*
@@ -89,6 +107,24 @@ class inoparametrosComponents extends sfComponents
 
         
 
-    }		
+    }
+
+    /*
+     * Ventana que permite editar los diferentes tipos de documentos
+     *
+     */
+    public function executeEditarTiposComprobanteWindow(){
+
+
+    }
+
+    /*
+     * Formulario que contiene la ventana EditarTiposComprobanteWindow
+     *
+     */
+    public function executeEditarTiposComprobantePropiedadesPanel(){
+
+
+    }
 }
 ?>

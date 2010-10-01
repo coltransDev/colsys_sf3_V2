@@ -243,6 +243,89 @@ class inoparametrosActions extends sfActions
 
     }
 
+
+    /**
+    * Importar Cuentas
+    *
+    * @param sfRequest $request A request object
+    */
+    public function executeImportarCuentas( sfWebRequest $request ){
+
+        if ($request->isMethod('post')){
+
+            $file = $_FILES["file"];
+
+            if(is_uploaded_file($file["tmp_name"])){
+                $objReader = new PHPExcel_Reader_Excel5();
+                $objPHPExcel = $objReader->load($file["tmp_name"]);
+
+                //print_r( $objPHPExcel );
+
+                $ws = $objPHPExcel->getSheet(0);
+
+                try{
+                    $conn = Doctrine::getTable("InoCuenta")->getConnection();
+                    $conn->beginTransaction();
+
+                    $array = $ws->toArray();
+                    $i = 0;
+                    $nuevos = 0;
+                    $actualizados = 0;
+                    foreach( $array as $row ){
+                        if( $i == 0){
+                            foreach( $row as $key=>$col ){
+                                if( trim($col) == "CUENTA" ){
+                                    $colCuenta = $key;
+                                }
+                                if( trim($col) == "DESCRIPCION" ){
+                                    $colDesc = $key;
+                                }
+                            }
+                        }else{
+                            $cuentaNo = trim(str_replace("-", "", $row[$colCuenta] ));
+                            $desc = $row[$colDesc];
+
+                            if( $cuentaNo ){
+                                $cuenta = Doctrine::getTable("InoCuenta")
+                                          ->createQuery("c")
+                                          ->addWhere("c.ca_cuenta = ?", $cuentaNo)
+                                          ->fetchOne();
+
+                                if( !$cuenta ){
+                                    $cuenta = new InoCuenta();
+                                    $nuevos++;
+                                }else{
+                                    $actualizados++;
+                                }
+                                //echo $i." ".$cuenta."<br />";
+                                $cuenta->setCaCuenta($cuentaNo);
+                                $cuenta->setCaDescripcion($desc);
+                                $cuenta->save( $conn );
+                            }
+                        }
+
+                        $i++;
+                    }
+                    $conn->commit();
+                    $this->actualizados = $actualizados;
+                    $this->nuevos = $nuevos;
+                    $this->setTemplate("importarCuentasOk");
+                }
+                catch (Exception $e){
+
+                    throw $e;
+                    $conn->rollBack();
+                }
+
+               
+                
+
+            }
+
+
+        }
+    }
+
     /**
     * Datos para el panel de parametros. 
     *

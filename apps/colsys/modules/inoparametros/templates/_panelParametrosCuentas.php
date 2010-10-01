@@ -29,10 +29,15 @@ PanelParametrosCuentas = function( config ){
             },
             Ext.data.Record.create([
                 {name: 'idcuenta',  mapping: 'ca_idcuenta'},
-                {name: 'cuenta',  mapping: 'ca_cuenta'}
+                {name: 'cuenta',  mapping: 'ca_cuenta'},
+                {name: 'descripcion',  mapping: 'ca_descripcion'}
             ])
         )
     });
+
+    this.resultTpl = new Ext.XTemplate(
+            '<tpl for="."><div class="search-item"><b>{cuenta}</b><br /><span>{descripcion}</span> </div></tpl>'
+    );
 
     this.editorCuentas = new Ext.form.ComboBox({
         typeAhead: true,
@@ -44,6 +49,8 @@ PanelParametrosCuentas = function( config ){
         valueField: 'idcuenta',
         lazyRender:true,
         listClass: 'x-combo-list-small',
+        tpl: this.resultTpl,
+        itemSelector: 'div.search-item',
         store : this.storeCuentas
     });
 
@@ -126,15 +133,10 @@ PanelParametrosCuentas = function( config ){
         hideable: false,
         width: 170,
         renderer: this.formatItem,
-        sortable: this.readOnly,
-        editor: new Ext.form.TextField({
-                    allowBlank: false ,
-                    style: 'text-align:left'
-                })
-      }
-      ,
-      this.recLocalCheckColumn,
-      this.recOrigenCheckColumn,
+        sortable: this.readOnly
+        
+      },
+      
       this.ingresoPropioCheckColumn
       ,
       {
@@ -283,7 +285,7 @@ PanelParametrosCuentas = function( config ){
        }),
        listeners:{
             validateedit: this.onValidateEdit,
-            rowcontextmenu: this.onRowcontextMenu,
+           
             dblclick:this.onDblClickHandler,
             celldblclick: this.onCelldblclick,
             validateedit: this.onValidateEdit
@@ -542,66 +544,11 @@ Ext.extend(PanelParametrosCuentas, Ext.grid.EditorGridPanel, {
         var data = record.get(fieldName);
 
         if( fieldName=="idconcepto" && data ){
-            this.showWindow( record );
+        
         }
     },
 
-    showWindow : function( record ){
-
-        //if(!this.win)
-        {
-            this.win = new ModalidadWindow({
-                            readOnly: this.readOnly
-                        });
-            //this.win.on('validfeed', this.addFeed, this);
-        }
-        this.win.ctxRecord = record;
-        this.win.show();
-    },
-
-    eliminarItem: function(){
-        if( !this.readOnly ){
-            var record = this.ctxRecord;
-            var store = this.store;
-            if( confirm("Esta seguro que desea eliminar este item?") ){
-                if( record.data.idconcepto ){
-                    var idconcepto = record.data.idconcepto;
-
-                    Ext.Ajax.request({
-
-                        waitMsg: 'Eliminando...',
-                        url: '<?=url_for("conceptos/eliminarPanelParametrosCuentas")?>',
-                        //method: 'POST',
-                        //Solamente se envian los cambios
-                        params :	{
-                            idconcepto: idconcepto
-                        },
-
-                        //Ejecuta esta accion en caso de fallo
-                        //(404 error etc, ***NOT*** success=false)
-                        failure:function(response,options){
-                            var res = Ext.util.JSON.decode( response.responseText );
-                            Ext.MessageBox.alert('Error Message', "Se ha presentado un error"+(res.errorInfo?": "+res.errorInfo:"")+" - "+(response.status?"\n Codigo HTTP "+response.status:""));
-                        },
-
-                        //Ejecuta esta accion cuando el resultado es exitoso
-                        success:function(response,options){
-                            var res = Ext.util.JSON.decode( response.responseText );
-                            if( res.success ){
-                                r = store.getById( record.id );
-                                store.remove( r );
-                            }else{
-                                Ext.MessageBox.alert('Error Message', "Se ha presentado un error"+(res.errorInfo?": "+res.errorInfo:"")+" - "+(response.status?"\n Codigo HTTP "+response.status:""));
-                            }
-                        }
-
-
-                    });
-                }
-            }
-        }
-
-    },
+    
     /*
     * Handler que se encarga de colocar el dato recargo_id en el Record
     * cuando se inserta un nuevo recargo
