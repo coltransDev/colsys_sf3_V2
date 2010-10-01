@@ -903,6 +903,8 @@ class Reporte extends BaseReporte
 
                 $this->setCaOrigen($reporteNew->getCaOrigen());
                 $this->setCaDestino($reporteNew->getCaDestino());
+                $this->setCaIdcotizacion($reporteNew->getCaIdcotizacion());
+                $this->setCaIdproducto($reporteNew->getCaIdproducto());
                 //$reporte->setCaImpoexpo($reporteNew->getCaImpoexpo());
                 //$reporte->setCaFchdespacho($reporteNew->getCaFchdespacho());
                 $this->setCaIdconcliente($reporteNew->getCaIdconcliente());
@@ -914,8 +916,10 @@ class Reporte extends BaseReporte
                 $this->setCaIdproveedor($reporteNew->getCaIdproveedor());
                 $this->setCaIncoterms($reporteNew->getCaIncoterms());
 
-                $this->setCaOrdenProv($reporteNew->getCaOrdenProv());
-                $this->setCaOrdenClie($reporteNew->getCaOrdenClie());
+                //$this->setCaOrdenProv($reporteNew->getCaOrdenProv());
+                $this->setCaOrdenProv("");
+                //$this->setCaOrdenClie($reporteNew->getCaOrdenClie());
+                $this->setCaOrdenClie("");
                 $this->setCaConfirmarClie($reporteNew->getCaConfirmarClie());
 
                 $this->setCaIdrepresentante($reporteNew->getCaIdrepresentante());
