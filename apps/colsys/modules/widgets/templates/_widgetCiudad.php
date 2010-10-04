@@ -74,12 +74,12 @@ Ext.extend(WidgetCiudad, Ext.form.ComboBox, {
     }
     ,
     onFocusWdg: function( field, newVal, oldVal ){
+        
         if( typeof(this.linkPais)!="undefined" && this.linkPais ){
             var cmp = Ext.getCmp(this.linkPais);
             if( cmp ){
-
                
-                this.idtrafico = Ext.getCmp(this.linkPais).getValue();
+                this.idtrafico = Ext.getCmp(this.linkPais).hiddenValue;
                 this.reload();
 
             }else{
