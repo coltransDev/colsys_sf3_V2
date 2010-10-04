@@ -754,7 +754,7 @@ div.post-info{
     background:#F9FAFB;
     padding:5px;
     border:1px solid #dadadb;
-	margin: 12px,
+	margin: 12px
 }
 
 
@@ -889,3 +889,7 @@ div.box1 .body {
     border-bottom:1px solid #EFEFEF;
     border-right:0;
 }
+
+.paging a{ font-size: 11px}
+
+.paging a.activate{font-size: 12px;color: #000000; font-weight: bold}
