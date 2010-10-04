@@ -44,13 +44,10 @@ WidgetPais = function( config ){
             render  : function(a ){
                 if( this.pais && this.pais!="todos" ){
 					pais=this.pais.split(",");
-                    
 
                     var list = new Array();
                     for( k in this.data ){
                         var rec = this.data[k];
-
-                        //if( rec.idtrafico==this.pais )
 						if(jQuery.inArray(rec.idtrafico, pais)>=0)
 						{
                             list.push( rec );
@@ -85,13 +82,76 @@ WidgetPais = function( config ){
                     }
                     this.store.loadData(data);
                 }
-            }
+            },
+            focus: this.onFocusWdg
         }
+
+
+
     });
 }
 
 
 Ext.extend(WidgetPais, Ext.form.ComboBox, {
+    onFocusWdg: function( field, newVal, oldVal ){
+
+            var data = new Object();
+            var list = new Array();            
+            if(this.tipo!="undefined" && this.tipo!="")
+            {
+                var cmp = Ext.getCmp(this.linkImpoexpo);
+                if( cmp ){                    
+                    if(this.tipo=='destino' && cmp.getValue()=='<?=constantes::IMPO?>')
+                    {
+                        var data1 = new Object();
+                            data1.idtrafico="CO-057";
+                            data1.nombre="COLOMBIA";                           
+                            list.push( data1 );
+
+                       
+                        data.root = list;
+                        this.store.loadData(data);
+                    }
+                    else if(this.tipo=='origen' && cmp.getValue()=='<?=constantes::EXPO?>')
+                    {
+                        var data1 = new Object();
+                            data1.idtrafico="CO-057";
+                            data1.nombre="COLOMBIA";
+
+                            list.push( data1 );
+
+                        
+                        data.root = list;
+                        this.store.loadData(data);
+                    }
+                    else
+                    {
+                        
+                        if(this.todos)
+                        {
+                            //alert(this.data)
+                            var data1 = new Object();
+                            data1.idtrafico="99-999";
+                            data1.nombre="Todos los Tráficos del Mundo";
+
+                            var list = new Array();
+                            list.push( data1 );
+                            for( k in this.data ){
+                                var rec = this.data[k];
+                                list.push( rec );
+                            }
+                            data.root = list;
+                        }
+                        else
+                        {
+                            //alert(this.todos)
+                            data.root = this.data;
+                        }
+                        this.store.loadData(data);
+                    }
+                }
+            }
+    },
     
 	getTrigger : Ext.form.TwinTriggerField.prototype.getTrigger,
     initTrigger : Ext.form.TwinTriggerField.prototype.initTrigger,
