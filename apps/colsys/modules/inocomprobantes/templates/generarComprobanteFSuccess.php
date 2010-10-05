@@ -258,7 +258,7 @@ $k = 5;
 foreach( $transacciones as $transaccion ){
     $centro = $transaccion->getInoCentroCosto();
     $concepto = $transaccion->getInoConcepto();
-    $parametro = $transaccion->getInoParametroFacturacion();
+    $parametro = $transaccion->getInoParametroFacturacion();  
     if( $lastIngresoPropio===null || $lastIngresoPropio!=$parametro->getCaIngresoPropio() ){
         $lastIngresoPropio=$parametro->getCaIngresoPropio();
         $pdf->SetXY($x+30,$y+$k+$space);

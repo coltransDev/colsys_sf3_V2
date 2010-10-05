@@ -412,8 +412,8 @@ class inocomprobantesActions extends sfActions
         $this->comprobante = Doctrine::getTable("InoComprobante")->find($request->getParameter("id"));
         $this->forward404Unless( $this->comprobante );
 
-        $inoCliente = $this->comprobante->getInoCliente();
-        $request->setParameter("idmaestra", $inoCliente->getcaIdmaestra());
+        $inoHouse = $this->comprobante->getInoHouse();
+        $request->setParameter("idmaestra", $inoHouse->getcaIdmaster());
 
         
 
@@ -421,7 +421,7 @@ class inocomprobantesActions extends sfActions
     }
 
     /**
-    * Genera el comprobante y lo transfiere a SIIGO
+    * Genera el comprobante 
     *
     * @param sfRequest $request A request object
     */
@@ -429,9 +429,6 @@ class inocomprobantesActions extends sfActions
         $this->forward404Unless( $request->getParameter("id") );
         $this->comprobante = Doctrine::getTable("InoComprobante")->find($request->getParameter("id"));
         $this->forward404Unless( $this->comprobante );
-
-
-        
 
 
         $this->filename = $request->getParameter("filename");
@@ -468,5 +465,26 @@ class inocomprobantesActions extends sfActions
                 break;
         }
     }
+
+
+
+    /**
+    * Genera el archivo plano para transferir a SIIGO
+    *
+    * @param sfRequest $request A request object
+    */
+    public function executeGenerarArchivo1(sfWebRequest $request){
+
+        $this->transacciones = Doctrine::getTable("InoTransaccion")
+                                         ->createQuery("t")
+                                         ->innerJoin("t.InoComprobante c")
+                                         ->innerJoin("t.InoCuenta cu")
+                                         ->execute();
+        $this->setLayout("none");
+        
+    }
+
+
+    
 
 }
