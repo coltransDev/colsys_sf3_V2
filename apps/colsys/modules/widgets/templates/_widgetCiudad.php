@@ -80,13 +80,14 @@ Ext.extend(WidgetCiudad, Ext.form.ComboBox, {
             if( cmp ){
                
                 this.idtrafico = Ext.getCmp(this.linkPais).hiddenValue;
+                if(!this.idtrafico)
+                     this.idtrafico = Ext.getCmp(this.linkPais).getValue();
                 this.reload();
 
             }else{
                 alert( "arrrrg: No existe el componente id: "+e.combo.linkPais+"!");
             }
         }
-
     },
 	getTrigger : Ext.form.TwinTriggerField.prototype.getTrigger,
     initTrigger : Ext.form.TwinTriggerField.prototype.initTrigger,
@@ -137,6 +138,4 @@ Ext.extend(WidgetCiudad, Ext.form.ComboBox, {
 		this.onTriggerClick();
 	}
 });
-
-	
 </script>
