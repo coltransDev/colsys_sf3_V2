@@ -491,6 +491,10 @@ RepAduana:
       local: ca_idreporte
       foreign: ca_idreporte
       type: one
+    Usuario:
+      local: ca_coordinador
+      foreign: ca_login
+      type: one
 
 
 RepExpo:
