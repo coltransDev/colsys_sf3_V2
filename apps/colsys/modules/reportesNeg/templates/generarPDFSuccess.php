@@ -346,12 +346,8 @@ if ($reporte->getCaContinuacion()!= "N/A") {
 
     $usuario = Doctrine::getTable("Usuario")->find($reporte->getCaContinuacionConf());
 
-
     $pdf->Row(array('Continuación/Viaje:',$reporte->getCaContinuacion(),'Destino final:',$reporte->getDestinoCont()->getCaCiudad(),'Notificar C/Viaje al email:',$usuario?$usuario->getCaEmail():""));
 }
-
-
-
 
 
 if( $reporte->getCaImpoexpo()==Constantes::EXPO ){
@@ -362,7 +358,7 @@ if( $reporte->getCaImpoexpo()==Constantes::EXPO ){
     $consig = (($consignatario)?$consignatario->getCaNombre():$cliente->getCaCompania());
     $consignar = Doctrine::getTable("Bodega")->find( $reporte->getCaIdconsignar() );
 
-    if( $consignar->getCaNombre()=='Nombre del Cliente' ){
+    if( $consignar->getCaNombre()=='Nombre del Cliente' || $consignar->getCaNombre()=='Cliente / Consignatario' ){
         $cadena = $consig;
     }else{
         $cadena = $consignar->getCaNombre();
@@ -372,7 +368,6 @@ if( $reporte->getCaImpoexpo()==Constantes::EXPO ){
         $bodega = Doctrine::getTable("Bodega")->find( $reporte->getCaIdbodega() );
         $cadena.=" / ".$bodega->getCaTipo()." ".$bodega->getCaNombre();
     }
-
 
     $pdf->Row(array('Consignar HAWB/HBL a :',$cadena));
 }

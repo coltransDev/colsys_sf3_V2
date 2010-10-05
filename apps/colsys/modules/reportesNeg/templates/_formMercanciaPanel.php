@@ -23,13 +23,15 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047,CU049,C
                             name: 'ca_mercancia_desc',
                             width: 500,
                             grow: true,
-                            id:"ca_mercancia_desc"
+                            id:"ca_mercancia_desc",
+                            tabIndex:this.tabIndex
                         },
                         {
                             xtype: "checkbox",
                             fieldLabel: "¿Es mercancía peligrosa?",
                             id: "ca_mcia_peligrosa",
-							name: "ca_mcia_peligrosa"
+							name: "ca_mcia_peligrosa",
+                            tabIndex:this.tabIndex++
                         }
 						<?
 						if($impoexpo==Constantes::EXPO)

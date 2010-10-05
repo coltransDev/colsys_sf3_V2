@@ -5,6 +5,7 @@
  *  (c) Coltrans S.A. - Colmas Ltda.
 */    
 include_component("widgets", "widgetContactoCliente");
+//echo $nprov;
 ?>
 <script type="text/javascript">
     FormClientePanel = function( config ){
@@ -198,10 +199,25 @@ include_component("widgets", "widgetContactoCliente");
             ]
         });
     };
-var i=<?=($nprov>0)?($nprov-1):"1"?>;
+var ij=parseInt(<?=($nprov>1)?($nprov-1):1?>);
+
     Ext.extend(FormClientePanel, Ext.Panel, {
         onSelectContactoCliente: function( combo, record, index){ // override default onSelect to do redirect
-                       
+            store=combo.store;
+            j=0;
+            store.each( function( r ){
+                if(r.data.compania==record.get("compania") && r.data.fijo && r.data.email!="")
+                {
+                    if( Ext.getCmp("contacto_fijos"+j) ){
+                        Ext.getCmp("contacto_fijos"+j).setValue(r.data.email);
+                        Ext.getCmp("contacto_fijos"+j).setReadOnly( false );
+                        Ext.getCmp("chkcontacto_fijos"+j).setValue( true );
+                        j++;
+                    }
+                }
+            });
+            //alert(combo.store.data[0].fijo)
+
             Ext.getCmp("idconcliente").setValue(record.get("idcontacto"));
             Ext.getCmp("contacto").setValue(record.get("nombre")+' '+record.get("papellido")+' '+record.get("sapellido") );
 
@@ -212,13 +228,20 @@ var i=<?=($nprov>0)?($nprov-1):"1"?>;
 			{
 				brokenconfirmar=confirmar.split(",");
 				var i=0;
+                var j=0;
 				for(i=0; i<brokenconfirmar.length; i++){
-					Ext.getCmp("contacto_"+i).setValue(brokenconfirmar[i]);
-					Ext.getCmp("contacto_"+i).setReadOnly( true );
-					Ext.getCmp("chkcontacto_"+i).setValue( true );
+                    if(brokenconfirmar[i])
+                    {
+                        Ext.getCmp("contacto_"+j).setValue(brokenconfirmar[i]);
+                        Ext.getCmp("contacto_"+j).setReadOnly( true );
+                        Ext.getCmp("chkcontacto_"+j).setValue( true );
+                        j++;
+                    }
+					
 				}
 			}
-			for( i=brokenconfirmar.length; i<20; i++ ){
+            
+			for( i=j; i<20; i++ ){
 				if( Ext.getCmp("contacto_"+i) ){
 					Ext.getCmp("contacto_"+i).setValue("");
 					Ext.getCmp("contacto_"+i).setReadOnly( false );
@@ -242,7 +265,10 @@ var i=<?=($nprov>0)?($nprov-1):"1"?>;
             Ext.getCmp("ca_liberacion").setValue(cupo);
 
 			Ext.getCmp("preferencias").setValue(record.get("preferencias"));
-   
+
+            Ext.getCmp("vendedor").setValue(record.data.vendedor);
+            $("#vendedor").val(record.data.nombre_ven);
+
             combo.alertaCliente(record);
 
         },
@@ -257,25 +283,26 @@ var i=<?=($nprov>0)?($nprov-1):"1"?>;
                                 new WidgetTercero({
                                             tipo: 'Proveedor',
                                             width: 300,
-                                            name: "idproveedor"+(++i),
-                                            hiddenName: "prov"+i,
-                                            id:"proveedor"+i
+                                            name: "idproveedor"+ij,
+                                            hiddenName: "prov"+ij,
+                                            id:"proveedor"+ij
                                            }),
                                 new WidgetIncoterms({
-                                      id: 'terminos'+i,
-                                      hiddenName:"incoterms"+i,
+                                      id: 'terminos'+ij,
+                                      hiddenName:"incoterms"+ij,
                                       width:180
                                     }),
                                  {
                                     xtype: "textfield",
-                                    name: "orden_pro"+i,
-                                    id: "orden_pro"+i,
+                                    name: "orden_pro"+ij,
+                                    id: "orden_pro"+ij,
                                     width:150
                                 }
 
                             ]
                         });
             tb.render('panel-proveedor');  // toolbar is rendered
+            ij++;
         }
     });
 </script>

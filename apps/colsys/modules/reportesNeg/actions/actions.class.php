@@ -128,6 +128,7 @@ class reportesNegActions extends sfActions
         $this->modo = $this->getRequestParameter("modo");
         $this->impoexpo = $this->getRequestParameter("impoexpo");
         $this->load_category();
+        
 
 //        $this->setRequestParameter("idcategory",$this->idcategory);
         //echo ":".$this->modo.":";
@@ -138,13 +139,36 @@ class reportesNegActions extends sfActions
     public function executeIndexAg()
 	{
         $this->permiso = $this->getUser()->getNivelAcceso( reportesNegActions::RUTINA );
+        $this->page=$this->getRequestParameter("page");
         if($this->permiso==-1)
             $this->forward404();
-
+        $nregs=30;
         $con = Doctrine_Manager::getInstance()->connection();
 		$sql="select * from vi_repconsulta  ";
+        $sql1="select count(*) as nregs from vi_repconsulta  ";
         if($this->permiso<2)
+        {
             $sql.="where ca_login='".$this->getUser()->getUserId()."'";
+            $sql1.="where ca_login='".$this->getUser()->getUserId()."'";
+        }
+
+        $st1 = $con->execute($sql1);
+
+        $count = $st1->fetch(PDO::FETCH_ASSOC);
+        $this->pages=ceil($count["nregs"]/$nregs);
+        //echo $this->count;
+
+        if($this->page && $this->page>0)
+        {
+            $offset=($this->getRequestParameter("page")-1)*$nregs;
+            $sql.="limit ".$nregs." offset ".$offset;
+        }
+        else
+        {
+            $this->page=1;
+            $sql.="limit ".$nregs." offset 0";
+        }
+
 
 		$st = $con->execute($sql);
 	//recuperamos las tuplas de resultados
@@ -185,6 +209,9 @@ class reportesNegActions extends sfActions
 		$criterio = $this->getRequestParameter("criterio");
 		$cadena = $this->getRequestParameter("cadena");
 
+        $fechaInicial = $this->getRequestParameter("fechaInicial");
+        $fechaFinal = $this->getRequestParameter("fechaFinal");
+
         $q = Doctrine::getTable("Reporte")
                        ->createQuery("r")
                        ->distinct()
@@ -197,7 +224,7 @@ class reportesNegActions extends sfActions
 			case "cliente":
                 $q->innerJoin("r.Contacto con");
                 $q->innerJoin("con.Cliente cl");
-                $q->addWhere("UPPER(cl.ca_compania) LIKE ?",strtoupper( $cadena )."%");
+                $q->addWhere("UPPER(cl.ca_compania) LIKE ?","%".strtoupper( $cadena )."%");
 				break;
             case "login":
                 $q->innerJoin("r.Usuario usu");
@@ -218,7 +245,7 @@ class reportesNegActions extends sfActions
                $q->addWhere("r.ca_idcotizacion LIKE ?",( $cadena )."%");
                break;
            case "mercancia_desc":
-               $q->addWhere("r.ca_mercancia_desc LIKE ?",( $cadena )."%");
+               $q->addWhere("r.ca_mercancia_desc LIKE ?","%".( $cadena )."%");
                break;
            case "vendedor":
                case "login":
@@ -230,10 +257,16 @@ class reportesNegActions extends sfActions
                 $q->addWhere("UPPER(ori.ca_ciudad) LIKE ?",strtoupper( $cadena )."%");
                 break;
 		}
+
+        if($fechaInicial!="" && $fechaFinal!="")
+        {
+            $q->addWhere("ca_fchcreado between '".Utils::parseDate($fechaInicial)."' and '".Utils::parseDate($fechaFinal)."'");
+        }
         //$q->addWhere("r.ca_transporte = ?", $this->modo);
         //$q->addWhere("r.ca_impoexpo = ?", $this->impoexpo);
         $q->addWhere("r.ca_fchanulado is null");
         $q->orderBy("ca_idreporte desc");
+        $q->limit(40);
 
 		$this->reportes = $q->execute();
 	}
@@ -424,11 +457,33 @@ class reportesNegActions extends sfActions
         $this->nivel = $this->getNivel();
         $this->impoexpo = Constantes::IMPO;
         $this->load_category();
-
 		$reporte = new Reporte();
 
-
         $this->reporte=$reporte;
+
+    $this->dep=$this->getUser()->getIddepartamento();
+        $this->pais2="todos";
+        //echo $this->dep;
+        if($this->dep==13 || $this->dep==14)
+        {
+            $this->modo=constantes::MARITIMO;
+            $this->impoexpo=constantes::IMPO;
+            $this->pais2="C0-057";
+        }
+        else if($this->dep==18 )
+        {
+            $this->impoexpo=constantes::IMPO;
+        }
+        else if($this->dep==3 )
+        {
+            $this->modo=constantes::AEREO;
+            $this->impoexpo=constantes::IMPO;
+        }
+        else{
+            $this->modo="";
+            $this->impoexpo="";
+        }
+
    }
 
    /*
@@ -648,8 +703,19 @@ class reportesNegActions extends sfActions
             {
                 if($request->getParameter("chkcontacto_".$i)=="on")
                 {
-                    $ca_confirmar_clie.=($ca_confirmar_clie!="")?",":"";
-                    $ca_confirmar_clie.=$request->getParameter("contacto_".$i);
+                    if($request->getParameter("contacto_".$i)!="")
+                    {
+                        $ca_confirmar_clie.=($ca_confirmar_clie!="")?",":"";
+                        $ca_confirmar_clie.=$request->getParameter("contacto_".$i);
+                    }
+                }
+                if($request->getParameter("chkcontacto_fijos".$i)=="on")
+                {
+                    if($request->getParameter("contacto_fijos".$i)!="")
+                    {
+                        $ca_confirmar_clie.=($ca_confirmar_clie!="")?",":"";
+                        $ca_confirmar_clie.=$request->getParameter("contacto_fijos".$i);
+                    }
                 }
             }
 
@@ -741,20 +807,25 @@ class reportesNegActions extends sfActions
             if($request->getParameter("preferencias") )
             {
                 $reporte->setCaPreferenciasClie(utf8_decode($request->getParameter("preferencias")));
-            }
+            }else
+                $reporte->setCaPreferenciasClie(null);
+
             if($request->getParameter("instrucciones") )
             {
                 $reporte->setCaInstrucciones(utf8_decode($request->getParameter("instrucciones")));
+            }else
+            {
+                $reporte->setCaInstrucciones(null);
             }
 
-
-            if($request->getParameter("idlinea") && $request->getParameter("idlinea")!="")
+            if(($request->getParameter("idlinea") && $request->getParameter("idlinea")!="") || $request->getParameter("idlinea")=="0" )
             {                
                 $reporte->setCaIdlinea($request->getParameter("idlinea"));
             }
             else
             {
-                $reporte->setCaIdlinea(0);
+                //if($reporte->getCaIdlinea()=="")
+                    $reporte->setCaIdlinea(0);
 //                $errors["linea"]="Debe seleccionar un linea";
             }
 
@@ -765,7 +836,8 @@ class reportesNegActions extends sfActions
             else
             {
                 //revisar
-                $reporte->setCaIdconsignar(1);
+                if($reporte->getCaIdconsignar()=="")
+                    $reporte->setCaIdconsignar(1);
             }
 
             if($request->getParameter("idconsigmaster") && $request->getParameter("idconsigmaster")>0  )
@@ -2220,12 +2292,32 @@ color="#000000";
             
             if( $reporte->getCaConfirmarClie() ){
                 $values = explode(",", $reporte->getCaConfirmarClie() );
+                $f=0;
+                $c=0;
                 if(count($values)>0)
                 {
-                    for($i=0;$i<count($values) && $i<20;$i++)
+                    for($i=0;$i<count($values) ;$i++)
                     {
-                        $data["contacto_".$i] =utf8_encode($values[$i]);
-                        $data["chkcontacto_".$i] =true;
+                        if($values[$i]!="")
+                        {
+                            $cfijo = Doctrine::getTable("Contacto")
+                                    ->createQuery("c")
+                                    ->select("c.ca_fijo")
+                                    ->where("c.ca_email=? and c.ca_idcliente=? and c.ca_fijo=true", array($values[$i],$cliente->getCaIdcliente()))
+                                    ->execute();
+    //                        Doctrine::getTable("Contacto")->findByDql("", array($values[$i],$cliente->getCaIdcliente()));
+
+                            if(count($cfijo)>0)
+                            {
+                                $data["contacto_fijos".$f] =utf8_encode($values[$i]);
+                                $data["chkcontacto_fijos".$f] =true;
+                                $f++;
+                            }else{
+                                $data["contacto_".$c] =utf8_encode($values[$i]);
+                                $data["chkcontacto_".$c] =true;
+                                $c++;
+                            }
+                        }
                     }
                 }
             }
@@ -2660,7 +2752,7 @@ color="#000000";
             $tarifas = Doctrine_Query::create()
                                 ->select("g.*")
                                 ->from("RepGasto g")
-                                ->where("g.ca_idreporte = ? AND g.ca_idconcepto = ? AND ca_idrecargo = ?", array($idreporte, $idrecargo, $idrecargo))
+                                ->where("(g.ca_idreporte = ? AND g.ca_idconcepto = ? AND ca_idrecargo = ?) or (g.ca_idreporte = ? AND g.ca_idconcepto = ? AND ca_idrecargo = ?)", array($idreporte, $idrecargo, $idrecargo,$idreporte, $idconcepto, $idrecargo))
                                 ->execute();
 
             foreach( $tarifas as $tarifa ){

@@ -270,7 +270,7 @@ if($permiso>=2)
             Ext.getCmp("destino").setValue(record.data.iddestino);
             $("#destino").val(record.data.destino);
 
-            $("#idvendedor").val(record.data.idvendedor);
+            //$("#idvendedor").val(record.data.idvendedor);
 
             Ext.getCmp("vendedor").setValue(record.data.idvendedor);
             $("#vendedor").val(record.data.vendedor);
@@ -282,6 +282,12 @@ if($permiso>=2)
             {
                 if(confirmaciones[i]!="")
                 Ext.getCmp("contacto_"+i).setValue(confirmaciones[i]);
+            }
+            confirmaciones=record.data.cfijo.split(",");
+            for(i=0;i<confirmaciones.length || i<20;i++)
+            {
+                if(confirmaciones[i]!="")
+                Ext.getCmp("contacto_fijos"+i).setValue(confirmaciones[i]);
             }
             Ext.getCmp("destino").setValue(record.data.iddestino);
 
@@ -301,7 +307,8 @@ if($permiso>=2)
             Ext.getCmp("ca_primaventa").setValue(record.data.prima_vlr);
             Ext.getCmp("ca_minimaventa").setValue(record.data.prima_min);
 
-            if(record.data.obtencion!="" || record.data.idmoneda!="" || record.data.idmonedaobtencion!="" || record.data.prima_vlr!="" || record.data.prima_min!="")
+            //if(parseInt(record.data.obtencion)>0 || record.data.idmoneda!="" || record.data.idmonedaobtencion!="" || parseInt(record.data.prima_vlr)!="" || parseInt(record.data.prima_min)!="")
+            if((record.data.obtencion) || (record.data.idmoneda) || (record.data.idmonedaobtencion) || (record.data.prima_vlr) || (record.data.prima_min))
             {
                 Ext.getCmp('seguros').expand();
             }

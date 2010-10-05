@@ -15,7 +15,8 @@ include_component("reportesNeg", "formReportePanelAg",array("reporte"=>$reporte,
 Ext.onReady(function(){
 Ext.QuickTips.init();
     var formPanel = new FormReportePanelAg({
-        title: "Reportes de Negocio <?=$reporte->getCaIdreporte()?$reporte->getCaConsecutivo()." ".$reporte->getCaVersion()."/".$reporte->numVersiones():""?>",        
+        title: "Reportes de Negocio AG  -  <?=$modo?>    ",
+        //title: "Reportes de Negocio <?=$reporte->getCaIdreporte()?$reporte->getCaConsecutivo()." ".$reporte->getCaVersion()."/".$reporte->numVersiones():""?>",
         idreporte:'<?=$reporte->getCaIdreporte()?>',
         renderTo:'panel'
     });
@@ -26,7 +27,7 @@ Ext.QuickTips.init();
 * Modulos de Tooltips
 */
 //echo $permiso;
-if( $permiso=="3" ) {
-    include_component("kbase","tooltipCreator", array("idcategory"=>$idcategory));
-}
+//if( $permiso=="3" ) {
+//    include_component("kbase","tooltipCreator", array("idcategory"=>$idcategory));
+//}
 ?>

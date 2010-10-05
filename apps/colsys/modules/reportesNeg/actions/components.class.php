@@ -225,6 +225,33 @@ class reportesNegComponents extends sfComponents
                                 ->execute();
         }
 
+        $this->dep=$this->getUser()->getIddepartamento();
+        $this->pais2="todos";
+        //echo $this->dep;
+        if($this->dep==13 || $this->dep==14)
+        {
+            $this->modo=constantes::MARITIMO;
+            $this->impoexpo=constantes::IMPO;
+            $this->pais2="Colombia";
+            $this->idpais2="CO-057";
+        }        
+        else if($this->dep==18 && $this->dep==3)
+        {
+            $this->impoexpo=constantes::IMPO;
+            $this->pais2="Colombia";
+            $this->idpais2="CO-057";
+        }
+/*        else if($this->dep==3 )
+        {
+            $this->modo=constantes::AEREO;
+            $this->impoexpo=constantes::IMPO;
+        }*/
+        else{
+            $this->modo="";
+            $this->impoexpo="";
+        }
+
+
     }
     /*
 	* Edita la informacion basica del trayecto
@@ -514,7 +541,23 @@ class reportesNegComponents extends sfComponents
 	*/
 	public function executeConsultaCorteGuias()
 	{
-
+        $this->load_category();
+        $this->nomGuiasH="";
+        if($this->modo==constantes::AEREO)
+        {
+            $this->nomGuiasH="HAWB";
+            $this->nomGuiasM="MAWB";
+        }
+        else if($this->modo==constantes::MARITIMO)
+        {
+            $this->nomGuiasH="HBL";
+            $this->nomGuiasM="BL";
+        }
+        else if($this->impoexpo==constantes::TRIANGULACION)
+        {
+            $this->nomGuiasH="AWB";
+            $this->nomGuiasM="AWB";
+        }        
     }
 
     /*

@@ -13,7 +13,7 @@ if( $reporte->getCaImpoexpo()==Constantes::EXPO){
      </tr>
      <tr>
          <td width="33%">
-             <b>Consignar Master (MAWB/BL) a:</b>
+             <b>Consignar Master (<?=$nomGuiasM?>) a:</b>
          </td>
          <td width="67%">
             <?=$reporte->getConsignarmaster()?>
@@ -21,11 +21,10 @@ if( $reporte->getCaImpoexpo()==Constantes::EXPO){
     </tr>
      <tr>
          <td>
-             <b>Consignar HAWB/HBL a :</b>
+             <b>Consignar <?=$nomGuiasH?> a :</b>
          </td>
-         <td >
-
-            <?=$reporte->getConsignar()?>
+         <td>
+            <? $reporte->getConsignar()?>
         </td>
     </tr>
 </table>
@@ -38,14 +37,23 @@ if( $reporte->getCaImpoexpo()==Constantes::EXPO){
      </tr>
      <tr>
         <td width="33%">
-             <b>Consignar HAWB/HBL a:</b>
+             <b>Consignar <?=$nomGuiasH?> a:</b>
          </td>
          <td width="67%">
             <?
-            if( $reporte->getCaIdconsignar() ){
+            if($reporte->getCaIdconsignatario())
+            {
+                $tercero = Doctrine::getTable("Tercero")->find($reporte->getCaIdconsignatario());
+                if($tercero)
+                    echo  ($tercero->getCaNombre());
+            }            
+
+/*            if( $reporte->getCaIdconsignar() ){
                 $bodega = $reporte->getBodegaConsignar();
                 echo $bodega->getCaNombre();
             }
+ * 
+ */
             ?>
         </td>
     </tr>

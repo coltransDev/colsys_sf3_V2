@@ -7,6 +7,24 @@
 ?>
 <div align="center">
 <table width="800px" border="1" class="tableList alignLeft">
+    <tr>
+        <td colspan="2">
+            <div align="center" class="paging">
+                Paginas <br/>
+    <?
+        $paginador="";
+        for ($i=1;$i<=$pages;$i++)
+        {
+            if($page==$i)
+                $paginador.=link_to($i, "reportesNeg/indexAg?page=".$i , array('class'  => 'activate') )."  ";
+            else
+                $paginador.=link_to($i, "reportesNeg/indexAg?page=".$i  )."  ";
+        }
+        echo $paginador;
+    ?>
+            </div>
+        </td>
+    </tr>
 	<tr>
 		<th width="70" scope="col">Consecutivo</th>
 		<th width="668" scope="col">Trayecto</th>
@@ -45,5 +63,15 @@
 	<?
 	}
 	?>
+    <tr>
+        <td colspan="2">
+            <div align="center" class="paging">
+                Paginas <br/>
+    <?
+        echo $paginador;
+    ?>
+            </div>
+        </td>
+    </tr>
 </table>
 </div>

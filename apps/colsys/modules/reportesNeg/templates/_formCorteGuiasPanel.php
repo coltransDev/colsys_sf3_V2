@@ -6,8 +6,6 @@
 */
 include_component("widgets", "widgetConsignar");
 include_component("widgets", "widgetBodega",array("modo"=>$modo,"impoexpo"=>$impoexpo,"permiso"=>$permiso));
-
-
 ?>
 <script type="text/javascript">
     FormCorteGuiasPanel = function( config ){

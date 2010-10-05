@@ -11,11 +11,18 @@ if( $cotizacion ){
     ?>
 
     <script type="text/javascript">
-    CotizacionWindow = function() {
+    CotizacionWindow = function(config) {
+        Ext.apply(this, config);
 
-        this.grid = new PanelProductos({
-
-        });
+/*        if(this.tipo=="OTM/DTA")
+        {
+            this.grid = new PanelProductos({tipo:'OTM/DTA'
+            });
+        }
+    else*/
+        {
+         this.grid = new PanelProductos();
+        }
 
         CotizacionWindow.superclass.constructor.call(this, {
             title: 'Seleccione las tarifas que desea importar',

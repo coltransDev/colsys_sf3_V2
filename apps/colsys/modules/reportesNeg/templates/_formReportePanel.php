@@ -169,31 +169,33 @@ if($idreporte!="")
                         text     : 'Importar',
                         scope    : this,
                         handler  : function( ){
-                            //alert(Ext.getCmp("reporte").getValue());
-                            idnew=Ext.getCmp("reporte").getValue();
-                            Ext.Ajax.request(
+                            if(window.confirm("Desea realmente importar este reporte="))
                             {
-                                waitMsg: 'Guardando cambios...',
-                                url: '<?=url_for("reportesNeg/importarReporte")?>',
-                                params :	{
-                                    idreportenew: idnew,
-                                    idreporte: <?=$reporte->getCaIdreporte()?>
-                                },
-                                //Ejecuta esta accion en caso de fallo
-                                //(404 error etc, ***NOT*** success=false)
-                                    failure:function(response,options){
-                                    alert( response.responseText );
-                                    success = false;
-                                },
-                                //Ejecuta esta accion cuando el resultado es exitoso
-                                success:function(response,options){
-                                    var res = Ext.util.JSON.decode( response.responseText );
-                                    if( res.success ){
-                                        location.href="/reportesNeg/consultaReporte/id/"+res.idreporte+"/impoexpo/<?=$impoexpo?>/modo/<?=$modo?>";
+                            //alert(Ext.getCmp("reporte").getValue());
+                                idnew=Ext.getCmp("reporte").getValue();
+                                Ext.Ajax.request(
+                                {
+                                    waitMsg: 'Guardando cambios...',
+                                    url: '<?=url_for("reportesNeg/importarReporte")?>',
+                                    params :	{
+                                        idreportenew: idnew,
+                                        idreporte: <?=$reporte->getCaIdreporte()?>
+                                    },
+                                    //Ejecuta esta accion en caso de fallo
+                                    //(404 error etc, ***NOT*** success=false)
+                                        failure:function(response,options){
+                                        alert( response.responseText );
+                                        success = false;
+                                    },
+                                    //Ejecuta esta accion cuando el resultado es exitoso
+                                    success:function(response,options){
+                                        var res = Ext.util.JSON.decode( response.responseText );
+                                        if( res.success ){
+                                            location.href="/reportesNeg/consultaReporte/id/"+res.idreporte+"/impoexpo/<?=$impoexpo?>/modo/<?=$modo?>";
+                                        }
                                     }
-                                }
-                            });
-
+                                });
+                            }
 
                         }
                     },
@@ -286,6 +288,15 @@ if($idreporte!="")
                                 }
                             }
                         }
+                        for( i=0; i<20; i++ ){
+                            if( Ext.getCmp("contacto_"+i) && Ext.getCmp("contacto_"+i).getValue()!="" ){
+                                Ext.getCmp("contacto_"+i).setReadOnly( true );
+                            }
+                            if( Ext.getCmp("contacto_fijos"+i) && Ext.getCmp("contacto_fijos"+i).getValue()!="" ){
+                                Ext.getCmp("contacto_fijos"+i).setReadOnly( true );
+                            }
+                        }
+
                         Ext.getCmp("origen").setValue(res.data.idorigen);
                         $("#origen").attr("value",res.data.origen);
 

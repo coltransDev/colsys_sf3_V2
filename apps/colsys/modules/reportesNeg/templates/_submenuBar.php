@@ -69,7 +69,13 @@ switch($action){
 		$button[$i]["link"]= "reportesNeg/unificarReporte?id=".$this->getRequestParameter("id").$opcion.$modo;
         $i++;
 
-		break;	
+        $button[$i]["name"]="Status ";
+		$button[$i]["tooltip"]="Historial de Status";
+		$button[$i]["image"]="22x22/txt.gif";
+		$button[$i]["onClick"]= "window.open('/traficos/verHistorialStatus/idreporte/".$this->getRequestParameter("id")."')";
+        $i++;
+
+		break;
 	case "verReporte":		
 		$button[$i]["name"]="Volver ";
 		$button[$i]["tooltip"]="Vuelve a la pagina anterior";

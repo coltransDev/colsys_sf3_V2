@@ -99,7 +99,7 @@
 	</tr>
      <tr><td colspan="2" ><b>Otros</b></td></tr>
     <tr>
-        <td><div align="left">
+        <td><div align="left">                
 			<?=link_to("Ag", "reportesNeg/indexAg")?>
 		</div></td>
         <td><div align="left">
@@ -146,7 +146,41 @@
 		</td>
 		<td  ><div id="visible" style="visibility:visible"><b>Que contenga la cadena:</b><br />
 			<input type="text"  name="cadena" size="60" />
-		</div></td>
+		</div>
+            <br>
+            Por Fechas <input type="checkbox" onclick="habFechas(this)">
+            <br>
+            <div  style="float: left;width: 50%">Fecha Inicial<div id="fecha1"></div></div>
+            <div  style="float: left;width: 50%">Fecha Final<div id="fecha2"></div></div>
+            <script>
+                var fech1= new Ext.form.DateField(
+                    {
+                        fieldLabel: 'Fecha Inicial',
+                        name : 'fechaInicial',
+                        id   : 'fechaInicial',
+                        format: 'Y-m-d',
+                        value: '<? //=date("Y-m-")."01"?>'
+                    }
+                );
+                fech1.render("fecha1");
+                var fech2= new Ext.form.DateField(
+                    {
+                        fieldLabel: 'Fecha Inicial',
+                        name : 'fechaFinal',
+                        id : 'fechaFinal',
+                        format: 'Y-m-d',
+                        value: '<? //=date("Y-m-d")?>'
+                    }
+                );
+                fech2.render("fecha2");
+                function habFechas(obj)
+                {
+                    fech1.setDisabled(!obj.checked);
+                    fech2.setDisabled(!obj.checked);
+                }
+            </script>
+            
+        </td>
 		<td  ><input class="submit" type='submit' name='buscar' value=' Buscar' /></td>
 	</tr>
 

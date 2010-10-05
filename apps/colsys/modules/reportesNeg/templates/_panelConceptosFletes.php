@@ -350,6 +350,12 @@ PanelConceptosFletes = function( config ){
 				iconCls: 'import',
 				handler: this.importarCotizacion
 			}
+            ,
+            {
+				text:'Importar OTM-DTA',
+				iconCls: 'import',
+				handler: this.importarCotizacionOTM
+			}
             <?
             }
             ?>
@@ -805,8 +811,14 @@ Ext.extend(PanelConceptosFletes, Ext.grid.EditorGridPanel, {
             this.win = new CotizacionWindow();
         }
         this.win.show();
+    }/*,
+    importarCotizacionOTM: function(){
+        if( !this.win ){
+            this.win1 = new CotizacionWindow({tipo:'OTM/DTA'});
+        }
+        this.win1.show();
     }
-    
+*/
 
 });
 
