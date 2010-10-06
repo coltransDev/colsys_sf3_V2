@@ -39,6 +39,7 @@ WidgetParametros = function( config ){
         listClass: 'x-combo-list-small',
         listeners: {
             focus: this.onFocusWdg
+           
             //focus: this.onRender
         }
     });
@@ -54,7 +55,7 @@ Ext.extend(WidgetParametros, Ext.form.ComboBox, {
                 var rec = this.data[k];
                 if( rec.caso_uso==this.caso_uso ){
                     if(this.idvalor=="valor")
-                        rec.id=rec.valor;
+                        rec.id=rec.name;
                     list.push( rec );
                 }
             }
@@ -64,6 +65,7 @@ Ext.extend(WidgetParametros, Ext.form.ComboBox, {
             this.store.loadData(data);
         }
     },
+    
 
 	getTrigger : Ext.form.TwinTriggerField.prototype.getTrigger,
     initTrigger : Ext.form.TwinTriggerField.prototype.initTrigger,
