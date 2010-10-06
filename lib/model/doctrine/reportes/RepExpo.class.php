@@ -27,4 +27,16 @@ class RepExpo extends BaseRepExpo
 	public function getTransportadorTerrestre( $con = null ){
 		return Doctrine::getTable("IdsProveedor")->find($this->getCaIdlineaterrestre());
 	}
+
+    public function getSia( ){
+        if($this->getCaIdsia())
+        {
+            $sia=Doctrine::getTable("Sia")->find($this->getCaIdsia());
+            if($sia)
+                return $sia->getCaNombre();
+        }
+        return "";
+
+    }
+
 }
