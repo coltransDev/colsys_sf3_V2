@@ -921,22 +921,34 @@ class idsActions extends sfActions
         $q = Doctrine::getTable("IdsCriterio")->createQuery("c")->select("c.*");
 
         $this->idreporte=$request->getParameter("idreporte");
-        if( $this->modo ){ //Esta ingresando desde la maestra de proveedores
-            
+        if( $this->modo ){ //Esta ingresando desde la maestra de proveedores o agentes
+
+           
             if( $request->getParameter("idevento") ){
                 $this->ids = $evento->getIds();
-                $q->addWhere("c.ca_impoexpo = ?", $evento->getIdsCriterio()->getCaImpoexpo());
+                if( $this->modo=="prov" ){
+                    $q->addWhere("c.ca_impoexpo = ?", $evento->getIdsCriterio()->getCaImpoexpo());
+                }
             }else{
                 $this->ids = Doctrine::getTable("Ids")->find($request->getParameter("id"));
-                $q->addWhere("c.ca_impoexpo = ?", $request->getParameter("impoexpo"));
+                if( $this->modo=="prov" ){
+                    $q->addWhere("c.ca_impoexpo = ?", $request->getParameter("impoexpo"));
+                }
+            }
+            if( $this->modo=="prov" ){
+                $this->form->setTipo($this->ids->getIdsProveedor()->getCaTipo());
+                $q->addWhere("c.ca_transporte = ?", $this->ids->getIdsProveedor()->getCaTransporte());
+            }else{
+                $this->form->setTipo("AGE");
+                $q->addWhere("c.ca_tipo = ?", "AGE" );
             }
 
-            $this->form->setTipo($this->ids->getIdsProveedor()->getCaTipo());
+            
             $this->url = "/ids/verIds?modo=".$this->modo."&id=".$this->ids->getCaId();
             $numreferencia = "";            
-            $q->where("c.ca_tipocriterio = ?", "desempeno");
+            $q->addWhere("c.ca_tipocriterio = ?", "desempeno");
             
-            $q->addWhere("c.ca_transporte = ?", $this->ids->getIdsProveedor()->getCaTransporte());
+            
             
             
         }else{
@@ -949,7 +961,7 @@ class idsActions extends sfActions
 
                 $numreferencia = $this->reporte->getCaConsecutivo();
 
-                $q->where("c.ca_tipocriterio = ?", "desempeno");
+                $q->addWhere("c.ca_tipocriterio = ?", "desempeno");
                 $q->addWhere("c.ca_tipo = ?", "AGE" );
             }else{// Esta ingresando desde la referencia
                 $numreferencia = str_replace("_",".",$request->getParameter("referencia"));
@@ -963,7 +975,7 @@ class idsActions extends sfActions
 
                     $this->url = "/colsys_php/inosea.php?boton=Consultar&id=".$numreferencia;
 
-                    $q->where("c.ca_tipocriterio = ?", "desempeno");
+                    $q->addWhere("c.ca_tipocriterio = ?", "desempeno");
                     $q->addWhere("c.ca_impoexpo = ?", Constantes::IMPO);
                     $q->addWhere("c.ca_transporte = ?", Constantes::MARITIMO);
                 }
@@ -975,7 +987,7 @@ class idsActions extends sfActions
 
                     $this->url = "/Coltrans/InoAir/ConsultaReferenciaAction.do?referencia=".$numreferencia;
 
-                    $q->where("c.ca_tipocriterio = ?", "desempeno");
+                    $q->addWhere("c.ca_tipocriterio = ?", "desempeno");
                     $q->addWhere("c.ca_impoexpo = ?", Constantes::IMPO);
                     $q->addWhere("c.ca_transporte = ?", Constantes::AEREO);
                 }

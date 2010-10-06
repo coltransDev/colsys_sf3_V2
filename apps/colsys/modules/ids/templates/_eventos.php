@@ -29,11 +29,22 @@
            &nbsp;
         </td>
         <td colspan="2" align="center">
-            <select id="tipo_evento">
-                <option value="<?=Constantes::IMPO?>"><?=Constantes::IMPO?></option>
-                <option value="<?=Constantes::EXPO?>"><?=Constantes::EXPO?></option>
-            </select>    
+            <?
+            if($modo=="prov"){
+            ?>
+                <select id="tipo_evento">
+                    <option value="<?=Constantes::IMPO?>"><?=Constantes::IMPO?></option>
+                    <option value="<?=Constantes::EXPO?>"><?=Constantes::EXPO?></option>
+                </select>
                 &nbsp;<?=image_tag("16x16/edit_add.gif",array("onClick"=>"crearEvento()"))?>
+            <?
+            }else{
+            ?>
+            &nbsp;<?=link_to(image_tag("16x16/edit_add.gif"), "ids/formEventos?modo=".$modo."&id=".$ids->getCaId() )?>
+            <?
+            }
+            ?>
+
         </td>
     </tr>
     <?
