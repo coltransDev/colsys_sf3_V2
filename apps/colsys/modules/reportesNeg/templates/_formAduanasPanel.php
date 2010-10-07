@@ -49,8 +49,9 @@
                             {
                                 xtype: "combo",
                                 fieldLabel: "Coordinador",
-                                name: "ca_coordinador",
-                                id: "ca_coordinador",
+                                //name: "ca_coordinador",
+                                id: "id_ca_coordinador",
+                                hiddenName: "ca_coordinador",
                                 mode:           'local',
                                 displayField:   'name',
                                 valueField:     'value',

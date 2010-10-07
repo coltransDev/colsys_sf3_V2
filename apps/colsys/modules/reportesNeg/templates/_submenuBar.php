@@ -75,6 +75,12 @@ switch($action){
 		$button[$i]["onClick"]= "window.open('/traficos/verHistorialStatus/idreporte/".$this->getRequestParameter("id")."')";
         $i++;
 
+        $button[$i]["name"]="Importar";
+		$button[$i]["tooltip"]="Importar un reporte";
+		$button[$i]["image"]="22x22/window_nofullscreen.gif";
+		$button[$i]["onClick"]= "window.open('/reportesNeg/busquedaReporte/idimpo/".$this->getRequestParameter("id")."')";
+        $i++;
+
 		break;
 	case "verReporte":		
 		$button[$i]["name"]="Volver ";
@@ -104,6 +110,31 @@ switch($action){
 		$buttonHelp["link"]= "kbase/viewIssue?idissue=46";
 //        print_r($buttonHelp);
         break;
+    case "formReporte":
+
+        if($this->getRequestParameter("id")!="")
+        {
+            $button[$i]["name"]="Generar ";
+            $button[$i]["tooltip"]="Genera un archivo PDF con el reporte";
+            $button[$i]["image"]="22x22/pdf.gif";
+            $button[$i]["link"]= "reportesNeg/verReporte?id=".$this->getRequestParameter("id").$opcion.$modo;
+            $i++;
+
+            $button[$i]["name"]="Status ";
+            $button[$i]["tooltip"]="Historial de Status";
+            $button[$i]["image"]="22x22/txt.gif";
+            $button[$i]["onClick"]= "window.open('/traficos/verHistorialStatus/idreporte/".$this->getRequestParameter("id")."')";
+            $i++;
+
+            $button[$i]["name"]="Importar";
+            $button[$i]["tooltip"]="Importar un reporte";
+            $button[$i]["image"]="22x22/window_nofullscreen.gif";
+            $button[$i]["onClick"]= "window.open('/reportesNeg/busquedaReporte/idimpo/".$this->getRequestParameter("id")."')";
+            $i++;
+        }
+
+        break;
+
 }
 
 

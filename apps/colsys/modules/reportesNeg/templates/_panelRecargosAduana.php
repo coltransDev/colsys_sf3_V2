@@ -10,7 +10,7 @@
 $recargos = $sf_data->getRaw("recargos");
 //print_r($sf_data);
 //exit;
-$aplicaciones = array("Valor Fijo","Sobre Flete","Sobre Flete + Recargos","Unitario x Peso/Volumen","Unitario x Pieza","Unitario x BLs/HAWBs");
+//$aplicaciones = array("Valor Fijo","Sobre Flete","Sobre Flete + Recargos","Unitario x Peso/Volumen","Unitario x Pieza","Unitario x BLs/HAWBs");
 
 include_component("reportesNeg","cotizacionRecargosAduanasWindow", array("reporte"=>$reporte));
 
@@ -117,6 +117,18 @@ this.storeParametros = new Ext.data.Store({
         listClass: 'x-combo-list-small',
         store : this.storeParametros
     });
+
+    this.editorTipoAplicaciones = new Ext.form.ComboBox({
+
+        typeAhead: true,
+        forceSelection: true,
+        triggerAction: 'all',
+        selectOnFocus: true,
+        mode: 'local',
+        lazyRender:true,
+        listClass: 'x-combo-list-small',
+        store : [["$","$"],["%","%"]]
+    });
     /*
     * Crea el expander
     */
@@ -149,10 +161,19 @@ this.storeParametros = new Ext.data.Store({
         sortable: this.readOnly,
         editor: this.editorParametros
       },
+
+        {
+            header: "Tipo",
+            dataIndex: 'tipo_app',
+            width: 35,
+            hideable: false,
+            sortable:false,
+            editor: this.editorTipoAplicaciones
+        },
       {
         header: "Valor",
         dataIndex: 'vlrcosto',
-        width: 50,
+        width: 80,
         hideable: false,
         sortable:false,
         editor: new Ext.form.NumberField({
@@ -162,18 +183,18 @@ this.storeParametros = new Ext.data.Store({
 				decimalPrecision :3
 			})
       },
-{
+/*{
         header: "Aplicacion",
         dataIndex: 'aplicacion',
         hideable: false,
         width: 170,
         sortable: this.readOnly,
         editor: <?=include_component("widgets", "emptyCombo" ,array("id"=>""))?>
-      },
+      },*/
       {
         header: "Minimo",
         dataIndex: 'mincosto',
-        width: 50,
+        width: 80,
         hideable: false,
         sortable:false,
         editor: new Ext.form.NumberField({
@@ -182,8 +203,8 @@ this.storeParametros = new Ext.data.Store({
 				style: 'text-align:left',
 				decimalPrecision :3
 			})
-      },
-      {
+      }//,
+/*      {
         header: "Aplicacion Min",
         dataIndex: 'aplicacionminimo',
         hideable: false,
@@ -191,7 +212,15 @@ this.storeParametros = new Ext.data.Store({
         sortable: this.readOnly,
         editor: <?=include_component("widgets", "emptyCombo" ,array("id"=>""))?>
       },
-
+*/
+        ,{
+            header: "Moneda",
+            dataIndex: 'idmoneda',
+            width: 90,
+            hideable: false,
+            sortable:false,
+            editor: <?=include_component("widgets", "monedas" ,array("id"=>""))?>
+        }
 
      ];
 
@@ -202,15 +231,16 @@ this.storeParametros = new Ext.data.Store({
             {name: 'idconcepto', type: 'int'},
             {name: 'parametro', type: 'string'},
             {name: 'tipo', type: 'string'},
+            {name: 'tipo_app', type: 'string'},
             {name: 'item', type: 'string'},
-                  
+            {name: 'idmoneda', type: 'string'},
             {name: 'vlrcosto', type: 'float'},
-            {name: 'aplicacion', type: 'string'},
+            //{name: 'aplicacion', type: 'string'},
             {name: 'mincosto', type: 'float'},
-            {name: 'aplicacionminimo', type: 'string'},           
+            //{name: 'aplicacionminimo', type: 'string'},
             
             {name: 'observaciones', type: 'string'},
-            {name: 'tipo', type: 'string'},
+            //{name: 'tipo', type: 'string'},
             {name: 'orden', type: 'string'}
         ]);
 
@@ -254,7 +284,30 @@ this.storeParametros = new Ext.data.Store({
             rowcontextmenu: this.onRowcontextMenu,           
             dblclick:this.onDblClickHandler
         },
-        boxMinHeight: 400
+        boxMinHeight: 400,
+        tbar:[
+            <?
+            //if($editable)
+            {
+            ?>
+            {
+				text:'Guardar',
+				iconCls:'disk',
+				handler: this.guardarCambios
+			},
+            <?
+            }
+            ?>
+            {
+                text: 'Recargar',
+                tooltip: 'Recarga los datos de la base de datos',
+                iconCls: 'refresh',  // reference to our css
+                scope: this,
+                handler: function(){
+					Ext.getCmp('idPanelRecargosAduana').store.reload();
+				}
+            }
+            ]
     });
 
     var storePanelRecargosAduana = this.store;
@@ -285,8 +338,8 @@ this.storeParametros = new Ext.data.Store({
 
 Ext.extend(PanelRecargosAduana, Ext.grid.EditorGridPanel, {
     guardarCambios: function(){
-
-        var store = this.store;
+        var store = Ext.getCmp('idPanelRecargosAduana').store;
+        //var store = this.store;
         var records = store.getModifiedRecords();
 			
         var lenght = records.length;
@@ -311,10 +364,12 @@ Ext.extend(PanelRecargosAduana, Ext.grid.EditorGridPanel, {
             
 
             changes['id']=r.id;
-            changes['tipo']=r.data.tipo;
+            changes['tipo']='costo';//r.data.tipo;
             changes['iditem']=r.data.iditem;
             changes['idconcepto']=r.data.idconcepto;
             changes['idreporte']=r.data.idreporte;
+            changes['tipo_app']=r.data.tipo;
+
             
             if( r.data.iditem ){
                 //envia los datos al servidor
@@ -342,7 +397,7 @@ Ext.extend(PanelRecargosAduana, Ext.grid.EditorGridPanel, {
     },
     onBeforeEdit: function(e){
 
-        if( e.field=="aplicacion" || e.field=="aplicacionminimo" ){
+        /*if( e.field=="aplicacion" || e.field=="aplicacionminimo" ){
             var data = [
                 <?
                 $i=0;
@@ -351,7 +406,7 @@ Ext.extend(PanelRecargosAduana, Ext.grid.EditorGridPanel, {
                         echo ",";
                     }
                 ?>
-                    ['<?//  =$aplicacion->getCaValor()?>']
+                    ['<?=$aplicacion?>']
                 <?
                 }
                 ?>
@@ -360,7 +415,7 @@ Ext.extend(PanelRecargosAduana, Ext.grid.EditorGridPanel, {
             var ed = this.colModel.getCellEditor(e.column, e.row);
             ed.field.store.loadData( data );
         }
-        else if( e.field == "parametro" ){
+        else */if( e.field == "parametro" ){
             this.storeParametros.removeAll();
             this.storeParametros.setBaseParam("idconcepto",e.record.data.iditem);
             this.storeParametros.load();
@@ -436,9 +491,9 @@ Ext.extend(PanelRecargosAduana, Ext.grid.EditorGridPanel, {
                                 tipo: 'costo',
                                 parametro: '',
                                 vlrcosto: '',
-                                aplicacion: '',
+                                //aplicacion: '',
                                 mincosto: '',
-                                aplicacionminimo: '',
+                                //aplicacionminimo: '',
                                 orden: 'Z' // Se utiliza Z por que el orden es alfabetico
                             });
                                                       
@@ -449,9 +504,10 @@ Ext.extend(PanelRecargosAduana, Ext.grid.EditorGridPanel, {
                             rec.set("tipo", "costo");
 
                             rec.set("vlrcosto", '');
-                            rec.set("aplicacion", '');
+                            rec.set("idmoneda", '');
+                            //rec.set("aplicacion", '');
                             rec.set("mincosto", '');
-                            rec.set("aplicacionminimo", '');
+                            //rec.set("aplicacionminimo", '');
                             
                                 //guardarGridProductosRec( rec );
                             
@@ -603,5 +659,4 @@ Ext.extend(PanelRecargosAduana, Ext.grid.EditorGridPanel, {
         this.win.show();
     }
 });
-
 </script>

@@ -15,6 +15,7 @@ if($idreporte!="")
 {
     include_component("widgets", "widgetReporte");
 }
+include_component("reportesNeg", "listReportesPanel",array("modo"=>$modo,"impoexpo"=>$impoexpo));
 ?>
 <script type="text/javascript">
     FormReportePanel = function( config ){
@@ -52,17 +53,6 @@ if($idreporte!="")
                  handler: this.onCancel
             } );
 
-            <?
-            if($idreporte)
-            {
-            ?>
-                this.buttons.push( {
-                text   : 'Importar',
-                 handler: this.onImportar
-            } );
-            <?
-            }
-            ?>
         FormReportePanel.superclass.constructor.call(this, {
             labelWidth:80,
             frame: true,
@@ -150,18 +140,13 @@ if($idreporte!="")
 
 
             win = new Ext.Window({
-                width       : 230,
-                height      : 150,
+                width       : '80%',
+                height      : '80%',
                 closeAction :'close',
                 plain       : true,
                 title       : "Importar reporte",
                 items       : [
-                    new WidgetReporte({fieldLabel: 'Reporte',
-                                       width: 200,
-                                       id: "reporte",
-                                       hiddenName: "idreporte"
-                                      })
-
+                    new listReportesPanel()
                 ]
                 ,
                 buttons: [

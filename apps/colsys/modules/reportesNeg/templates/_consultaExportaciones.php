@@ -1,11 +1,4 @@
-<?php
-/* 
- *  This file is part of the Colsys Project.
- * 
- *  (c) Coltrans S.A. - Colmas Ltda.
- */
 
-?>
 <?php
 /*
  *  This file is part of the Colsys Project.
@@ -43,7 +36,7 @@
 
 		</td>
 		<td colspan="2"  valign="top"><b>Agente Aduanero:</b><br />
-            <?=$repexpo->getSia()->getcaNombre()?>
+            <?=$repexpo->getSia()?>
 
         </td>
 	</tr>

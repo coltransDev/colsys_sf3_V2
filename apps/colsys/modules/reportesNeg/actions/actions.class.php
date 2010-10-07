@@ -208,6 +208,7 @@ class reportesNegActions extends sfActions
 
 		$criterio = $this->getRequestParameter("criterio");
 		$cadena = $this->getRequestParameter("cadena");
+        $this->idimpo =   $this->getRequestParameter("idimpo");
 
         $fechaInicial = $this->getRequestParameter("fechaInicial");
         $fechaFinal = $this->getRequestParameter("fechaFinal");
@@ -267,8 +268,12 @@ class reportesNegActions extends sfActions
         $q->addWhere("r.ca_fchanulado is null");
         $q->orderBy("ca_idreporte desc");
         $q->limit(40);
-
-		$this->reportes = $q->execute();
+        $this->reportes=null;
+        if( ($this->idimpo && $cadena) || !$this->idimpo )
+        {
+            //echo "entro";
+            $this->reportes = $q->execute();
+        }
 	}
 
     /**
@@ -382,9 +387,9 @@ class reportesNegActions extends sfActions
         $this->impoexpo = $this->getRequestParameter("impoexpo");
         $this->load_category();
         
-        if($this->modo=="Aéreo")
+        if($this->modo==Constantes::AEREO)
             $this->nomLinea="Aerolinea";
-        else if($this->modo=="Marítimo")
+        else if($this->modo==Constantes::MARITIMO)
             $this->nomLinea="Naviera";
         else
             $this->nomLinea="Linea";
@@ -625,6 +630,8 @@ class reportesNegActions extends sfActions
                 $errors["idagente"]="Debe seleccionar un agente";
                 $texto.="Agente<br>";
             }
+            else
+                $reporte->setCaIdagente(null);
 
             if($request->getParameter("ca_mercancia_desc") && $request->getParameter("ca_mercancia_desc")!="" )
             {
@@ -659,7 +666,7 @@ class reportesNegActions extends sfActions
 
             for($i=0;$i<10;$i++)
             {
-                if($request->getParameter("incoterms".$i) && $request->getParameter("prov".$i)!="" )
+                if($request->getParameter("incoterms".$i) && ($request->getParameter("prov".$i)!="" || $reporte->getCaImpoexpo() == Constantes::EXPO)  )
                 {
                     $incoterms.=($incoterms!="")?"|":"";
                     $incoterms.=$request->getParameter("incoterms".$i);
@@ -997,6 +1004,27 @@ class reportesNegActions extends sfActions
 				}
 				$repSeguro->save();
 			}
+            if($request->getParameter("aduanas-checkbox")== "on" )
+			{
+                $repAduana = Doctrine::getTable("RepAduana")->findOneBy("ca_idreporte", $reporte->getCaIdreporte() );
+                if(!$repAduana)
+                    $repAduana= new RepAduana();
+
+				$repAduana->setCaIdreporte($reporte->getCaIdreporte());
+
+                if($request->getParameter("ca_instrucciones") )
+				{
+					$repAduana->setCaInstrucciones($request->getParameter("ca_instrucciones"));
+				}
+
+				if($request->getParameter("ca_coordinador") )
+				{
+					$repAduana->setCaCoordinador($request->getParameter("ca_coordinador"));
+				}
+
+				$repAduana->save();
+			}
+
             if($reporte->getCaImpoexpo()== Constantes::EXPO || utf8_decode($reporte->getCaImpoexpo()) == Constantes::EXPO)
 			{
 
@@ -1010,40 +1038,73 @@ class reportesNegActions extends sfActions
 				{
 					$repExpo->setCaPiezas($request->getParameter("npiezas")."|".$request->getParameter("mpiezas"));
 				}
+                else
+                    $repExpo->setCaPiezas(null);
 
 				if($request->getParameter("npeso") && $request->getParameter("mpeso") )
 				{
 					$repExpo->setCaPeso($request->getParameter("npeso")."|".$request->getParameter("mpeso"));
 				}
+                else
+                    $repExpo->setCaPeso(null);
 
 				if($request->getParameter("nvolumen") && $request->getParameter("mvolumen") )
 				{
 					$repExpo->setCaVolumen($request->getParameter("nvolumen")."|".$request->getParameter("mvolumen"));
 				}
+                else
+                    $repExpo->setCaVolumen(null);
 
 				if($request->getParameter("dimensiones") )
 				{
 					$repExpo->setCaDimensiones($request->getParameter("dimensiones"));
 				}
+                else
+                    $repExpo->setCaDimensiones(null);
 
 				if($request->getParameter("valor_carga") )
 				{
 					$repExpo->setCaValorcarga($request->getParameter("valor_carga"));
 				}
+                else
+                    $repExpo->setCaValorcarga(null);
+
 				if($request->getParameter("idsia") )
 				{
 					$repExpo->setCaIdsia($request->getParameter("idsia"));
 				}
+                else
+                    $repExpo->setCaIdsia(null);
 
 				if($request->getParameter("idtipoexpo") )
 				{
 					$repExpo->setCaTipoexpo($request->getParameter("idtipoexpo"));
 				}
+                else
+                    $repExpo->setCaTipoexpo(null);
 
 				if($request->getParameter("motonave") )
 				{
 					$repExpo->setCaMotonave($request->getParameter("motonave"));
 				}
+                else
+                    $repExpo->setCaMotonave(null);
+                
+                if($request->getParameter("idemisionbl") )
+				{
+					$repExpo->setCaEmisionbl($request->getParameter("idemisionbl"));
+				}
+                else
+                    $repExpo->setCaEmisionbl(null);
+                
+                if($request->getParameter("ca_numbl") )
+				{
+					$repExpo->setCaNumbl($request->getParameter("ca_numbl"));
+				}
+                else
+                {
+                    $repExpo->setCaNumbl(null);
+                }
 
 				$repExpo->save();
                 ///echo $repExpo->getCaIdreporte();
@@ -1351,13 +1412,16 @@ class reportesNegActions extends sfActions
             $trayecto=$reporte->getOrigen()->getTrafico()->getCaNombre()."-".$reporte->getOrigen()->getCaCiudad()."&raquo;".$reporte->getDestino()->getTrafico()->getCaNombre()."-".$reporte->getDestino()->getCaCiudad();
             $proveedor="";
             if( $reporte->getCaIdproveedor() ){
-                $values = explode("|", $reporte->getCaIdproveedor() );
-                if(count($values)>0)
+                $values = explode("|", $reporte->getCaIdproveedor());
+                $values1 = explode("|", $reporte->getCaIncoterms());
+                $values2 = explode("|", $reporte->getCaOrdenProv());
+
+                for($i=0;$i<count($values);$i++)
                 {
-                    $tercero = Doctrine::getTable("Tercero")->find($values[0]);
+                    $tercero = Doctrine::getTable("Tercero")->find($values[$i]);
                     if($tercero)
                     {
-                        $proveedor =Utils::replace($tercero->getCaNombre());
+                        $proveedor .=Utils::replace($tercero->getCaNombre())." - ". $values1[$i]." - ". $values2[$i]."<br>";
                     }
                 }
             }
@@ -2336,8 +2400,8 @@ color="#000000";
             if( !$repaduana ){
                 $repaduana = new RepAduana();
             }
-            $data["ca_transnacarga"]=utf8_encode($repaduana->getCaTransnacarga());
-            $data["ca_transnatipo"]=utf8_encode($repaduana->getCaTransnatipo());
+            //$data["ca_transnacarga"]=utf8_encode($repaduana->getCaTransnacarga());
+            //$data["ca_transnatipo"]=utf8_encode($repaduana->getCaTransnatipo());
             $data["ca_coordinador"]=utf8_encode($repaduana->getCaCoordinador());
             $data["ca_instrucciones"]=utf8_encode($repaduana->getCaInstrucciones());
 
@@ -2422,7 +2486,7 @@ color="#000000";
                 if(count($tmp)==2)
                 {
                     $data["nvolumen"]=$tmp[0];
-                    $data["mvolumen"]=$tmp[1];
+                    $data["mvolumen"]=($tmp[1]);
                 }
                 $data["dimensiones"]=$repExpo->getCaDimensiones();
                 $data["valor_carga"]=$repExpo->getCaValorcarga();
@@ -2430,6 +2494,9 @@ color="#000000";
                 $data["idtipoexpo"]=$repExpo->getCaTipoexpo();
                 $data["tipoexpo"]=utf8_encode($repExpo->getTipoExpo());
                 $data["motonave"]=utf8_encode($repExpo->getCaMotonave());
+
+                $data["emisionbl"]=$repExpo->getCaEmisionbl();
+                $data["ca_numbl"]=$repExpo->getCaNumbl();
 //                $data[""]=$repExpo->getCa();
             }
 
@@ -2591,6 +2658,10 @@ color="#000000";
 
             if( $request->getParameter("reportar_tar")!==null ){
                 $tarifa->setCaReportarTar( $request->getParameter("reportar_tar") );
+            }
+            else
+            {
+                $tarifa->setCaReportarTar( "0" );
             }
 
             if( $request->getParameter("reportar_min")!==null ){
@@ -2789,7 +2860,7 @@ color="#000000";
         foreach( $recargos as $recargo ){
             $row = $baseRow;
             $row["iditem"] = $recargo->getCaIdrecargo();
-            $row["idconcepto"] = 9999;
+            $row["idconcepto"] = $recargo->getCaIdconcepto();
             $row["item"] = utf8_encode($recargo->getTipoRecargo()->getCaRecargo());
             $row["tipo_app"] = $recargo->getCaTipo();
             $row["aplicacion"] = $recargo->getCaAplicacion();
@@ -2918,6 +2989,8 @@ color="#000000";
             if( $request->getParameter("idmoneda")!==null ){
                 $tarifa->setCaIdmoneda( $request->getParameter("idmoneda") );
             }
+            else
+                $tarifa->setCaIdmoneda( "COP" );
 
             if( $request->getParameter("observaciones")!==null ){
 
@@ -3282,6 +3355,27 @@ color="#000000";
         $this->nivelAduana = $this->getUser()->getNivelAcceso( reportesNegActions::RUTINA_ADUANA );
         $this->nivelExpo = $this->getUser()->getNivelAcceso( reportesNegActions::RUTINA_EXPO );
 	}
+
+    public function executeDatosListReportes()
+    {
+        $data = array();
+
+        for ($i = 1; $i <= 10; $i++) {
+            $data[] = array(
+                'id' => $i,
+                'message' => 'Raw data number ' . $i
+            );
+        }
+
+        //$o = array('data' => $data);
+        $this->responseArray=array("success"=>true,"data"=>$data);
+        $this->setTemplate("responseTemplate");
+
+    }
+
+
+
+
 
 }
 

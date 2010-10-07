@@ -439,7 +439,8 @@ Ext.extend(PanelConceptosFletes, Ext.grid.EditorGridPanel, {
             changes['iditem']=r.data.iditem;
             changes['idconcepto']=r.data.idconcepto;
             changes['idreporte']=r.data.idreporte;
-            changes['ca_recargoorigen']="true";
+            changes['ca_recargoorigen']="true";            
+            changes['reportar_tar']=r.data.reportar_tar;
             if( r.data.iditem ){
                 //envia los datos al servidor
                 Ext.Ajax.request(

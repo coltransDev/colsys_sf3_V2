@@ -4,7 +4,7 @@
  *
  *  (c) Coltrans S.A. - Colmas Ltda.
 */
-include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047,CU049,CU050,CU058,CU011"));
+include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047,CU049,CU050,CU058,CU011,CU089"));
 ?>
 <script type="text/javascript">
     FormMercanciaPanel = function( config ){
@@ -210,6 +210,43 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047,CU049,C
 										xtype: "textfield",
 										name: "motonave",
 										id: "motonave"
+									}
+									]
+								}
+							]
+						}
+                        ,
+                        {
+							autoHeight:true,
+							layout:'column',
+							items :[
+                            {
+									layout:'column',
+									border:false,
+									title: "Lugar de emisión BL",
+									columnWidth: .25,
+									items: [                                        
+                                        new WidgetParametros({
+                                                    id: 'emisionbl',
+                                                    name: 'emisionbl',
+                                                    hiddenName: 'idemisionbl',
+                                                    caso_uso: "CU089",
+                                                    width:150,                                                    
+                                                    idvalor:"valor"
+                                                    })
+
+									]
+								},
+								{
+									layout:'column',
+									border:false,
+									title: "Cuantos BL?",
+									columnWidth: .75,
+									items: [
+									{
+										xtype: "numberfield",
+										name: "ca_numbl",
+										id: "ca_numbl"
 									}
 									]
 								}

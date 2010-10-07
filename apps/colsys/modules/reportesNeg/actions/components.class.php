@@ -110,8 +110,9 @@ class reportesNegComponents extends sfComponents
 
          }
          $reporte=$this->reporte;
+         $user = $this->getUser();
          if( ($reporte->isNew() || $reporte->getCaVersion() == $reporte->getUltVersion())
-                    &&!$reporte->existeReporteExteriorVersionActual() ){
+                    &&!$reporte->existeReporteExteriorVersionActual() || $user->getUserId()==$reporte->getCaUsucreado() || $user->getUserId()==$reporte->getCaLogin() ){
                 $this->editable = true;
             }else{
                 $this->editable = false;
@@ -144,12 +145,16 @@ class reportesNegComponents extends sfComponents
 
          }
         $reporte=$this->reporte;
+         $user = $this->getUser();
+         //echo $reporte->getCaUsucreado() || $user->getUserId()!=$reporte->getCaLogin()
          if( ($reporte->isNew() || $reporte->getCaVersion() == $reporte->getUltVersion())
-                    &&!$reporte->existeReporteExteriorVersionActual() ){
+                    &&!$reporte->existeReporteExteriorVersionActual() || $user->getUserId()==$reporte->getCaUsucreado() || $user->getUserId()==$reporte->getCaLogin() ){
                 $this->editable = true;
             }else{
                 $this->editable = false;
             }
+
+        
 
 	}
     /*
@@ -357,14 +362,14 @@ class reportesNegComponents extends sfComponents
 	*/
     public function executeFormTrayectoPanel()
     {
-        $this->load_category();
+        $this->load_category();        
         $this->origen="Ciudad Origen";
         $this->destino="Ciudad Destino";
-        if($this->modo=="Aéreo")
+        if($this->modo==constantes::AEREO)
         {
             $this->nomLinea="Aerolinea";
         }
-        else if($this->modo=="Marítimo")
+        else if($this->modo==constantes::MARITIMO)
         {
             $this->nomLinea="Naviera";
             $this->origen="Puerto Origen";
@@ -373,15 +378,15 @@ class reportesNegComponents extends sfComponents
         else
             $this->nomLinea="Linea";
 
-        if($this->impoexpo=="Importación")
+        if($this->impoexpo==constantes::IMPO)
         {
             $this->pais2="CO-057";
             $this->pais1="todos";
-        }else if($this->impoexpo=="Exportación")
+        }else if($this->impoexpo==constantes::EXPO)
         {
             $this->pais2="todos";
             $this->pais1="CO-057";
-        }else if($this->impoexpo=="Triangulación")
+        }else if($this->impoexpo==constantes::TRIANGULACION)
         {
             $this->pais1="todos";
             $this->pais2="todos";
@@ -455,17 +460,17 @@ class reportesNegComponents extends sfComponents
 	public function executeFormCorteGuiasPanel()
 	{
         $this->nomGuiasH="";
-        if($this->modo=="Aéreo")
+        if($this->modo==Constantes::AEREO)
         {
             $this->nomGuiasH="HAWB";
             $this->nomGuiasM="MAWB";
         }
-        else if($this->modo=="Marítimo")
+        else if($this->modo==Constantes::MARITIMO)
         {
             $this->nomGuiasH="HBL";
             $this->nomGuiasM="BL";
         }
-        else if($this->impoexpo=="Triangulación")
+        else if($this->impoexpo==Constantes::TRIANGULACION)
         {
             $this->nomGuiasH="AWB";
             $this->nomGuiasM="AWB";
@@ -616,10 +621,14 @@ class reportesNegComponents extends sfComponents
 
    public function executeGridPanelInstruccionesWindow()
    {
-        if($this->modo=="Aéreo")
+        if($this->modo==Constantes::AEREO)
             $this->instrucciones = ParametroTable::retrieveByCaso( "CU039" );
         else
             $this->instrucciones = ParametroTable::retrieveByCaso( "CU024" );
+   }
+   public function executeListReportesPanel()
+   {
+        
    }
 
 }

@@ -84,7 +84,7 @@
 include_component("reportesNeg","infoReporte", array("reporte"=>$reporte, "grupoReportes"=>$grupoReportes));
 
 include_component("reportesNeg","mainPanel");
-if( !$reporte->esSoloAduana() ){    
+/*if( !$reporte->esSoloAduana() ){
     include_component("reportesNeg","panelConceptosFletes", array("reporte"=>$reporte));
     $panelConceptosFletes = true;
     if( $reporte->getCaImpoexpo()!=Constantes::EXPO ){
@@ -97,12 +97,23 @@ if( !$reporte->esSoloAduana() ){
    $panelConceptosFletes = false;
    $panelRecargos = false;
 }
+*/
+include_component("reportesNeg","panelConceptosFletes", array("reporte"=>$reporte));
+$panelConceptosFletes = true;
+
+//echo $reporte->getCaImpoexpo();
+if( $reporte->getCaImpoexpo()!=Constantes::EXPO ){
+        include_component("reportesNeg","panelRecargos", array("reporte"=>$reporte));
+        $panelRecargos = true;
+    }else{
+        $panelRecargos = false;
+    }
 
 
-if( $reporte->getCaColmas()=="Sí" || substr($reporte->getCaModalidad(),0,6) == "ADUANA" ){
+if( $reporte->getCaColmas()=="Sí" && $reporte->getCaImpoexpo()!=Constantes::TRIANGULACION /*|| substr($reporte->getCaModalidad(),0,6) == "ADUANA"*/ ){
    include_component("reportesNeg","panelRecargosAduana", array("reporte"=>$reporte));
 //   include_component("cotizaciones","panelTarifarioAduana",array("cotizacion"=>$cotizacion));
-   $panelAduana = false;
+   $panelAduana = true;
 }else{
    $panelAduana = false;
 }

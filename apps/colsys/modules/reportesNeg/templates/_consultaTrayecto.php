@@ -74,7 +74,7 @@
             }
             if($repExpo->getCaIdsia() )
             {
-                $reporteExp["sia"]=$repExpo->getSia()->getCaNombre();
+                $reporteExp["sia"]=$repExpo->getSia();
             }
 
             if($repExpo->getCaTipoexpo() )
