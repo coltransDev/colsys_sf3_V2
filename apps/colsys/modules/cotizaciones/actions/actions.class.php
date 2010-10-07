@@ -736,10 +736,11 @@ class cotizacionesActions extends sfActions
             $newCotizacion = $cotizacion->copy( false ); //La copia recursiva se hace paso a paso por que las llaves son naturales
             $user = $this->getUser();
             $nv=$this->getRequestParameter("nv");
-            if(isset($nv) && $nv=="true")
+            //echo $nv;
+            //exit;
+            if(isset($nv) && ($nv=="true"||$nv==true) )
             {
-                //$sig=
-                $newCotizacion->setCaVersion( $cotizacion->setCaVersion()+1 );
+                $newCotizacion->setCaVersion( $cotizacion->getCaVersion()+1 );
             }
             else
             {
@@ -825,7 +826,6 @@ class cotizacionesActions extends sfActions
                 $newContinuacion = $continuacion->copy( false );
                 $newContinuacion->setCaIdcotizacion( $newCotizacion->getCaIdcotizacion() );
                 $newContinuacion->save( $conn );
-
             }
 
             $contactos = $cotizacion->getCotContactoAg();
@@ -862,8 +862,6 @@ class cotizacionesActions extends sfActions
 	* @author Andres Botero
 	*/
 	public function executeFormProductoGuardar(){
-
-
 
 		$user_id = $this->getUser()->getUserId();
 
@@ -925,8 +923,6 @@ class cotizacionesActions extends sfActions
         }else{
             $producto->setCaPostularlinea( false );
         }
-
-
 		$producto->save();
 
         //Elimina el seguimiento por cotizacion y lo establece por trayecto
