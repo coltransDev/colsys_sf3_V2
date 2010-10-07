@@ -70,7 +70,7 @@ WidgetCotizacion = function( config ){
         displayField:'consecutivo',
         loadingText: 'Buscando...',
         typeAhead: true,
-        forceSelection: true,
+        forceSelection: false,
         minChars: 3,
         tpl: this.resultTpl,
         triggerAction: 'all',
