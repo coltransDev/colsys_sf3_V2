@@ -246,7 +246,7 @@ class confirmacionesActions extends sfActions
 
             
             
-			$inoCliente = Doctrine::getTable("InoClientesSea")->find(array($referencia->getcaReferencia(), $idcliente, $hbls));
+			$inoCliente = Doctrine::getTable("InoClientesSea")->find(array($referencia->getCaReferencia(), $idcliente, $hbls));
            
 			
 			$reporte = $inoCliente->getReporte();
@@ -281,7 +281,9 @@ class confirmacionesActions extends sfActions
 			$status->setCaComentarios( $this->getRequestParameter("notas") );			
 			$status->setCaFchenvio( date("Y-m-d H:i:s") );
 			$status->setCaUsuenvio( $this->getUser()->getUserId() );
-			
+
+            
+
 			if( $ultimostatus ){
 				$status->setCaPiezas( $ultimostatus->getCaPiezas() );
 				$status->setCaPeso( $ultimostatus->getCaPeso() );
@@ -292,7 +294,16 @@ class confirmacionesActions extends sfActions
 				$status->setCaFchcontinuacion( $ultimostatus->getCaFchcontinuacion() );
 				$status->setCaDoctransporte( $ultimostatus->getCaDoctransporte() );
 			}
-			
+
+            if( substr($referencia->getCaReferencia(),0,1)=="7" ){                
+                $status->setCaPiezas( $inoCliente->getCaNumpiezas() );
+				$status->setCaPeso( $inoCliente->getCaPeso() );
+				$status->setCaVolumen( $inoCliente->getCaVolumen() );				
+				$status->setCaFchsalida( $referencia->getCaFchembarque() );
+				$status->setCaFchllegada( $referencia->getCaFcharribo() );
+				$status->setCaDoctransporte( $inoCliente->getCaHbls() );
+                
+            }
 			
 			switch( $modo ){
 				case "conf":
