@@ -195,6 +195,10 @@ Reporte:
       local: ca_idreporte
       foreign: ca_idreporte
       type: one
+    RepCosto:
+      local: ca_idreporte
+      foreign: ca_idreporte
+      type: many
 
 RepStatus:
   options:
