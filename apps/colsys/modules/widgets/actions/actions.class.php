@@ -763,17 +763,17 @@ class widgetsActions extends sfActions
 	* Buscar una referencia de Aduana para el módulo de Falabella
 	*/
     public function executeListaReportesJSON(){
-        $criterio =  $this->getRequestParameter("query");
+        $criterio =  $this->getRequestParameter("query");        
+        
         if( $criterio ){
             
             $transporte =  $this->getRequestParameter("transporte");
 
             $q = Doctrine::getTable("Reporte")
                            ->createQuery("r")
-                           ->select("r.ca_idreporte, r.ca_consecutivo, o.ca_ciudad, d.ca_ciudad, o.ca_idciudad, d.ca_idciudad,o.ca_idtrafico, d.ca_idtrafico, r.ca_mercancia_desc,
+                           ->select("r.ca_idreporte, r.ca_consecutivo,r.ca_version ,o.ca_ciudad, d.ca_ciudad, o.ca_idciudad, d.ca_idciudad,o.ca_idtrafico, d.ca_idtrafico, r.ca_mercancia_desc,
                                     r.ca_idlinea, r.ca_impoexpo, r.ca_transporte, r.ca_modalidad, r.ca_incoterms, con.ca_idcontacto, con.ca_nombres, con.ca_papellido, con.ca_sapellido, con.ca_cargo
-                                    ,cl.ca_idcliente, cl.ca_compania, cl.ca_preferencias, cl.ca_confirmar, cl.ca_coordinador, c.ca_usuario, p.ca_idlinea,usu.ca_nombre,libcli.ca_cupo, libcli.ca_diascredito,
-                                    s.ca_idmoneda,s.ca_prima_tip,s.ca_prima_vlr,s.ca_prima_min,s.ca_obtencion,s.ca_idmonedaobtencion")
+                                    ,cl.ca_idcliente, cl.ca_compania, cl.ca_preferencias, cl.ca_confirmar, cl.ca_coordinador")
                            ->leftJoin("r.Origen o")
                            ->leftJoin("r.Destino d")
                            ->leftJoin("r.Contacto con")
@@ -786,6 +786,11 @@ class widgetsActions extends sfActions
             {
                 $q->addWhere("r.ca_transporte = ?", utf8_decode($transporte));
             }
+
+            $q->addOrderBy("to_number(SUBSTR(r.ca_consecutivo , 1 , (POSITION('-' in r.ca_consecutivo)-1) ),'999999')  desc");
+            $q->addOrderBy("r.ca_version  desc");
+            //$q->orderBy("r.ca_fchcreado desc");
+
 
             $reportes = $q->setHydrationMode(Doctrine::HYDRATE_SCALAR)->limit(50)->execute();
 
@@ -832,8 +837,7 @@ class widgetsActions extends sfActions
         }else{
             $this->responseArray = array("root"=>array(), "total"=>0, "success"=>true);
         }
-        //print_r($reportes);
-        
+        //print_r($reportes);        
 		$this->setTemplate("responseTemplate");
 
 	}
