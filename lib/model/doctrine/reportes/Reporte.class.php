@@ -89,8 +89,8 @@ class Reporte extends BaseReporte
 	* Author: Andres Botero
 	*/
 	public function getProveedores(){
-
-		if( $this->getCaImpoexpo()==Constantes::IMPO || $this->getCaImpoexpo()==Constantes::TRIANGULACION ){
+        
+		if( $this->getCaImpoexpo()==Constantes::IMPO || $this->getCaImpoexpo()==Constantes::TRIANGULACION || $this->getCaImpoexpo()=="OTM/DTA" ){
 			$provId = $this->getCaIdproveedor();
 			if($provId){
 				$provId = explode("|", $provId);				
@@ -101,7 +101,7 @@ class Reporte extends BaseReporte
 				return $proveedores;
 			}
 		}
-		return null;
+        return null;
 	}
 
 
