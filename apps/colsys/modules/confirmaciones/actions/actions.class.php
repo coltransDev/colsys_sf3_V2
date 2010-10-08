@@ -301,8 +301,8 @@ class confirmacionesActions extends sfActions
 				$status->setCaVolumen( $inoCliente->getCaVolumen() );				
 				$status->setCaFchsalida( $referencia->getCaFchembarque() );
 				$status->setCaFchllegada( $referencia->getCaFcharribo() );
-				$status->setCaDoctransporte( $inoCliente->getCaHbls() );
-                
+                $status->setCaIdnave( $referencia->getCaMotonave() );
+				$status->setCaDoctransporte( $inoCliente->getCaHbls() );                                
             }
 			
 			switch( $modo ){
