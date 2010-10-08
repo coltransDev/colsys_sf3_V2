@@ -38,33 +38,13 @@ class pruebasActions extends sfActions {
     public function executeSendEmail() {
         //exit("detenido");
         set_time_limit(0);
-        $c = new Criteria ( );
-        /* $c->add ( EmailPeer::CA_FCHENVIO, "2009-07-15 13:10:01", Criteria::GREATER_THAN );
-         * c->addAnd ( EmailPeer::CA_FCHENVIO, "2009-07-15 17:50:01", Criteria::LESS_THAN );
-         * c->add( EmailPeer::CA_TIPO,  'Envío de Status'); */
-
-        //$c->add(  EmailPeer::CA_ADDRESS, "%bsnmedical%", Criteria::NOT_LIKE  );
-        //$c->addAnd(  EmailPeer::CA_ADDRESS, "%willard%", Criteria::NOT_LIKE  );
-        //$c->addAnd ( EmailPeer::CA_FCHENVIO, "2009-03-26 14:50:00", Criteria::LESS_THAN );
-        //$c->add(EmailPeer::CA_TIPO, "Envío de Avisos" );
-        //$c->addOr(EmailPeer::CA_TIPO, "Envío de Status" );
-
-        $c->add(EmailPeer::CA_IDEMAIL, 265437);
-        /* $c->addOr( EmailPeer::CA_IDEMAIL, 240610);
-         * c->addOr( EmailPeer::CA_IDEMAIL, 240656); */
-        //$c->add(  EmailPeer::CA_FCHENVIO , null, Criteria::ISNULL );
-        $c->addAscendingOrderByColumn(EmailPeer::CA_FCHENVIO);
-        $c->setLimit(5);
-
-        $i = 0;
-        $emails = EmailPeer::doSelect($c);
+        
 
 
-
-
-        foreach ($emails as $email) {
+        $email = Doctrine::getTable("Email")->find(516616);
+        //foreach ($emails as $email) {
             //print_r( $email);
-            echo "<b>Enviando " . $i++ . "</b>	emailid: " . $email->getCaIdEmail() . " Fch: " . $email->getCaFchEnvio() . " <br />From: " . $email->getCaFrom() . "<br />";
+            echo "<b>Enviando " . $i++ . "</b>	emailid: " . $email->getCaIdemail() . " Fch: " . $email->getCaFchenvio() . " <br />From: " . $email->getCaFrom() . "<br />";
 
             /* $addresses = explode(",",$email->getCaAddress());
              * oreach( $addresses as $key=>$address ){
@@ -89,15 +69,11 @@ class pruebasActions extends sfActions {
             echo "CC: " . $email->getCaCC() . "<br />";
             echo "Subject" . $email->getCaSubject() . "<br />";
 
-            if (!$email->getCaBodyHtml()) {
-                /* "Este mensaje se reenvia por problemas de visualizacion en env&acute;os anteriores <br />Si usted ya lo recibi&oacute; por favor haga caso omiso de este mensaje<br /><br />". */
-                $email->setCaBodyHtml($email->getCaBody());
-                $email->setCaBody("");
-            }
+
 
 
             echo $email->send() ? "OK" : "NO" . "<br /><br />";
-        }
+        //}
 
         return sfView::NONE;
     }
@@ -3696,8 +3672,7 @@ ORDER BY ca_idtrayecto,ca_idconcepto,log_pricrecargosxconcepto.ca_idrecargo, ca_
     }
 
 
-    public function executeRedimensionarImagen($request)
-     {
+    public function executeRedimensionarImagen($request){
        $users = Doctrine::getTable("Usuario")->createQuery("u")->execute();
        foreach($users as $user ){
               
@@ -3748,23 +3723,46 @@ ORDER BY ca_idtrayecto,ca_idconcepto,log_pricrecargosxconcepto.ca_idrecargo, ca_
                  };
                  //rename($directorio . "foto.jpg", $directorio . "foto120x150.jpg");
 
-               $this->setTemplate("blank");
-           }
-       }//return true; //si todo ha ido bien devuelve true
-       }
-       public function executeIndexar($request){
+                $this->setTemplate("blank");
+            }
+        }//return true; //si todo ha ido bien devuelve true
+    }
+    public function executeIndexar($request){
 
-           $this->usuarios=Doctrine::getTable('Usuario')
+        $this->usuarios=Doctrine::getTable('Usuario')
                         ->createQuery("u")
                         ->addWhere('ca_activo = ?', true)
                         ->execute();
 
-           foreach($usuarios as $usuario){
+        foreach($usuarios as $usuario){
 
 
 
 
-           }
-       }
+        }
+    }
+
+
+    public function executeRevisarCorreos( $request ){
+
+        set_time_limit(0);
+        $emails=Doctrine::getTable('Email')
+                        ->createQuery("e")
+                        ->addWhere('e.ca_tipo = ? OR e.ca_tipo = ?', array('Rep.MarítimoExterior', 'Rep.AéreoExterior'))
+                        ->addWhere('ca_fchenvio >= ? AND ca_fchenvio <=?', array("2010-10-03 00:00:00", "2010-10-04 15:00:00"))
+                        //->addWhere("e.ca_idemail = 520403")
+                        ->execute();
+
+        echo count( $emails );
+        $i= 0;
+        foreach( $emails as $email ){
+            $flag = false;
+
+            //echo "<b>Enviando " . $i++ . "</b>	emailid: " . $email->getCaIdemail() . " Fch: " . $email->getCaFchenvio() . " <br />From: " . $email->getCaFrom() . "<br />";
+            $email->send();
+        }
+
+        $this->setTemplate("blank");
+    }
 }
 ?>
