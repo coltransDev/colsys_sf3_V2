@@ -160,8 +160,8 @@ class Swift_Encoder_QpEncoder implements Swift_Encoder
       if( $currentLine && $currentLine[0]=="." && $lineLen==4 ){          
           $str = $lines[$lNo-2];          
           $lines[$lNo-2] = substr($str, 0, 68 );
-          $currentLine = substr($str, 69 ). $currentLine;
-          $lineLen += strlen( substr($str, 69 ) );
+          $currentLine = substr($str, 68 ). $currentLine;
+          $lineLen += strlen( substr($str, 68 ) );
       }
       //If we're filtering the input
       if (isset($this->_filter))
