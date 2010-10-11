@@ -35,6 +35,7 @@ $campos = array("Nombre del Cliente" => "ca_compania", "Representante Legal" => 
 $bdatos = array("Maestra Clientes", "Mis Clientes", "Clientes Libres");  // Arreglo con los lugares donde buscar
 $tipos = array("Llamada", "Visita", "Correo Electrónico", "Correspondencia", "Cerrar Caso");
 $estados = array("Potencial","Activo","Vetado");
+$libestados = array("Vigente","Congelada");
 $sstatus = array("","Vetado");
 $empresas= array("Coltrans","Colmas");
 $circular=array("Sin","Vencido","Vigente");
@@ -259,8 +260,8 @@ elseif (!isset($boton) and !isset($accion) and isset($criterio)){
 		}
 	if (isset($riesgo)){
 		$sub_cad = " and ca_nvlriesgo in (";
-		foreach($riesgo as $nivel){
-			$sub_cad.= "'".$nivel."',";
+		foreach($riesgo as $nivelr){
+			$sub_cad.= "'".$nivelr."',";
 		}
 		$sub_cad = substr($sub_cad,0,strlen($sub_cad)-1).")";
 		$condicion.= $sub_cad;
@@ -439,10 +440,10 @@ require_once("menu.php");
 		   echo "<TR>";
 		   echo "  <TD Class=listar ROWSPAN=10 style='text-align: center; center; $vetado'>";
 		   echo "    <TABLE>";
-		   echo "      <TR><TD Class=mostrar style='text-align: center;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='elegir(\"ListaClinton\", ".$rs->Value('ca_idcliente').");' style='color=blue;'><BR><IMG src='graficos/vista.gif'><BR>Consulta en<br>Lista Clinton</TD></TR>";
 		   echo "      <TR><TD style='visibility: $vista_3; text-align: center; color=blue;' Class=mostrar onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='elegir(\"Comisión\", ".$rs->Value('ca_idcliente').");'><BR><IMG src='graficos/Info.gif'><BR>Porcentaje de Comisión</TD></TR>";
 		   echo "      <TR><TD style='visibility: $vista_2; text-align: center; color=blue;' Class=mostrar onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='elegir(\"Contrato\", ".$rs->Value('ca_idcliente').");'><BR><IMG src='graficos/contrato.gif'><BR>Contrato de<br>Comodato</TD></TR>";
 		   echo "      <TR><TD style='visibility: $vista_1; text-align: center; color=blue;' Class=mostrar onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='elegir(\"Liberacion\", ".$rs->Value('ca_idcliente').");'><BR><IMG src='graficos/si.gif'><BR>Liberación<br>Automática</TD></TR>";
+		   echo "      <TR><TD style='visibility: $vista_1; text-align: center; color=blue;' Class=mostrar onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='elegir(\"Libestados\", ".$rs->Value('ca_idcliente').");'><BR><IMG src='graficos/lock_close.gif'><BR>Estado de<br>Liberación</TD></TR>";
 		   echo "    </TABLE>";
 		   echo "  </TD>";
 		   echo "  <TD Class=mostrar style='$vetado'>Dirección :</TD>";
@@ -451,7 +452,8 @@ require_once("menu.php");
 		   echo "    <TABLE>";
 		   echo "      <TR><TD Class=mostrar style='text-align: center; color=blue;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:document.location.href = \"concliente.php?id=".$rs->Value('ca_idcliente')."\"'><BR><IMG src='graficos/contacto.gif'><BR>Contactos</TD></TR>";
 		   echo "      <TR><TD Class=mostrar style='text-align: center; color=blue;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:document.location.href = \"enccliente.php?id=".$rs->Value('ca_idcliente')."\"'><BR><IMG src='graficos/encuesta.gif'><BR>Visitas<BR>".$rs->Value('ca_fchvisita')."</TD></TR>";
-		   echo "      <TR><TD Class=mostrar style='visibility: $visible;' style='text-align: center; color=blue;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:liberar(".$rs->Value('ca_idcliente').");'><BR><IMG src='graficos/no.gif'><BR>Liberar Cliente</TD></TR>";
+		   echo "      <TR><TD Class=mostrar style='text-align: center; color=blue;' visibility: $visible; onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:liberar(".$rs->Value('ca_idcliente').");'><BR><IMG src='graficos/no.gif'><BR>Liberar Cliente</TD></TR>";
+		   echo "      <TR><TD Class=mostrar style='text-align: center;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='elegir(\"ListaClinton\", ".$rs->Value('ca_idcliente').");' style='color=blue;'><BR><IMG src='graficos/vista.gif'><BR>Lista Clinton</TD></TR>";
 		   echo "      <TR><TD Class=mostrar style='text-align: center; color=blue;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:document.location.href = \"/clientes/clavesTracking?id=".$rs->Value('ca_idcliente')."\"'><BR><IMG src='graficos/tracking.gif'><BR>Tracking</TD></TR>";
 		   echo "    </TABLE>";
 		   echo "  </TD>";
@@ -577,24 +579,24 @@ require_once("menu.php");
 		   echo "  </TR>";
 		   echo "  </TABLE></TD>";
 		   echo "</TR>";
-		   if ($rs->Value('ca_diascredito') != 0 or $rs->Value('ca_cupo') != 0){
-                           $liberac = ($rs->Value('ca_stdcircular') != 'Vigente')?"negativo":"destacar";
-			   echo "<TR>";
-			   echo "  <TD Class='$liberac'><B>Liberación Automática:</B></TD>";
-			   echo "  <TD Class='$liberac' COLSPAN=4><TABLE WIDTH=100% CELLSPACING=1 BORDER=1>";
-			   echo "  <TR>";
-			   echo "    <TD Class='$liberac'><B>Días/Crédito : </B><BR />".$rs->Value('ca_diascredito')."</TD>";
-			   echo "    <TD Class='$liberac'><B>Cupo Asignado : </B><BR />".number_format($rs->Value('ca_cupo'))."</TD>";
-                           echo "    <TD Class='$liberac'><B>Creado : </B>".$rs->Value('ca_usucreado_lb')."<BR />".$rs->Value('ca_fchcreado_lb')."</TD>";
-                           echo "    <TD Class='$liberac'><B>Actualizado : </B>".$rs->Value('ca_usuactualizado_lb')."<BR />".$rs->Value('ca_fchactualizado_lb')."</TD>";
-			   echo "  </TR>";
-			   echo "  <TR>";
-			   echo "    <TD Class='$liberac' COLSPAN=4><B>Observaciones : </B>".$rs->Value('ca_observaciones')."</TD>";
-			   echo "  </TR>";
-			   echo "  </TABLE></TD>";
-			   echo "  <TD Class='$liberac'>".(($rs->Value('ca_stdcircular') != 'Vigente')?"Circular 0170<BR/>Vencida":"")."</TD>";
-			   echo "</TR>";
-			   }
+
+                   $beneficios = ($rs->Value('ca_diascredito')==0 or $rs->Value('ca_libestado')=="Suspendida")?'background-color:#FF0000;':'background-color:#FFFFC0;';
+                   $beneficios = ($rs->Value('ca_libestado')=="Congelada")?'background-color:#9999CC;':$beneficios;
+                   echo "<TR>";
+                   echo "  <TD Class=listar style='$beneficios'><B>Liberación Automática:</B></TD>";
+                   echo "  <TD Class=listar style='$beneficios' COLSPAN=4><TABLE WIDTH=100% CELLSPACING=1 BORDER=1>";
+                   echo "  <TR>";
+                   echo "    <TD Class=listar style='$beneficios'><B>Días/Crédito : </B><BR />".$rs->Value('ca_diascredito')."</TD>";
+                   echo "    <TD Class=listar style='$beneficios'><B>Cupo Asignado : </B><BR />".number_format($rs->Value('ca_cupo'))."</TD>";
+                   echo "    <TD Class=listar style='$beneficios'><B>Creado : </B>".$rs->Value('ca_usucreado_lb')."<BR />".$rs->Value('ca_fchcreado_lb')."</TD>";
+                   echo "    <TD Class=listar style='$beneficios'><B>Actualizado : </B>".$rs->Value('ca_usuactualizado_lb')."<BR />".$rs->Value('ca_fchactualizado_lb')."</TD>";
+                   echo "  </TR>";
+                   echo "  <TR>";
+                   echo "    <TD Class=listar style='$beneficios' COLSPAN=4><B>Observaciones : </B>".$rs->Value('ca_observaciones')." ".$rs->Value('ca_libestobservaciones')."</TD>";
+                   echo "  </TR>";
+                   echo "  </TABLE></TD>";
+                   echo "  <TD Class=listar style='$beneficios'>".(($rs->Value('ca_fchestado') != '')?"<B>Estado Lib.Automática:</B><BR/>".$rs->Value('ca_libestado')." - ".$rs->Value('ca_usucreado_le')."<BR/>".$rs->Value('ca_fchcreado_le'):"")."</TD>";
+                   echo "</TR>";
 
 		   if ($rs->Value('ca_fchfirmado') != '' or $rs->Value('ca_fchvencimiento') != ''){
 			   list($anno, $mes, $dia) = sscanf($rs->Value('ca_fchvencimiento'),"%d-%d-%d");
@@ -1863,6 +1865,99 @@ require_once("menu.php");
              echo "</BODY>";
              break;
              }
+        case 'Libestados': {
+             $modulo = "00100300";                                             // Identificación del módulo para la ayuda en línea
+//           include_once 'include/seguridad.php';                             // Control de Acceso al módulo
+             if (!$rs->Open("select * from vi_clientes where ca_idcliente = ".$id)) {    // Mueve el apuntador al registro que se desea eliminar
+                 echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+                 echo "<script>document.location.href = 'clientes.php';</script>";
+                 exit;
+                }
+             $tm =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
+             if (!$tm->Open("select * from tb_libestados where ca_idcliente = ".$id." order by ca_idlibestado DESC")) {    // Mueve el apuntador al registro que se desea eliminar
+                 echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+                 echo "<script>document.location.href = 'clientes.php';</script>";
+                 exit;
+                }
+             if ($nivel >= 2){
+                 array_push($libestados, "Suspendida");                         // Habilita la posibilidad de dar Suspencion definitiva de Lib.Automaticas a usuarios de alto perfil
+             }
+             echo "<HEAD>";
+             echo "<script language='JavaScript' type='text/JavaScript'>";     // Código en JavaScript para validar las opciones de mantenimiento
+             echo "function validar(){";
+             echo "  return (true);";
+             echo "}";
+             echo "</script>";
+             echo "<script language='javascript' src='javascripts/popcalendar.js'></script>";
+             echo "</HEAD>";
+             echo "<BODY>";
+require_once("menu.php");
+             echo "<STYLE>@import URL(\"Coltrans.css\");</STYLE>";             // Carga una hoja de estilo que estandariza las pantallas den sistema graficador
+             echo "<CENTER>";
+             echo "<H3>$titulo</H3>";
+             echo "<FORM METHOD=post NAME='libestados' ACTION='clientes.php' ONSUBMIT='return validar();'>";  // Llena la forma con los datos actuales del registro
+             echo "<TABLE CELLSPACING=1 WIDTH=500>";
+             echo "<INPUT TYPE='HIDDEN' NAME='id' VALUE=".$id.">";              // Hereda el Id del registro que se esta eliminando
+             echo "<TH Class=titulo COLSPAN=5>Información del Cliente</TH>";
+             echo "<TR>";
+             echo "  <TD Class=mostrar style='vertical-align: top;' ROWSPAN=5>".number_format($rs->Value('ca_idcliente'))."-".$rs->Value('ca_digito')."</TD>";
+             echo "  <TD Class=mostrar COLSPAN=4 style='font-size: 12px; font-weight:bold; text-align:left;'>".$rs->Value('ca_compania')."</TD>";
+             echo "</TR>";
+             echo "<TR>";
+             $complemento = (($rs->Value('ca_oficina')!='')?" Oficina : ".$rs->Value('ca_oficina'):"").(($rs->Value('ca_torre')!='')?" Torre : ".$rs->Value('ca_torre'):"").(($rs->Value('ca_interior')!='')?" Interior : ".$rs->Value('ca_interior'):"").(($rs->Value('ca_complemento')!='')?" - ".$rs->Value('ca_complemento'):"");
+             echo "  <TD Class=mostrar COLSPAN=4>&nbsp;&nbsp;<B>Dirección : </B>".str_replace ("|"," ",$rs->Value('ca_direccion')).$complemento."</TD>";
+             echo "</TR>";
+             echo "<TR>";
+             echo "  <TD Class=mostrar COLSPAN=4>&nbsp;&nbsp;<B>Teléfonos : </B>".$rs->Value('ca_telefonos')."</TD>";
+             echo "</TR>";
+             echo "<TR>";
+             echo "  <TD Class=mostrar COLSPAN=4>&nbsp;&nbsp;<B>Fax : </B>".$rs->Value('ca_fax')."</TD>";
+             echo "</TR>";
+             echo "<TR>";
+             echo "  <TD Class=mostrar COLSPAN=4>&nbsp;&nbsp;<B>Ciudad : </B>".$rs->Value('ca_ciudad')."</TD>";
+             echo "</TR>";
+             echo "<TH Class=titulo COLSPAN=4>Histórico de Estados de Liberación por Cliente</TH>";
+             echo "<TR>";
+             echo "  <TD Class=invertir>Fecha</TD>";
+             echo "  <TD Class=invertir>Estado</TD>";
+             echo "  <TD Class=invertir>Observación</TD>";
+             echo "  <TD Class=invertir>Registro</TD>";
+             echo "</TR>";
+             if($rs->Value('ca_fchcreado_lb')!=""){
+                 echo "<TR>";
+                 echo "  <TD Class=mostrar style='vertical-align: top;'><INPUT TYPE='TEXT' NAME='fchestado' SIZE=12 VALUE='".date("Y-m-d")."' ONKEYDOWN=\"chkDate(this)\" ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+                 echo "  <TD Class=mostrar style='vertical-align: top;'><SELECT NAME='libestado'>";
+                 while (list ($clave, $val) = each ($libestados)) {
+                    echo " <OPTION VALUE='".$val."'>".$val;
+                 }
+                 echo "  </SELECT></TD>";
+                 echo "  <TD Class=mostrar><TEXTAREA NAME='observaciones' WRAP=virtual ROWS=4 COLS=58></TEXTAREA></TD>";
+                 echo "  <TD Class=mostrar></TD>";
+                 echo "</TR>";
+             }
+             while (!$tm->Eof() and !$tm->IsEmpty()) {
+                 echo "<TR>";
+                 echo "  <TD Class=listar>".$tm->Value('ca_fchestado')."</TD>";
+                 echo "  <TD Class=listar>".$tm->Value('ca_libestado')."</TD>";
+                 echo "  <TD Class=listar>".$tm->Value('ca_observaciones')."</TD>";
+                 echo "  <TD Class=listar>".$tm->Value('ca_fchcreado')."<BR>".$tm->Value('ca_usucreado')."</TD>";
+                 echo "</TR>";
+                 $tm->MoveNext();
+             }
+             echo "</TABLE><BR>";
+             $cadena = "?modalidad=N.i.t.\&criterio=$id";
+             echo "<TABLE CELLSPACING=10>";
+             echo "<TH><INPUT Class=submit TYPE='SUBMIT' NAME='accion' VALUE='Registrar Estado'></TH>";     // Ordena eliminar el registro de forma permanente
+             echo "<TH><INPUT Class=button TYPE='BUTTON' NAME='accion' VALUE='Cancelar' ONCLICK='javascript:document.location.href = \"clientes.php$cadena\"'></TH>";  // Cancela la operación
+             echo "<script>comision.inicio.focus()</script>";
+             echo "</TABLE>";
+             echo "</FORM>";
+             echo "</CENTER>";
+//           echo "<P DIR='RTL'><A HREF=\"#\" ONCLICK='javascript:window.open(\"./help/$modulo.html\",\"Ayuda\",\"scrollbars=yes,width=600,height=400,top=200,left=150\")'><IMG SRC='./graficos/help.gif' border=0 ALT='Ayuda en Línea'><BR>Ayuda</A></P>";   // Link que proporciona la Ayuda en línea
+             require_once("footer.php");
+             echo "</BODY>";
+             break;
+             }
         case 'Eliminar': {
              $modulo = "00100300";                                             // Identificación del módulo para la ayuda en línea
 //           include_once 'include/seguridad.php';                             // Control de Acceso al módulo
@@ -1992,11 +2087,21 @@ elseif (isset($accion)) {                                                      /
              break;
              }
         case 'Registrar Porcentaje': {                                               // El Botón Guardar fue pulsado
-			 list($ano, $mes, $dia) = sscanf($inicio, "%d-%d-%d");
-			 $inicio = date("Y-m-d", mktime(0, 0, 0, $mes, 1, $ano));
-			 list($ano, $mes, $dia) = sscanf($fin, "%d-%d-%d");
-			 $fin = date("Y-m-d", mktime(0, 0, 0, $mes+1, 0, $ano));
+             list($ano, $mes, $dia) = sscanf($inicio, "%d-%d-%d");
+             $inicio = date("Y-m-d", mktime(0, 0, 0, $mes, 1, $ano));
+             list($ano, $mes, $dia) = sscanf($fin, "%d-%d-%d");
+             $fin = date("Y-m-d", mktime(0, 0, 0, $mes+1, 0, $ano));
              if (!$rs->Open("insert into tb_porcentajescomisiones (ca_idcliente, ca_inicio, ca_fin, ca_porcentaje, ca_empresa, ca_fchcreado, ca_usucreado) values($id, '$inicio', '$fin', $porcentaje, '$empresa', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
+                 echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
+                 echo "<script>document.location.href = 'clientes.php';</script>";
+                 exit;
+                }
+             break;
+             }
+        case 'Registrar Estado': {                                               // El Botón Guardar fue pulsado
+             list($ano, $mes, $dia) = sscanf($inicio, "%d-%d-%d");
+             $inicio = date("Y-m-d", mktime(0, 0, 0, $mes, 1, $ano));
+             if (!$rs->Open("insert into tb_libestados (ca_idcliente, ca_fchestado, ca_libestado, ca_observaciones, ca_fchcreado, ca_usucreado) values($id, '$fchestado', '$libestado', '$observaciones', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                  echo "<script>document.location.href = 'clientes.php';</script>";
                  exit;
