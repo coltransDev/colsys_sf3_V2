@@ -386,7 +386,7 @@ class widgetsActions extends sfActions
                             ->select("c.ca_idcontacto, cl.ca_idcliente, cl.ca_compania, c.ca_nombres,
                                       c.ca_papellido, c.ca_sapellido, c.ca_cargo,c.ca_fijo,c.ca_email,
                                       cl.ca_preferencias, cl.ca_confirmar, cl.ca_vendedor, cl.ca_coordinador,
-                                      v.ca_nombre, cl.ca_listaclinton, cl.ca_fchcircular
+                                      v.ca_nombre, cl.ca_listaclinton, cl.ca_fchcircular,cl.ca_preferencias
                                       ,cl.ca_status, cl.ca_vendedor, lc.ca_cupo, lc.ca_diascredito
                                      ")
                             ->from("Contacto c")
