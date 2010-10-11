@@ -25,16 +25,17 @@ class loginValidationFilter extends sfFilter
                 foreach( $octets as $octet ) {
 
 
-                #      if (($octet >= 40) && ($octet <= 42)) {
-                # The IP address is stored in eDirectory as four unsigned chars. ASCII 40, 41, 42 and # 92 are characters ( ) *\ which are known tokens in LDAP search filters If you don?t # escape these with a backslash they will cause LDAP errors and he script will fail.
-
-                       $netaddress= $netaddress.chr($octet);
+                    if ((($octet >= 40) && ($octet <= 42)) || ($octet == 92)) {
+                        $netaddress = $netaddress."\\".chr($octet);
+                    } else {
+                        $netaddress= $netaddress.chr($octet);
+                    }
                 }
                 
                 $group_filter_string = "(groupMembership=cn=quality,o=coltrans_bog)";
-                //$searchString = "(&(objectclass=user)(networkAddress=$netaddress))";
-                $searchString = "(&(objectclass=user)(|(groupMembership=cn=quality,o=coltrans_bog))(networkAddress=9#
-?\\))";
+                $searchString = "(&(objectclass=user)(networkAddress=$netaddress))";
+                //$searchString = "(&(objectclass=user)(|(groupMembership=cn=quality,o=coltrans_bog))(networkAddress=9#
+//?\\))";
                 echo "--->".$searchString."<br />";
                 $sr = ldap_search($connect, "o=coltrans_bog", $searchString );
                 //$info = ldap_get_entries($connect, $sr);
