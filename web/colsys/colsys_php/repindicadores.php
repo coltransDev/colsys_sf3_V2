@@ -556,7 +556,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
             $tm->MoveNext();
         }
         $ind_mem  = 12;
-        $add_cols = 6;
+        $add_cols = 7;
         $cot_ant  = null;
         $campos.= ", $source.ca_referencia, exe.ca_fchevento, exe.ca_idevento";
     } else if ($indicador == "Oportunidad en la Facturación" and $procesos == "Exportaciones") {
@@ -698,7 +698,8 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
         case 12:
             echo "	<TH>Referencia</TH>";
             echo "	<TH>IDG</TH>";
-            echo "	<TH>SIA</TH>";
+            echo "	<TH>Ag.Aduana</TH>";
+            echo "	<TH>Observaciones</TH>";
             echo "	<TH>Eventos</TH>";
             echo "	<TH>Calculos</TH>";
             echo "	<TH>Dif.</TH>";
@@ -1186,8 +1187,23 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
                 echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_referencia')."</TD>";
                 echo "  <TD Class=mostrar style='font-size: 9px;'>".(($rs->Value('ca_aplicaidg')=='t')?"Sí":"No")."</TD>";
                 echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_nomsia')."</TD>";
-                echo "  <TD Class=mostrar style='font-size: 9px; vertical-align:top;'><TABLE CELLSPACING=1>";
 
+                if (!$tm->Open("select rps.* from tb_repstatus rps INNER JOIN tb_reportes rep ON rps.ca_idreporte = rep.ca_idreporte and rep.ca_consecutivo = '".$rs->Value('ca_consecutivo')."' where rps.ca_observaciones_idg IS NOT NULL order by ca_fchenvio")) {       // Selecciona todos las observaciones de IDG de los estatus
+                    echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+                    echo "<script>document.location.href = 'repindicadores.php';</script>";
+                    exit; }
+                $observacionesIdg = "";
+                if ($tm->GetRowCount()>0){
+                    $tm->MoveFirst();
+                    while (!$tm->Eof()) {           // Carga todas las observaciones de IDG
+                        $observacionesIdg.= $tm->Value('ca_observaciones_idg');
+                        $tm->MoveNext();
+                        $observacionesIdg.= (!$tm->Eof())?"<br />":"";
+                    }
+                }
+                echo "  <TD Class=mostrar style='font-size: 9px;'>$observacionesIdg</TD>";
+
+                echo "  <TD Class=mostrar style='font-size: 9px; vertical-align:top;'><TABLE CELLSPACING=1>";
                 $ult_mem = $rs->Value('ca_fchevento');
                 $nom_sia = $rs->Value('ca_nomsia');
                 $apl_idg = $rs->Value("ca_aplicaidg");
