@@ -22,14 +22,16 @@ WidgetAgente = function( config ){
 						{name: 'idagente'},
                         {name: 'nombre'},
                         {name: 'idtrafico'},
-                        {name: 'pais'}
+                        {name: 'pais'},
+                        {name: 'ciudad'},
+                        {name: 'direccion'}
 					])
 				),
 				proxy: new Ext.data.MemoryProxy( <?=json_encode(array("root"=>$agentes, "total"=>count($agentes), "success"=>true) )?> )
 			})
     
     this.resultTpl = new Ext.XTemplate(
-            '<tpl for="."><div class="search-item"><b>{nombre}</b><br /><span>{pais} </span> </div></tpl>'
+            '<tpl for="."><div class="search-item"><b>{nombre}</b><br /><span style="font-size:9px">{pais}-{ciudad}-{direccion} </span> </div></tpl>'
     );
     WidgetAgente.superclass.constructor.call(this, {
         valueField: 'idagente',

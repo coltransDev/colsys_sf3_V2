@@ -434,7 +434,7 @@ class widgetsComponents extends sfComponents
     public function executeWidgetAgente(){
 		
         $agentes = Doctrine_Query::create()
-                             ->select("a.*, i.ca_nombre, t.ca_idtrafico, t.ca_nombre")
+                             ->select("a.*, i.ca_nombre, t.ca_idtrafico, t.ca_nombre,c.ca_ciudad,s.ca_direccion")
                              ->from("IdsAgente a")
                              ->innerJoin("a.Ids i")
                              ->innerJoin("i.IdsSucursal s")
@@ -451,7 +451,10 @@ class widgetsComponents extends sfComponents
             $this->agentes[]=array("idagente" => $agente["a_ca_idagente"],                                                                
                                     "nombre" => utf8_encode($agente["i_ca_nombre"]),
                                     "pais" => utf8_encode($agente["t_ca_nombre"]),
-                                    "idtrafico" => $agente["t_ca_idtrafico"]);
+                                    "idtrafico" => $agente["t_ca_idtrafico"],
+                                    "ciudad" => utf8_encode($agente["c_ca_ciudad"]),
+                                    "direccion" => utf8_encode($agente["s_ca_direccion"])
+                );
         }
 	}
 
