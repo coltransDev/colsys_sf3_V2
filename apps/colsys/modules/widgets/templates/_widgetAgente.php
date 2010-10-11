@@ -9,83 +9,81 @@ $agentes = $sf_data->getRaw("agentes");
 <script type="text/javascript">
 WidgetAgente = function( config ){
     Ext.apply(this, config);
-    this.data = <?=json_encode($agentes)?>;
+    
     this.store = new Ext.data.Store({
-				autoLoad : false,
+				autoLoad : true,
 				reader: new Ext.data.JsonReader(
 					{
-						root: 'root',
+						root: 'root'/*,
                         totalProperty: 'total',
-						successProperty: 'success'
+						successProperty: 'success'*/
 					},
 					Ext.data.Record.create([
 						{name: 'idagente'},
-                        {name: 'nombret'},
-                        {name: 'nombrei'},
+                        {name: 'nombre'},
+                        {name: 'idtrafico'},
                         {name: 'pais'}
 					])
-				)//,
-				//proxy: new Ext.data.MemoryProxy( <?=json_encode(array("root"=>$agentes, "total"=>count($agentes), "success"=>true) )?> )
+				),
+				proxy: new Ext.data.MemoryProxy( <?=json_encode(array("root"=>$agentes, "total"=>count($agentes), "success"=>true) )?> )
 			})
     
-
+    this.resultTpl = new Ext.XTemplate(
+            '<tpl for="."><div class="search-item"><b>{nombre}</b><br /><span>{pais} </span> </div></tpl>'
+    );
     WidgetAgente.superclass.constructor.call(this, {
         valueField: 'idagente',
-        displayField: 'nombrei',
+        displayField: 'nombre',
         typeAhead: true,
         forceSelection: true,
+        tpl: this.resultTpl,
         triggerAction: 'all',
         emptyText:'',
+        itemSelector: 'div.search-item',
         selectOnFocus: true,
         lazyRender:true,
         mode: 'local',
         listClass: 'x-combo-list-small',
         listeners: {
-            beforequery: this.onBeforeQuery
+            //beforequery: this.onBeforeQuery
+            //focus:this.onBeforeQuery,
+            expand : this.onBeforeQuery
         }
 
     });
 }
 
 Ext.extend(WidgetAgente, Ext.form.ComboBox, {
-    onBeforeQuery: function( e ){
-        var impoexpo = Ext.getCmp(e.combo.linkImpoExpo).getValue();
+    onBeforeQuery: function(  ){
+        var impoexpo = Ext.getCmp(this.linkImpoExpo).getValue();
         if( impoexpo=="<?=Constantes::EXPO?>" ){
-            var link = e.combo.linkDestino;
+            var link = this.linkDestino;
         }else{
-            var link = e.combo.linkOrigen;
+            var link = this.linkOrigen;
         }        
         var trafico =  Ext.getCmp(link).getValue();        
         var agentList = new Array();
         var listarTodos = false;
-        if( Ext.getCmp(e.combo.linkListarTodos) && Ext.getCmp(e.combo.linkListarTodos)){
-            var listarTodos = Ext.getCmp(e.combo.linkListarTodos).getValue();
+        if( Ext.getCmp(this.linkListarTodos) && Ext.getCmp(this.linkListarTodos)){
+            var listarTodos = Ext.getCmp(this.linkListarTodos).getValue();
         }
+        //alert(listarTodos)
+        if(!listarTodos)
+            this.store.filter("idtrafico",trafico,true,true)
+        else
+            this.store.filter("","",true,true)
 
-        for( k in this.data ){
-            var agent = this.data[k];
-            if( agent.idtrafico==trafico || listarTodos ){
-                agentList.push( agent );
-            }            
-        }        
-        var data = new Object();
-        data.root = agentList;
-       
-       
-        e.combo.store.loadData(data);
-        //this.resultTpl.overwrite(this.id, e.combo.store.data);
-        //this.resultTpl.o
     },
 	getTrigger : Ext.form.TwinTriggerField.prototype.getTrigger,
     initTrigger : Ext.form.TwinTriggerField.prototype.initTrigger,
     trigger1Class : 'x-form-clear-trigger',
     trigger2Class : 'x-form-search-trigger',
-    trigger3Class : 'x-form-select-trigger',
     hideTrigger1 : true,
-    hideTrigger2 : true,
+
 
     initComponent : function() {
         WidgetAgente.superclass.initComponent.call(this);
+
         this.triggerConfig = {
 			tag : 'span',
 			cls : 'x-form-twin-triggers',
@@ -93,10 +91,6 @@ Ext.extend(WidgetAgente, Ext.form.ComboBox, {
 				tag : 'img',
 				src : Ext.BLANK_IMAGE_URL,
 				cls : 'x-form-trigger ' + this.trigger1Class
-			}, {
-				tag : 'img',
-				src : Ext.BLANK_IMAGE_URL,
-				cls : 'x-form-trigger ' + this.trigger2Class
 			},
 			{
 				tag : 'img',
@@ -113,15 +107,13 @@ Ext.extend(WidgetAgente, Ext.form.ComboBox, {
 		this.triggers[0].show();
 	}),
 	onTrigger1Click : function(a,b,c) {
-		this.clearValue();
+		this.clearValue();        
 		this.triggers[0].hide();
 		this.fireEvent('clear', this);
 		this.fireEvent('select', this);
 	},
 	onTrigger2Click : function() {
-	},
-	onTrigger3Click : function() {
-		this.onTriggerClick();
+		this.onTriggerClick();       
 	}
 });
 </script>
