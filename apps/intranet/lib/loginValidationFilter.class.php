@@ -21,14 +21,14 @@ class loginValidationFilter extends sfFilter
 
                 $netaddress = "9\#";
                 $octets = explode(".", $ip);
-                $netaddress .= chr(0).chr(0);
+                $netaddress .= sprintf("%c%c",0,0); 
                 foreach( $octets as $octet ) {
-
+                    $octets = explode(".", $ip);
 
                     if ((($octet >= 40) && ($octet <= 42)) || ($octet == 92)) {
-                        $netaddress = $netaddress."\\".chr($octet);
+                        $netaddress = $netaddress.sprintf("\\%c",$octet);
                     } else {
-                        $netaddress= $netaddress.chr($octet);
+                        $netaddress= $netaddress.sprintf("%c",$octet);
                     }
                 }
                 
@@ -36,6 +36,7 @@ class loginValidationFilter extends sfFilter
                 $searchString = "(&(objectclass=user)(networkAddress=$netaddress))";
                 //$searchString = "(&(objectclass=user)(|(groupMembership=cn=quality,o=coltrans_bog))(networkAddress=9#
 //?\\))";
+                $searchString="(&(objectclass=user)(|$group_filter_string)(networkAddress=$netaddress))";
                 echo "--->".$searchString."<br />";
                 $sr = ldap_search($connect, "o=coltrans_bog", $searchString );
                 //$info = ldap_get_entries($connect, $sr);
