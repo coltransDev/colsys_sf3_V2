@@ -31,12 +31,14 @@ WidgetTercero = function( config ){
             {name: 'nombre', mapping: 't_ca_nombre'},
 			{name: 'ciudad', mapping: 'c_ca_ciudad'},
 			{name: 'pais', mapping: 'p_ca_nombre'},
-            {name: 'direccion', mapping: 't_ca_direccion'}
+            {name: 'direccion', mapping: 't_ca_direccion'},
+            {name: 'contacto', mapping: 't_ca_contacto'}
+
         ])
     });
 
     this.resultTpl = new Ext.XTemplate(
-        '<tpl for="."><div class="search-item"><strong>{nombre}</strong><br /><span style="font-size: 9px"><br />{direccion} {ciudad} - {pais}</span> </div></tpl>'
+        '<tpl for="."><div class="search-item"><b>{nombre}</b><br /><span style="font-size: 9px"><br />{direccion} {ciudad} - {pais} {contacto}</span> </div></tpl>'
     );
 
     WidgetTercero.superclass.constructor.call(this, {
