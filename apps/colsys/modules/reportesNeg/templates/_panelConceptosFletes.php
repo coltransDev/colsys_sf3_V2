@@ -181,6 +181,7 @@ PanelConceptosFletes = function( config ){
         width: 50,
         hideable: false,
         sortable:false,
+        renderer: this.formatItem1,
         editor: new Ext.form.NumberField({
 				allowBlank: false ,
 				allowNegative: false,
@@ -623,7 +624,8 @@ Ext.extend(PanelConceptosFletes, Ext.grid.EditorGridPanel, {
                         scope:this,
                         handler: function(){
                             if( this.ctxRecord.data.iditem  ){
-                                grid_productosObservacionesHandler( this.ctxRecord );
+                                activeRow = this.ctxRecord;
+                                this.ventanaObservaciones( this.ctxRecord );
                             }
 
                         }
@@ -790,8 +792,16 @@ Ext.extend(PanelConceptosFletes, Ext.grid.EditorGridPanel, {
             var rowIdx = v.findRowIndex(t);
             var record = this.getStore().getAt(rowIdx);
 
-            activeRow = rowIdx;
-            Ext.MessageBox.show({
+            activeRow = record;
+            this.ventanaObservaciones( record );
+        }
+        <?
+        //}
+        ?>
+    },
+    ventanaObservaciones : function( record ){
+        var activeRow = record;
+        Ext.MessageBox.show({
                title: 'Observaciones',
                msg: 'Por favor coloque las observaciones:',
                width:300,
@@ -801,10 +811,6 @@ Ext.extend(PanelConceptosFletes, Ext.grid.EditorGridPanel, {
                animEl: 'mb3',
                value: record.get("observaciones")
            });
-        }
-        <?
-        //}
-        ?>
     },
 
     importarCotizacion: function(){
@@ -812,7 +818,7 @@ Ext.extend(PanelConceptosFletes, Ext.grid.EditorGridPanel, {
             this.win = new CotizacionWindow();
         }
         this.win.show();
-    }/*,
+    },/*
     importarCotizacionOTM: function(){
         if( !this.win ){
             this.win1 = new CotizacionWindow({tipo:'OTM/DTA'});
@@ -820,6 +826,14 @@ Ext.extend(PanelConceptosFletes, Ext.grid.EditorGridPanel, {
         this.win1.show();
     }
 */
+   formatItem1: function(value, p, record) {
+
+        return String.format(
+            '<div style="background-color: #E9CCE9">{0}</div>',
+            value
+        );
+
+    }
 
 });
 

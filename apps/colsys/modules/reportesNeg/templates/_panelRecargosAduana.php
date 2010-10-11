@@ -368,7 +368,7 @@ Ext.extend(PanelRecargosAduana, Ext.grid.EditorGridPanel, {
             changes['iditem']=r.data.iditem;
             changes['idconcepto']=r.data.idconcepto;
             changes['idreporte']=r.data.idreporte;
-            changes['tipo_app']=r.data.tipo;
+            changes['tipo_app']=r.data.tipo_app;
 
             
             if( r.data.iditem ){

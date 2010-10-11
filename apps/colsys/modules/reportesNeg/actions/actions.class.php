@@ -499,6 +499,8 @@ class reportesNegActions extends sfActions
 
     public function executeGuardarReporte( sfWebRequest $request )
     {
+    try
+    {
         $this->permiso = $this->getUser()->getNivelAcceso( reportesNegActions::RUTINA );
         $idreporte=($request->getParameter("idreporte")!="")?$request->getParameter("idreporte"):"0";
         $reporte = Doctrine::getTable("Reporte")->find( $idreporte );
@@ -635,7 +637,7 @@ class reportesNegActions extends sfActions
 
             if($request->getParameter("ca_mercancia_desc") && $request->getParameter("ca_mercancia_desc")!="" )
             {
-                $reporte->setCaMercanciaDesc($request->getParameter("ca_mercancia_desc"));
+                $reporte->setCaMercanciaDesc(utf8_decode($request->getParameter("ca_mercancia_desc")));
             }else
             {
                 $errors["ca_mercancia_desc"]="Debe colocar un texto de descripcion de la mercacia";
@@ -682,7 +684,7 @@ class reportesNegActions extends sfActions
                 if($request->getParameter("orden_pro".$i) && $request->getParameter("prov".$i)!=""  )
                 {
                     $orden.=($orden!="")?"|":"";
-                    $orden.=$request->getParameter("orden_pro".$i);
+                    $orden.=utf8_decode($request->getParameter("orden_pro".$i));
                 }
             }
             if($orden )
@@ -752,9 +754,11 @@ class reportesNegActions extends sfActions
                 $reporte->setCaIdconsignatario($request->getParameter("consig"));
             }
     //ca_informar_cons:
-            if($request->getParameter("notify") )
+            if($request->getParameter("idnotify") )
             {
-                $reporte->setCaIdnotify($request->getParameter("notify"));
+                $reporte->setCaIdnotify($request->getParameter("idnotify"));
+                $reporte->setCaNotify("2");
+                //
             }
     //ca_informar_noti:
             if($request->getParameter("consigmaster") )
@@ -899,9 +903,8 @@ class reportesNegActions extends sfActions
                 $reporte->setCaLogin($request->getParameter("idvendedor"));
             }
             else
-            {
-                if($request->getParameter("vendedor") && $request->getParameter("vendedor")=="")
-                $errors["vendedor"]="Debe asignar una cotizacion con vendedor";
+            {                
+                $errors["vendedor"]="Debe asignar un vendedor ";
                 $texto.="vendedor<br>";
             }
 
@@ -1014,7 +1017,7 @@ class reportesNegActions extends sfActions
 
                 if($request->getParameter("ca_instrucciones") )
 				{
-					$repAduana->setCaInstrucciones($request->getParameter("ca_instrucciones"));
+					$repAduana->setCaInstrucciones(utf8_decode($request->getParameter("ca_instrucciones")));
 				}
 
 				if($request->getParameter("ca_coordinador") )
@@ -1112,8 +1115,13 @@ class reportesNegActions extends sfActions
 			}
             $this->responseArray=array("success"=>true,"idreporte"=>$reporte->getCaIdreporte(),"redirect"=>$redirect);
         }
+    }
+    catch(Exception $e)
+    {
+        $this->responseArray=array("success"=>false,"err"=>$e->getMessage());
+    }
 
-        $this->setTemplate("responseTemplate");
+    $this->setTemplate("responseTemplate");
         //cuando se seleccion una cotizacion se debe marcar el campo aprobado, etapa='APR';
     }
 
@@ -1316,6 +1324,7 @@ class reportesNegActions extends sfActions
         if($request->getParameter("notify") )
         {
             $reporte->setCaIdnotify($request->getParameter("notify"));
+            $reporte->setCaNotify("2");
         }
 
         if($request->getParameter("consigmaster") )
@@ -2258,6 +2267,7 @@ color="#000000";
 
             $data["idtra_origen_id"]=utf8_encode($reporte->getOrigen()->getTrafico()->getCaIdtrafico());
             $data["tra_origen_id"]=utf8_encode($reporte->getOrigen()->getTrafico()->getCaNombre());
+
             $data["origen"]=utf8_encode($reporte->getOrigen()->getCaCiudad());
             $data["idorigen"]=$reporte->getCaOrigen();
 
@@ -2685,13 +2695,9 @@ color="#000000";
             }
 
             if( $request->getParameter("observaciones")!==null ){
-                if( $request->getParameter("observaciones") ){
+                
                     $tarifa->setCaObservaciones( $request->getParameter("observaciones") );
-                }else{
-                    $tarifa->setCaObservaciones( null );
-                }
             }
-
             $tarifa->save();
             $this->responseArray["success"]=true;
         }
@@ -2722,7 +2728,6 @@ color="#000000";
             }else{
                 $tarifa->setCaNetaTar( 0 ); //[TODO] permitir null
             }
-
 
             if( $request->getParameter("neta_min")!==null ){
                 $tarifa->setCaNetaMin( $request->getParameter("neta_min") );
@@ -2764,11 +2769,11 @@ color="#000000";
             }
 
             if( $request->getParameter("observaciones")!==null ){
-                if( $request->getParameter("observaciones") ){
+                //if( $request->getParameter("observaciones") ){
                     $tarifa->setCaDetalles( $request->getParameter("observaciones") );
-                }else{
-                    $tarifa->setCaDetalles( null );
-                }
+                //}else{
+                //    $tarifa->setCaDetalles( null );
+                //}
             }
 
           

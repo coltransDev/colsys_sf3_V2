@@ -265,7 +265,7 @@ var ij=parseInt(<?=($nprov>1)?($nprov-1):1?>);
             Ext.getCmp("ca_liberacion").setValue(cupo);
 
 			Ext.getCmp("preferencias").setValue(record.get("preferencias"));
-
+            Ext.getCmp("vendedor").onTrigger1Click();
             Ext.getCmp("vendedor").setValue(record.data.vendedor);
             $("#vendedor").val(record.data.nombre_ven);
 

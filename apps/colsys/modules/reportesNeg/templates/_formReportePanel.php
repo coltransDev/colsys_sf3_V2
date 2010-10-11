@@ -115,13 +115,16 @@ include_component("reportesNeg", "listReportesPanel",array("modo"=>$modo,"impoex
                     success: function(gridForm, action) {
                         var res = Ext.util.JSON.decode( action.response.responseText );
                         Ext.MessageBox.alert("Mensaje",'Se guardo correctamente el reporte');
-                        if(res.redirect)                            
+                        if(res.redirect)
                             location.href="/reportesNeg/consultaReporte/id/"+res.idreporte+"/impoexpo/<?=$impoexpo?>/modo/<?=$modo?>";
                     }
                     ,
                     failure:function(form,action){
                         var res = Ext.util.JSON.decode( action.response.responseText );
-                        Ext.MessageBox.alert("Mensaje",'No es posible crear un reporte ya que posee errores en la digitacion, verifique los siguientes campos<br>'+res.texto);
+                        if(res.err)
+                            Ext.MessageBox.alert("Mensaje",'Se presento un error guardando por favor informe al Depto. de Sistemas<br>'+res.err);
+                        else
+                            Ext.MessageBox.alert("Mensaje",'No es posible crear un reporte ya que posee errores en la digitacion, verifique los siguientes campos<br>'+res.texto);
                     }//end failure block
                 });
             }else{
@@ -282,8 +285,15 @@ include_component("reportesNeg", "listReportesPanel",array("modo"=>$modo,"impoex
                             }
                         }
 
+
+                        Ext.getCmp("tra_origen_id").setValue(res.data.idtra_origen_id);
+                        
+
                         Ext.getCmp("origen").setValue(res.data.idorigen);
                         $("#origen").attr("value",res.data.origen);
+
+                        Ext.getCmp("tra_destino_id").setValue(res.data.idtra_destino_id);
+                        
 
                         Ext.getCmp("destino").setValue(res.data.iddestino);
                         $("#destino").attr("value",res.data.destino);
@@ -312,12 +322,18 @@ include_component("reportesNeg", "listReportesPanel",array("modo"=>$modo,"impoex
                         $("#agente").attr("value",res.data.agente);
 
                         //$("#cliente").attr("value",res.data.idcliente);
+                        Ext.getCmp("notify").setValue(res.data.idnotify);
                         $("#notify").val(res.data.notify);
 
 
                         $("#idconsignatario").val(res.data.consignatario);
 
                         $("#idconsigmaster").val(res.data.consigmaster);
+
+                        $("#tra_origen_id").val(res.data.tra_origen_id);
+                        $("#idtra_origen_id").val(res.data.idtra_origen_id);
+
+                        $("#tra_destino_id").val(res.data.tra_destino_id);
                        
                         if(res.data.idmodalidad=="CONSOLIDADO")
                         {

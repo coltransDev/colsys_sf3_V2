@@ -25,8 +25,8 @@ include_component("widgets", "widgetBodega",array("modo"=>$modo,"impoexpo"=>$imp
 		this.wgNotify=new WidgetTercero({fieldLabel:"Notificar a",
                                             tipo: 'Notify',
                                             width: 500,
-                                            hiddenName: "notify",
-                                            id:"idnotify"
+                                            hiddenName: "idnotify",
+                                            id:"notify"
                                            });
         var camposHija = new Array();
         <?

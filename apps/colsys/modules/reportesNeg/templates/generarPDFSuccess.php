@@ -513,7 +513,9 @@ if( !$soloAduana ){
             $pdf->Row ( array ($concepto->getConcepto ()->getCaConcepto (), $concepto->getCaCantidad (), Utils::formatNumber($concepto->getCaNetaTar ()) . " " . $concepto->getCaNetaIdm (), $concepto->getCaNetaMin () . " " . $concepto->getCaNetaIdm (), Utils::formatNumber ( $concepto->getCaReportarTar () ). " " . $concepto->getCaReportarIdm (), $concepto->getCaReportarMin () . " " . $concepto->getCaReportarIdm (), Utils::formatNumber ($concepto->getCaCobrarTar ()) . " " . $concepto->getCaCobrarIdm (), Utils::formatNumber ($concepto->getCaCobrarMin () ) . " " . $concepto->getCaCobrarIdm (), $concepto->getCaObservaciones () ) );
         }
     }
-    
+
+    $pdf->beginGroup();
+
     $pdf->Ln ( 3 );
     $pdf->SetWidths ( array (200 ) );
     $pdf->SetFills ( array (1 ) );
@@ -558,6 +560,8 @@ if( !$soloAduana ){
             $pdf->Row ( array ("* Observaciones: " . $gasto->getCaDetalles () ) );
         }
     }
+    $pdf->flushGroup();
+    $pdf->beginGroup();
 
     if( $reporte->getCaImpoexpo () == Constantes::IMPO ){
         $sub_mem = 'Recargo Local';
@@ -597,6 +601,7 @@ if( !$soloAduana ){
 
         }
     }
+    $pdf->flushGroup();
 }
 
 
