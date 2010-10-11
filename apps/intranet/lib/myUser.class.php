@@ -8,7 +8,7 @@ class myUser extends sfBasicSecurityUser
 
     public function signIn( $login ){
 		$this->setAuthenticated( true );
-		$this->setAttribute('user_id', $login );
+		$this->setUserId( $login );
 	}
 	public function signOut(){
 		
@@ -28,6 +28,27 @@ class myUser extends sfBasicSecurityUser
     public function getMenu( ){
         
     }
+
+    public function setUserId( $userId  ){
+		$this->setAttribute('user_id', $userId );
+		$user = Doctrine::getTable("Usuario")->find( $userId );
+
+		if( $user ){
+			//$sucursal = $user->getSucursal();
+			$this->setAttribute('idsucursal',  $user->getCaIdsucursal() );
+			$this->setAttribute('nombre', $user->getCaNombre());
+			$this->setAttribute('email', $user->getCaEmail() );
+			$this->setAttribute('cargo', $user->getCaCargo() );
+			$this->setAttribute('extension', $user->getCaExtension());
+            $this->setAttribute('nombres', $user->getCaNombres());
+		}
+    }
+    
+    public function getNombre(){
+		return $this->getAttribute('nombre');
+	}
+
+    public function getNombres(){
+		return $this->getAttribute('nombres');
+	}
 }
-
-
