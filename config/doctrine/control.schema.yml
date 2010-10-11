@@ -89,7 +89,7 @@ AccesoPerfil:
       type: string(255)
       primary: true
     ca_acceso:
-      type: integer(4)
+      type: integer(4)    
   relations:
     Perfil:
       local: ca_perfil
