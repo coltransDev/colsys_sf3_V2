@@ -2333,6 +2333,12 @@ else if (isset($opcion) and $opcion == 'Liberar' and isset($oid)){
         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
         echo "<script>document.location.href = 'entrada.php';</script>";
         exit; }
+    $tm =& DlRecordset::NewRecordset($conn);
+    if (!$tm->Open("select ca_valor from tb_parametros where ca_casouso = 'CU091'")) {    // Selecciona los registros de la tabla parámetros
+        echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";     // Muestra el mensaje de error
+        exit;
+        }
+
     echo "<HTML>";
     echo "<HEAD>";
     echo "<TITLE>$titulo</TITLE>";
@@ -2376,7 +2382,17 @@ else if (isset($opcion) and $opcion == 'Liberar' and isset($oid)){
     echo "</TR>";
     echo "<TR>";
     echo "  <TD Class=listar style='text-align:right;'>Fecha de Liberación:<BR><INPUT TYPE='TEXT' NAME='fchliberacion' SIZE=12 VALUE='".date("Y-m-d")."' ONKEYDOWN=\"chkDate(this)\" ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
-    echo "  <TD Class=listar COLSPAN=4>Nota de Liberación:<BR><INPUT TYPE='TEXT' NAME='notaliberacion' VALUE='".$rs->Value('ca_notaliberacion')."' SIZE=62 MAXLENGTH=250></TD>";
+    // echo "  <TD Class=listar COLSPAN=4>Nota de Liberación:<BR><INPUT TYPE='TEXT' NAME='notaliberacion' VALUE='".$rs->Value('ca_notaliberacion')."' SIZE=62 MAXLENGTH=250></TD>";
+    echo "  <TD Class=listar COLSPAN=4>Nota de Liberación:<BR><SELECT NAME='notaliberacion'>";
+    while (!$tm->Eof()) {
+        echo"<OPTION VALUE=\"".$tm->Value('ca_valor')."\"";
+        if ($tm->Value('ca_valor')==$rs->Value('ca_notaliberacion')){
+            echo " SELECT";
+        }
+        echo">".$tm->Value('ca_valor')."</OPTION>";
+        $tm->MoveNext();
+       }
+    echo "  </SELECT></TD>";
     echo "</TR>";
     echo "<TR HEIGHT=5>";
     echo "  <TD Class=titulo COLSPAN=5></TD>";
@@ -2384,7 +2400,7 @@ else if (isset($opcion) and $opcion == 'Liberar' and isset($oid)){
     echo "</TABLE><BR>";
 
     echo "<TABLE CELLSPACING=10>";
-    echo "<TH><INPUT Class=submit TYPE='SUBMIT' NAME='accion' VALUE='Liberar'></TH>";         // Ordena almacenar los datos ingresados
+    echo "<TH><INPUT Class=submit TYPE='SUBMIT' NAME='accion' VALUE='Liberar' ONCLICK='return confirm(\"¿Esta seguro de Aplicar la Liberación?\")'></TH>";         // Ordena almacenar los datos ingresados
     echo "<TH><INPUT Class=button TYPE='BUTTON' NAME='accion' VALUE='Cancelar' ONCLICK='javascript:window.parent.frames.liberar_sea.style.visibility = \"hidden\";'></TH>";  // Cancela la operación
     echo "</TABLE>";
 

@@ -73,7 +73,12 @@ elseif (!isset($boton) and !isset($accion) and isset($criterio)){
         $columnas = array("Nombre del Cliente"=>"ca_compania", "Vendedor"=>"ca_vendedor", "Ciudad"=>"ca_ciudad", "Observaciones"=>"ca_observaciones");
         $condicion.= "where lower($columnas[$modalidad]) like lower('%".addslashes($criterio)."%')";
        }
-    if (!$rs->Open("select cl.ca_idcliente, cl.ca_compania, cl.ca_vendedor, us.ca_sucursal, lc.ca_cupo, lc.ca_diascredito, lc.ca_usucreado, lc.ca_fchcreado, lc.ca_usuactualizado, lc.ca_fchactualizado, lc.ca_observaciones, CASE WHEN cl.ca_tipo IS NOT NULL OR length(cl.ca_tipo::text) <> 0 THEN 'Vigente'::text ELSE CASE WHEN cl.ca_fchcircular IS NULL THEN 'Sin'::text ELSE CASE WHEN (cl.ca_fchcircular + 365) < now() THEN 'Vencido'::text ELSE 'Vigente'::text END END END AS ca_stdcircular from tb_libcliente lc INNER JOIN tb_clientes cl ON lc.ca_idcliente = cl.ca_idcliente LEFT OUTER JOIN vi_usuarios us ON cl.ca_vendedor = us.ca_login $condicion order by ca_sucursal, ca_compania")) {  // Selecciona todos lo registros de la tabla tb_libcliente
+    $sql = "select cl.ca_idcliente, cl.ca_compania, cl.ca_vendedor, us.ca_sucursal, lc.ca_cupo, lc.ca_diascredito, lc.ca_usucreado, lc.ca_fchcreado, lc.ca_usuactualizado, lc.ca_fchactualizado, lc.ca_observaciones, CASE WHEN cl.ca_tipo IS NOT NULL OR length(cl.ca_tipo::text) <> 0 THEN 'Vigente'::text ELSE CASE WHEN cl.ca_fchcircular IS NULL THEN 'Sin'::text ELSE CASE WHEN (cl.ca_fchcircular + 365) < now() THEN 'Vencido'::text ELSE 'Vigente'::text END END END AS ca_stdcircular, ";
+    $sql.= "    st.ca_fchestado, st.ca_libestado, st.ca_libestobservaciones, st.ca_fchcreado_le, st.ca_usucreado_le from tb_libcliente lc ";
+    $sql.= "    INNER JOIN tb_clientes cl ON lc.ca_idcliente = cl.ca_idcliente ";
+    $sql.= "    LEFT JOIN ( SELECT les.ca_idcliente, les.ca_fchestado, les.ca_libestado, les.ca_observaciones as ca_libestobservaciones, les.ca_fchcreado as ca_fchcreado_le, les.ca_usucreado as ca_usucreado_le FROM tb_libestados les RIGHT OUTER JOIN (select ca_idcliente, max(ca_idlibestado) as ca_idlibestado from tb_libestados group by ca_idcliente) ule ON (les.ca_idcliente = ule.ca_idcliente and les.ca_idlibestado = ule.ca_idlibestado) ) st ON st.ca_idcliente = lc.ca_idcliente ";
+    $sql.= "    LEFT OUTER JOIN vi_usuarios us ON cl.ca_vendedor = us.ca_login $condicion order by ca_sucursal, ca_compania";
+    if (!$rs->Open("$sql")) {  // Selecciona todos lo registros de la tabla tb_libcliente
         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";                   // Muestra el mensaje de error
         echo "<script>document.location.href = 'entrada.php';</script>";
         exit; }
@@ -102,11 +107,10 @@ require_once("menu.php");
     echo "<TH>Vendedor</TH>";
     echo "<TH>Días<BR>de Crédito</TH>";
     echo "<TH>Cupo Asignado</TH>";
-    echo "<TH>Circular 0170</TH>";
-    echo "<TH>Usu.Creación</TH>";
-    echo "<TH>Fch.Creación</TH>";
-    echo "<TH>Usu.Actualizado</TH>";
-    echo "<TH>Fch.Actualizado</TH>";
+    echo "<TH WIDTH=110 COLSPAN='2'>Estado de Liberación</TH>";
+    echo "<TH WIDTH=110>Creación</TH>";
+    echo "<TH WIDTH=110>Actualización</TH>";
+    echo "<TH WIDTH=110>Estado</TH>";
     $nom_suc = "";
     while (!$rs->Eof() and !$rs->IsEmpty()) {                                                      // Lee la totalidad de los registros obtenidos en la instrucción Select
        if ($rs->Value('ca_sucursal') != $nom_suc) {
@@ -115,20 +119,20 @@ require_once("menu.php");
            echo "</TR>";
            $nom_suc = $rs->Value('ca_sucursal');
        }
-
-       $beneficios = ($rs->Value('ca_diascredito')==0 or $rs->Value('ca_stdcircular') != 'Vigente')?'background-color:#FFb2b2;':'';
-
+       $beneficios = ($rs->Value('ca_diascredito')==0 or $rs->Value('ca_libestado')=="Suspendida")?'background-color:#FF0000;':'';
+       $beneficios = ($rs->Value('ca_libestado')=="Congelada")?'background-color:#9999CC;':$beneficios;
+       $observaciones = $rs->Value('ca_observaciones')." ".$rs->Value('ca_libestobservaciones');
        echo "<TR>";
        echo "  <TD Class=listar style='$beneficios'>".$rs->Value('ca_idcliente')."</TD>";
-       echo "  <TD Class=listar style='$beneficios' WIDTH=260>".$rs->Value('ca_compania').((strlen($rs->Value('ca_observaciones')) != 0)?"<br />".$rs->Value('ca_observaciones'):"")."</TD>";
+       echo "  <TD Class=listar style='$beneficios' WIDTH=260>".$rs->Value('ca_compania').((strlen($observaciones) != 0)?"<br />".$observaciones:"")."</TD>";
        echo "  <TD Class=listar style='text-align:center;$beneficios'>".$rs->Value('ca_vendedor')."</TD>";
        echo "  <TD Class=listar style='text-align:center;$beneficios'>".$rs->Value('ca_diascredito')."</TD>";
        echo "  <TD Class=listar style='text-align:right;$beneficios'>".number_format($rs->Value('ca_cupo'),0)."</TD>";
-       echo "  <TD Class=listar style='text-align:center;$beneficios'>".$rs->Value('ca_stdcircular')."</TD>";
-       echo "  <TD Class=listar style='text-align:center;$beneficios'>".$rs->Value('ca_usucreado')."</TD>";
-       echo "  <TD Class=listar style='text-align:center;$beneficios'>".$rs->Value('ca_fchcreado')."</TD>";
-       echo "  <TD Class=listar style='text-align:center;$beneficios'>".$rs->Value('ca_usuactualizado')."</TD>";
-       echo "  <TD Class=listar style='text-align:center;$beneficios'>".$rs->Value('ca_fchactualizado')."</TD>";
+       echo "  <TD Class=listar style='text-align:right;$beneficios'>".$rs->Value('ca_libestado')."</TD>";
+       echo "  <TD Class=listar style='text-align:right;$beneficios'>".$rs->Value('ca_fchestado')."</TD>";
+       echo "  <TD Class=listar style='text-align:center;$beneficios'><B>".$rs->Value('ca_usucreado')."</B><BR>".$rs->Value('ca_fchcreado')."</TD>";
+       echo "  <TD Class=listar style='text-align:center;$beneficios'><B>".$rs->Value('ca_usuactualizado')."</B><BR>".$rs->Value('ca_fchactualizado')."<BR>"."</TD>";
+       echo "  <TD Class=listar style='text-align:center;$beneficios'><B>".$rs->Value('ca_usucreado_le')."</B><BR>".$rs->Value('ca_fchcreado_le')."</TD>";
        echo "</TR>";
        $rs->MoveNext();
        }
