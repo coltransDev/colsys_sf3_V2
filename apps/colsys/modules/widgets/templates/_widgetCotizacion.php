@@ -23,6 +23,7 @@ WidgetCotizacion = function( config ){
         }, [
             {name: 'idcotizacion', mapping: 'c_ca_idcotizacion'},
             {name: 'consecutivo', mapping: 'c_ca_consecutivo'},
+            {name: 'version', mapping: 'c_ca_version'},
             {name: 'idproducto', mapping: 'p_ca_idproducto'},
             {name: 'producto', mapping: 'p_ca_producto'},
             {name: 'impoexpo', mapping: 'p_ca_impoexpo'},
@@ -62,7 +63,7 @@ WidgetCotizacion = function( config ){
     });
 
     this.resultTpl = new Ext.XTemplate(
-        '<tpl for="."><div class="search-item"><strong>{consecutivo}</strong><br /><span><br />{modalidad} {origen} - {destino}</span> </div></tpl>'
+        '<tpl for="."><div class="search-item"><strong>{consecutivo}-V{version}</strong><br /><span><br />{modalidad} {origen} - {destino}</span> </div></tpl>'
     );
 
     WidgetCotizacion.superclass.constructor.call(this, {

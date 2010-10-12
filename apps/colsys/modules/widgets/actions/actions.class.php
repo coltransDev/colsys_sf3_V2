@@ -614,7 +614,7 @@ class widgetsActions extends sfActions
         
         $q = Doctrine::getTable("Cotizacion")
                        ->createQuery("c")
-                       ->select("c.ca_idcotizacion, c.ca_consecutivo, p.ca_idproducto, o.ca_ciudad, d.ca_ciudad, o.ca_idciudad, d.ca_idciudad,o.ca_idtrafico, d.ca_idtrafico, p.ca_producto
+                       ->select("c.ca_idcotizacion, c.ca_consecutivo, c.ca_version, p.ca_idproducto, o.ca_ciudad, d.ca_ciudad, o.ca_idciudad, d.ca_idciudad,o.ca_idtrafico, d.ca_idtrafico, p.ca_producto
                                 , p.ca_impoexpo, p.ca_transporte, p.ca_modalidad, p.ca_incoterms, con.ca_idcontacto, con.ca_nombres, con.ca_papellido, con.ca_sapellido, con.ca_cargo
                                 ,cl.ca_idcliente, cl.ca_compania, cl.ca_preferencias, cl.ca_confirmar, cl.ca_coordinador, c.ca_usuario, p.ca_idlinea,usu.ca_nombre,libcli.ca_cupo, libcli.ca_diascredito,
                                 s.ca_idmoneda,s.ca_prima_tip,s.ca_prima_vlr,s.ca_prima_min,s.ca_obtencion,s.ca_idmonedaobtencion")
