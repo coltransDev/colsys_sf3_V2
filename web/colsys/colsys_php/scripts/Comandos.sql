@@ -2220,3 +2220,12 @@ insert into tb_parametros values ('CU086',14,'PE-051','0');
 insert into tb_parametros values ('CU086',15,'CN-086','15');
 insert into tb_parametros values ('CU086',16,'HK-852','15');
 insert into tb_parametros values ('CU086',17,'KR-082','15');
+
+
+insert into tb_parametros values ('CU091',1,'Se libera sobre canje','');
+insert into tb_parametros values ('CU091',2,'Cartera al dia','');
+insert into tb_parametros values ('CU091',3,'Viene carga ruteada','');
+insert into tb_parametros values ('CU091',4,'Liberación autorizada por Gerente Comercial','');
+insert into tb_parametros values ('CU091',5,'Liberación autorizada por Gerente Regional','');
+insert into tb_parametros values ('CU091',6,'Carga para nacionalizar en Colmas','');
+insert into tb_parametros values ('CU091',7,'Se libera para transito OTM','');
