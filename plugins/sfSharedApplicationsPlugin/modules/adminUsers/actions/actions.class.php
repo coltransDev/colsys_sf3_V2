@@ -828,6 +828,26 @@ class adminUsersActions extends sfActions
         $this->manager=Doctrine::getTable('Usuario')->find($request->getParameter('login'));
         $this->manager = $this->manager->getManager();
 
+        $ldap_server = sfConfig::get("app_ldap_host");
+        $auth_user = "cn=" . sfConfig::get("app_ldap_user") . ",o=coltrans_bog";
+        $passwd = sfConfig::get("app_ldap_passwd");
+
+        $this->addresses = array();
+        if ($connect = ldap_connect($ldap_server)) {
+            if ($bind = ldap_bind($connect, $auth_user, $passwd)) {
+                $searchString = "(&(cn=" . $request->getParameter('login') . "))";
+                $sr = ldap_search($connect, "o=coltrans_bog", $searchString );
+                $entry = ldap_first_entry($connect, $sr);
+                $attrs = ldap_get_attributes($connect, $entry);
+                $result =  $attrs["networkAddress"];
+                foreach( $result as $key=>$val ){                    
+                    if( trim($key)!="count" ){
+                        $this->addresses[] = Utils::LDAPNetAddr($val);
+                    }
+                }
+            }
+        }
+
         
     }
 }

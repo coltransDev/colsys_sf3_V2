@@ -86,6 +86,13 @@
         </tr>
         <?
         }
+        foreach( $addresses as $address ){
+        ?>
+        <tr>
+            <td>Network Address:</td><td><b><?=$address["protocol"]." ".$address["address"]?></b></td>
+        </tr>
+        <?
+        }
         ?>
 </table>
 </div>
