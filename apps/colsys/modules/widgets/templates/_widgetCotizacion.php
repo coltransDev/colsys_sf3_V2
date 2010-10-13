@@ -42,7 +42,7 @@ WidgetCotizacion = function( config ){
 			{name: 'idcontacto', mapping: 'con_ca_idcontacto'},
             {name: 'idcliente', mapping: 'cl_ca_idcliente'},
             {name: 'compania', mapping: 'cl_ca_compania'},
-            {name: 'dias_credito', mapping: 'libcli_ca_diascredito'},
+            {name: 'diascredito', mapping: 'libcli_ca_diascredito'},
             {name: 'cupo', mapping: 'libcli_ca_cupo'},
 			{name: 'cargo', mapping: 'con_ca_cargo'},
 			{name: 'nombre', mapping: 'con_ca_nombres'},
