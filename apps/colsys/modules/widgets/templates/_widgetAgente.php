@@ -58,14 +58,16 @@ Ext.extend(WidgetAgente, Ext.form.ComboBox, {
             var link = this.linkDestino;
         }else{
             var link = this.linkOrigen;
-        }        
-        var trafico =  Ext.getCmp(link).getValue();        
-        var agentList = new Array();
+        }
+        record = Ext.getCmp(link).getRecord();
+        var trafico = record.data.idtrafico;       
+        
         var listarTodos = false;
         if( Ext.getCmp(this.linkListarTodos) && Ext.getCmp(this.linkListarTodos)){
             var listarTodos = Ext.getCmp(this.linkListarTodos).getValue();
         };
         if(!listarTodos)
+
             this.store.filter("idtrafico",trafico,true,true);
         else
             this.store.filter("","",true,true);
