@@ -27,7 +27,7 @@ WidgetContinuacion = function( config ){
                         {name: 'transporte'}
 					])
 				)
-			})
+			});
 
     WidgetContinuacion.superclass.constructor.call(this, {
         valueField: 'modalidad',
@@ -44,7 +44,7 @@ WidgetContinuacion = function( config ){
             focus: this.onFocusWdg
         }
     });
-}
+};
 
 
 Ext.extend(WidgetContinuacion, Ext.form.ComboBox, {
@@ -56,8 +56,7 @@ Ext.extend(WidgetContinuacion, Ext.form.ComboBox, {
             if( cmp2 ){
                 var list = new Array();
                 var transporte = Ext.getCmp(this.linkTransporte).getValue();
-                var impoexpo = Ext.getCmp(this.linkImpoexpo).getValue();
-                //list.push( {modalidad:" "} );
+                var impoexpo = Ext.getCmp(this.linkImpoexpo).getValue();                
                 for( k in this.data ){
                     var rec = this.data[k];
                     if( transporte && impoexpo && rec.transporte==transporte && rec.impoexpo==impoexpo ){

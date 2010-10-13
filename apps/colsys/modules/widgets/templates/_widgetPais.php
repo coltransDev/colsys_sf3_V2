@@ -25,9 +25,8 @@ WidgetPais = function( config ){
 						{name: 'idtrafico'},
                         {name: 'nombre'}
 					])
-				)
-                //,proxy: new Ext.data.MemoryProxy( <?=json_encode(array("root"=>$data, "total"=>count($data), "success"=>true) )?> )
-			})
+				)                
+			});
 
     WidgetPais.superclass.constructor.call(this, {
         valueField: 'idtrafico',
@@ -62,8 +61,7 @@ WidgetPais = function( config ){
                     var data = new Object();
 
                     if(this.todos)
-                    {
-                        //alert(this.data)
+                    {                        
                         var data1 = new Object();
                         data1.idtrafico="99-999";
                         data1.nombre="Todos los Tráficos del Mundo";
@@ -89,7 +87,7 @@ WidgetPais = function( config ){
 
 
     });
-}
+};
 
 
 Ext.extend(WidgetPais, Ext.form.ComboBox, {
@@ -128,8 +126,7 @@ Ext.extend(WidgetPais, Ext.form.ComboBox, {
                     {
                         
                         if(this.todos)
-                        {
-                            //alert(this.data)
+                        {                            
                             var data1 = new Object();
                             data1.idtrafico="99-999";
                             data1.nombre="Todos los Tráficos del Mundo";
@@ -143,8 +140,7 @@ Ext.extend(WidgetPais, Ext.form.ComboBox, {
                             data.root = list;
                         }
                         else
-                        {
-                            //alert(this.todos)
+                        {                            
                             data.root = this.data;
                         }
                         this.store.loadData(data);

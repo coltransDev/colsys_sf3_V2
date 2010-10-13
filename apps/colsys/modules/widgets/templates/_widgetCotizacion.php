@@ -80,7 +80,7 @@ WidgetCotizacion = function( config ){
         lazyRender:true,        
         itemSelector: 'div.search-item'
     });
-}
+};
 Ext.extend(WidgetCotizacion, Ext.form.ComboBox, {
     getTrigger : Ext.form.TwinTriggerField.prototype.getTrigger,
     initTrigger : Ext.form.TwinTriggerField.prototype.initTrigger,

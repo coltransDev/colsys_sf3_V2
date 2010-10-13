@@ -25,7 +25,7 @@ WidgetComerciales = function( config ){
 					])
 				),
 				proxy: new Ext.data.MemoryProxy( <?=json_encode(array("root"=>$comercialesJson, "total"=>count($comercialesJson), "success"=>true) )?> )
-			})
+			});
 
     WidgetComerciales.superclass.constructor.call(this, {
         valueField: 'login',
@@ -40,7 +40,7 @@ WidgetComerciales = function( config ){
         listClass: 'x-combo-list-small'
        
     });
-}
+};
 
 Ext.extend(WidgetComerciales, Ext.form.ComboBox, {
 	getTrigger : Ext.form.TwinTriggerField.prototype.getTrigger,

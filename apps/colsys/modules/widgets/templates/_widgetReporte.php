@@ -18,14 +18,15 @@ WidgetReporte = function( config ){
     Ext.apply(this, config);
 
     this.resultTpl = new Ext.XTemplate(
-        '<tpl for="."><div class="search-item"><strong>{consecutivo}</strong><br /><span><br />{origen} - {destino}</span> </div></tpl>'
+        '<tpl for="."><div class="search-item"><strong>{consecutivo}-{version}</strong><br /><span><br />{origen} - {destino}</span> </div></tpl>'
 
     );
         
     this.store = new Ext.data.Store({
         proxy: new Ext.data.HttpProxy({
             url: '<?=url_for("widgets/listaReportesJSON")?>'
-        }),        
+        }),
+        baseParams: {query: '1478'},
         reader: new Ext.data.JsonReader({
             root: 'root',
             totalProperty: 'total'           
@@ -52,9 +53,8 @@ WidgetReporte = function( config ){
 			{name: 'preferencias', mapping: 'cl_ca_preferencias'},
 			{name: 'confirmar', mapping: 'cl_ca_confirmar'},
             {name: 'vendedor', mapping: 'c_ca_usuario'},
-            {name: 'coordinador', mapping: 'cl_ca_coordinador'}
-
-
+            {name: 'coordinador', mapping: 'cl_ca_coordinador'},
+            {name: 'version', mapping: 'r_ca_version'}
         ])
     });
 

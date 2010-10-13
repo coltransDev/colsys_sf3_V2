@@ -59,7 +59,7 @@ WidgetTicket = function( config ){
         tpl: this.resultTpl,
         itemSelector: 'div.search-item'
     });
-}
+};
 
 
 Ext.extend(WidgetTicket, Ext.form.ComboBox, {

@@ -27,7 +27,7 @@ WidgetMoneda = function( config ){
 					])
 				),
 				proxy: new Ext.data.MemoryProxy( <?=json_encode(array("root"=>$data, "total"=>count($data), "success"=>true) )?> )
-			})
+			});
 
     WidgetMoneda.superclass.constructor.call(this, {
         valorField: 'valor',
@@ -41,7 +41,7 @@ WidgetMoneda = function( config ){
         mode: 'local',
         listClass: 'x-combo-list-small'
     });
-}
+};
 
 
 Ext.extend(WidgetMoneda, Ext.form.ComboBox, {

@@ -59,7 +59,7 @@ WidgetUsuario = function( config ){
         tpl: this.resultTpl,
         itemSelector: 'div.search-item'
     });
-}
+};
 
 
 Ext.extend(WidgetUsuario, Ext.form.ComboBox, {

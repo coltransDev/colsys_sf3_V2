@@ -57,7 +57,7 @@ WidgetTercero = function( config ){
         listeners: {
         }
     });
-}
+};
 
 
 Ext.extend(WidgetTercero, Ext.form.ComboBox, {
@@ -67,8 +67,7 @@ Ext.extend(WidgetTercero, Ext.form.ComboBox, {
     trigger2Class : 'x-form-search-trigger',
     trigger3Class : 'x-form-select-trigger',
     hideTrigger1 : true,
-    //hideTrigger2 : true,
-
+    
     initComponent : function() {
         WidgetTercero.superclass.initComponent.call(this);
 

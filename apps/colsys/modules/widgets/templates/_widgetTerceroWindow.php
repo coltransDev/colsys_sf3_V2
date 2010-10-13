@@ -16,18 +16,13 @@ WidgetTerceroWindow = function( config ){
     Ext.apply(this, config);
 
     WidgetTerceroWindow.superclass.constructor.call(this, {
-        width       : 500,
-			//height      : 200,
+        width       : 500,			
 			closeAction :'close',
 			plain       : true,
 
 			items       : new Ext.FormPanel({
                 id: 'tercero-form',
-                //frame: true,
-                //title: titulo,
-                //autoHeight: true,
-                //bodyStyle: 'padding: 10px 10px 0 10px;',
-                //labelWidth: 50,
+                
                 defaultType: 'textfield',
 
                 items: [
@@ -109,7 +104,7 @@ WidgetTerceroWindow = function( config ){
 				}
 			}]
     });
-}
+};
 
 Ext.extend(WidgetTerceroWindow, Ext.Window, {
     guardar: function(){
@@ -132,7 +127,7 @@ Ext.extend(WidgetTerceroWindow, Ext.Window, {
             {
                 waitMsg: 'Guardando cambios...',
                 url: '<?=url_for("widgets/guardarTercero")?>',
-                //Solamente se envian los cambios
+                
                 params : {
                     idtercero: idtercero,
                     nombre: nombre,
@@ -146,9 +141,7 @@ Ext.extend(WidgetTerceroWindow, Ext.Window, {
                     idcomponent: this.idcomponent,
                     tipo: this.tipo
                 }
-                ,
-
-                //Ejecuta esta accion cuando el resultado es exitoso
+                ,               
                 callback :function(options, success, response){
                     var res = Ext.util.JSON.decode( response.responseText );
                     if( res.success ){
@@ -171,20 +164,20 @@ Ext.extend(WidgetTerceroWindow, Ext.Window, {
     },
 
     show : function(){
-//        alert("173");
+
         if( this.idtercero ){
             
 			Ext.Ajax.request(
 			{
 				waitMsg: 'Cargando datos...',
 				url: '<?=url_for("widgets/datosTercero")?>',
-				//Solamente se envian los cambios
+
 				params : {
 					idtercero: this.idtercero
 				}
 				,
 
-				//Ejecuta esta accion cuando el resultado es exitoso
+
 				callback :function(options, success, response){
 					var res = Ext.util.JSON.decode( response.responseText );
 					var fp = Ext.getCmp("tercero-form");
@@ -207,9 +200,9 @@ Ext.extend(WidgetTerceroWindow, Ext.Window, {
 			});
 
 		}
-//        alert("209");
+
         WidgetTerceroWindow.superclass.show.apply(this, arguments);
-//        alert("211");
+
     }
 });
 	

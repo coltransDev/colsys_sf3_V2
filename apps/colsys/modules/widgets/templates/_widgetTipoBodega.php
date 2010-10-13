@@ -45,7 +45,7 @@ WidgetTipoBodega = function( config ){
             focus: this.onFocusWdg
         }
     });
-}
+};
 
 
 Ext.extend(WidgetTipoBodega, Ext.form.ComboBox, {

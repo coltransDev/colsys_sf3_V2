@@ -14,9 +14,7 @@ WidgetAgente = function( config ){
 				autoLoad : true,
 				reader: new Ext.data.JsonReader(
 					{
-						root: 'root'/*,
-                        totalProperty: 'total',
-						successProperty: 'success'*/
+						root: 'root'
 					},
 					Ext.data.Record.create([
 						{name: 'idagente'},
@@ -28,7 +26,7 @@ WidgetAgente = function( config ){
 					])
 				),
 				proxy: new Ext.data.MemoryProxy( <?=json_encode(array("root"=>$agentes, "total"=>count($agentes), "success"=>true) )?> )
-			})
+			});
     
     this.resultTpl = new Ext.XTemplate(
             '<tpl for="."><div class="search-item"><b>{nombre}</b><br /><span style="font-size:9px">{pais}-{ciudad}-{direccion} </span> </div></tpl>'
@@ -46,14 +44,12 @@ WidgetAgente = function( config ){
         lazyRender:true,
         mode: 'local',
         listClass: 'x-combo-list-small',
-        listeners: {
-            //beforequery: this.onBeforeQuery
-            //focus:this.onBeforeQuery,
+        listeners: {            
             expand : this.onBeforeQuery
         }
 
     });
-}
+};
 
 Ext.extend(WidgetAgente, Ext.form.ComboBox, {
     onBeforeQuery: function(  ){
@@ -68,12 +64,11 @@ Ext.extend(WidgetAgente, Ext.form.ComboBox, {
         var listarTodos = false;
         if( Ext.getCmp(this.linkListarTodos) && Ext.getCmp(this.linkListarTodos)){
             var listarTodos = Ext.getCmp(this.linkListarTodos).getValue();
-        }
-        //alert(listarTodos)
+        };
         if(!listarTodos)
-            this.store.filter("idtrafico",trafico,true,true)
+            this.store.filter("idtrafico",trafico,true,true);
         else
-            this.store.filter("","",true,true)
+            this.store.filter("","",true,true);
 
     },
 	getTrigger : Ext.form.TwinTriggerField.prototype.getTrigger,

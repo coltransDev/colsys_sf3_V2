@@ -50,44 +50,9 @@ WidgetBodega = function( config ){
         mode: 'local',
         listClass: 'x-combo-list-small'        
     });
-}
+};
 
 Ext.extend(WidgetBodega, Ext.form.ComboBox, {
-/*    onFocusWdg: function( field, newVal, oldVal ){
-        
-        var cmp = Ext.getCmp(this.linkTransporte);
-        
-        if( cmp ){
-
-
-            var cmp2 = Ext.getCmp(this.linkTipo);
-
-            //if( cmp2 ){
-                     
-                var list = new Array();
-                var transporte = Ext.getCmp(this.linkTransporte).getValue();
-              //  var tipo = Ext.getCmp(this.linkTipo).getValue();
-                
-                for( k in this.data ){
-                    var rec = this.data[k];
-
-//                    if( transporte && rec.b_ca_transporte==transporte && rec.b_ca_tipo==tipo ){
-                        list.push( rec );
-//                    }
-                }
-
-                var data = new Object();
-                data.root = list;
-
-                this.store.loadData(data);
-            }else{
-                alert( "arrrrg: No existe el componente id: "+e.combo.linkTipo+"!");
-            }
-        }else{
-            alert( "arrrrg: No existe el componente id: "+e.combo.linkTransporte+"!");
-        }
-    },
-*/
 	getTrigger : Ext.form.TwinTriggerField.prototype.getTrigger,
     initTrigger : Ext.form.TwinTriggerField.prototype.initTrigger,
     trigger1Class : 'x-form-clear-trigger',

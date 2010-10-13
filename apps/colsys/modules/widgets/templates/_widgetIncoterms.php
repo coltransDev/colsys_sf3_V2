@@ -29,7 +29,7 @@ WidgetIncoterms = function( config ){
 					])
 				),
 				proxy: new Ext.data.MemoryProxy( <?=json_encode(array("root"=>$incoterms, "total"=>count($incoterms), "success"=>true) )?> )
-			})
+			});
 
     WidgetIncoterms.superclass.constructor.call(this, {
         fieldLabel: 'Incoterms',
@@ -44,7 +44,7 @@ WidgetIncoterms = function( config ){
         mode: 'local',
         listClass: 'x-combo-list-small'
     });
-}
+};
 
 
 Ext.extend(WidgetIncoterms, Ext.form.ComboBox, {

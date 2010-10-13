@@ -47,7 +47,7 @@ WidgetConsignar = function( config ){
             focus: this.onFocusWdg
         }
     });
-}
+};
 
 
 Ext.extend(WidgetConsignar, Ext.form.ComboBox, {

@@ -34,7 +34,7 @@ WidgetCiudad = function( config ){
                         {name: 'idtrafico'}
 					])
 				)				
-			})
+			});
 
     WidgetCiudad.superclass.constructor.call(this, {
         valueField: 'idciudad',
@@ -52,7 +52,7 @@ WidgetCiudad = function( config ){
         }
     });
     this.reload();
-}
+};
 
 
 Ext.extend(WidgetCiudad, Ext.form.ComboBox, {

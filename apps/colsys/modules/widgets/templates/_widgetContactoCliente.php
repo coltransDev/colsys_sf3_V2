@@ -59,7 +59,7 @@ WidgetContactoCliente = function( config ){
         emptyText: 'Escriba el nombre del cliente...'        
 
     });
-}
+};
 
 
 Ext.extend(WidgetContactoCliente, Ext.form.ComboBox, {
@@ -73,7 +73,7 @@ Ext.extend(WidgetContactoCliente, Ext.form.ComboBox, {
         }
 
         if( record.get("listaclinton")=="Sí" ){
-            //Ext.MessageBox.alert("Alerta","Este cliente se encuentra en lista clinton");
+            
             if( mensaje!=""){
                 mensaje+="<br />";
             }
@@ -81,9 +81,9 @@ Ext.extend(WidgetContactoCliente, Ext.form.ComboBox, {
         }
 
         var fchcircular = record.get("fchcircular");
-        //alert( fchcircular);
+        
         if( !fchcircular ){
-            //Ext.MessageBox.alert("Alerta","El cliente no tiene circular 170");
+           
             if( mensaje!=""){
                 mensaje+="<br />";
             }
@@ -95,10 +95,10 @@ Ext.extend(WidgetContactoCliente, Ext.form.ComboBox, {
                     mensaje+="<br />";
                 }
                 mensaje += "La circular 170 se encuentra vencida";
-                //Ext.MessageBox.alert("Alerta","La circular 170 se encuentra vencida");
+                
             }else{
                 if( fchcircular+(86400*335)<=<?=time()?> ){
-                    //Ext.MessageBox.alert("Alerta","La circular 170 se vencera en menos de 30 dias");
+                    
                     if( mensaje!=""){
                         mensaje+="<br />";
                     }

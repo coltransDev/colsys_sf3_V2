@@ -5,7 +5,6 @@
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
 $data = $sf_data->getRaw("data");
-//print_r($data);
 ?>
 <script type="text/javascript">
 WidgetParametros = function( config ){
@@ -24,7 +23,7 @@ WidgetParametros = function( config ){
                         {name: 'name'}
 					])
 				)
-			})
+			});
 
     WidgetParametros.superclass.constructor.call(this, {
         mode: 'local',
@@ -38,19 +37,17 @@ WidgetParametros = function( config ){
         lazyRender:true,
         listClass: 'x-combo-list-small',
         listeners: {
-            focus: this.onFocusWdg
-           
-            //focus: this.onRender
+            focus: this.onFocusWdg            
         }
     });
-}
+};
 
 Ext.extend(WidgetParametros, Ext.form.ComboBox, {
     onFocusWdg: function( field, newVal, oldVal ){
         var list = new Array();
-        //alert(this.caso_uso)
+        
         if( this.caso_uso ){
-        //alert(this.data[0].toSource())
+       
             for( k in this.data ){
                 var rec = this.data[k];
                 if( rec.caso_uso==this.caso_uso ){
@@ -59,7 +56,7 @@ Ext.extend(WidgetParametros, Ext.form.ComboBox, {
                     list.push( rec );
                 }
             }
-//                alert(list.toSource());
+
             var data = new Object();
             data.root = list;
             this.store.loadData(data);

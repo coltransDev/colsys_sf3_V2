@@ -27,7 +27,7 @@ WidgetImpoexpo = function( config ){
 					])
 				),
 				proxy: new Ext.data.MemoryProxy( <?=json_encode(array("root"=>$data, "total"=>count($data), "success"=>true) )?> )
-			})
+			});
 
     WidgetImpoexpo.superclass.constructor.call(this, {       
         valorField: 'valor',

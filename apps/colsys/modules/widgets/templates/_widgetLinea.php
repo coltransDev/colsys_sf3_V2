@@ -30,7 +30,7 @@ WidgetLinea = function( config ){
                         {name: 'activo_expo'}
 					])
 				)
-			})
+			});
 
     WidgetLinea.superclass.constructor.call(this, {        
         mode: 'local',
@@ -49,7 +49,7 @@ WidgetLinea = function( config ){
         }
     });
         
-}
+};
 
 Ext.extend(WidgetLinea, Ext.form.ComboBox, {
     trigger1Class : 'x-form-clear-trigger',

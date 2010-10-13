@@ -30,7 +30,7 @@ WidgetSucursales = function( config ){
 					])
 				),
 				proxy: new Ext.data.MemoryProxy( <?=json_encode(array("root"=>$data, "total"=>count($data), "success"=>true) )?> )
-			})
+			});
 
     WidgetSucursales.superclass.constructor.call(this, {
         valorField: 'valor',
@@ -45,7 +45,7 @@ WidgetSucursales = function( config ){
         mode: 'local',
         listClass: 'x-combo-list-small'        
     });
-}
+};
 
 
 Ext.extend(WidgetSucursales, Ext.form.ComboBox, {

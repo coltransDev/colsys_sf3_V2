@@ -29,7 +29,7 @@ WidgetModalidad = function( config ){
 					])
 				)
 				,proxy: new Ext.data.MemoryProxy( <?=json_encode(array("root"=>$data, "total"=>count($data), "success"=>true) )?> )
-			})
+			});
 
     WidgetModalidad.superclass.constructor.call(this, {
         valueField: 'modalidad',
@@ -46,7 +46,7 @@ WidgetModalidad = function( config ){
             focus: this.onFocusWdg
         }
     });
-}
+};
 
 
 Ext.extend(WidgetModalidad, Ext.form.ComboBox, {
@@ -56,7 +56,7 @@ Ext.extend(WidgetModalidad, Ext.form.ComboBox, {
         if( cmp ){
             var cmp2 = Ext.getCmp(this.linkImpoexpo);
             if( cmp2 ){
-				// alert(this.linkTransporte);
+				
                 var list = new Array();
                 var transporte = Ext.getCmp(this.linkTransporte).getValue();
                 var impoexpo = Ext.getCmp(this.linkImpoexpo).getValue();                
