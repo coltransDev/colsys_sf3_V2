@@ -1,7 +1,7 @@
 <?php
-/* 
+/*
  *  This file is part of the Colsys Project.
- * 
+ *
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
 
@@ -15,13 +15,16 @@ $data = $sf_data->getRaw("data");
 
 
 WidgetCiudad = function( config ){
-    
+
     Ext.apply(this, config);
 
-    this.data = <?=json_encode($data)?>;
+    //this.data = <?=json_encode($data)?>;
 
+    this.resultTpl = new Ext.XTemplate(
+            '<tpl for="."><div class="search-item"><b>{ciudad}</b><br />{trafico}</div></tpl>'
+    );
     this.store = new Ext.data.Store({
-				autoLoad : false,
+				autoLoad : true,
 				reader: new Ext.data.JsonReader(
 					{
 						root: 'root',
@@ -31,111 +34,90 @@ WidgetCiudad = function( config ){
 					Ext.data.Record.create([
 						{name: 'idciudad'},
                         {name: 'ciudad'},
-                        {name: 'idtrafico'}
+                        {name: 'idtrafico'},
+                        {name: 'trafico'},
+                        {name: 'ciudad_trafico'}
 					])
-				)				
-			});
+				),
+                proxy: new Ext.data.MemoryProxy( <?=json_encode(array("root"=>$data, "total"=>count($data), "success"=>true) )?> )
+			})
 
     WidgetCiudad.superclass.constructor.call(this, {
         valueField: 'idciudad',
         displayField: 'ciudad',
-        typeAhead: true,
+        searchField: 'ciudad_trafico',
+        typeAhead: false,
         forceSelection: true,
-        triggerAction: 'all',
+        //triggerAction: 'all',
         emptyText:'',
-        selectOnFocus: true,        
+        selectOnFocus: true,
         lazyRender:true,
         mode: 'local',
+        tpl: this.resultTpl,
+        itemSelector: 'div.search-item',
         listClass: 'x-combo-list-small',
+        submitValue: true,
+        filterBy: this.filterFn,
         listeners: {
-            focus: this.onFocusWdg        
+            //focus: this.onFocusWdg
         }
     });
-    this.reload();
-};
+    //this.reload();
+}
 
 
 Ext.extend(WidgetCiudad, Ext.form.ComboBox, {
-    reload: function( parameter ){
-        if( typeof(this.idtrafico)!="undefined" && this.idtrafico ){
-            var list = new Array();
-            for( k in this.data ){
-                var rec = this.data[k];
 
-                if( rec.idtrafico==this.idtrafico ){
-                    list.push( rec );
-                }
-            }
-            var data = new Object();
-            data.root = list;
-            
-            this.store.loadData(data);
+    doQuery : function(q, forceAll){
+        q = Ext.isEmpty(q) ? '' : q;
+        var qe = {
+            query: q,
+            forceAll: forceAll,
+            combo: this,
+            cancel:false
+        };
+        if(this.fireEvent('beforequery', qe)===false || qe.cancel){
+            return false;
         }
-    }
-    ,
-    onFocusWdg: function( field, newVal, oldVal ){
-        
-        if( typeof(this.linkPais)!="undefined" && this.linkPais ){
-            var cmp = Ext.getCmp(this.linkPais);
-            if( cmp ){
-               
-                this.idtrafico = Ext.getCmp(this.linkPais).hiddenValue;
-                if(!this.idtrafico)
-                     this.idtrafico = Ext.getCmp(this.linkPais).getValue();
-                this.reload();
-
+        q = qe.query;
+        forceAll = qe.forceAll;
+        if(forceAll === true || (q.length >= this.minChars)){
+            if(this.lastQuery !== q){
+                this.lastQuery = q;
+                if(this.mode == 'local'){
+                    this.selectedIndex = -1;
+                    if(forceAll){
+                        this.store.clearFilter();
+                    }else{
+                        this.store.filter(this.searchField, q, true);//
+                    }
+                    this.onLoad();
+                }else{
+                    this.store.baseParams[this.queryParam] = q;
+                    this.store.load({
+                        params: this.getParams(q)
+                    });
+                    this.expand();
+                }
             }else{
-                alert( "arrrrg: No existe el componente id: "+e.combo.linkPais+"!");
+                this.selectedIndex = -1;
+                this.onLoad();
             }
         }
     },
-	getTrigger : Ext.form.TwinTriggerField.prototype.getTrigger,
-    initTrigger : Ext.form.TwinTriggerField.prototype.initTrigger,
-    trigger1Class : 'x-form-clear-trigger',
-    trigger2Class : 'x-form-search-trigger',
-    trigger3Class : 'x-form-select-trigger',
-    hideTrigger1 : true,
-    hideTrigger2 : true,
 
-    initComponent : function() {
-        WidgetCiudad.superclass.initComponent.call(this);
+    getRecord: function(){
+        if( this.getValue() ){
+            var record = this.findRecord(this.valueField, this.getValue());
+            return record;
+        }
+        return null;
+    }
 
-        this.triggerConfig = {
-			tag : 'span',
-			cls : 'x-form-twin-triggers',
-			cn : [{
-				tag : 'img',
-				src : Ext.BLANK_IMAGE_URL,
-				cls : 'x-form-trigger ' + this.trigger1Class
-			}, {
-				tag : 'img',
-				src : Ext.BLANK_IMAGE_URL,
-				cls : 'x-form-trigger ' + this.trigger2Class
-			},
-			{
-				tag : 'img',
-				src : Ext.BLANK_IMAGE_URL,
-				cls : 'x-form-trigger ' + this.trigger3Class
-			}]
-		};
-	},
-	reset : Ext.form.Field.prototype.reset.createSequence(function() {
-		this.triggers[0].hide();
-	}),
 
-	onViewClick : Ext.form.ComboBox.prototype.onViewClick.createSequence(function() {
-		this.triggers[0].show();
-	}),
-	onTrigger1Click : function(a,b,c) {
-		this.clearValue();
-		this.triggers[0].hide();
-		this.fireEvent('clear', this);
-		this.fireEvent('select', this);
-	},
-	onTrigger2Click : function() {
-	},
-	onTrigger3Click : function() {
-		this.onTriggerClick();
-	}
+
+
 });
+
+
 </script>
