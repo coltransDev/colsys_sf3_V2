@@ -4,10 +4,12 @@
 # default values
 all:
   digitalFile:
-    #root:  /home/alramirez/Desarrollo/digitalFile/
-    root:  /srv/www/digitalFile/
+    root:  /home/alramirez/Desarrollo/digitalFile/
+    #root:  /srv/www/digitalFile/
   ldap:
-    host: 10.192.1.2
+    host: 10.192.1.83
+    user: colsys
+    passwd: $tlco5903Am
  
   smtp:
     host: smtp.coltrans.com.co

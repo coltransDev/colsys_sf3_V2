@@ -14,7 +14,7 @@
         <link href="style.css" rel="stylesheet" type="text/css" media="screen" />
     
     <script language="Javascript" type="text/javascript">
-		mis_imagenes = new Array("images/logos/coltrans_logo.jpg","images/logos/colmas_logo.jpg","images/logos/consolcargo1.png","images/logos/coltrans_usa1.png")
+		mis_imagenes = new Array("<?=image_path("logos/coltrans_logo.jpg")?>","<?=image_path("logos/colmas_logo.jpg")?>","<?=image_path("logos/consolcargo1.png")?>","<?=image_path("logos/coltrans_usa1.png")?>")
 		mi_imagen = 0
 		imgCt = mis_imagenes.length
 		function rotacion() {

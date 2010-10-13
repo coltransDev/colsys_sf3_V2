@@ -18,33 +18,32 @@
                     <!--Top Area Start-->
                     <div class="top">
                         <div class="logo">
-
                             <a href="index.php" title="">
                                 <? echo image_tag('colmas_logo.jpg',array('border'=>'none')) ?>
                             </a>
                         </div>
-
                         <div class="search">
                             <div class="searchint">
                                 <div class="moduletable">
-
                                 </div>
-                                <?include_component('adminUsers','loginInformation')?>
+                                <?include_component('homepage','search')?>
                             </div>
-
                         </div>
-
                         <div class="topmenu">
-
                         </div>
-
                     </div>
                     <!--Top Area End-->
 
 
                     <!--Header Start-->
-                    <div class="header">
-                        <div class="header_foot"> </div>
+                    <div class="header" id="texto1">
+                        <font size="2" color="white">Bienvenido a Intranet:
+                            <?include_component('adminUsers','loginInformation')?>
+                        </font>
+                        <div class="header_foot">
+
+
+                        </div>
                     </div>
 
 

@@ -62,5 +62,8 @@ class homepageComponents extends sfComponents {
 
 
 	}
+    public function executeSearch()
+  {
+  }
 }
 

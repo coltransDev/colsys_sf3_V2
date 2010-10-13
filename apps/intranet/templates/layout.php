@@ -7,25 +7,20 @@
         <link rel="shortcut icon" href="/favicon.ico" />
         <?php include_stylesheets() ?>
         <?php include_javascripts() ?>
+   <script language="Javascript" type="text/javascript">
+        function muestra_imagen() {
+        var now = new Date();
+        var day = now.getDate();
 
-    <script language="Javascript" type="text/javascript">
-		mis_imagenes = new Array("images/birthday/birthday3.gif","images/birthday/birthday1.gif","images/birthday/birthday4.gif")
-		mi_imagen = 0
-		imgCt = mis_imagenes.length
-		function rotacion() {
-			if (document.images) {
-				mi_imagen++
-				if (mi_imagen == imgCt) {
-					mi_imagen = 0
-				}
-				document.anuncio.src=mis_imagenes[mi_imagen]
-				setTimeout("rotacion()", 360 * 1000)
-			}
-		}
+        var image = 'images/birthday/'+day+'.gif';
+        document.write('<img src="'+image+'">');
+
+        }
     </script>
-    
+   
+   
     </head>
-    <body onload="rotacion()">
+    <body>
         <div class="out">
             <div class="wrapper">
                 <div class="int">
@@ -40,7 +35,7 @@
                             <div class="searchint">
                                 <div class="moduletable">
                                 </div>
-                                <?include_component('adminUsers','loginInformation')?>
+                                <?include_component('homepage','search')?>
                             </div>
                         </div>
                         <div class="topmenu">
@@ -50,8 +45,14 @@
 
 
                     <!--Header Start-->
-                    <div class="header">
-                        <div class="header_foot"> </div>
+                    <div class="header" id="texto1">
+                        <font size="2" color="white">Bienvenido a Intranet:
+                            <?include_component('adminUsers','loginInformation')?>
+                        </font>
+                        <div class="header_foot">
+                        
+                                    
+                        </div>
                     </div>
 
 
@@ -113,10 +114,12 @@
 
                                     <div>
                                         <div>
-                                            <h1 class="show"><span>CUMPLEA&Ntilde;OS</span></h1><br />
+                                            <h1 class="show"><span>CUMPLEA&Ntilde;OS</span></h1>
                                             <tr>
                                                 <td width="150" align="center">
-                                                    <img src="http://illiweb.com/fa/empty.gif" name="anuncio" alt="Anuncios" />
+                                                    <script language="JavaScript">
+                                                        muestra_imagen();
+                                                    </script>
                                                 </td>
                                             </tr><br />
                                             <?
