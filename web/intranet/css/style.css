@@ -78,12 +78,14 @@ width:180px;
 }
 
 .searchint {
-float:left;
+float:center;
 padding:12px 24px;
 }
 
 .search input {
 color:#999;
+height: 20px;
+vertical-align:bottom;
 }
 a:link, a:visited {color:#1C3A56;
 }
@@ -236,14 +238,15 @@ color:#fff;
 }
 
 .header{
-padding-top:26px;
+padding-top:10px;
 width:100%;
 float:left;
 background-color:#2E4B66;
+text-align:right;
+
 }
 
 .header_foot{
-
 width:100%;
 float:left;
 background-color:#2E4B66;
