@@ -15,6 +15,12 @@ class Reporte extends BaseReporte
     private $ultimoStatus=null;
 	private $inoClientesSea=null;
     private $proveedoresStr=null;
+    private $editable=null;
+    private $nversiones=null;
+    private $ultimaVersion=null;
+    private $repExterior=null;
+    private $cerrado=null;
+
 
     const IDLISTASEG = 3;
     const IDLISTACONS = 6;
@@ -59,8 +65,10 @@ class Reporte extends BaseReporte
         
 		
 		if( $count>0 ){
+            $this->editable=false;
 			return false;
 		}else{
+            $this->editable=true;
 			return true;
 		}
 	}
@@ -223,14 +231,19 @@ class Reporte extends BaseReporte
 	*/
 	public function numVersiones(){
 
-		$count = Doctrine::getTable("Reporte")
-                           ->createQuery("r")
-                           ->select("count(*)")
-                           ->where("r.ca_consecutivo = ?", $this->getCaConsecutivo())
-                           ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)
-                           ->execute();
+        if(!$this->nversiones)
+        {
+            $count = Doctrine::getTable("Reporte")
+                               ->createQuery("r")
+                               ->select("count(*)")
+                               ->where("r.ca_consecutivo = ?", $this->getCaConsecutivo())
+                               ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)
+                               ->execute();
 
-		return $count;
+            $this->nversiones=$count;
+        }
+
+		return $this->nversiones;
 
 	}
 
@@ -241,7 +254,9 @@ class Reporte extends BaseReporte
 	*/
 	public function getUltVersion(){
 
-		$count = Doctrine::getTable("Reporte")
+        if(!$this->ultimaVersion)
+        {
+            $count = Doctrine::getTable("Reporte")
                            ->createQuery("r")
                            ->select("r.ca_version")
                            ->where("r.ca_consecutivo = ? AND ca_fchanulado IS NULL", $this->getCaConsecutivo())
@@ -249,10 +264,67 @@ class Reporte extends BaseReporte
                            ->limit(1)
                            ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)
                            ->execute();
-
-		return $count;
-
+            $this->ultimaVersion=$count;
+        }
+		return $this->ultimaVersion;
 	}
+
+    /*
+	* Retorna si el reporte puede ser modificado o no
+	* Author: Mauricio Quinche
+	*/
+	public function getEditable($permiso=0,$user=null){
+
+//        $this->user= sfContext::getInstance()->getUser();
+//        echo $this->user->getUserId();
+//        $user = sfContext::getInstance()->getUser();
+//        echo $user->getUserId();
+        //if(!$this->editable)
+        if($user->getUserId()!="maquinche")
+        {
+            
+            //echo "::".$this->editable."::<br>";
+            if($this->esUltimaVersion())
+            {
+                if($this->getCerrado())
+                {
+                    $this->editable=false;
+                }
+                else
+                {
+                    if($this->existeReporteExteriorVersionActual())
+                    {
+                        $this->editable=false;
+                    }
+                    else
+                    {
+                        if($user->getUserId()!=$this->getCaUsucreado() && $user->getUserId()!=$this->getCaLogin() )
+                        {
+                            $this->editable = false;
+                        }
+                        else
+                            $this->editable=true;
+                    }
+                    
+                }
+            }
+        }else $this->editable=true;;
+		return $this->editable;
+	}
+
+    /*
+	* Retorna si esta cerrado un reporte
+	* Author: mauricio Quinche
+	*/
+	public function getCerrado()
+    {
+        if($this->getCaFchcerrado() || $this->getCaUsucerrado() )
+            $this->cerrado=true;
+        else
+            $this->cerrado=false;
+
+        return $this->cerrado;
+    }
 
 	/*
 	* Retorna los equipos asociados al reporte
@@ -658,21 +730,25 @@ class Reporte extends BaseReporte
 	*/
 	public function existeReporteExteriorVersionActual(){
         if( $this->getCaImpoexpo()==Constantes::IMPO || $this->getCaImpoexpo()==Constantes::TRIANGULACION  ){
-			//Reportes al exterior
-			if( $this->getCaTransporte()==Constantes::MARITIMO ){
-				$tipo = 'Rep.MarítimoExterior';
-			}else{
-				$tipo = 'Rep.AéreoExterior';
-			}
+            if(!$this->repExterior)
+            {
+                //Reportes al exterior
+                if( $this->getCaTransporte()==Constantes::MARITIMO ){
+                    $tipo = 'Rep.MarítimoExterior';
+                }else{
+                    $tipo = 'Rep.AéreoExterior';
+                }
 
-			$numReportes = Doctrine::getTable("Email")
-                           ->createQuery("e")
-                           ->select("COUNT(*)")
-                           ->where( "e.ca_idcaso = ?", $this->getCaIdreporte() )
-                           ->addWhere("e.ca_tipo = ? ", $tipo)                           
-                           ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)
-                           ->execute();
-            return $numReportes>0;
+                $numReportes = Doctrine::getTable("Email")
+                               ->createQuery("e")
+                               ->select("COUNT(*)")
+                               ->where( "e.ca_idcaso = ?", $this->getCaIdreporte() )
+                               ->addWhere("e.ca_tipo = ? ", $tipo)
+                               ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)
+                               ->execute();
+                $this->repExterior=$numReportes>0;
+            }
+            return $this->repExterior;
 		}
         return null;
 
