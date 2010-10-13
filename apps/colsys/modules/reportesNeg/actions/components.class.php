@@ -111,8 +111,7 @@ class reportesNegComponents extends sfComponents
          }
          $reporte=$this->reporte;
          $user = $this->getUser();
-         if( ($reporte->isNew() || $reporte->getCaVersion() == $reporte->getUltVersion())
-                    &&!$reporte->existeReporteExteriorVersionActual() || $user->getUserId()==$reporte->getCaUsucreado() || $user->getUserId()==$reporte->getCaLogin() ){
+         if( $reporte->getEditable(0,$user) ){
                 $this->editable = true;
             }else{
                 $this->editable = false;
@@ -147,8 +146,7 @@ class reportesNegComponents extends sfComponents
         $reporte=$this->reporte;
          $user = $this->getUser();
          //echo $reporte->getCaUsucreado() || $user->getUserId()!=$reporte->getCaLogin()
-         if( ($reporte->isNew() || $reporte->getCaVersion() == $reporte->getUltVersion())
-                    &&!$reporte->existeReporteExteriorVersionActual() || $user->getUserId()==$reporte->getCaUsucreado() || $user->getUserId()==$reporte->getCaLogin() ){
+         if( $reporte->getEditable(0,$user) ){
                 $this->editable = true;
             }else{
                 $this->editable = false;

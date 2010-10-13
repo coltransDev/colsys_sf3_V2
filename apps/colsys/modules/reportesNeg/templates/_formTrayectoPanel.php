@@ -335,6 +335,8 @@ if($permiso>=2)
             //alert(cupo);
             Ext.getCmp("ca_liberacion").setValue(cupo);
 
+            Ext.getCmp("preferencias").setValue(record.get("preferencias"));
+
         } 
 		,
         onSelectModalidad: function( combo, record, index)

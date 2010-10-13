@@ -503,6 +503,7 @@ class reportesNegActions extends sfActions
     {
         $this->permiso = $this->getUser()->getNivelAcceso( reportesNegActions::RUTINA );
         $idreporte=($request->getParameter("idreporte")!="")?$request->getParameter("idreporte"):"0";
+        $tipo=$request->getParameter("tipo");
         $reporte = Doctrine::getTable("Reporte")->find( $idreporte );
         $nuevo=true;
         if(!$reporte)
@@ -541,6 +542,7 @@ class reportesNegActions extends sfActions
             $reporte->stopBlaming();
         }
         //else
+        if($tipo!="full")
         {
             if($request->getParameter("idcotizacion") && $request->getParameter("idcotizacion")>0)
             {
@@ -753,12 +755,19 @@ class reportesNegActions extends sfActions
             {
                 $reporte->setCaIdconsignatario($request->getParameter("consig"));
             }
+            else
+                $reporte->setCaIdconsignatario(null);
     //ca_informar_cons:
             if($request->getParameter("idnotify") )
             {
                 $reporte->setCaIdnotify($request->getParameter("idnotify"));
                 $reporte->setCaNotify("2");
                 //
+            }
+            else
+            {
+                $reporte->setCaIdnotify(null);
+                $reporte->setCaNotify("0");
             }
     //ca_informar_noti:
             if($request->getParameter("consigmaster") )
@@ -864,7 +873,7 @@ class reportesNegActions extends sfActions
             }
             else
             {
-                if($reporte->getCaIdbodega()=="")
+                //if($reporte->getCaIdbodega()=="")
                     $reporte->setCaIdbodega(1);
             }
     //ca_mastersame:
@@ -946,173 +955,175 @@ class reportesNegActions extends sfActions
                 $reporte->setCaIdproducto($request->getParameter("idproducto"));
 
             $reporte->save();
-
-            if($request->getParameter("idproducto"))
+            if($tipo!="full")
             {
-                $param=array();
-                $param["idproducto"]=$request->getParameter("idproducto");
-                $param["etapa"]="APR";
-                $param["seguimiento"]="";
-                $param["fchseguimiento"]="";
-                $param["user"]=$this->getUser()->getUserId();
-                $cotseguimientos = new CotSeguimiento();
-                $cotseguimientos->aprobarSeguimiento($param);
-            }
-            if($request->getParameter("seguros-checkbox")== "on" && $request->getParameter("ca_vlrasegurado")!="")
-			{
-                $repSeguro = Doctrine::getTable("RepSeguro")->findOneBy("ca_idreporte", $reporte->getCaIdreporte() );
-                if(!$repSeguro)
-                    $repSeguro= new RepSeguro();
-
-				$repSeguro->setCaIdreporte($reporte->getCaIdreporte());
-
-                if($request->getParameter("ca_seguro_conf") )
-				{
-					$repSeguro->setCaSeguroConf($request->getParameter("ca_seguro_conf"));
-				}
-
-				if($request->getParameter("ca_vlrasegurado") )
-				{
-					$repSeguro->setCaVlrasegurado($request->getParameter("ca_vlrasegurado"));
-				}
-
-                if($request->getParameter("ca_idmoneda_vlr") )
-				{
-					$repSeguro->setCaIdmonedaVlr($request->getParameter("ca_idmoneda_vlr"));
-				}
-
-                if($request->getParameter("ca_obtencionpoliza") )
-				{
-					$repSeguro->setCaObtencionpoliza($request->getParameter("ca_obtencionpoliza"));
-				}
-
-                if($request->getParameter("ca_idmoneda_pol") )
-				{
-					$repSeguro->setCaIdmonedaPol($request->getParameter("ca_idmoneda_pol"));
-				}
-
-                if($request->getParameter("ca_primaventa") )
-				{
-					$repSeguro->setCaPrimaventa($request->getParameter("ca_primaventa"));
-				}
-
-                if($request->getParameter("ca_minimaventa") )
-				{
-					$repSeguro->setCaMinimaventa($request->getParameter("ca_minimaventa"));
-				}
-                
-                if($request->getParameter("ca_idmoneda_vta") )
-				{
-					$repSeguro->setCaIdmonedaVta($request->getParameter("ca_idmoneda_vta"));
-				}
-				$repSeguro->save();
-			}
-            if($request->getParameter("aduanas-checkbox")== "on" )
-			{
-                $repAduana = Doctrine::getTable("RepAduana")->findOneBy("ca_idreporte", $reporte->getCaIdreporte() );
-                if(!$repAduana)
-                    $repAduana= new RepAduana();
-
-				$repAduana->setCaIdreporte($reporte->getCaIdreporte());
-
-                if($request->getParameter("ca_instrucciones") )
-				{
-					$repAduana->setCaInstrucciones(utf8_decode($request->getParameter("ca_instrucciones")));
-				}
-
-				if($request->getParameter("ca_coordinador") )
-				{
-					$repAduana->setCaCoordinador($request->getParameter("ca_coordinador"));
-				}
-
-				$repAduana->save();
-			}
-
-            if($reporte->getCaImpoexpo()== Constantes::EXPO || utf8_decode($reporte->getCaImpoexpo()) == Constantes::EXPO)
-			{
-
-                $repExpo = Doctrine::getTable("RepExpo")->findOneBy("ca_idreporte", $reporte->getCaIdreporte() );
-                if(!$repExpo)
-                    $repExpo= new RepExpo();
-
-				//$repExpo= new RepExpo();
-				$repExpo->setCaIdreporte($reporte->getCaIdreporte());
-				if($request->getParameter("npiezas") && $request->getParameter("mpiezas") )
-				{
-					$repExpo->setCaPiezas($request->getParameter("npiezas")."|".$request->getParameter("mpiezas"));
-				}
-                else
-                    $repExpo->setCaPiezas(null);
-
-				if($request->getParameter("npeso") && $request->getParameter("mpeso") )
-				{
-					$repExpo->setCaPeso($request->getParameter("npeso")."|".$request->getParameter("mpeso"));
-				}
-                else
-                    $repExpo->setCaPeso(null);
-
-				if($request->getParameter("nvolumen") && $request->getParameter("mvolumen") )
-				{
-					$repExpo->setCaVolumen($request->getParameter("nvolumen")."|".$request->getParameter("mvolumen"));
-				}
-                else
-                    $repExpo->setCaVolumen(null);
-
-				if($request->getParameter("dimensiones") )
-				{
-					$repExpo->setCaDimensiones($request->getParameter("dimensiones"));
-				}
-                else
-                    $repExpo->setCaDimensiones(null);
-
-				if($request->getParameter("valor_carga") )
-				{
-					$repExpo->setCaValorcarga($request->getParameter("valor_carga"));
-				}
-                else
-                    $repExpo->setCaValorcarga(null);
-
-				if($request->getParameter("idsia") )
-				{
-					$repExpo->setCaIdsia($request->getParameter("idsia"));
-				}
-                else
-                    $repExpo->setCaIdsia(null);
-
-				if($request->getParameter("idtipoexpo") )
-				{
-					$repExpo->setCaTipoexpo($request->getParameter("idtipoexpo"));
-				}
-                else
-                    $repExpo->setCaTipoexpo(null);
-
-				if($request->getParameter("motonave") )
-				{
-					$repExpo->setCaMotonave($request->getParameter("motonave"));
-				}
-                else
-                    $repExpo->setCaMotonave(null);
-                
-                if($request->getParameter("idemisionbl") )
-				{
-					$repExpo->setCaEmisionbl($request->getParameter("idemisionbl"));
-				}
-                else
-                    $repExpo->setCaEmisionbl(null);
-                
-                if($request->getParameter("ca_numbl") )
-				{
-					$repExpo->setCaNumbl($request->getParameter("ca_numbl"));
-				}
-                else
+                if($request->getParameter("idproducto"))
                 {
-                    $repExpo->setCaNumbl(null);
+                    $param=array();
+                    $param["idproducto"]=$request->getParameter("idproducto");
+                    $param["etapa"]="APR";
+                    $param["seguimiento"]="";
+                    $param["fchseguimiento"]="";
+                    $param["user"]=$this->getUser()->getUserId();
+                    $cotseguimientos = new CotSeguimiento();
+                    $cotseguimientos->aprobarSeguimiento($param);
+                }
+                if($request->getParameter("seguros-checkbox")== "on" && $request->getParameter("ca_vlrasegurado")!="")
+                {
+                    $repSeguro = Doctrine::getTable("RepSeguro")->findOneBy("ca_idreporte", $reporte->getCaIdreporte() );
+                    if(!$repSeguro)
+                        $repSeguro= new RepSeguro();
+
+                    $repSeguro->setCaIdreporte($reporte->getCaIdreporte());
+
+                    if($request->getParameter("ca_seguro_conf") )
+                    {
+                        $repSeguro->setCaSeguroConf($request->getParameter("ca_seguro_conf"));
+                    }
+
+                    if($request->getParameter("ca_vlrasegurado") )
+                    {
+                        $repSeguro->setCaVlrasegurado($request->getParameter("ca_vlrasegurado"));
+                    }
+
+                    if($request->getParameter("ca_idmoneda_vlr") )
+                    {
+                        $repSeguro->setCaIdmonedaVlr($request->getParameter("ca_idmoneda_vlr"));
+                    }
+
+                    if($request->getParameter("ca_obtencionpoliza") )
+                    {
+                        $repSeguro->setCaObtencionpoliza($request->getParameter("ca_obtencionpoliza"));
+                    }
+
+                    if($request->getParameter("ca_idmoneda_pol") )
+                    {
+                        $repSeguro->setCaIdmonedaPol($request->getParameter("ca_idmoneda_pol"));
+                    }
+
+                    if($request->getParameter("ca_primaventa") )
+                    {
+                        $repSeguro->setCaPrimaventa($request->getParameter("ca_primaventa"));
+                    }
+
+                    if($request->getParameter("ca_minimaventa") )
+                    {
+                        $repSeguro->setCaMinimaventa($request->getParameter("ca_minimaventa"));
+                    }
+
+                    if($request->getParameter("ca_idmoneda_vta") )
+                    {
+                        $repSeguro->setCaIdmonedaVta($request->getParameter("ca_idmoneda_vta"));
+                    }
+                    $repSeguro->save();
+                }
+                if($request->getParameter("aduanas-checkbox")== "on" )
+                {
+                    $repAduana = Doctrine::getTable("RepAduana")->findOneBy("ca_idreporte", $reporte->getCaIdreporte() );
+                    if(!$repAduana)
+                        $repAduana= new RepAduana();
+
+                    $repAduana->setCaIdreporte($reporte->getCaIdreporte());
+
+                    if($request->getParameter("ca_instrucciones") )
+                    {
+                        $repAduana->setCaInstrucciones(utf8_decode($request->getParameter("ca_instrucciones")));
+                    }
+
+                    if($request->getParameter("ca_coordinador") )
+                    {
+                        $repAduana->setCaCoordinador($request->getParameter("ca_coordinador"));
+                    }
+
+                    $repAduana->save();
                 }
 
-				$repExpo->save();
-                ///echo $repExpo->getCaIdreporte();
+                if($reporte->getCaImpoexpo()== Constantes::EXPO || utf8_decode($reporte->getCaImpoexpo()) == Constantes::EXPO)
+                {
 
-			}
+                    $repExpo = Doctrine::getTable("RepExpo")->findOneBy("ca_idreporte", $reporte->getCaIdreporte() );
+                    if(!$repExpo)
+                        $repExpo= new RepExpo();
+
+                    //$repExpo= new RepExpo();
+                    $repExpo->setCaIdreporte($reporte->getCaIdreporte());
+                    if($request->getParameter("npiezas") && $request->getParameter("mpiezas") )
+                    {
+                        $repExpo->setCaPiezas($request->getParameter("npiezas")."|".$request->getParameter("mpiezas"));
+                    }
+                    else
+                        $repExpo->setCaPiezas(null);
+
+                    if($request->getParameter("npeso") && $request->getParameter("mpeso") )
+                    {
+                        $repExpo->setCaPeso($request->getParameter("npeso")."|".$request->getParameter("mpeso"));
+                    }
+                    else
+                        $repExpo->setCaPeso(null);
+
+                    if($request->getParameter("nvolumen") && $request->getParameter("mvolumen") )
+                    {
+                        $repExpo->setCaVolumen($request->getParameter("nvolumen")."|".$request->getParameter("mvolumen"));
+                    }
+                    else
+                        $repExpo->setCaVolumen(null);
+
+                    if($request->getParameter("dimensiones") )
+                    {
+                        $repExpo->setCaDimensiones($request->getParameter("dimensiones"));
+                    }
+                    else
+                        $repExpo->setCaDimensiones(null);
+
+                    if($request->getParameter("valor_carga") )
+                    {
+                        $repExpo->setCaValorcarga($request->getParameter("valor_carga"));
+                    }
+                    else
+                        $repExpo->setCaValorcarga(null);
+
+                    if($request->getParameter("idsia") )
+                    {
+                        $repExpo->setCaIdsia($request->getParameter("idsia"));
+                    }
+                    else
+                        $repExpo->setCaIdsia(null);
+
+                    if($request->getParameter("idtipoexpo") )
+                    {
+                        $repExpo->setCaTipoexpo($request->getParameter("idtipoexpo"));
+                    }
+                    else
+                        $repExpo->setCaTipoexpo(null);
+
+                    if($request->getParameter("motonave") )
+                    {
+                        $repExpo->setCaMotonave($request->getParameter("motonave"));
+                    }
+                    else
+                        $repExpo->setCaMotonave(null);
+
+                    if($request->getParameter("idemisionbl") )
+                    {
+                        $repExpo->setCaEmisionbl($request->getParameter("idemisionbl"));
+                    }
+                    else
+                        $repExpo->setCaEmisionbl(null);
+
+                    if($request->getParameter("ca_numbl") )
+                    {
+                        $repExpo->setCaNumbl($request->getParameter("ca_numbl"));
+                    }
+                    else
+                    {
+                        $repExpo->setCaNumbl(null);
+                    }
+
+                    $repExpo->save();
+                    ///echo $repExpo->getCaIdreporte();
+
+                }
+            }
             $this->responseArray=array("success"=>true,"idreporte"=>$reporte->getCaIdreporte(),"redirect"=>$redirect);
         }
     }
@@ -1524,7 +1535,7 @@ color="#000000";
                                             <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Agente:</b>'.$agente.'</font><br />
                                             <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Trayecto:</b>'.$trayecto.'</font><br />
                                                 <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Proveedor:</b>'.$proveedor.'</font><br />
-                                            <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Cliente:</b>'.$reporte->getContacto()->getCliente()->getCaCompania().'</font><br />
+                                            <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Cliente:</b>'.$reporte->getContacto()->getCliente()->getCaCompania().' - '.$request->getParameter("orden_clie").'</font><br />
                                             <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Mercancia:</b>'.$reporte->getCaMercanciaDesc().'</font><br />
                                          </td>
                                     </tr>
@@ -1582,88 +1593,6 @@ color="#000000";
                 $this->responseArray=array("success"=>true,"idreporte"=>$idreporte);
             else
                 $this->responseArray=array("success"=>false);
-
-/*            $reportetmp=$reporte;
-            $reporte=$reportenew;
-            $reporte->state(Doctrine_Record::STATE_TDIRTY);
-            //echo $reportetmp->getCaIdreporte()."-".$reportenew->getCaIdreporte()."<br>";
-            $reporte->setCaIdreporte( $reportetmp->getCaIdreporte() );
-            $reporte->setCaVersion( $reportetmp->getCaVersion() );
-            $reporte->setCaConsecutivo( $reportetmp->getCaConsecutivo() );
-            $reporte->setCaIdcotizacion( $reportetmp->getCaIdcotizacion() );            
-            $reporte->setCaIdetapa( $reportetmp->getCaIdetapa() );
-            $reporte->setCaFchultstatus( $reportetmp->getCaFchultstatus() );
-            $reporte->setCaIdtareaRext( $reportetmp->getCaIdtareaRext() );
-            $reporte->setCaIdseguimiento( $reportetmp->getCaIdseguimiento() );
-
-            $reporte->setCaImpoexpo( $reportetmp->getCaImpoexpo() );
-            $reporte->setCaTransporte( $reportetmp->getCaTransporte() );
-
-            $reporte->setCaDetanulado( $reportetmp->getCaDetanulado() );
-            $reporte->setCaFchcreado( $reportetmp->getCaFchcreado() );
-            $reporte->setCaUsucreado( $reportetmp->getCaUsucreado() );
-            $reporte->setCaFchactualizado( $reportetmp->getCaFchactualizado() );
-            $reporte->setCaUsuactualizado( $reportetmp->getCaUsuactualizado());
-            $reporte->setCaFchcerrado( $reportetmp->getCaFchcerrado() );
-            $reporte->setCaUsucerrado( $reportetmp->getCaUsucerrado());
-
-            $reporte->save( $conn );
-
-
-            $conceptos = $reportenew->getRepTarifa();
-            foreach( $conceptos as $concepto ){
-                $newConcepto = $concepto->copy();
-                $newConcepto->setCaIdconcepto( $concepto->getCaIdconcepto() );
-                $newConcepto->setCaIdreporte( $reportetmp->getCaIdreporte() );
-                $newConcepto->save( $conn );
-            }
-
-            //Copia los gastos
-            $gastos =   $reportenew->getRecargos( );
-            foreach($gastos as $gasto ){
-                $newGasto = $gasto->copy();
-                $newGasto->setCaIdconcepto( $gasto->getCaIdconcepto() );
-                $newGasto->setCaIdrecargo( $gasto->getCaIdrecargo() );
-                $newGasto->setCaIdreporte( $reportetmp->getCaIdreporte() );
-                if($gasto->getCaRecargoorigen()==false)
-                    $newGasto->setCaRecargoorigen( "false" );
-                if($gasto->getCaRecargoorigen()==true)
-                    $newGasto->setCaRecargoorigen( "true" );
-                $newGasto->save( $conn );
-            }
-
-            $costos = $reportenew->getCostos( );
-            foreach($costos as $costo ){
-                $newCosto = $costo->copy();
-                $newCosto->setCaIdcosto( $costo->getCaIdcosto() );
-                $newCosto->setCaIdreporte( $reportetmp->getCaIdreporte() );
-                $newCosto->save();
-            }
-
-            if( $reportenew->getCaImpoexpo()==Constantes::EXPO ){
-                $repExpo = $this->getRepExpo();
-                $repExpoNew = $repExpo->copy();
-                $repExpoNew->setCaIdreporte( $reportetmp->getCaIdreporte() );
-                $repExpoNew->save();
-            }
-
-            if( $reportenew->getCaColmas()=="Sí" ){
-                $repAduana = $this->getRepAduana();
-                $repAduanaNew = $repAduana->copy();
-                $repAduanaNew->setCaIdreporte( $reportetmp->getCaIdreporte() );
-                $repAduanaNew->save();
-            }
-
-            if( $reportenew->getCaSeguro() =="Sí" ){
-                $repSeguro = $this->getRepSeguro();
-                $repSeguroNew = $repSeguro->copy();
-                $repSeguroNew->setCaIdreporte( $reportetmp->getCaIdreporte() );
-                $repSeguroNew->save();
-            }
- *
- */
-            //$reporte = $reporte->importar($idreportenew);
-            //$reporte->responseArray=array("success"=>true,"idreporte"=>$idreporte);
         }
         else
             $this->responseArray=array("success"=>false);
@@ -2531,6 +2460,7 @@ color="#000000";
         $tarifas = Doctrine::getTable("RepTarifa")
                              ->createQuery("t")
                              ->where("t.ca_idreporte = ?", $reporte->getCaIdreporte())
+
                              ->execute();
 
         foreach( $tarifas as $tarifa ){
@@ -2556,6 +2486,7 @@ color="#000000";
                              ->createQuery("t")
                              ->where("t.ca_idreporte = ?", $reporte->getCaIdreporte())
                              ->addWhere("t.ca_idconcepto = ?", $tarifa->getCaIdconcepto() )
+                             ->addWhere("t.ca_recargoorigen = true")
                              ->execute();
             foreach( $recargos as $recargo ){
                 $row = $baseRow;
@@ -2584,6 +2515,7 @@ color="#000000";
                              ->where("t.ca_idreporte = ?", $reporte->getCaIdreporte())
                              ->addWhere("t.ca_idconcepto = ?", 9999 )
                              ->addWhere("tr.ca_tipo like ?", "%".Constantes::RECARGO_EN_ORIGEN."%" )
+                            ->addWhere("t.ca_recargoorigen = true " )
                              ->execute();
 
         if( count($recargos)>0){
@@ -3376,6 +3308,33 @@ color="#000000";
         $this->responseArray=array("success"=>true,"data"=>$data);
         $this->setTemplate("responseTemplate");
 
+    }
+
+    public function executeCerrarReporte( $request ){
+
+        try
+        {
+            $this->forward404Unless( $request->getParameter( "id" ) );
+            $reporte = Doctrine::getTable("Reporte")->find($request->getParameter( "id" ));
+            if($request->getParameter( "tipo" )=="1")
+            {
+                $reporte->setCaFchcerrado(date('Y-m-d H:i:s'));
+                $reporte->setCaUsucerrado($this->getUser()->getUserId());
+            }
+            else if($request->getParameter( "tipo" )=="2")
+            {
+                $reporte->setCaFchcerrado(null);
+                $reporte->setCaUsucerrado(null);
+            }
+            $reporte->save();
+            $this->responseArray=array("success"=>true);
+        }
+        catch(Exception $e)
+        {
+            $this->responseArray=array("success"=>false,"err"=>$e->getMessage());
+        }
+
+        $this->setTemplate("responseTemplate");
     }
 
 

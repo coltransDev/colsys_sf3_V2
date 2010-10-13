@@ -201,9 +201,9 @@ $pdf->SetStyles ( array ("B", "B", "", "B", "", "B", "" ) );
 $pdf->Row ( array ('', 'Teléfono:', $cliente->getCaTelefonos (), 'Fax:', $cliente->getCaFax (), 'E-mail:', $contacto->getCaEmail () ) );
 
 $consignatario=null;
+$consignatario = $reporte->getConsignatario();
 if ($reporte->getCaContinuacion()!= "N/A" && $reporte->getCaContinuacion()!="")
-{
-    $consignatario = $reporte->getConsignatario();
+{    
     if ($consignatario) {
         $pdf->Ln ( 3 );
 
@@ -381,21 +381,27 @@ if( $reporte->getCaImpoexpo()==Constantes::EXPO ){
     $pdf->SetWidths ( array (45, 50, 55, 50 ) );
     $pdf->Row ( array ('Consignar MAWB/BL a :', $reporte->getConsignarmaster (),'Consignar HAWB/HBL a :', $reporte->getConsignar () ) );
 }else{
-    $pdf->SetWidths(array(45,115,30,10));
+    $pdf->SetWidths(array(45,115,30,10));    
     $consig = (($consignatario)?$consignatario->getCaNombre():$cliente->getCaCompania());
     $consignar = Doctrine::getTable("Bodega")->find( $reporte->getCaIdconsignar() );
 
+//    echo  $consignar->getCaNombre();
+//    exit;
     if( $consignar->getCaNombre()=='Nombre del Cliente' || $consignar->getCaNombre()=='Cliente / Consignatario' ){
         $cadena = $consig;
     }else{
         $cadena = $consignar->getCaNombre();
     }
-
-    if( $reporte->getCaIdbodega() && $reporte->getCaIdbodega()!= 111 ){ //Coltrans
+//    echo $consignar->getCaIdbodega();
+//    exit;
+    if( $reporte->getCaIdbodega() && $reporte->getCaIdbodega()!= 111 && $reporte->getCaIdbodega()!=1 ){ //Coltrans
         $bodega = Doctrine::getTable("Bodega")->find( $reporte->getCaIdbodega() );
         $cadena.=" / ".$bodega->getCaTipo()." ".$bodega->getCaNombre();
     }
-
+    else if($reporte->getCaIdbodega()==1)
+    {
+        $cadena='Cliente / Consignatario';
+    }
     $pdf->Row(array('Consignar HAWB/HBL a :',$cadena));
 }
 
@@ -543,9 +549,9 @@ if( !$soloAduana ){
         $pdf->SetAligns ( array ("L", "L", "R", "R", "R", "R", "R", "R" ) );
 
         $des_rec = $gasto->getTipoRecargo ()->getCaRecargo ();
-        if ($gasto->getCaIdconcepto () != '9999') {
+        /*if ($gasto->getCaIdconcepto () != '9999') {
             $des_rec .= " -> " . $gasto->getConcepto ()->getCaConcepto ();
-        }
+        }*/
 
         if ($gasto->getCaTipo () == "$") {
             $pdf->Row ( array ($des_rec, $gasto->getCaAplicacion (), Utils::formatNumber ( $gasto->getCaNetaTar (), 3 ) . " " . $gasto->getCaIdmoneda (), Utils::formatNumber ( $gasto->getCaNetaMin (), 3 ) . " " . $gasto->getCaIdmoneda (), Utils::formatNumber ( $gasto->getCaReportarTar (), 3 ) . " " . $gasto->getCaIdmoneda (), Utils::formatNumber ( $gasto->getCaReportarMin (), 3 ) . " " . $gasto->getCaIdmoneda (), Utils::formatNumber ( $gasto->getCaCobrarTar (), 3 ) . " " . $gasto->getCaIdmoneda (), Utils::formatNumber ($gasto->getCaCobrarMin (), 3 ) . " " . $gasto->getCaIdmoneda () ) );
@@ -583,9 +589,9 @@ if( !$soloAduana ){
             $pdf->SetAligns ( array ("L", "L", "R", "R" ) );
 
             $des_rec = $gasto->getTipoRecargo ()->getCaRecargo ();
-            if ($gasto->getCaIdconcepto () != '9999') {
+            /*if ($gasto->getCaIdconcepto () != '9999') {
                 $des_rec .= " -> " . $gasto->getConcepto ()->getCaConcepto ();
-            }
+            }*/
 
             if ($gasto->getCaTipo () == "$") {
                 $pdf->Row ( array ($des_rec, $gasto->getCaAplicacion (),Utils::formatNumber (  $gasto->getCaCobrarTar (), 3) . " " . $gasto->getCaIdmoneda (), Utils::formatNumber ( $gasto->getCaCobrarMin (), 3) . " " . $gasto->getCaIdmoneda () ) );

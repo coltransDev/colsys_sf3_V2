@@ -254,7 +254,7 @@ var ij=parseInt(<?=($nprov>1)?($nprov-1):1?>);
                 diascredito=(record.get("diascredito")!="")?record.get("diascredito")+" dias":"0";
             Ext.getCmp("ca_tiempocredito").setValue(diascredito);
   */
-            diascredito=(record.get("diascredito"))?record.get("diascredito")+" dias":"0";
+/*            diascredito=(record.get("diascredito"))?record.get("diascredito")+" dias":"0";
             Ext.getCmp("ca_tiempocredito").setValue(diascredito);
 
             if(record.data.cupo && record.data.cupo!="null")
@@ -263,6 +263,20 @@ var ij=parseInt(<?=($nprov>1)?($nprov-1):1?>);
                 cupo="No";
             
             Ext.getCmp("ca_liberacion").setValue(cupo);
+*/
+            diascredito=0;
+            if(record.data.diascredito && record.data.diascredito!="null")
+                diascredito=(record.get("diascredito")!="")?record.get("diascredito")+" dias":"0";
+
+            Ext.getCmp("ca_tiempocredito").setValue(diascredito);
+
+            if(record.data.cupo && record.data.cupo!="null")
+                cupo=(record.get("cupo")!="")?"Sí":"No";
+            else
+                cupo="No";
+            //alert(cupo);
+            Ext.getCmp("ca_liberacion").setValue(cupo);
+
 
 			Ext.getCmp("preferencias").setValue(record.get("preferencias"));
             Ext.getCmp("vendedor").onTrigger1Click();

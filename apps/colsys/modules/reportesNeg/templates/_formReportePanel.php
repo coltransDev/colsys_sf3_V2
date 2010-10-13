@@ -58,7 +58,8 @@ include_component("reportesNeg", "listReportesPanel",array("modo"=>$modo,"impoex
             frame: true,
             buttonAlign: 'center',
             layout:'fit',
-            monitorValid:true,            
+            monitorValid:true,
+            id:'idFormReportePanel',
             items: [{
                     xtype:'tabpanel',
                     deferredRender : false,
