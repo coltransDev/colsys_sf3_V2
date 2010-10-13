@@ -17,8 +17,8 @@ class adminUsersComponents extends sfComponents {
     public function executeLoginInformation() {
 
         $this->user = sfContext::getInstance()->getUser();
-
-
+        
+        
     }
 
 }

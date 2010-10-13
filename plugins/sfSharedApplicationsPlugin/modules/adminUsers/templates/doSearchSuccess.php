@@ -14,6 +14,8 @@
                 <th>Sucursal</th>
                 <th>Departamento</th>
                 <th>Empresa</th>
+                <th>Tel&eacute;fono</th>
+                <th>Extensi&oacute;n</th>
             </tr>
             <?
         foreach ($usuarios as $usuario) {
@@ -23,6 +25,8 @@
                 <td><?=($usuario->getSucursal()->getCaNombre())?></td>
                 <td><?=($usuario->getCaDepartamento())?></td>
                 <td><?=($usuario->getSucursal()->getEmpresa()->getCaNombre())?></td>
+                <td><?=($usuario->getSucursal()->getCaTelefono())?></td>
+                <td><?=($usuario->getCaExtension())?></td>
             </tr>
         <?
         }

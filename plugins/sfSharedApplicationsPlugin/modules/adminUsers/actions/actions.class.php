@@ -235,6 +235,14 @@ class adminUsersActions extends sfActions
 
         $this->parentescos = $r->execute($query);
 
+        $s = Doctrine_Manager::getInstance()->connection();
+			$query = "SELECT DISTINCT ca_teloficina";
+			$query.= "	from control.tb_usuarios";
+            $query.= "  order by ca_teloficina ASC";
+
+        $this->teloficinas = $s->execute($query);
+
+        /*
         $this->teloficinas = Doctrine::getTable("Usuario")
                           ->createQuery("u")
                           ->select('u.ca_idsucursal, s.ca_telefono')
@@ -248,6 +256,9 @@ class adminUsersActions extends sfActions
         foreach( $this->teloficinas as $key=>$val){
             $this->teloficinas[$key]["s_ca_telefono"] = utf8_encode($this->teloficinas[$key]["s_ca_telefono"]);
         }
+         * 
+         */
+
 		//$this->manager=Doctrine::getTable('Usuario')->find($request->getParameter('login'));
         //$this->manager = $this->manager->getManager();
         
@@ -281,6 +292,11 @@ class adminUsersActions extends sfActions
 	}
 
     public function executeGuardarUsuario( $request ){
+        switch( $app ){
+            case "intranet":
+                $this->setLayout("layout2col");
+                break;
+        }
 		$usuario = Doctrine::getTable("Usuario")->find( $request->getParameter("login") );
         $this->nivel = $this->getNivel();
         $cambiodireccion = 0;
@@ -801,6 +817,7 @@ class adminUsersActions extends sfActions
     }
 
     public function executeViewOrganigrama(sfWebRequest $request) {
+        $this->setLayout("layout2col");
         $this->manager=Doctrine::getTable('Usuario')->find($request->getParameter('login'));
         $this->forward404Unless( $this->manager );
 
@@ -851,5 +868,21 @@ class adminUsersActions extends sfActions
 
         
     }
+
+    public function executeSearch(sfWebRequest $request) {
+
+        $this->setLayout("layout2col");
+        $query = $request->getParameter('buscar');
+        
+        $query = str_replace(' ', ' and ', $query);
+
+        //echo $query;
+        $this->forwardUnless($query, "homepage", "index");
+
+        $this->usuarios = Doctrine_Core::getTable('Usuario') ->getForLuceneQuery($query);
+    }
+
+
+
 }
 ?>

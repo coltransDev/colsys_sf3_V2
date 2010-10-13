@@ -132,25 +132,7 @@ $teloficinas = $sf_data->getRaw("teloficinas");
             }
         }
 
-        var teloficinas = <?=json_encode($teloficinas)?>;
-        var teloficinasFld = document.getElementById("teloficina");
-        teloficinasFld.length=0;
-        for( i in teloficinas ){
-            if( typeof(teloficinas[i]['u_ca_idsucursal'])!="undefined" ){
-                //alert(jefes[i]['c2_ca_idempresa']);
-                if( idempresa == jefes[i]['s_ca_idempresa'] ){
-                    //alert("aaaaa");
-
-                    if( defaultValTel == jefes[i]["s_ca_telefono"]){
-                        var selected = true;
-                    }else{
-                        var selected = false;
-                    }
-
-                    teloficinasFld[teloficinasFld.length] = new Option(teloficinas[i]['s_ca_telefono'],jefes[i]['s_ca_telefono'], selected);
-                }
-            }
-        }
+       
 
     }
 </script>
@@ -349,8 +331,14 @@ $teloficinas = $sf_data->getRaw("teloficinas");
 								</td>
 								<td>
 									<div align="left">
-										<select name="teloficina" id="teloficina" <?if($nivel==0){?>disabled="disabled"<?}?>>                   >
-											
+										<select name="teloficina"                    >
+											<?
+											foreach( $teloficinas as $teloficina ){
+											?>
+											<option value="<?=$teloficina['ca_teloficina']?>"<?=$usuario->getCaTeloficina()==$teloficina['ca_teloficina']?'selected="selected"':''?> > <?=($teloficina['ca_teloficina'])?></option>
+											<?
+											}
+											?>
 										</select>
 									</div>
 								</td>
