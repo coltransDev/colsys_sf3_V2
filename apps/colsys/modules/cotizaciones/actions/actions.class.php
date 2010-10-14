@@ -746,6 +746,7 @@ class cotizacionesActions extends sfActions
             {
                 $sig = CotizacionTable::siguienteConsecutivo( date("Y"),$cotizacion->getCaEmpresa() );
                 $newCotizacion->setCaConsecutivo( $sig );
+                $newCotizacion->setCaVersion( 1 );
             }
             //$newCotizacion->setCaConsecutivo( $sig );
             $newCotizacion->setCaIdgEnvioOportuno(null);
