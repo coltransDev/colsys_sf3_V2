@@ -872,10 +872,11 @@ class adminUsersActions extends sfActions
     public function executeSearch(sfWebRequest $request) {
 
         $this->setLayout("layout2col");
-        $query = $request->getParameter('buscar');
+        $query = trim($request->getParameter('buscar'));
         
         $query = str_replace(' ', ' and ', $query);
-
+        $query = $query.'*';
+        
         //echo $query;
         $this->forwardUnless($query, "homepage", "index");
 
