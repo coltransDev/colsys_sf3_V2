@@ -402,6 +402,7 @@ class Reporte extends BaseReporte
                 $q->addWhere("r.ca_recargoorigen = ?", true );
 			}
 		}
+        $q->orderBy("r.ca_fchcreado ASC");
 		
 		$gastos = $q->execute();
 
@@ -416,13 +417,14 @@ class Reporte extends BaseReporte
 
         $q = Doctrine::getTable("RepCosto")
                   ->createQuery("c")
-                  ->innerJoin("c.Costo co");
+                  ->innerJoin("c.Costo co")
+                  ->orderBy("c.ca_fchcreado ASC");
         $q->addWhere("c.ca_idreporte = ? ", $this->getCaIdreporte());
-		if( $this->getCaImpoexpo()==Constantes::EXPO ){			
+		/*if( $this->getCaImpoexpo()==Constantes::EXPO ){
             $q->addWhere( "co.ca_impoexpo = ? OR co.ca_impoexpo = ? " , array("Aduanas", Constantes::EXPO) );
 		}else{
             $q->addWhere( "co.ca_impoexpo = ? " , "Aduanas" );
-        }
+        }*/
 		return $q->execute();
 	}
 
