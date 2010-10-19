@@ -5,9 +5,9 @@
  */
 
 ?>
-<br/>
-<FORM method='post' action="<?=url_for('adminUsers/search')?>">
-    <TABLE bgcolor="#FFFFFF" align="right">
+
+<form method='post' action="<?=url_for('adminUsers/search')?>">
+    <table bgcolor="#FFFFFF" align="right">
         <tr>
             <td>
                 <INPUT type='text' name='buscar' size='31' maxlength='255' value="">
@@ -16,6 +16,11 @@
                 <INPUT type='submit' name='btn' value="Buscar en Intranet">
             </td>
         </tr>
-    </TABLE>
-</FORM>
+        <tr>
+            <td>
+                <a href="<?=url_for("adminUsers/directory")?>">B&uacute;squeda Personalizada</a>
+            </td>
+        </tr>
+    </table>
+</form>
    
