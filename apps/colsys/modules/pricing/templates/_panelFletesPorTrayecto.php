@@ -389,9 +389,24 @@ PanelFletesPorTrayecto = function( config ){
                 iconCls: 'disk',  // reference to our css
                 scope: this,
                 handler: this.guardar
-            }];
+            },
+            {
+                text: 'Recargar',
+                tooltip: 'Actualiza los datos',
+                iconCls:'refresh',  // reference to our css
+                scope: this,
+                handler: this.recargar
+            }
+
+        ];
     }else{
-        this.tbar = null;
+        this.tbar = {
+                text: 'Recargar',
+                tooltip: 'Actualiza los datos',
+                iconCls:'refresh',  // reference to our css
+                scope: this,
+                handler: this.recargar
+            };
     }
 
     PanelFletesPorTrayecto.superclass.constructor.call(this, {
@@ -1046,6 +1061,15 @@ Ext.extend(PanelFletesPorTrayecto, Ext.grid.EditorGridPanel, {
         ctxRecord.set("pkBlocked", true);
     },
     
+    recargar: function(){
+        if( this.store.getModifiedRecords().length>0){
+            if(!confirm("Se perderan los cambios no guardados en el directorio de agentes unicamente, desea continuar?")){
+                return 0;
+            }
+        }
+        this.store.reload();
+    },
+
     guardar: function(){
 
         if( this.readOnly ){
