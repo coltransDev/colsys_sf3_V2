@@ -5,7 +5,8 @@
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
 
-include_component("inocomprobantes", "formComprobantePanel", array("inocliente"=>isset($inocliente)?$inocliente:null, "comprobante"=>$comprobante, "tipo"=>$tipo ));
+
+include_component("inocomprobantes", "formComprobantePanel", array("idhouse"=>isset($idhouse)?$idhouse:null, "comprobante"=>$comprobante, "tipo"=>$tipo ));
 if( $comprobante->getCaIdcomprobante() ){
     switch( $comprobante->getInoTipoComprobante()->getcaTipo() ){
         case "F":

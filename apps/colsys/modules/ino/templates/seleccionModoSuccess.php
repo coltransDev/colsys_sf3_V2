@@ -24,15 +24,6 @@
 	<?
 	}
 
-    if( $nivelAduana>=0 ){
-	?>
-	<tr>
-		<td><div align="left">
-			<?=link_to("Aduana", "ino/index?modo=aduana")?>
-		</div></td>
-	</tr>
-	<?
-	}
 
     if( $nivelExpo>=0 ){
 	?>

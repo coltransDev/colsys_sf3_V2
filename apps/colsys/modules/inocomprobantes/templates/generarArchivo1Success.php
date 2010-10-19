@@ -9,7 +9,7 @@ header('Content-type: text/plain');
 
 // It will be called downloaded.pdf
 //header('Content-Disposition: attachment; filename="downloaded.pdf"');
-header('Content-Disposition: inline; filename="dl.txt"');
+header('Content-Disposition: attachment; filename="'.$filename.'"');
 
 $file ="";
 

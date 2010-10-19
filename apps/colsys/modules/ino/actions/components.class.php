@@ -55,12 +55,27 @@ class inoComponents extends sfComponents
         
     }
 
+    /*
+     * Cuadro de eventos de auditoria
+     */
+    public function executeGridAuditoriaPanel(){
+     
+
+    }
+
+    /*
+     * Ventana para editar un evento
+     */
+    public function executeEditAuditoriaWindow(){
+
+
+    }
     
 
     public function executeCostos(){
         $this->costos = Doctrine::getTable("InoTransaccion")
                                  ->createQuery("t")
-                                 ->select("t.*, c.ca_consecutivo, con.ca_concepto, id.ca_nombre, tp.ca_tipo, tp.ca_comprobante")
+                                 ->select("t.*, c.ca_idcomprobante, c.ca_consecutivo, con.ca_concepto, id.ca_nombre, tp.ca_tipo, tp.ca_comprobante")
                                  ->innerJoin("t.InoComprobante c")
                                  ->innerJoin("c.InoTipoComprobante tp")
                                  ->innerJoin("t.InoConcepto con")
@@ -72,20 +87,7 @@ class inoComponents extends sfComponents
 
     }
 
-    public function executeAuditoria(){
-        /*$this->costos = Doctrine::getTable("InoTransaccion")
-                                 ->createQuery("t")
-                                 ->select("t.*, c.ca_consecutivo, con.ca_concepto, id.ca_nombre, tp.ca_tipo, tp.ca_comprobante")
-                                 ->innerJoin("t.InoComprobante c")
-                                 ->innerJoin("c.InoTipoComprobante tp")
-                                 ->innerJoin("t.InoConcepto con")
-                                 ->innerJoin("c.Ids id")
-                                 ->where("t.ca_idmaster = ?", $this->referencia->getCaIdmaster())
-                                 //->addWhere("c.ca_estado = ?", InoComprobante::TRANSFERIDO)
-                                 ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
-                                 ->execute();*/
-
-    }
+    
 
 
 }

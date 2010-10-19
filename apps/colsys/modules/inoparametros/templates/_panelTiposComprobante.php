@@ -83,8 +83,12 @@
                 enableRowBody:true,
                 enableGroupingMenu: false,
                 startCollapsed : true
+                
             }),
-            loadMask: {msg:'Cargando...'}
+            loadMask: {msg:'Cargando...'},
+            listeners:{
+                rowdblclick : this.onRowDblclick
+            }
         });
     
     };
@@ -92,13 +96,22 @@
     Ext.extend(PanelTiposComprobante, Ext.grid.GridPanel, {
 
         nuevo: function(){
-            this.win = new EditarTiposComprobanteWindow();
+
+            this.win = new EditarTiposComprobanteWindow({gridId: this.id});
             this.win.show();
 
         },
 
         recargar: function(){
             this.store.reload();
+        },
+        onRowDblclick: function( grid , rowIndex, e ){
+            
+            record =  this.store.getAt( rowIndex );
+            this.win = new EditarTiposComprobanteWindow({idtipo: record.data.idtipo,
+                                                         gridId: this.id});
+            this.win.show();
+            
         }
 
    

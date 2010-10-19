@@ -4,6 +4,9 @@
  *
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
+
+include_component("widgets", "widgetIds");
+
 if( !$comprobante->getCaConsecutivo() ){
     $tipos = $sf_data->getRaw("tipos");   
 }
@@ -12,33 +15,19 @@ if( !$comprobante->getCaConsecutivo() ){
 $saveUrl = "inocomprobantes/observeFormComprobantePanel";
 $saveUrlOkRedirect = "inocomprobantes/formComprobante";
 
-if( isset($inocliente) ){
-    $saveUrl.="?idinocliente=".$inocliente->getCaIdinocliente();
-    $saveUrlOkRedirect .= "?idinocliente=".$inocliente->getCaIdinocliente();
+if( isset($idhouse) && $idhouse ){
+
+    $saveUrl.="?idhouse=".$idhouse;
+    $saveUrlOkRedirect .= "?idhouse=".$idhouse;
 }
 
 
 ?>
 <script type="text/javascript">
 
-var ds = new Ext.data.Store({
-        proxy: new Ext.data.HttpProxy({
-            url: '<?=url_for('widgets/listaIdsJSON')?>'
-        }),
-        reader: new Ext.data.JsonReader({
-            root: 'root',
-            totalProperty: 'totalCount'
-        }, [
-            {name: 'id', mapping: 'ca_id'},
-            {name: 'nombre', mapping: 'ca_nombre'}
-        ])
-    });
 
 
 
-var resultTpl = new Ext.XTemplate(
-        '<tpl for="."><div class="search-item"><b>{nombre}</b></div></tpl>'
-);
 /*
 var storeTipos = new Ext.data.Store({
     autoload: true,
@@ -59,12 +48,31 @@ var storeTiposTpl = new Ext.XTemplate(
 );
 
 FormComprobantePanel = function(){
+
+
+    
+
+
+    this.ids = new WidgetIds({
+				        value: '<?=$comprobante->getIds()?$comprobante->getIds()->getCaNombre():""?>',
+                        hiddenName: "ids",
+                        forceSelection:true,
+                        width: 400,
+                        allowBlank:false,
+                        onSelect: function(record, index){ // override default onSelect to do redirect
+                            if(this.fireEvent('beforeselect', this, record, index) !== false){
+                                this.setValue(record.data[this.valueField || this.displayField]);
+                                this.collapse();
+                                this.fireEvent('select', this, record, index);
+                            }
+
+                            Ext.getCmp("id").setValue(record.get("id"));
+                            //Ext.getCmp("contacto").setValue(record.get("nombre")+' '+record.get("papellido")+' '+record.get("sapellido") );
+                        }
+					});
+
     this.preview = new Ext.Panel({
         id: 'preview',
-
-
-
-
         items: [{
             xtype:'tabpanel',
             buttonAlign: 'left',
@@ -186,7 +194,7 @@ FormComprobantePanel = function(){
                                     ?>
                                     {
                                         xtype:'hidden',
-                                        id: 'id',
+                                        id: 'idcomprobante',
                                         value: '<?=$comprobante->getCaId()?>'
 
                                     },
@@ -250,40 +258,8 @@ FormComprobantePanel = function(){
                             }
                         ]
                 },
-					new Ext.form.ComboBox({
-				        store: ds,
-				        fieldLabel: 'Tercero',
-				        displayField:'nombre',
-				        typeAhead: false,
-                        width: 420,
-				        loadingText: 'Buscando...',
-				        valueNotFoundText: 'No encontrado' ,
-						minChars: 1,
-				        tpl: resultTpl,
-				        itemSelector: 'div.search-item',
-					    emptyText:'Escriba el nombre del cliente...',
-					    value: '<?=$comprobante->getIds()?$comprobante->getIds()->getCaNombre():""?>',
-					    forceSelection:true,
-						selectOnFocus:true,
-						allowBlank:false,
-                        <?
-                        if( $tipo=="F" ){
-                        ?>
-                        readOnly:true,
-                        <?
-                        }
-                        ?>
-						onSelect: function(record, index){ // override default onSelect to do redirect
-							if(this.fireEvent('beforeselect', this, record, index) !== false){
-								this.setValue(record.data[this.valueField || this.displayField]);
-								this.collapse();
-								this.fireEvent('select', this, record, index);
-							}
-							
-							Ext.getCmp("id").setValue(record.get("id"));
-							//Ext.getCmp("contacto").setValue(record.get("nombre")+' '+record.get("papellido")+' '+record.get("sapellido") );
-						}
-					})
+
+                this.ids
 				
 
 				]

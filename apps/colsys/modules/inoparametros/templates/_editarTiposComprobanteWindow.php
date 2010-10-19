@@ -20,7 +20,9 @@ EditarTiposComprobanteWindow = function( config ) {
         new EditarTiposComprobantePropiedadesPanel({idTipoComprobante: this.idTipoComprobante,
                                              nivel: <?=isset($nivel)?$nivel:0?>,
                                              gridId: this.gridId,
-                                             actionTipoComprobante: this.actionTipoComprobante
+                                             actionTipoComprobante: this.actionTipoComprobante,
+                                             gridId: this.gridId,
+                                             idtipo: this.idtipo
                                             })
     ];
     

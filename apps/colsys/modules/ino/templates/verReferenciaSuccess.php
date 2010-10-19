@@ -126,6 +126,15 @@ include_component("ino", "mainPanel", array("referencia"=>$referencia));
 </div>
 
 
+
+<div id="costos" class="x-hide-display">
+    <?
+    include_component("ino", "costos", array("referencia"=>$referencia));
+    ?>
+
+</div>
+
+
 <script type="text/javascript">
     var mainPanel = new MainPanel();
 

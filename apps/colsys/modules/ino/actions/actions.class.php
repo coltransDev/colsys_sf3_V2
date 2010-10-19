@@ -31,11 +31,7 @@ class inoActions extends sfActions
 		if( $this->modo=="maritimo" ){
 			$this->nivel = $this->getUser()->getNivelAcceso( inoActions::RUTINA_MARITIMO );
 		}
-
-        if( $this->modo=="aduana" ){
-			$this->nivel = $this->getUser()->getNivelAcceso( inoActions::RUTINA_ADUANA );
-		}
-
+       
         if( $this->modo=="expo" ){
 			$this->nivel = $this->getUser()->getNivelAcceso( inoActions::RUTINA_EXPO );
 		}
@@ -55,8 +51,7 @@ class inoActions extends sfActions
 	public function executeSeleccionModo()
 	{
 		$this->nivelAereo = $this->getUser()->getNivelAcceso( inoActions::RUTINA_AEREO );
-		$this->nivelMaritimo = $this->getUser()->getNivelAcceso( inoActions::RUTINA_MARITIMO );
-        $this->nivelAduana = $this->getUser()->getNivelAcceso( inoActions::RUTINA_ADUANA );
+		$this->nivelMaritimo = $this->getUser()->getNivelAcceso( inoActions::RUTINA_MARITIMO );      
         $this->nivelExpo = $this->getUser()->getNivelAcceso( inoActions::RUTINA_EXPO );
 	}
 
@@ -67,9 +62,13 @@ class inoActions extends sfActions
     */
     public function executeIndex(sfWebRequest $request)
     {
+        $this->modo = $request->getParameter("modo");
+        if( !$this->modo ){
+            $this->redirect("ino/seleccionModo");
+        }
         $this->nivel = $this->getNivel();
         $this->comerciales = UsuarioTable::getComerciales();
-        $this->modo = $request->getParameter("modo");
+        
     }
 
     /**
@@ -429,6 +428,7 @@ class inoActions extends sfActions
                     $row["cliente"] = utf8_encode($inoHouse->getCliente()->getCaCompania());
                     $row["comprobante"] = utf8_encode( $tipo." ".str_pad($comprobante->getCaConsecutivo(), 6, "0", STR_PAD_LEFT));
                     $row["fchcomprobante"] = utf8_encode( $comprobante->getCaFchcomprobante());
+                    $row["idcomprobante"] = $comprobante->getCaIdcomprobante();
                     $row["valor"] = $comprobante->getValor();
                     $row["color"] = "";
 
@@ -480,6 +480,40 @@ class inoActions extends sfActions
         $this->forward("inocomprobantes", "formComprobante");
 
 
+    }
+
+
+    /*************************************************************************
+    *
+    *   Acciones para el cuadro de auditoria
+    *
+    ***************************************************************************/
+     /**
+    *
+    *
+    * @param sfRequest $request A request object
+    */
+    public function executeDatosGridAuditoriaPanel(sfWebRequest $request){
+
+        $idmaster = $request->getParameter("idmaster");
+        $this->forward404Unless( $idmaster );
+
+        $eventos = Doctrine::getTable("InoAuditor")
+                             ->createQuery("a")
+                             ->addWhere("a.ca_idmaster = ?", $idmaster )
+                             ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
+                             ->execute();
+
+        
+        foreach( $eventos as $key=>$evento ){
+            $eventos[$key]["ca_asunto"] = utf8_encode($eventos[$key]["ca_asunto"]);
+            $eventos[$key]["ca_detalle"] = utf8_encode($eventos[$key]["ca_detalle"]);
+            $eventos[$key]["ca_compromisos"] = utf8_encode($eventos[$key]["ca_compromisos"]);
+            $eventos[$key]["ca_respuesta"] = utf8_encode($eventos[$key]["ca_respuesta"]);
+        }
+
+        $this->responseArray = array("success"=>true, "root"=>$eventos, "total"=>count($eventos));
+        $this->setTemplate( "responseTemplate" );
     }
 
 

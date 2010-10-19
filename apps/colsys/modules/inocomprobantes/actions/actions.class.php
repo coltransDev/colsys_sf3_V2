@@ -28,14 +28,15 @@ class inocomprobantesActions extends sfActions
     */
     public function executeFormComprobante(sfWebRequest $request)
     {
+        $idhouse = $request->getParameter("idhouse");
        
         $this->tipo = $request->getParameter("tipo");
 
-        if( $request->getParameter("idinocliente") ){
-            $this->inocliente = Doctrine::getTable("InoCliente")->find($request->getParameter("idinocliente"));
-            $this->forward404Unless( $this->inocliente );
+        if( $request->getParameter("idhouse") ){
+            $this->house = Doctrine::getTable("InoHouse")->find($request->getParameter("idhouse"));
+            $this->forward404Unless( $this->house );
 
-             $request->setParameter("idmaestra", $this->inocliente->getCaIdmaestra());
+             $request->setParameter("idmaster", $this->house->getCaIdmaster());
         }
 
        
@@ -47,6 +48,8 @@ class inocomprobantesActions extends sfActions
             $this->comprobante = new InoComprobante();
 
         }
+
+        $this->idhouse = $idhouse;
 
         /*if( $this->comprobante->getCaEstado()!=InoComprobante::ABIERTO ){
             $this->redirect("inocomprobantes/verComprobante?id=".$this->comprobante->getCaIdcomprobante());
@@ -64,8 +67,8 @@ class inocomprobantesActions extends sfActions
     public function executeObserveFormComprobantePanel(sfWebRequest $request)
     {
 
-        $idinocliente = $request->getParameter("idinocliente");
-        $this->responseArray=array("idinocliente"=>$idinocliente,  "success"=>false);
+        $idhouse = $request->getParameter("idhouse");
+        $this->responseArray=array("idhouse"=>$idhouse,  "success"=>false);
 
 
         if( $request->getParameter("idcomprobante") ){
@@ -80,8 +83,8 @@ class inocomprobantesActions extends sfActions
             $comprobante->setCaConsecutivo( $request->getParameter("consecutivo") );
         }
         $comprobante->setCaFchcomprobante($request->getParameter("fechacomprobante"));
-        $comprobante->setCaIdinocliente($idinocliente);
-        $comprobante->setCaId($request->getParameter("id"));
+        $comprobante->setCaIdhouse($idhouse);
+        $comprobante->setCaId($request->getParameter("ids"));
         $comprobante->setCaPlazo($request->getParameter("plazo"));
         $comprobante->setCaTasacambio($request->getParameter("tasacambio"));
         $comprobante->save();
@@ -89,7 +92,7 @@ class inocomprobantesActions extends sfActions
         $this->responseArray["success"]=true;
         $this->responseArray["idcomprobante"]=$comprobante->getCaIdcomprobante();
 
-
+        
 
         $this->setTemplate("responseTemplate");
     }
@@ -158,7 +161,7 @@ class inocomprobantesActions extends sfActions
                             "db"=>$db,
                             "valor"=>$transaccion["t_ca_valor"],
                             "referencia"=>$transaccion["m_ca_referencia"],
-                            "idmaestra"=>$transaccion["m_ca_idmaster"]
+                            "idmaster"=>$transaccion["m_ca_idmaster"]
                      ));
 
         }
@@ -198,7 +201,7 @@ class inocomprobantesActions extends sfActions
 
         //$transaccion->setCaId( 1 );
         $transaccion->setCaIdconcepto( $request->getParameter("idconcepto") );
-        if( $request->getParameter("valor")=="D"){
+        if( $request->getParameter("db")=="D"){
             $transaccion->setCaDb( true );
         }else{
             $transaccion->setCaDb( false );
@@ -207,8 +210,8 @@ class inocomprobantesActions extends sfActions
             $transaccion->setCaValor( $request->getParameter("valor") );
         }
 
-        if( $request->getParameter("idmaestra")!==null ){
-            $transaccion->setCaIdmaestra( $request->getParameter("idmaestra") );
+        if( $request->getParameter("idmaster")!==null ){
+            $transaccion->setCaIdmaster( $request->getParameter("idmaster") );
         }
 
         $transaccion->setCaIdccosto( $request->getParameter("idccosto") );
@@ -283,7 +286,8 @@ class inocomprobantesActions extends sfActions
         $modo = $request->getParameter("modo");
         $tipo = $comprobante->getInoTipoComprobante();
 
-        if( $comprobante->getcaEstado()==InoComprobante::ABIERTO ){
+        //if( $comprobante->getcaEstado()==InoComprobante::ABIERTO ){
+        if( true ){
 
             try{
                 $tipo = $comprobante->getInoTipoComprobante();
@@ -361,7 +365,7 @@ class inocomprobantesActions extends sfActions
                         }else{
                             $total+=$transaccion->getCaValor();
                         }
-                        
+                        echo $parametro->getCaIdcuenta();
                         $transaccion->setCaIdcuenta( $parametro->getCaIdcuenta() );
                         $transaccion->save( $conn );
                     }
@@ -388,6 +392,8 @@ class inocomprobantesActions extends sfActions
 
 
                 $conn->commit();
+                //$conn->rollBack();
+
             }
             catch (Exception $e){
                 
@@ -413,7 +419,7 @@ class inocomprobantesActions extends sfActions
         $this->forward404Unless( $this->comprobante );
 
         $inoHouse = $this->comprobante->getInoHouse();
-        $request->setParameter("idmaestra", $inoHouse->getcaIdmaster());
+        $request->setParameter("idmaster", $inoHouse->getcaIdmaster());
 
         
 
@@ -474,15 +480,25 @@ class inocomprobantesActions extends sfActions
     * @param sfRequest $request A request object
     */
     public function executeGenerarArchivo1(sfWebRequest $request){
+        $idcomprobante = $request->getParameter("idcomprobante");
 
-        $this->transacciones = Doctrine::getTable("InoTransaccion")
+        $this->filename = "cs.txt";
+        $q = Doctrine::getTable("InoTransaccion")
                                          ->createQuery("t")
                                          ->innerJoin("t.InoComprobante c")
-                                         ->innerJoin("t.InoCuenta cu")
-                                         ->execute();
+                                         ->innerJoin("t.InoCuenta cu");
+        if( $idcomprobante ){
+            $q->addWhere("t.ca_idcomprobante = ?", $idcomprobante);
+            $comprobante = Doctrine::getTable("InoComprobante")->find( $idcomprobante );
+            $this->filename = $comprobante.".txt";
+        }
+        $this->transacciones = $q->execute();
         $this->setLayout("none");
-        
     }
+
+    
+
+
 
 
     

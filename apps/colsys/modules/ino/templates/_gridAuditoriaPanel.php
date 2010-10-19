@@ -5,21 +5,29 @@
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
 
+include_component("ino", "editAuditoriaWindow");
 ?>
 
 <script type="text/javascript">
 
 
-GridFacturacionPanel = function( config ){
+GridAuditoriaPanel = function( config ){
 
     Ext.apply(this, config);
 
     
     this.columns = [
-      
       {
-        header: "House",
-        dataIndex: 'doctransporte',
+        header: "Fecha",
+        dataIndex: 'ca_fchcreado',
+        //hideable: false,
+        width: 100,
+        sortable: true,
+        renderer: Ext.util.Format.dateRenderer('Y-m-d')
+      },
+      {
+        header: "Usuario",
+        dataIndex: 'ca_usucreado',
         //hideable: false,
         width: 100,
         sortable: true,
@@ -27,47 +35,42 @@ GridFacturacionPanel = function( config ){
 
       },
       {
-        header: "Idcliente",
-        dataIndex: 'idcliente',
+        header: "Hallazgo",
+        dataIndex: 'ca_detalle',
         //hideable: false,
         sortable: true,
         width: 80
       },
       {
-        header: "Cliente",
-        dataIndex: 'cliente',
+        header: "Compromisos",
+        dataIndex: 'ca_compromisos',
         hideable: false,
         sortable: true,
         width: 280
 
       },
       {
-        header: "Comprobante",
-        dataIndex: 'comprobante',
+        header: "Rta. Operativo",
+        dataIndex: 'ca_respuesta',
         //hideable: false,
         sortable: true,
-        width: 80,
-        renderer: this.formatComprobante
+        width: 80        
 
       },
       {
-        header: "Fecha",
-        dataIndex: 'fchcomprobante',
+        header: "Tipo",
+        dataIndex: 'ca_tipo',
         hideable: false,
         sortable: true,
-        width: 80,
-        renderer: Ext.util.Format.dateRenderer('Y-m-d')
-
+        width: 80
       },
 
       {
-        header: "Valor",
-        dataIndex: 'valor',
+        header: "Estado",
+        dataIndex: 'ca_estado',
         hideable: false,
         sortable: true,
-        width: 80,
-        align: 'right',
-        renderer: Ext.util.Format.numberRenderer('0,0.00')
+        width: 80        
       }
 
 
@@ -76,23 +79,24 @@ GridFacturacionPanel = function( config ){
 
     this.record = Ext.data.Record.create([
             
-            {name: 'idmaster', type: 'integer'},
-            {name: 'idhouse', type: 'integer'},
-            {name: 'doctransporte', type: 'string'},
-            {name: 'cliente', type: 'string'},
-            {name: 'idcliente', type: 'integer'},
-            {name: 'comprobante', type: 'string'},
-            {name: 'idcomprobante', type: 'string'},
-            {name: 'fchcomprobante', type: 'date', dateFormat:'Y-m-d'},
-            {name: 'valor', type: 'float'},
-            {name: 'color', type: 'string'}
+            {name: 'ca_idmaster', type: 'integer'},
+            {name: 'ca_idevento', type: 'integer'},
+            {name: 'ca_tipo', type: 'string'},
+            {name: 'ca_asunto', type: 'string'},
+            {name: 'ca_detalle', type: 'string'},
+            {name: 'ca_compromisos', type: 'string'},
+            {name: 'ca_respuesta', type: 'string'},
+            {name: 'ca_fchcompromiso', type: 'date', dateFormat:'Y-m-d'},
+            {name: 'ca_idantecedente', type: 'integer'},
+            {name: 'ca_usucreado', type: 'string'},
+            {name: 'ca_fchcreado', type: 'date', dateFormat:'Y-m-d H:i:s'}
     ]);
 
 
     this.store = new Ext.data.GroupingStore({
 
         autoLoad : true,
-        url: '<?=url_for("ino/datosGridFacturacionPanel")?>',
+        url: '<?=url_for("ino/datosGridAuditoriaPanel")?>',
         baseParams : {
             idmaster: this.idmaster
         },
@@ -103,7 +107,7 @@ GridFacturacionPanel = function( config ){
             },
             this.record
         ),
-        sortInfo:{field: 'doctransporte', direction: "ASC"}
+        sortInfo:{field: 'ca_fchcreado', direction: "DESC"}
     });
 
     this.tbar = [{
@@ -114,7 +118,7 @@ GridFacturacionPanel = function( config ){
     }];
 
     
-    GridFacturacionPanel.superclass.constructor.call(this, {
+    GridAuditoriaPanel.superclass.constructor.call(this, {
        loadMask: {msg:'Cargando...'},
        //boxMinHeight: 300,
        tbar: this.tbar,
@@ -135,7 +139,7 @@ GridFacturacionPanel = function( config ){
 
 };
 
-Ext.extend(GridFacturacionPanel, Ext.grid.GridPanel, {
+Ext.extend(GridAuditoriaPanel, Ext.grid.GridPanel, {
 
     recargar: function(){
 
@@ -179,31 +183,19 @@ Ext.extend(GridFacturacionPanel, Ext.grid.GridPanel, {
                 enableScrolling : false,
                 items: [
                         {
-                            text: 'Editar Factura',
+                            text: 'Editar',
                             iconCls: 'page_white_edit',
                             scope:this,
                             handler: function(){
                               
                                 if( this.ctxRecord.data.idhouse  ){
-                                    if( this.ctxRecord.data.idcomprobante ){
-                                        this.editarFactura( this.ctxRecord.data.idhouse, this.ctxRecord.data.idcomprobante );
-                                    }else{
-                                        alert("Este item no se ha facturado");
+                                    if( this.ctxRecord.data.idevento ){
+                                        this.editAuditoria( this.ctxRecord.data.idevento );
                                     }
                                 }
                             }
-                        },
-                        {
-                            text: 'Agregar Factura',
-                            iconCls: 'add',
-                            scope:this,
-                            handler: function(){
-
-                                if( this.ctxRecord.data.idhouse  ){
-                                    this.crearFactura( this.ctxRecord.data.idhouse );
-                                }
-                            }
                         }
+                       
                        ]
                 });
                 this.menu.on('hide', this.onContextHide , this);
@@ -232,7 +224,7 @@ Ext.extend(GridFacturacionPanel, Ext.grid.GridPanel, {
     onRowDblclick: function( grid , rowIndex, e ){
 		if( !this.readOnly ){
             record =  this.store.getAt( rowIndex );
-            this.editHouse( record.data.idhouse );
+            this.editAuditoria( record.data.idevento );
         }
 	}
     ,
@@ -246,14 +238,11 @@ Ext.extend(GridFacturacionPanel, Ext.grid.GridPanel, {
         return color;
     },
 
-    crearFactura: function( idhouse ){
-        document.location = "<?=url_for("inocomprobantes/formComprobante?tipo=F")?>?idhouse="+idhouse;
+    
 
-    },
-
-    editarFactura: function( idhouse, idfactura ){
-        document.location = "<?=url_for("inocomprobantes/formComprobante?tipo=F")?>?idhouse="+idhouse+"&idcomprobante="+idfactura;
-
+    editAuditoria: function( idevento ){
+        var win = new EditAuditoriaWindow( idevento );
+        win.show();
     }
 
 

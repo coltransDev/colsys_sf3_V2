@@ -331,7 +331,7 @@ class inoparametrosActions extends sfActions
     *
     * @param sfRequest $request A request object
     */
-    public function executeDatosPanelCuentas(){
+    public function executeDatosPanelCuentas( sfWebRequest $request  ){
         $q = Doctrine::getTable("InoCuenta")
                        ->createQuery("c")
                        ->addOrderBy("c.ca_cuenta");
@@ -366,7 +366,7 @@ class inoparametrosActions extends sfActions
     *
     * @param sfRequest $request A request object
     */
-    public function executeTiposComprobante(){
+    public function executeTiposComprobante( sfWebRequest $request  ){
 
     }
 
@@ -376,7 +376,7 @@ class inoparametrosActions extends sfActions
     *
     * @param sfRequest $request A request object
     */
-    public function executeDatosPanelTiposComprobante(){
+    public function executeDatosPanelTiposComprobante( sfWebRequest $request  ){
         $q = Doctrine::getTable("InoTipoComprobante")
                        ->createQuery("t");
                        
@@ -400,6 +400,62 @@ class inoparametrosActions extends sfActions
         $this->setTemplate("responseTemplate");
     }
 
+    
+    /**
+    * Guarda el formulario donde se crea y edita el tipo de comprobante
+    *
+    * @param sfRequest $request A request object
+    */
+    public function executeFormTipoComprobanteGuardar( sfWebRequest $request ){
+
+        if( $request->getParameter("idtipo") ){
+            $tipo = Doctrine::getTable("InoTipoComprobante")->find( $request->getParameter("idtipo") );
+            $this->forward404Unless( $tipo );
+        }else{
+            $tipo = new InoTipoComprobante();
+        }
+        $tipo->setCaTipo( $request->getParameter("tipo") );
+        $tipo->setCaComprobante( $request->getParameter("comprobante") );
+        if( $request->getParameter("numeracion_inicial") ){
+            $tipo->setCaNumeracionInicial( $request->getParameter("numeracion_inicial") );
+        }else{
+            $tipo->setCaNumeracionInicial( null );
+        }
+        $tipo->setCaTitulo( $request->getParameter("titulo") );
+        try{
+            $tipo->save();
+            $this->responseArray = array( "success"=>true );
+        }catch(Exception $e){
+            $this->responseArray = array( "success"=>false, "errorInfo"=>$e->getMessage() );
+        }
+        $this->setTemplate("responseTemplate");
+    }
+
+    /**
+    * Datos para el panel de tipos de comprobante para mostrar en el formulario.
+    *
+    * @param sfRequest $request A request object
+    */
+    public function executeDatosTipoComprobante( sfWebRequest $request ){
+
+        if( $request->getParameter("idtipo") ){
+            $tipo = Doctrine::getTable("InoTipoComprobante")->find( $request->getParameter("idtipo") );
+            $this->forward404Unless( $tipo );
+            $data = array();
+
+            $data["idtipo"] = $tipo->getCaIdtipo();
+            $data["tipo"] = $tipo->getCaTipo();
+            $data["comprobante"] = $tipo->getCaComprobante();
+            $data["titulo"] = utf8_encode($tipo->getCaTitulo());
+            $data["numeracion_inicial"] = $tipo->getCaNumeracionInicial();
+            $this->responseArray = array("data"=>$data, "success"=>true );
+
+        }else{
+            $this->responseArray = array( "success"=>false, "errorInfo"=>"Se debe especificar el Id" );
+        }
+        
+        $this->setTemplate("responseTemplate");
+    }
 
 
     /*****************************************************************************

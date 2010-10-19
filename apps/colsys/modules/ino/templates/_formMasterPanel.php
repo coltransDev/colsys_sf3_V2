@@ -95,15 +95,9 @@ include_component("widgets", "widgetContinuacion");
                                                     linkTransporte: "transporte",
                                                     linkImpoexpo: "impoexpo",
                                                     allowBlank: false
-                                                    }),
+                                                    }), 
                                 
-                                new WidgetPais({fieldLabel: 'País Origen',
-                                                id: 'tra_origen_id',
-                                                linkCiudad: 'origen',
-                                                allowBlank: false
-                                               }),
-                                new WidgetCiudad({fieldLabel: 'Ciudad Origen',
-                                                  linkPais: 'tra_origen_id',
+                                new WidgetCiudad({fieldLabel: 'Ciudad Origen',                                                  
                                                   name: 'origen',
                                                   hiddenName: 'idorigen',
                                                   id: 'origen',
@@ -111,8 +105,8 @@ include_component("widgets", "widgetContinuacion");
                                                 }),
                                 new WidgetAgente({fieldLabel: 'Agente',
                                                   linkImpoExpo: "impoexpo",
-                                                  linkOrigen: "tra_origen_id",
-                                                  linkDestino: "tra_destino_id",
+                                                  linkOrigen: "origen",
+                                                  linkDestino: "destino",
                                                   linkListarTodos: "listar_todos",
                                                   name:"agente",
                                                   hiddenName: 'idagente',
@@ -147,12 +141,8 @@ include_component("widgets", "widgetContinuacion");
                                                  hiddenName: 'idlinea',
                                                  allowBlank: false
                                                 }),
-                                new WidgetPais({fieldLabel: 'País Destino',
-                                                id: 'tra_destino_id',
-                                                allowBlank: false
-                                                }),
-                                new WidgetCiudad({fieldLabel: 'Ciudad Destino',
-                                                  linkPais: 'tra_destino_id',
+                               
+                                new WidgetCiudad({fieldLabel: 'Ciudad Destino',                                                
                                                   name: 'destino',
                                                   id: 'destino',
                                                   hiddenName: 'iddestino',

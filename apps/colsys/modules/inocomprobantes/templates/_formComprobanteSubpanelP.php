@@ -25,10 +25,10 @@ FormComprobanteSubpanel = function(){
 				xtype:'tabpanel',
 				id: 'tpanel',
 				plain:true,
-				activeTab: 1,
+				activeTab: 0,
 				height:250,
 				autoWidth : true,
-				defaults:{bodyStyle:'padding:10px'},
+				
 				items:[
 					this.panelConceptos,
                     this.panelDeducciones

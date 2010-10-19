@@ -51,8 +51,8 @@ class inocomprobantesComponents extends sfComponents
 
             $this->tipos = array("root"=>$tiposArray, "total"=>count($tiposArray));
             
-            if( isset($this->inocliente) && $this->inocliente ){
-                $this->comprobante->setCaId( $this->inocliente->getCaIdcliente() );                
+            if( isset($this->idhouse) && $this->idhouse ){
+                //$this->comprobante->setCaId( $this->inocliente->getCaIdcliente() );
             }
         }
 
