@@ -3452,7 +3452,7 @@ elseif (isset($boton)) {                                                       /
                 $query = "select DISTINCT ic.ca_idreporte, ic.ca_login, ic.ca_idproveedor, ic.ca_proveedor, ic.ca_idcliente, cl.ca_compania, ic.ca_numorden, ic.ca_hbls, ic.ca_fchhbls, ic.ca_numpiezas, ic.ca_peso, ic.ca_volumen, ic.ca_continuacion, ic.ca_continuacion_dest, bg.ca_nombre as ca_bodega, dc.*, dd.ca_nombre as ca_nomdeposito from tb_inoclientes_sea ic";
                 $query.= " LEFT OUTER JOIN tb_clientes cl ON (ic.ca_idcliente = cl.ca_idcliente) LEFT OUTER JOIN tb_bodegas bg ON (ic.ca_idbodega = bg.ca_idbodega)";
                 $query.= " LEFT OUTER JOIN tb_dianclientes dc ON (ic.ca_referencia = dc.ca_referencia AND ic.ca_idcliente = dc.ca_idcliente AND ic.ca_hbls = dc.ca_house)";
-                $query.= " LEFT OUTER JOIN tb_diandepositos dd ON (dc.ca_coddeposito::int = dd.ca_codigo)";
+                $query.= " LEFT OUTER JOIN tb_diandepositos dd ON (dc.ca_coddeposito = dd.ca_codigo::text)";
                 $query.= " where ic.ca_referencia = '$id' and ic.ca_idcliente = '$cl' and ic.ca_hbls = '$hb' order by ca_idinfodian DESC";
                 if (!$tm->Open("$query")) {    // Trae de la Tabla de la Dian por lo menos un registr vacio de la referencia.
                     echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";     // Muestra el mensaje de error
