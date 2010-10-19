@@ -1,12 +1,15 @@
 <table border="0" class="box1" width="170">
+    <tr>
+        <td>
+            <font size="2" color="white">Bienvenido a Intranet:</font>
+        </td>
+
 <?
-
     if ($user->getUserId()){?>
-    <tr><b>
-        <?
-
-    echo $user->getNombre();?></b></tr><br />
-        
+        <td>
+            <b><?echo $user->getNombre();?></b>
+        </td>
+    </tr>
 <?
 	}else{
 ?>
