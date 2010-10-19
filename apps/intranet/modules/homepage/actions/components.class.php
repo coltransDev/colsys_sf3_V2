@@ -15,7 +15,32 @@ class homepageComponents extends sfComponents {
      *
      */
    
-    
+    const RUTINA_COLSYS = 99;
+    const RUTINA_INTRANET = 99;
+
+    public function getNivel() {
+
+        $app =  sfContext::getInstance()->getConfiguration()->getApplication();
+        //   return 5;
+        switch( $app ){
+            case "colsys":
+                $rutina = homepageComponents::RUTINA_COLSYS;
+            break;
+            case "intranet":
+                $rutina = homepageComponents::RUTINA_INTRANET;
+            break;
+        }
+
+        $this->nivel = $this->getUser()->getNivelAcceso($rutina);
+        if (!$this->nivel) {
+            $this->nivel = 0;
+        }
+
+        //$this->forward404Unless($this->nivel != -1);
+
+        return $this->nivel;
+    }
+
     public function executeBirthday() {
 
         $inicial=date('m-d');
@@ -24,6 +49,7 @@ class homepageComponents extends sfComponents {
         $this->usuarios= Doctrine::getTable('Usuario')
                 ->createQuery('u')
                 ->where('substring(ca_cumpleanos::text, 6,5) BETWEEN ? and ?', array($inicial, $final))
+                ->addWhere ('ca_activo = ?', true)
                 ->addOrderBy('substring(ca_cumpleanos::text, 6,5)  ASC')
                 ->execute();
     }
@@ -39,6 +65,7 @@ class homepageComponents extends sfComponents {
         $this->usuarios= Doctrine::getTable('Usuario')
                 ->createQuery('u')
                 ->where('ca_fchingreso BETWEEN ? and ?', array($inicial, $final))
+                ->addWhere ('ca_activo = ?', true)
                 ->addOrderBy('ca_fchingreso ASC')
                 ->execute();
     }
@@ -52,6 +79,8 @@ class homepageComponents extends sfComponents {
 
   public function executeNoticias()
 	{
+
+        $this->nivel = $this->getNivel();
 
         $this->noticias = Doctrine::getTable("Noticia")
                                      ->createQuery("n")
