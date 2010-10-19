@@ -32,7 +32,7 @@ foreach($buttons as $button){
 <?php 
 }
 
-if(count($buttonHelp)>0)
+if(isset($buttonHelp) && count($buttonHelp)>0)
 {
 
 
