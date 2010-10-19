@@ -3449,9 +3449,10 @@ elseif (isset($boton)) {                                                       /
                     exit;
                 }
                 $tm =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
-                $query = "select DISTINCT ic.ca_idreporte, ic.ca_login, ic.ca_idproveedor, ic.ca_proveedor, ic.ca_idcliente, cl.ca_compania, ic.ca_numorden, ic.ca_hbls, ic.ca_fchhbls, ic.ca_numpiezas, ic.ca_peso, ic.ca_volumen, ic.ca_continuacion, ic.ca_continuacion_dest, bg.ca_nombre as ca_bodega, dc.* from tb_inoclientes_sea ic";
+                $query = "select DISTINCT ic.ca_idreporte, ic.ca_login, ic.ca_idproveedor, ic.ca_proveedor, ic.ca_idcliente, cl.ca_compania, ic.ca_numorden, ic.ca_hbls, ic.ca_fchhbls, ic.ca_numpiezas, ic.ca_peso, ic.ca_volumen, ic.ca_continuacion, ic.ca_continuacion_dest, bg.ca_nombre as ca_bodega, dc.*, dd.ca_nombre as ca_nomdeposito from tb_inoclientes_sea ic";
                 $query.= " LEFT OUTER JOIN tb_clientes cl ON (ic.ca_idcliente = cl.ca_idcliente) LEFT OUTER JOIN tb_bodegas bg ON (ic.ca_idbodega = bg.ca_idbodega)";
                 $query.= " LEFT OUTER JOIN tb_dianclientes dc ON (ic.ca_referencia = dc.ca_referencia AND ic.ca_idcliente = dc.ca_idcliente AND ic.ca_hbls = dc.ca_house)";
+                $query.= " LEFT OUTER JOIN tb_diandepositos dd ON (dc.ca_coddeposito::int = dd.ca_codigo)";
                 $query.= " where ic.ca_referencia = '$id' and ic.ca_idcliente = '$cl' and ic.ca_hbls = '$hb' order by ca_idinfodian DESC";
                 if (!$tm->Open("$query")) {    // Trae de la Tabla de la Dian por lo menos un registr vacio de la referencia.
                     echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";     // Muestra el mensaje de error
@@ -3670,6 +3671,9 @@ elseif (isset($boton)) {                                                       /
                 echo "  </SELECT></TD>";
                 echo "</TR>";
 
+                echo "<TR>";
+                echo "  <TD Class=mostrar COLSPAN=5><INPUT TYPE='TEXT' NAME='nomdeposito' VALUE='".$tm->Value('ca_nomdeposito')."' SIZE=110 MAXLENGTH=110 READONLY></TD>";
+                echo "</TR>";
                 echo "<TR>";
                 echo "  <TD Class=mostrar COLSPAN=5>Descripción de la Mercancía:<BR><TEXTAREA NAME='mercancia_desc' WRAP=virtual ROWS=3 COLS=110>$descripcion_merc</TEXTAREA></TD>";
                 echo "</TR>";

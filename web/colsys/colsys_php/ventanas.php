@@ -67,8 +67,9 @@ else if (isset($suf) and $suf == 'listDianDeposito'){
 	echo "<HEAD>";
 	echo "<TITLE>$titulo</TITLE>";
 	echo "<script language='JavaScript' type='text/JavaScript'>";              // Código en JavaScript para validar las opciones de mantenimiento
-	echo "function elegir(nw){";
+	echo "function elegir(nw, nm){";
 	echo "    window.parent.document.getElementById('coddeposito').value = nw;";
+        echo "    window.parent.document.getElementById('nomdeposito').value = nm;";
 	echo "    window.parent.frames.window_div.style.visibility = \"hidden\";";
 	echo "    window.parent.document.body.scroll=\"yes\";";
 	echo "}";
@@ -94,7 +95,7 @@ else if (isset($suf) and $suf == 'listDianDeposito'){
 	$consecutivo = '';
 	while (!$rs->Eof() and !$rs->IsEmpty()) {                                                      // Lee la totalidad de los registros obtenidos en la instrucción Select
 		echo "<TR>";
-		echo "  <TD Class=listar onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick=\"javascript:elegir('".$rs->Value('ca_codigo')."')\">".$rs->Value('ca_codigo')."</TD>";
+		echo "  <TD Class=listar onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick=\"javascript:elegir('".$rs->Value('ca_codigo')."','".$rs->Value('ca_nombre')."')\">".$rs->Value('ca_codigo')."</TD>";
 		echo "  <TD Class=listar>".$rs->Value('ca_nombre')."</TD>";
 		echo "  <TD Class=listar>".$rs->Value('ca_fchdesde')."</TD>";
 		echo "  <TD Class=listar>".$rs->Value('ca_fchhasta')."</TD>";
