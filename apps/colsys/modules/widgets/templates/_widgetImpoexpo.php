@@ -41,7 +41,7 @@ WidgetImpoexpo = function( config ){
         mode: 'local',
         listClass: 'x-combo-list-small'        
     });
-}
+};
 
 
 Ext.extend(WidgetImpoexpo, Ext.form.ComboBox, {
