@@ -231,7 +231,7 @@ table.tableList td.imprimir {
    background:#FFFFFF;
    color:#000000;
 }
-table.tableList td.invertir {
+table.tableList td.invertir tr.invertir {
    text-align:left;
    background:#D2D2D2;
    color:#000000;
