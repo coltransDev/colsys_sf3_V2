@@ -1,6 +1,8 @@
 
 <table>
+    <?if($nivel==1){?>
     <th title="Nuevo"><?=link_to(image_tag("new.png"),"homepage/editarNoticia")?></th>
+    <?}?>
 </table>
 <?
 $responses = $sf_data->getRaw("noticias");
