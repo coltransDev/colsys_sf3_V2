@@ -10,5 +10,4 @@
     <li id="current" class="active item1"><a href="/intranet"><span>Inicio</span></a></li>
     <li id="current" class="active item1"><a href="<?=url_for('adminUsers/mainUsers')?>"><span>Colaboradores</span></a></li>
     <li id="current" class="active item1"><a href="<?=url_for('adminUsers/phoneBook')?>"><span>Directorio Telefónico</span></a></li>
-
 </ul>
