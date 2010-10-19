@@ -23,7 +23,11 @@ $noticias = $sf_data->getRaw("noticias");
                 <div class="excerpt">
                     <?=nl2br($noticia->getCaDetalle())?>
                 </div>
-                <p class="readmore"><a href="<?=url_for('homepage/editarNoticia?idnoticia='.$noticia->getCaIdnoticia())?>">Editar</a></p>
+                <p class="readmore">
+                    <?if($nivel==1){?>
+                        <a href="<?=url_for('homepage/editarNoticia?idnoticia='.$noticia->getCaIdnoticia())?>">Editar</a>
+                    <?}?>
+                </p>
            </div>
        </div>
 
