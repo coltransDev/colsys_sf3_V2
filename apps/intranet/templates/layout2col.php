@@ -24,7 +24,7 @@
                         </div>
                         <div class="search">
                             <div class="searchint">
-                                <div class="moduletable">
+                                <div class="moduletable" >
                                 </div>
                                 <?include_component('homepage','search')?>
                             </div>
@@ -37,9 +37,7 @@
 
                     <!--Header Start-->
                     <div class="header" id="texto1">
-                        <font size="2" color="white">Bienvenido a Intranet:
                             <?include_component('adminUsers','loginInformation')?>
-                        </font>
                         <div class="header_foot">
 
 
