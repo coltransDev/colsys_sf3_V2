@@ -23,18 +23,16 @@
     <body>
         <div class="out">
             <div class="wrapper">
-                <div class="int">
+                <div class="int" >
                     <!--Top Area Start-->
                     <div class="top">
-                        <div class="logo">
+                        <div class="logo"  >
                             <a href="index.php" title="">
                                 <? echo image_tag('colmas_logo.jpg',array('border'=>'none')) ?>
                             </a>
                         </div>
                         <div class="search">
                             <div class="searchint">
-                                <div class="moduletable">
-                                </div>
                                 <?include_component('homepage','search')?>
                             </div>
                         </div>
@@ -45,14 +43,10 @@
 
 
                     <!--Header Start-->
-                    <div class="header" id="texto1">
-                        <font size="2" color="white">Bienvenido a Intranet:
-                            <?include_component('adminUsers','loginInformation')?>
-                        </font>
-                        <div class="header_foot">
-                        
-                                    
-                        </div>
+                    <div class="header">
+                        <?include_component('adminUsers','loginInformation')?>
+                    </div>
+                    <div class="header_foot">
                     </div>
 
 
