@@ -7,13 +7,13 @@
 ?>
 
 <form method='post' action="<?=url_for('adminUsers/search')?>">
-    <table bgcolor="#FFFFFF" align="right">
+    <table  align="left">
         <tr>
             <td>
                 <INPUT type='text' name='buscar' size='31' maxlength='255' value="">
             </td>
             <td>
-                <INPUT type='submit' name='btn' value="Buscar en Intranet">
+                <INPUT type='submit' name='btn' value="Buscar">
             </td>
         </tr>
         <tr>
