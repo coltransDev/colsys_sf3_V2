@@ -874,8 +874,19 @@ class adminUsersActions extends sfActions
         $this->setLayout("layout2col");
         $query = trim($request->getParameter('buscar'));
         
-        $query = str_replace(' ', ' and ', $query);
-        $query = $query.'*';
+        //$query = str_replace(' ', ' and ', $query);
+        //$query = $query.'*';
+
+        $queryarray=explode(' ',$query);
+
+        foreach($queryarray as $key=>$value){
+            if(strlen($queryarray[$key])>=3){
+                $queryarray[$key].='*';
+            }
+        }
+
+        $query = implode(' and ', $queryarray);
+
         
         //echo $query;
         $this->forwardUnless($query, "homepage", "index");
