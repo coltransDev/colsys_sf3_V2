@@ -77,22 +77,24 @@ class homepageComponents extends sfComponents {
 	
   }
 
-  public function executeNoticias()
-	{
+    public function executeNoticias()
+    {
 
-        $this->nivel = $this->getNivel();
+    $this->nivel = $this->getNivel();
 
-        $this->noticias = Doctrine::getTable("Noticia")
-                                     ->createQuery("n")
-                                     ->where("n.ca_fcharchivar>=?", date("Y-m-d"))
-                                     ->addOrderBy("n.ca_fchpublicacion DESC ")
-                                     ->execute();
-        
+    $this->noticias = Doctrine::getTable("Noticia")
+                             ->createQuery("n")
+                             ->where("n.ca_fcharchivar>=?", date("Y-m-d"))
+                             ->addOrderBy("n.ca_fchpublicacion DESC ")
+                             ->execute();
 
 
-	}
+
+    }
     public function executeSearch()
   {
   }
+
+  
 }
 
