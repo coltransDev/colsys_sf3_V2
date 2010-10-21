@@ -14,8 +14,8 @@
         <tr>
 			<td width="150">
 				<div class="box1" align="center">
-					<img src="<?=url_for('adminUsers/traerImagen?username='.$user->getCaLogin().'&tamano=120x150')?>" />
-				</div>
+                    <img src="<?=url_for('adminUsers/traerImagen?username='.$user->getCaLogin().'&tamano=120x150')?>" />
+                </div>
 			</td>
 			<td valign="top" align="left">
 				<b><?=(strtoupper($user->getCaNombre())) ?></b><br/>
@@ -29,7 +29,7 @@
 
 <div class="box1">
     <?//echo $nivel;?>
-    <table width="700" border="0" class="tableList">
+    <table width="700" border="0" class="tableList" align="left">
         <tr>
             <td>Login:</td><td><b><?=$user->getCaLogin()?></b></td>
         </tr>
@@ -55,7 +55,7 @@
             <td>M&oacute;vil:</td><td><b><?=$user->getCa_Movil()?></b></td>
         </tr>
         <tr>
-            <td>Jefe Inmediato:</td><td><b><a href="<?=url_for('adminUsers/viewUser?login='.$manager->getCaLogin()) ?>"><?=($manager->getCaNombres())?> <?=($manager->getCaApellidos())?></a></b></td>
+            <td>Jefe Inmediato:</td><td><b><a href="<?=url_for('adminUsers/viewUser?login='.$manager->getCaLogin()) ?>"><?=($manager->getCaNombre())?></a></b></td>
         </tr>
         <tr>
             <td>Fch. Cumplea&ntilde;os:</td><td><b><?=(Utils::getMonth(Utils::parseDate($user->getCaCumpleanos(), 'm'))."-".Utils::parseDate($user->getCaCumpleanos(), 'd'))?></b></td>
