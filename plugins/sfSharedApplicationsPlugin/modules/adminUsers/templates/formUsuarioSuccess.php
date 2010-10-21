@@ -117,11 +117,11 @@ $teloficinas = $sf_data->getRaw("teloficinas");
         jefesFld.length=0;
         for( i in jefes ){
             if( typeof(jefes[i]['j_ca_cargo'])!="undefined" ){
-                //alert(jefes[i]['c2_ca_idempresa']);
+                //alert(jefes[i]['c_ca_idempresa']);
                 if( idempresa == jefes[i]['c_ca_idempresa'] ){
-                    //alert("aaaaa");
+                    //alert(jefes[i]["j_ca_login"]);
                 
-                    if( defaultValJef == jefes[i]["j_ca_nombre"]){
+                    if( defaultValJef == jefes[i]["j_ca_login"]){
                         var selected = true;
                     }else{
                         var selected = false;
@@ -231,7 +231,7 @@ $teloficinas = $sf_data->getRaw("teloficinas");
 								</td>
 								<td>
 									<div align="left">
-										<select name="empresa" id="empresa" <?if($nivel==0){?>disabled="disabled"<?}?> onChange="cambiarValores('<?=$usuario->getCaIdsucursal()?>','<?=$usuario->getCaDepartamento()?>','<?=$usuario->getCaCargo()?>')">
+										<select name="empresa" id="empresa" <?if($nivel==0){?>disabled="disabled"<?}?> onChange="cambiarValores('<?=$usuario->getCaIdsucursal()?>','<?=$usuario->getCaDepartamento()?>','<?=$usuario->getCaCargo()?>','<?=$usuario->getCaManager()?>')">
 											<?
 											foreach( $empresas as $empresa ){
                                                
@@ -580,5 +580,5 @@ $teloficinas = $sf_data->getRaw("teloficinas");
 </form>
 <script language="javascript" type="text/javascript">
 	lockFields(document.getElementById('auth_method'));
-    cambiarValores('<?=$usuario->getCaIdsucursal()?>','<?=$usuario->getCaDepartamento()?>','<?=$usuario->getCaCargo()?>','<?=$usuario->getCaNombre()?>');
+    cambiarValores('<?=$usuario->getCaIdsucursal()?>','<?=$usuario->getCaDepartamento()?>','<?=$usuario->getCaCargo()?>','<?=$usuario->getCaManager()?>');
 </script>
