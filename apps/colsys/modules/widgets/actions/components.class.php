@@ -407,7 +407,8 @@ class widgetsComponents extends sfComponents
 		$this->data = array();
 
         $ciudades = Doctrine::getTable('Ciudad')->createQuery('c')
-                            //->where('c.ca_idtrafico = ?', $ciudad->getCaIdtrafico())
+                            ->innerJoin('c.Trafico t')
+                            ->addOrderBy('t.ca_nombre ASC')
                             ->addOrderBy('c.ca_ciudad ASC')
                             ->execute();
         $this->data = array();
@@ -415,6 +416,8 @@ class widgetsComponents extends sfComponents
             $this->data[] = array( "idciudad"=>$ciudad->getCaIdciudad(),
                                    "ciudad"=>utf8_encode($ciudad->getCaCiudad()),
                                    "idtrafico"=>$ciudad->getCaIdtrafico(),
+                                   "trafico"=>utf8_encode($ciudad->getTrafico()->getCaNombre()),
+                                   "ciudad_trafico"=>utf8_encode($ciudad->getTrafico()->getCaNombre()." ".$ciudad->getCaCiudad())
                                  );
         }
 	}
@@ -509,6 +512,9 @@ class widgetsComponents extends sfComponents
 
 	}
 
+    public function executeWidgetIds(){
+		
+	}
 
     public function executeWidgetTercero(){
 		

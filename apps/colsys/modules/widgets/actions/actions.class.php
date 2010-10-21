@@ -326,9 +326,9 @@ class widgetsActions extends sfActions
 		$criterio =  $this->getRequestParameter("query");
 
         $referencias = Doctrine_Query::create()
-                        ->select("m.ca_idmaestra, m.ca_referencia")
-                        ->from("InoMaestra m")
-                        ->addOrderBy("m.ca_idmaestra DESC")
+                        ->select("m.ca_idmaster, m.ca_referencia")
+                        ->from("InoMaster m")
+                        //->addOrderBy("m.ca_idmaster DESC")
                         ->addOrderBy("m.ca_referencia ASC")
                         ->setHydrationMode( Doctrine::HYDRATE_ARRAY )
                         ->limit(40)
@@ -498,6 +498,33 @@ class widgetsActions extends sfActions
             $row["ca_id"]=$row["i_ca_id"];
 			$row["ca_nombre"]=utf8_encode($row["i_ca_nombre"]);
 
+            $ids[]=$row;
+
+		}
+        $this->responseArray = array( "totalCount"=>count( $ids ), "root"=>$ids  );
+        $this->setTemplate("responseTemplate");
+	}
+
+    public function executeListaAgentesJSON(){
+		$criterio =  $this->getRequestParameter("query");
+
+        $rows = Doctrine_Query::create()
+                        ->select("i.ca_id, i.ca_nombre")
+                        ->from("Ids i")
+                        ->where("UPPER(i.ca_nombre) like ?", "%".strtoupper( $criterio )."%")
+                        ->addOrderBy("i.ca_nombre ASC")
+                        ->setHydrationMode( Doctrine::HYDRATE_SCALAR )
+                        ->limit(40)
+                        ->execute();
+
+
+
+		$ids = array();
+
+   		foreach ( $rows as $row ) {
+            $row["ca_id"]=$row["i_ca_id"];
+			$row["ca_nombre"]=utf8_encode($row["i_ca_nombre"]);
+            $row["ca_trafico"]=utf8_encode($row["i_ca_trafico"]);
             $ids[]=$row;
 
 		}
@@ -774,7 +801,7 @@ class widgetsActions extends sfActions
                            ->createQuery("r")
                            ->select("r.ca_idreporte, r.ca_consecutivo,r.ca_version ,o.ca_ciudad, d.ca_ciudad, o.ca_idciudad, d.ca_idciudad,o.ca_idtrafico, d.ca_idtrafico, r.ca_mercancia_desc,
                                     r.ca_idlinea, r.ca_impoexpo, r.ca_transporte, r.ca_modalidad, r.ca_incoterms, con.ca_idcontacto, con.ca_nombres, con.ca_papellido, con.ca_sapellido, con.ca_cargo
-                                    ,cl.ca_idcliente, cl.ca_compania, cl.ca_preferencias, cl.ca_confirmar, cl.ca_coordinador")
+                                    ,cl.ca_idcliente, cl.ca_compania, cl.ca_preferencias, cl.ca_confirmar, cl.ca_coordinador, usu.ca_login, usu.ca_nombre, r.ca_orden_clie")
                            ->leftJoin("r.Origen o")
                            ->leftJoin("r.Destino d")
                            ->leftJoin("r.Contacto con")
@@ -808,9 +835,10 @@ class widgetsActions extends sfActions
                 $reportes[$key]["con_ca_sapellido"] = utf8_encode($reportes[$key]["con_ca_sapellido"]);
                 $reportes[$key]["con_ca_cargo"] = utf8_encode($reportes[$key]["con_ca_cargo"]);
                 $reportes[$key]["cl_ca_preferencias"] = utf8_encode($reportes[$key]["cl_ca_preferencias"]);
-                $reportes[$key]["usu_ca_nombre"] = utf8_encode($reportes[$key]["usu_ca_nombre"]);
+                $reportes[$key]["usu_ca_nombre"] = isset($reportes[$key]["usu_ca_nombre"])?utf8_encode($reportes[$key]["usu_ca_nombre"]):"";
 
                 $reportes[$key]["r_ca_modalidad"] = utf8_encode($reportes[$key]["r_ca_modalidad"]);
+                $reportes[$key]["r_ca_orden_clie"] = utf8_encode($reportes[$key]["r_ca_orden_clie"]);
 
                 $reportes[$key]["r_ca_idlinea"] = utf8_encode($reportes[$key]["r_ca_idlinea"]);
 
