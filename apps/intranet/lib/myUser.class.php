@@ -48,6 +48,10 @@ class myUser extends sfBasicSecurityUser
 		return $this->getAttribute('nombre');
 	}
 
+    public function getSucursal(){
+        return $this->getAttribute('idsucursal');
+	}
+
     public function getNombres(){
 		return $this->getAttribute('nombres');
 	}
