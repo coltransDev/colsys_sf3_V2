@@ -30,16 +30,16 @@ class confirmacionesComponents extends sfComponents
             
 		}
 
-        $fijos = Doctrine::getTable("Contacto")
+        $this->fijos = Doctrine::getTable("Contacto")
                                    ->createQuery("c")
                                    ->addWhere("c.ca_idcliente = ?", $this->cliente->getCaIdcliente() )
                                    ->addWhere("ca_fijo = ?", true)
                                    ->execute();
-        $this->fijos = array();
+        /*$this->fijos = array();
         foreach( $fijos as $fijo  ){
             $this->fijos[] = $fijo->getCaEmail();
-        }
-        $this->fijos = array_unique( $this->fijos );
+        }*/
+        //$this->fijos = array_unique( $this->fijos );
 
 	}
 	

@@ -34,15 +34,18 @@ if( $modo=="otm" ){
                 <?
                 //Contactos fijos
                
-                foreach( $fijos as $email ){
+                foreach( $fijos as $fijo ){
+                    $email = $fijo->getCaEmail();
                     if( $email ){
                         $i++;
+                        echo "<b>".$fijo->getCaEmail()."</b> [".$fijo->getCaCargo()."]";
                         ?>
-                        <input id="ar_<?=$inoCliente->getOid()?>_<?=$i?>" type='text' name='ar_<?=$inoCliente->getOid()?>_<?=$i?>' value='<?=isset($email)?$email:""?>' size="35" maxlength="50" readonly="true" />
+                        <input id="ar_<?=$inoCliente->getOid()?>_<?=$i?>" type='hidden' name='ar_<?=$inoCliente->getOid()?>_<?=$i?>' value='<?=isset($email)?$email:""?>' size="35" maxlength="50" readonly="true" />
                         <input id="em_<?=$inoCliente->getOid()?>_<?=$i?>" type="checkbox" name='em_<?=$inoCliente->getOid()?>[]' value='<?=$i?>'  checked='checked' />
                         <br />
                         <?
                     }else{
+                        echo $fijo->getCaNombre();
                         ?>
                         <b>Contacto fijo sin e-mail</b>
                         <br />
