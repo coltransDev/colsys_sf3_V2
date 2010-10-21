@@ -251,12 +251,8 @@ class traficosActions extends sfActions
                                    ->addWhere("c.ca_idcliente = ?", $cliente->getCaIdcliente() )
                                    ->addWhere("ca_fijo = ?", true)
                                    ->execute();
-        $fijosArr = array();
-        foreach( $fijos as $fijo  ){
-            $fijosArr[] = $fijo->getCaEmail();
-        }
-        $fijosArr = array_unique( $fijosArr );
-        $this->form->setDestinatariosFijos( $fijosArr );
+        
+        $this->form->setDestinatariosFijos( $fijos );
 		//Etapas			
 
         $q = Doctrine::getTable("TrackingEtapa")->createQuery("t");
@@ -883,7 +879,7 @@ class traficosActions extends sfActions
             if( !is_dir($directory) ){
                 @mkdir($directory, 0777, true);
             }
-            $fileName = "status".$cliente->getCaIdcliente().".xls";
+            $fileName = "status".str_replace(".", "", str_replace(" ", "_", $cliente->getCaCompania())).".xls";
 
 			//Genera el archivo de excel
 			$this->getRequest()->setParameter('filename',$email->getDirectorio().$fileName);
@@ -1119,15 +1115,23 @@ class traficosActions extends sfActions
 	*/
 	public function executeTerminarSeguimiento( $request ){
         $this->form = new SeguimientoForm();
-		$reporte = $this->getRequestParameter( "reporte" );
+		$reporte = $request->getParameter( "reporte" );
 		$this->forward404Unless( $reporte );
 		$reporte = ReporteTable::retrieveByConsecutivo( $reporte );
         $this->forward404Unless( $reporte );
 
-        $tarea = Doctrine::getTable("NotTarea")->find( $this->getRequestParameter( "idtarea" ) );
+        $tarea = Doctrine::getTable("NotTarea")->find( $request->getParameter( "idtarea" ) );
         $this->forward404Unless( $tarea );
 
-        $asignacion = Doctrine::getTable("RepAsignacion")->find(array($reporte->getCaIdreporte(), $tarea->getCaIdtarea()));
+        
+        $asignacion = Doctrine::getTable("RepAsignacion")
+                                ->createQuery("a")
+                                ->innerJoin("a.Reporte r")
+                                ->addWhere("a.ca_idtarea = ? ", $tarea->getCaIdtarea() )
+                                ->addWhere("r.ca_consecutivo = ? ", $reporte->getCaConsecutivo() )
+                                ->fetchOne();
+        
+        $this->forward404Unless( $asignacion );
 
 		$this->modo = $this->getRequestParameter("modo");
 		if( !$this->modo ){
@@ -1135,7 +1139,7 @@ class traficosActions extends sfActions
 		}
 
 		
-        $tarea = $asignacion->getNotTarea();
+        
         $tarea->setCaFchterminada(date("Y-m-d H:i:s"));
         $tarea->save();
         if ($request->isXmlHttpRequest()){

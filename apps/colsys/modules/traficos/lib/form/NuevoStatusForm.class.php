@@ -29,7 +29,7 @@ class NuevoStatusForm extends BaseForm{
 
         for( $i=0; $i< count($destinatariosFijos) ; $i++ ){
             
-            $widgets["destinatariosfijos_".$i] = new sfWidgetFormInputCheckbox(array(), array("size"=>60, "style"=>"margin-bottom:3px", "value"=>trim($destinatariosFijos[$i])));
+            $widgets["destinatariosfijos_".$i] = new sfWidgetFormInputCheckbox(array(), array("size"=>60, "style"=>"margin-bottom:3px", "value"=>trim($destinatariosFijos[$i]->getCaEmail())));
             
 		}
 		
@@ -155,10 +155,10 @@ class NuevoStatusForm extends BaseForm{
             
             $validator["destinatariosfijos_".$i] =new sfValidatorEmail( array('required' => false ),
                                                     array('invalid' => 'La dirección es invalida'));
-            if( $destinatariosFijos[$i] ){
-                $this->widgetSchema->setLabel("destinatariosfijos_".$i, $destinatariosFijos[$i]);
+            if( $destinatariosFijos[$i]->getCaEmail() ){
+                $this->widgetSchema->setLabel("destinatariosfijos_".$i, $destinatariosFijos[$i]->getNombre()." [".$destinatariosFijos[$i]->getCaCargo()."]");
             }else{
-                $this->widgetSchema->setLabel("destinatariosfijos_".$i, "Destinatario sin e-mail");
+                $this->widgetSchema->setLabel("destinatariosfijos_".$i, $destinatariosFijos[$i]->getNombre()." <span class='rojo'>Destinatario sin e-mail</span>");
             }
             
 		}
