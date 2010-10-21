@@ -191,7 +191,7 @@ $container = $sf_data->getRaw( "container" );
     };
 
     Ext.extend(MainPanel, Ext.grid.EditorGridPanel, {
-        height: 90,
+        height: 95,
         guardarCambios: function(){
             var store = this.store;
             var records = store.getModifiedRecords();

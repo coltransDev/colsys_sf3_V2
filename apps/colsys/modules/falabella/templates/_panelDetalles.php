@@ -281,7 +281,9 @@ PanelDetalles = function(){
        id:'panel-detalle',
        loadMask: {msg:'Cargando...'},
        clicksToEdit: 1,
-       autoHeight: true,
+       //autoHeight: true,
+       autoWidth : true,
+       scroll: true,
        plugins: [this.checkColumn],
 
        listeners:{            
@@ -295,8 +297,7 @@ PanelDetalles = function(){
 };
 
 Ext.extend(PanelDetalles, Ext.grid.EditorGridPanel, {
-    height: 500,
-
+    height: 300,
     guardarCambios: function(){
         var store = this.store;
         var records = store.getModifiedRecords();

@@ -26,10 +26,9 @@ function export_file(){
         var panel = new MainPanel();
         panel.render("main-panel");
 
-
         var panelDetalles = new PanelDetalles();
         panelDetalles.render("panel-detalles");
-        //panelDetalles.setWidth(Ext.get(document.getElementById("content")).getWidth());
+        // panelDetalles.setWidth(Ext.get(document.getElementById("content")).getWidth());
         panelDetalles.store.load();
         panelDetalles.onAfterLoad();
 
