@@ -196,7 +196,7 @@ class adminUsersActions extends sfActions
 						  
 		$this->jefes = Doctrine::getTable("Usuario")
                           ->createQuery("j")
-					      ->select('j.ca_nombre, j.ca_cargo, c.ca_idempresa')
+					      ->select('j.ca_login, j.ca_nombre, j.ca_cargo, c.ca_idempresa')
 						  ->innerJoin('j.Cargo c')
                           ->innerJoin('c.Empresa e')
 						  ->addWhere('j.ca_activo = ?', true)
