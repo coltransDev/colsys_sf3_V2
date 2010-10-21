@@ -46,15 +46,19 @@ WidgetReporte = function( config ){
 			{name: 'iddestino', mapping: 'd_ca_idciudad'},
 			{name: 'idcontacto', mapping: 'con_ca_idcontacto'},
             {name: 'compania', mapping: 'cl_ca_compania'},
+            {name: 'idcliente', mapping: 'cl_ca_idcliente'},
 			{name: 'cargo', mapping: 'con_ca_cargo'},
 			{name: 'nombre', mapping: 'con_ca_nombres'},
 			{name: 'papellido', mapping: 'con_ca_papellido'},
 			{name: 'sapellido', mapping: 'con_ca_sapellido'},
 			{name: 'preferencias', mapping: 'cl_ca_preferencias'},
 			{name: 'confirmar', mapping: 'cl_ca_confirmar'},
-            {name: 'vendedor', mapping: 'c_ca_usuario'},
+            {name: 'vendedor', mapping: 'usu_ca_login'},
+            {name: 'nombreVendedor', mapping: 'usu_ca_nombre'},
             {name: 'coordinador', mapping: 'cl_ca_coordinador'},
-            {name: 'version', mapping: 'r_ca_version'}
+            {name: 'orden_clie', mapping: 'r_ca_orden_clie'}
+
+
         ])
     });
 
