@@ -82,9 +82,9 @@ var mostrar=function( oid ){
 	switch( value ){        
 		<?
 		foreach( $etapas as $etapa ){           
-            if( $etapa->getCaIdetapa()=="IMETA" && $count>0 ){
+            /*if( $etapa->getCaIdetapa()=="IMETA" && $count>0 ){
                 continue;
-            }            
+            }  */
 		?>
 		case '<?=$etapa->getCaIdetapa()?>':
 			var val = '<?=str_replace("\n", "<br />", $etapa->getCaMessage())?>';			

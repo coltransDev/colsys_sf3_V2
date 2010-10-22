@@ -300,12 +300,12 @@ class traficosActions extends sfActions
 		* Fin de la configuración
 		*/
 
-        $this->count = Doctrine::getTable("RepStatus")
+        /*$this->count = Doctrine::getTable("RepStatus")
                                  ->createQuery("r")
                                  ->select("count(*)")
                                  ->where("r.ca_idetapa = ? AND r.ca_idreporte = ?", array("IMCEM", $reporte->getCaIdreporte()))
                                  ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)
-                                 ->execute();
+                                 ->execute();*/
 		
 		if ($request->isMethod('post')){		
 		
