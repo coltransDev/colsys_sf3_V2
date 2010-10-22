@@ -4,9 +4,7 @@
  *
  *  (c) Coltrans S.A. - Colmas Ltda.
 */
-
 include_component("widgets", "widgetCotizacion");
-
 //include_component("widgets", "widgetImpoexpo");
 //include_component("widgets", "widgetTransporte");
 include_component("widgets", "widgetModalidad");
@@ -26,27 +24,26 @@ if($permiso>=2)
 {
     include_component("widgets", "widgetComerciales");
 }
-
 ?>
 <script type="text/javascript">
     FormTrayectoPanel = function( config ){
         Ext.apply(this, config);
         this.widgetCotizacion = new WidgetCotizacion({
-                                                      fieldLabel: "Cotización",
-                                                      id:"cotizacion",
-                                                      hiddenName: "idcotizacion",
-                                                      modo:"<?=$modo?>",
-                                                      impoexpo:"<?=$impoexpo?>",
-                                                      valueField:"consecutivo"
-                                                      });
+                                              fieldLabel: "Cotización",
+                                              id:"cotizacion",
+                                              hiddenName: "idcotizacion",
+                                              modo:"<?=$modo?>",
+                                              impoexpo:"<?=$impoexpo?>",
+                                              valueField:"consecutivo"
+                                              });
         this.widgetCotizacion.addListener("select", this.onSelectCotizacion, this );
 
 		this.wgModalidad=new WidgetModalidad({fieldLabel: 'Tipo Envio',
-                                                    id: 'modalidad',
-                                                    hiddenName: "idmodalidad",
-                                                    linkTransporte: "transporte",
-                                                    linkImpoexpo: "impoexpo"
-                                                    });
+                                        id: 'modalidad',
+                                        hiddenName: "idmodalidad",
+                                        linkTransporte: "transporte",
+                                        linkImpoexpo: "impoexpo"
+                                        });
         <?
 		if($impoexpo == Constantes::EXPO || ($impoexpo== Constantes::IMPO && $modo== Constantes::AEREO) || ($impoexpo== Constantes::TRIANGULACION ))
 		{
@@ -59,7 +56,7 @@ if($permiso>=2)
 			labelWidth: 100,
             title: 'General',
             deferredRender:false,
-            //layout:'form',
+            
             autoHeight:true,
             
             items: [{
@@ -130,9 +127,6 @@ if($permiso>=2)
                         },
                         items :
                         [
-                        /*
-                         * =========================Column 1 =========================
-                         **/
                             {
                                 columnWidth:.4,                                
                                 border:false,                                
@@ -152,19 +146,14 @@ if($permiso>=2)
                                                     pais:'<?=$pais1?>',
                                                     excluidos:'C0-057'
                                                    }),
-
                                     new WidgetCiudad({fieldLabel: '<?=$origen?>',
                                                       linkPais: 'tra_origen_id',
                                                       id: 'origen',
                                                       idciudad:"origen",
                                                       hiddenName:"idorigen"
                                                     })
-
                                 ]
-                            },
-                        /*
-                         * =========================Column 2 =========================
-                         **/
+                            },                       
                             {
                                 columnWidth : .6,
                                 layout : 'form',
@@ -217,14 +206,14 @@ if($permiso>=2)
                                 items:
                                 [
                                     new WidgetAgente({fieldLabel: 'Agente',
-                                                              linkImpoExpo: "impoexpo",
-                                                              linkOrigen: "tra_origen_id",
-                                                              linkDestino: "tra_destino_id",
-                                                              linkListarTodos: "listar_todos",
-                                                              id:"agente",
-                                                              hiddenName:"idagente",
-                                                              width:350
-                                                            }),
+                                                      linkImpoExpo: "impoexpo",
+                                                      linkOrigen: "tra_origen_id",
+                                                      linkDestino: "tra_destino_id",
+                                                      linkListarTodos: "listar_todos",
+                                                      id:"agente",
+                                                      hiddenName:"idagente",
+                                                      width:350
+                                                    }),
                                     {
                                         xtype: "checkbox",
                                         fieldLabel: "Listar todos",
@@ -268,9 +257,7 @@ if($permiso>=2)
 
             Ext.getCmp("tra_destino_id").setValue(record.data.tra_destino);
             Ext.getCmp("destino").setValue(record.data.iddestino);
-            $("#destino").val(record.data.destino);
-
-            //$("#idvendedor").val(record.data.idvendedor);
+            $("#destino").val(record.data.destino);            
 
             Ext.getCmp("vendedor").setValue(record.data.idvendedor);
             $("#vendedor").val(record.data.vendedor);
@@ -306,22 +293,14 @@ if($permiso>=2)
 
             Ext.getCmp("ca_primaventa").setValue(record.data.prima_vlr);
             Ext.getCmp("ca_minimaventa").setValue(record.data.prima_min);
-
-            //if(parseInt(record.data.obtencion)>0 || record.data.idmoneda!="" || record.data.idmonedaobtencion!="" || parseInt(record.data.prima_vlr)!="" || parseInt(record.data.prima_min)!="")
+            
             if((record.data.obtencion) || (record.data.idmoneda) || (record.data.idmonedaobtencion) || (record.data.prima_vlr) || (record.data.prima_min))
             {
                 Ext.getCmp('seguros').expand();
             }
 
-//            Ext.getCmp("ca_liberacion").setValue(record.data.prima_min);
-//            Ext.getCmp("ca_tiempocredito").setValue(record.data.prima_min);
             $("#destino").val(record.data.destino);
             Ext.getCmp("idproducto").setValue(record.data.idproducto);
-
-
-
-//            dias_credito
-            //alert(record.data.diascredito);
             diascredito=0;
             if(record.data.diascredito && record.data.diascredito!="null")
                 diascredito=(record.get("diascredito")!="")?record.get("diascredito")+" dias":"0";
@@ -332,17 +311,14 @@ if($permiso>=2)
                 cupo=(record.get("cupo")!="")?"Sí":"No";
             else
                 cupo="No";
-            //alert(cupo);
+
             Ext.getCmp("ca_liberacion").setValue(cupo);
-
-            Ext.getCmp("preferencias").setValue(record.get("preferencias"));
-
         } 
 		,
         onSelectModalidad: function( combo, record, index)
         {
             if(record)
-            {   
+            {
                 <?
                     if($impoexpo== Constantes::TRIANGULACION )
                     {
@@ -354,27 +330,30 @@ if($permiso>=2)
                     <?
                     }
                     ?>
-
                 if(record.data.modalidad=="CONSOLIDADO")
                 {
-                    if(Ext.getCmp("PCorteMaster"))
+                    /*if(Ext.getCmp("PCorteMaster"))
                         Ext.getCmp("PCorteMaster").hide();
                     if(Ext.getCmp("PCorteHija"))
-                        Ext.getCmp("PCorteHija").show();
+                        Ext.getCmp("PCorteHija").show();*/
                     Ext.getCmp("linea").allowBlank=true;
                 }
                 else if(record.data.modalidad=="DIRECTO")
                 {
+                    /*if(Ext.getCmp("PCorteMaster"))
+                        Ext.getCmp("PCorteMaster").hide();
                     if(Ext.getCmp("PCorteHija"))
+                        Ext.getCmp("PCorteHija").show();*/
+                    Ext.getCmp("linea").allowBlank=true;
+                    /*if(Ext.getCmp("PCorteHija"))
                         Ext.getCmp("PCorteHija").hide();
                     if(Ext.getCmp("PCorteMaster"))
                         Ext.getCmp("PCorteMaster").show();
-                    Ext.getCmp("linea").allowBlank=true;
+                    Ext.getCmp("linea").allowBlank=true;*/
                 }
                 else if(record.data.modalidad=="BACK TO BACK")
                 {
                     Ext.getCmp("linea").allowBlank=false;
-                    
                 }
                 else if(record.data.modalidad=="FCL")
                 {
