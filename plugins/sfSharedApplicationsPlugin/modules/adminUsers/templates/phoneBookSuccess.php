@@ -37,8 +37,6 @@ function cambiarValores(){
     }
 }
 </script>
-<table>
-<tr>
 <div id="cpanel">
 
         <div style="float:left;">
@@ -74,8 +72,6 @@ function cambiarValores(){
             </div>
         </div>
 </div>
-</tr>
-</table>
 <br />
 <br />
 <?
@@ -155,5 +151,11 @@ if($criterio=='buttondep'){
 }
 ?>
 <script language="javascript" type="text/javascript">
+    <?
+    if($criterio  ){
+    ?>
     cambiarValores();
+    <?
+    }
+    ?>
 </script>
