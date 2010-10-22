@@ -111,7 +111,8 @@ class reportesNegComponents extends sfComponents
          }
          $reporte=$this->reporte;
          $user = $this->getUser();
-         if( $reporte->getEditable(0,$user) ){
+         $this->permiso = $user->getNivelAcceso( "87" );
+         if( $reporte->getEditable($this->permiso,$user) ){
                 $this->editable = true;
             }else{
                 $this->editable = false;
@@ -141,12 +142,13 @@ class reportesNegComponents extends sfComponents
 
          foreach( $this->recargos as $key=>$val){
              $this->recargos[$key]['ca_concepto'] = utf8_encode($this->recargos[$key]['ca_concepto']);
-
          }
+
         $reporte=$this->reporte;
          $user = $this->getUser();
+         $this->permiso = $user->getNivelAcceso( "87" );
          //echo $reporte->getCaUsucreado() || $user->getUserId()!=$reporte->getCaLogin()
-         if( $reporte->getEditable(0,$user) ){
+         if( $reporte->getEditable($this->permiso,$user) ){
                 $this->editable = true;
             }else{
                 $this->editable = false;
@@ -163,17 +165,27 @@ class reportesNegComponents extends sfComponents
 	public function executePanelRecargosAduana()
 	{
         $this->recargos = Doctrine::getTable("Costo")
-                                     ->createQuery("c")
-                                     ->select("ca_idcosto as ca_idconcepto, ca_costo as ca_concepto")
+                                     ->createQuery("c")                                     
+                                     ->select("DISTINCT (ca_costo) as ca_concepto ,ca_idcosto as ca_idconcepto ")
                                      //->addWhere("c.ca_tipo = ? ", Constantes::RECARGO_LOCAL )
                                      ->addWhere("c.ca_impoexpo = ? ", "Aduanas")
-                                     ->addWhere("c.ca_transporte LIKE ? ", $this->reporte->getCaTransporte() )
+                                     /*->addWhere("c.ca_transporte LIKE ? ", $this->reporte->getCaTransporte() )*/
                                      ->addOrderBy("c.ca_costo")
                                      ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
                                      ->execute();
 
          foreach( $this->recargos as $key=>$val){
              $this->recargos[$key]['ca_concepto'] = utf8_encode($this->recargos[$key]['ca_concepto']);
+             /*if($tmp!=utf8_encode($this->recargos[$key]['ca_concepto']))
+             {
+                $this->recargos[$key]['ca_concepto'] = utf8_encode($this->recargos[$key]['ca_concepto']);
+                $tmp=$this->recargos[$key]['ca_concepto'];
+             }
+             else
+             {
+                 $tmp=$this->recargos[$key]['ca_concepto'];
+                 unset($this->recargos[$key]);
+             }*/
 
          }
 	}
@@ -195,7 +207,30 @@ class reportesNegComponents extends sfComponents
 	public function executeFormReportePanel()
 	{
 //        echo "categoria:".$this->getRequestParameter("idcategory")."<br>";
-        $this->permiso = $this->getUser()->getNivelAcceso( "87" );
+        $this->cache=$this->getRequestParameter("cache");
+        //echo "cache:".$this->cache."<br>";
+        $this->user=$this->getUser();
+        $this->permiso = $this->user->getNivelAcceso( "87" );
+        $this->load_category();
+        if($this->permiso=="3")
+        {
+        //    $this->load_category();
+//            echo $this->idcategory;
+            $this->issues = Doctrine::getTable("KBTooltip")
+                                ->createQuery("t")
+                                ->select("t.ca_idcategory, t.ca_title, t.ca_info, t.ca_field_id")
+                                ->where("t.ca_idcategory = ?", $this->idcategory)
+                                ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                                ->execute();
+        }
+
+    }
+
+    public function executeFormReportePanel1()
+	{
+//        echo "categoria:".$this->getRequestParameter("idcategory")."<br>";
+        $this->user=$this->getUser();
+        $this->permiso = $this->user->getNivelAcceso( "87" );
         $this->load_category();
         if($this->permiso=="3")
         {
@@ -238,7 +273,7 @@ class reportesNegComponents extends sfComponents
             $this->pais2="Colombia";
             $this->idpais2="CO-057";
         }        
-        else if($this->dep==18 && $this->dep==3)
+        else if($this->dep==18 || $this->dep==3)
         {
             $this->impoexpo=constantes::IMPO;
             $this->pais2="Colombia";
@@ -256,6 +291,8 @@ class reportesNegComponents extends sfComponents
 
 
     }
+
+    
     /*
 	* Edita la informacion basica del trayecto
 	* @author: Andres Botero
