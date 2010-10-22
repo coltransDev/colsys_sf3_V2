@@ -21,12 +21,12 @@
         foreach ($usuarios as $usuario) {
             ?>
             <tr>
-                <td><b><a href="<?=url_for('adminUsers/viewUser?login='.$usuario->getCaLogin()) ?>"><?=$usuario->getCaNombre()?></a></b></td>
-                <td><?=($usuario->getSucursal()->getCaNombre())?></td>
-                <td><?=($usuario->getCaDepartamento())?></td>
-                <td><?=($usuario->getSucursal()->getEmpresa()->getCaNombre())?></td>
-                <td><?=($usuario->getSucursal()->getCaTelefono())?></td>
-                <td><?=($usuario->getCaExtension())?></td>
+                <td align="left"><b><a href="<?=url_for('adminUsers/viewUser?login='.$usuario->getCaLogin()) ?>"><?=$usuario->getCaNombre()?></a></b></td>
+                <td align="left"><?=($usuario->getSucursal()->getCaNombre())?></td>
+                <td align="left"><?=($usuario->getCaDepartamento())?></td>
+                <td align="left"><?=($usuario->getSucursal()->getEmpresa()->getCaNombre())?></td>
+                <td align="left"><?=($usuario->getSucursal()->getCaTelefono())?></td>
+                <td align="left"><?=($usuario->getCaExtension())?></td>
             </tr>
         <?
         }
