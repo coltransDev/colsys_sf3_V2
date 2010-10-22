@@ -28,7 +28,7 @@
                     <div class="top">
                         <div class="logo"  >
                             <a href="index.php" title="">
-                                <? echo image_tag('colmas_logo.jpg',array('border'=>'none')) ?>
+                                <?include_component('homepage','logos')?>
                             </a>
                         </div>
                         <div class="search">
