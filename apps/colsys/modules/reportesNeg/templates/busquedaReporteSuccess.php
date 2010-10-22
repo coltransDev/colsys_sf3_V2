@@ -100,13 +100,10 @@ function importar(id,idnew)
                 idreportenew: idnew,
                 idreporte: id
             },
-            //Ejecuta esta accion en caso de fallo
-            //(404 error etc, ***NOT*** success=false)
                 failure:function(response,options){
                 alert( response.responseText );
                 success = false;
             },
-            //Ejecuta esta accion cuando el resultado es exitoso
             success:function(response,options){
                 var res = Ext.util.JSON.decode( response.responseText );
                 if( res.success ){
@@ -153,15 +150,15 @@ function importar(id,idnew)
                 </td>
         </tr>
         <tr >
-            <td  ><table width="100%" >
-                    <tbody>
-                        <tr>
-                            <td class="invertir" style="font-weight: bold;">Origen</td>
-                            <td class="invertir" style="font-weight: bold;">Destino</td>
-                            <td width="20%" class="invertir" style="font-weight: bold;">Fch.Despacho</td>
-                            <td width="20%" class="invertir" style="font-weight: bold;">T.Incoterms</td>
-                            <td width="20%" class="invertir" style="font-weight: bold;">Orden</td
-                            <td width="21%" class="invertir" style="font-weight: bold;">Cotizaci&oacute;n</td>
+            <td width="100%"  >
+                <table width="100%"  >
+                        <tr  style="font-weight: bold;background:#D2D2D2;">
+                            <td  >Origen</td>
+                            <td  >Destino</td>
+                            <td width="15%" >Fch.Despacho</td>
+                            <td width="15%" >T.Incoterms</td>
+                            <td width="15%" >Orden</td>
+                            <td width="15%" >Cot</td>
                         </tr>
                         <tr>
                             <td class="listar"><?=$origen?$origen->getTrafico()."->".$origen->getCaCiudad():"&nbsp;"?></td>
@@ -171,7 +168,24 @@ function importar(id,idnew)
                             <td class="listar"><?=$reporte->getCaOrdenClie()?></td>
                             <td class="listar"><?=$reporte->getCaIdcotizacion()?></td>
                         </tr>
-                    </tbody>
+                        <tr><td class="invertir" style="font-weight: bold;">Proveedor</td><td colspan="5" class="listar">
+                            <?
+                            if( $reporte->getCaIdproveedor() ){
+                            $values = explode("|", $reporte->getCaIdproveedor());
+                            $values2 = explode("|", $reporte->getCaOrdenProv());
+
+                            for($i=0;$i<count($values);$i++)
+                            {
+                                $tercero = Doctrine::getTable("Tercero")->find($values[$i]);
+                                if($tercero)
+                                {
+                                    echo $tercero->getCaNombre()." - ".  $values2[$i]."<br>";
+                                }
+                            }
+                            }
+
+                            ?>
+                            </td></tr>                   
                 </table></td>
         </tr>
         <?

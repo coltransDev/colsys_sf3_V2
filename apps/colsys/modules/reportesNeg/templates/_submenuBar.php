@@ -7,25 +7,20 @@
 ini_set('default_charset','UTF8');
 
 $i = 0;
-
-//$user = getUser();
-//echo  $user->getUserId();
-
+//if($user->getUserId()=="maquinche")
+//    echo $action;
 $permiso=$user->getNivelAcceso( "87" );
 if($this->getRequestParameter("id"))
 {
     $reporte = Doctrine::getTable("Reporte")->find( $this->getRequestParameter("id") );
-    //echo $this->getRequestParameter("id");
-    $editable=$reporte->getEditable(0,$user);
+    $editable=$reporte->getEditable($permiso,$user);
     $cerrado=$reporte->getCerrado();
-    //echo $editable;
 }
 else
     $editable=false;
 $opcion = ($this->getRequestParameter("opcion")?"&opcion=".$this->getRequestParameter("opcion"):"");
 
 $modo = $this->getRequestParameter("modo");
-
 
 if( $modo==Constantes::AEREO  || utf8_decode($modo) == Constantes::AEREO ){
     $modo=Constantes::AEREO;
@@ -34,9 +29,6 @@ if( $modo==Constantes::AEREO  || utf8_decode($modo) == Constantes::AEREO ){
 if( $modo==Constantes::MARITIMO || utf8_decode($modo)==Constantes::MARITIMO  ){
     $modo=Constantes::MARITIMO;
 }
-
-//echo $modo;
-
 
 
 $impoexpo = $this->getRequestParameter("impoexpo");
@@ -53,9 +45,6 @@ if( $impoexpo==Constantes::TRIANGULACION || utf8_decode($impoexpo)==Constantes::
     $impoexpo=Constantes::TRIANGULACION;
 }
 
-//echo $impoexpo;
-
-
 if( $action!="index" ){
 	$button[$i]["name"]="Inicio ";
 	$button[$i]["tooltip"]="Pagina inicial del reporte de negocios";
@@ -63,7 +52,7 @@ if( $action!="index" ){
 	$button[$i]["link"]= "/reportesNeg/index?token=".md5(time()).$opcion;
 	$i++;
 }
-//echo $action;
+
 switch($action){
 	case "index":		
 /*		$button[$i]["name"]="Nuevo";
@@ -84,14 +73,14 @@ switch($action){
         break;
 	case "consultaReporte":
 		
-    if($editable)
-    {
-        $button[$i]["name"]="Editar ";
-		$button[$i]["tooltip"]="Modificar este reporte";
-		$button[$i]["image"]="22x22/edit.gif";
-		$button[$i]["link"]= "/reportesNeg/formReporte/id/".$this->getRequestParameter("id")."/impoexpo/".$impoexpo."/modo/".$modo;
-        $i++;
-    }
+        if($editable)
+        {
+            $button[$i]["name"]="Editar ";
+            $button[$i]["tooltip"]="Modificar este reporte";
+            $button[$i]["image"]="22x22/edit.gif";
+            $button[$i]["link"]= "/reportesNeg/formReporte/id/".$this->getRequestParameter("id")."/impoexpo/".$impoexpo."/modo/".$modo;
+            $i++;
+        }
         $button[$i]["name"]="Generar ";
 		$button[$i]["tooltip"]="Genera un archivo PDF con el reporte";
 		$button[$i]["image"]="22x22/pdf.gif";
@@ -126,7 +115,7 @@ switch($action){
             $button[$i]["name"]="Importar";
             $button[$i]["tooltip"]="Importar un reporte";
             $button[$i]["image"]="22x22/window_nofullscreen.gif";
-            $button[$i]["onClick"]= "window.open('/reportesNeg/busquedaReporte/idimpo/".$this->getRequestParameter("id")."')";
+            $button[$i]["onClick"]= "location.href='/reportesNeg/busquedaReporte/idimpo/".$this->getRequestParameter("id")."'";
             $i++;
         }
             
@@ -140,7 +129,12 @@ switch($action){
             $button[$i]["onClick"]= "nuevoRep()";
             $i++;
         }
-        if($permiso>2 && !$cerrado)
+            $button[$i]["name"]="Copiar";
+            $button[$i]["tooltip"]="copiar en un nuevo reporte";
+            $button[$i]["image"]="22x22/copy_newv.gif";
+            $button[$i]["onClick"]= "copiaRep()";
+            $i++;
+        if($permiso>1 && !$cerrado)
         {
             $button[$i]["name"]="Cerrar";
             $button[$i]["tooltip"]="Cerrar un reporte";
@@ -186,7 +180,7 @@ switch($action){
 //        print_r($buttonHelp);
         break;
     case "formReporte":
-
+    case "formReporte1":
         if($this->getRequestParameter("id")!="")
         {
             $button[$i]["name"]="Generar ";
@@ -207,11 +201,7 @@ switch($action){
                 $button[$i]["image"]="22x22/window_nofullscreen.gif";
                 $button[$i]["onClick"]= "window.open('/reportesNeg/busquedaReporte/idimpo/".$this->getRequestParameter("id")."')";
                 $i++;
-
-                
-
             }
-
 
             if(!$cerrado)
             {
@@ -221,8 +211,13 @@ switch($action){
                 $button[$i]["onClick"]= "nuevoRep()";
                 $i++;
             }
-        if($permiso>2 && !$cerrado)
-        {
+            $button[$i]["name"]="Copiar";
+            $button[$i]["tooltip"]="copiar en un nuevo reporte";
+            $button[$i]["image"]="22x22/copy_newv.gif";
+            $button[$i]["onClick"]= "copiaRep()";
+            $i++;
+            if($permiso>1 && !$cerrado)
+            {
                 $button[$i]["name"]="Cerrar";
                 $button[$i]["tooltip"]="Cerrar un reporte";
                 $button[$i]["image"]="22x22/encrypted.gif";
@@ -257,14 +252,11 @@ switch($action){
                     id: id,
                     tipo: tipo
                 },
-                //Ejecuta esta accion en caso de fallo
-                //(404 error etc, ***NOT*** success=false)
                     failure:function(response,options){
                     alert( response.responseText );
                     Ext.Msg.hide();
                     success = false;
                 },
-                //Ejecuta esta accion cuando el resultado es exitoso
                 success:function(response,options){
                     var res = Ext.util.JSON.decode( response.responseText );
                     if( res.success ){
@@ -273,12 +265,10 @@ switch($action){
                     }
                 }
             });
-        }
-
-        // '/reportesNeg/cerrarReporte/id/".$this->getRequestParameter("id")."'
+        }        
     }
     
-    function nuevoRep(id,tipo)
+    function nuevoRep()
     {
         if(window.confirm("Realmente desea crear una nueva version para este reporte?"))
         {
@@ -291,9 +281,38 @@ switch($action){
                     idreporte:'<?=$this->getRequestParameter("id")?>',
                     opcion:"2",
                     tipo:"full"
+                },                
+                    failure:function(response,options){
+                        var res = Ext.util.JSON.decode( response.responseText );
+                            if(res.err)
+                                Ext.MessageBox.alert("Mensaje",'Se presento un error guardando por favor informe al Depto. de Sistemas<br>'+res.err);
+                            else
+                                Ext.MessageBox.alert("Mensaje",'No es posible crear un reporte ya que posee errores en la digitacion, verifique los siguientes campos<br>'+res.texto);
+                },                
+                success:function(response,options){
+                    var res = Ext.util.JSON.decode( response.responseText );
+                    Ext.MessageBox.alert("Mensaje",'Se guardo correctamente el reporte');
+                    if(res.redirect)
+                        location.href="/reportesNeg/consultaReporte/id/"+res.idreporte+"/impoexpo/<?=$impoexpo?>/modo/<?=$modo?>";
+                }
+            });
+        }
+    }
+
+    function copiaRep()
+    {
+        if(window.confirm("Realmente desea crear un nuevo reporte?"))
+        {
+            Ext.MessageBox.wait('Guardando, Espere por favor', '---');
+            Ext.Ajax.request(
+            {
+                waitMsg: 'Guardando cambios...',
+                url: '<?=url_for("reportesNeg/guardarReporte")?>',
+                params :	{
+                    idreporte:'<?=$this->getRequestParameter("id")?>',
+                    opcion:"1",
+                    tipo:"full"
                 },
-                //Ejecuta esta accion en caso de fallo
-                //(404 error etc, ***NOT*** success=false)
                     failure:function(response,options){
                         var res = Ext.util.JSON.decode( response.responseText );
                             if(res.err)
@@ -301,7 +320,6 @@ switch($action){
                             else
                                 Ext.MessageBox.alert("Mensaje",'No es posible crear un reporte ya que posee errores en la digitacion, verifique los siguientes campos<br>'+res.texto);
                 },
-                //Ejecuta esta accion cuando el resultado es exitoso
                 success:function(response,options){
                     var res = Ext.util.JSON.decode( response.responseText );
                     Ext.MessageBox.alert("Mensaje",'Se guardo correctamente el reporte');

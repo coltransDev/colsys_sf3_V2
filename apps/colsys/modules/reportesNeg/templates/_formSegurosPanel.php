@@ -20,14 +20,13 @@ include_component("widgets", "widgetMoneda");
                     xtype:'fieldset',
                     title: 'Información de Seguros',
                     autoHeight:true,
-                    id:"panel-seguros",
-                    //defaults: {width: 210},
+                    id:"panel-seguros",                    
                     items: [
                         {
                             xtype: "hidden",
                             name: "ca_seguro_conf",
                             id: "ca_seguro_conf",
-                            value: '<?=$seguro_conf?>'
+                            value: 'spena'
 
                         },
                         {

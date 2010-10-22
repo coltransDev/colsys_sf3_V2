@@ -101,7 +101,7 @@ include_component("reportesNeg","mainPanel");
 include_component("reportesNeg","panelConceptosFletes", array("reporte"=>$reporte));
 $panelConceptosFletes = true;
 
-//echo $reporte->getCaImpoexpo();
+
 if( $reporte->getCaImpoexpo()!=Constantes::EXPO ){
         include_component("reportesNeg","panelRecargos", array("reporte"=>$reporte));
         $panelRecargos = true;
@@ -112,7 +112,6 @@ if( $reporte->getCaImpoexpo()!=Constantes::EXPO ){
 
 if( $reporte->getCaColmas()=="Sí" && $reporte->getCaImpoexpo()!=Constantes::TRIANGULACION /*|| substr($reporte->getCaModalidad(),0,6) == "ADUANA"*/ ){
    include_component("reportesNeg","panelRecargosAduana", array("reporte"=>$reporte));
-//   include_component("cotizaciones","panelTarifarioAduana",array("cotizacion"=>$cotizacion));
    $panelAduana = true;
 }else{
    $panelAduana = false;
@@ -137,12 +136,9 @@ if( $reporte->getCaColmas()=="Sí" && $reporte->getCaImpoexpo()!=Constantes::TRIA
                 {
                     waitMsg: 'Anulando...',
                     url: '<?=url_for("reportesNeg/anularReporte?id=".$reporte->getCaIdreporte())?>',
-                    //method: 'POST',
-                    //Solamente se envian los cambios
                     params :	{
                         motivo: text.trim()
                     },
-                    //Ejecuta esta accion cuando el resultado es exitoso
                     callback :function(options, success, response){
                         var res = Ext.util.JSON.decode( response.responseText );
                         if( res.success ){
@@ -167,11 +163,6 @@ if( $reporte->getCaColmas()=="Sí" && $reporte->getCaImpoexpo()!=Constantes::TRIA
            modal: true
         });
     }
-
-    //tabpanel.render('panel-info');
-    //tabpanel.setWidth(Ext.getBody().getWidth()-250);
-
-
 
     var guardarCambios = function(){
         <?

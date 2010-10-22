@@ -1,4 +1,33 @@
 <?php
+//echo $pais2;
+$cachedir = '/srv/www/colsys_sf3/apps/colsys/modules/reportesNeg/cache/';
+$cachetime = 86400;
+$cacheext = 'colsys';
+$cachepage = md5("formReporteAG/dep/$dep/pais2/$pais2/impoexpo/$impoexpo");
+$cachefile = $cachedir.$cachepage.'.'.$cacheext;
+//echo $cachefile;
+if($cache=="refresh")
+{
+    unlink($cachefile);
+}
+$cachelast=0;
+
+if (file_exists($cachefile) ) {
+    $cachelast = filemtime($cachefile);
+} else {
+    $cachelast = 0;
+}
+clearstatcache();
+
+if (time() - $cachetime <$cachelast && $cache!="false" )
+{
+    readfile($cachefile);
+}
+else
+{
+ob_start();
+
+
 include_component("widgets", "widgetTercero");
 include_component("widgets", "widgetModalidad");
 include_component("widgets", "widgetLinea");
@@ -23,14 +52,14 @@ include_component("widgets", "widgetContactoCliente");
         var bodyStyle = 'padding: 5px 5px 5px 5px;';
         this.res="";
         this.buttons = [];
-        
+
         this.buttons.push( {
             text   : 'Guardar',
             formBind:true,
             scope:this,
             handler: this.onSave
         } );
-        
+
         this.buttons.push( {
                 text   : 'Cancelar',
                  handler: this.onCancel
@@ -83,7 +112,6 @@ include_component("widgets", "widgetContactoCliente");
                             value:'<?=date('Y-m-d')?>',
                             tabIndex:1
                         }
-                        
                     ]
                 },
                 {
@@ -99,11 +127,7 @@ include_component("widgets", "widgetContactoCliente");
                         bodyStyle:'padding:4px'
                     },
                     items :
-                        [                           
-                                                
-                        /*
-                         * =========================Column 1 =========================
-                         **/
+                        [
                         {
                             columnWidth:.5,
                             layout: 'form',
@@ -154,12 +178,9 @@ include_component("widgets", "widgetContactoCliente");
                                                   hiddenName:"idorigen",
                                                   tabIndex:5
                                                 })
-                                
+
                             ]
                         },
-                        /*
-                         * =========================Column 2 =========================
-                         **/
                         {
                             columnWidth:.5,
                             layout: 'form',
@@ -173,7 +194,7 @@ include_component("widgets", "widgetContactoCliente");
                                                     linkImpoexpo: "impoexpo",
                                                     tabIndex:3
                                                     })
-                                    
+
                                 ,
                                 new WidgetPais({fieldLabel: 'País Destino',
                                                 id: 'tra_destino_id',
@@ -229,7 +250,6 @@ include_component("widgets", "widgetContactoCliente");
                     title: 'Información del Proveedor',
                     autoHeight:true,
                     id:'panel-proveedor',
-                    //defaults: {width: 210},
                     items: [
                         {
                            xtype:'button',
@@ -297,14 +317,12 @@ include_component("widgets", "widgetContactoCliente");
                     xtype:'fieldset',
                     title: 'Información del Cliente',
                     autoHeight:true,
-                    //defaults: {width: 210},
                     items: [
                         this.wgContactoCliente,
                         {
                             xtype: "hidden",
                             id: "idconcliente",
                             name: "idconcliente"
-
                         },
                         {
                             xtype: "textfield",
@@ -344,7 +362,7 @@ include_component("widgets", "widgetContactoCliente");
                                     hiddenName: "idvendedor",
                                     tabIndex:18
                                     })
-                         
+
                     ]
                 },
                 {
@@ -352,7 +370,6 @@ include_component("widgets", "widgetContactoCliente");
                     xtype:'fieldset',
                     title: 'Documentos',
                     autoHeight:true,
-                    //defaults: {width: 210},
                     items: [
                         new WidgetTercero({fieldLabel:"Consignatario",
                                                     tipo: 'Consignatario',
@@ -384,13 +401,12 @@ include_component("widgets", "widgetContactoCliente");
                     xtype:'fieldset',
                     title: 'Mensaje para el Representante Comercial',
                     autoHeight:true,
-                    //defaults: {width: 210},
                     items: [
                         {
                             xtype: "textfield",
                             fieldLabel: "Asunto",
                             name: "asunto",
-                            id: "asunto",                            
+                            id: "asunto",
                             width: 200,
                             value:"Nuevo Reporte AG",
                             tabIndex:22
@@ -398,7 +414,7 @@ include_component("widgets", "widgetContactoCliente");
                         ,
                         {
                             xtype: 'htmleditor',
-                            fieldLabel: 'Mensaje adicional',                            
+                            fieldLabel: 'Mensaje adicional',
                             name: 'mensaje_comercial',
                             width: 600,
                             grow: true,
@@ -410,7 +426,7 @@ include_component("widgets", "widgetContactoCliente");
                             enableColors : false,
                             enableLists: false,
                             tabIndex:23
-                        },                    
+                        },
                         {
                             xtype: 'fileuploadfield',
                             id: 'archivo',
@@ -424,7 +440,6 @@ include_component("widgets", "widgetContactoCliente");
                             },
                             tabIndex:24
                         }
-
                     ]
                 }
                 ,
@@ -450,14 +465,13 @@ include_component("widgets", "widgetContactoCliente");
                             columnWidth:0.5,
                             layout:'form',
                             border:false,
-                           /* bodyStyle:'padding:4px',*/
                             hideLabels:true,
                             border:true
                         },
                         items: [
                             {
                                 defaultType: 'textfield',
-                                items: [                                    
+                                items: [
                                     {
                                         xtype: "textfield",
                                         fieldLabel: "",
@@ -483,12 +497,12 @@ include_component("widgets", "widgetContactoCliente");
                                         height :20,
                                         tabIndex:this.tabindex++
                                     }
-                                    
+
                                 ]
                             }
                         ]
                     }
-                    <?                    
+                    <?
                     }
                     ?>
                     ]
@@ -502,19 +516,33 @@ include_component("widgets", "widgetContactoCliente");
                 afterrender:this.onAfterload
             }
         });
-
-
-
     };
+<?
+    if($cache!="false")
+    {
+        $fp = fopen($cachefile, 'w');
+        $cntACmp =ob_get_contents();
+        ob_end_clean();
+        $cntACmp=str_replace("\n",' ',$cntACmp);
+        $cntACmp=ereg_replace('[[:space:]]+',' ',$cntACmp);
+        fwrite($fp, ($cntACmp));
+        //@fwrite($fp, trim(gzcompress($cntACmp,6)));
+        fclose($fp);
+    //    ob_end_flush();
+        echo "<script>location.href=location.href;</script>";
+        exit;
+    }
+}
+?>
     var i=0;
     Ext.extend(FormReportePanelAg, Ext.form.FormPanel, {
-        onSave: function(){            
+        onSave: function(){
             var form  = this.getForm();
             if( form.isValid() ){
                 form.submit({
                     url: "<?=url_for("reportesNeg/guardarReporteAg")?>",
                     waitMsg:'Guardando...',
-                    waitTitle:'Por favor espere...',                    
+                    waitTitle:'Por favor espere...',
                     success: function(gridForm, action) {
                         var res = Ext.util.JSON.decode( action.response.responseText );
                         alert('Se guardo correctamente el reporte');
@@ -532,8 +560,12 @@ include_component("widgets", "widgetContactoCliente");
                     }
                     ,
                     failure:function(form,action){
-                        Ext.MessageBox.alert("Mensaje",'No es posible crear un reporte ya que posee errores en la digitacion, verifique');
-                    }//end failure block
+                        if(res.err)
+                            Ext.MessageBox.alert("Mensaje",'Se presento un error guardando por favor informe al Depto. de Sistemas<br>'+res.err);
+                        else
+                            Ext.MessageBox.alert("Mensaje",'No es posible crear un reporte ya que posee errores en la digitacion, verifique los siguientes campos<br>'+res.texto);
+                        //Ext.MessageBox.alert("Mensaje",'No es posible crear un reporte ya que posee errores en la digitacion, verifique');
+                    }
                 });
             }else{
                 Ext.MessageBox.alert('Error Message', "Por favor complete todos los datos");
@@ -549,14 +581,13 @@ include_component("widgets", "widgetContactoCliente");
                     $info = str_replace("\"", "'",str_replace("\n", "<br />",$issue["t_ca_title"].":<br />".$issue["t_ca_info"]));
                     ?>
                     info = "<?=$info?>";
-
                     target = $('#<?=$issue["t_ca_field_id"]?>').addClass("help").attr("title",info);
 <?
                 }
 ?>
                 $('.help').tooltip({track: true, fade: 250, opacity: 1, top: -15, extraClass: "pretty fancy" });
        },
-       onSelectContactoCliente: function( combo, record, index){ // override default onSelect to do redirect
+       onSelectContactoCliente: function( combo, record, index){
 
             Ext.getCmp("idconcliente").setValue(record.get("idcontacto"));
             Ext.getCmp("contacto").setValue(record.get("nombre")+' '+record.get("papellido")+' '+record.get("sapellido") );
@@ -594,8 +625,6 @@ include_component("widgets", "widgetContactoCliente");
 
             Ext.getCmp("ca_liberacion").setValue(cupo);
 
-//			Ext.getCmp("preferencias").setValue(record.get("preferencias"));
-
             combo.alertaCliente(record);
 
             $("#asunto").val("Nuevo Reporte AG "+$("#proveedor0").val()+" / "+$("#cliente").val()) ;
@@ -606,9 +635,7 @@ include_component("widgets", "widgetContactoCliente");
             {
                 Ext.getCmp("tra_destino_id").setValue("CO-057");
                 $("#tra_destino_id").val("Colombia");
-
             }
-
         }
         ,
         agregarProv:function()
@@ -640,8 +667,7 @@ include_component("widgets", "widgetContactoCliente");
 
                             ]
                         });
-            tb.render('panel-proveedor');  // toolbar is rendered
+            tb.render('panel-proveedor');
         }
     });
 </script>
-

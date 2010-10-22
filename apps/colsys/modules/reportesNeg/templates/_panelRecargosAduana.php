@@ -89,9 +89,7 @@ PanelRecargosAduana = function( config ){
         store : this.storeRecargos
     });
 
-
-
-this.storeParametros = new Ext.data.Store({
+    this.storeParametros = new Ext.data.Store({
         autoLoad : false,
         url: '<?=url_for("cotizaciones/datosParametros")?>',
         reader: new Ext.data.JsonReader(
@@ -161,7 +159,6 @@ this.storeParametros = new Ext.data.Store({
         sortable: this.readOnly,
         editor: this.editorParametros
       },
-
         {
             header: "Tipo",
             dataIndex: 'tipo_app',
@@ -170,6 +167,20 @@ this.storeParametros = new Ext.data.Store({
             sortable:false,
             editor: this.editorTipoAplicaciones
         },
+        {
+        header: "Neto",
+        dataIndex: 'netcosto',
+        width: 80,
+        hideable: false,
+        sortable:false,
+        editor: new Ext.form.NumberField({
+				allowBlank: false ,
+				allowNegative: false,
+				style: 'text-align:left',
+				decimalPrecision :3
+			})
+      }
+        ,
       {
         header: "Valor",
         dataIndex: 'vlrcosto',
@@ -183,14 +194,6 @@ this.storeParametros = new Ext.data.Store({
 				decimalPrecision :3
 			})
       },
-/*{
-        header: "Aplicacion",
-        dataIndex: 'aplicacion',
-        hideable: false,
-        width: 170,
-        sortable: this.readOnly,
-        editor: <?=include_component("widgets", "emptyCombo" ,array("id"=>""))?>
-      },*/
       {
         header: "Minimo",
         dataIndex: 'mincosto',
@@ -203,17 +206,9 @@ this.storeParametros = new Ext.data.Store({
 				style: 'text-align:left',
 				decimalPrecision :3
 			})
-      }//,
-/*      {
-        header: "Aplicacion Min",
-        dataIndex: 'aplicacionminimo',
-        hideable: false,
-        width: 170,
-        sortable: this.readOnly,
-        editor: <?=include_component("widgets", "emptyCombo" ,array("id"=>""))?>
       },
-*/
-        ,{
+
+        {
             header: "Moneda",
             dataIndex: 'idmoneda',
             width: 90,
@@ -235,12 +230,8 @@ this.storeParametros = new Ext.data.Store({
             {name: 'item', type: 'string'},
             {name: 'idmoneda', type: 'string'},
             {name: 'vlrcosto', type: 'float'},
-            //{name: 'aplicacion', type: 'string'},
-            {name: 'mincosto', type: 'float'},
-            //{name: 'aplicacionminimo', type: 'string'},
-            
+            {name: 'mincosto', type: 'float'},            
             {name: 'observaciones', type: 'string'},
-            //{name: 'tipo', type: 'string'},
             {name: 'orden', type: 'string'}
         ]);
 
@@ -258,7 +249,7 @@ this.storeParametros = new Ext.data.Store({
         ),
         sortInfo: {
             field: 'orden',
-            direction: 'ASC' // or 'DESC' (case sensitive for local sorting)
+            direction: 'ASC' 
         }
     });
 
@@ -275,8 +266,7 @@ this.storeParametros = new Ext.data.Store({
 
             forceFit:true,
             enableRowBody:true,
-            showPreview:true//,
-            //getRowClass : this.applyRowClass
+            showPreview:true
        }),
        listeners:{
             validateedit: this.onValidateEdit,
@@ -301,7 +291,7 @@ this.storeParametros = new Ext.data.Store({
             {
                 text: 'Recargar',
                 tooltip: 'Recarga los datos de la base de datos',
-                iconCls: 'refresh',  // reference to our css
+                iconCls: 'refresh',  
                 scope: this,
                 handler: function(){
 					Ext.getCmp('idPanelRecargosAduana').store.reload();
@@ -339,7 +329,7 @@ this.storeParametros = new Ext.data.Store({
 Ext.extend(PanelRecargosAduana, Ext.grid.EditorGridPanel, {
     guardarCambios: function(){
         var store = Ext.getCmp('idPanelRecargosAduana').store;
-        //var store = this.store;
+
         var records = store.getModifiedRecords();
 			
         var lenght = records.length;
@@ -360,11 +350,8 @@ Ext.extend(PanelRecargosAduana, Ext.grid.EditorGridPanel, {
 
             var changes = r.getChanges();
 
-            //Da formato a las fechas antes de enviarlas 
-            
-
             changes['id']=r.id;
-            changes['tipo']='costo';//r.data.tipo;
+            changes['tipo']='costo';
             changes['iditem']=r.data.iditem;
             changes['idconcepto']=r.data.idconcepto;
             changes['idreporte']=r.data.idreporte;
@@ -372,12 +359,10 @@ Ext.extend(PanelRecargosAduana, Ext.grid.EditorGridPanel, {
 
             
             if( r.data.iditem ){
-                //envia los datos al servidor
                 Ext.Ajax.request(
                     {
                         waitMsg: 'Guardando cambios...',
-                        url: '<?=url_for("reportesNeg/observePanelRecargosAduana")?>', 						//method: 'POST',
-                        //Solamente se envian los cambios
+                        url: '<?=url_for("reportesNeg/observePanelRecargosAduana")?>',
                         params :	changes,
 
                         callback :function(options, success, response){
@@ -385,8 +370,6 @@ Ext.extend(PanelRecargosAduana, Ext.grid.EditorGridPanel, {
                             var res = Ext.util.JSON.decode( response.responseText );
                             if( res.id && res.success){
                                 var rec = store.getById( res.id );
-
-                                //rec.set("sel", false); //Quita la seleccion de todas las columnas
                                 rec.commit();
                             }
                         }
@@ -439,18 +422,6 @@ Ext.extend(PanelRecargosAduana, Ext.grid.EditorGridPanel, {
             var store = this.store;
             var lenght = this.store.data.length;
             var records = store.getRange();
-//            alert(records.toSource());
-
-            /*for( var i=0; i< (lenght); i++){
-                if(e.record.data.idconcepto==records[i].data.idconcepto)
-                {
-                    if(e.value==records[i].data.parametro)
-                    {
-                        alert("Este concepto y parametro ya han asignados,\n seleccione otro por favor");
-                        return false;
-                    }
-                }
-            }*/
         }
         else if( e.field == "item"){
 
@@ -464,19 +435,6 @@ Ext.extend(PanelRecargosAduana, Ext.grid.EditorGridPanel, {
 
             var lenght = storeGrid.data.length;
             var records = storeGrid.getRange();
-//            alert(records.toSource());
-            //alert( lenght );
-            /*for( var i=0; i< (lenght); i++){
-                if(e.record.data.iditem==records[i].data.iditem && e.record.id!=records[i].id)
-                {
-                    if(e.record.data.iditem==records[i].data.parametro)
-                    {
-                        alert("Este concepto y parametro ya han asignados,\n seleccione otro por favor2");
-                        return false;
-                    }
-                }
-            }*/
-
 
             store.each( function( r ){
                    
@@ -491,12 +449,9 @@ Ext.extend(PanelRecargosAduana, Ext.grid.EditorGridPanel, {
                                 tipo: 'costo',
                                 parametro: '',
                                 vlrcosto: '',
-                                //aplicacion: '',
                                 mincosto: '',
-                                //aplicacionminimo: '',
-                                orden: 'Z' // Se utiliza Z por que el orden es alfabetico
-                            });
-                                                      
+                                orden: 'Z' 
+                            });           
                             rec.set("iditem", r.data.idconcepto);
                             rec.set("idconcepto", r.data.idconcepto);
                             rec.set("item", r.data.concepto);
@@ -505,14 +460,7 @@ Ext.extend(PanelRecargosAduana, Ext.grid.EditorGridPanel, {
 
                             rec.set("vlrcosto", '');
                             rec.set("idmoneda", '');
-                            //rec.set("aplicacion", '');
                             rec.set("mincosto", '');
-                            //rec.set("aplicacionminimo", '');
-                            
-                                //guardarGridProductosRec( rec );
-                            
-
-                            //Inserta una columna en blanco al final
                             storeGrid.addSorted(newRec);
                             storeGrid.sort("orden", "ASC");
 
@@ -532,7 +480,7 @@ Ext.extend(PanelRecargosAduana, Ext.grid.EditorGridPanel, {
     onRowcontextMenu: function(grid, index, e){
         rec = this.store.getAt(index);
 
-        if(!this.menu){ // create context menu on first right click
+        if(!this.menu){
 
             this.menu = new Ext.menu.Menu({
             id:'grid_productos-ctx',
@@ -584,8 +532,6 @@ Ext.extend(PanelRecargosAduana, Ext.grid.EditorGridPanel, {
             {
                 waitMsg: 'Eliminando...',
                 url: '<?=url_for("reportesNeg/eliminarRecargosAduana?idreporte=".$reporte->getCaIdreporte())?>',
-                //method: 'POST',
-                //Solamente se envian los cambios
                 params :	{
                     id: id,                    
                     iditem: iditem,
@@ -593,15 +539,10 @@ Ext.extend(PanelRecargosAduana, Ext.grid.EditorGridPanel, {
                     
                     
                 },
-
-                //Ejecuta esta accion en caso de fallo
-                //(404 error etc, ***NOT*** success=false)
                 failure:function(response,options){
                     alert( response.responseText );
                     success = false;
                 },
-
-                //Ejecuta esta accion cuando el resultado es exitoso
                 success:function(response,options){
                     var res = Ext.util.JSON.decode( response.responseText );
                     if( res.success ){

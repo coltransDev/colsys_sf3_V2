@@ -6,7 +6,7 @@
  */
 $recargos = $sf_data->getRaw("recargos");
 
-$aplicaciones = array("Valor Fijo","Sobre Flete","Sobre Flete + Recargos","Unitario x Peso/Volumen","Unitario x Pieza","Unitario x BLs/HAWBs");
+$aplicaciones = array("Valor Fijo","Sobre Flete","Sobre Flete + Recargos","Unitario x Peso/Volumen","Unitario x Pieza","Unitario x BLs/HAWBs","TM3");
 
 include_component("reportesNeg","cotizacionRecargosWindow", array("reporte"=>$reporte));
 ?>
@@ -199,7 +199,7 @@ PanelRecargos = function( config ){
         ),
         sortInfo: {
             field: 'orden',
-            direction: 'ASC' // or 'DESC' (case sensitive for local sorting)
+            direction: 'ASC' 
         }
     });
 
@@ -215,8 +215,7 @@ PanelRecargos = function( config ){
 
             forceFit:true,
             enableRowBody:true,
-            showPreview:true//,
-            //getRowClass : this.applyRowClass
+            showPreview:true
        }),
        listeners:{
             validateedit: this.onValidateEdit,
@@ -240,7 +239,7 @@ PanelRecargos = function( config ){
             {
                 text: 'Recargar',
                 tooltip: 'Recarga los datos de la base de datos',
-                iconCls: 'refresh',  // reference to our css
+                iconCls: 'refresh', 
                 scope: this,
                 handler: function(){
 					Ext.getCmp('panel-recargos').store.reload();
@@ -293,7 +292,6 @@ Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
 
         var store = Ext.getCmp('panel-recargos').store;
 
-        //var store = this.store;
         var records = store.getModifiedRecords();
 			
         var lenght = records.length;
@@ -314,9 +312,6 @@ Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
 
             var changes = r.getChanges();
 
-            //Da formato a las fechas antes de enviarlas 
-            
-
             changes['id']=r.id;
             changes['tipo']=r.data.tipo;
             changes['iditem']=r.data.iditem;
@@ -326,12 +321,10 @@ Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
 
             
             if( r.data.iditem ){
-                //envia los datos al servidor
                 Ext.Ajax.request(
                     {
                         waitMsg: 'Guardando cambios...',
-                        url: '<?=url_for("reportesNeg/observePanelConceptoFletes")?>', 						//method: 'POST',
-                        //Solamente se envian los cambios
+                        url: '<?=url_for("reportesNeg/observePanelConceptoFletes")?>',
                         params :	changes,
 
                         callback :function(options, success, response){
@@ -340,7 +333,6 @@ Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
                             if( res.id && res.success){
                                 var rec = store.getById( res.id );
 
-                                //rec.set("sel", false); //Quita la seleccion de todas las columnas
                                 rec.commit();
                             }
                         }
@@ -373,7 +365,6 @@ Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
                     var existe = false;
                     if( r.data.idconcepto==e.value ){
 
-                        //Verifica que no se haya incluido
                         recordsConceptos = storeGrid.getRange();
                         for( var j=0; j< recordsConceptos.length&&!existe; j++){
 
@@ -404,7 +395,7 @@ Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
                                    cobrar_min: '',
                                    cobrar_idm: '',
                                    detalles: '',
-                                   orden: 'Z' // Se utiliza Z por que el orden es alfabetico
+                                   orden: 'Z' 
                                 });
 
 
@@ -417,10 +408,6 @@ Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
                                 rec.set("cobrar_min", 0);
                                 rec.set("cobrar_idm", "USD");
                                 rec.set("orden", "Y-Z");
-                                    //guardarGridProductosRec( rec );
-
-
-                                //Inserta una columna en blanco al final
                                 storeGrid.addSorted(newRec);
                                 storeGrid.sort("orden", "ASC");
 
@@ -446,8 +433,7 @@ Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
     onRowcontextMenu: function(grid, index, e){
         rec = this.store.getAt(index);
 
-        if(!this.menu){ // create context menu on first right click
-
+        if(!this.menu){
             this.menu = new Ext.menu.Menu({
             id:'grid-recargos-ctx',
             enableScrolling : false,
@@ -507,8 +493,7 @@ Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
             {
                 waitMsg: 'Eliminando...',
                 url: '<?=url_for("reportesNeg/eliminarPanelConceptosFletes?idreporte=".$reporte->getCaIdreporte())?>',
-                //method: 'POST',
-                //Solamente se envian los cambios
+
                 params :	{
                     id: id,
                     idconcepto: idconcepto,
@@ -516,13 +501,10 @@ Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
                     tipo: tipo,
                     idreporte: idreporte
                 },
-                //Ejecuta esta accion en caso de fallo
-                //(404 error etc, ***NOT*** success=false)
                 failure:function(response,options){
                     alert( response.responseText );
                     success = false;
                 },
-                //Ejecuta esta accion cuando el resultado es exitoso
                 success:function(response,options){
                     var res = Ext.util.JSON.decode( response.responseText );
                     if( res.success ){

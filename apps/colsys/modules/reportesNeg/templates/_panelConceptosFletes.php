@@ -293,11 +293,9 @@ PanelConceptosFletes = function( config ){
         ),
         sortInfo: {
             field: 'orden',
-            direction: 'ASC' // or 'DESC' (case sensitive for local sorting)
+            direction: 'ASC'
         }
-    });
-
-    
+    });   
 
 
     PanelConceptosFletes.superclass.constructor.call(this, {
@@ -309,8 +307,7 @@ PanelConceptosFletes = function( config ){
 
             forceFit:true,
             enableRowBody:true,
-            showPreview:true//,
-            //getRowClass : this.applyRowClass
+            showPreview:true
        }),
        listeners:{
             validateedit: this.onValidateEdit,
@@ -335,7 +332,7 @@ PanelConceptosFletes = function( config ){
             {
                 text: 'Recargar',
                 tooltip: 'Recarga los datos de la base de datos',
-                iconCls: 'refresh',  // reference to our css
+                iconCls: 'refresh',
                 scope: this,
                 handler: function(){
 					Ext.getCmp('panel-conceptos-fletes').store.reload();
@@ -369,7 +366,6 @@ PanelConceptosFletes = function( config ){
         var record = storePanelConceptosFletes.getAt(rowIndex);
         var field = this.getDataIndex(colIndex);
 
-//		alert(record.data.iditem + ":::"+field)
         if( !record.data.iditem && field!="item" ){
             return false;
         }
@@ -406,10 +402,6 @@ PanelConceptosFletes = function( config ){
 
 Ext.extend(PanelConceptosFletes, Ext.grid.EditorGridPanel, {
     guardarCambios: function(a,b){
-//        alert(Ext.getCmp('panel-conceptos-fletes').store.toSource())
-//        alert(a.toSource())
-//        alert(storeConceptos.toSource())
-//        alert(a.storeConceptos.toSource())
         
         var store = Ext.getCmp('panel-conceptos-fletes').store;
         var records = store.getModifiedRecords();
@@ -431,10 +423,6 @@ Ext.extend(PanelConceptosFletes, Ext.grid.EditorGridPanel, {
             r = records[i];
 
             var changes = r.getChanges();
-
-            //Da formato a las fechas antes de enviarlas 
-            
-
             changes['id']=r.id;
             changes['tipo']=r.data.tipo;
             changes['iditem']=r.data.iditem;
@@ -442,22 +430,18 @@ Ext.extend(PanelConceptosFletes, Ext.grid.EditorGridPanel, {
             changes['idreporte']=r.data.idreporte;
             changes['ca_recargoorigen']="true";            
             changes['reportar_tar']=r.data.reportar_tar;
-            if( r.data.iditem ){
-                //envia los datos al servidor
+            if( r.data.iditem ){                
                 Ext.Ajax.request(
                     {
                         waitMsg: 'Guardando cambios...',
-                        url: '<?=url_for("reportesNeg/observePanelConceptoFletes")?>', 						//method: 'POST',
-                        //Solamente se envian los cambios
+                        url: '<?=url_for("reportesNeg/observePanelConceptoFletes")?>',
                         params :	changes,
 
                         callback :function(options, success, response){
 
                             var res = Ext.util.JSON.decode( response.responseText );
                             if( res.id && res.success){
-                                var rec = store.getById( res.id );
-
-                                //rec.set("sel", false); //Quita la seleccion de todas las columnas
+                                var rec = store.getById( res.id );                                
                                 rec.commit();
                             }
                         }
@@ -512,7 +496,6 @@ Ext.extend(PanelConceptosFletes, Ext.grid.EditorGridPanel, {
             store.each( function( r ){                   
                     if( r.data.idconcepto==e.value ){      
                         
-                        //Verifica que no este repetido
                         var existe = false;
                         recordsConceptos = storeGrid.getRange();
                         for( var j=0; j< recordsConceptos.length&&!existe; j++){
@@ -549,7 +532,7 @@ Ext.extend(PanelConceptosFletes, Ext.grid.EditorGridPanel, {
                                    cobrar_min: '',
                                    cobrar_idm: '',
                                    detalles: '',
-                                   orden: 'Z' // Se utiliza Z por que el orden es alfabetico
+                                   orden: 'Z' 
                                 });
 
 
@@ -570,11 +553,8 @@ Ext.extend(PanelConceptosFletes, Ext.grid.EditorGridPanel, {
                                     rec.set("cobrar_tar", 0);
                                     rec.set("cobrar_min", 0);
                                     rec.set("cobrar_idm", "USD");
-                                    rec.set("orden", r.data.concepto);
-                                    //guardarGridProductosRec( rec );
+                                    rec.set("orden", r.data.concepto);                                    
                                 }
-
-                                //Inserta una columna en blanco al final
                                 storeGrid.addSorted(newRec);
                                 storeGrid.sort("orden", "ASC");
 
@@ -599,8 +579,7 @@ Ext.extend(PanelConceptosFletes, Ext.grid.EditorGridPanel, {
     onRowcontextMenu: function(grid, index, e){
         rec = this.store.getAt(index);
 
-        if(!this.menu){ // create context menu on first right click
-
+        if(!this.menu){
             this.menu = new Ext.menu.Menu({
             id:'grid_productos-ctx',
             enableScrolling : false,
@@ -667,8 +646,6 @@ Ext.extend(PanelConceptosFletes, Ext.grid.EditorGridPanel, {
             {
                 waitMsg: 'Eliminando...',
                 url: '<?=url_for("reportesNeg/eliminarPanelConceptosFletes?idreporte=".$reporte->getCaIdreporte())?>',
-                //method: 'POST',
-                //Solamente se envian los cambios
                 params :	{
                     id: id,
                     idconcepto: idconcepto,
@@ -678,16 +655,11 @@ Ext.extend(PanelConceptosFletes, Ext.grid.EditorGridPanel, {
                     
                 },
 
-                //Ejecuta esta accion en caso de fallo
-                //(404 error etc, ***NOT*** success=false)
                 failure:function(response,options){
                     alert( response.responseText );
                     success = false;
                 },
 
-
-
-                //Ejecuta esta accion cuando el resultado es exitoso
                 success:function(response,options){
                     var res = Ext.util.JSON.decode( response.responseText );
                     if( res.success ){
@@ -751,10 +723,8 @@ Ext.extend(PanelConceptosFletes, Ext.grid.EditorGridPanel, {
                                    cobrar_min: '',
                                    cobrar_idm: '',
                                    detalles: '',
-                                   orden: orden // Se utiliza Z por que el orden es alfabetico
+                                   orden: orden 
                                 });
-            //newRec.id = rec.data.id+1;
-
 
             this.store.addSorted(newRec);
             this.store.sort("orden", "ASC");

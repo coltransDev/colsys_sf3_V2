@@ -13,8 +13,7 @@
 <script language="javascript">
 gridPanelInstruccionesWindow = function( config ){
     Ext.apply(this, config);
-    var sm = new Ext.grid.CheckboxSelectionModel();
-    //var sm = new Ext.grid.CheckColumn({header:' ', dataIndex:'sel', width:30});
+    var sm = new Ext.grid.CheckboxSelectionModel();    
 
     gridPanelInstruccionesWindow.superclass.constructor.call(this, {
         clicksToEdit: 1,
@@ -56,7 +55,7 @@ gridPanelInstruccionesWindow = function( config ){
         id:'instructiones-grid'
 
     });
-}
+};
 
 Ext.extend(gridPanelInstruccionesWindow, Ext.grid.EditorGridPanel, {
 
@@ -84,7 +83,7 @@ gridWindow = function( config ){
                     }
             ]
     });
-}
+};
 
 Ext.extend(gridWindow, Ext.Window, {
     importar: function( a,b ){
