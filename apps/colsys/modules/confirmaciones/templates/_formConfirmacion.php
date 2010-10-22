@@ -12,18 +12,18 @@ if( $modo=="otm" ){
 <a name="oid_<?=$inoCliente->getOid()?>" >&nbsp;</a>
 <table id="tb_<?=$inoCliente->getOid()?>" style='display:none' cellspacing="1" width="100%">
     <tr>
-        <td width="20%" class="listar"><b>Vendedor:</b><br />
+        <td width="18%" class="listar"><b>Vendedor:</b><br />
                 <?=$inoCliente->getCaLogin()?></td>
-        <td width="10%" class="listar"><b>HBL:</b><br />
+        <td width="8%" class="listar"><b>HBL:</b><br />
                 <?=$inoCliente->getCaHbls()?></td>
-        <td width="10%" class="listar"><b>No.Piezas:</b><br />
+        <td width="8%" class="listar"><b>No.Piezas:</b><br />
                 <?=Utils::formatNumber($inoCliente->getCaNumpiezas())?></td>
-        <td width="10%" class="listar"><b>Peso en Kilos:</b><br />
+        <td width="8%" class="listar"><b>Peso en Kilos:</b><br />
                 <?=Utils::formatNumber($inoCliente->getCaPeso())?></td>
-        <td width="10%" class="listar"><b>Volumen CMB:</b><br />
+        <td width="8%" class="listar"><b>Volumen CMB:</b><br />
                 <?=Utils::formatNumber($inoCliente->getCaVolumen())?></td>
 
-        <td width="40%" class="listar" colspan="2" valign="top" rowspan="<?=$modo=="otm"?6:4?>" ><b>Correos Electr&oacute;nicos a enviar Confirmaci&oacute;n:</b><br />
+        <td width="50%" class="listar" colspan="2" valign="top" rowspan="<?=$modo=="otm"?6:4?>" ><b>Correos Electr&oacute;nicos a enviar Confirmaci&oacute;n:</b><br />
             <?
             $i=0;
             if( count($fijos)>0 ){
@@ -31,6 +31,9 @@ if( $modo=="otm" ){
             <div class="box1 qtip" id="divfijos_<?=$inoCliente->getOid()?>" title="Debe seleccionar al menos un contacto fijo">
                &nbsp;
                 <b>Contactos fijos</b><br />
+
+                <table>
+
                 <?
                 //Contactos fijos
                
@@ -38,21 +41,36 @@ if( $modo=="otm" ){
                     $email = $fijo->getCaEmail();
                     if( $email ){
                         $i++;
-                        echo "<b>".$fijo->getCaEmail()."</b> [".$fijo->getCaCargo()."]";
                         ?>
-                        <input id="ar_<?=$inoCliente->getOid()?>_<?=$i?>" type='hidden' name='ar_<?=$inoCliente->getOid()?>_<?=$i?>' value='<?=isset($email)?$email:""?>' size="35" maxlength="50" readonly="true" />
-                        <input id="em_<?=$inoCliente->getOid()?>_<?=$i?>" type="checkbox" name='em_<?=$inoCliente->getOid()?>[]' value='<?=$i?>'  checked='checked' />
-                        <br />
+                        
+                        <tr>
+                            <td>
+                                <?
+                                echo "".$fijo->getCaEmail()."".($fijo->getCaCargo()?" [".$fijo->getCaCargo()."]":"");
+                                ?>
+                                <input id="ar_<?=$inoCliente->getOid()?>_<?=$i?>" type='hidden' name='ar_<?=$inoCliente->getOid()?>_<?=$i?>' value='<?=isset($email)?$email:""?>' size="35" maxlength="50" readonly="true" />                                
+                                
+                            </td>
+                            <td>
+                                <input id="em_<?=$inoCliente->getOid()?>_<?=$i?>" type="checkbox" name='em_<?=$inoCliente->getOid()?>[]' value='<?=$i?>'  checked='checked' />
+                            </td>
+                        </tr>
                         <?
                     }else{
-                        echo $fijo->getCaNombre();
+                        
                         ?>
-                        <b>Contacto fijo sin e-mail</b>
-                        <br />
+                        <tr>
+                            <td colspan="2">
+                                <?=$fijo->getCaNombres();?>
+                                <span class="rojo">Contacto fijo sin e-mail</span>
+
+                            </td>
+                        </tr>
                         <?
                     }
                 }
                 ?>
+                </table>
             </div>
             <?
             }
