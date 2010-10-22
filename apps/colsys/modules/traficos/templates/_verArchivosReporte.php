@@ -10,7 +10,7 @@ foreach( $files as $file ){
 	?>
 	<li>
 		<?=mime_type_icon( basename($file) )?> 
-		<a href="#" onclick="popup('<?=url_for("traficos/fileViewer?idreporte=".$reporte->getCaIdreporte()."&file=".base64_encode(basename($file)) )?>')"><?=basename( $file )?></a> 
+        <a href="<?=url_for("traficos/fileViewer?idreporte=".$reporte->getCaIdreporte()."&file=".base64_encode(basename($file)) )?>" target="_blank"><?=basename( $file )?></a>
 		
 		<?
 		if( $nivel>0 ){

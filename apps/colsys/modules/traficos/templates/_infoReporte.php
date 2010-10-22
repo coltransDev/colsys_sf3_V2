@@ -187,8 +187,8 @@ if( $reporte->getCaUsuanulado() ){
 				
 				echo mime_type_icon( "pdf" );
 				?>
-				<a onclick="popup('<?=$url?>')" id="50440', '800', '600' , 'myWindow')" href="#">Reporte</a>
-				</li></ul>
+				<a href="<?=$url?>" target="_blank">Reporte</a>
+                
 				<div id="archivosReporte_<?=$reporte->getCaIdreporte()?>" >
 				<?
 				include_component("traficos", "verArchivosReporte", array("reporte"=>$reporte, "nivel"=>$nivel));				
