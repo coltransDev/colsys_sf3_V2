@@ -49,6 +49,7 @@ class NuevoContactoForm extends BaseForm{
   								'choices' => array('Oficial'=>'Oficial', 'No Oficial'=>'No Oficial'), 'expanded'=>true)),
   		  'sugerido'      => new sfWidgetFormInputCheckbox(),
 		  'activo'      => new sfWidgetFormInputCheckbox(),
+          'notificar_vencimientos'      => new sfWidgetFormInputCheckbox(),
 		  'detalles' => new sfWidgetFormTextarea(array(), array("rows"=>3, "cols"=>80 ) )
 		));
 	
@@ -71,7 +72,8 @@ class NuevoContactoForm extends BaseForm{
           'otro_cargo' => new sfValidatorString(array('required' => false)),
 		  'sugerido'      => new sfValidatorBoolean(array('required' => false)),
 		  'activo'      => new sfValidatorBoolean(array('required' => false)),
-		   'detalles'      => new sfValidatorString(array('required' => false)),
+          'notificar_vencimientos'      => new sfValidatorBoolean(array('required' => false)),
+		  'detalles'      => new sfValidatorString(array('required' => false)),
 		));												
 																												
 		
@@ -94,7 +96,11 @@ class NuevoContactoForm extends BaseForm{
             $this->validatorSchema['cargo']->setOption('required', false);
             $this->validatorSchema['otro_cargo']->setOption('required', true);
         }
-		
+        
+        if( $taintedValues["notificar_vencimientos"] ){
+            $this->validatorSchema['email']->setOption('required', true);
+        }
+        
 		parent::bind($taintedValues,  $taintedFiles);
 	}
 

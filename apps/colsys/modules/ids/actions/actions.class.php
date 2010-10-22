@@ -460,6 +460,7 @@ class idsActions extends sfActions
 			$bindValues["transporte"] = $request->getParameter("transporte");
             $bindValues["visibilidad"] = $request->getParameter("visibilidad");
             $bindValues["codigoarea"] = $request->getParameter("codigoarea");
+            $bindValues["notificar_vencimientos"] = $request->getParameter("notificar_vencimientos");
 			$this->form->bind( $bindValues );
 			if( $this->form->isValid() ){
 				if( $bindValues["idcontacto"] ){
@@ -500,6 +501,12 @@ class idsActions extends sfActions
 					$contacto->setCaActivo( true );
 				}else{
 					$contacto->setCaActivo( false );
+				}
+
+                if( $bindValues["notificar_vencimientos"] ){
+					$contacto->setCaNotificarVencimientos( true );
+				}else{
+					$contacto->setCaNotificarVencimientos( false );
 				}
 				$contacto->save();
 
@@ -927,17 +934,25 @@ class idsActions extends sfActions
             if( $request->getParameter("idevento") ){
                 $this->ids = $evento->getIds();
                 if( $this->modo=="prov" ){
-                    $q->addWhere("c.ca_impoexpo = ?", $evento->getIdsCriterio()->getCaImpoexpo());
+                    
+                    if( $this->ids->getIdsProveedor()->getCaTipo()=="TRI" ){                        
+                        $q->addWhere("c.ca_impoexpo = ?", $evento->getIdsCriterio()->getCaImpoexpo());
+                    }
                 }
             }else{
                 $this->ids = Doctrine::getTable("Ids")->find($request->getParameter("id"));
                 if( $this->modo=="prov" ){
-                    $q->addWhere("c.ca_impoexpo = ?", $request->getParameter("impoexpo"));
+                    if( $this->ids->getIdsProveedor()->getCaTipo()=="TRI" ){
+                        $q->addWhere("c.ca_impoexpo = ?", $request->getParameter("impoexpo"));
+                    }
                 }
             }
             if( $this->modo=="prov" ){
                 $this->form->setTipo($this->ids->getIdsProveedor()->getCaTipo());
-                $q->addWhere("c.ca_transporte = ?", $this->ids->getIdsProveedor()->getCaTransporte());
+                if( $this->ids->getIdsProveedor()->getCaTipo()=="TRI" ){
+                    $q->addWhere("c.ca_transporte = ?", $this->ids->getIdsProveedor()->getCaTransporte());
+                }
+                $q->addWhere("c.ca_tipo = ?", $this->ids->getIdsProveedor()->getCaTipo() );
             }else{
                 $this->form->setTipo("AGE");
                 $q->addWhere("c.ca_tipo = ?", "AGE" );
@@ -946,9 +961,6 @@ class idsActions extends sfActions
             
             $this->url = "/ids/verIds?modo=".$this->modo."&id=".$this->ids->getCaId();
             $numreferencia = "";            
-            $q->addWhere("c.ca_tipocriterio = ?", "desempeno");
-            
-            
             
             
         }else{
@@ -961,7 +973,7 @@ class idsActions extends sfActions
 
                 $numreferencia = $this->reporte->getCaConsecutivo();
 
-                $q->addWhere("c.ca_tipocriterio = ?", "desempeno");
+                
                 $q->addWhere("c.ca_tipo = ?", "AGE" );
             }else{// Esta ingresando desde la referencia
                 $numreferencia = str_replace("_",".",$request->getParameter("referencia"));
@@ -975,7 +987,7 @@ class idsActions extends sfActions
 
                     $this->url = "/colsys_php/inosea.php?boton=Consultar&id=".$numreferencia;
 
-                    $q->addWhere("c.ca_tipocriterio = ?", "desempeno");
+                    
                     $q->addWhere("c.ca_impoexpo = ?", Constantes::IMPO);
                     $q->addWhere("c.ca_transporte = ?", Constantes::MARITIMO);
                 }
@@ -987,7 +999,7 @@ class idsActions extends sfActions
 
                     $this->url = "/Coltrans/InoAir/ConsultaReferenciaAction.do?referencia=".$numreferencia;
 
-                    $q->addWhere("c.ca_tipocriterio = ?", "desempeno");
+                   
                     $q->addWhere("c.ca_impoexpo = ?", Constantes::IMPO);
                     $q->addWhere("c.ca_transporte = ?", Constantes::AEREO);
                 }
@@ -1008,6 +1020,7 @@ class idsActions extends sfActions
                               ->execute();
         }
         $q->addWhere("c.ca_activo = ?", true );
+        $q->addWhere("c.ca_tipocriterio = ?", "desempeno");
         $criterios = $q->execute();
         $this->form->setCriterios($criterios);
         $this->form->configure();

@@ -118,6 +118,7 @@ IdsContacto:
     ca_sugerido: boolean
     ca_visibilidad: integer
     ca_activo: boolean
+    ca_notificar_vencimientos: boolean
     ca_codigoarea: string
     ca_usucreado: string(20)
     ca_fchcreado: timestamp

@@ -252,7 +252,27 @@ var verificarCargo = function(){
 					 ?>
 					Activo<br /></td>
 			</tr>
-
+            <?
+            if( $modo=="prov" ){
+            ?>
+            <tr>
+				<td><b>Notificar Vencimiento de documentos: </b></td>
+				<td colspan="3">
+					<?
+					 echo $form['notificar_vencimientos']->renderError();
+					 if( $contacto ){
+						$form->setDefault('notificar_vencimientos', $contacto->getCaNotificarVencimientos() );
+					 }else{
+                         $form->setDefault('notificar_vencimientos', false );
+                     }
+					 echo $form['notificar_vencimientos']->render();
+					 ?>
+					<br />
+                </td>
+			</tr>
+            <?
+            }
+            ?>
 			<tr>
 				<td colspan="4" ><div align="center">
 			<input type="submit" value="Guardar" class="button" />&nbsp;
