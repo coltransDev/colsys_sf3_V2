@@ -298,7 +298,7 @@ class Reporte extends BaseReporte
                     }
                     else
                     {
-                        if($user->getUserId()!=$this->getCaUsucreado() && $user->getUserId()!=$this->getCaLogin() )
+                        if($user->getUserId()!=$this->getCaUsucreado() && $user->getUserId()!=$this->getCaLogin() && $permiso<2  )
                         {
                             $this->editable = false;
                         }
