@@ -17,9 +17,9 @@
 
                     <!--Top Area Start-->
                     <div class="top">
-                        <div class="logo">
+                        <div class="logo"  >
                             <a href="index.php" title="">
-                                <? echo image_tag('colmas_logo.jpg',array('border'=>'none')) ?>
+                                <?include_component('homepage','logos')?>
                             </a>
                         </div>
                         <div class="search">
@@ -36,12 +36,10 @@
 
 
                     <!--Header Start-->
-                    <div class="header" id="texto1">
-                            <?include_component('adminUsers','loginInformation')?>
-                        <div class="header_foot">
-
-
-                        </div>
+                    <div class="header">
+                        <?include_component('adminUsers','loginInformation')?>
+                    </div>
+                    <div class="header_foot">
                     </div>
 
 
