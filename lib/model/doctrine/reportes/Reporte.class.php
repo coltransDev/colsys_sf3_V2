@@ -907,6 +907,7 @@ class Reporte extends BaseReporte
             $reporte->setCaUsuactualizado( null);
             $reporte->setCaFchcerrado( null );
             $reporte->setCaUsucerrado( null);
+            $reporte->setCaFchdespacho(date("Y-m-d"));
             $reporte->save( $conn );
 
             //Copia los conceptos
@@ -984,7 +985,7 @@ class Reporte extends BaseReporte
                 $this->setCaIdcotizacion($reporteNew->getCaIdcotizacion());
                 $this->setCaIdproducto($reporteNew->getCaIdproducto());
                 //$reporte->setCaImpoexpo($reporteNew->getCaImpoexpo());
-                //$reporte->setCaFchdespacho($reporteNew->getCaFchdespacho());
+                //$reporte->setCaFchdespacho(date("Y-m-d"));
                 $this->setCaIdconcliente($reporteNew->getCaIdconcliente());
                 $this->setCaIdclientefac($reporteNew->getCaIdclientefac());
                 $this->setCaIdclienteag($reporteNew->getCaIdclienteag());
