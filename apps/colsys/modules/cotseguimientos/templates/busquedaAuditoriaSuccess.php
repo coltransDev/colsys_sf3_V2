@@ -12,7 +12,7 @@ include_component("widgets", "widgetPais");
 var tabs = new Ext.FormPanel({
 	labelWidth: 75,
 	border:true,
-	fame:true,
+	frame:true,
 	width: 650,    
 	standardSubmit: true,  
     id: 'formPanel',	
@@ -49,10 +49,8 @@ var tabs = new Ext.FormPanel({
                     format: 'Y-m-d',
 					//collapsed: true,
 					value: '<?=date("Y-m-d")?>',
-					//allowBlank: false
-					
-				}
-				
+					//allowBlank: false					
+				}				
                 <? 
                 if($nivel=="0")
                 {
@@ -178,9 +176,6 @@ var tabs = new Ext.FormPanel({
 		}
 	}]
 });
-
 tabs.render("container");
-
-
 </script>
 
