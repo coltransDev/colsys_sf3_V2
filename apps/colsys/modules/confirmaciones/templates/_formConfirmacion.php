@@ -61,7 +61,7 @@ if( $modo=="otm" ){
                         ?>
                         <tr>
                             <td colspan="2">
-                                <?=$fijo->getCaNombres();?>
+                                <?=$fijo->getNombre();?>
                                 <span class="rojo">Contacto fijo sin e-mail</span>
 
                             </td>
