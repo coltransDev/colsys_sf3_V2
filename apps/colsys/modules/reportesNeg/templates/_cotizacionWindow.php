@@ -28,8 +28,7 @@ if( $cotizacion ){
             title: 'Seleccione las tarifas que desea importar',
             id: 'add-cotizacion-win',
             autoHeight: true,
-            width: 800,
-            //height: 600,
+            width: 800,            
             resizable: true,
             plain:true,
             modal: true,
@@ -66,11 +65,8 @@ if( $cotizacion ){
 
         show : function(){
             if(this.rendered){
-                //this.feedUrl.setValue('');
+                
             }
-
-            //this.grid.store.baseParams={ modalidades:this.ctxRecord.data.modalidades };
-            //this.grid.store.load();
 
             CotizacionWindow.superclass.show.apply(this, arguments);
         },
@@ -153,7 +149,7 @@ if( $cotizacion ){
                         newRec.set("cobrar_idm", r.data.idmoneda);
 
                         if( r.data.tipo=="recargo" ){
-                            newRec.set("aplicacion", "Valor Fijo");
+                            newRec.set("aplicacion", r.data.aplica_tar);
                             newRec.set("tipo_app", "$");                          
 
                             if( lastConcepto==9999){
@@ -181,8 +177,6 @@ if( $cotizacion ){
                     }
 
                 }
-                //alert(r.data.idmodalidad + " "+r.data.modalidad );
-
             }
 
             this.el.unmask();

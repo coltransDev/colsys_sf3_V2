@@ -60,12 +60,8 @@ if( $cotizacion )
 
 
         show : function(){
-            if(this.rendered){
-                //this.feedUrl.setValue('');
+            if(this.rendered){               
             }
-
-            //this.grid.store.baseParams={ modalidades:this.ctxRecord.data.modalidades };
-            //this.grid.store.load();
 
             CotizacionRecargosAduanasWindow.superclass.show.apply(this, arguments);
         },
@@ -78,26 +74,20 @@ if( $cotizacion )
 
             var lenght = records.length;
             msg="";
-//            var gridAduanas = Ext.getCmp("panel-recargos-aduana");
-//            var recordAduanas = gridAduanas.record;
 
             var gridRecargos = Ext.getCmp("panel-recargos-aduana");
             var recordRecargos = gridRecargos.record;
             var lastConcepto = null;
             var lastConceptoTxt = null;
-//            alert("importando "+lenght+"::"+gridRecargos.store.getRange().length);
 
             for( var i=0; i< lenght; i++){
                 var existe = false;
-                r = records[i];
-                //alert(r.toSource());                
+                r = records[i];                
                 if( r.data.sel ){                
-                //Verifica que no se haya incluido
+                
                 recordsConceptos = gridRecargos.store.getRange();                
                 for( var j=0; j< recordsConceptos.length&&!existe; j++)
                 {
-//                    alert(r.data.idconcepto+":"+recordsConceptos[j].data.iditem);
-                    
                     if(recordsConceptos[j].data.iditem==r.data.idconcepto){
                         msg+=("Concepto:"+r.data.concepto+" - Parametro :"+r.data.parametro+"<br/> \n");
                         
@@ -117,16 +107,11 @@ if( $cotizacion )
                                         vlrcosto: '',
                                         aplicacion: '',
                                         mincosto: '',
-                                        aplicacionminimo: '',
-                                        
-                                        orden: 'Z' // Se utiliza Z por que el orden es alfabetico
+                                        aplicacionminimo: '',                                        
+                                        orden: 'Z'
                                     });
                         gridRecargos.store.addSorted(newRec);
-
-
                         newRec = gridRecargos.store.getById( newRec.id );
-
-
                         newRec.set("iditem", r.data.idconcepto);
                         newRec.set("idconcepto", r.data.idconcepto);
                         newRec.set("item", r.data.concepto);
@@ -147,16 +132,11 @@ if( $cotizacion )
                         {
                           Ext.Msg.alert("Conceptos","No se ingresaron los siguientes conceptos porque ya se encuentran en el Reporte de negocios <br/>"+msg);
                         }
-            //alert(r.data.idmodalidad + " "+r.data.modalidad );
-
             
 
             this.el.unmask();
             this.hide();
-        }
-
-
-   
+        }   
     });
 
     </script>

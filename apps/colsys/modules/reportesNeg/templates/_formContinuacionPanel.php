@@ -31,7 +31,7 @@ include_component("widgets", "widgetBodega");
                                                     name: 'continuacion',
                                                     linkTransporte: "transporte",
                                                     linkImpoexpo: "impoexpo"
-                                                    })
+                                                    });
 
 			this.wgContinuacion.addListener("select", this.onSelectContinuacion, this );
         <?
@@ -151,7 +151,6 @@ include_component("widgets", "widgetBodega");
 
     Ext.extend(FormContinuacionPanel, Ext.Panel, {
 		onSelectContinuacion: function( combo, record, index){
-//            alert(b.toSource())
             if(record)
             {
                 if(record.data.modalidad!=" " && record.data.modalidad!="")
@@ -170,11 +169,7 @@ include_component("widgets", "widgetBodega");
                 Ext.getCmp('idconsignatario').allowBlank=true;
                 Ext.getCmp('bodega_consignar').allowBlank=true;
             }
-/*            if(record.data.valor=="Aéreo")
-                Ext.getCmp("Pca_comodato").hide();
-            else
-                Ext.getCmp("Pca_comodato").show();
-*/
+
         }
     });
 </script>

@@ -25,14 +25,12 @@ include_component("widgets", "widgetContactoCliente");
             title: 'Cliente',
             buttonAlign: 'center',
             autoHeight:true,
-//            deferredRender:false,
             items: [
                     {
 
                     xtype:'fieldset',
                     title: 'Información del Cliente',
-                    autoHeight:true,
-                    //defaults: {width: 210},
+                    autoHeight:true,                    
                     items: [                        
                         this.wgContactoCliente,
                         {
@@ -72,7 +70,7 @@ include_component("widgets", "widgetContactoCliente");
                             width: 100
                         }
                         <?
-                        if($modo==Constantes::MARITIMO && $impoexpo!=constantes::TRIANGULACION)
+                        if($modo==Constantes::MARITIMO && $impoexpo==constantes::IMPO)
                         {
                         ?>
                         ,
@@ -92,16 +90,13 @@ include_component("widgets", "widgetContactoCliente");
 				if($impoexpo != Constantes::EXPO)
 				{
 				?>
-				,
-                /*
-                 *========================= Información del Proveedor =========================
-                 **/
+				,                
                 {
                     xtype:'fieldset',
                     title: 'Información del Proveedor',
                     autoHeight:true,
                     id:'panel-proveedor',
-                    //defaults: {width: 210},
+                    
                     items: [
                         {
                            xtype:'button',
@@ -202,7 +197,7 @@ include_component("widgets", "widgetContactoCliente");
 var ij=parseInt(<?=($nprov>1)?($nprov-1):1?>);
 
     Ext.extend(FormClientePanel, Ext.Panel, {
-        onSelectContactoCliente: function( combo, record, index){ // override default onSelect to do redirect
+        onSelectContactoCliente: function( combo, record, index){ 
             store=combo.store;
             j=0;
             store.each( function( r ){
@@ -215,8 +210,7 @@ var ij=parseInt(<?=($nprov>1)?($nprov-1):1?>);
                         j++;
                     }
                 }
-            });
-            //alert(combo.store.data[0].fijo)
+            });            
 
             Ext.getCmp("idconcliente").setValue(record.get("idcontacto"));
             Ext.getCmp("contacto").setValue(record.get("nombre")+' '+record.get("papellido")+' '+record.get("sapellido") );
@@ -249,32 +243,24 @@ var ij=parseInt(<?=($nprov>1)?($nprov-1):1?>);
 				}
 			}
 
-/*            diascredito=0;
-            if(record.data.diascredito && record.data.diascredito!="null")
-                diascredito=(record.get("diascredito")!="")?record.get("diascredito")+" dias":"0";
-            Ext.getCmp("ca_tiempocredito").setValue(diascredito);
-  */
-/*            diascredito=(record.get("diascredito"))?record.get("diascredito")+" dias":"0";
-            Ext.getCmp("ca_tiempocredito").setValue(diascredito);
 
-            if(record.data.cupo && record.data.cupo!="null")
-                cupo=(record.get("cupo")!="")?"Sí":"No";
-            else
-                cupo="No";
-            
-            Ext.getCmp("ca_liberacion").setValue(cupo);
-*/
             diascredito=0;
             if(record.data.diascredito && record.data.diascredito!="null")
+            {
                 diascredito=(record.get("diascredito")!="")?record.get("diascredito")+" dias":"0";
+            }
 
             Ext.getCmp("ca_tiempocredito").setValue(diascredito);
 
             if(record.data.cupo && record.data.cupo!="null")
+            {
                 cupo=(record.get("cupo")!="")?"Sí":"No";
+            }
             else
+            {
                 cupo="No";
-            //alert(cupo);
+            }
+            
             Ext.getCmp("ca_liberacion").setValue(cupo);
 
 
@@ -315,7 +301,7 @@ var ij=parseInt(<?=($nprov>1)?($nprov-1):1?>);
 
                             ]
                         });
-            tb.render('panel-proveedor');  // toolbar is rendered
+            tb.render('panel-proveedor');  
             ij++;
         }
     });

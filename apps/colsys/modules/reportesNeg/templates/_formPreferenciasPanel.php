@@ -18,17 +18,13 @@ include_component("reportesNeg", "gridPanelInstruccionesWindow",array("modo"=>$m
             buttonAlign: 'center',
             autoHeight:true,
             
-            items: [
-                /*
-                 *========================= Información del Proveedor =========================
-                 **/
+            items: [               
                 {
 
                     xtype:'fieldset',
                     title: 'Preferencias',
                     autoHeight:true,
-					labelWidth: 120,
-                    //defaults: {width: 210},
+					labelWidth: 120,                    
                     items: [                        
                         {
                             xtype: "textarea",
@@ -106,10 +102,9 @@ include_component("reportesNeg", "gridPanelInstruccionesWindow",array("modo"=>$m
                                     layout:'column',
                                     columns: 2,
                                     defaults:{
-                                        //columnWidth:0.5,
+                                        
                                         layout:'form',
-                                        border:false,
-                                       /* bodyStyle:'padding:4px',*/
+                                        border:false,                                       
                                         hideLabels:true,
                                         border:true
                                     },
@@ -170,11 +165,10 @@ include_component("reportesNeg", "gridPanelInstruccionesWindow",array("modo"=>$m
                                     autoHeight:true,
                                     layout:'column',
                                     columns: 2,
-                                    defaults:{
-                                        //columnWidth:0.5,
+                                    defaults:{                                        
                                         layout:'form',
                                         border:false,
-                                       /* bodyStyle:'padding:4px',*/
+                                       
                                         hideLabels:true,
                                         border:true
                                     },

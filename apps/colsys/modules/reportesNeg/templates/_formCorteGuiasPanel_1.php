@@ -67,8 +67,7 @@ include_component("widgets", "widgetBodega");
                 {
                     xtype:'fieldset',
                     title: 'Otros Datos',
-                    autoHeight:true,
-                    //defaults: {width: 210},
+                    autoHeight:true,                    
                     items: [
                         new WidgetTercero({fieldLabel:"Consignatario",
                                             tipo: 'Consignatario',
@@ -98,12 +97,7 @@ include_component("widgets", "widgetBodega");
                     ]
                 }
             ]
-
-
-
         });
-
-
     };
 
     Ext.extend(FormCorteGuiasPanel, Ext.Panel, {

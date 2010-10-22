@@ -52,17 +52,13 @@ include_component("widgets", "widgetCliente");
             title: 'Facturaci&oacute;n',
             buttonAlign: 'center',
             autoHeight:true,
-//            deferredRender:false,
             items: [
-                /*
-                 *========================= Información del Proveedor =========================
-                 **/
+                
                 {
 
                     xtype:'fieldset',
                     title: 'Informaci&oacute;n del Facturaci&oacute;n',
-                    autoHeight:true,
-                    //defaults: {width: 210},
+                    autoHeight:true,                    
                     items: campos
                 }
 

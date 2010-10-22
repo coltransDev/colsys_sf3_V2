@@ -59,12 +59,7 @@ if( $cotizacion ){
 
         show : function(){
             if(this.rendered){
-                //this.feedUrl.setValue('');
             }
-
-            //this.grid.store.baseParams={ modalidades:this.ctxRecord.data.modalidades };
-            //this.grid.store.load();
-
             CotizacionRecargosWindow.superclass.show.apply(this, arguments);
         },
 
@@ -84,15 +79,13 @@ if( $cotizacion ){
             for( var i=0; i< lenght; i++){
                 var existe = false;
                 r = records[i];
-                if( r.data.sel ){
-                //Verifica que no se haya incluido
+                if( r.data.sel ){               
                 recordsConceptos = gridRecargos.store.getRange();
                 for( var j=0; j< recordsConceptos.length&&!existe; j++){
 
                     if( recordsConceptos[j].data.iditem==r.data.idrecargo){
                         existe=true;
                     }
-
                 }
                 if( !existe ){
                     
@@ -115,7 +108,7 @@ if( $cotizacion ){
                                        aplicacion: '',
                                        tipo_app: '',
                                        detalles: '',
-                                       orden: '' //el orden es alfabetico
+                                       orden: '' 
                                     });
                         gridRecargos.store.addSorted(newRec);
 
@@ -123,7 +116,7 @@ if( $cotizacion ){
                         newRec = gridRecargos.store.getById( newRec.id );
 
 
-                        newRec.set("aplicacion", "Valor Fijo");
+                        newRec.set("aplicacion", r.data.aplica_tar);
                         newRec.set("tipo_app", "$");
                         newRec.set("iditem", r.data.idrecargo);
                         newRec.set("item", r.data.recargo);
@@ -136,10 +129,7 @@ if( $cotizacion ){
                     }
                 }
 
-            }
-            //alert(r.data.idmodalidad + " "+r.data.modalidad );
-
-            
+            }           
 
             this.el.unmask();
             this.hide();
@@ -174,7 +164,6 @@ if( $cotizacion ){
             this.markInvalid();
         }
     });
-
     </script>
 <?
 }

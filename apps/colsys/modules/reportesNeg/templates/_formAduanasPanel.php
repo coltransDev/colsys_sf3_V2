@@ -28,8 +28,6 @@
                     xtype:'fieldset',
                     title: 'Información de Aduanas',
                     autoHeight:true,
-                    //defaults: {width: 210},
-
                 items: [{
                         xtype:'fieldset',
                         checkboxToggle:true,
@@ -48,8 +46,7 @@
                             },
                             {
                                 xtype: "combo",
-                                fieldLabel: "Coordinador",
-                                //name: "ca_coordinador",
+                                fieldLabel: "Coordinador",                                
                                 id: "id_ca_coordinador",
                                 hiddenName: "ca_coordinador",
                                 mode:           'local',
@@ -92,35 +89,6 @@
     };
 
     Ext.extend(FormAduanasPanel, Ext.Panel, {
-        onSelectContactoCliente: function( combo, record, index){ // override default onSelect to do redirect
-
-            /*if(this.fireEvent('beforeselect', this, record, index) !== false){
-                this.setValue(record.data[this.valueField || this.displayField]);
-                this.collapse();
-                this.fireEvent('select', this, record, index);
-            }*/
-
-//            Ext.getCmp("idconcliente").setValue(record.get("idcontacto"));
-//            Ext.getCmp("contacto").setValue(record.get("nombre")+' '+record.get("papellido")+' '+record.get("sapellido") );
-
-            /*Ext.getCmp("usuario").setValue(record.get("vendedor"));
-            Ext.getCmp("vendedor_id").setValue(record.get("nombre_ven"));*/
-            <?
-            /*if( $user->getIddepartamento()!=5 ){
-            ?>
-                //Ext.getCmp("vendedor_id").setRawValue(record.get("nombre_ven"));
-                //Ext.getCmp("vendedor_id").hiddenField.value = record.get("vendedor");
-            <?
-            }*/
-            ?>
-
-            //Ext.getCmp("listaclinton").setValue(record.get("listaclinton"));
-            //Ext.getCmp("status").setValue(record.get("status"));
-
-//            combo.alertaCliente(record);
-
-        }
-
     });
 
 

@@ -21,7 +21,7 @@ include_component("widgets", "widgetBodega",array("modo"=>$modo,"impoexpo"=>$imp
                                             hiddenName: "idbodega_hd",
                                             width: 500,
                                             linkTransporte: "transporte"
-                                           })
+                                           });
 		this.wgNotify=new WidgetTercero({fieldLabel:"Notificar a",
                                             tipo: 'Notify',
                                             width: 500,
@@ -29,6 +29,8 @@ include_component("widgets", "widgetBodega",array("modo"=>$modo,"impoexpo"=>$imp
                                             id:"notify"
                                            });
         var camposHija = new Array();
+        var camposNotificar = new Array();
+
         <?
         if($impoexpo=="Importación"  && $modo=="Marítimo")
         {
@@ -36,14 +38,14 @@ include_component("widgets", "widgetBodega",array("modo"=>$modo,"impoexpo"=>$imp
             this.wgBodega.fieldLabel="Usuario";
             camposHija.push( this.wgBodega );
             camposHija.push( this.wgTercero );            
-            camposHija.push( this.wgNotify );
+            camposNotificar.push( this.wgNotify );
         <?
         }
-		else if($impoexpo==Constantes::EXPO  && $modo==Constantes::AEREO)
+		else if($impoexpo==Constantes::EXPO  )
 		{
 		?>
             camposHija.push( this.wgTercero );
-            camposHija.push( this.wgNotify );
+            camposNotificar.push( this.wgNotify );
         <?
 		}
         else
@@ -61,6 +63,7 @@ include_component("widgets", "widgetBodega",array("modo"=>$modo,"impoexpo"=>$imp
         var camposForm = new Array();
         obj = new Object();
         obj1 = null;
+        obj2 = null;
 
         obj.xtype='fieldset';
         obj.title='<?=$nomGuiasH?>';
@@ -79,13 +82,13 @@ include_component("widgets", "widgetBodega",array("modo"=>$modo,"impoexpo"=>$imp
         obj1.autoHeight=true;
         obj1.id='PCorteMaster';
         obj1.items=new Array();
-        obj1.items.push(new WidgetTercero({fieldLabel:"Consig. Master",tipo: 'Master',width: 600, id: "idconsigmaster",hiddenName: "consigmaster"}));
+        obj1.items.push(new WidgetTercero({fieldLabel:"Consig. Master",tipo: 'Master',width: 500, id: "idconsigmaster",hiddenName: "consigmaster"}));
 
         <?
         if(($impoexpo==Constantes::EXPO && $modo==Constantes::AEREO) || ($impoexpo==Constantes::TRIANGULACION ))
         {
         ?>
-        obj1.items.push(new WidgetTercero({fieldLabel:"Notificar a",tipo: 'Notify',width: 600,hiddenName: "ca_informar_mast",id:"idnotify_mast"}));
+            camposNotificar.push( this.wgNotify );
         <?
         } 
     }
@@ -99,6 +102,16 @@ include_component("widgets", "widgetBodega",array("modo"=>$modo,"impoexpo"=>$imp
     }
     ?>
     camposForm.push(obj);
+    if(camposNotificar.length>0)
+    {
+        obj2 = new Object();
+        obj2.xtype='fieldset';
+        obj2.title='Notificar';
+        obj2.autoHeight=true;
+        obj2.id='PNotificar';
+        obj2.items=camposNotificar;
+        camposForm.push(obj2);
+    }
  
         FormCorteGuiasPanel.superclass.constructor.call(this, {
             activeTab: 0,

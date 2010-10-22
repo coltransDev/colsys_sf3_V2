@@ -215,7 +215,10 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047,CU049,C
 								}
 							]
 						}
-                        ,
+                        <?
+                        if($modo==constantes::MARITIMO)
+                        {
+                        ?>,
                         {
 							autoHeight:true,
 							layout:'column',
@@ -253,6 +256,7 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047,CU049,C
 							]
 						}
                         <?
+                        }
 						}
 						?>
 						
