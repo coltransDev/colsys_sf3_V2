@@ -480,6 +480,7 @@ class cotseguimientosActions extends sfActions
 
 		$this->sucursales = Doctrine::getTable("Sucursal")
                                     ->createQuery("s")
+                                    ->where("s.ca_idempresa=2")
                                     ->orderBy("s.ca_nombre")
                                     ->execute();
 		$this->estados = ParametroTable::retrieveByCaso( "CU074" );
@@ -500,7 +501,6 @@ class cotseguimientosActions extends sfActions
 			INNER JOIN control.tb_usuarios u ON c.ca_usuario = u.ca_login
 			WHERE
 			( c.ca_idcotizacion IN ( SELECT p.ca_idcotizacion FROM tb_cotProductos p left join tb_cotseguimientos s on p.ca_idproducto=s.ca_idproducto where p.ca_etapa='SEG' and s.ca_idproducto is null  )
-
 			and  c.ca_idcotizacion  NOT IN ( SELECT ca_idcotizacion FROM tb_cotProductos  WHERE ca_etapa='NAP' or ca_etapa='APR' )
             and c.ca_idcotizacion NOT IN ( SELECT distinct(p.ca_idcotizacion) FROM  tb_cotProductos p inner join tb_cotseguimientos s on p.ca_idproducto=s.ca_idproducto )
 			or  c.ca_idcotizacion  NOT IN ( SELECT ca_idcotizacion FROM tb_cotProductos  )  )
