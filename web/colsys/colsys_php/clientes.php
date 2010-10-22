@@ -383,7 +383,7 @@ require_once("menu.php");
 		echo "<TH><IMG src='./graficos/new.gif' alt='Crear un Nuevo Registro' border=0 onclick='elegir(\"Adicionar\", 0);'></TH>";  // Botón para la creación de un Registro Nuevo
 		while (!$rs->Eof() and !$rs->IsEmpty()) {                                                      // Lee la totalidad de los registros obtenidos en la instrucción Select
 		   $vista_1 = ($nivel >= 3)?'visible':'hidden'; // Habilita la opción para dar liberación automática
-		   $vista_3 = ($nivel >= 2)?'visible':'hidden'; // Habilita la opción para definir porcentaje de comisión
+		   $vista_3 = ($nivel >= 3)?'visible':'hidden'; // Habilita la opción para definir porcentaje de comisión
 		   $vista_2 = ($nivel >= 1)?'visible':'hidden'; // Habilita la opción para firma de comodato
 		   $visible = ($rs->Value('ca_vendedor')== $usuario or $rs->Value('ca_vendedor')=='' or $nivel > 1)?'visible':'hidden';
 		   $vetado = ($rs->Value('ca_coltrans_std')=='Vetado' or $rs->Value('ca_colmas_std')=='Vetado' )?'background-color:#FFb2b2;':'';
@@ -443,7 +443,7 @@ require_once("menu.php");
 		   echo "      <TR><TD style='visibility: $vista_3; text-align: center; color=blue;' Class=mostrar onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='elegir(\"Comisión\", ".$rs->Value('ca_idcliente').");'><BR><IMG src='graficos/Info.gif'><BR>Porcentaje de Comisión</TD></TR>";
 		   echo "      <TR><TD style='visibility: $vista_2; text-align: center; color=blue;' Class=mostrar onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='elegir(\"Contrato\", ".$rs->Value('ca_idcliente').");'><BR><IMG src='graficos/contrato.gif'><BR>Contrato de<br>Comodato</TD></TR>";
 		   echo "      <TR><TD style='visibility: $vista_1; text-align: center; color=blue;' Class=mostrar onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='elegir(\"Liberacion\", ".$rs->Value('ca_idcliente').");'><BR><IMG src='graficos/si.gif'><BR>Liberación<br>Automática</TD></TR>";
-		   echo "      <TR><TD style='visibility: $vista_1; text-align: center; color=blue;' Class=mostrar onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='elegir(\"Libestados\", ".$rs->Value('ca_idcliente').");'><BR><IMG src='graficos/lock_close.gif'><BR>Estado de<br>Liberación</TD></TR>";
+		   echo "      <TR><TD style='visibility: $vista_2; text-align: center; color=blue;' Class=mostrar onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='elegir(\"Libestados\", ".$rs->Value('ca_idcliente').");'><BR><IMG src='graficos/lock_close.gif'><BR>Estado de<br>Liberación</TD></TR>";
 		   echo "    </TABLE>";
 		   echo "  </TD>";
 		   echo "  <TD Class=mostrar style='$vetado'>Dirección :</TD>";
