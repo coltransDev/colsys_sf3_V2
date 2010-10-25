@@ -54,7 +54,8 @@ class widgetsComponents extends sfComponents
 
         $this->monedas = Doctrine::getTable("Moneda")
                    ->createQuery("m")
-                   ->orderBy("m.ca_idmoneda")
+                   ->addOrderBy("m.ca_sugerido desc")
+                   ->addOrderBy("m.ca_idmoneda")
                    ->execute();
     }
 
@@ -346,12 +347,13 @@ class widgetsComponents extends sfComponents
 
         $monedas = Doctrine::getTable("Moneda")
                    ->createQuery("m")
-                   ->orderBy("m.ca_idmoneda")
+                   ->addOrderBy("m.ca_sugerido desc")
+                   ->addOrderBy("m.ca_idmoneda")
                    ->execute();
         
 //        echo count($monedas);
 		foreach( $monedas as $moneda ){
-			$this->data[] = array(  "valor"=>$moneda->getCaIdmoneda());
+			$this->data[] = array(  "valor"=>$moneda->getCaIdmoneda(), "sugerido"=>$moneda->getCaSugerido(), "nombre"=>utf8_encode($moneda->getCaNombre()));
 		}
 	}
 
