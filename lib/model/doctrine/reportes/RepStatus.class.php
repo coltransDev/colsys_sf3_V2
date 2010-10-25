@@ -75,7 +75,7 @@ class RepStatus extends BaseRepStatus
         /*
          * Si es un aviso y tiene carga embarcada no se aplica
          */
-        if( $this->getCaIdetapa()=="IMETA" ){
+       /* if( $this->getCaIdetapa()=="IMETA" ){
 
             $count = Doctrine::getTable("RepStatus")
                                  ->createQuery("r")
@@ -86,9 +86,9 @@ class RepStatus extends BaseRepStatus
 
         }else{
             $count=0;
-        }
+        }*/
 
-		if( $etapa && $count==0){
+		if( $etapa ){
 			$template = $etapa->getCaMessage();
 			if( $template ){                
                 if( $this->getCaIdetapa()=="IACAD" ){
