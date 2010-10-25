@@ -180,6 +180,7 @@ Moneda:
       fixed: false
       notnull: true
       primary: false
+    ca_sugerido: boolean
   relations:
     Moneda:
       local: ca_referencia
