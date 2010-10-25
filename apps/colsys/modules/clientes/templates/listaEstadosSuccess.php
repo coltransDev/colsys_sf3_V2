@@ -70,6 +70,17 @@ use_helper('ExtCalendar');
 
 		<td><input class="submit" type='submit' name='buscar' value=' Buscar' /></td>
 	</tr>
+            <td  colspan="7">
+                <span ><b>Simulaci&oacute;n :</b> Use &eacute;sta opci&oacute;n s&oacute;lo para efectos de evaluar el comportamiento del indicador frente a un eventual cambio en la forma de calcularlo.<br />
+                    <center>
+                    <input type='radio' name='simulacion' value='sin' checked/>Sin Simulaci&oacute;n&nbsp;&nbsp;
+                    <input type='radio' name='simulacion' value='uno' />Un a&ntilde;o&nbsp;&nbsp;
+                    <input type='radio' name='simulacion' value='dos' />Dos a&ntilde;os
+                    </center>
+            </td>
+
+	<tr>
+	</tr>
 
 	<tr style="HEIGHT:5">
             <td  colspan="7">

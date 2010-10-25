@@ -89,12 +89,10 @@ class clientesActions extends sfActions
 
         $this->sucursales = Doctrine::getTable("Sucursal")
                           ->createQuery("s")
-                          ->select("s.ca_nombre")
+                          ->select("DISTINCT s.ca_nombre")
                           ->addOrderBy("s.ca_nombre")
                           ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
                           ->execute();
-
-
 	}
 
 	/*
@@ -103,7 +101,7 @@ class clientesActions extends sfActions
 	public function executeListaCircular() {
 		 $this->sucursales = Doctrine::getTable("Sucursal")
                           ->createQuery("s")
-                          ->select("s.ca_nombre")
+                          ->select("DISTINCT s.ca_nombre")
                           ->addOrderBy("s.ca_nombre")
                           ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
                           ->execute();
@@ -192,18 +190,21 @@ class clientesActions extends sfActions
             $empresa =  $this->getRequestParameter("empresa");
             $estado =  $this->getRequestParameter("estado");
             $sucursal =  $this->getRequestParameter("sucursal");
+            $simulacion =  $this->getRequestParameter("simulacion");
 
             $this->clientesEstados = array();
 
             list($year, $month, $day) = sscanf($inicio, "%d-%d-%d");
             $inicio = date('Y-m-d h:i:s',mktime( 0, 0, 0,$month,$day ,$year));
+            // Para efectos de la simulacion recalcula la fecha inicial del periodo donde se analiza el estado anterior.
+            $inisim = ($simulacion == 'sin')?null:(($simulacion == 'uno')?date('Y-m-d h:i:s',mktime( 0, 0, 0,$month,$day ,$year-1)):date('Y-m-d h:i:s',mktime( 0, 0, 0,$month,$day ,$year-2)));
+            $ultimo = date('Y-m-d h:i:s',mktime(23,59,59,$month,$day-1,$year));
+
             list($year, $month, $day) = sscanf($final, "%d-%d-%d");
             $final  = date('Y-m-d h:i:s',mktime(23,59,59,$month,$day ,$year));
 
-            $ultimo = date('Y-m-d h:i:s',mktime(23,59,59,$month,$day-1,$year));
-
             $stmt = ClienteTable::estadoClientes($inicio, $final, $empresa, null, $estado, $sucursal);
-            $ante = ClienteTable::estadoClientes(null, $ultimo, $empresa, null, "Potencial", $sucursal);
+            $ante = ClienteTable::estadoClientes($inisim, $ultimo, $empresa, null, "Potencial", $sucursal);
 
             while($row = $stmt->fetch()) {
                 $anterior = array();

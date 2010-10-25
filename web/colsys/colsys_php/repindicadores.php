@@ -373,7 +373,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
     } else if ($indicador == "Oportunidad en la Facturación" and $procesos != "Aduana" and $procesos != "Exportaciones") {
         if ($tra_mem == 'Aéreo') {
             $source   = "vi_repindicador_air";
-            $subque = " LEFT OUTER JOIN (select rp.ca_consecutivo as ca_consecutivo_conf, rs.ca_fchllegada, min(rs.ca_fchenvio) as ca_fchconf_lleg from tb_repstatus rs INNER JOIN tb_reportes rp ON (rs.ca_idreporte = rp.ca_idreporte and rs.ca_idetapa = 'IACAD') group by rp.ca_consecutivo, rs.ca_fchllegada order by rp.ca_consecutivo) rs1 ON ($source.ca_consecutivo = rs1.ca_consecutivo_conf) ";
+            $subque = " LEFT OUTER JOIN (select rp.ca_consecutivo as ca_consecutivo_conf, rs.ca_fchllegada, rs.ca_fchcontinuacion, min(rs.ca_fchenvio) as ca_fchconf_lleg from tb_repstatus rs INNER JOIN tb_reportes rp ON (rs.ca_idreporte = rp.ca_idreporte and rs.ca_idetapa = 'IACAD') group by rp.ca_consecutivo, rs.ca_fchllegada, rs.ca_fchcontinuacion order by rp.ca_consecutivo) rs1 ON ($source.ca_consecutivo = rs1.ca_consecutivo_conf) ";
             $subque.= " LEFT OUTER JOIN (select ca_referencia as ca_referencia_fac, ca_idcliente as ca_idcliente_fac, ca_hawb as ca_hawb_fac, ca_fchfactura, ca_observaciones from tb_inoingresos_air where ((string_to_array(ca_referencia,'.'))[5]::int) in ($ano_mem) and ((string_to_array(ca_referencia,'.'))[3])::text in ($mes_mem) order by ca_referencia, ca_idcliente, ca_hawb, ca_fchfactura) ii ON ($source.ca_referencia = ii.ca_referencia_fac and $source.ca_idcliente = ii.ca_idcliente_fac and $source.ca_hawb = ii.ca_hawb_fac) ";
             $campos.= ", ca_referencia, ca_idcliente_fac, ca_hawb, ca_fchfactura";
         } else if ($tra_mem == 'Marítimo') {
@@ -767,16 +767,20 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
                 $ref_tmp = $rs->Value('ca_referencia');
                 $idc_tmp = $rs->Value('ca_idcliente');
                 $hbl_tmp = $rs->Value('ca_hbls');
+                $fch_llegada = $rs->Value('ca_fchllegada');
                 echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_referencia')."</TD>";
                 echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_continuacion')."</TD>";
                 if (in_array(trim($rs->Value("ca_observaciones")), array("Facturación al Agente","Reemplazo Factura","Cierre contable de Clientes") )) {
                     $dif_mem = null;
                 }else {
-                    $dif_mem = workDiff($festi, $rs->Value('ca_fchllegada'),$rs->Value('ca_fchfactura'));
+                    if ($rs->Value('ca_continuacion') == "CABOTAJE") {
+                        $fch_llegada = $rs->Value('ca_fchcontinuacion');
+                    }
+                    $dif_mem = workDiff($festi, $fch_llegada,$rs->Value('ca_fchfactura'));
                 }
 
                 $color = analizar_dif("D", $lci_var, $lcs_var, $dif_mem, $array_avg, $array_pnc, $array_pmc, $array_null); // Función que retorna un Arreglo con el resultado de Dif
-                echo "  <TD Class=$color style='font-size: 9px; text-align:left;'>".$rs->Value('ca_fchllegada')."</TD>";
+                echo "  <TD Class=$color style='font-size: 9px; text-align:left;'>".$fch_llegada."</TD>";
                 echo "  <TD Class=$color style='font-size: 9px; text-align:left;'>".$rs->Value('ca_fchfactura')."</TD>";
                 echo "  <TD Class=$color style='font-size: 9px; text-align:left;'>".$rs->Value("ca_observaciones")."</TD>";
                 echo "  <TD Class=$color style='font-size: 9px; text-align:right;'>".$dif_mem."</TD>";
