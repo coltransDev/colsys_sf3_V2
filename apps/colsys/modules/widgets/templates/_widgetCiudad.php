@@ -4,12 +4,8 @@
  *
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
-
 $data = $sf_data->getRaw("data");
-
 ?>
-
-
 
 <script type="text/javascript">
 
@@ -18,7 +14,7 @@ WidgetCiudad = function( config ){
 
     Ext.apply(this, config);
 
-    //this.data = <?=json_encode($data)?>;
+    /*this.data = <?=json_encode($data)?>;*/
 
     this.resultTpl = new Ext.XTemplate(
             '<tpl for="."><div class="search-item"><b>{ciudad}</b><br />{trafico}</div></tpl>'
@@ -40,7 +36,7 @@ WidgetCiudad = function( config ){
 					])
 				),
                 proxy: new Ext.data.MemoryProxy( <?=json_encode(array("root"=>$data, "total"=>count($data), "success"=>true) )?> )
-			})
+			});
 
     WidgetCiudad.superclass.constructor.call(this, {
         valueField: 'idciudad',
@@ -48,7 +44,7 @@ WidgetCiudad = function( config ){
         searchField: 'ciudad_trafico',
         typeAhead: false,
         forceSelection: true,
-        //triggerAction: 'all',
+        /*triggerAction: 'all',*/
         emptyText:'',
         selectOnFocus: true,
         lazyRender:true,
@@ -59,11 +55,10 @@ WidgetCiudad = function( config ){
         submitValue: true,
         filterBy: this.filterFn,
         listeners: {
-            //focus: this.onFocusWdg
+            /*focus: this.onFocusWdg*/
         }
-    });
-    //this.reload();
-}
+    });   
+};
 
 
 Ext.extend(WidgetCiudad, Ext.form.ComboBox, {
@@ -89,7 +84,7 @@ Ext.extend(WidgetCiudad, Ext.form.ComboBox, {
                     if(forceAll){
                         this.store.clearFilter();
                     }else{
-                        this.store.filter(this.searchField, q, true);//
+                        this.store.filter(this.searchField, q, true);
                     }
                     this.onLoad();
                 }else{
@@ -105,7 +100,6 @@ Ext.extend(WidgetCiudad, Ext.form.ComboBox, {
             }
         }
     },
-
     getRecord: function(){
         if( this.getValue() ){
             var record = this.findRecord(this.valueField, this.getValue());
@@ -113,10 +107,6 @@ Ext.extend(WidgetCiudad, Ext.form.ComboBox, {
         }
         return null;
     }
-
-
-
-
 });
 
 

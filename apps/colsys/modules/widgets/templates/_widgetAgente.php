@@ -42,36 +42,54 @@ WidgetAgente = function( config ){
         itemSelector: 'div.search-item',
         selectOnFocus: true,
         lazyRender:true,
+        filterBy: this.filterFn,
         mode: 'local',
-        listClass: 'x-combo-list-small',
-        listeners: {            
-            expand : this.onBeforeQuery
-        }
-
+        listClass: 'x-combo-list-small'
     });
 };
 
 Ext.extend(WidgetAgente, Ext.form.ComboBox, {
-    onBeforeQuery: function(  ){
-        var impoexpo = Ext.getCmp(this.linkImpoExpo).getValue();
+    doQuery : function(q, forceAll){        
+        q = Ext.isEmpty(q) ? '' : q;
+       var impoexpo = Ext.getCmp(this.linkImpoExpo).getValue();
         if( impoexpo=="<?=Constantes::EXPO?>" ){
             var link = this.linkDestino;
         }else{
             var link = this.linkOrigen;
         }
         record = Ext.getCmp(link).getRecord();
-        var trafico = record.data.idtrafico;       
-        
-        var listarTodos = false;
+        var trafico = record.data.idtrafico;
+
+        var listarTodos = "";
+
         if( Ext.getCmp(this.linkListarTodos) && Ext.getCmp(this.linkListarTodos)){
-            var listarTodos = Ext.getCmp(this.linkListarTodos).getValue();
-        };
+            listarTodos = Ext.getCmp(this.linkListarTodos).getValue();
+        }
+
         if(!listarTodos)
+        {
+            this.store.filterBy(function(record, id) {
+                if(record.get("idtrafico")==trafico)
+                {
+                    var str=record.get("nombre");
 
-            this.store.filter("idtrafico",trafico,true,true);
-        else
+                    var txt=new RegExp(q,"ig");
+                    
+                    if(str.search(txt) == -1 )
+                        return false;
+                    else
+                        return true;
+                }
+                else
+                    return false;
+            });
+
+        }
+        else if(listarTodos==true)
+        {
             this.store.filter("","",true,true);
-
+        }       
+       this.onLoad();
     },
 	getTrigger : Ext.form.TwinTriggerField.prototype.getTrigger,
     initTrigger : Ext.form.TwinTriggerField.prototype.initTrigger,
