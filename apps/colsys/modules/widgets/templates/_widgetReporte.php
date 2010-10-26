@@ -18,7 +18,7 @@ WidgetReporte = function( config ){
     Ext.apply(this, config);
 
     this.resultTpl = new Ext.XTemplate(
-        '<tpl for="."><div class="search-item"><strong>{consecutivo}-{version}</strong><br /><span><br />{origen} - {destino}</span> </div></tpl>'
+        '<tpl for="."><div class="search-item"><strong>{consecutivo}-V{version}</strong><br /><span><br />{origen} - {destino}</span> </div></tpl>'
 
     );
         
@@ -33,6 +33,7 @@ WidgetReporte = function( config ){
         }, [
             {name: 'idreporte', mapping: 'r_ca_idreporte'},
             {name: 'consecutivo', mapping: 'r_ca_consecutivo'},
+            {name: 'version', mapping: 'r_ca_version'},
             {name: 'mercancia_desc', mapping: 'r_ca_mercancia_desc'},
             {name: 'impoexpo', mapping: 'r_ca_impoexpo'},
             {name: 'transporte', mapping: 'r_ca_transporte'},
