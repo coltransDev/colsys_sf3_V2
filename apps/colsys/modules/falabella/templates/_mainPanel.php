@@ -8,6 +8,7 @@
 $header = $sf_data->getRaw( "header" );
 $container = $sf_data->getRaw( "container" );
 
+include_component("widgets", "widgetReporte");
 ?>
 <script type="text/javascript">
 
@@ -35,29 +36,7 @@ $container = $sf_data->getRaw( "container" );
 
     MainPanel = function(){
 
-        this.editorReporte = new Ext.form.ComboBox({
-            typeAhead: true,
-            forceSelection: true,
-            triggerAction: 'all',
-            selectOnFocus: true,
-            lazyRender:true,
-            displayField: 'reporte',
-            valueField: 'reporte',
-            minChars: 3,
-            store: new Ext.data.Store({
-                autoLoad : true,
-                url: '<?=url_for("widgets/datosComboReporteNegocios")?>',
-                reader: new Ext.data.JsonReader(
-                    {
-                        root: 'root',
-                        totalProperty: 'total'
-                    },
-                    Ext.data.Record.create([
-                        {name: 'reporte', mapping:'ca_reporte', type: 'string'},
-                    ])
-                )
-            })
-        });
+        this.editorReporte = new WidgetReporte();
 
         this.editorContainerMode = new Ext.form.ComboBox({
             typeAhead: true,
@@ -182,7 +161,10 @@ $container = $sf_data->getRaw( "container" );
                 iconCls: 'disk',
                 scope:this,
                 handler: this.guardarCambios
-            }]
+            }],
+            listeners:{
+                validateedit: this.onValidateEdit
+            }
 
         });
 
@@ -233,6 +215,27 @@ $container = $sf_data->getRaw( "container" );
             var grid = Ext.getCmp("panel-detalle");
             grid.guardarCambios();
 
+        },
+
+        /*
+        * Handler que se encarga de colocar el dato consecutivo en el Record
+        * cuando se llama el reporte de negocio.
+        */
+        onValidateEdit: function(e){
+            if( e.field == "reporte"){
+                var rec = e.record;
+                var ed = this.colModel.getCellEditor(e.column, e.row);
+
+                var store = ed.field.store;
+                store.each( function( r ){
+                        if( r.data.idreporte==e.value ){
+                            e.value = r.data.consecutivo;
+                            rec.set("idreporte", r.data.idreporte);
+                            return true;
+                        }
+                    }
+                );
+            }
         }
 
     });
