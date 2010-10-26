@@ -76,12 +76,12 @@ WidgetTerceroWindow = function( config ){
                         allowBlank:false,
                         width       : 300
                         },
-                        new WidgetPais({fieldLabel: 'País',
+                        /*new WidgetPais({fieldLabel: 'País',
                                         id: 'tra_ciudad_id',
                                         hiddenName: 'tra_ciudad',
                                         pais:'todos',
                                         todos:true
-                                       }),
+                                       }),*/
                         new WidgetCiudad({fieldLabel: 'Ciudad',
                                           linkPais: 'tra_ciudad_id',
                                           name: 'ciudad',
@@ -151,7 +151,7 @@ Ext.extend(WidgetTerceroWindow, Ext.Window, {
                                 Ext.getCmp(res.idcomponent).hiddenField.value = res.idtercero;
                             }
                         }
-                        WidgetTerceroWindow.close();
+                        WidgetTerceroWindow.hide();
                         
                     }else{
                         alert("Ha ocurrido un error al guardar el registro");
@@ -193,8 +193,8 @@ Ext.extend(WidgetTerceroWindow, Ext.Window, {
                     fp.getForm().findField("ciudad").setRawValue(res.ciudad);
                     fp.getForm().findField("ciudad").hiddenField.value = res.idciudad;
 
-                    fp.getForm().findField("tra_ciudad").setRawValue(res.trafico);
-                    fp.getForm().findField("tra_ciudad").hiddenField.value = res.idtrafico;
+                    //fp.getForm().findField("tra_ciudad").setRawValue(res.trafico);
+                    //fp.getForm().findField("tra_ciudad").hiddenField.value = res.idtrafico;
                     
 				}
 			});
