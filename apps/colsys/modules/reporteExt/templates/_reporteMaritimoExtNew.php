@@ -3,6 +3,7 @@ $consignatario_m = $sf_data->getRaw("consignatario_m");
 $master = $sf_data->getRaw("master");
 $notify_h = $sf_data->getRaw("notify_h");
 $hijo = $sf_data->getRaw("hijo");
+
 ?>
 <table width="100%" cellspacing="1" border="1" class="tableList">
 <tr>
