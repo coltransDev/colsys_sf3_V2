@@ -133,16 +133,12 @@ $cliente = $reporte->getCliente();
     <tr>
 		<td><b>Inspección Fisica</b></td>
 		<td colspan="5"><?=$repexpo->getCaInspeccionFisica()?"Sí":"No"?></td>
-	</tr>
-    <tr>
-		<td><b>Inspección Fisica</b></td>
-		<td colspan="5"><?=$repexpo->getCaInspeccionFisica()?"Sí":"No"?></td>
-	</tr>
+	</tr>    
 
 	<?
         }
 
-        if( $reporte->getCaTransporte()==Constantes::MARITIMO ) {
+        if( $reporte->getCaTransporte()==Constantes::MARITIMO && $status->getCaIdetapa()=="EEETD" ) {
         ?>
         <tr>
             <td><b>Emisi&oacute;n BLs:</b></td>
