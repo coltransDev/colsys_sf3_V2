@@ -320,7 +320,7 @@ $teloficinas = $sf_data->getRaw("teloficinas");
 									</div>
 								</td>
 								<td>
-									<input style="width: 75px;" class=" x-form-text x-form-field " id="fchingreso" name="fchingreso" type="text" />
+									<input align="left" style="width: 75px;" class=" x-form-text x-form-field " id="fchingreso" name="fchingreso" type="text" />
 								</td>
 							</tr>
 							<tr class="row0">
@@ -397,7 +397,7 @@ $teloficinas = $sf_data->getRaw("teloficinas");
 									</div>
 								</td>
 								<td>
-                                    <input style="width: 75px;" class=" x-form-text x-form-field " id="cumpleanos" name="cumpleanos" type="text" />
+                                    <input align="left" style="width: 75px;" class=" x-form-text x-form-field " id="cumpleanos" name="cumpleanos" type="text" />
 								</td>
 							</tr>
 							<tr class="row0">

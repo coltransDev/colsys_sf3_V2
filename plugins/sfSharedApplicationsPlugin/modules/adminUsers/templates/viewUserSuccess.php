@@ -2,7 +2,7 @@
     <table width="700"  class="tableList" >
         <tr>
             <td style="border:none; border-bottom: 1px solid #D0D0D0;text-align:left" <?if(($userinicio->getUserId()==$user->getCaLogin()) or $nivel>=1){?>colspan="3"<?}else{?>colspan="2"<?}?> scope="col">Perfil del usuario</td>
-            <td width="120"></td>
+            <td></td>
                 <?
                 if(($userinicio->getUserId()==$user->getCaLogin()) or $nivel>=1 ){
                 ?>
@@ -18,7 +18,7 @@
                     <img src="<?=url_for('adminUsers/traerImagen?username='.$user->getCaLogin().'&tamano=120x150')?>" />
                 </div>
             </td>
-            <td valign="top" align="left" <?if(($userinicio->getUserId()==$user->getCaLogin()) or $nivel>=1){?>colspan="4"<?}else{?>colspan="1"<?}?> >
+            <td valign="top" align="left" <?if(($userinicio->getUserId()==$user->getCaLogin()) or $nivel>=1){?>colspan="3"<?}else{?>colspan="2"<?}?> >
                 <b><?=(strtoupper($user->getCaNombre())) ?></b><br/>
                 <b><?=($user->getCaCargo()) ?></b><br />
             </td>

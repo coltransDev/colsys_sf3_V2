@@ -380,6 +380,8 @@ class adminUsersActions extends sfActions
 
 		if( $request->getParameter("activo") ){
 			$usuario->setCaActivo( true );
+        }else{
+			$usuario->setCaActivo( false );
 		}
 
 		
@@ -866,7 +868,7 @@ class adminUsersActions extends sfActions
             }
         }
 
-        
+
     }
 
     public function executeSearch(sfWebRequest $request) {
