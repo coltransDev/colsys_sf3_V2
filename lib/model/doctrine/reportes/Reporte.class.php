@@ -996,9 +996,9 @@ class Reporte extends BaseReporte
                 $this->setCaIncoterms($reporteNew->getCaIncoterms());
 
                 //$this->setCaOrdenProv($reporteNew->getCaOrdenProv());
-                $this->setCaOrdenProv("");
+                //$this->setCaOrdenProv("");
                 //$this->setCaOrdenClie($reporteNew->getCaOrdenClie());
-                $this->setCaOrdenClie("");
+                //$this->setCaOrdenClie("");
                 $this->setCaConfirmarClie($reporteNew->getCaConfirmarClie());
 
                 $this->setCaIdrepresentante($reporteNew->getCaIdrepresentante());
