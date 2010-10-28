@@ -511,8 +511,8 @@ class traficosActions extends sfActions
 			$status->setCaHorallegada( $request->getParameter("horallegada") );
 		}
 			
-		if( $request->getParameter("fchcontinuacion") && $reporte->getCaContinuacion()!="N/A" ){
-			$status->setCaFchcontinuacion( Utils::parseDate($request->getParameter("fchcontinuacion")) );
+		if( trim($request->getParameter("fchcontinuacion")) && $reporte->getCaContinuacion()!="N/A" ){
+			$status->setCaFchcontinuacion( Utils::parseDate(trim($request->getParameter("fchcontinuacion")) ));
 		}
 		
 		//borra los equipos viejos

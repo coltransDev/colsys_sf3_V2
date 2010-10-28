@@ -134,9 +134,23 @@ $cliente = $reporte->getCliente();
 		<td><b>Inspección Fisica</b></td>
 		<td colspan="5"><?=$repexpo->getCaInspeccionFisica()?"Sí":"No"?></td>
 	</tr>
+    <tr>
+		<td><b>Inspección Fisica</b></td>
+		<td colspan="5"><?=$repexpo->getCaInspeccionFisica()?"Sí":"No"?></td>
+	</tr>
 
 	<?
         }
+
+        if( $reporte->getCaTransporte()==Constantes::MARITIMO ) {
+        ?>
+        <tr>
+            <td><b>Emisi&oacute;n BLs:</b></td>
+            <td colspan="5"><?=$repexpo->getCaEmisionbl()?></td>
+        </tr>
+        <?
+        }
+
 	}
 	$bodega =  $status->getBodega();
 	if($bodega){
