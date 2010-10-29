@@ -147,6 +147,15 @@ $cliente = $reporte->getCliente();
         <?
         }
 
+        if( $reporte->getCaTransporte()==Constantes::MARITIMO && $status->getCaIdetapa()=="EEETD" ) {
+        ?>
+        <tr>
+            <td><b>DATOS EN DESTINO PARA RECLAMAR BLs:</b></td>
+            <td colspan="5"><?=nl2br($repexpo->getCaDatosbl())?></td>
+        </tr>
+        <?
+        }
+
 	}
 	$bodega =  $status->getBodega();
 	if($bodega){
@@ -167,7 +176,7 @@ $cliente = $reporte->getCliente();
 	<?	
 	}
 	
-	if ( $reporte->getCaColmas()== "Sí") {
+	if ( $reporte->getCaColmas()== "Sí" && $reporte->getCaImpoexpo()!=Constantes::EXPO) {
 	?>
 		<tr>
 			<td><strong>Nacionalización Colmas SIA Ltda:</strong></td>
@@ -311,7 +320,20 @@ if($reporte->getCaTransporte()==Constantes::AEREO && ($status->getCaIdetapa()=="
 La fecha de llegada de la mercancía es un estimado ya que puede variar por decisión de la aerolínea. 
 <?
 }
+
+
+echo $status->getCaComentarios()?"<strong>NOTA</strong><br />".Utils::replace($status->getCaComentarios()):"";
+
+if( $status->getCaIdetapa()=="EEETD" ) {
 ?>
+Sr. Importador, por favor verifique que el peso y cantidad de piezas que se indican en el documento de transporte sean los mismos que usted recibe. De no recibir ningùn comentario 24 horas despuès de retirada la carga, se entenderà por recibida a conformidad por parte suya.
+<br />
+<?
+}
+?>
+
+
+
 
 <br />
 Cualquier información adicional que ustedes requieran, con gusto le será suministrada.<br />

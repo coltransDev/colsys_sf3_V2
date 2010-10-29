@@ -14,7 +14,7 @@ foreach( $statusList as $status ){
 	$statusTxt = $status->getStatus();					
 	?>
 	<br />
-	<?=$status->getStatus()?> 
+	<?=nl2br($status->getStatus())?>
 	
 	<br />
 	<?
