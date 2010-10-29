@@ -40,6 +40,7 @@ class Utils{
 	
 		
 	static function formatNumber($number, $decimals=2, $dec_point=".", $thousands_sep=",") {
+       $number = floatval( $number );
 	   $nachkomma = abs($number - floor($number));
 	   $strnachkomma = number_format($nachkomma , $decimals, $dec_point, $thousands_sep);
 	
@@ -48,6 +49,7 @@ class Utils{
 			   break;
 		   }
 	   }
+   
 	   return number_format($number, ($decimals - $i +1), $dec_point, $thousands_sep);
 	}
 	
