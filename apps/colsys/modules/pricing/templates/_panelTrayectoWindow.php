@@ -185,6 +185,7 @@ Ext.extend(PanelTrayectoWindow, Ext.Window, {
             impoexpo = fp.getForm().findField("impoexpo").getValue();
             transporte = fp.getForm().findField("transporte").getValue();
 
+
             
             var node = this.node;
             if( ttransito=="" && frecuencia=="" && ((impoexpo=="<?=Constantes::IMPO?>" && transporte!="<?=Constantes::AEREO?>") || impoexpo=="<?=Constantes::EXPO?>" ) ){ // Solamente cuando es importación aérea se permite en blanco
@@ -193,6 +194,9 @@ Ext.extend(PanelTrayectoWindow, Ext.Window, {
                 fp.getForm().findField("impoexpo").enable();
                 fp.getForm().findField("transporte").enable();
                 fp.getForm().findField("modalidad").enable();
+                fp.getForm().findField("origen").enable();
+                fp.getForm().findField("destino").enable();
+                fp.getForm().findField("idlinea").enable();
                 var win = this;
                 fp.getForm().submit({url:'<?=url_for('pricing/panelTrayectoGuardar')?>',
                     waitMsg:'Salvando Datos de Productos...',

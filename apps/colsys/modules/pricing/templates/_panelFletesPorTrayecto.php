@@ -698,8 +698,8 @@ Ext.extend(PanelFletesPorTrayecto, Ext.grid.EditorGridPanel, {
                                         Ext.getCmp("idlinea").setValue(res.data.linea);
                                         Ext.getCmp("idlinea").hiddenField.value=res.data.idlinea;
 
-                                        Ext.getCmp("idagente").setValue(res.data.idagente);
-                                        Ext.getCmp("idagente").hiddenField.value=res.data.agente;
+                                        Ext.getCmp("idagente").setValue(res.data.agente);
+                                        Ext.getCmp("idagente").hiddenField.value=res.data.idagente;
                                         
                                         Ext.getCmp("idlinea").setDisabled(true);
                                         Ext.getCmp("origen").setDisabled(true);
