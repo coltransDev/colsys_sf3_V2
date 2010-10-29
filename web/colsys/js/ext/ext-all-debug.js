@@ -5105,7 +5105,7 @@ Ext.apply(Ext, function(){
 
         
         BLANK_IMAGE_URL : Ext.isIE6 || Ext.isIE7 || Ext.isAir ?
-                            'http:/' + '/www.extjs.com/s.gif' :
+                            '/images/s.gif' :
                             'data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==',
 
         extendX : function(supr, fn){
