@@ -6,6 +6,13 @@
  */
 
 include_component("widgets", "widgetAgente");
+
+include_component("widgets", "widgetImpoexpo");
+include_component("widgets", "widgetTransporte");
+include_component("widgets", "widgetModalidad");
+include_component("widgets", "widgetLinea");
+include_component("widgets", "widgetCiudad");
+
 ?>
 <script type="text/javascript">
  /**
@@ -51,27 +58,55 @@ PanelTrayectoWindow = function( config ) {
                         name: 'idtrayecto',
                         value: '',
                         allowBlank:false
-                    }
-                    ,<?=include_component("widgets", "impoexpo" ,array("id"=>"impoexpo", "label"=>"Impo/Expo"))?>
-                    ,<?=include_component("widgets", "transportes" ,array("id"=>"transporte", "allowBlank"=>"false"))?>
-                    ,<?=include_component("widgets", "modalidades" ,array("id"=>"modalidad", "label"=>"Modalidad", "allowBlank"=>"false", "transporte"=>"transporte", "impoexpo"=>"impoexpo"))?>
-                    ,<?=include_component("widgets", "lineas" ,array("id"=>"idlinea", "label"=>"Linea", "allowBlank"=>"false", "link"=>"transporte", "noaprob"=>true ))?>
-                    ,<?=include_component("widgets", "paises" ,array("id"=>"tra_origen", "label"=>"Pais Origen", "allowBlank"=>"false"))?>
-                    ,<?=include_component("widgets", "ciudades" ,array("id"=>"ciu_origen", "label"=>"Ciudad Origen", "link"=>"tra_origen", "allowBlank"=>"false"))?>
-                    ,<?=include_component("widgets", "paises" ,array("id"=>"tra_destino", "label"=>" Pais Destino", "value"=>"C0-057", "allowBlank"=>"false"))?>
-                    ,<?=include_component("widgets", "ciudades" ,array("id"=>"ciu_destino", "label"=>"Ciudad Destino", "link"=>"tra_destino", "allowBlank"=>"false"))?>
-                    ,
-                    new WidgetAgente({
-                        fieldLabel: "Agente",
-                        linkImpoExpo: "impoexpo",
-                        linkOrigen: "tra_origen_id",
-                        linkDestino: "tra_destino_id",
-                        linkListarTodos: "listar_todos",
-                        hiddenName: "idagente",
-                        name: "idagente_id",
-                        id: "idagente_id",
-                        width: 350
-                    }),
+                    },
+                     new WidgetImpoexpo({fieldLabel: 'Impo/Expo',
+                                                    id: 'impoexpo',
+                                                    name: 'impoexpo',
+                                                    allowBlank: false
+                                                    }),
+
+                    new WidgetTransporte({fieldLabel: 'Transporte',
+                                                      id: 'transporte',
+                                                      allowBlank: false
+                                                    }),
+                    new WidgetModalidad({fieldLabel: 'Modalidad',
+                                                    id: 'modalidad',
+                                                    name: 'modalidad',
+                                                    linkTransporte: "transporte",
+                                                    linkImpoexpo: "impoexpo",
+                                                    allowBlank: false
+                                                    }), 
+                    new WidgetLinea({fieldLabel: 'Linea',
+                                                 linkTransporte: "transporte",
+                                                 name: 'linea',
+                                                 id: 'linea',
+                                                 hiddenName: 'idlinea',
+                                                 allowBlank: false
+                                                }),
+                    new WidgetCiudad({fieldLabel: 'Ciudad Origen',
+                                                  id: 'origen',
+                                                  name: 'origen',
+                                                  hiddenName: 'idorigen',                                                  
+                                                  allowBlank: false
+                                                }),
+                    new WidgetCiudad({fieldLabel: 'Ciudad Destino',
+                                                  id: 'destino',
+                                                  name: 'destino',
+                                                  hiddenName: 'iddestino',
+                                                  allowBlank: false
+                                                }),
+
+                    new WidgetAgente({fieldLabel: 'Agente',
+                                                  linkImpoExpo: "impoexpo",
+                                                  linkOrigen: "origen",
+                                                  linkDestino: "destino",
+                                                  linkListarTodos: "listar_todos",
+                                                  name:"agente",
+                                                  hiddenName: 'idagente',
+                                                  allowBlank: false,
+                                                  width: 350
+                                                }),
+                   
                     {
                         xtype: 'checkbox',
                         width: 100,

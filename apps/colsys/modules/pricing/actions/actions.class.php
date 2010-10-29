@@ -2338,8 +2338,8 @@ class pricingActions extends sfActions
         $modalidad = utf8_decode($this->getRequestParameter("modalidad"));
         $idlinea = utf8_decode($this->getRequestParameter("idlinea"));
         $idagente = utf8_decode($this->getRequestParameter("idagente"));
-        $origen = utf8_decode($this->getRequestParameter("ciu_origen"));
-        $destino = utf8_decode($this->getRequestParameter("ciu_destino"));
+        $origen = utf8_decode($this->getRequestParameter("idorigen"));
+        $destino = utf8_decode($this->getRequestParameter("iddestino"));
         $observaciones = utf8_decode($this->getRequestParameter("observaciones"));
         $frecuencia = utf8_decode($this->getRequestParameter("frecuencia"));
         $ttransito = utf8_decode($this->getRequestParameter("ttransito"));
