@@ -167,7 +167,7 @@ class pmActions extends sfActions
 	*/
 	public function executeVerTicket(sfWebRequest $request){
 
-		$this->nivel = $this->getNivel();
+//		$this->nivel = $this->getNivel();
 		$this->iddepartamento = $this->getUser()->getIddepartamento();
 
 
@@ -1390,7 +1390,7 @@ class pmActions extends sfActions
         foreach( $usuarios as $usuario ){
             $row = array();
             $row["login"]=$usuario->getCaLogin();
-            $row["name"]=$usuario->getCaNombre();           
+            $row["name"]=utf8_encode($usuario->getCaNombre());
             $row["icon"]=$usuario->getImagenUrl("60x80");           
             $data[] = $row;
         }

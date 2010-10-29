@@ -1,6 +1,6 @@
 <?
 
-use_helper("MimeType");
+//use_helper("MimeType");
 
 $ticket = $sf_data->getRaw("ticket");
 
@@ -92,8 +92,9 @@ $ticket = $sf_data->getRaw("ticket");
                                         <td>&nbsp;</td><td>
                                             
                                             <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Ticket # <?=$ticket->getCaIdticket().": ".$ticket->getCaTitle() ?></b></font><br />
+                                            <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>&Aacute;rea:</b> <?=$ticket->getHdeskGroup()?$ticket->getHdeskGroup()->getCaName():""?></font><br />
                                             <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Reportado por:</b> <?=$ticket->getUsuario()?$ticket->getUsuario()->getCaNombre():$ticket->getCaLogin()?></font><br />
-                                            <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Asignado a:</b> <?=$ticket->getAssignedTo()?></font><br />
+                                            <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Asignado a:</b> <?=$ticket->getAssignedTo()?$ticket->getAssignedTo():"Sin asignar"?></font><br />
                                             <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Tipo:</b> <?=$ticket->getCaType()?></font><br />
                                             <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Prioridad:</b> <?=$ticket->getCaPriority()?></font><br />
                                             <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Porcentaje:</b> <?=$ticket->getCaPercentage()?>%</font><br />
@@ -166,7 +167,7 @@ $ticket = $sf_data->getRaw("ticket");
                                                            <li>
                                                         
                                                            <a class="link" href="<?=url_for("gestDocumental/verArchivo?folder=".base64_encode($ticket->getDirectorioBase())."&idarchivo=".base64_encode(basename($file)))?>">
-                                                                <b><?=mime_type_icon(basename($file), "22", array("class"=>"img") )?> <?=basename($file)?></b>
+                                                                <b><?=basename($file)?></b>
                                                             </a>
 
                                                            </li>
@@ -202,5 +203,5 @@ $ticket = $sf_data->getRaw("ticket");
             <tr><td><font size="1" face="arial, helvetica, sans-serif" color="#666666">&copy; Coltrans S.A. Colmas Ltda. Agencia de Aduanas Nivel 1</font></td></tr>
         </table>
 
-        <img src="http://www.linkedin.com/emimp/qhppgm-gc831vsq-6r.gif" style="width:1px; height:1px;"/></body>
+        <img src="https://www.coltrans.com.co/images/spacer.gif" style="width:1px; height:1px;"/></body>
 </html>
