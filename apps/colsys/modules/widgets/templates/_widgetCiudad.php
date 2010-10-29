@@ -100,9 +100,14 @@ Ext.extend(WidgetCiudad, Ext.form.ComboBox, {
             }
         }
     },
-    getRecord: function(){
-        if( this.getValue() ){
-            var record = this.findRecord(this.valueField, this.getValue());
+    getRecord: function(){        
+        if( this.hiddenField ){
+            var val = this.hiddenField.value;
+        }else{
+            var val = this.getValue();
+        }        
+        if( val ){
+            var record = this.findRecord(this.valueField, val);
             return record;
         }
         return null;

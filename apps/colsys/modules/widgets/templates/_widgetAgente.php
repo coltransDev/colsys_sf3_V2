@@ -57,6 +57,7 @@ Ext.extend(WidgetAgente, Ext.form.ComboBox, {
         }else{
             var link = this.linkOrigen;
         }
+        
         record = Ext.getCmp(link).getRecord();
         var trafico = record.data.idtrafico;
 
