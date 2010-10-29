@@ -687,27 +687,26 @@ Ext.extend(PanelFletesPorTrayecto, Ext.grid.EditorGridPanel, {
                                     params:{idtrayecto:record.data.idtrayecto},
                                     success:function(response,options){
                                         this.res = Ext.util.JSON.decode( options.response.responseText );
+                                        
+                                       
+                                        Ext.getCmp("origen").setValue(res.data.ciudad_origen); 
+                                        Ext.getCmp("origen").hiddenField.value=res.data.ciu_origen;
+                                        
+                                        Ext.getCmp("destino").setValue(res.data.ciudad_destino);
+                                        Ext.getCmp("destino").hiddenField.value=res.data.ciu_destino;
 
-                                        $("#tra_origen").val(res.data.tra_origen);
-                                        $("#tra_origen_id").val(res.data.pais_origen);
-                                        $("#tra_destino").val(res.data.tra_destino);
-                                        $("#tra_destino_id").val(res.data.pais_destino);
-                                        $("#ciu_origen").val(res.data.ciu_origen);
-                                        $("#ciu_origen_id").val(res.data.ciudad_origen);
-                                        $("#ciu_destino").val(res.data.ciu_destino);
-                                        $("#ciu_destino_id").val(res.data.ciudad_destino);
-                                        $("#idlinea").val(res.data.idlinea);
-                                        $("#idlinea_id").val(res.data.linea);
-                                        $("#idagente").val(res.data.idagente);
-                                        if(res.data.agente)
-                                            $("#idagente_id").val(res.data.pais_origen+" "+res.data.agente);
+                                        Ext.getCmp("idlinea").setValue(res.data.linea);
+                                        Ext.getCmp("idlinea").hiddenField.value=res.data.idlinea;
 
-                                        Ext.getCmp("tra_origen_id").disabled=true;
-                                        Ext.getCmp("tra_destino_id").disabled=true;
-                                        Ext.getCmp("ciu_origen_id").disabled=true;
-                                        Ext.getCmp("ciu_destino_id").disabled=true;
-                                        Ext.getCmp("impoexpo").disabled=true;
-                                        Ext.getCmp("modalidad").disabled=true;
+                                        Ext.getCmp("idagente").setValue(res.data.idagente);
+                                        Ext.getCmp("idagente").hiddenField.value=res.data.agente;
+                                        
+                                        Ext.getCmp("idlinea").setDisabled(true);
+                                        Ext.getCmp("origen").setDisabled(true);
+                                        Ext.getCmp("destino").setDisabled(true);
+                                        Ext.getCmp("impoexpo").setDisabled(true);
+                                        Ext.getCmp("transporte").setDisabled(true);
+                                        Ext.getCmp("modalidad").setDisabled(true);
                                     }
                                 });                                
                             }

@@ -1936,54 +1936,7 @@ class pricingActions extends sfActions
 		
 	}
 		
-	/*********************************************************************
-	* Administrador de archivos
-	*	
-	*********************************************************************/
 	
-	/*
-	* Genera la pestaña donde se muestran los archivos 
-	* @author: Andres Botero 
-	*/
-    /*
-	public function executeArchivosPais(){
-		$this->nivel = $this->getNivel();
-		
-		$this->opcion = "";
-		if( $this->nivel==-1 ){
-			$this->forward404();
-		}
-		
-		if( $this->nivel==0 ){
-			$this->opcion = "consulta";
-		}
-	
-		
-		$idtrafico = $this->getRequestParameter("idtrafico");
-		$impoexpo = utf8_decode($this->getRequestParameter("impoexpo"));
-		$transporte = utf8_decode($this->getRequestParameter("transporte"));	
-		$modalidad = utf8_decode($this->getRequestParameter("modalidad"));	
-				
-		$this->impoexpo = $impoexpo;
-		$this->forward404Unless( $this->impoexpo );
-				
-		$modalidad = $this->getRequestParameter( "modalidad" );					
-		$idtrafico = $this->getRequestParameter( "idtrafico" );
-			
-		$this->trafico = Doctrine::getTable("Trafico")->find($idtrafico);
-		$this->forward404Unless( $this->trafico );
-			
-		$this->idcomponent = substr_replace("=", "", base64_encode(substr($this->impoexpo,0,1)."_".$this->trafico->getCaIdtrafico()."_".$transporte."_".$modalidad));
-						
-		$this->forward404Unless( $idtrafico );
-
-        $this->folder = "Tarifario".DIRECTORY_SEPARATOR.substr($this->impoexpo,0,1)."_".substr($transporte,0,1)."_".$modalidad."_".$this->trafico->getCaIdtrafico();
-        
-		$this->impoexpo = utf8_encode($impoexpo);
-		$this->transporte = utf8_encode($transporte);
-		$this->modalidad = $modalidad;
-	}
-	*/
 	/*********************************************************************
 	* Datos panelCiudades
 	*

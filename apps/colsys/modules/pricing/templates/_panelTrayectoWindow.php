@@ -79,7 +79,7 @@ PanelTrayectoWindow = function( config ) {
                     new WidgetLinea({fieldLabel: 'Linea',
                                                  linkTransporte: "transporte",
                                                  name: 'linea',
-                                                 id: 'linea',
+                                                 id: 'idlinea',
                                                  hiddenName: 'idlinea',
                                                  allowBlank: false
                                                 }),
@@ -102,8 +102,9 @@ PanelTrayectoWindow = function( config ) {
                                                   linkDestino: "destino",
                                                   linkListarTodos: "listar_todos",
                                                   name:"agente",
+                                                  id: 'idagente',
                                                   hiddenName: 'idagente',
-                                                  allowBlank: false,
+                                                  allowBlank: true,
                                                   width: 350
                                                 }),
                    
