@@ -192,9 +192,6 @@ Ext.extend(WidgetTerceroWindow, Ext.Window, {
                     
                     fp.getForm().findField("ciudad").setRawValue(res.ciudad);
                     fp.getForm().findField("ciudad").hiddenField.value = res.idciudad;
-
-                    //fp.getForm().findField("tra_ciudad").setRawValue(res.trafico);
-                    //fp.getForm().findField("tra_ciudad").hiddenField.value = res.idtrafico;
                     
 				}
 			});

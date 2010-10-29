@@ -88,7 +88,7 @@ Ext.extend(WidgetCotizacion, Ext.form.ComboBox, {
     trigger2Class : 'x-form-search-trigger',
     trigger3Class : 'x-form-select-trigger',
     hideTrigger1 : true,
-    hideTrigger2 : true,
+    hideTrigger2 : false,
 
     initComponent : function() {
         WidgetCotizacion.superclass.initComponent.call(this);
