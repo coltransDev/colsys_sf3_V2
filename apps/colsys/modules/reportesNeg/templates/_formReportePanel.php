@@ -3,13 +3,14 @@
 
 $nprov=count(explode("|", $reporte->getCaIdproveedor() ));
 
-//$cachedir = 'C:/desarrollo/colsys_sf3/apps/colsys/modules/reportesNeg/cache/';
-$cachedir = '/srv/www/colsys_sf3/apps/colsys/modules/reportesNeg/cache/';
+$cachedir = 'C:/desarrollo/colsys_sf3/apps/colsys/modules/reportesNeg/cache/';
+//$cachedir = '/srv/www/colsys_sf3/apps/colsys/modules/reportesNeg/cache/';
 $cachetime = 86400;
 $cacheext = 'colsys';
 $cachepage = md5("formReporte-modo-$modo-impoexpo-$impoexpo-permiso-$permiso-nprov-$nprov");
 $cachefile = $cachedir.$cachepage.'.'.$cacheext;
 //echo $cachefile;
+//$cache="false";
 if($cache=="refresh")
 {
     unlink($cachefile);
@@ -23,7 +24,7 @@ if (file_exists($cachefile) ) {
     $cachelast = 0;
 }
 clearstatcache();
-
+//$cache="false";
 if (time() - $cachetime <$cachelast && $cache!="false" )
 {
     readfile($cachefile);
@@ -65,6 +66,12 @@ include_component("reportesNeg", "formSegurosPanel",array("modo"=>$modo,"impoexp
                 scope:this,
                 handler: this.onSave
             } );
+            this.buttons.push( {
+                text   : 'Finalizar',
+                formBind:true,
+                scope:this,
+                handler: this.onFinalizar
+            } );
         }
 
         if( this.nuevaVersion ){
@@ -88,7 +95,7 @@ include_component("reportesNeg", "formSegurosPanel",array("modo"=>$modo,"impoexp
                  handler: this.onCancel
             } );
 
-        FormReportePanel.superclass.constructor.call(this, {
+        FormReportePanel.superclass.constructor.call(this, {            
             labelWidth:80,
             frame: true,
             buttonAlign: 'center',
@@ -146,29 +153,52 @@ include_component("reportesNeg", "formSegurosPanel",array("modo"=>$modo,"impoexp
 
 }
 ?>
-
-    Ext.extend(FormReportePanel, Ext.form.FormPanel, {
+var idreporte='<?=$idreporte?>';
+    Ext.extend(FormReportePanel, Ext.form.FormPanel, {        
         onNuevaVersion: function(){
             this.onSave("2");
         },
         onCopiar: function(){
             this.onSave("1");
         },
+        onFinalizar: function(){
+            this.onSave("3");
+        },
         onSave: function(opt){
-            if(opt!="1" && opt!="2")
+            redire="false";
+            
+            if(opt!="1" && opt!="2" && opt!="3")
                 opt=0;
-            var form  = this.getForm();
+            else
+            {
+                redire="true";
+                if(opt=="3" && (idreporte=="" || !idreporte) )
+                {                    
+                    opt=0;
+                }                
+            }
+            if(!opt && !idreporte)
+            {
+                opt=0;
+            }
+            else if(!opt && idreporte!="")
+            {opt="4"}
+            //if(idreporte!="")
 
+            
+           
+            var form  = this.getForm();
             if( form.isValid() ){
                 form.submit({
-                    url: "<?=url_for("reportesNeg/guardarReporte?idreporte=".$idreporte)?>",
+                    url: "<?=url_for("reportesNeg/guardarReporte")?>",
                     waitMsg:'Guardando...',
                     waitTitle:'Por favor espere...',
-                    params: {opcion:opt},
+                    params: {opcion:opt,redirect:redire,idreporte:idreporte},
                     success: function(gridForm, action) {
                         var res = Ext.util.JSON.decode( action.response.responseText );
-                        Ext.MessageBox.alert("Mensaje",'Se guardo correctamente el reporte');
-                        if(res.redirect)
+                        Ext.MessageBox.alert("Mensaje",'Se guardo correctamente el reporte con el consecutivo '+res.consecutivo);
+                        idreporte=res.idreporte;
+                        if(res.redirect=="true" || res.redirect==true)
                             location.href="/reportesNeg/consultaReporte/id/"+res.idreporte+"/impoexpo/<?=$impoexpo?>/modo/<?=$modo?>";
                     }
                     ,
@@ -325,10 +355,12 @@ include_component("reportesNeg", "formSegurosPanel",array("modo"=>$modo,"impoexp
                                 Ext.getCmp("contacto_fijos"+i).setReadOnly( true );
                             }
                         };
-                        Ext.getCmp("tra_origen_id").setValue(res.data.idtra_origen_id);
+//                        Ext.getCmp("tra_origen_id").setValue(res.data.idtra_origen_id);
+
                         Ext.getCmp("origen").setValue(res.data.idorigen);
                         $("#origen").attr("value",res.data.origen);
-                        Ext.getCmp("tra_destino_id").setValue(res.data.idtra_destino_id);
+
+                        //Ext.getCmp("tra_destino_id").setValue(res.data.idtra_destino_id);
 
                         Ext.getCmp("destino").setValue(res.data.iddestino);
                         $("#destino").attr("value",res.data.destino);
@@ -366,10 +398,10 @@ include_component("reportesNeg", "formSegurosPanel",array("modo"=>$modo,"impoexp
                             Ext.getCmp("idconsigmaster").setValue(res.data.idconsigmaster);
                             $("#idconsigmaster").attr("value",res.data.consigmaster);
                         }
-                        $("#tra_origen_id").val(res.data.tra_origen_id);
-                        $("#idtra_origen_id").val(res.data.idtra_origen_id);
+//                        $("#tra_origen_id").val(res.data.tra_origen_id);
+//                        $("#idtra_origen_id").val(res.data.idtra_origen_id);
 
-                        $("#tra_destino_id").val(res.data.tra_destino_id);
+//                        $("#tra_destino_id").val(res.data.tra_destino_id);
 
                         if(res.data.idmodalidad=="CONSOLIDADO")
                         {

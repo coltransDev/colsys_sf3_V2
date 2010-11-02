@@ -15,7 +15,8 @@ include_component("widgets", "widgetContactoCliente");
                                                    id: "cliente",
                                                    hiddenName: "idcliente",
                                                    allowBlank:false,                                                   
-                                                   displayField:"compania"
+                                                   displayField:"compania",
+                                                   autoSelect : false
                                                   });
 
         this.wgContactoCliente.addListener("select", this.onSelectContactoCliente, this);
@@ -200,48 +201,55 @@ var ij=parseInt(<?=($nprov>1)?($nprov-1):1?>);
         onSelectContactoCliente: function( combo, record, index){ 
             store=combo.store;
             j=0;
-            store.each( function( r ){
-                if(r.data.compania==record.get("compania") && r.data.fijo && r.data.email!="")
-                {
-                    if( Ext.getCmp("contacto_fijos"+j) ){
-                        Ext.getCmp("contacto_fijos"+j).setValue(r.data.email);
-                        Ext.getCmp("contacto_fijos"+j).setReadOnly( false );
-                        Ext.getCmp("chkcontacto_fijos"+j).setValue( true );
-                        j++;
+            confirmacionesF=new Array();
+            if(Ext.getCmp("chkcontacto_0").getValue()==false)
+            {
+                store.each( function( r ){
+                    if(r.data.compania==record.get("compania") && r.data.fijo && r.data.email!="")
+                    {
+                        if( Ext.getCmp("contacto_fijos"+j) ){
+                            Ext.getCmp("contacto_fijos"+j).setValue(r.data.email);
+                            Ext.getCmp("contacto_fijos"+j).setReadOnly( false );
+                            Ext.getCmp("chkcontacto_fijos"+j).setValue( true );
+                            confirmacionesF.push(r.data.email);
+                            j++;
+                        }
                     }
-                }
-            });            
-
+                });
+            }
+            
             Ext.getCmp("idconcliente").setValue(record.get("idcontacto"));
             Ext.getCmp("contacto").setValue(record.get("nombre")+' '+record.get("papellido")+' '+record.get("sapellido") );
 
+            if(Ext.getCmp("chkcontacto_0").getValue()==false)
+            {
+                var confirmar =  record.get("confirmar") ;
+                var brokenconfirmar="";
+                if(confirmar)
+                {
+                    brokenconfirmar=confirmar.split(",");
+                    var i=0;
+                    var j=0;
+                    for(i=0; i<brokenconfirmar.length; i++){
+                        if(brokenconfirmar[i] && jQuery.inArray(brokenconfirmar[i], confirmacionesF)<0 )
+                        {
+                            Ext.getCmp("contacto_"+j).setValue(brokenconfirmar[i]);
+                            Ext.getCmp("contacto_"+j).setReadOnly( true );
+                            Ext.getCmp("chkcontacto_"+j).setValue( true );
+                            j++;
+                        }
 
-            var confirmar =  record.get("confirmar") ;
-			var brokenconfirmar="";
-			if(confirmar)
-			{
-				brokenconfirmar=confirmar.split(",");
-				var i=0;
-                var j=0;
-				for(i=0; i<brokenconfirmar.length; i++){
-                    if(brokenconfirmar[i])
-                    {
-                        Ext.getCmp("contacto_"+j).setValue(brokenconfirmar[i]);
-                        Ext.getCmp("contacto_"+j).setReadOnly( true );
-                        Ext.getCmp("chkcontacto_"+j).setValue( true );
-                        j++;
                     }
-					
-				}
-			}
+                }
             
-			for( i=j; i<20; i++ ){
-				if( Ext.getCmp("contacto_"+i) ){
-					Ext.getCmp("contacto_"+i).setValue("");
-					Ext.getCmp("contacto_"+i).setReadOnly( false );
-					Ext.getCmp("chkcontacto_"+i).setValue( false );
-				}
-			}
+                for( i=j; i<20; i++ ){
+                    if( Ext.getCmp("contacto_"+i) ){
+                        Ext.getCmp("contacto_"+i).setValue("");
+                        Ext.getCmp("contacto_"+i).setReadOnly( false );
+                        Ext.getCmp("chkcontacto_"+i).setValue( false );
+                    }
+                }
+            }
 
 
             diascredito=0;

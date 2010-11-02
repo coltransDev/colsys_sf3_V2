@@ -21,22 +21,20 @@
 
     </tr>
 	<tr>
-
 		<td width="123"  ><b>Buscar por:</b> <br />
             <select name="criterio" size="7">
-						<option selected="selected" value="numero_de_reporte">N&uacute;mero de reporte</option>
-						<option value="cliente">Cliente</option>
-                        <option value="">Nombre del Consignatario </option>
-                        <option value="login">Mis Reportes </option>
-                        <option value="proveedor">Nombre del Proveedor </option>
-                        <option value="orden_proveedor">No.Orden Proveedor </option>
-                        <option value="orden_cliente">No.Orden Cliente </option>
-                        <option value="cotizacion">No. Cotización </option>
-                        <option value="mercancia_desc">Descripción Mercancia </option>
-                        <option value="vendedor">Vendedor </option>
-                        <option value="">Borradores </option>
-                        <option value="">Tráficos </option>
-                        <option value="ciudadorigen">Puerto  </option>
+						<option selected="selected" value="ca_consecutivo">N&uacute;mero de reporte</option>
+						<option value="ca_nombre_cli">Cliente</option>
+                        <option value="ca_nombre_con">Nombre del Consignatario </option>
+                        <option value="ca_login">Mis Reportes </option>
+                        <option value="ca_nombre_pro">Nombre del Proveedor </option>
+                        <option value="ca_orden_prov">No.Orden Proveedor </option>
+                        <option value="ca_orden_clie">No.Orden Cliente </option>
+                        <option value="ca_idcotizacion">No. Cotización </option>
+                        <option value="ca_mercancia_desc">Descripción Mercancia </option>
+                        <option value="ca_login">Vendedor </option>
+                        <option value="ca_traorigen">Tráficos </option>
+                        <option value="ca_ciuorigen">Puerto  </option>
 					</select>
 
 		</td>
@@ -125,31 +123,32 @@ function importar(id,idnew)
     if($reportes)
     {
         foreach( $reportes as $reporte ){
-            $origen = $reporte->getOrigen();
-            $destino = $reporte->getDestino();
+
+            $origen = $reporte["ca_ciuorigen"];
+            $destino = $reporte["ca_ciudestino"];
         ?>
-        <tr>
+        <tr style="<?=($consecutivo==$reporte["ca_consecutivo"])?"":"border-top: 3px solid #A0A0A0" ?>">
             <td rowspan="2">
                 <?
                 if($idimpo>0)
                 {
                  ?>
-                <a href="javascript:importar('<?=$idimpo?>','<?=$reporte->getCaIdreporte()?>')"><?=$reporte->getCaConsecutivo()." V".$reporte->getCaVersion()?></a>
+                <a href="javascript:importar('<?=$idimpo?>','<?=$reporte["ca_idreporte"]?>')"><?=(($consecutivo==$reporte["ca_consecutivo"])?"":$reporte["ca_consecutivo"])." V".$reporte["ca_version"]?></a>
                 <?
                 }else
                 {
-                    $url = "reportesNeg/consultaReporte?id=".$reporte->getCaIdreporte()."&modo=".$reporte->getCaTransporte()."&impoexpo=".$reporte->getCaImpoexpo().($opcion?"&opcion=".$opcion:"");
-                    echo link_to($reporte->getCaConsecutivo()." V".$reporte->getCaVersion(), $url );
+                    $url = "reportesNeg/consultaReporte?id=".$reporte["ca_idreporte"]."&modo=".$reporte["ca_transporte"]."&impoexpo=".$reporte["ca_impoexpo"].($opcion?"&opcion=".$opcion:"");
+                    echo link_to((($consecutivo==$reporte["ca_consecutivo"])?"":$reporte["ca_consecutivo"])." V".$reporte["ca_version"], $url );
                 
                 }
                 ?>
             </td>
 
             <td  >
-                <?="<b>".$reporte->getCliente()."</b> (".$reporte->getCaTransporte()." ".$reporte->getCaModalidad().")"?>
+                <?="<b>".$reporte["ca_nombre_cli"]."</b> (".$reporte["ca_transporte"]." ".$reporte["ca_modalidad"].") - ".$reporte["ca_nomlinea"]?>
                 </td>
         </tr>
-        <tr >
+        <tr  >
             <td width="100%"  >
                 <table width="100%"  >
                         <tr  style="font-weight: bold;background:#D2D2D2;">
@@ -161,18 +160,18 @@ function importar(id,idnew)
                             <td width="15%" >Cot</td>
                         </tr>
                         <tr>
-                            <td class="listar"><?=$origen?$origen->getTrafico()."->".$origen->getCaCiudad():"&nbsp;"?></td>
-                            <td class="listar"><?=$destino?$destino->getTrafico()."->".$destino->getCaCiudad():"&nbsp;"?></td>
-                            <td class="listar"><?=$reporte->getCaFchreporte()?></td>
-                            <td class="listar"><?=$reporte->getCaIncoterms()?></td>
-                            <td class="listar"><?=$reporte->getCaOrdenClie()?></td>
-                            <td class="listar"><?=$reporte->getCaIdcotizacion()?></td>
+                            <td class="listar"><?=$origen?></td>
+                            <td class="listar"><?=$destino?></td>
+                            <td class="listar"><?=$reporte["ca_fchdespacho"]?></td>
+                            <td class="listar"><?=$reporte["ca_incoterms"]?></td>
+                            <td class="listar"><?=$reporte["ca_orden_clie"]?></td>
+                            <td class="listar"><?=$reporte["ca_idcotizacion"]?></td>
                         </tr>
                         <tr><td class="invertir" style="font-weight: bold;">Proveedor</td><td colspan="5" class="listar">
                             <?
-                            if( $reporte->getCaIdproveedor() ){
-                            $values = explode("|", $reporte->getCaIdproveedor());
-                            $values2 = explode("|", $reporte->getCaOrdenProv());
+                            if( $reporte["ca_idproveedor"] ){
+                            $values = explode("|", $reporte["ca_idproveedor"]);
+                            $values2 = explode("|", $reporte["ca_orden_prov"]);
 
                             for($i=0;$i<count($values);$i++)
                             {
@@ -189,7 +188,7 @@ function importar(id,idnew)
                 </table></td>
         </tr>
         <?
-        $consecutivo=$reporte->getCaConsecutivo();
+            $consecutivo=$reporte["ca_consecutivo"];
         }
     }
 	?>

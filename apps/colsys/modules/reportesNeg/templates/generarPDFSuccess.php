@@ -132,7 +132,7 @@ if ($reporte->getCaImpoexpo () == Constantes::EXPO ) {
 	$pdf->SetAligns ( array ("L", "L", "L", "L", "L", "L", "L", "L" ) );
 	$pdf->SetFills ( array (0, 0, 0, 0, 0, 0, 0, 0 ) );
 	$pdf->SetStyles ( array ("B", "", "B", "", "B", "", "B", "" ) );
-	$pdf->Row ( array ('Agente Aduanero:', $repexpo->getSia(), 'Emision BL:', $repexpo->getCaEmisionbl (), 'Motonave:', $repexpo->getCaMotonave () ) );
+	$pdf->Row ( array ('Agente Aduanero:', $repexpo->getSia(), ( $reporte->getCaTransporte()==Constantes::MARITIMO )?'Emision BL:':'', $repexpo->getCaEmisionbl (), ( $reporte->getCaTransporte()==Constantes::MARITIMO )?'Motonave:':'Vuelo', $repexpo->getCaMotonave () ) );
 
     if($agente!=null && $agente && $reporte->getCaIdagente ()!="")
     {
@@ -194,11 +194,28 @@ $pdf->SetFills ( array (1, 0, 0, 0, 0 ) );
 $pdf->SetStyles ( array ("B", "B", "", "B", "" ) );
 $pdf->Row ( array ('Cliente:', 'Nombre:', $cliente->getCaCompania ()." Nit : ".$cliente->getCaIdcliente()."-".$cliente->getCaDigito(), $reporte->getCaOrdenClie () != "''" ? 'Orden:' : ' ', $reporte->getCaOrdenClie () != "''" ? $reporte->getCaOrdenClie () : " " ) );
 $pdf->SetWidths ( array (5, 20, 70, 25, 80 ) );
-$pdf->Row ( array ('', 'Contacto:', utf8_decode($contacto->getNombre ()) , 'Dirección:', str_replace ( "|", " ", utf8_decode($cliente->getCaDireccion ()) ) . $cliente->getCaComplemento () ) );
+$pdf->Row ( array ('', 'Contacto:', ($contacto->getNombre ()) , 'Dirección:', str_replace ( "|", " ", utf8_decode($cliente->getCaDireccion ()) ) . $cliente->getCaComplemento () ) );
 $pdf->SetWidths ( array (5, 20, 40, 15, 30, 18, 72 ) );
 $pdf->SetFills ( array (1, 0, 0, 0, 0, 0, 0 ) );
 $pdf->SetStyles ( array ("B", "B", "", "B", "", "B", "" ) );
 $pdf->Row ( array ('', 'Teléfono:', $cliente->getCaTelefonos (), 'Fax:', $cliente->getCaFax (), 'E-mail:', $contacto->getCaEmail () ) );
+
+$pdf->Ln(3);
+
+if($reporte->getCaIdclientefac()>0)
+{
+    $cliente = $reporte->getClienteFac();
+    $pdf->SetWidths ( array (25, 25, 85, 25, 40 ) );
+    $pdf->SetFills ( array (1, 0, 0, 0, 0 ) );
+    $pdf->SetStyles ( array ("B", "B", "", "B", "" ) );
+    $pdf->Row ( array ('Facturar:', 'Nombre:', $cliente->getCaCompania ()." Nit : ".$cliente->getCaIdcliente()."-".$cliente->getCaDigito(), $reporte->getCaOrdenClie () != "''" ? 'Orden:' : ' ', $reporte->getCaOrdenClie () != "''" ? $reporte->getCaOrdenClie () : " " ) );
+    $pdf->SetWidths ( array (5, 20, 70, 25, 80 ) );
+    $pdf->Row ( array ('', 'Contacto:', utf8_decode($contacto->getNombre ()) , 'Dirección:', str_replace ( "|", " ", utf8_decode($cliente->getCaDireccion ()) ) . $cliente->getCaComplemento () ) );
+    $pdf->SetWidths ( array (5, 20, 40, 15, 30, 18, 72 ) );
+    $pdf->SetFills ( array (1, 0, 0, 0, 0, 0, 0 ) );
+    $pdf->SetStyles ( array ("B", "B", "", "B", "", "B", "" ) );
+    $pdf->Row ( array ('', 'Teléfono:', $cliente->getCaTelefonos (), 'Fax:', $cliente->getCaFax (), 'E-mail:', $contacto->getCaEmail () ) );
+}
 
 $consignatario=null;
 $consignatario = $reporte->getConsignatario();
@@ -288,7 +305,7 @@ $pdf->SetWidths(array(200));
 $pdf->SetStyles(array(""));
 $pdf->SetFills(array(0));
 
-$pdf->Row(array('Preferencias del Cliente:'."\n".utf8_decode($reporte->getCaPreferenciasClie ()) ));
+$pdf->Row(array('Preferencias del Cliente:'."\n".($reporte->getCaPreferenciasClie ()) ));
 
 $pdf->SetWidths(array(200));
 $pdf->SetStyles(array(""));
@@ -387,18 +404,32 @@ if( $reporte->getCaImpoexpo()==Constantes::EXPO ){
 //    echo  $consignar->getCaNombre();
 //    exit;
     if( $consignar->getCaNombre()=='Nombre del Cliente' || $consignar->getCaNombre()=='Cliente / Consignatario' ){
-        $cadena = $consig;
-        if($reporte->getCaContinuacion()== "OTM")
+        if($reporte->getCaContinuacion()== "OTM" || $reporte->getCaContinuacion()== "DTA")
+        {
+            $cadena = $consig;
             $cadena.=" NIT ".$consignatario->getCaIdentificacion();
+        }
+        else
+        {
+            $cadena=$consignar->getCaNombre();
+        }        
     }else{
-        $cadena = $consignar->getCaNombre();
+        if( $reporte->getCaContinuacion()== "DTA")
+        {
+            $cadena = $consig;
+            $cadena.=" NIT ".$consignatario->getCaIdentificacion();
+        }
+        else
+            $cadena = $consignar->getCaNombre();
 
     }
-//    echo $consignar->getCaIdbodega();
-//    exit;
+
     if( $reporte->getCaIdbodega() && $reporte->getCaIdbodega()!= 111 && $reporte->getCaIdbodega()!=1 ){ //Coltrans
         $bodega = Doctrine::getTable("Bodega")->find( $reporte->getCaIdbodega() );
-        $cadena.=" / ".$bodega->getCaTipo()." ".$bodega->getCaNombre();
+        if($bodega->getCaTipo()=="Entrega en Lugar de Arribo")
+            $cadena.=" / ".$bodega->getCaNombre();
+        else
+            $cadena.=" / ".$bodega->getCaTipo()." ".$bodega->getCaNombre();
     }
     else if($reporte->getCaIdbodega()==1 && (trim($reporte->getCaContinuacion())!= "N/A" && trim($reporte->getCaContinuacion())!="") )
     {
@@ -512,7 +543,6 @@ if( !$soloAduana ){
 
 
     foreach ( $conceptos as $concepto ) {
-
         if( $reporte->getCaTransporte()==Constantes::AEREO ){
            if($reporte->getCaImpoexpo()!=constantes::EXPO)
             {
@@ -520,8 +550,7 @@ if( !$soloAduana ){
                 $pdf->SetFills(array(0,0,0,0,0,0,0,0));
                 $pdf->SetStyles(array("","","","","","","",""));
                 $pdf->SetAligns(array("L","L","R","R","R","R","L","L"));
-
-                $pdf->Row ( array ('',$concepto->getConcepto ()->getCaConcepto (), Utils::formatNumber ( $concepto->getCaReportarTar () ). " " . $concepto->getCaReportarIdm (), $concepto->getCaReportarMin () . " " . $concepto->getCaReportarIdm (), Utils::formatNumber ($concepto->getCaCobrarTar ()) . " " . $concepto->getCaCobrarIdm (), Utils::formatNumber ($concepto->getCaCobrarMin () ) . " " . $concepto->getCaCobrarIdm (), utf8_decode($concepto->getCaObservaciones ()) , '' ) );
+                $pdf->Row ( array ('',$concepto->getConcepto()->getCaConcepto (),  ( $concepto->getCaReportarTar () ). " " . $concepto->getCaReportarIdm (), $concepto->getCaReportarMin () . " " . $concepto->getCaReportarIdm (),  ($concepto->getCaCobrarTar ()) . " " . $concepto->getCaCobrarIdm (),  ($concepto->getCaCobrarMin () ) . " " . $concepto->getCaCobrarIdm (), utf8_decode($concepto->getCaObservaciones ()) , '' ) );
             }
             else
             {

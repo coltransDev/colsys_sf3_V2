@@ -35,9 +35,9 @@ include_component("widgets", "widgetBodega",array("modo"=>$modo,"impoexpo"=>$imp
         if($impoexpo=="Importación"  && $modo=="Marítimo")
         {
         ?>
-            this.wgBodega.fieldLabel="Usuario";
+            this.wgBodega.fieldLabel="Usuario";            
+            camposHija.push( this.wgTercero );
             camposHija.push( this.wgBodega );
-            camposHija.push( this.wgTercero );            
             camposNotificar.push( this.wgNotify );
         <?
         }

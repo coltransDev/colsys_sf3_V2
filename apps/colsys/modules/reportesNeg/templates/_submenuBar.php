@@ -73,7 +73,7 @@ switch($action){
         break;
 	case "consultaReporte":
 		
-        if($editable)
+        if($editable )
         {
             $button[$i]["name"]="Editar ";
             $button[$i]["tooltip"]="Modificar este reporte";
@@ -110,7 +110,7 @@ switch($action){
 		$button[$i]["onClick"]= "window.open('/traficos/verHistorialStatus/idreporte/".$this->getRequestParameter("id")."')";
         $i++;
 
-        if($editable)
+        if($editable )
         {
             $button[$i]["name"]="Importar";
             $button[$i]["tooltip"]="Importar un reporte";
@@ -194,12 +194,12 @@ switch($action){
             $button[$i]["image"]="22x22/txt.gif";
             $button[$i]["onClick"]= "window.open('/traficos/verHistorialStatus/idreporte/".$this->getRequestParameter("id")."')";
             $i++;
-            if($editable)
+            if($editable )
             {
                 $button[$i]["name"]="Importar";
                 $button[$i]["tooltip"]="Importar un reporte";
                 $button[$i]["image"]="22x22/window_nofullscreen.gif";
-                $button[$i]["onClick"]= "window.open('/reportesNeg/busquedaReporte/idimpo/".$this->getRequestParameter("id")."')";
+                $button[$i]["onClick"]= "location.href='/reportesNeg/busquedaReporte/idimpo/".$this->getRequestParameter("id")."'";
                 $i++;
             }
 
@@ -270,7 +270,7 @@ switch($action){
     
     function nuevoRep()
     {
-        if(window.confirm("Realmente desea crear una nueva version para este reporte?"))
+       // if(window.confirm("Realmente desea crear una nueva version para este reporte?"))
         {
             Ext.MessageBox.wait('Guardando, Espere por favor', '---');
             Ext.Ajax.request(
@@ -293,7 +293,7 @@ switch($action){
                     var res = Ext.util.JSON.decode( response.responseText );
                     Ext.MessageBox.alert("Mensaje",'Se guardo correctamente el reporte');
                     if(res.redirect)
-                        location.href="/reportesNeg/consultaReporte/id/"+res.idreporte+"/impoexpo/<?=$impoexpo?>/modo/<?=$modo?>";
+                        location.href="/reportesNeg/formReporte/id/"+res.idreporte+"/impoexpo/<?=$impoexpo?>/modo/<?=$modo?>";
                 }
             });
         }

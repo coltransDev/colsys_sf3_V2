@@ -138,7 +138,7 @@ PanelConceptosFletes = function( config ){
 				allowBlank: false ,
 				allowNegative: false,
 				style: 'text-align:left',
-				decimalPrecision :0
+				decimalPrecision :2
 			})
       },
       {

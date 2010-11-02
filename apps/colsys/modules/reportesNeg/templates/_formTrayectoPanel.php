@@ -9,7 +9,7 @@ include_component("widgets", "widgetCotizacion");
 //include_component("widgets", "widgetTransporte");
 include_component("widgets", "widgetModalidad");
 include_component("widgets", "widgetLinea");
-include_component("widgets", "widgetPais");
+//include_component("widgets", "widgetPais");
 include_component("widgets", "widgetCiudad");
 include_component("widgets", "widgetAgente");
 include_component("widgets", "widgetIncoterms");
@@ -139,15 +139,15 @@ if($permiso>=2)
                                         value:'<?=$impoexpo?>'
                                     },
                                     this.wgModalidad,
-                                    new WidgetPais({fieldLabel: 'País Origen',
+                                    /*new WidgetPais({fieldLabel: 'País Origen',
                                                     id: 'tra_origen_id',
                                                     linkCiudad: 'origen',
                                                     hiddenName:'idtra_origen_id',
                                                     pais:'<?=$pais1?>',
                                                     excluidos:'C0-057'
                                                    }),
-                                    new WidgetCiudad({fieldLabel: '<?=$origen?>',
-                                                      linkPais: 'tra_origen_id',
+                                    */
+                                    new WidgetCiudad({fieldLabel: '<?=$origen?>',                                                      
                                                       id: 'origen',
                                                       idciudad:"origen",
                                                       hiddenName:"idorigen"
@@ -172,14 +172,14 @@ if($permiso>=2)
                                                      hiddenName: "idlinea",
                                                      width:300
                                                     }),
-                                    new WidgetPais({fieldLabel: 'País Destino',
+                                    /*new WidgetPais({fieldLabel: 'País Destino',
                                                     id: 'tra_destino_id',
                                                     linkCiudad: 'destino',
                                                     hiddenName:'idtra_destino_id',
                                                     pais:'<?=$pais2?>'
                                                    }),
-                                    new WidgetCiudad({fieldLabel: '<?=$destino?>',
-                                                      linkPais: 'tra_destino_id',
+                                    */
+                                    new WidgetCiudad({fieldLabel: '<?=$destino?>',                                                      
                                                       id: 'destino',
                                                       idciudad:"destino",
                                                       hiddenName:"iddestino"
@@ -207,8 +207,8 @@ if($permiso>=2)
                                 [
                                     new WidgetAgente({fieldLabel: 'Agente',
                                                       linkImpoExpo: "impoexpo",
-                                                      linkOrigen: "tra_origen_id",
-                                                      linkDestino: "tra_destino_id",
+                                                      linkOrigen: "origen",
+                                                      linkDestino: "destino",
                                                       linkListarTodos: "listar_todos",
                                                       id:"agente",
                                                       hiddenName:"idagente",
@@ -243,76 +243,124 @@ if($permiso>=2)
          * Completa los datos del reporte con la cotización seleccionada.
          **/
         onSelectCotizacion: function( combo, record, index){
-
-            Ext.getCmp("impoexpo").setValue(record.data.impoexpo);
-            Ext.getCmp("transporte").setValue(record.data.transporte);
+            if(Ext.getCmp("modalidad").getValue()=="")
             Ext.getCmp("modalidad").setValue(record.data.modalidad);
 
-            Ext.getCmp("linea").setValue(record.data.idlinea);
-            $("#linea").val(record.data.linea);
-
-            Ext.getCmp("tra_origen_id").setValue(record.data.tra_origen);
-            Ext.getCmp("origen").setValue(record.data.idorigen);
-            $("#origen").val(record.data.origen);
-
-            Ext.getCmp("tra_destino_id").setValue(record.data.tra_destino);
-            Ext.getCmp("destino").setValue(record.data.iddestino);
-            $("#destino").val(record.data.destino);            
-
-            Ext.getCmp("vendedor").setValue(record.data.idvendedor);
-            $("#vendedor").val(record.data.vendedor);
-
-            Ext.getCmp("ca_mercancia_desc").setValue(record.data.producto);
-
-            confirmaciones=record.data.confirmar.split(",");
-            for(i=0;i<confirmaciones.length || i<20;i++)
+            if(Ext.getCmp("linea").getValue()=="")
             {
-                if(confirmaciones[i]!="")
-                Ext.getCmp("contacto_"+i).setValue(confirmaciones[i]);
+                Ext.getCmp("linea").setValue(record.data.idlinea);
+                $("#linea").val(record.data.linea);
             }
-            confirmaciones=record.data.cfijo.split(",");
-            for(i=0;i<confirmaciones.length || i<20;i++)
+
+            /*Ext.getCmp("tra_origen_id").setValue(record.data.tra_origen);*/
+            if(Ext.getCmp("origen").getValue()=="")
             {
-                if(confirmaciones[i]!="")
-                Ext.getCmp("contacto_fijos"+i).setValue(confirmaciones[i]);
+                Ext.getCmp("origen").setValue(record.data.idorigen);
+                $("#origen").val(record.data.origen);
             }
-            Ext.getCmp("destino").setValue(record.data.iddestino);
+            /*Ext.getCmp("tra_destino_id").setValue(record.data.tra_destino);*/
+            if(Ext.getCmp("destino").getValue()=="")
+            {
+                Ext.getCmp("destino").setValue(record.data.iddestino);
+                $("#destino").val(record.data.destino);
+            }
+            if(Ext.getCmp("vendedor").getValue()=="")
+            {
+                Ext.getCmp("vendedor").setValue(record.data.idvendedor);
+                $("#vendedor").val(record.data.vendedor);
+            }
+            if(Ext.getCmp("ca_mercancia_desc").getValue()=="")
+            {
+                Ext.getCmp("ca_mercancia_desc").setValue(record.data.producto);
+            }
 
-            Ext.getCmp("contacto").setValue(record.data.nombre+" "+record.data.papellido+" "+record.data.sapellido);
+            if(Ext.getCmp("chkcontacto_0").getValue()==false)
+            {
+                confirmacionesF=record.data.cfijo.split(",");
+                confirmaciones=record.data.confirmar.split(",");
+                for(i=0;i<confirmaciones.length || i<20;i++)
+                {
+                    if(confirmaciones[i]!="" && jQuery.inArray(confirmaciones[i], confirmacionesF)<0 )
+                    Ext.getCmp("contacto_"+i).setValue(confirmaciones[i]);
+                }
 
-            Ext.getCmp("cliente").setValue(record.data.idcliente);
-            $("#cliente").attr("value",record.data.compania);
-            $("#idconcliente").attr("value",record.data.idcontacto);
+                for(i=0;i<confirmaciones.length || i<20;i++)
+                {
+                    if(confirmacionesF[i]!="")
+                        Ext.getCmp("contacto_fijos"+i).setValue(confirmacionesF[i]);
+                }
+            }
+            if(Ext.getCmp("destino").getValue()=="")
+            {
+                Ext.getCmp("destino").setValue(record.data.iddestino);
+            }
+            if(Ext.getCmp("contacto").getValue()=="")
+            {
+                Ext.getCmp("contacto").setValue(record.data.nombre+" "+record.data.papellido+" "+record.data.sapellido);
+            }
+            if(Ext.getCmp("cliente").getValue()=="")
+            {
+                Ext.getCmp("cliente").setValue(record.data.idcliente);
+                $("#cliente").attr("value",record.data.compania);
+                $("#idconcliente").attr("value",record.data.idcontacto);
+            }
 
             if(Ext.getCmp("terminos"))
-                Ext.getCmp("terminos").setValue(record.data.incoterms);
+            {
+                if(Ext.getCmp("terminos").getValue()=="")
+                {
+                    Ext.getCmp("terminos").setValue(record.data.incoterms);
+                }
+            }
 
-            Ext.getCmp("ca_obtencionpoliza").setValue(record.data.obtencion);
-            Ext.getCmp("ca_idmoneda_vta").setValue(record.data.idmoneda);
-            Ext.getCmp("ca_idmoneda_pol").setValue(record.data.idmonedaobtencion);
-
-            Ext.getCmp("ca_primaventa").setValue(record.data.prima_vlr);
-            Ext.getCmp("ca_minimaventa").setValue(record.data.prima_min);
+            if(Ext.getCmp("ca_obtencionpoliza").getValue()=="")
+            {
+                Ext.getCmp("ca_obtencionpoliza").setValue(record.data.obtencion);
+            }
+            if(Ext.getCmp("ca_idmoneda_vta").getValue()=="")
+            {
+                Ext.getCmp("ca_idmoneda_vta").setValue(record.data.idmoneda);
+            }
+            if(Ext.getCmp("ca_idmoneda_pol").getValue()=="")
+            {
+                Ext.getCmp("ca_idmoneda_pol").setValue(record.data.idmonedaobtencion);
+            }
+            if(Ext.getCmp("ca_primaventa").getValue()=="")
+            {
+                Ext.getCmp("ca_primaventa").setValue(record.data.prima_vlr);
+            }
+            if(Ext.getCmp("ca_minimaventa").getValue()=="")
+            {
+                Ext.getCmp("ca_minimaventa").setValue(record.data.prima_min);
+            }
             
             if((record.data.obtencion) || (record.data.idmoneda) || (record.data.idmonedaobtencion) || (record.data.prima_vlr) || (record.data.prima_min))
             {
                 Ext.getCmp('seguros').expand();
             }
 
-            $("#destino").val(record.data.destino);
+            if(Ext.getCmp("destino").getValue()=="")
+            {
+                $("#destino").val(record.data.destino);
+            }
             Ext.getCmp("idproducto").setValue(record.data.idproducto);
             diascredito=0;
             if(record.data.diascredito && record.data.diascredito!="null")
                 diascredito=(record.get("diascredito")!="")?record.get("diascredito")+" dias":"0";
 
-            Ext.getCmp("ca_tiempocredito").setValue(diascredito);
-            
+            if(Ext.getCmp("ca_tiempocredito").getValue()=="")
+            {
+                Ext.getCmp("ca_tiempocredito").setValue(diascredito);
+            }
             if(record.data.cupo && record.data.cupo!="null")
                 cupo=(record.get("cupo")!="")?"Sí":"No";
             else
                 cupo="No";
 
-            Ext.getCmp("ca_liberacion").setValue(cupo);
+            if(Ext.getCmp("ca_liberacion").getValue()=="")
+            {
+                Ext.getCmp("ca_liberacion").setValue(cupo);
+            }
         } 
 		,
         onSelectModalidad: function( combo, record, index)

@@ -65,9 +65,11 @@ include_component("widgets", "widgetMoneda");
 
                                         },
                                         new WidgetMoneda({
-                                                        id: 'ca_idmoneda_vlr',
+                                                        id: "ca_idmoneda_vlr",
                                                         width:          80,
-                                                        columnWidth: .35
+                                                        columnWidth: .35,
+                                                        value:"COP"
+
                                                         })
                                     ]
                                 },
@@ -89,7 +91,8 @@ include_component("widgets", "widgetMoneda");
                                     new WidgetMoneda({
                                                     id: 'ca_idmoneda_pol',
                                                     width:          80,
-                                                    columnWidth: .35
+                                                    columnWidth: .35,
+                                                    value:"USD"
                                                     })
                                     ]
                                 },
@@ -126,7 +129,8 @@ include_component("widgets", "widgetMoneda");
                                     new WidgetMoneda({
                                                     id: 'ca_idmoneda_vta',                                                    
                                                     width:          80,
-                                                    columnWidth: .35
+                                                    columnWidth: .35,
+                                                    value:"USD"
                                                     })
                                     ]
                                 }

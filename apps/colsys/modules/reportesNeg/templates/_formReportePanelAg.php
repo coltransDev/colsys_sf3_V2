@@ -1,9 +1,11 @@
 <?php
 //echo $pais2;
+//$cachedir = 'C:/desarrollo/colsys_sf3/apps/colsys/modules/reportesNeg/cache/';
 $cachedir = '/srv/www/colsys_sf3/apps/colsys/modules/reportesNeg/cache/';
 $cachetime = 86400;
 $cacheext = 'colsys';
-$cachepage = md5("formReporteAG/dep/$dep/pais2/$pais2/impoexpo/$impoexpo");
+//echo $dep;
+$cachepage = md5("formReporteAG/dep/$dep/pais2/$pais2/impoexpo/$impoexpo/email/$email");
 $cachefile = $cachedir.$cachepage.'.'.$cacheext;
 //echo $cachefile;
 if($cache=="refresh")
@@ -31,12 +33,11 @@ ob_start();
 include_component("widgets", "widgetTercero");
 include_component("widgets", "widgetModalidad");
 include_component("widgets", "widgetLinea");
-include_component("widgets", "widgetPais");
 include_component("widgets", "widgetCiudad");
 include_component("widgets", "widgetAgente");
 include_component("widgets", "widgetComerciales");
 include_component("widgets", "widgetIncoterms");
-//echo $modo;
+
 if(!$modo ||  $modo=="")
     include_component("widgets", "widgetTransporte");
 //if(!$impoexpo)
@@ -71,7 +72,8 @@ include_component("widgets", "widgetContactoCliente");
                                                    hiddenName: "idcliente",
                                                    allowBlank:false,
                                                    displayField:"compania",
-                                                   tabIndex:16
+                                                   tabIndex:16,
+                                                   autoSelect : false
                                                   });
 
         this.wgContactoCliente.addListener("select", this.onSelectContactoCliente, this);
@@ -112,6 +114,25 @@ include_component("widgets", "widgetContactoCliente");
                             value:'<?=date('Y-m-d')?>',
                             tabIndex:1
                         }
+                        <?
+                        if($dep==14 || $dep==13)
+                        {
+                        ?>
+                        ,                        
+                            new WidgetParametros({
+                                            fieldLabel: "Correo Envio",
+                                            id: 'send_email',
+                                            hiddenName: 'email_send',
+                                            caso_uso: "CU092",
+                                            width:150,
+                                            idvalor:"valor",
+                                            value:"<?=$email?>",
+                                            hiddenValue:"<?=$email?>"
+                                            })
+                         <?
+                        }
+                         ?>
+                        
                     ]
                 },
                 {
@@ -160,7 +181,7 @@ include_component("widgets", "widgetContactoCliente");
                                                ,
                                                this.wgImpoexpo
                                 ,
-                                new WidgetPais({fieldLabel: 'País Origen',
+                               /* new WidgetPais({fieldLabel: 'País Origen',
                                                 id: 'tra_origen_id',
                                                 linkCiudad: 'origen',
                                                 linkImpoexpo: "impoexpo",
@@ -169,10 +190,10 @@ include_component("widgets", "widgetContactoCliente");
                                                 pais:'todos',
                                                 tabIndex:4
 
-                                               }),
+                                               }),*/
 
                                 new WidgetCiudad({fieldLabel: 'Ciudad Origen',
-                                                  linkPais: 'tra_origen_id',
+                                                  
                                                   id: 'origen',
                                                   idciudad:"origen",
                                                   hiddenName:"idorigen",
@@ -196,7 +217,7 @@ include_component("widgets", "widgetContactoCliente");
                                                     })
 
                                 ,
-                                new WidgetPais({fieldLabel: 'País Destino',
+                                /*new WidgetPais({fieldLabel: 'País Destino',
                                                 id: 'tra_destino_id',
                                                 linkCiudad: 'destino',
                                                 linkImpoexpo: "impoexpo",
@@ -206,10 +227,9 @@ include_component("widgets", "widgetContactoCliente");
                                                 tabIndex:6,
                                                 value:'<?=$pais2?>',
                                                 hiddenValue:'<?=$idpais2?>'
-                                               }),
+                                               }),*/
 
-                                new WidgetCiudad({fieldLabel: 'Ciudad Destino',
-                                                  linkPais: 'tra_destino_id',
+                                new WidgetCiudad({fieldLabel: 'Ciudad Destino',                                                  
                                                   id: 'destino',
                                                   idciudad:"destino",
                                                   hiddenName:"iddestino",
@@ -226,8 +246,8 @@ include_component("widgets", "widgetContactoCliente");
                             items: [
                                 new WidgetAgente({fieldLabel: 'Agente',
                                                           linkImpoExpo: "impoexpo",
-                                                          linkOrigen: "tra_origen_id",
-                                                          linkDestino: "tra_destino_id",
+                                                          linkOrigen: "origen",
+                                                          linkDestino: "destino",
                                                           linkListarTodos: "listar_todos",
                                                           id:"agente",
                                                           hiddenName:"idagente",
@@ -274,7 +294,8 @@ include_component("widgets", "widgetContactoCliente");
                                             name: "idproveedor0",
                                             hiddenName: "prov0",
                                             id:"proveedor0",
-                                            tabIndex:11
+                                            tabIndex:11,
+                                            autoSelect : false
                                            })
                                     ]
                                 },
@@ -651,7 +672,8 @@ include_component("widgets", "widgetContactoCliente");
                                             width: 400,
                                             name: "idproveedor"+(++i),
                                             hiddenName: "prov"+i,
-                                            id:"proveedor"+i
+                                            id:"proveedor"+i,
+                                            autoSelect : false
                                            }),
                                 new WidgetIncoterms({
                                       id: 'terminos'+i,

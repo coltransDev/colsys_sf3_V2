@@ -167,7 +167,7 @@ if( $cotizacion ){
                                 newRec.set("orden", "Y");
                             }else{
                                 newRec.set("orden", r.data.item);
-                                newRec.set("cantidad", 1);
+                                newRec.set("cantidad", 0);
                                 newRec.set("neta_tar", 0);
                                 newRec.set("neta_min", 0);
                             }

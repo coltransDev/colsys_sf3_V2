@@ -4,7 +4,7 @@
  *
  *  (c) Coltrans S.A. - Colmas Ltda.
 */
-include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047,CU049,CU050,CU058,CU011,CU089"));
+include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047,CU049,CU050,CU058,CU011,CU089,CU092"));
 ?>
 <script type="text/javascript">
     FormMercanciaPanel = function( config ){
