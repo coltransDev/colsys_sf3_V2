@@ -66,14 +66,12 @@ Ext.extend(WidgetParametros, Ext.form.ComboBox, {
 
 	getTrigger : Ext.form.TwinTriggerField.prototype.getTrigger,
     initTrigger : Ext.form.TwinTriggerField.prototype.initTrigger,
-    trigger1Class : 'x-form-clear-trigger',
-    trigger2Class : 'x-form-search-trigger',
+    trigger1Class : 'x-form-clear-trigger',    
     trigger3Class : 'x-form-select-trigger',
     hideTrigger1 : true,
-    hideTrigger2 : true,
 
     initComponent : function() {
-        WidgetParametros.superclass.initComponent.call(this);
+        WidgetPa.superclass.initComponent.call(this);
 
         this.triggerConfig = {
 			tag : 'span',
@@ -82,10 +80,6 @@ Ext.extend(WidgetParametros, Ext.form.ComboBox, {
 				tag : 'img',
 				src : Ext.BLANK_IMAGE_URL,
 				cls : 'x-form-trigger ' + this.trigger1Class
-			}, {
-				tag : 'img',
-				src : Ext.BLANK_IMAGE_URL,
-				cls : 'x-form-trigger ' + this.trigger2Class
 			},
 			{
 				tag : 'img',
@@ -106,10 +100,8 @@ Ext.extend(WidgetParametros, Ext.form.ComboBox, {
 		this.triggers[0].hide();
 		this.fireEvent('clear', this);
 		this.fireEvent('select', this);
-	},
+	},	
 	onTrigger2Click : function() {
-	},
-	onTrigger3Click : function() {
 		this.onTriggerClick();
 	}
 
