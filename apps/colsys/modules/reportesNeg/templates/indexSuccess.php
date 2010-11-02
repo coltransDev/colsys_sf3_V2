@@ -128,19 +128,18 @@
 
 		<td width="123"  ><b>Buscar por:</b> <br />
             <select name="criterio" size="7">
-						<option selected="selected" value="numero_de_reporte">N&uacute;mero de reporte</option>
-						<option value="cliente">Cliente</option>
-                        <option value="">Nombre del Consignatario </option>
-                        <option value="login">Mis Reportes </option>
-                        <option value="proveedor">Nombre del Proveedor </option>
-                        <option value="orden_proveedor">No.Orden Proveedor </option>
-                        <option value="orden_cliente">No.Orden Cliente </option>
-                        <option value="cotizacion">No. Cotización </option>
-                        <option value="mercancia_desc">Descripción Mercancia </option>
-                        <option value="vendedor">Vendedor </option>
-                        <option value="">Borradores </option>
-                        <option value="">Tráficos </option>
-                        <option value="ciudadorigen">Puerto  </option>
+						<option selected="selected" value="ca_consecutivo">N&uacute;mero de reporte</option>
+						<option value="ca_nombre_cli">Cliente</option>
+                        <option value="ca_nombre_con">Nombre del Consignatario </option>
+                        <option value="ca_login">Mis Reportes </option>
+                        <option value="ca_nombre_pro">Nombre del Proveedor </option>
+                        <option value="ca_orden_prov">No.Orden Proveedor </option>
+                        <option value="ca_orden_clie">No.Orden Cliente </option>
+                        <option value="ca_idcotizacion">No. Cotización </option>
+                        <option value="ca_mercancia_desc">Descripción Mercancia </option>
+                        <option value="ca_login">Vendedor </option>
+                        <option value="ca_traorigen">Tráficos </option>
+                        <option value="ca_ciuorigen">Puerto  </option>
 					</select>
 
 		</td>
