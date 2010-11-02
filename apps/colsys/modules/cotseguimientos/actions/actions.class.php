@@ -420,6 +420,7 @@ class cotseguimientosActions extends sfActions
             ->innerJoin("con.Cliente cli ON cli.ca_idcliente=con.ca_idcliente")
             ->innerJoin("c.Usuario u")
             ->leftJoin("p.CotSeguimiento s" )
+            ->addWhere("c.ca_usuanulado is null")
             ->addWhere("c.ca_fchcreado BETWEEN ? AND ? AND p.ca_etapa IS NOT NULL", array($first_day, $last_day))
             ->addWhere("(s.ca_etapa<>'NAP' and s.ca_etapa<>'APR' or s.ca_etapa is null)" )
             ->orderBy("c.ca_usuario")
