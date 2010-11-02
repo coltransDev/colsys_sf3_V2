@@ -43,8 +43,7 @@ WidgetTercero = function( config ){
 
     WidgetTercero.superclass.constructor.call(this, {
         valueField:'idtercero',
-        displayField:'nombre',
-        typeAhead: false,
+        displayField:'nombre',        
         loadingText: 'Buscando...',
         forceSelection: true,
         minChars: 3,

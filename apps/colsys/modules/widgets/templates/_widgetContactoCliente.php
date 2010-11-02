@@ -47,7 +47,6 @@ WidgetContactoCliente = function( config ){
         valueField: (config.valueField)?config.valueField:'idcontacto',
         displayField: (config.displayField)?config.displayField:'nombre',
         loadingText: 'Buscando...',
-        typeAhead: false,
         forceSelection: true,
         minChars: 3,
         tpl: this.resultTpl,
@@ -56,8 +55,7 @@ WidgetContactoCliente = function( config ){
         selectOnFocus: true,        
         lazyRender:true,
         itemSelector: 'div.search-item',
-        emptyText: 'Escriba el nombre del cliente...'        
-
+        emptyText: 'Escriba el nombre del cliente...'
     });
 };
 
