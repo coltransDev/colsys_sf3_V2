@@ -47,7 +47,7 @@ WidgetContactoCliente = function( config ){
         valueField: (config.valueField)?config.valueField:'idcontacto',
         displayField: (config.displayField)?config.displayField:'nombre',
         loadingText: 'Buscando...',
-        typeAhead: true,
+        typeAhead: false,
         forceSelection: true,
         minChars: 3,
         tpl: this.resultTpl,
