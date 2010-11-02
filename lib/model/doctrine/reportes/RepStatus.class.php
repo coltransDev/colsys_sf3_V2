@@ -182,6 +182,24 @@ class RepStatus extends BaseRepStatus
 		return $asunto;
 	}
 
+
+    public function getUltReporte(){
+        $rep = $this->getReporte();
+        if( $rep ){
+            $rep = Doctrine::getTable("Reporte")                         
+                         ->createQuery("r")
+                         ->select("r.*")                         
+                         ->where("r.ca_consecutivo = ?", $rep->getCaConsecutivo())
+                         ->addWhere("r.ca_usuanulado IS NULL")
+                         ->orderBy("r.ca_version DESC")
+                         ->limit("1")
+                         ->fetchOne();
+          
+        }
+
+        return $rep;
+    }
+
 	/*
 	* Envia el status, generalemte se usa despues de guardar
 	*/
@@ -226,7 +244,7 @@ class RepStatus extends BaseRepStatus
 			}
 		}
 
-		$reporte = $this->getReporte();
+		$reporte = $this->getUltReporte();
 
 		if ( $reporte->getCaSeguro()=="Sí" ) {
 			$email->addCc( "seguros@coltrans.com.co" );
