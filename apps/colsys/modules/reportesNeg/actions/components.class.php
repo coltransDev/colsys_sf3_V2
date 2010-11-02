@@ -212,7 +212,7 @@ class reportesNegComponents extends sfComponents
         $this->user=$this->getUser();
         $this->permiso = $this->user->getNivelAcceso( "87" );
         $this->load_category();
-        if($this->permiso=="3")
+//        if($this->permiso=="3")
         {
         //    $this->load_category();
 //            echo $this->idcategory;
@@ -250,7 +250,7 @@ class reportesNegComponents extends sfComponents
 	{
 //        echo "categoria:".$this->getRequestParameter("idcategory")."<br>";
         $this->permiso = $this->getUser()->getNivelAcceso( "87" );
-
+        $this->cache=$this->getRequestParameter("cache");
         if($this->permiso=="3")
         {
             $this->load_category();
@@ -264,14 +264,18 @@ class reportesNegComponents extends sfComponents
         }
 
         $this->dep=$this->getUser()->getIddepartamento();
+        
         $this->pais2="todos";
+        $this->email="";
         //echo $this->dep;
+        //13 es sistemas
         if($this->dep==13 || $this->dep==14)
         {
             $this->modo=constantes::MARITIMO;
             $this->impoexpo=constantes::IMPO;
             $this->pais2="Colombia";
             $this->idpais2="CO-057";
+            $this->email=$this->getUser()->getEmail();
         }        
         else if($this->dep==18 || $this->dep==3)
         {

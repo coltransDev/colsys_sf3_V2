@@ -206,14 +206,15 @@ class reportesNegActions extends sfActions
         $this->modo = $this->getRequestParameter("modo");
         $this->impoexpo = $this->getRequestParameter("impoexpo");
 
-		$criterio = $this->getRequestParameter("criterio");
-		$cadena = trim($this->getRequestParameter("cadena"));
+		$opcion = $this->getRequestParameter("criterio");
+		$criterio = trim($this->getRequestParameter("cadena"));
         $this->idimpo =   $this->getRequestParameter("idimpo");
 
         $fechaInicial = $this->getRequestParameter("fechaInicial");
         $fechaFinal = $this->getRequestParameter("fechaFinal");
 
-        $q = Doctrine::getTable("Reporte")
+
+/*        $q = Doctrine::getTable("Reporte")
                        ->createQuery("r")
                        //->distinct()
                        ->limit(80);
@@ -270,13 +271,42 @@ class reportesNegActions extends sfActions
         $q->addOrderBy("to_number(SUBSTR(r.ca_consecutivo , 1 , (POSITION('-' in r.ca_consecutivo)-1) ),'999999')  desc");
         $q->addOrderBy("r.ca_version  desc");
 //        $q->orderBy("ca_idreporte desc");
-        $q->limit(40);
+        //$q->limit(40);
         $this->reportes=null;
         if( ($this->idimpo && $cadena) || !$this->idimpo )
         {
             //echo "entro";
             $this->reportes = $q->execute();
         }
+ *
+ */
+$condicion="";
+        if( $criterio ){
+            if ($opcion == 'ca_consecutivo' or $opcion == 'ca_nombre_cli' or $opcion == 'ca_nombre_con' or $opcion == 'ca_nombre_pro' or $opcion == 'ca_orden_prov' or $opcion == 'ca_orden_clie' or $opcion == 'ca_idcotizacion' or $opcion == 'ca_login' or $opcion == 'ca_mercancia_desc' or $opcion == 'ca_traorigen' or $opcion == 'ca_ciuorigen') {
+                $condicion= " and lower($opcion) like lower('%".$criterio."%')"; }
+        }else {
+            if ($opcion == 'ca_login') {
+                $condicion= " and $opcion = '$usuario'"; }
+        }
+
+        if($fechaInicial!="" && $fechaFinal!="")
+        {
+            $condicion.=" and ca_fchreporte between '".Utils::parseDate($fechaInicial)."' and '".Utils::parseDate($fechaFinal)."'";
+        }
+
+
+    if( ($this->idimpo && $criterio) || !$this->idimpo ){
+        $con = Doctrine_Manager::getInstance()->connection();
+		$sql="select * from vi_reportes where 1=1 $condicion limit 80";
+        
+		$st = $con->execute($sql);
+
+		$this->reportes = $st->fetchAll();
+    }
+    else
+        $this->reportes=array();
+//        print_r($this->reportes[0]);
+//        exit;
 	}
 
     /**
@@ -626,6 +656,7 @@ class reportesNegActions extends sfActions
 
         $redirect=true;
         $opcion=$request->getParameter("opcion");
+        $redirect=($request->getParameter("redirect")!="")?$request->getParameter("redirect"):"true";
         //$redirect=false;
         $errors =  array();
         $texto ="";
@@ -637,16 +668,16 @@ class reportesNegActions extends sfActions
                     $reporte->setCaVersion( 1 );
                 }
                 //$redirect=false;
-                $redirect=true;
+                //$redirect=true;
                 break;
             case 1:
                 $reporte = $reporte->copiar(1);
                 //$reporte->setCaVersion( $reporte->getCaVersion( )+1 );
-                $redirect=true;
+                //$redirect=true;
                 break;
             case 2:
                 $reporte = $reporte->copiar(2);
-                $redirect=true;
+                //$redirect=true;
                 break;
         }
 //        echo $opcion;
@@ -868,6 +899,11 @@ class reportesNegActions extends sfActions
             {
                 $reporte->setCaIdconsignatario($request->getParameter("consig"));
             }
+            else if($reporte->getCaContinuacion()== "OTM")
+            {
+                $errors["idconsignatario"]="Cuando es OTM se debe ingresar un consignatario";
+                $texto.="Consignatario<br>";
+            }
             else
                 $reporte->setCaIdconsignatario(null);
     //ca_informar_cons:
@@ -1085,7 +1121,7 @@ class reportesNegActions extends sfActions
                     $cotseguimientos = new CotSeguimiento();
                     $cotseguimientos->aprobarSeguimiento($param);
                 }
-                if($request->getParameter("seguros-checkbox")== "on" && $request->getParameter("ca_vlrasegurado")!="")
+                if($request->getParameter("seguros-checkbox")== "on" )
                 {
                     $repSeguro = Doctrine::getTable("RepSeguro")->findOneBy("ca_idreporte", $reporte->getCaIdreporte() );
                     if(!$repSeguro)
@@ -1272,7 +1308,7 @@ class reportesNegActions extends sfActions
 
                 }
             }
-            $this->responseArray=array("success"=>true,"idreporte"=>$reporte->getCaIdreporte(),"redirect"=>$redirect);
+            $this->responseArray=array("success"=>true,"idreporte"=>$reporte->getCaIdreporte(),"redirect"=>$redirect,"consecutivo"=>$reporte->getCaConsecutivo() );
         }
     }
     catch(Exception $e)
@@ -1289,7 +1325,9 @@ class reportesNegActions extends sfActions
     try
     {
         $errors =  array();
-        
+        $email_send=$request->getParameter("email_send");
+
+
         $reporte = new Reporte();        
         $reporte->setCaFchreporte( date("Y-m-d") );
         $reporte->setCaConsecutivo( ReporteTable::siguienteConsecutivo(date("Y")) );
@@ -1714,13 +1752,17 @@ color="#000000";
 </html>
 ';
             $mail->setCaBodyhtml($html);
-            
+
+            if($email_send=="" || !$email_send)
+            {
+                $email_send=$this->getUser()->getEmail();
+            }
             $mail->setCaFromname($this->getUser()->getNombre());
             $mail->setCaUsuenvio($this->getUser()->getUserId());
-            $mail->setCaFrom($this->getUser()->getEmail());
-            $mail->setCaReplyto($this->getUser()->getEmail());
+            $mail->setCaFrom($email_send);
+            $mail->setCaReplyto($email_send);
             $mail->setCaAddress($cc);
-            $mail->setCaCc($this->getUser()->getEmail().",".$reporte->getUsuario()->getCaEmail().",".$cc);
+            $mail->setCaCc($email_send.",".$reporte->getUsuario()->getCaEmail().",".$cc);
             $mail->save();
 
             $this->responseArray=array("success"=>true,"idreporte"=>$reporte->getCaIdreporte(),"consecutivo"=>$reporte->getCaConsecutivo(),"transporte"=>utf8_encode($request->getParameter("transporte")),"impoexpo"=>utf8_encode($request->getParameter("impoexpo")));
@@ -2512,8 +2554,8 @@ color="#000000";
                 $repseguro = new RepSeguro();
             }
             $data["notificar"]=$repseguro->getCaSeguroConf();
-            $data["ca_vlrasegurado"]=Utils::formatNumber($repseguro->getCaVlrasegurado(), 3);
-            $data["ca_idmoneda_vlr2"]=$repseguro->getCaIdmonedaVlr();
+            $data["ca_vlrasegurado"]=$repseguro->getCaVlrasegurado();
+            $data["ca_idmoneda_vlr"]=$repseguro->getCaIdmonedaVlr();
             $data["ca_obtencionpoliza"]=Utils::formatNumber($repseguro->getCaObtencionpoliza(), 3);
             $data["ca_idmoneda_pol"]=$repseguro->getCaIdmonedaPol();
             $data["ca_primaventa"]=Utils::formatNumber($repseguro->getCaPrimaventa(), 3);
