@@ -214,7 +214,20 @@ if( substr($inoMaestra->getcaReferencia(),0,1)=="4" ){
 - El tiempo libre para la devolución de los contenedores vacíos es estimado en 9 días calendario a partir de la fecha de arribo del buque para las unidades estándar. Y  los contenedores  especiales como refrigeradas tienen  3 días  siguientes a la llegada del buque, y sin excepcion la devolucion es en el  Puerto  ( este tiempo  esta sujeto a cambios o variaciones del mercado)<br />
 <?
 }
+
+
+if( $status->getCaIdetapa()=="IMCPD" ) {
 ?>
+<br />
+<br />
+IMPORTANTE: Favor tener en cuenta la entrada en vigencia de la Resolución No. 7408,  Declaracion  Anticipada. En caso de requerir certificación de fletes en forma anticipada informarnos por escrito y con el mayor gusto la suministraremos.
+<br />
+<?
+}
+
+?>
+
+
 
 
 
