@@ -366,12 +366,16 @@ echo "</BODY>";
 
 				$piezas = $rs->Value('ca_piezas');
 				if (strlen($piezas)!=0) {
-					$pattern = "([0-9]{1,6})?( )?";					// Expresion Regular que Extrael el valor numerico de las piezas
-					if (ereg ($pattern, trim($piezas), $regs)) {
-						$piezas = $regs[0];
-					}
+                                    if (strpos($piezas,".")==false){
+                                        $pattern = "([0-9]{1,6})?( )?";                         // Expresion Regular que Extrael el valor numerico de las piezas
+                                    }else{
+                                        $pattern = "([0-9]{1,6})?([.]{1})?([0-9]{1,6}())?( )?";
+                                    }
+                                    if (ereg ($pattern, trim($piezas), $regs)) {
+                                            $piezas = $regs[0];
+                                    }
 				}else{
-					$piezas = 0;
+                                    $piezas = 0;
 				}
 				$peso = $rs->Value('ca_peso');					// Expresion Regular que Extrael el valor numerico de las peso
 				if (strlen($peso)!=0) {
@@ -382,7 +386,7 @@ echo "</BODY>";
 				}else{
 					$peso = 0;
 				}
-				$volumen = $rs->Value('ca_volumen');					// Expresion Regular que Extrael el valor numerico del volumen
+				$volumen = $rs->Value('ca_volumen');				// Expresion Regular que Extrael el valor numerico del volumen
 				if (strlen($volumen)!=0) {
 					$pattern = "([0-9]{1,6})?([.]{1})?([0-9]{1,6}())?( )?";
 					if (ereg ($pattern, trim($volumen), $regs)) {

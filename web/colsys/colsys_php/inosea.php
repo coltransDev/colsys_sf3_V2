@@ -3468,9 +3468,12 @@ elseif (isset($boton)) {                                                       /
                     echo "<script>document.location.href = 'inosea.php';</script>";
                     exit;
                 }
+                
                 $consignatario = ($rp->Value('ca_idconsignatario')!=0)?$rp->Value('ca_nombre_con')." Nit. ".$rp->Value('ca_identificacion_con'):$rp->Value('ca_nombre_cli')." Nit. ".number_format($rp->Value('ca_idcliente'),0)."-".$rp->Value('ca_digito');
                 $consignatario = (($rp->Value('ca_idconsignar')==1)?$consignatario:$rp->Value('ca_consignar')).(($rp->Value('ca_tipobodega')!= "Coordinador Logistico")?" / ".$rp->Value('ca_tipobodega')." ".(($rp->Value('ca_bodega')!='N/A')?$rp->Value('ca_bodega'):""):"");
+                $consignatario = ($rp->Value('ca_continuacion')!="N/A" and $rp->Value('ca_idconsignatario')!=0)?$rp->Value('ca_nombre_con')." Nit. ".$rp->Value('ca_identificacion_con')." / ".$rp->Value('ca_tipobodega')." ".(($rp->Value('ca_bodega')!='N/A')?$rp->Value('ca_bodega'):""):$consignatario;
                 $descripcion_merc = (strlen(trim($tm->Value('ca_mercancia_desc')))!=0)?$tm->Value('ca_mercancia_desc'):$rp->Value('ca_mercancia_desc');
+
                 $cu =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
                 if (!$cu->Open("select ca_identificacion, ca_valor, ca_valor2 from tb_parametros where ca_casouso = 'CU073'")) {          // Selecciona los correos de la tabla Parametros
                     echo "<script>alert(\"".addslashes($cu->mErrMsg)."\");</script>";      // Muestra el mensaje de error
@@ -4084,8 +4087,12 @@ elseif (isset($boton)) {                                                       /
                     if ($ic->Value("ca_continuacion")=="OTM") {
                         $xml_hijo->setAttribute("hdo3", 31);
 
-                        $cadena = str_replace(array(",","."), "", $rp->Value("ca_consignar"));
-                        $nit = substr($cadena, strpos($cadena, "Nit")+3);
+                        if ($rp->Value("ca_idconsignatario") == 0){
+                            $cadena = str_replace(array(",","."), "", $rp->Value("ca_consignar"));
+                            $nit = substr($cadena, strpos($cadena, "Nit")+3);
+                        }else{
+                            $nit = $rp->Value("ca_identificacion_con");
+                        }
                         $nit = explode("-",$nit);
                         $nit = $nit[0];
 
