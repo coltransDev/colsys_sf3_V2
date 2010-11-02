@@ -50,7 +50,7 @@ WidgetTercero = function( config ){
         minChars: 3,
         triggerAction: 'all',
         emptyText:'',
-        selectOnFocus: true,        
+        selectOnFocus: true,
         lazyRender:true,
         tpl: this.resultTpl,
         itemSelector: 'div.search-item',
