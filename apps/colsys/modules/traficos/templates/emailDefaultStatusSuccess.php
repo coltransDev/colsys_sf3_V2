@@ -326,7 +326,15 @@ echo $status->getCaComentarios()?"<strong>NOTA</strong><br />".Utils::replace($s
 
 if( $status->getCaIdetapa()=="EEETD" ) {
 ?>
-Sr. Importador, por favor verifique que el peso y cantidad de piezas que se indican en el documento de transporte sean los mismos que usted recibe. De no recibir ningùn comentario 24 horas despuès de retirada la carga, se entenderà por recibida a conformidad por parte suya.
+Sr. Exportador, por favor pìdale a su cliente importador, que verifique que el peso y cantidad de piezas que se indican en el documento de transporte sean los mismos que usted envia. De no recibir ningùn comentario 24 horas despuès de retirada la carga, se entenderà por recibida a conformidad  por parte del importador.
+<br />
+<?
+}
+
+
+if( $status->getCaIdetapa()=="IMCPD" ) {
+?>
+IMPORTANTE: Favor tener en cuenta la entrada en vigencia de la Resolución No. 7408,  Declaracion  Anticipada. En caso de requerir certificación de fletes en forma anticipada informarnos por escrito y con el mayor gusto la suministraremos.
 <br />
 <?
 }
