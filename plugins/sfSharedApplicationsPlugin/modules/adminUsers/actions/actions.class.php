@@ -136,8 +136,13 @@ class adminUsersActions extends sfActions
 
         $app =  sfContext::getInstance()->getConfiguration()->getApplication();	
         $this->usuario = Doctrine::getTable("Usuario")->find( $request->getParameter("login") );
-		$this->userinicio = sfContext::getInstance()->getUser();
+	$this->userinicio = sfContext::getInstance()->getUser();
         $this->nivel = $this->getNivel();
+
+        if($this->usuario){
+            $this->manager=Doctrine::getTable('Usuario')->find($request->getParameter('login'));
+            $this->manager = $this->manager->getManager();
+        }
         
 		switch( $app ){
             case "intranet":
@@ -335,14 +340,6 @@ class adminUsersActions extends sfActions
 			$usuario->setCaNombre( $request->getParameter("nombre") );
 		}
 
-		if( $request->getParameter("extension") ){
-			$usuario->setCaExtension( $request->getParameter("extension") );
-		}
-
-		if( $request->getParameter("email") ){
-			$usuario->setCaEmail( $request->getParameter("email") );
-		}
-
 		if( $request->getParameter("cargo") ){
 			$usuario->setCaCargo( $request->getParameter("cargo") );
 		}
@@ -362,6 +359,14 @@ class adminUsersActions extends sfActions
 
 		}
 
+		if( $request->getParameter("email") ){
+			$usuario->setCaEmail( $request->getParameter("email") );
+		}
+
+        if( $request->getParameter("extension") ){
+			$usuario->setCaExtension( $request->getParameter("extension") );
+		}
+
 		if( $request->getParameter("auth_method") ){
 			$usuario->setCaAuthmethod( $request->getParameter("auth_method") );
 		}
@@ -370,20 +375,17 @@ class adminUsersActions extends sfActions
 			$usuario->setPasswd( $request->getParameter("passwd1") );
 		}
 
-
-		if( $request->getParameter("forcechange") ){
-			$usuario->setCaForcechange( true );
-		}else{
-			$usuario->setCaForcechange( false );
-		}
-
-
 		if( $request->getParameter("activo") ){
 			$usuario->setCaActivo( true );
         }else{
 			$usuario->setCaActivo( false );
 		}
 
+		if( $request->getParameter("forcechange") ){
+			$usuario->setCaForcechange( true );
+		}else{
+			$usuario->setCaForcechange( false );
+		}
 		
 		if($request->getParameter("foto") ){
 	        if (is_uploaded_file($_FILES['foto']['tmp_name'])) {
@@ -432,7 +434,7 @@ class adminUsersActions extends sfActions
 			$usuario->setCaFchingreso( $request->getParameter("fchingreso") );
 		}
 
-		if( $request->getParameter("nombres") ){
+        	if( $request->getParameter("nombres") ){
 			$usuario->setCaNombres( $request->getParameter("nombres") );
 		}
 
