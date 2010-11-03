@@ -280,10 +280,29 @@ class RepStatus extends BaseRepStatus
 		$etapa = $this->getTrackingEtapa();
 		if ( $reporte->getCaContinuacion() != 'N/A' ){
 			if( ($etapa && $etapa->getCaDepartamento()!="OTM/DTA") || !$etapa ){
-				$coordinador = Doctrine::getTable("Usuario")->find( $reporte->getCaContinuacionConf() );
-				if( $coordinador ){
-					$email->addCc( $coordinador->getCaEmail() );
-				}
+                if($reporte->getCaContinuacionConf()!="")
+                {
+                    $coordinador = Doctrine::getTable("Usuario")->find( $reporte->getCaContinuacionConf() );
+                    if( $coordinador ){
+                        $email->addCc( $coordinador->getCaEmail() );
+                    }
+                    else
+                    {
+                        $coordinadores = Doctrine::getTable("Usuario")
+                           ->createQuery("u")
+                           ->select("u.ca_login,u.ca_nombre,u.ca_email,ca_sucursal")
+                           ->innerJoin("u.UsuarioPerfil up")
+                           ->where("u.ca_activo=? AND up.ca_perfil=? ", array('TRUE','cordinador-de-otm'))
+                           ->addWhere("u.ca_idsucursal=?",array($reporte->getCaContinuacionConf()))
+                           ->addOrderBy("u.ca_idsucursal")
+                           ->addOrderBy("u.ca_nombre")
+                           ->execute();
+                        foreach($coordinadores as $coordinador)
+                        {
+                            $email->addCc( $coordinador->getCaEmail() );
+                        }
+                    }
+                }
 			}
 		}
 
