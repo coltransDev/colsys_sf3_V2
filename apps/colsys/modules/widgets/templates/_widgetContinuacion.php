@@ -78,10 +78,9 @@ Ext.extend(WidgetContinuacion, Ext.form.ComboBox, {
     getTrigger : Ext.form.TwinTriggerField.prototype.getTrigger,
     initTrigger : Ext.form.TwinTriggerField.prototype.initTrigger,
     trigger1Class : 'x-form-clear-trigger',
-    trigger2Class : 'x-form-search-trigger',
-    trigger3Class : 'x-form-select-trigger',
+    trigger2Class : 'x-form-select-trigger',
     hideTrigger1 : true,
-    hideTrigger2 : true,
+    
 
     initComponent : function() {
         WidgetContinuacion.superclass.initComponent.call(this);
@@ -93,15 +92,11 @@ Ext.extend(WidgetContinuacion, Ext.form.ComboBox, {
 				tag : 'img',
 				src : Ext.BLANK_IMAGE_URL,
 				cls : 'x-form-trigger ' + this.trigger1Class
-			}, {
-				tag : 'img',
-				src : Ext.BLANK_IMAGE_URL,
-				cls : 'x-form-trigger ' + this.trigger2Class
 			},
 			{
 				tag : 'img',
 				src : Ext.BLANK_IMAGE_URL,
-				cls : 'x-form-trigger ' + this.trigger3Class
+				cls : 'x-form-trigger ' + this.trigger2Class
 			}]
 		};
 	},
@@ -120,10 +115,8 @@ Ext.extend(WidgetContinuacion, Ext.form.ComboBox, {
 		this.fireEvent('clear', this);
 		this.fireEvent('select', this);
 	},
+	
 	onTrigger2Click : function() {
-
-	},
-	onTrigger3Click : function() {
 		this.onTriggerClick();
 	}
 
