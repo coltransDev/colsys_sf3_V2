@@ -63,6 +63,7 @@ $teloficinas = $sf_data->getRaw("teloficinas");
         sucursalesFld.length=0;
         for( i in sucursales ){
             if( typeof(sucursales[i]['ca_idsucursal'])!="undefined" ){
+                
                 if( idempresa == sucursales[i]['ca_idempresa'] ){                   
                     if( defaultValSuc == sucursales[i]["ca_idsucursal"] ){
                         var selected = true;
@@ -74,6 +75,7 @@ $teloficinas = $sf_data->getRaw("teloficinas");
                 }
             }
         }
+        sucursalesFld.value = defaultValSuc;
 
         var departamentos = <?=json_encode($departamentos)?>;
 //        alert(departamentos.toSource());
@@ -93,6 +95,7 @@ $teloficinas = $sf_data->getRaw("teloficinas");
                 }
             }
         }
+        departamentosFld.value = defaultValDep;
 		
 		var cargos = <?=json_encode($cargos)?>;
         var cargosFld = document.getElementById("cargo");
@@ -111,13 +114,14 @@ $teloficinas = $sf_data->getRaw("teloficinas");
                 }
             }
         }
+        cargosFld.value = defaultValCar;
 
         var jefes = <?=json_encode($jefes)?>;
         var jefesFld = document.getElementById("manager");
         jefesFld.length=0;
         for( i in jefes ){
             if( typeof(jefes[i]['j_ca_cargo'])!="undefined" ){
-                //alert(jefes[i]['c_ca_idempresa']);
+                //alert(defaultValJef);
                 if( idempresa == jefes[i]['c_ca_idempresa'] ){
                     //alert(jefes[i]["j_ca_login"]);
                 
@@ -128,9 +132,11 @@ $teloficinas = $sf_data->getRaw("teloficinas");
                     }
 
                     jefesFld[jefesFld.length] = new Option(jefes[i]['j_ca_nombre'],jefes[i]['j_ca_nombre'], selected);
+                    
                 }
             }
         }
+        jefesFld.value = defaultValJef;
 
        
 
