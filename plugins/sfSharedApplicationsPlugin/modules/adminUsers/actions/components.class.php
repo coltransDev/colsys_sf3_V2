@@ -21,5 +21,12 @@ class adminUsersComponents extends sfComponents {
         
     }
 
+
+    public function executeDirectorio() {
+        $this->idsucursal = $this->getUser()->getSucursal();
+
+        
+    }
+
 }
 

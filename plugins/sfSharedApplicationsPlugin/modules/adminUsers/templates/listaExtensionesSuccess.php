@@ -1,11 +1,13 @@
 <?php
 ?>
 <div class="content"  align="center">
+    
     <?
     if($criterio=='buttondirnal'){
     ?>
     <h2 style="font-size: 200%">Directorio Telef&oacute;nico Nacional</h2>
     <br />
+    
     <table class="tableList" border="1" width="680">
         <tr>
             <th >Usuario</th>
@@ -219,5 +221,10 @@
     <?
     }
     ?>
+    <br />
+    <?
+    include_component("adminUsers", "directorio");
+    ?>
+    
 
 </div>

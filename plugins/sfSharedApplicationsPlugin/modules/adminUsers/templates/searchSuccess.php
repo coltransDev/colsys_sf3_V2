@@ -33,5 +33,10 @@
         ?>
         </thead>
     </table>
+    <br />
+    <?
+    include_component("adminUsers", "directorio");
+    ?>
+
 </div>
 </div>
