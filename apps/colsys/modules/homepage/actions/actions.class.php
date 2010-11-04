@@ -10,6 +10,7 @@
  */
 class homepageActions extends sfActions
 {
+    const NIVEL_NOTICIAS=100;
 	/**
 	* Executes index action
 	*
@@ -34,6 +35,8 @@ class homepageActions extends sfActions
                                      
         
         $this->grupos = $this->getUser()->getMenu();
+
+        $this->nivelNoticias =  $this->getUser()->getNivelAcceso(self::NIVEL_NOTICIAS);
        
 		
 		

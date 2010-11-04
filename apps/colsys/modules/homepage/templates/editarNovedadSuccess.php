@@ -66,7 +66,7 @@ $info = str_replace("</b>", "</strong>", $info);
 </div>
 
 
-<input type="button" value="Prueba" onClick="alert(document.getElementById('fchpublicacion').value)">
+
 
 <script type="text/javascript">
 YAHOO.widget.Logger.enableBrowserConsole();

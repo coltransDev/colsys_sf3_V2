@@ -3,47 +3,36 @@
 $festivos = TimeUtils::getFestivos();
 
 if( count($listaTareas)>0 ){
+?>
+<div class="content-box">
+<h5>TAREAS PENDIENTES</h5>
+    <div class="content-box">
+        <p>Usted tiene las siguientes tareas:</p>
+<?
 	foreach( $listaTareas as $lista ){
 		$tareas = $lista->getTareasPendientes( $user );	
 	?>
 	<br />
 	
 	<div class="taskListHead_<?=count($listaTareas)==1?"expanded":"collapsed"?>" onclick="expandCollapse( this, 'taskListBody_<?=$lista->getCaIdlistatarea()?>', 'taskListHead')">
-	<h3><?=$lista->getCaNombre()?> (<?=count($tareas)?> Tarea<?=count($tareas)!=1?"s":""?>)</h3>
+        <div class="qtip" title="<?=$lista->getCaDescripcion()?>">
+            <b><?=$lista->getCaNombre()?> (<?=count($tareas)?> Tarea<?=count($tareas)!=1?"s":""?>)</b>
+        </div>
 	</div>	
-	<div class="nota"><?=$lista->getCaDescripcion()?></div>
+	<div class="nota"></div>
 	<br />	
 	
 	<div id="taskListBody_<?=$lista->getCaIdlistatarea()?>" style="display:<?=count($listaTareas)==1?"inline":"none"?>">
-	<table width="100%" border="1" class="tableList" >	
-		<tr>
-			<th width="40%" >Tarea</th>
-			<th width="8%" >Enlace</th>
-			<th width="20%" >Creada</th>
-            <th width="20%" >Vencimiento</th>
-			<th width="12%" >Diferencia *</th>
-			
-		</tr>
+	<table width="100%" border="0"  >
+		
 		<?
 		
 		foreach( $tareas as $tarea ){
 		?>
 		<tr>
-			<td><div class="qtip" title="<?=$tarea->getCaTexto()?>"><?=$tarea->getCaTitulo()?></div></td>
-			<td><a href="<?=url_for("notificaciones/realizarTarea?id=".$tarea->getCaIdtarea())?>">Click aca</a></td>
-			<td><?=Utils::fechaMes($tarea->getCaFchcreado())?></td>
-            <td><?=Utils::fechaMes($tarea->getCaFchvencimiento())?></td>
-			<td>
-				<?			
-				$diff = $tarea->getTiempoRestante( $festivos  );
-				if( substr($diff, 0,1)=="-" ){
-					echo "<span class='rojo'>".$diff."</span>";
-				}else{
-					echo $diff;			
-				}
-				?>
-            </td>
+			<td width="75%"><div class="qtip" title="<?=$tarea->getCaTexto()?>"><?=link_to( $tarea->getCaTitulo(), "notificaciones/realizarTarea?id=".$tarea->getCaIdtarea() )?></div></td>
 			
+			<td width="25%"><?=Utils::fechaMes($tarea->getCaFchcreado())?></td>
 		</tr>
 		<?
 		}
@@ -55,20 +44,8 @@ if( count($listaTareas)>0 ){
 	?>
 	<br />
 	<br />
-	<div class="nota">* Diferencia con la hora actual teniendo en cuenta las horas habiles, el color rojo indica que sobrepaso la hora.</div>
-	<?
-}else{
-?>
-<br />
-<br />
-<br />
-
-
-<div align="center">
-<h3>No tiene tareas pendientes en este momento</h3>
-</div>
-<br>
-
-<?	
+	</div>
+ </div>
+<?
 }
 ?>
