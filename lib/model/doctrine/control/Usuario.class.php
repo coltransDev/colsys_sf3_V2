@@ -178,39 +178,41 @@ class Usuario extends BaseUsuario
     
 	public function updateLuceneIndex(){
 
-		$index = UsuarioTable::getLuceneIndex();
- 
+		$index = $this->getTable()->getLuceneIndex();
+
   	    // remove an existing entry
 	    if ($hit = $index->find('pk:'.$this->getCaLogin())){
 	    		$index->delete($hit->id);
 	    }
-	 
+
 	    // don't index expired and non-activated jobs
-	    if ($this->getCaActivo()){
+	    if (!$this->getCaActivo()){
 	    	return;
 	  	}
-	 
+
 	  	$doc = new Zend_Search_Lucene_Document();
-	 
+
 	 	// store job primary key URL to identify it in the search results
 	  	$doc->addField(Zend_Search_Lucene_Field::UnIndexed('pk', $this->getCaLogin()));
-	 
+
 	 	 // index job fields
-	    $doc->addField(Zend_Search_Lucene_Field::UnStored('ca_nombres', $this->getCaNombres(), 'utf-8'));
-	    $doc->addField(Zend_Search_Lucene_Field::UnStored('ca_apellidos', $this->CaApellidos(), 'utf-8'));
-	    $doc->addField(Zend_Search_Lucene_Field::UnStored('ca_cargo', $this->getCaCargo(), 'utf-8'));
-	    $doc->addField(Zend_Search_Lucene_Field::UnStored('ca_sucursal', $this->CaSucursal(), 'utf-8'));
-	 
+	    $doc->addField(Zend_Search_Lucene_Field::UnStored('ca_nombre',utf8_encode($this->getCaNombre()), 'utf-8'));
+        $doc->addField(Zend_Search_Lucene_Field::UnStored('ca_nombres',utf8_encode($this->getCaNombres()), 'utf-8'));
+	    $doc->addField(Zend_Search_Lucene_Field::UnStored('ca_apellidos', utf8_encode($this->getCaApellidos()), 'utf-8'));
+	    $doc->addField(Zend_Search_Lucene_Field::UnStored('ca_cargo', utf8_encode($this->getCaCargo()), 'utf-8'));
+	    $doc->addField(Zend_Search_Lucene_Field::UnStored('ca_sucursal', utf8_encode($this->getSucursal()->getCaNombre()), 'utf-8'));
+        $doc->addField(Zend_Search_Lucene_Field::UnStored('ca_empresa', utf8_encode($this->getSucursal()->getEmpresa()->getCaNombre()), 'utf-8'));
+
 	    // add job to the index
 	    $index->addDocument($doc);
 	    $index->commit();
 	}
-/*
+
     public function save(Doctrine_Connection $conn = null)
     {
       // ...
 
-      $conn = $conn ? $conn : UsuarioTable::getConnection();
+      $conn = $conn ? $conn : $this->getTable()->getConnection();
       $conn->beginTransaction();
       try
       {
@@ -227,7 +229,20 @@ class Usuario extends BaseUsuario
         $conn->rollBack();
         throw $e;
       }
-    }*/
+    }
+
+    // lib/model/doctrine/JobeetJob.class.php
+    public function delete(Doctrine_Connection $conn = null)
+    {
+      $index = UsuarioTable::getLuceneIndex();
+
+      if ($hit = $index->find('pk:'.$this->getCaLogin()))
+      {
+        $index->delete($hit->id);
+      }
+
+      return parent::delete($conn);
+    }
 }
 
 
