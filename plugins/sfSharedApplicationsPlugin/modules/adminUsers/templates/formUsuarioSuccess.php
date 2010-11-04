@@ -115,7 +115,7 @@ $teloficinas = $sf_data->getRaw("teloficinas");
             }
         }
         cargosFld.value = defaultValCar;
-
+        //alert( departamentosFld.value );
         var jefes = <?=json_encode($jefes)?>;
         var jefesFld = document.getElementById("manager");
         jefesFld.length=0;
@@ -141,6 +141,41 @@ $teloficinas = $sf_data->getRaw("teloficinas");
        
 
     }
+
+
+    function cambiarValoresManager(defaultValJef){
+        //Actualizamos sucursales
+        var idempresa = document.getElementById("empresa").value;
+        var sucursalesFld = document.getElementById("idsucursal");        
+        var departamentosFld = document.getElementById("departamento");
+        
+        //alert( departamentosFld.value );
+        var jefes = <?=json_encode($jefes)?>;
+        var jefesFld = document.getElementById("manager");
+        jefesFld.length=0;
+        for( i in jefes ){
+            if( typeof(jefes[i]['j_ca_cargo'])!="undefined" ){
+                //alert(defaultValJef);
+                if( idempresa == jefes[i]['c_ca_idempresa'] || departamentosFld.value=="Exportaciones Aduana"){
+                    //alert(jefes[i]["j_ca_login"]);
+
+                    if( defaultValJef == jefes[i]["j_ca_login"]){
+                        var selected = true;
+                    }else{
+                        var selected = false;
+                    }
+
+                    jefesFld[jefesFld.length] = new Option(jefes[i]['j_ca_nombre'],jefes[i]['j_ca_login'], selected);
+
+                }
+            }
+        }
+        jefesFld.value = defaultValJef;
+
+
+
+    }
+
 </script>
 
 <form name="form1" action="<?=url_for("adminUsers/guardarUsuario")?>" method="post" onsubmit="return checkForm()" enctype="multipart/form-data" >
@@ -275,7 +310,7 @@ $teloficinas = $sf_data->getRaw("teloficinas");
 								</td>
 								<td>
 									<div align="left">
-										<select name="departamento" id="departamento" <?if($nivel==0){?>disabled="disabled"<?}?>>
+										<select name="departamento" id="departamento" <?if($nivel==0){?>disabled="disabled"<?}?> onChange="cambiarValoresManager('<?=$usuario->getCaManager()?>')">
 												
 										</select>
 									</div>
