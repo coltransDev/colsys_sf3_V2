@@ -452,6 +452,10 @@ class adminUsersActions extends sfActions {
             $usuario->setCaMovil($request->getParameter("movil"));
         }
 
+        if ($request->getParameter("manager")) {
+            $usuario->setCaManager($request->getParameter("manager"));
+        }
+
         $this->direccion = $request->getParameter("direccion");
         if ($request->getParameter("direccion")) {
             $usuario->setCaDireccion($request->getParameter("direccion"));

@@ -115,28 +115,8 @@ $teloficinas = $sf_data->getRaw("teloficinas");
             }
         }
         cargosFld.value = defaultValCar;
-        //alert( departamentosFld.value );
-        var jefes = <?=json_encode($jefes)?>;
-        var jefesFld = document.getElementById("manager");
-        jefesFld.length=0;
-        for( i in jefes ){
-            if( typeof(jefes[i]['j_ca_cargo'])!="undefined" ){
-                //alert(defaultValJef);
-                if( idempresa == jefes[i]['c_ca_idempresa'] ){
-                    //alert(jefes[i]["j_ca_login"]);
-                
-                    if( defaultValJef == jefes[i]["j_ca_login"]){
-                        var selected = true;
-                    }else{
-                        var selected = false;
-                    }
-
-                    jefesFld[jefesFld.length] = new Option(jefes[i]['j_ca_nombre'],jefes[i]['j_ca_login'], selected);
-                    
-                }
-            }
-        }
-        jefesFld.value = defaultValJef;
+        
+        cambiarValoresManager(defaultValJef);
 
        
 
