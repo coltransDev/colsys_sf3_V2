@@ -21,7 +21,7 @@ class gestDocumentalActions extends sfActions
 	}
 
     /*
-	* Sube un archivo a la carpeta especificada
+	* 
 	* @author: Andres Botero
 	*/
 	public function executeDataArchivos(){
@@ -186,6 +186,49 @@ class gestDocumentalActions extends sfActions
 
 
         $this->setTemplate("responseTemplate");
+    }
+
+     /*
+	*
+	* @author: Andres Botero
+	*/
+	public function executeDatosPanelDirectorios(){
+
+
+        $folder = base64_decode($this->getRequestParameter("folder"));
+        $directory = sfConfig::get('app_digitalFile_root').DIRECTORY_SEPARATOR.$folder.DIRECTORY_SEPARATOR;
+
+        if(!is_dir($directory)){
+            @mkdir($directory, 0777, true);
+        }
+
+        $archivos = sfFinder::type('file')->maxDepth(0)->in($directory);
+        $this->files = array();
+        foreach($archivos as $archivo ){
+			$this->files[]=array("idarchivo"=>base64_encode(basename($archivo)),
+							"name"=>utf8_encode(basename($archivo)),
+                            "lastmod"=>time()
+					);
+		}
+
+        /*
+         *
+         if ($path && strpos($folder,'.'.DIRECTORY_SEPARATOR)===false) {
+			$dirs = glob($path . DIRECTORY_SEPARATOR. '*', GLOB_ONLYDIR);
+			$data=array();
+			foreach($dirs as $dir){
+				$subdirs = glob($dir. DIRECTORY_SEPARATOR. '*', GLOB_ONLYDIR);
+				$data[] = array(
+					'id' => str_replace(DIRECTORY, "", $dir),
+					'text' => substr(strrchr($dir,DIRECTORY_SEPARATOR),1),
+					'loaded' => count($subdirs)==0,
+					'expanded' => false
+				);
+			}
+			print json_encode($data);
+		}
+         */
+
     }
 
 

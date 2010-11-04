@@ -26,9 +26,12 @@ class gestDocumentalComponents extends sfComponents
 		if(!isset( $this->readOnly )){
 			$this->readOnly=false;
 		}
-       
+	}
 
-        
+    public function executeFileManagerPanel(){
+	}
+
+    public function executePanelDirectorios(){
 	}
 	
 	

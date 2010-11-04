@@ -131,7 +131,7 @@ $teloficinas = $sf_data->getRaw("teloficinas");
                         var selected = false;
                     }
 
-                    jefesFld[jefesFld.length] = new Option(jefes[i]['j_ca_nombre'],jefes[i]['j_ca_nombre'], selected);
+                    jefesFld[jefesFld.length] = new Option(jefes[i]['j_ca_nombre'],jefes[i]['j_ca_login'], selected);
                     
                 }
             }
