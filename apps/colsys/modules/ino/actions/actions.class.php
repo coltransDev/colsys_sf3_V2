@@ -462,6 +462,66 @@ class inoActions extends sfActions
     }
 
 
+    /**
+    *
+    *
+    * @param sfRequest $request A request object
+    */
+    public function executeGuardarGridFacturacionPanel(sfWebRequest $request){
+
+
+        $idcomprobante = $request->getParameter("idcomprobante");
+        if( $idcomprobante ){
+            $comprobante = Doctrine::getTable("InoComprobante")->find( $idcomprobante );
+            $this->forward404Unless( $comprobante );
+        }else{
+            $comprobante = new InoComprobante();
+            $comprobante->setCaIdtipo( InoComprobante::IDTIPO_F_INO );
+        }
+
+        try{
+
+            $conn = $comprobante->getTable()->getConnection();
+            $conn->beginTransaction();
+            
+            if( $request->getParameter("comprobante") ){
+                $comprobante->setCaConsecutivo( $request->getParameter("comprobante") );
+            }
+
+            if( $request->getParameter("fchcomprobante") ){
+                $comprobante->setCaFchcomprobante( $request->getParameter("fchcomprobante") );
+            }
+
+            if( $request->getParameter("valor") ){
+                $comprobante->setCaValor( $request->getParameter("valor") );
+            }
+
+            if( $request->getParameter("idmoneda") ){
+                $comprobante->setCaIdmoneda( $request->getParameter("idmoneda") );
+            }
+            if( $request->getParameter("cambio") ){
+                $comprobante->setCaTasacambio( $request->getParameter("cambio") );
+            }
+
+            $comprobante->save( $conn );
+            
+
+            $conn->commit();
+                //$conn->rollBack();
+            $this->responseArray = array("success"=>true, "id"=>$request->getParameter("id"));
+        }
+        catch (Exception $e){
+
+            throw $e;
+            $conn->rollBack();
+            $this->responseArray = array("success"=>false, "errorInfo"=>$e->getMessage());
+        }
+
+        
+
+        $this->setTemplate( "responseTemplate" );
+    }
+
 
 
 
@@ -480,6 +540,137 @@ class inoActions extends sfActions
         $this->forward("inocomprobantes", "formComprobante");
 
 
+    }
+    
+    
+     /*************************************************************************
+    *
+    *   Acciones para el cuadro de costos
+    *
+    ***************************************************************************/
+
+    /**
+    *
+    *
+    * @param sfRequest $request A request object
+    */
+    public function executeDatosGridCostosPanel(sfWebRequest $request)
+    {
+        $idmaster = $request->getParameter("idmaster");
+        $this->forward404Unless( $idmaster );
+        /*$inoHouses = Doctrine::getTable("InoHouse")
+                             ->createQuery("c")
+                             ->select("c.*, cl.*")
+                             //->innerJoin("c.Ids cl")
+                             ->innerJoin("c.Cliente cl")
+                             ->leftJoin( "c.InoComprobante comp" )
+                             ->leftJoin( "comp.InoTipoComprobante tcomp" )
+                             ->where("c.ca_idmaster = ?", $idmaster)
+                             ->addOrderBy( "cl.ca_compania" )
+                             ->execute();*/
+
+        $transacciones = Doctrine::getTable("InoTransaccion")
+                                 ->createQuery("t")
+                                 ->select("t.*, c.ca_idcomprobante, c.ca_consecutivo, con.ca_concepto, id.ca_nombre, tp.ca_tipo, tp.ca_comprobante")
+                                 ->innerJoin("t.InoComprobante c")
+                                 ->innerJoin("c.InoTipoComprobante tp")
+                                 ->innerJoin("t.InoConcepto con")
+                                 ->innerJoin("c.Ids id")
+                                 ->where("t.ca_idmaster = ?", $idmaster)
+                                 //->addWhere("c.ca_estado = ?", InoComprobante::TRANSFERIDO)
+                                 //->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                                 ->execute();
+        $data = array();
+
+        foreach( $transacciones as $transaccion ){
+
+
+            $comprobante = $transaccion->getInoComprobante();
+            $k = 0;
+            
+            $tipo = $comprobante->getInoTipoComprobante();
+
+            $row = array();
+            $row["idmaster"] = $idmaster;
+            $row["idconcepto"] = $transaccion->getCaIdconcepto();
+            $row["concepto"] = $transaccion->getInoConcepto()->getCaConcepto();
+            $row["idproveedor"] = $comprobante->getCaId();
+            $row["proveedor"] = utf8_encode($comprobante->getIds()->getCaNombre());
+            $row["comprobante"] = utf8_encode( $tipo." ".str_pad($comprobante->getCaConsecutivo(), 6, "0", STR_PAD_LEFT));
+            $row["fchcomprobante"] = utf8_encode( $comprobante->getCaFchcomprobante());
+            $row["idcomprobante"] = $comprobante->getCaIdcomprobante();
+            $row["valor"] = $comprobante->getValor();
+            $row["cambio"] = $comprobante->getCaTasacambio();
+            $row["idmoneda"] = $comprobante->getCaIdmoneda();
+            $row["color"] = "";
+
+            $data[] = $row;
+               
+
+
+
+        }
+
+
+        $this->responseArray = array("success"=>true, "root"=>$data, "total"=>count($data));
+        $this->setTemplate( "responseTemplate" );
+    }
+
+
+     /**
+    *
+    *
+    * @param sfRequest $request A request object
+    */
+    public function executeGuardarGridCostosPanel(sfWebRequest $request){
+        $idcomprobante = $request->getParameter("idcomprobante");
+        if( $idcomprobante ){
+            $comprobante = Doctrine::getTable("InoComprobante")->find( $idcomprobante );
+            $this->forward404Unless( $comprobante );
+        }else{
+            $comprobante = new InoComprobante();
+            $comprobante->setCaIdtipo( InoComprobante::IDTIPO_F_INO );
+        }
+
+        try{
+
+            $conn = $comprobante->getTable()->getConnection();
+            $conn->beginTransaction();
+
+            if( $request->getParameter("comprobante") ){
+                $comprobante->setCaConsecutivo( $request->getParameter("comprobante") );
+            }
+
+            if( $request->getParameter("fchcomprobante") ){
+                $comprobante->setCaFchcomprobante( $request->getParameter("fchcomprobante") );
+            }
+
+            if( $request->getParameter("valor") ){
+                $comprobante->setCaValor( $request->getParameter("valor") );
+            }
+
+            if( $request->getParameter("idmoneda") ){
+                $comprobante->setCaIdmoneda( $request->getParameter("idmoneda") );
+            }
+            if( $request->getParameter("cambio") ){
+                $comprobante->setCaTasacambio( $request->getParameter("cambio") );
+            }
+
+            $comprobante->save( $conn );
+
+
+            $conn->commit();
+                //$conn->rollBack();
+            $this->responseArray = array("success"=>true, "id"=>$request->getParameter("id"));
+        }
+        catch (Exception $e){
+
+            throw $e;
+            $conn->rollBack();
+            $this->responseArray = array("success"=>false, "errorInfo"=>$e->getMessage());
+        }
+
+        $this->setTemplate( "responseTemplate" );
     }
 
 

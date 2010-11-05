@@ -14,11 +14,11 @@ $recargos = $sf_data->getRaw( "recargos" );
 FormComprobanteSubpanelConceptos = function(){
 
     
-    this.dataRecargos = <?=json_encode(array("root"=>$recargos))?>;
+    this.dataConceptos = <?=json_encode(array("root"=>$conceptos))?>;
 
     this.storeConceptos = new Ext.data.Store({
         autoLoad : true,
-        proxy: new Ext.data.MemoryProxy( this.dataRecargos ),
+        proxy: new Ext.data.MemoryProxy( this.dataConceptos ),
         reader: new Ext.data.JsonReader(
             {
                 id: 'idconcepto',

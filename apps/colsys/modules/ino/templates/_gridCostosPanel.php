@@ -5,42 +5,19 @@
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
 
+
+include_component("ino", "editCostosWindow");
 ?>
 
 <script type="text/javascript">
 
 
-GridFacturacionPanel = function( config ){
+GridCostosPanel = function( config ){
 
     Ext.apply(this, config);
 
     
     this.columns = [
-      
-      {
-        header: "House",
-        dataIndex: 'doctransporte',
-        //hideable: false,
-        width: 100,
-        sortable: true,
-        renderer: this.formatItem
-
-      },
-      {
-        header: "Idcliente",
-        dataIndex: 'idcliente',
-        //hideable: false,
-        sortable: true,
-        width: 80
-      },
-      {
-        header: "Cliente",
-        dataIndex: 'cliente',
-        hideable: false,
-        sortable: true,
-        width: 280
-
-      },
       {
         header: "Comprobante",
         dataIndex: 'comprobante',
@@ -51,6 +28,23 @@ GridFacturacionPanel = function( config ){
         editor: new Ext.form.TextField()
 
       },
+      {
+        header: "Costo",
+        dataIndex: 'concepto',
+        //hideable: false,
+        width: 100,
+        sortable: true,
+        renderer: this.formatItem
+
+      },
+      {
+        header: "Proveedor",
+        dataIndex: 'proveedor',
+        //hideable: false,
+        sortable: true,
+        width: 80,
+        editor: new WidgetIds()
+      },   
       {
         header: "Fecha",
         dataIndex: 'fchcomprobante',
@@ -121,12 +115,13 @@ GridFacturacionPanel = function( config ){
     this.record = Ext.data.Record.create([
             
             {name: 'idmaster', type: 'integer'},
-            {name: 'idhouse', type: 'integer'},
-            {name: 'doctransporte', type: 'string'},
-            {name: 'cliente', type: 'string'},
-            {name: 'idcliente', type: 'integer'},
+            {name: 'idconcepto', type: 'integer'},
+            {name: 'concepto', type: 'string'},
+            {name: 'idproveedor', type: 'integer'},
+            {name: 'proveedor', type: 'string'},
             {name: 'comprobante', type: 'string'},
             {name: 'idcomprobante', type: 'string'},
+            {name: 'idmoneda', type: 'string'},
 
             {name: 'fchcomprobante', type: 'date', dateFormat:'Y-m-d'},
             {name: 'group', type: 'string'},
@@ -140,7 +135,7 @@ GridFacturacionPanel = function( config ){
     this.store = new Ext.data.GroupingStore({
 
         autoLoad : true,
-        url: '<?=url_for("ino/datosGridFacturacionPanel")?>',
+        url: '<?=url_for("ino/datosGridCostosPanel")?>',
         baseParams : {
             idmaster: this.idmaster
         },
@@ -151,33 +146,36 @@ GridFacturacionPanel = function( config ){
             },
             this.record
         ),
-        sortInfo:{field: 'doctransporte', direction: "ASC"},
-        groupField: 'doctransporte'
+        sortInfo:{field: 'proveedor', direction: "ASC"},
+        groupField: 'proveedor'
 
     });
 
-    this.tbar = [{
+    this.tbar = [];
+    if( !this.readOnly ){
+        this.tbar.push({
+        text: 'Agregar',
+        iconCls: 'add',
+        handler : this.newItem,
+        scope: this
+        });
+    }
+
+    this.tbar.push({
         text: 'Recargar',
         iconCls: 'refresh',
         handler : this.recargar,
         scope: this
         }
-    ];
-
-    if( !this.readOnly ){
-        this.tbar.push({
-        text: 'Guardar',
-        iconCls: 'disk',
-        handler : this.guardar,
-        scope: this
-        });
-    }
+    );
 
     
-    GridFacturacionPanel.superclass.constructor.call(this, {
+
+    
+    GridCostosPanel.superclass.constructor.call(this, {
        loadMask: {msg:'Cargando...'},
        //boxMinHeight: 300,
-       tbar: this.tbar,
+       //tbar: this.tbar,
        autoHeight: true,
        view: new Ext.grid.GroupingView({
             enableGroupingMenu: false,
@@ -186,8 +184,10 @@ GridFacturacionPanel = function( config ){
             //showPreview:true,
        }),
        listeners:{
-            rowcontextmenu: this.onRowcontextMenu,
+            //rowcontextmenu: this.onRowcontextMenu,
+            validateedit: this.onValidateEdit,
             rowdblclick : this.onRowDblclick
+
        }
 
     });
@@ -195,7 +195,12 @@ GridFacturacionPanel = function( config ){
 
 };
 
-Ext.extend(GridFacturacionPanel, Ext.grid.EditorGridPanel, {
+Ext.extend(GridCostosPanel, Ext.grid.EditorGridPanel, {
+
+    newItem: function(){
+        this.win = new EditCostoWindow();
+        this.win.show();
+    },
 
     recargar: function(){
 
@@ -352,7 +357,7 @@ Ext.extend(GridFacturacionPanel, Ext.grid.EditorGridPanel, {
                 Ext.Ajax.request(
                     {
                         waitMsg: 'Guardando cambios...',
-                        url: '<?=url_for("ino/guardarGridFacturacionPanel")?>',
+                        url: '<?=url_for("ino/guardarGridCostosPanel")?>',
                         params :	changes,
 
                         callback :function(options, success, response){
@@ -369,6 +374,27 @@ Ext.extend(GridFacturacionPanel, Ext.grid.EditorGridPanel, {
            // }
         }
 
+    },
+
+    /*
+    * Handler que se encarga de colocar el dato recargo_id en el Record
+    * cuando se inserta un nuevo recargo
+    */
+    onValidateEdit: function(e){
+        if( e.field == "proveedor"){
+            var rec = e.record;
+            var ed = this.colModel.getCellEditor(e.column, e.row);
+
+            var store = ed.field.store;
+            store.each( function( r ){
+                    if( r.data.id==e.value ){
+                        e.value = r.data.nombre;
+                        rec.set("idproveedor", r.data.id);
+                        return true;
+                    }
+                }
+            );
+        }
     }
 
 

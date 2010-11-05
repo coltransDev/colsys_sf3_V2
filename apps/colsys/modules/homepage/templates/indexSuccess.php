@@ -8,9 +8,9 @@
                 <h1 class="pagetitle">COLSYS <span>Sistema de Informaci&oacute;n</span> </h1>
                 <div id="samples">
                     <div id="samples-cb">
-                        <img src="/s.gif" class="normal-view" title="Full view with descriptions"/>
-                        <img src="/s.gif" class="condensed-view" title="Condensed view" />
-                        <img src="/s.gif" class="mini-view" title="Mini view" />
+                        <img src="/images/s.gif" class="normal-view" title="Full view with descriptions"/>
+                        <img src="/images/s.gif" class="condensed-view" title="Condensed view" />
+                        <img src="/images/s.gif" class="mini-view" title="Mini view" />
                     </div>
                     <div id="sample-menu"><div id="sample-menu-inner"></div></div>
                     <div id="sample-box">
@@ -24,7 +24,8 @@
                 <div class="left-column">
                     <?
                     if( $nivelNoticias>0 ){
-                        echo link_to(image_tag("16x16/edit_add.gif")." Nuevo" , "homepage/editarNovedad", array("nivelNoticias"=>$nivelNoticias));
+                        echo link_to(image_tag("16x16/edit_add.gif")." Nuevo" , "homepage/editarNovedad", array("nivelNoticias"=>$nivelNoticias))."<br />";
+
                     }
                     include_component("homepage", "novedades") ;
                     
@@ -132,7 +133,7 @@ foreach ($grupos as $key => $grupo) {
 
 
         var tpl2 = new Ext.XTemplate(
-        '<tpl for="."><a href="#{id}" hidefocus="on" class="{cls}" id="a4{id}"><img src="http://extjs.com/s.gif" class="{iconCls}">{title}</a></tpl>'
+        '<tpl for="."><a href="#{id}" hidefocus="on" class="{cls}" id="a4{id}"><img src="/images/s.gif" class="{iconCls}">{title}</a></tpl>'
     );
         tpl2.overwrite(menu, catalog);
 

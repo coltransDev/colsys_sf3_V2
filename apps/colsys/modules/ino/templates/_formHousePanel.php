@@ -312,7 +312,17 @@ include_component("widgets", "widgetCiudad");
         }, // eo function onRender
 
         onSelectReporte: function( combo, record, idx ){
+            var form = this.getForm();            
+            form.findField("nombreVendedor").setRawValue(record.data.nombreVendedor);
+            form.findField("nombreVendedor").hiddenField.value = record.data.vendedor;
             
+            form.findField("compania").setValue(record.data.compania);
+            form.findField("compania").hiddenField.value = record.data.idcliente;
+
+            form.findField("numorden").setValue(record.data.orden_clie);
+
+
+
         }
 
        

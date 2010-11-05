@@ -56,6 +56,34 @@ class inoComponents extends sfComponents
     }
 
     /*
+     * Grid que muestra las facturas de compra de la referencia
+     */
+    public function executeGridCostosPanel(){
+
+    }
+    /*
+     * Grid que muestra las facturas de compra de la referencia
+     */
+    public function executeEditCostosWindow(){
+        $this->conceptos = Doctrine::getTable("InoConcepto")
+                                     ->createQuery("c")
+                                     ->select("ca_idconcepto,ca_concepto, cc.ca_idccosto, cc.ca_centro, cc.ca_subcentro, cc.ca_nombre")
+                                     ->innerJoin("c.InoParametroFacturacion p")
+                                     ->innerJoin("p.InoCentroCosto cc")
+                                     //->innerJoin("cc.CentroCosto cp")
+                                     ->innerJoin("c.InoConceptoModalidad cm")
+                                     ->innerJoin("cm.Modalidad m")
+                                     //->addWhere("c.ca_tipo = ? ", Constantes::RECARGO_LOCAL )
+                                     ->addWhere("p.ca_idcuenta IS NOT NULL" )
+                                     //->addWhere("m.ca_impoexpo LIKE ? ", $impoexpo )
+                                     //->addWhere("m.ca_transporte LIKE ? ", $this->reporte->getCaTransporte() )
+                                     ->addOrderBy("c.ca_concepto")
+                                     ->distinct()
+                                     ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                                     ->execute();
+    }
+
+    /*
      * Cuadro de eventos de auditoria
      */
     public function executeGridAuditoriaPanel(){
@@ -67,26 +95,12 @@ class inoComponents extends sfComponents
      * Ventana para editar un evento
      */
     public function executeEditAuditoriaWindow(){
-
+        
 
     }
     
 
-    public function executeCostos(){
-        $this->costos = Doctrine::getTable("InoTransaccion")
-                                 ->createQuery("t")
-                                 ->select("t.*, c.ca_idcomprobante, c.ca_consecutivo, con.ca_concepto, id.ca_nombre, tp.ca_tipo, tp.ca_comprobante")
-                                 ->innerJoin("t.InoComprobante c")
-                                 ->innerJoin("c.InoTipoComprobante tp")
-                                 ->innerJoin("t.InoConcepto con")
-                                 ->innerJoin("c.Ids id")
-                                 ->where("t.ca_idmaster = ?", $this->referencia->getCaIdmaster())
-                                 //->addWhere("c.ca_estado = ?", InoComprobante::TRANSFERIDO)
-                                 ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
-                                 ->execute();
-
-    }
-
+    
     
 
 

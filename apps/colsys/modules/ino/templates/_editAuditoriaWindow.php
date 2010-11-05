@@ -5,7 +5,7 @@
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
 
-include_component("pm", "widgetBusquedaTicket");
+
 ?>
 
 <script type="text/javascript">

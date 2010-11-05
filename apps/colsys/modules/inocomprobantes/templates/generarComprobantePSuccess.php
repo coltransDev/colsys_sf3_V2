@@ -9,8 +9,8 @@ $comprobante = $sf_data->getRaw("comprobante");
 $tipo = $comprobante->getInoTipoComprobante();
 $idsSucursal = $tipo->getIdsSucursal();
 $ids = $idsSucursal->getIds();
-$inoCliente = $comprobante->getInoCliente();
-$inoMaestra = $inoCliente->getInoMaestra();
+$inoHouse = $comprobante->getInoHouse();
+$inoMaestra = $inoHouse->getInoMaster();
 
 $cuentaCierre = Doctrine::getTable("InoCuenta")->find($tipo->getCaIdctaCierre());
 $cuentaIva = Doctrine::getTable("InoCuenta")->find($tipo->getCaIdctaIva());
@@ -217,7 +217,7 @@ foreach( $transacciones as $transaccion ){
     $parametro = $transaccion->getInoParametroCosto();
     $cuenta = $transaccion->getInoCuenta();
     
-    $maestra = $transaccion->getInoMaestra();
+    $maestra = $transaccion->getInoMaster();
     
     $codigo = str_pad($centro->getCaCentro(), 2, "0", STR_PAD_LEFT).str_pad($centro->getCaSubcentro(), 2, "0", STR_PAD_LEFT).str_pad($concepto->getCaIdconcepto(), 4, "0", STR_PAD_LEFT);
     

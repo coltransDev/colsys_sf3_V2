@@ -8,6 +8,10 @@
 
 include_component("ino", "mainPanel", array("referencia"=>$referencia));
 
+
+include_component("widgets", "widgetMoneda");
+include_component("widgets", "widgetIds");
+
 ?>
 
 
@@ -127,12 +131,6 @@ include_component("ino", "mainPanel", array("referencia"=>$referencia));
 
 
 
-<div id="costos" class="x-hide-display">
-    <?
-    include_component("ino", "costos", array("referencia"=>$referencia));
-    ?>
-
-</div>
 
 
 <script type="text/javascript">

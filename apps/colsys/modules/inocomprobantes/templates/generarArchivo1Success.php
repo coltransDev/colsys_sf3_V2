@@ -85,16 +85,19 @@ foreach( $transacciones as $transaccion ){
     $row.=" ";    
     //190 ? 192 CÓDIGO COMPROBANTE CRUCE:  3 posiciones alfanuméricas, diferentes a espacios
     //PENDIENTE
-    $row.=str_pad("", 3, "0", STR_PAD_LEFT );
+    //--$row.=str_pad("", 3, "0", STR_PAD_LEFT );
+    $row.=str_pad( $tipo->getCaComprobante(), 3, "0", STR_PAD_LEFT );
     //193 ?  203 NÚMERO DE DOCUMENTO CRUCE:  11 posiciones numéricas
     //PENDIENTE
-    $row.=str_pad("", 11, "0", STR_PAD_LEFT );
+    //--$row.=str_pad("", 11, "0", STR_PAD_LEFT );
+    $row.=str_pad( $comprobante->getCaConsecutivo(), 11, "0", STR_PAD_LEFT );
     //204 ? 206 SECUENCIA DEL DOCUMENTO CRUCE:  3 posiciones numéricas.  Secuencia del documento cruce, máximo hasta 250
     //PENDIENTE
     $row.=str_pad("", 3, "0", STR_PAD_LEFT );    
     //207 ? 214 FECHA VENCIMIENTO DE DOCUMENTO CRUCE:  8 posiciones numéricas (AAAAMMDD)
     //PENDIENTE
-    $row.=str_pad("", 8, "0", STR_PAD_LEFT );    
+    //$row.=str_pad("", 8, "0", STR_PAD_LEFT );
+    $row.=str_pad( Utils::parseDate( $comprobante->getCaFchcomprobante(), "Ymd"), 8, "0", STR_PAD_LEFT );
     //215 ? 218 CÓDIGO FORMA DE PAGO:  4 posiciones numéricas, solo se utilizan tres el primer digito debe ser cero.
     //PENDIENTE
     $row.=str_pad("", 4, "0", STR_PAD_LEFT );    

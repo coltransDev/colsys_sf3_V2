@@ -11,7 +11,7 @@ include_component("widgets", "widgetImpoexpo");
 include_component("widgets", "widgetTransporte");
 include_component("widgets", "widgetModalidad");
 include_component("widgets", "widgetLinea");
-include_component("widgets", "widgetPais");
+//include_component("widgets", "widgetPais");
 include_component("widgets", "widgetCiudad");
 include_component("widgets", "widgetAgente");
 

@@ -3734,11 +3734,8 @@ ORDER BY ca_idtrayecto,ca_idconcepto,log_pricrecargosxconcepto.ca_idrecargo, ca_
                         ->addWhere('ca_activo = ?', true)
                         ->execute();
 
-        foreach($usuarios as $usuario){
-
-
-
-
+        foreach( $usuarios as $usuario ){
+        
         }
     }
 
@@ -3763,6 +3760,20 @@ ORDER BY ca_idtrayecto,ca_idconcepto,log_pricrecargosxconcepto.ca_idrecargo, ca_
         }
 
         $this->setTemplate("blank");
+    }
+
+
+    public function executeGearmanTest(){
+        $this->setTemplate("blank");
+
+
+        // client connecting to default server
+        $client = sfGearmanClient::getInstance();
+
+        // this blocks until a worker do the job and return result
+        $result = sfGearmanClient::getInstance()->task('reverse1', 'Hello!');
+
+
     }
 }
 ?>
