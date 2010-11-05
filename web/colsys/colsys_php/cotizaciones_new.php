@@ -496,7 +496,7 @@ require_once("menu.php");
              $modulo = "00100100";                                             // Identificación del módulo para la ayuda en línea
              $us =& DlRecordset::NewRecordset($conn);
              $cambiar = ($nivel >= 1)?'':'DISABLED';
-             if (!$us->Open("select ca_login, ca_nombre from control.tb_usuarios where ca_login != 'Administrador' and (ca_cargo = 'Gerente Regional' or ca_cargo like '%Ventas%' or ca_departamento like '%Ventas%' or ca_departamento like '%Comercial%') order by ca_login")) {
+             if (!$us->Open("select ca_login, ca_nombre from control.tb_usuarios where ca_login != 'Administrador' and (ca_cargo = 'Gerente Sucursal' or ca_cargo like '%Ventas%' or ca_departamento like '%Ventas%' or ca_departamento like '%Comercial%') order by ca_login")) {
                  echo "<script>alert(\"".addslashes($us->mErrMsg)."\");</script>";
                  echo "<script>document.location.href = 'cotizaciones_new.php';</script>";
                  exit;
@@ -645,7 +645,7 @@ echo "</BODY>";
                  exit;
                 }
              $us =& DlRecordset::NewRecordset($conn);
-             if (!$us->Open("select ca_login, ca_nombre from control.tb_usuarios where ca_login != 'Administrador' and (ca_cargo = 'Gerente Regional' or ca_cargo like '%Ventas%' or ca_departamento like '%Ventas%' or ca_departamento like '%Comercial%') order by ca_login")) {
+             if (!$us->Open("select ca_login, ca_nombre from control.tb_usuarios where ca_login != 'Administrador' and (ca_cargo = 'Gerente Sucursal' or ca_cargo like '%Ventas%' or ca_departamento like '%Ventas%' or ca_departamento like '%Comercial%') order by ca_login")) {
                  echo "<script>alert(\"".addslashes($us->mErrMsg)."\");</script>";
                  echo "<script>document.location.href = 'cotizaciones_new.php';</script>";
                  exit;
@@ -1725,7 +1725,7 @@ elseif (isset($accion)) {                                                      /
 				 exit;
 			 }
              $id = $rs->Value('nextval');
-             if (!$rs->Open("insert into tb_cotizaciones (ca_idcotizacion, ca_fchcotizacion, ca_idcontacto, ca_asunto, ca_saludo, ca_entrada, ca_despedida, ca_anexos, ca_fchsolicitud, ca_horasolicitud, ca_usuario, ca_fchcreado, ca_usucreado) values('$id','$fchcotizacion',$idcontacto,'$asunto','$saludo','$entrada','$despedida','$anexos','$fchsolicitud','$horasolicitud','$vendedor',to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'),'$usuario')")) {
+             if (!$rs->Open("insert into tb_cotizaciones (ca_idcotizacion, ca_fchcotizacion, ca_idcontacto, ca_asunto, ca_saludo, ca_entrada, ca_despedida, ca_anexos, ca_fchsolicitud, ca_horasolicitud, ca_usuario, ca_fchcreado, ca_usucreado) values('$id','$fchcotizacion',$idcontacto,'$asunto','$saludo','$entrada','$despedida','$anexos','$fchsolicitud','$horasolicitud','$vendedor',to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'),'$usuario')")) {
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                  echo "<script>document.location.href = 'cotizaciones_new.php';</script>";
                  exit;
@@ -1739,32 +1739,32 @@ elseif (isset($accion)) {                                                      /
 				 exit;
 			 }
              $id_new = $rs->Value('nextval');
-             if (!$rs->Open("insert into tb_cotizaciones (ca_idcotizacion, ca_fchcotizacion, ca_idcontacto, ca_asunto, ca_saludo, ca_entrada, ca_despedida, ca_anexos, ca_usuario, ca_fchcreado, ca_usucreado) select $id_new, '".date("Y-m-d")."', ca_idcontacto, ca_asunto, ca_saludo, ca_entrada, ca_despedida, ca_anexos, ca_usuario, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario' from tb_cotizaciones where ca_idcotizacion = '$id'")) {
+             if (!$rs->Open("insert into tb_cotizaciones (ca_idcotizacion, ca_fchcotizacion, ca_idcontacto, ca_asunto, ca_saludo, ca_entrada, ca_despedida, ca_anexos, ca_usuario, ca_fchcreado, ca_usucreado) select $id_new, '".date("Y-m-d")."', ca_idcontacto, ca_asunto, ca_saludo, ca_entrada, ca_despedida, ca_anexos, ca_usuario, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario' from tb_cotizaciones where ca_idcotizacion = '$id'")) {
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                  echo "<script>document.location.href = 'cotizaciones_new.php';</script>";
                  exit;
                 }
-             if (!$rs->Open("insert into tb_cotproductos (ca_idcotizacion, ca_idproducto, ca_producto, ca_impoexpo, ca_transporte, ca_modalidad, ca_incoterms, ca_origen, ca_destino, ca_observaciones, ca_imprimir, ca_fchcreado, ca_usucreado) select $id_new, ca_idproducto, ca_producto, ca_impoexpo, ca_transporte, ca_modalidad, ca_incoterms, ca_origen, ca_destino, ca_observaciones, ca_imprimir, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario' from tb_cotproductos where ca_idcotizacion = '$id'")) {
+             if (!$rs->Open("insert into tb_cotproductos (ca_idcotizacion, ca_idproducto, ca_producto, ca_impoexpo, ca_transporte, ca_modalidad, ca_incoterms, ca_origen, ca_destino, ca_observaciones, ca_imprimir, ca_fchcreado, ca_usucreado) select $id_new, ca_idproducto, ca_producto, ca_impoexpo, ca_transporte, ca_modalidad, ca_incoterms, ca_origen, ca_destino, ca_observaciones, ca_imprimir, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario' from tb_cotproductos where ca_idcotizacion = '$id'")) {
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                  echo "<script>document.location.href = 'cotizaciones_new.php';</script>";
                  exit;
                 }
-             if (!$rs->Open("insert into tb_cotopciones (ca_idcotizacion, ca_idproducto, ca_idopcion, ca_idconcepto, ca_idmoneda, ca_tarifa, ca_oferta, ca_recargos, ca_observaciones, ca_fchcreado, ca_usucreado) select $id_new, ca_idproducto, ca_idopcion, ca_idconcepto, ca_idmoneda, ca_tarifa, ca_oferta, ca_recargos, ca_observaciones, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario' from tb_cotopciones where ca_idcotizacion = '$id'")) {
+             if (!$rs->Open("insert into tb_cotopciones (ca_idcotizacion, ca_idproducto, ca_idopcion, ca_idconcepto, ca_idmoneda, ca_tarifa, ca_oferta, ca_recargos, ca_observaciones, ca_fchcreado, ca_usucreado) select $id_new, ca_idproducto, ca_idopcion, ca_idconcepto, ca_idmoneda, ca_tarifa, ca_oferta, ca_recargos, ca_observaciones, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario' from tb_cotopciones where ca_idcotizacion = '$id'")) {
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                  echo "<script>document.location.href = 'cotizaciones_new.php';</script>";
                  exit;
                 }
-             if (!$rs->Open("insert into tb_cotrecargos (ca_idcotizacion, ca_idproducto, ca_idopcion, ca_idconcepto, ca_idrecargo, ca_tipo, ca_valor_tar, ca_aplica_tar, ca_valor_min, ca_aplica_min, ca_idmoneda, ca_modalidad, ca_observaciones, ca_fchcreado, ca_usucreado) select $id_new, ca_idproducto, ca_idopcion, ca_idconcepto, ca_idrecargo, ca_tipo, ca_valor_tar, ca_aplica_tar, ca_valor_min, ca_aplica_min, ca_idmoneda, ca_modalidad, ca_observaciones, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario' from tb_cotrecargos where ca_idcotizacion = '$id'")) {
+             if (!$rs->Open("insert into tb_cotrecargos (ca_idcotizacion, ca_idproducto, ca_idopcion, ca_idconcepto, ca_idrecargo, ca_tipo, ca_valor_tar, ca_aplica_tar, ca_valor_min, ca_aplica_min, ca_idmoneda, ca_modalidad, ca_observaciones, ca_fchcreado, ca_usucreado) select $id_new, ca_idproducto, ca_idopcion, ca_idconcepto, ca_idrecargo, ca_tipo, ca_valor_tar, ca_aplica_tar, ca_valor_min, ca_aplica_min, ca_idmoneda, ca_modalidad, ca_observaciones, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario' from tb_cotrecargos where ca_idcotizacion = '$id'")) {
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                  echo "<script>document.location.href = 'cotizaciones_new.php';</script>";
                  exit;
                 }
-             if (!$rs->Open("insert into tb_cotcontinuacion (ca_idcotizacion, ca_tipo, ca_modalidad, ca_origen, ca_destino, ca_idconcepto, ca_idequipo, ca_idmoneda, ca_tarifa, ca_frecuencia, ca_tiempotransito, ca_observaciones, ca_fchcreado, ca_usucreado) select $id_new, ca_tipo, ca_modalidad, ca_origen, ca_destino, ca_idconcepto, ca_idequipo, ca_idmoneda, ca_tarifa, ca_frecuencia, ca_tiempotransito, ca_observaciones, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario' from tb_cotcontinuacion where ca_idcotizacion = '$id'")) {
+             if (!$rs->Open("insert into tb_cotcontinuacion (ca_idcotizacion, ca_tipo, ca_modalidad, ca_origen, ca_destino, ca_idconcepto, ca_idequipo, ca_idmoneda, ca_tarifa, ca_frecuencia, ca_tiempotransito, ca_observaciones, ca_fchcreado, ca_usucreado) select $id_new, ca_tipo, ca_modalidad, ca_origen, ca_destino, ca_idconcepto, ca_idequipo, ca_idmoneda, ca_tarifa, ca_frecuencia, ca_tiempotransito, ca_observaciones, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario' from tb_cotcontinuacion where ca_idcotizacion = '$id'")) {
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                  echo "<script>document.location.href = 'cotizaciones_new.php';</script>";
                  exit;
                 }
-             if (!$rs->Open("insert into tb_cotseguro (ca_idcotizacion, ca_idmoneda, ca_prima, ca_obtencion, ca_observaciones, ca_fchcreado, ca_usucreado) select $id_new, ca_idmoneda, ca_prima, ca_obtencion, ca_observaciones, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario' from tb_cotseguro where ca_idcotizacion = '$id'")) {
+             if (!$rs->Open("insert into tb_cotseguro (ca_idcotizacion, ca_idmoneda, ca_prima, ca_obtencion, ca_observaciones, ca_fchcreado, ca_usucreado) select $id_new, ca_idmoneda, ca_prima, ca_obtencion, ca_observaciones, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario' from tb_cotseguro where ca_idcotizacion = '$id'")) {
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                  echo "<script>document.location.href = 'cotizaciones_new.php';</script>";
                  exit;
@@ -1773,7 +1773,7 @@ elseif (isset($accion)) {                                                      /
              break;
              }
         case 'Actualizar': {                                                   // El Botón Actualizar fue pulsado
-             if (!$rs->Open("update tb_cotizaciones set ca_fchcotizacion = '$fchcotizacion', ca_idcontacto = $idcontacto, ca_asunto = '$asunto', ca_saludo = '$saludo', ca_entrada = '$entrada', ca_despedida = '$despedida', ca_anexos = '$anexos', ca_fchsolicitud = '$fchsolicitud', ca_horasolicitud = '$horasolicitud', ca_usuario = '$vendedor', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usuactualizado = '$usuario' where ca_idcotizacion = $id")) {
+             if (!$rs->Open("update tb_cotizaciones set ca_fchcotizacion = '$fchcotizacion', ca_idcontacto = $idcontacto, ca_asunto = '$asunto', ca_saludo = '$saludo', ca_entrada = '$entrada', ca_despedida = '$despedida', ca_anexos = '$anexos', ca_fchsolicitud = '$fchsolicitud', ca_horasolicitud = '$horasolicitud', ca_usuario = '$vendedor', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where ca_idcotizacion = $id")) {
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                  echo "<script>document.location.href = 'cotizaciones_new.php';</script>";
                  exit;
@@ -1783,12 +1783,12 @@ elseif (isset($accion)) {                                                      /
         case 'Guardar Productos': {                                                      // El Botón Guardar fue pulsado
              while (list ($clave, $val) = each ($productos)) {
                 if ($val[fidpr] == 0 and $val[fdlte] == -1 and strlen($val[fprod]) != 0) {
-					if (!$rs->Open("insert into tb_cotproductos (ca_idcotizacion, ca_producto, ca_impoexpo, ca_transporte, ca_modalidad, ca_incoterms, ca_origen, ca_destino, ca_observaciones, ca_imprimir, ca_fchcreado, ca_usucreado) values($id, '".AddSlashes($val[fprod])."', '$val[fimex]', '$val[ftrns]', '$val[fmodl]', '$val[finct]', '$val[fiorg]', '$val[fidst]', '".AddSlashes($val[fobsv])."', '$val[fimpr]', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
+					if (!$rs->Open("insert into tb_cotproductos (ca_idcotizacion, ca_producto, ca_impoexpo, ca_transporte, ca_modalidad, ca_incoterms, ca_origen, ca_destino, ca_observaciones, ca_imprimir, ca_fchcreado, ca_usucreado) values($id, '".AddSlashes($val[fprod])."', '$val[fimex]', '$val[ftrns]', '$val[fmodl]', '$val[finct]', '$val[fiorg]', '$val[fidst]', '".AddSlashes($val[fobsv])."', '$val[fimpr]', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
                         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                         echo "<script>document.location.href = 'cotizaciones_new.php';</script>";
                         exit; }
                 }else if ($val[fidpr] != 0 and $val[fdlte] == 0) {
-                    if (!$rs->Open("update tb_cotproductos set ca_producto = '".AddSlashes($val[fprod])."', ca_impoexpo = '$val[fimex]', ca_transporte = '$val[ftrns]', ca_modalidad = '$val[fmodl]', ca_incoterms = '$val[finct]', ca_origen = '$val[fiorg]', ca_destino = '$val[fidst]', ca_observaciones = '".AddSlashes($val[fobsv])."', ca_imprimir = '$val[fimpr]', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usuactualizado = '$usuario' where ca_idcotizacion = $id and ca_idproducto = ".$val[fidpr])) {
+                    if (!$rs->Open("update tb_cotproductos set ca_producto = '".AddSlashes($val[fprod])."', ca_impoexpo = '$val[fimex]', ca_transporte = '$val[ftrns]', ca_modalidad = '$val[fmodl]', ca_incoterms = '$val[finct]', ca_origen = '$val[fiorg]', ca_destino = '$val[fidst]', ca_observaciones = '".AddSlashes($val[fobsv])."', ca_imprimir = '$val[fimpr]', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where ca_idcotizacion = $id and ca_idproducto = ".$val[fidpr])) {
                         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                         echo "<script>document.location.href = 'cotizaciones_new.php';</script>";
                         exit; }
@@ -1813,7 +1813,7 @@ elseif (isset($accion)) {                                                      /
              while (list ($clave, $val) = each ($continuacion)) {
 			 	$tarifa = $val[ftrfa]."|".$val[ffmin];
                 if ($val[foids] != 0 and strlen($tarifa)>1) {
-                    if (!$rs->Open("update tb_cotcontinuacion set ca_tipo = '$val[ftipo]', ca_modalidad = '$val[fmodl]', ca_origen = '$val[fiorg]', ca_destino = '$val[fidst]', ca_idconcepto = '$val[fidcn]', ca_idequipo = '$val[fideq]', ca_idmoneda = '$val[fmnda]', ca_tarifa = '$tarifa', ca_frecuencia = '$val[ffrca]', ca_tiempotransito = '$val[fttrs]', ca_observaciones = '".AddSlashes($val[fobsv])."', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usuactualizado = '$usuario' where oid = ".$val[foids])) {
+                    if (!$rs->Open("update tb_cotcontinuacion set ca_tipo = '$val[ftipo]', ca_modalidad = '$val[fmodl]', ca_origen = '$val[fiorg]', ca_destino = '$val[fidst]', ca_idconcepto = '$val[fidcn]', ca_idequipo = '$val[fideq]', ca_idmoneda = '$val[fmnda]', ca_tarifa = '$tarifa', ca_frecuencia = '$val[ffrca]', ca_tiempotransito = '$val[fttrs]', ca_observaciones = '".AddSlashes($val[fobsv])."', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where oid = ".$val[foids])) {
                         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                         echo "<script>document.location.href = 'cotizaciones_new.php';</script>";
                         exit;
@@ -1827,7 +1827,7 @@ elseif (isset($accion)) {                                                      /
 				}else {
 					if (strlen($val[ftrfa]) == 0){
 						continue;
-					}else if (!$rs->Open("insert into tb_cotcontinuacion (ca_idcotizacion, ca_tipo, ca_modalidad, ca_origen, ca_destino, ca_idconcepto, ca_idequipo, ca_idmoneda, ca_tarifa, ca_frecuencia, ca_tiempotransito, ca_observaciones, ca_fchcreado, ca_usucreado) values ($id,  '$val[ftipo]', '$val[fmodl]', '$val[fiorg]', '$val[fidst]', '$val[fidcn]', '$val[fideq]', '$val[fmnda]', '$tarifa', '$val[ffrca]', '$val[fttrs]', '".AddSlashes($val[fobsv])."' , to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
+					}else if (!$rs->Open("insert into tb_cotcontinuacion (ca_idcotizacion, ca_tipo, ca_modalidad, ca_origen, ca_destino, ca_idconcepto, ca_idequipo, ca_idmoneda, ca_tarifa, ca_frecuencia, ca_tiempotransito, ca_observaciones, ca_fchcreado, ca_usucreado) values ($id,  '$val[ftipo]', '$val[fmodl]', '$val[fiorg]', '$val[fidst]', '$val[fidcn]', '$val[fideq]', '$val[fmnda]', '$tarifa', '$val[ffrca]', '$val[fttrs]', '".AddSlashes($val[fobsv])."' , to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
                         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                         echo "<script>document.location.href = 'cotizaciones_new.php';</script>";
                         exit;
@@ -1840,7 +1840,7 @@ elseif (isset($accion)) {                                                      /
              while (list ($clave, $val) = each ($seguros)) {
 			 	$prima = $val[ftipo]."|".$val[fprma]."|".$val[fsmin];
                 if ($val[foids] != 0) {
-                    if (!$rs->Open("update tb_cotseguro set ca_idmoneda = '$val[fmnda]', ca_prima = '$prima', ca_obtencion = '$val[fobtc]', ca_observaciones = '".AddSlashes($val[fobsv])."', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usuactualizado = '$usuario' where oid = ".$val[foids])) {
+                    if (!$rs->Open("update tb_cotseguro set ca_idmoneda = '$val[fmnda]', ca_prima = '$prima', ca_obtencion = '$val[fobtc]', ca_observaciones = '".AddSlashes($val[fobsv])."', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where oid = ".$val[foids])) {
                         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                         echo "<script>document.location.href = 'cotizaciones_new.php';</script>";
                         exit;
@@ -1848,7 +1848,7 @@ elseif (isset($accion)) {                                                      /
 				}else {
 					if (strlen($val[fprma]) == 0){
 						continue;
-					}else if (!$rs->Open("insert into tb_cotseguro (ca_idcotizacion, ca_idmoneda, ca_prima, ca_obtencion, ca_observaciones, ca_fchcreado, ca_usucreado) values ($id, '$val[fmnda]', '$prima', '$val[fobtc]', '".AddSlashes($val[fobsv])."', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
+					}else if (!$rs->Open("insert into tb_cotseguro (ca_idcotizacion, ca_idmoneda, ca_prima, ca_obtencion, ca_observaciones, ca_fchcreado, ca_usucreado) values ($id, '$val[fmnda]', '$prima', '$val[fobtc]', '".AddSlashes($val[fobsv])."', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
                         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                         echo "<script>document.location.href = 'cotizaciones_new.php';</script>";
                         exit;
@@ -1860,13 +1860,13 @@ elseif (isset($accion)) {                                                      /
         case 'Guardar Recargos Locales': {                                                      // El Botón Guardar fue pulsado
              while (list ($clave, $val) = each ($recargos)) {
 				if ($val[foids] == '' and $val[fidrc] != '') {
-					if (!$rs->Open("insert into tb_cotrecargos (ca_idcotizacion, ca_idproducto, ca_idopcion, ca_idconcepto, ca_idrecargo, ca_tipo, ca_valor_tar, ca_aplica_tar, ca_valor_min, ca_aplica_min, ca_idmoneda, ca_modalidad, ca_observaciones, ca_fchcreado, ca_usucreado) values ($id, 99, 999, 9999, '$val[fidrc]', '$val[ftipo]', '$val[frvlr]', '$val[frapA]', '$val[frmin]', '$val[frapB]', '$val[frmnd]', '$val[frmdl]', '".AddSlashes($val[frdts])."', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
+					if (!$rs->Open("insert into tb_cotrecargos (ca_idcotizacion, ca_idproducto, ca_idopcion, ca_idconcepto, ca_idrecargo, ca_tipo, ca_valor_tar, ca_aplica_tar, ca_valor_min, ca_aplica_min, ca_idmoneda, ca_modalidad, ca_observaciones, ca_fchcreado, ca_usucreado) values ($id, 99, 999, 9999, '$val[fidrc]', '$val[ftipo]', '$val[frvlr]', '$val[frapA]', '$val[frmin]', '$val[frapB]', '$val[frmnd]', '$val[frmdl]', '".AddSlashes($val[frdts])."', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
 						echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
 						echo "<script>document.location.href = 'cotizaciones_new.php';</script>";
 						exit;
                        }
 				}else if ($val[foids] != 0 and $val[fidrc] != '') {
-                    if (!$rs->Open("update tb_cotrecargos set ca_idrecargo = '$val[fidrc]', ca_tipo = '$val[ftipo]', ca_valor_tar = '$val[frvlr]', ca_aplica_tar = '$val[frapA]', ca_valor_min = '$val[frmin]', ca_aplica_min = '$val[frapB]', ca_idmoneda = '$val[frmnd]', ca_modalidad = '$val[frmdl]', ca_observaciones = '".AddSlashes($val[frdts])."', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usuactualizado = '$usuario' where oid = ".$val[foids])) {
+                    if (!$rs->Open("update tb_cotrecargos set ca_idrecargo = '$val[fidrc]', ca_tipo = '$val[ftipo]', ca_valor_tar = '$val[frvlr]', ca_aplica_tar = '$val[frapA]', ca_valor_min = '$val[frmin]', ca_aplica_min = '$val[frapB]', ca_idmoneda = '$val[frmnd]', ca_modalidad = '$val[frmdl]', ca_observaciones = '".AddSlashes($val[frdts])."', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where oid = ".$val[foids])) {
                         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                         echo "<script>document.location.href = 'cotizaciones_new.php';</script>";
                         exit;
@@ -1900,7 +1900,7 @@ elseif (isset($accion)) {                                                      /
 				$opciones_reg = $opciones[$i];
 				$recargos_reg = $recargos[$i];
 				if ($opciones_reg['fidop'] == 0 and $opciones_reg['fidcn'] != ''){
-					if (!$rs->Open("insert into tb_cotopciones (ca_idcotizacion, ca_idproducto, ca_idconcepto, ca_idmoneda, ca_tarifa, ca_oferta, ca_recargos, ca_observaciones, ca_fchcreado, ca_usucreado) values($id, $pr, '".$opciones_reg['fidcn']."', '".$opciones_reg['fmnda']."', '', '".$opciones_reg['fflte'].'|'.$opciones_reg['ffmin'].'|'.$opciones_reg['ffapl']."', '".addslashes($recargos_mem)."', '".$opciones_reg['fdets']."', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'),'$usuario')")) {
+					if (!$rs->Open("insert into tb_cotopciones (ca_idcotizacion, ca_idproducto, ca_idconcepto, ca_idmoneda, ca_tarifa, ca_oferta, ca_recargos, ca_observaciones, ca_fchcreado, ca_usucreado) values($id, $pr, '".$opciones_reg['fidcn']."', '".$opciones_reg['fmnda']."', '', '".$opciones_reg['fflte'].'|'.$opciones_reg['ffmin'].'|'.$opciones_reg['ffapl']."', '".addslashes($recargos_mem)."', '".$opciones_reg['fdets']."', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'),'$usuario')")) {
 						echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
 						echo "<script>document.location.href = 'cotizaciones_new.php';</script>";
 						exit; }
@@ -1912,7 +1912,7 @@ elseif (isset($accion)) {                                                      /
 					while (list ($clave_1, $val_1) = each ($recargos_reg)) {
 						if ($val_1[frvlr] == 0){
 							continue;
-						}else if (!$rs->Open("insert into tb_cotrecargos (ca_idcotizacion, ca_idproducto, ca_idopcion, ca_idconcepto, ca_idrecargo, ca_tipo, ca_valor_tar, ca_aplica_tar, ca_valor_min, ca_aplica_min, ca_idmoneda, ca_modalidad, ca_observaciones, ca_fchcreado, ca_usucreado) values ($id, $pr, $opc, '".$opciones_reg['fidcn']."', '$val_1[fidrc]', '$val_1[ftipo]', '$val_1[frvlr]', '$val_1[frapA]', '$val_1[frmin]', '$val_1[frapB]', '$val_1[frmnd]', '$val_1[frmdl]', '".AddSlashes($val_1[frdts])."', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
+						}else if (!$rs->Open("insert into tb_cotrecargos (ca_idcotizacion, ca_idproducto, ca_idopcion, ca_idconcepto, ca_idrecargo, ca_tipo, ca_valor_tar, ca_aplica_tar, ca_valor_min, ca_aplica_min, ca_idmoneda, ca_modalidad, ca_observaciones, ca_fchcreado, ca_usucreado) values ($id, $pr, $opc, '".$opciones_reg['fidcn']."', '$val_1[fidrc]', '$val_1[ftipo]', '$val_1[frvlr]', '$val_1[frapA]', '$val_1[frmin]', '$val_1[frapB]', '$val_1[frmnd]', '$val_1[frmdl]', '".AddSlashes($val_1[frdts])."', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
 							echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
 							echo "<script>document.location.href = 'cotizaciones_new.php';</script>";
 							exit;
@@ -1934,7 +1934,7 @@ elseif (isset($accion)) {                                                      /
 						if ($val_1[fdltr] == '' and $val_1[frvlr] == 0){
 							continue;
 						}else if($val_1[foidr] == ''){
-							if (!$rs->Open("insert into tb_cotrecargos (ca_idcotizacion, ca_idproducto, ca_idopcion, ca_idconcepto, ca_idrecargo, ca_tipo, ca_valor_tar, ca_aplica_tar, ca_valor_min, ca_aplica_min, ca_idmoneda, ca_modalidad, ca_observaciones, ca_fchcreado, ca_usucreado) values ($id, $pr, '".$opciones_reg['fidop']."', '".$opciones_reg['fidcn']."', '$val_1[fidrc]', '$val_1[ftipo]', '$val_1[frvlr]', '$val_1[frapA]', '$val_1[frmin]', '$val_1[frapB]', '$val_1[frmnd]', '$val[frmdl]', '".AddSlashes($val_1[frdts])."', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
+							if (!$rs->Open("insert into tb_cotrecargos (ca_idcotizacion, ca_idproducto, ca_idopcion, ca_idconcepto, ca_idrecargo, ca_tipo, ca_valor_tar, ca_aplica_tar, ca_valor_min, ca_aplica_min, ca_idmoneda, ca_modalidad, ca_observaciones, ca_fchcreado, ca_usucreado) values ($id, $pr, '".$opciones_reg['fidop']."', '".$opciones_reg['fidcn']."', '$val_1[fidrc]', '$val_1[ftipo]', '$val_1[frvlr]', '$val_1[frapA]', '$val_1[frmin]', '$val_1[frapB]', '$val_1[frmnd]', '$val[frmdl]', '".AddSlashes($val_1[frdts])."', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
 								echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
 								echo "<script>document.location.href = 'cotizaciones_new.php';</script>";
 								exit;
@@ -1946,13 +1946,13 @@ elseif (isset($accion)) {                                                      /
 								exit;
 							   }
 						}else 
-							if (!$rs->Open("update tb_cotrecargos set ca_idrecargo = '$val_1[fidrc]', ca_tipo = '$val_1[ftipo]', ca_valor_tar = '$val_1[frvlr]', ca_aplica_tar = '$val_1[frapA]', ca_valor_min = '$val_1[frmin]', ca_aplica_min = '$val_1[frapB]', ca_idmoneda = '$val_1[frmnd]', ca_observaciones = '".AddSlashes($val_1[frdts])."', ca_usuactualizado = '$usuario', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss') where oid = ".$val_1[foidr])) {
+							if (!$rs->Open("update tb_cotrecargos set ca_idrecargo = '$val_1[fidrc]', ca_tipo = '$val_1[ftipo]', ca_valor_tar = '$val_1[frvlr]', ca_aplica_tar = '$val_1[frapA]', ca_valor_min = '$val_1[frmin]', ca_aplica_min = '$val_1[frapB]', ca_idmoneda = '$val_1[frmnd]', ca_observaciones = '".AddSlashes($val_1[frdts])."', ca_usuactualizado = '$usuario', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss') where oid = ".$val_1[foidr])) {
 								echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
 								echo "<script>document.location.href = 'cotizaciones_new.php';</script>";
 								exit;
 							   }
 						}
-					if (!$rs->Open("update tb_cotopciones set ca_idconcepto = '".$opciones_reg['fidcn']."', ca_idmoneda = '".$opciones_reg['fmnda']."', ca_tarifa = '', ca_oferta = '".$opciones_reg['fflte']."|".$opciones_reg['ffmin'].'|'.$opciones_reg['ffapl']."', ca_recargos = '".addslashes($recargos_mem)."', ca_observaciones = '".$opciones_reg['fdets']."', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usuactualizado = '$usuario' where ca_idopcion = ".$opciones_reg['fidop'])) {
+					if (!$rs->Open("update tb_cotopciones set ca_idconcepto = '".$opciones_reg['fidcn']."', ca_idmoneda = '".$opciones_reg['fmnda']."', ca_tarifa = '', ca_oferta = '".$opciones_reg['fflte']."|".$opciones_reg['ffmin'].'|'.$opciones_reg['ffapl']."', ca_recargos = '".addslashes($recargos_mem)."', ca_observaciones = '".$opciones_reg['fdets']."', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where ca_idopcion = ".$opciones_reg['fidop'])) {
 						echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
 						echo "<script>document.location.href = 'cotizaciones_new.php';</script>";
 						exit; }
@@ -1964,7 +1964,7 @@ elseif (isset($accion)) {                                                      /
 					if ($val_1[fdltr] == '' and $val_1[frvlr] == 0){
 						continue;
 					}else if($val_1[foidr] == ''){
-						if (!$rs->Open("insert into tb_cotrecargos (ca_idcotizacion, ca_idproducto, ca_idopcion, ca_idconcepto, ca_idrecargo, ca_tipo, ca_valor_tar, ca_aplica_tar, ca_valor_min, ca_aplica_min, ca_idmoneda, ca_modalidad, ca_observaciones, ca_fchcreado, ca_usucreado) values ($id, $pr, '999', '9999', '$val_1[fidrc]', '$val_1[ftipo]', '$val_1[frvlr]', '$val_1[frapA]', '$val_1[frmin]', '$val_1[frapB]', '$val_1[frmnd]', '$val[frmdl]', '".AddSlashes($val_1[frdts])."', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
+						if (!$rs->Open("insert into tb_cotrecargos (ca_idcotizacion, ca_idproducto, ca_idopcion, ca_idconcepto, ca_idrecargo, ca_tipo, ca_valor_tar, ca_aplica_tar, ca_valor_min, ca_aplica_min, ca_idmoneda, ca_modalidad, ca_observaciones, ca_fchcreado, ca_usucreado) values ($id, $pr, '999', '9999', '$val_1[fidrc]', '$val_1[ftipo]', '$val_1[frvlr]', '$val_1[frapA]', '$val_1[frmin]', '$val_1[frapB]', '$val_1[frmnd]', '$val[frmdl]', '".AddSlashes($val_1[frdts])."', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
 							echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
 							echo "<script>document.location.href = 'cotizaciones_new.php';</script>";
 							exit;
@@ -1976,7 +1976,7 @@ elseif (isset($accion)) {                                                      /
 							exit;
 						   }
 					}else 
-						if (!$rs->Open("update tb_cotrecargos set ca_idrecargo = '$val_1[fidrc]', ca_tipo = '$val_1[ftipo]', ca_valor_tar = '$val_1[frvlr]', ca_aplica_tar = '$val_1[frapA]', ca_valor_min = '$val_1[frmin]', ca_aplica_min = '$val_1[frapB]', ca_idmoneda = '$val_1[frmnd]', ca_observaciones = '".AddSlashes($val_1[frdts])."', ca_usuactualizado = '$usuario', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss') where oid = ".$val_1[foidr])) {
+						if (!$rs->Open("update tb_cotrecargos set ca_idrecargo = '$val_1[fidrc]', ca_tipo = '$val_1[ftipo]', ca_valor_tar = '$val_1[frvlr]', ca_aplica_tar = '$val_1[frapA]', ca_valor_min = '$val_1[frmin]', ca_aplica_min = '$val_1[frapB]', ca_idmoneda = '$val_1[frmnd]', ca_observaciones = '".AddSlashes($val_1[frdts])."', ca_usuactualizado = '$usuario', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss') where oid = ".$val_1[foidr])) {
 							echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
 							echo "<script>document.location.href = 'cotizaciones_new.php';</script>";
 							exit;

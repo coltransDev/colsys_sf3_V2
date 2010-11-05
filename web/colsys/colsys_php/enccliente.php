@@ -480,7 +480,7 @@ elseif (isset($accion)) {                                                      /
              if (!$rs->Open("insert into tb_enccliente (ca_idcliente, ca_fchvisita, ca_idcontacto, ca_instalaciones, ca_compartidas, ca_condiciones, ca_vivienda, ca_vigilancia, ca_alarma, ca_masseguridad, ca_detseguridad, ca_peracorde, ca_percarne, ca_perpresentado, ca_peruniformado,
 			                 ca_mermovimiento, ca_merorganizado, ca_merexistencias, ca_mercontrol, ca_merinfraestructura, ca_mersupervision, ca_mercargue, ca_merseguridad, ca_recomendable, ca_legalidad, ca_peligro, ca_explicacion, ca_actividad, ca_estado, ca_fchcreado, ca_usucreado)
 							 values($id, '$fchvisita', $idcontacto, '$instalaciones', '$compartidas', '$condiciones', '$vivienda', '$vigilancia', '', '$masseguridad', '$detseguridad', '$peracorde', '$percarne', '', '', '$mermovimiento', '', '',
-							 '$mercontrol', '','', '$mercargue', '', '$recomendable','$legalidad', '$peligro','$explicacion', '$actividad', '$estado', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
+							 '$mercontrol', '','', '$mercargue', '', '$recomendable','$legalidad', '$peligro','$explicacion', '$actividad', '$estado', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                  echo "<script>document.location.href = 'enccliente.php?id=$id';</script>";
                  exit;

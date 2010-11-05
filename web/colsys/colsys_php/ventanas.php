@@ -2129,13 +2129,13 @@ else if (isset($opcion) and $opcion == 'Novedad' and isset($accion)){
 				 	exit;
 				 	}
 				 $id = $rs->Value('nextval');
-				 if (!$rs->Open("insert into tb_colnovedades (ca_idnovedad, ca_asunto, ca_detalle, ca_fcharchivar, ca_fchpublicacion, ca_fchpublicado, ca_usupublicado) values ('$id', '$asunto', '$detalle', '$fcharchivar', '$fchpublicacion', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
+				 if (!$rs->Open("insert into tb_colnovedades (ca_idnovedad, ca_asunto, ca_detalle, ca_fcharchivar, ca_fchpublicacion, ca_fchpublicado, ca_usupublicado) values ('$id', '$asunto', '$detalle', '$fcharchivar', '$fchpublicacion', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
 					 echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
 					 echo "<script>document.location.href = 'entrada.php';</script>";
 					 exit;
 				 }
 			 } else {
-				 if (!$rs->Open("update tb_colnovedades set ca_asunto = '$asunto', ca_detalle = '$detalle', ca_fcharchivar = '$fcharchivar', ca_fchpublicacion = '$fchpublicacion', ca_fchpublicado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usupublicado = '$usuario' where ca_idnovedad = $id")) {
+				 if (!$rs->Open("update tb_colnovedades set ca_asunto = '$asunto', ca_detalle = '$detalle', ca_fcharchivar = '$fcharchivar', ca_fchpublicacion = '$fchpublicacion', ca_fchpublicado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usupublicado = '$usuario' where ca_idnovedad = $id")) {
 					 echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
 					 echo "<script>document.location.href = 'entrada.php';</script>";
 					 exit;

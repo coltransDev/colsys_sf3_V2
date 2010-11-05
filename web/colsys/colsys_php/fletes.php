@@ -536,7 +536,7 @@ elseif (isset($accion)) {                                                      /
     settype($fleteminimo,"double");	
     switch(trim($accion)) {                                                    // Switch que evalua cual botòn de comando fue pulsado por el usuario
         case 'Guardar': {                                                      // El Botón Guardar fue pulsado
-             if (!$rs->Open("insert into tb_fletes (ca_idtrayecto, ca_idconcepto, ca_vlrneto, ca_vlrminimo, ca_vlrsenior, ca_vlrjunior, ca_fleteminimo, ca_idmoneda, ca_fchcreado, ca_fchinicio, ca_fchvencimiento, ca_observaciones) values($id, $idconcepto, $vlrneto, $vlrminimo, $vlrsenior, $vlrjunior, $fleteminimo, '$idmoneda', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$fchinicio', '$fchvencimiento', '$observaciones')")) {
+             if (!$rs->Open("insert into tb_fletes (ca_idtrayecto, ca_idconcepto, ca_vlrneto, ca_vlrminimo, ca_vlrsenior, ca_vlrjunior, ca_fleteminimo, ca_idmoneda, ca_fchcreado, ca_fchinicio, ca_fchvencimiento, ca_observaciones) values($id, $idconcepto, $vlrneto, $vlrminimo, $vlrsenior, $vlrjunior, $fleteminimo, '$idmoneda', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$fchinicio', '$fchvencimiento', '$observaciones')")) {
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                  echo "<script>document.location.href = 'fletes.php';</script>";
                  exit;
@@ -544,7 +544,7 @@ elseif (isset($accion)) {                                                      /
              break;
              }
         case 'Actualizar': {                                                   // El Botón Actualizar fue pulsado
-             if (!$rs->Open("update tb_fletes set ca_idconcepto = $idconcepto, ca_vlrneto = $vlrneto, ca_vlrminimo = $vlrminimo, ca_vlrsenior = $vlrsenior, ca_vlrjunior = $vlrjunior, ca_fleteminimo = $fleteminimo, ca_idmoneda = '$idmoneda', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_fchinicio = '$fchinicio', ca_fchvencimiento = '$fchvencimiento', ca_observaciones = '$observaciones' where oid = $oid")) {
+             if (!$rs->Open("update tb_fletes set ca_idconcepto = $idconcepto, ca_vlrneto = $vlrneto, ca_vlrminimo = $vlrminimo, ca_vlrsenior = $vlrsenior, ca_vlrjunior = $vlrjunior, ca_fleteminimo = $fleteminimo, ca_idmoneda = '$idmoneda', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_fchinicio = '$fchinicio', ca_fchvencimiento = '$fchvencimiento', ca_observaciones = '$observaciones' where oid = $oid")) {
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                  echo "<script>document.location.href = 'fletes.php';</script>";
                  exit;

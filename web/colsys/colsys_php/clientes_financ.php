@@ -61,7 +61,7 @@ require_once("menu.php");
 
     echo "<TR>";
     $us =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
-    if (!$us->Open("select ca_login, ca_nombre from vi_usuarios where ca_cargo = 'Gerente Regional' or ca_cargo like '%Ventas%' or ca_departamento like '%Ventas%' or ca_departamento like '%Comercial%'")) {
+    if (!$us->Open("select ca_login, ca_nombre from vi_usuarios where ca_cargo = 'Gerente Sucursal' or ca_cargo like '%Ventas%' or ca_departamento like '%Ventas%' or ca_departamento like '%Comercial%'")) {
         echo "<script>alert(\"".addslashes($us->mErrMsg)."\");</script>";
         echo "<script>document.location.href = 'repcomisiones.php';</script>";
         exit;
@@ -481,7 +481,7 @@ elseif (isset($accion)) {                                                      /
              $tipo_nit = implode("|",$tipo_nit);
              $tipo_nit = ((strlen(trim($tipo_nit))==0)?'NULL':"'$tipo_nit'");
              
-             if (!$rs->Open("update tb_clientes set ca_fchcircular = $fchcircular, ca_nvlriesgo = '$nvlriesgo', ca_listaclinton = '$listaclinton', ca_leyinsolvencia = '$leyinsolvencia', ca_comentario = '$comentario', ca_tipo = $tipo_nit, ca_fchfinanciero = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usufinanciero = '$usuario' where ca_idcliente = $id")) {
+             if (!$rs->Open("update tb_clientes set ca_fchcircular = $fchcircular, ca_nvlriesgo = '$nvlriesgo', ca_listaclinton = '$listaclinton', ca_leyinsolvencia = '$leyinsolvencia', ca_comentario = '$comentario', ca_tipo = $tipo_nit, ca_fchfinanciero = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usufinanciero = '$usuario' where ca_idcliente = $id")) {
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                  echo "<script>document.location.href = 'clientes_financ.php';</script>";
                  exit;

@@ -4,6 +4,10 @@
 
 $rsMenu =& DlRecordset::NewRecordset($conn);                                    // Selecciona las bases de datos a las que usuario identificado tiene acceso
 
+
+
+
+
 $grupos = $cache->get($session_id."_menu");
 
 

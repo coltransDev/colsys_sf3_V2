@@ -410,7 +410,7 @@ elseif (isset($accion)) {                                                      /
                  exit;
                 }
              $rf =& DlRecordset::NewRecordset($conn);
-             if (!$rf->Open("update tb_inomaestra_sea set ca_asunto_otm = '$asunto_otm', ca_mensaje_otm = '$mensaje_otm', ca_fchllegada_otm = '$fchllegada_otm', ca_ciudad_otm = '$ciudad_otm', ca_fchconfirma_otm = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usuconfirma_otm = '$usuario' where ca_referencia = '$id'")) {
+             if (!$rf->Open("update tb_inomaestra_sea set ca_asunto_otm = '$asunto_otm', ca_mensaje_otm = '$mensaje_otm', ca_fchllegada_otm = '$fchllegada_otm', ca_ciudad_otm = '$ciudad_otm', ca_fchconfirma_otm = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usuconfirma_otm = '$usuario' where ca_referencia = '$id'")) {
                  echo "<script>alert(\"".addslashes($rf->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                  echo "<script>document.location.href = 'confirma_otm.php';</script>";
                  exit;

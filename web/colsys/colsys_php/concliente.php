@@ -468,7 +468,7 @@ elseif (isset($accion)) {                                                      /
     switch(trim($accion)) {                                                    // Switch que evalua cual botòn de comando fue pulsado por el usuario
         case 'Guardar': {                                                      // El Botón Guardar fue pulsado
              $cumpleanos = isset($cumpleanos)?implode("-",$cumpleanos):"";
-             if (!$rs->Open("insert into tb_concliente (ca_idcliente, ca_papellido, ca_sapellido, ca_nombres, ca_saludo, ca_cargo, ca_departamento, ca_telefonos, ca_fax, ca_cumpleanos, ca_email, ca_fijo, ca_observaciones, ca_fchcreado, ca_usucreado) values($id, '$papellido', '$sapellido', '$nombres', '$saludo', '$cargo', '$departamento', '$telefonos', '$fax', '$cumpleanos', lower('$email'), '$fijo','$observaciones', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
+             if (!$rs->Open("insert into tb_concliente (ca_idcliente, ca_papellido, ca_sapellido, ca_nombres, ca_saludo, ca_cargo, ca_departamento, ca_telefonos, ca_fax, ca_cumpleanos, ca_email, ca_fijo, ca_observaciones, ca_fchcreado, ca_usucreado) values($id, '$papellido', '$sapellido', '$nombres', '$saludo', '$cargo', '$departamento', '$telefonos', '$fax', '$cumpleanos', lower('$email'), '$fijo','$observaciones', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                  echo "<script>document.location.href = 'concliente.php?id=$id';</script>";
                  exit;
@@ -477,7 +477,7 @@ elseif (isset($accion)) {                                                      /
              }
         case 'Actualizar': {                                                   // El Botón Actualizar fue pulsado
              $cumpleanos = isset($cumpleanos)?implode("-",$cumpleanos):"";
-             if (!$rs->Open("update tb_concliente set ca_papellido = '$papellido', ca_sapellido = '$sapellido', ca_nombres = '$nombres', ca_saludo = '$saludo', ca_cargo = '$cargo', ca_departamento = '$departamento', ca_telefonos = '$telefonos', ca_fax = '$fax', ca_cumpleanos = '$cumpleanos', ca_email = lower('$email'), ca_fijo = '$fijo', ca_observaciones = '$observaciones', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usuactualizado = '$usuario' where ca_idcliente = $id and ca_idcontacto = $co")) {
+             if (!$rs->Open("update tb_concliente set ca_papellido = '$papellido', ca_sapellido = '$sapellido', ca_nombres = '$nombres', ca_saludo = '$saludo', ca_cargo = '$cargo', ca_departamento = '$departamento', ca_telefonos = '$telefonos', ca_fax = '$fax', ca_cumpleanos = '$cumpleanos', ca_email = lower('$email'), ca_fijo = '$fijo', ca_observaciones = '$observaciones', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where ca_idcliente = $id and ca_idcontacto = $co")) {
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                  echo "<script>document.location.href = 'concliente.php?id=$id';</script>";
                  exit;
@@ -485,7 +485,7 @@ elseif (isset($accion)) {                                                      /
              break;
              }
         case 'Eliminar': {                                                     // El Botón Eliminar fue pulsado
-             if (!$rs->Open("update tb_concliente set ca_cargo = 'Extrabajador', ca_departamento = 'Extrabajador', ca_email = '', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usuactualizado = '$usuario' where ca_idcliente = $id and ca_idcontacto = $co")) {
+             if (!$rs->Open("update tb_concliente set ca_cargo = 'Extrabajador', ca_departamento = 'Extrabajador', ca_email = '', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where ca_idcliente = $id and ca_idcontacto = $co")) {
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                  echo "<script>document.location.href = 'concliente.php?id=$id';</script>";
                  exit;

@@ -517,7 +517,7 @@ elseif (isset($accion)) {                                                      /
 			 }else{
 			 	$act = "false";
 			 }			 
-             if (!$rs->Open("insert into tb_contactos (ca_idcontacto, ca_idagente, ca_nombre, ca_direccion, ca_telefonos, ca_fax, ca_idciudad, ca_email, ca_impoexpo, ca_transporte, ca_cargo, ca_detalle, ca_sugerido, ca_activo, ca_fchcreado, ca_usucreado) values(upper('$idcontacto'), $idagente, '$nombre', '$direccion', '$telefonos', '$fax', '$idciudad', lower('$email'), '$impoexpo', '$transporte', '$cargo', '$detalle', $sug, $act, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
+             if (!$rs->Open("insert into tb_contactos (ca_idcontacto, ca_idagente, ca_nombre, ca_direccion, ca_telefonos, ca_fax, ca_idciudad, ca_email, ca_impoexpo, ca_transporte, ca_cargo, ca_detalle, ca_sugerido, ca_activo, ca_fchcreado, ca_usucreado) values(upper('$idcontacto'), $idagente, '$nombre', '$direccion', '$telefonos', '$fax', '$idciudad', lower('$email'), '$impoexpo', '$transporte', '$cargo', '$detalle', $sug, $act, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                  echo "<script>document.location.href = 'agentes.php';</script>";
                  exit;
@@ -540,7 +540,7 @@ elseif (isset($accion)) {                                                      /
 			 	$act = "false";
 			 }
 			 
-             if (!$rs->Open("update tb_contactos set ca_idcontacto = '$idcontacto', ca_nombre = '$nombre', ca_direccion = '$direccion', ca_telefonos = '$telefonos', ca_fax = '$fax', ca_idciudad = '$idciudad', ca_email = lower('$email'), ca_impoexpo = '$impoexpo', ca_transporte = '$transporte', ca_cargo = '$cargo', ca_detalle = '$detalle', ca_sugerido=$sug, ca_activo=$act, ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usuactualizado = '$usuario' where oid = $cn")) {
+             if (!$rs->Open("update tb_contactos set ca_idcontacto = '$idcontacto', ca_nombre = '$nombre', ca_direccion = '$direccion', ca_telefonos = '$telefonos', ca_fax = '$fax', ca_idciudad = '$idciudad', ca_email = lower('$email'), ca_impoexpo = '$impoexpo', ca_transporte = '$transporte', ca_cargo = '$cargo', ca_detalle = '$detalle', ca_sugerido=$sug, ca_activo=$act, ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where oid = $cn")) {
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                  echo "<script>document.location.href = 'agentes.php';</script>";
                  exit;

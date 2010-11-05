@@ -4550,13 +4550,13 @@ elseif (isset($accion)) {                                                      /
                 }
                 if (strlen($inspeccion_fch)!=0) {
                     if (!$rs->Eof()) {
-                        if (!$rs->Open("update tb_inocontratos_sea set ca_idcontrato = '$idcontrato', ca_fchcontrato = '$fchcontrato', ca_inspeccion_nta = '$inspeccion_nta', ca_inspeccion_fch = '$inspeccion_fch', ca_observaciones = '$observaciones', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usuactualizado = '$usuario' where ca_referencia = '$referencia' and ca_idequipo = '$idequipo'")) {
+                        if (!$rs->Open("update tb_inocontratos_sea set ca_idcontrato = '$idcontrato', ca_fchcontrato = '$fchcontrato', ca_inspeccion_nta = '$inspeccion_nta', ca_inspeccion_fch = '$inspeccion_fch', ca_observaciones = '$observaciones', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where ca_referencia = '$referencia' and ca_idequipo = '$idequipo'")) {
                             echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                             echo "<script>document.location.href = 'clientes.php';</script>";
                             exit;
                         }
                     }else {
-                        if (!$rs->Open("insert into tb_inocontratos_sea (ca_referencia, ca_idequipo, ca_idcontrato, ca_fchcontrato, ca_inspeccion_nta, ca_inspeccion_fch, ca_observaciones, ca_fchcreado, ca_usucreado) values('$referencia', '$idequipo', '$idcontrato', '$fchcontrato', '$inspeccion_nta', '$inspeccion_fch', '$observaciones', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
+                        if (!$rs->Open("insert into tb_inocontratos_sea (ca_referencia, ca_idequipo, ca_idcontrato, ca_fchcontrato, ca_inspeccion_nta, ca_inspeccion_fch, ca_observaciones, ca_fchcreado, ca_usucreado) values('$referencia', '$idequipo', '$idcontrato', '$fchcontrato', '$inspeccion_nta', '$inspeccion_fch', '$observaciones', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
                             echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                             echo "<script>document.location.href = 'clientes.php';</script>";
                             exit;
@@ -4564,13 +4564,13 @@ elseif (isset($accion)) {                                                      /
                     }
                 }else {
                     if (!$rs->Eof()) {
-                        if (!$rs->Open("update tb_inocontratos_sea set ca_idcontrato = '$idcontrato', ca_fchcontrato = '$fchcontrato', ca_observaciones = '$observaciones', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usuactualizado = '$usuario' where ca_referencia = '$referencia' and ca_idequipo = '$idequipo'")) {
+                        if (!$rs->Open("update tb_inocontratos_sea set ca_idcontrato = '$idcontrato', ca_fchcontrato = '$fchcontrato', ca_observaciones = '$observaciones', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where ca_referencia = '$referencia' and ca_idequipo = '$idequipo'")) {
                             echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                             echo "<script>document.location.href = 'clientes.php';</script>";
                             exit;
                         }
                     }else {
-                        if (!$rs->Open("insert into tb_inocontratos_sea (ca_referencia, ca_idequipo, ca_idcontrato, ca_fchcontrato, ca_observaciones, ca_fchcreado, ca_usucreado) values('$referencia', '$idequipo', '$idcontrato', '$fchcontrato', '$observaciones', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
+                        if (!$rs->Open("insert into tb_inocontratos_sea (ca_referencia, ca_idequipo, ca_idcontrato, ca_fchcontrato, ca_observaciones, ca_fchcreado, ca_usucreado) values('$referencia', '$idequipo', '$idcontrato', '$fchcontrato', '$observaciones', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
                             echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                             echo "<script>document.location.href = 'clientes.php';</script>";
                             exit;
@@ -4585,7 +4585,7 @@ elseif (isset($accion)) {                                                      /
                 break;
             }
         case 'Registrar': {                                                      // El Botón Guardar fue pulsado
-                if (!$rs->Open("insert into tb_inoauditor_sea (ca_referencia, ca_fchevento, ca_tipo, ca_asunto, ca_detalle, ca_compromisos, ca_fchcompromiso, ca_idantecedente, ca_usuario) values('$referencia', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$tipo', '".addslashes($asunto)."', '".addslashes($detalle)."', '".addslashes($compromisos)."', '$fchcompromiso', '$idantecedente', '$usuario')")) {
+                if (!$rs->Open("insert into tb_inoauditor_sea (ca_referencia, ca_fchevento, ca_tipo, ca_asunto, ca_detalle, ca_compromisos, ca_fchcompromiso, ca_idantecedente, ca_usuario) values('$referencia', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$tipo', '".addslashes($asunto)."', '".addslashes($detalle)."', '".addslashes($compromisos)."', '$fchcompromiso', '$idantecedente', '$usuario')")) {
                     echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                     echo "<script>document.location.href = 'clientes.php';</script>";
                     exit;
@@ -4622,7 +4622,7 @@ elseif (isset($accion)) {                                                      /
                     exit;
                 }
                 $referencia = $rs->Value('fun_referencia');
-                if (!$rs->Open("insert into tb_inomaestra_sea (ca_fchreferencia, ca_referencia, ca_impoexpo, ca_origen, ca_destino, ca_fchembarque, ca_fcharribo, ca_modalidad, ca_idlinea, ca_motonave, ca_ciclo, ca_mbls, ca_observaciones, ca_fchcreado, ca_usucreado, ca_provisional) values('$fchreferencia', '$referencia', '$impoexpo', '$idciuorigen', '$idciudestino', '$fchembarque', '$fcharribo', '$modalidad', $idlinea, '$motonave', '$ciclo', '$mbls', '".addslashes($observaciones)."', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario', 'FALSE')")) {
+                if (!$rs->Open("insert into tb_inomaestra_sea (ca_fchreferencia, ca_referencia, ca_impoexpo, ca_origen, ca_destino, ca_fchembarque, ca_fcharribo, ca_modalidad, ca_idlinea, ca_motonave, ca_ciclo, ca_mbls, ca_observaciones, ca_fchcreado, ca_usucreado, ca_provisional) values('$fchreferencia', '$referencia', '$impoexpo', '$idciuorigen', '$idciudestino', '$fchembarque', '$fcharribo', '$modalidad', $idlinea, '$motonave', '$ciclo', '$mbls', '".addslashes($observaciones)."', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario', 'FALSE')")) {
                     echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                     echo "<script>document.location.href = 'inosea.php';</script>";
                     exit;
@@ -4634,7 +4634,7 @@ elseif (isset($accion)) {                                                      /
                     $inoequipos_sea[$i]['numprecinto'] = strtoupper($inoequipos_sea[$i]['numprecinto'] );
                     if ($inoequipos_sea[$i]['cantidad'] != 0 and $inoequipos_sea[$i]['idconcepto'] != 'NULL') {
                         $idequipo = strtoupper($inoequipos_sea[$i]['idequipo_1']."-".$inoequipos_sea[$i]['idequipo_2']);
-                        if (!$rs->Open("insert into tb_inoequipos_sea (ca_referencia, ca_idconcepto, ca_cantidad, ca_idequipo, ca_numprecinto, ca_observaciones, ca_fchcreado, ca_usucreado) values('$referencia', ".$inoequipos_sea[$i]['idconcepto'].", ".$inoequipos_sea[$i]['cantidad'].", '$idequipo', '".$inoequipos_sea[$i]['numprecinto']."', '".$inoequipos_sea[$i]['observaciones']."', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
+                        if (!$rs->Open("insert into tb_inoequipos_sea (ca_referencia, ca_idconcepto, ca_cantidad, ca_idequipo, ca_numprecinto, ca_observaciones, ca_fchcreado, ca_usucreado) values('$referencia', ".$inoequipos_sea[$i]['idconcepto'].", ".$inoequipos_sea[$i]['cantidad'].", '$idequipo', '".$inoequipos_sea[$i]['numprecinto']."', '".$inoequipos_sea[$i]['observaciones']."', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
                             echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                             echo "<script>document.location.href = 'inosea.php?id=$id';</script>";
                             exit;
@@ -4646,7 +4646,7 @@ elseif (isset($accion)) {                                                      /
         case 'Actualizar': {                                                   // El Botón Actualizar fue pulsado
                 $ciclo = strtoupper($ciclo[0]."-".$ciclo[1]);
                 $mbls = strtoupper(implode("|",$mbls));
-                if (!$rs->Open("update tb_inomaestra_sea set ca_fchreferencia = '$fchreferencia', ca_impoexpo = '$impoexpo', ca_origen = '$idciuorigen', ca_destino = '$idciudestino', ca_fchembarque = '$fchembarque', ca_fcharribo = '$fcharribo', ca_modalidad = '$modalidad', ca_idlinea = $idlinea, ca_motonave = '$motonave', ca_ciclo = '$ciclo', ca_mbls = '$mbls', ca_observaciones = '".addslashes($observaciones)."', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usuactualizado = '$usuario' where ca_referencia = '$id'")) {
+                if (!$rs->Open("update tb_inomaestra_sea set ca_fchreferencia = '$fchreferencia', ca_impoexpo = '$impoexpo', ca_origen = '$idciuorigen', ca_destino = '$idciudestino', ca_fchembarque = '$fchembarque', ca_fcharribo = '$fcharribo', ca_modalidad = '$modalidad', ca_idlinea = $idlinea, ca_motonave = '$motonave', ca_ciclo = '$ciclo', ca_mbls = '$mbls', ca_observaciones = '".addslashes($observaciones)."', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where ca_referencia = '$id'")) {
                     echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                     echo "<script>document.location.href = 'inosea.php';</script>";
                     exit;
@@ -4661,7 +4661,7 @@ elseif (isset($accion)) {                                                      /
                     }
                     elseif ($inoequipos_sea[$i]['oid'] != 0 and $inoequipos_sea[$i]['cantidad'] != 0) {
                         $idequipo = strtoupper($inoequipos_sea[$i]['idequipo_1']."-".$inoequipos_sea[$i]['idequipo_2']);
-                        if (!$rs->Open("update tb_inoequipos_sea set ca_idconcepto = ".$inoequipos_sea[$i]['idconcepto'].", ca_cantidad = ".$inoequipos_sea[$i]['cantidad'].", ca_idequipo = '$idequipo', ca_numprecinto = '".$inoequipos_sea[$i]['numprecinto']."', ca_observaciones = '".$inoequipos_sea[$i]['observaciones']."', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usuactualizado = '$usuario' where oid = ".$inoequipos_sea[$i]['oid'])) {
+                        if (!$rs->Open("update tb_inoequipos_sea set ca_idconcepto = ".$inoequipos_sea[$i]['idconcepto'].", ca_cantidad = ".$inoequipos_sea[$i]['cantidad'].", ca_idequipo = '$idequipo', ca_numprecinto = '".$inoequipos_sea[$i]['numprecinto']."', ca_observaciones = '".$inoequipos_sea[$i]['observaciones']."', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where oid = ".$inoequipos_sea[$i]['oid'])) {
                             echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                             echo "<script>document.location.href = 'inosea.php?id=$id';</script>";
                             exit;
@@ -4681,7 +4681,7 @@ elseif (isset($accion)) {                                                      /
                     }
                     elseif ($inoequipos_sea[$i]['oid'] == 0 and $inoequipos_sea[$i]['cantidad'] != 0) {
                         $idequipo = strtoupper($inoequipos_sea[$i]['idequipo_1']."-".$inoequipos_sea[$i]['idequipo_2']);
-                        if (!$rs->Open("insert into tb_inoequipos_sea (ca_referencia, ca_idconcepto, ca_cantidad, ca_idequipo, ca_numprecinto, ca_observaciones, ca_fchcreado, ca_usucreado) values('$id', ".$inoequipos_sea[$i]['idconcepto'].", ".$inoequipos_sea[$i]['cantidad'].", '$idequipo', '".$inoequipos_sea[$i]['numprecinto']."', '".$inoequipos_sea[$i]['observaciones']."', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
+                        if (!$rs->Open("insert into tb_inoequipos_sea (ca_referencia, ca_idconcepto, ca_cantidad, ca_idequipo, ca_numprecinto, ca_observaciones, ca_fchcreado, ca_usucreado) values('$id', ".$inoequipos_sea[$i]['idconcepto'].", ".$inoequipos_sea[$i]['cantidad'].", '$idequipo', '".$inoequipos_sea[$i]['numprecinto']."', '".$inoequipos_sea[$i]['observaciones']."', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
                             echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                             echo "<script>document.location.href = 'inosea.php?id=$id';</script>";
                             exit;
@@ -4694,13 +4694,13 @@ elseif (isset($accion)) {                                                      /
                 $idtransportista = ($idtransportista=='')?'NULL':$idtransportista;
                 if ($idinfodian == '') {
                     $iddocactual = '';
-                    if (!$rs->Open("insert into tb_dianmaestra (ca_referencia, ca_codconcepto, ca_fchtrans, ca_iddocactual, ca_iddocanterior, ca_tipodocviaje, ca_codadministracion, ca_dispocarga, ca_coddeposito, ca_idtransportista, ca_fchinicial, ca_fchfinal, ca_iddoctrasbordo, ca_idcondiciones, ca_responsabilidad, ca_tiponegociacion, ca_tipocarga, ca_precursores, ca_fchcreado, ca_usucreado) values ('$id', '$codconcepto', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$iddocactual', '$iddocanterior', '$tipodocviaje', '$codadministracion', '$dispocarga', '$coddeposito', $idtransportista, '$fchinicial', '$fchfinal', '$iddoctrasbordo', '$idcondiciones', '".substr($responsabilidad,0,1)."', '$tiponegociacion', '$tipocarga', '".substr($precursores,0,1)."', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
+                    if (!$rs->Open("insert into tb_dianmaestra (ca_referencia, ca_codconcepto, ca_fchtrans, ca_iddocactual, ca_iddocanterior, ca_tipodocviaje, ca_codadministracion, ca_dispocarga, ca_coddeposito, ca_idtransportista, ca_fchinicial, ca_fchfinal, ca_iddoctrasbordo, ca_idcondiciones, ca_responsabilidad, ca_tiponegociacion, ca_tipocarga, ca_precursores, ca_fchcreado, ca_usucreado) values ('$id', '$codconcepto', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$iddocactual', '$iddocanterior', '$tipodocviaje', '$codadministracion', '$dispocarga', '$coddeposito', $idtransportista, '$fchinicial', '$fchfinal', '$iddoctrasbordo', '$idcondiciones', '".substr($responsabilidad,0,1)."', '$tiponegociacion', '$tipocarga', '".substr($precursores,0,1)."', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
                         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                         echo "<script>document.location.href = 'inosea.php?id=$id';</script>";
                         exit;
                     }
                 } else {
-                    if (!$rs->Open("update tb_dianmaestra set ca_codconcepto = '$codconcepto', ca_fchtrans = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_iddocanterior = '$iddocanterior', ca_tipodocviaje = '$tipodocviaje', ca_codadministracion = '$codadministracion', ca_dispocarga = '$dispocarga', ca_coddeposito = '$coddeposito', ca_idtransportista = $idtransportista, ca_fchinicial = '$fchinicial', ca_fchfinal = '$fchfinal', ca_iddoctrasbordo = '$iddoctrasbordo', ca_idcondiciones = '$idcondiciones', ca_responsabilidad = '".substr($responsabilidad,0,1)."', ca_tiponegociacion = '$tiponegociacion', ca_tipocarga = '$tipocarga', ca_precursores = '".substr($precursores,0,1)."', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usuactualizado = '$usuario' where ca_idinfodian = '$idinfodian'")) {
+                    if (!$rs->Open("update tb_dianmaestra set ca_codconcepto = '$codconcepto', ca_fchtrans = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_iddocanterior = '$iddocanterior', ca_tipodocviaje = '$tipodocviaje', ca_codadministracion = '$codadministracion', ca_dispocarga = '$dispocarga', ca_coddeposito = '$coddeposito', ca_idtransportista = $idtransportista, ca_fchinicial = '$fchinicial', ca_fchfinal = '$fchfinal', ca_iddoctrasbordo = '$iddoctrasbordo', ca_idcondiciones = '$idcondiciones', ca_responsabilidad = '".substr($responsabilidad,0,1)."', ca_tiponegociacion = '$tiponegociacion', ca_tipocarga = '$tipocarga', ca_precursores = '".substr($precursores,0,1)."', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where ca_idinfodian = '$idinfodian'")) {
                         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                         echo "<script>document.location.href = 'inosea.php?id=$id';</script>";
                         exit;
@@ -4721,13 +4721,13 @@ elseif (isset($accion)) {                                                      /
                         echo "<script>alert(\"¡No se encuentran datos de cabecera, de información para la Dian!\");</script>";  // Muestra el mensaje de error
                         exit;
                     }
-                    if (!$rs->Open("insert into tb_dianclientes (ca_idinfodian, ca_referencia, ca_idcliente, ca_house, ca_dispocarga, ca_coddeposito, ca_tipodocviaje, ca_idcondiciones, ca_responsabilidad, ca_tiponegociacion, ca_tipocarga, ca_precursores, ca_vlrfob, ca_vlrflete, ca_mercancia_desc, ca_iddestino, ca_fchcreado, ca_usucreado) values ('$idinfodian', '$referencia', '$idcliente', '$house', '$dispocarga', '$coddeposito', '$tipodocviaje', '$idcondiciones', '".substr($responsabilidad,0,1)."', '$tiponegociacion', '$tipocarga', '".substr($precursores,0,1)."', '$vlrfob', '$vlrflete', '$mercancia_desc', $iddestino, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
+                    if (!$rs->Open("insert into tb_dianclientes (ca_idinfodian, ca_referencia, ca_idcliente, ca_house, ca_dispocarga, ca_coddeposito, ca_tipodocviaje, ca_idcondiciones, ca_responsabilidad, ca_tiponegociacion, ca_tipocarga, ca_precursores, ca_vlrfob, ca_vlrflete, ca_mercancia_desc, ca_iddestino, ca_fchcreado, ca_usucreado) values ('$idinfodian', '$referencia', '$idcliente', '$house', '$dispocarga', '$coddeposito', '$tipodocviaje', '$idcondiciones', '".substr($responsabilidad,0,1)."', '$tiponegociacion', '$tipocarga', '".substr($precursores,0,1)."', '$vlrfob', '$vlrflete', '$mercancia_desc', $iddestino, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
                         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                         echo "<script>document.location.href = 'inosea.php?id=$referencia';</script>";
                         exit;
                     }
                 } else {
-                    if (!$rs->Open("update tb_dianclientes set ca_idinfodian = '$idinfodian', ca_referencia = '$referencia', ca_idcliente = '$idcliente', ca_house = '$house', ca_dispocarga = '$dispocarga', ca_coddeposito = '$coddeposito', ca_tipodocviaje = '$tipodocviaje', ca_idcondiciones = '$idcondiciones', ca_responsabilidad = '".substr($responsabilidad,0,1)."', ca_tiponegociacion = '$tiponegociacion', ca_tipocarga = '$tipocarga', ca_precursores = '".substr($precursores,0,1)."', ca_vlrfob = '$vlrfob', ca_vlrflete = '$vlrflete', ca_mercancia_desc = '$mercancia_desc', ca_iddestino = $iddestino, ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usuactualizado = '$usuario' where ca_idinfodian = '$idinfodian' and ca_referencia = '$referencia' and ca_idcliente = '$idcliente' and ca_house = '$house'")) {
+                    if (!$rs->Open("update tb_dianclientes set ca_idinfodian = '$idinfodian', ca_referencia = '$referencia', ca_idcliente = '$idcliente', ca_house = '$house', ca_dispocarga = '$dispocarga', ca_coddeposito = '$coddeposito', ca_tipodocviaje = '$tipodocviaje', ca_idcondiciones = '$idcondiciones', ca_responsabilidad = '".substr($responsabilidad,0,1)."', ca_tiponegociacion = '$tiponegociacion', ca_tipocarga = '$tipocarga', ca_precursores = '".substr($precursores,0,1)."', ca_vlrfob = '$vlrfob', ca_vlrflete = '$vlrflete', ca_mercancia_desc = '$mercancia_desc', ca_iddestino = $iddestino, ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where ca_idinfodian = '$idinfodian' and ca_referencia = '$referencia' and ca_idcliente = '$idcliente' and ca_house = '$house'")) {
                         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                         echo "<script>document.location.href = 'inosea.php?id=$referencia';</script>";
                         exit;
@@ -4751,7 +4751,7 @@ elseif (isset($accion)) {                                                      /
                     exit;
                 }else if ($rs->Value('ca_usuliquidado') == '') {
                         echo "<script>alert(\"No puede Cerrar el caso si no ha sido firmado como liquidado\");</script>";  // Muestra el mensaje de error
-                    }else if (!$rs->Open("update tb_inomaestra_sea set ca_fchcerrado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usucerrado = '$usuario', ca_usuoperacion = '$usuario', ca_provisional = $provisional where ca_referencia = '$referencia'")) {
+                    }else if (!$rs->Open("update tb_inomaestra_sea set ca_fchcerrado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usucerrado = '$usuario', ca_usuoperacion = '$usuario', ca_provisional = $provisional where ca_referencia = '$referencia'")) {
                             echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                             echo "<script>document.location.href = 'inosea.php';</script>";
                             exit;
@@ -4799,14 +4799,14 @@ elseif (isset($accion)) {                                                      /
                     $cadena.= implode(";",$contenedor)."|";
                 }
                 $contenedores = substr($cadena,0,strlen($cadena)-1);
-                if (!$rs->Open("insert into tb_inoclientes_sea (ca_referencia, ca_idcliente, ca_idreporte, ca_hbls, ca_fchhbls, ca_idproveedor, ca_proveedor, ca_numpiezas, ca_peso, ca_volumen, ca_numorden, ca_login, ca_continuacion, ca_continuacion_dest, ca_idbodega, ca_observaciones, ca_contenedores, ca_fchantecedentes, ca_fchcreado, ca_usucreado) values('$referencia', $idcliente, $idreporte, '$hbls', '$fchhbls', $idproveedor, '$proveedor', $numpiezas, $peso, $volumen, '$numorden', '$login', '$continuacion', '$continuacion_dest', '$idbodega', '', '$contenedores', $fchantecedentes, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
+                if (!$rs->Open("insert into tb_inoclientes_sea (ca_referencia, ca_idcliente, ca_idreporte, ca_hbls, ca_fchhbls, ca_idproveedor, ca_proveedor, ca_numpiezas, ca_peso, ca_volumen, ca_numorden, ca_login, ca_continuacion, ca_continuacion_dest, ca_idbodega, ca_observaciones, ca_contenedores, ca_fchantecedentes, ca_fchcreado, ca_usucreado) values('$referencia', $idcliente, $idreporte, '$hbls', '$fchhbls', $idproveedor, '$proveedor', $numpiezas, $peso, $volumen, '$numorden', '$login', '$continuacion', '$continuacion_dest', '$idbodega', '', '$contenedores', $fchantecedentes, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
                     echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                     echo "<script>document.location.href = 'inosea.php';</script>";
                     exit;
                 }
                 while (list ($clave, $val) = each ($facturacion)) {
                     if ($val[valor] != 0) {
-                        if (!$rs->Open("insert into tb_inoingresos_sea (ca_referencia, ca_idcliente, ca_hbls, ca_factura, ca_fchfactura, ca_idmoneda, ca_neto, ca_valor, ca_reccaja, ca_observaciones, ca_tcambio, ca_fchcreado, ca_usucreado) values('$referencia', $idcliente, '$hbls', '$val[factura]', '$val[fchfactura]', '$val[moneda]', '$val[neto]', '$val[valor]', '', '$val[observacion]', '$val[tcambio]', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
+                        if (!$rs->Open("insert into tb_inoingresos_sea (ca_referencia, ca_idcliente, ca_hbls, ca_factura, ca_fchfactura, ca_idmoneda, ca_neto, ca_valor, ca_reccaja, ca_observaciones, ca_tcambio, ca_fchcreado, ca_usucreado) values('$referencia', $idcliente, '$hbls', '$val[factura]', '$val[fchfactura]', '$val[moneda]', '$val[neto]', '$val[valor]', '', '$val[observacion]', '$val[tcambio]', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
                             echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                             echo "<script>document.location.href = 'inosea.php';</script>";
                             exit;
@@ -4815,7 +4815,7 @@ elseif (isset($accion)) {                                                      /
                 }
                 while (list ($clave, $val) = each ($deducibles)) {
                     if (strlen($val[deduccion]) != 0) {
-                        if (!$rs->Open("insert into tb_inodeduccion_sea (ca_referencia, ca_idcliente, ca_hbls, ca_factura, ca_iddeduccion, ca_neto, ca_valor, ca_fchcreado, ca_usucreado) values('$referencia', $idcliente, '$hbls', '$val[dedfactura]', '$val[iddeduccion]', $val[dedneto], $val[deduccion], to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
+                        if (!$rs->Open("insert into tb_inodeduccion_sea (ca_referencia, ca_idcliente, ca_hbls, ca_factura, ca_iddeduccion, ca_neto, ca_valor, ca_fchcreado, ca_usucreado) values('$referencia', $idcliente, '$hbls', '$val[dedfactura]', '$val[iddeduccion]', $val[dedneto], $val[deduccion], to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
                             echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                             echo "<script>document.location.href = 'inosea.php';</script>";
                             exit;
@@ -4838,13 +4838,13 @@ elseif (isset($accion)) {                                                      /
                 }
                 $contenedores = substr($cadena,0,strlen($cadena)-1);
                 if ( $hbl != $hbls ) {
-                    if (!$rs->Open("insert into tb_inoclientes_sea (ca_referencia, ca_idcliente, ca_idreporte, ca_hbls, ca_fchhbls, ca_idproveedor, ca_proveedor, ca_numpiezas, ca_peso, ca_volumen, ca_numorden, ca_login, ca_continuacion, ca_continuacion_dest, ca_idbodega, ca_observaciones, ca_contenedores, ca_fchantecedentes, ca_fchcreado, ca_usucreado) values('$referencia', $idcliente, $idreporte, '$hbls', '$fchhbls', $idproveedor, '$proveedor', $numpiezas, $peso, $volumen, '$numorden', '$login', '$continuacion', '$continuacion_dest', '$idbodega', '', '$contenedores', $fchantecedentes, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
+                    if (!$rs->Open("insert into tb_inoclientes_sea (ca_referencia, ca_idcliente, ca_idreporte, ca_hbls, ca_fchhbls, ca_idproveedor, ca_proveedor, ca_numpiezas, ca_peso, ca_volumen, ca_numorden, ca_login, ca_continuacion, ca_continuacion_dest, ca_idbodega, ca_observaciones, ca_contenedores, ca_fchantecedentes, ca_fchcreado, ca_usucreado) values('$referencia', $idcliente, $idreporte, '$hbls', '$fchhbls', $idproveedor, '$proveedor', $numpiezas, $peso, $volumen, '$numorden', '$login', '$continuacion', '$continuacion_dest', '$idbodega', '', '$contenedores', $fchantecedentes, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
                         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                         echo "<script>document.location.href = 'inosea.php';</script>";
                         exit;
                     }
                 }else {
-                    if (!$rs->Open("update tb_inoclientes_sea set ca_idreporte = $idreporte, ca_idcliente = '$idcliente', ca_hbls = '$hbls', ca_fchhbls = '$fchhbls', ca_idproveedor = $idproveedor, ca_proveedor = '$proveedor', ca_numpiezas = $numpiezas, ca_peso = $peso, ca_volumen = $volumen, ca_numorden = '$numorden', ca_login = '$login', ca_continuacion = '$continuacion', ca_continuacion_dest = '$continuacion_dest', ca_idbodega = '$idbodega', ca_observaciones = '', ca_contenedores = '$contenedores', ca_fchantecedentes = $fchantecedentes, ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usuactualizado = '$usuario' where oid = '$oid'")) {
+                    if (!$rs->Open("update tb_inoclientes_sea set ca_idreporte = $idreporte, ca_idcliente = '$idcliente', ca_hbls = '$hbls', ca_fchhbls = '$fchhbls', ca_idproveedor = $idproveedor, ca_proveedor = '$proveedor', ca_numpiezas = $numpiezas, ca_peso = $peso, ca_volumen = $volumen, ca_numorden = '$numorden', ca_login = '$login', ca_continuacion = '$continuacion', ca_continuacion_dest = '$continuacion_dest', ca_idbodega = '$idbodega', ca_observaciones = '', ca_contenedores = '$contenedores', ca_fchantecedentes = $fchantecedentes, ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where oid = '$oid'")) {
                         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                         echo "<script>document.location.href = 'inosea.php';</script>";
                         exit;
@@ -4853,13 +4853,13 @@ elseif (isset($accion)) {                                                      /
 
                 while (list ($clave, $val) = each ($facturacion)) {
                     if ($val[oid_fc] == '' and $val[valor] != 0) {
-                        if (!$rs->Open("insert into tb_inoingresos_sea (ca_referencia, ca_idcliente, ca_hbls, ca_factura, ca_fchfactura, ca_idmoneda, ca_neto, ca_valor, ca_reccaja, ca_observaciones, ca_tcambio, ca_fchcreado, ca_usucreado) values('$referencia', $idcliente, '$hbls', '$val[factura]', '$val[fchfactura]', '$val[moneda]', '$val[neto]', '$val[valor]', '', '$val[observacion]', '$val[tcambio]', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
+                        if (!$rs->Open("insert into tb_inoingresos_sea (ca_referencia, ca_idcliente, ca_hbls, ca_factura, ca_fchfactura, ca_idmoneda, ca_neto, ca_valor, ca_reccaja, ca_observaciones, ca_tcambio, ca_fchcreado, ca_usucreado) values('$referencia', $idcliente, '$hbls', '$val[factura]', '$val[fchfactura]', '$val[moneda]', '$val[neto]', '$val[valor]', '', '$val[observacion]', '$val[tcambio]', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
                             echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                             echo "<script>document.location.href = 'inosea.php';</script>";
                             exit;
                         }
                     }else if ($val[oid_fc] != '' and $val[valor] != 0) {
-                            if (!$rs->Open("update tb_inoingresos_sea set ca_hbls = '$hbls', ca_factura = '$val[factura]', ca_fchfactura = '$val[fchfactura]', ca_idmoneda = '$val[moneda]', ca_neto = '$val[neto]', ca_valor = '$val[valor]', ca_observaciones = '$val[observacion]', ca_tcambio = '$val[tcambio]', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usuactualizado = '$usuario' where oid = ".$val[oid_fc])) {
+                            if (!$rs->Open("update tb_inoingresos_sea set ca_hbls = '$hbls', ca_factura = '$val[factura]', ca_fchfactura = '$val[fchfactura]', ca_idmoneda = '$val[moneda]', ca_neto = '$val[neto]', ca_valor = '$val[valor]', ca_observaciones = '$val[observacion]', ca_tcambio = '$val[tcambio]', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where oid = ".$val[oid_fc])) {
                                 echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                                 echo "<script>document.location.href = 'inosea.php';</script>";
                                 exit;
@@ -4874,13 +4874,13 @@ elseif (isset($accion)) {                                                      /
                 }
                 while (list ($clave, $val) = each ($deducibles)) {
                     if ($val[oid] == '' and $val[deduccion] != 0) {
-                        if (!$rs->Open("insert into tb_inodeduccion_sea (ca_referencia, ca_idcliente, ca_hbls, ca_factura, ca_iddeduccion, ca_neto, ca_valor, ca_fchcreado, ca_usucreado) values('$referencia', $idcliente, '$hbls', '$val[dedfactura]', '$val[iddeduccion]', $val[dedneto], $val[deduccion], to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
+                        if (!$rs->Open("insert into tb_inodeduccion_sea (ca_referencia, ca_idcliente, ca_hbls, ca_factura, ca_iddeduccion, ca_neto, ca_valor, ca_fchcreado, ca_usucreado) values('$referencia', $idcliente, '$hbls', '$val[dedfactura]', '$val[iddeduccion]', $val[dedneto], $val[deduccion], to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
                             echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                             echo "<script>document.location.href = 'inosea.php';</script>";
                             exit;
                         }
                     }else if ($val[oid] != '' and $val[deduccion] != 0) {
-                            if (!$rs->Open("update tb_inodeduccion_sea set ca_hbls = '$hbls', ca_factura = '$val[dedfactura]', ca_iddeduccion = '$val[iddeduccion]', ca_neto = $val[dedneto], ca_valor = '$val[deduccion]', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usuactualizado = '$usuario' where oid = ".$val[oid])) {
+                            if (!$rs->Open("update tb_inodeduccion_sea set ca_hbls = '$hbls', ca_factura = '$val[dedfactura]', ca_iddeduccion = '$val[iddeduccion]', ca_neto = $val[dedneto], ca_valor = '$val[deduccion]', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where oid = ".$val[oid])) {
                                 echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                                 echo "<script>document.location.href = 'inosea.php';</script>";
                                 exit;
@@ -4939,14 +4939,14 @@ elseif (isset($accion)) {                                                      /
         case 'Guardar Costo': {                                                      // El Botón Guardar fue pulsado
                 settype($neto,"double");
                 settype($venta,"double");
-                if (!$rs->Open("insert into tb_inocostos_sea (ca_referencia, ca_idcosto, ca_factura, ca_fchfactura, ca_proveedor, ca_idmoneda, ca_tcambio, ca_neto, ca_venta, ca_login, ca_fchcreado, ca_usucreado) values('$referencia', $idcosto, '$factura', '$fchfactura', '$proveedor', '$idmoneda', $tcambio, $neto, $venta, '', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
+                if (!$rs->Open("insert into tb_inocostos_sea (ca_referencia, ca_idcosto, ca_factura, ca_fchfactura, ca_proveedor, ca_idmoneda, ca_tcambio, ca_neto, ca_venta, ca_login, ca_fchcreado, ca_usucreado) values('$referencia', $idcosto, '$factura', '$fchfactura', '$proveedor', '$idmoneda', $tcambio, $neto, $venta, '', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
                     echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                     echo "<script>document.location.href = 'inosea.php';</script>";
                     exit;
                 }
                 for ($i=0; $i < count($utilidades); $i++) {
                     if ($utilidades[$i] != 0) {
-                        if (!$rs->Open("insert into tb_inoutilidad_sea (ca_referencia, ca_idcliente, ca_hbls, ca_idcosto, ca_factura, ca_valor, ca_fchcreado, ca_usucreado) values('$referencia', $clientes[$i], '$hbls[$i]', $idcosto, '$factura', '$utilidades[$i]', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
+                        if (!$rs->Open("insert into tb_inoutilidad_sea (ca_referencia, ca_idcliente, ca_hbls, ca_idcosto, ca_factura, ca_valor, ca_fchcreado, ca_usucreado) values('$referencia', $clientes[$i], '$hbls[$i]', $idcosto, '$factura', '$utilidades[$i]', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
                             echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                             echo "<script>document.location.href = 'inosea.php';</script>";
                             exit;
@@ -4963,14 +4963,14 @@ elseif (isset($accion)) {                                                      /
                     echo "<script>document.location.href = 'inosea.php';</script>";
                     exit;
                 }
-                if (!$rs->Open("update tb_inocostos_sea set ca_idcosto = $idcosto, ca_factura = '$factura', ca_fchfactura = '$fchfactura', ca_proveedor = '$proveedor', ca_idmoneda = '$idmoneda', ca_tcambio = $tcambio, ca_neto = $neto, ca_venta = $venta, ca_login = '$login', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usuactualizado = '$usuario' where oid = $oid")) {
+                if (!$rs->Open("update tb_inocostos_sea set ca_idcosto = $idcosto, ca_factura = '$factura', ca_fchfactura = '$fchfactura', ca_proveedor = '$proveedor', ca_idmoneda = '$idmoneda', ca_tcambio = $tcambio, ca_neto = $neto, ca_venta = $venta, ca_login = '$login', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where oid = $oid")) {
                     echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                     echo "<script>document.location.href = 'inosea.php';</script>";
                     exit;
                 }
                 for ($i=0; $i < count($utilidades); $i++) {
                     if ($utilidades[$i] != 0) {
-                        if (!$rs->Open("insert into tb_inoutilidad_sea (ca_referencia, ca_idcliente, ca_hbls, ca_idcosto, ca_factura, ca_valor, ca_fchcreado, ca_usucreado) values('$referencia', $clientes[$i], '$hbls[$i]', $idcosto, '$factura', '$utilidades[$i]', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
+                        if (!$rs->Open("insert into tb_inoutilidad_sea (ca_referencia, ca_idcliente, ca_hbls, ca_idcosto, ca_factura, ca_valor, ca_fchcreado, ca_usucreado) values('$referencia', $clientes[$i], '$hbls[$i]', $idcosto, '$factura', '$utilidades[$i]', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
                             echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                             echo "<script>document.location.href = 'inosea.php';</script>";
                             exit;
@@ -4995,7 +4995,7 @@ elseif (isset($accion)) {                                                      /
                             echo "<script>alert(\"No puede firmar un caso como liquidado, si no se tienen Datos de la Carga\");</script>";  // Muestra el mensaje de error
                         }else if ($rs->Value('ca_peso') > $rs->Value('ca_peso_cap') or $rs->Value('ca_volumen') > $rs->Value('ca_volumen_cap')) {
                                 echo "<script>alert(\"No puede firmar el caso ya que el volumen o peso registrado en los HBL's, supera la capacidad de carga de la guia Master\");</script>";  // Muestra el mensaje de error
-                            }else if (!$rs->Open("update tb_inomaestra_sea set ca_fchliquidado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usuliquidado = '$usuario' where ca_referencia = '$referencia'")) {
+                            }else if (!$rs->Open("update tb_inomaestra_sea set ca_fchliquidado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usuliquidado = '$usuario' where ca_referencia = '$referencia'")) {
                                     echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                                     echo "<script>document.location.href = 'inosea.php';</script>";
                                     exit;

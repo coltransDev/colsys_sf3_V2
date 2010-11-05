@@ -441,7 +441,7 @@ echo "</BODY>";
 elseif (isset($accion)) {                                                      // Rutina que registra los cambios en la tabla de la base de datos
     switch(trim($accion)) {                                                    // Switch que evalua cual botòn de comando fue pulsado por el usuario
         case 'Guardar Importación': {                                                      // El Botón Guardar fue pulsado
-             if (!$rs->Open("insert into tb_planillas (ca_idtblgastos, ca_fchimportacion, ca_fchinicio, ca_fchvencimiento, ca_archivo, ca_usuario) values($id, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$fchinicio', '$fchvencimiento', '$archivo', '$usuario')")) {
+             if (!$rs->Open("insert into tb_planillas (ca_idtblgastos, ca_fchimportacion, ca_fchinicio, ca_fchvencimiento, ca_archivo, ca_usuario) values($id, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$fchinicio', '$fchvencimiento', '$archivo', '$usuario')")) {
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                  echo "<script>document.location.href = '\"planillas.php?id=$id\"';</script>";
                  exit;

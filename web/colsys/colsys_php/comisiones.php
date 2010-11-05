@@ -508,7 +508,7 @@ elseif (isset($accion)) {                                                      /
                         echo "<script>document.location.href = 'comisiones.php';</script>";
                         exit;
                        }            
-                    if (!$cm->Open("insert into tb_inocomisiones_sea (ca_referencia, ca_idcliente, ca_hbls, ca_comprobante, ca_fchliquidacion, ca_vlrcomision, ca_sbrcomision, ca_fchcreado, ca_usucreado) values ('".$rs->Value('ca_referencia')."', ".$rs->Value('ca_idcliente').", '".$rs->Value('ca_hbls')."', $comprobante, '".date("Y-m-d")."', ".(strlen($val[comision])>0?$val[comision]:0).", ".(strlen($val[sobrevta])>0?$val[sobrevta]:0).", to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
+                    if (!$cm->Open("insert into tb_inocomisiones_sea (ca_referencia, ca_idcliente, ca_hbls, ca_comprobante, ca_fchliquidacion, ca_vlrcomision, ca_sbrcomision, ca_fchcreado, ca_usucreado) values ('".$rs->Value('ca_referencia')."', ".$rs->Value('ca_idcliente').", '".$rs->Value('ca_hbls')."', $comprobante, '".date("Y-m-d")."', ".(strlen($val[comision])>0?$val[comision]:0).", ".(strlen($val[sobrevta])>0?$val[sobrevta]:0).", to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
                         echo "<script>alert(\"".addslashes($cm->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                         echo "<script>document.location.href = 'comisiones.php';</script>";
                         exit;

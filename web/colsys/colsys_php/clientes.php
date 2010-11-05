@@ -2079,7 +2079,7 @@ require_once("menu.php");
 elseif (isset($accion)) {                                                      // Rutina que registra los cambios en la tabla de la base de datos
     switch(trim($accion)) {                                                    // Switch que evalua cual botòn de comando fue pulsado por el usuario
         case 'Nueva Vigencia': {                                               // El Botón Guardar fue pulsado
-             if (!$rs->Open("insert into tb_comcliente (ca_idcliente, ca_fchfirmado, ca_fchvencimiento, ca_fchcreado, ca_usucreado) values($id, '$fchfirmado', '$fchvencimiento', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
+             if (!$rs->Open("insert into tb_comcliente (ca_idcliente, ca_fchfirmado, ca_fchvencimiento, ca_fchcreado, ca_usucreado) values($id, '$fchfirmado', '$fchvencimiento', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                  echo "<script>document.location.href = 'clientes.php';</script>";
                  exit;
@@ -2091,7 +2091,7 @@ elseif (isset($accion)) {                                                      /
              $inicio = date("Y-m-d", mktime(0, 0, 0, $mes, 1, $ano));
              list($ano, $mes, $dia) = sscanf($fin, "%d-%d-%d");
              $fin = date("Y-m-d", mktime(0, 0, 0, $mes+1, 0, $ano));
-             if (!$rs->Open("insert into tb_porcentajescomisiones (ca_idcliente, ca_inicio, ca_fin, ca_porcentaje, ca_empresa, ca_fchcreado, ca_usucreado) values($id, '$inicio', '$fin', $porcentaje, '$empresa', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
+             if (!$rs->Open("insert into tb_porcentajescomisiones (ca_idcliente, ca_inicio, ca_fin, ca_porcentaje, ca_empresa, ca_fchcreado, ca_usucreado) values($id, '$inicio', '$fin', $porcentaje, '$empresa', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                  echo "<script>document.location.href = 'clientes.php';</script>";
                  exit;
@@ -2101,7 +2101,7 @@ elseif (isset($accion)) {                                                      /
         case 'Registrar Estado': {                                               // El Botón Guardar fue pulsado
              list($ano, $mes, $dia) = sscanf($inicio, "%d-%d-%d");
              $inicio = date("Y-m-d", mktime(0, 0, 0, $mes, 1, $ano));
-             if (!$rs->Open("insert into tb_libestados (ca_idcliente, ca_fchestado, ca_libestado, ca_observaciones, ca_fchcreado, ca_usucreado) values($id, '$fchestado', '$libestado', '$observaciones', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
+             if (!$rs->Open("insert into tb_libestados (ca_idcliente, ca_fchestado, ca_libestado, ca_observaciones, ca_fchcreado, ca_usucreado) values($id, '$fchestado', '$libestado', '$observaciones', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                  echo "<script>document.location.href = 'clientes.php';</script>";
                  exit;
@@ -2111,7 +2111,7 @@ elseif (isset($accion)) {                                                      /
         case 'Actualizar Libreta': {                                               // El Botón Guardar fue pulsado
 			 include_once 'include/functions.php';
 			 $contactos = (isset($contactos))?implode(",",array_filter($contactos, "vacios")):"";           // Retira las posiciones en blanco del arreglo
-             if (!$rs->Open("update tb_clientes set ca_confirmar = '$contactos', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usuactualizado = '$usuario' where ca_idcliente = $id")) {
+             if (!$rs->Open("update tb_clientes set ca_confirmar = '$contactos', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where ca_idcliente = $id")) {
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                  echo "<script>document.location.href = 'clientes.php';</script>";
                  exit;
@@ -2125,13 +2125,13 @@ elseif (isset($accion)) {                                                      /
                  exit;
                 }
              if ($rs->GetRowCount() == 0){
-                 if (!$rs->Open("insert into tb_libcliente (ca_idcliente, ca_diascredito, ca_cupo, ca_observaciones, ca_fchcreado, ca_usucreado) values($id, $diascredito, $cupo, '".addslashes($observaciones)."', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
+                 if (!$rs->Open("insert into tb_libcliente (ca_idcliente, ca_diascredito, ca_cupo, ca_observaciones, ca_fchcreado, ca_usucreado) values($id, $diascredito, $cupo, '".addslashes($observaciones)."', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
                      echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                      echo "<script>document.location.href = 'clientes.php';</script>";
                      exit;
                     }
              }else{
-                 if (!$rs->Open("update tb_libcliente set ca_diascredito = $diascredito, ca_cupo = $cupo, ca_observaciones = '".addslashes($observaciones)."', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usuactualizado = '$usuario' where ca_idcliente = $id")) {
+                 if (!$rs->Open("update tb_libcliente set ca_diascredito = $diascredito, ca_cupo = $cupo, ca_observaciones = '".addslashes($observaciones)."', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where ca_idcliente = $id")) {
                      echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                      echo "<script>document.location.href = 'clientes.php';</script>";
                      exit;
@@ -2148,7 +2148,7 @@ elseif (isset($accion)) {                                                      /
              break;
              }
         case 'Registrar': {                                                      // El Botón Guardar fue pulsado
-             if (!$rs->Open("insert into tb_evecliente (ca_idcliente, ca_fchevento, ca_tipo, ca_asunto, ca_detalle, ca_compromisos, ca_fchcompromiso, ca_idantecedente, ca_usuario) values($id, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$tipo', '".addslashes($asunto)."', '".addslashes($detalle)."', '".addslashes($compromisos)."', '$fchcompromiso', '$idantecedente', '$usuario')")) {
+             if (!$rs->Open("insert into tb_evecliente (ca_idcliente, ca_fchevento, ca_tipo, ca_asunto, ca_detalle, ca_compromisos, ca_fchcompromiso, ca_idantecedente, ca_usuario) values($id, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$tipo', '".addslashes($asunto)."', '".addslashes($detalle)."', '".addslashes($compromisos)."', '$fchcompromiso', '$idantecedente', '$usuario')")) {
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                  echo "<script>document.location.href = 'clientes.php';</script>";
                  exit;
@@ -2164,7 +2164,7 @@ elseif (isset($accion)) {                                                      /
              $vendedor = ($nivel >= 2)?'null':"'$usuario'";
              $fchcotratoag = (strlen($fchcotratoag)!=0)?"'".$fchcotratoag."'":'date(null)';
              $status = ($listaclinton=='Sí')?"Vetado":$status;
-             if (!$rs->Open("insert into tb_clientes (ca_idcliente, ca_digito, ca_compania, ca_papellido, ca_sapellido, ca_nombres, ca_saludo, ca_sexo, ca_cumpleanos, ca_direccion, ca_oficina, ca_torre, ca_bloque, ca_interior, ca_localidad, ca_complemento, ca_telefonos, ca_fax, ca_idciudad, ca_website, ca_email, ca_actividad, ca_sectoreco, ca_vendedor, ca_fchcotratoag, ca_listaclinton, ca_leyinsolvencia, ca_comentario, ca_status, ca_calificacion, ca_entidad, ca_coordinador, ca_preferencias, ca_idgrupo, ca_fchcreado, ca_usucreado) values($id, $digito, upper('".addslashes($compania)."'), '$papellido', '$sapellido', '$nombres', '$saludo', '$sexo', '$cumpleanos', '$direccion', '$oficina', '$torre', '$bloque', '$interior', '$localidad', '$complemento', '$telefonos', '$fax', '$idciudad', lower('$website'), lower('$email'), '$actividad', '$sectoreco', $vendedor, $fchcotratoag, '$listaclinton', '$leyinsolvencia', '$comentario', '$status', '$calificacion', '$entidad', '$coordinador', '$preferencias', $id, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
+             if (!$rs->Open("insert into tb_clientes (ca_idcliente, ca_digito, ca_compania, ca_papellido, ca_sapellido, ca_nombres, ca_saludo, ca_sexo, ca_cumpleanos, ca_direccion, ca_oficina, ca_torre, ca_bloque, ca_interior, ca_localidad, ca_complemento, ca_telefonos, ca_fax, ca_idciudad, ca_website, ca_email, ca_actividad, ca_sectoreco, ca_vendedor, ca_fchcotratoag, ca_listaclinton, ca_leyinsolvencia, ca_comentario, ca_status, ca_calificacion, ca_entidad, ca_coordinador, ca_preferencias, ca_idgrupo, ca_fchcreado, ca_usucreado) values($id, $digito, upper('".addslashes($compania)."'), '$papellido', '$sapellido', '$nombres', '$saludo', '$sexo', '$cumpleanos', '$direccion', '$oficina', '$torre', '$bloque', '$interior', '$localidad', '$complemento', '$telefonos', '$fax', '$idciudad', lower('$website'), lower('$email'), '$actividad', '$sectoreco', $vendedor, $fchcotratoag, '$listaclinton', '$leyinsolvencia', '$comentario', '$status', '$calificacion', '$entidad', '$coordinador', '$preferencias', $id, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                  echo "<script>document.location.href = 'clientes.php';</script>";
                  exit;
@@ -2180,7 +2180,7 @@ elseif (isset($accion)) {                                                      /
              $vendedor = ($nivel >= 2)?$vendedor:$usuario;
              $fchcotratoag= (strlen($fchcotratoag)!=0)?"'".$fchcotratoag."'":'date(null)';
              $status = ($listaclinton=='Sí')?"Vetado":$status;
-             if (!$rs->Open("update tb_clientes set ca_compania = upper('".addslashes($compania)."'), ca_papellido = '$papellido', ca_sapellido = '$sapellido', ca_nombres = '$nombres', ca_saludo = '$saludo', ca_sexo = '$sexo', ca_cumpleanos = '$cumpleanos', ca_direccion = '$direccion', ca_oficina = '$oficina', ca_torre = '$torre', ca_bloque = '$bloque', ca_interior = '$interior', ca_localidad = '$localidad', ca_complemento = '$complemento', ca_telefonos = '$telefonos', ca_fax = '$fax', ca_idciudad  ='$idciudad', ca_website = lower('$website'), ca_email = lower('$email'), ca_actividad = '$actividad', ca_sectoreco = '$sectoreco', ca_vendedor = '$vendedor', ca_fchcotratoag = $fchcotratoag, ca_listaclinton = '$listaclinton', ca_leyinsolvencia = '$leyinsolvencia', ca_comentario = '$comentario', ca_status = '$status', ca_calificacion = '$calificacion', ca_entidad = '$entidad', ca_preferencias = '$preferencias', ca_coordinador = '$coordinador', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usuactualizado = '$usuario' where ca_idcliente = $id")) {
+             if (!$rs->Open("update tb_clientes set ca_compania = upper('".addslashes($compania)."'), ca_papellido = '$papellido', ca_sapellido = '$sapellido', ca_nombres = '$nombres', ca_saludo = '$saludo', ca_sexo = '$sexo', ca_cumpleanos = '$cumpleanos', ca_direccion = '$direccion', ca_oficina = '$oficina', ca_torre = '$torre', ca_bloque = '$bloque', ca_interior = '$interior', ca_localidad = '$localidad', ca_complemento = '$complemento', ca_telefonos = '$telefonos', ca_fax = '$fax', ca_idciudad  ='$idciudad', ca_website = lower('$website'), ca_email = lower('$email'), ca_actividad = '$actividad', ca_sectoreco = '$sectoreco', ca_vendedor = '$vendedor', ca_fchcotratoag = $fchcotratoag, ca_listaclinton = '$listaclinton', ca_leyinsolvencia = '$leyinsolvencia', ca_comentario = '$comentario', ca_status = '$status', ca_calificacion = '$calificacion', ca_entidad = '$entidad', ca_preferencias = '$preferencias', ca_coordinador = '$coordinador', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where ca_idcliente = $id")) {
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                  echo "<script>document.location.href = 'clientes.php';</script>";
                  exit;
@@ -2188,7 +2188,7 @@ elseif (isset($accion)) {                                                      /
              break;
              }
         case 'Liberar': {                                                   // El Botón Actualizar fue pulsado
-             if (!$rs->Open("update tb_clientes set ca_vendedor = null, ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usuactualizado = '$usuario' where ca_idcliente = $id")) {
+             if (!$rs->Open("update tb_clientes set ca_vendedor = null, ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where ca_idcliente = $id")) {
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                  echo "<script>document.location.href = 'clientes.php';</script>";
                  exit;
@@ -2204,7 +2204,7 @@ elseif (isset($accion)) {                                                      /
              break;
              }
         case 'anular_vig': {                                                     // Anula una Vigencia de Carta de Garantía de un Cliente
-             if (!$rs->Open("update tb_comcliente set ca_usuanulado = '$usuario', ca_fchanulado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss') where oid = $oid")) {
+             if (!$rs->Open("update tb_comcliente set ca_usuanulado = '$usuario', ca_fchanulado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss') where oid = $oid")) {
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                  echo "<script>document.location.href = 'clientes.php';</script>";
                  exit;

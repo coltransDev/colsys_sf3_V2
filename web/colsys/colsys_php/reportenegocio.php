@@ -2473,7 +2473,7 @@ elseif (isset($accion)) {                                                       
         $contactos = (isset($contactos))?str_replace(" ","",implode(",",array_filter($contactos, "vacios"))):"";           // Retira las posiciones en blanco del arreglo
         if (isset($actualizar_pref)) {
             $comando = "update tb_clientes set ca_preferencias = '$preferencias_clie', ";
-            $comando.= "ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usuactualizado = '$usuario' ";
+            $comando.= "ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' ";
             $comando.= "where ca_idcliente in (select ca_idcliente from tb_concliente where ca_idcontacto = $idconcliente)";
             if (!$rs->Open($comando)) {
                 echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
@@ -2529,7 +2529,7 @@ elseif (isset($accion)) {                                                       
     }
     switch(trim($accion)) {                                                     // Switch que evalua cual botòn de comando fue pulsado por el usuario
         case 'Guardar Modificación': {                                          // El Botón Guardar fue pulsado
-                if (!$rs->Open("update tb_reportes set ca_idcotizacion = $idcotizacion, ca_origen = '$idciuorigen', ca_destino = '$idciudestino', ca_impoexpo = '$impoexpo', ca_fchdespacho = '$fchdespacho', ca_idagente =  $idagente, ca_incoterms = '$incoterms', ca_mercancia_desc = '".AddSlashes($mercancia_desc)."', ca_mcia_peligrosa = '$mcia_peligrosa', ca_idproveedor = '$idproveedor', ca_orden_prov = '$orden_prov', ca_idconcliente = $idconcliente, ca_orden_clie = '$orden_clie', ca_confirmar_clie = '$confirmar', ca_idconsignatario = $idconsignatario, ca_informar_cons = '$informar_cons', ca_idnotify = $idnotify, ca_informar_noti = '$informar_noti', ca_idmaster = $idmaster, ca_informar_mast = '$informar_mast', ca_notify = $repnotify, ca_idrepresentante = $idrepresentante, ca_informar_repr = '$informar_repr', ca_transporte = '$transporte', ca_modalidad = '$modalidad', ca_colmas = '$colmas', ca_seguro = '$seguro', ca_liberacion = '$liberacion', ca_tiempocredito = '$tiempocredito', ca_preferencias_clie = '".addslashes($preferencias_clie)."', ca_instrucciones = '".addslashes($instrucciones)."', ca_idlinea = $idlinea, ca_idconsignar = $idconsignar, ca_idbodega = $idbodega, ca_mastersame = '$mastersame', ca_continuacion = '$continuacion', ca_continuacion_dest = '$continuacion_dest', ca_continuacion_conf = ".($continuacion_conf?"'$continuacion_conf'":"null").", ca_login = '$login', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usuactualizado = '$usuario' where ca_idreporte = $id")) {
+                if (!$rs->Open("update tb_reportes set ca_idcotizacion = $idcotizacion, ca_origen = '$idciuorigen', ca_destino = '$idciudestino', ca_impoexpo = '$impoexpo', ca_fchdespacho = '$fchdespacho', ca_idagente =  $idagente, ca_incoterms = '$incoterms', ca_mercancia_desc = '".AddSlashes($mercancia_desc)."', ca_mcia_peligrosa = '$mcia_peligrosa', ca_idproveedor = '$idproveedor', ca_orden_prov = '$orden_prov', ca_idconcliente = $idconcliente, ca_orden_clie = '$orden_clie', ca_confirmar_clie = '$confirmar', ca_idconsignatario = $idconsignatario, ca_informar_cons = '$informar_cons', ca_idnotify = $idnotify, ca_informar_noti = '$informar_noti', ca_idmaster = $idmaster, ca_informar_mast = '$informar_mast', ca_notify = $repnotify, ca_idrepresentante = $idrepresentante, ca_informar_repr = '$informar_repr', ca_transporte = '$transporte', ca_modalidad = '$modalidad', ca_colmas = '$colmas', ca_seguro = '$seguro', ca_liberacion = '$liberacion', ca_tiempocredito = '$tiempocredito', ca_preferencias_clie = '".addslashes($preferencias_clie)."', ca_instrucciones = '".addslashes($instrucciones)."', ca_idlinea = $idlinea, ca_idconsignar = $idconsignar, ca_idbodega = $idbodega, ca_mastersame = '$mastersame', ca_continuacion = '$continuacion', ca_continuacion_dest = '$continuacion_dest', ca_continuacion_conf = ".($continuacion_conf?"'$continuacion_conf'":"null").", ca_login = '$login', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where ca_idreporte = $id")) {
                     echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                     echo "<script>document.location.href = 'reportenegocio.php';</script>";
                     exit;
@@ -2550,7 +2550,7 @@ elseif (isset($accion)) {                                                       
                         echo "<script>document.location.href = 'reportenegocio.php';</script>";
                         exit;
                     }
-                    if (!$rs->Open("insert into tb_reptarifas select $id, ca_idconcepto, ca_cantidad, ca_neta_tar, ca_neta_min, ca_neta_idm, ca_reportar_tar, ca_reportar_min, ca_reportar_idm, ca_cobrar_tar, ca_cobrar_min, ca_cobrar_idm, ca_observaciones, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario' from tb_reptarifas where ca_idreporte = $nw")) {
+                    if (!$rs->Open("insert into tb_reptarifas select $id, ca_idconcepto, ca_cantidad, ca_neta_tar, ca_neta_min, ca_neta_idm, ca_reportar_tar, ca_reportar_min, ca_reportar_idm, ca_cobrar_tar, ca_cobrar_min, ca_cobrar_idm, ca_observaciones, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario' from tb_reptarifas where ca_idreporte = $nw")) {
                         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                         echo "<script>document.location.href = 'reportenegocio.php';</script>";
                         exit;
@@ -2572,12 +2572,12 @@ elseif (isset($accion)) {                                                       
                             exit;
                         }
                         $id_adu = $rs->Value('nextval');
-                        if (!$rs->Open("insert into tb_repaduana select $id, $id_adu, ca_coordinador, ca_transnacarga, ca_transnatipo, ca_instrucciones, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss') as ca_fchcreado, '$usuario' as ca_usucreado from tb_repaduana where ca_idreporte = $nw")) {
+                        if (!$rs->Open("insert into tb_repaduana select $id, $id_adu, ca_coordinador, ca_transnacarga, ca_transnatipo, ca_instrucciones, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss') as ca_fchcreado, '$usuario' as ca_usucreado from tb_repaduana where ca_idreporte = $nw")) {
                             echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                             echo "<script>document.location.href = 'reportenegocio.php';</script>";
                             exit;
                         }
-                        if (!$rs->Open("insert into tb_repaduanadet select $id, $id_adu, ca_idcosto, ca_tipo, ca_vlrcosto, ca_mincosto, ca_netcosto, ca_idmoneda, ca_detalles, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss') as ca_fchcreado, '$usuario' as ca_usucreado from tb_repaduanadet where ca_idreporte = $nw")) {
+                        if (!$rs->Open("insert into tb_repaduanadet select $id, $id_adu, ca_idcosto, ca_tipo, ca_vlrcosto, ca_mincosto, ca_netcosto, ca_idmoneda, ca_detalles, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss') as ca_fchcreado, '$usuario' as ca_usucreado from tb_repaduanadet where ca_idreporte = $nw")) {
                             echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                             echo "<script>document.location.href = 'reportenegocio.php';</script>";
                             exit;
@@ -2609,12 +2609,12 @@ elseif (isset($accion)) {                                                       
                 if ($rs->Value('ca_transporte') == 'Aéreo') {
                     while (list ($clave, $val) = each ($conceptos)) {
                         if ($val[foidt] == '' and $val[fidco] != 0) {
-                            if (!$rs->Open("insert into tb_reptarifas (ca_idreporte, ca_idconcepto, ca_reportar_tar, ca_reportar_min, ca_reportar_idm, ca_cobrar_tar, ca_cobrar_min, ca_cobrar_idm, ca_observaciones, ca_fchcreado, ca_usucreado) values($idreporte, $val[fidco], $val[frtar], $val[frmin], '$val[fridm]', $val[fctar], $val[fcmin], '$val[fcidm]', '$val[fobvs]', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
+                            if (!$rs->Open("insert into tb_reptarifas (ca_idreporte, ca_idconcepto, ca_reportar_tar, ca_reportar_min, ca_reportar_idm, ca_cobrar_tar, ca_cobrar_min, ca_cobrar_idm, ca_observaciones, ca_fchcreado, ca_usucreado) values($idreporte, $val[fidco], $val[frtar], $val[frmin], '$val[fridm]', $val[fctar], $val[fcmin], '$val[fcidm]', '$val[fobvs]', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
                                 echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                                 echo "<script>document.location.href = 'reportenegocio.php';</script>";
                                 exit; }
                         } else if ($val[foidt] != '' and $val[fidco] != 0) {
-                                if (!$rs->Open("update tb_reptarifas set ca_idconcepto = $val[fidco], ca_reportar_tar = $val[frtar], ca_reportar_min = $val[frmin], ca_reportar_idm = '$val[fridm]', ca_cobrar_tar = $val[fctar], ca_cobrar_min = $val[fcmin], ca_cobrar_idm = '$val[fcidm]', ca_observaciones = '$val[fobvs]', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usuactualizado = '$usuario' where oid = $val[foidt]")) {
+                                if (!$rs->Open("update tb_reptarifas set ca_idconcepto = $val[fidco], ca_reportar_tar = $val[frtar], ca_reportar_min = $val[frmin], ca_reportar_idm = '$val[fridm]', ca_cobrar_tar = $val[fctar], ca_cobrar_min = $val[fcmin], ca_cobrar_idm = '$val[fcidm]', ca_observaciones = '$val[fobvs]', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where oid = $val[foidt]")) {
                                     echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                                     echo "<script>document.location.href = 'reportenegocio.php';</script>";
                                     exit; }
@@ -2628,12 +2628,12 @@ elseif (isset($accion)) {                                                       
                 }else if ($rs->Value('ca_transporte') == 'Marítimo') {
                         while (list ($clave, $val) = each ($conceptos)) {
                             if ($val[foidt] == '' and $val[fidco] != 0) {
-                                if (!$rs->Open("insert into tb_reptarifas (ca_idreporte, ca_idconcepto, ca_cantidad, ca_neta_tar, ca_neta_min, ca_neta_idm, ca_reportar_tar, ca_reportar_min, ca_reportar_idm, ca_cobrar_tar, ca_cobrar_min, ca_cobrar_idm, ca_observaciones, ca_fchcreado, ca_usucreado) values($idreporte, $val[fidco], $val[fcant], $val[fntar], $val[fnmin], '$val[fnidm]', $val[frtar], $val[frmin], '$val[fridm]', $val[fctar], $val[fcmin], '$val[fcidm]', '$val[fobvs]', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
+                                if (!$rs->Open("insert into tb_reptarifas (ca_idreporte, ca_idconcepto, ca_cantidad, ca_neta_tar, ca_neta_min, ca_neta_idm, ca_reportar_tar, ca_reportar_min, ca_reportar_idm, ca_cobrar_tar, ca_cobrar_min, ca_cobrar_idm, ca_observaciones, ca_fchcreado, ca_usucreado) values($idreporte, $val[fidco], $val[fcant], $val[fntar], $val[fnmin], '$val[fnidm]', $val[frtar], $val[frmin], '$val[fridm]', $val[fctar], $val[fcmin], '$val[fcidm]', '$val[fobvs]', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
                                     echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                                     echo "<script>document.location.href = 'reportenegocio.php';</script>";
                                     exit; }
                             } else if ($val[foidt] != '' and $val[fidco] != 0) {
-                                    if (!$rs->Open("update tb_reptarifas set ca_idconcepto = $val[fidco], ca_cantidad = $val[fcant], ca_neta_tar = $val[fntar], ca_neta_min = $val[fnmin], ca_neta_idm = '$val[fnidm]', ca_reportar_tar = $val[frtar], ca_reportar_min = $val[frmin], ca_reportar_idm = '$val[fridm]', ca_cobrar_tar = $val[fctar], ca_cobrar_min = $val[fcmin], ca_cobrar_idm = '$val[fcidm]', ca_observaciones = '$val[fobvs]', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usuactualizado = '$usuario' where oid = $val[foidt]")) {
+                                    if (!$rs->Open("update tb_reptarifas set ca_idconcepto = $val[fidco], ca_cantidad = $val[fcant], ca_neta_tar = $val[fntar], ca_neta_min = $val[fnmin], ca_neta_idm = '$val[fnidm]', ca_reportar_tar = $val[frtar], ca_reportar_min = $val[frmin], ca_reportar_idm = '$val[fridm]', ca_cobrar_tar = $val[fctar], ca_cobrar_min = $val[fcmin], ca_cobrar_idm = '$val[fcidm]', ca_observaciones = '$val[fobvs]', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where oid = $val[foidt]")) {
                                         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                                         echo "<script>document.location.href = 'reportenegocio.php';</script>";
                                         exit; }
@@ -2647,12 +2647,12 @@ elseif (isset($accion)) {                                                       
                     }
                 while (list ($clave, $val) = each ($recargos_org)) {
                     if ($val[roidr] == '' and $val[ridrc] != 0) {
-                        if (!$rs->Open("insert into tb_repgastos (ca_idreporte, ca_idrecargo, ca_aplicacion, ca_tipo, ca_neta_tar, ca_neta_min, ca_reportar_tar, ca_reportar_min, ca_cobrar_tar, ca_cobrar_min, ca_idmoneda, ca_idconcepto, ca_detalles, ca_fchcreado, ca_usucreado, ca_recargoorigen) values($idreporte, $val[ridrc], '$val[rapli]', '$val[rtipo]', $val[rntar], $val[rnmin], $val[rrtar], $val[rrmin], $val[rctar], $val[rcmin], '$val[ridmn]', $val[ridco], '".AddSlashes($val[rdets])."', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario', true)")) {
+                        if (!$rs->Open("insert into tb_repgastos (ca_idreporte, ca_idrecargo, ca_aplicacion, ca_tipo, ca_neta_tar, ca_neta_min, ca_reportar_tar, ca_reportar_min, ca_cobrar_tar, ca_cobrar_min, ca_idmoneda, ca_idconcepto, ca_detalles, ca_fchcreado, ca_usucreado, ca_recargoorigen) values($idreporte, $val[ridrc], '$val[rapli]', '$val[rtipo]', $val[rntar], $val[rnmin], $val[rrtar], $val[rrmin], $val[rctar], $val[rcmin], '$val[ridmn]', $val[ridco], '".AddSlashes($val[rdets])."', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario', true)")) {
                             echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                             echo "<script>document.location.href = 'reportenegocio.php';</script>";
                             exit; }
                     }else if ($val[roidr] != '' and $val[ridrc] != 0) {
-                            if (!$rs->Open("update tb_repgastos set ca_idrecargo = $val[ridrc], ca_aplicacion = '$val[rapli]', ca_tipo = '$val[rtipo]', ca_neta_tar = $val[rntar], ca_neta_min = $val[rnmin], ca_reportar_tar = $val[rrtar], ca_reportar_min = $val[rrmin], ca_cobrar_tar = $val[rctar], ca_cobrar_min = $val[rcmin], ca_idmoneda = '$val[ridmn]', ca_idconcepto = $val[ridco], ca_detalles = '".AddSlashes($val[rdets])."', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usuactualizado = '$usuario' where oid = ".$val[roidr])) {
+                            if (!$rs->Open("update tb_repgastos set ca_idrecargo = $val[ridrc], ca_aplicacion = '$val[rapli]', ca_tipo = '$val[rtipo]', ca_neta_tar = $val[rntar], ca_neta_min = $val[rnmin], ca_reportar_tar = $val[rrtar], ca_reportar_min = $val[rrmin], ca_cobrar_tar = $val[rctar], ca_cobrar_min = $val[rcmin], ca_idmoneda = '$val[ridmn]', ca_idconcepto = $val[ridco], ca_detalles = '".AddSlashes($val[rdets])."', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where oid = ".$val[roidr])) {
                                 echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                                 echo "<script>document.location.href = 'reportenegocio.php';</script>";
                                 exit; }
@@ -2665,12 +2665,12 @@ elseif (isset($accion)) {                                                       
                 }
                 while (list ($clave, $val) = each ($recargos_loc)) {
                     if ($val[loidr] == '' and $val[lidrc] != 0) {
-                        if (!$rs->Open("insert into tb_repgastos (ca_idreporte, ca_idrecargo, ca_aplicacion, ca_tipo, ca_neta_tar, ca_neta_min, ca_reportar_tar, ca_reportar_min, ca_cobrar_tar, ca_cobrar_min, ca_idmoneda, ca_idconcepto, ca_detalles, ca_fchcreado, ca_usucreado, ca_recargoorigen) values($idreporte, $val[lidrc], '$val[lapli]', '$val[ltipo]', 0, 0, 0, 0, $val[lctar], $val[lcmin], '$val[lidmn]', $val[lidco], '".AddSlashes($val[ldets])."', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario', false)")) {
+                        if (!$rs->Open("insert into tb_repgastos (ca_idreporte, ca_idrecargo, ca_aplicacion, ca_tipo, ca_neta_tar, ca_neta_min, ca_reportar_tar, ca_reportar_min, ca_cobrar_tar, ca_cobrar_min, ca_idmoneda, ca_idconcepto, ca_detalles, ca_fchcreado, ca_usucreado, ca_recargoorigen) values($idreporte, $val[lidrc], '$val[lapli]', '$val[ltipo]', 0, 0, 0, 0, $val[lctar], $val[lcmin], '$val[lidmn]', $val[lidco], '".AddSlashes($val[ldets])."', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario', false)")) {
                             echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                             echo "<script>document.location.href = 'reportenegocio.php';</script>";
                             exit; }
                     }else if ($val[loidr] != '' and $val[lidrc] != 0) {
-                            if (!$rs->Open("update tb_repgastos set ca_idrecargo = $val[lidrc], ca_aplicacion = '$val[lapli]', ca_tipo = '$val[ltipo]', ca_neta_tar = 0, ca_neta_min = 0, ca_reportar_tar = 0, ca_reportar_min = 0, ca_cobrar_tar = $val[lctar], ca_cobrar_min = $val[lcmin], ca_idmoneda = '$val[lidmn]', ca_idconcepto = $val[lidco], ca_detalles = '".AddSlashes($val[ldets])."', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usuactualizado = '$usuario' where oid = ".$val[loidr])) {
+                            if (!$rs->Open("update tb_repgastos set ca_idrecargo = $val[lidrc], ca_aplicacion = '$val[lapli]', ca_tipo = '$val[ltipo]', ca_neta_tar = 0, ca_neta_min = 0, ca_reportar_tar = 0, ca_reportar_min = 0, ca_cobrar_tar = $val[lctar], ca_cobrar_min = $val[lcmin], ca_idmoneda = '$val[lidmn]', ca_idconcepto = $val[lidco], ca_detalles = '".AddSlashes($val[ldets])."', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where oid = ".$val[loidr])) {
                                 echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                                 echo "<script>document.location.href = 'reportenegocio.php';</script>";
                                 exit; }
@@ -2683,7 +2683,7 @@ elseif (isset($accion)) {                                                       
                 }
 
                 if ($idrepaduana == 0 and strlen($coordinador) != 0) {
-                    if (!$rs->Open("insert into tb_repaduana (ca_idreporte, ca_coordinador, ca_transnacarga, ca_transnatipo, ca_instrucciones, ca_fchcreado, ca_usucreado) values($idreporte, '$coordinador', '$transnacarga', '$transnatipo', '$instrucciones', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
+                    if (!$rs->Open("insert into tb_repaduana (ca_idreporte, ca_coordinador, ca_transnacarga, ca_transnatipo, ca_instrucciones, ca_fchcreado, ca_usucreado) values($idreporte, '$coordinador', '$transnacarga', '$transnatipo', '$instrucciones', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
                         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                         echo "<script>document.location.href = 'reportenegocio.php';</script>";
                         exit;
@@ -2695,7 +2695,7 @@ elseif (isset($accion)) {                                                       
                     }
                     $idrepaduana = $rs->Value('ca_idrepaduana');
                 }else if ($idrepaduana != 0 and strlen($coordinador) != 0) {
-                        if (!$rs->Open("update tb_repaduana set ca_coordinador = '$coordinador', ca_transnacarga = '$transnacarga', ca_transnatipo = '$transnatipo', ca_instrucciones = '$instrucciones', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usuactualizado = '$usuario' where ca_idreporte = $idreporte and ca_idrepaduana = $idrepaduana")) {
+                        if (!$rs->Open("update tb_repaduana set ca_coordinador = '$coordinador', ca_transnacarga = '$transnacarga', ca_transnatipo = '$transnatipo', ca_instrucciones = '$instrucciones', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where ca_idreporte = $idreporte and ca_idrepaduana = $idrepaduana")) {
                             echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                             echo "<script>document.location.href = 'reportenegocio.php';</script>";
                             exit;
@@ -2704,7 +2704,7 @@ elseif (isset($accion)) {                                                       
                 if (isset($aduanas)) {
                     while (list ($clave, $val) = each ($aduanas)) {
                         if ($val[aoids] != 0 and $val[adelt] == 0) {
-                            if (!$rs->Open("update tb_repaduanadet set ca_idcosto = '$val[aidco]', ca_tipo = '$val[atipo]', ca_netcosto = '$val[avlrn]', ca_vlrcosto = '$val[avlrc]', ca_mincosto = '$val[avlrm]', ca_idmoneda = '$val[amnda]', ca_detalles = '".AddSlashes($val[aobsv])."', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usuactualizado = '$usuario' where oid = ".$val[aoids])) {
+                            if (!$rs->Open("update tb_repaduanadet set ca_idcosto = '$val[aidco]', ca_tipo = '$val[atipo]', ca_netcosto = '$val[avlrn]', ca_vlrcosto = '$val[avlrc]', ca_mincosto = '$val[avlrm]', ca_idmoneda = '$val[amnda]', ca_detalles = '".AddSlashes($val[aobsv])."', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where oid = ".$val[aoids])) {
                                 echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                                 echo "<script>document.location.href = 'reportenegocio.php';</script>";
                                 exit;
@@ -2718,7 +2718,7 @@ elseif (isset($accion)) {                                                       
                             }else if (strlen($val[aidco]) == 0) {
                                     continue;
                                 }else {
-                                    if (!$rs->Open("insert into tb_repaduanadet (ca_idreporte, ca_idrepaduana, ca_idcosto, ca_tipo, ca_netcosto, ca_vlrcosto, ca_mincosto, ca_idmoneda, ca_detalles, ca_fchcreado, ca_usucreado) values ($idreporte, $idrepaduana, '$val[aidco]', '$val[atipo]', '$val[avlrn]', '$val[avlrc]', '$val[avlrm]', '$val[amnda]', '".AddSlashes($val[aobsv])."', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
+                                    if (!$rs->Open("insert into tb_repaduanadet (ca_idreporte, ca_idrepaduana, ca_idcosto, ca_tipo, ca_netcosto, ca_vlrcosto, ca_mincosto, ca_idmoneda, ca_detalles, ca_fchcreado, ca_usucreado) values ($idreporte, $idrepaduana, '$val[aidco]', '$val[atipo]', '$val[avlrn]', '$val[avlrc]', '$val[avlrm]', '$val[amnda]', '".AddSlashes($val[aobsv])."', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
                                         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                                         echo "<script>document.location.href = 'reportenegocio.php';</script>";
                                         exit;
@@ -2726,7 +2726,7 @@ elseif (isset($accion)) {                                                       
                                 }
                     }
                 }
-                if (!$rs->Open("update tb_reportes set ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usuactualizado = '$usuario' where ca_idreporte = $idreporte")) {
+                if (!$rs->Open("update tb_reportes set ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where ca_idreporte = $idreporte")) {
                     echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                     echo "<script>document.location.href = 'reportenegocio.php';</script>";
                     exit;
@@ -2734,7 +2734,7 @@ elseif (isset($accion)) {                                                       
                 break;
             }
         case 'Borrador': {                                                          // El Botón Guardar Borrador fue pulsado
-                if (!$rs->Open("insert into tb_repborrador (ca_fchcreado, ca_accion, ca_usucreado, ca_contenido) values(to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$accion', '$usuario', '".serialize($HTTP_POST_VARS)."')")) {
+                if (!$rs->Open("insert into tb_repborrador (ca_fchcreado, ca_accion, ca_usucreado, ca_contenido) values(to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$accion', '$usuario', '".serialize($HTTP_POST_VARS)."')")) {
                     echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                     echo "<script>document.location.href = 'reportenegocio.php';</script>";
                     exit;
@@ -2742,7 +2742,7 @@ elseif (isset($accion)) {                                                       
                 break;
             }
         case 'Cerrar': {                                                          // El Botón Guardar Borrador fue pulsado
-                if (!$rs->Open("update tb_reportes set ca_fchcerrado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usucerrado = '$usuario' where ca_idreporte = $id")) {
+                if (!$rs->Open("update tb_reportes set ca_fchcerrado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usucerrado = '$usuario' where ca_idreporte = $id")) {
                     echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                     echo "<script>document.location.href = 'reportenegocio.php';</script>";
                     exit;
@@ -2758,7 +2758,7 @@ elseif (isset($accion)) {                                                       
                 break;
             }
         case 'Anular': {                                                          // El Botón Guardar Borrador fue pulsado
-                if (!$rs->Open("update tb_reportes set ca_fchanulado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usuanulado = '$usuario', ca_detanulado = '$det' where ca_idreporte = $id")) {
+                if (!$rs->Open("update tb_reportes set ca_fchanulado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usuanulado = '$usuario', ca_detanulado = '$det' where ca_idreporte = $id")) {
                     echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                     echo "<script>document.location.href = 'reportenegocio.php';</script>";
                     exit;
@@ -2822,7 +2822,7 @@ elseif (isset($accion)) {                                                       
                     }
                     $login = $rs->Value('ca_vendedor');
                 }
-                if (!$rs->Open("insert into tb_reportes (ca_idreporte, ca_fchreporte, ca_consecutivo, ca_idcotizacion, ca_origen, ca_destino, ca_impoexpo, ca_fchdespacho, ca_idagente, ca_incoterms, ca_mercancia_desc, ca_mcia_peligrosa, ca_idproveedor, ca_orden_prov, ca_idconcliente, ca_orden_clie, ca_confirmar_clie, ca_idconsignatario, ca_informar_cons, ca_idnotify, ca_informar_noti, ca_idmaster, ca_informar_mast, ca_notify, ca_idrepresentante, ca_informar_repr, ca_transporte, ca_modalidad, ca_colmas, ca_seguro, ca_liberacion, ca_tiempocredito, ca_preferencias_clie, ca_instrucciones, ca_idlinea, ca_idconsignar, ca_idbodega, ca_mastersame, ca_continuacion, ca_continuacion_dest, ca_continuacion_conf, ca_login, ca_fchcreado, ca_usucreado) values($id, '$fchreporte', fun_reportecon('".substr($fchreporte,0,4)."'), 0, '$idciuorigen', '$idciudestino', '$impoexpo', '$fchdespacho', $idagente, '$incoterms', '".addslashes($mercancia_desc)."', '$mcia_peligrosa', '$idproveedor', '$orden_prov', $idconcliente, '$orden_clie', '$confirmar', $idconsignatario, '$informar_cons', $idnotify, '$informar_noti', $idmaster, '$informar_mast', $repnotify, $idrepresentante, '$informar_repr', '$transporte', '$modalidad', '', '', '', '', '', '', 0, 1, 1, 'No', 'N/A', '$idciudestino', '', '$login', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
+                if (!$rs->Open("insert into tb_reportes (ca_idreporte, ca_fchreporte, ca_consecutivo, ca_idcotizacion, ca_origen, ca_destino, ca_impoexpo, ca_fchdespacho, ca_idagente, ca_incoterms, ca_mercancia_desc, ca_mcia_peligrosa, ca_idproveedor, ca_orden_prov, ca_idconcliente, ca_orden_clie, ca_confirmar_clie, ca_idconsignatario, ca_informar_cons, ca_idnotify, ca_informar_noti, ca_idmaster, ca_informar_mast, ca_notify, ca_idrepresentante, ca_informar_repr, ca_transporte, ca_modalidad, ca_colmas, ca_seguro, ca_liberacion, ca_tiempocredito, ca_preferencias_clie, ca_instrucciones, ca_idlinea, ca_idconsignar, ca_idbodega, ca_mastersame, ca_continuacion, ca_continuacion_dest, ca_continuacion_conf, ca_login, ca_fchcreado, ca_usucreado) values($id, '$fchreporte', fun_reportecon('".substr($fchreporte,0,4)."'), 0, '$idciuorigen', '$idciudestino', '$impoexpo', '$fchdespacho', $idagente, '$incoterms', '".addslashes($mercancia_desc)."', '$mcia_peligrosa', '$idproveedor', '$orden_prov', $idconcliente, '$orden_clie', '$confirmar', $idconsignatario, '$informar_cons', $idnotify, '$informar_noti', $idmaster, '$informar_mast', $repnotify, $idrepresentante, '$informar_repr', '$transporte', '$modalidad', '', '', '', '', '', '', 0, 1, 1, 'No', 'N/A', '$idciudestino', '', '$login', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
                     echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                     echo "<script>document.location.href = 'reportenegocio.php';</script>";
                     exit;
@@ -2947,13 +2947,13 @@ elseif (isset($accion)) {                                                       
                 }
                 $id = $rs->Value('nextval');
                 if ($accion !='Nueva Versión') {
-                    if (!$rs->Open("insert into tb_reportes (ca_idreporte, ca_fchreporte, ca_consecutivo, ca_idcotizacion, ca_origen, ca_destino, ca_impoexpo, ca_fchdespacho, ca_idagente, ca_incoterms, ca_mercancia_desc, ca_mcia_peligrosa, ca_idproveedor, ca_orden_prov, ca_idconcliente, ca_orden_clie, ca_confirmar_clie, ca_idconsignatario, ca_informar_cons, ca_idnotify, ca_informar_noti, ca_idmaster, ca_informar_mast, ca_notify, ca_idrepresentante, ca_informar_repr, ca_transporte, ca_modalidad, ca_colmas, ca_seguro, ca_liberacion, ca_tiempocredito, ca_preferencias_clie, ca_instrucciones, ca_idlinea, ca_idconsignar, ca_idbodega, ca_mastersame, ca_continuacion, ca_continuacion_dest, ca_continuacion_conf, ca_login, ca_fchcreado, ca_usucreado) values($id, '$fchreporte', fun_reportecon('".substr($fchreporte,0,4)."'), $idcotizacion, '$idciuorigen', '$idciudestino', '$impoexpo', '$fchdespacho', $idagente, '$incoterms', '".addslashes($mercancia_desc)."', '$mcia_peligrosa', '$idproveedor', '$orden_prov', $idconcliente, '$orden_clie', '$confirmar', $idconsignatario, '$informar_cons', $idnotify, '$informar_noti', $idmaster, '$informar_mast', $repnotify, $idrepresentante, '$informar_repr', '$transporte', '$modalidad', '$colmas', '$seguro', '$liberacion', '$tiempocredito', '".addslashes($preferencias_clie)."', '".addslashes($instrucciones)."', $idlinea, $idconsignar, $idbodega, '$mastersame', '$continuacion', '$continuacion_dest', ".($continuacion_conf?"'$continuacion_conf'":"null").", '$login', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario' )")) {
+                    if (!$rs->Open("insert into tb_reportes (ca_idreporte, ca_fchreporte, ca_consecutivo, ca_idcotizacion, ca_origen, ca_destino, ca_impoexpo, ca_fchdespacho, ca_idagente, ca_incoterms, ca_mercancia_desc, ca_mcia_peligrosa, ca_idproveedor, ca_orden_prov, ca_idconcliente, ca_orden_clie, ca_confirmar_clie, ca_idconsignatario, ca_informar_cons, ca_idnotify, ca_informar_noti, ca_idmaster, ca_informar_mast, ca_notify, ca_idrepresentante, ca_informar_repr, ca_transporte, ca_modalidad, ca_colmas, ca_seguro, ca_liberacion, ca_tiempocredito, ca_preferencias_clie, ca_instrucciones, ca_idlinea, ca_idconsignar, ca_idbodega, ca_mastersame, ca_continuacion, ca_continuacion_dest, ca_continuacion_conf, ca_login, ca_fchcreado, ca_usucreado) values($id, '$fchreporte', fun_reportecon('".substr($fchreporte,0,4)."'), $idcotizacion, '$idciuorigen', '$idciudestino', '$impoexpo', '$fchdespacho', $idagente, '$incoterms', '".addslashes($mercancia_desc)."', '$mcia_peligrosa', '$idproveedor', '$orden_prov', $idconcliente, '$orden_clie', '$confirmar', $idconsignatario, '$informar_cons', $idnotify, '$informar_noti', $idmaster, '$informar_mast', $repnotify, $idrepresentante, '$informar_repr', '$transporte', '$modalidad', '$colmas', '$seguro', '$liberacion', '$tiempocredito', '".addslashes($preferencias_clie)."', '".addslashes($instrucciones)."', $idlinea, $idconsignar, $idbodega, '$mastersame', '$continuacion', '$continuacion_dest', ".($continuacion_conf?"'$continuacion_conf'":"null").", '$login', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario' )")) {
                         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                         echo "<script>document.location.href = 'reportenegocio.php';</script>";
                         exit;
                     }
                 }else {
-                    if (!$rs->Open("insert into tb_reportes (ca_idreporte, ca_fchreporte, ca_consecutivo, ca_version, ca_idcotizacion, ca_origen, ca_destino, ca_impoexpo, ca_fchdespacho, ca_idagente, ca_incoterms, ca_mercancia_desc, ca_mcia_peligrosa, ca_idproveedor, ca_orden_prov, ca_idconcliente, ca_orden_clie, ca_confirmar_clie, ca_idconsignatario, ca_informar_cons, ca_idnotify, ca_informar_noti, ca_idmaster, ca_informar_mast, ca_notify, ca_idrepresentante, ca_informar_repr, ca_transporte, ca_modalidad, ca_colmas, ca_seguro, ca_liberacion, ca_tiempocredito, ca_preferencias_clie, ca_instrucciones, ca_idlinea, ca_idconsignar, ca_idbodega, ca_mastersame, ca_continuacion, ca_continuacion_dest, ca_continuacion_conf, ca_idetapa,ca_fchultstatus, ca_propiedades, ca_idseguimiento,  ca_login, ca_fchcreado, ca_usucreado) values($id, '$fchreporte', '$consecutivo', fun_reportever('$consecutivo'), $idcotizacion, '$idciuorigen', '$idciudestino', '$impoexpo', '$fchdespacho', $idagente, '$incoterms', '".addslashes($mercancia_desc)."', '$mcia_peligrosa','$idproveedor', '$orden_prov', $idconcliente, '$orden_clie', '$confirmar', $idconsignatario, '$informar_cons', $idnotify, '$informar_noti', $idmaster, '$informar_mast', $repnotify, $idrepresentante, '$informar_repr', '$transporte', '$modalidad', '$colmas', '$seguro', '$liberacion', '$tiempocredito', '".addslashes($preferencias_clie)."', '".addslashes($instrucciones)."', $idlinea, $idconsignar, $idbodega, '$mastersame', '$continuacion', '$continuacion_dest', ".($continuacion_conf?"'$continuacion_conf'":"null").", ".($idetapa?"'$idetapa'":"null").", ".($fchultstatus?"'$fchultstatus'":"null").",'$propiedades', ".($idseguimiento?"'$idseguimiento'":"null").",  '$login', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
+                    if (!$rs->Open("insert into tb_reportes (ca_idreporte, ca_fchreporte, ca_consecutivo, ca_version, ca_idcotizacion, ca_origen, ca_destino, ca_impoexpo, ca_fchdespacho, ca_idagente, ca_incoterms, ca_mercancia_desc, ca_mcia_peligrosa, ca_idproveedor, ca_orden_prov, ca_idconcliente, ca_orden_clie, ca_confirmar_clie, ca_idconsignatario, ca_informar_cons, ca_idnotify, ca_informar_noti, ca_idmaster, ca_informar_mast, ca_notify, ca_idrepresentante, ca_informar_repr, ca_transporte, ca_modalidad, ca_colmas, ca_seguro, ca_liberacion, ca_tiempocredito, ca_preferencias_clie, ca_instrucciones, ca_idlinea, ca_idconsignar, ca_idbodega, ca_mastersame, ca_continuacion, ca_continuacion_dest, ca_continuacion_conf, ca_idetapa,ca_fchultstatus, ca_propiedades, ca_idseguimiento,  ca_login, ca_fchcreado, ca_usucreado) values($id, '$fchreporte', '$consecutivo', fun_reportever('$consecutivo'), $idcotizacion, '$idciuorigen', '$idciudestino', '$impoexpo', '$fchdespacho', $idagente, '$incoterms', '".addslashes($mercancia_desc)."', '$mcia_peligrosa','$idproveedor', '$orden_prov', $idconcliente, '$orden_clie', '$confirmar', $idconsignatario, '$informar_cons', $idnotify, '$informar_noti', $idmaster, '$informar_mast', $repnotify, $idrepresentante, '$informar_repr', '$transporte', '$modalidad', '$colmas', '$seguro', '$liberacion', '$tiempocredito', '".addslashes($preferencias_clie)."', '".addslashes($instrucciones)."', $idlinea, $idconsignar, $idbodega, '$mastersame', '$continuacion', '$continuacion_dest', ".($continuacion_conf?"'$continuacion_conf'":"null").", ".($idetapa?"'$idetapa'":"null").", ".($fchultstatus?"'$fchultstatus'":"null").",'$propiedades', ".($idseguimiento?"'$idseguimiento'":"null").",  '$login', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
                         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                         echo "<script>document.location.href = 'reportenegocio.php';</script>";
                         exit;
@@ -2971,7 +2971,7 @@ elseif (isset($accion)) {                                                       
                 }
 
                 if ($accion =='Reporte Nuevo' or $accion =='Nueva Versión') {
-                    if (!$rs->Open("insert into tb_reptarifas (ca_idreporte, ca_idconcepto, ca_cantidad, ca_neta_tar, ca_neta_min, ca_neta_idm, ca_reportar_tar, ca_reportar_min, ca_reportar_idm, ca_cobrar_tar, ca_cobrar_min, ca_cobrar_idm, ca_observaciones, ca_fchcreado, ca_usucreado)  select $id, ca_idconcepto, ca_cantidad, ca_neta_tar, ca_neta_min, ca_neta_idm, ca_reportar_tar, ca_reportar_min, ca_reportar_idm, ca_cobrar_tar, ca_cobrar_min, ca_cobrar_idm, ca_observaciones, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario' from tb_reptarifas where ca_idreporte = $id_old")) {
+                    if (!$rs->Open("insert into tb_reptarifas (ca_idreporte, ca_idconcepto, ca_cantidad, ca_neta_tar, ca_neta_min, ca_neta_idm, ca_reportar_tar, ca_reportar_min, ca_reportar_idm, ca_cobrar_tar, ca_cobrar_min, ca_cobrar_idm, ca_observaciones, ca_fchcreado, ca_usucreado)  select $id, ca_idconcepto, ca_cantidad, ca_neta_tar, ca_neta_min, ca_neta_idm, ca_reportar_tar, ca_reportar_min, ca_reportar_idm, ca_cobrar_tar, ca_cobrar_min, ca_cobrar_idm, ca_observaciones, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario' from tb_reptarifas where ca_idreporte = $id_old")) {
                         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                         echo "<script>document.location.href = 'reportenegocio.php';</script>";
                         exit;
@@ -2986,7 +2986,7 @@ elseif (isset($accion)) {                                                       
                         echo "<script>document.location.href = 'reportenegocio.php';</script>";
                         exit;
                     }
-                    if (!$rs->Open("insert into tb_repaduana (ca_idreporte, ca_coordinador, ca_transnacarga, ca_transnatipo, ca_instrucciones, ca_fchcreado, ca_usucreado) select $id, ca_coordinador, ca_transnacarga, ca_transnatipo, ca_instrucciones, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario' from tb_repaduana where ca_idreporte = $id_old")) {
+                    if (!$rs->Open("insert into tb_repaduana (ca_idreporte, ca_coordinador, ca_transnacarga, ca_transnatipo, ca_instrucciones, ca_fchcreado, ca_usucreado) select $id, ca_coordinador, ca_transnacarga, ca_transnatipo, ca_instrucciones, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario' from tb_repaduana where ca_idreporte = $id_old")) {
                         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                         echo "<script>document.location.href = 'reportenegocio.php';</script>";
                         exit;
@@ -2998,7 +2998,7 @@ elseif (isset($accion)) {                                                       
                     }
                     if (!$rs->Eof() and !$rs->IsEmpty()) {
                         $idrepaduana = $rs->Value('ca_idrepaduana');
-                        if (!$rs->Open("insert into tb_repaduanadet (ca_idreporte, ca_idrepaduana, ca_idcosto, ca_tipo, ca_netcosto, ca_vlrcosto, ca_mincosto, ca_idmoneda, ca_detalles, ca_fchcreado, ca_usucreado) select $id, $idrepaduana, ca_idcosto, ca_tipo, ca_netcosto, ca_vlrcosto, ca_mincosto, ca_idmoneda, ca_detalles, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario' from tb_repaduanadet where ca_idreporte = $id_old")) {
+                        if (!$rs->Open("insert into tb_repaduanadet (ca_idreporte, ca_idrepaduana, ca_idcosto, ca_tipo, ca_netcosto, ca_vlrcosto, ca_mincosto, ca_idmoneda, ca_detalles, ca_fchcreado, ca_usucreado) select $id, $idrepaduana, ca_idcosto, ca_tipo, ca_netcosto, ca_vlrcosto, ca_mincosto, ca_idmoneda, ca_detalles, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario' from tb_repaduanadet where ca_idreporte = $id_old")) {
                             echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                             echo "<script>document.location.href = 'reportenegocio.php';</script>";
                             exit;

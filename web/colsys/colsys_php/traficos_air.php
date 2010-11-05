@@ -689,7 +689,7 @@ elseif (isset($accion)) {                                                       
                 exit;
                }
             $id_email = $rs->Value('nextval');
-            if (!$rs->Open("insert into tb_emails (ca_idemail, ca_fchenvio, ca_usuenvio, ca_tipo, ca_idcaso, ca_from, ca_fromname, ca_cc, ca_replyto, ca_address, ca_attachment, ca_subject, ca_body) values($id_email, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario', 'Rep.AéreoExterior', '$id', '$recorreo', '$remitente', '$cc', '$recorreo', '$address', '', '$asunto', '$contenido')")) {
+            if (!$rs->Open("insert into tb_emails (ca_idemail, ca_fchenvio, ca_usuenvio, ca_tipo, ca_idcaso, ca_from, ca_fromname, ca_cc, ca_replyto, ca_address, ca_attachment, ca_subject, ca_body) values($id_email, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario', 'Rep.AéreoExterior', '$id', '$recorreo', '$remitente', '$cc', '$recorreo', '$address', '', '$asunto', '$contenido')")) {
                 echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                 echo "<script>document.location.href = 'traficos_air.php';</script>";
                 exit;
