@@ -23,7 +23,12 @@ switch($action){
 		$button[2]["image"]="22x22/edit.gif"; 			
 		$button[2]["link"]= "helpdesk/crearTicket?id=".$this->getRequestParameter("id")."&token=".md5(time());
 
-       
+
+		$button[3]["name"]="PM";
+		$button[3]["tooltip"]="Editar este ticket";
+		$button[3]["image"]="22x22/edit.gif";
+		$button[3]["link"]= "pm/index?idticket=".$this->getRequestParameter("id")."&token=".md5(time());
+
 		break;
 	case "nuevoSeguimiento":
 		$button[2]["name"]="Volver";

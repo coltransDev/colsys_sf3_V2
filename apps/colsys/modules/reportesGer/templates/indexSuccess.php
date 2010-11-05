@@ -1,0 +1,138 @@
+<?php
+/*
+ *  This file is part of the Colsys Project.
+ *
+ *  (c) Coltrans S.A. - Colmas Ltda.
+ */
+
+
+include_component("reportesGer", "panelConsulta");
+
+include_component("reportesGer", "reporteInoPanel");
+
+include_component("reportesGer", "listaCamposGridPanel");
+include_component("reportesGer", "listaFiltrosGridPanel");
+
+
+?>
+<script type="text/javascript">
+
+
+
+Ext.onReady(function(){
+
+    /* Inicializa los tooltips
+    */
+    Ext.QuickTips.init();
+    Ext.apply(Ext.QuickTips.getQuickTip(), {
+       dismissDelay: 200000 //permite que los tips permanezcan por mas tiempo.
+    });
+
+
+    new Ext.Viewport({
+        layout: 'border',
+        items: [
+        // create instance immediately
+        new Ext.BoxComponent({
+            region: 'north',
+            height: 30, // give north and south regions a height
+            autoEl: {
+                tag: 'div',
+                html:''
+            }
+        }), {
+            region: 'west',
+            id: 'west-panel', // see Ext.getCmp() below
+            title: 'Consultas',
+            split: true,
+            width: 200,
+            minSize: 175,
+            maxSize: 400,
+            collapsible: true,
+            margins: '0 0 0 5',
+            layout: {
+                type: 'accordion',
+                animate: true
+            },
+            items: [
+                new PanelConsulta({
+                        title: "Reportes disponibles"
+                    })
+               
+
+            ]
+        },
+        // in this instance the TabPanel is not wrapped by another panel
+        // since no title is needed, this Panel is added directly
+        // as a Container
+        new Ext.TabPanel({
+            id:'tab-panel',
+            region: 'center', // a center region is ALWAYS required for border layout
+            deferredRender: false,
+            activeTab: 0,     // first tab initially active
+            enableTabScroll:true,
+            items: [ {
+                contentEl: 'center1',
+                title: 'Acerca de',
+                autoScroll: true
+            }
+
+            ]
+        })]
+    });
+    // get a reference to the HTML element with id "hideit" and add a click listener to it
+    Ext.get("hideit").on('click', function(){
+        // get a reference to the Panel that was created with id = 'west-panel'
+        var w = Ext.getCmp('west-panel');
+        // expand or collapse that Panel based on its collapsed property state
+        w.collapsed ? w.expand() : w.collapse();
+    });
+});
+
+
+
+</script>
+
+<!-- use class="x-hide-display" to prevent a brief flicker of the content -->
+<div id="west" class="x-hide-display">
+</div>
+
+<div id="center1" class="x-hide-display">
+    <br />
+	<h3>&nbsp;&nbsp;&nbsp;Bienvenido al sistema de reportes gerenciales. </h3><br />
+	<hr />
+	&nbsp;&nbsp;&nbsp;Para comenzar a trabajar por favor seleccione una opci&oacute;n del panel lateral.
+
+	<br />
+	&nbsp;&nbsp;&nbsp;<a id="hideit" href="#">Ocultar panel lateral</a>
+    <br />
+
+
+
+
+</div>
+
+<div id="props-panel" class="x-hide-display" style="width:200px;height:200px;overflow:hidden;">
+
+</div>
+
+
+
+<div style="height:100%"></div>
+<script type="text/javascript">
+    Ext.onReady(function(){
+        var newComponent = new ReporteInoPanel({    id: 'adad',
+                                                 closable: true,
+                                                 idinforme: 2,
+                                                 title: 'Panel prueba'
+                                                });
+        Ext.getCmp('tab-panel').add(newComponent);
+        Ext.getCmp('tab-panel').setActiveTab(newComponent);
+
+
+       
+
+
+    });
+
+</script>

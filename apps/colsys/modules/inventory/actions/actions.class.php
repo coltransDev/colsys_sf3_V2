@@ -180,7 +180,9 @@ class inventoryActions extends sfActions
         $activo->setCaEmpresa( utf8_decode($request->getParameter("empresa")) );
         $activo->setCaProveedor( utf8_decode($request->getParameter("proveedor")) );
         $activo->setCaFactura( utf8_decode($request->getParameter("factura")) );
-        $activo->setCaAsignadoa( $request->getParameter("asignadoa") );
+        if( $request->getParameter("asignadoa") ){
+            $activo->setCaAsignadoa( $request->getParameter("asignadoa") );
+        }
 
         if( $request->getParameter("fchcompra") ){
             $activo->setCaFchcompra( $request->getParameter("fchcompra") );

@@ -13,7 +13,8 @@ include_component("pm", "asignarMilestoneWindow");
 //include_component("gestDocumental", "panelArchivos");
 include_component("pm", "editarTicketWindow", array("nivel"=>$nivel));
 //include_component("pm", "mainPanel");
-include_component("gestDocumental", "panelArchivos", array("readOnly"=>false) );
+
+include_component("gestDocumental", "fileManagerPanel");
 
 //Paneles laterales
 include_component("pm","panelConsulta");
@@ -307,6 +308,15 @@ Ext.onReady(function(){
         Ext.getCmp('tab-panel').add(newComponent);
         Ext.getCmp('tab-panel').setActiveTab(newComponent);
         */
+
+       var newComponent = new FileManagerPanel({    id: 'adad',
+                                                 closable: true,
+                                                 idproject: 3,
+                                                 title: 'Panel prueba Archivos',
+                                                 folder: '<?=base64_encode("KB")?>'
+                                                });
+        Ext.getCmp('tab-panel').add(newComponent);
+        Ext.getCmp('tab-panel').setActiveTab(newComponent);
        <?
        if( $idticket ){
        ?>
