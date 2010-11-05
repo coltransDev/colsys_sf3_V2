@@ -375,17 +375,18 @@ class adminUsersActions extends sfActions {
             $usuario->setCaForcechange(true);
         } else {
             $usuario->setCaForcechange(false);
-        }
-
+        }       
         if (isset($_FILES['foto'])) {
             if (is_uploaded_file($_FILES['foto']['tmp_name'])) {
+
                 $directory = $usuario->getDirectorio() . DIRECTORY_SEPARATOR;
                 if (!is_dir($directory)) {
                     @mkdir($directory, 0777, true);
                 }
+                
                 $nombre_archivo = $directory . 'foto.jpg';
                 if (move_uploaded_file($_FILES['foto']['tmp_name'], $nombre_archivo)) {
-
+                    
                     // Obtener nuevos tamaños
                     list($ancho, $alto) = getimagesize($nombre_archivo);
                     $nuevo_ancho = 120;
