@@ -14,7 +14,7 @@ class menuComponents extends sfComponents
 		$button=array();			
         //echo sfConfig::get("sf_plugins_dir");
 
-        
+        $this->user = $this->getUser();
 		$filename=sfConfig::get("sf_app_module_dir").DIRECTORY_SEPARATOR.$module.DIRECTORY_SEPARATOR."templates".DIRECTORY_SEPARATOR."_submenuBar.php";
 		if( file_exists($filename) ){
 			include($filename);
