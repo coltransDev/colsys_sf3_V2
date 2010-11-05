@@ -580,6 +580,7 @@ class widgetsComponents extends sfComponents
 						 ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
 						 ->execute();
 
+        //print_r($this->data);
         foreach( $this->data as $key=>$val ){
             $arrTransporte=explode("|",$this->data[$key]["b_ca_transporte"]);
             if(count($arrTransporte)<2)
@@ -590,11 +591,22 @@ class widgetsComponents extends sfComponents
             }
             else
             {
+                $new=false;
                 foreach($arrTransporte as $t)
                 {
-                    $this->data[$key]["b_ca_tipo"] = utf8_encode($this->data[$key]["b_ca_tipo"]);
-                    $this->data[$key]["b_ca_nombre"] = utf8_encode($this->data[$key]["b_ca_nombre"]);
-                    $this->data[$key]["b_ca_transporte"] = utf8_encode($t);
+                    if(!$new)
+                    {
+                        $this->data[$key]["b_ca_tipo"] = utf8_encode($this->data[$key]["b_ca_tipo"]);
+                        $this->data[$key]["b_ca_nombre"] = utf8_encode($this->data[$key]["b_ca_nombre"]);
+                        $this->data[$key]["b_ca_transporte"] = utf8_encode($t);
+                        $new=true;
+                    }
+                    else
+                    {
+                        $this->data[]["b_ca_tipo"] = utf8_encode($this->data[$key]["b_ca_tipo"]);
+                        $this->data[]["b_ca_nombre"] = utf8_encode($this->data[$key]["b_ca_nombre"]);
+                        $this->data[]["b_ca_transporte"] = utf8_encode($t);
+                    }
                 }
             }
         }
