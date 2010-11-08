@@ -297,7 +297,7 @@ $condicion="";
 
     if( ($this->idimpo && $criterio) || !$this->idimpo ){
         $con = Doctrine_Manager::getInstance()->connection();
-		$sql="select * from vi_reportes where 1=1 $condicion limit 80";
+		$sql="select * from vi_reportes1 where 1=1 $condicion limit 80";
         
 		$st = $con->execute($sql);
 
@@ -781,7 +781,7 @@ $condicion="";
             else
                 $reporte->setCaIdagente(null);
 
-            if($request->getParameter("ca_mercancia_desc") && $request->getParameter("ca_mercancia_desc")!="" )
+            if($request->getParameter("ca_mercancia_desc") )
             {
                 $reporte->setCaMercanciaDesc(utf8_decode($request->getParameter("ca_mercancia_desc")));
             }else
@@ -898,8 +898,10 @@ $condicion="";
             if($request->getParameter("consig") )
             {
                 $reporte->setCaIdconsignatario($request->getParameter("consig"));
+                if($request->getParameter("continuacion")== "OTM")
+                    $reporte->setCaIdconsignar(1);
             }
-            else if($reporte->getCaContinuacion()== "OTM")
+            else if($request->getParameter("continuacion")== "OTM")
             {
                 $errors["idconsignatario"]="Cuando es OTM se debe ingresar un consignatario";
                 $texto.="Consignatario<br>";
@@ -1002,15 +1004,13 @@ $condicion="";
 //                $errors["linea"]="Debe seleccionar un linea";
             }
 
-            if($request->getParameter("consignar") && $request->getParameter("consignar")>0  )
+            if($request->getParameter("consignar") )
             {
                 $reporte->setCaIdconsignar($request->getParameter("consignar"));
             }
             else
             {
-                //revisar
-                if($reporte->getCaIdconsignar()=="")
-                    $reporte->setCaIdconsignar(1);
+                $reporte->setCaIdconsignar(1);
             }
 
             if($request->getParameter("idconsigmaster") && $request->getParameter("idconsigmaster")>0  )
@@ -1412,7 +1412,7 @@ $condicion="";
  *
  */
 
-        if($request->getParameter("ca_mercancia_desc") && $request->getParameter("ca_mercancia_desc")!="" )
+        if($request->getParameter("ca_mercancia_desc")  )
         {
             $reporte->setCaMercanciaDesc($request->getParameter("ca_mercancia_desc"));
         }else
@@ -2656,7 +2656,7 @@ color="#000000";
 
         $tarifas = Doctrine::getTable("RepTarifa")
                              ->createQuery("t")
-                             ->where("t.ca_idreporte = ?", $reporte->getCaIdreporte())
+                             ->where("t.ca_idreporte = ? and t.ca_idconcepto!=9999 ", $reporte->getCaIdreporte())
                              ->orderBy("t.ca_fchcreado ASC")
                              ->execute();
 
@@ -2771,65 +2771,68 @@ color="#000000";
         $tipo = $request->getParameter("tipo");
 
         if( $tipo=="concepto" ){
-            $idreporte = $request->getParameter("idreporte");
-            $idconcepto = $request->getParameter("iditem");
-            $tarifa = Doctrine::getTable("RepTarifa")->find(array($idreporte, $idconcepto));
-            if( !$tarifa ){
-                $tarifa = new RepTarifa();
-                $tarifa->setCaIdreporte( $idreporte );
-                $tarifa->setCaIdconcepto( $idconcepto );
-            }
-
-
-            if( $request->getParameter("cantidad")!==null ){
-                $tarifa->setCaCantidad( $request->getParameter("cantidad") );
-            }
-
-            if( $request->getParameter("neta_tar")!==null ){
-                $tarifa->setCaNetaTar( $request->getParameter("neta_tar") );
-            }
-            if( $request->getParameter("neta_min")!==null ){
-                $tarifa->setCaNetaMin( $request->getParameter("neta_min") );
-            }
-
-            if( $request->getParameter("neta_idm")!==null ){
-                $tarifa->setCaNetaIdm( $request->getParameter("neta_idm") );
-            }
-
-
-            if( $request->getParameter("reportar_tar")!==null ){
-                $tarifa->setCaReportarTar( $request->getParameter("reportar_tar") );
-            }
-            else
+            if($idconcepto!='9999')
             {
-                $tarifa->setCaReportarTar( "0" );
-            }
+                $idreporte = $request->getParameter("idreporte");
+                $idconcepto = $request->getParameter("iditem");
+                $tarifa = Doctrine::getTable("RepTarifa")->find(array($idreporte, $idconcepto));
+                if( !$tarifa ){
+                    $tarifa = new RepTarifa();
+                    $tarifa->setCaIdreporte( $idreporte );
+                    $tarifa->setCaIdconcepto( $idconcepto );
+                }
 
-            if( $request->getParameter("reportar_min")!==null ){
-                $tarifa->setCaReportarMin( $request->getParameter("reportar_min") );
-            }
 
-            if( $request->getParameter("reportar_idm")!==null ){
-                $tarifa->setCaReportarIdm( $request->getParameter("reportar_idm") );
-            }
+                if( $request->getParameter("cantidad")!==null ){
+                    $tarifa->setCaCantidad( $request->getParameter("cantidad") );
+                }
 
-            if( $request->getParameter("cobrar_tar")!==null ){
-                $tarifa->setCaCobrarTar( $request->getParameter("cobrar_tar") );
-            }
+                if( $request->getParameter("neta_tar")!==null ){
+                    $tarifa->setCaNetaTar( $request->getParameter("neta_tar") );
+                }
+                if( $request->getParameter("neta_min")!==null ){
+                    $tarifa->setCaNetaMin( $request->getParameter("neta_min") );
+                }
 
-            if( $request->getParameter("cobrar_min")!==null ){
-                $tarifa->setCaCobrarMin( $request->getParameter("cobrar_min") );
-            }
+                if( $request->getParameter("neta_idm")!==null ){
+                    $tarifa->setCaNetaIdm( $request->getParameter("neta_idm") );
+                }
 
-            if( $request->getParameter("cobrar_idm")!==null ){
-                $tarifa->setCaCobrarIdm( $request->getParameter("cobrar_idm") );
-            }
 
-            if( $request->getParameter("observaciones")!==null ){
-                
-                    $tarifa->setCaObservaciones( $request->getParameter("observaciones") );
+                if( $request->getParameter("reportar_tar")!==null ){
+                    $tarifa->setCaReportarTar( $request->getParameter("reportar_tar") );
+                }
+                else
+                {
+                    $tarifa->setCaReportarTar( "0" );
+                }
+
+                if( $request->getParameter("reportar_min")!==null ){
+                    $tarifa->setCaReportarMin( $request->getParameter("reportar_min") );
+                }
+
+                if( $request->getParameter("reportar_idm")!==null ){
+                    $tarifa->setCaReportarIdm( $request->getParameter("reportar_idm") );
+                }
+
+                if( $request->getParameter("cobrar_tar")!==null ){
+                    $tarifa->setCaCobrarTar( $request->getParameter("cobrar_tar") );
+                }
+
+                if( $request->getParameter("cobrar_min")!==null ){
+                    $tarifa->setCaCobrarMin( $request->getParameter("cobrar_min") );
+                }
+
+                if( $request->getParameter("cobrar_idm")!==null ){
+                    $tarifa->setCaCobrarIdm( $request->getParameter("cobrar_idm") );
+                }
+
+                if( $request->getParameter("observaciones")!==null ){
+
+                        $tarifa->setCaObservaciones( $request->getParameter("observaciones") );
+                }
+                $tarifa->save();
             }
-            $tarifa->save();
             $this->responseArray["success"]=true;
         }
 
