@@ -439,11 +439,6 @@ if( $reporte->getCaImpoexpo()==Constantes::EXPO ){
         {
             $cadena=$consignar->getCaNombre();
         }        
-        }
-        else
-        {
-            $cadena=$consignar->getCaNombre();
-        }        
     }else{
         if( $reporte->getCaContinuacion()== "DTA")
         {
