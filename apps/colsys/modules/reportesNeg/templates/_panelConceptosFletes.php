@@ -500,14 +500,19 @@ Ext.extend(PanelConceptosFletes, Ext.grid.EditorGridPanel, {
                         recordsConceptos = storeGrid.getRange();
                         for( var j=0; j< recordsConceptos.length&&!existe; j++){
                             if( recordsConceptos[j].data.tipo=="concepto" ){
+                                if(recordsConceptos[j].data.tipo==r.data.tipo)
+                                {
                                 if( recordsConceptos[j].data.iditem==r.data.idconcepto){
                                     existe=true;
+                                    //alert(1);
+                                }
                                 }
                             }
 
                             if( recordsConceptos[j].data.tipo=="recargo" ){
                                 if( recordsConceptos[j].data.iditem==r.data.idconcepto && recordsConceptos[j].data.idconcepto==rec.data.idconcepto ){
                                     existe=true;
+                                    //alert(2);
                                 }
                             }
                         }

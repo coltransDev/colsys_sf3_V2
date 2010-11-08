@@ -202,7 +202,7 @@ if( $reporte->getCaColmas()=="Sí" && $reporte->getCaImpoexpo()!=Constantes::TRIA
     if( $panelConceptosFletes ){
     ?>
         var panelFletes = new PanelConceptosFletes({
-            title: 'Conceptos de fletes',
+            title: 'Con. de fletes',
             id:'panel-Fletes'
             <?
             if( $editable ){
@@ -239,7 +239,7 @@ if( $reporte->getCaColmas()=="Sí" && $reporte->getCaImpoexpo()!=Constantes::TRIA
     if( $panelRecargos ){
     ?>
         var panelRecargosLocales = new PanelRecargos({
-            title: 'Recargos locales',
+            title: 'Rec. locales',
             id:'panel-RecargosLocales'
             <?
             if( $editable ){
@@ -276,7 +276,7 @@ if( $reporte->getCaColmas()=="Sí" && $reporte->getCaImpoexpo()!=Constantes::TRIA
     if( $panelAduana ){
         ?>
         var panelRecargosAduana = new PanelRecargosAduana({
-            title: 'Recargos Aduana',
+            title: 'Rec. Aduana',
             id:'panel-Recargos-Aduana'
             <?
             if( $editable ){
@@ -338,7 +338,7 @@ if( $reporte->getCaColmas()=="Sí" && $reporte->getCaImpoexpo()!=Constantes::TRIA
                                     }
                                     if( !$reporte->esSoloAduana() ){
                                     ?>
-                                    {contentEl:'guias', title: 'Corte de Documentos', bodyStyle: bodyStyle},
+                                    {contentEl:'guias', title: 'Corte de Doc', bodyStyle: bodyStyle},
                                     <?
                                     }
                                     if($reporte->getCaImpoexpo()==Constantes::EXPO && 1==2){

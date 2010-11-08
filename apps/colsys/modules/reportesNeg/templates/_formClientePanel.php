@@ -195,7 +195,7 @@ include_component("widgets", "widgetContactoCliente");
             ]
         });
     };
-var ij=parseInt(<?=($nprov>1)?($nprov-1):1?>);
+var ij=parseInt(<?=($nprov>1)?($nprov):1?>);
 
     Ext.extend(FormClientePanel, Ext.Panel, {
         onSelectContactoCliente: function( combo, record, index){ 

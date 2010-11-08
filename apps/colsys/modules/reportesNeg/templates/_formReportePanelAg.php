@@ -1,7 +1,8 @@
 <?php
 //echo $pais2;
 //$cachedir = 'C:/desarrollo/colsys_sf3/apps/colsys/modules/reportesNeg/cache/';
-$cachedir = '/srv/www/colsys_sf3/apps/colsys/modules/reportesNeg/cache/';
+//$cachedir = '/srv/www/colsys_sf3/apps/colsys/modules/reportesNeg/cache/';
+$cachedir = $config = sfConfig::get('sf_app_module_dir').DIRECTORY_SEPARATOR."reportesNeg".DIRECTORY_SEPARATOR."cache".DIRECTORY_SEPARATOR;
 $cachetime = 86400;
 $cacheext = 'colsys';
 //echo $dep;
@@ -72,8 +73,7 @@ include_component("widgets", "widgetContactoCliente");
                                                    hiddenName: "idcliente",
                                                    allowBlank:false,
                                                    displayField:"compania",
-                                                   tabIndex:16,
-                                                   autoSelect : false
+                                                   tabIndex:16                                                  
                                                   });
 
         this.wgContactoCliente.addListener("select", this.onSelectContactoCliente, this);
@@ -580,7 +580,8 @@ include_component("widgets", "widgetContactoCliente");
                         }
                     }
                     ,
-                    failure:function(form,action){
+                    failure:function(gridForm, action){
+                    var res = Ext.util.JSON.decode( action.response.responseText );
                         if(res.err)
                             Ext.MessageBox.alert("Mensaje",'Se presento un error guardando por favor informe al Depto. de Sistemas<br>'+res.err);
                         else

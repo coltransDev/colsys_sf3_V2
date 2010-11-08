@@ -3,8 +3,9 @@
 
 $nprov=count(explode("|", $reporte->getCaIdproveedor() ));
 
-$cachedir = 'C:/desarrollo/colsys_sf3/apps/colsys/modules/reportesNeg/cache/';
+//$cachedir = 'C:/desarrollo/colsys_sf3/apps/colsys/modules/reportesNeg/cache/';
 //$cachedir = '/srv/www/colsys_sf3/apps/colsys/modules/reportesNeg/cache/';
+$cachedir = $config = sfConfig::get('sf_app_module_dir').DIRECTORY_SEPARATOR."reportesNeg".DIRECTORY_SEPARATOR."cache".DIRECTORY_SEPARATOR;
 $cachetime = 86400;
 $cacheext = 'colsys';
 $cachepage = md5("formReporte-modo-$modo-impoexpo-$impoexpo-permiso-$permiso-nprov-$nprov");

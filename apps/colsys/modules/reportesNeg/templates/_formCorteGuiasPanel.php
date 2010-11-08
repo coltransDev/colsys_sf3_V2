@@ -20,7 +20,8 @@ include_component("widgets", "widgetBodega",array("modo"=>$modo,"impoexpo"=>$imp
                                             id: "bodega_consignar",
                                             hiddenName: "idbodega_hd",
                                             width: 500,
-                                            linkTransporte: "transporte"
+                                            linkTransporte: "transporte",
+                                            autoSelect : false
                                            });
 		this.wgNotify=new WidgetTercero({fieldLabel:"Notificar a",
                                             tipo: 'Notify',

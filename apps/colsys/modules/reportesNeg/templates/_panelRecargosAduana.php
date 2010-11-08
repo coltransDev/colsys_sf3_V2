@@ -230,6 +230,7 @@ PanelRecargosAduana = function( config ){
             {name: 'item', type: 'string'},
             {name: 'idmoneda', type: 'string'},
             {name: 'vlrcosto', type: 'float'},
+            {name: 'netcosto', type: 'float'},
             {name: 'mincosto', type: 'float'},            
             {name: 'observaciones', type: 'string'},
             {name: 'orden', type: 'string'}
@@ -449,6 +450,7 @@ Ext.extend(PanelRecargosAduana, Ext.grid.EditorGridPanel, {
                                 tipo: 'costo',
                                 parametro: '',
                                 vlrcosto: '',
+                                netcosto: '',
                                 mincosto: '',
                                 orden: 'Z' 
                             });           
@@ -459,6 +461,8 @@ Ext.extend(PanelRecargosAduana, Ext.grid.EditorGridPanel, {
                             rec.set("tipo", "costo");
 
                             rec.set("vlrcosto", '');
+                            rec.set("netcosto", '');
+
                             rec.set("idmoneda", '');
                             rec.set("mincosto", '');
                             storeGrid.addSorted(newRec);

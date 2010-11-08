@@ -370,10 +370,35 @@ if( ($reporte->getCaContinuacion()!= "N/A" && $reporte->getCaContinuacion()!= ""
     $pdf->SetAligns(array("L","L","L","L","L","L"));
     $pdf->SetStyles(array("B","","B","","B",""));
     $pdf->SetFills(array(0,0,0,0,0,0));
+    $not_cont="";
+    if($reporte->getCaContinuacionConf()!="")
+    {
+        $usuario = Doctrine::getTable("Usuario")->find($reporte->getCaContinuacionConf());
+        if($usuario)
+        {
+           $not_cont= $usuario->getCaEmail();
+        }
+        else
+        {
+            $usuarios = Doctrine::getTable("Usuario")
+               ->createQuery("u")
+               ->select("u.ca_login,u.ca_nombre,u.ca_email,ca_sucursal")
+               ->innerJoin("u.UsuarioPerfil up")
+               ->where("u.ca_activo=? AND up.ca_perfil=? ", array('TRUE','cordinador-de-otm'))
+               ->addWhere("u.ca_idsucursal=?",array($reporte->getCaContinuacionConf()))
+               ->addOrderBy("u.ca_idsucursal")
+               ->addOrderBy("u.ca_nombre")
+               ->execute();
+            foreach($usuarios as $usuario)
+            {
+                if($not_cont!="")
+                    $not_cont.=",";
+                $not_cont.=$usuario->getCaEmail();
+            }
+        }
+    }
 
-    $usuario = Doctrine::getTable("Usuario")->find($reporte->getCaContinuacionConf());
-
-    $pdf->Row(array('Continuación/Viaje:',$reporte->getCaContinuacion(),'Destino final:',$reporte->getDestinoCont()->getCaCiudad(),'Notificar C/Viaje al email:',$usuario?$usuario->getCaEmail():""));
+    $pdf->Row(array('Continuación/Viaje:',$reporte->getCaContinuacion(),'Destino final:',$reporte->getDestinoCont()->getCaCiudad(),'Notificar C/Viaje al email:',$not_cont));
 }
 else if ( $reporte->getCaImpoexpo () == Constantes::EXPO  && $reporte->getCaContOrigen()!="" && $reporte->getCaContDestino()!="" ) {
     $pdf->Ln(3);
@@ -399,6 +424,7 @@ if( $reporte->getCaImpoexpo()==Constantes::EXPO ){
 }else{
     $pdf->SetWidths(array(45,115,30,10));    
     $consig = (($consignatario)?$consignatario->getCaNombre():$cliente->getCaCompania());
+    $nit = (($consignatario)?$consignatario->getCaIdentificacion():$cliente->getCaIdcliente()."-".$cliente->getCaDigito());
     $consignar = Doctrine::getTable("Bodega")->find( $reporte->getCaIdconsignar() );
 
 //    echo  $consignar->getCaNombre();
@@ -407,7 +433,12 @@ if( $reporte->getCaImpoexpo()==Constantes::EXPO ){
         if($reporte->getCaContinuacion()== "OTM" || $reporte->getCaContinuacion()== "DTA")
         {
             $cadena = $consig;
-            $cadena.=" NIT ".$consignatario->getCaIdentificacion();
+            $cadena.=" NIT ".$nit;
+        }
+        else
+        {
+            $cadena=$consignar->getCaNombre();
+        }        
         }
         else
         {
@@ -417,11 +448,10 @@ if( $reporte->getCaImpoexpo()==Constantes::EXPO ){
         if( $reporte->getCaContinuacion()== "DTA")
         {
             $cadena = $consig;
-            $cadena.=" NIT ".$consignatario->getCaIdentificacion();
+            $cadena.=" NIT ".$nit;
         }
         else
             $cadena = $consignar->getCaNombre();
-
     }
 
     if( $reporte->getCaIdbodega() && $reporte->getCaIdbodega()!= 111 && $reporte->getCaIdbodega()!=1 ){ //Coltrans
@@ -543,6 +573,8 @@ if( !$soloAduana ){
 
 
     foreach ( $conceptos as $concepto ) {
+        if($concepto->getCaIdconcepto()=="9999")
+                continue;
         if( $reporte->getCaTransporte()==Constantes::AEREO ){
            if($reporte->getCaImpoexpo()!=constantes::EXPO)
             {
