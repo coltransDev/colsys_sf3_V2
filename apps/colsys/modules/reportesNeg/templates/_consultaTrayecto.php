@@ -15,8 +15,9 @@
         <td ><?=Utils::replace($reporte->getCaImpoexpo())?></td>
         <td ><b>Fecha Despacho:</b></td>
         <td ><?=Utils::fechaMes($reporte->getCaFchdespacho())?></td>
-        <td ><b>Linea:</b></td>
-        <td ><?=$reporte->getIdsProveedor()->getIds()->getCaNombre()?></td>
+        <td ><b>Linea</b></td>
+        <td ><?=$reporte->getIdsProveedor()->getIds()->getCaNombre();
+        ?></td>
     </tr>
 
     <tr>
