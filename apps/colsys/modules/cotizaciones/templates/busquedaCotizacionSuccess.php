@@ -79,10 +79,10 @@ $pagerLayout->display();
                         <?=$destino->getTrafico()." ".$destino->getCaCiudad()?></td>
                     <td width="190" class="listar">
                     <?
-                    echo isset($estados[$producto->getCaEtapa()])?$estados[$producto->getCaEtapa()]:"";
+                    echo isset($estados[$producto->getCaEtapa()]) && $cotizacion->getCaFchanulado() =="" ?$estados[$producto->getCaEtapa()]:"";
 
                     $seg = $producto->getUltSeguimiento();
-                    if( $producto->getCaEtapa()==Cotizacion::EN_SEGUIMIENTO ){
+                    if( $producto->getCaEtapa()==Cotizacion::EN_SEGUIMIENTO && $cotizacion->getCaFchanulado() == "" ){
                     ?>
                         <a style="cursor:pointer" onclick="window.open('<?=url_for("cotseguimientos/formSeguimiento?idcotizacion=".$cotizacion->getCaIdcotizacion()."&idproducto=".$producto->getCaIdproducto())?>')" title="Haga click aca para crear un seguimiento. Se abrira una nueva ventana.">
                         <?
@@ -151,8 +151,8 @@ $pagerLayout->display();
                 Sin trayectos</td>             
                 <td width="35%" class="listar">
                     <?
-                    echo isset($estados[$cotizacion->getCaEtapa()])?$estados[$cotizacion->getCaEtapa()]:"";
-                    if( $cotizacion->getCaEtapa()==Cotizacion::EN_SEGUIMIENTO ){
+                    echo isset($estados[$cotizacion->getCaEtapa()]) && $cotizacion->getCaFchanulado()=="" ?$estados[$cotizacion->getCaEtapa()]:"";
+                    if( $cotizacion->getCaEtapa()==Cotizacion::EN_SEGUIMIENTO && $cotizacion->getCaFchanulado() =="" ){
                         $seg = $cotizacion->getUltSeguimiento();
                     ?>
                     <a style="cursor:pointer"  onclick="window.open('<?=url_for("cotseguimientos/formSeguimiento?idcotizacion=".$cotizacion->getCaIdcotizacion())?>')" title="Haga click aca para crear un seguimiento. Se abrira una nueva ventana.">
