@@ -346,7 +346,7 @@ class reportesNegComponents extends sfComponents
 		$this->title=($impoexpo== Constantes::IMPO)?"Continuación de viaje":"DTA";
 		$usuarios = Doctrine::getTable("Usuario")
                ->createQuery("u")
-               ->select("u.ca_login,u.ca_nombre,u.ca_email,ca_sucursal")
+               ->select("u.ca_login,u.ca_nombre,u.ca_email,ca_sucursal,u.ca_idsucursal")
                ->innerJoin("u.UsuarioPerfil up")
                ->where("u.ca_activo=? AND up.ca_perfil=? ", array('TRUE','cordinador-de-otm'))
                ->addOrderBy("u.ca_idsucursal")
@@ -356,11 +356,11 @@ class reportesNegComponents extends sfComponents
         $this->usuarios=array();
         foreach($usuarios as $usuario)
         {
-            if(!isset($this->usuarios[$usuario->getCaSucursal()]))
-                $this->usuarios[$usuario->getCaSucursal()]="";
+            if(!isset($this->usuarios[$usuario->getCaIdsucursal()]))
+                $this->usuarios[$usuario->getCaIdsucursal()]="";
             else
-                $this->usuarios[$usuario->getCaSucursal()].="<br>";
-            $this->usuarios[$usuario->getCaSucursal()].=$usuario->getCaEmail();
+                $this->usuarios[$usuario->getCaIdsucursal()].="<br>";
+            $this->usuarios[$usuario->getCaIdsucursal()].=$usuario->getCaEmail();
         }
 	}
 
@@ -478,20 +478,7 @@ class reportesNegComponents extends sfComponents
 
     }
 
-    /*
-	* Edita la informacion seguro
-	* @author: Andres Botero
-	*/
-	public function executeFormSeguros()
-	{
-        $this->usuarios = UsuarioTable::getUsuariosSeguros();
-
-        $this->repseguro = Doctrine::getTable("RepSeguro")->find( $this->reporte->getCaIdreporte());
-        if( !$this->repseguro ){
-            $this->repseguro = new RepSeguro();
-        }
-    }
-
+ 
     /*
 	* Instrucciones para el corte de la guia
 	* @author: Andres Botero
@@ -524,18 +511,7 @@ class reportesNegComponents extends sfComponents
 
     }
 
-    /*
-	* Formulario de exportaciones
-	* @author: Andres Botero
-	*/
-	public function executeFormExportaciones()
-	{
-        $this->repexpo = Doctrine::getTable("RepExpo")->find( $this->reporte->getCaIdreporte());
-        if( !$this->repexpo ){
-            $this->repexpo = new RepExpo();
-        }
 
-    }
     
     public function executeInfoReporte()
 	{
