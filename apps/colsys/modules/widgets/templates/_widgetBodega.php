@@ -38,8 +38,7 @@ WidgetBodega = function( config ){
 
     WidgetBodega.superclass.constructor.call(this, {
         valueField: 'b_ca_idbodega',
-        displayField: 'b_ca_nombre',
-        typeAhead: true,
+        displayField: 'b_ca_nombre',        
         forceSelection: true,
         tpl: this.resultTpl,
         triggerAction: 'all',
