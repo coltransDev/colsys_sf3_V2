@@ -580,23 +580,25 @@ require_once("menu.php");
 		   echo "  </TABLE></TD>";
 		   echo "</TR>";
 
-                   $beneficios = ($rs->Value('ca_diascredito')==0 or $rs->Value('ca_libestado')=="Suspendida")?'background-color:#FF0000;':'background-color:#FFFFC0;';
-                   $beneficios = ($rs->Value('ca_libestado')=="Congelada")?'background-color:#9999CC;':$beneficios;
-                   echo "<TR>";
-                   echo "  <TD Class=listar style='$beneficios'><B>Liberación Automática:</B></TD>";
-                   echo "  <TD Class=listar style='$beneficios' COLSPAN=4><TABLE WIDTH=100% CELLSPACING=1 BORDER=1>";
-                   echo "  <TR>";
-                   echo "    <TD Class=listar style='$beneficios'><B>Días/Crédito : </B><BR />".$rs->Value('ca_diascredito')."</TD>";
-                   echo "    <TD Class=listar style='$beneficios'><B>Cupo Asignado : </B><BR />".number_format($rs->Value('ca_cupo'))."</TD>";
-                   echo "    <TD Class=listar style='$beneficios'><B>Creado : </B>".$rs->Value('ca_usucreado_lb')."<BR />".$rs->Value('ca_fchcreado_lb')."</TD>";
-                   echo "    <TD Class=listar style='$beneficios'><B>Actualizado : </B>".$rs->Value('ca_usuactualizado_lb')."<BR />".$rs->Value('ca_fchactualizado_lb')."</TD>";
-                   echo "  </TR>";
-                   echo "  <TR>";
-                   echo "    <TD Class=listar style='$beneficios' COLSPAN=4><B>Observaciones : </B>".$rs->Value('ca_observaciones')." ".$rs->Value('ca_libestobservaciones')."</TD>";
-                   echo "  </TR>";
-                   echo "  </TABLE></TD>";
-                   echo "  <TD Class=listar style='$beneficios'>".(($rs->Value('ca_fchestado') != '')?"<B>Estado Lib.Automática:</B><BR/>".$rs->Value('ca_libestado')." - ".$rs->Value('ca_usucreado_le')."<BR/>".$rs->Value('ca_fchcreado_le'):"")."</TD>";
-                   echo "</TR>";
+                   if (strlen(trim($rs->Value('ca_diascredito')))!=0){
+                       $beneficios = ($rs->Value('ca_diascredito')==0 or $rs->Value('ca_libestado')=="Suspendida")?'background-color:#FF0000;':'background-color:#FFFFC0;';
+                       $beneficios = ($rs->Value('ca_libestado')=="Congelada")?'background-color:#9999CC;':$beneficios;
+                       echo "<TR>";
+                       echo "  <TD Class=listar style='$beneficios'><B>Liberación Automática:</B></TD>";
+                       echo "  <TD Class=listar style='$beneficios' COLSPAN=4><TABLE WIDTH=100% CELLSPACING=1 BORDER=1>";
+                       echo "  <TR>";
+                       echo "    <TD Class=listar style='$beneficios'><B>Días/Crédito : </B><BR />".$rs->Value('ca_diascredito')."</TD>";
+                       echo "    <TD Class=listar style='$beneficios'><B>Cupo Asignado : </B><BR />".number_format($rs->Value('ca_cupo'))."</TD>";
+                       echo "    <TD Class=listar style='$beneficios'><B>Creado : </B>".$rs->Value('ca_usucreado_lb')."<BR />".$rs->Value('ca_fchcreado_lb')."</TD>";
+                       echo "    <TD Class=listar style='$beneficios'><B>Actualizado : </B>".$rs->Value('ca_usuactualizado_lb')."<BR />".$rs->Value('ca_fchactualizado_lb')."</TD>";
+                       echo "  </TR>";
+                       echo "  <TR>";
+                       echo "    <TD Class=listar style='$beneficios' COLSPAN=4><B>Observaciones : </B>".$rs->Value('ca_observaciones')." ".$rs->Value('ca_libestobservaciones')."</TD>";
+                       echo "  </TR>";
+                       echo "  </TABLE></TD>";
+                       echo "  <TD Class=listar style='$beneficios'>".(($rs->Value('ca_fchestado') != '')?"<B>Estado Lib.Automática:</B><BR/>".$rs->Value('ca_libestado')." - ".$rs->Value('ca_usucreado_le')."<BR/>".$rs->Value('ca_fchcreado_le'):"")."</TD>";
+                       echo "</TR>";
+                   }
 
 		   if ($rs->Value('ca_fchfirmado') != '' or $rs->Value('ca_fchvencimiento') != ''){
 			   list($anno, $mes, $dia) = sscanf($rs->Value('ca_fchvencimiento'),"%d-%d-%d");
