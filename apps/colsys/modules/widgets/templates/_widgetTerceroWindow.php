@@ -152,8 +152,7 @@ Ext.extend(WidgetTerceroWindow, Ext.Window, {
                                 Ext.getCmp(res.idcomponent).hiddenField.value = res.idtercero;
                             }
                         }
-                        Ext.getCmp('tercero-window').hide();
-                        //WidgetTerceroWindow.closeAction="close";
+                        Ext.getCmp('tercero-window').hide();                        
                         
                     }else{
                         alert("Ha ocurrido un error al guardar el registro");
