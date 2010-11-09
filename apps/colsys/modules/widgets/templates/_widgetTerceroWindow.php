@@ -16,6 +16,8 @@ WidgetTerceroWindow = function( config ){
     Ext.apply(this, config);
 
     WidgetTerceroWindow.superclass.constructor.call(this, {
+        autoDestroy :false,
+        id: 'tercero-window',
         width       : 500,			
 			closeAction :'close',
 			plain       : true,
@@ -127,7 +129,6 @@ Ext.extend(WidgetTerceroWindow, Ext.Window, {
             {
                 waitMsg: 'Guardando cambios...',
                 url: '<?=url_for("widgets/guardarTercero")?>',
-                
                 params : {
                     idtercero: idtercero,
                     nombre: nombre,
@@ -151,7 +152,8 @@ Ext.extend(WidgetTerceroWindow, Ext.Window, {
                                 Ext.getCmp(res.idcomponent).hiddenField.value = res.idtercero;
                             }
                         }
-                        WidgetTerceroWindow.hide();
+                        Ext.getCmp('tercero-window').hide();
+                        //WidgetTerceroWindow.closeAction="close";
                         
                     }else{
                         alert("Ha ocurrido un error al guardar el registro");
@@ -162,45 +164,40 @@ Ext.extend(WidgetTerceroWindow, Ext.Window, {
         );
         }
     },
+    cargar :function(idtercero)
+    {
+        
+        if( idtercero ){
+            Ext.Ajax.request(
+            {
+                waitMsg: 'Cargando datos...',
+                url: '<?=url_for("widgets/datosTercero")?>',
 
-    show : function(){
-
-        if( this.idtercero ){
-            
-			Ext.Ajax.request(
-			{
-				waitMsg: 'Cargando datos...',
-				url: '<?=url_for("widgets/datosTercero")?>',
-
-				params : {
-					idtercero: this.idtercero
-				}
-				,
-
-
-				callback :function(options, success, response){
-					var res = Ext.util.JSON.decode( response.responseText );
-					var fp = Ext.getCmp("tercero-form");
-					fp.getForm().findField("idtercero").setValue(res.idtercero);
-					fp.getForm().findField("nombre").setValue(res.nombre);
-					fp.getForm().findField("identificacion").setValue(res.identificacion);
-					fp.getForm().findField("direccion").setValue(res.direccion);
-					fp.getForm().findField("telefono").setValue(res.telefonos);
-					fp.getForm().findField("email").setValue(res.email);
-					fp.getForm().findField("fax").setValue(res.fax);
-					fp.getForm().findField("contacto").setValue(res.contacto);
-                    
+                params : {
+                        idtercero: idtercero
+                }
+                ,
+    		callback :function(options, success, response){
+                    var res = Ext.util.JSON.decode( response.responseText );
+                    var fp = Ext.getCmp("tercero-form");
+                    fp.getForm().findField("idtercero").setValue(res.idtercero);
+                    fp.getForm().findField("nombre").setValue(res.nombre);
+                    fp.getForm().findField("identificacion").setValue(res.identificacion);
+                    fp.getForm().findField("direccion").setValue(res.direccion);
+                    fp.getForm().findField("telefono").setValue(res.telefonos);
+                    fp.getForm().findField("email").setValue(res.email);
+                    fp.getForm().findField("fax").setValue(res.fax);
+                    fp.getForm().findField("contacto").setValue(res.contacto);
                     fp.getForm().findField("ciudad").setRawValue(res.ciudad);
                     fp.getForm().findField("ciudad").hiddenField.value = res.idciudad;
-                    
-				}
-			});
 
-		}
-
-        WidgetTerceroWindow.superclass.show.apply(this, arguments);
+                }
+            });
+	}
 
     }
+
+
 });
 	
 </script>

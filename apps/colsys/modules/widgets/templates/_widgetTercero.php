@@ -58,7 +58,6 @@ WidgetTercero = function( config ){
     });
 };
 
-
 Ext.extend(WidgetTercero, Ext.form.ComboBox, {
     getTrigger : Ext.form.TwinTriggerField.prototype.getTrigger,
     initTrigger : Ext.form.TwinTriggerField.prototype.initTrigger,
@@ -116,13 +115,17 @@ Ext.extend(WidgetTercero, Ext.form.ComboBox, {
     titulo+=this.tipo;
 
     idtercero = this.hiddenField?this.hiddenField.value:this.getValue();
-    win = new WidgetTerceroWindow({idcomponent: this.id,
-                                        title: titulo,
-                                        idtercero: (idtercero)?idtercero:"",
+    win1 = Ext.getCmp("tercero-window");
+    if(!win1)
+    {
+        win1 = new WidgetTerceroWindow({idcomponent: this.id,
+                                        title: titulo,                                        
                                         tipo: this.tipo
                                        });
-    
-    win.show();
+        
+    }    
+    win1.show();
+    win1.cargar(idtercero);
   },
   onTrigger3Click : function() {
     this.onTriggerClick();
