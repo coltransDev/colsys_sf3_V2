@@ -4,8 +4,6 @@
  * 
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
-
-
 include_component("widgets", "widgetTerceroWindow");
 ?>
 
