@@ -17,6 +17,13 @@ class InoComprobante extends BaseInoComprobante
     const PARA_TRANSFERIR = 1;
     const TRANSFERIDO = 1;
 
+    const IDTIPO_F_INO = 10;
+
+    public function __toString(){
+        $tipo = $this->getInoTipoComprobante();
+        return $tipo->getCaTipo().$tipo->getCaComprobante()."-".$this->getCaConsecutivo();
+    }
+
     public function getValor(){
         $tipo = $this->getInoTipoComprobante();
 

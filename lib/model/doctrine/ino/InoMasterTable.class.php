@@ -75,7 +75,7 @@ class InoMasterTable extends Doctrine_Table
         $referencia[4] = "%";
         $referencia[5] = $ano%10;
 
-        $ref = Doctrine::getTable("InoMaestra")
+        $ref = Doctrine::getTable("InoMaster")
                          ->createQuery("m")
                          ->select( "m.ca_referencia" )
                          ->where("m.ca_referencia LIKE ?", implode(".", $referencia) )
@@ -146,7 +146,7 @@ class InoMasterTable extends Doctrine_Table
 
         /*$referencia.=$mes.'.';
 
-        $ref = Doctrine::getTable("InoMaestra")
+        $ref = Doctrine::getTable("InoMaster")
                          ->createQuery("m")
                          ->select( "MAX(m.ca_referencia)" )
                          ->where("m.ca_referencia LIKE ?", $referencia."%.".$ano )
@@ -243,7 +243,7 @@ BEGIN
     END IF;
     a_output:= a_output || a_mes[1] || '.%.' || a_mes[2];
 
-	select into registro max(ca_referencia) as ca_referencia from tb_inomaestra_sea where ca_referencia like a_output;
+	select into registro max(ca_referencia) as ca_referencia from tb_InoMaster_sea where ca_referencia like a_output;
 	IF nullvalue(registro.ca_referencia) THEN
 		a_referencia:= string_to_array(a_output,'.');
 		a_referencia[4]:= '001';
