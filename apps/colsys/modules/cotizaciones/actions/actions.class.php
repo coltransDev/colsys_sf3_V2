@@ -572,7 +572,7 @@ class cotizacionesActions extends sfActions
 
 		$this->filename=$this->getRequestParameter("filename");
 		$this->notas = sfYaml::load(sfConfig::get('sf_app_module_dir').DIRECTORY_SEPARATOR."cotizaciones".DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."notas.yml");
-
+        
 		$grupos = array();
 
 		$rows = Doctrine::getTable("CotProducto")
@@ -587,7 +587,7 @@ class cotizacionesActions extends sfActions
 			$grupos[$row["ca_transporte"]][]=$row["ca_modalidad"];
 			$grupos[$row["ca_transporte"]] = array_unique( $grupos[$row["ca_transporte"]] );
 		}
-                $this->setTemplate("generarPDF".$this->cotizacion->getCaEmpresa());
+        $this->setTemplate("generarPDF".$this->cotizacion->getCaEmpresa());
 		$this->grupos = $grupos;
 	}
     /*
@@ -667,6 +667,8 @@ class cotizacionesActions extends sfActions
 			if(file_exists($fileName)){
 				@unlink( $fileName );
 			}
+            
+
 			$this->getRequest()->setParameter('filename',$directory.$fileName);
 			sfContext::getInstance()->getController()->getPresentationFor( 'cotizaciones', 'generarPDF') ;
 

@@ -1,8 +1,7 @@
 # default values
 all:
   digitalFile:
-    root:  /home/abotero/Desarrollo/digitalFile/
-    pricing:  /home/abotero/colsys_sf12/web/colsys/uploads
+    root:  /home/abotero/Desarrollo/digitalFile/    
 #    root:  C:\Desarrollo\digitalFile\
 
   smtp:
@@ -11,19 +10,20 @@ all:
     passwd:  tasas_cambios
 #    host: smtp.colmas.com.co
 #    user: bogota-aduana@colmas.com.co
-#    passwd:  gbvFR5
+#    passwd:  bogotaadu
     port: 25
     debugAddress: abotero@coltrans.com.co
 #    debugAddress: botero82@gmail.com
 #    public_ip: 200.14.235.62
 
   ldap:
-    host: 10.192.1.2
+    host: 10.192.1.83
     auth_enabled: true
 #    user: colsys
 #    passwd: $tlco5903Am
 
   memcache:
+#    host: 127.0.0.1
     host: 10.192.1.62
     port: 11211
     prefix: colsess

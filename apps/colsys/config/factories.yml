@@ -73,7 +73,10 @@ all:
   storage:
     class: mySessionStorage
     param:
-      session_name: colsys
+      session_name: colsys      
+      session_cookie_secure: true
+      session_cookie_secret: Ard$ttE!hvd
+      session_cookie_lifetime: null
       cache:
         class: sfMemcacheCache
         param:

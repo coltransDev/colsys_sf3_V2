@@ -1185,7 +1185,8 @@ Algunos de estos mecanismos de prevención y control del lavado de activos que la
 Nos es muy grato ofrecer los servicios de nuestra empresa, para contribuir con el buen servicio los invitamos a diligenciar la Circular 0170 de manera sincera y oportuna.
  ", 0,'J',0);
 $pdf->Ln(2);
-$pdf->Output ( $filename);
+$pdf->Output ( $filename );
+
 if( !$filename ){ //Para evitar que salga la barra de depuracion
 	exit();
 }

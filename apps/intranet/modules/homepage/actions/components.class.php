@@ -14,21 +14,20 @@ class homepageComponents extends sfComponents {
      *
      *
      */
-   
     const RUTINA_COLSYS = 99;
     const RUTINA_INTRANET = 99;
 
     public function getNivel() {
 
-        $app =  sfContext::getInstance()->getConfiguration()->getApplication();
+        $app = sfContext::getInstance()->getConfiguration()->getApplication();
         //   return 5;
-        switch( $app ){
+        switch ($app) {
             case "colsys":
                 $rutina = homepageComponents::RUTINA_COLSYS;
-            break;
+                break;
             case "intranet":
                 $rutina = homepageComponents::RUTINA_INTRANET;
-            break;
+                break;
         }
 
         $this->nivel = $this->getUser()->getNivelAcceso($rutina);
@@ -43,58 +42,55 @@ class homepageComponents extends sfComponents {
 
     public function executeBirthday() {
 
-        $inicial=date('m-d');
-        $final=date('m-d',time()+ 86400*3);
+        $inicial = date('m-d');
+        $final = date('m-d', time() + 86400 * 3);
 
-        $this->usuarios= Doctrine::getTable('Usuario')
-                ->createQuery('u')
-                ->where('substring(ca_cumpleanos::text, 6,5) BETWEEN ? and ?', array($inicial, $final))
-                ->addWhere ('ca_activo = ?', true)
-                ->addOrderBy('substring(ca_cumpleanos::text, 6,5)  ASC')
-                ->execute();
+        $this->usuarios = Doctrine::getTable('Usuario')
+                        ->createQuery('u')
+                        ->where('substring(ca_cumpleanos::text, 6,5) BETWEEN ? and ?', array($inicial, $final))
+                        ->addWhere('ca_activo = ?', true)
+                        ->addOrderBy('substring(ca_cumpleanos::text, 6,5)  ASC')
+                        ->execute();
     }
 
     public function executeMainMenu() {
+        
     }
+
+    public function executeIncomeLast() {
+
+        $final = date('Y-m-d');
+        $inicial = date('Y-m-d', time() - 86400 * 45);
+
+        $this->usuarios = Doctrine::getTable('Usuario')
+                        ->createQuery('u')
+                        ->where('ca_fchingreso BETWEEN ? and ?', array($inicial, $final))
+                        ->addWhere('ca_activo = ?', true)
+                        ->addOrderBy('ca_fchingreso ASC')
+                        ->execute();
+    }
+
+    public function executeLogos() {
+        // $this->forward('default', 'module');
+        $this->user = sfContext::getInstance()->getUser();
+    }
+
+    public function executeNoticias() {
+
+        $this->nivel = $this->getNivel();
+
+        $this->noticias = Doctrine::getTable("Noticia")
+                        ->createQuery("n")
+                        ->where("n.ca_fcharchivar>=?", date("Y-m-d"))
+                        ->addOrderBy("n.ca_fchpublicacion DESC ")
+                        ->execute();
+    }
+
+    public function executeSearch() {
+
+    }
+        
     
-	public function executeIncomeLast() {
 
-        $final=date('Y-m-d');
-        $inicial=date('Y-m-d',time()- 86400*45);
-
-        $this->usuarios= Doctrine::getTable('Usuario')
-                ->createQuery('u')
-                ->where('ca_fchingreso BETWEEN ? and ?', array($inicial, $final))
-                ->addWhere ('ca_activo = ?', true)
-                ->addOrderBy('ca_fchingreso ASC')
-                ->execute();
-    }
-    
-  public function executeLogos()
-  {
-    // $this->forward('default', 'module');
-    $this->user = sfContext::getInstance()->getUser();
-	
-  }
-
-    public function executeNoticias()
-    {
-
-    $this->nivel = $this->getNivel();
-
-    $this->noticias = Doctrine::getTable("Noticia")
-                             ->createQuery("n")
-                             ->where("n.ca_fcharchivar>=?", date("Y-m-d"))
-                             ->addOrderBy("n.ca_fchpublicacion DESC ")
-                             ->execute();
-
-
-
-    }
-    public function executeSearch()
-  {
-  }
-
-  
 }
 

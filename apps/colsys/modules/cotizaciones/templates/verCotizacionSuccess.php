@@ -50,7 +50,10 @@ if( !$cotizacion->getCaUsuanulado() ){
     <?
     }
     ?>
+
+
 <div id="emailForm"  style="display:<?=$enBlanco?"inline":"none"?>;">
+   
 	<form name="form1" id="form1" method="post" action="<?=url_for("cotizaciones/enviarCotizacionEmail?id=".$cotizacion->getCaIdcotizacion())?>" onsubmit="return verificarInfo()">
 		<input type="hidden" name="checkObservaciones" id="checkObservaciones" value="" />
 	
