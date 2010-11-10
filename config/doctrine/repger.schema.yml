@@ -1,0 +1,50 @@
+
+RepGerInforme:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: repger
+  tableName: repger.tb_informes
+  attributes:
+    export: tables
+  columns:
+    ca_idinforme:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_titulo: string
+    ca_categoria: string
+  relations:
+    RepGerCampo:
+      local: ca_idinforme
+      foreign: ca_idinforme
+      type: many
+  
+
+RepGerCampo:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: repger
+  tableName: repger.tb_campos
+  attributes:
+    export: tables
+  columns:
+    ca_idcampo:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_idinforme: integer
+    ca_campo: string
+    ca_nombre: string
+    ca_tipo: string    
+    ca_agrupar: boolean
+    ca_filtrar: boolean
+    ca_agregacion: string
+  relations:
+    RepGerInforme:
+      local: ca_idinforme
+      foreign: ca_idinforme
+      type: one

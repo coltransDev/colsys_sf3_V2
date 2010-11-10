@@ -211,6 +211,8 @@ InoComprobante:
     ca_tasacambio: decimal
     ca_observaciones: string
     ca_estado: integer
+    ca_valor: float
+    ca_idmoneda: string
     ca_fchcreado: timestamp
     ca_usucreado: string
     ca_fchactualizado: timestamp
@@ -320,10 +322,9 @@ InoConcepto:
     ca_recargolocal: boolean
     ca_recargoorigen: boolean
     ca_recargootmdta: boolean
-    ca_costo: boolean    
-    ca_parametros:
-      type: string
-      notnull: true
+    ca_costo: boolean
+    ca_aplicaciones: string
+    ca_aka: string
     ca_fcheliminado: timestamp
     ca_usueliminado: string
   relations:
@@ -519,25 +520,24 @@ InoAuditor:
       type: integer
       autoincrement: true
       primary: true
-    ca_referencia: string
-    ca_fchevento: datetime
+    ca_idmaster: integer
     ca_tipo : string
     ca_asunto: string
     ca_detalle : string
     ca_compromisos: string
+    ca_respuesta: string
     ca_fchcompromiso : date
-    ca_idantecedente: integer
-    ca_usuario: string
-    ca_sucursal: string
-    ca_modulo: integer
+    ca_idantecedente: integer           
     ca_estado: char
+    ca_fchcreado: timestamp
+    ca_usucreado: string
   relations:
-    InoMaestra:
-      local: ca_referencia
-      foreign: ca_referencia
+    InoMaster:
+      local: ca_idmaster
+      foreign: ca_idmaster
       type: many
     UsuCreado:
-      local: ca_usuario
+      local: ca_usucreado
       foreign: ca_login
       type: one
       class: Usuario

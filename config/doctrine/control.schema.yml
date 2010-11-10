@@ -26,7 +26,7 @@ Usuario:
     ca_cumpleanos: date
     ca_fchingreso: date
     ca_manager: string(15)
-    ca_nombres: string(30)car
+    ca_nombres: string(30)
     ca_apellidos: string(30)
     ca_teloficina: string(30)
     ca_telparticular: string(30)
@@ -36,6 +36,10 @@ Usuario:
     ca_direccion: string(80)
     ca_tiposangre: string(15)
     ca_parentesco: string(10)
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string
   relations:
     AccesoUsuario:
       local: ca_login
@@ -89,7 +93,7 @@ AccesoPerfil:
       type: string(255)
       primary: true
     ca_acceso:
-      type: integer(4)    
+      type: integer(4)
   relations:
     Perfil:
       local: ca_perfil
