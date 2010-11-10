@@ -45,3 +45,28 @@ ALTER TABLE pric.tb_conceptoaduanaxcliente_id OWNER TO postgres;
 GRANT ALL ON TABLE pric.tb_conceptoaduanaxcliente_id TO postgres;
 GRANT ALL ON TABLE pric.tb_conceptoaduanaxcliente_id TO "Administrador";
 GRANT ALL ON TABLE pric.tb_conceptoaduanaxcliente_id TO "Usuarios";
+
+
+2010-04-05
+
+//Se modificaron las referencia a la tabla costos
+
+ALTER TABLE pric.tb_conceptoaduana DROP CONSTRAINT fk_tb_conceptos_tb_conceptos;
+ALTER TABLE pric.tb_conceptoaduana
+  ADD CONSTRAINT fk_tb_conceptos_tb_conceptos FOREIGN KEY (ca_idconcepto)
+      REFERENCES tb_costos (ca_idcosto) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE NO ACTION;
+
+ALTER TABLE pric.tb_conceptoaduanaxcliente DROP CONSTRAINT fk_tb_conceptosaduanaxcliente;
+ALTER TABLE pric.tb_conceptoaduanaxcliente
+  ADD CONSTRAINT fk_tb_conceptosaduanaxcliente FOREIGN KEY (ca_idconcepto)
+      REFERENCES tb_costos (ca_idcosto) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE NO ACTION;
+
+
+ALTER TABLE cot.tb_conceptoaduana DROP CONSTRAINT fk_tb_conceptos_tb_conceptos;
+
+ALTER TABLE cot.tb_conceptoaduana
+  ADD CONSTRAINT fk_tb_conceptos_tb_conceptos FOREIGN KEY (ca_idconcepto)
+      REFERENCES tb_costos (ca_idcosto) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE NO ACTION;
