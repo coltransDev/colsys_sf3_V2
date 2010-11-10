@@ -547,7 +547,7 @@ a:active {
 }
 
 #bd .right-column {
-	width: 200px;
+	width: 170px;
 	float: left;
 	margin-left: 20px;
 }
@@ -1790,3 +1790,29 @@ ul#social a#vimeo:hover {
     background-position: 0 -230px; }
 
 /* End Social Favicons */
+
+
+
+/*
+* Estilos para la lista de tareas
+*/
+
+.taskListHead_expanded{
+	padding: 2px 2px 2px 15px;
+	border-bottom:#333333 3px solid;
+	cursor:pointer;
+	background: transparent url(../images/group-expand-sprite.gif) no-repeat scroll 3px -49px;
+}
+
+.taskListHead_collapsed{
+	padding: 2px 2px 2px 15px;
+	border-bottom:#333333 3px solid;
+	cursor:pointer;
+	background: transparent url(../images/group-expand-sprite.gif) no-repeat scroll 3px 0px;
+
+
+}
+
+.nota{
+	font-size: 9px;
+}

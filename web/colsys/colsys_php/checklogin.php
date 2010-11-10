@@ -13,29 +13,9 @@ if( !$session_id ){
 }
 
 
-
-require( '../../../config/ProjectConfiguration.class.php' );
-
-$config = '../../../config/databases.yml';
-$databaseConfig = sfYaml::load($config);
+require("db_config.php");
 
 
-$database = "Coltrans";
-
-$dsn = $databaseConfig['all']['doctrine']['param']['dsn'];
-
-
-$dsn =  substr( $dsn,  strpos( $dsn, "dbname")+7 );
-$principal = substr( $dsn, 0,  strpos( $dsn, ";") );
-$servidor = substr( $dsn,  strlen( $principal )+6 );
-$usuarioDb = $databaseConfig['all']['doctrine']['param']['username'];
-$password = $databaseConfig['all']['doctrine']['param']['password'];
-
-/*
-$usuarioDb = "Administrador";
-$password = "cglti\$col91";
-$servidor = "10.192.1.127";
-*/
 
 
 $config = '../../../apps/colsys/config/app.yml';
