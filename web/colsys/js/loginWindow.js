@@ -61,7 +61,7 @@ var checkLogin = function(){
     title: 'Colsys: Control de acceso',
 
     items: [
-        new Ext.FormPanel({
+        new Ext.form.FormPanel({
             labelWidth: 75, // label settings here cascade unless overridden
             frame:false,
 
