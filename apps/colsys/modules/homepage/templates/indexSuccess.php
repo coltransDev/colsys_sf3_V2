@@ -27,7 +27,7 @@
                         echo link_to(image_tag("16x16/edit_add.gif")." Nuevo" , "homepage/editarNovedad", array("nivelNoticias"=>$nivelNoticias))."<br />";
 
                     }
-                    include_component("homepage", "novedades") ;
+                    include_component("homepage", "novedades", array( "nivelNoticias"=>$nivelNoticias )) ;
                     
                     include_component("notificaciones","tareasPendientes")
                     ?>
@@ -48,14 +48,6 @@
             </div>
 
             <div style="clear:both"></div>
-
-
-
-
-
-
-
-
 
         </div>
     </div>

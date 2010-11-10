@@ -22,7 +22,7 @@ $i=0;
                     ?>
                </a>
            </h2>
-           <p class="meta"><?=$novedad->getCaUsucreado()." ".Utils::fechaMes($novedad->getCaFchpublicacion("Y-m-d"))?> <!--<a href="" title="">40 Comments »</a></p>-->
+           <p class="meta"><?=$novedad->getUsuCreado()->getCaNombre()." ".Utils::fechaMes($novedad->getCaFchpublicacion("Y-m-d"))?> <!--<a href="" title="">40 Comments »</a></p>-->
            <div style="overflow: hidden;">
                     <img src="<?=$novedad->getCaIcon()?>" class="post-icon">
                 <div class="excerpt">
