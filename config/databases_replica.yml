@@ -20,8 +20,8 @@ all:
     class: sfDoctrineDatabase
     param:
       is_master: true
-      dsn: 'pgsql:dbname=Coltrans;host=10.192.1.104'
-#      dsn: 'pgsql:dbname=Coltrans;host=10.192.1.64'
+      dsn: 'pgsql:dbname=Coltrans;host=10.192.1.65'
+
       username: Administrador
       password: cglti$col91
       encoding: iso8859-1

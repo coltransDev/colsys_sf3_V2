@@ -9,5 +9,5 @@ autoload:
 #    recursive: true
   Swift:
     name:      Swift
-    path:      %SF_LIB_DIR%/vendor/Swift
+    path:      %SF_LIB_DIR%/vendor/Swift/lib
     recursive: true

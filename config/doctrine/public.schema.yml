@@ -471,6 +471,12 @@ ColNovedad:
     ca_fchcreado: timestamp
     ca_usucreado: string
     ca_icon: string
+  relations:
+    UsuCreado:
+      local: ca_usucreado
+      foreign: ca_login
+      type: one
+      class: Usuario
 
 
 Sia:

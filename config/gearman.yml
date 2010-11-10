@@ -1,0 +1,9 @@
+all:
+  server:
+    default:
+      host: localhost
+      port: 4730
+  worker:
+    example1:
+      reverse: [Worker1, reverse]
+      hash: [Worker1, hash]
