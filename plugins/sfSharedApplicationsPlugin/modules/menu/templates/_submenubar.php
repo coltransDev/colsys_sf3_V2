@@ -31,14 +31,13 @@ foreach($buttons as $button){
 	</div>
 <?php 
 }
-
 if(isset($buttonHelp) && count($buttonHelp)>0)
 {
 
 
 ?>
     <div class="toolbarbtnhelp">
-        <? echo link_to( image_tag( $buttonHelp["image"] ) , $buttonHelp["link"] ,array('target' => '_blank') );?>
+        <a onclick="<?=$buttonHelp['onClick']?>" class="toolbarBtn"><?=image_tag( $buttonHelp["image"] ) ?></a>
     </div>
 <?
 }
