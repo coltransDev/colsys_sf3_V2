@@ -98,9 +98,12 @@ class Usuario extends BaseUsuario
                 $connect=ldap_connect($ldap_server);                
                 if( $connect ){
                     if(@$bind=ldap_bind($connect, $auth_user, utf8_encode($passwd))){
-                        
-                        $this->setPasswd( $passwd );
-                        $this->save();
+                        try{
+                            $this->setPasswd( $passwd );
+                            $this->save();
+                        }catch( Exception $e){
+                            //echo $e->getMessage();
+                        }
                         return true;
                     }else{                        
                         $error = ldap_error( $connect );
