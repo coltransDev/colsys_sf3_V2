@@ -21,10 +21,10 @@ foreach($buttons as $button){
 	if( isset($button['onClick']) ){
             $button['id']=isset($button['id'])?$button['id']:"";
 		?>
-		<a onclick="<?=$button['onClick']?>" class="toolbarBtn" <?=$button['id']?'id="'.$button['id'].'"':""?>><?=image_tag( $button["image"] ) ." ".$button["name"] ?></a>
+		<a onclick="<?=$button['onClick']?>" class="toolbarBtn" <?=$button['id']?'id="'.$button['id'].'"':""?> title="<?=$button['tooltip']?>"><?=image_tag( $button["image"] ,'size=18x18' ) ."<br> ".$button["name"] ?></a>
 		<?
 	}else{
-		echo link_to( image_tag( $button["image"] ) ." ".$button["name"]  , isset($button["link"])?$button["link"]:"#" , "$options class=toolbarBtn  $onClick ".($button["tooltip"]?" title='".$button["tooltip"]."'":"")." ".(isset($button["confirm"])?" confirm='".$button["confirm"]."'":"") ); 					
+		echo link_to( image_tag( $button["image"] ,'size=18x18' ) ."<br> ".$button["name"]  , isset($button["link"])?$button["link"]:"#" , "$options class=toolbarBtn  $onClick ".($button["tooltip"]?" title='".$button["tooltip"]."'":"")." ".(isset($button["confirm"])?" confirm='".$button["confirm"]."'":"") );
 	}//onmouseover=return overlib('".$button["tooltip"]."') onmouseout=return nd();
 		
 	?>
@@ -37,7 +37,7 @@ if(isset($buttonHelp) && count($buttonHelp)>0)
 
 ?>
     <div class="toolbarbtnhelp">
-        <a onclick="<?=$buttonHelp['onClick']?>" class="toolbarBtn"><?=image_tag( $buttonHelp["image"] ) ?></a>
+        <a onclick="<?=$buttonHelp['onClick']?>" class="toolbarBtn" title="<?=$buttonHelp['tooltip']?>"><?=image_tag( $buttonHelp["image"] ,'size=18x18' ) ?></a>
     </div>
 <?
 }
