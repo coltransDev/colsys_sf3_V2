@@ -226,12 +226,11 @@ class adminUsersActions extends sfActions {
 
         $this->tiposangre = $p->execute($query);
 
-        $r = Doctrine_Manager::getInstance()->connection();
-        $query = "SELECT DISTINCT ca_parentesco";
-        $query.= "	from control.tb_usuarios";
-        $query.= "  order by ca_parentesco ASC";
 
-        $this->parentescos = $r->execute($query);
+
+
+        $this->parentescos = ParametroTable::retrieveByCaso('CU093');
+
 
         $s = Doctrine_Manager::getInstance()->connection();
         $query = "SELECT DISTINCT ca_teloficina";

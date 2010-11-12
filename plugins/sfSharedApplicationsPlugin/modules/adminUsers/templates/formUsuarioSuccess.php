@@ -136,7 +136,7 @@ $teloficinas = $sf_data->getRaw("teloficinas");
         for( i in jefes ){
             if( typeof(jefes[i]['j_ca_cargo'])!="undefined" ){
                 //alert(defaultValJef);
-                if( idempresa == jefes[i]['c_ca_idempresa'] || departamentosFld.value=="Exportaciones Aduana"){
+                if( idempresa == jefes[i]['c_ca_idempresa'] || idempresa == 1 || idempresa == 2){
                     //alert(jefes[i]["j_ca_login"]);
 
                     if( defaultValJef == jefes[i]["j_ca_login"]){
@@ -501,7 +501,7 @@ $teloficinas = $sf_data->getRaw("teloficinas");
 											<?
 											foreach( $parentescos as $parentesco ){
 											?>
-											<option value="<?=$parentesco['ca_parentesco']?>"<?=$usuario->getCaParentesco()==$parentesco['ca_parentesco']?'selected="selected"':''?> > <?=($parentesco['ca_parentesco'])?></option>
+											<option value="<?=$parentesco->getCaValor()?>"<?=$usuario->getCaParentesco()==$parentesco->getCaValor()?'selected="selected"':''?> > <?=($parentesco->getCaValor())?></option>
 											<?
 											}
 											?>
