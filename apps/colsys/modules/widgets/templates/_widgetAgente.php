@@ -30,7 +30,22 @@ WidgetAgente = function( config ){
 			});
     
     this.resultTpl = new Ext.XTemplate(
-            '<tpl for="."><div class="search-item"><b>{nombre}</b><br /><span style="font-size:9px">{pais}-{ciudad}-{direccion} </span> <span style="font-size:9px">{tipo} </span> </div></tpl>'
+            '<tpl for="."><div class="search-item"><b>{nombre}</b><br /><span style="font-size:9px">{pais}-{ciudad}-{direccion} </span> <br />',
+            '<span style="font-size:9px">',
+             '<tpl if="this.oficial(tipo)">',
+                '<p>{tipo}</p>',
+            '</tpl>',
+             '<tpl if="!this.oficial(tipo)">',
+                '<p><span class="rojo">{tipo}</span></p>',
+            '</tpl>',
+
+            '</span> </div></tpl>'
+            ,{
+                oficial: function(val){
+                    return val == 'Oficial'
+                }
+            }
+
     );
     WidgetAgente.superclass.constructor.call(this, {
         valueField: 'idagente',
