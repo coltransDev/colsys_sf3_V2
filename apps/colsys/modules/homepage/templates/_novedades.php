@@ -5,6 +5,12 @@ if( count($novedades)>0 ){
 ?>
 <div class="content-box">
 <h5>Noticias</h5>
+<?
+if( $nivelNoticias>0 ){
+    echo link_to(image_tag("16x16/edit_add.gif")." Nuevo" , "homepage/editarNovedad", array("nivelNoticias"=>$nivelNoticias))."<br />";
+
+}
+?>
 <div class="box">
 <div id="entry-list">
 <?

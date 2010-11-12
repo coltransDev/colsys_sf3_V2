@@ -23,10 +23,7 @@
             <div style="padding:10px 0 0;">
                 <div class="left-column">
                     <?
-                    if( $nivelNoticias>0 ){
-                        echo link_to(image_tag("16x16/edit_add.gif")." Nuevo" , "homepage/editarNovedad", array("nivelNoticias"=>$nivelNoticias))."<br />";
-
-                    }
+                    
                     include_component("homepage", "novedades", array( "nivelNoticias"=>$nivelNoticias )) ;
                     
                     include_component("notificaciones","tareasPendientes")
