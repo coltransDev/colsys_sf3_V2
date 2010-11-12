@@ -458,7 +458,8 @@ class widgetsComponents extends sfComponents
                                     "pais" => utf8_encode($agente["t_ca_nombre"]),
                                     "idtrafico" => $agente["t_ca_idtrafico"],
                                     "ciudad" => utf8_encode($agente["c_ca_ciudad"]),
-                                    "direccion" => utf8_encode($agente["s_ca_direccion"])
+                                    "direccion" => utf8_encode($agente["s_ca_direccion"]),
+                                    "tipo" => utf8_encode($agente["a_ca_tipo"])
                 );
         }
 	}
