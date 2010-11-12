@@ -661,6 +661,7 @@ Ext.extend(PanelRecargosPorLinea, Ext.grid.EditorGridPanel, {
                 changes['idtrafico']=this.idtrafico;
                 changes['modalidad']=this.modalidad;
                 changes['impoexpo']=this.impoexpo;
+                changes['transporte']=this.transporte;
                 changes['idlinea']=r.data.idlinea;
                 changes['idrecargo']=r.data.idrecargo;
                 changes['idmoneda']=r.data.idmoneda;
@@ -676,27 +677,29 @@ Ext.extend(PanelRecargosPorLinea, Ext.grid.EditorGridPanel, {
                     changes['idconcepto']=r.data.idconcepto;
                 }
 
-                //envia los datos al servidor
-                Ext.Ajax.request(
-                    {
-                        waitMsg: 'Guardando cambios...',
-                        url: '<?=url_for("pricing/guardarPanelRecargosPorLinea")?>',
-                        //Solamente se envian los cambios
-                        params :	changes,
+                if( r.data.idlinea && r.data.idrecargo ){
+                    //envia los datos al servidor
+                    Ext.Ajax.request(
+                        {
+                            waitMsg: 'Guardando cambios...',
+                            url: '<?=url_for("pricing/guardarPanelRecargosPorLinea")?>',
+                            //Solamente se envian los cambios
+                            params :	changes,
 
-                        callback :function(options, success, response){
+                            callback :function(options, success, response){
 
-                            var res = Ext.util.JSON.decode( response.responseText );
-                            if( res.id && res.success){
-                                var rec = storeRecargos.getById( res.id );
-                                rec.set("sel", false); //Quita la seleccion de todas las columnas
-                                rec.commit();
+                                var res = Ext.util.JSON.decode( response.responseText );
+                                if( res.id && res.success){
+                                    var rec = storeRecargos.getById( res.id );
+                                    rec.set("sel", false); //Quita la seleccion de todas las columnas
+                                    rec.commit();
+                                }
                             }
-                        }
 
 
-                     }
-                );
+                         }
+                    );
+                }
                 r.set("sel", false);//Quita la seleccion de todas las columnas
             }
         }
@@ -717,6 +720,7 @@ Ext.extend(PanelRecargosPorLinea, Ext.grid.EditorGridPanel, {
             var idtrafico = this.idtrafico;
             var modalidad = this.modalidad;
             var impoexpo = this.impoexpo;
+            var transporte = this.transporte;
             var storeRecargos = this.store;
             if( !this.menu ){
                 this.menu = new Ext.menu.Menu({                
@@ -744,6 +748,7 @@ Ext.extend(PanelRecargosPorLinea, Ext.grid.EditorGridPanel, {
                                                 idtrafico: idtrafico,
                                                 modalidad: modalidad,
                                                 impoexpo: impoexpo,
+                                                transporte: transporte,
                                                 idlinea: idlinea,
                                                 idrecargo: idrecargo,
                                                 idconcepto: idconcepto,

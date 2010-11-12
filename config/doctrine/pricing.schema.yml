@@ -343,6 +343,9 @@ PricRecargoxCiudad:
     ca_impoexpo:
       type: string
       primary: true
+    ca_transporte:
+      type: string
+      primary: true
     ca_vlrrecargo: decimal
     ca_aplicacion: string
     ca_vlrminimo: decimal
@@ -393,6 +396,9 @@ PricRecargoxCiudadBs:
       type: string
       primary: true
     ca_impoexpo:
+      type: string
+      primary: true
+    ca_transporte:
       type: string
       primary: true
     ca_vlrrecargo: decimal
@@ -449,6 +455,9 @@ PricRecargoxLinea:
       type: string
       primary: true
     ca_impoexpo:
+      type: string
+      primary: true
+    ca_transporte:
       type: string
       primary: true
     ca_vlrrecargo: decimal
@@ -508,6 +517,9 @@ PricRecargoxLineaBs:
       type: string
       primary: true
     ca_impoexpo:
+      type: string
+      primary: true
+    ca_transporte:
       type: string
       primary: true
     ca_vlrrecargo: decimal

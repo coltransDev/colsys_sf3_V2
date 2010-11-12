@@ -248,7 +248,7 @@ class pricingActions extends sfActions
                     $q = Doctrine_Query::create()->from("PricRecargoxCiudad r");
                 }
                 $q->innerJoin("r.TipoRecargo t");
-                $q->addWhere("r.ca_idtrafico = ? AND (r.ca_idciudad = ? OR r.ca_idciudad = '999-9999') AND t.ca_transporte= ? AND r.ca_modalidad= ? AND r.ca_impoexpo = ?", array($this->trafico->getCaIdtrafico(), $idciudad , $trayecto["t_ca_transporte"], $trayecto["t_ca_modalidad"], $trayecto["t_ca_impoexpo"]));
+                $q->addWhere("r.ca_idtrafico = ? AND (r.ca_idciudad = ? OR r.ca_idciudad = '999-9999') AND r.ca_transporte= ? AND r.ca_modalidad= ? AND r.ca_impoexpo = ?", array($this->trafico->getCaIdtrafico(), $idciudad , $trayecto["t_ca_transporte"], $trayecto["t_ca_modalidad"], $trayecto["t_ca_impoexpo"]));
                 $q->addOrderBy("t.ca_recargo");
                 $pricRecargosxCiudad = $q->execute();
             }
@@ -292,7 +292,7 @@ class pricingActions extends sfActions
                     $q = Doctrine_Query::create()->from("PricRecargoxLinea r");
                 }
                 $q->innerJoin("r.TipoRecargo t");
-                $q->addWhere("r.ca_idtrafico = ? AND r.ca_idlinea = ? AND t.ca_transporte= ? AND r.ca_modalidad= ? AND r.ca_impoexpo = ?", array($this->trafico->getCaIdtrafico(), $trayecto["t_ca_idlinea"], $trayecto["t_ca_transporte"], $trayecto["t_ca_modalidad"], $trayecto["t_ca_impoexpo"]));
+                $q->addWhere("r.ca_idtrafico = ? AND r.ca_idlinea = ? AND r.ca_transporte= ? AND r.ca_modalidad= ? AND r.ca_impoexpo = ?", array($this->trafico->getCaIdtrafico(), $trayecto["t_ca_idlinea"], $trayecto["t_ca_transporte"], $trayecto["t_ca_modalidad"], $trayecto["t_ca_impoexpo"]));
                 
                 $q->addOrderBy("t.ca_recargo");
                 $PricRecargoxLinea = $q->execute();
@@ -843,7 +843,7 @@ class pricingActions extends sfActions
 		}
 		$q = Doctrine_Query::create()->from("PricRecargoxCiudad r");
         $q->innerJoin("r.TipoRecargo t");
-        $q->where("r.ca_idtrafico = ? AND t.ca_transporte= ? AND r.ca_modalidad= ? AND r.ca_impoexpo = ?", array($idtrafico, $transporte , $modalidad, $impoexpo));
+        $q->where("r.ca_idtrafico = ? AND r.ca_transporte= ? AND r.ca_modalidad= ? AND r.ca_impoexpo = ?", array($idtrafico, $transporte , $modalidad, $impoexpo));
         $q->addOrderBy("t.ca_recargo");
         $recargos = $q->execute();
 
@@ -949,13 +949,15 @@ class pricingActions extends sfActions
 		$idrecargo = $this->getRequestParameter("idrecargo");
 		$modalidad = $this->getRequestParameter("modalidad");
 		$impoexpo = $this->getRequestParameter("impoexpo");
+        $transporte = $this->getRequestParameter("transporte");
 
 		$this->forward404Unless( $idtrafico );
 		$this->forward404Unless( $idciudad );
 		$this->forward404Unless( $modalidad );
 		$this->forward404Unless( $impoexpo );
+        $this->forward404Unless( $transporte );
 		//print_r( array($idtrafico, $idciudad, $idrecargo , $modalidad, utf8_decode($impoexpo)) );
-		$recargo = Doctrine::getTable("PricRecargoxCiudad")->find(array($idtrafico, $idciudad, $idrecargo , $modalidad, utf8_decode($impoexpo)));
+		$recargo = Doctrine::getTable("PricRecargoxCiudad")->find(array($idtrafico, $idciudad, $idrecargo , $modalidad, utf8_decode($impoexpo), utf8_decode($transporte)));
 		if( !$recargo ){
 			$recargo = new PricRecargoxCiudad();
 			$recargo->setCaIdtrafico( $idtrafico );
@@ -963,6 +965,7 @@ class pricingActions extends sfActions
 			$recargo->setCaIdrecargo( $idrecargo );
 			$recargo->setCaModalidad( $modalidad );
 			$recargo->setCaImpoexpo( utf8_decode($impoexpo) );
+            $recargo->setCaTransporte( utf8_decode($transporte) );
 			$recargo->setCaVlrrecargo( 0 );
 			$recargo->setCaVlrminimo( 0 );
 			if($consecutivo>0)
@@ -1149,7 +1152,7 @@ class pricingActions extends sfActions
 
         //$q = Doctrine_Query::create()->from("PricRecargoxLinea r");
         $q->innerJoin("r.TipoRecargo t");
-        $q->where("r.ca_idtrafico = ? AND t.ca_transporte= ? AND r.ca_modalidad= ? AND r.ca_impoexpo = ?", array($idtrafico, $transporte, $modalidad, $impoexpo));
+        $q->where("r.ca_idtrafico = ? AND r.ca_transporte= ? AND r.ca_modalidad= ? AND r.ca_impoexpo = ?", array($idtrafico, $transporte, $modalidad, $impoexpo));
         if( $idtrafico=="99-999" ){
             $q->addWhere("r.ca_idlinea = ?", $idlinea);
         }
@@ -1231,7 +1234,9 @@ class pricingActions extends sfActions
 		$idconcepto = $this->getRequestParameter("idconcepto");
 		$modalidad = $this->getRequestParameter("modalidad");
 		$impoexpo = $this->getRequestParameter("impoexpo");
+        $transporte = $this->getRequestParameter("transporte");
 		//echo $impoexpo;
+        
 		
 		if( !$idconcepto ){
 			$idconcepto = 9999;
@@ -1242,7 +1247,7 @@ class pricingActions extends sfActions
 		$this->forward404Unless( $modalidad );
 		$this->forward404Unless( $impoexpo );
 		
-		$recargo = Doctrine::getTable("PricRecargoxLinea")->find( array($idtrafico, $idlinea, $idrecargo, $idconcepto , $modalidad, utf8_decode($impoexpo)) );
+		$recargo = Doctrine::getTable("PricRecargoxLinea")->find( array($idtrafico, $idlinea, $idrecargo, $idconcepto , $modalidad, utf8_decode($impoexpo), utf8_decode($transporte)) );
 		if( !$recargo ){
 			
 			$recargo = new PricRecargoxLinea();
@@ -1250,6 +1255,7 @@ class pricingActions extends sfActions
 			$recargo->setCaIdlinea( $idlinea );
 			$recargo->setCaIdrecargo( $idrecargo );
 			$recargo->setCaModalidad( $modalidad );
+            $recargo->setCaTransporte( utf8_decode($transporte) );
 			$recargo->setCaImpoexpo( utf8_decode($impoexpo) );
 			$recargo->setCaVlrrecargo( 0 );
 //                        echo $consecutivo;
@@ -1431,7 +1437,7 @@ class pricingActions extends sfActions
         $impoexpo = utf8_decode($request->getParameter("impoexpo"));
 		$transporte = utf8_decode($request->getParameter("transporte"));
         $modalidad = utf8_decode($request->getParameter("modalidad"));
-
+        
         $conceptos = Doctrine::getTable("Concepto")
                               ->createQuery("c")
                               ->select("c.ca_idconcepto, c.ca_concepto")

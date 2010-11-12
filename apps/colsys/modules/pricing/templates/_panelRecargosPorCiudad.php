@@ -649,6 +649,7 @@ Ext.extend(PanelRecargosPorCiudad, Ext.grid.EditorGridPanel, {
                     changes['consecutivo']=r.data.consecutivo;
                     changes['idtrafico']=this.idtrafico;
                     changes['modalidad']=this.modalidad;
+                    changes['transporte']=this.transporte;
                     changes['impoexpo']=this.impoexpo;
                     changes['idciudad']=r.data.idciudad;
                     changes['idrecargo']=r.data.idrecargo;
@@ -664,27 +665,30 @@ Ext.extend(PanelRecargosPorCiudad, Ext.grid.EditorGridPanel, {
                         changes['vencimiento']=Ext.util.Format.date(changes['vencimiento'],'Y-m-d');
                     }
 
-                    //envia los datos al servidor
-                    Ext.Ajax.request(
-                        {
-                            waitMsg: 'Guardando cambios...',
-                            url: '<?=url_for("pricing/guardarPanelRecargosPorCiudad")?>',
-                            //Solamente se envian los cambios
-                            params :	changes,
+                    if( r.data.idciudad && r.data.idrecargo ){
 
-                            callback :function(options, success, response){
+                        //envia los datos al servidor
+                        Ext.Ajax.request(
+                            {
+                                waitMsg: 'Guardando cambios...',
+                                url: '<?=url_for("pricing/guardarPanelRecargosPorCiudad")?>',
+                                //Solamente se envian los cambios
+                                params :	changes,
 
-                                var res = Ext.util.JSON.decode( response.responseText );
-                                if( res.id && res.success){
-                                    var rec = storeRecargos.getById( res.id );
-                                    rec.set("sel", false); //Quita la seleccion de todas las columnas
-                                    rec.commit();
+                                callback :function(options, success, response){
+
+                                    var res = Ext.util.JSON.decode( response.responseText );
+                                    if( res.id && res.success){
+                                        var rec = storeRecargos.getById( res.id );
+                                        rec.set("sel", false); //Quita la seleccion de todas las columnas
+                                        rec.commit();
+                                    }
                                 }
-                            }
 
 
-                         }
-                    );
+                             }
+                        );
+                    }
                     r.set("sel", false);//Quita la seleccion de todas las columnas
                 }
             }
@@ -707,6 +711,7 @@ Ext.extend(PanelRecargosPorCiudad, Ext.grid.EditorGridPanel, {
             var idtrafico = this.idtrafico;
             var modalidad = this.modalidad;
             var impoexpo = this.impoexpo;
+            var transporte = this.transporte;
             var storeRecargos = this.store;
             if( !this.menu ){
                 this.menu = new Ext.menu.Menu({
@@ -735,6 +740,7 @@ Ext.extend(PanelRecargosPorCiudad, Ext.grid.EditorGridPanel, {
                                                 idtrafico: idtrafico,
                                                 modalidad: modalidad,
                                                 impoexpo: impoexpo,
+                                                transporte: transporte,
                                                 idciudad: idciudad,
                                                 idrecargo: idrecargo,
                                                 id: id
