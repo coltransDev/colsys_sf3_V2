@@ -190,13 +190,13 @@ Ext.extend(PanelFacturacion, Ext.grid.EditorGridPanel, {
 
             changes['numdocumento']=r.data.numdocumento;
             
-            if( r.data.numdocumento ){
+            if( r.data.numdocumento && r.data.numdocumento != '+' ){
                 //envia los datos al servidor
                 Ext.Ajax.request(
                     {
                         waitMsg: 'Guardando cambios...',
                         url: '<?=url_for("falabellaAdu/observePanelFacturacion?referencia=".base64_encode($referencia))?>',
-						//method: 'POST',
+			//method: 'POST',
                         //Solamente se envian los cambios
                         params :	changes,
 
