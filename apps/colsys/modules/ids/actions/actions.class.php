@@ -357,12 +357,23 @@ class idsActions extends sfActions
                     }
 
                     $agente->setCaTipo( $bindValues["tipo"] );
-                   
+
+
+
                     if( $bindValues["activo"] ){
+                        
+                        if( $agente->setCaActivo()==false ){
+                            $this->getUser()->log("Cambio Agente Activo: ".$bindValues["nombre"]." pasa a activo");
+                        }
                         $agente->setCaActivo( true );
                     }else{
+                        if( $agente->setCaActivo()==true ){
+                            $this->getUser()->log("Cambio Agente Activo: ".$bindValues["nombre"]." pasa a inactivo");
+                        }
                         $agente->setCaActivo( false );
                     }
+
+
 
                     $agente->save();
                 }
