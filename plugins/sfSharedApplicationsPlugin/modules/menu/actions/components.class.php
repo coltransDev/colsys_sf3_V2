@@ -31,7 +31,7 @@ class menuComponents extends sfComponents
         }
 
 		$this->buttons = $button;
-                $this->buttonHelp = $buttonHelp;
+        $this->buttonHelp = isset($buttonHelp)?$buttonHelp:null;
 					
 		
 	} 
