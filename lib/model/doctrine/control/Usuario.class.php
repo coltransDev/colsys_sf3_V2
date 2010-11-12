@@ -183,10 +183,14 @@ class Usuario extends BaseUsuario
 
 		$index = $this->getTable()->getLuceneIndex();
 
-  	    // remove an existing entry
-	    if ($hit = $index->find('pk:'.$this->getCaLogin())){
-	    		$index->delete($hit->id);
-	    }
+        // remove an existing entry
+	    
+        $hits = $index->find('ca_login:'.$this->getCaLogin());
+        foreach ($hits as $hit) {
+        
+            $index->delete($hit->id);
+            
+        }
 
 	    // don't index expired and non-activated jobs
 	    if (!$this->getCaActivo()){
@@ -196,7 +200,8 @@ class Usuario extends BaseUsuario
 	  	$doc = new Zend_Search_Lucene_Document();
 
 	 	// store job primary key URL to identify it in the search results
-	  	$doc->addField(Zend_Search_Lucene_Field::UnIndexed('pk', $this->getCaLogin()));
+        $doc->addField(Zend_Search_Lucene_Field::UnIndexed('pk', $this->getCaLogin()));
+	  	$doc->addField(Zend_Search_Lucene_Field::UnStored('ca_login', $this->getCaLogin()));
 
 	 	 // index job fields
 	    $doc->addField(Zend_Search_Lucene_Field::UnStored('ca_nombre',utf8_encode($this->getCaNombre()), 'utf-8'));
