@@ -1049,13 +1049,14 @@ class pricingActions extends sfActions
 		$idrecargo = $this->getRequestParameter("idrecargo");
 		$modalidad = $this->getRequestParameter("modalidad");
 		$impoexpo = utf8_decode($this->getRequestParameter("impoexpo"));
+        $transporte = utf8_decode($this->getRequestParameter("transporte"));
         $id = $this->getRequestParameter("id");        
 		
 		$this->forward404Unless( $idtrafico );
 		$this->forward404Unless( $idciudad );
 		$this->forward404Unless( $modalidad );
 		$this->forward404Unless( $impoexpo );		
-		$recargo = Doctrine::getTable("PricRecargoxCiudad")->find( array($idtrafico, $idciudad, $idrecargo , $modalidad, $impoexpo) );
+		$recargo = Doctrine::getTable("PricRecargoxCiudad")->find( array($idtrafico, $idciudad, $idrecargo , $modalidad, $impoexpo, $transporte) );
 		$this->responseArray = array("id"=>$id, "success"=>false);
 		
 		if( $recargo ){
@@ -1345,7 +1346,7 @@ class pricingActions extends sfActions
 		$idconcepto = $this->getRequestParameter("idconcepto");
 		$modalidad = $this->getRequestParameter("modalidad");
 		$impoexpo = utf8_decode($this->getRequestParameter("impoexpo"));
-		
+		$transporte = utf8_decode($this->getRequestParameter("transporte"));
 		
 		if( !$idconcepto ){
 			$idconcepto = 9999;
@@ -1357,7 +1358,7 @@ class pricingActions extends sfActions
 		$this->forward404Unless( $impoexpo );
 		$id = $this->getRequestParameter("id");
 		$this->responseArray = array("id"=>$id, "success"=>true);
-		$recargo = Doctrine::getTable("PricRecargoxLinea")->find( array($idtrafico, $idlinea, $idrecargo, $idconcepto , $modalidad, $impoexpo) );
+		$recargo = Doctrine::getTable("PricRecargoxLinea")->find( array($idtrafico, $idlinea, $idrecargo, $idconcepto , $modalidad, $impoexpo, $transporte ) );
 
 		if( $recargo ){
 			$recargo->delete();
