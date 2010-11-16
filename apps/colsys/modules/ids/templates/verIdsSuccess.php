@@ -67,8 +67,8 @@
                 <td>
                     <div align="left"><b>Tipo</b></div>
                </td>
-               <td>
-                   <div align="left"><?=$agente->getCaTipo()?></div>
+               <td>                   
+                   <div align="left"><?=$agente->getCaTipo()=="Oficial"?$agente->getCaTipo():"<span class='rojo'>".$agente->getCaTipo()."</span>"?></div>
                </td>
                <td>
                    <div align="left"><b>Activo</b></div>
