@@ -26,19 +26,13 @@ EOF;
 	// Borra las dos líneas siguientes si no utilizas una base de datos
 	$databaseManager = new sfDatabaseManager($this->configuration);
 	$databaseManager->loadConfiguration();
-	
-	/*$c = new Criteria();
-	$c->addJoin( NotTareaPeer::CA_IDTAREA, NotificacionPeer::CA_IDTAREA, Criteria::LEFT_JOIN );	
-	$c->add( NotTareaPeer::CA_FCHCREADO, '2010-06-20 00:00:00', Criteria::GREATER_EQUAL );
-	$c->add( NotTareaPeer::CA_FCHVISIBLE, , Criteria::LESS_EQUAL );	
-	$c->add( NotTareaPeer::CA_FCHTERMINADA, null, Criteria::ISNULL );
-	$c->add( NotificacionPeer::CA_IDEMAIL, null, Criteria::ISNULL );	
-	$c->setDistinct();			*/
+
+
 
     $q = Doctrine::getTable("NotTarea")->createQuery("t");
     $q->select("t.*");
     $q->leftJoin("t.Notificacion n");
-    $q->addWhere("t.ca_fchcreado >= ?", "2010-06-20 00:00:00");
+    $q->addWhere("t.ca_fchvisible >= ?", date("Y-m-d H:i:s", time()-86400*15) );
     $q->addWhere("t.ca_fchvisible <= ?", date("Y-m-d H:i:s"));
     $q->addWhere("t.ca_fchterminada IS NULL");
     $q->addWhere("n.ca_idemail IS NULL");
