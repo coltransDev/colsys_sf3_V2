@@ -662,6 +662,7 @@ class traficosActions extends sfActions
                 $tareas = $reporte->getTareas( Reporte::IDLISTASEG );
                 foreach( $tareas as $tarea ){
                     $tarea->setCaFchterminada( date("Y-m-d H:i:s") );
+                    $tarea->setCaUsuterminada( $this->getUser()->getUserId() );
                     $tarea->save();
                 }
 			}	
@@ -699,6 +700,7 @@ class traficosActions extends sfActions
         $tareas = $reporte->getTareas( Reporte::IDLISTASEG );
         foreach( $tareas as $tarea ){
             $tarea->setCaFchterminada( date("Y-m-d H:i:s") );
+            $tarea->setCaUsuterminada( $this->getUser()->getUserId() );
             $tarea->save();
         }
 
@@ -1089,6 +1091,7 @@ class traficosActions extends sfActions
 				$tarea->setCaFchvisible( $request->getParameter("fchseguimiento")." 00:00:00" );			
 				$tarea->setCaTitulo( $titulo );		
 				$tarea->setCaTexto( $request->getParameter("txtseguimiento") );
+                $tarea->setCaNotificar( $this->getUser()->getEmail() );
 				$tarea->save();
 				$loginsAsignaciones = array( $this->getUser()->getUserId() );
 				$tarea->setAsignaciones( $loginsAsignaciones );	
@@ -1141,6 +1144,7 @@ class traficosActions extends sfActions
 		
         
         $tarea->setCaFchterminada(date("Y-m-d H:i:s"));
+        $tarea->setCaUsuterminada( $this->getUser()->getUserId() );
         $tarea->save();
         if ($request->isXmlHttpRequest()){
             $this->responseArray = array("success"=>true);
