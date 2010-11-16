@@ -1984,11 +1984,12 @@ CREATE TABLE tb_diandepositos
 (
   ca_codigo integer NOT NULL,
   ca_nombre character varying(250),
-  ca_fchdesde date NOT NULL,
-  ca_fchhasta date,
-  ca_codadmin integer,
-  ca_codtipo integer,
-  CONSTRAINT pk_diandepositos PRIMARY KEY (ca_codigo, ca_fchdesde)
+  ca_administracion character varying(100),
+  ca_tipo_deposito character varying(100),
+  ca_direccion character varying(250),
+  ca_fchdesde character varying(12),
+  ca_fchhasta character varying(12),
+  CONSTRAINT pk_diandepositos PRIMARY KEY (ca_codigo)
 )
 WITH (
   OIDS=FALSE

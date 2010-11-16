@@ -2229,3 +2229,8 @@ insert into tb_parametros values ('CU091',4,'Liberación autorizada por Gerente C
 insert into tb_parametros values ('CU091',5,'Liberación autorizada por Gerente Regional','');
 insert into tb_parametros values ('CU091',6,'Carga para nacionalizar en Colmas','');
 insert into tb_parametros values ('CU091',7,'Se libera para transito OTM','');
+
+insert into tb_parametros values ('CU072',17,'Carga - Oportunidad en Exportación','Nuevo Exportaciones');
+insert into tb_parametros values ('CU072',18,'Carga - Oportunidad en la Facturación','Nuevo Exportaciones');
+insert into tb_parametros values ('CU072',19,'Aduana - Oportunidad en Exportación','Nuevo Exportaciones');
+insert into tb_parametros values ('CU072',20,'Aduana - Oportunidad en la Facturación','Nuevo Exportaciones');
