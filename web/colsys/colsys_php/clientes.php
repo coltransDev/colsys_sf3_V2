@@ -30,7 +30,7 @@ $localidades = array(
     );
 $sexos = array("Femenino","Masculino");
 $calificaciones = array("A","B","C","D","E");
-$riesgos = array("","Mínimo","Medio","Alto");
+$riesgos = array("Sin","Mínimo","Medio","Alto");
 $campos = array("Nombre del Cliente" => "ca_compania", "Representante Legal" => "ca_ncompleto", "N.i.t." => "ca_idcliente", "Calificación" => "ca_calificacion", "Coordinador Aduana" => "ca_coordinador", "Actividad Económica" => "ca_actividad", "Sector Económico" => "ca_sector", "Localidad" => "ca_localidad", "Ciudad" => "ca_ciudad", "Contrato Agenciamiento" => "ca_stdcotratoag");  // Arreglo con las opciones de busqueda
 $bdatos = array("Maestra Clientes", "Mis Clientes", "Clientes Libres");  // Arreglo con los lugares donde buscar
 $tipos = array("Llamada", "Visita", "Correo Electrónico", "Correspondencia", "Cerrar Caso");
@@ -50,6 +50,7 @@ $rs =& DlRecordset::NewRecordset($conn);                                       /
 
 
 if (!isset($criterio) and !isset($boton) and !isset($accion)){
+    
     echo "<HTML>";
     echo "<HEAD>";
     echo "<TITLE>$titulo</TITLE>";
@@ -143,7 +144,7 @@ require_once("menu.php");
 	echo "		</TD>";
 
 	echo "  	<TD Class=listar><B>Nivel de Riesgo:</B>";
-    for ($i=1; $i < count($riesgos); $i++) {
+    for ($i=0; $i < count($riesgos); $i++) {
          echo "<BR /><INPUT TYPE='CHECKBOX' NAME='riesgo[]' VALUE='".$riesgos[$i]."' $che_mem>".$riesgos[$i];
         }
 	echo "		</TD>";
@@ -232,7 +233,10 @@ require_once("menu.php");
     echo "</BODY>";
     echo "</HTML>";
     }
-elseif (!isset($boton) and !isset($accion) and isset($criterio)){	
+elseif (!isset($boton) and !isset($accion) and isset($criterio)){
+    /*header ("Pragma: no-cache");
+    header ("Content-type: application/x-msexcel");
+    header ("Content-Disposition: attachment; filename=prueba.xls" );*/
     set_time_limit(360);
     $modulo = "00100000";                                                      // Identificación del módulo para la ayuda en línea
 //  include_once 'include/seguridad.php';                                      // Control de Acceso al módulo
@@ -261,7 +265,11 @@ elseif (!isset($boton) and !isset($accion) and isset($criterio)){
 	if (isset($riesgo)){
 		$sub_cad = " and ca_nvlriesgo in (";
 		foreach($riesgo as $nivelr){
-			$sub_cad.= "'".$nivelr."',";
+                    if($nivelr == "Sin"){
+                        $sub_cad.= "'',";
+                    }else{
+                        $sub_cad.= "'".$nivelr."',";
+                    }
 		}
 		$sub_cad = substr($sub_cad,0,strlen($sub_cad)-1).")";
 		$condicion.= $sub_cad;
