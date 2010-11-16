@@ -71,7 +71,7 @@ $cliente = $reporte->getCliente();
 		<td>&nbsp;</td>
 	</tr>
 	<?				
-	if( $reporte->getCaContinuacion()!="N/A" ){
+	if( $reporte->getCaContinuacion()!="N/A" && $reporte->getCaImpoexpo()!=Constantes::EXPO ){
 	?>
 	<tr>
 		<td><b>Destino:</b></td>
