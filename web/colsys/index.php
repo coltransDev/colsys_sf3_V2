@@ -12,10 +12,10 @@ sfContext::createInstance($configuration)->dispatch();
 
 $time = round(microtime( true )-$startTime, 2 );
 
-$user = sfContext::getInstance()->getUser();
+/*$user = sfContext::getInstance()->getUser();
 if( $user ){    
     $user->log("Time: ".$time );
-}
+}*/
 
 
 
