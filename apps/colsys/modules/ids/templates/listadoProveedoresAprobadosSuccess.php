@@ -55,7 +55,7 @@ $counts = array();
                 $tipo = $proovedor->getIdsTipo();
             ?>
             <tr class="row0">
-                <td  colspan="<?=11+$numYears?>"><div align="left"><b><?=$tipo->getCaNombre()?></b></div></td>
+                <td  colspan="<?=12+$numYears?>"><div align="left"><b><?=$tipo->getCaNombre()?></b></div></td>
             </tr>
             <?
             }
@@ -65,7 +65,7 @@ $counts = array();
 
             ?>
             <tr class="row0">
-                <td  colspan="<?=11+$numYears?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<div align="left"><?=$proovedor->getCaTransporte()?$proovedor->getCaTransporte():"Sin definir"?></div></td>
+                <td  colspan="<?=12+$numYears?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<div align="left"><?=$proovedor->getCaTransporte()?$proovedor->getCaTransporte():"Sin definir"?></div></td>
             </tr>
             <?
             }

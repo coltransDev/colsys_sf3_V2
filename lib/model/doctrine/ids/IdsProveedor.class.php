@@ -21,7 +21,7 @@ class IdsProveedor extends BaseIdsProveedor
 
         $evaluaciones = Doctrine::getTable("IdsEvaluacion")
                         ->createQuery("e")
-                        ->where("e.ca_tipo= ?", 'desempeno')
+                        ->where("e.ca_tipo like ?", 'desempeno%')
                         ->addWhere("to_char( e.ca_fchevaluacion, 'YYYY') = ?", $year )
                         ->execute();
         

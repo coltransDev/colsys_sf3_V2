@@ -52,7 +52,7 @@ class Ids extends BaseIds
                 ->innerJoin("ev.IdsEvaluacionxCriterio e")
                 ->select("ev.ca_ano,SUM(e.ca_valor*e.ca_ponderacion )/SUM(e.ca_ponderacion ) as calificacion")
                 ->addWhere("ev.ca_id = ?",$this->getCaId() )
-                ->addWhere("ev.ca_tipo = ?",'desempeno' )
+                ->addWhere("ev.ca_tipo like ?",'desempeno%' )
                 ->addGroupBy("ev.ca_ano")
                 ->addOrderBy("ev.ca_ano")
                 ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
