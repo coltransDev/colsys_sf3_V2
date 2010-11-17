@@ -181,6 +181,33 @@ class falabellaActions extends sfActions {
 	}
 
 	/*
+	* Genera informe de cantidades
+	*/
+	public function executeInformarOrden(){
+                $details = Doctrine::getTable("FalaDetail") // Elimina los registros anteriores
+                               ->createQuery("d")
+                               ->where("d.ca_iddoc = ?", base64_decode($this->getRequestParameter ( 'iddoc' )) )
+                               ->addOrderBy("d.ca_sku")
+                               ->execute();
+                $this->iddoc = $this->getRequestParameter ( 'iddoc' );
+		$salida = '';
+                $salida.= "Carpeta"."\t"; // 1
+                $salida.= "SKU"."\t"; // 1
+                $salida.= "Cant.Pedida"."\t"; // 1
+                $salida.= "Cant.Despachada"."\t"; // 1
+                $salida.= "\r\n";
+		foreach( $details as $detail ){
+			$salida.= substr($detail->getCaIddoc(),0,15)."\t"; // 1
+                        $salida.= $detail->getSkuNeto()."\t"; // 2
+			$salida.= number_format($detail->getCaCantidadPedido(), 0, '', '')."\t"; // 3
+                        $salida.= number_format($detail->getCaCantidadMiles(), 0, '', '')."\t"; // 3
+			$salida.= "\r\n";
+		}
+
+        	$this->salida = $salida;
+	}
+
+	/*
 	* Permite archivar la Orden de Pedido
 	*/
 	public function executeArchivarOrden(){

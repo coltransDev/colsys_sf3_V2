@@ -28,10 +28,15 @@ switch($action){
 		$button[3]["image"]="22x22/attach.gif";
 		$button[3]["link"]= "falabella/archivarOrden?iddoc=".$this->getRequestParameter("iddoc");
 
-		$button[4]["name"]="Anular";
-		$button[4]["tooltip"]="Anular la Orden de Pedido";
-		$button[4]["image"]="22x22/cancel.gif";
-		$button[4]["link"]= "falabella/anularOrden?iddoc=".$this->getRequestParameter("iddoc");
+		$button[4]["name"]="Informar";
+		$button[4]["tooltip"]="Genera Archivo Plano con Cantidades";
+		$button[4]["image"]="22x22/txt.gif";
+		$button[4]["link"]= "falabella/informarOrden?iddoc=".$this->getRequestParameter("iddoc");
+
+		$button[5]["name"]="Anular";
+		$button[5]["tooltip"]="Anular la Orden de Pedido";
+		$button[5]["image"]="22x22/cancel.gif";
+		$button[5]["link"]= "falabella/anularOrden?iddoc=".$this->getRequestParameter("iddoc");
 		
 		break;	
 	case "shippingInstructions":	
