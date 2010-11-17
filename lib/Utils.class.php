@@ -280,6 +280,16 @@ class Utils{
 			case "pdf":
 					return "application/pdf";
 					break;
+                        case "xls":
+					return "application/vnd.ms-excel";
+					break;
+                        case "zip":
+					return "application/zip";
+					break;
+                        case "doc":
+                        case "docx":
+					return "application/msword";
+					break;
 			default:
 					return "application/octet-stream";
 					break;
