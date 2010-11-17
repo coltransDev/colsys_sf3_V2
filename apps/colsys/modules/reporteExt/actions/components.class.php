@@ -387,8 +387,9 @@ class reporteExtComponents extends sfComponents
         }else{
             $hijo = $bodegaConsignar->getCaNombre();
         }
-
-        $hijo.=" / ".$bodega2->getCaTipo()." ".(($bodega2->getCaNombre()!='N/A')?$bodega2->getCaNombre():"");
+        
+        if($bodega2 && $reporte->getCaImpoexpo!=Constantes::TRIANGULACION && $bodega2->getCaIdbodega()!="1")
+            $hijo.=" / ".$bodega2->getCaTipo()." ".(($bodega2->getCaNombre()!='N/A')?$bodega2->getCaNombre():"");
 
         if( $reporte->getCaContinuacion()== 'N/A' ){
             $hijo.="<br />".$reporte->getDestino()->getCaCiudad();

@@ -88,7 +88,10 @@ if ( $reporte->getCaIdlinea() ){
 <tr>
 	<td colspan="4">&nbsp;</td>
 </tr>
-
+<?
+if($reporte->getCaModalidad()!="DIRECTO")
+{
+?>
 <tr>
 	<td colspan="4"><center><b>MAWB INSTRUCTIONS</b></center></td>
 </tr>
@@ -109,7 +112,9 @@ if ( $reporte->getCaIdlinea() ){
 <tr>
 	<td colspan="4">&nbsp;</td>
 </tr>
-
+<?
+}
+?>
 <tr>
 	<td colspan="4"><center><b>HAWB INSTRUCTIONS</b></center></td>
 </tr>
