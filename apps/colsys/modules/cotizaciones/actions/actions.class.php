@@ -2404,5 +2404,83 @@ class cotizacionesActions extends sfActions
  *
  */
     }
+
+    public function executeReporteCotizaciones($request)
+    {
+/*            $this->nivel = $this->getUser()->getNivelAcceso( cotizacionesActions::RUTINA );
+
+            if( $this->nivel<=-1 ){
+                    $this->forward404();
+            }
+ *
+ */
+            $this->vendedor=$this->getUser()->getUserId();
+            $this->usuarios = Doctrine::getTable("Usuario")
+                                ->createQuery("u")
+                                ->select("u.*")
+                                ->innerJoin("u.Cotizacion")
+                                ->distinct()
+                                ->orderBy("u.ca_nombre")
+                                ->where("u.ca_departamento='Comercial' and u.ca_activo=true")
+                                ->execute();
+
+            $this->sucursales = Doctrine::getTable("Sucursal")
+                                ->createQuery("s")
+                                ->orderBy("s.ca_nombre")
+                                ->where("s.ca_idempresa=2")
+                                ->execute();
+            $this->estados = ParametroTable::retrieveByCaso( "CU074" );
+
+            $opcion=$this->getRequestParameter("opcion");
+            if($opcion=="buscar")
+            {
+
+                $this->fechaInicial = Utils::parseDate($request->getParameter("fechaInicial"));
+		$this->fechaFinal = Utils::parseDate($request->getParameter("fechaFinal"));
+		$checkboxVendedor = $request->getParameter( "checkboxVendedor" );
+                $checkboxSucursal = $request->getParameter( "checkboxSucursal" );
+
+                $this->cotizaciones="";
+
+
+                $q = Doctrine_Query::create()
+                    ->select("c.ca_idcotizacion,c.ca_consecutivo,c.ca_usucreado,c.ca_fchcreado")
+                    ->from('Cotizacion c')
+                    ->innerJoin("c.Usuario u")
+                    ->where("c.ca_consecutivo IS NOT NULL ")
+                    ->addWhere(" ( ca_usuanulado is  null or ca_usuanulado='' ) and c.ca_fchcreado between ? and ?", array($this->fechaInicial,$this->fechaFinal))
+                    ->orderBy("EXTRACT(YEAR FROM c.ca_fchcreado) DESC  ")
+                    ->addOrderBy("to_number(SUBSTR(c.ca_consecutivo , 1 , (POSITION('-' in c.ca_consecutivo)-1) ),'999999')  desc")
+                    ->addOrderBy("c.ca_version  desc");
+                if( $checkboxVendedor ){
+                    $q->addWhere("c.ca_usuario = ?", $this->login );
+		}
+
+		if( $checkboxSucursal ){
+                    $this->sucursal = $request->getParameter( "sucursal_est" );
+                    $q->addWhere("u.ca_idsucursal = ?", $this->sucursal );
+		}else{
+			$this->sucursal = "";
+		}
+
+                $this->cotizaciones = $q->setHydrationMode(Doctrine::HYDRATE_ARRAY)->execute();
+//                print_r($this->cotizaciones[0]);
+
+                for($i=0;$i<count($this->cotizaciones);$i++)
+                {
+
+                    $this->emails = Doctrine::getTable("Email")
+                                  ->createQuery("e")
+                                  ->where("e.ca_tipo = ? AND e.ca_idcaso = ?", array("Envío de cotización", $this->cotizaciones[$i]["ca_idcotizacion"] ))
+                                  ->addOrderBy("e.ca_fchenvio")
+                                  ->execute();
+                    if(count($this->emails)>0)
+                    $this->cotizaciones[$i]["ca_fchenvio"]=$this->emails[0]->getCaFchenvio();
+                    $this->cotizaciones[$i]["ca_usuenvio"]=$this->emails[0]->getCaUsuenvio();
+                }
+//                print_r($this->cotizaciones);
+            }
+    }
+
 }
 ?>
