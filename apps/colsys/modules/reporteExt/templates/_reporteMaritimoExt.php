@@ -184,6 +184,11 @@ if ( $reporte->getCaModalidad() != 'LCL'){
 			<?
 			foreach( $gastos as $gasto ){
 				if ($gasto->getCaIdconcepto() == $tarifa->getCaIdconcepto() ){
+
+
+                                    if ( $gasto->getCaNetaTar()== 0 and $gasto->getCaReportarTar() == 0) {
+                                        continue;
+                                    }
 			?>
 			<tr>
 				<td style="vertical-align:bottom" width="30%"><b>

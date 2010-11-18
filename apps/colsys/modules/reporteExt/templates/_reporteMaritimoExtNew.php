@@ -185,6 +185,10 @@ if ( $reporte->getCaModalidad() != 'LCL'){
 			<?
 			foreach( $gastos as $gasto ){
 				if ($gasto->getCaIdconcepto() == $tarifa->getCaIdconcepto() ){
+
+                                    if ( (int)$gasto->getCaNetaTar()== 0 && (int)$gasto->getCaReportarTar() == 0) {
+                                        continue;
+                                    }
 			?>
 			<tr>
 				<td style="vertical-align:bottom" width="30%"><b>
@@ -233,14 +237,21 @@ if ( $reporte->getCaModalidad() != 'LCL'){
 					</center></td>
 			</tr>
 			<?
-		foreach( $gastos as $gasto ){			
-			if ( $gasto->getCaNetaTar()== 0 and $gasto->getCaReportarTar() == 0) {			
+		foreach( $gastos as $gasto ){
+                    //echo "1:".(int)$gasto->getCaNetaTar()."<br>";
+                    //echo "2:".(int)$gasto->getCaReportarTar()."<br>";
+			if ( (int)$gasto->getCaNetaTar()== 0 && (int)$gasto->getCaReportarTar() == 0) {
+//                            echo $gasto->getTipoRecargo()->getCaRecargo()."<br>";
 				continue;
 			}
 			if ($gasto->getCaIdconcepto() == '9999'){
 		?>
 			<tr>
 				<td style="vertical-align:bottom" width="30%"><b>
+                                        <?
+//                                        echo "1:".(int)$gasto->getCaNetaTar()."<br>";
+//                    echo "2:".(int)$gasto->getCaReportarTar()."<br>";
+                                        ?>
 					<?=$gasto->getTipoRecargo()->getCaRecargo()?>
 				</b></td>
 				<td style="vertical-align:bottom" width="70%"><table border="1" cellspacing="0" width="100%">
