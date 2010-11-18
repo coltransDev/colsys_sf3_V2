@@ -13,7 +13,7 @@
 class Reporte extends BaseReporte
 {
     private $ultimoStatus=null;
-	private $inoClientesSea=null;
+    private $inoClientesSea=null;
     private $proveedoresStr=null;
     private $editable=null;
     private $nversiones=null;
@@ -280,7 +280,7 @@ class Reporte extends BaseReporte
 //        $user = sfContext::getInstance()->getUser();
 //        echo $user->getUserId();
         //if(!$this->editable)
-        if($user->getUserId()!="maquinche")
+        if($user->getUserId()!="maquinche" && $user->getUserId()!="olcasallas")
         {
             
             //echo "::".$this->editable."::<br>";
@@ -408,6 +408,28 @@ class Reporte extends BaseReporte
 
 		return $gastos;
 	}
+
+
+
+        public function getRepTarifa(  ){
+
+        $q = Doctrine::getTable("RepTarifa")
+                             ->createQuery("t")
+                             ->innerJoin("t.Concepto c")
+                             ->where("t.ca_idreporte = ? and t.ca_idconcepto!=9999 ", $this->getCaIdreporte())
+                             ->orderBy("c.ca_concepto")
+                             ->execute();
+
+
+
+		/*if( $this->getCaImpoexpo()==Constantes::EXPO ){
+            $q->addWhere( "co.ca_impoexpo = ? OR co.ca_impoexpo = ? " , array("Aduanas", Constantes::EXPO) );
+		}else{
+            $q->addWhere( "co.ca_impoexpo = ? " , "Aduanas" );
+        }*/
+		return $q;
+	}
+
 
 	/*
 	* Retorna los objetos RepCosto asociados al reporte
