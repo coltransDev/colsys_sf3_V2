@@ -4,6 +4,7 @@
  * 
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
+$grupos = $sf_data->getRaw("grupos");
 ?>
 <script type="text/javascript">
     EditarTicketPropiedadesPanel = function( config ) {
@@ -45,46 +46,13 @@
                     {name: 'nombre'}
                 ])
             )
-            }),
-            listeners:{select:function( field, record, index ){
-                    //this.cargar( record.data.iddepartamento );
-                    this.cargar( );
-                }
-            },
-            cargar: function(  ){
-                var iddepartamento = this.hiddenField.value;                
-                area = Ext.getCmp('area_id');
-                area.store.setBaseParam( "departamento",iddepartamento );
-                area.store.load();
-                area.setValue("");
-
-                type = Ext.getCmp('type_id');
-                type.store.setBaseParam( "departamento",iddepartamento );
-                type.store.load();
-                type.setValue("");
-
-                proyecto = Ext.getCmp('proyecto_id');
-                proyecto.setValue("");
-
-                assignedto = Ext.getCmp('assignedto_id');
-                assignedto.setValue("");
-                
-                if( this.nivel==2 || this.nivel==3 ){
-                  
-                    if( record.data.iddepartamento!=iddepartamento ){
-                        this.bloquearCampos();
-                    }else{
-                        this.desbloquearCampos();
-                    }
-                }
-
-                if( this.nivel<2 ){
-                    bloquearCampos();
-                } 
-                
-            }
+            })
+            
+            
 
         });
+
+        this.departamentos.on("select", this.cargarDepartamentos, this );
 
 
         this.areas =  new Ext.form.ComboBox({
@@ -105,8 +73,7 @@
 
             store : new Ext.data.Store({
                 autoLoad : false ,
-                url: '<?=url_for("pm/datosAreas")
-?>',
+                url: '<?=url_for("pm/datosAreas")?>',
                 reader: new Ext.data.JsonReader(
                 {
                     id: 'idgrupo',
@@ -119,56 +86,13 @@
                     {name: 'nombre'}
                 ])
             )
-            }),
-            listeners:{select:function( field, record, index ){
-                    this.cargar( );
-                }
-            },
-            cargar: function(){
-                var idgrupo = this.hiddenField.value;
-                proyecto = Ext.getCmp('proyecto_id');
-                proyecto.store.baseParams = {
-                    idgrupo: idgrupo
-                };
-                proyecto.store.load();
-
-
-                assignedto = Ext.getCmp('assignedto_id');
-                assignedto.store.baseParams = {
-                    idgrupo: idgrupo
-                };
-                assignedto.store.load();
-
-
-                proyecto = Ext.getCmp('proyecto_id');
-                proyecto.setValue("");
-
-                assignedto = Ext.getCmp('assignedto_id');
-                assignedto.setValue("");
-
-
-
-                if( this.nivel==1 ){
-  
-                    var grupos = <?=json_encode($grupos)?>;
-                    var encontro = false;
-                    for(i in grupos ){
-                        //alert(grupos[i]+"");
-                        if( grupos[i] == record.data.idgrupo ){
-                            encontro = true;
-                        }
-                    }
-                    if( !encontro ){
-                        this.bloquearCampos();
-                    }else{
-                        this.desbloquearCampos();
-                    }
-  
-                }
-
-            }
+            })
+            
 
         });
+
+
+        this.areas.on("select", this.cargarAreas, this );
 
 
 
@@ -192,8 +116,7 @@
 
             store : new Ext.data.Store({
                 autoLoad : true ,
-                url: '<?=url_for("pm/datosProyectos")
-?>',
+                url: '<?=url_for("pm/datosProyectos")?>',
                 reader: new Ext.data.JsonReader(
                 {
                     id: 'idproyecto',
@@ -206,22 +129,12 @@
                     {name: 'nombre'}
                 ])
             )
-            }),
-            listeners:{select:function( field, record, index ){
-                    this.cargar( );                    
-                }
-            }
-            ,
-            cargar: function(){
-                var idproyecto = this.hiddenField.value;
-                milestone = Ext.getCmp('milestone_id');
-                milestone.store.baseParams = {
-                    idproject: idproyecto
-                };
-                milestone.store.load();
-
-            }
+            })
+            
+            
         });
+
+        this.projectos.on("select", this.cargarProyectos, this );
 
 
 
@@ -560,6 +473,7 @@
             this.getForm().waitMsgTarget = this.getEl();
             this.validarVigencia();
             var actionTicket =  this.actionTicket;
+            var panel = this;
             if(this.idticket!="undefined" && this.idticket!="" )
             {
                 this.load({
@@ -571,18 +485,18 @@
                         this.res = Ext.util.JSON.decode( options.response.responseText );
                         Ext.getCmp("departamento_id").setRawValue(this.res.data.departamento);
                         Ext.getCmp("departamento_id").hiddenField.value = this.res.data.iddepartament;
-                        Ext.getCmp("departamento_id").cargar();
+                        panel.cargarDepartamentos();
 
                         area = Ext.getCmp("area_id");
                         area.setValue(this.res.data.group);
                         area.hiddenField.value = this.res.data.idgroup;
-                        area.cargar();
+                        panel.cargarAreas();
 
 
                         proyecto = Ext.getCmp('proyecto_id');
                         proyecto.setValue(this.res.data.project);
                         proyecto.hiddenField.value = this.res.data.idproject;
-                        proyecto.cargar();
+                        panel.cargarProyectos();
 
                         Ext.getCmp('assignedto_id').setValue( this.res.data.assignedto );
                         Ext.getCmp('reportedby_id').setValue( this.res.data.loginName );
@@ -594,6 +508,11 @@
                         }
                         
                         Ext.getCmp('type_id').setValue( this.res.data.type );
+
+
+
+
+                        //
 
                         
                     }
@@ -636,6 +555,94 @@
             }else{
                 Ext.MessageBox.alert('Sistema de Tickets:', '¡Por favor complete los campos subrayados!');
             }
+
+        },
+
+        cargarDepartamentos: function(  ){           
+            var iddepartamento =  Ext.getCmp('departamento_id').hiddenField.value;
+            area = Ext.getCmp('area_id');
+            area.store.setBaseParam( "departamento",iddepartamento );
+            area.store.load();
+            area.setValue("");
+
+            type = Ext.getCmp('type_id');
+            type.store.setBaseParam( "departamento",iddepartamento );
+            type.store.load();
+            type.setValue("");
+
+            proyecto = Ext.getCmp('proyecto_id');
+            proyecto.setValue("");
+
+            assignedto = Ext.getCmp('assignedto_id');
+            assignedto.setValue("");
+           
+            //alert( record.data.iddepartamento+" "+iddepartamento );
+            if( this.nivel==2 || this.nivel==3 ){
+
+                if( iddepartamento!=<?=$iddepartamento?> ){
+                    this.bloquearCampos();
+                }else{
+                    this.desbloquearCampos();
+                }
+            }
+
+            if( this.nivel<2 ){
+                this.bloquearCampos();
+            }
+
+
+
+        },
+
+        cargarAreas: function(   ){
+            var idgrupo = Ext.getCmp('area_id').hiddenField.value;
+            proyecto = Ext.getCmp('proyecto_id');
+            proyecto.store.baseParams = {
+                idgrupo: idgrupo
+            };
+            proyecto.store.load();
+
+
+            assignedto = Ext.getCmp('assignedto_id');
+            assignedto.store.baseParams = {
+                idgrupo: idgrupo
+            };
+            assignedto.store.load();
+
+
+            proyecto = Ext.getCmp('proyecto_id');
+            proyecto.setValue("");
+
+            assignedto = Ext.getCmp('assignedto_id');
+            assignedto.setValue("");
+
+            
+
+            if( this.nivel==1 ){               
+
+                var grupos = <?=json_encode($grupos)?>;
+                var encontro = false;
+                for(i in grupos ){                    
+                    if( grupos[i] == idgrupo ){
+                        encontro = true;
+                    }
+                }
+                if( !encontro ){
+                    this.bloquearCampos();
+                }else{
+                    this.desbloquearCampos();
+                }
+
+            }
+        },
+
+        cargarProyectos: function( ){
+            var idproyecto = Ext.getCmp('proyecto_id').hiddenField.value;
+            milestone = Ext.getCmp('milestone_id');
+            milestone.store.baseParams = {
+                idproject: idproyecto
+            };
+            milestone.store.load();
 
         }
 

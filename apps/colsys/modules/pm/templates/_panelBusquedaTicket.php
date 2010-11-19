@@ -107,12 +107,6 @@ PanelBusquedaTicket = function( config ){
 
     this.summary = new Ext.ux.grid.GroupSummary();
 
-
-
-
-
-
-
     this.columns = [
       this.expander,      
       {
@@ -198,7 +192,12 @@ PanelBusquedaTicket = function( config ){
         ),
         sortInfo:{field: 'fchevento', direction: "DESC"},
         //groupOnSort: true,
-        groupField: 'group'
+        groupField: 'group',
+        listeners: {            
+            exception: this.onException
+        }
+
+        
         
 
     });
@@ -220,7 +219,8 @@ PanelBusquedaTicket = function( config ){
             forceFit:true,
             enableRowBody:true,
             hideGroupedColumn: true,
-            startCollapsed : true
+            startCollapsed : true,
+            emptyText: "No se han encontrado resultados"
             //showPreview:true,
             //hideGroupedColumn: true,
             
@@ -279,7 +279,16 @@ Ext.extend(PanelBusquedaTicket, Ext.grid.GridPanel, {
                 win.close();
             }
 		}
-	}
+	},
+    
+
+    onException: function ( obj,  type,  action,  options,  response, arg  ) {
+        var res = Ext.util.JSON.decode( response.responseText );
+        if( res.errorInfo ){
+            Ext.MessageBox.alert( "Error",  res.errorInfo );
+        }
+    }
+
 
 
 

@@ -10,114 +10,182 @@
  * @author     ##NAME## <##EMAIL##>
  * @version    SVN: $Id: Builder.php 5845 2009-06-09 07:36:57Z jwage $
  */
-class HdeskTicket extends BaseHdeskTicket
-{
+class HdeskTicket extends BaseHdeskTicket {
     const FOLDER = "tickets";
-    
-    public function getLastResponse(){
-		
-        return Doctrine::getTable("HdeskResponse")->createQuery("r")
-                                           ->where("r.ca_idticket = ?", $this->getCaIdticket() )
-                                           ->addOrderBy("r.ca_createdat DESC")
-                                           ->fetchOne();
-	}
 
-    public function cerrarSeguimientos(){
+    public function getLastResponse() {
+
+        return Doctrine::getTable("HdeskResponse")->createQuery("r")
+                ->where("r.ca_idticket = ?", $this->getCaIdticket())
+                ->addOrderBy("r.ca_createdat DESC")
+                ->fetchOne();
+    }
+
+    public function cerrarSeguimientos() {
 
         $responses = Doctrine::getTable("HdeskResponse")->createQuery("r")
-                                           ->where("r.ca_idticket = ?", $this->getCaIdticket() )
-                                           ->addWhere("r.ca_idtarea IS NOT NULL")                                           
-                                           ->execute();
-        
-        foreach( $responses as $response ){
+                        ->where("r.ca_idticket = ?", $this->getCaIdticket())
+                        ->addWhere("r.ca_idtarea IS NOT NULL")
+                        ->execute();
+
+        foreach ($responses as $response) {
             $tarea = $response->getNotTarea();
-            if( $tarea ){
+            if ($tarea) {
                 $tarea->setCaFchterminada(date("Y-m-d H:i:s"));
                 $tarea->save();
             }
         }
-	}
-
-
+    }
 
     /*
-	*
-	*/
-	public function getAssignedUser(){
-		if( $this->getCaAssignedto() ){
-			return Doctrine::getTable("Usuario")->find( $this->getCaAssignedto() );
-		}
-		return  null;
-	}
+     *
+     */
 
+    public function getAssignedUser() {
+        if ($this->getCaAssignedto()) {
+            return Doctrine::getTable("Usuario")->find($this->getCaAssignedto());
+        }
+        return null;
+    }
 
-    public function getTareaIdg(){
+    public function getTareaIdg() {
 
-		$tarea=null;
-		if( $this->getCaIdtarea() ){
-			$tarea = Doctrine::getTable("NotTarea")->find( $this->getCaIdtarea() );
-		}
-		return $tarea;
-	}
+        $tarea = null;
+        if ($this->getCaIdtarea()) {
+            $tarea = Doctrine::getTable("NotTarea")->find($this->getCaIdtarea());
+        }
+        return $tarea;
+    }
 
-    public function getTareaSeguimiento(){
+    public function getTareaSeguimiento() {
 
-		$tarea=null;
-		if( $this->getCaIdseguimiento() ){
-            $tarea = Doctrine::getTable("NotTarea")->find( $this->getCaIdseguimiento() );
-		}
-		return $tarea;
-	}
+        $tarea = null;
+        if ($this->getCaIdseguimiento()) {
+            $tarea = Doctrine::getTable("NotTarea")->find($this->getCaIdseguimiento());
+        }
+        return $tarea;
+    }
 
-	/*
-	*  Retorna un array con los logins del grupo
-	*/
-	public function getLoginsGroup(){
-		$loginsAsignaciones = array( );
-		if( $this->getCaAssignedto() ){
-			$loginsAsignaciones[]=$this->getCaAssignedto();
-		}else{
-			
+    /*
+     *  Retorna un array con los logins del grupo
+     */
+
+    public function getLoginsGroup() {
+        $loginsAsignaciones = array();
+        if ($this->getCaAssignedto()) {
+            $loginsAsignaciones[] = $this->getCaAssignedto();
+        } else {
+
             $usuarios = Doctrine::getTable("HdeskUserGroup")
-                     ->createQuery("ug")
-                     ->where("ug.ca_idgroup = ?", $this->getCaIdgroup() )
-                     ->addOrderBy("ug.ca_login")
-                     ->execute();
-			foreach( $usuarios as $usuario ){
-				$loginsAsignaciones[]=$usuario->getCaLogin();
-			}
-		}
-		return array_unique( $loginsAsignaciones );
-	}
+                            ->createQuery("ug")
+                            ->where("ug.ca_idgroup = ?", $this->getCaIdgroup())
+                            ->addOrderBy("ug.ca_login")
+                            ->execute();
+            foreach ($usuarios as $usuario) {
+                $loginsAsignaciones[] = $usuario->getCaLogin();
+            }
+        }
+        return array_unique($loginsAsignaciones);
+    }
 
     /*
      * Retorna los usuarios involucrados en el ticket
      */
-	public function getUsuarios(){
-        return Doctrine::getTable("Usuario")->createQuery("u")
-                    ->innerJoin("u.HdeskTicketUser ug")
-                    ->where("ug.ca_idticket = ?", $this->getCaIdticket())
-                    ->addOrderBy("u.ca_nombre")
-                    ->execute();
-        
-    }
 
+    public function getUsuarios() {
+        return Doctrine::getTable("Usuario")->createQuery("u")
+                ->innerJoin("u.HdeskTicketUser ug")
+                ->where("ug.ca_idticket = ?", $this->getCaIdticket())
+                ->addOrderBy("u.ca_nombre")
+                ->execute();
+    }
 
     /*
-	* Devuelve la ubicacion del directorio donde se encuentran los archivos
-	* @author Andres Botero
-	*/
-    public function getDirectorio(){
-        $folder = HdeskProject::FOLDER;
-        return $directory = sfConfig::get('app_digitalFile_root').DIRECTORY_SEPARATOR.$this->getDirectorioBase();
+     * Devuelve la ubicacion del directorio donde se encuentran los archivos
+     * @author Andres Botero
+     */
 
+    public function getDirectorio() {
+        $folder = HdeskProject::FOLDER;
+        return $directory = sfConfig::get('app_digitalFile_root') . DIRECTORY_SEPARATOR . $this->getDirectorioBase();
     }
 
-    public function getDirectorioBase(){
+    public function getDirectorioBase() {
         $folder = HdeskProject::FOLDER;
-        return $directory = $folder.DIRECTORY_SEPARATOR.$this->getCaIdticket();
-
+        return $directory = $folder . DIRECTORY_SEPARATOR . $this->getCaIdticket();
     }
 
-	
+    public function updateLuceneIndex() {
+
+        $index = $this->getTable()->getLuceneIndex();
+
+        // remove an existing entry
+
+        $hits = $index->find('idticket:' . $this->getCaIdticket());
+        foreach ($hits as $hit) {
+
+            $index->delete($hit->id);
+        }
+        
+       
+        $doc = new Zend_Search_Lucene_Document();
+
+        // store job primary key URL to identify it in the search results
+        $doc->addField(Zend_Search_Lucene_Field::UnIndexed('pk', $this->getCaIdticket()));
+        $doc->addField(Zend_Search_Lucene_Field::Keyword('idticket', $this->getCaIdticket()));
+        $doc->addField(Zend_Search_Lucene_Field::UnStored('title', $this->getCaTitle()));
+        $doc->addField(Zend_Search_Lucene_Field::UnStored('text', utf8_encode($this->getCaText()), 'utf-8'));
+        $doc->addField(Zend_Search_Lucene_Field::UnStored('login', $this->getCaLogin()));
+        $doc->addField(Zend_Search_Lucene_Field::UnStored('loginName', $this->getUsuario()->getCaNombre()));
+
+        $grupo = $this->getHdeskGroup();
+        if( $grupo ){
+			$departamento = $grupo->getDepartamento();			
+            $doc->addField(Zend_Search_Lucene_Field::UnStored('departamento', $departamento->getCaNombre()));
+            $doc->addField(Zend_Search_Lucene_Field::UnStored('grupo', $grupo->getCaName() ));
+
+
+		}
+        $proyecto = $this->getHdeskProject();
+        if( $proyecto ){
+            $doc->addField(Zend_Search_Lucene_Field::UnStored('proyecto', $proyecto->getCaName()));
+		}
+        
+        
+
+        // add job to the index
+        $index->addDocument($doc);
+        $index->commit();
+    }
+
+    public function save(Doctrine_Connection $conn = null) {
+        // ...
+
+        $conn = $conn ? $conn : $this->getTable()->getConnection();
+        $conn->beginTransaction();
+        try {
+            $ret = parent::save($conn);
+
+            $this->updateLuceneIndex();
+
+            $conn->commit();
+
+            return $ret;
+        } catch (Exception $e) {
+            $conn->rollBack();
+            throw $e;
+        }
+    }
+
+    // lib/model/doctrine/JobeetJob.class.php
+    public function delete(Doctrine_Connection $conn = null) {
+        $index = HdeskTicketTable::getLuceneIndex();
+
+        if ($hit = $index->find('pk:' . $this->getCaIdticket())) {
+            $index->delete($hit->id);
+        }
+
+        return parent::delete($conn);
+    }
+
 }

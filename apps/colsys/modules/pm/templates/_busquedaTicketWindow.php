@@ -35,8 +35,9 @@ BusquedaTicketWindow = function( config ) {
     id: 'search-ticket-option',
     lazyRender:true,
     listClass: 'x-combo-list-small',
-    value: "idticket",
+    value: "index",
     store : [
+        ["index","Indexada"],
         ["idticket","# ticket"],
         ["texto","Entre los textos"],
         ["reportedBy","Reportado por"]
