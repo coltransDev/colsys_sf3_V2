@@ -1345,7 +1345,7 @@ class cotizacionesActions extends sfActions
 	public function executeEliminarProducto(){
 		$idproducto = $this->getRequestParameter("idproducto");
 		$this->responseArray = array();
-        $this->responseArray["success"] = false;
+                $this->responseArray["success"] = false;
 		if( $idproducto  ){
 			$producto = Doctrine::getTable("CotProducto")->find($idproducto);
 			if( $producto ){
