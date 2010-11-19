@@ -268,6 +268,16 @@ class pmComponents extends sfComponents
     public function executePorcentajeTicketWindow( ){
 
     }
+    
+    /*
+	* 
+	* @author: Andres Botero
+	*/
+    public function executePanelTicketsActivos( ){
+
+    }
+
+
 	
 	
 }

@@ -55,7 +55,7 @@ class pmActions extends sfActions {
         $criterio = $request->getParameter("criterio");
         $groupby = $request->getParameter("groupby");
 
-        $this->forward404Unless($request->getParameter("idgroup") || $request->getParameter("idproject"));
+        $this->forward404Unless($request->getParameter("idgroup") || $request->getParameter("idproject") || $request->getParameter("option") );
 
         $q = Doctrine_Query::create()
                         ->select("h.*, g.ca_name, u.ca_nombre, u.ca_extension, s.ca_nombre, m.ca_due, m.ca_title, p.ca_name, tar.ca_fchterminada, (SELECT MAX(rr.ca_createdat) FROM HdeskResponse rr WHERE rr.ca_idticket = h.ca_idticket ) as ultseg")
@@ -109,6 +109,11 @@ class pmActions extends sfActions {
         }
 
 
+        if ( $request->getParameter("option")=="misTickets" ){
+            $q->addWhere("(h.ca_login = ? or hu.ca_login = ?)", array($this->getUser()->getUserid(), $this->getUser()->getUserid()));
+            $q->addWhere("h.ca_action=?", "Abierto");
+        }
+
         $q->addOrderBy("h.ca_idgroup ASC");
         $q->addOrderBy("h.ca_idproject ASC");
         $q->addOrderBy("h.ca_action ASC");
@@ -151,7 +156,7 @@ class pmActions extends sfActions {
             $tickets[$key]["u_ca_nombre"] = utf8_encode($tickets[$key]["u_ca_nombre"]);
         }
 
-        $this->responseArray = array("success" => true, "root" => $tickets);
+        $this->responseArray = array("success" => true, "total"=>count($tickets), "root" => $tickets);
 
         $this->setTemplate("responseTemplate");
     }
@@ -1390,7 +1395,7 @@ class pmActions extends sfActions {
 
         $nivel = $this->getUser()->getNivelAcceso(self::RUTINA);
 
-        //try{
+        try{
             $option = $request->getParameter("option");
             $query = $request->getParameter("query");
             Doctrine::getTable("HdeskGroup")
@@ -1418,17 +1423,20 @@ class pmActions extends sfActions {
                     $q->addWhere("(LOWER(t.ca_title) LIKE ? OR LOWER(t.ca_text) LIKE ? OR LOWER(r.ca_text) LIKE ?)", array("%" . strtolower($query) . "%", "%" . strtolower($query) . "%", "%" . strtolower($query) . "%"));
                     break;
                 case "index":
+                    if( substr($query,0,1)=="=" ){
+                        $newQuery = substr($query,1);
+                    }else{
+                        $queryarray = explode(' ', $query);
 
-                    $queryarray = explode(' ', $query);
+                        foreach ($queryarray as $key => $value) {
+                            if (strlen($queryarray[$key]) >= 3) {
 
-                    foreach ($queryarray as $key => $value) {
-                        if (strlen($queryarray[$key]) >= 3) {
+                                $queryarray[$key].='*';
 
-                            $queryarray[$key].='*';
-
+                            }
                         }
+                        $newQuery = implode(' and ', $queryarray);
                     }
-                    $newQuery = implode(' and ', $queryarray);
                     $pks = Doctrine::getTable("HdeskTicket")->getPksForLuceneQuery($newQuery);
 
                     $pksResponses = Doctrine::getTable("HdeskResponse")->getPksForLuceneQuery($newQuery);
@@ -1445,6 +1453,7 @@ class pmActions extends sfActions {
                     }else {
                         $q->where('t.ca_idticket', -1);
                     }
+                    $q->limit(500);
 
                     break;
                 case "reportedBy":
@@ -1477,7 +1486,8 @@ class pmActions extends sfActions {
             }
 
        
-
+            $q->addOrderBy("t.ca_idticket DESC");           
+            
             $results = $q->execute();
 
 
@@ -1567,9 +1577,9 @@ class pmActions extends sfActions {
                 }
             }
             $this->responseArray = array("success" => true, "root" => $data);
-        /*}catch(Exception $e){
+        }catch(Exception $e){
             $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
-        }*/
+        }
         $this->setTemplate("responseTemplate");
     }
 

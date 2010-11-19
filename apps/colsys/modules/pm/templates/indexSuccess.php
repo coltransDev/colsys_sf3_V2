@@ -39,6 +39,8 @@ include_component("kbase", "busquedaIssueWindow");
 include_component("pm","panelBusquedaTicket");
 include_component("pm","panelPreviewTicket");
 
+include_component("pm","panelTicketsActivos");
+
 
 
 include_component("pm", "busquedaTicketWindow");
@@ -223,6 +225,11 @@ Ext.onReady(function(){
 
    </div>
 
+    <br />
+    <div style="clear:left; margin: 20px">
+        <div  id="panel-activos"></div>
+    </div>
+
 
 </div>
 <div id="props-panel" class="x-hide-display" style="width:200px;height:200px;overflow:hidden;">
@@ -337,6 +344,19 @@ Ext.onReady(function(){
        <?
        }
        ?>
+
+
+       var panel = new PanelTicketsActivos({
+           title: "Tickets Abiertos",
+           width: 650,
+           height: 300,
+           autoload: false
+       });
+       panel.render("panel-activos");
+       panel.store.setBaseParam("option", "misTickets");
+       panel.recargar();
+       
+       
 
 
     });
