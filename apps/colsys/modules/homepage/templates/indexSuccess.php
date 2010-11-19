@@ -1,4 +1,14 @@
+<?
 
+include_component("pm", "editarTicketWindow", array("nivel"=>$nivelTickets));
+?>
+
+<script type="text/javascript">
+var crearTicket = function(){
+    var win = new EditarTicketWindow();
+    win.show();
+}
+</script>
 
 
 <div id="viewport">
@@ -32,8 +42,10 @@
 
                 <div class="right-column" style="padding-top:15px;">
                     <div class="side-box"><div class="side-box-inner">
-                            <h5>Otros servicios</h5>
+                            <h5>Links</h5>
                             <ul class="features">
+
+                                <li><a href="#" onClick="crearTicket()">Nuevo ticket</a></li>
                                 <li><a href="http://www.coltrans.com.co/intranet" target="blank">Intranet</a></li>
                                 <li><a href="https://www.coltrans.com.co/tracking/login/novell" target="blank">Tracking</a></li>
                                 <li><a href="http://www.coltrans.com.co/mail" target="blank">Webmail</a></li>

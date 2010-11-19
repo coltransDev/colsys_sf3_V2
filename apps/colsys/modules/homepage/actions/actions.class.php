@@ -10,7 +10,8 @@
  */
 class homepageActions extends sfActions
 {
-    const NIVEL_NOTICIAS=100;
+    const RUTINA_NOTICIAS=100;
+    const RUTINA_TICKETS = 89;
 	/**
 	* Executes index action
 	*
@@ -36,8 +37,8 @@ class homepageActions extends sfActions
         
         $this->grupos = $this->getUser()->getMenu();
 
-        $this->nivelNoticias =  $this->getUser()->getNivelAcceso(self::NIVEL_NOTICIAS);
-       
+        $this->nivelNoticias =  $this->getUser()->getNivelAcceso(self::RUTINA_NOTICIAS);
+        $this->nivelTickets =  $this->getUser()->getNivelAcceso(self::RUTINA_TICKETS);
 		
 		
 	}
