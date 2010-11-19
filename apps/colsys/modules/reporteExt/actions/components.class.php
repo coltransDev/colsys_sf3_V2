@@ -79,7 +79,10 @@ class reporteExtComponents extends sfComponents
 
 
         if( $bodega2 && ($bodega2->getCaTipo()!= "Coordinador Logistico" && $bodega2->getCaTipo()!="Coordinador Logístico") ){
-            $hijo .=" / ".$bodega2->getCaTipo()." ".(($bodega2->getCaNombre()!='N/A')?$bodega2->getCaNombre():"")." ".$reporte->getDestinoCont()->getCaCiudad()." - ".$reporte->getDestinoCont()->getTrafico()->getCaNombre();
+            if($bodega2->getCaTipo()==$bodega2->getCaNombre())
+                $hijo .=" / ".$bodega2->getCaTipo()." ".$reporte->getDestinoCont()->getCaCiudad()." - ".$reporte->getDestinoCont()->getTrafico()->getCaNombre();
+            else
+                $hijo .=" / ".$bodega2->getCaTipo()." ".(($bodega2->getCaNombre()!='N/A')?$bodega2->getCaNombre():"")." ".$reporte->getDestinoCont()->getCaCiudad()." - ".$reporte->getDestinoCont()->getTrafico()->getCaNombre();
 
         }
 
@@ -192,9 +195,10 @@ class reporteExtComponents extends sfComponents
 //        if($reporte->getCaIdconsignar()!=1)
         {
             //echo "--".$bodega2->getCaTipo()."--";
-            if( $bodega2 && ($bodega2->getCaTipo()!= "Coordinador Logistico" && $bodega2->getCaTipo()!="Coordinador Logístico") ){
+            if($bodega2->getCaTipo()==$bodega2->getCaNombre())
+                $hijo .=" / ".$bodega2->getCaTipo()." ".$reporte->getDestinoCont()->getCaCiudad()." - ".$reporte->getDestinoCont()->getTrafico()->getCaNombre();
+            else
                 $hijo .=" / ".$bodega2->getCaTipo()." ".(($bodega2->getCaNombre()!='N/A')?$bodega2->getCaNombre():"")." ".$reporte->getDestinoCont()->getCaCiudad()." - ".$reporte->getDestinoCont()->getTrafico()->getCaNombre();
-            }
         }
         // $hijo = (
         //              ($rs->Value('ca_tipobodega')!= "Coordinador Logistico")?" / ".$rs->Value('ca_tipobodega')." ".(($rs->Value('ca_bodega')!='N/A')?$rs->Value('ca_bodega'):"")." ".$rs->Value('ca_final_dest')." - ".$tm->Value('ca_pais'):"");
@@ -294,7 +298,11 @@ class reporteExtComponents extends sfComponents
             $hijo = $bodegaConsignar->getCaNombre();
         }
 
-        $hijo.=" / ".$bodega2->getCaTipo()." ".(($bodega2->getCaNombre()!='N/A')?$bodega2->getCaNombre():"");
+        if($bodega2->getCaTipo()==$bodega2->getCaNombre())
+                $hijo.=" / ".$bodega2->getCaTipo();
+            else
+                $hijo.=" / ".$bodega2->getCaTipo()." ".(($bodega2->getCaNombre()!='N/A')?$bodega2->getCaNombre():"");
+//        $hijo.=" / ".$bodega2->getCaTipo()." ".(($bodega2->getCaNombre()!='N/A')?$bodega2->getCaNombre():"");
 
         if( $reporte->getCaContinuacion()== 'N/A' ){
             $hijo.="<br />".$reporte->getDestino()->getCaCiudad();
@@ -388,9 +396,17 @@ class reporteExtComponents extends sfComponents
             $hijo = $bodegaConsignar->getCaNombre();
         }
         
-        if($bodega2 && $reporte->getCaImpoexpo!=Constantes::TRIANGULACION && $bodega2->getCaIdbodega()!="1")
-            $hijo.=" / ".$bodega2->getCaTipo()." ".(($bodega2->getCaNombre()!='N/A')?$bodega2->getCaNombre():"");
+        if($bodega2 && $reporte->getCaImpoexpo()!=Constantes::TRIANGULACION && $bodega2->getCaIdbodega()!="1")
+        {
 
+
+            if($bodega2->getCaTipo()==$bodega2->getCaNombre())
+                $hijo.=" / ".$bodega2->getCaNombre();
+            else
+                $hijo.=" / ".$bodega2->getCaTipo()." ".(($bodega2->getCaNombre()!='N/A')?$bodega2->getCaNombre():"");
+
+            
+        }
         if( $reporte->getCaContinuacion()== 'N/A' ){
             $hijo.="<br />".$reporte->getDestino()->getCaCiudad();
         }
