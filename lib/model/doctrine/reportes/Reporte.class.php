@@ -280,7 +280,7 @@ class Reporte extends BaseReporte
 //        $user = sfContext::getInstance()->getUser();
 //        echo $user->getUserId();
         //if(!$this->editable)
-        if($user->getUserId()!="maquinche" && $user->getUserId()!="olcasallas")
+        if($user->getUserId()!="maquinche" )
         {
             
             //echo "::".$this->editable."::<br>";
