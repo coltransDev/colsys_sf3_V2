@@ -252,8 +252,7 @@ class pmActions extends sfActions {
         }
 
         $this->user = $this->getuser();
-        $response = sfContext::getInstance()->getResponse();
-        $response->addJavaScript("extExtras/FileUploadField", 'last');
+        
     }
 
     /**

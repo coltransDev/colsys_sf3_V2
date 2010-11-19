@@ -152,6 +152,7 @@ class pmComponents extends sfComponents
 	*/
     public function executeEditarTicketWindow( ){
 
+
     }
 
     /*
@@ -169,6 +170,10 @@ class pmComponents extends sfComponents
 	* @author: Andres Botero
 	*/
     public function executeEditarTicketPropiedadesPanel( ){
+
+        $response = sfContext::getInstance()->getResponse();
+        $response->addJavaScript("extExtras/FileUploadField", 'last');
+
         $departamentos = Doctrine::getTable("Departamento")
                          ->createQuery("d")
                          ->where("d.ca_inhelpdesk = ?", true)

@@ -274,10 +274,10 @@ Ext.extend(PanelBusquedaTicket, Ext.grid.GridPanel, {
             Ext.getCmp('tab-panel').setActiveTab(newComponent);
 
 
-            var win = Ext.getCmp('ticket-search-win');
+            /*var win = Ext.getCmp('ticket-search-win');
             if( win ){
                 win.close();
-            }
+            }*/
 		}
 	},
     
