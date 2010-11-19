@@ -403,9 +403,12 @@ Ext.extend(MainPanel, Ext.FormPanel, {
 //		if(Ext.getCmp("fchPresentacion").getValue()==)
 //			return 0;
 
-        if( this.getForm().isValid() ){
+        var fp = Ext.getCmp("main-tabs");
+            form = fp.getForm();
 
-            this.getForm().submit({url:'<?=url_for('cotizaciones/formCotizacionGuardar')?>',
+        if( form.isValid() ){
+
+            form.submit({url:'<?=url_for('cotizaciones/formCotizacionGuardar')?>',
                                     waitMsg:'Salvando Datos básicos de la Cotizaci&oacute;n...',
                                     success:function(response,options){
                                         <?

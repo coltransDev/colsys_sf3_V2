@@ -421,11 +421,11 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
         var lenght = records.length;
 
         //Se hace la valida que se hayan colocado todos los datos
+        
         for( var i=0; i< lenght; i++){
             r = records[i];
-            //alert( r.data.iditem );
-            if( !r.data.idmoneda && r.data.iditem!=9999 ){
-                alert('Por favor coloque la moneda en todos los items en la pestaña Tarifas de trayectos','Warning');
+            if( r.data.idmoneda<=0 && r.data.iditem!="9999" ){
+                r.data.idmoneda="USD";
             }
 
             if( !r.data.idequipo && r.data.modalidad =="FCL" && r.data.transporte=="<?=Constantes::TERRESTRE?>" )
@@ -443,8 +443,6 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
 				habilita=true;
             if( records[i].data.tipo=="concepto" || (records[i].data.tipo=="recargo" && records[i].data.idopcion ))
             {
-                //alert(records[i].data.tipo + " "+ records[i].data.idconcepto)
-				//alert(i+" = "+(lenght-1))
                 this.guardarGridProductosRec( records[i],habilita );
 				habilita="S";
             }
@@ -468,12 +466,9 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
     guardarGridProductosRec: function( r, habilita ){
         var storeProductos = this.store;
         var changes = r.getChanges();
-//        alert("1"+tipo +" : "+this.tipo)
-        tipo=this.tipo;
-//        alert("2"+tipo +" : "+this.tipo)
 
+        tipo=this.tipo;
         if( r.data.iditem && !r.data.inSave ){
-            //alert( r.data.id );
             changes['id']=r.id;
             changes['parent']=r.data.parent;
             changes['idproducto']=r.data.idproducto;
@@ -565,7 +560,7 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
     * tambien inserta otra columna en blanco para que el usuario continue digitando
     */
     onValidateEdit: function(e){
-       //alert(e.toSource());
+
        var rec = e.record;
        var ed = this.colModel.getCellEditor(e.column, e.row);
        var store = ed.field.store;
@@ -1104,7 +1099,6 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
         if(typeof(record)!="undefined"){ // Coloca los datos en la ventana
             var fp = Ext.getCmp("producto-form");
             form = fp.getForm().loadRecord(record);
-//            alert(form.toSource())
             fp.getForm().findField("idproducto").setValue(record.data.idproducto);
             if(fp.getForm().findField("tra_origen_id"))
             {
