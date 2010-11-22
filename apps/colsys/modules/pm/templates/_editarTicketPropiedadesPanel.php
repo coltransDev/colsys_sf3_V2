@@ -323,6 +323,35 @@ $grupos = $sf_data->getRaw("grupos");
             ]
         });
 
+        this.reportedoThrough = new Ext.form.ComboBox({
+            fieldLabel: 'Medio reportado',
+            typeAhead: true,
+            forceSelection: true,
+            triggerAction: 'all',
+            emptyText:'',
+            selectOnFocus: true,
+            value: 'Web',
+            name: 'reportedthrough',
+            id: 'reportedthrough_id',
+            lazyRender:true,
+            allowBlank: true,
+            listClass: 'x-combo-list-small',
+            store : [
+                <?
+                $i = 0;
+                foreach( $reportedThroughtParams as $param ){
+                    if( $i++!=0){
+                        echo ",";
+                    }
+                    ?>
+                    ["<?=$param->getCaValor()?>", "<?=$param->getCaValor()?>"]
+                    <?
+                }
+                ?>
+                
+            ]
+        });
+
         
     
         EditarTicketPropiedadesPanel.superclass.constructor.call(this, {
@@ -354,7 +383,8 @@ $grupos = $sf_data->getRaw("grupos");
                                 this.departamentos,
                                 this.projectos,
                                 this.tipos,
-                                this.asignaciones
+                                this.asignaciones,
+                                this.reportadoPor
 
                             ]
                         },{
@@ -365,7 +395,7 @@ $grupos = $sf_data->getRaw("grupos");
                                 this.prioridades,
                                 this.acciones,
                                 this.milestones,
-                                this.reportadoPor
+                                this.reportedoThrough
                         
                             ]
                         }]
@@ -450,6 +480,10 @@ $grupos = $sf_data->getRaw("grupos");
             Ext.getCmp('proyecto_id').setDisabled(true);
             Ext.getCmp('milestone_id').setDisabled(true);
             Ext.getCmp('reportedby_id').setDisabled(true);
+            Ext.getCmp('reportedthrough_id').setDisabled(true);
+            Ext.getCmp('reportedthrough_id').setValue("Web");
+            Ext.getCmp('reportedby_id').setValue("");
+
 
         },
 
@@ -463,6 +497,7 @@ $grupos = $sf_data->getRaw("grupos");
             Ext.getCmp('proyecto_id').setDisabled(false);
             Ext.getCmp('milestone_id').setDisabled(false);
             Ext.getCmp('reportedby_id').setDisabled(false);
+            Ext.getCmp('reportedthrough_id').setDisabled(false);
         },
 
         onRender: function(){
@@ -473,8 +508,8 @@ $grupos = $sf_data->getRaw("grupos");
             this.getForm().waitMsgTarget = this.getEl();
             this.validarVigencia();
             var actionTicket =  this.actionTicket;
-            var panel = this;
-            if(this.idticket!="undefined" && this.idticket!="" )
+            var panel = this;            
+            if(typeof(this.idticket)!="undefined" && this.idticket!="" )
             {
                 this.load({
                     url:'<?=url_for("pm/datosTicket")?>',

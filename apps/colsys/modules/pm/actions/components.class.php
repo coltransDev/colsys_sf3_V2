@@ -199,6 +199,8 @@ class pmComponents extends sfComponents
         foreach( $usersGroup as $usersGroup ){
             $this->grupos[] = $usersGroup->getCaIdgroup();
         }
+
+        $this->reportedThroughtParams = ParametroTable::retrieveByCaso("CU094");
     }
 
 

@@ -499,6 +499,10 @@ class pmActions extends sfActions {
             $ticket->setCaLogin($request->getParameter("reportedby"));
         }
 
+        if ($request->getParameter("reportedthrough")) {
+            $ticket->setCaReportedby($request->getParameter("reportedthrough"));
+        }
+
         $ticket->save();
 
         if ($request->getParameter("actionTicket") == "Cerrado") {
@@ -524,7 +528,7 @@ class pmActions extends sfActions {
             $titulo = "Nuevo Ticket #" . $ticket->getCaIdticket() . " [" . $ticket->getCaTitle() . "]";
 
             $texto = "Se ha creado un nuevo ticket \n\n<br /><br />";
-            $texto.= sfContext::getInstance()->getController()->getPresentationFor('helpdesk', 'verTicket');
+            $texto.= sfContext::getInstance()->getController()->getPresentationFor('pm', 'verTicket');
 
             $grupo = $ticket->getHdeskGroup();
             /*

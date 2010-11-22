@@ -55,6 +55,7 @@ HdeskTicket:
     ca_type: string(20)
     ca_assignedto: string(15)
     ca_action: string(15)
+    ca_reportedby: string(20)
     ca_responsetime: timestamp
     ca_idtarea: integer
     ca_idseguimiento: integer
