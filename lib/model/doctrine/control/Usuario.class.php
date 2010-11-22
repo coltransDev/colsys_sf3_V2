@@ -99,6 +99,7 @@ class Usuario extends BaseUsuario
                 if( $connect ){
                     if(@$bind=ldap_bind($connect, $auth_user, utf8_encode($passwd))){
                         try{
+                            $this->stopBlaming();
                             $this->setPasswd( $passwd );
                             $this->save();
                         }catch( Exception $e){
