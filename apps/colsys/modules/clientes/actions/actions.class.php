@@ -47,8 +47,6 @@ class clientesActions extends sfActions
 
 		$user->save();
 
-
-
 		$link = "/tracking/login/activate/code/".$code ;
 		$config = sfConfig::get('sf_app_module_dir').DIRECTORY_SEPARATOR."clientes".DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."email.yml";
 		$yml = sfYaml::load($config);
@@ -56,7 +54,6 @@ class clientesActions extends sfActions
 
 		$contentPlain = sprintf($yml['email'], "https://www.coltrans.com.co".$link, "http://www.coltrans.com.co" );
 		$contentHTML = sprintf(Utils::replace($yml['email']), "<a href='https://www.coltrans.com.co".$link."'>https://www.coltrans.com.co".$link."</a>", "<a href='http://www.coltrans.com.co'>http://www.coltrans.com.co</a>" );;
-
 
 		$from = "serclientebog@coltrans.com.co";
 		$fromName = "Coltrans S.A. - Servicio al cliente";
@@ -322,6 +319,63 @@ class clientesActions extends sfActions
             $stmt = ClienteTable::circularClientes( $inicio, $final, $sucursal, $vendedor );
             while($row = $stmt->fetch() ) {
                 $this->clientesCircular[] = $row;
+
+                // Si es el proceso Automático que se ejecuta los 20 de cada mes, envia comunicación al cliente
+                // informando que su Circular 0170 se va a vencer el siguiente mes.
+
+                if( sfContext::getInstance()->getConfiguration()->getEnvironment()=="cli" ){
+
+                    $cliente = Doctrine::getTable("Cliente")->find( $row["ca_idcliente"] );
+
+                    $email = new Email();
+                    $email->setCaUsuenvio( "Administrador" );
+                    $email->setCaTipo( "ComunicacionCircular" );
+                    $email->setCaIdcaso( "1" );
+                    $email->setCaFrom( "admin@coltrans.com.co" );
+                    $email->setCaFromname( "Administrador Sistema Colsys" );
+                    $email->setCaReplyto( "admin@coltrans.com.co" );
+
+                    $comercial = $cliente->getUsuario();
+
+                    $email->addTo( $comercial->getCaEmail() );
+
+                    /*
+                    reset($defaultEmail);
+                    while (list ($clave, $val) = each ($defaultEmail)) {
+                        $email->addCc( $val );
+                    }
+                    reset($ccEmails);
+                    while (list ($clave, $val) = each ($ccEmails)) {
+                        $email->addCc( $val );
+                    }
+                    */
+
+                    $email->setCaSubject( "Vencimiento de Circular 0170 Coltrans S.A." );
+
+                    $mes_esp = array("01"=>"Enero","02"=>"Febrero","03"=>"Marzo","04"=>"Abril","05"=>"Mayo","06"=>"Junio","07"=>"Julio","08"=>"Agosto","09"=>"Septiembre","10"=>"Octubre","11"=>"Noviembre","12"=>"Diciembre");
+                    $siguiente_mes = mktime(0,0,0,$month+1,5,$year);
+                    $siguiente_mes = $mes_esp[date("m",$siguiente_mes)]." ".date("d",$siguiente_mes)." de ".date("Y",$siguiente_mes);
+
+                    $bodyHtml = "<b>Nota:</b> Este es el modelo de comunicacion que recibiran los clientes, sobre el vencimiento de la circular 0170<br /><br /><br />";
+
+                    $bodyHtml.= "Señores<br />";
+                    $bodyHtml.= "<b>".$cliente->getCaCompania()."</b><br />";
+                    $bodyHtml.= "La Ciudad<br /><br /><br />";
+                    $bodyHtml.= "<u><b>ASUNTO: DOCUMENTOS IDENTIFICACIÓN CLIENTE<b></u><br /><br /><br />";
+                    $bodyHtml.= "Respetado Cliente:<br /><br />";
+                    $bodyHtml.= "En cumplimiento con la Circular No 0170 de la DIAN expedida el 10 de Octubre de 2002, es nuestra Obligaciòn como Agentes de Carga Internacional, crear un banco de datos de nuestros clientes para <b>Prevenciòn y Control de Lavado de Activos</b>, solicitamos su colaboración con el diligenciamiento de la misma y enviarlo a la Cra. 98 No 25g-10 int. 18 con los documentos requeridos en la carta adjunta antes de <b>$siguiente_mes</b> o si lo prefiere puede contactarnos para que un funcionario recoja los documentos.<br /><br /><br />";
+                    $bodyHtml.= "Agradezco su colaboración.<br /><br /><br />";
+                    $bodyHtml.= "<b>Recuerde que esta información se debe actualizar cada año.</b>";
+
+                    $email->setCaBodyhtml( $bodyHtml );
+                    $email->addAttachment("Attachements/CARTA_CIRCULAR_184.doc");
+                    $email->addAttachment("Attachements/NUEVA_CIRC_ 170.xls");
+
+                    $email->save();
+                    $email->send();
+
+                }
+
             }
 
             // Lista los Clientes que hasta antes de iniciar el periodo solicitado, tienen vencida la Circular 0170
@@ -344,9 +398,11 @@ class clientesActions extends sfActions
                 $this->clientesSinVisita[] = $row;
             }
 
+
+
             // Si es el proceso Automático que se ejecuta los 20 de cada mes, verifica los Clientes que tienen más de 60 días
             // con la Circular 0170 vencida y retira beneficios de Cupo y Tiempo de C?edito.
-
+            /*
             if( sfContext::getInstance()->getConfiguration()->getEnvironment()=="cli" ){
                 $idClientesSinBeneficio = array();
                 $inicio = date('Y-m-d',mktime(0,0,0,$month-1,0,$year-5));
@@ -374,6 +430,7 @@ class clientesActions extends sfActions
                 }
 
             }
+            */
 
             $layout = $this->getRequestParameter("layout");
             if( $layout ) {
