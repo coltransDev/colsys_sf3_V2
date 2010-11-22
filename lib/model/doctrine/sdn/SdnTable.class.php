@@ -29,6 +29,9 @@ class SdnTable extends Doctrine_Table
 		$query.= " sdak.ca_uid_aka as sdak_uid_aka, sdak.ca_type as sdak_type, sdak.ca_category as sdak_category, sdak.ca_firstname as sdak_firstname, sdak.ca_lastname as sdak_lastname ";
 		$query.= "from tb_clientes cl ";
 
+                $query.= "	RIGHT JOIN (select ca_idcliente, ca_coltrans_std, ca_colmas_std from vi_clientes where ca_coltrans_std = 'Activo' or ca_colmas_std = 'Activo' order by ca_idcliente) as std";
+		$query.= "	ON ( cl.ca_idcliente = std.ca_idcliente )";
+
 		$query.= "	LEFT OUTER JOIN tb_sdn sdnm";
 		$query.= "	ON ( fun_similarpercent(cl.ca_compania, textcat(case when sdnm.ca_firstname IS NULL then '' else sdnm.ca_firstname end, case when sdnm.ca_lastname IS NULL then '' else sdnm.ca_lastname end)) >90 )";
 
@@ -39,11 +42,9 @@ class SdnTable extends Doctrine_Table
 		$query.= "	ON ( fun_similarpercent(cl.ca_compania, textcat(case when sdal.ca_firstname IS NULL then '' else sdal.ca_firstname end, case when sdal.ca_lastname IS NULL then '' else sdal.ca_lastname end)) >90 )";
 
 		$query.= "	LEFT OUTER JOIN tb_sdnaka sdak";
-		$query.= "	ON ( fun_similarpercent(cl.ca_nombres||' '||cl.ca_papellido||' '||cl.ca_sapellido, textcat(case when sdak.ca_firstname IS NULL then '' else sdak.ca_firstname end, case when sdak.ca_lastname IS NULL then '' else sdak.ca_lastname end)) >90 ),";
+		$query.= "	ON ( fun_similarpercent(cl.ca_nombres||' '||cl.ca_papellido||' '||cl.ca_sapellido, textcat(case when sdak.ca_firstname IS NULL then '' else sdak.ca_firstname end, case when sdak.ca_lastname IS NULL then '' else sdak.ca_lastname end)) >90 )";
 
-		$query.= "	(select ca_idcliente, ca_coltrans_std, ca_colmas_std from vi_clientes where ca_coltrans_std = 'Activo' or ca_colmas_std = 'Activo' order by ca_idcliente) as std ";
-
-		$query.= "	where cl.ca_idcliente = std.ca_idcliente and (sdnm.ca_uid IS NOT NULL or sdid.ca_uid IS NOT NULL or sdak.ca_uid IS NOT NULL)";
+		$query.= "	where sdnm.ca_uid IS NOT NULL or sdid.ca_uid IS NOT NULL or sdak.ca_uid IS NOT NULL";
 
 		$query.= "  order by cl.ca_vendedor, cl.ca_compania";
 
