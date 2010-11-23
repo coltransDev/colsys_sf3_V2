@@ -336,10 +336,12 @@ class idsActions extends sfActions
                             $proveedor->setCaEsporadico( false );
                         }
 
+                        
                         if( $bindValues["aprobado"] ){
-                            
-                            $proveedor->setCaFchaprobado( $bindValues["aprobado"] );
-                            $proveedor->setCaUsuaprobado( $this->getUser()->getUserId() );
+                            if( $bindValues["aprobado"]!=$proveedor->getCaFchaprobado() ){
+                                $proveedor->setCaFchaprobado( $bindValues["aprobado"] );
+                                $proveedor->setCaUsuaprobado( $this->getUser()->getUserId() );
+                            }
                             
                         }else{
                             $proveedor->setCaFchaprobado( null );
@@ -1288,7 +1290,7 @@ class idsActions extends sfActions
     public function executeAlertasDocumentos(sfWebRequest $request){
        $this->modo=$request->getParameter("modo");  
        $this->fecha = date("Y-m-d", time()+86400*16);
-       echo$this->fecha ;
+       //echo$this->fecha ;
        $q = Doctrine::getTable("IdsDocumento")
                                ->createQuery("d")
                                ->select("i.ca_id, d.ca_iddocumento, d.ca_fchvencimiento, t.ca_tipo, i.ca_nombre")
