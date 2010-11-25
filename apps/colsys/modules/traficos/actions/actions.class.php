@@ -882,7 +882,8 @@ class traficosActions extends sfActions
                 @mkdir($directory, 0777, true);
             }
             $fileName = "status".str_replace(".", "", str_replace(" ", "_", $cliente->getCaCompania())).".xls";
-
+            $fileName = str_replace("&", "AND", $fileName );
+            
 			//Genera el archivo de excel
 			$this->getRequest()->setParameter('filename',$email->getDirectorio().$fileName);
 			sfContext::getInstance()->getController()->getPresentationFor( 'traficos', 'informeTraficosFormato1');
