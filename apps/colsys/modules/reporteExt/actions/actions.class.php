@@ -149,17 +149,20 @@ class reporteExtActions extends sfActions
 					$tarea->save();
 					$loginsAsignaciones = array( $this->getUser()->getUserId() );
 					$tarea->setAsignaciones( $loginsAsignaciones );	
-					
-					$reporte->setCaIdseguimiento( $tarea->getCaIdtarea() );
+
+
+                    $asignacion = Doctrine::getTable("RepAsignacion")->find(array($reporte->getCaIdreporte(), $tarea->getCaIdtarea()));
+                    if( !$asignacion ){
+                        $asignacion = new RepAsignacion();
+                    }
+                    $asignacion->setCaIdreporte( $reporte->getCaIdreporte() );
+                    $asignacion->setCaIdtarea( $tarea->getCaIdtarea() );
+                    $asignacion->save();
+
+					/*$reporte->setCaIdseguimiento( $tarea->getCaIdtarea() );
                     $reporte->stopBlaming();
-					$reporte->save();				
-				}else{
-					if( $tarea && $tarea->getCaIdtarea() ){
-						$tarea->setCaFchterminada( date("Y-m-d H:i:s") );
-						$tarea->setCaUsuterminada( $this->getUser()->getUserId()  );									
-						$tarea->save();
-					}	
-				}	
+					$reporte->save();*/
+				}
 				
 				/*
 				* Crea el reporte

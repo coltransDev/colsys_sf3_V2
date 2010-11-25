@@ -191,15 +191,15 @@ var crearSeguimiento=function(){
 	</tr>
 	
 	<?
-	$tarea = $reporte->getNotTarea();
+	//$tarea = $reporte->getNotTarea();
 	?>
 	<tr>
 		<td colspan="2"><div align="left"><b>Programar seguimiento:</b>
 			<?
 			 echo $form['prog_seguimiento']->renderError(); 
-			 if( $tarea && $tarea->getCaIdtarea() &&  !$tarea->getCaFchterminada() ){
+			 /*if( $tarea && $tarea->getCaIdtarea() &&  !$tarea->getCaFchterminada() ){
 			 	$form->setDefault('prog_seguimiento', true ); 
-			 }	
+			 }*/
 			 echo $form['prog_seguimiento']->render();
 			 ?>
 			 
@@ -209,9 +209,9 @@ var crearSeguimiento=function(){
 		<td colspan="2" id="row_seguimiento"><div align="left"><b>Fecha seguimiento:</b>
 				<?
 			 echo $form['fchseguimiento']->renderError();
-			 if( $tarea && $tarea->getCaIdtarea() && !$tarea->getCaFchterminada() ){
+			 /*if( $tarea && $tarea->getCaIdtarea() && !$tarea->getCaFchterminada() ){
 			 	$form->setDefault('fchseguimiento', Utils::parseDate($tarea->getCaFchvencimiento(),"Y-m-d") );
-			 }			   
+			 }*/
 			 echo $form['fchseguimiento']->render();
 			 ?>
 		</div>			
@@ -219,9 +219,9 @@ var crearSeguimiento=function(){
 		<div align="left"><b>Recordar sobre:</b>
 				<?               
 			 echo $form['txtseguimiento']->renderError(); 
-			 if( $tarea && $tarea->getCaIdtarea() && !$tarea->getCaFchterminada() ){
+			 /*if( $tarea && $tarea->getCaIdtarea() && !$tarea->getCaFchterminada() ){
 			 	$form->setDefault('txtseguimiento', $tarea->getCaTexto() ); 
-			 }	
+			 }*/
 			 echo $form['txtseguimiento']->render();
 			 ?>
 			</div></td>
