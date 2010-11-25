@@ -473,10 +473,16 @@ PanelFletesPorTrayecto = function( config ){
             }
 
             if( record.data.tipo=="recargo"){
-                if( (field=='nconcepto' && record.data.iditem) || !( field=='nconcepto' || field=='sugerida' || field=='minima' || field=='moneda'|| field=='aplicacion'|| field=='aplicacion_min'|| field=='inicio' || field=='vencimiento')  ){
+                if( (field=='nconcepto' && record.data.iditem) || !( field=='nconcepto' || field=='equipo' || field=='sugerida' || field=='minima' || field=='moneda'|| field=='aplicacion'|| field=='aplicacion_min'|| field=='inicio' || field=='vencimiento')  ){
+                    return false;
+                }
+
+                if( field=='equipo' && record.data.consecutivo ){
                     return false;
                 }
             }
+
+
 
             if( record.data.tipo=="trayecto_obs"   ){
                 return false;
@@ -927,7 +933,7 @@ Ext.extend(PanelFletesPorTrayecto, Ext.grid.EditorGridPanel, {
 
     },
 
-    renderConcepto: function(value, metaData, record){
+    renderConcepto: function(value, metaData, record, rowIndex, colIndex, store){
         var data = record.data;
         // create tooltip
         var qtipTpl=new Ext.XTemplate(
@@ -940,6 +946,8 @@ Ext.extend(PanelFletesPorTrayecto, Ext.grid.EditorGridPanel, {
 
         var qtip = qtipTpl.apply(data);
 
+
+
         switch(  record.data.tipo ){
             case 'trayecto_obs':
                 return '<div qtip="' + qtip +'"><b>'+value+'</b></div>';
@@ -948,7 +956,12 @@ Ext.extend(PanelFletesPorTrayecto, Ext.grid.EditorGridPanel, {
                 return '<div qtip="' + qtip +'"><b>'+value+'</b></div>';
                 break;
             case 'recargo':
-                return '<div qtip="' + qtip +'" class="recargo">'+value+'</div>';
+                
+                if( colIndex==2 ){
+                    return '<div qtip="' + qtip +'" class="recargo">'+value+'</div>';
+                }else{
+                    return '<div qtip="' + qtip +'" >'+value+'</div>';
+                }
                 break;
             case 'recargoxciudad':
                 return '<div qtip="' + qtip +'" class="recargo">'+value+'</div>';
@@ -974,6 +987,8 @@ Ext.extend(PanelFletesPorTrayecto, Ext.grid.EditorGridPanel, {
                 params['idconcepto'] = ctxRecord.data.idconcepto;
                 params['idrecargo'] = ctxRecord.data.iditem;
             }
+
+            params['idequipo'] = ctxRecord.data.idequipo;
 
             params['tipo'] = ctxRecord.data.tipo;
             params['id'] = ctxRecord.id;

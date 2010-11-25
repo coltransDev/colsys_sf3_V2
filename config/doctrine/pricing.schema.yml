@@ -277,6 +277,11 @@ PricRecargoxConcepto:
       local: ca_idrecargo
       foreign: ca_idrecargo
       type: one
+    Equipo:
+      local: ca_idequipo
+      foreign: ca_idconcepto
+      type: one
+      class: Concepto
 
 PricRecargoxConceptoBs:
   options:
@@ -316,6 +321,11 @@ PricRecargoxConceptoBs:
       local: ca_idrecargo
       foreign: ca_idrecargo
       type: one
+    Equipo:
+      local: ca_idequipo
+      foreign: ca_idconcepto
+      type: one
+      class: Concepto
 
 
 PricRecargoxCiudad:

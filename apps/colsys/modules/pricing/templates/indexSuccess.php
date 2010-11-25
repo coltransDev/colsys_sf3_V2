@@ -38,8 +38,8 @@ include_component("conceptos","AKAGrid");
 
 
 //Tarifario Colmas
-include_component("pricing","panelTarifarioAduana");
-include_component("pricing","panelTarifarioAduanaCliente");
+//include_component("pricing","panelTarifarioAduana");
+//include_component("pricing","panelTarifarioAduanaCliente");
 ?>
 <script type="text/javascript">
 
@@ -119,14 +119,14 @@ Ext.onReady(function(){
                         "readOnly": <?=$opcion=="consulta"?"true":"false"?>
                     }),
                     
-                     new PanelConsultaCiudades({
+                     /*new PanelConsultaCiudades({
                         title: "Aduana",
                         "impoexpo": "<?=(Constantes::IMPO)?>",
 
                         "transporte": '<?=Constantes::TERRESTRE?>',
                         "modalidad": '<?=Constantes::ADUANA?>',
                         "readOnly": <?=$opcion=="consulta"?"true":"false"?>
-                    }),
+                    }),*/
                 
                 <?
                 include_partial("formSeguros", array("opcion"=>$opcion));

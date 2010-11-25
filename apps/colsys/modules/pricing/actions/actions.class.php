@@ -213,6 +213,8 @@ class pricingActions extends sfActions
                     $row = array (
                         'nconcepto' => utf8_encode($tipoRecargo->getCaRecargo()),
                         'idconcepto'=>'9999',
+                        'equipo' => utf8_encode($pricRecargo->getEquipo()?$pricRecargo->getEquipo()->getCaConcepto():""),
+                        'idequipo' => $pricRecargo->getCaIdequipo(),
                         'inicio' => $pricRecargo->getCaFchinicio(),
                         'vencimiento' => $pricRecargo->getCaFchvencimiento(),
                         'moneda' => $pricRecargo->getCaIdmoneda(),
@@ -458,9 +460,13 @@ class pricingActions extends sfActions
 							$sugerida=$pricRecargo->getCaVlrrecargo();
 							$minima=$pricRecargo->getCaVlrminimo();
 						}
+
+                        
                         $row = array (
                             'nconcepto' => utf8_encode($tipoRecargo->getCaRecargo()),
                             'idconcepto'=>$pricConcepto->getCaIdconcepto(),
+                            'equipo' => utf8_encode($pricRecargo->getEquipo()?$pricRecargo->getEquipo()->getCaConcepto():""),
+                            'idequipo' => $pricRecargo->getCaIdequipo(),
                             'inicio' => $pricRecargo->getCaFchinicio(),
                             'vencimiento' => $pricRecargo->getCaFchvencimiento(),
                             'moneda' => $pricRecargo->getCaIdmoneda(),
@@ -490,7 +496,7 @@ class pricingActions extends sfActions
 				}
                 $i++;
             }
-
+           
 			//$this->opcion!="consulta" se hace para que el usuario pueda 
 			// hacer click con el boton derecho y agregar un recargo general 
 			if( $this->opcion!="consulta" || ( count($recargosGenerales)>0  ) ){ 				
@@ -591,11 +597,11 @@ class pricingActions extends sfActions
                             $flete->setCaVlrsugerido( $sugerida );
                     }			
                     if( $this->getRequestParameter("style")!==null){
-                            if( $this->getRequestParameter("style") ){
-                                    $flete->setEstilo($this->getRequestParameter("style"));
-                            }else{
-                                    $flete->setEstilo(null);
-                            }
+                        if( $this->getRequestParameter("style") ){
+                                $flete->setEstilo($this->getRequestParameter("style"));
+                        }else{
+                                $flete->setEstilo(null);
+                        }
                     }
 
                     if( $this->getRequestParameter("inicio")!==null ){
@@ -653,7 +659,7 @@ class pricingActions extends sfActions
 					$flete = new PricFlete();
 					$flete->setCaIdtrayecto( $trayecto->getCaIdtrayecto() );
 					$flete->setCaIdconcepto( $idconcepto );
-					$flete->setCaVlrneto( 0 );					
+					$flete->setCaVlrneto( 0 );                    
 					$flete->save();
 				}
 			}			
@@ -674,13 +680,15 @@ class pricingActions extends sfActions
 				$pricRecargo = new PricRecargoxConcepto();
 				$pricRecargo->setCaIdtrayecto( $trayecto->getCaIdtrayecto() );
 				$pricRecargo->setCaIdconcepto( $idconcepto );
-                if( $idequipo ){
-                    $pricRecargo->setCaIdequipo( $idequipo );
-                }
+                
 				$pricRecargo->setCaIdrecargo( $idrecargo );
 				$pricRecargo->setCaVlrrecargo( 0 );
 				//$pricRecargo->setCaVlrminimo( 0 );				
 			}
+
+            if( $idequipo ){
+                $pricRecargo->setCaIdequipo( $idequipo );
+            }
 
             if( $sugerida!==null ){
 				$pricRecargo->setCaVlrrecargo( $sugerida );
@@ -787,6 +795,7 @@ class pricingActions extends sfActions
                                                   ->addWhere("ca_idtrayecto = ?",$idtrayecto )
                                                   ->addWhere("ca_idconcepto= ?", $idconcepto)
                                                   ->addWhere("ca_idrecargo= ?", $idrecargo);
+            
             if( $idequipo ){
                 $q->addWhere("ca_idequipo= ?", $idequipo);
             }else{
