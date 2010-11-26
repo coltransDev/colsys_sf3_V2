@@ -64,14 +64,14 @@ Ext.extend(WidgetParametros, Ext.form.ComboBox, {
     },
     
 
-	getTrigger : Ext.form.TwinTriggerField.prototype.getTrigger,
+    getTrigger : Ext.form.TwinTriggerField.prototype.getTrigger,
     initTrigger : Ext.form.TwinTriggerField.prototype.initTrigger,
     trigger1Class : 'x-form-clear-trigger',    
     trigger3Class : 'x-form-select-trigger',
     hideTrigger1 : true,
 
     initComponent : function() {
-        WidgetPa.superclass.initComponent.call(this);
+        WidgetParametros.superclass.initComponent.call(this);
 
         this.triggerConfig = {
 			tag : 'span',

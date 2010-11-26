@@ -6,11 +6,7 @@
  */
 include_component("widgets", "widgetTerceroWindow");
 ?>
-
-
-
 <script type="text/javascript">
-
 
 WidgetTercero = function( config ){
     Ext.apply(this, config);
@@ -38,7 +34,6 @@ WidgetTercero = function( config ){
     this.resultTpl = new Ext.XTemplate(
         '<tpl for="."><div class="search-item"><b>{nombre}</b><br /><span style="font-size: 9px"><br />{direccion} {ciudad} - {pais} {contacto}</span> </div></tpl>'
     );
-
     WidgetTercero.superclass.constructor.call(this, {
         valueField:'idtercero',
         displayField:'nombre',        
@@ -129,7 +124,5 @@ Ext.extend(WidgetTercero, Ext.form.ComboBox, {
     this.onTriggerClick();
   }
 
-});
-
-	
+});	
 </script>
