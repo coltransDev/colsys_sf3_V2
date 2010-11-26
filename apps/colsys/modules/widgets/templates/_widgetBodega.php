@@ -6,10 +6,7 @@
  */
 
 $data = $sf_data->getRaw("data");
-
 ?>
-
-
 
 <script type="text/javascript">
 
@@ -23,16 +20,16 @@ WidgetBodega = function( config ){
 						root: 'root'                        
 					},
 					Ext.data.Record.create([
-                        {name: 'b_ca_idbodega'},
-                        {name: 'b_ca_tipo'},
-                        {name: 'b_ca_transporte'},
-						{name: 'b_ca_nombre'}
+                                            {name: 'b_ca_idbodega'},
+                                            {name: 'b_ca_tipo'},
+                                            {name: 'b_ca_transporte'},
+                                            {name: 'b_ca_nombre'}
 					])
 				),
 				proxy: new Ext.data.MemoryProxy( <?=json_encode(array("root"=>$data, "total"=>count($data), "success"=>true) )?> )
 			});
 
- this.resultTpl = new Ext.XTemplate(
+    this.resultTpl = new Ext.XTemplate(
             '<tpl for="."><div class="search-item"><b>{b_ca_nombre}</b><br /><span>{nombre}  <br />{b_ca_tipo}</span> </div></tpl>'
     );
 
