@@ -978,7 +978,7 @@ class cotizacionesActions extends sfActions
 		$aplica_tar = utf8_decode($this->getRequestParameter("aplica_tar"));
 		$aplica_min = utf8_decode($this->getRequestParameter("aplica_min"));
 		$observaciones = $this->getRequestParameter("detalles");
-        $equipo = $this->getRequestParameter("idequipo");
+                 $equipo = $this->getRequestParameter("idequipo");
 
 		$consecutivo = $this->getRequestParameter("consecutivo"); //Consecutivo tarifario
 
@@ -2407,13 +2407,7 @@ class cotizacionesActions extends sfActions
 
     public function executeReporteCotizaciones($request)
     {
-/*            $this->nivel = $this->getUser()->getNivelAcceso( cotizacionesActions::RUTINA );
 
-            if( $this->nivel<=-1 ){
-                    $this->forward404();
-            }
- *
- */
             $this->vendedor=$this->getUser()->getUserId();
             $this->usuarios = Doctrine::getTable("Usuario")
                                 ->createQuery("u")
@@ -2452,8 +2446,9 @@ class cotizacionesActions extends sfActions
                     ->orderBy("EXTRACT(YEAR FROM c.ca_fchcreado) DESC  ")
                     ->addOrderBy("to_number(SUBSTR(c.ca_consecutivo , 1 , (POSITION('-' in c.ca_consecutivo)-1) ),'999999')  desc")
                     ->addOrderBy("c.ca_version  desc");
+
                 if( $checkboxVendedor ){
-                    $q->addWhere("c.ca_usuario = ?", $this->login );
+                    $q->addWhere("c.ca_usuario = ?", $request->getParameter( "login" ) );
 		}
 
 		if( $checkboxSucursal ){
