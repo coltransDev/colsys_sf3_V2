@@ -550,19 +550,26 @@ class widgetsActions extends sfActions
                         ->limit(40)
                         ->execute();
 
+	$terceros = array();
+        if($tipo=="Master")
+        {
+            $terceros[]=array("t_ca_idtercero"=>"1", "t_ca_nombre"=>"Cliente/Consignatario", "c_ca_ciudad"=>"", "p_ca_nombre"=>"","t_ca_direccion"=>"","t_ca_contacto"=>"");
+            $terceros[]=array("t_ca_idtercero"=>"2", "t_ca_nombre"=>"Coltrans/Consignatario", "c_ca_ciudad"=>"", "p_ca_nombre"=>"","t_ca_direccion"=>"","t_ca_contacto"=>"");
+            $terceros[]=array("t_ca_idtercero"=>"4", "t_ca_nombre"=>"Coltrans/Agente", "c_ca_ciudad"=>"", "p_ca_nombre"=>"","t_ca_direccion"=>"","t_ca_contacto"=>"");
+        }
+        else if($tipo=="Consignatario")
+        {
+            $terceros[]=array("t_ca_idtercero"=>"1", "t_ca_nombre"=>"Cliente/Consignatario", "c_ca_ciudad"=>"", "p_ca_nombre"=>"","t_ca_direccion"=>"","t_ca_contacto"=>"");
+            $terceros[]=array("t_ca_idtercero"=>"2", "t_ca_nombre"=>"Coltrans/Consignatario", "c_ca_ciudad"=>"", "p_ca_nombre"=>"","t_ca_direccion"=>"","t_ca_contacto"=>"");
+        }
 
-
-		$terceros = array();
-
-   		foreach ( $rows as $row ) {            
-			//$row["t_ca_nombre"]=utf8_encode($row["t_ca_nombre"]);
+   	foreach ( $rows as $row ) {
             $row["c_ca_ciudad"]=($row["c_ca_ciudad"]!="Todas las Ciudades")?utf8_encode($row["c_ca_ciudad"]):"";
             $row["p_ca_nombre"]=($row["p_ca_nombre"]!="Todos los Tráficos del Mundo")?utf8_encode($row["p_ca_nombre"]):"";
             $row["t_ca_contacto"]=utf8_encode($row["t_ca_contacto"]);
             $row["t_ca_direccion"]=utf8_encode($row["t_ca_direccion"]);
             $terceros[]=$row;
-
-		}
+	}
         $this->responseArray = array( "totalCount"=>count( $terceros ), "terceros"=>$terceros  );
         $this->setTemplate("responseTemplate");
 	}
