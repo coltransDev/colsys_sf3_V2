@@ -4270,7 +4270,7 @@ elseif (isset($boton)) {                                                       /
                                 $mercancia_desc = (strlen($dc->Value("ca_mercancia_desc"))!=0)?$dc->Value("ca_mercancia_desc"):$rp->Value("ca_mercancia_desc");
                                 $mercancia_desc = utf8_encode(substr($mercancia_desc,0,200));
                                 $xml_item->setAttribute("item", $item);
-                                $xml_item->setAttribute("cemb", $rp->Value("ca_codembalaje"));
+                                $xml_item->setAttribute("cemb", ($rp->Value("ca_codembalaje")==""?"PK":$rp->Value("ca_codembalaje")));
                                 $xml_item->setAttribute("idg", $mercancia_desc);
                                 $xml_item->setAttribute("mpel", $mercancia_peli);
                                 $xml_h267->appendChild( $xml_item );
@@ -4315,7 +4315,7 @@ elseif (isset($boton)) {                                                       /
                         $mercancia_desc = (strlen($dc->Value("ca_mercancia_desc"))!=0)?$dc->Value("ca_mercancia_desc"):$rp->Value("ca_mercancia_desc");
                         $mercancia_desc = utf8_encode(substr($mercancia_desc,0,200));
                         $xml_item->setAttribute("item", $item);
-                        $xml_item->setAttribute("cemb", $rp->Value("ca_codembalaje"));
+                        $xml_item->setAttribute("cemb", ($rp->Value("ca_codembalaje")==""?"PK":$rp->Value("ca_codembalaje")));
                         $xml_item->setAttribute("idg", $mercancia_desc);
                         $xml_item->setAttribute("mpel", $mercancia_peli);
                         $xml_h267->appendChild( $xml_item );
@@ -4399,7 +4399,7 @@ elseif (isset($boton)) {                                                       /
                                     $mercancia_desc = (strlen($dc->Value("ca_mercancia_desc"))!=0)?$dc->Value("ca_mercancia_desc"):$rp->Value("ca_mercancia_desc");
                                     $mercancia_desc = utf8_encode(substr($mercancia_desc,0,200));
                                     $xml_item->setAttribute("item", $item);
-                                    $xml_item->setAttribute("cemb", $rp->Value("ca_codembalaje"));
+                                    $xml_item->setAttribute("cemb", ($rp->Value("ca_codembalaje")==""?"PK":$rp->Value("ca_codembalaje")));
                                     $xml_item->setAttribute("idg", $mercancia_desc);
                                     $xml_item->setAttribute("mpel", $mercancia_peli);
                                     $xml_h267->appendChild( $xml_item );
@@ -4456,7 +4456,7 @@ elseif (isset($boton)) {                                                       /
                         $mercancia_desc = (strlen($dc->Value("ca_mercancia_desc"))!=0)?$dc->Value("ca_mercancia_desc"):$rp->Value("ca_mercancia_desc");
                         $mercancia_desc = utf8_encode(substr($mercancia_desc,0,200));
                         $xml_item->setAttribute("item", $item);
-                        $xml_item->setAttribute("cemb", $rp->Value("ca_codembalaje"));
+                        $xml_item->setAttribute("cemb", ($rp->Value("ca_codembalaje")==""?"PK":$rp->Value("ca_codembalaje")));
                         $xml_item->setAttribute("idg", $mercancia_desc);
                         $xml_item->setAttribute("mpel", $mercancia_peli);
                         $xml_h267->appendChild( $xml_item );
