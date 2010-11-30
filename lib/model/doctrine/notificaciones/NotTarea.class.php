@@ -47,8 +47,7 @@ class NotTarea extends BaseNotTarea
                         ->where("a.ca_idtarea = ?", $this->getCaIdtarea() )
                         ->execute();
 
-		$email = new Email();
-		$email->setCaFchenvio( date("Y-m-d H:i:s") );
+		$email = new Email();		
 		$email->setCaUsuenvio( $this->getCaUsucreado() );
 		$email->setCaTipo( "Notificación Tareas" );
 		$email->setCaIdcaso( $this->getCaIdtarea() );

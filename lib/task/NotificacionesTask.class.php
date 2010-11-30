@@ -31,23 +31,17 @@ EOF;
 
     $q = Doctrine::getTable("NotTarea")->createQuery("t");
     $q->select("t.*");
-    $q->leftJoin("t.Notificacion n");
-    $q->addWhere("t.ca_fchvisible >= ?", date("Y-m-d H:i:s", time()-86400*15) );
+    $q->leftJoin("t.Notificacion n");    
     $q->addWhere("t.ca_fchvisible <= ?", date("Y-m-d H:i:s"));
     $q->addWhere("t.ca_fchterminada IS NULL");
     $q->addWhere("n.ca_idemail IS NULL");
     $q->distinct();
 
     $tareas = $q->execute();
-
-	//$tareas = NotTareaPeer::doSelect( $c );
 	
 	foreach( $tareas as $tarea ){
 		$tarea->notificar();
-	}
-	
-	
-	
+	}	
 		
   }
 }
