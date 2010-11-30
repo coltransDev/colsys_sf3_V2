@@ -15,7 +15,8 @@
 
 $titulo = 'Consulta a Maestra de Reportes';
 $columnas = array("Nombre del Cliente"=>"ca_nombre_cli", "Mis Reportes"=>"ca_login", "Nombre del Proveedor"=>"ca_nombre_pro", "Número de Reporte"=>"ca_consecutivo", "No.Orden Proveedor"=>"ca_orden_prov", "No.Orden Cliente"=>"ca_orden_clie", "No. Cotización"=>"ca_idcotizacion", "Descripción Mercancia"=>"ca_mercancia_desc", "Vendedor"=>"ca_login");                        // Arreglo con las opciones de busqueda
-$opciones = array("Número de Reporte"=>"ca_consecutivo", "Nombre del Cliente"=>"ca_nombre_cli", "Número de Hbl"=>"ca_doctransporte", "Proveedor"=>"ca_nombre_pro", "No.Orden Proveedor"=>"ca_orden_prov", "No.Orden Cliente"=>"ca_orden_clie", "Naviera"=>"ca_nombre", "Motonave"=>"ca_idnave");                        // Arreglo con las opciones de busqueda
+//$opciones = array("Número de Reporte"=>"ca_consecutivo", "Nombre del Cliente"=>"ca_nombre_cli", "Número de Hbl"=>"ca_doctransporte", "Proveedor"=>"ca_nombre_pro", "No.Orden Proveedor"=>"ca_orden_prov", "No.Orden Cliente"=>"ca_orden_clie", "Naviera"=>"ca_nombre", "Motonave"=>"ca_idnave");                        // Arreglo con las opciones de busqueda
+$opciones = array("Número de Reporte"=>"ca_consecutivo", "Número de Hbl"=>"ca_doctransporte");                        // Arreglo con las opciones de busqueda
 
 include_once 'include/datalib.php';                                            // Incorpora la libreria de funciones, para accesar leer bases de datos
 require_once("checklogin.php");                                                                 // Captura las variables de la sessión abierta
@@ -223,15 +224,19 @@ echo "</BODY>";
 				echo "<script>document.location.href = 'inosea.php';</script>";
 				exit;
 			}
-			$condicion = " and ca_traorigen = '".$im->Value('ca_traorigen')."' and ca_ciudestino = '".$im->Value('ca_ciudestino')."' and ca_modalidad = '".$im->Value('ca_modalidad')."'";
+			$condicion = "ca_traorigen = '".$im->Value('ca_traorigen')."' and ca_ciudestino = '".$im->Value('ca_ciudestino')."' and ca_modalidad = '".$im->Value('ca_modalidad')."'";
 			if (isset($contents) and strlen(trim($contents)) != 0) {
 			   if ($opcion == 'ca_consecutivo' or $opcion == 'ca_nombre_cli' or $opcion == 'ca_nombre_pro' or $opcion == 'ca_orden_prov' or $opcion == 'ca_orden_clie' or $opcion == 'ca_nombre' or $opcion == 'ca_idnave' or $opcion == 'ca_doctransporte') {
 				   $condicion.= " and lower($opcion) like lower('%".$contents."%')"; }
 			}
-			$command = "select rp.ca_idreporte, rp.ca_consecutivo, rp.ca_version, rf.ca_idemail, rp.ca_idcliente, rp.ca_nombre_cli, rp.ca_orden_clie, rp.ca_transporte, rp.ca_modalidad, rp.ca_nombre, rp.ca_ciuorigen, rp.ca_traorigen, rp.ca_ciudestino, rp.ca_tradestino,";
-			$command.= "  rp.ca_fchdespacho, rp.ca_incoterms, rp.ca_idcotizacion, rp.ca_idproveedor, rp.ca_orden_prov, rp.ca_continuacion, rp.ca_continuacion_dest, rp.ca_final_dest, rp.ca_idbodega, rp.ca_login, ra.ca_idemail, ra.ca_idnave, ra.ca_doctransporte, ra.ca_piezas, ra.ca_peso, ra.ca_volumen";
-			$command.= "  from vi_reportes rp LEFT OUTER JOIN (select rpt.ca_consecutivo as ca_consecutivo_f, max(rpa.ca_idemail) as ca_idemail from tb_reportes rpt, tb_repstatus rpa where rpt.ca_usuanulado IS NULL and rpt.ca_idreporte = rpa.ca_idreporte group by ca_consecutivo) rf ON (rp.ca_consecutivo = rf.ca_consecutivo_f)";
-			$command.= "  LEFT OUTER JOIN tb_repstatus ra ON (ra.ca_idemail = rf.ca_idemail), (select ca_consecutivo as ca_consecutivo_f, max(ca_idreporte) as ca_idreporte from tb_reportes where ca_usuanulado IS NULL group by ca_consecutivo_f) rx where rp.ca_idreporte = rx.ca_idreporte and rp.ca_usuanulado IS NULL and rp.ca_transporte = 'Marítimo'".$condicion." order by rp.ca_idreporte DESC";
+			$command = "select rp.ca_idreporte, rp.ca_consecutivo, re.ca_referencia, rp.ca_version, rf.ca_idemail, rp.ca_idcliente, rp.ca_nombre_cli, rp.ca_identificacion_con,rp.ca_orden_clie, rp.ca_transporte, rp.ca_modalidad, rp.ca_nombre, rp.ca_ciuorigen, rp.ca_traorigen, rp.ca_ciudestino, rp.ca_tradestino,";
+			$command.= "  rp.ca_fchdespacho, rp.ca_incoterms, rp.ca_idcotizacion, rp.ca_idproveedor, rp.ca_orden_prov, rp.ca_continuacion, rp.ca_continuacion_dest, rp.ca_final_dest, rp.ca_idconsignar, rp.ca_idbodega, rp.ca_login, ra.ca_idemail, ra.ca_idnave, ra.ca_doctransporte, ra.ca_piezas, ra.ca_peso, ra.ca_volumen from vi_reportes rp";
+			$command.= "  RIGHT JOIN (select ca_consecutivo as ca_consecutivo_f, max(ca_idreporte) as ca_idreporte from tb_reportes where ca_usuanulado IS NULL and ca_transporte = 'Marítimo' group by ca_consecutivo_f) rx ON (rp.ca_idreporte = rx.ca_idreporte)";
+			$command.= "  LEFT JOIN (select srp.ca_consecutivo as ca_consecutivo_r, sic.ca_referencia from tb_reportes srp INNER JOIN tb_inoclientes_sea sic ON srp.ca_idreporte = sic.ca_idreporte) re ON (rp.ca_consecutivo = re.ca_consecutivo_r)";
+			$command.= "  LEFT JOIN (select ca_consecutivo as ca_consecutivo_n from tb_reportes srp INNER JOIN tb_inoclientes_sea sic ON srp.ca_idreporte = sic.ca_idreporte) ns ON (rp.ca_consecutivo = ns.ca_consecutivo_n and ns.ca_consecutivo_n IS NULL)";
+			$command.= "  LEFT JOIN (select rpt.ca_consecutivo as ca_consecutivo_f, max(rpa.ca_idemail) as ca_idemail from tb_reportes rpt, tb_repstatus rpa where rpt.ca_usuanulado IS NULL and rpt.ca_idreporte = rpa.ca_idreporte group by ca_consecutivo_f) rf ON (rp.ca_consecutivo = rf.ca_consecutivo_f)";
+			$command.= "  LEFT JOIN tb_repstatus ra ON (ra.ca_idemail = rf.ca_idemail)";
+			$command.= "  where $condicion order by rp.ca_idreporte DESC";
 
 			if (!$rs->Open("$command")) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
 			   echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
@@ -274,17 +279,17 @@ echo "</BODY>";
 			echo "    	}";
 			echo "    }";
 			echo "    source = document.getElementById('numpiezas_'+i);";
-			echo "    if (source.value.length > 1){";
+			echo "    if (source.value.length >= 1){";
 			echo "    	elemento = window.parent.document.getElementById('numpiezas');";
 			echo "    	elemento.value = source.value;";
 			echo "    }";
 			echo "    source = document.getElementById('peso_'+i);";
-			echo "    if (source.value.length > 1){";
+			echo "    if (source.value.length >= 1){";
 			echo "    	elemento = window.parent.document.getElementById('peso');";
 			echo "    	elemento.value = source.value;";
 			echo "    }";
 			echo "    source = document.getElementById('volumen_'+i);";
-			echo "    if (source.value.length > 1){";
+			echo "    if (source.value.length >= 1){";
 			echo "    	elemento = window.parent.document.getElementById('volumen');";
 			echo "    	elemento.value = source.value;";
 			echo "    }";
@@ -304,8 +309,8 @@ echo "</BODY>";
 			echo "    elemento.disabled = habilita;";
 			echo "    source = document.getElementById('login_'+i);";
 			echo "    window.parent.elegir_item('login',source.value);";
-            echo "    window.parent.frames.findreporte.style.visibility = \"hidden\";";
-            echo "    window.parent.document.body.scroll=\"yes\";";
+                        echo "    window.parent.frames.findreporte.style.visibility = \"hidden\";";
+                        echo "    window.parent.document.body.scroll=\"yes\";";
 			echo "    window.parent.valida_cantidades();";
 			echo "    if (isNaN(window.parent.document.getElementById('client_lupa'))) {";
 			echo "    	window.parent.document.getElementById('client_lupa').style.visibility = \"hidden\";";
@@ -335,7 +340,8 @@ echo "</BODY>";
 				echo "<TR>";
 				if ($consecutivo <> $rs->Value('ca_consecutivo')){
 					$i++;
-					echo "  <TD Class=listar ROWSPAN=2 style='font-weight:bold;'  onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick=\"javascript:seleccion($i)\">".$rs->Value('ca_consecutivo')."</TD>";
+                                        $ref_use = ($rs->Value('ca_referencia')!="")?"<br/><br/>Usado en Ref.:<br/>".$rs->Value('ca_referencia'):"";
+					echo "  <TD Class=listar ROWSPAN=2 style='font-weight:bold;' ".(($rs->Value('ca_referencia')=="")?"onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick=\"javascript:seleccion($i)\"":"").">".$rs->Value('ca_consecutivo')."$ref_use</TD>";
 					$consecutivo = $rs->Value('ca_consecutivo');
 					$cadena = (trim(strlen($rs->Value('ca_idproveedor'))) != 0)?"ca_idtercero in (".str_replace("|",",",$rs->Value('ca_idproveedor')).")":"false";
 					if (!$tm->Open("select * from vi_terceros where $cadena")) {
@@ -358,6 +364,13 @@ echo "</BODY>";
 				}else {
 					echo "  <TD Class=listar ROWSPAN=2></TD>";
 				}
+                                if (!$tm->Open("select ca_idbodega, ca_nombre from tb_bodegas where ca_transporte = 'Marítimo' and ca_tipo = 'Operador Multimodal' and ca_nombre like '%".number_format(substr($rs->Value('ca_identificacion_con'),0,strlen($rs->Value('ca_identificacion_con'))-2),0,',','.')."%'")) {
+                                    echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";
+                                    echo "<script>document.location.href = 'inosea.php';</script>";
+                                    exit;
+                                }
+                                $tm->MoveFirst();
+
 				echo "  <TD Class=listar style='font-weight:bold;'>".$rs->Value('ca_nombre_cli')." (".$rs->Value('ca_transporte')." - ".$rs->Value('ca_modalidad').") ".ucwords(strtolower($rs->Value('ca_nombre')))."</TD>";
 				echo "</TR>";
 				echo "<TR>";
@@ -366,11 +379,12 @@ echo "</BODY>";
 
 				$piezas = $rs->Value('ca_piezas');
 				if (strlen($piezas)!=0) {
-                                    if (strpos($piezas,".")==false){
-                                        $pattern = "([0-9]{1,6})?( )?";                         // Expresion Regular que Extrael el valor numerico de las piezas
-                                    }else{
+                                    if (strpos($piezas,".")===true){
                                         $pattern = "([0-9]{1,6})?([.]{1})?([0-9]{1,6}())?( )?";
+                                    }else{
+                                        $pattern = "([0-9]{1,6})";                         // Expresion Regular que Extrael el valor numerico de las piezas
                                     }
+                                    //$pattern = "[-+]?\b[0-9]*\.?[0-9]+\b";
                                     if (ereg ($pattern, trim($piezas), $regs)) {
                                             $piezas = $regs[0];
                                     }
@@ -384,7 +398,7 @@ echo "</BODY>";
 						$peso = $regs[0];
 					}
 				}else{
-					$peso = 0;
+                                    $peso = 0;
 				}
 				$volumen = $rs->Value('ca_volumen');				// Expresion Regular que Extrael el valor numerico del volumen
 				if (strlen($volumen)!=0) {
@@ -393,24 +407,30 @@ echo "</BODY>";
 						$volumen = $regs[0];
 					}
 				}else{
-					$volumen = 0;
+                                    $volumen = 0;
 				}
 
-                echo "  <INPUT ID=consecutivo_$i TYPE='HIDDEN' NAME='consecutivo_$i' VALUE='".$rs->Value('ca_consecutivo')."'>";
-                echo "  <INPUT ID=idcliente_$i TYPE='HIDDEN' NAME='idcliente_$i' VALUE='".$rs->Value('ca_idcliente')."'>";
-                echo "  <INPUT ID=nombre_con_$i TYPE='HIDDEN' NAME='nombre_con_$i' VALUE='".$rs->Value('ca_nombre_cli')."'>";
-                echo "  <INPUT ID=hbls_$i TYPE='HIDDEN' NAME='hbls_$i' VALUE='".$rs->Value('ca_doctransporte')."'>";
-                echo "  <INPUT ID=numpiezas_$i TYPE='HIDDEN' NAME='numpiezas_$i' VALUE='$piezas'>";
-                echo "  <INPUT ID=peso_$i TYPE='HIDDEN' NAME='peso_$i' VALUE='$peso'>";
-                echo "  <INPUT ID=volumen_$i TYPE='HIDDEN' NAME='volumen_$i' VALUE='$volumen'>";
-                echo "  <INPUT ID=numorden_$i TYPE='HIDDEN' NAME='numorden_$i' VALUE='".$rs->Value('ca_orden_clie')."'>";
-                echo "  <INPUT ID=idreporte_$i TYPE='HIDDEN' NAME='idreporte_$i' VALUE='".$rs->Value('ca_idreporte')."'>";
-                echo "  <INPUT ID=idproveedor_$i TYPE='HIDDEN' NAME='idproveedor_$i' VALUE='".$rs->Value('ca_idproveedor')."'>";
-                echo "  <INPUT ID=proveedor_$i TYPE='HIDDEN' NAME='proveedor_$i' VALUE='$proveedor'>";
-                echo "  <INPUT ID=continuacion_$i TYPE='HIDDEN' NAME='continuacion_$i' VALUE='".$rs->Value('ca_continuacion')."'>";
-                echo "  <INPUT ID=continuacion_dest_$i TYPE='HIDDEN' NAME='continuacion_dest_$i' VALUE='".$rs->Value('ca_continuacion_dest')."'>";
-                echo "  <INPUT ID=idbodega_$i TYPE='HIDDEN' NAME='idbodega_$i' VALUE='".$rs->Value('ca_idbodega')."'>";
-                echo "  <INPUT ID=login_$i TYPE='HIDDEN' NAME='login_$i' VALUE='".$rs->Value('ca_login')."'>";
+                                echo "  <INPUT ID=consecutivo_$i TYPE='HIDDEN' NAME='consecutivo_$i' VALUE='".$rs->Value('ca_consecutivo')."'>";
+                                echo "  <INPUT ID=idcliente_$i TYPE='HIDDEN' NAME='idcliente_$i' VALUE='".$rs->Value('ca_idcliente')."'>";
+                                echo "  <INPUT ID=nombre_con_$i TYPE='HIDDEN' NAME='nombre_con_$i' VALUE='".$rs->Value('ca_nombre_cli')."'>";
+                                echo "  <INPUT ID=hbls_$i TYPE='HIDDEN' NAME='hbls_$i' VALUE='".$rs->Value('ca_doctransporte')."'>";
+                                echo "  <INPUT ID=numpiezas_$i TYPE='HIDDEN' NAME='numpiezas_$i' VALUE='$piezas'>";
+                                echo "  <INPUT ID=peso_$i TYPE='HIDDEN' NAME='peso_$i' VALUE='$peso'>";
+                                echo "  <INPUT ID=volumen_$i TYPE='HIDDEN' NAME='volumen_$i' VALUE='$volumen'>";
+                                echo "  <INPUT ID=numorden_$i TYPE='HIDDEN' NAME='numorden_$i' VALUE='".$rs->Value('ca_orden_clie')."'>";
+                                echo "  <INPUT ID=idreporte_$i TYPE='HIDDEN' NAME='idreporte_$i' VALUE='".$rs->Value('ca_idreporte')."'>";
+                                echo "  <INPUT ID=idproveedor_$i TYPE='HIDDEN' NAME='idproveedor_$i' VALUE='".$rs->Value('ca_idproveedor')."'>";
+                                echo "  <INPUT ID=proveedor_$i TYPE='HIDDEN' NAME='proveedor_$i' VALUE='$proveedor'>";
+                                echo "  <INPUT ID=continuacion_$i TYPE='HIDDEN' NAME='continuacion_$i' VALUE='".$rs->Value('ca_continuacion')."'>";
+                                echo "  <INPUT ID=continuacion_dest_$i TYPE='HIDDEN' NAME='continuacion_dest_$i' VALUE='".$rs->Value('ca_continuacion_dest')."'>";
+
+                                if ($rs->Value('ca_continuacion') != 'N/A' and $rs->Value('ca_idconsignar') == 1){
+                                    echo "  <INPUT ID=idbodega_$i TYPE='HIDDEN' NAME='idbodega_$i' VALUE='".$tm->Value('ca_idbodega')."'>";
+                                }else { //if ($rs->Value('ca_continuacion') != 'N/A' and $rs->Value('ca_idconsignar') == 1){
+                                    echo "  <INPUT ID=idbodega_$i TYPE='HIDDEN' NAME='idbodega_$i' VALUE='".$rs->Value('ca_idconsignar')."'>";
+                                }
+
+                                echo "  <INPUT ID=login_$i TYPE='HIDDEN' NAME='login_$i' VALUE='".$rs->Value('ca_login')."'>";
 				echo "  <TR>";
 				echo "    <TD Class=invertir style='font-weight:bold;' COLSPAN=2>Origen</TD>";
 				echo "    <TD Class=invertir style='font-weight:bold;' COLSPAN=2>Destino</TD>";
@@ -433,7 +453,7 @@ echo "</BODY>";
 				echo "    <TD Class=invertir><b>Hbl's:</b><br />".$rs->Value('ca_doctransporte')."</TD>";
 				echo "    <TD Class=invertir><b>Piezas:</b><br />$piezas</TD>";
 				echo "    <TD Class=invertir><b>Peso:</b><br />$peso</TD>";
-				echo "    <TD Class=invertir><b>Volumen:</b><br /></TD>";
+				echo "    <TD Class=invertir><b>Volumen:</b><br />$volumen</TD>";
 				echo "    <TD Class=invertir><b>Vendedor:</b><br />".$rs->Value('ca_login')."</TD>";
 				echo "  </TR>";
 				echo $sub_str;
