@@ -17,7 +17,7 @@ $programa = 10;
 
 $titulo = 'Maestra de Clientes Colsys';
 $saludos= array( "Señor" => "Señor", "Señora" => "Señora", "Doctor" => "Doctor", "Doctora" => "Doctora", "Ingeniero" => "Ingeniero", "Ingeniera" => "Ingeniera", "Arquitecto" => "Arquitecto", "Arquitecta" => "Arquitecta" );
-$letras  = array(" ","A","B","C","D","E","F","G","H","I","J","K","L","M","N");
+$letras  = array(" ","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P", "Q", "R", "S");
 $parte_1 = array(" ","Avenida","Autopista","Calle","Carrera","Circular","Diagonal","Transversal","Kilómetro","Via");
 $parte_2 = array(" ","Bis");
 $parte_3 = array(" ","Norte","Sur","Este","Oeste");
