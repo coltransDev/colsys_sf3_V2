@@ -72,7 +72,8 @@ class confirmacionesActions extends sfActions
                 $q->addWhere("cl.ca_idcliente = ? ", $cadena);
 				break;
 			case "contenedor":
-                $q->innerJoin("c.InoMaestraSea e");
+                $q->innerJoin("c.InoMaestraSea mm");
+                $q->innerJoin("mm.InoEquiposSea e");
                 $q->addWhere("e.ca_idequipo like ? ", $cadena."%");
 				break;
 		}
