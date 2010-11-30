@@ -460,11 +460,11 @@ Ext.extend(PanelRecargosAduana, Ext.grid.EditorGridPanel, {
                             rec.set("parametro", '');
                             rec.set("tipo", "costo");
 
-                            rec.set("vlrcosto", '');
-                            rec.set("netcosto", '');
+                            rec.set("vlrcosto", '0');
+                            rec.set("netcosto", '0');
 
-                            rec.set("idmoneda", '');
-                            rec.set("mincosto", '');
+                            rec.set("idmoneda", 'COP');
+                            rec.set("mincosto", '0');
                             storeGrid.addSorted(newRec);
                             storeGrid.sort("orden", "ASC");
 

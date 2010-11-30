@@ -10,9 +10,9 @@
 class reportesNegComponents extends sfComponents
 {
     public function executeMainPanel()
-	{
+    {
 
-	}
+    }
 
     public function load_category()
     {
@@ -32,6 +32,7 @@ class reportesNegComponents extends sfComponents
                 $this->modo=Constantes::MARITIMO;
                 $this->idcategory="32";
             }
+            
         }
         else if($this->impoexpo==Constantes::EXPO || utf8_decode($this->impoexpo)==Constantes::EXPO)
         {
@@ -47,6 +48,42 @@ class reportesNegComponents extends sfComponents
                 $this->modo=Constantes::MARITIMO;
                 $this->idcategory="35";
             }
+            else if($this->modo==Constantes::TRIANGULACION || utf8_decode($this->modo)==Constantes::TRIANGULACION)
+            {
+                $this->modo=Constantes::TRIANGULACION;
+                $this->idcategory="35";
+            }
+        }
+        else if($this->impoexpo==Constantes::TRIANGULACION || utf8_decode($this->impoexpo)==Constantes::TRIANGULACION)
+        {
+            $this->impoexpo=Constantes::TRIANGULACION;
+            $this->modo=$this->getRequestParameter("modo");
+            if($this->modo==Constantes::AEREO || utf8_decode($this->modo)==Constantes::AEREO)
+            {
+                $this->modo=Constantes::AEREO;
+                $this->idcategory="31";
+            }
+            else if($this->modo==Constantes::MARITIMO || utf8_decode($this->modo)==Constantes::MARITIMO)
+            {
+                $this->modo=Constantes::MARITIMO;
+                $this->idcategory="32";
+            }
+
+        }
+        else if($this->impoexpo==Constantes::OTMDTA || utf8_decode($this->impoexpo)==Constantes::OTMDTA)
+        {
+            $this->impoexpo=Constantes::OTMDTA;
+            $this->modo=$this->getRequestParameter("modo");
+            if($this->modo==Constantes::AEREO || utf8_decode($this->modo)==Constantes::AEREO)
+            {
+                $this->modo=Constantes::AEREO;
+                $this->idcategory="31";
+            }
+            else if($this->modo==Constantes::MARITIMO || utf8_decode($this->modo)==Constantes::MARITIMO)
+            {
+                $this->modo=Constantes::MARITIMO;
+                $this->idcategory="32";
+            }
         }
         else
         {
@@ -59,6 +96,11 @@ class reportesNegComponents extends sfComponents
             else if($this->modo==Constantes::MARITIMO || utf8_decode($this->modo)==Constantes::MARITIMO)
             {
                 $this->modo=Constantes::MARITIMO;
+                $this->idcategory="38";
+            }
+            else if($this->modo==Constantes::TRIANGULACION || utf8_decode($this->modo)==Constantes::TRIANGULACION)
+            {
+                $this->modo=Constantes::TRIANGULACION;
                 $this->idcategory="38";
             }
         }
@@ -112,7 +154,58 @@ class reportesNegComponents extends sfComponents
          $reporte=$this->reporte;
          $user = $this->getUser();
          $this->permiso = $user->getNivelAcceso( "87" );
-         if( $reporte->getEditable($this->permiso,$user) ){
+         if( $reporte->getEditable($this->permiso,$user)  ){
+                $this->editable = true;
+            }else{
+                $this->editable = false;
+            }
+
+	}
+
+
+    public function executePanelConceptosOtm()
+    {
+		$this->conceptos = Doctrine::getTable("Concepto")
+                                     ->createQuery("c")
+                                     ->select("ca_idconcepto, ca_concepto")
+                                     ->where("c.ca_transporte = 'Terrestre'" )
+                                     ->addWhere("c.ca_modalidad = 'OTM-DTA'" )
+                                     ->addWhere("c.ca_fcheliminado is null " )
+                                     ->addOrderBy("c.ca_liminferior")
+                                     ->addOrderBy("c.ca_concepto")
+                                     ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
+                                     ->execute();
+
+        foreach( $this->conceptos as $key=>$val){
+            $this->conceptos[$key]['ca_concepto'] = utf8_encode($this->conceptos[$key]['ca_concepto']);
+
+        }
+
+        array_push( $this->conceptos , array("ca_idconcepto"=>"9999", "ca_concepto"=>"Recargo general del trayecto"));
+
+        $impoexpo = $this->reporte->getCaImpoexpo();
+        if( $impoexpo==Constantes::TRIANGULACION ){
+            $impoexpo=Constantes::IMPO;
+        }
+
+        $this->recargos = Doctrine::getTable("TipoRecargo")
+                                     ->createQuery("c")
+                                     ->select("ca_idrecargo as ca_idconcepto, ca_recargo as ca_concepto")
+                                     ->addWhere("c.ca_tipo like ? ", "%".Constantes::RECARGO_EN_ORIGEN."%" )
+                                     /*->addWhere("c.ca_impoexpo LIKE ? ", $impoexpo )
+                                     ->addWhere("c.ca_transporte LIKE ? ", $this->reporte->getCaTransporte() )*/
+                                     ->addOrderBy("c.ca_recargo")
+                                     ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
+                                     ->execute();
+
+         foreach( $this->recargos as $key=>$val){
+             $this->recargos[$key]['ca_concepto'] = utf8_encode($this->recargos[$key]['ca_concepto']);
+
+         }
+         $reporte=$this->reporte;
+         $user = $this->getUser();
+         $this->permiso = $user->getNivelAcceso( "87" );
+         if( $reporte->getEditable($this->permiso,$user)  ){
                 $this->editable = true;
             }else{
                 $this->editable = false;
@@ -196,7 +289,9 @@ class reportesNegComponents extends sfComponents
 	*/
 	public function executePreviewTercero()
 	{
-        $this->tercero = Doctrine::getTable("Tercero")->find($this->idtercero);
+            $this->tercero = Doctrine::getTable("Tercero")->find($this->idtercero);
+            if(!$this->tercero)
+                $this->tercero=new Tercero();
     }
 
 
@@ -246,15 +341,14 @@ class reportesNegComponents extends sfComponents
 
     }
 
-    public function executeFormReportePanelAg()
+    public function executeFormReportePanelOs()
 	{
-//        echo "categoria:".$this->getRequestParameter("idcategory")."<br>";
         $this->permiso = $this->getUser()->getNivelAcceso( "87" );
         $this->cache=$this->getRequestParameter("cache");
         if($this->permiso=="3")
         {
             $this->load_category();
-//            echo $this->idcategory;
+
             $this->issues = Doctrine::getTable("KBTooltip")
                                 ->createQuery("t")
                                 ->select("t.ca_idcategory, t.ca_title, t.ca_info, t.ca_field_id")
@@ -283,17 +377,52 @@ class reportesNegComponents extends sfComponents
             $this->pais2="Colombia";
             $this->idpais2="CO-057";
         }
-/*        else if($this->dep==3 )
+        else{
+            $this->modo="";
+            $this->impoexpo="";
+        }        
+    }
+
+    public function executeFormReportePanelAg()
+	{
+        $this->permiso = $this->getUser()->getNivelAcceso( "87" );
+        $this->cache=$this->getRequestParameter("cache");
+        if($this->permiso=="3")
         {
-            $this->modo=constantes::AEREO;
+            $this->load_category();
+
+            $this->issues = Doctrine::getTable("KBTooltip")
+                                ->createQuery("t")
+                                ->select("t.ca_idcategory, t.ca_title, t.ca_info, t.ca_field_id")
+                                ->where("t.ca_idcategory = ?", $this->idcategory)
+                                ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                                ->execute();
+        }
+
+        $this->dep=$this->getUser()->getIddepartamento();
+
+        $this->pais2="todos";
+        $this->email="";
+        //echo $this->dep;
+        //13 es sistemas
+        if($this->dep==13 || $this->dep==14)
+        {
+            $this->modo=constantes::MARITIMO;
             $this->impoexpo=constantes::IMPO;
-        }*/
+            $this->pais2="Colombia";
+            $this->idpais2="CO-057";
+            $this->email=$this->getUser()->getEmail();
+        }
+        else if($this->dep==18 || $this->dep==3)
+        {
+            $this->impoexpo=constantes::IMPO;
+            $this->pais2="Colombia";
+            $this->idpais2="CO-057";
+        }
         else{
             $this->modo="";
             $this->impoexpo="";
         }
-
-
     }
 
     
@@ -303,12 +432,8 @@ class reportesNegComponents extends sfComponents
 	*/
 	public function executeFormClientePanel()
 	{
-        $this->incotermsVals = Doctrine::getTable("Parametro")
-                                     ->createQuery("p")
-                                     ->where("ca_casouso = ?", "CU021")
-                                     ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
-                                     ->execute();
-    }
+            $this->tiporep=($this->tiporep)?$this->tiporep:"0";
+        }
 
 	public function executeFormFacturacionPanel()
 	{
@@ -335,6 +460,10 @@ class reportesNegComponents extends sfComponents
             {
                 $this->nave="Motonave";
             }
+            else if($this->modo==constantes::TERRESTRE)
+            {
+                $this->nave="Motonave";
+            }
 
         }
 	}
@@ -343,7 +472,7 @@ class reportesNegComponents extends sfComponents
 	{        
 		$impoexpo=$this->impoexpo;
         
-		$this->title=($impoexpo== Constantes::IMPO)?"Continuación de viaje":"DTA";
+		$this->title=($impoexpo!= Constantes::EXPO)?"Continuación de viaje":"DTA";
 		$usuarios = Doctrine::getTable("Usuario")
                ->createQuery("u")
                ->select("u.ca_login,u.ca_nombre,u.ca_email,ca_sucursal,u.ca_idsucursal")
@@ -402,6 +531,57 @@ class reportesNegComponents extends sfComponents
     public function executeFormTrayectoPanel()
     {
         $this->load_category();        
+        $this->origen="Ciudad Origen";
+        $this->destino="Ciudad Destino";
+        if($this->modo==constantes::AEREO)
+        {
+            $this->nomLinea="Aerolinea";
+        }
+        else if($this->modo==constantes::MARITIMO)
+        {
+            $this->nomLinea="Naviera";
+            $this->origen="Puerto Origen";
+            $this->destino="Puerto Destino";
+        }
+        else
+            $this->nomLinea="Linea";
+
+        if($this->impoexpo==constantes::IMPO)
+        {
+            $this->pais2="CO-057";
+            $this->pais1="todos";
+        }else if($this->impoexpo==constantes::EXPO)
+        {
+            $this->pais2="todos";
+            $this->pais1="CO-057";
+        }else if($this->impoexpo==constantes::TRIANGULACION)
+        {
+            $this->pais1="todos";
+            $this->pais2="todos";
+        }
+        $usuarios = Doctrine::getTable("Usuario")
+               ->createQuery("u")
+               ->select("u.ca_login,u.ca_nombre,u.ca_email,ca_sucursal")
+               ->innerJoin("u.UsuarioPerfil up")
+               ->where("u.ca_activo=? AND up.ca_perfil=? ", array('TRUE','cordinador-de-otm'))
+               ->addOrderBy("u.ca_idsucursal")
+               ->addOrderBy("u.ca_nombre")
+               ->execute();
+        //echo count($usuarios);
+        $this->usuarios=array();
+        foreach($usuarios as $usuario)
+        {
+            if(!isset($this->usuarios[$usuario->getCaSucursal()]))
+                $this->usuarios[$usuario->getCaSucursal()]="";
+            $this->usuarios[$usuario->getCaSucursal()].=$usuario->getCaEmail();
+        }
+        //print_r($this->usuarios);
+    }
+
+
+    public function executeFormGeneralOsPanel()
+    {
+        $this->load_category();
         $this->origen="Ciudad Origen";
         $this->destino="Ciudad Destino";
         if($this->modo==constantes::AEREO)
@@ -584,7 +764,7 @@ class reportesNegComponents extends sfComponents
      *
      */
     public function executeCotizacionWindow()
-	{
+    {
         //echo "::".$this->reporte->getCaIdproducto()."::<BR>";
         if( $this->reporte->getCaIdproducto() ){
             $this->producto = Doctrine::getTable("CotProducto")->find( $this->reporte->getCaIdproducto() );
@@ -594,7 +774,19 @@ class reportesNegComponents extends sfComponents
             //$this->cotizacion = $this->reporte->getCaIdcotizacion();
             $this->cotizacion = null;
         }
-	}
+    }
+
+    public function executeCotizacionOtmWindow()
+    {
+        //echo "::".$this->reporte->getCaIdproducto()."::<BR>";
+        if( $this->reporte->getCaIdproductootm() ){
+            $this->productootm = Doctrine::getTable("CotProducto")->find( $this->reporte->getCaIdproductootm() );
+            $this->cotizacionotm = $this->productootm->getCotizacion();
+        }else{
+            $this->productootm = null;
+            $this->cotizacionotm = null;
+        }
+    }
     /*
      *
      */

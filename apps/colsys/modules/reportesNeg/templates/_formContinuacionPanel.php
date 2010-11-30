@@ -5,7 +5,7 @@
  *  (c) Coltrans S.A. - Colmas Ltda.
 */
 //echo "modo:".$modo.":::::::impoexpo:".$impoexpo;
-if($impoexpo==Constantes::IMPO)
+if($impoexpo!=Constantes::EXPO)
 {
 include_component("widgets", "widgetContinuacion");
 $usuarios = $sf_data->getRaw("usuarios");
@@ -23,7 +23,7 @@ include_component("widgets", "widgetBodega");
         Ext.apply(this, config);
 
 		<?
-			if($impoexpo==Constantes::IMPO)
+			if($impoexpo!=Constantes::EXPO)
 			{
 		?>
             this.wgContinuacion=new WidgetContinuacion({fieldLabel: 'Continuación',
@@ -34,6 +34,15 @@ include_component("widgets", "widgetBodega");
                                                     });
 
 			this.wgContinuacion.addListener("select", this.onSelectContinuacion, this );
+                        this.widgetCotizacionOtm = new WidgetCotizacion({
+                                              fieldLabel: "Cotización",
+                                              id:"cotizacionotm",
+                                              hiddenName: "idcotizacionotm",
+                                              modo:"<?=constantes::OTMDTA?>",
+                                              impoexpo:"<?=$impoexpo?>",
+                                              valueField:"consecutivo"
+                                              });
+                this.widgetCotizacionOtm.addListener("select", this.onSelectCotizacionOtm, this );
         <?
 			}
 		?>
@@ -50,12 +59,13 @@ include_component("widgets", "widgetBodega");
                     items: [
 
 						<?
-						if($impoexpo==Constantes::IMPO )
+						if($impoexpo!=Constantes::EXPO )
 						{
 							$keys=array_keys($usuarios);
 							$conta=count($keys);
 						
 						?>
+                        this.widgetCotizacionOtm,
                         this.wgContinuacion,
                         new WidgetCiudad({fieldLabel: 'Destino Final',
                                                   name: 'continuacion_destino',
@@ -66,8 +76,13 @@ include_component("widgets", "widgetBodega");
                         <?
                         if($modo==Constantes::MARITIMO )
                         {
-                        ?>
-						,
+                        ?>,
+                        {
+                            xtype: "hidden",
+                            id: "idproductootm",
+                            name: "idproductootm"
+                        }                        
+			,
                         {
                             xtype:'fieldset',
                             title: 'Informar A',
@@ -150,7 +165,7 @@ include_component("widgets", "widgetBodega");
     };
 
     Ext.extend(FormContinuacionPanel, Ext.Panel, {
-		onSelectContinuacion: function( combo, record, index){
+        onSelectContinuacion: function( combo, record, index){
             if(record)
             {
                 if(record.data.modalidad!=" " && record.data.modalidad!="")
@@ -169,6 +184,26 @@ include_component("widgets", "widgetBodega");
                 Ext.getCmp('idconsignatario').allowBlank=true;
                 Ext.getCmp('bodega_consignar').allowBlank=true;
             }
+
+        },
+        onSelectCotizacionOtm: function( combo, record, index){
+
+            /*Ext.getCmp("tra_destino_id").setValue(record.data.tra_destino);*/
+            if(Ext.getCmp("continuacion_destino").getValue()=="")
+            {
+                Ext.getCmp("continuacion_destino").setValue(record.data.iddestino);
+                $("#continuacion_destino").val(record.data.destino);
+            }
+            if(Ext.getCmp("continuacion").getValue()=="")
+            {
+                Ext.getCmp("continuacion").setValue(record.data.producto);
+            }
+
+            
+            Ext.getCmp("idproductootm").setValue(record.data.idproducto);
+            
+
+
 
         }
     });

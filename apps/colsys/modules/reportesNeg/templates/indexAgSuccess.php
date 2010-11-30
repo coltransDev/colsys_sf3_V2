@@ -42,22 +42,21 @@
 			</td>
 	</tr>
 	<tr >
-		<td  ><table width="100%" >
-				<tbody>
-					<tr>
-						<td class="invertir" style="font-weight: bold;">Origen</td>
-						<td class="invertir" style="font-weight: bold;">Destino</td>
-						<td width="20%" class="invertir" style="font-weight: bold;">Fch.Despacho</td>
-						<td width="60%" class="invertir" style="font-weight: bold;">Proveedor</td>
-                        
-					</tr>
-					<tr>
-						<td class="listar"><?=$origen?></td>
-						<td class="listar"><?=$destino?></td>
-						<td class="listar"><?=$reporte["ca_fchreporte"]?></td>
-						<td class="listar"><?=$reporte["ca_nombre_pro"]?></td>
-					</tr>
-				</tbody>
+		<td><table width="100%" >
+                        <tbody>
+                        <tr>
+                            <td class="invertir" style="font-weight: bold;">Origen</td>
+                            <td class="invertir" style="font-weight: bold;">Destino</td>
+                            <td width="20%" class="invertir" style="font-weight: bold;">Fch.Despacho</td>
+                            <td width="60%" class="invertir" style="font-weight: bold;">Proveedor</td>
+                        </tr>
+                        <tr>
+                                <td class="listar"><?=$origen?></td>
+                                <td class="listar"><?=$destino?></td>
+                                <td class="listar"><?=$reporte["ca_fchreporte"]?></td>
+                                <td class="listar"><?=$reporte["ca_nombre_pro"]?></td>
+                          </tr>
+                        </tbody>
 			</table></td>
 	</tr>
 	<?

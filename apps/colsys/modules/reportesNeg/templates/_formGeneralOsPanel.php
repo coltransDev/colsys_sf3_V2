@@ -5,28 +5,16 @@
  *  (c) Coltrans S.A. - Colmas Ltda.
 */
 include_component("widgets", "widgetCotizacion");
-//include_component("widgets", "widgetImpoexpo");
-//include_component("widgets", "widgetTransporte");
-include_component("widgets", "widgetModalidad");
-include_component("widgets", "widgetLinea");
-//include_component("widgets", "widgetPais");
-include_component("widgets", "widgetCiudad");
-include_component("widgets", "widgetAgente");
 include_component("widgets", "widgetIncoterms");
 include_component("reportesNeg", "formMercanciaPanel",array("modo"=>$modo,"impoexpo"=>$impoexpo));
-//$usuarios = $sf_data->getRaw("usuarios");
-if($impoexpo!= Constantes::TRIANGULACION)
-{
-	include_component("reportesNeg", "formContinuacionPanel",array("modo"=>$modo,"impoexpo"=>$impoexpo));
-}
 
-if($permiso>=2)
-{
-    include_component("widgets", "widgetComerciales");
-}
+include_component("widgets", "widgetComerciales");
+include_component("widgets", "widgetTransporte");
+include_component("widgets", "widgetImpoexpo");
+
 ?>
 <script type="text/javascript">
-    FormTrayectoPanel = function( config ){
+    FormGeneralOsPanel = function( config ){
         Ext.apply(this, config);
         this.widgetCotizacion = new WidgetCotizacion({
                                               fieldLabel: "Cotización",
@@ -38,29 +26,24 @@ if($permiso>=2)
                                               });
         this.widgetCotizacion.addListener("select", this.onSelectCotizacion, this );
 
-        
 
-		this.wgModalidad=new WidgetModalidad({fieldLabel: 'Tipo Envio',
-                                        id: 'modalidad',
-                                        hiddenName: "idmodalidad",
-                                        linkTransporte: "transporte",
-                                        linkImpoexpo: "impoexpo"
-                                        });
-        <?
-		if($impoexpo == Constantes::EXPO || ($impoexpo== Constantes::IMPO && $modo== Constantes::AEREO) || ($impoexpo== Constantes::TRIANGULACION ))
-		{
-		?>
-		this.wgModalidad.addListener("select", this.onSelectModalidad, this );
-		<?
-		}
-		?>
-        FormTrayectoPanel.superclass.constructor.call(this, {
+        this.wgImpoexpo=new WidgetImpoexpo({fieldLabel: 'Impoexpo',
+                                                id: 'impoexpo',
+                                                name:'impoexpo',
+                                                tabIndex:2,
+                                                value:'<?=$impoexpo?>'
+                                               });
+        this.wgImpoexpo.addListener("select", this.onSelectImpoexpo, this);
+
+
+
+        FormGeneralOsPanel.superclass.constructor.call(this, {
 			labelWidth: 100,
             title: 'General',
             deferredRender:false,
-            
+
             autoHeight:true,
-            
+
             items: [{
                         xtype:'fieldset',
                         title: 'General',
@@ -84,163 +67,27 @@ if($permiso>=2)
                                 name: "fchdespacho",
                                 format: 'Y-m-d'
                             },
-                            <?
-                            if($permiso<2)
-                            {
-                            ?>
-                            {
-                                xtype: "hidden",
-                                id: "idvendedor",
-                                name: "idvendedor"
-                            }
-                            ,
-                            {
-                                xtype: "textfield",
-                                fieldLabel: "Vendedor",
-                                id: "vendedor",
-                                name: "vendedor"
-                            }
-                            <?
-                            }
-                            else
-                            {
-                            ?>
+
                             new WidgetComerciales({fieldLabel: 'Vendedor',
                                                     id: 'vendedor',
                                                     name: 'vendedor',
                                                     hiddenName: "idvendedor"
-                                                    })
-                            <?
-                            }
-                            ?>
+                                                    }),
+                            new WidgetTransporte({fieldLabel: 'Transporte',
+                                                id: 'transporte',
+                                                name:'transporte',
+                                                tabIndex:2,
+                                                value:'<?=$modo?>'
+                                               }),
+                                               this.wgImpoexpo
                         ]
                     },
-                    {
-                        xtype:'fieldset',
-                        title: 'Información del trayecto',
-                        autoHeight : true,
-                        layout : 'column',
-                        columns : 2,
-                        defaults:{
-                            columnWidth:0.5,
-                            layout:'form',
-                            border:false,
-                            bodyStyle:'padding:4px'
-                        },
-                        items :
-                        [
-                            {
-                                columnWidth:.4,                                
-                                border:false,                                
-                                items:
-                                [
-                                    {
-                                        xtype:"hidden",
-                                        id: 'impoexpo',
-                                        name: 'impoexpo',
-                                        value:'<?=$impoexpo?>'
-                                    },
-                                    this.wgModalidad,
-                                    /*new WidgetPais({fieldLabel: 'País Origen',
-                                                    id: 'tra_origen_id',
-                                                    linkCiudad: 'origen',
-                                                    hiddenName:'idtra_origen_id',
-                                                    pais:'<?=$pais1?>',
-                                                    excluidos:'C0-057'
-                                                   }),
-                                    */
-                                    new WidgetCiudad({fieldLabel: '<?=$origen?>',                                                      
-                                                      id: 'origen',
-                                                      idciudad:"origen",
-                                                      hiddenName:"idorigen"
-                                                    })
-                                ]
-                            },                       
-                            {
-                                columnWidth : .6,
-                                layout : 'form',
-                                border : false,
-                                items:
-                                [
-                                    {
-                                        xtype:"hidden",
-                                        id: 'transporte',
-                                        name: 'transporte',
-                                        value:'<?=$modo?>'
-                                    },
-                                    new WidgetLinea({fieldLabel: '<?=$nomLinea?>',
-                                                     linkTransporte: "transporte",
-                                                     id:"linea",
-                                                     hiddenName: "idlinea",
-                                                     width:300
-                                                    }),
-                                    /*new WidgetPais({fieldLabel: 'País Destino',
-                                                    id: 'tra_destino_id',
-                                                    linkCiudad: 'destino',
-                                                    hiddenName:'idtra_destino_id',
-                                                    pais:'<?=$pais2?>'
-                                                   }),
-                                    */
-                                    new WidgetCiudad({fieldLabel: '<?=$destino?>',                                                      
-                                                      id: 'destino',
-                                                      idciudad:"destino",
-                                                      hiddenName:"iddestino"
-                                                    })
-    <?
-                                    if($impoexpo==constantes::EXPO)
-                                    {
-    ?>
-                                        ,new WidgetIncoterms({title: 'Terminos',
-                                                      fieldLabel:"Terminos",
-                                                      id: 'terminos0',
-                                                      hiddenName:"incoterms0",
-                                                      width:250
-                                                    })
-    <?
-                                    }
-    ?>
-                                ]
-                            },
-                            {
-                                columnWidth : 1,
-                                layout : 'form',
-                                border : false,
-                                items:
-                                [
-                                    new WidgetAgente({fieldLabel: 'Agente',
-                                                      linkImpoExpo: "impoexpo",
-                                                      linkOrigen: "origen",
-                                                      linkDestino: "destino",
-                                                      linkListarTodos: "listar_todos",
-                                                      id:"agente",
-                                                      hiddenName:"idagente",
-                                                      width:350
-                                                    }),
-                                    {
-                                        xtype: "checkbox",
-                                        fieldLabel: "Listar todos",
-                                        id: "listar_todos",
-                                        name:"listar_todos"
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                <?
-                if($impoexpo!="Triangulación")
-                {
-
-                ?>
-                    new FormContinuacionPanel(),
-                <?
-                }
-                ?>
                     new FormMercanciaPanel()
                 ]
         });
     };
 
-    Ext.extend(FormTrayectoPanel, Ext.Panel, {
+    Ext.extend(FormGeneralOsPanel, Ext.Panel, {
         /*
          * Completa los datos del reporte con la cotización seleccionada.
          **/
@@ -335,7 +182,7 @@ if($permiso>=2)
             {
                 Ext.getCmp("ca_minimaventa").setValue(record.data.prima_min);
             }
-            
+
             if((record.data.obtencion) || (record.data.idmoneda) || (record.data.idmonedaobtencion) || (record.data.prima_vlr) || (record.data.prima_min))
             {
                 Ext.getCmp('seguros').expand();
@@ -363,7 +210,7 @@ if($permiso>=2)
             {
                 Ext.getCmp("ca_liberacion").setValue(cupo);
             }
-        } 
+        }
 		,
         onSelectModalidad: function( combo, record, index)
         {

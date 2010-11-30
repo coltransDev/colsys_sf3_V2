@@ -23,29 +23,31 @@
 	<tr>
 		<td width="123"  ><b>Buscar por:</b> <br />
             <select name="criterio" size="7">
-						<option selected="selected" value="ca_consecutivo">N&uacute;mero de reporte</option>
-						<option value="ca_nombre_cli">Cliente</option>
-                        <option value="ca_nombre_con">Nombre del Consignatario </option>
-                        <option value="ca_login">Mis Reportes </option>
-                        <option value="ca_nombre_pro">Nombre del Proveedor </option>
-                        <option value="ca_orden_prov">No.Orden Proveedor </option>
-                        <option value="ca_orden_clie">No.Orden Cliente </option>
-                        <option value="ca_idcotizacion">No. Cotización </option>
-                        <option value="ca_mercancia_desc">Descripción Mercancia </option>
-                        <option value="ca_login">Vendedor </option>
-                        <option value="ca_traorigen">Tráficos </option>
-                        <option value="ca_ciuorigen">Puerto  </option>
-					</select>
+                <option value="ca_consecutivo" <?=($criterio=="ca_consecutivo")?"selected":""?>>N&uacute;mero de reporte</option>
+                        <option value="ca_nombre_cli" <?=($criterio=="ca_nombre_cli")?"selected":""?>>Cliente</option>
+                        <option value="ca_nombre_con" <?=($criterio=="ca_nombre_con")?"selected":""?>>Nombre del Consignatario </option>
+                        <option value="ca_login" <?=($criterio=="ca_login")?"selected":""?>>Mis Reportes </option>
+                        <option value="ca_nombre_pro" <?=($criterio=="ca_nombre_pro")?"selected":""?>>Nombre del Proveedor </option>
+                        <option value="ca_orden_prov" <?=($criterio=="ca_orden_prov")?"selected":""?>>No.Orden Proveedor </option>
+                        <option value="ca_orden_clie" <?=($criterio=="ca_orden_clie")?"selected":""?>>No.Orden Cliente </option>
+                        <option value="ca_idcotizacion" <?=($criterio=="ca_idcotizacion")?"selected":""?>>No. Cotización </option>
+                        <option value="ca_mercancia_desc" <?=($criterio=="ca_mercancia_desc")?"selected":""?>>Descripción Mercancia </option>
+                        <option value="ca_login" <?=($criterio=="ca_login")?"selected":""?>>Vendedor </option>
+                        <option value="ca_traorigen" <?=($criterio=="ca_traorigen")?"selected":""?>>Tráficos </option>
+                        <option value="ca_ciuorigen" <?=($criterio=="ca_ciuorigen")?"selected":""?>>Puerto  </option>
+            </select>
 
 		</td>
 		<td  ><div id="visible" style="visibility:visible"><b>Que contenga la cadena:</b><br />
-			<input type="text"  name="cadena" size="60" />
+			<input type="text"  name="cadena" size="60" value="<?=$cadena?>" />
 		</div>
             <br>
             Por Fechas <input type="checkbox" onclick="habFechas(this)">
             <br>
+            <div>
             <div  style="float: left;width: 50%">Fecha Inicial<div id="fecha1"></div></div>
             <div  style="float: left;width: 50%">Fecha Final<div id="fecha2"></div></div>
+            </div>
             <script>
                 var fech1= new Ext.form.DateField(
                     {
@@ -53,7 +55,7 @@
                         name : 'fechaInicial',
                         id   : 'fechaInicial',
                         format: 'Y-m-d',
-                        value: '<? //=date("Y-m-")."01"?>'
+                        value: '<?=$fechaInicial?>'
                     }
                 );
                 fech1.render("fecha1");
@@ -63,7 +65,7 @@
                         name : 'fechaFinal',
                         id : 'fechaFinal',
                         format: 'Y-m-d',
-                        value: '<? //=date("Y-m-d")?>'
+                        value: '<?=$fechaFinal?>'
                     }
                 );
                 fech2.render("fecha2");
@@ -73,6 +75,12 @@
                     fech2.setDisabled(!obj.checked);
                 }
             </script>
+            <br>&nbsp;
+            <div>
+                <div  style="float: left;width: 50%">Seguro <select id="seguro" name="seguro"><option value="">...</option><option value="Sí" <?=($seguro=="Sí")?"selected":""?>>Sí</option><option value="No" <?=($seguro=="No")?"selected":""?>>No</option></select></div>
+                <div  style="float: left;width: 50%">Aduanas <select id="colmas" name="colmas"><option value="">...</option><option value="Sí" <?=($colmas=="Sí")?"selected":""?>>Sí</option><option value="No" <?=(cadena=="No")?"selected":""?>>No</option></select></div>
+            </div>
+
 
         </td>
 		<td  ><input class="submit" type='submit' name='buscar' value=' Buscar' /></td>
@@ -105,7 +113,7 @@ function importar(id,idnew)
             success:function(response,options){
                 var res = Ext.util.JSON.decode( response.responseText );
                 if( res.success ){
-                    location.href="/reportesNeg/consultaReporte/id/"+res.idreporte+"/impoexpo/<?=$impoexpo?>/modo/<?=$modo?>";
+                    location.href="/reportesNeg/consultaReporte/id/"+res.idreporte+"/impoexpo/"+res.impoexpo+"/modo/"+res.transporte;
                 }
             }
         });
@@ -137,7 +145,7 @@ function importar(id,idnew)
                 <?
                 }else
                 {
-                    $url = "reportesNeg/consultaReporte?id=".$reporte["ca_idreporte"]."&modo=".$reporte["ca_transporte"]."&impoexpo=".$reporte["ca_impoexpo"].($opcion?"&opcion=".$opcion:"");
+                    $url = "reportesNeg/consultaReporte?id=".$reporte["ca_idreporte"]."&modo=".$reporte["ca_transporte"]."&impoexpo=".(($reporte["ca_impoexpo"]=="OTM/DTA")?"OTM-DTA":$reporte["ca_impoexpo"]).($opcion?"&opcion=".$opcion:"");
                     echo link_to((($consecutivo==$reporte["ca_consecutivo"])?"":$reporte["ca_consecutivo"])." V".$reporte["ca_version"], $url );
                 
                 }

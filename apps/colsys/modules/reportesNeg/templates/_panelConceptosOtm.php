@@ -1,19 +1,19 @@
 <?php
-/* 
+/*
  *  This file is part of the Colsys Project.
- * 
+ *
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
-$recargos = $sf_data->getRaw("recargos");
+$recargos = $sf_data->getRaw("conceptos");
 
 $aplicaciones = array("Valor Fijo","Sobre Flete","Sobre Flete + Recargos","Unitario x Peso/Volumen","Unitario x Pieza","Unitario x BLs/HAWBs","TM3");
 
-include_component("reportesNeg","cotizacionRecargosWindow", array("reporte"=>$reporte));
+include_component("reportesNeg","cotizacionOtmWindow", array("reporte"=>$reporte));
 ?>
 <script type="text/javascript">
 
 
-PanelRecargos = function( config ){
+PanelConceptosOtm = function( config ){
 
     Ext.apply(this, config);
 
@@ -37,11 +37,11 @@ PanelRecargos = function( config ){
     });
 
     this.editorConceptos = new Ext.form.ComboBox({
-        
+
         typeAhead: true,
         forceSelection: true,
         triggerAction: 'all',
-        selectOnFocus: true,        
+        selectOnFocus: true,
         mode: 'local',
         displayField: 'concepto',
         valueField: 'idconcepto',
@@ -56,7 +56,7 @@ PanelRecargos = function( config ){
         forceSelection: true,
         triggerAction: 'all',
         selectOnFocus: true,
-        mode: 'local',        
+        mode: 'local',
         lazyRender:true,
         listClass: 'x-combo-list-small',
         store : [["$","$"],["%","%"]]
@@ -86,6 +86,42 @@ PanelRecargos = function( config ){
                     ?>
                 ]
     });
+    this.storeEquipos = new Ext.data.Store({
+        autoLoad : true,
+        url: '<?=url_for("conceptos/datosConceptos")?>',
+        baseParams:{
+               transporte:"<?=Constantes::MARITIMO?>",
+               modalidad:"<?=Constantes::FCL?>",
+               impoexpo:"<?=Constantes::IMPO?>"
+        },
+        reader: new Ext.data.JsonReader({
+                    root: 'root',
+                    totalProperty: 'total',
+                    successProperty: 'success'
+                },
+
+                Ext.data.Record.create([
+                    {name: 'idconcepto'},
+                    {name: 'concepto'}
+
+                ])
+        )
+    });
+    this.editorEquipos = new Ext.form.ComboBox({
+        fieldLabel: 'Equipo',
+        typeAhead: true,
+        forceSelection: true,
+        triggerAction: 'all',
+        selectOnFocus: true,
+        name: 'equipo',
+        id: 'idequipo',
+        mode: 'local',
+        displayField: 'concepto',
+        valueField: 'idconcepto',
+        lazyRender:true,
+        listClass: 'x-combo-list-small',
+        store : this.storeEquipos
+    });
 
     /*
     * Crea el expander
@@ -109,6 +145,15 @@ PanelRecargos = function( config ){
             width: 170,
             renderer: this.formatItem,
             editor: this.editorConceptos
+        },
+        {
+            id: 'equipo',
+            header: "Equipo",
+            width: 200,
+            sortable: false,
+            dataIndex: 'equipo',
+            hideable: false,
+            editor: this.editorEquipos
         },
         {
             header: "Aplicacion",
@@ -173,10 +218,12 @@ PanelRecargos = function( config ){
             {name: 'idreporte', type: 'int'},
             {name: 'iditem', type: 'int'},
             {name: 'idconcepto', type: 'int'},
+            {name: 'idequipo', type: 'string'}, //Concepto al cual pertenece el recargo
+            {name: 'equipo', type: 'string'},
             {name: 'aplicacion', type: 'string'},
             {name: 'tipo_app', type: 'string'},
             {name: 'item', type: 'string'},
-            {name: 'cantidad', type: 'int'},            
+            {name: 'cantidad', type: 'int'},
             {name: 'cobrar_tar', type: 'float'},
             {name: 'cobrar_min', type: 'float'},
             {name: 'cobrar_idm', type: 'string'},
@@ -188,7 +235,7 @@ PanelRecargos = function( config ){
     this.store = new Ext.data.Store({
 
         autoLoad : true,
-        url: '<?=url_for("reportesNeg/panelRecargosData?id=".$reporte->getCaIdreporte())?>',
+        url: '<?=url_for("reportesNeg/panelRecargosData?tipo=2&id=".$reporte->getCaIdreporte())?>',
         reader: new Ext.data.JsonReader(
             {
 
@@ -199,17 +246,17 @@ PanelRecargos = function( config ){
         ),
         sortInfo: {
             field: 'orden',
-            direction: 'ASC' 
+            direction: 'ASC'
         }
     });
 
-    
 
 
-    PanelRecargos.superclass.constructor.call(this, {
+
+    PanelConceptosOtm.superclass.constructor.call(this, {
        loadMask: {msg:'Cargando...'},
        clicksToEdit: 1,
-       id: 'panel-recargos',
+       id: 'panel-recargos-otm',
        plugins: [this.expander],
        view: new Ext.grid.GridView({
 
@@ -219,7 +266,7 @@ PanelRecargos = function( config ){
        }),
        listeners:{
             validateedit: this.onValidateEdit,
-            rowcontextmenu: this.onRowcontextMenu,           
+            rowcontextmenu: this.onRowcontextMenu,
             dblclick:this.onDblClickHandler
         },
         boxMinHeight: 400,
@@ -244,14 +291,14 @@ PanelRecargos = function( config ){
             {
                 text: 'Recargar',
                 tooltip: 'Recarga los datos de la base de datos',
-                iconCls: 'refresh', 
+                iconCls: 'refresh',
                 scope: this,
                 handler: function(){
-					Ext.getCmp('panel-recargos').store.reload();
+					Ext.getCmp('panel-recargos-otm').store.reload();
 				}
             }
             <?
-            if($reporte->getCaIdproducto())
+            if($reporte->getCaIdproductootm())
             {
             ?>
             ,
@@ -266,10 +313,10 @@ PanelRecargos = function( config ){
             ]
     });
 
-    var storePanelRecargos = this.store;
+    var storePanelConceptosOtm = this.store;
     this.getColumnModel().isCellEditable = function(colIndex, rowIndex) {
-        
-        var record = storePanelRecargos.getAt(rowIndex);
+
+        var record = storePanelConceptosOtm.getAt(rowIndex);
         var field = this.getDataIndex(colIndex);
 
 
@@ -280,7 +327,7 @@ PanelRecargos = function( config ){
         if( record.data.iditem && field=="item" ){
             return false;
         }
-        
+
         return Ext.grid.ColumnModel.prototype.isCellEditable.call(this, colIndex, rowIndex);
     }
 
@@ -292,15 +339,15 @@ PanelRecargos = function( config ){
     }
 };
 
-Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
+Ext.extend(PanelConceptosOtm, Ext.grid.EditorGridPanel, {
     guardarCambios: function(){
 
-        var store = Ext.getCmp('panel-recargos').store;
+        var store = Ext.getCmp('panel-recargos-otm').store;
 
         var records = store.getModifiedRecords();
-			
+
         var lenght = records.length;
-        
+
         /*
         for( var i=0; i< lenght; i++){
             r = records[i];
@@ -319,12 +366,12 @@ Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
 
             changes['id']=r.id;
             changes['tipo']=r.data.tipo;
-            changes['iditem']=r.data.iditem;
+            changes['iditem']="61";
             changes['idconcepto']=r.data.idconcepto;
             changes['idreporte']=r.data.idreporte;
             changes['ca_recargoorigen']="false";
 
-            
+
             if( r.data.iditem ){
                 Ext.Ajax.request(
                     {
@@ -365,7 +412,7 @@ Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
                 },
 
                 success:function(response,options){
-                    Ext.getCmp('panel-recargos').store.reload();
+                    Ext.getCmp('panel-recargos-otm').store.reload();
                 }
 
 
@@ -377,24 +424,25 @@ Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
     }
     ,
     formatItem: function(value, p, record) {
-        
+
         return String.format(
             '<b>{0}</b>',
             value
         );
-        
+
     },
 
-    
-    onValidateEdit : function(e){
-        if( e.field == "item"){
-            
-            var rec = e.record;
-            var ed = this.colModel.getCellEditor(e.column, e.row);
-            var store = ed.field.store;
 
-            var recordConcepto = this.record;
-            var storeGrid = this.store;
+    onValidateEdit : function(e){
+         var rec = e.record;
+        var ed = this.colModel.getCellEditor(e.column, e.row);
+        var store = ed.field.store;
+
+        var recordConcepto = this.record;
+        var storeGrid = this.store;
+        if( e.field == "item"){
+
+           
             store.each( function( r ){
                     var existe = false;
                     if( r.data.idconcepto==e.value ){
@@ -416,7 +464,8 @@ Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
 
                                    item: '+',
                                    iditem: '',
-                                   idconcepto: '9999',
+                                   idconcepto: '61',
+                                   idequipo: '',
                                    tipo: 'recargo',
                                    cantidad: '',
                                    neta_tar: '',
@@ -429,13 +478,15 @@ Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
                                    cobrar_min: '',
                                    cobrar_idm: '',
                                    detalles: '',
-                                   orden: 'Z' 
+                                   orden: 'Z'
                                 });
 
 
 
                                 rec.set("iditem", r.data.idconcepto);
                                 rec.set("idconcepto", r.data.idconcepto);
+                                rec.set("idequipo", r.data.idequipo );
+                                rec.set("equipo", r.data.equipo );
                                 rec.set("tipo_app", "$");
                                 rec.set("aplicacion", "<?=$aplicaciones[0]?>");
                                 rec.set("cobrar_tar", 0);
@@ -445,7 +496,17 @@ Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
                                 storeGrid.addSorted(newRec);
                                 storeGrid.sort("orden", "ASC");
 
-                            }else{
+                            }
+                            else if( e.field == "equipo"){
+                               store.each( function( r ){
+                                       if( r.data.idconcepto==e.value ){
+                                           rec.set("idequipo", r.data.idconcepto );
+                                           e.value = r.data.concepto;
+                                           return true;
+                                       }
+                                   });
+                            }
+                            else{
                                 rec.set("idmoneda", "USD");
                                 rec.set("iditem", r.data.idconcepto);
                             }
@@ -461,6 +522,16 @@ Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
                 }
             )
         }
+         else if( e.field == "equipo"){
+
+            store.each( function( r ){
+                    if( r.data.idconcepto==e.value ){
+                        rec.set("idequipo", r.data.idconcepto );
+                        e.value = r.data.concepto;
+                        return true;
+                    }
+                });
+         }
     }
     ,
 
@@ -469,9 +540,9 @@ Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
 
         if(!this.menu){
             this.menu = new Ext.menu.Menu({
-            id:'grid-recargos-ctx',
+            id:'grid-recargos-otm-ctx',
             enableScrolling : false,
-            items: [                   
+            items: [
                     {
                         text: 'Eliminar item',
                         iconCls: 'delete',
@@ -521,7 +592,7 @@ Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
             var id = this.ctxRecord.id;
             var tipo = this.ctxRecord.data.tipo;
             var idreporte = this.ctxRecord.data.idreporte;
-            
+
             var storeConceptosFletes = this.store;
             Ext.Ajax.request(
             {
@@ -551,9 +622,9 @@ Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
                             * Se deben eliminar los recargos del concepto que se elimino ya que al enviar la
                             * petición son borrados de la base de datos.
                             */
-                            storeConceptosFletes.each( function( r ){                                
+                            storeConceptosFletes.each( function( r ){
                                 if( r.data.tipo=="recargo" && r.data.idconcepto==record.data.iditem ){
-                                    
+
                                     storeConceptosFletes.remove(r);
                                 }
                             });
@@ -561,7 +632,7 @@ Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
                     }
                 }
             });
-            
+
         }
     }
     ,
@@ -604,9 +675,9 @@ Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
            });
     },
     importarCotizacion: function(){
-        
+
         if( !this.win ){
-            this.win = new CotizacionRecargosWindow();
+            this.win = new CotizacionOtmWindow();
         }
         this.win.show();
     }

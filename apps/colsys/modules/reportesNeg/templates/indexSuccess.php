@@ -8,9 +8,9 @@
 <div class="content" align="center">
 	<table width="50%" border="0" class="tableList">
 	<tr>
-        <th scope="col" colspan="2" align="left"><b>Crear un nuevo reporte, seleccione el servicio</b></th>
+        <th scope="col" colspan="3" align="left"><b>Crear un nuevo reporte, seleccione el servicio</b></th>
 	</tr>
-    <tr><td colspan="2"><b>Importaci&oacute;n</b></td></tr>
+    <tr><td colspan="3"><b>Importaci&oacute;n</b></td></tr>
 
     <tr style="padding: 10px">
 <?
@@ -31,11 +31,15 @@
         <td><div align="left">
 			<?=link_to("Marítimo", "reportesNeg/formReporte?modo=Marítimo&impoexpo=Importación")?>
 		</div></td>
+
+        <td align="left">
+            <?=link_to("OTM-DTA (Pruebas)", "reportesNeg/formReporte?modo=Marítimo&impoexpo=".constantes::OTMDTA )?>
+	</td>
 <?
 	}
 ?>
 	</tr>
-    <tr><td colspan="2" ><b>Exportaci&oacute;n</b></td></tr>
+    <tr><td colspan="3" ><b>Exportaci&oacute;n</b></td></tr>
     <tr style="padding: 10px">
 <?
 //	if( $nivelAereo>=0 )
@@ -43,8 +47,8 @@
 
 ?>
         <td align="left">
-			<?=link_to("Aéreo", "reportesNeg/formReporte?modo=Aéreo&impoexpo=Exportación" )?>
-		</td>
+            <?=link_to("Aéreo", "reportesNeg/formReporte?modo=Aéreo&impoexpo=Exportación" )?>
+	</td>
 <?
 	}
 
@@ -53,11 +57,14 @@
 
 ?>
         <td><div align="left">
-			<?=link_to("Marítimo", "reportesNeg/formReporte?modo=Marítimo&impoexpo=Exportación")?>
-		</div></td>
+            <?=link_to("Marítimo", "reportesNeg/formReporte?modo=Marítimo&impoexpo=Exportación")?>
+	</div></td>
 <?
 	}
 ?>
+        <td><div align="left">
+            <?=link_to("Terrestre (Pruebas)", "reportesNeg/formReporte?modo=Terrestre&impoexpo=Exportación")?>
+	</div></td>
 	</tr>
 <?
 
@@ -103,7 +110,7 @@
 			<?=link_to("Ag", "reportesNeg/indexAg")?>
 		</div></td>
         <td><div align="left">
-			<?=link_to("Otros Servicios", "reportesNeg/indexOs")?>
+			<?=link_to("Otros Servicios", "reportesNeg/formReporteOs")?>
 		</div></td>
     </tr>
 
@@ -128,8 +135,8 @@
 
 		<td width="123"  ><b>Buscar por:</b> <br />
             <select name="criterio" size="7">
-						<option selected="selected" value="ca_consecutivo">N&uacute;mero de reporte</option>
-						<option value="ca_nombre_cli">Cliente</option>
+                        <option selected="selected" value="ca_consecutivo">N&uacute;mero de reporte</option>
+                        <option value="ca_nombre_cli">Cliente</option>
                         <option value="ca_nombre_con">Nombre del Consignatario </option>
                         <option value="ca_login">Mis Reportes </option>
                         <option value="ca_nombre_pro">Nombre del Proveedor </option>
@@ -149,8 +156,10 @@
             <br>
             Por Fechas <input type="checkbox" onclick="habFechas(this)">
             <br>
+            <div>
             <div  style="float: left;width: 50%">Fecha Inicial<div id="fecha1"></div></div>
             <div  style="float: left;width: 50%">Fecha Final<div id="fecha2"></div></div>
+            </div>
             <script>
                 var fech1= new Ext.form.DateField(
                     {
@@ -158,7 +167,7 @@
                         name : 'fechaInicial',
                         id   : 'fechaInicial',
                         format: 'Y-m-d',
-                        value: '<? //=date("Y-m-")."01"?>'
+                        value: '<?=$fechaInicial?>'
                     }
                 );
                 fech1.render("fecha1");
@@ -168,7 +177,7 @@
                         name : 'fechaFinal',
                         id : 'fechaFinal',
                         format: 'Y-m-d',
-                        value: '<? //=date("Y-m-d")?>'
+                        value: '<?=$fechaFinal?>'
                     }
                 );
                 fech2.render("fecha2");
@@ -178,6 +187,11 @@
                     fech2.setDisabled(!obj.checked);
                 }
             </script>
+            <br>&nbsp;
+            <div>
+                <div  style="float: left;width: 50%">Seguro <select id="seguro" name="seguro"><option value="">...</option><option value="Sí" >Sí</option><option value="No" >No</option></select></div>
+                <div  style="float: left;width: 50%">Aduanas <select id="colmas" name="colmas"><option value="">...</option><option value="Sí" >Sí</option><option value="No" >No</option></select></div>
+            </div>
             
         </td>
 		<td  ><input class="submit" type='submit' name='buscar' value=' Buscar' /></td>

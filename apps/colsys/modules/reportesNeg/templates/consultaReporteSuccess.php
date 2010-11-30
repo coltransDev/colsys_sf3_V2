@@ -52,22 +52,28 @@
     <table cellspacing="0" width="100%" class="tableList alignLeft">
         <tbody>
             <tr class="row0">
-                <td width="25%" ><b>Ciudad :</b><br />
+                <td width="20%" ><b>Ciudad :</b><br />
                         <?=$sucursal?$sucursal->getCaNombre():""?>
                         </td>
-                <td width="25%">
+                <td width="20%">
                     <div align="left">
                         <b>Elaborado por:</b><br />
                         <?=$reporte->getCaUsucreado()?> <?=UTils::fechaMes($reporte->getCaFchcreado())?>
                     </div>
                 </td>
-                <td width="25%">
+                <td width="20%">
                     <div align="left">
                         <b>Actualizado por:</b><br />
                         <?=$reporte->getCaUsuactualizado()?$reporte->getCaUsuactualizado():"&nbsp;"?> <?=UTils::fechaMes( $reporte->getCaFchactualizado() )?>
                     </div>
                 </td>
-                <td width="25%">
+                <td width="20%">
+                    <div align="left">
+                        <b>Cerrado por:</b><br />
+                        <?=$reporte->getCaUsucerrado()?$reporte->getCaUsucerrado():"&nbsp;"?> <?=UTils::fechaMes( $reporte->getCaFchcerrado() )?>
+                    </div>
+                </td>
+                <td width="20%">
                     <div align="left">
                         <b>Rep. Comercial:</b><br />
                         <?=$usuario->getCaNombre()?>
@@ -101,8 +107,15 @@ include_component("reportesNeg","mainPanel");
 include_component("reportesNeg","panelConceptosFletes", array("reporte"=>$reporte));
 $panelConceptosFletes = true;
 
+if($reporte->getCaTransporte()==constantes::MARITIMO && $reporte->getCaImpoexpo()==constantes::IMPO)
+{
+    include_component("reportesNeg","panelConceptosOtm", array("reporte"=>$reporte));
+    $panelConceptosOtm = true;
+}
+else
+    $panelConceptosOtm = false;
 
-if( $reporte->getCaImpoexpo()!=Constantes::EXPO ){
+if( $reporte->getCaImpoexpo()!=Constantes::EXPO || $reporte->getCaTiporep()=="3" ){
         include_component("reportesNeg","panelRecargos", array("reporte"=>$reporte));
         $panelRecargos = true;
     }else{
@@ -110,7 +123,7 @@ if( $reporte->getCaImpoexpo()!=Constantes::EXPO ){
     }
 
 
-if( $reporte->getCaColmas()=="Sí" && $reporte->getCaImpoexpo()!=Constantes::TRIANGULACION /*|| substr($reporte->getCaModalidad(),0,6) == "ADUANA"*/ ){
+if( ($reporte->getCaColmas()=="Sí" && $reporte->getCaImpoexpo()!=Constantes::TRIANGULACION /*|| substr($reporte->getCaModalidad(),0,6) == "ADUANA"*/ ) || $reporte->getCaTiporep()=="3"){
    include_component("reportesNeg","panelRecargosAduana", array("reporte"=>$reporte));
    $panelAduana = true;
 }else{
@@ -171,6 +184,11 @@ if( $reporte->getCaColmas()=="Sí" && $reporte->getCaImpoexpo()!=Constantes::TRIA
             panelFletes.guardarCambios();
         <?
         }
+        if( $panelConceptosOtm ){
+        ?>
+            panelFletes.guardarCambios();
+        <?
+        }
         if( $panelRecargos ){
         ?>
             panelRecargosLocales.guardarCambios();
@@ -225,6 +243,43 @@ if( $reporte->getCaColmas()=="Sí" && $reporte->getCaImpoexpo()!=Constantes::TRIA
                     iconCls: 'import',
                     scope:this,
                     handler: importarConceptosFletes
+                }
+                <?
+                }
+                ?>
+            ]
+            <?
+            }
+            ?>
+        });
+    <?
+    }
+    if( $panelConceptosOtm ){
+    ?>
+        var panelOtm = new PanelConceptosOtm({
+            title: 'Otm',
+            id:'panel-Otm'
+            <?
+            if( $editable ){
+            ?>
+            ,tbar: [
+                {
+                    text:'Guardar',
+                    iconCls: 'disk',
+                    scope:this,
+                    handler: guardarCambios
+                }
+                <?
+                if( $reporte->getCaIdproductootm() ){
+                ?>
+                ,
+                '-',
+
+                 {
+                    text:'Importar Cotizacion',
+                    iconCls: 'import',
+                    scope:this,
+                    handler: importarConceptosOtm
                 }
                 <?
                 }
@@ -351,6 +406,16 @@ if( $reporte->getCaColmas()=="Sí" && $reporte->getCaImpoexpo()!=Constantes::TRIA
                                     if( $panelConceptosFletes ){
                                     ?>
                                     panelFletes
+                                    <?
+                                        $flag = true;
+                                    }
+                                    if( $panelConceptosOtm ){
+                                        if( $flag ){
+                                            echo ",";
+                                        }
+                                    
+                                    ?>
+                                    panelOtm
                                     <?
                                         $flag = true;
                                     }

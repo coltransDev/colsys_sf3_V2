@@ -321,10 +321,15 @@ PanelConceptosFletes = function( config ){
             if($editable)
             {
             ?>
-            {
+                    {
 				text:'Guardar',
 				iconCls:'disk',
 				handler: this.guardarCambios
+			},
+                        {
+				text:'Borrar Todo',
+				iconCls:'delete',
+				handler: this.borrarTodos
 			},
             <?
             }
@@ -348,12 +353,12 @@ PanelConceptosFletes = function( config ){
 				iconCls: 'import',
 				handler: this.importarCotizacion
 			}
-            ,
+           /* ,
             {
 				text:'Importar OTM-DTA',
 				iconCls: 'import',
 				handler: this.importarCotizacionOTM
-			}
+			}*/
             <?
             }
             ?>
@@ -430,6 +435,13 @@ Ext.extend(PanelConceptosFletes, Ext.grid.EditorGridPanel, {
             changes['idreporte']=r.data.idreporte;
             changes['ca_recargoorigen']="true";            
             changes['reportar_tar']=r.data.reportar_tar;
+            changes['neta_tar']=r.data.neta_tar;
+            changes['neta_min']=r.data.neta_min;
+            changes['reportar_min']=r.data.reportar_min;            
+            changes['cobrar_min']=r.data.cobrar_min;
+            changes['cobrar_tar']=r.data.cobrar_tar;
+
+
             if( r.data.iditem ){                
                 Ext.Ajax.request(
                     {
@@ -449,6 +461,35 @@ Ext.extend(PanelConceptosFletes, Ext.grid.EditorGridPanel, {
                 );
             }
         }
+    }
+    ,
+    borrarTodos : function(a,b){
+        if( confirm("Desea continuar?") ){
+            Ext.Ajax.request(
+            {
+                waitMsg: 'Eliminando...',
+                url: '<?=url_for("reportesNeg/eliminarPanelConceptosFletes")?>',
+                params :
+                {
+                    idreporte: '<?=$reporte->getCaIdreporte()?>',
+                    tipo:"All-conceptos"
+                },
+
+                failure:function(response,options){
+                    alert( response.responseText );
+                    success = false;
+                },
+
+                success:function(response,options){
+                    Ext.getCmp('panel-conceptos-fletes').store.reload();
+                }
+
+
+
+            });
+        }
+
+
     }
     ,
     formatItem: function(value, p, record) {

@@ -1,4 +1,4 @@
-    <?php
+<?php
 /*
  *  This file is part of the Colsys Project.
  *
@@ -123,20 +123,27 @@ include_component("widgets", "widgetContactoCliente");
                                             id:"proveedor0"
                                            })
                                     ]
-                                },
+                                }
+                                <?
+                                if($tiporep!="3")
+                                {
+                                ?>,
                                 {
                                     layout:'column',
                                     border:false,
                                     title: "Incoterms ",
                                     items: [
                                        new WidgetIncoterms(
-                                               {
-                                                  id: 'terminos0',
-                                                  hiddenName:"incoterms0",
-												  width:180
-                                                })
+                                           {
+                                              id: 'terminos0',
+                                              hiddenName:"incoterms0",
+                                              width:180
+                                            })
                                     ]
-                                },
+                                }
+                                <?
+                                }
+                                ?>,
                                 {
                                     layout:'column',
                                     border:false,
@@ -169,11 +176,18 @@ include_component("widgets", "widgetContactoCliente");
                                                     hiddenName: "prov<?=$i?>",
                                                     id:"proveedor<?=$i?>"
                                                    }),
+                                            <?
+                                            if($tiporep!="3")
+                                            {
+                                            ?>
                                             new WidgetIncoterms({
                                               id: 'terminos<?=$i?>',
                                               hiddenName:"incoterms<?=$i?>",
                                               width:180
                                             }),
+                                            <?
+                                            }
+                                            ?>
                                              {
                                                 xtype: "textfield",
                                                 name: "orden_pro<?=$i?>",
@@ -202,7 +216,7 @@ var ij=parseInt(<?=($nprov>1)?($nprov):1?>);
             store=combo.store;
             j=0;
             confirmacionesF=new Array();
-            if(Ext.getCmp("chkcontacto_0").getValue()==false)
+            
             {
                 store.each( function( r ){
                     if(r.data.compania==record.get("compania") && r.data.fijo && r.data.email!="")
@@ -221,7 +235,7 @@ var ij=parseInt(<?=($nprov>1)?($nprov):1?>);
             Ext.getCmp("idconcliente").setValue(record.get("idcontacto"));
             Ext.getCmp("contacto").setValue(record.get("nombre")+' '+record.get("papellido")+' '+record.get("sapellido") );
 
-            if(Ext.getCmp("chkcontacto_0").getValue()==false)
+            
             {
                 var confirmar =  record.get("confirmar") ;
                 var brokenconfirmar="";
@@ -262,7 +276,7 @@ var ij=parseInt(<?=($nprov>1)?($nprov):1?>);
 
             if(record.data.cupo && record.data.cupo!="null")
             {
-                cupo=(record.get("cupo")!="")?"Sí":"No";
+                cupo=(record.get("cupo")=="" || record.get("cupo")=="0")?"No":"Sí";
             }
             else
             {
@@ -272,7 +286,7 @@ var ij=parseInt(<?=($nprov>1)?($nprov):1?>);
             Ext.getCmp("ca_liberacion").setValue(cupo);
 
 
-			Ext.getCmp("preferencias").setValue(record.get("preferencias"));
+            Ext.getCmp("preferencias").setValue(record.get("preferencias"));
             Ext.getCmp("vendedor").onTrigger1Click();
             Ext.getCmp("vendedor").setValue(record.data.vendedor);
             $("#vendedor").val(record.data.nombre_ven);
@@ -295,11 +309,18 @@ var ij=parseInt(<?=($nprov>1)?($nprov):1?>);
                                             hiddenName: "prov"+ij,
                                             id:"proveedor"+ij
                                            }),
+                                <?
+                                if($tiporep!="3")
+                                {
+                                ?>
                                 new WidgetIncoterms({
                                       id: 'terminos'+ij,
                                       hiddenName:"incoterms"+ij,
                                       width:180
                                     }),
+                                <?
+                                }
+                                ?>
                                  {
                                     xtype: "textfield",
                                     name: "orden_pro"+ij,

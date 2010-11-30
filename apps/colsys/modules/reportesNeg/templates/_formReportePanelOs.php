@@ -6,12 +6,12 @@ $nprov=count(explode("|", $reporte->getCaIdproveedor() ));
 //$cachedir = 'C:/desarrollo/colsys_sf3/apps/colsys/modules/reportesNeg/cache/';
 //$cachedir = '/srv/www/colsys_sf3/apps/colsys/modules/reportesNeg/cache/';
 $cachedir = $config = sfConfig::get('sf_app_module_dir').DIRECTORY_SEPARATOR."reportesNeg".DIRECTORY_SEPARATOR."cache".DIRECTORY_SEPARATOR;
-$cachetime = 10;
+$cachetime = 86400;
 $cacheext = 'colsys';
-$cachepage = md5("formReporte-modo-$modo-impoexpo-$impoexpo-permiso-$permiso-nprov-$nprov");
+$cachepage = md5("formReporte-nprov-$nprov-tiporep-3");
 $cachefile = $cachedir.$cachepage.'.'.$cacheext;
 //echo $cachefile;
-//$cache="false";
+$cache="false";
 if($cache=="refresh")
 {
 unlink($cachefile);
@@ -20,7 +20,6 @@ $cachelast=0;
 
 
 if (file_exists($cachefile) ) {
-    
     $cachelast = filemtime($cachefile);
 } else {
     $cachelast = 0;
@@ -28,7 +27,7 @@ if (file_exists($cachefile) ) {
 clearstatcache();
 //$cache="false";
 if (time() - $cachetime <$cachelast && $cache!="false" )
-{    
+{
     readfile($cachefile);
 }
 else
@@ -37,73 +36,47 @@ else
 ob_start();
 
 
-include_component("reportesNeg", "formTrayectoPanel",array("modo"=>$modo,"impoexpo"=>$impoexpo,"permiso"=>$permiso));
+include_component("reportesNeg", "formGeneralOsPanel");
 
-include_component("reportesNeg", "formClientePanel",array("modo"=>$modo,"impoexpo"=>$impoexpo,"permiso"=>$permiso,"nprov"=>$nprov  ));
-include_component("reportesNeg", "formFacturacionPanel",array("modo"=>$modo,"impoexpo"=>$impoexpo,"permiso"=>$permiso));
-include_component("reportesNeg", "formPreferenciasPanel",array("modo"=>$modo,"impoexpo"=>$impoexpo,"permiso"=>$permiso));
-include_component("reportesNeg", "formCorteGuiasPanel",array("modo"=>$modo,"impoexpo"=>$impoexpo,"permiso"=>$permiso));
+include_component("reportesNeg", "formClientePanel",array("tiporep"=>"3","nprov"=>$nprov));
 
-if($impoexpo!="Triangulación")
-{
-include_component("reportesNeg", "formAduanasPanel",array("modo"=>$modo,"impoexpo"=>$impoexpo));
-}
-include_component("reportesNeg", "formSegurosPanel",array("modo"=>$modo,"impoexpo"=>$impoexpo));
-/*if($idreporte!="")
-{
-    include_component("widgets", "widgetReporte");
-}*/
-//include_component("reportesNeg", "listReportesPanel",array("modo"=>$modo,"impoexpo"=>$impoexpo));
+include_component("reportesNeg", "formPreferenciasPanel");
+
+
 ?>
 <script type="text/javascript">
-    FormReportePanel = function( config ){
+    FormReporteOsPanel = function( config ){
         Ext.apply(this, config);
         var bodyStyle = 'padding: 5px 5px 5px 5px;';
         this.res="";
         this.buttons = [];
-        if( this.editable ){
-            this.buttons.push( {
-                text   : 'Guardar',
-                formBind:true,
-                scope:this,
-                handler: this.onSave
-            } );
-            this.buttons.push( {
-                text   : 'Finalizar',
-                formBind:true,
-                scope:this,
-                handler: this.onFinalizar
-            } );
-        }
+        
+        this.buttons.push( {
+            text   : 'Guardar',
+            formBind:true,
+            scope:this,
+            handler: this.onSave
+        } );
+        this.buttons.push( {
+            text   : 'Finalizar',
+            formBind:true,
+            scope:this,
+            handler: this.onFinalizar
+        } );
 
-        if( this.nuevaVersion ){
-            this.buttons.push( {
-                text   : 'Nueva Version',
-                formBind:true,
-                scope:this,
-                handler: this.onNuevaVersion
-            } );
-        }
-        if( this.copiar ){
-            this.buttons.push( {
-                text   : 'Copiar en nuevo reporte',
-                formBind:true,
-                scope:this,
-                handler: this.onCopiar
-            } );
-        }
+
         this.buttons.push( {
                 text   : 'Cancelar',
                  handler: this.onCancel
             } );
 
-        FormReportePanel.superclass.constructor.call(this, {            
+        FormReporteOsPanel.superclass.constructor.call(this, {
             labelWidth:80,
             frame: true,
             buttonAlign: 'center',
             layout:'fit',
             monitorValid:true,
-            id:'idFormReportePanel',
+            id:'idFormReporteOsPanel',
             items: [{
                     xtype:'tabpanel',
                     deferredRender : false,
@@ -114,20 +87,9 @@ include_component("reportesNeg", "formSegurosPanel",array("modo"=>$modo,"impoexp
                         hideMode:'offsets'
                     },
                     items:[
-                        new FormTrayectoPanel({bodyStyle:bodyStyle,lazyRender:true}) ,
+                        new FormGeneralOsPanel({bodyStyle:bodyStyle,lazyRender:true}) ,
                         new FormClientePanel({bodyStyle:bodyStyle,lazyRender:true}),
-						new FormFacturacionPanel({bodyStyle:bodyStyle,lazyRender:true}),
-                        new FormPreferenciasPanel({bodyStyle:bodyStyle,lazyRender:true}),
-                        new FormCorteGuiasPanel({bodyStyle:bodyStyle,lazyRender:true}),
-                        <?
-                        if($impoexpo!="Triangulación")
-                        {
-                        ?>
-                        new FormAduanasPanel({bodyStyle:bodyStyle}),
-                        <?
-                        }
-                        ?>
-                        new FormSegurosPanel({bodyStyle:bodyStyle})
+                        new FormPreferenciasPanel({bodyStyle:bodyStyle,lazyRender:true})
                     ]
             }],
             buttons: this.buttons,
@@ -156,28 +118,22 @@ include_component("reportesNeg", "formSegurosPanel",array("modo"=>$modo,"impoexp
 }
 ?>
 var idreporte='<?=$idreporte?>';
-    Ext.extend(FormReportePanel, Ext.form.FormPanel, {        
-        onNuevaVersion: function(){
-            this.onSave("2");
-        },
-        onCopiar: function(){
-            this.onSave("1");
-        },
+    Ext.extend(FormReporteOsPanel, Ext.form.FormPanel, {        
         onFinalizar: function(){
             this.onSave("3");
         },
         onSave: function(opt){
             redire="false";
-            
-            if(opt!="1" && opt!="2" && opt!="3")
+
+            if(opt!="3")
                 opt=0;
             else
             {
                 redire="true";
                 if(opt=="3" && (idreporte=="" || !idreporte) )
-                {                    
+                {
                     opt=0;
-                }                
+                }
             }
             if(!opt && !idreporte)
             {
@@ -187,12 +143,12 @@ var idreporte='<?=$idreporte?>';
             {opt="4"}
             //if(idreporte!="")
 
-            
-           
+
+
             var form  = this.getForm();
             if( form.isValid() ){
                 form.submit({
-                    url: "<?=url_for("reportesNeg/guardarReporte")?>",
+                    url: "<?=url_for("reportesNeg/guardarReporteOs")?>",
                     waitMsg:'Guardando...',
                     waitTitle:'Por favor espere...',
                     params: {opcion:opt,redirect:redire,idreporte:idreporte},
@@ -309,7 +265,7 @@ var idreporte='<?=$idreporte?>';
        }
        ,
         onRender:function() {
-            FormReportePanel.superclass.onRender.apply(this, arguments);
+            FormReporteOsPanel.superclass.onRender.apply(this, arguments);
             this.getForm().waitMsgTarget = this.getEl();
             if(this.idreporte!="undefined" && this.idreporte!="" )
             {
@@ -319,30 +275,12 @@ var idreporte='<?=$idreporte?>';
                     params:{idreporte:this.idreporte},
                     success:function(response,options){
                         res = Ext.util.JSON.decode( options.response.responseText );
-                        if(Ext.getCmp('ca_colmas'))
-                        {
-                            if(Ext.getCmp('ca_colmas').getValue()=="Sí")
-                                Ext.getCmp('aduanas').expand();
-                            else
-                                Ext.getCmp('aduanas').collapse();
-                        }
-
-                        if(Ext.getCmp('ca_seguro').getValue()=="Sí")
-                            Ext.getCmp('seguros').expand();
-                        else
-                            Ext.getCmp('seguros').collapse();
-
+                    
                         Ext.getCmp("cotizacion").setValue(res.data.cotizacion);
-                        Ext.getCmp("cotizacionotm").setValue(res.data.cotizacionotm);
-
-                        Ext.getCmp("linea").setValue(res.data.idlinea);
-                        $("#linea").attr("value",res.data.linea);
 
                         Ext.getCmp("cliente").setValue(res.data.idcliente);
                         $("#cliente").attr("value",res.data.cliente);
 
-                        Ext.getCmp("bodega_consignar").setValue(res.data.idbodega_hd);
-                        $("#bodega_consignar").attr("value",res.data.bodega_consignar);
                         for(i=0;i<<?=($nprov>0)?$nprov:0?>;i++)
                         {
                             {
@@ -361,81 +299,11 @@ var idreporte='<?=$idreporte?>';
                                 Ext.getCmp("contacto_fijos"+i).setReadOnly( true );
                             }
                         };
-//                        Ext.getCmp("tra_origen_id").setValue(res.data.idtra_origen_id);
 
-                        Ext.getCmp("origen").setValue(res.data.idorigen);
-                        $("#origen").attr("value",res.data.origen);
-
-                        //Ext.getCmp("tra_destino_id").setValue(res.data.idtra_destino_id);
-
-                        Ext.getCmp("destino").setValue(res.data.iddestino);
-                        $("#destino").attr("value",res.data.destino);
-
-                        Ext.getCmp("cliente-impoexpo").setValue(res.data.idclientefac);
-                        $("#cliente-impoexpo").attr("value",res.data.clientefac);
-
-                        if(Ext.getCmp("agente-impoexpo"))
-                        {
-                            Ext.getCmp("agente-impoexpo").setValue(res.data.idclienteag);
-                            $("#agente-impoexpo").attr("value",res.data.clienteag);
-                        }
-
-                        if(Ext.getCmp("otro-aduana"))
-                        {
-                            Ext.getCmp("otro-aduana").setValue(res.data.idclienteotro);
-                            $("#otro-aduana").attr("value",res.data.clienteotro);
-                        }
                         if(!Ext.getCmp("idvendedor"))
                         {
                             Ext.getCmp("vendedor").setValue(res.data.idvendedor);
                             $("#vendedor").attr("value",res.data.vendedor);
-                        }
-
-                        Ext.getCmp("agente").setValue(res.data.idagente);
-                        $("#agente").attr("value",res.data.agente);
-
-                        Ext.getCmp("notify").setValue(res.data.idnotify);
-                        $("#notify").val(res.data.notify);
-
-                        $("#idconsignatario").val(res.data.consignatario);
-
-                        if(Ext.getCmp("idconsigmaster"))
-                        {
-                            Ext.getCmp("idconsigmaster").setValue(res.data.idconsigmaster);
-                            $("#idconsigmaster").attr("value",res.data.consigmaster);
-                        }
-//                        $("#tra_origen_id").val(res.data.tra_origen_id);
-//                        $("#idtra_origen_id").val(res.data.idtra_origen_id);
-
-//                        $("#tra_destino_id").val(res.data.tra_destino_id);
-
-                        if(res.data.idmodalidad=="CONSOLIDADO")
-                        {
-                            /*if(Ext.getCmp("PCorteMaster"))
-                            {
-                                Ext.getCmp("PCorteMaster").hide();
-                            }
-                            if(Ext.getCmp("PCorteHija"))
-                            {
-                                Ext.getCmp("PCorteHija").show();
-                            }*/
-                        }
-                        else if(res.data.idmodalidad=="DIRECTO")
-                        {
-                            /*if(Ext.getCmp("PCorteHija"))
-                            {
-                                Ext.getCmp("PCorteHija").hide();
-                            }
-                            if(Ext.getCmp("PCorteMaster"))
-                            {
-                                Ext.getCmp("PCorteMaster").show();
-                            }*/
-                        };
-
-                        if(Ext.getCmp("tipoexpo"))
-                        {
-                            Ext.getCmp("tipoexpo").setValue(res.data.idtipoexpo);
-                            $("#tipoexpo").attr("value",res.data.tipoexpo);
                         }
                     }
                 });

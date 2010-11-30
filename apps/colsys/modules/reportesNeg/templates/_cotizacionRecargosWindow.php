@@ -32,7 +32,7 @@ if( $cotizacion ){
 
             buttons:[
             <?
-            //if( $modo=="edicion" ){
+            
             ?>
              {
                 text: 'Importar',
@@ -40,8 +40,13 @@ if( $cotizacion ){
                 scope: this
              }
              ,
+             {
+                text: 'Importar Todo',
+                handler: this.importarAll,
+                scope: this
+             },
              <?
-            //}
+            
              ?>
              {
                 text: 'Cancel',
@@ -62,8 +67,14 @@ if( $cotizacion ){
             }
             CotizacionRecargosWindow.superclass.show.apply(this, arguments);
         },
+        importarAll: function() {
+            this.importar("1");
+        }
+        ,
 
-        importar: function() {
+        importar: function(tipo) {
+            if(tipo!="1")
+                tipo="0";
             this.el.mask('Importando...', 'x-mask-loading');
 
             var store = this.grid.store;
@@ -79,7 +90,7 @@ if( $cotizacion ){
             for( var i=0; i< lenght; i++){
                 var existe = false;
                 r = records[i];
-                if( r.data.sel ){               
+                if( r.data.sel || tipo=="1" ){
                 recordsConceptos = gridRecargos.store.getRange();
                 for( var j=0; j< recordsConceptos.length&&!existe; j++){
 
@@ -117,6 +128,9 @@ if( $cotizacion ){
 
 
                         newRec.set("aplicacion", r.data.aplica_tar);
+                        newRec.set("tipo", "recargo");
+                        newRec.set("observaciones", r.data.detalles);
+
                         newRec.set("tipo_app", "$");
                         newRec.set("iditem", r.data.idrecargo);
                         newRec.set("item", r.data.recargo);

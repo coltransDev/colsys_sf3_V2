@@ -5,28 +5,24 @@
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
 
-if( $cotizacion ){
+if( $cotizacionotm ){
     
-    include_component("cotizaciones","panelProductos",array("cotizacion"=>$cotizacion, "producto"=>$producto , "modo"=>"consulta"));
+    include_component("cotizaciones","panelProductos",array("cotizacion"=>$cotizacionotm, "producto"=>$productootm , "modo"=>"consulta"));
     ?>
 
     <script type="text/javascript">
-    CotizacionWindow = function(config) {
+    CotizacionOtmWindow = function(config) {
         Ext.apply(this, config);
 
-/*        if(this.tipo=="OTM/DTA")
-        {
-            this.grid = new PanelProductos({tipo:'OTM/DTA'
-            });
-        }
-    else*/
-        {
-         this.grid = new PanelProductos();
-        }
 
-        CotizacionWindow.superclass.constructor.call(this, {
+
+            this.grid = new PanelProductos({tipo:'OTM/DTA'});
+
+    
+
+        CotizacionOtmWindow.superclass.constructor.call(this, {
             title: 'Seleccione las tarifas que desea importar',
-            id: 'add-cotizacion-win',
+            id: 'add-cotizacionotm-win',
             autoHeight: true,
             width: 800,            
             resizable: true,
@@ -65,7 +61,7 @@ if( $cotizacion ){
         this.addEvents({add:true});
     }
 
-    Ext.extend(CotizacionWindow, Ext.Window, {
+    Ext.extend(CotizacionOtmWindow, Ext.Window, {
 
 
         show : function(){
@@ -73,7 +69,7 @@ if( $cotizacion ){
                 
             }
 
-            CotizacionWindow.superclass.show.apply(this, arguments);
+            CotizacionOtmWindow.superclass.show.apply(this, arguments);
         },
         importarAll: function() {
             this.importar("1");
@@ -92,7 +88,7 @@ if( $cotizacion ){
 
             var str = "";
 
-            var gridConceptos = Ext.getCmp("panel-conceptos-fletes");
+            var gridConceptos = Ext.getCmp("panel-recargos-otm");
             var recordConceptos = gridConceptos.record;
             var lastConcepto = null;
             var lastConceptoTxt = null;
@@ -100,6 +96,7 @@ if( $cotizacion ){
             for( var i=0; i< lenght; i++){
                 var existe = false;
                 r = records[i];
+
                 if( r.data.sel || tipo=="1" ){
                     
                     recordsConceptos = gridConceptos.store.getRange();                    
@@ -121,9 +118,10 @@ if( $cotizacion ){
                         lastConcepto = r.data.iditem;
                         lastConceptoTxt = r.data.item;
                     }
-
+                    
                     if( !existe && (r.data.tipo=="concepto" || (r.data.tipo=="recargo" && lastConcepto==r.data.idconcepto))){
-
+                    
+                    
                         var newRec = new recordConceptos({
 
                                        idreporte: '<?=$reporte->getCaIdreporte()?>',
@@ -147,6 +145,7 @@ if( $cotizacion ){
                                        orden: ''
                                     });
                         gridConceptos.store.addSorted(newRec);
+
 
                         newRec = gridConceptos.store.getById( newRec.id );                        
                         newRec.set("neta_idm", r.data.idmoneda);
@@ -185,7 +184,6 @@ if( $cotizacion ){
                                 newRec.set("neta_min", 0);
                             }
                         }
-
                         gridConceptos.store.sort("orden", "ASC");
                     }
 
@@ -194,35 +192,6 @@ if( $cotizacion ){
 
             this.el.unmask();
             this.hide();
-        },
-
-        markInvalid : function(){
-            this.feedUrl.markInvalid('The URL specified is not a valid RSS2 feed.');
-            this.el.unmask();
-        },
-
-        validateFeed : function(response, options){
-            var dq = Ext.DomQuery;
-            var url = options.feedUrl;
-
-            try{
-                var xml = response.responseXML;
-                var channel = xml.getElementsByTagName('channel')[0];
-                if(channel){
-                    var text = dq.selectValue('title', channel, url);
-                    var description = dq.selectValue('description', channel, 'No description available.');
-                    this.el.unmask();
-                    this.hide();
-
-                    return this.fireEvent('validfeed', {
-                        url: url,
-                        text: text,
-                        description: description
-                    });
-                }
-            }catch(e){
-            }
-            this.markInvalid();
         }
     });
 
