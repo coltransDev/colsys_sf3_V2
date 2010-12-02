@@ -568,6 +568,8 @@ class widgetsActions extends sfActions
             $row["p_ca_nombre"]=($row["p_ca_nombre"]!="Todos los Tráficos del Mundo")?utf8_encode($row["p_ca_nombre"]):"";
             $row["t_ca_contacto"]=utf8_encode($row["t_ca_contacto"]);
             $row["t_ca_direccion"]=utf8_encode($row["t_ca_direccion"]);
+            $row["t_ca_nombre"]=utf8_encode($row["t_ca_nombre"]);
+
             $terceros[]=$row;
 	}
         $this->responseArray = array( "totalCount"=>count( $terceros ), "terceros"=>$terceros  );
