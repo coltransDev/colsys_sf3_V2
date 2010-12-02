@@ -192,15 +192,17 @@ class falabellaActions extends sfActions {
                 $this->iddoc = $this->getRequestParameter ( 'iddoc' );
 		$salida = '';
                 $salida.= "Carpeta"."\t"; // 1
-                $salida.= "SKU"."\t"; // 1
-                $salida.= "Cant.Pedida"."\t"; // 1
-                $salida.= "Cant.Despachada"."\t"; // 1
+                $salida.= "SKU"."\t"; // 2
+                $salida.= "Descripcion"."\t"; // 3
+                $salida.= "Cant.Pedida"."\t"; // 4
+                $salida.= "Cant.Despachada"."\t"; // 5
                 $salida.= "\r\n";
 		foreach( $details as $detail ){
 			$salida.= substr($detail->getCaIddoc(),0,15)."\t"; // 1
                         $salida.= $detail->getSkuNeto()."\t"; // 2
-			$salida.= number_format($detail->getCaCantidadPedido(), 0, '', '')."\t"; // 3
-                        $salida.= number_format($detail->getCaCantidadMiles(), 0, '', '')."\t"; // 3
+                        $salida.= $detail->getCaDescripcionItem()."\t"; // 3
+			$salida.= number_format($detail->getCaCantidadPedido(), 0, '', '')."\t"; // 4
+                        $salida.= number_format($detail->getCaCantidadMiles(), 0, '', '')."\t"; // 5
 			$salida.= "\r\n";
 		}
 
