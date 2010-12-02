@@ -88,6 +88,9 @@ Reporte:
     ca_idclienteotro: numeric
     ca_cont_origen: integer
     ca_cont_destino: integer
+    ca_idcotizacionotm: string
+    ca_idproductootm: integer
+    ca_tiporep: integer
   relations:
     RepStatus:
       local: ca_idreporte
@@ -375,6 +378,13 @@ RepTarifa:
     ca_usucreado: string
     ca_fchactualizado: timestamp
     ca_usuactualizado: string
+    ca_idreptarifa:
+      type: integer
+      autoincrement: true
+      notnull: true
+    ca_tipo:
+      type: integer
+      notnull: true
   relations:
     Reporte:
       local: ca_idreporte
@@ -402,6 +412,9 @@ RepGasto:
     ca_idrecargo:
       type: integer
       primary: true
+    ca_idequipo:
+      type: integer
+      primary: true
     ca_aplicacion: string
     ca_tipo: string
     ca_neta_tar: decimal
@@ -417,6 +430,7 @@ RepGasto:
     ca_usucreado: string
     ca_fchactualizado: timestamp
     ca_usuactualizado: string
+    
   relations:
     Reporte:
       local: ca_idreporte
@@ -430,6 +444,11 @@ RepGasto:
       local: ca_idconcepto
       foreign: ca_idconcepto
       type: one
+    Equipo:
+      local: ca_idequipo
+      foreign: ca_idconcepto
+      type: one
+      class: Concepto
 
 
 RepSeguro:
@@ -592,6 +611,10 @@ RepCosto:
     ca_aplicacion: string
     ca_aplicacionminimo: string
     ca_parametro: string
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string
   relations:
     Reporte:
       local: ca_idreporte
