@@ -380,8 +380,11 @@ class Reporte extends BaseReporte {
             $q = Doctrine::getTable("RepGasto")
                             ->createQuery("r")
                             ->innerJoin("r.TipoRecargo tr")
-                            ->addWhere("r.ca_idreporte = ? ", $this->getCaIdreporte())
-                            ->addWhere("r.ca_idequipo is null");
+                            ->addWhere("r.ca_idreporte = ? ", $this->getCaIdreporte());
+            if($tipo!= null)
+            {
+                $q->addWhere("r.ca_idrecargo!=61");
+            }
             
             if ($this->getCaImpoexpo() == Constantes::IMPO) {
                 if ($tipo == "local") {
@@ -398,12 +401,11 @@ class Reporte extends BaseReporte {
         {
              $q = Doctrine::getTable("RepGasto")
                              ->createQuery("t")
+                             ->leftJoin("t.Concepto c")
                              ->leftJoin("t.Equipo e")
                              ->where("t.ca_idreporte = ?", $this->getCaIdreporte())
-                             ->addWhere("t.ca_idequipo>0")
-                             ->orderBy("e.ca_concepto");
-
-                             
+                             ->addWhere("t.ca_idrecargo=61")
+                             ->orderBy("c.ca_concepto");
         }
         $gastos = $q->execute();
 
@@ -969,6 +971,7 @@ class Reporte extends BaseReporte {
                 $newGasto->setCaIdconcepto($gasto->getCaIdconcepto());
                 $newGasto->setCaIdrecargo($gasto->getCaIdrecargo());
                 $newGasto->setCaIdreporte($reporte->getCaIdreporte());
+                $newGasto->setCaIdequipo($gasto->getCaIdequipo());
                 if ($gasto->getCaRecargoorigen() == false)
                     $newGasto->setCaRecargoorigen("false");
                 if ($gasto->getCaRecargoorigen() == true)
