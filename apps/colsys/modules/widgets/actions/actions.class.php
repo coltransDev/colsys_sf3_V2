@@ -380,7 +380,7 @@ class widgetsActions extends sfActions
     }
 
 	public function executeListaContactosClientesJSON(){
-		$criterio =  $this->getRequestParameter("query");
+		$criterio = utf8_decode( $this->getRequestParameter("query") );        
         if( $criterio ){
             $rows = Doctrine_Query::create()
                             ->select("c.ca_idcontacto, cl.ca_idcliente, cl.ca_compania, c.ca_nombres,
