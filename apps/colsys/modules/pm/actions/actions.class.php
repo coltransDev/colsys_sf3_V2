@@ -24,7 +24,7 @@ class pmActions extends sfActions {
         }
 
         $this->forward404Unless($this->nivel != -1);
-
+        //return 0;
         return $this->nivel;
     }
 
@@ -1314,6 +1314,9 @@ class pmActions extends sfActions {
         $data["folder"] = base64_encode($ticket->getDirectorioBase());
         $data["contact"] = utf8_encode($ticket->getUsuario() ? $ticket->getUsuario()->getSucursal()->getCaNombre() . " " . $ticket->getUsuario()->getCaExtension() : "");
 
+        $nivel = $this->getNivel();
+
+        $data["readOnly"] = $ticket->getReadonly( $nivel );;
 
         $this->responseArray = array("success" => true, "data" => $data);
         $this->setTemplate("responseTemplate");

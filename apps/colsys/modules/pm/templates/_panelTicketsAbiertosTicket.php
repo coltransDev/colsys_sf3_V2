@@ -267,7 +267,7 @@ Ext.extend(PanelBusquedaTicket, Ext.grid.GridPanel, {
                                                 title: 'Ticket # '+idticket,
                                                 //autoHeight: true,
                                                 items: new PanelPreviewTicket({
-                                                     idticket: idticket
+                                                     idticket: idticket                                                     
                                                     })
                                               });
             Ext.getCmp('tab-panel').add(newComponent);

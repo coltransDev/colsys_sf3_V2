@@ -29,6 +29,8 @@ PanelPreviewTicket = function( config ){
     }else{
         var idcomponent = this.id;
     }
+
+    this.readOnly = true;
     
     
     this.preview = new Ext.Panel({
@@ -256,6 +258,14 @@ Ext.extend(PanelPreviewTicket, Ext.TabPanel, {
 
         responsePanel = this.responses;
 
+        this.readOnly = true;
+         
+        if( typeof(record.data.readOnly)!="undefined" ){
+            this.readOnly = record.data.readOnly;
+        }
+
+        //alert(record.data.readOnly+" --- "+ this.readOnly);
+
         responsePanel.body.update(" ");
         Ext.Ajax.request({
             url: '<?=url_for("pm/verRespuestas")?>',
@@ -273,10 +283,18 @@ Ext.extend(PanelPreviewTicket, Ext.TabPanel, {
 
 
         var items = this.preview.topToolbar.items;
-        items.get('edit-'+idcomponent).enable();
+        //if( !this.readOnly ){
+            items.get('edit-'+idcomponent).enable();
+        /*}else{
+            items.get('edit-'+idcomponent).disable();
+        }*/
         items.get('tab-'+idcomponent).enable();
         items.get('print-'+idcomponent).enable();
-        items.get('percent-'+idcomponent).enable();
+        //if( !this.readOnly ){
+            items.get('percent-'+idcomponent).enable();
+        /*}else{
+            items.get('percent-'+idcomponent).disable();
+        }*/
 
         var items = this.responses.topToolbar.items;
         items.get('response-'+idcomponent).enable();

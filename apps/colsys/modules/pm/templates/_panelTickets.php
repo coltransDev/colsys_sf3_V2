@@ -242,6 +242,7 @@ PanelTickets = function( config ){
             {name: 'percentage', type: 'integer', mapping: 'h_ca_percentage'},
             {name: 'folder', type: 'string'},
             {name: 'contact', type: 'string'},
+            {name: 'readOnly', type: 'bool'},
             {name: 'loginName', type: 'string', mapping: 'u_ca_nombre'}
             
     ]);

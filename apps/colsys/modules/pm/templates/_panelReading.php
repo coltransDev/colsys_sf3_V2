@@ -32,9 +32,10 @@ PanelReading = function( config ){
             deferredRender: false,
             activeTab: 0,     // first tab initially active
             height: 400,
-            enableTabScroll:true
+            enableTabScroll:true,
+            readOnly: this.readOnly
     });
-
+    
     this.tbar = [
 
                 /*{
