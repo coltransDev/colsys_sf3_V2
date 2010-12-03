@@ -29,18 +29,22 @@ $modulo = "00100000";                                                          /
 //  include_once 'include/seguridad.php';                                      // Control de Acceso al módulo
 
 $rs =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
+if (strpos($id, '-') === false){
+    $condition = "ca_idreporte = $id";
+}else{
+    $cadena_co = "select r1.ca_idreporte from tb_reportes r1, ";
+    $cadena_co.= "(select ca_consecutivo, max(ca_version) as ca_version from tb_reportes where ca_consecutivo = '$id' and ca_usuanulado is null group by ca_consecutivo) r2 ";
+    $cadena_co.= "where r1.ca_consecutivo = r2.ca_consecutivo and r1.ca_version = r2.ca_version ";
+    $condition = "ca_idreporte = ($cadena_co)";
+}
+if ($rs->Open("select ca_tiporep from tb_reportes where $condition and ca_tiporep > 0")) { // Verfica si se trata de un reporte de negocios con el nuevo módulo
+    echo "<script>document.location.href = '/reportesNeg/verReporte/id/$id';</script>";
+    exit;
+}
 
 if (true){
      $tm =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
-	 if (strpos($id, '-') === false){
-	 	$condition = "ca_idreporte = $id";
-	 }else{
-	 	$cadena_co = "select r1.ca_idreporte from tb_reportes r1, ";
-		$cadena_co.= "(select ca_consecutivo, max(ca_version) as ca_version from tb_reportes where ca_consecutivo = '$id' and ca_usuanulado is null group by ca_consecutivo) r2 ";
-	 	$cadena_co.= "where r1.ca_consecutivo = r2.ca_consecutivo and r1.ca_version = r2.ca_version ";
-	 	$condition = "ca_idreporte = ($cadena_co)";
-	 }
-	 
+
      if (!$rs->Open("select * from vi_reportes where $condition")) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
          echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
          echo "<script>document.location.href = 'entrada.php';</script>";
