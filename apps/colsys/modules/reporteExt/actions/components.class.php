@@ -193,6 +193,7 @@ class reporteExtComponents extends sfComponents
 
 //echo "::".$reporte->getCaIdconsignar();
 //        if($reporte->getCaIdconsignar()!=1)
+        if($bodega2)
         {
            // echo "--".$bodega2->getCaTipo()."--".$bodega2->getCaNombre();
             if($bodega2->getCaTipo()==$bodega2->getCaNombre() || $bodega2->getCaTipo()=="Entrega Urgente")
