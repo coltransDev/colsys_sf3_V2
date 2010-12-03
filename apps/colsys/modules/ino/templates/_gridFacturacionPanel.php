@@ -5,6 +5,9 @@
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
 
+
+include_component("ino", "gridFacturacionWindow", array("referencia"=>$referencia ));
+
 ?>
 
 <script type="text/javascript">
@@ -21,6 +24,7 @@ GridFacturacionPanel = function( config ){
         header: "House",
         dataIndex: 'doctransporte',
         //hideable: false,
+        hidden: true,
         width: 100,
         sortable: true,
         renderer: this.formatItem
@@ -30,6 +34,7 @@ GridFacturacionPanel = function( config ){
         header: "Idcliente",
         dataIndex: 'idcliente',
         //hideable: false,
+        hidden: true, 
         sortable: true,
         width: 80
       },
@@ -85,13 +90,7 @@ GridFacturacionPanel = function( config ){
         sortable: true,
         width: 80,
         align: 'right',
-        renderer: Ext.util.Format.numberRenderer('0,0.00'),
-        editor: new Ext.form.NumberField({
-            allowBlank: false ,
-            allowNegative: false,
-            style: 'text-align:right',
-            decimalPrecision :2
-        })
+        renderer: Ext.util.Format.numberRenderer('0,0.00')
       },
       {
         header: "Moneda",
@@ -166,9 +165,11 @@ GridFacturacionPanel = function( config ){
 
     if( !this.readOnly ){
         this.tbar.push({
-        text: 'Guardar',
-        iconCls: 'disk',
-        handler : this.guardar,
+        text: 'Agregar',
+        iconCls: 'add',
+        handler : function(){
+            this.crearFactura(null, this.id)
+        },
         scope: this
         });
     }
@@ -195,7 +196,7 @@ GridFacturacionPanel = function( config ){
 
 };
 
-Ext.extend(GridFacturacionPanel, Ext.grid.EditorGridPanel, {
+Ext.extend(GridFacturacionPanel, Ext.grid.GridPanel, {
 
     recargar: function(){
 
@@ -251,7 +252,7 @@ Ext.extend(GridFacturacionPanel, Ext.grid.EditorGridPanel, {
                               
                                 if( this.ctxRecord.data.idhouse  ){
                                     if( this.ctxRecord.data.idcomprobante ){
-                                        this.editarFactura( this.ctxRecord.data.idhouse, this.ctxRecord.data.idcomprobante );
+                                        this.editarFactura( this.ctxRecord.data.idhouse, this.ctxRecord.data.idcomprobante, grid.id );
                                     }else{
                                         alert("Este item no se ha facturado");
                                     }
@@ -265,7 +266,7 @@ Ext.extend(GridFacturacionPanel, Ext.grid.EditorGridPanel, {
                             handler: function(){
 
                                 if( this.ctxRecord.data.idhouse  ){
-                                    this.crearFactura( this.ctxRecord.data.idhouse );
+                                    this.crearFactura( this.ctxRecord.data.idhouse , grid.id);
                                 }
                             }
                         }
@@ -297,79 +298,40 @@ Ext.extend(GridFacturacionPanel, Ext.grid.EditorGridPanel, {
     onRowDblclick: function( grid , rowIndex, e ){
 		if( !this.readOnly ){
             record =  this.store.getAt( rowIndex );
-            this.editHouse( record.data.idhouse );
+            if( record.data.idcomprobante ){
+                this.editarFactura( record.data.idhouse, record.data.idcomprobante, grid.id );
+            }else{
+                this.crearFactura( record.data.idhouse, grid.id);
+            }
+            this.win.show();
         }
 	}
     ,
     getRowClass : function(record, rowIndex, p, ds){
         p.cols = p.cols-1;
-        if( record.data.color ){
-            var color = "row_"+record.data.color;
+        
+        if( !record.data.comprobante ){
+            //alert( record.data.comprobante );
+            var color = "row_pink";
         }else{
             var color = "";
         }        
         return color;
     },
 
-    crearFactura: function( idhouse ){
-        document.location = "<?=url_for("inocomprobantes/formComprobante?tipo=F")?>?idhouse="+idhouse;
-
+    crearFactura: function( idhouse , gridId){
+        this.win = new GridFacturacionWindow( {gridId:gridId} );
+        this.win.show();
     },
 
-    editarFactura: function( idhouse, idfactura ){
-        document.location = "<?=url_for("inocomprobantes/formComprobante?tipo=F")?>?idhouse="+idhouse+"&idcomprobante="+idfactura;
-
-    },
-
-    guardar: function(){
-        var store = this.store;
-
-        var records = store.getModifiedRecords();
-
-        var lenght = records.length;
-
-        /*
-        for( var i=0; i< lenght; i++){
-            r = records[i];
-            if(!r.data.moneda && (r.data.tipo=="concepto"||r.data.recargo=="concepto") ){
-                if( r.data.iditem!=9999){
-                    Ext.MessageBox.alert('Warning','Por favor coloque la moneda en todos los items');
-                    return 0;
-                }
-            }
-        }	*/
-
-        for( var i=0; i< lenght; i++){
-            r = records[i];
-
-            var changes = r.getChanges();
-
-            changes['id']=r.id;            
-            changes['idcomprobante']=r.data.idcomprobante;
-
-
-            //if( r.data.iditem ){
-                Ext.Ajax.request(
-                    {
-                        waitMsg: 'Guardando cambios...',
-                        url: '<?=url_for("ino/guardarGridFacturacionPanel")?>',
-                        params :	changes,
-
-                        callback :function(options, success, response){
-
-                            var res = Ext.util.JSON.decode( response.responseText );
-                            if( res.id && res.success){
-                                var rec = store.getById( res.id );
-
-                                rec.commit();
-                            }
-                        }
-                     }
-                );
-           // }
-        }
+    editarFactura: function( idhouse, idcomprobante, gridId ){
+        this.win = new GridFacturacionWindow( {gridId:gridId, idcomprobante:idcomprobante} );
+        this.win.show();
 
     }
+
+    
+
 
 
 

@@ -8,76 +8,69 @@
  * @author     Andres Botero
  * @version    SVN: $Id: actions.class.php 12479 2008-10-31 10:54:40Z fabien $
  */
-class inoActions extends sfActions
-{
-
+class inoActions extends sfActions {
     const RUTINA_AEREO = 15;
     const RUTINA_MARITIMO = 15;
     const RUTINA_ADUANA = 15;
     const RUTINA_EXPO = 15;
 
-    public function getNivel( ){
+    public function getNivel() {
         $this->modo = $this->getRequestParameter("modo");
 
         $this->nivel = -1;
-		/*if( !$this->modo ){
-			$this->forward( "ino", "seleccionModo" );
-		}*/
+        /* if( !$this->modo ){
+          $this->forward( "ino", "seleccionModo" );
+          } */
 
-		if( $this->modo=="aereo" ){
-			$this->nivel = $this->getUser()->getNivelAcceso( inoActions::RUTINA_AEREO );
-		}
+        if ($this->modo == "aereo") {
+            $this->nivel = $this->getUser()->getNivelAcceso(inoActions::RUTINA_AEREO);
+        }
 
-		if( $this->modo=="maritimo" ){
-			$this->nivel = $this->getUser()->getNivelAcceso( inoActions::RUTINA_MARITIMO );
-		}
-       
-        if( $this->modo=="expo" ){
-			$this->nivel = $this->getUser()->getNivelAcceso( inoActions::RUTINA_EXPO );
-		}
+        if ($this->modo == "maritimo") {
+            $this->nivel = $this->getUser()->getNivelAcceso(inoActions::RUTINA_MARITIMO);
+        }
+
+        if ($this->modo == "expo") {
+            $this->nivel = $this->getUser()->getNivelAcceso(inoActions::RUTINA_EXPO);
+        }
 
 
-		if( $this->nivel==-1 ){
-			$this->forward404();
-		}
+        if ($this->nivel == -1) {
+            $this->forward404();
+        }
         return $this->nivel;
     }
 
+    /**
+     * Permite seleccionar el modo de operacion del programa
+     * @author: Andres Botero
+     */
+    public function executeSeleccionModo() {
+        $this->nivelAereo = $this->getUser()->getNivelAcceso(inoActions::RUTINA_AEREO);
+        $this->nivelMaritimo = $this->getUser()->getNivelAcceso(inoActions::RUTINA_MARITIMO);
+        $this->nivelExpo = $this->getUser()->getNivelAcceso(inoActions::RUTINA_EXPO);
+    }
 
     /**
-	 * Permite seleccionar el modo de operacion del programa
-	 * @author: Andres Botero
-	 */
-	public function executeSeleccionModo()
-	{
-		$this->nivelAereo = $this->getUser()->getNivelAcceso( inoActions::RUTINA_AEREO );
-		$this->nivelMaritimo = $this->getUser()->getNivelAcceso( inoActions::RUTINA_MARITIMO );      
-        $this->nivelExpo = $this->getUser()->getNivelAcceso( inoActions::RUTINA_EXPO );
-	}
-
-    /**
-    * Executes index action
-    *
-    * @param sfRequest $request A request object
-    */
-    public function executeIndex(sfWebRequest $request)
-    {
+     * Executes index action
+     *
+     * @param sfRequest $request A request object
+     */
+    public function executeIndex(sfWebRequest $request) {
         $this->modo = $request->getParameter("modo");
-        if( !$this->modo ){
+        if (!$this->modo) {
             $this->redirect("ino/seleccionModo");
         }
         $this->nivel = $this->getNivel();
         $this->comerciales = UsuarioTable::getComerciales();
-        
     }
 
     /**
-    * Executes index action
-    *
-    * @param sfRequest $request A request object
-    */
-    public function executeBusqueda(sfWebRequest $request)
-    {
+     * Executes index action
+     *
+     * @param sfRequest $request A request object
+     */
+    public function executeBusqueda(sfWebRequest $request) {
         $this->nivel = $this->getNivel();
         $this->modo = $request->getParameter("modo");
 
@@ -88,19 +81,19 @@ class inoActions extends sfActions
 
         $q = Doctrine_Query::create()->from('InoMaster m');
         //$q->innerJoin( "m.Modalidad mod" );
-        switch( $this->modo ){
+        switch ($this->modo) {
             case "aereo":
-                $q->addWhere( "m.ca_impoexpo = ? and m.ca_transporte = ?", array(Constantes::IMPO, Constantes::AEREO) );
+                $q->addWhere("m.ca_impoexpo = ? and m.ca_transporte = ?", array(Constantes::IMPO, Constantes::AEREO));
                 break;
             case "maritimo":
-                $q->addWhere( "m.ca_impoexpo = ? and m.ca_transporte = ?", array(Constantes::IMPO, Constantes::MARITIMO) );
+                $q->addWhere("m.ca_impoexpo = ? and m.ca_transporte = ?", array(Constantes::IMPO, Constantes::MARITIMO));
                 break;
         }
 
 
-        switch( $criterio ){
-			case "nombre":
-                $q->addWhere("m.ca_referencia LIKE ?", $cadena."%" );
+        switch ($criterio) {
+            case "nombre":
+                $q->addWhere("m.ca_referencia LIKE ?", $cadena . "%");
                 break;
         }
 
@@ -113,180 +106,161 @@ class inoActions extends sfActions
 
         // Creating pager object
         $this->pager = new Doctrine_Pager(
-              $q,
-              $currentPage,
-              $resultsPerPage
+                        $q,
+                        $currentPage,
+                        $resultsPerPage
         );
 
         $this->refList = $this->pager->execute();
-		if( $this->pager->getResultsInPage()==1 && $this->pager->getPage()==1 ){
+        if ($this->pager->getResultsInPage() == 1 && $this->pager->getPage() == 1) {
             $refs = $this->refList;
-			$this->redirect("ino/verReferencia?modo=".$this->modo."&id=".$refs[0]->getCaIdmaster());
-		}
-		$this->criterio = $criterio;
-		$this->cadena = $cadena;
-
-        
-
-
-
+            $this->redirect("ino/verReferencia?modo=" . $this->modo . "&id=" . $refs[0]->getCaIdmaster());
+        }
+        $this->criterio = $criterio;
+        $this->cadena = $cadena;
     }
 
-
     /**
-    * 
-    *
-    * @param sfRequest $request A request object
-    */
-    public function executeFormIno(sfWebRequest $request)
-    {
-        $this->nivel = $this->getNivel();        
-        $this->modo = $request->getParameter("modo");        
+     *
+     *
+     * @param sfRequest $request A request object
+     */
+    public function executeFormIno(sfWebRequest $request) {
+        $this->nivel = $this->getNivel();
+        $this->modo = $request->getParameter("modo");
     }
 
-
     /**
-    *
-    *
-    * @param sfRequest $request A request object
-    */
-    public function executeGuardarMaster(sfWebRequest $request)
-    {
+     *
+     *
+     * @param sfRequest $request A request object
+     */
+    public function executeGuardarMaster(sfWebRequest $request) {
         //$this->nivel = $this->getNivel();
         $this->modo = $request->getParameter("modo");
         //----------------------- Validación ---------------------------
         $errors = array();
 
         //$errors["idagente"]="El agente es requerido";
-        if( count($errors)>0 ){
-            $this->responseArray = array("success"=>false, "errors"=>$errors);
+        if (count($errors) > 0) {
+            $this->responseArray = array("success" => false, "errors" => $errors);
         }
 
         //----------------------- Guarda los datos ---------------------------
-        try{
+        try {
 
             $impoexpo = utf8_decode($request->getParameter("impoexpo"));
             $transporte = utf8_decode($request->getParameter("transporte"));
             $modalidad = utf8_decode($request->getParameter("modalidad"));
             $idorigen = $request->getParameter("idorigen");
             $iddestino = $request->getParameter("iddestino");
-            $fchreferencia  = $request->getParameter("fchreferencia");
+            $fchreferencia = $request->getParameter("fchreferencia");
             $fchreferenciaTm = strtotime($fchreferencia);
 
             $ino = new InoMaster();
-            $numRef = InoMasterTable::getNumReferencia( $impoexpo, $transporte, $modalidad, $idorigen, $iddestino, date("m", $fchreferenciaTm), date("Y", $fchreferenciaTm)  );
-            $ino->setCaReferencia( $numRef );
-            $ino->setCaImpoexpo( $impoexpo );
-            $ino->setCaTransporte( $transporte );
-            $ino->setCaModalidad( $modalidad );
-            $ino->setCaFchreferencia( $fchreferencia );           
-            $ino->setCaOrigen( $idorigen );
-            $ino->setCaDestino( $iddestino );
-            $ino->setCaIdlinea( $request->getParameter("idlinea") );
-            $ino->setCaIdagente( $request->getParameter("idagente") );
+            $numRef = InoMasterTable::getNumReferencia($impoexpo, $transporte, $modalidad, $idorigen, $iddestino, date("m", $fchreferenciaTm), date("Y", $fchreferenciaTm));
+            $ino->setCaReferencia($numRef);
+            $ino->setCaImpoexpo($impoexpo);
+            $ino->setCaTransporte($transporte);
+            $ino->setCaModalidad($modalidad);
+            $ino->setCaFchreferencia($fchreferencia);
+            $ino->setCaOrigen($idorigen);
+            $ino->setCaDestino($iddestino);
+            $ino->setCaIdlinea($request->getParameter("idlinea"));
+            $ino->setCaIdagente($request->getParameter("idagente"));
 
-            $ino->setCaMaster( $request->getParameter("ca_master") );
-            $ino->setCaFchmaster( $request->getParameter("ca_fchmaster") );
+            $ino->setCaMaster($request->getParameter("ca_master"));
+            $ino->setCaFchmaster($request->getParameter("ca_fchmaster"));
 
-            
 
-            $ino->save();            
-            $this->responseArray = array("success"=>true, "idmaestra"=>$ino->getCaIdmaster());
-        }catch (Exception $e){
-            $this->responseArray = array("success"=>false, "errorInfo"=>$e->getMessage());
+
+            $ino->save();
+            $this->responseArray = array("success" => true, "idmaestra" => $ino->getCaIdmaster());
+        } catch (Exception $e) {
+            $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
         }
 
-        
+
 
         $this->setTemplate("responseTemplate");
-        
     }
 
-
     /**
-    * 
-    *
-    * @param sfRequest $request A request object
-    */
-    public function executeVerReferencia(sfWebRequest $request)
-    {
+     *
+     *
+     * @param sfRequest $request A request object
+     */
+    public function executeVerReferencia(sfWebRequest $request) {
         $this->modo = $request->getParameter("modo");
-       // $this->nivel = $this->getNivel();
+        // $this->nivel = $this->getNivel();
 
-        $this->forward404Unless( $request->getParameter("id") );
+        $this->forward404Unless($request->getParameter("id"));
         $this->referencia = Doctrine::getTable("InoMaster")->find($request->getParameter("id"));
 
-        $this->forward404Unless( $this->referencia );
-
-     
-        
+        $this->forward404Unless($this->referencia);
     }
 
-
-    /*************************************************************************
-    *
-    *   Acciones para las guias hijas
-    *
-    ***************************************************************************/
+    /*     * ***********************************************************************
+     *
+     *   Acciones para las guias hijas
+     *
+     * ************************************************************************* */
 
     /**
-    * Guarda los datos desde la ventana de creación de House
-    *
-    * @param sfRequest $request A request object
-    */
-    public function executeFormHouseGuardar(sfWebRequest $request)
-    {
+     * Guarda los datos desde la ventana de creación de House
+     *
+     * @param sfRequest $request A request object
+     */
+    public function executeFormHouseGuardar(sfWebRequest $request) {
         //print_r( $_POST );
-        
-        try{
-            if( $request->getParameter("idhouse") ){
-                $house = Doctrine::getTable("InoHouse")->find($request->getParameter("idhouse"));
-                $this->forward404Unless( $house );
-            }else{
-                $house = new InoHouse();
-                $house->setCaIdmaster( $request->getParameter("idmaster") );
-            }
-            $house->setCaIdreporte( $request->getParameter("idreporte"));
-            $house->setCaIdcliente( $request->getParameter("idcliente"));
-            $house->setCaVendedor( $request->getParameter("vendedor"));
-            $house->setCaIdproveedor( $request->getParameter("idproveedor"));
-            $house->setCaNumorden( $request->getParameter("numorden"));
-            $house->setCaNumpiezas( $request->getParameter("numpiezas"));
-            $house->setCaPeso( $request->getParameter("peso"));
-            $house->setCaVolumen( $request->getParameter("volumen"));
-            $house->setCaDoctransporte( $request->getParameter("doctransporte"));
-            $house->setCaFchdoctransporte( $request->getParameter("fchdoctransporte"));
-            $house->save();
-            $this->responseArray = array("success"=>true);
 
-        }catch (Exception $e){
-            $this->responseArray = array("success"=>false, "errorInfo"=>$e->getMessage());
+        try {
+            if ($request->getParameter("idhouse")) {
+                $house = Doctrine::getTable("InoHouse")->find($request->getParameter("idhouse"));
+                $this->forward404Unless($house);
+            } else {
+                $house = new InoHouse();
+                $house->setCaIdmaster($request->getParameter("idmaster"));
+            }
+            $house->setCaIdreporte($request->getParameter("idreporte"));
+            $house->setCaIdcliente($request->getParameter("idcliente"));
+            $house->setCaVendedor($request->getParameter("vendedor"));
+            $house->setCaIdproveedor($request->getParameter("idproveedor"));
+            $house->setCaNumorden($request->getParameter("numorden"));
+            $house->setCaNumpiezas($request->getParameter("numpiezas"));
+            $house->setCaPeso($request->getParameter("peso"));
+            $house->setCaVolumen($request->getParameter("volumen"));
+            $house->setCaDoctransporte($request->getParameter("doctransporte"));
+            $house->setCaFchdoctransporte($request->getParameter("fchdoctransporte"));
+            $house->save();
+            $this->responseArray = array("success" => true);
+        } catch (Exception $e) {
+            $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
         }
 
-        $this->setTemplate( "responseTemplate" );
+        $this->setTemplate("responseTemplate");
     }
 
     /**
-    *
-    *
-    * @param sfRequest $request A request object
-    */
-    public function executeDatosGridHousePanel(sfWebRequest $request)
-    {
+     *
+     *
+     * @param sfRequest $request A request object
+     */
+    public function executeDatosGridHousePanel(sfWebRequest $request) {
         $idmaster = $request->getParameter("idmaster");
-        $this->forward404Unless( $idmaster );
+        $this->forward404Unless($idmaster);
         $inoHouses = Doctrine::getTable("InoHouse")
-                             ->createQuery("c")
-                             ->select("c.*, cl.*")
-                             //->innerJoin("c.Ids cl")
-                             ->innerJoin("c.Cliente cl")
-                             ->where("c.ca_idmaster = ?", $idmaster)
-                             ->addOrderBy( "cl.ca_compania" )
-                             ->execute();
+                        ->createQuery("c")
+                        ->select("c.*, cl.*")
+                        //->innerJoin("c.Ids cl")
+                        ->innerJoin("c.Cliente cl")
+                        ->where("c.ca_idmaster = ?", $idmaster)
+                        ->addOrderBy("cl.ca_compania")
+                        ->execute();
 
         $data = array();
 
-        foreach( $inoHouses as $inoHouse ){
+        foreach ($inoHouses as $inoHouse) {
             $row = array();
             $row["idmaster"] = $inoHouse->getCaIdmaster();
             $row["idhouse"] = $inoHouse->getCaIdhouse();
@@ -295,7 +269,7 @@ class inoActions extends sfActions
             $row["numorden"] = utf8_encode($inoHouse->getCaNumorden());
             $row["idcliente"] = $inoHouse->getCliente()->getCaIdcliente();
             $row["cliente"] = utf8_encode($inoHouse->getCliente()->getCaCompania());
-            $row["vendedor"] = $inoHouse->getCaVendedor();            
+            $row["vendedor"] = $inoHouse->getCaVendedor();
             $row["idreporte"] = $inoHouse->getCaIdreporte();
             $row["reporte"] = $inoHouse->getReporte()->getCaConsecutivo();
             $row["numpiezas"] = $inoHouse->getCaNumpiezas();
@@ -307,26 +281,23 @@ class inoActions extends sfActions
         }
 
 
-        $this->responseArray = array("success"=>true, "root"=>$data, "total"=>count($data));
+        $this->responseArray = array("success" => true, "root" => $data, "total" => count($data));
 
-        $this->setTemplate( "responseTemplate" );
+        $this->setTemplate("responseTemplate");
     }
 
-
-
     /**
-    *
-    *
-    * @param sfRequest $request A request object
-    */
-    public function executeDatosFormHousePanel(sfWebRequest $request)
-    {
+     *
+     *
+     * @param sfRequest $request A request object
+     */
+    public function executeDatosFormHousePanel(sfWebRequest $request) {
 
 
-        $this->forward404Unless( $request->getParameter("idhouse") );
+        $this->forward404Unless($request->getParameter("idhouse"));
         $idhouse = $request->getParameter("idhouse");
-        $inoHouse = Doctrine::getTable("InoHouse")->find( $idhouse );
-        $this->forward404Unless( $inoHouse );
+        $inoHouse = Doctrine::getTable("InoHouse")->find($idhouse);
+        $this->forward404Unless($inoHouse);
 
 
         $data = array();
@@ -347,77 +318,71 @@ class inoActions extends sfActions
         $data["volumen"] = $inoHouse->getCaVolumen();
         $data["idproveedor"] = $inoHouse->getCaIdproveedor();
         $data["proveedor"] = utf8_encode($inoHouse->getProveedor()->getCaNombre());
-        
 
 
-        $this->responseArray = array("success"=>true, "data"=>$data);
+
+        $this->responseArray = array("success" => true, "data" => $data);
         $this->setTemplate("responseTemplate");
     }
 
-
     /**
-    *
-    *
-    * @param sfRequest $request A request object
-    */
-    public function executeEliminarGridHousePanel(sfWebRequest $request)
-    {
+     *
+     *
+     * @param sfRequest $request A request object
+     */
+    public function executeEliminarGridHousePanel(sfWebRequest $request) {
 
-        $this->forward404Unless( $request->getParameter("idhouse") );
+        $this->forward404Unless($request->getParameter("idhouse"));
         $idhouse = $request->getParameter("idhouse");
-        $inoHouse = Doctrine::getTable("InoHouse")->find( $idhouse );
-        $this->forward404Unless( $inoHouse );
+        $inoHouse = Doctrine::getTable("InoHouse")->find($idhouse);
+        $this->forward404Unless($inoHouse);
 
-        try{
+        try {
             $inoHouse->delete();
-            $this->responseArray = array("success"=>true);
-
-        }catch (Exception $e){
-            $this->responseArray = array("success"=>false, "errorInfo"=>$e->getMessage());
+            $this->responseArray = array("success" => true);
+        } catch (Exception $e) {
+            $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
         }
 
 
         $this->setTemplate("responseTemplate");
     }
 
-
-    /*************************************************************************
-    *
-    *   Acciones para las facturas
-    *
-    ***************************************************************************/
-
+    /*     * ***********************************************************************
+     *
+     *   Acciones para las facturas
+     *
+     * ************************************************************************* */
 
     /**
-    *
-    *
-    * @param sfRequest $request A request object
-    */
-    public function executeDatosGridFacturacionPanel(sfWebRequest $request)
-    {
+     *
+     *
+     * @param sfRequest $request A request object
+     */
+    public function executeDatosGridFacturacionPanel(sfWebRequest $request) {
         $idmaster = $request->getParameter("idmaster");
-        $this->forward404Unless( $idmaster );
+        $this->forward404Unless($idmaster);
         $inoHouses = Doctrine::getTable("InoHouse")
-                             ->createQuery("c")
-                             ->select("c.*, cl.*")
-                             //->innerJoin("c.Ids cl")
-                             ->innerJoin("c.Cliente cl")
-                             ->leftJoin( "c.InoComprobante comp" )
-                             ->leftJoin( "comp.InoTipoComprobante tcomp" )
-                             ->where("c.ca_idmaster = ?", $idmaster)
-                             ->addOrderBy( "cl.ca_compania" )
-                             ->execute();
-                            
+                        ->createQuery("c")
+                        ->select("c.*, cl.*")
+                        //->innerJoin("c.Ids cl")
+                        ->innerJoin("c.Cliente cl")
+                        ->leftJoin("c.InoComprobante comp")
+                        ->leftJoin("comp.InoTipoComprobante tcomp")
+                        ->where("c.ca_idmaster = ?", $idmaster)
+                        ->addOrderBy("cl.ca_compania")
+                        ->execute();
+
 
         $data = array();
 
-        foreach( $inoHouses as $inoHouse ){
+        foreach ($inoHouses as $inoHouse) {
 
 
             $comprobantes = $inoHouse->getInoComprobante();
             $k = 0;
-            if( count($comprobantes)>0 ){
-                foreach( $comprobantes as $comprobante ){
+            if (count($comprobantes) > 0) {
+                foreach ($comprobantes as $comprobante) {
                     $tipo = $comprobante->getInoTipoComprobante();
 
                     $row = array();
@@ -426,15 +391,15 @@ class inoActions extends sfActions
                     $row["doctransporte"] = utf8_encode($inoHouse->getCaDoctransporte());
                     $row["idcliente"] = $inoHouse->getCliente()->getCaIdcliente();
                     $row["cliente"] = utf8_encode($inoHouse->getCliente()->getCaCompania());
-                    $row["comprobante"] = utf8_encode( $tipo." ".str_pad($comprobante->getCaConsecutivo(), 6, "0", STR_PAD_LEFT));
-                    $row["fchcomprobante"] = utf8_encode( $comprobante->getCaFchcomprobante());
+                    $row["comprobante"] = utf8_encode($tipo . " " . str_pad($comprobante->getCaConsecutivo(), 6, "0", STR_PAD_LEFT));
+                    $row["fchcomprobante"] = utf8_encode($comprobante->getCaFchcomprobante());
                     $row["idcomprobante"] = $comprobante->getCaIdcomprobante();
                     $row["valor"] = $comprobante->getValor();
                     $row["color"] = "";
 
                     $data[] = $row;
                 }
-            }else{
+            } else {
                 $row = array();
                 $row["idmaster"] = $inoHouse->getCaIdmaster();
                 $row["idhouse"] = $inoHouse->getCaIdhouse();
@@ -447,147 +412,169 @@ class inoActions extends sfActions
                 $row["color"] = "pink";
                 $data[] = $row;
             }
-
-            
-            
         }
 
 
-        $this->responseArray = array("success"=>true, "root"=>$data, "total"=>count($data));
+        $this->responseArray = array("success" => true, "root" => $data, "total" => count($data));
 
-        $this->setTemplate( "responseTemplate" );
-
-
-
+        $this->setTemplate("responseTemplate");
     }
 
-
     /**
-    *
-    *
-    * @param sfRequest $request A request object
-    */
-    public function executeGuardarGridFacturacionPanel(sfWebRequest $request){
-
-
-        $idcomprobante = $request->getParameter("idcomprobante");
-        if( $idcomprobante ){
-            $comprobante = Doctrine::getTable("InoComprobante")->find( $idcomprobante );
-            $this->forward404Unless( $comprobante );
-        }else{
-            $comprobante = new InoComprobante();
-            $comprobante->setCaIdtipo( InoComprobante::IDTIPO_F_INO );
-        }
-
-        try{
-
-            $conn = $comprobante->getTable()->getConnection();
-            $conn->beginTransaction();
-            
-            if( $request->getParameter("comprobante") ){
-                $comprobante->setCaConsecutivo( $request->getParameter("comprobante") );
-            }
-
-            if( $request->getParameter("fchcomprobante") ){
-                $comprobante->setCaFchcomprobante( $request->getParameter("fchcomprobante") );
-            }
-
-            if( $request->getParameter("valor") ){
-                $comprobante->setCaValor( $request->getParameter("valor") );
-            }
-
-            if( $request->getParameter("idmoneda") ){
-                $comprobante->setCaIdmoneda( $request->getParameter("idmoneda") );
-            }
-            if( $request->getParameter("cambio") ){
-                $comprobante->setCaTasacambio( $request->getParameter("cambio") );
-            }
-
-            $comprobante->save( $conn );
-            
-
-            $conn->commit();
-                //$conn->rollBack();
-            $this->responseArray = array("success"=>true, "id"=>$request->getParameter("id"));
-        }
-        catch (Exception $e){
-
-            throw $e;
-            $conn->rollBack();
-            $this->responseArray = array("success"=>false, "errorInfo"=>$e->getMessage());
-        }
+     *
+     *
+     * @param sfRequest $request A request object
+     */
+    public function executeGuardarGridFacturacionPanel(sfWebRequest $request) {
 
         
 
-        $this->setTemplate( "responseTemplate" );
+        try {
+            
+            $idcomprobante = $request->getParameter("idcomprobante");
+            if ($idcomprobante) {
+                $comprobante = Doctrine::getTable("InoComprobante")->find($idcomprobante);
+                $this->forward404Unless($comprobante);
+            } else {
+                $comprobante = new InoComprobante();
+                //$comprobante->setCaIdtipo( InoComprobante::IDTIPO_F_INO );
+            }
+
+
+
+            $conn = $comprobante->getTable()->getConnection();
+            $conn->beginTransaction();
+            $idhouse = $request->getParameter("idhouse");
+            $comprobante->setCaIdhouse($idhouse);
+            
+            $comprobante->setCaConsecutivo($request->getParameter("consecutivo"));            
+            $comprobante->setCaIdtipo($request->getParameter("idtipo"));
+            $comprobante->setCaFchcomprobante($request->getParameter("fchcomprobante"));
+            $comprobante->setCaId($request->getParameter("ids_id"));
+            $comprobante->setCaValor($request->getParameter("valor"));
+            $comprobante->setCaIdmoneda($request->getParameter("idmoneda"));            
+            $comprobante->setCaTasacambio($request->getParameter("tasacambio"));
+            $comprobante->setCaPlazo($request->getParameter("plazo"));
+            $comprobante->setCaObservaciones($request->getParameter("observaciones"));
+            
+
+            $comprobante->save($conn);
+
+
+            $conn->commit();
+            //$conn->rollBack();
+
+            $this->responseArray = array("success" => true, "id" => $request->getParameter("id"), "idcomprobante" => $comprobante->getCaIdcomprobante());
+        } catch (Exception $e) {
+
+            
+            $conn->rollBack();
+            $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
+        }
+
+
+
+        $this->setTemplate("responseTemplate");
+    }
+
+    /**
+     *
+     *
+     * @param sfRequest $request A request object
+     */
+    public function executeDatosGridFacturacionFormPanel(sfWebRequest $request) {
+
+        $idcomprobante = $request->getParameter("idcomprobante");
+        $this->forward404Unless($idcomprobante);
+        $comprobante = Doctrine::getTable("InoComprobante")
+                        ->createQuery("c")
+                        ->select("c.*, ids.*")                        
+                        ->innerJoin("c.Ids ids")
+                        ->where("c.ca_idcomprobante = ?", $idcomprobante)
+                        ->fetchOne();
+
+        $this->forward404Unless($comprobante);
+
+        $tipo = $comprobante->getInoTipoComprobante();
+        $data = array();
+        $data["idhouse"] = $comprobante->getCaIdhouse();
+        $data["ids"] = utf8_encode($comprobante->getIds()->getCaNombre());
+        $data["ids_id"] = utf8_encode($comprobante->getCaId());
+        //$data["tipo"] = $tipo->getCaTipo() . "-" . str_pad($tipo->getCaComprobante(), 2, "0", STR_PAD_LEFT) . " " . $tipo->getCaTitulo();
+        $data["idtipo"] = $tipo->getCaIdtipo();
+        $data["comprobante"] = utf8_encode($tipo . " " . str_pad($comprobante->getCaConsecutivo(), 6, "0", STR_PAD_LEFT));
+        $data["fchcomprobante"] = utf8_encode($comprobante->getCaFchcomprobante());
+        $data["idcomprobante"] = $comprobante->getCaIdcomprobante();
+        $data["consecutivo"] = $comprobante->getCaConsecutivo();
+        $data["plazo"] = $comprobante->getCaPlazo();
+        $data["observaciones"] = $comprobante->getCaObservaciones();
+        $data["tasacambio"] = $comprobante->getCaTasacambio();
+        $data["valor"] = $comprobante->getValor();
+        
+
+        $this->responseArray = array("success" => true, "data" => $data);
+        $this->setTemplate("responseTemplate");
     }
 
 
-
-
     /**
-    *
-    *
-    * @param sfRequest $request A request object
-    */
-    public function executeFormComprobante(sfWebRequest $request)
-    {
+     *
+     *
+     * @param sfRequest $request A request object
+     */
+    public function executeFormComprobante(sfWebRequest $request) {
         $this->modo = $request->getParameter("modo");
         //$this->nivel = $this->getNivel();
 
         $request->setParameter("tipo", "F");
 
         $this->forward("inocomprobantes", "formComprobante");
-
-
     }
-    
-    
-     /*************************************************************************
-    *
-    *   Acciones para el cuadro de costos
-    *
-    ***************************************************************************/
+
+    /*     * ***********************************************************************
+     *
+     *   Acciones para el cuadro de costos
+     *
+     * ************************************************************************* */
 
     /**
-    *
-    *
-    * @param sfRequest $request A request object
-    */
-    public function executeDatosGridCostosPanel(sfWebRequest $request)
-    {
+     *
+     *
+     * @param sfRequest $request A request object
+     */
+    public function executeDatosGridCostosPanel(sfWebRequest $request) {
         $idmaster = $request->getParameter("idmaster");
-        $this->forward404Unless( $idmaster );
-        /*$inoHouses = Doctrine::getTable("InoHouse")
-                             ->createQuery("c")
-                             ->select("c.*, cl.*")
-                             //->innerJoin("c.Ids cl")
-                             ->innerJoin("c.Cliente cl")
-                             ->leftJoin( "c.InoComprobante comp" )
-                             ->leftJoin( "comp.InoTipoComprobante tcomp" )
-                             ->where("c.ca_idmaster = ?", $idmaster)
-                             ->addOrderBy( "cl.ca_compania" )
-                             ->execute();*/
+        $this->forward404Unless($idmaster);
+        /* $inoHouses = Doctrine::getTable("InoHouse")
+          ->createQuery("c")
+          ->select("c.*, cl.*")
+          //->innerJoin("c.Ids cl")
+          ->innerJoin("c.Cliente cl")
+          ->leftJoin( "c.InoComprobante comp" )
+          ->leftJoin( "comp.InoTipoComprobante tcomp" )
+          ->where("c.ca_idmaster = ?", $idmaster)
+          ->addOrderBy( "cl.ca_compania" )
+          ->execute(); */
 
         $transacciones = Doctrine::getTable("InoTransaccion")
-                                 ->createQuery("t")
-                                 ->select("t.*, c.ca_idcomprobante, c.ca_consecutivo, con.ca_concepto, id.ca_nombre, tp.ca_tipo, tp.ca_comprobante")
-                                 ->innerJoin("t.InoComprobante c")
-                                 ->innerJoin("c.InoTipoComprobante tp")
-                                 ->innerJoin("t.InoConcepto con")
-                                 ->innerJoin("c.Ids id")
-                                 ->where("t.ca_idmaster = ?", $idmaster)
-                                 //->addWhere("c.ca_estado = ?", InoComprobante::TRANSFERIDO)
-                                 //->setHydrationMode(Doctrine::HYDRATE_SCALAR)
-                                 ->execute();
+                        ->createQuery("t")
+                        ->select("t.*, c.ca_idcomprobante, c.ca_consecutivo, con.ca_concepto, id.ca_nombre, tp.ca_tipo, tp.ca_comprobante")
+                        ->innerJoin("t.InoComprobante c")
+                        ->innerJoin("c.InoTipoComprobante tp")
+                        ->innerJoin("t.InoConcepto con")
+                        ->innerJoin("c.Ids id")
+                        ->where("t.ca_idmaster = ?", $idmaster)
+                        //->addWhere("c.ca_estado = ?", InoComprobante::TRANSFERIDO)
+                        //->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                        ->execute();
         $data = array();
 
-        foreach( $transacciones as $transaccion ){
+        foreach ($transacciones as $transaccion) {
 
 
             $comprobante = $transaccion->getInoComprobante();
             $k = 0;
-            
+
             $tipo = $comprobante->getInoTipoComprobante();
 
             $row = array();
@@ -596,8 +583,8 @@ class inoActions extends sfActions
             $row["concepto"] = $transaccion->getInoConcepto()->getCaConcepto();
             $row["idproveedor"] = $comprobante->getCaId();
             $row["proveedor"] = utf8_encode($comprobante->getIds()->getCaNombre());
-            $row["comprobante"] = utf8_encode( $tipo." ".str_pad($comprobante->getCaConsecutivo(), 6, "0", STR_PAD_LEFT));
-            $row["fchcomprobante"] = utf8_encode( $comprobante->getCaFchcomprobante());
+            $row["comprobante"] = utf8_encode($tipo . " " . str_pad($comprobante->getCaConsecutivo(), 6, "0", STR_PAD_LEFT));
+            $row["fchcomprobante"] = utf8_encode($comprobante->getCaFchcomprobante());
             $row["idcomprobante"] = $comprobante->getCaIdcomprobante();
             $row["valor"] = $comprobante->getValor();
             $row["cambio"] = $comprobante->getCaTasacambio();
@@ -605,109 +592,101 @@ class inoActions extends sfActions
             $row["color"] = "";
 
             $data[] = $row;
-               
-
-
-
         }
 
 
-        $this->responseArray = array("success"=>true, "root"=>$data, "total"=>count($data));
-        $this->setTemplate( "responseTemplate" );
+        $this->responseArray = array("success" => true, "root" => $data, "total" => count($data));
+        $this->setTemplate("responseTemplate");
     }
 
-
-     /**
-    *
-    *
-    * @param sfRequest $request A request object
-    */
-    public function executeGuardarGridCostosPanel(sfWebRequest $request){
+    /**
+     *
+     *
+     * @param sfRequest $request A request object
+     */
+    public function executeGuardarGridCostosPanel(sfWebRequest $request) {
         $idcomprobante = $request->getParameter("idcomprobante");
-        if( $idcomprobante ){
-            $comprobante = Doctrine::getTable("InoComprobante")->find( $idcomprobante );
-            $this->forward404Unless( $comprobante );
-        }else{
+        if ($idcomprobante) {
+            $comprobante = Doctrine::getTable("InoComprobante")->find($idcomprobante);
+            $this->forward404Unless($comprobante);
+        } else {
             $comprobante = new InoComprobante();
-            $comprobante->setCaIdtipo( InoComprobante::IDTIPO_F_INO );
+            $comprobante->setCaIdtipo(InoComprobante::IDTIPO_F_INO);
         }
 
-        try{
+        try {
 
             $conn = $comprobante->getTable()->getConnection();
             $conn->beginTransaction();
 
-            if( $request->getParameter("comprobante") ){
-                $comprobante->setCaConsecutivo( $request->getParameter("comprobante") );
+            if ($request->getParameter("comprobante")) {
+                $comprobante->setCaConsecutivo($request->getParameter("comprobante"));
             }
 
-            if( $request->getParameter("fchcomprobante") ){
-                $comprobante->setCaFchcomprobante( $request->getParameter("fchcomprobante") );
+            if ($request->getParameter("fchcomprobante")) {
+                $comprobante->setCaFchcomprobante($request->getParameter("fchcomprobante"));
             }
 
-            if( $request->getParameter("valor") ){
-                $comprobante->setCaValor( $request->getParameter("valor") );
+            if ($request->getParameter("valor")) {
+                $comprobante->setCaValor($request->getParameter("valor"));
             }
 
-            if( $request->getParameter("idmoneda") ){
-                $comprobante->setCaIdmoneda( $request->getParameter("idmoneda") );
+            if ($request->getParameter("idmoneda")) {
+                $comprobante->setCaIdmoneda($request->getParameter("idmoneda"));
             }
-            if( $request->getParameter("cambio") ){
-                $comprobante->setCaTasacambio( $request->getParameter("cambio") );
+            if ($request->getParameter("cambio")) {
+                $comprobante->setCaTasacambio($request->getParameter("cambio"));
             }
 
-            $comprobante->save( $conn );
+            $comprobante->save($conn);
 
 
             $conn->commit();
-                //$conn->rollBack();
-            $this->responseArray = array("success"=>true, "id"=>$request->getParameter("id"));
-        }
-        catch (Exception $e){
+            //$conn->rollBack();
+            $this->responseArray = array("success" => true, "id" => $request->getParameter("id"));
+        } catch (Exception $e) {
 
             throw $e;
             $conn->rollBack();
-            $this->responseArray = array("success"=>false, "errorInfo"=>$e->getMessage());
+            $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
         }
 
-        $this->setTemplate( "responseTemplate" );
+        $this->setTemplate("responseTemplate");
     }
 
+    /*     * ***********************************************************************
+     *
+     *   Acciones para el cuadro de auditoria
+     *
+     * ************************************************************************* */
 
-    /*************************************************************************
-    *
-    *   Acciones para el cuadro de auditoria
-    *
-    ***************************************************************************/
-     /**
-    *
-    *
-    * @param sfRequest $request A request object
-    */
-    public function executeDatosGridAuditoriaPanel(sfWebRequest $request){
+    /**
+     *
+     *
+     * @param sfRequest $request A request object
+     */
+    public function executeDatosGridAuditoriaPanel(sfWebRequest $request) {
 
         $idmaster = $request->getParameter("idmaster");
-        $this->forward404Unless( $idmaster );
+        $this->forward404Unless($idmaster);
 
         $eventos = Doctrine::getTable("InoAuditor")
-                             ->createQuery("a")
-                             ->addWhere("a.ca_idmaster = ?", $idmaster )
-                             ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
-                             ->execute();
+                        ->createQuery("a")
+                        ->addWhere("a.ca_idmaster = ?", $idmaster)
+                        ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
+                        ->execute();
 
-        
-        foreach( $eventos as $key=>$evento ){
+
+        foreach ($eventos as $key => $evento) {
             $eventos[$key]["ca_asunto"] = utf8_encode($eventos[$key]["ca_asunto"]);
             $eventos[$key]["ca_detalle"] = utf8_encode($eventos[$key]["ca_detalle"]);
             $eventos[$key]["ca_compromisos"] = utf8_encode($eventos[$key]["ca_compromisos"]);
             $eventos[$key]["ca_respuesta"] = utf8_encode($eventos[$key]["ca_respuesta"]);
         }
 
-        $this->responseArray = array("success"=>true, "root"=>$eventos, "total"=>count($eventos));
-        $this->setTemplate( "responseTemplate" );
+        $this->responseArray = array("success" => true, "root" => $eventos, "total" => count($eventos));
+        $this->setTemplate("responseTemplate");
     }
 
-
-    
 }
 

@@ -8,7 +8,7 @@
 include_component("ino", "formHousePanel");
 include_component("ino", "gridHousePanel");
 
-include_component("ino", "gridFacturacionPanel");
+include_component("ino", "gridFacturacionPanel", array("referencia"=>$referencia) );
 include_component("ino", "gridCostosPanel");
 include_component("ino", "gridAuditoriaPanel");
 ?>
@@ -47,7 +47,7 @@ MainPanel = function(){
     MainPanel.superclass.constructor.call(this, {        
         id: 'tpanel',
         plain:true,
-        activeTab: 3,
+        activeTab: 2,
         height:450,
         autoHeight: true,
         autoWidth : true,
