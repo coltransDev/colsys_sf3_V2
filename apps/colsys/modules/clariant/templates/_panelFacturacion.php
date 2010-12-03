@@ -190,7 +190,7 @@ Ext.extend(PanelFacturacion, Ext.grid.EditorGridPanel, {
 
             changes['numdocumento']=r.data.numdocumento;
             
-            if( r.data.numdocumento ){
+            if( r.data.numdocumento && r.data.numdocumento != '+' ){
                 //envia los datos al servidor
                 Ext.Ajax.request(
                     {

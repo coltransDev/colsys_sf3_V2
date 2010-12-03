@@ -65,11 +65,14 @@ class clariantActions extends sfActions {
                         }
 
                         if ($fields[2] != $docCompra){
+                            list($dia, $mes, $ano) = sscanf($fields[8], "%d.%d.%d");
+                            $documentoFch = date ("Y-m-d",mktime(0,0,0,$mes,$dia,$ano));
+
                             $clariant = new Clariant();
                             $clariant->setCaPais($fields[0]);
                             $clariant->setCaProveedor($fields[1]);
                             $clariant->setCaOrden($fields[2]);
-                            $clariant->setCaDocumentoFch($fields[8]);
+                            $clariant->setCaDocumentoFch($documentoFch);
                             $clariant->setCaIncoterm($fields[9]);
                             $docCompra = $fields[2];
                         }
@@ -307,18 +310,18 @@ class clariantActions extends sfActions {
                         ->addOrderBy("rp.ca_consecutivo desc")
                         ->execute();
 
+                    $dep_estimate = null;
+                    $arr_estimate = null;
+                    $dep_confirm  = null;
+                    $arr_confirm  = null;
+                    $motonave     = null;
+                    $doctranspor  = null;
+
                     foreach($reportes as $reporte){
                         if (!$reporte->esUltimaVersion()){
                             continue;
                         }
                         $repStatus = $reporte->getRepStatus();
-                        
-                        $dep_estimate = null;
-                        $arr_estimate = null;
-                        $dep_confirm  = null;
-                        $arr_confirm  = null;
-                        $motonave     = null;
-                        $doctranspor  = null;
                         
                         foreach($repStatus as $status){
                             if ($status->getCaIdnave()){
@@ -829,6 +832,7 @@ class clariantActions extends sfActions {
             $salida.= round($row["ca_ingresos_terc"]*$factor,0)."\t";
             $salida.= $row["ca_unidad"]."\t";
             $salida.= "\r\n";
+            $imp_tot = true;
 
             $clariant = Doctrine::getTable("Clariant")
                 ->createQuery("c")
