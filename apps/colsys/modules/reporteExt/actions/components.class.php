@@ -79,8 +79,8 @@ class reporteExtComponents extends sfComponents
 
 
         if( $bodega2 && ($bodega2->getCaTipo()!= "Coordinador Logistico" && $bodega2->getCaTipo()!="Coordinador Logístico") ){
-            if($bodega2->getCaTipo()==$bodega2->getCaNombre())
-                $hijo .=" / ".$bodega2->getCaTipo()." ".$reporte->getDestinoCont()->getCaCiudad()." - ".$reporte->getDestinoCont()->getTrafico()->getCaNombre();
+            if($bodega2->getCaTipo()==$bodega2->getCaNombre() || $bodega2->getCaTipo()=="Entrega Urgente")
+                $hijo .=" / ".$bodega2->getCaTipo();
             else
                 $hijo .=" / ".$bodega2->getCaTipo()." ".(($bodega2->getCaNombre()!='N/A')?$bodega2->getCaNombre():"")." ".$reporte->getDestinoCont()->getCaCiudad()." - ".$reporte->getDestinoCont()->getTrafico()->getCaNombre();
 
@@ -194,9 +194,9 @@ class reporteExtComponents extends sfComponents
 //echo "::".$reporte->getCaIdconsignar();
 //        if($reporte->getCaIdconsignar()!=1)
         {
-            //echo "--".$bodega2->getCaTipo()."--";
-            if($bodega2->getCaTipo()==$bodega2->getCaNombre())
-                $hijo .=" / ".$bodega2->getCaTipo()." ".$reporte->getDestinoCont()->getCaCiudad()." - ".$reporte->getDestinoCont()->getTrafico()->getCaNombre();
+           // echo "--".$bodega2->getCaTipo()."--".$bodega2->getCaNombre();
+            if($bodega2->getCaTipo()==$bodega2->getCaNombre() || $bodega2->getCaTipo()=="Entrega Urgente")
+                $hijo .=" / ".$bodega2->getCaTipo();
             else
                 $hijo .=" / ".$bodega2->getCaTipo()." ".(($bodega2->getCaNombre()!='N/A')?$bodega2->getCaNombre():"")." ".$reporte->getDestinoCont()->getCaCiudad()." - ".$reporte->getDestinoCont()->getTrafico()->getCaNombre();
         }
@@ -298,16 +298,26 @@ class reporteExtComponents extends sfComponents
             $hijo = $bodegaConsignar->getCaNombre();
         }
 
-        if($bodega2->getCaTipo()==$bodega2->getCaNombre())
-                $hijo.=" / ".$bodega2->getCaTipo();
+        if($bodega2 && $reporte->getCaImpoexpo()!=Constantes::TRIANGULACION && $bodega2->getCaIdbodega()!="1")
+        {
+
+
+            if($bodega2->getCaTipo()==$bodega2->getCaNombre())
+                $hijo.=" / ".$bodega2->getCaNombre();
             else
+            {
                 $hijo.=" / ".$bodega2->getCaTipo()." ".(($bodega2->getCaNombre()!='N/A')?$bodega2->getCaNombre():"");
+                if( $reporte->getCaContinuacion()== 'N/A' ){
+                    $hijo.="<br />".$reporte->getDestino()->getCaCiudad();
+                }
+                $hijo.="<br />".$reporte->getDestino()->getTrafico()->getCaNombre();
+            }
+
+
+        }
 //        $hijo.=" / ".$bodega2->getCaTipo()." ".(($bodega2->getCaNombre()!='N/A')?$bodega2->getCaNombre():"");
 
-        if( $reporte->getCaContinuacion()== 'N/A' ){
-            $hijo.="<br />".$reporte->getDestino()->getCaCiudad();
-        }
-        $hijo.="<br />".$reporte->getDestino()->getTrafico()->getCaNombre();
+        
         //.(($rs->Value('ca_continuacion') == 'N/A')?"<br />".$rs->Value('ca_ciudestino'):"")."<br />".$tm->Value('ca_pais');
 
 
@@ -403,14 +413,16 @@ class reporteExtComponents extends sfComponents
             if($bodega2->getCaTipo()==$bodega2->getCaNombre())
                 $hijo.=" / ".$bodega2->getCaNombre();
             else
+            {
                 $hijo.=" / ".$bodega2->getCaTipo()." ".(($bodega2->getCaNombre()!='N/A')?$bodega2->getCaNombre():"");
+                if( $reporte->getCaContinuacion()== 'N/A' ){
+                    $hijo.="<br />".$reporte->getDestino()->getCaCiudad();
+                }
+                $hijo.="<br />".$reporte->getDestino()->getTrafico()->getCaNombre();
+            }
 
             
         }
-        if( $reporte->getCaContinuacion()== 'N/A' ){
-            $hijo.="<br />".$reporte->getDestino()->getCaCiudad();
-        }
-        $hijo.="<br />".$reporte->getDestino()->getTrafico()->getCaNombre();
         //.(($rs->Value('ca_continuacion') == 'N/A')?"<br />".$rs->Value('ca_ciudestino'):"")."<br />".$tm->Value('ca_pais');
 
 
