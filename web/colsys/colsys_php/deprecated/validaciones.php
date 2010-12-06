@@ -1,4 +1,3 @@
-<?
 
 include_once 'include/datalib.php';                                            // Incorpora la libreria de funciones, para accesar leer bases de datos
 require_once("checklogin.php");                                                                 // Captura las variables de la sessión abierta
