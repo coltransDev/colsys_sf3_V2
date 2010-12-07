@@ -104,6 +104,8 @@ $cliente = $reporte->getCliente();
     if($reporte->getCaTransporte()==Constantes::AEREO && ($reporte->getCaImpoexpo()==Constantes::IMPO||$reporte->getCaImpoexpo()==Constantes::TRIANGULACION)){
         //Ticket # 1921
         $bodega2 = Doctrine::getTable("Bodega")->find( $reporte->getCaIdbodega() );
+        if(!$bodega2)
+            $bodega2 = new Bodega();
     ?>
     <tr>
 		<td><b>Trasladar a:</b></td>
