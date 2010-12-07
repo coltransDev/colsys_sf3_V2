@@ -343,8 +343,8 @@ class falabellaActions extends sfActions {
 			$salida.= "UN|"; // Vessel 22
 			$salida.= $fala_header->getCaCodigoPuertoDescarga()."|"; // 23
 
-			$ets_mem= (strlen(trim($reporte->getETS("Ymd")))==0 and $status)?$status->getCaFchsalida("Ymd"):$reporte->getETS("Ymd");
-			$eta_mem= (strlen(trim($reporte->getETA("Ymd")))==0 and $status)?$status->getCaFchllegada("Ymd"):$reporte->getETA("Ymd");
+			$ets_mem= (strlen(trim($reporte->getETS()))==0 and $status)?Utils::parseDate($status->getCaFchsalida(),"Ymd"):Utils::parseDate($reporte->getETS(),"Ymd");
+			$eta_mem= (strlen(trim($reporte->getETA()))==0 and $status)?Utils::parseDate($status->getCaFchllegada(),"Ymd"):Utils::parseDate($reporte->getETA(),"Ymd");
 			$salida.= $ets_mem."|"; // 24
 			$salida.= $ets_mem."|"; // 25
 			$salida.= $eta_mem."|"; // 26
@@ -360,7 +360,7 @@ class falabellaActions extends sfActions {
 			$salida.= "|"; // 35
 			$salida.= "|"; // 36
 			$salida.= substr($fala_header->getCaIddoc(),0,15)."|"; // 37
-			$salida.= $fala_header->getCaFechaCarpeta("Ymd")."|"; // 38
+			$salida.= Utils::parseDate($fala_header->getCaFechaCarpeta(),"Ymd")."|"; // 38
 			$salida.= $detail->getSkuNeto()."|"; // 39
 			$salida.= $detail->getCaVpn()."|"; // 40
 			$salida.= number_format($detail->getCaCantidadMiles()*10000, 0, '', '')."|"; // 41
