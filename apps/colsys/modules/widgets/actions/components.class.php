@@ -571,13 +571,19 @@ class widgetsComponents extends sfComponents
     public function executeWidgetBodega(){
 
 //        $casos=$this->transporte;
+
+        if($this->modo==Constantes::TERRESTRE)
+            $modo=constantes::MARITIMO;
+        else
+            $modo=$this->modo;
+
         $this->data = Doctrine::getTable("Bodega")
 						 ->createQuery("b")
 						 ->select("b.*")
 						 ->addOrderBy("b.ca_tipo ASC")
 						 ->addOrderBy("b.ca_nombre ASC")
 						 ->distinct()
-                        ->where("b.ca_transporte like ? and b.ca_nombre<>'-'","%".$this->modo."%")
+                         ->where("b.ca_transporte like ? and b.ca_nombre<>'-'","%".$modo."%")
 						 ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
 						 ->execute();
 
