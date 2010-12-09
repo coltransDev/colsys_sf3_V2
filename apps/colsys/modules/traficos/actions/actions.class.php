@@ -594,9 +594,7 @@ class traficosActions extends sfActions
 				$cc[] = trim($request->getParameter("cc_".$i));
 			}
 		}
-		
-		
-		
+
 		$user = $this->getUser();
 		$attachments = $this->getRequestParameter( "attachments" );
 		$att = array();
@@ -606,12 +604,9 @@ class traficosActions extends sfActions
 			}
 		}
 
-
-		
 		$options["from"] =  $request->getParameter("remitente");
 		
 		$options["subject"] =  $request->getParameter("asunto");
-		
 			
 		//$address = array();
 		$status->send($address, $cc,  $att, $options);
@@ -652,8 +647,6 @@ class traficosActions extends sfActions
             $asignacion->setCaIdreporte( $reporte->getCaIdreporte() );
             $asignacion->setCaIdtarea( $tarea->getCaIdtarea() );
             $asignacion->save();
-
-
             		
 		}else{
             //Se lee de la base de datos ya que la etapa es actualizada por los triggers
@@ -665,13 +658,10 @@ class traficosActions extends sfActions
                     $tarea->setCaUsuterminada( $this->getUser()->getUserId() );
                     $tarea->save();
                 }
-			}	
-		}				
+			}
+		}
 		$this->redirect("traficos/listaStatus?modo=".$this->modo."&reporte=".$reporte->getCaConsecutivo());
 	}
-	
-	
-	
 	
 	/*
 	* Muestra un resumen de los status enviados al cliente
@@ -681,7 +671,6 @@ class traficosActions extends sfActions
 		$this->reporte = Doctrine::getTable("Reporte")->find( $this->getRequestParameter("idreporte") );
 		$this->forward404Unless( $this->reporte );
 	}
-
 
     /*
 	* Muestra un resumen de los status enviados al cliente
