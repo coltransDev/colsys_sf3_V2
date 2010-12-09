@@ -119,7 +119,7 @@ require_once("menu.php");
         echo ">$val</OPTION>";
         }
     echo "  </SELECT></TD>";
-    echo "  <TD Class=listar ROWSPAN=2>Sucursal:<BR><SELECT ID=sucursal NAME='sucursal[]' ONCHANGE='llenar_vendedores();' SIZE=10 MULTIPLE>";
+    echo "  <TD Class=listar ROWSPAN=2>Sucursal:<BR><SELECT ID=sucursal NAME='sucursal[]' ONCHANGE='llenar_vendedores();' SIZE=13 MULTIPLE>";
     echo "  <OPTION VALUE=% SELECTED>Sucursales (Todas)</OPTION>";
     $tm->MoveFirst();
     while (!$tm->Eof()) {
@@ -127,7 +127,7 @@ require_once("menu.php");
            $tm->MoveNext();
           }
     echo "  </SELECT></TD>";
-    echo "  <TD Class=listar ROWSPAN=2>Vendedor:<BR><SELECT ID=login NAME='vendedor[]' SIZE=8 MULTIPLE>";                 // Llena el cuadro de lista con los valores de la tabla Vendedores
+    echo "  <TD Class=listar ROWSPAN=2>Vendedor:<BR><SELECT ID=login NAME='vendedor[]' SIZE=13 MULTIPLE>";                 // Llena el cuadro de lista con los valores de la tabla Vendedores
     echo "  <OPTION VALUE=% SELECTED>Vendedores (Todos)</OPTION>";
     echo "  </SELECT></TD>";
 
@@ -185,7 +185,8 @@ require_once("menu.php");
 	echo " <OPTION VALUE=% SELECTED>(Todas)</OPTION>";
 	for ($i=0; $i < count($modalidades); $i++) {
 		echo " <OPTION VALUE=".$modalidades[$i].">".$modalidades[$i]."</OPTION>"; }
-    echo "  </SELECT></TD>";
+    echo "  </SELECT><BR /><BR />";
+    echo "  Con Proyectos :<BR><INPUT TYPE='CHECKBOX' NAME='proyectos'></TD>";
 
     if (!$tm->Open("select ca_ciudad from vi_ciudades where ca_idtrafico = 'CO-057' and ca_puerto in ('Marítimo','Ambos') order by ca_ciudad")) {       // Selecciona todos lo registros de la tabla ciudades
         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
@@ -254,6 +255,10 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)){
 	$sufijo = "substr(ca_referencia,5,2) like '$sufijo'";
 	$modalidad = "ca_modalidad ".((count($modalidad)==1)?"like '$modalidad[0]'":"in ('".implode("','",$modalidad)."')");
 	$ciudestino = "ca_ciudestino ".((count($ciudestino)==1)?"like '$ciudestino[0]'":"in ('".implode("','",$ciudestino)."')");
+        $subcond = "";
+        if (!$proyectos){
+            $subcond = " and ca_modalidad != 'PROYECTOS'";
+        }
 
 	$campos = "";
 	while (list ($clave, $val) = each ($agrupamiento)) {
@@ -262,7 +267,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)){
 	$campos = substr($campos,0,strlen($campos)-1);
 	$queries = "select $campos";
 	$queries.= ", count(ca_hbls) as ca_hbls, sum(ca_facturacion) as ca_facturacion, sum(ca_utilidad) as ca_utilidad, sum(ca_sobreventa) as ca_sobreventa, sum(ca_cbm) as ca_cbm, sum(ca_teus) as ca_teus ";
-	$queries.= "from vi_repgerencia_sea where $sucursal and $vendedor $cliente $nomlinea ";
+	$queries.= "from vi_repgerencia_sea where $sucursal and $vendedor $cliente $nomlinea $subcond ";
 	$queries.= "and ca_referencia in (select ca_referencia from vi_inomaestra_sea where $ano and $mes and $sufijo and $traorigen and $modalidad and $ciudestino) ";
 	$queries.= "group by $campos ";
 	$queries.= "order by $campos ";

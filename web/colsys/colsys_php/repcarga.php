@@ -32,8 +32,8 @@ require_once("menu.php");
     echo "<CENTER>";
     echo "<H3>$titulo</H3>";
     echo "<FORM METHOD=post NAME='menuform' ACTION='repcarga.php'>";
-    echo "<TABLE WIDTH=530 BORDER=0 CELLSPACING=1 CELLPADDING=5>";
-    echo "<TH COLSPAN=7 style='font-size: 12px; font-weight:bold;'><B>Ingrese los parámetros para el Reporte</TH>";
+    echo "<TABLE BORDER=0 CELLSPACING=1 CELLPADDING=5>";
+    echo "<TH COLSPAN=8 style='font-size: 12px; font-weight:bold;'><B>Ingrese los parámetros para el Reporte</TH>";
 
     echo "<TR>";
     echo "  <TD Class=captura ROWSPAN=2></TD>";
@@ -89,11 +89,12 @@ require_once("menu.php");
             $tm->MoveNext();
           }
     echo "  </TD>";
+    echo "  <TD Class=mostrar>Con Proyectos :<BR><CENTER><INPUT TYPE='CHECKBOX' NAME='proyectos'></CENTER></TD>";
     echo "  <TH style='vertical-align:bottom;'><INPUT Class=submit TYPE='SUBMIT' NAME='buscar' VALUE='  Buscar  ' ONCLIK='menuform.submit();'></TH>";
     echo "</TR>";
 
     echo "<TR HEIGHT=5>";
-    echo "  <TD Class=captura COLSPAN=6></TD>";
+    echo "  <TD Class=captura COLSPAN=7></TD>";
     echo "</TR>";
 
     echo "</TABLE><BR>";
@@ -113,13 +114,17 @@ elseif (!isset($boton) and !isset($accion) and isset($traorigen)){
 //  include_once 'include/seguridad.php';                                      // Control de Acceso al módulo
 
     $condicion = "where ca_mes::text like '$mes' and ca_ano::text = '$ano' and ca_sucursal like '%$sucursal%' and ca_trafico like '%$trafico%' and ca_traorigen like '%$traorigen%'";
+    $subcond = "";
+    if (!$proyectos){
+        $subcond = " and ca_modalidad != 'PROYECTOS'";
+    }
     if (!$rs->Open("select distinct ca_sucursal from control.tb_usuarios where ca_sucursal like '%$sucursal%' order by ca_sucursal")) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
         echo "<script>document.location.href = 'entrada.php';</script>";
         exit; }
     
     $fc =& DlRecordset::NewRecordset($conn);
-    if (!$fc->Open("select * from vi_inocarga_fcl $condicion")) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
+    if (!$fc->Open("select * from vi_inocarga_fcl $condicion $subcond")) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
         echo "<script>alert(\"".addslashes($fc->mErrMsg)."\");</script>";      // Muestra el mensaje de error
         echo "<script>document.location.href = 'entrada.php';</script>";
         exit; }
