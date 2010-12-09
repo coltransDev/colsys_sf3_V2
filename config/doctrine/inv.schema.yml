@@ -62,6 +62,9 @@ InvActivo:
     ca_observaciones: string
     ca_contrato: string
     ca_so: string
+    ca_so_serial: string
+    ca_office: string
+    ca_office_serial: string
     ca_empresa: string
     ca_asignadoa: string
     ca_fchcreado: timestamp

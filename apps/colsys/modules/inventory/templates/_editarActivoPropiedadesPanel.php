@@ -4,6 +4,9 @@
  * 
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
+$so_types = $sf_data->getRaw("so_types");
+$office_types = $sf_data->getRaw("office_types");
+
 ?>
 <script type="text/javascript">
     EditarActivoPropiedadesPanel = function( config ) {
@@ -23,14 +26,14 @@
                     Ext.getCmp("editar-activo-win").close();
                 }
             }
-         ];
+        ];
     
         EditarActivoPropiedadesPanel.superclass.constructor.call(this, {
             title: 'Propiedades',
             id: 'form-activo-panel',
             autoHeight: true,            
             bodyStyle:'padding:5px 5px 0',
-            url: '<?=url_for('inventory/formActivoGuardar')?>',            
+            url: '<?= url_for('inventory/formActivoGuardar') ?>',
             buttons: this.buttons,
             items: [
                 {
@@ -87,11 +90,27 @@
                                     allowBlank: true
                                 },
 
-                                {
-                                    xtype:'textfield',
-                                    fieldLabel: 'Empresa',
-                                    name: 'empresa',
-                                    allowBlank: true
+                                {                                    
+                                    xtype:          'combo',
+                                    mode:           'local',
+                                    value:          '',
+                                    triggerAction:  'all',
+                                    forceSelection: true,
+                                    editable:       true,
+                                    fieldLabel:     'Empresa',
+                                    name:           'empresa',
+                                    hiddenName:     'empresa',
+                                    displayField:   'name',
+                                    valueField:     'value',
+                                    allowBlank: true,
+                                    store:          new Ext.data.JsonStore({
+                                        fields : ['name', 'value'],
+                                        data   : [
+                                            {name : 'Coltrans',   value: 'Coltrans'},
+                                            {name : 'Colmas',  value: 'Colmas'}
+
+                                        ]
+                                    })
                                 },
                                 {
                                     xtype:'textfield',
@@ -105,13 +124,7 @@
                                     name: 'fchcompra',
                                     format: 'Y-m-d',
                                     allowBlank: true
-                                },
-                                new WidgetUsuario({fieldLabel: 'Asignado a',
-                                                   name: 'asignadoa',
-                                                   hiddenName: 'asignadoa'
-                                                  })
-                                
-
+                                }
                             ]
                         },{
                             columnWidth:.5,
@@ -146,13 +159,7 @@
                                     fieldLabel: 'Un. Optica',
                                     name: 'optica',
                                     allowBlank: true
-                                },
-                                {
-                                    xtype:'textfield',
-                                    fieldLabel: 'S.O.',
-                                    name: 'so',
-                                    allowBlank: true
-                                },
+                                },                                
                                 {
                                     xtype:'textfield',
                                     fieldLabel: 'Proveedor',
@@ -170,8 +177,105 @@
                                     fieldLabel: 'Serial',
                                     name: 'serial',
                                     allowBlank: true
+                                },
+                                new WidgetUsuario({fieldLabel: 'Asignado a',
+                                    name: 'asignadoa',
+                                    hiddenName: 'asignadoa'
+                                })
+
+                            ]
+                        }]
+                },
+                {
+                    xtype:'fieldset',
+                    title: 'Software',
+                    autoHeight:true,
+
+                    layout:'column',
+                    columns: 2,
+                    defaults:{
+                        columnWidth:0.5,
+                        layout:'form',
+                        border:false,
+                        bodyStyle:'padding:4px'
+                    },
+                    items:[{
+                            columnWidth:.5,
+                            layout: 'form',
+                            items: [
+                                {
+                                    xtype:          'combo',
+                                    mode:           'local',
+                                    value:          '',
+                                    triggerAction:  'all',
+                                    forceSelection: true,
+                                    editable:       true,
+                                    fieldLabel:     'S.O.',
+                                    name:           'so',
+                                    hiddenName:     'so',
+                                    displayField:   'name',
+                                    valueField:     'value',
+                                    allowBlank: true,
+                                    store:          new Ext.data.JsonStore({
+                                        fields : ['name', 'value'],
+                                        data   : [
+                                            <?
+                                            $i=0;
+                                            foreach($so_types as $type ){
+                                                echo ($i++>0)?",":"";
+                                                echo "{name : '".$type->getCaValor()."',   value: '".$type->getCaValor()."'}";
+                                            }
+                                            ?>
+                                        ]
+                                    })
+                                },
+                                {
+                                    xtype:          'combo',
+                                    mode:           'local',
+                                    value:          '',
+                                    triggerAction:  'all',
+                                    forceSelection: true,
+                                    editable:       true,
+                                    fieldLabel:     'Office',
+                                    name:           'office',
+                                    hiddenName:     'office',
+                                    displayField:   'name',
+                                    valueField:     'value',
+                                    allowBlank: true,
+                                    store:          new Ext.data.JsonStore({
+                                        fields : ['name', 'value'],
+                                        data   : [
+                                            <?
+                                            $i=0;
+                                            foreach($office_types as $type ){
+                                                echo ($i++>0)?",":"";
+                                                echo "{name : '".$type->getCaValor()."',   value: '".$type->getCaValor()."'}";
+                                            }
+                                            ?>
+                                        ]
+                                    })
                                 }
 
+
+                                
+                            ]
+                        },
+                        {
+                            columnWidth:.5,
+                            layout: 'form',
+                            items: [
+                                {
+                                    xtype:'textfield',
+                                    fieldLabel: 'Serial',
+                                    name: 'so_serial',
+                                    allowBlank: true
+                                },
+                                {
+                                    xtype:'textfield',
+                                    fieldLabel: 'Serial',
+                                    name: 'office_serial',
+                                    allowBlank: true
+                                }
                             ]
                         }]
                 },
@@ -258,7 +362,7 @@
             if(this.idactivo!="undefined" && this.idactivo )
             {
                 this.load({
-                    url:'<?=url_for("inventory/datosActivo")?>',
+                    url:'<?= url_for("inventory/datosActivo") ?>',
                     waitMsg:'Cargando...',
                     params:{idactivo:this.idactivo},
 

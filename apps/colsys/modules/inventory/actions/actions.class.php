@@ -94,6 +94,9 @@ class inventoryActions extends sfActions
             $row["factura"]=utf8_encode($activo->getCaFactura());
             $row["reposicion"]=utf8_encode($activo->getCaReposicion());
             $row["so"]=utf8_encode($activo->getCaSo());
+            $row["so_serial"]=utf8_encode($activo->getCaSoSerial());
+            $row["so_office"]=utf8_encode($activo->getCaOffice());
+            $row["so_office_serial"]=utf8_encode($activo->getCaOfficeSerial());
             $row["asignadoa"] = utf8_encode($activo->getCaAsignadoa());
             $row["asignadoaNombre"] = utf8_encode($activo->getUsuario()->getCaNombre());
             $result[]=$row;
@@ -130,7 +133,10 @@ class inventoryActions extends sfActions
         $data["memoria"] = utf8_encode($activo->getCaMemoria());
         $data["disco"] = utf8_encode($activo->getCaDisco());
         $data["optica"] = utf8_encode($activo->getCaOptica());
-        $data["so"] = utf8_encode($activo->getCaSo());
+        $data["so"] = utf8_encode($activo->getCaSo());        
+        $data["so_serial"]=utf8_encode($activo->getCaSoSerial());
+        $data["office"]=utf8_encode($activo->getCaOffice());
+        $data["office_serial"]=utf8_encode($activo->getCaOfficeSerial());
         $data["ubicacion"] = utf8_encode($activo->getCaUbicacion());
         $data["empresa"] = utf8_encode($activo->getCaEmpresa());
         $data["proveedor"] = utf8_encode($activo->getCaProveedor());
@@ -176,6 +182,9 @@ class inventoryActions extends sfActions
         $activo->setCaDisco( utf8_decode($request->getParameter("disco")) );
         $activo->setCaOptica( utf8_decode($request->getParameter("optica")) );
         $activo->setCaSo( utf8_decode($request->getParameter("so")) );
+        $activo->setCaSoSerial( utf8_decode($request->getParameter("so_serial")) );
+        $activo->setCaOffice( utf8_decode($request->getParameter("office")) );
+        $activo->setCaOfficeSerial( utf8_decode($request->getParameter("office_serial")) );
         $activo->setCaUbicacion( utf8_decode($request->getParameter("ubicacion")) );
         $activo->setCaEmpresa( utf8_decode($request->getParameter("empresa")) );
         $activo->setCaProveedor( utf8_decode($request->getParameter("proveedor")) );

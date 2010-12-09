@@ -58,7 +58,8 @@ class inventoryComponents extends sfComponents
 	* @author: Andres Botero
 	*/
     public function executeEditarActivoPropiedadesPanel( ){
-
+        $this->so_types = ParametroTable::retrieveByCaso("CU095");
+        $this->office_types = ParametroTable::retrieveByCaso("CU096");
     }
 
     /*
