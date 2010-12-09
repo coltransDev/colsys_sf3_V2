@@ -551,7 +551,7 @@ class traficosActions extends sfActions
 		$reporte->stopBlaming();
 		$reporte->save();
 		
-		if( $reporte->getCaImpoexpo()==Constantes::EXPO ){
+		if( $reporte->getCaImpoexpo()==Constantes::EXPO && $reporte->getCaTiporep()!="3" ){
 			$repExpo = $reporte->getRepexpo();		
 			if( $request->getParameter("datosbl") ){
 				$repExpo->setCaDatosbl( $request->getParameter("datosbl") );
