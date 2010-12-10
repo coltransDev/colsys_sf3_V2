@@ -314,6 +314,13 @@ class Reporte extends BaseReporte {
         return $this->cerrado;
     }
 
+    public function getAnulado() {
+        if ($this->getCaFchanulado() || $this->getCaUsuanulado())
+            return true;
+        else
+            return false;
+    }
+
     /*
      * Retorna los equipos asociados al reporte
      * Author: Andres Botero
@@ -546,8 +553,8 @@ class Reporte extends BaseReporte {
      */
 
     public function getConsignarmaster() {
-        if ($this->getCaImpoexpo() == constantes::EXPO && $this->getCaIdconsignarmaster()>0) {
-            $consignar = ParametroTable::retrieveByCaso("CU048", null, null, $this->getCaIdconsignarmaster());
+        if ($this->getCaImpoexpo() == constantes::EXPO && $this->getCaIdmaster()>0) {
+            $consignar = ParametroTable::retrieveByCaso("CU048", null, null, $this->getCaIdmaster());
 
             if ($consignar) {
                 return $consignar[0]->getCaValor();
