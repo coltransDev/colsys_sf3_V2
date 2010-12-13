@@ -237,26 +237,31 @@ class conceptosActions extends sfActions
 
 
 			$q = Doctrine::getTable("InoConcepto")
-                         ->createQuery("c")                        
-                         ->innerJoin("c.InoConceptoModalidad cm")
-                         ->innerJoin("cm.Modalidad m")
-                         ->addWhere("m.ca_impoexpo like ? ", "%".$impoexpo."%" )
-                         ->addWhere("m.ca_transporte = ? ", $transporte )
+                         ->createQuery("c")    
                          ->addWhere("c.ca_usueliminado IS NULL" )
                          ->distinct()
                          ->addOrderBy( "c.ca_concepto" );
             
-            if( $tipo ){
-                if( $tipo==Constantes::RECARGO_EN_ORIGEN ){
-                    $q->addWhere("c.ca_recargoorigen = ? ", true );
+            if( $modalidad!=Constantes::OTMDTA ){
+                $q->innerJoin("c.InoConceptoModalidad cm")
+                         ->innerJoin("cm.Modalidad m")
+                         ->addWhere("m.ca_impoexpo like ? ", "%".$impoexpo."%" )
+                         ->addWhere("m.ca_transporte = ? ", $transporte );
+
+                if( $tipo ){
+                    if( $tipo==Constantes::RECARGO_EN_ORIGEN ){
+                        $q->addWhere("c.ca_recargoorigen = ? ", true );
+                    }
+                    if( $tipo==Constantes::RECARGO_LOCAL ){
+                        $q->addWhere("c.ca_recargolocal = ? ", true );
+                    }                    
                 }
-                if( $tipo==Constantes::RECARGO_LOCAL ){
-                    $q->addWhere("c.ca_recargolocal = ? ", true );
-                }
-                if( $tipo==Constantes::RECARGO_OTM_DTA ){
-                    $q->addWhere("c.ca_recargootmdta = ? ", true );
-                }
+            }else{
+                 $q->addWhere("c.ca_recargootmdta = ? ", true );
             }
+
+
+            
 
             $recargos = $q->execute();
 			$this->conceptos = array();
