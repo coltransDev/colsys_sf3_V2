@@ -11,73 +11,71 @@ include_component("widgets", "widgetBodega",array("modo"=>$modo,"impoexpo"=>$imp
     FormCorteGuiasPanel = function( config ){
         Ext.apply(this, config);
         this.wgTercero=new WidgetTercero({fieldLabel:"Consignatario",
-                                            tipo: 'Consignatario',
-                                            width: 500,
-                                            hiddenName: "consig",
+                                            tipo:'Consignatario',
+                                            width:500,
+                                            hiddenName:"consig",
                                             id:"idconsignatario"                                            
                                            });
         this.wgBodega=new WidgetBodega({fieldLabel:"Trasladar a",
-                                            id: "bodega_consignar",
-                                            hiddenName: "idbodega_hd",
-                                            width: 500,
-                                            linkTransporte: "transporte",
-                                            autoSelect : false
+                                            id:"bodega_consignar",
+                                            hiddenName:"idbodega_hd",
+                                            width:500,
+                                            linkTransporte:"transporte",
+                                            autoSelect:false
                                            });
 		this.wgNotify=new WidgetTercero({fieldLabel:"Notificar a",
-                                            tipo: 'Notify',
-                                            width: 500,
-                                            hiddenName: "idnotify",
+                                            tipo:'Notify',
+                                            width:500,
+                                            hiddenName:"idnotify",
                                             id:"notify"
                                            });
         var camposHija = new Array();
         var camposNotificar = new Array();
 
         <?
-        if($impoexpo=="Importación"  && $modo=="Marítimo")
+        if($impoexpo=="Importación" && $modo=="Marítimo")
         {
         ?>
             this.wgBodega.fieldLabel="Usuario";            
-            camposHija.push( this.wgTercero );
-            camposHija.push( this.wgBodega );
-            camposNotificar.push( this.wgNotify );
+            camposHija.push(this.wgTercero);
+            camposHija.push(this.wgBodega);
+            camposNotificar.push(this.wgNotify);
         <?
         }
 		else if($impoexpo==Constantes::EXPO  )
 		{
 		?>
-            camposHija.push( this.wgTercero );
-            camposNotificar.push( this.wgNotify );
+            camposHija.push(this.wgTercero);
+            camposNotificar.push(this.wgNotify);
         <?
 		}
         else
         {
         ?>
-            camposHija.push( this.wgTercero );
+            camposHija.push(this.wgTercero);
             <?
-            if($impoexpo!=Constantes::TRIANGULACION )
+            if($impoexpo!=Constantes::TRIANGULACION)
             ?>
-            camposHija.push( this.wgBodega );
+            camposHija.push(this.wgBodega);
         <?
         }
         ?>
 
-        var camposForm = new Array();
-        obj = new Object();
-        obj1 = null;
-        obj2 = null;
-
+        var camposForm=new Array();
+        obj=new Object();
+        obj1=null;
+        obj2=null;
         obj.xtype='fieldset';
         obj.title='<?=$nomGuiasH?>';
         obj.autoHeight=true;
         obj.id='PCorteHija';
-        obj.items=camposHija;
-        
+        obj.items=camposHija;        
 
     <?
     if(($impoexpo==Constantes::IMPO  && $modo!=Constantes::AEREO) || ($impoexpo==Constantes::EXPO  && $modo==Constantes::AEREO) || ($impoexpo==Constantes::TRIANGULACION ))
     {
     ?>
-        obj1 = new Object();
+        obj1=new Object();
         obj1.xtype='fieldset';
         obj1.title='<?=$nomGuiasM?>';
         obj1.autoHeight=true;
@@ -105,7 +103,7 @@ include_component("widgets", "widgetBodega",array("modo"=>$modo,"impoexpo"=>$imp
     camposForm.push(obj);
     if(camposNotificar.length>0)
     {
-        obj2 = new Object();
+        obj2=new Object();
         obj2.xtype='fieldset';
         obj2.title='Notificar';
         obj2.autoHeight=true;
@@ -115,17 +113,16 @@ include_component("widgets", "widgetBodega",array("modo"=>$modo,"impoexpo"=>$imp
     }
  
         FormCorteGuiasPanel.superclass.constructor.call(this, {
-            activeTab: 0,
-            title: 'Corte Documentos',
-            buttonAlign: 'center',
+            activeTab:0,
+            title:'Corte Documentos',
+            buttonAlign:'center',
             autoHeight:true,
             deferredRender:false,
-            defaults: {labelWidth: 120},
-            items: camposForm
+            defaults:{labelWidth: 120},
+            items:camposForm
         });
     };
-
-    Ext.extend(FormCorteGuiasPanel, Ext.Panel, {
+    Ext.extend(FormCorteGuiasPanel,Ext.Panel,{
 
     });
 </script>

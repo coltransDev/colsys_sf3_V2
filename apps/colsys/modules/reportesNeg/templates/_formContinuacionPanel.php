@@ -7,18 +7,18 @@
 //echo "modo:".$modo.":::::::impoexpo:".$impoexpo;
 if($impoexpo!=Constantes::EXPO)
 {
-include_component("widgets", "widgetContinuacion");
+include_component("widgets","widgetContinuacion");
 $usuarios = $sf_data->getRaw("usuarios");
 }
 else
 {
-include_component("widgets", "widgetBodega");
+include_component("widgets","widgetBodega");
 }
 ?>
 <script type="text/javascript">
 
 
-    FormContinuacionPanel = function( config ){
+    FormContinuacionPanel=function( config ){
 
         Ext.apply(this, config);
 
@@ -26,18 +26,18 @@ include_component("widgets", "widgetBodega");
 			if($impoexpo!=Constantes::EXPO)
 			{
 		?>
-            this.wgContinuacion=new WidgetContinuacion({fieldLabel: 'Continuación',
-                                                    id: 'continuacion',
-                                                    name: 'continuacion',
-                                                    linkTransporte: "transporte",
-                                                    linkImpoexpo: "impoexpo"
+            this.wgContinuacion=new WidgetContinuacion({fieldLabel:'Continuación',
+                                                    id:'continuacion',
+                                                    name:'continuacion',
+                                                    linkTransporte:"transporte",
+                                                    linkImpoexpo:"impoexpo"
                                                     });
 
-			this.wgContinuacion.addListener("select", this.onSelectContinuacion, this );
+			this.wgContinuacion.addListener("select",this.onSelectContinuacion, this );
                         this.widgetCotizacionOtm = new WidgetCotizacion({
-                                              fieldLabel: "Cotización",
+                                              fieldLabel:"Cotización",
                                               id:"cotizacionotm",
-                                              hiddenName: "idcotizacionotm",
+                                              hiddenName:"idcotizacionotm",
                                               modo:"<?=constantes::OTMDTA?>",
                                               impoexpo:"<?=$impoexpo?>",
                                               valueField:"consecutivo"
@@ -50,14 +50,12 @@ include_component("widgets", "widgetBodega");
         FormContinuacionPanel.superclass.constructor.call(this, {
 
             items: [
-
                 {
                     xtype:'fieldset',
-                    title: '<?=$title?>',
+                    title:'<?=$title?>',
                     autoHeight:true,
                     id:'Pcontinuacion',
-                    items: [
-
+                    items:[
 						<?
 						if($impoexpo!=Constantes::EXPO )
 						{
@@ -67,9 +65,9 @@ include_component("widgets", "widgetBodega");
 						?>
                         this.widgetCotizacionOtm,
                         this.wgContinuacion,
-                        new WidgetCiudad({fieldLabel: 'Destino Final',
-                                                  name: 'continuacion_destino',
-                                                  id: 'continuacion_destino',
+                        new WidgetCiudad({fieldLabel:'Destino Final',
+                                                  name:'continuacion_destino',
+                                                  id:'continuacion_destino',
                                                   hiddenName:'continuacion_dest',
                                                   idtrafico: 'CO-057'
                                                 })
@@ -78,17 +76,17 @@ include_component("widgets", "widgetBodega");
                         {
                         ?>,
                         {
-                            xtype: "hidden",
-                            id: "idproductootm",
-                            name: "idproductootm"
+                            xtype:"hidden",
+                            id:"idproductootm",
+                            name:"idproductootm"
                         }                        
 			,
                         {
                             xtype:'fieldset',
-                            title: 'Informar A',
+                            title:'Informar A',
                             autoHeight:true,
                             layout:'column',
-                            columns: 2,
+                            columns:2,
                             defaults:{
                                 columnWidth:'<?=(1/$conta)?>',
                                 layout:'form',
@@ -103,16 +101,16 @@ include_component("widgets", "widgetBodega");
 ?>
                             {
                             columnWidth:'<?=(1/$conta)?>',
-                            layout: 'form',
+                            layout:'form',
                             border:false,
-                            defaultType: 'textfield',
+                            defaultType:'textfield',
                             items: [
                                 {
-                                    xtype: "radio",
-                                    fieldLabel: "<?=$usuarios[$keys[$i]]?>",
-                                    labelStyle: 'width:150px',
-                                    name: "ca_continuacion_conf",
-                                    id: "ca_continuacion_conf_<?=$keys[$i]?>",
+                                    xtype:"radio",
+                                    fieldLabel:"<?=$usuarios[$keys[$i]]?>",
+                                    labelStyle:'width:150px',
+                                    name:"ca_continuacion_conf",
+                                    id:"ca_continuacion_conf_<?=$keys[$i]?>",
                                     inputValue:"<?=$keys[$i]?>"
                                 }
                             ]
@@ -122,10 +120,10 @@ include_component("widgets", "widgetBodega");
                         $i++;
 ?>
                                 {
-                                    xtype: "hidden",
-                                    fieldLabel: "",
-                                    name: "ss",
-                                    id: "ss",
+                                    xtype:"hidden",
+                                    fieldLabel:"",
+                                    name:"ss",
+                                    id:"ss",
                                     value:""
                                 }
                             ]
@@ -138,22 +136,40 @@ include_component("widgets", "widgetBodega");
 						?>
 							{
 								xtype:"hidden",
-								id: 'continuacion',
-								name: 'continuacion',
+								id:'continuacion',
+								name:'continuacion',
 								value:'DTA'
                             },
 							new WidgetBodega({fieldLabel:"Origen",
-                                            id: "cont-origen",
-                                            hiddenName: "idcont-origen",
-                                            width: 600,
-                                            linkTransporte: "transporte"
+                                            id:"cont-origen",
+                                            hiddenName:"idcont-origen",
+                                            width:600,
+                                            linkTransporte:"transporte"
                                            }),
+                          <?
+                          if($modo==Constantes::MARITIMO )
+                          {
+                          ?>
 							new WidgetBodega({fieldLabel:"Destino",
-                                            id: "cont-destino",
-                                            hiddenName: "idcont-origen",
-                                            width: 600,
-                                            linkTransporte: "transporte"
+                                            id:"cont-destino",
+                                            hiddenName:"idcont-origen",
+                                            width:600,
+                                            linkTransporte:"transporte"
                                            })
+                           <?
+                          }
+                          else
+                          {
+                          ?>
+                           new WidgetCiudad({fieldLabel:'Destino Final',
+                              name:'continuacion_destino',
+                              id:'continuacion_destino',
+                              hiddenName:'continuacion_dest',
+                              idtrafico:'CO-057'
+                            })
+                          <?
+                          }
+                           ?>
 						<?
 						}
 						?>
@@ -186,9 +202,7 @@ include_component("widgets", "widgetBodega");
             }
 
         },
-        onSelectCotizacionOtm: function( combo, record, index){
-
-            /*Ext.getCmp("tra_destino_id").setValue(record.data.tra_destino);*/
+        onSelectCotizacionOtm: function( combo, record, index){            
             if(Ext.getCmp("continuacion_destino").getValue()=="")
             {
                 Ext.getCmp("continuacion_destino").setValue(record.data.iddestino);
@@ -198,13 +212,8 @@ include_component("widgets", "widgetBodega");
             {
                 Ext.getCmp("continuacion").setValue(record.data.producto);
             }
-
             
             Ext.getCmp("idproductootm").setValue(record.data.idproducto);
-            
-
-
-
         }
     });
 </script>

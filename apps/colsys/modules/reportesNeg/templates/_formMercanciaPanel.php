@@ -10,27 +10,27 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047,CU049,C
     FormMercanciaPanel = function( config ){
         Ext.apply(this, config);
         FormMercanciaPanel.superclass.constructor.call(this, {
-			items: [
+			items:[
                 {
 					xtype:'fieldset',
-                    title: 'Información de la Mercancia',
+                    title:'Información de la Mercancia',
                     autoHeight:true,
                     id:'Pmercancia',
-                    items: [
+                    items:[
                         {
-                            xtype: 'textarea',
-                            fieldLabel: 'Descripción',                            
-                            name: 'ca_mercancia_desc',
-                            width: 500,
-                            grow: true,
+                            xtype:'textarea',
+                            fieldLabel:'Descripción',
+                            name:'ca_mercancia_desc',
+                            width:500,
+                            grow:true,
                             id:"ca_mercancia_desc",
                             tabIndex:this.tabIndex
                         },
                         {
-                            xtype: "checkbox",
-                            fieldLabel: "¿Es mercancía peligrosa?",
-                            id: "ca_mcia_peligrosa",
-							name: "ca_mcia_peligrosa",
+                            xtype:"checkbox",
+                            fieldLabel:"¿Es mercancía peligrosa?",
+                            id:"ca_mcia_peligrosa",
+							name:"ca_mcia_peligrosa",
                             tabIndex:this.tabIndex++
                         }
 						<?
@@ -41,92 +41,90 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047,CU049,C
 						{                         
                                 autoHeight:true,
                                 layout:'column',                                
-                                items :[
+                                items:[
                                 {
                                     layout:'column',
                                     border:false,
-                                    title: "Piezas",
-                                    columns: 2,
-                                    columnWidth: .25,
-                                    fieldLabel: "Piezas",
-                                    items: [                                        
+                                    title:"Piezas",
+                                    columns:2,
+                                    columnWidth:.25,
+                                    fieldLabel:"Piezas",
+                                    items:[
                                         {
-                                            xtype: "numberfield",
-                                            name: "npiezas",
-                                            id: "npiezas",
+                                            xtype:"numberfield",
+                                            name:"npiezas",
+                                            id:"npiezas",
                                             width:60
                                         }
                                         ,
                                         new WidgetParametros({
-                                                    id: 'mpiezas',
-                                                    name: 'mpiezas',
-                                                    caso_uso: "CU047",
+                                                    id:'mpiezas',
+                                                    name:'mpiezas',
+                                                    caso_uso:"CU047",
                                                     width:80,
                                                     idvalor:"valor"
                                                     })
-
-
                                     ]
                                 },
                                 {
-                                    layout: 'column',
+                                    layout:'column',
                                     border:false,
-                                    defaultType: 'textfield',
-                                    columns: 2,
-                                    columnWidth: .25,
-                                    title: "Peso",
-                                    items: [
+                                    defaultType:'textfield',
+                                    columns:2,
+                                    columnWidth:.25,
+                                    title:"Peso",
+                                    items:[
                                     {
-                                        xtype: "numberfield",
-                                        name: "npeso",
-                                        id: "npeso",
+                                        xtype:"numberfield",
+                                        name:"npeso",
+                                        id:"npeso",
 										width:60
                                     },
                                     new WidgetParametros({
-                                                    id: 'mpeso',
-                                                    name: 'mpeso',
-                                                    caso_uso: "CU049",
+                                                    id:'mpeso',
+                                                    name:'mpeso',
+                                                    caso_uso:"CU049",
                                                     width:80,
                                                     idvalor:"valor"
                                                     })
                                     ]
                                 },                                
                                 {
-                                    layout: 'column',
+                                    layout:'column',
                                     border:false,
-                                    defaultType: 'textfield',
-                                    columns: 2,
-                                    columnWidth: .25,
-                                    title: "Volumen",
-                                    items: [
+                                    defaultType:'textfield',
+                                    columns:2,
+                                    columnWidth:.25,
+                                    title:"Volumen",
+                                    items:[
 										{
-											xtype: "numberfield",
-											name: "nvolumen",
-											id: "nvolumen",
+											xtype:"numberfield",
+											name:"nvolumen",
+											id:"nvolumen",
 											width:60
 										},
                                         new WidgetParametros({
-                                                    id: 'mvolumen',
-                                                    name: 'mvolumen',
-                                                    caso_uso: "<?=($modo==Constantes::AEREO)?"CU058":"CU050"?>",
+                                                    id:'mvolumen',
+                                                    name:'mvolumen',
+                                                    caso_uso:"<?=($modo==Constantes::AEREO)?"CU058":"CU050"?>",
                                                     width:80,
                                                     idvalor:"valor"
                                                     })
                                     ]
                                 },
 								{
-                                    layout: 'column',
+                                    layout:'column',
                                     border:false,
-                                    defaultType: 'textfield',
-                                    columns: 4,
-                                    columnWidth: .25,
-                                    title: "Dimensiones",
-                                    items: [
+                                    defaultType:'textfield',
+                                    columns:4,
+                                    columnWidth:.25,
+                                    title:"Dimensiones",
+                                    items:[
 										{
-											xtype: 'textarea',
-											name: 'dimensiones',
-											width: '80%',
-											grow: true,
+											xtype:'textarea',
+											name:'dimensiones',
+											width:'80%',
+											grow:true,
 											id:"dimensiones"
 										}
 									]
@@ -137,34 +135,34 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047,CU049,C
 						{
 							autoHeight:true,
 							layout:'column',
-							items :[
+							items:[
 								{
 									layout:'column',
 									border:false,
-									title: "Valor Carga (USD)",
+									title:"Valor Carga (USD)",
 
-									columnWidth: .15,
-									items: [
+									columnWidth:.15,
+									items:[
 									{
-										xtype: "numberfield",
-										name: "valor_carga",
-										id: "valor_carga"
+										xtype:"numberfield",
+										name:"valor_carga",
+										id:"valor_carga"
 									}
 									]
 								},
 								{
 									layout:'column',
 									border:false,
-									title: "Agencia de Aduana",
-									columnWidth: .35,
-									items: [
+									title:"Agencia de Aduana",
+									columnWidth:.35,
+									items:[
 										{
-											xtype: "combo",											
-											id: "sia",
+											xtype:"combo",
+											id:"sia",
                                             hiddenName:"idsia",
 											mode:'local',
 											width:350,
-											store : [
+											store:[
 											<?
 											echo "['','...']";
 											foreach( $sia as $t ){
@@ -175,9 +173,9 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047,CU049,C
 											}
 											?>
 											],
-											typeAhead: true,
-											forceSelection: true,
-											triggerAction: 'all',
+											typeAhead:true,
+											forceSelection:true,
+											triggerAction:'all',
 											selectOnFocus:true,
 											lazyRender:true
 										}
@@ -187,12 +185,12 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047,CU049,C
 								{
 									layout:'column',
 									border:false,
-									title: "Tipo Exportacion",
-									columnWidth: .25,
-									items: [
+									title:"Tipo Exportacion",
+									columnWidth:.25,
+									items:[
                                         new WidgetParametros({
-                                                    id: 'tipoexpo',                                                    
-                                                    caso_uso: "CU011",
+                                                    id:'tipoexpo',
+                                                    caso_uso:"CU011",
                                                     width:230,
                                                     hiddenName:"idtipoexpo"
                                                     })
@@ -202,14 +200,14 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047,CU049,C
 								{
 									layout:'column',
 									border:false,
-									title: "<?=$nave?>",
+									title:"<?=$nave?>",
 
-									columnWidth: .25,
-									items: [
+									columnWidth:.25,
+									items:[
 									{
-										xtype: "textfield",
-										name: "motonave",
-										id: "motonave"
+										xtype:"textfield",
+										name:"motonave",
+										id:"motonave"
 									}
 									]
 								}
@@ -222,18 +220,18 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047,CU049,C
                         {
 							autoHeight:true,
 							layout:'column',
-							items :[
+							items:[
                             {
 									layout:'column',
 									border:false,
-									title: "Lugar de emisión BL",
-									columnWidth: .25,
-									items: [                                        
+									title:"Lugar de emisión BL",
+									columnWidth:.25,
+									items:[
                                         new WidgetParametros({
-                                                    id: 'emisionbl',
-                                                    name: 'emisionbl',
-                                                    hiddenName: 'idemisionbl',
-                                                    caso_uso: "CU089",
+                                                    id:'emisionbl',
+                                                    name:'emisionbl',
+                                                    hiddenName:'idemisionbl',
+                                                    caso_uso:"CU089",
                                                     width:150,                                                    
                                                     idvalor:"valor"
                                                     })
@@ -243,13 +241,13 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047,CU049,C
 								{
 									layout:'column',
 									border:false,
-									title: "Cuantos BL?",
-									columnWidth: .75,
-									items: [
+									title:"Cuantos BL?",
+									columnWidth:.75,
+									items:[
 									{
-										xtype: "numberfield",
-										name: "ca_numbl",
-										id: "ca_numbl"
+										xtype:"numberfield",
+										name:"ca_numbl",
+										id:"ca_numbl"
 									}
 									]
 								}

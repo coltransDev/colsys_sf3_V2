@@ -7,7 +7,7 @@
 
 if( $cotizacionotm ){
     
-    include_component("cotizaciones","panelProductos",array("cotizacion"=>$cotizacionotm, "producto"=>$productootm , "modo"=>"consulta"));
+    include_component("cotizaciones","panelProductosotm",array("cotizacion"=>$cotizacionotm, "producto"=>$productootm , "modo"=>"consulta"));
     ?>
 
     <script type="text/javascript">
@@ -16,7 +16,7 @@ if( $cotizacionotm ){
 
 
 
-            this.grid = new PanelProductos({tipo:'OTM/DTA'});
+            this.grid = new PanelProductosOtm({tipo:'OTM/DTA'});
 
     
 
@@ -118,6 +118,8 @@ if( $cotizacionotm ){
                         lastConcepto = r.data.iditem;
                         lastConceptoTxt = r.data.item;
                     }
+                    else
+                        continue;
                     
                     if( !existe && (r.data.tipo=="concepto" || (r.data.tipo=="recargo" && lastConcepto==r.data.idconcepto))){
                     
@@ -127,7 +129,7 @@ if( $cotizacionotm ){
                                        idreporte: '<?=$reporte->getCaIdreporte()?>',
                                        item: r.data.item,
                                        iditem: r.data.iditem,
-                                       idconcepto: r.data.idconcepto,
+                                       idconcepto: r.data.iditem,
                                        tipo: r.data.tipo,
                                        cantidad: '',
                                        neta_tar: '',

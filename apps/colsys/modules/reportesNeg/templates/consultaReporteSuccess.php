@@ -107,7 +107,7 @@ include_component("reportesNeg","mainPanel");
 include_component("reportesNeg","panelConceptosFletes", array("reporte"=>$reporte));
 $panelConceptosFletes = true;
 
-if($reporte->getCaTransporte()==constantes::MARITIMO && $reporte->getCaImpoexpo()==constantes::IMPO)
+if($reporte->getCaContinuacion()=="OTM")
 {
     include_component("reportesNeg","panelConceptosOtm", array("reporte"=>$reporte));
     $panelConceptosOtm = true;
@@ -141,14 +141,26 @@ if( ($reporte->getCaColmas()=="Sí" && $reporte->getCaImpoexpo()!=Constantes::TRI
    });
 
     var anularReporte = function(btn, text){
-        if( btn == "ok"){
+/*        ok     : "Solo Version",
+              cancel : "cancelar",
+              yes    : "Todas Las versiones"
+*/
+
+
+        if( btn == "ok" || btn == "yes"){
+
             if( text.trim()==""){
                 alert("Debe colocar un motivo");
             }else{
+                if(btn=="ok")
+                    href='<?=url_for("reportesNeg/anularReporte?id=".$reporte->getCaIdreporte())?>';
+                else if(btn=="yes")
+                    href='<?=url_for("reportesNeg/anularReporte?consecutivo=".$reporte->getCaConsecutivo())?>';
+
                 Ext.Ajax.request(
                 {
                     waitMsg: 'Anulando...',
-                    url: '<?=url_for("reportesNeg/anularReporte?id=".$reporte->getCaIdreporte())?>',
+                    url: href,
                     params :	{
                         motivo: text.trim()
                     },
@@ -169,12 +181,18 @@ if( ($reporte->getCaColmas()=="Sí" && $reporte->getCaImpoexpo()!=Constantes::TRI
            title: 'Anular Reporte',
            msg: 'por favor coloque el motivo por el que anula el reporte:',
            width:300,
-           buttons: Ext.MessageBox.OKCANCEL,
+           buttons:{
+              ok     : "Solo Version",
+              cancel : "cancelar",
+              yes    : "Todas Las versiones"
+           },
            multiline: true,
            fn: anularReporte,
            animEl: 'anular-reporte',
            modal: true
         });
+        Ext.MessageBox.buttonText.yes = "Version";
+        Ext.MessageBox.buttonText.no = "Todas las versiones";
     }
 
     var guardarCambios = function(){
@@ -221,36 +239,7 @@ if( ($reporte->getCaColmas()=="Sí" && $reporte->getCaImpoexpo()!=Constantes::TRI
     ?>
         var panelFletes = new PanelConceptosFletes({
             title: 'Con. de fletes',
-            id:'panel-Fletes'
-            <?
-            if( $editable ){
-            ?>
-            ,tbar: [
-                {
-                    text:'Guardar',
-                    iconCls: 'disk',
-                    scope:this,
-                    handler: guardarCambios
-                }
-                <?
-                if( $reporte->getCaIdproducto() ){
-                ?>
-                ,
-                '-',
-
-                 {
-                    text:'Importar Cotizacion',
-                    iconCls: 'import',
-                    scope:this,
-                    handler: importarConceptosFletes
-                }
-                <?
-                }
-                ?>
-            ]
-            <?
-            }
-            ?>
+            id:'panel-Fletes'            
         });
     <?
     }
@@ -258,36 +247,7 @@ if( ($reporte->getCaColmas()=="Sí" && $reporte->getCaImpoexpo()!=Constantes::TRI
     ?>
         var panelOtm = new PanelConceptosOtm({
             title: 'Otm',
-            id:'panel-Otm'
-            <?
-            if( $editable ){
-            ?>
-            ,tbar: [
-                {
-                    text:'Guardar',
-                    iconCls: 'disk',
-                    scope:this,
-                    handler: guardarCambios
-                }
-                <?
-                if( $reporte->getCaIdproductootm() ){
-                ?>
-                ,
-                '-',
-
-                 {
-                    text:'Importar Cotizacion',
-                    iconCls: 'import',
-                    scope:this,
-                    handler: importarConceptosOtm
-                }
-                <?
-                }
-                ?>
-            ]
-            <?
-            }
-            ?>
+            id:'panel-Otm'            
         });
     <?
     }
@@ -296,35 +256,7 @@ if( ($reporte->getCaColmas()=="Sí" && $reporte->getCaImpoexpo()!=Constantes::TRI
         var panelRecargosLocales = new PanelRecargos({
             title: 'Rec. locales',
             id:'panel-RecargosLocales'
-            <?
-            if( $editable ){
-            ?>
-            ,
-            tbar: [
-                {
-                    text:'Guardar',
-                    iconCls: 'disk',
-                    scope:this,
-                    handler: guardarCambios
-                }
-                <?
-                if( $reporte->getCaIdcotizacion() ){
-                ?>
-                ,
-                '-',
-                 {
-                    text:'Importar Cotizacion',
-                    iconCls: 'import',
-                    scope:this,
-                    handler: importarRecargosLocales
-                }
-                <?
-                }
-                ?>
-            ]
-            <?
-            }
-            ?>
+            
         });
     <?
     }
@@ -343,22 +275,7 @@ if( ($reporte->getCaColmas()=="Sí" && $reporte->getCaImpoexpo()!=Constantes::TRI
                     iconCls: 'disk',
                     scope:this,
                     handler: guardarCambios
-                }
-                <?
-                /*if( $reporte->getCaIdcotizacion() ){
-                ?>
-                ,
-                '-',
-
-                 {
-                    text:'Importar de la Cotizacion',
-                    iconCls: 'import',
-                    scope:this,
-                    handler: importarRecargosAduanas
-                }
-                <?
-                }*/
-                ?>
+                }                
                 ]
             <?
             }

@@ -14,67 +14,63 @@ include_component("widgets", "widgetImpoexpo");
 
 ?>
 <script type="text/javascript">
-    FormGeneralOsPanel = function( config ){
-        Ext.apply(this, config);
-        this.widgetCotizacion = new WidgetCotizacion({
-                                              fieldLabel: "Cotización",
+    FormGeneralOsPanel=function( config ){
+        Ext.apply(this,config);
+        this.widgetCotizacion=new WidgetCotizacion({
+                                              fieldLabel:"Cotización",
                                               id:"cotizacion",
-                                              hiddenName: "idcotizacion",
+                                              hiddenName:"idcotizacion",
                                               modo:"<?=$modo?>",
                                               impoexpo:"<?=$impoexpo?>",
                                               valueField:"consecutivo"
                                               });
-        this.widgetCotizacion.addListener("select", this.onSelectCotizacion, this );
+        this.widgetCotizacion.addListener("select",this.onSelectCotizacion,this );
 
 
-        this.wgImpoexpo=new WidgetImpoexpo({fieldLabel: 'Impoexpo',
-                                                id: 'impoexpo',
+        this.wgImpoexpo=new WidgetImpoexpo({fieldLabel:'Impoexpo',
+                                                id:'impoexpo',
                                                 name:'impoexpo',
                                                 tabIndex:2,
                                                 value:'<?=$impoexpo?>'
                                                });
-        this.wgImpoexpo.addListener("select", this.onSelectImpoexpo, this);
-
-
+        this.wgImpoexpo.addListener("select",this.onSelectImpoexpo,this);
 
         FormGeneralOsPanel.superclass.constructor.call(this, {
 			labelWidth: 100,
-            title: 'General',
+            title:'General',
             deferredRender:false,
-
             autoHeight:true,
 
             items: [{
                         xtype:'fieldset',
-                        title: 'General',
+                        title:'General',
                         autoHeight:true,
-
                         layout:'form',
-                        defaults: {width: 200},
+                        defaults:{width: 200},
                         items :
                         [
                             {
-                                xtype: "hidden",
-                                id: "idproducto",
-                                name: "idproducto"
+                                xtype:"hidden",
+                                id:"idproducto",
+                                name:"idproducto"
                             }
                             ,
                             this.widgetCotizacion,
                             {
-                                xtype: "datefield",
-                                fieldLabel: "Fecha de Despacho",
-                                id: "fchdespacho",
-                                name: "fchdespacho",
-                                format: 'Y-m-d'
+                                xtype:"datefield",
+                                fieldLabel:"Fecha de Despacho",
+                                id:"fchdespacho",
+                                name:"fchdespacho",
+                                format:'Y-m-d'
                             },
 
-                            new WidgetComerciales({fieldLabel: 'Vendedor',
-                                                    id: 'vendedor',
-                                                    name: 'vendedor',
-                                                    hiddenName: "idvendedor"
+                            new WidgetComerciales({fieldLabel:'Vendedor',
+                                                    id:'vendedor',
+                                                    name:'vendedor',
+                                                    hiddenName:"idvendedor"
                                                     }),
-                            new WidgetTransporte({fieldLabel: 'Transporte',
-                                                id: 'transporte',
+                            new WidgetTransporte({fieldLabel:'Transporte',
+                                                id:'transporte',
                                                 name:'transporte',
                                                 tabIndex:2,
                                                 value:'<?=$modo?>'
@@ -87,11 +83,8 @@ include_component("widgets", "widgetImpoexpo");
         });
     };
 
-    Ext.extend(FormGeneralOsPanel, Ext.Panel, {
-        /*
-         * Completa los datos del reporte con la cotización seleccionada.
-         **/
-        onSelectCotizacion: function( combo, record, index){
+    Ext.extend(FormGeneralOsPanel,Ext.Panel, {
+        onSelectCotizacion: function(combo,record,index){
             if(Ext.getCmp("modalidad").getValue()=="")
             Ext.getCmp("modalidad").setValue(record.data.modalidad);
 
@@ -99,15 +92,12 @@ include_component("widgets", "widgetImpoexpo");
             {
                 Ext.getCmp("linea").setValue(record.data.idlinea);
                 $("#linea").val(record.data.linea);
-            }
-
-            /*Ext.getCmp("tra_origen_id").setValue(record.data.tra_origen);*/
+            }            
             if(Ext.getCmp("origen").getValue()=="")
             {
                 Ext.getCmp("origen").setValue(record.data.idorigen);
                 $("#origen").val(record.data.origen);
-            }
-            /*Ext.getCmp("tra_destino_id").setValue(record.data.tra_destino);*/
+            }            
             if(Ext.getCmp("destino").getValue()=="")
             {
                 Ext.getCmp("destino").setValue(record.data.iddestino);
@@ -129,7 +119,7 @@ include_component("widgets", "widgetImpoexpo");
                 confirmaciones=record.data.confirmar.split(",");
                 for(i=0;i<confirmaciones.length || i<20;i++)
                 {
-                    if(confirmaciones[i]!="" && jQuery.inArray(confirmaciones[i], confirmacionesF)<0 )
+                    if(confirmaciones[i]!="" && jQuery.inArray(confirmaciones[i],confirmacionesF)<0 )
                     Ext.getCmp("contacto_"+i).setValue(confirmaciones[i]);
                 }
 
@@ -153,7 +143,6 @@ include_component("widgets", "widgetImpoexpo");
                 $("#cliente").attr("value",record.data.compania);
                 $("#idconcliente").attr("value",record.data.idcontacto);
             }
-
             if(Ext.getCmp("terminos"))
             {
                 if(Ext.getCmp("terminos").getValue()=="")
@@ -161,7 +150,6 @@ include_component("widgets", "widgetImpoexpo");
                     Ext.getCmp("terminos").setValue(record.data.incoterms);
                 }
             }
-
             if(Ext.getCmp("ca_obtencionpoliza").getValue()=="")
             {
                 Ext.getCmp("ca_obtencionpoliza").setValue(record.data.obtencion);
@@ -182,7 +170,6 @@ include_component("widgets", "widgetImpoexpo");
             {
                 Ext.getCmp("ca_minimaventa").setValue(record.data.prima_min);
             }
-
             if((record.data.obtencion) || (record.data.idmoneda) || (record.data.idmonedaobtencion) || (record.data.prima_vlr) || (record.data.prima_min))
             {
                 Ext.getCmp('seguros').expand();
@@ -212,12 +199,12 @@ include_component("widgets", "widgetImpoexpo");
             }
         }
 		,
-        onSelectModalidad: function( combo, record, index)
+        onSelectModalidad: function(combo,record,index)
         {
             if(record)
             {
                 <?
-                    if($impoexpo== Constantes::TRIANGULACION )
+                    if($impoexpo==Constantes::TRIANGULACION )
                     {
                     ?>
                         if(Ext.getCmp("PCorteHija"))

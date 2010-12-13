@@ -254,10 +254,10 @@ class reportesNegActions extends sfActions
         $this->modo = $this->getRequestParameter("modo");
         $this->impoexpo = $this->getRequestParameter("impoexpo");
 
-	$opcion = $this->getRequestParameter("criterio");
-	$criterio = trim($this->getRequestParameter("cadena"));
+        $opcion = $this->getRequestParameter("criterio");
+        $criterio = trim($this->getRequestParameter("cadena"));
         $this->criterio = $this->getRequestParameter("criterio");
-	$this->cadena = trim($this->getRequestParameter("cadena"));
+        $this->cadena = trim($this->getRequestParameter("cadena"));
         $this->idimpo =   $this->getRequestParameter("idimpo");
 
         $fechaInicial = $this->getRequestParameter("fechaInicial");
@@ -267,73 +267,6 @@ class reportesNegActions extends sfActions
         $this->seguro = $this->getRequestParameter("seguro");
         $this->colmas = $this->getRequestParameter("colmas");
 
-
-/*        $q = Doctrine::getTable("Reporte")
-                       ->createQuery("r")
-                       //->distinct()
-                       ->limit(80);
-                       //->addOrderBy("r.ca_consecutivo");
-		switch( $criterio ){
-			case "numero_de_reporte":
-                $q->addWhere("r.ca_consecutivo like ?", $cadena."%");
-				break;
-			case "cliente":
-                $q->innerJoin("r.Contacto con");
-                $q->innerJoin("con.Cliente cl");
-                $q->addWhere("UPPER(cl.ca_compania) LIKE ?","%".strtoupper( $cadena )."%");
-				break;
-            case "login":
-                $q->innerJoin("r.Usuario usu");
-                $q->addWhere("usu.ca_login = ?",$this->getUser()->getUserId());
-  //              echo "usuario:<b>".$this->getUser()->getCaLogin()."</b><br>";
-               break;
-           case "proveedor":
-                //$q->innerJoin("r.Proveedor prov");
-                //$q->addWhere("UPPER(prov.ca_nombre) LIKE ? ",strtoupper( $cadena )."%");
-               break;
-           case "orden_proveedor":
-               $q->addWhere("r.ca_orden_prov LIKE ?",( $cadena )."%");
-               break;
-           case "orden_cliente":
-               $q->addWhere("r.ca_orden_clie LIKE ?",( $cadena )."%");
-               break;
-           case "cotizacion":
-               $q->addWhere("r.ca_idcotizacion LIKE ?",( $cadena )."%");
-               break;
-           case "mercancia_desc":
-               $q->addWhere("r.ca_mercancia_desc LIKE ?","%".( $cadena )."%");
-               break;
-           case "vendedor":
-               case "login":
-                $q->innerJoin("r.Usuario usu");
-                $q->addWhere("usu.ca_nombre LIKE ?",( $cadena )."%");
-               break;
-           case "ciudadorigen":
-                $q->innerJoin("r.Origen ori");
-                $q->addWhere("UPPER(ori.ca_ciudad) LIKE ?",strtoupper( $cadena )."%");
-                break;
-		}
-
-        if($fechaInicial!="" && $fechaFinal!="")
-        {
-            $q->addWhere("ca_fchcreado between '".Utils::parseDate($fechaInicial)."' and '".Utils::parseDate($fechaFinal)."'");
-        }
-        //$q->addWhere("r.ca_transporte = ?", $this->modo);
-        //$q->addWhere("r.ca_impoexpo = ?", $this->impoexpo);
-        $q->addWhere("r.ca_fchanulado is null");
-        $q->addOrderBy("to_number( SUBSTR(r.ca_consecutivo , (POSITION('-' in r.ca_consecutivo)-1)  , length(r.ca_consecutivo))  ,'999999')  desc");
-        $q->addOrderBy("to_number(SUBSTR(r.ca_consecutivo , 1 , (POSITION('-' in r.ca_consecutivo)-1) ),'999999')  desc");
-        $q->addOrderBy("r.ca_version  desc");
-//        $q->orderBy("ca_idreporte desc");
-        //$q->limit(40);
-        $this->reportes=null;
-        if( ($this->idimpo && $cadena) || !$this->idimpo )
-        {
-            //echo "entro";
-            $this->reportes = $q->execute();
-        }
- *
- */
         $condicion="";
         if( $criterio ){
             if ($opcion == 'ca_consecutivo' or $opcion == 'ca_nombre_cli' or $opcion == 'ca_nombre_con' or $opcion == 'ca_nombre_pro' or $opcion == 'ca_orden_prov' or $opcion == 'ca_orden_clie' or $opcion == 'ca_idcotizacion' or $opcion == 'ca_login' or $opcion == 'ca_mercancia_desc' or $opcion == 'ca_traorigen' or $opcion == 'ca_ciuorigen') {
@@ -361,7 +294,7 @@ class reportesNegActions extends sfActions
 
         if( ($this->idimpo && $criterio) || !$this->idimpo ){
             $con = Doctrine_Manager::getInstance()->connection();
-                    $sql="select * from vi_reportes1 where 1=1 $condicion limit 80";
+                    $sql="select * from vi_reportes2 where 1=1 $condicion limit 80";
 
                     $st = $con->execute($sql);
 
@@ -383,13 +316,11 @@ class reportesNegActions extends sfActions
 		$reporte = Doctrine::getTable("Reporte")->find( $this->getRequestParameter("id") );
 		$this->forward404Unless( $reporte );
 
-        if( ($reporte->isNew() || $reporte->getCaVersion() == $reporte->getUltVersion()) &&!$reporte->existeReporteExteriorVersionActual() )
-        {
-            if( $reporte->getCaUsuanulado() ){
-                $this->redirect( "reportesNeg/verReporte?id=".$reporte->getCaIdreporte().($this->opcion?"&opcion=".$this->opcion:"") );
-            }
-        }else{
-           // $this->redirect( "reportesNeg/verReporte?id=".$reporte->getCaIdreporte().($this->opcion?"&opcion=".$this->opcion:"") );
+//        if( ($reporte->isNew() || $reporte->getCaVersion() == $reporte->getUltVersion()) &&!$reporte->existeReporteExteriorVersionActual() )
+
+//        echo $reporte->getCaUsuanulado();
+        if( $reporte->getCaUsuanulado() ){
+            $this->redirect( "reportesNeg/verReporte?id=".$reporte->getCaIdreporte());
         }
         
 		$this->reporte = $reporte;
@@ -549,7 +480,10 @@ class reportesNegActions extends sfActions
                 $this->copiar = true;
             }
         }
-        $this->reporte=$reporte;       
+        $this->reporte=$reporte;
+        $response = sfContext::getInstance()->getResponse();
+		$response->addJavaScript("extExtras/RowExpander",'last');
+		$response->addJavaScript("extExtras/CheckColumn",'last');
    }
 
    public function executeFormReporte1(sfWebRequest $request){
@@ -1107,10 +1041,14 @@ class reportesNegActions extends sfActions
             {
                 $reporte->setCaTiempocredito($request->getParameter("ca_tiempocredito"));
             }
-            if($request->getParameter("ca_comodato") )
+            if($request->getParameter("ca_comodato") && $request->getParameter("ca_comodato")=="on"  )
             {
-                $reporte->setCaComodato($request->getParameter("ca_comodato"));
+                $reporte->setCaComodato("Sí");
+            }else
+            {
+                $reporte->setCaComodato("No");
             }
+
             if($request->getParameter("preferencias") )
             {
                 $reporte->setCaPreferenciasClie(utf8_decode($request->getParameter("preferencias")));
@@ -1261,6 +1199,30 @@ class reportesNegActions extends sfActions
                                              ->execute();
 
                     
+                    if(count($seg)<=0)
+                    {
+                        $cotseguimientos = new CotSeguimiento();
+                        $cotseguimientos->aprobarSeguimiento($param);
+                    }
+                }
+                if($request->getParameter("idproductootm"))
+                {
+                    $idproductootm=$request->getParameter("idproductootm");
+                    $param=array();
+                    $param["idproducto"]=$request->getParameter("idproductootm");
+                    $param["etapa"]="APR";
+                    $param["seguimiento"]="";
+                    $param["fchseguimiento"]="";
+                    $param["user"]=$this->getUser()->getUserId();
+
+//                    $cotseguimientos=Doctrine::gettable("CotSeguimiento")->findBy("ca_idproducto", $idproducto);
+
+                    $seg = Doctrine::getTable("CotSeguimiento")
+                                             ->createQuery("s")
+                                             ->where("s.ca_idproducto = ? and s.ca_etapa=?", array($idproductootm,'APR'))
+                                             ->execute();
+
+
                     if(count($seg)<=0)
                     {
                         $cotseguimientos = new CotSeguimiento();
@@ -2814,12 +2776,12 @@ color="#000000";
 
             $data["ca_liberacion"] =($cliente->getLibCliente()->getCaDiascredito()>0)?"Si":"No";
             $data["ca_tiempocredito"] =$cliente->getLibCliente()->getCaDiascredito();
-            $data["preferencias"] =($reporte->getCaPreferenciasClie()!="")?utf8_encode($reporte->getCaPreferenciasClie()):$cliente->getCaPreferencias();            
+            $data["preferencias"] =utf8_encode(($reporte->getCaPreferenciasClie()!="")?($reporte->getCaPreferenciasClie()):$cliente->getCaPreferencias());
 
-           $data["ca_comodato"] =utf8_encode($reporte->getCaComodato());
+            $data["ca_comodato"] =utf8_encode($reporte->getCaComodato());
 
             if( $reporte->getCaIdproveedor() ){
-                $values = explode("|", $reporte->getCaIdproveedor() );
+                $values = explode("|", $reporte->getCaIdproveedor());
                 for($i=0;$i<count($values);$i++)
                 {
                     $tercero = Doctrine::getTable("Tercero")->find($values[$i]);
@@ -2916,6 +2878,7 @@ color="#000000";
             $data["ca_idmoneda_vta"]=$repseguro->getCaIdmonedaVta();
 
 
+            $data["idconsignarmaster"]=$reporte->getConsignarmaster();
             $data["consignarmaster"]=$reporte->getConsignarmaster();
             $data["tipobodega"]=utf8_encode($reporte->getBodega()->getCaTipo());
             $data["idbodega_hd"]=$reporte->getCaIdbodega();
@@ -3104,7 +3067,7 @@ color="#000000";
                     $row["cobrar_idm"] = $recargo->getCaIdmoneda();
                     $row["observaciones"] = utf8_encode($recargo->getCaDetalles());
                     $row['tipo']="recargo";
-                    $row['orden']="Y-".$recargo->getTipoRecargo()->getCaRecargo();
+                    $row['orden']="Y-".utf8_encode($recargo->getTipoRecargo()->getCaRecargo());
                     $conceptos[] = $row;
                 }
             }
@@ -3204,10 +3167,11 @@ color="#000000";
         }
 
 
-        if( $tipo=="recargo" ){           
+        if( $tipo=="recargo" ){
             $idconcepto = $request->getParameter("idconcepto");
             $idrecargo = $request->getParameter("iditem");
-            $tarifa = Doctrine::getTable("RepGasto")->find(array($idreporte, $idconcepto, $idrecargo ));
+            $idequipo=($request->getParameter("idequipo"))?$request->getParameter("idequipo"):"0";
+            $tarifa = Doctrine::getTable("RepGasto")->find(array($idreporte, $idconcepto, $idrecargo,$idequipo ));
             if( !$tarifa ){
                 $tarifa = new RepGasto();
                 $tarifa->setCaIdreporte( $idreporte );
@@ -3216,7 +3180,9 @@ color="#000000";
                 
                 $tarifa->setCaIdconcepto( $idconcepto );
                 $tarifa->setCaIdrecargo( $idrecargo );
+                
             }
+            $tarifa->setCaIdequipo( $idequipo );
 
             if( $request->getParameter("aplicacion")!==null ){
                 $tarifa->setCaAplicacion( $request->getParameter("aplicacion") );
@@ -3284,9 +3250,7 @@ color="#000000";
                 $tarifa->setCaRecargoorigen( $request->getParameter("ca_recargoorigen") );
             }
 
-            if( $request->getParameter("idequipo")!==null ){
-                $tarifa->setCaIdequipo( $request->getParameter("idequipo") );
-            }
+            
 
             $tarifa->save();
 
@@ -3330,7 +3294,17 @@ color="#000000";
             Doctrine_Query::create()
                    ->delete()
                    ->from("RepGasto g")
-                   ->where("g.ca_idreporte = ? and ca_recargoorigen=false ", array($idreporte))
+                   ->where("g.ca_idreporte = ? and ca_recargoorigen=false and ca_idrecargo!=61 ", array($idreporte))
+                   ->execute();
+
+
+        }
+        else if($tipo=="All-recargos-otm")
+        {
+            Doctrine_Query::create()
+                   ->delete()
+                   ->from("RepGasto g")
+                   ->where("g.ca_idreporte = ? and ca_recargoorigen=false and ca_idrecargo=61 ", array($idreporte))
                    ->execute();
 
 
@@ -3407,19 +3381,15 @@ color="#000000";
 
         if($this->getRequestParameter("tipo")=="2")
         {
-            $recargos = Doctrine::getTable("RepGasto")
-                             ->createQuery("t")                             
-                             ->where("t.ca_idreporte = ?", $reporte->getCaIdreporte())
-                             ->addWhere("t.ca_idequipo>0")
-                             ->execute();
+            $recargos = $reporte->getRecargos ( constantes::OTMDTA );
 
             foreach( $recargos as $recargo ){
                 $row = $baseRow;
                 $row["iditem"] = $recargo->getCaIdrecargo();
                 $row["idconcepto"] = $recargo->getCaIdconcepto();
-                $row["item"] = utf8_encode($recargo->getConcepto()->getCaConcepto());
+                $row["item"] = ($recargo->getConcepto())?utf8_encode($recargo->getConcepto()->getCaConcepto()):"";
                 $row["idequipo"] = $recargo->getCaIdequipo();
-                $row["equipo"] = utf8_encode($recargo->getEquipo()->getCaConcepto());
+                $row["equipo"] = ($recargo->getEquipo())?utf8_encode($recargo->getEquipo()->getCaConcepto()):"";
                 $row["tipo_app"] = $recargo->getCaTipo();
                 $row["aplicacion"] = $recargo->getCaAplicacion();
                 $row["neta_tar"] = $recargo->getCaNetaTar();
@@ -3438,20 +3408,14 @@ color="#000000";
         }
         else
         {
-            $recargos = Doctrine::getTable("RepGasto")
-                             ->createQuery("t")
-                             ->innerJoin("t.TipoRecargo tr")
-                             ->where("t.ca_idreporte = ?", $reporte->getCaIdreporte())
-                             //->addWhere("t.ca_idconcepto = ?", 9999 )
-                             ->addWhere("tr.ca_tipo like ?", "%".Constantes::RECARGO_LOCAL."%" )
-                             ->addWhere("t.ca_idequipo is null")
-                             ->orderBy("t.ca_fchcreado ASC")
-                             ->execute();
+            $recargos = $reporte->getRecargos ( "local" );
 
             foreach( $recargos as $recargo ){
                 $row = $baseRow;
                 $row["iditem"] = $recargo->getCaIdrecargo();
                 $row["idconcepto"] = $recargo->getCaIdconcepto();
+                $row["idequipo"] = $recargo->getCaIdequipo();
+                $row["equipo"] = utf8_encode($recargo->getEquipo()->getCaConcepto());
                 $row["item"] = utf8_encode($recargo->getTipoRecargo()->getCaRecargo());
                 $row["tipo_app"] = $recargo->getCaTipo();
                 $row["aplicacion"] = $recargo->getCaAplicacion();
@@ -3669,19 +3633,34 @@ color="#000000";
 	* Anula un reporte
 	* @author: Mauricio Quinche
 	*/
-	public function executeAnularReporte( $request ){
-        $this->opcion = $this->getRequestParameter("opcion");
-        $this->forward404Unless( $request->getParameter("id") );
+	public function executeAnularReporte( $request ){        
+        $id=$request->getParameter("id") ;
+        $consecutivo=$request->getParameter("consecutivo") ;
+
         $this->forward404Unless( trim($request->getParameter("motivo")) );
-		$reporte = Doctrine::getTable("Reporte")->find( $request->getParameter("id") );
-		$this->forward404Unless($reporte);
 
-		$user = $this->getUser();
-		$reporte->setCaUsuanulado( $user->getUserId() );
-		$reporte->setCaFchanulado( date("Y-m-d H:i:s") );
-        $reporte->setCaDetanulado( trim($request->getParameter("motivo")));
-		$reporte->save();
+        if($id)
+        {
+            $reporte = Doctrine::getTable("Reporte")->find( $request->getParameter("id") );
+            $this->forward404Unless($reporte);
 
+            $user = $this->getUser();
+            $reporte->setCaUsuanulado( $user->getUserId() );
+            $reporte->setCaFchanulado( date("Y-m-d H:i:s") );
+            $reporte->setCaDetanulado( trim($request->getParameter("motivo")));
+            $reporte->save();
+        }
+        else if($consecutivo)
+        {
+            Doctrine::getTable("Reporte")
+                  ->createQuery("r")
+                  ->update()
+                  ->set("r.ca_fchanulado","'". date('Y-m-d H:i:s')."'")
+                  ->set("r.ca_usuanulado","'". $this->getUser()->getUserId()."'")
+                  ->set("r.ca_detanulado","'". trim(utf8_decode($request->getParameter("motivo")))."'")
+                  ->where("r.ca_consecutivo =?", $consecutivo)
+                  ->execute();
+        }
         $this->responseArray = array("success"=>true);
         $this->setTemplate("responseTemplate");
 	}
@@ -3691,9 +3670,7 @@ color="#000000";
 	* @author: Mauricio Quinche
 	*/
 	public function executeRevivirReporte( $request ){
-        $this->opcion = $this->getRequestParameter("opcion");
-        $this->forward404Unless( $request->getParameter("id") );
-		$reporte = Doctrine::getTable("Reporte")->find( $request->getParameter("id") );
+		$reporte = Doctrine::getTable("Reporte")->find( $request->getParameter("idreporte") );
 		$this->forward404Unless($reporte);
 
 		$user = $this->getUser();
@@ -3702,7 +3679,8 @@ color="#000000";
         $reporte->setCaDetanulado( "Revivido por: ".$user->getUserId()." ".date("Y-m-d H:i:s") );
 		$reporte->save();
 
-        $this->redirect( "reportesNeg/verReporte?id=".$reporte->getCaIdreporte().($this->opcion?"&opcion=".$this->opcion:"") );
+        $this->responseArray=array("success"=>true,"idreporte"=>$reporte->getCaIdreporte(),"impoexpo"=>utf8_encode($reporte->getCaImpoexpo()),"transporte"=>utf8_encode($reporte->getCaTransporte()));
+        $this->setTemplate("responseTemplate");
 	}
 
 
@@ -3979,22 +3957,31 @@ color="#000000";
     }
 
     public function executeCerrarReporte( $request ){
-
         try
         {
             $this->forward404Unless( $request->getParameter( "id" ) );
             $reporte = Doctrine::getTable("Reporte")->find($request->getParameter( "id" ));
+
             if($request->getParameter( "tipo" )=="1")
             {
-                $reporte->setCaFchcerrado(date('Y-m-d H:i:s'));
-                $reporte->setCaUsucerrado($this->getUser()->getUserId());
+                Doctrine::getTable("Reporte")
+                      ->createQuery("r")
+                      ->update()
+                      ->set("r.ca_fchcerrado","'". date('Y-m-d H:i:s')."'")
+                      ->set("r.ca_usucerrado","'". $this->getUser()->getUserId()."'")
+                      ->where("r.ca_consecutivo =?", $reporte->getCaConsecutivo())
+                      ->execute();
             }
             else if($request->getParameter( "tipo" )=="2")
             {
-                $reporte->setCaFchcerrado(null);
-                $reporte->setCaUsucerrado(null);
-            }
-            $reporte->save();
+                Doctrine::getTable("Reporte")
+                      ->createQuery("r")
+                      ->update()
+                      ->set("r.ca_fchcerrado",'NULL')
+                      ->set("r.ca_usucerrado",'NULL')
+                      ->where("r.ca_consecutivo =?", $reporte->getCaConsecutivo())
+                      ->execute();
+            }            
             $this->responseArray=array("success"=>true);
         }
         catch(Exception $e)
@@ -4004,8 +3991,6 @@ color="#000000";
 
         $this->setTemplate("responseTemplate");
     }
-
-
 
     public function executeHelp( $request ){
 

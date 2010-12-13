@@ -17,44 +17,43 @@
 
         
         FormAduanasPanel.superclass.constructor.call(this, {
-            activeTab: 0,
-            title: 'Aduanas',
-            buttonAlign: 'center',
-            autoHeight: true,
+            activeTab:0,
+            title:'Aduanas',
+            buttonAlign:'center',
+            autoHeight:true,
             id:'id-form-aduanas-panel',
-            items: [
+            items:[
                 {
-
                     xtype:'fieldset',
                     title: 'Información de Aduanas',
                     autoHeight:true,
-                items: [{
+                    items: [{
                         xtype:'fieldset',
                         checkboxToggle:true,
-                        title: 'Aduanas',
+                        title:'Aduanas',
                         autoHeight:true,
-                        defaults: {width: 210},
-                        defaultType: 'textfield',
-                        collapsed: true,
+                        defaults:{width: 210},
+                        defaultType:'textfield',
+                        collapsed:true,
                         id:"aduanas",
                         name:"aduanas",
-                        items :[
+                        items:[
                             {
-                                xtype: "hidden",
-                                name: "ca_colmas",
-                                id: "ca_colmas"
+                                xtype:"hidden",
+                                name:"ca_colmas",
+                                id:"ca_colmas"
                             },
                             {
-                                xtype: "combo",
-                                fieldLabel: "Coordinador",                                
-                                id: "id_ca_coordinador",
-                                hiddenName: "ca_coordinador",
-                                mode:           'local',
-                                displayField:   'name',
-                                valueField:     'value',
-                                store:  new Ext.data.ArrayStore({
-                                    fields: ['value', 'name' ],
-                                    data : [
+                                xtype:"combo",
+                                fieldLabel:"Coordinador",                                
+                                id:"id_ca_coordinador",
+                                hiddenName:"ca_coordinador",
+                                mode:'local',
+                                displayField:'name',
+                                valueField:'value',
+                                store:new Ext.data.ArrayStore({
+                                    fields:['value', 'name' ],
+                                    data:[
                                     <?
                                         $i=0;
                                         foreach( $usuarios as $usuario ){
@@ -66,26 +65,23 @@
                                     ?>
                                     ]
                                 }),
-                                typeAhead: true,
-                                forceSelection: true,
-                                triggerAction: 'all',
+                                typeAhead:true,
+                                forceSelection:true,
+                                triggerAction:'all',
                                 selectOnFocus:true,
                                 lazyRender:true
-                            },                            
+                            },
                             {
-                                xtype: "textarea",
-                                fieldLabel: "Instrucciones Especiales",
-                                name: "ca_instrucciones",
-                                id: "ca_instrucciones"
+                                xtype:"textarea",
+                                fieldLabel:"Instrucciones Especiales",
+                                name:"ca_instrucciones",
+                                id:"ca_instrucciones"
                             }
                         ]
                     }]
                 }
-
             ]
         });
-
-
     };
 
     Ext.extend(FormAduanasPanel, Ext.Panel, {

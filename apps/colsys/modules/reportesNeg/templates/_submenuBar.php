@@ -14,6 +14,7 @@ if ($this->getRequestParameter("id")) {
     $reporte = Doctrine::getTable("Reporte")->find($this->getRequestParameter("id"));
     $editable = $reporte->getEditable($permiso, $user);
     $cerrado = $reporte->getCerrado();
+    $anulado = $reporte->getAnulado();
 }
 else
     $editable=false;
@@ -114,13 +115,16 @@ switch ($action) {
         $button[$i]["link"] = "/reportesNeg/verReporte/id/" . $this->getRequestParameter("id") . "/impoexpo/" . $impoexpo . "/modo/" . $modo;
         $i++;
         if (!$cerrado) {
-            $button[$i]["id"] = "anular-reporte";
-            $button[$i]["name"] = "Anular ";
-            $button[$i]["tooltip"] = "Anula el reporte actual";
-            $button[$i]["image"] = "22x22/cancel.gif";
-            $button[$i]["onClick"] = "ventanaAnularReporte()";
-            $button[$i]["link"] = "#";
-            $i++;
+            if(anulado)
+            {
+                $button[$i]["id"] = "anular-reporte";
+                $button[$i]["name"] = "Anular ";
+                $button[$i]["tooltip"] = "Anula el reporte actual";
+                $button[$i]["image"] = "22x22/cancel.gif";
+                $button[$i]["onClick"] = "ventanaAnularReporte()";                
+                $i++;
+            }
+            
         }
         if ($editable) {
             $button[$i]["name"] = "Unificar ";
@@ -175,7 +179,7 @@ switch ($action) {
         $button[$i]["name"] = "Volver ";
         $button[$i]["tooltip"] = "Vuelve a la pagina anterior";
         $button[$i]["image"] = "22x22/1leftarrow.gif";
-        $button[$i]["link"] = "/reportesNeg/consultaReporte/id/" . $this->getRequestParameter("id") . "/impoexpo/" . $impoexpo . "/modo/" . $modo;
+        $button[$i]["link"] = "/reportesNeg/consultaReporte/id/" . $this->getRequestParameter("id") . "/impoexpo/" . $reporte->getCaImpoexpo() . "/modo/" . $reporte->getCaTransporte();
         $i++;
 
         $button[$i]["name"] = "Notificar";
@@ -183,6 +187,18 @@ switch ($action) {
         $button[$i]["image"] = "22x22/email.gif";
         $button[$i]["link"] = "/reportesNeg/enviarNotificacion/idreporte/" . $this->getRequestParameter("id") . "/token/" . md5(time());
         $i++;
+
+
+            if($reporte->getCaUsuanulado()==$user->getUserId() && !$reporte->getCaIdgrupo())
+            {
+                $button[$i]["id"] = "revivir-reporte";
+                $button[$i]["name"] = "Revivir";
+                $button[$i]["tooltip"] = "Revive el reporte actual";
+                $button[$i]["image"] = "22x22/cancel.gif";
+                $button[$i]["onClick"] = "revivirReporte()";
+                $button[$i]["link"] = "#";
+                $i++;
+            }
 
         break;
     case "unificarReporte":
@@ -337,6 +353,36 @@ switch ($action) {
     }
 
 
+    function revivirReporte()
+    {
+        if(window.confirm("Realmente desea crear un nuevo reporte?"))
+        {
+            Ext.MessageBox.wait('Guardando, Espere por favor', '---');
+            Ext.Ajax.request(
+            {
+                waitMsg: 'Guardando cambios...',
+                url: '<?= url_for("reportesNeg/revivirReporte") ?>',
+                params :	{
+                    idreporte:'<?= $this->getRequestParameter("id") ?>'
+                },
+                failure:function(response,options){
+                    var res = Ext.util.JSON.decode( response.responseText );
+                    if(res.err)
+                        Ext.MessageBox.alert("Mensaje",'Se presento un error guardando por favor informe al Depto. de Sistemas<br>'+res.err);
+                    else
+                        Ext.MessageBox.alert("Mensaje",'Se produjo un error, vuelva a intentar o informe al Depto. de Sistema<br>'+res.texto);
+                },
+                success:function(response,options){
+                    var res = Ext.util.JSON.decode( response.responseText );
+                    Ext.MessageBox.alert("Mensaje",'Se guardo correctamente el reporte');
+                    //if(res.redirect)
+                        location.href="/reportesNeg/consultaReporte/id/"+res.idreporte+"/impoexpo/"+res.impoexpo+"/modo/"+res.trasnporte;
+                }
+            });
+        }
+    }
+
+
 
     function help1(id)
     {
@@ -353,9 +399,9 @@ switch ($action) {
             ,title:'Instructivo de ayuda'
         });
         win.show();
-
-
     }
+
+
 
     function changeTrans()
     {
@@ -372,39 +418,45 @@ switch ($action) {
                 bbar:[
                     {
                         text:'Guardar',
-				iconCls:'disk',
-				handler: function(){
-
-                                    if(window.confirm("Realmente desea cambiar el transporte del reporte?"))
-                                    {
-                                        Ext.MessageBox.wait('Guardando, Espere por favor', '---');
-                                        Ext.Ajax.request(
-                                        {
-                                            waitMsg: 'Guardando cambios...',
-                                            url: '<?= url_for("reportesNeg/cambioTransporte") ?>',
-                                            params :	{
-                                                idreporte:'<?= $this->getRequestParameter("id") ?>',
-                                                transporte:Ext.getCmp("transporte-change").getValue(),
-                                                tipo:"cambio-transporte"
-                                            },
-                                            failure:function(response,options){
-                                                var res = Ext.util.JSON.decode( response.responseText );
-                                                if(res.err)
-                                                    Ext.MessageBox.alert("Mensaje",'Se presento un error guardando por favor informe al Depto. de Sistemas<br>'+res.err);
-                                            },
-                                            success:function(response,options){
-                                                var res = Ext.util.JSON.decode( response.responseText );
-                                                Ext.MessageBox.alert("Mensaje",'Se guardo correctamente el reporte');
-                                                if(res.redirect)
-                                                    location.href="/reportesNeg/consultaReporte/id/"+res.idreporte+"/impoexpo/<?= $impoexpo ?>/modo/"+Ext.getCmp("transporte-change").getValue();
-                                            }
-                                        });
+                        iconCls:'disk',
+                        handler: function(){
+                        if(Ext.getCmp("transporte-change").getValue()!="")
+                        {
+                            if(window.confirm("Realmente desea cambiar el transporte del reporte?"))
+                            {
+                                Ext.MessageBox.wait('Guardando, Espere por favor', '---');
+                                Ext.Ajax.request(
+                                {
+                                    waitMsg: 'Guardando cambios...',
+                                    url: '<?= url_for("reportesNeg/cambioTransporte") ?>',
+                                    params :	{
+                                        idreporte:'<?= $this->getRequestParameter("id") ?>',
+                                        transporte:Ext.getCmp("transporte-change").getValue(),
+                                        tipo:"cambio-transporte"
+                                    },
+                                    failure:function(response,options){
+                                        var res = Ext.util.JSON.decode( response.responseText );
+                                        if(res.err)
+                                            Ext.MessageBox.alert("Mensaje",'Se presento un error guardando por favor informe al Depto. de Sistemas<br>'+res.err);
+                                    },
+                                    success:function(response,options){
+                                        var res = Ext.util.JSON.decode( response.responseText );
+                                        Ext.MessageBox.alert("Mensaje",'Se guardo correctamente el reporte');
+                                        if(res.redirect)
+                                            location.href="/reportesNeg/consultaReporte/id/"+res.idreporte+"/impoexpo/<?= $impoexpo ?>/modo/"+Ext.getCmp("transporte-change").getValue();
                                     }
+                                });
+                            }
+                        }
+                        else
+                        {
+                            Ext.MessageBox.alert("Mensaje",'Por favor escoja un transporte para seguir');
+                        }
 
 
 
-                                   // alert(Ext.getCmp("transporte-change").getValue());
-                                }
+                                       // alert(Ext.getCmp("transporte-change").getValue());
+                    }
                     }
                 ],
 
@@ -434,5 +486,4 @@ switch ($action) {
         });
         win.show();
     }
-
 </script>

@@ -173,14 +173,7 @@ if($permiso>=2)
                                                      id:"linea",
                                                      hiddenName: "idlinea",
                                                      width:300
-                                                    }),
-                                    /*new WidgetPais({fieldLabel: 'País Destino',
-                                                    id: 'tra_destino_id',
-                                                    linkCiudad: 'destino',
-                                                    hiddenName:'idtra_destino_id',
-                                                    pais:'<?=$pais2?>'
-                                                   }),
-                                    */
+                                                    }),                                    
                                     new WidgetCiudad({fieldLabel: '<?=$destino?>',                                                      
                                                       id: 'destino',
                                                       idciudad:"destino",
@@ -363,6 +356,8 @@ if($permiso>=2)
             {
                 Ext.getCmp("ca_liberacion").setValue(cupo);
             }
+
+            Ext.getCmp("preferencias").setValue(record.get("preferencias"));
         } 
 		,
         onSelectModalidad: function( combo, record, index)

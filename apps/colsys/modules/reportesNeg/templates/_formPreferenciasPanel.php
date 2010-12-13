@@ -13,39 +13,39 @@ include_component("reportesNeg", "gridPanelInstruccionesWindow",array("modo"=>$m
         Ext.apply(this, config);
 
         FormPreferenciasPanel.superclass.constructor.call(this, {
-            activeTab: 0,
-            title: 'Preferencias',
-            buttonAlign: 'center',
+            activeTab:0,
+            title:'Preferencias',
+            buttonAlign:'center',
             autoHeight:true,
             
-            items: [               
+            items:[
                 {
 
                     xtype:'fieldset',
-                    title: 'Preferencias',
+                    title:'Preferencias',
                     autoHeight:true,
-					labelWidth: 120,                    
-                    items: [                        
+					labelWidth:120,
+                    items:[
                         {
-                            xtype: "textarea",
-                            fieldLabel: "Preferencias del cliente",
-                            name: "preferencias",
-                            id: "preferencias",                            
-                            width: 500,
-                            grow: true
+                            xtype:"textarea",
+                            fieldLabel:"Preferencias del cliente",
+                            name:"preferencias",
+                            id:"preferencias",
+                            width:500,
+                            grow:true
                         },
                         {
-                            xtype: "textarea",
-                            fieldLabel: "Instrucciones especiales (Agente)",
-                            name: "instrucciones",
-                            id: "instrucciones",
-                            width: 500,
-                            grow: true
+                            xtype:"textarea",
+                            fieldLabel:"Instrucciones especiales (Agente)",
+                            name:"instrucciones",
+                            id:"instrucciones",
+                            width:500,
+                            grow:true
                         },
                         {
-                            xtype: "button",
-                            text: "Agregar",
-                            id: "bagregar",
+                            xtype:"button",
+                            text:"Agregar",
+                            id:"bagregar",
                             handler:function()
                             {
                                 win = new gridWindow();
@@ -56,36 +56,36 @@ include_component("reportesNeg", "gridPanelInstruccionesWindow",array("modo"=>$m
                 },
                 {
                     xtype:'fieldset',
-                    title: '',
+                    title:'',
                     autoHeight:true,
-                    items: [
+                    items:[
                          new WidgetTercero({fieldLabel:"Representante",
-                                            tipo: 'Representante',
-                                            width: 600,
-                                            id: "idrepresentante",
-                                            hiddenName: "idrepres"
+                                            tipo:'Representante',
+                                            width:600,
+                                            id:"idrepresentante",
+                                            hiddenName:"idrepres"
                                            })
                          ,
                         {
-                            xtype       :   'checkbox',
-                            fieldLabel  :   'Notificar',
-                            id          :   'ca_informar_repr',
-                            name        :   'ca_informar_repr'
+                            xtype    :'checkbox',
+                            fieldLabel:'Notificar',
+                            id       :'ca_informar_repr',
+                            name     :'ca_informar_repr'
                         }
                         ]
                 },
                 {
                     xtype:'fieldset',
-                    title: 'Informaciones a:',
+                    title:'Informaciones a:',
                     autoHeight:true,
                     layout:'column',
-                    columns: 2,
-                    items: [
+                    columns:2,
+                    items:[
                         {
                             border:false,
-                            title: 'Libreta de contactos',
+                            title:'Libreta de contactos',
                             autoHeight:true,
-                            columns: 2,
+                            columns:2,
                             columnWidth:0.5,
                             items:[
                                 <?
@@ -97,10 +97,10 @@ include_component("reportesNeg", "gridPanelInstruccionesWindow",array("modo"=>$m
                                 ?>
                                 {
                                    border:false,
-                                    title: '',
+                                    title:'',
                                     autoHeight:true,
                                     layout:'column',
-                                    columns: 2,
+                                    columns:2,
                                     defaults:{
                                         
                                         layout:'form',
@@ -108,32 +108,32 @@ include_component("reportesNeg", "gridPanelInstruccionesWindow",array("modo"=>$m
                                         hideLabels:true,
                                         border:true
                                     },
-                                    items: [
+                                    items:[
                                         {
-                                            defaultType: 'textfield',
-                                            items: [
+                                            defaultType:'textfield',
+                                            items:[
                                                 {
-                                                    xtype: "textfield",
-                                                    fieldLabel: "",
-                                                    name: "contacto_<?=$i?>",
-                                                    id: "contacto_<?=$i?>",
-                                                    readOnly: false,
-                                                    width: 250,
-                                                    height :20
+                                                    xtype:"textfield",
+                                                    fieldLabel:"",
+                                                    name:"contacto_<?=$i?>",
+                                                    id:"contacto_<?=$i?>",
+                                                    readOnly:false,
+                                                    width:250,
+                                                    height:20
                                                 }
 
                                             ]
                                         },
                                         {
-                                            defaults: {width: 20},
-                                            items: [
+                                            defaults:{width:20},
+                                            items:[
                                                 {
-                                                    xtype: "checkbox",
-                                                    fieldLabel: "",
-                                                    name: "chkcontacto_<?=$i?>",
-                                                    id: "chkcontacto_<?=$i?>",
-                                                    width: 20,
-                                                    height :20
+                                                    xtype:"checkbox",
+                                                    fieldLabel:"",
+                                                    name:"chkcontacto_<?=$i?>",
+                                                    id:"chkcontacto_<?=$i?>",
+                                                    width:20,
+                                                    height:20
                                                 }
 
                                             ]
@@ -148,7 +148,7 @@ include_component("reportesNeg", "gridPanelInstruccionesWindow",array("modo"=>$m
                         ,
                         {
                             border:false,
-                            title: 'Contactos fijos',
+                            title:'Contactos fijos',
                             autoHeight:true,
                             columnWidth:0.5,
                             items:[
@@ -161,10 +161,10 @@ include_component("reportesNeg", "gridPanelInstruccionesWindow",array("modo"=>$m
                                 ?>
                                 {
                                    border:false,
-                                    title: '',
+                                    title:'',
                                     autoHeight:true,
                                     layout:'column',
-                                    columns: 2,
+                                    columns:2,
                                     defaults:{                                        
                                         layout:'form',
                                         border:false,
@@ -172,32 +172,32 @@ include_component("reportesNeg", "gridPanelInstruccionesWindow",array("modo"=>$m
                                         hideLabels:true,
                                         border:true
                                     },
-                                    items: [
+                                    items:[
                                         {
-                                            defaultType: 'textfield',
-                                            items: [
+                                            defaultType:'textfield',
+                                            items:[
                                                 {
-                                                    xtype: "textfield",
-                                                    fieldLabel: "",
-                                                    name: "contacto_fijos<?=$i?>",
-                                                    id: "contacto_fijos<?=$i?>",
-                                                    readOnly: true,
-                                                    width: 250,
-                                                    height :20
+                                                    xtype:"textfield",
+                                                    fieldLabel:"",
+                                                    name:"contacto_fijos<?=$i?>",
+                                                    id:"contacto_fijos<?=$i?>",
+                                                    readOnly:true,
+                                                    width:250,
+                                                    height:20
                                                 }
 
                                             ]
                                         },
                                         {
-                                            defaults: {width: 20},
-                                            items: [
+                                            defaults:{width:20},
+                                            items:[
                                                 {
-                                                    xtype: "checkbox",
-                                                    fieldLabel: "",
-                                                    name: "chkcontacto_fijos<?=$i?>",
-                                                    id: "chkcontacto_fijos<?=$i?>",
-                                                    width: 20,
-                                                    height :20
+                                                    xtype:"checkbox",
+                                                    fieldLabel:"",
+                                                    name:"chkcontacto_fijos<?=$i?>",
+                                                    id:"chkcontacto_fijos<?=$i?>",
+                                                    width:20,
+                                                    height:20
                                                 }
 
                                             ]

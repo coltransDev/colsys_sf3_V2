@@ -149,7 +149,7 @@ PanelConceptosOtm = function( config ){
         {
             id: 'equipo',
             header: "Equipo",
-            width: 200,
+            width: 120,
             sortable: false,
             dataIndex: 'equipo',
             hideable: false,
@@ -204,21 +204,14 @@ PanelConceptosOtm = function( config ){
             hideable: false,
             sortable:false,
             editor: <?=include_component("widgets", "monedas" ,array("id"=>""))?>
-        }/*,
-        {
-            header: "Orden",
-            dataIndex: 'orden',
-            width: 50,
-            sortable:true,
-            hideable: true
-        }*/
+        }
     ];
 
     this.record = Ext.data.Record.create([
             {name: 'idreporte', type: 'int'},
             {name: 'iditem', type: 'int'},
             {name: 'idconcepto', type: 'int'},
-            {name: 'idequipo', type: 'string'}, //Concepto al cual pertenece el recargo
+            {name: 'idequipo', type: 'string'},
             {name: 'equipo', type: 'string'},
             {name: 'aplicacion', type: 'string'},
             {name: 'tipo_app', type: 'string'},
@@ -348,16 +341,7 @@ Ext.extend(PanelConceptosOtm, Ext.grid.EditorGridPanel, {
 
         var lenght = records.length;
 
-        /*
-        for( var i=0; i< lenght; i++){
-            r = records[i];
-            if(!r.data.moneda && (r.data.tipo=="concepto"||r.data.recargo=="concepto") ){
-                if( r.data.iditem!=9999){
-                    Ext.MessageBox.alert('Warning','Por favor coloque la moneda en todos los items');
-                    return 0;
-                }
-            }
-        }	*/
+    
 
         for( var i=0; i< lenght; i++){
             r = records[i];
@@ -365,12 +349,13 @@ Ext.extend(PanelConceptosOtm, Ext.grid.EditorGridPanel, {
             var changes = r.getChanges();
 
             changes['id']=r.id;
-            changes['tipo']=r.data.tipo;
+            changes['tipo']="recargo";
             changes['iditem']="61";
             changes['idconcepto']=r.data.idconcepto;
             changes['idreporte']=r.data.idreporte;
             changes['ca_recargoorigen']="false";
-
+            changes['aplicacion']=r.data.aplicacion;
+            changes['idequipo']=r.data.idequipo;
 
             if( r.data.iditem ){
                 Ext.Ajax.request(
@@ -403,7 +388,7 @@ Ext.extend(PanelConceptosOtm, Ext.grid.EditorGridPanel, {
                 params :
                 {
                     idreporte: '<?=$reporte->getCaIdreporte()?>',
-                    tipo:"All-recargos"
+                    tipo:"All-recargos-otm"
                 },
 
                 failure:function(response,options){
@@ -414,13 +399,8 @@ Ext.extend(PanelConceptosOtm, Ext.grid.EditorGridPanel, {
                 success:function(response,options){
                     Ext.getCmp('panel-recargos-otm').store.reload();
                 }
-
-
-
             });
         }
-
-
     }
     ,
     formatItem: function(value, p, record) {
@@ -429,7 +409,6 @@ Ext.extend(PanelConceptosOtm, Ext.grid.EditorGridPanel, {
             '<b>{0}</b>',
             value
         );
-
     },
 
 

@@ -3,10 +3,52 @@
 
 $nprov=count(explode("|", $reporte->getCaIdproveedor() ));
 
-//$cachedir = 'C:/desarrollo/colsys_sf3/apps/colsys/modules/reportesNeg/cache/';
-//$cachedir = '/srv/www/colsys_sf3/apps/colsys/modules/reportesNeg/cache/';
+if($reporte->getCaIdreporte())
+{
+    include_component("reportesNeg","panelConceptosFletes", array("reporte"=>$reporte));
+    $panelConceptos = true;
+
+    if($reporte->getCaContinuacion()=="OTM")
+    {
+        include_component("reportesNeg","panelConceptosOtm", array("reporte"=>$reporte));
+        $panelConceptosOtm = true;
+    }
+    else
+        $panelConceptosOtm = false;
+
+    if($reporte->getCaContinuacion()=="OTM")
+    {
+        include_component("reportesNeg","panelConceptosOtm", array("reporte"=>$reporte));
+        $panelConceptosOtm = true;
+    }
+    else
+        $panelConceptosOtm = false;
+
+    if( $reporte->getCaImpoexpo()!=Constantes::EXPO || $reporte->getCaTiporep()=="3" ){
+            include_component("reportesNeg","panelRecargos", array("reporte"=>$reporte));
+            $panelRecargos = true;
+    }else{
+        $panelRecargos = false;
+    }
+
+
+    if( ($reporte->getCaColmas()=="Sí" && $reporte->getCaImpoexpo()!=Constantes::TRIANGULACION /*|| substr($reporte->getCaModalidad(),0,6) == "ADUANA"*/ ) || $reporte->getCaTiporep()=="3"){
+       include_component("reportesNeg","panelRecargosAduana", array("reporte"=>$reporte));
+       $panelAduana = true;
+    }else{
+       $panelAduana = false;
+    }
+}
+else
+{
+    $panelConceptos = false;
+    $panelConceptosOtm = false;
+    $panelRecargos = false;
+    $panelAduana = false;
+}
+
 $cachedir = $config = sfConfig::get('sf_app_module_dir').DIRECTORY_SEPARATOR."reportesNeg".DIRECTORY_SEPARATOR."cache".DIRECTORY_SEPARATOR;
-$cachetime = 10;
+$cachetime = 84600;
 $cacheext = 'colsys';
 $cachepage = md5("formReporte-modo-$modo-impoexpo-$impoexpo-permiso-$permiso-nprov-$nprov");
 $cachefile = $cachedir.$cachepage.'.'.$cacheext;
@@ -54,61 +96,76 @@ include_component("reportesNeg", "formSegurosPanel",array("modo"=>$modo,"impoexp
     include_component("widgets", "widgetReporte");
 }*/
 //include_component("reportesNeg", "listReportesPanel",array("modo"=>$modo,"impoexpo"=>$impoexpo));
+
+    if($cache!="false")
+    {
+        $fp = fopen($cachefile, 'c');
+        $cntACmp =ob_get_contents();
+        ob_end_clean();
+        $cntACmp=str_replace("\n",' ',$cntACmp);
+        $cntACmp=ereg_replace('[[:space:]]+',' ',$cntACmp);
+        fwrite($fp, ($cntACmp));
+        fclose($fp);
+        echo "<script>location.href=location.href.replace('cache/refresh','');</script>";
+        exit;
+    }
+
+}
 ?>
 <script type="text/javascript">
     FormReportePanel = function( config ){
         Ext.apply(this, config);
-        var bodyStyle = 'padding: 5px 5px 5px 5px;';
+        var bodyStyle = 'padding:5px 5px 5px 5px;';
         this.res="";
         this.buttons = [];
         if( this.editable ){
-            this.buttons.push( {
-                text   : 'Guardar',
+            this.buttons.push({
+                text:'Guardar',
                 formBind:true,
                 scope:this,
-                handler: this.onSave
+                handler:this.onSave
             } );
-            this.buttons.push( {
-                text   : 'Finalizar',
+            this.buttons.push({
+                text:'Finalizar',
                 formBind:true,
                 scope:this,
-                handler: this.onFinalizar
+                handler:this.onFinalizar
             } );
         }
 
-        if( this.nuevaVersion ){
-            this.buttons.push( {
-                text   : 'Nueva Version',
+        if(this.nuevaVersion){
+            this.buttons.push({
+                text:'Nueva Version',
                 formBind:true,
                 scope:this,
-                handler: this.onNuevaVersion
+                handler:this.onNuevaVersion
             } );
         }
-        if( this.copiar ){
-            this.buttons.push( {
-                text   : 'Copiar en nuevo reporte',
+        if(this.copiar){
+            this.buttons.push({
+                text:'Copiar en nuevo reporte',
                 formBind:true,
                 scope:this,
-                handler: this.onCopiar
+                handler:this.onCopiar
             } );
         }
-        this.buttons.push( {
-                text   : 'Cancelar',
-                 handler: this.onCancel
-            } );
+        this.buttons.push({
+                text:'Cancelar',
+                 handler:this.onCancel
+            });
 
         FormReportePanel.superclass.constructor.call(this, {            
             labelWidth:80,
-            frame: true,
-            buttonAlign: 'center',
+            frame:true,
+            buttonAlign:'center',
             layout:'fit',
             monitorValid:true,
             id:'idFormReportePanel',
-            items: [{
+            items:[{
                     xtype:'tabpanel',
-                    deferredRender : false,
-                    activeTab: 0,
-                    autoHeight: true,
+                    deferredRender:false,
+                    activeTab:0,
+                    autoHeight:true,
                     defaults:{
                         layout:'form',
                         hideMode:'offsets'
@@ -128,45 +185,64 @@ include_component("reportesNeg", "formSegurosPanel",array("modo"=>$modo,"impoexp
                         }
                         ?>
                         new FormSegurosPanel({bodyStyle:bodyStyle})
+                        <?
+                        if($panelConceptos)
+                        {
+                        ?>
+                        ,new PanelConceptosFletes({
+                            title:'Con. de fletes',
+                            id:'panel-Fletes'
+                        })
+                        <?
+                        }
+                        if( $panelConceptosOtm ){
+                        ?>
+                            ,new PanelConceptosOtm({
+                                title:'Otm',
+                                id:'panel-Otm'
+                            })
+                        <?
+                        }
+                        if( $panelRecargos ){
+                        ?>
+                            ,new PanelRecargos({
+                                title:'Rec. locales',
+                                id:'panel-RecargosLocales'
+
+                            })
+                        <?
+                        }
+                        if( $panelAduana ){
+                        ?>
+                        ,new PanelRecargosAduana({
+                            title:'Rec. Aduana',
+                            id:'panel-Recargos-Aduana'
+                        })
+                        <?
+                    }
+                    ?>
                     ]
             }],
-            buttons: this.buttons,
+            buttons:this.buttons,
             listeners:{
                 afterrender:this.onAfterload
             }
         });
     };
 
-<?
-    if($cache!="false")
-    {
-        $fp = fopen($cachefile, 'c');
-        $cntACmp =ob_get_contents();
-        ob_end_clean();
-        $cntACmp=str_replace("\n",' ',$cntACmp);
-        $cntACmp=ereg_replace('[[:space:]]+',' ',$cntACmp);
-        fwrite($fp, ($cntACmp));
-        //@fwrite($fp, trim(gzcompress($cntACmp,6)));
-        fclose($fp);
-    //    ob_end_flush();
-        echo "<script>location.href=location.href.replace('cache/refresh','');</script>";
-        exit;
-    }
 
-}
-?>
 var idreporte='<?=$idreporte?>';
     Ext.extend(FormReportePanel, Ext.form.FormPanel, {        
-        onNuevaVersion: function(){
+        onNuevaVersion:function(){
             this.onSave("2");
         },
-        onCopiar: function(){
+        onCopiar:function(){
             this.onSave("1");
         },
-        onFinalizar: function(){
+        onFinalizar:function(){
             this.onSave("3");
         },
-        onSave: function(opt){
+        onSave:function(opt){
             redire="false";
             
             if(opt!="1" && opt!="2" && opt!="3")
@@ -185,18 +261,15 @@ var idreporte='<?=$idreporte?>';
             }
             else if(!opt && idreporte!="")
             {opt="4"}
-            //if(idreporte!="")
 
-            
-           
             var form  = this.getForm();
             if( form.isValid() ){
                 form.submit({
-                    url: "<?=url_for("reportesNeg/guardarReporte")?>",
+                    url:"<?=url_for("reportesNeg/guardarReporte")?>",
                     waitMsg:'Guardando...',
                     waitTitle:'Por favor espere...',
-                    params: {opcion:opt,redirect:redire,idreporte:idreporte},
-                    success: function(gridForm, action) {
+                    params:{opcion:opt,redirect:redire,idreporte:idreporte},
+                    success:function(gridForm, action) {
                         var res = Ext.util.JSON.decode( action.response.responseText );
                         Ext.MessageBox.alert("Mensaje",'Se guardo correctamente el reporte con el consecutivo '+res.consecutivo);
                         idreporte=res.idreporte;
@@ -216,7 +289,7 @@ var idreporte='<?=$idreporte?>';
                 Ext.MessageBox.alert('Error Message', "Por favor complete todos los datos");
             }
         },
-        onCancel: function(){
+        onCancel:function(){
             location.href="/reportesNeg/index";
         }
 <?
@@ -224,32 +297,32 @@ var idreporte='<?=$idreporte?>';
             {
 ?>
         ,
-        onImportar: function(){
+        onImportar:function(){
             win = new Ext.Window({
-                width       : '80%',
-                height      : '80%',
-                closeAction :'close',
-                plain       : true,
-                title       : "Importar reporte",
-                items       : [
+                width:'80%',
+                height:'80%',
+                closeAction:'close',
+                plain:true,
+                title:"Importar reporte",
+                items:[
                     new listReportesPanel()
                 ]
                 ,
-                buttons: [
+                buttons:[
                     {
-                        text     : 'Importar',
-                        scope    : this,
-                        handler  : function( ){
+                        text:'Importar',
+                        scope:this,
+                        handler:function( ){
                             if(window.confirm("Desea realmente importar este reporte?"))
                             {
                                 idnew=Ext.getCmp("reporte").getValue();
                                 Ext.Ajax.request(
                                 {
-                                    waitMsg: 'Guardando cambios...',
-                                    url: '<?=url_for("reportesNeg/importarReporte")?>',
-                                    params :	{
-                                        idreportenew: idnew,
-                                        idreporte: <?=$reporte->getCaIdreporte()?>
+                                    waitMsg:'Guardando cambios...',
+                                    url:'<?=url_for("reportesNeg/importarReporte")?>',
+                                    params:	{
+                                        idreportenew:idnew,
+                                        idreporte:<?=$reporte->getCaIdreporte()?>
                                     },
                                         failure:function(response,options){
                                         alert( response.responseText );
@@ -267,8 +340,8 @@ var idreporte='<?=$idreporte?>';
                         }
                     },
                     {
-                        text     : 'Cancelar',
-                        handler  : function(){
+                        text:'Cancelar',
+                        handler:function(){
                             win.close();
                         }
                     }
@@ -304,8 +377,8 @@ var idreporte='<?=$idreporte?>';
 <?
                 }
 ?>
-                $('.help').tooltip({track: true, fade: 250, opacity: 1, top: -15, extraClass: "pretty fancy" });
-                $('.helpL').tooltip({track: true, fade: 250, opacity: 1, top: -15, extraClass: "prettyL fancyL" });
+                $('.help').tooltip({track:true, fade:250, opacity:1, top:-15, extraClass:"pretty fancy" });
+                $('.helpL').tooltip({track:true, fade:250, opacity:1, top:-15, extraClass:"prettyL fancyL" });
        }
        ,
         onRender:function() {
@@ -333,11 +406,12 @@ var idreporte='<?=$idreporte?>';
                             Ext.getCmp('seguros').collapse();
 
                         Ext.getCmp("cotizacion").setValue(res.data.cotizacion);
-                        Ext.getCmp("cotizacionotm").setValue(res.data.cotizacionotm);
+                        if(Ext.getCmp("cotizacionotm"))
+                            Ext.getCmp("cotizacionotm").setValue(res.data.cotizacionotm);
 
                         Ext.getCmp("linea").setValue(res.data.idlinea);
-                        $("#linea").attr("value",res.data.linea);
-
+                        $("#linea").val(res.data.linea);
+                        
                         Ext.getCmp("cliente").setValue(res.data.idcliente);
                         $("#cliente").attr("value",res.data.cliente);
 
@@ -361,12 +435,9 @@ var idreporte='<?=$idreporte?>';
                                 Ext.getCmp("contacto_fijos"+i).setReadOnly( true );
                             }
                         };
-//                        Ext.getCmp("tra_origen_id").setValue(res.data.idtra_origen_id);
 
                         Ext.getCmp("origen").setValue(res.data.idorigen);
                         $("#origen").attr("value",res.data.origen);
-
-                        //Ext.getCmp("tra_destino_id").setValue(res.data.idtra_destino_id);
 
                         Ext.getCmp("destino").setValue(res.data.iddestino);
                         $("#destino").attr("value",res.data.destino);
@@ -437,6 +508,7 @@ var idreporte='<?=$idreporte?>';
                             Ext.getCmp("tipoexpo").setValue(res.data.idtipoexpo);
                             $("#tipoexpo").attr("value",res.data.tipoexpo);
                         }
+                        Ext.getCmp('panel-conceptos-fletes').store.reload();
                     }
                 });
             }

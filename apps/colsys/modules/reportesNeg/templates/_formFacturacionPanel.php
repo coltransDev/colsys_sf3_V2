@@ -10,36 +10,36 @@ include_component("widgets", "widgetCliente");
     FormFacturacionPanel = function( config ){
 
         Ext.apply(this, config);
-		var campos = new Array();
+		var campos=new Array();
 
-			this.wgCliente1 = new WidgetCliente({fieldLabel: 'Cliente ',
-                                                   width: 500,
-                                                   id: "cliente-impoexpo",
-                                                   hiddenName: "idclientefac"
+			this.wgCliente1=new WidgetCliente({fieldLabel:'Cliente ',
+                                                   width:500,
+                                                   id:"cliente-impoexpo",
+                                                   hiddenName:"idclientefac"
                                                   });
-		this.wgCliente1.addListener("select", this.onSelectCliente, this);
-		campos.push( this.wgCliente1 );
+		this.wgCliente1.addListener("select",this.onSelectCliente,this);
+		campos.push(this.wgCliente1);
 		<?
-		if($impoexpo== Constantes::EXPO)
+		if($impoexpo==Constantes::EXPO)
 		{
 		?>
-			this.wgCliente = new WidgetCliente({fieldLabel: 'Agente ',
-                                                   width: 500,
-                                                   id: "agente-impoexpo",
-                                                   hiddenName: "idclienteag",
+			this.wgCliente=new WidgetCliente({fieldLabel:'Agente ',
+                                                   width:500,
+                                                   id:"agente-impoexpo",
+                                                   hiddenName:"idclienteag",
                                                    tipo:"Agente"
                                                   });
         
-			this.wgCliente2 = new WidgetCliente({fieldLabel: 'Otro ',
-                                                   width: 500,
-                                                   id: "otro-aduana",
-                                                   hiddenName: "idclienteotro"
+			this.wgCliente2 = new WidgetCliente({fieldLabel:'Otro ',
+                                                   width:500,
+                                                   id:"otro-aduana",
+                                                   hiddenName:"idclienteotro"
                                                   });
-			this.wgCliente.addListener("select", this.onSelectCliente, this);
-			this.wgCliente2.addListener("select", this.onSelectCliente, this);
-			campos[0]= this.wgCliente ;
-			campos.push( this.wgCliente1 );
-			campos.push( this.wgCliente2 );
+			this.wgCliente.addListener("select",this.onSelectCliente,this);
+			this.wgCliente2.addListener("select",this.onSelectCliente,this);
+			campos[0]=this.wgCliente;
+			campos.push(this.wgCliente1);
+			campos.push(this.wgCliente2);
 		<?
 		}
 		?>
@@ -52,30 +52,21 @@ include_component("widgets", "widgetCliente");
             title: 'Facturaci&oacute;n',
             buttonAlign: 'center',
             autoHeight:true,
-            items: [
-                
+            items: [                
                 {
 
                     xtype:'fieldset',
-                    title: 'Informaci&oacute;n del Facturaci&oacute;n',
+                    title:'Informaci&oacute;n del Facturaci&oacute;n',
                     autoHeight:true,                    
-                    items: campos
+                    items:campos
                 }
-
             ]
-
-
-
         });
-
-
     };
 
-    Ext.extend(FormFacturacionPanel, Ext.Panel, {
-		onSelectCliente: function( combo, record, index){
+    Ext.extend(FormFacturacionPanel,Ext.Panel, {
+		onSelectCliente: function(combo,record,index){
             combo.alertaCliente(record);
         }
     });
-
-
 </script>

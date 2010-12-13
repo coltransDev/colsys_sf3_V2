@@ -37,9 +37,6 @@
         <b>Motivo:</b> <?=$reporte->getCaDetanulado()?>
         <br />
         <?
-        if( $reporte->getCaUsuanulado()==$user->getUserId() && !$reporte->getCaIdgrupo() ){
-            echo link_to("Haga click aca para revivir este reporte", "reportesNeg/revivirReporte?id=".$reporte->getCaIdreporte(), array("confirm"=>"Esta seguro?"));
-        }
 
         if( $reporte->getCaIdgrupo() ){
             echo link_to("Ver reporte ".$reporte->getGrupoReporte()->getCaConsecutivo(), "reportesNeg/consultaReporte?id=".$reporte->getCaIdgrupo());

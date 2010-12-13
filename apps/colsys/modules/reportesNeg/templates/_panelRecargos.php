@@ -87,6 +87,43 @@ PanelRecargos = function( config ){
                 ]
     });
 
+    this.storeEquipos = new Ext.data.Store({
+        autoLoad : true,
+        url: '<?=url_for("conceptos/datosConceptos")?>',
+        baseParams:{
+               transporte:"<?=Constantes::MARITIMO?>",
+               modalidad:"<?=Constantes::FCL?>",
+               impoexpo:"<?=Constantes::IMPO?>"
+        },
+        reader: new Ext.data.JsonReader({
+                    root: 'root',
+                    totalProperty: 'total',
+                    successProperty: 'success'
+                },
+
+                Ext.data.Record.create([
+                    {name: 'idconcepto'},
+                    {name: 'concepto'}
+
+                ])
+        )
+    });
+    this.editorEquipos = new Ext.form.ComboBox({
+        fieldLabel: 'Equipo',
+        typeAhead: true,
+        forceSelection: true,
+        triggerAction: 'all',
+        selectOnFocus: true,
+        name: 'equipo',
+        id: 'idequipo',
+        mode: 'local',
+        displayField: 'concepto',
+        valueField: 'idconcepto',
+        lazyRender:true,
+        listClass: 'x-combo-list-small',
+        store : this.storeEquipos
+    });
+
     /*
     * Crea el expander
     */
@@ -106,9 +143,18 @@ PanelRecargos = function( config ){
             dataIndex: 'item',
             hideable: false,
             sortable:false,
-            width: 170,
+            width: 120,
             renderer: this.formatItem,
             editor: this.editorConceptos
+        },
+        {
+            id: 'equipo',
+            header: "Equipo",
+            width: 120,
+            sortable: false,
+            dataIndex: 'equipo',
+            hideable: false,
+            editor: this.editorEquipos
         },
         {
             header: "Aplicacion",
@@ -159,20 +205,15 @@ PanelRecargos = function( config ){
             hideable: false,
             sortable:false,
             editor: <?=include_component("widgets", "monedas" ,array("id"=>""))?>
-        }/*,
-        {
-            header: "Orden",
-            dataIndex: 'orden',
-            width: 50,
-            sortable:true,
-            hideable: true
-        }*/
+        }
     ];
 
     this.record = Ext.data.Record.create([
             {name: 'idreporte', type: 'int'},
             {name: 'iditem', type: 'int'},
             {name: 'idconcepto', type: 'int'},
+            {name: 'idequipo', type: 'string'},
+            {name: 'equipo', type: 'string'},
             {name: 'aplicacion', type: 'string'},
             {name: 'tipo_app', type: 'string'},
             {name: 'item', type: 'string'},
@@ -323,6 +364,7 @@ Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
             changes['idconcepto']=r.data.idconcepto;
             changes['idreporte']=r.data.idreporte;
             changes['ca_recargoorigen']="false";
+            changes['idequipo']=r.data.idequipo;
 
             
             if( r.data.iditem ){
@@ -387,14 +429,13 @@ Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
 
     
     onValidateEdit : function(e){
-        if( e.field == "item"){
-            
-            var rec = e.record;
-            var ed = this.colModel.getCellEditor(e.column, e.row);
-            var store = ed.field.store;
+        var rec = e.record;
+        var ed = this.colModel.getCellEditor(e.column, e.row);
+        var store = ed.field.store;
 
-            var recordConcepto = this.record;
-            var storeGrid = this.store;
+        var recordConcepto = this.record;
+        var storeGrid = this.store;
+        if( e.field == "item"){            
             store.each( function( r ){
                     var existe = false;
                     if( r.data.idconcepto==e.value ){
@@ -402,7 +443,7 @@ Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
                         recordsConceptos = storeGrid.getRange();
                         for( var j=0; j< recordsConceptos.length&&!existe; j++){
 
-                            if( recordsConceptos[j].data.iditem==r.data.idconcepto){
+                            if( recordsConceptos[j].data.iditem==r.data.idconcepto && recordsConceptos[j].data.idequipo==r.data.idequipo){
                                 existe=true;
                             }
 
@@ -445,7 +486,17 @@ Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
                                 storeGrid.addSorted(newRec);
                                 storeGrid.sort("orden", "ASC");
 
-                            }else{
+                            }
+                            else if( e.field == "equipo"){
+                               store.each( function( r ){
+                                       if( r.data.idconcepto==e.value ){
+                                           rec.set("idequipo", r.data.idconcepto );
+                                           e.value = r.data.concepto;
+                                           return true;
+                                       }
+                                   });
+                            }
+                            else{
                                 rec.set("idmoneda", "USD");
                                 rec.set("iditem", r.data.idconcepto);
                             }
@@ -461,6 +512,16 @@ Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
                 }
             )
         }
+        else if( e.field == "equipo"){
+
+            store.each( function( r ){
+                    if( r.data.idconcepto==e.value ){
+                        rec.set("idequipo", r.data.idconcepto );
+                        e.value = r.data.concepto;
+                        return true;
+                    }
+                });
+         }
     }
     ,
 

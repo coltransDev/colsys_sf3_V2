@@ -10,65 +10,64 @@ include_component("widgets", "widgetContactoCliente");
 <script type="text/javascript">
     FormClientePanel = function( config ){
         Ext.apply(this, config);
-        this.wgContactoCliente = new WidgetContactoCliente({fieldLabel: 'Cliente',
-                                                   width: 500,
-                                                   id: "cliente",
-                                                   hiddenName: "idcliente",
+        this.wgContactoCliente = new WidgetContactoCliente({fieldLabel:'Cliente',
+                                                   width:500,
+                                                   id:"cliente",
+                                                   hiddenName:"idcliente",
                                                    allowBlank:false,                                                   
                                                    displayField:"compania",
-                                                   autoSelect : false
+                                                   autoSelect:false
                                                   });
 
         this.wgContactoCliente.addListener("select", this.onSelectContactoCliente, this);
 
         FormClientePanel.superclass.constructor.call(this, {
-            activeTab: 0,
-            title: 'Cliente',
-            buttonAlign: 'center',
+            activeTab:0,
+            title:'Cliente',
+            buttonAlign:'center',
             autoHeight:true,
-            items: [
+            items:[
                     {
-
                     xtype:'fieldset',
-                    title: 'Información del Cliente',
+                    title:'Información del Cliente',
                     autoHeight:true,                    
-                    items: [                        
+                    items:[                        
                         this.wgContactoCliente,
                         {
-                            xtype: "hidden",
-                            id: "idconcliente",
-                            name: "idconcliente"
+                            xtype:"hidden",
+                            id:"idconcliente",
+                            name:"idconcliente"
                         },
                         {
-                            xtype: "textfield",
-                            fieldLabel: "Contacto",
-                            name: "contacto",
-                            id: "contacto",
-                            readOnly: true,
-                            width: 500
+                            xtype:"textfield",
+                            fieldLabel:"Contacto",
+                            name:"contacto",
+                            id:"contacto",
+                            readOnly:true,
+                            width:500
                         },
                         {
-                            xtype: "textfield",
-                            fieldLabel: "Orden Cliente",
-                            name: "orden_clie",
-                            id: "orden_clie",
-                            width: 300
+                            xtype:"textfield",
+                            fieldLabel:"Orden Cliente",
+                            name:"orden_clie",
+                            id:"orden_clie",
+                            width:300
                         },
                         {
-                            xtype: "textfield",
-                            fieldLabel: "Lib. Automatica",
-                            name: "ca_liberacion",
-                            id: "ca_liberacion",
-                            readOnly: true,
-                            width: 100
+                            xtype:"textfield",
+                            fieldLabel:"Lib. Automatica",
+                            name:"ca_liberacion",
+                            id:"ca_liberacion",
+                            readOnly:true,
+                            width:100
                         },
                         {
-                            xtype: "textfield",
-                            fieldLabel: "Tiempo de Crédito",
-                            name: "ca_tiempocredito",
-                            id: "ca_tiempocredito",
-                            readOnly: true,
-                            width: 100
+                            xtype:"textfield",
+                            fieldLabel:"Tiempo de Crédito",
+                            name:"ca_tiempocredito",
+                            id:"ca_tiempocredito",
+                            readOnly:true,
+                            width:100
                         }
                         <?
                         if($modo==Constantes::MARITIMO && $impoexpo==constantes::IMPO)
@@ -76,10 +75,10 @@ include_component("widgets", "widgetContactoCliente");
                         ?>
                         ,
                         {
-                            xtype       :   'checkbox',
-                            fieldLabel  :   'Contrato de Comodato',
-                            id          :   'ca_comodato',
-                            name        :   'ca_comodato'
+                            xtype:'checkbox',
+                            fieldLabel:'Contrato de Comodato',
+                            id:'ca_comodato',
+                            name:'ca_comodato'
                         }
 
                         <?
@@ -94,32 +93,30 @@ include_component("widgets", "widgetContactoCliente");
 				,                
                 {
                     xtype:'fieldset',
-                    title: 'Información del Proveedor',
+                    title:'Información del Proveedor',
                     autoHeight:true,
                     id:'panel-proveedor',
-                    
-                    items: [
+                    items:[
                         {
                            xtype:'button',
-                           text: "Agregar",
+                           text:"Agregar",
                            handler:this.agregarProv
                         },
                         {
                             xtype:'fieldset',
                             border:false,
                             layout:'column',
-
-                            items: [
+                            items:[
                                 {
                                     layout:'column',
                                     border:false,
-                                    title: "Proveedor ",
-                                    items: [
+                                    title:"Proveedor ",
+                                    items:[
                                         new WidgetTercero({
-                                            tipo: 'Proveedor',
-                                            width: 300,
-                                            name: "idproveedor0",
-                                            hiddenName: "prov0",
+                                            tipo:'Proveedor',
+                                            width:300,
+                                            name:"idproveedor0",
+                                            hiddenName:"prov0",
                                             id:"proveedor0"
                                            })
                                     ]
@@ -131,11 +128,11 @@ include_component("widgets", "widgetContactoCliente");
                                 {
                                     layout:'column',
                                     border:false,
-                                    title: "Incoterms ",
-                                    items: [
+                                    title:"Incoterms ",
+                                    items:[
                                        new WidgetIncoterms(
                                            {
-                                              id: 'terminos0',
+                                              id:'terminos0',
                                               hiddenName:"incoterms0",
                                               width:180
                                             })
@@ -147,12 +144,12 @@ include_component("widgets", "widgetContactoCliente");
                                 {
                                     layout:'column',
                                     border:false,
-                                    title: "Orden",
-                                    items: [
+                                    title:"Orden",
+                                    items:[
                                         {
-                                            xtype: "textfield",
-                                            name: "orden_pro0",
-                                            id: "orden_pro0",
+                                            xtype:"textfield",
+                                            name:"orden_pro0",
+                                            id:"orden_pro0",
                                             width:150
                                         }
                                     ]
@@ -169,11 +166,11 @@ include_component("widgets", "widgetContactoCliente");
                                     xtype:'fieldset',
                                     border:false,
                                     layout:'column',
-                                    items: [
+                                    items:[
                                         new WidgetTercero({
-                                                    tipo: 'Proveedor',
-                                                    width: 300,
-                                                    hiddenName: "prov<?=$i?>",
+                                                    tipo:'Proveedor',
+                                                    width:300,
+                                                    hiddenName:"prov<?=$i?>",
                                                     id:"proveedor<?=$i?>"
                                                    }),
                                             <?
@@ -181,7 +178,7 @@ include_component("widgets", "widgetContactoCliente");
                                             {
                                             ?>
                                             new WidgetIncoterms({
-                                              id: 'terminos<?=$i?>',
+                                              id:'terminos<?=$i?>',
                                               hiddenName:"incoterms<?=$i?>",
                                               width:180
                                             }),
@@ -189,9 +186,9 @@ include_component("widgets", "widgetContactoCliente");
                                             }
                                             ?>
                                              {
-                                                xtype: "textfield",
-                                                name: "orden_pro<?=$i?>",
-                                                id: "orden_pro<?=$i?>",
+                                                xtype:"textfield",
+                                                name:"orden_pro<?=$i?>",
+                                                id:"orden_pro<?=$i?>",
                                                 width:150
                                             }
                                     ]
@@ -216,7 +213,6 @@ var ij=parseInt(<?=($nprov>1)?($nprov):1?>);
             store=combo.store;
             j=0;
             confirmacionesF=new Array();
-            
             {
                 store.each( function( r ){
                     if(r.data.compania==record.get("compania") && r.data.fijo && r.data.email!="")
@@ -231,13 +227,12 @@ var ij=parseInt(<?=($nprov>1)?($nprov):1?>);
                     }
                 });
             }
-            
             Ext.getCmp("idconcliente").setValue(record.get("idcontacto"));
-            Ext.getCmp("contacto").setValue(record.get("nombre")+' '+record.get("papellido")+' '+record.get("sapellido") );
+            Ext.getCmp("contacto").setValue(record.get("nombre")+' '+record.get("papellido")+' '+record.get("sapellido"));
 
             
             {
-                var confirmar =  record.get("confirmar") ;
+                var confirmar=record.get("confirmar") ;
                 var brokenconfirmar="";
                 if(confirmar)
                 {
@@ -245,7 +240,7 @@ var ij=parseInt(<?=($nprov>1)?($nprov):1?>);
                     var i=0;
                     var j=0;
                     for(i=0; i<brokenconfirmar.length; i++){
-                        if(brokenconfirmar[i] && jQuery.inArray(brokenconfirmar[i], confirmacionesF)<0 )
+                        if(brokenconfirmar[i] && jQuery.inArray(brokenconfirmar[i],confirmacionesF)<0 )
                         {
                             Ext.getCmp("contacto_"+j).setValue(brokenconfirmar[i]);
                             Ext.getCmp("contacto_"+j).setReadOnly( true );
@@ -256,7 +251,7 @@ var ij=parseInt(<?=($nprov>1)?($nprov):1?>);
                     }
                 }
             
-                for( i=j; i<20; i++ ){
+                for(i=j;i<20;i++){
                     if( Ext.getCmp("contacto_"+i) ){
                         Ext.getCmp("contacto_"+i).setValue("");
                         Ext.getCmp("contacto_"+i).setReadOnly( false );
@@ -264,8 +259,6 @@ var ij=parseInt(<?=($nprov>1)?($nprov):1?>);
                     }
                 }
             }
-
-
             diascredito=0;
             if(record.data.diascredito && record.data.diascredito!="null")
             {
@@ -284,15 +277,11 @@ var ij=parseInt(<?=($nprov>1)?($nprov):1?>);
             }
             
             Ext.getCmp("ca_liberacion").setValue(cupo);
-
-
             Ext.getCmp("preferencias").setValue(record.get("preferencias"));
             Ext.getCmp("vendedor").onTrigger1Click();
             Ext.getCmp("vendedor").setValue(record.data.vendedor);
             $("#vendedor").val(record.data.nombre_ven);
-
             combo.alertaCliente(record);
-
         },
         agregarProv:function()
         {
@@ -301,12 +290,12 @@ var ij=parseInt(<?=($nprov>1)?($nprov):1?>);
                             xtype:'fieldset',
                             layout:'column',
                             bodyCssClass:'x-fieldset',
-                            items: [
+                            items:[
                                 new WidgetTercero({
-                                            tipo: 'Proveedor',
-                                            width: 300,
-                                            name: "idproveedor"+ij,
-                                            hiddenName: "prov"+ij,
+                                            tipo:'Proveedor',
+                                            width:300,
+                                            name:"idproveedor"+ij,
+                                            hiddenName:"prov"+ij,
                                             id:"proveedor"+ij
                                            }),
                                 <?
@@ -314,7 +303,7 @@ var ij=parseInt(<?=($nprov>1)?($nprov):1?>);
                                 {
                                 ?>
                                 new WidgetIncoterms({
-                                      id: 'terminos'+ij,
+                                      id:'terminos'+ij,
                                       hiddenName:"incoterms"+ij,
                                       width:180
                                     }),
@@ -322,12 +311,11 @@ var ij=parseInt(<?=($nprov>1)?($nprov):1?>);
                                 }
                                 ?>
                                  {
-                                    xtype: "textfield",
-                                    name: "orden_pro"+ij,
-                                    id: "orden_pro"+ij,
+                                    xtype:"textfield",
+                                    name:"orden_pro"+ij,
+                                    id:"orden_pro"+ij,
                                     width:150
                                 }
-
                             ]
                         });
             tb.render('panel-proveedor');  

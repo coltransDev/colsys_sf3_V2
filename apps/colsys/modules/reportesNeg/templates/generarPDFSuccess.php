@@ -275,17 +275,17 @@ if ($notify) {
 	$pdf->Row ( array ('', 'Tel.:', $notify->getCaTelefonos (), 'Fax:', $notify->getCaFax (), 'E-mail:', $notify->getCaEmail () ) );
 }
 
-if( $reporte->getCaIdmaster()>4 ){
-    $tercero = Doctrine::getTable("Tercero")->find($reporte->getCaIdmaster());    
+if( $reporte->getCaIdconsignarmaster()>4 ){
+    $tercero = Doctrine::getTable("Tercero")->find($reporte->getCaIdconsignarmaster());
         
     $orden = $ordenes[$idprov];
     $termino = substr($terminos[$idprov],0,3);
     $pdf->SetWidths(array(25,25,85,25,40));
     $pdf->SetFills(array(1,0,0,0,0,0,0));
     $pdf->SetStyles(array("B","B","","B",""));
-    $pdf->Row(array('Consigna.Master:','Nombre:',$reporte->getConsignarmaster(),'Enviar Información:',$reporte->getCaInformarMast()));
+    $pdf->Row(array('Consigna.Master:','Nombre:',$tercero->getCaNombre(),'Enviar Información:',$reporte->getCaInformarMast()));
     $pdf->SetWidths(array(5,20,70,25,80));
-    $pdf->Row(array('','Contacto:',$tercero->getCaContacto(),'Dirección:',$tercero->getCaDireccion()));
+    $pdf->Row(array('','Contacto:',($tercero->getCaContacto()?$tercero->getCaContacto():""),'Dirección:',($tercero->getCaDireccion()?$tercero->getCaDireccion():"") ));
     $pdf->SetWidths(array(5,20,40,15,30,18,40,22,10));
     $pdf->SetStyles(array("B","B","","B","","B","","B",""));
     $pdf->Row(array('','Teléfono:',$tercero->getCaTelefonos(),'Fax:',$tercero->getCaFax(),'E-mail:',$tercero->getCaEmail(),'7.7 Incoterms:',$termino));
@@ -502,23 +502,28 @@ if ($reporte->getCaSeguro () == "Sí") {
     $pdf->Ln ( 3 );
 
     $repseguro = $reporte->getRepSeguro ();
+    if($repseguro)
+    {
 
-    $pdf->SetWidths(array(200));
-    $pdf->SetFills(array(1));
-    $pdf->SetAligns(array("C"));
-    $pdf->SetStyles(array("B"));
-    $pdf->Row(array('INFORMACIÓN PARA LA ASEGURADORA'));
+        $pdf->SetWidths(array(200));
+        $pdf->SetFills(array(1));
+        $pdf->SetAligns(array("C"));
+        $pdf->SetStyles(array("B"));
+        $pdf->Row(array('INFORMACIÓN PARA LA ASEGURADORA'));
 
-    $pdf->SetWidths(array(35,35,35,95));
-    $pdf->SetFills(array(1,1,1,1));
-    $pdf->SetAligns(array("C","C","C","C"));
-    $pdf->SetStyles(array("B","B","B","B"));
-    $pdf->Row(array('Vlr.Asegurado:','Obtención Póliza:','Prima Venta:','Notificar Seguro:'));
-    $pdf->SetStyles(array("","","",""));
-    $pdf->SetFills(array(0,0,0,0));
-    $pdf->SetAligns(array("C","C","C","L"));
-    $usuario = Doctrine::getTable("Usuario")->find( $repseguro->getCaSeguroConf() );
-    $pdf->Row(array(Utils::formatNumber($repseguro->getCaVlrasegurado(),3)." ".$repseguro->getCaIdmonedaVlr (),Utils::formatNumber($repseguro->getCaObtencionpoliza(),3)." ".$repseguro->getCaIdmonedaPol(), $repseguro->getCaPrimaventa () . "%\nMin." . $repseguro->getCaMinimaventa()." ".$repseguro->getCaIdmonedaVta(),$usuario->getCaEmail())); 
+        $pdf->SetWidths(array(35,35,35,95));
+        $pdf->SetFills(array(1,1,1,1));
+        $pdf->SetAligns(array("C","C","C","C"));
+        $pdf->SetStyles(array("B","B","B","B"));
+        $pdf->Row(array('Vlr.Asegurado:','Obtención Póliza:','Prima Venta:','Notificar Seguro:'));
+        $pdf->SetStyles(array("","","",""));
+        $pdf->SetFills(array(0,0,0,0));
+        $pdf->SetAligns(array("C","C","C","L"));
+        $usuario = Doctrine::getTable("Usuario")->find( $repseguro->getCaSeguroConf() );
+        if(!$usuario)
+            $usuario = new Usuario();
+        $pdf->Row(array(Utils::formatNumber($repseguro->getCaVlrasegurado(),3)." ".$repseguro->getCaIdmonedaVlr (),Utils::formatNumber($repseguro->getCaObtencionpoliza(),3)." ".$repseguro->getCaIdmonedaPol(), $repseguro->getCaPrimaventa () . "%\nMin." . $repseguro->getCaMinimaventa()." ".$repseguro->getCaIdmonedaVta(),$usuario->getCaEmail()));
+    }
 }
 
 if( ($reporte->getCaImpoexpo()==Constantes::IMPO && $reporte->getCaColmas()=="Sí") || ($reporte->getCaImpoexpo()==Constantes::EXPO && $reporte->getCaTiporep()=="3" && ($repexpo->getCaIdsia()==17 || $repexpo->getCaIdsia()==9) ) ){
@@ -926,7 +931,7 @@ if( !$soloAduana && $reporte->getCaTiporep()!="3" ){
             $pdf->SetStyles ( array ("B", "", "", "" ) );
             $pdf->SetAligns ( array ("L", "L", "R", "R" ) );
 
-            $des_rec = $gasto->getTipoRecargo ()->getCaRecargo ();
+            $des_rec = $gasto->getTipoRecargo ()->getCaRecargo ().(($gasto->getEquipo())?"->".$gasto->getEquipo()->getCaConcepto():"");
             /*if ($gasto->getCaIdconcepto () != '9999') {
                 $des_rec .= " -> " . $gasto->getConcepto ()->getCaConcepto ();
             }*/
@@ -961,7 +966,7 @@ if( !$soloAduana && $reporte->getCaTiporep()!="3" ){
             $pdf->SetFills ( array (1, 1, 1 ) );
             $pdf->SetStyles ( array ("B", "B", "B" ) );
             $pdf->SetAligns ( array ("C", "C", "C" ) );
-            $pdf->Row ( array ($sub_mem, 'Observaciones', 'Cobrar / Min' ) );
+            $pdf->Row ( array ($sub_mem, 'Aplicacion', 'Cobrar / Min' ) );
 
             foreach ( $gastos as $gasto ) {
 
@@ -970,7 +975,7 @@ if( !$soloAduana && $reporte->getCaTiporep()!="3" ){
                 $pdf->SetStyles ( array ("B", "", "", "" ) );
                 $pdf->SetAligns ( array ("L", "L", "R", "R" ) );
 
-                $des_rec = $gasto->getConcepto()->getCaConcepto() ."->". (($gasto->getEquipo())?$gasto->getEquipo()->getCaConcepto():"");
+                $des_rec = ($gasto->getConcepto()?$gasto->getConcepto()->getCaConcepto():"" ). (($gasto->getEquipo())?"->".$gasto->getEquipo()->getCaConcepto():"");
                 /*if ($gasto->getCaIdconcepto () != '9999') {
                     $des_rec .= " -> " . $gasto->getConcepto ()->getCaConcepto ();
                 }*/
@@ -986,18 +991,17 @@ if( !$soloAduana && $reporte->getCaTiporep()!="3" ){
                     $pdf->SetFills ( array (0));
                     $pdf->Row ( array ("* Observaciones: " . $gasto->getCaDetalles () ) );
                 }
-
             }
         }
     }
     $pdf->flushGroup();
-
 }
 
 if( ($reporte->getCaImpoexpo()==constantes::IMPO && $reporte->getCaColmas()=="Sí") ||($reporte->getCaTiporep()=="3") ||($reporte->getCaImpoexpo()==constantes::EXPO && ($repexpo->getCaIdsia()==17 || $repexpo->getCaIdsia()==9 ) ) ){
 
 	$costosAduana = $reporte->getCostos ( "aduana" );
 	if (count ( $costosAduana )) {
+             $pdf->beginGroup();
 		$pdf->Ln ( 3 );
 		$pdf->SetWidths ( array (200 ) );
 		$pdf->SetFills ( array (1 ) );
@@ -1022,6 +1026,7 @@ if( ($reporte->getCaImpoexpo()==constantes::IMPO && $reporte->getCaColmas()=="Sí
 			$pdf->Row ( array ($costo->getCosto ()->getCaCosto (), $costo->getCaTipo (), Utils::formatNumber ( $costo->getCaNetcosto () ), Utils::formatNumber ( $costo->getCaVlrcosto () ), Utils::formatNumber ( $costo->getCaMincosto () ), $costo->getCaIdmoneda (), $costo->getCaDetalles () ) );
 
 		}
+                $pdf->flushGroup();
 	}
 }
 

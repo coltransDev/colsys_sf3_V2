@@ -4,8 +4,6 @@
  * 
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
-
-
 $conceptos = $sf_data->getRaw("conceptos");
 $recargos = $sf_data->getRaw("recargos");
 
@@ -14,8 +12,6 @@ $aplicaciones = array("Valor Fijo","Sobre Flete","Sobre Flete + Recargos","Unita
 include_component("reportesNeg","cotizacionWindow", array("reporte"=>$reporte));
 ?>
 <script type="text/javascript">
-
-
 PanelConceptosFletes = function( config ){
 
     Ext.apply(this, config);
@@ -89,9 +85,6 @@ PanelConceptosFletes = function( config ){
     });
 
 
-    /*
-    * Crea el expander
-    */
     this.expander = new Ext.grid.RowExpander({
         lazyRender : false,
         width: 15,
@@ -244,15 +237,7 @@ PanelConceptosFletes = function( config ){
         hideable: false,
         sortable:false,
         editor: <?=include_component("widgets", "monedas" ,array("id"=>""))?>
-      }/*,
-      {
-        header: "Orden",
-        dataIndex: 'orden',
-        width: 50,
-        sortable:true,
-        hideable: true
-
-      }*/
+      }
      ];
 
 
@@ -280,7 +265,6 @@ PanelConceptosFletes = function( config ){
         ]);
 
     this.store = new Ext.data.Store({
-
         autoLoad : true,
         url: '<?=url_for("reportesNeg/panelConceptosData?id=".$reporte->getCaIdreporte())?>',
         reader: new Ext.data.JsonReader(
@@ -544,16 +528,14 @@ Ext.extend(PanelConceptosFletes, Ext.grid.EditorGridPanel, {
                                 if(recordsConceptos[j].data.tipo==r.data.tipo)
                                 {
                                 if( recordsConceptos[j].data.iditem==r.data.idconcepto){
-                                    existe=true;
-                                    //alert(1);
+                                    existe=true;                                    
                                 }
                                 }
                             }
 
                             if( recordsConceptos[j].data.tipo=="recargo" ){
                                 if( recordsConceptos[j].data.iditem==r.data.idconcepto && recordsConceptos[j].data.idconcepto==rec.data.idconcepto ){
-                                    existe=true;
-                                    //alert(2);
+                                    existe=true;                                    
                                 }
                             }
                         }
@@ -740,6 +722,7 @@ Ext.extend(PanelConceptosFletes, Ext.grid.EditorGridPanel, {
         if( rec.data.tipo=="recargo"){
             alert("Solo pueda agregar un recargo sobre un concepto de flete");
         }
+        
         if( rec.data.tipo=="concepto"){
 
             var idconcepto = rec.data.iditem;
@@ -798,9 +781,7 @@ Ext.extend(PanelConceptosFletes, Ext.grid.EditorGridPanel, {
     }
     ,
     onDblClickHandler: function(e) {
-        <?
-        //if($opcion!="consulta"){
-        ?>
+        
         var btn = e.getTarget('.btnComentarios');
         if (btn) {
             var t = e.getTarget();
@@ -810,10 +791,7 @@ Ext.extend(PanelConceptosFletes, Ext.grid.EditorGridPanel, {
 
             activeRow = record;
             this.ventanaObservaciones( record );
-        }
-        <?
-        //}
-        ?>
+        }        
     },
     ventanaObservaciones : function( record ){
         var activeRow = record;

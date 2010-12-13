@@ -113,8 +113,10 @@ class reportesNegComponents extends sfComponents
 	* @author: Andres Botero
 	*/
 	public function executePanelConceptosFletes()
-	{		
-		$this->conceptos = Doctrine::getTable("Concepto")
+	{
+        if($this->reporte)
+        {
+            $this->conceptos = Doctrine::getTable("Concepto")
                                      ->createQuery("c")
                                      ->select("ca_idconcepto, ca_concepto")
                                      ->where("c.ca_transporte = ?", $this->reporte->getCaTransporte() )
@@ -125,43 +127,47 @@ class reportesNegComponents extends sfComponents
                                      ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
                                      ->execute();
          
-        foreach( $this->conceptos as $key=>$val){
-            $this->conceptos[$key]['ca_concepto'] = utf8_encode($this->conceptos[$key]['ca_concepto']);
-             
-        }
-
-        array_push( $this->conceptos , array("ca_idconcepto"=>"9999", "ca_concepto"=>"Recargo general del trayecto"));
-
-        $impoexpo = $this->reporte->getCaImpoexpo();
-        if( $impoexpo==Constantes::TRIANGULACION ){
-            $impoexpo=Constantes::IMPO;
-        }
-
-        $this->recargos = Doctrine::getTable("TipoRecargo")
-                                     ->createQuery("c")
-                                     ->select("ca_idrecargo as ca_idconcepto, ca_recargo as ca_concepto")
-                                     ->addWhere("c.ca_tipo like ? ", "%".Constantes::RECARGO_EN_ORIGEN."%" )
-                                     /*->addWhere("c.ca_impoexpo LIKE ? ", $impoexpo )
-                                     ->addWhere("c.ca_transporte LIKE ? ", $this->reporte->getCaTransporte() )*/
-                                     ->addOrderBy("c.ca_recargo")
-                                     ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
-                                     ->execute();
-
-         foreach( $this->recargos as $key=>$val){
-             $this->recargos[$key]['ca_concepto'] = utf8_encode($this->recargos[$key]['ca_concepto']);
-
-         }
-         $reporte=$this->reporte;
-         $user = $this->getUser();
-         $this->permiso = $user->getNivelAcceso( "87" );
-         if( $reporte->getEditable($this->permiso,$user)  ){
-                $this->editable = true;
-            }else{
-                $this->editable = false;
+            foreach( $this->conceptos as $key=>$val){
+                $this->conceptos[$key]['ca_concepto'] = utf8_encode($this->conceptos[$key]['ca_concepto']);
             }
 
-	}
+            array_push( $this->conceptos , array("ca_idconcepto"=>"9999", "ca_concepto"=>"Recargo general del trayecto"));
 
+            $impoexpo = $this->reporte->getCaImpoexpo();
+            if( $impoexpo==Constantes::TRIANGULACION ){
+                $impoexpo=Constantes::IMPO;
+            }
+
+            $this->recargos = Doctrine::getTable("TipoRecargo")
+                                         ->createQuery("c")
+                                         ->select("ca_idrecargo as ca_idconcepto, ca_recargo as ca_concepto")
+                                         ->addWhere("c.ca_tipo like ? ", "%".Constantes::RECARGO_EN_ORIGEN."%" )
+                                         /*->addWhere("c.ca_impoexpo LIKE ? ", $impoexpo )
+                                         ->addWhere("c.ca_transporte LIKE ? ", $this->reporte->getCaTransporte() )*/
+                                         ->addOrderBy("c.ca_recargo")
+                                         ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
+                                         ->execute();
+
+             foreach( $this->recargos as $key=>$val){
+                 $this->recargos[$key]['ca_concepto'] = utf8_encode($this->recargos[$key]['ca_concepto']);
+
+             }
+             $reporte=$this->reporte;
+             $user = $this->getUser();
+             $this->permiso = $user->getNivelAcceso( "87" );
+             if( $reporte->getEditable($this->permiso,$user)  ){
+                    $this->editable = true;
+                }else{
+                    $this->editable = false;
+                }
+        }
+        else
+        {
+            $this->conceptos=array();
+            $this->recargos=array();
+        }
+
+	}
 
     public function executePanelConceptosOtm()
     {
