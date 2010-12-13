@@ -49,8 +49,7 @@ WidgetAgente = function( config ){
     );
     WidgetAgente.superclass.constructor.call(this, {
         valueField: 'idagente',
-        displayField: 'nombre',
-        typeAhead: true,
+        displayField: 'nombre',        
         forceSelection: true,
         tpl: this.resultTpl,
         triggerAction: 'all',
@@ -90,8 +89,7 @@ Ext.extend(WidgetAgente, Ext.form.ComboBox, {
                 {
                     var str=record.get("nombre");
 
-                    var txt=new RegExp(q,"ig");
-                    
+                    var txt=new RegExp(q,"ig");                    
                     if(str.search(txt) == -1 )
                         return false;
                     else
@@ -104,7 +102,21 @@ Ext.extend(WidgetAgente, Ext.form.ComboBox, {
         }
         else if(listarTodos==true)
         {
-            this.store.filter("","",true,true);
+            if(q!="")
+            {
+              this.store.filterBy(function(record, id) {
+                var str=record.get("nombre");
+
+                var txt=new RegExp(q,"ig");
+                if(str.search(txt) == -1 )
+                    return false;
+                else
+                    return true;
+
+            });
+            }
+            else
+                this.store.filter("","",true,true);
         }       
        this.onLoad();
     },
