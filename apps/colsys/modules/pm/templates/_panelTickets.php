@@ -483,16 +483,20 @@ Ext.extend(PanelTickets, Ext.grid.GridPanel, {
             if( record.data.tipo=="Defecto" ){
                 color = "pink";
             }else{
-                switch( record.data.priority ){
-                    case "Media":
-                        color = "yellow";
-                        break;
-                    case "Alta":
-                        color = "pink";
-                        break;
-                    default:
-                        color = "";
-                        break;
+                if( record.data.ultseg ){
+                    switch( record.data.priority ){
+                        case "Media":
+                            color = "yellow";
+                            break;
+                        case "Alta":
+                            color = "pink";
+                            break;
+                        default:
+                            color = "";
+                            break;
+                    }
+                }else{
+                    color = "green";
                 }
             }
         }
