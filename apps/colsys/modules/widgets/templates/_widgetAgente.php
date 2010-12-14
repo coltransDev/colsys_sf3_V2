@@ -104,16 +104,16 @@ Ext.extend(WidgetAgente, Ext.form.ComboBox, {
         {
             if(q!="")
             {
-              this.store.filterBy(function(record, id) {
-                var str=record.get("nombre");
+                this.store.filterBy(function(record, id){
+                    var str=record.get("nombre");
+                    var str1=record.get("pais");
 
-                var txt=new RegExp(q,"ig");
-                if(str.search(txt) == -1 )
-                    return false;
-                else
-                    return true;
-
-            });
+                    var txt=new RegExp(q,"ig");
+                    if(str.search(txt) == -1 && str1.search(txt) == -1 )
+                        return false;
+                    else
+                        return true;
+                });
             }
             else
                 this.store.filter("","",true,true);
