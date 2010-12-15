@@ -76,6 +76,16 @@ class cotizacionesComponents extends sfComponents
 
 	}
 
+        public function executePanelProductosotm(){
+		$this->aplicacionesAereo = ParametroTable::retrieveByCaso("CU064", null, Constantes::AEREO );
+		$this->aplicacionesMaritimo = ParametroTable::retrieveByCaso("CU064", null, Constantes::MARITIMO );
+
+        if(!isset($this->modo)){
+            $this->modo = "";
+        }
+
+	}
+
 	/*
 	* Permite crear recargos locales
 	* @author: Andres Botero
@@ -86,7 +96,7 @@ class cotizacionesComponents extends sfComponents
 
 		$this->aplicacionesAereo = ParametroTable::retrieveByCaso("CU064", null, Constantes::AEREO );
 		$this->aplicacionesMaritimo = ParametroTable::retrieveByCaso("CU064", null, Constantes::MARITIMO );
-
+        $this->parametros = ParametroTable::retrieveByCaso("CU071");
 		$this->recargosMaritimo = Doctrine::getTable("InoConcepto")
                                   ->createQuery("c")
                                  ->innerJoin("c.InoConceptoModalidad cm")

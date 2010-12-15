@@ -456,8 +456,37 @@ Ext.extend(PanelRecargosCotizacion, Ext.grid.EditorGridPanel, {
                 ?>
             ];
 
+            var dataParametros = new Array();
+
+
+                <?
+                $i=0;
+                foreach( $parametros as $aplicacion ){
+                ?>
+                    if('<?=strtolower(trim($aplicacion->getCaValor()))?>'==e.record.data.recargo.replace(/^\s*|\s*$/g,"").toLowerCase())
+                    {
+                        <?
+                        $rangos = explode("|", $aplicacion->getcaValor2() );
+                        foreach( $rangos as $rango ){
+                        ?>
+                        dataParametros.push('<?=$rango?>');
+                        <?
+                        }
+                        //break;
+                        ?>
+
+                    }
+                <?
+                }
+                ?>
+
+
             var ed = this.colModel.getCellEditor(e.column, e.row);
-            if( e.record.data.transporte=="<?=Constantes::AEREO?>" ){
+            if(dataParametros.length>0)
+            {
+                ed.field.store.loadData( dataParametros );
+            }
+            else if( e.record.data.transporte=="<?=Constantes::AEREO?>" ){
                 ed.field.store.loadData( dataAereo );
             }else{
                 ed.field.store.loadData( dataMaritimo );
