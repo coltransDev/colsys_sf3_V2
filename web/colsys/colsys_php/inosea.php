@@ -231,6 +231,11 @@ elseif (isset($boton)) {                                                       /
                 echo "        document.location.href = 'inosea.php?accion='+opcion+'\&id='+id;";
                 echo "    }";
                 echo "}";
+                echo "function digitar(opcion, id){";
+                echo "    if (confirm(\"¿Esta seguro que desea confirmar digitación Muisca OK?\")) {";
+                echo "        document.location.href = 'inosea.php?accion='+opcion+'\&id='+id;";
+                echo "    }";
+                echo "}";
                 echo "function ver_pdf(id){";
                 echo "    window.open(\"reporteneg.php?id=\"+id);"; //toolbar=no, location=no, directories=no, menubar=no
                 echo "}";
@@ -258,9 +263,17 @@ elseif (isset($boton)) {                                                       /
                     echo "  <TD Class=partir>Fecha de Registro :</TD>";
                     echo "  <TD style='font-size: 11px; text-align: center;' Class=listar>".$rs->Value('ca_fchreferencia')."</TD>";
                     echo "  <TD ROWSPAN=6 Class=listar style='text-align: center;'>";                                             // Botones para hacer Mantenimiento a la Tabla
-                    echo "    <IMG style='visibility: $visible;' src='./graficos/edit.gif' alt='Editar el Registro' border=0 onclick='elegir(\"Modificar\", \"".$rs->Value('ca_referencia')."\", 0, 0);'>";
-                    echo "    <IMG style='visibility: $visible;' src='./graficos/del.gif'  alt='Eliminar el Registro' border=0 onclick='elegir(\"Eliminar\", \"".$rs->Value('ca_referencia')."\", 0, 0);'><BR><BR>";
-                    echo "    <IMG style='visibility: $visible;' src='./graficos/muisca.gif'  alt='Informacion Muisca' border=0 onclick='elegir(\"Muisca\", \"".$rs->Value('ca_referencia')."\", 0, 0);'><BR>";
+                    echo "    <IMG style='visibility: $visible' src='./graficos/edit.gif' alt='Editar el Registro' border=0 onclick='elegir(\"Modificar\", \"".$rs->Value('ca_referencia')."\", 0, 0);'>";
+                    echo "    <IMG style='visibility: $visible' src='./graficos/del.gif' alt='Eliminar el Registro' border=0 onclick='elegir(\"Eliminar\", \"".$rs->Value('ca_referencia')."\", 0, 0);'><BR><BR>";
+                    if ($rs->value("ca_usumuisca") != ''){
+                        $digitable = 'hidden';
+                        $fch_muisca = explode(" ",$rs->value("ca_fchmuisca"));
+                        echo "<br /><b>Digitado:</b><br />".$rs->value("ca_usumuisca")."<br />".$fch_muisca[0]."<br />".$fch_muisca[1]."<br />";
+                    }else{
+                        $digitable = 'visible';
+                        echo "<IMG style='visibility: $digitable' src='./graficos/digita.gif' alt='Digitación Muisca Ok' border=0 onclick='digitar(\"Digitacion\", \"".$rs->Value('ca_referencia')."\", 0, 0);'><BR><BR>";
+                    }
+                    echo "    <IMG style='visibility: $digitable' src='./graficos/muisca.gif' alt='Informacion Muisca' border=0 onclick='elegir(\"Muisca\", \"".$rs->Value('ca_referencia')."\", 0, 0);'><BR>";
                     if ($dm->value("ca_usuenvio") != ''){
                         $fch_envio = explode(" ",$dm->value("ca_fchenvio"));
                         echo "<br /><b>Radicado:</b><br />".$dm->value("ca_usuenvio")."<br />".$fch_envio[0]."<br />".$fch_envio[1]."<br />";
@@ -490,7 +503,7 @@ elseif (isset($boton)) {                                                       /
                             echo "  <TD ROWSPAN=2 WIDTH=80 Class=listar style='text-align: center;'>";                                              // Botones para hacer Mantenimiento a la Tabla
                             echo "    <IMG style='visibility: $visible;' src='./graficos/edit.gif' alt='Editar el Registro' border=0 onclick='elegir(\"ModificarCl\", \"".$rs->Value('ca_referencia')."\", \"".$cl->Value('ca_idcliente')."\", \"".urlencode($cl->Value('ca_hbls'))."\");'>";
                             echo "   <IMG style='visibility: $visible;' src='./graficos/del.gif'  alt='Eliminar el Registro' border=0 onclick='elegir(\"EliminarCl\", \"".$rs->Value('ca_referencia')."\", \"".$cl->Value('ca_idcliente')."\", \"".urlencode($cl->Value('ca_hbls'))."\");'><BR><BR>";
-                            echo "    <IMG style='visibility: $visible;' src='./graficos/muisca.gif'  alt='Informacion Muisca' border=0 onclick='elegir(\"MuiscaCl\", \"".$rs->Value('ca_referencia')."\", \"".$cl->Value('ca_idcliente')."\", \"".urlencode($cl->Value('ca_hbls'))."\");'><BR>";
+                            echo "    <IMG style='visibility: $digitable;' src='./graficos/muisca.gif'  alt='Informacion Muisca' border=0 onclick='elegir(\"MuiscaCl\", \"".$rs->Value('ca_referencia')."\", \"".$cl->Value('ca_idcliente')."\", \"".urlencode($cl->Value('ca_hbls'))."\");'><BR>";
                             echo "  </TD>";
                             echo "</TR>";
                             echo "<TR>";
@@ -4737,6 +4750,63 @@ elseif (isset($accion)) {                                                      /
             }
         case 'Abrir': {                                                      // El Botón Guardar fue pulsado
                 if (!$rs->Open("update tb_inomaestra_sea set ca_usucerrado = null, ca_usuoperacion = '$usuario', ca_fchcerrado = null, ca_provisional = false where ca_referencia = '$id'")) {
+                    echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
+                    echo "<script>document.location.href = 'inosea_abrir.php';</script>";
+                    exit;
+                }
+                break;
+            }
+        case 'Digitacion': {                                                      // El Botón Digitacion Muisca fue pulsado
+                $us =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
+                if (!$us->Open("select * from vi_usuarios where ca_login = '$usuario'")) {
+                    echo "<script>alert(\"".addslashes($us->mErrMsg)."\");</script>";
+                    echo "<script>document.location.href = 'cotizaciones.php';</script>";
+                    exit;
+                   }
+
+                $from = $us->Value('ca_email');
+                $fromName = $us->Value('ca_nombre');
+                $subject = "Digitación Muisca OK - Ref.:".$id;
+                $bodyhtml.= "<html><head></head><body>";
+                $bodyhtml.= "Apreciados Compañeros:<br /><br />";
+                $bodyhtml.= "La presente con el fin de informar que las casillas Muisca en Colsys han sido totalmente diligenciadas y ustedes pueden proceder a generar el xml dejandolo en la bandeja de la DIAN comprobando su recibo exitoso en los tiempos de la Aduana, adjuntamos el (los) Hbl`(s ) y Mbl amparados en dicha referencia.<br /><br />";
+                $bodyhtml.= "<br />";
+                $bodyhtml.= "TENER PRESENTE LA FECHA DE LLEGADA DE LA MERCANCÍA SUMINISTRADA EN EL EMAIL, O LA DADA POR LA PAGINA WEB DEL TERMINAL MARÍTIMO EN MOTONAVES ANUNCIADAS O PREVISTA A SU ARRIBO.<br /><br />";
+                $bodyhtml.= "DESPUÉS DE LA PRESENTACIÓN FÍSICA EN PUERTO DEL ORIGINAL DEL HBL ENTREGAR EL MBL SIN VALOR DE FLETES AL AGENTE DE ADUANA, SI EL CLIENTE GOZA DE FIRMA DE CONTRATO DE COMODATO , FAVOR PROCEDER A LA CONSECUCIÓN DEL PAZ Y SALVO DEL CONTENEDOR MÁXIMO EL MISMO DÍA DE LLEGADA DEL BUQUE.<br /><br />";
+                $bodyhtml.= "Quedamos pendientes,<br /><br />";
+                $bodyhtml.= $us->Value('ca_nombre')."<br />";
+                $bodyhtml.= $us->Value('ca_cargo')."<br />";
+                $bodyhtml.= "COLTRANS S.A."."<br />";
+                $bodyhtml.= $us->Value('ca_direccion')."<br />";
+                $bodyhtml.= "Tel.:".$us->Value('ca_telefono')." ".$us->Value('ca_extension')."<br />";
+                $bodyhtml.= "Fax :".$us->Value('ca_fax')."<br />";
+                $bodyhtml.= $us->Value('ca_sucursal')." - Colombia"."<br />";
+                $bodyhtml.= $us->Value('ca_email')."<br />";
+                $bodyhtml.= "www.coltrans.com.co";
+                $bodyhtml.= "</body></html>";
+
+                $query = "select up.ca_login, us.ca_email, us.ca_sucursal from control.tb_usuarios_perfil up";
+                $query.= "  inner join control.tb_usuarios us on us.ca_login = up.ca_login";
+                $query.= "  inner join vi_inomaestra_sea im on im.ca_ciudestino = us.ca_sucursal";
+                $query.= "  where im.ca_referencia = '$id' and up.ca_perfil like '%asistente-marítimo-puerto%' order by us.ca_sucursal";
+                if (!$us->Open("$query")) {
+                    echo "<script>alert(\"".addslashes($us->mErrMsg)."\");</script>";
+                    echo "<script>document.location.href = 'cotizaciones.php';</script>";
+                    exit;
+                   }
+                $address = "";
+                while (!$us->Eof() and !$us->IsEmpty()) {
+                    $address.= $us->Value('ca_email').",";
+                    $us->MoveNext();
+                }
+                $address = substr($address,0,strlen($address)-1);
+                if (!$rs->Open("insert into tb_emails (ca_usuenvio, ca_tipo, ca_from, ca_fromname, ca_cc, ca_replyto, ca_address, ca_subject, ca_bodyhtml) values ('$usuario','Ok Digitación Muisca','$from', '$fromName', '$from', '$from', '$address','$subject','$bodyhtml')")) {
+                    echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
+                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    exit;
+                }
+
+                if (!$rs->Open("update tb_inomaestra_sea set ca_fchmuisca = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usumuisca = '$usuario' where ca_referencia = '$id'")) {
                     echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                     echo "<script>document.location.href = 'inosea_abrir.php';</script>";
                     exit;
