@@ -58,7 +58,6 @@ PanelRecargosLocalesNaviera = function( config ){
             this.panelRecargosPatios
         ]
     });
-
 };
 
 Ext.extend(PanelRecargosLocalesNaviera, Ext.TabPanel, {
