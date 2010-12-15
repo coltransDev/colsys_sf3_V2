@@ -566,11 +566,13 @@ class clientesActions extends sfActions
                 $handleLocal = fopen($file, 'x');
                 //Descarga el archivo
                 $handle = fopen($url, 'r');
+                if ($handle === false){
+                    throw "No se puede leer la url ($url)";
+                }
                 while (!feof($handle)) {
                     $data = fgets($handle, 512);
                     if (fwrite($handleLocal, $data) === FALSE) {
-                        echo "No se puede escribir al archivo ($nombre_archivo)";
-                        exit;
+                        throw "No se puede escribir al archivo ($nombre_archivo)";
                     }
                 }
                 fclose($handle);
