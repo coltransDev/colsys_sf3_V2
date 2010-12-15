@@ -220,6 +220,8 @@ class conceptosActions extends sfActions
 		$tipo = utf8_decode($request->getParameter("tipo"));
 		$modo = $request->getParameter("modo");
 
+        if($impoexpo==constantes::TRIANGULACION)
+            $impoexpo=constantes::IMPO;
 
 		if( $modo=="recargos" ){
             $this->forward404Unless( $impoexpo );
