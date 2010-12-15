@@ -1488,6 +1488,8 @@ class pricingActions extends sfActions
             $this->opcion = "consulta";
         }		
 		$transporte = utf8_decode($this->getRequestParameter( "transporte" ));
+
+        
 		
 		$modalidad = utf8_decode($this->getRequestParameter( "modalidad" ));
 		$impoexpo = utf8_decode($this->getRequestParameter( "impoexpo" ));

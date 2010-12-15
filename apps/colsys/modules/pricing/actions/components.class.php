@@ -143,7 +143,9 @@ class pricingComponents extends sfComponents
     public function executePanelRecargosPorLinea(){
         $this->aplicacionesAereo = ParametroTable::retrieveByCaso("CU064", null, Constantes::AEREO );
 		$this->aplicacionesMaritimo = ParametroTable::retrieveByCaso("CU064", null, Constantes::MARITIMO );
-        
+        $this->parametros = ParametroTable::retrieveByCaso("CU071");
+        //array_merge($this->aplicacionesAereo, $this->parametros);
+        //array_merge($this->aplicacionesMaritimo, $this->parametros);
     }
 
 

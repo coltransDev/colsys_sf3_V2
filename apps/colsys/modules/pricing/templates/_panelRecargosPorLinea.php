@@ -12,8 +12,6 @@
  **/
 PanelRecargosPorLinea = function( config ){
     Ext.apply(this, config);
-
-
     this.storeLineas = new Ext.data.Store({
         autoLoad : true,
         url: '<?=url_for("pricing/datosEditorLineas")?>',
@@ -487,9 +485,40 @@ Ext.extend(PanelRecargosPorLinea, Ext.grid.EditorGridPanel, {
                 }
                 ?>
             ];
+            
+            var dataParametros = new Array();
+
+
+                <?
+                $i=0;
+                foreach( $parametros as $aplicacion ){                    
+                ?>                    
+                    if('<?=strtolower(trim($aplicacion->getCaValor()))?>'==e.record.data.recargo.replace(/^\s*|\s*$/g,"").toLowerCase())
+                    {                        
+                        <?
+                        $rangos = explode("|", $aplicacion->getcaValor2() );
+                        foreach( $rangos as $rango ){
+                        ?>
+                        dataParametros.push('<?=$rango?>');
+                        <?
+                        }
+                        //break;
+                        ?>
+                        
+                    }
+                <?
+                }
+                ?>
+            
 
             var ed = this.colModel.getCellEditor(e.column, e.row);
-            if( this.transporte=="<?=Constantes::AEREO?>" ){
+            //alert(e.record.data.toSource());
+            //alert(e.record.data.recargo);
+            if(dataParametros.length>0)
+            {
+                ed.field.store.loadData( dataParametros );                
+            }
+            else if( this.transporte=="<?=Constantes::AEREO?>" ){
                 ed.field.store.loadData( dataAereo );
             }else{
                 ed.field.store.loadData( dataMaritimo );
