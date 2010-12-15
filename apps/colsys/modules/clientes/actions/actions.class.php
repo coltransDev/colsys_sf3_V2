@@ -559,7 +559,8 @@ class clientesActions extends sfActions
                 $file =  sfConfig::get('sf_root_dir').DIRECTORY_SEPARATOR."tmp".DIRECTORY_SEPARATOR."clinton.xml";
                 sfConfig::set("sf_web_debug", false);
 
-                $url = "http://www.treas.gov/offices/enforcement/ofac/sdn/sdn.xml";
+                // $url = "http://www.treas.gov/offices/enforcement/ofac/sdn/sdn.xml";
+                $url = "http://www.treasury.gov/ofac/downloads/sdn.xml";        // A partir 15 de diciembre /2010
                 unlink($file);
 
                 $handleLocal = fopen($file, 'x');
