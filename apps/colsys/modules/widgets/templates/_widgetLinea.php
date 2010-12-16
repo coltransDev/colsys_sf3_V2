@@ -77,6 +77,8 @@ Ext.extend(WidgetLinea, Ext.form.ComboBox, {
                 transporte="<?=Constantes::TERRESTRE?>";
             }
 
+            
+
             for( k in this.data ){
                 var rec = this.data[k];
                 if( transporte && rec.transporte==transporte ){                    
