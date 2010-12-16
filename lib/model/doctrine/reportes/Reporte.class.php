@@ -1042,7 +1042,7 @@ class Reporte extends BaseReporte {
                 $this->setCaIdconcliente($reporteNew->getCaIdconcliente());
                 $this->setCaIdclientefac($reporteNew->getCaIdclientefac());
                 $this->setCaIdclienteag($reporteNew->getCaIdclienteag());
-                $this->setCaIdclienteotro($reporteNew->getCaIdclientefac());
+                $this->setCaIdclienteotro($reporteNew->getCaIdclienteotro());
                 $this->setCaIdagente($reporteNew->getCaIdagente());
                 $this->setCaMercanciaDesc($reporteNew->getCaMercanciaDesc());
                 $this->setCaIdproveedor($reporteNew->getCaIdproveedor());
