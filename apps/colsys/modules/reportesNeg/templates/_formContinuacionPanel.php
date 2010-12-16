@@ -4,7 +4,6 @@
  *
  *  (c) Coltrans S.A. - Colmas Ltda.
 */
-//echo "modo:".$modo.":::::::impoexpo:".$impoexpo;
 if($impoexpo!=Constantes::EXPO)
 {
 include_component("widgets","widgetContinuacion");

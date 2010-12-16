@@ -162,7 +162,7 @@ PanelRecargos = function( config ){
             width: 80,
             hideable: false,
             sortable:false,
-            editor: this.editorAplicaciones
+            editor: <?=include_component("widgets", "emptyCombo" ,array("id"=>""))?>
         },
         {
             header: "Tipo",
@@ -261,7 +261,8 @@ PanelRecargos = function( config ){
        listeners:{
             validateedit: this.onValidateEdit,
             rowcontextmenu: this.onRowcontextMenu,           
-            dblclick:this.onDblClickHandler
+            dblclick:this.onDblClickHandler,
+            beforeedit: this.onBeforeEdit,
         },
         boxMinHeight: 400,
         tbar:[
@@ -427,6 +428,78 @@ Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
         
     },
 
+    onBeforeEdit: function(e){
+        
+
+
+        if( e.field=="aplicacion" || e.field=="aplicacion_min" ){
+            var dataAereo = [
+                <?
+                $i=0;
+                foreach( $aplicacionesAereo as $aplicacion ){
+                    if( $i++!=0){
+                        echo ",";
+                    }
+                ?>
+                    ['<?=$aplicacion->getCaValor()?>']
+                <?
+                }
+                ?>
+            ];
+
+            var dataMaritimo = [
+                <?
+                $i=0;
+                foreach( $aplicacionesMaritimo as $aplicacion ){
+                    if( $i++!=0){
+                        echo ",";
+                    }
+                ?>
+                    ['<?=$aplicacion->getCaValor()?>']
+                <?
+                }
+                ?>
+            ];
+
+            var dataParametros = new Array();
+            //alert(e.record.data.toSource());
+                <?
+                $i=0;
+                foreach( $parametros as $aplicacion ){
+                ?>
+                    if('<?=strtolower(trim($aplicacion->getCaValor()))?>'==e.record.data.item.replace(/^\s*|\s*$/g,"").toLowerCase())
+                    {
+                        <?
+                        $rangos = explode("|", $aplicacion->getcaValor2() );
+                        foreach( $rangos as $rango ){
+                        ?>
+                        dataParametros.push('<?=$rango?>');
+                        <?
+                        }
+                        //break;
+                        ?>
+
+                    }
+                <?
+                }
+                ?>
+
+
+            var ed = this.colModel.getCellEditor(e.column, e.row);
+            //alert(e.record.data.toSource());
+            //alert(e.record.data.recargo);
+            if(dataParametros.length>0)
+            {
+                ed.field.store.loadData( dataParametros );
+            }
+            else if( this.transporte=="<?=Constantes::AEREO?>" ){
+                ed.field.store.loadData( dataAereo );
+            }else{
+                ed.field.store.loadData( dataMaritimo );
+            }
+        }
+    },
+
     
     onValidateEdit : function(e){
         var rec = e.record;
@@ -478,7 +551,7 @@ Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
                                 rec.set("iditem", r.data.idconcepto);
                                 rec.set("idconcepto", r.data.idconcepto);
                                 rec.set("tipo_app", "$");
-                                rec.set("aplicacion", "<?=$aplicaciones[0]?>");
+                                rec.set("aplicacion", "");
                                 rec.set("cobrar_tar", 0);
                                 rec.set("cobrar_min", 0);
                                 rec.set("cobrar_idm", "USD");
@@ -634,9 +707,7 @@ Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
     }
     ,
     onDblClickHandler: function(e) {
-        <?
-        //if($opcion!="consulta"){
-        ?>
+       
         var btn = e.getTarget('.btnComentarios');
         if (btn) {
             var t = e.getTarget();
@@ -647,9 +718,7 @@ Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
             activeRow = record;
             this.ventanaObservaciones( record );
         }
-        <?
-        //}
-        ?>
+       
     },
     ventanaObservaciones : function( record ){
         var activeRow = record;

@@ -132,23 +132,7 @@ include_component("reportesNeg", "formSegurosPanel",array("modo"=>$modo,"impoexp
                 handler:this.onFinalizar
             } );
         }
-
-        if(this.nuevaVersion){
-            this.buttons.push({
-                text:'Nueva Version',
-                formBind:true,
-                scope:this,
-                handler:this.onNuevaVersion
-            } );
-        }
-        if(this.copiar){
-            this.buttons.push({
-                text:'Copiar en nuevo reporte',
-                formBind:true,
-                scope:this,
-                handler:this.onCopiar
-            } );
-        }
+       
         this.buttons.push({
                 text:'Cancelar',
                  handler:this.onCancel
@@ -207,8 +191,8 @@ include_component("reportesNeg", "formSegurosPanel",array("modo"=>$modo,"impoexp
                         ?>
                             ,new PanelRecargos({
                                 title:'Rec. locales',
-                                id:'panel-RecargosLocales'
-
+                                id:'panel-RecargosLocales',
+                                trasnporte:'<?=$modo?>'
                             })
                         <?
                         }
@@ -233,12 +217,6 @@ include_component("reportesNeg", "formSegurosPanel",array("modo"=>$modo,"impoexp
 
 var idreporte='<?=$idreporte?>';
     Ext.extend(FormReportePanel, Ext.form.FormPanel, {        
-        onNuevaVersion:function(){
-            this.onSave("2");
-        },
-        onCopiar:function(){
-            this.onSave("1");
-        },
         onFinalizar:function(){
             this.onSave("3");
         },
@@ -290,68 +268,15 @@ var idreporte='<?=$idreporte?>';
             }
         },
         onCancel:function(){
-            location.href="/reportesNeg/index";
-        }
-<?
-            if($idreporte)
+            if(idreporte>0)
             {
-?>
-        ,
-        onImportar:function(){
-            win = new Ext.Window({
-                width:'80%',
-                height:'80%',
-                closeAction:'close',
-                plain:true,
-                title:"Importar reporte",
-                items:[
-                    new listReportesPanel()
-                ]
-                ,
-                buttons:[
-                    {
-                        text:'Importar',
-                        scope:this,
-                        handler:function( ){
-                            if(window.confirm("Desea realmente importar este reporte?"))
-                            {
-                                idnew=Ext.getCmp("reporte").getValue();
-                                Ext.Ajax.request(
-                                {
-                                    waitMsg:'Guardando cambios...',
-                                    url:'<?=url_for("reportesNeg/importarReporte")?>',
-                                    params:	{
-                                        idreportenew:idnew,
-                                        idreporte:<?=$reporte->getCaIdreporte()?>
-                                    },
-                                        failure:function(response,options){
-                                        alert( response.responseText );
-                                        success = false;
-                                    },
-
-                                    success:function(response,options){
-                                        var res = Ext.util.JSON.decode( response.responseText );
-                                        if( res.success ){
-                                            location.href="/reportesNeg/consultaReporte/id/"+res.idreporte+"/impoexpo/<?=$impoexpo?>/modo/<?=$modo?>";
-                                        }
-                                    }
-                                });
-                            }
-                        }
-                    },
-                    {
-                        text:'Cancelar',
-                        handler:function(){
-                            win.close();
-                        }
-                    }
-                ]
-            });
-            win.show( );
-        }
-<?
+                location.href="/reportesNeg/consultaReporte/id/"+idreporte+"/impoexpo/<?=$impoexpo?>/modo/<?=$modo?>";
             }
-?>
+            else
+            {
+                location.href="/reportesNeg/index";
+            }
+        }
         ,
        onAfterload:function()
        {
@@ -404,6 +329,7 @@ var idreporte='<?=$idreporte?>';
                             Ext.getCmp('seguros').expand();
                         else
                             Ext.getCmp('seguros').collapse();
+                        
 
                         Ext.getCmp("cotizacion").setValue(res.data.cotizacion);
                         if(Ext.getCmp("cotizacionotm"))

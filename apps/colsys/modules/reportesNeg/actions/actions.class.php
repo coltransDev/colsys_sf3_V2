@@ -315,6 +315,7 @@ class reportesNegActions extends sfActions
         $this->opcion = $this->getRequestParameter("opcion");
 		$reporte = Doctrine::getTable("Reporte")->find( $this->getRequestParameter("id") );
 		$this->forward404Unless( $reporte );
+        $this->load_category();
 
 //        if( ($reporte->isNew() || $reporte->getCaVersion() == $reporte->getUltVersion()) &&!$reporte->existeReporteExteriorVersionActual() )
 
@@ -2778,8 +2779,7 @@ color="#000000";
             $data["ca_tiempocredito"] =$cliente->getLibCliente()->getCaDiascredito();
             $data["preferencias"] =utf8_encode(($reporte->getCaPreferenciasClie()!="")?($reporte->getCaPreferenciasClie()):$cliente->getCaPreferencias());
 
-            $data["ca_comodato"] =utf8_encode($reporte->getCaComodato());
-
+            $data["ca_comodato"] =($reporte->getCaComodato()=="Sí" || $reporte->getCaComodato()=="on" )?true:false;
             if( $reporte->getCaIdproveedor() ){
                 $values = explode("|", $reporte->getCaIdproveedor());
                 for($i=0;$i<count($values);$i++)
@@ -3912,7 +3912,6 @@ color="#000000";
                       ->set("s.ca_idreporte", $reporte->getCaIdreporte())
                       ->where("s.ca_idreporte IN (SELECT r2.ca_idreporte FROM Reporte r2 WHERE r2.ca_consecutivo = ?)", $consecutivo)
                       ->execute();
-
             //Coloca el grupo a los reportes y los anula
             Doctrine::getTable("Reporte")
                       ->createQuery("r")
@@ -3923,6 +3922,35 @@ color="#000000";
                       ->set("ca_detanulado", "'Unificado con el reporte ".$reporte->getCaConsecutivo()."'")
                       ->where("ca_consecutivo = ?", $consecutivo)
                       ->execute();
+            $tmp="";
+            if($reporte->getCaIdproveedor()!="")
+            {
+                $tmp=$reporte->getCaIdproveedor()."|";
+            }
+
+            $reporte->setCaIdproveedor($tmp.$reporte2->getCaIdproveedor());
+
+            $tmp="";
+            if($reporte->getCaIncoterms()!="")
+                $tmp=$reporte->getCaIncoterms()."|";
+            $reporte->setCaIncoterms($tmp.$reporte2->getCaIncoterms());
+
+            $tmp="";
+            if($reporte->getCaOrdenProv()!="")
+                $tmp=$reporte->getCaOrdenProv()."|";
+            $reporte->setCaOrdenProv($tmp.$reporte2->getCaOrdenProv());
+
+            $tmp="";
+            if($reporte->getCaOrdenClie()!="")
+                $tmp=$reporte->getCaOrdenClie()."-";
+            $reporte->setCaOrdenClie($tmp.$reporte2->getCaOrdenClie());
+
+            $tmp="";
+            if($reporte->getCaMercanciaDesc()!="")
+                $tmp=$reporte->getCaMercanciaDesc()."--";
+            $reporte->setCaMercanciaDesc($tmp.$reporte2->getCaMercanciaDesc());
+
+            $reporte->save();
 
             $this->redirect("reportesNeg/consultaReporte?id=".$reporte->getCaIdreporte());
         }

@@ -4,7 +4,7 @@
  * 
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
-//print_r($cotizacion);
+
 
 if( $cotizacion )
 {
@@ -33,18 +33,13 @@ if( $cotizacion )
             closeAction: 'hide',
 
             buttons:[
-            <?
-            //if( $modo=="edicion" ){
-            ?>
+           
              {
                 text: 'Importar',
                 handler: this.importar,
                 scope: this
              }
-             ,
-             <?
-            //}
-             ?>
+             ,             
              {
                 text: 'Cancel',
                 handler: this.hide.createDelegate(this, [])

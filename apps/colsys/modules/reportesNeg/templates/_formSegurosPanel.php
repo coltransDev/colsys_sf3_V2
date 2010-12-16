@@ -4,7 +4,7 @@
  *
  *  (c) Coltrans S.A. - Colmas Ltda.
 */
-//include_component("widgets", "widgetContactoCliente");
+
 include_component("widgets", "widgetMoneda");
 ?>
 <script type="text/javascript">

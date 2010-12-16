@@ -5,7 +5,6 @@
  *  (c) Coltrans S.A. - Colmas Ltda.
 */    
 include_component("widgets", "widgetContactoCliente");
-//echo $nprov;
 ?>
 <script type="text/javascript">
     FormClientePanel = function( config ){

@@ -116,10 +116,11 @@ class reportesNegComponents extends sfComponents
 	{
         if($this->reporte)
         {
+            $transporte=($this->reporte->getCaTransporte()==constantes::TERRESTRE ) ?constantes::MARITIMO:$this->reporte->getCaTransporte();
             $this->conceptos = Doctrine::getTable("Concepto")
                                      ->createQuery("c")
                                      ->select("ca_idconcepto, ca_concepto")
-                                     ->where("c.ca_transporte = ?", $this->reporte->getCaTransporte() )
+                                     ->where("c.ca_transporte = ?", $transporte )
                                      ->addWhere("c.ca_modalidad = ?", $this->reporte->getCaModalidad() )
                                      ->addWhere("c.ca_fcheliminado is null " )
                                      ->addOrderBy("c.ca_liminferior")
@@ -252,6 +253,10 @@ class reportesNegComponents extends sfComponents
             }else{
                 $this->editable = false;
             }
+
+        $this->aplicacionesAereo = ParametroTable::retrieveByCaso("CU064", null, Constantes::AEREO );
+		$this->aplicacionesMaritimo = ParametroTable::retrieveByCaso("CU064", null, Constantes::MARITIMO );
+        $this->parametros = ParametroTable::retrieveByCaso("CU071");
 
         
 

@@ -5,16 +5,12 @@
  *  (c) Coltrans S.A. - Colmas Ltda.
 */
 include_component("widgets", "widgetCotizacion");
-//include_component("widgets", "widgetImpoexpo");
-//include_component("widgets", "widgetTransporte");
 include_component("widgets", "widgetModalidad");
 include_component("widgets", "widgetLinea");
-//include_component("widgets", "widgetPais");
 include_component("widgets", "widgetCiudad");
 include_component("widgets", "widgetAgente");
 include_component("widgets", "widgetIncoterms");
 include_component("reportesNeg", "formMercanciaPanel",array("modo"=>$modo,"impoexpo"=>$impoexpo));
-//$usuarios = $sf_data->getRaw("usuarios");
 if($impoexpo!= Constantes::TRIANGULACION)
 {
 	include_component("reportesNeg", "formContinuacionPanel",array("modo"=>$modo,"impoexpo"=>$impoexpo));

@@ -255,8 +255,8 @@ if( ($reporte->getCaColmas()=="Sí" && $reporte->getCaImpoexpo()!=Constantes::TRI
     ?>
         var panelRecargosLocales = new PanelRecargos({
             title: 'Rec. locales',
-            id:'panel-RecargosLocales'
-            
+            id:'panel-RecargosLocales',
+            trasnporte:'<?=$modo?>'
         });
     <?
     }

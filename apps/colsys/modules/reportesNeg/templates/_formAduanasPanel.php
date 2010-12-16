@@ -4,9 +4,6 @@
  *
  *  (c) Coltrans S.A. - Colmas Ltda.
 */
-
-//include_component("widgets", "widgetContactoCliente");
-
 ?>
 <script type="text/javascript">
 

@@ -8,9 +8,6 @@
 
 
 $recargos = $sf_data->getRaw("recargos");
-//print_r($sf_data);
-//exit;
-//$aplicaciones = array("Valor Fijo","Sobre Flete","Sobre Flete + Recargos","Unitario x Peso/Volumen","Unitario x Pieza","Unitario x BLs/HAWBs");
 
 include_component("reportesNeg","cotizacionRecargosAduanasWindow", array("reporte"=>$reporte));
 
@@ -277,18 +274,12 @@ PanelRecargosAduana = function( config ){
         },
         boxMinHeight: 400,
         tbar:[
-            <?
-            //if($editable)
-            {
-            ?>
+            
             {
 				text:'Guardar',
 				iconCls:'disk',
 				handler: this.guardarCambios
-			},
-            <?
-            }
-            ?>
+			},            
             {
                 text: 'Recargar',
                 tooltip: 'Recarga los datos de la base de datos',
@@ -335,16 +326,7 @@ Ext.extend(PanelRecargosAduana, Ext.grid.EditorGridPanel, {
 			
         var lenght = records.length;
         
-        /*
-        for( var i=0; i< lenght; i++){
-            r = records[i];
-            if(!r.data.moneda && (r.data.tipo=="concepto"||r.data.recargo=="concepto") ){
-                if( r.data.iditem!=9999){
-                    Ext.MessageBox.alert('Warning','Por favor coloque la moneda en todos los items');
-                    return 0;
-                }
-            }
-        }	*/
+        
 
         for( var i=0; i< lenght; i++){
             r = records[i];
@@ -381,25 +363,7 @@ Ext.extend(PanelRecargosAduana, Ext.grid.EditorGridPanel, {
     },
     onBeforeEdit: function(e){
 
-        /*if( e.field=="aplicacion" || e.field=="aplicacionminimo" ){
-            var data = [
-                <?
-                $i=0;
-                foreach( $aplicaciones as $aplicacion ){
-                    if( $i++!=0){
-                        echo ",";
-                    }
-                ?>
-                    ['<?=$aplicacion?>']
-                <?
-                }
-                ?>
-            ];
-
-            var ed = this.colModel.getCellEditor(e.column, e.row);
-            ed.field.store.loadData( data );
-        }
-        else */if( e.field == "parametro" ){
+        if( e.field == "parametro" ){
             this.storeParametros.removeAll();
             this.storeParametros.setBaseParam("idconcepto",e.record.data.iditem);
             this.storeParametros.load();
@@ -567,9 +531,7 @@ Ext.extend(PanelRecargosAduana, Ext.grid.EditorGridPanel, {
     }
     ,
     onDblClickHandler: function(e) {
-        <?
-        //if($opcion!="consulta"){
-        ?>
+       
         var btn = e.getTarget('.btnComentarios');
         if (btn) {
             var t = e.getTarget();
@@ -580,9 +542,7 @@ Ext.extend(PanelRecargosAduana, Ext.grid.EditorGridPanel, {
             activeRow = record;
             this.ventanaObservaciones( record );
         }
-        <?
-        //}
-        ?>
+       
     },
     ventanaObservaciones : function( record ){
         var activeRow = record;

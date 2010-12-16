@@ -623,9 +623,7 @@ Ext.extend(PanelConceptosOtm, Ext.grid.EditorGridPanel, {
     }
     ,
     onDblClickHandler: function(e) {
-        <?
-        //if($opcion!="consulta"){
-        ?>
+       
         var btn = e.getTarget('.btnComentarios');
         if (btn) {
             var t = e.getTarget();
@@ -635,10 +633,7 @@ Ext.extend(PanelConceptosOtm, Ext.grid.EditorGridPanel, {
 
             activeRow = record;
             this.ventanaObservaciones( record );
-        }
-        <?
-        //}
-        ?>
+        }       
     },
     ventanaObservaciones : function( record ){
         var activeRow = record;

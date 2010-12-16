@@ -4,10 +4,7 @@
  *
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
-//$instrucciones = $sf_data->getRaw("instrucciones");
-//echo json_encode(instrucciones);
-//print_r($instrucciones);
-//echo $modo;
+
 ?>
 
 <script language="javascript">

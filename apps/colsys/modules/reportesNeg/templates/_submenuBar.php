@@ -115,7 +115,7 @@ switch ($action) {
         $button[$i]["link"] = "/reportesNeg/verReporte/id/" . $this->getRequestParameter("id") . "/impoexpo/" . $impoexpo . "/modo/" . $modo;
         $i++;
         if (!$cerrado) {
-            if(anulado)
+            if($anulado)
             {
                 $button[$i]["id"] = "anular-reporte";
                 $button[$i]["name"] = "Anular ";
@@ -355,7 +355,7 @@ switch ($action) {
 
     function revivirReporte()
     {
-        if(window.confirm("Realmente desea crear un nuevo reporte?"))
+        if(window.confirm("Realmente desea revivir el reporte?"))
         {
             Ext.MessageBox.wait('Guardando, Espere por favor', '---');
             Ext.Ajax.request(
