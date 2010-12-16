@@ -188,7 +188,7 @@ Ext.extend(PanelTrayectoWindow, Ext.Window, {
 
             
             var node = this.node;
-            if( ttransito=="" && frecuencia=="" && ((impoexpo=="<?=Constantes::IMPO?>" && transporte!="<?=Constantes::AEREO?>") || impoexpo=="<?=Constantes::EXPO?>" ) ){ // Solamente cuando es importación aérea se permite en blanco
+            if( ttransito=="" && frecuencia=="" && ((impoexpo=="<?=Constantes::IMPO?>" && (transporte!="<?=Constantes::AEREO?>"|| transporte!="<?=Constantes::OTMDTA?>")) || impoexpo=="<?=Constantes::EXPO?>" ) ){ // Solamente cuando es importación aérea se permite en blanco
                 Ext.MessageBox.alert('Trayectos - Error:', 'Por favor indique el tiempo de transito y la frecuencia');
             }else{
                 fp.getForm().findField("impoexpo").enable();

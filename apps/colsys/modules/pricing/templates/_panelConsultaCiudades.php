@@ -220,7 +220,7 @@ Ext.extend(PanelConsultaCiudades, Ext.tree.TreePanel, {
         if( id.substring(0,4) == "traf" ){
             if( !this.readOnly ){
 
-                if(!this.menu){ // create context menu on first right click
+                //if(!this.menu){ // create context menu on first right click
                     this.menu = new Ext.menu.Menu({
                     enableScrolling : false,
                     items: [{
@@ -232,7 +232,7 @@ Ext.extend(PanelConsultaCiudades, Ext.tree.TreePanel, {
                                 }
                             }]
                     });
-                }
+                //}
                 e.stopEvent();
                 this.menu.showAt(e.getXY());
             }
@@ -256,6 +256,7 @@ Ext.extend(PanelConsultaCiudades, Ext.tree.TreePanel, {
         }
         fp.getForm().findField("transporte").setValue( n.attributes.transporte );
         fp.getForm().findField("modalidad").setValue( n.attributes.modalidad );
+        
 
     }
     
