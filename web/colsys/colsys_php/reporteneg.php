@@ -31,9 +31,11 @@ $modulo = "00100000";                                                          /
 $rs =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
 if (strpos($id, '-') === false){
     $condition = "ca_idreporte = $id";
-    if ($rs->Open("select ca_tiporep from tb_reportes where $condition and ca_tiporep > 0")) { // Verfica si se trata de un reporte de negocios con el nuevo módulo
-        echo "<script>document.location.href = '/reportesNeg/verReporte/id/$id';</script>";
-        exit;
+    if ($rs->Open("select count(ca_tiporep) as ca_contador from tb_reportes where $condition and ca_tiporep > 0")) { // Verfica si se trata de un reporte de negocios con el nuevo módulo
+        if($rs->Value('ca_contador')!=0){
+           echo "<script>document.location.href = '/reportesNeg/verReporte/id/$id';</script>";
+           exit;
+        }
     }
 }else{
     $cadena_co = "select r1.ca_idreporte from tb_reportes r1, ";
