@@ -425,7 +425,7 @@ class Reporte extends BaseReporte {
                         ->createQuery("t")
                         ->innerJoin("t.Concepto c")
                         ->where("t.ca_idreporte = ? and t.ca_idconcepto!=9999 ", $this->getCaIdreporte())
-                        ->orderBy("t.ca_idconcepto")
+                        ->orderBy("to_char(t.ca_idconcepto, '999')")
                         ->execute();
 
 
