@@ -25,7 +25,6 @@ class clientesActions extends sfActions {
      */
 
     public function executeActivarClave() {
-
         $contacto = Doctrine::getTable("Contacto")->find($this->getRequestParameter("contacto"));
         $this->forward404Unless($contacto);
         $user = $contacto->getTrackingUser();
@@ -422,9 +421,7 @@ class clientesActions extends sfActions {
                 $siguiente_mes = mktime(0, 0, 0, $month + 1, 5, $year);
                 $siguiente_mes = $mes_esp[date("m", $siguiente_mes)]." ".date("d", $siguiente_mes)." de ".date("Y", $siguiente_mes);
 
-                $bodyHtml = "<b>Nota:</b> Este es el modelo de comunicacion que recibiran los clientes, sobre el vencimiento de la circular 0170<br /><br /><br />";
-
-                $bodyHtml.= "Señores<br />";
+                $bodyHtml = "Señores<br />";
                 $bodyHtml.= "<b>".$cliente->getCaCompania()."</b><br />";
                 $bodyHtml.= "La Ciudad<br /><br /><br />";
                 $bodyHtml.= "<u><b>ASUNTO: DOCUMENTOS IDENTIFICACIÓN CLIENTE<b></u><br /><br /><br />";
@@ -434,11 +431,11 @@ class clientesActions extends sfActions {
                 $bodyHtml.= "<b>Recuerde que esta información se debe actualizar cada año.</b>";
 
                 $email->setCaBodyhtml($bodyHtml);
+                //$email->setCaFchenvio(date("Y-m-d H:i:s"));
                 $email->addAttachment("Attachements/CARTA_CIRCULAR_184.doc");
                 $email->addAttachment("Attachements/NUEVA_CIRC_ 170.xls");
 
                 $email->save();
-                $email->send();
             }
         }
 
@@ -548,7 +545,6 @@ class clientesActions extends sfActions {
         $email->setCaBodyhtml(sfContext::getInstance()->getController()->getPresentationFor('clientes', 'reporteEstados'));
 
         $email->save();
-        $email->send();
     }
 
     public function executeReporteCircularEmail() {
@@ -606,7 +602,6 @@ class clientesActions extends sfActions {
             $email->setCaBodyhtml(sfContext::getInstance()->getController()->getPresentationFor('clientes', 'reporteCircular'));
 
             $email->save();
-            $email->send();
         }
     }
 
@@ -874,7 +869,6 @@ class clientesActions extends sfActions {
                         $email->setCaSubject("Verificación Clientes en Lista Clinton - $ven_mem");
                         $email->setCaBodyhtml($msn_mem);
                         $email->save(); //guarda el cuerpo del mensaje
-                        $email->send(); //envia el mensaje de correo
                     }
                     if ($row["ca_vendedor"] != '') {
                         $user = Doctrine::getTable("Usuario")->find($row["ca_vendedor"]);
@@ -900,12 +894,14 @@ class clientesActions extends sfActions {
                         $sucursal = $user->getSucursal();
                         $empleados = $sucursal->getUsuario();
                         foreach ($empleados as $empleado) {
-                            if ($empleado->getCaCargo() == "Jefe Dpto. Administrativo" and ($empleado->getCaSucursal() == "Barranquilla" or $empleado->getCaSucursal() == "Cali" or $empleado->getCaSucursal() == "Medellín")) {
-                                $email->addCc($user->getCaEmail());
-                            } else if ($empleado->getCaCargo() == "Asistente Dpto. Administrativo" and $empleado->getCaSucursal() == "Bucaramanga") {
-                                $email->addCc($user->getCaEmail());
-                            } else if ($empleado->getCaCargo() == "Gerente Regional" and $empleado->getCaSucursal() == "Pereira") {
-                                $email->addCc($user->getCaEmail());
+                            if ($empleado->getCaActivo()){
+                                if ($empleado->getCaCargo() == "Jefe Dpto. Administrativo" and ($empleado->getCaSucursal() == "Barranquilla" or $empleado->getCaSucursal() == "Cali" or $empleado->getCaSucursal() == "Medellín")) {
+                                    $email->addCc($user->getCaEmail());
+                                } else if ($empleado->getCaCargo() == "Asistente Dpto. Administrativo" and $empleado->getCaSucursal() == "Bucaramanga") {
+                                    $email->addCc($user->getCaEmail());
+                                } else if ($empleado->getCaCargo() == "Gerente Regional" and $empleado->getCaSucursal() == "Pereira") {
+                                    $email->addCc($user->getCaEmail());
+                                }
                             }
                         }
                         $email->addCc($val);
@@ -936,7 +932,6 @@ class clientesActions extends sfActions {
             $email->setCaSubject("Verificación Clientes en Lista Clinton - ".$ven_mem);
             $email->setCaBodyhtml($msn_mem);
             $email->save(); //guarda el cuerpo del mensaje
-            $email->send(); //envia el mensaje de correo
 
             if (isset($ultimo)) {
                 $ultimo->setCaValor2($nueva_fecha);
@@ -979,7 +974,6 @@ class clientesActions extends sfActions {
             $email->setCaSubject("¡Error en la Verificación con Lista Clinton!");
             $email->setCaBodyhtml("Caught exception: ".$e->getMessage()."\n\n".$e->getTraceAsString()."\n\n Se ha presentado un error en el proceso que lee la información de Lista Clinton y la compara con la Maestra de Clientes Activos de COLSYS. Agradecemos confirmar que el Departamento de Sistemas esté enterado de esta falla. Gracias!");
             $email->save(); //guarda el cuerpo del mensaje
-            $email->send(); //envia el mensaje de correo
         }
     }
 
