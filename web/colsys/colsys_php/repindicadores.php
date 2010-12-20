@@ -846,7 +846,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
                 $fch_llegada = $rs->Value('ca_fchllegada');
                 echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_referencia')."</TD>";
                 echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_continuacion')."</TD>";
-                if (in_array(trim($rs->Value("ca_observaciones")), array("Facturación al Agente","Reemplazo Factura","Cierre contable de Clientes") )) {
+                if (in_array(trim($rs->Value("ca_observaciones")), array("Facturación al Agente","Reemplazo Factura","Cierre contable de Clientes","Referencia Particulares") )) {
                     $dif_mem = null;
                 }else {
                     if ($rs->Value('ca_continuacion') == "CABOTAJE") {
