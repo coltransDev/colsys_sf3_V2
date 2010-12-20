@@ -393,7 +393,7 @@ require_once("menu.php");
 		   $vista_1 = ($nivel >= 3)?'visible':'hidden'; // Habilita la opción para dar liberación automática
 		   $vista_3 = ($nivel >= 3)?'visible':'hidden'; // Habilita la opción para definir porcentaje de comisión
 		   $vista_2 = ($nivel >= 1)?'visible':'hidden'; // Habilita la opción para firma de comodato
-		   $visible = ($rs->Value('ca_vendedor')== $usuario or $rs->Value('ca_vendedor')=='' or $nivel > 1)?'visible':'hidden';
+		   $visible = ($rs->Value('ca_vendedor')==$usuario or $rs->Value('ca_vendedor')=='' or $nivel>1)?'visible':'hidden';
 		   $vetado = ($rs->Value('ca_coltrans_std')=='Vetado' or $rs->Value('ca_colmas_std')=='Vetado' )?'background-color:#FFb2b2;':'';
 		   $alerta = ($rs->Value('ca_coltrans_std')=='Vetado' or $rs->Value('ca_colmas_std')=='Vetado' )?'<IMG src=\'./graficos/izquierda.gif\' border=0>':'';
 		   if (!$cn->Open("select * from vi_concliente where ca_idcliente = ".$rs->Value('ca_idcliente')." and ca_idcontacto != 0")) {          // Selecciona todos lo registros de la tabla Contacos de Clientes
@@ -419,17 +419,17 @@ require_once("menu.php");
 		   echo "    <TD Class=invertir style='font-weight:bold; font-size: 9px; text-align:'>Correo Elec.</TD>";
 		   echo "  </TR>";
 		   if (!$cn->IsEmpty()) {
-			   $cn->MoveFirst();
-			   while (!$cn->Eof() and !$cn->IsEmpty()) {
-					echo "<TR>";
-					echo "  <TD Class=mostrar style='font-size: 9px; center; $vetado'>".$cn->Value('ca_ncompleto_cn')."</TD>";
-					echo "  <TD Class=mostrar style='font-size: 9px; center; $vetado'>".$cn->Value('ca_cargo')."</TD>";
-					echo "  <TD Class=mostrar style='font-size: 9px; center; $vetado'>".$cn->Value('ca_telefonos')."</TD>";
-					echo "  <TD Class=mostrar style='font-size: 9px; center; $vetado'>".$cn->Value('ca_email')."</TD>";
-					echo "</TR>";
-					$cn->MoveNext();
-			   }
-		   }else {
+                       $cn->MoveFirst();
+                       while (!$cn->Eof() and !$cn->IsEmpty()) {
+                            echo "<TR>";
+                            echo "  <TD Class=mostrar style='font-size: 9px; center; $vetado'>".$cn->Value('ca_ncompleto_cn')."</TD>";
+                            echo "  <TD Class=mostrar style='font-size: 9px; center; $vetado'>".$cn->Value('ca_cargo')."</TD>";
+                            echo "  <TD Class=mostrar style='font-size: 9px; center; $vetado'>".$cn->Value('ca_telefonos')."</TD>";
+                            echo "  <TD Class=mostrar style='font-size: 9px; center; $vetado'>".$cn->Value('ca_email')."</TD>";
+                            echo "</TR>";
+                            $cn->MoveNext();
+                       }
+                   }else {
 			   echo "<TR>";
 			   echo "  <TD Class=mostrar style='font-weight:bold; font-size: 9px;' COLSPAN=4>El Cliente no tiene Contactos registrados</TD>";
 			   echo "</TR>";
@@ -460,7 +460,7 @@ require_once("menu.php");
 		   echo "    <TABLE>";
 		   echo "      <TR><TD Class=mostrar style='text-align: center; color=blue;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:document.location.href = \"concliente.php?id=".$rs->Value('ca_idcliente')."\"'><BR><IMG src='graficos/contacto.gif'><BR>Contactos</TD></TR>";
 		   echo "      <TR><TD Class=mostrar style='text-align: center; color=blue;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:document.location.href = \"enccliente.php?id=".$rs->Value('ca_idcliente')."\"'><BR><IMG src='graficos/encuesta.gif'><BR>Visitas<BR>".$rs->Value('ca_fchvisita')."</TD></TR>";
-		   echo "      <TR><TD Class=mostrar style='text-align: center; color=blue;' visibility: $visible; onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:liberar(".$rs->Value('ca_idcliente').");'><BR><IMG src='graficos/no.gif'><BR>Liberar Cliente</TD></TR>";
+		   echo "      <TR><TD Class=mostrar style='visibility: $visible; text-align: center; color=blue;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:liberar(".$rs->Value('ca_idcliente').");'><BR><IMG src='graficos/no.gif'><BR>Liberar Cliente</TD></TR>";
 		   echo "      <TR><TD Class=mostrar style='text-align: center;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='elegir(\"ListaClinton\", ".$rs->Value('ca_idcliente').");' style='color=blue;'><BR><IMG src='graficos/vista.gif'><BR>Lista Clinton</TD></TR>";
 		   echo "      <TR><TD Class=mostrar style='text-align: center; color=blue;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:document.location.href = \"/clientes/clavesTracking?id=".$rs->Value('ca_idcliente')."\"'><BR><IMG src='graficos/tracking.gif'><BR>Tracking</TD></TR>";
 		   echo "    </TABLE>";
