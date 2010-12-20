@@ -56,7 +56,11 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)){
     echo "<TITLE>$titulo</TITLE>";
     echo "<script language='JavaScript' type='text/JavaScript'>";              // Código en JavaScript para validar las opciones de mantenimiento
     echo "function elegir(opcion, id){";
+    echo "  if(opcion=='Modificar'){";
+    echo "    document.location.href = '/crm/formCliente/idcliente/'+id";
+    echo "  }else{";
     echo "    document.location.href = 'clientes.php?boton='+opcion+'\&id='+id;";
+    echo "  }";
     echo "}";
     echo "</script>";
     echo "</HEAD>";
@@ -359,7 +363,11 @@ require_once("menu.php");
 	}else{
 		echo "<script language='JavaScript' type='text/JavaScript'>";              // Código en JavaScript para validar las opciones de mantenimiento
 		echo "function elegir(opcion, id){";
-		echo "    document.location.href = 'clientes.php?boton='+opcion+'\&id='+id;";
+        echo "  if(opcion=='Modificar'){";
+		echo "    document.location.href = '/crm/formCliente/idcliente/'+id";
+        echo "  }else{";
+        echo "    document.location.href = 'clientes.php?boton='+opcion+'\&id='+id;";
+        echo "  }";
 		echo "}";
 		echo "function liberar(id) {";
 		echo "    document.cabecera.accion.value = \"Liberar\";";
@@ -2190,7 +2198,7 @@ elseif (isset($accion)) {                                                      /
              $vendedor = ($nivel >= 2)?$vendedor:$usuario;
              $fchcotratoag= (strlen($fchcotratoag)!=0)?"'".$fchcotratoag."'":'date(null)';
              $status = ($listaclinton=='Sí')?"Vetado":$status;
-             if (!$rs->Open("update tb_clientes set ca_compania = upper('".addslashes($compania)."'), ca_papellido = '$papellido', ca_sapellido = '$sapellido', ca_nombres = '$nombres', ca_saludo = '$saludo', ca_sexo = '$sexo', ca_cumpleanos = '$cumpleanos', ca_direccion = '$direccion', ca_oficina = '$oficina', ca_torre = '$torre', ca_bloque = '$bloque', ca_interior = '$interior', ca_localidad = '$localidad', ca_complemento = '$complemento', ca_telefonos = '$telefonos', ca_fax = '$fax', ca_idciudad  ='$idciudad', ca_website = lower('$website'), ca_email = lower('$email'), ca_actividad = '$actividad', ca_sectoreco = '$sectoreco', ca_vendedor = '$vendedor', ca_fchcotratoag = $fchcotratoag, ca_listaclinton = '$listaclinton', ca_leyinsolvencia = '$leyinsolvencia', ca_comentario = '$comentario', ca_status = '$status', ca_calificacion = '$calificacion', ca_entidad = '$entidad', ca_preferencias = '$preferencias', ca_coordinador = '$coordinador', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where ca_idcliente = $id")) {
+             if (!$rs->Open("update tb_clientes set ca_compania = upper('".addslashes($compania)."'), ca_papellido = '$papellido', ca_sapellido = '$sapellido', ca_nombres = '$nombres', ca_saludo = '$saludo', ca_sexo = '$sexo', ca_cumpleanos = '$cumpleanos', ca_direccion = '$direccion', ca_oficina = '$oficina', ca_torre = '$torre', ca_bloque = '$bloque', ca_interior = '$interior', ca_localidad = '$localidad', ca_complemento = '$complemento', ca_telefonos = '$telefonos', ca_fax = '$fax', ca_idciudad  ='$idciudad', ca_website = lower('$website'), ca_email = lower('$email'), ca_actividad = '$actividad', ca_sectoreco = '$sectoreco', ca_vendedor = '".$vendedor?$VENDEDOR:"null"."', ca_fchcotratoag = $fchcotratoag, ca_listaclinton = '$listaclinton', ca_leyinsolvencia = '$leyinsolvencia', ca_comentario = '$comentario', ca_status = '$status', ca_calificacion = '$calificacion', ca_entidad = '$entidad', ca_preferencias = '$preferencias', ca_coordinador = '$coordinador', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where ca_idcliente = $id")) {
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                  echo "<script>document.location.href = 'clientes.php';</script>";
                  exit;
