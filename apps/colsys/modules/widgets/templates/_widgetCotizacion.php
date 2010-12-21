@@ -4,11 +4,8 @@
  * 
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
-
 ?>
 <script type="text/javascript">
-
-
 WidgetCotizacion = function( config ){
     Ext.apply(this, config);
     
@@ -63,7 +60,7 @@ WidgetCotizacion = function( config ){
     });
 
     this.resultTpl = new Ext.XTemplate(
-        '<tpl for="."><div class="search-item"><strong>{consecutivo}-V{version}</strong><br /><span><br />{modalidad} {origen} - {destino}</span> </div></tpl>'
+        '<tpl for="."><div class="search-item"><strong>{consecutivo}-V{version} ({modalidad})</strong><br /><span><br />{origen} - {destino} ({linea})</span> </div></tpl>'
     );
 
     WidgetCotizacion.superclass.constructor.call(this, {
@@ -87,8 +84,6 @@ Ext.extend(WidgetCotizacion, Ext.form.ComboBox, {
     trigger1Class : 'x-form-clear-trigger',    
     trigger2Class : 'x-form-select-trigger',
     hideTrigger1 : true,
-   
-
     initComponent : function() {
         WidgetCotizacion.superclass.initComponent.call(this);
 
@@ -123,6 +118,5 @@ Ext.extend(WidgetCotizacion, Ext.form.ComboBox, {
 	onTrigger2Click : function() {
 		this.onTriggerClick();
 	}
-
 });
 </script>
