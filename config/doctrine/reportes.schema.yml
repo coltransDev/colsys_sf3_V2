@@ -91,6 +91,7 @@ Reporte:
     ca_idcotizacionotm: string
     ca_idproductootm: integer
     ca_tiporep: integer
+    ca_master: string
   relations:
     RepStatus:
       local: ca_idreporte
