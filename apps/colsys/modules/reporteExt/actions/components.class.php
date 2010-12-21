@@ -36,7 +36,6 @@ class reporteExtComponents extends sfComponents
             $consignatario_m = $consignatario->getCaNombre()."<br />".$consignatario->getCaContacto()."<br />Dirección: ".$consignatario->getCaDireccion()."<br />Teléfonos:".$consignatario->getCaTelefonos()." Fax:".$consignatario->getCaFax()."<br />Email: ".$consignatario->getCaEmail();
         }else {
             $consignatario = Doctrine::getTable("Cliente")->find( 800024075 );
-
             $consignatario_m = $consignatario->getCaCompania()." Nit. ".number_format($consignatario->getCaIdcliente(),0)."-".$consignatario->getCaDigito()."<br />Dirección: ".$consignatario->getDireccion()."<br />Teléfonos:".$consignatario->getCaTelefonos()." Fax:".$consignatario->getCaFax()."<br />".$consignatario->getCiudad()->getCaCiudad()." ".$consignatario->getCiudad()->getTrafico()->getCaNombre();
         }
 
@@ -78,7 +77,8 @@ class reporteExtComponents extends sfComponents
 
 
 
-        if( $bodega2 && ($bodega2->getCaTipo()!= "Coordinador Logistico" && $bodega2->getCaTipo()!="Coordinador Logístico") ){
+        if( $bodega2 && ($bodega2->getCaTipo()!= "Coordinador Logistico" && $bodega2->getCaTipo()!="Coordinador Logístico" && $bodega2->getCaTipo()!="Cliente/Consignatario" && $bodega2->getCaTipo()!="-")  )
+        {
             if($bodega2->getCaTipo()==$bodega2->getCaNombre() || $bodega2->getCaTipo()=="Entrega Urgente")
                 $hijo .=" / ".$bodega2->getCaTipo();
             else
@@ -148,11 +148,18 @@ class reporteExtComponents extends sfComponents
 
         if( $reporte->getCaIdmaster()){
             $consignatario = Doctrine::getTable("Tercero")->find( $reporte->getCaIdmaster() );
-            $consignatario_m = $consignatario->getCaNombre()."<br />".$consignatario->getCaContacto()."<br />Dirección: ".$consignatario->getCaDireccion()."<br />Teléfonos:".$consignatario->getCaTelefonos()." Fax:".$consignatario->getCaFax()."<br />Email: ".$consignatario->getCaEmail();
+            $consignatario_m1 = $consignatario->getCaNombre()."<br />".$consignatario->getCaContacto()."<br />Dirección: ".$consignatario->getCaDireccion()."<br />Teléfonos:".$consignatario->getCaTelefonos()." Fax:".$consignatario->getCaFax()."<br />Email: ".$consignatario->getCaEmail();
         }else {
             $consignatario = Doctrine::getTable("Cliente")->find( 800024075 );
-
-            $consignatario_m = $consignatario->getCaCompania()." Nit. ".number_format($consignatario->getCaIdcliente(),0)."-".$consignatario->getCaDigito()."<br />Dirección: ".$consignatario->getDireccion()."<br />Teléfonos:".$consignatario->getCaTelefonos()." Fax:".$consignatario->getCaFax()."<br />".$consignatario->getCiudad()->getCaCiudad()." ".$consignatario->getCiudad()->getTrafico()->getCaNombre();
+            $consignatario_m1 = $consignatario->getCaCompania()." Nit. ".number_format($consignatario->getCaIdcliente(),0)."-".$consignatario->getCaDigito()."<br />Dirección: ".$consignatario->getDireccion()."<br />Teléfonos:".$consignatario->getCaTelefonos()." Fax:".$consignatario->getCaFax()."<br />".$consignatario->getCiudad()->getCaCiudad()." ".$consignatario->getCiudad()->getTrafico()->getCaNombre();
+            
+            if($reporte->getCaIdconsignarmaster()>3)
+            {
+                 $consignatario1 = Doctrine::getTable("Tercero")->find($reporte->getCaIdconsignarmaster());
+                if(!$consignatario1)
+                    $consignatario1=new Tercero();
+                $consignatario_m = $consignatario1->getCaNombre()." Nit. ".number_format($consignatario1->getCaIdtercero(),0)."<br />Dirección: ".$consignatario1->getCaDireccion()."<br />Teléfonos:".$consignatario1->getCaTelefonos()." Fax:".$consignatario1->getCaFax()."<br />".$consignatario1->getCiudad()->getCaCiudad()." ".$consignatario1->getCiudad()->getTrafico()->getCaNombre();
+            }
         }
 
         if( $reporte->getCaIdconsignatario() ){
@@ -193,7 +200,8 @@ class reporteExtComponents extends sfComponents
 
 //echo "::".$reporte->getCaIdconsignar();
 //        if($reporte->getCaIdconsignar()!=1)
-        if($bodega2)
+        
+        if( $bodega2 && ($bodega2->getCaTipo()!= "Coordinador Logistico" && $bodega2->getCaTipo()!="Coordinador Logístico" && $bodega2->getCaTipo()!="Cliente/Consignatario" && $bodega2->getCaTipo()!="-")  )
         {
            // echo "--".$bodega2->getCaTipo()."--".$bodega2->getCaNombre();
             if($bodega2->getCaTipo()==$bodega2->getCaNombre() || $bodega2->getCaTipo()=="Entrega Urgente")
@@ -229,7 +237,11 @@ class reporteExtComponents extends sfComponents
         if ( $reporte->getCaMastersame() == 'Sí' ){
             $master = $hijo;
         }else{
-            $master = $consignatario_m;
+            echo "::".$reporte->getCaIdconsignarmaster()."::";
+            if($reporte->getCaIdconsignarmaster()>3)
+                $master = $consignatario_m1;
+            else
+                $master = $consignatario_m;
         }
 
         $this->reporte = $reporte;
@@ -238,10 +250,6 @@ class reporteExtComponents extends sfComponents
         $this->hijo = $hijo;
         $this->notify_h = $notify_h;
         $this->consignatario_m = $consignatario_m;
-
-
-
-
 	}
 	
 	
