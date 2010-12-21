@@ -420,21 +420,12 @@ class Reporte extends BaseReporte {
     }
 
     public function getRepTarifa() {
-
         $q = Doctrine::getTable("RepTarifa")
-                        ->createQuery("t")
-                        ->innerJoin("t.Concepto c")
-                        ->where("t.ca_idreporte = ? and t.ca_idconcepto!=9999 ", $this->getCaIdreporte())
-                        ->orderBy("to_char(t.ca_idconcepto, '999')")
-                        ->execute();
-
-
-
-        /* if( $this->getCaImpoexpo()==Constantes::EXPO ){
-          $q->addWhere( "co.ca_impoexpo = ? OR co.ca_impoexpo = ? " , array("Aduanas", Constantes::EXPO) );
-          }else{
-          $q->addWhere( "co.ca_impoexpo = ? " , "Aduanas" );
-          } */
+                ->createQuery("t")
+                ->innerJoin("t.Concepto c")
+                ->where("t.ca_idreporte = ? and t.ca_idconcepto!=9999 ", $this->getCaIdreporte())
+                ->orderBy("to_char(t.ca_idconcepto, '999')")
+                ->execute();
         return $q;
     }
 
@@ -531,15 +522,17 @@ class Reporte extends BaseReporte {
     public function getConsignar() {
         if ($this->getCaImpoexpo() == constantes::EXPO && $this->getCaIdconsignar()>0) {
 
-            $consignar = ParametroTable::retrieveByCaso("CU048", null, null, $this->getCaIdconsignar());
-
-
-            if ($consignar) {
-                return $consignar[0]->getCaValor();
+            
+            if($this->getCaIdconsignar()<4)
+            {
+                $consignar = ParametroTable::retrieveByCaso("CU048", null, null, $this->getCaIdconsignar());
+                if ($consignar) {
+                    return $consignar[0]->getCaValor();
+                }
             }
             else
             {
-                $tercero = Doctrine::getTable("Tercero")->find($reporte->getCaIdmaster());
+                $tercero = Doctrine::getTable("Tercero")->find($this->getCaIdconsignar());
                 if($tercero)
                     return $tercero->getCaNombre();
 
@@ -553,19 +546,33 @@ class Reporte extends BaseReporte {
      */
 
     public function getConsignarmaster() {
-        if ($this->getCaImpoexpo() == constantes::EXPO && $this->getCaIdmaster()>0) {
-            $consignar = ParametroTable::retrieveByCaso("CU048", null, null, $this->getCaIdmaster());
+        if($this->getCaTiporep()>0)
+            $id=$this->getCaIdconsignarmaster();
+        else
+            $id =$this->getCaIdmaster();
+        
+        if ($this->getCaImpoexpo() == constantes::EXPO && $id>0) {
+            if($id<4)
+            {
+                $consignar = ParametroTable::retrieveByCaso("CU048", null, null, $id);
 
-            if ($consignar) {
-                return $consignar[0]->getCaValor();
+                if ($consignar) {
+                    return $consignar[0]->getCaValor();
+                }
             }
             else
             {
-                $tercero = Doctrine::getTable("Tercero")->find($reporte->getCaIdmaster());
+                $tercero = Doctrine::getTable("Tercero")->find($id);
                 if($tercero)
                     return $tercero->getCaNombre();
-
             }
+        }
+        else if($id>3)
+        {
+
+            $tercero = Doctrine::getTable("Tercero")->find($id);
+                if($tercero)
+                    return $tercero->getCaNombre();
         }
     }
 
