@@ -115,7 +115,7 @@ switch ($action) {
         $button[$i]["link"] = "/reportesNeg/verReporte/id/" . $this->getRequestParameter("id") . "/impoexpo/" . $impoexpo . "/modo/" . $modo;
         $i++;
         if (!$cerrado) {
-            if($anulado)
+            if(!$anulado)
             {
                 $button[$i]["id"] = "anular-reporte";
                 $button[$i]["name"] = "Anular ";

@@ -104,7 +104,6 @@ PanelRecargos = function( config ){
                 Ext.data.Record.create([
                     {name: 'idconcepto'},
                     {name: 'concepto'}
-
                 ])
         )
     });
@@ -124,15 +123,12 @@ PanelRecargos = function( config ){
         store : this.storeEquipos
     });
 
-    /*
-    * Crea el expander
-    */
+
     this.expander = new Ext.grid.RowExpander({
         lazyRender : false,
         width: 15,
         tpl : new Ext.Template(
           '<p><div class=\'btnComentarios\' id=\'obs_{_id}\'>&nbsp; {observaciones}</div></p>'
-
         )
     });
 
@@ -262,7 +258,7 @@ PanelRecargos = function( config ){
             validateedit: this.onValidateEdit,
             rowcontextmenu: this.onRowcontextMenu,           
             dblclick:this.onDblClickHandler,
-            beforeedit: this.onBeforeEdit,
+            beforeedit: this.onBeforeEdit
         },
         boxMinHeight: 400,
         tbar:[
@@ -339,20 +335,8 @@ Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
 
         var store = Ext.getCmp('panel-recargos').store;
 
-        var records = store.getModifiedRecords();
-			
+        var records = store.getModifiedRecords();			
         var lenght = records.length;
-        
-        /*
-        for( var i=0; i< lenght; i++){
-            r = records[i];
-            if(!r.data.moneda && (r.data.tipo=="concepto"||r.data.recargo=="concepto") ){
-                if( r.data.iditem!=9999){
-                    Ext.MessageBox.alert('Warning','Por favor coloque la moneda en todos los items');
-                    return 0;
-                }
-            }
-        }	*/
 
         for( var i=0; i< lenght; i++){
             r = records[i];
@@ -410,13 +394,8 @@ Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
                 success:function(response,options){
                     Ext.getCmp('panel-recargos').store.reload();
                 }
-
-
-
             });
         }
-
-
     }
     ,
     formatItem: function(value, p, record) {
@@ -461,8 +440,7 @@ Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
                 ?>
             ];
 
-            var dataParametros = new Array();
-            //alert(e.record.data.toSource());
+            var dataParametros = new Array();            
                 <?
                 $i=0;
                 foreach( $parametros as $aplicacion ){
@@ -475,8 +453,7 @@ Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
                         ?>
                         dataParametros.push('<?=$rango?>');
                         <?
-                        }
-                        //break;
+                        }                        
                         ?>
 
                     }
@@ -485,9 +462,7 @@ Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
                 ?>
 
 
-            var ed = this.colModel.getCellEditor(e.column, e.row);
-            //alert(e.record.data.toSource());
-            //alert(e.record.data.recargo);
+            var ed = this.colModel.getCellEditor(e.column, e.row);            
             if(dataParametros.length>0)
             {
                 ed.field.store.loadData( dataParametros );
@@ -680,11 +655,7 @@ Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
                         storeConceptosFletes.remove(record);
                         if(record.data.tipo=="concepto"){
                             storeConceptosFletes.remove(record);
-
-                            /*
-                            * Se deben eliminar los recargos del concepto que se elimino ya que al enviar la
-                            * petición son borrados de la base de datos.
-                            */
+                            
                             storeConceptosFletes.each( function( r ){                                
                                 if( r.data.tipo=="recargo" && r.data.idconcepto==record.data.iditem ){
                                     

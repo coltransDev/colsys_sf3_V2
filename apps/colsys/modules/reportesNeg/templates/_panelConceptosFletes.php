@@ -337,12 +337,7 @@ PanelConceptosFletes = function( config ){
 				iconCls: 'import',
 				handler: this.importarCotizacion
 			}
-           /* ,
-            {
-				text:'Importar OTM-DTA',
-				iconCls: 'import',
-				handler: this.importarCotizacionOTM
-			}*/
+
             <?
             }
             ?>
@@ -397,17 +392,6 @@ Ext.extend(PanelConceptosFletes, Ext.grid.EditorGridPanel, {
 			
         var lenght = records.length;
         
-        /*
-        for( var i=0; i< lenght; i++){
-            r = records[i];
-            if(!r.data.moneda && (r.data.tipo=="concepto"||r.data.recargo=="concepto") ){
-                if( r.data.iditem!=9999){
-                    Ext.MessageBox.alert('Warning','Por favor coloque la moneda en todos los items');
-                    return 0;
-                }
-            }
-        }	*/
-
         for( var i=0; i< lenght; i++){
             r = records[i];
 

@@ -438,9 +438,7 @@ Ext.extend(PanelConceptosOtm, Ext.grid.EditorGridPanel, {
 
                             if( !rec.data.iditem ){
                                 var newRec = new recordConcepto({
-
                                    idreporte: '<?=$reporte->getCaIdreporte()?>',
-
                                    item: '+',
                                    iditem: '',
                                    idconcepto: '61',
@@ -459,8 +457,6 @@ Ext.extend(PanelConceptosOtm, Ext.grid.EditorGridPanel, {
                                    detalles: '',
                                    orden: 'Z'
                                 });
-
-
 
                                 rec.set("iditem", r.data.idconcepto);
                                 rec.set("idconcepto", r.data.idconcepto);

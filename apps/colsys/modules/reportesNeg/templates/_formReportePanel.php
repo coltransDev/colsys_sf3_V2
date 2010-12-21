@@ -395,6 +395,12 @@ var idreporte='<?=$idreporte?>';
                         $("#notify").val(res.data.notify);
 
                         $("#idconsignatario").val(res.data.consignatario);
+                        if(Ext.getCmp("idconsigmaster"))
+                        {                            
+                            $("#idconsigmaster").val(res.data.consigmaster);
+                        }
+
+
 
                         if(Ext.getCmp("idconsigmaster"))
                         {
