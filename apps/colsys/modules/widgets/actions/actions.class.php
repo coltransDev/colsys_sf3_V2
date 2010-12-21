@@ -243,8 +243,30 @@ class widgetsActions extends sfActions
 	public function executeDatosComboReportes( $request ){
 		$criterio =  $request->getParameter("query");
 		
-		$transporte =  utf8_decode($this->getRequestParameter("transporte"));
-		$impoexpo =  utf8_decode($this->getRequestParameter("impoexpo"));
+        
+        if( $this->getRequestParameter("transporte")==Constantes::AEREO  || utf8_decode($this->getRequestParameter("transporte")) == Constantes::AEREO ){
+            $transporte=constantes::AEREO;
+        }
+        if( $this->getRequestParameter("transporte")==Constantes::MARITIMO  || utf8_decode($this->getRequestParameter("transporte")) == Constantes::MARITIMO ){
+            $transporte=constantes::MARITIMO;
+        }
+        if( $this->getRequestParameter("transporte")==Constantes::TERRESTRE  || utf8_decode($this->getRequestParameter("transporte")) == Constantes::TERRESTRE ){
+            $transporte=constantes::TERRESTRE;
+        }
+
+
+        if( $this->getRequestParameter("impoexpo")==Constantes::IMPO || utf8_decode($this->getRequestParameter("impoexpo")) == Constantes::IMPO ){
+            $impoexpo=constantes::IMPO;
+        }
+
+        if( $this->getRequestParameter("impoexpo")==Constantes::EXPO || utf8_decode($this->getRequestParameter("impoexpo")) == Constantes::EXPO ){
+            $impoexpo=constantes::EXPO;
+        }
+
+        if( $this->getRequestParameter("impoexpo")==Constantes::TRIANGULACION || utf8_decode($this->getRequestParameter("impoexpo")) == Constantes::TRIANGULACION ){
+            $impoexpo=constantes::TRIANGULACION;
+        }
+
 
         $q = Doctrine_Query::create()
                   ->select("r.ca_consecutivo, r.ca_idreporte, r.ca_version")
