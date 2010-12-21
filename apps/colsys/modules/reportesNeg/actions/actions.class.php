@@ -925,7 +925,7 @@ class reportesNegActions extends sfActions
             {
                 if($request->getParameter("chkcontacto_".$i)=="on")
                 {
-                    if($request->getParameter("contacto_".$i)!="")
+                    if(trim($request->getParameter("contacto_".$i))!="")
                     {
                         $ca_confirmar_clie.=($ca_confirmar_clie!="")?",":"";
                         $ca_confirmar_clie.=$request->getParameter("contacto_".$i);
@@ -933,7 +933,7 @@ class reportesNegActions extends sfActions
                 }
                 if($request->getParameter("chkcontacto_fijos".$i)=="on")
                 {
-                    if($request->getParameter("contacto_fijos".$i)!="")
+                    if(trim($request->getParameter("contacto_fijos".$i))!="")
                     {
                         $ca_confirmar_clie.=($ca_confirmar_clie!="")?",":"";
                         $ca_confirmar_clie.=$request->getParameter("contacto_fijos".$i);
@@ -1606,10 +1606,14 @@ class reportesNegActions extends sfActions
         {
             if($request->getParameter("chkcontacto_".$i)=="on")
             {
-                $ca_confirmar_clie.=($ca_confirmar_clie!="")?",":"";
+                if(trim($request->getParameter("contacto_".$i))!="")
+                {
+                    $ca_confirmar_clie.=($ca_confirmar_clie!="")?",":"";
+                    $ca_confirmar_clie.=$request->getParameter("contacto_".$i);
+                }
 
-                $ca_confirmar_clie.=$request->getParameter("contacto_".$i);
-                if (stripos(strtolower($request->getParameter("contacto_".$i)), '@coltrans.com.co') !== false) {
+                if (stripos(strtolower($request->getParameter("contacto_".$i)), '@coltrans.com.co') !== false)
+                {
                     $cc.=($cc!="")?",":"";
                     $cc.= $request->getParameter("contacto_".$i);
                 }
@@ -2878,8 +2882,8 @@ color="#000000";
             $data["ca_idmoneda_vta"]=$repseguro->getCaIdmonedaVta();
 
 
-            $data["idconsignarmaster"]=$reporte->getConsignarmaster();
-            $data["consignarmaster"]=$reporte->getConsignarmaster();
+            $data["idconsignarmaster"]=$reporte->getCaIdconsignarmaster();
+            $data["consignarmaster"]=utf8_encode($reporte->getConsignarmaster());
             $data["tipobodega"]=utf8_encode($reporte->getBodega()->getCaTipo());
             $data["idbodega_hd"]=$reporte->getCaIdbodega();
             $data["bodega_consignar"]=utf8_encode($reporte->getBodega()->getCaNombre());
@@ -2892,7 +2896,7 @@ color="#000000";
                     $data["consignatario"]="Cliente/Consignatario";
 
                 }
-                if($reporte->getCaIdconsignatario()=="2")
+                else if($reporte->getCaIdconsignatario()=="2")
                 {
                     $data["consignatario"]="Coltrans/Consignatario";
                 }
@@ -2905,7 +2909,12 @@ color="#000000";
                 $data["consignatario"] ="";
             }
 
-            $data["idconsigmaster"]=$reporte->getCaIdmaster();
+             if($reporte->getCaTiporep()>0)
+                $idM=$reporte->getCaIdconsignarmaster();
+            else
+                $idM=$reporte->getCaIdmaster();
+
+            $data["idconsigmaster"]=$idM;
             $data["consigmaster"]=utf8_encode($reporte->getConsignarmaster());
                         
 
@@ -2970,7 +2979,7 @@ color="#000000";
     */
     public function executePanelConceptosData(sfWebRequest $request){
         $reporte = Doctrine::getTable("Reporte")->find( $this->getRequestParameter("id") );
-	$this->forward404Unless( $reporte );
+        $this->forward404Unless( $reporte );
         $tipo=($this->getRequestParameter("tipo"))?$this->getRequestParameter("tipo"):"1";
 
         $conceptos = array();
@@ -3201,36 +3210,52 @@ color="#000000";
             if( $request->getParameter("neta_min")!==null ){
                 $tarifa->setCaNetaMin( $request->getParameter("neta_min") );
             }else{
-                $tarifa->setCaNetaMin( 0 ); //[TODO] permitir null
+                $tarifa->setCaNetaMin( 0 );
             }
 
 
             if( $request->getParameter("reportar_tar")!==null ){
                 $tarifa->setCaReportarTar( $request->getParameter("reportar_tar") );
             }else{
-                $tarifa->setCaReportarTar( 0 ); //[TODO] permitir null
+                $tarifa->setCaReportarTar( 0 );
             }
 
             if( $request->getParameter("reportar_min")!==null ){
                 $tarifa->setCaReportarMin( $request->getParameter("reportar_min") );
             }else{
-                $tarifa->setCaReportarMin( 0 ); //[TODO] permitir null
+                $tarifa->setCaReportarMin( 0 ); 
+            }
+
+            if( $request->getParameter("reportar_tar")!==null ){
+                $tarifa->setCaReportarTar( $request->getParameter("reportar_tar") );
+            }else{
+                $tarifa->setCaReportarTar( 0 );
+            }
+
+            if( $request->getParameter("reportar_min")!==null ){
+                $tarifa->setCaReportarMin( $request->getParameter("reportar_min") );
+            }else{
+                $tarifa->setCaReportarMin( 0 );
+            }
+
+
+            if( $request->getParameter("reportar_idm")!==null ){
+                $tarifa->setCaIdmoneda( $request->getParameter("reportar_idm") );
             }
 
 
             if( $request->getParameter("cobrar_tar")!==null ){
                 $tarifa->setCaCobrarTar( $request->getParameter("cobrar_tar") );
-            }
-            else{
-                if($tarifa->getCaCobrarTar()=="")
-                    $tarifa->setCaCobrarTar( 0 ); //[TODO] permitir null
+            }else{
+                if($tarifa->setCaCobrarTar()=="")
+                    $tarifa->setCaCobrarTar( 0 );
             }
 
             if( $request->getParameter("cobrar_min")!==null ){
                 $tarifa->setCaCobrarMin( $request->getParameter("cobrar_min") );
             }else{
                 if($tarifa->getCaCobrarMin()=="")
-                    $tarifa->setCaCobrarMin( 0 ); //[TODO] permitir null
+                    $tarifa->setCaCobrarMin( 0 ); 
             }
 
             if( $request->getParameter("cobrar_idm")!==null ){
