@@ -1416,5 +1416,38 @@ class falabellaAduActions extends sfActions {
         $this->setTemplate("responseTemplate");
     }
 
+    public function executeEliminarNotaCab( sfWebRequest $request ){
+        $id = $request->getParameter("id");
+        $referencia = base64_decode($request->getParameter("referencia"));
+        $numdocumento = $request->getParameter("numdocumento");
+
+        $this->forward404Unless( $referencia );
+        $this->forward404Unless( $numdocumento );
+//        echo $referencia. "--".$numdocumento;
+        try
+        {
+            $factura = Doctrine::getTable("FalaNotaCab")->find(array($referencia, $numdocumento));
+//            echo "<br>c:".count($factura);
+            if($factura)
+            {
+                $factura->getCaReferencia();
+                $factura->delete();
+                $this->responseArray=array("success"=>true,"id"=>$id);
+            }
+            else
+                $this->responseArray=array("success"=>false,"err"=>"Registro no encontrado");
+        }
+        catch(Exception $e)
+        {
+  //          echo $e->getMessage();
+            $this->responseArray=array("success"=>false,"err"=>$e->getMessage());
+        }
+//        $this->responseArray=array("success"=>true);
+//        print_r($this->responseArray);
+//        exit;
+        
+        $this->setTemplate("responseTemplate");
+    }
+
 }
 ?>

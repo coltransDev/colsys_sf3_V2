@@ -175,27 +175,24 @@ Ext.extend(PanelNotasCab, Ext.grid.EditorGridPanel, {
             {
                 waitMsg: 'Eliminando...',
                 url: '<?=url_for("falabellaAdu/eliminarNotaCab?referencia=".base64_encode($referencia))?>',
-                //method: 'POST',
-                //Solamente se envian los cambios
                 params :	{
                     id: id,
                     numdocumento: this.ctxRecord.data.numdocumento
-                },
-
-                //Ejecuta esta accion en caso de fallo
-                //(404 error etc, ***NOT*** success=false)
-                failure:function(response,options){
-                    alert( response.responseText );
-                    success = false;
-                },
-
-                //Ejecuta esta accion cuando el resultado es exitoso
+                },                
                 success:function(response,options){
-                    var res = Ext.util.JSON.decode( response.responseText );
+                    var res = Ext.util.JSON.decode( response.responseText );                    
                     if( res.success ){
-                        record = storeTransacciones.getById( res.id );
-                        storeTransacciones.remove(record);
+                        record = Ext.getCmp("panel-notas-cab").store.getById( res.id );
+                        Ext.getCmp("panel-notas-cab").store.remove(record);
+
+                        Ext.getCmp("panel-notas-det").store.baseParams = {numdocumento:'' };
+                        Ext.getCmp("panel-notas-det").store.reload();
                     }
+                },
+                failure:function(response,options){
+                    var res = Ext.util.JSON.decode( response.responseText );
+                    if(res.err)
+                        Ext.MessageBox.alert("Mensaje",'Se presento un error guardando por favor informe al Depto. de Sistemas<br>'+res.err);
                 }
             });
         }
