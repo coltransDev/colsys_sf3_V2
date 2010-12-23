@@ -229,7 +229,8 @@ var ij=parseInt(<?=($nprov>1)?($nprov):1?>);
             Ext.getCmp("idconcliente").setValue(record.get("idcontacto"));
             Ext.getCmp("contacto").setValue(record.get("nombre")+' '+record.get("papellido")+' '+record.get("sapellido"));
 
-            
+
+            /*if(Ext.getCmp("chkcontacto_0").getValue()==false)*/
             {
                 var confirmar=record.get("confirmar") ;
                 var brokenconfirmar="";
@@ -276,10 +277,10 @@ var ij=parseInt(<?=($nprov>1)?($nprov):1?>);
             }
             
             Ext.getCmp("ca_liberacion").setValue(cupo);
-            if(record.data.cupo && record.data.cupo!="null")
-            {
-                Ext.getCmp("preferencias").setValue(record.get("preferencias"));
-            }
+            
+            
+            Ext.getCmp("preferencias").setValue(record.get("preferencias"));
+            
             Ext.getCmp("vendedor").onTrigger1Click();
             Ext.getCmp("vendedor").setValue(record.data.vendedor);
             $("#vendedor").val(record.data.nombre_ven);

@@ -353,7 +353,8 @@ if($permiso>=2)
                 Ext.getCmp("ca_liberacion").setValue(cupo);
             }
 
-            Ext.getCmp("preferencias").setValue(record.get("preferencias"));
+            if(Ext.getCmp("preferencias").getValue()=="")
+                Ext.getCmp("preferencias").setValue(record.get("preferencias"));
         } 
 		,
         onSelectModalidad: function( combo, record, index)

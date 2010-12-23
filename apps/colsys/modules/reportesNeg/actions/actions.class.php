@@ -3247,7 +3247,7 @@ color="#000000";
             if( $request->getParameter("cobrar_tar")!==null ){
                 $tarifa->setCaCobrarTar( $request->getParameter("cobrar_tar") );
             }else{
-                if($tarifa->setCaCobrarTar()=="")
+                if(!$tarifa->getCaCobrarTar())
                     $tarifa->setCaCobrarTar( 0 );
             }
 

@@ -375,15 +375,16 @@ PanelConceptosFletes = function( config ){
 
     actualizarObservaciones = function( btn, text, obj ){
         if( btn=="ok" ){
-            var record = storePanelConceptosFletes.getAt(activeRow);
-            record.set("observaciones", text);
+            //var record = storePanelConceptosFletes.getAt(activeRow);
+            activeRow.set("observaciones", text);
+            //record.set("observaciones", text);
         }
     }
    
 
 
 };
-
+var activeRow;
 Ext.extend(PanelConceptosFletes, Ext.grid.EditorGridPanel, {
     guardarCambios: function(a,b){
         
@@ -778,7 +779,7 @@ Ext.extend(PanelConceptosFletes, Ext.grid.EditorGridPanel, {
         }        
     },
     ventanaObservaciones : function( record ){
-        var activeRow = record;
+        activeRow = record;
         Ext.MessageBox.show({
                title: 'Observaciones',
                msg: 'Por favor coloque las observaciones:',

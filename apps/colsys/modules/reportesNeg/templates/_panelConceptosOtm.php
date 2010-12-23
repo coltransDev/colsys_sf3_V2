@@ -142,14 +142,14 @@ PanelConceptosOtm = function( config ){
             dataIndex: 'item',
             hideable: false,
             sortable:false,
-            width: 170,
+            
             renderer: this.formatItem,
             editor: this.editorConceptos
         },
         {
             id: 'equipo',
             header: "Equipo",
-            width: 120,
+           
             sortable: false,
             dataIndex: 'equipo',
             hideable: false,
