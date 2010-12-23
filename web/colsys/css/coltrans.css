@@ -231,7 +231,7 @@ table.tableList td.imprimir {
    background:#FFFFFF;
    color:#000000;
 }
-table.tableList td.invertir tr.invertir {
+table.tableList td.invertir {
    text-align:left;
    background:#D2D2D2;
    color:#000000;
@@ -369,7 +369,7 @@ div.grey{
 
 	color: #333333;
 	display: block;
-	font-size:8px;
+	font-size:9px;
 	max-width: 150px;
 }
 
@@ -473,6 +473,10 @@ a.toolbar:active {
 }
 .row_blue{
 	background-color: #F4F8FF !important;
+}
+
+.row_green{
+	background-color:#CEFFCE !important;
 }
 
 /*
@@ -623,6 +627,13 @@ a.toolbar:active {
     background: url('../images/fam/shape_align_left.png') no-repeat 0 0 !important;
 }
 
+.arrow_up {
+    background: url('../images/fam/arrow_up.png') no-repeat 0 0 !important;
+}
+
+
+
+
 .preview-right {
 	background: url('../images/16x16/preview-right.gif') no-repeat 0 0 !important;
 }
@@ -638,6 +649,8 @@ a.toolbar:active {
 .new-tab {
     background: url('../images/16x16/new_tab.gif') no-repeat 0 0 !important;
 }
+
+
 
 
 
