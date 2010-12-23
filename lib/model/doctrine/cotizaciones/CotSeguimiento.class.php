@@ -34,16 +34,20 @@ class CotSeguimiento extends BaseCotSeguimiento
             if(!$producto)
                 return 0;
 
-            if( $producto->getCaIdtarea() ){
+            if( $producto->getCaIdtarea()  ){
                 $tarea  =  Doctrine::gettable("NotTarea")->find( $producto->getCaIdtarea() );
-                $tarea->setCaFchterminada( date("Y-m-d H:i:s") );
-                $tarea->save();
+                if($tarea->getCaFchterminada()=="")
+                {
+                    $tarea->setCaFchterminada( date("Y-m-d H:i:s") );
+                    $tarea->save();
+                }
             }
         }
 
         $cotizacion = Doctrine::gettable("Cotizacion")->find( $producto->getCaIdcotizacion() );
         if(!$cotizacion)
             return 0;
+
 
         $seguimiento = new CotSeguimiento();
         if( $idproducto ){
