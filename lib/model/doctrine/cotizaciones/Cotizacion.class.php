@@ -123,11 +123,7 @@ class Cotizacion extends BaseCotizacion
 	* @author Andres Botero
 	*/
 	public function getRecargosLocales( $transporte=null, $modalidad=null ){
-		//$tipo = Constantes::RECARGO_LOCAL;
-        $tipo1 = Constantes::RECARGO_OTM_DTA;
-        //MAQR 2010-05-21 le agregue para que listara los recargos OTM
-
-		
+		//$tipo = Constantes::RECARGO_LOCAL;		
         $q = Doctrine_Query::create()
                         ->from("CotRecargo r")
                         ->innerJoin("r.TipoRecargo tr")
@@ -142,7 +138,7 @@ class Cotizacion extends BaseCotizacion
 		if( $modalidad ){
             $q->addWhere("r.ca_modalidad = ? ", $modalidad );
 		}
-
+        //echo $q->getSqlQuery();
 		return $q->execute();
 	}
 
