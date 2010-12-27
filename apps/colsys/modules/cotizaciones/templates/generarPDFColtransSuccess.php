@@ -750,7 +750,7 @@ for( $k=0; $k<count($transportes); $k++ ):
     $rows =  Doctrine_Query::create()
                     ->select("p.ca_transporte, p.ca_modalidad")
                     ->from("CotProducto p")
-                    ->where("p.ca_idcotizacion = ? and  p.ca_transporte=? ", array($cotizacion->getCaIdcotizacion(),constantes::OTMDTA) )
+                    ->where("p.ca_idcotizacion = ?  ", array($cotizacion->getCaIdcotizacion()) )
                     ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
                     ->execute();
 
@@ -767,7 +767,7 @@ for( $k=0; $k<count($transportes); $k++ ):
 		foreach( $grupos as $key => $grupo ){
             //echo $key." - ".$transporte;
 			if( $key!=$transporte ){
-                if($key!=constantes::OTMDTA && $transporte!="OTM" )
+//                if($key!=constantes::OTMDTA && $transporte!="OTM" )
 				continue;
 			}
 			foreach( $grupo as $modalidad ){
