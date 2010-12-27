@@ -590,13 +590,13 @@ class widgetsComponents extends sfComponents
         //print_r($this->data);
         foreach( $this->data as $key=>$val ){
             $arrTransporte=explode("|",$this->data[$key]["b_ca_transporte"]);
-            if(count($arrTransporte)<2)
+//            if(count($arrTransporte)<2)
             {
                 $this->data[$key]["b_ca_tipo"] = utf8_encode($this->data[$key]["b_ca_tipo"]);
                 $this->data[$key]["b_ca_nombre"] = utf8_encode($this->data[$key]["b_ca_nombre"]);
-                $this->data[$key]["b_ca_transporte"] = utf8_encode($this->data[$key]["b_ca_transporte"]);
+                $this->data[$key]["b_ca_transporte"] = $modo ;
             }
-            else
+/*            else
             {
                 $new=false;
                 foreach($arrTransporte as $t)
@@ -610,12 +610,15 @@ class widgetsComponents extends sfComponents
                     }
                     else
                     {
-                        $this->data[]["b_ca_tipo"] = utf8_encode($this->data[$key]["b_ca_tipo"]);
-                        $this->data[]["b_ca_nombre"] = utf8_encode($this->data[$key]["b_ca_nombre"]);
+                        $this->data[]=$this->data[$key];
+                        $this->data[]["b_ca_tipo"] = ($this->data[$key]["b_ca_tipo"]);
+                        $this->data[]["b_ca_nombre"] = ($this->data[$key]["b_ca_nombre"]);
                         $this->data[]["b_ca_transporte"] = utf8_encode($t);
                     }
                 }
             }
+ * 
+ */
         }
 
 	}

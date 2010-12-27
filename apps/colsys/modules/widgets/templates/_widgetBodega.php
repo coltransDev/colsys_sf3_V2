@@ -1,7 +1,7 @@
 <?php
-/* 
+/*
  *  This file is part of the Colsys Project.
- * 
+ *
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
 
@@ -12,12 +12,12 @@ $data = $sf_data->getRaw("data");
 
 
 WidgetBodega = function( config ){
-    Ext.apply(this, config);    
+    Ext.apply(this, config);
     this.store = new Ext.data.Store({
 				autoLoad : true,
 				reader: new Ext.data.JsonReader(
 					{
-						root: 'root'                        
+						root: 'root'
 					},
 					Ext.data.Record.create([
                                             {name: 'b_ca_idbodega'},
@@ -35,16 +35,16 @@ WidgetBodega = function( config ){
 
     WidgetBodega.superclass.constructor.call(this, {
         valueField: 'b_ca_idbodega',
-        displayField: 'b_ca_nombre',        
+        displayField: 'b_ca_nombre',
         forceSelection: true,
         tpl: this.resultTpl,
         triggerAction: 'all',
         emptyText:'',
         itemSelector: 'div.search-item',
-        selectOnFocus: true,        
+        selectOnFocus: true,
         lazyRender:true,
         mode: 'local',
-        listClass: 'x-combo-list-small'        
+        listClass: 'x-combo-list-small'
     });
 };
 
@@ -92,5 +92,5 @@ Ext.extend(WidgetBodega, Ext.form.ComboBox, {
 	}
 });
 
-	
+
 </script>
