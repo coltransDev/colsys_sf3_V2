@@ -417,8 +417,8 @@ Ext.extend(PanelRecargosCotizacion, Ext.grid.EditorGridPanel, {
             var ed = this.colModel.getCellEditor(e.column, e.row);
             if( e.record.data.transporte=="<?=Constantes::AEREO?>" ){
                 ed.field.store.loadData( recargosAereo );
-            }else{
-                if( e.record.data.transporte=="<?=Constantes::TERRESTRE?>" && ( e.record.data.modalidad=="OTM"||e.record.data.modalidad=="DTA") ){
+            }else{                
+                if (e.record.data.transporte=="<?=constantes::OTMDTA?>" || ( e.record.data.transporte=="<?=Constantes::TERRESTRE?>" && ( e.record.data.modalidad=="OTM"||e.record.data.modalidad=="DTA") ) ){
                     ed.field.store.loadData( recargosTerrestreOTM );
                 }else{
                     ed.field.store.loadData( recargosMaritimo );

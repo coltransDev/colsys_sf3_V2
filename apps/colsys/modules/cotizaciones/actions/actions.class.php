@@ -978,7 +978,7 @@ class cotizacionesActions extends sfActions
 		$aplica_tar = utf8_decode($this->getRequestParameter("aplica_tar"));
 		$aplica_min = utf8_decode($this->getRequestParameter("aplica_min"));
 		$observaciones = $this->getRequestParameter("detalles");
-                 $equipo = $this->getRequestParameter("idequipo");
+        $equipo = $this->getRequestParameter("idequipo");
 
 		$consecutivo = $this->getRequestParameter("consecutivo"); //Consecutivo tarifario
 
@@ -1535,6 +1535,7 @@ class cotizacionesActions extends sfActions
                                       ->addOrderBy("tr.ca_recargo ASC")
                                       ->execute();*/
                 //echo $transporte;
+                
                 $recargos = $cotizacion->getRecargosLocales($transporte, $modalidad);
 				$j=0;
 				foreach( $recargos as $recargo ){

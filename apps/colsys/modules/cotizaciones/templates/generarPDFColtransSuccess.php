@@ -314,6 +314,9 @@ for( $k=0; $k<count($transportes); $k++ ):
 			}
 
 			//Imprime el tiempo de transito
+                        array_push($widths,35);
+                        array_push($datos,"Modalidad: ".nl2br($producto->getCaModalidad()));
+                        $pos_mem+= 35;
 			if (strlen($producto->getCaFrecuencia())<>0){
 				array_push($widths,35);
 				array_push($datos,"Frecuencia: ".nl2br($producto->getCaFrecuencia()));
@@ -329,6 +332,9 @@ for( $k=0; $k<count($transportes); $k++ ):
 
 				array_push($datos,"Observaciones: ".$producto->getCaObservaciones());
 			}
+
+
+
 			$pdf->SetFont($font,'',8);
 			$pdf->SetWidths($widths);
 			$pdf->SetAligns(array_fill(0, 3, "L"));
@@ -740,10 +746,28 @@ for( $k=0; $k<count($transportes); $k++ ):
 		}
 	}
 
+    $grupos = array();
+    $rows =  Doctrine_Query::create()
+                    ->select("p.ca_transporte, p.ca_modalidad")
+                    ->from("CotProducto p")
+                    ->where("p.ca_idcotizacion = ? and  p.ca_transporte=? ", array($cotizacion->getCaIdcotizacion(),constantes::OTMDTA) )
+                    ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
+                    ->execute();
+
+
+    foreach ( $rows as $row ) {
+        $grupos[$row["ca_transporte"]][]=$row["ca_modalidad"];
+        $grupos[$row["ca_transporte"]] = array_unique( $grupos[$row["ca_transporte"]] );
+    }
+
+
 	if( !isset($transportes[$k+1]) || $transporte!=$transportes[$k+1] ){
+        //echo "..:";
 		// ======================== Recargos Locales ======================== //
 		foreach( $grupos as $key => $grupo ){
+            //echo $key." - ".$transporte;
 			if( $key!=$transporte ){
+                if($key!=constantes::OTMDTA && $transporte!="OTM" )
 				continue;
 			}
 			foreach( $grupo as $modalidad ){
