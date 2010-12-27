@@ -692,7 +692,10 @@ class widgetsActions extends sfActions
 
         if($impoexpo!="")
         {
-            $q->addWhere("p.ca_impoexpo = ?", utf8_decode($impoexpo));
+            if(utf8_decode($impoexpo)==constantes::TRIANGULACION)
+                $q->addWhere("p.ca_impoexpo = ? or p.ca_impoexpo = ? ", array(utf8_decode($impoexpo),constantes::IMPO));
+            else
+                $q->addWhere("p.ca_impoexpo = ?", utf8_decode($impoexpo));
         }
 
         $cotizaciones = $q->setHydrationMode(Doctrine::HYDRATE_SCALAR)->execute();
