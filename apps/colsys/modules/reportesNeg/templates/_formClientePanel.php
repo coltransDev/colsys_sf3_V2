@@ -129,10 +129,11 @@ include_component("widgets", "widgetContactoCliente");
                                     border:false,
                                     title:"Incoterms ",
                                     items:[
+
                                        new WidgetIncoterms(
                                            {
                                               id:'terminos0',
-                                              hiddenName:"incoterms0",
+                                              name:"incoterms0",
                                               width:180
                                             })
                                     ]
@@ -178,7 +179,7 @@ include_component("widgets", "widgetContactoCliente");
                                             ?>
                                             new WidgetIncoterms({
                                               id:'terminos<?=$i?>',
-                                              hiddenName:"incoterms<?=$i?>",
+                                              name:"incoterms<?=$i?>",
                                               width:180
                                             }),
                                             <?
@@ -307,7 +308,7 @@ var ij=parseInt(<?=($nprov>1)?($nprov):1?>);
                                 ?>
                                 new WidgetIncoterms({
                                       id:'terminos'+ij,
-                                      hiddenName:"incoterms"+ij,
+                                      name:"incoterms"+ij,
                                       width:180
                                     }),
                                 <?
