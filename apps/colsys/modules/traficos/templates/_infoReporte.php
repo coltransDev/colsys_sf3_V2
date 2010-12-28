@@ -12,7 +12,7 @@ if( $reporte->getCaUsuanulado() ){
 					if( $reporte->getCaUsuanulado() ){
 						echo "<b>Anulado por:</b> ".$reporte->getCaUsuanulado()." ".$reporte->getCaFchanulado()."<br />";
 					}
-					?>					
+					?>
 					<b>Transporte:</b> <?=$reporte->getCaTransporte()?><br />
 					<b>Modalidad:</b> <?=$reporte->getCaModalidad()?><br />					
 					<b>Orden:</b> <?=$reporte->getCaOrdenClie()?>				
@@ -181,8 +181,9 @@ if( $reporte->getCaUsuanulado() ){
 			<?
 				if( $reporte->getCaImpoexpo()==Constantes::EXPO ){	
 					$url = url_for("reportes/generarPDF?reporteId=".$reporte->getCaIdreporte()."&token=".md5(time().basename($reporte->getCaIdreporte())));
-				}else{				
-					$url = "/colsys_php/reporteneg.php?id=".$reporte->getCaIdreporte();
+				}else{
+                    $url = url_for("reportes/verReporte?id=".$reporte->getCaIdreporte()."&token=".md5(time().basename($reporte->getCaIdreporte())));
+					//$url = "/colsys_php/reporteneg.php?id=".$reporte->getCaIdreporte();
 				}
 				
 				echo mime_type_icon( "pdf" );

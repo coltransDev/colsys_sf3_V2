@@ -14,7 +14,11 @@
     }
 </script>
 <?
-if( $reporte->getCaImpoexpo()=="Exportación" || $reporte->getCaTiporep()>0 ){
+if($reporte->getCaTiporep()>0)
+{
+    $url = "/reportesNeg/generarPDF?id=".$reporte->getCaIdreporte()."&token=".md5( time() );
+}
+else if( $reporte->getCaImpoexpo()=="Exportación" ){
     $url = "/colsys_sf/reportesNeg/generarPDF?reporteId=".$reporte->getCaIdreporte()."&token=".md5( time() );
 }else{
     $url = "/colsys_php/reporteneg.php?id=".$reporte->getCaIdreporte();
