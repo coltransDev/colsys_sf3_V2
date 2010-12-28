@@ -34,8 +34,7 @@ WidgetIncoterms = function( config ){
     WidgetIncoterms.superclass.constructor.call(this, {
         fieldLabel: 'Incoterms',
         valorField: 'valor',
-        displayField: 'valor',
-        typeAhead: true,
+        displayField: 'valor',                
         forceSelection: true,
         triggerAction: 'all',
         emptyText:'',

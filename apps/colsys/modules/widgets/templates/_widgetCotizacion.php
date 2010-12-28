@@ -74,7 +74,7 @@ WidgetCotizacion = function( config ){
         triggerAction: 'all',
         emptyText:'',
         selectOnFocus: true,
-        lazyRender:true,        
+        
         itemSelector: 'div.search-item'
     });
 };

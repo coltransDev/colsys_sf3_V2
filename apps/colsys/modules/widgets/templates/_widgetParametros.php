@@ -28,8 +28,7 @@ WidgetParametros = function( config ){
     WidgetParametros.superclass.constructor.call(this, {
         mode: 'local',
         displayField: 'name',
-        valueField: 'id',
-        typeAhead: true,
+        valueField: 'id',        
         forceSelection: true,
         triggerAction: 'all',
         emptyText:'',
