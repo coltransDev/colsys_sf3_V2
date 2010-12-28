@@ -887,15 +887,21 @@ class reportesNegActions extends sfActions
 
             for($i=0;$i<10;$i++)
             {
-                if($request->getParameter("incoterms".$i) && ($request->getParameter("prov".$i)!="" || $reporte->getCaImpoexpo() == Constantes::EXPO)  )
+                if($request->getParameter("incoterms".$i)!="" && ($request->getParameter("prov".$i)!="" || $reporte->getCaImpoexpo() == Constantes::EXPO)  )
                 {
                     $incoterms.=($incoterms!="")?"|":"";
                     $incoterms.=$request->getParameter("incoterms".$i);
                 }
             }
+
             if($incoterms )
             {
                 $reporte->setCaIncoterms($incoterms);
+            }
+            else if($reporte->getCaImpoexpo()!= Constantes::EXPO)
+            {
+                $errors["incoterms0"]="Debe colocar un incoterm";
+                $texto.="Incoterms<br>";
             }
 
             for($i=0;$i<10;$i++)
@@ -909,6 +915,11 @@ class reportesNegActions extends sfActions
             if($orden )
             {
                 $reporte->setCaOrdenProv($orden);
+            }
+            else if($reporte->getCaImpoexpo()!= Constantes::EXPO)
+            {
+                $errors["orden_pro0"]="Debe colocar una orden de proveedor";
+                $texto.="Orden de Proveedor<br>";
             }
 
             if($request->getParameter("orden_clie") )
