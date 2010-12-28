@@ -967,6 +967,8 @@ class reportesNegActions extends sfActions
             {
                 $reporte->setCaIdrepresentante($request->getParameter("idrepres"));
             }
+            else
+                $reporte->setCaIdrepresentante(null);
 
             if($request->getParameter("ca_informar_repr") )
             {
@@ -2938,7 +2940,9 @@ color="#000000";
             }
             else
                 $data["notify"]="";
+            
             $data["idrepresentante"]=$reporte->getCaIdrepresentante();
+            $data["representante"]=$reporte->getRepresentante();
 
             $repExpo=$reporte->getRepExpo();
 

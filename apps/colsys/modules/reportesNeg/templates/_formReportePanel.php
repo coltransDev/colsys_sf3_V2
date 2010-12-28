@@ -407,6 +407,12 @@ var idreporte='<?=$idreporte?>';
                             Ext.getCmp("idconsigmaster").setValue(res.data.idconsigmaster);
                             $("#idconsigmaster").attr("value",res.data.consigmaster);
                         }
+
+                        if(Ext.getCmp("idrepresentante"))
+                        {
+                            Ext.getCmp("idrepresentante").setValue(res.data.idrepresentante);
+                            $("#idrepresentante").attr("value",res.data.representante);
+                        }
 //                        $("#tra_origen_id").val(res.data.tra_origen_id);
 //                        $("#idtra_origen_id").val(res.data.idtra_origen_id);
 

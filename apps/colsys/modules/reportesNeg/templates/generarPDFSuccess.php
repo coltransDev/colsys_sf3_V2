@@ -281,6 +281,9 @@ if( $reporte->getCaIdconsignarmaster()>4 ){
 if( $reporte->getCaIdrepresentante() ){
     $tercero = Doctrine::getTable("Tercero")->find($reporte->getCaIdrepresentante());
 
+    if(!$tercero)
+        $tercero = new Tercero();
+    
     $orden = $ordenes[$idprov];
     $termino = substr($terminos[$idprov],0,3);
     $pdf->SetWidths(array(25,25,85,25,40));
