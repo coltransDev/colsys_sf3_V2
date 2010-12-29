@@ -43,11 +43,23 @@ class homepageComponents extends sfComponents {
     public function executeBirthday() {
 
         $inicial = date('m-d');
-        $final = date('m-d', time() + 86400 * 3);
+        $final = date('m-d', time() + 86400 * 2);
 
         $this->usuarios = Doctrine::getTable('Usuario')
                         ->createQuery('u')
                         ->where('substring(ca_cumpleanos::text, 6,5) BETWEEN ? and ?', array($inicial, $final))
+                        ->addWhere('ca_activo = ?', true)
+                        ->addOrderBy('substring(ca_cumpleanos::text, 6,5)  ASC')
+                        ->execute();
+    }
+
+    public function executeBirthdayEmail() {
+
+        $inicial = date('m-d',time()+86400);
+
+        $this->usuarios = Doctrine::getTable('Usuario')
+                        ->createQuery('u')
+                        ->where('substring(ca_cumpleanos::text, 6,5)=?', $inicial)
                         ->addWhere('ca_activo = ?', true)
                         ->addOrderBy('substring(ca_cumpleanos::text, 6,5)  ASC')
                         ->execute();
@@ -60,13 +72,13 @@ class homepageComponents extends sfComponents {
     public function executeIncomeLast() {
 
         $final = date('Y-m-d');
-        $inicial = date('Y-m-d', time() - 86400 * 45);
+        $inicial = date('Y-m-d', time() - 86400 * 30);
 
         $this->usuarios = Doctrine::getTable('Usuario')
                         ->createQuery('u')
                         ->where('ca_fchingreso BETWEEN ? and ?', array($inicial, $final))
                         ->addWhere('ca_activo = ?', true)
-                        ->addOrderBy('ca_fchingreso ASC')
+                        ->addOrderBy('ca_fchingreso DESC')
                         ->execute();
     }
 
