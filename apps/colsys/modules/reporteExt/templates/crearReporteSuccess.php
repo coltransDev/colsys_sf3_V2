@@ -10,22 +10,19 @@ var verInstruccionesAgente=function(){
 	ventana.style.left = ((screen.width - document.getElementById('find_texts').offsetWidth)/2)+"px";
 }
 	
-	
 var crearSeguimiento=function(){
 	if(document.getElementById("prog_seguimiento").checked){
 		document.getElementById("row_seguimiento").style.display="";
 	}else{
 		document.getElementById("row_seguimiento").style.display="none";
 	}
-}	
-	
+}
 </script>
 
 <div class="content" align="center">
 
 <div id='find_texts' style='display:none; border-width:3; border-color:#666666; border-style:solid; position:absolute;' >
-		<iframe id="find_texts_frame" src="<?=url_for("reporteExt/instruccionesAgentes?transporte=".$reporte->getCaTransporte());?>" scrolling="yes" frameborder="0" marginheight="0" marginwidth="0" width="650px" height="800px"></iframe>
-	
+		<iframe id="find_texts_frame" src="<?=url_for("reporteExt/instruccionesAgentes?transporte=".$reporte->getCaTransporte());?>" scrolling="yes" frameborder="0" marginheight="0" marginwidth="0" width="650px" height="800px"></iframe>	
 	</div>
 <form action="<?=url_for("reporteExt/crearReporte?idreporte=".$reporte->getCaIdreporte())?>" method="post" enctype="multipart/form-data">
 <table width="60%" border="0" class="tableList">
@@ -120,14 +117,11 @@ var crearSeguimiento=function(){
 			$destino = $reporte->getDestino()->getCaCiudad();
 			$cliente = $reporte->getCliente();			
 			
-			
 			$proveedor = substr($reporte->getProveedoresStr(),0,130);					
 			$asunto = $proveedor." / ".$cliente." [".$origen." -> ".$destino."] ";					
-			
-			
-				
+
 			 $asunto .= " Id.: ".$reporte->getCaConsecutivo()." ";
-			 echo $form['asunto']->renderError(); 			 
+			 echo $form['asunto']->renderError();
 			 $form->setDefault('asunto', $asunto); 
 			 echo $form['asunto']->render();
 			 ?>
@@ -250,9 +244,7 @@ var crearSeguimiento=function(){
 	</tr>
 	</table>
 </form>
-</div>
-
-	
+</div>	
 <script language="javascript" type="text/javascript">
 	crearSeguimiento();
 </script>
