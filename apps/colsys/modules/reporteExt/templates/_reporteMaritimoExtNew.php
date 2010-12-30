@@ -106,7 +106,7 @@ if ( $reporte->getCaIdlinea() ){
 <?	
 }
 			 
-if ( $reporte->getCaModalidad() != 'LCL' || $reporte->getCaImpoexpo() == constantes::TRIANGULACION){
+if ( ($reporte->getCaModalidad() != 'LCL' || $reporte->getCaImpoexpo() == constantes::TRIANGULACION)  ){
 ?>
 <tr>
 	<td style="vertical-align:top;"><b>MBL CONSIGNED TO:</b></td>

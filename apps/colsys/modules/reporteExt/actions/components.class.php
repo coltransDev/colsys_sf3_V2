@@ -150,16 +150,19 @@ class reporteExtComponents extends sfComponents
             $consignatario = Doctrine::getTable("Tercero")->find( $reporte->getCaIdmaster() );
             $consignatario_m1 = $consignatario->getCaNombre()."<br />".$consignatario->getCaContacto()."<br />Dirección: ".$consignatario->getCaDireccion()."<br />Teléfonos:".$consignatario->getCaTelefonos()." Fax:".$consignatario->getCaFax()."<br />Email: ".$consignatario->getCaEmail();
         }else {
+            
             $consignatario = Doctrine::getTable("Cliente")->find( 800024075 );
             $consignatario_m1 = $consignatario->getCaCompania()." Nit. ".number_format($consignatario->getCaIdcliente(),0)."-".$consignatario->getCaDigito()."<br />Dirección: ".$consignatario->getDireccion()."<br />Teléfonos:".$consignatario->getCaTelefonos()." Fax:".$consignatario->getCaFax()."<br />".$consignatario->getCiudad()->getCaCiudad()." ".$consignatario->getCiudad()->getTrafico()->getCaNombre();
             
-            if($reporte->getCaIdconsignarmaster()>3)
+            if($reporte->getCaIdconsignarmaster() && $reporte->getCaIdconsignarmaster()>3)
             {
                  $consignatario1 = Doctrine::getTable("Tercero")->find($reporte->getCaIdconsignarmaster());
                 if(!$consignatario1)
                     $consignatario1=new Tercero();
                 $consignatario_m = $consignatario1->getCaNombre()." Nit. ".number_format($consignatario1->getCaIdtercero(),0)."<br />Dirección: ".$consignatario1->getCaDireccion()."<br />Teléfonos:".$consignatario1->getCaTelefonos()." Fax:".$consignatario1->getCaFax()."<br />".$consignatario1->getCiudad()->getCaCiudad()." ".$consignatario1->getCiudad()->getTrafico()->getCaNombre();
             }
+            else
+                $consignatario_m=$consignatario_m1;
         }
 
         if( $reporte->getCaIdconsignatario() ){
@@ -188,7 +191,6 @@ class reporteExtComponents extends sfComponents
                 $consignatario_final .="<br />Teléfonos:".$contacto->getCaTelefonos()." Fax:".$contacto->getCaFax()."<br /> Email:".$contacto->getCaEmail();
             }
         }
-
 
         $bodega1 = $reporte->getBodegaConsignar();
         $bodega2 = Doctrine::getTable("Bodega")->find( $reporte->getCaIdbodega() );
@@ -232,9 +234,10 @@ class reporteExtComponents extends sfComponents
         if ( $reporte->getCaMastersame() == 'Sí' ){
             $master = $hijo;
         }else{
-            echo "::".$reporte->getCaIdconsignarmaster()."::";
-            if($reporte->getCaIdconsignarmaster()>3)
+            if(!$reporte->getCaIdconsignarmaster() || $reporte->getCaIdconsignarmaster()>3 )
+            {
                 $master = $consignatario_m1;
+            }
             else
                 $master = $consignatario_m;
         }
