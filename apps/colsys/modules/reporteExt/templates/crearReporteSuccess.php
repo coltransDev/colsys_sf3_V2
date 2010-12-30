@@ -131,7 +131,8 @@ var crearSeguimiento=function(){
 			 $form->setDefault('asunto', $asunto); 
 			 echo $form['asunto']->render();
 			 ?>
-			</div>		</td>
+			</div>
+        </td>
 	</tr>
 	<tr>
 		<td colspan="2" valign="top">
@@ -167,7 +168,8 @@ var crearSeguimiento=function(){
                     }
                 }
 				?>
-			</div>		</td>
+			</div>
+        </td>
 	</tr>
 	<tr>
 		<td colspan="2" valign="top">
