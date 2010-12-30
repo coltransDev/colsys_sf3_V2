@@ -146,13 +146,26 @@ var crearSeguimiento=function(){
 		<td colspan="2" valign="top">
 			<div align="left">
 				<?
-				if( $reporte->getCaTransporte()==Constantes::MARITIMO ){
-					include_component("reporteExt","reporteMaritimoExt", array("reporte"=>$reporte));
-				}
-				
-				if( $reporte->getCaTransporte()==Constantes::AEREO ){
-					include_component("reporteExt","reporteAereoExt", array("reporte"=>$reporte));
-				}
+                if($reporte->setCaTiporep()>0)
+                {
+                    if( $reporte->getCaTransporte()==Constantes::MARITIMO ){
+                        include_component("reporteExt","reporteMaritimoExtNew", array("reporte"=>$reporte));
+                    }
+
+                    if( $reporte->getCaTransporte()==Constantes::AEREO ){
+                        include_component("reporteExt","reporteAereoExtNew", array("reporte"=>$reporte));
+                    }
+                }
+                else
+                {
+                    if( $reporte->getCaTransporte()==Constantes::MARITIMO ){
+                        include_component("reporteExt","reporteMaritimoExt", array("reporte"=>$reporte));
+                    }
+
+                    if( $reporte->getCaTransporte()==Constantes::AEREO ){
+                        include_component("reporteExt","reporteAereoExt", array("reporte"=>$reporte));
+                    }
+                }
 				?>
 			</div>		</td>
 	</tr>

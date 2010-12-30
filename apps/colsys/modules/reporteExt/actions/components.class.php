@@ -169,6 +169,7 @@ class reporteExtComponents extends sfComponents
             if( $reporte->getCaMciaPeligrosa() ){
                 $consignatario_final .= "<br />Contacto: ".$consignatario->getCaContacto();
             }
+            if(strlen ( $consignatario->getCaDireccion() )>5 )
             $consignatario_final .= "<br />Dirección: ".$consignatario->getCaDireccion();
             if( $reporte->getCaMciaPeligrosa() ){
                 $consignatario_final .= "<br />Teléfonos:".$consignatario->getCaTelefonos()." Fax:".$consignatario->getCaFax()."<br />Email: ".$consignatario->getCaEmail();
@@ -197,20 +198,14 @@ class reporteExtComponents extends sfComponents
         }else{
             $hijo = $bodega1->getCaNombre();
         }
-
-//echo "::".$reporte->getCaIdconsignar();
-//        if($reporte->getCaIdconsignar()!=1)
         
         if( $bodega2 && ($bodega2->getCaTipo()!= "Coordinador Logistico" && $bodega2->getCaTipo()!="Coordinador Logístico" && $bodega2->getCaTipo()!="Cliente/Consignatario" && $bodega2->getCaTipo()!="-")  )
         {
-           // echo "--".$bodega2->getCaTipo()."--".$bodega2->getCaNombre();
             if($bodega2->getCaTipo()==$bodega2->getCaNombre() || $bodega2->getCaTipo()=="Entrega Urgente")
                 $hijo .=" / ".$bodega2->getCaTipo();
             else
                 $hijo .=" / ".$bodega2->getCaTipo()." ".(($bodega2->getCaNombre()!='N/A')?$bodega2->getCaNombre():"")." ".$reporte->getDestinoCont()->getCaCiudad()." - ".$reporte->getDestinoCont()->getTrafico()->getCaNombre();
         }
-        // $hijo = (
-        //              ($rs->Value('ca_tipobodega')!= "Coordinador Logistico")?" / ".$rs->Value('ca_tipobodega')." ".(($rs->Value('ca_bodega')!='N/A')?$rs->Value('ca_bodega'):"")." ".$rs->Value('ca_final_dest')." - ".$tm->Value('ca_pais'):"");
 
         if( !$reporte->getCaNotify() ){
             $contacto = $reporte->getContacto();
