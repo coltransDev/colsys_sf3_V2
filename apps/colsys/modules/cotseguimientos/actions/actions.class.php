@@ -78,6 +78,7 @@ class cotseguimientosActions extends sfActions
 		$this->sucursales = Doctrine::getTable("Sucursal")
                                     ->createQuery("s")
                                     ->orderBy("s.ca_nombre")
+                                    ->where("s.ca_idempresa=2")
                                     ->execute();
 		$this->estados = ParametroTable::retrieveByCaso( "CU074" );
 	}
@@ -406,7 +407,9 @@ class cotseguimientosActions extends sfActions
 
     public function executeReporteSeguimientosEmail( $request)
     {
-        $ultimo_dia = mktime(0, 0, 0, date("m"), 0, 2010);
+        $mes=date("m");        
+        $ano=date("Y");
+        $ultimo_dia = mktime(0, 0, 0, $mes, 0,$ano);
         $last_day=date("Y-m-d",$ultimo_dia);
         $first_day=date("Y-m-01",$ultimo_dia);
 
@@ -439,7 +442,7 @@ class cotseguimientosActions extends sfActions
             $this->emails[$seguimiento["c_ca_usuario"]]["html"].="<tr><td>".$seguimiento["c_ca_consecutivo"]."</td><td>".$seguimiento["cli_ca_compania"]."</td><td>".$seguimiento["p_ca_transporte"]."</td><td>".$seguimiento["o_ca_ciudad"]."-".$seguimiento["d_ca_ciudad"]."::".$seguimiento["p_ca_idproducto"]."</td></tr>";
         }
         $keys= array_keys($this->emails);
-
+        
         foreach($keys as $key)
         {
             $this->emails[$key]["html"]="<table width='90%' cellspacing='1' border='1'>".$this->emails[$key]["html"]."</table>";
@@ -483,6 +486,7 @@ class cotseguimientosActions extends sfActions
                                     ->createQuery("s")
                                     ->where("s.ca_idempresa=2")
                                     ->orderBy("s.ca_nombre")
+                                    ->where("s.ca_idempresa=2")
                                     ->execute();
 		$this->estados = ParametroTable::retrieveByCaso( "CU074" );
 	}
