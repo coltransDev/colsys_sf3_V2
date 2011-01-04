@@ -192,7 +192,7 @@ include_component("reportesNeg", "formSegurosPanel",array("modo"=>$modo,"impoexp
                             ,new PanelRecargos({
                                 title:'Rec. locales',
                                 id:'panel-RecargosLocales',
-                                trasnporte:'<?=$modo?>'
+                                transporte:'<?=$modo?>'
                             })
                         <?
                         }
@@ -391,9 +391,11 @@ var idreporte='<?=$idreporte?>';
                         Ext.getCmp("agente").setValue(res.data.idagente);
                         $("#agente").attr("value",res.data.agente);
 
-                        Ext.getCmp("notify").setValue(res.data.idnotify);
-                        $("#notify").val(res.data.notify);
-
+                        if(Ext.getCmp("notify"))
+                        {
+                            Ext.getCmp("notify").setValue(res.data.idnotify);
+                            $("#notify").val(res.data.notify);
+                        }
                         $("#idconsignatario").val(res.data.consignatario);
                         if(Ext.getCmp("idconsigmaster"))
                         {                            

@@ -6,7 +6,8 @@ $cachedir = $config = sfConfig::get('sf_app_module_dir').DIRECTORY_SEPARATOR."re
 $cachetime = 86400;
 $cacheext = 'colsys';
 //echo $dep;
-$cachepage = md5("formReporteAG/dep/$dep/pais2/$pais2/impoexpo/$impoexpo/email/$email");
+$nprov=count(explode("|", $reporte->getCaIdproveedor() ));
+$cachepage = md5("formReporteAG/dep/$dep/pais2/$pais2/impoexpo/$impoexpo/email/$email/nprov-$nprov/rep/".($idreporte>0));
 $cachefile = $cachedir.$cachepage.'.'.$cacheext;
 //echo $cachefile;
 if($cache=="refresh")
@@ -55,12 +56,21 @@ include_component("widgets", "widgetContactoCliente");
         this.res="";
         this.buttons = [];
 
+
+
+        
         this.buttons.push( {
-            text   : 'Guardar',
+            text   : '<?=($idreporte>0)?"Copiar":"Guardar"?>',
             formBind:true,
             scope:this,
             handler: this.onSave
         } );
+
+
+
+
+
+        
 
         this.buttons.push( {
                 text   : 'Cancelar',
@@ -550,18 +560,28 @@ include_component("widgets", "widgetContactoCliente");
         //@fwrite($fp, trim(gzcompress($cntACmp,6)));
         fclose($fp);
     //    ob_end_flush();
-        echo "<script>location.href=location.href;</script>";
+        echo "<script>location.href=location.href.replace('cache/refresh','');</script>";
         exit;
     }
 }
 ?>
     var i=0;
     Ext.extend(FormReportePanelAg, Ext.form.FormPanel, {
-        onSave: function(){
+        
+        onSave: function(opt){
+            if(!this.idreporte)
+            {
+                opt=0;
+                this.idreporte=0;
+            }
+            else
+                opt=1;
+
             var form  = this.getForm();
             if( form.isValid() ){
                 form.submit({
                     url: "<?=url_for("reportesNeg/guardarReporteAg")?>",
+                    params:{opcion:opt,idreporte:this.idreporte},
                     waitMsg:'Guardando...',
                     waitTitle:'Por favor espere...',
                     success: function(gridForm, action) {
@@ -586,6 +606,7 @@ include_component("widgets", "widgetContactoCliente");
                             Ext.MessageBox.alert("Mensaje",'Se presento un error guardando por favor informe al Depto. de Sistemas<br>'+res.err);
                         else
                             Ext.MessageBox.alert("Mensaje",'No es posible crear un reporte ya que posee errores en la digitacion, verifique los siguientes campos<br>'+res.texto);
+
                         //Ext.MessageBox.alert("Mensaje",'No es posible crear un reporte ya que posee errores en la digitacion, verifique');
                     }
                 });
@@ -691,6 +712,77 @@ include_component("widgets", "widgetContactoCliente");
                             ]
                         });
             tb.render('panel-proveedor');
+        }
+        ,onRender:function() {
+            FormReportePanelAg.superclass.onRender.apply(this, arguments);
+            this.getForm().waitMsgTarget = this.getEl();
+            if(this.idreporte!="undefined" && this.idreporte!="" )
+            {
+                this.load({
+                    url:'<?=url_for("reportesNeg/datosReporte")?>',
+                    waitMsg:'cargando...',
+                    params:{idreporte:this.idreporte},
+                    success:function(response,options){
+                        res = Ext.util.JSON.decode( options.response.responseText );
+
+                        
+
+                        Ext.getCmp("cliente").setValue(res.data.idcliente);
+                        $("#cliente").attr("value",res.data.cliente);
+
+                        for(i=0;i<<?=($nprov>0)?$nprov:0?>;i++)
+                        {
+                            {
+                                if(Ext.getCmp("proveedor"+i))
+                                {
+                                    Ext.getCmp("proveedor"+i).setValue(eval("res.data.idproveedor"+i));
+                                    $("#proveedor"+i).attr("value",eval("res.data.proveedor"+i));
+                                }
+                            }
+                        };
+                        for( i=0; i<20; i++ ){
+                            if( Ext.getCmp("contacto_"+i) && Ext.getCmp("contacto_"+i).getValue()!="" ){
+                                Ext.getCmp("contacto_"+i).setReadOnly( true );
+                            };
+                            if( Ext.getCmp("contacto_fijos"+i) && Ext.getCmp("contacto_fijos"+i).getValue()!="" ){
+                                Ext.getCmp("contacto_fijos"+i).setReadOnly( true );
+                            }
+                        };
+
+                        if(!Ext.getCmp("idvendedor"))
+                        {
+                            Ext.getCmp("vendedor").setValue(res.data.idvendedor);
+                            $("#vendedor").attr("value",res.data.vendedor);
+                        }
+                        $("#idconsignatario").val(res.data.consignatario);
+                        if(Ext.getCmp("notify"))
+                        {
+                            Ext.getCmp("notify").setValue(res.data.idnotify);
+                            $("#notify").val(res.data.notify);
+                        }
+
+                        if(Ext.getCmp("idrepresentante"))
+                        {
+                            Ext.getCmp("idrepresentante").setValue(res.data.idrepresentante);
+                            $("#idrepresentante").attr("value",res.data.representante);
+                        }
+                         Ext.getCmp("agente").setValue(res.data.idagente);
+                        $("#agente").attr("value",res.data.agente);
+                        
+                        for(i=0;i<<?=($nprov>0)?$nprov:0?>;i++)
+                        {
+                            {
+                                if(Ext.getCmp("proveedor"+i))
+                                {
+                                    Ext.getCmp("proveedor"+i).setValue(eval("res.data.idproveedor"+i));
+                                    $("#proveedor"+i).attr("value",eval("res.data.proveedor"+i));
+                                }
+                            }
+                        };
+
+                    }
+                });
+            }
         }
     });
 </script>

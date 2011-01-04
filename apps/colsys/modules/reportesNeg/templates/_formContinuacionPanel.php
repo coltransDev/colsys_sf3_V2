@@ -33,6 +33,10 @@ include_component("widgets","widgetBodega");
                                                     });
 
 			this.wgContinuacion.addListener("select",this.onSelectContinuacion, this );
+		<?
+			if($modo==Constantes::MARITIMO)
+			{
+		?>
                         this.widgetCotizacionOtm = new WidgetCotizacion({
                                               fieldLabel:"Cotización",
                                               id:"cotizacionotm",
@@ -43,6 +47,7 @@ include_component("widgets","widgetBodega");
                                               });
                 this.widgetCotizacionOtm.addListener("select", this.onSelectCotizacionOtm, this );
         <?
+            }
 			}
 		?>
 
@@ -60,9 +65,14 @@ include_component("widgets","widgetBodega");
 						{
 							$keys=array_keys($usuarios);
 							$conta=count($keys);
-						
+
+                            if($modo==Constantes::MARITIMO )
+                            {
 						?>
                         this.widgetCotizacionOtm,
+                        <?
+                            }
+                        ?>
                         this.wgContinuacion,
                         new WidgetCiudad({fieldLabel:'Destino Final',
                                                   name:'continuacion_destino',

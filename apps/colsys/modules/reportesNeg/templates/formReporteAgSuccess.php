@@ -15,8 +15,7 @@ include_component("reportesNeg", "formReportePanelAg",array("reporte"=>$reporte,
 Ext.onReady(function(){
 Ext.QuickTips.init();
     var formPanel = new FormReportePanelAg({
-        title: "Reportes de Negocio AG  -  <?=$modo?>    ",
-        //title: "Reportes de Negocio <?=$reporte->getCaIdreporte()?$reporte->getCaConsecutivo()." ".$reporte->getCaVersion()."/".$reporte->numVersiones():""?>",
+        title: "Reportes de Negocio AG  -  <?=$modo?> ",
         idreporte:'<?=$reporte->getCaIdreporte()?>',
         renderTo:'panel'
     });

@@ -102,6 +102,8 @@ switch ($action) {
                 $button[$i]["link"] = "/reportesNeg/formReporte/id/" . $this->getRequestParameter("id") . "/impoexpo/" . $impoexpo . "/modo/" . $modo;
             $i++;
 
+
+
             $button[$i]["name"] = "Transp.";
             $button[$i]["tooltip"] = "Cambiar el Tranporte";
             $button[$i]["image"] = "22x22/arrow_branch.png";
@@ -161,6 +163,15 @@ switch ($action) {
         $button[$i]["image"] = "22x22/copy_newv.gif";
         $button[$i]["onClick"] = "copiaRep()";
         $i++;
+
+        if($reporte->getCaTiporep()=="2" && $user->getIddepartamento()==14 || $user->getIddepartamento()==13  )
+        {
+            $button[$i]["name"] = "Copiar Ag";
+            $button[$i]["tooltip"] = "Copiar este Reporte Ag  ";
+            $button[$i]["image"] = "22x22/copy.gif";
+            $button[$i]["link"] = "/reportesNeg/formReporteAg/id/" . $this->getRequestParameter("id");
+            $i++;
+        }
         if ($permiso > 1 && !$cerrado) {
             $button[$i]["name"] = "Cerrar";
             $button[$i]["tooltip"] = "Cerrar un reporte";

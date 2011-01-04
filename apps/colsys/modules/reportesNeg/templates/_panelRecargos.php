@@ -6,7 +6,11 @@
  */
 $recargos = $sf_data->getRaw("recargos");
 
-$aplicaciones = array("Valor Fijo","Sobre Flete","Sobre Flete + Recargos","Unitario x Peso/Volumen","Unitario x Pieza","Unitario x BLs/HAWBs","TM3");
+$aplicaciones = array();
+foreach( $aplicaciones1 as $aplicacion ){
+    $aplicaciones[]=$aplicacion->getCaValor();
+}
+
 
 include_component("reportesNeg","cotizacionRecargosWindow", array("reporte"=>$reporte));
 ?>
@@ -240,9 +244,6 @@ PanelRecargos = function( config ){
         }
     });
 
-    
-
-
     PanelRecargos.superclass.constructor.call(this, {
        loadMask: {msg:'Cargando...'},
        clicksToEdit: 1,
@@ -460,7 +461,6 @@ Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
                 <?
                 }
                 ?>
-
 
             var ed = this.colModel.getCellEditor(e.column, e.row);            
             if(dataParametros.length>0)

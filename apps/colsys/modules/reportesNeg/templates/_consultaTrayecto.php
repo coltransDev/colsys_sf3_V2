@@ -146,15 +146,29 @@ if( $reporte->getcaContinuacion()!="N/A" && $reporte->getcaContinuacion()!="" ){
                 ?>
                 <b>Notificar a:</b><br />
                 <?
+                
                     if( $reporte->getCaContinuacionConf() ){
-                        $usuariosC = Doctrine::getTable("Usuario")
+
+                        $q = Doctrine::getTable("Usuario")
+                               ->createQuery("u")
+                               ->select("u.ca_login,u.ca_nombre,u.ca_email,ca_sucursal,u.ca_idsucursal")
+                               ->innerJoin("u.UsuarioPerfil up")
+                               ->where("u.ca_activo=? AND up.ca_perfil=? ", array('TRUE','cordinador-de-otm'))
+                                ->addWhere("u.ca_idsucursal = ?",$reporte->getCaContinuacionConf())
+                               ->addOrderBy("u.ca_idsucursal")
+                               ->addOrderBy("u.ca_nombre");                        
+                        $usuariosC=$q->execute();
+
+                               
+                               
+                        /*Doctrine::getTable("Usuario")
                                ->createQuery("u")
                                ->select("u.ca_login,u.ca_nombre,u.ca_email,ca_sucursal")
                                ->innerJoin("u.UsuarioPerfil up")
                                ->where("u.ca_activo=? AND up.ca_perfil=? ", array('TRUE','cordinador-de-otm'))
                                ->addWhere("u.ca_sucursal = ?",$reporte->getCaContinuacionConf())
                                ->addOrderBy("u.ca_nombre")
-                               ->execute();
+                               ->execute();*/
 
                         foreach($usuariosC as $usuario)
                         {

@@ -161,6 +161,12 @@ class reportesNegComponents extends sfComponents
                 }else{
                     $this->editable = false;
                 }
+
+            if($this->reporte->getCaTransporte()==constantes::AEREO)
+                $this->aplicaciones1 = ParametroTable::retrieveByCaso("CU064", null, Constantes::AEREO );
+            else
+                $this->aplicaciones1 = ParametroTable::retrieveByCaso("CU064", null, Constantes::MARITIMO );
+
         }
         else
         {
@@ -185,7 +191,6 @@ class reportesNegComponents extends sfComponents
 
         foreach( $this->conceptos as $key=>$val){
             $this->conceptos[$key]['ca_concepto'] = utf8_encode($this->conceptos[$key]['ca_concepto']);
-
         }
 
         array_push( $this->conceptos , array("ca_idconcepto"=>"9999", "ca_concepto"=>"Recargo general del trayecto"));
@@ -257,6 +262,11 @@ class reportesNegComponents extends sfComponents
         $this->aplicacionesAereo = ParametroTable::retrieveByCaso("CU064", null, Constantes::AEREO );
 		$this->aplicacionesMaritimo = ParametroTable::retrieveByCaso("CU064", null, Constantes::MARITIMO );
         $this->parametros = ParametroTable::retrieveByCaso("CU071");
+
+        if($this->reporte->getCaTransporte()==constantes::AEREO)
+            $this->aplicaciones1 = ParametroTable::retrieveByCaso("CU064", null, Constantes::AEREO );
+        else
+            $this->aplicaciones1 = ParametroTable::retrieveByCaso("CU064", null, Constantes::MARITIMO );
 
         
 
@@ -502,6 +512,7 @@ class reportesNegComponents extends sfComponents
                 $this->usuarios[$usuario->getCaIdsucursal()].="<br>";
             $this->usuarios[$usuario->getCaIdsucursal()].=$usuario->getCaEmail();
         }
+        $this->usuarios["ninguno"]="No lo maneja Coltrans";
 	}
 
     public function executeFormAduanasPanel()

@@ -7,7 +7,12 @@
 $conceptos = $sf_data->getRaw("conceptos");
 $recargos = $sf_data->getRaw("recargos");
 
-$aplicaciones = array("Valor Fijo","Sobre Flete","Sobre Flete + Recargos","Unitario x Peso/Volumen","Unitario x Pieza","Unitario x BLs/HAWBs");
+//$aplicaciones = array("Valor Fijo","Sobre Flete","Sobre Flete + Recargos","Unitario x Peso/Volumen","Unitario x Pieza","Unitario x BLs/HAWBs");
+$aplicaciones = array();
+foreach( $aplicaciones1 as $aplicacion ){
+    $aplicaciones[]=$aplicacion->getCaValor();
+}
+
 
 include_component("reportesNeg","cotizacionWindow", array("reporte"=>$reporte));
 ?>
