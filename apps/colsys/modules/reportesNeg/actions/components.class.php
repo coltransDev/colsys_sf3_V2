@@ -267,9 +267,6 @@ class reportesNegComponents extends sfComponents
             $this->aplicaciones1 = ParametroTable::retrieveByCaso("CU064", null, Constantes::AEREO );
         else
             $this->aplicaciones1 = ParametroTable::retrieveByCaso("CU064", null, Constantes::MARITIMO );
-
-        
-
 	}
     /*
 	* Muestra los conceptos del reporte y un formulario para agregar un nuevo registro, tambien
@@ -300,7 +297,6 @@ class reportesNegComponents extends sfComponents
                  $tmp=$this->recargos[$key]['ca_concepto'];
                  unset($this->recargos[$key]);
              }*/
-
          }
 	}
 
@@ -314,7 +310,6 @@ class reportesNegComponents extends sfComponents
             if(!$this->tercero)
                 $this->tercero=new Tercero();
     }
-
 
     /*
 	* Panel principal que contiene los demas paneles

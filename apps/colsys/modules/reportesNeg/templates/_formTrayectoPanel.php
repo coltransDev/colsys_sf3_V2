@@ -382,10 +382,10 @@ if($permiso>=2)
                 }
                 else if(record.data.modalidad=="DIRECTO")
                 {
-                    /*if(Ext.getCmp("PCorteMaster"))
+                    if(Ext.getCmp("PCorteMaster"))
                         Ext.getCmp("PCorteMaster").hide();
                     if(Ext.getCmp("PCorteHija"))
-                        Ext.getCmp("PCorteHija").show();*/
+                        Ext.getCmp("PCorteHija").show();
                     Ext.getCmp("linea").allowBlank=true;
                     /*if(Ext.getCmp("PCorteHija"))
                         Ext.getCmp("PCorteHija").hide();
@@ -395,6 +395,10 @@ if($permiso>=2)
                 }
                 else if(record.data.modalidad=="BACK TO BACK")
                 {
+                    if(Ext.getCmp("PCorteMaster"))
+                        Ext.getCmp("PCorteMaster").show();
+                    if(Ext.getCmp("PCorteHija"))
+                        Ext.getCmp("PCorteHija").show();
                     Ext.getCmp("linea").allowBlank=false;
                 }
                 else if(record.data.modalidad=="FCL")

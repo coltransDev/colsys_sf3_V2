@@ -30,7 +30,6 @@ if ($modo == Constantes::MARITIMO || utf8_decode($modo) == Constantes::MARITIMO)
     $modo = Constantes::MARITIMO;
 }
 
-
 $impoexpo = $this->getRequestParameter("impoexpo");
 
 if ($impoexpo == Constantes::EXPO || utf8_decode($impoexpo) == Constantes::EXPO) {
@@ -55,27 +54,13 @@ if ($action != "index") {
         $buttonHelp["tooltip"] = "Instructivo de Ayuda";
         $buttonHelp["image"] = "22x22/help.png";
         $idhelp = (($impoexpo != Constantes::EXPO) ? "46" : "50");
-        //$idhelp="46";
         $buttonHelp["onClick"] = "help1('$idhelp')";
     }
-    //        print_r($buttonHelp);
 }
 
 switch ($action) {
     case "index":
-
-
-
-
-        /* 		$button[$i]["name"]="Nuevo";
-          $button[$i]["tooltip"]="Crear un nuevo reporte de negocios";
-          $button[$i]["image"]="22x22/new.gif";
-          $button[$i]["link"]= "reportesNeg/formReporte?token=".md5(time()).$opcion.$modo;
-          $i++;
-          break;
-         *
-         */
-        break;
+    break;
     case "indexAg":
         $button[$i]["name"] = "Nuevo";
         $button[$i]["tooltip"] = "Crear un nuevo reporte de negocios";
@@ -164,7 +149,7 @@ switch ($action) {
         $button[$i]["onClick"] = "copiaRep()";
         $i++;
 
-        if($reporte->getCaTiporep()=="2" && $user->getIddepartamento()==14 || $user->getIddepartamento()==13  )
+        if($reporte->getCaTiporep()=="2" && ( $user->getIddepartamento()==14 || $user->getIddepartamento()==13 ) )
         {
             $button[$i]["name"] = "Copiar Ag";
             $button[$i]["tooltip"] = "Copiar este Reporte Ag  ";
@@ -200,16 +185,16 @@ switch ($action) {
         $i++;
 
 
-            if($reporte->getCaUsuanulado()==$user->getUserId() && !$reporte->getCaIdgrupo())
-            {
-                $button[$i]["id"] = "revivir-reporte";
-                $button[$i]["name"] = "Revivir";
-                $button[$i]["tooltip"] = "Revive el reporte actual";
-                $button[$i]["image"] = "22x22/cancel.gif";
-                $button[$i]["onClick"] = "revivirReporte()";
-                $button[$i]["link"] = "#";
-                $i++;
-            }
+        if($reporte->getCaUsuanulado()==$user->getUserId() && !$reporte->getCaIdgrupo())
+        {
+            $button[$i]["id"] = "revivir-reporte";
+            $button[$i]["name"] = "Revivir";
+            $button[$i]["tooltip"] = "Revive el reporte actual";
+            $button[$i]["image"] = "22x22/cancel.gif";
+            $button[$i]["onClick"] = "revivirReporte()";
+            $button[$i]["link"] = "#";
+            $i++;
+        }
 
         break;
     case "unificarReporte":
@@ -223,10 +208,33 @@ switch ($action) {
     case "formReporte":
     case "formReporte1":
         if ($this->getRequestParameter("id") != "") {
+
+            $button[$i]["name"] = "Transp.";
+            $button[$i]["tooltip"] = "Cambiar el Tranporte";
+            $button[$i]["image"] = "22x22/arrow_branch.png";
+            $button[$i]["onClick"] = "changeTrans()";
+            $i++;
+
             $button[$i]["name"] = "Generar ";
             $button[$i]["tooltip"] = "Genera un archivo PDF con el reporte";
             $button[$i]["image"] = "22x22/pdf.gif";
             $button[$i]["link"] = "/reportesNeg/verReporte/id/" . $this->getRequestParameter("id") . "/impoexpo/" . $impoexpo . "/modo/" . $modo;
+            $i++;
+            
+            if(!$anulado)
+            {
+                $button[$i]["id"] = "anular-reporte";
+                $button[$i]["name"] = "Anular ";
+                $button[$i]["tooltip"] = "Anula el reporte actual";
+                $button[$i]["image"] = "22x22/cancel.gif";
+                $button[$i]["onClick"] = "ventanaAnularReporte()";
+                $i++;
+            }
+
+            $button[$i]["name"] = "Unificar ";
+            $button[$i]["tooltip"] = "Copia las comunicaciones existentes de un reporte a este reporte";
+            $button[$i]["image"] = "22x22/copy_newv.gif";
+            $button[$i]["link"] = "/reportesNeg/unificarReporte/id/" . $this->getRequestParameter("id") . "/impoexpo/" . $impoexpo . "/modo/" . $modo;
             $i++;
 
             $button[$i]["name"] = "Status ";
@@ -254,6 +262,16 @@ switch ($action) {
             $button[$i]["image"] = "22x22/copy_newv.gif";
             $button[$i]["onClick"] = "copiaRep()";
             $i++;
+
+            if($reporte->getCaTiporep()=="2" && ($user->getIddepartamento()==14 || $user->getIddepartamento()==13)  )
+            {
+                $button[$i]["name"] = "Copiar Ag";
+                $button[$i]["tooltip"] = "Copiar este Reporte Ag  ";
+                $button[$i]["image"] = "22x22/copy.gif";
+                $button[$i]["link"] = "/reportesNeg/formReporteAg/id/" . $this->getRequestParameter("id");
+                $i++;
+            }
+
             if ($permiso > 1 && !$cerrado) {
                 $button[$i]["name"] = "Cerrar";
                 $button[$i]["tooltip"] = "Cerrar un reporte";
@@ -363,7 +381,6 @@ switch ($action) {
         }
     }
 
-
     function revivirReporte()
     {
         if(window.confirm("Realmente desea revivir el reporte?"))
@@ -393,12 +410,8 @@ switch ($action) {
         }
     }
 
-
-
     function help1(id)
     {
-
-    
         var win = new Ext.Window({
             width:600
             ,id:'autoload-win'
@@ -412,8 +425,6 @@ switch ($action) {
         win.show();
     }
 
-
-
     function changeTrans()
     {
         var win = new Ext.Window({
@@ -423,8 +434,7 @@ switch ($action) {
             ,autoScroll:true
             ,title:'Cambio de Transporte'
             ,items:new Ext.FormPanel({
-                autoWidth       : true,
-                
+                autoWidth       : true,                
                 id: 'change-form',
                 bbar:[
                     {
@@ -463,9 +473,6 @@ switch ($action) {
                         {
                             Ext.MessageBox.alert("Mensaje",'Por favor escoja un transporte para seguir');
                         }
-
-
-
                                        // alert(Ext.getCmp("transporte-change").getValue());
                     }
                     }

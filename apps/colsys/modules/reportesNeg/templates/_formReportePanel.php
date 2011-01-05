@@ -433,14 +433,10 @@ var idreporte='<?=$idreporte?>';
                         }
                         else if(res.data.idmodalidad=="DIRECTO")
                         {
-                            /*if(Ext.getCmp("PCorteHija"))
-                            {
-                                Ext.getCmp("PCorteHija").hide();
-                            }
-                            if(Ext.getCmp("PCorteMaster"))
-                            {
-                                Ext.getCmp("PCorteMaster").show();
-                            }*/
+                             if(Ext.getCmp("PCorteMaster"))
+                                Ext.getCmp("PCorteMaster").hide();
+                            if(Ext.getCmp("PCorteHija"))
+                                Ext.getCmp("PCorteHija").show();
                         };
 
                         if(Ext.getCmp("tipoexpo"))
