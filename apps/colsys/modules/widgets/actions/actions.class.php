@@ -616,12 +616,12 @@ class widgetsActions extends sfActions
 			}else{
 				$tercero = Doctrine::getTable("Tercero")->find( $idtercero );
 			}
-			$tercero->setCaNombre( $this->getRequestParameter("nombre") );
-			$tercero->setCaDireccion( $this->getRequestParameter("direccion") );
+			$tercero->setCaNombre( utf8_decode($this->getRequestParameter("nombre")) );
+			$tercero->setCaDireccion( utf8_decode($this->getRequestParameter("direccion")) );
 			$tercero->setCaTelefonos( $this->getRequestParameter("telefono") );
 			$tercero->setCaFax( $this->getRequestParameter("fax") );
 			$tercero->setCaEmail( $this->getRequestParameter("email") );
-			$tercero->setCaContacto( $this->getRequestParameter("contacto") );
+			$tercero->setCaContacto( utf8_decode($this->getRequestParameter("contacto")) );
 			$tercero->setCaIdciudad( ($this->getRequestParameter("idciudad")!="")?$this->getRequestParameter("idciudad"):"999-9999" );
 			$tercero->setCaIdentificacion( $this->getRequestParameter("identificacion") );
 			$tercero->setCaVendedor( $this->getRequestParameter( "vendedor") );
