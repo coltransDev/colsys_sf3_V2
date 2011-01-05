@@ -89,7 +89,7 @@ if ( $reporte->getCaIdlinea() ){
 	<td colspan="4">&nbsp;</td>
 </tr>
 <?
-if($reporte->getCaModalidad()!="DIRECTO")
+if($reporte->getCaModalidad()!="DIRECTO" && $master)
 {
 ?>
 <tr>
