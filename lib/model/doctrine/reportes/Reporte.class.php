@@ -366,6 +366,15 @@ class Reporte extends BaseReporte {
         }
     }
 
+    public function getRepresentante() {
+        if ($this->getCaIdrepresentante()) {
+            $consignee = Doctrine::getTable("Tercero")->find($this->getCaIdrepresentante());
+            return $consignee;
+        } else {
+            return null;
+        }
+    }
+
     /*
      * Retorna el objeto Tercero de tipo notify asociado al reporte
      * @author Andres Botero
