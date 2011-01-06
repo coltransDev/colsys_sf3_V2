@@ -128,14 +128,14 @@ class Cotizacion extends BaseCotizacion
                         ->from("CotRecargo r")
                         ->innerJoin("r.TipoRecargo tr")
                         ->where("r.ca_idcotizacion = ?", $this->getCaIdcotizacion() )
-                        //->addWhere("tr.ca_tipo like ? ", "%".$tipo."%")
+                        //->addWhere("r.ca_tipo like ? ", "%".$tipo."%")
                         ->addWhere("tr.ca_tipo like ? OR tr.ca_tipo like ? ", array("%".Constantes::RECARGO_LOCAL."%","%". Constantes::RECARGO_OTM_DTA."%") )
                         ->addOrderBy("r.ca_modalidad ASC");
                         
         if( $transporte ){
-            if(constantes::OTMDTA==$transporte || $transporte=="OTM" || $transporte=="DTA")
+            if($transporte==constantes::OTMDTA || $transporte=="OTM" || $transporte=="DTA")
                 $transporte=constantes::TERRESTRE;
-            $q->addWhere("tr.ca_transporte = ? ", $transporte );
+            $q->addWhere("tr.ca_transporte = ? and r.ca_consecutivo is null ", $transporte );
 		}
 		if( $modalidad ){
             $q->addWhere("r.ca_modalidad = ? ", $modalidad );
