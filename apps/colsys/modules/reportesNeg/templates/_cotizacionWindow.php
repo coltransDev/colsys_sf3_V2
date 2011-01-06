@@ -161,7 +161,12 @@ if( $cotizacion ){
 
                         if( r.data.tipo=="recargo" ){
                             newRec.set("aplicacion", r.data.aplica_tar);
-                            newRec.set("tipo_app", "$");                          
+                            
+                            if(r.data.aplica_tar.indexOf('%',0)<0)
+                                newRec.set("tipo_app", "$");
+                            else
+                                newRec.set("tipo_app", "%");
+
 
                             if( lastConcepto==9999){
                                 newRec.set("orden", "Y"+"-"+r.data.item);

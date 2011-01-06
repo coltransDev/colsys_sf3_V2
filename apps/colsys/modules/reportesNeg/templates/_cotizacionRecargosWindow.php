@@ -131,7 +131,11 @@ if( $cotizacion ){
                         newRec.set("tipo", "recargo");
                         newRec.set("observaciones", r.data.detalles);
 
-                        newRec.set("tipo_app", "$");
+                        if(r.data.aplica_tar.indexOf('%',0)<0)
+                            newRec.set("tipo_app", "$");
+                        else
+                            newRec.set("tipo_app", "%");
+                        //newRec.set("tipo_app", "$");
                         newRec.set("iditem", r.data.idrecargo);
                         newRec.set("item", r.data.recargo);
                         newRec.set("orden", "Y-"+r.data.recargo);
