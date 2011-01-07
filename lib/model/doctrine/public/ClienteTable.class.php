@@ -41,34 +41,40 @@ class ClienteTable extends Doctrine_Table {
     }
 
     /*
-     * Relaciona los negocios de Clientes en un determinado periodo de tiempo, retorna fecha ultimo negocio y sumataria de facturas en un periodo
-     * @author Carlos G. López M.
-     */
+    * Relaciona los negocios de Clientes en un determinado periodo de tiempo, retorna fecha ultimo negocio y sumataria de facturas en un periodo
+    * @author Carlos G. López M.
+    */
+    public static function negociosClientes( $fch_ini, $fch_fin, $empresa, $idcliente ){
+            if ($fch_ini == null){
+                    $fch_ini = date('Y-m-d',mktime(0, 0, 0, 1, 1, 1900)); }
 
-    public static function negociosClientes($fch_ini, $fch_fin, $empresa, $idcliente) {
-        if ($fch_ini == null) {
-            $fch_ini = date('Y-m-d', mktime(0, 0, 0, 1, 1, 1900));
-        }
+            if ($fch_fin == null){
+                    $fch_fin = date('Y-m-d'); }
 
-        if ($fch_fin == null) {
-            $fch_fin = date('Y-m-d');
-        }
+            $query = "select cl.ca_idcliente, ca_fchnegocio, CASE WHEN ca_numnegocios IS NULL THEN 0 ELSE ca_numnegocios END as ca_numnegocios, CASE WHEN ca_totnegocios IS NULL THEN 0 ELSE ca_totnegocios END as ca_totnegocios                from tb_clientes cl ";
+            if ($empresa == 'Coltrans'){
+                $query.= "LEFT JOIN (select ca_idcliente, max(ca_fchcreado) as ca_fchnegocio, count(ca_fchcreado) as ca_totnegocios ";
+                $query.= "  from (select ca_idcliente, ca_fchcreado from tb_inoclientes_sea where ca_fchcreado <= '$fch_fin' UNION select ca_idcliente, ca_fchcreado from tb_inoclientes_air  where ca_fchcreado <= '$fch_fin') fc group by ca_idcliente) neg_tot ON (cl.ca_idcliente = neg_tot.ca_idcliente)";
+                $query.= "LEFT JOIN (select ca_idcliente, count(ca_fchcreado) as ca_numnegocios ";
+                $query.= "  from (select ca_idcliente, ca_fchcreado from tb_inoclientes_sea where ca_fchcreado >= '$fch_ini' and ca_fchcreado <= '$fch_fin' UNION select ca_idcliente, ca_fchcreado from tb_inoclientes_air where ca_fchcreado >= '$fch_ini' and ca_fchcreado <= '$fch_fin') fc group by ca_idcliente) num_neg ON (cl.ca_idcliente = num_neg.ca_idcliente)";
+                //$query.= "LEFT OUTER JOIN (select ca_idcliente, max(ca_fchfactura) as ca_fchfactura from (select ca_idcliente, ca_fchfactura from tb_inoingresos_sea where ca_fchfactura <= '$fch_fin' UNION select ca_idcliente, ca_fchfactura from tb_inoingresos_air where ca_fchfactura <= '$fch_fin') fc group by ca_idcliente) fac_fch ON (cl.ca_idcliente = fac_fch.ca_idcliente) ";
+                //$query.= "LEFT OUTER JOIN (select ca_idcliente, sum(ca_valor) as ca_valor from (select ca_idcliente, ca_valor from tb_inoingresos_sea where ca_fchfactura between '$fch_ini' and '$fch_fin' UNION select ca_idcliente, (ca_valor*ca_tcalaico) as ca_valor from tb_inoingresos_air where ca_fchfactura between '$fch_ini' and '$fch_fin') fc group by ca_idcliente) fac_val ON (cl.ca_idcliente = fac_val.ca_idcliente) ";
+            }else{
+                $query.= "LEFT OUTER JOIN (select ca_idcliente, max(ca_fchcreado) as ca_fchnegocio, count(ca_fchcreado) as ca_totnegocios ";
+                $query.= "  from (select ca_idcliente, ca_fchcreado from tb_expo_maestra where ca_fchcreado <= '$fch_fin' UNION select ca_idcliente, ca_fchcreado from tb_brk_maestra where ca_fchcreado <= '$fch_fin') fc group by ca_idcliente) neg_tot ON (cl.ca_idcliente = neg_tot.ca_idcliente)";
+                $query.= "LEFT OUTER JOIN (select ca_idcliente, count(ca_fchcreado) as ca_numnegocios ";
+                $query.= "  from (select ca_idcliente, ca_fchcreado from tb_expo_maestra where ca_fchcreado >= '$fch_ini' and ca_fchcreado <= '$fch_fin' UNION select ca_idcliente, ca_fchcreado from tb_brk_maestra where ca_fchcreado >= '$fch_ini' and ca_fchcreado <= '$fch_fin') fc group by ca_idcliente) num_neg ON (cl.ca_idcliente = num_neg.ca_idcliente)";
+                //$query.= "LEFT OUTER JOIN (select ca_idcliente, max(ca_fchfactura) as ca_fchfactura from (select ca_idcliente, ca_fchfactura from tb_brk_ingresos LEFT OUTER JOIN tb_brk_maestra ON tb_brk_ingresos.ca_referencia = tb_brk_maestra.ca_referencia where ca_fchfactura <= '$fch_fin' UNION select ca_idcliente, ca_fchfactura from tb_expo_ingresos where ca_fchfactura <= '$fch_fin') fc group by ca_idcliente) fac_fch ON (cl.ca_idcliente = fac_fch.ca_idcliente) ";
+                //$query.= "LEFT OUTER JOIN (select ca_idcliente, sum(ca_valor) as ca_valor from (select ca_idcliente, (ca_valor*ca_tasacambio) as ca_valor from tb_brk_ingresos LEFT OUTER JOIN tb_brk_maestra ON tb_brk_ingresos.ca_referencia = tb_brk_maestra.ca_referencia where ca_fchfactura between '$fch_ini' and '$fch_fin' UNION select ca_idcliente, (ca_valor*ca_tasacambio) as ca_valor from tb_expo_ingresos where ca_fchfactura between '$fch_ini' and '$fch_fin') fc group by ca_idcliente) fac_val ON (cl.ca_idcliente = fac_val.ca_idcliente) ";
+            }
+            $query.= "where cl.ca_idcliente = $idcliente";
 
-        $query = "select cl.ca_idcliente, ca_fchnegocio, CASE WHEN ca_numnegocios IS NULL THEN 0 ELSE ca_numnegocios END as ca_numnegocios, CASE WHEN ca_totnegocios IS NULL THEN 0 ELSE ca_totnegocios END as ca_totnegocios from tb_clientes cl ";
-        if ($empresa == 'Coltrans') {
-            $query.= "LEFT OUTER JOIN (select ca_idcliente, max(ca_fchfactura) as ca_fchfactura from (select ca_idcliente, ca_fchfactura from tb_inoingresos_sea where ca_fchfactura <= '$fch_fin' UNION select ca_idcliente, ca_fchfactura from tb_inoingresos_air where ca_fchfactura <= '$fch_fin') fc group by ca_idcliente) fac_fch ON (cl.ca_idcliente = fac_fch.ca_idcliente) ";
-            $query.= "LEFT OUTER JOIN (select ca_idcliente, sum(ca_valor) as ca_valor from (select ca_idcliente, ca_valor from tb_inoingresos_sea where ca_fchfactura between '$fch_ini' and '$fch_fin' UNION select ca_idcliente, (ca_valor*ca_tcalaico) as ca_valor from tb_inoingresos_air where ca_fchfactura between '$fch_ini' and '$fch_fin') fc group by ca_idcliente) fac_val ON (cl.ca_idcliente = fac_val.ca_idcliente) ";
-        } else {
-            $query.= "LEFT OUTER JOIN (select ca_idcliente, max(ca_fchfactura) as ca_fchfactura from (select ca_idcliente, ca_fchfactura from tb_brk_ingresos LEFT OUTER JOIN tb_brk_maestra ON tb_brk_ingresos.ca_referencia = tb_brk_maestra.ca_referencia where ca_fchfactura <= '$fch_fin' UNION select ca_idcliente, ca_fchfactura from tb_expo_ingresos where ca_fchfactura <= '$fch_fin') fc group by ca_idcliente) fac_fch ON (cl.ca_idcliente = fac_fch.ca_idcliente) ";
-            $query.= "LEFT OUTER JOIN (select ca_idcliente, sum(ca_valor) as ca_valor from (select ca_idcliente, (ca_valor*ca_tasacambio) as ca_valor from tb_brk_ingresos LEFT OUTER JOIN tb_brk_maestra ON tb_brk_ingresos.ca_referencia = tb_brk_maestra.ca_referencia where ca_fchfactura between '$fch_ini' and '$fch_fin' UNION select ca_idcliente, (ca_valor*ca_tasacambio) as ca_valor from tb_expo_ingresos where ca_fchfactura between '$fch_ini' and '$fch_fin') fc group by ca_idcliente) fac_val ON (cl.ca_idcliente = fac_val.ca_idcliente) ";
-        }
-        $query.= "where cl.ca_idcliente = $idcliente";
-
-        // echo "<br />".$query."<br />";
-        $q = Doctrine_Manager::getInstance()->connection();
-        $stmt = $q->execute($query);
-        return $stmt;
+            // echo "<br />".$query."<br />";
+            $q = Doctrine_Manager::getInstance()->connection();
+            $stmt = $q->execute($query);
+            return $stmt;
     }
+
 
     /*
      * Relaciona los negocios de Clientes en un determinado periodo de tiempo, retorna fecha ultimo negocio y sumataria de facturas en un periodo
