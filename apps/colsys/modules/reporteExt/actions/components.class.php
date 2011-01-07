@@ -181,26 +181,32 @@ class reporteExtComponents extends sfComponents
 
             $consignatario = Doctrine::getTable("Tercero")->find( $reporte->getCaIdconsignatario() );
             $consignatario_final = $consignatario->getCaNombre()." Nit. ".$consignatario->getCaIdentificacion();
-            if( $reporte->getCaMciaPeligrosa() ){
-                $consignatario_final .= "<br />Contacto: ".$consignatario->getCaContacto();
+            if($reporte->getCaContinuacion()!="OTM")
+            {
+                if( $reporte->getCaMciaPeligrosa() || $reporte->getCaImpoexpo()==constantes::TRIANGULACION ){
+                    $consignatario_final .= "<br />Contacto: ".$consignatario->getCaContacto();
+                }
+                if(strlen ( $consignatario->getCaDireccion() )>5 )
+                $consignatario_final .= "<br />Dirección: ".$consignatario->getCaDireccion();
+                if( $reporte->getCaMciaPeligrosa() || $reporte->getCaImpoexpo()==constantes::TRIANGULACION  ){
+                    $consignatario_final .= "<br />Teléfonos:".$consignatario->getCaTelefonos()." Fax:".$consignatario->getCaFax()."<br />Email: ".$consignatario->getCaEmail();
+                }
             }
-            if(strlen ( $consignatario->getCaDireccion() )>5 )
-            $consignatario_final .= "<br />Dirección: ".$consignatario->getCaDireccion();
-            if( $reporte->getCaMciaPeligrosa() ){
-                $consignatario_final .= "<br />Teléfonos:".$consignatario->getCaTelefonos()." Fax:".$consignatario->getCaFax()."<br />Email: ".$consignatario->getCaEmail();
-            }
-
         }else{
             $contacto = $reporte->getContacto();
             $cliente = $reporte->getContacto()->getCliente();
 
             $consignatario_final = $cliente->getCaCompania()." Nit. ".number_format($cliente->getCaIdcliente(),0)."-".$cliente->getCaDigito();
-            if( $reporte->getCaMciaPeligrosa() ){
-                $consignatario_final .= "<br />Contacto: ".$contacto->getCaNombres()." ".$contacto->getCaPapellido()." ".$contacto->getCaSapellido();
-            }
-            $consignatario_final .="<br />Dirección: ".$cliente->getDireccion()." ".$cliente->getCiudad()->getCaCiudad()." ".$cliente->getCiudad()->getTrafico()->getCaNombre();
-            if( $reporte->getCaMciaPeligrosa() ){
-                $consignatario_final .="<br />Teléfonos:".$contacto->getCaTelefonos()." Fax:".$contacto->getCaFax()."<br /> Email:".$contacto->getCaEmail();
+            
+            if($reporte->getCaContinuacion()!="OTM")
+            {
+                if( $reporte->getCaMciaPeligrosa() ){
+                    $consignatario_final .= "<br />Contacto: ".$contacto->getCaNombres()." ".$contacto->getCaPapellido()." ".$contacto->getCaSapellido();
+                }
+                $consignatario_final .="<br />Dirección: ".$cliente->getDireccion()." ".$cliente->getCiudad()->getCaCiudad()." ".$cliente->getCiudad()->getTrafico()->getCaNombre();
+                if( $reporte->getCaMciaPeligrosa() ){
+                    $consignatario_final .="<br />Teléfonos:".$contacto->getCaTelefonos()." Fax:".$contacto->getCaFax()."<br /> Email:".$contacto->getCaEmail();
+                }
             }
         }
 
@@ -417,10 +423,15 @@ class reporteExtComponents extends sfComponents
         }
 
         if( $reporte->getCaIdconsignatario() ){
-
             $consignatario = Doctrine::getTable("Tercero")->find( $reporte->getCaIdconsignatario() );
-            $consignatario_final = $consignatario->getCaNombre()." Nit. ".$consignatario->getCaIdentificacion()."<br />".$consignatario->getCaDireccion();
-
+            if($reporte->getCaImpoexpo()==constantes::TRIANGULACION)
+            {
+                $consignatario_final = $consignatario->getCaNombre()." Nit. ".number_format($consignatario->getCaIdtercero(),0)."<br />Dirección: ".$consignatario->getCaDireccion()."<br />Teléfonos:".$consignatario->getCaTelefonos()." Fax:".$consignatario->getCaFax()."<br />".$consignatario->getCiudad()->getCaCiudad()." ".$consignatario->getCiudad()->getTrafico()->getCaNombre();
+            }
+            else
+            {
+                $consignatario_final = $consignatario->getCaNombre()." Nit. ".$consignatario->getCaIdentificacion()."<br />".$consignatario->getCaDireccion();
+            }
         }else{
             $contacto = $reporte->getContacto();
             $cliente = $reporte->getContacto()->getCliente();
