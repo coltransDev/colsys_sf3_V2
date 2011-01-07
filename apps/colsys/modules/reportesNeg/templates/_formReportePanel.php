@@ -48,7 +48,7 @@ else
 }
 
 $cachedir = $config = sfConfig::get('sf_app_module_dir').DIRECTORY_SEPARATOR."reportesNeg".DIRECTORY_SEPARATOR."cache".DIRECTORY_SEPARATOR;
-$cachetime = 84600;
+$cachetime = 14400;
 $cacheext = 'colsys';
 $cachepage = md5("formReporte-modo-$modo-impoexpo-$impoexpo-permiso-$permiso-nprov-$nprov");
 $cachefile = $cachedir.$cachepage.'.'.$cacheext;
