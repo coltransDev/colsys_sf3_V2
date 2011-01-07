@@ -18,17 +18,6 @@ class reportesNegActions extends sfActions
     const RUTINA_ADUANA = 15;
     const RUTINA_EXPO = 15;
 
-/*    public function getNivel( ){
-
-		$this->nivel = $this->getUser()->getNivelAcceso( reportesNegActions::RUTINA );
-
-		if( $this->nivel==-1 ){
-			$this->forward404();
-		}
-        return $this->nivel;
-
-    }
-*/
     public function getNivel( ){
         $this->modo = $this->getRequestParameter("modo");
 
@@ -64,12 +53,6 @@ class reportesNegActions extends sfActions
 
         $this->permiso = $this->getUser()->getNivelAcceso( reportesNegActions::RUTINA );
 
-
-
-/*		if( $this->nivel==-1 ){
-			$this->forward404();
-		}
- */
         return $this->nivel;
     }
 
@@ -127,7 +110,6 @@ class reportesNegActions extends sfActions
                 $this->modo=Constantes::MARITIMO;
                 $this->idcategory="32";
             }
-
         }
         else if($this->impoexpo==Constantes::OTMDTA || utf8_decode($this->impoexpo)==Constantes::OTMDTA)
         {
@@ -143,7 +125,6 @@ class reportesNegActions extends sfActions
                 $this->modo=Constantes::MARITIMO;
                 $this->idcategory="32";
             }
-
         }
         else
         {
@@ -176,12 +157,6 @@ class reportesNegActions extends sfActions
         $this->modo = $this->getRequestParameter("modo");
         $this->impoexpo = $this->getRequestParameter("impoexpo");
         $this->load_category();
-        
-
-//        $this->setRequestParameter("idcategory",$this->idcategory);
-        //echo ":".$this->modo.":";
-		/*$this->modo = $this->getRequestParameter("modo");
-		$this->forward404Unless( $this->modo );*/
 	}
 
     public function executeIndexAg()
@@ -192,19 +167,21 @@ class reportesNegActions extends sfActions
             $this->forward404();
         $nregs=30;
         $con = Doctrine_Manager::getInstance()->connection();
-		$sql="select * from vi_repconsulta  ";
-        $sql1="select count(*) as nregs from vi_repconsulta  ";
+		$sql="select * from vi_repconsulta where 1=1 ";
+        $sql1="select count(*) as nregs from vi_repconsulta where 1=1 ";
         if($this->permiso<2)
         {
-            $sql.="where ca_login='".$this->getUser()->getUserId()."'";
-            $sql1.="where ca_login='".$this->getUser()->getUserId()."'";
+            $sql.="and ca_login='".$this->getUser()->getUserId()."'";
+            $sql1.="and ca_login='".$this->getUser()->getUserId()."'";
         }
+
+        $sql.=" and ca_tiporep=2 and ca_versiones=1 and ca_usuanulado is null and ca_usucerrado is null ";
+        $sql1.=" and ca_tiporep=2 and ca_versiones=1 and ca_usuanulado is null and ca_usucerrado is null ";
 
         $st1 = $con->execute($sql1);
 
         $count = $st1->fetch(PDO::FETCH_ASSOC);
         $this->pages=ceil($count["nregs"]/$nregs);
-        //echo $this->count;
 
         if($this->page && $this->page>0)
         {
@@ -217,23 +194,8 @@ class reportesNegActions extends sfActions
             $sql.="limit ".$nregs." offset 0";
         }
 
-
 		$st = $con->execute($sql);
-	//recuperamos las tuplas de resultados
 		$this->reportesAg = $st->fetchAll();
-
-/*        $q=Doctrine::getTable("Reporte")
-                       ->createQuery("r")
-                       ->distinct()
-                       ->limit(200)
-                       ->addOrderBy("r.ca_idreporte desc")
-                       ->where("r.ca_incoterms is null or r.ca_incoterms=''");
-        if($this->permiso<2)
-            $q->addWhere("ca_login=?",$this->getUser()->getUserId());
-        $this->reportesAg=$q->execute();
- * 
- */
-        //echo count($this->reportesAg);
 	}
 
     public function executeIndexOs()
@@ -242,8 +204,6 @@ class reportesNegActions extends sfActions
         if($this->permiso==-1)
             $this->forward404();
 	}
-
-
 	/*
 	* Muestra los resultados de la busqueda del reporte de negocios
 	* @author Mauricio Quinche
@@ -262,7 +222,6 @@ class reportesNegActions extends sfActions
 
         $fechaInicial = $this->getRequestParameter("fechaInicial");
         $fechaFinal = $this->getRequestParameter("fechaFinal");
-
 
         $this->seguro = $this->getRequestParameter("seguro");
         $this->colmas = $this->getRequestParameter("colmas");
@@ -291,19 +250,14 @@ class reportesNegActions extends sfActions
             $condicion.=" and ca_colmas = '$this->colmas'";
         }
 
-
         if( ($this->idimpo && $criterio) || !$this->idimpo ){
             $con = Doctrine_Manager::getInstance()->connection();
-                    $sql="select * from vi_reportes2 where 1=1 $condicion limit 80";
-
-                    $st = $con->execute($sql);
-
-                    $this->reportes = $st->fetchAll();
+            $sql="select * from vi_reportes2 where 1=1 $condicion limit 80";
+            $st = $con->execute($sql);
+            $this->reportes = $st->fetchAll();
         }
         else
             $this->reportes=array();
-    //        print_r($this->reportes[0]);
-    //        exit;
 	}
 
     /**
@@ -317,9 +271,6 @@ class reportesNegActions extends sfActions
 		$this->forward404Unless( $reporte );
         $this->load_category();
 
-//        if( ($reporte->isNew() || $reporte->getCaVersion() == $reporte->getUltVersion()) &&!$reporte->existeReporteExteriorVersionActual() )
-
-//        echo $reporte->getCaUsuanulado();
         if( $reporte->getCaUsuanulado() ){
             $this->redirect( "reportesNeg/verReporte?id=".$reporte->getCaIdreporte());
         }
@@ -336,9 +287,6 @@ class reportesNegActions extends sfActions
                       ->addWhere("g.ca_consecutivo = ?", $reporte->getCaConsecutivo())
                       ->distinct()
                       ->execute();
-
-
-        //exit();
 
         if( ($reporte->isNew() || $reporte->getCaVersion() == $reporte->getUltVersion())
                 &&!$reporte->existeReporteExteriorVersionActual() ){
@@ -357,9 +305,7 @@ class reportesNegActions extends sfActions
         if( $reporte->getCaIdgrupo()){
             $this->editable = false;
         }
-
 	}
-
 
 	/*
 	* Permite ver una cotización en formato PDF
@@ -392,8 +338,6 @@ class reportesNegActions extends sfActions
 			}
 		}
 
-
-
 		if( $reporte->getCaIdtareaRext() ){
 			$this->tarea = Doctrine::getTable("NotTarea")->find( $reporte->getCaIdtareaRext() );
 		}else{
@@ -402,7 +346,6 @@ class reportesNegActions extends sfActions
 
 		$this->asignaciones = $reporte->getRepAsignacion();
 		$this->reporte = $reporte;
-
 	}
 
 	/*
@@ -422,14 +365,9 @@ class reportesNegActions extends sfActions
             $this->nomLinea="Naviera";
         else
             $this->nomLinea="Linea";
-        /*
-        * Se inicializa el objeto
-        */
+
 		if( $this->getRequestParameter("id") ){
-//                        echo $this->getRequestParameter("id");
 			$reporte = Doctrine::getTable("Reporte")->findOneBy("ca_idreporte", $this->getRequestParameter("id")) ;
-//                        print_r($reporte);
-//                        exit;
 			$this->forward404Unless( $reporte );
 		}else{
 			$reporte = new Reporte();
@@ -444,8 +382,6 @@ class reportesNegActions extends sfActions
                 $this->editable = false;
             }
 
-        //echo $this->editable;
-        //No permite editar si el usuario no realizo el reporte
         if($this->permiso<2)
         {
 
@@ -455,7 +391,6 @@ class reportesNegActions extends sfActions
                 $this->editable = false;
             }
 
-            //No permite editar reportes que se hayan agrupado
             if( $reporte->getCaIdgrupo()){
                 $this->editable = false;
                 $this->nuevaVersion = false;
@@ -487,81 +422,6 @@ class reportesNegActions extends sfActions
 		$response->addJavaScript("extExtras/CheckColumn",'last');
    }
 
-   public function executeFormReporte1(sfWebRequest $request){
-
-        $this->nivel = $this->getNivel();
-        $this->impoexpo = $this->getRequestParameter("impoexpo");
-        $this->load_category();
-
-        if($this->modo==Constantes::AEREO)
-            $this->nomLinea="Aerolinea";
-        else if($this->modo==Constantes::MARITIMO)
-            $this->nomLinea="Naviera";
-        else
-            $this->nomLinea="Linea";
-        /*
-        * Se inicializa el objeto
-        */
-		if( $this->getRequestParameter("id") ){
-//                        echo $this->getRequestParameter("id");
-			$reporte = Doctrine::getTable("Reporte")->findOneBy("ca_idreporte", $this->getRequestParameter("id")) ;
-//                        print_r($reporte);
-//                        exit;
-			$this->forward404Unless( $reporte );
-		}else{
-			$reporte = new Reporte();
-		}
-
-        $this->nuevaVersion = true;
-
-        if( ($reporte->isNew() || $reporte->getCaVersion() == $reporte->getUltVersion())
-                    &&!$reporte->existeReporteExteriorVersionActual() ){
-                $this->editable = true;
-            }else{
-                $this->editable = false;
-            }
-
-        //echo $this->editable;
-        //No permite editar si el usuario no realizo el reporte
-        if($this->permiso<2)
-        {
-
-
-            $user = $this->getUser();
-            if( !$reporte->isNew() && ($user->getUserId()!=$reporte->getCaUsucreado() && $user->getUserId()!=$reporte->getCaLogin() ) ){
-                $this->editable = false;
-            }
-
-            //No permite editar reportes que se hayan agrupado
-            if( $reporte->getCaIdgrupo()){
-                $this->editable = false;
-                $this->nuevaVersion = false;
-            }
-
-            //No permite copiar ni generar nuevas versiones de nuevos reportes
-            if( !$reporte->getCaIdreporte()){
-                $this->editable = true;
-                $this->nuevaVersion = false;
-                $this->copiar = false;
-            }else{
-                $this->copiar = true;
-            }
-        }
-        else
-        {
-            $this->editable = true;
-            if( !$reporte->getCaIdreporte()){
-                $this->editable = true;
-                $this->nuevaVersion = false;
-                $this->copiar = false;
-            }else{
-                $this->copiar = true;
-            }
-        }
-        $this->reporte=$reporte;
-   }
-
-
     public function executeFormReporteAg(sfWebRequest $request){
         $response = sfContext::getInstance()->getResponse();
 		$response->addJavaScript("extExtras/FileUploadField",'last');
@@ -575,42 +435,14 @@ class reportesNegActions extends sfActions
         $this->dep=$this->getUser()->getIddepartamento();
         
         if( $this->getRequestParameter("id") ){
-//                        echo $this->getRequestParameter("id");
 			$this->reporte = Doctrine::getTable("Reporte")->findOneBy("ca_idreporte", $this->getRequestParameter("id")) ;
-//                        print_r($reporte);
-//                        exit;
 			$this->forward404Unless( $reporte );
 		}else{
 			$this->reporte = new Reporte();
 		}
-       /* $this->pais2="todos";
-        //echo $this->dep;
-        if( $this->dep==14)
-        {
-            $this->modo=constantes::MARITIMO;
-            $this->impoexpo=constantes::IMPO;
-            $this->pais2="C0-057";
-        }
-        else if($this->dep==13 || $this->dep==18 )
-        {
-            $this->impoexpo=constantes::IMPO;
-            $this->pais2="C0-057";           
-        }
-        else if($this->dep==3 )
-        {
-            $this->modo=constantes::AEREO;
-            $this->impoexpo=constantes::IMPO;
-        }
-        else{
-            $this->modo="";
-            $this->impoexpo="";
-        }*/
-        //echo $this->pais2;
    }
 
     public function executeFormReporteOs(sfWebRequest $request){
-//        $response = sfContext::getInstance()->getResponse();
-//        $response->addJavaScript("extExtras/FileUploadField",'last');
         $this->nivel = $this->getNivel();
         $this->impoexpo = Constantes::IMPO;
         $this->load_category();
@@ -687,7 +519,6 @@ class reportesNegActions extends sfActions
 
         $this->responseArray=array("success"=>true,"idreporte"=>$reporte->getCaIdreporte(),"redirect"=>"true","consecutivo"=>$reporte->getCaConsecutivo() );
         $this->setTemplate("responseTemplate");
-
     }
 
     public function executeGuardarReporte( sfWebRequest $request )
@@ -710,8 +541,7 @@ class reportesNegActions extends sfActions
 
         $redirect=true;
         $opcion=$request->getParameter("opcion");
-        $redirect=($request->getParameter("redirect")!="")?$request->getParameter("redirect"):"true";
-        //$redirect=false;
+        $redirect=($request->getParameter("redirect")!="")?$request->getParameter("redirect"):"true";        
         $errors =  array();
         $texto ="";
         switch( $opcion ){
@@ -972,13 +802,11 @@ class reportesNegActions extends sfActions
                     else
                         $ca_confirmar_clie=$coor->getCaEmail();
                 }
-
             }
 
 
             if($ca_confirmar_clie!="" )
             {
-
                 $reporte->setCaConfirmarClie($ca_confirmar_clie);
             }
             else
@@ -1018,7 +846,6 @@ class reportesNegActions extends sfActions
             {
                 $reporte->setCaIdnotify($request->getParameter("idnotify"));
                 $reporte->setCaNotify("2");
-                //
             }
             else
             {
@@ -1128,7 +955,6 @@ class reportesNegActions extends sfActions
             }
             else
             {
-                //if($reporte->getCaIdbodega()=="")                
                 if(utf8_decode($request->getParameter("impoexpo"))==constantes::TRIANGULACION)
                     $reporte->setCaIdbodega(null);
                 else
@@ -2855,7 +2681,7 @@ color="#000000";
 
             $data["ca_liberacion"] =($cliente->getLibCliente()->getCaDiascredito()>0)?"Si":"No";
             $data["ca_tiempocredito"] =$cliente->getLibCliente()->getCaDiascredito();
-            $data["preferencias"] =utf8_encode(($reporte->getCaPreferenciasClie()!="")?($reporte->getCaPreferenciasClie()):$cliente->getCaPreferencias());
+            $data["preferencias"] =utf8_encode($reporte->getCaPreferenciasClie());
 
             $data["ca_comodato"] =($reporte->getCaComodato()=="Sí" || $reporte->getCaComodato()=="on" )?true:false;
             if( $reporte->getCaIdproveedor() ){
@@ -3214,7 +3040,6 @@ color="#000000";
                 if( $request->getParameter("neta_idm")!==null ){
                     $tarifa->setCaNetaIdm( $request->getParameter("neta_idm") );
                 }
-
 
                 if( $request->getParameter("reportar_tar")!==null ){
                     $tarifa->setCaReportarTar( $request->getParameter("reportar_tar") );

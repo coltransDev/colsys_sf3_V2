@@ -5,25 +5,15 @@
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
 
-if( $cotizacion ){
-    
+if( $cotizacion ){    
     include_component("cotizaciones","panelProductos",array("cotizacion"=>$cotizacion, "producto"=>$producto , "modo"=>"consulta"));
-    ?>
-
+?>
     <script type="text/javascript">
     CotizacionWindow = function(config) {
         Ext.apply(this, config);
-
-/*        if(this.tipo=="OTM/DTA")
-        {
-            this.grid = new PanelProductos({tipo:'OTM/DTA'
-            });
-        }
-    else*/
         {
          this.grid = new PanelProductos();
         }
-
         CotizacionWindow.superclass.constructor.call(this, {
             title: 'Seleccione las tarifas que desea importar',
             id: 'add-cotizacion-win',
@@ -37,9 +27,6 @@ if( $cotizacion ){
             closeAction: 'hide',
 
             buttons:[
-            <?
-            
-            ?>
              {
                 text: 'Importar',
                 handler: this.importar,
@@ -51,9 +38,6 @@ if( $cotizacion ){
                 handler: this.importarAll,
                 scope: this
              },
-             <?
-            
-             ?>
              {
                 text: 'Cancel',
                 handler: this.hide.createDelegate(this, [])
@@ -66,32 +50,20 @@ if( $cotizacion ){
     }
 
     Ext.extend(CotizacionWindow, Ext.Window, {
-
-
         show : function(){
-            if(this.rendered){
-                
-            }
-
             CotizacionWindow.superclass.show.apply(this, arguments);
         },
         importarAll: function() {
             this.importar("1");
-        }
-        ,
-
+        },
         importar: function(tipo) {
             if(tipo!="1")
                 tipo="0";
             this.el.mask('Importando...', 'x-mask-loading');
-
             var store = this.grid.store;
             var records = store.getRange();
-
             var lenght = records.length;
-
             var str = "";
-
             var gridConceptos = Ext.getCmp("panel-conceptos-fletes");
             var recordConceptos = gridConceptos.record;
             var lastConcepto = null;
@@ -100,8 +72,7 @@ if( $cotizacion ){
             for( var i=0; i< lenght; i++){
                 var existe = false;
                 r = records[i];
-                if( r.data.sel || tipo=="1" ){
-                    
+                if( r.data.sel || tipo=="1" ){                    
                     recordsConceptos = gridConceptos.store.getRange();                    
                     for( var j=0; j< recordsConceptos.length&&!existe; j++){
                         if( r.data.tipo=="concepto" ){                            
@@ -116,16 +87,12 @@ if( $cotizacion ){
                         }
                     }
 
-
                     if( r.data.tipo=="concepto" ){
                         lastConcepto = r.data.iditem;
                         lastConceptoTxt = r.data.item;
                     }
-
                     if( !existe && (r.data.tipo=="concepto" || (r.data.tipo=="recargo" && lastConcepto==r.data.idconcepto))){
-
                         var newRec = new recordConceptos({
-
                                        idreporte: '<?=$reporte->getCaIdreporte()?>',
                                        item: r.data.item,
                                        iditem: r.data.iditem,
@@ -147,7 +114,6 @@ if( $cotizacion ){
                                        orden: ''
                                     });
                         gridConceptos.store.addSorted(newRec);
-
                         newRec = gridConceptos.store.getById( newRec.id );                        
                         newRec.set("neta_idm", r.data.idmoneda);
                         newRec.set("reportar_tar", /*r.data.valor_tar*/0);
@@ -158,7 +124,6 @@ if( $cotizacion ){
                         newRec.set("cobrar_idm", r.data.idmoneda);
                         newRec.set("observaciones", r.data.detalles);
 
-
                         if( r.data.tipo=="recargo" ){
                             newRec.set("aplicacion", r.data.aplica_tar);
                             
@@ -166,7 +131,6 @@ if( $cotizacion ){
                                 newRec.set("tipo_app", "$");
                             else
                                 newRec.set("tipo_app", "%");
-
 
                             if( lastConcepto==9999){
                                 newRec.set("orden", "Y"+"-"+r.data.item);
@@ -190,26 +154,20 @@ if( $cotizacion ){
                                 newRec.set("neta_min", 0);
                             }
                         }
-
                         gridConceptos.store.sort("orden", "ASC");
                     }
-
                 }
             }
-
             this.el.unmask();
             this.hide();
         },
-
         markInvalid : function(){
             this.feedUrl.markInvalid('The URL specified is not a valid RSS2 feed.');
             this.el.unmask();
         },
-
         validateFeed : function(response, options){
             var dq = Ext.DomQuery;
             var url = options.feedUrl;
-
             try{
                 var xml = response.responseXML;
                 var channel = xml.getElementsByTagName('channel')[0];
@@ -230,7 +188,6 @@ if( $cotizacion ){
             this.markInvalid();
         }
     });
-
     </script>
 <?
 }

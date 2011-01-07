@@ -23,8 +23,8 @@ WidgetTercero = function( config ){
         }, [
             {name: 'idtercero', mapping: 't_ca_idtercero'},
             {name: 'nombre', mapping: 't_ca_nombre'},
-			{name: 'ciudad', mapping: 'c_ca_ciudad'},
-			{name: 'pais', mapping: 'p_ca_nombre'},
+            {name: 'ciudad', mapping: 'c_ca_ciudad'},
+            {name: 'pais', mapping: 'p_ca_nombre'},
             {name: 'direccion', mapping: 't_ca_direccion'},
             {name: 'contacto', mapping: 't_ca_contacto'}
 
@@ -45,13 +45,11 @@ WidgetTercero = function( config ){
         selectOnFocus: true,
         lazyRender:true,
         tpl: this.resultTpl,
-        itemSelector: 'div.search-item',
-        listeners: {
-        }
+        itemSelector: 'div.search-item'
     });
 };
 
-Ext.extend(WidgetTercero, Ext.form.ComboBox, {
+Ext.extend(WidgetTercero, Ext.form.ComboBox, {    
     getTrigger : Ext.form.TwinTriggerField.prototype.getTrigger,
     initTrigger : Ext.form.TwinTriggerField.prototype.initTrigger,
     trigger1Class : 'x-form-clear-trigger',
@@ -114,8 +112,7 @@ Ext.extend(WidgetTercero, Ext.form.ComboBox, {
         win1 = new WidgetTerceroWindow({idcomponent: this.id,
                                         title: titulo,                                        
                                         tipo: this.tipo
-                                       });
-        
+                                       });        
     }    
     win1.show();
     win1.cargar(idtercero);
@@ -123,6 +120,5 @@ Ext.extend(WidgetTercero, Ext.form.ComboBox, {
   onTrigger3Click : function() {
     this.onTriggerClick();
   }
-
 });	
 </script>
