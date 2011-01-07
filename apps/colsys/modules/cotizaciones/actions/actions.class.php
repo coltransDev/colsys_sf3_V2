@@ -731,7 +731,7 @@ class cotizacionesActions extends sfActions
 		$cotizacion = Doctrine::getTable("Cotizacion")->find($this->getRequestParameter("idcotizacion"));
 		$this->forward404Unless($cotizacion);
 
-        try{
+        try{//
             $conn = $cotizacion->getTable()->getConnection();
             $conn->beginTransaction();
 
@@ -746,7 +746,8 @@ class cotizacionesActions extends sfActions
             }
             else
             {
-                $sig = CotizacionTable::siguienteConsecutivo( date("Y"),$cotizacion->getCaEmpresa() );
+                $sig = CotizacionTable::siguienteConsecutivo( date("Y"),$cotizacion->getCaEmpresa() );                
+                
                 $newCotizacion->setCaConsecutivo( $sig );
                 $newCotizacion->setCaVersion( 1 );
             }
@@ -1496,7 +1497,7 @@ class cotizacionesActions extends sfActions
 
             //Recargos de OTM-DTA
 
-            $tipo = Constantes::RECARGO_OTM_DTA;
+/*            $tipo = Constantes::RECARGO_OTM_DTA;
 
 
             $rows = Doctrine::getTable("CotContinuacion")
@@ -1511,6 +1512,8 @@ class cotizacionesActions extends sfActions
                 $grupos[Constantes::TERRESTRE][]=$row["c_ca_tipo"];
                 $grupos[Constantes::TERRESTRE] = array_unique( $grupos[Constantes::TERRESTRE] );
             }
+ * 
+ */
         }
 
 		$this->recargos=array();
