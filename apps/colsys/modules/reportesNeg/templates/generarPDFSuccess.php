@@ -1,6 +1,6 @@
 <?
 $reporte = $sf_data->getRaw("reporte");
-$pdf = new PDF ( $orientation = 'P', $unit = 'mm', $format = 'letter' );
+$pdf = new PDF ( 'P', 'mm', 'letter' );
 $pdf->Open ();
 $pdf->AliasNbPages ();
 $pdf->setTopMargin(0);
@@ -8,13 +8,13 @@ $pdf->setLeftMargin ( 5 );
 $pdf->setRightMargin ( 5 );
 $pdf->setColtransHeader ( false );
 
-$pdf->SetAutoPageBreak ( true, 0 );
+$pdf->SetAutoPageBreak(true, 0);
 $pdf->SetHeight ( 4 );
 $pdf->AddPage ();
 
 if( $reporte->getCaUsuanulado() ){
     $x=$pdf->GetX();
-    $y=$pdf->GetY();    
+    $y=$pdf->GetY();
     $pdf->SetY( 50 );
     $pdf->SetTextColor(128,128,128);
     $pdf->SetFont("Arial",'B',84);
@@ -25,7 +25,6 @@ if( $reporte->getCaUsuanulado() ){
 }
 
 $pdf->SetFont ( 'Arial', '', 8 );
-
 list ( $anno, $mes, $dia, $tiempo, $minuto, $segundo ) = sscanf ( date ( "Y-m-d" ), "%d-%d-%d %d:%d:%d" );
 
 $pdf->SetWidths ( array (200 ) );
@@ -62,7 +61,6 @@ $agente=null;
 //if($reporte->getCaIdagente()!="")
 {
     $agente = $reporte->getIdsAgente();
-
     $pdf->SetWidths(array(26,17,25,73,59));
     $pdf->SetAligns(array("L","L","L","L","L","L"));
     $pdf->SetFills(array(0,0,0,0,0,0));
@@ -78,7 +76,7 @@ $pdf->SetWidths(array(200));
 $pdf->SetStyles(array(""));
 $pdf->Row(array('Descripción de la Mercancia:'."\n".$reporte->getCaMercanciaDesc().' «'.(($reporte->getCaMciaPeligrosa())?"SÍ":"NO")." es Mercancía Peligrosa»"));
     
-$pdf->Ln(3);
+//$pdf->Ln(3);
 
 if ($reporte->getCaImpoexpo () == Constantes::EXPO && $reporte->getCaTiporep()!="3" ) {
 	$repexpo = $reporte->getRepExpo ();
@@ -143,6 +141,7 @@ $idproveedores = explode("|",$reporte->getCaIdproveedor());
 foreach( $idproveedores as $idprov ){
     if($idprov=="")
         continue;
+    $pdf->Ln(2);
     $tercero = Doctrine::getTable("Tercero")->find($idprov);
     if(!$tercero)
         $tercero=new Tercero();
@@ -161,8 +160,7 @@ foreach( $idproveedores as $idprov ){
     $pdf->Ln(1);
 }
 
-$pdf->Ln(3);
-
+$pdf->Ln(2);
 $contacto = $reporte->getContacto();
 $cliente = $contacto->getCliente();
 $pdf->SetWidths ( array (25, 25, 85, 25, 40 ) );
@@ -176,10 +174,11 @@ $pdf->SetFills ( array (1, 0, 0, 0, 0, 0, 0 ) );
 $pdf->SetStyles ( array ("B", "B", "", "B", "", "B", "" ) );
 $pdf->Row ( array ('', 'Teléfono:', $cliente->getCaTelefonos (), 'Fax:', $cliente->getCaFax (), 'E-mail:', $contacto->getCaEmail () ) );
 
-$pdf->Ln(3);
+
 
 if($reporte->getCaIdclienteag()>0)
 {
+    $pdf->Ln(2);
     $cliente = $reporte->getClienteAg();
     $pdf->SetWidths ( array (25, 25, 85, 25, 40 ) );
     $pdf->SetFills ( array (1, 0, 0, 0, 0 ) );
@@ -193,9 +192,10 @@ if($reporte->getCaIdclienteag()>0)
     $pdf->Row ( array ('', 'Teléfono:', $cliente->getCaTelefonos (), 'Fax:', $cliente->getCaFax (), 'E-mail:', $contacto->getCaEmail () ) );
 }
 
-$pdf->Ln(3);
+
 if($reporte->getCaIdclientefac()>0)
 {
+    $pdf->Ln(2);
     $cliente = $reporte->getClienteFac();
     $pdf->SetWidths ( array (25, 25, 85, 25, 40 ) );
     $pdf->SetFills ( array (1, 0, 0, 0, 0 ) );
@@ -208,9 +208,10 @@ if($reporte->getCaIdclientefac()>0)
     $pdf->SetStyles ( array ("B", "B", "", "B", "", "B", "" ) );
     $pdf->Row ( array ('', 'Teléfono:', $cliente->getCaTelefonos (), 'Fax:', $cliente->getCaFax (), 'E-mail:', $contacto->getCaEmail () ) );
 }
-$pdf->Ln(3);
+
 if($reporte->getCaIdclienteotro()>0)
 {
+    $pdf->Ln(2);
     $cliente = $reporte->getClienteOtro();
     $pdf->SetWidths ( array (25, 25, 85, 25, 40 ) );
     $pdf->SetFills ( array (1, 0, 0, 0, 0 ) );
@@ -262,6 +263,7 @@ if ($notify) {
 }
 
 if( $reporte->getCaIdconsignarmaster()>4 ){
+    $pdf->Ln(2);
     $tercero = Doctrine::getTable("Tercero")->find($reporte->getCaIdconsignarmaster());
         
     $orden = $ordenes[$idprov];
@@ -298,7 +300,7 @@ if( $reporte->getCaIdrepresentante() ){
     $pdf->Ln(1);
 }
 
-$pdf->Ln(3);
+$pdf->Ln(2);
 
 $pdf->SetWidths(array(200));
 $pdf->SetFills(array(1));
@@ -307,8 +309,9 @@ $pdf->Row(array(''));
 $pdf->SetWidths(array(200));
 $pdf->SetStyles(array(""));
 $pdf->SetFills(array(0));
-
-$pdf->Row(array('Preferencias del Cliente:'."\n".($reporte->getCaPreferenciasClie ()) ));
+$pdf->MultiCell(200,4,'Preferencias del Cliente:'."\n".($reporte->getCaPreferenciasClie ()),1);
+$pdf->Ln(2);
+//$pdf->Row(array('Preferencias del Cliente:'."\n".($reporte->getCaPreferenciasClie ()) ));
 
 $pdf->SetWidths(array(200));
 $pdf->SetStyles(array(""));
@@ -329,7 +332,7 @@ for($i = 0; $i < ceil ( count ( $emails ) / 3 ); $i ++) {
     $pdf->Row ( explode ( ",", $cadena ) );
     $cadena = "";
 }
-$pdf->Ln(3);
+$pdf->Ln(2);
 
 $transportista = $reporte->getIdsProveedor();
 if ( $transportista ) {
@@ -356,7 +359,7 @@ if( $reporte->getCaImpoexpo()==Constantes::IMPO ){
 }
 
 if( ($reporte->getCaContinuacion()!= "N/A" && $reporte->getCaContinuacion()!= "" && $reporte->getCaImpoexpo() == constantes::IMPO ) ) {
-    $pdf->Ln(3);
+    $pdf->Ln(2);
     $pdf->SetWidths(array(200));
     $pdf->SetFills(array(1));
     $pdf->SetAligns(array("C"));
@@ -397,7 +400,7 @@ if( ($reporte->getCaContinuacion()!= "N/A" && $reporte->getCaContinuacion()!= ""
     $pdf->Row(array('Continuación/Viaje:',$reporte->getCaContinuacion(),'Destino final:',$reporte->getDestinoCont()->getCaCiudad(),'Notificar C/Viaje al email:',$not_cont));
 }
 else if ( $reporte->getCaImpoexpo () == Constantes::EXPO  && $reporte->getCaContOrigen()!="" && $reporte->getCaContDestino()!="" ) {
-    $pdf->Ln(3);
+    $pdf->Ln(2);
     $pdf->SetWidths(array(200));
     $pdf->SetFills(array(1));
     $pdf->SetAligns(array("C"));
@@ -423,7 +426,6 @@ if($reporte->getCaTiporep()!="3")
         if($reporte->getConsignar())
         {
             //$data["idconsignatario"]=$reporte->getConsignar();
-
             $cadena =$reporte->getConsignar();
         }
         $pdf->Row ( array ('Consignar MAWB/BL a :', $reporte->getConsignarmaster (),'Consignar HAWB/HBL a :', $cadena ) );
@@ -535,7 +537,8 @@ $pdf->SetAligns ( array ("C" ) );
 $pdf->SetStyles ( array ("B" ) );
 
 $soloAduana = $reporte->esSoloAduana();
-if( !$soloAduana && $reporte->getCaTiporep()!="3" ){    
+if( !$soloAduana && $reporte->getCaTiporep()!="3" ){
+    //$pdf->beginGroup();
     $pdf->Row ( array ('EMBARQUE ' . strtoupper ( $reporte->getCaTransporte () ) ) );
 
     $conceptos = $reporte->getRepTarifa();
@@ -557,7 +560,6 @@ if( !$soloAduana && $reporte->getCaTiporep()!="3" ){
             $pdf->SetAligns(array("C","C","C","C","C"));
             $pdf->Row(array('Concepto:','Neta / Min.','Reportar / Min.','Cobrar / Min', 'Observaciones'));
         }
-
     }else{
         $pdf->SetWidths(array(40,10,40,40,40,30));
         $pdf->SetFills(array(1,1,1,1,1,1));
@@ -567,6 +569,7 @@ if( !$soloAduana && $reporte->getCaTiporep()!="3" ){
     }
 
     foreach ( $conceptos as $concepto ) {
+ //       $pdf->beginGroup();
         if($concepto->getCaIdconcepto()=="9999")
                 continue;
         if( $reporte->getCaTransporte()==Constantes::AEREO ){
@@ -631,7 +634,7 @@ if( !$soloAduana && $reporte->getCaTiporep()!="3" ){
             }
             else
             {
-                $pdf->beginGroup();
+//                $pdf->beginGroup();
                 $pdf->SetWidths(array(40,20,20,20,20,20,20,40));
                 $pdf->SetFills(array(1,0,0,0,0,0,0,0,0));
                 $pdf->SetStyles(array("B","","","","","","","",""));
@@ -722,7 +725,6 @@ if( !$soloAduana && $reporte->getCaTiporep()!="3" ){
             $pdf->SetStyles ( array ("","B", "", "", "", "", "", "", "", "" ) );
             $pdf->SetAligns ( array ("","L", "L", "R", "R", "R", "R", "R", "R" ) );
 
-
             foreach ( $gastos as $gasto ) {
                 $pdf->SetWidths ( array (5,40, 35, 20, 20, 20, 20, 20, 20 ) );
                 $pdf->SetFills ( array (0,1, 0, 0, 0, 0, 0, 0, 0, 0 ) );
@@ -749,8 +751,9 @@ if( !$soloAduana && $reporte->getCaTiporep()!="3" ){
             }            
             $pdf->Ln ( 1 );
         }
+        $pdf->flushGroup();
     }
-
+ //$pdf->beginGroup();
     $gastos = Doctrine::getTable("RepGasto")
                      ->createQuery("t")
                      ->innerJoin("t.TipoRecargo r")
@@ -759,14 +762,12 @@ if( !$soloAduana && $reporte->getCaTiporep()!="3" ){
                      ->addWhere("t.ca_recargoorigen = true")
                      ->orderBy("r.ca_recargo")
                      ->execute();
-
     if(count($gastos)>0)
     {
             $pdf->SetWidths(array(200));
             $pdf->SetFills(array(1));
             $pdf->SetStyles(array("B"));
             $pdf->SetAligns(array("L"));
-
             $pdf->Row ( array ("Recargos generales del Trayecto" ) );
             $sub_mem = 'Recargo en Origen';
             $pdf->SetWidths ( array (5,40, 35, 40, 40, 40 ) );
@@ -774,7 +775,6 @@ if( !$soloAduana && $reporte->getCaTiporep()!="3" ){
             $pdf->SetStyles ( array ("","B", "B", "B", "B", "B" ) );
             $pdf->SetAligns ( array ("","C", "C", "C", "C", "C" ) );
             $pdf->Row ( array ("+",$sub_mem, 'Aplicación', 'Neta / Min.', 'Reportar / Min.', 'Cobrar / Min' ) );
-
             $pdf->SetWidths ( array (5,40, 35, 20, 20, 20, 20, 20, 20 ) );
             $pdf->SetFills ( array (0,1, 0, 0, 0, 0, 0, 0, 0, 0 ) );
             $pdf->SetStyles ( array ("","B", "", "", "", "", "", "", "", "" ) );
@@ -785,15 +785,12 @@ if( !$soloAduana && $reporte->getCaTiporep()!="3" ){
                 $pdf->SetFills ( array (0,1, 0, 0, 0, 0, 0, 0, 0, 0 ) );
                 $pdf->SetStyles ( array ("","B", "", "", "", "", "", "", "", "" ) );
                 $pdf->SetAligns ( array ("","L", "L", "R", "R", "R", "R", "R", "R" ) );
-
                 $des_rec = $gasto->getTipoRecargo ()->getCaRecargo ();
-
                 if ($gasto->getCaTipo () == "$") {
                     $pdf->Row ( array ("",$des_rec, utf8_decode($gasto->getCaAplicacion ()), Utils::formatNumber ( $gasto->getCaNetaTar (), 3 ) . " " . $gasto->getCaIdmoneda (), Utils::formatNumber ( $gasto->getCaNetaMin (), 3 ) . " " . $gasto->getCaIdmoneda (), Utils::formatNumber ( $gasto->getCaReportarTar (), 3 ) . " " . $gasto->getCaIdmoneda (), Utils::formatNumber ( $gasto->getCaReportarMin (), 3 ) . " " . $gasto->getCaIdmoneda (), Utils::formatNumber ( $gasto->getCaCobrarTar (), 3 ) . " " . $gasto->getCaIdmoneda (), Utils::formatNumber ($gasto->getCaCobrarMin (), 3 ) . " " . $gasto->getCaIdmoneda () ) );
                 } else {
                     $pdf->Row ( array ("",$des_rec, utf8_decode($gasto->getCaAplicacion ()), Utils::formatNumber ( $gasto->getCaNetaTar (), 3 ) . " " . $gasto->getCaTipo (), Utils::formatNumber ( $gasto->getCaNetaMin (), 3 ) . " " . $gasto->getCaIdmoneda (), Utils::formatNumber ( $gasto->getCaReportarTar (), 3 ) . " " . $gasto->getCaTipo (), Utils::formatNumber ( $gasto->getCaReportarMin (), 3 ) . " " . $gasto->getCaIdmoneda (), Utils::formatNumber ( $gasto->getCaCobrarTar (), 3 ) . " " . $gasto->getCaTipo (), Utils::formatNumber ( $gasto->getCaCobrarMin (), 3 ) . " " . $gasto->getCaIdmoneda () ) );
                 }
-
                 if ($gasto->getCaDetalles ()) {
                     $pdf->SetWidths ( array (200 ) );
                     $pdf->SetStyles ( array ("" ) );
@@ -801,18 +798,14 @@ if( !$soloAduana && $reporte->getCaTiporep()!="3" ){
                     $pdf->Row ( array ("* Observaciones: " . utf8_decode($gasto->getCaDetalles ()) ) );
                 }
             }
-
             $pdf->Ln ( 1 );
     }
-
-    $pdf->beginGroup();
-
+  //  $pdf->flushGroup();
+  //  $pdf->beginGroup();
     if( $reporte->getCaImpoexpo () == Constantes::IMPO || $reporte->getCaImpoexpo ()==Constantes::OTMDTA || $reporte->getCaImpoexpo ()==Constantes::OTMDTA1 ){
         $sub_mem = 'Recargo Local';
         $pdf->Ln ( 3 );
-
         $gastos = $reporte->getRecargos ( "local" );
-
         $pdf->SetWidths ( array (100, 40, 60 ) );
         $pdf->SetFills ( array (1, 1, 1 ) );
         $pdf->SetStyles ( array ("B", "B", "B" ) );
@@ -827,9 +820,6 @@ if( !$soloAduana && $reporte->getCaTiporep()!="3" ){
             $pdf->SetAligns ( array ("L", "L", "R", "R" ) );
 
             $des_rec = $gasto->getTipoRecargo ()->getCaRecargo ().(($gasto->getEquipo())?"->".$gasto->getEquipo()->getCaConcepto():"");
-            /*if ($gasto->getCaIdconcepto () != '9999') {
-                $des_rec .= " -> " . $gasto->getConcepto ()->getCaConcepto ();
-            }*/
 
             if ($gasto->getCaTipo () == "$") {
                 $pdf->Row ( array ($des_rec, utf8_decode($gasto->getCaAplicacion ()) ,Utils::formatNumber (  $gasto->getCaCobrarTar (), 3) . " " . $gasto->getCaIdmoneda (), Utils::formatNumber ( $gasto->getCaCobrarMin (), 3) . " " . $gasto->getCaIdmoneda () ) );
@@ -844,10 +834,8 @@ if( !$soloAduana && $reporte->getCaTiporep()!="3" ){
             }
         }
     }
-    $pdf->flushGroup();
-
-    $pdf->beginGroup();
-
+//   $pdf->flushGroup();
+//   $pdf->beginGroup();
     if( $reporte->getCaImpoexpo () == Constantes::IMPO || $reporte->getCaImpoexpo ()==Constantes::OTMDTA || $reporte->getCaImpoexpo ()==Constantes::OTMDTA1 ){
         $sub_mem = 'OTM';
         $pdf->Ln ( 3 );
@@ -887,14 +875,14 @@ if( !$soloAduana && $reporte->getCaTiporep()!="3" ){
             }
         }
     }
-    $pdf->flushGroup();
+//    $pdf->flushGroup();
 }
 
 if( ($reporte->getCaImpoexpo()==constantes::IMPO && $reporte->getCaColmas()=="Sí") ||($reporte->getCaTiporep()=="3") ||($reporte->getCaImpoexpo()==constantes::EXPO && ($repexpo->getCaIdsia()==17 || $repexpo->getCaIdsia()==9 ) ) ){
 
 	$costosAduana = $reporte->getCostos ( "aduana" );
 	if (count ( $costosAduana )) {
-             $pdf->beginGroup();
+//        $pdf->beginGroup();
 		$pdf->Ln ( 3 );
 		$pdf->SetWidths ( array (200 ) );
 		$pdf->SetFills ( array (1 ) );
@@ -915,13 +903,13 @@ if( ($reporte->getCaImpoexpo()==constantes::IMPO && $reporte->getCaColmas()=="Sí
 		$pdf->SetAligns ( array ("L", "C", "R", "R", "R", "C", "L" ) );
 		$pdf->SetStyles ( array_fill ( 0, 7, "" ) );
 		foreach ( $costosAduana as $costo ) {
-			$pdf->Row ( array ($costo->getCosto ()->getCaCosto (), $costo->getCaTipo (), Utils::formatNumber ( $costo->getCaNetcosto () ), Utils::formatNumber ( $costo->getCaVlrcosto () ), Utils::formatNumber ( $costo->getCaMincosto () ), $costo->getCaIdmoneda (), $costo->getCaDetalles () ) );
+			$pdf->Row ( array ($costo->getCosto ()->getCaCosto (), $costo->getCaTipo (), Utils::formatNumber ( $costo->getCaNetcosto () ), Utils::formatNumber ( $costo->getCaVlrcosto () ), Utils::formatNumber ( $costo->getCaMincosto () ), $costo->getCaIdmoneda (), utf8_decode($costo->getCaDetalles ()) ) );
 		}
-        $pdf->flushGroup();
+//        $pdf->flushGroup();
 	}
 }
 
-$pdf->Ln(3);
+$pdf->Ln(2);
 $line = $pdf->GetAttrib('y');
 for ($i=$line; $i<274; $i+=5){
   $pdf->Cell(0, 5, str_repeat(" . ", 84), 0, 1);
