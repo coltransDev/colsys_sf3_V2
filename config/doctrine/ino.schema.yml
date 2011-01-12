@@ -50,6 +50,9 @@ InoMaster:
     ca_usucerrado: string
     ca_fchanulado: timestamp
     ca_usuanulado: string
+    ca_motonave : string
+    ca_fchsalida : date
+    ca_fchllegada : date
   relations:
     InoHouse:
       local: ca_idmaster
