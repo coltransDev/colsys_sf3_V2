@@ -35,10 +35,8 @@ include_component("widgets", "widgetContinuacion");
             //layout:'form',
             autoHeight:true,
             bodyStyle:"padding: 5px",
-            buttonAlign: 'center',
-            //frame: true,
-            url: '<?=url_for('pm/formTicketGuardar')?>',
-            //fileUpload : true,
+            buttonAlign: 'center',            
+            url: '<?=url_for('pm/formTicketGuardar')?>',            
             items: [{
                         xtype: 'fieldset',
                         title: 'General',
@@ -55,7 +53,8 @@ include_component("widgets", "widgetContinuacion");
                                 name: "fchreferencia",
                                 allowBlank: false,
                                 format:'Y-m-d',
-                                value: "<?=date("Y-m-d")?>"
+                                value: "<?=date("Y-m-d")?>",
+                                tabIndex:1
                             }
                         ]
                     },
@@ -63,8 +62,7 @@ include_component("widgets", "widgetContinuacion");
                     {
                     xtype:'fieldset',                    
                     title: 'Información del trayecto',
-                    autoHeight:true,
-                   
+                    autoHeight:true,                   
                     layout:'column',
                     columns: 2,
                     defaults:{
@@ -79,6 +77,7 @@ include_component("widgets", "widgetContinuacion");
                          * =========================Column 1 =========================
                          **/
                         {
+                            xtype:'fieldset',
                             columnWidth:.5,
                             layout: 'form',
                             border:false,                            
@@ -87,21 +86,27 @@ include_component("widgets", "widgetContinuacion");
                                 new WidgetImpoexpo({fieldLabel: 'Clase',
                                                     id: 'impoexpo',
                                                     name: 'impoexpo',
-                                                    allowBlank: false
+                                                    allowBlank: false,
+                                                    tabIndex:2
                                                     }),
                                 new WidgetModalidad({fieldLabel: 'Modalidad',
                                                     id: 'modalidad',
                                                     name: 'modalidad',
                                                     linkTransporte: "transporte",
                                                     linkImpoexpo: "impoexpo",
-                                                    allowBlank: false
+                                                    allowBlank: false,
+                                                    tabIndex:4
                                                     }), 
                                 
                                 new WidgetCiudad({fieldLabel: 'Ciudad Origen',                                                  
                                                   name: 'origen',
                                                   hiddenName: 'idorigen',
                                                   id: 'origen',
-                                                  allowBlank: false
+                                                  allowBlank: false,
+                                                  tipo:"1",
+                                                  impoexpo:"impoexpo",
+                                                  tabIndex:6
+
                                                 }),
                                 new WidgetAgente({fieldLabel: 'Agente',
                                                   linkImpoExpo: "impoexpo",
@@ -110,12 +115,14 @@ include_component("widgets", "widgetContinuacion");
                                                   linkListarTodos: "listar_todos",
                                                   name:"agente",
                                                   hiddenName: 'idagente',
-                                                  allowBlank: false
+                                                  allowBlank: false,
+                                                  tabIndex:8
                                                 }),
                                 {
                                     xtype: "checkbox",
                                     fieldLabel: "Listar todos",
-                                    id: "listar_todos"
+                                    id: "listar_todos",
+                                    tabIndex:9
                                 }
                                 
                             ]
@@ -124,42 +131,42 @@ include_component("widgets", "widgetContinuacion");
                          * =========================Column 2 =========================
                          **/
                         {
+                            xtype:'fieldset',
                             columnWidth:.5,
                             layout: 'form',
                             border:false,
                             defaultType: 'textfield',
                             items: [
-                                
                                 new WidgetTransporte({fieldLabel: 'Transporte',
                                                       id: 'transporte',
-                                                      allowBlank: false
+                                                      allowBlank: false,
+                                                      tabIndex:3
                                                     }),
                                 new WidgetLinea({fieldLabel: 'Linea',
                                                  linkTransporte: "transporte",
                                                  name: 'linea',
                                                  id: 'linea',
                                                  hiddenName: 'idlinea',
-                                                 allowBlank: false
-                                                }),
-                               
+                                                 allowBlank: false,
+                                                 tabIndex:5
+                                                }),                               
                                 new WidgetCiudad({fieldLabel: 'Ciudad Destino',                                                
                                                   name: 'destino',
                                                   id: 'destino',
                                                   hiddenName: 'iddestino',
-                                                  allowBlank: false
+                                                  allowBlank: false,
+                                                  tipo:"2",
+                                                  impoexpo:"impoexpo",
+                                                  tabIndex:7
                                                 })
-                                
                             ]
                         }
-
                     ]
                 },
-
                 {
                     xtype:'fieldset',
                     title: 'Información del trayecto',
                     autoHeight:true,
-
                     layout:'column',
                     columns: 2,
                     defaults:{
@@ -174,17 +181,18 @@ include_component("widgets", "widgetContinuacion");
                          * =========================Column 1 =========================
                          **/
                         {
+                            xtype:'fieldset',
                             columnWidth:.5,
                             layout: 'form',
                             border:false,
                             defaultType: 'textfield',
                             items: [
-                                {
-                                    xtype: 'textfield',
+                                {                                    
                                     fieldLabel: 'Master',
                                     name: 'ca_master',
                                     width: 200,
-                                    allowBlank: false
+                                    allowBlank: false,
+                                    tabIndex:10
                                 },
                                 {
                                     xtype: 'datefield',
@@ -192,14 +200,15 @@ include_component("widgets", "widgetContinuacion");
                                     name: 'ca_fchsalida',
                                     format:'Y-m-d',
                                     width: 200,
-                                    allowBlank: false
+                                    allowBlank: false,
+                                    tabIndex:12
                                 },
-                                {
-                                    xtype: 'textfield',
+                                {                                    
                                     fieldLabel: 'MN/Vuelo',
                                     name: 'ca_idnave',
                                     width: 200,
-                                    allowBlank: false
+                                    allowBlank: false,
+                                    tabIndex:14
                                 }
 
                             ]
@@ -208,6 +217,7 @@ include_component("widgets", "widgetContinuacion");
                          * =========================Column 2 =========================
                          **/
                         {
+                            xtype:'fieldset',
                             columnWidth:.5,
                             layout: 'form',
                             border:false,
@@ -219,7 +229,8 @@ include_component("widgets", "widgetContinuacion");
                                     name: 'ca_fchmaster',
                                     format:'Y-m-d',
                                     width: 200,
-                                    allowBlank: false
+                                    allowBlank: false,
+                                    tabIndex:11
                                 },
                                 {
                                     xtype: 'datefield',
@@ -227,14 +238,14 @@ include_component("widgets", "widgetContinuacion");
                                     name: 'ca_fchllegada',
                                     format:'Y-m-d',
                                     width: 200,
-                                    allowBlank: false
+                                    allowBlank: false,
+                                    tabIndex:13
                                 }
                             ]
                         }
 
                     ]
-                }
-                
+                }                
             ],
             buttons:[
                 {
@@ -249,12 +260,6 @@ include_component("widgets", "widgetContinuacion");
                 }
             ]
         });
-
-
-
-
-
-
     };
 
     Ext.extend(FormMasterPanel, Ext.form.FormPanel, {
@@ -264,7 +269,6 @@ include_component("widgets", "widgetContinuacion");
 
         onSave: function(){
             var form  = this.getForm();
-
             if( form.isValid() ){
                 form.submit({
                     url: "<?=url_for("ino/guardarMaster")?>",
