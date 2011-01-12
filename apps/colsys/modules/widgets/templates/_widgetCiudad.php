@@ -41,10 +41,8 @@ WidgetCiudad = function( config ){
     WidgetCiudad.superclass.constructor.call(this, {
         valueField: 'idciudad',
         displayField: 'ciudad',
-        searchField: 'ciudad_trafico',
-        typeAhead: false,
-        forceSelection: true,
-        /*triggerAction: 'all',*/
+        searchField: 'ciudad_trafico',        
+        forceSelection: true,        
         emptyText:'',
         selectOnFocus: true,
         lazyRender:true,
@@ -53,10 +51,7 @@ WidgetCiudad = function( config ){
         itemSelector: 'div.search-item',
         listClass: 'x-combo-list-small',
         submitValue: true,
-        filterBy: this.filterFn,
-        listeners: {
-            /*focus: this.onFocusWdg*/
-        }
+        filterBy: this.filterFn        
     });   
 };
 
@@ -84,7 +79,94 @@ Ext.extend(WidgetCiudad, Ext.form.ComboBox, {
                     if(forceAll){
                         this.store.clearFilter();
                     }else{
-                        this.store.filter(this.searchField, q, true);
+                        var tipo=this.tipo;
+                        var impoexpo=this.impoexpo;
+                        i=0;
+                        if(this.tipo && this.impoexpo)
+                        {
+                            this.store.filterBy(function(record, id){
+                            if( Ext.getCmp(impoexpo).getValue()=="<?=constantes::IMPO?>")
+                            {
+                                var str=record.get("ciudad_trafico");
+                                var txt=new RegExp(q,"ig");
+                                if(tipo=="1")
+                                {
+                                    if(record.get("idtrafico")!="CO-057")
+                                    {
+
+                                        if(str.search(txt) == -1  )
+                                            return false;
+                                        else
+                                            return true;
+                                    }
+                                    else
+                                        return false;
+
+                                }
+                                else if(tipo=="2")
+                                {
+                                    if(record.get("idtrafico")=="CO-057")
+                                    {
+
+                                        if(str.search(txt) == -1  )
+                                            return false;
+                                        else
+                                            return true;
+                                    }
+                                    else
+                                        return false;
+
+                                }
+                                    return true;
+                            }
+                            else if( Ext.getCmp(impoexpo).getValue()=="<?=constantes::EXPO?>")
+                            {
+                                var str=record.get("ciudad_trafico");
+                                var txt=new RegExp(q,"ig");
+                                if(tipo=="2")
+                                {
+                                    if(record.get("idtrafico")!="CO-057")
+                                    {
+                                        if(str.search(txt) == -1  )
+                                            return false;
+                                        else
+                                            return true;
+                                    }
+                                    else
+                                        return false;
+                                }
+                                else if(tipo=="1")
+                                {
+                                    if(record.get("idtrafico")=="CO-057")
+                                    {
+
+                                        if(str.search(txt) == -1  )
+                                            return false;
+                                        else
+                                            return true;
+                                    }
+                                    else
+                                        return false;
+
+                                }
+                                    return true;
+                            }
+                            else if( Ext.getCmp(impoexpo).getValue()=="<?=constantes::TRIANGULACION?>")
+                            {
+                                var str=record.get("ciudad_trafico");
+                                var txt=new RegExp(q,"ig");
+                                if(str.search(txt) == -1  )
+                                    return false;
+                                else
+                                    return true;
+
+                            }
+                            else
+                                return true;
+                            });
+                         }
+                         else
+                            this.store.filter(this.searchField, q, true);
                     }
                     this.onLoad();
                 }else{

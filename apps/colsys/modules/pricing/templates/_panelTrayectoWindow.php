@@ -87,13 +87,17 @@ PanelTrayectoWindow = function( config ) {
                                                   id: 'origen',
                                                   name: 'origen',
                                                   hiddenName: 'idorigen',                                                  
-                                                  allowBlank: false
+                                                  allowBlank: false,
+                                                  tipo:"1",
+                                                  impoexpo:"impoexpo"
                                                 }),
                     new WidgetCiudad({fieldLabel: 'Ciudad Destino',
                                                   id: 'destino',
                                                   name: 'destino',
                                                   hiddenName: 'iddestino',
-                                                  allowBlank: false
+                                                  allowBlank: false,
+                                                  tipo:"2",
+                                                  impoexpo:"impoexpo"
                                                 }),
 
                     new WidgetAgente({fieldLabel: 'Agente',
