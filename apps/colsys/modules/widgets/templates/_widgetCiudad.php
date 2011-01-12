@@ -8,14 +8,8 @@ $data = $sf_data->getRaw("data");
 ?>
 
 <script type="text/javascript">
-
-
 WidgetCiudad = function( config ){
-
     Ext.apply(this, config);
-
-    /*this.data = <?=json_encode($data)?>;*/
-
     this.resultTpl = new Ext.XTemplate(
             '<tpl for="."><div class="search-item"><b>{ciudad}</b><br />{trafico}</div></tpl>'
     );
@@ -38,7 +32,7 @@ WidgetCiudad = function( config ){
                 proxy: new Ext.data.MemoryProxy( <?=json_encode(array("root"=>$data, "total"=>count($data), "success"=>true) )?> )
 			});
 
-    WidgetCiudad.superclass.constructor.call(this, {
+        WidgetCiudad.superclass.constructor.call(this, {
         valueField: 'idciudad',
         displayField: 'ciudad',
         searchField: 'ciudad_trafico',        
@@ -93,7 +87,6 @@ Ext.extend(WidgetCiudad, Ext.form.ComboBox, {
                                 {
                                     if(record.get("idtrafico")!="CO-057")
                                     {
-
                                         if(str.search(txt) == -1  )
                                             return false;
                                         else
@@ -101,13 +94,11 @@ Ext.extend(WidgetCiudad, Ext.form.ComboBox, {
                                     }
                                     else
                                         return false;
-
                                 }
                                 else if(tipo=="2")
                                 {
                                     if(record.get("idtrafico")=="CO-057")
                                     {
-
                                         if(str.search(txt) == -1  )
                                             return false;
                                         else
@@ -139,7 +130,6 @@ Ext.extend(WidgetCiudad, Ext.form.ComboBox, {
                                 {
                                     if(record.get("idtrafico")=="CO-057")
                                     {
-
                                         if(str.search(txt) == -1  )
                                             return false;
                                         else
@@ -147,7 +137,6 @@ Ext.extend(WidgetCiudad, Ext.form.ComboBox, {
                                     }
                                     else
                                         return false;
-
                                 }
                                     return true;
                             }
@@ -159,7 +148,6 @@ Ext.extend(WidgetCiudad, Ext.form.ComboBox, {
                                     return false;
                                 else
                                     return true;
-
                             }
                             else
                                 return true;
@@ -195,6 +183,4 @@ Ext.extend(WidgetCiudad, Ext.form.ComboBox, {
         return null;
     }
 });
-
-
 </script>
