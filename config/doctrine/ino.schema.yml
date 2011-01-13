@@ -131,6 +131,8 @@ InoHouse:
     ca_numpiezas:
       type: decimal
       notnull: true
+    ca_mpiezas:
+      type: string
     ca_peso:
       type: decimal
       notnull: true
