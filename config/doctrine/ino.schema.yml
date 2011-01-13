@@ -130,9 +130,7 @@ InoHouse:
       type: string
     ca_numpiezas:
       type: decimal
-      notnull: true
-    ca_mpiezas:
-      type: string
+      notnull: true    
     ca_peso:
       type: decimal
       notnull: true
@@ -155,6 +153,8 @@ InoHouse:
     ca_usucreado: string
     ca_fchactualizado: timestamp
     ca_usuactualizado: string
+    ca_mpiezas:
+      type: string
   relations:
     Cliente:
       local: ca_idcliente
