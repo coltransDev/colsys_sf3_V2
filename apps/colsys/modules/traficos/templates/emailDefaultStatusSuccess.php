@@ -109,7 +109,7 @@ $cliente = $reporte->getCliente();
     ?>
     <tr>
 		<td><b>Trasladar a:</b></td>
-		<td colspan="5"><?=$bodega2->getCaTipo()." ".$bodega2->getCaNombre()?></td>
+		<td colspan="5"><?=$bodega2->getCaTipo()!=$bodega2->getCaNombre()?$bodega2->getCaTipo()." ".$bodega2->getCaNombre():$bodega2->getCaTipo()?></td>
 	</tr>
     <?
     }
