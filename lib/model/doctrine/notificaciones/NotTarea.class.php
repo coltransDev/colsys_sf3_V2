@@ -15,7 +15,7 @@ class NotTarea extends BaseNotTarea
     /*
 	* Crea las asignaciones a partir de un array de logins
 	*/
-	public function setAsignaciones( $loginsAsignaciones ){
+	public function setAsignaciones( $loginsAsignaciones, $conn=null ){
 		$loginsAsignaciones = array_unique( $loginsAsignaciones );
 		
         $asignaciones = Doctrine::getTable("NotTareaAsignacion")
@@ -24,21 +24,21 @@ class NotTarea extends BaseNotTarea
                         ->execute();
 
 		foreach( $asignaciones as $asignacion ){
-			$asignacion->delete();
+			$asignacion->delete( $conn );
 		}
 
 		foreach( $loginsAsignaciones as $loginsAsignacion ){
 			$asignacion = new NotTareaAsignacion();
 			$asignacion->setCaIdtarea( $this->getCaIdtarea() );
 			$asignacion->setCaLogin( $loginsAsignacion );
-			$asignacion->save();
+			$asignacion->save( $conn );
 		}
 	}
 
 	/*
 	* Crea notificaciones para los usuarios
 	*/
-	public function notificar( ){
+	public function notificar( $conn ){
 
 		$lista = Doctrine::getTable("NotListaTareas")->find( $this->getCaIdlistatarea());
 
@@ -83,13 +83,13 @@ class NotTarea extends BaseNotTarea
 		$texto .= $this->getCaTexto();
 
 		$email->setCaBodyhtml( $texto );
-		$email->save();
+		$email->save( $conn );
 		//$email->send();
 
 		$notificacion = new Notificacion();
 		$notificacion->setCaIdtarea( $this->getCaIdtarea() );
 		$notificacion->setCaIdemail( $email->getCaIdemail() );
-		$notificacion->save();
+		$notificacion->save( $conn );
 	}
 
 	/*
