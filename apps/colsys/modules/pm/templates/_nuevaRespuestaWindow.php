@@ -67,7 +67,7 @@ NuevaRespuestaWindow = function( config ) {
                                 xtype:'htmleditor',
                                 name:'respuesta',
                                 hideLabel: true,
-                                height:450,
+                                height:300,
                                 anchor:'100%',
                                 enableFont: false,
                                 enableFontSize: false,
