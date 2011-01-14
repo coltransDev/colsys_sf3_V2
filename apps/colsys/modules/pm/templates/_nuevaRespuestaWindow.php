@@ -120,7 +120,7 @@ NuevaRespuestaWindow = function( config ) {
         resizable: false,
         plain:true,
         //modal: true,
-        y: 100,
+        y: 20,
         autoScroll: true,
         closeAction: 'close',
         buttons: this.buttons,
