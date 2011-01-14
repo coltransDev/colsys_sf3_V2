@@ -181,6 +181,8 @@ class pmActions extends sfActions {
         if ($request->getParameter("format") == "email") {
             $this->setTemplate("verTicketEmail");
             $this->setLayout("none");
+        }else{
+            $this->redirect("pm/index?idticket=".$idticket);
         }
 
 
@@ -267,161 +269,169 @@ class pmActions extends sfActions {
      */
     public function executeGuardarRespuestaTicket(sfWebRequest $request) {
 
-        $this->nivel = $this->getNivel();
-        $idticket = $request->getParameter("idticket");
-        $ticket = HdeskTicketTable::retrieveIdTicket($idticket, $this->nivel);
-        $this->forward404Unless($ticket);
-
-        $idissue = $request->getParameter("idissue");
-
-        $user = $this->getUser();
-
-        $respuesta = new HdeskResponse();
-        $respuesta->setCaIdticket($request->getParameter("idticket"));
-
-        $idresponse = $request->getParameter("idresponse");
-
-        if ($idresponse) {
-            $respuesta->setCaResponseto($idresponse);
-        }
-
-        if ($idissue) {
-            $issue = Doctrine::getTable("KBIssue")->find($idissue);
-            $this->forward404Unless($issue);
-            $respuesta->setCaIdissue($idissue);
-            $url = "https://www.coltrans.com.co/kbase/viewIssue/idissue/" . $idissue;
-            $txt = "Adjunto encontrara una soluci&oacute;n al problema reportado.\n<br />";
-            $txt .= "Tambien es posible verlo desde el siguiente vinculo: <br />";
-            $txt .= "<b><a href='$url'>$url</a></b> <br /> <br />";
 
 
-            $respuesta->setCaText(utf8_decode($txt));
-        } else {
-            $respuesta->setCaText(utf8_decode($request->getParameter("respuesta")));
-        }
-        $respuesta->setCaLogin($user->getUserId());
-        $respuesta->setCaCreatedat(date("Y-m-d H:i:s"));
-        $respuesta->save();
+        $conn = Doctrine::getTable("HdeskResponse")->getConnection();
+        $conn->beginTransaction();
+        try{
+            $this->nivel = $this->getNivel();
+            $idticket = $request->getParameter("idticket");
+            $ticket = HdeskTicketTable::retrieveIdTicket($idticket, $this->nivel);
+            $this->forward404Unless($ticket);
 
-        $logins = array($ticket->getCaLogin());
-        if ($ticket->getCaAssignedto()) {
-            $logins[] = $ticket->getCaAssignedto();
-        } else {
-            $usuarios = Doctrine::getTable("HdeskUserGroup")
-                            ->createQuery("h")
-                            ->where("h.ca_idgroup = ? ", $ticket->getCaIdgroup())
-                            ->addOrderBy("h.ca_login")
-                            ->execute();
+            $idissue = $request->getParameter("idissue");
+
+            $user = $this->getUser();
+
+            $respuesta = new HdeskResponse();
+            $respuesta->setCaIdticket($request->getParameter("idticket"));
+
+            $idresponse = $request->getParameter("idresponse");
+
+            if ($idresponse) {
+                $respuesta->setCaResponseto($idresponse);
+            }
+
+            if ($idissue) {
+                $issue = Doctrine::getTable("KBIssue")->find($idissue);
+                $this->forward404Unless($issue);
+                $respuesta->setCaIdissue($idissue);
+                $url = "https://www.coltrans.com.co/kbase/viewIssue/idissue/" . $idissue;
+                $txt = "Adjunto encontrara una soluci&oacute;n al problema reportado.\n<br />";
+                $txt .= "Tambien es posible verlo desde el siguiente vinculo: <br />";
+                $txt .= "<b><a href='$url'>$url</a></b> <br /> <br />";
+
+
+                $respuesta->setCaText(utf8_decode($txt));
+            } else {
+                $respuesta->setCaText(utf8_decode($request->getParameter("respuesta")));
+            }
+            $respuesta->setCaLogin($user->getUserId());
+            $respuesta->setCaCreatedat(date("Y-m-d H:i:s"));
+            $respuesta->save( $conn );
+
+            $logins = array($ticket->getCaLogin());
+            if ($ticket->getCaAssignedto()) {
+                $logins[] = $ticket->getCaAssignedto();
+            } else {
+                $usuarios = Doctrine::getTable("HdeskUserGroup")
+                                ->createQuery("h")
+                                ->where("h.ca_idgroup = ? ", $ticket->getCaIdgroup())
+                                ->addOrderBy("h.ca_login")
+                                ->execute();
+                foreach ($usuarios as $usuario) {
+                    $logins[] = $usuario->getCaLogin();
+                }
+            }
+
+
+            $usuarios = $ticket->getUsuarios();
             foreach ($usuarios as $usuario) {
                 $logins[] = $usuario->getCaLogin();
             }
-        }
 
-
-        $usuarios = $ticket->getUsuarios();
-        foreach ($usuarios as $usuario) {
-            $logins[] = $usuario->getCaLogin();
-        }
-
-
-
-        if ($ticket->getCaAssignedto() == $this->getUser()->getUserId() || in_array($this->getUser()->getUserId(), $logins)) {
-            $tarea = $ticket->getTareaIdg();
-            if ($tarea) {
-                if (!$tarea->getCaFchterminada()) {
-                    $tarea->setCaFchterminada(date("Y-m-d H:i:s"));
-                    $tarea->setCaUsuterminada($this->getUser()->getUserId());
-                    $tarea->save();
+            if ($ticket->getCaAssignedto() == $this->getUser()->getUserId() || in_array($this->getUser()->getUserId(), $logins)) {
+                $tarea = $ticket->getTareaIdg();
+                if ($tarea) {
+                    if (!$tarea->getCaFchterminada()) {
+                        $tarea->setCaFchterminada(date("Y-m-d H:i:s"));
+                        $tarea->setCaUsuterminada($this->getUser()->getUserId());
+                        $tarea->save( $conn );
+                    }
                 }
             }
-        }
 
-
-        /*
-         * Termina seguimientos previos
-         */
-        if ($idresponse) {
-            $res = Doctrine::getTable("HDeskResponse")->find($idresponse);
-            if ($res->getCaIdtarea()) {
-                $tarea = $res->getNotTarea();
-                if ($tarea && !$tarea->getCaFchterminada()) {
-                    $tarea->setCaFchterminada(date("Y-m-d H:i:s"));
-                    $tarea->save();
-                }
-            }
-        }
-
-        /*
-         * Crea un seguimiento
-         */
-        if ($request->getParameter("fchseguimiento")) {
-            $titulo = "Seg. Ticket #" . $ticket->getCaIdticket() . " [" . $ticket->getCaTitle() . "]";
-            $texto = "<b>Seguimiento:</b> \n<br />";
-            $texto .= $respuesta->getCaText();
             /*
-             * Se crea la tarea para los miembros del grupo.
+             * Termina seguimientos previos
              */
-            $tarea = new NotTarea();
-            $tarea->setCaUrl("/pm/index?idticket=" . $ticket->getCaIdticket());
-            $tarea->setCaIdlistatarea(5);
-            $tarea->setCaFchcreado(date("Y-m-d h:i:s"));
-
-            $tarea->setCaFchvisible($request->getParameter("fchseguimiento") . " 00:00:00");
-            $tarea->setCaFchvencimiento($request->getParameter("fchseguimiento") . " 23:59:59");
-
-            $tarea->setCaUsucreado($this->getUser()->getUserId());
-            $tarea->setCaTitulo($titulo);
-            $tarea->setCaTexto($texto);
-            $tarea->save();
-
-            $tarea->setAsignaciones(array($this->getUser()->getUserId()));
-
-            $respuesta->setCaIdtarea($tarea->getCaIdtarea());
-            $respuesta->save();
-        }
-
-
-        $email = new Email();
-        $email->setCaUsuenvio($this->getUser()->getUserId());
-        $email->setCaTipo("Notificación");
-        $email->setCaIdcaso($ticket->getCaIdticket());
-        $email->setCaFrom("no-reply@coltrans.com.co");
-        $email->setCaFromname("Colsys Notificaciones");
-
-
-        $email->setCaSubject("Nueva respuesta Ticket #" . $ticket->getCaIdticket() . " [" . $ticket->getCaTitle() . "]");
-
-
-        $request->setParameter("id", $ticket->getCaIdticket());
-        $request->setParameter("format", "email");
-        if ($idissue) {
-            $texto = $txt;
-            $texto .=sfContext::getInstance()->getController()->getPresentationFor('kbase', 'viewIssue');
-
-            $texto = str_replace('src="/', 'src="https://www.coltrans.com.co/', $texto);
-            //$texto = str_replace('src="/', 'src="https://localhost/',  $texto);
-        } else {
-            $texto = sfContext::getInstance()->getController()->getPresentationFor('pm', 'verTicket');
-        }
-
-
-        $email->setCaBodyhtml($texto);
-
-        foreach ($logins as $login) {
-
-            if ($this->getUser()->getUserId() != $login) {
-                $usuario = Doctrine::getTable("Usuario")->find($login);
-                $email->addTo($usuario->getCaEmail());
+            if ($idresponse) {
+                $res = Doctrine::getTable("HDeskResponse")->find($idresponse);
+                if ($res->getCaIdtarea()) {
+                    $tarea = $res->getNotTarea();
+                    if ($tarea && !$tarea->getCaFchterminada()) {
+                        $tarea->setCaFchterminada(date("Y-m-d H:i:s"));
+                        $tarea->save( $conn );
+                    }
+                }
             }
+
+            /*
+             * Crea un seguimiento
+             */
+            if ($request->getParameter("fchseguimiento")) {
+                $titulo = "Seg. Ticket #" . $ticket->getCaIdticket() . " [" . $ticket->getCaTitle() . "]";
+                $texto = "<b>Seguimiento:</b> \n<br />";
+                $texto .= $respuesta->getCaText();
+                /*
+                 * Se crea la tarea para los miembros del grupo.
+                 */
+                $tarea = new NotTarea();
+                $tarea->setCaUrl("/pm/index?idticket=" . $ticket->getCaIdticket());
+                $tarea->setCaIdlistatarea(5);
+                $tarea->setCaFchcreado(date("Y-m-d h:i:s"));
+
+                $tarea->setCaFchvisible($request->getParameter("fchseguimiento") . " 00:00:00");
+                $tarea->setCaFchvencimiento($request->getParameter("fchseguimiento") . " 23:59:59");
+
+                $tarea->setCaUsucreado($this->getUser()->getUserId());
+                $tarea->setCaTitulo($titulo);
+                $tarea->setCaTexto($texto);
+                $tarea->save( $conn );
+
+                $tarea->setAsignaciones(array($this->getUser()->getUserId()));
+
+                $respuesta->setCaIdtarea($tarea->getCaIdtarea());
+                $respuesta->save( $conn );
+            }
+
+
+            $email = new Email();
+            $email->setCaUsuenvio($this->getUser()->getUserId());
+            $email->setCaTipo("Notificación");
+            $email->setCaIdcaso($ticket->getCaIdticket());
+            $email->setCaFrom("no-reply@coltrans.com.co");
+            $email->setCaFromname("Colsys Notificaciones");
+
+
+            $email->setCaSubject("Nueva respuesta Ticket #" . $ticket->getCaIdticket() . " [" . $ticket->getCaTitle() . "]");
+
+
+            $request->setParameter("id", $ticket->getCaIdticket());
+            $request->setParameter("format", "email");
+            if ($idissue) {
+                $texto = $txt;
+                $texto .=sfContext::getInstance()->getController()->getPresentationFor('kbase', 'viewIssue');
+
+                $texto = str_replace('src="/', 'src="https://www.coltrans.com.co/', $texto);
+                //$texto = str_replace('src="/', 'src="https://localhost/',  $texto);
+            } else {
+                $texto = sfContext::getInstance()->getController()->getPresentationFor('pm', 'verTicket');
+            }
+
+
+            $email->setCaBodyhtml($texto);
+
+            foreach ($logins as $login) {
+
+                if ($this->getUser()->getUserId() != $login) {
+                    $usuario = Doctrine::getTable("Usuario")->find($login);
+                    $email->addTo($usuario->getCaEmail());
+                }
+            }
+
+            $email->save( $conn );
+            //$email->send();
+            //$this->ticket = $ticket;
+
+            $conn->commit();
+            $request->setParameter("format", "");
+            $texto = sfContext::getInstance()->getController()->getPresentationFor('pm', 'verRespuestas');
+
+            $this->responseArray = array("success" => true, "idticket" => $ticket->getCaIdticket(), "info" => utf8_encode($texto));
+        }catch(Exception $e){
+            $conn->rollback();
+            $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
         }
-
-        $email->save();
-        //$email->send();
-        //$this->ticket = $ticket;
-        $request->setParameter("format", "");
-        $texto = sfContext::getInstance()->getController()->getPresentationFor('pm', 'verRespuestas');
-
-        $this->responseArray = array("success" => true, "idticket" => $ticket->getCaIdticket(), "info" => utf8_encode($texto));
         $this->setTemplate("responseTemplate");
     }
 
@@ -454,10 +464,24 @@ class pmActions extends sfActions {
 
             if ($request->getParameter("area") != $ticket->getCaIdgroup()) { //Cuando cambia el area notifica.
                 $tarea = $ticket->getNotTarea();
-                if ($tarea) {
-                    $tarea->delete();
-                }
-                $update = false;
+                /*if ($tarea) {
+                    $tarea->delete(); //Antes se eliminaba, ahora no para que conserve los datos del IDG.
+                }*/
+
+
+
+                //Crea un nuevo status para saber que se cambio de área
+                $area1 = Doctrine::getTable("HdeskGroup")->find($ticket->getCaIdgroup() );
+                $area2 = Doctrine::getTable("HdeskGroup")->find($request->getParameter("area") );
+                $txt = "Se cambio de ".$area1->getCaName()." a ".$area2->getCaName();
+                $respuesta = new HdeskResponse();
+                $respuesta->setCaIdticket($request->getParameter("idticket"));
+                $respuesta->setCaText($txt);
+                $respuesta->setCaLogin($user->getUserId());
+                $respuesta->setCaCreatedat(date("Y-m-d H:i:s"));
+                $respuesta->save();
+
+                //$update = false;
             }
         } else {
             $ticket = new HdeskTicket();
@@ -534,17 +558,20 @@ class pmActions extends sfActions {
             /*
              * Se crea la tarea para los miembros del grupo.
              */
-            $tarea = new NotTarea();
-            $tarea->setCaUrl("/pm/verTicket?id=" . $ticket->getCaIdticket());
-            $tarea->setCaIdlistatarea(1);
-            $tarea->setCaFchcreado(date("Y-m-d h:i:s"));
+            $tarea = $ticket->getTareaIdg();
+            if( !$tarea || !$tarea->getCaIdtarea() ){
+                $tarea = new NotTarea();
+                $tarea->setCaUrl("/pm/verTicket?id=" . $ticket->getCaIdticket());
+                $tarea->setCaIdlistatarea(1);
+                $tarea->setCaFchcreado(date("Y-m-d h:i:s"));
 
-            $tarea->setTiempo(TimeUtils::getFestivos(), $grupo->getCaMaxresponsetime());
+                $tarea->setTiempo(TimeUtils::getFestivos(), $grupo->getCaMaxresponsetime());
 
-            $tarea->setCaUsucreado($this->getUser()->getUserId());
-            $tarea->setCaTitulo($titulo);
-            $tarea->setCaTexto($texto);
-            $tarea->save();
+                $tarea->setCaUsucreado($this->getUser()->getUserId());
+                $tarea->setCaTitulo($titulo);
+                $tarea->setCaTexto($texto);
+                $tarea->save();
+            }
 
             $ticket->setCaIdtarea($tarea->getCaIdtarea());
             $ticket->save();
@@ -558,7 +585,7 @@ class pmActions extends sfActions {
             $tarea->setAsignaciones($loginsAsignaciones);
         }
 
-        if (!$update) {
+        if (!$update &&  $request->getParameter("actionTicket") != "Cerrado") {
             $tarea->notificar();
         }
 
