@@ -13,6 +13,8 @@
 class HdeskTicket extends BaseHdeskTicket {
     const FOLDER = "tickets";
 
+    private $tarea = null;
+
     public function getLastResponse() {
 
         return Doctrine::getTable("HdeskResponse")->createQuery("r")
@@ -50,11 +52,11 @@ class HdeskTicket extends BaseHdeskTicket {
 
     public function getTareaIdg() {
 
-        $tarea = null;
+        $this->tarea = null;
         if ($this->getCaIdtarea()) {
-            $tarea = Doctrine::getTable("NotTarea")->find($this->getCaIdtarea());
+            $this->tarea = Doctrine::getTable("NotTarea")->find($this->getCaIdtarea());
         }
-        return $tarea;
+        return $this->tarea;
     }
 
     public function getTareaSeguimiento() {
@@ -126,8 +128,8 @@ class HdeskTicket extends BaseHdeskTicket {
 
             $index->delete($hit->id);
         }
-        
-       
+
+
         $doc = new Zend_Search_Lucene_Document();
 
         // store job primary key URL to identify it in the search results
@@ -139,19 +141,17 @@ class HdeskTicket extends BaseHdeskTicket {
         $doc->addField(Zend_Search_Lucene_Field::UnStored('loginName', $this->getUsuario()->getCaNombre()));
 
         $grupo = $this->getHdeskGroup();
-        if( $grupo ){
-			$departamento = $grupo->getDepartamento();			
+        if ($grupo) {
+            $departamento = $grupo->getDepartamento();
             $doc->addField(Zend_Search_Lucene_Field::UnStored('departamento', $departamento->getCaNombre()));
-            $doc->addField(Zend_Search_Lucene_Field::UnStored('grupo', $grupo->getCaName() ));
-
-
-		}
+            $doc->addField(Zend_Search_Lucene_Field::UnStored('grupo', $grupo->getCaName()));
+        }
         $proyecto = $this->getHdeskProject();
-        if( $proyecto ){
+        if ($proyecto) {
             $doc->addField(Zend_Search_Lucene_Field::UnStored('proyecto', $proyecto->getCaName()));
-		}
-        
-        
+        }
+
+
 
         // add job to the index
         $index->addDocument($doc);
@@ -186,6 +186,39 @@ class HdeskTicket extends BaseHdeskTicket {
         }
 
         return parent::delete($conn);
+    }
+
+    public function getReadonly( $nivel ) {
+
+        
+        $user = sfContext::getInstance()->getUser();
+        $q = Doctrine_Query::create()->from("HdeskTicket h");
+        $q->where("h.ca_idticket = ?", $this->getCaIdticket());
+
+        switch ($nivel) {
+            case 0:
+                $q->leftJoin("h.HdeskTicketUser hu  ");
+                $q->addWhere("(h.ca_login = ? OR hu.ca_login = ?)", array($user->getUserid(), $user->getUserid()));
+
+                break;
+            case 1:
+                $q->leftJoin("h.HdeskUserGroup ug ");
+                $q->leftJoin("h.HdeskTicketUser hu  ");
+                $q->addWhere("(h.ca_login = ? OR ug.ca_login = ? OR hu.ca_login = ? )", array($user->getUserid(), $user->getUserid(), $user->getUserid()));
+                break;
+            case 2:
+                $q->leftJoin("h.HdeskGroup g ");
+                $q->leftJoin("h.HdeskTicketUser hu  ");
+                $q->addWhere("(h.ca_login = ? OR g.ca_iddepartament = ? OR hu.ca_login = ?)", array($user->getUserid(), $user->getIddepartamento(), $user->getUserid()));
+                break;
+        }
+
+        $ticket = $q->fetchOne();
+        if( $ticket ){
+            return false;
+        }else{
+            return true;
+        }
     }
 
 }
