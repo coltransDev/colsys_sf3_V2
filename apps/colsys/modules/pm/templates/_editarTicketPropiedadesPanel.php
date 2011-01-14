@@ -391,7 +391,7 @@ $grupos = $sf_data->getRaw("grupos");
                         },{
                             columnWidth:.5,
                             layout: 'form',
-                            
+                            xtype:'fieldset',
                             items: [
                                 this.areas,
                                 this.prioridades,
