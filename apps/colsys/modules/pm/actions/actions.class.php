@@ -458,138 +458,149 @@ class pmActions extends sfActions {
     public function executeFormTicketGuardar(sfWebRequest $request) {
         $update = false;
         $user = $this->getUser();
-        if ($request->getParameter("idticket")) {
-            $ticket = Doctrine::getTable("HdeskTicket")->find($request->getParameter("idticket"));
-            $update = true;
 
-            if ($request->getParameter("area") != $ticket->getCaIdgroup()) { //Cuando cambia el area notifica.
+        $conn = Doctrine::getTable("HdeskTicket")->getConnection();
+        $conn->beginTransaction();
+        try{
+            if ($request->getParameter("idticket")) {
+                $ticket = Doctrine::getTable("HdeskTicket")->find($request->getParameter("idticket"));
+                $update = true;
+
+                if ($request->getParameter("area") != $ticket->getCaIdgroup()) { //Cuando cambia el area notifica.
+                    $tarea = $ticket->getNotTarea();
+                    /*if ($tarea) {
+                        $tarea->delete(); //Antes se eliminaba, ahora no para que conserve los datos del IDG.
+                    }*/
+
+
+
+                    //Crea un nuevo status para saber que se cambio de área
+                    $area1 = Doctrine::getTable("HdeskGroup")->find($ticket->getCaIdgroup() );
+                    $area2 = Doctrine::getTable("HdeskGroup")->find($request->getParameter("area") );
+                    $txt = "Se cambio de ".$area1->getCaName()." a ".$area2->getCaName();
+                    $respuesta = new HdeskResponse();
+                    $respuesta->setCaIdticket($request->getParameter("idticket"));
+                    $respuesta->setCaText($txt);
+                    $respuesta->setCaLogin($user->getUserId());
+                    $respuesta->setCaCreatedat(date("Y-m-d H:i:s"));
+                    $respuesta->save( $conn );
+
+                    //$update = false;
+                }
+            } else {
+                $ticket = new HdeskTicket();
+                $ticket->setCaLogin($user->getUserId());
+                $ticket->setCaOpened(date("Y-m-d H:i:s"));
+            }
+
+
+            $ticket->setCaIdgroup($request->getParameter("area"));
+            if ($request->getParameter("project")) {
+                $ticket->setCaIdproject($request->getParameter("project"));
+            }
+
+            $ticket->setCaTitle(($request->getParameter("title")));
+            $ticket->setCaText(($request->getParameter("text")));
+
+
+
+            if ($request->getParameter("actionTicket")) {
+                $ticket->setCaAction($request->getParameter("actionTicket"));
+            }
+            if ($request->getParameter("type")) {
+                $ticket->setCaType($request->getParameter("type"));
+            }
+
+            if ($request->getParameter("priority")) {
+                $ticket->setCaPriority($request->getParameter("priority"));
+            }
+
+            if ($request->getParameter("assignedto")) {
+                $ticket->setCaAssignedto($request->getParameter("assignedto"));
+            }
+
+            if ($request->getParameter("idmilestone")) {
+                $ticket->setCaIdmilestone($request->getParameter("idmilestone"));
+            }
+
+            if ($request->getParameter("reportedby")) {
+                $ticket->setCaLogin($request->getParameter("reportedby"));
+            }
+
+            if ($request->getParameter("reportedthrough")) {
+                $ticket->setCaReportedby($request->getParameter("reportedthrough"));
+            }
+
+            $ticket->save( $conn );
+
+            if ($request->getParameter("actionTicket") == "Cerrado") {
+                $ticket->cerrarSeguimientos( $conn );
+            }
+
+
+            if (isset($_FILES["archivo"])) {
+
+                $archivo = $_FILES["archivo"];
+                $directorio = $ticket->getDirectorio();
+
+                if (!is_dir($directorio)) {
+                    mkdir($directorio, 0777, true);
+                }
+                move_uploaded_file($archivo["tmp_name"], $directorio . DIRECTORY_SEPARATOR . $archivo["name"]);
+            }
+
+
+            if (!$update) {
+                $request->setParameter("id", $ticket->getCaIdticket());
+                $request->setParameter("format", "email");
+                $titulo = "Nuevo Ticket #" . $ticket->getCaIdticket() . " [" . $ticket->getCaTitle() . "]";
+
+                $texto = "Se ha creado un nuevo ticket \n\n<br /><br />";
+                $texto.= sfContext::getInstance()->getController()->getPresentationFor('pm', 'verTicket');
+
+                $grupo = $ticket->getHdeskGroup();
+                /*
+                 * Se crea la tarea para los miembros del grupo.
+                 */
+                $tarea = $ticket->getTareaIdg();
+                if( !$tarea || !$tarea->getCaIdtarea() ){
+                    $tarea = new NotTarea();
+                    $tarea->setCaUrl("/pm/verTicket?id=" . $ticket->getCaIdticket());
+                    $tarea->setCaIdlistatarea(1);
+                    $tarea->setCaFchcreado(date("Y-m-d h:i:s"));
+
+                    $tarea->setTiempo(TimeUtils::getFestivos(), $grupo->getCaMaxresponsetime());
+
+                    $tarea->setCaUsucreado($this->getUser()->getUserId());
+                    $tarea->setCaTitulo($titulo);
+                    $tarea->setCaTexto($texto);
+                    $tarea->save();
+                }
+
+                $ticket->setCaIdtarea($tarea->getCaIdtarea());
+                $ticket->save( $conn );
+            } else {
                 $tarea = $ticket->getNotTarea();
-                /*if ($tarea) {
-                    $tarea->delete(); //Antes se eliminaba, ahora no para que conserve los datos del IDG.
-                }*/
-
-
-
-                //Crea un nuevo status para saber que se cambio de área
-                $area1 = Doctrine::getTable("HdeskGroup")->find($ticket->getCaIdgroup() );
-                $area2 = Doctrine::getTable("HdeskGroup")->find($request->getParameter("area") );
-                $txt = "Se cambio de ".$area1->getCaName()." a ".$area2->getCaName();
-                $respuesta = new HdeskResponse();
-                $respuesta->setCaIdticket($request->getParameter("idticket"));
-                $respuesta->setCaText($txt);
-                $respuesta->setCaLogin($user->getUserId());
-                $respuesta->setCaCreatedat(date("Y-m-d H:i:s"));
-                $respuesta->save();
-
-                //$update = false;
-            }
-        } else {
-            $ticket = new HdeskTicket();
-            $ticket->setCaLogin($user->getUserId());
-            $ticket->setCaOpened(date("Y-m-d H:i:s"));
-        }
-
-
-        $ticket->setCaIdgroup($request->getParameter("area"));
-        if ($request->getParameter("project")) {
-            $ticket->setCaIdproject($request->getParameter("project"));
-        }
-
-        $ticket->setCaTitle(($request->getParameter("title")));
-        $ticket->setCaText(($request->getParameter("text")));
-
-
-
-        if ($request->getParameter("actionTicket")) {
-            $ticket->setCaAction($request->getParameter("actionTicket"));
-        }
-        if ($request->getParameter("type")) {
-            $ticket->setCaType($request->getParameter("type"));
-        }
-
-        if ($request->getParameter("priority")) {
-            $ticket->setCaPriority($request->getParameter("priority"));
-        }
-
-        if ($request->getParameter("assignedto")) {
-            $ticket->setCaAssignedto($request->getParameter("assignedto"));
-        }
-
-        if ($request->getParameter("idmilestone")) {
-            $ticket->setCaIdmilestone($request->getParameter("idmilestone"));
-        }
-
-        if ($request->getParameter("reportedby")) {
-            $ticket->setCaLogin($request->getParameter("reportedby"));
-        }
-
-        if ($request->getParameter("reportedthrough")) {
-            $ticket->setCaReportedby($request->getParameter("reportedthrough"));
-        }
-
-        $ticket->save();
-
-        if ($request->getParameter("actionTicket") == "Cerrado") {
-            $ticket->cerrarSeguimientos();
-        }
-
-
-        if (isset($_FILES["archivo"])) {
-
-            $archivo = $_FILES["archivo"];
-            $directorio = $ticket->getDirectorio();
-
-            if (!is_dir($directorio)) {
-                mkdir($directorio, 0777, true);
-            }
-            move_uploaded_file($archivo["tmp_name"], $directorio . DIRECTORY_SEPARATOR . $archivo["name"]);
-        }
-
-
-        if (!$update) {
-            $request->setParameter("id", $ticket->getCaIdticket());
-            $request->setParameter("format", "email");
-            $titulo = "Nuevo Ticket #" . $ticket->getCaIdticket() . " [" . $ticket->getCaTitle() . "]";
-
-            $texto = "Se ha creado un nuevo ticket \n\n<br /><br />";
-            $texto.= sfContext::getInstance()->getController()->getPresentationFor('pm', 'verTicket');
-
-            $grupo = $ticket->getHdeskGroup();
-            /*
-             * Se crea la tarea para los miembros del grupo.
-             */
-            $tarea = $ticket->getTareaIdg();
-            if( !$tarea || !$tarea->getCaIdtarea() ){
-                $tarea = new NotTarea();
-                $tarea->setCaUrl("/pm/verTicket?id=" . $ticket->getCaIdticket());
-                $tarea->setCaIdlistatarea(1);
-                $tarea->setCaFchcreado(date("Y-m-d h:i:s"));
-
-                $tarea->setTiempo(TimeUtils::getFestivos(), $grupo->getCaMaxresponsetime());
-
-                $tarea->setCaUsucreado($this->getUser()->getUserId());
-                $tarea->setCaTitulo($titulo);
-                $tarea->setCaTexto($texto);
-                $tarea->save();
             }
 
-            $ticket->setCaIdtarea($tarea->getCaIdtarea());
-            $ticket->save();
-        } else {
-            $tarea = $ticket->getNotTarea();
-        }
+            if ($tarea) {
+                //Verifica las asignaciones de la tarea.
+                $loginsAsignaciones = $ticket->getLoginsGroup();
+                $tarea->setAsignaciones($loginsAsignaciones, $conn );
+            }
 
-        if ($tarea) {
-            //Verifica las asignaciones de la tarea.
-            $loginsAsignaciones = $ticket->getLoginsGroup();
-            $tarea->setAsignaciones($loginsAsignaciones);
-        }
+            if (!$update &&  $request->getParameter("actionTicket") != "Cerrado") {
+                $tarea->notificar( $conn );
+            }
 
-        if (!$update &&  $request->getParameter("actionTicket") != "Cerrado") {
-            $tarea->notificar();
-        }
+            $conn->commit();
 
-        $this->responseArray = array("success" => true, "idticket" => $ticket->getCaIdticket());
+            $this->responseArray = array("success" => true, "idticket" => $ticket->getCaIdticket());
+
+        }catch(Exception $e){
+            $conn->rollback();
+            $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
+        }
         $this->setTemplate("responseTemplate");
         $this->setLayout("none");
     }
