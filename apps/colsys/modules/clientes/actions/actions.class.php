@@ -389,9 +389,6 @@ class clientesActions extends sfActions {
                 $email->setCaUsuenvio("Administrador");
                 $email->setCaTipo("ComunicacionCircular");
                 $email->setCaIdcaso("1");
-                $email->setCaFrom("admin@coltrans.com.co");
-                $email->setCaFromname("Administrador Sistema Colsys");
-                $email->setCaReplyto("admin@coltrans.com.co");
 
                 $comercial = $cliente->getUsuario();
 
@@ -402,6 +399,9 @@ class clientesActions extends sfActions {
                     }
 
                 }
+                $email->setCaFrom($comercial->getCaEmail());
+                $email->setCaFromname($comercial->getCaNombre());
+                $email->setCaReplyto($comercial->getCaEmail());
                 $email->addCc($comercial->getCaEmail());
 
                 /*
