@@ -410,18 +410,27 @@ class widgetsComponents extends sfComponents
 
         $ciudades = Doctrine::getTable('Ciudad')->createQuery('c')
                             ->innerJoin('c.Trafico t')
-                            ->addOrderBy('t.ca_nombre ASC')
                             ->addOrderBy('c.ca_ciudad ASC')
+                            ->addOrderBy('t.ca_nombre ASC')                            
                             ->execute();
         $this->data = array();
+        $con=0;
+        $name="";
         foreach( $ciudades as $ciudad ){
+
+            if(trim(utf8_encode($ciudad->getCaCiudad()))==trim($name))
+                $con++;
+            else
+                $con=0;
+            $name=trim(utf8_encode($ciudad->getCaCiudad()));
             $this->data[] = array( "idciudad"=>$ciudad->getCaIdciudad(),
-                                   "ciudad"=>utf8_encode($ciudad->getCaCiudad()),
+                                   "ciudad"=>utf8_encode($ciudad->getCaCiudad()).(($con)?"(".($con+1).")":""),
                                    "idtrafico"=>$ciudad->getCaIdtrafico(),
                                    "trafico"=>utf8_encode($ciudad->getTrafico()->getCaNombre()),
                                    "ciudad_trafico"=>utf8_encode($ciudad->getTrafico()->getCaNombre()." ".$ciudad->getCaCiudad())
                                  );
         }
+        
 	}
     public function executeUsuarios()
     {
