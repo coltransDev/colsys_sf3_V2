@@ -2,8 +2,12 @@
 /*
 * Muestra los resultados de la busqueda de la cotización 
 * @author Andres Botero
-*/	
+*/
+include_component("ino","panelFiltro");
 ?>
+
+
+
 <div align="center">
 <?
 $url = "ino/busqueda?modo=".$modo."&criterio=".$criterio;
@@ -43,25 +47,36 @@ $pagerLayout->display();
 	foreach( $refList as $referencia ){
 		
 	?>
-	<tr>
-	  <td rowspan="2"  >
-        <?=link_to($referencia->getCaReferencia(), "ino/verReferencia?modo=".$modo."&id=".$referencia->getCaIdmaster())?>
+	<tr style="border-bottom: #A0A0A0 solid 2px">
+	  <td >
+        <?=link_to($referencia->getCaReferencia(), "ino/verReferencia?modo=".$referencia->getCaTransporte()."&id=".$referencia->getCaIdmaster())?>
           <?=$referencia->getCaFchanulado()?"<br />Anulada":""?>
       </td>
-	  <td ><b>Fch :</b><br />
-      &nbsp;</td>
-      <td ><b>Cliente:</b><br />
-      &nbsp;</td>
-      <td ><b> </b><br />
-      &nbsp;</td>
-	  <td ><b>Vendedor:</b><br />
-        &nbsp;</td>
+      <td width="100%">
+          <table width="100%">
+              <tr>
+                  <td >
+                      <b><?=$referencia->getIdsProveedor()->getIds()->getCaNombre()?></b>
+                  </td>
+              </tr>
+              <tr>
+                  <td width="100%" >
+                      <table width="100%">
+                          <tr style="font-weight: bold;background:#D2D2D2;"><td width="20%">Origen</td><td width="20%">Destino</td><td width="20%">Fech.Embarque</td><td width="20%">Fch.Arribo</td><td width="20%">Motonave</td><tr>
+                              <tr>
+                                  <td><?=$referencia->getOrigen()->getCaCiudad()?></td>
+                                  <td><?=$referencia->getDestino()->getCaCiudad()?></td>
+                                  <td><?=$referencia->getCaFchsalida()?></td>
+                                  <td><?=$referencia->getCaFchllegada()?></td>
+                                  <td><?=$referencia->getCaMotonave()?></td>
+                              <tr>
+                      </table>
+                  </td>
+              </tr>
+          </table>
+      </td>      
 	</tr>
-	<tr>
-	  <td colspan="4" >
-          &nbsp;
-	  	</td>
-    </tr>
+	
 	
 	<?
 	}

@@ -14,30 +14,33 @@ class inoActions extends sfActions {
     const RUTINA_ADUANA = 15;
     const RUTINA_EXPO = 15;
 
-    public function getNivel() {
+    public function getNivel( ){
         $this->modo = $this->getRequestParameter("modo");
+        $this->impoexpo = $this->getRequestParameter("impoexpo");
 
         $this->nivel = -1;
-        /* if( !$this->modo ){
-          $this->forward( "ino", "seleccionModo" );
-          } */
 
-        if ($this->modo == "aereo") {
-            $this->nivel = $this->getUser()->getNivelAcceso(inoActions::RUTINA_AEREO);
+		if( $this->modo==Constantes::AEREO  || utf8_decode($this->modo) == Constantes::AEREO ){
+            $this->modo=Constantes::AEREO;
+			$this->nivel = $this->getUser()->getNivelAcceso( inoActions::RUTINA_AEREO );
+		}else if( $this->modo==Constantes::MARITIMO || utf8_decode($this->modo)==Constantes::MARITIMO  ){
+            $this->modo=Constantes::MARITIMO;
+			$this->nivel = $this->getUser()->getNivelAcceso( inoActions::RUTINA_MARITIMO );
+		}else if( $this->modo==Constantes::TERRESTRE || utf8_decode($this->modo)==Constantes::TERRESTRE ){
+            $this->modo=Constantes::TERRESTRE;
+			$this->nivel = $this->getUser()->getNivelAcceso( inoActions::RUTINA_EXPO );
+		}
+
+        if( $this->impoexpo==Constantes::IMPO || utf8_decode($this->impoexpo) == Constantes::IMPO ){
+            $this->impoexpo=Constantes::IMPO;
+		}
+        else if( $this->impoexpo==Constantes::EXPO || utf8_decode($this->impoexpo) == Constantes::EXPO ){
+            $this->impoexpo=Constantes::EXPO;
+        }else if( $this->impoexpo==Constantes::TRIANGULACION || utf8_decode($this->impoexpo) == Constantes::TRIANGULACION ){
+            $this->impoexpo=Constantes::TRIANGULACION;
         }
+        
 
-        if ($this->modo == "maritimo") {
-            $this->nivel = $this->getUser()->getNivelAcceso(inoActions::RUTINA_MARITIMO);
-        }
-
-        if ($this->modo == "expo") {
-            $this->nivel = $this->getUser()->getNivelAcceso(inoActions::RUTINA_EXPO);
-        }
-
-
-        if ($this->nivel == -1) {
-            $this->forward404();
-        }
         return $this->nivel;
     }
 
@@ -64,36 +67,66 @@ class inoActions extends sfActions {
         $this->nivel = $this->getNivel();
         $this->comerciales = UsuarioTable::getComerciales();
     }
-
     /**
      * Executes index action
      *
      * @param sfRequest $request A request object
      */
     public function executeBusqueda(sfWebRequest $request) {
-        $this->nivel = $this->getNivel();
-        $this->modo = $request->getParameter("modo");
-
-
         $criterio = $request->getParameter("criterio");
         $cadena = $request->getParameter("cadena");
 
+        $q = Doctrine_Query::create()->from('InoMaster m')
+                ;
 
-        $q = Doctrine_Query::create()->from('InoMaster m');
-        //$q->innerJoin( "m.Modalidad mod" );
-        switch ($this->modo) {
-            case "aereo":
-                $q->addWhere("m.ca_impoexpo = ? and m.ca_transporte = ?", array(Constantes::IMPO, Constantes::AEREO));
-                break;
-            case "maritimo":
-                $q->addWhere("m.ca_impoexpo = ? and m.ca_transporte = ?", array(Constantes::IMPO, Constantes::MARITIMO));
-                break;
-        }
+        $q = Doctrine::getTable("InoMaster")
+                        ->createQuery("m")
+                        ->select("*");
+
 
 
         switch ($criterio) {
-            case "nombre":
-                $q->addWhere("m.ca_referencia LIKE ?", $cadena . "%");
+            case "ca_referencia":
+            case "ca_motonave":
+            case "ca_origen":
+            case "ca_destino":
+                $q->addWhere("lower(m.$criterio) LIKE ?","%". strtolower($cadena) . "%");
+                break;
+            case "ca_fchsalida":
+            case "ca_fchllegada":
+                $q->addWhere("m.$criterio = ?","'". $cadena . "'");
+                break;
+            case "linea":
+                $q->innerJoin("m.IdsProveedor pr");
+                $q->innerJoin("pr.Ids ids");
+                $q->addWhere("lower(ids.ca_nombre) like ?", "%". strtolower($cadena) ."%");
+
+                break;
+            case "cliente":
+            case "ca_numorden":
+            case "reporte":
+            case "proveedor":
+            case "ca_doctransporte":
+                $q->innerJoin("m.InoHouse h");
+                if($criterio=="cliente")
+                {                    
+                    $q->innerJoin("h.Cliente cl");
+                    $q->addWhere("lower(cl.ca_compania) like ?", "%". strtolower($cadena) ."%");
+                }            
+                else if($criterio=="proveedor")
+                {
+                    $q->innerJoin("h.Proveedor pr");
+                    $q->addWhere("lower(pr.ca_nombre) like ?", "%". strtolower($cadena) ."%");
+                }
+                else if($criterio=="reporte")
+                {
+                    $q->innerJoin("h.Reporte rep");
+                    $q->addWhere("lower(rep.ca_consecutivo) like ?", "%". strtolower($cadena) ."%");
+                }
+                else
+                {
+                    $q->addWhere("lower(h.$criterio) like ?", "%". strtolower($cadena) ."%");
+                }
                 break;
         }
 
@@ -112,12 +145,12 @@ class inoActions extends sfActions {
         );
 
         $this->refList = $this->pager->execute();
-        if ($this->pager->getResultsInPage() == 1 && $this->pager->getPage() == 1) {
+        /*if ($this->pager->getResultsInPage() == 1 && $this->pager->getPage() == 1) {
             $refs = $this->refList;
-            $this->redirect("ino/verReferencia?modo=" . $this->modo . "&id=" . $refs[0]->getCaIdmaster());
-        }
+            $this->redirect("ino/verReferencia?id=" . $refs[0]->getCaIdmaster());
+        }*/
         $this->criterio = $criterio;
-        $this->cadena = $cadena;
+        $this->cadena = $cadena;        
     }
 
     /**
@@ -126,8 +159,16 @@ class inoActions extends sfActions {
      * @param sfRequest $request A request object
      */
     public function executeFormIno(sfWebRequest $request) {
-        $this->nivel = $this->getNivel();
         $this->modo = $request->getParameter("modo");
+        $this->impoexpo = $request->getParameter("impoexpo");
+        $this->id = $request->getParameter("id");
+        if($this->id>0)
+        {
+            $this->referencia = Doctrine::getTable("InoMaster")->find($this->id);
+            $this->modo = $this->referencia->getCaTransporte();
+        }
+        else
+            $this->nivel = $this->getNivel();
     }
 
     /**
@@ -136,19 +177,13 @@ class inoActions extends sfActions {
      * @param sfRequest $request A request object
      */
     public function executeGuardarMaster(sfWebRequest $request) {
-        //$this->nivel = $this->getNivel();
-        $this->modo = $request->getParameter("modo");
-        //----------------------- Validación ---------------------------
         $errors = array();
 
-        //$errors["idagente"]="El agente es requerido";
         if (count($errors) > 0) {
             $this->responseArray = array("success" => false, "errors" => $errors);
         }
 
-        //----------------------- Guarda los datos ---------------------------
         try {
-
             $impoexpo = utf8_decode($request->getParameter("impoexpo"));
             $transporte = utf8_decode($request->getParameter("transporte"));
             $modalidad = utf8_decode($request->getParameter("modalidad"));
@@ -157,7 +192,13 @@ class inoActions extends sfActions {
             $fchreferencia = $request->getParameter("fchreferencia");
             $fchreferenciaTm = strtotime($fchreferencia);
 
-            $ino = new InoMaster();
+            $this->id=($request->getParameter("id")!="")?$request->getParameter("id"):"0";
+
+            $ino = Doctrine::getTable("InoMaster")->find($this->id);
+
+            if(!$ino)
+                $ino = new InoMaster();
+            
             $numRef = InoMasterTable::getNumReferencia($impoexpo, $transporte, $modalidad, $idorigen, $iddestino, date("m", $fchreferenciaTm), date("Y", $fchreferenciaTm));
             $ino->setCaReferencia($numRef);
             $ino->setCaImpoexpo($impoexpo);
@@ -172,15 +213,53 @@ class inoActions extends sfActions {
             $ino->setCaMaster($request->getParameter("ca_master"));
             $ino->setCaFchmaster($request->getParameter("ca_fchmaster"));
 
-
+            $ino->setCaFchsalida($request->getParameter("ca_fchsalida"));
+            $ino->setCaFchllegada($request->getParameter("ca_fchllegada"));
+            $ino->setCaMotonave(utf8_decode($request->getParameter("ca_motonave")));
 
             $ino->save();
-            $this->responseArray = array("success" => true, "idmaestra" => $ino->getCaIdmaster());
+            $this->responseArray = array("success" => true, "idmaestra" => $ino->getCaIdmaster(),"modo" => utf8_decode($this->modo) );
+            
         } catch (Exception $e) {
             $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
         }
+        $this->setTemplate("responseTemplate");
+    }
+    /**
+     *
+     *
+     * @param sfRequest $request A request object
+     */
+    public function executeDatosMaster(sfWebRequest $request) {        
+        $this->id = $request->getParameter("id");
+        $this->forward404Unless($this->id);
 
+        $ino = Doctrine::getTable("InoMaster")->find($this->id);
+     
+        try {
+            $data["impoexpo"]=utf8_encode($ino->getCaImpoexpo());
+            $data["transporte"]=utf8_encode($ino->getCaTransporte());
+            $data["modalidad"]=$ino->getCaModalidad();
+            $data["fchreferencia"]=$ino->getCaFchreferencia();
+            $data["idorigen"]=$ino->getCaOrigen();
+            $data["iddestino"]=$ino->getCaDestino();
 
+            $data["idlinea"]=$ino->getCaIdlinea();
+            $data["linea"]=utf8_encode($ino->getIdsProveedor()->getIds()->getCaNombre());
+
+            $data["idagente"]=$ino->getCaIdagente();
+
+            $data["ca_master"]=$ino->getCaMaster();
+            $data["ca_fchmaster"]=$ino->getCaFchmaster();
+
+            $data["ca_motonave"]=utf8_encode($ino->getCaMotonave());
+            $data["ca_fchsalida"]=$ino->getCaFchsalida();
+            $data["ca_fchllegada"]=$ino->getCaFchllegada();
+            
+            $this->responseArray = array("success" => true,"data"=>$data);
+        } catch (Exception $e) {
+            $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
+        }
 
         $this->setTemplate("responseTemplate");
     }
@@ -228,6 +307,7 @@ class inoActions extends sfActions {
             $house->setCaIdproveedor($request->getParameter("idproveedor"));
             $house->setCaNumorden($request->getParameter("numorden"));
             $house->setCaNumpiezas($request->getParameter("numpiezas"));
+            $house->setCaMpiezas(utf8_decode($request->getParameter("mpiezas")));
             $house->setCaPeso($request->getParameter("peso"));
             $house->setCaVolumen($request->getParameter("volumen"));
             $house->setCaDoctransporte($request->getParameter("doctransporte"));
@@ -272,7 +352,7 @@ class inoActions extends sfActions {
             $row["vendedor"] = $inoHouse->getCaVendedor();
             $row["idreporte"] = $inoHouse->getCaIdreporte();
             $row["reporte"] = $inoHouse->getReporte()->getCaConsecutivo();
-            $row["numpiezas"] = $inoHouse->getCaNumpiezas();
+            $row["numpiezas"] = $inoHouse->getCaNumpiezas()." ".utf8_encode($inoHouse->getCaMpiezas());
             $row["peso"] = $inoHouse->getCaPeso();
             $row["volumen"] = $inoHouse->getCaVolumen();
             $row["idproveedor"] = $inoHouse->getCaIdproveedor();
@@ -314,6 +394,7 @@ class inoActions extends sfActions {
         $data["idreporte"] = $inoHouse->getCaIdreporte();
         $data["reporte"] = $inoHouse->getReporte()->getCaConsecutivo();
         $data["numpiezas"] = $inoHouse->getCaNumpiezas();
+        $data["mpiezas"] = utf8_encode($inoHouse->getCaMpiezas());
         $data["peso"] = $inoHouse->getCaPeso();
         $data["volumen"] = $inoHouse->getCaVolumen();
         $data["idproveedor"] = $inoHouse->getCaIdproveedor();
@@ -598,6 +679,13 @@ class inoActions extends sfActions {
         $this->responseArray = array("success" => true, "root" => $data, "total" => count($data));
         $this->setTemplate("responseTemplate");
     }
+    
+    
+     /*************************************************************************
+    *
+    *   Acciones para el cuadro de costos
+    *
+    ***************************************************************************/
 
     /**
      *
@@ -688,5 +776,27 @@ class inoActions extends sfActions {
         $this->setTemplate("responseTemplate");
     }
 
+    public function executeDatosReporteCarga(sfWebRequest $request) {
+
+        $data=array();
+        $reporte = Doctrine::getTable("Reporte")->find( $request->getParameter("idreporte")  );
+
+        $prov=$reporte->getProveedores();
+        if(count($prov)>0)
+        {
+            $data["idproveedor"]=$prov[0]->getCaIdtercero();
+            $data["proveedor"]=$prov[0]->getCaNombre();
+        }
+
+        $data["doctransporte"]=$reporte->getDocTransporte();
+
+        $data["numpiezas"]=preg_replace( "{[a-zA-Z]+}", '', $reporte->getPiezas());
+        $data["mpiezas"]=trim(preg_replace( "{[0-9.]+}", '', $reporte->getPiezas()));
+        $data["peso"]=preg_replace( "{[a-zA-Z]+}", '', $reporte->getPeso());
+        $vol=(explode(" ", preg_replace( "{[a-zA-Z]+}", '', $reporte->getVolumen())));
+        $data["volumen"]=$vol[0];
+        $this->responseArray=array("success"=>true,"data"=>$data);
+        $this->setTemplate("responseTemplate");
+    }
 }
 

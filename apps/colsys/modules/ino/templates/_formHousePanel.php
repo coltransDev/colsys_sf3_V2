@@ -4,31 +4,25 @@
  *
  *  (c) Coltrans S.A. - Colmas Ltda.
 */
-
 include_component("widgets", "widgetReporte");
 include_component("widgets", "widgetCliente");
 include_component("widgets", "widgetUsuario");
 include_component("widgets", "widgetTercero");
-
-include_component("widgets", "widgetPais");
-include_component("widgets", "widgetCiudad");
+include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047"));
 ?>
 <script type="text/javascript">
-
     Ext.form.Field.prototype.msgTarget = 'side';
-    
     FormHousePanel = function( config ){
-
         Ext.apply(this, config);
-
         this.widgetReporte = new WidgetReporte({
-                                                      fieldLabel: "Reporte",
-                                                      name: "consecutivo",
-                                                      hiddenName: "idreporte",
-                                                      allowBlank: false
-                                                      });
+                                              fieldLabel: "Reporte",
+                                              name: "consecutivo",
+                                              hiddenName: "idreporte",
+                                              hiddenId: "idreporte",
+                                              allowBlank: false,
+                                              tipo:1
+                                              });
         this.widgetReporte.addListener("select", this.onSelectReporte, this );
-
 
         this.widgetCliente = new WidgetCliente({
                                               fieldLabel: "Cliente",
@@ -37,8 +31,6 @@ include_component("widgets", "widgetCiudad");
                                               hiddenName: "idcliente",
                                               allowBlank: false
                                               });
-        
-
         this.widgetVendedor = new WidgetUsuario({
                                               fieldLabel: "Vendedor",
                                               name: "nombreVendedor",
@@ -46,28 +38,24 @@ include_component("widgets", "widgetCiudad");
                                               hiddenName: "vendedor",
                                               allowBlank: false
                                               });
-
         FormHousePanel.superclass.constructor.call(this, {
             deferredRender:false,
-            //layout:'form',
             autoHeight:true,
             bodyStyle:"padding: 5px",
             buttonAlign: 'center',
-            //frame: true,
-            
-            //fileUpload : true,
             items: [{
                         xtype: 'fieldset',
                         title: 'General',
-                        autoHeight:true,                       
+                        autoHeight:true,
                         layout:'column',
                         columns: 2,
                         items :
-                        [       
+                        [
                             /*
                              * =========================Column 1 =========================
                              **/
                             {
+                                xtype: 'fieldset',
                                 columnWidth:.5,
                                 layout: 'form',
                                 border:false,
@@ -90,15 +78,17 @@ include_component("widgets", "widgetCiudad");
                                             name: "proveedor",
                                             id: "proveedor",
                                             hiddenName: "idproveedor",
-                                            allowBlank: false
+                                            hiddenId: "idproveedor",
+                                            allowBlank: false,
+                                            idreporte: "idreporte"
                                            })
-                                    
                                 ]
                             },
                             /*
                              * =========================Column 2 =========================
                              **/
                             {
+                                xtype: 'fieldset',
                                 columnWidth:.5,
                                 layout: 'form',
                                 border:false,
@@ -110,23 +100,20 @@ include_component("widgets", "widgetCiudad");
                                         fieldLabel: "Orden",
                                         name: "numorden",
                                         allowBlank: false
-                                    }             
+                                    }
                                 ]
                             }
-                            
                         ]
                     },
-
                     {
-                    xtype:'fieldset',                    
+                    xtype:'fieldset',
                     title: 'Información de la carga',
                     autoHeight:true,
-                   
                     layout:'column',
                     columns: 2,
                     defaults:{
                         columnWidth:0.5,
-                        layout:'form',                        
+                        layout:'form',
                         border:false,
                         bodyStyle:'padding:4px'
                     },
@@ -136,11 +123,12 @@ include_component("widgets", "widgetCiudad");
                          * =========================Column 1 =========================
                          **/
                         {
+                            xtype: 'fieldset',
                             columnWidth:.5,
                             layout: 'form',
-                            border:false,                            
+                            border:false,
                             defaultType: 'textfield',
-                            items: [                                
+                            items: [
                                 {
                                     xtype: "textfield",
                                     fieldLabel: "Doc. Transporte",
@@ -148,12 +136,27 @@ include_component("widgets", "widgetCiudad");
                                     allowBlank: false
                                 },
                                 {
-                                    xtype: "numberfield",
-                                    fieldLabel: "Piezas",
-                                    name:  "numpiezas",
-                                    allowNegative: false,
-                                    allowDecimals: false,
-                                    allowBlank: false
+                                    xtype: 'compositefield',
+                                    width:158,
+                                    items: [
+                                        {
+                                            xtype: "numberfield",
+                                            fieldLabel: "Piezas",
+                                            name:  "numpiezas",
+                                            allowNegative: false,
+                                            allowDecimals: false,
+                                            allowBlank: false,
+                                            width:72
+                                        },
+                                         new WidgetParametros({
+                                                            id:'mpiezas',
+                                                            name:'mpiezas',
+                                                            caso_uso:"CU047",
+                                                            width:80,
+                                                            idvalor:"valor",
+                                                             allowBlank: false
+                                                            })
+                                    ]
                                 },
                                 {
                                     xtype: "numberfield",
@@ -163,13 +166,13 @@ include_component("widgets", "widgetCiudad");
                                     decimalPrecision: 3,
                                     allowBlank: false
                                 }
-
                             ]
                         },
                         /*
                          * =========================Column 2 =========================
                          **/
                         {
+                            xtype: 'fieldset',
                             columnWidth:.5,
                             layout: 'form',
                             border:false,
@@ -189,15 +192,11 @@ include_component("widgets", "widgetCiudad");
                                     allowNegative: false,
                                     decimalPrecision: 3,
                                     allowBlank: false
-                                },
+                                }
                             ]
                         }
-
                     ]
                 }
-
-                
-                
             ],
             buttons:[
                 {
@@ -212,27 +211,15 @@ include_component("widgets", "widgetCiudad");
                 }
             ]
         });
-
-
-
-
-
-
     };
 
     Ext.extend(FormHousePanel, Ext.form.FormPanel, {
-        /*
-        * Valida y guarda los datos.
-        **/      
-
         onSave: function(){
             var form  = this.getForm();
-
             if( form.isValid() ){
                 var gridOpener = this.gridOpener;
                 form.submit({
-                    url: "<?=url_for("ino/formHouseGuardar")?>",
-                    //scope:this,
+                    url: "<?=url_for("ino/formHouseGuardar")?>",                    
                     waitMsg:'Guardando...',
                     waitTitle:'Por favor espere...',
                     success:function(form,action){
@@ -240,45 +227,29 @@ include_component("widgets", "widgetCiudad");
                         if( win ){
                             win.close();
                         }
-                        
                         if( gridOpener ){
                             var grid = Ext.getCmp( gridOpener);
                             if( grid ){
                                 grid.recargar();
                             }
                         }
-
-
-
                     },
-                    // standardSubmit: false,
                     failure:function(form,action){
                         Ext.MessageBox.alert('Error Message', "Se ha presentado un error"+(action.result?": "+action.result.errorInfo:"")+" "+(action.response?"\n Codigo HTTP "+action.response.status:""));
-                    }//end failure block
+                    }
                 });
             }else{
                 Ext.MessageBox.alert('Error Message', "Por favor complete todos los datos");
             }
         },
-
-        /*
-        * Vuelve a la pagina inicial
-        **/
         onCancel: function(){
             var win = Ext.getCmp("edit-house-win");
             if( win ){
                 win.close();
             }
         },
-        /**
-        * Form onRender override
-        */
         onRender:function() {
-
-            // call parent
             FormHousePanel.superclass.onRender.apply(this, arguments);
-
-            // set wait message target
             this.getForm().waitMsgTarget = this.getEl();
             var form  = this.getForm();
             if( this.idhouse ){
@@ -286,47 +257,43 @@ include_component("widgets", "widgetCiudad");
                     url:'<?=url_for("ino/datosFormHousePanel")?>',
                     waitMsg:'Cargando...',
                     params:{idhouse:this.idhouse},
-
                     success:function(response,options){
-                        this.res = Ext.util.JSON.decode( options.response.responseText );                        
+                        this.res = Ext.util.JSON.decode( options.response.responseText );
                         form.findField("compania").setRawValue(this.res.data.cliente);
                         form.findField("compania").hiddenField.value = this.res.data.idcliente;
-
                         form.findField("nombreVendedor").setRawValue(this.res.data.nombreVendedor);
                         form.findField("nombreVendedor").hiddenField.value = this.res.data.vendedor;
-
                         form.findField("idreporte").setRawValue(this.res.data.reporte);
                         form.findField("idreporte").hiddenField.value = this.res.data.idreporte;
-
-
                         form.findField("proveedor").setRawValue(this.res.data.proveedor);
                         form.findField("proveedor").hiddenField.value = this.res.data.idproveedor;
-
-
-
                     }
-
                 });
             }
-
-        }, // eo function onRender
-
+        },
         onSelectReporte: function( combo, record, idx ){
-            var form = this.getForm();            
+            var form = this.getForm();
             form.findField("nombreVendedor").setRawValue(record.data.nombreVendedor);
             form.findField("nombreVendedor").hiddenField.value = record.data.vendedor;
-            
             form.findField("compania").setValue(record.data.compania);
             form.findField("compania").hiddenField.value = record.data.idcliente;
-
             form.findField("numorden").setValue(record.data.orden_clie);
-
-
-
+            this.load({
+                url: '<?= url_for("ino/datosReporteCarga") ?>',
+                params :{
+                    idreporte:record.data.idreporte
+                },
+                failure:function(response,options){
+                    var res = Ext.util.JSON.decode( response.responseText );
+                    if(res.err)
+                        Ext.MessageBox.alert("Mensaje",'Se presento un error cargando por favor informe al Depto. de Sistemas<br>'+res.err);
+                },
+                success:function(response,options){
+                    var res = Ext.util.JSON.decode( options.response.responseText );
+                    $("#idproveedor").val(res.data.idproveedor);                    
+                    Ext.getCmp("proveedor").lastQuery=res.data.proveedor;
+                }
+            });
         }
-
-       
     });
-
-
 </script>

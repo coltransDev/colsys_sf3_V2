@@ -12,7 +12,7 @@ if( $action!="index" ){
 	$button[$i]["name"]="Inicio ";
 	$button[$i]["tooltip"]="Pagina inicial del módulo";
 	$button[$i]["image"]="22x22/gohome.gif"; 			
-	$button[$i]["link"]= "ino/index?modo=".$this->getRequestParameter("modo");
+	$button[$i]["link"]= "ino/seleccionModo";
 	$i++;
 }
 
@@ -36,7 +36,7 @@ switch($action){
 		$button[$i]["name"]="Editar";
 		$button[$i]["tooltip"]="Edita los valores de esta referencia";
 		$button[$i]["image"]="22x22/edit.gif";
-		$button[$i]["link"]= "ino/formIno?modo=".$this->getRequestParameter("modo")."&id=".$this->getRequestParameter("id")."&token=".md5(time());
+		$button[$i]["link"]= "ino/formIno?id=".$this->getRequestParameter("id");
 		$i++;
 		
 		break;

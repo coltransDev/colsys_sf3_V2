@@ -196,7 +196,7 @@ GridFacturacionPanel = function( config ){
 
 };
 
-Ext.extend(GridFacturacionPanel, Ext.grid.GridPanel, {
+Ext.extend(GridFacturacionPanel, Ext.grid.EditorGridPanel, {
 
     recargar: function(){
 
@@ -327,6 +327,56 @@ Ext.extend(GridFacturacionPanel, Ext.grid.GridPanel, {
     editarFactura: function( idhouse, idcomprobante, gridId ){
         this.win = new GridFacturacionWindow( {gridId:gridId, idcomprobante:idcomprobante} );
         this.win.show();
+
+    },
+
+    guardar: function(){
+        var store = this.store;
+
+        var records = store.getModifiedRecords();
+
+        var lenght = records.length;
+
+        /*
+        for( var i=0; i< lenght; i++){
+            r = records[i];
+            if(!r.data.moneda && (r.data.tipo=="concepto"||r.data.recargo=="concepto") ){
+                if( r.data.iditem!=9999){
+                    Ext.MessageBox.alert('Warning','Por favor coloque la moneda en todos los items');
+                    return 0;
+                }
+            }
+        }	*/
+
+        for( var i=0; i< lenght; i++){
+            r = records[i];
+
+            var changes = r.getChanges();
+
+            changes['id']=r.id;            
+            changes['idcomprobante']=r.data.idcomprobante;
+
+
+            //if( r.data.iditem ){
+                Ext.Ajax.request(
+                    {
+                        waitMsg: 'Guardando cambios...',
+                        url: '<?=url_for("ino/guardarGridFacturacionPanel")?>',
+                        params :	changes,
+
+                        callback :function(options, success, response){
+
+                            var res = Ext.util.JSON.decode( response.responseText );
+                            if( res.id && res.success){
+                                var rec = store.getById( res.id );
+
+                                rec.commit();
+                            }
+                        }
+                     }
+                );
+           // }
+        }
 
     }
 

@@ -4,32 +4,21 @@
  * 
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
-
 ?>
-
 <script type="text/javascript">
-
-
 GridHousePanel = function( config ){
-
-    Ext.apply(this, config);
-
-    
-    this.columns = [
-      
+    Ext.apply(this, config);    
+    this.columns = [      
       {
         header: "House",
         dataIndex: 'doctransporte',
-        //hideable: false,
         width: 100,
         sortable: true,
         renderer: this.formatItem
-
       },
       {
         header: "Idcliente",
         dataIndex: 'idcliente',
-        //hideable: false,
         sortable: true,
         width: 80
       },
@@ -39,15 +28,12 @@ GridHousePanel = function( config ){
         hideable: false,
         sortable: true,
         width: 280
-
       },
       {
         header: "Reporte",
         dataIndex: 'reporte',
-        //hideable: false,
         sortable: true,
         width: 80
-
       },
       {
         header: "Vendedor",
@@ -55,9 +41,7 @@ GridHousePanel = function( config ){
         hideable: false,
         sortable: true,
         width: 80
-
       },
-
       {
         header: "Piezas",
         dataIndex: 'numpiezas',
@@ -86,15 +70,10 @@ GridHousePanel = function( config ){
         hideable: false,
         width: 200,
         sortable: true
-        
       }
-
-
      ];
 
-
     this.record = Ext.data.Record.create([
-            
             {name: 'idmaster', type: 'integer'},
             {name: 'idhouse', type: 'integer'},
             {name: 'doctransporte', type: 'string'},
@@ -106,15 +85,12 @@ GridHousePanel = function( config ){
             {name: 'vendedor', type: 'string'},
             {name: 'idproveedor', type: 'integer'},
             {name: 'reporte', type: 'string'},
-            {name: 'numpiezas', type: 'integer'},
+            {name: 'numpiezas', type: 'string'},
             {name: 'peso', type: 'float'},
-            {name: 'volumen', type: 'float'},
-            
+            {name: 'volumen', type: 'float'}
     ]);
 
-
     this.store = new Ext.data.GroupingStore({
-
         autoLoad : true,
         url: '<?=url_for("ino/datosGridHousePanel")?>',
         baseParams : {
@@ -147,37 +123,27 @@ GridHousePanel = function( config ){
     }
 
     GridHousePanel.superclass.constructor.call(this, {
-       loadMask: {msg:'Cargando...'},
-       //boxMinHeight: 300,
+       loadMask: {msg:'Cargando...'},       
        tbar: this.tbar,
        autoHeight: true,
        view: new Ext.grid.GridView({
-
             forceFit:true,
-            enableRowBody:false
-            //showPreview:true,
+            enableRowBody:false            
        }),
        listeners:{
             rowcontextmenu: this.onRowcontextMenu,
             rowdblclick : this.onRowDblclick
        }
-
     });
-    //this.getView().getRowClass = this.getRowClass;
-
 };
 
 Ext.extend(GridHousePanel, Ext.grid.GridPanel, {
-
     newHouse: function(){
         if( !this.readOnly ){
-            
-            //En caso de que la ventana ya exista la cierra
             var win = Ext.getCmp("edit-house-win");
             if( win ){
                 win.close();
             }
-
             var idmaster = this.idmaster;
             var gridOpener = this.id;
             this.win = new Ext.Window({
@@ -189,15 +155,12 @@ Ext.extend(GridHousePanel, Ext.grid.GridPanel, {
                                             } ),
                 closeAction: 'close',
                 width: 800
-
-
             });
             this.win.show();
         }
     },
     editHouse: function(idhouse){
-       if( !this.readOnly ){
-           //En caso de que la ventana ya exista la cierra
+       if( !this.readOnly ){           
            var win = Ext.getCmp("edit-house-win");
            if( win ){
                 win.close();
@@ -213,8 +176,6 @@ Ext.extend(GridHousePanel, Ext.grid.GridPanel, {
                                            gridOpener: gridOpener}),
                 closeAction: 'close',
                 width: 800
-
-
             });
             this.win.show();
        }
@@ -225,23 +186,15 @@ Ext.extend(GridHousePanel, Ext.grid.GridPanel, {
            if( confirm("Esta seguro que desea eliminar este item?") ){
                var store = this.store;
                Ext.Ajax.request({
-
                     waitMsg: 'Eliminando...',
                     url: '<?=url_for("ino/eliminarGridHousePanel")?>',
-                    //method: 'POST',
-                    //Solamente se envian los cambios
                     params :	{
                         idhouse: idhouse
                     },
-
-                    //Ejecuta esta accion en caso de fallo
-                    //(404 error etc, ***NOT*** success=false)
                     failure:function(response,options){
                         var res = Ext.util.JSON.decode( response.responseText );
                         Ext.MessageBox.alert('Error Message', "Se ha presentado un error"+(res.errorInfo?": "+res.errorInfo:"")+" - "+(response.status?"\n Codigo HTTP "+response.status:""));
                     },
-
-                    //Ejecuta esta accion cuando el resultado es exitoso
                     success:function(response,options){
                         var res = Ext.util.JSON.decode( response.responseText );
                         if( res.success ){
@@ -250,15 +203,11 @@ Ext.extend(GridHousePanel, Ext.grid.GridPanel, {
                             Ext.MessageBox.alert('Error Message', "Se ha presentado un error"+(res.errorInfo?": "+res.errorInfo:"")+" - "+(response.status?"\n Codigo HTTP "+response.status:""));
                         }
                     }
-
-
                 });
             }
        }
     },
-
     recargar: function(){
-
         if(this.store.getModifiedRecords().length>0){
             if(!confirm("Se perderan los cambios no guardados, desea continuar?")){
                 return 0;
@@ -266,33 +215,27 @@ Ext.extend(GridHousePanel, Ext.grid.GridPanel, {
         }
         this.store.reload();
     },
-    
-
     formatItem: function(value, p, record) {
         return String.format(
             '<b>{0}</b>',
             value
         );
-    }
-    ,
-
+    },
     onRowcontextMenu: function(grid, index, e){
         if( !this.readOnly ){
             rec = this.store.getAt(index);
             var idmaster = rec.data.idmaster;
             var idhouse = rec.data.idhouse;
-            if(!this.menu){ // create context menu on first right click
-
-                this.menu = new Ext.menu.Menu({                
+            if(!this.menu){
+                this.menu = new Ext.menu.Menu({
                 enableScrolling : false,
                 items: [
                         {
                             text: 'Editar',
                             iconCls: 'page_white_edit',
                             scope:this,
-                            handler: function(){
-                              
-                                if( this.ctxRecord.data.idhouse  ){                                      
+                            handler: function(){                              
+                                if( this.ctxRecord.data.idhouse  ){
                                     this.editHouse( this.ctxRecord.data.idhouse );
                                 }
                             }
@@ -302,7 +245,6 @@ Ext.extend(GridHousePanel, Ext.grid.GridPanel, {
                             iconCls: 'delete',
                             scope:this,
                             handler: function(){
-
                                 if( this.ctxRecord.data.idhouse  ){
                                     this.deleteHouse( this.ctxRecord.data.idhouse );
                                 }
@@ -323,8 +265,7 @@ Ext.extend(GridHousePanel, Ext.grid.GridPanel, {
             Ext.fly(this.ctxRow).addClass('x-node-ctx');
             this.menu.showAt(e.getXY());
         }
-    }
-    ,
+    },
     onContextHide: function(){
         if(this.ctxRow){
             Ext.fly(this.ctxRow).removeClass('x-node-ctx');
@@ -332,17 +273,14 @@ Ext.extend(GridHousePanel, Ext.grid.GridPanel, {
             this.ctxGridId = null;
         }
     },
-
     onRowDblclick: function( grid , rowIndex, e ){
 		if( !this.readOnly ){
             record =  this.store.getAt( rowIndex );
             this.editHouse( record.data.idhouse );
         }
-	}
-    ,
+	},
     getRowClass : function(record, rowIndex, p, ds){
         p.cols = p.cols-1;
-
         var color;
         if( record.data.action=="Cerrado" ){
             color = "blue";
@@ -366,7 +304,5 @@ Ext.extend(GridHousePanel, Ext.grid.GridPanel, {
         color = "row_"+color;
         return this.state[record.id] ? 'x-grid3-row-expanded '+color : 'x-grid3-row-collapsed '+color;
     }
-
 });
-
 </script>

@@ -10,6 +10,7 @@ include_component("ino", "gridHousePanel");
 
 include_component("ino", "gridFacturacionPanel", array("referencia"=>$referencia) );
 include_component("ino", "gridCostosPanel");
+include_component("ino", "gridCostosPanel");
 include_component("ino", "gridAuditoriaPanel");
 ?>
 <script type="text/javascript">

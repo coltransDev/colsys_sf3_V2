@@ -74,6 +74,7 @@ class inoComponents extends sfComponents {
                         ->innerJoin("i.IdsEmpresa e")
                         ->addWhere("t.ca_tipo = ?", "F")
                         ->addOrderBy("t.ca_tipo, t.ca_comprobante");
+        
 
         if (isset($this->empresa)) {
             $q->addWhere("e.ca_sigla = ?", $this->empresa);
@@ -134,6 +135,7 @@ class inoComponents extends sfComponents {
     /*
      * Grid que muestra las facturas de compra de la referencia
      */
+    
 
     public function executeEditCostosWindow() {
         $this->conceptos = Doctrine::getTable("InoConcepto")
@@ -168,6 +170,14 @@ class inoComponents extends sfComponents {
 
     public function executeEditAuditoriaWindow() {
         
+    }
+
+    public function executePanelFiltro(sfWebRequest $request)
+	{
+        $this->criterio = $request->getParameter("criterio");
+        $this->cadena = $request->getParameter("cadena");
+        $this->field = $request->getParameter("field");
+
     }
 
 }
