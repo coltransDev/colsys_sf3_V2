@@ -13,8 +13,8 @@ WidgetTercero = function( config ){
     
     this.store = new Ext.data.Store({
         proxy: new Ext.data.HttpProxy({
-            url: '<?=url_for("widgets/listaTercerosJSON")?>'
-            
+            url: '<?=url_for("widgets/listaTercerosJSON")?>'            
+
         }),
         baseParams: {tipo: this.tipo},
         reader: new Ext.data.JsonReader({
@@ -26,13 +26,28 @@ WidgetTercero = function( config ){
             {name: 'ciudad', mapping: 'c_ca_ciudad'},
             {name: 'pais', mapping: 'p_ca_nombre'},
             {name: 'direccion', mapping: 't_ca_direccion'},
-            {name: 'contacto', mapping: 't_ca_contacto'}
+            {name: 'contacto', mapping: 't_ca_contacto'},
+            {name: 'idreporte'}
 
         ])
     });
 
     this.resultTpl = new Ext.XTemplate(
-        '<tpl for="."><div class="search-item"><b>{nombre}</b><br /><span style="font-size: 9px"><br />{direccion} {ciudad} - {pais} {contacto}</span> </div></tpl>'
+        '<tpl for="."><div class="search-item">',
+        '<b><span style="font-size:9px">',
+             '<tpl if="this.oficial(idreporte)">',
+                '<span class="rojo">{nombre}</span>',
+            '</tpl>',
+             '<tpl if="!this.oficial(idreporte)">',
+                '{nombre}',
+            '</tpl>',
+            '</span></b><span style="font-size: 9px"><br />{direccion} {ciudad} - {pais} {contacto}</span>',
+        '</div></tpl>'
+        ,{
+            oficial: function(val){
+                return val == true
+            }
+        }
     );
     WidgetTercero.superclass.constructor.call(this, {
         valueField:'idtercero',
@@ -45,7 +60,10 @@ WidgetTercero = function( config ){
         selectOnFocus: true,
         lazyRender:true,
         tpl: this.resultTpl,
-        itemSelector: 'div.search-item'
+        itemSelector: 'div.search-item',
+        listeners:{
+            beforequery:this.onBeforequery
+        }
     });
 };
 
@@ -86,6 +104,7 @@ Ext.extend(WidgetTercero, Ext.form.ComboBox, {
   }),
 
   onViewClick : Ext.form.ComboBox.prototype.onViewClick.createSequence(function() {
+        
     this.triggers[0].show();    
   }),
 
@@ -117,8 +136,16 @@ Ext.extend(WidgetTercero, Ext.form.ComboBox, {
     win1.show();
     win1.cargar(idtercero);
   },
-  onTrigger3Click : function() {
-    this.onTriggerClick();
+  onTrigger3Click : function() {    
+    this.onTriggerClick();    
+  },
+  onBeforequery: function ( queryEvent )
+  {
+      if(this.idreporte)
+      {
+          this.store.baseParams = {idreporte:$("#idreporte").val(),tipo: this.tipo};
+      }
   }
+
 });	
 </script>

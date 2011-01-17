@@ -1,27 +1,17 @@
 <?php
-/* 
+/*
  *  This file is part of the Colsys Project.
- * 
+ *
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
-
-
-
 ?>
-
-
-
 <script type="text/javascript">
-
-
 WidgetReporte = function( config ){
     Ext.apply(this, config);
 
     this.resultTpl = new Ext.XTemplate(
         '<tpl for="."><div class="search-item"><strong>{consecutivo}-V{version}</strong><br /><span><br />{origen} - {destino}</span> </div></tpl>'
-
     );
-        
     this.store = new Ext.data.Store({
         proxy: new Ext.data.HttpProxy({
             url: '<?=url_for("widgets/listaReportesJSON")?>'
@@ -29,7 +19,7 @@ WidgetReporte = function( config ){
         baseParams: {query: '1478'},
         reader: new Ext.data.JsonReader({
             root: 'root',
-            totalProperty: 'total'           
+            totalProperty: 'total'
         }, [
             {name: 'idreporte', mapping: 'r_ca_idreporte'},
             {name: 'consecutivo', mapping: 'r_ca_consecutivo'},
@@ -58,12 +48,9 @@ WidgetReporte = function( config ){
             {name: 'nombreVendedor', mapping: 'usu_ca_nombre'},
             {name: 'coordinador', mapping: 'cl_ca_coordinador'},
             {name: 'orden_clie', mapping: 'r_ca_orden_clie'}
-
-
         ])
     });
 
-    
     WidgetReporte.superclass.constructor.call(this, {
         valueField:'idreporte',
         displayField:'consecutivo',
@@ -73,18 +60,13 @@ WidgetReporte = function( config ){
         minChars: 3,
         triggerAction: 'all',
         emptyText:'',
-        selectOnFocus: true,        
+        selectOnFocus: true,
         lazyRender:true,
         tpl: this.resultTpl,
         itemSelector: 'div.search-item'
     });
 }
-
-
 Ext.extend(WidgetReporte, Ext.form.ComboBox, {
-    
 
 });
-
-	
 </script>

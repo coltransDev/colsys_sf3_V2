@@ -559,7 +559,22 @@ class widgetsActions extends sfActions
 		$criterio =  utf8_decode($this->getRequestParameter("query"));
         $tipo =  $this->getRequestParameter("tipo");
 
-        $rows = Doctrine_Query::create()
+        $idreporte =  $this->getRequestParameter("idreporte");
+
+        $terceros = array();
+        $notIn  = array();
+        if($idreporte)
+        {
+            $reporte = Doctrine::getTable("Reporte")->find( $idreporte );
+            $proveedores=$reporte->getProveedores();
+            foreach($proveedores as $prov)
+            {
+                $terceros[]=array("t_ca_idtercero"=>$prov->getCaIdtercero(), "t_ca_nombre"=>$prov->getCaNombre(), "c_ca_ciudad"=>$prov->getCiudad()->getCaCiudad(), "p_ca_nombre"=>$prov->getCiudad()->getTrafico()->getCaNombre(),"t_ca_direccion"=>$prov->getCaDireccion(),"t_ca_contacto"=>$prov->getCaContacto(),"idreporte"=>true);
+                $notIn[]=$prov->getCaIdtercero();
+            }
+        }
+
+        $q = Doctrine_Query::create()
                         ->select("t.ca_idtercero, t.ca_nombre, c.ca_ciudad, p.ca_nombre,t.ca_direccion,t.ca_contacto")
                         ->from("Tercero t")
                         ->innerJoin("t.Ciudad c")
@@ -569,10 +584,14 @@ class widgetsActions extends sfActions
                         ->addOrderBy("t.ca_nombre ASC")
                         ->setHydrationMode( Doctrine::HYDRATE_SCALAR )
                         ->distinct()
-                        ->limit(40)
-                        ->execute();
+                        ->limit(40);
+        if($idreporte)
+        {
+            $q->addWhere("t.ca_idtercero not in (".implode(",",$notIn).")" );
+        }
 
-	$terceros = array();
+        $rows=$q->execute();
+
         if($tipo=="Master")
         {
             $terceros[]=array("t_ca_idtercero"=>"1", "t_ca_nombre"=>"Cliente/Consignatario", "c_ca_ciudad"=>"", "p_ca_nombre"=>"","t_ca_direccion"=>"","t_ca_contacto"=>"");
@@ -586,9 +605,12 @@ class widgetsActions extends sfActions
         }
 
         $con=0;
+        $rows=array_merge($terceros,$rows );
+        $terceros=array();
         foreach ( $rows as $row ) {
-            $row["c_ca_ciudad"]=($row["c_ca_ciudad"]!="Todas las Ciudades")?utf8_encode($row["c_ca_ciudad"]):"";
-            $row["p_ca_nombre"]=($row["p_ca_nombre"]!="Todos los Tráficos del Mundo")?utf8_encode($row["p_ca_nombre"]):"";
+            //echo $row["p_ca_nombre"]."<br>";
+            $row["c_ca_ciudad"]=(trim($row["c_ca_ciudad"])!="Todas las Ciudades" && $row["c_ca_ciudad"]!="")?utf8_encode($row["c_ca_ciudad"]):" ";
+            $row["p_ca_nombre"]=(trim($row["p_ca_nombre"])=="Todos los Tráficos del Mundo" || $row["p_ca_nombre"]=="")?"":utf8_encode($row["p_ca_nombre"]);
             $row["t_ca_contacto"]=utf8_encode($row["t_ca_contacto"]);
             $row["t_ca_direccion"]=utf8_encode($row["t_ca_direccion"]);
             if(trim(utf8_encode($row["t_ca_nombre"]))==trim($name))
@@ -599,6 +621,8 @@ class widgetsActions extends sfActions
             $row["t_ca_nombre"]=utf8_encode($row["t_ca_nombre"]).(($con)?"(".($con+1).")":"");
             $terceros[]=$row;
         }
+        //print_r($terceros);
+//        exit;
         $this->responseArray = array( "totalCount"=>count( $terceros ), "terceros"=>$terceros  );
         $this->setTemplate("responseTemplate");
 	}
