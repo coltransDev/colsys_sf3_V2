@@ -3,7 +3,7 @@
 * Pantalla de bienvenida para el modulo de reportes 
 * @author Andres Botero
 */
-
+include_component("widgets", "widgetTransporte");
 ?>
 <form action="<?=url_for( "cotizaciones/busquedaCotizacion" )?>" method="post" >
 <script language="javascript">
@@ -13,7 +13,6 @@
 		}else{
 			document.getElementById("visible").style.display="inline";
 		}
-
 		switch( field.value ){
             case "vendedor":
                 document.getElementById("cadena").style.display="none";
@@ -69,10 +68,8 @@
 
                 </select>		
 			</div>
-
             <div id="seguimiento" style="display:none">
                 Mis cotizaciones en estado:<br />
-
                 <select name="seguimiento">
                     <?
                     foreach($estados as $estado ){
@@ -81,10 +78,33 @@
                     <?
                     }
                     ?>
-
                 </select>
 			</div>
-	  </div></td>
+	  </div>
+      <div ><b>Transporte</b> <br><span id="div_filtros"></span></div>
+            <script>
+                 field=new Ext.form.ComboBox({
+                        id: "transporte",
+                        name:"transporte",
+                        mode:'local',
+                        width:100,
+                        store : [
+                            ['','...'],
+                            ['Aéreo','Aéreo'],
+                            ['Marítimo','Marítimo'],
+                            ['Terrestre','Terrestre'],
+                            ['OTM-DTA','OTM-DTA']
+                        ],
+                        forceSelection: true,
+                        triggerAction: 'all',
+                        selectOnFocus:true,
+                        lazyRender:true
+                });
+
+
+                field.render("div_filtros");                
+            </script>
+        </td>
 	  <td width="64"  ><input  type='submit' name='buscar' value=' Buscar' /></td>
 	</tr>
 </table>
