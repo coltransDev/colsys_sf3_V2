@@ -137,11 +137,21 @@ InoClientesSea:
        local: ca_idproveedor
        foreign: ca_idtercero
        type: one
+     Proveedor:
+       local: ca_idproveedor
+       foreign: ca_idtercero
+       type: one
+       class: Tercero
      DestinoCont:
       local: ca_continuacion_dest
       foreign: ca_idciudad
       type: one
       class: Ciudad
+     Vendedor:
+      local: ca_login
+      foreign: ca_login
+      type: one
+      class: Usuario
 
 
 InoEquiposSea:

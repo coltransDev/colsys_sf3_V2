@@ -22,12 +22,12 @@ class ProjectConfiguration extends sfProjectConfiguration
     **/
     public function configureDoctrine(Doctrine_Manager $manager)
     {
-        $manager->setAttribute(Doctrine::ATTR_QUERY_CACHE, new Doctrine_Cache_Apc());
+        $manager->setAttribute(Doctrine_Core::ATTR_QUERY_CACHE, new Doctrine_Cache_Apc());
 
         $options = array('baseClassName' => 'myDoctrineRecord'); 
         sfConfig::set('doctrine_model_builder_options', $options);
 
-        $manager->setAttribute(Doctrine::ATTR_SEQNAME_FORMAT, '%s_id');
+        $manager->setAttribute(Doctrine_Core::ATTR_SEQNAME_FORMAT, '%s_id');
 
         $manager->registerExtension('Blameable');
 
