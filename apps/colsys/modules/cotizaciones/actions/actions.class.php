@@ -97,7 +97,8 @@ class cotizacionesActions extends sfActions
 
             if($transporte)
             {
-                $q->innerJoin("c.CotProducto p");
+                if($criterio!="seguimiento")
+                    $q->innerJoin("c.CotProducto p");
                 $q->addWhere("p.ca_transporte=? ", array($transporte) );
             }
             //$q->addOrderBy("c.ca_idcotizacion DESC");
