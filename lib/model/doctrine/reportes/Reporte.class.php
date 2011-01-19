@@ -961,10 +961,11 @@ class Reporte extends BaseReporte {
                 $reporte->setCaIdetapa(null);
                 $reporte->setCaFchultstatus(null);
                 $reporte->setCaFchreporte(date("Y-m-d"));
+                $reporte->setCaFchdespacho(date("Y-m-d"));
             }
 
             if ($opcion == 2) {
-                $reporte->setCaVersion($this->numVersiones() + 1);
+                $reporte->setCaVersion($this->numVersiones() + 1);                
             }
 
             $reporte->setCaDetanulado(null);
@@ -974,8 +975,7 @@ class Reporte extends BaseReporte {
             $reporte->setCaUsuactualizado(null);
             $reporte->setCaFchcerrado(null);
             $reporte->setCaUsucerrado(null);
-            $reporte->setCaPropiedades(null);
-            $reporte->setCaFchdespacho(date("Y-m-d"));
+            $reporte->setCaPropiedades(null);            
             $reporte->save($conn);
 
             //Copia los conceptos
