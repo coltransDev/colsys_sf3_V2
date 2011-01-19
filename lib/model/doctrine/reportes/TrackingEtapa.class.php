@@ -26,6 +26,9 @@ class TrackingEtapa extends BaseTrackingEtapa
 			case "IMETA":
 				$asunto = "Aviso";
 				break;
+            case "IMETT":
+				$asunto = "Aviso";
+				break;
 			case "99999":
 				$asunto = "Cierre";
 				break;
