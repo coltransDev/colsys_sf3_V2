@@ -82,12 +82,32 @@ $office_types = $sf_data->getRaw("office_types");
                                     fieldLabel: 'Disco',
                                     name: 'disco',
                                     allowBlank: true
-                                },
+                                },                               
                                 {
-                                    xtype:'textfield',
-                                    fieldLabel: 'Ubicación',
-                                    name: 'ubicacion',
-                                    allowBlank: true
+                                    xtype:          'combo',
+                                    mode:           'local',
+                                    value:          '',
+                                    triggerAction:  'all',
+                                    forceSelection: true,
+                                    editable:       true,
+                                    fieldLabel:     'Ubicación.',
+                                    name:           'ubicacion',
+                                    hiddenName:     'ubicacion',
+                                    displayField:   'value',
+                                    valueField:     'value',
+                                    allowBlank: true,
+                                    store:          new Ext.data.JsonStore({
+                                        fields : ['value'],
+                                        data   : [
+                                            <?
+                                            $i=0;
+                                            foreach($ubicaciones as $ubicacion ){
+                                                echo ($i++>0)?",":"";
+                                                echo "{value: '".$ubicacion."'}";
+                                            }
+                                            ?>
+                                        ]
+                                    })
                                 },
 
                                 {                                    

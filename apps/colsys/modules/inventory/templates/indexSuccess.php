@@ -216,8 +216,8 @@ Ext.onReady(function(){
 
 <div style="height:100%"></div>
 <script type="text/javascript">
-    Ext.onReady(function(){
-          /*  var newComponent = new PanelReading({
+    /*Ext.onReady(function(){
+            var newComponent = new PanelReading({
                                                              id: 'asdad',
                                                              closable: true,
                                                              idcategory: 2,
@@ -228,9 +228,9 @@ Ext.onReady(function(){
 
 
         Ext.getCmp('tab-panel').add(newComponent);
-        Ext.getCmp('tab-panel').setActiveTab(newComponent);*/
+        Ext.getCmp('tab-panel').setActiveTab(newComponent);
 
-    });
+    });*/
 
 
 </script>

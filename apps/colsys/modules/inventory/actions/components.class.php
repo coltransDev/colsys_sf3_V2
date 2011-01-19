@@ -60,6 +60,35 @@ class inventoryComponents extends sfComponents
     public function executeEditarActivoPropiedadesPanel( ){
         $this->so_types = ParametroTable::retrieveByCaso("CU095");
         $this->office_types = ParametroTable::retrieveByCaso("CU096");
+
+
+        /*$sucursales = Doctrine::getTable("Sucursal")
+                                ->createQuery("s")
+                                ->select("s.ca_nombre")
+                                ->addOrderBy("s.ca_nombre")
+                                ->addWhere("s.ca_idempresa = ?",  2)
+                                ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
+                                ->distinct()
+                                ->execute();*/
+
+        $departamentos = Doctrine::getTable("Departamento")
+                                ->createQuery("d")
+                                ->select("d.ca_nombre")
+                                ->addOrderBy("d.ca_nombre")
+                                ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
+                                ->execute();
+
+        $this->ubicaciones = array();
+
+        /*foreach( $sucursales as $sucursal ){
+            $this->ubicaciones[] = $sucursal["ca_nombre"];
+        }*/
+        foreach( $departamentos as $departamento ){
+            $this->ubicaciones[] = $departamento["ca_nombre"];
+        }
+
+
+
     }
 
     /*
