@@ -236,6 +236,12 @@ class Email extends BaseEmail
 
 			$this->setCaFchenvio( date("Y-m-d H:i:s") );
 			$this->save();
+
+            
+            $event= $logHeader;
+            $event.= "Enviado OK\n";
+            Utils::writeLog($logFile , $event );
+
 			$result = true;
 		}catch (Exception $e) {
 			echo 'Caught exception: ',  $e->getMessage(), "\n";
