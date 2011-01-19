@@ -1385,15 +1385,7 @@ class idsActions extends sfActions
 
         $stmt = $q->prepare($query, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
         @$stmt->execute();
-        $this->stmt = $stmt;
-
-
-        
-
-        
-
-
-        
+        $this->stmt = $stmt;        
 
     }
 

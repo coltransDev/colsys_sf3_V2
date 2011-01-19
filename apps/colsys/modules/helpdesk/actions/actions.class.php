@@ -190,13 +190,18 @@ class helpdeskActions extends sfActions
 
 		$this->nivel = $this->getUser()->getNivelAcceso( helpdeskActions::RUTINA );		
 		$this->iddepartamento = $this->getUser()->getIddepartamento();	
-		
+
+        $idticket = $request->getParameter("id");
 				
 		if( !$this->nivel ){
 			$this->nivel = 0;
 		}
+
+        if( $this->nivel>0 ){
+            $this->redirect("pm/index?idticket=".$idticket);
+        }
         
-		$idticket = $request->getParameter("id");
+		
 		$this->ticket = HdeskTicketTable::retrieveIdTicket($idticket, $this->nivel );
 		$this->forward404Unless( $this->ticket );	
 								

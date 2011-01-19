@@ -120,11 +120,11 @@ use_helper("ExtCalendar");
                             <input type="hidden" name="idcriterio[]" size="5" value="<?=$criterio->getCaIdcriterio()?>" />
                         </td>
                         <?
-                        if( $tipo=="seleccion" ){
-                            $ponderacion = 100/count( $criterios );
-                        }else{
+                        //if( $tipo=="seleccion" ){
+                        //    $ponderacion = 100/count( $criterios );
+                        //}else{
                             $ponderacion = $criterio->getCaPonderacion();
-                        }
+                        //}
                         ?>
                         <td>
                             <?
