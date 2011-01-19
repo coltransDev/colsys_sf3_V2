@@ -28,7 +28,7 @@ EOF;
 	$databaseManager->loadConfiguration();
     set_time_limit(0);
 
-	$tickets=Doctrine::getTable('HdeskTicket')
+	/*$tickets=Doctrine::getTable('HdeskTicket')
                         ->createQuery("u")
                         ->addOrderBy("u.ca_idticket")
                         //->addWhere('ca_activo = ?', true)
@@ -37,10 +37,10 @@ EOF;
     foreach($tickets as $ticket){
         echo $ticket->getCaIdticket()."\n";
         $ticket->updateLuceneIndex();
-    }
+    }*/
 
-    $index = HdeskTicketTable::getLuceneIndex();
-    $index->optimize();
+    /*$index = HdeskTicketTable::getLuceneIndex();
+    $index->optimize();*/
 
 
 
@@ -55,8 +55,8 @@ EOF;
         $response->updateLuceneIndex();
     }
 
-    $index = HdeskResponseTable::getLuceneIndex();
-    $index->optimize();
+    /*$index = HdeskResponseTable::getLuceneIndex();
+    $index->optimize();*/
 	
 	
 	
