@@ -38,6 +38,21 @@ class notificacionesActions extends sfActions
 		}						
 		$this->tarea = $tarea;			
 	}
+    
+    
+    public function executeCalendario(sfWebRequest $request){
+        $response = sfContext::getInstance()->getResponse();
+        $response->addJavaScript("calendar/calendar-all.js", 'last');
+        $response->addStylesheet("calendar/css/calendar.css", 'last');
+    }
+
+
+    public function executeDatosCalendario(sfWebRequest $request){
+        
+      
+    }
+
+
 	
 	
 	
