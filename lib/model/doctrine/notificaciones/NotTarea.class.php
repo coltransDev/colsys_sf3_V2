@@ -38,7 +38,7 @@ class NotTarea extends BaseNotTarea
 	/*
 	* Crea notificaciones para los usuarios
 	*/
-	public function notificar( $conn ){
+	public function notificar( $conn=null ){
 
 		$lista = Doctrine::getTable("NotListaTareas")->find( $this->getCaIdlistatarea());
 
