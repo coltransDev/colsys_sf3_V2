@@ -4,7 +4,7 @@
 $i=1;
 ?>
 <div class="content" align="center">
-<h1>Estado de Clientes Perido: <?=$inicio?> - <?=$final?></h1>
+<h1>Estado de Clientes Peri&oacute;do: <?=$inicio?> - <?=$final?></h1>
 
 <table class="tableList" border="1">
 <thead>
@@ -60,7 +60,7 @@ $i=1;
 	}else{
 ?>
 	<tr>
-	    <td colspan="12"><div align="left"><b>Total Clientes Potenciales al Iniciar el Periodo: <?=$poblacion?></b></div></td>
+	    <td colspan="12"><div align="left"><b>Total Clientes Potenciales al Iniciar el Peri&oacute;do: <?=$poblacion?></b></div></td>
         </tr>
 <?
 	}
