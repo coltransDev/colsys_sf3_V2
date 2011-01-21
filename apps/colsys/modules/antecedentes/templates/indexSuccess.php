@@ -4,34 +4,39 @@
  *
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
-
-
 ?>
 
 <div style="height:100%"></div>
 
 
 <div class="content" align="center">
-    <form action="<?= url_for("antecedentes/asignacionMaster") ?>">
-        <table width="50%" class="tableList" >
+    <form action="<?= url_for("antecedentes/buscarReferencia") ?>" method="post">
+        <table class="tableList" width="550px" align="center" border="0" cellpadding="5px" cellspacing="1px" >
             <tr>
-                <th colspan="2" >Asignación de Master</th>
-
+                <th colspan="3" style='font-size: 12px; font-weight:bold;'>Sistema de Antecedentes</th>
             </tr>
             <tr>
-                <td>Crear un nuevo numero master</td>
-                <td><input type="text" name="master" /></td>
+                <td colspan="3" style='font-size: 10px;'>Ingrese un criterio para realizar las busqueda</td>
             </tr>
             <tr>
-                <td>Usar un numero de master existente</td>
-                <td><input type="text" name="master2" /></td>
-            </tr>
-            <tr>
-                <td align="center" colspan="2">
-                    <input type="submit" value="Continuar">
+                <td width="88" ><b>Buscar por:</b> <br />
+                    <select name="criterio" size="7" >
+                        <option value="reporte" selected="selected">Reporte</option>
+                        <option value="referencia">Referencia</option>
+                    </select>
                 </td>
+                <td width="337" >&nbsp;
+                    <div id="visible" style=""><b>Que contenga la cadena:</b><br />
+                        <div id="cadena"><input type="text" name="cadena" id="cadena" size="60" /></div>
+                    </div></td>
+                <td width="64"  ><input  type='submit' name='buscar' value=' Buscar' /></td>
             </tr>
         </table>
     </form>
+    <br />
+    <div align="center">
+        <a href="<?=url_for("antecedentes/listadoReferencias")?>">Ver el listado completo</a>
+    </div>
+
 </div>
 

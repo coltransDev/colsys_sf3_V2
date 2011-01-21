@@ -80,7 +80,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
     echo "  <TH ROWSPAN=2><INPUT Class=submit TYPE='SUBMIT' NAME='buscar' VALUE='  Buscar  ' ONCLIK='menuform.submit();'></TH>";
     echo "</TR>";
     echo "<TR>";
-    echo "  <TD Class=listar COLSPAN=3>Búsqueda por ETA:  <INPUT TYPE=CHECKBOX NAME='rango' ONCLICK='habilitar();'><IMG SRC='./graficos/nuevo.gif' border=0 ALT='Nuevo Servicio'><TABLE CELLSPACING=1 WIDTH=320>";
+    echo "  <TD Class=listar COLSPAN=3>Búsqueda por ETA:  <INPUT TYPE=CHECKBOX NAME='rango' ONCLICK='habilitar();'><TABLE CELLSPACING=1 WIDTH=320>";
     echo "	<TR>";
     echo "    <TD Class=listar>Fecha Inicial:<BR><INPUT TYPE='TEXT' NAME='fchinicial' DISABLED SIZE=12 VALUE='".date(date("Y")."-".date("m")."-"."01")."' ONKEYDOWN=\"chkDate(this)\" ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
     echo "    <TD Class=listar>Fecha Final :<BR><INPUT TYPE='TEXT' NAME='fchfinal' DISABLED SIZE=12 VALUE='".date( "Y-m-d", mktime(0,0,0,date("m")+1,0,date("Y")))."' ONKEYDOWN=\"chkDate(this)\" ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
@@ -98,7 +98,10 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
     echo "<TR HEIGHT=5>";
     echo "  <TD Class=captura COLSPAN=6></TD>";
     echo "</TR>";
-    echo "</TABLE><BR>";
+    echo "</TABLE><BR>";    
+    echo "<BR />";
+    echo "<a href='/antecedentes/listadoReferencias/format/maritimo'>Listado de antecedentes</a><IMG SRC='./graficos/nuevo.gif' border=0 ALT='Nuevo Servicio'>";
+    echo "<BR />";
     echo "<TABLE CELLSPACING=10>";
     echo "<TH><INPUT Class=button TYPE='BUTTON' NAME='boton' VALUE='Terminar' ONCLICK='javascript:document.location.href = \"/\"'></TH>";  // Cancela la operación
     echo "</TABLE>";
@@ -255,6 +258,12 @@ elseif (isset($boton)) {                                                       /
                 echo "<TH COLSPAN=4>Descripción</TH>";
                 echo "<TH><IMG src='./graficos/new.gif' alt='Crear un Nuevo Registro' border=0 onclick='elegir(\"Adicionar\", 0, 0, 0);'></TH>";  // Botón para la creación de un Registro Nuevo
                 while (!$rs->Eof() and !$rs->IsEmpty()) {                                                      // Lee la totalidad de los registros obtenidos en la instrucción Select
+                    if( $rs->Value('ca_provisional')=="t" ){                        
+                        echo "<script type='text/javascript'>";
+                        echo "document.location='/antecedentes/verPlanilla/format/maritimo/ref/".str_replace(".","|",$rs->Value('ca_referencia'))."'";
+                        echo "</script>";
+                        exit();
+                    }
                     $visible = ($rs->Value('ca_usucerrado')=='')?'visible':'hidden';
                     $abrible = ($rs->Value('ca_usucerrado')!='' and $nivel >= 3)?'visible':'hidden';
                     echo "<TR>";
@@ -469,7 +478,7 @@ elseif (isset($boton)) {                                                       /
                     }
                     if ($rs->Value('ca_usucerrado')=='') {
                         echo "  <TD Class=invertir style='text-align: center; vertical-align: middle;'><INPUT Class=submit onMouseOver=\"this.style.cursor='hand'\" onMouseOut=\"this.style.cursor='default'\" TYPE='SUBMIT' NAME='accion' VALUE='Cerrar Caso'></TD>";
-                        echo "  <TD Class=invertir style='text-align: center; vertical-align: middle;'><div style='display:$ver;'>Provisional:<BR><INPUT TYPE=CHECKBOX NAME='provisional'></div></TD>";
+                        echo "  <TD Class=invertir style='text-align: center; vertical-align: middle;'><div style='display:none'>Provisional:<BR><INPUT TYPE=CHECKBOX NAME='provisional'></div></TD>";
                     }else {
                         echo "  <TD Class=listar><B>Cierre:</B>&nbsp;".$rs->Value('ca_usucerrado')."<BR>".$rs->Value('ca_fchcerrado')."</TD>";
                         echo "  <TD Class=listar style='font-weight:bold; text-align: center; vertical-align: middle;'><B>".(($rs->Value('ca_provisional')=="t")?"Cierre<br>Provisional":"")."</TD>";
@@ -4749,7 +4758,7 @@ elseif (isset($accion)) {                                                      /
                 break;
             }
         case 'Abrir': {                                                      // El Botón Guardar fue pulsado
-                if (!$rs->Open("update tb_inomaestra_sea set ca_usucerrado = null, ca_usuoperacion = '$usuario', ca_fchcerrado = null, ca_provisional = false where ca_referencia = '$id'")) {
+                if (!$rs->Open("update tb_inomaestra_sea set ca_usucerrado = null, ca_usuoperacion = '$usuario', ca_fchcerrado = null where ca_referencia = '$id'")) {
                     echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                     echo "<script>document.location.href = 'inosea_abrir.php';</script>";
                     exit;
@@ -4821,7 +4830,7 @@ elseif (isset($accion)) {                                                      /
                     exit;
                 }else if ($rs->Value('ca_usuliquidado') == '') {
                         echo "<script>alert(\"No puede Cerrar el caso si no ha sido firmado como liquidado\");</script>";  // Muestra el mensaje de error
-                    }else if (!$rs->Open("update tb_inomaestra_sea set ca_fchcerrado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usucerrado = '$usuario', ca_usuoperacion = '$usuario', ca_provisional = $provisional where ca_referencia = '$referencia'")) {
+                    }else if (!$rs->Open("update tb_inomaestra_sea set ca_fchcerrado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usucerrado = '$usuario', ca_usuoperacion = '$usuario' where ca_referencia = '$referencia'")) {
                             echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                             echo "<script>document.location.href = 'inosea.php';</script>";
                             exit;

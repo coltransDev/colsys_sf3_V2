@@ -45,6 +45,11 @@ class antecedentesComponents extends sfComponents {
         
     }
 
+    /**
+     *
+     */
+    public function executeWidgetReporteAntecedentes() {
 
+    }
 
 }
