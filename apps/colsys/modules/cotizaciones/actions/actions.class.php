@@ -47,6 +47,8 @@ class cotizacionesActions extends sfActions
             $login = $this->getRequestParameter("login");
             $seguimiento = $this->getRequestParameter("seguimiento");
             $transporte = $this->getRequestParameter("transporte");
+            $idorigen = $this->getRequestParameter("idorigen");
+            $iddestino = $this->getRequestParameter("iddestino");
 
             $q = Doctrine_Query::create()
                                 ->select("c.*,EXTRACT(YEAR FROM c.ca_fchcreado),to_number(SUBSTR(c.ca_consecutivo , 1 , (POSITION('-' in c.ca_consecutivo)-1) ),'999999')")
@@ -95,12 +97,20 @@ class cotizacionesActions extends sfActions
                 break;
             }
 
-            if($transporte)
+            if($transporte || $idorigen)
             {
                 if($criterio!="seguimiento")
                     $q->innerJoin("c.CotProducto p");
-                $q->addWhere("p.ca_transporte=? ", array($transporte) );
+                if($transporte)
+                    $q->addWhere("p.ca_transporte=? ", array($transporte) );
+                if($idorigen)
+                    $q->addWhere("p.ca_origen=? ", array($idorigen) );
+                if($iddestino)
+                    $q->addWhere("p.ca_destino=? ", array($iddestino) );
+                
             }
+
+
             //$q->addOrderBy("c.ca_idcotizacion DESC");
             $q->limit(200);
             $q->distinct();
