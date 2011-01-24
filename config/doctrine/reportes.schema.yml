@@ -71,7 +71,7 @@ Reporte:
     ca_idetapa: string
     ca_fchultstatus: timestamp
     ca_idtarea_rext: integer
-    ca_idseguimiento: integer
+    ca_idtarea_antecedente: integer
     ca_detanulado: string
     ca_mcia_peligrosa: boolean
     ca_idgrupo: integer
@@ -90,8 +90,7 @@ Reporte:
     ca_cont_destino: integer
     ca_idcotizacionotm: string
     ca_idproductootm: integer
-    ca_tiporep: integer
-    ca_master: string
+    ca_tiporep: integer    
   relations:
     RepStatus:
       local: ca_idreporte
@@ -136,10 +135,11 @@ Reporte:
       foreign: ca_idciudad
       type: one
       class: Ciudad
-    NotTarea:
-      local: ca_idseguimiento
+    NotTareaAntecedente:
+      local: ca_idtarea_antecedente
       foreign: ca_idtarea
       type: one
+      class: NotTarea
     RepEquipo:
       local: ca_idreporte
       foreign: ca_idreporte
