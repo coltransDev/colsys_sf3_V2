@@ -3,7 +3,8 @@
 * Pantalla de bienvenida para el modulo de reportes 
 * @author Andres Botero
 */
-include_component("widgets", "widgetTransporte");
+
+include_component("widgets", "widgetCiudad");
 ?>
 <form action="<?=url_for( "cotizaciones/busquedaCotizacion" )?>" method="post" >
 <script language="javascript">
@@ -81,7 +82,21 @@ include_component("widgets", "widgetTransporte");
                 </select>
 			</div>
 	  </div>
-      <div ><b>Transporte</b> <br><span id="div_filtros"></span></div>
+            <table>
+                <tr>
+                    <td>
+                        <div><b>Transporte</b> <br><span id="div_filtros"></span></div>
+                    </td>
+                    <td>
+                        <div><b>Origen</b> <br><span id="div_filtros1"></span></div>
+                    </td>
+                   <td>
+                        <div><b>Destino</b> <br><span id="div_filtros2"></span></div>
+                    </td>
+                </tr>
+            </table>
+            
+            
             <script>
                  field=new Ext.form.ComboBox({
                         id: "transporte",
@@ -100,9 +115,26 @@ include_component("widgets", "widgetTransporte");
                         selectOnFocus:true,
                         lazyRender:true
                 });
+                field.render("div_filtros");
 
+                field=new WidgetCiudad({
+                                      name: 'origen',
+                                      hiddenName: 'idorigen',
+                                      id: 'origen',
+                                      width:100
+                                    })
 
-                field.render("div_filtros");                
+                field.render("div_filtros1");
+
+                field=new WidgetCiudad({
+                                      name: 'destino',
+                                      hiddenName: 'iddestino',
+                                      id: 'destino',
+                                      width:100
+                                    })
+
+                field.render("div_filtros2");
+
             </script>
         </td>
 	  <td width="64"  ><input  type='submit' name='buscar' value=' Buscar' /></td>
