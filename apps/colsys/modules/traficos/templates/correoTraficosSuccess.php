@@ -2,7 +2,7 @@
 use_helper("MimeType");
 
 
-
+$reportes = $sf_data->getRaw("reportes");
 ?>
 <div class="content" >
 <form action="<?=url_for("traficos/enviarCorreoTraficos?reporte=".$consecutivo)?>" method="post">
