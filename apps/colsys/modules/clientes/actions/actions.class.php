@@ -404,6 +404,9 @@ class clientesActions extends sfActions {
                 $email->setCaReplyto($comercial->getCaEmail());
                 $email->addCc($comercial->getCaEmail());
 
+                $sucursal = $comercial->getSucursal();
+                $direccion_suc = $sucursal->getCaDireccion()." ".$sucursal->getCaNombre();
+
                 /*
                   reset($defaultEmail);
                   while (list ($clave, $val) = each ($defaultEmail)) {
@@ -426,12 +429,12 @@ class clientesActions extends sfActions {
                 $bodyHtml.= "La Ciudad<br /><br /><br />";
                 $bodyHtml.= "<u><b>ASUNTO: DOCUMENTOS IDENTIFICACIÓN CLIENTE<b></u><br /><br /><br />";
                 $bodyHtml.= "Respetado Cliente:<br /><br />";
-                $bodyHtml.= "En cumplimiento con la Circular No 0170 de la DIAN expedida el 10 de Octubre de 2002, es nuestra Obligaciòn como Agentes de Carga Internacional, crear un banco de datos de nuestros clientes para <b>Prevenciòn y Control de Lavado de Activos</b>, solicitamos su colaboración con el diligenciamiento de la misma y enviarlo a la Cra. 98 No 25g-10 int. 18 con los documentos requeridos en la carta adjunta antes de <b>$siguiente_mes</b> o si lo prefiere puede contactarnos para que un funcionario recoja los documentos.<br /><br /><br />";
+                $bodyHtml.= "En cumplimiento con la Circular No 0170 de la DIAN expedida el 10 de Octubre de 2002, es nuestra Obligaciòn como Agentes de Carga Internacional, crear un banco de datos de nuestros clientes para <b>Prevenciòn y Control de Lavado de Activos</b>, solicitamos su colaboración con el diligenciamiento de la misma y enviarlo a la $direccion_suc con los documentos requeridos en la carta adjunta antes de <b>$siguiente_mes</b> o si lo prefiere puede contactarnos para que un funcionario recoja los documentos.<br /><br /><br />";
                 $bodyHtml.= "Agradezco su colaboración.<br /><br /><br />";
                 $bodyHtml.= "<b>Recuerde que esta información se debe actualizar cada año.</b>";
 
                 $email->setCaBodyhtml($bodyHtml);
-                //$email->setCaFchenvio(date("Y-m-d H:i:s"));
+                // $email->setCaFchenvio(date("Y-m-d H:i:s"));
                 $email->addAttachment("Attachements/CARTA_CIRCULAR_184.doc");
                 $email->addAttachment("Attachements/NUEVA_CIRC_ 170.xls");
 
