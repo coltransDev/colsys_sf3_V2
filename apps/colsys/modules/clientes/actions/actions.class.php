@@ -462,8 +462,6 @@ class clientesActions extends sfActions {
             $this->clientesSinVisita[] = $row;
         }
 
-
-
         // Si es el proceso Automático que se ejecuta los 20 de cada mes, verifica los Clientes que tienen más de 60 días
         // con la Circular 0170 vencida y retira beneficios de Cupo y Tiempo de C?edito.
         /*
