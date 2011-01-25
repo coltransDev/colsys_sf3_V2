@@ -118,8 +118,30 @@ if( $reporte->getCaUsuanulado() ){
 		?>	
 		</div>
 		<br />
-		
-		<?
+
+        <?
+        $tarea = $reporte->getNotTareaAntecedente();
+        if( $tarea && $tarea->getCaFchvencimiento() ){
+            if( $tarea->getCaFchterminada() ){
+                ?>
+                <div class="post-info" align="left">
+                <b>Antecedentes</b><br />
+                <?=image_tag("22x22/agt_action_success.gif");?> Se entregaron antecedentes el: <br />
+                <b> <?=Utils::fechaMes($tarea->getCaFchterminada())?> </b>
+                </div>
+                <br />
+                <?
+            }else{
+                ?>
+                <div class="post-info" align="left">
+                <b>Antecedentes</b><br />
+                <?=image_tag("22x22/agt_update_critical.gif");?> Debe entregar antecedentes antes de: <br />
+                <b> <?=Utils::fechaMes($tarea->getCaFchvencimiento())?> </b>
+                </div>
+                <br />
+                <?
+            }
+        }
 		if( $reporte->getCaImpoexpo()==Constantes::IMPO || $reporte->getCaImpoexpo()==Constantes::TRIANGULACION ){
 		?>
 		<div class="post-info" align="left">

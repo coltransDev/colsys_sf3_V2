@@ -417,249 +417,292 @@ class traficosActions extends sfActions
 	 * @author: Andres Botero
 	 */
 	private function executeGuardarStatus( $request ){
-		$idreporte = $this->getRequestParameter("idreporte");
-		$this->forward404Unless( $idreporte );
-		$reporte = Doctrine::getTable("Reporte")->find( $idreporte );
-		$this->forward404Unless( $reporte );
-		
-		$this->modo = $this->getRequestParameter("modo");
-		$this->forward404unless( $this->modo );
-		
-		$user = $this->getUser();
-				
-		$status = new RepStatus();
-		$status->setCaIdreporte( $reporte->getCaIdreporte() );
-		$status->setCaFchstatus( date("Y-m-d H:i:s") );
-		$status->setCaIntroduccion( Utils::replace( $request->getParameter("introduccion") ) );	
-		
-		
-		if( $request->getParameter("notas") ){ 
-			$status->setCaComentarios( $request->getParameter("notas") );
-		}
-		$status->setCaIdetapa( $request->getParameter("idetapa") );
-		
-		
-		
-	
-		if( $request->getParameter("fchrecibo") ){			
-			$horaRecibo =  $request->getParameter("horarecibo");            
-			if( !$horaRecibo['minute'] ){
-				$horaRecibo['minute']='00';
-			}
+        $conn = Doctrine::getTable("Reporte")->getConnection();
+        $conn->beginTransaction();
 
-            $horaRecibo['hour']=str_pad($horaRecibo['hour'],2, "0", STR_PAD_LEFT );
-            $horaRecibo['minute']=str_pad($horaRecibo['minute'],2, "0", STR_PAD_LEFT );
-			$horaRecibo = implode(":", $horaRecibo );            
-			$status->setCaFchrecibo( Utils::parseDate($request->getParameter("fchrecibo"), "Y-m-d")." ".$horaRecibo );
-		}
+        try{
+            $idreporte = $this->getRequestParameter("idreporte");
+            $this->forward404Unless( $idreporte );
+            $reporte = Doctrine::getTable("Reporte")->find( $idreporte );
+            $this->forward404Unless( $reporte );
 
-        if( $request->getParameter("observaciones_idg") ){
-            $status->setCaObservacionesIdg( $request->getParameter("observaciones_idg") );
+            $this->modo = $this->getRequestParameter("modo");
+            $this->forward404unless( $this->modo );
+
+            $user = $this->getUser();
+
+            $status = new RepStatus();
+            $status->setCaIdreporte( $reporte->getCaIdreporte() );
+            $status->setCaFchstatus( date("Y-m-d H:i:s") );
+            $status->setCaIntroduccion( Utils::replace( $request->getParameter("introduccion") ) );
+
+
+            if( $request->getParameter("notas") ){
+                $status->setCaComentarios( $request->getParameter("notas") );
+            }
+            $status->setCaIdetapa( $request->getParameter("idetapa") );
+
+
+
+
+            if( $request->getParameter("fchrecibo") ){
+                $horaRecibo =  $request->getParameter("horarecibo");
+                if( !$horaRecibo['minute'] ){
+                    $horaRecibo['minute']='00';
+                }
+
+                $horaRecibo['hour']=str_pad($horaRecibo['hour'],2, "0", STR_PAD_LEFT );
+                $horaRecibo['minute']=str_pad($horaRecibo['minute'],2, "0", STR_PAD_LEFT );
+                $horaRecibo = implode(":", $horaRecibo );
+                $status->setCaFchrecibo( Utils::parseDate($request->getParameter("fchrecibo"), "Y-m-d")." ".$horaRecibo );
+            }
+
+            if( $request->getParameter("observaciones_idg") ){
+                $status->setCaObservacionesIdg( $request->getParameter("observaciones_idg") );
+            }
+
+            $status->setCaFchenvio( date("Y-m-d H:i:s") );
+            $status->setCaUsuenvio( $user->getUserId() );
+
+            $piezas = $request->getParameter("piezas")."|".$request->getParameter("un_piezas");
+            $peso = $request->getParameter("peso")."|".$request->getParameter("un_peso");
+            $volumen = $request->getParameter("volumen")."|".$request->getParameter("un_volumen");
+
+            if($request->getParameter("piezas")){
+                $status->setCaPiezas( $piezas );
+            }
+
+            if($request->getParameter("peso")){
+                $status->setCaPeso( $peso );
+            }
+            if($request->getParameter("volumen")){
+                $status->setCaVolumen( $volumen );
+            }
+
+            if( $request->getParameter("doctransporte") ){
+                $status->setCaDoctransporte( $request->getParameter("doctransporte") );
+            }
+
+            if( $request->getParameter("docmaster") ){
+                $status->setCaDocmaster( $request->getParameter("docmaster") );
+            }
+
+
+            if( $request->getParameter("idnave") ){
+                $status->setCaIdnave( $request->getParameter("idnave") );
+            }
+
+            if( $request->getParameter("fchsalida") ){
+                $status->setCaFchsalida( Utils::parseDate($request->getParameter("fchsalida")) );
+            }
+            if( $request->getParameter("fchllegada") ){
+                $status->setCaFchllegada( Utils::parseDate($request->getParameter("fchllegada")) );
+            }
+
+
+            $horaRecibo = $request->getParameter("horasalida");
+            if( $horaRecibo['hour'] ){
+                $horasalida =  $request->getParameter("horasalida");
+                if( !$horasalida['minute'] ){
+                    $horasalida['minute']='00';
+                }
+                $horasalida = implode(":", $horasalida );
+                $horasalida = $horasalida.":00";
+                $status->setCaHorasalida( $horasalida );
+            }
+
+            if( $request->getParameter("horallegada") ){
+                $status->setCaHorallegada( $request->getParameter("horallegada") );
+            }
+
+            if( trim($request->getParameter("fchcontinuacion")) && $reporte->getCaContinuacion()!="N/A" ){
+                $status->setCaFchcontinuacion( Utils::parseDate(trim($request->getParameter("fchcontinuacion")) ));
+            }
+
+            //borra los equipos viejos
+            $repequipos = $reporte->getRepEquipos();
+            foreach( $repequipos as $equipo ){
+                $equipo->delete( $conn );
+            }
+
+            for( $i=0; $i<NuevoStatusForm::NUM_EQUIPOS ; $i++ ){
+
+                if( $request->getParameter("equipos_tipo_".$i) && $request->getParameter("equipos_cant_".$i) ){
+                    $repequipo = new RepEquipo();
+                    $repequipo->setCaIdreporte( $reporte->getCaIdreporte() );
+                    $repequipo->setCaIdconcepto( $request->getParameter("equipos_tipo_".$i) );
+                    $repequipo->setCaCantidad( $request->getParameter("equipos_cant_".$i) );
+                    if( $reporte->getCaImpoexpo()==Constantes::EXPO ){
+                        $repequipo->setCaIdequipo( $request->getParameter("equipos_serial_".$i) );
+                    }
+                    $repequipo->save( $conn );
+                }
+            }
+
+
+            $parametros = ParametroTable::retrieveByCaso("CU059", null, null, $reporte->getCliente()->getCaIdgrupo() );
+
+
+            foreach( $parametros as $parametro ){
+                $valor = explode(":",$parametro->getCaValor());
+                $name = $valor[0];
+                $type = $valor[1];
+                if( $request->getParameter($name ) ){
+
+                    $reporte->setProperty($name, $request->getParameter($name));
+                }
+            }
+            $reporte->stopBlaming();
+            $reporte->save( $conn );
+
+            if( $reporte->getCaImpoexpo()==Constantes::EXPO && $reporte->getCaTiporep()!="3" ){
+                $repExpo = $reporte->getRepexpo();
+                if( $request->getParameter("datosbl") ){
+                    $repExpo->setCaDatosbl( $request->getParameter("datosbl") );
+                }
+                if( $request->getParameter("inspeccion_fisica")!==null ){
+                    if( $request->getParameter("inspeccion_fisica") ){
+                        $repExpo->setCaInspeccionFisica( true );
+                    }else{
+                        $repExpo->setCaInspeccionFisica( false );
+                    }
+                }
+                $repExpo->save( $conn );
+            }
+
+            $status->setStatus( $request->getParameter("mensaje") );
+
+            $status->save( $conn );
+
+
+            $address = array();
+            foreach( $_POST as $key=>$val ){
+                if( substr($key,0,14 )=="destinatarios_" ){
+                    if( $request->getParameter($key) ){
+                        $address[] = trim($request->getParameter($key));
+                    }
+                }
+
+                if( substr($key,0,19 )=="destinatariosfijos_" ){
+                    if( $request->getParameter($key) ){
+                        $address[] = trim($request->getParameter($key));
+                    }
+                }
+            }
+
+
+
+            $cc = array();
+            for( $i=0; $i<NuevoStatusForm::NUM_CC ; $i++ ){
+                if( $request->getParameter("cc_".$i) ){
+                    $cc[] = trim($request->getParameter("cc_".$i));
+                }
+            }
+
+            $user = $this->getUser();
+            $attachments = $this->getRequestParameter( "attachments" );
+            $att = array();
+            if( $attachments ){
+                foreach( $attachments as $attachment){
+                    $att[]=$reporte->getDirectorioBase().base64_decode( $attachment );
+                }
+            }
+
+            $options["from"] =  $request->getParameter("remitente");
+
+            $options["subject"] =  $request->getParameter("asunto");
+
+            //$address = array();
+            $status->send($address, $cc,  $att, $options, $conn);
+
+            
+            if( $request->getParameter("prog_seguimiento") ){
+
+                $titulo = "Seguimiento RN".$reporte->getCaConsecutivo()." [".$reporte->getCaModalidad()." ".$reporte->getOrigen()->getCaCiudad()."->".$reporte->getDestino()->getCaCiudad()."]";
+                $texto = "";
+                
+                $tarea = new NotTarea();
+                $tarea->setCaUrl( "/traficos/listaStatus/modo/".$this->modo."/reporte/".$reporte->getCaConsecutivo() );
+                $tarea->setCaIdlistatarea( 3 );
+                $tarea->setCaFchvencimiento( $request->getParameter("fchseguimiento")." 23:59:59" );
+                $tarea->setCaFchvisible( $request->getParameter("fchseguimiento")." 00:00:00" );
+                $tarea->setCaTitulo( $titulo );
+                $tarea->setCaTexto( $request->getParameter("txtseguimiento") );
+                if( $request->getParameter("remitente") ){
+                    $tarea->setCaNotificar( $request->getParameter("remitente") );
+                }
+                $tarea->save( $conn );
+                $loginsAsignaciones = array( $this->getUser()->getUserId() );
+                $tarea->setAsignaciones( $loginsAsignaciones, $conn );
+
+                /*$reporte->setCaIdseguimiento( $tarea->getCaIdtarea() );
+                $reporte->stopBlaming();
+                $reporte->save();		*/
+
+                $asignacion = Doctrine::getTable("RepAsignacion")->find(array($reporte->getCaIdreporte(), $tarea->getCaIdtarea()));
+                if( !$asignacion ){
+                    $asignacion = new RepAsignacion();
+                }
+                $asignacion->setCaIdreporte( $reporte->getCaIdreporte() );
+                $asignacion->setCaIdtarea( $tarea->getCaIdtarea() );
+                $asignacion->save( $conn );
+
+            }else{
+                //Se lee de la base de datos ya que la etapa es actualizada por los triggers
+                $reporte = Doctrine::getTable("Reporte")->find( $reporte->getCaIdreporte() );
+                if( $reporte->getCaIdetapa()=="IMETA" || $reporte->getCaIdetapa()=="99999" ){//Quita todas las tareas
+                    $tareas = $reporte->getTareas( Reporte::IDLISTASEG );
+                    foreach( $tareas as $tarea ){
+                        $tarea->setCaFchterminada( date("Y-m-d H:i:s") );
+                        $tarea->setCaUsuterminada( $this->getUser()->getUserId() );
+                        $tarea->save( $conn );
+                    }
+                }
+            }
+
+           
+            //Tarea de envio de antecedentes
+            if( $reporte->getCaIdetapa()=="IMETA" ){
+                
+                if( $reporte->getCaIdtareaAntecedente() ){
+                    $tarea = Doctrine::getTable("NotTarea")->find( $reporte->getCaIdtareaAntecedente() );
+                    $this->forward404Unless($tarea );
+                }else{
+                    $tarea = new NotTarea();
+                    $tarea->setCaIdlistatarea( 8 );
+                }              
+
+                $titulo = "Antecedentes RN".$reporte->getCaConsecutivo()." [".$reporte->getCaModalidad()." ".$reporte->getOrigen()->getCaCiudad()."->".$reporte->getDestino()->getCaCiudad()."]";
+                $texto = "";
+
+                //Numero de días para entregar antecedentes
+                $numdias = 9; //[TODO] Parametrizar segun tabla
+                $tarea->setCaUrl( "/traficos/listaStatus/modo/reporte/".$reporte->getCaConsecutivo() );
+                $tarea->setCaFchvisible( date("Y-m-d H:i:s") );
+                $tarea->setCaFchvencimiento( date("Y-m-d H:i:s", time()+86400*$numdias) );
+                
+                $tarea->setCaTitulo( $titulo );
+                $texto = "Debe entregar los antecedentes...";//[TODO] Colocar un texto mas descriptivo
+                $tarea->setCaTexto( $texto );
+                if( $request->getParameter("remitente") ){
+                    $tarea->setCaNotificar( $request->getParameter("remitente") );
+                }
+                $tarea->save( $conn );
+
+                $loginsAsignaciones = array( $this->getUser()->getUserId() );
+                $tarea->setAsignaciones( $loginsAsignaciones, $conn );
+
+                $reporte->setCaIdtareaAntecedente( $tarea->getCaIdtarea() );
+                $reporte->stopBlaming();
+                $reporte->save( $conn );
+            }
+            $conn->commit();            
+
+        } catch (Exception $e) {            
+            $conn->rollBack();
+            throw $e;
         }
 
-		$status->setCaFchenvio( date("Y-m-d H:i:s") );
-		$status->setCaUsuenvio( $user->getUserId() );
-			
-		$piezas = $request->getParameter("piezas")."|".$request->getParameter("un_piezas");
-		$peso = $request->getParameter("peso")."|".$request->getParameter("un_peso");
-		$volumen = $request->getParameter("volumen")."|".$request->getParameter("un_volumen");
-		
-		if($request->getParameter("piezas")){
-			$status->setCaPiezas( $piezas );
-		}
-		
-		if($request->getParameter("peso")){
-			$status->setCaPeso( $peso );
-		}
-		if($request->getParameter("volumen")){
-			$status->setCaVolumen( $volumen );
-		}	
-		
-		if( $request->getParameter("doctransporte") ){
-			$status->setCaDoctransporte( $request->getParameter("doctransporte") );
-		}
-					
-		if( $request->getParameter("docmaster") ){
-			$status->setCaDocmaster( $request->getParameter("docmaster") );
-		}
-		
-		
-		if( $request->getParameter("idnave") ){
-			$status->setCaIdnave( $request->getParameter("idnave") );
-		}
-		
-		if( $request->getParameter("fchsalida") ){
-			$status->setCaFchsalida( Utils::parseDate($request->getParameter("fchsalida")) );
-		}
-		if( $request->getParameter("fchllegada") ){
-			$status->setCaFchllegada( Utils::parseDate($request->getParameter("fchllegada")) );
-		}
-			
-		
-		$horaRecibo = $request->getParameter("horasalida");		
-		if( $horaRecibo['hour'] ){	
-			$horasalida =  $request->getParameter("horasalida");		
-			if( !$horasalida['minute'] ){
-				$horasalida['minute']='00';
-			}
-			$horasalida = implode(":", $horasalida );
-            $horasalida = $horasalida.":00";
-			$status->setCaHorasalida( $horasalida );
-		}
-		
-		if( $request->getParameter("horallegada") ){
-			$status->setCaHorallegada( $request->getParameter("horallegada") );
-		}
-			
-		if( trim($request->getParameter("fchcontinuacion")) && $reporte->getCaContinuacion()!="N/A" ){
-			$status->setCaFchcontinuacion( Utils::parseDate(trim($request->getParameter("fchcontinuacion")) ));
-		}
-		
-		//borra los equipos viejos
-		$repequipos = $reporte->getRepEquipos();
-		foreach( $repequipos as $equipo ){
-			$equipo->delete();
-		}
-		
-		for( $i=0; $i<NuevoStatusForm::NUM_EQUIPOS ; $i++ ){
-			
-			if( $request->getParameter("equipos_tipo_".$i) && $request->getParameter("equipos_cant_".$i) ){				
-				$repequipo = new RepEquipo();
-				$repequipo->setCaIdreporte( $reporte->getCaIdreporte() );
-				$repequipo->setCaIdconcepto( $request->getParameter("equipos_tipo_".$i) );
-				$repequipo->setCaCantidad( $request->getParameter("equipos_cant_".$i) );	
-				if( $reporte->getCaImpoexpo()==Constantes::EXPO ){
-					$repequipo->setCaIdequipo( $request->getParameter("equipos_serial_".$i) );
-				}
-				$repequipo->save();
-			}
-		}
-			
-		
-		$parametros = ParametroTable::retrieveByCaso("CU059", null, null, $reporte->getCliente()->getCaIdgrupo() );
-				
-		
-		foreach( $parametros as $parametro ){
-			$valor = explode(":",$parametro->getCaValor());
-			$name = $valor[0];
-			$type = $valor[1];						
-			if( $request->getParameter($name ) ){		
-					
-				$reporte->setProperty($name, $request->getParameter($name));
-			}
-		}
-		$reporte->stopBlaming();
-		$reporte->save();
-		
-		if( $reporte->getCaImpoexpo()==Constantes::EXPO && $reporte->getCaTiporep()!="3" ){
-			$repExpo = $reporte->getRepexpo();		
-			if( $request->getParameter("datosbl") ){
-				$repExpo->setCaDatosbl( $request->getParameter("datosbl") );
-			}
-            if( $request->getParameter("inspeccion_fisica")!==null ){
-                if( $request->getParameter("inspeccion_fisica") ){
-                    $repExpo->setCaInspeccionFisica( true );
-                }else{
-                    $repExpo->setCaInspeccionFisica( false );
-                }
-            }
-			$repExpo->save();	
-		}			
-		
-		$status->setStatus( $request->getParameter("mensaje") );		
-						
-		$status->save();
-		
-		
-		$address = array();			
-		foreach( $_POST as $key=>$val ){					
-			if( substr($key,0,14 )=="destinatarios_" ){
-				if( $request->getParameter($key) ){
-					$address[] = trim($request->getParameter($key));					 
-				}
-			}
-
-            if( substr($key,0,19 )=="destinatariosfijos_" ){
-				if( $request->getParameter($key) ){
-					$address[] = trim($request->getParameter($key));
-				}
-			}
-		}
-
-        
-		
-		$cc = array();
-		for( $i=0; $i<NuevoStatusForm::NUM_CC ; $i++ ){
-			if( $request->getParameter("cc_".$i) ){
-				$cc[] = trim($request->getParameter("cc_".$i));
-			}
-		}
-
-		$user = $this->getUser();
-		$attachments = $this->getRequestParameter( "attachments" );
-		$att = array();
-		if( $attachments ){
-			foreach( $attachments as $attachment){				
-				$att[]=$reporte->getDirectorioBase().base64_decode( $attachment );				
-			}
-		}
-
-		$options["from"] =  $request->getParameter("remitente");
-		
-		$options["subject"] =  $request->getParameter("asunto");
-			
-		//$address = array();
-		$status->send($address, $cc,  $att, $options);
-		
-		$tarea = $reporte->getNotTarea();					
-		if( $request->getParameter("prog_seguimiento") ){
-			
-			$titulo = "Seguimiento RN".$reporte->getCaConsecutivo()." [".$reporte->getCaModalidad()." ".$reporte->getOrigen()->getCaCiudad()."->".$reporte->getDestino()->getCaCiudad()."]";
-			$texto = "";			
-			
-			
-			if( !$tarea || ($tarea && $tarea->getCaFchterminada()) ){			
-				$tarea = new NotTarea(); 
-				$tarea->setCaFchcreado( date("Y-m-d H:i:s") );
-				$tarea->setCaUsucreado( $this->getUser()->getUserId() );
-			}	
-			$tarea->setCaUrl( "/traficos/listaStatus/modo/".$this->modo."/reporte/".$reporte->getCaConsecutivo() );
-			$tarea->setCaIdlistatarea( 3 );			
-			$tarea->setCaFchvencimiento( $request->getParameter("fchseguimiento")." 23:59:59" );
-			$tarea->setCaFchvisible( $request->getParameter("fchseguimiento")." 00:00:00" );			
-			$tarea->setCaTitulo( $titulo );		
-			$tarea->setCaTexto( $request->getParameter("txtseguimiento") );
-            if( $request->getParameter("remitente") ){
-                $tarea->setCaNotificar( $request->getParameter("remitente") );
-            }
-			$tarea->save();
-			$loginsAsignaciones = array( $this->getUser()->getUserId() );
-			$tarea->setAsignaciones( $loginsAsignaciones );	
-			
-			/*$reporte->setCaIdseguimiento( $tarea->getCaIdtarea() );
-            $reporte->stopBlaming();
-			$reporte->save();		*/
-
-            $asignacion = Doctrine::getTable("RepAsignacion")->find(array($reporte->getCaIdreporte(), $tarea->getCaIdtarea()));
-            if( !$asignacion ){
-                $asignacion = new RepAsignacion();
-            }
-            $asignacion->setCaIdreporte( $reporte->getCaIdreporte() );
-            $asignacion->setCaIdtarea( $tarea->getCaIdtarea() );
-            $asignacion->save();
-            		
-		}else{
-            //Se lee de la base de datos ya que la etapa es actualizada por los triggers
-            $reporte = Doctrine::getTable("Reporte")->find( $reporte->getCaIdreporte() );
-			if( $reporte->getCaIdetapa()=="IMETA" || $reporte->getCaIdetapa()=="99999" ){//Quita todas las tareas
-                $tareas = $reporte->getTareas( Reporte::IDLISTASEG );
-                foreach( $tareas as $tarea ){
-                    $tarea->setCaFchterminada( date("Y-m-d H:i:s") );
-                    $tarea->setCaUsuterminada( $this->getUser()->getUserId() );
-                    $tarea->save();
-                }
-			}
-		}
 		$this->redirect("traficos/listaStatus?modo=".$this->modo."&reporte=".$reporte->getCaConsecutivo());
 	}
 	

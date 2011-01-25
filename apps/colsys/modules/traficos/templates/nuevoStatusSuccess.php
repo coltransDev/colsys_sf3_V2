@@ -751,15 +751,12 @@ echo $form['mensaje_mask']->render();
 
 	</tr>
 	<?
-	$tarea = $reporte->getNotTarea();
+	
 	?>
 	<tr>
 		<td colspan="2"><div align="left"><b>Programar recordatorio:</b>
 			<?
-			 echo $form['prog_seguimiento']->renderError(); 
-			 if( $tarea && $tarea->getCaIdtarea() && !$tarea->getCaFchterminada() ){
-			 	$form->setDefault('prog_seguimiento', true ); 
-			 }	
+			 echo $form['prog_seguimiento']->renderError(); 	
 			 echo $form['prog_seguimiento']->render();
 			 ?>
 			 
@@ -768,20 +765,14 @@ echo $form['mensaje_mask']->render();
 	<tr>
 		<td colspan="2" id="row_seguimiento"><div align="left"><b>Fecha:</b>
 				<?
-			 echo $form['fchseguimiento']->renderError();
-			 if( $tarea && $tarea->getCaIdtarea() && !$tarea->getCaFchterminada() ){
-			 	$form->setDefault('fchseguimiento', Utils::parseDate($tarea->getCaFchvencimiento(),"Y-m-d") );
-			 }			   
+			 echo $form['fchseguimiento']->renderError();			 
 			 echo $form['fchseguimiento']->render();
 			 ?>
 		</div>			
 		<br />
 		<div align="left"><b>Recordar sobre:</b>
 				<?
-			 echo $form['txtseguimiento']->renderError(); 
-			 if( $tarea && $tarea->getCaIdtarea() &&  !$tarea->getCaFchterminada() ){
-			 	$form->setDefault('txtseguimiento', $tarea->getCaTexto() ); 
-			 }	
+			 echo $form['txtseguimiento']->renderError(); 			 
 			 echo $form['txtseguimiento']->render();
 			 ?>
 			</div></td>
