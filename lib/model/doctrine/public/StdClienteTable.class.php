@@ -12,7 +12,7 @@ class StdClienteTable extends Doctrine_Table
             if ($empresa == 'Coltrans') {
                 $query.= "LEFT JOIN ( select ca_idcliente, max(ca_fchcreado) as ca_fchcreado from (select ca_idcliente, ca_fchcreado from tb_inoclientes_sea UNION select ca_idcliente, ca_fchcreado from tb_inoclientes_air) cl group by ca_idcliente ) act ON (cl.ca_idcliente = act.ca_idcliente)";
             } else if ($empresa == 'Colmas'){
-                $query.= "LEFT JOIN ( select ca_idcliente, max(ca_fchcreado) as ca_fchcreado from (select ca_idcliente, ca_fchcreado from tb_expo_maestra UNION select ca_idcliente, ca_fchcreado from tb_brk_maestra) cl group by ca_idcliente ) act ON (cl.ca_idcliente = act.ca_idcliente)";
+                $query.= "LEFT JOIN ( select ca_idcliente, max(ca_fchcreado) as ca_fchcreado from (select em.ca_idcliente, ei.ca_fchcreado from tb_expo_ingresos ei INNER JOIN tb_expo_maestra em ON ei.ca_referencia = em.ca_referencia UNION select bm.ca_idcliente, bi.ca_fchcreado from tb_brk_maestra bm INNER JOIN tb_brk_ingresos bi ON bi.ca_referencia = bm.ca_referencia) cl group by ca_idcliente ) act ON (cl.ca_idcliente = act.ca_idcliente)";
             }
             $query.= " INNER JOIN ( select ca_idcliente, max(ca_fchestado) as ca_fchestado from tb_stdcliente where ca_empresa = '$empresa' group by ca_idcliente ) ult ON (cl.ca_idcliente = ult.ca_idcliente)";
             $query.= " INNER JOIN ( select ca_idcliente, ca_fchestado, ca_estado from tb_stdcliente where ca_empresa= '$empresa' ) std ON (std.ca_idcliente = ult.ca_idcliente and std.ca_fchestado::text = ult.ca_fchestado::text)";
