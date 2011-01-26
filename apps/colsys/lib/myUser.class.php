@@ -80,6 +80,10 @@ class myUser extends sfBasicSecurityUser
 	public function setGrupos( $grupos ){		
 		$this->setAttribute('grupos', $grupos );
 	}
+
+    public function getSucursal(){
+        return $this->getAttribute('idsucursal');
+	}
 	
 	
 		
@@ -403,7 +407,8 @@ class myUser extends sfBasicSecurityUser
         }        
         return $menu;
     }
-	
+
+    
 }
 
 ?>
