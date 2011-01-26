@@ -764,14 +764,21 @@ for( $k=0; $k<count($transportes); $k++ ):
 	if( !isset($transportes[$k+1]) || $transporte!=$transportes[$k+1] ){
         //echo "..:";
 		// ======================== Recargos Locales ======================== //
+
 		foreach( $grupos as $key => $grupo ){
             //echo $key." - ".$transporte;
+            if($transporte=="DTA" || $transporte=="OTM" )
+            {
+                $transporte=constantes::OTMDTA;
+            }
 			if( $key!=$transporte ){
 //                if($key!=constantes::OTMDTA && $transporte!="OTM" )
 				continue;
 			}
+
+            
 			foreach( $grupo as $modalidad ){
-				$recargosLoc = $cotizacion->getRecargosLocales($key, $modalidad);
+				$recargosLoc = $cotizacion->getRecargosLocales($key, $modalidad); 
 				if( count($recargosLoc)>0 ){
 					$imprimirObservaciones=false;
 					foreach( $recargosLoc as $recargo ){
