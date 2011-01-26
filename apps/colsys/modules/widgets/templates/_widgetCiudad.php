@@ -14,7 +14,7 @@ WidgetCiudad = function( config ){
     this.resultTpl = new Ext.XTemplate(
             '<tpl for="."><div class="search-item"><b>{ciudad}</b><br />{trafico}</div></tpl>'
     );
-    this.trafico = (this.trafico)?this.trafico:"CO-057";    
+    this.trafico = "<?=$trafico?>";
     this.store = new Ext.data.Store({
 				autoLoad : true,
 				reader: new Ext.data.JsonReader(
@@ -66,8 +66,7 @@ Ext.extend(WidgetCiudad, Ext.form.ComboBox, {
         if(this.fireEvent('beforequery', qe)===false || qe.cancel){
             return false;
         }
-        q = qe.query;
-        //alert(this.trafico)
+        q = qe.query;        
         forceAll = qe.forceAll;
         if(forceAll === true || (q.length >= this.minChars)){
             if(this.lastQuery !== q){

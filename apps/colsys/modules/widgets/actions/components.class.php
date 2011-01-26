@@ -429,6 +429,8 @@ class widgetsComponents extends sfComponents
                                    "ciudad_trafico"=>utf8_encode($ciudad->getTrafico()->getCaNombre()." ".$ciudad->getCaCiudad())
                                  );
         }
+
+        $this->trafico=$trafico=$this->getUser()->getIdtrafico();
         
 	}
     public function executeUsuarios()
