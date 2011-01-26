@@ -28,7 +28,9 @@ class inoComponents extends sfComponents {
      */
 
     public function executeFormMasterPanel() {
-        
+        $user = $this->getUser();
+        $this->trafico=$trafico=$user->getIdtrafico();        
+        $this->impoexpo=$this->getRequestParameter("impoexpo");        
     }
 
     /*

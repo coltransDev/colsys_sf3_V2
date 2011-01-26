@@ -91,6 +91,7 @@ include_component("widgets", "widgetAgente");
                                                   allowBlank: false,
                                                   tipo:"1",
                                                   impoexpo:"impoexpo",
+                                                  trafico: "<?=$trafico?>",
                                                   tabIndex:6
                                                 }),
                                 new WidgetAgente({fieldLabel: 'Agente',
@@ -148,6 +149,7 @@ include_component("widgets", "widgetAgente");
                                                   allowBlank: false,
                                                   tipo:"2",
                                                   impoexpo:"impoexpo",
+                                                  trafico: "<?=$trafico?>",
                                                   tabIndex:7
                                                 })
                             ]
