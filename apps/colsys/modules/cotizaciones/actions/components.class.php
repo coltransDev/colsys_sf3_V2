@@ -180,12 +180,8 @@ class cotizacionesComponents extends sfComponents
 	*
 	*/
 	public function executePanelAgentes(){
-
 		$response = sfContext::getInstance()->getResponse();
 		$response->addJavaScript("extExtras/CheckColumn",'last');
-
-
-
 	}
 
     /*
@@ -217,7 +213,6 @@ class cotizacionesComponents extends sfComponents
         
     }
 
-
     /*
      * Ventana para crear un nuevo trayecto
      */
@@ -235,7 +230,5 @@ class cotizacionesComponents extends sfComponents
 	{
 
     }
-
-
 }
 ?>
