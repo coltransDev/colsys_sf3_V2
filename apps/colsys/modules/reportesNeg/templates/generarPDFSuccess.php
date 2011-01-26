@@ -234,7 +234,7 @@ if (trim($reporte->getCaContinuacion())== "N/A" || (trim($reporte->getCaContinua
         $pdf->SetWidths ( array (25, 25, 85, 40, 25 ) );
         $pdf->SetFills ( array (1, 0, 0, 0, 0 ) );
         $pdf->SetStyles ( array ("B", "B", "", "B", "" ) );
-        $pdf->Row ( array ('Consignatario:', 'Nombre:', $consignatario->getCaNombre (), $reporte->getCaImpoexpo () == "Exportación" ? 'Identificacion' : 'Enviar Información:', $reporte->getCaImpoexpo () == "Exportación" ? $consignatario->getCaIdentificacion () : $reporte->getCaInformarCons () ) );
+        $pdf->Row ( array ('Consignatario:', 'Nombre:', $consignatario->getCaNombre () . "  ".$consignatario->getCaIdentificacion (), $reporte->getCaImpoexpo () == "Exportación" ? 'Identificacion' : 'Enviar Información:', $reporte->getCaImpoexpo () == "Exportación" ? $consignatario->getCaIdentificacion () : $reporte->getCaInformarCons () ) );
 
         $pdf->SetWidths ( array (5, 22, 68, 25, 80 ) );
         $pdf->Row ( array ('', 'Cont.:', $consignatario->getCaContacto (), 'Dirección:', str_replace ( "|", " ", $consignatario->getCaDireccion () ) ) );
@@ -498,7 +498,7 @@ if ($reporte->getCaSeguro () == "Sí") {
     }
 }
 
-if( ($reporte->getCaImpoexpo()==Constantes::IMPO && $reporte->getCaColmas()=="Sí") || ($reporte->getCaImpoexpo()==Constantes::EXPO && $reporte->getCaTiporep()=="3" && ($repexpo->getCaIdsia()==17 || $repexpo->getCaIdsia()==9) ) ){
+if( (($reporte->getCaImpoexpo()==Constantes::IMPO || $reporte->getCaImpoexpo()=="OTM/DTA") && $reporte->getCaColmas()=="Sí") || ($reporte->getCaImpoexpo()==Constantes::EXPO && $reporte->getCaTiporep()=="3" && ($repexpo->getCaIdsia()==17 || $repexpo->getCaIdsia()==9) ) ){
 	$pdf->Ln ( 3 );
 	$repaduana = $reporte->getRepAduana ();
 

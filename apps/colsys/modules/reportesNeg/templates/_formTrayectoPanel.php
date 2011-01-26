@@ -4,6 +4,7 @@
  *
  *  (c) Coltrans S.A. - Colmas Ltda.
 */
+
 include_component("widgets", "widgetCotizacion");
 include_component("widgets", "widgetModalidad");
 include_component("widgets", "widgetLinea");
@@ -136,19 +137,14 @@ if($permiso>=2)
                                         name: 'impoexpo',
                                         value:'<?=$impoexpo?>'
                                     },
-                                    this.wgModalidad,
-                                    /*new WidgetPais({fieldLabel: 'País Origen',
-                                                    id: 'tra_origen_id',
-                                                    linkCiudad: 'origen',
-                                                    hiddenName:'idtra_origen_id',
-                                                    pais:'<?=$pais1?>',
-                                                    excluidos:'C0-057'
-                                                   }),
-                                    */
+                                    this.wgModalidad,                                   
                                     new WidgetCiudad({fieldLabel: '<?=$origen?>',                                                      
                                                       id: 'origen',
                                                       idciudad:"origen",
-                                                      hiddenName:"idorigen"
+                                                      hiddenName:"idorigen",
+                                                      tipo:"1",
+                                                      impoexpo:"impoexpo",
+                                                      trafico: "<?=$trafico?>"
                                                     })
                                 ]
                             },                       
@@ -173,7 +169,10 @@ if($permiso>=2)
                                     new WidgetCiudad({fieldLabel: '<?=$destino?>',                                                      
                                                       id: 'destino',
                                                       idciudad:"destino",
-                                                      hiddenName:"iddestino"
+                                                      hiddenName:"iddestino",
+                                                      tipo:"2",
+                                                      impoexpo:"impoexpo",
+                                                      trafico: "<?=$trafico?>"
                                                     })
     <?
                                     if($impoexpo==constantes::EXPO)

@@ -513,7 +513,7 @@ class reportesNegComponents extends sfComponents
     public function executeFormAduanasPanel()
 	{
         //echo $this->impoexpo;
-        $perfil=($this->impoexpo==Constantes::IMPO)?"coordinador-de-servicio-al-cliente-aduana":"coordinador-aduana-expo";
+        $perfil=($this->impoexpo==Constantes::EXPO)?"coordinador-aduana-expo":"coordinador-de-servicio-al-cliente-aduana";
         $this->usuarios = Doctrine::getTable("Usuario")
                                    ->createQuery("u")
                                    ->innerJoin("u.UsuarioPerfil up")
@@ -546,7 +546,7 @@ class reportesNegComponents extends sfComponents
 	* @author:
 	*/
     public function executeFormTrayectoPanel()
-    {
+    {        
         $this->load_category();        
         $this->origen="Ciudad Origen";
         $this->destino="Ciudad Destino";
@@ -565,12 +565,12 @@ class reportesNegComponents extends sfComponents
 
         if($this->impoexpo==constantes::IMPO)
         {
-            $this->pais2="CO-057";
+            $this->pais2=$this->trafico;
             $this->pais1="todos";
         }else if($this->impoexpo==constantes::EXPO)
         {
             $this->pais2="todos";
-            $this->pais1="CO-057";
+            $this->pais1=$this->trafico;
         }else if($this->impoexpo==constantes::TRIANGULACION)
         {
             $this->pais1="todos";

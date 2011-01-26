@@ -1,5 +1,4 @@
 <?php
-
 /**
 * Modulo de creacion de reportes Basado en el modulo de reportes de Carlos Lopez y
 * solo que ademas permite crear reportes de exportaciones, adicionalmente entra el
@@ -73,8 +72,7 @@ class reportesNegActions extends sfActions
             {
                 $this->modo=Constantes::MARITIMO;
                 $this->idcategory="32";
-            }
-           
+            }           
         }
         else if($this->impoexpo==Constantes::EXPO || utf8_decode($this->impoexpo)==Constantes::EXPO)
         {
@@ -358,6 +356,7 @@ class reportesNegActions extends sfActions
         $this->nivel = $this->getNivel();        
         $this->impoexpo = $this->getRequestParameter("impoexpo");
         $this->load_category();
+        $user = $this->getUser();
         
         if($this->modo==Constantes::AEREO)
             $this->nomLinea="Aerolinea";
@@ -384,9 +383,6 @@ class reportesNegActions extends sfActions
 
         if($this->permiso<2)
         {
-
-
-            $user = $this->getUser();
             if( !$reporte->isNew() && ($user->getUserId()!=$reporte->getCaUsucreado() && $user->getUserId()!=$reporte->getCaLogin() ) ){
                 $this->editable = false;
             }
@@ -429,6 +425,7 @@ class reportesNegActions extends sfActions
         $this->impoexpo = Constantes::IMPO;
         $this->load_category();
 		$reporte = new Reporte();
+        $user = $this->getUser();
 
         $this->reporte=$reporte;
 
@@ -445,8 +442,7 @@ class reportesNegActions extends sfActions
     public function executeFormReporteOs(sfWebRequest $request){
         $this->nivel = $this->getNivel();
         $this->impoexpo = Constantes::IMPO;
-        $this->load_category();
-
+        $this->load_category();        
 
         if( $this->getRequestParameter("id") ){
                 $reporte = Doctrine::getTable("Reporte")->findOneBy("ca_idreporte", $this->getRequestParameter("id")) ;
@@ -830,9 +826,17 @@ class reportesNegActions extends sfActions
 
             if($request->getParameter("consig") )
             {
-                $reporte->setCaIdconsignatario($request->getParameter("consig"));
-                if($request->getParameter("continuacion")== "OTM")
-                    $reporte->setCaIdconsignar(1);
+                if(($reporte->getCaImpoexpo()==constantes::IMPO || $reporte->getCaImpoexpo()==constantes::TRIANGULACION) && $request->getParameter("consig")>4)
+                {
+                    $reporte->setCaIdconsignatario($request->getParameter("consig"));
+                    if($request->getParameter("continuacion")== "OTM")
+                        $reporte->setCaIdconsignar(1);
+                }
+                else if($reporte->getCaImpoexpo()==constantes::EXPO)
+                    $reporte->setCaIdconsignatario($request->getParameter("consig"));
+                else
+                    $reporte->setCaIdconsignatario(null);
+
             }
             else if($request->getParameter("continuacion")== "OTM")
             {
@@ -3818,12 +3822,12 @@ color="#000000";
         $this->reporte = $reporte;
     }
 
-
 	/**
 	*
 	* @author Mauricio Quinche
 	*/
     public function executeUnificarReporte( $request ){
+
         $this->forward404Unless( $request->getParameter( "id" ) );
 		$reporte = Doctrine::getTable("Reporte")->find($request->getParameter( "id" ));
 		$this->forward404Unless( $reporte );
@@ -3850,23 +3854,38 @@ color="#000000";
                       ->set("ca_detanulado", "'Unificado con el reporte ".$reporte->getCaConsecutivo()."'")
                       ->where("ca_consecutivo = ?", $consecutivo)
                       ->execute();
+
             $tmp="";
-            if($reporte->getCaIdproveedor()!="")
+
+            $proveedores=explode("|", $reporte->getCaIdproveedor());
+            $ordenes=explode("|", $reporte->getCaOrdenProv());
+            $incoterms=explode("|", $reporte->getCaIncoterms());
+
+            $proveedores1=explode("|", $reporte2->getCaIdproveedor());
+            $ordenes1=explode("|", $reporte2->getCaOrdenProv());
+            $incoterms1=explode("|", $reporte2->getCaIncoterms());
+
+            $proveedores=array_merge($proveedores,$proveedores1);
+            $incoterms=array_merge($incoterms,$incoterms1);
+            $ordenes=array_merge($ordenes,$ordenes1);
+            
+            for($i=0;$i<count($proveedores);$i++)
             {
-                $tmp=$reporte->getCaIdproveedor()."|";
+                for($j=$i+1;$j<count($proveedores);$j++)
+                {
+                    if($proveedores[$i]==$proveedores[$j] &&  $incoterms[$i]==$incoterms[$j])
+                    {
+                        $ordenes[$i].="-".$ordenes[$j];
+                        unset($proveedores[$j]);
+                        unset($incoterms[$j]);
+                        unset($ordenes[$j]);
+                    }
+                }
             }
 
-            $reporte->setCaIdproveedor($tmp.$reporte2->getCaIdproveedor());
-
-            $tmp="";
-            if($reporte->getCaIncoterms()!="")
-                $tmp=$reporte->getCaIncoterms()."|";
-            $reporte->setCaIncoterms($tmp.$reporte2->getCaIncoterms());
-
-            $tmp="";
-            if($reporte->getCaOrdenProv()!="")
-                $tmp=$reporte->getCaOrdenProv()."|";
-            $reporte->setCaOrdenProv($tmp.$reporte2->getCaOrdenProv());
+            $reporte->setCaIdproveedor(implode("|", $proveedores));
+            $reporte->setCaIncoterms(implode("|", $incoterms));
+            $reporte->setCaOrdenProv( implode("|", $ordenes));
 
             $tmp="";
             if($reporte->getCaOrdenClie()!="")
@@ -3882,7 +3901,6 @@ color="#000000";
 
             $this->redirect("reportesNeg/consultaReporte?id=".$reporte->getCaIdreporte());
         }
-
         $this->reporte = $reporte;
     }
 
@@ -3906,7 +3924,6 @@ color="#000000";
             );
         }
 
-        //$o = array('data' => $data);
         $this->responseArray=array("success"=>true,"data"=>$data);
         $this->setTemplate("responseTemplate");
 
@@ -3958,7 +3975,6 @@ color="#000000";
             exit;
         $this->setTemplate("responseTemplate");
     }
-
 }
 
 ?>

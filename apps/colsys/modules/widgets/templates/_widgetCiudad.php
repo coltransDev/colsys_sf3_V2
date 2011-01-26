@@ -5,6 +5,7 @@
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
 $data = $sf_data->getRaw("data");
+//echo $trafico."widget";
 ?>
 
 <script type="text/javascript">
@@ -13,6 +14,7 @@ WidgetCiudad = function( config ){
     this.resultTpl = new Ext.XTemplate(
             '<tpl for="."><div class="search-item"><b>{ciudad}</b><br />{trafico}</div></tpl>'
     );
+    this.trafico = (this.trafico)?this.trafico:"CO-057";    
     this.store = new Ext.data.Store({
 				autoLoad : true,
 				reader: new Ext.data.JsonReader(
@@ -53,6 +55,7 @@ WidgetCiudad = function( config ){
 Ext.extend(WidgetCiudad, Ext.form.ComboBox, {
 
     doQuery : function(q, forceAll){
+        
         q = Ext.isEmpty(q) ? '' : q;
         var qe = {
             query: q,
@@ -64,6 +67,7 @@ Ext.extend(WidgetCiudad, Ext.form.ComboBox, {
             return false;
         }
         q = qe.query;
+        //alert(this.trafico)
         forceAll = qe.forceAll;
         if(forceAll === true || (q.length >= this.minChars)){
             if(this.lastQuery !== q){
@@ -74,6 +78,7 @@ Ext.extend(WidgetCiudad, Ext.form.ComboBox, {
                         this.store.clearFilter();
                     }else{
                         var tipo=this.tipo;
+                        trafico=this.trafico;
                         var impoexpo=this.impoexpo;
                         i=0;
                         if(this.tipo && this.impoexpo)
@@ -85,7 +90,7 @@ Ext.extend(WidgetCiudad, Ext.form.ComboBox, {
                                 var txt=new RegExp(q,"ig");
                                 if(tipo=="1")
                                 {
-                                    if(record.get("idtrafico")!="CO-057")
+                                    if(record.get("idtrafico")!=trafico)
                                     {
                                         if(str.search(txt) == -1  )
                                             return false;
@@ -96,8 +101,8 @@ Ext.extend(WidgetCiudad, Ext.form.ComboBox, {
                                         return false;
                                 }
                                 else if(tipo=="2")
-                                {
-                                    if(record.get("idtrafico")=="CO-057")
+                                {                                    
+                                    if(record.get("idtrafico")==trafico)
                                     {
                                         if(str.search(txt) == -1  )
                                             return false;
@@ -106,7 +111,6 @@ Ext.extend(WidgetCiudad, Ext.form.ComboBox, {
                                     }
                                     else
                                         return false;
-
                                 }
                                     return true;
                             }
@@ -116,7 +120,7 @@ Ext.extend(WidgetCiudad, Ext.form.ComboBox, {
                                 var txt=new RegExp(q,"ig");
                                 if(tipo=="2")
                                 {
-                                    if(record.get("idtrafico")!="CO-057")
+                                    if(record.get("idtrafico")!=trafico)
                                     {
                                         if(str.search(txt) == -1  )
                                             return false;
@@ -128,7 +132,7 @@ Ext.extend(WidgetCiudad, Ext.form.ComboBox, {
                                 }
                                 else if(tipo=="1")
                                 {
-                                    if(record.get("idtrafico")=="CO-057")
+                                    if(record.get("idtrafico")==trafico)
                                     {
                                         if(str.search(txt) == -1  )
                                             return false;

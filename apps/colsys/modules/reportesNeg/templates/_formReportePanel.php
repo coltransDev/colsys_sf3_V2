@@ -2,6 +2,7 @@
 //error_reporting(E_ALL);
 
 $nprov=count(explode("|", $reporte->getCaIdproveedor() ));
+$trafico=$user->getIdtrafico();
 
 if($reporte->getCaIdreporte())
 {
@@ -50,7 +51,7 @@ else
 $cachedir = $config = sfConfig::get('sf_app_module_dir').DIRECTORY_SEPARATOR."reportesNeg".DIRECTORY_SEPARATOR."cache".DIRECTORY_SEPARATOR;
 $cachetime = 14400;
 $cacheext = 'colsys';
-$cachepage = md5("formReporte-modo-$modo-impoexpo-$impoexpo-permiso-$permiso-nprov-$nprov");
+$cachepage = md5("formReporte-modo-$modo-impoexpo-$impoexpo-permiso-$permiso-nprov-$nprov-trafico-$trafico");
 $cachefile = $cachedir.$cachepage.'.'.$cacheext;
 //echo $cachefile;
 //$cache="false";
@@ -79,7 +80,7 @@ else
 ob_start();
 
 
-include_component("reportesNeg", "formTrayectoPanel",array("modo"=>$modo,"impoexpo"=>$impoexpo,"permiso"=>$permiso));
+include_component("reportesNeg", "formTrayectoPanel",array("modo"=>$modo,"impoexpo"=>$impoexpo,"permiso"=>$permiso,"trafico"=>$trafico));
 
 include_component("reportesNeg", "formClientePanel",array("modo"=>$modo,"impoexpo"=>$impoexpo,"permiso"=>$permiso,"nprov"=>$nprov  ));
 include_component("reportesNeg", "formFacturacionPanel",array("modo"=>$modo,"impoexpo"=>$impoexpo,"permiso"=>$permiso));

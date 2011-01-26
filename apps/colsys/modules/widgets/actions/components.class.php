@@ -294,10 +294,9 @@ class widgetsComponents extends sfComponents
 
     public function executeWidgetTransporte(){
 		$this->data = array();
-
-        $this->data[] = array( "valor"=>utf8_encode(Constantes::AEREO ));
-        $this->data[] = array( "valor"=>utf8_encode(Constantes::MARITIMO ));
-        $this->data[] = array( "valor"=>utf8_encode(Constantes::TERRESTRE ));
+        $this->data[] = array("valor"=>utf8_encode(Constantes::AEREO ));
+        $this->data[] = array("valor"=>utf8_encode(Constantes::MARITIMO ));
+        $this->data[] = array("valor"=>utf8_encode(Constantes::TERRESTRE ));
 
 	}
 

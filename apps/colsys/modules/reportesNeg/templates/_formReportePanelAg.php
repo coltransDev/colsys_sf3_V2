@@ -7,7 +7,8 @@ $cachetime = 14400;
 $cacheext = 'colsys';
 //echo $dep;
 $nprov=count(explode("|", $reporte->getCaIdproveedor() ));
-$cachepage = md5("formReporteAG/dep/$dep/pais2/$pais2/impoexpo/$impoexpo/email/$email/nprov-$nprov/rep/".($idreporte>0));
+$trafico=$user->getIdtrafico();
+$cachepage = md5("formReporteAG/dep/$dep/pais2/$pais2/impoexpo/$impoexpo/email/$email/nprov-$nprov/rep/".($idreporte>0)."/trafico/$trafico");
 $cachefile = $cachedir.$cachepage.'.'.$cacheext;
 //echo $cachefile;
 if($cache=="refresh")
@@ -83,7 +84,7 @@ include_component("widgets", "widgetContactoCliente");
                                                    hiddenName: "idcliente",
                                                    allowBlank:false,
                                                    displayField:"compania",
-                                                   tabIndex:16                                                  
+                                                   tabIndex:16
                                                   });
 
         this.wgContactoCliente.addListener("select", this.onSelectContactoCliente, this);
@@ -207,7 +208,10 @@ include_component("widgets", "widgetContactoCliente");
                                                   id: 'origen',
                                                   idciudad:"origen",
                                                   hiddenName:"idorigen",
-                                                  tabIndex:5
+                                                  tipo:"1",
+                                                  impoexpo:"impoexpo",
+                                                  tabIndex:5,
+                                                  trafico: "<?=$trafico?>"
                                                 })
 
                             ]
@@ -243,7 +247,10 @@ include_component("widgets", "widgetContactoCliente");
                                                   id: 'destino',
                                                   idciudad:"destino",
                                                   hiddenName:"iddestino",
-                                                  tabIndex:7
+                                                  tipo:"2",
+                                                  impoexpo:"impoexpo",
+                                                  tabIndex:7,
+                                                  trafico: "<?=$trafico?>"
                                                 })
                             ]
                         }
