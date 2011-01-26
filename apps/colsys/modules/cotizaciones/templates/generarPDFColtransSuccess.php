@@ -775,7 +775,6 @@ for( $k=0; $k<count($transportes); $k++ ):
 //                if($key!=constantes::OTMDTA && $transporte!="OTM" )
 				continue;
 			}
-
             
 			foreach( $grupo as $modalidad ){
 				$recargosLoc = $cotizacion->getRecargosLocales($key, $modalidad); 
