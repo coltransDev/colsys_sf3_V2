@@ -75,6 +75,11 @@ Cotizacion:
       local: ca_idcotizacion
       foreign: ca_idcotizacion
       type: many
+    Envio :
+      local: ca_idcotizacion
+      foreign: ca_idcaso
+      type: many
+      class : Email
       
       
 
