@@ -24,8 +24,7 @@ class myUser extends sfBasicSecurityUser
 			$this->setAttribute('email', $user->getCaEmail() );
 			$this->setAttribute('cargo', $user->getCaCargo() );
 			$this->setAttribute('extension', $user->getCaExtension() );
-			
-			
+			$this->setAttribute('idtrafico',  $user->getSucursal()->getEmpresa()->getCaIdtrafico());
 			
 			$c = new Criteria();
 			$c->add(DepartamentoPeer::CA_NOMBRE, $user->getCaDepartamento() );
@@ -34,8 +33,6 @@ class myUser extends sfBasicSecurityUser
 				$this->setAttribute('iddepartamento', $departamento->getCaIddepartamento() );
 			}
 		}
-
-        
 	}
 	
 	public function getUserId(){
@@ -65,8 +62,11 @@ class myUser extends sfBasicSecurityUser
 	public function getExtension(){
 		return $this->getAttribute('extension' );
 	}
-	
-	
+
+    public function getIdtrafico(){
+		return ($this->getAttribute('idtrafico'))?$this->getAttribute('idtrafico'):"CO-057";
+	}
+
 	public function getNivelAcceso( $rutina ){        
 		$usuario = Doctrine::getTable('Usuario')->createQuery('u')->where('u.ca_login = ? ', $this->getUserId() )->fetchOne();		
         return $usuario->getNivelAcceso( $rutina );
@@ -265,6 +265,7 @@ class myUser extends sfBasicSecurityUser
 			$this->setAttribute('email', $user->getCaEmail() );
 			$this->setAttribute('cargo', $user->getCaCargo() );			
 			$this->setAttribute('extension', $user->getCaExtension() );
+            $this->setAttribute('idtrafico', $user->getSucursal()->getEmpresa()->getCaIdtrafico() );
 			$this->setAttribute('authmethod', $user->getCaAuthmethod() );
 			$this->setAttribute('forcechange', false );					
 			
@@ -276,15 +277,9 @@ class myUser extends sfBasicSecurityUser
 				$this->setAttribute('iddepartamento', $departamento->getCaIddepartamento() );
 			}									
 
-            $this->log("Login LDAP");
-            
+            $this->log("Login LDAP");            
 		}
-			
-	}
-	
-	
-	
-	
+	}	
 	
 	
 	/*
@@ -307,6 +302,7 @@ class myUser extends sfBasicSecurityUser
 			$this->setAttribute('email', $user->getCaEmail() );
 			$this->setAttribute('cargo', $user->getCaCargo() );			
 			$this->setAttribute('extension', $user->getCaExtension() );
+            $this->setAttribute('idtrafico', $user->getSucursal()->getEmpresa()->getCaIdtrafico() );
 			$this->setAttribute('authmethod', $user->getCaAuthmethod() );			
 			$this->setAttribute('forcechange', $user->getCaForcechange() );
 			
@@ -339,6 +335,7 @@ class myUser extends sfBasicSecurityUser
 		$this->setAttribute('email', null);
 		$this->setAttribute('cargo', null);
 		$this->setAttribute('extension', null);
+        $this->setAttribute('idtrafico', null );
 		$this->setAttribute('iddepartamento', null);
 		$this->setAttribute('authmethod', null);
         $this->setAttribute('menu', null);
