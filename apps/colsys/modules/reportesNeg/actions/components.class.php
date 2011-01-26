@@ -439,6 +439,8 @@ class reportesNegComponents extends sfComponents
             $this->modo="";
             $this->impoexpo="";
         }
+
+        $this->user=$this->getUser();
     }
 
     

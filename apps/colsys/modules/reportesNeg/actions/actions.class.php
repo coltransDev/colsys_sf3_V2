@@ -425,7 +425,7 @@ class reportesNegActions extends sfActions
         $this->impoexpo = Constantes::IMPO;
         $this->load_category();
 		$reporte = new Reporte();
-        $user = $this->getUser();
+        //$this->user = $this->getUser();
 
         $this->reporte=$reporte;
 

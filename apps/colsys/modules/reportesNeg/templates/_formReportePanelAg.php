@@ -1,16 +1,13 @@
 <?php
-//echo $pais2;
-//$cachedir = 'C:/desarrollo/colsys_sf3/apps/colsys/modules/reportesNeg/cache/';
-//$cachedir = '/srv/www/colsys_sf3/apps/colsys/modules/reportesNeg/cache/';
 $cachedir = $config = sfConfig::get('sf_app_module_dir').DIRECTORY_SEPARATOR."reportesNeg".DIRECTORY_SEPARATOR."cache".DIRECTORY_SEPARATOR;
 $cachetime = 14400;
 $cacheext = 'colsys';
-//echo $dep;
+
 $nprov=count(explode("|", $reporte->getCaIdproveedor() ));
 $trafico=$user->getIdtrafico();
-$cachepage = md5("formReporteAG/dep/$dep/pais2/$pais2/impoexpo/$impoexpo/email/$email/nprov-$nprov/rep/".($idreporte>0)."/trafico/$trafico");
+$cachepage = md5("formReporteAG/dep/$dep/impoexpo/$impoexpo/email/$email/nprov-$nprov/rep/".($idreporte>0)."/trafico/$trafico");
 $cachefile = $cachedir.$cachepage.'.'.$cacheext;
-//echo $cachefile;
+
 if($cache=="refresh")
 {
     unlink($cachefile);
@@ -32,7 +29,6 @@ else
 {
 ob_start();
 
-
 include_component("widgets", "widgetTercero");
 include_component("widgets", "widgetModalidad");
 include_component("widgets", "widgetLinea");
@@ -48,7 +44,6 @@ if(!$modo ||  $modo=="")
 include_component("reportesNeg", "formMercanciaPanel",array("modo"=>$modo,"impoexpo"=>$impoexpo));
 
 include_component("widgets", "widgetContactoCliente");
-
 ?>
 <script type="text/javascript">
     FormReportePanelAg = function( config ){
@@ -56,22 +51,13 @@ include_component("widgets", "widgetContactoCliente");
         var bodyStyle = 'padding: 5px 5px 5px 5px;';
         this.res="";
         this.buttons = [];
-
-
-
         
         this.buttons.push( {
             text   : '<?=($idreporte>0)?"Copiar":"Guardar"?>',
             formBind:true,
             scope:this,
             handler: this.onSave
-        } );
-
-
-
-
-
-        
+        } );        
 
         this.buttons.push( {
                 text   : 'Cancelar',
@@ -111,7 +97,6 @@ include_component("widgets", "widgetContactoCliente");
                     xtype:'fieldset',
                     title: 'General',
                     autoHeight:true,
-
                     layout:'form',
                     defaults: {width: 200},
                     items :
@@ -192,16 +177,6 @@ include_component("widgets", "widgetContactoCliente");
                                                ,
                                                this.wgImpoexpo
                                 ,
-                               /* new WidgetPais({fieldLabel: 'País Origen',
-                                                id: 'tra_origen_id',
-                                                linkCiudad: 'origen',
-                                                linkImpoexpo: "impoexpo",
-                                                tipo: 'origen',
-                                                hiddenName:'idtra_origen_id',
-                                                pais:'todos',
-                                                tabIndex:4
-
-                                               }),*/
 
                                 new WidgetCiudad({fieldLabel: 'Ciudad Origen',
                                                   
@@ -210,8 +185,7 @@ include_component("widgets", "widgetContactoCliente");
                                                   hiddenName:"idorigen",
                                                   tipo:"1",
                                                   impoexpo:"impoexpo",
-                                                  tabIndex:5,
-                                                  trafico: "<?=$trafico?>"
+                                                  tabIndex:5                                                  
                                                 })
 
                             ]
@@ -231,17 +205,6 @@ include_component("widgets", "widgetContactoCliente");
                                                     })
 
                                 ,
-                                /*new WidgetPais({fieldLabel: 'País Destino',
-                                                id: 'tra_destino_id',
-                                                linkCiudad: 'destino',
-                                                linkImpoexpo: "impoexpo",
-                                                hiddenName:'idtra_destino_id',
-                                                pais:'todos',
-                                                tipo: 'destino',
-                                                tabIndex:6,
-                                                value:'<?=$pais2?>',
-                                                hiddenValue:'<?=$idpais2?>'
-                                               }),*/
 
                                 new WidgetCiudad({fieldLabel: 'Ciudad Destino',                                                  
                                                   id: 'destino',
@@ -249,8 +212,7 @@ include_component("widgets", "widgetContactoCliente");
                                                   hiddenName:"iddestino",
                                                   tipo:"2",
                                                   impoexpo:"impoexpo",
-                                                  tabIndex:7,
-                                                  trafico: "<?=$trafico?>"
+                                                  tabIndex:7
                                                 })
                             ]
                         }

@@ -143,8 +143,7 @@ if($permiso>=2)
                                                       idciudad:"origen",
                                                       hiddenName:"idorigen",
                                                       tipo:"1",
-                                                      impoexpo:"impoexpo",
-                                                      trafico: "<?=$trafico?>"
+                                                      impoexpo:"impoexpo"                                                      
                                                     })
                                 ]
                             },                       
@@ -171,8 +170,7 @@ if($permiso>=2)
                                                       idciudad:"destino",
                                                       hiddenName:"iddestino",
                                                       tipo:"2",
-                                                      impoexpo:"impoexpo",
-                                                      trafico: "<?=$trafico?>"
+                                                      impoexpo:"impoexpo"                                                      
                                                     })
     <?
                                     if($impoexpo==constantes::EXPO)
