@@ -90,8 +90,7 @@ include_component("widgets", "widgetAgente");
                                                   id: 'origen',
                                                   allowBlank: false,
                                                   tipo:"1",
-                                                  impoexpo:"impoexpo",
-                                                  trafico: "<?=$trafico?>",
+                                                  impoexpo:"impoexpo",                                                  
                                                   tabIndex:6
                                                 }),
                                 new WidgetAgente({fieldLabel: 'Agente',
@@ -148,8 +147,7 @@ include_component("widgets", "widgetAgente");
                                                   hiddenName: 'iddestino',
                                                   allowBlank: false,
                                                   tipo:"2",
-                                                  impoexpo:"impoexpo",
-                                                  trafico: "<?=$trafico?>",
+                                                  impoexpo:"impoexpo",                                                  
                                                   tabIndex:7
                                                 })
                             ]
