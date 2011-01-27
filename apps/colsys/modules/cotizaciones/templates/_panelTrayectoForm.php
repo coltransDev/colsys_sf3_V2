@@ -11,7 +11,8 @@ include_component("widgets", "widgetModalidad");
 include_component("widgets", "widgetLinea");
 include_component("widgets", "widgetIncoterms");
 //include_component("widgets", "widgetPais");
-//include_component("widgets", "widgetCiudad");
+include_component("widgets", "widgetCiudad");
+
 
 ?>
 <script type="text/javascript">
@@ -61,13 +62,40 @@ include_component("widgets", "widgetIncoterms");
                             name: 'postular_linea',
                             value: false,
                             width: 300
-                        }
-                        ,<?=include_component("widgets", "paises" ,array("id"=>"tra_origen", "label"=>"Pais Origen","value"=>"CO-057", "allowBlank"=>"false"))?>
-                        ,<?=include_component("widgets", "ciudades" ,array("id"=>"ciu_origen", "label"=>"Ciudad Origen", "link"=>"tra_origen", "allowBlank"=>"false"))?>
-                        ,<?=include_component("widgets", "paises" ,array("id"=>"tra_destino", "label"=>" Pais Destino", "value"=>"CO-057", "allowBlank"=>"false"))?>
-                        ,<?=include_component("widgets", "ciudades" ,array("id"=>"ciu_destino", "label"=>"Ciudad Destino", "link"=>"tra_destino", "allowBlank"=>"false"))?>
-                        ,<?=include_component("widgets", "paises" ,array("id"=>"tra_escala", "label"=>"Pais Escala"))?>
-                        ,<?=include_component("widgets", "ciudades" ,array("id"=>"ciu_escala", "label"=>"Ciudad Escala", "link"=>"tra_escala"))?>
+                        },
+                        new WidgetCiudad({fieldLabel: 'Ciudad Origen',
+                                          id: 'origen',
+                                          idciudad:"origen",
+                                          hiddenName:"ciu_origen",
+                                          tipo:"1",
+                                          impoexpo:"impoexpo",
+                                          allowBlank:false
+                                        })
+                        ,
+                        new WidgetCiudad({fieldLabel: 'Ciudad Destino',
+                                                  id: 'destino',
+                                                  idciudad:"destino",
+                                                  hiddenName:"ciu_destino",
+                                                  tipo:"2",
+                                                  impoexpo:"impoexpo",
+                                                  allowBlank:false
+                                                })
+                        ,
+                        new WidgetCiudad({fieldLabel: 'Ciudad Origen',
+                                          id: 'origen',
+                                          idciudad:"origen",
+                                          hiddenName:"ciu_origen",
+                                          tipo:"1",
+                                          impoexpo:"impoexpo"
+                                        })
+                        ,
+                        new WidgetCiudad({fieldLabel: 'Ciudad Escala',
+                                                  id: 'escala',
+                                                  idciudad:"escala",
+                                                  hiddenName:"ciu_escala",                                                  
+                                                  impoexpo:"impoexpo",
+                                                  allowBlank:false
+                                                })
                         ,{
                             xtype: 'textarea',
                             width: 310,
