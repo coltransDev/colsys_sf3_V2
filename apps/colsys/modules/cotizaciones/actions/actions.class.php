@@ -2452,50 +2452,53 @@ class cotizacionesActions extends sfActions
             {
 
                 $this->fechaInicial = Utils::parseDate($request->getParameter("fechaInicial"));
-		$this->fechaFinal = Utils::parseDate($request->getParameter("fechaFinal"));
-		$checkboxVendedor = $request->getParameter( "checkboxVendedor" );
+                $this->fechaFinal = Utils::parseDate($request->getParameter("fechaFinal"));
+                $checkboxVendedor = $request->getParameter( "checkboxVendedor" );
                 $checkboxSucursal = $request->getParameter( "checkboxSucursal" );
 
                 $this->cotizaciones="";
 
 
                 $q = Doctrine_Query::create()
-                    ->select("c.ca_idcotizacion,c.ca_consecutivo,c.ca_usucreado,c.ca_fchcreado")
+                    ->select("c.ca_idcotizacion,c.ca_consecutivo,c.ca_usucreado,c.ca_fchcreado,e.ca_fchenvio,e.ca_usuenvio")                    
                     ->from('Cotizacion c')
                     ->innerJoin("c.Usuario u")
+                    ->leftJoin("c.Envio e")
                     ->where("c.ca_consecutivo IS NOT NULL ")
                     ->addWhere(" ( ca_usuanulado is  null or ca_usuanulado='' ) and c.ca_fchcreado between ? and ?", array($this->fechaInicial,$this->fechaFinal))
+                    ->addWhere("e.ca_tipo = ? ",array("Envío de cotización"))
                     ->orderBy("EXTRACT(YEAR FROM c.ca_fchcreado) DESC  ")
                     ->addOrderBy("to_number(SUBSTR(c.ca_consecutivo , 1 , (POSITION('-' in c.ca_consecutivo)-1) ),'999999')  desc")
                     ->addOrderBy("c.ca_version  desc");
 
                 if( $checkboxVendedor ){
                     $q->addWhere("c.ca_usuario = ?", $request->getParameter( "login" ) );
-		}
-
-		if( $checkboxSucursal ){
-                    $this->sucursal = $request->getParameter( "sucursal_est" );
-                    $q->addWhere("u.ca_idsucursal = ?", $this->sucursal );
-		}else{
-			$this->sucursal = "";
-		}
-
-                $this->cotizaciones = $q->setHydrationMode(Doctrine::HYDRATE_ARRAY)->execute();
-//                print_r($this->cotizaciones[0]);
-
-                for($i=0;$i<count($this->cotizaciones);$i++)
-                {
-
-                    $this->emails = Doctrine::getTable("Email")
-                                  ->createQuery("e")
-                                  ->where("e.ca_tipo = ? AND e.ca_idcaso = ?", array("Envío de cotización", $this->cotizaciones[$i]["ca_idcotizacion"] ))
-                                  ->addOrderBy("e.ca_fchenvio")
-                                  ->execute();
-                    if(count($this->emails)>0)
-                    $this->cotizaciones[$i]["ca_fchenvio"]=$this->emails[0]->getCaFchenvio();
-                    $this->cotizaciones[$i]["ca_usuenvio"]=$this->emails[0]->getCaUsuenvio();
                 }
-//                print_r($this->cotizaciones);
+
+                if( $checkboxSucursal ){
+                            $this->sucursal = $request->getParameter( "sucursal_est" );
+                            $q->addWhere("u.ca_idsucursal = ?", $this->sucursal );
+                }else{
+                    $this->sucursal = "";
+                }
+
+                $this->cotizaciones = $q->setHydrationMode(Doctrine::HYDRATE_SCALAR)->execute();
+
+
+                $con = Doctrine_Manager::getInstance()->connection();
+                $sql="SELECT t.ca_idcotizacion , t.ca_consecutivo , t.ca_usucreado , t.ca_fchcreado , t2.ca_fchenvio , t2.ca_usuenvio 
+                ,(SELECT case when p.ca_etapa = '' or p.ca_etapa is null then ( SELECT ca_etapa FROM tb_cotSeguimientos s WHERE s.ca_idcotizacion=p.ca_idcotizacion limit 1 ) else ca_etapa end FROM tb_cotProductos p WHERE t.ca_idcotizacion=p.ca_idcotizacion order by p.ca_etapa limit 1  )  as etapa
+                ,( SELECT ca_etapa FROM tb_cotSeguimientos s WHERE s.ca_idcotizacion=t.ca_idcotizacion limit 1 ) as etapa1
+                FROM tb_cotizaciones t
+                INNER JOIN control.tb_usuarios c ON t.ca_usuario = c.ca_login
+                LEFT JOIN tb_emails t2 ON t.ca_idcotizacion = t2.ca_idcaso
+                WHERE (t.ca_consecutivo IS NOT NULL AND ((t.ca_usuanulado is null OR t.ca_usuanulado = '') AND t.ca_fchcreado BETWEEN '2010-12-15' AND '2010-12-19') AND t2.ca_tipo = 'Envío de cotización' AND c.ca_idsucursal = 'BOG')
+
+                ORDER BY EXTRACT(YEAR FROM t.ca_fchcreado) DESC , to_number(SUBSTR(t.ca_consecutivo, 1, (POSITION('-' in t.ca_consecutivo)-1)), '999999') desc, t.ca_version desc";
+
+                $st = $con->execute($sql);
+                $this->cotizaciones = $st->fetchAll();
+
             }
     }
 
