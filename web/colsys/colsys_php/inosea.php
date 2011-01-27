@@ -239,6 +239,9 @@ elseif (isset($boton)) {                                                       /
                 echo "        document.location.href = 'inosea.php?accion='+opcion+'\&id='+id;";
                 echo "    }";
                 echo "}";
+                echo "function archivos(id){";
+                echo "    document.location.href = '/antecedentes/verArchivos?ref='+id";
+                echo "}";
                 echo "function ver_pdf(id){";
                 echo "    window.open(\"reporteneg.php?id=\"+id);"; //toolbar=no, location=no, directories=no, menubar=no
                 echo "}";
@@ -283,6 +286,7 @@ elseif (isset($boton)) {                                                       /
                         echo "<IMG style='visibility: $digitable' src='./graficos/digita.gif' alt='Digitación Muisca Ok' border=0 onclick='digitar(\"Digitacion\", \"".$rs->Value('ca_referencia')."\", 0, 0);'><BR><BR>";
                     }
                     echo "    <IMG style='visibility: $digitable' src='./graficos/muisca.gif' alt='Informacion Muisca' border=0 onclick='elegir(\"Muisca\", \"".$rs->Value('ca_referencia')."\", 0, 0);'><BR>";
+                    echo "    <BR><IMG  src='./graficos/fileopen.png' alt='Archivos adjuntos a la referencia' border=0 onclick='archivos( \"".$rs->Value('ca_referencia')."\", 0, 0);'><BR>";
                     if ($dm->value("ca_usuenvio") != ''){
                         $fch_envio = explode(" ",$dm->value("ca_fchenvio"));
                         echo "<br /><b>Radicado:</b><br />".$dm->value("ca_usuenvio")."<br />".$fch_envio[0]."<br />".$fch_envio[1]."<br />";
