@@ -12,7 +12,6 @@
 // Copyright:     Coltrans S.A. - 2004                                        \\
 /*================-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*\
 */
-
 $programa = 10;
 
 $titulo = 'Maestra de Clientes Colsys';
@@ -771,7 +770,7 @@ require_once("menu.php");
              $modulo = "00100100";                                             // Identificación del módulo para la ayuda en línea
 //           include_once 'include/seguridad.php';                             // Control de Acceso al módulo
              $tm =& DlRecordset::NewRecordset($conn);
-             if (!$tm->Open("select ca_idciudad, ca_ciudad, ca_nombre from vi_ciudades where ca_idtrafico='CO-057'")) {       // Selecciona todos lo registros de la tabla Ciudades
+             if (!$tm->Open("select ca_idciudad, ca_ciudad, ca_nombre from vi_ciudades where ca_idtrafico='$regional'")) {       // Selecciona todos lo registros de la tabla Ciudades
                  echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";          // Muestra el mensaje de error
                  echo "<script>document.location.href = 'clientes.php';</script>";
                  exit; }
@@ -1140,7 +1139,7 @@ require_once("menu.php");
              $modulo = "00100200";                                             // Identificación del módulo para la ayuda en línea
 //           include_once 'include/seguridad.php';                             // Control de Acceso al módulo
              $tm =& DlRecordset::NewRecordset($conn);
-             if (!$tm->Open("select ca_idciudad, ca_ciudad, ca_nombre from vi_ciudades where ca_idtrafico='CO-057'")) {       // Selecciona todos lo registros de la tabla Ciudades
+             if (!$tm->Open("select ca_idciudad, ca_ciudad, ca_nombre from vi_ciudades where ca_idtrafico='$regional'")) {       // Selecciona todos lo registros de la tabla Ciudades
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
                  echo "<script>document.location.href = 'clientes.php';</script>";
                  exit; }

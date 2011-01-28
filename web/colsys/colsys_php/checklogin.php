@@ -66,7 +66,10 @@ if($conn->Open()){
             /*$rs->Open("UPDATE control.tb_sessions SET sess_time=".time()." WHERE sess_id='".$session_id."'" );*/
 
             $attributes = $data["symfony/user/sfUser/attributes"]["symfony/user/sfUser/attributes"];           
-            $usuario = $attributes["user_id"];            
+            $usuario = $attributes["user_id"];
+            $regional = $attributes["idtrafico"];
+
+
             $cache->set($session_id."_lr", time());
             
             if( isset($programa) ){
