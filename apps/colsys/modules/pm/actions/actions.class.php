@@ -969,7 +969,7 @@ class pmActions extends sfActions {
         $bindValues["ca_idticket"] = $request->getParameter("idticket");
 
         $usuarioTicket = Doctrine::getTable("HdeskTicketUser")->find(array($this->ticket->getCaIdticket(), $bindValues["ca_login"]));
-        if (!$usuarioTicket) {
+        if (!$usuarioTicket) {           
             $usuarioTicket = new HdeskTicketUser();
             $usuarioTicket->setCaLogin($bindValues["ca_login"]);
             $usuarioTicket->setCaIdticket($this->ticket->getCaIdticket());
@@ -988,7 +988,7 @@ class pmActions extends sfActions {
             $texto = "Ha sido involucrado en el Ticket \n\n<br /><br />";
             $request->setParameter("id", $this->ticket->getCaIdticket());
             $request->setParameter("format", "email");
-            $texto.= sfContext::getInstance()->getController()->getPresentationFor('helpdesk', 'verTicket');
+            $texto.= sfContext::getInstance()->getController()->getPresentationFor('pm', 'verTicket');
 
             $email->setCaBodyhtml($texto);
             $usuario = Doctrine::getTable("Usuario")->find($bindValues["ca_login"]);
