@@ -676,7 +676,21 @@ class traficosActions extends sfActions
                 $texto = "";
 
                 //Numero de días para entregar antecedentes
-                $numdias = 9; //[TODO] Parametrizar segun tabla
+
+                /*$fchAntecedente = Doctrine::getTable("FchAntecedentes")
+                              ->createQuery("f")
+                              ->addWhere("f.ca_idtrafico_origen = ?", $reporte->getOrigen()->getCaIdtrafico() )
+                              ->addWhere("f.ca_idtrafico_destino = ?", $reporte->getDestino()->getCaIdtrafico() )
+                              ->fetchOne();
+
+                if( $fchAntecedente ){
+                    $numdias = $fchAntecedente->getCaNumdias();
+                }else{
+                    $numdias = 9; //[TODO] Parametrizar segun tabla
+                }*/
+                
+                $numdias = 9;
+                
                 $tarea->setCaUrl( "/traficos/listaStatus/modo/reporte/".$reporte->getCaConsecutivo() );
                 $tarea->setCaFchvisible( date("Y-m-d H:i:s") );
                 $tarea->setCaFchvencimiento( date("Y-m-d H:i:s", time()+86400*$numdias) );
@@ -828,7 +842,12 @@ class traficosActions extends sfActions
 		$this->user = $this->getUser();
 		
 		$this->usuario = Doctrine::getTable("Usuario")->find( $this->user->getUserId() );
-		
+
+        $this->emails = Doctrine::getTable("Email")
+                                  ->createQuery("e")
+                                  ->where("e.ca_tipo = ? AND e.ca_subject LIKE ?", array("Envío de cuadro", "%".$this->cliente->getCaCompania()."%" ))
+                                  ->addOrderBy("e.ca_fchenvio")
+                                  ->execute();
 		
 	}
 			
