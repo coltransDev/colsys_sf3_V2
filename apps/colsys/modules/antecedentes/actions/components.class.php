@@ -10,7 +10,7 @@
  */
 class antecedentesComponents extends sfComponents {
 
-    
+    private $filetypes = array("MBL", "HBL");
     
     /**
      *
@@ -50,6 +50,45 @@ class antecedentesComponents extends sfComponents {
      */
     public function executeWidgetReporteAntecedentes() {
 
+    }
+
+    /**
+     *
+     */
+    public function executeWidgetHBLAntecedentes() {
+
+    }
+
+    /**
+     *
+     */
+    public function executeFileManager() {
+        $folder = "Referencias" . DIRECTORY_SEPARATOR . $this->ref->getCaReferencia();
+        $directory = sfConfig::get('app_digitalFile_root') . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR;
+
+        if (!is_dir($directory)) {
+            @mkdir($directory, DEFAULT_PRIVILEGES, true);
+        }
+
+
+        $archivos = sfFinder::type('file')->maxDepth(0)->in($directory);
+
+        $filenames = array();
+
+        $fileTypes = $this->filetypes;
+        
+        foreach ($fileTypes as $fileType) {
+
+            foreach ($archivos as $archivo) {
+                if (substr(basename($archivo), 0, strlen($fileType)) == $fileType) {
+                    $filenames[$fileType]["file"] = str_replace(sfConfig::get('app_digitalFile_root'), "", $archivo);
+                }
+            }
+        }
+
+        $this->folder = $folder;
+        $this->filenames = $filenames;
+        
     }
 
 }

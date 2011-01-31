@@ -14,11 +14,11 @@
 <script type="text/javascript">
 
 
-WidgetReporteAntecedentes = function( config ){
+WidgetHBLAntecedentes = function( config ){
     Ext.apply(this, config);
 
     this.resultTpl = new Ext.XTemplate(
-        '<tpl for="."><div class="search-item"><strong>{consecutivo}-V{version}</strong><br /><strong>{doctransporte}</strong><br /><span><br />{origen} - {destino}</span> </div></tpl>',
+        '<tpl for="."><div class="search-item"><strong>{doctransporte}</strong><br /><span><br /><strong>{consecutivo}-V{version}</strong><br /><span><br />{origen} - {destino}</span> </div></tpl>',
         '<tpl if="this.referencia">',
          '<span class="rojo">{referencia}</span>',
         '</tpl>'
@@ -30,7 +30,8 @@ WidgetReporteAntecedentes = function( config ){
     this.store = new Ext.data.Store({
         proxy: new Ext.data.HttpProxy({
             url: '<?=url_for("antecedentes/listaReportesJSON")?>'
-        }),        
+        }),
+        baseParams: {queryType: 'hbl'},
         reader: new Ext.data.JsonReader({
             root: 'root',
             totalProperty: 'total'           
@@ -71,9 +72,9 @@ WidgetReporteAntecedentes = function( config ){
     });
 
     
-    WidgetReporteAntecedentes.superclass.constructor.call(this, {
-        valueField:'idreporte',
-        displayField:'consecutivo',
+    WidgetHBLAntecedentes.superclass.constructor.call(this, {
+        valueField:'doctransporte',
+        displayField:'doctransporte',
         typeAhead: false,
         loadingText: 'Buscando...',
         forceSelection: true,
@@ -91,7 +92,7 @@ WidgetReporteAntecedentes = function( config ){
 }
 
 
-Ext.extend(WidgetReporteAntecedentes, Ext.form.ComboBox, {
+Ext.extend(WidgetHBLAntecedentes, Ext.form.ComboBox, {
     onFocusWdg: function( field, newVal, oldVal ){
 
         var cmp = Ext.getCmp(this.linkModalidad);

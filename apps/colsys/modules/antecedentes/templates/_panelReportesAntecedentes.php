@@ -6,6 +6,7 @@
  */
 
 include_component("antecedentes", "widgetReporteAntecedentes");
+include_component("antecedentes", "widgetHBLAntecedentes");
 ?>
 
 <script type="text/javascript">
@@ -31,6 +32,19 @@ include_component("antecedentes", "widgetReporteAntecedentes");
 
             },
             {
+                header: "HBL",
+                dataIndex: 'hbl',
+                //hideable: false,
+                sortable: false,
+                width: 280,
+                editor: new WidgetHBLAntecedentes({
+                    linkModalidad: "modalidad",
+                    linkOrigen: "origen",
+                    linkDestino: "destino"
+                })
+
+            },
+            {
                 header: "Cliente",
                 dataIndex: 'cliente',
                 //hideable: false,
@@ -38,7 +52,6 @@ include_component("antecedentes", "widgetReporteAntecedentes");
                 width: 280
 
             }
-
         ];
 
 
@@ -46,6 +59,7 @@ include_component("antecedentes", "widgetReporteAntecedentes");
             {name: 'sel', type: 'bool'},
             {name: 'idreporte', type: 'integer', mapping: 'r_ca_idreporte'},
             {name: 'consecutivo', type: 'string', mapping: 'r_ca_consecutivo'},
+            {name: 'hbl', type: 'string', mapping: 'ic_ca_hbls'},
             {name: 'cliente', type: 'string', mapping: 'cl_ca_compania'},
             {name: 'orden', type: 'string' }
             
@@ -181,6 +195,7 @@ include_component("antecedentes", "widgetReporteAntecedentes");
                         if( !rec.data.idreporte  ){
                             var newRec = new recordReportes({
                                 consecutivo: '+',
+                                hbl: '',
                                 orden: 'Z' // Se utiliza Z por que el orden es alfabetico
                             });
 
@@ -191,9 +206,56 @@ include_component("antecedentes", "widgetReporteAntecedentes");
                             storeReportes.sort("orden", "ASC");
 
                         }
-
+                        
                         e.value = r.data.consecutivo;
+                        rec.set( "idreporte",r.data.idreporte);
                         rec.set( "cliente",r.data.compania);
+                        rec.set( "hbl",r.data.doctransporte);
+
+                        return true;
+                    }
+                });
+
+            }
+
+            if( e.field == "hbl"){
+                store.each( function( r ){
+                    if( r.data.doctransporte==e.value ){
+
+
+
+                        if( r.data.referencia ){
+                            alert("El reporte que esta asociado a la referencia "+r.data.referencia);
+                            e.value = "";
+                            return false;
+                        }
+
+                        /*if( r.data.idetapa == "99999" ){
+                            alert("El reporte que esta seleccionando se encuentra cerrado");
+                            e.value = "";
+                            return false;
+                        }*/
+
+                        if( !rec.data.idreporte  ){
+                            var newRec = new recordReportes({
+                                consecutivo: '+',
+                                hbl: '',
+                                orden: 'Z' // Se utiliza Z por que el orden es alfabetico
+                            });
+
+                            newRec.data.concepto = "";
+
+                            //Inserta una columna en blanco al final
+                            storeReportes.addSorted(newRec);
+                            storeReportes.sort("orden", "ASC");
+
+                        }
+
+                        e.value = r.data.doctransporte;
+                        rec.set( "consecutivo",r.data.consecutivo);
+                        rec.set( "idreporte",r.data.idreporte);
+                        rec.set( "cliente",r.data.compania);
+                        rec.set( "hbl",r.data.doctransporte);
 
                         return true;
                     }
