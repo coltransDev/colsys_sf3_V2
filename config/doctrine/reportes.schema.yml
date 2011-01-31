@@ -301,6 +301,10 @@ Tercero:
     ca_tipo: string
     ca_identificacion: string
     ca_idciudad: string
+    ca_usucreado: string
+    ca_fchcreado: timestamp
+    ca_usuactualizado: string
+    ca_fchactualizado: timestamp
   relations:
     Ciudad:
       local: ca_idciudad
