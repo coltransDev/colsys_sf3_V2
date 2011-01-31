@@ -30,7 +30,7 @@ class emailActions extends sfActions
 	public function executeVerAttachment( $request ){
         $id= base64_decode($request->getParameter("id"));
 		$this->archivo = sfConfig::get('app_digitalFile_root').DIRECTORY_SEPARATOR.$id;
-
+       
         if(!file_exists($this->archivo)){
             $this->forward404("No se encuentra el archivo especificado");
         }

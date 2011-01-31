@@ -35,7 +35,7 @@ class adminUsersActions extends sfActions {
             $this->nivel = 0;
         }
 
-        $this->forward404Unless($this->nivel != -1);
+        $this->forward404Unless($this->nivel>=0);
 
         return $this->nivel;
     }

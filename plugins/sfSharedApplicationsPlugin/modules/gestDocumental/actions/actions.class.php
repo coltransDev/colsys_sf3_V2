@@ -26,7 +26,7 @@ class gestDocumentalActions extends sfActions
 	*/
 	public function executeDataArchivos(){
 
-
+    
         $folder = base64_decode($this->getRequestParameter("folder"));
         $directory = sfConfig::get('app_digitalFile_root').DIRECTORY_SEPARATOR.$folder.DIRECTORY_SEPARATOR;
 
@@ -61,13 +61,26 @@ class gestDocumentalActions extends sfActions
 
         }
 		if ( count( $_FILES )>0 ){
+
+            $filePrefix = $this->getRequestParameter("filePrefix");
+            if( $filePrefix ){
+                $archivos = sfFinder::type('file')->maxDepth(0)->in($directory);
+                foreach($archivos as $archivo ){
+                    if( substr(basename($archivo),0, strlen($filePrefix))==$filePrefix ){
+                        @unlink($archivo);
+                    }
+                }
+            }
+
 			foreach ( $_FILES as $uploadedFile){
-
-				$fileName  = $uploadedFile['name'] ;
-
-
+                if( $filePrefix ){
+                    $fileName  = $filePrefix."_".$uploadedFile['name'] ;
+                }else{
+                    $fileName  = $uploadedFile['name'] ;
+                }
+                
                 if(move_uploaded_file($uploadedFile['tmp_name'],$directory.$fileName )){
-                    $this->responseArray = array("id"=>base64_encode($fileName), "filename"=>$fileName, "success"=>true);
+                    $this->responseArray = array("id"=>base64_encode($fileName), "filename"=>$fileName, "folder"=>$folder, "success"=>true);
                 }
 		  	}
 		}else{
@@ -196,12 +209,13 @@ class gestDocumentalActions extends sfActions
 
 
         $folder = base64_decode($this->getRequestParameter("folder"));
-        $directory = sfConfig::get('app_digitalFile_root').DIRECTORY_SEPARATOR.$folder.DIRECTORY_SEPARATOR;
+        $digitalFile = sfConfig::get('app_digitalFile_root');
+        $directory = $digitalFile.DIRECTORY_SEPARATOR.$folder.DIRECTORY_SEPARATOR;
 
         if(!is_dir($directory)){
             @mkdir($directory, 0777, true);
         }
-
+        /*
         $archivos = sfFinder::type('file')->maxDepth(0)->in($directory);
         $this->files = array();
         foreach($archivos as $archivo ){
@@ -209,25 +223,23 @@ class gestDocumentalActions extends sfActions
 							"name"=>utf8_encode(basename($archivo)),
                             "lastmod"=>time()
 					);
+		}*/
+        //echo $directory;
+
+        $dirs = glob($directory . DIRECTORY_SEPARATOR. '*', GLOB_ONLYDIR);
+		$data=array();
+		foreach($dirs as $dir){
+			$subdirs = glob($dir. DIRECTORY_SEPARATOR. '*', GLOB_ONLYDIR);
+			$data[] = array(
+				'id' => str_replace($digitalFile, "", $dir),
+				'text' => substr(strrchr($dir,DIRECTORY_SEPARATOR),1),
+				'loaded' => count($subdirs)==0,
+				'expanded' => false
+			);
 		}
 
-        /*
-         *
-         if ($path && strpos($folder,'.'.DIRECTORY_SEPARATOR)===false) {
-			$dirs = glob($path . DIRECTORY_SEPARATOR. '*', GLOB_ONLYDIR);
-			$data=array();
-			foreach($dirs as $dir){
-				$subdirs = glob($dir. DIRECTORY_SEPARATOR. '*', GLOB_ONLYDIR);
-				$data[] = array(
-					'id' => str_replace(DIRECTORY, "", $dir),
-					'text' => substr(strrchr($dir,DIRECTORY_SEPARATOR),1),
-					'loaded' => count($subdirs)==0,
-					'expanded' => false
-				);
-			}
-			print json_encode($data);
-		}
-         */
+        print json_encode($data);
+         
 
     }
 

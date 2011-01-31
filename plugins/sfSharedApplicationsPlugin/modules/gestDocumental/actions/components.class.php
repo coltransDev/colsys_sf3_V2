@@ -29,11 +29,19 @@ class gestDocumentalComponents extends sfComponents
 	}
 
     public function executeFileManagerPanel(){
-	}
+	
+        
+    }
 
     public function executePanelDirectorios(){
+
+
+    }
+
+	public function executeWidgetUploadButton(){
+
+
 	}
-	
 	
 }
 ?>
