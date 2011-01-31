@@ -37,7 +37,7 @@ if( $reporte->getCaUsuanulado() ){
 					<b>Piezas:</b> <?=$reporte->getPiezas()?><br />
 					<b>Peso:</b> <?=$reporte->getPeso()?><br />
 					<b>Volumen:</b> <?=$reporte->getVolumen()?><br />
-					<b><?=$reporte->getCaTransporte()==Constantes::MARITIMO?"HBL:":"HAWB:"?></b> <?=$reporte->getDocTransporte()?><br />	
+					<b><?=$reporte->getCaTransporte()==Constantes::MARITIMO?"HBL:":"HAWB:"?></b> <?=$reporte->getDocTransporte()?><br />
 					<b><?=$reporte->getCaTransporte()==Constantes::MARITIMO?"MN:":"Vuelo:"?></b> <?=$reporte->getIdnave()
 										
 					?><br />
