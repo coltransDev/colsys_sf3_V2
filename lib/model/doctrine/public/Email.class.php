@@ -238,9 +238,9 @@ class Email extends BaseEmail
 			$this->save();
 
             
-            $event= $logHeader;
+            /*$event= $logHeader;
             $event.= "Enviado OK\n";
-            Utils::writeLog($logFile , $event );
+            Utils::writeLog($logFile , $event );*/
 
 			$result = true;
 		}catch (Exception $e) {
