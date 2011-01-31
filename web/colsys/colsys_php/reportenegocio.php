@@ -107,7 +107,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
     echo "<TR>";
     echo "  <TD Class=listar WIDTH=160>Con Continuación/Viaje:&nbsp;<INPUT TYPE=CHECKBOX NAME='continuacion' ONCLICK='habilitar(this);'></TD>";
     $tm =& DlRecordset::NewRecordset($conn);
-    if (!$tm->Open("select ca_idciudad, ca_ciudad from vi_ciudades where ca_idtrafico = 'CO-057' and ca_puerto not in ('Marítimo','Ambos') order by ca_ciudad")) {       // Selecciona todos lo registros de la tabla ciudades
+    if (!$tm->Open("select ca_idciudad, ca_ciudad from vi_ciudades where ca_idtrafico = '$regional' and ca_puerto not in ('Marítimo','Ambos') order by ca_ciudad")) {       // Selecciona todos lo registros de la tabla ciudades
         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
         echo "<script>document.location.href = 'repcarga.php';</script>";
         exit; }

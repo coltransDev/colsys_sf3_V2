@@ -1610,7 +1610,7 @@ elseif (isset($boton)) {                                                       /
                 }
                 echo "  </SELECT></TD>";
 
-                if (!$us->Open("select ca_idciudad, ca_ciudad from vi_ciudades where ca_idtrafico = 'CO-057' and ca_puerto not in ('Marítimo', 'Ninguno')")) {
+                if (!$us->Open("select ca_idciudad, ca_ciudad from vi_ciudades where ca_idtrafico = '$regional' and ca_puerto not in ('Marítimo', 'Ninguno')")) {
                     echo "<script>alert(\"".addslashes($us->mErrMsg)."\");</script>";
                     echo "<script>document.location.href = 'inosea.php';</script>";
                     exit;
@@ -2036,7 +2036,7 @@ elseif (isset($boton)) {                                                       /
                 }
                 echo "  </SELECT></TD>";
 
-                if (!$us->Open("select ca_idciudad, ca_ciudad from vi_ciudades where ca_idtrafico = 'CO-057' and ca_puerto not in ('Marítimo', 'Ninguno')")) {
+                if (!$us->Open("select ca_idciudad, ca_ciudad from vi_ciudades where ca_idtrafico = '$regional' and ca_puerto not in ('Marítimo', 'Ninguno')")) {
                     echo "<script>alert(\"".addslashes($us->mErrMsg)."\");</script>";
                     echo "<script>document.location.href = 'inosea.php';</script>";
                     exit;
@@ -2408,7 +2408,7 @@ elseif (isset($boton)) {                                                       /
                     echo "<INPUT TYPE='HIDDEN' NAME='ciutraficos' VALUE='".$tm->Value('ca_idtrafico')."'>";
                     $tm->MoveNext();
                 }
-                if (!$tm->Open("select ca_idciudad, ca_ciudad from vi_puertos where ca_idtrafico = 'CO-057' order by ca_ciudad")) { // Selecciona todos lo registros de la tabla Ciudades Colombianas
+                if (!$tm->Open("select ca_idciudad, ca_ciudad from vi_puertos where ca_idtrafico = '$regional' order by ca_ciudad")) { // Selecciona todos lo registros de la tabla Ciudades Colombianas
                     echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
                     echo "<script>document.location.href = 'inosea.php';</script>";
                     exit; }
@@ -2445,21 +2445,21 @@ elseif (isset($boton)) {                                                       /
                 echo "  document.adicionar.idtradestino.length=0;";
                 echo "  if (document.adicionar.impoexpo.value == 'Importación'){";
                 echo "      for (cont=0; cont<idtraficos.length; cont++) {";
-                echo "           if (idtraficos[cont].value != 'CO-057')";
+                echo "           if (idtraficos[cont].value != '$regional')";
                 echo "               document.adicionar.idtraorigen[document.adicionar.idtraorigen.length] = new Option(nomtraficos[cont].value,idtraficos[cont].value,false,false);";
                 echo "           else";
                 echo "               document.adicionar.idtradestino[document.adicionar.idtradestino.length] = new Option(nomtraficos[cont].value,idtraficos[cont].value,false,false);";
                 echo "      }";
                 echo "  } else if (document.adicionar.impoexpo.value == 'OTM/DTA'){";
                 echo "      for (cont=0; cont<idtraficos.length; cont++) {";
-                echo "           if (idtraficos[cont].value == 'CO-057') {";
+                echo "           if (idtraficos[cont].value == '$regional') {";
                 echo "               document.adicionar.idtraorigen[document.adicionar.idtraorigen.length] = new Option(nomtraficos[cont].value,idtraficos[cont].value,false,false);";
                 echo "               document.adicionar.idtradestino[document.adicionar.idtradestino.length] = new Option(nomtraficos[cont].value,idtraficos[cont].value,false,false);";
                 echo "           }";
                 echo "      }";
                 echo "  } else if (document.adicionar.impoexpo.value == 'Triangulación'){";
                 echo "      for (cont=0; cont<idtraficos.length; cont++){";
-                echo "           if (idtraficos[cont].value != 'CO-057'){";
+                echo "           if (idtraficos[cont].value != '$regional'){";
                 echo "               document.adicionar.idtraorigen[document.adicionar.idtraorigen.length] = new Option(nomtraficos[cont].value,idtraficos[cont].value,false,false);";
                 echo "               document.adicionar.idtradestino[document.adicionar.idtradestino.length] = new Option(nomtraficos[cont].value,idtraficos[cont].value,false,false);";
                 echo "           }";
@@ -2770,7 +2770,7 @@ elseif (isset($boton)) {                                                       /
                     echo "<INPUT TYPE='HIDDEN' NAME='ciutraficos' VALUE='".$tm->Value('ca_idtrafico')."'>";
                     $tm->MoveNext();
                 }
-                if (!$tm->Open("select ca_idciudad, ca_ciudad from vi_puertos where ca_idtrafico = 'CO-057' order by ca_ciudad")) { // Selecciona todos lo registros de la tabla Ciudades Colombianas
+                if (!$tm->Open("select ca_idciudad, ca_ciudad from vi_puertos where ca_idtrafico = '$regional' order by ca_ciudad")) { // Selecciona todos lo registros de la tabla Ciudades Colombianas
                     echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
                     echo "<script>document.location.href = 'inosea.php';</script>";
                     exit; }
@@ -2806,7 +2806,7 @@ elseif (isset($boton)) {                                                       /
                 echo "  document.modificar.idtradestino.length=0;";
                 echo "  if (document.modificar.impoexpo.value == 'Importación'){";
                 echo "      for (cont=0; cont<idtraficos.length; cont++) {";
-                echo "           if (idtraficos[cont].value != 'CO-057') {";
+                echo "           if (idtraficos[cont].value != '$regional') {";
                 echo "               seleccion = (nomtraficos[cont].value == '".$rs->Value('ca_traorigen')."') ? true : false;";
                 echo "               document.modificar.idtraorigen[document.modificar.idtraorigen.length] = new Option(nomtraficos[cont].value,idtraficos[cont].value,false,seleccion); }";
                 echo "           else {";
@@ -2815,7 +2815,7 @@ elseif (isset($boton)) {                                                       /
                 echo "      }";
                 echo "  } else if (document.modificar.impoexpo.value == 'Triangulación'){";
                 echo "      for (cont=0; cont<idtraficos.length; cont++) {";
-                echo "           if (idtraficos[cont].value != 'CO-057'){";
+                echo "           if (idtraficos[cont].value != '$regional'){";
                 echo "               seleccion = (nomtraficos[cont].value == '".$rs->Value('ca_traorigen')."') ? true : false;";
                 echo "               document.modificar.idtraorigen[document.modificar.idtraorigen.length] = new Option(nomtraficos[cont].value,idtraficos[cont].value,false,seleccion);";
                 echo "               seleccion = (nomtraficos[cont].value == '".$rs->Value('ca_tradestino')."') ? true : false;";
@@ -2824,7 +2824,7 @@ elseif (isset($boton)) {                                                       /
                 echo "      }";
                 echo "  } else if (document.modificar.impoexpo.value == 'OTM/DTA'){";
                 echo "      for (cont=0; cont<idtraficos.length; cont++){";
-                echo "           if (idtraficos[cont].value == 'CO-057'){";
+                echo "           if (idtraficos[cont].value == '$regional'){";
                 echo "               seleccion = (nomtraficos[cont].value == '".$rs->Value('ca_traorigen')."') ? true : false;";
                 echo "               document.modificar.idtraorigen[document.modificar.idtraorigen.length] = new Option(nomtraficos[cont].value,idtraficos[cont].value,false,seleccion);";
                 echo "               seleccion = (nomtraficos[cont].value == '".$rs->Value('ca_tradestino')."') ? true : false;";
@@ -3685,7 +3685,7 @@ elseif (isset($boton)) {                                                       /
                 echo "  <TD Class=mostrar>Cod.Depósito:<BR><INPUT TYPE='TEXT' NAME='coddeposito' VALUE='".$tm->Value('ca_coddeposito')."' SIZE=4 MAXLENGTH=4>&nbsp;<IMG src='graficos/lupa.gif' alt='Buscar' hspace='0' vspace='0' onclick='window_find();'></TD>";
                 echo "  <TD Class=mostrar>Vlr.FOB:<BR><INPUT TYPE='TEXT' NAME='vlrfob' VALUE='".((strlen($tm->Value('ca_vlrfob'))==0)?0:$tm->Value('ca_vlrfob'))."' SIZE=20 MAXLENGTH=20></TD>";
                 echo "  <TD Class=mostrar>Vlr.Flete:<BR><INPUT TYPE='TEXT' NAME='vlrflete' VALUE='".((strlen($tm->Value('ca_vlrflete'))==0)?0:$tm->Value('ca_vlrflete'))."' SIZE=20 MAXLENGTH=20></TD>";
-                if (!$cu->Open("select ca_idciudad, ca_ciudad from tb_ciudades where ca_idtrafico = 'CO-057' order by ca_ciudad")) {       // Selecciona todos lo registros de la tabla ciudades
+                if (!$cu->Open("select ca_idciudad, ca_ciudad from tb_ciudades where ca_idtrafico = '$regional' order by ca_ciudad")) {       // Selecciona todos lo registros de la tabla ciudades
                     echo "<script>alert(\"".addslashes($cu->mErrMsg)."\");</script>";      // Muestra el mensaje de error
                     echo "<script>document.location.href = 'repgenerator.php';</script>";
                     exit; }

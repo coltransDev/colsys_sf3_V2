@@ -502,7 +502,7 @@ else if (isset($opcion) and $opcion == 'Producto' and $id != 0){
 	echo "  document.producto.idtradestino.length=0;";
 	echo "  if (document.producto.impoexpo.value == 'Importación'){";
 	echo "      for (cont=0; cont<idtraficos.length; cont++) {";
-	echo "           if (idtraficos[cont].value != 'CO-057')";
+	echo "           if (idtraficos[cont].value != '$regional')";
 	echo "               document.producto.idtraorigen[document.producto.idtraorigen.length] = new Option(nomtraficos[cont].value,idtraficos[cont].value,false,false);";
 	echo "           else";
 	echo "               document.producto.idtradestino[document.producto.idtradestino.length] = new Option(nomtraficos[cont].value,idtraficos[cont].value,false,false);";
@@ -510,7 +510,7 @@ else if (isset($opcion) and $opcion == 'Producto' and $id != 0){
 	echo "       }";
 	echo "  else {";
 	echo "      for (cont=0; cont<idtraficos.length; cont++) {";
-	echo "           if (idtraficos[cont].value == 'CO-057')";
+	echo "           if (idtraficos[cont].value == '$regional')";
 	echo "               document.producto.idtraorigen[document.producto.idtraorigen.length] = new Option(nomtraficos[cont].value,idtraficos[cont].value,false,false);";
 	echo "           else";
 	echo "               document.producto.idtradestino[document.producto.idtradestino.length] = new Option(nomtraficos[cont].value,idtraficos[cont].value,false,false);";
@@ -816,7 +816,7 @@ else if (isset($opcion) and $opcion == 'Continuacion' and $id != 0){
 	$tiposs= array("OTM","DTA");          // Arreglo con los tipos de Continuaciones de Viaje
 	$modals= array("LCL","FCL");          // Arreglo con los tipos de Modalidades de Carga
 	$pt =& DlRecordset::NewRecordset($conn);
-	if (!$pt->Open("select ca_idciudad, ca_ciudad, ca_puerto from vi_puertos where ca_idtrafico = 'CO-057'")) { // Selecciona todos lo registros de la tabla Ciudades
+	if (!$pt->Open("select ca_idciudad, ca_ciudad, ca_puerto from vi_puertos where ca_idtrafico = '$regional'")) { // Selecciona todos lo registros de la tabla Ciudades
 		echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
 		echo "<script>document.location.href = 'cotizaciones.php';</script>";
 		exit; }

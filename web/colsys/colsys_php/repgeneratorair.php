@@ -193,7 +193,7 @@ if (!isset($boton) and !isset($agrupamiento)) {
     }
     echo "  </SELECT></TD>";
 
-    if (!$tm->Open("select ca_ciudad from vi_ciudades where ca_idtrafico = 'CO-057' and ca_puerto in ('Aéreo','Ambos') order by ca_ciudad")) {       // Selecciona todos lo registros de la tabla ciudades
+    if (!$tm->Open("select ca_ciudad from vi_ciudades where ca_idtrafico = '$regional' and ca_puerto in ('Aéreo','Ambos') order by ca_ciudad")) {       // Selecciona todos lo registros de la tabla ciudades
         echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
         echo "<script>document.location.href = 'repgeneratorair.php';</script>";
         exit;
