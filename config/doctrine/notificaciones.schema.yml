@@ -78,7 +78,8 @@ NotListaTareas:
       primary: true
       autoincrement: true   
     ca_nombre: string
-    ca_descripcion: string   
+    ca_descripcion: string
+    ca_notificar_superior: boolean
   relations:
     NotTarea:
       local: ca_idlistatarea

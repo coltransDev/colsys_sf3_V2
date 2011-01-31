@@ -51,6 +51,8 @@ InoMaestraSea:
     ca_usuconfirmado: string
     ca_fchconfirma_otm: timestamp
     ca_usuconfirma_otm: string
+    ca_fchmuisca: timestamp
+    ca_usumuisca: string
   relations:
     InoClientesSea:
       local: ca_referencia
@@ -214,4 +216,20 @@ InoContratosSea:
        local: ca_referencia
        foreign: ca_referencia
        type: one
-     
+
+FchAntecedentes:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: sea
+  tableName: tb_fchantecedentes
+  columns:
+    ca_id:
+      type: integer
+      primary: true
+      autoincrement: true    
+    ca_idtrafico_origen: string
+    ca_idtrafico_destino: string
+    ca_dias: integer
+    
