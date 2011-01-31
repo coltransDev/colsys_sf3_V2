@@ -203,7 +203,7 @@ class RepStatus extends BaseRepStatus
 	/*
 	* Envia el status, generalemte se usa despues de guardar
 	*/
-	public function send(array $addresses=array(), array $cc=array(), array $attachments = array(),  $options=array()){
+	public function send(array $addresses=array(), array $cc=array(), array $attachments = array(),  $options=array() , $conn =null){
 
 		$user = sfContext::getInstance()->getUser();
 
@@ -321,9 +321,9 @@ class RepStatus extends BaseRepStatus
 
 		sfContext::getInstance()->getRequest()->setParameter("idstatus", $this->getCaIdstatus());
 		$email->setCaBodyhtml(  sfContext::getInstance()->getController()->getPresentationFor( 'traficos', 'verStatus') );
-		$email->save();
+		$email->save( $conn );
 		$this->setCaIdemail( $email->getCaIdemail() );
-		$this->save();
+		$this->save( $conn );
 
 		//$email->send();
 
