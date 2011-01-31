@@ -485,7 +485,7 @@ class pmActions extends sfActions {
                     $respuesta->setCaCreatedat(date("Y-m-d H:i:s"));
                     $respuesta->save( $conn );
 
-                    //$update = false;
+                    $update = false;
                 }
             } else {
                 $ticket = new HdeskTicket();
@@ -550,7 +550,7 @@ class pmActions extends sfActions {
             }
 
 
-            if (!$update) {
+            if (!$update && !$ticket->setCaIdticket()) {
                 $request->setParameter("id", $ticket->getCaIdticket());
                 $request->setParameter("format", "email");
                 $titulo = "Nuevo Ticket #" . $ticket->getCaIdticket() . " [" . $ticket->getCaTitle() . "]";
