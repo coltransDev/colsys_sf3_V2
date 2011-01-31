@@ -69,9 +69,8 @@ class crmActions extends sfActions {
             $cliente->setCaComplemento($request->getParameter("complemento") );
 
             $cliente->setCaTelefonos( $request->getParameter("phone")  );
-            $cliente->setCaFax( $request->getParameter("fax")  );
-            //$cliente->setCaCiudad( $request->getParameter("")  );
-            $cliente->setCaIdciudad( "BOG-0001" );
+            $cliente->setCaFax( $request->getParameter("fax")  );            
+            $cliente->setCaIdciudad( $request->getParameter("idciudad")  );
 
             $cliente->setCaSectoreco( utf8_decode($request->getParameter("sectoreco")) );
             $cliente->setCaActividad( utf8_decode($request->getParameter("actividad")) );
@@ -81,7 +80,9 @@ class crmActions extends sfActions {
             $cliente->setCaFchcotratoag( $request->getParameter("fchcotratoag") );
             $cliente->setCaEntidad( $request->getParameter("entidad") );
             $cliente->setCaPreferencias( $request->getParameter("preferencias") );
-
+            
+            $cliente->setCaLeyinsolvencia( utf8_decode($request->getParameter("leyinsolvencia")) );
+            $cliente->setCaListaclinton( utf8_decode($request->getParameter("listaclinton")) );
 
             $ids->save( $conn );
             $cliente->setCaIdcliente( $ids->getCaId() );
@@ -132,7 +133,8 @@ class crmActions extends sfActions {
         $data["fchcotratoag"] = $cliente->getCaFchcotratoag();
         $data["entidad"] = $cliente->getCaEntidad();
         $data["comentario"] = $cliente->getCaComentario();
-        
+        $data["leyinsolvencia"] = utf8_encode($cliente->getCaLeyinsolvencia());
+        $data["listaclinton"] = utf8_encode($cliente->getCaListaclinton());
         
         $direccion = explode("|",$cliente->getCaDireccion());
        
@@ -145,6 +147,9 @@ class crmActions extends sfActions {
         $data["interior"] = $cliente->getCaInterior();
         $data["oficina"] = $cliente->getCaOficina();
         $data["complemento"] = $cliente->getCaComplemento();
+        $data["idciudad"] = $cliente->getCaIdciudad();
+        $data["ciudad"] = utf8_encode($cliente->getCiudad()->getCaCiudad());
+
 
         $data["phone"] = $cliente->getCaTelefonos();
         $data["fax"] = $cliente->getCaFax();

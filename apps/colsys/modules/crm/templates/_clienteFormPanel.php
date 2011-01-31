@@ -35,6 +35,8 @@ $tiposnits=array("","Agente","Proveedor");
 
 $tipos = $sf_data->getRaw("tipos");
 
+include_component("widgets", "widgetCiudad");
+
 
 ?>
 <script type="text/javascript">
@@ -574,12 +576,13 @@ $tipos = $sf_data->getRaw("tipos");
                                             }
                                         ]
                                     },
-                                    {
-                                        xtype     : 'textfield',
+                                    new WidgetCiudad({
                                         name      : 'ciudad',
+                                        hiddenName      : 'idciudad',
                                         fieldLabel: 'Ciudad',
-                                        width: 200
-                                    },
+                                        width: 200,
+                                        allowBlank: false
+                                    }),
                                     {
                                         xtype     : 'textfield',
                                         name      : 'email',
