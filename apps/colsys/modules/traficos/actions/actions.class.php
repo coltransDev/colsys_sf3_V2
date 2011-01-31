@@ -662,7 +662,7 @@ class traficosActions extends sfActions
 
            
             //Tarea de envio de antecedentes
-            if( $reporte->getCaIdetapa()=="IMETA" ){
+            if( $reporte->getCaIdetapa()=="IMETA" || $reporte->getCaIdetapa()=="IMCMT" ){ //En cualquiera de estas dos etapas se crea la tarea según los usuarios.
                 
                 if( $reporte->getCaIdtareaAntecedente() ){
                     $tarea = Doctrine::getTable("NotTarea")->find( $reporte->getCaIdtareaAntecedente() );
