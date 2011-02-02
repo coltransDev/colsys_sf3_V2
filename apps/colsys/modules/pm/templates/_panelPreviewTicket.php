@@ -171,7 +171,9 @@ PanelPreviewTicket = function( config ){
 
             callback :function(options, success, response){
                 var res = Ext.util.JSON.decode( response.responseText );
-                res.data.opened = Date.parseDate( res.data.opened, "Y-m-d H:i:s" );                
+                res.data.opened = Date.parseDate( res.data.opened, "Y-m-d H:i:s" );
+                res.data.vencimiento = Date.parseDate( res.data.vencimiento, "Y-m-d H:i:s" );
+                res.data.respuesta = Date.parseDate( res.data.respuesta, "Y-m-d H:i:s" );
                 panel.loadRecord( res );
 
             }
@@ -245,6 +247,8 @@ Ext.extend(PanelPreviewTicket, Ext.TabPanel, {
 
         this.record = record;
         this.idticket = record.data.idticket;
+        this.vencimiento = record.data.vencimiento;
+        this.respuesta = record.data.respuesta;
 
         this.tpl.overwrite(this.preview.body, record.data);
 
@@ -324,10 +328,10 @@ Ext.extend(PanelPreviewTicket, Ext.TabPanel, {
         Ext.getCmp('tab-panel').setActiveTab(newComponent);
     }
     ,
-    newResponse: function(record){
+    newResponse: function(){
         var idticket = this.idticket;
 
-        newResponse(idticket, null, this.responses.id );
+        newResponse(idticket, null, this.vencimiento, this.respuesta, this.responses.id );
     },
 
     editTicket: function(){

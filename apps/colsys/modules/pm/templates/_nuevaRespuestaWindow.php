@@ -15,7 +15,7 @@ $data = $sf_data->getRaw("data");
 NuevaRespuestaWindow = function( config ) {
     Ext.apply(this, config);
     this.ctxRecord = null;
-
+    //alert( this.vencimiento+" "+this.respuesta  );
 
     this.combo = new Ext.form.ComboBox({
         fieldLabel: 'Mensaje',
@@ -92,6 +92,15 @@ NuevaRespuestaWindow = function( config ) {
                                 enableLists: false,
                                 allowBlank: true,
                                 disabled: this.idresponse?true:false
+                            },
+                            {
+                                xtype:'textfield',
+                                name: 'motivo',
+                                id: 'motivo',
+                                value: '',
+                                disabled: true,
+                                anchor:'100%',
+                                fieldLabel: "Observ. IDG"
                             }
                         ]
                     })
@@ -128,7 +137,9 @@ NuevaRespuestaWindow = function( config ) {
         tbar: [this.combo]
     });
 
-    this.addEvents({add:true});
+    
+
+    
 }
 
 Ext.extend(NuevaRespuestaWindow, Ext.Window, {
@@ -152,7 +163,19 @@ Ext.extend(NuevaRespuestaWindow, Ext.Window, {
         var win = this;
 
         var opener = this.opener;
+
         if( form.isValid() ){
+            if( !this.respuesta && this.vencimiento<=new Date()){
+                
+                motivo = Ext.getCmp('motivo');
+                motivo.setDisabled(false)
+                if(motivo.getValue()=="")
+                {
+                    Ext.MessageBox.alert('Mensaje', 'El IDG ha sobrepasado el tiempo. Por favor indique la razón.');
+                    return false;
+                }          
+                    
+            }
 
             form.submit({
                 success:function(form,action){

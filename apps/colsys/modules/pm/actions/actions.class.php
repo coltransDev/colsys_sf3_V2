@@ -58,8 +58,8 @@ class pmActions extends sfActions {
         $this->forward404Unless($request->getParameter("idgroup") || $request->getParameter("idproject") || $request->getParameter("option") );
 
         $q = Doctrine_Query::create()
-                        ->select("h.*, g.ca_name, u.ca_nombre, u.ca_extension, s.ca_nombre, m.ca_due, m.ca_title, p.ca_name, tar.ca_fchterminada, (SELECT MAX(rr.ca_createdat) FROM HdeskResponse rr WHERE rr.ca_idticket = h.ca_idticket ) as ultseg")
-                        ->from('HdeskTicket h');
+            ->select("h.*, g.ca_name, u.ca_nombre, u.ca_extension, s.ca_nombre, m.ca_due, m.ca_title, p.ca_name, tar.ca_fchterminada, tar.ca_fchvencimiento, (SELECT MAX(rr.ca_createdat) FROM HdeskResponse rr WHERE rr.ca_idticket = h.ca_idticket ) as ultseg")
+            ->from('HdeskTicket h');
         $q->innerJoin("h.HdeskGroup g");
         $q->leftJoin("h.HdeskTicketUser hu  ");
         $q->leftJoin("h.HdeskProject p");
@@ -335,6 +335,7 @@ class pmActions extends sfActions {
                 if ($tarea) {
                     if (!$tarea->getCaFchterminada()) {
                         $tarea->setCaFchterminada(date("Y-m-d H:i:s"));
+                        $tarea->setCaObservaciones(utf8_decode($request->getParameter("motivo")));
                         $tarea->setCaUsuterminada($this->getUser()->getUserId());
                         $tarea->save( $conn );
                     }
@@ -567,7 +568,7 @@ class pmActions extends sfActions {
                     $tarea = new NotTarea();
                     $tarea->setCaUrl("/pm/verTicket?id=" . $ticket->getCaIdticket());
                     $tarea->setCaIdlistatarea(1);
-                    $tarea->setCaFchcreado(date("Y-m-d h:i:s"));
+                    $tarea->setCaFchcreado(date("Y-m-d H:i:s"));
 
                     $tarea->setTiempo(TimeUtils::getFestivos(), $grupo->getCaMaxresponsetime());
 
@@ -1351,6 +1352,12 @@ class pmActions extends sfActions {
         $data["percentage"] = $ticket->getCaPercentage();
         $data["folder"] = base64_encode($ticket->getDirectorioBase());
         $data["contact"] = utf8_encode($ticket->getUsuario() ? $ticket->getUsuario()->getSucursal()->getCaNombre() . " " . $ticket->getUsuario()->getCaExtension() : "");
+
+        $tarea = $ticket->getNotTarea();
+        if( $tarea ){
+            $data["respuesta"] = $tarea->getCaFchterminada();
+            $data["vencimiento"] = $tarea->getCaFchvencimiento();
+        }
 
         $nivel = $this->getNivel();
 

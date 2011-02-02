@@ -68,7 +68,7 @@ var buscarTicket = function(){
 }
 
 
-var newResponse = function( idticket , idresponse, opener ){
+var newResponse = function( idticket , idresponse, vencimiento, respuesta, opener ){
     var win = Ext.getCmp("nueva-respuesta-ticket");
     if( win ){
         win.close();
@@ -76,6 +76,8 @@ var newResponse = function( idticket , idresponse, opener ){
 
     var win = new NuevaRespuestaWindow({idticket: idticket,
                                         idresponse: idresponse,
+                                        vencimiento: vencimiento,
+                                        respuesta: respuesta,
                                         opener: opener
                                       });
     win.show();
@@ -278,7 +280,8 @@ Ext.onReady(function(){
             <td >
                 <b>Estado:</b> {action}
             </td>
-          </tr>                   
+          </tr>
+        
         </table>        
         <br />
         {text:this.getBody}
