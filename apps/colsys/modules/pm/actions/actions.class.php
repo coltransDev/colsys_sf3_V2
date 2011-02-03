@@ -22,7 +22,7 @@ class pmActions extends sfActions {
         if (!$this->nivel) {
             $this->nivel = 0;
         }
-
+       
         $this->forward404Unless($this->nivel != -1);
         //return 0;
         return $this->nivel;
@@ -369,7 +369,7 @@ class pmActions extends sfActions {
                 $tarea = new NotTarea();
                 $tarea->setCaUrl("/pm/index?idticket=" . $ticket->getCaIdticket());
                 $tarea->setCaIdlistatarea(5);
-                $tarea->setCaFchcreado(date("Y-m-d h:i:s"));
+                $tarea->setCaFchcreado(date("Y-m-d H:i:s"));
 
                 $tarea->setCaFchvisible($request->getParameter("fchseguimiento") . " 00:00:00");
                 $tarea->setCaFchvencimiento($request->getParameter("fchseguimiento") . " 23:59:59");
