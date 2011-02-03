@@ -56,11 +56,12 @@ if( $format!="email" ){
     </div>
     <?
     }
+    $master=explode("|",$ref->getCaMbls());
     ?>
 
     <table class="tableList alignLeft" width="100%">
          <tr>
-             <th colspan="2">
+             <th colspan="3">
                 Datos Basicos
              </th>
          </tr>
@@ -69,10 +70,13 @@ if( $format!="email" ){
                 <b>Referencia:</b> <?=$ref->getCaReferencia()?>
             </td>
             <td>
-                <b>Master:</b> <?=$ref->getCaMbls()?>
-<!--                 <b>Agente: </b> Pendiente-->
+                <b>Master:</b> <?=($master[0])?$master[0]:""?>
+            </td>
+            <td>
+                <b>Fecha Master:</b> <?=($master[0])?$master[1]:""?>
             </td>
         </tr>
+
         <tr>
             <td>
                 <b>Naviera:</b> <?=$ref->getIdsProveedor()->getIds()->getCaNombre()?>
@@ -80,7 +84,9 @@ if( $format!="email" ){
             <td>
                 <b>Motonave:</b> <?=$ref->getCaMotonave()?>
             </td>
-            
+           <td>
+                <b>No Viaje:</b> <?=$ref->getCaCiclo()?>
+            </td>
         </tr>
         <tr>
             <td>
@@ -89,6 +95,7 @@ if( $format!="email" ){
             <td>
                 <b>Destino:</b> <?=$ref->getDestino()->getTrafico()->getCaNombre()." - ".$ref->getDestino()->getCaCiudad()?>
             </td>
+            <td>&nbsp;</td>
         </tr>
         <tr>
             <td>
@@ -96,7 +103,8 @@ if( $format!="email" ){
             </td>
             <td>
                 <b>ETA</b> <?=$ref->getCaFcharribo()?>
-            </td>            
+            </td>
+            <td>&nbsp;</td>
         </tr>
         
         <tr>

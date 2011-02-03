@@ -209,7 +209,7 @@ include_component("widgets", "widgetCiudad");
             for( var i=0; i<records.length; i++ ){                
                 if( records[i].data.consecutivo!="" && records[i].data.consecutivo!="+" ){
                     reportes.push( records[i].data.consecutivo );
-                    imprimirorigen.push( records[i].data.sel );
+                    imprimirorigen.push( (records[i].data.sel==true) );
                 }
             }
             if( reportes.length==0 ){

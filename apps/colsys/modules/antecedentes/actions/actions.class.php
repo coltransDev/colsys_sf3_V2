@@ -133,8 +133,8 @@ class antecedentesActions extends sfActions {
             $viaje = $request->getParameter("viaje");
             $fchmaster = $request->getParameter("fchmaster");
 
-            
-            $idlinea = 0;
+            $idlinea = ($request->getParameter("idlinea")?$request->getParameter("idlinea"):"0");
+            //$idlinea = 0;
 
             $mmRef = Utils::parseDate($fchllegada, "m");
             $aaRef = substr(Utils::parseDate($fchllegada, "Y"), -1, 1);
@@ -205,8 +205,7 @@ class antecedentesActions extends sfActions {
                             $inoCliente->setCaVolumen($volumen[0] ? $volumen[0] : 0);
                             $inoCliente->setCaNumorden($reporte->getCaOrdenClie());
 
-                            $inoCliente->setCaImprimirorigen($imprimir[$i]);
-                            //$imprimir
+                            $inoCliente->setCaImprimirorigen($imprimir[$i]);                            
 
                             $inoCliente->setCaLogin($reporte->getCaLogin());
                             $inoCliente->save($conn);
