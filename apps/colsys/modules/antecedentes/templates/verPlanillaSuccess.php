@@ -139,9 +139,18 @@ if( $format!="email" ){
             <th>
                 Vendedor
             </th>
+
+            <th>
+                Impr.Or.
+            </th>
         </tr>
-        <?       
+        <?
+        $tpeso=0;
+        $tvolumen=0;
         foreach( $hijas as $hija ){
+            $tpeso+=$hija->getCaPeso();
+            $tvolumen+=$hija->getCaVolumen();
+
         ?>
         <tr>
             <td>
@@ -162,20 +171,36 @@ if( $format!="email" ){
             <td>
                 <?=$hija->getTercero()->getCaNombre()?>
             </td>
-            <td>
-                <?=$hija->getCaPeso()?>
+            <td align="right" >
+                <?=Utils::formatNumber($hija->getCaPeso(),2)?>
             </td>
-            <td>
-                <?=$hija->getCaVolumen()?>
+            <td align="right">
+                <?=Utils::formatNumber($hija->getCaVolumen(),2)?>
             </td>
-            
             <td>
                 <?=$hija->getVendedor()->getCaNombre()?>
+            </td>
+            <td>
+                <?=$hija->getCaImprimirorigen()?>
             </td>
         </tr>
         <?
         }
         ?>
+        <tr style="border: #000000 2px solid">
+            <td colspan="4">
+                Totales: <?=count($hijas)?> registros
+            </td>
+            <td align="right" >
+                <?=Utils::formatNumber($tpeso,2)?>
+            </td>
+            <td align="right">
+                <?=Utils::formatNumber($tvolumen,2)?>
+            </td>
+            <td>
+                &nbsp;
+            </td>
+        </tr>
         
     </table>
     <?

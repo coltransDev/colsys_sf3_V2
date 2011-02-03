@@ -10,48 +10,45 @@ include_component("antecedentes", "widgetHBLAntecedentes");
 ?>
 
 <script type="text/javascript">
-
-
     PanelReportesAntecedentes = function( config ){
 
-        Ext.apply(this, config);
+        Ext.apply(this, config);        
 
+this.checkColumn=new Ext.grid.CheckColumn({header:'Imp.Or', dataIndex:'sel', width:30})
         this.columns = [
             {
                 header: "Reporte",
                 dataIndex: 'consecutivo',
                 //hideable: false,
                 width: 63,
-                sortable: false,
+                sortable: true,
                 renderer: this.formatItem,
                 editor: new WidgetReporteAntecedentes({
                     linkModalidad: "modalidad",
                     linkOrigen: "origen",
                     linkDestino: "destino"
                 })
-
             },
             {
                 header: "HBL",
                 dataIndex: 'hbl',
-                //hideable: false,
-                sortable: false,
+                sortable: true,
                 width: 280,
                 editor: new WidgetHBLAntecedentes({
                     linkModalidad: "modalidad",
                     linkOrigen: "origen",
                     linkDestino: "destino"
                 })
-
             },
             {
                 header: "Cliente",
                 dataIndex: 'cliente',
                 //hideable: false,
-                sortable: false,
+                sortable: true,
                 width: 280
-
             }
+            ,
+            this.checkColumn
         ];
 
 
@@ -62,12 +59,9 @@ include_component("antecedentes", "widgetHBLAntecedentes");
             {name: 'hbl', type: 'string', mapping: 'ic_ca_hbls'},
             {name: 'cliente', type: 'string', mapping: 'cl_ca_compania'},
             {name: 'orden', type: 'string' }
-            
-
         ]);
 
         this.store = new Ext.data.GroupingStore({
-
             autoLoad : true,
             url: '<?= url_for("antecedentes/datosPanelReportesAntecedentes") ?>',            
             baseParams : {
@@ -79,41 +73,30 @@ include_component("antecedentes", "widgetHBLAntecedentes");
                 totalProperty: 'total'
             },
             this.record),
-
             sortInfo:{field: 'orden', direction: "ASC"}
-            //groupOnSort: true,
-            //groupField: 'action'
-
-
         });
 
         PanelReportesAntecedentes.superclass.constructor.call(this, {
-            loadMask: {msg:'Cargando...'},
-            //boxMinHeight: 300,
-            id: 'reportes-antecedentes',            
+            clicksToEdit: 1,
+            stripeRows: true,
+            loadMask: {msg:'Cargando...'},            
+            id: 'reportes-antecedentes',
+            plugins: [this.checkColumn],
             view: new Ext.grid.GroupingView({
                 emptyText: "No hay datos",
                 forceFit:true,
                 enableRowBody:true,
                 hideGroupedColumn: true
-                //showPreview:true,
-                //hideGroupedColumn: true,
-
-
-            }),
+            }),            
             listeners:{
                 rowcontextmenu: this.onRowContextMenu,
-                validateedit: this.onValidateEdit,
-                rowdblclick : this.onRowDblclick
+                validateedit: this.onValidateEdit               
             }
-
         });
         this.getView().getRowClass = this.getRowClass;
-
     };
 
-    Ext.extend(PanelReportesAntecedentes, Ext.grid.EditorGridPanel, {
-               
+    Ext.extend(PanelReportesAntecedentes, Ext.grid.EditorGridPanel, {               
         recargar: function(){
 
             if(this.store.getModifiedRecords().length>0){
@@ -123,12 +106,7 @@ include_component("antecedentes", "widgetHBLAntecedentes");
             }
             this.store.reload();
         },
-        
 
-        onRowDblclick: function( grid , rowIndex, e ){
-            
-        }
-        ,
         getRowClass : function(record, rowIndex, p, ds){
             p.cols = p.cols-1;
 
@@ -160,7 +138,6 @@ include_component("antecedentes", "widgetHBLAntecedentes");
             return this.state[record.id] ? 'x-grid3-row-expanded '+color : 'x-grid3-row-collapsed '+color;
         },
 
-
         /*
          * Cambia el valor que se toma de los combobox y copia el valor em otra columna,
          * tambien inserta otra columna en blanco para que el usuario continue digitando
@@ -172,13 +149,10 @@ include_component("antecedentes", "widgetHBLAntecedentes");
             var store = ed.field.store;
             storeReportes = this.store;
             recordReportes = this.record;
-                      
-           
+
             if( e.field == "consecutivo"){               
                 store.each( function( r ){
                     if( r.data.idreporte==e.value ){
-
-                       
                         
                         if( r.data.referencia ){
                             alert("El reporte que esta asociado a la referencia "+r.data.referencia);
@@ -215,14 +189,11 @@ include_component("antecedentes", "widgetHBLAntecedentes");
                         return true;
                     }
                 });
-
             }
 
             if( e.field == "hbl"){
                 store.each( function( r ){
                     if( r.data.doctransporte==e.value ){
-
-
 
                         if( r.data.referencia ){
                             alert("El reporte que esta asociado a la referencia "+r.data.referencia);
@@ -260,9 +231,7 @@ include_component("antecedentes", "widgetHBLAntecedentes");
                         return true;
                     }
                 });
-
-            }
-            
+            }            
         },
         /*
         * Menu contextual que se despliega sobre una fila con el boton derecho
@@ -302,8 +271,6 @@ include_component("antecedentes", "widgetHBLAntecedentes");
                                 window.open("/reportesNeg/verReporte/id/"+this.ctxRecord.data.idreporte);
                             }
                         }
-
-
                     ]
                 });
             }
@@ -317,10 +284,7 @@ include_component("antecedentes", "widgetHBLAntecedentes");
             this.ctxRow = this.view.getRow(index);
             Ext.fly(this.ctxRow).addClass('x-node-ctx');
             this.menu.showAt(e.getXY());
-
         }
-
-
     });
 
 </script>

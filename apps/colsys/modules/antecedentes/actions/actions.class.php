@@ -35,8 +35,7 @@ class antecedentesActions extends sfActions {
         $q = Doctrine::getTable("InoMaestraSea")
                         ->createQuery("m")
                         ->select("m.*")
-                        ->innerJoin('m.InoClientesSea ic')
-                        ->innerJoin('ic.Reporte r')
+                        ->innerJoin('m.InoClientesSea ic')                        
                         ->addWhere("m.ca_provisional = ?", true);
 
 
@@ -46,10 +45,18 @@ class antecedentesActions extends sfActions {
 
         switch ($criterio) {
             case "reporte":
+                $q->innerJoin('ic.Reporte r');
                 $q->addWhere("r.ca_consecutivo like ?", $cadena . "%");
                 break;
             case "referencia":
                 $q->addWhere("m.ca_referencia like ?", $cadena . "%");
+                break;
+            case "hbl":
+                $q->addWhere("ic.ca_hbls like ?", $cadena . "%");
+                break;
+            case "cliente":
+                $q->innerJoin("ic.Cliente cl");
+                $q->addWhere("lower(cl.ca_compania) like ?", "%". strtolower($cadena) ."%");
                 break;
         }
 
@@ -102,7 +109,6 @@ class antecedentesActions extends sfActions {
      */
     public function executeGuardarPanelMasterAntecedentes(sfWebRequest $request) {
 
-
         $conn = Doctrine::getTable("InoMaestraSea")->getConnection();
         $conn->beginTransaction();
         try {
@@ -124,10 +130,11 @@ class antecedentesActions extends sfActions {
             $this->forward404Unless($motonave);
             $mbls = $request->getParameter("mbls");
             $this->forward404Unless($mbls);
-            $idlinea = 0;
-
+            $viaje = $request->getParameter("viaje");
+            $fchmaster = $request->getParameter("fchmaster");
 
             
+            $idlinea = 0;
 
             $mmRef = Utils::parseDate($fchllegada, "m");
             $aaRef = substr(Utils::parseDate($fchllegada, "Y"), -1, 1);
@@ -138,8 +145,6 @@ class antecedentesActions extends sfActions {
                     $aaRef = $aaRef + 1;
                 }
             }
-
-
 
             $numref = str_replace("|", ".", $request->getParameter("referencia"));
 
@@ -160,7 +165,8 @@ class antecedentesActions extends sfActions {
             $master->setCaFcharribo($fchllegada);
             $master->setCaFchreferencia($fchllegada);
             $master->setCaIdlinea($idlinea);
-            $master->setCaMbls($mbls);
+            $master->setCaMbls($mbls."|".$fchmaster);
+            $master->setCa_ciclo($viaje);
             $master->setCaProvisional(true);
 
             $master->save($conn);
@@ -171,11 +177,11 @@ class antecedentesActions extends sfActions {
                             ->addWhere("ic.ca_referencia = ? ", $numref);
             $q->execute();
 
-
-
             $consecutivos = array_unique(explode("|", $request->getParameter("reportes")));
+            $imprimir = array_unique(explode("|", $request->getParameter("imprimirorigen")));
             $i = 0;
-            foreach ($consecutivos as $consecutivo) {
+            for($i=0;$i<count($consecutivos);$i++) {
+                $consecutivo=$consecutivos[$i];
                 $reporte = ReporteTable::retrieveByConsecutivo($consecutivo);
                 if ($reporte) {
 
@@ -198,6 +204,10 @@ class antecedentesActions extends sfActions {
                             $volumen = explode("|", $status->getCaVolumen());
                             $inoCliente->setCaVolumen($volumen[0] ? $volumen[0] : 0);
                             $inoCliente->setCaNumorden($reporte->getCaOrdenClie());
+
+                            $inoCliente->setCaImprimirorigen($imprimir[$i]);
+                            //$imprimir
+
                             $inoCliente->setCaLogin($reporte->getCaLogin());
                             $inoCliente->save($conn);
                         }
@@ -209,7 +219,7 @@ class antecedentesActions extends sfActions {
             $this->responseArray = array("success" => true, "numref" => $numref);
         } catch (Exception $e) {
             $conn->rollBack();
-            $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
+            $this->responseArray = array("success" => false, "errorInfo" => utf8_encode($e->getMessage()));
         }
         $this->setTemplate("responseTemplate");
     }
@@ -220,6 +230,11 @@ class antecedentesActions extends sfActions {
      * @param sfRequest $request A request object
      */
     public function executeAsignacionMaster(sfWebRequest $request) {
+
+        $response = sfContext::getInstance()->getResponse();
+        $response->addJavaScript("extExtras/CheckColumn",'last');
+
+
         $this->numReferencia = $request->getParameter("numReferencia");
 
         $numref = str_replace("|", ".", $request->getParameter("ref"));
@@ -270,9 +285,15 @@ class antecedentesActions extends sfActions {
         $data["fchsalida"] = $ref->getCaFchembarque();
         $data["fchllegada"] = $ref->getCaFcharribo();
         $data["idlinea"] = $ref->getCaIdlinea();
-        $data["mbls"] = $ref->getCaMbls();
-        $data["linea"] = $ref->getIdsProveedor()->getIds()->getCaNombre();
 
+        $arrMbls = explode("|", $ref->getCaMbls());
+        $data["mbls"] = $arrMbls[0];
+        if($arrMbls[1])
+            $data["fchmaster"] = $arrMbls[1];
+
+        $data["viaje"] = $ref->getCaCiclo();
+
+        $data["linea"] = $ref->getIdsProveedor()->getIds()->getCaNombre();
 
         $this->responseArray = array("success" => true, "data" => $data);
         $this->setTemplate("responseTemplate");
@@ -288,12 +309,12 @@ class antecedentesActions extends sfActions {
         $numRef = $request->getParameter("numRef");
         if ($numRef) {
             $q = Doctrine_Query::create()
-                            ->select("ic.*, c.ca_idcliente, cl.ca_compania, r.ca_consecutivo, r.ca_idreporte")
-                            ->from('InoClientesSea ic')
-                            ->innerJoin('ic.Cliente cl')
-                            ->leftJoin('ic.Reporte r')
-                            ->addWhere("ic.ca_referencia = ? ", $numRef)
-                            ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
+                ->select("ic.*, c.ca_idcliente, cl.ca_compania, r.ca_consecutivo, r.ca_idreporte")
+                ->from('InoClientesSea ic')
+                ->innerJoin('ic.Cliente cl')
+                ->leftJoin('ic.Reporte r')
+                ->addWhere("ic.ca_referencia = ? ", $numRef)
+                ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
 
             $reportes = $q->execute();
 
@@ -301,6 +322,7 @@ class antecedentesActions extends sfActions {
                 $reportes[$key]["cl_ca_compania"] = utf8_encode($reportes[$key]["cl_ca_compania"]);
                 $reportes[$key]["ic_ca_hbls"] = utf8_encode($reportes[$key]["ic_ca_hbls"]);
                 $reportes[$key]["orden"] = $reportes[$key]["r_ca_consecutivo"];
+                $reportes[$key]["sel"] = $reportes[$key]["ic_ca_imprimirorigen"];
             }
         } else {
             $reportes = array();
@@ -525,7 +547,7 @@ class antecedentesActions extends sfActions {
 
         if ($criterio) {
 
-            $transporte = $this->getRequestParameter("transporte");
+           // $transporte = $this->getRequestParameter("transporte");
             /* Doctrine::getTable("Cliente")
               ->setAttribute(Doctrine_Core::ATTR_QUERY_LIMIT, Doctrine_Core::LIMIT_ROWS);
               Doctrine::getTable("Contacto")
@@ -593,7 +615,7 @@ class antecedentesActions extends sfActions {
             //$q->limit(50);
             $q->distinct();
             $reportes = $q->execute();
-
+            //echo $q->getSqlQuery();
 
             $result = array();
 

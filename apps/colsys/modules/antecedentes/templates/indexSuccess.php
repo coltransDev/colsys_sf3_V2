@@ -22,7 +22,9 @@
                 <td width="88" ><b>Buscar por:</b> <br />
                     <select name="criterio" size="7" >
                         <option value="reporte" selected="selected">Reporte</option>
-                        <option value="referencia">Referencia</option>
+                        <option value="referencia">Referencia</option>                        
+                        <option value="hbl">hbl</option>
+                        <option value="cliente">cliente</option>
                     </select>
                 </td>
                 <td width="337" >&nbsp;

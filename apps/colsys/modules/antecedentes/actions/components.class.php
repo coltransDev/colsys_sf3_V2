@@ -17,6 +17,8 @@ class antecedentesComponents extends sfComponents {
      */
     public function executePanelReportesAntecedentes() {
 
+
+
     }
 
     /**
@@ -24,6 +26,7 @@ class antecedentesComponents extends sfComponents {
      */
     public function executePanelMasterAntecedentes() {
 
+        
     }
 
     /**

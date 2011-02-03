@@ -4,9 +4,6 @@
  *
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
-
-
-
 include_component("widgets", "widgetImpoexpo");
 include_component("widgets", "widgetTransporte");
 include_component("widgets", "widgetModalidad");
@@ -53,8 +50,8 @@ include_component("widgets", "widgetCiudad");
                     },
                     {
                         xtype: "hidden",
-                        id: "reportes",
-                        name: "reportes",
+                        id: "imprimirorigen",
+                        name: "imprimirorigen",
                         allowBlank: false
 
                     },
@@ -98,6 +95,13 @@ include_component("widgets", "widgetCiudad");
                                 type: 'textfield',
                                 allowBlank: false
                             }
+                            ,
+                             {
+                                name: "viaje",
+                                fieldLabel: "No viaje",
+                                type: 'textfield',
+                                allowBlank: false
+                            }
 
                         ]
                     },
@@ -132,7 +136,13 @@ include_component("widgets", "widgetCiudad");
                                 fieldLabel: "Master",
                                 type: 'textfield',
                                 allowBlank: false
-                            }
+                            },
+                            new Ext.form.DateField({
+                                name: "fchmaster",
+                                fieldLabel: "Fecha de Master",
+                                format: "Y-m-d",
+                                allowBlank: false
+                            })
                         ]
                     }
                 ]
@@ -194,10 +204,12 @@ include_component("widgets", "widgetCiudad");
 
             var records = grid.getStore().getRange();
             var reportes = [];
+            var imprimirorigen = [];
 
-            for( var i=0; i<records.length; i++ ){
+            for( var i=0; i<records.length; i++ ){                
                 if( records[i].data.consecutivo!="" && records[i].data.consecutivo!="+" ){
                     reportes.push( records[i].data.consecutivo );
+                    imprimirorigen.push( records[i].data.sel );
                 }
             }
             if( reportes.length==0 ){
@@ -206,6 +218,7 @@ include_component("widgets", "widgetCiudad");
             }
 
             form.findField("reportes").setValue( reportes.join("|") );
+            form.findField("imprimirorigen").setValue( imprimirorigen.join("|") );
          
             if( form.isValid() ){
 
@@ -229,7 +242,5 @@ include_component("widgets", "widgetCiudad");
                 Ext.MessageBox.alert('Error Message', "Por favor complete todos los datos");
             }
         }
-
     });
-
 </script>

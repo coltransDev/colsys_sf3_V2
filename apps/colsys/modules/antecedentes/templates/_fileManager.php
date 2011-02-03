@@ -34,6 +34,15 @@ include_component("gestDocumental", "widgetUploadButton");
         });
         uploadButton2.render("button2");
 
+        var uploadButton3 = new WidgetUploadButton({
+            text: "Subir",
+            iconCls: 'arrow_up',
+            folder: "<?=base64_encode("Referencias/".$ref->getCaReferencia())?>",
+            filePrefix: "Other",
+            update: "other",
+            confirm: true
+        });
+        uploadButton3.render("button3");
 
      });
    
@@ -62,6 +71,16 @@ include_component("gestDocumental", "widgetUploadButton");
             <b>Imagen HBL Definitivos:</b>
             <div id="hbl_defs"><?=isset($filenames["HBL"])?link_to(basename($filenames["HBL"]["file"]), "gestDocumental/verArchivo?idarchivo=".base64_encode($filenames["HBL"]["file"])):"<span class='rojo'>No se ha subido el archivo</span>"?></div>
            <div id="button2" ></div>
+        </td>
+        <td>
+            &nbsp;
+        </td>
+    </tr>
+    <tr>
+        <td width="130px">
+            <b>Imagen otros:</b>
+            <div id="other"><?=isset($filenames["Other"])?link_to(basename($filenames["Other"]["file"]), "gestDocumental/verArchivo?idarchivo=".base64_encode($filenames["Other"]["file"])):"<span class='rojo'>No se ha subido el archivo</span>"?></div>
+           <div id="button3" ></div>
         </td>
         <td>
             &nbsp;
