@@ -398,7 +398,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
     } else if ($indicador == "Oportunidad en el Envío de Comunicaciones") {
         $format_avg = "H:i:s";
         $source   = "vi_repindicadores";
-        $subque   = "LEFT OUTER JOIN (select ca_consecutivo as ca_consecutivo_sub, ca_fchrecibo, ca_fchenvio, ca_observaciones_idg from tb_repstatus rs LEFT OUTER JOIN tb_reportes rp ON (rp.ca_idreporte = rs.ca_idreporte) where ".str_replace("ca_ano","to_char(ca_fchrecibo,'YYYY')",$ano)." and ".str_replace("ca_mes","to_char(ca_fchrecibo,'MM')",$mes)." order by ca_consecutivo, ca_fchrecibo) sq ON (vi_repindicadores.ca_consecutivo = sq.ca_consecutivo_sub) ";
+        $subque   = "LEFT OUTER JOIN (select ca_ciudad as ca_ciuorigen, ca_consecutivo as ca_consecutivo_sub, ca_fchrecibo, ca_fchenvio, ca_observaciones_idg from tb_repstatus rs LEFT OUTER JOIN tb_reportes rp ON (rp.ca_idreporte = rs.ca_idreporte) INNER JOIN tb_ciudades pd ON (rp.ca_origen = pd.ca_idciudad) where ".str_replace("ca_ano","to_char(ca_fchrecibo,'YYYY')",$ano)." and ".str_replace("ca_mes","to_char(ca_fchrecibo,'MM')",$mes)." order by ca_consecutivo, ca_fchrecibo) sq ON (vi_repindicadores.ca_consecutivo = sq.ca_consecutivo_sub) ";
         if (!$tm->Open("select ca_fchfestivo from tb_festivos")) {        // Selecciona todos lo registros de la tabla Festivos
             echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
             echo "<script>document.location.href = 'entrada.php';</script>";
@@ -410,7 +410,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
         }
         $tm->MoveFirst();
         $ind_mem  = 5;
-        $add_cols = 4;
+        $add_cols = 5;
     } else if ($indicador == "Oportunidad de Primer Status") {
         $format_avg = "H:i:s";
         $source = "vi_repindicadores";
@@ -711,6 +711,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
             echo "	<TH>Dif.</TH>";
             break;
         case 5:
+            echo "	<TH>Ciu.Origen</TH>";
             echo "	<TH>Fch.Status</TH>";
             echo "	<TH>Envío Msg</TH>";
             echo "	<TH>Dif.</TH>";
@@ -904,6 +905,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
                     $tstamp_enviado = mktime($hor, $min, $seg, $mes, $dia, $ano);
                     $dif_mem = calc_dif($festi, $tstamp_recibido, $tstamp_enviado);
                     $color = analizar_dif("T", $lci_var, $lcs_var, $dif_mem, $array_avg, $array_pnc, $array_pmc, $array_null); // Función que retorna un Arreglo con el resultado de Dif
+                    echo "  <TD Class=$color style='font-size: 9px; text-align:left;'>".$rs->Value('ca_ciuorigen')."</TD>";
                     echo "  <TD Class=$color style='font-size: 9px; text-align:left;'>".$rs->Value('ca_fchrecibo')."</TD>";
                     echo "  <TD Class=$color style='font-size: 9px; text-align:left;'>".$rs->Value('ca_fchenvio')."</TD>";
                     echo "  <TD Class=$color style='font-size: 9px; text-align:right;'>".$dif_mem."</TD>";
