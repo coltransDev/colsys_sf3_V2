@@ -16,7 +16,6 @@ $programa = 18;
 
 $titulo = 'Sistema Reportes de Negocio';
 $imporexpor = array("Importación","Triangulación","OTM/DTA");                              // Arreglo con los tipos de Trayecto
-$tincoterms = array("EXW - EX Works","FCA - Free Carrier","FAS - Free Alongside Ship","FOB - Free On Board","CIF - Cost, Insuarance & Freight", "CIP - Carriage and Insurence Paid", "CPT - Carriage Paid To", "CFR - Cost and Freight", "DDP - Delivered Duty Paid", "DDU - Delivered Duty Unpaid", "DAF - Delivered at Frontier"); // Arreglo con los términos Iconterms
 $modalstrans = array("Inland - Ocean/Air Freight - Inland","Inland - Ocean/Air Freight","Ocean/Air Freight","Ocean/Air Freight - Inland"); // Arreglo con las Modalidades de Transporte
 $modalsventa = array("Door to Door","Door to Port","Port to Port","Port to Door");
 $transportes = array("Aéreo","Marítimo","Terrestre");                          // Arreglo con los tipos de Transportes
@@ -29,6 +28,17 @@ include_once 'include/functions.php';                                          /
 require_once("checklogin.php");
 
 $rs =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
+if (!$rs->Open("select ca_valor from tb_parametros where ca_casouso = 'CU062'")) { // Selecciona los términos de la tabla Parametros
+    echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
+    echo "<script>document.location.href = 'reportenegocio.php';</script>";
+    exit;
+}
+$tincoterms = array(); // Arreglo con los términos Iconterms
+while (!$rs->Eof()) {
+    $tincoterms[] = $rs->Value('ca_valor');
+    $rs->MoveNext();
+}
+
 if (!isset($criterio) and !isset($boton) and !isset($accion)) {
     echo "<HTML>";
     echo "<HEAD>";
@@ -108,7 +118,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
     echo "  <TD Class=listar WIDTH=160>Con Continuación/Viaje:&nbsp;<INPUT TYPE=CHECKBOX NAME='continuacion' ONCLICK='habilitar(this);'></TD>";
     $tm =& DlRecordset::NewRecordset($conn);
     if (!$tm->Open("select ca_idciudad, ca_ciudad from vi_ciudades where ca_idtrafico = '$regional' and ca_puerto not in ('Marítimo','Ambos') order by ca_ciudad")) {       // Selecciona todos lo registros de la tabla ciudades
-        echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+        echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
         echo "<script>document.location.href = 'repcarga.php';</script>";
         exit; }
     $tm->MoveFirst();

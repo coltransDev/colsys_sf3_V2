@@ -17,13 +17,22 @@ $programa = 37;
 $titulo = 'Maestra de Tablas de Gastos para Tráfico';
 $tipostarifas = array("Valor Fijo","Porcentaje","Valor Unitario");             // Arreglo con los tipos de Tarifa en Tablas de Gastos
 $basestarifas = array("Sobre Flete","Sobre Vlr Factura","Cantidad unidades Peso/Volumen", "Número de Piezas","Cantidad de BLs/AWBs");  // Arreglo con las bases de Tarifa en Tablas de Gastos
-$tincoterms = array("EXW - EX Works","FCA - Free Carrier","FAS - Free Alongside Ship","FOB - Free On Board","CIF - Cost, Insuarance & Freight", "CIP - Carriage and Insurence Paid", "CPT - Carriage Paid To", "CFR - Cost and Freight", "DDP - Delivered Duty Paid", "DDU - Delivered Duty Unpaid", "DAF - Delivered at Frontier"); // Arreglo con los términos Iconterms
 
 include_once 'include/datalib.php';                                            // Incorpora la libreria de funciones, para accesar leer bases de datos
 require_once("checklogin.php");                                                                 // Captura las variables de la sessión abierta
  
-
 $rs =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
+if (!$rs->Open("select ca_valor from tb_parametros where ca_casouso = 'CU062'")) { // Selecciona los términos de la tabla Parametros
+    echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
+    echo "<script>document.location.href = 'reportenegocio.php';</script>";
+    exit;
+}
+$tincoterms = array(); // Arreglo con los términos Iconterms
+while (!$rs->Eof()) {
+    $tincoterms[] = $rs->Value('ca_valor');
+    $rs->MoveNext();
+}
+
 if (!isset($boton) and !isset($accion)){
     $modulo = "00100000";                                                      // Identificación del módulo para la ayuda en línea
 //  include_once 'include/seguridad.php';                                      // Control de Acceso al módulo

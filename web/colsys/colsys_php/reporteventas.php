@@ -15,7 +15,6 @@
 
 $titulo = 'Sistema Reporte de Ventas';
 $imporexpor = array("Importación","Exportación");                              // Arreglo con los tipos de Trayecto
-$tincoterms = array("EXW - EX Works","FCA - Free Carrier","FAS - Free Alongside Ship","FOB - Free On Board","CIF - Cost, Insuarance & Freight"); // Arreglo con los términos Iconterms
 $modalstrans = array("Inland - Ocean/Air Freight - Inland","Inland - Ocean/Air Freight","Ocean/Air Freight","Ocean/Air Freight - Inland"); // Arreglo con las Modalidades de Transporte
 $modalsventa = array("Door to Door","Door to Port","Port to Port","Port to Door");
 $transitos= array("  ","OTM","DTA");                                           // Arreglo con los tipos de Modalidades de Transporte Terrestre
@@ -26,6 +25,17 @@ include_once 'include/datalib.php';                                            /
 require_once("checklogin.php");                                                                 // Captura las variables de la sessión abierta
  
 $rs =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
+if (!$rs->Open("select ca_valor from tb_parametros where ca_casouso = 'CU062'")) { // Selecciona los términos de la tabla Parametros
+    echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
+    echo "<script>document.location.href = 'reportenegocio.php';</script>";
+    exit;
+}
+$tincoterms = array(); // Arreglo con los términos Iconterms
+while (!$rs->Eof()) {
+    $tincoterms[] = $rs->Value('ca_valor');
+    $rs->MoveNext();
+}
+
 if (!isset($criterio) and !isset($boton) and !isset($accion)){
     echo "<HTML>";
     echo "<HEAD>";
