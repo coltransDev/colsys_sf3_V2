@@ -17,6 +17,7 @@ InvCategory:
     ca_name: string
     ca_order: integer
     ca_main: boolean
+    ca_parametro: string
   relations:
     SubCategory:
       local: ca_idcategory
