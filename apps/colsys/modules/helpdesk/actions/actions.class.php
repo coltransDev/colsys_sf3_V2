@@ -459,7 +459,7 @@ class helpdeskActions extends sfActions
 			$tarea = new NotTarea(); 
 			$tarea->setCaUrl( "/helpdesk/verTicket?id=".$ticket->getCaIdticket() );
 			$tarea->setCaIdlistatarea( 1 );
-			$tarea->setCaFchcreado( date("Y-m-d h:i:s") );
+			$tarea->setCaFchcreado( date("Y-m-d H:i:s") );
 									
 			$tarea->setTiempo( TimeUtils::getFestivos(), $grupo->getCaMaxresponsetime() );
 			
