@@ -11,8 +11,9 @@
 class inventoryActions extends sfActions
 {
 	const RUTINA = "38";
+    const RUTINAINV = "94";
 
-    public function getNivel(){        
+    public function getNivel($rutina='38'){
         $this->nivel = $this->getUser()->getNivelAcceso( inventoryActions::RUTINA );
 		if( $this->nivel==-1 ){
 			$this->forward404();
@@ -28,7 +29,7 @@ class inventoryActions extends sfActions
 	public function executeIndex(sfWebRequest $request)
 	{
 	
-		$this->nivel = $this->getNivel();
+		$this->nivel = $this->getNivel(self::RUTINAINV);
 	}
 
 
@@ -161,6 +162,12 @@ class inventoryActions extends sfActions
      */
     public function executeFormActivoGuardar( $request ){
 
+        $nivel = $this->getNivel(self::RUTINAINV);
+
+        if ($nivel<1){
+            $this->forward404();
+        }
+
         $idactivo = $request->getParameter("idactivo");
         if( $idactivo ){
             $activo = Doctrine::getTable("InvActivo")->find( $idactivo );
@@ -281,6 +288,7 @@ class inventoryActions extends sfActions
      */
     public function executePanelCategoriaGuardar( $request ){
         $idcategory = $request->getParameter("idcategory");
+        $ususucursal = $this->getUser()->getIdSucursal();
 
         if( $idcategory ){
             $categoria = Doctrine::getTable("InvCategory")->find($idcategory);
@@ -289,6 +297,7 @@ class inventoryActions extends sfActions
             $categoria = new InvCategory();
             $main = $this->getRequestParameter("main");
             $categoria->setCaMain($main=="on");
+            $categoria->setCaParametro($ususucursal);
         }
 
 

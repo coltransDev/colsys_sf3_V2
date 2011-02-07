@@ -13,13 +13,28 @@ PanelReading = function( config ){
 
     Ext.apply(this, config);
     
+<?  if($nivel<2)
+     {
+?>
+    cate='<?=$id_cate?>';    
+    this.editable=(cate.indexOf(this.idcategory+",",0)> -1);
+<?
+    }
+    else
+    {
+?>
+
+    this.editable=true;
+<?
+    }
+?>
+    
     this.grid = new PanelActivos(
                      {id:idcomponent,
                       idcategory: this.idcategory,
                       readOnly: this.readOnly,
-                      region: 'center'
-                     
-
+                      region: 'center',
+                      editable:this.editable
                      });
 
     var idcomponent = this.id;

@@ -61,7 +61,7 @@ Ext.extend(PanelCategorias, Ext.tree.TreePanel, {
             if( Ext.getCmp('tab-panel').findById(idcomponent) ){
                 Ext.getCmp('tab-panel').setActiveTab(idcomponent);
             }else{
-                //alert( action );
+                //alert( action );                
                 switch( action ){                   
                     default:
 

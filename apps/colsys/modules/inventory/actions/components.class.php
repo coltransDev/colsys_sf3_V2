@@ -11,7 +11,7 @@
 class inventoryComponents extends sfComponents
 {
 	const RUTINA = "38";
-
+    const RUTINAINV = "94";
    
     /*
 	* Panel que muestra un arbol con opciones de busqueda
@@ -26,6 +26,10 @@ class inventoryComponents extends sfComponents
 	* @author: Andres Botero
 	*/
     public function executePanelActivos( ){
+
+        
+        //echo $this->editable;
+
         $response = sfContext::getInstance()->getResponse();
 		$response->addJavaScript("extExtras/RowExpander",'last');
 
@@ -96,7 +100,20 @@ class inventoryComponents extends sfComponents
 	* @author: Andres Botero
 	*/
     public function executePanelReading( ){
+        $this->nivel = $this->getUser()->getNivelAcceso( inventoryActions::RUTINAINV );
 
+        $this->editable = "false";
+
+        if($this->nivel==1){
+
+            $ususucursal = $this->getUser()->getIdSucursal();
+            $categorias=Doctrine::getTable("InvCategory")->findBy("ca_parametro", $ususucursal);
+            $id_cate="";
+            foreach($categorias as $categoria)
+            {
+                $this->id_cate.=$categoria->getCaIdcategory().",";
+            }
+        }
     }
 
     /*
@@ -112,6 +129,23 @@ class inventoryComponents extends sfComponents
 	* @author: Andres Botero
 	*/
     public function executePanelCategoriaWindow( ){
+        $this->nivel = $this->getUser()->getNivelAcceso( inventoryActions::RUTINAINV );
+
+        $this->editable = "false";
+
+        if($this->nivel>=1){
+            $idcategory = $this->getRequestParameter("idcategory");
+
+            $categoria = Doctrine::getTable("InvCategory")->find($idcategory);
+            if(!$categoria)
+                $categoria = new InvCategory();
+            $sucursal = $categoria->getCaParametro();
+            $ususucursal = $this->getUser()->getIdSucursal();
+            //echo $ususucursal;
+            if($sucursal==$ususucursal){
+                $this->editable = "true";
+            } 
+        }
 
     }
 

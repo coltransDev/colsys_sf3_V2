@@ -5,7 +5,7 @@
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
 
-
+//echo $editable;
 
 
 
@@ -267,8 +267,10 @@ PanelActivos = function( config ){
 
     });
 
-
+    if(this.editable)
+    {
      this.tbar = [
+         
                 {
                     text: 'Nuevo',
                     tooltip: '',
@@ -276,6 +278,7 @@ PanelActivos = function( config ){
                     scope: this,
                     handler: this.crearActivo
                 },
+
                 {
                     text: 'Recargar',
                     tooltip: 'Actualiza losdatos del panel',
@@ -283,8 +286,9 @@ PanelActivos = function( config ){
                     scope: this,
                     handler: this.recargar
                 }
+         
          ];
-
+    }
     
     PanelActivos.superclass.constructor.call(this, {
        loadMask: {msg:'Cargando...'},       
@@ -304,9 +308,10 @@ PanelActivos = function( config ){
             //hideGroupedColumn: true,
             
        }),
-       listeners:{            
+       listeners:{    
             //rowcontextmenu: this.onRowcontextMenu,
             rowdblclick : this.onRowDblclick
+    
        },
        tbar: this.tbar
     });
@@ -390,6 +395,8 @@ Ext.extend(PanelActivos, Ext.grid.GridPanel, {
     },
 
     onRowDblclick: function( grid , rowIndex, e ){
+        if(!this.editable)
+            return;
 		record =  this.store.getAt( rowIndex );
         
 		if( typeof(record)!="undefined" ){			
