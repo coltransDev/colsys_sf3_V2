@@ -55,7 +55,6 @@
         });
     };
 
-
     Ext.extend(WidgetUploadButton, Ext.Button, {
         fileUpload : function(){
             this.actionFileUpload();
@@ -75,13 +74,21 @@
                     if ( response.filename ){
                         //this.fileStore.reload();
                         //alert( update );
-                        if( update ){
-                            document.getElementById(update).innerHTML = "<a href='<?=url_for("gestDocumental/verArchivo?idarchivo=")?>"+Base64.encode(response.folder+"/"+response.filename)+"'>"+response.filename+"</a>";
+                        if(!this.callback)
+                        {
+                            if( update ){
+                                document.getElementById(update).innerHTML = "<a href='<?=url_for("gestDocumental/verArchivo?idarchivo=")?>"+Base64.encode(response.folder+"/"+response.filename)+"'>"+response.filename+"</a>";
+                            }
+                        }
+                        else
+                        {
+                            jQuery.globalEval(this.callback+"('"+response.filename+"');");
                         }
 
-                        if( confirm ){
-                            Ext.MessageBox.alert("", "El archivo "+response.filename+" se ha subido correctamente.");
-                        }
+                            if( confirm ){
+                                Ext.MessageBox.alert("", "El archivo "+response.filename+" se ha subido correctamente.");
+                            }
+
                         
                     }
                     
