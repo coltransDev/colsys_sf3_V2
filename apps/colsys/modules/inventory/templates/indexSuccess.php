@@ -193,7 +193,7 @@ Ext.onReady(function(){
             <tr>
                 <th><b>Factura</b></th>
                 <td>{factura}</td>
-                <th><b>Vlr. Repocisi&oacute;n</b></th>
+                <th><b>Vlr. Reposici&oacute;n</b></th>
                 <td>{reposicion}</td>
             </tr>
             <tr>
