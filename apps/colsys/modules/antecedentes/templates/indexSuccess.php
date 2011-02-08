@@ -24,7 +24,8 @@
                         <option value="reporte" selected="selected">Reporte</option>
                         <option value="referencia">Referencia</option>                        
                         <option value="hbl">hbl</option>
-                        <option value="cliente">cliente</option>
+                        <option value="cliente">Cliente</option>
+                        <option value="motonave">Motonave</option>
                     </select>
                 </td>
                 <td width="337" >&nbsp;

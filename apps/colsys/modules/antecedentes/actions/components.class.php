@@ -75,19 +75,18 @@ class antecedentesComponents extends sfComponents {
 
 
         $archivos = sfFinder::type('file')->maxDepth(0)->in($directory);
+        //echo print_r($archivos);
 
         $filenames = array();
 
         $fileTypes = $this->filetypes;
         
-        foreach ($fileTypes as $fileType) {
 
-            foreach ($archivos as $archivo) {
-                if (substr(basename($archivo), 0, strlen($fileType)) == $fileType) {
-                    $filenames[$fileType]["file"] = str_replace(sfConfig::get('app_digitalFile_root'), "", $archivo);
-                }
-            }
-        }
+
+        foreach ($archivos as $archivo) {            
+            $file=explode("/", $archivo);
+            $filenames[]["file"] = $file[count($file)-1];
+        }        
 
         $this->folder = $folder;
         $this->filenames = $filenames;

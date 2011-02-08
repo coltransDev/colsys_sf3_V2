@@ -9,27 +9,21 @@ if( $format!="email" ){
     
 
 ?>
-
 <script language="javascript" type="text/javascript">
 	function showEmailForm(){
 		if( document.getElementById('emailForm').style.display=="none"){
-			document.getElementById('emailForm').style.display="inline"
+			document.getElementById('emailForm').style.display="inline";
 		}else{
-			document.getElementById('emailForm').style.display="none"
+			document.getElementById('emailForm').style.display="none";
 		}
 	}
-    
-
-	
-
 </script>
 <?
 }
 ?>
 
-
 <div align="center">
-    <h2>ENTREGA DE ANTECEDENTES</h2><br />
+    <h2>ENTREGA DE ANTECEDENTES</h2><br/>
     <b>Fecha</b> <?=Utils::fechaLarga(date("Y-m-d"))?>
 </div>
 <div class="content">
@@ -40,11 +34,10 @@ if( $format!="email" ){
 
         <form name="form1" id="form1" method="post" action="<?=url_for("antecedentes/enviarAntecedentes?ref=".str_replace(".","|",$ref->getCaReferencia()))?>" >
             <input type="hidden" name="checkObservaciones" id="checkObservaciones" value="" />
-
         <?
 
         $asunto  = "Envio de Antecedentes ".$ref->getCaReferencia();
-        $mensaje = "Adjunto encontrara las instrucciónes de embarque de la referencia ".$ref->getCaReferencia();
+        $mensaje = "Adjunto encontrará los antecedentes de la referencia ".$ref->getCaReferencia();
         include_component("email", "formEmail", array("subject"=>$asunto,"message"=>$mensaje, "contacts"=>$contactos));
         ?>
         <br />
@@ -58,7 +51,6 @@ if( $format!="email" ){
     }
     $master=explode("|",$ref->getCaMbls());
     ?>
-
     <table class="tableList alignLeft" width="100%">
          <tr>
              <th colspan="3">
@@ -105,8 +97,7 @@ if( $format!="email" ){
                 <b>ETA</b> <?=$ref->getCaFcharribo()?>
             </td>
             <td>&nbsp;</td>
-        </tr>
-        
+        </tr>        
         <tr>
             <td colspan="2">
                 <b>Observaciones: </b><br />
@@ -141,6 +132,9 @@ if( $format!="email" ){
                 Peso
             </th>
             <th>
+                Piezas
+            </th>
+            <th>
                 CMB
             </th>
            
@@ -149,16 +143,17 @@ if( $format!="email" ){
             </th>
 
             <th>
-                Impr.Or.
+                Hbls Dest.
             </th>
         </tr>
         <?
         $tpeso=0;
         $tvolumen=0;
+        $tpiezas=0;
         foreach( $hijas as $hija ){
             $tpeso+=$hija->getCaPeso();
             $tvolumen+=$hija->getCaVolumen();
-
+            $tpiezas=$hija->getCaNumpiezas();
         ?>
         <tr>
             <td>
@@ -182,6 +177,9 @@ if( $format!="email" ){
             <td align="right" >
                 <?=Utils::formatNumber($hija->getCaPeso(),2)?>
             </td>
+            <td align="right" >
+                <?=Utils::formatNumber($hija->getCaNumpiezas(),2)?>
+            </td>
             <td align="right">
                 <?=Utils::formatNumber($hija->getCaVolumen(),2)?>
             </td>
@@ -189,7 +187,7 @@ if( $format!="email" ){
                 <?=$hija->getVendedor()->getCaNombre()?>
             </td>
             <td>
-                <?=$hija->getCaImprimirorigen()?>
+                <?=($hija->getCaImprimirorigen()?"Sí":"No")?>
             </td>
         </tr>
         <?
@@ -201,6 +199,9 @@ if( $format!="email" ){
             </td>
             <td align="right" >
                 <?=Utils::formatNumber($tpeso,2)?>
+            </td>
+            <td align="right" >
+                <?=Utils::formatNumber($tpiezas,2)?>
             </td>
             <td align="right">
                 <?=Utils::formatNumber($tvolumen,2)?>

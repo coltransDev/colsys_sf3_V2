@@ -1,89 +1,113 @@
 <?php
-/* 
+/*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
 
 include_component("gestDocumental", "widgetUploadButton");
+$i=1;
 ?>
 
 <script language="javascript" type="text/javascript">
-	
-   
-    Ext.onReady(function(){
-        var wd = Ext.getBody().getWidth();
-
-
+button=0;
+ Ext.onReady(function(){
+//    function agregar_fileupload()
+    {
         var uploadButton = new WidgetUploadButton({
-            text: "Subir",
+            text: "Agregar Archivo",
             iconCls: 'arrow_up',
             folder: "<?=base64_encode("Referencias/".$ref->getCaReferencia())?>",
-            filePrefix: "MBL",
-            update: "master_bl",
-            confirm: true
+            filePrefix: "",
+            confirm: true,
+            callback:"actualizar"
         });
         uploadButton.render("button1");
-
-        var uploadButton2 = new WidgetUploadButton({
-            text: "Subir",
-            iconCls: 'arrow_up',
-            folder: "<?=base64_encode("Referencias/".$ref->getCaReferencia())?>",
-            filePrefix: "HBL",
-            update: "hbl_defs",
-            confirm: true
-        });
-        uploadButton2.render("button2");
-
-        var uploadButton3 = new WidgetUploadButton({
-            text: "Subir",
-            iconCls: 'arrow_up',
-            folder: "<?=base64_encode("Referencias/".$ref->getCaReferencia())?>",
-            filePrefix: "Other",
-            update: "other",
-            confirm: true
-        });
-        uploadButton3.render("button3");
-
-     });
+    }
    
+});
+    function actualizar(file)
+    {
+        $("#archivos").append("<tr><td ><b>"+(button++)+".</b>&nbsp;&nbsp;&nbsp;&nbsp;<b>Archivo "+file+" </b><div id='hbl_defs'><a href='<?=url_for("gestDocumental/verArchivo?idarchivo=")?>"+Base64.encode("<?=folder?>/"+file)+"'>"+file+"</a></div></td><td>&nbsp;</td></tr>");
+    }
 
+
+
+
+    function eliminar(file,idtr)
+    {
+        if(window.confirm("Realmente desea eliminar este archivo?"))
+        {
+            Ext.MessageBox.wait('Guardando, Espere por favor', '---');
+            Ext.Ajax.request(
+            {
+                waitMsg: 'Guardando cambios...',
+                url: '<?= url_for("gestDocumental/borrarArchivo") ?>',
+                params :	{
+                    idarchivo:file
+                },
+                failure:function(response,options){
+                    var res = Ext.util.JSON.decode( response.responseText );
+                    if(res.err)
+                        Ext.MessageBox.alert("Mensaje",'Se presento un error guardando por favor informe al Depto. de Sistemas<br>'+res.err);
+                    else
+                        Ext.MessageBox.alert("Mensaje",'Se produjo un error, vuelva a intentar o informe al Depto. de Sistema<br>'+res.texto);
+                },
+                success:function(response,options){
+                    var res = Ext.util.JSON.decode( response.responseText );
+                    $("#"+idtr).remove();
+                    Ext.MessageBox.hide();
+                }
+            });
+        }
+    }
 </script>
 
 
-<table class="tableList alignLeft" width="100%">
+<table class="tableList alignLeft" width="100%" id="archivos">
     <tr>
        <th colspan="2">
            Archivos
        </th>
     </tr>
+
     <tr>
-        <td width="130px">
-           <b>Imagen BL <?=$ref->getCaMbls()?>:</b>
-           <div id="master_bl"><?=isset($filenames["MBL"])?link_to(basename($filenames["MBL"]["file"]), "gestDocumental/verArchivo?idarchivo=".base64_encode($filenames["MBL"]["file"])):"<span class='rojo'>No se ha subido el archivo</span>"?></div>
-           <div id="button1" ></div>
+        <td >
+           <div id="button1" name="button1" ></div>
         </td>
         <td>
             &nbsp;
         </td>
     </tr>
-    <tr>
-        <td width="130px">
-            <b>Imagen HBL Definitivos:</b>
-            <div id="hbl_defs"><?=isset($filenames["HBL"])?link_to(basename($filenames["HBL"]["file"]), "gestDocumental/verArchivo?idarchivo=".base64_encode($filenames["HBL"]["file"])):"<span class='rojo'>No se ha subido el archivo</span>"?></div>
-           <div id="button2" ></div>
+
+    <?
+
+        foreach($filenames as $file)
+        {
+
+            $id_tr="tr_$i";
+    ?>
+    <tr id="<?=$id_tr?>" >
+        <td >
+            <b><?=$i++?>.</b>&nbsp;&nbsp;&nbsp;&nbsp;
+            <b>Archivo <?=$file["file"]?></b>
+            <div id="hbl_defs">
+            <?= link_to(basename($folder."/".$file["file"]), "gestDocumental/verArchivo?idarchivo=".base64_encode($folder."/".$file["file"]))?>
+                &nbsp;&nbsp;
+                <a href="#" onclick="eliminar('<?=base64_encode($folder."/".$file["file"])?>','<?=$id_tr?>')"><?=image_tag( "16x16/delete.gif" ,'size=18x18 border=0' )?></a>
+                
+                
+            </div>
+           
         </td>
         <td>
             &nbsp;
         </td>
     </tr>
-    <tr>
-        <td width="130px">
-            <b>Imagen otros:</b>
-            <div id="other"><?=isset($filenames["Other"])?link_to(basename($filenames["Other"]["file"]), "gestDocumental/verArchivo?idarchivo=".base64_encode($filenames["Other"]["file"])):"<span class='rojo'>No se ha subido el archivo</span>"?></div>
-           <div id="button3" ></div>
-        </td>
-        <td>
-            &nbsp;
-        </td>
-    </tr>
+    <?
+        }
+    ?>
 </table>
+<script>
+button=<?=$i?>;
+</script>
+

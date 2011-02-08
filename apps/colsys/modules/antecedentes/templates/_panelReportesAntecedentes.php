@@ -14,7 +14,7 @@ include_component("antecedentes", "widgetHBLAntecedentes");
 
         Ext.apply(this, config);        
 
-this.checkColumn=new Ext.grid.CheckColumn({header:'Imp.Or', dataIndex:'sel', width:30})
+this.checkColumn=new Ext.grid.CheckColumn({header:'Hbls Dest.', dataIndex:'sel', width:30})
         this.columns = [
             {
                 header: "Reporte",
