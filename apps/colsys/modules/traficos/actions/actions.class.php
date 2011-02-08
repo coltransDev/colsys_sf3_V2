@@ -689,14 +689,20 @@ class traficosActions extends sfActions
                     $numdias = 9; //[TODO] Parametrizar segun tabla
                 }*/
                 
-                $numdias = 9;
-                
+                $numdias = 2;
+                $parametros = ParametroTable::retrieveByCaso("CU086", $reporte->getOrigen()->getCaIdtrafico() );
+                if(count($parametros)>0)
+                {
+                    $numdias=$parametros[0]->getCaValor2();
+                }
+
+                //  echo $numdias;
                 $tarea->setCaUrl( "/traficos/listaStatus/modo/reporte/".$reporte->getCaConsecutivo() );
                 $tarea->setCaFchvisible( date("Y-m-d H:i:s") );
                 $tarea->setCaFchvencimiento( date("Y-m-d H:i:s", time()+86400*$numdias) );
                 
                 $tarea->setCaTitulo( $titulo );
-                $texto = "Debe entregar los antecedentes...";//[TODO] Colocar un texto mas descriptivo
+                $texto = "Debe entregar los antecedentes dentro de los proximos $numdias dias";//[TODO] Colocar un texto mas descriptivo
                 $tarea->setCaTexto( $texto );
                 if( $request->getParameter("remitente") ){
                     $tarea->setCaNotificar( $request->getParameter("remitente") );
