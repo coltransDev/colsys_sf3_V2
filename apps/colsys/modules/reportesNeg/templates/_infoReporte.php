@@ -77,7 +77,7 @@
                             <td width="33%" ><b>Orden:</b><?=$reporte->getCaOrdenClie()?></td>
                         </tr>
                         <tr>
-                            <td><b>Direcci&oacute;n:</b> <?=Utils::replace($cliente->getDireccion())?></td>
+                            <td><b>Direcci&oacute;n:</b> <?=Utils::replace($cliente->getCaDireccion())?></td>
                             <td><b>Tel&eacute;fono:</b> <?=$contacto->getCaTelefonos()?></td>
                             <td><b>Fax:</b><?=$contacto->getCaFax()?></td>
                         </tr>

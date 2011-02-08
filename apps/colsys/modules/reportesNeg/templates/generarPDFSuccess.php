@@ -878,7 +878,7 @@ if( !$soloAduana && $reporte->getCaTiporep()!="3" ){
 //    $pdf->flushGroup();
 }
 
-if( ($reporte->getCaImpoexpo()==constantes::IMPO && $reporte->getCaColmas()=="Sí") ||($reporte->getCaTiporep()=="3") ||($reporte->getCaImpoexpo()==constantes::EXPO && ($repexpo->getCaIdsia()==17 || $repexpo->getCaIdsia()==9 ) ) ){
+if( ($reporte->getCaImpoexpo()==constantes::IMPO && $reporte->getCaColmas()=="Sí") ||($reporte->getCaTiporep()=="3") ||($reporte->getCaImpoexpo()==constantes::EXPO /*&& ($repexpo->getCaIdsia()==17 || $repexpo->getCaIdsia()==9 )*/ ) ){
 
 	$costosAduana = $reporte->getCostos ( "aduana" );
 	if (count ( $costosAduana )) {

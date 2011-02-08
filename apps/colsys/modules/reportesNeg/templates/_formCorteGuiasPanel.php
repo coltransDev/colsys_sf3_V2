@@ -72,7 +72,7 @@ include_component("widgets", "widgetBodega",array("modo"=>$modo,"impoexpo"=>$imp
         obj.items=camposHija;        
 
     <?
-    if(($impoexpo==Constantes::IMPO  && $modo!=Constantes::AEREO) || ($impoexpo==Constantes::EXPO  && $modo==Constantes::AEREO) || ($impoexpo==Constantes::TRIANGULACION ))
+    if(($impoexpo==Constantes::IMPO  && $modo!=Constantes::AEREO) || ($impoexpo==Constantes::EXPO ) || ($impoexpo==Constantes::TRIANGULACION ))
     {
     ?>
         obj1=new Object();

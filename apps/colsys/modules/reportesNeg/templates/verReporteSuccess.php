@@ -64,7 +64,7 @@
 			<th width="30%" scope="col"><b>e-mail</b></th>
 		</tr>
 		<?	
-		if( $asignaciones ){	
+		if( $asignaciones ){
 			foreach( $asignaciones as $asignacion ){	
 				$tarea = $asignacion->getNotTarea();	
 				$asignacionesTarea  = $tarea->getNotTareaAsignacion();
@@ -72,7 +72,6 @@
 					$usuario = Doctrine::getTable("Usuario")->find( $asignacionTarea->getCaLogin() );
 					?>		
 					<tr>
-										
 						<td>Ver reporte</td>
 						<td><?=$tarea->getCaFchterminada()?image_tag("16x16/button_ok.gif"):image_tag("16x16/button_cancel.gif")?></td>	
 						<td><?
