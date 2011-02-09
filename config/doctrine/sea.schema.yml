@@ -80,6 +80,11 @@ InoMaestraSea:
       foreign: ca_idciudad
       type: one
       class: Ciudad
+    UsuCreado:
+      local: ca_usucreado
+      foreign: ca_login
+      type: one
+      class: Usuario
     
 
 InoClientesSea:
