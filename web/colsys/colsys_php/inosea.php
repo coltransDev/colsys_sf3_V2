@@ -5068,11 +5068,11 @@ elseif (isset($accion)) {                                                      /
                     echo "<script>document.location.href = 'inosea.php';</script>";
                     exit;
                 }
-                if ($rs->Value('ca_costoneto') == 0) {
-                    echo "<script>alert(\"No puede firmar un caso como liquidado, si no se tienen Facturas de Proveedores\");</script>";  // Muestra el mensaje de error
+                // if ($rs->Value('ca_costoneto') == 0) {
+                //    echo "<script>alert(\"No puede firmar un caso como liquidado, si no se tienen Facturas de Proveedores\");</script>";  // Muestra el mensaje de error
                 //           }else if ($rs->Value('ca_facturacion') == 0) {
                 //               echo "<script>alert(\"No puede firmar un caso como liquidado, si no se tienen Facturas de Clientes\");</script>";  // Muestra el mensaje de error
-                }else if (($rs->Value('ca_facturacion') - $rs->Value('ca_deduccion') - $rs->Value('ca_utilidad')) == 0) {
+                /*}else*/ if (($rs->Value('ca_facturacion') - $rs->Value('ca_deduccion') - $rs->Value('ca_utilidad')) == 0) {
                         echo "<script>alert(\"No puede firmar un caso como liquidado, si la utilidad es igual a 0\");</script>";  // Muestra el mensaje de error
                     }else if ($rs->Value('ca_concepto') == '') {
                             echo "<script>alert(\"No puede firmar un caso como liquidado, si no se tienen Datos de la Carga\");</script>";  // Muestra el mensaje de error
