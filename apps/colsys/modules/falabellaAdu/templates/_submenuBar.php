@@ -39,10 +39,15 @@ switch($action){
 		$button[4]["image"]="22x22/mail_forward.gif";
 		$button[4]["link"]= "falabellaAdu/shippingInstructions?iddoc=".$this->getRequestParameter("iddoc");
 
-		$button[5]["name"]="Anular";
-		$button[5]["tooltip"]="Anular la Orden de Pedido";
-		$button[5]["image"]="22x22/cancel.gif";
-		$button[5]["link"]= "falabellaAdu/anularOrden?iddoc=".$this->getRequestParameter("iddoc");
+		$button[5]["name"]="Archivar";
+		$button[5]["tooltip"]="Archivar la Orden de Pedido";
+		$button[5]["image"]="22x22/attach.gif";
+		$button[5]["link"]= "falabellaAdu/archivarOrden?iddoc=".$this->getRequestParameter("iddoc");
+
+		$button[6]["name"]="Anular";
+		$button[6]["tooltip"]="Anular la Orden de Pedido";
+		$button[6]["image"]="22x22/cancel.gif";
+		$button[6]["link"]= "falabellaAdu/anularOrden?iddoc=".$this->getRequestParameter("iddoc");
 
 		break;	
 	case "shippingInstructions":
