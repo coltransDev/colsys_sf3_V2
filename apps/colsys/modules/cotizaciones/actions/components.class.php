@@ -121,7 +121,6 @@ class cotizacionesComponents extends sfComponents
                                  ->addOrderBy( "c.ca_concepto" )
                                  ->execute();
 
-
         $this->recargosTerrestreOTM = Doctrine::getTable("InoConcepto")
                                   ->createQuery("c")
                                  ->innerJoin("c.InoConceptoModalidad cm")
@@ -132,7 +131,6 @@ class cotizacionesComponents extends sfComponents
                                  ->distinct()
                                  ->addOrderBy( "c.ca_concepto" )
                                  ->execute();
-
 
         if(!isset($this->modo)){
             $this->modo = "";

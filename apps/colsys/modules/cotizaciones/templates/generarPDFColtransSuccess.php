@@ -8,7 +8,7 @@ $cliente = $contacto->getCliente();
 
 $meses = array("enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre");
 
-$pdf = new PDF (  );
+$pdf = new PDF ( );
 $pdf->Open ();
 $pdf->setColtransHeader ( true );
 $pdf->setColtransFooter ( true );

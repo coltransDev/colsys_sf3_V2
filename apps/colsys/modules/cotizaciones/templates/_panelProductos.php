@@ -413,39 +413,42 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
 		Ext.getCmp('guardarbtnOTM/DTA').enable();
     },
     guardarItems: function (){
+        try{
+            tipo=this.tipo;
+            var storeProductos = this.store;
+            var success = true;
+            var records = storeProductos.getModifiedRecords();
+            var lenght = records.length;
 
-        tipo=this.tipo;
-        var storeProductos = this.store;
-        var success = true;
-        var records = storeProductos.getModifiedRecords();
-        var lenght = records.length;
+            for( var i=0; i< lenght; i++){
+                r = records[i];
+                if( r.data.idmoneda<=0 && r.data.iditem!="9999" ){
+                    r.data.idmoneda="USD";
+                }
 
-        //Se hace la valida que se hayan colocado todos los datos
-        
-        for( var i=0; i< lenght; i++){
-            r = records[i];
-            if( r.data.idmoneda<=0 && r.data.iditem!="9999" ){
-                r.data.idmoneda="USD";
+                if( !r.data.idequipo && r.data.modalidad =="FCL" && r.data.transporte=="<?=Constantes::TERRESTRE?>" )
+                {
+                   alert('Por favor indique el equipo 1 del trayecto '+r.data.trayecto,'Alert');
+                }
             }
+            var numResponses = 0;
 
-            if( !r.data.idequipo && r.data.modalidad =="FCL" && r.data.transporte=="<?=Constantes::TERRESTRE?>" )
-            {
-               alert('Por favor indique el equipo 1 del trayecto '+r.data.trayecto,'Alert');
+            Ext.getCmp('guardarbtn'+tipo).disable();
+            habilita=false;
+            for( var i=0; i< lenght; i++){
+
+                if(i==(lenght-1))
+                    habilita=true;
+                if( records[i].data.tipo=="concepto" || (records[i].data.tipo=="recargo" && records[i].data.idopcion ))
+                {
+                    this.guardarGridProductosRec( records[i],habilita );
+                    habilita="S";
+                }
             }
         }
-        var numResponses = 0;
-
-        Ext.getCmp('guardarbtn'+tipo).disable();
-		habilita=false;
-        for( var i=0; i< lenght; i++){
-			
-			if(i==(lenght-1))
-				habilita=true;
-            if( records[i].data.tipo=="concepto" || (records[i].data.tipo=="recargo" && records[i].data.idopcion ))
-            {
-                this.guardarGridProductosRec( records[i],habilita );
-				habilita="S";
-            }
+        catch(err)
+        {
+            habilita="N";
         }
 		if(habilita!="S")
 		{
@@ -481,7 +484,7 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
             changes['idequipo']=r.data.idequipo;
             changes['equipo']=r.data.equipo;
             r.set("inSave", true);
-            //envia los datos al servidor
+            
             Ext.Ajax.request(
                 {
                     waitMsg: 'Guardando cambios...',
@@ -524,11 +527,9 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
                                 }
                             } );
                         }
-
                         if( rec.data.tipo=="recargo" ){
                             rec.set("idcotrecargo", res.idcotrecargo );
                         }
-                        //rec.set("inSave", false);                        
                         rec.commit();
                         storeProductos.sort("orden", "ASC");
 						if(habilita==true)
@@ -1100,40 +1101,26 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
             var fp = Ext.getCmp("producto-form");
             form = fp.getForm().loadRecord(record);
             fp.getForm().findField("idproducto").setValue(record.data.idproducto);
-            if(fp.getForm().findField("tra_origen_id"))
-            {
-                fp.getForm().findField("tra_origen_id").setValue(record.data.tra_origen_value);            
-                fp.getForm().findField("tra_origen_id").hiddenField.value = record.data.tra_origen;
-            }
-            fp.getForm().findField("ciu_origen_id").setValue(record.data.ciu_origen_value);
-            fp.getForm().findField("ciu_origen_id").hiddenField.value = record.data.ciu_origen;
 
-            if(fp.getForm().findField("tra_destino_id"))
-            {
-                fp.getForm().findField("tra_destino_id").setValue(record.data.tra_destino_value);
-                fp.getForm().findField("tra_destino_id").hiddenField.value = record.data.tra_destino;
-            }
-            fp.getForm().findField("ciu_destino_id").setValue(record.data.ciu_destino_value);
-            fp.getForm().findField("ciu_destino_id").hiddenField.value = record.data.ciu_destino;
+            fp.getForm().findField("origen").setValue(record.data.ciu_origen_value);
+            fp.getForm().findField("origen").hiddenField.value = record.data.ciu_origen;
 
-            if(fp.getForm().findField("tra_escala_id"))
+            fp.getForm().findField("destino").setValue(record.data.ciu_destino_value);
+            fp.getForm().findField("destino").hiddenField.value = record.data.ciu_destino;
+
+            if(fp.getForm().findField("escala"))
             {
-                fp.getForm().findField("tra_escala_id").setValue(record.data.tra_escala_value);
-                fp.getForm().findField("tra_escala_id").hiddenField.value = record.data.tra_escala;
-            }
-            if(fp.getForm().findField("ciu_escala_id"))
-            {
-                fp.getForm().findField("ciu_escala_id").setValue(record.data.ciu_escala_value);
-                fp.getForm().findField("ciu_escala_id").hiddenField.value = record.data.ciu_escala;
+                fp.getForm().findField("escala").setValue(record.data.ciu_escala_value);
+                fp.getForm().findField("escala").hiddenField.value = record.data.ciu_escala;
             }
             if(fp.getForm().findField("idlinea"))
-            {
+            {                
                 fp.getForm().findField("idlinea").setValue(record.data.linea);
                 fp.getForm().findField("idlinea").hiddenField.value = record.data.idlinea;
             }
+            
             var now = new Date(<?=strtotime(date("Y-m-d"))*1000?>);
             fp.getForm().findField("vigencia").setMinValue( (record.data.vigencia&&record.data.vigencia<=now)?record.data.vigencia:now );
-
 
             //Verifica que no hayan concepto para poder editar los campos impoexpo, transporte y modalidad
             storeProductos.each( function( r ){

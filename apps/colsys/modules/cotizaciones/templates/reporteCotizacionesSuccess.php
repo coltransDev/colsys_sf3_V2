@@ -42,7 +42,7 @@ Datos basados en <?=count($cotizaciones)?> cotizaciones
 ?>
         <tr>
         <td><?=$cotizacion["ca_consecutivo"]?></td>
-        <td><?=$cotizacion["ca_usucreado"]?></td>
+        <td><?=$cotizacion["ca_login"]?></td>
         <td><?=$cotizacion["ca_fchcreado"]?></td>
         <td><?=$cotizacion["ca_usuenvio"]?></td>
         <td><?=$cotizacion["ca_fchenvio"]?></td>
