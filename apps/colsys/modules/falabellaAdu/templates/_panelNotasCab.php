@@ -14,7 +14,7 @@ $data = $sf_data->getRaw( "data" );
 PanelNotasCab = function(){
     this.selectedRow = null;
     this.columns = [
-     
+
       {
         header: "Numero",
         dataIndex: 'numdocumento',
@@ -22,7 +22,7 @@ PanelNotasCab = function(){
         width: 90,
         editor: new Ext.form.NumberField({
 				allowBlank: false ,
-				allowNegative: false,				
+				allowNegative: false,
 				decimalPrecision :3
 	})
       },
@@ -58,13 +58,13 @@ PanelNotasCab = function(){
         renderer: 'usMoney',
         editor: new Ext.form.NumberField({
 				allowBlank: false ,
-				allowNegative: false,				
+				allowNegative: false,
 				decimalPrecision :3
 			})
       }
     ];
 
-    
+
     this.record = Ext.data.Record.create([
             {name: 'referencia', type: 'string', mapping: 'd_ca_referencia'},
             {name: 'numdocumento', type: 'string', mapping: 'd_ca_numdocumento'},
@@ -72,10 +72,10 @@ PanelNotasCab = function(){
             {name: 'tipo_cambio', type: 'float', mapping: 'd_ca_tipo_cambio'},
             {name: 'vlrdocumento', type: 'float', mapping: 'd_ca_vlrdocumento'},
             {name: 'orden', type: 'string'}
-            
+
         ]);
 
-    this.store = new Ext.data.Store({       
+    this.store = new Ext.data.Store({
 
         autoLoad : true,
         proxy: new Ext.data.MemoryProxy( <?=json_encode(array("root"=>$data))?>),
@@ -87,7 +87,7 @@ PanelNotasCab = function(){
         )
     });
 
-    
+
     PanelNotasCab.superclass.constructor.call(this, {
         id: 'panel-notas-cab',
         loadMask: {msg:'Cargando...'},
@@ -101,7 +101,7 @@ PanelNotasCab = function(){
         selModel: new Ext.grid.CellSelectionModel({
             listeners: { cellselect:this.onCellSelect  }
         }),
-        
+
 
         view: new Ext.grid.GridView({
             forceFit:true
@@ -109,7 +109,7 @@ PanelNotasCab = function(){
             //showPreview:true//,
             //getRowClass : this.applyRowClass
         })
-        
+
         ,listeners:{
             validateEdit: this.onValidateEdit,
             rowContextMenu: this.onRowcontextMenu
@@ -138,8 +138,8 @@ Ext.extend(PanelNotasCab, Ext.grid.EditorGridPanel, {
             changes['id']=r.id;
 
             changes['numdocumento']=r.data.numdocumento;
-            
-            if( r.data.numdocumento && r.data.numdocumento != '+' ){
+
+            if( r.data.numdocumento ){
                 //envia los datos al servidor
                 Ext.Ajax.request(
                     {
@@ -168,9 +168,9 @@ Ext.extend(PanelNotasCab, Ext.grid.EditorGridPanel, {
         var storeTransacciones = this.store;
 
         if( this.ctxRecord &&  confirm("Desea continuar?") ){
-            
+
             var id = this.ctxRecord.id;
-            
+
             Ext.Ajax.request(
             {
                 waitMsg: 'Eliminando...',
@@ -178,9 +178,9 @@ Ext.extend(PanelNotasCab, Ext.grid.EditorGridPanel, {
                 params :	{
                     id: id,
                     numdocumento: this.ctxRecord.data.numdocumento
-                },                
+                },
                 success:function(response,options){
-                    var res = Ext.util.JSON.decode( response.responseText );                    
+                    var res = Ext.util.JSON.decode( response.responseText );
                     if( res.success ){
                         record = Ext.getCmp("panel-notas-cab").store.getById( res.id );
                         Ext.getCmp("panel-notas-cab").store.remove(record);
@@ -196,9 +196,9 @@ Ext.extend(PanelNotasCab, Ext.grid.EditorGridPanel, {
                 }
             });
         }
-        
+
     },
-    onValidateEdit : function(e){        
+    onValidateEdit : function(e){
         if( e.field == "numdocumento" && e.value && e.record.data.orden=="Z" ){
             var rec = e.record;
             var ed = this.colModel.getCellEditor(e.column, e.row);
@@ -211,9 +211,9 @@ Ext.extend(PanelNotasCab, Ext.grid.EditorGridPanel, {
 
                                referencia: '<?=$referencia?>',
                                numdocumento: '+',
-                               emision_fch: '',                                                              
+                               emision_fch: '',
                                tipo_cambio: '',
-                               vlrdocumento: '',                              
+                               vlrdocumento: '',
                                orden: 'Z' // Se utiliza Z por que el orden es alfabetico
             });
             rec.set("orden", "Y");
@@ -221,13 +221,13 @@ Ext.extend(PanelNotasCab, Ext.grid.EditorGridPanel, {
             storeGrid.addSorted(newRec);
             storeGrid.sort("orden", "ASC");
 
-            
-            
+
+
         }
 
         return true;
     },
-    
+
     onRowcontextMenu: function(grid, index, e){
         rec = this.store.getAt(index);
 
@@ -236,7 +236,7 @@ Ext.extend(PanelNotasCab, Ext.grid.EditorGridPanel, {
             this.menu = new Ext.menu.Menu({
             id:'grid_notas-cab-ctx',
             enableScrolling : false,
-            items: [                   
+            items: [
                     {
                         text: 'Eliminar item',
                         iconCls: 'delete',
@@ -269,7 +269,7 @@ Ext.extend(PanelNotasCab, Ext.grid.EditorGridPanel, {
         rec = grid.store.getAt( row );
 
         if( this.selectedRow!=rec.id ){
-        
+
             var grid = Ext.getCmp("panel-notas-det");
             grid.store.baseParams = {numdocumento:rec.data.numdocumento };
             grid.store.reload();
