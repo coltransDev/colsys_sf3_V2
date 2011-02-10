@@ -31,7 +31,8 @@ $office_types = $sf_data->getRaw("office_types");
         EditarActivoPropiedadesPanel.superclass.constructor.call(this, {
             title: 'Propiedades',
             id: 'form-activo-panel',
-            autoHeight: true,            
+            autoHeight: true,
+            autoWidth: true,
             bodyStyle:'padding:5px 5px 0',
             url: '<?= url_for('inventory/formActivoGuardar') ?>',
             buttons: this.buttons,
@@ -42,21 +43,38 @@ $office_types = $sf_data->getRaw("office_types");
                     autoHeight:true,
 
                     layout:'column',
-                    columns: 2,
+                    columns: 3,
+                    width: 890,
                     defaults:{
-                        columnWidth:0.5,
+                        columnWidth:0.33,
                         layout:'form',
                         border:false,
                         bodyStyle:'padding:4px'
                     },
                     items:[{
-                            columnWidth:.5,
+                            columnWidth:.3,
                             layout: 'form',
+                            defaults:{
+                                width: 130
+                            },
                             items: [
                                 {
+                                    xtype:'datefield',
+                                    fieldLabel: 'Fch. Compra',
+                                    name: 'fchcompra',
+                                    format: 'Y-m-d',
+                                    allowBlank: true
+                                },
+                                {
                                     xtype:'textfield',
-                                    fieldLabel: 'No Inventario',
-                                    name: 'noinventario',
+                                    fieldLabel: 'Factura',
+                                    name: 'factura',
+                                    allowBlank: true
+                                },
+                                {
+                                    xtype:'textfield',
+                                    fieldLabel: 'Proveedor',
+                                    name: 'proveedor',
                                     allowBlank: true
                                 },
                                 {
@@ -67,22 +85,39 @@ $office_types = $sf_data->getRaw("office_types");
                                 },
                                 {
                                     xtype:'textfield',
+                                    fieldLabel: 'Modelo',
+                                    name: 'modelo',
+                                    allowBlank: true
+                                },
+                                {
+                                    xtype:'textfield',
                                     fieldLabel: 'Version',
                                     name: 'version',
                                     allowBlank: true
-                                },
+                                }
+                            ]
+                        },{
+                            columnWidth:.4,
+                            layout: 'form',
+                            items: [
                                 {
                                     xtype:'textfield',
-                                    fieldLabel: 'Procesador',
-                                    name: 'procesador',
+                                    fieldLabel: 'No Inventario',
+                                    name: 'noinventario',
                                     allowBlank: true
                                 },
                                 {
                                     xtype:'textfield',
-                                    fieldLabel: 'Disco',
-                                    name: 'disco',
+                                    fieldLabel: 'Identificador',
+                                    name: 'identificador',
                                     allowBlank: true
-                                },                               
+                                },
+                                {
+                                    xtype:'textfield',
+                                    fieldLabel: 'Serial',
+                                    name: 'serial',
+                                    allowBlank: true
+                                },
                                 {
                                     xtype:          'combo',
                                     mode:           'local',
@@ -109,8 +144,7 @@ $office_types = $sf_data->getRaw("office_types");
                                         ]
                                     })
                                 },
-
-                                {                                    
+                                {
                                     xtype:          'combo',
                                     mode:           'local',
                                     value:          '',
@@ -132,34 +166,42 @@ $office_types = $sf_data->getRaw("office_types");
                                         ]
                                     })
                                 },
-                                {
-                                    xtype:'textfield',
-                                    fieldLabel: 'Factura',
-                                    name: 'factura',
-                                    allowBlank: true
-                                },
-                                {
-                                    xtype:'datefield',
-                                    fieldLabel: 'Fch. Compra',
-                                    name: 'fchcompra',
-                                    format: 'Y-m-d',
-                                    allowBlank: true
-                                }
+                                new WidgetUsuario({fieldLabel: 'Asignado a',
+                                    name: 'asignadoa',
+                                    hiddenName: 'asignadoa'
+                                })
                             ]
-                        },{
-                            columnWidth:.5,
+                        },
+                        {
+                            columnWidth:.3,
                             layout: 'form',
+                            defaults:{
+                                width: 130
+                            },
                             items: [
+
                                 {
                                     xtype:'textfield',
-                                    fieldLabel: 'Identificador',
-                                    name: 'identificador',
+                                    fieldLabel: 'Procesador',
+                                    name: 'procesador',
                                     allowBlank: true
                                 },
                                 {
                                     xtype:'textfield',
-                                    fieldLabel: 'Modelo',
-                                    name: 'modelo',                                    
+                                    fieldLabel: 'Disco',
+                                    name: 'disco',
+                                    allowBlank: true
+                                },
+                                {
+                                    xtype:'textfield',
+                                    fieldLabel: 'Memoria',
+                                    name: 'memoria',
+                                    allowBlank: true
+                                },
+                                 {
+                                    xtype:'textfield',
+                                    fieldLabel: 'Un. Optica',
+                                    name: 'optica',
                                     allowBlank: true
                                 },
                                 {
@@ -170,41 +212,13 @@ $office_types = $sf_data->getRaw("office_types");
                                 },
                                 {
                                     xtype:'textfield',
-                                    fieldLabel: 'Memoria',
-                                    name: 'memoria',
-                                    allowBlank: true
-                                },
-                                {
-                                    xtype:'textfield',
-                                    fieldLabel: 'Un. Optica',
-                                    name: 'optica',
-                                    allowBlank: true
-                                },                                
-                                {
-                                    xtype:'textfield',
-                                    fieldLabel: 'Proveedor',
-                                    name: 'proveedor',
-                                    allowBlank: true
-                                },
-                                {
-                                    xtype:'textfield',
                                     fieldLabel: 'Vlr. Reposición',
                                     name: 'reposicion',
                                     allowBlank: true
-                                },
-                                {
-                                    xtype:'textfield',
-                                    fieldLabel: 'Serial',
-                                    name: 'serial',
-                                    allowBlank: true
-                                },
-                                new WidgetUsuario({fieldLabel: 'Asignado a',
-                                    name: 'asignadoa',
-                                    hiddenName: 'asignadoa'
-                                })
-
+                                }
                             ]
-                        }]
+                        }
+                    ]
                 },
                 {
                     xtype:'fieldset',
@@ -275,9 +289,6 @@ $office_types = $sf_data->getRaw("office_types");
                                         ]
                                     })
                                 }
-
-
-                                
                             ]
                         },
                         {

@@ -47,7 +47,7 @@ EditarActivoWindow = function( config ) {
         title: title,
         id: 'editar-activo-win',
         autoHeight: true,
-        width: 800,
+        width: 900,
         //height: 400,
         autoHeight: true, 
         resizable: false,
