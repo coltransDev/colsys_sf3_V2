@@ -23,6 +23,7 @@ class falabellaAduActions extends sfActions {
     public function executeList() {
         $this->fala_headers = Doctrine::getTable("FalaHeaderAdu")
             ->createQuery("f")
+            ->addWhere("f.ca_fcharchivado is null")
             ->leftJoin("f.FalaDeclaracionImp d")
             ->leftJoin("f FalaInstructionAdu i")
             ->addOrderBy("f.ca_reqd_delivery desc")
@@ -41,6 +42,17 @@ class falabellaAduActions extends sfActions {
         $this->info = $this->header->getFalaShipmentInfoAdu();
     }
 
+    /*
+    * Permite archivar la Orden de Pedido
+    */
+    public function executeArchivarOrden(){
+            $fala_header = Doctrine::getTable("FalaHeaderAdu")->find ( base64_decode($this->getRequestParameter ( 'iddoc' )) );
+            $this->forward404Unless($fala_header);
+            $fala_header->setCaFcharchivado(date("d M Y H:i:s"));
+            $fala_header->setCaUsuarchivado($this->getUser()->getUserId());
+            $fala_header->save();
+            $this->redirect("falabellaAdu/list");
+    }
 
 	/*
 	* Permite ver los detalles del PO y confirmar los datos para generar el archivo de salida
@@ -972,7 +984,7 @@ class falabellaAduActions extends sfActions {
 
             $salida.= str_pad($row["ca_factura_ter"],20, " "); // 10
             $salida.= str_pad($row["ca_nit_ter"],10, " "); // 11
-            
+
             list($anno,$mes,$dia) = sscanf($row["ca_factura_fch"],"%d-%d-%d");
             $emision = date("Ymd", mktime(0,0,0,$mes,$dia,$anno));
             $salida.= $emision; // 12
@@ -992,7 +1004,7 @@ class falabellaAduActions extends sfActions {
             if ($prorrateos[$row["ca_iddoc"]] != 0 and $row["ca_idconcepto"] == 12){
                 $valor_carpeta+= $prorrateos[$row["ca_iddoc"]];
             }
-            
+
             $salida.= str_pad($valor_carpeta, 15, "0", STR_PAD_LEFT); // 20
             $salida.= "\r\n";
         }
@@ -1000,7 +1012,7 @@ class falabellaAduActions extends sfActions {
         foreach($acumula as $key => $value){
             $salida = $value.$salida;
         }
-        
+
         $filename = $directory.DIRECTORY_SEPARATOR.'Not_'.$numdocumento.'.txt';
         $handle = fopen($filename , 'w');
 
@@ -1008,7 +1020,7 @@ class falabellaAduActions extends sfActions {
             echo "No se puede escribir al archivo {filename}";
             exit;
         }
-        
+
         $this->redirect("falabellaAdu/list");
     }
 
@@ -1238,13 +1250,15 @@ class falabellaAduActions extends sfActions {
         $this->responseArray=array("success"=>false, "id"=>$request->getParameter("id"));
 
         $referencia = base64_decode($request->getParameter("referencia"));
-        $numdocumento = $request->getParameter("numdocumento");
-        
+        $numdocumento = $request->getParameter("olddocumento");
+
         $factura = Doctrine::getTable("FalaFacturacionAdu")->find(array($referencia, $numdocumento));
         if( !$factura ){
             $factura = new FalaFacturacionAdu();
             $factura->setCaReferencia( $referencia );
-            $factura->setCaNumdocumento( $numdocumento );
+        }
+        if( $this->getRequestParameter ( 'numdocumento' ) ) {
+            $factura->setCaNumdocumento( $this->getRequestParameter ( 'numdocumento' ) );
         }
         if( $this->getRequestParameter ( 'emision_fch' ) ) {
             $factura->setCaEmisionFch( $this->getRequestParameter ( 'emision_fch' ) );
@@ -1273,7 +1287,7 @@ class falabellaAduActions extends sfActions {
         $this->setTemplate("responseTemplate");
     }
 
-   
+
     public function executeEliminarFactura( sfWebRequest $request ){
         $this->responseArray=array("success"=>false, "id"=>$request->getParameter("id"));
 
@@ -1349,7 +1363,7 @@ class falabellaAduActions extends sfActions {
                     ->where("d.ca_referencia = ? AND d.ca_numdocumento = ?",array($referencia, $numdocumento))
                     ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
                     ->execute();
-        
+
             $facturas[] = array("d_ca_concepto"=>"", "d_ca_numdocumento"=>$numdocumento, "orden"=>"Z");
         }
         $this->responseArray["root"]=$facturas;
@@ -1445,7 +1459,7 @@ class falabellaAduActions extends sfActions {
 //        $this->responseArray=array("success"=>true);
 //        print_r($this->responseArray);
 //        exit;
-        
+
         $this->setTemplate("responseTemplate");
     }
 
