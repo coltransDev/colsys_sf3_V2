@@ -1793,6 +1793,9 @@ elseif (isset($boton)) {                                                       /
                     echo "<script>document.location.href = 'inosea.php';</script>";
                     exit;
                 }
+                echo $rs->Value('ca_imprimirorigen');
+                exit();
+
                 echo "<HEAD>";
                 echo "<TITLE>$titulo</TITLE>";
                 echo "<script language='JavaScript' type='text/JavaScript'>";     // Código en JavaScript para validar las opciones de mantenimiento
