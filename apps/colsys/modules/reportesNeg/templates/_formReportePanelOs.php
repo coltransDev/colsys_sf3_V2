@@ -35,7 +35,7 @@ else
 
 ob_start();
 
-
+include_component("widgets", "widgetCiudad");
 include_component("reportesNeg", "formGeneralOsPanel");
 
 include_component("reportesNeg", "formClientePanel",array("tiporep"=>"3","nprov"=>$nprov));
