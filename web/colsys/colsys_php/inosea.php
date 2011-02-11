@@ -4932,6 +4932,7 @@ elseif (isset($accion)) {                                                      /
                 settype($volumen,"double");
                 settype($idbodega,"integer");
                 $fchantecedentes = (strlen($fchantecedentes)==0)?'null':"'".$fchantecedentes."'";
+                $imprimirorigen = ($imprimirorigen)?"TRUE":"FALSE";
                 $cadena = "";
                 foreach($contenedores as $contenedor) {
                     $cadena.= implode(";",$contenedor)."|";
