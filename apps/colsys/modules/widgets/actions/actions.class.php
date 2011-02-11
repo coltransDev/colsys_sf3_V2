@@ -643,7 +643,7 @@ class widgetsActions extends sfActions
 			}else{
 				$tercero = Doctrine::getTable("Tercero")->find( $idtercero );
 			}
-			$tercero->setCaNombre( utf8_decode(strtoupper($this->getRequestParameter("nombre"))) );
+			$tercero->setCaNombre( utf8_decode(strtoupper($this->getRequestParameter("nombre"))));
 			$tercero->setCaDireccion( utf8_decode(strtoupper($this->getRequestParameter("direccion"))) );
 			$tercero->setCaTelefonos( $this->getRequestParameter("telefono") );
 			$tercero->setCaFax( $this->getRequestParameter("fax") );
@@ -659,7 +659,6 @@ class widgetsActions extends sfActions
 		$this->responseArray = array("success"=>true, "nombre"=>$this->getRequestParameter("nombre"), "idtercero"=>$tercero->getCaIdtercero() , "tipo"=>$this->tipo, "idcomponent"=>$idcomponent);
 		$this->setTemplate("responseTemplate");
 	}
-
 
     /*
 	* Carga los datos de un tercero en un objeto JSON
@@ -683,7 +682,6 @@ class widgetsActions extends sfActions
                                     "ciudad"=>utf8_encode($tercero->getCiudad()->getCaCiudad()),
                                     "idtrafico"=>$tercero->getCiudad()->getCaIdtrafico(),
                                     "trafico"=>utf8_encode($tercero->getCiudad()->getTrafico()->getCaNombre())
-
 									);
 		$this->setTemplate("responseTemplate");
 	}
