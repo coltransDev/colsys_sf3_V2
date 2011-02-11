@@ -2027,7 +2027,7 @@ elseif (isset($boton)) {                                                       /
                 echo "      <TR>";
                 echo "          <TD Class=mostrar>HBL:<BR><INPUT TYPE='TEXT' NAME='hbls' VALUE='".$rs->Value('ca_hbls')."' SIZE=25 MAXLENGTH=25></TD>";
                 echo "          <TD Class=mostrar>Fch.HBL<BR><INPUT TYPE='TEXT' NAME='fchhbls' SIZE=12 VALUE='".((strlen($rs->Value('ca_fchhbls'))!=0)?$rs->Value('ca_fchhbls'):(strlen($mbls[1])!=0)?$mbls[1]:date("Y-m-d"))."' ONKEYDOWN=\"chkDate(this)\" ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
-                echo "          <TD Class=mostrar>Imp.Origen<BR><INPUT TYPE='CHECKBOX' NAME='imprimirorigen' ".(($rs->Value('ca_imprimirorigen')=="" or $rs->Value('ca_imprimirorigen')=='FALSE')?"":"CHECKED")."></TD>";
+                echo "          <TD Class=mostrar>Imp.Origen<BR><CENTER><INPUT TYPE='CHECKBOX' NAME='imprimirorigen' ".(($rs->Value('ca_imprimirorigen')=="" or $rs->Value('ca_imprimirorigen')=='FALSE')?"":"CHECKED")."></CENTER></TD>";
                 echo "      </TR>";
                 echo "      </TABLE>";
                 echo "    </TD>";
