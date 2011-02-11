@@ -1594,7 +1594,7 @@ elseif (isset($boton)) {                                                       /
                 echo " <TD Class=invertir COLSPAN=2>";
                 echo "  <TABLE WIDTH=100% CELLSPACING=1>";
                 echo "  <TR>";
-                echo "    <TD Class=mostrar COLSPAN=2>";
+                echo "    <TD Class=mostrar COLSPAN=3>";
                 echo "      <TABLE WIDTH=100% CELLSPACING=1>";
                 echo "      <TR>";
                 echo "          <TD Class=mostrar>HBL:<BR><INPUT TYPE='TEXT' NAME='hbls' SIZE=25 MAXLENGTH=25></TD>";
@@ -2022,7 +2022,7 @@ elseif (isset($boton)) {                                                       /
                 echo " <TD Class=invertir COLSPAN=2>";
                 echo "  <TABLE WIDTH=100% CELLSPACING=1>";
                 echo "  <TR>";
-                echo "    <TD Class=mostrar COLSPAN=2>";
+                echo "    <TD Class=mostrar COLSPAN=3>";
                 echo "      <TABLE WIDTH=100% CELLSPACING=1>";
                 echo "      <TR>";
                 echo "          <TD Class=mostrar>HBL:<BR><INPUT TYPE='TEXT' NAME='hbls' VALUE='".$rs->Value('ca_hbls')."' SIZE=25 MAXLENGTH=25></TD>";
