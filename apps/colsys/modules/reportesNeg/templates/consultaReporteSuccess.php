@@ -116,11 +116,11 @@ else
     $panelConceptosOtm = false;
 
 if( $reporte->getCaImpoexpo()!=Constantes::EXPO || $reporte->getCaTiporep()=="3" ){
-        include_component("reportesNeg","panelRecargos", array("reporte"=>$reporte));
-        $panelRecargos = true;
-    }else{
-        $panelRecargos = false;
-    }
+    include_component("reportesNeg","panelRecargos", array("reporte"=>$reporte));
+    $panelRecargos = true;
+}else{
+    $panelRecargos = false;
+}
 
 
 if( ($reporte->getCaColmas()=="Sí" && $reporte->getCaImpoexpo()!=Constantes::TRIANGULACION /*|| substr($reporte->getCaModalidad(),0,6) == "ADUANA"*/ ) || $reporte->getCaTiporep()=="3"){

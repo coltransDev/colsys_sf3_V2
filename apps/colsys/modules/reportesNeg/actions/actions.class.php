@@ -555,7 +555,8 @@ class reportesNegActions extends sfActions
                 $reporte = $reporte->copiar(2);
                 break;
         }
-        $reporte->setCaTiporep( 1 );
+        if($reporte->getCaTiporep()!="3")
+            $reporte->setCaTiporep( 1 );
 //        echo $opcion;
 /*        if( $opcion!=0 ) //Al copiar el reporte ya se coloco el usuario y la fecha
         {
@@ -960,7 +961,7 @@ class reportesNegActions extends sfActions
             else
             {
                 if(utf8_decode($request->getParameter("impoexpo"))==constantes::TRIANGULACION)
-                    $reporte->setCaIdbodega(null);
+                    $reporte->setCaIdbodega(1);
                 else
                     $reporte->setCaIdbodega(1);
 

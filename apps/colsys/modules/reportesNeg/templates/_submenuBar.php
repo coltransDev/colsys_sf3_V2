@@ -10,11 +10,13 @@ $i = 0;
 //if($user->getUserId()=="maquinche")
 //    echo $action;
 $permiso = $user->getNivelAcceso("87");
+$tipo="1";
 if ($this->getRequestParameter("id")) {
     $reporte = Doctrine::getTable("Reporte")->find($this->getRequestParameter("id"));
     $editable = $reporte->getEditable($permiso, $user);
     $cerrado = $reporte->getCerrado();
     $anulado = $reporte->getAnulado();
+    $tipo=$reporte->getCaTiporep();
 }
 else
     $editable=false;
@@ -332,7 +334,7 @@ switch ($action) {
                     idreporte:'<?= $this->getRequestParameter("id") ?>',
                     opcion:"2",
                     tipo:"full"
-                },                
+                },
                 failure:function(response,options){
                     var res = Ext.util.JSON.decode( response.responseText );
                     if(res.err)
@@ -344,7 +346,22 @@ switch ($action) {
                     var res = Ext.util.JSON.decode( response.responseText );
                     Ext.MessageBox.alert("Mensaje",'Se guardo correctamente el reporte');
                     if(res.redirect)
-                        location.href="/reportesNeg/formReporte/id/"+res.idreporte+"/impoexpo/<?= $impoexpo ?>/modo/<?= $modo ?>";
+                        <?
+                            if($tipo!="3")
+                            {
+                        ?>
+                            location.href="/reportesNeg/formReporte/id/"+res.idreporte+"/impoexpo/<?= $impoexpo ?>/modo/<?= $modo ?>";
+                        <?
+                            }
+                            else
+                            {
+                        ?>
+                            location.href="/reportesNeg/formReporteOs/id/"+res.idreporte;
+                            
+                        <?
+                            }
+                        ?>
+                        
                 }
             });
         }
