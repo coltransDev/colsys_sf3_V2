@@ -177,7 +177,7 @@ class reporteExtComponents extends sfComponents
             }
         }
 
-        if( $reporte->getCaIdconsignatario() ){
+        if( $reporte->getCaIdconsignatario()){
 
             $consignatario = Doctrine::getTable("Tercero")->find( $reporte->getCaIdconsignatario() );
             $consignatario_final = $consignatario->getCaNombre()." Nit. ".$consignatario->getCaIdentificacion();
@@ -224,7 +224,7 @@ class reporteExtComponents extends sfComponents
             if($bodega2->getCaTipo()==$bodega2->getCaNombre() || $bodega2->getCaTipo()=="Entrega Urgente")
                 $hijo .=" / ".$bodega2->getCaTipo();
             else
-                $hijo .=" / ".$bodega2->getCaTipo()." ".(($bodega2->getCaNombre()!='N/A')?$bodega2->getCaNombre():"")." ".$reporte->getDestinoCont()->getCaCiudad()." - ".$reporte->getDestinoCont()->getTrafico()->getCaNombre();
+                $hijo .=" / ".$bodega2->getCaTipo()." ".(($bodega2->getCaNombre()!='N/A')?$bodega2->getCaNombre():"")." ".(($reporte->getCaContinuacion()!="N/A")? $reporte->getDestinoCont()->getCaCiudad()." - ".$reporte->getDestinoCont()->getTrafico()->getCaNombre():"");
         }
 
         if( !$reporte->getCaNotify() ){
