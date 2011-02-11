@@ -1590,13 +1590,19 @@ elseif (isset($boton)) {                                                       /
                 echo "  <TD Class=mostrar COLSPAN=3>Nombre del Cliente:<BR><INPUT TYPE='TEXT' READONLY NAME='cliente' SIZE=60 MAXLENGTH=60></TD>";
                 echo "  <TD Class=mostrar>Orden Cliente No.<BR><INPUT TYPE='TEXT' NAME='numorden' SIZE=17 MAXLENGTH=100></TD>";
                 echo "</TR>";
-
                 echo "<TR>";
                 echo " <TD Class=invertir COLSPAN=2>";
                 echo "  <TABLE WIDTH=100% CELLSPACING=1>";
                 echo "  <TR>";
-                echo "    <TD Class=mostrar COLSPAN=2>HBL:<BR><INPUT TYPE='TEXT' NAME='hbls' SIZE=25 MAXLENGTH=25></TD>";
-                echo "    <TD Class=mostrar>Fch.HBL<BR><INPUT TYPE='TEXT' NAME='fchhbls' SIZE=12 VALUE='".((strlen($mbls[1])!=0)?$mbls[1]:date("Y-m-d"))."' ONKEYDOWN=\"chkDate(this)\" ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+                echo "    <TD Class=mostrar COLSPAN=2>";
+                echo "      <TABLE WIDTH=100% CELLSPACING=1>";
+                echo "      <TR>";
+                echo "          <TD Class=mostrar>HBL:<BR><INPUT TYPE='TEXT' NAME='hbls' SIZE=25 MAXLENGTH=25></TD>";
+                echo "          <TD Class=mostrar>Fch.HBL<BR><INPUT TYPE='TEXT' NAME='fchhbls' SIZE=12 VALUE='".((strlen($mbls[1])!=0)?$mbls[1]:date("Y-m-d"))."' ONKEYDOWN=\"chkDate(this)\" ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+                echo "          <TD Class=mostrar>Imp.Origen<BR><INPUT TYPE='CHECKBOX' NAME='imprimirorigen'></TD>";
+                echo "      </TR>";
+                echo "      </TABLE>";
+                echo "    </TD>";
                 echo "  </TR>";
                 echo "  <TR>";
                 echo "    <TD Class=mostrar>No.Piezas:<BR><INPUT TYPE='TEXT' NAME='numpiezas' SIZE=6 MAXLENGTH=6></TD>";
@@ -2012,13 +2018,23 @@ elseif (isset($boton)) {                                                       /
                 echo "  <TD Class=mostrar COLSPAN=3>Nombre del Cliente:<BR><INPUT TYPE='TEXT' READONLY NAME='cliente' VALUE='".$rs->Value('ca_compania')."' SIZE=60 MAXLENGTH=60 READONLY></TD>";
                 echo "  <TD Class=mostrar>Orden Cliente No.<BR><INPUT TYPE='TEXT' NAME='numorden' VALUE='".$rs->Value('ca_numorden')."' SIZE=17 MAXLENGTH=100></TD>";
                 echo "</TR>";
-
                 echo "<TR>";
                 echo " <TD Class=invertir COLSPAN=2>";
                 echo "  <TABLE WIDTH=100% CELLSPACING=1>";
                 echo "  <TR>";
-                echo "    <TD Class=mostrar COLSPAN=2>HBL:<BR><INPUT TYPE='TEXT' NAME='hbls' VALUE='".$rs->Value('ca_hbls')."' SIZE=25 MAXLENGTH=25></TD>";
-                echo "    <TD Class=mostrar>Fch.HBL<BR><INPUT TYPE='TEXT' NAME='fchhbls' SIZE=12 VALUE='".((strlen($rs->Value('ca_fchhbls'))!=0)?$rs->Value('ca_fchhbls'):(strlen($mbls[1])!=0)?$mbls[1]:date("Y-m-d"))."' ONKEYDOWN=\"chkDate(this)\" ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+                echo "    <TD Class=mostrar COLSPAN=2>";
+                echo "      <TABLE WIDTH=100% CELLSPACING=1>";
+                echo "      <TR>";
+                echo "          <TD Class=mostrar>HBL:<BR><INPUT TYPE='TEXT' NAME='hbls' VALUE='".$rs->Value('ca_hbls')."' SIZE=25 MAXLENGTH=25></TD>";
+                echo "          <TD Class=mostrar>Fch.HBL<BR><INPUT TYPE='TEXT' NAME='fchhbls' SIZE=12 VALUE='".((strlen($rs->Value('ca_fchhbls'))!=0)?$rs->Value('ca_fchhbls'):(strlen($mbls[1])!=0)?$mbls[1]:date("Y-m-d"))."' ONKEYDOWN=\"chkDate(this)\" ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+                echo "          <TD Class=mostrar>Imp.Origen<BR><INPUT TYPE='CHECKBOX' NAME='imprimirorigen' ".(($rs->Value('ca_imprimirorigen')=="" or $rs->Value('ca_imprimirorigen')=='FALSE')?"":"CHECKED")."></TD>";
+                echo "      </TR>";
+                echo "      </TABLE>";
+                echo "    </TD>";
+                echo "  </TR>";
+                echo "  <TR>";
+                echo "    <TD Class=mostrar COLSPAN=2></TD>";
+                echo "    <TD Class=mostrar></TD>";
                 echo "  </TR>";
                 echo "  <TR>";
                 echo "    <TD Class=mostrar>No.Piezas:<BR><INPUT ID=='numpiezas' TYPE='TEXT' NAME='numpiezas' VALUE='".$rs->Value('ca_numpiezas')."' SIZE=6 MAXLENGTH=6></TD>";
@@ -4877,12 +4893,13 @@ elseif (isset($accion)) {                                                      /
                 settype($volumen,"double");
                 settype($idbodega,"integer");
                 $fchantecedentes = (strlen($fchantecedentes)==0)?'null':"'".$fchantecedentes."'";
+                $imprimirorigen = ($imprimirorigen)?"TRUE":"FALSE";
                 $cadena = "";
                 foreach($contenedores as $contenedor) {
                     $cadena.= implode(";",$contenedor)."|";
                 }
                 $contenedores = substr($cadena,0,strlen($cadena)-1);
-                if (!$rs->Open("insert into tb_inoclientes_sea (ca_referencia, ca_idcliente, ca_idreporte, ca_hbls, ca_fchhbls, ca_idproveedor, ca_proveedor, ca_numpiezas, ca_peso, ca_volumen, ca_numorden, ca_login, ca_continuacion, ca_continuacion_dest, ca_idbodega, ca_observaciones, ca_contenedores, ca_fchantecedentes, ca_fchcreado, ca_usucreado) values('$referencia', $idcliente, $idreporte, '$hbls', '$fchhbls', $idproveedor, '$proveedor', $numpiezas, $peso, $volumen, '$numorden', '$login', '$continuacion', '$continuacion_dest', '$idbodega', '', '$contenedores', $fchantecedentes, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
+                if (!$rs->Open("insert into tb_inoclientes_sea (ca_referencia, ca_idcliente, ca_idreporte, ca_hbls, ca_fchhbls, ca_imprimirorigen, ca_idproveedor, ca_proveedor, ca_numpiezas, ca_peso, ca_volumen, ca_numorden, ca_login, ca_continuacion, ca_continuacion_dest, ca_idbodega, ca_observaciones, ca_contenedores, ca_fchantecedentes, ca_fchcreado, ca_usucreado) values('$referencia', $idcliente, $idreporte, '$hbls', '$fchhbls', '$imprimirorigen', $idproveedor, '$proveedor', $numpiezas, $peso, $volumen, '$numorden', '$login', '$continuacion', '$continuacion_dest', '$idbodega', '', '$contenedores', $fchantecedentes, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
                     echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                     echo "<script>document.location.href = 'inosea.php';</script>";
                     exit;
@@ -4921,13 +4938,13 @@ elseif (isset($accion)) {                                                      /
                 }
                 $contenedores = substr($cadena,0,strlen($cadena)-1);
                 if ( $hbl != $hbls ) {
-                    if (!$rs->Open("insert into tb_inoclientes_sea (ca_referencia, ca_idcliente, ca_idreporte, ca_hbls, ca_fchhbls, ca_idproveedor, ca_proveedor, ca_numpiezas, ca_peso, ca_volumen, ca_numorden, ca_login, ca_continuacion, ca_continuacion_dest, ca_idbodega, ca_observaciones, ca_contenedores, ca_fchantecedentes, ca_fchcreado, ca_usucreado) values('$referencia', $idcliente, $idreporte, '$hbls', '$fchhbls', $idproveedor, '$proveedor', $numpiezas, $peso, $volumen, '$numorden', '$login', '$continuacion', '$continuacion_dest', '$idbodega', '', '$contenedores', $fchantecedentes, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
+                    if (!$rs->Open("insert into tb_inoclientes_sea (ca_referencia, ca_idcliente, ca_idreporte, ca_hbls, ca_fchhbls, ca_imprimirorigen, ca_idproveedor, ca_proveedor, ca_numpiezas, ca_peso, ca_volumen, ca_numorden, ca_login, ca_continuacion, ca_continuacion_dest, ca_idbodega, ca_observaciones, ca_contenedores, ca_fchantecedentes, ca_fchcreado, ca_usucreado) values('$referencia', $idcliente, $idreporte, '$hbls', '$fchhbls', '$imprimirorigen', $idproveedor, '$proveedor', $numpiezas, $peso, $volumen, '$numorden', '$login', '$continuacion', '$continuacion_dest', '$idbodega', '', '$contenedores', $fchantecedentes, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
                         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                         echo "<script>document.location.href = 'inosea.php';</script>";
                         exit;
                     }
                 }else {
-                    if (!$rs->Open("update tb_inoclientes_sea set ca_idreporte = $idreporte, ca_idcliente = '$idcliente', ca_hbls = '$hbls', ca_fchhbls = '$fchhbls', ca_idproveedor = $idproveedor, ca_proveedor = '$proveedor', ca_numpiezas = $numpiezas, ca_peso = $peso, ca_volumen = $volumen, ca_numorden = '$numorden', ca_login = '$login', ca_continuacion = '$continuacion', ca_continuacion_dest = '$continuacion_dest', ca_idbodega = '$idbodega', ca_observaciones = '', ca_contenedores = '$contenedores', ca_fchantecedentes = $fchantecedentes, ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where oid = '$oid'")) {
+                    if (!$rs->Open("update tb_inoclientes_sea set ca_idreporte = $idreporte, ca_idcliente = '$idcliente', ca_hbls = '$hbls', ca_fchhbls = '$fchhbls', ca_imprimirorigen = '$imprimirorigen', ca_idproveedor = $idproveedor, ca_proveedor = '$proveedor', ca_numpiezas = $numpiezas, ca_peso = $peso, ca_volumen = $volumen, ca_numorden = '$numorden', ca_login = '$login', ca_continuacion = '$continuacion', ca_continuacion_dest = '$continuacion_dest', ca_idbodega = '$idbodega', ca_observaciones = '', ca_contenedores = '$contenedores', ca_fchantecedentes = $fchantecedentes, ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where oid = '$oid'")) {
                         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                         echo "<script>document.location.href = 'inosea.php';</script>";
                         exit;
