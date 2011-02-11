@@ -370,7 +370,7 @@ class cotizacionesActions extends sfActions
             if( $mostrarTodos ){
                 $paises = array();
                 foreach( $productos as $producto ){
-                    if( $producto->getCaImpoexpo() == Constantes::IMPO ){
+                    if( $producto->getCaImpoexpo() == Constantes::IMPO || $producto->getCaImpoexpo() == Constantes::TRIANGULACION ){
                         $paises[] = $producto->getOrigen()->getCaIdtrafico();
 
                         //Esto es debido a que China y Hong Kong estan separado y no se
@@ -398,7 +398,7 @@ class cotizacionesActions extends sfActions
                 $ciudades = array();
 
                 foreach( $productos as $producto ){
-                    if( $producto->getCaImpoexpo() == Constantes::IMPO ){
+                    if( $producto->getCaImpoexpo() == Constantes::IMPO || $producto->getCaImpoexpo() == Constantes::TRIANGULACION ){
                         $ciudades[] = $producto->getCaOrigen();
                     }else{
                         $ciudades[] = $producto->getCaDestino();
