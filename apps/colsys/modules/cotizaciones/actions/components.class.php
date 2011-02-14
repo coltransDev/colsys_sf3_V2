@@ -124,7 +124,7 @@ class cotizacionesComponents extends sfComponents
         $this->recargosTerrestreOTM = Doctrine::getTable("InoConcepto")
                                   ->createQuery("c")
                                  ->innerJoin("c.InoConceptoModalidad cm")
-                                 ->innerJoin("cm.Modalidad m")                                 
+                                 ->innerJoin("cm.Modalidad m")
                                  ->addWhere("m.ca_transporte = ? ", Constantes::TERRESTRE )
                                  ->addWhere("c.ca_recargootmdta = ? ", true )
                                  ->addWhere("c.ca_usueliminado IS NULL" )
@@ -208,7 +208,7 @@ class cotizacionesComponents extends sfComponents
 
     public function executeGridPanelContinuacionWindow()
     {
-        
+
     }
 
     /*
