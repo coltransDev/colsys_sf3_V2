@@ -41,8 +41,8 @@ WidgetLinea = function( config ){
         triggerAction: 'all',
         emptyText:'',
         selectOnFocus: true,        
-        lazyRender:true,
-        
+        lazyRender:true,        
+
         listClass: 'x-combo-list-small'  ,
         listeners: {
             focus: this.onFocusWdg            
