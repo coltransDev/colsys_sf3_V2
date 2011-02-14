@@ -521,7 +521,7 @@ elseif (isset($boton)) {                                                       /
                             echo "</TR>";
                             echo "<TR>";
                             echo "  <TD Class=listar><B>Vendedor:</B><BR>".$cl->Value('ca_login')."</TD>";
-                            echo "  <TD Class=listar><B>HBL:</B><BR>".$cl->Value('ca_hbls')."</TD>";
+                            echo "  <TD Class=listar><B>HBL:</B> (Hbl Dest.: ".(($cl->Value('ca_imprimirorigen')=="t")?"Sí":"No").")<BR>".$cl->Value('ca_hbls')."</TD>";
                             echo "  <TD Class=listar><B>No.Piezas:</B><BR>".number_format($cl->Value('ca_numpiezas'))."</TD>";
                             echo "  <TD Class=listar><B>Peso en Kilos:</B><BR>".formatNumber($cl->Value('ca_peso'),3)."</TD>";
                             echo "  <TD Class=listar><B>Volumen CMB:</B><BR>".formatNumber($cl->Value('ca_volumen'),3)."</TD>";
@@ -556,7 +556,8 @@ elseif (isset($boton)) {                                                       /
                             $hbl_mem = $cl->Value('ca_hbls');
                         }
                         echo "<TR>";
-                        echo "  <TD Class=invertir><B>Factura Nro.:</B><BR>".$cl->Value('ca_factura')." <BR /><img src='graficos/image.gif' /><a href='colsys_sf/digitalFile/verReferencia?referencia=".$cl->Value('ca_referencia')."&factura=".$cl->Value('ca_factura')."'><strong>Imagen</strong></a> </TD>";
+                        echo "  <TD Class=invertir><B>Factura Nro.:</B><BR>".$cl->Value('ca_factura')."</TD>";
+                        echo "  <TD Class=invertir><B>Valor Factura:</B><BR>".number_format($cl->Value('ca_valor'),2)."</TD>";
                         echo "  <TD Class=invertir><B>".$cl->Value('ca_idmoneda').":</B><BR>".number_format($cl->Value('ca_neto'),2)."<BR><B>Tasa Cambio:</B><BR>".number_format($cl->Value('ca_tcambio'),2)."</TD>";
                         echo "  <TD Class=invertir><B>Valor Factura:</B><BR>".number_format($cl->Value('ca_valor'),2)."</TD>";
                         echo "  <TD Class=invertir><B>Deducciones:</B><BR>".number_format($cl->Value('ca_deduccion'),2)."</TD>";
@@ -1599,7 +1600,7 @@ elseif (isset($boton)) {                                                       /
                 echo "      <TR>";
                 echo "          <TD Class=mostrar>HBL:<BR><INPUT TYPE='TEXT' NAME='hbls' SIZE=25 MAXLENGTH=25></TD>";
                 echo "          <TD Class=mostrar>Fch.HBL<BR><INPUT TYPE='TEXT' NAME='fchhbls' SIZE=12 VALUE='".((strlen($mbls[1])!=0)?$mbls[1]:date("Y-m-d"))."' ONKEYDOWN=\"chkDate(this)\" ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
-                echo "          <TD Class=mostrar>Imp.Origen<BR><INPUT TYPE='CHECKBOX' NAME='imprimirorigen' VALUE='Sí'></TD>";
+                echo "          <TD Class=mostrar>Hbl Dest.<BR><INPUT TYPE='CHECKBOX' NAME='imprimirorigen' VALUE='Sí'></TD>";
                 echo "      </TR>";
                 echo "      </TABLE>";
                 echo "    </TD>";
@@ -2028,7 +2029,7 @@ elseif (isset($boton)) {                                                       /
                 echo "      <TR>";
                 echo "          <TD Class=mostrar>HBL:<BR><INPUT TYPE='TEXT' NAME='hbls' VALUE='".$rs->Value('ca_hbls')."' SIZE=25 MAXLENGTH=25></TD>";
                 echo "          <TD Class=mostrar>Fch.HBL<BR><INPUT TYPE='TEXT' NAME='fchhbls' SIZE=12 VALUE='".((strlen($rs->Value('ca_fchhbls'))!=0)?$rs->Value('ca_fchhbls'):(strlen($mbls[1])!=0)?$mbls[1]:date("Y-m-d"))."' ONKEYDOWN=\"chkDate(this)\" ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
-                echo "          <TD Class=mostrar>Imp.Origen<BR><CENTER><INPUT TYPE='CHECKBOX' NAME='imprimirorigen' VALUE='Sí' ".(($rs->Value('ca_imprimirorigen')=='t')?"CHECKED":"")."></CENTER></TD>";
+                echo "          <TD Class=mostrar>Hbl Dest.<BR><CENTER><INPUT TYPE='CHECKBOX' NAME='imprimirorigen' VALUE='Sí' ".(($rs->Value('ca_imprimirorigen')=='t')?"CHECKED":"")."></CENTER></TD>";
                 echo "      </TR>";
                 echo "      </TABLE>";
                 echo "    </TD>";
