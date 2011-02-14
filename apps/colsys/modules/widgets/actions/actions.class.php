@@ -676,7 +676,7 @@ class widgetsActions extends sfActions
 									"fax"=>$tercero->getCaFax(),
 									"email"=>$tercero->getCaEmail(),
 									"contacto"=>utf8_encode($tercero->getCaContacto()),
-									"identificacion"=>$tercero->getCaIdentificacion(),
+									"identificacion"=>$tercero->getCaIdentificacion(),									
 									//"ciudad"=>$tercero->getCaCiudad(),
 									"idciudad"=>$tercero->getCaIdciudad(),
                                     "ciudad"=>utf8_encode($tercero->getCiudad()->getCaCiudad()),
