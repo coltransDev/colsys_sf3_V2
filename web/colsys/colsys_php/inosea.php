@@ -521,7 +521,7 @@ elseif (isset($boton)) {                                                       /
                             echo "</TR>";
                             echo "<TR>";
                             echo "  <TD Class=listar><B>Vendedor:</B><BR>".$cl->Value('ca_login')."</TD>";
-                            echo "  <TD Class=listar><B>HBL:</B> (Hbl Dest.: ".(($cl->Value('ca_imprimirorigen')=="t")?"Sí":"No").")<BR>".$cl->Value('ca_hbls')."</TD>";
+                            echo "  <TD Class=listar><B>HBL:</B> (Destino : ".(($cl->Value('ca_imprimirorigen')=="t")?"Sí":"No").")<BR>".$cl->Value('ca_hbls')."</TD>";
                             echo "  <TD Class=listar><B>No.Piezas:</B><BR>".number_format($cl->Value('ca_numpiezas'))."</TD>";
                             echo "  <TD Class=listar><B>Peso en Kilos:</B><BR>".formatNumber($cl->Value('ca_peso'),3)."</TD>";
                             echo "  <TD Class=listar><B>Volumen CMB:</B><BR>".formatNumber($cl->Value('ca_volumen'),3)."</TD>";
@@ -557,7 +557,6 @@ elseif (isset($boton)) {                                                       /
                         }
                         echo "<TR>";
                         echo "  <TD Class=invertir><B>Factura Nro.:</B><BR>".$cl->Value('ca_factura')."</TD>";
-                        echo "  <TD Class=invertir><B>Valor Factura:</B><BR>".number_format($cl->Value('ca_valor'),2)."</TD>";
                         echo "  <TD Class=invertir><B>".$cl->Value('ca_idmoneda').":</B><BR>".number_format($cl->Value('ca_neto'),2)."<BR><B>Tasa Cambio:</B><BR>".number_format($cl->Value('ca_tcambio'),2)."</TD>";
                         echo "  <TD Class=invertir><B>Valor Factura:</B><BR>".number_format($cl->Value('ca_valor'),2)."</TD>";
                         echo "  <TD Class=invertir><B>Deducciones:</B><BR>".number_format($cl->Value('ca_deduccion'),2)."</TD>";
