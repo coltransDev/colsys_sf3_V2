@@ -60,17 +60,17 @@ var tabs = new Ext.FormPanel({
 	labelWidth: 75,
 	border:true,
 	fame:true,
-	width: 650,    
-	standardSubmit: true,  
+	width: 650,
+	standardSubmit: true,
         id: 'formPanel',
 	items: {
 		xtype: 'tabpanel',
 		activeTab: 0,
 		defaults:{autoHeight:true, bodyStyle:'padding:10px'},
-		id: 'tab-panel', 
+		id: 'tab-panel',
 		items:[{
 			title:'Estadisticas',
-			layout:'form',			
+			layout:'form',
 			defaultType: 'textfield',
 			id: 'estadisticas',
                         labelWidth: 75,
@@ -103,7 +103,7 @@ var tabs = new Ext.FormPanel({
 				labelWidth: 75,
 				defaultType: 'textfield',
 				collapsed: true,
-				checkboxName: "checkboxVendedor", 
+				checkboxName: "checkboxVendedor",
 				items :[
                                     new Ext.form.ComboBox({
                                         fieldLabel: 'Vendedor',

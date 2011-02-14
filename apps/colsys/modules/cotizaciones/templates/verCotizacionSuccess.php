@@ -66,175 +66,182 @@ if( !$cotizacion->getCaUsuanulado() ){
 	if( $cotizacion->getCliente()->getCaConfirmar() ){
 		$contactos .=  $cotizacion->getCliente()->getCaConfirmar();
 	}
+	if( $trayectosVencidos>0 ){
+    ?>
+        <div align="center" class="rojo">No se puede enviar una cotizaci&oacute;n con trayectos vencidos.</div><br /><br />
+    <?
+    }else{
 	
-	
-	include_component("email", "formEmail", array("subject"=>$asunto,"message"=>$mensaje,"contacts"=>$contactos));
-	
-	?>
-	<br />
-	
-	
-	<table width="700px" border="0" cellspacing="0" cellpadding="0" class="tableList">	
-		<tr>
-			<th><div align="left"><b>Adjuntos:</b> 
-			</div></th>
-		</tr>
-		<?php 
-		if( !$enBlanco ){
-		?>
-		<tr>
-			<td>
-				<div align="left">
-					<input type="checkbox" name="incluirPDF" value="PDF" checked="checked" > Cotización en PDF
-				</div>
-			</td>
-		</tr>
-		<?php 
-		}
+        include_component("email", "formEmail", array("subject"=>$asunto,"message"=>$mensaje,"contacts"=>$contactos));
 
-        $directorio = $cotizacion->getDirectorio();
-		$archivos = sfFinder::type('file')->maxDepth(0)->in($directorio);
-		foreach( $archivos as $archivo ){		
-		?>
-		<tr>
-			<td>
-				<div align="left">
-					<input type="checkbox" name="attachments[]" value="<?=base64_encode(basename($archivo))?>" checked="checked">
-                        <a href="#"
-                           onclick="window.open('<?=url_for("gestDocumental/verArchivo?folder=".base64_encode($cotizacion->getDirectorioBase())."&idarchivo=".base64_encode(basename($archivo)))?>')">
-                            <?=basename($archivo)?>
-                        </a>
-				</div>
-			</td>
-		</tr>
-		<?php 
-		}
+        ?>
+        <br />
 
-        if(count($archivos)>0){
-            ?>
+
+        <table width="700px" border="0" cellspacing="0" cellpadding="0" class="tableList">
             <tr>
-                <th>
-                    <div align="left" class="qtip" title="Estas notas solo se incluyen cuando se envian archivos por separado"><b>Notas:</b></div>
-                </th>
+                <th><div align="left"><b>Adjuntos:</b>
+                </div></th>
             </tr>
-            <?
-            foreach( $notas as $key => $nota ){
-                if( substr($key, -6, 6 )=="Titulo" ){
+            <?php
+            if( !$enBlanco ){
             ?>
             <tr>
                 <td>
-                    <div align="left" class="qtip" title="Estas notas solo se incluyen cuando se envian archivos por separado">
-                        <input type="checkbox" name="notas[]" value="<?=substr($key,0 ,strlen($key)-6 )?>">
-                        <?=$nota?>
+                    <div align="left">
+                        <input type="checkbox" name="incluirPDF" value="PDF" checked="checked" > Cotización en PDF
                     </div>
                 </td>
             </tr>
-            <?
+            <?php
+            }
+
+            $directorio = $cotizacion->getDirectorio();
+            $archivos = sfFinder::type('file')->maxDepth(0)->in($directorio);
+            foreach( $archivos as $archivo ){
+            ?>
+            <tr>
+                <td>
+                    <div align="left">
+                        <input type="checkbox" name="attachments[]" value="<?=base64_encode(basename($archivo))?>" checked="checked">
+                            <a href="#"
+                               onclick="window.open('<?=url_for("gestDocumental/verArchivo?folder=".base64_encode($cotizacion->getDirectorioBase())."&idarchivo=".base64_encode(basename($archivo)))?>')">
+                                <?=basename($archivo)?>
+                            </a>
+                    </div>
+                </td>
+            </tr>
+            <?php
+            }
+
+            if(count($archivos)>0){
+                ?>
+                <tr>
+                    <th>
+                        <div align="left" class="qtip" title="Estas notas solo se incluyen cuando se envian archivos por separado"><b>Notas:</b></div>
+                    </th>
+                </tr>
+                <?
+                foreach( $notas as $key => $nota ){
+                    if( substr($key, -6, 6 )=="Titulo" ){
+                ?>
+                <tr>
+                    <td>
+                        <div align="left" class="qtip" title="Estas notas solo se incluyen cuando se envian archivos por separado">
+                            <input type="checkbox" name="notas[]" value="<?=substr($key,0 ,strlen($key)-6 )?>">
+                            <?=$nota?>
+                        </div>
+                    </td>
+                </tr>
+                <?
+                    }
                 }
             }
-        }
-		?>
-	</table>	
-	<br />
-	<?	 
-	if( $tarea ){
-		if( !$tarea->getCaFchterminada() ){
-		?>
-		<table width="700px" border="0" cellspacing="0" cellpadding="0" class="tableList">	
-			<tr>
-				<th><div align="left"><b>IDG Oferta y Contrataci&oacute;n:</b> 
-				</div></th>
-			</tr>		
-			<tr>
-				<td><b>Fecha de solicitud:</b>
-                    <?=Utils::fechaMes($dateFormat->format($tarea->getCaFchcreado()) ) ?>                    
-                </td>
-			</tr>
-            <tr>
-				<td><b>Fecha de vencimiento:</b>
-                    <?=Utils::fechaMes($dateFormat->format($tarea->getCaFchvencimiento()) ) ?>
-                </td>
-			</tr>
-            <tr>
-				<td><b>Hora actual:</b>
-                    <?=Utils::fechaMes( date("Y-m-d H:i:s") ) ?>
-                </td>
-			</tr>
-			<tr>
-				<td>
-					<b>Hora actual - Fecha de vencimiento:</b>
-					<?
-					$diff = $tarea->getTiempoRestante( $festivos );                   
-					if( substr($diff, 0,1)=="-" ){
-						echo "<span class='rojo'>".$diff."</span>";
-						?>
-						<script language="javascript" type="text/javascript">
-							document.getElementById("checkObservaciones").value = "1";
-						</script>
-						<?
-					}else{
-						echo $diff;			
-					}
-					?>				</td>
-			</tr>
-			<tr>
-				<td>
-					Observaciones: 
-                    <select name="observaciones_idg" id="observaciones_idg">
-                        <option value=""></option>
-                    <?                    
-                    foreach( $observacionesIdg as $observacion ){
-                        ?>
-                        <option value="<?=$observacion->getCaValor()?>"><?=$observacion->getCaValor()?></option>
+            ?>
+        </table>
+        <br />
+        <?
+        if( $tarea ){
+            if( !$tarea->getCaFchterminada() ){
+            ?>
+            <table width="700px" border="0" cellspacing="0" cellpadding="0" class="tableList">
+                <tr>
+                    <th><div align="left"><b>IDG Oferta y Contrataci&oacute;n:</b>
+                    </div></th>
+                </tr>
+                <tr>
+                    <td><b>Fecha de solicitud:</b>
+                        <?=Utils::fechaMes($dateFormat->format($tarea->getCaFchcreado()) ) ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td><b>Fecha de vencimiento:</b>
+                        <?=Utils::fechaMes($dateFormat->format($tarea->getCaFchvencimiento()) ) ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td><b>Hora actual:</b>
+                        <?=Utils::fechaMes( date("Y-m-d H:i:s") ) ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <b>Hora actual - Fecha de vencimiento:</b>
                         <?
-                    }
-                    ?>
-                    </select>
-                </td>
-			</tr>		
-		</table>	
-		<br />
-		<?
-		}else{
-		?>
-		<table width="700px" border="0" cellspacing="0" cellpadding="0" class="tableList">	
-			<tr>
-				<th><div align="left"><b>IDG Oferta y Contrataci&oacute;n:</b> 
-				</div></th>
-			</tr>		
-			<tr>
-				<td>					
-					<b>Fecha de solicitud:</b> <?=Utils::fechaMes($dateFormat->format($tarea->getCaFchcreado(), "yyyy-MM-dd") ) ?>  <?=$dateFormat->format($tarea->getCaFchcreado(), "HH:mm:ss")?>
-					<br />
-					<b>Fecha de presentaci&oacute;n:</b> <?=Utils::fechaMes( $dateFormat->format($tarea->getCaFchterminada(), "yyyy-MM-dd")) ?> <?=$dateFormat->format($tarea->getCaFchterminada(), "HH:mm:ss")?>
-					<br />
-					<b>Horas habiles:</b> 
-					<?					
-					echo $tarea->getTiempo( $festivos );				
-					?>
-									
-				</td>
-			</tr>
-			<?
-			if($tarea->getCaObservaciones() ){
-			?>
-			<tr>
-				<td>
-					Observaciones: 
-					<?=$tarea->getCaObservaciones()?>
-				</td>
-			</tr>
-			<?
-			}
-			?>		
-		</table>	
-		<br />
-		<?		
-		}
-	}
-	?>
+                        $diff = $tarea->getTiempoRestante( $festivos );
+                        if( substr($diff, 0,1)=="-" ){
+                            echo "<span class='rojo'>".$diff."</span>";
+                            ?>
+                            <script language="javascript" type="text/javascript">
+                                document.getElementById("checkObservaciones").value = "1";
+                            </script>
+                            <?
+                        }else{
+                            echo $diff;
+                        }
+                        ?>				</td>
+                </tr>
+                <tr>
+                    <td>
+                        Observaciones:
+                        <select name="observaciones_idg" id="observaciones_idg">
+                            <option value=""></option>
+                        <?
+                        foreach( $observacionesIdg as $observacion ){
+                            ?>
+                            <option value="<?=$observacion->getCaValor()?>"><?=$observacion->getCaValor()?></option>
+                            <?
+                        }
+                        ?>
+                        </select>
+                    </td>
+                </tr>
+            </table>
+            <br />
+            <?
+            }else{
+            ?>
+            <table width="700px" border="0" cellspacing="0" cellpadding="0" class="tableList">
+                <tr>
+                    <th><div align="left"><b>IDG Oferta y Contrataci&oacute;n:</b>
+                    </div></th>
+                </tr>
+                <tr>
+                    <td>
+                        <b>Fecha de solicitud:</b> <?=Utils::fechaMes($dateFormat->format($tarea->getCaFchcreado(), "yyyy-MM-dd") ) ?>  <?=$dateFormat->format($tarea->getCaFchcreado(), "HH:mm:ss")?>
+                        <br />
+                        <b>Fecha de presentaci&oacute;n:</b> <?=Utils::fechaMes( $dateFormat->format($tarea->getCaFchterminada(), "yyyy-MM-dd")) ?> <?=$dateFormat->format($tarea->getCaFchterminada(), "HH:mm:ss")?>
+                        <br />
+                        <b>Horas habiles:</b>
+                        <?
+                        echo $tarea->getTiempo( $festivos );
+                        ?>
 
+                    </td>
+                </tr>
+                <?
+                if($tarea->getCaObservaciones() ){
+                ?>
+                <tr>
+                    <td>
+                        Observaciones:
+                        <?=$tarea->getCaObservaciones()?>
+                    </td>
+                </tr>
+                <?
+                }
+                ?>
+            </table>
+            <br />
+            <?
+            }
+        }
+
+        ?>
         <div align="center"><input type="submit" name="commit" value="Enviar" class="button" /></div><br /><br />
+    <?
+    }
+    ?>
     </form>
 </div>
 
