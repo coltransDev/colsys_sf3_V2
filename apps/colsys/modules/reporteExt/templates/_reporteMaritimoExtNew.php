@@ -180,7 +180,7 @@ if ( (($reporte->getCaModalidad() != 'LCL' || ($reporte->getCaModalidad() != 'LC
 			<?
 			foreach( $gastos as $gasto ){
 				if ($gasto->getCaIdconcepto() == $tarifa->getCaIdconcepto() ){
-                    if ( (int)$gasto->getCaNetaTar()== 0 && (int)$gasto->getCaReportarTar() == 0) {
+                    if ( $gasto->getCaNetaTar()== 0 && $gasto->getCaReportarTar() == 0) {
                         continue;
                     }
 			?>
@@ -232,7 +232,7 @@ if ( (($reporte->getCaModalidad() != 'LCL' || ($reporte->getCaModalidad() != 'LC
 			</tr>
 			<?
 		foreach( $gastos as $gasto ){
-			if ( (int)$gasto->getCaNetaTar()== 0 && (int)$gasto->getCaReportarTar() == 0) {
+			if ( $gasto->getCaNetaTar()== 0 && $gasto->getCaReportarTar() == 0) {
 				continue;
 			}
 			if ($gasto->getCaIdconcepto() == '9999'){
