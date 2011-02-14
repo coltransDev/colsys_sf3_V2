@@ -84,7 +84,6 @@ MainPanel = function(){
             items:[{
                 title:'Información General',
                 layout:'form',
-                id:"form-encabezado",
                 defaults: {width: 440},
 
                 items: [{
@@ -95,7 +94,8 @@ MainPanel = function(){
 				        bodyStyle:'padding-right:20px',
 				        border: false
 				    },
-				    layoutConfig: {				       
+				    layoutConfig: {
+				        // The total column count must be specified here
 				        columns: 3
 				    },
 				    items: [{
@@ -173,6 +173,8 @@ MainPanel = function(){
 							Ext.getCmp("idconcliente").setValue(record.get("idcontacto"));
 							Ext.getCmp("contacto").setValue(record.get("nombre")+' '+record.get("papellido")+' '+record.get("sapellido") );
 
+							/*Ext.getCmp("usuario").setValue(record.get("vendedor"));
+							Ext.getCmp("vendedor_id").setValue(record.get("nombre_ven"));*/
 							<?
 							if( $user->getIddepartamento()!=5 ){
 							?>
@@ -181,8 +183,12 @@ MainPanel = function(){
 							<?
 							}
 							?>
+
 							Ext.getCmp("listaclinton").setValue(record.get("listaclinton"));
 							Ext.getCmp("status").setValue(record.get("status"));
+
+							
+
 						}
 					})
 				,{
@@ -267,6 +273,7 @@ MainPanel = function(){
 					value: anexos,
                     allowBlank:false
                 }
+
 				]
             },
 			{
@@ -391,32 +398,33 @@ Ext.extend(MainPanel, Ext.FormPanel, {
             Ext.MessageBox.alert("Alerta","Este cliente se encuentra vetado");
             return 0;
         }
+//		alert(Ext.getCmp("fchPresentacion").getValue())
+//		return 0;
+//		if(Ext.getCmp("fchPresentacion").getValue()==)
+//			return 0;
 
-//        var fp = Ext.getCmp("preview");
-//        form = fp. .getForm();
-        var form  = this.getForm();
-//alert(form.id);
-//var form=Ext.getCmp("form-encabezado");
-//Ext.MessageBox.alert('Error Message',form.toSource());
-//return;
+        var fp = Ext.getCmp("main-tabs");
+            form = fp.getForm();
 
         if( form.isValid() ){
 
             form.submit({url:'<?=url_for('cotizaciones/formCotizacionGuardar')?>',
-                        waitMsg:'Salvando Datos básicos de la Cotizaci&oacute;n...',
-                        success:function(response,options){
-                            <?
-                            if( !$cotizacion->getCaIdcotizacion() || !$tarea ){
-                            ?>
-                                document.location='<?=url_for("cotizaciones/consultaCotizacion?id=")?>'+options.result.idcotizacion;
-                            <?
-                            }
-                            ?>
-                        },
-                        failure:function(form,action){
-                            Ext.MessageBox.alert('Error Message', "Se han presentado errores en la elaboración de la cotización por favor verifique");
-                        }
-                    });
+                                    waitMsg:'Salvando Datos básicos de la Cotizaci&oacute;n...',
+                                    success:function(response,options){
+                                        <?
+                                        if( !$cotizacion->getCaIdcotizacion() || !$tarea ){
+                                        ?>
+                                            document.location='<?=url_for("cotizaciones/consultaCotizacion?id=")?>'+options.result.idcotizacion;
+                                        <?
+                                        }
+                                        ?>
+                                       //Ext.Msg.alert( "Msg "+response.responseText );
+                                    },
+                                    // standardSubmit: false,
+                                    failure:function(form,action){
+                                        Ext.MessageBox.alert('Error Message', "Se han presentado errores en la elaboración de la cotización por favor verifique");
+                                    }//end failure block
+                                });
         }else{
             Ext.MessageBox.alert('Sistema de Cotizaciones - Error:', '¡Atención: La información básica de la cotización no es válida o está incompleta!');
         }

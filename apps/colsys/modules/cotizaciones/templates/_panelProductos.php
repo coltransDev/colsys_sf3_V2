@@ -73,8 +73,7 @@ PanelProductos = function( config ){
         mode: 'local',
         displayField: 'concepto',
         valueField: 'idconcepto',
-        lazyRender:true,
-       
+        lazyRender:true,       
         tpl: this.resultTpl,
         itemSelector: 'div.search-item',
         store : this.storeConceptos
@@ -291,8 +290,7 @@ PanelProductos = function( config ){
        clicksToEdit: 1,
 
         stripeRows: true,
-        autoExpandColumn: 'producto',
-        /*title: 'Tarifas de trayectos',*/
+        autoExpandColumn: 'producto',        
         height: 400,
 
         root_title: 'impoexpo',
@@ -414,40 +412,40 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
     },
     guardarItems: function (){
         try{
-            tipo=this.tipo;
-            var storeProductos = this.store;
-            var success = true;
-            var records = storeProductos.getModifiedRecords();
-            var lenght = records.length;
+        tipo=this.tipo;
+        var storeProductos = this.store;
+        var success = true;
+        var records = storeProductos.getModifiedRecords();
+        var lenght = records.length;
 
-            for( var i=0; i< lenght; i++){
-                r = records[i];
-                if( r.data.idmoneda<=0 && r.data.iditem!="9999" ){
-                    r.data.idmoneda="USD";
-                }
-
-                if( !r.data.idequipo && r.data.modalidad =="FCL" && r.data.transporte=="<?=Constantes::TERRESTRE?>" )
-                {
-                   alert('Por favor indique el equipo 1 del trayecto '+r.data.trayecto,'Alert');
-                }
+        for( var i=0; i< lenght; i++){
+            r = records[i];
+            if( r.data.idmoneda<=0 && r.data.iditem!="9999" ){
+                r.data.idmoneda="USD";
             }
-            var numResponses = 0;
 
-            Ext.getCmp('guardarbtn'+tipo).disable();
-            habilita=false;
-            for( var i=0; i< lenght; i++){
-
-                if(i==(lenght-1))
-                    habilita=true;
-                if( records[i].data.tipo=="concepto" || (records[i].data.tipo=="recargo" && records[i].data.idopcion ))
-                {
-                    this.guardarGridProductosRec( records[i],habilita );
-                    habilita="S";
-                }
+            if( !r.data.idequipo && r.data.modalidad =="FCL" && r.data.transporte=="<?=Constantes::TERRESTRE?>" )
+            {
+               alert('Por favor indique el equipo 1 del trayecto '+r.data.trayecto,'Alert');
             }
         }
+        var numResponses = 0;
+
+        Ext.getCmp('guardarbtn'+tipo).disable();
+		habilita=false;
+        for( var i=0; i< lenght; i++){
+			
+			if(i==(lenght-1))
+				habilita=true;
+            if( records[i].data.tipo=="concepto" || (records[i].data.tipo=="recargo" && records[i].data.idopcion ))
+            {
+                this.guardarGridProductosRec( records[i],habilita );
+				habilita="S";
+            }
+        }
+        }
         catch(err)
-        {
+		{
             habilita="N";
         }
 		if(habilita!="S")
@@ -462,10 +460,6 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
         Ext.getCmp('guardarbtnTrayecto').enable();
         Ext.getCmp('guardarbtnOTM/DTA').enable();
     },
-
-    /*
-    * Guarda un record en la Base de datos
-    */
     guardarGridProductosRec: function( r, habilita ){
         var storeProductos = this.store;
         var changes = r.getChanges();
@@ -484,7 +478,7 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
             changes['idequipo']=r.data.idequipo;
             changes['equipo']=r.data.equipo;
             r.set("inSave", true);
-            
+
             Ext.Ajax.request(
                 {
                     waitMsg: 'Guardando cambios...',
@@ -576,13 +570,6 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
           {               
              iditem=r.data.iditem;
           }
-          if(r.data.tipo=="recargo" && iditem==rec.data.idconcepto)
-          {
-             if(e.value==r.data.iditem )
-             {
-
-             }
-          }
        });
        if(validate==false)
           return false;
@@ -633,7 +620,7 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
                                aplica_min: '',
                                idmoneda: '',
                                detalles: '',
-                               orden: 'Z' // Se utiliza Z por que el orden es alfabetico
+                               orden: 'Z'
                             });
 
                             newRec.data.concepto = "";
@@ -652,7 +639,6 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
                                 else
                                     Ext.getCmp("grid_productos").guardarGridProductosRec( rec );
                             }
-                            //Inserta una columna en blanco al final
                             storeProductos.addSorted(newRec);
                             storeProductos.sort("orden", "ASC");
 
@@ -687,17 +673,12 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
                 });
          }
     },
-
-    /*
-    * Menu contextual que se despliega sobre una fila con el boton derecho
-    */
     onContextHide: function(){
         if(this.ctxRow){
             Ext.fly(this.ctxRow).removeClass('x-node-ctx');
             this.ctxRow = null;
         }
     },
-
     onRowcontextmenu :  function(grid, index, e){
         rec = this.store.getAt(index);
         var storeProductos = this.store;
@@ -727,17 +708,6 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
 
                         }
                     }
-                    /*,
-                    {
-                        text: 'Archivos del tarifario',
-                        iconCls: 'import',
-                        scope:this,
-                        handler: function(){
-                            if( this.ctxRecord ){
-                                this.ventanaTarifarioArchivos( this.ctxRecord );
-                            }
-                        }
-                    }*/
                     ,
                     {
                         text: 'Nuevo recargo',
@@ -781,7 +751,6 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
         Ext.fly(this.ctxRow).addClass('x-node-ctx');
         this.menu.showAt(e.getXY());
     },
-
     /*
     * Determina que store se debe utilizar dependiendo si es un concepto o recargo
     */
@@ -1114,11 +1083,11 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
                 fp.getForm().findField("escala").hiddenField.value = record.data.ciu_escala;
             }
             if(fp.getForm().findField("idlinea"))
-            {                
+            {
                 fp.getForm().findField("idlinea").setValue(record.data.linea);
                 fp.getForm().findField("idlinea").hiddenField.value = record.data.idlinea;
             }
-            
+
             var now = new Date(<?=strtotime(date("Y-m-d"))*1000?>);
             fp.getForm().findField("vigencia").setMinValue( (record.data.vigencia&&record.data.vigencia<=now)?record.data.vigencia:now );
 

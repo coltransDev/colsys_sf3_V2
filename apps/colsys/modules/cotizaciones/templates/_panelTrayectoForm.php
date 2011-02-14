@@ -4,19 +4,16 @@
  * 
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
-
 include_component("widgets", "widgetImpoexpo");
 include_component("widgets", "widgetTransporte");
 include_component("widgets", "widgetModalidad");
 include_component("widgets", "widgetLinea");
 include_component("widgets", "widgetIncoterms");
-//include_component("widgets", "widgetPais");
 include_component("widgets", "widgetCiudad");
-
 
 ?>
 <script type="text/javascript">
-    PanelTrayectoForm = function( config ) {
+    PanelTrayectoForm = function( config ) {        
         Ext.apply(this,config);
         this.items;        
         if(this.tipo=="Trayecto")
@@ -71,8 +68,7 @@ include_component("widgets", "widgetCiudad");
                                           impoexpo:"impoexpo",
                                           allowBlank:false
                                         })
-                        ,                    
-                                        ,
+                        ,   
                         new WidgetCiudad({fieldLabel: 'Ciudad Destino',
                                                   id: 'destino',
                                                   idciudad:"destino",
@@ -85,9 +81,9 @@ include_component("widgets", "widgetCiudad");
                         new WidgetCiudad({fieldLabel: 'Ciudad Escala',
                                                   id: 'escala',
                                                   idciudad:"escala",
-                                                  hiddenName:"ciu_escala",                                                  
+                                                  hiddenName:"ciu_escala",
                                                   impoexpo:"impoexpo"
-                                                  
+
                                                 })
                         ,{
                             xtype: 'textarea',
@@ -251,7 +247,6 @@ include_component("widgets", "widgetCiudad");
                     ];
         }
 
-
         PanelTrayectoForm.superclass.constructor.call(this, {                
                 layout: 'form',
                 frame: true,
@@ -260,7 +255,6 @@ include_component("widgets", "widgetCiudad");
                 bodyStyle: 'padding: 5px 5px 0 5px;',
                 labelWidth: 100,
                 items: this.items
-
         });
 
         
