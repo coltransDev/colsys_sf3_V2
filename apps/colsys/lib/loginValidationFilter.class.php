@@ -12,11 +12,10 @@ class loginValidationFilter extends sfFilter
             
 		}else{
             if($module=="gestDocumental" && $action=="verArchivo"){
-                $config = sfConfig::get('sf_app_module_dir').DIRECTORY_SEPARATOR."gestDocumental".DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."access.yml";
-                $configYaml = sfYaml::load($config);
-
-                $folders = explode(",",$configYaml["trusted"]);
-
+               
+                $folders = explode(",",sfConfig::get('app_gestDocumental_noAuth'));
+                                
+                
                 $folder = base64_decode(sfContext::getInstance()->getRequest()->getParameter("folder"));
 
                 if( in_array($folder, $folders) ){

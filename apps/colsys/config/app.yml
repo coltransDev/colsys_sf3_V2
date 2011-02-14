@@ -12,7 +12,7 @@ all:
 #    user: bogota-aduana@colmas.com.co
 #    passwd:  bogotaadu
     port: 25
-    debugAddress: abotero@coltrans.com.co
+    debugAddress: maquinche@coltrans.com.co
 #    debugAddress: botero82@gmail.com
 #    public_ip: 200.14.235.62
 
@@ -37,5 +37,7 @@ all:
     output:  /home/falabella/IN    
 #    input: c:\fala\
 #    input_processed: c:\fala\procesados\
+  gestDocumental:
+    noAuth: KBaseWeb, KBase
 
  

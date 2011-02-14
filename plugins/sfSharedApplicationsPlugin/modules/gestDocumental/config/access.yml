@@ -1,6 +1,0 @@
-#Recuerde identar correctamente las notas y los correspondientes espacios entre renglones 
-#RECOMENDACION USE NOTEPAD++ PARA EDITAR ESTE ARCHIVO
-#separar varios folderes con coma. Los folderes listados no requieren autenticación
-trusted: KBaseWeb, KBase
-
-
