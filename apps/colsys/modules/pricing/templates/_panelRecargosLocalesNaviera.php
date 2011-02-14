@@ -4,15 +4,10 @@
  * 
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
-
 ?>
 <script type="text/javascript">
-
-
 PanelRecargosLocalesNaviera = function( config ){
     Ext.apply(this, config);
-
-
     this.panelRecargos = new PanelRecargosPorLinea({
                                           idtrafico: "99-999",
                                           impoexpo: this.impoexpo,
@@ -24,7 +19,7 @@ PanelRecargosLocalesNaviera = function( config ){
                                           readOnly: this.readOnly
                                       });
     
-    this.panelRecargosParametros = new PanelRecargosLocalesParametros({
+    /*this.panelRecargosParametros = new PanelRecargosLocalesParametros({
                                           idtrafico: "99-999",
                                           impoexpo: this.impoexpo,
                                           transporte: this.transporte,
@@ -34,7 +29,7 @@ PanelRecargosLocalesNaviera = function( config ){
                                           closable: false,
                                           readOnly: this.readOnly
                                       });
-
+*/
     this.panelRecargosPatios = new PanelRecargosLocalesPatios({
                                           idtrafico: "99-999",
                                           impoexpo: this.impoexpo,
@@ -53,7 +48,7 @@ PanelRecargosLocalesNaviera = function( config ){
 		closable: true,
 		activeTab: 0,
         items: [
-            this.panelRecargosParametros,
+            //this.panelRecargosParametros,
             this.panelRecargos,
             this.panelRecargosPatios
         ]
@@ -63,5 +58,4 @@ PanelRecargosLocalesNaviera = function( config ){
 Ext.extend(PanelRecargosLocalesNaviera, Ext.TabPanel, {
 
 });
-
 </script>

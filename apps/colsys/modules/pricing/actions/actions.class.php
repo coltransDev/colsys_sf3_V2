@@ -1981,7 +1981,6 @@ class pricingActions extends sfActions
             if( $modalidad==Constantes::ADUANA ){
                 $this->setTemplate("datosAduana");
             }else{
-
                 $q = Doctrine_Query::create()
                                      ->select("t.ca_modalidad, tg.ca_descripcion, tr.ca_nombre, tr.ca_idtrafico")
                                      ->distinct()
@@ -2011,7 +2010,6 @@ class pricingActions extends sfActions
                     $grupo = $row["tg_ca_descripcion"];
                     $pais = $row["tr_ca_nombre"];
                     $idtrafico = $row["tr_ca_idtrafico"];
-
                     $this->results[$modalidad][$grupo][]=array("idtrafico"=>$idtrafico, "pais"=>$pais);
                     $modalidades[]=$modalidad;
                 }
@@ -2069,6 +2067,7 @@ class pricingActions extends sfActions
             $q->setHydrationMode(Doctrine::HYDRATE_SCALAR);
             $this->ciudades = $q->execute();
 
+            
             $q = Doctrine_Query::create()
                                  ->distinct()
                                  ->select("p.ca_idproveedor, p.ca_sigla, id.ca_nombre, t.ca_modalidad")
