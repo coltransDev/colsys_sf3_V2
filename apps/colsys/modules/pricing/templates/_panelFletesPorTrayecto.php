@@ -808,7 +808,7 @@ Ext.extend(PanelFletesPorTrayecto, Ext.grid.EditorGridPanel, {
 
                         {
                             text: 'Control de cambios',
-                            iconCls: '',
+                            iconCls: 'calendar_view_week',
                             scope:this,
                             handler: function(){
                                     this.ventanaControlCambios(this.ctxRecord, index);                                    

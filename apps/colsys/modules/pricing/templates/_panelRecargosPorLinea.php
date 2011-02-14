@@ -744,81 +744,83 @@ Ext.extend(PanelRecargosPorLinea, Ext.grid.EditorGridPanel, {
         }
     },
     onRowContext: function(grid, index, e){
+        var items = [{
+                        text: 'Control de cambios',
+                        iconCls: 'calendar_view_week',
+                        scope:this,
+                        handler: function(){
+                                this.ventanaControlCambios(this.ctxRecord, index);
+                        }
+                    }];
+
         if( !this.readOnly ){
-            rec = this.store.getAt(index);
-            var idtrafico = this.idtrafico;
-            var modalidad = this.modalidad;
-            var impoexpo = this.impoexpo;
-            var transporte = this.transporte;
-            var storeRecargos = this.store;
-            if( !this.menu ){
-                this.menu = new Ext.menu.Menu({                
-                items: [
-                        {
-                            text: 'Eliminar item',
-                            iconCls: 'delete',
-                            scope:this,
-                            handler: function(){
-                                if( this.ctxRecord && this.ctxRecord.data.idrecargo ){
-                                    var id = this.ctxRecord.id;
-                                    var idlinea = this.ctxRecord.data.idlinea;
-                                    var idrecargo = this.ctxRecord.data.idrecargo;
-                                    var idconcepto = this.ctxRecord.data.idconcepto;
+            items.push({
+                        text: 'Eliminar item',
+                        iconCls: 'delete',
+                        scope:this,
+                        handler: function(){
+                            if( this.ctxRecord && this.ctxRecord.data.idrecargo ){
+                                var id = this.ctxRecord.id;
+                                var idlinea = this.ctxRecord.data.idlinea;
+                                var idrecargo = this.ctxRecord.data.idrecargo;
+                                var idconcepto = this.ctxRecord.data.idconcepto;
 
-                                    if( idrecargo && confirm("Esta seguro?") ){
+                                if( idrecargo && confirm("Esta seguro?") ){
 
-                                        Ext.Ajax.request(
-                                        {
-                                            waitMsg: 'Guardando cambios...',
-                                            url: '<?=url_for("pricing/eliminarPanelRecargosPorLinea")?>',
-                                            //method: 'POST',
-                                            //Solamente se envian los cambios
-                                            params :	{
-                                                idtrafico: idtrafico,
-                                                modalidad: modalidad,
-                                                impoexpo: impoexpo,
-                                                transporte: transporte,
-                                                idlinea: idlinea,
-                                                idrecargo: idrecargo,
-                                                idconcepto: idconcepto,
-                                                id: id
-                                            },
-                                            callback :function(options, success, response){
-                                                var res = Ext.util.JSON.decode( response.responseText );
-                                                if( res.id && res.success){
-                                                    var rec = storeRecargos.getById( res.id );
-                                                    storeRecargos.remove(rec);
-                                                }
+                                    Ext.Ajax.request(
+                                    {
+                                        waitMsg: 'Guardando cambios...',
+                                        url: '<?=url_for("pricing/eliminarPanelRecargosPorLinea")?>',
+                                        //method: 'POST',
+                                        //Solamente se envian los cambios
+                                        params :	{
+                                            idtrafico: idtrafico,
+                                            modalidad: modalidad,
+                                            impoexpo: impoexpo,
+                                            transporte: transporte,
+                                            idlinea: idlinea,
+                                            idrecargo: idrecargo,
+                                            idconcepto: idconcepto,
+                                            id: id
+                                        },
+                                        callback :function(options, success, response){
+                                            var res = Ext.util.JSON.decode( response.responseText );
+                                            if( res.id && res.success){
+                                                var rec = storeRecargos.getById( res.id );
+                                                storeRecargos.remove(rec);
                                             }
-                                        });
-                                    }
+                                        }
+                                    });
                                 }
                             }
-                        },
-
-                        {
-                            text: 'Control de cambios',
-                            iconCls: '',
-                            scope:this,
-                            handler: function(){
-                                    this.ventanaControlCambios(this.ctxRecord, index);
-                            }
                         }
-                        ]
-                });
-            }
-            this.menu.on('hide', this.onContextHide, this);
+                    });
 
-            e.stopEvent();
-            if(this.ctxRow){
-                Ext.fly(this.ctxRow).removeClass('x-node-ctx');
-                this.ctxRow = null;
-            }
-            this.ctxRecord = rec;
-            this.ctxRow = this.view.getRow(index);
-            Ext.fly(this.ctxRow).addClass('x-node-ctx');
-            this.menu.showAt(e.getXY());
+
         }
+        rec = this.store.getAt(index);
+        var idtrafico = this.idtrafico;
+        var modalidad = this.modalidad;
+        var impoexpo = this.impoexpo;
+        var transporte = this.transporte;
+        var storeRecargos = this.store;
+        if( !this.menu ){
+            this.menu = new Ext.menu.Menu({
+            items: items
+            });
+        }
+        this.menu.on('hide', this.onContextHide, this);
+
+        e.stopEvent();
+        if(this.ctxRow){
+            Ext.fly(this.ctxRow).removeClass('x-node-ctx');
+            this.ctxRow = null;
+        }
+        this.ctxRecord = rec;
+        this.ctxRow = this.view.getRow(index);
+        Ext.fly(this.ctxRow).addClass('x-node-ctx');
+        this.menu.showAt(e.getXY());
+        
     },
 
     seleccionarTodo: function(){
