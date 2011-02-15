@@ -964,7 +964,6 @@ class falabellaAduActions extends sfActions {
                     }
                     $chk_doc = 0;
                 }
-                $prorrateos[$row["ca_iddoc"]] = $valor_documento;
                 $adicion.= str_pad($valor_documento, 10, "0", STR_PAD_LEFT); // 25
                 $adicion.= "\r\n";
 
@@ -999,10 +998,12 @@ class falabellaAduActions extends sfActions {
             $salida.= str_pad($row["ca_embarque"], 2, " "); // 19
 
             $valor_carpeta = round($tot_doc * $factor,0);
-            $prorrateos[$row["ca_iddoc"]]-= $valor_carpeta;
+            echo "<br />",$valor_carpeta;
+            $prorrateos[$row["ca_factura_ter"]]+= $valor_carpeta;
 
-            if ($prorrateos[$row["ca_iddoc"]] != 0 and $row["ca_idconcepto"] == 12){
-                $valor_carpeta+= $prorrateos[$row["ca_iddoc"]];
+            if (($chk_count%$ctr_count)==0){
+                $prorrateos[$row["ca_factura_ter"]]-= $tot_doc;
+                $valor_carpeta-= $prorrateos[$row["ca_factura_ter"]];
             }
 
             $salida.= str_pad($valor_carpeta, 15, "0", STR_PAD_LEFT); // 20
@@ -1020,7 +1021,6 @@ class falabellaAduActions extends sfActions {
             echo "No se puede escribir al archivo {filename}";
             exit;
         }
-
         $this->redirect("falabellaAdu/list");
     }
 
