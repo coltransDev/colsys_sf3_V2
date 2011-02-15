@@ -696,8 +696,7 @@ class traficosActions extends sfActions
                     $numdias=$parametros[0]->getCaValor2();
                 }
 
-                //  echo $numdias;
-                $tarea->setCaUrl( "/traficos/listaStatus/modo/reporte/".$reporte->getCaConsecutivo() );
+                $tarea->setCaUrl( "/antecedentes/verPlanilla/reporte/".$reporte->getCaConsecutivo() );
                 $tarea->setCaFchvisible( date("Y-m-d H:i:s") );
                 $tarea->setCaFchvencimiento( date("Y-m-d H:i:s", time()+86400*$numdias) );
                 
