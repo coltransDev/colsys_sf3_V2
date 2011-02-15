@@ -34,6 +34,7 @@ include_component("widgets","widgetBodega");
 
 			this.wgContinuacion.addListener("select",this.onSelectContinuacion, this );
 		<?
+            }
 			if($modo==Constantes::MARITIMO)
 			{
 		?>
@@ -42,12 +43,12 @@ include_component("widgets","widgetBodega");
                                               id:"cotizacionotm",
                                               hiddenName:"idcotizacionotm",
                                               modo:"<?=constantes::OTMDTA?>",
-                                              impoexpo:"<?=$impoexpo?>",
+                                              impoexpo:"<?=constantes::IMPO?>",
                                               valueField:"consecutivo"
                                               });
                 this.widgetCotizacionOtm.addListener("select", this.onSelectCotizacionOtm, this );
         <?
-            }
+            
 			}
 		?>
 
@@ -142,6 +143,18 @@ include_component("widgets","widgetBodega");
 						}
 						else
 						{
+
+                        if($modo==Constantes::MARITIMO )
+                            {
+						?>
+                        {
+                            xtype:"hidden",
+                            id:"idproductootm",
+                            name:"idproductootm"
+                        },
+                        this.widgetCotizacionOtm,
+                        <?
+                            }
 						?>
 							{
 								xtype:"hidden",
@@ -161,7 +174,7 @@ include_component("widgets","widgetBodega");
                           ?>
 							new WidgetBodega({fieldLabel:"Destino",
                                             id:"cont-destino",
-                                            hiddenName:"idcont-origen",
+                                            hiddenName:"idcont-destino",
                                             width:600,
                                             linkTransporte:"transporte"
                                            })
@@ -211,17 +224,22 @@ include_component("widgets","widgetBodega");
             }
 
         },
-        onSelectCotizacionOtm: function( combo, record, index){            
-            if(Ext.getCmp("continuacion_destino").getValue()=="")
+        onSelectCotizacionOtm: function( combo, record, index){
+            if(Ext.getCmp("continuacion_destino"))
             {
-                Ext.getCmp("continuacion_destino").setValue(record.data.iddestino);
-                $("#continuacion_destino").val(record.data.destino);
+                if(Ext.getCmp("continuacion_destino").getValue()=="")
+                {
+                    Ext.getCmp("continuacion_destino").setValue(record.data.iddestino);
+                    $("#continuacion_destino").val(record.data.destino);
+                }
             }
-            if(Ext.getCmp("continuacion").getValue()=="")
+            if(Ext.getCmp("continuacion"))
             {
-                Ext.getCmp("continuacion").setValue(record.data.producto);
+                if(Ext.getCmp("continuacion").getValue()=="")
+                {
+                    Ext.getCmp("continuacion").setValue(record.data.producto);
+                }
             }
-            
             Ext.getCmp("idproductootm").setValue(record.data.idproducto);
         }
     });

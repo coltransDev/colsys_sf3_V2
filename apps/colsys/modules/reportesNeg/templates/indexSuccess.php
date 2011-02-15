@@ -33,7 +33,7 @@
 		</div></td>
 
         <td align="left">
-            <?=link_to("OTM-DTA (Pruebas)", "reportesNeg/formReporte?modo=Marítimo&impoexpo=".constantes::OTMDTA )?>
+            <?=link_to("OTM-DTA ", "reportesNeg/formReporte?modo=Marítimo&impoexpo=".constantes::OTMDTA )?>
 	</td>
 <?
 	}
@@ -63,7 +63,7 @@
 	}
 ?>
         <td><div align="left">
-            <?=link_to("Terrestre (Pruebas)", "reportesNeg/formReporte?modo=Terrestre&impoexpo=Exportación")?>
+            <?=link_to("Terrestre ", "reportesNeg/formReporte?modo=Terrestre&impoexpo=Exportación")?>
 	</div></td>
 	</tr>
 <?

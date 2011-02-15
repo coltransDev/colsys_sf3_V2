@@ -354,8 +354,8 @@ if( $reporte->getCaImpoexpo()==Constantes::IMPO ){
     if( $reporte->getCaTransporte()==Constantes::MARITIMO && $reporte->getCaModalidad()=='FCL' )
         $pdf->Row ( array ('Firma Contrato Comodato', $reporte->getCaComodato(), '', '' ,'' ,'' ) );
 }else{
-    $pdf->SetWidths ( array (40, 10, 35, 10, 35,70 ) );
-    $pdf->Row ( array ('Transporte terrestre Nal:', $reporte->getCaColmas (), 'Seguro:', $reporte->getCaSeguro (), "Tiempo de Crédito:", $reporte->getCaTiempocredito()  ) );
+    $pdf->SetWidths ( array ( 55, 25, 45,75 ) );
+    $pdf->Row ( array ('Seguro:', $reporte->getCaSeguro (), "Tiempo de Crédito:", $reporte->getCaTiempocredito()  ) );
 }
 
 if( ($reporte->getCaContinuacion()!= "N/A" && $reporte->getCaContinuacion()!= "" && $reporte->getCaImpoexpo() == constantes::IMPO ) ) {
@@ -802,7 +802,7 @@ if( !$soloAduana && $reporte->getCaTiporep()!="3" ){
     }
   //  $pdf->flushGroup();
   //  $pdf->beginGroup();
-    if( $reporte->getCaImpoexpo () == Constantes::IMPO || $reporte->getCaImpoexpo ()==Constantes::OTMDTA || $reporte->getCaImpoexpo ()==Constantes::OTMDTA1 ){
+    if( $reporte->getCaImpoexpo () == Constantes::IMPO || $reporte->getCaImpoexpo ()==Constantes::OTMDTA || $reporte->getCaImpoexpo ()==Constantes::OTMDTA1   ){
         $sub_mem = 'Recargo Local';
         $pdf->Ln ( 3 );
         $gastos = $reporte->getRecargos ( "local" );
@@ -836,8 +836,8 @@ if( !$soloAduana && $reporte->getCaTiporep()!="3" ){
     }
 //   $pdf->flushGroup();
 //   $pdf->beginGroup();
-    if( $reporte->getCaImpoexpo () == Constantes::IMPO || $reporte->getCaImpoexpo ()==Constantes::OTMDTA || $reporte->getCaImpoexpo ()==Constantes::OTMDTA1 ){
-        $sub_mem = 'OTM';
+    if( $reporte->getCaImpoexpo () == Constantes::IMPO || $reporte->getCaImpoexpo ()==Constantes::OTMDTA || $reporte->getCaImpoexpo ()==Constantes::OTMDTA1 || ($reporte->getCaImpoexpo () == Constantes::EXPO && $reporte->getCaTransporte()==Constantes::MARITIMO) ){
+        $sub_mem = 'OTM-DTA';
         $pdf->Ln ( 3 );
 
         $gastos = $reporte->getRecargos ( constantes::OTMDTA );
