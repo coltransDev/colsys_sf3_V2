@@ -165,10 +165,10 @@ elseif (!isset($boton) and !isset($accion) and isset($login)){
     echo "<FORM METHOD=post NAME='informe' ACTION='repreportes.php'>";             // Hace una llamado nuevamente a este script pero con
     echo "<TABLE WIDTH=900 CELLSPACING=1>";                                    // un boton de comando definido para hacer mantemientos
     echo "<TR>";
-    echo "  <TH Class=titulo COLSPAN=12>COLTRANS S.A.<BR>$titulo<BR>$meses[$mes]/$ano</TH>";
+    echo "  <TH Class=titulo COLSPAN=13>COLTRANS S.A.<BR>$titulo<BR>$meses[$mes]/$ano</TH>";
     echo "</TR>";
     echo "<TR>";
-    echo "  <TD Class=partir COLSPAN=12 style='font-weight:bold'>IMPORTACIÓN</TD>";
+    echo "  <TD Class=partir COLSPAN=13 style='font-weight:bold'>IMPORTACIÓN</TD>";
     echo "</TR>";
     echo "<TR>";
     echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Reporte</TD>";
@@ -181,7 +181,8 @@ elseif (!isset($boton) and !isset($accion) and isset($login)){
     echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Destino</TD>";
     echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Transporte</TD>";
     echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>T.Incoterms</TD>";
-    echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Vendedor</TD>";
+    echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Usu.Creado</TD>";
+    echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Vendedor.</TD>";
     echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Sucursal</TD>";
     echo "</TR>";
     while (!$rsi->Eof() and !$rsi->IsEmpty()) {                                                      // Lee la totalidad de los registros obtenidos en la instrucción Select
@@ -198,6 +199,7 @@ elseif (!isset($boton) and !isset($accion) and isset($login)){
        echo "  <TD Class=listar style='font-size: 9px;'>".$rsi->Value('ca_ciudestino')."</TD>";
        echo "  <TD Class=listar style='font-size: 9px;'>".$rsi->Value('ca_transporte')."</TD>";
        echo "  <TD Class=listar style='font-size: 9px;'>".$incoterms."</TD>";
+       echo "  <TD Class=listar style='font-size: 9px;'>".$rsi->Value('ca_usucreado')."</TD>";
        echo "  <TD Class=listar style='font-size: 9px;'>".$rsi->Value('ca_login')."</TD>";
        echo "  <TD Class=listar style='font-size: 9px;'>".$rsi->Value('ca_sucursal')."</TD>";
        echo "</TR>";
@@ -223,7 +225,7 @@ elseif (!isset($boton) and !isset($accion) and isset($login)){
     echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Destino</TD>";
     echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Transporte</TD>";
     echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>T.Incoterms</TD>";
-    echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Vendedor</TD>";
+    echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Vendedor..</TD>";
     echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Sucursal</TD>";
     echo "</TR>";
     while (!$rse->Eof() and !$rse->IsEmpty()) {                                                      // Lee la totalidad de los registros obtenidos en la instrucción Select
