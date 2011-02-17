@@ -157,12 +157,22 @@ class Swift_Encoder_QpEncoder implements Swift_Encoder
     while (false !== $bytes = $this->_nextSequence())
     {
 
-      if( $currentLine && $currentLine[0]=="." && $lineLen==4 ){          
-          $str = $lines[$lNo-2];          
-          $lines[$lNo-2] = substr($str, 0, 68 );
-          $currentLine = substr($str, 68 ). $currentLine;
-          $lineLen += strlen( substr($str, 68 ) );
+      if( $currentLine && $currentLine[0]=="." && $lineLen==4 ){
+          
+          $str = $lines[$lNo-2];
+
+          $len = 68;
+          //Cuando el ultimo caracter es un acento puede cortarlo.
+          if( substr($str, $len-1,1) == "=" ){
+              $len = 66;
+          }
+
+          $lines[$lNo-2] = substr($str, 0, $len );
+          $currentLine = substr($str, $len ). $currentLine;
+          $lineLen += strlen( substr($str, $len ) );         
       }
+
+      
       //If we're filtering the input
       if (isset($this->_filter))
       {
