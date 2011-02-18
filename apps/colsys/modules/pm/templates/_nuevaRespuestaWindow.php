@@ -176,7 +176,7 @@ Ext.extend(NuevaRespuestaWindow, Ext.Window, {
                 }          
                     
             }
-
+            
             form.submit({
                 success:function(form,action){
 
