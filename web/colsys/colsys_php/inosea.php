@@ -245,6 +245,9 @@ elseif (isset($boton)) {                                                       /
                 echo "function ver_pdf(id){";
                 echo "    window.open(\"reporteneg.php?id=\"+id);"; //toolbar=no, location=no, directories=no, menubar=no
                 echo "}";
+                echo "function subir_hbl(id, hb){";
+                echo "    document.location.href = 'inosea.php?boton=subirHbl\&id='+id+'\&hb='+hb;";
+                echo "}";
                 echo "</script>";
                 echo "</HEAD>";
                 echo "<BODY>";
@@ -499,8 +502,20 @@ elseif (isset($boton)) {                                                       /
                     echo "<TH><IMG style='visibility: $visible;' src='./graficos/new.gif' alt='Crear un Nuevo Registro' border=0 onclick='elegir(\"AdicionarCl\",  \"".$rs->Value('ca_referencia')."\", 0, 0);'></TH>";  // Botón para la creación de un Registro Nuevo
                     $cli_mem = 0;
                     $hbl_mem = 0;
+                    $root = '/srv/www/digitalFile';
                     while (!$cl->Eof() and !$cl->IsEmpty()) {                                      // Lee la totalidad de los registros obtenidos en la instrucción Select
                         if( $cl->Value('ca_idcliente') != $cli_mem or $cl->Value('ca_hbls') != $hbl_mem) {
+                            $path = '/referencias/'.$cl->Value('ca_referencia').'/docTrans';
+                            $docTrans = array();
+                            if ($handle = opendir($root.$path)) {
+                                while (false !== ($file = readdir($handle))) {
+                                        if ($file == "." or $file == ".."){
+                                            continue;
+                                        }
+                                        $docTrans[] = pathinfo($root.$path.'/'.$file);
+                                    }
+                            }
+                            
                             echo "<TR HEIGHT=5>";
                             echo "  <TD Class=captura COLSPAN=6></TD>";
                             echo "</TR>";
@@ -532,7 +547,12 @@ elseif (isset($boton)) {                                                       /
                             echo "  <TD Class=listar><B>ID Proveedor:</B><BR>".$cl->Value('ca_idproveedor')."</TD>";
                             echo "  <TD Class=listar COLSPAN=2><B>Proveedor:</B><BR>".$cl->Value('ca_proveedor')."</TD>";
                             echo "  <TD Class=listar><B>Utilidad x Cliente:</B><BR>".number_format($utl_cbm * $cl->Value('ca_volumen'))."</TD>";
-                            echo "  <TD Class=listar><B>Rec/Antec.:&nbsp;&nbsp;&nbsp;</B><BR>".$cl->Value('ca_fchantecedentes')."</TD>";
+                            echo "  <TD Class=listar><B>Hbl Final: <IMG src='./graficos/fileopen.png' alt='Agregar Copia de Hbl Definitivo' border=0 onclick='javascript:subir_hbl(\"".$cl->Value('ca_referencia')."\",\"".$cl->Value('ca_hbls')."\")'>";
+                            $i=1;
+                            foreach($docTrans as $docTran){
+                                echo "<br /><a href='/gestDocumental/verArchivo?folder=".base64_encode("referencias/".$cl->Value('ca_referencia')."/docTrans")."&idarchivo=".base64_encode($docTran['basename'])."'><IMG src='./graficos/image.gif' alt='".$docTran['filename']."' border=0> Doc. $i</img></a>";
+                            }
+                            echo "  <br />Rec/Antec.:&nbsp;&nbsp;&nbsp;</B><BR>".$cl->Value('ca_fchantecedentes')."</TD>";
                             echo "</TR>";
                             echo "<TR HEIGHT=5>";
                             echo "  <TD Class=invertir COLSPAN=6></TD>";
@@ -3847,6 +3867,55 @@ elseif (isset($boton)) {                                                       /
 
                 break;
             }
+        case 'subirHbl': {
+                echo "<HEAD>";
+                echo "<TITLE>$titulo</TITLE>";
+                echo "</HEAD>";
+                echo "<BODY>";
+                require_once("menu.php");
+                echo "<STYLE>@import URL(\"Coltrans.css\");</STYLE>";             // Carga una hoja de estilo que estandariza las pantallas den sistema graficador
+                echo "<CENTER>";
+                echo "<H3>$titulo</H3>";
+                echo "<FORM METHOD=post NAME='upload' ACTION='inosea.php' ONSUBMIT='return validar();' enctype='multipart/form-data'>";  // Llena la forma con los datos actuales del registro
+                echo "<INPUT TYPE='HIDDEN' NAME='referencia' VALUE=\"".$id."\">";             // Hereda el Id de la Referencia que se esta modificando
+                echo "<TABLE WIDTH=600 CELLSPACING=1>";
+                echo "<TR>";
+                echo "  <TD Class=captura STYLE='vertical-align:top'>Adjuntar Hbl Definitivo :</TD>";
+                echo "  <TD Class=listar><INPUT TYPE='FILE' NAME='file' SIZE=70></TD>";
+                echo "</TR>";
+                echo "</TABLE><BR>";
+
+                $root = '/srv/www/digitalFile';
+                $path = '/referencias/'.$id.'/docTrans';
+                $docTrans = array();
+                if ($handle = opendir($root.$path)) {
+                    while (false !== ($file = readdir($handle))) {
+                            if ($file == "." or $file == ".."){
+                                continue;
+                            }
+                            $docTrans[] = pathinfo($root.$path.'/'.$file);
+                        }
+                }
+                echo "<TABLE WIDTH=400 CELLSPACING=1>";
+                foreach($docTrans as $docTran){
+                    // echo "<br /><a href='/gestDocumental/verArchivo?folder=".base64_encode("referencias/".$cl->Value('ca_referencia')."/docTrans")."&idarchivo=".base64_encode($docTran['basename'])."'><IMG src='./graficos/image.gif' alt='".$docTran['filename']."' border=0> Doc. $i</img></a>";
+                    echo "<TR>";
+                    echo "  <TD Class=listar><INPUT TYPE='CHECKBOX' NAME='delete_files[]' VALUE='".base64_encode($docTran['dirname'].'/'.$docTran['basename'])."'></TD>";
+                    echo "  <TD Class=listar>".$docTran['basename']."</TD>";
+                    echo "</TR>";
+                }
+                echo "</TABLE><BR>";
+
+                echo "<TABLE CELLSPACING=10>";
+                echo "<TH><INPUT Class=submit TYPE='SUBMIT' NAME='accion' VALUE='Subir el Documento'></TH>";     // Subir el Documento
+                echo "<TH><INPUT Class=submit TYPE='SUBMIT' NAME='accion' VALUE='Eliminar Seleccionados'></TH>";     // Eliminar Seleccionados
+                echo "<TH><INPUT Class=button TYPE='BUTTON' NAME='boton' VALUE='Cancelar' ONCLICK='javascript:document.location.href = \"inosea.php?boton=Consultar\&id=$id\"'></TH>";  // Cancela la operación
+                echo "</TABLE>";
+                echo "</FORM>";
+                echo "</CENTER>";
+
+                break;
+            }
         case 'Generar XML': {
                 $modulo = "00100300";                                             // Identificación del módulo para la ayuda en línea
                 //           include_once 'include/seguridad.php';                             // Control de Acceso al módulo
@@ -5114,6 +5183,26 @@ elseif (isset($accion)) {                                                      /
                     echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                     echo "<script>document.location.href = 'inosea.php';</script>";
                     exit;
+                }
+                break;
+            }
+        case 'Subir el Documento': {                                                      // El Botón Subir el Documento fue pulsado
+                $file = $_FILES["file"];
+                $root = '/srv/www/digitalFile';
+                $path = '/referencias/'.$referencia.'/docTrans';
+
+                if(is_uploaded_file($file["tmp_name"])){
+                    $fileName = $root.$path.'/'.$file["name"];
+                    if( !is_dir($root.$path) ){
+                        mkdir($root.$path, 0777, true);
+                    }
+                    move_uploaded_file( $file["tmp_name"], $fileName);
+                }
+                break;
+            }
+        case 'Eliminar Seleccionados': {                                                      // El Botón Eliminar Seleccionados fue pulsado
+                foreach($delete_files as $file){
+                    unlink(base64_decode($file));
                 }
                 break;
             }
