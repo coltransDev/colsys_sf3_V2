@@ -19,7 +19,7 @@ class ClienteTable extends Doctrine_Table {
 
         //list($ano, $mes, $dia) = sscanf($fch_fin, "%d-%d-%d");
         //$fch_fin = date('Y-m-d h:i:s',mktime(23,59,59, $mes, $dia, $ano)); // Incrementa en un día para tener en cuenta los registros el último día dentro de la consulta
-        $query = "select std0.*,cl.ca_compania, cl.ca_vendedor, u.ca_sucursal from tb_stdcliente std0 INNER JOIN tb_clientes cl ON (std0.ca_idcliente = cl.ca_idcliente) ";
+        $query = "select std0.*,cl.ca_compania, cl.ca_vendedor, cl.ca_tipo, cl.ca_entidad, u.ca_sucursal from tb_stdcliente std0 INNER JOIN tb_clientes cl ON (std0.ca_idcliente = cl.ca_idcliente) ";
         $query.= "INNER JOIN control.tb_usuarios u ON (cl.ca_vendedor = u.ca_login) ";
         $query.= "INNER JOIN (select ca_idcliente, max(ca_fchestado) as ca_fchestado, ca_empresa from tb_stdcliente where ca_fchestado between '$fch_ini' and '$fch_fin' group by ca_idcliente, ca_empresa order by ca_idcliente) std1 ON (std0.ca_idcliente = std1.ca_idcliente) ";
         $query.= "where std0.ca_fchestado = std1.ca_fchestado and std0.ca_empresa = std1.ca_empresa and std0.ca_empresa = '$empresa' and cl.ca_tipo IS NULL ";
@@ -28,6 +28,10 @@ class ClienteTable extends Doctrine_Table {
         }
         if ($estado != null) {
             $query.= "and std0.ca_estado = '$estado' ";
+            if ($estado == 'Activo') {
+                $query.= "(cl.ca_tipo is null  or cl.ca_tipo = '' ) and ";
+                $query.= "and cl.ca_entidad = 'Vigente' ";
+            }
         }
         if ($sucursal != null) {
             $query.= "and u.ca_sucursal = '$sucursal' ";
