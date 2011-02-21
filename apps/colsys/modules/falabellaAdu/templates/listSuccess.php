@@ -27,15 +27,16 @@
 </thead>
 <tbody>
 <?php foreach ($fala_headers as $fala_header): ?>
-<tr class="<?=$fala_header->getcaProcesado()?"green":(strlen($fala_header->getcaUsuanulado())!=0?"pink":"")?>" >
+<tr class="<?=$fala_header->getCaProcesado()?"green":(strlen($fala_header->getCaUsuanulado())!=0?"pink":"")?>" >
 
     <?
+    
     $link = false;
-    if ($fala_header->getFalaDeclaracionImp()){
-        if($fala_header->getFalaDeclaracionImp()->getCaReferencia()){
-            $link = true;
-        }
+    
+    if($fala_header->getCaReferencia()){
+        $link = true;
     }
+    
     ?>
 
     <td ><?php echo link_to($fala_header->getCaIddoc(), 'falabellaAdu/details?iddoc='.base64_encode($fala_header->getCaIddoc()))?></td>
@@ -49,9 +50,9 @@
       <td><?php echo $fala_header->getCaNombreProveedor() ?></td>
       <td><?php echo $fala_header->getCaCodigoProveedor() ?></td>
       <td><?php echo $fala_header->getCaMontoInvoiceMiles() ?></td>
-      <td><?php echo $fala_header->getCaProformaNumber() ?></td>
+      <td><?php echo $fala_header->getCaProformaNumber()?></td>
       </tr>
-<?php 
+<?php
 	endforeach; 
 	
 	if( count($fala_headers)==0 ){
