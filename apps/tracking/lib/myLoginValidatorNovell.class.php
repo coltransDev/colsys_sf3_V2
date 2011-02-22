@@ -18,7 +18,7 @@ class myLoginValidatorNovell extends sfValidatorBase
 		$passwd = isset($values[$this->getOption('password_field')]) ? $values[$this->getOption('password_field')] : '';			
 		if( $username && $passwd ){
 			$auth_user="cn=".$username.",o=coltrans_bog";			
-			$ldap_server="10.192.1.15";
+			$ldap_server="10.192.1.83";
 			
 			if($connect=ldap_connect($ldap_server)){
 				

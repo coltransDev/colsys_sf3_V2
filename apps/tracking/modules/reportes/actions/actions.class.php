@@ -263,16 +263,17 @@ class reportesActions extends sfActions
 		$this->forward404Unless( $this->cliente );
 		$this->forward404unless( $this->impoexpo );
 		
-		
+		$historial = $this->getRequestParameter("historial");
+
 		if( $this->impoexpo==Constantes::IMPO ){	
 			$this->forward404unless( $this->transporte );
 			if( $this->transporte==Constantes::MARITIMO ){				
-				$this->reportes = ReportePeer::getReportesActivosImpoMaritimo( $this->getUser()->getClienteActivo() );
+				$this->reportes = ReportePeer::getReportesActivosImpoMaritimo( $this->getUser()->getClienteActivo(), false, "",  $historial );
 			}elseif( $this->transporte==Constantes::AEREO ){
-				$this->reportes = ReportePeer::getReportesActivosImpoAereo( $this->getUser()->getClienteActivo() );
+				$this->reportes = ReportePeer::getReportesActivosImpoAereo( $this->getUser()->getClienteActivo(), false, "",  $historial );
 			}
 		}elseif( $this->impoexpo==Constantes::EXPO ){				
-			$this->reportes = ReportePeer::getReportesActivosExpo( $this->getUser()->getClienteActivo() );
+			$this->reportes = ReportePeer::getReportesActivosExpo( $this->getUser()->getClienteActivo(), false, "",  $historial );
 		}
 					
 		

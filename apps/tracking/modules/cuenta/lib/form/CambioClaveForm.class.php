@@ -1,5 +1,5 @@
 <?
-class CambioClaveForm extends BaseForm{
+class CambioClaveForm extends sfForm{
 	public function configure(){
 		//$this->setValidatorSchema(new RegisterValidatorSchema());
 		//$this->setWidgetSchema(new RegisterWidgetFormSchema());

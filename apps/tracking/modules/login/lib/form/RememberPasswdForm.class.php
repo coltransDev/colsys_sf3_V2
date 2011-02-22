@@ -1,10 +1,10 @@
 <?
-class RememberPasswdForm extends BaseForm{
+class RememberPasswdForm extends sfForm{
 	public function configure(){
 		
 		
 		$this->setWidgets(array(		  
-		  'email' => new sfWidgetFormInputText()
+		  'email' => new sfWidgetFormInput()
 		
 		));
 		

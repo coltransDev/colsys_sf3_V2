@@ -1,5 +1,5 @@
 <?
-class ActivateForm extends BaseForm{
+class ActivateForm extends sfForm{
 	public function configure(){
 		//$this->setValidatorSchema(new RegisterValidatorSchema());
 		//$this->setWidgetSchema(new RegisterWidgetFormSchema());

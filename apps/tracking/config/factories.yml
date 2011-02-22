@@ -35,9 +35,25 @@ all:
 #    class: myUser
 #
   storage:
-    class: sfSessionStorage
+#    class: sfSessionStorage
+#    param:
+#      session_name: coltrans_tracking
+    class: sfCacheSessionStorage
     param:
       session_name: coltrans_tracking
+      session_cookie_secure: true
+      session_cookie_secret: Ard$ttE!hvaaad
+      session_cookie_lifetime: null
+      cache:
+        class: sfMemcacheCache
+        param:
+          storeCacheInfo: false
+          lifetime: 86400
+          prefix: tracksess
+          servers:
+            localserver:
+              host: 10.192.1.62
+              port: 11211
 #
 #  view_cache:
 #    class: sfFileCache

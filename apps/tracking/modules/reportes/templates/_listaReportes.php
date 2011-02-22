@@ -151,7 +151,7 @@ Ext.onReady(function(){
 	*/
 	var excelBtnHandler=function( btn , e ){
 				
-		var url = "<?=url_for("reportes/informeTraficosFormato1?impoexpo=".$impoexpo."&transporte=".$transporte)?>";
+		var url = "<?=url_for("reportes/informeTraficosFormato1?impoexpo=".$impoexpo."&transporte=".$transporte.($historial?"&historial=".$historial:""))?>";
 		document.location.href = url;
 		
 	}
@@ -232,6 +232,21 @@ Ext.onReady(function(){
 				iconCls: 'page_excel',  // reference to our css
 				handler: excelBtnHandler
 			}
+            <?
+            //if( $idclienteActivo==800182042 ){ // Solo para probar con el cliente BECOR
+            ?>
+            ,
+			{
+				text: 'Historial',
+				tooltip: 'Lista todas las cargas desde hace un año',
+				iconCls: 'clock',  // reference to our css
+				handler: function(){
+                    document.location="?historial=true";
+                }
+			}
+            <?
+            //}
+            ?>
 		],
 		listeners:{
 			 rowdblclick : rowdblclickHandler

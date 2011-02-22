@@ -20,6 +20,7 @@ class reportesComponents extends sfComponents
 		$c->add( RepStatusRespuestaPeer::CA_IDSTATUS, $this->idstatus );	
 		$c->addAscendingOrderByColumn( RepStatusRespuestaPeer::CA_FCHCREADO );				
 		$this->respuestas = RepStatusRespuestaPeer::doSelect( $c );
+        
 	}
 	
 	/**
@@ -29,21 +30,23 @@ class reportesComponents extends sfComponents
 	public function executeListaReportes(){
 		$response = sfContext::getInstance()->getResponse();		
 		$response->addJavaScript("extExtras/RowExpander",'last');
-		
+
+        $historial = sfContext::getInstance()->getRequest()->getParameter("historial");
+        $this->idclienteActivo = $this->getUser()->getClienteActivo();
 		if( $this->impoexpo==Constantes::IMPO ){	
 			if( $this->transporte==Constantes::MARITIMO ){
-				$reportes = ReportePeer::getReportesActivosImpoMaritimo( $this->getUser()->getClienteActivo() );
+				$reportes = ReportePeer::getReportesActivosImpoMaritimo( $this->getUser()->getClienteActivo(), false, "",  $historial );
 			}
 			if( $this->transporte==Constantes::AEREO ){
-				$reportes = ReportePeer::getReportesActivosImpoAereo( $this->getUser()->getClienteActivo() );
+				$reportes = ReportePeer::getReportesActivosImpoAereo( $this->getUser()->getClienteActivo(), false, "",  $historial );
 			}
 		}
 				
 		if( $this->impoexpo==Constantes::EXPO ){				
-			$reportes = ReportePeer::getReportesActivosExpo( $this->getUser()->getClienteActivo() );
+			$reportes = ReportePeer::getReportesActivosExpo( $this->getUser()->getClienteActivo(), false, "",  $historial );
 		}
 		
-		
+		$this->historial = $historial;
 		$this->data=array();
 		
 		foreach( $reportes as $reporte ){
