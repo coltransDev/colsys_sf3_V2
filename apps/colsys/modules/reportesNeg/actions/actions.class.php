@@ -802,6 +802,7 @@ class reportesNegActions extends sfActions
             }
 
 
+
             if($ca_confirmar_clie!="" )
             {
                 $reporte->setCaConfirmarClie($ca_confirmar_clie);
@@ -1205,6 +1206,17 @@ class reportesNegActions extends sfActions
                         $repAduana->setCaCoordinador(null);
                     }
                     $repAduana->save();
+                }
+                else
+                {
+                    $repAduana = Doctrine::getTable("RepAduana")->findOneBy("ca_idreporte", $reporte->getCaIdreporte() );
+                    if($repAduana)
+                    {
+                        $repAduana->setCaIdreporte($reporte->getCaIdreporte());
+                        $repAduana->setCaInstrucciones("");
+                        $repAduana->setCaCoordinador(null);
+                        $repAduana->save();
+                    }
                 }
 
                 if($reporte->getCaImpoexpo()== Constantes::EXPO || utf8_decode($reporte->getCaImpoexpo()) == Constantes::EXPO)
