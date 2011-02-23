@@ -38,7 +38,7 @@ class NotTarea extends BaseNotTarea
 	/*
 	* Crea notificaciones para los usuarios
 	*/
-	public function notificar( $conn=null ){
+	public function notificar( $conn=null, $type=1 ){
 
 		$lista = Doctrine::getTable("NotListaTareas")->find( $this->getCaIdlistatarea());
 
@@ -54,7 +54,8 @@ class NotTarea extends BaseNotTarea
 		$email->setCaFrom( "no-reply@coltrans.com.co" );
 		$email->setCaFromname( "Colsys Notificaciones" );
 
-        if( $this->getCaNotificar() ){            
+
+        if( $this->getCaNotificar() ){
             $email->addTo( $this->getCaNotificar() );
         }
 
@@ -65,12 +66,29 @@ class NotTarea extends BaseNotTarea
                 $email->addTo( $usuario->getCaEmail() );
             }
 
+            if( $type==2 ){
+                $jefe = $usuario->getManager();
+                if( $jefe && $usuario->getCaLogin()!="falopez" ){
+                    $email->addCC( $jefe->getCaEmail() );
+                }
+            }
+
             $usuariosAsignacion[] = $usuario;
         }
 
+
+
+
 		$email->setCaSubject( $this->getCaTitulo() );
 
-		$texto = "Tiene una tarea pendiente con vencimiento en ".Utils::fechaMes($this->getCaFchvencimiento("Y-m-d"))." ".$this->getCaFchvencimiento("H:i:s")." \n\n<br /><br />" ;
+        if( $type==1 ){
+            $texto = "Tiene una tarea pendiente con vencimiento en ".Utils::fechaMes($this->getCaFchvencimiento("Y-m-d"))." ".$this->getCaFchvencimiento("H:i:s")." \n\n<br /><br />" ;
+        }
+
+        if( $type==2 ){
+            $texto = "Tiene una tarea vencida sin realizar  \n\nHa superado el tiempo permitido y esta afectando sus indices de gestión<br /><br />" ;
+        }
+        
 		$texto .= "<a href='https://www.coltrans.com.co/notificaciones/realizarTarea/id/".$this->getCaIdtarea()."'>Haga click aca para realizarla </a> \n\n<br /><br />" ;
 		$texto .= "Descripción de la tarea: <br /><b>".$lista->getCaNombre()."</b><br /> ".$lista->getCaDescripcion()." \n\n<br /><br />" ;
 
@@ -89,6 +107,7 @@ class NotTarea extends BaseNotTarea
 		$notificacion = new Notificacion();
 		$notificacion->setCaIdtarea( $this->getCaIdtarea() );
 		$notificacion->setCaIdemail( $email->getCaIdemail() );
+        $notificacion->setCaTipo( $type );
 		$notificacion->save( $conn );
 	}
 
