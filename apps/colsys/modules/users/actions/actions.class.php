@@ -27,17 +27,27 @@ class usersActions extends sfActions
 	*
 	* @param sfRequest $request A request object
 	*/
-	public function executeLogin($request)
+	public function executeLogin(sfWebRequest $request)
 	{
+        
         //header("Location: /users/login");
         //exit();
-		//echo "login".session_id();
+		
 		$response = sfContext::getInstance()->getResponse();
 		$response->addStylesheet("login");
 		
 		if($this->getUser()->isAuthenticated()){
 			$this->redirect("homepage/index");
 		}
+
+
+        if( $request->isMethod("get")){            
+            $this->getUser()->setAttribute("path_info", $request->getPathInfo());
+            $this->getUser()->setAttribute("request_parameters", $request->getGetParameters());
+        }
+
+
+
 					
 		$this->form = new LoginForm();		
 		if ($request->isMethod('post')){		
@@ -48,8 +58,20 @@ class usersActions extends sfActions
 					)
 				); 
 			if( $this->form->isValid() ){	
-				//Se valido correctamente			
-				$this->redirect("homepage/index");
+				//Se valido correctamente
+                if( $this->getUser()->getAttribute("path_info") ){
+                    $url = $this->getUser()->getAttribute("path_info");
+                    $params = $this->getUser()->getAttribute("request_parameters");
+                   
+                    foreach( $params as $key=>$val ){
+                        $request->setParameter($key, $val);
+                    }
+                   
+                }else{
+                    $url = "homepage/index";
+                }
+                
+				$this->redirect( $url );
 				//echo "OK";	
 			}
 		}
