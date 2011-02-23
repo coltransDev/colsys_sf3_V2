@@ -45,6 +45,7 @@ class NuevaEvaluacionForm extends BaseForm {
         }
 
         $widgets['idtipo'] = new sfWidgetFormInputHidden();
+        $widgets['comentarios'] = new sfWidgetFormTextarea();
         $criterios = $this->getCriterios();
         if ($criterios) {
             foreach ($criterios as $criterio) {
@@ -76,6 +77,9 @@ class NuevaEvaluacionForm extends BaseForm {
                                 array('required' => 'Requerido'));
             }
         }
+
+        $validator['comentarios'] = new sfValidatorString(array('required' => false),
+                                array('required' => 'Requerido'));
 
 
 

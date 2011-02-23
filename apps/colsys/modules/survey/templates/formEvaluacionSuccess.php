@@ -15,6 +15,16 @@ $ticket = $sf_data->getRaw( "ticket" );
             document.getElementById("obs_"+id).style.display="none";
         }
     }
+
+    var checkComentarios = function(){
+        if( document.getElementById("comentarios_check").checked ){
+            document.getElementById("comentarios").style.display="";
+        }else{
+            document.getElementById("comentarios").style.display="none";
+        }
+
+
+    }
 </script>
 
 <div class="content" align="center" >
@@ -124,6 +134,22 @@ $ticket = $sf_data->getRaw( "ticket" );
                 }
                 ?>
                 <tr>
+
+                    <td> ¿Desea colocar comentarios? <input type="checkbox" name="comentarios_check" id="comentarios_check" onclick="checkComentarios()" value="1" <?=$evaluacion->getCaComentarios()?"checked='checked'":""?>  /></td>
+                    <td>
+                        <div id="comentarios" style="display:none">
+                        <?
+                        echo $form["comentarios"]->renderError();
+                        if( $evaluacionXCriterio ){
+                            $form->setDefault("comentarios",$evaluacion->getCaComentarios() );
+                        }
+                        echo $form["comentarios"]->render();
+                        ?>
+                        </div>
+                    </td>
+
+                </tr>
+                <tr>
                     <td colspan="3">
                         <div align="center">
                             <input type="Submit" value="Guardar" class="button">&nbsp;
@@ -145,4 +171,6 @@ foreach( $criterios as $criterio ){
     <?
 }
 ?>
+
+    checkComentarios();
 </script>

@@ -1,0 +1,128 @@
+
+
+
+SurvTipo:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: survey
+  tableName: survey.tb_tipos
+  columns:
+    ca_idtipo:
+      type: integer
+      primary: true
+    ca_nombre: string(50)    
+  relations:
+    SurvEvaluacion:
+      local: ca_idtipo
+      foreign: ca_idtipo
+      type: many
+    SurvCriterio:
+      local: ca_idtipo
+      foreign: ca_idtipo
+      type: many
+
+SurvEvaluacion:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: survey
+  tableName: survey.tb_evaluacion
+  columns:
+    ca_idevaluacion:
+      type: integer
+      primary: true
+      autoincrement: true   
+    ca_idtipo: integer
+    ca_estado: integer
+    ca_usucreado: string(20)
+    ca_fchcreado: timestamp
+    ca_usuactualizado: string(20)
+    ca_fchactualizado: timestamp
+    ca_fchnotificacion: timestamp
+    ca_notificar: string
+    ca_titulo: string
+    ca_numnotificacion: integer
+    ca_comentarios: text
+  relations:
+    SurvTipo:
+      local: ca_idtipo
+      foreign: ca_idtipo
+      type: one
+    SurvEvaluacionxCriterio:
+      local: ca_idevaluacion
+      foreign: ca_idevaluacion
+      type: many
+    Usuario:
+      local: ca_notificar
+      foreign: ca_login
+      type: one
+      
+
+
+SurvEvaluacionxCriterio:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: survey
+  tableName: survey.tb_evaluacionxcriterio
+  columns:
+    ca_idevaluacion:
+      type: integer
+      primary: true
+    ca_idcriterio:
+      type: integer
+      primary: true
+    ca_valor: decimal
+    ca_ponderacion: decimal
+    ca_observaciones: string(255)
+    ca_usucreado: string(20)
+    ca_fchcreado: timestamp
+    ca_usuactualizado: string(20)
+    ca_fchactualizado: timestamp
+  relations:
+    SurvEvaluacion:
+      local: ca_idevaluacion
+      foreign: ca_idevaluacion
+      type: one
+    SurvCriterio:
+      local: ca_idcriterio
+      foreign: ca_idcriterio
+      type: one
+    
+
+SurvCriterio:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: survey
+  tableName: survey.tb_criterios
+  columns:
+    ca_idcriterio:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_idtipo: integer
+    ca_criterio: string(60)
+    ca_ponderacion: integer(4)
+    ca_tipocriterio: string(30)
+    ca_activo: boolean   
+    ca_usucreado: string(20)
+    ca_fchcreado: timestamp
+    ca_usuactualizado: string(20)
+    ca_fchactualizado: timestamp
+  relations:
+    SurvEvaluacionxCriterio:
+      local: ca_idcriterio
+      foreign: ca_idcriterio
+      type: many
+    SurvTipo:
+      local: ca_idtipo
+      foreign: ca_idtipo
+      type: one
+    
+

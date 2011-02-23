@@ -34,7 +34,7 @@ class surveyActions extends sfActions {
             $this->forward404Unless($evaluacion);
 
             if( $evaluacion->getCaNotificar()!=$this->getuser()->getUserid() ){
-               // $this->redirect("users/noAccess");
+                $this->redirect("users/noAccess");
             }
 
             $this->ticket = Doctrine::getTable("HDeskTicket")
@@ -72,6 +72,14 @@ class surveyActions extends sfActions {
             $bindValues = array();
 
             $bindValues["idtipo"] = $request->getParameter("idtipo");
+            $bindValues["comentarios"] = $request->getParameter("comentarios");
+            
+            if(!$request->getParameter("comentarios_check") ){
+                $bindValues["comentarios"] = "";
+            }
+
+            
+            
             foreach ($this->criterios as $criterio) {
                 $bindValues["ponderacion_" . $criterio->getCaIdcriterio()] = $request->getParameter("ponderacion_" . $criterio->getCaIdcriterio());
                 $bindValues["calificacion_" . $criterio->getCaIdcriterio()] = $request->getParameter("calificacion_" . $criterio->getCaIdcriterio());
@@ -84,6 +92,12 @@ class surveyActions extends sfActions {
                 if (!$request->getParameter("idevaluacion")) {
                     $evaluacion->setCaIdtipo($request->getParameter('idtipo'));
                 }
+                
+                if ($bindValues["comentarios"]) {
+                    $evaluacion->setCaComentarios($bindValues["comentarios"]);
+                }
+
+
                 $evaluacion->setCaEstado(SurvEvaluacion::ESTADO_RESUELTA);
                 $evaluacion->save();
 

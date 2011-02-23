@@ -17,10 +17,12 @@ class surveyComponents extends sfComponents {
      */
     public function executeListaEvaluaciones(sfWebRequest $request) {
 
+        $user = sfContext::getInstance()->getUser();
         $fecha = date("Y-m-d H:i:s", time() - (90 * 86400));
         $this->evaluaciones = Doctrine::getTable("SurvEvaluacion")
                         ->createQuery("e")
                         ->addWhere("e.ca_estado = ? ", SurvEvaluacion::ESTADO_SINCONTESTAR )
+                        ->addWhere("e.ca_notificar = ?", $user->getUserId() )
                         ->addWhere("e.ca_fchcreado >= ?", $fecha)
                         ->execute();
 

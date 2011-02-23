@@ -14,6 +14,7 @@ HdeskGroup:
     ca_iddepartament: integer
     ca_name: string
     ca_maxresponsetime: integer
+    ca_idtipo: integer
   relations:    
     HdeskTicket:
       local: ca_idgroup
@@ -31,6 +32,10 @@ HdeskGroup:
     Departamento:
       local: ca_iddepartament
       foreign: ca_iddepartamento      
+      type: one
+    SurvTipo:
+      local: ca_idtipo
+      foreign: ca_idtipo
       type: one
     
 HdeskTicket:
@@ -61,6 +66,7 @@ HdeskTicket:
     ca_idseguimiento: integer
     ca_idmilestone: integer
     ca_percentage: integer
+    ca_idevaluacion: integer
   relations:    
     HdeskGroup:
       local: ca_idgroup
@@ -104,6 +110,9 @@ HdeskTicket:
       foreign: ca_login
       type: one
       class: Usuario
+    SurvEvaluacion:
+      local: ca_idevaluacion
+      foreign: ca_idevaluacion
 
 
 
