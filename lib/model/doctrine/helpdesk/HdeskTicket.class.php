@@ -44,7 +44,7 @@ class HdeskTicket extends BaseHdeskTicket {
 
         if( !$this->getCaIdevaluacion() ){
             $grupo = $this->getHdeskGroup();
-            if( $grupo->getCaIdtipo() ){//&& $this->getCaOpened()>="2011-02-22"
+            if( $grupo->getCaIdtipo() && $this->getCaOpened()>="2011-03-01" ){
                 $evaluacion = new SurvEvaluacion();
                 $evaluacion->setCaIdtipo( $grupo->getCaIdtipo() );
 
