@@ -4868,7 +4868,7 @@ elseif (isset($accion)) {                                                      /
                 $subject = "Digitación Muisca OK - Ref.:".$id;
                 $bodyhtml.= "<html><head></head><body>";
                 $bodyhtml.= "Apreciados Compañeros:<br /><br />";
-                $bodyhtml.= "La presente con el fin de informar que las casillas Muisca en Colsys han sido totalmente diligenciadas y ustedes pueden proceder a generar el xml dejandolo en la bandeja de la DIAN comprobando su recibo exitoso en los tiempos de la Aduana, adjuntamos el (los) Hbl`(s ) y Mbl amparados en dicha referencia.<br /><br />";
+                $bodyhtml.= "La presente con el fin de informar que las casillas Muisca en Colsys han sido totalmente diligenciadas y ustedes pueden proceder a generar el xml dejandolo en la bandeja de la DIAN comprobando su recibo exitoso en los tiempos de la Aduana, adjunto a la referencia encontrará el (los) Hbl`(s ) y Mbl amparados en dicha referencia.<br /><br />";
                 $bodyhtml.= "<br />";
                 $bodyhtml.= "TENER PRESENTE LA FECHA DE LLEGADA DE LA MERCANCÍA SUMINISTRADA EN EL EMAIL, O LA DADA POR LA PAGINA WEB DEL TERMINAL MARÍTIMO EN MOTONAVES ANUNCIADAS O PREVISTA A SU ARRIBO.<br /><br />";
                 $bodyhtml.= "DESPUÉS DE LA PRESENTACIÓN FÍSICA EN PUERTO DEL ORIGINAL DEL HBL ENTREGAR EL MBL SIN VALOR DE FLETES AL AGENTE DE ADUANA, SI EL CLIENTE GOZA DE FIRMA DE CONTRATO DE COMODATO , FAVOR PROCEDER A LA CONSECUCIÓN DEL PAZ Y SALVO DEL CONTENEDOR MÁXIMO EL MISMO DÍA DE LLEGADA DEL BUQUE.<br /><br />";
