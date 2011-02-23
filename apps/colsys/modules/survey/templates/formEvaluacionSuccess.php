@@ -27,7 +27,7 @@ $ticket = $sf_data->getRaw( "ticket" );
         if( $ticket->getCaAssignedto() ){
 			$asignado = $ticket->getAssignedUser();
 			if( $asignado ){
-				echo "<b>Asignado: a</b> ".$asignado->getCaNombre()."";
+				echo "<b>Asignado: a</b> ".$asignado->getCaNombre()."<br />";
 			}
 		}
         echo $ticket->getCaText();

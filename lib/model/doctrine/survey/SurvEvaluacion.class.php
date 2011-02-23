@@ -12,4 +12,8 @@
  */
 class SurvEvaluacion extends BaseSurvEvaluacion
 {
+    const ESTADO_SINCONTESTAR = 0;
+    const ESTADO_RESUELTA = 1;
+    const MAX_NOTIFICACIONES = 3;
+
 }

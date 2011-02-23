@@ -5,7 +5,7 @@
  */
 
 
-
+if( count($evaluaciones)>0 ){
 ?>
 
 <div class="content-box">
@@ -29,3 +29,6 @@
         </table>
     </div>
 </div>
+<?
+}
+?>
