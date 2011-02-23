@@ -62,10 +62,21 @@ class usersActions extends sfActions
                 if( $this->getUser()->getAttribute("path_info") ){
                     $url = $this->getUser()->getAttribute("path_info");
                     $params = $this->getUser()->getAttribute("request_parameters");
-                   
+                    
+                    $p = "";
+                    $i=0;
                     foreach( $params as $key=>$val ){
+                        if( $i==0 ){
+                            $p.="?";
+                        }else{
+                            $p.="&";
+                        }
+
+                        $p.=$key."=".$val;
                         $request->setParameter($key, $val);
                     }
+
+                    $url.= $p;
                    
                 }else{
                     $url = "homepage/index";
