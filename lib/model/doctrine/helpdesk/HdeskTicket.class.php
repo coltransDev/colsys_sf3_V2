@@ -39,6 +39,26 @@ class HdeskTicket extends BaseHdeskTicket {
         }
     }
 
+
+    public function crearEvaluacion( $conn=null ) {
+
+        if( !$this->getCaIdevaluacion() ){
+            $grupo = $this->getHdeskGroup();
+            if( $grupo->getCaIdtipo() ){//&& $this->getCaOpened()>="2011-02-22"
+                $evaluacion = new SurvEvaluacion();
+                $evaluacion->setCaIdtipo( $grupo->getCaIdtipo() );
+
+                $evaluacion->setCaTitulo( "Evaluación Ticket #".$this->getCaIdticket()." [".$this->getCaTitle()."]" );
+                $evaluacion->setCaNotificar( $this->getCaLogin() );
+                $evaluacion->save( $conn );
+
+                $this->setCaIdevaluacion( $evaluacion->getCaIdevaluacion() );                
+                $this->save( $conn );
+            }
+        }
+
+    }
+
     /*
      *
      */

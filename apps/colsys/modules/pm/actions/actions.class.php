@@ -536,6 +536,8 @@ class pmActions extends sfActions {
 
             if ($request->getParameter("actionTicket") == "Cerrado") {
                 $ticket->cerrarSeguimientos( $conn );
+
+                $ticket->crearEvaluacion( $conn );
             }
 
 
@@ -651,6 +653,7 @@ class pmActions extends sfActions {
             }
 
             $ticket->cerrarSeguimientos();
+            $ticket->crearEvaluacion();
         }
 
 
