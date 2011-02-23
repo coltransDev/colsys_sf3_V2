@@ -36,7 +36,10 @@ var crearTicket = function(){
                     
                     include_component("homepage", "novedades", array( "nivelNoticias"=>$nivelNoticias )) ;
                     
-                    include_component("notificaciones","tareasPendientes")
+                    include_component("notificaciones","tareasPendientes");
+
+                    include_component("survey","listaEvaluaciones");
+
                     ?>
                 </div>
 
