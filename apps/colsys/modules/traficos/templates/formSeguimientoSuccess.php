@@ -63,5 +63,40 @@ if( $tarea ){
 		</div></td>
 		</tr>
 </table>
+<?
+if( count($emails)>0 ){
+?>
+<br />
+<br />
+
+<table class="tableList">
+	<tr >
+		<th>Fecha Envio</th>
+		<th>Asunto</th>
+		<th>Destinatarios</th>
+		<th>Email</th>
+	</tr>
+<?
+	foreach( $emails as $email ){
+		?>
+		<tr >
+			<td><?=$email->getCaFchenvio()?></td>
+			<td>
+			<?=$email->getCaSubject()?></td>
+			<td><?=$email->getCaAddress()?></td>
+
+			<td>
+				<a href='#' onClick=window.open('<?=url_for("email/verEmail?id=".$email->getCaIdemail())?>')><?=image_tag("22x22/email.gif")?></a>
+			</td>
+		</tr>
+		<?
+	}
+?>
+</table>
+<?
+
+}
+?>
+
 </form>
 </div>

@@ -1164,6 +1164,16 @@ class traficosActions extends sfActions
 				$this->redirect( "traficos/listaStatus?modo=".$this->modo."&reporte=".$reporte->getCaConsecutivo() );
 			}				
 		}
+
+        if( $this->getRequestParameter( "idtarea" ) ){
+            $this->emails = Doctrine::getTable("Email")
+                                        ->createQuery("e")
+                                        ->innerJoin("e.Notificacion n")
+                                        ->addWhere("n.ca_idtarea = ? ", $this->getRequestParameter( "idtarea" ))
+                                        ->execute();
+        }else{
+            $this->emails = array();
+        }
 		
 		$this->reporte = $reporte;
         $this->tarea = $tarea;
