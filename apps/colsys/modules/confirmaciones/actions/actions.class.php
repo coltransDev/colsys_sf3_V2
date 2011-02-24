@@ -338,10 +338,14 @@ class confirmacionesActions extends sfActions
 					break;
 				case "otm":				
 					$etapa =  $this->getRequestParameter("tipo_".$oid);
-					
+
+                    if( $etapa=="IMCOL" || $this->getRequestParameter("modfchllegada_".$oid) ){
+                        $status->setCaFchcontinuacion( Utils::parseDate($this->getRequestParameter("fchllegada_".$oid)));	
+                    }
+
 					if( $etapa=="IMCOL" ){
 						$idbodega = $this->getRequestParameter("bodega_".$oid); 						
-						$status->setCaFchcontinuacion( Utils::parseDate($this->getRequestParameter("fchllegada_".$oid)));	
+						
 						$status->setProperty("idbodega", $idbodega);				
 					}
 

@@ -140,6 +140,36 @@ function habilitar( oid ){
 	}
 }
 
+function mostrarFchllegada(oid){
+
+    eval('var tipo = document.form1.tipo_'+oid );
+	var value='';
+	for (i=0;i<tipo.length;i++){
+		  if ( tipo[i].checked ){
+				 value = tipo[i].value;
+		  }
+	}
+
+    var objeto_1 = document.getElementById('divfchllegada_' + oid);
+
+    if(  value == "IMCOL" ){
+        document.getElementById('divmodfchllegada_' + oid).style.display = 'none';
+    }else{
+        document.getElementById('divmodfchllegada_' + oid).style.display = 'inline';
+    }
+
+    if( document.getElementById('modfchllegada_' + oid).checked || value == "IMCOL") {
+		objeto_1.style.display = 'inline';
+	}else{
+        objeto_1.style.display = 'none';
+    }
+
+
+    
+
+   
+}
+
 function mostrar(oid){
 	
 	
@@ -193,15 +223,13 @@ function mostrar(oid){
 			objeto_4.value = '';
 			break;
 	}
-	
-	
-			
+
+    
+	mostrarFchllegada(oid);
 	if(value == "IMCOL") {
-		objeto_1.style.display = 'inline';
 		objeto_2.style.display = 'inline';
 	}
-	else {
-		objeto_1.style.display = 'none';
+	else {		
 		objeto_2.style.display = 'none';
 	}
     <?

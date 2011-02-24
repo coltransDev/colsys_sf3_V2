@@ -149,6 +149,11 @@ if( $modo=="otm" ){
         <td class="listar" style='vertical-align:bottom;'><b>Destino OTM:</b><br />
                 <?=$inoCliente->getDestinoCont()?$inoCliente->getDestinoCont()->getcaCiudad():""?></td>
         <td class="listar" style='vertical-align:bottom;' colspan="3">
+            <div id="divmodfchllegada_<?=$inoCliente->getOid()?>">
+                Modificar fecha de llegada:            
+                <input type="checkbox" value="1" name="modfchllegada_<?=$inoCliente->getOid()?>" id="modfchllegada_<?=$inoCliente->getOid()?>" onclick="mostrarFchllegada(<?=$inoCliente->getOid()?>)" />
+            </div>
+            <br />
             <div id="divfchllegada_<?=$inoCliente->getOid()?>"> <b>Fecha llegada:</b><br />
 
                         <?
