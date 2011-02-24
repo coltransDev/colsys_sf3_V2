@@ -253,6 +253,40 @@ RepStatus:
       local: ca_idetapa
       foreign: ca_idetapa
       type: one
+    RepStatusRespuesta:
+      local: ca_idstatus
+      foreign: ca_idstatus
+      type: many
+
+
+RepStatusRespuesta:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: reportes
+  tableName: tb_repstatusrespuestas
+  columns:
+    ca_idrepstatusrespuestas:
+      type: integer
+      autoincrement: true
+      primary: true
+    ca_idstatus: integer
+    ca_respuesta: string
+    ca_email: string
+    ca_login: string
+    ca_fchcreado: string
+  relations:
+    RepStatus:
+      local: ca_idstatus
+      foreign: ca_idstatus
+      type: one
+    Usuario:
+      local: ca_login
+      foreign: ca_login
+      type: one
+
+
 
 TrackingEtapa:
   options:
