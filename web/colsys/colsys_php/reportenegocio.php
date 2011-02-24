@@ -1435,6 +1435,7 @@ elseif (isset($boton)) {                                                       /
                 break;
             }
         case 'Editar': {                                                    // Opcion para Adicionar Registros a la tabla
+
                 $modulo = "00100100";                                             // Identificación del módulo para la ayuda en línea
                 //           include_once 'include/seguridad.php';                             // Control de Acceso al módulo
                 if (!isset($nw)) {
@@ -1443,9 +1444,18 @@ elseif (isset($boton)) {                                                       /
                         echo "<script>document.location.href = 'reportenegocio.php';</script>";
                         exit;
                     }
+                    else
+                    {
+                        echo "::".$rs->Value('ca_tiporep')."::";
+                        if($rs->Value('ca_tiporep'))
+                        {
+                            $url="/reportesNeg/formReporte/id/" . $rs->Value('ca_idreporte') . "/impoexpo/" . $rs->Value('ca_impoexpo') . "/modo/" . $rs->Value('ca_transporte');
+                            echo "<script>location.href='".$url."'</script>";
+                        }
+                    }
                 }else {
                     if (!$rs->Open("select b.ca_idreporte, b.ca_version, b.ca_versiones, b.ca_fchreporte, b.ca_consecutivo, a.ca_idcotizacion, b.ca_origen, b.ca_ciuorigen, b.ca_idtraorigen, b.ca_traorigen, b.ca_destino, b.ca_ciudestino, b.ca_idtradestino, b.ca_tradestino, b.ca_impoexpo, b.ca_fchdespacho, b.ca_idagente,
-                     b.ca_agente, a.ca_incoterms, a.ca_mercancia_desc, a.ca_mcia_peligrosa, b.ca_idproveedor, b.ca_orden_prov, a.ca_idconcliente, b.ca_orden_clie, a.ca_confirmar_clie, a.ca_idconsignatario, a.ca_informar_cons, a.ca_idrepresentante, a.ca_informar_repr, a.ca_transporte, a.ca_modalidad, a.ca_colmas, a.ca_seguro,
+                     b.ca_agente, b.ca_tiporep ,a.ca_incoterms, a.ca_mercancia_desc, a.ca_mcia_peligrosa, b.ca_idproveedor, b.ca_orden_prov, a.ca_idconcliente, b.ca_orden_clie, a.ca_confirmar_clie, a.ca_idconsignatario, a.ca_informar_cons, a.ca_idrepresentante, a.ca_informar_repr, a.ca_transporte, a.ca_modalidad, a.ca_colmas, a.ca_seguro,
                      a.ca_liberacion, a.ca_tiempocredito, a.ca_preferencias_clie, a.ca_instrucciones, a.ca_idconsignar, a.ca_consignar, a.ca_idbodega, a.ca_bodega, a.ca_tipobodega, a.ca_mastersame, a.ca_continuacion, a.ca_continuacion_dest, a.ca_final_dest, a.ca_continuacion_conf, a.ca_idlinea, a.ca_nombre,
                      b.ca_fchcreado, b.ca_usucreado, b.ca_fchactualizado, b.ca_usuactualizado, b.ca_fchanulado, b.ca_usuanulado, b.ca_nombre_pro, b.ca_contacto_pro, b.ca_direccion_pro, b.ca_telefonos_pro, b.ca_fax_pro, b.ca_email_pro, a.ca_nombre_cli, a.ca_idcliente, a.ca_digito, a.ca_contacto_cli, a.ca_telefonos_cli,
                      a.ca_fax_cli, a.ca_email_cli, a.ca_direccion_cli, a.ca_nombre_rep, a.ca_contacto_rep, a.ca_direccion_rep, a.ca_telefonos_rep, a.ca_fax_rep, a.ca_email_rep, a.ca_nombre_con, a.ca_contacto_con, a.ca_direccion_con, a.ca_telefonos_con, a.ca_fax_con, a.ca_email_con,
