@@ -1446,7 +1446,7 @@ elseif (isset($boton)) {                                                       /
                     }
                     else
                     {
-                        echo "::".$rs->Value('ca_tiporep')."::";
+                        ///echo "::".$rs->Value('ca_tiporep')."::";
                         if($rs->Value('ca_tiporep'))
                         {
                             $url="/reportesNeg/formReporte/id/" . $rs->Value('ca_idreporte') . "/impoexpo/" . $rs->Value('ca_impoexpo') . "/modo/" . $rs->Value('ca_transporte');
