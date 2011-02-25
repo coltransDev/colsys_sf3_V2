@@ -1,7 +1,7 @@
 <?
 $novedades = $sf_data->getRaw("novedades");
 
-if( count($novedades)>0 ){
+if( count($novedades)>0 || $nivelNoticias>0){
 ?>
 <div class="content-box">
 <h5>Noticias</h5>
