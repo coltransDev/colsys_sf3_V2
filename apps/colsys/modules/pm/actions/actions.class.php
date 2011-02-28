@@ -15,7 +15,7 @@
  * 3 Acceso a todo.
  */
 class pmActions extends sfActions {
-    const RUTINA = "89";
+    const RUTINA = "39";
 
     public function getNivel() {
         $this->nivel = $this->getUser()->getNivelAcceso(pmActions::RUTINA);
