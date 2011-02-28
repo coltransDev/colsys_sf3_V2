@@ -88,7 +88,7 @@ class traficosActions extends sfActions
 		
 		
 		
-					
+        
 		if( $this->getRequestParameter("reporte") ){
 			$consecutivo = $this->getRequestParameter("reporte");
 			
@@ -662,7 +662,7 @@ class traficosActions extends sfActions
 
            
             //Tarea de envio de antecedentes
-            if( $reporte->getCaIdetapa()=="IMETA" || $reporte->getCaIdetapa()=="IMCMT" ){ //En cualquiera de estas dos etapas se crea la tarea según los usuarios.
+            if( false && $reporte->getCaIdetapa()=="IMETA" || $reporte->getCaIdetapa()=="IMCMT" ){ //En cualquiera de estas dos etapas se crea la tarea según los usuarios.
                 
                 if( $reporte->getCaIdtareaAntecedente() ){
                     $tarea = Doctrine::getTable("NotTarea")->find( $reporte->getCaIdtareaAntecedente() );
@@ -670,7 +670,7 @@ class traficosActions extends sfActions
                 }else{
                     $tarea = new NotTarea();
                     $tarea->setCaIdlistatarea( 8 );
-                }              
+                }   
 
                 $titulo = "Antecedentes RN".$reporte->getCaConsecutivo()." [".$reporte->getCaModalidad()." ".$reporte->getOrigen()->getCaCiudad()."->".$reporte->getDestino()->getCaCiudad()."]";
                 $texto = "";
@@ -706,14 +706,14 @@ class traficosActions extends sfActions
                 if( $request->getParameter("remitente") ){
                     $tarea->setCaNotificar( $request->getParameter("remitente") );
                 }
-                $tarea->save( $conn );
+               // $tarea->save( $conn );
 
                 $loginsAsignaciones = array( $this->getUser()->getUserId() );
-                $tarea->setAsignaciones( $loginsAsignaciones, $conn );
+                //$tarea->setAsignaciones( $loginsAsignaciones, $conn );
 
                 $reporte->setCaIdtareaAntecedente( $tarea->getCaIdtarea() );
                 $reporte->stopBlaming();
-                $reporte->save( $conn );
+                //$reporte->save( $conn );
             }
             $conn->commit();            
 
@@ -1125,13 +1125,25 @@ class traficosActions extends sfActions
         if( $this->getRequestParameter( "idtarea" ) ){
             $tarea = Doctrine::getTable("NotTarea")->find( $this->getRequestParameter( "idtarea" ) );
             $this->forward404Unless( $tarea );
+
+            
+
         }else{
             $tarea = new NotTarea();
-            $tarea->setCaFchcreado( date("Y-m-d H:i:s") );
-            $tarea->setCaUsucreado( $this->getUser()->getUserId() );
+            
         }
 		
-		if ($request->isMethod('post')){           
+		if ($request->isMethod('post')){
+
+
+            //En caso que ya se haya creado una notificación se crea una nueva
+            //tarea de lo contrario no se notifica
+            $notificacion = $tarea->getNotificacion();
+            if( $this->getRequestParameter( "idtarea" ) && count($notificacion)>0){
+                $tarea = new NotTarea();                
+            }
+            
+
 			$bindValues = array();			
 			$bindValues["fchseguimiento"] = $request->getParameter("fchseguimiento");
 			$bindValues["txtseguimiento"] = $request->getParameter("txtseguimiento");
@@ -1171,6 +1183,7 @@ class traficosActions extends sfActions
                                         ->innerJoin("e.Notificacion n")
                                         ->addWhere("n.ca_idtarea = ? ", $this->getRequestParameter( "idtarea" ))
                                         ->execute();
+           
         }else{
             $this->emails = array();
         }

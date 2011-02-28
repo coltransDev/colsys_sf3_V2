@@ -66,12 +66,19 @@ if( $tarea ){
 <?
 if( count($emails)>0 ){
 ?>
+
+<br />
+<br />
+
+<div align="center">
+    <h2>Historial de notificaciones enviadas al correo</h2>
+</div>
 <br />
 <br />
 
 <table class="tableList">
 	<tr >
-		<th>Fecha Envio</th>
+        <th>Fecha Env&iacute;o</th>
 		<th>Asunto</th>
 		<th>Destinatarios</th>
 		<th>Email</th>
