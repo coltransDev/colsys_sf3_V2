@@ -277,7 +277,7 @@ class Reporte extends BaseReporte {
 //        $user = sfContext::getInstance()->getUser();
 //        echo $user->getUserId();
         //if(!$this->editable)
-        if ($user->getUserId() != "maquinche") {
+        if ($permiso < 4 ) {
 
             //echo "::".$this->editable."::<br>";
             if ($this->esUltimaVersion()) {
