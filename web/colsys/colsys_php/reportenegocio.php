@@ -708,7 +708,7 @@ elseif (isset($boton)) {                                                       /
         case 'Adicionar': {
             $url="/reportesNeg/index";
             echo "<script>location.href='".$url."'</script>";
-                exit;// Opcion para Adicionar Registros a la tabla
+            //    exit;// Opcion para Adicionar Registros a la tabla
                 $modulo = "00100100";                                             // Identificación del módulo para la ayuda en línea
                 //           include_once 'include/seguridad.php';                             // Control de Acceso al módulo
 
@@ -1119,7 +1119,7 @@ elseif (isset($boton)) {                                                       /
 
                 $url="/reportesNeg/formReporteAg";
                 echo "<script>location.href='".$url."'</script>";
-                exit;
+                //exit;
 
                 $modulo = "00100100";                                             // Identificación del módulo para la ayuda en línea
                 //           include_once 'include/seguridad.php';                             // Control de Acceso al módulo
@@ -1908,7 +1908,7 @@ elseif (isset($boton)) {                                                       /
                     echo "<TH><INPUT Class=submit TYPE='SUBMIT' NAME='accion' VALUE='Guardar Modificación' ONCLICK='validar(this);'></TH>";    // Ordena almacenar los datos ingresados
                     echo "<TH><INPUT Class=submit TYPE='SUBMIT' NAME='accion' VALUE='Nueva Versión' ONCLICK='validar(this);'></TH>";         // Ordena almacenar los datos ingresados
                 }
-                echo "<TH><INPUT Class=submit TYPE='SUBMIT' NAME='accion' VALUE='Reporte Nuevo' ONCLICK='validar(this);'></TH>";         // Ordena almacenar los datos ingresados
+                //echo "<TH><INPUT Class=submit TYPE='SUBMIT' NAME='accion' VALUE='Reporte Nuevo' ONCLICK='validar(this);'></TH>";         // Ordena almacenar los datos ingresados
                 echo "<TH><INPUT Class=button TYPE='BUTTON' NAME='boton' VALUE='Cancelar' ONCLICK='javascript:document.location.href = \"reportenegocio.php?boton=Consultar\&id=$id\"'></TH>";  // Cancela la operación
                 echo "<script>llenar_traficos();</script>";
                 echo "<script>elegir_traficos('".$rs->Value('ca_idtraorigen')."','".$rs->Value('ca_idtradestino')."');</script>";
