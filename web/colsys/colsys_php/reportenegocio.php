@@ -91,8 +91,8 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
     echo "<TH>";
     echo "   <TABLE CELLSPACING=1>";
     echo "      <TR>";
-    echo "          <TD><IMG src='./graficos/new_ag.gif' alt='Crear Reporte AG' border=0 onclick='elegir(\"Reporte_Ag\", 0, 0);' style='visibility: $vista_1;'></TH></TD>";  // Botón para la creación de un Registro Nuevo
-    echo "          <TD><IMG src='./graficos/new.gif' alt='Crear Reporte de Negocio' border=0 onclick='elegir(\"Adicionar\", 0, 0);'></TH></TD>";  // Botón para la creación de un Registro Nuevo
+    //echo "          <TD><IMG src='./graficos/new_ag.gif' alt='Crear Reporte AG' border=0 onclick='elegir(\"Reporte_Ag\", 0, 0);' style='visibility: $vista_1;'></TH></TD>";  // Botón para la creación de un Registro Nuevo
+    //echo "          <TD><IMG src='./graficos/new.gif' alt='Crear Reporte de Negocio' border=0 onclick='elegir(\"Adicionar\", 0, 0);'></TH></TD>";  // Botón para la creación de un Registro Nuevo
     echo " 	 </TR>";
     echo "   </TABLE>";
     echo "</TH>";
@@ -248,8 +248,8 @@ elseif (!isset($boton) and !isset($accion) and isset($criterio)) {
         echo "<TH>";
         echo "   <TABLE CELLSPACING=1>";
         echo "   <TR>";
-        echo "		<TD><IMG src='./graficos/new_ag.gif' alt='Crear Reporte AG' border=0 onclick='elegir(\"Reporte_Ag\", 0, 0);' style='visibility: $vista_1;'></TH></TD>";  // Botón para la creación de un Registro Nuevo
-        echo "		<TD><IMG src='./graficos/new.gif' alt='Crear Reporte de Negocio' border=0 onclick='elegir(\"Adicionar\", 0, 0);'></TH></TD>";  // Botón para la creación de un Registro Nuevo
+//        echo "		<TD><IMG src='./graficos/new_ag.gif' alt='Crear Reporte AG' border=0 onclick='elegir(\"Reporte_Ag\", 0, 0);' style='visibility: $vista_1;'></TH></TD>";  // Botón para la creación de un Registro Nuevo
+//        echo "		<TD><IMG src='./graficos/new.gif' alt='Crear Reporte de Negocio' border=0 onclick='elegir(\"Adicionar\", 0, 0);'></TH></TD>";  // Botón para la creación de un Registro Nuevo
         echo " 	 </TR>";
         echo "   </TABLE>";
         echo "</TH>";
@@ -322,8 +322,8 @@ elseif (!isset($boton) and !isset($accion) and isset($criterio)) {
         echo "<TH>";
         echo "   <TABLE CELLSPACING=1>";
         echo "   <TR>";
-        echo "		<TD><IMG src='./graficos/new_ag.gif' alt='Crear Reporte AG' border=0 onclick='elegir(\"Reporte_Ag\", 0, 0);' style='visibility: $vista_1;'></TH></TD>";  // Botón para la creación de un Registro Nuevo
-        echo "		<TD><IMG src='./graficos/new.gif' alt='Crear Reporte de Negocio' border=0 onclick='elegir(\"Adicionar\", 0, 0);'></TH></TD>";  // Botón para la creación de un Registro Nuevo
+//        echo "		<TD><IMG src='./graficos/new_ag.gif' alt='Crear Reporte AG' border=0 onclick='elegir(\"Reporte_Ag\", 0, 0);' style='visibility: $vista_1;'></TH></TD>";  // Botón para la creación de un Registro Nuevo
+//        echo "		<TD><IMG src='./graficos/new.gif' alt='Crear Reporte de Negocio' border=0 onclick='elegir(\"Adicionar\", 0, 0);'></TH></TD>";  // Botón para la creación de un Registro Nuevo
         echo " 	 </TR>";
         echo "   </TABLE>";
         echo "</TH>";
@@ -705,7 +705,10 @@ elseif (isset($boton)) {                                                       /
                 header("Location: /reportes/verReporte/id/".$id);
                 break;
             }
-        case 'Adicionar': {                                                    // Opcion para Adicionar Registros a la tabla
+        case 'Adicionar': {
+            $url="/reportesNeg/index";
+            echo "<script>location.href='".$url."'</script>";
+                exit;// Opcion para Adicionar Registros a la tabla
                 $modulo = "00100100";                                             // Identificación del módulo para la ayuda en línea
                 //           include_once 'include/seguridad.php';                             // Control de Acceso al módulo
 
@@ -1112,7 +1115,12 @@ elseif (isset($boton)) {                                                       /
                 }
                 break;
             }
-        case 'Reporte_Ag': {                                                    // Opcion para Adicionar Registros a la tabla
+        case 'Reporte_Ag': {
+
+                $url="/reportesNeg/formReporteAg";
+                echo "<script>location.href='".$url."'</script>";
+                exit;
+
                 $modulo = "00100100";                                             // Identificación del módulo para la ayuda en línea
                 //           include_once 'include/seguridad.php';                             // Control de Acceso al módulo
 
