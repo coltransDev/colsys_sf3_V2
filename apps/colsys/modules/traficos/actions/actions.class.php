@@ -662,8 +662,9 @@ class traficosActions extends sfActions
 
            
             //Tarea de envio de antecedentes
-            if( false && $reporte->getCaIdetapa()=="IMETA" || $reporte->getCaIdetapa()=="IMCMT" ){ //En cualquiera de estas dos etapas se crea la tarea según los usuarios.
-                
+            $valido=Utils::compararFechas(date("Y-m-d") , "2011-02-28");
+            if( $valido>0 && ( $reporte->getCaIdetapa()=="IMETA" || $reporte->getCaIdetapa()=="IMCMT") )
+            { //En cualquiera de estas dos etapas se crea la tarea según los usuarios.
                 if( $reporte->getCaIdtareaAntecedente() ){
                     $tarea = Doctrine::getTable("NotTarea")->find( $reporte->getCaIdtareaAntecedente() );
                     $this->forward404Unless($tarea );
@@ -674,20 +675,6 @@ class traficosActions extends sfActions
 
                 $titulo = "Antecedentes RN".$reporte->getCaConsecutivo()." [".$reporte->getCaModalidad()." ".$reporte->getOrigen()->getCaCiudad()."->".$reporte->getDestino()->getCaCiudad()."]";
                 $texto = "";
-
-                //Numero de días para entregar antecedentes
-
-                /*$fchAntecedente = Doctrine::getTable("FchAntecedentes")
-                              ->createQuery("f")
-                              ->addWhere("f.ca_idtrafico_origen = ?", $reporte->getOrigen()->getCaIdtrafico() )
-                              ->addWhere("f.ca_idtrafico_destino = ?", $reporte->getDestino()->getCaIdtrafico() )
-                              ->fetchOne();
-
-                if( $fchAntecedente ){
-                    $numdias = $fchAntecedente->getCaNumdias();
-                }else{
-                    $numdias = 9; //[TODO] Parametrizar segun tabla
-                }*/
                 
                 $numdias = 2;
                 $parametros = ParametroTable::retrieveByCaso("CU086", $reporte->getOrigen()->getCaIdtrafico() );
@@ -706,14 +693,14 @@ class traficosActions extends sfActions
                 if( $request->getParameter("remitente") ){
                     $tarea->setCaNotificar( $request->getParameter("remitente") );
                 }
-               // $tarea->save( $conn );
+                $tarea->save( $conn );
 
                 $loginsAsignaciones = array( $this->getUser()->getUserId() );
-                //$tarea->setAsignaciones( $loginsAsignaciones, $conn );
+                $tarea->setAsignaciones( $loginsAsignaciones, $conn );
 
                 $reporte->setCaIdtareaAntecedente( $tarea->getCaIdtarea() );
                 $reporte->stopBlaming();
-                //$reporte->save( $conn );
+                $reporte->save( $conn );
             }
             $conn->commit();            
 
