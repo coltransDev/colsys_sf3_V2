@@ -27,21 +27,21 @@ class gestDocumentalComponents extends sfComponents
 			$this->readOnly=false;
 		}
 	}
-
+       
     public function executeFileManagerPanel(){
-	
+
         
-    }
-
+	}
+	
     public function executePanelDirectorios(){
+	
 
-
-    }
+}
 
 	public function executeWidgetUploadButton(){
 
 
 	}
-	
+
 }
 ?>

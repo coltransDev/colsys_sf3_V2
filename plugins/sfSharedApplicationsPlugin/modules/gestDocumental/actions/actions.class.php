@@ -21,12 +21,12 @@ class gestDocumentalActions extends sfActions
 	}
 
     /*
-	* 
+	* Sube un archivo a la carpeta especificada
 	* @author: Andres Botero
 	*/
 	public function executeDataArchivos(){
 
-    
+
         $folder = base64_decode($this->getRequestParameter("folder"));
         $directory = sfConfig::get('app_digitalFile_root').DIRECTORY_SEPARATOR.$folder.DIRECTORY_SEPARATOR;
 
@@ -76,9 +76,9 @@ class gestDocumentalActions extends sfActions
                 if( $filePrefix ){
                     $fileName  = $filePrefix."_".$uploadedFile['name'] ;
                 }else{
-                    $fileName  = $uploadedFile['name'] ;
+				$fileName  = $uploadedFile['name'] ;
                 }
-                
+
                 if(move_uploaded_file($uploadedFile['tmp_name'],$directory.$fileName )){
                     $this->responseArray = array("id"=>base64_encode($fileName), "filename"=>$fileName, "folder"=>$folder, "success"=>true);
                 }
@@ -214,7 +214,7 @@ class gestDocumentalActions extends sfActions
 
         if(!is_dir($directory)){
             @mkdir($directory, 0777, true);
-        }
+}
         /*
         $archivos = sfFinder::type('file')->maxDepth(0)->in($directory);
         $this->files = array();
@@ -239,7 +239,7 @@ class gestDocumentalActions extends sfActions
 		}
 
         print json_encode($data);
-         
+
 
     }
 
