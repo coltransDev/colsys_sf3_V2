@@ -39,12 +39,14 @@ WidgetTerceroWindow = function( config ){
                             name: 'nombre',
                             id: 'nombre',
                             allowBlank:false,
-                            width:300
+                            width:300,
+                            maxLength: 80
                         })
                         ,
                         {
                         fieldLabel: 'Identificación',
                         name: 'identificacion',
+                        maxLength: 35,
                         width       : 300
                         }
                         ,
@@ -52,31 +54,36 @@ WidgetTerceroWindow = function( config ){
                         fieldLabel: 'Dirección',
                         name: 'direccion',
                         allowBlank:false,
-                        width       : 300
+                        width       : 300,
+                        maxLength: 255
                         },
                         {
                         fieldLabel: 'Telefono',
                         name: 'telefono',
                         allowBlank:false,
-                        width       : 300
+                        width       : 300,
+                        maxLength: 50
                         },
                         {
                         fieldLabel: 'Fax',
                         name: 'fax',
                         allowBlank:false,
-                        width       : 300
+                        width       : 300,
+                         maxLength: 50
                         },
                         {
                         fieldLabel: 'Email',
                         name: 'email',
                         allowBlank:false,
-                        width       : 300
+                        width       : 300,
+                         maxLength: 250
                         },
                         {
                         fieldLabel: 'Contacto',
                         name: 'contacto',
                         allowBlank:false,
-                        width       : 300
+                        width       : 300,
+                        maxLength: 60
                         },
                         /*new WidgetPais({fieldLabel: 'País',
                                         id: 'tra_ciudad_id',
