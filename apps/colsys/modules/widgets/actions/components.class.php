@@ -572,22 +572,7 @@ class widgetsComponents extends sfComponents {
             $this->data[$key]["b_ca_nombre"] = utf8_encode($this->data[$key]["b_ca_nombre"]) . "-" . $this->data[$key]["b_ca_tipo"];
             $this->data[$key]["b_ca_transporte"] = $modo;
 
-            if( is_array($rows) ){
-                foreach ($rows as $row) {
-                    //echo $row["p_ca_nombre"]."<br>";
-                    $row["c_ca_ciudad"] = (trim($row["c_ca_ciudad"]) != "Todas las Ciudades" && $row["c_ca_ciudad"] != "") ? utf8_encode($row["c_ca_ciudad"]) : " ";
-                    $row["p_ca_nombre"] = (trim($row["p_ca_nombre"]) == "Todos los Tráficos del Mundo" || $row["p_ca_nombre"] == "") ? "" : utf8_encode($row["p_ca_nombre"]);
-                    $row["t_ca_contacto"] = utf8_encode($row["t_ca_contacto"]);
-                    $row["t_ca_direccion"] = utf8_encode($row["t_ca_direccion"]);
-                    if (trim(utf8_encode($row["t_ca_nombre"])) == trim($name))
-                        $con++;
-                    else
-                        $con=0;
-                    $name = trim(utf8_encode($row["t_ca_nombre"]));
-                    $row["t_ca_nombre"] = utf8_encode($row["t_ca_nombre"]) . (($con) ? "(" . ($con + 1) . ")" : "");
-                    $terceros[] = $row;
-                }
-            }
+            
             
         }
     }
