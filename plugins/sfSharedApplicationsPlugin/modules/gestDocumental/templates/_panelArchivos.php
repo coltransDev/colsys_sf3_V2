@@ -78,8 +78,8 @@ $dataUrl = "gestDocumental/dataArchivos";
                         var fv = this;
                         var folder = this.folder;                        
                         records =  fv.getSelectedRecords();
-                        for( var i=0;i< records.length; i++){
-                            document.location.href = "<?= url_for($viewUrl) ?>?folder="+folder+"&idarchivo="+records[i].data.idarchivo;
+                        for( var i=0;i< records.length; i++){                            
+                            window.open("<?= url_for($viewUrl) ?>?folder="+folder+"&idarchivo="+records[i].data.idarchivo, "","status=0,toolbar=0,menubar=0");
                         }
                     }
                 }
@@ -231,7 +231,7 @@ $dataUrl = "gestDocumental/dataArchivos";
             var fv = this.dataView;
             records =  fv.getSelectedRecords();
             for( var i=0;i< records.length; i++){
-                document.location.href = "<?= url_for($viewUrl) ?>?folder="+this.folder+"&idarchivo="+records[i].data.idarchivo;
+                window.open("<?= url_for($viewUrl) ?>?folder="+this.folder+"&idarchivo="+records[i].data.idarchivo, "","status=0,toolbar=0,menubar=0");
             }
         },
         eliminarArchivo: function(){
