@@ -58,8 +58,8 @@ class gestDocumentalActions extends sfActions
 
         if(!is_dir($directory)){
             mkdir($directory, 0777, true);
-
         }
+        
 		if ( count( $_FILES )>0 ){
 
             $filePrefix = $this->getRequestParameter("filePrefix");
@@ -79,8 +79,11 @@ class gestDocumentalActions extends sfActions
 				$fileName  = $uploadedFile['name'] ;
                 }
 
+                
                 if(move_uploaded_file($uploadedFile['tmp_name'],$directory.$fileName )){
                     $this->responseArray = array("id"=>base64_encode($fileName), "filename"=>$fileName, "folder"=>$folder, "success"=>true);
+                }else{
+                    $this->responseArray = array("error"=>"No se pudo mover el archivo", "success"=>false);
                 }
 		  	}
 		}else{
