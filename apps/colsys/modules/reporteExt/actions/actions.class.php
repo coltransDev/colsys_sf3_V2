@@ -125,18 +125,18 @@ class reporteExtActions extends sfActions
 				*/
 				
 				$reporte = $this->reporte;
-				$tarea = $reporte->getNotTarea();					
+				//$tarea = $reporte->getNotTarea();
 				if( $request->getParameter("prog_seguimiento") ){
 					
 					$titulo = "Seguimiento RN".$reporte->getCaConsecutivo()." [".$reporte->getCaModalidad()." ".$reporte->getOrigen()->getCaCiudad()."->".$reporte->getDestino()->getCaCiudad()."]";
 					$texto = "";			
 					
 					
-					if( !$tarea || ($tarea && $tarea->getCaFchterminada()) ){			
-						$tarea = new NotTarea(); 
-						$tarea->setCaFchcreado( date("Y-m-d H:i:s") );
-						$tarea->setCaUsucreado( $this->getUser()->getUserId() );
-					}	
+						
+                    $tarea = new NotTarea();
+                    $tarea->setCaFchcreado( date("Y-m-d H:i:s") );
+                    $tarea->setCaUsucreado( $this->getUser()->getUserId() );
+
 					$tarea->setCaUrl( "/traficos/listaStatus/modo/".$this->modo."/reporte/".$reporte->getCaConsecutivo() );
 					$tarea->setCaIdlistatarea( 3 );			
 					$tarea->setCaFchvencimiento( $request->getParameter("fchseguimiento")." 23:59:59" );
