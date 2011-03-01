@@ -141,7 +141,7 @@ var crearSeguimiento=function(){
 		<td colspan="2" valign="top">
 			<div align="left">
 				<?
-                if($reporte->setCaTiporep()>0)
+                if($reporte->getCaTiporep()>0)
                 {
                     if( $reporte->getCaTransporte()==Constantes::MARITIMO ){
                         include_component("reporteExt","reporteMaritimoExtNew", array("reporte"=>$reporte));
