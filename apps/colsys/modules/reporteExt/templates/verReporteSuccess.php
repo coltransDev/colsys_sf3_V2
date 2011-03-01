@@ -4,7 +4,7 @@ echo nl2br($introduccion);
 <br />
 
 <?
-if($reporte->setCaTiporep()>0)
+if($reporte->getCaTiporep()>0)
 {
     if( $reporte->getCaTransporte()==Constantes::MARITIMO ){
         include_component("reporteExt","reporteMaritimoExtNew", array("reporte"=>$reporte));
