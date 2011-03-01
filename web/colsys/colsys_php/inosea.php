@@ -505,7 +505,7 @@ elseif (isset($boton)) {                                                       /
                     $root = '/srv/www/digitalFile';
                     while (!$cl->Eof() and !$cl->IsEmpty()) {                                      // Lee la totalidad de los registros obtenidos en la instrucción Select
                         if( $cl->Value('ca_idcliente') != $cli_mem or $cl->Value('ca_hbls') != $hbl_mem) {
-                            $path = '/referencias/'.$cl->Value('ca_referencia').'/docTrans';
+                            $path = '/Referencias/'.$cl->Value('ca_referencia').'/docTrans';
                             $docTrans = array();
                             if ($handle = opendir($root.$path)) {
                                 while (false !== ($file = readdir($handle))) {
@@ -550,7 +550,7 @@ elseif (isset($boton)) {                                                       /
                             echo "  <TD Class=listar><B>Hbl Final: <IMG src='./graficos/fileopen.png' alt='Agregar Copia de Hbl Definitivo' border=0 onclick='javascript:subir_hbl(\"".$cl->Value('ca_referencia')."\",\"".$cl->Value('ca_hbls')."\")'>";
                             $i=1;
                             foreach($docTrans as $docTran){
-                                echo "<br /><a href='/gestDocumental/verArchivo?folder=".base64_encode("referencias/".$cl->Value('ca_referencia')."/docTrans")."&idarchivo=".base64_encode($docTran['basename'])."'><IMG src='./graficos/image.gif' alt='".$docTran['filename']."' border=0> Doc. $i</img></a>";
+                                echo "<br /><a href='/gestDocumental/verArchivo?folder=".base64_encode("Referencias/".$cl->Value('ca_referencia')."/docTrans")."&idarchivo=".base64_encode($docTran['basename'])."'><IMG src='./graficos/image.gif' alt='".$docTran['filename']."' border=0> Doc. $i</img></a>";
                             }
                             echo "  <br />Rec/Antec.:&nbsp;&nbsp;&nbsp;</B><BR>".$cl->Value('ca_fchantecedentes')."</TD>";
                             echo "</TR>";
@@ -5194,7 +5194,7 @@ elseif (isset($accion)) {                                                      /
                 if(is_uploaded_file($file["tmp_name"])){
                     $fileName = $root.$path.'/'.$file["name"];
                     if( !is_dir($root.$path) ){
-                        mkdir($root.$path, "0777", true);
+                        mkdir($root.$path, 0777, true);
                     }
                     move_uploaded_file( $file["tmp_name"], $fileName);
                 }
