@@ -3886,7 +3886,7 @@ elseif (isset($boton)) {                                                       /
                 echo "</TABLE><BR>";
 
                 $root = '/srv/www/digitalFile';
-                $path = '/referencias/'.$id.'/docTrans';
+                $path = '/Referencias/'.$id.'/docTrans';
                 $docTrans = array();
                 if ($handle = opendir($root.$path)) {
                     while (false !== ($file = readdir($handle))) {
@@ -5189,12 +5189,12 @@ elseif (isset($accion)) {                                                      /
         case 'Subir el Documento': {                                                      // El Botón Subir el Documento fue pulsado
                 $file = $_FILES["file"];
                 $root = '/srv/www/digitalFile';
-                $path = '/referencias/'.$referencia.'/docTrans';
+                $path = '/Referencias/'.$referencia.'/docTrans';
 
                 if(is_uploaded_file($file["tmp_name"])){
                     $fileName = $root.$path.'/'.$file["name"];
                     if( !is_dir($root.$path) ){
-                        mkdir($root.$path, 0777, true);
+                        mkdir($root.$path, "0777", true);
                     }
                     move_uploaded_file( $file["tmp_name"], $fileName);
                 }
