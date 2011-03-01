@@ -563,6 +563,7 @@ class widgetsActions extends sfActions
 
         $terceros = array();
         $notIn  = array();
+        $rows   = array();
         if($idreporte)
         {
             $reporte = Doctrine::getTable("Reporte")->find( $idreporte );
@@ -607,22 +608,22 @@ class widgetsActions extends sfActions
         $con=0;
         $rows=array_merge($terceros,$rows );
         $terceros=array();
-        foreach ( $rows as $row ) {
-            //echo $row["p_ca_nombre"]."<br>";
-            $row["c_ca_ciudad"]=(trim($row["c_ca_ciudad"])!="Todas las Ciudades" && $row["c_ca_ciudad"]!="")?utf8_encode($row["c_ca_ciudad"]):" ";
-            $row["p_ca_nombre"]=(trim($row["p_ca_nombre"])=="Todos los Tráficos del Mundo" || $row["p_ca_nombre"]=="")?"":utf8_encode($row["p_ca_nombre"]);
-            $row["t_ca_contacto"]=utf8_encode($row["t_ca_contacto"]);
-            $row["t_ca_direccion"]=utf8_encode($row["t_ca_direccion"]);
-            if(trim(utf8_encode($row["t_ca_nombre"]))==trim($name))
-                $con++;
-            else
-                $con=0;
-            $name=trim(utf8_encode($row["t_ca_nombre"]));
-            $row["t_ca_nombre"]=utf8_encode($row["t_ca_nombre"]).(($con)?"(".($con+1).")":"");
-            $terceros[]=$row;
+        if(count($rows)>0)
+        {
+            foreach ( $rows as $row ) {                
+                $row["c_ca_ciudad"]=(trim($row["c_ca_ciudad"])!="Todas las Ciudades" && $row["c_ca_ciudad"]!="")?utf8_encode($row["c_ca_ciudad"]):" ";
+                $row["p_ca_nombre"]=(trim($row["p_ca_nombre"])=="Todos los Tráficos del Mundo" || $row["p_ca_nombre"]=="")?"":utf8_encode($row["p_ca_nombre"]);
+                $row["t_ca_contacto"]=utf8_encode($row["t_ca_contacto"]);
+                $row["t_ca_direccion"]=utf8_encode($row["t_ca_direccion"]);
+                if(trim(utf8_encode($row["t_ca_nombre"]))==trim($name))
+                    $con++;
+                else
+                    $con=0;
+                $name=trim(utf8_encode($row["t_ca_nombre"]));
+                $row["t_ca_nombre"]=utf8_encode($row["t_ca_nombre"]).(($con)?"(".($con+1).")":"");
+                $terceros[]=$row;
+            }
         }
-        //print_r($terceros);
-//        exit;
         $this->responseArray = array( "totalCount"=>count( $terceros ), "terceros"=>$terceros  );
         $this->setTemplate("responseTemplate");
 	}
