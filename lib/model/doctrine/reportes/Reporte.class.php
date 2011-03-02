@@ -1216,4 +1216,16 @@ class Reporte extends BaseReporte {
         return $q->execute();
     }
 
+    public function getTerceroBodega() {
+
+        $con = Doctrine_Manager::getInstance()->connection();
+        //echo $this->getCaConsecutivo();
+        $sql="select b.ca_idbodega from tb_terceros t
+        inner join tb_bodegas b on t.ca_identificacion = fun_getnit_bodega_tercero(b.ca_nombre)
+        where ca_idtercero=".$this->getCaIdconsignatario();
+        $st = $con->execute($sql);
+		$bodega = $st->fetchColumn(0);
+        return $bodega;
+    }
+
 }
