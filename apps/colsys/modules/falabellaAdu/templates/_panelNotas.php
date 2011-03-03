@@ -25,7 +25,7 @@ PanelNotas = function(){
         frame:false,
         defaults: {
             collapsible: false,
-            split: true,
+            split: true
             //bodyStyle: 'padding:15px'
         },
         items: [

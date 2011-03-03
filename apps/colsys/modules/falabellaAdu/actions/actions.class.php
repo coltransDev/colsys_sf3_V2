@@ -25,13 +25,21 @@ class falabellaAduActions extends sfActions {
             ->createQuery("f")
             ->select("f.*, i.*")
             ->addWhere("f.ca_fcharchivado is null")
-            //->leftJoin("f.FalaDeclaracionImp d")
             ->leftJoin("f.FalaInstructionAdu i")
             ->addOrderBy("f.ca_reqd_delivery desc")
             ->addOrderBy("f.ca_referencia")
             ->addOrderBy("f.ca_archivo_origen")
             //->getSqlQuery();
             ->execute();
+    }
+
+	/*
+	* Lista los PO disponibles
+	*/
+    public function executeReferences() {
+        $response = sfContext::getInstance()->getResponse();
+        $response->addJavaScript("extExtras/CheckColumn",'last');
+        $response->addJavaScript("extExtras/LockingGridView",'last');
     }
 
 	/*
@@ -48,12 +56,27 @@ class falabellaAduActions extends sfActions {
     * Permite archivar la Orden de Pedido
     */
     public function executeArchivarOrden(){
-            $fala_header = Doctrine::getTable("FalaHeaderAdu")->find ( base64_decode($this->getRequestParameter ( 'iddoc' )) );
-            $this->forward404Unless($fala_header);
+            if ($this->getRequestParameter('id')){
+                $fala_header = Doctrine::getTable("FalaHeaderAdu")->find ( $this->getRequestParameter ( 'iddoc' ) );
+                $this->forward404Unless($fala_header);
+
+                $this->responseArray=array("id"=>$this->getRequestParameter('id'), "success"=>false);
+            }else{
+                $fala_header = Doctrine::getTable("FalaHeaderAdu")->find ( base64_decode($this->getRequestParameter ( 'iddoc' )) );
+                $this->forward404Unless($fala_header);
+            }
+
             $fala_header->setCaFcharchivado(date("d M Y H:i:s"));
             $fala_header->setCaUsuarchivado($this->getUser()->getUserId());
             $fala_header->save();
-            $this->redirect("falabellaAdu/list");
+
+            if ($this->getRequestParameter('id')){
+                $this->responseArray["success"]=true;
+                $this->setTemplate("responseTemplate");
+            }else{
+                $this->redirect("falabellaAdu/list");
+            }
+
     }
 
 	/*
@@ -134,6 +157,34 @@ class falabellaAduActions extends sfActions {
         }
 
         $fala_declaracion->save();
+
+        $this->responseArray["success"]=true;
+        $this->setTemplate("responseTemplate");
+    }
+
+	/*
+	* Guarda los cambios en el encabezado de la Declaración de Importación
+	*/
+    public function executeObserveReference() {
+        $fala_header = Doctrine::getTable("FalaHeaderAdu")->find ( $this->getRequestParameter ( 'iddoc' ) );
+        $this->forward404Unless($fala_header);
+
+        $this->responseArray=array("id"=>$this->getRequestParameter('id'), "success"=>false);
+
+        if(!$this->getRequestParameter ( 'limpiar' )){
+            if( $this->getRequestParameter ( 'referencia' )!==null ) {
+                $fala_header->setCaReferencia( $this->getRequestParameter ( 'referencia' ) );
+            }
+
+            if( $this->getRequestParameter ( 'reqd_delivery' )!==null ) {
+                $fala_header->setCaReqdDelivery( $this->getRequestParameter ( 'reqd_delivery' ) );
+            }
+        }else{
+            $fala_header->setCaReferencia( null );
+            $fala_header->setCaReqdDelivery( null );
+        }
+
+        $fala_header->save();
 
         $this->responseArray["success"]=true;
         $this->setTemplate("responseTemplate");
