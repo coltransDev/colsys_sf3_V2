@@ -1,7 +1,7 @@
 <?
 
 $cotizacion = $sf_data->getRaw("cotizacion");
-
+$notas = $sf_data->getRaw("notas");
 $usuario = $cotizacion->getUsuario();
 $contacto = $cotizacion->getContacto();
 $cliente = $contacto->getCliente();
@@ -277,10 +277,17 @@ for( $k=0; $k<count($transportes); $k++ ):
 						$imprimirObservaciones=true;
 					}
 				}
+
+                if( $producto->getCaTransporte()=="OTM-DTA" ){
+                    $titulo = "COSTOS QUE SE PUEDEN GENERAR EN PUERTO POR LA OPERACION DE OTM";
+                }else{
+                    $titulo = "RECARGOS EN ORIGEN";
+                }
+
 				$pdf->beginGroup();
 				$pdf->Ln(2);
 				$pdf->SetFont($font,'B',8);
-				$pdf->Cell(0, 4, 'RECARGOS EN ORIGEN ', 0, 1, 'L', 0);
+				$pdf->Cell(0, 4,  $titulo, 0, 1, 'L', 0);
 				$pdf->Ln(2);
 				$pdf->SetFont($font,'',7);
 
