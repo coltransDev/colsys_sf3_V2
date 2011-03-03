@@ -44,7 +44,7 @@ OTM_LCL: |
   Las anteriores tarifas no incluyen:
   • Uso de instalaciones portuarias
   • Bodegaje en puerto a  partir del cuarto día  de arribo  del buque a  puerto
-  • Servicio documental  por administración de  inventario de  SPRC  USD 23,20
+  • Servicio documental  por administración de  inventario de  SPRC  USD 29
   • Inspección Aduanera
   • Movimiento Policía Fiscal
   • Seguros  a  la mercancía en el trayecto terrestre nacional
@@ -116,55 +116,69 @@ OTM_FCL: |
 
 seguroTitulo: NOTAS DE SEGURO DE TRANSPORTE Y ADMINISTRACION DE RIESGO  
 seguro: | 
-  OBJETIVO DEL SEGURO: Se asegura la carga de importación, exportación, despachos nacionales o urbanos,  frente a los riesgos propios del transporte de mercancías.
+  Se asegura la carga de importación, exportación, despachos nacionales o urbanos, frente a los riesgos propios del transporte de mercancías.
+  1. EL VALOR ASEGURADO: deberá corresponder al valor real de la carga, es decir, su componente de costos: factura comercial, fletes internacionales, fletes nacionales, tributos aduaneros (el IVA sólo se incluye en el componente de costos cuando éste no es descontable).
+
+  Los factores de costos diferentes a los anteriores no se deben considerar como valor asegurado, pero se pueden amparar bajo el rubro de GASTOS ADICIONALES
+
+  2. TRAYECTO ASEGURADO: Se asegura ?bodega-bodega?, es decir, desde el momento que el asegurado recibe la carga y asume la responsabilidad sobre ella, hasta su destino final en bodegas. El verdadero alcance de ese trayecto será definido por los términos de negociación INCOTERMS 2011 y el INTERÉS ASEGURABLE existente sobre la carga. Se incluyen las operaciones de cargue y descargue.
+
+  Se excluyen destinos finales o puertos de origen de los siguientes países: Burma (Myanmar), Cuba, Irán, Irak, Liberia, Corea del Norte, Sudan, Siria, Zimbabwe, y países que eventualmente puedan ser excluidos por las leyes de los EE.UU.
+
+  3. BIENES EXCLUIDOS: documentos o títulos valores, efectos personales o menaje doméstico, avería particular para maquinaria usada, obras de arte, semovientes, animales en general, graneles, azúcar, joyas, dinero en efectivo, monedas, valores y títulos valores, bonos cédulas hipotecarias, estampillas de timbre o correo, cartas, mapas o planos, perecederos que no cumplan con la cláusula de bienes transportados en condiciones especiales de refrigeración, congelación o calefacción.
+
+  4. AMPAROS
+      • Cobertura completa: amparo básico, falta de entrega, avería particular (se excluye para maquinaria o mercancía usada), saqueo (se
+        excluye para maquinaria o mercancía usada), huelga (trayectos interiores). Incluye la cobertura de terrorismo y guerra.
+      • Amparos adicionales: Lucro cesante y gastos adicionales (hasta un 10 %)
+    NO ESTA AMPARADO:
+      • Toma de muestras por autoridad competente, comiso, embargo, secuestro, retención,aprehensión o en general, cualquier acto
+        de autoridad sobre los bienes asegurados o sobre su medio de transporte.
+      • Vicio propio, combustión espontánea, merma, evaporación o filtración, no originadas en rotura o daño del empaque.
+      • Pérdidas o daños causados como consecuencia de variaciones climatológicas y deterioro por el simple transcurso del tiempo.
+      • Las pérdidas o daños causados por la acción de roedores, comején, gorgojo, polilla u otras plagas.
+      • Fisión, fusión y, en general, cualquier reacción nuclear, emisiones ionizantes, radiación, radioactividad y contaminación radioactiva,
+        sean controlada o no y sean o no, consecuencia de hechos amparados por la póliza.
+      • Errores o faltas en el despacho, o pérdidas y/o daños por envío de bienes en mal estado.
+      • Demoras en la entrega y pérdidas de mercado.
+      • Mal empaque de las mercancías cuando el asegurado tiene el control sobre el mismo.
+
+  5. DEDUCIBLES: No se amparan reclamaciones inferiores a $1.000.000. A partir de esta cifra los deducibles son:
+      • Mercancía de alto riesgo en despachos mayores a $100.000.000 10% sobre el valor de la pérdida mínimo 3 SMMLV.
+      • Otro tipo de despachos: Sin deducible
+
+  6. MERCANCÍAS DE ALTO RIESGO: Llantas y neumáticos, algodón en pacas, productos biomédicos, teléfonos celulares o equivalentes, juegos de video, software de videos, pieles, cigarrillos, licores, cervezas, vinos, productos farmacéuticos y veterinarios, vehículos de cualquier clase, incluyendo botes o aviones, incluyendo los movilizados por sus propios medios, repuestos automotores, Material CKD, Zinc, cobre o aluminio, perfumes, colonias y productos similares (incluyendo productos de aseo personal), Electrodomésticos, sus partes, accesorios o repuestos para los mismos, libros e impresos y textos escolares, pinturas, alimentos enlatados, leche en polvo, polipropileno, polietileno y látex en bruto o a granel, equipos de computo y/o componentes o accesorios, calzado, textiles, confecciones y cueros en productos terminados, juguetería, café y sus derivados, papel y/o productos elaborados con pulpa de papel tales como: papel higiénico, servilletas, toallas para cocina, toallas sanitarias y pañales desechables.
+
+  7. EXCLUSIONES: Se considerarán excluidos los despachos que no cumplan las siguientes condiciones:
+    A. Exclusiones por falta de acompañamiento vehicular: será obligatorio el uso de acompañantes vehiculares para los siguientes despachos dentro del territorio nacional:
+      a) Mercancía de alto riesgo; despachos con un valor asegurable superior a
+         $150.000.000 deberán llevar acompañamiento vehicular.
+      b) Mercancía de bajo riesgo; despachos con un valor asegurable superior a
+         $300.000.000 deberán llevar acompañamiento vehicular.
+
+      La firma que se utilice para el acompañamiento deberá cumplir con los siguientes requisitos:
+      • No ser personal armado.
+      • Viajar en un vehículo diferente
+      • Tener una central de operaciones
+      • Tener acuerdos con Fuerzas Armadas
+      • No hacer parte del transportador
+      • Estar habilitado por la Superintendencia de Vigilancia y Seguridad Privada
+    B. Empresas transportadoras: Estarán excluidos aquellos despachos que se realicen con
+       compañías que no estén legalmente constituidas.
+    C. Subrogación: estarán excluidos los despachos donde EL ASEGURADO renuncie a
+       cualquier forma de subrogación sobre los responsables de un siniestro.
+
+    Si se realizan despachos sin el cumplimiento de los anteriores requisitos, se considerará
+    como un riesgo excluido y la Aseguradora no tendrá responsabilidad alguna en caso de
+    siniestro.
+
+  8. CLAUSULAS ADICIONALES:
+      • La carga debe viajar con su valor declarado al 100% al transportista
+      • Dejar en el documento de transporte constancia de la cantidad, estado y condición de
+      los bienes a su recibo
+      • No pernoctar en carreteras ni en despoblado
+      • El embalaje de la mercancía debe cumplir con las normas internacionales
   
-  EL VALOR ASEGURADO: deberá corresponder al valor real de la carga, es decir, su componente de costos: factura comercial, fletes internacionales, fletes nacionales, tributos aduaneros (el  IVA sólo se incluye en el componente de costos cuando éste no es descontable).
-  
-  Los factores de costos diferentes a los anteriores no se deben considerar como valor asegurado, pero se pueden asegurar bajo el rubro de GASTOS ADICIONALES
-   
-  TRAYECTO ASEGURADO: Se asegura "bodega-bodega", es decir, desde el momento que el Asegurado recibe la carga y asume la responsabilidad sobre ella, hasta su destino final en bodegas. El verdadero alcance de ese trayecto será definido por los términos de negociación INCOTERMS 2000 y el INTERÉS ASEGURABLE existente sobre la carga. Se incluyen las operaciones de cargue y descargue.
-  
-  Se excluyen destinos finales o puertos de origen los siguientes países: Burma (Myanmar), Cuba, Irán, Irak, Liberia, Corea del Norte, Sudan, Siria, Zimbabwe, y países que eventualmente puedan ser excluidos por las leyes de los EE.UU.)
-   
-  BIENES ASEGURADOS: se asegura todo tipo de carga excluyendo la siguiente: documentos o títulos valores, efectos personales o menaje doméstico, avería particular para maquinaria usada, obras de arte, semovientes, animales en general, graneles, azúcar, joyas, dinero en efectivo, monedas, valores y títulos valores, bonos cédulas hipotecarias, estampillas de timbre o correo, cartas, mapas o planos, perecederos que no cumplan con la cláusula de bienes transportados en condiciones especiales de refrigeración, congelación o calefacción.
-  
-  AMPAROS
-  • Cobertura completa: Amparo básico, Falta de entrega, Avería particular, Saqueo, Huelga (trayectos interiores) Incluye la cobertura de terrorismo, Guerra
-  • Amparos adicionales:  Lucro cesante y gastos adicionales (hasta un 10 %)
-   
-  Nota; Se aclara que no se asegura la AVERÍA PARTICULAR para mercancías y maquinaria usada excluyéndose el daño eléctrico o mecánico interno.
-   
-  NO ESTA AMPARADO: 
-  • Toma de muestras por autoridad competente, comiso, embargo, secuestro, retención, aprehensión o en general, cualquier acto de autoridad sobre los bienes asegurados o sobre su medio de transporte.
-  • Vicio propio, combustión espontánea, merma, evaporación o filtración, no originadas en rotura o daño del empaque.
-  • Pérdidas o daños causados como consecuencia de variaciones climatológicas y deterioro por el simple transcurso del tiempo.
-  • Las pérdidas o daños causados por la acción de roedores, comején, gorgojo, polilla u otras plagas.
-  • Fisión, fusión y, en general, cualquier reacción nuclear, emisiones ionizantes, radiación, radioactividad y contaminación radioactiva, sean controlada o no y sean o no, consecuencia de hechos amparados por la póliza.
-  • Errores o faltas en el despacho, o pérdidas y/o daños por envío de bienes en mal estado.
-  • Demoras en la entrega y pérdidas de mercado.
-  • Mal empaque de las mercancías cuando el asegurado tiene el control sobre el mismo. 
-   
-  DEDUCIBLES: No se amparan reclamaciones menores a $1.000.000. A partir de esta cifra los deducibles son;
-  • Mercancía de alto riesgo en despachos mayores a $100.000.000 10% sobre el valor de la pérdida mínimo 3 SMMLV.
-  • Otro tipo de despachos:  Sin deducible
-   
-  MERCANCÍAS DE ALTO RIESGO
-    Llantas y neumáticos, algodón en pacas, productos biomédicos, teléfonos celulares o equivalentes, juegos de video, software de videos, pieles, cigarrillos, licores, cervezas, vinos, productos farmacéuticos y veterinarios, vehículos de cualquier clase, incluyendo botes o aviones, incluyendo los movilizados por sus propios medios, repuestos automotores, Material CKD, Zinc, cobre o aluminio, perfumes, colonias y productos similares (incluyendo productos de aseo personal), Electrodomésticos, sus partes, accesorios o repuestos para los mismos, libros e impresos y textos escolares, pinturas, alimentos enlatados, leche en polvo, polipropileno, polietileno y látex en bruto o a granel, equipos de computo y/o componentes o accesorios, calzado, textiles, confecciones y cueros en productos terminados, juguetería, café y sus derivados, papel y/o productos elaborados con pulpa de papel tales como: papel higiénico, servilletas, toallas para cocina, tollas sanitarias y pañales desechables.
-  
-  EXCLUSIONES: Se considerará excluidos los despachos que no cumplan las siguientes condiciones. Si se realizan despachos sin el cumplimiento de los requisitos exigidos, se considerará como un riesgo excluido del presente contrato y la Aseguradora no tendrá responsabilidad alguna en caso de siniestro;
-   
-    1.	Exclusiones por falta de acompañamiento vehicular: será obligatorio el uso de acompañantes vehiculares para los siguientes despachos dentro del territorio nacional;
-       a)  Mercancía de alto riesgo; despachos con un valor asegurable superior a $150.000.000 deberán llevar acompañamiento vehicular.
-       b)  Mercancía de bajo riesgo; despachos con un valor asegurable superior a $300.000.000 deberán llevar acompañamiento vehicular.
-  
-    La firma que se utilice para el acompañamiento deberá cumplir con los siguientes requisitos:
-    • No ser personal armado. 
-    • Viajar en un vehículo  diferente
-    • Tener una central de operaciones
-    • Tener acuerdos con Fuerzas Armadas
-    • No hacer parte del transportador, 
-    
-    2. Empresas transportadoras: Estarán excluidos aquellos despachos que se realicen con compañías que no estén legalmente constituidas. 
-    3. Subrogación: estarán excluidos los despachos donde EL ASEGURADO renuncie a cualquier forma de subrogación sobre los responsables de un siniestro. 
-   
-  EN CASO DE SINIESTRO: debe ser reportado a seguros@coltrans.com.co a más tardar 36 Hrs después de la ocurrencia del mismo.
+  9. SINIESTRO: debe ser reportado a seguros@coltrans.com.co a más tardar 36 Horas después de la ocurrencia del mismo.
+
+  Para asegurar las mercancías es necesaria la instrucción por escrito.
