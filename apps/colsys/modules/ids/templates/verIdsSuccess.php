@@ -224,6 +224,17 @@
 
                 </td>
             </tr>
+            <tr>
+                <td>
+                    <div align="left"><b>Creado:</b> <?=$ids->getCaUsucreado()." ".Utils::fechaMes($ids->getCaFchcreado())?></div>
+               </td>
+               <td>
+                   <div align="left"><?=$ids->getCaUsuactualizado()?"<b>Actualizado:</b>":"&nbsp;"?> <?=$ids->getCaUsuactualizado()." ".Utils::fechaMes($ids->getCaFchactualizado())?></div>
+               </td>
+               <td colspan="2">
+                   <div align="left">&nbsp;</div>
+               </td>
+            </tr>
         </tbody>
     </table>
 </div>

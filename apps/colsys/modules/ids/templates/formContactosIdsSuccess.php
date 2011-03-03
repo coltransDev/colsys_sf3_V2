@@ -281,6 +281,22 @@ var verificarCargo = function(){
                    onClick="document.location='<?=url_for("ids/verIds?modo=".$modo."&id=".$sucursal->getCaId())?>'" />
 		</div></td>
 		</tr>
+
+        <?
+        if( $contacto && $contacto->getCaUsucreado()  ){
+        ?>
+        <tr>
+            <td colspan="2">
+                <div align="left"><b>Creado:</b> <?=$contacto->getCaUsucreado()." ".Utils::fechaMes($contacto->getCaFchcreado())?></div>
+           </td>
+           <td colspan="2">
+               <div align="left"><?=$contacto->getCaUsuactualizado()?"<b>Actualizado:</b>":"&nbsp;"?> <?=$contacto->getCaUsuactualizado()." ".Utils::fechaMes($contacto->getCaFchactualizado())?></div>
+           </td>           
+        </tr>
+        <?
+        }
+        ?>
+
 		</tbody>
 	</table>
 	</form>

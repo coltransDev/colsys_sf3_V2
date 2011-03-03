@@ -99,6 +99,23 @@ echo $form['idsucursal']->render();
             </div>
        </td>
 	</tr>
+    <?
+    if( $sucursal && $sucursal->getCaUsucreado()  ){
+    ?>
+    <tr>
+        <td>
+            <div align="left"><b>Creado:</b> <?=$sucursal->getCaUsucreado()." ".Utils::fechaMes($sucursal->getCaFchcreado())?></div>
+       </td>
+       <td>
+           <div align="left"><?=$sucursal->getCaUsuactualizado()?"<b>Actualizado:</b>":"&nbsp;"?> <?=$sucursal->getCaUsuactualizado()." ".Utils::fechaMes($sucursal->getCaFchactualizado())?></div>
+       </td>
+       <td colspan="4">
+           <div align="left">&nbsp;</div>
+       </td>
+    </tr>
+    <?
+    }
+    ?>
 
 </table>
 </form>
