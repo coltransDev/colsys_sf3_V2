@@ -281,7 +281,7 @@ elseif (isset($boton)) {                                                       /
                     echo "    <IMG style='visibility: $visible' src='./graficos/edit.gif' alt='Editar el Registro' border=0 onclick='elegir(\"Modificar\", \"".$rs->Value('ca_referencia')."\", 0, 0);'>";
                     echo "    <IMG style='visibility: $visible' src='./graficos/del.gif' alt='Eliminar el Registro' border=0 onclick='elegir(\"Eliminar\", \"".$rs->Value('ca_referencia')."\", 0, 0);'><BR><BR>";
                     if ($rs->value("ca_usumuisca") != ''){
-                        $digitable = 'hidden';
+                        $digitable = 'visible'; // hidden
                         $fch_muisca = explode(" ",$rs->value("ca_fchmuisca"));
                         echo "<br /><b>Digitado:</b><br />".$rs->value("ca_usumuisca")."<br />".$fch_muisca[0]."<br />".$fch_muisca[1]."<br />";
                     }else{
