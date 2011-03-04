@@ -1114,7 +1114,7 @@ require_once("menu.php");
              echo "<TR>";
              echo "  <TD Class=captura style='vertical-align: top;'>Coordinador Colmas:</TD>";
              echo "  <TD Class=mostrar COLSPAN=2><SELECT NAME='coordinador'>";  // Llena el cuadro de lista con los valores de la tabla Vendedores
-			 echo "<OPTION VALUE=''>Ninguno Asignado</OPTION>";
+			 echo "  <OPTION VALUE=''>Ninguno Asignado</OPTION>";
              $us->MoveFirst();
              while (!$us->Eof()) {
                     echo "<OPTION VALUE='".$us->Value('ca_login')."'>".$us->Value('ca_nombre')."</OPTION>";
@@ -1126,6 +1126,24 @@ require_once("menu.php");
              echo "  <TD Class=captura style='vertical-align: top;'>Preferencias:</TD>";
              echo "  <TD Class=mostrar COLSPAN=2><TEXTAREA NAME='preferencias' WRAP=virtual ROWS=5 COLS=65></TEXTAREA></TD>";
              echo "</TR>";
+             if ($nivel >= 3){
+                 echo "<TR>";
+                 echo "  <TD Class=captura style='vertical-align: top;'>Vendedor :</TD>";
+                 echo "  <TD Class=mostrar COLSPAN=2><SELECT NAME='vendedor'>";  // Llena el cuadro de lista con los valores de la tabla Vendedores
+                 echo "  <OPTION VALUE=''>Sin Comercial</OPTION>";
+                 $us->MoveFirst();
+                 if (!$us->Open("select ca_login, ca_nombre, ca_sucursal from vi_usuarios where ca_login != 'Administrador' and (ca_cargo = 'Gerente Regional' or ca_cargo like '%Ventas%' or ca_departamento like '%Ventas%' or ca_departamento like '%Comercial%') order by ca_login")) {
+                     echo "<script>alert(\"".addslashes($us->mErrMsg)."\");</script>";
+                     echo "<script>document.location.href = 'repcomisiones.php';</script>";
+                     exit;
+                    }
+                 while (!$us->Eof()) {
+                        echo "<OPTION VALUE='".$us->Value('ca_login')."'>".$us->Value('ca_nombre')."</OPTION>";
+                        $us->MoveNext();
+                       }
+                 echo "  </SELECT></TD>";
+                 echo "</TR>";
+             }
              echo "</TABLE><BR>";
              echo "<TABLE CELLSPACING=10>";
              echo "<TH><INPUT Class=submit TYPE='SUBMIT' NAME='accion' VALUE='Guardar'></TH>";         // Ordena almacenar los datos ingresados
@@ -1210,7 +1228,7 @@ require_once("menu.php");
              echo "<FORM METHOD=post NAME='modificar' ACTION='clientes.php' ONSUBMIT='return validar();'>"; // Llena la forma con los datos actuales del registro
              echo "<TABLE CELLSPACING=1>";
              echo "<INPUT TYPE='HIDDEN' NAME='id' VALUE=".$id.">";              // Hereda el Id del registro que se esta modificando
-             echo "<INPUT TYPE='HIDDEN' NAME='vendedor' VALUE='".$rs->Value('ca_vendedor')."'>";
+             echo "<INPUT TYPE='HIDDEN' NAME='comercial' VALUE='".$rs->Value('ca_vendedor')."'>";
              echo "<TH Class=titulo COLSPAN=3>Nuevos Datos para el Cliente</TH>";
              echo "<TR>";
              echo "  <TD Class=captura>N.i.t.:</TD>";
@@ -1463,6 +1481,25 @@ require_once("menu.php");
              echo "  <TD Class=captura>Preferencias:</TD>";
              echo "  <TD Class=mostrar COLSPAN=2><TEXTAREA NAME='preferencias' WRAP=virtual ROWS=5 COLS=65>".$rs->Value('ca_preferencias')."</TEXTAREA></TD>";
              echo "</TR>";
+             if ($nivel >= 3){
+                 echo "<TR>";
+                 echo "  <TD Class=captura style='vertical-align: top;'>Vendedor :</TD>";
+                 echo "  <TD Class=mostrar COLSPAN=2><SELECT NAME='vendedor'>";  // Llena el cuadro de lista con los valores de la tabla Vendedores
+                 echo "  <OPTION VALUE=''>Sin Comercial</OPTION>";
+                 $us->MoveFirst();
+                 if (!$us->Open("select ca_login, ca_nombre, ca_sucursal from vi_usuarios where ca_login != 'Administrador' and (ca_cargo = 'Gerente Regional' or ca_cargo like '%Ventas%' or ca_departamento like '%Ventas%' or ca_departamento like '%Comercial%') order by ca_login")) {
+                     echo "<script>alert(\"".addslashes($us->mErrMsg)."\");</script>";
+                     echo "<script>document.location.href = 'repcomisiones.php';</script>";
+                     exit;
+                    }
+                 while (!$us->Eof()) {
+                        $check = ($us->Value('ca_login')==$rs->Value('ca_vendedor'))?"SELECTED":"";
+                        echo "<OPTION VALUE='".$us->Value('ca_login')."' $check>".$us->Value('ca_nombre')."</OPTION>";
+                        $us->MoveNext();
+                       }
+                 echo "  </SELECT></TD>";
+                 echo "</TR>";
+             }
              echo"</TABLE><BR>";
              echo "<TABLE CELLSPACING=10>";
              echo"<TH><INPUT Class=submit TYPE='SUBMIT' NAME='accion' VALUE='Actualizar'></TH>";  // Ordena que se actualice el registro
@@ -2182,7 +2219,9 @@ elseif (isset($accion)) {                                                      /
              $sapellido = addslashes($sapellido);
              $nombres = addslashes($nombres);
              $direccion = isset($direccion)?implode("|",$direccion):"";
-             $vendedor = ($nivel >= 2)?'null':"'$usuario'";
+             if (!isset($vendedor)){
+                $vendedor = ($nivel >= 2)?'null':"'$usuario'";
+             }
              $fchcotratoag = (strlen($fchcotratoag)!=0)?"'".$fchcotratoag."'":'date(null)';
              $status = ($listaclinton=='Sí')?"Vetado":$status;
              if (!$rs->Open("insert into tb_clientes (ca_idcliente, ca_digito, ca_compania, ca_papellido, ca_sapellido, ca_nombres, ca_saludo, ca_sexo, ca_cumpleanos, ca_direccion, ca_oficina, ca_torre, ca_bloque, ca_interior, ca_localidad, ca_complemento, ca_telefonos, ca_fax, ca_idciudad, ca_website, ca_email, ca_actividad, ca_sectoreco, ca_vendedor, ca_fchcotratoag, ca_listaclinton, ca_leyinsolvencia, ca_comentario, ca_status, ca_calificacion, ca_entidad, ca_coordinador, ca_preferencias, ca_idgrupo, ca_fchcreado, ca_usucreado) values($id, $digito, upper('".addslashes($compania)."'), '$papellido', '$sapellido', '$nombres', '$saludo', '$sexo', '$cumpleanos', '$direccion', '$oficina', '$torre', '$bloque', '$interior', '$localidad', '$complemento', '$telefonos', '$fax', '$idciudad', lower('$website'), lower('$email'), '$actividad', '$sectoreco', $vendedor, $fchcotratoag, '$listaclinton', '$leyinsolvencia', '$comentario', '$status', '$calificacion', '$entidad', '$coordinador', '$preferencias', $id, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
@@ -2198,7 +2237,9 @@ elseif (isset($accion)) {                                                      /
              $sapellido = addslashes($sapellido);
              $nombres = addslashes($nombres);
              $direccion = isset($direccion)?implode("|",$direccion):"";
-             $vendedor = ($nivel >= 2)?$vendedor:$usuario;
+             if (!isset($vendedor)){
+                 $vendedor = ($nivel >= 2)?$comercial:$usuario;
+             }
              $fchcotratoag= (strlen($fchcotratoag)!=0)?"'".$fchcotratoag."'":'date(null)';
              $status = ($listaclinton=='Sí')?"Vetado":$status;
              if (!$rs->Open("update tb_clientes set ca_compania = upper('".addslashes($compania)."'), ca_papellido = '$papellido', ca_sapellido = '$sapellido', ca_nombres = '$nombres', ca_saludo = '$saludo', ca_sexo = '$sexo', ca_cumpleanos = '$cumpleanos', ca_direccion = '$direccion', ca_oficina = '$oficina', ca_torre = '$torre', ca_bloque = '$bloque', ca_interior = '$interior', ca_localidad = '$localidad', ca_complemento = '$complemento', ca_telefonos = '$telefonos', ca_fax = '$fax', ca_idciudad  ='$idciudad', ca_website = lower('$website'), ca_email = lower('$email'), ca_actividad = '$actividad', ca_sectoreco = '$sectoreco', ca_vendedor = '".(($vendedor!='')?$vendedor:"null")."', ca_fchcotratoag = $fchcotratoag, ca_listaclinton = '$listaclinton', ca_leyinsolvencia = '$leyinsolvencia', ca_comentario = '$comentario', ca_status = '$status', ca_calificacion = '$calificacion', ca_entidad = '$entidad', ca_preferencias = '$preferencias', ca_coordinador = '$coordinador', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where ca_idcliente = $id")) {
