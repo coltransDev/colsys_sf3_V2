@@ -170,18 +170,18 @@ PanelTickets = function( config ){
         header: "Abierto",
         dataIndex: 'opened',
         hideable: false,
-        width: 100,
+        width: 120,
         sortable: true,
         renderer: Ext.util.Format.dateRenderer('d/m/y H:i')
       },
-      {
+      /*{
         header: "Respuesta",
         dataIndex: 'respuesta',
         hideable: false,
-        width: 100,
+        width: 120,
         sortable: true,
         renderer: Ext.util.Format.dateRenderer('d/m/y H:i')
-      },
+      },*/
       {
         header: "Ult. Seguimiento",
         dataIndex: 'ultseg',
@@ -189,22 +189,7 @@ PanelTickets = function( config ){
         width: 100,
         sortable: true,
         renderer: Ext.util.Format.dateRenderer('d/m/y')
-      },
-      {
-        header: "Milestone",
-        dataIndex: 'milestone',
-        hideable: false,
-        width: 100,
-        sortable: true        
-      },
-      {
-        header: "Estimado",
-        dataIndex: 'estimated',
-        hideable: true,
-        width: 100,
-        sortable: true,
-        renderer: Ext.util.Format.dateRenderer('d/m/y')
-      },
+      },      
       {
         header: "%",
         dataIndex: 'percentage',
@@ -484,7 +469,7 @@ Ext.extend(PanelTickets, Ext.grid.GridPanel, {
             if( record.data.tipo=="Defecto" ){
                 color = "pink";
             }else{
-                if( record.data.ultseg ){
+                if( record.data.respuesta ){
                     switch( record.data.priority ){
                         case "Media":
                             color = "yellow";
