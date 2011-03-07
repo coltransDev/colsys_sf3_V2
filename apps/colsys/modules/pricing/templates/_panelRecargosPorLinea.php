@@ -149,7 +149,8 @@ PanelRecargosPorLinea = function( config ){
         {name: 'aplicacion', type: 'string'},
         {name: 'aplicacion_min', type: 'string'},
         {name: 'idmoneda', type: 'string'},
-        {name: 'observaciones', type: 'string'}
+        {name: 'observaciones', type: 'string'},
+        {name: 'deleted', type: 'bool'}
     ]);
 
     this.store = new Ext.data.GroupingStore({
@@ -683,6 +684,10 @@ Ext.extend(PanelRecargosPorLinea, Ext.grid.EditorGridPanel, {
             for( var i=0; i< lenght; i++){
                 r = records[i];
 
+                if(r.data.deleted){
+                    continue;
+                }
+
                 var changes = r.getChanges();
 
                 changes['id']=r.id;
@@ -715,7 +720,7 @@ Ext.extend(PanelRecargosPorLinea, Ext.grid.EditorGridPanel, {
                             //Solamente se envian los cambios
                             params :	changes,
 
-                            callback :function(options, success, response){
+                            success:function(response,options){
 
                                 var res = Ext.util.JSON.decode( response.responseText );
                                 if( res.id && res.success){
@@ -723,7 +728,11 @@ Ext.extend(PanelRecargosPorLinea, Ext.grid.EditorGridPanel, {
                                     rec.set("sel", false); //Quita la seleccion de todas las columnas
                                     rec.commit();
                                 }
+                            },
+                            failure:function(response,options){
+                                Ext.MessageBox.alert('Error Message', "Se ha presentado un error"+(action.result?": "+action.result.errorInfo:"")+" "+(action.response?"\n Codigo HTTP "+action.response.status:""));
                             }
+
 
 
                          }
@@ -783,12 +792,16 @@ Ext.extend(PanelRecargosPorLinea, Ext.grid.EditorGridPanel, {
                                             idconcepto: idconcepto,
                                             id: id
                                         },
-                                        callback :function(options, success, response){
+                                        success:function(response,options){
                                             var res = Ext.util.JSON.decode( response.responseText );
                                             if( res.id && res.success){
                                                 var rec = storeRecargos.getById( res.id );
                                                 storeRecargos.remove(rec);
+                                                rec.set("deleted", true);
                                             }
+                                        },
+                                        failure:function(response,options){
+                                            Ext.MessageBox.alert('Error Message', "Se ha presentado un error"+(action.result?": "+action.result.errorInfo:"")+" "+(action.response?"\n Codigo HTTP "+action.response.status:""));
                                         }
                                     });
                                 }

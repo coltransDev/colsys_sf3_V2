@@ -126,7 +126,8 @@ PanelFletesPorTrayecto = function( config ){
         {name: 'consecutivo', type: 'int'},
         {name: 'orden', type: 'string'},
         {name: 'actualizado', type: 'string'},
-        {name: 'pkBlocked', type: 'bool'}
+        {name: 'pkBlocked', type: 'bool'},
+        {name: 'deleted', type: 'bool'}
 
     ]);
 
@@ -1001,8 +1002,7 @@ Ext.extend(PanelFletesPorTrayecto, Ext.grid.EditorGridPanel, {
                     //Solamente se envian los cambios
                     params :	params,
 
-                    callback :function(options, success, response){
-
+                    success:function(response,options){
                         var res = Ext.util.JSON.decode( response.responseText );
                         if( res.success ){
 
@@ -1010,21 +1010,29 @@ Ext.extend(PanelFletesPorTrayecto, Ext.grid.EditorGridPanel, {
                                 store.each(
                                     function(r){
                                         if(r.id == res.id){
-                                            store.remove( r );
+                                            var rec = store.getById( res.id );
+                                            store.remove( rec );
+                                            rec.set("deleted", true);
                                         }
                                         if(r.data.tipo=="recargo"&& r.data.idconcepto && r.data.idtrayecto == res.idtrayecto && r.data.idconcepto == res.idconcepto ){
-                                            store.remove( r );
+
+                                            var rec = store.getById( r.id );
+                                            store.remove( rec );
+                                            rec.set("deleted", true);
                                         }
                                     }
                                 );
                             }
                             if( ctxRecord.data.tipo=='recargo' ){
-                                r = store.getById( res.id );
-                                store.remove( r );
-
+                                var rec = store.getById( res.id );
+                                store.remove( rec );
+                                rec.set("deleted", true);
                             }
 
                         }
+                    },
+                    failure:function(response,options){
+                        Ext.MessageBox.alert('Error Message', "Se ha presentado un error"+(action.result?": "+action.result.errorInfo:"")+" "+(action.response?"\n Codigo HTTP "+action.response.status:""));
                     }
                  }
             );
@@ -1107,6 +1115,10 @@ Ext.extend(PanelFletesPorTrayecto, Ext.grid.EditorGridPanel, {
         for( var i=0; i< lenght; i++){
             r = records[i];
 
+            if(r.data.deleted){
+                continue;
+            }
+
             var changes = r.getChanges();
 
             //Da formato a las fechas antes de enviarlas
@@ -1132,18 +1144,26 @@ Ext.extend(PanelFletesPorTrayecto, Ext.grid.EditorGridPanel, {
                 waitMsg: 'Guardando cambios...',
                 url: '<?=url_for("pricing/guardarPanelFletesPorTrayecto")?>', 						//method: 'POST',
                 //Solamente se envian los cambios
-                params :	changes,
-                callback :function(options, success, response){
-
+                params :	changes,               
+                
+                success:function(response,options){
                     var res = Ext.util.JSON.decode( response.responseText );
-                    if( res.id ){
-                        var rec = store.getById( res.id );
-                        rec.set("consecutivo", res.consecutivo);
-                        rec.set("actualizado", res.actualizado);
-                        rec.set("sel", false); //Quita la seleccion de todas las columnas
-                        rec.commit();
+                    if( res.success ){
+                       
+                        if( res.id ){
+                            var rec = store.getById( res.id );
+                            rec.set("consecutivo", res.consecutivo);
+                            rec.set("actualizado", res.actualizado);
+                            rec.set("sel", false); //Quita la seleccion de todas las columnas
+                            rec.commit();
+                        }
+
                     }
-                }                 
+                },
+                failure:function(response,options){
+                    Ext.MessageBox.alert('Error Message', "Se ha presentado un error"+(action.result?": "+action.result.errorInfo:"")+" "+(action.response?"\n Codigo HTTP "+action.response.status:""));
+                }
+
             });
         }
     },

@@ -537,114 +537,42 @@ class pricingActions extends sfActions {
      */
 
     public function executeGuardarPanelFletesPorTrayecto() {
-        $this->nivel = $this->getNivel();
+        $conn = Doctrine::getTable("PricFlete")->getConnection();
+        $conn->beginTransaction();
+        try {
+            $this->nivel = $this->getNivel();
 
-        if ($this->nivel <= 0) {
-            $this->forward404();
-        }
-
-        $trayecto = Doctrine::getTable("Trayecto")->find($this->getRequestParameter("idtrayecto"));
-        $this->forward404Unless($trayecto);
-
-        $tipo = $this->getRequestParameter("tipo");
-        $neta = $this->getRequestParameter("neta");
-        $sugerida = $this->getRequestParameter("sugerida");
-        $id = $this->getRequestParameter("id");
-        $idequipo = $this->getRequestParameter("idequipo");
-        $this->responseArray = array("id" => $id, "success" => true);
-        $user = $this->getUser();
-
-        if ($tipo == "trayecto_obs") {
-            if ($this->getRequestParameter("observaciones") !== null) {
-                if ($this->getRequestParameter("observaciones")) {
-                    $trayecto->setCaObservaciones($this->getRequestParameter("observaciones"));
-                } else {
-                    $trayecto->setCaObservaciones(null);
-                }
-            }
-            $trayecto->save();
-        }
-
-        if ($tipo == "concepto") {
-            $idconcepto = $this->getRequestParameter("iditem");
-            $q = Doctrine::getTable("PricFlete")->createQuery()
-                            ->addWhere("ca_idtrayecto = ?", $trayecto->getCaIdtrayecto())
-                            ->addWhere("ca_idconcepto= ?", $idconcepto);
-            if ($idequipo) {
-                $q->addWhere("ca_idequipo= ?", $idequipo);
-            } else {
-                $q->addWhere("ca_idequipo IS NULL");
-            }
-            $flete = $q->fetchOne();
-
-            if (!$flete) {
-                $flete = new PricFlete();
-                $flete->setCaIdtrayecto($trayecto->getCaIdtrayecto());
-                $flete->setCaIdconcepto($idconcepto);
-                if ($idequipo) {
-                    $flete->setCaIdequipo($idequipo);
-                }
-                $flete->setCaVlrneto(0);
+            if ($this->nivel <= 0) {
+                $this->forward404();
             }
 
-            if ($neta !== null) {
-                $flete->setCaVlrneto($neta);
-            }
-            if ($sugerida !== null) {
-                $flete->setCaVlrsugerido($sugerida);
-            }
-            if ($this->getRequestParameter("style") !== null) {
-                if ($this->getRequestParameter("style")) {
-                    $flete->setEstilo($this->getRequestParameter("style"));
-                } else {
-                    $flete->setEstilo(null);
-                }
-            }
+            $trayecto = Doctrine::getTable("Trayecto")->find($this->getRequestParameter("idtrayecto"));
+            $this->forward404Unless($trayecto);
 
-            if ($this->getRequestParameter("inicio") !== null) {
-                if ($this->getRequestParameter("inicio")) {
-                    $flete->setCaFchinicio($this->getRequestParameter("inicio"));
-                } else {
-                    $flete->setCaFchinicio(null);
-                }
-            }
-
-            if ($this->getRequestParameter("vencimiento") !== null) {
-                if ($this->getRequestParameter("vencimiento")) {
-                    $flete->setCaFchvencimiento($this->getRequestParameter("vencimiento"));
-                } else {
-                    $flete->setCaFchvencimiento(null);
-                }
-            }
-
-            if ($this->getRequestParameter("moneda")) {
-                $flete->setCaIdmoneda($this->getRequestParameter("moneda"));
-            }
-
-            if ($this->getRequestParameter("aplicacion") !== null) {
-                $flete->setCaAplicacion(utf8_decode($this->getRequestParameter("aplicacion")));
-            }
+            $tipo = $this->getRequestParameter("tipo");
+            $neta = $this->getRequestParameter("neta");
+            $sugerida = $this->getRequestParameter("sugerida");
+            $id = $this->getRequestParameter("id");
+            $idequipo = $this->getRequestParameter("idequipo");
+            $this->responseArray = array("id" => $id, "success" => true);
             $user = $this->getUser();
-            $flete->setCaUsucreado($user->getUserId());
-            $flete->setCaFchcreado(date("Y-m-d H:i:s"));
-            $flete->save();
-            $this->responseArray["consecutivo"] = $flete->getCaConsecutivo();
-            $this->responseArray["actualizado"] = $flete->getCaUsucreado() . " " . Utils::fechaMes($flete->getCaFchcreado());
-        }
 
-        if ($tipo == "recargo") {
+            if ($tipo == "trayecto_obs") {
+                if ($this->getRequestParameter("observaciones") !== null) {
+                    if ($this->getRequestParameter("observaciones")) {
+                        $trayecto->setCaObservaciones($this->getRequestParameter("observaciones"));
+                    } else {
+                        $trayecto->setCaObservaciones(null);
+                    }
+                }
+                $trayecto->save( $conn );
+            }
 
-            $minima = $this->getRequestParameter("minima");
-            $idconcepto = $this->getRequestParameter("idconcepto");
-            $idrecargo = $this->getRequestParameter("iditem");
-
-            if ($idconcepto == '')
-                $idconcepto = 9999;
-            if ($idconcepto != 9999) {
-
+            if ($tipo == "concepto") {
+                $idconcepto = $this->getRequestParameter("iditem");
                 $q = Doctrine::getTable("PricFlete")->createQuery()
                                 ->addWhere("ca_idtrayecto = ?", $trayecto->getCaIdtrayecto())
-                                ->addWhere("ca_idconcepto = ?", $idconcepto);
+                                ->addWhere("ca_idconcepto= ?", $idconcepto);
                 if ($idequipo) {
                     $q->addWhere("ca_idequipo= ?", $idequipo);
                 } else {
@@ -656,154 +584,244 @@ class pricingActions extends sfActions {
                     $flete = new PricFlete();
                     $flete->setCaIdtrayecto($trayecto->getCaIdtrayecto());
                     $flete->setCaIdconcepto($idconcepto);
+                    if ($idequipo) {
+                        $flete->setCaIdequipo($idequipo);
+                    }
                     $flete->setCaVlrneto(0);
-                    $flete->save();
                 }
+
+                if ($neta !== null) {
+                    $flete->setCaVlrneto($neta);
+                }
+                if ($sugerida !== null) {
+                    $flete->setCaVlrsugerido($sugerida);
+                }
+                if ($this->getRequestParameter("style") !== null) {
+                    if ($this->getRequestParameter("style")) {
+                        $flete->setEstilo($this->getRequestParameter("style"));
+                    } else {
+                        $flete->setEstilo(null);
+                    }
+                }
+
+                if ($this->getRequestParameter("inicio") !== null) {
+                    if ($this->getRequestParameter("inicio")) {
+                        $flete->setCaFchinicio($this->getRequestParameter("inicio"));
+                    } else {
+                        $flete->setCaFchinicio(null);
+                    }
+                }
+
+                if ($this->getRequestParameter("vencimiento") !== null) {
+                    if ($this->getRequestParameter("vencimiento")) {
+                        $flete->setCaFchvencimiento($this->getRequestParameter("vencimiento"));
+                    } else {
+                        $flete->setCaFchvencimiento(null);
+                    }
+                }
+
+                if ($this->getRequestParameter("moneda")) {
+                    $flete->setCaIdmoneda($this->getRequestParameter("moneda"));
+                }
+
+                if ($this->getRequestParameter("aplicacion") !== null) {
+                    $flete->setCaAplicacion(utf8_decode($this->getRequestParameter("aplicacion")));
+                }
+                $user = $this->getUser();
+                $flete->setCaUsucreado($user->getUserId());
+                $flete->setCaFchcreado(date("Y-m-d H:i:s"));
+                $flete->save( $conn );
+                $this->responseArray["consecutivo"] = $flete->getCaConsecutivo();
+                $this->responseArray["actualizado"] = $flete->getCaUsucreado() . " " . Utils::fechaMes($flete->getCaFchcreado());
             }
-            //$pricRecargo = Doctrine::getTable("PricRecargoxConcepto")->find(array( $trayecto->getCaIdtrayecto() , $idconcepto , $idrecargo));
 
-            $q = Doctrine::getTable("PricRecargoxConcepto")->createQuery()
-                            ->addWhere("ca_idtrayecto = ?", $trayecto->getCaIdtrayecto())
-                            ->addWhere("ca_idconcepto = ?", $idconcepto)
-                            ->addWhere("ca_idrecargo = ?", $idrecargo);
-            if ($idequipo) {
-                $q->addWhere("ca_idequipo= ?", $idequipo);
-            } else {
-                $q->addWhere("ca_idequipo IS NULL");
-            }
-            $pricRecargo = $q->fetchOne();
+            if ($tipo == "recargo") {
 
-            if (!$pricRecargo) {
-                $pricRecargo = new PricRecargoxConcepto();
-                $pricRecargo->setCaIdtrayecto($trayecto->getCaIdtrayecto());
-                $pricRecargo->setCaIdconcepto($idconcepto);
+                $minima = $this->getRequestParameter("minima");
+                $idconcepto = $this->getRequestParameter("idconcepto");
+                $idrecargo = $this->getRequestParameter("iditem");
 
-                $pricRecargo->setCaIdrecargo($idrecargo);
-                $pricRecargo->setCaVlrrecargo(0);
-                //$pricRecargo->setCaVlrminimo( 0 );
-            }
+                if ($idconcepto == '')
+                    $idconcepto = 9999;
+                if ($idconcepto != 9999) {
 
-            if ($idequipo) {
-                $pricRecargo->setCaIdequipo($idequipo);
-            }
+                    $q = Doctrine::getTable("PricFlete")->createQuery()
+                                    ->addWhere("ca_idtrayecto = ?", $trayecto->getCaIdtrayecto())
+                                    ->addWhere("ca_idconcepto = ?", $idconcepto);
+                    if ($idequipo) {
+                        $q->addWhere("ca_idequipo= ?", $idequipo);
+                    } else {
+                        $q->addWhere("ca_idequipo IS NULL");
+                    }
+                    $flete = $q->fetchOne();
 
-            if ($sugerida !== null) {
-                $pricRecargo->setCaVlrrecargo($sugerida);
-            }
+                    if (!$flete) {
+                        $flete = new PricFlete();
+                        $flete->setCaIdtrayecto($trayecto->getCaIdtrayecto());
+                        $flete->setCaIdconcepto($idconcepto);
+                        $flete->setCaVlrneto(0);
+                        $flete->save( $conn );
+                    }
+                }
+                //$pricRecargo = Doctrine::getTable("PricRecargoxConcepto")->find(array( $trayecto->getCaIdtrayecto() , $idconcepto , $idrecargo));
 
-            if ($minima !== null) {
-                if ($minima) {
-                    $pricRecargo->setCaVlrminimo($minima);
+                $q = Doctrine::getTable("PricRecargoxConcepto")->createQuery()
+                                ->addWhere("ca_idtrayecto = ?", $trayecto->getCaIdtrayecto())
+                                ->addWhere("ca_idconcepto = ?", $idconcepto)
+                                ->addWhere("ca_idrecargo = ?", $idrecargo);
+                if ($idequipo) {
+                    $q->addWhere("ca_idequipo= ?", $idequipo);
                 } else {
-                    $pricRecargo->setCaVlrminimo(null);
+                    $q->addWhere("ca_idequipo IS NULL");
                 }
-            }
+                $pricRecargo = $q->fetchOne();
 
-            if ($this->getRequestParameter("moneda")) {
-                $pricRecargo->setCaIdmoneda($this->getRequestParameter("moneda"));
-            }
+                if (!$pricRecargo) {
+                    $pricRecargo = new PricRecargoxConcepto();
+                    $pricRecargo->setCaIdtrayecto($trayecto->getCaIdtrayecto());
+                    $pricRecargo->setCaIdconcepto($idconcepto);
 
-            if ($this->getRequestParameter("inicio") !== null) {
-                if ($this->getRequestParameter("inicio")) {
-                    $pricRecargo->setCaFchinicio($this->getRequestParameter("inicio"));
-                } else {
-                    $pricRecargo->setCaFchinicio(null);
+                    $pricRecargo->setCaIdrecargo($idrecargo);
+                    $pricRecargo->setCaVlrrecargo(0);
+                    //$pricRecargo->setCaVlrminimo( 0 );
                 }
-            }
 
-            if ($this->getRequestParameter("vencimiento") !== null) {
-                if ($this->getRequestParameter("vencimiento")) {
-                    $pricRecargo->setCaFchvencimiento($this->getRequestParameter("vencimiento"));
-                } else {
-                    $pricRecargo->setCaFchvencimiento(null);
+                if ($idequipo) {
+                    $pricRecargo->setCaIdequipo($idequipo);
                 }
-            }
 
-            if ($this->getRequestParameter("aplicacion") !== null) {
-                $pricRecargo->setCaAplicacion(utf8_decode($this->getRequestParameter("aplicacion")));
-            }
+                if ($sugerida !== null) {
+                    $pricRecargo->setCaVlrrecargo($sugerida);
+                }
 
-            if ($this->getRequestParameter("aplicacion_min") !== null) {
-                $pricRecargo->setCaAplicacionMin(utf8_decode($this->getRequestParameter("aplicacion_min")));
-            }
+                if ($minima !== null) {
+                    if ($minima) {
+                        $pricRecargo->setCaVlrminimo($minima);
+                    } else {
+                        $pricRecargo->setCaVlrminimo(null);
+                    }
+                }
 
-            if ($this->getRequestParameter("observaciones") !== null) {
-                $pricRecargo->setCaObservaciones($this->getRequestParameter("observaciones"));
-            }
+                if ($this->getRequestParameter("moneda")) {
+                    $pricRecargo->setCaIdmoneda($this->getRequestParameter("moneda"));
+                }
 
-            $user = $this->getUser();
-            $pricRecargo->setCaUsucreado($user->getUserId());
-            $pricRecargo->setCaFchcreado(date("Y-m-d H:i:s"));
-            $pricRecargo->save();
-            $this->responseArray["consecutivo"] = $pricRecargo->getCaConsecutivo();
-            $this->responseArray["actualizado"] = $pricRecargo->getCaUsucreado() . " " . Utils::fechaMes($pricRecargo->getCaFchcreado());
+                if ($this->getRequestParameter("inicio") !== null) {
+                    if ($this->getRequestParameter("inicio")) {
+                        $pricRecargo->setCaFchinicio($this->getRequestParameter("inicio"));
+                    } else {
+                        $pricRecargo->setCaFchinicio(null);
+                    }
+                }
+
+                if ($this->getRequestParameter("vencimiento") !== null) {
+                    if ($this->getRequestParameter("vencimiento")) {
+                        $pricRecargo->setCaFchvencimiento($this->getRequestParameter("vencimiento"));
+                    } else {
+                        $pricRecargo->setCaFchvencimiento(null);
+                    }
+                }
+
+                if ($this->getRequestParameter("aplicacion") !== null) {
+                    $pricRecargo->setCaAplicacion(utf8_decode($this->getRequestParameter("aplicacion")));
+                }
+
+                if ($this->getRequestParameter("aplicacion_min") !== null) {
+                    $pricRecargo->setCaAplicacionMin(utf8_decode($this->getRequestParameter("aplicacion_min")));
+                }
+
+                if ($this->getRequestParameter("observaciones") !== null) {
+                    $pricRecargo->setCaObservaciones($this->getRequestParameter("observaciones"));
+                }
+
+                $user = $this->getUser();
+                $pricRecargo->setCaUsucreado($user->getUserId());
+                $pricRecargo->setCaFchcreado(date("Y-m-d H:i:s"));
+                $pricRecargo->save( $conn );
+                $this->responseArray["consecutivo"] = $pricRecargo->getCaConsecutivo();
+                $this->responseArray["actualizado"] = $pricRecargo->getCaUsucreado() . " " . Utils::fechaMes($pricRecargo->getCaFchcreado());
+            }
+            $conn->commit();
+        } catch (Exception $e) {
+            $conn->rollBack();
+            $this->responseArray = array("success" => false, "errorInfo" => utf8_encode($e->getMessage()));
         }
         $this->setTemplate("responseTemplate");
     }
 
     public function executeEliminarPanelFletesPorTrayecto() {
         $this->nivel = $this->getNivel();
-
-        if ($this->nivel <= 0) {
-            $this->forward404();
-        }
-
-        $idtrayecto = $this->getRequestParameter("idtrayecto");
-        $idconcepto = $this->getRequestParameter("idconcepto");
-        $idrecargo = $this->getRequestParameter("idrecargo");
-        $idequipo = $this->getRequestParameter("idequipo");
-        $tipo = $this->getRequestParameter("tipo");
-        $id = $this->getRequestParameter("id");
-
-        $this->forward404unless($idtrayecto);
-        $this->forward404unless($idconcepto);
-
-        $this->responseArray = array("id" => $id, "success" => false);
-        if ($tipo == "concepto") {
-            $q = Doctrine::getTable("PricFlete")->createQuery()
-                            ->addWhere("ca_idtrayecto = ?", $idtrayecto)
-                            ->addWhere("ca_idconcepto= ?", $idconcepto);
-            if ($idequipo) {
-                $q->addWhere("ca_idequipo= ?", $idequipo);
-            } else {
-                $q->addWhere("ca_idequipo IS NULL");
+        $conn = Doctrine::getTable("PricFlete")->getConnection();
+        $conn->beginTransaction();
+        try {
+            if ($this->nivel <= 0) {
+                $this->forward404();
             }
-            $pricFlete = $q->fetchOne();
 
-            if ($pricFlete) {
-                //Borra todos los recargos del concepto
-                Doctrine_Query::create()
-                        ->delete()
-                        ->from("PricRecargoxConcepto r")
-                        ->where("r.ca_idtrayecto = ? AND r.ca_idconcepto = ?", array($idtrayecto, $idconcepto))
-                        ->execute();
-                $pricFlete->delete();
+            $idtrayecto = $this->getRequestParameter("idtrayecto");
+            $idconcepto = $this->getRequestParameter("idconcepto");
+            $idrecargo = $this->getRequestParameter("idrecargo");
+            $idequipo = $this->getRequestParameter("idequipo");
+            $tipo = $this->getRequestParameter("tipo");
+            $id = $this->getRequestParameter("id");
 
-                $this->responseArray["idconcepto"] = $idconcepto;
-                $this->responseArray["idtrayecto"] = $idtrayecto;
-            }
-            $this->responseArray["success"] = true;
-        }
-
-        if ($tipo == "recargo") {
+            $this->forward404unless($idtrayecto);
             $this->forward404unless($idconcepto);
-            //$pricRecargo = Doctrine::getTable("PricRecargoxConcepto")->find(array($idtrayecto , $idconcepto , $idrecargo));
-            $q = Doctrine::getTable("PricRecargoxConcepto")->createQuery()
-                            ->addWhere("ca_idtrayecto = ?", $idtrayecto)
-                            ->addWhere("ca_idconcepto= ?", $idconcepto)
-                            ->addWhere("ca_idrecargo= ?", $idrecargo);
 
-            if ($idequipo) {
-                $q->addWhere("ca_idequipo= ?", $idequipo);
-            } else {
-                $q->addWhere("ca_idequipo IS NULL");
-            }
-            $pricRecargo = $q->fetchOne();
+            $this->responseArray = array("id" => $id, "success" => false);
+            if ($tipo == "concepto") {
+                $q = Doctrine::getTable("PricFlete")->createQuery()
+                                ->addWhere("ca_idtrayecto = ?", $idtrayecto)
+                                ->addWhere("ca_idconcepto= ?", $idconcepto);
+                if ($idequipo) {
+                    $q->addWhere("ca_idequipo= ?", $idequipo);
+                } else {
+                    $q->addWhere("ca_idequipo IS NULL");
+                }
+                $pricFlete = $q->fetchOne();
 
-            if ($pricRecargo) {
-                $pricRecargo->delete();
-                $this->responseArray["success"] = true;
+                if ($pricFlete) {
+                    //Borra todos los recargos del concepto
+                    Doctrine_Query::create()
+                            ->delete()
+                            ->from("PricRecargoxConcepto r")
+                            ->where("r.ca_idtrayecto = ? AND r.ca_idconcepto = ?", array($idtrayecto, $idconcepto))
+                            ->execute();
+                    $pricFlete->delete( $conn );
+                    $this->responseArray["success"] = true;
+
+                    $this->responseArray["idconcepto"] = $idconcepto;
+                    $this->responseArray["idtrayecto"] = $idtrayecto;
+                }
+
             }
+
+            if ($tipo == "recargo") {
+                $this->forward404unless($idconcepto);
+                //$pricRecargo = Doctrine::getTable("PricRecargoxConcepto")->find(array($idtrayecto , $idconcepto , $idrecargo));
+                $q = Doctrine::getTable("PricRecargoxConcepto")->createQuery()
+                                ->addWhere("ca_idtrayecto = ?", $idtrayecto)
+                                ->addWhere("ca_idconcepto= ?", $idconcepto)
+                                ->addWhere("ca_idrecargo= ?", $idrecargo);
+
+                if ($idequipo) {
+                    $q->addWhere("ca_idequipo= ?", $idequipo);
+                } else {
+                    $q->addWhere("ca_idequipo IS NULL");
+                }
+                $pricRecargo = $q->fetchOne();
+
+                if ($pricRecargo) {
+                    $pricRecargo->delete( $conn );
+                    $this->responseArray["success"] = true;
+                }else{
+                    $this->responseArray = array("success" => false, "errorInfo" => "No se ha encontrado el recargo o ya se ha eliminado");
+                }
+            }
+            $conn->commit();
+        } catch (Exception $e) {
+            $conn->rollBack();
+            $this->responseArray = array("success" => false, "errorInfo" => utf8_encode($e->getMessage()));
         }
         $this->setTemplate("responseTemplate");
     }
@@ -947,100 +965,109 @@ class pricingActions extends sfActions {
 
     public function executeGuardarPanelRecargosPorCiudad() {
         $this->nivel = $this->getNivel();
-
-        if ($this->nivel <= 0) {
-            $this->forward404();
-        }
-        $delete = false;
-        $consecutivo = $this->getRequestParameter("consecutivo");
-
-        $idtrafico = $this->getRequestParameter("idtrafico");
-        $idciudad = $this->getRequestParameter("idciudad");
-        $idrecargo = $this->getRequestParameter("idrecargo");
-        $modalidad = $this->getRequestParameter("modalidad");
-        $impoexpo = $this->getRequestParameter("impoexpo");
-        $transporte = $this->getRequestParameter("transporte");
-
-        $this->forward404Unless($idtrafico);
-        $this->forward404Unless($idciudad);
-        $this->forward404Unless($modalidad);
-        $this->forward404Unless($impoexpo);
-        $this->forward404Unless($transporte);
-        //print_r( array($idtrafico, $idciudad, $idrecargo , $modalidad, utf8_decode($impoexpo)) );
-        $recargo = Doctrine::getTable("PricRecargoxCiudad")->find(array($idtrafico, $idciudad, $idrecargo, $modalidad, utf8_decode($impoexpo), utf8_decode($transporte)));
-        if (!$recargo) {
-            $recargo = new PricRecargoxCiudad();
-            $recargo->setCaIdtrafico($idtrafico);
-            $recargo->setCaIdciudad($idciudad);
-            $recargo->setCaIdrecargo($idrecargo);
-            $recargo->setCaModalidad($modalidad);
-            $recargo->setCaImpoexpo(utf8_decode($impoexpo));
-            $recargo->setCaTransporte(utf8_decode($transporte));
-            $recargo->setCaVlrrecargo(0);
-            $recargo->setCaVlrminimo(0);
-            if ($consecutivo > 0)
-                $delete = true;
-        }
-
-        $user = $this->getUser();
-        $recargo->setCaUsucreado($user->getUserId());
-        $recargo->setCaFchcreado(date("Y-m-d H:i:s"));
-
-        if ($this->getRequestParameter("inicio") !== null) {
-            if ($this->getRequestParameter("inicio")) {
-                $recargo->setCaFchinicio($this->getRequestParameter("inicio"));
-            } else {
-                $recargo->setCaFchinicio(null);
+        $conn = Doctrine::getTable("PricRecargoxCiudad")->getConnection();
+        $conn->beginTransaction();
+        try{
+            if ($this->nivel <= 0) {
+                $this->forward404();
             }
-        }
+            $delete = false;
+            $consecutivo = $this->getRequestParameter("consecutivo");
 
-        if ($this->getRequestParameter("vencimiento") !== null) {
-            if ($this->getRequestParameter("vencimiento")) {
-                $recargo->setCaFchvencimiento($this->getRequestParameter("vencimiento"));
-            } else {
-                $recargo->setCaFchvencimiento(null);
+            $idtrafico = $this->getRequestParameter("idtrafico");
+            $idciudad = $this->getRequestParameter("idciudad");
+            $idrecargo = $this->getRequestParameter("idrecargo");
+            $modalidad = $this->getRequestParameter("modalidad");
+            $impoexpo = $this->getRequestParameter("impoexpo");
+            $transporte = $this->getRequestParameter("transporte");
+
+            $this->forward404Unless($idtrafico);
+            $this->forward404Unless($idciudad);
+            $this->forward404Unless($modalidad);
+            $this->forward404Unless($impoexpo);
+            $this->forward404Unless($transporte);
+            //print_r( array($idtrafico, $idciudad, $idrecargo , $modalidad, utf8_decode($impoexpo)) );
+            $recargo = Doctrine::getTable("PricRecargoxCiudad")->find(array($idtrafico, $idciudad, $idrecargo, $modalidad, utf8_decode($impoexpo), utf8_decode($transporte)));
+            if (!$recargo) {
+                $recargo = new PricRecargoxCiudad();
+                $recargo->setCaIdtrafico($idtrafico);
+                $recargo->setCaIdciudad($idciudad);
+                $recargo->setCaIdrecargo($idrecargo);
+                $recargo->setCaModalidad($modalidad);
+                $recargo->setCaImpoexpo(utf8_decode($impoexpo));
+                $recargo->setCaTransporte(utf8_decode($transporte));
+                $recargo->setCaVlrrecargo(0);
+                $recargo->setCaVlrminimo(0);
+                if ($consecutivo > 0)
+                    $delete = true;
             }
-        }
 
-        if ($this->getRequestParameter("vlrrecargo") !== null) {
-            $recargo->setCaVlrrecargo($this->getRequestParameter("vlrrecargo"));
-        }
+            $user = $this->getUser();
+            $recargo->setCaUsucreado($user->getUserId());
+            $recargo->setCaFchcreado(date("Y-m-d H:i:s"));
 
-        if ($this->getRequestParameter("vlrminimo") !== null) {
-            if ($this->getRequestParameter("vlrminimo")) {
-                $recargo->setCaVlrminimo($this->getRequestParameter("vlrminimo"));
-            } else {
-                $recargo->setCaVlrminimo(null);
+            if ($this->getRequestParameter("inicio") !== null) {
+                if ($this->getRequestParameter("inicio")) {
+                    $recargo->setCaFchinicio($this->getRequestParameter("inicio"));
+                } else {
+                    $recargo->setCaFchinicio(null);
+                }
             }
-        }
 
-        if ($this->getRequestParameter("idmoneda")) {
-            $recargo->setCaIdmoneda($this->getRequestParameter("idmoneda"));
-        }
-
-        if ($this->getRequestParameter("aplicacion") !== null) {
-            $recargo->setCaAplicacion(utf8_decode($this->getRequestParameter("aplicacion")));
-        }
-
-        if ($this->getRequestParameter("aplicacion_min") !== null) {
-            $recargo->setCaAplicacionMin(utf8_decode($this->getRequestParameter("aplicacion_min")));
-        }
-
-        if ($this->getRequestParameter("observaciones") !== null) {
-            $recargo->setCaObservaciones(utf8_decode($this->getRequestParameter("observaciones")));
-        }
-
-        $recargo->save();
-        $id = $this->getRequestParameter("id");
-
-        if ($delete) {   //echo $consecutivo;
-            $recargo = Doctrine::getTable("PricRecargoxCiudad")->findOneBy("ca_consecutivo", $consecutivo);
-            if ($recargo) {
-                //  echo $recargo->getCaConsecutivo();
-                $recargo->delete();
+            if ($this->getRequestParameter("vencimiento") !== null) {
+                if ($this->getRequestParameter("vencimiento")) {
+                    $recargo->setCaFchvencimiento($this->getRequestParameter("vencimiento"));
+                } else {
+                    $recargo->setCaFchvencimiento(null);
+                }
             }
+
+            if ($this->getRequestParameter("vlrrecargo") !== null) {
+                $recargo->setCaVlrrecargo($this->getRequestParameter("vlrrecargo"));
+            }
+
+            if ($this->getRequestParameter("vlrminimo") !== null) {
+                if ($this->getRequestParameter("vlrminimo")) {
+                    $recargo->setCaVlrminimo($this->getRequestParameter("vlrminimo"));
+                } else {
+                    $recargo->setCaVlrminimo(null);
+                }
+            }
+
+            if ($this->getRequestParameter("idmoneda")) {
+                $recargo->setCaIdmoneda($this->getRequestParameter("idmoneda"));
+            }
+
+            if ($this->getRequestParameter("aplicacion") !== null) {
+                $recargo->setCaAplicacion(utf8_decode($this->getRequestParameter("aplicacion")));
+            }
+
+            if ($this->getRequestParameter("aplicacion_min") !== null) {
+                $recargo->setCaAplicacionMin(utf8_decode($this->getRequestParameter("aplicacion_min")));
+            }
+
+            if ($this->getRequestParameter("observaciones") !== null) {
+                $recargo->setCaObservaciones(utf8_decode($this->getRequestParameter("observaciones")));
+            }
+
+            $recargo->save( $conn );
+            $id = $this->getRequestParameter("id");
+
+            if ($delete) {   //echo $consecutivo;
+                $recargo = Doctrine::getTable("PricRecargoxCiudad")->findOneBy("ca_consecutivo", $consecutivo);
+                if ($recargo) {
+                    //  echo $recargo->getCaConsecutivo();
+                    $recargo->delete( $conn );
+                }
+            }
+            $this->responseArray = array("id" => $id, "success" => true);
+
+            $conn->commit();
+        } catch (Exception $e) {
+            $conn->rollBack();
+            $this->responseArray = array("success" => false, "errorInfo" => utf8_encode($e->getMessage()));
         }
-        $this->responseArray = array("id" => $id, "success" => true);
+        $this->setTemplate("responseTemplate");
         $this->setTemplate("responseTemplate");
     }
 
@@ -1050,29 +1077,41 @@ class pricingActions extends sfActions {
      */
 
     public function executeEliminarPanelRecargosPorCiudad() {
-        $this->nivel = $this->getNivel();
+        
+        $conn = Doctrine::getTable("PricRecargoxCiudad")->getConnection();
+        $conn->beginTransaction();
+        try{
 
-        if ($this->nivel <= 0) {
-            $this->forward404();
-        }
-        $idtrafico = $this->getRequestParameter("idtrafico");
-        $idciudad = $this->getRequestParameter("idciudad");
-        $idrecargo = $this->getRequestParameter("idrecargo");
-        $modalidad = $this->getRequestParameter("modalidad");
-        $impoexpo = utf8_decode($this->getRequestParameter("impoexpo"));
-        $transporte = utf8_decode($this->getRequestParameter("transporte"));
-        $id = $this->getRequestParameter("id");
+            $this->nivel = $this->getNivel();
 
-        $this->forward404Unless($idtrafico);
-        $this->forward404Unless($idciudad);
-        $this->forward404Unless($modalidad);
-        $this->forward404Unless($impoexpo);
-        $recargo = Doctrine::getTable("PricRecargoxCiudad")->find(array($idtrafico, $idciudad, $idrecargo, $modalidad, $impoexpo, $transporte));
-        $this->responseArray = array("id" => $id, "success" => false);
+            if ($this->nivel <= 0) {
+                $this->forward404();
+            }
+            $idtrafico = $this->getRequestParameter("idtrafico");
+            $idciudad = $this->getRequestParameter("idciudad");
+            $idrecargo = $this->getRequestParameter("idrecargo");
+            $modalidad = $this->getRequestParameter("modalidad");
+            $impoexpo = utf8_decode($this->getRequestParameter("impoexpo"));
+            $transporte = utf8_decode($this->getRequestParameter("transporte"));
+            $id = $this->getRequestParameter("id");
 
-        if ($recargo) {
-            $recargo->delete();
-            $this->responseArray["success"] = true;
+            $this->forward404Unless($idtrafico);
+            $this->forward404Unless($idciudad);
+            $this->forward404Unless($modalidad);
+            $this->forward404Unless($impoexpo);
+            $recargo = Doctrine::getTable("PricRecargoxCiudad")->find(array($idtrafico, $idciudad, $idrecargo, $modalidad, $impoexpo, $transporte));
+            $this->responseArray = array("id" => $id, "success" => false);
+
+            if ($recargo) {
+                $recargo->delete( $conn );
+                $this->responseArray["success"] = true;
+            }else{
+                $this->responseArray = array("success" => false, "errorInfo" => "No se ha encontrado el recargo o ya se ha eliminado");
+            }
+            $conn->commit();
+        } catch (Exception $e) {
+            $conn->rollBack();
+            $this->responseArray = array("success" => false, "errorInfo" => utf8_encode($e->getMessage()));
         }
         $this->setTemplate("responseTemplate");
     }
@@ -1238,110 +1277,117 @@ class pricingActions extends sfActions {
      */
 
     public function executeGuardarPanelRecargosPorLinea() {
-
-        $this->nivel = $this->getNivel();
-        if ($this->nivel <= 0) {
-            $this->forward404();
-        }
-
-        $delete = false;
-        $consecutivo = $this->getRequestParameter("consecutivo");
-        $idtrafico = $this->getRequestParameter("idtrafico");
-        $idlinea = $this->getRequestParameter("idlinea");
-        $idrecargo = $this->getRequestParameter("idrecargo");
-        $idconcepto = $this->getRequestParameter("idconcepto");
-        $modalidad = $this->getRequestParameter("modalidad");
-        $impoexpo = $this->getRequestParameter("impoexpo");
-        $transporte = $this->getRequestParameter("transporte");
-        //echo $impoexpo;
-
-
-        if (!$idconcepto) {
-            $idconcepto = 9999;
-        }
-
-        $this->forward404Unless($idtrafico);
-        $this->forward404Unless($idlinea);
-        $this->forward404Unless($modalidad);
-        $this->forward404Unless($impoexpo);
-
-        $recargo = Doctrine::getTable("PricRecargoxLinea")->find(array($idtrafico, $idlinea, $idrecargo, $idconcepto, $modalidad, utf8_decode($impoexpo), utf8_decode($transporte)));
-        if (!$recargo) {
-
-            $recargo = new PricRecargoxLinea();
-            $recargo->setCaIdtrafico($idtrafico);
-            $recargo->setCaIdlinea($idlinea);
-            $recargo->setCaIdrecargo($idrecargo);
-            $recargo->setCaModalidad($modalidad);
-            $recargo->setCaTransporte(utf8_decode($transporte));
-            $recargo->setCaImpoexpo(utf8_decode($impoexpo));
-            $recargo->setCaVlrrecargo(0);
-//                        echo $consecutivo;
-            if ($consecutivo > 0)
-                $delete = true;
-        }
-        $user = $this->getUser();
-        $recargo->setCaUsucreado($user->getUserId());
-        $recargo->setCaFchcreado(date("Y-m-d H:i:s"));
-
-
-        if ($this->getRequestParameter("idconcepto")) {
-            $recargo->setCaIdconcepto($this->getRequestParameter("idconcepto"));
-        }
-
-        if ($this->getRequestParameter("inicio") !== null) {
-            if ($this->getRequestParameter("inicio")) {
-                $recargo->setCaFchinicio($this->getRequestParameter("inicio"));
-            } else {
-                $recargo->setCaFchinicio(null);
+        $conn = Doctrine::getTable("PricRecargoxCiudad")->getConnection();
+        $conn->beginTransaction();
+        try{
+            $this->nivel = $this->getNivel();
+            if ($this->nivel <= 0) {
+                $this->forward404();
             }
-        }
-        if ($this->getRequestParameter("vencimiento") !== null) {
-            if ($this->getRequestParameter("vencimiento")) {
-                $recargo->setCaFchvencimiento($this->getRequestParameter("vencimiento"));
-            } else {
-                $recargo->setCaFchvencimiento(null);
+
+            $delete = false;
+            $consecutivo = $this->getRequestParameter("consecutivo");
+            $idtrafico = $this->getRequestParameter("idtrafico");
+            $idlinea = $this->getRequestParameter("idlinea");
+            $idrecargo = $this->getRequestParameter("idrecargo");
+            $idconcepto = $this->getRequestParameter("idconcepto");
+            $modalidad = $this->getRequestParameter("modalidad");
+            $impoexpo = $this->getRequestParameter("impoexpo");
+            $transporte = $this->getRequestParameter("transporte");
+            //echo $impoexpo;
+
+
+            if (!$idconcepto) {
+                $idconcepto = 9999;
             }
-        }
-        if ($this->getRequestParameter("vlrrecargo") !== null) {
-            $recargo->setCaVlrrecargo($this->getRequestParameter("vlrrecargo"));
-        }
 
-        if ($this->getRequestParameter("vlrminimo") !== null) {
-            if ($this->getRequestParameter("vlrminimo")) {
-                $recargo->setCaVlrminimo($this->getRequestParameter("vlrminimo"));
-            } else {
-                $recargo->setCaVlrminimo(null);
+            $this->forward404Unless($idtrafico);
+            $this->forward404Unless($idlinea);
+            $this->forward404Unless($modalidad);
+            $this->forward404Unless($impoexpo);
+
+            $recargo = Doctrine::getTable("PricRecargoxLinea")->find(array($idtrafico, $idlinea, $idrecargo, $idconcepto, $modalidad, utf8_decode($impoexpo), utf8_decode($transporte)));
+            if (!$recargo) {
+
+                $recargo = new PricRecargoxLinea();
+                $recargo->setCaIdtrafico($idtrafico);
+                $recargo->setCaIdlinea($idlinea);
+                $recargo->setCaIdrecargo($idrecargo);
+                $recargo->setCaModalidad($modalidad);
+                $recargo->setCaTransporte(utf8_decode($transporte));
+                $recargo->setCaImpoexpo(utf8_decode($impoexpo));
+                $recargo->setCaVlrrecargo(0);
+    //                        echo $consecutivo;
+                if ($consecutivo > 0)
+                    $delete = true;
             }
-        }
+            $user = $this->getUser();
+            $recargo->setCaUsucreado($user->getUserId());
+            $recargo->setCaFchcreado(date("Y-m-d H:i:s"));
 
-        if ($this->getRequestParameter("idmoneda")) {
-            $recargo->setCaIdmoneda($this->getRequestParameter("idmoneda"));
-        }
 
-        if ($this->getRequestParameter("aplicacion") !== null) {
-            $recargo->setCaAplicacion(utf8_decode($this->getRequestParameter("aplicacion")));
-        }
-
-        if ($this->getRequestParameter("aplicacion_min") !== null) {
-            $recargo->setCaAplicacionMin(utf8_decode($this->getRequestParameter("aplicacion_min")));
-        }
-
-        if ($this->getRequestParameter("observaciones") !== null) {
-            $recargo->setCaObservaciones(utf8_decode($this->getRequestParameter("observaciones")));
-        }
-
-        $recargo->save();
-        $id = $this->getRequestParameter("id");
-
-        if ($delete) {   //echo $consecutivo;
-            $recargo = Doctrine::getTable("PricRecargoxLinea")->findOneBy("ca_consecutivo", $consecutivo);
-            if ($recargo) {
-                //  echo $recargo->getCaConsecutivo();
-                $recargo->delete();
+            if ($this->getRequestParameter("idconcepto")) {
+                $recargo->setCaIdconcepto($this->getRequestParameter("idconcepto"));
             }
+
+            if ($this->getRequestParameter("inicio") !== null) {
+                if ($this->getRequestParameter("inicio")) {
+                    $recargo->setCaFchinicio($this->getRequestParameter("inicio"));
+                } else {
+                    $recargo->setCaFchinicio(null);
+                }
+            }
+            if ($this->getRequestParameter("vencimiento") !== null) {
+                if ($this->getRequestParameter("vencimiento")) {
+                    $recargo->setCaFchvencimiento($this->getRequestParameter("vencimiento"));
+                } else {
+                    $recargo->setCaFchvencimiento(null);
+                }
+            }
+            if ($this->getRequestParameter("vlrrecargo") !== null) {
+                $recargo->setCaVlrrecargo($this->getRequestParameter("vlrrecargo"));
+            }
+
+            if ($this->getRequestParameter("vlrminimo") !== null) {
+                if ($this->getRequestParameter("vlrminimo")) {
+                    $recargo->setCaVlrminimo($this->getRequestParameter("vlrminimo"));
+                } else {
+                    $recargo->setCaVlrminimo(null);
+                }
+            }
+
+            if ($this->getRequestParameter("idmoneda")) {
+                $recargo->setCaIdmoneda($this->getRequestParameter("idmoneda"));
+            }
+
+            if ($this->getRequestParameter("aplicacion") !== null) {
+                $recargo->setCaAplicacion(utf8_decode($this->getRequestParameter("aplicacion")));
+            }
+
+            if ($this->getRequestParameter("aplicacion_min") !== null) {
+                $recargo->setCaAplicacionMin(utf8_decode($this->getRequestParameter("aplicacion_min")));
+            }
+
+            if ($this->getRequestParameter("observaciones") !== null) {
+                $recargo->setCaObservaciones(utf8_decode($this->getRequestParameter("observaciones")));
+            }
+
+            $recargo->save( $conn );
+            $id = $this->getRequestParameter("id");
+
+            if ($delete) {   //echo $consecutivo;
+                $recargo = Doctrine::getTable("PricRecargoxLinea")->findOneBy("ca_consecutivo", $consecutivo);
+                if ($recargo) {
+                    //  echo $recargo->getCaConsecutivo();
+                    $recargo->delete( $conn );
+                }
+            }
+            $this->responseArray = array("id" => $id, "success" => true);
+            $conn->commit();
+        } catch (Exception $e) {
+            $conn->rollBack();
+            $this->responseArray = array("success" => false, "errorInfo" => utf8_encode($e->getMessage()));
         }
-        $this->responseArray = array("id" => $id, "success" => true);
         $this->setTemplate("responseTemplate");
     }
 
@@ -1351,35 +1397,45 @@ class pricingActions extends sfActions {
      */
 
     public function executeEliminarPanelRecargosPorLinea() {
-        $this->nivel = $this->getNivel();
+        $conn = Doctrine::getTable("PricRecargoxCiudad")->getConnection();
+        $conn->beginTransaction();
+        try{
+            $this->nivel = $this->getNivel();
 
-        if ($this->nivel <= 0) {
-            $this->forward404();
-        }
+            if ($this->nivel <= 0) {
+                $this->forward404();
+            }
 
-        $idtrafico = $this->getRequestParameter("idtrafico");
-        $idlinea = $this->getRequestParameter("idlinea");
-        $idrecargo = $this->getRequestParameter("idrecargo");
-        $idconcepto = $this->getRequestParameter("idconcepto");
-        $modalidad = $this->getRequestParameter("modalidad");
-        $impoexpo = utf8_decode($this->getRequestParameter("impoexpo"));
-        $transporte = utf8_decode($this->getRequestParameter("transporte"));
+            $idtrafico = $this->getRequestParameter("idtrafico");
+            $idlinea = $this->getRequestParameter("idlinea");
+            $idrecargo = $this->getRequestParameter("idrecargo");
+            $idconcepto = $this->getRequestParameter("idconcepto");
+            $modalidad = $this->getRequestParameter("modalidad");
+            $impoexpo = utf8_decode($this->getRequestParameter("impoexpo"));
+            $transporte = utf8_decode($this->getRequestParameter("transporte"));
 
-        if (!$idconcepto) {
-            $idconcepto = 9999;
-        }
+            if (!$idconcepto) {
+                $idconcepto = 9999;
+            }
 
-        $this->forward404Unless($idtrafico);
-        $this->forward404Unless($idlinea);
-        $this->forward404Unless($modalidad);
-        $this->forward404Unless($impoexpo);
-        $id = $this->getRequestParameter("id");
-        $this->responseArray = array("id" => $id, "success" => true);
-        $recargo = Doctrine::getTable("PricRecargoxLinea")->find(array($idtrafico, $idlinea, $idrecargo, $idconcepto, $modalidad, $impoexpo, $transporte));
+            $this->forward404Unless($idtrafico);
+            $this->forward404Unless($idlinea);
+            $this->forward404Unless($modalidad);
+            $this->forward404Unless($impoexpo);
+            $id = $this->getRequestParameter("id");
+            $this->responseArray = array("id" => $id, "success" => true);
+            $recargo = Doctrine::getTable("PricRecargoxLinea")->find(array($idtrafico, $idlinea, $idrecargo, $idconcepto, $modalidad, $impoexpo, $transporte));
 
-        if ($recargo) {
-            $recargo->delete();
-            $this->responseArray["success"] = true;
+            if ($recargo) {
+                $recargo->delete( $conn );
+                $this->responseArray["success"] = true;
+            }else{
+                $this->responseArray = array("success" => false, "errorInfo" => "No se ha encontrado el recargo o ya se ha eliminado");
+            }
+            $conn->commit();
+        } catch (Exception $e) {
+            $conn->rollBack();
+            $this->responseArray = array("success" => false, "errorInfo" => utf8_encode($e->getMessage()));
         }
         $this->setTemplate("responseTemplate");
     }
@@ -1414,7 +1470,7 @@ class pricingActions extends sfActions {
         $q->fetchArray();
         $lineas = $q->execute();
         $q = Doctrine_Query::create()
-                        ->select("p.ca_idproveedor, id.ca_nombre")
+                        ->select("p.ca_idproveedor, id.ca_nombre, p.ca_sigla")
                         ->from("IdsProveedor p")
                         ->innerJoin("p.Trayecto t")
                         ->innerJoin("p.Ids id")
@@ -1438,7 +1494,7 @@ class pricingActions extends sfActions {
         $this->lineas = array();
         foreach ($lineas as $linea) {
             $this->lineas[] = array("idlinea" => $linea['p_ca_idproveedor'],
-                "linea" => utf8_encode($linea['id_ca_nombre']),
+                "linea" => utf8_encode($linea['p_ca_sigla']?$linea['p_ca_sigla']:$linea['id_ca_nombre']),
                 "transporte" => utf8_encode($transporte),
             );
         }
