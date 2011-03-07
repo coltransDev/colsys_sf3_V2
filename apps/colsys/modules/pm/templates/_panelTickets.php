@@ -92,11 +92,14 @@ PanelTickets = function( config ){
 
     this.summary = new Ext.ux.grid.GroupSummary();
 
-    this.checkColumn = new Ext.grid.CheckColumn({header:' ', dataIndex:'sel', width:30, hideable: false});
+    this.starColumn = new Ext.grid.StarColumn({header:' ', dataIndex:'starred', width:30, hideable: false});
+
+
+    this.starColumn.onChange = this.onChangeStar;
 
     this.columns = [
       //this.expander,
-      this.checkColumn,
+      this.starColumn,
       {
         header: "Ticket #",
         dataIndex: 'idticket',
@@ -229,6 +232,7 @@ PanelTickets = function( config ){
             {name: 'folder', type: 'string'},
             {name: 'contact', type: 'string'},
             {name: 'readOnly', type: 'bool'},
+            {name: 'starred', type: 'bool', mapping: 'h_ca_starred'},
             {name: 'loginName', type: 'string', mapping: 'u_ca_nombre'}
             
     ]);
@@ -268,7 +272,7 @@ PanelTickets = function( config ){
        plugins: [
                     this.expander,
                     this.filters,
-                    this.checkColumn,
+                    this.starColumn,
                     this.summary
                 ],
        view: new Ext.grid.GroupingView({
@@ -283,7 +287,8 @@ PanelTickets = function( config ){
        }),
        listeners:{            
             rowcontextmenu: this.onRowcontextMenu,
-            rowdblclick : this.onRowDblclick
+            rowdblclick : this.onRowDblclick,
+            validateedit: this.onValidateEdit
        }
        
     });
@@ -291,7 +296,7 @@ PanelTickets = function( config ){
 
 };
 
-Ext.extend(PanelTickets, Ext.grid.GridPanel, {
+Ext.extend(PanelTickets, Ext.grid.EditorGridPanel, {
 
     crearTicket: function(){
         this.win = new EditarTicketWindow();
@@ -299,11 +304,11 @@ Ext.extend(PanelTickets, Ext.grid.GridPanel, {
     },
     recargar: function(){
 
-        if(this.store.getModifiedRecords().length>0){
+        /*if(this.store.getModifiedRecords().length>0){
             if(!confirm("Se perderan los cambios no guardados en los recargos locales unicamente, desea continuar?")){
                 return 0;
             }
-        }
+        }*/
         this.store.reload();
     },
     roadmap: function(){
@@ -457,8 +462,9 @@ Ext.extend(PanelTickets, Ext.grid.GridPanel, {
                                         });
             win.show();
 		}
-	}
-    ,
+	},
+
+    
     getRowClass : function(record, rowIndex, p, ds){
         p.cols = p.cols-1;
 
@@ -582,6 +588,37 @@ Ext.extend(PanelTickets, Ext.grid.GridPanel, {
 
             
         }
+    },
+
+    onValidateEdit: function(e){
+        alert( e.field );
+        if( e.field == "starred"){
+            alert("OK");
+
+        }
+    },
+
+    onChangeStar: function( e, t, r ){
+          
+        var status = r.get("starred");        
+        
+        Ext.Ajax.request(
+        {
+            waitMsg: '...',
+            url: '<?=url_for("pm/starTicket")?>',
+            method: 'POST',
+            //Solamente se envian los cambios
+            params :	{
+                idticket: r.data.idticket,
+                status: status
+            },
+
+            callback :function(options, success, response){
+                
+               
+            }
+         }
+    );
     }
 
 });

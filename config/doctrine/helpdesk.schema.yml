@@ -67,6 +67,7 @@ HdeskTicket:
     ca_idmilestone: integer
     ca_percentage: integer
     ca_idevaluacion: integer
+    ca_starred: boolean
   relations:    
     HdeskGroup:
       local: ca_idgroup
@@ -83,6 +84,10 @@ HdeskTicket:
     HdeskTicketUser:
       local: ca_idticket
       foreign: ca_idticket
+      type: many
+    HdeskUserGroup:
+      local: ca_login
+      foreign: ca_login
       type: many
     HdeskMilestone:
       local: ca_idmilestone

@@ -40,6 +40,7 @@ class pmActions extends sfActions {
         $response->addJavaScript("extExtras/RowExpander", 'last');
         $response->addJavaScript("extExtras/SliderTip", 'last');
         $response->addStylesheet("extExtras/slider", 'last');
+        $response->addJavaScript("extExtras/StarColumn", 'last');
 
         $this->idticket = $request->getParameter("idticket");
     }
@@ -58,7 +59,7 @@ class pmActions extends sfActions {
         $this->forward404Unless($request->getParameter("idgroup") || $request->getParameter("idproject") || $request->getParameter("option") );
 
         $q = Doctrine_Query::create()
-            ->select("h.*, g.ca_name, u.ca_nombre, u.ca_extension, s.ca_nombre, m.ca_due, m.ca_title, p.ca_name, tar.ca_fchterminada, tar.ca_fchvencimiento, (SELECT MAX(rr.ca_createdat) FROM HdeskResponse rr WHERE rr.ca_idticket = h.ca_idticket ) as ultseg")
+            ->select("h.ca_starred, h.*, g.ca_name, u.ca_nombre, u.ca_extension, s.ca_nombre, m.ca_due, m.ca_title, p.ca_name, tar.ca_fchterminada, tar.ca_fchvencimiento, (SELECT MAX(rr.ca_createdat) FROM HdeskResponse rr WHERE rr.ca_idticket = h.ca_idticket ) as ultseg")
             ->from('HdeskTicket h');
         $q->innerJoin("h.HdeskGroup g");
         $q->leftJoin("h.HdeskTicketUser hu  ");
@@ -118,7 +119,7 @@ class pmActions extends sfActions {
         $q->addOrderBy("h.ca_idproject ASC");
         $q->addOrderBy("h.ca_action ASC");
         $q->addOrderBy("h.ca_opened ASC");
-
+        
         /*
          * Aplica restricciones de acuerdo al nivel de acceso.
          */
@@ -261,6 +262,35 @@ class pmActions extends sfActions {
         $this->user = $this->getuser();
         
     }
+
+
+    /**
+     * Coloca una estrella al ticket
+     *
+     * @param sfRequest $request A request object
+     */
+    public function executeStarTicket(sfWebRequest $request) {
+        $conn = Doctrine::getTable("HdeskResponse")->getConnection();
+        $conn->beginTransaction();
+        try{
+            $this->nivel = $this->getNivel();
+            $idticket = $request->getParameter("idticket");
+            $this->forward404Unless($this->nivel>0);
+            $ticket = HdeskTicketTable::retrieveIdTicket($idticket, $this->nivel);
+            $this->forward404Unless($ticket);
+
+            $status = $request->getParameter("status");            
+            $ticket->setCaStarred($status);
+            $ticket->save( $conn );
+            $this->responseArray = array("success" => true, "idticket" => $idticket);
+            $conn->commit();
+        }catch(Exception $e){
+            $conn->rollback();
+            $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
+        }
+        $this->setTemplate("responseTemplate");
+    }
+
 
     /**
      * Guarda un seguimiento a un ticket
