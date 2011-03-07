@@ -658,16 +658,19 @@ class traficosActions extends sfActions
                         $tarea->save( $conn );
                     }
                 }
-            }
-
-           
+            }           
             //Tarea de envio de antecedentes
-            $valido=Utils::compararFechas(date("Y-m-d") , "2011-02-28");
-            if( $valido>0 && ( $reporte->getCaIdetapa()=="IMETA" || $reporte->getCaIdetapa()=="IMCMT") )
+            //$valido=Utils::compararFechas(date("Y-m-d") , "2011-02-28");
+            if(  ( $reporte->getCaIdetapa()=="IMETA" || $reporte->getCaIdetapa()=="IMCMT") )
             { //En cualquiera de estas dos etapas se crea la tarea según los usuarios.
                 if( $reporte->getCaIdtareaAntecedente() ){
                     $tarea = Doctrine::getTable("NotTarea")->find( $reporte->getCaIdtareaAntecedente() );
-                    $this->forward404Unless($tarea );
+                    if(!$tarea)
+                    {
+                        $tarea = new NotTarea();
+                        $tarea->setCaIdlistatarea( 8 );
+                    }
+                    //$this->forward404Unless($tarea );
                 }else{
                     $tarea = new NotTarea();
                     $tarea->setCaIdlistatarea( 8 );
@@ -682,11 +685,13 @@ class traficosActions extends sfActions
                 {
                     $numdias=$parametros[0]->getCaValor2();
                 }
-
-                $tarea->setCaUrl( "/antecedentes/verPlanilla/reporte/".$reporte->getCaConsecutivo() );
+                $tarea->setCaUrl( "/antecedentes/buscarReferencia/reporte/".$reporte->getCaConsecutivo() );
                 $tarea->setCaFchvisible( date("Y-m-d H:i:s") );
-                $tarea->setCaFchvencimiento( date("Y-m-d H:i:s", time()+86400*$numdias) );
+
+                $fechaEta= Utils::addDays($request->getParameter("fchsalida"), $numdias);
                 
+                $tarea->setCaFchvencimiento( date("Y-m-d H:i:s", strtotime(date($fechaEta." ".date("H:i:s"))) ) );
+
                 $tarea->setCaTitulo( $titulo );
                 $texto = "Debe entregar los antecedentes dentro de los proximos $numdias dias";//[TODO] Colocar un texto mas descriptivo
                 $tarea->setCaTexto( $texto );
