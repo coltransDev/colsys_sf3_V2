@@ -324,8 +324,19 @@ class RepStatus extends BaseRepStatus
 		$email->save( $conn );
 		$this->setCaIdemail( $email->getCaIdemail() );
 		$this->save( $conn );
-
 		//$email->send();
+	}
+
+    public static function retrieveByHbl( $hbl ){
+
+        $hbl = Doctrine::getTable("RepStatus")
+                            ->createQuery("s")
+                            ->where("s.ca_doctransporte = ?", $hbl )
+                            ->addOrderBy("s.ca_idstatus DESC")
+                            ->limit(1)
+                            ->fetchOne();
+
+		return $hbl;
 
 	}
 }

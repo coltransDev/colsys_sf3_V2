@@ -968,6 +968,13 @@ class Reporte extends BaseReporte {
                 $reporte->setCaVersion($this->numVersiones() + 1);                
             }
 
+/*            if($request->getParameter("continuacion")== "OTM")
+            {
+                $reporte->setCaIdconsignatario($request->getParameter("consig"));
+                if($request->getParameter("continuacion")== "OTM")
+                    $reporte->setCaIdconsignar(1);
+            }
+*/
             $reporte->setCaDetanulado(null);
             $reporte->setCaFchcreado(null);
             $reporte->setCaUsucreado(null);
@@ -1218,13 +1225,21 @@ class Reporte extends BaseReporte {
 
     public function getTerceroBodega() {
 
-        $con = Doctrine_Manager::getInstance()->connection();
-        //echo $this->getCaConsecutivo();
-        $sql="select b.ca_idbodega from tb_terceros t
-        inner join tb_bodegas b on t.ca_identificacion = fun_getnit_bodega_tercero(b.ca_nombre)
-        where ca_idtercero=".$this->getCaIdconsignatario();
-        $st = $con->execute($sql);
-		$bodega = $st->fetchColumn(0);
+        if($this->getCaIdconsignatario()>0)
+        {
+            $con = Doctrine_Manager::getInstance()->connection();
+            //echo $this->getCaConsecutivo();
+            $sql="select b.ca_idbodega from tb_terceros t
+            inner join tb_bodegas b on t.ca_identificacion = fun_getnit_bodega_tercero(b.ca_nombre)
+            where ca_idtercero=".$this->getCaIdconsignatario();
+            $st = $con->execute($sql);
+            $bodega = $st->fetchColumn(0);
+        }
+        else
+        {
+            $bodega=0;
+        }
+
         return $bodega;
     }
 
