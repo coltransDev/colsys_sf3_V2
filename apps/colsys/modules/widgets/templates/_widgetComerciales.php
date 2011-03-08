@@ -43,45 +43,6 @@ WidgetComerciales = function( config ){
 };
 
 Ext.extend(WidgetComerciales, Ext.form.ComboBox, {
-	getTrigger : Ext.form.TwinTriggerField.prototype.getTrigger,
-    initTrigger : Ext.form.TwinTriggerField.prototype.initTrigger,
-    trigger1Class : 'x-form-clear-trigger',    
-    trigger2Class : 'x-form-select-trigger',
-    hideTrigger1 : true,    
-
-    initComponent : function() {
-        WidgetComerciales.superclass.initComponent.call(this);
-
-        this.triggerConfig = {
-			tag : 'span',
-			cls : 'x-form-twin-triggers',
-			cn : [{
-				tag : 'img',
-				src : Ext.BLANK_IMAGE_URL,
-				cls : 'x-form-trigger ' + this.trigger1Class
-			},
-			{
-				tag : 'img',
-				src : Ext.BLANK_IMAGE_URL,
-				cls : 'x-form-trigger ' + this.trigger2Class
-			}]
-		};
-	},
-	reset : Ext.form.Field.prototype.reset.createSequence(function() {
-		this.triggers[0].hide();
-	}),
-
-	onViewClick : Ext.form.ComboBox.prototype.onViewClick.createSequence(function() {
-		this.triggers[0].show();
-	}),
-	onTrigger1Click : function(a,b,c) {
-		this.clearValue();
-		this.triggers[0].hide();
-		this.fireEvent('clear', this);
-		this.fireEvent('select', this);
-	},	
-	onTrigger2Click : function() {
-		this.onTriggerClick();
-	}
+	
 });
 </script>
