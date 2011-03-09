@@ -55,7 +55,7 @@ SubPanel = function(){
                                             });
 
 
-    MainPanel.superclass.constructor.call(this, {
+    SubPanel.superclass.constructor.call(this, {
         labelAlign: 'top',
         bodyStyle:'padding:1px',
         id: 'subpanel-cotizaciones',
