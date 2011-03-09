@@ -412,7 +412,7 @@ require_once("menu.php");
 				echo "<script>document.location.href = 'clientes.php';</script>";
 				exit; }
 		   echo "<TR>";
-		   echo "<TD Class=titulo style='vertical-align: top;'>".number_format($rs->Value('ca_idcliente'))."-".$rs->Value('ca_digito')."</TD>";
+		   echo "<TD Class=titulo style='vertical-align: top;'>".number_format($rs->Value('ca_idalterno')?$rs->Value('ca_idalterno'):$rs->Value('ca_idcliente'))."-".$rs->Value('ca_digito')."</TD>";
 		   echo "<TD Class=titulo COLSPAN=4 style='font-size: 12px; font-weight:bold; text-align:left;'>".$rs->Value('ca_compania')."</TD>";
 		   echo "  <TD Class=titulo style='vertical-align: top; text-align: center;'>";                                            // Botones para hacer Mantenimiento a la Tabla
 		   echo "    <IMG style='visibility: $visible;' src='./graficos/edit.gif' alt='Editar el Registro' border=0 onclick='elegir(\"Modificar\", ".$rs->Value('ca_idcliente').");'>";
@@ -795,11 +795,13 @@ require_once("menu.php");
              echo "<HEAD>";
              echo "<TITLE>Tabla de Contactos por Cliente</TITLE>";
              echo "<script language='JavaScript' type='text/JavaScript'>";     // Código en JavaScript para validar las opciones de mantenimiento
-             echo "function validar(){";
+             echo "function validar(){";             
              echo "  if (document.adicionar.id.value == 0)";
              echo "      alert('El campo Identificación no es válido');";
-             echo "  else if (document.adicionar.digito.value == '' && d_verificacion())";
-             echo "      alert('El campo Digito de Verificación no es válido');";
+             if( $regional!="PE-051" ){
+                 echo "  else if (document.adicionar.digito.value == '' && d_verificacion())";
+                 echo "      alert('El campo Digito de Verificación no es válido');";
+             }
              echo "  else if (document.adicionar.compania.value == '')";
              echo "      alert('El campo Compañia no es válido');";
              echo "  else if (document.adicionar.nombres.value == '')";
@@ -915,8 +917,11 @@ require_once("menu.php");
                  echo "</TR>";
                  echo "<TR>";
                  echo "  <TD Class=captura>N.i.t.:</TD>";
-                 echo "  <TD Class=mostrar COLSPAN=2><INPUT TYPE='TEXT' NAME='id' VALUE='".$po->Value('ca_idcliente')."' SIZE=13 MAXLENGTH=11 ONBLUR='validacion(\"validcliente\",this);'>-<INPUT TYPE='TEXT' NAME='digito' SIZE=2 MAXLENGTH=1 ONBLUR='verificar();'></TD>";
-                 echo "  <script>document.adicionar.digito.value = d_verificacion(document.adicionar.id.value);</script>";
+                 echo "  <TD Class=mostrar COLSPAN=2><INPUT TYPE='TEXT' NAME='id' VALUE='".$po->Value('ca_idcliente')."' SIZE=13 MAXLENGTH=11 ONBLUR='validacion(\"validcliente\",this);'>";
+                 if( $regional!="PE-051" ){
+                    echo "-<INPUT TYPE='TEXT' NAME='digito' SIZE=2 MAXLENGTH=1 ONBLUR='verificar();'></TD>";
+                    echo "  <script>document.adicionar.digito.value = d_verificacion(document.adicionar.id.value);</script>";
+                 }                 
                  echo "</TR>";
                  echo "<TR>";
                  echo "  <TD Class=captura>Compañia:</TD>";
@@ -924,8 +929,15 @@ require_once("menu.php");
                  echo "</TR>"; } 
              else {
                  echo "<TR>";
-                 echo "  <TD Class=captura>N.i.t.:</TD>";
-                 echo "  <TD Class=mostrar COLSPAN=2><INPUT TYPE='TEXT' NAME='id' SIZE=13 MAXLENGTH=11 ONBLUR='validacion(\"validcliente\",this);'>-<INPUT TYPE='TEXT' NAME='digito' SIZE=2 MAXLENGTH=1 ONBLUR='verificar();'></TD>";
+                 if( $regional!="PE-051" ){
+                    echo "  <TD Class=captura>N.i.t.:</TD>";
+                 }else{
+                    echo "  <TD Class=captura>RUC:</TD>";
+                 }
+                 echo "  <TD Class=mostrar COLSPAN=2><INPUT TYPE='TEXT' NAME='id' SIZE=13 MAXLENGTH=11 ONBLUR='validacion(\"validcliente\",this);'>";
+                 if( $regional!="PE-051" ){
+                    echo "-<INPUT TYPE='TEXT' NAME='digito' SIZE=2 MAXLENGTH=1 ONBLUR='verificar();'></TD>";
+                 }
                  echo "</TR>";
                  echo "<TR>";
                  echo "  <TD Class=captura>Compañia:</TD>";
@@ -960,86 +972,94 @@ require_once("menu.php");
                   }
              echo "  </SELECT></TD>";
              echo "</TR>";
-             echo "<TR>";
-             echo "  <TD Class=captura>Dirección:</TD>";
-             echo "  <TD Class=mostrar COLSPAN=2><INPUT TYPE='TEXT' NAME='dircompleta' SIZE=66 MAXLENGTH=66 READONLY></TD>";
-             echo "</TR>";
-             echo "<TR>";
-             echo "  <TD Class=captura style='vertical-align: top;' ROWSPAN=6><SELECT NAME='direccion[]' ONCHANGE='completar(adicionar.elements[\"direccion[]\"]);'>";
-             for ($i=0; $i < count($parte_1); $i++) {
-                  echo " <OPTION VALUE='".$parte_1[$i]."'>".$parte_1[$i];
-                  }
-             echo "  </SELECT>";
-             echo "  <INPUT TYPE='TEXT' NAME='direccion[]' SIZE=3 MAXLENGTH=15 ONCHANGE='completar(adicionar.elements[\"direccion[]\"]);'>";
-             echo "  <TD Class=mostrar COLSPAN=2><SELECT NAME='direccion[]' ONCHANGE='completar(adicionar.elements[\"direccion[]\"]);'>";
-             for ($i=0; $i < count($letras); $i++) {
-                  echo " <OPTION VALUE='".$letras[$i]."'>".$letras[$i];
-                  }
-             echo "  </SELECT>";
-             echo "  <SELECT NAME='direccion[]' ONCHANGE='completar(adicionar.elements[\"direccion[]\"]);'>";
-             for ($i=0; $i < count($parte_2); $i++) {
-                  echo " <OPTION VALUE='".$parte_2[$i]."'>".$parte_2[$i];
-                  }
-             echo "  </SELECT>";
-             echo "  <SELECT NAME='direccion[]' ONCHANGE='completar(adicionar.elements[\"direccion[]\"]);'>";
-             for ($i=0; $i < count($numero); $i++) {
-                  echo " <OPTION VALUE='".$numero[$i]."'>".$numero[$i];
-                  }
-             echo "  </SELECT>";
-             echo "  <INPUT TYPE='TEXT' NAME='direccion[]' SIZE=2 MAXLENGTH=3 ONCHANGE='completar(adicionar.elements[\"direccion[]\"]);'>";
-             echo "  <SELECT NAME='direccion[]' ONCHANGE='completar(adicionar.elements[\"direccion[]\"]);'>";
-             for ($i=0; $i < count($letras); $i++) {
-                  echo " <OPTION VALUE='".$letras[$i]."'>".$letras[$i];
-                  }
-             echo "  </SELECT>";
-             echo "  <SELECT NAME='direccion[]' ONCHANGE='completar(adicionar.elements[\"direccion[]\"]);'>";
-             for ($i=0; $i < count($parte_2); $i++) {
-                  echo " <OPTION VALUE='".$parte_2[$i]."'>".$parte_2[$i];
-                  }
-             echo "  </SELECT>";
-             echo "  -";
-             echo "  <INPUT TYPE='TEXT' NAME='direccion[]' SIZE=2 MAXLENGTH=3 ONCHANGE='completar(adicionar.elements[\"direccion[]\"]);'>";
-             echo "  <SELECT NAME='direccion[]' ONCHANGE='completar(adicionar.elements[\"direccion[]\"]);'>";
-             for ($i=0; $i < count($parte_3); $i++) {
-                  echo " <OPTION VALUE='".$parte_3[$i]."'>".$parte_3[$i];
-                  }
-             echo "  </SELECT>";
-             echo "  </TD>";
-             echo "</TR>";
-             echo "<TR>";
-             echo "  <TD Class=mostrar>Oficina:</TD>";
-             echo "  <TD Class=mostrar><INPUT TYPE='TEXT' NAME='oficina' SIZE=15 MAXLENGTH=16 ONCHANGE='completar(adicionar.elements[\"direccion[]\"]);'></TD>";
-             echo "</TR>";
-             echo "<TR>";
-             echo "  <TD Class=mostrar>Torre:</TD>";
-             echo "  <TD Class=mostrar><INPUT TYPE='TEXT' NAME='torre' SIZE=15 MAXLENGTH=16 ONCHANGE='completar(adicionar.elements[\"direccion[]\"]);'></TD>";
-             echo "</TR>";
-             echo "<TR>";
-             echo "  <TD Class=mostrar>Bloque:</TD>";
-             echo "  <TD Class=mostrar><INPUT TYPE='TEXT' NAME='bloque' SIZE=15 MAXLENGTH=16 ONCHANGE='completar(adicionar.elements[\"direccion[]\"]);'></TD>";
-             echo "</TR>";
-             echo "<TR>";
-             echo "  <TD Class=mostrar>Interior:</TD>";
-             echo "  <TD Class=mostrar><INPUT TYPE='TEXT' NAME='interior' SIZE=15 MAXLENGTH=16 ONCHANGE='completar(adicionar.elements[\"direccion[]\"]);'></TD>";
-             echo "</TR>";
-             echo "<TR>";
-             echo "  <TD Class=mostrar>Complemento:</TD>";
-             echo "  <TD Class=mostrar><INPUT TYPE='TEXT' NAME='complemento' SIZE=47 MAXLENGTH=50 ONCHANGE='completar(adicionar.elements[\"direccion[]\"]);'></TD>";
-             echo "</TR>";
-             echo "<TR>";
-             echo "  <TD Class=captura>Localidad:</TD>";
-             echo "  <TD Class=mostrar COLSPAN=2><SELECT NAME='localidad'>";
-             foreach($localidades as $key => $grupo){
-                 echo "<OPTGROUP LABEL=$key>";
-                 foreach($grupo as $localidad){
-                    echo " <OPTION VALUE='".$localidad."'>".$localidad;
+             if( $regional!="PE-051" ){
+                 echo "<TR>";
+                 echo "  <TD Class=captura>Dirección:</TD>";
+                 echo "  <TD Class=mostrar COLSPAN=2><INPUT TYPE='TEXT' NAME='dircompleta' SIZE=66 MAXLENGTH=66 READONLY></TD>";
+                 echo "</TR>";
+                 echo "<TR>";
+                 echo "  <TD Class=captura style='vertical-align: top;' ROWSPAN=6><SELECT NAME='direccion[]' ONCHANGE='completar(adicionar.elements[\"direccion[]\"]);'>";
+                 for ($i=0; $i < count($parte_1); $i++) {
+                      echo " <OPTION VALUE='".$parte_1[$i]."'>".$parte_1[$i];
+                      }
+                 echo "  </SELECT>";
+                 echo "  <INPUT TYPE='TEXT' NAME='direccion[]' SIZE=3 MAXLENGTH=15 ONCHANGE='completar(adicionar.elements[\"direccion[]\"]);'>";
+                 echo "  <TD Class=mostrar COLSPAN=2><SELECT NAME='direccion[]' ONCHANGE='completar(adicionar.elements[\"direccion[]\"]);'>";
+                 for ($i=0; $i < count($letras); $i++) {
+                      echo " <OPTION VALUE='".$letras[$i]."'>".$letras[$i];
+                      }
+                 echo "  </SELECT>";
+                 echo "  <SELECT NAME='direccion[]' ONCHANGE='completar(adicionar.elements[\"direccion[]\"]);'>";
+                 for ($i=0; $i < count($parte_2); $i++) {
+                      echo " <OPTION VALUE='".$parte_2[$i]."'>".$parte_2[$i];
+                      }
+                 echo "  </SELECT>";
+                 echo "  <SELECT NAME='direccion[]' ONCHANGE='completar(adicionar.elements[\"direccion[]\"]);'>";
+                 for ($i=0; $i < count($numero); $i++) {
+                      echo " <OPTION VALUE='".$numero[$i]."'>".$numero[$i];
+                      }
+                 echo "  </SELECT>";
+                 echo "  <INPUT TYPE='TEXT' NAME='direccion[]' SIZE=2 MAXLENGTH=3 ONCHANGE='completar(adicionar.elements[\"direccion[]\"]);'>";
+                 echo "  <SELECT NAME='direccion[]' ONCHANGE='completar(adicionar.elements[\"direccion[]\"]);'>";
+                 for ($i=0; $i < count($letras); $i++) {
+                      echo " <OPTION VALUE='".$letras[$i]."'>".$letras[$i];
+                      }
+                 echo "  </SELECT>";
+                 echo "  <SELECT NAME='direccion[]' ONCHANGE='completar(adicionar.elements[\"direccion[]\"]);'>";
+                 for ($i=0; $i < count($parte_2); $i++) {
+                      echo " <OPTION VALUE='".$parte_2[$i]."'>".$parte_2[$i];
+                      }
+                 echo "  </SELECT>";
+                 echo "  -";
+                 echo "  <INPUT TYPE='TEXT' NAME='direccion[]' SIZE=2 MAXLENGTH=3 ONCHANGE='completar(adicionar.elements[\"direccion[]\"]);'>";
+                 echo "  <SELECT NAME='direccion[]' ONCHANGE='completar(adicionar.elements[\"direccion[]\"]);'>";
+                 for ($i=0; $i < count($parte_3); $i++) {
+                      echo " <OPTION VALUE='".$parte_3[$i]."'>".$parte_3[$i];
+                      }
+                 echo "  </SELECT>";
+                 echo "  </TD>";
+                 echo "</TR>";
+                 echo "<TR>";
+                 echo "  <TD Class=mostrar>Oficina:</TD>";
+                 echo "  <TD Class=mostrar><INPUT TYPE='TEXT' NAME='oficina' SIZE=15 MAXLENGTH=16 ONCHANGE='completar(adicionar.elements[\"direccion[]\"]);'></TD>";
+                 echo "</TR>";
+                 echo "<TR>";
+                 echo "  <TD Class=mostrar>Torre:</TD>";
+                 echo "  <TD Class=mostrar><INPUT TYPE='TEXT' NAME='torre' SIZE=15 MAXLENGTH=16 ONCHANGE='completar(adicionar.elements[\"direccion[]\"]);'></TD>";
+                 echo "</TR>";
+                 echo "<TR>";
+                 echo "  <TD Class=mostrar>Bloque:</TD>";
+                 echo "  <TD Class=mostrar><INPUT TYPE='TEXT' NAME='bloque' SIZE=15 MAXLENGTH=16 ONCHANGE='completar(adicionar.elements[\"direccion[]\"]);'></TD>";
+                 echo "</TR>";
+                 echo "<TR>";
+                 echo "  <TD Class=mostrar>Interior:</TD>";
+                 echo "  <TD Class=mostrar><INPUT TYPE='TEXT' NAME='interior' SIZE=15 MAXLENGTH=16 ONCHANGE='completar(adicionar.elements[\"direccion[]\"]);'></TD>";
+                 echo "</TR>";
+                 echo "<TR>";
+                 echo "  <TD Class=mostrar>Complemento:</TD>";
+                 echo "  <TD Class=mostrar><INPUT TYPE='TEXT' NAME='complemento' SIZE=47 MAXLENGTH=50 ONCHANGE='completar(adicionar.elements[\"direccion[]\"]);'></TD>";
+                 echo "</TR>";
+                 echo "<TR>";
+                 echo "  <TD Class=captura>Localidad:</TD>";
+                 echo "  <TD Class=mostrar COLSPAN=2><SELECT NAME='localidad'>";
+                 foreach($localidades as $key => $grupo){
+                     echo "<OPTGROUP LABEL=$key>";
+                     foreach($grupo as $localidad){
+                        echo " <OPTION VALUE='".$localidad."'>".$localidad;
+                     }
+                     echo "</OPTGROUP>";
                  }
-                 echo "</OPTGROUP>";
+                 echo "  </SELECT>";
+                 echo "  </TD>";
+                 echo "</TR>";
+                 echo "<TR>";
+             }else{
+                 echo "<TR>";
+                 echo "  <TD Class=captura>Dirección:</TD>";
+                 echo "  <TD Class=mostrar colspan='2'><INPUT TYPE='TEXT' NAME='direccion' SIZE=47 MAXLENGTH=50 ONCHANGE='completar(adicionar.elements[\"direccion[]\"]);'></TD>";
+                 echo "</TR>";
              }
-             echo "  </SELECT>";
-             echo "  </TD>";
-             echo "</TR>";
-             echo "<TR>";
+             
              echo "  <TD Class=captura>Teléfonos:</TD>";
              echo "  <TD Class=mostrar COLSPAN=2><INPUT TYPE='TEXT' NAME='telefonos' SIZE=30 MAXLENGTH=30></TD>";
              echo "</TR>";
@@ -1111,17 +1131,20 @@ require_once("menu.php");
              echo "  </SELECT></TD>";
              echo "  </TABLE><TD>";
              echo "</TR>";
-             echo "<TR>";
-             echo "  <TD Class=captura style='vertical-align: top;'>Coordinador Colmas:</TD>";
-             echo "  <TD Class=mostrar COLSPAN=2><SELECT NAME='coordinador'>";  // Llena el cuadro de lista con los valores de la tabla Vendedores
-			 echo "  <OPTION VALUE=''>Ninguno Asignado</OPTION>";
-             $us->MoveFirst();
-             while (!$us->Eof()) {
-                    echo "<OPTION VALUE='".$us->Value('ca_login')."'>".$us->Value('ca_nombre')."</OPTION>";
-                    $us->MoveNext();
-                   }
-             echo "  </SELECT></TD>";
-             echo "</TR>";
+             if( $regional!="PE-051" ){
+                 echo "<TR>";
+                 echo "  <TD Class=captura style='vertical-align: top;'>Coordinador Colmas:</TD>";
+                 echo "  <TD Class=mostrar COLSPAN=2><SELECT NAME='coordinador'>";  // Llena el cuadro de lista con los valores de la tabla Vendedores
+                 echo "  <OPTION VALUE=''>Ninguno Asignado</OPTION>";
+                 $us->MoveFirst();
+                 while (!$us->Eof()) {
+                        echo "<OPTION VALUE='".$us->Value('ca_login')."'>".$us->Value('ca_nombre')."</OPTION>";
+                        $us->MoveNext();
+                       }
+                 echo "  </SELECT></TD>";
+                 echo "</TR>";
+             }
+             
              echo "<TR>";
              echo "  <TD Class=captura style='vertical-align: top;'>Preferencias:</TD>";
              echo "  <TD Class=mostrar COLSPAN=2><TEXTAREA NAME='preferencias' WRAP=virtual ROWS=5 COLS=65></TEXTAREA></TD>";
@@ -1230,10 +1253,17 @@ require_once("menu.php");
              echo "<INPUT TYPE='HIDDEN' NAME='id' VALUE=".$id.">";              // Hereda el Id del registro que se esta modificando
              echo "<INPUT TYPE='HIDDEN' NAME='comercial' VALUE='".$rs->Value('ca_vendedor')."'>";
              echo "<TH Class=titulo COLSPAN=3>Nuevos Datos para el Cliente</TH>";
-             echo "<TR>";
-             echo "  <TD Class=captura>N.i.t.:</TD>";
-             echo "  <TD Class=mostrar COLSPAN=2>".$rs->Value('ca_idcliente')." - ".$rs->Value('ca_digito')."</TD>";
-             echo "</TR>";
+             if( $regional!="PE-051" ){
+                 echo "<TR>";
+                 echo "  <TD Class=captura>N.i.t.:</TD>";
+                 echo "  <TD Class=mostrar COLSPAN=2>".$rs->Value('ca_idcliente')." - ".$rs->Value('ca_digito')."</TD>";
+                 echo "</TR>";
+             }else{
+                 echo "<TR>";
+                 echo "  <TD Class=captura>RUC:</TD>";
+                 echo "  <TD Class=mostrar COLSPAN=2>".($rs->Value('ca_idalterno')?$rs->Value('ca_idalterno'):$rs->Value('ca_idcliente'))." </TD>";
+                 echo "</TR>";
+             }
              echo "<TR>";
              echo "  <TD Class=captura>Compañia:</TD>";
              echo "  <TD Class=mostrar COLSPAN=2><INPUT TYPE='TEXT' NAME='compania' VALUE='".$rs->Value('ca_compania')."' SIZE=60 MAXLENGTH=60 style='text-transform: uppercase'></TD>";
@@ -1273,112 +1303,119 @@ require_once("menu.php");
                   }
              echo "  </SELECT></TD>";
              echo "</TR>";
-             echo "<TR>";
-             echo "  <TD Class=captura>Dirección:</TD>";
-             echo "  <TD Class=mostrar COLSPAN=2><INPUT TYPE='TEXT' NAME='dircompleta' SIZE=66 MAXLENGTH=66 READONLY></TD>";
-             echo "</TR>";
-             $dir_anterior = explode("|",$rs->Value('ca_direccion'));
-             echo "<TR>";
-             echo "  <TD Class=captura style='vertical-align: top;' ROWSPAN=6><SELECT NAME='direccion[]' ONCHANGE='completar(modificar.elements[\"direccion[]\"]);'>";
-             for ($i=0; $i < count($parte_1); $i++) {
-                  echo " <OPTION VALUE='".$parte_1[$i]."'";
-                  if ($parte_1[$i]==$dir_anterior[0]) {
-                      echo" SELECTED"; }
-                  echo " >".$parte_1[$i];
-                  }
-             echo "  </SELECT>";
-             echo "  <INPUT TYPE='TEXT' NAME='direccion[]' VALUE='".$dir_anterior[1]."' SIZE=3 MAXLENGTH=15 ONCHANGE='completar(modificar.elements[\"direccion[]\"]);'>";
-             echo "  <TD Class=mostrar COLSPAN=2><SELECT NAME='direccion[]' ONCHANGE='completar(modificar.elements[\"direccion[]\"]);'>";
-             for ($i=0; $i < count($letras); $i++) {
-                  echo " <OPTION VALUE='".$letras[$i]."'";
-                  if ($letras[$i]==$dir_anterior[2]) {
-                      echo" SELECTED"; }
-                  echo " >".$letras[$i];
-                  }
-             echo "  </SELECT>";
-             echo "  <SELECT NAME='direccion[]' ONCHANGE='completar(modificar.elements[\"direccion[]\"]);'>";
-             for ($i=0; $i < count($parte_2); $i++) {
-                  echo " <OPTION VALUE='".$parte_2[$i]."'";
-                  if ($parte_2[$i]==$dir_anterior[3]) {
-                      echo" SELECTED"; }
-                  echo " >".$parte_2[$i];
-                  }
-             echo "  </SELECT>";
-             echo "  <SELECT NAME='direccion[]' VALUE='".$dir_anterior[4]."' ONCHANGE='completar(modificar.elements[\"direccion[]\"]);'>";
-             for ($i=0; $i < count($numero); $i++) {
-                  echo " <OPTION VALUE='".$numero[$i]."'";
-                  if ($numero[$i]==$dir_anterior[4]) {
-                      echo" SELECTED"; }
-                  echo " >".$numero[$i];
-                  }
-             echo "  </SELECT>";
+             if( $regional!="PE-051" ){
+                 echo "<TR>";
+                 echo "  <TD Class=captura>Dirección:</TD>";
+                 echo "  <TD Class=mostrar COLSPAN=2><INPUT TYPE='TEXT' NAME='dircompleta' SIZE=66 MAXLENGTH=66 READONLY></TD>";
+                 echo "</TR>";
+                 $dir_anterior = explode("|",$rs->Value('ca_direccion'));
+                 echo "<TR>";
+                 echo "  <TD Class=captura style='vertical-align: top;' ROWSPAN=6><SELECT NAME='direccion[]' ONCHANGE='completar(modificar.elements[\"direccion[]\"]);'>";
+                 for ($i=0; $i < count($parte_1); $i++) {
+                      echo " <OPTION VALUE='".$parte_1[$i]."'";
+                      if ($parte_1[$i]==$dir_anterior[0]) {
+                          echo" SELECTED"; }
+                      echo " >".$parte_1[$i];
+                      }
+                 echo "  </SELECT>";
+                 echo "  <INPUT TYPE='TEXT' NAME='direccion[]' VALUE='".$dir_anterior[1]."' SIZE=3 MAXLENGTH=15 ONCHANGE='completar(modificar.elements[\"direccion[]\"]);'>";
+                 echo "  <TD Class=mostrar COLSPAN=2><SELECT NAME='direccion[]' ONCHANGE='completar(modificar.elements[\"direccion[]\"]);'>";
+                 for ($i=0; $i < count($letras); $i++) {
+                      echo " <OPTION VALUE='".$letras[$i]."'";
+                      if ($letras[$i]==$dir_anterior[2]) {
+                          echo" SELECTED"; }
+                      echo " >".$letras[$i];
+                      }
+                 echo "  </SELECT>";
+                 echo "  <SELECT NAME='direccion[]' ONCHANGE='completar(modificar.elements[\"direccion[]\"]);'>";
+                 for ($i=0; $i < count($parte_2); $i++) {
+                      echo " <OPTION VALUE='".$parte_2[$i]."'";
+                      if ($parte_2[$i]==$dir_anterior[3]) {
+                          echo" SELECTED"; }
+                      echo " >".$parte_2[$i];
+                      }
+                 echo "  </SELECT>";
+                 echo "  <SELECT NAME='direccion[]' VALUE='".$dir_anterior[4]."' ONCHANGE='completar(modificar.elements[\"direccion[]\"]);'>";
+                 for ($i=0; $i < count($numero); $i++) {
+                      echo " <OPTION VALUE='".$numero[$i]."'";
+                      if ($numero[$i]==$dir_anterior[4]) {
+                          echo" SELECTED"; }
+                      echo " >".$numero[$i];
+                      }
+                 echo "  </SELECT>";
 
-             echo "  <INPUT TYPE='TEXT' NAME='direccion[]' VALUE='".$dir_anterior[5]."' SIZE=2 MAXLENGTH=3 ONCHANGE='completar(modificar.elements[\"direccion[]\"]);'>";
-             echo "  <SELECT NAME='direccion[]' ONCHANGE='completar(modificar.elements[\"direccion[]\"]);'>";
-             for ($i=0; $i < count($letras); $i++) {
-                  echo " <OPTION VALUE='".$letras[$i]."'";
-                  if ($letras[$i]==$dir_anterior[6]) {
-                      echo" SELECTED"; }
-                  echo " >".$letras[$i];
-                  }
-             echo "  </SELECT>";
-             echo "  <SELECT NAME='direccion[]' VALUE='".$dir_anterior[7]."' ONCHANGE='completar(modificar.elements[\"direccion[]\"]);'>";
-             for ($i=0; $i < count($parte_2); $i++) {
-                  echo " <OPTION VALUE='".$parte_2[$i]."'";
-                  if ($parte_2[$i]==$dir_anterior[7]) {
-                      echo" SELECTED"; }
-                  echo " >".$parte_2[$i];
-                  }
-             echo "  </SELECT>";
-             echo "  -";
-             echo "  <INPUT TYPE='TEXT' NAME='direccion[]' VALUE='".$dir_anterior[8]."' SIZE=2 MAXLENGTH=3 ONCHANGE='completar(modificar.elements[\"direccion[]\"]);'>";
-             echo "  <SELECT NAME='direccion[]' ONCHANGE='completar(modificar.elements[\"direccion[]\"]);'>";
-             for ($i=0; $i < count($parte_3); $i++) {
-                  echo " <OPTION VALUE='".$parte_3[$i]."'";
-                  if ($parte_3[$i]==$dir_anterior[9]) {
-                      echo" SELECTED"; }
-                  echo " >".$parte_3[$i];
-                  }
-             echo "  </SELECT>";
-             echo "  </TD>";
-             echo "</TR>";
-             echo "<TR>";
-             echo "  <TD Class=mostrar>Oficina:</TD>";
-             echo "  <TD Class=mostrar><INPUT TYPE='TEXT' NAME='oficina' VALUE='".$rs->Value('ca_oficina')."' SIZE=15 MAXLENGTH=16 ONCHANGE='completar(modificar.elements[\"direccion[]\"]);'></TD>";
-             echo "</TR>";
-             echo "<TR>";
-             echo "  <TD Class=mostrar>Torre:</TD>";
-             echo "  <TD Class=mostrar><INPUT TYPE='TEXT' NAME='torre' VALUE='".$rs->Value('ca_torre')."' SIZE=15 MAXLENGTH=16 ONCHANGE='completar(modificar.elements[\"direccion[]\"]);'></TD>";
-             echo "</TR>";
-             echo "<TR>";
-             echo "  <TD Class=mostrar>Bloque:</TD>";
-             echo "  <TD Class=mostrar><INPUT TYPE='TEXT' NAME='bloque' VALUE='".$rs->Value('ca_bloque')."' SIZE=15 MAXLENGTH=16 ONCHANGE='completar(modificar.elements[\"direccion[]\"]);'></TD>";
-             echo "</TR>";
-             echo "<TR>";
-             echo "  <TD Class=mostrar>Interior:</TD>";
-             echo "  <TD Class=mostrar><INPUT TYPE='TEXT' NAME='interior' VALUE='".$rs->Value('ca_interior')."' SIZE=15 MAXLENGTH=16 ONCHANGE='completar(modificar.elements[\"direccion[]\"]);'></TD>";
-             echo "</TR>";
-             echo "<TR>";
-             echo "  <TD Class=mostrar>Complemento:</TD>";
-             echo "  <TD Class=mostrar><INPUT TYPE='TEXT' NAME='complemento' VALUE='".$rs->Value('ca_complemento')."' SIZE=47 MAXLENGTH=50 ONCHANGE='completar(modificar.elements[\"direccion[]\"]);'></TD>";
-             echo "</TR>";
-             echo"<script>completar(modificar.elements[\"direccion[]\"])</script>";
-             echo "<TR>";
-             echo "  <TD Class=captura>Localidad:</TD>";
-             echo "  <TD Class=mostrar COLSPAN=2><SELECT NAME='localidad'>";
-             foreach($localidades as $key => $grupo){
-                 echo "<OPTGROUP LABEL=$key>";
-                 foreach($grupo as $localidad){
-                    echo " <OPTION VALUE='".$localidad."'";
-                    if ($rs->Value('ca_localidad')==$localidad) {
-                        echo" SELECTED"; }
-                    echo ">".$localidad;
+                 echo "  <INPUT TYPE='TEXT' NAME='direccion[]' VALUE='".$dir_anterior[5]."' SIZE=2 MAXLENGTH=3 ONCHANGE='completar(modificar.elements[\"direccion[]\"]);'>";
+                 echo "  <SELECT NAME='direccion[]' ONCHANGE='completar(modificar.elements[\"direccion[]\"]);'>";
+                 for ($i=0; $i < count($letras); $i++) {
+                      echo " <OPTION VALUE='".$letras[$i]."'";
+                      if ($letras[$i]==$dir_anterior[6]) {
+                          echo" SELECTED"; }
+                      echo " >".$letras[$i];
+                      }
+                 echo "  </SELECT>";
+                 echo "  <SELECT NAME='direccion[]' VALUE='".$dir_anterior[7]."' ONCHANGE='completar(modificar.elements[\"direccion[]\"]);'>";
+                 for ($i=0; $i < count($parte_2); $i++) {
+                      echo " <OPTION VALUE='".$parte_2[$i]."'";
+                      if ($parte_2[$i]==$dir_anterior[7]) {
+                          echo" SELECTED"; }
+                      echo " >".$parte_2[$i];
+                      }
+                 echo "  </SELECT>";
+                 echo "  -";
+                 echo "  <INPUT TYPE='TEXT' NAME='direccion[]' VALUE='".$dir_anterior[8]."' SIZE=2 MAXLENGTH=3 ONCHANGE='completar(modificar.elements[\"direccion[]\"]);'>";
+                 echo "  <SELECT NAME='direccion[]' ONCHANGE='completar(modificar.elements[\"direccion[]\"]);'>";
+                 for ($i=0; $i < count($parte_3); $i++) {
+                      echo " <OPTION VALUE='".$parte_3[$i]."'";
+                      if ($parte_3[$i]==$dir_anterior[9]) {
+                          echo" SELECTED"; }
+                      echo " >".$parte_3[$i];
+                      }
+                 echo "  </SELECT>";
+                 echo "  </TD>";
+                 echo "</TR>";
+                 echo "<TR>";
+                 echo "  <TD Class=mostrar>Oficina:</TD>";
+                 echo "  <TD Class=mostrar><INPUT TYPE='TEXT' NAME='oficina' VALUE='".$rs->Value('ca_oficina')."' SIZE=15 MAXLENGTH=16 ONCHANGE='completar(modificar.elements[\"direccion[]\"]);'></TD>";
+                 echo "</TR>";
+                 echo "<TR>";
+                 echo "  <TD Class=mostrar>Torre:</TD>";
+                 echo "  <TD Class=mostrar><INPUT TYPE='TEXT' NAME='torre' VALUE='".$rs->Value('ca_torre')."' SIZE=15 MAXLENGTH=16 ONCHANGE='completar(modificar.elements[\"direccion[]\"]);'></TD>";
+                 echo "</TR>";
+                 echo "<TR>";
+                 echo "  <TD Class=mostrar>Bloque:</TD>";
+                 echo "  <TD Class=mostrar><INPUT TYPE='TEXT' NAME='bloque' VALUE='".$rs->Value('ca_bloque')."' SIZE=15 MAXLENGTH=16 ONCHANGE='completar(modificar.elements[\"direccion[]\"]);'></TD>";
+                 echo "</TR>";
+                 echo "<TR>";
+                 echo "  <TD Class=mostrar>Interior:</TD>";
+                 echo "  <TD Class=mostrar><INPUT TYPE='TEXT' NAME='interior' VALUE='".$rs->Value('ca_interior')."' SIZE=15 MAXLENGTH=16 ONCHANGE='completar(modificar.elements[\"direccion[]\"]);'></TD>";
+                 echo "</TR>";
+                 echo "<TR>";
+                 echo "  <TD Class=mostrar>Complemento:</TD>";
+                 echo "  <TD Class=mostrar><INPUT TYPE='TEXT' NAME='complemento' VALUE='".$rs->Value('ca_complemento')."' SIZE=47 MAXLENGTH=50 ONCHANGE='completar(modificar.elements[\"direccion[]\"]);'></TD>";
+                 echo "</TR>";
+                 echo"<script>completar(modificar.elements[\"direccion[]\"])</script>";
+                 echo "<TR>";
+                 echo "  <TD Class=captura>Localidad:</TD>";
+                 echo "  <TD Class=mostrar COLSPAN=2><SELECT NAME='localidad'>";
+                 foreach($localidades as $key => $grupo){
+                     echo "<OPTGROUP LABEL=$key>";
+                     foreach($grupo as $localidad){
+                        echo " <OPTION VALUE='".$localidad."'";
+                        if ($rs->Value('ca_localidad')==$localidad) {
+                            echo" SELECTED"; }
+                        echo ">".$localidad;
+                     }
+                     echo "</OPTGROUP>";
                  }
-                 echo "</OPTGROUP>";
+                 echo "  </SELECT>";
+                 echo "  </TD>";
+                 echo "</TR>";
+             }else{
+                  echo "<TR>";
+                 echo "  <TD Class=captura>Direccion:</TD>";
+                 echo "  <TD Class=mostrar><INPUT TYPE='TEXT' NAME='direccion' VALUE='".$rs->Value('ca_direccion')."' SIZE=47 MAXLENGTH=50 ONCHANGE='completar(modificar.elements[\"direccion[]\"]);'></TD>";
+                 echo "</TR>";
              }
-             echo "  </SELECT>";
-             echo "  </TD>";
-             echo "</TR>";
              echo "<TR>";
              echo "  <TD Class=captura>Teléfonos:</TD>";
              echo "  <TD Class=mostrar COLSPAN=2><INPUT TYPE='TEXT' NAME='telefonos' VALUE='".$rs->Value('ca_telefonos')."' SIZE=30 MAXLENGTH=30></TD>";
@@ -1463,20 +1500,22 @@ require_once("menu.php");
              echo "  </SELECT></TD>";
              echo "  </TABLE><TD>";
              echo "</TR>";
-             echo "<TR>";
-             echo "  <TD Class=captura style='vertical-align: top;'>Coordinador Colmas:</TD>";
-             echo "  <TD Class=mostrar COLSPAN=2><SELECT NAME='coordinador'>";  // Llena el cuadro de lista con los valores de la tabla Vendedores
-			 echo "<OPTION VALUE=''>Ninguno Asignado</OPTION>";
-             $us->MoveFirst();
-             while (!$us->Eof()) {
-                    echo "<OPTION VALUE='".$us->Value('ca_login')."'";
-                    if ($us->Value('ca_login')==$rs->Value('ca_coordinador')) {
-                        echo" SELECTED"; }
-					echo ">".$us->Value('ca_nombre')."</OPTION>";
-                    $us->MoveNext();
-                   }
-             echo "  </SELECT></TD>";
-             echo "</TR>";
+             if( $regional!="PE-051" ){
+                 echo "<TR>";
+                 echo "  <TD Class=captura style='vertical-align: top;'>Coordinador Colmas:</TD>";
+                 echo "  <TD Class=mostrar COLSPAN=2><SELECT NAME='coordinador'>";  // Llena el cuadro de lista con los valores de la tabla Vendedores
+                 echo "<OPTION VALUE=''>Ninguno Asignado</OPTION>";
+                 $us->MoveFirst();
+                 while (!$us->Eof()) {
+                        echo "<OPTION VALUE='".$us->Value('ca_login')."'";
+                        if ($us->Value('ca_login')==$rs->Value('ca_coordinador')) {
+                            echo" SELECTED"; }
+                        echo ">".$us->Value('ca_nombre')."</OPTION>";
+                        $us->MoveNext();
+                       }
+                 echo "  </SELECT></TD>";
+                 echo "</TR>";
+             }
              echo "<TR>";
              echo "  <TD Class=captura>Preferencias:</TD>";
              echo "  <TD Class=mostrar COLSPAN=2><TEXTAREA NAME='preferencias' WRAP=virtual ROWS=5 COLS=65>".$rs->Value('ca_preferencias')."</TEXTAREA></TD>";
@@ -2218,17 +2257,50 @@ elseif (isset($accion)) {                                                      /
              $papellido = addslashes($papellido);
              $sapellido = addslashes($sapellido);
              $nombres = addslashes($nombres);
-             $direccion = isset($direccion)?implode("|",$direccion):"";
+             if( $regional!="PE-051" ){
+                $direccion = isset($direccion)?implode("|",$direccion):"";
+             }
+
+
+
              if (!isset($vendedor)){
                 $vendedor = ($nivel >= 2)?'null':"'$usuario'";
              }
              $fchcotratoag = (strlen($fchcotratoag)!=0)?"'".$fchcotratoag."'":'date(null)';
              $status = ($listaclinton=='Sí')?"Vetado":$status;
-             if (!$rs->Open("insert into tb_clientes (ca_idcliente, ca_digito, ca_compania, ca_papellido, ca_sapellido, ca_nombres, ca_saludo, ca_sexo, ca_cumpleanos, ca_direccion, ca_oficina, ca_torre, ca_bloque, ca_interior, ca_localidad, ca_complemento, ca_telefonos, ca_fax, ca_idciudad, ca_website, ca_email, ca_actividad, ca_sectoreco, ca_vendedor, ca_fchcotratoag, ca_listaclinton, ca_leyinsolvencia, ca_comentario, ca_status, ca_calificacion, ca_entidad, ca_coordinador, ca_preferencias, ca_idgrupo, ca_fchcreado, ca_usucreado) values($id, $digito, upper('".addslashes($compania)."'), '$papellido', '$sapellido', '$nombres', '$saludo', '$sexo', '$cumpleanos', '$direccion', '$oficina', '$torre', '$bloque', '$interior', '$localidad', '$complemento', '$telefonos', '$fax', '$idciudad', lower('$website'), lower('$email'), '$actividad', '$sectoreco', $vendedor, $fchcotratoag, '$listaclinton', '$leyinsolvencia', '$comentario', '$status', '$calificacion', '$entidad', '$coordinador', '$preferencias', $id, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
-                 echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
-                 echo "<script>document.location.href = 'clientes.php';</script>";
-                 exit;
-                }
+
+             
+             $ids =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
+             
+             if (!$ids->Open("select nextval('ids.tb_ids_id'::regclass) as next")) {
+                echo "<script>alert(\"".addslashes($us->mErrMsg)."\");</script>";
+                //echo "<script>document.location.href = 'repcomisiones.php';</script>";
+                exit;
+               }
+               
+             
+             
+             while (!$ids->Eof()) {
+               $next = $ids->Value('next');
+               $ids->MoveNext();
+               
+             }             
+
+             if( $regional!="PE-051" ){
+                 if (!$rs->Open("insert into tb_clientes (ca_idcliente, ca_digito, ca_compania, ca_papellido, ca_sapellido, ca_nombres, ca_saludo, ca_sexo, ca_cumpleanos, ca_direccion, ca_oficina, ca_torre, ca_bloque, ca_interior, ca_localidad, ca_complemento, ca_telefonos, ca_fax, ca_idciudad, ca_website, ca_email, ca_actividad, ca_sectoreco, ca_vendedor, ca_fchcotratoag, ca_listaclinton, ca_leyinsolvencia, ca_comentario, ca_status, ca_calificacion, ca_entidad, ca_coordinador, ca_preferencias, ca_idgrupo, ca_fchcreado, ca_usucreado) values($id, ".($digito?$digito:"null").", upper('".addslashes($compania)."'), '$papellido', '$sapellido', '$nombres', '$saludo', '$sexo', '$cumpleanos', '$direccion', '$oficina', '$torre', '$bloque', '$interior', '$localidad', '$complemento', '$telefonos', '$fax', '$idciudad', lower('$website'), lower('$email'), '$actividad', '$sectoreco', $vendedor, $fchcotratoag, '$listaclinton', '$leyinsolvencia', '$comentario', '$status', '$calificacion', '$entidad', '$coordinador', '$preferencias', $id, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
+                     echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
+                     //echo "<script>document.location.href = 'clientes.php';</script>";
+                     exit;
+                    }
+             }else{
+                 if (!$rs->Open("insert into tb_clientes (ca_idcliente, ca_idalterno, ca_tipoidentificacion, ca_digito, ca_compania, ca_papellido, ca_sapellido, ca_nombres, ca_saludo, ca_sexo, ca_cumpleanos, ca_direccion, ca_oficina, ca_torre, ca_bloque, ca_interior, ca_localidad, ca_complemento, ca_telefonos, ca_fax, ca_idciudad, ca_website, ca_email, ca_actividad, ca_sectoreco, ca_vendedor, ca_fchcotratoag, ca_listaclinton, ca_leyinsolvencia, ca_comentario, ca_status, ca_calificacion, ca_entidad, ca_coordinador, ca_preferencias, ca_idgrupo, ca_fchcreado, ca_usucreado) values( $next, $id, 1, ".($digito?$digito:"null").", upper('".addslashes($compania)."'), '$papellido', '$sapellido', '$nombres', '$saludo', '$sexo', '$cumpleanos', '$direccion', '$oficina', '$torre', '$bloque', '$interior', '$localidad', '$complemento', '$telefonos', '$fax', '$idciudad', lower('$website'), lower('$email'), '$actividad', '$sectoreco', $vendedor, $fchcotratoag, '$listaclinton', '$leyinsolvencia', '$comentario', '$status', '$calificacion', '$entidad', '$coordinador', '$preferencias', $next, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
+                 
+                     echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
+                     //echo "<script>document.location.href = 'clientes.php';</script>";
+                     exit;
+                    }
+                 $id = $next;
+             }
              break;
              }
         case 'Actualizar': {                                                   // El Botón Actualizar fue pulsado
@@ -2236,7 +2308,9 @@ elseif (isset($accion)) {                                                      /
              $papellido = addslashes($papellido);
              $sapellido = addslashes($sapellido);
              $nombres = addslashes($nombres);
-             $direccion = isset($direccion)?implode("|",$direccion):"";
+             if( $regional!="PE-051" ){
+                $direccion = isset($direccion)?implode("|",$direccion):"";
+             }
              if (!isset($vendedor)){
                  $vendedor = ($nivel >= 2)?$comercial:$usuario;
              }
