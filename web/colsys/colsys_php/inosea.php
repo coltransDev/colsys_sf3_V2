@@ -505,7 +505,7 @@ elseif (isset($boton)) {                                                       /
                     $root = '/srv/www/digitalFile';
                     while (!$cl->Eof() and !$cl->IsEmpty()) {                                      // Lee la totalidad de los registros obtenidos en la instrucción Select
                         if( $cl->Value('ca_idcliente') != $cli_mem or $cl->Value('ca_hbls') != $hbl_mem) {
-                            $path = '/Referencias/'.$cl->Value('ca_referencia').'/docTrans';
+                            $path = '/Referencias/'.$cl->Value('ca_referencia').'/docTrans/'.$cl->Value('ca_hbls');
                             $docTrans = array();
                             if ($handle = opendir($root.$path)) {
                                 while (false !== ($file = readdir($handle))) {
@@ -550,7 +550,7 @@ elseif (isset($boton)) {                                                       /
                             echo "  <TD Class=listar><B>Hbl Final: <IMG src='./graficos/fileopen.png' alt='Agregar Copia de Hbl Definitivo' border=0 onclick='javascript:subir_hbl(\"".$cl->Value('ca_referencia')."\",\"".$cl->Value('ca_hbls')."\")'>";
                             $i=1;
                             foreach($docTrans as $docTran){
-                                echo "<br /><a href='/gestDocumental/verArchivo?folder=".base64_encode("Referencias/".$cl->Value('ca_referencia')."/docTrans")."&idarchivo=".base64_encode($docTran['basename'])."'><IMG src='./graficos/image.gif' alt='".$docTran['filename']."' border=0> Doc. $i</img></a>";
+                                echo "<br /><a href='/gestDocumental/verArchivo?folder=".base64_encode("Referencias/".$cl->Value('ca_referencia')."/docTrans/".$cl->Value('ca_hbls'))."&idarchivo=".base64_encode($docTran['basename'])."'><IMG src='./graficos/image.gif' alt='".$docTran['filename']."' border=0> Doc. ".$i++."</img></a>";
                             }
                             echo "  <br />Rec/Antec.:&nbsp;&nbsp;&nbsp;</B><BR>".$cl->Value('ca_fchantecedentes')."</TD>";
                             echo "</TR>";
@@ -3878,6 +3878,7 @@ elseif (isset($boton)) {                                                       /
                 echo "<H3>$titulo</H3>";
                 echo "<FORM METHOD=post NAME='upload' ACTION='inosea.php' ONSUBMIT='return validar();' enctype='multipart/form-data'>";  // Llena la forma con los datos actuales del registro
                 echo "<INPUT TYPE='HIDDEN' NAME='referencia' VALUE=\"".$id."\">";             // Hereda el Id de la Referencia que se esta modificando
+                echo "<INPUT TYPE='HIDDEN' NAME='hbl' VALUE=\"".$hb."\">";                    // Hereda el Hbl que se esta modificando
                 echo "<TABLE WIDTH=600 CELLSPACING=1>";
                 echo "<TR>";
                 echo "  <TD Class=captura STYLE='vertical-align:top'>Adjuntar Hbl Definitivo :</TD>";
@@ -3886,7 +3887,7 @@ elseif (isset($boton)) {                                                       /
                 echo "</TABLE><BR>";
 
                 $root = '/srv/www/digitalFile';
-                $path = '/Referencias/'.$id.'/docTrans';
+                $path = '/Referencias/'.$id.'/docTrans/'.$hb;
                 $docTrans = array();
                 if ($handle = opendir($root.$path)) {
                     while (false !== ($file = readdir($handle))) {
@@ -5189,7 +5190,7 @@ elseif (isset($accion)) {                                                      /
         case 'Subir el Documento': {                                                      // El Botón Subir el Documento fue pulsado
                 $file = $_FILES["file"];
                 $root = '/srv/www/digitalFile';
-                $path = '/Referencias/'.$referencia.'/docTrans';
+                $path = '/Referencias/'.$referencia.'/docTrans/'.$hbl;
 
                 if(is_uploaded_file($file["tmp_name"])){
                     $fileName = $root.$path.'/'.$file["name"];
