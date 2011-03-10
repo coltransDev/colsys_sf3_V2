@@ -32,7 +32,7 @@ if( count($listaTareas)>0 ){
 		<tr>
 			<td width="75%"><div class="qtip" title="<?=$tarea->getCaTexto()?>"><?=link_to( $tarea->getCaTitulo(), "notificaciones/realizarTarea?id=".$tarea->getCaIdtarea() )?></div></td>
 			
-			<td width="25%"><?=Utils::fechaMes($tarea->getCaFchcreado())?></td>
+			<td width="25%"><?=Utils::fechaMes($tarea->getCaFchvencimiento())?></td>
 		</tr>
 		<?
 		}
