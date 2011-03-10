@@ -17,7 +17,7 @@ if( $ticket ){
 ?>
 <br />
 <br />
-Nuestros registros muestran que usted recientemente un caso suyo fue cerrado.
+Nuestros registros muestran que recientemente un ticket suyo fue cerrado.
 <br />
 <br />
 Por favor tome unos minutos para contarnos su experiencia.
