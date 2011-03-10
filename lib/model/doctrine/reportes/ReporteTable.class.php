@@ -22,7 +22,7 @@ class ReporteTable extends Doctrine_Table
 	* Retorna los reportes con estado distinto a carga entregada de acuerdo aun modo (impo, expo)
 	* @author: Andres Botero
 	*/
-	public static function getReportesActivos( $idCliente , $impoexpo, $transporte=null,  $query=false, $order="" ){
+	public static function getReportesActivos( $idCliente , $impoexpo, $transporte=null,  $query=false, $order="", $historial=false ){
         $q = Doctrine_Query::create()
                             ->from("Reporte r")
                             ->select("r.*")
@@ -61,7 +61,7 @@ class ReporteTable extends Doctrine_Table
 		if( $idCliente==860048626 ||$idCliente==830512518 ){ //Este cliente (Minipak) solicita especialmente que siempre la aparezcan todos los reportes del mes
 			$fecha =  date("Y-m-")."01";
 		}else{
-			//Muetra los reportes con estado carga recogida de los ultimos 3 dias o 6 en caso de que sea lunes y 5 en caso de que sea martes
+			//Muestra los reportes con estado carga recogida de los ultimos 3 dias o 6 en caso de que sea lunes y 5 en caso de que sea martes
 			$today = date( "N" );
 
 			if( $today==1 ){
@@ -74,6 +74,10 @@ class ReporteTable extends Doctrine_Table
 			}
 			$fecha = Utils::addDays( date("Y-m-d"), $add );
 		}
+
+        if( $historial ){
+            $fecha = date("Y-m-d", time()-86400*365);
+        }
 
         $q->addWhere("r.ca_fchultstatus>=? OR (r.ca_idetapa!= ? AND r.ca_idetapa!= ?) OR r.ca_idetapa IS NULL", array($fecha, "99999", "00000"));
 		

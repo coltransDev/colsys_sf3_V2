@@ -204,10 +204,10 @@ class Reporte extends BaseReporte {
      */
 
     public function getInoClientesAir() {
-
-        $c = new Criteria();
-        $c->add(InoClientesAirPeer::CA_IDREPORTE, $this->getCaConsecutivo());
-        return InoClientesAirPeer::doSelectOne($c);
+        return Doctrine::getTable("InoClientesAir")
+            ->createQuery("c")
+            ->addWhere("c.ca_idreporte=?",  $this->getCaConsecutivo())
+            ->fetchOne();
     }
 
     /*
