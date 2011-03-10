@@ -296,7 +296,7 @@ PanelTickets = function( config ){
 
 };
 
-Ext.extend(PanelTickets, Ext.grid.EditorGridPanel, {
+Ext.extend(PanelTickets, Ext.grid.GridPanel, {
 
     crearTicket: function(){
         this.win = new EditarTicketWindow();
@@ -610,12 +610,15 @@ Ext.extend(PanelTickets, Ext.grid.EditorGridPanel, {
             //Solamente se envian los cambios
             params :	{
                 idticket: r.data.idticket,
-                status: status
+                status: status,
+                id: r.id
             },
 
-            callback :function(options, success, response){
-                
-               
+            success:function(form,action){
+                r.commit();
+            },
+            failure:function(form,action){
+                Ext.MessageBox.alert('Error Message', "Se ha presentado un error"+(action.result?": "+action.result.errorInfo:"")+" "+(action.response?"\n Codigo HTTP "+action.response.status:""));
             }
          }
     );
