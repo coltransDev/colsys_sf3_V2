@@ -27,9 +27,6 @@ include_component("widgets", "widgetCiudad");
                 columns: 2,
                 items :
                     [
-                    /*
-                     * =========================Column 1 =========================
-                     **/
                     {
                         xtype: "hidden",
                         id: "impoexpo",
@@ -115,7 +112,7 @@ include_component("widgets", "widgetCiudad");
                             new WidgetLinea({fieldLabel: 'Linea',
                                 linkTransporte: "transporte",
                                 name: 'linea',
-                                id: 'idlinea',
+                                id: 'linea',
                                 hiddenName: 'idlinea',
                                 allowBlank: false
                             }),
@@ -146,10 +143,7 @@ include_component("widgets", "widgetCiudad");
                         ]
                     }
                 ]
-            }];
-    
-
-        
+            }];        
         this.tbar = [
             {
                 text: 'Guardar',
@@ -161,23 +155,13 @@ include_component("widgets", "widgetCiudad");
 
         PanelMasterAntecedentes.superclass.constructor.call(this, {
             loadMask: {msg:'Cargando...'},
-            //boxMinHeight: 300,
-            
-            id: 'master-antecedentes'
-            //tbar: this.tbar,
-            
-
+            id: 'master-antecedentes'           
         });
-        
-
     };
 
     Ext.extend(PanelMasterAntecedentes, Ext.form.FormPanel, {
         onRender: function(){
-            // call parent
             PanelMasterAntecedentes.superclass.onRender.apply(this, arguments);
-
-            // set wait message target
             this.getForm().waitMsgTarget = this.getEl();           
             if(typeof(this.numRef)!="undefined" && this.numRef!="" )
             {
@@ -185,16 +169,16 @@ include_component("widgets", "widgetCiudad");
                     url:'<?=url_for("antecedentes/datosReferencia")?>',
                     waitMsg:'Cargando...',
                     params:{numRef:this.numRef},
-
                     success:function(response,options){
                         this.res = Ext.util.JSON.decode( options.response.responseText );
-                        Ext.getCmp("idlinea").setRawValue(this.res.data.linea);
-                        Ext.getCmp("idlinea").hiddenField.value = this.res.data.idlinea;
+                        Ext.getCmp("linea").setRawValue(this.res.data.linea);
+                        Ext.getCmp("linea").hiddenField.value = this.res.data.idlinea;
+                        Ext.getCmp("origen").setReadOnly(true);
+                        Ext.getCmp("destino").setReadOnly(true);
+                        Ext.getCmp("modalidad").setReadOnly(true);
+
                     }
-
                 });
-
-
             }
         },
         guardar : function(){            
@@ -221,10 +205,8 @@ include_component("widgets", "widgetCiudad");
             form.findField("imprimirorigen").setValue( imprimirorigen.join("|") );
          
             if( form.isValid() ){
-
                 form.submit({
-                    url: "<?=url_for("antecedentes/guardarPanelMasterAntecedentes")?>",
-                    //scope:this,
+                    url: "<?=url_for("antecedentes/guardarPanelMasterAntecedentes")?>",                    
                     waitMsg:'Guardando...',
                     waitTitle:'Por favor espere...',
                     success:function(form,action){
@@ -233,10 +215,9 @@ include_component("widgets", "widgetCiudad");
                             document.location = "<?=url_for("antecedentes/verPlanilla")?>?ref="+numref.split(".").join("|");
                         }
                     },
-                    // standardSubmit: false,
                     failure:function(form,action){
                         Ext.MessageBox.alert('Error Message', "Se ha presentado un error"+(action.result?": "+action.result.errorInfo:"")+" "+(action.response?"\n Codigo HTTP "+action.response.status:""));
-                    }//end failure block
+                    }
                 });
             }else{
                 Ext.MessageBox.alert('Error Message', "Por favor complete todos los datos");

@@ -4,8 +4,6 @@
  *
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
-
-
 include_component("antecedentes", "panelReportesAntecedentes");
 include_component("antecedentes", "panelMasterAntecedentes");
 
@@ -14,14 +12,12 @@ include_component("antecedentes", "panelMasterAntecedentes");
 <div class="content">    
     <div id="main-panel"></div>
     <div id="sub-panel"></div>
+    <div id="resul"></div>
 </div>
 
 <script type="text/javascript">
     
-    Ext.onReady(function(){
-    
-
-        
+    Ext.onReady(function(){        
         var panel = new PanelMasterAntecedentes({
             title: "Asignación de Master",
             bodyStyle: "pading: 5px",

@@ -102,7 +102,8 @@ Ext.extend(WidgetHBLAntecedentes, Ext.form.ComboBox, {
 
         var cmp = Ext.getCmp(this.linkOrigen);
         if( cmp ){
-            this.store.setBaseParam("origen",cmp.getValue());
+            combo=cmp.getRecord();
+            this.store.setBaseParam("origen",combo.data.idtrafico);
         }
 
         var cmp = Ext.getCmp(this.linkDestino);

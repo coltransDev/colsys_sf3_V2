@@ -65,13 +65,15 @@ class antecedentesComponents extends sfComponents {
     /**
      *
      */
-    public function executeFileManager() {
+    public function executeFileManager() {        
+        $this->edit=($this->getRequestParameter("format")==""?true:false);
         $folder = "Referencias" . DIRECTORY_SEPARATOR . $this->ref->getCaReferencia();
         $directory = sfConfig::get('app_digitalFile_root') . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR;
 
         if (!is_dir($directory)) {
-            @mkdir($directory, DEFAULT_PRIVILEGES, true);
+            @mkdir($directory, 0777, true);
         }
+        chmod ( $directory , 0777 );
 
 
         $archivos = sfFinder::type('file')->maxDepth(0)->in($directory);

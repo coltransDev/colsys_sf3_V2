@@ -4,13 +4,7 @@
  * 
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
-
-
-
 ?>
-
-
-
 <script type="text/javascript">
 
 
@@ -18,13 +12,10 @@ WidgetReporteAntecedentes = function( config ){
     Ext.apply(this, config);
 
     this.resultTpl = new Ext.XTemplate(
-        '<tpl for="."><div class="search-item"><strong>{consecutivo}-V{version}</strong><br /><strong>{doctransporte}</strong><br /><span><br />{origen} - {destino}</span> </div></tpl>',
+        '<tpl for="."><div class="search-item"><strong>{consecutivo}</strong><br /><strong>{doctransporte}</strong><br /><span><br />{origen} - {destino}</span> </div></tpl>',
         '<tpl if="this.referencia">',
          '<span class="rojo">{referencia}</span>',
         '</tpl>'
-
-
-
     );
         
     this.store = new Ext.data.Store({
@@ -36,9 +27,7 @@ WidgetReporteAntecedentes = function( config ){
             totalProperty: 'total'           
         }, [
             {name: 'idreporte', mapping: 'r_ca_idreporte'},
-            {name: 'consecutivo', mapping: 'r_ca_consecutivo'},
-            {name: 'version', mapping: 'r_ca_version'},
-            {name: 'mercancia_desc', mapping: 'r_ca_mercancia_desc'},
+            {name: 'consecutivo', mapping: 'r_ca_consecutivo'},                        
             {name: 'impoexpo', mapping: 'r_ca_impoexpo'},
             {name: 'transporte', mapping: 'r_ca_transporte'},
             {name: 'modalidad', mapping: 'r_ca_modalidad'},
@@ -52,21 +41,9 @@ WidgetReporteAntecedentes = function( config ){
 			{name: 'idcontacto', mapping: 'con_ca_idcontacto'},
             {name: 'compania', mapping: 'cl_ca_compania'},
             {name: 'idcliente', mapping: 'cl_ca_idcliente'},
-			{name: 'cargo', mapping: 'con_ca_cargo'},
-			{name: 'nombre', mapping: 'con_ca_nombres'},
-			{name: 'papellido', mapping: 'con_ca_papellido'},
-			{name: 'sapellido', mapping: 'con_ca_sapellido'},
-			{name: 'preferencias', mapping: 'cl_ca_preferencias'},
-			{name: 'confirmar', mapping: 'cl_ca_confirmar'},
-            {name: 'vendedor', mapping: 'usu_ca_login'},
-            {name: 'nombreVendedor', mapping: 'usu_ca_nombre'},
-            {name: 'coordinador', mapping: 'cl_ca_coordinador'},
-            {name: 'orden_clie', mapping: 'r_ca_orden_clie'},
             {name: 'idetapa', mapping: 'r_ca_idetapa'},
             {name: 'referencia', mapping: 'ic_ca_referencia'},
             {name: 'doctransporte', mapping: 's_ca_doctransporte'}
-
-
         ])
     });
 
@@ -101,7 +78,9 @@ Ext.extend(WidgetReporteAntecedentes, Ext.form.ComboBox, {
 
         var cmp = Ext.getCmp(this.linkOrigen);
         if( cmp ){
-            this.store.setBaseParam("origen",cmp.getValue());
+            combo=cmp.getRecord();
+            this.store.setBaseParam("origen",combo.data.idtrafico);
+            //this.store.setBaseParam("origen",cmp.getValue());
         }
 
         var cmp = Ext.getCmp(this.linkDestino);

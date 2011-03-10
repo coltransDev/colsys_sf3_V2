@@ -27,7 +27,7 @@ button=0;
 });
     function actualizar(file)
     {
-        $("#archivos").append("<tr><td ><b>"+(button++)+".</b>&nbsp;&nbsp;&nbsp;&nbsp;<b>Archivo "+file+" </b><div id='hbl_defs'><a href='<?=url_for("gestDocumental/verArchivo?idarchivo=")?>"+Base64.encode("<?=folder?>/"+file)+"'>"+file+"</a></div></td><td>&nbsp;</td></tr>");
+        $("#archivos").append("<tr><td ><b>"+(button++)+".</b>&nbsp;&nbsp;&nbsp;&nbsp;<b>Archivo "+file+" </b><div id='hbl_defs'><a href='<?=url_for("gestDocumental/verArchivo?idarchivo=")?>"+Base64.encode("<?=$folder?>/"+file)+"'>"+file+"</a></div></td><td>&nbsp;</td></tr>");
     }
 
 
@@ -83,7 +83,6 @@ button=0;
 
         foreach($filenames as $file)
         {
-
             $id_tr="tr_$i";
     ?>
     <tr id="<?=$id_tr?>" >
@@ -92,10 +91,14 @@ button=0;
             <b>Archivo <?=$file["file"]?></b>
             <div id="hbl_defs">
             <?= link_to(basename($folder."/".$file["file"]), "gestDocumental/verArchivo?idarchivo=".base64_encode($folder."/".$file["file"]))?>
+                <? if($edit)
+                {
+                ?>
                 &nbsp;&nbsp;
                 <a href="#" onclick="eliminar('<?=base64_encode($folder."/".$file["file"])?>','<?=$id_tr?>')"><?=image_tag( "16x16/delete.gif" ,'size=18x18 border=0' )?></a>
-                
-                
+                <?
+                }
+                ?>
             </div>
            
         </td>

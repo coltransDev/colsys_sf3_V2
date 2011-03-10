@@ -6,8 +6,6 @@
 
 
 if( $format!="email" ){
-    
-
 ?>
 <script language="javascript" type="text/javascript">
 	function showEmailForm(){
@@ -153,7 +151,7 @@ if( $format!="email" ){
         foreach( $hijas as $hija ){
             $tpeso+=$hija->getCaPeso();
             $tvolumen+=$hija->getCaVolumen();
-            $tpiezas=$hija->getCaNumpiezas();
+            $tpiezas+=$hija->getCaNumpiezas();
         ?>
         <tr>
             <td>
@@ -251,16 +249,19 @@ if( $format!="email" ){
 ?>
 
 <?
-
+/*
 if( $format=="maritimo" ){
-?>
+
     <br /><br />
 
 <div align="center">
    <?=image_tag("22x22/unlock.gif")?> <a href="<?=url_for("antecedentes/aceptarReferencia?ref=".  str_replace(".", "|", $ref->getCaReferencia()))?>">Haga click aca para desbloquear esta referencia y<br /> confirmar la aceptaci&oacute;n de esta referencia</a>
 </div>
-<?
+
+
 }
+ * 
+ */
 ?>
 <br />
 </div>

@@ -7,14 +7,16 @@
 
 include_component("antecedentes", "widgetReporteAntecedentes");
 include_component("antecedentes", "widgetHBLAntecedentes");
+include_component("gestDocumental", "widgetUploadButton");
 ?>
 
 <script type="text/javascript">
+
     PanelReportesAntecedentes = function( config ){
 
         Ext.apply(this, config);        
 
-this.checkColumn=new Ext.grid.CheckColumn({header:'Hbls Dest.', dataIndex:'sel', width:30})
+    this.checkColumn=new Ext.grid.CheckColumn({header:'Hbls Dest.', dataIndex:'sel', width:30})
         this.columns = [
             {
                 header: "Reporte",
@@ -75,6 +77,17 @@ this.checkColumn=new Ext.grid.CheckColumn({header:'Hbls Dest.', dataIndex:'sel',
             this.record),
             sortInfo:{field: 'orden', direction: "ASC"}
         });
+
+        this.tbar = [
+           new WidgetUploadButton({
+                text: "Agregar Archivo",
+                iconCls: 'arrow_up',
+                folder: "<?=base64_encode("tmp")?>",
+                filePrefix: "",
+                confirm: true,
+                callback: "Ext.getCmp('reportes-antecedentes').actFile"
+            })
+        ];
 
         PanelReportesAntecedentes.superclass.constructor.call(this, {
             clicksToEdit: 1,
@@ -284,7 +297,66 @@ this.checkColumn=new Ext.grid.CheckColumn({header:'Hbls Dest.', dataIndex:'sel',
             this.ctxRow = this.view.getRow(index);
             Ext.fly(this.ctxRow).addClass('x-node-ctx');
             this.menu.showAt(e.getXY());
-        }
+        },
+        actFile:function (file)
+        {
+            Ext.MessageBox.wait('Procesando', '');
+
+            mod=Ext.getCmp("modalidad").getValue();
+
+            //ori=Ext.getCmp("origen").getValue();
+            cmp = Ext.getCmp("origen");
+            if( cmp ){
+                combo=cmp.getRecord();
+                ori=combo.data.idtrafico
+            }
+
+            des=Ext.getCmp("destino").getValue();
+
+            Ext.Ajax.request(
+            {
+                url: '<?=url_for("antecedentes/procesarArchivohbls")?>',
+                params :	{
+                    archivo: file,
+                    modalidad: mod,
+                    origen: ori,
+                    destino: des
+                },
+                failure:function(response,options){
+                    var res = Ext.util.JSON.decode( options.response.responseText );
+                    
+                    Ext.Msg.hide();
+                    success = false;
+                    alert("Surgio un problema al procesar el archivo")
+                },
+                success:function(response,options){
+                    var res = Ext.util.JSON.decode( response.responseText );
+                    if( res.success ){
+                        //alert(res.reportes.toSource());
+                        //reportes=Ext.util.JSON.decode(res.reportes);
+                        //alert(res.reportes.length);
+                        recordReportes = Ext.getCmp('reportes-antecedentes').record;
+                        storeReportes=Ext.getCmp('reportes-antecedentes').getStore();
+                        for(i=0;i<res.reportes.length;i++)
+                        {
+                            
+                         var newRec = new recordReportes({
+                                idreporte: res.reportes[i].ca_idreporte,
+                                consecutivo: res.reportes[i].ca_consecutivo,
+                                hbl: res.reportes[i].doctransporte,
+                                cliente: res.reportes[i].compania
+                            });
+                            storeReportes.addSorted(newRec);
+                            storeReportes.sort("orden", "ASC");
+                        }
+
+                        alert("Se Proceso correctamente");
+                        $("#resul").html("<p>Resumen:</p>"+res.resultado);
+                        //location.href="/antecedentes/listadoReferencias/format/maritimo";
+                    }
+                }
+            });
+        }        
     });
 
 </script>
