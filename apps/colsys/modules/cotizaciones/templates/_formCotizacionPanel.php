@@ -96,18 +96,18 @@ include_component("cotizaciones", "fieldsEncabezado");
 
             FormCotizacionPanel.superclass.onRender.apply(this, arguments);
             this.getForm().waitMsgTarget = this.getEl();
-            //if(this.idreporte!="undefined" && this.idreporte!="" )
-            {
-                this.load({
-                    url:'<?= url_for("cotizaciones/datosEncabezado") ?>',
-                    waitMsg:'cargando...',
-                    params:{idcotizacion:this.idcotizacion},
-                    success:function(response,options){
-                        res = Ext.util.JSON.decode( options.response.responseText );
+            var form = this.getForm();
+            this.load({
+                url:'<?= url_for("cotizaciones/datosEncabezado") ?>',
+                waitMsg:'cargando...',
+                params:{idcotizacion:this.idcotizacion},
+                success:function(response,options){
+                    res = Ext.util.JSON.decode( options.response.responseText );                    
+                    form.findField("vendedor").hiddenField.value = res.data.idvendedor;
 
-                    }
-                });
-            }
+                }
+            });
+
         }
     });
 </script>

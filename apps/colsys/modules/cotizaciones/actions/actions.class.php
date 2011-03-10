@@ -251,9 +251,9 @@ class cotizacionesActions extends sfActions {
             if ($this->getRequestParameter("empresa")) {
                 $cotizacion->setCaEmpresa($this->getRequestParameter("empresa"));
             }
-
-            if ($this->getRequestParameter("vendedor")) {
-                $cotizacion->setCaUsuario($this->getRequestParameter("vendedor"));
+            
+            if ($this->getRequestParameter("idvendedor")) {
+                $cotizacion->setCaUsuario($this->getRequestParameter("idvendedor"));
             } else {
                 if ($this->getUser()->getIddepartamento() == 5) { // Si es comercial le coloca la cotizacion
                     $cotizacion->setCaUsuario($this->getUser()->getUserid());
