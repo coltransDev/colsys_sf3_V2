@@ -250,7 +250,11 @@ if (isset($suf) and $suf == 'findDianDeposito') {
     }
     $rs->MoveFirst();
     if (!$rs->Eof() and !$rs->IsEmpty()) {
-        if (($rs->Value('ca_peso') + $peso > $rs->Value('ca_peso_cap')) or ($rs->Value('ca_volumen') + $volumen > $rs->Value('ca_volumen_cap'))) {
+        if ($rs->Value('ca_peso') + $peso > $rs->Value('ca_peso_cap')) {
+            echo "<script>window.parent.document.getElementById('explicacion').value = 'Peso Ref. ".$rs->Value('ca_peso') + $peso." - Capacidad ".$rs->Value('ca_peso_cap')."';</script>";
+            echo "<script>window.parent.document.getElementById('validado').value = 'false';</script>";
+        }else if ($rs->Value('ca_volumen') + $volumen > $rs->Value('ca_volumen_cap')) {
+            echo "<script>window.parent.document.getElementById('explicacion').value = 'Volumen Ref. ".$rs->Value('ca_volumen') + $volumen." - Capacidad ".$rs->Value('ca_volumen_cap')."';</script>";
             echo "<script>window.parent.document.getElementById('validado').value = 'false';</script>";
         } else {
             echo "<script>window.parent.document.getElementById('validado').value = 'true';</script>";

@@ -1405,7 +1405,7 @@ elseif (isset($boton)) {                                                       /
                 echo "  else if (document.adicionar.continuacion.value != 'N/A' && document.adicionar.idbodega.value == '')";
                 echo "      alert('Debe seleccionar el Operador Multimodal');";
                 echo "  else if (!eval(document.adicionar.validado.value))";
-                echo "      alert('El peso o el volumen registrado superan la capacidad de carga total de la referencia. Ingrese nuevamente el volumen en M³ y el peso en Kilos sin comas y utilizando el punto para separar decimales. Si se trata de un LCL asegúrese de haber registrado en la master la cantidad de metros cúbicos y no el peso de mercancia en el concepto T/M3.');";
+                echo "      alert('El peso o el volumen registrado superan la capacidad de carga total de la referencia. Ingrese nuevamente el volumen en M³ y el peso en Kilos sin comas y utilizando el punto para separar decimales. Si se trata de un LCL asegúrese de haber registrado en la master la cantidad de metros cúbicos y no el peso de mercancia en el concepto T/M3. '+document.adicionar.explicacion.value);";
                 echo "  else{";
                 echo "      respuesta = true;";
                 echo "      for (cont=0; cont<3; cont++) {";
@@ -1586,6 +1586,7 @@ elseif (isset($boton)) {                                                       /
                 echo "<INPUT TYPE='HIDDEN' NAME='vendedor'>";
                 echo "<INPUT TYPE='HIDDEN' NAME='idreporte'>";
                 echo "<INPUT TYPE='HIDDEN' NAME='validado'>";
+                echo "<INPUT TYPE='HIDDEN' NAME='explicacion'>";
                 echo "<TH Class=titulo COLSPAN=5 style='font-size: 11px; vertical-align:bottom'>$id<BR>Información del Cliente</TH>";
                 echo "<TR>";
                 echo "  <TD Class=mostrar>ID Reporte:<BR><INPUT TYPE='TEXT' NAME='consecutivo' SIZE=12 MAXLENGTH=10 READONLY>&nbsp;<a><IMG ID=report_lupa src='graficos/lupa.gif' onclick='buscar_reporte();' alt='Buscar' hspace='0' vspace='0'></a></TD>";
@@ -1835,7 +1836,7 @@ elseif (isset($boton)) {                                                       /
                 echo "  else if (document.modificar.login.value == '')";
                 echo "      alert('Debe seleccionar el nombre del Vendedor');";
                 echo "  else if (!eval(document.modificar.validado.value))";
-                echo "      alert('El peso o el volumen registrado superan la capacidad de carga total de la referencia. Ingrese nuevamente el volumen en M³ y el peso en Kilos. Si se trata de un LCL asegúrese de haber registrado en la master la cantidad de metros cúbicos y no el peso de mercancia en el concepto T/M3.');";
+                echo "      alert('El peso o el volumen registrado superan la capacidad de carga total de la referencia. Ingrese nuevamente el volumen en M³ y el peso en Kilos. Si se trata de un LCL asegúrese de haber registrado en la master la cantidad de metros cúbicos y no el peso de mercancia en el concepto T/M3. '+document.modificar.explicacion.value);";
                 echo "  else{";
                 echo "      respuesta = true;";
                 echo "      elementos = document.getElementById('num_reg');";
@@ -2012,6 +2013,7 @@ elseif (isset($boton)) {                                                       /
                 echo "<INPUT TYPE='HIDDEN' NAME='volumen_ant' VALUE=\"".$rs->Value('ca_volumen')."\">";
                 echo "<INPUT TYPE='HIDDEN' NAME='idreporte' VALUE=\"".$rs->Value('ca_idreporte')."\">";
                 echo "<INPUT TYPE='HIDDEN' NAME='validado'>";
+                echo "<INPUT TYPE='HIDDEN' NAME='explicacion'>";
                 echo "<TH Class=titulo COLSPAN=5 style='font-size: 11px; vertical-align:bottom'>$id<BR>Información del Cliente</TH>";
                 echo "<TR>";
                 echo "  <TD Class=mostrar>ID Reporte:<BR><INPUT TYPE='TEXT' NAME='consecutivo' VALUE='".$rs->Value('ca_consecutivo')."' SIZE=12 MAXLENGTH=10 READONLY>&nbsp;<a><IMG ID=report_lupa src='graficos/lupa.gif' onclick='buscar_reporte();' alt='Buscar' hspace='0' vspace='0'></a></TD>";
