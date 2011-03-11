@@ -52,6 +52,8 @@ Ext.extend(WidgetParametros, Ext.form.ComboBox, {
                 if( rec.caso_uso==this.caso_uso ){
                     if(this.idvalor=="valor")
                         rec.id=rec.name;
+                    if(this.ididentificador=="identificador")
+                        rec.name=rec.id;
                     list.push( rec );
                 }
             }
