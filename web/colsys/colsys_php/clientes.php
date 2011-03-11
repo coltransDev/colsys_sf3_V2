@@ -1184,6 +1184,14 @@ require_once("menu.php");
              $modulo = "00100200";                                             // Identificación del módulo para la ayuda en línea
 //           include_once 'include/seguridad.php';                             // Control de Acceso al módulo
              $tm =& DlRecordset::NewRecordset($conn);
+             if (!$tm->Open("select case when id.ca_idalterno::text is null then id.ca_id::text else id.ca_idalterno end from ids.tb_proveedores pv INNER JOIN ids.tb_ids id ON id.ca_id =  pv.ca_idproveedor where ca_idalterno = '$id'")) {       // Selecciona todos lo registros de la tabla Ciudades
+                 echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+                 echo "<script>document.location.href = 'clientes.php';</script>";
+                 exit; }
+             $es_proveedor = "";
+             if ($tm->GetRowCount() > 0){
+                 $es_proveedor = " READONLY";
+             }
              if (!$tm->Open("select ca_idciudad, ca_ciudad, ca_nombre from vi_ciudades where ca_idtrafico='$regional'")) {       // Selecciona todos lo registros de la tabla Ciudades
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
                  echo "<script>document.location.href = 'clientes.php';</script>";
@@ -1266,7 +1274,7 @@ require_once("menu.php");
              }
              echo "<TR>";
              echo "  <TD Class=captura>Compañia:</TD>";
-             echo "  <TD Class=mostrar COLSPAN=2><INPUT TYPE='TEXT' NAME='compania' VALUE='".$rs->Value('ca_compania')."' SIZE=60 MAXLENGTH=60 style='text-transform: uppercase'></TD>";
+             echo "  <TD Class=mostrar COLSPAN=2><INPUT TYPE='TEXT' NAME='compania' VALUE='".$rs->Value('ca_compania')."' SIZE=60 MAXLENGTH=60 $es_proveedor style='text-transform: uppercase'></TD>";
              echo "</TR>";
              echo "<TR>";
              echo "  <TD Class=captura style='vertical-align: top;' ROWSPAN=4>Representante Legal :</TD>";
