@@ -34,6 +34,7 @@ class confirmacionesComponents extends sfComponents
                                    ->createQuery("c")
                                    ->addWhere("c.ca_idcliente = ?", $this->cliente->getCaIdcliente() )
                                    ->addWhere("ca_fijo = ?", true)
+                                   ->addWhere("ca_cargo != ?", 'Extrabajador')
                                    ->execute();
         /*$this->fijos = array();
         foreach( $fijos as $fijo  ){

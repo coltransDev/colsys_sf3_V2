@@ -249,6 +249,7 @@ class traficosActions extends sfActions
         $fijos = Doctrine::getTable("Contacto")
                                    ->createQuery("c")
                                    ->addWhere("c.ca_idcliente = ?", $cliente->getCaIdcliente() )
+                                   ->addWhere("ca_cargo != ?", 'Extrabajador')
                                    ->addWhere("ca_fijo = ?", true)
                                    ->execute();
         
