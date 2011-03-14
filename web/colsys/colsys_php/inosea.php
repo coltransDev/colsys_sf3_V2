@@ -234,12 +234,24 @@ elseif (isset($boton)) {                                                       /
                 echo "    if (confirm(\"¿Esta seguro que desea abrir la Referencia?\")) {";
                 echo "        document.location.href = 'inosea.php?accion='+opcion+'\&id='+id;";
                 echo "    }";
-                echo "}";
-                echo "function digitar(opcion, id){";
-                echo "    if (confirm(\"¿Esta seguro que desea confirmar digitación Muisca OK?\")) {";
-                echo "        document.location.href = 'inosea.php?accion='+opcion+'\&id='+id;";
-                echo "    }";
-                echo "}";
+                echo "};";
+                echo "function digitar(opcion, id){
+                    if(opcion=='Digitacion_desbloqueo')
+                    {
+                        if (confirm(\"¿Esta seguro que desea Desbloquear la digitación Muisca?\"))
+                        {
+                            document.location.href = 'inosea.php?accion='+opcion+'\&id='+id;                        
+                        }
+                    }
+                    else
+                    {
+                        if (confirm(\"¿Esta seguro que desea confirmar digitación Muisca OK?\"))
+                        {
+                            document.location.href = 'inosea.php?accion='+opcion+'\&id='+id;
+                        }
+                    }
+                    };";
+
                 echo "function archivos(id){";
                 echo "    document.location.href = '/antecedentes/verArchivos?ref='+id";
                 echo "}";
@@ -282,14 +294,15 @@ elseif (isset($boton)) {                                                       /
                     echo "    <IMG style='visibility: $visible' src='./graficos/edit.gif' alt='Editar el Registro' border=0 onclick='elegir(\"Modificar\", \"".$rs->Value('ca_referencia')."\", 0, 0);'>";
                     echo "    <IMG style='visibility: $visible' src='./graficos/del.gif' alt='Eliminar el Registro' border=0 onclick='elegir(\"Eliminar\", \"".$rs->Value('ca_referencia')."\", 0, 0);'><BR><BR>";
                     if ($rs->value("ca_usumuisca") != ''){
-                        $digitable = 'visible'; // hidden
+                        $digitable = 'block'; // hidden
                         $fch_muisca = explode(" ",$rs->value("ca_fchmuisca"));
                         echo "<br /><b>Digitado:</b><br />".$rs->value("ca_usumuisca")."<br />".$fch_muisca[0]."<br />".$fch_muisca[1]."<br />";
+                        echo "<IMG  src='./graficos/digita.gif' alt='Digitación Muisca Ok Desbloquear' border=0 onclick='digitar(\"Digitacion_desbloqueo\", \"".$rs->Value('ca_referencia')."\", 0, 0);'><BR><BR>";
                     }else{
-                        $digitable = 'visible';
-                        echo "<IMG style='visibility: $digitable' src='./graficos/digita.gif' alt='Digitación Muisca Ok' border=0 onclick='digitar(\"Digitacion\", \"".$rs->Value('ca_referencia')."\", 0, 0);'><BR><BR>";
+                        $digitable = 'block';
+                        echo "<IMG style='display: $digitable' src='./graficos/digita.gif' alt='Digitación Muisca Ok' border=0 onclick='digitar(\"Digitacion\", \"".$rs->Value('ca_referencia')."\", 0, 0);'><BR><BR>";
                     }
-                    echo "    <IMG style='visibility: $digitable' src='./graficos/muisca.gif' alt='Informacion Muisca' border=0 onclick='elegir(\"Muisca\", \"".$rs->Value('ca_referencia')."\", 0, 0);'><BR>";
+                    echo "    <IMG style='' src='./graficos/muisca.gif' alt='Informacion Muisca' border=0 onclick='elegir(\"Muisca\", \"".$rs->Value('ca_referencia')."\", 0, 0);'><BR>";
                     echo "    <BR><IMG  src='./graficos/fileopen.png' alt='Archivos adjuntos a la referencia' border=0 onclick='archivos( \"".$rs->Value('ca_referencia')."\", 0, 0);'><BR>";
                     if ($dm->value("ca_usuenvio") != ''){
                         $fch_envio = explode(" ",$dm->value("ca_fchenvio"));
@@ -3495,8 +3508,34 @@ elseif (isset($boton)) {                                                       /
                 echo "  <TD Class=invertir COLSPAN=5></TD>";
                 echo "</TR>";
                 echo "</TABLE><BR>";
+                //echo "muisca:".$rs->value("ca_usumuisca");
                 echo "<TABLE CELLSPACING=10>";
-                echo "<TH><INPUT Class=submit TYPE='SUBMIT' NAME='accion' VALUE='Grabar Encabezado'></TH>";     // Ordena Grabar el registro de forma permanente
+
+                if ($rs->value("ca_usumuisca") != '')
+                {
+                    $digitado=true;
+                    //echo "select count(*) as conta from control.tb_usuarios_perfil where ca_perfil = 'radicación-muisca-colsys' and ca_login='$usuario'";
+                    if (!$tm->Open("select count(*) as conta from control.tb_usuarios_perfil where ca_perfil = 'radicación-muisca-colsys' and ca_login='$usuario'"))
+                    {
+                        echo $tm->mErrMsg;
+                        echo "<script>alert(\"".addslashes($tmp->mErrMsg)."\");</script>";     // Muestra el mensaje de error
+                        //echo "<script>document.location.href = 'inosea.php';</script>";
+
+                        exit;
+                    }
+                    else
+                    {
+                        if($tm->Value('conta')>0)
+                        {
+                            echo "<TH><INPUT Class=submit TYPE='SUBMIT' NAME='accion' VALUE='Grabar Encabezado'></TH>";     // Ordena Grabar el registro de forma permanente
+                        }
+                    }
+                }
+                else
+                    echo "<TH><INPUT Class=submit TYPE='SUBMIT' NAME='accion' VALUE='Grabar Encabezado'></TH>";     // Ordena Grabar el registro de forma permanente
+
+
+                
                 echo "<TH><INPUT Class=button TYPE='BUTTON' NAME='boton' VALUE='Cancelar' ONCLICK='javascript:document.location.href = \"inosea.php?boton=Consultar\&id=$id\"'></TH>";  // Cancela la operación
                 echo "</TABLE>";
                 echo "</FORM>";
@@ -3754,7 +3793,30 @@ elseif (isset($boton)) {                                                       /
                 echo "</TR>";
                 echo "</TABLE><BR>";
                 echo "<TABLE CELLSPACING=10>";
-                echo "<TH><INPUT Class=submit TYPE='SUBMIT' NAME='accion' VALUE='Grabar Cliente'></TH>";     // Ordena Grabar el Registro del Cliente
+
+                if ($rs->value("ca_usumuisca") != '')
+                {
+                    $digitado=true;
+                    if (!$tm->Open("select count(*) as conta from control.tb_usuarios_perfil where ca_perfil = 'radicación-muisca-colsys' and ca_login='$usuario'"))
+                    {
+                        echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";     // Muestra el mensaje de error
+                        //echo "<script>document.location.href = 'inosea.php';</script>";
+                        
+                        exit;
+                    }
+                    else
+                    {
+                        if($tm->Value('conta')>0)
+                        {
+                            echo "<TH><INPUT Class=submit TYPE='SUBMIT' NAME='accion' VALUE='Grabar Cliente'></TH>";     // Ordena Grabar el Registro del Cliente
+                        }
+                    }
+                }
+                else
+                    echo "<TH><INPUT Class=submit TYPE='SUBMIT' NAME='accion' VALUE='Grabar Cliente'></TH>";     // Ordena Grabar el Registro del Cliente
+
+
+               // echo "<TH><INPUT Class=submit TYPE='SUBMIT' NAME='accion' VALUE='Grabar Cliente'></TH>";     // Ordena Grabar el Registro del Cliente
                 echo "<TH><INPUT Class=button TYPE='BUTTON' NAME='boton' VALUE='Cancelar' ONCLICK='javascript:document.location.href = \"inosea.php?boton=Consultar\&id=$id\"'></TH>";  // Cancela la operación
                 echo "</TABLE>";
                 echo "</FORM>";
@@ -4859,6 +4921,16 @@ elseif (isset($accion)) {                                                      /
                 }
                 break;
             }
+
+        case 'Digitacion_desbloqueo': {                                                      // El Botón Guardar fue pulsado
+                if (!$rs->Open("update tb_inomaestra_sea set ca_usumuisca = null, ca_fchmuisca = null where ca_referencia = '$id'")) {
+                    echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
+                    echo "<script>document.location.href = 'inosea_abrir.php';</script>";
+                    exit;
+                }
+                break;
+            }
+
         case 'Digitacion': {                                                      // El Botón Digitacion Muisca fue pulsado
                 $us =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
                 if (!$us->Open("select * from vi_usuarios where ca_login = '$usuario'")) {
