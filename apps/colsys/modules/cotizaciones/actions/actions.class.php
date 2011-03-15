@@ -2496,7 +2496,7 @@ class cotizacionesActions extends sfActions {
                 INNER JOIN control.tb_usuarios c ON t.ca_usuario = c.ca_login
                 LEFT JOIN tb_emails t2 ON t.ca_idcotizacion = t2.ca_idcaso
                 WHERE (t.ca_consecutivo IS NOT NULL AND ((t.ca_usuanulado is null OR t.ca_usuanulado = '') AND t.ca_fchcreado BETWEEN '" . $this->fechaInicial . "' AND '" . $this->fechaFinal . "') AND t2.ca_tipo = 'Envío de cotización' $where)
-                ORDER BY EXTRACT(YEAR FROM t.ca_fchcreado) DESC , to_number(SUBSTR(t.ca_consecutivo, 1, (POSITION('-' in t.ca_consecutivo)-1)), '999999') desc, t.ca_version desc";
+                ORDER BY t.ca_fchcreado ASC, to_number(SUBSTR(t.ca_consecutivo, 1, (POSITION('-' in t.ca_consecutivo)-1)), '999999') desc, t.ca_version desc";
 
 
             $st = $con->execute($sql);

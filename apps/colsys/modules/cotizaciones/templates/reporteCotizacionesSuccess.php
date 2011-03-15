@@ -14,7 +14,7 @@ if( $cotizaciones)
 <h3>Estadisticas de cotizaciones <?=$fechaInicial?> <?=$fechaFinal?> <br>
 <?
 if( $usuario ){
-	echo "Vendedor: ".$usuario->getCaNombre();
+    echo "Vendedor: ".$usuario->getCaNombre();
 }
 if( $sucursal ){
 	echo " Sucursal: ".$sucursal;
@@ -27,13 +27,13 @@ if( $sucursal ){
 Datos basados en <?=count($cotizaciones)?> cotizaciones
 <br />
 </div>
-<table width="450" border="1" class="tableList" align="center">
+<table width="45%" border="1" class="tableList" align="center">
     <tr>
         <th scope="col">No. Cotizacion</th>
-        <th scope="col">Vendedor</th>
+        <th scope="col">Creado Por</th>
         <th scope="col">Fecha Creado</th>
-        <th scope="col">Usuario Envio</th>
         <th scope="col">Fecha Envio</th>
+        <th scope="col">Vendedor</th>
         <th scope="col">Etapa</th>
     </tr>
     <?
@@ -42,10 +42,10 @@ Datos basados en <?=count($cotizaciones)?> cotizaciones
 ?>
         <tr>
         <td><?=$cotizacion["ca_consecutivo"]?></td>
-        <td><?=$cotizacion["ca_login"]?></td>
+        <td><?=$cotizacion["ca_usucreado"]?></td>
         <td><?=$cotizacion["ca_fchcreado"]?></td>
-        <td><?=$cotizacion["ca_usuenvio"]?></td>
         <td><?=$cotizacion["ca_fchenvio"]?></td>
+        <td><?=$cotizacion["ca_login"]?></td>
         <td><?=($cotizacion["etapa"])?$cotizacion["etapa"]:$cotizacion["etapa1"]?></td>
     </tr>
 <?
@@ -195,4 +195,3 @@ var tabs = new Ext.FormPanel({
 });
 tabs.render("container");
 </script>
-
