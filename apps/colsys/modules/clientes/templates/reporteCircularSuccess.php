@@ -190,60 +190,10 @@
     <tr>
 	    <td colspan="11"><div align="center">Reporte sin Registros</div></td>
     </tr>
-
 <?
 	}
-
-        if( count($clientesSinBeneficio)!=0 ){
 ?>
 
-</tbody>
-</table>
-<br />
-<br />
-
-<h3>Clientes que PIERDEN beneficios crediticios por vencimiento de circular 0170</h3>
-
-<table class="tableList" border="1">
-<thead>
-<tr>
-  <th>Id Cliente</th>
-  <th>D&iacute;gito</th>
-  <th>Cliente</th>
-  <th>Direcci&oacute;n</th>
-  <th>Tel&eacute;fono</th>
-  <th>Fax</th>
-  <th>Cupo</th>
-  <th>D&iacute;as/Cr&eacute;dito</th>
-  <th>Ciudad</th>
-  <th>Vendedor</th>
-  <th>Sucursal</th>
-</tr>
-</thead>
-<tbody>
-
-<?php foreach ($clientesSinBeneficio as $cliente): ?>
-<tr >
-      <td><?php echo $cliente["ca_idcliente"] ?></td>
-      <td><?php echo $cliente["ca_digito"] ?></td>
-      <td><?php echo $cliente["ca_compania"] ?></td>
-      <td><?php echo $cliente["ca_direccion"]." ".$cliente["ca_oficina"]." ".$cliente["ca_torre"]." ".$cliente["ca_bloque"]." ".$cliente["ca_interior"]." ".$cliente["ca_complemento"] ?></td>
-      <td><?php echo $cliente["ca_telefonos"] ?></td>
-      <td><?php echo $cliente["ca_fax"] ?></td>
-      <td><?php echo $cliente["ca_cupo"] ?></td>
-      <td><?php echo $cliente["ca_diascredito"] ?></td>
-      <td><?php echo $cliente["ca_ciudad"] ?></td>
-      <td><?php echo $cliente["ca_vendedor"] ?></td>
-      <td><?php echo $cliente["ca_sucursal"] ?></td>
-</tr>
-<?php
-      endforeach;
-    }
-?>
-
-<tr>
-    <td colspan="13"><div align="center">Fin del Reporte</div></td>
-</tr>
 </tbody>
 </table>
 
