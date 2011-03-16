@@ -1029,6 +1029,8 @@ Ext.extend(PanelFletesPorTrayecto, Ext.grid.EditorGridPanel, {
                                 rec.set("deleted", true);
                             }
 
+                        }else{
+                            Ext.MessageBox.alert('Error', "Ha ocurrido el siguiente error"+res.errorInfo);
                         }
                     },
                     failure:function(response,options){
@@ -1158,6 +1160,8 @@ Ext.extend(PanelFletesPorTrayecto, Ext.grid.EditorGridPanel, {
                             rec.commit();
                         }
 
+                    }else{
+                        Ext.MessageBox.alert('Error', "Ha ocurrido el siguiente error"+res.errorInfo);
                     }
                 },
                 failure:function(response,options){

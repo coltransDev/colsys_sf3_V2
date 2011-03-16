@@ -686,6 +686,8 @@ Ext.extend(PanelRecargosPorCiudad, Ext.grid.EditorGridPanel, {
                                         var rec = storeRecargos.getById( res.id );
                                         rec.set("sel", false); //Quita la seleccion de todas las columnas
                                         rec.commit();
+                                    }else{
+                                        Ext.MessageBox.alert('Error', "Ha ocurrido el siguiente error"+res.errorInfo);
                                     }
                                 },
                                 failure:function(response,options){
@@ -763,6 +765,8 @@ Ext.extend(PanelRecargosPorCiudad, Ext.grid.EditorGridPanel, {
                                                     var rec = storeRecargos.getById( res.id );
                                                     storeRecargos.remove(rec);
                                                     rec.set("deleted", true);
+                                                }else{
+                                                    Ext.MessageBox.alert('Error', "Ha ocurrido el siguiente error"+res.errorInfo);
                                                 }
                                             },
                                             failure:function(response,options){
