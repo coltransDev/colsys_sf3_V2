@@ -118,101 +118,112 @@ var eliminarAgente = function(){
             }
                      
             if( $modo=="prov" ){
-                $proveedor = $ids->getIdsProveedor();            
-            ?>
-            <tr>
-                <td>
-                    <div align="left"><b>Tipo</b></div>
-               </td>
-               <td>
-                   <div align="left"><?=$proveedor->getIdsTipo()?></div>
-               </td>
-               <td>
-                   <div align="left"><b>Fecha de aprobaci&oacute;n</b></div>
-               </td>
-               <td>
-                   <div align="left"><?=$proveedor->getCaFchaprobado()?Utils::fechaMes($proveedor->getCaFchaprobado())." por ".$proveedor->getCaUsuaprobado():"No Aprobado"?></div>
-               </td>
-            </tr>
-            <tr>
-                <td>
-                    <div align="left"><b>Empresa</b></div>
-               </td>
-               <td>
-                   <div align="left"><?=$proveedor->getCaEmpresa()?$proveedor->getCaEmpresa():"Ambas"?></div>
-               </td>
-               <td>
-                   <div align="left">&nbsp;</div>
-               </td>
-               <td>
-                   <div align="left">&nbsp;</div>
-               </td>
-            </tr>
-
-                <?
-                if( $proveedor->getCaTipo()=="TRI" || $proveedor->getCaTipo()=="TRN" ){
+                $proveedor = $ids->getIdsProveedor();                               
+                if( $proveedor && $proveedor->getCaIdproveedor() ){
                 ?>
                 <tr>
                     <td>
-                        <div align="left"><b>Sigla</b></div>
+                        <div align="left"><b>Tipo</b></div>
                    </td>
                    <td>
-                       <div align="left"><?=$proveedor->getCaSigla()?></div>
+                       <div align="left"><?=$proveedor->getIdsTipo()?></div>
                    </td>
                    <td>
-                       <div align="left"><b>Transporte</b></div>
+                       <div align="left"><b>Fecha de aprobaci&oacute;n</b></div>
                    </td>
                    <td>
-                       <div align="left"><?=$proveedor->getCaTransporte()?></div>
+                       <div align="left"><?=$proveedor->getCaFchaprobado()?Utils::fechaMes($proveedor->getCaFchaprobado())." por ".$proveedor->getCaUsuaprobado():"No Aprobado"?></div>
                    </td>
                 </tr>
-                <?  
-                }
+                <tr>
+                    <td>
+                        <div align="left"><b>Empresa</b></div>
+                   </td>
+                   <td>
+                       <div align="left"><?=$proveedor->getCaEmpresa()?$proveedor->getCaEmpresa():"Ambas"?></div>
+                   </td>
+                   <td>
+                       <div align="left">&nbsp;</div>
+                   </td>
+                   <td>
+                       <div align="left">&nbsp;</div>
+                   </td>
+                </tr>
+
+                    <?
+                    if( $proveedor->getCaTipo()=="TRI" || $proveedor->getCaTipo()=="TRN" ){
+                    ?>
+                    <tr>
+                        <td>
+                            <div align="left"><b>Sigla</b></div>
+                       </td>
+                       <td>
+                           <div align="left"><?=$proveedor->getCaSigla()?></div>
+                       </td>
+                       <td>
+                           <div align="left"><b>Transporte</b></div>
+                       </td>
+                       <td>
+                           <div align="left"><?=$proveedor->getCaTransporte()?></div>
+                       </td>
+                    </tr>
+                    <?
+                    }
+                    ?>
+
+                <tr>
+                    <td>
+                        <div align="left"><b>Controlado por SIG</b></div>
+                   </td>
+                   <td>
+                       <div align="left"><?=$proveedor->getCaControladoporsig()?"S&iacute;":"No"?></div>
+                   </td>
+                   <td>
+                       <div align="left"><b>Critico</b></div>
+                   </td>
+                   <td>
+                       <div align="left"><?=$proveedor->getCaCritico()?"S&iacute;":"No"?></div>
+                   </td>
+                </tr>
+                 <tr>
+                    <td>
+                        <div align="left"><b>Activo Impo</b></div>
+                   </td>
+                   <td>
+                       <div align="left"><?=$proveedor->getCaActivoImpo()?"S&iacute;":"<span class='rojo'>No</span>"?></div>
+                   </td>
+                   <td>
+                       <div align="left"><b>Esporadico</b></div>
+                   </td>
+                   <td>
+                       <div align="left"><div align="left"><?=$proveedor->getCaEsporadico()?"S&iacute;":"No"?></div></div>
+                   </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div align="left"><b>Activo Expo</b></div>
+                   </td>
+                   <td>
+                       <div align="left"><?=$proveedor->getCaActivoExpo()?"S&iacute;":"<span class='rojo'>No</span>"?></div>
+                   </td>
+                   <td>
+                       <div align="left">&nbsp;</div>
+                   </td>
+                   <td>
+                       <div align="left">&nbsp;</div>
+                   </td>
+                </tr>
+                <?
+                }else{
                 ?>
-            
-            <tr>
-                <td>
-                    <div align="left"><b>Controlado por SIG</b></div>
-               </td>
-               <td>
-                   <div align="left"><?=$proveedor->getCaControladoporsig()?"S&iacute;":"No"?></div>
-               </td>
-               <td>
-                   <div align="left"><b>Critico</b></div>
-               </td>
-               <td>
-                   <div align="left"><?=$proveedor->getCaCritico()?"S&iacute;":"No"?></div>
-               </td>
-            </tr>
-             <tr>
-                <td>
-                    <div align="left"><b>Activo Impo</b></div>
-               </td>
-               <td>
-                   <div align="left"><?=$proveedor->getCaActivoImpo()?"S&iacute;":"<span class='rojo'>No</span>"?></div>
-               </td>
-               <td>
-                   <div align="left"><b>Esporadico</b></div>
-               </td>
-               <td>
-                   <div align="left"><div align="left"><?=$proveedor->getCaEsporadico()?"S&iacute;":"No"?></div></div>
-               </td>
-            </tr>
-            <tr>
-                <td>
-                    <div align="left"><b>Activo Expo</b></div>
-               </td>
-               <td>
-                   <div align="left"><?=$proveedor->getCaActivoExpo()?"S&iacute;":"<span class='rojo'>No</span>"?></div>
-               </td>
-               <td>
-                   <div align="left">&nbsp;</div>
-               </td>
-               <td>
-                   <div align="left">&nbsp;</div>
-               </td>
-            </tr>
-            <?
+                <tr>
+
+                    <td colspan="4">
+                       <div align="left" ><span class="rojo">Este registro ya existe en otra maestra, es necesario editar el registro y completar los datos.</span></div>
+                   </td>
+                </tr>
+                <?
+                }
             }
             ?>
             <tr>
@@ -237,7 +248,9 @@ var eliminarAgente = function(){
                         <div class="tab-page">
                           <h2 class="tab">Evaluaci&oacute;n</h2>
                           <?
-                          include_component("ids", "evaluaciones", array("ids"=>$ids, "modo"=>$modo, "nivel"=>$nivel ));
+                          if( $modo=="prov" && $proveedor && $proveedor->getCaIdproveedor() ){
+                            include_component("ids", "evaluaciones", array("ids"=>$ids, "modo"=>$modo, "nivel"=>$nivel ));
+                          }
                           ?>
                        </div>
                        <?

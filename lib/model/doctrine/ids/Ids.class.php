@@ -14,6 +14,8 @@ class Ids extends BaseIds
 {
     const FOLDER = "ids";
 
+    private $idsProveedor = null;
+
     public function __toString(){
         return $this->getcaNombre();
     }
@@ -63,5 +65,15 @@ class Ids extends BaseIds
         return $result;
 
         
+    }
+
+
+    public function getIdsProveedor(){
+        if( !$this->idsProveedor ){
+            $this->idsProveedor = Doctrine::getTable("IdsProveedor")->find($this->getCaId());
+        }
+
+        return $this->idsProveedor;
+
     }
 }
