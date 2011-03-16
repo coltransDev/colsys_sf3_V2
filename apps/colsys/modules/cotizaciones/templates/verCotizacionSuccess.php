@@ -83,18 +83,7 @@ if( !$cotizacion->getCaUsuanulado() ){
                 <th><div align="left"><b>Adjuntos:</b>
                 </div></th>
             </tr>
-            <?php
-            if( !$enBlanco ){
-            ?>
-            <tr>
-                <td>
-                    <div align="left">
-                        <input type="checkbox" name="incluirPDF" value="PDF" checked="checked" > Cotización en PDF
-                    </div>
-                </td>
-            </tr>
-            <?php
-            }
+            <?php            
 
             $directorio = $cotizacion->getDirectorio();
             $archivos = sfFinder::type('file')->maxDepth(0)->in($directorio);
