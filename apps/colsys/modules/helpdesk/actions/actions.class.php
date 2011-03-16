@@ -80,7 +80,7 @@ class helpdeskActions extends sfActions
 				$q->where("(h.ca_title like ?  or r.ca_text like ?) ", array("%". strtolower($criterio)."%", "%". strtolower($criterio)."%" ) );
                 $q->addOrderBy("h.ca_idgroup");
                 $q->addOrderBy("h.ca_idproject");
-                $q->addOrderBy("h.ca_action");
+                $q->addOrderBy("h.ca_closedat");
                 $q->addOrderBy("h.ca_opened");
 				break;	
 			case "personalizada":			
@@ -102,9 +102,14 @@ class helpdeskActions extends sfActions
                     $q->addWhere("h.ca_priority = ? ", $request->getParameter("priority") );
 				}
 				
-				if( $request->getParameter("actionTicket") ){						
-                    $q->addWhere("h.ca_action = ? ", $request->getParameter("actionTicket") );
-				}
+
+                if ($request->getParameter("actionTicket")) {
+                    if( $request->getParameter("actionTicket")=="Cerrado" ){
+                        $q->addWhere("h.ca_closedat IS NOT NULL");
+                    }else{
+                        $q->addWhere("h.ca_closedat IS NULL");
+                    }
+                }
 				
 				if( $request->getParameter("type") ){
                     $q->addWhere("h.ca_type = ? ", $request->getParameter("type") );
@@ -125,7 +130,7 @@ class helpdeskActions extends sfActions
 				if( $groupby=="project" ){
                     $q->addOrderBy("h.ca_idproject ASC");
 				}
-                $q->addOrderBy("h.ca_action ASC");
+                $q->addOrderBy("h.ca_closedat");
                 $q->addOrderBy("h.ca_opened ASC");
 					
 				break;
@@ -142,7 +147,7 @@ class helpdeskActions extends sfActions
 						$q->addWhere( "h.ca_assignedto IS NULL" );
 					}
 				}
-				$q->addWhere("h.ca_action = ? ", "Abierto");
+				$q->addWhere("h.ca_closedat IS NULL");
 				$q->addOrderBy("h.ca_idgroup");
 				 
 				if( $groupby=="project" ){
