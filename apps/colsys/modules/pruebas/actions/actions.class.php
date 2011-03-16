@@ -36,13 +36,17 @@ class pruebasActions extends sfActions {
     }
 
     public function executeSendEmail() {
-        //exit("detenido");
+        exit("detenido");
         set_time_limit(0);
         
 
-
-        $email = Doctrine::getTable("Email")->find(516616);
-        //foreach ($emails as $email) {
+        $emails = Doctrine::getTable("Email")
+                            ->createQuery("e")
+                            ->addWhere("e.ca_fchenvio>= ?", "2010-12-13 13:38:00" )
+                            ->addWhere("e.ca_fchenvio<= ?", "2010-12-13 15:28:00" )
+                            ->execute();
+        //$email = Doctrine::getTable("Email")->find(516616);
+        foreach ($emails as $email) {
             //print_r( $email);
             echo "<b>Enviando " . $i++ . "</b>	emailid: " . $email->getCaIdemail() . " Fch: " . $email->getCaFchenvio() . " <br />From: " . $email->getCaFrom() . "<br />";
 
@@ -73,9 +77,9 @@ class pruebasActions extends sfActions {
 
 
             echo $email->send() ? "OK" : "NO" . "<br /><br />";
-        //}
+        }
 
-        return sfView::NONE;
+        $this->setTemplate("blank");
     }
 
     public function executeSendStatus() {
@@ -3772,6 +3776,58 @@ ORDER BY ca_idtrayecto,ca_idconcepto,log_pricrecargosxconcepto.ca_idrecargo, ca_
 
         // this blocks until a worker do the job and return result
         $result = sfGearmanClient::getInstance()->task('reverse1', 'Hello!');
+
+
+    }
+
+
+
+    /*
+     *
+     *
+     * @author: Andres Botero
+     */
+
+    public function executeCierresTickets($request) {
+        $q = Doctrine::getTable("HDeskTicket")
+                        ->createQuery("t")
+                        ->select("t.*")
+                        ->addWhere("t.ca_closedat IS NULL")
+                        ->addWhere("t.ca_action=?", "Cerrado")
+                        //->limit(100)
+                        ->addOrderBy("t.ca_idticket ASC");
+                        
+        
+        $tickets = $q->execute();
+
+
+        foreach( $tickets as $ticket ){
+
+
+
+            $response = Doctrine::getTable("HDeskResponse")
+                            ->createQuery("r")
+                            ->select( "MAX(ca_createdat)")
+                            ->addWhere("r.ca_idticket = ? ", $ticket->getCaIdticket())
+                            ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)
+                            ->execute();
+
+
+            if( $response ){
+                echo $ticket->getCaIdticket()." ---->".$response."<br />";
+                $ticket->setCaClosedat($response);
+                $ticket->save();
+            }else{
+                $ticket->setCaClosedat($ticket->getcaOpened());
+                $ticket->save();
+            }
+
+        }
+
+        
+        $this->setTemplate("blank");
+
+
 
 
     }
