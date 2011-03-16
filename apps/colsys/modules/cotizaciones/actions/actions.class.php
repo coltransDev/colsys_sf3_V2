@@ -147,51 +147,7 @@ class cotizacionesActions extends sfActions {
      * Permite consultar una cotizacion ya creada y permite
      * agregar nuevas
      * @author Carlos G. López M., Andres Botero
-     */
-    /* public function executeConsultaCotizacionOld()
-      {
-      $response = sfContext::getInstance()->getResponse();
-      $response->addJavaScript("extExtras/RowExpander",'last');
-      $response->addJavaScript("extExtras/myRowExpander",'last');
-      $response->addJavaScript("extExtras/CheckColumn",'last');
-
-      if( !is_null($this->getRequestParameter("id")) ) {
-      $id_cotizacion = $this->getRequestParameter("id");
-      $cotizacion = Doctrine::getTable("Cotizacion")->find( $id_cotizacion );
-      $this->forward404Unless( $cotizacion );
-      $this->editable = $this->getRequestParameter("editable");
-      $this->option = $this->getRequestParameter("option");
-
-      $this->tarea = $cotizacion->getTareaIDGEnvioOportuno();
-      if( $this->tarea && $this->tarea->getCaFchterminada() ){
-      $this->redirect("cotizaciones/verCotizacion?id=".$cotizacion->getCaIdcotizacion());
-      }
-
-
-      if($cotizacion->getCaUsuanulado()){
-      $this->redirect("cotizaciones/verCotizacion?id=".$cotizacion->getCaIdcotizacion());
-      }
-
-      $this->cotizacion = $cotizacion;
-      }else {
-      $config = sfConfig::get('sf_app_module_dir').DIRECTORY_SEPARATOR."cotizaciones".DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."textos.yml";
-      $textos = sfYaml::load($config);
-      $user = $this->getUser()->getUserId();
-      $this->cotizacion = new Cotizacion();
-      $this->cotizacion->setCaAsunto($textos['asunto']);
-      $this->cotizacion->setCaSaludo($textos['saludo']);
-      $this->cotizacion->setCaEntrada( $textos['entrada'] );
-      $this->cotizacion->setCaDespedida( $textos['despedida'] );
-      $this->cotizacion->setCaAnexos( $textos['anexos'] );
-      $this->cotizacion->setCaUsuario($user);
-      $this->tarea = $this->cotizacion->getTareaIDGEnvioOportuno();
-      }
-      $this->user = $this->getUser();
-      $this->nivel = $this->getUser()->getNivelAcceso( cotizacionesActions::RUTINA );
-      if( $this->nivel==-1 ){
-      $this->forward404();
-      }
-      } */
+     */   
 
     public function executeConsultaCotizacion() {
         $response = sfContext::getInstance()->getResponse();
@@ -1884,6 +1840,8 @@ class cotizacionesActions extends sfActions {
 
         if ($this->getRequestParameter("observaciones")) {
             $seguro->setCaObservaciones($this->getRequestParameter("observaciones"));
+        }else{
+            $seguro->setCaObservaciones(null);
         }
 
         if ($this->getRequestParameter("transporte")) {
