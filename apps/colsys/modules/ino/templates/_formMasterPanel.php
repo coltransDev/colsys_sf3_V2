@@ -131,7 +131,7 @@ include_component("widgets", "widgetAgente");
                                         xtype:"hidden",
                                         id: 'transporte',
                                         name: 'transporte',
-                                        value:'<?=$modo?>'
+                                        value:'<?=  Constantes::MARITIMO?>'
                                 },
                                 new WidgetLinea({fieldLabel: 'Linea',
                                                  linkTransporte: "transporte",

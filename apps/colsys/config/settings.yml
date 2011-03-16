@@ -113,3 +113,4 @@ all:
       - gestDocumental
       - email
       - menu
+      - fileManager

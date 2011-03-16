@@ -154,96 +154,6 @@ class myUser extends sfBasicSecurityUser
 	
 	
 	
-	/*
-	* Inicia la sesion y verifica a los grupos a los que pertenece
-	*  el usuario el el directorio LDAP
-	*/
-	/*public function signInLDAP( $username )
-	{ 		
-		$user = Doctrine::getTable("Usuario")->find( $username );
-		
-		if( $user ){	
-			
-			$gruposArray = array();
-			
-			$ldap_server=sfConfig::get("app_ldap_host");
-			$auth_user="cn=".sfConfig::get("app_ldap_user").",o=coltrans_bog";			
-					
-			$passwd =sfConfig::get("app_ldap_passwd");
-			
-			if($connect=ldap_connect($ldap_server)){						
-				if($bind=ldap_bind($connect, $auth_user, $passwd)){
-					
-					//Determina la pertenecia a los grupos en el serv. LDAP		
-					$gruposObj = GrupoPeer::doSelect( new Criteria() );
-					foreach( $gruposObj as $grupoObj ){
-						$gruposArray[]=$grupoObj->getCaNombre();
-					}						
-											
-					$sr = ldap_search($connect,"o=coltrans_bog" , "(&(objectclass=person)(cn=".$username."))" );
-					$info = ldap_get_entries($connect, $sr);										
-					$person = $info[0];		
-						
-					$grupos = array();
-					foreach($person['groupmembership'] as $key=>$grupo ){												
-						if( $key!=="count"){							
-							$grupo = str_replace(",o=coltrans_bog", "", $grupo);
-							$grupo = strtolower(str_replace("cn=", "", $grupo));		
-							if( in_array( $grupo, $gruposArray ) ){													
-								$grupos[]=$grupo;
-							}
-						}
-					}						
-					
-					
-					//Borra todos los grupos a los que pertenece  
-					$c = new Criteria();
-					$c->add( UsuarioGrupoPeer::CA_LOGIN, $username );
-					$accesos = UsuarioGrupoPeer::doSelect( $c );
-					foreach( $accesos as $acceso ){
-						$acceso->delete();			
-					}
-				
-					foreach( $grupos as $grupo ){
-						$usuarioGrupo = new UsuarioGrupo();
-						$usuarioGrupo->setCaLogin( $username );
-						$usuarioGrupo->setCaGrupo( $grupo );
-						$usuarioGrupo->save();
-					}	
-																									
-					$this->setGrupos( $grupos );	
-				
-					
-				
-					
-					$this->setAttribute('user_id', $username );			
-					$this->setAuthenticated(true);							
-					$this->addCredential('colsys_user');
-					$this->setCulture('es_CO');			
-									
-					$sucursal = $user->getSucursal();			
-					$this->setAttribute('idsucursal',  $user->getCaIdsucursal() );
-					$this->setAttribute('nombre', $user->getCaNombre() );		
-					$this->setAttribute('email', $user->getCaEmail() );
-					$this->setAttribute('cargo', $user->getCaCargo() );			
-					$this->setAttribute('extension', $user->getCaExtension() );
-					$this->setAttribute('authmethod', $user->getCaAuthmethod() );
-					$this->setAttribute('forcechange', false );					
-					$c = new Criteria();
-					$c->add(DepartamentoPeer::CA_NOMBRE, $user->getCaDepartamento() );
-					$departamento = DepartamentoPeer::doSelectOne( $c );
-					if( $departamento ){
-						$this->setAttribute('iddepartamento', $departamento->getCaIddepartamento() );
-					}	
-					
-										
-				}	
-		
-			}
-		}
-	}
-	*/
-	
 	
 	/*
 	* Inicia la sesion y verifica a los grupos a los que pertenece
@@ -351,7 +261,7 @@ class myUser extends sfBasicSecurityUser
 			
 		$this->setAuthenticated(false);		
 		$this->clearCredentials();
-		session_destroy();
+		//session_destroy();
 	}
 
 

@@ -49,7 +49,7 @@ class loginValidationFilter extends sfFilter
                 }
             }else{
                 sfContext::getInstance()->getUser()->signOut();
-                sfContext::getInstance()->getController()->redirect("/");
+                sfContext::getInstance()->getController()->forward("users", "login");
                 exit();
             }
         }
