@@ -1,0 +1,13 @@
+fields:
+  password1:
+    required:
+      msg:      Por favor ingresa una contrase&ntilde;a
+    sfStringValidator:
+      min:       6
+      min_error: La clave debe ser por lo menos de 6 caracteres
+  password2:
+    required:
+      msg:      Por favor vuelve a ingresa una contrase&ntilde;a   
+    sfCompareValidator:
+      check:    password1
+      compare_error: Las dos contrase&ntilde;as no coinciden
