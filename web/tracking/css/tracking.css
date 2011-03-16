@@ -357,6 +357,9 @@ color:#CCCCCC;
 	background-image:url('../images/fam/application_delete.png') !important;
 }
 
+.clock{
+	background: url('../images/fam/clock.png') no-repeat 0 0 !important;
+}
 
 /*
 * otros
