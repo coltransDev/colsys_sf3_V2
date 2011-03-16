@@ -1390,6 +1390,44 @@ class idsActions extends sfActions
     }
 
 
+    /**
+	* Muestra el formulario de creación y edicion de proveedores
+	*
+	* @param sfRequest $request A request object
+	*/
+	public function executeEliminarAgente(sfWebRequest $request){
+        
+        $conn = Doctrine::getTable("IdsAgente")->getConnection();
+        $conn->beginTransaction();
+        try{
+            $nivel = $this->getNivel();
+            $modo = $request->getParameter("modo");
+            if( $nivel>=3 ){
+                if( $modo=="agentes" ){
+                    $id = $request->getParameter("id");
+                    $this->forward404Unless( $id );
+                    $agente = Doctrine::getTable("IdsAgente")->find($id);
+                    $this->forward404Unless( $agente );
+                    $ids = $agente->getIds();
+                    $agente->delete( $conn );
+                    $ids->delete( $conn );
+                    $conn->commit();
+
+                    $this->getUser()->log("Elimina agente: ".$ids->getCaId()." ".$ids->getCaNombre());
+                    $this->responseArray = array("success" => true);
+                }else{
+                    throw new Exception("No implementado");
+                }
+            }else{
+                throw new Exception("Nivel de privilegios no adecuado");
+            }
+        } catch (Exception $e) {
+            $conn->rollBack();
+            $this->responseArray = array("success" => false, "errorInfo" => utf8_encode($e->getMessage()));
+        }
+        
+        $this->setTemplate("responseTemplate");
+    }
 
 }
 ?>

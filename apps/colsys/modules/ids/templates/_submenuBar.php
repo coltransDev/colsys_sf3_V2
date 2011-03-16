@@ -51,6 +51,15 @@ switch($action){
             $button[$i]["image"]="22x22/kfind.gif";
             $button[$i]["link"]= "ids/verificarListaClinton?id=".$this->getRequestParameter("id")."&modo=".$this->getRequestParameter("modo") ;
             $i++;
+
+            if( $this->getRequestParameter("modo")=="agentes" ){
+                $button[$i]["name"]="Eliminar";
+                $button[$i]["tooltip"]="";
+                $button[$i]["image"]="16x16/delete.gif";
+                $button[$i]["onClick"]= "eliminarAgente()" ;
+                $i++;
+            }
+
         }
 		break;
 }

@@ -3,8 +3,45 @@
 *
 */
 
+if(  $modo=="agentes"  ){
 ?>
+<script type="text/javascript">
 
+var eliminarAgente = function(){
+    Ext.Ajax.request(
+        {
+            waitMsg: 'Eliminando ...',
+            url: '<?=url_for("ids/eliminarAgente")?>',
+            //Solamente se envian los cambios
+            params :	{
+                id: <?=$ids->getCaId()?>,
+                modo: '<?=$modo?>' 
+            },
+
+            success:function(response,options){
+
+                var res = Ext.util.JSON.decode( response.responseText );
+                if( res.success){
+                    alert( "El agente se elimino correctamente.");
+                    document.location = "<?=url_for("ids/index?modo=".$modo)?>"
+                }else{
+                    Ext.MessageBox.alert('Error', "Ha ocurrido el siguiente error"+res.errorInfo);
+                }
+            },
+            failure:function(response,options){
+                Ext.MessageBox.alert('Error Message', "Se ha presentado un error"+response.status );
+                //Ext.MessageBox.alert('Error Message', "Se ha presentado un error"+(action.result?": "+action.result.errorInfo:"")+" "+(action.response?"\n Codigo HTTP "+action.response.status:""));
+            }
+
+
+
+         }
+    );
+}
+</script>
+<?
+}
+?>
 
 <div align="center" class="content">
     <h3>Maestra de
