@@ -370,7 +370,7 @@ class clientesActions extends sfActions {
         $this->clientesVenCircular = array();
         $this->clientesSinCircular = array();
         $this->clientesSinVisita = array();
-        $this->clientesSinBeneficio = array();
+        // $this->clientesSinBeneficio = array();
         list($year, $month, $day) = sscanf($final, "%d-%d-%d");
 
         // Lista los Clientes a los cuales se les vence la Circular 0170 en el siguiente mes
