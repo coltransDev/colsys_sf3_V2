@@ -30,10 +30,18 @@ class Cliente extends BaseCliente
 
         $direccion = str_replace ("|"," ",$this->getCaDireccion());
 
-        $direccion.=$this->getCaOficina()." ";
-        $direccion.=$this->getCaTorre()." ";
-        $direccion.=$this->getCaBloque()." ";
-        $direccion.=$this->getCaInterior()." ";
+        if( $this->getCaOficina() ){
+            $direccion.="Oficina ".$this->getCaOficina()." ";
+        }
+        if( $this->getCaTorre() ){
+            $direccion.="Torre ".$this->getCaTorre()." ";
+        }
+        if( $this->getCaBloque() ){
+            $direccion.="Bloque ".$this->getCaBloque()." ";
+        }
+        if( $this->getCaInterior() ){
+            $direccion.="Interior ".$this->getCaInterior()." ";
+        }
         $direccion.=$this->getCaComplemento()." ";
 
 		return $direccion;
