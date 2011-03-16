@@ -151,6 +151,7 @@ class pmActions extends sfActions {
         $tickets = $q->execute();
 
         foreach ($tickets as $key => $val) {
+            $tickets[$key]["h_ca_action"] = $tickets[$key]["h_ca_closedat"]?"Cerrado":"Abierto";
             $tickets[$key]["g_ca_name"] = utf8_encode($tickets[$key]["g_ca_name"]);
             $tickets[$key]["milestone"] = utf8_encode($tickets[$key]["m_ca_title"] . " " . Utils::fechaMes($tickets[$key]["m_ca_due"]));
             $tickets[$key]["h_ca_title"] = utf8_encode(str_replace('"', "'", $tickets[$key]["h_ca_title"]));
