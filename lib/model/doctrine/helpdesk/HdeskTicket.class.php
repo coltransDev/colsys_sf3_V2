@@ -15,6 +15,15 @@ class HdeskTicket extends BaseHdeskTicket {
 
     private $tarea = null;
 
+    public function getCaAction() {
+        if( $this->getCaClosedat() ){
+            return "Cerrado";
+        }else{
+            return "Abierto";
+        }
+
+    }
+
     public function getLastResponse() {
 
         return Doctrine::getTable("HdeskResponse")->createQuery("r")
@@ -136,7 +145,7 @@ class HdeskTicket extends BaseHdeskTicket {
         $folder = HdeskProject::FOLDER;
         return $directory = $folder . DIRECTORY_SEPARATOR . $this->getCaIdticket();
     }
-
+    
     public function updateLuceneIndex() {
 
         $index = $this->getTable()->getLuceneIndex();

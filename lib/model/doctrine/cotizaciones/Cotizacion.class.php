@@ -25,6 +25,7 @@ class Cotizacion extends BaseCotizacion
 		$tarea=null;
 		if( $this->getCaIdgEnvioOportuno() ){
 			$tarea = Doctrine::getTable("NotTarea")->find( $this->getCaIdgEnvioOportuno() );
+            //echo $tarea->getCaIdtarea()." ".$this->getCaIdgEnvioOportuno()."<br />" ;
 		}
 		return $tarea;
 	}
@@ -76,10 +77,10 @@ class Cotizacion extends BaseCotizacion
 	*
 	*/
 
-	public function setFchPresentacion( $fchEnvio ){
+	public function setFchPresentacion( $fchEnvio ){       
 		$tarea = $this->getTareaIDGEnvioOportuno();
 		$tarea->setCaFchterminada( $fchEnvio );
-		$tarea->save();
+		$tarea->save();        
 	}
 
 

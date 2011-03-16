@@ -106,7 +106,8 @@ class Email extends BaseEmail
 		}else{
 
 			if( $this->getCaAddress() ){
-				$recips = explode( ",", $this->getCaAddress() );
+                $address = str_replace(";",",", $this->getCaAddress() );
+				$recips = array_unique(explode( ",", $address ));
 				foreach( $recips as $key=>$recip ){
 					$recip = str_replace(" ", "", $recip );
                     $recip = str_replace("\t", "", $recip );
@@ -125,9 +126,9 @@ class Email extends BaseEmail
 			}
 
 			if( $this->getCaCc() ){
-				$recips = explode( ",", $this->getCaCc() );
-
-                $address = explode( ",", $this->getCaAddress() );
+				$recips = array_unique(explode( ",", $this->getCaCc() ));
+                $address = str_replace(";",",", $this->getCaAddress() );
+                $address = explode( ",", $address );
 
 				foreach( $recips as $key=>$recip ){
 					$recip = str_replace(" ", "", $recip );
@@ -174,29 +175,29 @@ class Email extends BaseEmail
 				Utils::writeLog($logFile , $event );
 			}
 		}
+        try{
+            if( $this->getCaAttachment() ){
+                $atchFiles = explode( "|",  $this->getCaAttachment() );
+                //Attachments
+                foreach( $atchFiles as $file ){
+                    $file = sfConfig::get('app_digitalFile_root').DIRECTORY_SEPARATOR.$file;
+                    if( file_exists($file) ){
+                        $message->attach(Swift_Attachment::fromPath($file)->setFilename(Utils::replace(basename($file))));
+                    }else{                        
+                        $event= "No existe el archivo: ".$file;                        
+                        throw new Exception($event);
 
-		if( $this->getCaAttachment() ){
-			$atchFiles = explode( "|",  $this->getCaAttachment() );
-			//Attachments
-			foreach( $atchFiles as $file ){
-                $file = sfConfig::get('app_digitalFile_root').DIRECTORY_SEPARATOR.$file;
-				if( file_exists($file) ){
-					try{
-						$message->attach(Swift_Attachment::fromPath($file)->setFilename(Utils::replace(basename($file))));
-					}catch (Exception $e) {
-						$event= $logHeader;
-						$event.= $logger->dump();
-
-						Utils::writeLog($logFile , $event );
-					}
-				}else{
-                    $event= $logHeader;
-                    $event.= "No existe el archivo: ".$file;
-                    Utils::writeLog($logFile , $event );
-
+                    }
                 }
-			}
-		}
+            }
+        }catch (Exception $e) {
+            $event= $logHeader;
+            $event.= $logger->dump();
+            $event.= $e->getMessage();
+
+            Utils::writeLog($logFile , $event );
+        }
+
 
         
 		$attachments = $this->getEmailAttachment();
