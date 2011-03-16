@@ -27,12 +27,12 @@ EOF;
 	$databaseManager = new sfDatabaseManager($this->configuration);
 	$databaseManager->loadConfiguration();
 		
-					
 	$emails = Doctrine::getTable("Email")
                         ->createQuery("e")
-                        ->where("e.ca_fchenvio IS NULL")
+                        ->addWhere("e.ca_fchenvio IS NULL")
+                        ->addWhere("e.ca_fchcreado <= ? ", date("Y-m-d H:i:s", time()-30))
                         ->execute();
-		
+	
 	foreach( $emails as $email ){
 		try{
             $email->send();
