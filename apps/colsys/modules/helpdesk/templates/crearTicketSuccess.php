@@ -517,9 +517,13 @@ text = text.split("<br />").join("\n");
 form.findField("text").setValue(text);
 form.findField("assignedto").setValue('<?=$ticket->getCaAssignedto()?>');
 <?
-if( $ticket->getCaAction() ){
+if( $ticket->getCaClosedat() ){
 ?>
-	form.findField("actionTicket").setValue('<?=$ticket->getCaAction()?>');
+	form.findField("actionTicket").setValue('Cerrado');
+<?
+}else{
+?>
+	form.findField("actionTicket").setValue('Abierto');
 <?
 }
 ?>
