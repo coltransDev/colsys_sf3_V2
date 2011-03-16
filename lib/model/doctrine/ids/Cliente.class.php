@@ -38,7 +38,7 @@ class Cliente extends BaseCliente
 
 		return $direccion;
 	}
-
+/*
     public function getCaCompania(){
         return $this->getIds()->getCaNombre();
     }
@@ -46,4 +46,5 @@ class Cliente extends BaseCliente
     public function getCaDigito(){
         return $this->getIds()->getCaDv();
     }
+ */
 }
