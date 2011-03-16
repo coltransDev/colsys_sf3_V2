@@ -4922,12 +4922,62 @@ elseif (isset($accion)) {                                                      /
                 break;
             }
 
-        case 'Digitacion_desbloqueo': {                                                      // El Botón Guardar fue pulsado
+        case 'Digitacion_desbloqueo': {
+
+            $us =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
+                if (!$us->Open("select * from vi_usuarios where ca_login = '$usuario'")) {
+                    echo "<script>alert(\"".addslashes($us->mErrMsg)."\");</script>";
+                    echo "<script>document.location.href = 'cotizaciones.php';</script>";
+                    exit;
+                   }
+
+                $from = $us->Value('ca_email');
+                $fromName = $us->Value('ca_nombre');
+                $subject = "Desbloqueo Muisca OFF - Ref.:".$id;
+                $bodyhtml.= "<html><head></head><body>";
+                $bodyhtml.= "Apreciados Compañeros:<br /><br />";
+                $bodyhtml.= "La presente con el fin de informar referencia ha sido desbloqueada por ".$us->Value('ca_nombre')." <br />por favor detener la generacion del archivo xml<br /> <br />";
+                $bodyhtml.= "<br />";
+                $bodyhtml.= "Quedamos pendientes,<br /><br />";
+                $bodyhtml.= $us->Value('ca_nombre')."<br />";
+                $bodyhtml.= $us->Value('ca_cargo')."<br />";
+                $bodyhtml.= "COLTRANS S.A."."<br />";
+                $bodyhtml.= $us->Value('ca_direccion')."<br />";
+                $bodyhtml.= "Tel.:".$us->Value('ca_telefono')." ".$us->Value('ca_extension')."<br />";
+                $bodyhtml.= "Fax :".$us->Value('ca_fax')."<br />";
+                $bodyhtml.= $us->Value('ca_sucursal')." - Colombia"."<br />";
+                $bodyhtml.= $us->Value('ca_email')."<br />";
+                $bodyhtml.= "www.coltrans.com.co";
+                $bodyhtml.= "</body></html>";
+
+                $query = "select up.ca_login, us.ca_email, us.ca_sucursal from control.tb_usuarios_perfil up";
+                $query.= "  inner join control.tb_usuarios us on us.ca_login = up.ca_login";
+                $query.= "  inner join vi_inomaestra_sea im on im.ca_ciudestino = us.ca_sucursal";
+                $query.= "  where im.ca_referencia = '$id' and up.ca_perfil like '%asistente-marítimo-puerto%' order by us.ca_sucursal";
+                if (!$us->Open("$query")) {
+                    echo "<script>alert(\"".addslashes($us->mErrMsg)."\");</script>";
+                    echo "<script>document.location.href = 'cotizaciones.php';</script>";
+                    exit;
+                   }
+                $address = "";
+                while (!$us->Eof() and !$us->IsEmpty()) {
+                    $address.= $us->Value('ca_email').",";
+                    $us->MoveNext();
+                }
+                $address = substr($address,0,strlen($address)-1);
+                if (!$rs->Open("insert into tb_emails (ca_usuenvio, ca_tipo, ca_from, ca_fromname, ca_cc, ca_replyto, ca_address, ca_subject, ca_bodyhtml) values ('$usuario','Ok Digitación Muisca','$from', '$fromName', '$from', '$from', '$address','$subject','$bodyhtml')")) {
+                    echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
+                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    exit;
+                }
+
                 if (!$rs->Open("update tb_inomaestra_sea set ca_usumuisca = null, ca_fchmuisca = null where ca_referencia = '$id'")) {
                     echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                     echo "<script>document.location.href = 'inosea_abrir.php';</script>";
                     exit;
                 }
+
+
                 break;
             }
 
