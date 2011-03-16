@@ -16,7 +16,6 @@ class Cliente extends BaseCliente
 		return $this->getCaCompania();
 	}
 
-
 	/*
 	* Retorna el objeto Usuario de tipo coordinador asociado al reporte
 	* @author Andres Botero

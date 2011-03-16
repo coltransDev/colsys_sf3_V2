@@ -29,7 +29,7 @@ class ClienteTable extends Doctrine_Table {
         if ($estado != null) {
             $query.= "and std0.ca_estado = '$estado' ";
             if ($estado == 'Activo') {
-                $query.= "(cl.ca_tipo is null  or cl.ca_tipo = '' ) and ";
+                $query.= "and (cl.ca_tipo is null  or cl.ca_tipo = '') ";
                 $query.= "and cl.ca_entidad = 'Vigente' ";
             }
         }
