@@ -92,7 +92,11 @@ class pmActions extends sfActions {
         }
 
         if ($request->getParameter("actionTicket")) {
-            $q->addWhere("h.ca_action = ? ", $request->getParameter("actionTicket"));
+            if( $request->getParameter("actionTicket")=="Cerrado" ){
+                $q->addWhere("h.ca_closedat IS NOT NULL");
+            }else{
+                $q->addWhere("h.ca_closedat IS NULL");
+            }
         }
 
         if ($request->getParameter("type")) {
@@ -112,12 +116,12 @@ class pmActions extends sfActions {
 
         if ( $request->getParameter("option")=="misTickets" ){
             $q->addWhere("(h.ca_login = ? or hu.ca_login = ?)", array($this->getUser()->getUserid(), $this->getUser()->getUserid()));
-            $q->addWhere("h.ca_action=?", "Abierto");
+            $q->addWhere("h.ca_closedat IS NULL");
         }
 
         $q->addOrderBy("h.ca_idgroup ASC");
         $q->addOrderBy("h.ca_idproject ASC");
-        $q->addOrderBy("h.ca_action ASC");
+        $q->addOrderBy("h.ca_closedat");
         $q->addOrderBy("h.ca_opened ASC");
         
         /*
@@ -535,9 +539,15 @@ class pmActions extends sfActions {
 
 
 
-            if ($request->getParameter("actionTicket")) {
-                $ticket->setCaAction($request->getParameter("actionTicket"));
+            if ($request->getParameter("actionTicket")=="Cerrado") {
+                $ticket->setCaClosedat(date("Y-m-d H:i:s"));
+                $ticket->setCaClosedby($this->getUser()->getUserId());
+            }else{
+                $ticket->setCaClosedat(null);
+                $ticket->setCaClosedby(null);
             }
+
+
             if ($request->getParameter("type")) {
                 $ticket->setCaType($request->getParameter("type"));
             }
@@ -567,7 +577,9 @@ class pmActions extends sfActions {
             if ($request->getParameter("actionTicket") == "Cerrado") {
                 $ticket->cerrarSeguimientos( $conn );
 
-                $ticket->crearEvaluacion( $conn );
+                if( $request->getParameter("type")!="Invalido"){
+                    $ticket->crearEvaluacion( $conn );
+                }
             }
 
 
@@ -668,26 +680,32 @@ class pmActions extends sfActions {
      * @param sfRequest $request A request object
      */
     public function executeCerrarTicket(sfWebRequest $request) {
-        if ($request->getParameter("idticket")) {
-            $ticket = Doctrine::getTable("HdeskTicket")->find($request->getParameter("idticket"));
-            $ticket->setCaAction("Cerrado");
-            $ticket->setCaPercentage(100);
-            $ticket->save();
+        try{
+            if ($request->getParameter("idticket")) {
+                $ticket = Doctrine::getTable("HdeskTicket")->find($request->getParameter("idticket"));
+                $ticket->setCaClosedat(date("Y-m-d H:i:s"));
+                $ticket->setCaClosedby( $this->getUser()->getUserId() );
 
-            //Solo por compatibilidad
-            $tarea = $ticket->getTareaSeguimiento();
-            if ($tarea) {
-                $tarea->setCaFchterminada(date("Y-m-d H:i:s"));
-                $tarea->setCaUsuterminada($this->getUser()->getUserId());
-                $tarea->save();
+                $ticket->setCaPercentage(100);
+                $ticket->save();
+
+                //Solo por compatibilidad
+                $tarea = $ticket->getTareaSeguimiento();
+                if ($tarea) {
+                    $tarea->setCaFchterminada(date("Y-m-d H:i:s"));
+                    $tarea->setCaUsuterminada($this->getUser()->getUserId());
+                    $tarea->save();
+                }
+
+                $ticket->cerrarSeguimientos();
+                $ticket->crearEvaluacion();
             }
 
-            $ticket->cerrarSeguimientos();
-            $ticket->crearEvaluacion();
+
+            $this->responseArray = array("success" => true, "idticket" => $request->getParameter("idticket"));
+        }catch( Exception $e ){
+            $this->responseArray = array("success" => false, "errorInfo");
         }
-
-
-        $this->responseArray = array("success" => true, "idticket" => $request->getParameter("idticket"));
 
         $this->setTemplate("responseTemplate");
     }
@@ -911,77 +929,7 @@ class pmActions extends sfActions {
         $this->setTemplate("responseTemplate");
     }
 
-    /**
-     * Lista de tickets de acuerdo al numero de horas de trabajo y a l aprioridad
-     *
-     * @param sfRequest $request A request object
-     */
-    public function executeListaTicketsPrioridades(sfWebRequest $request) {
-        $this->nivel = $this->getNivel();
-        $this->option = $request->getParameter("option");
-        $this->forward404Unless($request->getParameter("user"));
-        $this->user = Doctrine::getTable("Usuario")->find($request->getParameter("user"));
-
-        $this->userId = $this->getUser()->getUserId();
-
-        if ($this->user->getCaLogin() != $this->getUser()->getUserId()) {
-            $this->option = "view";
-        }
-
-
-        $q = Doctrine_Query::create()
-                        ->from('HdeskTicket h');
-
-        $q->addWhere("h.ca_idgroup = ? ", $request->getParameter("area"));
-        $q->addWhere("h.ca_action != ? ", "Cerrado");
-        $q->addWhere("h.ca_assignedto = ? ", $this->user->getCaLogin());
-        $q->addOrderBy("h.ca_order ASC");
-        $q->addOrderBy("h.ca_idgroup ASC");
-        $q->addOrderBy("h.ca_action ASC");
-        $q->addOrderBy("h.ca_opened ASC");
-        $q->distinct();
-        $this->tickets = $q->execute();
-
-
-        $this->nivel = $this->getNivel();
-
-
-        $response = sfContext::getInstance()->getResponse();
-        $response->addJavaScript("jquery/jquery.tablednd.js", 'last');
-    }
-
-    /**
-     * Lista de tickets de acuerdo al numero de horas de trabajo y a l aprioridad
-     *
-     * @param sfRequest $request A request object
-     */
-    public function executeGuardarListPrioridades(sfWebRequest $request) {
-
-
-
-        $orders = $request->getParameter("table-5");
-
-        foreach ($orders as $key => $order) {
-            if (substr($order, 0, 4) == "row_") {
-                $idticket = substr($order, 4, 100);
-                $hours = $request->getParameter("hours_" . $idticket);
-                $percentage = $request->getParameter("percentage_" . $idticket);
-
-                $q = Doctrine_Query::create();
-                $q->update('HdeskTicket h');
-                $q->set('h.ca_order', $key);
-                if ($hours >= 0) {
-                    $q->set('h.ca_estimatedhours', $hours);
-                }
-                if ($percentage >= 0 && $percentage <= 100) {
-                    $q->set('h.ca_percentage', $percentage);
-                }
-                $q->where('h.ca_idticket = ?', $idticket);
-                $q->execute();
-            }
-        }
-        return sfView::NONE;
-    }
+    
 
     /**
      * Agrega un usuario a un ticket para copiarle las comunicaciones o escritbir respuestas
@@ -1667,6 +1615,10 @@ class pmActions extends sfActions {
         }
         $this->setTemplate("responseTemplate");
     }
+
+
+
+    
 
 }
 
