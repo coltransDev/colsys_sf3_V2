@@ -680,8 +680,8 @@ class cotizacionesActions extends sfActions {
         $email->setCaBodyhtml(Utils::replace($mensaje) . $usuario->getFirmaHTML());
 
         $email->save(); //guarda el cuerpo del mensaje
-        
-        if (!$cotizacion->enBlanco()) {
+       
+        if (!$this->cotizacion->enBlanco()) {
             $directory = $email->getDirectorio();
             if (!is_dir($directory)) {
                 @mkdir($directory, 0777, true);
