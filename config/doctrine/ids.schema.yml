@@ -289,6 +289,34 @@ IdsTipoDocumento:
       foreign: ca_idtipo
       type: many
 
+IdsDocumentoPorTipo:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: ids
+  tableName: ids.tb_documentosxtipo
+  columns:
+    ca_iddocumentosxtipo:
+      type: integer
+      primary: true
+    ca_idtipo: integer
+    ca_tipo: string
+    ca_controladoxsig: boolean
+    ca_impoexpo: string
+    ca_transporte: string
+  relations:
+    IdsTipoDocumento:
+      local: ca_idtipo
+      foreign: ca_idtipo
+      type: one
+    IdsTipo:
+      local: ca_tipo
+      foreign: ca_tipo
+      type: one
+
+
+
 IdsEvaluacion:
   options:
     symfony:

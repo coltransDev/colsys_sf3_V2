@@ -1429,5 +1429,116 @@ class idsActions extends sfActions
         $this->setTemplate("responseTemplate");
     }
 
+    /**
+	* Muestra los documentos que le corresponden a cada proveedor.
+	*
+	* @param sfRequest $request A request object
+	*/
+	public function executeDocumentosPorTipo(sfWebRequest $request){
+
+
+        $this->modo = $request->getParameter("modo");
+
+        $this->forward404Unless( $this->modo );
+
+        $q = Doctrine::getTable("IdsTipo")
+                                ->createQuery("t")                                
+                                ->addOrderBy("t.ca_nombre");
+        
+        if( $this->modo=="prov" ){
+            $q->addWhere("t.ca_aplicacion = ? ", "Proveedores");
+        }
+
+
+        $this->tipos = $q->execute();
+
+        
+    }
+
+    /**
+	* Formulario qeu agrega los documentos que le corresponden a cada proveedor.
+	*
+	* @param sfRequest $request A request object
+	*/
+	public function executeFormDocumentosPorTipo(sfWebRequest $request){
+        $this->form = new NuevoDocumentoPorTipoForm();
+        $this->form->configure();
+        if( $request->getParameter("iddocumentosxtipo") ){
+            $docPorTipo = Doctrine::getTable("IdsDocumentoPorTipo")->find( $request->getParameter("iddocumentosxtipo") );
+            $this->forward404Unless( $docPorTipo );
+        }else{
+            $docPorTipo = new IdsDocumentoPorTipo();
+        }
+        
+        $this->modo = $request->getParameter("modo");
+        $this->forward404Unless( $this->modo );
+
+        if ($request->isMethod('post')){
+			$bindValues = array();
+            $bindValues["tipo"] = $request->getParameter("tipo");
+            $bindValues["idtipo"] = $request->getParameter("idtipo");
+            $bindValues["controladoporsig"] = $request->getParameter("controladoporsig");
+            if( $bindValues["tipo"]=="TRI" || $bindValues["tipo"]=="TRN" ){
+                $bindValues["transporte"] = $request->getParameter("transporte");
+                $bindValues["impoexpo"] = $request->getParameter("impoexpo");
+            }else{
+                $bindValues["transporte"] = null;
+                $bindValues["impoexpo"] = null;
+            }
+
+            if( !$bindValues["transporte"]){
+                $bindValues["transporte"] = "N/A";
+            }
+
+            if( !$bindValues["impoexpo"]){
+                $bindValues["impoexpo"] = "N/A";
+            }
+
+
+            $this->form->bind( $bindValues );
+			if( $this->form->isValid() ){
+                
+                $docPorTipo->setCaIdtipo($bindValues["idtipo"]);
+                $docPorTipo->setCaTipo($bindValues["tipo"]);
+                $docPorTipo->setCaTransporte($bindValues["transporte"]);
+                $docPorTipo->setCaControladoxsig($bindValues["controladoporsig"]);
+                $docPorTipo->setCaImpoexpo($bindValues["impoexpo"]);
+                $docPorTipo->save();
+                $this->redirect("ids/documentosPorTipo?modo=".$this->modo );
+            }
+        }
+
+
+        
+        $this->docPortipo = $docPorTipo;
+
+        $this->tipo = $request->getParameter("tipo");
+        $this->forward404Unless( $this->tipo );
+    }
+    
+    /**
+	* Elimina los documentos que le corresponden a cada proveedor.
+	*
+	* @param sfRequest $request A request object
+	*/
+	public function executeEliminarDocumentosPorTipo(sfWebRequest $request){
+        
+        $this->modo = $request->getParameter("modo");
+        $this->forward404Unless( $this->modo );
+
+        $this->forward404Unless($request->getParameter("iddocumentosxtipo"));
+        $docPorTipo = Doctrine::getTable("IdsDocumentoPorTipo")->find( $request->getParameter("iddocumentosxtipo") );
+        $this->forward404Unless( $docPorTipo );
+        $docPorTipo->delete();
+
+        
+        $this->redirect("ids/documentosPorTipo?modo=".$this->modo);
+
+
+        
+
+    }
+
+
 }
 ?>

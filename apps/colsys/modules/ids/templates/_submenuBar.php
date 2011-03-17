@@ -80,10 +80,16 @@ if( $this->getRequestParameter("modo")=="prov" && $action!="listadoProveedoresAp
 
     @$nivel = idsActions::getNivel();
     if( $nivel>=2 ){
-        $button[$i]["name"]="Vencimientos";
+        $button[$i]["name"]="Vencimientos Docs.";
         $button[$i]["tooltip"]="Listado de documentos proximos a vencerse";
         $button[$i]["image"]="22x22/todo.gif";
         $button[$i]["link"]= "ids/alertasDocumentos?modo=".$this->getRequestParameter("modo");
+        $i++;
+
+         $button[$i]["name"]="Docs. Por Proveedor";
+        $button[$i]["tooltip"]="Listado de documentos proximos a vencerse";
+        $button[$i]["image"]="22x22/package_editors.png";
+        $button[$i]["link"]= "ids/documentosPorTipo?modo=".$this->getRequestParameter("modo");
         $i++;
     }
     
