@@ -297,7 +297,21 @@ elseif (isset($boton)) {                                                       /
                         $digitable = 'block'; // hidden
                         $fch_muisca = explode(" ",$rs->value("ca_fchmuisca"));
                         echo "<br /><b>Digitado:</b><br />".$rs->value("ca_usumuisca")."<br />".$fch_muisca[0]."<br />".$fch_muisca[1]."<br />";
-                        echo "<IMG  src='./graficos/digita_off.gif' alt='Digitación Muisca Ok Desbloquear' border=0 onclick='digitar(\"Digitacion_desbloqueo\", \"".$rs->Value('ca_referencia')."\", 0, 0);'><BR><BR>";
+                        if (!$tm->Open("select count(*) as conta from control.tb_usuarios_perfil where ca_perfil = 'radicación-muisca-colsys' and ca_login='$usuario'"))
+                        {
+                            echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";     // Muestra el mensaje de error
+                            //echo "<script>document.location.href = 'inosea.php';</script>";
+
+                            exit;
+                        }
+                        else
+                        {
+                            if($tm->Value('conta')>0)
+                            {
+                                echo "<IMG  src='./graficos/digita_off.gif' alt='Digitación Muisca Ok Desbloquear' border=0 onclick='digitar(\"Digitacion_desbloqueo\", \"".$rs->Value('ca_referencia')."\", 0, 0);'><BR><BR>";
+                            }
+                        }
+                        
                     }else{
                         $digitable = 'block';
                         echo "<IMG style='display: $digitable' src='./graficos/digita.gif' alt='Digitación Muisca Ok' border=0 onclick='digitar(\"Digitacion\", \"".$rs->Value('ca_referencia')."\", 0, 0);'><BR><BR>";
