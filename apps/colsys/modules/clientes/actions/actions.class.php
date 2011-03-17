@@ -404,8 +404,8 @@ class clientesActions extends sfActions {
                 $email->setCaReplyto($comercial->getCaEmail());
                 $email->addCc($comercial->getCaEmail());
 
-                $sucursal = $comercial->getSucursal();
-                $direccion_suc = $sucursal->getCaDireccion()." ".$sucursal->getCaNombre();
+                $sucursal_obj = $comercial->getSucursal();
+                $direccion_suc = $sucursal_obj->getCaDireccion()." ".$sucursal_obj->getCaNombre();
 
                 /*
                   reset($defaultEmail);

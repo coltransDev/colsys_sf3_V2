@@ -31,7 +31,7 @@ EOF;
 		
 	$inicio = mktime(0, 0, 0, date('m')+1, 1, date('Y'));
 	$final = mktime(0, 0, 0, date('m')+2, 0, date('Y'));
-	
+
 	sfContext::getInstance()->getRequest()->setParameter("fchStart", date('Y-m-d',$inicio));
 	sfContext::getInstance()->getRequest()->setParameter("fchEnd", date('Y-m-d',$final));
 	echo sfContext::getInstance()->getController()->getPresentationFor( 'clientes', 'reporteCircularEmail');	
