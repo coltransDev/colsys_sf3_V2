@@ -962,6 +962,7 @@ class Reporte extends BaseReporte {
                 $reporte->setCaFchultstatus(null);
                 $reporte->setCaFchreporte(date("Y-m-d"));
                 $reporte->setCaFchdespacho(date("Y-m-d"));
+                $reporte->setCaIdtareaAntecedente(null);
             }
 
             if ($opcion == 2) {
