@@ -1,6 +1,21 @@
+<?php
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+*/
+include_component("helpdesk", "formIndicadoresGestionPanel");
+include_component("pm", "widgetAsignaciones");
+include_component("pm", "widgetGrupos");
+
+$array = array();
+$cuantos_lcs = 0;
+$cuantos_lci = 0;
+$totales = array();
+$total_ing = 0;
+$promedio_ing = 0;
+$festivos = TimeUtils::getFestivos();
+?>
 <div align="center" >
-<br />
-<h3> Reporte de IDG Dpto. Sistemas </h3>
 <br />
 <br />
 </div>
@@ -8,58 +23,105 @@
 <?
 if( $idgsistemas){
 ?>
-<table width="75%" border="1" class="tableList" align="center">
+<table width="80%" border="1" class="tableList" align="center">
     <tr>
-        <th colspan="12" style="text-align: center"><b>IDG Usuarios atendidos a tiempo&nbsp;<?=date('Y-m-d')?></b></th>
+        <th colspan="13" style="text-align: center"><b><?echo $type_est==1?"IDG: USUARIOS ATENDIDOS A TIEMPO ".date("Y-m-d"):($type_est==2?"ESTADISTICA TICKETS CERRADOS ".date("Y-m-d"):"ESTADISTICA TICKETS ABIERTOS ".date("Y-m-d"));
+        ?></b></th>
     </tr>
     <tr>
-        <th scope="col">Mes</th>
-        <th scope="col">No. Ticket</th>
-        <th scope="col">Titulo</th>
-        <th scope="col">Usuario Asignado</th>
-        <th scope="col">Fecha Creado</th>
-        <th scope="col">Hora Creado</th>
-        <th scope="col">Fecha Respuesta</th>
-        <th scope="col">Hora Respuesta</th>
-        <th scope="col" style="width: 110px" >Grupo</th>
-        <th scope="col">Reportado por</th>
-        <th scope="col">C&aacute;lculo IDG</th>
-        <th scope="col">Observaciones</th>
+        <th scope="col" style=" text-align: center"><b>Mes</b></th>
+        <th scope="col" style=" text-align: center"><b>No. Ticket</b></th>
+        <th scope="col" style=" text-align: center"><b>Titulo</b></th>
+        <th scope="col" style=" text-align: center"><b>Usuario Asignado</b></th>
+        <th scope="col" style=" text-align: center"><b>Fecha Creado</b></th>
+        <th scope="col" style=" text-align: center"><b>Hora Creado</b></th>
+        <th scope="col" style=" text-align: center"><b><?echo $type_est==1?"Fecha Respuesta":($type_est==2?"Fecha Cierre":"Fecha Ult. Seg.");?></b></th>
+        <th scope="col" style=" text-align: center"><b><?echo $type_est==1?"Hora Respuesta":($type_est==2?"Hora Cierre":"Hora Ult. Seg.");?></b></th>
+        <th scope="col" style=" text-align: center;width: 110px"><b>Grupo</b></th>
+        <th scope="col" style=" text-align: center"><b>Reportado por</b></th>
+        <th scope="col" style=" text-align: center"><b><?echo $type_est==1?"Cálculo IDG":($type_est==2?"Cerrado":"Abierto");?></b></th>
+        <?if($type_est==3){?>
+        <th scope="col" style=" text-align: center"><b>Sin seguimiento hace:</b></th>
+        <th scope="col" style=" text-align: center"><b>Porcentaje</b></th>
+            <?}?>
+        <?if($type_est==1){?><th scope="col"style=" text-align: center"><b>Observaciones</b></th><?}?>
 
     </tr>
     <?
-    $array = array();
-    $cuantos_lcs = 0;
-    $cuantos_lci = 0;
     foreach( $idgsistemas as  $idgsistema)
     {
-        $group = $idgsistema["ca_name"];
+        //Cálculo de horas laborales
 
-        $festivos = TimeUtils::getFestivos();
+        $hoy = date("Y-m-d H:i:s");
+       
+        $group = $idgsistema["ca_name"];
+        switch($type_est){
+            case 1:
+                $fch_terminada = $idgsistema["ca_fchterminada"];
+            break;
+            case 2:
+                $fch_terminada = $idgsistema["fch_close"];
+            break;
+            case 3:
+                $fch_terminada = $idgsistema["fch_ultseg"];
+            break;
+        }
+
+        
         list($ano, $mes, $dia, $hor, $min, $seg) = sscanf($idgsistema["ca_fchcreado"], "%d-%d-%d %d:%d:%d");
         $inicio = mktime($hor, $min, $seg, $mes, $dia, $ano);
-        list($ano, $mes, $dia, $hor, $min, $seg) = sscanf($idgsistema["ca_fchterminada"], "%d-%d-%d %d:%d:%d");
+
+        list($ano, $mes, $dia, $hor, $min, $seg) = sscanf($fch_terminada, "%d-%d-%d %d:%d:%d");
         $final = mktime($hor, $min, $seg, $mes, $dia, $ano);
-        $calculoidg_seg = TimeUtils::calcDiff( $festivos, $inicio , $final );
-        
-        if ($idgsistema["ca_fchterminada"]==""){
-            $calculoidg_seg = '28800';
-        }elseif($calculoidg_seg==0){
-            $calculoidg_seg = '60';
+
+        list($ano, $mes, $dia, $hor, $min, $seg) = sscanf($hoy, "%d-%d-%d %d:%d:%d");
+        $hoy = mktime($hor, $min, $seg, $mes, $dia, $ano);
+
+        switch($type_est){
+            case 1:
+                $calculo_seg = TimeUtils::calcDiff( $festivos, $inicio , $final );
+            //Verifica si la tarea está terminada, predetermina un total de 8 horas para tickets abiertos al momento de generar el informe.
+                if ($fch_terminada==""){
+                    $calculo_seg = '28800';
+                }elseif($calculo_seg==0){
+                    $calculo_seg = '60';
+                }
+            break;
+            case 2:
+                $calculo_seg = TimeUtils::calcDiff( $festivos, $inicio , $final );
+            break;
+            case 3:
+                $calculo_seg = TimeUtils::calcDiff( $festivos, $inicio , $hoy ); // Tiempo que lleva el ticket abierto en seg
+                $calculoultsg_seg = TimeUtils::calcDiff( $festivos, $final , $hoy ); // Tiempo hasta la fecha sin seguimiento en seg
+                //Pasa los tiempos a formato HH:mm:ss
+                $calculoultsg_hms = TimeUtils::workDiff($festivos, $idgsistema["ult_fch"], date("Y-m-d")).' días';
+            break;
         }
 
-        $calculoidg_hms = TimeUtils::tiempoSegundos($calculoidg_seg);
-
-        if($calculoidg_hms>$lcs){
-            $array_lcs[] = $calculoidg_seg;
+        //Pasa los tiempos a formato HH:mm:ss
+         $calculo_hms = TimeUtils::tiempoSegundos( $calculo_seg);
+        
+        // Establece los límites de Control
+        if($calculo_hms>$lcs){
+            $array_lcs[] = $calculo_seg;
             $cuantos_lcs = count($array_lcs);
-        }elseif($calculoidg_hms<$lci){
-            $array_lci[] = $calculoidg_seg;
+        }elseif($calculo_hms<$lci){
+            $array_lci[] = $calculo_seg;
             $cuantos_lci = count($array_lci);
         }
-
-        $array[] = $calculoidg_seg;
+        
+        //Cálculo de Tiempo por Servicio
+        $array[] = $calculo_seg;
         $cuantos=count($array);
+
+        //Cálculo de Tiempo por Ingeniero Asignado
+        if(!isset( $totales[$idgsistema["ca_assignedto"]] )){
+            $totales[$idgsistema["ca_assignedto"]] = array();
+            $totales[$idgsistema["ca_assignedto"]]["total_tickets"] = 0;
+            $totales[$idgsistema["ca_assignedto"]]["prom_tiempo"] = 0;
+        }
+        $totales[$idgsistema["ca_assignedto"]]["total_tickets"]++;
+        $totales[$idgsistema["ca_assignedto"]]["prom_tiempo"]+=$calculo_seg;        
 
     ?>
         <tr>
@@ -69,22 +131,26 @@ if( $idgsistemas){
         <td><?=$idgsistema["ca_assignedto"]?></td>
         <td><?=$idgsistema["fechacreado"]?></td>
         <td><?=$idgsistema["horacreado"]?></td>
-        <td><?=$idgsistema["fechaterminada"]?></td>
-        <td><?=$idgsistema["horaterminada"]?></td>
-        <td ><?=$idgsistema["ca_name"]?></td>
+        <td><?echo $type_est==1?$idgsistema["fechaterminada"]:($type_est==2?$idgsistema["close_fch"]:$idgsistema["ult_fch"]);?></td>
+        <td><?echo $type_est==1?$idgsistema["horaterminada"]:($type_est==2?$idgsistema["close_hou"]:$idgsistema["ult_hou"]);?></td>
+        <td><?=$idgsistema["ca_name"]?></td>
         <td><?=$idgsistema["ca_login"]?></td>
-        <td><?if($calculoidg_hms>$lcs){?> <font color="red"><?echo $calculoidg_hms;?></font><?}elseif($calculoidg_hms<$lci){?><font color="orange"><?echo $calculoidg_hms;?></font><?}else{echo $calculoidg_hms;}?></td>
-        <td><?=$idgsistema["ca_observaciones"]?></td>
+        <td style=" text-align: right"><font color="<?echo $calculo_hms>$lcs?"red":($calculo_hms<$lci?"orange":"black")?>"><?=$calculo_hms?></font></td>
+        <?if($type_est==3){?>
+        <td style=" text-align: right; width: 60px "><?=$calculoultsg_hms?></td>
+        <td><?=$idgsistema["ca_percentage"]?></td>
+        <?}?>
+        <?if($type_est==1){?><td><?=$idgsistema["ca_observaciones"]?></td><?}?>
 
     </tr>
 <?
     }
-    //print_r($array);
     $promedio_seg = TimeUtils::array_avg($array);
     $promedio_hms = TimeUtils::tiempoSegundos($promedio_seg);
     $porcentaje_lcs = @round($cuantos_lcs*100/$cuantos,2);
     $porcentaje_lci = round($cuantos_lci*100/$cuantos,2);
 ?>
+
 </table>
 <br />
 <table class="tableList" align="center" width="30%">
@@ -93,7 +159,7 @@ if( $idgsistemas){
     </tr>
     <tr>
         <th colspan="1"><b>Indicador:</b></th>
-        <td colspan="3">Usuarios atendidos a tiempo</td>
+        <td colspan="3"><?echo $type_est==1?"Usuarios atendidos a tiempo":($type_est==2?"Tickets Cerrados":"Tickets Abiertos");?></td>
     </tr>
     <tr>
         <th colspan="1"><b>Periodo:</b></th>
@@ -105,64 +171,55 @@ if( $idgsistemas){
     </tr>
     <tr>
         <th><b>Producto NO Conforme:</b></th>
-        <th>No. Casos&nbsp;<?=$cuantos_lcs?></th>
+        <th>No. Casos:&nbsp;<b><?=$cuantos_lcs?></b></th>
         <th>LCs:&nbsp;<?=$lcs?></th>
         <td><font color="red"><b><?=$porcentaje_lcs?>%</b></font></td>
     </tr>
     <tr>
         <th><b>Promedio Ponderado:</b></th>
-        <th>No. Casos&nbsp;<?=$cuantos?></th>
-        <th>LC:&nbsp;<?=$lc?></th>
+        <th>No. Casos:&nbsp;<b><?=$cuantos?></b></th>
+        <th>LC:&nbsp;&nbsp;<?=$lc?></th>
         <td><b><?=$promedio_hms?></b></td>
     </tr>
     <tr>
         <th><b>Registros inferiores a lci:</b></th>
-        <th>No. Casos&nbsp;<?=$cuantos_lci?></th>
+        <th>No. Casos:&nbsp;<b><?=$cuantos_lci?></b></th>
         <th>LCi:&nbsp;<?=$lci?></th>
         <td><font color="orange"><b><?=$porcentaje_lci?>%</b></font></td>
     </tr>
 </table>
-    
+<br />
+<br />
+
+<table class="tableList" align="center" width="20%" border="1">
+     <tr>
+        <th colspan="4" style="text-align: center"><b>ESTADISTICA POR ING. ASIGNADO</b></th>
+    </tr>
+    <tr>
+        <th style="text-align: center"><b>Ingeniero</b></th>
+        <th style="text-align: center"><b>No. Casos</b></th>
+        <th style="text-align: center"><b>Promedio</b></th>
+    </tr>
+<?
+
+    foreach( $totales as $key=>$val){
+        $promedio = $val["prom_tiempo"]/$val["total_tickets"];
+        $promedio_ing = TimeUtils::tiempoSegundos($promedio);
+?>
+  <tr>
+        <th><b><?=$key?></b></th>
+        <td align="center"><?=$val["total_tickets"]?></td>
+        <td align="center" style=" text-align: right"><?if($promedio_ing>$lcs){?> <font color="red"><?=$promedio_ing?></font><?}elseif($promedio_ing<$lci){?><font color="orange"><?=$promedio_ing?></font><?}else{echo $promedio_ing;}?></td>
+  </tr>
+<?
+    }
+?>
+  
+</table>
 <?
 }
 ?>
 <script language="javascript">
-    asignaciones = new Ext.form.ComboBox({
-            fieldLabel: 'Asignado a',
-            typeAhead: true,
-            forceSelection: true,
-            triggerAction: 'all',
-            emptyText:'',
-            selectOnFocus: true,
-            value: '',
-            width:120,
-            id: 'usuario',
-            name: 'usuario',
-            lazyRender:true,
-            allowBlank: true,
-            displayField: 'login',
-            valueField: 'login',
-            hiddenName: 'login',
-            listClass: 'x-combo-list-small',
-            mode: 'local',
-            store : new Ext.data.Store({
-                autoLoad : true ,
-                url: '<?=url_for("pm/datosAsignaciones")?>',
-                reader: new Ext.data.JsonReader(
-                {
-                    id: 'login',
-                    root: 'usuarios',
-                    totalProperty: 'total',
-                    successProperty: 'success'
-                },
-                Ext.data.Record.create([
-                    {name: 'login'}
-
-                ])
-            )
-            })
-        });
-
    
 var tabs = new Ext.FormPanel({
 	labelWidth: 75,
@@ -176,160 +233,9 @@ var tabs = new Ext.FormPanel({
 		activeTab: 0,
 		defaults:{autoHeight:true, bodyStyle:'padding:10px'},
 		id: 'tab-panel', 
-		items:[{
-			title:'Indicadores de Gestión',
-			layout:'form',			
-			defaultType: 'textfield',
-			id: 'estadisticas',
-            labelWidth: 75,
-			items: [
-                    {
-                        xtype:'hidden',
-                        name:"opcion",
-                        value:"buscar"
-                    },
-                    {
-                            xtype:'datefield',
-                            fieldLabel: 'Fecha Inicial',
-                            name : 'fechaInicial',
-                            format: 'Y-m-d',
-                            value: '<?=date("Y-m-")."01"?>'
-                    },
-                    {
-                            xtype:'datefield',
-                            fieldLabel: 'Fecha final',
-                            name : 'fechaFinal',
-                            format: 'Y-m-d',
-                            value: '<?=date("Y-m-d")?>'
-                    }
-                    ,
-                    {
-                            xtype:'fieldset',
-                            checkboxToggle:true,
-                            title: 'Filtrar por Grupo',
-                            autoHeight:true,
-                            labelWidth: 75,
-                            defaultType: 'textfield',
-                            collapsed: true,
-                            checkboxName: "checkboxGrupo",
-                            items :[
-                                    new Ext.form.ComboBox({
-                                        fieldLabel: 'Grupo',
-                                        typeAhead: true,
-                                        forceSelection: true,
-                                        triggerAction: 'all',
-                                        emptyText:'Seleccione',
-                                        selectOnFocus: true,
-                                        name: 'grupo',
-                                        id:'grupo',
-                                        hiddenName: 'idgroup',
-                                        width: 200,
-                                        valueField:'idgroup',
-                                        displayField:'name',
-                                        mode: 'local',
-                                        listClass: 'x-combo-list-small',
-                                        store :  new Ext.data.SimpleStore({
-                                                    fields: ['idgroup', 'name'],
-                                                    data : [
-                                                        <?
-                                                        $i = 0;
-                                                        foreach( $grupos as $grupo ){
-                                                                if($i++!=0){
-                                                                        echo ",";
-                                                                }
-                                                        ?>
-                                                                ['<?=$grupo->getCaIdgroup()?>', '<?=$grupo->getCaName()?>']
-                                                        <?
-                                                        }
-                                                        ?>
-                                                     ]
-                                                }),
-                                                listeners:{
-                                                    select:function(combo,record,index)
-                                                    {
-                                                        asignaciones.store.setBaseParam( "idgrupo",record.data.idgroup );
-                                                        asignaciones.store.load();
-                                                    }
-                                                },
-                                    })
-                            ]
-                    }
-                    ,                    
-                    {
-                            xtype:'fieldset',
-                            checkboxToggle:true,
-                            title: 'Filtrar por Ingeniero Asignado',
-                            autoHeight:true,
-                            labelWidth: 75,
-                            defaultType: 'textfield',
-                            collapsed: true,
-                            checkboxName: "checkboxUsuario",
-                            items :[
-                                asignaciones
-                            ]
-                    },
-                    {
-                            xtype:'fieldset',
-                            checkboxToggle:true,
-                            title: 'Límites de Control',
-                            autoHeight:true,
-                            width: 630,
-                            layout:'column',
-                            labelWidth: 0.1,
-                            columns: 1,                            
-                            collapsed: true,
-                            checkboxName: "checkboxLimite",                            
-                            defaults:{
-                                xtype:'fieldset',
-                                columnWidth:0.33,
-                                layout:'form',
-                                border:false                                
-                            },
-                            items:[{
-                                    //columnWidth:.3,                                    
-                                    items: [
-                                        {
-                                            xtype:'timefield',
-                                            name: 'lcs',
-                                            id: 'lcs',
-                                            value: '',
-                                            width: 95,
-                                            format: 'H:i:s',
-                                            fieldLabel: "  LCs"
-                                        }
-                                    ]
-                            },
-                            {                                   
-                                    
-                                    items: [
-                                        {
-                                            xtype:'timefield',
-                                            name: 'lc',
-                                            id: 'lc',
-                                            value: '',
-                                            width: 95,
-                                            format: 'H:i:s',
-                                            fieldLabel: " LC"
-                                        }
-                                    ]
-                            },
-                            {                             
-                                    items: [
-                                        {
-                                            xtype:'timefield',
-                                            name: 'lci',
-                                            id: 'lci',
-                                            value: '',
-                                            width: 95,
-                                            format: 'H:i:s',
-                                            fieldLabel: "  LCi"
-                                        }
-                                    ]
-                            }
-                        ]
-                    }
-              ]
-		}]
+		items:[
+                new FormIndicadoresGestionPanel()              
+        ]
 	},
 	buttons: [
             {
@@ -346,6 +252,7 @@ var tabs = new Ext.FormPanel({
             }]
 });
 tabs.render("container");
+
 /*
  //información a graficar
    var data = [
