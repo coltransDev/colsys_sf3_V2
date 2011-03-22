@@ -792,6 +792,8 @@ class pricingActions extends sfActions {
 
                     $this->responseArray["idconcepto"] = $idconcepto;
                     $this->responseArray["idtrayecto"] = $idtrayecto;
+                }else{
+                    $this->responseArray = array("success" => false, "errorInfo" => "No se ha encontrado el recargo o ya se ha eliminado");
                 }
 
             }
