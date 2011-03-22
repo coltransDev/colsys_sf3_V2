@@ -384,7 +384,7 @@ class reporteExtComponents extends sfComponents
                                    ->where("t.ca_idreporte = ? ", $reporte->getCaIdreporte())
                                    ->execute();
 
-
+//echo $reporte->getCaImpoexpo();
         if( $reporte->getCaIdmaster()){
             $consignatario = Doctrine::getTable("Tercero")->find( $reporte->getCaIdmaster() );
             $master = $consignatario->getCaNombre()."<br />".$consignatario->getCaContacto()."<br />".$consignatario->getCaDireccion()."<br />Teléfonos:".$consignatario->getCaTelefonos()." Fax:".$consignatario->getCaFax()."<br />Email: ".$consignatario->getCaEmail();
@@ -396,6 +396,8 @@ class reporteExtComponents extends sfComponents
             }
             else
             {
+                //echo "ss".$reporte->getCaIdconsignarmaster();
+                
                 if($reporte->getCaIdconsignarmaster() && $reporte->getCaIdconsignarmaster()>3)
                 {
                     $consignatario1 = Doctrine::getTable("Tercero")->find($reporte->getCaIdconsignarmaster());
@@ -426,7 +428,7 @@ class reporteExtComponents extends sfComponents
             $consignatario = Doctrine::getTable("Tercero")->find( $reporte->getCaIdconsignatario() );
             if($reporte->getCaImpoexpo()==constantes::TRIANGULACION)
             {
-                $consignatario_final = $consignatario->getCaNombre()." Nit. ".number_format($consignatario->getCaIdtercero(),0)."<br />Dirección: ".$consignatario->getCaDireccion()."<br />Teléfonos:".$consignatario->getCaTelefonos()." Fax:".$consignatario->getCaFax()."<br />".$consignatario->getCiudad()->getCaCiudad()." ".$consignatario->getCiudad()->getTrafico()->getCaNombre();
+                $consignatario_final = $consignatario->getCaNombre()." Nit. ".($consignatario->getCaIdentificacion())."<br />Dirección: ".$consignatario->getCaDireccion()."<br />Teléfonos:".$consignatario->getCaTelefonos()." Fax:".$consignatario->getCaFax()."<br />".$consignatario->getCiudad()->getCaCiudad()." ".$consignatario->getCiudad()->getTrafico()->getCaNombre();
             }
             else
             {
