@@ -620,7 +620,7 @@ class pmActions extends sfActions {
                     $tarea->setCaUsucreado($this->getUser()->getUserId());
                     $tarea->setCaTitulo($titulo);
                     $tarea->setCaTexto($texto);
-                    $tarea->save();
+                    $tarea->save( $conn );
                 }
 
                 $ticket->setCaIdtarea($tarea->getCaIdtarea());

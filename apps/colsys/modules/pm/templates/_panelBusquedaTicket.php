@@ -262,13 +262,12 @@ Ext.extend(PanelBusquedaTicket, Ext.grid.GridPanel, {
 
             var idticket = record.data.idticket;
 
-            var newComponent = new Ext.Panel({
+            var newComponent = new PanelPreviewTicket({
                                                 closable: true,
                                                 title: 'Ticket # '+idticket,
+                                                idticket: idticket
                                                 //autoHeight: true,
-                                                items: new PanelPreviewTicket({
-                                                     idticket: idticket
-                                                    })
+                                                
                                               });
             Ext.getCmp('tab-panel').add(newComponent);
             Ext.getCmp('tab-panel').setActiveTab(newComponent);

@@ -167,7 +167,7 @@ $ticket = $sf_data->getRaw("ticket");
                                                         ?>
                                                            <li>
                                                         
-                                                           <a class="link" href="<?=url_for("gestDocumental/verArchivo?folder=".base64_encode($ticket->getDirectorioBase())."&idarchivo=".base64_encode(basename($file)))?>">
+                                                           <a class="link" href="https://www.coltrans.com.co<?=url_for("gestDocumental/verArchivo?folder=".base64_encode($ticket->getDirectorioBase())."&idarchivo=".base64_encode(basename($file)))?>">
                                                                 <b><?=basename($file)?></b>
                                                             </a>
 

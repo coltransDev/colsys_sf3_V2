@@ -91,8 +91,8 @@ PanelPreviewTicket = function( config ){
         title: "Respuestas",
         cls:'preview',
         autoScroll: true,
-        //autoHeight: true,
-        height: 600,
+        
+        //height: 400,
         
         tbar: [{
             id:'response-'+idcomponent,
@@ -153,6 +153,8 @@ PanelPreviewTicket = function( config ){
         activeTab:0,
         enableTabScroll: true,
         deferredRender: false,
+        autoScroll: true,
+        
         
         items: [
             this.preview,

@@ -334,13 +334,10 @@ Ext.onReady(function(){
        <?
        if( $idticket ){
        ?>
-            var newComponent = new Ext.Panel({
+            var newComponent = new PanelPreviewTicket({
                                                 closable: true,
                                                 title: 'Ticket # <?=$idticket?>',
-                                                //autoHeight: true,
-                                                items: new PanelPreviewTicket({
-                                                     idticket: <?=$idticket?>
-                                                    })
+                                                idticket: <?=$idticket?>
                                               });
             Ext.getCmp('tab-panel').add(newComponent);
             Ext.getCmp('tab-panel').setActiveTab(newComponent);

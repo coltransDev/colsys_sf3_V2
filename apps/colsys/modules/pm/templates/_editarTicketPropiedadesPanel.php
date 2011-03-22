@@ -427,7 +427,7 @@ $grupos = $sf_data->getRaw("grupos");
                             id:'text_id',
                             name:'text',
                             fieldLabel:'Descripción',
-                            height:200,
+                            height:150,
                             anchor:'98%',
                             enableFont: false,
                             enableFontSize: false,
