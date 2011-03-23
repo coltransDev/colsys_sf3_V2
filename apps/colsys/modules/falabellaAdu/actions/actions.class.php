@@ -857,7 +857,7 @@ class falabellaAduActions extends sfActions {
             $salida.= "0"; // 3
             $salida.= "900017447 "; // 4
             $salida.= "8"; // 5
-            $salida.= str_pad($row["ca_numdocumento"],10, " "); // 6
+            $salida.= str_pad($row["ca_numdocumento"],10,"0", STR_PAD_RIGHT); // 6
             $salida.= str_pad(null,10, " "); // 7
             list($anno,$mes,$dia) = sscanf($row["ca_emision_fch"],"%d-%d-%d");
             $emision = date("Ymd", mktime(0,0,0,$mes,$dia,$anno));
@@ -904,7 +904,7 @@ class falabellaAduActions extends sfActions {
                     $adicion.= "11"; // 1
                     $adicion.= "830003960"; // 2
                     $adicion.= "900017447 "; // 3
-                    $adicion.= str_pad($row["ca_numdocumento"],10, " "); // 4
+                    $adicion.= str_pad($row["ca_numdocumento"],10,"0", STR_PAD_RIGHT); // 4
                     $adicion.= str_pad("006",50, " "); // 5 Concepto de Afecto y Exento
                     $adicion.= str_pad($vlr_exento, 10, "0", STR_PAD_LEFT); // 6
                     $adicion.= "\r\n";
@@ -913,7 +913,7 @@ class falabellaAduActions extends sfActions {
                 $adicion.= "12"; // 1
                 $adicion.= "830003960"; // 2
                 $adicion.= "900017447 "; // 3
-                $adicion.= str_pad($row["ca_numdocumento"],10, " "); // 4
+                $adicion.= str_pad($row["ca_numdocumento"],10,"0", STR_PAD_RIGHT); // 4
                 $adicion.= str_pad("006",50, " "); // 5 Concepto de Retención en la Fuente
                 $adicion.= str_pad(0, 10, "0", STR_PAD_LEFT); // 6  $vlr_afecto Se deja en 0 por ser autoretenedores
                 $adicion.= "\r\n";
@@ -921,7 +921,7 @@ class falabellaAduActions extends sfActions {
                 $adicion.= "13"; // 1
                 $adicion.= "830003960"; // 2
                 $adicion.= "900017447 "; // 3
-                $adicion.= str_pad($row["ca_numdocumento"],10, " "); // 4
+                $adicion.= str_pad($row["ca_numdocumento"],10,"0", STR_PAD_RIGHT); // 4
                 $adicion.= str_pad("002",50, " "); // 5 Concepto del IVA
                 $adicion.= str_pad($vlr_iva, 10, "0", STR_PAD_LEFT); // 6
                 $adicion.= "\r\n";
@@ -971,7 +971,7 @@ class falabellaAduActions extends sfActions {
                 $adicion.= "01"; // 1
                 $adicion.= "830003960"; // 2
                 $adicion.= "900017447 "; // 3
-                $adicion.= str_pad($row["ca_numdocumento"],7, " "); // 4
+                $adicion.= str_pad($row["ca_numdocumento"],7,"0", STR_PAD_RIGHT); // 4
                 $adicion.= str_pad(1, 7, "0", STR_PAD_LEFT); // 5
                 $adicion.= str_pad(null,2, " "); // 6
                 $adicion.= str_pad($row["ca_embarque"], 8, " "); // 7
@@ -1026,7 +1026,7 @@ class falabellaAduActions extends sfActions {
             $salida.= "04"; // 1
             $salida.= "830003960"; // 2
             $salida.= "900017447 "; // 3
-            $salida.= str_pad($row["ca_numdocumento"],7, " "); // 4
+            $salida.= str_pad($row["ca_numdocumento"],7,"0", STR_PAD_RIGHT); // 4
             $salida.= str_pad(floatval($row["ca_idconcepto"]),50, " "); // 5
 
             $spaces = array(10,4,10,4); // Campos del 6 al 9
