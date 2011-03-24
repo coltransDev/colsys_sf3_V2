@@ -181,7 +181,7 @@ $cliente = $reporte->getCliente();
 	if ( $reporte->getCaColmas()== "Sí" && $reporte->getCaImpoexpo()!=Constantes::EXPO) {
 	?>
 		<tr>
-			<td><strong>Nacionalización Colmas SIA Ltda:</strong></td>
+			<td><strong>Nacionalización Colmas Ltda:</strong></td>
 			<td colspan="5"><?=Utils::replace($reporte->getCaColmas())?></td>
 		</tr> 
 	<?	
