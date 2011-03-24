@@ -10,90 +10,6 @@
  */
 class reportesGerActions extends sfActions
 {
-
-    /**
-	*
-	*
-	* @param sfRequest $request A request object
-	*/
-	public function executeIndex(sfWebRequest $request)
-	{
-		
-	}
-
-
-    /*
-	* Panel que muestra un arbol con opciones de busqueda
-	* @author Andres Botero
-    * @param sfRequest $request A request object
-	*/
-    public function executeDatosPanelConsulta( sfWebRequest $request ){
-        $informes = Doctrine::getTable("RepGerInforme")
-                                    ->createQuery("n")
-                                    ->addOrderBy("n.ca_categoria ASC")
-                                    ->addOrderBy("n.ca_titulo ASC")
-                                    ->execute();
-
-        $this->informes = array();
-        foreach( $informes as $informe ){
-            if( !isset( $this->informes[$informe->getCaCategoria()] )){
-                $this->informes[$informe->getCaCategoria()] = array();
-            }
-            $this->informes[$informe->getCaCategoria()][] = $informe;
-
-        }
-    }
-
-
-
-     /*
-	* Lista los campos disponibles para crear un informe
-	* @author Andres Botero
-    * @param sfRequest $request A request object
-	*/
-    public function executeListadoCampos( sfWebRequest $request ){
-        $idinforme = $request->getParameter("idinforme");
-        $this->forward404Unless( $idinforme );
-        $campos = Doctrine::getTable("RepGerCampo")
-                                    ->createQuery("c")
-                                    ->addWhere("c.ca_idinforme = ? ", $idinforme )
-                                    ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
-                                    ->execute();
-
-        foreach( $campos as $key=>$campo ){
-            $campos[$key]["c_ca_campo"] = utf8_encode($campos[$key]["c_ca_campo"]);
-        }
-
-        $this->responseArray = array("success"=>true, "root"=>$campos);
-        $this->setTemplate("responseTemplate");
-    }
-
-
-     /*
-	* Lista los filtros disponibles para crear un informe
-	* @author Andres Botero
-    * @param sfRequest $request A request object
-	*/
-    public function executeListadoFiltros( sfWebRequest $request ){
-        $idinforme = $request->getParameter("idinforme");
-        $this->forward404Unless( $idinforme );
-        $campos = Doctrine::getTable("RepGerCampo")
-                                    ->createQuery("c")
-                                    ->addWhere("c.ca_idinforme = ? ", $idinforme )
-                                    ->addWhere("c.ca_filtrar = ? ", true)
-                                    ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
-                                    ->execute();
-
-        foreach( $campos as $key=>$campo ){
-            $campos[$key]["c_ca_campo"] = utf8_encode($campos[$key]["c_ca_campo"]);
-        }
-
-        $this->responseArray = array("success"=>true, "root"=>$campos);
-        $this->setTemplate("responseTemplate");
-    }
-    
-
-    
 	/**
 	* Muestra un menu donde el usuario puede seleccionar las comisiones que desa sacar 
 	*
@@ -102,6 +18,44 @@ class reportesGerActions extends sfActions
 	public function executeReporteComisionesVendedor(sfWebRequest $request)
 	{
 		$this->userid = $this->getUser()->getUserId();	
+	}
+
+
+	public function executeReporteCargaTraficos(sfWebRequest $request)
+	{
+        $this->fechainicial=$request->getParameter("fechaInicial");
+        $this->fechafinal=$request->getParameter("fechaFinal");
+        $this->idpais_origen=$request->getParameter("idpais_origen");
+        $this->origen=$request->getParameter("origen");
+        $this->idorigen=$request->getParameter("idorigen");
+        $this->idpais_destino=$request->getParameter("idpais_destino");
+        $this->destino=$request->getParameter("destino");
+        $this->iddestino=$request->getParameter("iddestino");
+        $this->idmodalidad=$request->getParameter("idmodalidad");
+        $this->opcion=$request->getParameter("opcion");
+
+        if($this->opcion)
+        {
+            $q = Doctrine::getTable("RepCargaTraficos")
+                            ->createQuery("ct")
+                            ->select("*")
+                            ->where("(ca_fchreferencia between ? and ?) and ca_modalidad=?", array($this->fechainicial,$this->fechafinal,$this->idmodalidad))
+                            ->setHydrationMode(Doctrine::HYDRATE_ARRAY);
+            if($this->idpais_origen)
+                $q->addWhere("ori_ca_idtrafico=?",$this->idpais_origen);
+            if($this->idorigen)
+                $q->addWhere("ca_origen=?",$this->idorigen);
+            if($this->idpais_destino)
+                $q->addWhere("des_ca_idtrafico=?",$this->idpais_destino);
+            if($this->iddestino)
+                $q->addWhere("ca_destino=?",$this->iddestino);
+            
+            $this->resul=$q->execute();
+            
+            
+            
+        }
+		
 	}
 }
 ?>
