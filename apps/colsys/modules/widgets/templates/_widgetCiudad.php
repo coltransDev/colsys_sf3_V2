@@ -80,12 +80,9 @@ Ext.extend(WidgetCiudad, Ext.form.ComboBox, {
                         var tipo=this.tipo;
                         var trafico=this.trafico;
                         var impoexpo=this.impoexpo;
-                        //alert(impoexpo);
-                        var nomimpoexpo=Ext.getCmp(impoexpo).getValue();
-                        //alert(trafico);
-                        //alert(Ext.getCmp(this.traficoParent).getValue());
+
+                        var nomimpoexpo=(Ext.getCmp(impoexpo))?Ext.getCmp(impoexpo).getValue():"";
                         var traf=Ext.getCmp(this.traficoParent)?Ext.getCmp(this.traficoParent).getValue():"";
-                        //alert(traf);
                         i=0;
                         
                         if(this.tipo && this.impoexpo)
