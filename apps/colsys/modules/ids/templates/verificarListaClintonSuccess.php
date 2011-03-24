@@ -50,6 +50,12 @@ $stmt = $sf_data->getRaw("stmt");
     </table>
 
    <br>
-   <input type="button" value="Regresar" class="button" onClick="document.location='<?=url_for("ids/verIds?modo=".$modo."&id=".$ids->getCaId())?>'" />
+   <?
+   if( $id ){
+   ?>
+   <input type="button" value="Regresar" class="button" onClick="document.location='<?=url_for("ids/verIds?modo=".$modo."&id=".$id)?>'" />
+   <?
+   }
+   ?>
 
 </div>

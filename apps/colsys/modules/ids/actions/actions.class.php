@@ -1,5 +1,5 @@
 <?php
- 
+
 /**
  * homepage actions.
  *
@@ -8,126 +8,123 @@
  * @author     Your name here
  * @version    SVN: $Id: actions.class.php 12479 2008-10-31 10:54:40Z fabien $
  */
-class idsActions extends sfActions
-{
-
+class idsActions extends sfActions {
     const RUTINA_AGENTES = "8";
-	const RUTINA_PROV = "81";
+    const RUTINA_PROV = "81";
     /*
      * Retorna el nivel de acceso de acuerdo al modo
      */
-    public function getNivel( ){
-        $this->modo = $this->getRequestParameter("modo");
-        
-        $this->nivel = -1;
-		if( !$this->modo ){
-			$this->forward( "ids", "seleccionModo" );
-		}
 
-		if( $this->modo=="agentes" ){
-			$this->nivel = $this->getUser()->getNivelAcceso( idsActions::RUTINA_AGENTES );			
-		}
-		
-		if( $this->modo=="prov" ){
-			$this->nivel = $this->getUser()->getNivelAcceso( idsActions::RUTINA_PROV );            
-		}
-        
-        
-		if( $this->nivel==-1 ){
-			$this->forward404();
-		}        
+    public function getNivel() {
+        $this->modo = $this->getRequestParameter("modo");
+
+        $this->nivel = -1;
+        if (!$this->modo) {
+            $this->forward("ids", "seleccionModo");
+        }
+
+        if ($this->modo == "agentes") {
+            $this->nivel = $this->getUser()->getNivelAcceso(idsActions::RUTINA_AGENTES);
+        }
+
+        if ($this->modo == "prov") {
+            $this->nivel = $this->getUser()->getNivelAcceso(idsActions::RUTINA_PROV);
+        }
+
+
+        if ($this->nivel == -1) {
+            $this->forward404();
+        }
         return $this->nivel;
     }
-	/**
-	* Muestra la pagina inicial del modulo, le permite al usuario hacer busquedas.
-	*
-	* @param sfRequest $request A request object
-	*/
-	public function executeIndex(sfWebRequest $request)
-	{
-        
+
+    /**
+     * Muestra la pagina inicial del modulo, le permite al usuario hacer busquedas.
+     *
+     * @param sfRequest $request A request object
+     */
+    public function executeIndex(sfWebRequest $request) {
+
         $this->modo = $request->getParameter("modo");
         $this->nivel = $this->getNivel();
 
         $this->traficos = Doctrine::getTable('Trafico')->createQuery('t')
-                            ->where('t.ca_idtrafico != ?', '99-999')
-                            ->addOrderBy('t.ca_nombre ASC')
-                            ->execute();
+                        ->where('t.ca_idtrafico != ?', '99-999')
+                        ->addOrderBy('t.ca_nombre ASC')
+                        ->execute();
 
         $ciudades = Doctrine::getTable('Ciudad')->createQuery('c')
-                            ->where('c.ca_idciudad != ?', '999-9999')
-                            ->addOrderBy('c.ca_idtrafico ASC')
-                            ->addOrderBy('c.ca_ciudad ASC')
-                            ->execute();
-       
-		$result = array();
-		foreach( $ciudades as $ciudad ){
-			$result[ $ciudad->getCaIdtrafico() ][] = array("idciudad"=>$ciudad->getCaIdciudad(),
-															"ciudad"=>utf8_encode($ciudad->getCaCiudad())
-													 );
-		}
+                        ->where('c.ca_idciudad != ?', '999-9999')
+                        ->addOrderBy('c.ca_idtrafico ASC')
+                        ->addOrderBy('c.ca_ciudad ASC')
+                        ->execute();
 
-		$this->ciudades = json_encode($result);
-	}
+        $result = array();
+        foreach ($ciudades as $ciudad) {
+            $result[$ciudad->getCaIdtrafico()][] = array("idciudad" => $ciudad->getCaIdciudad(),
+                "ciudad" => utf8_encode($ciudad->getCaCiudad())
+            );
+        }
 
-    /**
-	 * Permite seleccionar el modo de operacion del programa
-	 * @author: Andres Botero
-	 */
-	public function executeSeleccionModo()
-	{
-		$this->nivelAgentes = $this->getUser()->getNivelAcceso( idsActions::RUTINA_AGENTES );		
-		$this->nivelProveedores = $this->getUser()->getNivelAcceso( idsActions::RUTINA_PROV );
-	}
+        $this->ciudades = json_encode($result);
+    }
 
     /**
-	* Permite realizar busquedas en la tabla de proveedores
-	*
-	* @param sfRequest $request A request object
-	*/
-	public function executeBusqueda(sfWebRequest $request)
-	{
+     * Permite seleccionar el modo de operacion del programa
+     * @author: Andres Botero
+     */
+    public function executeSeleccionModo() {
+        $this->nivelAgentes = $this->getUser()->getNivelAcceso(idsActions::RUTINA_AGENTES);
+        $this->nivelProveedores = $this->getUser()->getNivelAcceso(idsActions::RUTINA_PROV);
+    }
+
+    /**
+     * Permite realizar busquedas en la tabla de proveedores
+     *
+     * @param sfRequest $request A request object
+     */
+    public function executeBusqueda(sfWebRequest $request) {
         $this->modo = $request->getParameter("modo");
         $this->nivel = $this->getNivel();
         $criterio = $request->getParameter("criterio");
         $cadena = $request->getParameter("cadena");
-        
+
         $q = Doctrine_Query::create()->from('Ids i');
 
-        switch( $this->modo ){
+        switch ($this->modo) {
             case "agentes":
-                $q->innerJoin( "i.IdsAgente ag" );
-                if( $this->nivel<2 ){
-                    $q->addWhere('ag.ca_activo = ?', true );
+                $q->innerJoin("i.IdsAgente ag");
+                if ($this->nivel < 2) {
+                    $q->addWhere('ag.ca_activo = ?', true);
                 }
                 break;
             case "prov":
-                 $q->innerJoin( "i.IdsProveedor prov" );
+                $q->innerJoin("i.IdsProveedor prov");
                 break;
         }
 
-        switch( $criterio ){
-			case "nombre":
-                $q->addWhere('i.ca_nombre like ?', '%'.strtoupper($cadena).'%');
-				break;
-            case "id":				
-                $q->addWhere('i.ca_idalterno like ?', strtoupper($cadena).'%');
-				break;
+        switch ($criterio) {
+            case "nombre":
+                $q->addWhere('i.ca_nombre like ?', '%' . strtoupper($cadena) . '%');
+                break;
+            case "id":
+                $q->addWhere('i.ca_idalterno like ?', strtoupper($cadena) . '%');
+                break;
             case "ciudad":
                 $idtrafico = $request->getParameter("idtrafico");
                 $idciudad = $request->getParameter("idciudad");
                 $q->innerJoin("i.IdsSucursal s");
                 $q->innerJoin("s.Ciudad c");
                 $q->innerJoin("c.Trafico t");
-				
-                if( $idtrafico ){                    
+
+                if ($idtrafico) {
                     $q->addWhere('t.ca_idtrafico = ?', $idtrafico);
                 }
-                if( $idciudad ){                    
+                if ($idciudad) {
                     $q->addWhere('c.ca_idciudad = ?', $idciudad);
                 }
-				break;
-		}
+                break;
+        }
 
         $q->addOrderBy("i.ca_nombre");
         $q->limit(200);
@@ -138,48 +135,45 @@ class idsActions extends sfActions
 
         // Creating pager object
         $this->pager = new Doctrine_Pager(
-              $q,
-              $currentPage, 
-              $resultsPerPage
+                        $q,
+                        $currentPage,
+                        $resultsPerPage
         );
 
         $this->idsList = $this->pager->execute();
-		if( $this->pager->getResultsInPage()==1 && $this->pager->getPage()==1 ){
+        if ($this->pager->getResultsInPage() == 1 && $this->pager->getPage() == 1) {
             $ids = $this->idsList;
-			$this->redirect("ids/verIds?modo=".$this->modo."&id=".$ids[0]->getCaId());
-		}
-		$this->criterio = $criterio;
-		$this->cadena = $cadena;
-	}
-
+            $this->redirect("ids/verIds?modo=" . $this->modo . "&id=" . $ids[0]->getCaId());
+        }
+        $this->criterio = $criterio;
+        $this->cadena = $cadena;
+    }
 
     /**
-	* Muestra el formulario de creación y edicion de proveedores
-	*
-	* @param sfRequest $request A request object
-	*/
-	public function executeVerIds(sfWebRequest $request)
-	{
+     * Muestra el formulario de creación y edicion de proveedores
+     *
+     * @param sfRequest $request A request object
+     */
+    public function executeVerIds(sfWebRequest $request) {
         $this->nivel = $this->getNivel();
         $this->modo = $request->getParameter("modo");
         $this->forward404Unless($request->getParameter("id"));
 
         $this->ids = Doctrine::getTable('Ids')->find($request->getParameter("id"));
         $this->forward404Unless($this->ids);
-       
+
 
         $response = sfContext::getInstance()->getResponse();
-		$response->addJavaScript("tabpane/tabpane",'last');
-        $response->addStylesheet("tabpane/luna/tab",'last');
+        $response->addJavaScript("tabpane/tabpane", 'last');
+        $response->addStylesheet("tabpane/luna/tab", 'last');
     }
 
     /**
-	* Muestra el formulario de creación y edicion de proveedores
-	*
-	* @param sfRequest $request A request object
-	*/
-	public function executeFormIds(sfWebRequest $request)
-	{
+     * Muestra el formulario de creación y edicion de proveedores
+     *
+     * @param sfRequest $request A request object
+     */
+    public function executeFormIds(sfWebRequest $request) {
         $this->nivel = $this->getNivel();
         $this->modo = $request->getParameter("modo");
         $this->form = new NuevoIdsForm();
@@ -187,29 +181,29 @@ class idsActions extends sfActions
         $formSucursal = new NuevaSucursalForm();
         $this->form->mergeForm($formSucursal);
 
-        if( $this->modo=="prov" ){
+        if ($this->modo == "prov") {
             $this->formProveedor = new NuevoProveedorForm();
             $this->form->mergeForm($this->formProveedor);
         }
 
-        if( $this->modo=="agentes" ){
+        if ($this->modo == "agentes") {
             $this->formAgente = new NuevoAgenteForm();
             $this->form->mergeForm($this->formAgente);
         }
 
         $ids = null;
 
-        if( $request->getParameter("id") ){
-            $ids = Doctrine::getTable("Ids")->find($request->getParameter("id"));           
+        if ($request->getParameter("id")) {
+            $ids = Doctrine::getTable("Ids")->find($request->getParameter("id"));
         }
 
-        if( !$ids ){
+        if (!$ids) {
             $ids = new Ids();
         }
-        
-        if ($request->isMethod('post')){		
-		
-			$bindValues = array();
+
+        if ($request->isMethod('post')) {
+
+            $bindValues = array();
 
             $bindValues["tipo_identificacion"] = $request->getParameter("tipo_identificacion");
             $bindValues["id"] = $request->getParameter("id");
@@ -218,13 +212,13 @@ class idsActions extends sfActions
             $bindValues["nombre"] = strtoupper($request->getParameter("nombre"));
             $bindValues["website"] = $request->getParameter("website");
             $bindValues["idgrupo"] = $request->getParameter("idgrupo");
-            
+
             $bindValues["direccion"] = $request->getParameter("direccion");
             $bindValues["telefonos"] = $request->getParameter("telefonos");
             $bindValues["fax"] = $request->getParameter("fax");
             $bindValues["idciudad"] = $request->getParameter("idciudad");
 
-            if( $this->modo=="prov" ){
+            if ($this->modo == "prov") {
                 $bindValues["tipo_proveedor"] = $request->getParameter("tipo_proveedor");
                 $bindValues["controladoporsig"] = $request->getParameter("controladoporsig");
                 $bindValues["critico"] = $request->getParameter("critico");
@@ -234,119 +228,116 @@ class idsActions extends sfActions
                 $bindValues["activo_expo"] = $request->getParameter("activo_expo");
                 $bindValues["empresa"] = $request->getParameter("empresa");
 
-               
-                if( $bindValues["tipo_proveedor"]=="TRI" || $bindValues["tipo_proveedor"]=="TRN" ){
+
+                if ($bindValues["tipo_proveedor"] == "TRI" || $bindValues["tipo_proveedor"] == "TRN") {
                     $bindValues["sigla"] = $request->getParameter("sigla");
                     $bindValues["transporte"] = $request->getParameter("transporte");
                 }
-
             }
-            
-            if( $this->modo=="agentes" ){
+
+            if ($this->modo == "agentes") {
                 $bindValues["tipo"] = $request->getParameter("tipo");
                 $bindValues["activo"] = $request->getParameter("activo");
             }
 
-            $this->form->bind( $bindValues );
-            
-			if( $this->form->isValid() ){
+            $this->form->bind($bindValues);
 
-                if( $bindValues["tipo_identificacion"] ){                    
-                    $ids->setCaTipoidentificacion( intval($bindValues["tipo_identificacion"]));
+            if ($this->form->isValid()) {
+
+                if ($bindValues["tipo_identificacion"]) {
+                    $ids->setCaTipoidentificacion(intval($bindValues["tipo_identificacion"]));
                 }
 
-                if( $bindValues["idalterno"] ){
-                    $ids->setCaIdalterno( $bindValues["idalterno"]);
+                if ($bindValues["idalterno"]) {
+                    $ids->setCaIdalterno($bindValues["idalterno"]);
                 }
-                
 
-                if( $bindValues["dv"] ){
-                    $ids->setCaDv( intval($bindValues["dv"]));
+
+                if ($bindValues["dv"]) {
+                    $ids->setCaDv(intval($bindValues["dv"]));
                 }
-                
+
                 $ids->setCaNombre($bindValues["nombre"]);
                 $ids->setCaWebsite($bindValues["website"]);
-                                              
+
                 $ids->save();
 
                 //exit( $ids->getCaId() );
-                if( $bindValues["idgrupo"] ){
-                    $ids->setCaIdgrupo( intval($bindValues["idgrupo"]));
-                }else{
-                    $ids->setCaIdgrupo( intval($ids->getCaId()) );
+                if ($bindValues["idgrupo"]) {
+                    $ids->setCaIdgrupo(intval($bindValues["idgrupo"]));
+                } else {
+                    $ids->setCaIdgrupo(intval($ids->getCaId()));
                 }
                 $ids->save();
 
 
                 // Guarda el proveedor
-                if( isset($this->formProveedor) ){
+                if (isset($this->formProveedor)) {
                     $proveedor = $ids->getIdsProveedor();
-                    if( !$proveedor ){
+                    if (!$proveedor) {
                         $proveedor = new IdsProveedor();
                         $proveedor->setCaIdproveedor($ids->getCaId());
                     }
 
-                    $proveedor->setCaTipo( $bindValues["tipo_proveedor"] );
+                    $proveedor->setCaTipo($bindValues["tipo_proveedor"]);
 
-                    if( $bindValues["activo_impo"] ){
-                        $proveedor->setCaActivoImpo( true );
-                    }else{
-                        $proveedor->setCaActivoImpo( false );
+                    if ($bindValues["activo_impo"]) {
+                        $proveedor->setCaActivoImpo(true);
+                    } else {
+                        $proveedor->setCaActivoImpo(false);
                     }
 
-                    if( $bindValues["activo_expo"] ){
-                        $proveedor->setCaActivoExpo( true );
-                    }else{
-                        $proveedor->setCaActivoExpo( false );
+                    if ($bindValues["activo_expo"]) {
+                        $proveedor->setCaActivoExpo(true);
+                    } else {
+                        $proveedor->setCaActivoExpo(false);
                     }
-                    
-                   
 
-                    if( $bindValues["empresa"] ){
+
+
+                    if ($bindValues["empresa"]) {
                         $proveedor->setCaEmpresa($bindValues["empresa"]);
-                    }else{
+                    } else {
                         $proveedor->setCaEmpresa(null);
                     }
-                    
-                    if( $bindValues["tipo_proveedor"]=="TRI" || $bindValues["tipo_proveedor"]=="TRN" ){
-                        $proveedor->setCaSigla($bindValues["sigla"] );
-                        if( $bindValues["transporte"] ){
-                            $proveedor->setCaTransporte( $bindValues["transporte"] );
-                        }else{
-                            $proveedor->setCaTransporte( null );
+
+                    if ($bindValues["tipo_proveedor"] == "TRI" || $bindValues["tipo_proveedor"] == "TRN") {
+                        $proveedor->setCaSigla($bindValues["sigla"]);
+                        if ($bindValues["transporte"]) {
+                            $proveedor->setCaTransporte($bindValues["transporte"]);
+                        } else {
+                            $proveedor->setCaTransporte(null);
                         }
-                    }                   
-                    
-                    if( $this->nivel>=5 ){
-                        if( $bindValues["controladoporsig"] ){
-                            $proveedor->setCaControladoporsig( true );
-                        }else{
-                            $proveedor->setCaControladoporsig( false );
+                    }
+
+                    if ($this->nivel >= 5) {
+                        if ($bindValues["controladoporsig"]) {
+                            $proveedor->setCaControladoporsig(true);
+                        } else {
+                            $proveedor->setCaControladoporsig(false);
                         }
 
-                        if( $bindValues["critico"] ){
-                            $proveedor->setCaCritico( true );
-                        }else{
-                            $proveedor->setCaCritico( false );
+                        if ($bindValues["critico"]) {
+                            $proveedor->setCaCritico(true);
+                        } else {
+                            $proveedor->setCaCritico(false);
                         }
 
-                         if( $bindValues["esporadico"] ){
-                            $proveedor->setCaEsporadico( true );
-                        }else{
-                            $proveedor->setCaEsporadico( false );
+                        if ($bindValues["esporadico"]) {
+                            $proveedor->setCaEsporadico(true);
+                        } else {
+                            $proveedor->setCaEsporadico(false);
                         }
 
-                        
-                        if( $bindValues["aprobado"] ){
-                            if( $bindValues["aprobado"]!=$proveedor->getCaFchaprobado() ){
-                                $proveedor->setCaFchaprobado( $bindValues["aprobado"] );
-                                $proveedor->setCaUsuaprobado( $this->getUser()->getUserId() );
+
+                        if ($bindValues["aprobado"]) {
+                            if ($bindValues["aprobado"] != $proveedor->getCaFchaprobado()) {
+                                $proveedor->setCaFchaprobado($bindValues["aprobado"]);
+                                $proveedor->setCaUsuaprobado($this->getUser()->getUserId());
                             }
-                            
-                        }else{
-                            $proveedor->setCaFchaprobado( null );
-                            $proveedor->setCaUsuaprobado( null );
-
+                        } else {
+                            $proveedor->setCaFchaprobado(null);
+                            $proveedor->setCaUsuaprobado(null);
                         }
                     }
 
@@ -354,404 +345,396 @@ class idsActions extends sfActions
                 }
 
 
-                if( isset($this->formAgente) ){
+                if (isset($this->formAgente)) {
                     $agente = $ids->getIdsAgente();
-                    if( !$agente ){
+                    if (!$agente) {
                         $agente = new IdsAgente();
                         $agente->setCaIdagente($ids->getCaId());
                     }
 
-                    $agente->setCaTipo( $bindValues["tipo"] );
+                    $agente->setCaTipo($bindValues["tipo"]);
 
 
 
-                    if( $bindValues["activo"] ){
-                        
-                        if( $agente->setCaActivo()==false ){
-                            $this->getUser()->log("Cambio Agente Activo: ".$bindValues["nombre"]." pasa a activo");
+                    if ($bindValues["activo"]) {
+
+                        if ($agente->setCaActivo() == false) {
+                            $this->getUser()->log("Cambio Agente Activo: " . $bindValues["nombre"] . " pasa a activo");
                         }
-                        $agente->setCaActivo( true );
-                    }else{
-                        if( $agente->setCaActivo()==true ){
-                            $this->getUser()->log("Cambio Agente Activo: ".$bindValues["nombre"]." pasa a inactivo");
+                        $agente->setCaActivo(true);
+                    } else {
+                        if ($agente->setCaActivo() == true) {
+                            $this->getUser()->log("Cambio Agente Activo: " . $bindValues["nombre"] . " pasa a inactivo");
                         }
-                        $agente->setCaActivo( false );
+                        $agente->setCaActivo(false);
                     }
 
 
 
                     $agente->save();
                 }
-                
+
                 // Guardar Sucursal
                 $sucursal = $ids->getSucursalPrincipal();
-                if( !$sucursal ){
+                if (!$sucursal) {
                     $sucursal = new IdsSucursal();
-                    $sucursal->setCaPrincipal( true );
+                    $sucursal->setCaPrincipal(true);
                 }
-                
-                $sucursal->setCaId( $ids->getCaId());
-                $sucursal->setCaDireccion( $request->getParameter("direccion"));
-                $sucursal->setCaTelefonos( $request->getParameter("telefonos"));
-                $sucursal->setCaIdciudad( $request->getParameter("idciudad"));
-                $sucursal->setCaFax( $request->getParameter("fax"));
-                
-                $sucursal->save();
-                
-                $this->redirect("ids/verIds?modo=".$this->modo."&id=".$ids->getCaId() );
 
+                $sucursal->setCaId($ids->getCaId());
+                $sucursal->setCaDireccion($request->getParameter("direccion"));
+                $sucursal->setCaTelefonos($request->getParameter("telefonos"));
+                $sucursal->setCaIdciudad($request->getParameter("idciudad"));
+                $sucursal->setCaFax($request->getParameter("fax"));
+
+                $sucursal->save();
+
+                $this->redirect("ids/verIds?modo=" . $this->modo . "&id=" . $ids->getCaId());
             }
         }
 
         $this->ids = $ids;
-	}
+    }
 
-
-   /**
-	* Comprueba si existe un ID en la BD
-	*
-	* @param sfRequest $request A request object
-	*/
-
-    public function executeComprobarId(sfWebRequest $request){
+    /**
+     * Comprueba si existe un ID en la BD
+     *
+     * @param sfRequest $request A request object
+     */
+    public function executeComprobarId(sfWebRequest $request) {
         $idalterno = $request->getParameter("idalterno");
-        $tipo_identificacion = $request->getParameter("tipo_identificacion");        
+        $tipo_identificacion = $request->getParameter("tipo_identificacion");
         $id = Doctrine::getTable("Ids")
-                  ->createQuery("id")
-                  ->where("id.ca_idalterno = ? AND id.ca_tipoidentificacion = ? ", array($idalterno, $tipo_identificacion))
-                  ->fetchOne();
+                        ->createQuery("id")
+                        ->where("id.ca_idalterno = ? AND id.ca_tipoidentificacion = ? ", array($idalterno, $tipo_identificacion))
+                        ->fetchOne();
         $this->responseArray = array();
-        if( $id ){
+        if ($id) {
             $this->responseArray["id"] = $id->getCaId();
-        }else{
+        } else {
             $this->responseArray["id"] = false;
         }
         $this->setTemplate("responseTemplate");
     }
 
     /**
-	* Muestra el formulario de creación y edicion de contactos
-	*
-	* @param sfRequest $request A request object
-	*/
-
-    public function executeFormContactosIds(sfWebRequest $request){
+     * Muestra el formulario de creación y edicion de contactos
+     *
+     * @param sfRequest $request A request object
+     */
+    public function executeFormContactosIds(sfWebRequest $request) {
         $this->nivel = $this->getNivel();
-        
-		if( $this->nivel<3 ){
-			$this->forward404();
-		}
-        $this->modo = $request->getParameter("modo");
-		
-		$this->contacto = Doctrine::getTable("IdsContacto")->find( $request->getParameter("idcontacto") );
 
-        if( $this->contacto ){
-            $this->sucursal = $this->contacto->getIdsSucursal();
-        }else{
-            $this->sucursal = Doctrine::getTable("IdsSucursal")->find( $request->getParameter("idsucursal") );
+        if ($this->nivel < 3) {
+            $this->forward404();
         }
-		$this->forward404Unless( $this->sucursal );
+        $this->modo = $request->getParameter("modo");
 
-		$this->form = new NuevoContactoForm();
+        $this->contacto = Doctrine::getTable("IdsContacto")->find($request->getParameter("idcontacto"));
 
-		if ($request->isMethod('post')){
-			$bindValues = array();
+        if ($this->contacto) {
+            $this->sucursal = $this->contacto->getIdsSucursal();
+        } else {
+            $this->sucursal = Doctrine::getTable("IdsSucursal")->find($request->getParameter("idsucursal"));
+        }
+        $this->forward404Unless($this->sucursal);
 
-			$bindValues["idcontacto"] = $request->getParameter("idcontacto");
-			$bindValues["idsucursal"] = $request->getParameter("idsucursal");
-			$bindValues["nombre"] = trim($request->getParameter("nombre"));
-			$bindValues["apellido"] = trim($request->getParameter("apellido"));
-			//$bindValues["direccion"] = $request->getParameter("direccion");
-			//$bindValues["idciudad"] = $request->getParameter("idciudad");
-			$bindValues["telefonos"] = $request->getParameter("telefonos");
-			$bindValues["fax"] = $request->getParameter("fax");
-			$bindValues["email"] = trim($request->getParameter("email"));
-			$bindValues["cargo"] = $request->getParameter("cargo");
+        $this->form = new NuevoContactoForm();
+
+        if ($request->isMethod('post')) {
+            $bindValues = array();
+
+            $bindValues["idcontacto"] = $request->getParameter("idcontacto");
+            $bindValues["idsucursal"] = $request->getParameter("idsucursal");
+            $bindValues["nombre"] = trim($request->getParameter("nombre"));
+            $bindValues["apellido"] = trim($request->getParameter("apellido"));
+            //$bindValues["direccion"] = $request->getParameter("direccion");
+            //$bindValues["idciudad"] = $request->getParameter("idciudad");
+            $bindValues["telefonos"] = $request->getParameter("telefonos");
+            $bindValues["fax"] = $request->getParameter("fax");
+            $bindValues["email"] = trim($request->getParameter("email"));
+            $bindValues["cargo"] = $request->getParameter("cargo");
             $bindValues["otro_cargo"] = $request->getParameter("otro_cargo");
-			$bindValues["sugerido"] = $request->getParameter("sugerido");
-			$bindValues["activo"] = $request->getParameter("activo");
-			$bindValues["detalles"] = $request->getParameter("detalles");
+            $bindValues["sugerido"] = $request->getParameter("sugerido");
+            $bindValues["activo"] = $request->getParameter("activo");
+            $bindValues["detalles"] = $request->getParameter("detalles");
 
-			$bindValues["impoexpo"] =  $request->getParameter("impoexpo");
-			$bindValues["transporte"] = $request->getParameter("transporte");
+            $bindValues["impoexpo"] = $request->getParameter("impoexpo");
+            $bindValues["transporte"] = $request->getParameter("transporte");
             $bindValues["visibilidad"] = $request->getParameter("visibilidad");
             $bindValues["codigoarea"] = $request->getParameter("codigoarea");
             $bindValues["notificar_vencimientos"] = $request->getParameter("notificar_vencimientos");
-			$this->form->bind( $bindValues );
-			if( $this->form->isValid() ){
-				if( $bindValues["idcontacto"] ){
+            $this->form->bind($bindValues);
+            if ($this->form->isValid()) {
+                if ($bindValues["idcontacto"]) {
                     $contacto = Doctrine::getTable("IdsContacto")->find($bindValues["idcontacto"]);
-				}else{					
-					$contacto = new IdsContacto();
-					$contacto->setCaIdsucursal( $this->sucursal->getCaIdsucursal() );					
-				}
-
-				$contacto->setCaNombres( ucwords(strtolower( trim($bindValues["nombre"]))));
-				$contacto->setCaPapellido( ucwords(strtolower( trim($bindValues["apellido"]))));
-				//$contacto->setCaDireccion( trim($bindValues["direccion"]) );
-				//$contacto->setCaIdciudad( $bindValues["idciudad"] );
-				$contacto->setCaTelefonos( $bindValues["telefonos"] );
-				$contacto->setCaFax( $bindValues["fax"] );
-				$contacto->setCaEmail( $bindValues["email"] );
-				$contacto->setCaImpoexpo( implode("|",$bindValues["impoexpo"]) );
-				$contacto->setCaTransporte( implode("|",$bindValues["transporte"]) );
-                if( $bindValues["cargo"] ){
-                    $contacto->setCaCargo( $bindValues["cargo"] );
-                }else{
-                    $contacto->setCaCargo( $bindValues["otro_cargo"] );
+                } else {
+                    $contacto = new IdsContacto();
+                    $contacto->setCaIdsucursal($this->sucursal->getCaIdsucursal());
                 }
-                if( $bindValues["codigoarea"] && $this->sucursal->getCiudad()->getCodigoarea() ){
-                    $contacto->setCaCodigoarea( $bindValues["codigoarea"] );
-                }else{
-                    $contacto->setCaCodigoarea( null );
+
+                $contacto->setCaNombres(ucwords(strtolower(trim($bindValues["nombre"]))));
+                $contacto->setCaPapellido(ucwords(strtolower(trim($bindValues["apellido"]))));
+                //$contacto->setCaDireccion( trim($bindValues["direccion"]) );
+                //$contacto->setCaIdciudad( $bindValues["idciudad"] );
+                $contacto->setCaTelefonos($bindValues["telefonos"]);
+                $contacto->setCaFax($bindValues["fax"]);
+                $contacto->setCaEmail($bindValues["email"]);
+                $contacto->setCaImpoexpo(implode("|", $bindValues["impoexpo"]));
+                $contacto->setCaTransporte(implode("|", $bindValues["transporte"]));
+                if ($bindValues["cargo"]) {
+                    $contacto->setCaCargo($bindValues["cargo"]);
+                } else {
+                    $contacto->setCaCargo($bindValues["otro_cargo"]);
                 }
-				$contacto->setCaObservaciones( $bindValues["detalles"] );
-                $contacto->setCaVisibilidad( intval($bindValues["visibilidad"]) );
-				if( $bindValues["sugerido"] ){
-					$contacto->setCaSugerido( true );
-				}else{
-					$contacto->setCaSugerido( false );
-				}
+                if ($bindValues["codigoarea"] && $this->sucursal->getCiudad()->getCodigoarea()) {
+                    $contacto->setCaCodigoarea($bindValues["codigoarea"]);
+                } else {
+                    $contacto->setCaCodigoarea(null);
+                }
+                $contacto->setCaObservaciones($bindValues["detalles"]);
+                $contacto->setCaVisibilidad(intval($bindValues["visibilidad"]));
+                if ($bindValues["sugerido"]) {
+                    $contacto->setCaSugerido(true);
+                } else {
+                    $contacto->setCaSugerido(false);
+                }
 
-				if( $bindValues["activo"] ){
-					$contacto->setCaActivo( true );
-				}else{
-					$contacto->setCaActivo( false );
-				}
+                if ($bindValues["activo"]) {
+                    $contacto->setCaActivo(true);
+                } else {
+                    $contacto->setCaActivo(false);
+                }
 
-                if( $bindValues["notificar_vencimientos"] ){
-					$contacto->setCaNotificarVencimientos( true );
-				}else{
-					$contacto->setCaNotificarVencimientos( false );
-				}
-				$contacto->save();
+                if ($bindValues["notificar_vencimientos"]) {
+                    $contacto->setCaNotificarVencimientos(true);
+                } else {
+                    $contacto->setCaNotificarVencimientos(false);
+                }
+                $contacto->save();
 
-				$this->redirect("ids/verIds?modo=".$this->modo."&id=".$this->sucursal->getCaId() );
-
-
-			}
-		}
+                $this->redirect("ids/verIds?modo=" . $this->modo . "&id=" . $this->sucursal->getCaId());
+            }
+        }
     }
 
     /**
-	* Elimina un contacto de una sucursal
-	*
-	* @param sfRequest $request A request object
-	*/
-    public function executeEliminarContactoIds(sfWebRequest $request){
+     * Elimina un contacto de una sucursal
+     *
+     * @param sfRequest $request A request object
+     */
+    public function executeEliminarContactoIds(sfWebRequest $request) {
         $this->nivel = $this->getNivel();
 
-		/*if( $this->nivel<=0 ){
-			$this->forward404();
-		}*/
+        /* if( $this->nivel<=0 ){
+          $this->forward404();
+          } */
 
         $this->modo = $request->getParameter("modo");
 
         $contacto = Doctrine::getTable("IdsContacto")->find($request->getParameter("idcontacto"));
-        $this->forward404Unless( $contacto );
+        $this->forward404Unless($contacto);
         $this->sucursal = $contacto->getIdsSucursal();
-        $contacto->setCaFcheliminado(date("Y-m-d H:i:s"));        
+        $contacto->setCaFcheliminado(date("Y-m-d H:i:s"));
         $contacto->setCaUsueliminado($this->getUser()->getUserId());
         $contacto->save();
-        $this->redirect("ids/verIds?modo=".$this->modo."&id=".$this->sucursal->getCaId() );
-
+        $this->redirect("ids/verIds?modo=" . $this->modo . "&id=" . $this->sucursal->getCaId());
     }
 
     /**
-	* Muestra el formulario de creación y edicion de sucursales
-	*
-	* @param sfRequest $request A request object
-	*/
-    public function executeFormSucursalIds(sfWebRequest $request){
+     * Muestra el formulario de creación y edicion de sucursales
+     *
+     * @param sfRequest $request A request object
+     */
+    public function executeFormSucursalIds(sfWebRequest $request) {
         $this->nivel = $this->getNivel();
         /*
-		if( $this->nivel<=0 ){
-			$this->forward404();
-		}*/
+          if( $this->nivel<=0 ){
+          $this->forward404();
+          } */
         $this->modo = $request->getParameter("modo");
-        if( $request->getParameter("idsucursal") ){
+        if ($request->getParameter("idsucursal")) {
             $sucursal = Doctrine::getTable("IdsSucursal")->find($request->getParameter("idsucursal"));
             $ids = $sucursal->getIds();
-        }else{
+        } else {
             $ids = Doctrine::getTable("Ids")->find($request->getParameter("id"));
-            $sucursal=null;
+            $sucursal = null;
         }
 
-        
-		$this->forward404Unless( $ids );
 
-		$this->form = new NuevaSucursalForm();
+        $this->forward404Unless($ids);
 
-		if ($request->isMethod('post')){
-			$bindValues = array();
-            
-			$bindValues["direccion"] = $request->getParameter("direccion");
-			$bindValues["idciudad"] = $request->getParameter("idciudad");
-			$bindValues["telefonos"] = $request->getParameter("telefonos");
-			$bindValues["fax"] = $request->getParameter("fax");
-			
-           			
-			$this->form->bind( $bindValues );
-			if( $this->form->isValid() ){
+        $this->form = new NuevaSucursalForm();
+
+        if ($request->isMethod('post')) {
+            $bindValues = array();
+
+            $bindValues["direccion"] = $request->getParameter("direccion");
+            $bindValues["idciudad"] = $request->getParameter("idciudad");
+            $bindValues["telefonos"] = $request->getParameter("telefonos");
+            $bindValues["fax"] = $request->getParameter("fax");
 
 
-                if( !$sucursal ){
+            $this->form->bind($bindValues);
+            if ($this->form->isValid()) {
+
+
+                if (!$sucursal) {
                     $sucursal = new IdsSucursal();
-                    $sucursal->setCaPrincipal( false );
+                    $sucursal->setCaPrincipal(false);
                 }
 
-                $sucursal->setCaId( $ids->getCaId());
-                $sucursal->setCaDireccion( $request->getParameter("direccion"));
-                $sucursal->setCaTelefonos( $request->getParameter("telefonos"));
-                $sucursal->setCaIdciudad( $request->getParameter("idciudad"));
-                $sucursal->setCaFax( $request->getParameter("fax"));
+                $sucursal->setCaId($ids->getCaId());
+                $sucursal->setCaDireccion($request->getParameter("direccion"));
+                $sucursal->setCaTelefonos($request->getParameter("telefonos"));
+                $sucursal->setCaIdciudad($request->getParameter("idciudad"));
+                $sucursal->setCaFax($request->getParameter("fax"));
 
                 $sucursal->save();
 
-                $this->redirect("ids/verIds?modo=".$this->modo."&id=".$ids->getCaId() );
-			}
-		}
+                $this->redirect("ids/verIds?modo=" . $this->modo . "&id=" . $ids->getCaId());
+            }
+        }
         $this->sucursal = $sucursal;
         $this->ids = $ids;
-
     }
-
 
     /*
      * Manejo de documentos
      *
      * @param sfRequest $request A request object
      */
-    public function executeFormDocumentos(sfWebRequest $request){
-         $this->nivel = $this->getNivel();
-        
-		if( $this->nivel<=0 ){
-			$this->forward404();
-		}
+
+    public function executeFormDocumentos(sfWebRequest $request) {
+        $this->nivel = $this->getNivel();
+
+        if ($this->nivel <= 0) {
+            $this->forward404();
+        }
         $this->modo = $request->getParameter("modo");
 
-        $documento = Doctrine::getTable("IdsDocumento")->find( $request->getParameter("iddocumento") );
+        $documento = Doctrine::getTable("IdsDocumento")->find($request->getParameter("iddocumento"));
 
-        if( $documento ){
+        if ($documento) {
             $ids = $documento->getIds();
-        }else{
-            $ids = Doctrine::getTable("Ids")->find( $request->getParameter("id") );            
-        }              
-		$this->forward404Unless( $ids );
+        } else {
+            $ids = Doctrine::getTable("Ids")->find($request->getParameter("id"));
+        }
+        $this->forward404Unless($ids);
 
-		$this->form = new NuevoDocumentoForm();
-        
-		if ($request->isMethod('post')){
-			$bindValues = array();
+        $this->form = new NuevoDocumentoForm();
 
-			$bindValues["id"] = $request->getParameter("id");
-			$bindValues["idtipo"] = $request->getParameter("idtipo");
-            if( $request->getParameter("inicio") ){
-                $bindValues["inicio"] = Utils::parseDate($request->getParameter("inicio"));                
+        if ($request->isMethod('post')) {
+            $bindValues = array();
+
+            $bindValues["id"] = $request->getParameter("id");
+            $bindValues["idtipo"] = $request->getParameter("idtipo");
+            if ($request->getParameter("inicio")) {
+                $bindValues["inicio"] = Utils::parseDate($request->getParameter("inicio"));
             }
 
-            if( $request->getParameter("vencimiento") ){
+            if ($request->getParameter("vencimiento")) {
                 $bindValues["vencimiento"] = Utils::parseDate($request->getParameter("vencimiento"));
             }
 
             $bindFiles["archivo"] = $_FILES["archivo"];
 
-			$this->form->bind( $bindValues, $bindFiles );
-            
-			if( $this->form->isValid() ){
-                
+            $this->form->bind($bindValues, $bindFiles);
 
-                if( !$documento ){
+            if ($this->form->isValid()) {
+
+
+                if (!$documento) {
                     $documento = new IdsDocumento();
-                    $documento->setCaId( $ids->getCaId() );
+                    $documento->setCaId($ids->getCaId());
                 }
 
-                $documento->setCaIdtipo( $request->getParameter("idtipo"));
+                $documento->setCaIdtipo($request->getParameter("idtipo"));
 
-                if( $request->getParameter("inicio") ){
-                    $documento->setCaFchinicio( Utils::parseDate($request->getParameter("inicio")));
+                if ($request->getParameter("inicio")) {
+                    $documento->setCaFchinicio(Utils::parseDate($request->getParameter("inicio")));
                 }
 
-                if( $request->getParameter("vencimiento")!==null ){
-                    if( $request->getParameter("vencimiento") ){
-                        $documento->setCaFchvencimiento( Utils::parseDate($request->getParameter("vencimiento")));
-                    }else{
-                         $documento->setCaFchvencimiento( null );
+                if ($request->getParameter("vencimiento") !== null) {
+                    if ($request->getParameter("vencimiento")) {
+                        $documento->setCaFchvencimiento(Utils::parseDate($request->getParameter("vencimiento")));
+                    } else {
+                        $documento->setCaFchvencimiento(null);
                     }
                 }
-                
+
                 $documento->save();
 
-                if( $bindFiles["archivo"] ){
+                if ($bindFiles["archivo"]) {
                     $directorio = $documento->getDirectorio();
-                    
-                    if( !is_dir($directorio) ){
+
+                    if (!is_dir($directorio)) {
                         mkdir($directorio, 0777, true);
                     }
-                    print_r( $bindFiles["archivo"] );
-                    move_uploaded_file( $bindFiles["archivo"]["tmp_name"], $directorio.DIRECTORY_SEPARATOR. $bindFiles["archivo"]["name"]);
-                    $documento->setCaUbicacion( $bindFiles["archivo"]["name"] );
-                    $documento->save();                   
-                }                
-                
+                    print_r($bindFiles["archivo"]);
+                    move_uploaded_file($bindFiles["archivo"]["tmp_name"], $directorio . DIRECTORY_SEPARATOR . $bindFiles["archivo"]["name"]);
+                    $documento->setCaUbicacion($bindFiles["archivo"]["name"]);
+                    $documento->save();
+                }
 
-                $this->redirect("ids/verIds?modo=".$this->modo."&id=".$ids->getCaId() );
-			}
-		}
+
+                $this->redirect("ids/verIds?modo=" . $this->modo . "&id=" . $ids->getCaId());
+            }
+        }
         $this->documento = $documento;
         $this->ids = $ids;
     }
 
     /*
-    * Visualiza documentos
-    *
-    * @param sfRequest $request A request object
-    */
-    public function executeVerDocumento(sfWebRequest $request){
-        $documento = Doctrine::getTable("IdsDocumento")->find( $request->getParameter("iddocumento") );
-		$this->forward404Unless( $documento);
+     * Visualiza documentos
+     *
+     * @param sfRequest $request A request object
+     */
+
+    public function executeVerDocumento(sfWebRequest $request) {
+        $documento = Doctrine::getTable("IdsDocumento")->find($request->getParameter("iddocumento"));
+        $this->forward404Unless($documento);
         $this->file = $documento->getArchivo();
     }
 
-
     /*
-    * Visualiza documentos
-    *
-    * @param sfRequest $request A request object
-    */
-    public function executeFormEvaluacion(sfWebRequest $request){
+     * Visualiza documentos
+     *
+     * @param sfRequest $request A request object
+     */
+
+    public function executeFormEvaluacion(sfWebRequest $request) {
         $this->nivel = $this->getNivel();
 
-        if( $request->getParameter("idevaluacion") ){
-            $evaluacion = Doctrine::getTable("IdsEvaluacion")->find( $request->getParameter("idevaluacion") );
+        if ($request->getParameter("idevaluacion")) {
+            $evaluacion = Doctrine::getTable("IdsEvaluacion")->find($request->getParameter("idevaluacion"));
             $this->ids = $evaluacion->getIds();
             $this->tipo = $evaluacion->getCaTipo();
             $this->proveedor = $evaluacion->getIds()->getIdsProveedor();
             //Solo permite editar evaluaciones con un privilegio alto
-            if( $this->nivel<6 ){
+            if ($this->nivel < 6) {
                 $this->forward404();
             }
-        }else{
-            $this->ids = Doctrine::getTable("Ids")->find( $request->getParameter("id") );
+        } else {
+            $this->ids = Doctrine::getTable("Ids")->find($request->getParameter("id"));
             $evaluacion = new IdsEvaluacion();
             $this->tipo = $request->getParameter("tipo");
-            $this->proveedor = Doctrine::getTable("IdsProveedor")->find( $request->getParameter("id") );
-
+            $this->proveedor = Doctrine::getTable("IdsProveedor")->find($request->getParameter("id"));
         }
 
-        if( $this->nivel<=3 &&  $this->tipo=="seleccion" ){
+        if ($this->nivel <= 3 && $this->tipo == "seleccion") {
             $this->forward404();
         }
-        
+
         $this->modo = $request->getParameter("modo");
-		$this->forward404Unless( $this->ids );
-        
+        $this->forward404Unless($this->ids);
+
         $q = Doctrine::getTable("IdsCriterio")->createQuery("c");
-        if( $request->getParameter("idevaluacion") ){
+        if ($request->getParameter("idevaluacion")) {
             $q->innerJoin("c.IdsEvaluacionxCriterio ec");
             $q->addWhere("ec.ca_idevaluacion = ?", $request->getParameter("idevaluacion"));
-        }else{            
-            switch( $this->tipo ){
+        } else {
+            switch ($this->tipo) {
                 case "reevaluacion":
                     $q->addWhere("c.ca_tipocriterio = ?", "desempeno");
                     break;
@@ -778,75 +761,74 @@ class idsActions extends sfActions
                 default:
                     $q->addWhere("c.ca_tipocriterio = ?", $this->tipo);
                     break;
-            }            
+            }
 
-            if( $this->modo=="prov" ){
+            if ($this->modo == "prov") {
                 $q->addWhere("c.ca_tipo = ? or c.ca_tipo IS NULL", $this->proveedor->getCaTipo());
-                if( $this->proveedor->getCaTipo() ){
+                if ($this->proveedor->getCaTipo()) {
 
                 }
-            }else{
-                if( $this->modo=="agentes" ){
-                    $q->addWhere("c.ca_tipo = ? or c.ca_tipo IS NULL", "AGE" );
+            } else {
+                if ($this->modo == "agentes") {
+                    $q->addWhere("c.ca_tipo = ? or c.ca_tipo IS NULL", "AGE");
                 }
             }
         }
-        $q->addWhere("c.ca_activo = ?", true );
+        $q->addWhere("c.ca_activo = ?", true);
         $this->criterios = $q->execute();
 
-        
+
         $this->form = new NuevaEvaluacionForm();
-        $this->form->setCriterios( $this->criterios );
+        $this->form->setCriterios($this->criterios);
         $this->form->configure();
-        
-        if ($request->isMethod('post')){
+
+        if ($request->isMethod('post')) {
 
             $bindValues = array();
-            
-			$bindValues["fchevaluacion"] = $request->getParameter("fchevaluacion");
-			$bindValues["concepto"] = $request->getParameter("concepto");
-			$bindValues["tipo"] = $request->getParameter("tipo");
-            $bindValues["ano"] = $request->getParameter("ano");
-            foreach( $this->criterios as $criterio ){
-                $bindValues["ponderacion_".$criterio->getCaIdcriterio() ] = $request->getParameter("ponderacion_".$criterio->getCaIdcriterio());
-                $bindValues["calificacion_".$criterio->getCaIdcriterio() ] = $request->getParameter("calificacion_".$criterio->getCaIdcriterio());
-                $bindValues["observaciones_".$criterio->getCaIdcriterio() ] = $request->getParameter("observaciones_".$criterio->getCaIdcriterio());
-            }
-            
-			$this->form->bind( $bindValues);
-			if( $this->form->isValid() ){              
-                
-                $evaluacion->setCaId( $this->ids->getCaId() );
-                $evaluacion->setCaFchevaluacion( Utils::parseDate( $request->getParameter('fchevaluacion' )) );
-                $evaluacion->setCaAno( $request->getParameter('ano') );
-                $evaluacion->setCaConcepto( $request->getParameter('concepto') );
 
-                $evaluacion->setCaTipo( $request->getParameter('tipo') );
+            $bindValues["fchevaluacion"] = $request->getParameter("fchevaluacion");
+            $bindValues["concepto"] = $request->getParameter("concepto");
+            $bindValues["tipo"] = $request->getParameter("tipo");
+            $bindValues["ano"] = $request->getParameter("ano");
+            foreach ($this->criterios as $criterio) {
+                $bindValues["ponderacion_" . $criterio->getCaIdcriterio()] = $request->getParameter("ponderacion_" . $criterio->getCaIdcriterio());
+                $bindValues["calificacion_" . $criterio->getCaIdcriterio()] = $request->getParameter("calificacion_" . $criterio->getCaIdcriterio());
+                $bindValues["observaciones_" . $criterio->getCaIdcriterio()] = $request->getParameter("observaciones_" . $criterio->getCaIdcriterio());
+            }
+
+            $this->form->bind($bindValues);
+            if ($this->form->isValid()) {
+
+                $evaluacion->setCaId($this->ids->getCaId());
+                $evaluacion->setCaFchevaluacion(Utils::parseDate($request->getParameter('fchevaluacion')));
+                $evaluacion->setCaAno($request->getParameter('ano'));
+                $evaluacion->setCaConcepto($request->getParameter('concepto'));
+
+                $evaluacion->setCaTipo($request->getParameter('tipo'));
                 $evaluacion->save();
 
                 $evaluacionxCriterios = $evaluacion->getIdsEvaluacionxCriterio();
-                foreach( $evaluacionxCriterios as $evaluacionxCriterio ){
+                foreach ($evaluacionxCriterios as $evaluacionxCriterio) {
                     $evaluacionxCriterio->delete();
                 }
 
                 $criterios = $request->getParameter("idcriterio");
 
-                foreach( $criterios as $idcriterio ){
+                foreach ($criterios as $idcriterio) {
                     $evaluacionxcriterio = new IdsEvaluacionxCriterio();
-                    $evaluacionxcriterio->setCaIdcriterio( $idcriterio );
-                    $evaluacionxcriterio->setCaPonderacion( trim($request->getParameter("ponderacion_".$idcriterio)) );                    
-                    $evaluacionxcriterio->setCaValor( trim($request->getParameter("calificacion_".$idcriterio)) );
-                    $evaluacionxcriterio->setCaIdevaluacion(  $evaluacion->getCaIdevaluacion() );
-                    if( $request->getParameter("observaciones_".$idcriterio) ){
-                        $evaluacionxcriterio->setCaObservaciones( $request->getParameter("observaciones_".$idcriterio) );
-                    }else{
-                        $evaluacionxcriterio->setCaObservaciones( null );
+                    $evaluacionxcriterio->setCaIdcriterio($idcriterio);
+                    $evaluacionxcriterio->setCaPonderacion(trim($request->getParameter("ponderacion_" . $idcriterio)));
+                    $evaluacionxcriterio->setCaValor(trim($request->getParameter("calificacion_" . $idcriterio)));
+                    $evaluacionxcriterio->setCaIdevaluacion($evaluacion->getCaIdevaluacion());
+                    if ($request->getParameter("observaciones_" . $idcriterio)) {
+                        $evaluacionxcriterio->setCaObservaciones($request->getParameter("observaciones_" . $idcriterio));
+                    } else {
+                        $evaluacionxcriterio->setCaObservaciones(null);
                     }
                     $evaluacionxcriterio->save();
                 }
 
-                $this->redirect("ids/verIds?modo=".$this->modo."&id=".$this->ids->getCaId() );
-                
+                $this->redirect("ids/verIds?modo=" . $this->modo . "&id=" . $this->ids->getCaId());
             }
         }
 
@@ -854,47 +836,44 @@ class idsActions extends sfActions
 
         $this->evaluacionxCriterios = array();
         $evaluacionxCriterios = $evaluacion->getIdsEvaluacionxCriterio();
-        foreach( $evaluacionxCriterios as $evaluacionxCriterio ){
-            $this->evaluacionxCriterios[$evaluacionxCriterio->getCaIdcriterio()]= $evaluacionxCriterio;
+        foreach ($evaluacionxCriterios as $evaluacionxCriterio) {
+            $this->evaluacionxCriterios[$evaluacionxCriterio->getCaIdcriterio()] = $evaluacionxCriterio;
         }
-
     }
 
-
     /*
-    * Muestra una evaluacion
-    *
-    * @param sfRequest $request A request object
-    */
-    public function executeVerEvaluacion(sfWebRequest $request){
+     * Muestra una evaluacion
+     *
+     * @param sfRequest $request A request object
+     */
+
+    public function executeVerEvaluacion(sfWebRequest $request) {
         $this->evaluacion = Doctrine::getTable("IdsEvaluacion")->find($request->getParameter("idevaluacion"));
 
-        $this->forward404Unless( $this->evaluacion );
+        $this->forward404Unless($this->evaluacion);
 
         $this->ids = $this->evaluacion->getIds();
-        $this->modo=$request->getParameter("modo");
-        
+        $this->modo = $request->getParameter("modo");
+
         $this->nivel = $this->getNivel();
         $this->user = $this->getUser();
-
-
-
     }
 
     /*
-    * Elimina una evaluacion
-    *
-    * @param sfRequest $request A request object
-    */
-    public function executeEliminarEvaluacion(sfWebRequest $request){
+     * Elimina una evaluacion
+     *
+     * @param sfRequest $request A request object
+     */
+
+    public function executeEliminarEvaluacion(sfWebRequest $request) {
 
 
 
-        $this->modo=$request->getParameter("modo");
+        $this->modo = $request->getParameter("modo");
         $this->nivel = $this->getNivel();
         $this->user = $this->getUser();
 
-        if( $this->nivel<6 ){
+        if ($this->nivel < 6) {
             $this->forward404();
         }
 
@@ -902,124 +881,113 @@ class idsActions extends sfActions
         $evaluacion = Doctrine::getTable("IdsEvaluacion")->find($request->getParameter("idevaluacion"));
 
         $ids = $evaluacion->getIds();
-        $this->forward404Unless( $evaluacion );
+        $this->forward404Unless($evaluacion);
 
 
         $evaluacionxCriterios = $evaluacion->getIdsEvaluacionxCriterio();
-        foreach( $evaluacionxCriterios as $evaluacionxCriterio ){
+        foreach ($evaluacionxCriterios as $evaluacionxCriterio) {
             $evaluacionxCriterio->delete();
         }
 
         $evaluacion->delete();
 
-        $this->redirect("ids/verIds?modo=".$this->modo."&id=".$ids->getCaId() );
-
-
-
-
-
-
-
+        $this->redirect("ids/verIds?modo=" . $this->modo . "&id=" . $ids->getCaId());
     }
-    
+
     /*
-    * Permite registrar eventos por referencia
-    *
-    * @param sfRequest $request A request object
-    */
-    public function executeFormEventos(sfWebRequest $request){
+     * Permite registrar eventos por referencia
+     *
+     * @param sfRequest $request A request object
+     */
+
+    public function executeFormEventos(sfWebRequest $request) {
         //Se debe verificar que la referencia exista y determinar el proveedor.
 
-        $this->modo=$request->getParameter("modo");
+        $this->modo = $request->getParameter("modo");
         $this->form = new NuevoEventoForm();
 
-        if( $request->getParameter("idevento") ){
-            $evento = Doctrine::getTable("IdsEvento")->find( $request->getParameter("idevento") );
+        if ($request->getParameter("idevento")) {
+            $evento = Doctrine::getTable("IdsEvento")->find($request->getParameter("idevento"));
             $this->forward404Unless($evento);
-            
-        }else{
+        } else {
             $evento = new IdsEvento();
         }
 
         $q = Doctrine::getTable("IdsCriterio")->createQuery("c")->select("c.*");
 
-        $this->idreporte=$request->getParameter("idreporte");
-        if( $this->modo ){ //Esta ingresando desde la maestra de proveedores o agentes
-
-           
-            if( $request->getParameter("idevento") ){
+        $this->idreporte = $request->getParameter("idreporte");
+        if ($this->modo) { //Esta ingresando desde la maestra de proveedores o agentes
+            if ($request->getParameter("idevento")) {
                 $this->ids = $evento->getIds();
-                if( $this->modo=="prov" ){
-                    
-                    if( $this->ids->getIdsProveedor()->getCaTipo()=="TRI" ){                        
+                if ($this->modo == "prov") {
+
+                    if ($this->ids->getIdsProveedor()->getCaTipo() == "TRI") {
                         $q->addWhere("c.ca_impoexpo = ?", $evento->getIdsCriterio()->getCaImpoexpo());
                     }
                 }
-            }else{
+            } else {
                 $this->ids = Doctrine::getTable("Ids")->find($request->getParameter("id"));
-                if( $this->modo=="prov" ){
-                    if( $this->ids->getIdsProveedor()->getCaTipo()=="TRI" ){
+                if ($this->modo == "prov") {
+                    if ($this->ids->getIdsProveedor()->getCaTipo() == "TRI") {
                         $q->addWhere("c.ca_impoexpo = ?", $request->getParameter("impoexpo"));
                     }
                 }
             }
-            if( $this->modo=="prov" ){
+            if ($this->modo == "prov") {
                 $this->form->setTipo($this->ids->getIdsProveedor()->getCaTipo());
-                if( $this->ids->getIdsProveedor()->getCaTipo()=="TRI" ){
+                if ($this->ids->getIdsProveedor()->getCaTipo() == "TRI") {
                     $q->addWhere("c.ca_transporte = ?", $this->ids->getIdsProveedor()->getCaTransporte());
                 }
-                $q->addWhere("c.ca_tipo = ?", $this->ids->getIdsProveedor()->getCaTipo() );
-            }else{
+                $q->addWhere("c.ca_tipo = ?", $this->ids->getIdsProveedor()->getCaTipo());
+            } else {
                 $this->form->setTipo("AGE");
-                $q->addWhere("c.ca_tipo = ?", "AGE" );
+                $q->addWhere("c.ca_tipo = ?", "AGE");
             }
 
-            
-            $this->url = "/ids/verIds?modo=".$this->modo."&id=".$this->ids->getCaId();
-            $numreferencia = "";            
-            
-            
-        }else{
-          
-            if( $this->idreporte ){ // Esta ingresando desde el reporte
-                $this->reporte = Doctrine::getTable("Reporte")->find( $this->idreporte );
-                $this->forward404Unless( $this->reporte );
+
+            $this->url = "/ids/verIds?modo=" . $this->modo . "&id=" . $this->ids->getCaId();
+            $numreferencia = "";
+        } else {
+
+            if ($this->idreporte) { // Esta ingresando desde el reporte
+                $this->reporte = Doctrine::getTable("Reporte")->find($this->idreporte);
+                $this->forward404Unless($this->reporte);
                 $this->agente = $this->reporte->getIdsAgente();
-                $this->url = "/colsys_php/reportenegocio.php?boton=Consultar&id=".$this->idreporte;
+                $this->url = "/colsys_php/reportenegocio.php?boton=Consultar&id=" . $this->idreporte;
 
                 $numreferencia = $this->reporte->getCaConsecutivo();
 
-                
-                $q->addWhere("c.ca_tipo = ?", "AGE" );
-            }else{// Esta ingresando desde la referencia
-                $numreferencia = str_replace("_",".",$request->getParameter("referencia"));
-                $this->forward404Unless(  $numreferencia );
-                
-               
 
-                if( substr($numreferencia,0,1)=="4" || substr($numreferencia,0,1)=="5" ){
+                $q->addWhere("c.ca_tipo = ?", "AGE");
+            } else {// Esta ingresando desde la referencia
+                $numreferencia = str_replace("_", ".", $request->getParameter("referencia"));
+                $this->forward404Unless($numreferencia);
+
+
+
+                if (substr($numreferencia, 0, 1) == "4" || substr($numreferencia, 0, 1) == "5") {
                     $referencia = Doctrine::getTable("InoMaestraSea")->find($numreferencia);
-                    $linea = $referencia->getCaIdlinea();              
+                    $linea = $referencia->getCaIdlinea();
 
-                    $this->url = "/colsys_php/inosea.php?boton=Consultar&id=".$numreferencia;
+                    $this->url = "/colsys_php/inosea.php?boton=Consultar&id=" . $numreferencia;
 
-                    
+
                     $q->addWhere("c.ca_impoexpo = ?", Constantes::IMPO);
                     $q->addWhere("c.ca_transporte = ?", Constantes::MARITIMO);
                 }
 
-                if( substr($numreferencia,0,1)=="1"  ){
+                if (substr($numreferencia, 0, 1) == "1") {
                     $referencia = Doctrine::getTable("InoMaestraAir")->find($numreferencia);
 
-                    $linea = $referencia->getCaIdlinea();                    
+                    $linea = $referencia->getCaIdlinea();
 
-                    $this->url = "/Coltrans/InoAir/ConsultaReferenciaAction.do?referencia=".$numreferencia;
+                    $this->url = "/Coltrans/InoAir/ConsultaReferenciaAction.do?referencia=" . $numreferencia;
 
-                   
+
                     $q->addWhere("c.ca_impoexpo = ?", Constantes::IMPO);
                     $q->addWhere("c.ca_transporte = ?", Constantes::AEREO);
                 }
-                
+
                 $q->addWhere("c.ca_tipo = ? or c.ca_tipo IS NULL", "TRI");
 
                 $this->form->setIdproveedor($linea);
@@ -1029,119 +997,110 @@ class idsActions extends sfActions
             }
 
             $this->eventos = Doctrine::getTable("IdsEvento")
-                              ->createQuery("e")
-                              ->select("e.*")
-                              ->where("e.ca_referencia=?",$numreferencia)
-                              ->addOrderBy("e.ca_fchcreado ASC")
-                              ->execute();
+                            ->createQuery("e")
+                            ->select("e.*")
+                            ->where("e.ca_referencia=?", $numreferencia)
+                            ->addOrderBy("e.ca_fchcreado ASC")
+                            ->execute();
         }
-        $q->addWhere("c.ca_activo = ?", true );
+        $q->addWhere("c.ca_activo = ?", true);
         $q->addWhere("c.ca_tipocriterio = ?", "desempeno");
         $criterios = $q->execute();
         $this->form->setCriterios($criterios);
         $this->form->configure();
-        
 
-        if ($request->isMethod('post')){
 
-			$bindValues = array();
+        if ($request->isMethod('post')) {
+
+            $bindValues = array();
             $bindValues["id"] = $request->getParameter("id");
             $bindValues["tipo_evento"] = $request->getParameter("tipo_evento");
-            $bindValues["evento"] = $request->getParameter("evento");           
-            
-            $this->form->bind( $bindValues );
-			if( $this->form->isValid() ){
-                
-                $evento->setCaId( $bindValues["id"] );
-                $evento->setCaEvento( $bindValues["evento"] );
-                if( $numreferencia ){
-                    $evento->setCaReferencia( $numreferencia );
+            $bindValues["evento"] = $request->getParameter("evento");
+
+            $this->form->bind($bindValues);
+            if ($this->form->isValid()) {
+
+                $evento->setCaId($bindValues["id"]);
+                $evento->setCaEvento($bindValues["evento"]);
+                if ($numreferencia) {
+                    $evento->setCaReferencia($numreferencia);
                 }
-                $evento->setCaIdcriterio( $bindValues["tipo_evento"] );
+                $evento->setCaIdcriterio($bindValues["tipo_evento"]);
                 $evento->save();
-                
+
                 $this->redirect($this->url);
-
-                
             }
-
         }
 
         $this->evento = $evento;
-
     }
 
-
-    public function executeFormEventosNew(sfWebRequest $request){
+    public function executeFormEventosNew(sfWebRequest $request) {
         //Se debe verificar que la referencia exista y determinar el proveedor.
 
-        $this->modo=$request->getParameter("modo");
+        $this->modo = $request->getParameter("modo");
         $this->form = new NuevoEventoForm();
 
-        if( $request->getParameter("idevento") ){
-            $evento = Doctrine::getTable("IdsEvento")->find( $request->getParameter("idevento") );
+        if ($request->getParameter("idevento")) {
+            $evento = Doctrine::getTable("IdsEvento")->find($request->getParameter("idevento"));
             $this->forward404Unless($evento);
-
-        }else{
+        } else {
             $evento = new IdsEvento();
         }
 
         $q = Doctrine::getTable("IdsCriterio")->createQuery("c")->select("c.*");
 
-        $this->idreporte=$request->getParameter("idreporte");
-        if( $this->modo ){ //Esta ingresando desde la maestra de proveedores
-
-            if( $request->getParameter("idevento") ){
+        $this->idreporte = $request->getParameter("idreporte");
+        if ($this->modo) { //Esta ingresando desde la maestra de proveedores
+            if ($request->getParameter("idevento")) {
                 $this->ids = $evento->getIds();
                 $q->addWhere("c.ca_impoexpo = ?", $evento->getIdsCriterio()->getCaImpoexpo());
-            }else{
+            } else {
                 $this->ids = Doctrine::getTable("Ids")->find($request->getParameter("id"));
                 $q->addWhere("c.ca_impoexpo = ?", $request->getParameter("impoexpo"));
             }
 
             $this->form->setTipo($this->ids->getIdsProveedor()->getCaTipo());
-            $this->url = "/ids/verIds?modo=".$this->modo."&id=".$this->ids->getCaId();
+            $this->url = "/ids/verIds?modo=" . $this->modo . "&id=" . $this->ids->getCaId();
             $numreferencia = "";
             $q->addWhere("c.ca_tipocriterio = ?", "desempeno");
 
             $q->addWhere("c.ca_transporte = ?", $this->ids->getIdsProveedor()->getCaTransporte());
+        } else {
 
-
-        }else{
-
-            if( $this->idreporte ){ // Esta ingresando desde el reporte
-                $this->reporte = Doctrine::getTable("Reporte")->find( $this->idreporte );
-                $this->forward404Unless( $this->reporte );
+            if ($this->idreporte) { // Esta ingresando desde el reporte
+                $this->reporte = Doctrine::getTable("Reporte")->find($this->idreporte);
+                $this->forward404Unless($this->reporte);
                 $this->agente = $this->reporte->getIdsAgente();
-                $this->url = "/reportesNeg/consultaReporte/id/".$this->idreporte."/mpoexpo/".$this->reporte->getCaImpoexpo()."/modo/".$this->reporte->getCaTransporte();
+                $this->url = "/reportesNeg/consultaReporte/id/" . $this->idreporte . "/mpoexpo/" . $this->reporte->getCaImpoexpo() . "/modo/" . $this->reporte->getCaTransporte();
 
                 $numreferencia = $this->reporte->getCaConsecutivo();
 
                 $q->addWhere("c.ca_tipocriterio = ?", "desempeno");
-                $q->addWhere("c.ca_tipo = ?", "AGE" );
-            }else{// Esta ingresando desde la referencia
-                $numreferencia = str_replace("_",".",$request->getParameter("referencia"));
-                $this->forward404Unless(  $numreferencia );
+                $q->addWhere("c.ca_tipo = ?", "AGE");
+            } else {// Esta ingresando desde la referencia
+                $numreferencia = str_replace("_", ".", $request->getParameter("referencia"));
+                $this->forward404Unless($numreferencia);
 
 
 
-                if( substr($numreferencia,0,1)=="4" || substr($numreferencia,0,1)=="5" ){
+                if (substr($numreferencia, 0, 1) == "4" || substr($numreferencia, 0, 1) == "5") {
                     $referencia = Doctrine::getTable("InoMaestraSea")->find($numreferencia);
                     $linea = $referencia->getCaIdlinea();
 
-                    $this->url = "/colsys_php/inosea.php?boton=Consultar&id=".$numreferencia;
+                    $this->url = "/colsys_php/inosea.php?boton=Consultar&id=" . $numreferencia;
 
                     $q->addWhere("c.ca_tipocriterio = ?", "desempeno");
                     $q->addWhere("c.ca_impoexpo = ?", Constantes::IMPO);
                     $q->addWhere("c.ca_transporte = ?", Constantes::MARITIMO);
                 }
 
-                if( substr($numreferencia,0,1)=="1"  ){
+                if (substr($numreferencia, 0, 1) == "1") {
                     $referencia = Doctrine::getTable("InoMaestraAir")->find($numreferencia);
 
                     $linea = $referencia->getCaIdlinea();
 
-                    $this->url = "/Coltrans/InoAir/ConsultaReferenciaAction.do?referencia=".$numreferencia;
+                    $this->url = "/Coltrans/InoAir/ConsultaReferenciaAction.do?referencia=" . $numreferencia;
 
                     $q->addWhere("c.ca_tipocriterio = ?", "desempeno");
                     $q->addWhere("c.ca_impoexpo = ?", Constantes::IMPO);
@@ -1157,225 +1116,227 @@ class idsActions extends sfActions
             }
 
             $this->eventos = Doctrine::getTable("IdsEvento")
-                              ->createQuery("e")
-                              ->select("e.*")
-                              ->where("e.ca_referencia=?",$numreferencia)
-                              ->addOrderBy("e.ca_fchcreado ASC")
-                              ->execute();
+                            ->createQuery("e")
+                            ->select("e.*")
+                            ->where("e.ca_referencia=?", $numreferencia)
+                            ->addOrderBy("e.ca_fchcreado ASC")
+                            ->execute();
         }
-        $q->addWhere("c.ca_activo = ?", true );
+        $q->addWhere("c.ca_activo = ?", true);
         $criterios = $q->execute();
         $this->form->setCriterios($criterios);
         $this->form->configure();
 
 
-        if ($request->isMethod('post')){
+        if ($request->isMethod('post')) {
 
-			$bindValues = array();
+            $bindValues = array();
             $bindValues["id"] = $request->getParameter("id");
             $bindValues["tipo_evento"] = $request->getParameter("tipo_evento");
             $bindValues["evento"] = $request->getParameter("evento");
 
-            $this->form->bind( $bindValues );
-			if( $this->form->isValid() ){
+            $this->form->bind($bindValues);
+            if ($this->form->isValid()) {
 
-                $evento->setCaId( $bindValues["id"] );
-                $evento->setCaEvento( $bindValues["evento"] );
-                if( $numreferencia ){
-                    $evento->setCaReferencia( $numreferencia );
+                $evento->setCaId($bindValues["id"]);
+                $evento->setCaEvento($bindValues["evento"]);
+                if ($numreferencia) {
+                    $evento->setCaReferencia($numreferencia);
                 }
-                $evento->setCaIdcriterio( $bindValues["tipo_evento"] );
+                $evento->setCaIdcriterio($bindValues["tipo_evento"]);
                 $evento->save();
 
                 $this->redirect($this->url);
-
-
             }
-
         }
 
         $this->evento = $evento;
-
     }
-
-
-
-     /*
-    * Permite agregar lineas de transporte
-    *
-    * @param sfRequest $request A request object
-    */
-   
 
     /*
-    * Permite agregar lineas de transporte
-    *
-    * @param sfRequest $request A request object
-    */
-    public function executeListadoProveedoresAprobados(sfWebRequest $request){
-       $this->proveedores = Doctrine::getTable("IdsProveedor")
-                             ->createQuery("p")
-                             ->innerJoin("p.Ids i")
-                             ->innerJoin("i.IdsSucursal s")
-                             ->innerJoin("s.Ciudad c")
-                             ->innerJoin("p.IdsTipo t")
-                             ->where("p.ca_fchaprobado IS NOT NULL")
-                             ->addWhere("p.ca_controladoporsig = true")
-                             ->addOrderBy("t.ca_nombre ASC")
-                             ->addOrderBy("p.ca_transporte ASC")
-                             ->addOrderBy("i.ca_nombre ASC")                             
-                             ->execute();      
-    }
-	
-    public function executeListadoProveedoresInactivos(sfWebRequest $request){
-		$this->proveedores = Doctrine::getTable("IdsProveedor")
-                             ->createQuery("p")
-							 ->innerJoin("p.Ids i")
-                             ->innerJoin("i.IdsSucursal s")
-                             ->innerJoin("s.Ciudad c")
-                             ->innerJoin("p.IdsTipo t")
-                             ->where("p.ca_fchaprobado IS NOT NULL")
-                             ->addWhere("p.ca_activo_impo = false OR p.ca_activo_expo=false")
-							 ->addOrderBy("i.ca_nombre ASC")
-                             ->execute();
-    }
-    
+     * Permite agregar lineas de transporte
+     *
+     * @param sfRequest $request A request object
+     */
+
+
     /*
-    * Permite agregar grupos a una cabeza de grupo
-    *
-    * @param sfRequest $request A request object
-    */
-    public function executeFormGrupos(sfWebRequest $request){
-        $this->modo=$request->getParameter("modo");
+     * Permite agregar lineas de transporte
+     *
+     * @param sfRequest $request A request object
+     */
+
+    public function executeListadoProveedoresAprobados(sfWebRequest $request) {
+        $this->proveedores = Doctrine::getTable("IdsProveedor")
+                        ->createQuery("p")
+                        ->innerJoin("p.Ids i")
+                        ->innerJoin("i.IdsSucursal s")
+                        ->innerJoin("s.Ciudad c")
+                        ->innerJoin("p.IdsTipo t")
+                        ->where("p.ca_fchaprobado IS NOT NULL")
+                        ->addWhere("p.ca_controladoporsig = true")
+                        ->addOrderBy("t.ca_nombre ASC")
+                        ->addOrderBy("p.ca_transporte ASC")
+                        ->addOrderBy("i.ca_nombre ASC")
+                        ->execute();
+    }
+
+    public function executeListadoProveedoresInactivos(sfWebRequest $request) {
+        $this->proveedores = Doctrine::getTable("IdsProveedor")
+                        ->createQuery("p")
+                        ->innerJoin("p.Ids i")
+                        ->innerJoin("i.IdsSucursal s")
+                        ->innerJoin("s.Ciudad c")
+                        ->innerJoin("p.IdsTipo t")
+                        ->where("p.ca_fchaprobado IS NOT NULL")
+                        ->addWhere("p.ca_activo_impo = false OR p.ca_activo_expo=false")
+                        ->addOrderBy("i.ca_nombre ASC")
+                        ->execute();
+    }
+
+    /*
+     * Permite agregar grupos a una cabeza de grupo
+     *
+     * @param sfRequest $request A request object
+     */
+
+    public function executeFormGrupos(sfWebRequest $request) {
+        $this->modo = $request->getParameter("modo");
         $this->form = new NuevoGrupoForm();
-        $this->form->setModo( $this->modo );
+        $this->form->setModo($this->modo);
         $this->form->configure();
         $this->ids = Doctrine::getTable("Ids")->find($request->getParameter("id"));
 
-       if ($request->isMethod('post')){
-			$bindValues = array();
+        if ($request->isMethod('post')) {
+            $bindValues = array();
             $bindValues["idgrupo"] = $request->getParameter("idgrupo");
-            $this->form->bind( $bindValues );
-			if( $this->form->isValid() ){
+            $this->form->bind($bindValues);
+            if ($this->form->isValid()) {
                 $idsGrupo = Doctrine::getTable("Ids")->find($request->getParameter("idgrupo"));
                 $idsGrupo->setCaIdgrupo($this->ids->getCaId());
                 $idsGrupo->save();
-                $this->redirect("ids/verIds?modo=".$this->modo."&id=".$this->ids->getCaId() );
+                $this->redirect("ids/verIds?modo=" . $this->modo . "&id=" . $this->ids->getCaId());
             }
         }
     }
 
-
     /*
-    * Permite eliminar la pertenecia a un grupo
-    *
-    * @param sfRequest $request A request object
-    */
-    public function executeEliminarGrupo(sfWebRequest $request){
-        $this->modo=$request->getParameter("modo");       
+     * Permite eliminar la pertenecia a un grupo
+     *
+     * @param sfRequest $request A request object
+     */
+
+    public function executeEliminarGrupo(sfWebRequest $request) {
+        $this->modo = $request->getParameter("modo");
         $this->ids = Doctrine::getTable("Ids")->find($request->getParameter("id"));
 
         $idsGrupo = Doctrine::getTable("Ids")->find($request->getParameter("idgrupo"));
         $idsGrupo->setCaIdgrupo($idsGrupo->getCaId());
         $idsGrupo->save();
-        $this->redirect("ids/verIds?modo=".$this->modo."&id=".$this->ids->getCaId() );
+        $this->redirect("ids/verIds?modo=" . $this->modo . "&id=" . $this->ids->getCaId());
     }
 
     /*
-    * Envia alertas sobre los vencimientos de los documentos 
-    *
-    * @param sfRequest $request A request object
-    */
+     * Envia alertas sobre los vencimientos de los documentos
+     *
+     * @param sfRequest $request A request object
+     */
 
-    public function executeAlertasDocumentos(sfWebRequest $request){
-       $this->modo=$request->getParameter("modo");  
-       $this->fecha = date("Y-m-d", time()+86400*16);
-       //echo$this->fecha ;
-       $q = Doctrine::getTable("IdsDocumento")
-                               ->createQuery("d")
-                               ->select("i.ca_id, d.ca_iddocumento, d.ca_fchvencimiento, t.ca_tipo, i.ca_nombre")
-                               ->innerJoin("d.Ids i")
-                               ->innerJoin("d.IdsTipoDocumento t")
-                               ->where("d.ca_fchvencimiento<=?", $this->fecha )
-                               ->addWhere("d.ca_iddocumento IN (SELECT dd.ca_iddocumento FROM IdsDocumento dd WHERE dd.ca_idtipo=d.ca_idtipo AND dd.ca_id=d.ca_id ORDER BY dd.ca_fchvencimiento DESC LIMIT 1)")
-
-                               ->addOrderBy("d.ca_fchvencimiento ASC")
-                               ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
-       if( $this->modo=="prov" ){
+    public function executeAlertasDocumentos(sfWebRequest $request) {
+        $this->modo = $request->getParameter("modo");
+        $this->fecha = date("Y-m-d", time() + 86400 * 16);
+        //echo$this->fecha ;
+        $q = Doctrine::getTable("IdsDocumento")
+                        ->createQuery("d")
+                        ->select("i.ca_id, d.ca_iddocumento, d.ca_fchvencimiento, t.ca_tipo, i.ca_nombre")
+                        ->innerJoin("d.Ids i")
+                        ->innerJoin("d.IdsTipoDocumento t")
+                        ->where("d.ca_fchvencimiento<=?", $this->fecha)
+                        ->addWhere("d.ca_iddocumento IN (SELECT dd.ca_iddocumento FROM IdsDocumento dd WHERE dd.ca_idtipo=d.ca_idtipo AND dd.ca_id=d.ca_id ORDER BY dd.ca_fchvencimiento DESC LIMIT 1)")
+                        ->addOrderBy("d.ca_fchvencimiento ASC")
+                        ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
+        if ($this->modo == "prov") {
             $q->innerJoin("i.IdsProveedor p");
             $q->addWhere("p.ca_controladoporsig = ?", true);
             $this->titulo = "Documentos de proveedores controlados por SIG";
-       }
+        }
 
-       if( $request->getParameter("layout") ){
+        if ($request->getParameter("layout")) {
             $this->setLayout($request->getParameter("layout"));
-       }
-       /* echo $q->getSqlQuery();
-        exit();*/
+        }
+        /* echo $q->getSqlQuery();
+          exit(); */
 
-       $this->documentos = $q->execute();
+        $this->documentos = $q->execute();
     }
 
-    public function executeAlertasDocumentosEmail(sfWebRequest $request){
+    public function executeAlertasDocumentosEmail(sfWebRequest $request) {
 
-        
-        $this->modo=$request->getParameter("modo");
+
+        $this->modo = $request->getParameter("modo");
 
         $usuarios = Doctrine::getTable("Usuario")
-                          ->createQuery("u")
-                          ->innerJoin("u.UsuarioPerfil p")
-                          ->where("p.ca_perfil = ? ", "asistente-de-pricing")
-                          ->addWhere("u.ca_activo = ?", true)
-                          ->execute();
+                        ->createQuery("u")
+                        ->innerJoin("u.UsuarioPerfil p")
+                        ->where("p.ca_perfil = ? ", "asistente-de-pricing")
+                        ->addWhere("u.ca_activo = ?", true)
+                        ->execute();
 
-        $contentHTML = sfContext::getInstance()->getController()->getPresentationFor( 'ids', 'alertasDocumentos');
-        
+        $contentHTML = sfContext::getInstance()->getController()->getPresentationFor('ids', 'alertasDocumentos');
+
         $email = new Email();
-        $email->setCaUsuenvio( "Administrador" );
-        $email->setCaTipo( "Not. Vencimiento" );
-        $email->setCaFrom( "no-reply@coltrans.com.co" );
-        $email->setCaReplyto( "no-reply@coltrans.com.co" );
-        $email->setCaFromname( "Colsys" );
-        foreach( $usuarios as $usuario ){
-            $email->addTo( $usuario->getCaEmail() );
+        $email->setCaUsuenvio("Administrador");
+        $email->setCaTipo("Not. Vencimiento");
+        $email->setCaFrom("no-reply@coltrans.com.co");
+        $email->setCaReplyto("no-reply@coltrans.com.co");
+        $email->setCaFromname("Colsys");
+        foreach ($usuarios as $usuario) {
+            $email->addTo($usuario->getCaEmail());
         }
-        $email->setCaSubject( "Vencimiento de documentos" );
-        $email->setCaBodyhtml( $contentHTML );
+        $email->setCaSubject("Vencimiento de documentos");
+        $email->setCaBodyhtml($contentHTML);
 
-        $email->save();        
-        $email->send();       
+        $email->save();
+        $email->send();
 
         return sfView::NONE;
     }
 
-
-
-    public function executeVerificarListaClinton(sfWebRequest $request){
+    public function executeVerificarListaClinton(sfWebRequest $request) {
         $id = $request->getParameter("id");
 
-        $this->ids = Doctrine::getTable("Ids")->find($request->getParameter("id"));
-        $this->forward404Unless( $this->ids );
+        if( $id ){
+            $this->ids = Doctrine::getTable("Ids")->find($request->getParameter("id"));
+            $this->forward404Unless($this->ids);
+        }
         $this->modo = $request->getParameter("modo");
 
         $q = Doctrine_Manager::getInstance()->connection();
 
-        
+
+        if( $request->getParameter("layout") ){
+            $this->setLayout( $request->getParameter("layout"));
+        }
+
         $query = "select * from tb_parametros where ca_casouso = 'CU065' and ca_identificacion = 1";
         $stmt = $q->execute($query);
-        $row =  $stmt->fetch();
+        $row = $stmt->fetch();
         $this->fechaActualizacion = $row["ca_valor2"];
-        
-
-
+        $cond = "";
+        if( $id ){
+            $from = "select * from ids.tb_ids where ca_id = $id";
+        }else{
+            $from = "select * from ids.tb_ids ids inner join ids.tb_proveedores p on p.ca_idproveedor = ids.ca_id  where ca_controladoporsig= true";
+        }
 
         $query = "select 	cl.ca_idalterno, cl.ca_nombre, sdnm.*, sdid.*, sdal.* "; //, sdak.*
-        $query.= "		from (select * from ids.tb_ids where ca_id = $id) cl ";
+        $query.= "		from ( $from ) cl ";
         $query.= "		LEFT OUTER JOIN tb_sdn sdnm ";
-        $query.= "		ON ( fun_similarpercent(cl.ca_nombre, textcat(case when nullvalue(sdnm.ca_firstname) then '' else sdnm.ca_firstname end, case when nullvalue(sdnm.ca_lastname) then '' else sdnm.ca_lastname end)) >90 ) ";
+        $query.= "		ON ( fun_similarpercent(cl.ca_nombre, textcat(case when sdnm.ca_firstname IS NULL then '' else sdnm.ca_firstname end, case when sdnm.ca_lastname IS NULL then '' else sdnm.ca_lastname end)) >90 ) ";
         $query.= "		LEFT OUTER JOIN tb_sdnid sdid ";
         $query.= "		ON ( fun_similarpercent(cl.ca_idalterno::text, sdid.ca_idnumber) >90 ) ";
         $query.= "		LEFT OUTER JOIN tb_sdnaka sdal ";
-        $query.= "		ON ( fun_similarpercent(cl.ca_nombre, textcat(case when nullvalue(sdal.ca_firstname) then '' else sdal.ca_firstname end, case when nullvalue(sdal.ca_lastname) then '' else sdal.ca_lastname end)) >90 ) ";
+        $query.= "		ON ( fun_similarpercent(cl.ca_nombre, textcat(case when sdal.ca_firstname  IS NULL then '' else sdal.ca_firstname end, case when sdal.ca_lastname  IS NULL then '' else sdal.ca_lastname end)) >90 ) ";
         //$query.= "		LEFT OUTER JOIN tb_sdnaka sdak ";
         //$query.= "		ON ( fun_similarpercent(cl.ca_nombres||' '||cl.ca_papellido||' '||cl.ca_sapellido, textcat(case when nullvalue(sdak.ca_firstname) then '' else sdak.ca_firstname end, case when nullvalue(sdak.ca_lastname) then '' else sdak.ca_lastname end)) >90 ) ";
         //$query.= "		LEFT OUTER JOIN tb_ciudades ciu ";
@@ -1385,160 +1346,342 @@ class idsActions extends sfActions
 
         $stmt = $q->prepare($query, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
         @$stmt->execute();
-        $this->stmt = $stmt;        
+        $this->stmt = $stmt;
+
+        $this->id  = $id;
+    }
+
+    /**
+     * Envia un email a las personas de pricing con las coincidencia de la lista clinton
+     *
+     * @param sfRequest $request A request object
+     */
+    public function executeEmailListaClintonProveedores(sfWebRequest $request) {
+        
+        $email = new Email();
+        $email->setCaUsuenvio("Administrador");
+        $email->setCaTipo("Not. Lista Clinton");
+        $email->setCaFrom("no-reply@coltrans.com.co");
+        $email->setCaReplyto("no-reply@coltrans.com.co");
+        $email->setCaFromname("Colsys");
+        //$email->addTo("abotero@coltrans.com.co");
+        
+        
+        $usuarios = Doctrine::getTable("Usuario")
+                        ->createQuery("u")
+                        ->innerJoin("u.UsuarioPerfil p")
+                        ->where("p.ca_perfil = ? ", "asistente-de-pricing")
+                        ->addWhere("u.ca_activo = ?", true)
+                        ->execute();
+        foreach ($usuarios as $usuario) {
+            $email->addTo($usuario->getCaEmail());
+        }
+
+        $email->setCaSubject("Verificación Lista Clinton");
+        $request->setParameter("modo", "prov");
+        $request->setParameter("layout", "email");
+        $contentHTML = sfContext::getInstance()->getController()->getPresentationFor('ids', 'verificarListaClinton');
+        $email->setCaBodyhtml($contentHTML);
+
+        $email->save();
+        //$email->send();
+
+
+        return sfView::NONE;
+
 
     }
 
 
     /**
-	* Muestra el formulario de creación y edicion de proveedores
-	*
-	* @param sfRequest $request A request object
-	*/
-	public function executeEliminarAgente(sfWebRequest $request){
-        
+     * Muestra el formulario de creación y edicion de proveedores
+     *
+     * @param sfRequest $request A request object
+     */
+    public function executeEliminarAgente(sfWebRequest $request) {
+
         $conn = Doctrine::getTable("IdsAgente")->getConnection();
         $conn->beginTransaction();
-        try{
+        try {
             $nivel = $this->getNivel();
             $modo = $request->getParameter("modo");
-            if( $nivel>=3 ){
-                if( $modo=="agentes" ){
+            if ($nivel >= 3) {
+                if ($modo == "agentes") {
                     $id = $request->getParameter("id");
-                    $this->forward404Unless( $id );
+                    $this->forward404Unless($id);
                     $agente = Doctrine::getTable("IdsAgente")->find($id);
-                    $this->forward404Unless( $agente );
+                    $this->forward404Unless($agente);
                     $ids = $agente->getIds();
-                    $agente->delete( $conn );
-                    $ids->delete( $conn );
+                    $agente->delete($conn);
+                    $ids->delete($conn);
                     $conn->commit();
 
-                    $this->getUser()->log("Elimina agente: ".$ids->getCaId()." ".$ids->getCaNombre());
+                    $this->getUser()->log("Elimina agente: " . $ids->getCaId() . " " . $ids->getCaNombre());
                     $this->responseArray = array("success" => true);
-                }else{
+                } else {
                     throw new Exception("No implementado");
                 }
-            }else{
+            } else {
                 throw new Exception("Nivel de privilegios no adecuado");
             }
         } catch (Exception $e) {
             $conn->rollBack();
             $this->responseArray = array("success" => false, "errorInfo" => utf8_encode($e->getMessage()));
         }
-        
+
         $this->setTemplate("responseTemplate");
     }
 
     /**
-	* Muestra los documentos que le corresponden a cada proveedor.
-	*
-	* @param sfRequest $request A request object
-	*/
-	public function executeDocumentosPorTipo(sfWebRequest $request){
+     * Muestra los documentos que le corresponden a cada proveedor.
+     *
+     * @param sfRequest $request A request object
+     */
+    public function executeDocumentosPorTipo(sfWebRequest $request) {
+        $this->nivel = $this->getNivel();
 
+        if ($this->nivel <= 0) {
+            $this->forward404();
+        }
 
         $this->modo = $request->getParameter("modo");
 
-        $this->forward404Unless( $this->modo );
+        $this->forward404Unless($this->modo);
 
         $q = Doctrine::getTable("IdsTipo")
-                                ->createQuery("t")                                
-                                ->addOrderBy("t.ca_nombre");
-        
-        if( $this->modo=="prov" ){
+                        ->createQuery("t")
+                        ->addOrderBy("t.ca_nombre");
+
+        if ($this->modo == "prov") {
             $q->addWhere("t.ca_aplicacion = ? ", "Proveedores");
         }
 
 
         $this->tipos = $q->execute();
-
-        
     }
 
     /**
-	* Formulario qeu agrega los documentos que le corresponden a cada proveedor.
-	*
-	* @param sfRequest $request A request object
-	*/
-	public function executeFormDocumentosPorTipo(sfWebRequest $request){
+     * Formulario qeu agrega los documentos que le corresponden a cada proveedor.
+     *
+     * @param sfRequest $request A request object
+     */
+    public function executeFormDocumentosPorTipo(sfWebRequest $request) {
+
+        $this->nivel = $this->getNivel();
+
+        if ($this->nivel <= 0) {
+            $this->forward404();
+        }
+
         $this->form = new NuevoDocumentoPorTipoForm();
         $this->form->configure();
-        if( $request->getParameter("iddocumentosxtipo") ){
-            $docPorTipo = Doctrine::getTable("IdsDocumentoPorTipo")->find( $request->getParameter("iddocumentosxtipo") );
-            $this->forward404Unless( $docPorTipo );
-        }else{
+        if ($request->getParameter("iddocumentosxtipo")) {
+            $docPorTipo = Doctrine::getTable("IdsDocumentoPorTipo")->find($request->getParameter("iddocumentosxtipo"));
+            $this->forward404Unless($docPorTipo);
+        } else {
             $docPorTipo = new IdsDocumentoPorTipo();
         }
-        
-        $this->modo = $request->getParameter("modo");
-        $this->forward404Unless( $this->modo );
 
-        if ($request->isMethod('post')){
-			$bindValues = array();
+        $this->modo = $request->getParameter("modo");
+        $this->forward404Unless($this->modo);
+
+        if ($request->isMethod('post')) {
+            $bindValues = array();
             $bindValues["tipo"] = $request->getParameter("tipo");
             $bindValues["idtipo"] = $request->getParameter("idtipo");
             $bindValues["controladoporsig"] = $request->getParameter("controladoporsig");
-            if( $bindValues["tipo"]=="TRI" || $bindValues["tipo"]=="TRN" ){
+            if ($bindValues["tipo"] == "TRI" || $bindValues["tipo"] == "TRN") {
                 $bindValues["transporte"] = $request->getParameter("transporte");
                 $bindValues["impoexpo"] = $request->getParameter("impoexpo");
-            }else{
+            } else {
                 $bindValues["transporte"] = null;
                 $bindValues["impoexpo"] = null;
             }
 
-            if( !$bindValues["transporte"]){
+            if (!$bindValues["transporte"]) {
                 $bindValues["transporte"] = "N/A";
             }
 
-            if( !$bindValues["impoexpo"]){
+            if (!$bindValues["impoexpo"]) {
                 $bindValues["impoexpo"] = "N/A";
             }
 
 
-            $this->form->bind( $bindValues );
-			if( $this->form->isValid() ){
-                
+            $this->form->bind($bindValues);
+            if ($this->form->isValid()) {
+
                 $docPorTipo->setCaIdtipo($bindValues["idtipo"]);
                 $docPorTipo->setCaTipo($bindValues["tipo"]);
                 $docPorTipo->setCaTransporte($bindValues["transporte"]);
                 $docPorTipo->setCaControladoxsig($bindValues["controladoporsig"]);
                 $docPorTipo->setCaImpoexpo($bindValues["impoexpo"]);
                 $docPorTipo->save();
-                $this->redirect("ids/documentosPorTipo?modo=".$this->modo );
+                $this->redirect("ids/documentosPorTipo?modo=" . $this->modo);
             }
         }
 
 
-        
+
         $this->docPortipo = $docPorTipo;
 
         $this->tipo = $request->getParameter("tipo");
-        $this->forward404Unless( $this->tipo );
+        $this->forward404Unless($this->tipo);
     }
-    
+
     /**
-	* Elimina los documentos que le corresponden a cada proveedor.
-	*
-	* @param sfRequest $request A request object
-	*/
-	public function executeEliminarDocumentosPorTipo(sfWebRequest $request){
-        
+     * Elimina los documentos que le corresponden a cada proveedor.
+     *
+     * @param sfRequest $request A request object
+     */
+    public function executeEliminarDocumentosPorTipo(sfWebRequest $request) {
+        $this->nivel = $this->getNivel();
+
+        if ($this->nivel <= 0) {
+            $this->forward404();
+        }
+
+
         $this->modo = $request->getParameter("modo");
-        $this->forward404Unless( $this->modo );
+        $this->forward404Unless($this->modo);
 
         $this->forward404Unless($request->getParameter("iddocumentosxtipo"));
-        $docPorTipo = Doctrine::getTable("IdsDocumentoPorTipo")->find( $request->getParameter("iddocumentosxtipo") );
-        $this->forward404Unless( $docPorTipo );
+        $docPorTipo = Doctrine::getTable("IdsDocumentoPorTipo")->find($request->getParameter("iddocumentosxtipo"));
+        $this->forward404Unless($docPorTipo);
         $docPorTipo->delete();
 
-        
-        $this->redirect("ids/documentosPorTipo?modo=".$this->modo);
 
-
-        
-
+        $this->redirect("ids/documentosPorTipo?modo=" . $this->modo);
     }
 
+    /*
+     * Envia alertas sobre los vencimientos de los documentos
+     *
+     * @param sfRequest $request A request object
+     */
+
+    public function executeNotificacionDocumentosVencidos(sfWebRequest $request) {
+        $this->modo = $request->getParameter("modo");
+        $this->fecha = date("Y-m-d", time() + 86400 * 16);
+        //echo$this->fecha ;
+        $q = Doctrine::getTable("IdsDocumento")
+                        ->createQuery("d")
+                        ->select("d.*, i.*, t.*")
+                        ->innerJoin("d.Ids i")
+                        ->innerJoin("d.IdsTipoDocumento t")
+                        ->innerJoin("t.IdsDocumentoPorTipo dxt")
+                        ->addWhere("d.ca_fchvencimiento<=?", $this->fecha)
+                        ->addWhere("dxt.ca_controladoxsig=?", true)
+                        ->addWhere("d.ca_iddocumento IN (SELECT dd.ca_iddocumento FROM IdsDocumento dd WHERE dd.ca_idtipo=d.ca_idtipo AND dd.ca_id=d.ca_id ORDER BY dd.ca_fchvencimiento DESC LIMIT 1)")
+                        ->addOrderBy("i.ca_nombre ASC")
+                        ->addOrderBy("d.ca_fchvencimiento ASC");
+                        
+        if ($this->modo == "prov") {
+            $q->innerJoin("i.IdsProveedor p");
+            $q->select("d.*, i.*, p.*");
+            $q->addWhere("p.ca_controladoporsig = ?", true);
+            $this->titulo = "Documentos de proveedores controlados por SIG";
+        }
+
+        if ($request->getParameter("layout")) {
+            $this->setLayout($request->getParameter("layout"));
+        }
+
+
+        $documentos = $q->execute();
+
+        $resultados = array();
+
+
+        //Se agrupan los documentos por ID
+        foreach ($documentos as $documento) {
+            
+            
+            if (!isset($resultados[$documento->getCaId()])) {
+                $resultados[$documento->getCaId()] = array();
+                $resultados[$documento->getCaId()]["ids"] = $documento->getIds();
+                $resultados[$documento->getCaId()]["docs"] = array();
+            }
+
+            $resultados[$documento->getCaId()]["docs"][] = $documento;
+        }
+
+        //Se genera el correo y luego se despacha a cada contacto.
+        foreach( $resultados as $resultado ){
+            
+            $email = new Email();
+
+            $ids = $resultado["ids"];
+            $contactos = Doctrine::getTable("IdsContacto")
+                          ->createQuery("c")
+                          ->innerJoin("c.IdsSucursal s")
+                          ->addWhere("s.ca_id = ?", $ids->getCaId() )
+                          ->addWhere("c.ca_notificar_vencimientos = ?", true)
+                          ->addWhere("c.ca_email IS NOT NULL")
+                          ->execute();
+            if( count($contactos)==0 ){
+                continue;
+            }
+
+            foreach( $contactos as $contacto ){
+                $email->addTo( $contacto->getCaEmail() );
+            }
+
+            $txt = "Estimados señores,
+
+            Con el fin de proceder con la actualización de la documentación exigida por nuestro Sistema de Gestión de Calidad, requerimos nos sean enviados por este medio los mismos como siguen:
+            
+            ";
+            
+            $documentos = $resultado["docs"];
+            foreach ($documentos as $documento) {
+                //echo $documento->getCaId()." ".$documento->getIds()->getCaNombre()." ".$documento->getIdsTipoDocumento()->getCaTipo()."<br />";
+                if( $documento->getCaFchvencimiento()<=date("Y-m-d")){
+                    $venc = "Venció";
+                }else{
+                    $venc = "Vence";
+                }
+                $txt.=" - ". $documento->getIdsTipoDocumento()->getCaTipo()." ".$venc." ".Utils::fechaMes($documento->getCaFchvencimiento())."\n";
+            }
+
+            $txt.="
+            Gracias por su oportuno envío y respuesta.
+
+            Cualquier duda o aclaración con mucho gusto será atendida.
+
+            Cordial Saludo.
+
+
+
+            Pricing & Procurement
+            COLTRANS S.A.
+            Cra 98 No. 25G-10 Int 18
+            TEL: 57 1 4239300 Ext 141/148
+            FAX: 57 1 4239323 Ext. 141/148
+            Bogotá D.C. - Colombia
+            E-mail : pricing@coltrans.com.co
+            www.coltrans.com.co";
+
+            
+            $email->setCaUsuenvio("Administrador");
+            $email->setCaTipo("Sol. documentos");
+            $email->setCaIdcaso($documento->getCaId());
+            $email->setCaFrom("pricing@coltrans.com.co");
+            $email->setCaFromname("Pricing & Procurement Coltrans S.A.");
+            $email->setCaSubject("Solicitud de documentos");
+            $email->setCaReplyto("pricing@coltrans.com.co");            
+
+            //$mensaje = utf8_decode($this->getRequestParameter("mensaje")."\n\n");
+
+            $email->setCaBody($txt );
+            $email->setCaBodyhtml(Utils::replace($txt));
+
+            $email->save(); //guarda el cuerpo del mensaje
+            $email->send();
+            
+        }
+        return sfView::NONE;
+    }
 
 }
+
 ?>
