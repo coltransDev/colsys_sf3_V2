@@ -127,6 +127,7 @@ InoClientesSea:
     ca_usuactualizado: string
     ca_fchliberado: timestamp
     ca_usuliberado: string
+    ca_fchhbls : date
     ca_fchantecedentes: date
     ca_imprimirorigen : boolean
   relations:
