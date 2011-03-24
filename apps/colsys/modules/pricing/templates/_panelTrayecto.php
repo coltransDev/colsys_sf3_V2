@@ -25,7 +25,8 @@ PanelTrayecto = function( config ){
         {name: 'idlinea', type: 'string'},
         {name: 'ttransito', type: 'string'},
         {name: 'frecuencia', type: 'string'},
-        {name: 'activo', type: 'bool'}
+        {name: 'activo', type: 'bool'},
+        {name: 'netnet', type: 'bool'}
     ]);
 
     this.store = new Ext.data.GroupingStore({
@@ -54,8 +55,13 @@ PanelTrayecto = function( config ){
     /*
     * Crea la columna de chequeo
     */
+
+    
+
+    
     this.checkColumn = new Ext.grid.CheckColumn({header:' ', dataIndex:'sel', width:30, groupable: false});
     this.checkColumnActivo = new Ext.grid.CheckColumn({header:'Activo', dataIndex:'activo', width:50, groupable: false});
+    this.checkColumnNetNet = new Ext.grid.CheckColumn({header:'Net-Net', dataIndex:'netnet', width:50, groupable: false});
 
     this.columns = [
 		this.checkColumn,
@@ -109,16 +115,20 @@ PanelTrayecto = function( config ){
 			groupable: false,
 			dataIndex: 'frecuencia'	,
 			editor: new Ext.form.TextField()
-		},
+		},        
 		this.checkColumnActivo
 
 	];
+
+    if( this.impoexpo=="<?=Constantes::EXPO?>" && this.transporte=="<?=Constantes::AEREO?>"){
+        this.columns.push( this.checkColumnNetNet );
+    }
 
     PanelTrayecto.superclass.constructor.call(this, {        
         clicksToEdit: 1,
         stripeRows: true,
         autoExpandColumn: 'origen',
-        plugins: [this.checkColumn, this.checkColumnActivo],
+        plugins: [this.checkColumn, this.checkColumnActivo, this.checkColumnNetNet],
         closable: true,        
         height: 400,
         //autoHeight : true,

@@ -127,7 +127,8 @@ PanelFletesPorTrayecto = function( config ){
         {name: 'orden', type: 'string'},
         {name: 'actualizado', type: 'string'},
         {name: 'pkBlocked', type: 'bool'},
-        {name: 'deleted', type: 'bool'}
+        {name: 'deleted', type: 'bool'},
+        {name: 'netnet', type: 'string'}
 
     ]);
 
@@ -380,7 +381,7 @@ PanelFletesPorTrayecto = function( config ){
 
 	];
 
-    this.groupGrillaTpl =  '{text} <tpl if="values.rs[0].data[\'style\'].indexOf(\'1\')!= -1"><img src="/images/yellow_group.gif" /> </tpl>'+' <tpl if="values.rs[0].data[\'style\'].indexOf(\'2\')!= -1"><img src="/images/pink_group.gif" /> </tpl>';
+    this.groupGrillaTpl =  '{text} <tpl if="values.rs[0].data[\'netnet\'].indexOf(\'1\')!= -1"><span class=\'rojo\'>NET-NET</span> </tpl>'+'<tpl if="values.rs[0].data[\'style\'].indexOf(\'1\')!= -1"><img src="/images/yellow_group.gif" /> </tpl>'+' <tpl if="values.rs[0].data[\'style\'].indexOf(\'2\')!= -1"><img src="/images/pink_group.gif" /> </tpl>';
 
     if( !this.readOnly ){
         this.tbar = [

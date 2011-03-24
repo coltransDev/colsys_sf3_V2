@@ -107,7 +107,7 @@ class pricingActions extends sfActions {
                         ->select("t.ca_idtrayecto, p.ca_sigla, id.ca_nombre, t.ca_origen,
                               t.ca_destino, t.ca_idlinea, o.ca_ciudad, d.ca_ciudad,
                               ai.ca_nombre, a.ca_idagente, t.ca_transporte, t.ca_modalidad,
-                              t.ca_impoexpo, t.ca_observaciones, t.ca_tiempotransito, t.ca_frecuencia")
+                              t.ca_impoexpo, t.ca_observaciones, t.ca_tiempotransito, t.ca_frecuencia, t.ca_netnet")
                         ->from("Trayecto t");
         $q->innerJoin("t.Origen o");
         $q->innerJoin("t.Destino d");
@@ -383,7 +383,8 @@ class pricingActions extends sfActions {
                 'neta' => '',
                 'minima' => '',
                 'minima' => '',
-                'orden' => '000'
+                'orden' => '000',
+                'netnet' => $trayecto["t_ca_netnet"]?"1":""
             );
             $data[] = array_merge($baseRow, $row);
 
@@ -1891,7 +1892,8 @@ class pricingActions extends sfActions {
                 'idlinea' => $trayecto["t_ca_idlinea"],
                 'ttransito' => utf8_encode($trayecto["t_ca_tiempotransito"]),
                 'frecuencia' => $trayecto["t_ca_frecuencia"],
-                'activo' => $trayecto["t_ca_activo"]
+                'activo' => $trayecto["t_ca_activo"],
+                'netnet' => $trayecto["t_ca_netnet"]
             );
             $data[] = $row;
         }
@@ -1928,6 +1930,15 @@ class pricingActions extends sfActions {
                 $trayecto->setCaActivo(true);
             } else {
                 $trayecto->setCaActivo(false);
+            }
+        }
+
+        if ($this->getRequestParameter("netnet") !== null) {
+
+            if ($this->getRequestParameter("netnet") == "true") {
+                $trayecto->setCaNetnet(true);
+            } else {
+                $trayecto->setCaNetnet(false);
             }
         }
         $trayecto->save();
