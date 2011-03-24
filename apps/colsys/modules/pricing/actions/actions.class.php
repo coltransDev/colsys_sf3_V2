@@ -1860,10 +1860,12 @@ class pricingActions extends sfActions {
 
         $q = Doctrine::getTable("Trayecto")
                         ->createQuery("t")
-                        ->select("t.*, o.ca_idciudad, d.ca_idciudad, o.ca_ciudad, d.ca_ciudad, to.ca_nombre, td.ca_nombre, i.ca_nombre")
+                        ->select("t.*, o.ca_idciudad, d.ca_idciudad, o.ca_ciudad, d.ca_ciudad, to.ca_nombre, td.ca_nombre, i.ca_nombre, ag.ca_nombre")
                         ->where("t.ca_transporte = ? AND t.ca_modalidad = ? AND t.ca_impoexpo = ?", array($transporte, $modalidad, $impoexpo))
                         ->innerJoin("t.IdsProveedor p")
                         ->innerJoin("p.Ids i")
+                        ->leftJoin("t.IdsAgente a")
+                        ->leftJoin("a.Ids ag")
                         ->addOrderBy("i.ca_nombre");
 
         $q->innerJoin("t.Origen o");
@@ -1884,6 +1886,7 @@ class pricingActions extends sfActions {
                 'idtrayecto' => $trayecto["t_ca_idtrayecto"],
                 'origen' => utf8_encode($trayecto["o_ca_ciudad"]),
                 'destino' => utf8_encode($trayecto["d_ca_ciudad"]),
+                'agente' => utf8_encode($trayecto["ag_ca_nombre"]),
                 'linea' => $trayecto["i_ca_nombre"],
                 'idlinea' => $trayecto["t_ca_idlinea"],
                 'ttransito' => utf8_encode($trayecto["t_ca_tiempotransito"]),

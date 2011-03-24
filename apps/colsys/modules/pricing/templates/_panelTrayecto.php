@@ -20,6 +20,7 @@ PanelTrayecto = function( config ){
         {name: 'origen', type: 'string'},        
         {name: 'destino', type: 'string'},        
         {name: 'trayecto', type: 'string'},
+        {name: 'agente', type: 'string'},
         {name: 'linea', type: 'string'},
         {name: 'idlinea', type: 'string'},
         {name: 'ttransito', type: 'string'},
@@ -82,6 +83,14 @@ PanelTrayecto = function( config ){
 			dataIndex: 'destino',
 			hideable: false
 
+		},
+        {
+			id: 'agente',
+			header: "Agente",
+			width: 100,
+			sortable: true,
+			dataIndex: 'agente',
+			hideable: false
 		}
 		,{
 			id: 'ttransito',
