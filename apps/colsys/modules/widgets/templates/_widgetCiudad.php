@@ -69,7 +69,8 @@ Ext.extend(WidgetCiudad, Ext.form.ComboBox, {
         q = qe.query;        
         forceAll = qe.forceAll;
         if(forceAll === true || (q.length >= this.minChars)){
-            if(this.lastQuery !== q){
+            if(1==1)
+            {
                 this.lastQuery = q;
                 if(this.mode == 'local'){
                     this.selectedIndex = -1;
@@ -77,13 +78,22 @@ Ext.extend(WidgetCiudad, Ext.form.ComboBox, {
                         this.store.clearFilter();
                     }else{
                         var tipo=this.tipo;
-                        trafico=this.trafico;
+                        var trafico=this.trafico;
                         var impoexpo=this.impoexpo;
+                        //alert(impoexpo);
+                        var nomimpoexpo=Ext.getCmp(impoexpo).getValue();
+                        //alert(trafico);
+                        //alert(Ext.getCmp(this.traficoParent).getValue());
+                        var traf=Ext.getCmp(this.traficoParent)?Ext.getCmp(this.traficoParent).getValue():"";
+                        //alert(traf);
                         i=0;
+                        
                         if(this.tipo && this.impoexpo)
                         {
-                            this.store.filterBy(function(record, id){
-                            if( Ext.getCmp(impoexpo).getValue()=="<?=constantes::IMPO?>")
+                            
+                            this.store.filterBy(function(record, id){                          
+
+                            if( nomimpoexpo=="<?=constantes::IMPO?>")
                             {
                                 var str=record.get("ciudad_trafico");
                                 var txt=new RegExp(q,"ig");
@@ -111,9 +121,22 @@ Ext.extend(WidgetCiudad, Ext.form.ComboBox, {
                                     else
                                         return false;
                                 }
-                                    return true;
+                                else if(tipo=="3")
+                                {
+                                    
+                                    if(record.get("idtrafico")==traf)
+                                    {
+                                        if(str.search(txt) == -1  )
+                                            return false;
+                                        else
+                                            return true;
+                                    }
+                                    else
+                                        return false;
+                                }
+                                 return true;
                             }
-                            else if( Ext.getCmp(impoexpo).getValue()=="<?=constantes::EXPO?>")
+                            else if( nomimpoexpo=="<?=constantes::EXPO?>")
                             {
                                 var str=record.get("ciudad_trafico");
                                 var txt=new RegExp(q,"ig");
@@ -143,7 +166,7 @@ Ext.extend(WidgetCiudad, Ext.form.ComboBox, {
                                 }
                                     return true;
                             }
-                            else if( Ext.getCmp(impoexpo).getValue()=="<?=constantes::TRIANGULACION?>")
+                            else if( nomimpoexpo=="<?=constantes::TRIANGULACION?>")
                             {
                                 var str=record.get("ciudad_trafico");
                                 var txt=new RegExp(q,"ig");
