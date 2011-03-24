@@ -52,14 +52,13 @@ HdeskTicket:
       autoincrement: true
     ca_idgroup: integer
     ca_idproject: integer
-    ca_login: string(15)
+    ca_login: string(15)    
     ca_title: string(255)
     ca_text: string
     ca_priority: string(8)
     ca_opened: timestamp
     ca_type: string(20)
-    ca_assignedto: string(15)
-    ca_action: string(15)
+    ca_assignedto: string(15)    
     ca_reportedby: string(20)
     ca_responsetime: timestamp
     ca_idtarea: integer
@@ -68,6 +67,8 @@ HdeskTicket:
     ca_percentage: integer
     ca_idevaluacion: integer
     ca_starred: boolean
+    ca_closedat: timestamp
+    ca_closedby: string(15)
   relations:    
     HdeskGroup:
       local: ca_idgroup

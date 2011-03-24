@@ -37,6 +37,7 @@ Trayecto:
     ca_activo: boolean
     ca_fchcreado: timestamp
     ca_usucreado: string
+    ca_netnet: boolean
   relations:
     Origen:
       local: ca_origen
