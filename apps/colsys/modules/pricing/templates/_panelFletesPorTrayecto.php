@@ -1122,12 +1122,14 @@ Ext.extend(PanelFletesPorTrayecto, Ext.grid.EditorGridPanel, {
                 continue;
             }
 
-            if(r.data.iditem=="9999"){
-                continue;
-            }
-            
-            if( !r.data.iditem ){
-                continue;
+            if(r.data.tipo!="trayecto_obs"){
+                if(r.data.iditem=="9999"){
+                    continue;
+                }
+
+                if( !r.data.iditem ){
+                    continue;
+                }
             }
 
             var changes = r.getChanges();
