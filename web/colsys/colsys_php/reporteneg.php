@@ -13,7 +13,7 @@
 /*================-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*\
 */
 
-$programa = 18;
+//$programa = 18;
 include_once 'include/datalib.php';                                        // Incorpora la libreria de funciones, para accesar leer bases de datos
 include_once 'include/functions.php';                                          // Funciones de Usuarios para PHP
 require('include/fpdf.php');                                               // Incorpora la librería de funciones, para generara Archivos en formato PDF
