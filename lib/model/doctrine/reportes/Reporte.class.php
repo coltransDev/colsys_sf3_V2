@@ -561,7 +561,7 @@ class Reporte extends BaseReporte {
             $id =$this->getCaIdmaster();
         
         if ($this->getCaImpoexpo() == constantes::EXPO && $id>0) {
-            if($id<4)
+            if($id<5)
             {
                 $consignar = ParametroTable::retrieveByCaso("CU048", null, null, $id);
 
@@ -576,7 +576,7 @@ class Reporte extends BaseReporte {
                     return $tercero->getCaNombre();
             }
         }
-        else if($id>3)
+        else if($id>4)
         {
 
             $tercero = Doctrine::getTable("Tercero")->find($id);
