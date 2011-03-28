@@ -48,3 +48,38 @@ RepGerCampo:
       local: ca_idinforme
       foreign: ca_idinforme
       type: one
+
+
+
+
+RepCargaTraficos:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: repger
+  tableName: vi_repcargatraficos
+  columns:
+    ca_fchreferencia: date
+    ca_referencia:
+      type: string
+      primary: true
+    ca_origen: string
+    ori_ca_ciudad : string
+    ca_destino: string
+    des_ca_ciudad : string
+    ori_ca_idtrafico: string(6)
+    ori_ca_nombre: string(40)
+    des_ca_idtrafico: string(6)
+    des_ca_nombre: string(40)
+    ca_modalidad : string
+    ca_idlinea: integer
+    ca_concepto :
+      type: string
+      primary: true
+    ca_nombre: string
+    teus : integer
+    ncontenedores : integer
+    piezas: integer
+    peso: numeric
+    volumen : numeric  
