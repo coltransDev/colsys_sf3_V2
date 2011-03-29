@@ -10,7 +10,7 @@
  */
 class antecedentesComponents extends sfComponents {
 
-    private $filetypes = array("MBL", "HBL");
+    //private $filetypes = array("MBL", "HBL");
     
     /**
      *
@@ -66,7 +66,7 @@ class antecedentesComponents extends sfComponents {
      *
      */
     public function executeFileManager() {        
-        $this->edit=($this->getRequestParameter("format")==""?true:false);
+        $this->edit=(($this->getRequestParameter("format")=="" && $this->format=="")?true:false);        
         $folder = "Referencias" . DIRECTORY_SEPARATOR . $this->ref->getCaReferencia();
         $directory = sfConfig::get('app_digitalFile_root') . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR;
 
@@ -75,20 +75,17 @@ class antecedentesComponents extends sfComponents {
         }
         chmod ( $directory , 0777 );
 
-
         $archivos = sfFinder::type('file')->maxDepth(0)->in($directory);
         //echo print_r($archivos);
 
         $filenames = array();
 
         $fileTypes = $this->filetypes;
-        
-
 
         foreach ($archivos as $archivo) {            
             $file=explode("/", $archivo);
             $filenames[]["file"] = $file[count($file)-1];
-        }        
+        }
 
         $this->folder = $folder;
         $this->filenames = $filenames;

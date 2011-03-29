@@ -7,7 +7,7 @@
 <div class="content">
 
 <?
-include_component("antecedentes", "fileManager", array("ref"=>$ref));
+include_component("antecedentes", "fileManager", array("ref"=>$ref,"format"=>"maritimo"));
 ?>
 </div>
 

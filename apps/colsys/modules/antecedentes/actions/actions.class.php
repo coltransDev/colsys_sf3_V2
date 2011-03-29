@@ -112,6 +112,8 @@ class antecedentesActions extends sfActions {
         $q->distinct();
         $this->referencias = $q->execute();
 
+        $this->sufijos = ParametroTable::retrieveByCaso("CU010");
+
         
     }
 
@@ -364,19 +366,13 @@ class antecedentesActions extends sfActions {
      * @param sfRequest $request A request object
      */
     public function executeAsignarMaster(sfWebRequest $request) {
-
-
         $this->setTemplate("responseTemplate");
-
-
-
         try {
 
             $master = $request->getParameter("master");
             $this->forward404Unless($master);
 
             $assign = $request->getParameter("assign");
-
 
             $data = $request->getParameter("data");
             $this->forward404Unless($data);
@@ -396,7 +392,6 @@ class antecedentesActions extends sfActions {
                 }
                 $reporte->save();
             }
-
 
             $this->responseArray = array("success" => true);
         } catch (Exception $e) {
@@ -475,10 +470,17 @@ class antecedentesActions extends sfActions {
         }
 
         $this->contactos = implode(",", $contactos);
+
+        $folder = "Referencias" . DIRECTORY_SEPARATOR . $this->ref->getCaReferencia();
+        $directory = sfConfig::get('app_digitalFile_root') . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR;
+        $archivos = sfFinder::type('file')->maxDepth(0)->in($directory);
+
+        foreach ($archivos as $archivo) {
+            $file=explode("/", $archivo);
+            $filenames[]["file"] = $file[count($file)-1];
+        }
+        $this->filenames = $filenames;
     }
-
-
-
 
     /**
      *
@@ -608,30 +610,31 @@ exit;
     public function executeListaReportesJSON() {
         $criterio = trim($this->getRequestParameter("query"));
         $queryType = trim($this->getRequestParameter("queryType"));
+        //echo $criterio;
 
         if ($criterio) {
 
+            $modalidad = $this->getRequestParameter("modalidad");
+            $origen = $this->getRequestParameter("origen");
+            $destino = $this->getRequestParameter("destino");
             $q = Doctrine_Query::create()
-                            /* ->select("r.ca_idreporte, r.ca_consecutivo,r.ca_version ,o.ca_ciudad, d.ca_ciudad, o.ca_idciudad, d.ca_idciudad,o.ca_idtrafico, d.ca_idtrafico, r.ca_mercancia_desc,
-                              r.ca_idlinea, r.ca_impoexpo, r.ca_transporte, r.ca_modalidad, r.ca_incoterms, con.ca_idcontacto, con.ca_nombres, con.ca_papellido, con.ca_sapellido, con.ca_cargo
-                              ,cl.ca_idcliente, cl.ca_compania, cl.ca_preferencias, cl.ca_confirmar, cl.ca_coordinador, usu.ca_login, usu.ca_nombre, r.ca_orden_clie, r.ca_idetapa, ic.ca_referencia") */
-                            ->select("r.ca_consecutivo,r.ca_idreporte,r.ca_version,r.ca_origen,r.ca_destino,r.ca_idconcliente,
-                                r.ca_usuanulado,r.ca_transporte,r.ca_impoexpo, o.*, d.*, con.ca_idcontacto,con.ca_idcliente, cl.ca_idcliente,cl.ca_compania")
+                            ->select("r.ca_consecutivo,r.ca_idreporte,r.ca_version,r.ca_idconcliente,
+                                r.ca_usuanulado,r.ca_transporte,r.ca_impoexpo, con.ca_idcontacto,con.ca_idcliente, cl.ca_idcliente,cl.ca_compania")
                             ->from("Reporte r")
                             ->leftJoin("r.RepStatus s")
-                            ->innerJoin("r.Origen o")
-                            ->innerJoin("r.Destino d")
                             ->innerJoin("r.Contacto con")
-                            ->innerJoin("con.Cliente cl")
-                            //->leftJoin("cl.LibCliente libcli")
+                            ->innerJoin("con.Cliente cl")                    
                             ->leftJoin('r.InoClientesSea ic')
                             ->addWhere("r.ca_usuanulado IS NULL")
                             ->addWhere("ic.ca_referencia IS NULL")
                             ->addWhere("s.ca_doctransporte IS NOT NULL")
                             ->addWhere("r.ca_impoexpo = ? OR r.ca_impoexpo = ?", array(Constantes::IMPO, Constantes::TRIANGULACION))
                             ->addWhere("r.ca_transporte = ? ", Constantes::MARITIMO)
-                            ->addWhere("r.ca_idetapa != ?", "99999");
-
+                            ->addWhere("r.ca_idetapa != ?", "99999")
+                            ->addWhere("r.ca_consecutivo in 
+                                (SELECT ca_consecutivo FROM Reporte
+                                INNER JOIN r.Origen o
+                                WHERE ca_modalidad=? AND o.ca_idtrafico=? AND ca_destino=? )  ",array(utf8_decode($modalidad),$origen,$destino));
 
             if( $queryType == "hbl" ){
                 $q->addWhere("UPPER(s.ca_doctransporte) LIKE ?", "%".strtoupper($criterio) . "%");
@@ -639,36 +642,13 @@ exit;
                 $q->addWhere("r.ca_consecutivo LIKE ?", $criterio . "%");
             }
 
-            $modalidad = $this->getRequestParameter("modalidad");
-            if ($modalidad) {
-                $q->addWhere("r.ca_modalidad = ?", utf8_decode($modalidad));
-            }
-
-            $origen = $this->getRequestParameter("origen");
-            if ($origen) {
-                $q->addWhere("o.ca_idtrafico = ?", $origen);
-            }
-
-            $destino = $this->getRequestParameter("destino");
-            if ($destino) {
-                $q->addWhere("r.ca_destino = ?", $destino);
-            }
-
-
-
-            //$q->addOrderBy("to_number(SUBSTR(r.ca_consecutivo , 1 , (POSITION('-' in r.ca_consecutivo)-1) ),'999999')  desc");
             $q->addOrderBy("r.ca_consecutivo desc");
             $q->addOrderBy("r.ca_version  desc");
-            //$q->orderBy("r.ca_fchcreado desc");
-            //$q->limit(50);
             $q->distinct();
 
             $reportes = $q->execute();
-            
-            //echo $q->getSqlQuery();
-
             $result = array();
-            //echo $reportes[0]->getCaIdreporte();
+            $conse="";
             foreach ($reportes as $reporte) {
                 /*if (!$reporte->esUltimaVersion()) {
                     //echo "1.1";
@@ -680,13 +660,13 @@ exit;
                 }
 
                 $status = $reporte->getUltimoStatus();
+                
                 $row = array();
-                if( $status && $status->getCaDoctransporte() ){
+                if( $status && $status->getCaDoctransporte() && $reporte->getCaConsecutivo()!=$conse ){
+
                     $row["r_ca_idreporte"] = $reporte->getCaIdreporte();
                     $row["r_ca_consecutivo"] = $reporte->getCaConsecutivo();
                     $row["r_ca_version"] = $reporte->getCaVersion();
-                    $row["o_ca_ciudad"] = $reporte->getOrigen()->getCaCiudad();
-                    $row["d_ca_ciudad"] = $reporte->getDestino()->getCaCiudad();                    
                     $row["r_ca_impoexpo"] = utf8_encode($reporte->getCaImpoexpo());
                     $row["r_ca_transporte"] = utf8_encode($reporte->getCaTransporte());
                     $row["cl_ca_compania"] = utf8_encode($reporte->getCliente()->getCaCompania());                                        
@@ -694,13 +674,14 @@ exit;
                     $row["s_ca_doctransporte"] = utf8_encode($status->getCaDoctransporte());
                     $result[] = $row;
                 }
-
+                $conse=$reporte->getCaConsecutivo();
             }
             $this->responseArray = array("total" => count($result), "root" => $result, "success" => true);
         } else {
             $this->responseArray = array("root" => array(), "total" => 0, "success" => true);
         }
         //print_r($reportes);
+        //exit;
         $this->setTemplate("responseTemplate");
     }
 
@@ -717,7 +698,6 @@ exit;
         $this->forward404Unless($ref);
         $ref->setCaProvisional(false);
         $ref->save();
-
 
         $this->hijas = Doctrine::getTable("InoClientesSea")
                         ->createQuery("c")
@@ -761,7 +741,7 @@ exit;
         $this->numref = $numref;
     }
 
-        /**
+     /**
      *
      *
      * @param sfRequest $request A request object
@@ -855,7 +835,7 @@ exit;
             $tmp=null;
             $valido=true;
             $lines[$i]=trim($lines[$i]);
-            $patron = '/[0-9]+[-][0-9]+/';
+            $patron = '/(\d+)-(20\d\d)/';
             if (preg_match($patron, $lines[$i])) {
                 $tmp=ReporteTable::retrieveByConsecutivo($lines[$i]);
                 if($tmp)
@@ -924,5 +904,37 @@ exit;
 
         $this->responseArray = array("success" => true,"reportes"=>$reportes,"resultado"=>$resultado);
         $this->setTemplate("responseTemplate");
+   }
+
+
+   public function executeEliminarReporte(sfWebRequest $request)
+   {
+
+
+       try{
+            $numref = str_replace("|", ".", $request->getParameter("referencia"));
+            $idreporte = $request->getParameter("idreporte");
+
+             Doctrine_Query::create()
+                   ->delete()
+                   ->from("InoClientesSea ic")
+                   ->addWhere("ic.ca_referencia = ? and ic.ca_idreporte=? ", array($numref,$idreporte))
+                   ->execute();
+
+              Doctrine::getTable("Email")
+                  ->createQuery("e")
+                  ->update()
+                  ->set("ca_subject","replcace(ca_subject,'.','-')")
+                  ->addWhere("ca_subject like ?", "%" . $this->getCaReferencia() . "%")
+                  ->execute();
+
+
+            $this->responseArray = array("success" => true);
+       }
+       catch(Exception $e)
+       {
+           $this->responseArray = array("success" => false,"errorInfo"=>$e->getMessage());
+       }
+       $this->setTemplate("responseTemplate");
    }
 }

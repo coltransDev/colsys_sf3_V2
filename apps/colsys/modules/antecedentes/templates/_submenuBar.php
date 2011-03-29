@@ -59,6 +59,7 @@ switch($action){
 		$i++;
         break;
     case "verPlanilla":
+//        echo $sucursal."-".$master->getUsuCreado()->getCaIdsucursal();
         if( $this->getRequestParameter("format")!="maritimo" && $sucursal==$master->getUsuCreado()->getCaIdsucursal()  ){
             $button[$i]["name"] = "Editar ";
             $button[$i]["tooltip"] = "Edita esta referencia para agregar o quitar reportes";

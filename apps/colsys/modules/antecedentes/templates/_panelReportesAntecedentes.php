@@ -65,7 +65,7 @@ include_component("gestDocumental", "widgetUploadButton");
 
         this.store = new Ext.data.GroupingStore({
             autoLoad : true,
-            url: '<?= url_for("antecedentes/datosPanelReportesAntecedentes") ?>',            
+            url: '<?= url_for("antecedentes/datosPanelReportesAntecedentes") ?>',
             baseParams : {
                 numRef: this.numRef
             },
@@ -260,8 +260,9 @@ include_component("gestDocumental", "widgetUploadButton");
 
             rec = grid.store.getAt(index);
             e.stopEvent(); //Evita que se despliegue el menu con el boton izquierdo
-            var store = this.store
-            if(!this.menu){                
+            var store = this.store;
+                        
+            if(!this.menu){
                 this.menu = new Ext.menu.Menu({
                     enableScrolling : false,
                     items: [
@@ -271,8 +272,34 @@ include_component("gestDocumental", "widgetUploadButton");
                             scope:this,
                             handler: function(){
                                 if( confirm("Esta seguro?") ){
-                                    r = store.getById( this.ctxRecord.id );
-                                    store.remove( r );
+                                    if( this.ctxRecord.data.idreporte  && this.numRef){
+                                       // alert(this.ctxRecord.data.idreporte+"-"+ this.numRef);
+                                       var id=this.ctxRecord.id;
+                                        Ext.Ajax.request(
+                                        {
+                                            waitMsg: 'Guardando cambios...',
+                                            url:'<?=url_for("antecedentes/eliminarReporte")?>',
+                                            params : {
+                                                referencia: this.numRef,
+                                                idreporte: this.ctxRecord.data.idreporte
+                                            },
+                                            failure:function(response,options){
+                                                alert( response.responseText );
+                                                success = false;
+                                            },
+                                            success:function(response,options){
+                                                var res = Ext.util.JSON.decode( response.responseText );
+                                                //if( res.success ){
+                                                    r = store.getById(id );
+                                                    store.remove( r );
+                                                //}
+                                            }
+                                        });
+                                    }else
+                                    {
+                                        r = store.getById( this.ctxRecord.id );
+                                        store.remove( r );
+                                    }
                                 }
                             }
                         },

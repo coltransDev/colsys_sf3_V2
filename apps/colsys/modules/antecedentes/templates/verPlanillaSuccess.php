@@ -107,8 +107,27 @@ if( $format!="email" ){
 
     <?
     
-    if( $format!="email" ){
+    if( $format!="email" )
+    {
         include_component("antecedentes", "fileManager", array("ref"=>$ref));
+    }
+    else
+    {
+?>
+         <table class="tableList alignLeft" width="100%">         
+         <tr>
+            <th>Archivos Adjuntados</th>
+         </tr>
+         <tr><td>
+<?
+        foreach($filenames as $file)
+        {
+            echo $file["file"]."<br>";
+        }
+?>
+        </td></tr>
+        </table>
+<?
     }
     ?>
 
@@ -173,13 +192,13 @@ if( $format!="email" ){
                 <?=$hija->getTercero()->getCaNombre()?>
             </td>
             <td align="right" >
-                <?=Utils::formatNumber($hija->getCaPeso(),2)?>
+                <?=number_format($hija->getCaPeso(),3)?>
             </td>
             <td align="right" >
-                <?=Utils::formatNumber($hija->getCaNumpiezas(),2)?>
+                <?=number_format($hija->getCaNumpiezas(),3)?>
             </td>
             <td align="right">
-                <?=Utils::formatNumber($hija->getCaVolumen(),2)?>
+                <?=number_format($hija->getCaVolumen(),3)?>
             </td>
             <td>
                 <?=$hija->getVendedor()->getCaNombre()?>
@@ -196,13 +215,13 @@ if( $format!="email" ){
                 Totales: <?=count($hijas)?> registros
             </td>
             <td align="right" >
-                <?=Utils::formatNumber($tpeso,2)?>
+                <?=number_format($tpeso,3)?>
             </td>
             <td align="right" >
-                <?=Utils::formatNumber($tpiezas,2)?>
+                <?=number_format($tpiezas,3)?>
             </td>
             <td align="right">
-                <?=Utils::formatNumber($tvolumen,2)?>
+                <?= number_format($tvolumen,4)?>
             </td>
             <td>
                 &nbsp;
@@ -264,4 +283,35 @@ if( $format=="maritimo" ){
  */
 ?>
 <br />
+<?
+    $usuario = $ref->getUsuCreado();
+    $sucursal = $usuario->getSucursal();
+    //if($sucursal)
+    //   echo $sucursal->getCaNombre();
+?>
+<table cellspacing="0" width="100%" class="tableList alignLeft">
+        <tbody>
+            <tr class="row0">
+                <td width="33%">
+                    <div align="left">
+                        <b>Ciudad:</b><br />
+                        <?=$sucursal?$sucursal->getCaNombre():"&nbsp;"?>
+                    </div>
+                </td>
+                <td width="33%">
+                    <div align="left">
+                        <b>Elaborado por:</b><br />
+                        <?=$ref->getCaUsucreado()?> <?=UTils::fechaMes($ref->getCaFchcreado())?>
+                    </div>
+                </td>
+                <td width="34%">
+                    <div align="left">
+                        <b>Actualizado por:</b><br />
+                        <?=$ref->getCaUsuactualizado()?$ref->getCaUsuactualizado():"&nbsp;"?> <?=UTils::fechaMes( $ref->getCaFchactualizado() )?>
+                    </div>
+                </td>                
+            </tr>
+            </tbody>
+        </table>
 </div>
+

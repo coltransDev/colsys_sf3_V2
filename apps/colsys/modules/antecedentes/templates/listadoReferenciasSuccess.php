@@ -3,7 +3,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
+include_component("widgets", "widgetParametros",array("caso_uso"=>"CU010"));
 ?>
 <div class="content" align="center">
     <h2> Referencias sin desbloquear</h2>
@@ -117,7 +117,7 @@
             $email=$referencia->getUltEmail();
             if($email == null || strpos($email->getCaSubject(), 'Rechazo de Antecedentes') === false)
             {
-                if($email)
+                //if($email)
                     //echo $email->getCaSubject();
 //                echo $referencia->getCaReferencia()."".$referencia->getCountEmails();
                 continue;
@@ -174,8 +174,39 @@
 
     <br />
 
+
     <h2> Referencias sin reportar a Muisca</h2>
     <br />
+    Sufijo<div id="filtro"></div>
+    <script>
+    function recargar(combo, record, index)
+    {
+        if(parseInt(record.data.id)!="")
+        {
+            $("tr[class*=tipo]").hide();
+            $(".tipo"+record.data.id).show();
+        }
+        else
+            $("tr[class*=tipo]").show();
+    };
+    function limpiar()
+    {
+        $("tr[class*=tipo]").show();
+    }
+    var sufijo=new WidgetParametros({
+                                id:'sufijo',
+                                name:'sufijo',
+                                caso_uso:"CU010",
+                                width:100,
+                                ididentificador:"identificador",
+                                renderTo:"filtro"                                
+                             });
+    sufijo.addListener("select", recargar, this);
+    sufijo.addListener("clear", limpiar, this);
+
+
+    </script>
+
     <table class="tableList" width="900px" border="1" id="mainTable">
         <tr>
             <th width="70" scope="col">Referencia</th>
@@ -201,9 +232,11 @@
             if( $format ){
                 $url.="&format=".$format;
             }
-
+            $arrRef=explode(".", $referencia->getCaReferencia());
+            //if($i==1)
+            //print_r($arrRef);
         ?>
-        <tr>
+        <tr class="tipo<?=(int)$arrRef[1]?>" id="tipos">
             <td  >
                 <?=link_to($referencia->getCaReferencia(), $url)?>
             </td>

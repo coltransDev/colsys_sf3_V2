@@ -19,7 +19,7 @@ include_component("antecedentes", "panelMasterAntecedentes");
     
     Ext.onReady(function(){        
         var panel = new PanelMasterAntecedentes({
-            title: "Asignación de Master",
+            title: "Asignación de Master <?=($numRef)?$numRef:""?>",
             bodyStyle: "pading: 5px",
             numRef: "<?=$numRef?>"
         });
