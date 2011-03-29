@@ -449,6 +449,12 @@ class widgetsComponents extends sfComponents {
         }
     }
 
+
+    public function executeWidgetSucursalAgente() {
+
+        
+    }
+
     public function executeWidgetComerciales() {
         $comerciales = UsuarioTable::getComerciales();
         $this->comercialesJson = array();

@@ -931,5 +931,32 @@ class widgetsActions extends sfActions
 
 	}
 
+
+    public function executeDatosSucAgente($request)
+    {
+        $idagente=$request->getParameter("idagente");
+
+        $sucursales = Doctrine_Query::create()
+                        ->select("c.ca_ciudad,s.ca_direccion,s.ca_idsucursal,s.ca_id")
+                        ->from("IdsSucursal s")
+                        ->innerJoin("s.Ciudad c")
+                        ->where("s.ca_id=?",$idagente)
+                        ->addOrderBy("c.ca_ciudad")
+                        ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                        ->execute();
+        $sucursal = array();
+
+        foreach ($sucursales as $suc) {
+            $sucursal[] = array(
+                "idsucursal" => $suc["s_ca_idsucursal"],
+                "ciudad" => utf8_encode($suc["c_ca_ciudad"]),
+                "direccion" => utf8_encode($suc["s_ca_direccion"])
+            );
+        }
+         $this->responseArray = array("root"=>$sucursal, "total"=>count($sucursal), "success"=>true);
+         $this->setTemplate("responseTemplate");
+
+    }
+
 }
 ?>
