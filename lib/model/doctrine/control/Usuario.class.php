@@ -136,7 +136,29 @@ class Usuario extends BaseUsuario
         return $directory = $folder.DIRECTORY_SEPARATOR.$this->getCaLogin();
 
     }
+
+    public function getImagenBase($tamano='120x150'){
+
+         switch($tamano){
+             case '120x150':
+                 $imagen = $this->getDirectorioBase().DIRECTORY_SEPARATOR.'foto120x150.jpg';
+                 break;
+             case '60x80':
+                 $imagen = $this->getDirectorioBase().DIRECTORY_SEPARATOR.'foto60x80.jpg';
+                 break;
+             case '30x40':
+                 $imagen = $this->getDirectorioBase().DIRECTORY_SEPARATOR.'foto30x40.jpg';
+                 break;
+             default:
+                 $imagen = $this->getDirectorioBase().DIRECTORY_SEPARATOR.'foto120x150.jpg';
+                 break;
+         }
+
+        return $imagen;
+    }
+
     public function getImagen($tamano='120x150'){
+
          switch($tamano){
              case '120x150':
                  $imagen = $this->getDirectorio().DIRECTORY_SEPARATOR.'foto120x150.jpg';
@@ -257,9 +279,15 @@ class Usuario extends BaseUsuario
 
       return parent::delete($conn);
     }
+
+    public function getDirectorioIp(){
+        $directorio = Doctrine::getTable("Directorio")
+                    ->createQuery("d")
+                    ->select('d.ca_phoneip')
+                    ->addWhere('d.ca_callfrom=?', sfContext::getInstance()->getUser()->getIdSucursal() )
+                    ->addWhere('d.ca_callto=?', $this->getCaIdsucursal() )
+                    ->fetchOne();
+        return $directorio;
+
+    }
 }
-
-
-
-
-
