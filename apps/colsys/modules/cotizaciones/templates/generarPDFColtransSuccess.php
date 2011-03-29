@@ -5,11 +5,14 @@ $notas = $sf_data->getRaw("notas");
 $usuario = $cotizacion->getUsuario();
 $contacto = $cotizacion->getContacto();
 $cliente = $contacto->getCliente();
+$empresa = $usuario->getSucursal()->getEmpresa();
+
 
 $meses = array("enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre");
 
 $pdf = new PDF (  );
 $pdf->Open ();
+$pdf->setIdempresa ( $empresa->getCaIdempresa() );
 $pdf->setColtransHeader ( true );
 $pdf->setColtransFooter ( true );
 $pdf->AliasNbPages();
@@ -839,7 +842,7 @@ $pdf->MultiCell(0, 4, "Nota Importante: En caso de aceptación de nuestros servic
 $pdf->Ln(2);
 $pdf->flushGroup();
 
-
+// ======================== Continuación de viaje ======================== //
 if(in_array("OTM",$transportes) || in_array("DTA",$transportes))
 {
 $pdf->beginGroup();
@@ -851,143 +854,9 @@ La Poliza del Importador deberá incluir los tributos aduaneros. El OTM no se hac
 
 	$pdf->flushGroup();
 }
-// ======================== Continuación de viaje ======================== //
-/*
-$continuaciones = $cotizacion->getCotContinuacions();
-if(count($continuaciones)>0){
-	$imprimirtitulo=true;
-	$tipo = "";
-	$imprimirObservaciones = array();
-	foreach( $continuaciones as $continuacion ){
-		if( !isset($imprimirObservaciones[$continuacion->getCaTipo()]) ){
-			$imprimirObservaciones[$continuacion->getCaTipo()]=false;
-		}
-		if( $continuacion->getCaObservaciones() ){
-			$imprimirObservaciones[$continuacion->getCaTipo()]=true;
-		}
-	}
-	$numContinuaciones = count( $continuaciones );
-	for( $i=0; $i<$numContinuaciones; $i++ ){
-		$continuacion = $continuaciones[$i];
-		$imprimirNotas[]="anexoImpo";
-		$imprimirNotas[]="OTM_".$continuacion->getCaModalidad();
-		if( $tipo!=$continuacion->getCaTipo() ){
-			$imprimiotitulo=false;
-			if( $imprimirtitulo ){ // Se hace de esta manera para mantener el grupo
-				$pdf->beginGroup();
-				$pdf->Ln(4);
-				$pdf->SetFont($font,'B',9);
-				$pdf->Cell(0, 4, 'SERVICIO DE CONTINUACIÓN DE VIAJE', 0, 1, 'L', 0);
-				$pdf->SetFont($font,'',7);
-				$imprimirtitulo=false;
-				$imprimiotitulo=true;
-			}
-			if( $continuacion->getCaTipo()=="OTM" ){
-				if( !$imprimiotitulo ){
-					$pdf->beginGroup();
-				}
-				//Control impresión
-				$pdf->Ln(4);
-				$pdf->SetFont($font,'B',8);
-				$pdf->Cell(0, 4, '   OTM – OPERACIÓN DE TRANSPORTE MULTIMODAL', 0, 1, 'L', 0);
-			}
-			if( $continuacion->getCaTipo()=="DTA" ){
 
-				if( !$imprimiotitulo ){
-					$pdf->beginGroup();
-				}
 
-				$pdf->Ln(4);
-				$pdf->SetFont($font,'B',8);
-				$pdf->Cell(0, 4, '   DTA – DECLARACIÓN DE TRÁNSITO ADUANERO', 0, 1, 'L', 0);
-			}
-			$pdf->SetFont($font,'',7);
-			$pdf->Ln(4);
 
-			$titu_mem= array('Origen', 'Destino','Mod.', 'Concepto', 'Tarifa');
-
-			if( $imprimirObservaciones[$continuacion->getCaTipo()] ){
-				array_push( $titu_mem, 'Observaciones' );
-				$width_mem= array(20,20, 10, 50, 35, 35);
-			}else{
-				$width_mem= array(20,20, 10, 50, 70);
-			}
-			$pdf->SetWidths($width_mem);
-			$pdf->SetAligns(array_fill(0, count($width_mem), "C"));
-			$pdf->SetStyles(array_fill(0, count($width_mem), "B"));
-			$pdf->SetFills(array_fill(0, count($width_mem), 1));
-			$pdf->Row($titu_mem);
-
-			$pdf->SetWidths($width_mem);
-			$pdf->SetAligns(array_fill(0, count($width_mem), "L"));
-			$pdf->SetStyles(array_fill(0, count($width_mem), ""));
-			$pdf->SetFills(array_fill(0, count($width_mem), 0));
-			$tipo=$continuacion->getCaTipo();
-		}
-		$row = array( $continuacion->getOrigen()->getCaCiudad(),
-					  $continuacion->getDestino()->getCaCiudad(),
-					  $continuacion->getCaModalidad(),
-					  $continuacion->getTexto(),
-					  $continuacion->getTextoTarifa()
-				);
-		if( $imprimirObservaciones[$continuacion->getCaTipo()] ){
-			array_push( $row, $continuacion->getCaObservaciones()?$continuacion->getCaObservaciones():" ");
-		}
-		$pdf->Row( $row	);
-		if( !isset( $continuaciones[$i+1] ) || $continuaciones[$i+1]->getCaTipo()!=$continuacion->getCaTipo() ){
-
-			//Recargos OTM - DTA
-			$recargosLoc = $cotizacion->getRecargosOTMDTA( $tipo );
-
-			if( count($recargosLoc)>0 ){
-				$imprimirObservaciones=false;
-				foreach( $recargosLoc as $recargo ){
-					if( $recargo->getCaObservaciones() ){
-						$imprimirObservaciones=true;
-					}
-				}
-				$pdf->beginGroup();
-				$pdf->Ln(4);
-				$pdf->SetFont($font,'B',8);
-				$pdf->Cell(200, 4, 'RECARGOS' , 0, 1, 'L', 0);
-				$pdf->Ln(2);
-				$pdf->SetFont($font,'',7);
-
-				$titu_mem= array('Concepto',  'Tarifa' );
-				if( $imprimirObservaciones ){
-					array_push( $titu_mem, 'Observaciones' );
-					$width_mem= array(55, 53, 62);
-				}else{
-					$width_mem= array(80, 90);
-				}
-				$pdf->SetWidths($width_mem);
-				$pdf->SetAligns(array_fill(0, count($width_mem), "C"));
-				$pdf->SetStyles(array_fill(0, count($width_mem), "B"));
-				$pdf->SetFills(array_fill(0, count($width_mem), 1));
-				$pdf->Row($titu_mem);
-
-				$pdf->SetAligns(array_fill(0, count($width_mem), "L"));
-				$pdf->SetStyles(array_fill(0, count($width_mem), ""));
-				$pdf->SetFills(array_fill(0, count($width_mem), 0));
-
-				foreach( $recargosLoc as $recargo ){
-					$row = array( $recargo->getTipoRecargo()->getCaRecargo(), $recargo->getTextoTarifa() );
-					if( $imprimirObservaciones ){
-						array_push( $row,  $recargo->getCaObservaciones() );
-					}
-					$pdf->Row($row);
-				}
-				$pdf->flushGroup();
-			}
-		}
-	}
-    $pdf->Ln(2);
-    $pdf->MultiCell(0, 4, "Nota Importante: Es responsabilidad del importador, los prejuicios a que haya lugar como consecuencia de inexactitudes o errores en la documentación suministrada, así como de las sanciones resultado de requerimientos aduaneros por faltantes o sobrantes.
-
-La Poliza del Importador deberá incluir los tributos aduaneros. El OTM no se hace responsable por el pago de tributos aduaneros a la DIAN, la póliza de tributos aduanero sólo cumple la función de garantía a la DIAN. Los pagos por tríbutos aduaneros deberán ser asumidos por el importador y reclamados a su compañía de seguros para ser pagados a la DIAN.", 0,'J',0);
-	$pdf->flushGroup();
-}
-*/
 // ======================== Seguros ======================== //
 $seguros = $cotizacion->getCotSeguros();
 $imprimirObservaciones = false;
@@ -1132,96 +1001,105 @@ $pdf->SetFont($font,'B',10);
 $pdf->MultiCell(0, 4, strtoupper($usuario->getCaNombre()),0,1);
 $pdf->SetFont($font,'',10);
 $pdf->MultiCell(0, 4, strtoupper($usuario->getCaCargo()),0,1);
-$pdf->MultiCell(0, 4, "COLTRANS S.A.",0,1);
+$pdf->MultiCell(0, 4, strtoupper($empresa->getCaNombre()),0,1);
 $pdf->MultiCell(0, 4, $sucursal->getCaDireccion(),0,1);
 $pdf->MultiCell(0, 4, "Tel.:".$sucursal->getCaTelefono()." ".$usuario->getCaExtension(),0,1);
 $pdf->MultiCell(0, 4, "Fax :".$sucursal->getCaFax(),0,1);
 
-$pdf->MultiCell(0, 4, $sucursal->getCaNombre()." - Colombia",0,1);
+$pdf->MultiCell(0, 4, $sucursal->getCaNombre()." - ".$empresa->getTrafico()->getCaNombre(),0,1);
 $pdf->MultiCell(0, 4, $usuario->getCaEmail(),0,1);
-$pdf->MultiCell(0, 4, "www.coltrans.com.co",0,1);
+$pdf->MultiCell(0, 4, $empresa->getCaUrl(),0,1);
 
-if ($cotizacion->getCaAnexos() != '') {
+if ($cotizacion->getCaAnexos() != '' &&  $empresa->getCaIdempresa()==1) {
 	$pdf->Ln(6);
 	$pdf->MultiCell(0, 4, "Anexo: ".$cotizacion->getCaAnexos(),0,1);
 }
 $pdf->flushGroup();
-$imprimirNotas = array_unique( $imprimirNotas );
 
-$nuevaPagina = false;
+// ======================== Notas ======================== //
 
-foreach($imprimirNotas as $val ) {
-	if(!$nuevaPagina){
-   		$pdf->AddPage();
-		$nuevaPagina=true;
-	}
+if( $empresa->getCaIdempresa()==1 ){
+    $imprimirNotas = array_unique( $imprimirNotas );
 
-	//Hace que el titulo tenga por lo menos 2 renglones
-	if( $pdf->GetY()>$pdf->PageBreakTrigger-15 ){
-		$pdf->AddPage();
-	}else{
-		$pdf->Ln(2);
-	}
+    $nuevaPagina = false;
 
-	$pdf->SetFont($font,'B',9);
-	$pdf->MultiCell(0, 4, $notas[$val."Titulo"], 0,'C',0);
-	$pdf->Ln(1);
-	$pdf->SetFont($font,'',8);
-	$pdf->MultiCell(0, 4, $notas[$val], 0,'J',0);
+    foreach($imprimirNotas as $val ) {
+        if(!$nuevaPagina){
+            $pdf->AddPage();
+            $nuevaPagina=true;
+        }
+
+        //Hace que el titulo tenga por lo menos 2 renglones
+        if( $pdf->GetY()>$pdf->PageBreakTrigger-15 ){
+            $pdf->AddPage();
+        }else{
+            $pdf->Ln(2);
+        }
+
+        $pdf->SetFont($font,'B',9);
+        $pdf->MultiCell(0, 4, $notas[$val."Titulo"], 0,'C',0);
+        $pdf->Ln(1);
+        $pdf->SetFont($font,'',8);
+        $pdf->MultiCell(0, 4, $notas[$val], 0,'J',0);
+    }
 }
 
-//Nota
-$pdf->AddPage();
-$pdf->Ln(4);
-$pdf->SetFont($font,'B',14);
-$pdf->Cell(0, 4, "CIRCULAR EXTERNA NO. 001",0,1, "C");
+// ======================== Notas adicionales ======================== //
 
-$pdf->Ln(4);
-$pdf->SetFont($font,'',10);
-$pdf->Cell(0, 4, "27 de Abril de 2009",0,1);
+if( $empresa->getCaIdempresa()==1 ){
+    $pdf->AddPage();
+    $pdf->Ln(4);
+    $pdf->SetFont($font,'B',14);
+    $pdf->Cell(0, 4, "CIRCULAR EXTERNA NO. 001",0,1, "C");
 
-$pdf->Ln(10);
-$pdf->SetFont($font,'',10);
-$pdf->Cell(0, 4, "Apreciados Clientes,",0,1);
-$pdf->Ln(15);
-$pdf->MultiCell(0, 5, "La presente es con el fin de  informarles las nuevas disposiciones  Aduaneras en el Marco Legal actual que es el Decreto 2101 del 13 de Junio de 2008 , Decreto 1039 del 26 de Marzo 2009 y la Resolución No. 7941 del 26 de Agosto de 2008, Resolución 3942 del 17 de Abril de 2009  en donde se modifica trámites semiautomatizados a procedimientos totalmente automatizados sin uso del papel en el Proceso de Importación Marítima, se tuvieron en cuenta lineamientos internacionales como el Marco Normativo de la OMA y acuerdos que en la actualidad Colombia está negociando.", 0,'J',0);
-$pdf->Ln(2);
-$pdf->MultiCell(0, 5, "Por lo anterior a partir del 1o. de Mayo 2009 es indispensable que los documentos de transporte contengan como mínimo la siguiente información: ", 0,'J',0);
-$pdf->Ln(2);
-$pdf->MultiCell(0, 5,
-" RUT ( Registro Único Tributario)  del Importador
-  La indicación del Trámite o destino que se le dará a la mercancía una vez descargada en el lugar de llegada, ejemplo:
-     -   Entrega en lugar de arribo
-     -   Transito Aduanero
-     -   Ingreso a depósito o Zona Franca después del descargue en el lugar de arribo
-     -   Descargue de mercancía directamente en el depósito o zona franca
-     -   Entrega Urgente
-  Descripción  genérica de la mercancía ;  NO es aceptada como descripción \" mercancías varias, mercancía según factura , misceláneas.. \"
-  La DIAN tendrá la potestad de establecer en que eventos es necesario las partidas o  sub-partidas arancelarias de la mercancía   por acto oficial, como lo estipula en el Decreto 2101 art. 8 y la Resolución 7941 art 8 , hasta la fecha no se ha pronunciado la Aduana con los productos susceptibles del anterior requerimiento
-  Peso,  unidades de carga.  Cuando se trate de carga contenerizada es necesario el número de seguridad o precinto", 0,'J',0);
-$pdf->Ln(2);
-$pdf->MultiCell(0, 5, "Es recomendable que la información  descrita sea de conocimiento de los Exportadores, para el momento de la elaboración de los documentos de transporte. ", 0,'J',0);
-$pdf->Ln(15);
-$pdf->Cell(0, 4, "Atentamente,",0,1);
-$pdf->Ln(10);
-$pdf->Cell(0, 4, "COLTRANS S.A.",0,1);
-$pdf->Ln(4);
-$pdf->Cell(0, 4, "DEPARTAMENTO MARITIMO",0,1);
-$pdf->AddPage();
-// Ticket # 1811
-$pdf->Ln(4);
-$pdf->SetFont($font,'B',14);
-$pdf->Cell(0, 4, "CIRCULAR 0170",0,1, "C");
-$pdf->Ln(15);
-$pdf->SetFont($font,'',14);
-$pdf->MultiCell(0, 5,
-"Los Agentes de Carga Internacional  y Agencias de Aduana debemos adoptar las medidas necesarias para prevención  y control al lavado de activos. Así mismo, establecer mecanismos de control orientados a seleccionar y conocer los clientes acerca lo personal, financiero y comercial. Dentro de estas medidas existe una herramienta para el conocimiento del cliente que es la aplicación de la Circular 0170 exigida por la DIAN
+    $pdf->Ln(4);
+    $pdf->SetFont($font,'',10);
+    $pdf->Cell(0, 4, "27 de Abril de 2009",0,1);
 
-Algunos de estos mecanismos de prevención y control del lavado de activos que la DIAN instruye ayudan a identificar las operaciones sospechosas y así mismo controlar los indicios que permite detectar la realización de una operación  inusual.
+    $pdf->Ln(10);
+    $pdf->SetFont($font,'',10);
+    $pdf->Cell(0, 4, "Apreciados Clientes,",0,1);
+    $pdf->Ln(15);
+    $pdf->MultiCell(0, 5, "La presente es con el fin de  informarles las nuevas disposiciones  Aduaneras en el Marco Legal actual que es el Decreto 2101 del 13 de Junio de 2008 , Decreto 1039 del 26 de Marzo 2009 y la Resolución No. 7941 del 26 de Agosto de 2008, Resolución 3942 del 17 de Abril de 2009  en donde se modifica trámites semiautomatizados a procedimientos totalmente automatizados sin uso del papel en el Proceso de Importación Marítima, se tuvieron en cuenta lineamientos internacionales como el Marco Normativo de la OMA y acuerdos que en la actualidad Colombia está negociando.", 0,'J',0);
+    $pdf->Ln(2);
+    $pdf->MultiCell(0, 5, "Por lo anterior a partir del 1o. de Mayo 2009 es indispensable que los documentos de transporte contengan como mínimo la siguiente información: ", 0,'J',0);
+    $pdf->Ln(2);
+    $pdf->MultiCell(0, 5,
+    " RUT ( Registro Único Tributario)  del Importador
+      La indicación del Trámite o destino que se le dará a la mercancía una vez descargada en el lugar de llegada, ejemplo:
+         -   Entrega en lugar de arribo
+         -   Transito Aduanero
+         -   Ingreso a depósito o Zona Franca después del descargue en el lugar de arribo
+         -   Descargue de mercancía directamente en el depósito o zona franca
+         -   Entrega Urgente
+      Descripción  genérica de la mercancía ;  NO es aceptada como descripción \" mercancías varias, mercancía según factura , misceláneas.. \"
+      La DIAN tendrá la potestad de establecer en que eventos es necesario las partidas o  sub-partidas arancelarias de la mercancía   por acto oficial, como lo estipula en el Decreto 2101 art. 8 y la Resolución 7941 art 8 , hasta la fecha no se ha pronunciado la Aduana con los productos susceptibles del anterior requerimiento
+      Peso,  unidades de carga.  Cuando se trate de carga contenerizada es necesario el número de seguridad o precinto", 0,'J',0);
+    $pdf->Ln(2);
+    $pdf->MultiCell(0, 5, "Es recomendable que la información  descrita sea de conocimiento de los Exportadores, para el momento de la elaboración de los documentos de transporte. ", 0,'J',0);
+    $pdf->Ln(15);
+    $pdf->Cell(0, 4, "Atentamente,",0,1);
+    $pdf->Ln(10);
+    $pdf->Cell(0, 4, "COLTRANS S.A.",0,1);
+    $pdf->Ln(4);
+    $pdf->Cell(0, 4, "DEPARTAMENTO MARITIMO",0,1);
+    $pdf->AddPage();
+    // Ticket # 1811
+    $pdf->Ln(4);
+    $pdf->SetFont($font,'B',14);
+    $pdf->Cell(0, 4, "CIRCULAR 0170",0,1, "C");
+    $pdf->Ln(15);
+    $pdf->SetFont($font,'',14);
+    $pdf->MultiCell(0, 5,
+    "Los Agentes de Carga Internacional  y Agencias de Aduana debemos adoptar las medidas necesarias para prevención  y control al lavado de activos. Así mismo, establecer mecanismos de control orientados a seleccionar y conocer los clientes acerca lo personal, financiero y comercial. Dentro de estas medidas existe una herramienta para el conocimiento del cliente que es la aplicación de la Circular 0170 exigida por la DIAN
 
-Nos es muy grato ofrecer los servicios de nuestra empresa, para contribuir con el buen servicio los invitamos a diligenciar la Circular 0170 de manera sincera y oportuna.
- ", 0,'J',0);
-$pdf->Ln(2);
+    Algunos de estos mecanismos de prevención y control del lavado de activos que la DIAN instruye ayudan a identificar las operaciones sospechosas y así mismo controlar los indicios que permite detectar la realización de una operación  inusual.
+
+    Nos es muy grato ofrecer los servicios de nuestra empresa, para contribuir con el buen servicio los invitamos a diligenciar la Circular 0170 de manera sincera y oportuna.
+     ", 0,'J',0);
+    $pdf->Ln(2);
+}
+
 $pdf->Output ( $filename );
 
 if( !$filename ){ //Para evitar que salga la barra de depuracion

@@ -302,6 +302,7 @@ Empresa:
     ca_nombre: string(15)
     ca_activo: boolean
     ca_idtrafico : string
+    ca_url : string
   relations:
     Trafico:
       local: ca_idtrafico
