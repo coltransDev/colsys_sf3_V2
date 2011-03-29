@@ -13,7 +13,7 @@ class PDF extends FPDF {
     private $linerepeat;
     private $grouping = false;
     private $bufferGroup = array();
-    private $empresa=1;
+    private $idempresa=1;
     const COLTRANS=1;
     const COLMAS=2;
 
@@ -22,20 +22,23 @@ class PDF extends FPDF {
     private $U;
     private $HREF;
 
+    public function setIdempresa( $v ){
+        $this->idempresa = $v;
+    }
 	
 	//Cabecera de página
     function Header() {
         //echo "--->".$this->empresa;
         
-		if( $this->coltransHeader||$this->colmasHeader ){
-            if($this->colmasHeader){
-                $this->empresa=self::COLMAS;
-                $image="Colmas.jpg";
+		if( $this->coltransHeader ){
+            if($this->idempresa==7){                
+                $image="TPLogistics.jpg";
             }
-            else{
-                $this->empresa=self::COLTRANS;
+            else{                
                 $image="ColtransSA.jpg";
             }
+
+
 			//Posición: a 1,6 cm del final
 			$this->SetY(16);
 			//Arial italic 8
@@ -63,19 +66,17 @@ class PDF extends FPDF {
 		if( $this->coltransFooter ){
 			//Número de página
 			$this->Cell(0,14,'Página '.$this->PageNo().'/{nb}',0,0,'C');
-			$this->Image(sfConfig::get('sf_web_dir').DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'pdf'.DIRECTORY_SEPARATOR.'pie_pagina.jpg', 18, 270, 40, 16, 'JPG');
+            if($this->idempresa==7){
+                $file = "pie_pagina_tplogistics.jpg";
+            }else{
+                $file = "pie_pagina.jpg";
+            }
+			$this->Image(sfConfig::get('sf_web_dir').DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'pdf'.DIRECTORY_SEPARATOR.$file, 18, 270, 40, 16, 'JPG');
 			if (!strlen(trim($this->sucursal)) == 0) {		
 			   $this->Image(sfConfig::get('sf_web_dir').DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'pdf'.DIRECTORY_SEPARATOR.'Dir'.$this->sucursal.'.jpg', 160, 270, 40, 18, 'JPG');
 			}
 		}
-      else if($this->colmasFooter)
-      {
-         $this->Cell(0,14,'Página '.$this->PageNo().'/{nb}',0,0,'C');
-			$this->Image( sfConfig::get('sf_web_dir').DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'pdf'.DIRECTORY_SEPARATOR.'pie_pagina_colmas.jpg', 18, 270, 30, 18, 'JPG');
-			if (!strlen(trim($this->sucursal)) == 0) {
-			   $this->Image(sfConfig::get('sf_web_dir').DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'pdf'.DIRECTORY_SEPARATOR.'Dir'.$this->sucursal.'_colmas.jpg', 160, 270, 40, 18, 'JPG');
-			}
-      }
+      
     }
     
     function SetWidths($w) {
