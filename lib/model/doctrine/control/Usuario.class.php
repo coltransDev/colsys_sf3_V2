@@ -50,30 +50,35 @@ class Usuario extends BaseUsuario
     }
 
     public function getFirmaHTML(){
+
+        $sucursal = $this->getSucursal();
+        $empresa = $sucursal->getEmpresa();
 		$resultado = "<strong>".Utils::replace(strtoupper($this->getCaNombre()))."</strong><br />";
-		$resultado .= $this->getCaCargo()."- COLTRANS S.A.<br />";
-		$sucursal = $this->getSucursal();
+		$resultado .= $this->getCaCargo()."- ".strtoupper($empresa->getCaNombre())."<br />";
+		
 		if( $sucursal ){
 			$resultado .= $sucursal->getCaDireccion()."<br />";
 			$resultado .= "Tel.: ".$sucursal->getCaTelefono()." ".$this->getCaExtension()."<br />";
 			$resultado .= "Fax.: ".$sucursal->getCaFax()."<br />";
 		}
-		$resultado .= Utils::replace($sucursal->getCaNombre())."- Colombia<br />";
-		$resultado .= "<a href=\"http://www.coltrans.com.co\">http://www.coltrans.com.co</a>";
+		$resultado .= Utils::replace($sucursal->getCaNombre())."- ".$empresa->getTrafico()->getCaNombre()."<br />";
+		$resultado .= "<a href=\"http://".$empresa->getCaUrl()."\">".$empresa->getCaUrl()."</a>";
 		return $resultado;
 	}
 
 	public function getFirma(){
+        $sucursal = $this->getSucursal();
+        $empresa = $sucursal->getEmpresa();
 		$resultado = Utils::replace(strtoupper($this->getCaNombre()))."\n";
-		$resultado .= $this->getCaCargo()."\nCOLTRANS S.A.\n";
-		$sucursal = $this->getSucursal();
+		$resultado .= $this->getCaCargo()."\n".strtoupper($empresa->getCaNombre()).".\n";
+		
 		if( $sucursal ){
 			$resultado .= $sucursal->getCaDireccion()."\n";
 			$resultado .= "Tel.: ".$sucursal->getCaTelefono()." ".$this->getCaExtension()."\n";
 			$resultado .= "Fax.: ".$sucursal->getCaFax()."\n";
 		}
-		$resultado .= $sucursal->getCaNombre()." - Colombia\n";
-		$resultado .= "http://www.coltrans.com.co";
+		$resultado .= $sucursal->getCaNombre()." - ".$empresa->getTrafico()->getCaNombre();
+		$resultado .= "http://".$empresa->getCaUrl();
 		return $resultado;
 	}
 
