@@ -68,7 +68,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
     echo "<FORM METHOD=post NAME='menuform' ACTION='inosea.php' >";
     echo "<TABLE WIDTH=450 BORDER=0 CELLSPACING=1 CELLPADDING=5>";
     echo "<TH COLSPAN=5 style='font-size: 12px; font-weight:bold;'><B>Ingrese un criterio para realizar las busqueda</TH>";
-    echo "<TH><IMG src='./graficos/new.gif' alt='Crear un Nuevo Registro' border=0 onclick='elegir(\"Adicionar\", 0);'></TH>";  // Botón para la creación de un Registro Nuevo
+    echo "<TH><IMG style='cursor:pointer' src='./graficos/new.gif' alt='Crear un Nuevo Registro' border=0 onclick='elegir(\"Adicionar\", 0);'></TH>";  // Botón para la creación de un Registro Nuevo
     echo "<TR>";
     echo "  <TH ROWSPAN=2>&nbsp;</TH>";
     echo "  <TD Class=listar ROWSPAN=2><B>Buscar por:</B><BR><SELECT NAME='opcion' SIZE=7>";
@@ -159,7 +159,7 @@ elseif (!isset($boton) and !isset($accion) and isset($criterio)) {
     echo "</TR>";
     echo "<TH>Referencia</TH>";
     echo "<TH>Linea</TH>";
-    echo "<TH><IMG src='./graficos/new.gif' alt='Crear un Nuevo Registro' border=0 onclick='elegir(\"Adicionar\", 0);'></TH>";  // Botón para la creación de un Registro Nuevo
+    echo "<TH><IMG style='cursor:pointer' src='./graficos/new.gif' alt='Crear un Nuevo Registro' border=0 onclick='elegir(\"Adicionar\", 0);'></TH>";  // Botón para la creación de un Registro Nuevo
     $ano_mem = '';
     while (!$rs->Eof() and !$rs->IsEmpty()) {                                                      // Lee la totalidad de los registros obtenidos en la instrucción Select
         if ($rs->Value('ca_ano') != $ano_mem) {
@@ -275,7 +275,7 @@ elseif (isset($boton)) {                                                       /
                 echo "</TR>";
                 echo "<TH></TH>";
                 echo "<TH COLSPAN=4>Descripción</TH>";
-                echo "<TH><IMG src='./graficos/new.gif' alt='Crear un Nuevo Registro' border=0 onclick='elegir(\"Adicionar\", 0, 0, 0);'></TH>";  // Botón para la creación de un Registro Nuevo
+                echo "<TH><IMG style='cursor:pointer' src='./graficos/new.gif' alt='Crear un Nuevo Registro' border=0 onclick='elegir(\"Adicionar\", 0, 0, 0);'></TH>";  // Botón para la creación de un Registro Nuevo
                 while (!$rs->Eof() and !$rs->IsEmpty()) {                                                      // Lee la totalidad de los registros obtenidos en la instrucción Select
                     if( $rs->Value('ca_provisional')=="t" ){                        
                         echo "<script type='text/javascript'>";
@@ -291,17 +291,18 @@ elseif (isset($boton)) {                                                       /
                     echo "  <TD Class=partir>Fecha de Registro :</TD>";
                     echo "  <TD style='font-size: 11px; text-align: center;' Class=listar>".$rs->Value('ca_fchreferencia')."</TD>";
                     echo "  <TD ROWSPAN=6 Class=listar style='text-align: center;'>";                                             // Botones para hacer Mantenimiento a la Tabla
-                    echo "    <IMG style='visibility: $visible' src='./graficos/edit.gif' alt='Editar el Registro' border=0 onclick='elegir(\"Modificar\", \"".$rs->Value('ca_referencia')."\", 0, 0);'>";
-                    echo "    <IMG style='visibility: $visible' src='./graficos/del.gif' alt='Eliminar el Registro' border=0 onclick='elegir(\"Eliminar\", \"".$rs->Value('ca_referencia')."\", 0, 0);'><BR><BR>";
+                    echo "    <IMG style='visibility: $visible;cursor:pointer' src='./graficos/edit.gif' alt='Editar el Registro' border=0 onclick='elegir(\"Modificar\", \"".$rs->Value('ca_referencia')."\", 0, 0);'>";
+                    echo "    <IMG style='visibility: $visible;cursor:pointer' src='./graficos/del.gif' alt='Eliminar el Registro' border=0 onclick='elegir(\"Eliminar\", \"".$rs->Value('ca_referencia')."\", 0, 0);'><BR><BR>";
                     if ($rs->value("ca_usumuisca") != ''){
                         $digitable = 'block'; // hidden
                         $fch_muisca = explode(" ",$rs->value("ca_fchmuisca"));
                         echo "<br /><b>Digitado:</b><br />".$rs->value("ca_usumuisca")."<br />".$fch_muisca[0]."<br />".$fch_muisca[1]."<br />";
+//echo "select count(*) as conta from control.tb_usuarios_perfil where ca_perfil = 'radicación-muisca-colsys' and ca_login='$usuario'";
+                        $tm =& DlRecordset::NewRecordset($conn);
                         if (!$tm->Open("select count(*) as conta from control.tb_usuarios_perfil where ca_perfil = 'radicación-muisca-colsys' and ca_login='$usuario'"))
                         {
-                            echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";     // Muestra el mensaje de error
-                            //echo "<script>document.location.href = 'inosea.php';</script>";
-
+                            echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+                            echo "<script>document.location.href = 'entrada.php';</script>";
                             exit;
                         }
                         else
@@ -311,13 +312,29 @@ elseif (isset($boton)) {                                                       /
                                 echo "<IMG  src='./graficos/digita_off.gif' alt='Digitación Muisca Ok Desbloquear' border=0 onclick='digitar(\"Digitacion_desbloqueo\", \"".$rs->Value('ca_referencia')."\", 0, 0);'><BR><BR>";
                             }
                         }
-                        
+
                     }else{
                         $digitable = 'block';
-                        echo "<IMG style='display: $digitable' src='./graficos/digita.gif' alt='Digitación Muisca Ok' border=0 onclick='digitar(\"Digitacion\", \"".$rs->Value('ca_referencia')."\", 0, 0);'><BR><BR>";
+                        $cl =& DlRecordset::NewRecordset($conn);                                   // Apuntador que permite manejar la conexiòn a la base de datos
+                        if (!$cl->Open("select count(*) as conta from tb_inoclientes_sea where ca_referencia = '".$rs->Value('ca_referencia')."' and (ca_usuactualizado is null or ca_usuactualizado='' )"))
+                        {
+                            echo "<script>alert(\"".addslashes($cl->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+                            echo "<script>document.location.href = 'entrada.php';</script>";
+                            exit;
+                        }
+                        if($cl->Value('conta')>0)
+                        {
+                            echo "<IMG style='display: $digitable;cursor:pointer;border:#FF0000 1px solid' src='./graficos/digita.gif' alt='Actualice la informacion de los hbls primero' border=0 >por favor actualice la informaci&oacute;n de los hbl<BR><BR>";
+                            
+                        }
+                        else
+                        {
+                            echo "<IMG style='display: $digitable;cursor:pointer' src='./graficos/digita.gif' alt='Digitación Muisca Ok' border=0 onclick='digitar(\"Digitacion\", \"".$rs->Value('ca_referencia')."\", 0, 0);'><BR><BR>";
+                        }
+                        
                     }
-                    echo "    <IMG style='' src='./graficos/muisca.gif' alt='Informacion Muisca' border=0 onclick='elegir(\"Muisca\", \"".$rs->Value('ca_referencia')."\", 0, 0);'><BR>";
-                    echo "    <BR><IMG  src='./graficos/fileopen.png' alt='Archivos adjuntos a la referencia' border=0 onclick='archivos( \"".$rs->Value('ca_referencia')."\", 0, 0);'><BR>";
+                    echo "    <IMG style='cursor:pointer' src='./graficos/muisca.gif' alt='Informacion Muisca' border=0 onclick='elegir(\"Muisca\", \"".$rs->Value('ca_referencia')."\", 0, 0);'><BR>";
+                    echo "    <BR><IMG style='cursor:pointer' src='./graficos/fileopen.png' alt='Archivos adjuntos a la referencia' border=0 onclick='archivos( \"".$rs->Value('ca_referencia')."\", 0, 0);'><BR>";
                     if ($dm->value("ca_usuenvio") != ''){
                         $fch_envio = explode(" ",$dm->value("ca_fchenvio"));
                         echo "<br /><b>Radicado:</b><br />".$dm->value("ca_usuenvio")."<br />".$fch_envio[0]."<br />".$fch_envio[1]."<br />";
@@ -420,7 +437,7 @@ elseif (isset($boton)) {                                                       /
                     echo "  <TD Class=listar style='font-weight:bold;'>Fecha Estim.Arribo:</TD>";
                     echo "  <TD Class=listar>".$rs->Value('ca_fcharribo')."</TD>";
                     echo "  <TD Class=listar style='text-align: center;'>";
-                    echo "    <IMG style='visibility: $visible;' src='./graficos/xml.gif'  alt='nerar Información para el Prevalidador' border=0 onclick='elegir(\"Prevalidador\", \"".$rs->Value('ca_referencia')."\", 0, 0);'><BR>";
+                    echo "    <IMG style='visibility: $visible;cursor:pointer' src='./graficos/xml.gif'  alt='nerar Información para el Prevalidador' border=0 onclick='elegir(\"Prevalidador\", \"".$rs->Value('ca_referencia')."\", 0, 0);'><BR>";
                     echo "  </TD>";
                     echo "</TR>";
                     echo "<TR HEIGHT=5>";
@@ -527,7 +544,7 @@ elseif (isset($boton)) {                                                       /
                     echo "  <TD Class=imprimir COLSPAN=6>&nbsp;</TD>";
                     echo "</TR>";
                     echo "<TH Class=titulo COLSPAN=5>Cuadro de Clientes de la Referencia</TH>";
-                    echo "<TH><IMG style='visibility: $visible;' src='./graficos/new.gif' alt='Crear un Nuevo Registro' border=0 onclick='elegir(\"AdicionarCl\",  \"".$rs->Value('ca_referencia')."\", 0, 0);'></TH>";  // Botón para la creación de un Registro Nuevo
+                    echo "<TH><IMG style='visibility: $visible;cursor:pointer' src='./graficos/new.gif' alt='Crear un Nuevo Registro' border=0 onclick='elegir(\"AdicionarCl\",  \"".$rs->Value('ca_referencia')."\", 0, 0);'></TH>";  // Botón para la creación de un Registro Nuevo
                     $cli_mem = 0;
                     $hbl_mem = 0;
                     $root = '/srv/www/digitalFile';
@@ -557,9 +574,9 @@ elseif (isset($boton)) {                                                       /
                             }
 
                             echo "  <TD ROWSPAN=2 WIDTH=80 Class=listar style='text-align: center;'>";                                              // Botones para hacer Mantenimiento a la Tabla
-                            echo "    <IMG style='visibility: $visible;' src='./graficos/edit.gif' alt='Editar el Registro' border=0 onclick='elegir(\"ModificarCl\", \"".$rs->Value('ca_referencia')."\", \"".$cl->Value('ca_idcliente')."\", \"".urlencode($cl->Value('ca_hbls'))."\");'>";
-                            echo "   <IMG style='visibility: $visible;' src='./graficos/del.gif'  alt='Eliminar el Registro' border=0 onclick='elegir(\"EliminarCl\", \"".$rs->Value('ca_referencia')."\", \"".$cl->Value('ca_idcliente')."\", \"".urlencode($cl->Value('ca_hbls'))."\");'><BR><BR>";
-                            echo "    <IMG style='visibility: $digitable;' src='./graficos/muisca.gif'  alt='Informacion Muisca' border=0 onclick='elegir(\"MuiscaCl\", \"".$rs->Value('ca_referencia')."\", \"".$cl->Value('ca_idcliente')."\", \"".urlencode($cl->Value('ca_hbls'))."\");'><BR>";
+                            echo "    <IMG style='visibility: $visible;cursor:pointer' src='./graficos/edit.gif' alt='Editar el Registro' border=0 onclick='elegir(\"ModificarCl\", \"".$rs->Value('ca_referencia')."\", \"".$cl->Value('ca_idcliente')."\", \"".urlencode($cl->Value('ca_hbls'))."\");'>";
+                            echo "   <IMG style='visibility: $visible;cursor:pointer' src='./graficos/del.gif'  alt='Eliminar el Registro' border=0 onclick='elegir(\"EliminarCl\", \"".$rs->Value('ca_referencia')."\", \"".$cl->Value('ca_idcliente')."\", \"".urlencode($cl->Value('ca_hbls'))."\");'><BR><BR>";
+                            echo "    <IMG style='visibility: $digitable;cursor:pointer' src='./graficos/muisca.gif'  alt='Informacion Muisca' border=0 onclick='elegir(\"MuiscaCl\", \"".$rs->Value('ca_referencia')."\", \"".$cl->Value('ca_idcliente')."\", \"".urlencode($cl->Value('ca_hbls'))."\");'><BR>";
                             echo "  </TD>";
                             echo "</TR>";
                             echo "<TR>";
@@ -575,7 +592,7 @@ elseif (isset($boton)) {                                                       /
                             echo "  <TD Class=listar><B>ID Proveedor:</B><BR>".$cl->Value('ca_idproveedor')."</TD>";
                             echo "  <TD Class=listar COLSPAN=2><B>Proveedor:</B><BR>".$cl->Value('ca_proveedor')."</TD>";
                             echo "  <TD Class=listar><B>Utilidad x Cliente:</B><BR>".number_format($utl_cbm * $cl->Value('ca_volumen'))."</TD>";
-                            echo "  <TD Class=listar><B>Hbl Final: <IMG src='./graficos/fileopen.png' alt='Agregar Copia de Hbl Definitivo' border=0 onclick='javascript:subir_hbl(\"".$cl->Value('ca_referencia')."\",\"".$cl->Value('ca_hbls')."\")'>";
+                            echo "  <TD Class=listar><B>Hbl Final: <IMG style='cursor:pointer' src='./graficos/fileopen.png' alt='Agregar Copia de Hbl Definitivo' border=0 onclick='javascript:subir_hbl(\"".$cl->Value('ca_referencia')."\",\"".$cl->Value('ca_hbls')."\")'>";
                             $i=1;
                             foreach($docTrans as $docTran){
                                 echo "<br /><a href='/gestDocumental/verArchivo?folder=".base64_encode("Referencias/".$cl->Value('ca_referencia')."/docTrans/".$cl->Value('ca_hbls'))."&idarchivo=".base64_encode($docTran['basename'])."'><IMG src='./graficos/image.gif' alt='".$docTran['filename']."' border=0> Doc. ".$i++."</img></a>";
@@ -625,8 +642,8 @@ elseif (isset($boton)) {                                                       /
                     echo "  <TD Class=imprimir COLSPAN=6>&nbsp;</TD>";
                     echo "</TR>";
                     echo "<TH Class=titulo COLSPAN=5>Cuadro de Costos de la Referencia</TH>";
-                    echo "<TH><IMG style='visibility: $visible;' src='./graficos/new.gif' alt='Crear un Nuevo Registro' border=0 onclick='elegir(\"AdicionarCs\",  \"".$rs->Value('ca_referencia')."\", 0);'>";  // Botón para la creación de un Registro Nuevo
-                    echo "<IMG src='./graficos/post.gif' onClick=\"document.location='/ids/formEventos?referencia=".$rs->Value('ca_referencia')."'\" title='Eventos Proveedores' ></TH>";
+                    echo "<TH><IMG style='visibility: $visible;cursor:pointer' src='./graficos/new.gif' alt='Crear un Nuevo Registro' border=0 onclick='elegir(\"AdicionarCs\",  \"".$rs->Value('ca_referencia')."\", 0);'>";  // Botón para la creación de un Registro Nuevo
+                    echo "<IMG style='cursor:pointer' src='./graficos/post.gif' onClick=\"document.location='/ids/formEventos?referencia=".$rs->Value('ca_referencia')."'\" title='Eventos Proveedores' ></TH>";
                     while (!$cs->Eof() and !$cs->IsEmpty()) {                                      // Lee la totalidad de los registros obtenidos en la instrucción Select
                         echo "<TR>";
                         echo "<TR HEIGHT=5>";
@@ -636,8 +653,8 @@ elseif (isset($boton)) {                                                       /
                         echo "  <TD Class=listar><B>Factura:</B><BR>".$cs->Value('ca_factura')."</TD>";
                         echo "  <TD Class=listar COLSPAN=2><B>Proveedor:</B><BR>".$cs->Value('ca_proveedor')."</TD>";
                         echo "  <TD ROWSPAN=2 WIDTH=80 Class=listar>";                                              // Botones para hacer Mantenimiento a la Tabla
-                        echo "    <IMG style='visibility: $visible;' src='./graficos/edit.gif' alt='Editar el Registro' border=0 onclick='elegir(\"ModificarCs\", \"".$cs->Value('ca_referencia')."\", \"".$cs->Value('ca_oid')."\");'>";
-                        echo "    <IMG style='visibility: $visible;' src='./graficos/del.gif'  alt='Eliminar el Registro' border=0 onclick='elegir(\"EliminarCs\", \"".$cs->Value('ca_referencia')."\", \"".$cs->Value('ca_oid')."\");'>";
+                        echo "    <IMG style='visibility: $visible;cursor:pointer' src='./graficos/edit.gif' alt='Editar el Registro' border=0 onclick='elegir(\"ModificarCs\", \"".$cs->Value('ca_referencia')."\", \"".$cs->Value('ca_oid')."\");'>";
+                        echo "    <IMG style='visibility: $visible;cursor:pointer' src='./graficos/del.gif'  alt='Eliminar el Registro' border=0 onclick='elegir(\"EliminarCs\", \"".$cs->Value('ca_referencia')."\", \"".$cs->Value('ca_oid')."\");'>";
                         echo "  </TD>";
                         echo "</TR>";
                         $cos_mem = $cs->Value('ca_neto') * $cs->Value('ca_tcambio');
@@ -668,7 +685,7 @@ elseif (isset($boton)) {                                                       /
                 echo "<TH WIDTH=80>Fecha</TH>";
                 echo "<TH>Tipo</TH>";
                 echo "<TH WIDTH=300 COLSPAN=3>Asunto</TH>";
-                echo "<TH><IMG src='./graficos/new.gif' alt='Crear un Nuevo Registro' border=0 onclick='elegir(\"Evento\", \"".$rs->Value('ca_referencia')."\");'></TH>";  // Botón para la creación de un Registro Nuevo
+                echo "<TH><IMG style='cursor:pointer' src='./graficos/new.gif' alt='Crear un Nuevo Registro' border=0 onclick='elegir(\"Evento\", \"".$rs->Value('ca_referencia')."\");'></TH>";  // Botón para la creación de un Registro Nuevo
                 $eve_ant = 0;
                 while (!$tm->Eof()) {
                     if ($eve_ant != $tm->Value('ca_idevento_ant')) {
@@ -684,8 +701,8 @@ elseif (isset($boton)) {                                                       /
                     echo "  <TD Class=listar style='letter-spacing:-1px;'>".$tm->Value('ca_usuario');
                     if ($nivel >= 4) {
                         echo "  <BR>";
-                        echo "  <IMG src='./graficos/edit.gif' alt='Editar el Registro' border=0 onclick='elegir(\"Evento_Mod\", \"".$tm->Value('ca_oid')."\");'>";
-                        echo "  <IMG src='./graficos/del.gif'  alt='Eliminar el Registro' border=0 onclick='elegir(\"Evento_Eli\", \"".$tm->Value('ca_oid')."\");'>";
+                        echo "  <IMG style='cursor:pointer' src='./graficos/edit.gif' alt='Editar el Registro' border=0 onclick='elegir(\"Evento_Mod\", \"".$tm->Value('ca_oid')."\");'>";
+                        echo "  <IMG style='cursor:pointer' src='./graficos/del.gif'  alt='Eliminar el Registro' border=0 onclick='elegir(\"Evento_Eli\", \"".$tm->Value('ca_oid')."\");'>";
                     }
                     echo "  </TD>";
                     echo "</TR>";
