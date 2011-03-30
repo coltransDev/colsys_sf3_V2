@@ -12,10 +12,10 @@
 class reportesNegActions extends sfActions
 {
     const RUTINA = 87;
-    const RUTINA_AEREO = 15;
-    const RUTINA_MARITIMO = 15;
-    const RUTINA_ADUANA = 15;
-    const RUTINA_EXPO = 15;
+    const RUTINA_AEREO = 87;
+    const RUTINA_MARITIMO = 87;
+    const RUTINA_ADUANA = 87;
+    const RUTINA_EXPO = 87;
 
     public function getNivel( ){
         $this->modo = $this->getRequestParameter("modo");
@@ -218,8 +218,8 @@ class reportesNegActions extends sfActions
         $this->cadena = trim($this->getRequestParameter("cadena"));
         $this->idimpo =   $this->getRequestParameter("idimpo");
 
-        $fechaInicial = $this->getRequestParameter("fechaInicial");
-        $fechaFinal = $this->getRequestParameter("fechaFinal");
+        $this->fechaInicial = $this->getRequestParameter("fechaInicial");
+        $this->fechaFinal = $this->getRequestParameter("fechaFinal");
 
         $this->seguro = $this->getRequestParameter("seguro");
         $this->colmas = $this->getRequestParameter("colmas");
@@ -232,7 +232,7 @@ class reportesNegActions extends sfActions
             if ($opcion == 'ca_login') {
                 $condicion= " and $opcion = '".$this->getUser()->getUserId()."'"; }
         }
-
+        
         if($this->fechaInicial!="" && $this->fechaFinal!="")
         {
             $condicion.=" and ca_fchreporte between '".Utils::parseDate($this->fechaInicial)."' and '".Utils::parseDate($this->fechaFinal)."'";
@@ -675,6 +675,7 @@ class reportesNegActions extends sfActions
             if($request->getParameter("idagente") && $request->getParameter("idagente")!="")
             {
                 $reporte->setCaIdagente($request->getParameter("idagente"));
+                $reporte->setCaIdsucursalagente(($request->getParameter("idsucursalagente"))?$request->getParameter("idsucursalagente"):"0");
             }
             else if($request->getParameter("impoexpo")!=constantes::EXPO && utf8_decode($request->getParameter("impoexpo"))!=Constantes::EXPO)
             {
@@ -683,6 +684,7 @@ class reportesNegActions extends sfActions
             }
             else{
                 $reporte->setCaIdagente(null);
+                $reporte->setCaIdsucursalagente(null);
             }
             
 
@@ -810,7 +812,7 @@ class reportesNegActions extends sfActions
             else
             {
                 $errors["chkcontacto_0"]="Debe seleccionar almenos un contacto para informar";
-                $errors["contacto_0"]="Debe seleccionar almeno un contacto para informar";
+                $errors["contacto_0"]="Debe seleccionar almenos un contacto para informar";
                 $texto.="contacto de Informaciones<br>";
             }
 
@@ -825,10 +827,14 @@ class reportesNegActions extends sfActions
             {
                 $reporte->setCaInformarRepr( (($request->getParameter("ca_informar_repr")=="on")?"Sí":"No") );
             }
+            else
+            {
+                $reporte->setCaInformarRepr("No") ;
+            }
 
             if($request->getParameter("consig") )
             {
-                if(($reporte->getCaImpoexpo()==constantes::IMPO || $reporte->getCaImpoexpo()==constantes::TRIANGULACION) && $request->getParameter("consig")>4)
+                if(($reporte->getCaImpoexpo()==constantes::IMPO || $reporte->getCaImpoexpo()==constantes::TRIANGULACION) && $request->getParameter("consig")>4 )
                 {
                     $reporte->setCaIdconsignatario($request->getParameter("consig"));
                     if($request->getParameter("continuacion")== "OTM")
@@ -993,7 +999,7 @@ class reportesNegActions extends sfActions
                 else
                     $reporte->setCaContinuacionConf(null);
             }
-            else if($reporte->getCaContinuacion()=="OTM")
+            else if($reporte->getCaContinuacion()=="OTM" && $reporte->getCaImpoexpo()!=constantes::OTMDTA)
             {
                 $errors["ca_continuacion_conf"]="Debe asignar un grupo de confirmaci&oacute;n ";
                 $texto.="Confirmaci&oacute;n OTM<br>";
@@ -1299,6 +1305,14 @@ class reportesNegActions extends sfActions
                         $repExpo->setCaNumbl(null);
                     }
 
+                    if($request->getParameter("ca_anticipo") && $request->getParameter("ca_anticipo")=="on"  )
+                    {
+                        $repExpo->setCaAnticipo("Sí");
+                    }else
+                    {
+                        $repExpo->setCaAnticipo("No");
+                    }
+
                     $repExpo->save();
 
                 }
@@ -1531,7 +1545,17 @@ class reportesNegActions extends sfActions
                     $cc.= $request->getParameter("contacto_".$i);
                 }
             }
+            if($request->getParameter("chkcontacto_fijos".$i)=="on")
+            {
+                if(trim($request->getParameter("contacto_fijos".$i))!="")
+                {
+                    $ca_confirmar_clie.=($ca_confirmar_clie!="")?",":"";
+                    $ca_confirmar_clie.=$request->getParameter("contacto_fijos".$i);
+                }
+            }
         }
+
+
 
         if($ca_confirmar_clie!="" )
         {
@@ -1619,20 +1643,22 @@ class reportesNegActions extends sfActions
 
             $mail = new Email();
             $asunto=$request->getParameter("asunto")." - ".$reporte->getCaConsecutivo();
-             if( isset( $_FILES["archivo"] )){
+             if( isset( $_FILES["archivo"] ) ){
                 $archivo = $_FILES["archivo"];
 
-                $directorio = $mail->getDirectorio();
+                if($archivo["name"])
+                {
+                    $directorio = $mail->getDirectorio();
 
-                if( !is_dir($directorio) ){
-                    mkdir($directorio, 0777, true);
+                    if( !is_dir($directorio) ){
+                        mkdir($directorio, 0777, true);
+                    }
+                    $adjunto=$directorio.DIRECTORY_SEPARATOR."Rep".$reporte->getCaIdreporte()."-".$archivo["name"];
+                    move_uploaded_file( $archivo["tmp_name"], $adjunto);
+
+                    $mail->setCaAttachment("Attachements/Rep".$reporte->getCaIdreporte()."-".$archivo["name"]);
                 }
-                $adjunto=$directorio.DIRECTORY_SEPARATOR."Rep".$reporte->getCaIdreporte()."-".$archivo["name"];
-                move_uploaded_file( $archivo["tmp_name"], $adjunto);
-
-                $mail->setCaAttachment("Attachements/Rep".$reporte->getCaIdreporte()."-".$archivo["name"]);
             }
-           
 
             $mail->setCaSubject($asunto);
             $mail->setCaIdcaso($reporte->getCaIdreporte());
@@ -2081,6 +2107,11 @@ color="#000000";
             $data["idagente"]=$reporte->getCaIdagente();
             $data["agente"]=utf8_encode(/*$ids->getIdsSucursal()->getCiudad()->getCaCiudad() .*/" ".$ids->getCaNombre());
 
+            $idsSucursal=$reporte->getIdsSucursal();
+            $data["idsucursalagente"]=$idsSucursal->getCaIdsucursal();
+            $data["sucursalagente"]=utf8_encode($idsSucursal->getCiudad()->getCaCiudad());
+
+
             $data["idcliente"]=$reporte->getContacto()->getCaIdcliente();
             $data["cliente"]=utf8_encode($reporte->getContacto()->getCliente()->getCaCompania());
 
@@ -2093,7 +2124,7 @@ color="#000000";
             if($clienteFac)
             {
                 $data["idclientefac"]=$clienteFac->getCaIdcliente();
-                $data["clientefac"]=$clienteFac->getCaCompania();                
+                $data["clientefac"]=utf8_encode($clienteFac->getCaCompania());
             }
             else
             {
@@ -2105,7 +2136,7 @@ color="#000000";
             if($clienteAg)
             {
                 $data["clienteag"]=$clienteAg->getCaCompania();
-                $data["idclienteag"]=$clienteAg->getCaIdcliente();
+                $data["idclienteag"]=utf8_encode($clienteAg->getCaIdcliente());
             }
             else
             {
@@ -2117,7 +2148,7 @@ color="#000000";
             if($clienteOtro)
             {
                 $data["clienteotro"]=$clienteOtro->getCaCompania();
-                $data["idclienteotro"]=$clienteOtro->getCaIdcliente();
+                $data["idclienteotro"]=utf8_encode($clienteOtro->getCaIdcliente());
             }
             else
             {
@@ -2277,7 +2308,8 @@ color="#000000";
                 $data["notify"]="";
             
             $data["idrepresentante"]=$reporte->getCaIdrepresentante();
-            $data["representante"]=$reporte->getRepresentante();
+            $data["representante"]=($reporte->getRepresentante())?$reporte->getRepresentante()->getCaNombre():"";
+            $data["ca_informar_repr"]=$reporte->getCaInformarRepr();
 
             $repExpo=$reporte->getRepExpo();
 
@@ -2384,7 +2416,7 @@ color="#000000";
                 $row["cobrar_tar"] = $recargo->getCaCobrarTar();
                 $row["cobrar_min"] = $recargo->getCaCobrarMin();
                 $row["cobrar_idm"] = $recargo->getCaIdmoneda();
-                $row["observaciones"] = $recargo->getCaDetalles();
+                $row["observaciones"] = utf8_encode($recargo->getCaDetalles());
                 $row['tipo']="recargo";
                 $row['orden']=$tarifa->getConcepto()->getCaConcepto()."-".$recargo->getTipoRecargo()->getCaRecargo();
                 $conceptos[] = $row;
@@ -2615,7 +2647,7 @@ color="#000000";
 
             if( $request->getParameter("observaciones")!==null ){
                 //if( $request->getParameter("observaciones") ){
-                    $tarifa->setCaDetalles( $request->getParameter("observaciones") );
+                    $tarifa->setCaDetalles( utf8_decode($request->getParameter("observaciones")) );
                 //}else{
                 //    $tarifa->setCaDetalles( null );
                 //}
@@ -2631,15 +2663,17 @@ color="#000000";
             $tarifa->save();
 
             $this->responseArray["success"]=true;
-        }       
-        $reporte = Doctrine::getTable("Reporte")->find( $idreporte );
-        $reporte->setCaUsuactualizado($this->getUser()->getUserId());
-        $reporte->setCaFchactualizado(date('Y-m-d H:i:s'));
-        $reporte->save();
-
+        }
+        $this->permiso = $this->getUser()->getNivelAcceso( reportesNegActions::RUTINA );
+        if($this->permiso<4)
+        {
+            $reporte = Doctrine::getTable("Reporte")->find( $idreporte );
+            $reporte->setCaUsuactualizado($this->getUser()->getUserId());
+            $reporte->setCaFchactualizado(date('Y-m-d H:i:s'));
+            $reporte->save();
+        }
         $this->setTemplate("responseTemplate");
     }
-
 
     /*
     * Datos para el panel de conceptos
@@ -3420,5 +3454,4 @@ color="#000000";
         $this->setTemplate("responseTemplate");
     }
 }
-
 ?>
