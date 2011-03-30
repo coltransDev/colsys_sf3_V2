@@ -103,7 +103,7 @@ Ext.onReady(function(){
 
 <div id="center1" class="x-hide-display">
     <br />
-	<h3>&nbsp;&nbsp;&nbsp;Bienvenido a la Base de Datos de conocimiento. </h3><br />
+	<h3>&nbsp;&nbsp;&nbsp;Bienvenido a la Base de Datos de activos. </h3><br />
 	<hr />
 	&nbsp;&nbsp;&nbsp;Para comenzar a trabajar por favor seleccione una opci&oacute;n del panel lateral.
 
@@ -216,21 +216,21 @@ Ext.onReady(function(){
 
 <div style="height:100%"></div>
 <script type="text/javascript">
-    /*Ext.onReady(function(){
-            var newComponent = new PanelReading({
-                                                             id: 'asdad',
-                                                             closable: true,
-                                                             idcategory: 2,
-                                                             title: 'Panel prueba'
-                                                            });
+    Ext.onReady(function(){
+       /* var newComponent = new PanelReading({
+                                             id: 'asdad',
+                                             closable: true,
+                                             idcategory: 11,
+                                             title: 'Panel prueba'
+                                            });
                     Ext.getCmp('tab-panel').add(newComponent);
                     Ext.getCmp('tab-panel').setActiveTab(newComponent);
 
 
         Ext.getCmp('tab-panel').add(newComponent);
-        Ext.getCmp('tab-panel').setActiveTab(newComponent);
+        Ext.getCmp('tab-panel').setActiveTab(newComponent);*/
 
-    });*/
+    });
 
 
 </script>

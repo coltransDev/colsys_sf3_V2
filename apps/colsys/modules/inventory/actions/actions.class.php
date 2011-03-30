@@ -63,7 +63,11 @@ class inventoryActions extends sfActions
         $this->forward404Unless( $idcategory );
         
         $q  = Doctrine::getTable("InvActivo")
-                                      ->createQuery("a");
+                        ->createQuery("a")
+                        ->leftJoin("a.InvAsignacion as")
+                        ->leftJoin("as.Usuario u")                        
+                        ->leftJoin("u.Sucursal s")
+                        ->leftJoin("s.Empresa e");
                                       
         $q->addWhere("a.ca_idcategory = ?", $idcategory );
         //$q->setHydrationMode(Doctrine::HYDRATE_SCALAR);
@@ -84,22 +88,27 @@ class inventoryActions extends sfActions
             $row["optica"]=utf8_encode($activo->getCaOptica());
             $row["serial"]=utf8_encode($activo->getCaSerial());
             $row["noinventario"]=utf8_encode($activo->getCaNoinventario());
-            $row["ubicacion"]=utf8_encode($activo->getCaUbicacion());
+            
             $row["fchcompra"]=utf8_encode($activo->getCaFchcompra());
             $row["observaciones"]=utf8_encode($activo->getCaObservaciones());
             $row["contrato"]=utf8_encode($activo->getCaContrato());
             $row["folder"] = utf8_encode(base64_encode($activo->getDirectorioBase()));
             $row["ipaddress"]=utf8_encode($activo->getCaIpaddress());
-            $row["empresa"]=utf8_encode($activo->getCaEmpresa());
+            
             $row["proveedor"]=utf8_encode($activo->getCaProveedor());
             $row["factura"]=utf8_encode($activo->getCaFactura());
-            $row["reposicion"]=utf8_encode($activo->getCaReposicion());
+            $row["reposicion"]=$activo->getCaReposicion()?utf8_encode(round($activo->getCaReposicion(),2)):"";
             $row["so"]=utf8_encode($activo->getCaSo());
             $row["so_serial"]=utf8_encode($activo->getCaSoSerial());
             $row["so_office"]=utf8_encode($activo->getCaOffice());
             $row["so_office_serial"]=utf8_encode($activo->getCaOfficeSerial());
-            $row["asignadoa"] = utf8_encode($activo->getCaAsignadoa());
-            $row["asignadoaNombre"] = utf8_encode($activo->getUsuario()->getCaNombre());
+            $row["mantenimiento"] = $activo->getCaMantenimiento();
+            if( $activo->getCaAsignadoa() ){
+                $row["asignadoa"] = utf8_encode($activo->getCaAsignadoa());
+                $row["asignadoaNombre"] = utf8_encode($activo->getUsuario()->getCaNombre());
+                $row["ubicacion"]=utf8_encode($activo->getUsuario()->getCaDepartamento());
+                $row["empresa"]=utf8_encode($activo->getUsuario()->getSucursal()->getEmpresa()->getCaNombre());
+            }
             $result[]=$row;
         }
 
@@ -116,16 +125,14 @@ class inventoryActions extends sfActions
         $idactivo = $request->getParameter("idactivo");
         $this->forward404Unless( $idactivo );
 
+        $copy = $request->getParameter("copy");
+
         $activo = Doctrine::getTable("InvActivo")->find( $idactivo );
         $this->forward404Unless( $activo );
 
 
-        $data = array();
-        $data["identificador"] = $activo->getCaIdentificador();
-        $data["idactivo"] = $activo->getCaIdactivo();
-        $data["idcategory"] = $activo->getCaIdcategory();
-        $data["noinventario"] = $activo->getCaNoinventario();
-        $data["serial"] = $activo->getCaSerial();
+        $data = array();  
+        $data["idcategory"] = $activo->getCaIdcategory();        
         $data["marca"] = utf8_encode($activo->getCaMarca());
         $data["modelo"] = utf8_encode($activo->getCaModelo());
         $data["version"] = utf8_encode($activo->getCaVersion());
@@ -134,21 +141,33 @@ class inventoryActions extends sfActions
         $data["memoria"] = utf8_encode($activo->getCaMemoria());
         $data["disco"] = utf8_encode($activo->getCaDisco());
         $data["optica"] = utf8_encode($activo->getCaOptica());
-        $data["so"] = utf8_encode($activo->getCaSo());        
-        $data["so_serial"]=utf8_encode($activo->getCaSoSerial());
-        $data["office"]=utf8_encode($activo->getCaOffice());
-        $data["office_serial"]=utf8_encode($activo->getCaOfficeSerial());
+        $data["so"] = utf8_encode($activo->getCaSo());                
+        $data["office"]=utf8_encode($activo->getCaOffice());        
         $data["ubicacion"] = utf8_encode($activo->getCaUbicacion());
         $data["empresa"] = utf8_encode($activo->getCaEmpresa());
         $data["proveedor"] = utf8_encode($activo->getCaProveedor());
         $data["factura"] = utf8_encode($activo->getCaFactura());
         $data["fchcompra"] = utf8_encode($activo->getCaFchcompra());
-        $data["reposicion"] = utf8_encode($activo->getCaReposicion());
+        $data["reposicion"] = $activo->getCaReposicion()?utf8_encode(round($activo->getCaReposicion(),2)):"";
         $data["contrato"] = utf8_encode($activo->getCaContrato());
         $data["observaciones"] = utf8_encode($activo->getCaObservaciones());
-        $data["asignadoa"] = utf8_encode($activo->getCaAsignadoa());
-        $data["asignadoaNombre"] = utf8_encode($activo->getUsuario()->getCaNombre());
-        
+        $data["software"] = utf8_encode($activo->getCaSoftware());
+        $data["mantenimiento"] = $activo->getCaMantenimiento();
+
+        if( !$copy ){
+            $data["idactivo"] = $activo->getCaIdactivo();
+            $data["identificador"] = $activo->getCaIdentificador();
+            $data["noinventario"] = $activo->getCaNoinventario();
+            $data["serial"] = $activo->getCaSerial();
+            $data["so_serial"]=utf8_encode($activo->getCaSoSerial());
+            $data["office_serial"]=utf8_encode($activo->getCaOfficeSerial());
+            $data["asignadoa"] = utf8_encode($activo->getCaAsignadoa());
+            $data["asignadoaNombre"] = utf8_encode($activo->getUsuario()->getCaNombre());
+        }else{
+            $data["asignadoa"] = "";
+            $data["asignadoaNombre"] = "";
+        }
+
         $this->responseArray = array("success"=>true, "data"=>$data);
 
     
@@ -178,7 +197,11 @@ class inventoryActions extends sfActions
         
         $activo->setCaIdcategory( $request->getParameter("idcategory") );
         $activo->setCaNoinventario( strtoupper($request->getParameter("noinventario")) );
-        $activo->setCaIdentificador( utf8_decode(strtoupper($request->getParameter("identificador"))) );
+        if( $request->getParameter("identificador") ){
+            $activo->setCaIdentificador( utf8_decode(strtoupper($request->getParameter("identificador"))) );
+        }else{
+            $activo->setCaIdentificador( null );
+        }
         $activo->setCaSerial( $request->getParameter("serial") );
         $activo->setCaMarca( utf8_decode($request->getParameter("marca")) );
         $activo->setCaModelo( utf8_decode($request->getParameter("modelo")) );
@@ -196,6 +219,7 @@ class inventoryActions extends sfActions
         $activo->setCaEmpresa( utf8_decode($request->getParameter("empresa")) );
         $activo->setCaProveedor( utf8_decode($request->getParameter("proveedor")) );
         $activo->setCaFactura( utf8_decode($request->getParameter("factura")) );
+        $activo->setCaSoftware( utf8_decode($request->getParameter("software")) );
         if( $request->getParameter("asignadoa") ){
             $activo->setCaAsignadoa( $request->getParameter("asignadoa") );
         }
@@ -223,6 +247,12 @@ class inventoryActions extends sfActions
             $activo->setCaObservaciones( null);
         }
 
+        if( $request->getParameter("mantenimiento") ){
+            $activo->setCaMantenimiento( $request->getParameter("mantenimiento") );
+        }else{
+            $activo->setCaMantenimiento( null);
+        }
+
 
         try{
             $activo->save();
@@ -231,6 +261,29 @@ class inventoryActions extends sfActions
             $this->responseArray = array("success"=>false, "errorInfo"=>$e->getMessage());
         }
         
+        $this->setTemplate("responseTemplate");
+    }
+
+    public function executeEliminarActivo(sfWebRequest $request){
+        $idactivo = $request->getParameter("idactivo");
+
+        if( $idactivo ){
+            $activo = Doctrine::getTable("InvActivo")->find($idactivo);
+            $this->forward404Unless( $activo );
+
+            try{
+                $activo->delete();
+                $this->responseArray = array("success"=>true, "id"=>$request->getParameter("id"));
+            }catch( Exception $e ){
+                $this->responseArray = array("success"=>false, "errorInfo"=>$e->getMessage());
+            }
+
+
+        }else{
+            $this->responseArray = array("success"=>false);
+        }
+
+
         $this->setTemplate("responseTemplate");
     }
     

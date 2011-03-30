@@ -68,6 +68,8 @@ InvActivo:
     ca_office_serial: string
     ca_empresa: string
     ca_asignadoa: string
+    ca_software: string
+    ca_mantenimiento: string
     ca_fchcreado: timestamp
     ca_usucreado: string
     ca_fchactualizado: timestamp

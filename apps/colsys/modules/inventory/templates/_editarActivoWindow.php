@@ -18,21 +18,15 @@ EditarActivoWindow = function( config ) {
     this.ctxRecord = null;
 
     
-    this.items = [
-        new EditarActivoPropiedadesPanel({idactivo: this.idactivo,
-                                          idcategory: this.idcategory,
-                                          gridopener: this.gridopener
-                                         })
-    ];
+       
 
-    
-
-    this.subpanel = new Ext.TabPanel({
+    this.subpanel = new EditarActivoPropiedadesPanel({
        readOnly: this.readOnly,
        idactivo: this.idactivo,
        idcategory: this.idcategory,
-       activeTab: 0,
-       items: this.items
+       gridopener: this.gridopener,
+       items: this.items,
+       copy: this.copy
     });
     
    
