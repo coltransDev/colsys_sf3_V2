@@ -5055,6 +5055,29 @@ elseif (isset($accion)) {                                                      /
                     $address.= $us->Value('ca_email').",";
                     $us->MoveNext();
                 }
+                
+                $query="select us.ca_email 
+                    from control.tb_usuarios_perfil up
+                    inner join control.tb_usuarios us on us.ca_login = up.ca_login
+                    where up.ca_perfil ='cordinador-de-otm' and us.ca_idsucursal in (
+                        select distinct(u.ca_idsucursal) 
+                            from tb_inoclientes_sea  c
+                            inner join tb_reportes r on r.ca_idreporte=c.ca_idreporte
+                            inner join control.tb_usuarios u on r.ca_usucreado=u.ca_login
+                            where 
+                            c.ca_referencia='".$id."' and c.ca_continuacion <>'N/A'
+                            )";
+                if (!$us->Open("$query")) {
+                    echo "<script>alert(\"".addslashes($us->mErrMsg)."\");</script>";
+                    echo "<script>document.location.href = 'cotizaciones.php';</script>";
+                    exit;
+                   }
+                
+                while (!$us->Eof() and !$us->IsEmpty()) {
+                    $address.= $us->Value('ca_email').",";
+                    $us->MoveNext();
+                }
+
                 $address = substr($address,0,strlen($address)-1);
                 if (!$rs->Open("insert into tb_emails (ca_usuenvio, ca_tipo, ca_from, ca_fromname, ca_cc, ca_replyto, ca_address, ca_subject, ca_bodyhtml) values ('$usuario','Ok Digitación Muisca','$from', '$fromName', '$from', '$from', '$address','$subject','$bodyhtml')")) {
                     echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
