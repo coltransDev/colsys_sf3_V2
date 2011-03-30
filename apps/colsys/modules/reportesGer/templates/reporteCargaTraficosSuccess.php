@@ -5,7 +5,7 @@ include_component("widgets", "widgetCiudad");
 ?>
 <div align="center" >
 <br />
-<h3> Reporte de carga traficos </h3>
+<h3> Reporte de carga tráficos </h3>
 <br />
 <?=print_r($cargas)?>
 <br />
@@ -30,6 +30,7 @@ var tabs = new Ext.FormPanel({
 			defaultType: 'textfield',
 			id: 'estadisticas',
             labelWidth: 75,
+
 			items: [
                     {
                         xtype:'hidden',
@@ -151,7 +152,7 @@ if( $destino ){
 <br />
 </div>
 <table class="tableList" width="900px" border="1" id="mainTable" align="center">
-    <tr><td>Fecha</td><td>Referencia</td><td>Origen</td><td>Destino</td><td>Linea</td><td>Contenedores</td><td>Teus</td><td>Piezas</td><td>Peso</td><td>Volumen</td></tr>
+    <tr><td>Fecha<br>Emabrque</td><td>Fecha<br>Referencia</td><td>Referencia</td><td>Origen</td><td>Destino</td><td>Linea</td><td>Contenedores</td><td>Teus</td><td>Piezas</td><td>Peso</td><td>Volumen</td></tr>
 <?
     $ref="";
     $tvolumen=0;
@@ -182,6 +183,7 @@ if( $destino ){
         }
 ?>
     <tr>
+        <td><?=$r["ca_fchembarque"]?></td>
         <td><?=$r["ca_fchreferencia"]?></td>
         <td><?=$r["ca_referencia"]?></td>
         <td><?=$r["ori_ca_ciudad"]?></td>
@@ -197,7 +199,7 @@ if( $destino ){
     $ref=$r["ca_referencia"];
     }
 ?>
-    <tr><td colspan="6">Totales</td>
+    <tr><td colspan="7">Totales</td>
         <td align="right"><?=$teus?></td>
         <td align="right"><?=number_format($tpiezas,0)?></td><td align="right"><?=number_format($tpeso,2)?></td><td align="right"><?=number_format($tvolumen,2)?></td></tr>
 
