@@ -280,6 +280,26 @@ class pmComponents extends sfComponents
     }
 
 
+    /*
+	* Muestra las referencias que el usuario ha buscado
+	* @author: Andres Botero
+	*/
+	public function executeWidgetAsignaciones(){
+
+    }
+
+    public function executeWidgetGrupos(){
+        $this->grupos = Doctrine::getTable("HdeskGroup")
+                              ->createQuery("g")
+                              ->select("g.ca_idgroup, g.ca_name")
+                              ->distinct()
+                              ->addOrderBy("g.ca_idgroup")
+                              ->where("g.ca_iddepartament=13")
+                              ->execute();
+
+    }
+
+
 	
 	
 }
