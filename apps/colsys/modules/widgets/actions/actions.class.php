@@ -452,7 +452,7 @@ class widgetsActions extends sfActions
 
     public function executeListaClientesJSON()
     {
-		$criterio =  $this->getRequestParameter("query");
+		$criterio = utf8_decode( $this->getRequestParameter("query") );
         $tipo   =   $this->getRequestParameter("tipo");
         if( $criterio ){
             $q = Doctrine_Query::create()
