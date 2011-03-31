@@ -57,7 +57,8 @@ EditarTicketWindow = function( config ) {
         autoScroll: true,
         closeAction: 'close',
         buttons: this.buttons,
-        items: this.subpanel
+        items: this.subpanel,
+        onEsc: Ext.emptyFn
     });
 
     this.addEvents({add:true});
