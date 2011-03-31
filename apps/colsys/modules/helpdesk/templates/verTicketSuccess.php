@@ -208,7 +208,7 @@ $ticket = $sf_data->getRaw("ticket");
 		<div class="boxText">
 			<div id="coments">
 			<?			
-			include_component("helpdesk", "listaRespuestasTicket", array("idticket"=>$ticket->getCaIdticket()) );
+			include_component("pm", "listaRespuestasTicket", array("idticket"=>$ticket->getCaIdticket(), "format"=>"email") );
 			?>			  
 			</div>
 			<?

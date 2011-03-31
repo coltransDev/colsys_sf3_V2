@@ -1,3 +1,3 @@
 <?			
-include_component("helpdesk", "listaRespuestasTicket", array("idticket"=>$ticket->getCaIdticket()) );
+include_component("pm", "listaRespuestasTicket", array("idticket"=>$ticket->getCaIdticket(), "format"=>"email") );
 ?>	
