@@ -17,7 +17,9 @@
             autoHeight  : true,
             closeAction :'close',
             plain       : true,
-            modal: true,            
+            modal: true,
+            title: 'Ingrese los datos del '+this.tipo,
+            onEsc: Ext.emptyFn,
             items       : new PanelTrayectoForm({id: 'producto-form',tipo:this.tipo}),
             buttons: [{
                 text     : 'Guardar',

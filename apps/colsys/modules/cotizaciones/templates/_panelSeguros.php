@@ -1,6 +1,6 @@
 <?
 $seguros = $sf_data->getRaw("seguros");
-include_component("cotizaciones", "formTrayectoAduanaWindow", array("cotizacion"=>$cotizacion) );
+
 ?>
 <script type="text/javascript">
 PanelSeguros = function( config ){

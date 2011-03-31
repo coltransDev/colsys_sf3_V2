@@ -250,7 +250,7 @@ include_component("widgets", "widgetCiudad");
         PanelTrayectoForm.superclass.constructor.call(this, {                
                 layout: 'form',
                 frame: true,
-                title: 'Ingrese los datos del '+this.tipo,
+                
                 autoHeight: true,
                 bodyStyle: 'padding: 5px 5px 0 5px;',
                 labelWidth: 100,
