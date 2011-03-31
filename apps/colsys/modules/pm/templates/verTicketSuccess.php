@@ -1,367 +1,208 @@
 <?
 
-use_helper("MimeType");
-$grupo = $ticket->getHdeskGroup();
-$proyecto = $ticket->getHdeskProject();
+//use_helper("MimeType");
 
 $ticket = $sf_data->getRaw("ticket");
 
-include_component("pm","panelDetalleTicket");
-include_component("gestDocumental", "panelArchivos", array("readOnly"=>$ticket->getCaAction()=="Cerrado" ));
-//include_component("pm","panelTareas");
 
-include_component("pm", "editarTicketWindow", array("nivel"=>$nivel));
+$ticket = $sf_data->getRaw("ticket");
 ?>
-<script language="javascript">
-	function comentar(  ){		
-		document.getElementById( "coment_status_txt" ).style.display = "inline";
-		document.getElementById( "coment_status" ).style.display = "none";
-	}
-	function cancelar_comentar(  ){
-		document.getElementById( "coment_status" ).style.display = "inline";
-		document.getElementById( "coment_status_txt" ).style.display = "none";
-	}
-	
-	function guardar_comentario(  idticket ){
-		cancelar_comentar(  );
-		
-		var txt = document.getElementById( "coment_status_field" ).value;
-		document.getElementById( "coment_status_field" ).value="";
-		Ext.Ajax.request( 
-			{   
-				waitMsg: 'Guardando...',						
-				url: '<?=url_for("pm/guardarRespuestaTicket")?>',
-				params : {
-					idticket: idticket,					
-					comentario: txt
-				},
-										
-				callback :function(options, success, response){	
-					document.getElementById("coments").innerHTML = response.responseText; 
-				}	
-			 }
-		); 				
-		
-	}
+<html>
+    <body>
+    <style type="text/css" >
 
-
-
-    var crearTicket = function( ){
-        win = new EditarTicketWindow();
-        win.show();
-    }
-
-    var editarTicket = function( idticket ){
-        win = new EditarTicketWindow({idticket: idticket});
-        win.show();
-    }
-
-
-    
-		
-</script>
-
-
-<div class="content" >
-    <div id="panel"></div>
-</div>
-
-
-<div id ="header" class="x-hide-display">
-<table width="100%"  border="0" class="tableList">
-    
-  <tr>
-    <td width="50%" class="listar"><b>Reportado por:</b> <?=$ticket->getUsuario()?$ticket->getUsuario()->getCaNombre():$ticket->getCaLogin()?></td>
-    <td width="50%" class="listar"><b>Abierto </b> <?=Utils::fechaMes($ticket->getCaOpened())?> </td>
-	</tr>
-	<tr>
-    <td width="50%" class="listar"><b>Contacto:</b> <?=$ticket->getUsuario()?$ticket->getUsuario()->getSucursal()->getCaNombre()." ".$ticket->getUsuario()->getCaExtension():"&nbsp;"?></td>
-    <td width="50%" class="listar">&nbsp; </td>
-  </tr>  
- 
-   <tr>
-    <td class="listar"><b>Departamento:</b>
-		<?
-		if( $grupo ){
-			$departamento = $grupo->getDepartamento();
-			echo Utils::replace($departamento->getCaNombre()); 
-		}
-		?>
-	</td>
-    <td class="listar"><b>Area: </b>  
-		<?
-		if( $grupo ){
-			echo Utils::replace($grupo->getCaName());
-		}
-		?>
-	</td>
-  </tr>
-  
-  <tr>
-  	<td class="listar">
-		<b>Proyecto: </b>
-		<?
-		if( $proyecto ){
-			echo Utils::replace($proyecto->getCaName()); 
-		}
-		?>
-	</td>
-  	<td class="listar">&nbsp;</td>
-  </tr>
-   <tr>
-    <td class="listar">
-		<b>Prioridad: </b> 
-		<?=$ticket->getCaPriority()?>
-	</td>
-    <td class="listar">
-		<b>Asignado a:</b> 
-		<?		
-		if( $ticket->getCaAssignedto() ){
-			$asignado = $ticket->getAssignedUser();
-			if( $asignado ){
-				echo $asignado->getCaNombre()."&nbsp;&nbsp;&nbsp;&nbsp;";
-			}
-		}else{
-			if( $nivel>0 && $ticket->getCaAction()=="Abierto" ){
-				echo link_to("Tomar asignaci&oacute;n" , "pm/tomarAsignacion?id=".$ticket->getCaIdticket() );
-			}
-		}		
-		?>
-	</td>
-  </tr>
-
-
-  <tr>
-    <td class="listar">
-		<b>Tipo: </b>
-		<?=$ticket->getCaType()?>
-	</td>
-    <td class="listar">
-		<b>Estado: 	</b>		
-		<?=$ticket->getCaAction()?> <?=$nivel>0&&$ticket->getCaAction()=="Abierto"?link_to("Cerrar","pm/cerrarTicket?id=".$ticket->getCaIdticket() ):""?>
-	</td>
-  </tr>
-  <tr>
-    <td class="listar">
-		<b>Milestone: </b>
-		<?=$ticket->getHdeskMilestone()?$ticket->getHdeskMilestone()->getCaTitle():""?>
-	</td>
-    <td class="listar">
-		<b>Estimado: 	</b>
-		<?=$ticket->getHdeskMilestone()?Utils::fechaMes($ticket->getHdeskMilestone()->getCaDue()):""?>
-	</td>
-  </tr>
-  
-   <tr>
-    <td class="listar">
-      <?
-      $loginsGrupo = $sf_data->getRaw("loginsGrupo");
-      if( in_array($user->getUserId(), $loginsGrupo ) ){
-      ?>
-		<b>Seguimiento: </b> 
-		<br />
-		<?
-		$tarea = $ticket->getTareaSeguimiento();
-		
-		if( $ticket->getCaAction()=="Abierto" ){
-		?>
-		<?=link_to($tarea&&!$tarea->getCaFchterminada()?utils::fechaMes($tarea->getCaFchvencimiento()):"Nuevo seguimiento", "pm/nuevoSeguimiento?id=".$ticket->getCaIdticket() );
-		}
-		?>
-		
-		
-		<?=$tarea&&!$tarea->getCaFchterminada()?link_to(image_tag("16x16/button_cancel.gif"), "pm/eliminarSeguimiento?id=".$ticket->getCaIdticket() ):""?>
-
-        <?
-      }
-      ?>
-		
-	</td>
-    <td class="listar">
-        <b>Progreso:</b>
-        <?
-        if( $ticket->getCaAction()=="Abierto" && $nivel>0 ){
-        ?>
-            <div id="custom-slider"></div>
-
-            <script type="text/javascript">
-                Ext.onReady(function(){
-
-                    var tip = new Ext.ux.SliderTip({
-                        getText: function(slider){
-                            return String.format('<b>{0}% complete</b>', slider.getValue());
-                        }
-                    });
-
-                    var updatePercent = function(   slider,  newValue ){
-
-                        Ext.Ajax.request({
-                            url: '<?=url_for("pm/actualizarPorcentajeTicket")?>',
-                            method: 'POST',
-                            //Solamente se envian los cambios
-                            params :	{
-                                idticket: <?=$ticket->getCaIdticket()?>,
-                                percentage: newValue
-                            },
-
-                            failure :function(options, success, response){
-
-                                alert("Ha ocurrido un error");
-                            }
-                         }
-                        );
-                    }
-
-                    var slider = new Ext.Slider({
-                        renderTo: 'custom-slider',
-                        width: 214,
-                        increment: 1,
-                        value: <?=$ticket->getCaPercentage()?>,                        
-                        minValue: 0,
-                        maxValue: 100,
-                        plugins: tip,
-                        listeners: {
-                            changecomplete: updatePercent
-                        }
-                    });
-                });
-                
-
-            </script>
-        <?
-        }else{
-            echo $ticket->getCaPercentage()."% Terminado";
-        }
-        ?>
-	</td>
-  </tr>
-  
-  
-</table>
-
-</div>
-
-<div id ="respuestas" class="x-hide-display">
-
-
-    <div class="boxText">
-        <div id="coments">
-        <?
-        include_component("helpdesk", "listaRespuestasTicket", array("idticket"=>$ticket->getCaIdticket()) );
-        ?>
-        </div>
-        <?
-        if( $ticket->getCaAction()=="Abierto" ){
-        ?>
-         <div class="story_coment" id="coment_status_txt" style="display:none" >
-            <textarea rows="1" cols="180" id="coment_status_field" onkeyup="autoGrow(this)" onfocus="autoGrow(this)"></textarea>
-            <br />
-
-            <b><a onclick="guardar_comentario( <?=$ticket->getCaIdticket()?> )"><?=image_tag("16x16/button_ok.gif")?> Guardar</b></a> <b><a onclick="cancelar_comentar()"> <?=image_tag("16x16/button_cancel.gif")?> Cancelar</a></b>
-        </div>
-        <div class="story_coment" id="coment_status" onclick="comentar()">
-            <b> <?=image_tag("16x16/edit_add.gif")?> Respuesta</b>
-        </div>       
-         <?
-         }
-         ?>
-    </div>
-</div>
-
-
-
-<div id="descripcion" class="x-hide-display">
-    <div class="boxText">
-        <?=$ticket->getCaText()?>
-	</div>   
-</div>
-
-
-<div id="usuarios" class="x-hide-display">
-
-	<div class="boxText">
-    <?
-    foreach( $usuarios as $usuario ){
-        echo image_tag("16x16/user_male.gif")." ".$usuario->getCaNombre()." ";
-        if( $nivel>0 && $ticket->getCaAction()!="Cerrado" ){
-            echo link_to(image_tag("16x16/delete.gif"), "pm/eliminarUsuario?id=".$ticket->getCaIdticket()."&usuario=".$usuario->getCaLogin()."&token=".md5(time()), array("confirm"=>"Esta seguro"));
-        }
-        echo "<br />";
-    }
-
-    if( $nivel>0 && $ticket->getCaAction()!="Cerrado"){
-        echo link_to(image_tag("16x16/add_user.gif")." Agregar", "pm/agregarUsuario?id=".$ticket->getCaIdticket()."&token=".md5(time()))." ";
-    }
-	?>
-    </div>
-</div>
-
-
-<div id="archivos" class="x-hide-display">
-	<div class="boxText">
-    <?
-    foreach( $files as $file ){
-	?>
-	<a href="#" onclick='javascript:window.open("<?=url_for("pm/verArchivo?id=".$ticket->getCaIdticket()."&file=".base64_encode(basename($file)))?>")'>
-		<b><?=mime_type_icon(basename($file))?> <?=basename($file)?></b>
-        <?
-        if( $ticket->getCaAction()!="Cerrado"){
-            echo link_to(image_tag("16x16/delete.gif"), "pm/eliminarArchivo?id=".$ticket->getCaIdticket()."&file=".base64_encode(basename($file))."&token=".md5(time()), array("confirm"=>"Esta seguro"));
+        img.img{
+            border: 0px;
         }
 
-        ?>
-	</a>
-	<br />
-	<br />
-	<?
-	}
-    if( $ticket->getCaAction()!="Cerrado"){
-        echo link_to(image_tag("16x16/attach.gif")." Adjuntar", "pm/adjuntarArchivo?id=".$ticket->getCaIdticket()."&token=".md5(time()))." ";
-    }
-	?>
-    </div>
-</div>
-
-<script type="text/javascript" >
-    var bodyStyle = 'padding: 5px 5px 5px 5px; overflow: auto;';
-
-    /*var panelTareas = new PanelTareas({title: 'Tareas',
-                                       idticket: '<?=$ticket->getCaIdticket()?>',
-                                       readOnly: false
-                                       });*/
 
 
-    var panelArchivos = new PanelArchivos({
-                                                folder:"<?=base64_encode($ticket->getDirectorioBase())?>",
-                                                closable:true,
-                                                title:"Archivos",
-                                                closable:false,
-                                                boxMinHeight: 400
-                                            });
+        a.link:link {
+           text-decoration:none;
+           color:#0000FF;
+        }
+        a.link:active {
+           text-decoration:none;
+           color:#0000FF;
+        }
+        a.link:visited {
+           text-decoration: none;
+           color: #062A7D;
+        }
 
-    var mainPanel = new PanelDetalleTicket({
-                                    activeTab: 0,
-                                    items: [
-                                            {contentEl:'descripcion', title: 'Descripción', bodyStyle: bodyStyle, boxMinHeight: 400},
-                                            {contentEl:'usuarios', title: 'Usuarios', bodyStyle: bodyStyle, boxMinHeight: 400},
-                                            panelArchivos,
-                                            {contentEl:'respuestas', title: 'Respuestas', bodyStyle: bodyStyle, boxMinHeight: 400}
-                                            //,panelTareas
-
-                                    ]
-                    });
-
+        .entry {
+            border-bottom: 1px solid #DDDDDD;
+            clear:both;
+            padding: 0 0 10px;
+        }
 
 
-    var panel = new Ext.FormPanel({
-        title: "Ticket # <?=$ticket->getCaIdticket()?>: <?=Utils::replace($ticket->getCaTitle())?>",
-        items: [
-            {contentEl:'header'},
-            mainPanel
-            
-        ]
-      });
-    panel.render("panel");
+        .entry-even {
+            background-color:#F6F6F6;
+            border-color:#CCCCCC;
+            border-style:dotted;
+            border-width:1px ;
+            margin:12px 0 0;
+            padding:12px 12px 24px;
+            font-size: 12px;
+            font-family: arial, helvetica, sans-serif;
+
+        }
+
+        .entry-odd {
+            background-color:#FFFFFF;
+            border-color:#CCCCCC;
+            border-style:dotted;
+            border-width:1px ;
+            margin:12px 0 0;
+            padding:12px 12px 24px;
+            font-size: 12px;
+            font-family: arial, helvetica, sans-serif;
+
+        }
+
+        .entry-yellow {
+            background-color:#FFFFCC;
+            border-color:#CCCCCC;
+            border-style:dotted;
+            border-width:1px ;
+            margin:12px 0 0;
+            padding:12px 12px 24px;
+            font-size: 12px;
+            font-family: arial, helvetica, sans-serif;
+
+        }
+        .entry-date{
+            float: right;
+            color: #0464BB;
+        }
+    </style>
+        <!-- GREY BORDER -->
+        <table width="100%" border="0" cellspacing="15" cellpadding="0" bgcolor="#E1E1E1"><tr><td>
+                    <!-- WHITE BACKGROUND -->
+                    <table width="100%" border="0" cellspacing="15" cellpadding="0" bgcolor="#FFFFFF"><tr><td>
+                                <!-- MAIN CONTENT TABLE -->
+                                <table width="100%" border="0" cellspacing="5" cellpadding="0">
+                                    <!-- LOGO -->
+                                    <tr><td colspan="3"><table><tr><td width="135"><img src="https://www.coltrans.com.co/images/logo_colsys.gif" width="178" height="30" alt="COLSYS"></td>
+                                                    <td><font size="4" face="arial, helvetica, sans-serif" color="#D99324">Sistema de tickets</font></td></tr></table></td></tr>
+                                    <tr><td width="25"><img src="https://www.coltrans.com.co/images/spacer.gif" width="25" height="1" alt=""></td><td colspan="2"><hr noshade size="1"></td></tr>
+                                    <!-- INTRO -->
+                                    <tr>
+                                        <td>&nbsp;</td><td>
+
+                                            <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Ticket # <?=$ticket->getCaIdticket().": ".$ticket->getCaTitle() ?></b></font><br />
+                                            <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>&Aacute;rea:</b> <?=$ticket->getHdeskGroup()?$ticket->getHdeskGroup()->getCaName():""?></font><br />
+                                            <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Reportado por:</b> <?=$ticket->getUsuario()?$ticket->getUsuario()->getCaNombre():$ticket->getCaLogin()?> <?=$ticket->getCaReportedby()?" por ".$ticket->getCaReportedby():""?></font><br />
+                                            <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Fecha </b> <?=Utils::fechaMes($ticket->getCaOpened()) ?></font><br />
+                                            <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Asignado a:</b> <?=$ticket->getAssignedTo()?$ticket->getAssignedTo():"Sin asignar"?></font><br />
+                                            <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Tipo:</b> <?=$ticket->getCaType()?></font><br />
+                                            <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Prioridad:</b> <?=$ticket->getCaPriority()?></font><br />
+                                            <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Porcentaje:</b> <?=$ticket->getCaPercentage()?>%</font><br />
+
+                                            <div class="entry-even">
+                                            <?=$ticket->getCaText()?>
+                                            </div>
+                                        </td><td width="50"><img src="https://www.coltrans.com.co/images/spacer.gif" width="75" height="1" alt=""></td></tr>
+                                    <tr><td>&nbsp;</td><td colspan="2"><hr noshade size="1"></td></tr>
+                                    <tr>
+                                        <td>&nbsp;</td>
+                                        <td>
+                                            <img src="https://www.coltrans.com.co/images/spacer.gif" width="1" height="1" alt="">
+                                            <p><font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Respuestas</b></font><br>
+
+                                            <?
+                                            include_component("pm", "listaRespuestasTicket", array("idticket"=>$ticket->getCaIdticket(), "opener"=>"", "format"=>$format) );
+                                            ?>
+
+                                         </td>
+                                    </tr>
+                                    <?
+                                    if( count($usuarios)>0 ){
+                                    ?>
+                                    <tr><td>&nbsp;</td><td colspan="2"><hr noshade size="1"></td></tr>
+                                    <tr>
+                                        <td>&nbsp;</td>
+                                        <td>
+                                            <img src="https://www.coltrans.com.co/images/spacer.gif" width="1" height="1" alt="">
+                                            <p><font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Usuarios</b></font><br>
+
+                                            <div class="entry-even">
+
+                                                    <ul style="margin-top: 0;">
+                                                    <?
 
 
-</script>
+                                                    $i=0;
+                                                    foreach( $usuarios as $usuario ){
+                                                        ?>
+                                                           <li><?=$usuario->getCaNombre()?></li>
+                                                        <?
+
+
+                                                    }
+                                                    ?>
+                                                    </ul>
+                                            </div>
+                                         </td>
+                                    </tr>
+                                    <?
+                                    }
+                                    if( count($files)>0 ){
+                                    ?>
+                                    <tr><td>&nbsp;</td><td colspan="2"><hr noshade size="1"></td></tr>
+                                    <tr>
+                                        <td>&nbsp;</td>
+                                        <td>
+                                            <img src="https://www.coltrans.com.co/images/spacer.gif" width="1" height="1" alt="">
+                                            <p><font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Archivos</b></font><br>
+
+                                            <div class="entry-even">
+
+                                                    <ul style="margin-top: 0;">
+                                                    <?
+
+
+                                                    foreach( $files as $file ){
+                                                        ?>
+                                                           <li>
+
+                                                           <a class="link" href="https://www.coltrans.com.co<?=url_for("gestDocumental/verArchivo?folder=".base64_encode($ticket->getDirectorioBase())."&idarchivo=".base64_encode(basename($file)))?>">
+                                                                <b><?=basename($file)?></b>
+                                                            </a>
+
+                                                           </li>
+                                                        <?
+
+
+                                                    }
+                                                    ?>
+                                                    </ul>
+                                            </div>
+                                         </td>
+                                    </tr>
+                                    <?
+                                    }
+                                    ?>
+                                    <tr><td>&nbsp;</td><td colspan="2"><hr noshade size="1"></td></tr>
+
+
+
+
+                                    <tr><td>&nbsp;</td><td>
+                                            <font size="1" face="arial, helvetica, sans-serif" color="#000000"> Si los links no estan funcionando, copie y pegue esta dirección en el navegador:<br>https://www.coltrans.com.co<?=url_for("/pm/verTicket?id=".$ticket->getCaIdticket())?> <br><br> Gracias por utilizar el sistema de tickets!<br><br>Coltrans S.A. - Colmas Ltda. Agencia de Aduanas Nivel 1<br>
+                                                <a href="https://www.coltrans.com.co/">http://www.coltrans.com.co/</a>
+                                            </font>
+                                        </td>
+                                        <td>&nbsp;</td>
+                                    </tr>
+                                </table>
+                            </td></tr>
+                    </table>
+                </td></tr>
+            <!-- COPYRIGHT -->
+            <tr><td><font size="1" face="arial, helvetica, sans-serif" color="#666666">&copy; Coltrans S.A. Colmas Ltda. Agencia de Aduanas Nivel 1</font></td></tr>
+        </table>
+
+        <img src="https://www.coltrans.com.co/images/spacer.gif" style="width:1px; height:1px;"/></body>
+</html>
