@@ -103,17 +103,11 @@ $ticket = $sf_data->getRaw("ticket");
 		if( $ticket->getCaAssignedto() ){
 			$asignado = $ticket->getAssignedUser();
 			if( $asignado ){
-				echo $asignado->getCaNombre()."&nbsp;&nbsp;&nbsp;&nbsp;";
-                if( $ticket->getCaIdgroup()==2 ){
-                    //echo link_to(image_tag("22x22/inline_table.gif")." Estimaciones",
-                    //                  "helpdesk/listaTicketsPrioridades?area=".$ticket->getCaIdgroup()."&user=".$asignado->getCaLogin());
-                }
+				echo $asignado->getCaNombre()."&nbsp;&nbsp;&nbsp;&nbsp;";                
 
 			}
 		}else{
-			if( $nivel>0 && $ticket->getCaAction()=="Abierto" ){
-				echo link_to("Tomar asignaci&oacute;n" , "helpdesk/tomarAsignacion?id=".$ticket->getCaIdticket() );
-			}
+			echo "Por asignar&nbsp;&nbsp;&nbsp;&nbsp;";
 		}		
 		?>
 
