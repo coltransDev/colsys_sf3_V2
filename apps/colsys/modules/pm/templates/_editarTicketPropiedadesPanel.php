@@ -354,8 +354,7 @@ $grupos = $sf_data->getRaw("grupos");
 
         
     
-        EditarTicketPropiedadesPanel.superclass.constructor.call(this, {
-            title: 'Propiedades',
+        EditarTicketPropiedadesPanel.superclass.constructor.call(this, {            
             id: 'form-ticket-panel',
             autoHeight: true,            
             bodyStyle:'padding:5px 5px 0',
@@ -427,7 +426,7 @@ $grupos = $sf_data->getRaw("grupos");
                             id:'text_id',
                             name:'text',
                             fieldLabel:'Descripción',
-                            height:150,
+                            height:120,
                             anchor:'98%',
                             enableFont: false,
                             enableFontSize: false,

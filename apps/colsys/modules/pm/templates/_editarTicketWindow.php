@@ -16,21 +16,14 @@ EditarTicketWindow = function( config ) {
     this.ctxRecord = null;
 
     
-    this.items = [
-        new EditarTicketPropiedadesPanel({idticket: this.idticket,
-                                             nivel: <?=isset($nivel)?$nivel:0?>,
-                                             gridId: this.gridId,
-                                             actionTicket: this.actionTicket
-                                            })
-    ];
     
-    this.subpanel = new Ext.TabPanel({
-       readOnly: this.readOnly,
-       idticket: this.idticket,
-       activeTab: 0,
-       items: this.items
-       
-    });
+    
+    this.subpanel = new EditarTicketPropiedadesPanel({idticket: this.idticket,
+                         nivel: <?=isset($nivel)?$nivel:0?>,
+                         gridId: this.gridId,
+                         readOnly: this.readOnly,
+                         actionTicket: this.actionTicket
+                        })
 
 
     this.buttons = [
