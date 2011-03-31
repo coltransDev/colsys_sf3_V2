@@ -19,7 +19,7 @@ $festivos = TimeUtils::getFestivos();
 <br />
 <br />
 </div>
-<div align="center" id="container"></div
+<div align="center" id="container"></div>
 <?
 if( $idgsistemas){
 ?>
@@ -126,7 +126,7 @@ if( $idgsistemas){
     ?>
         <tr>
         <td><?=$idgsistema["mes"]?></td>
-        <td><a href="https://www.coltrans.com.co<?=url_for("helpdesk/verTicket?id=".$idgsistema["ca_idticket"])?>"><?=$idgsistema["ca_idticket"]?></a></td>
+        <td><a href="<?=url_for("helpdesk/verTicket?id=".$idgsistema["ca_idticket"])?>" target="_blank"><?=$idgsistema["ca_idticket"]?></a></td>
         <td><?=$idgsistema["ca_title"]?></td>
         <td><?=$idgsistema["ca_assignedto"]?></td>
         <td><?=$idgsistema["fechacreado"]?></td>
@@ -253,75 +253,5 @@ var tabs = new Ext.FormPanel({
 });
 tabs.render("container");
 
-/*
- //información a graficar
-   var data = [
-            ['1erTrim','02:21:57','01:00:00'],
-            ['2doTrim','02:21:57','01:00:00'],
-            ['3erTrim','02:09:44','01:00:00'],
-            ['4toTrim','01:44:37','01:00:00']
-   ];
-
-Ext.onReady(function(){
-
-    var store = new Ext.data.ArrayStore({
-       fields:[
-           {name:'trimestre'},
-           {name:'limite_sup', type: 'date', dateFormat: 'H:i:s'},
-           {name:'limite_ctr', type: 'date', dateFormat: 'H:i:s'},
-           {name:'limite_inf', type: 'date', dateFormat: 'H:i:s'}
-       ]
-    });
-    store.loadData(data); // se carga la info en el store
-
-
-    new Ext.Panel({
-        width: 700,
-        height: 400,
-        renderTo: document.body,
-        title: 'Column Chart with Reload - Hits per Month',
-        tbar: [{
-            text: 'Load new data set'
-            
-        }],
-        items: {
-            xtype: 'linechart',
-            store: store,
-            xField: 'trimestre',
-	    url: '/css/ext/charts.swf',
-            xAxis: new Ext.chart.CategoryAxis({
-                title: 'Año'
-
-            }),
-            yAxis: new Ext.chart.TimeAxis({
-                title: 'Limites',
-                labelRenderer: function(date) { return date.format('H:i:s')}
-
-            }),
-            series: [{
-                yField: 'limite_sup',
-                displayName: 'LCS'
-            	},{
-                type: 'line',
-                yField: 'limite_ctr',
-                displayName: 'LC'
-	            },{
-                type: 'line',
-                yField: 'limite_inf',
-                displayName: 'LCi'
-	            }],
-            extraStyle: {
-               xAxis: {
-                   labelRotation: -90
-                },
-                legend: {
-                    display: 'right'
-            	}
-            }
-        }
-    });
-});
-
-*/
 
 </script>
