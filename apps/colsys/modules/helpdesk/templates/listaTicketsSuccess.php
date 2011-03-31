@@ -165,7 +165,7 @@ for( $i =0 ; $i<$numtickets; $i++ ){
 		}
 		?>
 	</td>	
-    <td><?=$ticket->getCaAction()?> <?=$nivel>0&&$ticket->getCaAction()=="Abierto"?link_to("Cerrar","helpdesk/cerrarTicket?id=".$ticket->getCaIdticket() ):""?></td>
+    <td><?=$ticket->getCaAction()?> </td>
   </tr> 
 	<?
 	if( !isset($tickets[$i+1])||$tickets[$i+1]->getCaIdgroup()!=$grupo ){ 
