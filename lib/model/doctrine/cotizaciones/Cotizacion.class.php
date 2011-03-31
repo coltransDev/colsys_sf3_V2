@@ -13,7 +13,7 @@
 class Cotizacion extends BaseCotizacion
 {
     const EN_SEGUIMIENTO = "SEG";
-	const TIEMPO_IDG_ENTREGA_OPORTUNA = 43200; //12 h
+	const TIEMPO_IDG_ENTREGA_OPORTUNA = 35880; //9:58 Ticket 6237
     const FOLDER = "Cotizaciones";
 	public function getId(){
 		return $this->getCaIdcotizacion();
