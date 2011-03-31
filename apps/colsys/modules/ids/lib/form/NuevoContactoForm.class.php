@@ -56,8 +56,8 @@ class NuevoContactoForm extends BaseForm{
 		$this->setValidators(array(
 		  'idcontacto'    => new sfValidatorDoctrineChoice(array('model' => 'IdsContacto', 'column' => 'ca_idcontacto', 'required' => false)),
 		  'idsucursal'    => new sfValidatorDoctrineChoice(array('model' => 'IdsSucursal', 'column' => 'ca_idsucursal', 'required' => false)),
-		  'nombre'      => new sfValidatorString(array('required' => true)),
-		  'apellido'      => new sfValidatorString(array('required' => true)),
+		  'nombre'      => new sfValidatorString(array('required' => true, "maxlength"=>"60")),
+		  'apellido'      => new sfValidatorString(array('required' => true, "maxlength"=>"60")),
 		  //'direccion'   => new sfValidatorString(array('required' => true)),
           'codigoarea'   => new sfValidatorString(array('required' => false)),
 		  'telefonos'   => new sfValidatorString(array('required' => true)),

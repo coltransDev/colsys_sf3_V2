@@ -41,9 +41,9 @@ class NuevoIdsForm extends BaseForm{
 														array('required' => 'El DV es requerido'));
 
         $validator["nombre"] =new sfValidatorString( array('required' => true ),
-														array('required' => 'El nombre es requerido'));
+														array('required' => 'El nombre es requerido', "max_length"=>255));
 
-        $validator["website"] =new sfValidatorString( array('required' => false ));
+        $validator["website"] =new sfValidatorString( array('required' => false, "max_length"=>60 ));
 
         $validator["idgrupo"] =new sfValidatorInteger( array('required' => false ));
 

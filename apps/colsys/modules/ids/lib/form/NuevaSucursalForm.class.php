@@ -32,9 +32,9 @@ class NuevaSucursalForm extends BaseForm {
 
 		$validator = array();
         $validator["idciudad"] = new sfValidatorDoctrineChoice(array('model' => 'IdsSucursal', 'column' => 'ca_idsucursal', 'required' => false));
-        $validator["direccion"] =new sfValidatorString( array('required' => true ),
+        $validator["direccion"] =new sfValidatorString( array('required' => true, "max_length"=>100 ),
 														array('required' => 'La dirección es requerida'));
-        $validator["telefonos"] =new sfValidatorString( array('required' => true ),
+        $validator["telefonos"] =new sfValidatorString( array('required' => true, "max_length"=>30 ),
 														array('required' => 'El teléfono es requerido'));
 
         $validator["fax"] = new sfValidatorString( array('required' => false ),
