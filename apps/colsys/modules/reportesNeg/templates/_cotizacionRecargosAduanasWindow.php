@@ -8,7 +8,7 @@
 
 if( $cotizacion )
 {
-   include_component("cotizaciones", "panelTarifarioAduana",array("cotizacion"=>$cotizacion , "modo"=>"consulta"));
+   
 ?>
 
     <script type="text/javascript">
