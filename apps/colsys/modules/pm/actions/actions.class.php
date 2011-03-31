@@ -184,8 +184,7 @@ class pmActions extends sfActions {
         $this->ticket = HdeskTicketTable::retrieveIdTicket($idticket, $this->nivel);
         $this->forward404Unless($this->ticket);
 
-        if ($request->getParameter("format") == "email") {
-            $this->setTemplate("verTicketEmail");
+        if ($request->getParameter("format") == "email") {            
             $this->setLayout("none");
         }else{
             $this->redirect("pm/index?idticket=".$idticket);
