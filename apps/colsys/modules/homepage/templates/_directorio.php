@@ -1,4 +1,4 @@
-<h1> Directorio de Coltrans S.A. - Colmas SIA Ltda. </h1>
+<h1> Directorio de Coltrans S.A. - Colmas Ltda. </h1>
 
 <br>
 <br>
