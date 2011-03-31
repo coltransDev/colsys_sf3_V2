@@ -1018,7 +1018,7 @@ $pdf->flushGroup();
 
 // ======================== Notas ======================== //
 
-if( $empresa->getCaIdempresa()==1 ){
+if( $empresa->getCaIdempresa()==2 ){
     $imprimirNotas = array_unique( $imprimirNotas );
 
     $nuevaPagina = false;
@@ -1046,7 +1046,7 @@ if( $empresa->getCaIdempresa()==1 ){
 
 // ======================== Notas adicionales ======================== //
 
-if( $empresa->getCaIdempresa()==1 ){
+if( $empresa->getCaIdempresa()==2 ){
     $pdf->AddPage();
     $pdf->Ln(4);
     $pdf->SetFont($font,'B',14);
