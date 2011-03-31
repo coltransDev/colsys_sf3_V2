@@ -113,14 +113,7 @@ class cotizacionesComponents extends sfComponents {
         }
     }
 
-    /*
-     *
-     */
-
-    public function executePanelContViajes() {
-        $id = $this->cotizacion->getCaIdcotizacion();
-    }
-
+   
     /*
      *
      */
@@ -160,48 +153,12 @@ class cotizacionesComponents extends sfComponents {
         $response->addJavaScript("extExtras/CheckColumn", 'last');
     }
 
-    /*
-     *  Cotizaciones de Colmas
-     * */
+    
 
+    
+    
 
-    /*
-     * Grilla que muestra los trayectos y sus respectivos conceptos
-     * @author: Andres Botero
-     */
-
-    public function executePanelTransporteAduana() {
-        $this->aplicacionesAereo = ParametroTable::retrieveByCaso("CU064", null, Constantes::AEREO);
-        $this->aplicacionesMaritimo = ParametroTable::retrieveByCaso("CU064", null, Constantes::MARITIMO);
-
-        if (!isset($this->modo)) {
-            $this->modo = "";
-        }
-    }
-
-    public function executePanelTarifarioAduana() {
-        $this->aplicaciones = ParametroTable::retrieveByCaso("CU082");
-    }
-
-    public function executeGridPanelContinuacionWindow() {
-
-    }
-
-    /*
-     * Ventana para crear un nuevo trayecto
-     */
-
-    public function executeFormTrayectoAduanaWindow() {
-
-    }
-
-    public function executeFormFiltrosPanel() {
-
-    }
-
-    public function executeChart() {
-
-    }
+   
 
     public function executeFormCotizacionPanel() {
         

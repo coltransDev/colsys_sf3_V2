@@ -36,7 +36,7 @@ SubPanel = function(){
         ?>
         this.gridRecargos = new PanelRecargosCotizacion();
         this.gridContviajes = new PanelProductos({tipo:'OTM/DTA',empresa:'<?=$cotizacion->getCaEmpresa()?>',id:'grid_productos1',title:'Tarifas para OTM/DTA'});
-//        this.gridContviajes = new PanelContViajes();
+
         this.gridSeguros = new PanelSeguros();
         this.gridAgentes = new PanelAgentes();
 
