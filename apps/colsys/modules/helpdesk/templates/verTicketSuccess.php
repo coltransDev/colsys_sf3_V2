@@ -131,38 +131,10 @@ $ticket = $sf_data->getRaw("ticket");
 	</td>
     <td class="listar">
 		<b>Estado: 	</b>		
-		<?=$ticket->getCaAction()?> <?=$nivel>0&&$ticket->getCaAction()=="Abierto"?link_to("Cerrar","helpdesk/cerrarTicket?id=".$ticket->getCaIdticket() ):""?>
+		<?=$ticket->getCaAction()?> 
 	</td>
   </tr>
-  <?
-  $loginsGrupo = $sf_data->getRaw("loginsGrupo");
-  if( in_array($user->getUserId(), $loginsGrupo ) ){
-  ?>
-   <tr>
-    <td class="listar">
-		<b>Seguimiento: </b> 
-		<br />
-		<?
-		$tarea = $ticket->getTareaSeguimiento();
-		
-		if( $ticket->getCaAction()=="Abierto" ){
-		?>
-		<?=link_to($tarea&&!$tarea->getCaFchterminada()?utils::fechaMes($tarea->getCaFchvencimiento()):"Nuevo seguimiento", "helpdesk/nuevoSeguimiento?id=".$ticket->getCaIdticket() );
-		}
-		?>
-		
-		
-		<?=$tarea&&!$tarea->getCaFchterminada()?link_to(image_tag("16x16/button_cancel.gif"), "helpdesk/eliminarSeguimiento?id=".$ticket->getCaIdticket() ):""?>
-		
-		
-	</td>
-    <td class="listar">&nbsp;
-		
-	</td>
-  </tr>
-  <?
-  }
-  ?>
+  
   
   <tr>
     <td class="listar" colspan="2"><b>Descripci&oacute;n</b></td>
@@ -188,20 +160,13 @@ $ticket = $sf_data->getRaw("ticket");
 	?>
 	<a href="#" onclick='javascript:window.open("<?=url_for("helpdesk/verArchivo?id=".$ticket->getCaIdticket()."&file=".base64_encode(basename($file)))?>")'>
 		<b><?=mime_type_icon(basename($file))?> <?=basename($file)?></b>
-        <?
-        if( $ticket->getCaAction()!="Cerrado"){
-            echo link_to(image_tag("16x16/delete.gif"), "helpdesk/eliminarArchivo?id=".$ticket->getCaIdticket()."&file=".base64_encode(basename($file))."&token=".md5(time()), array("confirm"=>"Esta seguro"));
-        }
-
-        ?>
+        
 	</a>
 	<br />
 	<br />
 	<?
 	}
-    if( $ticket->getCaAction()!="Cerrado"){
-        echo link_to(image_tag("16x16/attach.gif")." Adjuntar", "helpdesk/adjuntarArchivo?id=".$ticket->getCaIdticket()."&token=".md5(time()))." ";
-    }
+    
 	?>
     </div>
 	</td>
@@ -215,16 +180,11 @@ $ticket = $sf_data->getRaw("ticket");
 	<div class="boxText">
     <?
     foreach( $usuarios as $usuario ){
-        echo image_tag("16x16/user_male.gif")." ".$usuario->getCaNombre()." ";
-        if( $nivel>0 && $ticket->getCaAction()!="Cerrado" ){
-            echo link_to(image_tag("16x16/delete.gif"), "helpdesk/eliminarUsuario?id=".$ticket->getCaIdticket()."&usuario=".$usuario->getCaLogin()."&token=".md5(time()), array("confirm"=>"Esta seguro"));
-        }
+        echo image_tag("16x16/user_male.gif")." ".$usuario->getCaNombre()." ";        
         echo "<br />";
     }
 
-    if( $nivel>0 && $ticket->getCaAction()!="Cerrado"){
-        echo link_to(image_tag("16x16/add_user.gif")." Agregar", "helpdesk/agregarUsuario?id=".$ticket->getCaIdticket()."&token=".md5(time()))." ";
-    }
+    
 	?>
     </div>
 	</td>

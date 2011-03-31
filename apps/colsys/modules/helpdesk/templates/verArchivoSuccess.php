@@ -4,7 +4,7 @@
  *
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
-
+$file = $sf_data->getRaw("file");
 ?>
 <?
 header('Content-Disposition: attachment; filename="'.basename($file).'"');

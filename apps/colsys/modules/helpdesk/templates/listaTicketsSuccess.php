@@ -1,3 +1,15 @@
+<?
+
+include_component("pm", "editarTicketWindow", array("nivel"=>$nivel));
+?>
+
+<script type="text/javascript">
+var crearTicket = function(){
+    var win = new EditarTicketWindow();
+    win.show();
+}
+</script>
+
 <div align="center">
 <?
 $numtickets = count( $tickets );

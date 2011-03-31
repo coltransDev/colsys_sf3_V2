@@ -80,7 +80,7 @@ class helpdeskActions extends sfActions
 				$q->where("(h.ca_title like ?  or r.ca_text like ?) ", array("%". strtolower($criterio)."%", "%". strtolower($criterio)."%" ) );
                 $q->addOrderBy("h.ca_idgroup");
                 $q->addOrderBy("h.ca_idproject");
-                $q->addOrderBy("h.ca_closedat");
+                $q->addOrderBy("h.ca_closedat DESC");
                 $q->addOrderBy("h.ca_opened");
 				break;	
 			case "personalizada":			
@@ -130,7 +130,7 @@ class helpdeskActions extends sfActions
 				if( $groupby=="project" ){
                     $q->addOrderBy("h.ca_idproject ASC");
 				}
-                $q->addOrderBy("h.ca_closedat");
+                $q->addOrderBy("h.ca_closedat DESC");
                 $q->addOrderBy("h.ca_opened ASC");
 					
 				break;
@@ -203,7 +203,7 @@ class helpdeskActions extends sfActions
 		}
 
         if( $this->nivel>0 ){
-            $this->redirect("pm/index?idticket=".$idticket);
+            //$this->redirect("pm/index?idticket=".$idticket);
         }
         
 		
@@ -501,107 +501,6 @@ class helpdeskActions extends sfActions
 	}
 	
 	
-	/**
-	* Toma asignacion de un ticket 
-	*
-	* @param sfRequest $request A request object
-	*/
-	public function executeTomarAsignacion(sfWebRequest $request){
-		if( $request->getParameter("id") ){
-			$ticket = Doctrine::getTable("HdeskTicket")->find( $request->getParameter("id") );
-			$ticket->setCaAssignedto( $this->getUser()->getUserId() );
-			$ticket->save();
-			$tarea = $ticket->getNotTarea(); 
-			if( $tarea ){														
-				$tarea->setAsignaciones( array( $this->getUser()->getUserId() ) );	
-			}		
-		}
-		$this->redirect("helpdesk/verTicket?id=".$request->getParameter("id"));
-		
-	}
-	
-	/**
-	* Toma asignacion de un ticket 
-	*
-	* @param sfRequest $request A request object
-	*/
-	public function executeCerrarTicket(sfWebRequest $request){
-		if( $request->getParameter("id") ){
-			$ticket = Doctrine::getTable("HdeskTicket")->find( $request->getParameter("id") );
-			$ticket->setCaAction( "Cerrado" );
-			$ticket->save();
-			
-			$tarea = $ticket->getTareaSeguimiento();
-			if( $tarea ){
-				$tarea->setCaFchterminada(date("Y-m-d H:i:s"));
-				$tarea->setCaUsuterminada( $this->getUser()->getUserId() );	
-				$tarea->save();
-			}
-		}
-		$this->redirect("helpdesk/verTicket?id=".$request->getParameter("id"));
-		
-	}
-	
-	public function executeNuevoSeguimiento(sfWebRequest $request){
-		$this->ticket = null;
-		if( $request->getParameter("id") ){
-			$this->ticket = Doctrine::getTable("HdeskTicket")->find( $request->getParameter("id") );
-		}	
-		
-		$this->forward404Unless( $this->ticket );
-		
-		$seguimiento = $request->getParameter("seguimiento");
-		
-		if( $seguimiento ){			
-			$titulo = "Seguimiento Ticket # ".$this->ticket->getCaIdticket()." [".$this->ticket->getCaTitle()."]";
-			
-			$texto = "Usted ha programado un seguimiento para el ticket # ".$this->ticket->getCaIdticket()." [".$this->ticket->getCaTitle()."]";
-			$tarea = $this->ticket->getTareaSeguimiento();
-			if( !$tarea ){
-				$tarea = new NotTarea(); 
-				$tarea->setCaUsucreado( $this->getUser()->getUserId() );
-				$tarea->setCaFchcreado( date("Y-m-d H:i:s") );
-			}
-			$tarea->setCaUrl( "/helpdesk/verTicket?id=".$this->ticket->getCaIdticket() );
-			$tarea->setCaIdlistatarea( 5 );
-				
-			
-			$fchvisible = $request->getParameter("fchvisible");
-			if( $fchvisible ){
-                $fchvisible = Utils::parseDate( $fchvisible );
-				$tarea->setCaFchvisible( $fchvisible." 00:00:00" );
-			}
-
-            $seguimiento = Utils::parseDate( $seguimiento );
-			$tarea->setCaFchvencimiento( $seguimiento." 23:59:59" );
-			
-			$tarea->setCaTitulo( $titulo );		
-			$tarea->setCaTexto( $texto );
-			$tarea->save();	
-			
-			$tarea->setAsignaciones(array($this->getUser()->getUserId()));
-			$this->ticket->setCaIdseguimiento( $tarea->getCaIdtarea() );
-			$this->ticket->save();
-			$this->redirect("helpdesk/verTicket?id=".$this->ticket->getCaIdticket());
-			
-		}		
-	}
-	
-	
-	public function executeEliminarSeguimiento(sfWebRequest $request){
-		$this->ticket = null;
-		if( $request->getParameter("id") ){
-			$this->ticket = Doctrine::getTable("HdeskTicket")->find( $request->getParameter("id") );
-		}	
-		
-		$this->forward404Unless( $this->ticket );
-		
-		$tarea = $this->ticket->getTareaSeguimiento();
-		if( $tarea ){
-			$tarea->delete();
-		}
-		$this->redirect("helpdesk/verTicket?id=".$this->ticket->getCaIdticket());
-	}
 	
 
 	/**
