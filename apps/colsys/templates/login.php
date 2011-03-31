@@ -14,21 +14,14 @@
     <?php include_javascripts() ?>
 </head>
 <body>
-	<div class="top">
+	<div class="topLogos">
 		<div class="logo1"> 			          					
 				<?=image_tag("branding/".sfConfig::get("app_branding_template")."/logo_left.jpg")?>
 		</div>
 		<div class="logo2"> 			          					
 				<?=image_tag("branding/".sfConfig::get("app_branding_template")."/logo_right.jpg")	?>
 		</div>			
-		<!--	
-		<div class="search">
-			<div class="searchint">
-				<div class="moduletable">
-				<jdoc:include type="modules" name="user4" />
-			</div>
-		  </div>
-		</div>-->		
+			
 	</div>
 	
 	<div class="headerlogin">
