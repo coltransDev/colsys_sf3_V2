@@ -1228,7 +1228,7 @@ class pricingActions extends sfActions {
                 'consecutivo' => $recargo->getCaConsecutivo(),
                 'idtrafico' => $idtrafico,
                 'idlinea' => $recargo->getCaIdlinea(),
-                'linea' => $recargo->getIdsProveedor()->getIds()->getCaNombre(),
+                'linea' => utf8_encode($recargo->getIdsProveedor()->getCaSigla()?$recargo->getIdsProveedor()->getCaSigla():$recargo->getIdsProveedor()->getIds()->getCaNombre()),
                 'idrecargo' => $recargo->getCaIdrecargo(),
                 'recargo' => utf8_encode($recargo->getTipoRecargo()->getCaRecargo()),
                 'idconcepto' => $recargo->getCaIdconcepto(),
@@ -1861,7 +1861,7 @@ class pricingActions extends sfActions {
 
         $q = Doctrine::getTable("Trayecto")
                         ->createQuery("t")
-                        ->select("t.*, o.ca_idciudad, d.ca_idciudad, o.ca_ciudad, d.ca_ciudad, to.ca_nombre, td.ca_nombre, i.ca_nombre, ag.ca_nombre")
+                        ->select("t.*, o.ca_idciudad, d.ca_idciudad, o.ca_ciudad, d.ca_ciudad, to.ca_nombre, td.ca_nombre, i.ca_nombre, p.ca_sigla, ag.ca_nombre")
                         ->where("t.ca_transporte = ? AND t.ca_modalidad = ? AND t.ca_impoexpo = ?", array($transporte, $modalidad, $impoexpo))
                         ->innerJoin("t.IdsProveedor p")
                         ->innerJoin("p.Ids i")
@@ -1888,7 +1888,7 @@ class pricingActions extends sfActions {
                 'origen' => utf8_encode($trayecto["o_ca_ciudad"]),
                 'destino' => utf8_encode($trayecto["d_ca_ciudad"]),
                 'agente' => utf8_encode($trayecto["ag_ca_nombre"]),
-                'linea' => $trayecto["i_ca_nombre"],
+                'linea' => utf8_encode(($trayecto["p_ca_sigla"]?$trayecto["p_ca_sigla"]." - ":"").$trayecto["i_ca_nombre"]),
                 'idlinea' => $trayecto["t_ca_idlinea"],
                 'ttransito' => utf8_encode($trayecto["t_ca_tiempotransito"]),
                 'frecuencia' => $trayecto["t_ca_frecuencia"],
