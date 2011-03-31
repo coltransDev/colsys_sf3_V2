@@ -953,7 +953,28 @@ class helpdeskActions extends sfActions
                             GROUP BY tk.ca_opened, tk.ca_idticket, tk.ca_title, tk.ca_assignedto, fechacreado, horacreado, tk.ca_login, gr.ca_name, tk.ca_percentage
                             ORDER BY tk.ca_idticket
                              ) as consulta
-                        WHERE ult_fch < '".$this->fechaUltSeg."' AND ca_percentage<'".$porcentaje."'";
+                        WHERE ult_fch < '".$this->fechaUltSeg."' AND ca_percentage<='".$porcentaje."'";
+                break;
+                case 4:
+                    $sql="SELECT date_part('month',tk.ca_opened) as mes,tk.ca_idticket, tk.ca_title, tk.ca_assignedto,
+                            to_char( tk.ca_opened, 'YYYY-MM-DD') as fechacreado, to_char( tk.ca_opened, 'HH24:MI:SS') as horacreado,
+                            to_char(tk.ca_closedat, 'YYYY-MM-DD') as close_fch, to_char(tk.ca_closedat, 'HH24:MI:SS') as close_hou,
+                            gr.ca_name, tk.ca_login, tk.ca_opened as ca_fchcreado, tk.ca_closedat as fch_close
+                        FROM helpdesk.tb_tickets tk
+                            LEFT OUTER JOIN helpdesk.tb_groups gr ON (tk.ca_idgroup = gr.ca_idgroup)
+                        WHERE to_char(tk.ca_closedat, 'YYYY-MM-DD') BETWEEN '".$this->fechaInicial."' AND '".$this->fechaFinal."' $sql_grupo $assigned
+                        ORDER BY tk.ca_idticket";
+                    $abiertos=
+                            "SELECT date_part('month',tk.ca_opened) as mes,tk.ca_idticket, tk.ca_title, tk.ca_assignedto,
+                            to_char( tk.ca_opened, 'YYYY-MM-DD') as fechacreado, to_char( tk.ca_opened, 'HH24:MI:SS') as horacreado,
+                            to_char(tk.ca_closedat, 'YYYY-MM-DD') as close_fch, to_char(tk.ca_closedat, 'HH24:MI:SS') as close_hou,
+                            gr.ca_name, tk.ca_login, tk.ca_opened as ca_fchcreado, tk.ca_closedat as fch_close
+                        FROM helpdesk.tb_tickets tk
+                            LEFT OUTER JOIN helpdesk.tb_groups gr ON (tk.ca_idgroup = gr.ca_idgroup)
+                        WHERE to_char(tk.ca_opened, 'YYYY-MM-DD') BETWEEN '".$this->fechaInicial."' AND '".$this->fechaFinal."' $sql_grupo $assigned
+                        ORDER BY tk.ca_idticket";
+                    $sta = $con->execute($abiertos);
+                    $this->abiertos = $sta->fetchAll();
                 break;
             }
         $st = $con->execute($sql);
