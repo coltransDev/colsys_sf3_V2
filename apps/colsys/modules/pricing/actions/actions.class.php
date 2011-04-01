@@ -57,7 +57,8 @@ class pricingActions extends sfActions {
      */
 
     public function executeDatosPanelFletesPorTrayecto() {
-
+        set_time_limit(90);       
+        
         $this->nivel = $this->getNivel();
 
         $this->opcion = "";

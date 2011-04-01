@@ -140,7 +140,7 @@ PanelFletesPorTrayecto = function( config ){
     
     this.store = new Ext.data.GroupingStore({
         autoLoad : true,
-        url: '<?=url_for("pricing/datosPanelFletesPorTrayecto")?>',
+        
         baseParams : {
             impoexpo: this.impoexpo,
             transporte: this.transporte,
@@ -161,6 +161,11 @@ PanelFletesPorTrayecto = function( config ){
             },
             this.record
         ),
+        proxy: new Ext.data.HttpProxy({
+            method: 'POST',
+            url: '<?=url_for("pricing/datosPanelFletesPorTrayecto")?>',
+            timeout: 90000
+        }),
         sortInfo:{field: 'orden', direction: "ASC"},
         groupField: 'trayecto'        
     });
