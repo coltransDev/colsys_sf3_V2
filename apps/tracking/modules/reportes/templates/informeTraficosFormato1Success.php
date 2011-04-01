@@ -210,7 +210,7 @@ foreach( $reportes as $reporte ){
 	
 	if( $transporte==Constantes::MARITIMO ){
 	// N tipo contenedor
-		if( $reporte->getCaModalidad()=="LCL"){
+		if( $reporte->getCaModalidad()=="LCL" ){
 			$objPHPExcel->getActiveSheet()->setCellValue('N'.$i,utf8_encode("N/A"));
 		}else{
 			$equiposStr="";
@@ -220,10 +220,10 @@ foreach( $reportes as $reporte ){
 			}
 			$objPHPExcel->getActiveSheet()->setCellValue('N'.$i,utf8_encode($equiposStr));
 		}
-	}else{
-		$transporte = $reporte->getTransportador();
+	}else{		
+        $transporte = $reporte->getIdsProveedor()->getCaSigla()?$reporte->getIdsProveedor()->getCaSigla():$reporte->getIdsProveedor()->getIds()->getCaNombre();
 		if( $transporte ){
-			$objPHPExcel->getActiveSheet()->setCellValue('N'.$i,utf8_encode($transporte->getCaNombre()));					
+			$objPHPExcel->getActiveSheet()->setCellValue('N'.$i,utf8_encode($transporte));					
 		}
 		
 	}
