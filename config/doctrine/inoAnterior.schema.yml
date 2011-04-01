@@ -1,3 +1,19 @@
+InoMaestraAir:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: inoAnterior
+  tableName: tb_inomaestra_air
+  columns:
+    ca_referencia:
+      type: string(16)
+      primary: true
+      autoincrement: true
+    ca_idlinea: integer
+
+
+
 InoMaestraSea:
   options:
     symfony:
@@ -85,7 +101,7 @@ InoMaestraSea:
       foreign: ca_login
       type: one
       class: Usuario
-    
+
 
 InoClientesSea:
   options:
@@ -225,19 +241,28 @@ InoContratosSea:
        foreign: ca_referencia
        type: one
 
-FchAntecedentes:
+ExpoAlerta:
   options:
     symfony:
       form: false
       filter: false
-  generatePath: sea
-  tableName: tb_fchantecedentes
+  generatePath: inoAnterior
+  tableName: tb_expo_alertas
   columns:
-    ca_id:
+    ca_idalerta:
       type: integer
       primary: true
-      autoincrement: true    
-    ca_idtrafico_origen: string
-    ca_idtrafico_destino: string
-    ca_dias: integer
-    
+      autoincrement: true
+    ca_cuerpoalerta: string
+    ca_fchrecordatorio: date
+    ca_referencia: string
+    ca_fchvencimiento: date
+    ca_fchcreacion: string
+    ca_usucreacion: date
+  relations:
+    Usuario:
+      local: ca_usucreacion
+      foreign: ca_login
+      type: one
+      
+
