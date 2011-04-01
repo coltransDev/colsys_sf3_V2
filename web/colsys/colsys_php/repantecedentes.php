@@ -81,7 +81,7 @@ if (!isset($traorigen) and !isset($boton) and !isset($accion)) {
         $tm->MoveNext();
     }
     echo "  </TD>";
-    if (!$tm->Open("select ca_ciudad from vi_ciudades where ca_idtrafico = '$regional' and ca_puerto in ('Marítimo','Ambos') order by ca_ciudad")) {       // Selecciona todos lo registros de la tabla ciudades
+    if (!$tm->Open("select ca_ciudad from vi_ciudades where ca_idtrafico = 'CO-057' and ca_puerto in ('Marítimo','Ambos') order by ca_ciudad")) {       // Selecciona todos lo registros de la tabla ciudades
         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
         echo "<script>document.location.href = 'repgenerator.php';</script>";
         exit;
@@ -94,7 +94,7 @@ if (!isset($traorigen) and !isset($boton) and !isset($accion)) {
         $tm->MoveNext();
     }
     echo "  </TD>";
-    if (!$tm->Open("select ca_nombre as ca_sucursal from control.tb_sucursales order by ca_sucursal")) {       // Selecciona todos lo registros de la tabla Sucursales
+    if (!$tm->Open("select DISTINCT ca_nombre as ca_sucursal from control.tb_sucursales order by ca_sucursal")) {       // Selecciona todos lo registros de la tabla Sucursales
         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
         echo "<script>document.location.href = 'repcomisiones.php';</script>";
         exit;
