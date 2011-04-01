@@ -122,7 +122,7 @@ if (!isset($boton) and !isset($agrupamiento)) {
     echo "<FORM METHOD=post NAME='forma' ACTION='repindicadores.php' ONSUBMIT='return validar();'>";
 
     $tm =& DlRecordset::NewRecordset($conn);
-    if (!$tm->Open("select ca_valor, ca_valor2 from tb_parametros where ca_casouso = 'CU072' order by ca_valor2, ca_valor")) {    // Selecciona los registros de la tabla parámetros
+    if (!$tm->Open("select ca_valor, ca_valor2 from tb_parametros where ca_casouso = 'CU072' order by ca_valor2, ca_identificacion")) {    // Selecciona los registros de la tabla parámetros
         echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";     // Muestra el mensaje de error
         exit;
     }
@@ -389,7 +389,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
         }
 
         $ano = str_replace("ca_ano", "ca_ano_new", $ano);
-        $mes = str_replace("ca_mes", "ca_mes_new", $mes);
+        $mes = str_replace("ca_mes", "ca_mes_new", $ano);
         $campos = str_replace("ca_ano", "ca_ano_new", $campos);
         $campos = str_replace("ca_mes", "ca_mes_new", $campos);
         $ind_mem  = 16;
@@ -642,7 +642,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
         $campos.= ", $source.ca_referencia, exe.ca_fchevento, exe.ca_idevento";
     } else if (substr($indicador, -29) == "Oportunidad en la Facturación" and $procesos == "Nuevo_Exportaciones") {
         $tipo = "D";
-        
+
         $impoexpo = "ca_impoexpo = 'Exportación'";
         if (substr($indicador, 0, 6)=='Aduana'){
             $impoexpo.= " and ca_nomsia = 'COLMAS'";
@@ -780,21 +780,6 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
             echo "	<TH>Observaciones</TH>";
             echo "	<TH>Coordinador</TH>";
             echo "	<TH>Eventos</TH>";
-            echo "	<TH>Calculos</TH>";
-            echo "	<TH>Dif.</TH>";
-            break;
-        case 12:
-            echo "	<TH>Referencia</TH>";
-            echo "	<TH>IDG</TH>";
-            echo "	<TH>Ag.Aduana</TH>";
-            echo "	<TH>Observaciones</TH>";
-            echo "	<TH>Eventos</TH>";
-            echo "	<TH>Calculos</TH>";
-            echo "	<TH>Dif.</TH>";
-            break;
-        case 13:
-            echo "	<TH>Referencia</TH>";
-            echo "	<TH>Observaciones</TH>";
             echo "	<TH>Calculos</TH>";
             echo "	<TH>Dif.</TH>";
             break;
@@ -1296,230 +1281,6 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
                 echo "  <TD Class=$color style='font-size: 9px; text-align:right;'>".$dif_mem."</TD>";
 
                 if (!$rs->Eof()) {           // Retrocede un registro para quedar en la última Referencia
-                    $rs->MovePrevious();
-                }
-                continue;
-                break;
-            case 12:
-                echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_referencia')."</TD>";
-                echo "  <TD Class=mostrar style='font-size: 9px;'>".(($rs->Value('ca_aplicaidg')=='t')?"Sí":"No")."</TD>";
-                echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_nomsia')."</TD>";
-
-                if (!$tm->Open("select rps.* from tb_repstatus rps INNER JOIN tb_reportes rep ON rps.ca_idreporte = rep.ca_idreporte and rep.ca_consecutivo = '".$rs->Value('ca_consecutivo')."' where rps.ca_observaciones_idg IS NOT NULL order by ca_fchenvio")) {       // Selecciona todos las observaciones de IDG de los estatus
-                    echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'repindicadores.php';</script>";
-                    exit; }
-                $observacionesIdg = "";
-                if ($tm->GetRowCount()>0){
-                    $tm->MoveFirst();
-                    while (!$tm->Eof()) {           // Carga todas las observaciones de IDG
-                        $observacionesIdg.= $tm->Value('ca_observaciones_idg');
-                        $tm->MoveNext();
-                        $observacionesIdg.= (!$tm->Eof())?"<br />":"";
-                    }
-                }
-                echo "  <TD Class=mostrar style='font-size: 9px;'>$observacionesIdg</TD>";
-
-                echo "  <TD Class=mostrar style='font-size: 9px; vertical-align:top;'><TABLE CELLSPACING=1>";
-                $ult_mem = $rs->Value('ca_fchevento');
-                $nom_sia = $rs->Value('ca_nomsia');
-                $apl_idg = $rs->Value("ca_aplicaidg");
-                $rad_mem = null;
-                $sae_mem = null;
-
-                $matriz_eventos = array();
-                $referencia = $rs->Value('ca_referencia');
-                while ($referencia == $rs->Value('ca_referencia') and !$rs->Eof() and !$rs->IsEmpty()) {
-                    echo "<TR>";
-                    echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_valor')."</TD>";
-                    $ult_mem = (!in_array($rs->Value('ca_valor'),$no_docs) and $rs->Value('ca_fchevento')>$ult_mem)?$rs->Value('ca_fchevento'):$ult_mem;
-                    if ($rs->Value('ca_valor') == 'Radicación Documento de Transporte'){
-                        $fch_tmp = $rad_mem = $rs->Value('ca_fchevento');
-                    }else if ($rs->Value('ca_valor') == 'SAE'){
-                        $fch_tmp = $sae_mem = $rs->Value('ca_fechadoc');
-                    }else{
-                        $fch_tmp = $rs->Value('ca_fchevento');
-                    }
-                    echo "  <TD Class=mostrar style='font-size: 9px;'>$fch_tmp</TD>";
-                    echo "</TR>";
-                    $rs->MoveNext();	// Buscar Todos los Registros de la referencia
-                }
-                echo "  </TABLE></TD>";
-
-                $matriz_eventos["intervalo_1"]['Rec.Último Documento'] = $ult_mem;
-                if (!is_null($sae_mem) and is_null($rad_mem) and $nom_sia=='COLMAS'){
-                    $matriz_eventos["intervalo_1"]['SAE'] = $sae_mem;
-                }else{
-                    $matriz_eventos["intervalo_1"]['Radicación Documento de Transporte'] = $rad_mem;
-                }
-
-                echo "  <TD Class=mostrar style='font-size: 9px; vertical-align:top;'><TABLE CELLSPACING=1>";
-                foreach($matriz_eventos as $intervalo) {
-                    echo "<TR>";
-                    $flag = true;
-                    $ini_event = null;
-                    $fin_event = null;
-                    while (list ($clave, $val) = each ($intervalo)) {
-                        if ($flag) {
-                            $ini_event = $val;
-                            $flag = false;
-                        }else {
-                            $fin_event = $val;
-                        }
-                        echo "<TD WIDTH=110>$clave <br /> $val</TD>";
-                    }
-                    $dif_mem = workDiff($festi, $ini_event, $fin_event);
-                    $dif_mem = (!is_null($ini_event) and !is_null($fin_event) and $ini_event>$fin_event)?1:$dif_mem;
-                    echo "</TR>";
-                }
-                echo "  </TABLE></TD>";
-
-                $dif_mem = ($apl_idg == 'f')?null:$dif_mem;
-                $color = analizar_dif($tipo, $lci_var, $lcs_var, $dif_mem, $array_avg, $array_pnc, $array_pmc, $array_null); // Función que retorna un Arreglo con el resultado de Dif
-                echo "  <TD Class=$color style='font-size: 9px; text-align:right;'>".$dif_mem."</TD>";
-
-                if (!$rs->Eof()) {           // Retrocede un registro para quedar en en la última Referencia
-                    $rs->MovePrevious();
-                }
-                continue;
-                break;
-            case 13:
-                $apl_idg = $rs->Value("ca_aplicaidg");
-                echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_referencia')."</TD>";
-                echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_observaciones')."</TD>";
-
-                $matriz_eventos = array();
-                if ($tra_mem == 'Aéreo') {
-//                    echo "<pre>";print_r($rs);echo "</pre>";
-//                    exit;
-                    $matriz_eventos["intervalo_1"]['Fch.Carga Embarcada'] = $rs->Value('ca_fchsalida');
-                } else if ($tra_mem == 'Marítimo') {
-                    if (strlen($rs->Value('ca_fchevento')) != 0 and strlen($rs->Value('ca_fchsalida')) != 0) {
-                        $matriz_eventos["intervalo_1"]['Fch.Confirmación Salida'] = $rs->Value('ca_fchsalida');
-                        $matriz_eventos["intervalo_2"]['Fch.Recibo Soportes'] = $rs->Value('ca_fchevento');
-                    } else if(strlen($rs->Value('ca_fchsalida')) != 0){
-                        $matriz_eventos["intervalo_1"]['Fch.Confirmación Salida'] = $rs->Value('ca_fchsalida');
-                    } else {
-                        $matriz_eventos["intervalo_1"]['Fch.Recibo Soportes'] = $rs->Value('ca_fchevento');
-                    }
-                }
-                $matriz_eventos["intervalo_1"]['Fch.Factura'] = $rs->Value('ca_fchfactura');
-
-                $uno = true;
-                echo "  <TD Class=mostrar style='font-size: 9px; vertical-align:top;'><TABLE CELLSPACING=1>";
-                foreach($matriz_eventos as $intervalo) {
-                    echo "<TR>";
-                    $flag = true;
-                    $ini_event = null;
-                    $fin_event = null;
-                    while (list ($clave, $val) = each ($intervalo)) {
-                        if ($flag) {
-                            $ini_event = $val;
-                            $flag = false;
-                        }else {
-                            $fin_event = $val;
-                        }
-                        echo "<TD WIDTH=110>$clave <br /> $val</TD>";
-                    }
-                    if ($uno){
-                        $dif_mem = workDiff($festi, $ini_event, $fin_event);
-                        $uno = false;
-                    }
-                    echo "</TR>";
-                }
-                echo "  </TABLE></TD>";
-
-                $dif_mem = ($apl_idg == 'f')?null:$dif_mem;
-                $dif_mem = ($rs->Value("ca_observaciones") == 'Cierre contable' or $rs->Value("ca_observaciones") == 'Error de Factura' or $rs->Value("ca_observaciones") == 'Faltantes Soportes Agente')?null:$dif_mem;
-                $color = analizar_dif($tipo, $lci_var, $lcs_var, $dif_mem, $array_avg, $array_pnc, $array_pmc, $array_null); // Función que retorna un Arreglo con el resultado de Dif
-                echo "  <TD Class=$color style='font-size: 9px; text-align:right;'>".$dif_mem."</TD>";
-                continue;
-                break;
-            case 14:
-                echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_referencia')."</TD>";
-                echo "  <TD Class=mostrar style='font-size: 9px;'>".(($rs->Value('ca_aplicaidg')=='t')?"Sí":"No")."</TD>";
-                echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_nomsia')."</TD>";
-
-                if (!$tm->Open("select rps.* from tb_repstatus rps INNER JOIN tb_reportes rep ON rps.ca_idreporte = rep.ca_idreporte and rep.ca_consecutivo = '".$rs->Value('ca_consecutivo')."' where rps.ca_observaciones_idg IS NOT NULL order by ca_fchenvio")) {       // Selecciona todos las observaciones de IDG de los estatus
-                    echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'repindicadores.php';</script>";
-                    exit; }
-                $observacionesIdg = "";
-                if ($tm->GetRowCount()>0){
-                    $tm->MoveFirst();
-                    while (!$tm->Eof()) {           // Carga todas las observaciones de IDG
-                        $observacionesIdg.= $tm->Value('ca_observaciones_idg');
-                        $tm->MoveNext();
-                        $observacionesIdg.= (!$tm->Eof())?"<br />":"";
-                    }
-                }
-                echo "  <TD Class=mostrar style='font-size: 9px;'>$observacionesIdg</TD>";
-
-                echo "  <TD Class=mostrar style='font-size: 9px; vertical-align:top;'><TABLE CELLSPACING=1>";
-                $ult_mem = $rs->Value('ca_fchevento');
-                $nom_sia = $rs->Value('ca_nomsia');
-                $apl_idg = $rs->Value("ca_aplicaidg");
-                $tip_tra = $rs->Value('ca_transporte');
-                $rad_mem = null;
-                $sae_mem = null;
-
-                $matriz_eventos = array();
-                $referencia = $rs->Value('ca_referencia');
-                while ($referencia == $rs->Value('ca_referencia') and !$rs->Eof() and !$rs->IsEmpty()) {
-                    echo "<TR>";
-                    echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_valor')."</TD>";
-                    $ult_mem = (!in_array($rs->Value('ca_valor'),$no_docs) and $rs->Value('ca_fchevento')>$ult_mem)?$rs->Value('ca_fchevento'):$ult_mem;
-                    if ($rs->Value('ca_valor') == 'Radicación Documento de Transporte'){
-                        $fch_tmp = $rad_mem = $rs->Value('ca_fchevento');
-                    }else if ($rs->Value('ca_valor') == 'SAE'){
-                        $fch_tmp = $sae_mem = $rs->Value('ca_fechadoc');
-                    }else{
-                        $fch_tmp = $rs->Value('ca_fchevento');
-                    }
-                    echo "  <TD Class=mostrar style='font-size: 9px;'>$fch_tmp</TD>";
-                    echo "</TR>";
-                    $rs->MoveNext();	// Buscar Todos los Registros de la referencia
-                }
-                echo "  </TABLE></TD>";
-
-                if (substr($indicador, 0, 6)=='Aduana'){
-                    $matriz_eventos["intervalo_1"]['Rec.Último Documento'] = $ult_mem;
-                    $matriz_eventos["intervalo_1"]['SAE'] = $sae_mem;
-                }else if (substr($indicador, 0, 5)=='Carga'){
-                    if (!is_null($sae_mem) and $nom_sia=='COLMAS' and $tip_tra=='Marítimo'){
-                        $matriz_eventos["intervalo_1"]['SAE'] = $sae_mem;
-                    }else{
-                        $matriz_eventos["intervalo_1"]['Rec.Último Documento'] = $ult_mem;
-                    }
-                    $matriz_eventos["intervalo_1"]['Radicación Documento de Transporte'] = $rad_mem;
-                }
-
-                echo "  <TD Class=mostrar style='font-size: 9px; vertical-align:top;'><TABLE CELLSPACING=1>";
-                foreach($matriz_eventos as $intervalo) {
-                    echo "<TR>";
-                    $flag = true;
-                    $ini_event = null;
-                    $fin_event = null;
-                    while (list ($clave, $val) = each ($intervalo)) {
-                        if ($flag) {
-                            $ini_event = $val;
-                            $flag = false;
-                        }else {
-                            $fin_event = $val;
-                        }
-                        echo "<TD WIDTH=110>$clave <br /> $val</TD>";
-                    }
-                    $dif_mem = workDiff($festi, $ini_event, $fin_event);
-                    $dif_mem = (!is_null($ini_event) and !is_null($fin_event) and $ini_event>$fin_event)?1:$dif_mem;
-                    echo "</TR>";
-                }
-                echo "  </TABLE></TD>";
-
-                $dif_mem = ($apl_idg == 'f')?null:$dif_mem;
-                $color = analizar_dif($tipo, $lci_var, $lcs_var, $dif_mem, $array_avg, $array_pnc, $array_pmc, $array_null); // Función que retorna un Arreglo con el resultado de Dif
-                echo "  <TD Class=$color style='font-size: 9px; text-align:right;'>".$dif_mem."</TD>";
-
-                if (!$rs->Eof()) {           // Retrocede un registro para quedar en en la última Referencia
                     $rs->MovePrevious();
                 }
                 continue;
