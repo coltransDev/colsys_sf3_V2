@@ -389,7 +389,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
         }
 
         $ano = str_replace("ca_ano", "ca_ano_new", $ano);
-        $mes = str_replace("ca_mes", "ca_mes_new", $ano);
+        $mes = str_replace("ca_mes", "ca_mes_new", $mes);
         $campos = str_replace("ca_ano", "ca_ano_new", $campos);
         $campos = str_replace("ca_mes", "ca_mes_new", $campos);
         $ind_mem  = 16;
