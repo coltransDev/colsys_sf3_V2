@@ -1,0 +1,30 @@
+#Recuerde identar correctamente las notas y los correspondientes espacios entre renglones 
+#RECOMENDACION USE NOTEPAD++ PARA EDITAR ESTE ARCHIVO 
+
+
+asuntoEmail: 'Solicitud de documentos'
+  
+mensajeEmail: |
+  Estimados señores,
+
+  En nombre de la organización COLTRANS S.A. / COLMAS LTDA.(Agencia de Aduanas nivel 1) extendemos un cordial saludo.
+
+
+  Nuestra compañía aplica procedimientos BASC e ISO 9001 en todas sus operaciones, queriendo con esto garantizar fielmente nuestra transparencia, calidad y seguridad en cada etapa del proceso. Por esta razón, parte del procedimiento a aplicar para proveedores aprobados que no han actualizado su información en nuestra base de datos, es la de reunir la siguiente documentación la cual podrá ser enviada vía e-mail (preferiblemente), a las direcciones pricing@coltrans.com.co, mccalderon@coltrans.com.co, ó a nuestra oficina principal, ubicada en la Cra. 98 No. 25G-10 Int 18.
+
+  %s
+
+  NOTA: Por favor tener en cuenta que no podrán ser incluidos ó actualizados como proveedores activos en nuestra base de datos sin tener la documentación al día.
+
+  Quedamos atentos a sus comentarios.
+
+
+
+  Pricing & Procurement
+  COLTRANS S.A.
+  Cra 98 No. 25G-10 Int 18
+  TEL: 57 1 4239300 Ext 141/148
+  FAX: 57 1 4239323 Ext. 141/148
+  Bogotá D.C. - Colombia
+  E-mail : pricing@coltrans.com.co
+  www.coltrans.com.co

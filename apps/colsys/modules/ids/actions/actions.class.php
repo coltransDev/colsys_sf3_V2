@@ -1624,13 +1624,12 @@ class idsActions extends sfActions {
 
             foreach( $contactos as $contacto ){
                 $email->addTo( $contacto->getCaEmail() );
-            }
+            }            
 
-            $txt = "Estimados señores,
+            $config = sfConfig::get('sf_app_module_dir') . DIRECTORY_SEPARATOR . "ids" . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "textos.yml";
+            $textos = sfYaml::load($config);
 
-            Con el fin de proceder con la actualización de la documentación exigida por nuestro Sistema de Gestión de Calidad, requerimos nos sean enviados por este medio los mismos como siguen:
-            
-            ";
+            $txt = "";
             
             $documentos = $resultado["docs"];
             foreach ($documentos as $documento) {
@@ -1642,45 +1641,57 @@ class idsActions extends sfActions {
                 }
                 $txt.=" - ". $documento->getIdsTipoDocumento()->getCaTipo()." ".$venc." ".Utils::fechaMes($documento->getCaFchvencimiento())."\n";
             }
+           
 
-            $txt.="
-            Gracias por su oportuno envío y respuesta.
-
-            Cualquier duda o aclaración con mucho gusto será atendida.
-
-            Cordial Saludo.
-
-
-
-            Pricing & Procurement
-            COLTRANS S.A.
-            Cra 98 No. 25G-10 Int 18
-            TEL: 57 1 4239300 Ext 141/148
-            FAX: 57 1 4239323 Ext. 141/148
-            Bogotá D.C. - Colombia
-            E-mail : pricing@coltrans.com.co
-            www.coltrans.com.co";
-
+            $msg = sprintf($textos['mensajeEmail'], $txt);
             
             $email->setCaUsuenvio("Administrador");
             $email->setCaTipo("Sol. documentos");
             $email->setCaIdcaso($documento->getCaId());
             $email->setCaFrom("pricing@coltrans.com.co");
             $email->setCaFromname("Pricing & Procurement Coltrans S.A.");
-            $email->setCaSubject("Solicitud de documentos");
+            $email->setCaSubject( $textos['asuntoEmail'] );
             $email->setCaReplyto("pricing@coltrans.com.co");            
 
             //$mensaje = utf8_decode($this->getRequestParameter("mensaje")."\n\n");
 
-            $email->setCaBody($txt );
-            $email->setCaBodyhtml(Utils::replace($txt));
+            $email->setCaBody($msg );
+            $email->setCaBodyhtml(Utils::replace($msg));
 
             $email->save(); //guarda el cuerpo del mensaje
-            $email->send();
+            //$email->send();
             
         }
         return sfView::NONE;
     }
+
+    /*
+      Muestra el historal de mensajes enviados sobre los vencimientos de los documentos
+     *
+     * @param sfRequest $request A request object
+     */
+
+    public function executeHistorialMensajes(sfWebRequest $request) {
+
+        $this->nivel = $this->getNivel();
+
+        if ($this->nivel <= 0) {
+            $this->forward404();
+        }
+
+        $this->forward404Unless( $request->getParameter("id") );
+        
+        $this->emails = Doctrine::getTable("Email")
+                                        ->createQuery("e")
+                                        ->addWhere("e.ca_tipo = ? ", "Sol. documentos")
+                                        ->addWhere("e.ca_idcaso = ? ", $request->getParameter("id"))
+                                        ->execute();
+
+        $this->id = $request->getParameter("id");
+        $this->modo = $request->getParameter("modo");
+    }
+
+
 
 }
 

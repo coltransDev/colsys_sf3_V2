@@ -96,3 +96,10 @@ use_helper("MimeType");
     ?>
 </table>
 
+<?
+if( $nivel>=3 ){
+    echo "<br />";
+    echo link_to("Historial de envio de mensajes", "ids/historialMensajes?modo=".$modo."&id=".$ids->getCaId(),array("title"=>"Mensajes de solicitud de documentos enviados automaticamente."));
+}
+?>
+
