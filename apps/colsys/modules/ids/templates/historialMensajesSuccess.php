@@ -33,7 +33,7 @@
         if( count( $emails)==0 ){
            ?>
             <tr >
-                <td><div align="center">No hay mensajes</div></td>
+                <td colspan="4"><div align="center">No hay mensajes</div></td>
 
             </tr>
             <?
