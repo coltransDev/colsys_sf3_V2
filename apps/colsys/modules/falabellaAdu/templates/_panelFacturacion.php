@@ -13,7 +13,7 @@ $data = $sf_data->getRaw( "data" );
 PanelFacturacion = function(){
 
     this.columns = [
-
+     
       {
         header: "Factura",
         dataIndex: 'numdocumento',
@@ -21,7 +21,7 @@ PanelFacturacion = function(){
         width: 90,
         editor: new Ext.form.NumberField({
 				allowBlank: false ,
-				allowNegative: false,
+				allowNegative: false,				
 				decimalPrecision :3
 			})
       },
@@ -61,7 +61,7 @@ PanelFacturacion = function(){
         renderer: 'usMoney',
         editor: new Ext.form.NumberField({
 				allowBlank: false ,
-				allowNegative: false,
+				allowNegative: false,				
 				decimalPrecision :3
 			})
       },
@@ -74,7 +74,7 @@ PanelFacturacion = function(){
         renderer: 'usMoney',
         editor: new Ext.form.NumberField({
 				allowBlank: false ,
-				allowNegative: false,
+				allowNegative: false,				
 				decimalPrecision :3
 			})
       },
@@ -87,7 +87,7 @@ PanelFacturacion = function(){
         renderer: 'usMoney'/*,
         editor: new Ext.form.NumberField({
 				allowBlank: false ,
-				allowNegative: false,
+				allowNegative: false,				
 				decimalPrecision :3
 			})*/
       },
@@ -100,7 +100,7 @@ PanelFacturacion = function(){
         renderer: 'usMoney',
         editor: new Ext.form.NumberField({
 				allowBlank: false ,
-				allowNegative: false,
+				allowNegative: false,				
 				decimalPrecision :3
 			})
       }/*,
@@ -109,11 +109,11 @@ PanelFacturacion = function(){
         dataIndex: 'orden',
         sortable:false,
         width: 75,
-        align: 'right'
+        align: 'right'       
       }*/
     ];
 
-
+    
     this.record = Ext.data.Record.create([
             {name: 'referencia', type: 'string', mapping: 'd_ca_referencia'},
             {name: 'numdocumento', type: 'string', mapping: 'd_ca_numdocumento'},
@@ -126,10 +126,10 @@ PanelFacturacion = function(){
             {name: 'iva_vlr', type: 'float', mapping: 'd_ca_iva_vlr'},
             {name: 'exento_vlr', type: 'float', mapping: 'd_ca_exento_vlr'},
             {name: 'orden', type: 'string'}
-
+            
         ]);
 
-    this.store = new Ext.data.Store({
+    this.store = new Ext.data.Store({       
 
         autoLoad : true,
         proxy: new Ext.data.MemoryProxy( <?=json_encode(array("root"=>$data))?>),
@@ -141,18 +141,18 @@ PanelFacturacion = function(){
         )
     });
 
-
+    
     PanelFacturacion.superclass.constructor.call(this, {
         id: 'panel-facturacion',
         loadMask: {msg:'Cargando...'},
         clicksToEdit: 1,
         stripeRows: true,
         title: 'Facturación',
-
+        
         //height: 350,
         //width: 600,
         selModel: new Ext.grid.CellSelectionModel(),
-
+        
 
         view: new Ext.grid.GridView({
             forceFit:true
@@ -160,7 +160,7 @@ PanelFacturacion = function(){
             //showPreview:true//,
             //getRowClass : this.applyRowClass
         })
-
+        
         ,listeners:{
             validateEdit: this.onValidateEdit,
             rowContextMenu: this.onRowcontextMenu,
@@ -191,7 +191,7 @@ Ext.extend(PanelFacturacion, Ext.grid.EditorGridPanel, {
 
             changes['numdocumento']=r.data.numdocumento;
             changes['olddocumento']=r.data.olddocumento;
-
+            
             if( r.data.numdocumento && r.data.numdocumento != '+' ){
                 //envia los datos al servidor
                 Ext.Ajax.request(
@@ -207,8 +207,8 @@ Ext.extend(PanelFacturacion, Ext.grid.EditorGridPanel, {
                             var res = Ext.util.JSON.decode( response.responseText );
                             if( res.id && res.success){
                                 var rec = store.getById( res.id );
-
-
+                                
+                                
                                 rec.commit();
                             }
                         }
@@ -222,9 +222,9 @@ Ext.extend(PanelFacturacion, Ext.grid.EditorGridPanel, {
         var storeTransacciones = this.store;
 
         if( this.ctxRecord &&  confirm("Desea continuar?") ){
-
+            
             var id = this.ctxRecord.id;
-
+            
             Ext.Ajax.request(
             {
                 waitMsg: 'Eliminando...',
@@ -253,10 +253,10 @@ Ext.extend(PanelFacturacion, Ext.grid.EditorGridPanel, {
                 }
             });
         }
-
+        
     },
 
-    onValidateEdit : function(e){
+    onValidateEdit : function(e){        
         if( e.field == "numdocumento" && e.value && e.record.data.orden=="Z" ){
             var rec = e.record;
             var ed = this.colModel.getCellEditor(e.column, e.row);
@@ -283,8 +283,8 @@ Ext.extend(PanelFacturacion, Ext.grid.EditorGridPanel, {
             storeGrid.addSorted(newRec);
             storeGrid.sort("orden", "ASC");
 
-
-
+            
+            
         }
 
         return true;
@@ -307,7 +307,7 @@ Ext.extend(PanelFacturacion, Ext.grid.EditorGridPanel, {
             this.menu = new Ext.menu.Menu({
             id:'grid_facturacion-ctx',
             enableScrolling : false,
-            items: [
+            items: [                   
                     {
                         text: 'Eliminar item',
                         iconCls: 'delete',
