@@ -477,6 +477,7 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
             changes['modalidad']=r.data.modalidad;
             changes['idequipo']=r.data.idequipo;
             changes['equipo']=r.data.equipo;
+            changes['idmoneda']=r.data.idmoneda;
             r.set("inSave", true);
 
             Ext.Ajax.request(
