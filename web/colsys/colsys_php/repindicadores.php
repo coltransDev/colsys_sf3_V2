@@ -963,7 +963,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
                             $fin_ant = $rs->Value('ca_fchconf_lleg');
                         }
                     }
-                $dif_mem = (is_null($dif_mem) and $rs->Value('ca_transporte') == 'Marítimo')?"48:00:00":$dif_mem;
+                $dif_mem = (is_null($dif_mem) and $rs->Value('ca_transporte') == 'Marítimo')?null:$dif_mem;
                 $dif_mem = ($rs->Value("ca_eta") > $ult_dia or $rs->Value("ca_eta") >= date("Y-m-d"))?null:$dif_mem;
 
                 $color = analizar_dif($tipo, $lci_var, $lcs_var, $dif_mem, $array_avg, $array_pnc, $array_pmc, $array_null); // Función que retorna un Arreglo con el resultado de Dif
