@@ -187,7 +187,7 @@ if($reporte->getCaIdclienteag()>0)
     $pdf->SetWidths ( array (25, 25, 85, 25, 40 ) );
     $pdf->SetFills ( array (1, 0, 0, 0, 0 ) );
     $pdf->SetStyles ( array ("B", "B", "", "B", "" ) );
-    $pdf->Row ( array ('Facturar Agente:', 'Nombre:', $cliente->getCaNombre ()." Codigo : ".$cliente->getCaId(), $reporte->getCaOrdenClie () != "''" ? 'Orden:' : ' ', $reporte->getCaOrdenClie () != "''" ? $reporte->getCaOrdenClie () : " " ) );
+    $pdf->Row ( array ('Facturar Agente:', 'Nombre:', $cliente->getCaCompania ()." Codigo : ".$cliente->getCaIdcliente(), $reporte->getCaOrdenClie () != "''" ? 'Orden:' : ' ', $reporte->getCaOrdenClie () != "''" ? $reporte->getCaOrdenClie () : " " ) );
     $pdf->SetWidths ( array (5, 20, 70, 25, 80 ) );
     $pdf->Row ( array ('', 'Contacto:', utf8_decode($contacto->getNombre ()) , 'Dirección:', str_replace ( "|", " ", utf8_decode($cliente->getCaDireccion ()) ) . $cliente->getCaComplemento () ) );
     $pdf->SetWidths ( array (5, 20, 40, 15, 30, 18, 72 ) );
