@@ -10,7 +10,7 @@
 <script language="javascript">
 gridPanelInstruccionesWindow = function( config ){
     Ext.apply(this, config);
-    var sm = new Ext.grid.CheckboxSelectionModel();
+    var sm = new Ext.grid.CheckboxSelectionModel();    
 
     gridPanelInstruccionesWindow.superclass.constructor.call(this, {
         clicksToEdit: 1,

@@ -206,7 +206,7 @@ include_component("widgets","widgetBodega");
         onSelectContinuacion: function( combo, record, index){
             if(record)
             {
-                if(record.data.modalidad!=" " && record.data.modalidad!="")
+                 if(record.data.modalidad=="OTM")
                 {
                     Ext.getCmp('idconsignatario').allowBlank=false;
                     Ext.getCmp('bodega_consignar').allowBlank=false;

@@ -392,16 +392,19 @@ var idreporte='<?=$idreporte?>';
                         Ext.getCmp("agente").setValue(res.data.idagente);
                         $("#agente").attr("value",res.data.agente);
 
+                        Ext.getCmp("sucursalagente").setValue(res.data.idsucursalagente);
+                        $("#sucursalagente").attr("value",res.data.sucursalagente);
+
                         if(Ext.getCmp("notify"))
                         {
                             Ext.getCmp("notify").setValue(res.data.idnotify);
                             $("#notify").val(res.data.notify);
                         }
                         $("#idconsignatario").val(res.data.consignatario);
-                        if(Ext.getCmp("idconsigmaster"))
+                        /*if(Ext.getCmp("idconsigmaster"))
                         {                            
                             $("#idconsigmaster").val(res.data.consigmaster);
-                        }
+                        }*/
 
 
 

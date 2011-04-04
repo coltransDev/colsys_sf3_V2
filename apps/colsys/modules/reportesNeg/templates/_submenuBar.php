@@ -85,11 +85,11 @@ switch ($action) {
             $button[$i]["image"] = "22x22/edit.gif";
             if($reporte->getCaTiporep()=="3")
                 $button[$i]["link"] = "/reportesNeg/formReporteOs/id/" . $this->getRequestParameter("id");
-            else
+            else //if($reporte->getCaTiporep()!="")
                 $button[$i]["link"] = "/reportesNeg/formReporte/id/" . $this->getRequestParameter("id") . "/impoexpo/" . $impoexpo . "/modo/" . $modo;
+//            else
+//                $button[$i]["link"] = "/colsys_php/reportenegocio.php?boton=Editar&id=" . $this->getRequestParameter("id");
             $i++;
-
-
 
             $button[$i]["name"] = "Transp.";
             $button[$i]["tooltip"] = "Cambiar el Tranporte";

@@ -531,7 +531,7 @@ class reportesNegComponents extends sfComponents
                ->createQuery("u")
                ->select("u.ca_login")
                ->innerJoin("u.UsuarioPerfil up")
-               ->where("u.ca_activo=? AND up.ca_perfil=? ", array('TRUE','tramitador-de-pólizas'))
+               ->where("u.ca_activo=? AND up.ca_perfil=? ", array('TRUE','tramitador-de-polizas'))
                ->addOrderBy("u.ca_nombre")
                //->fetchOne();
                ->execute();

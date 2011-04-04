@@ -224,6 +224,13 @@ class reportesNegActions extends sfActions
         $this->seguro = $this->getRequestParameter("seguro");
         $this->colmas = $this->getRequestParameter("colmas");
 
+        $this->transporte = $this->getRequestParameter("transporte");
+        $this->idorigen = $this->getRequestParameter("idorigen");
+        $this->iddestino = $this->getRequestParameter("iddestino");
+        $this->origen = $this->getRequestParameter("origen");
+        $this->destino = $this->getRequestParameter("destino");
+
+
         $condicion="";
         if( $criterio ){
             if ($opcion == 'ca_consecutivo' or $opcion == 'ca_nombre_cli' or $opcion == 'ca_nombre_con' or $opcion == 'ca_nombre_pro' or $opcion == 'ca_orden_prov' or $opcion == 'ca_orden_clie' or $opcion == 'ca_idcotizacion' or $opcion == 'ca_login' or $opcion == 'ca_mercancia_desc' or $opcion == 'ca_traorigen' or $opcion == 'ca_ciuorigen') {
@@ -247,6 +254,24 @@ class reportesNegActions extends sfActions
         {
             $condicion.=" and ca_colmas = '$this->colmas'";
         }
+
+
+        if($this->idorigen!="")
+        {
+            $condicion.=" and ca_origen = '$this->idorigen'";
+        }
+
+        if($this->iddestino!="")
+        {
+            $condicion.=" and ca_destino = '$this->iddestino'";
+        }
+
+        if($this->transporte!="")
+        {
+            $condicion.=" and ca_transporte = '$this->transporte'";
+        }
+
+
 
         if( ($this->idimpo && $criterio) || !$this->idimpo ){
             $con = Doctrine_Manager::getInstance()->connection();
@@ -2346,6 +2371,8 @@ color="#000000";
 
                 $data["emisionbl"]=$repExpo->getCaEmisionbl();
                 $data["ca_numbl"]=$repExpo->getCaNumbl();
+                $data["ca_anticipo"]=($repExpo->getCaAnticipo()=="Sí")?"on":"";
+
 //                $data[""]=$repExpo->getCa();
             }
             if($reporte->getCaTiporep()=="2")

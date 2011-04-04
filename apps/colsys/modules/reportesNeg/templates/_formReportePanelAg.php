@@ -445,69 +445,141 @@ include_component("widgets", "widgetContactoCliente");
                 ,
                 {
                     xtype:'fieldset',
-                    title: 'Informaciones a:',
+                    title:'Informaciones a:',
                     autoHeight:true,
-                    items: [
-                    <?
-                    for( $i=0; $i<20; $i++ )
-                    {
-                        if( $i!=0){
-                            echo ",";
-                        }
-                    ?>
-                    {
-                       border:false,
-                        title: '',
-                        autoHeight:true,
-                        layout:'column',
-                        columns: 2,
-                        defaults:{
-                            columnWidth:0.5,
-                            layout:'form',
+                    layout:'column',
+                    columns:2,
+                    items:[
+                        {
                             border:false,
-                            hideLabels:true,
-                            border:true
-                        },
-                        items: [
-                            {
-                                defaultType: 'textfield',
-                                items: [
-                                    {
-                                        xtype: "textfield",
-                                        fieldLabel: "",
-                                        name: "contacto_<?=$i?>",
-                                        id: "contacto_<?=$i?>",
-                                        readOnly: false,
-                                        width: 550,
-                                        height :((navigator.appName=="Netscape")?20:22),
-                                        tabIndex:this.tabindex++
+                            title:'Libreta de contactos',
+                            autoHeight:true,
+                            columns:2,
+                            columnWidth:0.5,
+                            items:[
+                                <?
+                                for( $i=0; $i<20; $i++ )
+                                {
+                                    if( $i!=0){
+                                        echo ",";
                                     }
+                                ?>
+                                {
+                                   border:false,
+                                    title:'',
+                                    autoHeight:true,
+                                    layout:'column',
+                                    columns:2,
+                                    defaults:{
 
-                                ]
-                            },
-                            {
-                                defaults: {width: 20},
-                                items: [
-                                    {
-                                        xtype: "checkbox",
-                                        fieldLabel: "",
-                                        name: "chkcontacto_<?=$i?>",
-                                        id: "chkcontacto_<?=$i?>",
-                                        width: 20,
-                                        height :20,
-                                        tabIndex:this.tabindex++
+                                        layout:'form',
+                                        border:false,
+                                        hideLabels:true,
+                                        border:true
+                                    },
+                                    items:[
+                                        {
+                                            defaultType:'textfield',
+                                            items:[
+                                                {
+                                                    xtype:"textfield",
+                                                    fieldLabel:"",
+                                                    name:"contacto_<?=$i?>",
+                                                    id:"contacto_<?=$i?>",
+                                                    readOnly:false,
+                                                    width:250,
+                                                    height:20
+                                                }
+
+                                            ]
+                                        },
+                                        {
+                                            defaults:{width:20},
+                                            items:[
+                                                {
+                                                    xtype:"checkbox",
+                                                    fieldLabel:"",
+                                                    name:"chkcontacto_<?=$i?>",
+                                                    id:"chkcontacto_<?=$i?>",
+                                                    width:20,
+                                                    height:20
+                                                }
+
+                                            ]
+                                        }
+                                    ]
+                                }
+                                <?
+                                }
+                                ?>
+                            ]
+                        }
+                        ,
+                        {
+                            border:false,
+                            title:'Contactos fijos',
+                            autoHeight:true,
+                            columnWidth:0.5,
+                            items:[
+                                <?
+                                for( $i=0; $i<20; $i++ )
+                                {
+                                    if( $i!=0){
+                                        echo ",";
                                     }
+                                ?>
+                                {
+                                   border:false,
+                                    title:'',
+                                    autoHeight:true,
+                                    layout:'column',
+                                    columns:2,
+                                    defaults:{
+                                        layout:'form',
+                                        border:false,
 
-                                ]
-                            }
-                        ]
-                    }
-                    <?
-                    }
-                    ?>
+                                        hideLabels:true,
+                                        border:true
+                                    },
+                                    items:[
+                                        {
+                                            defaultType:'textfield',
+                                            items:[
+                                                {
+                                                    xtype:"textfield",
+                                                    fieldLabel:"",
+                                                    name:"contacto_fijos<?=$i?>",
+                                                    id:"contacto_fijos<?=$i?>",
+                                                    readOnly:true,
+                                                    width:250,
+                                                    height:20
+                                                }
+
+                                            ]
+                                        },
+                                        {
+                                            defaults:{width:20},
+                                            items:[
+                                                {
+                                                    xtype:"checkbox",
+                                                    fieldLabel:"",
+                                                    name:"chkcontacto_fijos<?=$i?>",
+                                                    id:"chkcontacto_fijos<?=$i?>",
+                                                    width:20,
+                                                    height:20
+                                                }
+
+                                            ]
+                                        }
+                                    ]
+                                }
+                                <?
+                                }
+                                ?>
+                            ]
+                        }
                     ]
-
-                }
+                 }
 
 
             ],
@@ -606,6 +678,25 @@ include_component("widgets", "widgetContactoCliente");
 
             Ext.getCmp("vendedor").setValue(record.data.vendedor);
             $("#vendedor").val(record.data.nombre_ven);
+
+            store=combo.store;
+            j=0;
+            confirmacionesF=new Array();
+            {
+                store.each( function( r ){
+                    if(r.data.compania==record.get("compania") && r.data.fijo && r.data.email!="")
+                    {
+                        if( Ext.getCmp("contacto_fijos"+j) ){
+                            Ext.getCmp("contacto_fijos"+j).setValue(r.data.email);
+                            Ext.getCmp("contacto_fijos"+j).setReadOnly( false );
+                            Ext.getCmp("chkcontacto_fijos"+j).setValue( true );
+                            confirmacionesF.push(r.data.email);
+                            j++;
+                        }
+                    }
+                });
+            }
+
 
             var confirmar =  record.get("confirmar") ;
 			var brokenconfirmar="";

@@ -26,7 +26,7 @@ include_component("widgets", "widgetMoneda");
                             xtype: "hidden",
                             name: "ca_seguro_conf",
                             id: "ca_seguro_conf",
-                            value: 'spena'
+                            value: '<?=$seguro_conf?>'
 
                         },
                         {

@@ -117,7 +117,7 @@ if( $cotizacion ){
                         newRec = gridConceptos.store.getById( newRec.id );                        
                         newRec.set("neta_idm", r.data.idmoneda);
                         newRec.set("reportar_tar", /*r.data.valor_tar*/0);
-                        newRec.set("reportar_min", r.data.valor_min);
+                        newRec.set("reportar_min", /*r.data.valor_min*/0);
                         newRec.set("reportar_idm", r.data.idmoneda);
                         newRec.set("cobrar_tar", r.data.valor_tar);
                         newRec.set("cobrar_min", r.data.valor_min);

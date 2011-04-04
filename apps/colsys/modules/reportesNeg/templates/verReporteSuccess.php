@@ -64,7 +64,7 @@
 			<th width="30%" scope="col"><b>e-mail</b></th>
 		</tr>
 		<?	
-		if( $asignaciones ){
+		/*if( $asignaciones ){
 			foreach( $asignaciones as $asignacion ){	
 				$tarea = $asignacion->getNotTarea();	
 				$asignacionesTarea  = $tarea->getNotTareaAsignacion();
@@ -85,7 +85,7 @@
 				}
 			}
 		}
-		
+		*/
 		if( $reporte->getCaIdtareaRext() ){
 			$tarea = Doctrine::getTable("NotTarea")->find( $reporte->getCaIdtareaRext() );
 			$asignacionesTarea  = $tarea->getNotTareaAsignacion();

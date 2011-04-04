@@ -3,7 +3,8 @@
 * Muestra los resultados de la busqueda del reporte de negocios 
 * @author Andres Botero , Mauricio Quinche
 */
-
+include_component("widgets", "widgetTransporte");
+include_component("widgets", "widgetCiudad");
 ?>
 <div align="center">
 
@@ -21,7 +22,7 @@
 
     </tr>
 	<tr>
-		<td width="123"  ><b>Buscar por:</b> <br />
+        <td width="123" valign="top"  ><b>Buscar por:</b> <br />
             <select name="criterio" size="7">
                 <option value="ca_consecutivo" <?=($criterio=="ca_consecutivo")?"selected":""?>>N&uacute;mero de reporte</option>
                         <option value="ca_nombre_cli" <?=($criterio=="ca_nombre_cli")?"selected":""?>>Cliente</option>
@@ -44,11 +45,21 @@
             <br>
             Por Fechas <input type="checkbox" onclick="habFechas(this)">
             <br>
+             <div>
+            <div style="float:left;width: 33%"><b>Transporte</b> <br><span id="transpor"></span></div>
+            <div style="float:left;width: 33%"><b>Origen</b> <br><span id="orig"></span></div>
+            <div style="float:left;width: 33%"><b>Destino</b> <br><span id="dest"></span></div>
+            </div>
+            <br>
             <div>
             <div  style="float: left;width: 50%">Fecha Inicial<div id="fecha1"></div></div>
             <div  style="float: left;width: 50%">Fecha Final<div id="fecha2"></div></div>
             </div>
             <script>
+                var trasnpo=new WidgetTransporte({fieldLabel: "Transporte",id:"transporte", allowBlank:false,renderTo:'transpor',width:100,value:'<?=$transporte?>'});
+                var orig=new WidgetCiudad({name: 'origen',hiddenName: 'idorigen',id: 'origen',width:100,renderTo:'orig',value:'<?=$origen?>',hiddenValue:'<?=$idorigen?>'});
+                var dest=new WidgetCiudad({name: 'destino',hiddenName: 'iddestino',id: 'destino',width:100, renderTo:'dest', value:'<?=$destino?>', hiddenValue:'<?=$iddestino?>'});
+                
                 var fech1= new Ext.form.DateField(
                     {
                         fieldLabel: 'Fecha Inicial',

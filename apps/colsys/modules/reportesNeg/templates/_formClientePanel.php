@@ -82,6 +82,18 @@ include_component("widgets", "widgetContactoCliente");
 
                         <?
                         }
+                        else if($impoexpo==constantes::EXPO)
+                        {
+                        ?>
+                        ,
+                        {
+                            xtype:'checkbox',
+                            fieldLabel:'Solicitud de Anticipo',
+                            id:'ca_anticipo',
+                            name:'ca_anticipo'
+                        }
+                        <?
+                        }
                         ?>
                     ]
                 }
@@ -231,7 +243,7 @@ var ij=parseInt(<?=($nprov>1)?($nprov):1?>);
             Ext.getCmp("contacto").setValue(record.get("nombre")+' '+record.get("papellido")+' '+record.get("sapellido"));
 
 
-            /*if(Ext.getCmp("chkcontacto_0").getValue()==false)*/
+            
             {
                 var confirmar=record.get("confirmar") ;
                 var brokenconfirmar="";
@@ -282,7 +294,7 @@ var ij=parseInt(<?=($nprov>1)?($nprov):1?>);
             
             Ext.getCmp("preferencias").setValue(record.get("preferencias"));
             
-            Ext.getCmp("vendedor").onTrigger1Click();
+
             Ext.getCmp("vendedor").setValue(record.data.vendedor);
             $("#vendedor").val(record.data.nombre_ven);
             combo.alertaCliente(record);

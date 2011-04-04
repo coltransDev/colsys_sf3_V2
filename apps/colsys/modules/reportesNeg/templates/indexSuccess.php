@@ -3,6 +3,8 @@
 * Pantalla de bienvenida para el modulo de reportes
 * @author Andres Botero, Mauricio Quinche
 */
+include_component("widgets", "widgetTransporte");
+include_component("widgets", "widgetCiudad");
 ?>
 
 <div class="content" align="center">
@@ -133,7 +135,7 @@
     </tr>
 	<tr>
 
-		<td width="123"  ><b>Buscar por:</b> <br />
+		<td width="123" valign="top"  ><b>Buscar por:</b> <br />
             <select name="criterio" size="7">
                         <option selected="selected" value="ca_consecutivo">N&uacute;mero de reporte</option>
                         <option value="ca_nombre_cli">Cliente</option>
@@ -154,13 +156,24 @@
 			<input type="text"  name="cadena" size="60" />
 		</div>
             <br>
+            <div>
+            <div style="float:left;width: 33%"><b>Transporte</b> <br><span id="transpor"></span></div>
+            <div style="float:left;width: 33%"><b>Origen</b> <br><span id="orig"></span></div>
+            <div style="float:left;width: 33%"><b>destino</b> <br><span id="dest"></span></div>
+            </div>
+            <br>
             Por Fechas <input type="checkbox" onclick="habFechas(this)">
             <br>
+
             <div>
             <div  style="float: left;width: 50%">Fecha Inicial<div id="fecha1"></div></div>
             <div  style="float: left;width: 50%">Fecha Final<div id="fecha2"></div></div>
             </div>
             <script>
+                var trasnpo=new WidgetTransporte({fieldLabel: "Transporte",id:"transporte", allowBlank:false,renderTo:'transpor',width:100});
+                var orig=new WidgetCiudad({name: 'origen',hiddenName: 'idorigen',id: 'origen',width:100,renderTo:'orig'})
+                var dest=new WidgetCiudad({name: 'destino',hiddenName: 'iddestino',id: 'destino',width:100,renderTo:'dest'})
+
                 var fech1= new Ext.form.DateField(
                     {
                         fieldLabel: 'Fecha Inicial',

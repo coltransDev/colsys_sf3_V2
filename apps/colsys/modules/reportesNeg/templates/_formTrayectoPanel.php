@@ -10,6 +10,7 @@ include_component("widgets", "widgetModalidad");
 include_component("widgets", "widgetLinea");
 include_component("widgets", "widgetCiudad");
 include_component("widgets", "widgetAgente");
+include_component("widgets", "widgetSucursalAgente");
 include_component("widgets", "widgetIncoterms");
 include_component("reportesNeg", "formMercanciaPanel",array("modo"=>$modo,"impoexpo"=>$impoexpo));
 if($impoexpo!= Constantes::TRIANGULACION)
@@ -17,10 +18,9 @@ if($impoexpo!= Constantes::TRIANGULACION)
 	include_component("reportesNeg", "formContinuacionPanel",array("modo"=>$modo,"impoexpo"=>$impoexpo));
 }
 
-if($permiso>=2)
-{
-    include_component("widgets", "widgetComerciales");
-}
+
+include_component("widgets", "widgetComerciales");
+
 ?>
 <script type="text/javascript">
     FormTrayectoPanel = function( config ){
@@ -81,35 +81,13 @@ if($permiso>=2)
                                 name: "fchdespacho",
                                 format: 'Y-m-d'
                             },
-                            <?
-                            if($permiso<2)
-                            {
-                            ?>
-                            {
-                                xtype: "hidden",
-                                id: "idvendedor",
-                                name: "idvendedor"
-                            }
-                            ,
-                            {
-                                xtype: "textfield",
-                                fieldLabel: "Vendedor",
-                                id: "vendedor",
-                                name: "vendedor"
-                            }
-                            <?
-                            }
-                            else
-                            {
-                            ?>
+
                             new WidgetComerciales({fieldLabel: 'Vendedor',
                                                     id: 'vendedor',
                                                     name: 'vendedor',
-                                                    hiddenName: "idvendedor"
+                                                    hiddenName: "idvendedor",
+                                                     readOnly: <?=($permiso<2)?"true":"false"?>
                                                     })
-                            <?
-                            }
-                            ?>
                         ]
                     },
                     {
@@ -201,6 +179,12 @@ if($permiso>=2)
                                                       id:"agente",
                                                       hiddenName:"idagente",
                                                       width:350
+                                                    }),
+                                    new WidgetSucursalAgente({fieldLabel: 'Sucursal',
+                                                      linkAgente: "agente",
+                                                      id:"sucursalagente",
+                                                      hiddenName:"idsucursalagente",
+                                                      width:250
                                                     }),
                                     {
                                         xtype: "checkbox",
