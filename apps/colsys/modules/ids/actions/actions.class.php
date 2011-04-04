@@ -105,7 +105,12 @@ class idsActions extends sfActions {
 
         switch ($criterio) {
             case "nombre":
-                $q->addWhere('i.ca_nombre like ?', '%' . strtoupper($cadena) . '%');
+                if( $this->modo=="prov" ){
+                    $q->addWhere('i.ca_nombre like ? OR prov.ca_sigla like ?', array('%'.strtoupper($cadena).'%','%'.strtoupper($cadena).'%'));
+                }else{
+                    $q->addWhere('i.ca_nombre like ?', '%' . strtoupper($cadena) . '%');
+                }
+
                 break;
             case "id":
                 $q->addWhere('i.ca_idalterno like ?', strtoupper($cadena) . '%');
