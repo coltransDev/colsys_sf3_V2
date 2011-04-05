@@ -305,14 +305,23 @@ class clientesActions extends sfActions {
         foreach($empresas as $empresa){
             $stmt = ClienteTable::estadoClientes(null, null, $empresa, null, null, null);
             list($year, $month, $day) = sscanf(date('Y-m-d'), "%d-%d-%d");
-            $fch_ini = date('Y-m-d', mktime(0, 0, 0, $month, $day, $year-1));
-            $fch_fin = date('Y-m-d', mktime(0, 0, 0, $month, $day, $year));
+            $fch_ini = date('Y-m-d H:i:s', mktime( 0,  0,  0, $month, $day, $year-1));
+            $fch_fin = date('Y-m-d H:i:s', mktime(23, 59, 59, $month, $day, $year));
             $clientes = array();
             while ($row = $stmt->fetch()) {
                 $sb = ClienteTable::verificacionStdCliente($fch_ini, $fch_fin, $empresa, $row["ca_idcliente"]);
                 while ($row1 = $sb->fetch()) {
                     $estado_cal = ($row1["ca_numnegocios"] == "" or $row1["ca_numnegocios"] == 0) ? "Potencial" : "Activo";
                     $resultado = ($row["ca_estado"]!=$estado_cal)?"Error":"OK";
+                    /*
+                    if ($row["ca_idcliente"] == 80089103){     // Ruptura de Control ver Variables
+                        print_r($row);
+                        print_r($row1);
+                        echo "$fch_ini, $fch_fin | ";
+                        echo $row["ca_estado"]." ".$estado_cal." ".$resultado." ".$empresa." ".$row1["ca_numnegocios"];
+                        
+                        die();
+                    }*/
                     if($row["ca_estado"]!="Vetado" and $resultado != "OK"){
                         if($row1["ca_fchnegocio"] != ""){
                             list($ano, $mes, $dia, $hor, $min, $seg) = sscanf($row1["ca_fchnegocio"], "%d-%d-%d %d:%d:%d");

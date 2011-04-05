@@ -10,11 +10,11 @@ class ClienteTable extends Doctrine_Table {
 
     public static function estadoClientes($fch_ini, $fch_fin, $empresa, $idcliente, $estado, $sucursal) {
         if ($fch_ini == null) {
-            $fch_ini = date('Y-m-d h:i:s', mktime(0, 0, 0, 1, 1, 1900));
+            $fch_ini = date('Y-m-d H:i:s', mktime(0, 0, 0, 1, 1, 1900));
         }
 
         if ($fch_fin == null) {
-            $fch_fin = date('Y-m-d h:i:s');
+            $fch_fin = date('Y-m-d H:i:s', mktime(23, 59, 59, date('m'), date('d'), date('Y')));
         }
 
         //list($ano, $mes, $dia) = sscanf($fch_fin, "%d-%d-%d");
