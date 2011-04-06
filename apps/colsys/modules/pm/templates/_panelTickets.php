@@ -186,13 +186,21 @@ PanelTickets = function( config ){
         renderer: Ext.util.Format.dateRenderer('d/m/y H:i')
       },*/
       {
-        header: "Ult. Seguimiento",
+        header: "Ult. Seg.",
         dataIndex: 'ultseg',
         hideable: false,
         width: 100,
         sortable: true,
         renderer: Ext.util.Format.dateRenderer('d/m/y')
-      },      
+      },
+      {
+        header: "Prox. Seg.",
+        dataIndex: 'proxseg',
+        hideable: false,
+        width: 100,
+        sortable: true,
+        renderer: Ext.util.Format.dateRenderer('d/m/y')
+      },
       {
         header: "%",
         dataIndex: 'percentage',
@@ -226,6 +234,7 @@ PanelTickets = function( config ){
             {name: 'opened', type: 'date', mapping: 'h_ca_opened', dateFormat:'Y-m-d H:i:s'},
             {name: 'action', type: 'string', mapping: 'h_ca_action'},
             {name: 'ultseg', type: 'date', mapping: 'h_ultseg', dateFormat:'Y-m-d H:i:s'},
+            {name: 'proxseg', type: 'date', mapping: 'h_proxseg', dateFormat:'Y-m-d H:i:s'},
             {name: 'respuesta', type: 'date', mapping: 'tar_ca_fchterminada', dateFormat:'Y-m-d H:i:s'},
             {name: 'vencimiento', type: 'date', mapping: 'tar_ca_fchvencimiento', dateFormat:'Y-m-d H:i:s'},
             {name: 'percentage', type: 'integer', mapping: 'h_ca_percentage'},
