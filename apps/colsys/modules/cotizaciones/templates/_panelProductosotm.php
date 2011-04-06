@@ -166,6 +166,7 @@ PanelProductosOtm = function( config ){
     */
     this.store = new Ext.data.GroupingStore({
         autoLoad : true,
+        pruneModifiedRecords:true,
         url: (this.tipo=="OTM/DTA")?'<?=url_for($url1)?>':'<?=url_for($url)?>',
         reader: new Ext.data.JsonReader(
             {
