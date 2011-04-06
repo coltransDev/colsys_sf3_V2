@@ -443,7 +443,7 @@ require_once("menu.php");
                 echo "  <TD Class=imprimir COLSPAN=6>&nbsp;</TD>";
                 echo "</TR>";
                 echo "<TH Class=titulo COLSPAN=5>Cuadro de Costos de la Referencia</TH>";
-                echo "<TH></TH>";  // Botón para la creación de un Registro Nuevo
+                echo "<TH><IMG src='./graficos/post.gif' onClick=\"document.location='/ids/formEventos?referencia=".$rs->Value('ca_referencia')."'\" title='Eventos Proveedores' ></TH>";  // Botón para la creación de un Registro Nuevo
                 while (!$cs->Eof() and !$cs->IsEmpty()) {                                      // Lee la totalidad de los registros obtenidos en la instrucción Select
                    echo "<TR>";
                    echo "<TR HEIGHT=5>";
