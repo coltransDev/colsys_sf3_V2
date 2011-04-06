@@ -7,7 +7,7 @@
 include_component("pricing", "panelFletesPorTrayecto");
 include_component("cotizaciones", "panelTrayectoWindow", array("cotizacion"=>$cotizacion) );
 include_component("cotizaciones", "panelTrayectoForm", array("cotizacion"=>$cotizacion) );
-include_component("cotizaciones", "formTrayectoAduanaWindow", array("cotizacion"=>$cotizacion) );
+//include_component("cotizaciones", "formTrayectoAduanaWindow", array("cotizacion"=>$cotizacion) );
 ?>
 <script type="text/javascript">
 
