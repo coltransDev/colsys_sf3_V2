@@ -155,9 +155,9 @@ foreach( $idproveedores as $idprov ){
     $pdf->SetWidths(array(25,25,85,25,40));
     $pdf->SetFills(array(1,0,0,0,0,0,0));
     $pdf->SetStyles(array("B","B","","B",""));
-    $pdf->Row(array('Proveedor:','Nombre:',utf8_decode($tercero->getCaNombre()),'Orden:',$orden));
+    $pdf->Row(array('Proveedor:','Nombre:',($tercero->getCaNombre()),'Orden:',$orden));
     $pdf->SetWidths(array(5,20,70,25,80));
-    $pdf->Row(array('','Contacto:',utf8_decode($tercero->getCaContacto()),'Dirección:',utf8_decode($tercero->getCaDireccion()) ));
+    $pdf->Row(array('','Contacto:',($tercero->getCaContacto()),'Dirección:',($tercero->getCaDireccion()) ));
     $pdf->SetWidths(array(5,20,40,15,30,18,40,22,10));
     $pdf->SetStyles(array("B","B","","B","","B","","B",""));
     $pdf->Row(array('','Teléfono:',$tercero->getCaTelefonos(),'Fax:',$tercero->getCaFax(),'E-mail:',$tercero->getCaEmail(),'Incoterms:',$termino));
