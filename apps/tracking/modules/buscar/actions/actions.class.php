@@ -34,7 +34,7 @@ class buscarActions extends sfActions
 
 
 
-            $query = "SELECT DISTINCT  t.ca_consecutivo, ca_transporte, 
+            $query = "SELECT DISTINCT  t.ca_consecutivo, ca_transporte, t.ca_fchcreado,
                         o.ca_ciudad as origen, d.ca_ciudad as destino, t3.ca_nombre as proveedor, ca_orden_clie
                       FROM tb_reportes t
                       INNER JOIN tb_ciudades o ON o.ca_idciudad = t.ca_origen
@@ -66,6 +66,8 @@ class buscarActions extends sfActions
 					exit();
 					break;	
 			}
+
+            $query.=" ORDER BY t.ca_fchcreado DESC ";
 
             $query.=" LIMIT 100 ";
 
