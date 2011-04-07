@@ -180,6 +180,10 @@ class cotizacionesComponents extends sfComponents {
         //echo $this->getRequestParameter("id");
     }
 
+    public function executeChart() {
+
+    }
+
 }
 
 ?>
