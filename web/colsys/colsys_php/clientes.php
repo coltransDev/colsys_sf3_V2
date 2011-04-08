@@ -1149,7 +1149,7 @@ require_once("menu.php");
              echo "  <TD Class=captura style='vertical-align: top;'>Preferencias:</TD>";
              echo "  <TD Class=mostrar COLSPAN=2><TEXTAREA NAME='preferencias' WRAP=virtual ROWS=5 COLS=65></TEXTAREA></TD>";
              echo "</TR>";
-             if ($nivel >= 3){
+             if ($nivel >= 2){
                  echo "<TR>";
                  echo "  <TD Class=captura style='vertical-align: top;'>Vendedor :</TD>";
                  echo "  <TD Class=mostrar COLSPAN=2><SELECT NAME='vendedor'>";  // Llena el cuadro de lista con los valores de la tabla Vendedores
@@ -1528,7 +1528,7 @@ require_once("menu.php");
              echo "  <TD Class=captura>Preferencias:</TD>";
              echo "  <TD Class=mostrar COLSPAN=2><TEXTAREA NAME='preferencias' WRAP=virtual ROWS=5 COLS=65>".$rs->Value('ca_preferencias')."</TEXTAREA></TD>";
              echo "</TR>";
-             if ($nivel >= 3){
+             if ($nivel >= 2){
                  echo "<TR>";
                  echo "  <TD Class=captura style='vertical-align: top;'>Vendedor :</TD>";
                  echo "  <TD Class=mostrar COLSPAN=2><SELECT NAME='vendedor'>";  // Llena el cuadro de lista con los valores de la tabla Vendedores
