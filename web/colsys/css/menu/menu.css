@@ -1,7 +1,7 @@
 #navigation {
 	width:auto;
 	list-style-type: none;
-	background-color: #F0F0F0;
+	
 	height: 25px;
 	position: relative;
 	border-top: 0;
@@ -32,14 +32,14 @@
 }
 
 #navigation li a:hover {
-	background-color: #1D3F99;
-	color: #FFFFFF;	
+	background-color: #CCCCCC;
+	
 }
 
 
 #navigation li.selected a {
-	background-color: #1D3F99;
-	color:#FFFFFF;
+	background-color: #CCCCCC;
+	
 }
 #navigation li a.arrow {
 	padding: 0;
@@ -53,33 +53,36 @@
 
 #navigation li a.arrow:hover {
 	padding: 0;
-	background-image: url("../../images/global_menu_arrow_hover.gif");	
+	/*background-image: url("../../images/global_menu_arrow_hover.gif");	*/
 	background-position:center;
 	
 }
 
 #navigation li.selected a.arrow {
 	padding: 0;
-	background-image: url("../../images/global_menu_arrow_hover.gif");
+	/*background-image: url("../../images/global_menu_arrow_hover.gif");*/
 	background-position:center;
 
 }
 
 /*
-- 
+- Submenu 
 */
 #navigation li ul {
 	list-style-type: none;
 	width: 130px;
 	position: absolute;
-	background-color: #fff;
+	
+    background-color:#e5e5e5;
+	border:#b5b5b5 solid 1px;
+    
 	height: auto;
 	top: 26px;
 	left: -1px;
-	border: 1px solid #3B5998;
+	
 	border-top: 0;
 	display: none;
-	padding: 5px 0;
+	padding: 2px;
 	z-index: 12;
 	
 	list-style-image:none;
@@ -87,12 +90,17 @@
 	list-style-type:none;
 	margin: 0px;
 
-
-	
+    -webkit-border-radius:3px;
+    -khtml-border-radius:3px;
+    -moz-border-radius:3px;
+    border-radius:3px;
 }
 
 #navigation li ul li ul{
 	width: auto;
+    
+
+    
 	
 }
 
@@ -104,10 +112,15 @@
 	
 	float: left;
 	font-size: 10px;
-	width: 129px;
+	width: 129px;    
 	font-weight: normal;
-	border-top: 1px dashed #F7F7F7 ;
+    border-top: 1px solid #F7F7F7 ;
+    text-align: left;
 	
+	-webkit-border-radius:3px;
+    -khtml-border-radius:3px;
+    -moz-border-radius:3px;
+    border-radius:3px;
 	
 	
 }
@@ -123,18 +136,19 @@
 #navigation li ul li a, #navigation li.selected ul li a {
 	
 	
-	color: #3B5998;
+	color: #666;
 	background: #FFFFFF;
 	float: none;
 	border-left: 1px solid #fff;
+    padding-left: 20px;
 	
 	
 }
 #navigation li ul li a:hover, #navigation li.selected ul li a:hover {
-	background-color: #1D3F99;
+	background-color: #cccccc;
 	color: #FFFFFF;
-	border-left: 1px solid #6D84B4;
-	border-right: 1px solid #6D84B4;
+	border-left: 1px solid #afafaf;
+	border-right: 1px solid #afafaf;
 	cursor:pointer;
 	border-top: 0px  ;
 	
@@ -155,13 +169,16 @@ Submenus
 
 
 
-
+/*
+* 2do Nivel
+*/
 #navigation li ul ul {
 	margin: -3em 0 0 13em;
-	border: 1px solid #1D3F99;
+	
 	text-align:left;
-	padding-left: 10px;
+	
 	display:block;
+    
 }
 
 
