@@ -17,38 +17,42 @@
     <?php include_javascripts() ?>
 
     <script type="text/javascript" src="/js/loginWindow.js"></script>
-<!--
 
 
-    <link type="text/css" href="/css/jx/jx.bar.css" rel="stylesheet" />
+
+<!--    <link type="text/css" href="/css/jx/jx.bar.css" rel="stylesheet" />
     
-    <script type="text/javascript" src="/js/jixedbar-0.0.3-dev.js"></script>
+    <script type="text/javascript" src="/js/jquery.jixedbar.js"></script>-->
     <script type="text/javascript">
         /*$(document).ready(function() {
+            document.getElementById("demo-bar").style.display = "";
             $("#demo-bar").jixedbar({
                 roundedCorners: true
             });
+
+            
         });*/
+        
     </script>
--->
+
 
 </head>
 <body >
-    
+<!--    <div class="top"></div>-->
 	<div align="center">
-		<div class="header" align="center" >	
-			
-			
-			<div class="headerleft" ><?=image_tag("layout/header/head_left.gif")?></div>
-			<div class="headerright" ><?=image_tag("layout/header/head_right.gif")?></div>
+		<div class="header" align="center" >
+			<div class="headerleft" ><?=image_tag("branding/".sfConfig::get("app_branding_template")."/header/head_left.gif")?></div>
+			<div class="headerright" ><?=image_tag("branding/".sfConfig::get("app_branding_template")."/header/head_right.gif")?></div>
 			<div class="topmenuwraper"  >
-					<? 
-					include_component("menu", "menubar");
-					?>
+                <?
+                include_component("menu", "menubar");
+                ?>
 			</div>
 		</div>
 		
-		
+		<?
+        //include_component("menu", "menubar");
+        ?>
 		
 	</div>
     <?
@@ -66,7 +70,7 @@ include_component("menu", "submenubar");
 
 <div class="footer">	
 	<div class="copyright">
-		Coltrans S.A. - Colmas LTDA. Todos los derechos reservados
+		<?=sfConfig::get("app_branding_name")?>. Todos los derechos reservados
         <br />        
         colsys@<?=$_SERVER["SERVER_ADDR"]?>
 	</div>
