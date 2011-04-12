@@ -6,9 +6,10 @@ all:
 
 
   branding:
-    template: coltrans
-    url: www.coltrans.com.co
-    name: Coltrans S.A. - Colmas Ltda.
+    template: tplogistics
+    url: www.tplogistics.com.pe
+    name: TPLogistics
+    from: serclientebog@coltrans.com.co
 
   smtp:
     host: smtp.coltrans.com.co
