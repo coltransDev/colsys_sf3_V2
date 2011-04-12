@@ -51,12 +51,12 @@ class clientesActions extends sfActions {
         $yml = sfYaml::load($config);
 
 
-        $contentPlain = sprintf($yml['email'], "https://www.coltrans.com.co".$link, "http://www.coltrans.com.co");
-        $contentHTML = sprintf(Utils::replace($yml['email']), "<a href='https://www.coltrans.com.co".$link."'>https://www.coltrans.com.co".$link."</a>", "<a href='http://www.coltrans.com.co'>http://www.coltrans.com.co</a>");
+        $contentPlain = sprintf($yml['email'], "https://".sfConfig::get("app_branding_url").$link, "http://".sfConfig::get("app_branding_url"));
+        $contentHTML = sprintf(Utils::replace($yml['email']), "<a href='https://".sfConfig::get("app_branding_url").$link."'>https://".sfConfig::get("app_branding_url").$link."</a>", "<a href='http://".sfConfig::get("app_branding_url")."'>http://".sfConfig::get("app_branding_url")."</a>");
         ;
 
-        $from = "serclientebog@coltrans.com.co";
-        $fromName = "Coltrans S.A. - Servicio al cliente";
+        $from = sfConfig::get("app_branding_from");
+        $fromName = sfConfig::get("app_branding_name")." - Servicio al cliente";
         //$to = array($contacto->getCaNombres()." ".$contacto->getCaPapellido()=>$contacto->getCaEmail() );
         //$to = array($contacto->getCaNombres()." ".$contacto->getCaPapellido()=>$contacto->getCaEmail() );
         $to = array($contacto->getCaNombres()." ".$contacto->getCaPapellido() => $contacto->getCaEmail(), $this->getUser()->getNombre() => $this->getUser()->getEmail());
@@ -70,7 +70,7 @@ class clientesActions extends sfActions {
         $email->setCaFromname($fromName);
         $email->addTo($contacto->getCaEmail());
         $email->addCc($this->getUser()->getEmail());
-        $email->setCaSubject("Activación Clave Coltrans.com.co");
+        $email->setCaSubject("Activación Clave ".sfConfig::get("app_branding_name"));
         $email->setCaBodyhtml($contentHTML);
         $email->setCaBody($contentPlain);
         $email->save();

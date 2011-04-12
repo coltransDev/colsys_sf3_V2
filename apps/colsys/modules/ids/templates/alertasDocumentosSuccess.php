@@ -22,7 +22,7 @@
         foreach( $documentos as $documento ){
         ?>
         <tr>
-            <td><a href="https://www.coltrans.com.co/<?=url_for("ids/verIds?modo=".$modo."&id=".$documento["i_ca_id"])?>"><?=$documento["i_ca_nombre"]?></a></td>
+            <td><a href="https://<?=sfConfig::get("app_branding_url")?>/<?=url_for("ids/verIds?modo=".$modo."&id=".$documento["i_ca_id"])?>"><?=$documento["i_ca_nombre"]?></a></td>
             <td><?=$documento["t_ca_tipo"]?></td>
             <td>
                 <?
