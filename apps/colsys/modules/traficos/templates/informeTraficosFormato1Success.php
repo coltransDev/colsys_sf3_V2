@@ -19,7 +19,7 @@ error_reporting( E_ERROR );
 $objPHPExcel = new sfPhpExcel();
 
 // Set properties	
-$objPHPExcel->getProperties()->setCreator("Coltrans S.A.");
+$objPHPExcel->getProperties()->setCreator("Colsys");
 $objPHPExcel->getProperties()->setLastModifiedBy("Dpto de Traficos");
 $objPHPExcel->getProperties()->setTitle("Cuadro de transito de cargas");
 $objPHPExcel->getProperties()->setSubject("Cuadro de transito de cargas");
@@ -102,7 +102,7 @@ if( $modo=="maritimo" ){
 $objPHPExcel->getActiveSheet()->setCellValue('P'.$i, 'Consignatario');
 $objPHPExcel->getActiveSheet()->setCellValue('Q'.$i, 'Status');
 $objPHPExcel->getActiveSheet()->setCellValue('R'.$i, 'Actualizado');
-$objPHPExcel->getActiveSheet()->setCellValue('S'.$i, 'Ref. Coltrans');
+$objPHPExcel->getActiveSheet()->setCellValue('S'.$i, 'Ref. ');
 
 
 if( $parametros ){
@@ -472,8 +472,8 @@ $objPHPExcel->getActiveSheet()->setCellValue('A'.$i, utf8_encode("Orden Anulada"
 		
 
 // Add a hyperlink to the sheet		
-$objPHPExcel->getActiveSheet()->setCellValue('A'.($i+2), 'http://www.coltrans.com.co');
-$objPHPExcel->getActiveSheet()->getCell('A'.($i+2))->getHyperlink()->setUrl('http://www.coltrans.com.co');
+$objPHPExcel->getActiveSheet()->setCellValue('A'.($i+2), 'http://'.sfConfig::get("app_branding_url"));
+$objPHPExcel->getActiveSheet()->getCell('A'.($i+2))->getHyperlink()->setUrl('http://'.sfConfig::get("app_branding_url"));
 $objPHPExcel->getActiveSheet()->getCell('A'.($i+2))->getHyperlink()->setTooltip(utf8_encode('Mayor información'));
 $objPHPExcel->getActiveSheet()->getStyle('A'.($i+2))->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
 
@@ -484,7 +484,7 @@ $objPHPExcel->getActiveSheet()->mergeCells('A'.($i+2).":B".($i+2));
 $objDrawing = new PHPExcel_Worksheet_Drawing();
 $objDrawing->setName('Logo');
 $objDrawing->setDescription('Logo');
-$objDrawing->setPath(sfConfig::get("sf_web_dir") . '/images/logos/logoCOLTRANS316x60.png');
+$objDrawing->setPath(sfConfig::get("sf_web_dir") . '/images/branding/'.sfConfig::get("app_branding_template").'/logo316x60.png');
 $objDrawing->setCoordinates('A1');		
 $objDrawing->setHeight(36);
 $objDrawing->getShadow()->setVisible(true);
