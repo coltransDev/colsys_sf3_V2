@@ -11,6 +11,9 @@ body{
 	padding: 0px;
 }
 
+.top{
+    height: 30px;
+}
 .headerleft{
 	float:left;
 	width:auto;
@@ -589,6 +592,12 @@ a.toolbar:active {
 .page_white_edit {
 	background: url('../images/fam/page_white_edit.png') no-repeat 0 0 !important;
 }
+
+.page_copy {
+	background: url('../images/fam/page_copy.png') no-repeat 0 0 !important;
+}
+
+
 
 .page_white_magnify{
     background: url('../images/fam/page_white_magnify.png') no-repeat 0 0 !important;
