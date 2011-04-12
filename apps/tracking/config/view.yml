@@ -6,7 +6,7 @@ default:
     content-type: text/html
 
   metas:
-    title:        Coltrans S.A 
+    title:        Tracking & Tracing <?php echo sfConfig::get("app_branding_name");?> 
     robots:       index, follow
     description:  sistema de tracking 
     keywords:     tracking, cargo
@@ -14,7 +14,7 @@ default:
 
   stylesheets:    [tracking, ext/css/ext-all, ext/css/xtheme-gray]
 
-  javascripts:    [tracking, ext/adapter/ext/ext-base, ext/ext-all-debug, tracking ]
+  javascripts:    [tracking, ext/adapter/ext/ext-base, ext/ext-all, tracking ]
 
   has_layout:     on
   layout:         layout

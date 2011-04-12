@@ -68,7 +68,7 @@
 
 		</td>
 		<td >
-			Bienvenido al sistema de Tracking &amp; Tracing de Coltrans S.A.
+			Bienvenido al sistema de Tracking &amp; Tracing de <?=sfConfig::get("app_branding_name")?>.
 		</td>
 	</tr>	
 </table>

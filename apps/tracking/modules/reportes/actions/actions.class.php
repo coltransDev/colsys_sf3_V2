@@ -197,7 +197,7 @@ class reportesActions extends sfActions
 
             $txt.="\n\nPara responder haga click en el siguiente vinculo:\n\n ";
 
-            $link ="https://www.coltrans.com.co/tracking/reportes/detalleReporte/rep/".$reporte->getCaConsecutivo()."/idstatus/".$idstatus;
+            $link ="https://".sfConfig::get("app_branding_url")."/tracking/reportes/detalleReporte/rep/".$reporte->getCaConsecutivo()."/idstatus/".$idstatus;
 
             $linkHtml= "<a href='$link'>$link</a>";
 

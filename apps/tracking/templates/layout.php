@@ -14,20 +14,13 @@
 </head>
 <body>
 	<div class="top">
-		<div class="logo1"> 			          					
-				<?=image_tag("coltrans_logo.jpg")?>
+		<div class="logo1"> 			 
+            <?=image_tag("branding/".sfConfig::get("app_branding_template")."/logo_left.jpg")?>
 		</div>
-		<div class="logo2"> 			          					
-				<?=image_tag("colmas_logo.jpg")?>
+		<div class="logo2">
+            <?=image_tag("branding/".sfConfig::get("app_branding_template")."/logo_right.jpg")?>
 		</div>			
-		<!--	
-		<div class="search">
-			<div class="searchint">
-				<div class="moduletable">
-				<jdoc:include type="modules" name="user4" />
-			</div>
-		  </div>
-		</div>-->		
+			
 	</div>
 	
 	<div class="header">
@@ -44,7 +37,7 @@ echo $sf_content ?>
 
 <div class="footer">	
 	<div class="copyright">
-		Coltrans S.A. - Colmas LTDA. Todos los derechos reservados        
+		<?=sfConfig::get("app_branding_name")?>. Todos los derechos reservados
         
 	</div>
 </div>	

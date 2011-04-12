@@ -7,6 +7,12 @@ all:
   digitalFile:
     root:  /srv/www/digitalFile/
 
+  branding:
+    template: tplogistics
+    url: www.tplogistics.com.pe
+    name: TPLogistics
+    from: info@tplogistics.com.pe
+    
   smtp:
     host: smtp.coltrans.com.co
     user:  tasas_cambios
