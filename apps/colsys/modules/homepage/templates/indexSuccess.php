@@ -49,9 +49,9 @@ var crearTicket = function(){
                             <ul class="features">
 
                                 <li><a href="#" onClick="crearTicket()">Nuevo ticket</a></li>
-                                <li><a href="http://www.coltrans.com.co/intranet" target="blank">Intranet</a></li>
-                                <li><a href="https://www.coltrans.com.co/tracking/login/novell" target="blank">Tracking</a></li>
-                                <li><a href="http://www.coltrans.com.co/mail" target="blank">Webmail</a></li>
+                                <li><a href="http://<?=sfConfig::get("app_branding_url")?>/intranet" target="blank">Intranet</a></li>
+                                <li><a href="https://<?=sfConfig::get("app_branding_url")?>/tracking/login/novell" target="blank">Tracking</a></li>
+                                <li><a href="http://<?=sfConfig::get("app_branding_url")?>/mail" target="blank">Webmail</a></li>
                             </ul>
 
                         </div>
