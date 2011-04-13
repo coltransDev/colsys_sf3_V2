@@ -438,7 +438,8 @@ class widgetsComponents extends sfComponents {
                         ->execute();
         $this->agentes = array();
         foreach ($agentes as $agente) {
-            $this->agentes[] = array("idagente" => $agente["a_ca_idagente"],
+
+            $ag = array("idagente" => $agente["a_ca_idagente"],
                 "nombre" => utf8_encode($agente["i_ca_nombre"]),
                 "pais" => utf8_encode($agente["t_ca_nombre"]),
                 "idtrafico" => $agente["t_ca_idtrafico"],
@@ -446,6 +447,22 @@ class widgetsComponents extends sfComponents {
                 "direccion" => utf8_encode($agente["s_ca_direccion"]),
                 "tipo" => utf8_encode($agente["a_ca_tipo"])
             );
+
+            $this->agentes[] = $ag;
+            if ( $agente["t_ca_idtrafico"] == "CN-086") {
+
+                $ag["idtrafico"] = "HK-852";
+                $this->agentes[] = $ag;
+                
+            }
+
+            if ( $agente["t_ca_idtrafico"] == "HK-852") {
+                $ag["idtrafico"] = "CN-086";
+                $this->agentes[] = $ag;
+                
+            }
+
+
         }
     }
 

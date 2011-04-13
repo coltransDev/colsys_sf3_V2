@@ -30,7 +30,7 @@ WidgetAgente = function( config ){
 			});
     
     this.resultTpl = new Ext.XTemplate(
-            '<tpl for="."><div class="search-item"><b>{nombre}</b><br /><span style="font-size:9px">{pais}-{ciudad}-{direccion} </span> <br />',
+            '<tpl for="."><div class="search-item"><b>{nombre}</b><br /><span style="font-size:9px">{pais}</span> <br />',
             '<span style="font-size:9px">',
              '<tpl if="this.oficial(tipo)">',
                 '<p>{tipo}</p>',
