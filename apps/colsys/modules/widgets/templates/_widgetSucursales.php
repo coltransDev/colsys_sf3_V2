@@ -26,21 +26,20 @@ WidgetSucursales = function( config ){
 						successProperty: 'success'
 					},
 					Ext.data.Record.create([
-						{name: 'valor'}
+						{name: 'id'},{name: 'valor'}
 					])
 				),
 				proxy: new Ext.data.MemoryProxy( <?=json_encode(array("root"=>$data, "total"=>count($data), "success"=>true) )?> )
 			});
 
     WidgetSucursales.superclass.constructor.call(this, {
-        valorField: 'valor',
+        valorField: 'id',
         displayField: 'valor',
         typeAhead: true,
         forceSelection: true,
         triggerAction: 'all',
         emptyText:'',
-        selectOnFocus: true,
-        
+        selectOnFocus: true,        
         lazyRender:true,
         mode: 'local',
         listClass: 'x-combo-list-small'        
