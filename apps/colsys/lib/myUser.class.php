@@ -25,6 +25,8 @@ class myUser extends sfBasicSecurityUser
 			$this->setAttribute('cargo', $user->getCaCargo() );
 			$this->setAttribute('extension', $user->getCaExtension() );
 			$this->setAttribute('idtrafico',  $user->getSucursal()->getEmpresa()->getCaIdtrafico());
+            $this->setAttribute('idempresa',  $user->getSucursal()->getEmpresa()->getCaIdempresa());
+
 			
 			$c = new Criteria();
 			$c->add(DepartamentoPeer::CA_NOMBRE, $user->getCaDepartamento() );
@@ -65,6 +67,10 @@ class myUser extends sfBasicSecurityUser
 
     public function getIdtrafico(){
 		return ($this->getAttribute('idtrafico'))?$this->getAttribute('idtrafico'):"CO-057";
+	}
+
+    public function getIdempresa(){
+		return $this->getAttribute('idempresa');
 	}
 
 	public function getNivelAcceso( $rutina ){        
@@ -176,6 +182,7 @@ class myUser extends sfBasicSecurityUser
 			$this->setAttribute('cargo', $user->getCaCargo() );			
 			$this->setAttribute('extension', $user->getCaExtension() );
             $this->setAttribute('idtrafico', $user->getSucursal()->getEmpresa()->getCaIdtrafico() );
+            $this->setAttribute('idempresa', $user->getSucursal()->getEmpresa()->getCaIdempresa() );
 			$this->setAttribute('authmethod', $user->getCaAuthmethod() );
 			$this->setAttribute('forcechange', false );					
 			
@@ -213,6 +220,7 @@ class myUser extends sfBasicSecurityUser
 			$this->setAttribute('cargo', $user->getCaCargo() );			
 			$this->setAttribute('extension', $user->getCaExtension() );
             $this->setAttribute('idtrafico', $user->getSucursal()->getEmpresa()->getCaIdtrafico() );
+            $this->setAttribute('idempresa', $user->getSucursal()->getEmpresa()->getCaIdempresa() );
 			$this->setAttribute('authmethod', $user->getCaAuthmethod() );			
 			$this->setAttribute('forcechange', $user->getCaForcechange() );
 			
@@ -246,6 +254,7 @@ class myUser extends sfBasicSecurityUser
 		$this->setAttribute('cargo', null);
 		$this->setAttribute('extension', null);
         $this->setAttribute('idtrafico', null );
+        $this->setAttribute('idempresa', null );
 		$this->setAttribute('iddepartamento', null);
 		$this->setAttribute('authmethod', null);
         $this->setAttribute('menu', null);
@@ -314,7 +323,6 @@ class myUser extends sfBasicSecurityUser
         }        
         return $menu;
     }
-
     
 }
 
