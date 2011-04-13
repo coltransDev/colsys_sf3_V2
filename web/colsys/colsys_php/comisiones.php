@@ -417,8 +417,8 @@ require_once("menu.php");
                 echo "  <TD Class=listar  WIDTH=50 style='font-size: 9px;$back_col'>".$rs->Value('ca_factura')."</TD>";
                 echo "  <TD Class=listar  WIDTH=70 style='font-size: 9px;$back_col'>".$rs->Value('ca_fchfactura')."</TD>";
                 echo "  <TD Class=valores WIDTH=75 style='font-size: 9px;$back_col'>".number_format($rs->Value('ca_valor'))."</TD>";
-                echo "  <TD Class=listar  WIDTH=75><INPUT ID=".$num_oid."_".$j." TYPE='TEXT' NAME='reccaja[".$rs->Value('ca_oid')."][recibo]' VALUE='".$rs->Value('ca_reccaja')."' SIZE=13 MAXLENGTH=15 READONLY></TD>";
-                echo "  <TD Class=listar  WIDTH=75><INPUT TYPE='TEXT' NAME='reccaja[".$rs->Value('ca_oid')."][fchpago]' SIZE=12 VALUE='".$rs->Value('ca_fchpago')."' READONLY></TD>";
+                echo "  <TD Class=listar  WIDTH=75><INPUT ID=".$num_oid."_".$j." TYPE='hidden' NAME='reccaja[".$rs->Value('ca_oid')."][recibo]' VALUE='".$rs->Value('ca_reccaja')."' SIZE=13 MAXLENGTH=15 READONLY>".$rs->Value('ca_reccaja')."</TD>";
+                echo "  <TD Class=listar  WIDTH=75><INPUT TYPE='hidden' NAME='reccaja[".$rs->Value('ca_oid')."][fchpago]' SIZE=12 VALUE='".$rs->Value('ca_fchpago')."' READONLY>".$rs->Value('ca_fchpago')."</TD>";
                 if ($rec_com) {
                     echo "  <TD Class=invertir WIDTH=140>";
                     echo "    <TABLE CELLSPACING=1>";
