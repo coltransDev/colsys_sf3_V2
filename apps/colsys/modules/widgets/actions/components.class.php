@@ -451,12 +451,14 @@ class widgetsComponents extends sfComponents {
             $this->agentes[] = $ag;
             if ( $agente["t_ca_idtrafico"] == "CN-086") {
 
+                $ag["pais"] = "Hong Kong";
                 $ag["idtrafico"] = "HK-852";
                 $this->agentes[] = $ag;
                 
             }
 
             if ( $agente["t_ca_idtrafico"] == "HK-852") {
+                $ag["pais"] = "China";
                 $ag["idtrafico"] = "CN-086";
                 $this->agentes[] = $ag;
                 
