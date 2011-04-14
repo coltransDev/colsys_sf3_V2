@@ -230,6 +230,13 @@ class reportesNegActions extends sfActions
         $this->origen = $this->getRequestParameter("origen");
         $this->destino = $this->getRequestParameter("destino");
 
+//        $this->idsucursal = $this->getRequestParameter("idsucursal");
+        $this->sucursal = $this->getRequestParameter("sucursal");
+
+        $this->continuacion = $this->getRequestParameter("continuacion");
+
+
+        //echo $this->continuacion."-".$this->idsucursal;
 
         $condicion="";
         if( $criterio ){
@@ -254,6 +261,17 @@ class reportesNegActions extends sfActions
         {
             $condicion.=" and ca_colmas = '$this->colmas'";
         }
+
+        if($this->continuacion!="")
+        {
+            $condicion.=" and ca_continuacion = '$this->continuacion'";
+        }
+
+        if($this->sucursal!="")
+        {
+            $condicion.=" and ca_usucreado in (select ca_login from control.tb_usuarios where ca_sucursal='".$this->sucursal."' )";
+        }
+
 
 
         if($this->idorigen!="")
@@ -289,6 +307,8 @@ class reportesNegActions extends sfActions
 	* @author Mauricio Quinche
 	*/
 	public function executeConsultaReporte(){
+
+
         $this->opcion = $this->getRequestParameter("opcion");
 		$reporte = Doctrine::getTable("Reporte")->find( $this->getRequestParameter("id") );
 		$this->forward404Unless( $reporte );
@@ -304,6 +324,16 @@ class reportesNegActions extends sfActions
 		$response->addJavaScript("extExtras/RowExpander",'last');
 		$response->addJavaScript("extExtras/CheckColumn",'last');
 
+        $user_agent = $_SERVER['HTTP_USER_AGENT'];
+//        echo $user_agent;
+        $ie = false;
+        if( strpos($user_agent , "MSIE")!==false ){
+            $ie = true;
+        }
+        if( $ie ){
+            $response->addJavaScript("json",'last');
+        }
+        
         $this->grupoReportes = Doctrine::getTable("Reporte")
                       ->createQuery("r")
                       ->innerJoin("r.GrupoReporte g")
@@ -441,6 +471,7 @@ class reportesNegActions extends sfActions
         $response = sfContext::getInstance()->getResponse();
 		$response->addJavaScript("extExtras/RowExpander",'last');
 		$response->addJavaScript("extExtras/CheckColumn",'last');
+        $response->addJavaScript("json",'last');
    }
 
     public function executeFormReporteAg(sfWebRequest $request){
@@ -699,8 +730,7 @@ class reportesNegActions extends sfActions
 
             if($request->getParameter("idagente") && $request->getParameter("idagente")!="")
             {
-                $reporte->setCaIdagente($request->getParameter("idagente"));
-                $reporte->setCaIdsucursalagente(($request->getParameter("idsucursalagente"))?$request->getParameter("idsucursalagente"):"0");
+                $reporte->setCaIdagente($request->getParameter("idagente"));                
             }
             else if($request->getParameter("impoexpo")!=constantes::EXPO && utf8_decode($request->getParameter("impoexpo"))!=Constantes::EXPO)
             {
@@ -710,6 +740,16 @@ class reportesNegActions extends sfActions
             else{
                 $reporte->setCaIdagente(null);
                 $reporte->setCaIdsucursalagente(null);
+            }
+
+            if($request->getParameter("idsucursalagente") && $request->getParameter("idsucursalagente")!="")
+            {
+                $reporte->setCaIdsucursalagente($request->getParameter("idsucursalagente"));
+            }
+            else if($request->getParameter("impoexpo")!=constantes::EXPO && utf8_decode($request->getParameter("impoexpo"))!=Constantes::EXPO)
+            {
+                $errors["idsucursalagente"]="Debe seleccionar una sucursal del agente";
+                $texto.="Sucursal del Agente<br>";
             }
             
 
@@ -2406,6 +2446,7 @@ color="#000000";
         foreach( $tarifas as $tarifa ){
             $row = $baseRow;
             $row["iditem"] = $tarifa->getCaIdconcepto();
+            $row["idreg"] = $tarifa->getCaIdreptarifa();
             $row["item"] = utf8_encode($tarifa->getConcepto()->getCaConcepto());
             $row["cantidad"] = $tarifa->getCaCantidad();
             $row["neta_tar"] = $tarifa->getCaNetaTar();
@@ -2419,7 +2460,7 @@ color="#000000";
             $row["cobrar_idm"] = $tarifa->getCaCobrarIdm();
             $row["observaciones"] = utf8_encode($tarifa->getCaObservaciones());
             $row['tipo']="concepto";
-            $row['orden']=$tarifa->getCaIdconcepto();
+            $row['orden']= $tarifa->getCaIdconcepto();
             $conceptos[] = $row;
 
             $recargos = Doctrine::getTable("RepGasto")
@@ -2432,6 +2473,7 @@ color="#000000";
             foreach( $recargos as $recargo ){
                 $row = $baseRow;
                 $row["iditem"] = $recargo->getCaIdrecargo();
+                $row["idreg"] = $recargo->getCaIdrepgasto();
                 $row["idconcepto"] = $tarifa->getCaIdconcepto();
                 $row["item"] = utf8_encode($recargo->getTipoRecargo()->getCaRecargo());
                 $row["tipo_app"] = $recargo->getCaTipo();
@@ -2445,7 +2487,7 @@ color="#000000";
                 $row["cobrar_idm"] = $recargo->getCaIdmoneda();
                 $row["observaciones"] = utf8_encode($recargo->getCaDetalles());
                 $row['tipo']="recargo";
-                $row['orden']=$tarifa->getConcepto()->getCaConcepto()."-".$recargo->getTipoRecargo()->getCaRecargo();
+                $row['orden']= $tarifa->getCaIdconcepto()."-".utf8_encode($recargo->getTipoRecargo()->getCaRecargo());
                 $conceptos[] = $row;
             }
         }
@@ -2474,6 +2516,7 @@ color="#000000";
                 foreach( $recargos as $recargo ){
                     $row = $baseRow;
                     $row["iditem"] = $recargo->getCaIdrecargo();
+                    $row["idreg"] = $recargo->getCaIdrepgasto();
                     $row["idconcepto"] = 9999;
                     $row["item"] = utf8_encode($recargo->getTipoRecargo()->getCaRecargo());
                     $row["tipo_app"] = $recargo->getCaTipo();
@@ -2511,6 +2554,7 @@ color="#000000";
     */
     public function executeObservePanelConceptoFletes(sfWebRequest $request){
         $id = $request->getParameter("id");
+        $idreg = $request->getParameter("idreg");
         $this->responseArray=array("id"=>$id,  "success"=>false);
         $idreporte = $request->getParameter("idreporte");
 
@@ -2519,19 +2563,25 @@ color="#000000";
         if( $tipo=="concepto" ){
             $idconcepto = $request->getParameter("iditem");
             if($idconcepto!='9999')
-            {                
+            {
+                //echo $idreg;
 //                $tarifa = Doctrine::getTable("RepTarifa")->find(array($idreporte, $idconcepto));
                 $tarifa = Doctrine::getTable("RepTarifa")
                              ->createQuery("t")
-                             ->where("t.ca_idreporte = ? and t.ca_idconcepto=? ", array($idreporte,$idconcepto))
+                             ->where("t.ca_idreptarifa=? ", array($idreg))
                              ->fetchOne();
                              //->execute();
 
                 if( !$tarifa ){
                     $tarifa = new RepTarifa();
                     $tarifa->setCaIdreporte( $idreporte );
-                    $tarifa->setCaIdconcepto( $idconcepto );
+                    $tarifa->setCaIdconcepto( $idconcepto );                    
                 }
+
+                if( $idconcepto!==null ){                    
+                    $tarifa->setCaIdconcepto( $idconcepto );
+                }                
+
 
                 if( $request->getParameter("cantidad")!==null ){
                     $tarifa->setCaCantidad( $request->getParameter("cantidad") );
@@ -2596,7 +2646,7 @@ color="#000000";
                 $tarifa->setCaIdreporte( $idreporte );
                 //if($idconcepto==0 || $idconcepto=="0" || $idconcepto!="")
 //                    $idconcepto="9999";
-                
+
                 $tarifa->setCaIdconcepto( $idconcepto );
                 $tarifa->setCaIdrecargo( $idrecargo );
                 
@@ -2701,6 +2751,226 @@ color="#000000";
         }
         $this->setTemplate("responseTemplate");
     }
+
+
+    public function executeGuardarConceptoFletes(sfWebRequest $request)
+    {
+        $datos = $request->getParameter("datos");
+
+        $tarifas = json_decode($datos);
+        $errorInfo="";
+        $ids= array();
+        foreach($tarifas as $t)
+        {
+            $error="";
+            try
+            {
+                if( $t->tipo=="concepto" ){
+                    $idconcepto = $t->iditem;
+                    if($idconcepto!='9999')
+                    {
+                        $tarifa = Doctrine::getTable("RepTarifa")->find($t->idreg);
+
+                        if( !$tarifa ){
+                            $tarifa = new RepTarifa();
+                            $tarifa->setCaIdreporte( $t->idreporte );
+                            $tarifa->setCaIdconcepto( $idconcepto );
+                        }
+
+                        $tarifa->setCaIdconcepto( $idconcepto );
+
+                        if( $t->cantidad){
+                            $tarifa->setCaCantidad( $t->cantidad );
+                        }
+
+                        if( $t->neta_tar ){
+                            $tarifa->setCaNetaTar( $t->neta_tar );
+                        }
+                        if( $t->neta_min ){
+                            $tarifa->setCaNetaMin( $t->neta_min );
+                        }
+
+                        if( $t->neta_idm ){
+                            $tarifa->setCaNetaIdm( $t->neta_idm );
+                        }
+
+                        if( $t->reportar_tar ){
+                            $tarifa->setCaReportarTar( $t->reportar_tar );
+                        }
+                        else
+                        {
+                            $tarifa->setCaReportarTar( "0" );
+                        }
+
+                        if( $t->reportar_min){
+                            $tarifa->setCaReportarMin( $t->reportar_min );
+                        }
+
+                        if( $t->reportar_idm ){
+                            $tarifa->setCaReportarIdm( $t->reportar_idm );
+                        }
+
+                        if( $t->cobrar_tar ){
+                            $tarifa->setCaCobrarTar( $t->cobrar_tar );
+                        }
+                        else
+                        {
+                            $tarifa->setCaCobrarTar( 0 );
+                        }
+
+                        if( $t->cobrar_min ){
+                            $tarifa->setCaCobrarMin( $t->cobrar_min );
+                        }
+
+                        if( $t->cobrar_idm ){
+                            $tarifa->setCaCobrarIdm( $t->cobrar_idm );
+                        }
+
+                        if( $t->observaciones !="" ){
+                                $tarifa->setCaObservaciones( utf8_decode($t->observaciones) );
+                        }
+                        else
+                        {
+                            $tarifa->setCaObservaciones( null );
+                        }
+
+                        if($error!="")
+                            $errorInfo.="Error en item".utf8_encode($t->item).": ".$error." <br>";
+                        else
+                        {
+                            $tarifa->save();
+                            $ids[]=$t->id;
+                            $ids_reg[]=$tarifa->getCaIdreptarifa();
+                        }
+                    }                    
+                }
+                else if( $t->tipo=="recargo" ){
+                    $idconcepto = $t->idconcepto;
+                    $idrecargo = $t->iditem;
+                    $idequipo=($t->idequipo)?$t->idequipo:"0";
+                    $tarifa = Doctrine::getTable("RepGasto")->find($t->idreg);
+                    if( !$tarifa ){
+                        $tarifa = new RepGasto();
+                        $tarifa->setCaIdreporte( $t->idreporte );
+                        $tarifa->setCaIdrecargo( $idrecargo );
+                    }
+                    $tarifa->setCaIdconcepto( $idconcepto );
+                    $tarifa->setCaIdequipo( $idequipo );
+
+                    if( $t->aplicacion ){
+                        $tarifa->setCaAplicacion( $t->aplicacion );
+                    }
+                    else
+                    {
+                        $error="Falta la aplicacion";
+                    }
+
+                    if( $t->tipo_app ){
+                        $tarifa->setCaTipo( $t->tipo_app );
+                    }
+                    else
+                    {
+                        $error="Falta el tipo";
+                    }
+
+                    if( $t->neta_tar){
+                        $tarifa->setCaNetaTar( $t->neta_tar );
+                    }else{
+                        $tarifa->setCaNetaTar( 0 ); //[TODO] permitir null
+                    }
+
+                    if( $t->neta_min ){
+                        $tarifa->setCaNetaMin( $t->neta_min );
+                    }else{
+                        $tarifa->setCaNetaMin( 0 );
+                    }
+
+
+                    if( $t->reportar_tar ){
+                        $tarifa->setCaReportarTar( $t->reportar_tar );
+                    }else{
+                        $tarifa->setCaReportarTar( 0 );
+                    }
+
+                    if( $t->reportar_min ){
+                        $tarifa->setCaReportarMin( $t->reportar_min );
+                    }else{
+                        $tarifa->setCaReportarMin( 0 );
+                    }
+
+                    if( $t->reportar_tar ){
+                        $tarifa->setCaReportarTar( $t->reportar_tar );
+                    }else{
+                        $tarifa->setCaReportarTar( 0 );
+                    }
+
+                    if( $t->reportar_min){
+                        $tarifa->setCaReportarMin( $t->reportar_min );
+                    }else{
+                        $tarifa->setCaReportarMin( 0 );
+                    }
+
+
+                    if( $t->reportar_idm || $t->cobrar_idm ){
+                        
+                        $tarifa->setCaIdmoneda( ($t->reportar_idm!="")?$t->reportar_idm:$t->cobrar_idm );
+                        //echo $tarifa->getCaIdmoneda();
+                    }
+                    else
+                    {
+                        $error="Falta la moneda";
+                    }
+
+
+                    if( $t->cobrar_tar ){
+                        $tarifa->setCaCobrarTar( $t->cobrar_tar );
+                    }else{
+                        //if(!$tarifa->getCaCobrarTar())
+                            $tarifa->setCaCobrarTar( 0 );
+                    }
+
+                    if( $t->cobrar_min ){
+                        $tarifa->setCaCobrarMin( $t->cobrar_min );
+                    }else{
+                        //if($tarifa->getCaCobrarMin()=="")
+                            $tarifa->setCaCobrarMin( 0 );
+                    }                    
+
+                    if( $t->observaciones!="" ){
+                            $tarifa->setCaDetalles( utf8_decode($t->observaciones) );                        
+                    }
+                    else
+                    {
+                        $tarifa->setCaDetalles( null);
+                    }
+                    
+                    if( $t->ca_recargoorigen=="false" ){
+                        $tarifa->setCaRecargoorigen( "false" );
+                    }
+                    else if( $t->ca_recargoorigen=="true" )
+                    {                        
+                        $tarifa->setCaRecargoorigen( "true" );
+                    }
+                    if($error!="")
+                        $errorInfo.="Error en item ".($t->item).": ".$error." <br>";
+                    else
+                    {
+                        $tarifa->save();
+                        $ids[]=$t->id;
+                        $ids_reg[]=$tarifa->getCaIdrepgasto();
+                    }
+                }
+            }
+            catch(Exception $e)
+            {
+                $errorInfo.="Error en item ".utf8_encode($t->item).": ".$error." ".utf8_encode($e->getMessage())."<br>";
+            }
+        }
+
+        $this->responseArray=array("errorInfo"=>$errorInfo,"id"=>  implode(",", $ids),"idreg"=>  implode(",", $ids_reg),  "success"=>true);
+        $this->setTemplate("responseTemplate");
+    }
+
 
     /*
     * Datos para el panel de conceptos
@@ -2810,7 +3080,7 @@ color="#000000";
     */
     public function executePanelRecargosData(sfWebRequest $request){
         $reporte = Doctrine::getTable("Reporte")->find( $this->getRequestParameter("id") );
-	$this->forward404Unless( $reporte );
+        $this->forward404Unless( $reporte );
 
         $conceptos = array();
 
@@ -2823,6 +3093,7 @@ color="#000000";
             foreach( $recargos as $recargo ){
                 $row = $baseRow;
                 $row["iditem"] = $recargo->getCaIdrecargo();
+                $row["idreg"] = $recargo->getCaIdrepgasto();
                 $row["idconcepto"] = $recargo->getCaIdconcepto();
                 $row["item"] = ($recargo->getConcepto())?utf8_encode($recargo->getConcepto()->getCaConcepto()):"";
                 $row["idequipo"] = $recargo->getCaIdequipo();
@@ -2838,8 +3109,7 @@ color="#000000";
                 $row["cobrar_idm"] = $recargo->getCaIdmoneda();
                 $row["observaciones"] = $recargo->getCaDetalles();
                 $row['tipo']="recargo";
-                $row["cobrar_idm"] = $recargo->getCaIdequipo();
-                $row['orden']="Y-".$recargo->getTipoRecargo()->getCaRecargo();
+                $row['orden']="Y-".utf8_encode($recargo->getTipoRecargo()->getCaRecargo());
                 $conceptos[] = $row;
             }
         }
@@ -2850,6 +3120,7 @@ color="#000000";
             foreach( $recargos as $recargo ){
                 $row = $baseRow;
                 $row["iditem"] = $recargo->getCaIdrecargo();
+                $row["idreg"] = $recargo->getCaIdrepgasto();
                 $row["idconcepto"] = $recargo->getCaIdconcepto();
                 $row["idequipo"] = $recargo->getCaIdequipo();
                 $row["equipo"] = utf8_encode($recargo->getEquipo()->getCaConcepto());
@@ -2864,8 +3135,7 @@ color="#000000";
                 $row["cobrar_min"] = $recargo->getCaCobrarMin();
                 $row["cobrar_idm"] = $recargo->getCaIdmoneda();
                 $row["observaciones"] = $recargo->getCaDetalles();
-                $row['tipo']="recargo";
-                $row["cobrar_idm"] = $recargo->getCaIdequipo();
+                $row['tipo']="recargo";                
                 $row['orden']="Y-".$recargo->getTipoRecargo()->getCaRecargo();
                 $conceptos[] = $row;
             }
@@ -2880,7 +3150,6 @@ color="#000000";
 
         $this->responseArray=array("items"=>$conceptos, "total"=>count($conceptos), "success"=>true);
         $this->setTemplate("responseTemplate");
-
     }
 
 
@@ -2895,11 +3164,7 @@ color="#000000";
 
         $conceptos = array();
 
-        $baseRow = array(
-	 					 'idreporte'=>$reporte->getCaIdreporte()
-						);
-
-
+        $baseRow = array('idreporte'=>$reporte->getCaIdreporte());
 
         $recargos = Doctrine::getTable("RepCosto")
                              ->createQuery("t")
@@ -2909,8 +3174,6 @@ color="#000000";
                              //->addWhere("tr.ca_tipo = ?", Constantes::RECARGO_LOCAL )
                              ->orderBy("t.ca_fchcreado ASC")
                              ->execute();
-
-
 
         foreach( $recargos as $recargo ){
             $row = $baseRow;
@@ -2923,7 +3186,6 @@ color="#000000";
             $row["idmoneda"] = $recargo->getCaIdmoneda();
             $row["aplicacion"] = $recargo->getCaAplicacion();
             $row["aplicacionminimo"] = $recargo->getCaAplicacionminimo();
-
             $row["observaciones"] = $recargo->getCaDetalles();
             $row['tipo']="costo";
             $row['orden']="Y-".$recargo->getCosto()->getCaCosto();
@@ -3403,8 +3665,16 @@ color="#000000";
             $reporte->setCaMercanciaDesc($tmp.$reporte2->getCaMercanciaDesc());
 
             $reporte->save();
+//        echo $reporte->getCaIdreporte() ."<br> ".$reporte->getCaTransporte()."<br> ".$reporte->getCaImpoexpo();
+//        exit;
 
-            $this->redirect("reportesNeg/consultaReporte?id=".$reporte->getCaIdreporte());
+            //$this->redirect("reportesNeg/consultaReporte?id=".$reporte->getCaIdreporte());
+            
+            $this->redirect($this->generateUrl('default',
+                    array('module' => 'reportesNeg','action' => 'consultaReporte','id' => $reporte->getCaIdreporte(),'modo' => urlencode($reporte->getCaTransporte()), 'impoexpo'=>  urlencode($reporte->getCaImpoexpo()) )));
+
+            //$this->redirect("reportesNeg/index");
+            //$this->redirect( $this->url_for("reportesNeg/consultaReporte?id=".$reporte->getCaIdreporte()."&modo=".$reporte->getCaTransporte()."&impoexpo=".$reporte->getCaImpoexpo()));
         }
         $this->reporte = $reporte;
     }

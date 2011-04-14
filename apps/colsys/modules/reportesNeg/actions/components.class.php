@@ -857,5 +857,39 @@ class reportesNegComponents extends sfComponents
         
    }
 
+   public function executeFiltrosBusqueda()
+   {
+
+        $this->opcion = $this->getRequestParameter("opcion");
+        $this->modo = $this->getRequestParameter("modo");
+        $this->impoexpo = $this->getRequestParameter("impoexpo");
+
+        $opcion = $this->getRequestParameter("criterio");
+        $criterio = trim($this->getRequestParameter("cadena"));
+        $this->criterio = ($this->getRequestParameter("criterio")?$this->getRequestParameter("criterio"):"ca_consecutivo");
+        $this->cadena = trim($this->getRequestParameter("cadena"));
+        $this->idimpo =   $this->getRequestParameter("idimpo");
+
+        $this->fechaInicial = $this->getRequestParameter("fechaInicial");
+        $this->fechaFinal = $this->getRequestParameter("fechaFinal");
+
+        $this->seguro = $this->getRequestParameter("seguro");
+        $this->colmas = $this->getRequestParameter("colmas");
+
+        $this->transporte = $this->getRequestParameter("transporte");
+        $this->idorigen = $this->getRequestParameter("idorigen");
+        $this->iddestino = $this->getRequestParameter("iddestino");
+        $this->origen = $this->getRequestParameter("origen");
+        $this->destino = $this->getRequestParameter("destino");
+
+        //$this->idsucursal = $this->getRequestParameter("idsucursal");
+        //echo $this->getRequestParameter("sucursal");
+        //echo $this->getRequestParameter("sucursal");
+        $this->sucursal = $this->getRequestParameter("sucursal");
+        //echo $this->sucursal;
+
+        $this->continuacion = $this->getRequestParameter("continuacion");
+   }
+
 }
 ?>

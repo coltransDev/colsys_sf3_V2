@@ -211,6 +211,7 @@ PanelRecargos = function( config ){
     this.record = Ext.data.Record.create([
             {name: 'idreporte', type: 'int'},
             {name: 'iditem', type: 'int'},
+            {name: 'idreg', type: 'int'},
             {name: 'idconcepto', type: 'int'},
             {name: 'idequipo', type: 'string'},
             {name: 'equipo', type: 'string'},
@@ -229,10 +230,10 @@ PanelRecargos = function( config ){
     this.store = new Ext.data.Store({
 
         autoLoad : true,
+        pruneModifiedRecords:true,
         url: '<?=url_for("reportesNeg/panelRecargosData?id=".$reporte->getCaIdreporte())?>',
         reader: new Ext.data.JsonReader(
             {
-
                 root: 'items',
                 totalProperty: 'total'
             },
@@ -339,39 +340,75 @@ Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
         var records = store.getModifiedRecords();			
         var lenght = records.length;
 
+        changes=[];
         for( var i=0; i< lenght; i++){
             r = records[i];
+            if( r.data.iditem!="" && r.getChanges())
+            {
+                records[i].data.id=r.id;
+                records[i].data.idreg=r.data.idreg;
+                records[i].data.ca_recargoorigen="false";
 
-            var changes = r.getChanges();
 
-            changes['id']=r.id;
-            changes['tipo']=r.data.tipo;
-            changes['iditem']=r.data.iditem;
-            changes['idconcepto']=r.data.idconcepto;
-            changes['idreporte']=r.data.idreporte;
-            changes['ca_recargoorigen']="false";
-            changes['idequipo']=r.data.idequipo;
+               if (records[i].data.aplicacion.constructor.toString().indexOf("Array") == -1)
+                  straplica=records[i].data.aplicacion;
+               else
+                  straplica=records[i].data.aplicacion[0];
 
-            
-            if( r.data.iditem ){
-                Ext.Ajax.request(
+ 
+        //        alert(records[i].data.aplicacion);
+          //      if(records[i].data.aplicacion.length>0)
+                    //
+          //      else
+//                    straplica=records[i].data.aplicacion;
+//          alert(records[i].data.aplicacion+":::"+straplica)
+                records[i].data.aplicacion=straplica;
+                
+                changes[i]=records[i].data;
+            }
+        }
+
+        //alert(changes.toSource());
+        var str= JSON.stringify(changes);
+        //alert(str.toSource());
+
+        if(str.length>5)
+        {
+            Ext.Ajax.request(
+                {
+                    waitMsg: 'Guardando cambios...',
+                    url: '<?=url_for("reportesNeg/guardarConceptoFletes")?>',
+                    params :	{
+                        datos:str
+                    },
+                    failure:function(response,options){
+                        var res = Ext.util.JSON.decode( response.responseText );
+                        if(res.err)
+                            Ext.MessageBox.alert("Mensaje",'Se presento un error guardando por favor informe al Depto. de Sistemas<br>'+res.err);
+                        else
+                            Ext.MessageBox.alert("Mensaje",'Se produjo un error, vuelva a intentar o informe al Depto. de Sistema<br>'+res.texto);
+                    },
+                    success:function(response,options)
                     {
-                        waitMsg: 'Guardando cambios...',
-                        url: '<?=url_for("reportesNeg/observePanelConceptoFletes")?>',
-                        params :	changes,
-
-                        callback :function(options, success, response){
-
-                            var res = Ext.util.JSON.decode( response.responseText );
-                            if( res.id && res.success){
-                                var rec = store.getById( res.id );
-
+                        var res = Ext.util.JSON.decode( response.responseText );
+                        if( res.id && res.success)
+                        {
+                            id=res.id.split(",");
+                            idreg=res.idreg.split(",");
+                            for(i=0;i<id.length;i++)
+                            {
+                                var rec = store.getById( id[i] );
+                                rec.set("idreg",idreg[i]);
                                 rec.commit();
                             }
                         }
-                     }
-                );
-            }
+                        if(res.errorInfo!="")
+                        {
+                            Ext.MessageBox.alert("Mensaje",'No fue posible el guardar la fila <br>'+res.errorInfo);
+                        }
+                    }
+                 }
+            );
         }
     }
     ,
@@ -505,6 +542,7 @@ Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
 
                                    item: '+',
                                    iditem: '',
+                                   idreg:'',
                                    idconcepto: '9999',
                                    tipo: 'recargo',
                                    cantidad: '',
@@ -524,6 +562,7 @@ Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
 
 
                                 rec.set("iditem", r.data.idconcepto);
+                                rec.set("idreg", '0');
                                 rec.set("idconcepto", r.data.idconcepto);
                                 rec.set("tipo_app", "$");
                                 rec.set("aplicacion", "");

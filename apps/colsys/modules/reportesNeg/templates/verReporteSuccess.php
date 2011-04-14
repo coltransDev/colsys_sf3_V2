@@ -92,7 +92,9 @@
 			$i=0;
 			foreach( $asignacionesTarea as $asignacionTarea ){
 					
-				$usuario = Doctrine::getTable("Usuario")->find( $asignacionTarea->getCaLogin() );
+				$usuario = Doctrine::getTable("Usuario")->find( ($asignacionTarea->getCaLogin()?$asignacionTarea->getCaLogin():"") );
+                if(!$usuario)
+                    $usuario = new Usuario();
 				?>		
 			<tr>
 				<?
