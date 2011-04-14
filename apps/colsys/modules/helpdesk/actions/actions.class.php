@@ -396,7 +396,7 @@ class helpdeskActions extends sfActions
                         FROM helpdesk.tb_tickets tk
                             LEFT OUTER JOIN helpdesk.tb_groups gr ON (tk.ca_idgroup = gr.ca_idgroup)
                             LEFT OUTER JOIN notificaciones.tb_tareas nt ON nt.ca_idtarea = tk.ca_idtarea
-                        WHERE tk.ca_opened BETWEEN '".$this->fechaInicial."' AND '".$this->fechaFinal."' $sql_grupo $assigned
+                        WHERE to_char( nt.ca_fchcreado, 'YYYY-MM-DD') BETWEEN '".$this->fechaInicial."' AND '".$this->fechaFinal."' $sql_grupo $assigned
                         ORDER BY tk.ca_opened, tk.ca_idticket";
                 break;
                 case 2:
