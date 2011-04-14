@@ -278,7 +278,7 @@ class myUser extends sfBasicSecurityUser
      * Recrea el menu y lo almacena en cache
      */
 
-    private function buildMenu(){
+    public function buildMenu(){
         $app =  sfContext::getInstance()->getConfiguration()->getApplication();        
         $rutinas = Doctrine::getTable("Rutina")
                           ->createQuery("r")

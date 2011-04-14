@@ -323,7 +323,8 @@ class usersActions extends sfActions
 					$this->getUser()->signInAlternative( $username );					
 				}
 
-                unset($_COOKIE["menu"]);
+                $this->getUser()->buildMenu();
+                
 				$this->forward("homepage","index");
 				
 			}
