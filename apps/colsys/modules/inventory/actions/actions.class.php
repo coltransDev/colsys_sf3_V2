@@ -10,10 +10,10 @@
  */
 class inventoryActions extends sfActions
 {
-	const RUTINA = "38";
-    const RUTINAINV = "94";
+	const RUTINA = "94";
+    
 
-    public function getNivel($rutina='38'){
+    public function getNivel($rutina=inventoryActions::RUTINA){
         $this->nivel = $this->getUser()->getNivelAcceso( inventoryActions::RUTINA );
 		if( $this->nivel==-1 ){
 			$this->forward404();
@@ -29,7 +29,7 @@ class inventoryActions extends sfActions
 	public function executeIndex(sfWebRequest $request)
 	{
 	
-		$this->nivel = $this->getNivel(self::RUTINAINV);
+		$this->nivel = $this->getNivel(self::RUTINA);
 	}
 
 
@@ -63,11 +63,8 @@ class inventoryActions extends sfActions
         $this->forward404Unless( $idcategory );
         
         $q  = Doctrine::getTable("InvActivo")
-                        ->createQuery("a")
-                        ->leftJoin("a.InvAsignacion as")
-                        ->leftJoin("as.Usuario u")                        
-                        ->leftJoin("u.Sucursal s")
-                        ->leftJoin("s.Empresa e");
+                        ->createQuery("a");
+                        
                                       
         $q->addWhere("a.ca_idcategory = ?", $idcategory );
         //$q->setHydrationMode(Doctrine::HYDRATE_SCALAR);
@@ -181,9 +178,9 @@ class inventoryActions extends sfActions
      */
     public function executeFormActivoGuardar( $request ){
 
-        $nivel = $this->getNivel(self::RUTINAINV);
+        $nivel = $this->getNivel(self::RUTINA);
 
-        if ($nivel<1){
+        if ($nivel<0){
             $this->forward404();
         }
 
