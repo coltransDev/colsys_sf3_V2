@@ -402,7 +402,8 @@ class Reporte extends BaseReporte {
                 $q->addWhere("r.ca_idrecargo!=61");
             }
             
-            if ($this->getCaImpoexpo() == Constantes::IMPO) {
+            if ($this->getCaImpoexpo() != Constantes::EXPO) {
+                //echo "::".$tipo."::";
                 if ($tipo == "local") {
                     $q->addWhere("r.ca_recargoorigen = ?", false);
                 }
@@ -992,6 +993,7 @@ class Reporte extends BaseReporte {
                 $newConcepto = $concepto->copy();
                 $newConcepto->setCaIdconcepto($concepto->getCaIdconcepto());
                 $newConcepto->setCaIdreporte($reporte->getCaIdreporte());
+                $newConcepto->setCaIdreptarifa(null);
                 $newConcepto->save($conn);
             }
 
@@ -1003,6 +1005,7 @@ class Reporte extends BaseReporte {
                 $newGasto->setCaIdrecargo($gasto->getCaIdrecargo());
                 $newGasto->setCaIdreporte($reporte->getCaIdreporte());
                 $newGasto->setCaIdequipo($gasto->getCaIdequipo());
+                $newGasto->setCaIdrepgasto(null);
                 if ($gasto->getCaRecargoorigen() == false)
                     $newGasto->setCaRecargoorigen("false");
                 if ($gasto->getCaRecargoorigen() == true)
@@ -1125,6 +1128,7 @@ class Reporte extends BaseReporte {
                     $newConcepto = $concepto->copy();
                     $newConcepto->setCaIdconcepto($concepto->getCaIdconcepto());
                     $newConcepto->setCaIdreporte($this->getCaIdreporte());
+                    $newConcepto->setCaIdreptarifa(null);
                     $newConcepto->save($conn);
                 }
 
@@ -1139,6 +1143,7 @@ class Reporte extends BaseReporte {
                     $newGasto->setCaIdconcepto($gasto->getCaIdconcepto());
                     $newGasto->setCaIdrecargo($gasto->getCaIdrecargo());
                     $newGasto->setCaIdreporte($this->getCaIdreporte());
+                    $newGasto->setCaIdrepgasto(null);
                     if ($gasto->getCaRecargoorigen() == false)
                         $newGasto->setCaRecargoorigen("false");
                     if ($gasto->getCaRecargoorigen() == true)
