@@ -16,9 +16,9 @@ Reporte:
     ca_idcotizacion: string
     ca_idproducto: integer
     ca_origen:
-      type: string      
+      type: string
     ca_destino:
-      type: string      
+      type: string
     ca_impoexpo:
       type: string
       notnull: true
@@ -26,6 +26,7 @@ Reporte:
       type: date
       notnull: true
     ca_idagente: integer
+    ca_idsucursalagente: integer
     ca_incoterms: string
     ca_mercancia_desc:
       type: string
@@ -46,7 +47,7 @@ Reporte:
     ca_idnotify: integer
     ca_informar_noti: string
     ca_idmaster: integer
-    ca_informar_mast: string    
+    ca_informar_mast: string
     ca_notify: integer
     ca_transporte: string
     ca_modalidad: string
@@ -90,7 +91,7 @@ Reporte:
     ca_cont_destino: integer
     ca_idcotizacionotm: string
     ca_idproductootm: integer
-    ca_tiporep: integer    
+    ca_tiporep: integer
   relations:
     RepStatus:
       local: ca_idreporte
@@ -155,6 +156,10 @@ Reporte:
     IdsAgente:
       local: ca_idagente
       foreign: ca_idagente
+      type: one
+    IdsSucursal:
+      local: ca_idsucursalagente
+      foreign: ca_idsucursal
       type: one
     IdsProveedor:
       local: ca_idlinea
@@ -223,7 +228,7 @@ RepStatus:
     ca_comentarios: string
     ca_fchrecibo: timestamp
     ca_fchenvio: timestamp
-    ca_usuenvio: string    
+    ca_usuenvio: string
     ca_introduccion: string
     ca_fchsalida: date
     ca_fchllegada: date
@@ -395,13 +400,9 @@ RepTarifa:
       filter: false
   generatePath: reportes
   tableName: tb_reptarifas
-  columns:    
-    ca_idreporte:
-      type: integer
-      primary: true
-    ca_idconcepto:
-      type: integer
-      primary: true
+  columns:
+    ca_idreporte: integer
+    ca_idconcepto: integer      
     ca_cantidad: decimal
     ca_neta_tar: decimal
     ca_neta_min: decimal
@@ -412,7 +413,7 @@ RepTarifa:
     ca_cobrar_tar: decimal
     ca_cobrar_min: decimal
     ca_cobrar_idm: string
-    ca_observaciones: string    
+    ca_observaciones: string
     ca_fchcreado: timestamp
     ca_usucreado: string
     ca_fchactualizado: timestamp
@@ -420,7 +421,7 @@ RepTarifa:
     ca_idreptarifa:
       type: integer
       autoincrement: true
-      notnull: true
+      primary : true
     ca_tipo:
       type: integer
       notnull: true
@@ -441,19 +442,15 @@ RepGasto:
       filter: false
   generatePath: reportes
   tableName: tb_repgastos
-  columns:    
-    ca_idreporte:
+  columns:
+    ca_idrepgasto :
       type: integer
-      primary: true    
-    ca_idconcepto:
-      type: integer
-      primary: true
-    ca_idrecargo:
-      type: integer
-      primary: true
-    ca_idequipo:
-      type: integer
-      primary: true
+      autoincrement: true      
+      primary : true
+    ca_idreporte: integer      
+    ca_idconcepto: integer      
+    ca_idrecargo: integer      
+    ca_idequipo: integer      
     ca_aplicacion: string
     ca_tipo: string
     ca_neta_tar: decimal
@@ -469,7 +466,6 @@ RepGasto:
     ca_usucreado: string
     ca_fchactualizado: timestamp
     ca_usuactualizado: string
-    
   relations:
     Reporte:
       local: ca_idreporte
@@ -502,7 +498,7 @@ RepSeguro:
   columns:
     ca_idreporte:
       type: integer
-      primary: true     
+      primary: true
     ca_vlrasegurado:
       type: decimal
       notnull: true
@@ -516,11 +512,11 @@ RepSeguro:
     ca_idmoneda_vta: string
     ca_obtencionpoliza:
       type: decimal
-      notnull: true    
+      notnull: true
     ca_idmoneda_pol: string
     ca_seguro_conf:
       type: string
-      notnull: true    
+      notnull: true
   relations:
     Reporte:
       local: ca_idreporte
@@ -597,7 +593,7 @@ RepExpo:
       local: ca_idsia
       foreign: ca_idsia
       type: one
-      
+
 
 RepAsignacion:
   options:
