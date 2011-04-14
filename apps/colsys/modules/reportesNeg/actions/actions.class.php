@@ -3338,6 +3338,12 @@ color="#000000";
 
         $this->forward404Unless( trim($request->getParameter("motivo")) );
 
+        $q = Doctrine::getTable("NotTarea")
+                  ->createQuery("t")
+                  ->innerJoin("t.RepAsignacion a")
+                  ->innerJoin("a.Reporte r");
+                  
+
         if($id)
         {
             $reporte = Doctrine::getTable("Reporte")->find( $request->getParameter("id") );
@@ -3348,6 +3354,7 @@ color="#000000";
             $reporte->setCaFchanulado( date("Y-m-d H:i:s") );
             $reporte->setCaDetanulado( trim($request->getParameter("motivo")));
             $reporte->save();
+            $q->addWhere("r.ca_idreporte = ?", $request->getParameter("id") );
         }
         else if($consecutivo)
         {
@@ -3359,7 +3366,18 @@ color="#000000";
                   ->set("r.ca_detanulado","'". trim(utf8_decode($request->getParameter("motivo")))."'")
                   ->where("r.ca_consecutivo =?", $consecutivo)
                   ->execute();
+            $q->addWhere("r.ca_consecutivo = ?", $consecutivo );
+            
         }
+
+        $tareas = $q->execute();
+        foreach( $tareas as $tarea ){
+            $tarea->setCaFchterminada(date("Y-m-d H:i:s"));
+            $tarea->setCaUsuterminada( $this->getUser()->getUserId());
+            $tarea->save();
+        }
+
+
         $this->responseArray = array("success"=>true);
         $this->setTemplate("responseTemplate");
 	}
