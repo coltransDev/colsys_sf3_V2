@@ -89,6 +89,10 @@ class cotseguimientosActions extends sfActions
 	* @param sfRequest $request A request object
 	*/
 	public function executeEstadisticas($request){
+
+        $response = sfContext::getInstance()->getResponse();
+        $response->addJavaScript("extExtras/RowExpander",'last');
+
 		$fechaInicial = Utils::parseDate($request->getParameter("fechaInicial"));
 		$fechaFinal = Utils::parseDate($request->getParameter("fechaFinal"));
 
@@ -459,7 +463,7 @@ class cotseguimientosActions extends sfActions
             $email->addTo( $this->emails[$key]["email"] );
             //$email->addTo( "maquinche@coltrans.com.co" );
             $email->save(); //guarda el cuerpo del mensaje
-            $email->send(); //envia el mensaje de correo            
+            $email->send(); //envia el mensaje de correo
             //break;
         }
     }
