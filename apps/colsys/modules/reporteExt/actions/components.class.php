@@ -38,11 +38,8 @@ class reporteExtComponents extends sfComponents
             $consignatario = Doctrine::getTable("Tercero")->find( $reporte->getCaIdmaster() );
             $consignatario_m = $consignatario->getCaNombre()."<br />".$consignatario->getCaContacto()."<br />Dirección: ".$consignatario->getCaDireccion()."<br />Teléfonos:".$consignatario->getCaTelefonos()." Fax:".$consignatario->getCaFax()."<br />Email: ".$consignatario->getCaEmail();
         }else {
-            if( $idtrafico=="CO-057" ){
-                $consignatario = Doctrine::getTable("Cliente")->find( 800024075 );
-            }else{
-                $consignatario = Doctrine::getTable("Cliente")->find( 622 );
-            }
+            $idempresa=sfConfig::get('app_branding_idempresa');
+            $consignatario = Doctrine::getTable("Cliente")->find( $idempresa );
             $consignatario_m = $consignatario->getCaCompania().($idtrafico=="CO-057"?" Nit. ".number_format($consignatario->getCaIdcliente(),0)."-".$consignatario->getCaDigito():"")."<br />Dirección: ".$consignatario->getDireccion()."<br />Teléfonos:".$consignatario->getCaTelefonos()." Fax:".$consignatario->getCaFax()."<br />".$consignatario->getCiudad()->getCaCiudad()." ".$consignatario->getCiudad()->getTrafico()->getCaNombre();
         }
 
@@ -163,12 +160,8 @@ class reporteExtComponents extends sfComponents
 
             if($reporte->getCaImpoexpo()!=constantes::TRIANGULACION)
             {
-
-                if( $idtrafico=="CO-057" ){
-                    $consignatario = Doctrine::getTable("Cliente")->find( 800024075 );
-                }else{
-                    $consignatario = Doctrine::getTable("Cliente")->find( 622 );
-                }
+                $idempresa=sfConfig::get('app_branding_idempresa');
+                $consignatario = Doctrine::getTable("Cliente")->find( $idempresa );
 
                 $consignatario_m1 = $consignatario->getCaCompania().($idtrafico=="CO-057"?" Nit. ".number_format($consignatario->getCaIdcliente(),0)."-".$consignatario->getCaDigito():"")."<br />Dirección: ".$consignatario->getDireccion()."<br />Teléfonos:".$consignatario->getCaTelefonos()." Fax:".$consignatario->getCaFax()."<br />".$consignatario->getCiudad()->getCaCiudad()." ".$consignatario->getCiudad()->getTrafico()->getCaNombre();
 
@@ -309,11 +302,8 @@ class reporteExtComponents extends sfComponents
             $consignatario = Doctrine::getTable("Tercero")->find( $reporte->getCaIdmaster() );
             $master = $consignatario->getCaNombre()."<br />".$consignatario->getCaContacto()."<br />".$consignatario->getCaDireccion()."<br />Teléfonos:".$consignatario->getCaTelefonos()." Fax:".$consignatario->getCaFax()."<br />Email: ".$consignatario->getCaEmail();
         }else {
-            if( $idtrafico=="CO-057" ){
-                $consignatario = Doctrine::getTable("Cliente")->find( 800024075 );
-            }else{
-                $consignatario = Doctrine::getTable("Cliente")->find( 622 );
-            }
+            $idempresa=sfConfig::get('app_branding_idempresa');
+            $consignatario = Doctrine::getTable("Cliente")->find( $idempresa );
             
             $sucursal = Doctrine::getTable("Sucursal")
                                   ->createQuery("s")
@@ -418,11 +408,8 @@ class reporteExtComponents extends sfComponents
         }else {
             if($reporte->getCaImpoexpo()!=constantes::TRIANGULACION)
             {
-                if( $idtrafico=="CO-057" ){
-                    $consignatario = Doctrine::getTable("Cliente")->find( 800024075 );
-                }else{
-                    $consignatario = Doctrine::getTable("Cliente")->find( 622 );
-                }
+                $idempresa=sfConfig::get('app_branding_idempresa');
+                $consignatario = Doctrine::getTable("Cliente")->find( $idempresa );
                 $master = $consignatario->getCaCompania().($idtrafico=="CO-057"?" Nit. ".number_format($consignatario->getCaIdcliente(),0)."-".$consignatario->getCaDigito():"")."<br />";
             }
             else
