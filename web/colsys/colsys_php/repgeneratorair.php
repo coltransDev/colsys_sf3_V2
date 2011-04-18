@@ -303,7 +303,7 @@ if (!isset($boton) and !isset($agrupamiento)) {
     echo "<FORM METHOD=post NAME='informe' ACTION='repgeneratorair.php'>";        // Hace una llamado nuevamente a este script pero con
     echo "<TABLE CELLSPACING=1>";                                    // un boton de comando definido para hacer mantemientos
 
-    $num_cols = $rs->GetColumnCount();
+    $num_cols = $rs->GetColumnCount() +1;
     echo "<TR>";
     echo "  <TH Class=titulo COLSPAN=$num_cols>COLTRANS S.A.<BR>$titulo<BR>$mes_mem / $ano_mem</TH>";
     echo "</TR>";
@@ -323,6 +323,7 @@ if (!isset($boton) and !isset($agrupamiento)) {
     echo "<TH>Piezas</TH>";
     echo "<TH>Peso</TH>";
     echo "<TH>Volumen</TH>";
+    echo "<TH>Rentabilidad</TH>";
     echo "</TR>";
     $rs->MoveFirst();
     while (!$rs->Eof() and !$rs->IsEmpty()) {                                  // Lee la totalidad de los registros obtenidos en la instrucción Select
@@ -362,6 +363,7 @@ if (!isset($boton) and !isset($agrupamiento)) {
                             echo "  <TD Class=mostrar style='font-size: 9px; text-align:right;'>" . number_format($rs->Value('ca_piezas')) . "</TD>";
                             echo "  <TD Class=mostrar style='font-size: 9px; text-align:right;'>" . number_format($rs->Value('ca_peso'), 2) . "</TD>";
                             echo "  <TD Class=mostrar style='font-size: 9px; text-align:right;'>" . number_format($rs->Value('ca_volumen'), 2) . "</TD>";
+                            echo "  <TD Class=mostrar style='font-size: 9px; text-align:right;'>" . number_format($rs->Value('ca_utilidad')/$rs->Value('ca_facturacion')*100, 2) . "%</TD>";
                             $lst_prn = $clave;
                             if (!isset(${$lst_prn})) {
                                 ${$lst_prn} = array();
@@ -372,6 +374,8 @@ if (!isset($boton) and !isset($agrupamiento)) {
                             ${$lst_prn}['piezas']+= $rs->Value('ca_piezas');
                             ${$lst_prn}['peso']+= $rs->Value('ca_peso');
                             ${$lst_prn}['volumen']+= $rs->Value('ca_volumen');
+                            ${$lst_prn}['rentabilidad']+= round($rs->Value('ca_utilidad')/$rs->Value('ca_facturacion'),4);
+                            ${$lst_prn}['items']+= 1;
                             break;
                         } else {
                             echo "  <TD Class=invertir style='font-size: 9px;$back_col'></TD>";
@@ -420,6 +424,7 @@ function print_totals($nc, $ns, &$arreglo_1, &$arreglo_2, &$titulos, &$impr_grn)
     echo "  <TD Class=resaltar style='font-weight:bold; font-size: 10px; text-align:right;'>" . number_format($arreglo_1['piezas']) . "</TD>";
     echo "  <TD Class=resaltar style='font-weight:bold; font-size: 10px; text-align:right;'>" . number_format($arreglo_1['peso'], 2) . "</TD>";
     echo "  <TD Class=resaltar style='font-weight:bold; font-size: 10px; text-align:right;'>" . number_format($arreglo_1['volumen'], 2) . "</TD>";
+    echo "  <TD Class=resaltar style='font-weight:bold; font-size: 10px; text-align:right;'>" . number_format($arreglo_1['rentabilidad']/$arreglo_1['items']*100, 2) . "%</TD>";
     echo "</TR>";
     $arreglo_2['hawbs']+= $arreglo_1['hawbs'];
     $arreglo_2['facturacion']+= $arreglo_1['facturacion'];
@@ -427,6 +432,8 @@ function print_totals($nc, $ns, &$arreglo_1, &$arreglo_2, &$titulos, &$impr_grn)
     $arreglo_2['piezas']+= $arreglo_1['piezas'];
     $arreglo_2['peso']+= $arreglo_1['peso'];
     $arreglo_2['volumen']+= $arreglo_1['volumen'];
+    $arreglo_2['rentabilidad']+= round($arreglo_1['rentabilidad']/$arreglo_1['items'],4);
+    $arreglo_2['items']+= 1;
     $arreglo_1 = array();
 }
 
