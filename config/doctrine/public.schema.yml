@@ -29,8 +29,7 @@ Ciudad:
     Trafico:
       local: ca_idtrafico
       foreign: ca_idtrafico
-      type: one    
-
+      type: one
 
 Trafico:
   options:
@@ -87,13 +86,11 @@ Trafico:
     Moneda:
       local: ca_idmoneda
       foreign: ca_idmoneda
-      type: one
-    
+      type: one    
     Ciudad:
       local: ca_idtrafico
       foreign: ca_idtrafico
       type: many
-
 
 TraficoUsers:
   options:

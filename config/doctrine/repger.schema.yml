@@ -61,6 +61,8 @@ RepCargaTraficos:
   tableName: vi_repcargatraficos
   columns:
     ca_fchreferencia: date
+    ca_fchembarque: date
+    ca_fcharribo: date
     ca_referencia:
       type: string
       primary: true
