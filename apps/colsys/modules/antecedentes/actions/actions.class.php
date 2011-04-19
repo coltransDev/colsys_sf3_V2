@@ -459,7 +459,7 @@ class antecedentesActions extends sfActions {
 
         $usuarios = Doctrine::getTable("Usuario")
                         ->createQuery("u")
-                        ->addWhere("u.ca_departamento = ? or u.ca_login =? or u.ca_login =? or u.ca_login =? ", array("Marítimo","nmrey","mflecompte","mjortiz"))
+                        ->addWhere("u.ca_departamento = ? or u.ca_login =? or u.ca_login =? or u.ca_login =? and u.ca_activo=true ", array("Marítimo","nmrey","mflecompte","mjortiz"))
                         ->addOrderBy("u.ca_email")
                         ->execute();
         $contactos = array();
@@ -638,6 +638,7 @@ exit;
 
             if( $queryType == "hbl" ){
                 $q->addWhere("UPPER(s.ca_doctransporte) LIKE ?", "%".strtoupper($criterio) . "%");
+                //$q->addWhere("r.ca_modalidad=? and ca_destino=?",array(utf8_decode($modalidad),$destino));
             }else{
                 $q->addWhere("r.ca_consecutivo LIKE ?", $criterio . "%");
             }
@@ -645,7 +646,7 @@ exit;
             $q->addOrderBy("r.ca_consecutivo desc");
             $q->addOrderBy("r.ca_version  desc");
             $q->distinct();
-
+            //echo $q->getSqlQuery();
             $reportes = $q->execute();
             $result = array();
             $conse="";
@@ -831,10 +832,15 @@ exit;
 
         $reportes=array();
         $lines = file($file);
-        for($i=0;$i<count($lines);$i++){
+        for($i=0;$i<count($lines);$i++)
+        {
+            if(trim($lines[$i])=="")
+            {
+                continue;
+            }
             $tmp=null;
             $valido=true;
-            $lines[$i]=trim($lines[$i]);
+            $lines[$i]=trim($lines[$i]);            
             $patron = '/(\d+)-(20\d\d)/';
             if (preg_match($patron, $lines[$i])) {
                 $tmp=ReporteTable::retrieveByConsecutivo($lines[$i]);
@@ -842,22 +848,22 @@ exit;
                 {
                     if($tmp->getInoClientesSea())
                     {
-                        $resultado.="linea :".($i+1)."->".$lines[$i]." :El RN esta asociado ya a otra referencia<br>";
+                        $resultado.="1.1-linea :".($i+1)."->".$lines[$i]." :El RN esta asociado ya a otra referencia<br>";
                         $valido=false;
                     }
                     if($tmp->getCaModalidad()!=$modalidad)
                     {
-                        $resultado.="linea :".($i+1)."->".$lines[$i]." :Modalidad es diferente<br>";
+                        $resultado.="1.2-linea :".($i+1)."->".$lines[$i]." :Modalidad es diferente<br>";
                         $valido=false;
                     }
                     if($tmp->getOrigen()->getCaIdtrafico()!=$origen)
                     {
-                        $resultado.="linea :".($i+1)."->".$lines[$i]." :Origen es diferente<br>";
+                        $resultado.="1.3-linea :".($i+1)."->".$lines[$i]." :Origen es diferente<br>";
                         $valido=false;
                     }
                     if($tmp->getCaDestino()!=$destino)
                     {
-                        $resultado.="linea :".($i+1)."->".$lines[$i]." :destino es diferente<br>";
+                        $resultado.="1.4-linea :".($i+1)."->".$lines[$i]." :destino es diferente<br>";
                         $valido=false;
                     }
                     if($valido)
@@ -865,31 +871,32 @@ exit;
                 }
                 else
                 {
-                   $resultado.="linea :".$i."->".$lines[$i]." :Reporte no encontrado<br>";
+                   $resultado.="1.5-linea :".$i."->".$lines[$i]." :Reporte no encontrado<br>";
                 }
             } else {
                 $tmp=RepStatus::retrieveByHbl($lines[$i]);
                 if($tmp)
                 {
-                    $reporte=$tmp->getReporte();
+                    $reporte=$tmp->getUltReporte();
+                   // $resultado=$reporte->getCaIdreporte()."<br>";
                     if($reporte->getInoClientesSea())
                     {
-                        $resultado.="linea :".($i+1)."->".$lines[$i]." :El RN esta asociado ya a otra referencia<br>";
+                        $resultado.="2.1-linea :".($i+1)."->".$lines[$i]." :El RN esta asociado ya a otra referencia<br>";
                         $valido=false;
                     }
                     if($reporte->getCaModalidad()!=$modalidad)
                     {
-                        $resultado.="linea :".($i+1)."->".$lines[$i]." :Modalidad es diferente<br>";
+                        $resultado.="2.2-linea :".($i+1)."->".$lines[$i]." :Modalidad es diferente<br>";
                         $valido=false;
                     }
                     if($reporte->getOrigen()->getCaIdtrafico()!=$origen)
                     {
-                        $resultado.="linea :".($i+1)."->".$lines[$i]." :Origen es diferente<br>";
+                        $resultado.="2.3-linea :".($i+1)."->".$lines[$i]." :Origen es diferente<br>";
                         $valido=false;
                     }
                     if($reporte->getCaDestino()!=$destino)
                     {
-                        $resultado.="linea :".($i+1)."->".$lines[$i]." :destino es diferente<br>";
+                        $resultado.="2.4-linea :".($i+1)."->".$lines[$i]." :destino es diferente<br>";
                         $valido=false;
                     }
                     if($valido)
@@ -897,7 +904,7 @@ exit;
                 }
                 else
                 {
-                   $resultado.="linea :".($i+1)."->".$lines[$i]." :Hbl no encontrado<br>";
+                   $resultado.="2.5-linea :".($i+1)."->".$lines[$i]." :Hbl no encontrado<br>";
                 }
             }
         }
