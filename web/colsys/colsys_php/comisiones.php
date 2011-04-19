@@ -106,7 +106,8 @@ elseif (!isset($boton) and !isset($accion) and isset($buscar)){
     $modulo = "00100000";                                                      // Identificación del módulo para la ayuda en línea
 //  include_once 'include/seguridad.php';                                      // Control de Acceso al módulo
 
-    $condicion= "substr(ca_referencia,8,2) like '%$mes%' and substr(ca_referencia,15) = '".substr($ano, -1)."' and ca_login like '$usuario' and ".str_replace("\"","'",$casos)." and ".$comision;
+    $compania = (strlen($compania)!=0)?"and lower(ca_compania) like lower('$compania')":"";
+    $condicion= "substr(ca_referencia,8,2) like '%$mes%' and substr(ca_referencia,15) = '".substr($ano, -1)."' $compania and ca_login like '$usuario' and ".str_replace("\"","'",$casos)." and ".$comision;
     if (!$rs->Open("select * from vi_inocomisiones_sea where $condicion")) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
         echo "<script>document.location.href = 'entrada.php';</script>";
