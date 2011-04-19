@@ -1708,7 +1708,7 @@ class reportesNegActions extends sfActions
 
             $mail = new Email();
             $asunto=$request->getParameter("asunto")." - ".$reporte->getCaConsecutivo();
-             if( isset( $_FILES["archivo"] ) ){
+            if( isset( $_FILES["archivo"] ) ){
                 $archivo = $_FILES["archivo"];
 
                 if($archivo["name"])
@@ -1748,123 +1748,12 @@ class reportesNegActions extends sfActions
                 }
             }
 
-            $html='<html>
-    <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
-<body>
-    <style type="text/css" >
+            $this->getRequest()->setParameter('tipo',"AG");
+            $this->getRequest()->setParameter('idreporte',$reporte->getCaIdreporte());
+            //$this->getRequest()->setParameter('mensaje_comercial',$request->getParameter("mensaje_comercial"));
 
-img.img{
-    border: 0px;
-}
-span{
-    font-size: 12px;
-    font-family: Arial;
-    color: #000000;
-}
-a.link:link {
-   text-decoration:none;
-   color:#0000FF;
-}
-a.link:active {
-   text-decoration:none;
-   color:#0000FF;
-}
-a.link:visited {
-   text-decoration: none;
-   color: #062A7D;
-}
-.entry {
-    border-bottom: 1px solid #DDDDDD;
-    clear:both;
-    padding: 0 0 10px;
-}
-.entry-even {
-    background-color:#F6F6F6;
-    border-color:#CCCCCC;
-    border-style:dotted;
-    border-width:1px ;
-    margin:12px 0 0;
-    padding:12px 12px 24px;
-    font-size: 12px;
-    font-family: arial, helvetica, sans-serif;
-}
-.entry-odd {
-    background-color:#FFFFFF;
-    border-color:#CCCCCC;
-    border-style:dotted;
-    border-width:1px ;
-    margin:12px 0 0;
-    padding:12px 12px 24px;
-    font-size: 12px;
-    font-family: arial, helvetica, sans-serif;
-}
-span{
-font-size: 12px;
-font-family: arial, helvetica, sans-serif;
-color="#000000";
-}
-.entry-yellow {
-    background-color:#FFFFCC;
-    border-color:#CCCCCC;
-    border-style:dotted;
-    border-width:1px ;
-    margin:12px 0 0;
-    padding:12px 12px 24px;
-    font-size: 12px;
-    font-family: arial, helvetica, sans-serif;
-}
-.entry-date{
-    float: right;
-    color: #0464BB;
-}
-</style>
-        <!-- GREY BORDER -->
-        <table width="100%" border="0" cellspacing="15" cellpadding="0" bgcolor="#E1E1E1"><tr><td>
-                    <!-- WHITE BACKGROUND -->
-                    <table width="100%" border="0" cellspacing="15" cellpadding="0" bgcolor="#FFFFFF"><tr><td>
-                                <!-- MAIN CONTENT TABLE -->
+			$html=sfContext::getInstance()->getController()->getPresentationFor( 'reportesNeg', 'emailReporte');
 
-                                <table width="100%" border="0" cellspacing="5" cellpadding="0">
-                                    <!-- LOGO -->
-                                    <tr><td colspan="3"><table><tr><td width="135"><img src="https://www.coltrans.com.co/images/logo_colsys.gif" width="178" height="30" alt="COLSYS"></td>
-                                                    <td><font size="4" face="arial, helvetica, sans-serif" color="#D99324"></font></td></tr></table></td></tr>
-                                    <tr><td width="25"><img src="https://www.coltrans.com.co/images/spacer.gif" width="25" height="1" alt=""></td><td colspan="2"><hr noshade size="1"></td></tr>
-                                    <!-- INTRO -->
-                                    <tr>
-                                        <td>&nbsp;</td>
-                                        <td >
-                                            <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>No:'.$reporte->getCaConsecutivo().'</b></font><br />
-                                            <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Agente:</b>'.$agente.'</font><br />
-                                            <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Trayecto:</b>'.$trayecto.'</font><br />
-                                                <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Proveedor:</b>'.$proveedor.'</font><br />
-                                            <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Cliente:</b>'.$reporte->getContacto()->getCliente()->getCaCompania().' - '.$request->getParameter("orden_clie").'</font><br />
-                                            <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Mercancia:</b>'.$reporte->getCaMercanciaDesc().'</font><br />
-                                         </td>
-                                    </tr>
-                                    <tr>
-                                        <td>&nbsp;</td>
-                                        <td ><font size="2" face="arial, helvetica, sans-serif" color="#000000">'.$request->getParameter("mensaje_comercial").'</font></td>
-                                    </tr>
-                                    <tr><td colspan="2"><hr noshade size="1"></td></tr>
-                                    <tr><td>&nbsp;</td><td>
-                                            <font size="1" face="arial, helvetica, sans-serif" color="#000000"> Si los links no estan funcionando, copie y pegue esta dirección en el navegador:<br>https://www.coltrans.com.co/pm/verTicket?id=2935 <br><br> Gracias por utilizar el sistema de tickets!<br><br>Coltrans S.A. - Colmas Ltda. Agencia de Aduanas Nivel 1<br>
-                                                <a href="https://www.coltrans.com.co/">http://www.coltrans.com.co/</a>
-                                            </font>
-                                        </td>
-
-                                        <td>&nbsp;</td>
-                                    </tr>
-                                </table>
-                            </td></tr>
-                    </table>
-                </td></tr>
-            <!-- COPYRIGHT -->
-            <tr><td><font size="1" face="arial, helvetica, sans-serif" color="#666666">&copy; Coltrans S.A. Colmas Ltda. Agencia de Aduanas Nivel 1</font></td></tr>
-
-        </table>
-        </body>
-</html>
-';
             $mail->setCaBodyhtml($html);
 
             if($email_send=="" || !$email_send)
@@ -2805,6 +2694,8 @@ color="#000000";
                         if( $t->reportar_min){
                             $tarifa->setCaReportarMin( $t->reportar_min );
                         }
+                        else
+                            $tarifa->setCaReportarMin( 0 );
 
                         if( $t->reportar_idm ){
                             $tarifa->setCaReportarIdm( $t->reportar_idm );
@@ -3767,6 +3658,158 @@ color="#000000";
                 echo ($issue->getCaInfo());
             exit;
         $this->setTemplate("responseTemplate");
+    }
+
+
+    public function executeCierreAutomatico($request)
+    {  
+
+    $con = Doctrine_Manager::getInstance()->connection();
+     try{
+        
+        $con->beginTransaction();
+
+        $sql="select count(ca_consecutivo) as count from tb_reportes r
+            inner join tb_repstatus s on  s.ca_idreporte=r.ca_idreporte and s.ca_idetapa in ('IMETA','IMETT')
+            where s.ca_fchenvio<=(CURRENT_TIMESTAMP - CAST('15 days' AS INTERVAL))
+            and r.ca_usucerrado is null";
+        $st = $con->execute($sql);
+        $count = $st->fetch();
+        
+        $nreg=2000;
+        $pages=ceil($count[0]/$nreg);
+        //echo "Pages:".$pages."<br><br>";
+        for($i=0;$i<$pages;$i++)
+        {
+            $html="";
+            $sql="select r.ca_consecutivo from tb_reportes r
+                inner join tb_repstatus s on  s.ca_idreporte=r.ca_idreporte and s.ca_idetapa in ('IMETA','IMETT')
+                where s.ca_fchenvio<=(CURRENT_TIMESTAMP - CAST('15 days' AS INTERVAL))
+                and r.ca_usucerrado is null order by 1";
+
+            $sql1="select r.ca_consecutivo from tb_reportes r
+                inner join tb_repstatus s on  s.ca_idreporte=r.ca_idreporte and s.ca_idetapa in ('IMETA','IMETT')
+                where s.ca_fchenvio<=(CURRENT_TIMESTAMP - CAST('15 days' AS INTERVAL))
+                and r.ca_usucerrado is null order by 1 ";
+
+            $offset=$i*$nreg;
+            $sql.=" limit ".$nreg;
+            $sql1.=" limit ".$nreg;
+
+            //echo $sql."<br><br>";
+            $st = $con->execute($sql);
+            $reportes = $st->fetchAll();
+
+            //$html="Se hizo el cierre de los siguientes reportes:";
+            foreach($reportes as $rep)
+            {
+                $html.=$rep["ca_consecutivo"]."|";
+            }
+
+            $email = new Email();
+            $email->setCaUsuenvio("Administrador");
+            $email->setCaTipo("Reporte de Negocios"); //Envío de Avisos
+            $email->setCaIdcaso(null);
+
+            $email->setCaFrom("no-reply@coltrans.com.co");
+            $email->setCaFromname("Administrador");
+            $email->setCaAddress("traficos1@coltrans.com.co");
+            $email->addTo("maquinche@coltrans.com.co");
+
+            $email->setCaSubject("Cierre de Reportes de negocios ".date("Y-m-d"));
+            $email->setCaBody($this->getRequestParameter("mensaje"));
+
+            $this->getRequest()->setParameter('tipo',"CIERRE");
+
+            $this->getRequest()->setParameter('html',$html);
+            $html=sfContext::getInstance()->getController()->getPresentationFor( 'reportesNeg', 'emailReporte');
+
+            $email->setCaBodyhtml($html);
+            //$email->save();
+            $email->send($con);
+
+             $sql2="update tb_reportes set ca_usucerrado='Administrador' , ca_fchcerrado=now()
+             where ca_consecutivo in ($sql1)";
+
+            $st = $con->execute($sql2);
+
+            //echo "Actualizacion:<br>".$sql2."<br><br>";
+        //$con->rollBack();           
+        }
+        $con->commit();
+
+     }
+     catch(Exception $e)
+     {
+        $email = new Email();
+        $email->setCaUsuenvio("Administrador");
+        $email->setCaTipo("Reporte de Negocios"); //Envío de Avisos
+        $email->setCaIdcaso(null);
+
+        $email->setCaFrom("no-reply@coltrans.com.co");
+        $email->setCaFromname("Administrador");
+
+        $email->addTo("maquinche@coltrans.com.co");
+
+        $email->setCaSubject("Error en el Cierre de Reportes de negocios ".date("Y-m-d"));
+        $email->setCaBody($this->getRequestParameter("mensaje"));
+
+        $mensaje = "Se presento un error al cerrar reportes de negocios:<br>".$e->getMessage()."<br>".$e->getTraceAsString();
+
+        $this->getRequest()->setParameter('tipo',"CIERRE");
+
+        $this->getRequest()->setParameter('html',$mensaje);
+        $html=sfContext::getInstance()->getController()->getPresentationFor( 'reportesNeg', 'emailReporte');
+
+        $email->setCaBodyhtml($mensaje);
+        $email->save();
+        $email->send();
+        $con->rollBack();
+     }
+
+
+
+        //echo count($reportes)."<br>";
+        //echo "<pre>";print_r($reportes);echo "</pre>";
+        exit;
+    }
+    public function executeEmailReporte($request)
+    {
+        $this->tipo=$request->getParameter("tipo");
+
+        if($this->tipo=="AG")
+        {
+            
+            $idreporte=($request->getParameter("idreporte")!="")?$request->getParameter("idreporte"):"0";
+//            echo "ddd".$idreporte;
+            $this->reporte = Doctrine::getTable("Reporte")->find( $idreporte );
+
+            $ids=$this->reporte->getIdsAgente()->getIds();
+            $this->agente=$ids->getCaNombre();
+            $this->trayecto=$this->reporte->getOrigen()->getTrafico()->getCaNombre()."-".$this->reporte->getOrigen()->getCaCiudad()."&raquo;".$this->reporte->getDestino()->getTrafico()->getCaNombre()."-".$this->reporte->getDestino()->getCaCiudad();
+
+            $this->proveedor="";
+            if( $this->reporte->getCaIdproveedor() ){
+                $values = explode("|", $this->reporte->getCaIdproveedor());
+                $values1 = explode("|", $this->reporte->getCaIncoterms());
+                $values2 = explode("|", $this->reporte->getCaOrdenProv());
+
+                for($i=0;$i<count($values);$i++)
+                {
+                    $tercero = Doctrine::getTable("Tercero")->find($values[$i]);
+                    if($tercero)
+                    {
+                        $proveedor .=Utils::replace($tercero->getCaNombre())." - ". $values1[$i]." - ". $values2[$i]."<br>";
+                    }
+                }
+            }
+            $this->mensaje_comercial=$request->getParameter("mensaje_comercial");
+        }
+        if($this->tipo=="CIERRE")
+        {
+            $this->reportes=explode("|", $request->getParameter("html"));
+        }
+        $this->setLayout("email");
     }
 }
 ?>

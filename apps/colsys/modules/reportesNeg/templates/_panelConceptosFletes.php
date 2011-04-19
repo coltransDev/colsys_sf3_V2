@@ -50,7 +50,8 @@ PanelConceptosFletes = function( config ){
         valueField: 'idconcepto',
         lazyRender:true,
         listClass: 'x-combo-list-small',
-        store : this.storeConceptos
+        store : this.storeConceptos,
+        listeners:{select:this.onSelect}
     });
 
     this.editorTipoAplicaciones = new Ext.form.ComboBox({
@@ -363,14 +364,19 @@ PanelConceptosFletes = function( config ){
             //return false;/**/
         }
 
+        //alert(record.data.iditem+ "-"+record.data.tipo+"-"+record.data.iditem)
         if( record.data.iditem && field=="item" && record.data.tipo=="concepto" ){
             iditemtmp=record.data.iditem
+            //alert(iditemtmp)
+
             //alert(record.data.iditem);
             //return false;/**/
         }
+        else
+            iditemtmp="";
 
         if( record.data.iditem == 9999 && record.data.tipo=="concepto" ){
-            //return false;/**/
+            return false;
         }
         if(field=="item" && record.data.iditem && record.data.tipo=="recargo" ){
             return false;
@@ -511,11 +517,25 @@ Ext.extend(PanelConceptosFletes, Ext.grid.EditorGridPanel, {
             }else{
                 ed.field.store.loadData( this.dataRecargos );
             }
-
         }
     }
     ,
-    onValidateEdit : function(e){        
+    onSelect : function(combo,record,index){
+        if(iditemtmp!="")
+        {            
+            idconcepto=record.data.idconcepto;            
+            var storeGrid = Ext.getCmp('panel-conceptos-fletes').store;
+
+            storeGrid.each( function( t ){                
+                if( t.data.tipo=="recargo" && t.data.idconcepto == iditemtmp){                    
+                    t.set("idconcepto", idconcepto);
+                }
+            });
+            iditemtmp=idconcepto;
+        }
+    }
+    ,
+    onValidateEdit : function(e){    
         if( e.field == "item"){
             
             var rec = e.record;
@@ -601,16 +621,18 @@ Ext.extend(PanelConceptosFletes, Ext.grid.EditorGridPanel, {
                             idconcepto=e.value;
                             e.value = r.data.concepto;
 
+                            
                             //alert("antes:"+iditemtmp+ "-nuevo:"+r.data.idconcepto);
-                            storeGrid.each( function( t ){
-                                //alert("nuevos:"+t.data.idconcepto +"-x cambio"+ iditemtmp)
+                           /* storeGrid.each( function( t ){
                                 if( t.data.tipo=="recargo" && t.data.idconcepto == iditemtmp){
+                                    //alert("nuevos:"+t.data.idconcepto +"-x cambio"+ iditemtmp)
                                     //alert()
+                                    //t.set("idconcepto", t.data.idconcepto);
                                     t.set("idconcepto", idconcepto);
 
                                     //t.set("iditem", iditemtmp);
                                 }
-                            });
+                            });*/
 
                         }else{
                             alert("Esta agregando un concepto que ya existe");
