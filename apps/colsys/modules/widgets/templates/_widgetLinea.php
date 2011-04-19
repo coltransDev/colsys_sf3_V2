@@ -41,8 +41,8 @@ WidgetLinea = function( config ){
         triggerAction: 'all',
         emptyText:'',
         selectOnFocus: true,        
-        lazyRender:true,        
-
+        lazyRender:true,
+        
         listClass: 'x-combo-list-small'  ,
         listeners: {
             focus: this.onFocusWdg            
@@ -58,51 +58,51 @@ Ext.extend(WidgetLinea, Ext.form.ComboBox, {
     getTrigger : Ext.form.TwinTriggerField.prototype.getTrigger,
     initTrigger : Ext.form.TwinTriggerField.prototype.initTrigger,
 
-    onFocusWdg: function( field, newVal, oldVal ){
-        var cmp = Ext.getCmp(this.linkTransporte);
-        if( cmp ){
+        onFocusWdg: function( field, newVal, oldVal ){
+            var cmp = Ext.getCmp(this.linkTransporte);
+            if( cmp ){
 
 
-            var cmp2 = Ext.getCmp(this.linkImpoexpo);
-            if( cmp2 ){
-                var impoexpo = cmp2.getValue();
-            }else{
-                var impoexpo = null;
-            }
-            
-            var list = new Array();
-            var transporte = Ext.getCmp(this.linkTransporte).getValue();
+                var cmp2 = Ext.getCmp(this.linkImpoexpo);
+                if( cmp2 ){
+                    var impoexpo = cmp2.getValue();
+                }else{
+                    var impoexpo = null;
+                }
 
-            if( transporte=="<?=Constantes::OTMDTA?>" ){
-                transporte="<?=Constantes::TERRESTRE?>";
-            }
+                var list = new Array();
+                var transporte = Ext.getCmp(this.linkTransporte).getValue();
 
-            
+                if( transporte=="<?=Constantes::OTMDTA?>" ){
+                    transporte="<?=Constantes::TERRESTRE?>";
+                }
 
-            for( k in this.data ){
-                var rec = this.data[k];
-                if( transporte && rec.transporte==transporte ){                    
-                    if( this.linkImpoexpo ){
-                        if( impoexpo=="<?=Constantes::IMPO?>" && rec.activo_impo ){
+
+
+                for( k in this.data ){
+                    var rec = this.data[k];
+                    if( transporte && rec.transporte==transporte ){
+                        if( this.linkImpoexpo ){
+                            if( impoexpo=="<?=Constantes::IMPO?>" && rec.activo_impo ){
+                                list.push( rec );
+                            }
+
+                            if( impoexpo=="<?=Constantes::EXPO?>" && rec.activo_expo ){
+                                list.push( rec );
+                            }
+                        }else{
                             list.push( rec );
                         }
-
-                        if( impoexpo=="<?=Constantes::EXPO?>" && rec.activo_expo ){
-                            list.push( rec );
-                        }
-                    }else{
-                        list.push( rec );
                     }
                 }
-            }
-            var data = new Object();
-            data.root = list;
+                var data = new Object();
+                data.root = list;
 
-            this.store.loadData(data);
-        }else{
-            alert( "arrrrg: No existe el componente id: "+e.combo.linkTransporte+"!");
-        }
-    },
+                this.store.loadData(data);
+            }else{
+                alert( "arrrrg: No existe el componente id: "+e.combo.linkTransporte+"!");
+            }
+        },
 
 	
     

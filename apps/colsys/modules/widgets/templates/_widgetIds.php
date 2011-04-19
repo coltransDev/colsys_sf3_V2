@@ -35,15 +35,13 @@ WidgetIds = function( config ){
     WidgetIds.superclass.constructor.call(this, {
         displayField:'nombre',
         valueField:'id',
-        loadingText: 'Buscando...',
-        typeAhead: true,
+        loadingText: 'Buscando...',        
         forceSelection: true,
         selectOnFocus:true,
         minChars: 3,
         tpl: this.resultTpl,
         triggerAction: 'all',
-        emptyText:'',
-        selectOnFocus: true,        
+        emptyText:'',              
         lazyRender:true,                
         emptyText: 'Escriba el nombre del cliente...',
         itemSelector: 'div.search-item'
