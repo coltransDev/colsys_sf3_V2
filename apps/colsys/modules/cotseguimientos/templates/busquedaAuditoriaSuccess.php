@@ -12,7 +12,7 @@ include_component("widgets", "widgetPais");
 var tabs = new Ext.FormPanel({
 	labelWidth: 75,
 	border:true,
-	frame:true,
+	fame:true,
 	width: 650,    
 	standardSubmit: true,  
     id: 'formPanel',	
@@ -30,27 +30,20 @@ var tabs = new Ext.FormPanel({
 			items: [				
 				{
 					xtype:'datefield',					
-					fieldLabel: 'Fecha Inicial',
-					//autoHeight:true,
-					name : 'fechaInicial',					
-					//defaultType: 'textfield',
+					fieldLabel: 'Fecha Inicial',					
+					name : 'fechaInicial',
                     format: 'Y-m-d',
-					//collapsed: true,
-					value: '<?=date("Y-m-")."01"?>',
-					//allowBlank: false
+					value: '<?=date("Y-m-")."01"?>'					
 				},
 				{
-					xtype:'datefield',
-					//checkboxToggle:true,
-					fieldLabel: 'Fecha final',
-					//autoHeight:true,
-					name : 'fechaFinal',					
-					//defaultType: 'textfield',
+					xtype:'datefield',					
+					fieldLabel: 'Fecha final',					
+					name : 'fechaFinal',
                     format: 'Y-m-d',
-					//collapsed: true,
-					value: '<?=date("Y-m-d")?>',
-					//allowBlank: false					
-				}				
+					value: '<?=date("Y-m-d")?>'					
+					
+				}
+				
                 <? 
                 if($nivel=="0")
                 {
@@ -176,6 +169,9 @@ var tabs = new Ext.FormPanel({
 		}
 	}]
 });
+
 tabs.render("container");
+
+
 </script>
 

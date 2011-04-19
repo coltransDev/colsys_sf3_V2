@@ -1,3 +1,4 @@
+
 <div align="center">
 <br>
 <h3>Estadisticas de cotizaciones <?=$fechaInicial?> <?=$fechaFinal?> <br>
@@ -22,9 +23,12 @@ Datos basados en <?=$numcotizaciones?> cotizaciones
 				<tr>
 					<th scope="col">Fecha</th>
 					<th scope="col">Usuario</th>
-					<th scope="col">No Cotizacion</th>
+					<th scope="col">No Cotizacion</th>					
 				</tr>
 				<?
+				$total = 0;
+				$total2 = 0;
+				
 				foreach( $seguimientos as $row )
 				{
 				?>
@@ -32,12 +36,15 @@ Datos basados en <?=$numcotizaciones?> cotizaciones
 					<td><?=$row["ca_fchcreado"]?></td>
 					<td><?=$row["ca_usuario"] ."-". $row["ca_idsucursal"]?></td>
 					<td><?=$row["ca_consecutivo"]?></td>
+
 				</tr>
 				<?
 				}
-				?>
+				?>				
 			</table>
 		</td>
 	</tr>
 </table>
+
+
 </div>
