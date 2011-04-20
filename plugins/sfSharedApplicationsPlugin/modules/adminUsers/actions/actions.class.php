@@ -327,7 +327,7 @@ class adminUsersActions extends sfActions {
         }
 
         if ($request->getParameter("nombre")) {
-            $usuario->setCaNombre($request->getParameter("nombre"));
+            $usuario->setCaNombre(ucwords(strtolower($request->getParameter("nombre"))));
         }
 
         if ($request->getParameter("cargo")) {
