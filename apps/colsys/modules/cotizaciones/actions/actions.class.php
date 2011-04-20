@@ -1775,62 +1775,74 @@ class cotizacionesActions extends sfActions {
      */
 
     public function executeObserveSegurosManagement() {
-        $user_id = $this->getUser()->getUserId();
-        $id = $this->getRequestParameter("id");
-        if ($this->getRequestParameter("oid")) {
 
-            $seguro = Doctrine::getTable("CotSeguro")->find($this->getRequestParameter("oid"));
-            $this->forward404Unless($seguro);
-        } else {
-            $seguro = new CotSeguro();
-            $seguro->setCaIdcotizacion($this->getRequestParameter("cotizacionId"));
+        $conn = Doctrine::getTable("CotSeguro")->getConnection();
+        $conn->beginTransaction();
+        try {
+            $user_id = $this->getUser()->getUserId();
+            $id = $this->getRequestParameter("id");
+            if ($this->getRequestParameter("oid")) {
+
+                $seguro = Doctrine::getTable("CotSeguro")->find($this->getRequestParameter("oid"));
+                $this->forward404Unless($seguro);
+            } else {
+                $seguro = new CotSeguro();
+                $seguro->setCaIdcotizacion($this->getRequestParameter("cotizacionId"));
+            }
+
+            if ($this->getRequestParameter("prima_tip")) {
+                $seguro->setCaPrimaTip($this->getRequestParameter("prima_tip"));
+            }
+
+            if ($this->getRequestParameter("prima_vlr")) {
+                $seguro->setCaPrimaVlr($this->getRequestParameter("prima_vlr"));
+            }
+
+            if ($this->getRequestParameter("prima_min")) {
+                $seguro->setCaPrimaMin($this->getRequestParameter("prima_min"));
+            }
+
+            if ($this->getRequestParameter("obtencion")) {
+                $seguro->setCaObtencion($this->getRequestParameter("obtencion"));
+            }
+
+            if ($this->getRequestParameter("idmoneda")) {
+                $seguro->setCaIdmoneda($this->getRequestParameter("idmoneda"));
+            }
+
+            if ($this->getRequestParameter("idmonedaobtencion")) {
+                $seguro->setCaIdmonedaobtencion($this->getRequestParameter("idmonedaobtencion"));
+            }
+
+            if ($this->getRequestParameter("observaciones")) {
+                $seguro->setCaObservaciones($this->getRequestParameter("observaciones"));
+            }else{
+                $seguro->setCaObservaciones(null);
+            }
+
+            if ($this->getRequestParameter("transporte")) {
+                $seguro->setCaTransporte(utf8_decode($this->getRequestParameter("transporte")));
+            }
+
+            if (!$this->getRequestParameter("oid")) {
+                $seguro->setCaFchcreado(date("Y-m-d H:i:s"));
+                $seguro->setCaUsucreado($user_id);
+            } else {
+                $seguro->setCaFchactualizado(date("Y-m-d H:i:s"));
+                $seguro->setCaUsuactualizado($user_id);
+            }
+
+
+
+            $seguro->save( $conn );
+            $this->responseArray = array("success"=>true,"id" => $id, "oid"=>$seguro->getCaIdseguro() );
+            $conn->commit();
+        } catch (Exception $e) {
+            $conn->rollBack();
+            $this->responseArray = array("success" => false, "errorInfo" => utf8_encode($e->getMessage()));
         }
-
-        if ($this->getRequestParameter("prima_tip")) {
-            $seguro->setCaPrimaTip($this->getRequestParameter("prima_tip"));
-        }
-
-        if ($this->getRequestParameter("prima_vlr")) {
-            $seguro->setCaPrimaVlr($this->getRequestParameter("prima_vlr"));
-        }
-
-        if ($this->getRequestParameter("prima_min")) {
-            $seguro->setCaPrimaMin($this->getRequestParameter("prima_min"));
-        }
-
-        if ($this->getRequestParameter("obtencion")) {
-            $seguro->setCaObtencion($this->getRequestParameter("obtencion"));
-        }
-
-        if ($this->getRequestParameter("idmoneda")) {
-            $seguro->setCaIdmoneda($this->getRequestParameter("idmoneda"));
-        }
-
-        if ($this->getRequestParameter("idmonedaobtencion")) {
-            $seguro->setCaIdmonedaobtencion($this->getRequestParameter("idmonedaobtencion"));
-        }
-
-        if ($this->getRequestParameter("observaciones")) {
-            $seguro->setCaObservaciones($this->getRequestParameter("observaciones"));
-        }else{
-            $seguro->setCaObservaciones(null);
-        }
-
-        if ($this->getRequestParameter("transporte")) {
-            $seguro->setCaTransporte(utf8_decode($this->getRequestParameter("transporte")));
-        }
-
-        if (!$this->getRequestParameter("oid")) {
-            $seguro->setCaFchcreado(date("Y-m-d H:i:s"));
-            $seguro->setCaUsucreado($user_id);
-        } else {
-            $seguro->setCaFchactualizado(date("Y-m-d H:i:s"));
-            $seguro->setCaUsuactualizado($user_id);
-        }
-
-        $seguro->save();
-        $this->responseArray = array("id" => $id);
         $this->setTemplate("responseTemplate");
+
     }
 
     public function executeEliminarGrillaSeguros() {

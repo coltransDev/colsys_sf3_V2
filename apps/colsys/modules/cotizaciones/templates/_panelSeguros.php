@@ -328,6 +328,11 @@ Ext.extend(PanelSeguros, Ext.grid.EditorGridPanel, {
             changes['cotizacionId']=r.data.idcotizacion;
             changes['oid']=r.data.oid;
             changes['id']=r.id;
+
+
+
+
+
             //envia los datos al servidor
             Ext.Ajax.request(
                 {
@@ -336,11 +341,19 @@ Ext.extend(PanelSeguros, Ext.grid.EditorGridPanel, {
                     //Solamente se envian los cambios
                     params :	changes,
 
-                    callback :function(options, success, response){
+                    success:function(response,options){
 
                         var res = Ext.util.JSON.decode( response.responseText );
-                        var rec = storeSegurosCot.getById( res.id );
-                        rec.commit();
+                        if( res.success ){
+                            var rec = storeSegurosCot.getById( res.id );
+                            rec.set( "oid", res.oid);
+                            rec.commit();
+                        }else{
+                            Ext.MessageBox.alert('Error', "Ha ocurrido el siguiente error"+res.errorInfo);
+                        }
+                    },
+                    failure:function(response,options){
+                        Ext.MessageBox.alert('Error Message', "Se ha presentado un error"+(action.result?": "+action.result.errorInfo:"")+" "+(action.response?"\n Codigo HTTP "+action.response.status:""));
                     }
                  }
             );
