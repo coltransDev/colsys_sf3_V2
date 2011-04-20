@@ -425,11 +425,11 @@ class adminUsersActions extends sfActions {
         }
 
         if ($request->getParameter("nombres")) {
-            $usuario->setCaNombres($request->getParameter("nombres"));
+            $usuario->setCaNombres(strtoupper($request->getParameter("nombres")));
         }
 
         if ($request->getParameter("apellidos")) {
-            $usuario->setCaApellidos($request->getParameter("apellidos"));
+            $usuario->setCaApellidos(strtoupper($request->getParameter("apellidos")));
         }
 
         if ($request->getParameter("teloficina")) {
@@ -445,7 +445,7 @@ class adminUsersActions extends sfActions {
         }
 
         if ($request->getParameter("nombrefamiliar")) {
-            $usuario->setCaNombrefamiliar($request->getParameter("nombrefamiliar"));
+            $usuario->setCaNombrefamiliar(strtoupper($request->getParameter("nombrefamiliar")));
         }
 
         if ($request->getParameter("movil")) {
