@@ -59,28 +59,39 @@ WidgetAgente = function( config ){
         lazyRender:true,
         filterBy: this.filterFn,
         mode: 'local',
+        submitValue: true,
         listClass: 'x-combo-list-small'
     });
 };
 
 Ext.extend(WidgetAgente, Ext.form.ComboBox, {
     doQuery : function(q, forceAll){        
-        q = Ext.isEmpty(q) ? '' : q;
-       var impoexpo = Ext.getCmp(this.linkImpoExpo).getValue();
+        q = Ext.isEmpty(q) ? '' : q;        
+       var impoexpo = (Ext.getCmp(this.linkImpoExpo))?Ext.getCmp(this.linkImpoExpo).getValue():this.linkImpoExpo;
         if( impoexpo=="<?=Constantes::EXPO?>" ){
             var link = this.linkDestino;
         }else{
             var link = this.linkOrigen;
-        }
+        }       
         
-        record = Ext.getCmp(link).getRecord();
-        var trafico = record.data.idtrafico;
+        var trafico ;
 
         var listarTodos = "";
 
-        if( Ext.getCmp(this.linkListarTodos) && Ext.getCmp(this.linkListarTodos)){
-            listarTodos = Ext.getCmp(this.linkListarTodos).getValue();
+        if(this.linkListarTodos=="all")
+        {
+            listarTodos=true;
         }
+        else
+        {
+            record = Ext.getCmp(link).getRecord();
+            var trafico = record.data.idtrafico;
+
+            if( Ext.getCmp(this.linkListarTodos) && Ext.getCmp(this.linkListarTodos)){
+                listarTodos = Ext.getCmp(this.linkListarTodos).getValue();
+            }
+        }
+
 
         if(!listarTodos)
         {

@@ -49,6 +49,7 @@ WidgetSucursalAgente = function( config ){
         selectOnFocus: true,
         lazyRender:true,                
         idAgente:0,
+        submitValue: true,
         listClass: 'x-combo-list-small',
         listeners: {
             focus: this.onFocusWdg

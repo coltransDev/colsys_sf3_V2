@@ -42,7 +42,7 @@ WidgetLinea = function( config ){
         emptyText:'',
         selectOnFocus: true,        
         lazyRender:true,
-        
+        submitValue: true,
         listClass: 'x-combo-list-small'  ,
         listeners: {
             focus: this.onFocusWdg            
