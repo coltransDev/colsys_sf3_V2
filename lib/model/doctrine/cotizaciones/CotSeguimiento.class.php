@@ -21,15 +21,16 @@ class CotSeguimiento extends BaseCotSeguimiento
     }
 
 
-    public function aprobarSeguimiento( $param ){
-        
-        $idproducto=$param["idproducto"];
+    public function aprobarSeguimiento( $param ){        
+
+        $idproducto=(isset($param["idproducto"])?$param["idproducto"]:"");
         $etapa=$param["etapa"];
         $user=$param["user"];
         $seguimientos=(isset($param["seguimiento"])?$param["seguimiento"]:"");
         $fchseguimiento=(isset($param["fchseguimiento"])?$param["fchseguimiento"]:"");
+        $coti=(isset($param["cotizacion"])?$param["cotizacion"]:"");
 
-        if( $idproducto ){
+        if( $idproducto !="" ){
             $producto = Doctrine::gettable("CotProducto")->find( $idproducto );
             if(!$producto)
                 return 0;
@@ -42,19 +43,28 @@ class CotSeguimiento extends BaseCotSeguimiento
                     $tarea->save();
                 }
             }
+            $cotizacion = Doctrine::gettable("Cotizacion")->find( $producto->getCaIdcotizacion() );
         }
-
-        $cotizacion = Doctrine::gettable("Cotizacion")->find( $producto->getCaIdcotizacion() );
+        else if($coti!="")
+        {
+            $cotizacion = Doctrine::gettable("Cotizacion")->findOneBy("ca_consecutivo", $coti);
+        }
+        
         if(!$cotizacion)
             return 0;
 
 
         $seguimiento = new CotSeguimiento();
-        if( $idproducto ){
+        if( $idproducto !=""){
             $seguimiento->setCaIdproducto( $idproducto );
             $producto->setCaEtapa( $etapa );
             $producto->save();
         }
+        else if($coti!="")
+        {
+            $seguimiento->setCaIdcotizacion( $cotizacion->getCaIdcotizacion() );
+        }
+
 
         $seguimiento->setCaLogin( $user );
         $seguimiento->setCaFchseguimiento( date("Y-m-d H:i:s") );
