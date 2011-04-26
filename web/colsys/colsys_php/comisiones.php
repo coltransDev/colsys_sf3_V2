@@ -15,8 +15,8 @@
 
 $titulo = 'Cuadro de Comisiones para Vendedores';
 $meses  = array( "%" => "Todos los Meses", "01" => "Enero", "02" => "Febrero", "03" => "Marzo", "04" => "Abril", "05" => "Mayo", "06" => "Junio", "07" => "Julio", "08" => "Agosto", "09" => "Septiembre", "10" => "Octubre", "11" => "Noviembre", "12" => "Diciembre" );
-$comisiones = array("Sin Comisionar" => "(case when ca_vlrcomisiones <> 0 then ca_vlrcomisiones else 0 end) = 0 and (case when ca_sbrcomisiones <> 0 then ca_sbrcomisiones else 0 end) = 0", "Sólo Comisionados" => "(ca_vlrcomisiones <> 0 or ca_sbrcomisiones <> 0)", "Todos los Casos" => "true");
-$estados = array("Casos Cerrados" => "ca_estado <> \"Abierto\"","Cierre Provisional" => "ca_estado = \"Provisional\"","Casos Abiertos" => "ca_estado = \"Abierto\"","Todos los Casos" => "true");
+$comisiones = array("Sin Comisionar" => "(case when ca_vlrcomisiones <> 0 then ca_vlrcomisiones else 0 end) = 0 and (case when ca_sbrcomisiones <> 0 then ca_sbrcomisiones else 0 end) = 0", "Sólo Comisionados" => "(ca_vlrcomisiones <> 0 or ca_sbrcomisiones <> 0)", "Todos los Casos" => "");
+$estados = array("Casos Cerrados" => "ca_estado <> \"Abierto\"","Cierre Provisional" => "ca_estado = \"Provisional\"","Casos Abiertos" => "ca_estado = \"Abierto\"","Todos los Casos" => "");
 $months = array("Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre");
 
 include_once 'include/datalib.php';                                            // Incorpora la libreria de funciones, para accesar leer bases de datos
@@ -37,7 +37,7 @@ require_once("menu.php");
     echo "<H3>$titulo</H3>";
     echo "<FORM METHOD=post NAME='menuform' ACTION='comisiones.php'>";
     echo "<TABLE WIDTH=550 BORDER=0 CELLSPACING=1 CELLPADDING=5>";
-    echo "<TH COLSPAN=6 style='font-size: 12px; font-weight:bold;'><B>Ingrese los parámetros para el Reporte</TH>";
+    echo "<TH COLSPAN=7 style='font-size: 12px; font-weight:bold;'><B>Ingrese los parámetros para el Reporte</TH>";
     if (!$rs->Open("select DISTINCT c.ca_comprobante, c.ca_fchliquidacion from tb_inocomisiones_sea c, vi_inoingresos_sea i where c.ca_referencia = i.ca_referencia and c.ca_idcliente = i.ca_idcliente and c.ca_hbls = i.ca_hbls and i.ca_login = '$usuario' order by c.ca_comprobante DESC")) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
         echo "<script>document.location.href = 'entrada.php';</script>";
@@ -45,12 +45,12 @@ require_once("menu.php");
 
     echo "<TR>";
     echo "  <TD Class=captura ROWSPAN=2></TD>";
-    echo "  <TD Class=listar>Año a Consultar:<BR><SELECT NAME='ano'>";
+    echo "  <TD Class=listar>Año:<BR><SELECT NAME='ano'>";
     for ( $i=5; $i>=0; $i-- ){
           echo " <OPTION VALUE=".(date('Y')-$i)." SELECTED>".(date('Y')-$i)."</OPTION>";
         }
     echo "  </SELECT></TD>";
-    echo "  <TD Class=listar>Mes a Consultar:<BR><SELECT NAME='mes'>";
+    echo "  <TD Class=listar>Mes:<BR><SELECT NAME='mes'>";
     while (list ($clave, $val) = each ($meses)) {
         echo " <OPTION VALUE=$clave";
         if (date('m')==$clave) {
@@ -58,6 +58,7 @@ require_once("menu.php");
         echo ">$val</OPTION>";
         }
     echo "  </SELECT></TD>";
+    echo "  <TD Class=listar ROWSPAN=2>Nombre del Cliente:<BR><INPUT TYPE='text' NAME='compania' size='40'></TD>";
     echo "  <TD Class=listar ROWSPAN=2>Comisiones:<BR><SELECT NAME='comision'>";
     while (list ($clave, $val) = each ($comisiones)) {
         echo " <OPTION VALUE='".$val."'>".$clave;
@@ -105,9 +106,11 @@ echo "</BODY>";
 elseif (!isset($boton) and !isset($accion) and isset($buscar)){
     $modulo = "00100000";                                                      // Identificación del módulo para la ayuda en línea
 //  include_once 'include/seguridad.php';                                      // Control de Acceso al módulo
+    $compania = (strlen($compania)!=0)?"and lower(ca_compania) like lower('%$compania%')":"";
+    $casos = (strlen($casos)!=0)?"and ".str_replace("\"","'",$casos):"";
+    $comision = (strlen($comision)!=0)?"and ".$comision:"";
+    $condicion= "ca_mes like '$mes' and ca_ano = $ano $compania and ca_login like '$usuario' $casos $comision";
 
-    $compania = (strlen($compania)!=0)?"and lower(ca_compania) like lower('$compania')":"";
-    $condicion= "substr(ca_referencia,8,2) like '%$mes%' and substr(ca_referencia,15) = '".substr($ano, -1)."' $compania and ca_login like '$usuario' and ".str_replace("\"","'",$casos)." and ".$comision;
     if (!$rs->Open("select * from vi_inocomisiones_sea where $condicion")) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
         echo "<script>document.location.href = 'entrada.php';</script>";
@@ -134,7 +137,6 @@ require_once("menu.php");
     echo "<CENTER>";
     echo "<FORM METHOD=post NAME='informe' ACTION='comisiones.php'>";          // Hace una llamado nuevamente a este script pero con
     echo "<TABLE CELLSPACING=1>";                                              // un boton de comando definido para hacer mantemientos
-    echo "<INPUT TYPE='HIDDEN' NAME='ano' VALUE=".$ano.">";                    // Hereda el Id del registro que se esta modificando
     echo "<TR>";
     echo "  <TH Class=titulo COLSPAN=9>COLTRANS S.A.<BR>$titulo<BR>$meses[$mes]/$ano</TH>";
     echo "</TR>";
@@ -253,7 +255,7 @@ require_once("menu.php");
     echo "</TABLE><BR>";
 
     echo "<TABLE CELLSPACING=10>";
-    echo "<TH><INPUT Class=submit TYPE='SUBMIT' NAME='boton' VALUE='Liquidar Comisiones'></TH>";         // Ordena almacenar los datos ingresados
+    echo "<TH><INPUT Class=button TYPE='BUTTON' NAME='boton' VALUE='Liquidar Comisiones' ONCLICK='javascript:document.location.replace(\"comisiones.php?boton=".base64_encode('Liquidar')."&var=".base64_encode($ano)."\")'></TH>";         // Ordena almacenar los datos ingresados
     echo "<TH><INPUT Class=button TYPE='BUTTON' NAME='boton' VALUE='Regresar' ONCLICK='javascript:document.location.href = \"comisiones.php\"'></TH>";  // Cancela la operación
     echo "</TABLE>";
     echo "</FORM>";
@@ -264,16 +266,18 @@ echo "</BODY>";
     echo "</HTML>";
     }
 elseif (isset($boton)) {                                                       // Switch que evalua cual botòn de comando fue pulsado por el usuario
+    $boton = base64_decode($boton);
     switch(trim($boton)) {
-        case 'Liquidar Comisiones': {                                          // Opcion para Liquidar Comisiones
+        case 'Liquidar': {                                          // Opcion para Liquidar Comisiones
             $modulo = "00100100";                                              // Identificación del módulo para la ayuda en línea
 //          include_once 'include/seguridad.php';                              // Control de Acceso al módulo
 
+            $ano = base64_decode($var);
             $annos_mem = '';
-			for ($i=9; $i<=$ano-2000; $i++){
-				$annos_mem.="'".substr($i,-1)."',";
-			}
-			$annos_mem = substr($annos_mem,0,strlen($annos_mem)-1);
+            for ($i=9; $i<=$ano-2000; $i++){
+                    $annos_mem.="'".substr($i,-1)."',";
+            }
+            $annos_mem = substr($annos_mem,0,strlen($annos_mem)-1);
             $condicion= "substr(ca_referencia,15)::text in ($annos_mem) and ca_login like '$usuario' and ca_estado <> 'Abierto'";
 
             if (!$rs->Open("select * from vi_inoingresos_sea where $condicion")) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
@@ -324,6 +328,12 @@ elseif (isset($boton)) {                                                       /
             echo "     }";
             echo "  }";
             echo "}";
+            echo "function procesar()";
+            echo "{";
+            echo "  if (confirm(\"¿Esta seguro de Registrar el Cobro de Comisiones?\")){";
+            echo "      document.location.replace('comisiones.php?accion=".base64_encode('Registrar')."');";
+            echo "  }";
+            echo "}";
             echo "function imprimir(id)";
             echo "{";
             echo "  document.informe.id.value = id;";
@@ -354,10 +364,10 @@ elseif (isset($boton)) {                                                       /
             echo "<script language='javascript' src='javascripts/popcalendar.js'></script>";
             echo "</HEAD>";
             echo "<BODY>";
-require_once("menu.php");
+            require_once("menu.php");
             echo "<STYLE>@import URL(\"Coltrans.css\");</STYLE>";                      // Carga una hoja de estilo que estandariza las pantallas den sistema graficador
             echo "<CENTER>";
-            echo "<FORM METHOD=post NAME='informe' ACTION='comisiones.php' ONSUBMIT='javascript:return confirm(\"¿Esta seguro de Registrar el Cobro de Comisiones?\")'>";             // Hace una llamado nuevamente a este script pero con
+            echo "<FORM METHOD=post NAME='informe' ACTION='comisiones.php'>";             // Hace una llamado nuevamente a este script pero con
             echo "<INPUT TYPE='HIDDEN' NAME='id'>";
             echo "<TABLE CELLSPACING=1>";                                              // un boton de comando definido para hacer mantemientos
             echo "<TR>";
@@ -467,7 +477,7 @@ require_once("menu.php");
             echo "<script language='javascript'>sumarizar(document.informe);</script>";
             
             echo "<TABLE CELLSPACING=10>";
-            echo "<TH><INPUT Class=submit TYPE='SUBMIT' NAME='accion' VALUE='Registrar'></TH>";         // Ordena almacenar los datos ingresados
+            echo "<TH><INPUT Class=button TYPE='BUTTON' NAME='accion' VALUE='Registrar' ONCLICK='procesar();'></TH>";    // Ordena almacenar los datos ingresados
             echo "<TH><INPUT Class=button TYPE='BUTTON' NAME='accion' VALUE='Regresar' ONCLICK='javascript:document.location.href = \"comisiones.php\"'></TH>";  // Cancela la operación
             echo "</TABLE>";
             echo "</FORM>";
@@ -481,20 +491,9 @@ echo "</BODY>";
       }
    }
 elseif (isset($accion)) {                                                      // Rutina que registra los cambios en la tabla de la base de datos
+    $accion = base64_decode($accion);
     switch(trim($accion)) {                                                    // Switch que evalua cual botòn de comando fue pulsado por el usuario
-        case 'Registrar': {  
-		                                               // El Botón Guardar fue pulsado
-            while (list ($clave, $val) = each ($reccaja)) {
-                if (strlen($val[recibo]) != 0) {
-                    if (!$rs->Open("update tb_inoingresos_sea set ca_reccaja = '".$val[recibo]."', ca_fchpago = '".$val[fchpago]."' where oid = $clave")) {	
-					   
-                        echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
-                        echo "<script>document.location.href = 'comisiones.php';</script>";
-                        exit;
-                       }            
-                }
-            }
-			
+        case 'Registrar': {
             if (!$rs->Open("select nextval('tb_inocomisiones_sea_id')")) {
                 echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                 echo "<script>document.location.href = 'comisiones.php';</script>";
@@ -502,6 +501,11 @@ elseif (isset($accion)) {                                                      /
                }
             $comprobante = $rs->Value('nextval');
 			
+            if (!$rs->Open("BEGIN")) {
+                echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
+                echo "<script>document.location.href = 'comisiones.php';</script>";
+                exit;
+               }
             while (list ($clave, $val) = each ($hbls)) {
                 if (isset($val[oid])) {
                     if (!$rs->Open("select ca_referencia, ca_idcliente, ca_hbls from tb_inoingresos_sea where oid = ".$val[oid]." limit 1")) {
@@ -516,13 +520,23 @@ elseif (isset($accion)) {                                                      /
                        }            
                 }
             }
+            if (!$rs->Open("COMMIT")) {
+                echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
+                echo "<script>document.location.href = 'comisiones.php';</script>";
+                exit;
+               }
+            echo "<script>document.location.replace(\"comisiones.php?accion=".base64_encode('Imprimir')."&var=".base64_encode($comprobante)."\");</script>";
+            break;
+         }
+        case 'Imprimir': {
             $modulo = "00100100";                                             // Identificación del módulo para la ayuda en línea
+            $comprobante = base64_decode($var);
 //          include_once 'include/seguridad.php';                             // Control de Acceso al módulo
             echo "<HEAD>";
             echo "<TITLE>$titulo</TITLE>";
             echo "</HEAD>";
             echo "<BODY>";
-require_once("menu.php");
+            require_once("menu.php");
             echo "<STYLE>@import URL(\"Coltrans.css\");</STYLE>";             // Carga una hoja de estilo que estandariza las pantallas den sistema graficador
             echo "<CENTER>";
             echo "<TABLE CELLSPACING=1 WIDTH='830' HEIGHT='650'>";
