@@ -2265,19 +2265,18 @@ elseif (isset($accion)) {                                                      /
              $papellido = addslashes($papellido);
              $sapellido = addslashes($sapellido);
              $nombres = addslashes($nombres);
+
              if( $regional!="PE-051" ){
                 $direccion = isset($direccion)?implode("|",$direccion):"";
              }
 
-
-
-             if (!isset($vendedor)){
+             if (isset($vendedor)){
                 $vendedor = ($nivel >= 2)?'null':"'$usuario'";
              }
+
              $fchcotratoag = (strlen($fchcotratoag)!=0)?"'".$fchcotratoag."'":'date(null)';
              $status = ($listaclinton=='Sí')?"Vetado":$status;
 
-             
              $ids =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
              
              if (!$ids->Open("select nextval('ids.tb_ids_id'::regclass) as next")) {
@@ -2285,8 +2284,6 @@ elseif (isset($accion)) {                                                      /
                 //echo "<script>document.location.href = 'repcomisiones.php';</script>";
                 exit;
                }
-               
-             
              
              while (!$ids->Eof()) {
                $next = $ids->Value('next');
