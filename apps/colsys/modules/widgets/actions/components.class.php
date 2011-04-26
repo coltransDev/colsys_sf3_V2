@@ -434,8 +434,7 @@ class widgetsComponents extends sfComponents {
                         ->innerJoin("s.Ciudad c")
                         ->innerJoin("c.Trafico t")
                         ->where("s.ca_principal = ?", true)
-                        ->addWhere("a.ca_activo = ?", true)
-                        ->addOrderBy("t.ca_nombre")
+                        ->addWhere("a.ca_activo = ?", true)                        
                         ->addOrderBy("i.ca_nombre")
                         ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
                         ->execute();
