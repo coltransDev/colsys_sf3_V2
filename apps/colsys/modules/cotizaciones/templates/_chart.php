@@ -2,6 +2,7 @@
 
 ?>
 <script type="text/javascript">
+    Ext.chart.Chart.CHART_URL = '/css/yui/charts/assets/charts.swf';
     ChartPanel = function( config ){
   /*  var store = new Ext.data.JsonStore({
         fields: ['season', 'total'],
