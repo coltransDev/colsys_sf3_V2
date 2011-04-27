@@ -459,7 +459,7 @@ class antecedentesActions extends sfActions {
 
         $usuarios = Doctrine::getTable("Usuario")
                         ->createQuery("u")
-                        ->addWhere("u.ca_departamento = ? or u.ca_login =? or u.ca_login =? or u.ca_login =? and u.ca_activo=true ", array("Marítimo","nmrey","mflecompte","mjortiz"))
+                        ->addWhere("u.ca_departamento = ? and u.ca_activo=true or (u.ca_login =? or u.ca_login =? or u.ca_login =? ) ", array("Marítimo","nmrey","mflecompte","mjortiz"))
                         ->addOrderBy("u.ca_email")
                         ->execute();
         $contactos = array();
@@ -720,6 +720,7 @@ exit;
                         }
                     }
                     $hija->setCaFchantecedentes(date("Y-m-d H:i:s"));
+                    $hija->stopBlaming();
                     $hija->save();
                 }
             }
