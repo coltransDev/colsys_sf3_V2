@@ -98,7 +98,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
     echo "<TR HEIGHT=5>";
     echo "  <TD Class=captura COLSPAN=6></TD>";
     echo "</TR>";
-    echo "</TABLE><BR>";    
+    echo "</TABLE><BR>";
     echo "<BR />";
     echo "<a href='/antecedentes/listadoReferencias/format/maritimo'>Listado de antecedentes</a><IMG SRC='./graficos/nuevo.gif' border=0 ALT='Nuevo Servicio'>";
     echo "<BR />";
@@ -240,7 +240,7 @@ elseif (isset($boton)) {                                                       /
                     {
                         if (confirm(\"¿Esta seguro que desea Desbloquear la digitación Muisca?\"))
                         {
-                            document.location.href = 'inosea.php?accion='+opcion+'\&id='+id;                        
+                            document.location.href = 'inosea.php?accion='+opcion+'\&id='+id;
                         }
                     }
                     else
@@ -277,7 +277,7 @@ elseif (isset($boton)) {                                                       /
                 echo "<TH COLSPAN=4>Descripción</TH>";
                 echo "<TH><IMG style='cursor:pointer' src='./graficos/new.gif' alt='Crear un Nuevo Registro' border=0 onclick='elegir(\"Adicionar\", 0, 0, 0);'></TH>";  // Botón para la creación de un Registro Nuevo
                 while (!$rs->Eof() and !$rs->IsEmpty()) {                                                      // Lee la totalidad de los registros obtenidos en la instrucción Select
-                    if( $rs->Value('ca_provisional')=="t" ){                        
+                    if( $rs->Value('ca_provisional')=="t" ){
                         echo "<script type='text/javascript'>";
                         echo "document.location='/antecedentes/verPlanilla/format/maritimo/ref/".str_replace(".","|",$rs->Value('ca_referencia'))."'";
                         echo "</script>";
@@ -325,13 +325,13 @@ elseif (isset($boton)) {                                                       /
                         if($cl->Value('conta')>0)
                         {
                             echo "<IMG style='display: $digitable;cursor:pointer;border:#FF0000 1px solid' src='./graficos/digita.gif' alt='Actualice la informacion de los hbls primero' border=0 >por favor actualice la informaci&oacute;n de los hbl<BR><BR>";
-                            
+
                         }
                         else
                         {
                             echo "<IMG style='display: $digitable;cursor:pointer' src='./graficos/digita.gif' alt='Digitación Muisca Ok' border=0 onclick='digitar(\"Digitacion\", \"".$rs->Value('ca_referencia')."\", 0, 0);'><BR><BR>";
                         }
-                        
+
                     }
                     echo "    <IMG style='cursor:pointer' src='./graficos/muisca.gif' alt='Informacion Muisca' border=0 onclick='elegir(\"Muisca\", \"".$rs->Value('ca_referencia')."\", 0, 0);'><BR>";
                     echo "    <BR><IMG style='cursor:pointer' src='./graficos/fileopen.png' alt='Archivos adjuntos a la referencia' border=0 onclick='archivos( \"".$rs->Value('ca_referencia')."\", 0, 0);'><BR>";
@@ -560,7 +560,7 @@ elseif (isset($boton)) {                                                       /
                                         $docTrans[] = pathinfo($root.$path.'/'.$file);
                                     }
                             }
-                            
+
                             echo "<TR HEIGHT=5>";
                             echo "  <TD Class=captura COLSPAN=6></TD>";
                             echo "</TR>";
@@ -3566,7 +3566,7 @@ elseif (isset($boton)) {                                                       /
                     echo "<TH><INPUT Class=submit TYPE='SUBMIT' NAME='accion' VALUE='Grabar Encabezado'></TH>";     // Ordena Grabar el registro de forma permanente
 
 
-                
+
                 echo "<TH><INPUT Class=button TYPE='BUTTON' NAME='boton' VALUE='Cancelar' ONCLICK='javascript:document.location.href = \"inosea.php?boton=Consultar\&id=$id\"'></TH>";  // Cancela la operación
                 echo "</TABLE>";
                 echo "</FORM>";
@@ -3604,7 +3604,7 @@ elseif (isset($boton)) {                                                       /
                     echo "<script>document.location.href = 'inosea.php';</script>";
                     exit;
                 }
-                
+
                 $consignatario = ($rp->Value('ca_idconsignatario')!=0)?$rp->Value('ca_nombre_con')." Nit. ".$rp->Value('ca_identificacion_con'):$rp->Value('ca_nombre_cli')." Nit. ".number_format($rp->Value('ca_idcliente'),0)."-".$rp->Value('ca_digito');
                 $consignatario = (($rp->Value('ca_idconsignar')==1)?$consignatario:$rp->Value('ca_consignar')).(($rp->Value('ca_tipobodega')!= "Coordinador Logistico")?" / ".$rp->Value('ca_tipobodega')." ".(($rp->Value('ca_bodega')!='N/A')?$rp->Value('ca_bodega'):""):"");
                 $consignatario = ($rp->Value('ca_continuacion')!="N/A" and $rp->Value('ca_idconsignatario')!=0)?$rp->Value('ca_nombre_con')." Nit. ".$rp->Value('ca_identificacion_con').(($rp->Value('ca_tipobodega')!= "Coordinador Logistico")?" / ".$rp->Value('ca_tipobodega')." ".(($rp->Value('ca_bodega')!='N/A')?$rp->Value('ca_bodega'):""):""):$consignatario; //" / ".$rp->Value('ca_tipobodega')." ".(($rp->Value('ca_bodega')!='N/A')?$rp->Value('ca_bodega'):"")
@@ -3832,7 +3832,7 @@ elseif (isset($boton)) {                                                       /
                     {
                         echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";     // Muestra el mensaje de error
                         //echo "<script>document.location.href = 'inosea.php';</script>";
-                        
+
                         exit;
                     }
                     else
@@ -5055,16 +5055,16 @@ elseif (isset($accion)) {                                                      /
                     $address.= $us->Value('ca_email').",";
                     $us->MoveNext();
                 }
-                
-                $query="select us.ca_email 
+
+                $query="select us.ca_email
                     from control.tb_usuarios_perfil up
                     inner join control.tb_usuarios us on us.ca_login = up.ca_login
                     where up.ca_perfil ='cordinador-de-otm' and us.ca_idsucursal in (
-                        select distinct(u.ca_idsucursal) 
+                        select distinct(u.ca_idsucursal)
                             from tb_inoclientes_sea  c
                             inner join tb_reportes r on r.ca_idreporte=c.ca_idreporte
                             inner join control.tb_usuarios u on r.ca_usucreado=u.ca_login
-                            where 
+                            where
                             c.ca_referencia='".$id."' and c.ca_continuacion <>'N/A'
                             )";
                 if (!$us->Open("$query")) {
@@ -5072,7 +5072,7 @@ elseif (isset($accion)) {                                                      /
                     echo "<script>document.location.href = 'cotizaciones.php';</script>";
                     exit;
                    }
-                
+
                 while (!$us->Eof() and !$us->IsEmpty()) {
                     $address.= $us->Value('ca_email').",";
                     $us->MoveNext();
