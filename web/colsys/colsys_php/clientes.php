@@ -2270,8 +2270,10 @@ elseif (isset($accion)) {                                                      /
                 $direccion = isset($direccion)?implode("|",$direccion):"";
              }
 
-             if (isset($vendedor)){
+             if (!isset($vendedor)){
                 $vendedor = ($nivel >= 2)?'null':"'$usuario'";
+             }else{
+                $vendedor = "'$vendedor'";
              }
 
              $fchcotratoag = (strlen($fchcotratoag)!=0)?"'".$fchcotratoag."'":'date(null)';
