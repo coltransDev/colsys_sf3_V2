@@ -379,7 +379,7 @@ elseif (isset($boton)) {                                                      //
                     $nmeses.= "'".substr(100+$i,1,2)."',";
             }
             $nmeses = substr($nmeses,0,strlen($nmeses)-1);
-			
+
             $condicion = "ca_ano::text in ($nanos) and ca_mes::text in ($nmeses) and ca_login like '$id' and ca_estado <> 'Abierto'";
             if (!$rs->Open("select * from vi_inoingresos_sea where $condicion")) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
                 echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
