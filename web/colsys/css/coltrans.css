@@ -932,3 +932,7 @@ div.box1 .body {
 	background-image:url(../images/16x16/star.png);
     background-repeat: no-repeat;
 }
+
+.b{
+    font-weight: bold;
+}
