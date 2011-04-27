@@ -218,3 +218,7 @@ a:visited {
     width:100%;
     z-index:100;
 }
+
+.b{
+    font-weight: bold;
+}
