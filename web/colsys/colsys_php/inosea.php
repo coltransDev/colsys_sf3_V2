@@ -453,7 +453,7 @@ elseif (isset($boton)) {                                                       /
                         $utl_cbm = 0;
                     $col_mem = ($utl_mem <= 0)? 'background: #FF0000; color: #FFFFFF;':'';
                     echo "<TR>";
-                    echo "  <TD Class=partir ROWSPAN=9>Balance:</TD>";
+                    echo "  <TD Class=partir ROWSPAN=12>Balance:</TD>";
                     echo "  <TD Class=listar><B>No.Total Piezas:</B></TD>";
                     echo "  <TD Class=listar style='text-align: right;'>".number_format($rs->Value('ca_numpiezas'))."&nbsp;</TD>";
                     echo "  <TD Class=listar><B>Facturación Clientes:</B></TD>";
@@ -461,7 +461,7 @@ elseif (isset($boton)) {                                                       /
                     if ($abrible == 'visible') {
                         echo "  <TD Class=listar style='visibility: $abrible; text-align: center; vertical-align: bottom;' ROWSPAN=9><IMG src='./graficos/abrir.gif'  alt='Abrir la Referencia' border=0 onclick='apertura(\"Abrir\", \"".$rs->Value('ca_referencia')."\");'></TD>";
                     }else {
-                        echo "  <TD Class=listar ROWSPAN=9></TD>";
+                        echo "  <TD Class=listar ROWSPAN=12></TD>";
                     }
                     echo "</TR>";
                     echo "<TR>";
@@ -485,7 +485,7 @@ elseif (isset($boton)) {                                                       /
                     echo "<TR HEIGHT=5><TD Class=invertir COLSPAN=4></TD></TR>";
 
                     echo "<TR>";
-                    echo "  <TD Class=invertir COLSPAN=2 ROWSPAN=4 style='vertical-align:bottom;'><TABLE WIDTH=100% CELLSPACING=1></TD>";
+                    echo "  <TD Class=invertir COLSPAN=2 ROWSPAN=7 style='vertical-align:bottom;'><TABLE WIDTH=100% CELLSPACING=1></TD>";
                     echo "		<TR>";
                     echo "  		<TH style='font-size:8px;'>Acción</TD>";
                     echo "  		<TH style='font-size:8px;'>Usuario</TD>";
@@ -501,20 +501,33 @@ elseif (isset($boton)) {                                                       /
                     }
                     echo "  </TABLE></TD>";
 
-                    echo "  <TD Class=listar><B>Utilidad Consolidado:</B></TD>";
-                    echo "  <TD Class=listar style='text-align: right;$col_mem'>".number_format($rs->Value('ca_facturacion') - $rs->Value('ca_deduccion') - $rs->Value('ca_utilidad'))."</TD>";
+                    echo "  <TD Class='listar b'>Utilidad Consolidado:</TD>";
+                    echo "  <TD Class='listar b' style='text-align: right;$col_mem'>".number_format($rs->Value('ca_facturacion') - $rs->Value('ca_deduccion') - $rs->Value('ca_utilidad'))."</TD>";
+                    echo "</TR>";
+                    echo "<TR>
+                    <TD Class='listar b'>Ingr. x Sobreventa:</TD>
+                     <TD Class='listar b' style='text-align: right;$col_mem'>".number_format($rs->Value('ca_comisionable'))."</TD>
+                    </TR>
+                    <TR>
+                    <TD Class='listar'>Ingr. x Sobreventa OTM:</TD>
+                     <TD Class='listar' style='text-align: right;$col_mem'>".number_format($rs->Value('ca_otm'))."</TD>
+                    </TR>
+                    <TR>
+                    <TD Class='listar'>Ingr. x Sobreventa Contenedores:</TD>
+                     <TD Class='listar' style='text-align: right;$col_mem'>".number_format($rs->Value('ca_contenedor'))."</TD>
+                    </TR>
+                   <TR>
+                    <TD Class='listar'>Ingr. x Sobreventa Otros:</TD>
+                     <TD Class='listar' style='text-align: right;$col_mem'>".number_format($rs->Value('ca_comisionable')+$rs->Value('ca_otm')+$rs->Value('ca_ca_contenedor'))."</TD>
+                    </TR>
+                    ";
+                    echo "<TR>";
+                    echo "  <TD Class='listar b'>Ingr. No Comisionable:</TD>";
+                    echo "  <TD Class=v style='text-align: right;$col_mem'>".number_format($rs->Value('ca_nocomisionable'))."</TD>";
                     echo "</TR>";
                     echo "<TR>";
-                    echo "  <TD Class=listar><B>Ingr. x Sobreventa:</B></TD>";
-                    echo "  <TD Class=listar style='text-align: right;$col_mem'>".number_format($rs->Value('ca_comisionable'))."</TD>";
-                    echo "</TR>";
-                    echo "<TR>";
-                    echo "  <TD Class=listar><B>Ingr. No Comisionable:</B></TD>";
-                    echo "  <TD Class=listar style='text-align: right;$col_mem'>".number_format($rs->Value('ca_nocomisionable'))."</TD>";
-                    echo "</TR>";
-                    echo "<TR>";
-                    echo "  <TD Class=listar><B>Utilidad x CBM:</B></TD>";
-                    echo "  <TD Class=listar style='text-align: right;$col_mem'>".number_format($utl_cbm)."</TD>";
+                    echo "  <TD Class='listar b'><B>Utilidad x CBM:</B></TD>";
+                    echo "  <TD Class='listar b' style='text-align: right;$col_mem'>".number_format($utl_cbm)."</TD>";
                     echo "</TR>";
                     echo "<TR HEIGHT=5>";
                     echo "  <TD Class=invertir COLSPAN=6></TD>";
