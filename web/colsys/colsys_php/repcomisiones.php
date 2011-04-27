@@ -141,7 +141,7 @@ elseif (!isset($boton) and !isset($accion) and isset($login)){
     echo "<TITLE>$titulo</TITLE>";
     echo "<script language='JavaScript' type='text/JavaScript'>";              // Código en JavaScript para validar las opciones de mantenimiento
     echo "function elegir(opcion, id, cl){";
-    echo "    document.location.href = 'repcomisiones.php?boton='+opcion+'\&id='+id+'\&cl='+cl;";
+    echo "    window.open(\"repcomisiones.php?boton=\"+opcion+\"\&id=\"+id+\"\&cl=\"+cl);";
     echo "}";
     echo "function uno(src,color_entrada) {";
     echo "    src.style.background=color_entrada;src.style.cursor='hand'";
@@ -360,18 +360,27 @@ echo "</BODY>";
     }
 elseif (isset($boton)) {                                                      // Rutina que registra los cambios en la tabla de la base de datos
     switch(trim($boton)) {                                                    // Switch que evalua cual botòn de comando fue pulsado por el usuario
-        case 'ComisionesXC': {                                                 // El Botón ComisionesXC fue pulsado
+        case 'ComisionesXC': {                                                // El Botón ComisionesXC fue pulsado
 		$modulo = "00100100";                                              // Identificación del módulo para la ayuda en línea
-//          include_once 'include/seguridad.php';                              // Control de Acceso al módulo
-			list($mes, $ano, $sucursal, $login, $casos) = split('[|]', $cl); // sscanf($cl, "%d|%d|%s|%s|%s");
-			$nmeses = '';
-			$mes = ($mes=='%')?12:$mes;
-			for ($i=1; $i<=$mes; $i++){
-				$nmeses.= "'".substr(100+$i,1,2)."',";
-			}
-			$nmeses = substr($nmeses,0,strlen($nmeses)-1);
+//          include_once 'include/seguridad.php';                             // Control de Acceso al módulo
+            list($mes, $ano, $sucursal, $login, $casos) = split('[|]', $cl);  // sscanf($cl, "%d|%d|%s|%s|%s");
+            
+            $annos = $ano;
+            $nanos = '';
+            while ($annos >= 2009){                                             // Trae lo pendiente x cobrar en comisiones desde el año 2009 hasta el año solicitado
+                $nanos.= "'".$annos."',";
+                $annos--;
+            }
+            $nanos = substr($nanos,0,strlen($nanos)-1);
+
+            $nmeses = '';
+            $mes = ($mes=='%')?12:$mes;
+            for ($i=1; $i<=$mes; $i++){
+                    $nmeses.= "'".substr(100+$i,1,2)."',";
+            }
+            $nmeses = substr($nmeses,0,strlen($nmeses)-1);
 			
-            $condicion = "ca_ano::text like '$ano' and ca_mes::text in ($nmeses) and ca_login like '$id' and ca_estado <> 'Abierto'";
+            $condicion = "ca_ano::text in ($nanos) and ca_mes::text in ($nmeses) and ca_login like '$id' and ca_estado <> 'Abierto'";
             if (!$rs->Open("select * from vi_inoingresos_sea where $condicion")) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
                 echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
                 echo "<script>document.location.href = 'entrada.php';</script>";
@@ -468,8 +477,8 @@ require_once("menu.php");
             echo "<TH>Fch.Pago</TH>";
             echo "<TH>Com.Causada</TH>";
             $nom_cli = '';
-			$tot_vlr = 0;
-			$tot_sbr = 0;
+            $tot_vlr = 0;
+            $tot_sbr = 0;
             while (!$rs->Eof() and !$rs->IsEmpty()) {                                                      // Lee la totalidad de los registros obtenidos en la instrucción Select
                 $utl_cbm = ($rs->Value('ca_facturacion_r') - $rs->Value('ca_deduccion_r') - $rs->Value('ca_utilidad_r')) / $rs->Value('ca_volumen_r');
                 $com_cas = round($rs->Value('ca_volumen') * $utl_cbm * $rs->Value('ca_porcentaje') / 100,0);
@@ -529,8 +538,8 @@ require_once("menu.php");
                     echo "    <INPUT ID=SBR_$num_oid TYPE='HIDDEN' NAME='hbls[$num_oid][sobrevta]' VALUE=".($com_sbr-$rs->Value('ca_sbrcomisiones')).">";
                     echo "  </TD>";
                     $rec_com = false;
-					$tot_vlr+= ($com_cas-$rs->Value('ca_vlrcomisiones'));
-					$tot_sbr+= ($com_sbr-$rs->Value('ca_sbrcomisiones'));
+                    $tot_vlr+= ($com_cas-$rs->Value('ca_vlrcomisiones'));
+                    $tot_sbr+= ($com_sbr-$rs->Value('ca_sbrcomisiones'));
                 }else{
                     echo "  <TD Class=listar></TD>";
                 }
