@@ -4284,3 +4284,149 @@ END;
 $BODY$
 LANGUAGE 'plpgsql';
 
+'\
+
+
+-- Schema: audit
+
+-- DROP SCHEMA audit;
+
+CREATE SCHEMA audit
+  AUTHORIZATION postgres;
+
+GRANT ALL ON SCHEMA audit TO postgres;
+GRANT ALL ON SCHEMA audit TO "Usuarios";
+GRANT ALL ON SCHEMA audit TO public;
+COMMENT ON SCHEMA audit IS 'Standard audit schema';
+
+
+create sequence audit.tb_audit_id
+minvalue     1
+maxvalue 32767
+increment    1
+start        1;
+REVOKE ALL ON audit.tb_audit_id FROM PUBLIC;
+GRANT ALL ON audit.tb_audit_id TO "Administrador";
+GRANT ALL ON audit.tb_audit_id TO GROUP "Usuarios";
+
+-- Table: audit.tb_clientes_audit
+
+-- DROP TABLE audit.tb_clientes_audit;
+
+CREATE TABLE audit.tb_clientes_audit(
+    ca_idaudit        integer DEFAULT nextval('audit.tb_audit_id') UNIQUE NOT NULL,
+    ca_operation      char(1)   NOT NULL,
+    ca_stamp          timestamp NOT NULL,
+    ca_userid         character varying(20) NOT NULL,
+    ca_idcliente      integer NOT NULL,
+    ca_table_name     character varying(60) NOT NULL,
+    ca_field_name     character varying(60) NOT NULL,
+    ca_value_old     text,
+    ca_value_new     text,
+    CONSTRAINT pk_tb_clientes_audit PRIMARY KEY (ca_idaudit)
+);
+ALTER TABLE audit.tb_clientes_audit OWNER TO postgres;
+GRANT ALL ON TABLE audit.tb_clientes_audit TO postgres;
+GRANT ALL ON TABLE audit.tb_clientes_audit TO "Usuarios";
+
+CREATE OR REPLACE FUNCTION audit.process_clientes_audit() RETURNS TRIGGER AS $clientes_audit$
+    BEGIN
+        IF (TG_OP = 'INSERT') THEN
+            IF (NEW.ca_fchcreado IS NULL) THEN
+                NEW.ca_fchcreado = date_trunc('second', localtimestamp);
+                NEW.ca_usucreado = user;
+            END IF;
+        ELSIF (TG_OP = 'UPDATE') THEN
+            IF (OLD.ca_fchactualizado = NEW.ca_fchactualizado OR NEW.ca_fchactualizado IS NULL) THEN
+                NEW.ca_fchactualizado = date_trunc('second', localtimestamp);
+                NEW.ca_usuactualizado = user;
+            END IF;
+        END IF;
+
+	IF (TG_TABLE_NAME = 'tb_libcliente') THEN
+		IF (TG_OP = 'INSERT') THEN
+		    INSERT INTO audit.tb_clientes_audit (ca_operation, ca_stamp, ca_userid, ca_idcliente, ca_table_name, ca_field_name, ca_value_new) SELECT 'I', NEW.ca_fchcreado, NEW.ca_usucreado, NEW.ca_idcliente, TG_TABLE_NAME, 'ca_diascredito', NEW.ca_diascredito;
+		    INSERT INTO audit.tb_clientes_audit (ca_operation, ca_stamp, ca_userid, ca_idcliente, ca_table_name, ca_field_name, ca_value_new) SELECT 'I', NEW.ca_fchcreado, NEW.ca_usucreado, NEW.ca_idcliente, TG_TABLE_NAME, 'ca_cupo', NEW.ca_cupo;
+		    INSERT INTO audit.tb_clientes_audit (ca_operation, ca_stamp, ca_userid, ca_idcliente, ca_table_name, ca_field_name, ca_value_new) SELECT 'I', NEW.ca_fchcreado, NEW.ca_usucreado, NEW.ca_idcliente, TG_TABLE_NAME, 'ca_observaciones', NEW.ca_observaciones;
+		    RETURN NEW;
+		ELSIF (TG_OP = 'UPDATE') THEN
+                    IF (NEW.ca_diascredito <> OLD.ca_diascredito) THEN
+                        INSERT INTO audit.tb_clientes_audit (ca_operation, ca_stamp, ca_userid, ca_idcliente, ca_table_name, ca_field_name, ca_value_new, ca_value_old) SELECT 'U', NEW.ca_fchactualizado, NEW.ca_usuactualizado, OLD.ca_idcliente, TG_TABLE_NAME, 'ca_diascredito', NEW.ca_diascredito, OLD.ca_diascredito;
+                    END IF;
+                    IF (NEW.ca_cupo <> OLD.ca_cupo) THEN
+                        INSERT INTO audit.tb_clientes_audit (ca_operation, ca_stamp, ca_userid, ca_idcliente, ca_table_name, ca_field_name, ca_value_new, ca_value_old) SELECT 'U', NEW.ca_fchactualizado, NEW.ca_usuactualizado, OLD.ca_idcliente, TG_TABLE_NAME, 'ca_cupo', NEW.ca_cupo, OLD.ca_cupo;
+                    END IF;
+                    IF (NEW.ca_observaciones <> OLD.ca_observaciones) THEN
+                        INSERT INTO audit.tb_clientes_audit (ca_operation, ca_stamp, ca_userid, ca_idcliente, ca_table_name, ca_field_name, ca_value_new, ca_value_old) SELECT 'U', NEW.ca_fchactualizado, NEW.ca_usuactualizado, OLD.ca_idcliente, TG_TABLE_NAME, 'ca_observaciones', NEW.ca_observaciones, OLD.ca_observaciones;
+                    END IF;
+		    RETURN NEW;
+		ELSIF (TG_OP = 'DELETE') THEN
+		    INSERT INTO audit.tb_clientes_audit (ca_operation, ca_stamp, ca_userid, ca_idcliente, ca_table_name, ca_field_name, ca_value_new) SELECT 'D', date_trunc('second', localtimestamp), user, OLD.ca_idcliente, TG_TABLE_NAME, 'ca_diascredito', OLD.ca_diascredito;
+		    INSERT INTO audit.tb_clientes_audit (ca_operation, ca_stamp, ca_userid, ca_idcliente, ca_table_name, ca_field_name, ca_value_new) SELECT 'D', date_trunc('second', localtimestamp), user, OLD.ca_idcliente, TG_TABLE_NAME, 'ca_cupo', OLD.ca_cupo;
+		    INSERT INTO audit.tb_clientes_audit (ca_operation, ca_stamp, ca_userid, ca_idcliente, ca_table_name, ca_field_name, ca_value_new) SELECT 'D', date_trunc('second', localtimestamp), user, OLD.ca_idcliente, TG_TABLE_NAME, 'ca_observaciones', OLD.ca_observaciones;
+		    RETURN OLD;
+		END IF;
+	ELSIF (TG_TABLE_NAME = 'tb_clientes') THEN
+                IF (NEW.ca_fchfinanciero IS NOT NULL) THEN
+                    NEW.ca_fchactualizado = NEW.ca_fchfinanciero;
+                    NEW.ca_usuactualizado = NEW.ca_usufinanciero;
+                END IF;
+		IF (TG_OP = 'UPDATE') THEN
+                    IF (NEW.ca_fchcircular <> OLD.ca_fchcircular) THEN
+                        INSERT INTO audit.tb_clientes_audit (ca_operation, ca_stamp, ca_userid, ca_idcliente, ca_table_name, ca_field_name, ca_value_new, ca_value_old) SELECT 'U', NEW.ca_fchactualizado, NEW.ca_usuactualizado, OLD.ca_idcliente, TG_TABLE_NAME, 'ca_fchcircular', NEW.ca_fchcircular::text, OLD.ca_fchcircular::text;
+                    END IF;
+                    IF (NEW.ca_nvlriesgo <> OLD.ca_nvlriesgo) THEN
+                        INSERT INTO audit.tb_clientes_audit (ca_operation, ca_stamp, ca_userid, ca_idcliente, ca_table_name, ca_field_name, ca_value_new, ca_value_old) SELECT 'U', NEW.ca_fchactualizado, NEW.ca_usuactualizado, OLD.ca_idcliente, TG_TABLE_NAME, 'ca_nvlriesgo', NEW.ca_nvlriesgo, OLD.ca_nvlriesgo;
+                    END IF;
+                    IF (NEW.ca_leyinsolvencia <> OLD.ca_leyinsolvencia) THEN
+                        INSERT INTO audit.tb_clientes_audit (ca_operation, ca_stamp, ca_userid, ca_idcliente, ca_table_name, ca_field_name, ca_value_new, ca_value_old) SELECT 'U', NEW.ca_fchactualizado, NEW.ca_usuactualizado, OLD.ca_idcliente, TG_TABLE_NAME, 'ca_leyinsolvencia', NEW.ca_leyinsolvencia, OLD.ca_leyinsolvencia;
+                    END IF;
+                    IF (NEW.ca_comentario <> OLD.ca_comentario) THEN
+                        INSERT INTO audit.tb_clientes_audit (ca_operation, ca_stamp, ca_userid, ca_idcliente, ca_table_name, ca_field_name, ca_value_new, ca_value_old) SELECT 'U', NEW.ca_fchactualizado, NEW.ca_usuactualizado, OLD.ca_idcliente, TG_TABLE_NAME, 'ca_comentario', NEW.ca_comentario, OLD.ca_comentario;
+                    END IF;
+                    IF (NEW.ca_tipo <> OLD.ca_tipo) THEN
+                        INSERT INTO audit.tb_clientes_audit (ca_operation, ca_stamp, ca_userid, ca_idcliente, ca_table_name, ca_field_name, ca_value_new, ca_value_old) SELECT 'U', NEW.ca_fchactualizado, NEW.ca_usuactualizado, OLD.ca_idcliente, TG_TABLE_NAME, 'ca_tipo', NEW.ca_tipo, OLD.ca_tipo;
+                    END IF;
+                    IF (NEW.ca_entidad <> OLD.ca_entidad) THEN
+                        INSERT INTO audit.tb_clientes_audit (ca_operation, ca_stamp, ca_userid, ca_idcliente, ca_table_name, ca_field_name, ca_value_new, ca_value_old) SELECT 'U', NEW.ca_fchactualizado, NEW.ca_usuactualizado, OLD.ca_idcliente, TG_TABLE_NAME, 'ca_entidad', NEW.ca_entidad, OLD.ca_entidad;
+                    END IF;
+                    IF (NEW.ca_listaclinton <> OLD.ca_listaclinton) THEN
+                        INSERT INTO audit.tb_clientes_audit (ca_operation, ca_stamp, ca_userid, ca_idcliente, ca_table_name, ca_field_name, ca_value_new, ca_value_old) SELECT 'U', NEW.ca_fchactualizado, NEW.ca_usuactualizado, OLD.ca_idcliente, TG_TABLE_NAME, 'ca_listaclinton', NEW.ca_listaclinton, OLD.ca_listaclinton;
+                    END IF;
+		    RETURN NEW;
+		ELSIF (TG_OP = 'DELETE') THEN
+                    INSERT INTO audit.tb_clientes_audit (ca_operation, ca_stamp, ca_userid, ca_idcliente, ca_table_name, ca_field_name, ca_value_old) SELECT 'D', NEW.ca_fchactualizado, NEW.ca_usuactualizado, OLD.ca_idcliente, TG_TABLE_NAME, 'ca_fchcircular', OLD.ca_fchcircular;
+                    INSERT INTO audit.tb_clientes_audit (ca_operation, ca_stamp, ca_userid, ca_idcliente, ca_table_name, ca_field_name, ca_value_old) SELECT 'D', NEW.ca_fchactualizado, NEW.ca_usuactualizado, OLD.ca_idcliente, TG_TABLE_NAME, 'ca_nvlriesgo', OLD.ca_nvlriesgo;
+                    INSERT INTO audit.tb_clientes_audit (ca_operation, ca_stamp, ca_userid, ca_idcliente, ca_table_name, ca_field_name, ca_value_old) SELECT 'D', NEW.ca_fchactualizado, NEW.ca_usuactualizado, OLD.ca_idcliente, TG_TABLE_NAME, 'ca_leyinsolvencia', OLD.ca_leyinsolvencia;
+                    INSERT INTO audit.tb_clientes_audit (ca_operation, ca_stamp, ca_userid, ca_idcliente, ca_table_name, ca_field_name, ca_value_old) SELECT 'D', NEW.ca_fchactualizado, NEW.ca_usuactualizado, OLD.ca_idcliente, TG_TABLE_NAME, 'ca_comentario', OLD.ca_comentario;
+                    INSERT INTO audit.tb_clientes_audit (ca_operation, ca_stamp, ca_userid, ca_idcliente, ca_table_name, ca_field_name, ca_value_old) SELECT 'D', NEW.ca_fchactualizado, NEW.ca_usuactualizado, OLD.ca_idcliente, TG_TABLE_NAME, 'ca_tipo', OLD.ca_tipo;
+                    INSERT INTO audit.tb_clientes_audit (ca_operation, ca_stamp, ca_userid, ca_idcliente, ca_table_name, ca_field_name, ca_value_old) SELECT 'D', NEW.ca_fchactualizado, NEW.ca_usuactualizado, OLD.ca_idcliente, TG_TABLE_NAME, 'ca_entidad', OLD.ca_entidad;
+                    INSERT INTO audit.tb_clientes_audit (ca_operation, ca_stamp, ca_userid, ca_idcliente, ca_table_name, ca_field_name, ca_value_old) SELECT 'D', NEW.ca_fchactualizado, NEW.ca_usuactualizado, OLD.ca_idcliente, TG_TABLE_NAME, 'ca_listaclinton', OLD.ca_listaclinton;
+		    RETURN OLD;
+		END IF;
+
+	END IF;
+        RETURN NULL; -- result is ignored since this is an AFTER trigger
+    END;
+$clientes_audit$ LANGUAGE plpgsql;
+
+
+-- Trigger: clientes_audit on tb_libcliente
+
+-- DROP TRIGGER clientes_audit ON tb_clientes;
+
+CREATE TRIGGER clientes_audit
+AFTER INSERT OR UPDATE OR DELETE ON tb_clientes
+    FOR EACH ROW EXECUTE PROCEDURE audit.process_clientes_audit();
+
+
+-- Trigger: libcliente_audit on tb_libcliente
+
+-- DROP TRIGGER libcliente_audit ON tb_libcliente;
+
+CREATE TRIGGER libcliente_audit
+  AFTER INSERT OR UPDATE OR DELETE
+  ON tb_libcliente
+  FOR EACH ROW
+  EXECUTE PROCEDURE audit.process_clientes_audit();
+
