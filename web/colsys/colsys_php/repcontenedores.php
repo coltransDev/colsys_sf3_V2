@@ -117,7 +117,7 @@ require_once("menu.php");
 		   echo "  <TD Class=listar style='font-size: 9px;'><b>Tráfico:</b><br>".$rs->Value('ca_traorigen')."</TD>";
 		   echo "  <TD Class=listar style='font-size: 9px;'><b>Origen:</b><br>".$rs->Value('ca_ciuorigen')."</TD>";
 		   echo "  <TD Class=listar style='font-size: 9px;'><b>Destino:</b><br>".$rs->Value('ca_ciudestino')."</TD>";
-		   echo "  <TD Class=listar style='font-size: 9px;'><b>MBL:</b><br>".$rs->Value('ca_mbls')."</TD>";
+		   echo "  <TD Class=listar style='font-size: 9px;'><b>MBL:</b><br>".$rs->Value('ca_mbls')."|".$rs->Value('ca_fchmbls')."</TD>";
 		   echo "  <TD Class=listar style='font-size: 9px;'><b>E.T.A.:</b><br>".$rs->Value('ca_fchconfirmacion')."</TD>";
 		   echo "  <TD Class=listar style='font-size: 9px;;$back_col'><b>Devolución:</b><br>".$rs->Value('ca_fchdevolucion')."</TD>";
 		   echo "</TR>";

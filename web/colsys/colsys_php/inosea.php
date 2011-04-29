@@ -361,7 +361,7 @@ elseif (isset($boton)) {                                                       /
                     echo "<TR>";
                     echo "  <TD Class=partir ROWSPAN=2>Modalidad:<BR><CENTER>".$rs->Value('ca_modalidad')."</CENTER></TD>";
                     echo "  <TD Class=listar><B>Motonave:</B><BR>".$rs->Value('ca_motonave')."</TD>";
-                    echo "  <TD Class=listar><B>MBL's:</B><BR>".str_replace("|","<br />",$rs->Value('ca_mbls'))."</TD>";
+                    echo "  <TD Class=listar><B>MBL's:</B><BR>".$rs->Value('ca_mbls')."<br>".$rs->Value('ca_fchmbls')."</TD>";
                     echo "  <TD Class=listar COLSPAN=2><B>Observaciones:</B><BR>".nl2br($rs->Value('ca_observaciones'))."</TD>";
                     echo "</TR>";
                     echo "<TR>";
@@ -1406,14 +1406,15 @@ elseif (isset($boton)) {                                                       /
                 $modulo = "00100100";                                             // Identificación del módulo para la ayuda en línea
                 //           include_once 'include/seguridad.php';                             // Control de Acceso al módulo
                 $us =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
-                if (!$us->Open("select ca_impoexpo, ca_modalidad, ca_mbls from tb_inomaestra_sea where ca_referencia = '$id'")) {
+                if (!$us->Open("select ca_impoexpo, ca_modalidad, ca_mbls,ca_fchmbls from tb_inomaestra_sea where ca_referencia = '$id'")) {
                     echo "<script>alert(\"".addslashes($us->mErrMsg)."\");</script>";
                     echo "<script>document.location.href = 'inosea.php';</script>";
                     exit;
                 }
                 $impoexpo = $us->Value('ca_impoexpo');
                 $modalidad= $us->Value('ca_modalidad');
-                $mbls = explode("|",$us->Value('ca_mbls'));
+                $mbls[] = $us->Value('ca_mbls');
+                $mbls[] = $us->Value('ca_fchmbls');
                 if (!$us->Open("select ca_valor from tb_parametros where ca_casouso = 'CU041'")) {
                     echo "<script>alert(\"".addslashes($us->mErrMsg)."\");</script>";
                     echo "<script>document.location.href = 'inosea.php';</script>";
@@ -1836,14 +1837,15 @@ elseif (isset($boton)) {                                                       /
                     exit;
                 }
                 $us =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
-                if (!$us->Open("select ca_impoexpo, ca_modalidad, ca_mbls from tb_inomaestra_sea where ca_referencia = '$id'")) {
+                if (!$us->Open("select ca_impoexpo, ca_modalidad, ca_mbls,ca_fchmbls from tb_inomaestra_sea where ca_referencia = '$id'")) {
                     echo "<script>alert(\"".addslashes($us->mErrMsg)."\");</script>";
                     echo "<script>document.location.href = 'inosea.php';</script>";
                     exit;
                 }
                 $impoexpo = $us->Value('ca_impoexpo');
                 $modalidad= $us->Value('ca_modalidad');
-                $mbls = explode("|",$us->Value('ca_mbls'));
+                $mbls[] = $us->Value('ca_mbls');
+                $mbls[] = $us->Value('ca_fchmbls');
                 if (!$us->Open("select ca_valor from tb_parametros where ca_casouso = 'CU041'")) {
                     echo "<script>alert(\"".addslashes($us->mErrMsg)."\");</script>";
                     echo "<script>document.location.href = 'inosea.php';</script>";
@@ -3127,7 +3129,8 @@ elseif (isset($boton)) {                                                       /
                 echo "  <TD Class=listar>No.Ciclo-Rumbo:<BR><DIV ID='viaje' style='display:$oculto_2'><INPUT TYPE='TEXT' NAME='ciclo[]' VALUE='".$ciclo[0]."' SIZE=5 MAXLENGTH=4 style='text-transform: uppercase'>-<INPUT TYPE='TEXT' NAME='ciclo[]' VALUE='".$ciclo[1]."' SIZE=3 MAXLENGTH=2 style='text-transform: uppercase'></DIV></TD>";
                 echo "</TR>";
                 echo "<TR>";
-                $mbls = explode("|",$rs->Value('ca_mbls'));
+                $mbls[] = $us->Value('ca_mbls');
+                $mbls[] = $us->Value('ca_fchmbls');
                 echo "  <TD Class=listar COLSPAN=3>MBL: Sólo debe ingresar un Master por cada Referencia<BR><INPUT ID=mbls_1 NAME='mbls[]' VALUE='$mbls[0]' TYPE='TEXT' SIZE=50 MAXLENGTH=50></TD>";
                 echo "  <TD Class=listar>Fecha MBL:<BR><INPUT ID=mbls_2 NAME='mbls[]' TYPE='TEXT' SIZE=12 VALUE='$mbls[1]' ONKEYDOWN=\"chkDate(this)\" ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
                 echo "</TR>";
@@ -3255,7 +3258,7 @@ elseif (isset($boton)) {                                                       /
                 echo "<TR>";
                 echo "  <TD Class=partir ROWSPAN=2>Modalidad:<BR><CENTER>".$rs->Value('ca_modalidad')."</CENTER></TD>";
                 echo "  <TD Class=listar><B>Motonave:</B><BR>".$rs->Value('ca_motonave')."</TD>";
-                echo "  <TD Class=listar><B>MBL's:</B><BR>".str_replace("|","<br />",$rs->Value('ca_mbls'))."</TD>";
+                echo "  <TD Class=listar><B>MBL's:</B><BR>".$rs->Value('ca_mbls')."<br>".$rs->Value('ca_fchmbls')."</TD>";
                 echo "  <TD Class=listar COLSPAN=2><B>Observaciones:</B><BR>".nl2br($rs->Value('ca_observaciones'))."</TD>";
                 echo "</TR>";
                 echo "<TR>";
@@ -3392,7 +3395,7 @@ elseif (isset($boton)) {                                                       /
                 echo "<TR>";
                 echo "  <TD Class=partir ROWSPAN=2>Modalidad:<BR><CENTER>".$rs->Value('ca_modalidad')."</CENTER></TD>";
                 echo "  <TD Class=listar><B>Motonave:</B><BR>".$rs->Value('ca_motonave')."</TD>";
-                echo "  <TD Class=listar><B>MBL's:</B><BR>".str_replace("|","<br />",$rs->Value('ca_mbls'))."</TD>";
+                echo "  <TD Class=listar><B>MBL's:</B><BR>".$rs->Value('ca_mbls')."<br>".$rs->Value('ca_fchmbls')."</TD>";
                 echo "  <TD Class=listar COLSPAN=2><B>Observaciones:</B><BR>".nl2br($rs->Value('ca_observaciones'))."</TD>";
                 echo "</TR>";
                 echo "<TR>";
@@ -3929,7 +3932,7 @@ elseif (isset($boton)) {                                                       /
                 echo "<TR>";
                 echo "  <TD Class=partir ROWSPAN=2>Modalidad:<BR><CENTER>".$rs->Value('ca_modalidad')."</CENTER></TD>";
                 echo "  <TD Class=listar><B>Motonave:</B><BR>".$rs->Value('ca_motonave')."</TD>";
-                echo "  <TD Class=listar><B>MBL's:</B><BR>".str_replace("|","<br />",$rs->Value('ca_mbls'))."</TD>";
+                echo "  <TD Class=listar><B>MBL's:</B><BR>".$rs->Value('ca_mbls')."<br>".$rs->Value('ca_fchmbls')."</TD>";
                 echo "  <TD Class=listar COLSPAN=2><B>Observaciones:</B><BR>".nl2br($rs->Value('ca_observaciones'))."</TD>";
                 echo "</TR>";
                 echo "<TR>";
@@ -4144,7 +4147,8 @@ elseif (isset($boton)) {                                                       /
                     $xml_pal66->setAttribute("cdep", $dm->Value("ca_coddeposito"));
                 }
 
-                $mbls = explode("|",$rs->Value('ca_mbls'));
+                $mbls[] = $us->Value('ca_mbls');
+                $mbls[] = $us->Value('ca_fchmbls');
                 $xml_pal66->setAttribute("ndv", $mbls[0]);
                 $xml_pal66->setAttribute("fdv", $mbls[1]);
 
@@ -4846,7 +4850,7 @@ elseif (isset($accion)) {                                                      /
                     exit;
                 }
                 $referencia = $rs->Value('fun_referencia');
-                if (!$rs->Open("insert into tb_inomaestra_sea (ca_fchreferencia, ca_referencia, ca_impoexpo, ca_origen, ca_destino, ca_fchembarque, ca_fcharribo, ca_modalidad, ca_idlinea, ca_motonave, ca_ciclo, ca_mbls, ca_observaciones, ca_fchcreado, ca_usucreado, ca_provisional) values('$fchreferencia', '$referencia', '$impoexpo', '$idciuorigen', '$idciudestino', '$fchembarque', '$fcharribo', '$modalidad', $idlinea, '$motonave', '$ciclo', '$mbls', '".addslashes($observaciones)."', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario', 'FALSE')")) {
+                if (!$rs->Open("insert into tb_inomaestra_sea (ca_fchreferencia, ca_referencia, ca_impoexpo, ca_origen, ca_destino, ca_fchembarque, ca_fcharribo, ca_modalidad, ca_idlinea, ca_motonave, ca_ciclo, ca_mbls, ca_fchmbls, ca_observaciones, ca_fchcreado, ca_usucreado, ca_provisional) values('$fchreferencia', '$referencia', '$impoexpo', '$idciuorigen', '$idciudestino', '$fchembarque', '$fcharribo', '$modalidad', $idlinea, '$motonave', '$ciclo', '$mbls', '".addslashes($observaciones)."', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario', 'FALSE')")) {
                     echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                     echo "<script>document.location.href = 'inosea.php';</script>";
                     exit;
@@ -4870,7 +4874,7 @@ elseif (isset($accion)) {                                                      /
         case 'Actualizar': {                                                   // El Botón Actualizar fue pulsado
                 $ciclo = strtoupper($ciclo[0]."-".$ciclo[1]);
                 $mbls = strtoupper(implode("|",$mbls));
-                if (!$rs->Open("update tb_inomaestra_sea set ca_fchreferencia = '$fchreferencia', ca_impoexpo = '$impoexpo', ca_origen = '$idciuorigen', ca_destino = '$idciudestino', ca_fchembarque = '$fchembarque', ca_fcharribo = '$fcharribo', ca_modalidad = '$modalidad', ca_idlinea = $idlinea, ca_motonave = '$motonave', ca_ciclo = '$ciclo', ca_mbls = '$mbls', ca_observaciones = '".addslashes($observaciones)."', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where ca_referencia = '$id'")) {
+                if (!$rs->Open("update tb_inomaestra_sea set ca_fchreferencia = '$fchreferencia', ca_impoexpo = '$impoexpo', ca_origen = '$idciuorigen', ca_destino = '$idciudestino', ca_fchembarque = '$fchembarque', ca_fcharribo = '$fcharribo', ca_modalidad = '$modalidad', ca_idlinea = $idlinea, ca_motonave = '$motonave', ca_ciclo = '$ciclo', ca_mbls = '".$mbls[0]."',ca_fchmbls = '".$mbls[1]."', ca_observaciones = '".addslashes($observaciones)."', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where ca_referencia = '$id'")) {
                     echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                     echo "<script>document.location.href = 'inosea.php';</script>";
                     exit;
