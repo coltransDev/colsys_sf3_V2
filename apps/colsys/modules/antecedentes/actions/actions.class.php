@@ -180,7 +180,8 @@ class antecedentesActions extends sfActions {
             $master->setCaFcharribo($fchllegada);
             $master->setCaFchreferencia($fchllegada);
             $master->setCaIdlinea($idlinea);
-            $master->setCaMbls($mbls."|".$fchmaster);
+            $master->setCaMbls($mbls);
+            $master->setCafchmbls($fchmaster);
             $master->setCa_ciclo($viaje);
             $master->setCaProvisional(true);
 
@@ -311,10 +312,10 @@ class antecedentesActions extends sfActions {
         $data["fchllegada"] =   $ref->getCaFcharribo();
         $data["idlinea"]    =   $ref->getCaIdlinea();
 
-        $arrMbls = explode("|", $ref->getCaMbls());
-        $data["mbls"] = $arrMbls[0];
-        if($arrMbls[1])
-            $data["fchmaster"] = $arrMbls[1];
+//        $ref->getCaMbls();
+        $data["mbls"] = $ref->getCaMbls();
+        //if($arrMbls[1])
+            $data["fchmaster"] = $ref->getCaFchmbls();
 
         $data["viaje"] = $ref->getCaCiclo();
 

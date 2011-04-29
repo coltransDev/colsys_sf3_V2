@@ -352,7 +352,7 @@ function cambiarTipoMsg( value ){
 				<td class="listar"><b>Motonave:</b><br />
 					<?=$referencia->getCaMotonave()?></td>
 				<td class="listar"><b>MBL's:</b><br />
-					<?=$referencia->getCaMbls()?></td>
+					<?=$referencia->getCaMbls()."|".$referencia->getCaFchmbls()?></td>
 				<td class="listar" colspan="2"><b>Observaciones:</b><br />
 					<?=Utils::replace($referencia->getCaObservaciones())?></td>
 			</tr>
