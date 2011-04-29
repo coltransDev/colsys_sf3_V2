@@ -1406,7 +1406,7 @@ elseif (isset($boton)) {                                                       /
                 $modulo = "00100100";                                             // Identificación del módulo para la ayuda en línea
                 //           include_once 'include/seguridad.php';                             // Control de Acceso al módulo
                 $us =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
-                if (!$us->Open("select ca_impoexpo, ca_modalidad, ca_mbls,ca_fchmbls from tb_inomaestra_sea where ca_referencia = '$id'")) {
+                if (!$us->Open("select ca_impoexpo, ca_modalidad, ca_mbls, ca_fchmbls from tb_inomaestra_sea where ca_referencia = '$id'")) {
                     echo "<script>alert(\"".addslashes($us->mErrMsg)."\");</script>";
                     echo "<script>document.location.href = 'inosea.php';</script>";
                     exit;
@@ -4147,8 +4147,9 @@ elseif (isset($boton)) {                                                       /
                     $xml_pal66->setAttribute("cdep", $dm->Value("ca_coddeposito"));
                 }
 
-                $mbls[] = $us->Value('ca_mbls');
-                $mbls[] = $us->Value('ca_fchmbls');
+                $mbls = array();
+                $mbls[] = $rs->Value('ca_mbls');
+                $mbls[] = $rs->Value('ca_fchmbls');
                 $xml_pal66->setAttribute("ndv", $mbls[0]);
                 $xml_pal66->setAttribute("fdv", $mbls[1]);
 
