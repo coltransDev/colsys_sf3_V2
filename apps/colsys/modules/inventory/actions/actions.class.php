@@ -13,7 +13,7 @@ class inventoryActions extends sfActions
 	const RUTINA = "94";
     
 
-    public function getNivel($rutina=inventoryActions::RUTINA){
+    public function getNivel(){
         $this->nivel = $this->getUser()->getNivelAcceso( inventoryActions::RUTINA );
 		if( $this->nivel==-1 ){
 			$this->forward404();
@@ -68,7 +68,7 @@ class inventoryActions extends sfActions
                                       
         $q->addWhere("a.ca_idcategory = ?", $idcategory );
         //$q->setHydrationMode(Doctrine::HYDRATE_SCALAR);
-        $q->limit(200);
+        $q->limit(500);
 		$activos = $q->execute();
         $result = array();
         foreach( $activos as $activo){
@@ -409,7 +409,7 @@ class inventoryActions extends sfActions
                 $activo->setCaIdcategory($idcategory);
                 $activo->stopBlaming();
                 $activo->save();
-                $this->responseArray = array("success"=>true);
+                $this->responseArray = array("success"=>true, "id"=>$request->getParameter("id"));
             }catch( Exception $e ){
                 $this->responseArray = array("success"=>false, "errorInfo"=>$e->getMessage());
             }
@@ -463,6 +463,13 @@ class inventoryActions extends sfActions
     }
 
 
+
+    /*
+     * Informes
+     */
+     public function executeInformes( $request ){
+
+     }
 
 
 

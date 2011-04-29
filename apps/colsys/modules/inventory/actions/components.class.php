@@ -71,7 +71,7 @@ class inventoryComponents extends sfComponents
 	* @author: Andres Botero
 	*/
     public function executePanelReading( ){
-        $this->nivel = $this->getUser()->getNivelAcceso( inventoryActions::RUTINAINV );
+        $this->nivel = $this->getUser()->getNivelAcceso( inventoryActions::RUTINA );
 
         $this->editable = "false";
 
@@ -100,7 +100,7 @@ class inventoryComponents extends sfComponents
 	* @author: Andres Botero
 	*/
     public function executePanelCategoriaWindow( ){
-        $this->nivel = $this->getUser()->getNivelAcceso( inventoryActions::RUTINAINV );
+        $this->nivel = $this->getUser()->getNivelAcceso( inventoryActions::RUTINA );
 
         $this->editable = "false";
 

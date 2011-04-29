@@ -134,40 +134,47 @@ Ext.extend(PanelCategorias, Ext.tree.TreePanel, {
     },
     onBeforeNodeDrop: function( e ){
         var ddSource = e.source;
-        var selectedRecord = ddSource.dragData.selections[0];
+        var selectedRecords = ddSource.dragData.selections;
         var node = e.target;
-        var idactivo = selectedRecord.data.idactivo;
+        
         var idcategoria = node.attributes.idcategoria;
         //alert( selectedRecord.data.idissue+" "+node.attributes.idcategoria );
 
         var grid = ddSource.grid;
         if(node.leaf){
-            Ext.Ajax.request(
-            {
-                waitMsg: 'Guardando...',
-                url: '<?=url_for("inventory/cambiarCategoria")?>',
-                //method: 'POST',
-                //Solamente se envian los cambios
-                params :	{
-                    idactivo: idactivo,
-                    idcategory: idcategoria
-                },
+            
+            for( var i=0; i<selectedRecords.length; i++){                
+                selectedRecord = selectedRecords[i];
+                var idactivo = selectedRecord.data.idactivo;
+                Ext.Ajax.request(
+                {
+                    waitMsg: 'Guardando...',
+                    url: '<?=url_for("inventory/cambiarCategoria")?>',
+                    //method: 'POST',
+                    //Solamente se envian los cambios
+                    params :	{
+                        idactivo: idactivo,
+                        idcategory: idcategoria,
+                        id: selectedRecord.id
+                    },
 
-                //Ejecuta esta accion en caso de fallo
-                //(404 error etc, ***NOT*** success=false)
-                failure:function(response,options){
-                    Ext.MessageBox.alert("Error", "Ha ocurrido un error" );
-                },
-                //Ejecuta esta accion cuando el resultado es exitoso
-                success:function(response,options){
-                    var res = Ext.util.JSON.decode( response.responseText );
-                    if( res.success ){
-                        grid.store.remove(selectedRecord);
-                    }else{
-                        Ext.MessageBox.alert("Error", "Ha ocurrido un error: "+res.errorInfo );
+                    //Ejecuta esta accion en caso de fallo
+                    //(404 error etc, ***NOT*** success=false)
+                    failure:function(response,options){
+                        Ext.MessageBox.alert("Error", "Ha ocurrido un error" );
+                    },
+                    //Ejecuta esta accion cuando el resultado es exitoso
+                    success:function(response,options){
+                        var res = Ext.util.JSON.decode( response.responseText );
+                        if( res.success ){
+                            var rec = grid.store.getById( res.id );
+                            grid.store.remove(rec);
+                        }else{
+                            Ext.MessageBox.alert("Error", "Ha ocurrido un error: "+res.errorInfo );
+                        }
                     }
-                }
-            });
+                });
+            }
         }else{
             Ext.MessageBox.alert("Error", "No es posible mover el elemento aca");
         }
