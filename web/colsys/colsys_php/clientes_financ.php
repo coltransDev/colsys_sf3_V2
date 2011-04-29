@@ -21,6 +21,7 @@ $estados = array("Potencial","Activo","Vetado");
 $empresas= array("Coltrans","Colmas");
 $circular=array("Sin","Vencido","Vigente");
 $tiposnits=array("","Agente","Proveedor");
+$operaciones=array("I" => "Nuevo Registro", "U" => "Actualización", "D" => "Borrado");
 
 include_once 'include/datalib.php';                                                // Incorpora la libreria de funciones, para accesar leer bases de datos
 require_once("checklogin.php");                                                                     // Captura las variables de la sessión abierta
@@ -185,10 +186,6 @@ elseif (!isset($boton) and !isset($accion) and isset($criterio)){
 	$cn =& DlRecordset::NewRecordset($conn);
 	$tm =& DlRecordset::NewRecordset($conn);
 
-	if (!$tm->Open("select * from vi_evecliente where $registros")) {          // Selecciona todos lo registros de la tabla Eventos de Clientes
-		echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
-		echo "<script>document.location.href = 'clientes_financ.php';</script>";
-		exit; }
 	echo "<HTML>";
 	echo "<HEAD>";
 	echo "<TITLE>Tabla de Clientes Coltrans S.A.</TITLE>";
@@ -221,9 +218,9 @@ require_once("menu.php");
 	while (!$rs->Eof() and !$rs->IsEmpty()) {                                                      // Lee la totalidad de los registros obtenidos en la instrucción Select
 	   $vetado = ($rs->Value('ca_coltrans_std')=='Vetado' or $rs->Value('ca_colmas_std')=='Vetado' )?'background-color:#FFb2b2;':'';
 	   if (!$cn->Open("select * from vi_concliente where ca_idcliente = ".$rs->Value('ca_idcliente')." and ca_idcontacto != 0")) {          // Selecciona todos lo registros de la tabla Contacos de Clientes
-			echo "<script>alert(\"".addslashes($cn->mErrMsg)."\");</script>";      // Muestra el mensaje de error
-			echo "<script>document.location.href = 'clientes_financ.php';</script>";
-			exit; }
+                echo "<script>alert(\"".addslashes($cn->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+                echo "<script>document.location.href = 'clientes_financ.php';</script>";
+                exit; }
 	   echo "<TR>";
 	   echo "<TD Class=titulo style='vertical-align: top;'>".number_format($rs->Value('ca_idcliente'))."-".$rs->Value('ca_digito')."</TD>";
 	   echo "<TD Class=titulo COLSPAN=5 style='font-size: 12px; font-weight:bold; text-align:left;'>".$rs->Value('ca_compania')."</TD>";
@@ -239,20 +236,20 @@ require_once("menu.php");
 	   echo "    <TD Class=invertir style='font-weight:bold; font-size: 9px; text-align: center; $vetado'>Correo Elec.</TD>";
 	   echo "  </TR>";
 	   if (!$cn->IsEmpty()) {
-		   $cn->MoveFirst();
-		   while (!$cn->Eof() and !$cn->IsEmpty()) {
-				echo "<TR>";
-				echo "  <TD Class=mostrar style='font-size: 9px; $vetado'>".$cn->Value('ca_ncompleto_cn')."</TD>";
-				echo "  <TD Class=mostrar style='font-size: 9px; $vetado'>".$cn->Value('ca_cargo')."</TD>";
-				echo "  <TD Class=mostrar style='font-size: 9px; $vetado'>".$cn->Value('ca_telefonos')."</TD>";
-				echo "  <TD Class=mostrar style='font-size: 9px; $vetado'>".$cn->Value('ca_email')."</TD>";
-				echo "</TR>";
-				$cn->MoveNext();
-		   }
+               $cn->MoveFirst();
+               while (!$cn->Eof() and !$cn->IsEmpty()) {
+                    echo "<TR>";
+                    echo "  <TD Class=mostrar style='font-size: 9px; $vetado'>".$cn->Value('ca_ncompleto_cn')."</TD>";
+                    echo "  <TD Class=mostrar style='font-size: 9px; $vetado'>".$cn->Value('ca_cargo')."</TD>";
+                    echo "  <TD Class=mostrar style='font-size: 9px; $vetado'>".$cn->Value('ca_telefonos')."</TD>";
+                    echo "  <TD Class=mostrar style='font-size: 9px; $vetado'>".$cn->Value('ca_email')."</TD>";
+                    echo "</TR>";
+                    $cn->MoveNext();
+               }
 	   }else {
-		   echo "<TR>";
-		   echo "  <TD Class=mostrar style='font-weight:bold; font-size: 9px; $vetado' COLSPAN=4>El Cliente no tiene Contactos registrados</TD>";
-		   echo "</TR>";
+               echo "<TR>";
+               echo "  <TD Class=mostrar style='font-weight:bold; font-size: 9px; $vetado' COLSPAN=4>El Cliente no tiene Contactos registrados</TD>";
+               echo "</TR>";
 	   }
 	   echo "  <TR>";
 	   echo "    <TD Class=mostrar style='font-size: 9px; $vetado'>".$rs->Value('ca_ncompleto')."</TD>";
@@ -371,7 +368,41 @@ require_once("menu.php");
 	echo "  <TD Class=titulo COLSPAN=6></TD>";
 	echo "</TR>";
 	echo "</TABLE><BR>";
-	
+
+        if($rs->GetRowCount() == 1) {
+            if (!$tm->Open("select * from audit.tb_clientes_audit where $registros order by ca_stamp DESC")) {          // Selecciona todos lo registros de la tabla Eventos de Clientes
+                echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+                echo "<script>document.location.href = 'clientes.php';</script>";
+                exit;
+            }
+            echo "<TABLE WIDTH=600 CELLSPACING=1>";                                    // un boton de comando definido para hacer mantemientos
+            if (!$rs->IsEmpty()) {
+                echo "<TR>";
+                echo "  <TH Class=titulo COLSPAN=7>Histórico de Cambios en Clientes</TH>";
+                echo "</TR>";
+                echo "<TH>Operación</TH>";
+                echo "<TH>Fecha</TH>";
+                echo "<TH>Usuario</TH>";
+                echo "<TH>Tabla</TH>";
+                echo "<TH>Campo</TH>";
+                echo "<TH>Dato Anterior</TH>";
+                echo "<TH>Nuevo Dato</TH>";
+            }
+            while (!$tm->Eof()) {
+                echo "<TR>";
+                echo "  <TD WIDTH=60 Class=listar>".$operaciones[$tm->Value('ca_operation')]."</TD>";
+                echo "  <TD WIDTH=60 Class=listar>".$tm->Value('ca_stamp')."</TD>";
+                echo "  <TD WIDTH=30 Class=listar>".$tm->Value('ca_userid')."</TD>";
+                echo "  <TD WIDTH=60 Class=listar>".$tm->Value('ca_table_name')."</TD>";
+                echo "  <TD WIDTH=60 Class=listar>".$tm->Value('ca_field_name')."</TD>";
+                echo "  <TD WIDTH=100 Class=listar>".$tm->Value('ca_value_old')."</TD>";
+                echo "  <TD WIDTH=100 Class=listar>".$tm->Value('ca_value_new')."</TD>";
+                echo "</TR>";
+                $tm->MoveNext();
+            }
+            echo "</TABLE><BR>";
+        }
+
 	echo "<TABLE CELLSPACING=10>";
 	echo "<TH><INPUT Class=button TYPE='BUTTON' NAME='boton' VALUE='Nueva Consulta' ONCLICK='javascript:document.location.href = \"clientes_financ.php\"'></TH>";  // Realizar una nueva consulta
 	echo "<TH><INPUT Class=button TYPE='BUTTON' NAME='boton' VALUE='Terminar' ONCLICK='javascript:document.location.href = \"/\"'></TH>";  // Cancela la operación
