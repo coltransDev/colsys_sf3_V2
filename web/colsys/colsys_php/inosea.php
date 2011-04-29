@@ -518,7 +518,7 @@ elseif (isset($boton)) {                                                       /
                     </TR>
                    <TR>
                     <TD Class='listar'>Ingr. x Sobreventa Otros:</TD>
-                     <TD Class='listar' style='text-align: right;$col_mem'>".number_format($rs->Value('ca_comisionable')+$rs->Value('ca_otm')+$rs->Value('ca_ca_contenedor'))."</TD>
+                     <TD Class='listar' style='text-align: right;$col_mem'>".number_format($rs->Value('ca_comisionable')-$rs->Value('ca_otm')+$rs->Value('ca_ca_contenedor'))."</TD>
                     </TR>
                     ";
                     echo "<TR>";
@@ -3528,11 +3528,13 @@ elseif (isset($boton)) {                                                       /
                 echo "</TR>";
 
                 echo "<TR>";
-                if (!$cu->Open("select ca_idtransportista, ca_nombre from vi_transportistas where ca_idtransportista in (select ca_valor::text from tb_parametros where ca_casouso = 'CU073' and ca_identificacion = 10 and ca_valor2 like '%".$rs->Value("ca_destino")."%') order by ca_nombre")) {
+               
+                if (!$cu->Open("select ca_idtransportista, ca_nombre from vi_transportistas where ca_idtransportista in (select ca_valor::text from tb_parametros where ca_casouso = 'CU073' and ca_identificacion = 10  and  ca_valor2 like '%".$rs->Value("ca_destino")."%'".") order by ca_nombre")) {
                     echo "<script>alert(\"".addslashes($cu->mErrMsg)."\");</script>";      // Muestra el mensaje de error
                     echo "<script>document.location.href = 'inosea.php';</script>";
                     exit; }
                 $cu->MoveFirst();
+
                 echo "  <TD Class=mostrar COLSPAN=5>Transportista:<BR><SELECT NAME='idtransportista'>";  // Llena el cuadro de lista transportistas
                 echo "    <OPTION VALUE=''></OPTION>";
                 while (!$cu->Eof()) {
