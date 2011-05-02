@@ -288,6 +288,25 @@ class NuevoStatusForm extends BaseForm{
 		}
 
 
+        $horaRecibo = $taintedValues["horarecibo"];
+
+        if( !$horaRecibo['minute'] ){
+            $horaRecibo['minute']='00';
+        }
+
+        $horaRecibo['hour']=str_pad($horaRecibo['hour'],2, "0", STR_PAD_LEFT );
+        $horaRecibo['minute']=str_pad($horaRecibo['minute'],2, "0", STR_PAD_LEFT );
+        $horaRecibo = implode(":", $horaRecibo ).":00";
+        $fch = $taintedValues["fchrecibo"]." ".$horaRecibo;
+        //echo $fch;
+        $fest = TimeUtils::getFestivos();
+        $dif = TimeUtils::calcDiff( $fest, strtotime($fch), time() );
+        
+        if( !$taintedValues["observaciones_idg"] && $dif>RepStatus::IDG ){
+			$this->validatorSchema['observaciones_idg']->setOption('required', true);
+		}
+
+
         $destinatariosFijos = $this->getDestinatariosFijos();
         		
 		parent::bind($taintedValues,  $taintedFiles);

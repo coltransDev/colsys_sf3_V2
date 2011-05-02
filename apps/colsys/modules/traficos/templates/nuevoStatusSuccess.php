@@ -743,7 +743,7 @@ echo $form['mensaje_mask']->render();
 	</tr>
     <tr>
         <td colspan="2"><div align="left"><b>Observaciones IDG (Justificaci&oacute;n Demoras):</b><br />
-				<?
+			<?
 			echo $form['observaciones_idg']->renderError();
 			echo $form['observaciones_idg']->render();
 			?>

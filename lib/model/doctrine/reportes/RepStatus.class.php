@@ -14,6 +14,8 @@ class RepStatus extends BaseRepStatus
 {
     var $bodega = null;
 
+    const IDG = 24600; // 6h 50m
+
 
 	/*
 	* Retorna la etapa del status

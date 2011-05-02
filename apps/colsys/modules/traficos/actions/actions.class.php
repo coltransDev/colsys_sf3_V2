@@ -356,6 +356,10 @@ class traficosActions extends sfActions
 			
 			$bindValues["fchrecibo"] = $request->getParameter("fchrecibo");
 			$bindValues["horarecibo"] = $request->getParameter("horarecibo");
+            
+            $bindValues["observaciones_idg"] = $request->getParameter("observaciones_idg");
+
+
 						
 			for( $i=0; $i<NuevoStatusForm::NUM_EQUIPOS ; $i++ ){
 				$bindValues["equipos_tipo_".$i] = $request->getParameter("equipos_tipo_".$i);
