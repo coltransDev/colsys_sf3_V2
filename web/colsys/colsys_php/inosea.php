@@ -1,4 +1,6 @@
 <?
+//echo "fuera de servicio temporalmente";
+//exit;
 /*================-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*\
 // Archivo:       inosea.PHP                                                  \\
 // Creado:        2004-05-11                                                  \\
@@ -268,7 +270,7 @@ elseif (isset($boton)) {                                                       /
                 echo "<STYLE>@import URL(\"Coltrans.css\");</STYLE>";                      // Carga una hoja de estilo que estandariza las pantallas den sistema graficador
                 echo "<CENTER>";
                 echo "<FORM METHOD=post NAME='cabecera' ACTION='inosea.php' ONSUBMIT='javascript:return confirm(\"¿Esta seguro que desea realizar la acción?\")'>";             // Hace una llamado nuevamente a este script pero con
-                echo "<INPUT TYPE='HIDDEN' NAME='referencia' VALUE=\"".$id."\">";             // Hereda el Id de la Referencia que se esta modificando
+                echo "<INPUT TYPE='HIDDEN' NAME='referencia' id='referencia'  VALUE=\"".$id."\">";             // Hereda el Id de la Referencia que se esta modificando
                 echo "<TABLE WIDTH=620 CELLSPACING=1>";                                    // un boton de comando definido para hacer mantemientos
                 echo "<TR>";
                 echo "  <TH Class=titulo COLSPAN=6>COLTRANS S.A.<BR>$titulo</TH>";
@@ -774,7 +776,7 @@ elseif (isset($boton)) {                                                       /
                 echo "<CENTER>";
                 echo "<H3>$titulo</H3>";
                 echo "<FORM METHOD=post NAME='adicionar' ACTION='inosea.php' ONSUBMIT='return validar();'>";// Crea una forma con datos vacios
-                echo "<INPUT TYPE='HIDDEN' NAME='referencia' VALUE=\"".$id."\">";
+                echo "<INPUT TYPE='HIDDEN' NAME='referencia' id='referencia' VALUE=\"".$id."\">";
                 echo "<TABLE CELLSPACING=1>";
                 echo "<TH Class=titulo COLSPAN=2>Datos del Evento</TH>";
                 echo "<TR>";
@@ -860,8 +862,8 @@ elseif (isset($boton)) {                                                       /
                 echo "<CENTER>";
                 echo "<H3>$titulo</H3>";
                 echo "<FORM METHOD=post NAME='modificar' ACTION='inosea.php' ONSUBMIT='return validar();'>";// Crea una forma con datos vacios
-                echo "<INPUT TYPE='HIDDEN' NAME='referencia' VALUE=\"".$rs->Value('ca_referencia')."\">";
-                echo "<INPUT TYPE='HIDDEN' NAME='oid' VALUE=\"".$id."\">";
+                echo "<INPUT TYPE='HIDDEN' NAME='referencia' id='referencia' VALUE=\"".$rs->Value('ca_referencia')."\">";
+                echo "<INPUT TYPE='HIDDEN' NAME='oid' id='oid' VALUE=\"".$id."\">";
                 echo "<TABLE CELLSPACING=1>";
                 echo "<TH Class=titulo COLSPAN=2>Datos del Evento</TH>";
                 echo "<TR>";
@@ -939,8 +941,8 @@ elseif (isset($boton)) {                                                       /
                 echo "<CENTER>";
                 echo "<H3>$titulo</H3>";
                 echo "<FORM METHOD=post NAME='eliminar' ACTION='inosea.php' ONSUBMIT='return validar();'>";// Crea una forma con datos vacios
-                echo "<INPUT TYPE='HIDDEN' NAME='referencia' VALUE=\"".$rs->Value('ca_referencia')."\">";
-                echo "<INPUT TYPE='HIDDEN' NAME='oid' VALUE=\"".$id."\">";
+                echo "<INPUT TYPE='HIDDEN' NAME='referencia' id='referencia' VALUE=\"".$rs->Value('ca_referencia')."\">";
+                echo "<INPUT TYPE='HIDDEN' NAME='oid' id='oid' VALUE=\"".$id."\">";
                 echo "<TABLE WIDTH=250 CELLSPACING=1>";
                 echo "<TH Class=titulo COLSPAN=2>Datos del Evento</TH>";
                 echo "<TR>";
@@ -1053,7 +1055,7 @@ elseif (isset($boton)) {                                                       /
                 echo "<H3>$titulo</H3>";
                 echo "<FORM METHOD=post NAME='adicionar' ACTION='inosea.php' ONSUBMIT='return validar();'>";// Crea una forma con datos vacios
                 echo "<TABLE WIDTH=610 CELLSPACING=1>";
-                echo "<INPUT TYPE='HIDDEN' NAME='referencia' VALUE=\"".$id."\">";             // Hereda el Id de la Referencia que se esta modificando
+                echo "<INPUT TYPE='HIDDEN' NAME='referencia' id='referencia' VALUE=\"".$id."\">";             // Hereda el Id de la Referencia que se esta modificando
                 echo "<TH Class=titulo COLSPAN=6 style='font-size: 11px; vertical-align:bottom'>$id<BR>Información de la Factura</TH>";
                 echo "<TR>";
                 echo "  <TD Class=listar COLSPAN=2>Tabla de Costos:<BR><SELECT NAME='idcosto'>";  // Llena el cuadro de lista con los valores de la tabla Vendedores
@@ -1191,10 +1193,10 @@ elseif (isset($boton)) {                                                       /
                 echo "<H3>$titulo</H3>";
                 echo "<FORM METHOD=post NAME='modificar' ACTION='inosea.php' ONSUBMIT='return validar();'>";// Crea una forma con datos vacios
                 echo "<TABLE WIDTH=610 CELLSPACING=1>";
-                echo "<INPUT TYPE='HIDDEN' NAME='referencia' VALUE=\"".$id."\">";        // Hereda el Id de la Referencia que se esta modificando
-                echo "<INPUT TYPE='HIDDEN' NAME='oid' VALUE=\"".$cl."\">";               // Hereda el Id de la Referencia que se esta modificando
-                echo "<INPUT TYPE='HIDDEN' NAME='old_idcosto' VALUE=\"".$rs->Value('ca_idcosto')."\">";          // Controla el Número Actual de la Factura
-                echo "<INPUT TYPE='HIDDEN' NAME='old_fact' VALUE=\"".$rs->Value('ca_factura')."\">";          // Controla el Número Actual de la Factura
+                echo "<INPUT TYPE='HIDDEN' NAME='referencia' id='referencia' VALUE=\"".$id."\">";        // Hereda el Id de la Referencia que se esta modificando
+                echo "<INPUT TYPE='HIDDEN' NAME='oid' id='oid' VALUE=\"".$cl."\">";               // Hereda el Id de la Referencia que se esta modificando
+                echo "<INPUT TYPE='HIDDEN' NAME='old_idcosto' id='old_idcosto' VALUE=\"".$rs->Value('ca_idcosto')."\">";          // Controla el Número Actual de la Factura
+                echo "<INPUT TYPE='HIDDEN' NAME='old_fact' id='old_fact' VALUE=\"".$rs->Value('ca_factura')."\">";          // Controla el Número Actual de la Factura
                 echo "<TH Class=titulo COLSPAN=6 style='font-size: 11px; vertical-align:bottom'>$id<BR>Información de la Factura</TH>";
                 echo "<TR>";
                 echo "  <TD Class=listar COLSPAN=2>Tabla de Costos:<BR><SELECT NAME='idcosto'>";  // Llena el cuadro de lista con los valores de la tabla Vendedores
@@ -1290,8 +1292,8 @@ elseif (isset($boton)) {                                                       /
                 echo "<H3>$titulo</H3>";
                 echo "<FORM METHOD=post NAME='eliminar' ACTION='inosea.php'>";// Crea una forma con datos vacios
                 echo "<TABLE WIDTH=600 CELLSPACING=1>";
-                echo "<INPUT TYPE='HIDDEN' NAME='referencia' VALUE=\"".$id."\">";        // Hereda el Id de la Referencia que se esta modificando
-                echo "<INPUT TYPE='HIDDEN' NAME='oid' VALUE=\"".$cl."\">";              // Hereda el Id de la Referencia que se esta modificando
+                echo "<INPUT TYPE='HIDDEN' NAME='referencia' id='referencia' VALUE=\"".$id."\">";        // Hereda el Id de la Referencia que se esta modificando
+                echo "<INPUT TYPE='HIDDEN' NAME='oid' id='oid' VALUE=\"".$cl."\">";              // Hereda el Id de la Referencia que se esta modificando
                 echo "<TH Class=titulo COLSPAN=5 style='font-size: 11px; vertical-align:bottom'>$id<BR>Información de la Factura</TH>";
 
                 $util_mem = number_format($rs->Value('ca_venta') - ($rs->Value('ca_neto') * $rs->Value('ca_tcambio')));
@@ -1363,8 +1365,8 @@ elseif (isset($boton)) {                                                       /
                 echo "<H3>$titulo</H3>";
                 echo "<FORM METHOD=post NAME='contrato' ACTION='inosea.php' ONSUBMIT='return validar();'>";// Crea una forma con datos vacios
                 echo "<TABLE WIDTH=500 CELLSPACING=1>";
-                echo "<INPUT TYPE='HIDDEN' NAME='referencia' VALUE=\"".$id."\">";        // Hereda el Id de la Referencia que se esta modificando
-                echo "<INPUT TYPE='HIDDEN' NAME='idequipo' VALUE=\"".$cl."\">";              // Hereda el Id de la Referencia que se esta modificando
+                echo "<INPUT TYPE='HIDDEN' NAME='referencia' id='referencia' VALUE=\"".$id."\">";        // Hereda el Id de la Referencia que se esta modificando
+                echo "<INPUT TYPE='HIDDEN' NAME='idequipo' id='idequipo' VALUE=\"".$cl."\">";              // Hereda el Id de la Referencia que se esta modificando
                 echo "<TH Class=titulo COLSPAN=4 style='font-size: 11px; vertical-align:bottom'>$id<BR>Información del Contrato de Comodato</TH>";
 
                 echo "<TR>";
@@ -1506,8 +1508,9 @@ elseif (isset($boton)) {                                                       /
                 echo "      if ((document.getElementById('numpiezas').value != roundNumber(pz,2) || document.getElementById('peso').value != roundNumber(ps,2)) && '$modalidad' != 'COLOADING' && '$modalidad' != 'PROYECTOS' && '$modalidad' != 'PARTICULARES' && '$impoexpo' != 'OTM/DTA'){";
                 echo "               alert('Hay inconsistencia entre el Piezas/Peso y el desgloce en Contenedores');";
                 echo "               respuesta = false;";
-                echo "          }";
-                echo "      if (respuesta){";
+                echo "          }
+                            return true;
+                            if (respuesta){";
                 echo "      	document.getElementById('continuacion_dest').disabled = false;";
                 echo "      	document.getElementById('login').disabled = false;";
                 echo "      	document.getElementById('idbodega').disabled = false;";
@@ -1577,24 +1580,31 @@ elseif (isset($boton)) {                                                       /
                 echo "       }";
                 echo "  }";
                 echo "}";
-                echo "function cambiar(element){";
-                echo "  if(element.value != 'N/A'){";
-                echo "     document.getElementById('idbodega').disabled = false;";
-                echo "     document.getElementById('continuacion_dest').disabled = false;";
-                echo "  }else{";
-                echo "     document.getElementById('idbodega')[0].selected = true;";
-                echo "     document.getElementById('idbodega').disabled = true;";
-                echo "     document.getElementById('continuacion_dest')[0].selected = true;";
-                echo "     document.getElementById('continuacion_dest').disabled = true;";
-                echo "  }";
-                echo "}";
-                echo "function pesosCalc(element){";
-                echo "  index = element.id.substring(element.id.indexOf('_')+1);";
-                echo "  neto = document.getElementById('neto_'+index);";
-                echo "  tcamb = document.getElementById('tcambio_'+index);";
-                echo "  valor = document.getElementById('valor_'+index);";
-                echo "  valor.value = Math.round(eval(neto.value) * eval(tcamb.value))";
-                echo "}";
+                echo "function cambiar(element){
+                        if(element)
+                        {
+                            if(element.value != 'N/A'){
+                            document.getElementById('idbodega').disabled = false;
+                            document.getElementById('continuacion_dest').disabled = false;
+                            }else{
+                            document.getElementById('idbodega')[0].selected = true;
+                            document.getElementById('idbodega').disabled = true;
+                            document.getElementById('continuacion_dest')[0].selected = true;
+                            document.getElementById('continuacion_dest').disabled = true;
+                            }
+                        }
+                    }";
+                echo "
+                    function pesosCalc(element){
+                        if(element)
+                        {
+                            index = element.id.substring(element.id.indexOf('_')+1);
+                            neto = document.getElementById('neto_'+index);
+                            tcamb = document.getElementById('tcambio_'+index);
+                            valor = document.getElementById('valor_'+index);
+                            valor.value = Math.round(eval(neto.value) * eval(tcamb.value));
+                        }
+                    }";
                 echo "function aplica_trm(element){";
                 echo "  i = 0;";
                 echo "  index = element.id.substring(element.id.indexOf('_')+1);";
@@ -1613,9 +1623,11 @@ elseif (isset($boton)) {                                                       /
                 echo "  if(element.checked){";
                 echo "  	document.getElementById('contenedor_'+index+'_pz').style.display = 'block';";
                 echo "  	document.getElementById('contenedor_'+index+'_ps').style.display = 'block';";
+                echo "  	document.getElementById('contenedor_'+index+'_vo').style.display = 'block';";
                 echo "  }else{";
                 echo "  	document.getElementById('contenedor_'+index+'_pz').style.display = 'none';";
                 echo "  	document.getElementById('contenedor_'+index+'_ps').style.display = 'none';";
+                echo "  	document.getElementById('contenedor_'+index+'_vo').style.display = 'none';";
                 echo "  }";
                 echo "}";
                 echo "</script>";
@@ -1638,18 +1650,18 @@ elseif (isset($boton)) {                                                       /
                 echo "<H3>$titulo</H3>";
                 echo "<FORM METHOD=post NAME='adicionar' ACTION='inosea.php' ONSUBMIT='return validar();'>";// Crea una forma con datos vacios
                 echo "<TABLE WIDTH=550 CELLSPACING=1>";
-                echo "<INPUT TYPE='HIDDEN' NAME='referencia' VALUE=\"".$id."\">";              // Hereda el Id de la Referencia que se esta modificando
-                echo "<INPUT TYPE='HIDDEN' NAME='impoexpo' VALUE=\"".$impoexpo."\">";
-                echo "<INPUT TYPE='HIDDEN' NAME='modalidad' VALUE=\"".$modalidad."\">";
-                echo "<INPUT TYPE='HIDDEN' NAME='vigencia' VALUE=\"".((mktime(0, 0, 0, $mes, 1, $ano)>=mktime(0, 0, 0, 4, 1, 2008))?'true':'false')."\">"; // Verifica si la Referencia es después de 1 abril/2008
-                echo "<INPUT TYPE='HIDDEN' NAME='vendedor'>";
-                echo "<INPUT TYPE='HIDDEN' NAME='idreporte'>";
-                echo "<INPUT TYPE='HIDDEN' NAME='validado'>";
-                echo "<INPUT TYPE='HIDDEN' NAME='explicacion'>";
+                echo "<INPUT TYPE='HIDDEN' NAME='referencia' id='referencia' VALUE=\"".$id."\">";              // Hereda el Id de la Referencia que se esta modificando
+                echo "<INPUT TYPE='HIDDEN' NAME='impoexpo' id='impoexpo' VALUE=\"".$impoexpo."\">";
+                echo "<INPUT TYPE='HIDDEN' NAME='modalidad' id='modalidad' VALUE=\"".$modalidad."\">";
+                echo "<INPUT TYPE='HIDDEN' NAME='vigencia' id='vigencia' VALUE=\"".((mktime(0, 0, 0, $mes, 1, $ano)>=mktime(0, 0, 0, 4, 1, 2008))?'true':'false')."\">"; // Verifica si la Referencia es después de 1 abril/2008
+                echo "<INPUT TYPE='HIDDEN' NAME='vendedor' id='vendedor'>";
+                echo "<INPUT TYPE='HIDDEN' NAME='idreporte' id='idreporte'>";
+                echo "<INPUT TYPE='HIDDEN' NAME='validado' id='validado'>";
+                echo "<INPUT TYPE='HIDDEN' NAME='explicacion' id='explicacion'>";
                 echo "<TH Class=titulo COLSPAN=5 style='font-size: 11px; vertical-align:bottom'>$id<BR>Información del Cliente</TH>";
                 echo "<TR>";
-                echo "  <TD Class=mostrar>ID Reporte:<BR><INPUT TYPE='TEXT' NAME='consecutivo' SIZE=12 MAXLENGTH=10 READONLY>&nbsp;<a><IMG ID=report_lupa src='graficos/lupa.gif' onclick='buscar_reporte();' alt='Buscar' hspace='0' vspace='0'></a></TD>";
-                echo "  <TD Class=listar>Vendedor:<BR><SELECT NAME='login'>";  // Llena el cuadro de lista con los valores de la tabla Vendedores
+                echo "  <TD Class=mostrar>ID Reporte:<BR><INPUT TYPE='TEXT' NAME='consecutivo' id='consecutivo' SIZE=12 MAXLENGTH=10 READONLY>&nbsp;<a><IMG ID=report_lupa src='graficos/lupa.gif' onclick='buscar_reporte();' alt='Buscar' hspace='0' vspace='0'></a></TD>";
+                echo "  <TD Class=listar>Vendedor:<BR><SELECT NAME='login' id='login'>";  // Llena el cuadro de lista con los valores de la tabla Vendedores
                 echo "  <OPTION VALUE=''></OPTION>";
                 if (!$us->Open("select ca_login, ca_nombre from control.tb_usuarios where ca_login != 'Administrador' and (ca_cargo = 'Gerente Regional' or ca_cargo like '%Ventas%' or ca_departamento like '%Ventas%' or ca_departamento like '%Comercial%') order by ca_login")) {
                     echo "<script>alert(\"".addslashes($us->mErrMsg)."\");</script>";
@@ -1685,9 +1697,9 @@ elseif (isset($boton)) {                                                       /
                 echo "    </TD>";
                 echo "  </TR>";
                 echo "  <TR>";
-                echo "    <TD Class=mostrar>No.Piezas:<BR><INPUT TYPE='TEXT' NAME='numpiezas' SIZE=6 MAXLENGTH=6></TD>";
-                echo "    <TD Class=mostrar>No.Kilos:<BR><INPUT TYPE='TEXT' NAME='peso' SIZE=9 MAXLENGTH=9 ONCHANGE='valida_cantidades();'></TD>";
-                echo "    <TD Class=mostrar>No.CMB:<BR><INPUT TYPE='TEXT' NAME='volumen' SIZE=13 MAXLENGTH=15 ONCHANGE='valida_cantidades();'></TD>";
+                echo "    <TD Class=mostrar>No.Piezas:<BR><INPUT TYPE='TEXT' NAME='numpiezas' id='numpiezas' SIZE=6 MAXLENGTH=6></TD>";
+                echo "    <TD Class=mostrar>No.Kilos:<BR><INPUT TYPE='TEXT' NAME='peso' id='peso' SIZE=9 MAXLENGTH=9 ONCHANGE='valida_cantidades();'></TD>";
+                echo "    <TD Class=mostrar>No.CMB:<BR><INPUT TYPE='TEXT' NAME='volumen' id='volumen' SIZE=13 MAXLENGTH=15 ONCHANGE='valida_cantidades();'></TD>";
                 echo "  </TR>";
                 echo "  <TR>";
                 echo "  <TD Class=mostrar>Continua/Viaje:<BR><SELECT NAME='continuacion' ONCHANGE='cambiar(this);'>";
@@ -1895,8 +1907,8 @@ elseif (isset($boton)) {                                                       /
                 echo "      alert('Debe ingresar el número de Orden del Cliente');";
                 echo "  else if (document.modificar.login.value == '')";
                 echo "      alert('Debe seleccionar el nombre del Vendedor');";
-                echo "  else if (!eval(document.modificar.validado.value))";
-                echo "      alert('El peso o el volumen registrado superan la capacidad de carga total de la referencia. Ingrese nuevamente el volumen en M³ y el peso en Kilos. Si se trata de un LCL asegúrese de haber registrado en la master la cantidad de metros cúbicos y no el peso de mercancia en el concepto T/M3. '+document.modificar.explicacion.value);";
+                echo "  /*else if (!eval(document.modificar.validado.value))";
+                echo "      alert('El peso o el volumen registrado superan la capacidad de carga total de la referencia. Ingrese nuevamente el volumen en M³ y el peso en Kilos. Si se trata de un LCL asegúrese de haber registrado en la master la cantidad de metros cúbicos y no el peso de mercancia en el concepto T/M3. '+document.modificar.explicacion.value);*/";
                 echo "  else{";
                 echo "      respuesta = true;";
                 echo "      elementos = document.getElementById('num_reg');";
@@ -2002,25 +2014,33 @@ elseif (isset($boton)) {                                                       /
                 echo "  if (document.getElementById('consecutivo').value == ''){";
                 echo "		document.getElementById('login').disabled = false }";
                 echo "}";
-                echo "function cambiar(element){";
-                echo "  if(element.value != 'N/A'){";
-                echo "     document.getElementById('idbodega').disabled = false;";
-                echo "     document.getElementById('continuacion_dest').disabled = false;";
-                echo "  }else{";
-                echo "     document.getElementById('idbodega')[0].selected = true;";
-                echo "     document.getElementById('idbodega').disabled = true;";
-                echo "     document.getElementById('continuacion_dest')[0].selected = true;";
-                echo "     document.getElementById('continuacion_dest').disabled = true;";
-                echo "  }";
-                echo "}";
-                echo "function pesosCalc(element){";
-                echo "  index = element.id.substring(element.id.indexOf('_')+1);";
-                echo "  neto = document.getElementById('neto_'+index);";
-                echo "  tcamb = document.getElementById('tcambio_'+index);";
-                echo "  valor = document.getElementById('valor_'+index);";
-                echo "  valor.value = Math.round(eval(neto.value) * eval(tcamb.value))";
-                echo "}";
+                echo "function cambiar(element){
+                        if(element)
+                        {
+                            if(element.value != 'N/A'){
+                                document.getElementById('idbodega').disabled = false;
+                                document.getElementById('continuacion_dest').disabled = false;
+                            }else{
+                                document.getElementById('idbodega')[0].selected = true;
+                                document.getElementById('idbodega').disabled = true;
+                                document.getElementById('continuacion_dest')[0].selected = true;
+                                document.getElementById('continuacion_dest').disabled = true;
+                            }
+                        }
+                }";
+                echo "function pesosCalc(element){
+                        if(element)
+                        {
+                            index = element.id.substring(element.id.indexOf('_')+1);
+                            neto = document.getElementById('neto_'+index);
+                            tcamb = document.getElementById('tcambio_'+index);
+                            valor = document.getElementById('valor_'+index);
+                            valor.value = Math.round(eval(neto.value) * eval(tcamb.value))
+                        }
+                    }
+                    ";
                 echo "function aplica_trm(element){";
+                echo "if(element){";
                 echo "  i = 0;";
                 echo "  index = element.id.substring(element.id.indexOf('_')+1);";
                 echo "  factura = document.getElementById('dedfactura_'+index);";
@@ -2032,10 +2052,13 @@ elseif (isset($boton)) {                                                       /
                 echo "  }";
                 echo "  document.getElementById('deduccion_'+index).value = document.getElementById('dedneto_'+index).value * tcambio;";
                 echo "}";
+                echo "}";
                 echo "function borrar_deduccion(element){";
+                echo "if(element){";
                 echo "  index = element.id.substring(element.id.indexOf('_')+1);";
                 echo "  document.getElementById('dedneto_'+index).value = '';";
                 echo "  document.getElementById('deduccion_'+index).value = '';";
+                echo "}";
                 echo "}";
                 echo "function seldetails(element){";
                 echo "  index = element.id.substring(element.id.indexOf('_')+1);";
@@ -2043,9 +2066,11 @@ elseif (isset($boton)) {                                                       /
                 echo "  if(element.checked){";
                 echo "  	document.getElementById('contenedor_'+index+'_pz').style.display = 'block';";
                 echo "  	document.getElementById('contenedor_'+index+'_ps').style.display = 'block';";
+                echo "  	document.getElementById('contenedor_'+index+'_vo').style.display = 'block';";
                 echo "  }else{";
                 echo "  	document.getElementById('contenedor_'+index+'_pz').style.display = 'none';";
                 echo "  	document.getElementById('contenedor_'+index+'_ps').style.display = 'none';";
+                echo "  	document.getElementById('contenedor_'+index+'_vo').style.display = 'none';";
                 echo "  }";
                 echo "}";
                 echo "</script>";
@@ -2064,20 +2089,20 @@ elseif (isset($boton)) {                                                       /
                 echo "<H3>$titulo</H3>";
                 echo "<FORM METHOD=post NAME='modificar' ACTION='inosea.php' ONSUBMIT='return validar();'>";// Crea una forma con los datos del registro
                 echo "<TABLE WIDTH=550 CELLSPACING=1>";
-                echo "<INPUT TYPE='HIDDEN' NAME='oid' VALUE=\"".$rs->Value('ca_oid')."\">";             // Hereda el Id de la Referencia que se esta modificando
-                echo "<INPUT TYPE='HIDDEN' NAME='referencia' VALUE=\"".$id."\">";             // Hereda el Id de la Referencia que se esta modificando
-                echo "<INPUT TYPE='HIDDEN' NAME='impoexpo' VALUE=\"".$impoexpo."\">";
-                echo "<INPUT TYPE='HIDDEN' NAME='vigencia' VALUE=\"".((mktime(0, 0, 0, $mes, 1, $ano)>=mktime(0, 0, 0, 4, 1, 2008))?'true':'false')."\">"; // Verifica si la Referencia es después de 1 abril/2008
-                echo "<INPUT TYPE='HIDDEN' NAME='hbl' VALUE=\"".$rs->Value('ca_hbls')."\">";
-                echo "<INPUT TYPE='HIDDEN' NAME='peso_ant' VALUE=\"".$rs->Value('ca_peso')."\">";
-                echo "<INPUT TYPE='HIDDEN' NAME='volumen_ant' VALUE=\"".$rs->Value('ca_volumen')."\">";
-                echo "<INPUT TYPE='HIDDEN' NAME='idreporte' VALUE=\"".$rs->Value('ca_idreporte')."\">";
-                echo "<INPUT TYPE='HIDDEN' NAME='validado'>";
-                echo "<INPUT TYPE='HIDDEN' NAME='explicacion'>";
+                echo "<INPUT TYPE='HIDDEN' NAME='oid' id='oid' VALUE=\"".$rs->Value('ca_oid')."\">";             // Hereda el Id de la Referencia que se esta modificando
+                echo "<INPUT TYPE='HIDDEN' NAME='referencia' id='referencia' VALUE=\"".$id."\">";             // Hereda el Id de la Referencia que se esta modificando
+                echo "<INPUT TYPE='HIDDEN' NAME='impoexpo' id='impoexpo' VALUE=\"".$impoexpo."\">";
+                echo "<INPUT TYPE='HIDDEN' NAME='vigencia' id='vigencia' VALUE=\"".((mktime(0, 0, 0, $mes, 1, $ano)>=mktime(0, 0, 0, 4, 1, 2008))?'true':'false')."\">"; // Verifica si la Referencia es después de 1 abril/2008
+                echo "<INPUT TYPE='HIDDEN' NAME='hbl' id='hbl' VALUE=\"".$rs->Value('ca_hbls')."\">";
+                echo "<INPUT TYPE='HIDDEN' NAME='peso_ant' id='peso_ant' VALUE=\"".$rs->Value('ca_peso')."\">";
+                echo "<INPUT TYPE='HIDDEN' NAME='volumen_ant' id='volumen_ant' VALUE=\"".$rs->Value('ca_volumen')."\">";
+                echo "<INPUT TYPE='HIDDEN' NAME='idreporte' id='idreporte' VALUE=\"".$rs->Value('ca_idreporte')."\">";
+                echo "<INPUT TYPE='HIDDEN' NAME='validado' id='validado'>";
+                echo "<INPUT TYPE='HIDDEN' NAME='explicacion' id='explicacion'>";
                 echo "<TH Class=titulo COLSPAN=5 style='font-size: 11px; vertical-align:bottom'>$id<BR>Información del Cliente</TH>";
                 echo "<TR>";
-                echo "  <TD Class=mostrar>ID Reporte:<BR><INPUT TYPE='TEXT' NAME='consecutivo' VALUE='".$rs->Value('ca_consecutivo')."' SIZE=12 MAXLENGTH=10 READONLY>&nbsp;<a><IMG ID=report_lupa src='graficos/lupa.gif' onclick='buscar_reporte();' alt='Buscar' hspace='0' vspace='0'></a></TD>";
-                echo "  <TD Class=listar>Vendedor:<BR><SELECT NAME='login' DISABLED>";  // Llena el cuadro de lista con los valores de la tabla Vendedores
+                echo "  <TD Class=mostrar>ID Reporte:<BR><INPUT TYPE='TEXT' NAME='consecutivo' id='consecutivo' VALUE='".$rs->Value('ca_consecutivo')."' SIZE=12 MAXLENGTH=10 READONLY>&nbsp;<a><IMG ID=report_lupa src='graficos/lupa.gif' onclick='buscar_reporte();' alt='Buscar' hspace='0' vspace='0'></a></TD>";
+                echo "  <TD Class=listar>Vendedor:<BR><SELECT NAME='login' id=login no-change >";  // Llena el cuadro de lista con los valores de la tabla Vendedores
                 echo"<OPTION VALUE=''></OPTION>";
                 if (!$us->Open("select ca_login, ca_nombre from control.tb_usuarios where ca_login != 'Administrador' and (ca_cargo = 'Gerente Regional' or ca_cargo like '%Ventas%' or ca_departamento like '%Ventas%' or ca_departamento like '%Comercial%') order by ca_login")) {
                     echo "<script>alert(\"".addslashes($us->mErrMsg)."\");</script>";
@@ -2120,9 +2145,9 @@ elseif (isset($boton)) {                                                       /
                 echo "    <TD Class=mostrar></TD>";
                 echo "  </TR>";
                 echo "  <TR>";
-                echo "    <TD Class=mostrar>No.Piezas:<BR><INPUT ID=='numpiezas' TYPE='TEXT' NAME='numpiezas' VALUE='".$rs->Value('ca_numpiezas')."' SIZE=6 MAXLENGTH=6></TD>";
-                echo "    <TD Class=mostrar>No.Kilos:<BR><INPUT TYPE='TEXT' NAME='peso' VALUE='".$rs->Value('ca_peso')."' SIZE=9 MAXLENGTH=9 ONCHANGE='valida_cantidades();'></TD>";
-                echo "    <TD Class=mostrar>No.CMB:<BR><INPUT TYPE='TEXT' NAME='volumen' VALUE='".$rs->Value('ca_volumen')."' SIZE=13 MAXLENGTH=15 ONCHANGE='valida_cantidades();'></TD>";
+                echo "    <TD Class=mostrar>No.Piezas:<BR><INPUT ID='numpiezas' TYPE='TEXT' NAME='numpiezas' VALUE='".$rs->Value('ca_numpiezas')."' SIZE=6 MAXLENGTH=6></TD>";
+                echo "    <TD Class=mostrar>No.Kilos:<BR><INPUT TYPE='TEXT' NAME='peso' id='peso' VALUE='".$rs->Value('ca_peso')."' SIZE=9 MAXLENGTH=9 ONCHANGE='valida_cantidades();'></TD>";
+                echo "    <TD Class=mostrar>No.CMB:<BR><INPUT TYPE='TEXT' NAME='volumen' id='volumen' VALUE='".$rs->Value('ca_volumen')."' SIZE=13 MAXLENGTH=15 ONCHANGE='valida_cantidades();'></TD>";
                 echo "  </TR>";
 
                 echo "  <TR>";
@@ -2385,9 +2410,9 @@ elseif (isset($boton)) {                                                       /
                 echo "<H3>$titulo</H3>";
                 echo "<FORM METHOD=post NAME='eliminar' ACTION='inosea.php' ONSUBMIT='return validar();'>";// Crea una forma con los datos del registro
                 echo "<TABLE WIDTH=600 CELLSPACING=1>";
-                echo "<INPUT TYPE='HIDDEN' NAME='referencia' VALUE=\"".$id."\">";             // Hereda el Id de la Referencia que se esta modificando
-                echo "<INPUT TYPE='HIDDEN' NAME='idcliente' VALUE=\"".$cl."\">";              // Hereda el Id del Cliente que se esta modificando
-                echo "<INPUT TYPE='HIDDEN' NAME='hbl' VALUE=\"".$hb."\">";                    // Hereda el Id del Cliente que se esta modificando
+                echo "<INPUT TYPE='HIDDEN' NAME='referencia' id='referencia' VALUE=\"".$id."\">";             // Hereda el Id de la Referencia que se esta modificando
+                echo "<INPUT TYPE='HIDDEN' NAME='idcliente' id='idcliente' VALUE=\"".$cl."\">";              // Hereda el Id del Cliente que se esta modificando
+                echo "<INPUT TYPE='HIDDEN' NAME='hbl' id='hbl' VALUE=\"".$hb."\">";                    // Hereda el Id del Cliente que se esta modificando
                 echo "<TH Class=titulo COLSPAN=5 style='font-size: 11px; vertical-align:bottom'>$id<BR>Información del Cliente</TH>";
                 echo "<TR>";
                 echo "  <TD Class=listar style='font-size: 11px;'><B>ID Reporte:</B><BR>".$rs->Value('ca_consecutivo')."</TD>";
@@ -2492,8 +2517,8 @@ elseif (isset($boton)) {                                                       /
                     exit; }
                 $tm->MoveFirst();
                 while (!$tm->Eof()) {
-                    echo "<INPUT TYPE='HIDDEN' NAME='idtraficos' VALUE=".$tm->Value('ca_idtrafico').">";
-                    echo "<INPUT TYPE='HIDDEN' NAME='nomtraficos' VALUE='".$tm->Value('ca_nombre')."'>";
+                    echo "<INPUT TYPE='HIDDEN' NAME='idtraficos' id='idtraficos' VALUE=".$tm->Value('ca_idtrafico').">";
+                    echo "<INPUT TYPE='HIDDEN' NAME='nomtraficos' id='nomtraficos' VALUE='".$tm->Value('ca_nombre')."'>";
                     $tm->MoveNext();
                 }
                 if (!$tm->Open("select ca_idciudad, ca_ciudad, ca_idtrafico from vi_puertos where ca_puerto not in ('Aéreo','Terrestre') order by ca_ciudad")) { // Selecciona todos lo registros de la tabla Ciudades
@@ -2502,9 +2527,9 @@ elseif (isset($boton)) {                                                       /
                     exit; }
                 $tm->MoveFirst();
                 while (!$tm->Eof()) {
-                    echo "<INPUT TYPE='HIDDEN' NAME='idciudades' VALUE=".$tm->Value('ca_idciudad').">";
-                    echo "<INPUT TYPE='HIDDEN' NAME='nomciudades' VALUE='".$tm->Value('ca_ciudad')."'>";
-                    echo "<INPUT TYPE='HIDDEN' NAME='ciutraficos' VALUE='".$tm->Value('ca_idtrafico')."'>";
+                    echo "<INPUT TYPE='HIDDEN' NAME='idciudades' id='idciudades' VALUE=".$tm->Value('ca_idciudad').">";
+                    echo "<INPUT TYPE='HIDDEN' NAME='nomciudades' id='nomciudades' VALUE='".$tm->Value('ca_ciudad')."'>";
+                    echo "<INPUT TYPE='HIDDEN' NAME='ciutraficos' id='ciutraficos' VALUE='".$tm->Value('ca_idtrafico')."'>";
                     $tm->MoveNext();
                 }
                 if (!$tm->Open("select ca_idciudad, ca_ciudad from vi_puertos where ca_idtrafico = '$regional' order by ca_ciudad")) { // Selecciona todos lo registros de la tabla Ciudades Colombianas
@@ -2513,8 +2538,8 @@ elseif (isset($boton)) {                                                       /
                     exit; }
                 $tm->MoveFirst();
                 while (!$tm->Eof()) {
-                    echo "<INPUT TYPE='HIDDEN' NAME='idlocales' VALUE=".$tm->Value('ca_idciudad').">";
-                    echo "<INPUT TYPE='HIDDEN' NAME='nomlocales' VALUE='".$tm->Value('ca_ciudad')."'>";
+                    echo "<INPUT TYPE='HIDDEN' NAME='idlocales' id='idlocales' VALUE=".$tm->Value('ca_idciudad').">";
+                    echo "<INPUT TYPE='HIDDEN' NAME='nomlocales' id='nomlocales' VALUE='".$tm->Value('ca_ciudad')."'>";
                     $tm->MoveNext();
                 }
                 if (!$tm->Open("select ca_idlinea, ca_nombre, ca_transporte from vi_transporlineas where ca_transporte = 'Marítimo' and ca_activo_impo=true order by ca_nombre")) { // Selecciona todos lo registros de la tabla Ciudades
@@ -2523,9 +2548,9 @@ elseif (isset($boton)) {                                                       /
                     exit; }
                 $tm->MoveFirst();
                 while (!$tm->Eof()) {
-                    echo "<INPUT TYPE='HIDDEN' NAME='aidlinea' VALUE=".$tm->Value('ca_idlinea').">";
-                    echo "<INPUT TYPE='HIDDEN' NAME='anombre' VALUE='".$tm->Value('ca_nombre')."'>";
-                    echo "<INPUT TYPE='HIDDEN' NAME='atransporte' VALUE='".$tm->Value('ca_transporte')."'>";
+                    echo "<INPUT TYPE='HIDDEN' NAME='aidlinea' id='aidlinea' VALUE=".$tm->Value('ca_idlinea').">";
+                    echo "<INPUT TYPE='HIDDEN' NAME='anombre' id='anombre' VALUE='".$tm->Value('ca_nombre')."'>";
+                    echo "<INPUT TYPE='HIDDEN' NAME='atransporte' id='atransporte' VALUE='".$tm->Value('ca_transporte')."'>";
                     $tm->MoveNext();
                 }
                 if (!$tm->Open("select ca_idconcepto, ca_concepto from vi_conceptos where ca_transporte = 'Marítimo' and (ca_modalidad = 'FCL' or ca_idconcepto = 9) order by ca_modalidad DESC, ca_concepto")) { // Selecciona todos lo registros de la tabla Ciudades
@@ -2854,8 +2879,8 @@ elseif (isset($boton)) {                                                       /
                     exit; }
                 $tm->MoveFirst();
                 while ( !$tm->Eof()) {
-                    echo "<INPUT TYPE='HIDDEN' NAME='idtraficos' VALUE=".$tm->Value('ca_idtrafico').">";
-                    echo "<INPUT TYPE='HIDDEN' NAME='nomtraficos' VALUE='".$tm->Value('ca_nombre')."'>";
+                    echo "<INPUT TYPE='HIDDEN' NAME='idtraficos' id='idtraficos' VALUE=".$tm->Value('ca_idtrafico').">";
+                    echo "<INPUT TYPE='HIDDEN' NAME='nomtraficos' id='nomtraficos' VALUE='".$tm->Value('ca_nombre')."'>";
                     $tm->MoveNext();
                 }
                 if (!$tm->Open("select ca_idciudad, ca_ciudad, ca_idtrafico from vi_puertos where ca_puerto not in ('Aéreo','Terrestre') order by ca_ciudad")) { // Selecciona todos lo registros de la tabla Ciudades
@@ -2864,9 +2889,9 @@ elseif (isset($boton)) {                                                       /
                     exit; }
                 $tm->MoveFirst();
                 while ( !$tm->Eof()) {
-                    echo "<INPUT TYPE='HIDDEN' NAME='idciudades' VALUE=".$tm->Value('ca_idciudad').">";
-                    echo "<INPUT TYPE='HIDDEN' NAME='nomciudades' VALUE='".$tm->Value('ca_ciudad')."'>";
-                    echo "<INPUT TYPE='HIDDEN' NAME='ciutraficos' VALUE='".$tm->Value('ca_idtrafico')."'>";
+                    echo "<INPUT TYPE='HIDDEN' NAME='idciudades' id='idciudades' VALUE=".$tm->Value('ca_idciudad').">";
+                    echo "<INPUT TYPE='HIDDEN' NAME='nomciudades' id='nomciudades' VALUE='".$tm->Value('ca_ciudad')."'>";
+                    echo "<INPUT TYPE='HIDDEN' NAME='ciutraficos' id='ciutraficos' VALUE='".$tm->Value('ca_idtrafico')."'>";
                     $tm->MoveNext();
                 }
                 if (!$tm->Open("select ca_idciudad, ca_ciudad from vi_puertos where ca_idtrafico = '$regional' order by ca_ciudad")) { // Selecciona todos lo registros de la tabla Ciudades Colombianas
@@ -2875,8 +2900,8 @@ elseif (isset($boton)) {                                                       /
                     exit; }
                 $tm->MoveFirst();
                 while (!$tm->Eof()) {
-                    echo "<INPUT TYPE='HIDDEN' NAME='idlocales' VALUE=".$tm->Value('ca_idciudad').">";
-                    echo "<INPUT TYPE='HIDDEN' NAME='nomlocales' VALUE='".$tm->Value('ca_ciudad')."'>";
+                    echo "<INPUT TYPE='HIDDEN' NAME='idlocales' id='idlocales' VALUE=".$tm->Value('ca_idciudad').">";
+                    echo "<INPUT TYPE='HIDDEN' NAME='nomlocales' id='nomlocales' VALUE='".$tm->Value('ca_ciudad')."'>";
                     $tm->MoveNext();
                 }
                 if (!$tm->Open("select ca_idconcepto, ca_concepto from vi_conceptos where ca_transporte = 'Marítimo' and (ca_modalidad = 'FCL' or ca_idconcepto = 9) order by ca_modalidad DESC, ca_concepto")) { // Selecciona todos lo registros de la tabla Ciudades
@@ -3067,7 +3092,7 @@ elseif (isset($boton)) {                                                       /
                 echo "<H3>$titulo</H3>";
                 echo "<FORM METHOD=post NAME='modificar' ACTION='inosea.php' ONSUBMIT='return validar();'>"; // Llena la forma con los datos actuales del registro
                 echo "<TABLE WIDTH=600 CELLSPACING=1>";
-                echo "<INPUT TYPE='HIDDEN' NAME='id' VALUE=".$id.">";              // Hereda el Id del registro que se esta modificando
+                echo "<INPUT TYPE='HIDDEN' NAME='id' id='id' VALUE=".$id.">";              // Hereda el Id del registro que se esta modificando
                 echo "<TH Class=titulo COLSPAN=5>Nuevos Datos Para la Referencia</TH>";
                 echo "<TR>";
                 echo "  <TD Class=captura>Referencia:</TD>";
@@ -3230,7 +3255,7 @@ elseif (isset($boton)) {                                                       /
                 echo "<H3>$titulo</H3>";
                 echo "<FORM METHOD=post NAME='eliminar' ACTION='inosea.php'>";  // Llena la forma con los datos actuales del registro
                 echo "<TABLE WIDTH=600 CELLSPACING=1>";
-                echo "<INPUT TYPE='HIDDEN' NAME='id' VALUE=".$id.">";              // Hereda el Id del registro que se esta eliminando
+                echo "<INPUT TYPE='HIDDEN' NAME='id' id='id' VALUE=".$id.">";              // Hereda el Id del registro que se esta eliminando
                 echo "<TH Class=titulo COLSPAN=5>Datos del Tipo de Recargo a Eliminar</TH>";
                 echo "<TR>";
                 echo "  <TD Class=partir>Referencia:</TD>";
@@ -3367,7 +3392,7 @@ elseif (isset($boton)) {                                                       /
                 echo "<H3>$titulo</H3>";
                 echo "<FORM METHOD=post NAME='muisca' ACTION='inosea.php' ONSUBMIT='return validar();'>";  // Llena la forma con los datos actuales del registro
                 echo "<TABLE WIDTH=600 CELLSPACING=1>";
-                echo "<INPUT TYPE='HIDDEN' NAME='id' VALUE=".$id.">";              // Hereda el Id del registro que se esta actualizando
+                echo "<INPUT TYPE='HIDDEN' NAME='id' id='id' VALUE=".$id.">";              // Hereda el Id del registro que se esta actualizando
                 echo "<TH Class=titulo COLSPAN=5>Datos del Master para Muisca</TH>";
                 echo "<TR>";
                 echo "  <TD Class=partir>Referencia:</TD>";
@@ -3430,7 +3455,7 @@ elseif (isset($boton)) {                                                       /
                 echo "<TR>";
                 echo "  <TD Class=partir>Información para Muisca:</TD>";
                 echo "  <TD Class=listar COLSPAN=5><TABLE WIDTH=100% CELLSPACING=1>";
-                echo "<INPUT TYPE='HIDDEN' NAME='idinfodian' VALUE=".$tm->Value('ca_idinfodian').">";
+                echo "<INPUT TYPE='HIDDEN' NAME='idinfodian' id='idinfodian' VALUE=".$tm->Value('ca_idinfodian').">";
                 echo "<TR>";
                 echo "  <TD Class=mostrar COLSPAN=3>Concepto:<BR><SELECT NAME='codconcepto'>";  // Llena el cuadro de lista con los valores de la tabla Parametros
                 $cu->MoveFirst();
@@ -3666,9 +3691,9 @@ elseif (isset($boton)) {                                                       /
                 echo "<H3>$titulo</H3>";
                 echo "<FORM METHOD=post NAME='muiscaCl' ACTION='inosea.php' ONSUBMIT='return validar();'>";  // Llena la forma con los datos actuales del registro
                 echo "<TABLE WIDTH=600 CELLSPACING=1>";
-                echo "<INPUT TYPE='HIDDEN' NAME='referencia' VALUE=\"".$id."\">";             // Hereda el Id de la Referencia que se esta modificando
-                echo "<INPUT TYPE='HIDDEN' NAME='idcliente' VALUE=\"".$cl."\">";              // Hereda el Id del Cliente que se esta modificando
-                echo "<INPUT TYPE='HIDDEN' NAME='house' VALUE=\"".$hb."\">";                    // Hereda el Id del Cliente que se esta modificando
+                echo "<INPUT TYPE='HIDDEN' NAME='referencia' id='referencia' VALUE=\"".$id."\">";             // Hereda el Id de la Referencia que se esta modificando
+                echo "<INPUT TYPE='HIDDEN' NAME='idcliente' id='idcliente' VALUE=\"".$cl."\">";              // Hereda el Id del Cliente que se esta modificando
+                echo "<INPUT TYPE='HIDDEN' NAME='house' id='house' VALUE=\"".$hb."\">";                    // Hereda el Id del Cliente que se esta modificando
                 echo "<TH Class=titulo COLSPAN=5 style='font-size: 11px; vertical-align:bottom'>$id<BR>Información del Cliente</TH>";
                 echo "<TR>";
                 echo "  <TD Class=listar style='font-size: 11px;'><B>ID Reporte:</B><BR>".$rp->Value('ca_consecutivo')."</TD>";
@@ -3739,7 +3764,7 @@ elseif (isset($boton)) {                                                       /
                 echo "</TR>";
                 echo "<TR>";
                 echo "  <TD Class=listar COLSPAN=5><TABLE WIDTH=100% CELLSPACING=1>";
-                echo "<INPUT TYPE='HIDDEN' NAME='idinfodian' VALUE=".$tm->Value('ca_idinfodian').">";
+                echo "<INPUT TYPE='HIDDEN' NAME='idinfodian' id='idinfodian' VALUE=".$tm->Value('ca_idinfodian').">";
 
                 echo "<TR>";
                 echo "  <TD Class=mostrar COLSPAN=2>Disposición/Carga:<BR><SELECT NAME='dispocarga'>";  // Llena el cuadro de lista con los valores de la tabla Parametros
@@ -3904,7 +3929,7 @@ elseif (isset($boton)) {                                                       /
                 echo "<H3>$titulo</H3>";
                 echo "<FORM METHOD=post NAME='muisca' ACTION='inosea.php' ONSUBMIT='return validar();'>";  // Llena la forma con los datos actuales del registro
                 echo "<TABLE WIDTH=600 CELLSPACING=1>";
-                echo "<INPUT TYPE='HIDDEN' NAME='id' VALUE=".$id.">";              // Hereda el Id del registro que se esta actualizando
+                echo "<INPUT TYPE='HIDDEN' NAME='id' id='id' VALUE=".$id.">";              // Hereda el Id del registro que se esta actualizando
                 echo "<TH Class=titulo COLSPAN=5>Generar el Archivo XML para sistema Muisca</TH>";
                 echo "<TR>";
                 echo "  <TD Class=partir>Referencia:</TD>";
@@ -3991,8 +4016,8 @@ elseif (isset($boton)) {                                                       /
                 echo "<CENTER>";
                 echo "<H3>$titulo</H3>";
                 echo "<FORM METHOD=post NAME='upload' ACTION='inosea.php' ONSUBMIT='return validar();' enctype='multipart/form-data'>";  // Llena la forma con los datos actuales del registro
-                echo "<INPUT TYPE='HIDDEN' NAME='referencia' VALUE=\"".$id."\">";             // Hereda el Id de la Referencia que se esta modificando
-                echo "<INPUT TYPE='HIDDEN' NAME='hbl' VALUE=\"".$hb."\">";                    // Hereda el Hbl que se esta modificando
+                echo "<INPUT TYPE='HIDDEN' NAME='referencia' id='referencia' VALUE=\"".$id."\">";             // Hereda el Id de la Referencia que se esta modificando
+                echo "<INPUT TYPE='HIDDEN' NAME='hbl' id='hbl' VALUE=\"".$hb."\">";                    // Hereda el Hbl que se esta modificando
                 echo "<TABLE WIDTH=600 CELLSPACING=1>";
                 echo "<TR>";
                 echo "  <TD Class=captura STYLE='vertical-align:top'>Adjuntar Hbl Definitivo :</TD>";
@@ -4045,7 +4070,11 @@ elseif (isset($boton)) {                                                       /
                     exit;
                 }
                 $ic =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
-                if (!$ic->Open("select DISTINCT ic.ca_referencia, ic.ca_idcliente, ic.ca_hbls, ic.ca_fchhbls, ic.ca_continuacion, ic.ca_continuacion_dest, ic.ca_contenedores, ic.ca_numpiezas, ic.ca_peso, rp.ca_consecutivo from tb_inoclientes_sea ic INNER JOIN tb_reportes rp ON (ic.ca_idreporte = rp.ca_idreporte) where ic.ca_referencia = '".$id."' order by ic.ca_idcliente")) {    // Trae de la Tabla de la Dian el último registro.
+                if (!$ic->Open("select DISTINCT ic.ca_referencia, ic.ca_idcliente, ic.ca_hbls, ic.ca_fchhbls, ic.ca_continuacion, ic.ca_continuacion_dest, 
+                        array_to_string(array(select (ca_idequipo||';'||ca_piezas||';'||ca_peso||';'||ca_volumen) 
+                            from tb_inoequiposxcliente tt 
+                            where tt.ca_referencia = ic.ca_referencia and tt.ca_idcliente = ic.ca_idcliente and tt.ca_hbls = ic.ca_hbls),'|') as ca_contenedores, 
+                    ic.ca_numpiezas, ic.ca_peso, rp.ca_consecutivo from tb_inoclientes_sea ic INNER JOIN tb_reportes rp ON (ic.ca_idreporte = rp.ca_idreporte) where ic.ca_referencia = '".$id."' order by ic.ca_idcliente")) {    // Trae de la Tabla de la Dian el último registro.
                     echo "<script>alert(\"".addslashes($dc->mErrMsg)."\");</script>";     // Muestra el mensaje de error
                     echo "<script>document.location.href = 'inosea.php';</script>";
                     exit;
@@ -5148,6 +5177,11 @@ elseif (isset($accion)) {                                                      /
                     echo "<script>document.location.href = 'inosea.php';</script>";
                     exit;
                 }
+                if (!$rs->Open("delete from tb_inoequiposxcliente where ca_referencia = '$id'")) {
+                    echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
+                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    exit;
+                }
                 if (!$rs->Open("delete from tb_inomaestra_sea where ca_referencia = '$id'")) {
                     echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                     echo "<script>document.location.href = 'inosea.php';</script>";
@@ -5165,15 +5199,39 @@ elseif (isset($accion)) {                                                      /
                 $fchantecedentes = (strlen($fchantecedentes)==0)?'null':"'".$fchantecedentes."'";
                 $imprimirorigen = ($imprimirorigen=="Sí")?"TRUE":"FALSE";
                 $cadena = "";
-                foreach($contenedores as $contenedor) {
+/*                foreach($contenedores as $contenedor) {
                     $cadena.= implode(";",$contenedor)."|";
                 }
                 $contenedores = substr($cadena,0,strlen($cadena)-1);
-                if (!$rs->Open("insert into tb_inoclientes_sea (ca_referencia, ca_idcliente, ca_idreporte, ca_hbls, ca_fchhbls, ca_imprimirorigen, ca_idproveedor, ca_proveedor, ca_numpiezas, ca_peso, ca_volumen, ca_numorden, ca_login, ca_continuacion, ca_continuacion_dest, ca_idbodega, ca_observaciones, ca_contenedores, ca_fchantecedentes, ca_fchcreado, ca_usucreado) values('$referencia', $idcliente, $idreporte, '$hbls', '$fchhbls', '$imprimirorigen', $idproveedor, '$proveedor', $numpiezas, $peso, $volumen, '$numorden', '$login', '$continuacion', '$continuacion_dest', '$idbodega', '', '$contenedores', $fchantecedentes, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
+ * 
+ */
+                if (!$rs->Open("insert into tb_inoclientes_sea (ca_referencia, ca_idcliente, ca_idreporte, ca_hbls, ca_fchhbls, ca_imprimirorigen, ca_idproveedor, ca_proveedor, ca_numpiezas, ca_peso, ca_volumen, ca_numorden, ca_login, ca_continuacion, ca_continuacion_dest, ca_idbodega, ca_observaciones,  ca_fchantecedentes, ca_fchcreado, ca_usucreado) values('$referencia', $idcliente, $idreporte, '$hbls', '$fchhbls', '$imprimirorigen', $idproveedor, '$proveedor', $numpiezas, $peso, $volumen, '$numorden', '$login', '$continuacion', '$continuacion_dest', '$idbodega', '', $fchantecedentes, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
                     echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                     echo "<script>document.location.href = 'inosea.php';</script>";
                     exit;
                 }
+
+                $values="";
+                foreach($contenedores as $contenedor) {
+                    if($contenedor["id"])
+                    {
+                        if($values)
+                            $values.=",";
+                        $values.="('$referencia', $idcliente, '".$contenedor["id"]."', ".($contenedor["ps"]?$contenedor["ps"]:"0")." , ".($contenedor["pz"]?$contenedor["pz"]:"0").",".($contenedor["vo"]?$contenedor["vo"]:"0")." ,  '$hbls' )";
+                    }
+                }
+
+                if($values)
+                {
+                    $sql="insert into tb_inoequiposxcliente (ca_referencia, ca_idcliente, ca_idequipo, ca_peso , ca_piezas , ca_volumen ,  ca_hbls ) values " .$values;
+                    if (!$rs->Open($sql))
+                    {
+
+                        echo $rs->mErrMsg;
+                        exit;
+                    }
+                }
+                
                 while (list ($clave, $val) = each ($facturacion)) {
                     if ($val[valor] != 0) {
                         if (!$rs->Open("insert into tb_inoingresos_sea (ca_referencia, ca_idcliente, ca_hbls, ca_factura, ca_fchfactura, ca_idmoneda, ca_neto, ca_valor, ca_reccaja, ca_observaciones, ca_tcambio, ca_fchcreado, ca_usucreado) values('$referencia', $idcliente, '$hbls', '$val[factura]', '$val[fchfactura]', '$val[moneda]', '$val[neto]', '$val[valor]', '', '$val[observacion]', '$val[tcambio]', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
@@ -5203,22 +5261,76 @@ elseif (isset($accion)) {                                                      /
                 settype($idbodega,"integer");
                 $fchantecedentes = (strlen($fchantecedentes)==0)?'null':"'".$fchantecedentes."'";
                 $imprimirorigen = ($imprimirorigen=="Sí")?"TRUE":"FALSE";
-                $cadena = "";
+/*                $cadena = "";
                 foreach($contenedores as $contenedor) {
                     $cadena.= implode(";",$contenedor)."|";
                 }
                 $contenedores = substr($cadena,0,strlen($cadena)-1);
-                if ( $hbl != $hbls ) {
-                    if (!$rs->Open("insert into tb_inoclientes_sea (ca_referencia, ca_idcliente, ca_idreporte, ca_hbls, ca_fchhbls, ca_imprimirorigen, ca_idproveedor, ca_proveedor, ca_numpiezas, ca_peso, ca_volumen, ca_numorden, ca_login, ca_continuacion, ca_continuacion_dest, ca_idbodega, ca_observaciones, ca_contenedores, ca_fchantecedentes, ca_fchcreado, ca_usucreado) values('$referencia', $idcliente, $idreporte, '$hbls', '$fchhbls', '$imprimirorigen', $idproveedor, '$proveedor', $numpiezas, $peso, $volumen, '$numorden', '$login', '$continuacion', '$continuacion_dest', '$idbodega', '', '$contenedores', $fchantecedentes, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
-                        echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
-                        echo "<script>document.location.href = 'inosea.php';</script>";
+ * 
+ */
+                if ( $hbl != $hbls ) {                    
+                    if (!$rs->Open("insert into tb_inoclientes_sea (ca_referencia, ca_idcliente, ca_idreporte, ca_hbls, ca_fchhbls, ca_imprimirorigen, ca_idproveedor, ca_proveedor, ca_numpiezas, ca_peso, ca_volumen, ca_numorden, ca_login, ca_continuacion, ca_continuacion_dest, ca_idbodega, ca_observaciones,  ca_fchantecedentes, ca_fchcreado, ca_usucreado) values('$referencia', $idcliente, $idreporte, '$hbls', '$fchhbls', '$imprimirorigen', $idproveedor, '$proveedor', $numpiezas, $peso, $volumen, '$numorden', '$login', '$continuacion', '$continuacion_dest', '$idbodega', '', $fchantecedentes, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
+                        //echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
+                        //echo "<script>document.location.href = 'inosea.php';</script>";
+                        echo $rs->mErrMsg;
                         exit;
                     }
-                }else {
-                    if (!$rs->Open("update tb_inoclientes_sea set ca_idreporte = $idreporte, ca_idcliente = '$idcliente', ca_hbls = '$hbls', ca_fchhbls = '$fchhbls', ca_imprimirorigen = '$imprimirorigen', ca_idproveedor = $idproveedor, ca_proveedor = '$proveedor', ca_numpiezas = $numpiezas, ca_peso = $peso, ca_volumen = $volumen, ca_numorden = '$numorden', ca_login = '$login', ca_continuacion = '$continuacion', ca_continuacion_dest = '$continuacion_dest', ca_idbodega = '$idbodega', ca_observaciones = '', ca_contenedores = '$contenedores', ca_fchantecedentes = $fchantecedentes, ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where oid = '$oid'")) {
-                        echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
-                        echo "<script>document.location.href = 'inosea.php';</script>";
+                    if (!$rs->Open("delete from tb_inoequiposxcliente where ca_referencia='$referencia' and ca_idcliente=$idcliente and ca_hbls='$hbls' "))
+                    {
+                        echo $rs->mErrMsg;
                         exit;
+                    }
+
+                    $values="";
+                    foreach($contenedores as $contenedor) {                            
+                        if($contenedor["id"])
+                        {    
+                            if($values)
+                                $values.=",";
+                            $values.="('$referencia', $idcliente, '".$contenedor["id"]."', ".($contenedor["ps"]?$contenedor["ps"]:"0")." , ".($contenedor["pz"]?$contenedor["pz"]:"0").",".($contenedor["vo"]?$contenedor["vo"]:"0")." ,  '$hbls' )";
+                        }
+                    }
+                    
+                    if($values)
+                    {
+                        $sql="insert into tb_inoequiposxcliente (ca_referencia, ca_idcliente, ca_idequipo, ca_peso , ca_piezas , ca_volumen ,  ca_hbls ) values " .$values;
+                        if (!$rs->Open($sql))
+                        {
+                            
+                            echo $rs->mErrMsg;
+                            exit;
+                        }
+                    }
+                }else {                    
+                    if (!$rs->Open("update tb_inoclientes_sea set ca_idreporte = $idreporte, ca_idcliente = '$idcliente', ca_hbls = '$hbls', ca_fchhbls = '$fchhbls', ca_imprimirorigen = '$imprimirorigen', ca_idproveedor = $idproveedor, ca_proveedor = '$proveedor', ca_numpiezas = $numpiezas, ca_peso = $peso, ca_volumen = $volumen, ca_numorden = '$numorden', ca_login = '$login', ca_continuacion = '$continuacion', ca_continuacion_dest = '$continuacion_dest', ca_idbodega = '$idbodega', ca_observaciones = '',  ca_fchantecedentes = $fchantecedentes, ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where oid = '$oid'")) {
+                        echo $rs->mErrMsg;
+                        exit;
+                    }
+                    $sql="delete from tb_inoequiposxcliente where ca_referencia='$referencia' and ca_idcliente=$idcliente and ca_hbls='$hbls' ";
+                    if (!$rs->Open($sql))
+                    {
+                        echo $rs->mErrMsg;
+                        exit;
+                    }
+                    
+                    $values="";
+                    foreach($contenedores as $contenedor) {
+                        if($contenedor["id"])
+                        {    
+                            if($values)
+                                $values.=",";
+                            $values.="('$referencia', $idcliente, '".$contenedor["id"]."', ".($contenedor["ps"]?$contenedor["ps"]:"0")." , ".($contenedor["pz"]?$contenedor["pz"]:"0").",".($contenedor["vo"]?$contenedor["vo"]:"0")." ,  '$hbls' )";
+                        }
+                    }
+                    
+                    if($values)
+                    {
+                        $sql="insert into tb_inoequiposxcliente (ca_referencia, ca_idcliente, ca_idequipo, ca_peso , ca_piezas , ca_volumen ,  ca_hbls ) values " .$values;
+                        if (!$rs->Open($sql))
+                        {
+                            echo $rs->mErrMsg;
+                            exit;
+                        }
                     }
                 }
 
@@ -5300,6 +5412,12 @@ elseif (isset($accion)) {                                                      /
                     echo "<script>document.location.href = 'inosea.php';</script>";
                     exit;
                 }
+                if (!$rs->Open("delete from tb_inoequiposxcliente where ca_referencia = '$referencia' and ca_idcliente = $idcliente and ca_hbls = '$hbl'")) {
+                    echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
+                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    exit;
+                }
+                
                 if (!$rs->Open("delete from tb_inoclientes_sea where ca_referencia = '$referencia' and ca_idcliente = $idcliente and ca_hbls = '$hbl'")) {
                     echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                     echo "<script>document.location.href = 'inosea.php';</script>";
