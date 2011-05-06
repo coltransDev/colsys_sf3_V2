@@ -67,11 +67,13 @@ class widgetsComponents extends sfComponents {
     }
     
     public function executeWidgetMultiIncoterms() {
-        $incoterms = ParametroTable::retrieveByCaso("CU062");
-        $this->incoterms = array();
+        $incoterms = ParametroTable::retrieveByCaso("CU062");        
+        //$this->incoterms = array();
+        $this->incoterms="[";
         foreach ($incoterms as $incoterm) {
-            $this->incoterms[] = array("valor" => $incoterm->getCaValor());
+            $this->incoterms.="['". $incoterm->getCaValor()."'],";
         }
+        $this->incoterms.="]";
     }
 
     public function executeTransportes() {
