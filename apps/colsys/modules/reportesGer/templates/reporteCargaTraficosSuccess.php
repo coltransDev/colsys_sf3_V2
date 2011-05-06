@@ -3,13 +3,19 @@ include_component("widgets", "widgetModalidad");
 include_component("widgets", "widgetPais");
 include_component("widgets", "widgetCiudad");
 include_component("widgets", "widgetLinea");
-include_component("widgets", "widgetIncoterms");
+//include_component("widgets", "widgetIncoterms");
+include_component("widgets", "widgetMultiIncoterms");
 include_component("widgets", "widgetAgente");
 include_component("widgets", "widgetSucursalAgente");
 $agente = $sf_data->getRaw("agente");
 $linea = $sf_data->getRaw("linea");
 $sucursalagente = $sf_data->getRaw("sucursalagente");
+$incoterms = $sf_data->getRaw("incoterms");
+//print_r($incoterms);
+//echo implode(",", $incoterms);
+$resul = $sf_data->getRaw("resul");
 ?>
+
 <div align="center" >
 <br />
 <h3> Reporte de carga tráficos </h3>
@@ -23,6 +29,7 @@ var tabs = new Ext.FormPanel({
 	labelWidth: 75,
 	border:true,
 	fame:true,
+    deferredRender:false,
 	width: 900,
 	standardSubmit: true,
         id: 'formPanel',
@@ -131,12 +138,13 @@ var tabs = new Ext.FormPanel({
                                                       hiddenValue:"<?=$idagente?>"
                                                       
                                                     }),
-                                    new WidgetIncoterms({title: 'Terminos',
-                                                      fieldLabel:"Terminos",
-                                                      id: 'terminos',
-                                                      hiddenName:"incoterms",
+
+                                          new WidgetMultiIncoterms({title: 'Terminos',
+                                                      fieldLabel:"Incoterms",
+                                                      id: 'incoterms',
+                                                      name: 'incoterms[]',                                                      
                                                       width:250,
-                                                      value:"<?=$incoterms?>"
+                                                      value:'<?=implode(",", $incoterms)?>'
                                                     })
                               ]
                          },
@@ -214,12 +222,12 @@ var tabs = new Ext.FormPanel({
             {
 		text: 'Continuar',
 		handler: function(){
-                    var tp = Ext.getCmp("tab-panel");
-
+                    var tp = Ext.getCmp("tab-panel");                    
                     var owner=Ext.getCmp("formPanel");
                     if( tp.getActiveTab().getId()=="estadisticas"){
                         owner.getForm().getEl().dom.action='<?=url_for("reportesGer/reporteCargaTraficos")?>';
-                    }
+                    }                    
+                    //alert(Ext.getCmp("incoterms").getValue());
                     owner.getForm().submit();
             }
 	}],
@@ -249,6 +257,7 @@ var tabs = new Ext.FormPanel({
             Ext.getCmp("sucursalagente").setValue(idsucagente_sel);
             $("#sucursalagente").val(suc_agente_sel);
         }
+        
     }
 
     }
@@ -283,6 +292,9 @@ if( $origen ){
 if( $destino ){
     echo " destino: ".$destino." - ";
 }
+if( $incoterms ){
+    echo "<br>Incoterms: ".implode(",", $incoterms)." - ";
+}
 
 ?>
 </h3>
@@ -290,7 +302,7 @@ if( $destino ){
 <br />
 </div>
 <table class="tableList" width="900px" border="1" id="mainTable" align="center">
-    <tr><td>Fecha<br>Embarque</td><td>Fecha<br>Arribo</td><td>Fecha<br>Referencia</td><td>Referencia</td><td>Origen</td><td>Destino</td><td>Linea</td><td>Contenedores</td><td>Teus</td><td>Piezas</td><td>Peso</td><td>Volumen</td></tr>
+    <tr><td>No</td><td>Fecha<br>Embarque</td><td>Fecha<br>Arribo</td><td>Fecha<br>Referencia</td><td>Referencia</td><td>Origen</td><td>Destino</td><td>Linea</td><td>Contenedores</td><td>Teus</td><td>Piezas</td><td>Peso</td><td>Volumen</td></tr>
 <?
     $ref="";
     $tvolumen=0;
@@ -298,10 +310,17 @@ if( $destino ){
     $tpeso=0;
     $teus=0;
 
+    $nreferencias=0;
+    $nhbls=0;
+    $nitem=1;
+    $totales = array();
     foreach($resul as $r)
     {
     //print_r($r);
 
+        $teus+=$r["teus"];
+        $totales["modalidad"][$r["ca_modalidad"]]["origen"][$r["ori_ca_nombre"]]+=$r["teus"];
+        $totales["modalidad"][$r["ca_modalidad"]]["destino"][$r["des_ca_ciudad"]]+=$r["teus"];
         if($r["ca_referencia"]==$ref)
         {
             $volumen="";
@@ -309,22 +328,31 @@ if( $destino ){
             $peso="";
         }
         else
-        {
+        {            
+
             $tvolumen+=$r["volumen"];
             $volumen=number_format($r["volumen"],2);
             $tpiezas+=$r["piezas"];
             $piezas=number_format($r["piezas"],0);
             $tpeso+=$r["peso"];
-            $peso=number_format($r["peso"],2);
-            $teus+=$r["teus"];
+            $peso=number_format($r["peso"],2);            
+            $nreferencias++;
+            $arrtmp=explode("-", $r["ca_fchreferencia"]);
+            //print_r($arrtmp);
+            //echo $arrtmp[4]."-";
 
         }
+        $nhbls+=$r["nhbls"];
+        $totales["años"][$arrtmp[0]][$arrtmp[1]]["volumen"]+=$volumen;
+        $totales["años"][$arrtmp[0]][$arrtmp[1]]["teus"]+=$r["teus"];
+        
 ?>
     <tr>
+        <td><?=$nitem++?></td>
         <td><?=$r["ca_fchembarque"]?></td>
         <td><?=$r["ca_fcharribo"]?></td>
         <td><?=$r["ca_fchreferencia"]?></td>
-        <td><?=$r["ca_referencia"]?></td>
+        <td><a href="/colsys_php/inosea.php?boton=Consultar&id=<?=$r["ca_referencia"]?>" target="_blank"><?=$r["ca_referencia"]?></td>
         <td><?=$r["ori_ca_ciudad"]?></td>
         <td><?=$r["des_ca_ciudad"]?></td>
         <td><?=$r["ca_nombre"]?></td>
@@ -338,11 +366,97 @@ if( $destino ){
     $ref=$r["ca_referencia"];
     }
 ?>
-    <tr><td colspan="8">Totales</td>
+    <tr><td colspan="9">Totales</td>
         <td align="right"><?=$teus?></td>
         <td align="right"><?=number_format($tpiezas,0)?></td><td align="right"><?=number_format($tpeso,2)?></td><td align="right"><?=number_format($tvolumen,2)?></td></tr>
 
 </table>
+<table class="tableList" width="900px" border="1" id="mainTable" align="center">
+    <tr>
+        <td>
+            <div style="float: left;width: 40%">
+                <table width="98%" align="left" class="tableList">
+                    <tr><th colspan="3">Resumen x Años </th></tr>
+                    <tr><th >Año-Mes</th><th>CMB</th><th>TEUS</th></tr>
+                    <?
+                    $totales1=$totales["años"];
+                    
+                    foreach($totales1 as $key => $valor)
+                    {
+            ?>
+                        <tr><th colspan="3"><?=$key?> </th></tr>
+            <?
+                        foreach($valor as $mes => $valor1)
+                        {
+
+
+            ?>
+                        <tr><td ><?=  Utils::mesLargo($mes)?></td><td><?=$valor1["volumen"]?></td><td><?=$valor1["teus"]?></td></tr>
+            <?
+                        }
+            /*          echo "<pre>";
+                      print_r($key);
+                      print_r($valor);
+                      echo "</pre>";
+             *
+             */
+                    }
+                    //$totales[$arrtmp[4]]["meses"][$arrtmp[2]]["volumen"]
+                    ?>
+                </table>
+
+            </div>
+            <div style="float: left;width: 60%">
+                <table width="98%" align="right" class="tableList">
+                <tr><th colspan="2">Resumen x Modalidad </th></tr>
+                <tr><td>No. Hbls</td><td><?=$nhbls?></td></tr>
+                <tr><td>No. Master</td><td><?=$nreferencias?></td></tr>
+
+                <?
+                $totales1=$totales["modalidad"];
+                foreach($totales1 as $modalidad => $valor)
+                {
+
+                    $ori=$valor["origen"];
+                    arsort($ori,SORT_NUMERIC);
+
+                    $des=$valor["destino"];
+                    arsort($des,SORT_NUMERIC);
+                    ?>
+                    <tr><th colspan="2"><?=$modalidad?></th></tr>
+                    <tr><td width="30%">Origen</td>
+                       <td width="100%">
+                            <table width="100%">
+                                <tr>
+                                    <th>País</th><th width="40%">Teus</th>
+                                </tr>
+                                <? foreach($ori as $key => $value){?><tr><td><?=$key?></td><td><?=$value?></td><?}?></tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr><td>Puerto LLegada</td>
+                        <td width="100%">
+                            <table width="100%">
+                                <tr>
+                                    <th>Puerto</th><th width="40%">Teus</th>
+                                </tr>
+                                <? foreach($des as $key => $value){?><tr><td><?=$key?></td><td><?=$value?></td><?}?></tr>
+                            </table>
+                        </td>
+                    </tr>
+            <?
+                }
+            ?>
+            </table>
+            </div>
+        </td>
+    </tr>
+</table>
 <?
 }
 ?>
+<script>
+    //Ext.getCmp('incoterms').mode="local";
+    //Ext.getCmp('incoterms').onStoreLoad();
+    //Ext.getCmp('incoterms').setValue('<?=implode(",", $incoterms)?>');
+    //Ext.getCmp('incoterms').setValue('<?=implode(",", $incoterms)?>');</script>
