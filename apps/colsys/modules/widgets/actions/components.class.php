@@ -70,8 +70,10 @@ class widgetsComponents extends sfComponents {
         $incoterms = ParametroTable::retrieveByCaso("CU062");        
         //$this->incoterms = array();
         $this->incoterms="[";
+        $incotmp="";
         foreach ($incoterms as $incoterm) {
-            $this->incoterms.="['". $incoterm->getCaValor()."'],";
+            $incotmp=($incotmp!="")?",":"";
+            $incotmp.="['". $incoterm->getCaValor()."']";
         }
         $this->incoterms.="]";
     }
