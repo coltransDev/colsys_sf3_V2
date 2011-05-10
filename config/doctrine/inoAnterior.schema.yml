@@ -69,6 +69,8 @@ InoMaestraSea:
     ca_usuconfirma_otm: string
     ca_fchmuisca: timestamp
     ca_usumuisca: string
+    ca_fchmbls: date
+    ca_carpeta: boolean
   relations:
     InoClientesSea:
       local: ca_referencia
