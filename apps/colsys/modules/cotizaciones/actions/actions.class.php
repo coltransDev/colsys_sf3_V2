@@ -750,6 +750,7 @@ class cotizacionesActions extends sfActions {
             $newCotizacion->setCaUsuactualizado(null);
             $newCotizacion->setCaFchanulado(null);
             $newCotizacion->setCaUsuanulado(null);
+            $newCotizacion->setCaEtapa(Cotizacion::EN_SEGUIMIENTO);
             $newCotizacion->save($conn);
 
             $productos = $cotizacion->getCotProductos();
