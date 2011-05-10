@@ -9,8 +9,8 @@ $button[0]["link"]= "/index.html";
 if( $action!="index" ){
 	$button[1]["name"]="Inicio ";
 	$button[1]["tooltip"]="Pagina inicial del módulo de Reporte de Negocios";
-	$button[1]["image"]="22x22/gohome.gif"; 			
-	$button[1]["link"]= "/colsys_php/reportenegocio.php";
+	$button[1]["image"]="22x22/gohome.gif";
+	$button[1]["link"]= "/reportesNeg/index";
 	
 }
 

@@ -1,17 +1,20 @@
 <script type="text/javascript" >
     function volver(){
         <?
-        if( $reporte->getCaImpoexpo()=="Exportación" ){
+            if($reporte->getCaTiporep()>0)
+            {
+                $url = "/reportesNeg/consultaReporte/id/".$reporte->getCaIdreporte()."/modo/".$reporte->getCaTransporte()."/impoexpo/".$reporte->getCaImpoexpo();
+            }
+            else if( $reporte->getCaImpoexpo()=="Exportación" ){
+                $url = "/colsys_sf/reportesNeg/consultaReporte?modo=expo&reporteId=".$reporte->getCaIdreporte();
+            }else{
+                $url = "/colsys_php/reportenegocio.php?boton=Consultar&id=".$reporte->getCaIdreporte();
+            }
         ?>
-            document.location = "<?="/colsys_sf/reportesNeg/consultaReporte?modo=expo&reporteId=".$reporte->getCaIdreporte()."&token=".md5(time())?>";
-        <?
-        }else{
-        ?>
-            document.location = "<?="/colsys_php/reportenegocio.php?boton=Consultar&id=".$reporte->getCaIdreporte()?>"
-        <?
-        }
-        ?>
+            document.location = "<?=$url?>";
     }
+    
+    
 </script>
 <?
 if($reporte->getCaTiporep()>0)
