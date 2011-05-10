@@ -42,7 +42,7 @@ $ticket = $sf_data->getRaw( "ticket" );
 		}
         echo $ticket->getCaText();
         echo "<br /><br />";
-        echo link_to("Haga click aca para ver el ticket completo", "pm/VerTicket?format=email&id=".$ticket->getCaIdticket(), array("target"=>"_blank"));
+        echo link_to("Haga click aca para ver el ticket completo", "pm/verTicket?format=email&id=".$ticket->getCaIdticket(), array("target"=>"_blank"));
        
     }
 
