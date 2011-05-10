@@ -2718,6 +2718,10 @@ class reportesNegActions extends sfActions
                         if( $t->cantidad){
                             $tarifa->setCaCantidad( $t->cantidad );
                         }
+                        else
+                        {
+                            $tarifa->setCaCantidad( 0);
+                        }
 
                         if( $t->neta_tar ){
                             $tarifa->setCaNetaTar( $t->neta_tar );
