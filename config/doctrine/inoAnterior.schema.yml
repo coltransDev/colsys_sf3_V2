@@ -212,7 +212,36 @@ InoEquiposSea:
        local: ca_idconcepto
        foreign: ca_idconcepto
        type: one
+       
+InoEquipoxClienteSea:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: sea
+  tableName: tb_inoequipos_sea
+  columns:
+    ca_referencia:
+      type: string
+      primary: true
+    ca_idcliente:
+      type: integer
+      primary: true
+    ca_idequipo:
+      type: integer
+      primary: true
+    ca_hbls:
+      type: string
+      primary: true
+    ca_volumen: numeric
+    ca_peso: numeric
+    ca_piezas: integer    
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string
 
+    
 
 InoContratosSea:
   options:
