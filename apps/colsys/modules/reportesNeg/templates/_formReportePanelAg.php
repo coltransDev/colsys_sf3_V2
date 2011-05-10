@@ -111,7 +111,7 @@ include_component("widgets", "widgetContactoCliente");
                             tabIndex:1
                         }
                         <?
-                        if($dep==14 || $dep==13)
+                        if($dep==14 || $dep==13 || $dep==16)
                         {
                         ?>
                         ,                        
