@@ -293,7 +293,7 @@ class reportesNegActions extends sfActions
 
         if( ($this->idimpo && $criterio) || !$this->idimpo ){
             $con = Doctrine_Manager::getInstance()->connection();
-            $sql="select * from vi_reportes2 where 1=1 $condicion limit 80";
+            $sql="select * from vi_reportes2 where 1=1 $condicion limit 150";
             $st = $con->execute($sql);
             $this->reportes = $st->fetchAll();
         }
@@ -530,7 +530,7 @@ class reportesNegActions extends sfActions
             $this->impoexpo=constantes::IMPO;
             $this->pais2="C0-057";
         }
-        else if($this->dep==13 || $this->dep==18 )
+        else if($this->dep==13 || $this->dep==18 || $this->dep==16  )
         {
             $this->impoexpo=constantes::IMPO;
             $this->pais2="C0-057";
@@ -899,7 +899,7 @@ class reportesNegActions extends sfActions
 
             if($request->getParameter("consig") )
             {
-                if(($reporte->getCaImpoexpo()==constantes::IMPO || $reporte->getCaImpoexpo()==constantes::TRIANGULACION) && $request->getParameter("consig")>4 )
+                if(($reporte->getCaImpoexpo()==constantes::IMPO || $reporte->getCaImpoexpo()==constantes::OTMDTA || $reporte->getCaImpoexpo()==constantes::OTMDTA1 || $reporte->getCaImpoexpo()==constantes::TRIANGULACION) && $request->getParameter("consig")>4 )
                 {
                     $reporte->setCaIdconsignatario($request->getParameter("consig"));
                     if($request->getParameter("continuacion")== "OTM")
@@ -1156,6 +1156,29 @@ class reportesNegActions extends sfActions
                         $cotseguimientos->aprobarSeguimiento($param);
                     }
                 }
+                else if($reporte->getCaIdcotizacion()>0 &&  $reporte->getCaIdproducto()=="")
+                {
+                    $cotizacion = Doctrine::gettable("Cotizacion")->findOneBy("ca_consecutivo", $reporte->getCaIdcotizacion());
+                    if($cotizacion)
+                    {
+                        $param=array();
+                        $param["cotizacion"]=$reporte->getCaIdcotizacion();
+                        $param["etapa"]="APR";
+                        $param["seguimiento"]="";
+                        $param["fchseguimiento"]="";
+                        $param["user"]=$this->getUser()->getUserId();
+
+                        $seg = Doctrine::getTable("CotSeguimiento")
+                                                 ->createQuery("s")
+                                                 ->where("s.ca_idcotizacion = ? and s.ca_etapa=?", array($cotizacion->getCaIdcotizacion(),'APR'))
+                                                 ->execute();
+                    }
+                    if(count($seg)<=0)
+                    {
+                        $cotseguimientos = new CotSeguimiento();
+                        $cotseguimientos->aprobarSeguimiento($param);
+                    }
+                }
                 if($request->getParameter("idproductootm"))
                 {
                     $idproductootm=$request->getParameter("idproductootm");
@@ -1177,6 +1200,30 @@ class reportesNegActions extends sfActions
                         $cotseguimientos->aprobarSeguimiento($param);
                     }
                 }
+                else if($reporte->getCaIdcotizacionotm()!="" && $reporte->getCaIdproductootm()=="")
+                {
+                    $cotizacion = Doctrine::gettable("Cotizacion")->findOneBy("ca_consecutivo", $reporte->getCaIdcotizacionotm());
+                    if($cotizacion)
+                    {
+                        $param=array();
+                        $param["cotizacion"]=$reporte->getCaIdcotizacionotm();
+                        $param["etapa"]="APR";
+                        $param["seguimiento"]="";
+                        $param["fchseguimiento"]="";
+                        $param["user"]=$this->getUser()->getUserId();
+
+                        $seg = Doctrine::getTable("CotSeguimiento")
+                                                 ->createQuery("s")
+                                                 ->where("s.ca_idcotizacion = ? and s.ca_etapa=?", array($cotizacion->getCaIdcotizacion(),'APR'))
+                                                 ->execute();
+                    }
+                    if(count($seg)<=0)
+                    {
+                        $cotseguimientos = new CotSeguimiento();
+                        $cotseguimientos->aprobarSeguimiento($param);
+                    }
+                }
+
                 if($request->getParameter("seguros-checkbox")== "on" )
                 {
                     $repSeguro = Doctrine::getTable("RepSeguro")->findOneBy("ca_idreporte", $reporte->getCaIdreporte() );
@@ -2675,9 +2722,14 @@ class reportesNegActions extends sfActions
                         if( $t->neta_tar ){
                             $tarifa->setCaNetaTar( $t->neta_tar );
                         }
+                        else
+                            $tarifa->setCaNetaTar( 0 );
+
                         if( $t->neta_min ){
                             $tarifa->setCaNetaMin( $t->neta_min );
                         }
+                        else
+                            $tarifa->setCaNetaMin( 0 );
 
                         if( $t->neta_idm ){
                             $tarifa->setCaNetaIdm( $t->neta_idm );
@@ -2712,6 +2764,8 @@ class reportesNegActions extends sfActions
                         if( $t->cobrar_min ){
                             $tarifa->setCaCobrarMin( $t->cobrar_min );
                         }
+                        else
+                            $tarifa->setCaCobrarMin( 0 );
 
                         if( $t->cobrar_idm ){
                             $tarifa->setCaCobrarIdm( $t->cobrar_idm );
@@ -2804,8 +2858,7 @@ class reportesNegActions extends sfActions
 
                     if( $t->reportar_idm || $t->cobrar_idm ){
                         
-                        $tarifa->setCaIdmoneda( ($t->reportar_idm!="")?$t->reportar_idm:$t->cobrar_idm );
-                        //echo $tarifa->getCaIdmoneda();
+                        $tarifa->setCaIdmoneda( ($t->reportar_idm!="")?$t->reportar_idm:$t->cobrar_idm );                       
                     }
                     else
                     {
@@ -2815,15 +2868,13 @@ class reportesNegActions extends sfActions
 
                     if( $t->cobrar_tar ){
                         $tarifa->setCaCobrarTar( $t->cobrar_tar );
-                    }else{
-                        //if(!$tarifa->getCaCobrarTar())
+                    }else{                        
                             $tarifa->setCaCobrarTar( 0 );
                     }
 
                     if( $t->cobrar_min ){
                         $tarifa->setCaCobrarMin( $t->cobrar_min );
-                    }else{
-                        //if($tarifa->getCaCobrarMin()=="")
+                    }else{                        
                             $tarifa->setCaCobrarMin( 0 );
                     }                    
 

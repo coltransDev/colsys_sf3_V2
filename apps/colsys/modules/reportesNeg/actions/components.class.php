@@ -379,7 +379,7 @@ class reportesNegComponents extends sfComponents
         $this->email="";
         //echo $this->dep;
         //13 es sistemas
-        if($this->dep==13 || $this->dep==14)
+        if($this->dep==13 || $this->dep==14  || $this->dep==16)
         {
             $this->modo=constantes::MARITIMO;
             $this->impoexpo=constantes::IMPO;
@@ -421,7 +421,7 @@ class reportesNegComponents extends sfComponents
         $this->email="";
         //echo $this->dep;
         //13 es sistemas
-        if($this->dep==13 || $this->dep==14)
+        if($this->dep==13 || $this->dep==14 || $this->dep==16)
         {
             $this->modo=constantes::MARITIMO;
             $this->impoexpo=constantes::IMPO;
