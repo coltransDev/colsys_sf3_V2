@@ -199,18 +199,18 @@ if($reporte->getCaIdclienteag()>0)
 
 if($reporte->getCaIdclientefac()>0)
 {
-    $pdf->Ln(2);
-    $cliente = $reporte->getClienteFac();
+    $pdf->Ln(2);    
+    $cliente = $reporte->getClienteFac();    
     $pdf->SetWidths ( array (25, 25, 85, 25, 40 ) );
     $pdf->SetFills ( array (1, 0, 0, 0, 0 ) );
     $pdf->SetStyles ( array ("B", "B", "", "B", "" ) );
     $pdf->Row ( array ('Facturar:', 'Nombre:', $cliente->getCaCompania ()." Nit : ".$cliente->getCaIdcliente()."-".$cliente->getCaDigito(), $reporte->getCaOrdenClie () != "''" ? 'Orden:' : ' ', $reporte->getCaOrdenClie () != "''" ? $reporte->getCaOrdenClie () : " " ) );
-    $pdf->SetWidths ( array (5, 20, 70, 25, 80 ) );
-    $pdf->Row ( array ('', 'Contacto:', utf8_decode($contacto->getNombre ()) , 'Dirección:', str_replace ( "|", " ", utf8_decode($cliente->getCaDireccion ()) ) . $cliente->getCaComplemento () ) );
+    $pdf->SetWidths ( array (5, 40, 155 ) );
+    $pdf->Row ( array ('',  'Dirección:', str_replace ( "|", " ", utf8_decode($cliente->getCaDireccion ()) ) . $cliente->getCaComplemento () ) );
     $pdf->SetWidths ( array (5, 20, 40, 15, 30, 18, 72 ) );
     $pdf->SetFills ( array (1, 0, 0, 0, 0, 0, 0 ) );
     $pdf->SetStyles ( array ("B", "B", "", "B", "", "B", "" ) );
-    $pdf->Row ( array ('', 'Teléfono:', $cliente->getCaTelefonos (), 'Fax:', $cliente->getCaFax (), 'E-mail:', $contacto->getCaEmail () ) );
+    $pdf->Row ( array ('', 'Teléfono:', $cliente->getCaTelefonos (), 'Fax:', $cliente->getCaFax (), 'E-mail:', $cliente->getCaEmail () ) );
 }
 
 if($reporte->getCaIdclienteotro()>0)
@@ -823,7 +823,7 @@ if( !$soloAduana && $reporte->getCaTiporep()!="3" ){
     }
   //  $pdf->flushGroup();
   //  $pdf->beginGroup();
-    if( $reporte->getCaImpoexpo () == Constantes::IMPO || $reporte->getCaImpoexpo ()==Constantes::OTMDTA || $reporte->getCaImpoexpo ()==Constantes::OTMDTA1   ){
+    if( $reporte->getCaImpoexpo () == Constantes::IMPO || $reporte->getCaImpoexpo ()==Constantes::OTMDTA || $reporte->getCaImpoexpo ()==Constantes::OTMDTA1 || $reporte->getCaImpoexpo () == Constantes::TRIANGULACION   ){
         $sub_mem = 'Recargo Local';
         $pdf->Ln ( 3 );
         $gastos = $reporte->getRecargos ( "local" );
@@ -899,7 +899,7 @@ if( !$soloAduana && $reporte->getCaTiporep()!="3" ){
 //    $pdf->flushGroup();
 }
 
-if( ($reporte->getCaImpoexpo()==constantes::IMPO && $reporte->getCaColmas()=="Sí") ||($reporte->getCaTiporep()=="3") ||($reporte->getCaImpoexpo()==constantes::EXPO /*&& ($repexpo->getCaIdsia()==17 || $repexpo->getCaIdsia()==9 )*/ ) ){
+if( ( ($reporte->getCaImpoexpo()==constantes::IMPO || $reporte->getCaImpoexpo ()==Constantes::OTMDTA || $reporte->getCaImpoexpo ()==Constantes::OTMDTA1 ) && $reporte->getCaColmas()=="Sí") ||($reporte->getCaTiporep()=="3") ||($reporte->getCaImpoexpo()==constantes::EXPO /*&& ($repexpo->getCaIdsia()==17 || $repexpo->getCaIdsia()==9 )*/ ) ){
 
 	$costosAduana = $reporte->getCostos ( "aduana" );
 	if (count ( $costosAduana )) {
