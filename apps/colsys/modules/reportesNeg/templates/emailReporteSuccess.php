@@ -1,10 +1,7 @@
 <?
 //echo $tipo;
-$reporte = $sf_data->getRaw("reporte");
-$agente = $sf_data->getRaw("agente");
-$trayecto = $sf_data->getRaw("trayecto");
-$proveedor = $sf_data->getRaw("proveedor");
-$mensaje_comercial = $sf_data->getRaw("mensaje_comercial");
+
+
 ?>
 <table width="100%" border="0" cellspacing="5" cellpadding="0">
     <!-- LOGO -->
@@ -18,6 +15,12 @@ $mensaje_comercial = $sf_data->getRaw("mensaje_comercial");
 <?
             if($tipo=="AG")
             {
+                $mensaje_comercial = $sf_data->getRaw("mensaje_comercial");
+                $reporte = $sf_data->getRaw("reporte");
+                $agente = $sf_data->getRaw("agente");
+                $trayecto = $sf_data->getRaw("trayecto");
+                $proveedor = $sf_data->getRaw("proveedor");
+
 ?>
             <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>No:<?=$reporte->getCaConsecutivo()?></b></font><br />
             <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Agente:</b><?=$agente?></font><br />
