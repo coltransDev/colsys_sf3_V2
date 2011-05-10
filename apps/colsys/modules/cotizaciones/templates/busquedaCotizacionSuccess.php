@@ -151,9 +151,19 @@ $pagerLayout->display();
                 Sin trayectos</td>             
                 <td width="35%" class="listar">
                     <?
-                    echo isset($estados[$cotizacion->getCaEtapa()]) && $cotizacion->getCaFchanulado()=="" ?$estados[$cotizacion->getCaEtapa()]:"";
-                    if( ($cotizacion->getCaEtapa()==Cotizacion::EN_SEGUIMIENTO || $cotizacion->getCaEtapa()=="" )&& $cotizacion->getCaFchanulado() =="" ){
-                        $seg = $cotizacion->getUltSeguimiento();
+
+                    $seg = $cotizacion->getUltSeguimiento();
+                    if($seg)
+                    {
+                        $eta=isset($estados[$seg->getCaEtapa()]) && $cotizacion->getCaFchanulado()=="" ?$seg->getCaEtapa():Cotizacion::EN_SEGUIMIENTO;
+                    }
+                    else
+                    {
+                        $eta=Cotizacion::EN_SEGUIMIENTO;
+                    }
+                    echo $estados[$eta];
+                    if( ($eta==Cotizacion::EN_SEGUIMIENTO )&& $cotizacion->getCaFchanulado() =="" ){
+                        //$seg = $cotizacion->getUltSeguimiento();
                     ?>
                     <a style="cursor:pointer"  onclick="window.open('<?=url_for("cotseguimientos/formSeguimiento?idcotizacion=".$cotizacion->getCaIdcotizacion())?>')" title="Haga click aca para crear un seguimiento. Se abrira una nueva ventana.">
                             <?
