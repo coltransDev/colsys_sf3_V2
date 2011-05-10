@@ -63,6 +63,8 @@ class CotSeguimiento extends BaseCotSeguimiento
         else if($coti!="")
         {
             $seguimiento->setCaIdcotizacion( $cotizacion->getCaIdcotizacion() );
+            $cotizacion->setCaEtapa($etapa);
+            $cotizacion->save();
         }
 
 
