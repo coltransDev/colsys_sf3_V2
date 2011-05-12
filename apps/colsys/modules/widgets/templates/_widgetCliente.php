@@ -51,7 +51,8 @@ WidgetCliente = function( config ){
         triggerAction: 'all',
         emptyText:'',
         selectOnFocus: true,        
-        lazyRender:true,                
+        lazyRender:true,  
+        submitValue: true,
         emptyText: 'Escriba el nombre del cliente...'        
 
     });
