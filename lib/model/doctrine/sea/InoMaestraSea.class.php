@@ -46,4 +46,19 @@ class InoMaestraSea extends BaseInoMaestraSea
             $email=null;
         return $email;
     }
+    
+    static public function getUltEmailR($referencia) {
+ 
+        $email = Doctrine::getTable("Email")
+                        ->createQuery("e")
+                        ->select("ca_subject")
+                        ->addWhere("ca_tipo=? and ca_subject like ?", array('Antecedentes',"%" . $referencia ))
+                        ->addOrderBy("e.ca_idemail DESC")
+                        //->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                        ->fetchOne();
+                //print_r($email);
+        return $email;
+    }
+    
+    
 }
