@@ -9,7 +9,7 @@ if($reporte->getCaIdreporte())
     include_component("reportesNeg","panelConceptosFletes", array("reporte"=>$reporte));
     $panelConceptos = true;
 
-    if($reporte->getCaContinuacion()=="OTM")
+    if($reporte->getEsOtm())
     {
         include_component("reportesNeg","panelConceptosOtm", array("reporte"=>$reporte));
         $panelConceptosOtm = true;
