@@ -477,14 +477,7 @@ class cotseguimientosActions extends sfActions
 			$this->forward404();
 		}		
 		$this->vendedor=$this->getUser()->getUserId();
-		$this->usuarios = Doctrine::getTable("Usuario")
-                                    ->createQuery("u")
-                                    ->select("u.*")
-                                    ->innerJoin("u.Cotizacion")
-                                    ->distinct()
-                                    ->orderBy("u.ca_nombre")
-									->where("u.ca_departamento='Comercial' and u.ca_activo=true")
-                                    ->execute();
+		$this->usuarios = UsuarioTable::getComerciales();
 
 		$this->sucursales = Doctrine::getTable("Sucursal")
                                     ->createQuery("s")
