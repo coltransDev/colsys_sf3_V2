@@ -97,20 +97,123 @@ class antecedentesActions extends sfActions {
      * @param sfRequest $request A request object
      */
     public function executeListadoReferencias(sfWebRequest $request) {
-
+        //error_reporting(E_ALL);
         $this->user=$this->getUser();
         $this->format = $this->getRequestParameter("format");
-        $q = Doctrine::getTable("InoMaestraSea")
+        
+        
+/*            $q = Doctrine::getTable("InoMaestraSea")
                         ->createQuery("m")
-                        ->select("m.*")
+                        ->select("m.ca_referencia,m.ca_fchreferencia,m.ca_provisional,m.ca_modalidad,m.ca_motonave,m.ca_fchembarque,m.ca_fcharribo,m.ca_usucreado,o.ca_ciudad ca_ciu_origen,d.ca_ciudad ca_ciu_destino,u.ca_idsucursal,m.ca_fchmuisca")
+                        ->innerJoin("m.Origen o")
+                        ->innerJoin("m.Destino d")
                         ->addWhere("m.ca_fchreferencia>=?", "2011-02-28")
-                        ->innerJoin('m.InoClientesSea ic')
-                        ->innerJoin('ic.Reporte r')
-                        ->innerJoin('m.UsuCreado u')
-                        ->addWhere("(m.ca_provisional = ? and ((m.ca_modalidad=? and u.ca_idsucursal=?) or m.ca_modalidad<>?) ) OR (m.ca_provisional = ? AND ca_fchmuisca IS NULL)", array(true,constantes::FCL,$this->user->getIdSucursal(),constantes::FCL,false));
-
+                        //->leftJoin('m.InoClientesSea ic')                        
+                        ->innerJoin('m.UsuCreado u');
+                
         $q->distinct();
-        $this->referencias = $q->execute();
+        if($this->format=="")
+        {
+//            $q->addWhere("(m.ca_provisional = ? and ((m.ca_modalidad=? and u.ca_idsucursal=?) or m.ca_modalidad<>?) )", array(true,constantes::FCL,$this->user->getIdSucursal(),constantes::FCL));
+            $q->addWhere("(m.ca_provisional = ? and ((m.ca_modalidad=? and u.ca_idsucursal=?) or m.ca_modalidad<>?) ) OR (m.ca_provisional = ? AND m.ca_fchmuisca IS NULL)", array(true,constantes::FCL,$this->user->getIdSucursal(),constantes::FCL,false));
+        }
+        else
+        {
+            $q->addWhere("(m.ca_provisional = ? and ((m.ca_modalidad=? and u.ca_idsucursal=?) or m.ca_modalidad<>?) ) OR (m.ca_provisional = ? AND m.ca_fchmuisca IS NULL)", array(true,constantes::FCL,$this->user->getIdSucursal(),constantes::FCL,false));
+        }
+       */
+        $where="";
+        if($this->format=="")
+        {
+            $where = " and (m.ca_provisional = true and ((m.ca_modalidad='".constantes::FCL."' and u.ca_idsucursal='".$this->user->getIdSucursal()."') or m.ca_modalidad<>'".constantes::FCL."') ) ";
+            
+        }
+        else
+        {
+            $where =" and ( (m.ca_provisional = true and ((m.ca_modalidad='".constantes::FCL."' and u.ca_idsucursal='".$this->user->getIdSucursal()."') or m.ca_modalidad<>'".constantes::FCL."') ) OR (m.ca_provisional = false AND m.ca_fchmuisca IS NULL ))";
+        }
+        
+        $sql="select m.ca_referencia,m.ca_fchreferencia,m.ca_provisional,m.ca_modalidad,m.ca_motonave,m.ca_fchembarque,m.ca_fcharribo,m.ca_usucreado,ori.ca_ciudad ca_ciu_origen,des.ca_ciudad ca_ciu_destino,u.ca_idsucursal,m.ca_fchmuisca
+                from tb_inomaestra_sea m
+                JOIN tb_ciudades ori ON ori.ca_idciudad = m.ca_origen
+                JOIN tb_ciudades des ON des.ca_idciudad = m.ca_destino
+                JOIN control.tb_usuarios u ON u.ca_login = m.ca_usucreado
+                where m.ca_fchreferencia>='2011-03-01' $where" ;
+            
+            $con = Doctrine_Manager::getInstance()->connection();
+            $st = $con->execute($sql);
+            $referencias = $st->fetchAll();
+       
+/*        $this->refBloqueadas=$referencias;//array();
+        $this->refRechazadas=$referencias;//array();
+        $this->refSinMuisca=$referencias;//array();*/
+        $this->refBloqueadas=array();
+        $this->refRechazadas=array();
+        $this->refSinMuisca=array();
+        foreach($referencias as $ref)
+        {
+            if( trim($ref["ca_provisional"])=="1" )
+            {
+                $email=InoMaestraSea::getUltEmailR(trim($ref["ca_referencia"]));
+                if($this->format=="maritimo" )
+                {
+                    if($email)
+                    {
+                        if( strpos($email->getCaSubject(), 'Envio de Antecedentes')!==false  )
+                            $this->refBloqueadas[]=$ref;
+                        else if($email && $email->getCaSubject()== 'Rechazo de Antecedentes '.$ref["ca_referencia"])
+                            $this->refRechazadas[]=$ref;
+                    }
+                }
+                else
+                {
+                    //if($email)
+                    {
+                        if($email== null )
+                        {
+                            $this->refBloqueadas[]=$ref;
+                        }
+                        else if($email  && $email->getCaSubject()== 'Rechazo de Antecedentes '.$ref["ca_referencia"])
+                            $this->refRechazadas[]=$ref;
+                    }
+                }                
+            }
+            else
+            {
+                $this->refSinMuisca[]=$ref;
+            }
+        }
+
+        //$this->referencias = $q->fetchArray();
+
+        $this->sucursal=$this->user->getIdSucursal();
+
+        $this->login=$this->user->getUserId();
+        if($this->sucursal=="BOG")
+        //if($this->login=="maquinche")
+        {
+  /*          $q = Doctrine::getTable("InoMaestraSea")
+                            ->createQuery("m")                             
+                            ->select("m.ca_referencia,m.ca_modalidad,m.ca_motonave,m.ca_fchembarque,m.ca_fcharribo,m.ca_usucreado,o.ca_ciudad ca_ciu_origen,d.ca_ciudad ca_ciu_destino")
+                            ->innerJoin("m.Origen o")
+                            ->innerJoin("m.Destino d")
+                            ->where("m.ca_fchmuisca is not null and m.ca_carpeta=false");
+            $this->refcarpetas = $q->fetchArray();
+*/            
+            $sql="select m.ca_referencia,m.ca_modalidad,m.ca_motonave,m.ca_fchembarque,m.ca_fcharribo,m.ca_usucreado,ori.ca_ciudad ca_ciu_origen,des.ca_ciudad ca_ciu_destino
+                from tb_inomaestra_sea m
+                JOIN tb_ciudades ori ON ori.ca_idciudad = m.ca_origen
+                JOIN tb_ciudades des ON des.ca_idciudad = m.ca_destino
+                where m.ca_fchmuisca is not null and m.ca_carpeta=false";
+            
+            $con = Doctrine_Manager::getInstance()->connection();
+            $st = $con->execute($sql);
+            $this->refcarpetas = $st->fetchAll();
+
+       
+//            print_r($this->refcarpetas);
+            //exit;
+        }
 
         $this->sufijos = ParametroTable::retrieveByCaso("CU010");
 
@@ -124,6 +227,7 @@ class antecedentesActions extends sfActions {
      */
     public function executeGuardarPanelMasterAntecedentes(sfWebRequest $request) {
 
+        $this->user=$this->getUser();
         $conn = Doctrine::getTable("InoMaestraSea")->getConnection();
         $conn->beginTransaction();
         try {
@@ -181,9 +285,11 @@ class antecedentesActions extends sfActions {
             $master->setCaFchreferencia($fchllegada);
             $master->setCaIdlinea($idlinea);
             $master->setCaMbls($mbls);
-            $master->setCafchmbls($fchmaster);
+            $master->setCaFchmbls($fchmaster);
             $master->setCa_ciclo($viaje);
             $master->setCaProvisional(true);
+            if($this->user->getIdSucursal()=="BOG")
+                $master->setCaCarpeta(true);
 
             $master->save($conn);
 
@@ -482,6 +588,8 @@ class antecedentesActions extends sfActions {
         }
         $this->filenames = $filenames;
     }
+    
+    
 
     /**
      *
@@ -946,4 +1054,141 @@ exit;
        }
        $this->setTemplate("responseTemplate");
    }
+    
+    public function executeArchivarReferencia(sfWebRequest $request)  
+    {
+        try{
+            $numref = str_replace("|", ".", $request->getParameter("referencia"));
+            $this->forward404Unless($numref);
+            $ref = Doctrine::getTable("InoMaestraSea")->find($numref);
+            $this->forward404Unless($ref);
+            $ref->setCaCarpeta(true);
+            $ref->save();  
+            $this->responseArray = array("success" => true);
+       }
+       catch(Exception $e)
+       {
+           $this->responseArray = array("success" => false,"errorInfo"=>$e->getMessage());
+       }
+       $this->setTemplate("responseTemplate");
+    }
+ 
+    
+    
+    public function executeEmailColoader(sfWebRequest $request) {
+
+        $numref = str_replace("|", ".", $request->getParameter("ref"));
+        $this->forward404Unless($numref);
+
+        $ref = Doctrine::getTable("InoMaestraSea")->find($numref);
+        $this->forward404Unless($ref);
+
+        $this->setLayout($format);
+
+        $this->ref = $ref;
+        $this->user = $this->getUser();
+        $this->format = $format;
+
+/*        $usuarios = Doctrine::getTable("Usuario")
+                        ->createQuery("u")
+                        ->addWhere("u.ca_departamento = ? and u.ca_activo=true or (u.ca_login =? or u.ca_login =? or u.ca_login =? ) ", array("Marítimo","nmrey","mflecompte","mjortiz"))
+                        ->addOrderBy("u.ca_email")
+                        ->execute();
+        $contactos = array();
+        foreach ($usuarios as $usuario) {
+            if ($usuario->getCaEmail() != "-") {
+                $contactos[] = $usuario->getCaEmail();
+            }
+        }
+*/
+        $this->conta = ParametroTable::retrieveByCaso("CU098", $this->ref->getCaIdlinea());
+        if($this->conta[0])
+        {        
+            $this->contactos = $this->conta[0]->getCaValor2();
+        }
+
+        $folder = "Referencias" . DIRECTORY_SEPARATOR . $this->ref->getCaReferencia();
+        $directory = sfConfig::get('app_digitalFile_root') . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR;
+        $archivos = sfFinder::type('file')->maxDepth(0)->in($directory);
+
+        foreach ($archivos as $archivo) {
+            $file=explode("/", $archivo);
+            $filenames[]["file"] = $file[count($file)-1];
+        }
+        $this->filenames = $filenames;
+        
+    }
+    
+    public function executeEnviarEmailColoader(sfWebRequest $request) {
+
+        $user = $this->getUser();
+       
+        
+        $email = new Email();
+
+        $email->setCaUsuenvio($user->getUserId());
+        $email->setCaTipo("Antecedentes"); //Envío de Avisos
+        $email->setCaIdcaso(null);
+
+        $from = $this->getRequestParameter("from");
+        if ($from) {
+            $email->setCaFrom($from);
+        } else {
+            $email->setCaFrom($user->getEmail());
+        }
+        $email->setCaFromname($user->getNombre());
+
+
+        if ($this->getRequestParameter("readreceipt")) {
+            $email->setCaReadreceipt(true);
+        } else {
+            $email->setCaReadreceipt(false);
+        }
+
+        $email->setCaReplyto($user->getEmail());
+
+        $recips = explode(",", $this->getRequestParameter("destinatario"));
+
+        foreach ($recips as $recip) {
+            $recip = str_replace(" ", "", $recip);
+            if ($recip) {
+                $email->addTo($recip);
+            }
+        }
+        //$email->addTo($user->getEmail());
+
+        $recips = explode(",", $this->getRequestParameter("cc"));
+        foreach ($recips as $recip) {
+            $recip = str_replace(" ", "", $recip);
+            if ($recip) {
+                $email->addCc($recip);
+            }
+        }
+
+        if ($from) {
+            $email->addCc($from);
+        } else {
+            $email->addCc($this->getUser()->getEmail());
+        }
+
+        $email->setCaSubject($this->getRequestParameter("asunto"));
+        $email->setCaBody($this->getRequestParameter("mensaje"));
+
+        $mensaje = Utils::replace($this->getRequestParameter("mensaje")) . "<br />";
+        //$request->setParameter("format", "email");
+        //$mensaje .= sfContext::getInstance()->getController()->getPresentationFor('antecedentes', 'verPlanilla');
+        $email->setCaBodyhtml($mensaje);
+        
+        $files=$this->getRequestParameter("files");
+        foreach ($files as $archivo) {
+            
+            $name =  $archivo;            
+            $email->AddAttachment($name);            
+        }
+        $email->send();
+       // $email->save();
+ 
+    }
+
+   
 }

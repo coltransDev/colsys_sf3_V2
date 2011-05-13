@@ -106,6 +106,16 @@ switch($action){
                 $button[$i]["onClick"] = "rechazarReferencia()";
                 $i++;
             }
+            if($master && $master->getCaUsumuisca()!="" && $user->getIdSucursal()=="BOG" && ($master->getCaCarpeta()=="0" or $master->getCaCarpeta()==false ) )
+            {
+                $button[$i]["id"] = "archivar-ref";
+                $button[$i]["name"] = "Archivar ";
+                $button[$i]["tooltip"] = "Crear la carpeta para archivar";
+                $button[$i]["image"] = "22x22/folder.png";
+                $button[$i]["link"]= "#";                
+                $button[$i]["onClick"] = "archivar('".$master->getCaReferencia()."')";
+                $i++;
+            }
         }
 		break;	
 }
@@ -214,6 +224,35 @@ switch($action){
            modal: true
         });
     }
+    
+    var archivar = function(ref){    
+        if(window.confirm("Ya creo la carpeta para archivar?"))
+        {
+            Ext.MessageBox.wait('Espere por favor', '');
+            Ext.Ajax.request(
+            {
+                waitMsg: 'Guardando cambios...',
+                url: '<?= url_for("antecedentes/archivarReferencia") ?>',
+                params :	{
+                    referencia: ref
+                },
+                failure:function(response,options){
+                    //alert( response.responseText );
+                    Ext.Msg.hide();
+                    success = false;
+                    Ext.MessageBox.hide();
+                },
+                success:function(response,options){
+                    var res = Ext.util.JSON.decode( response.responseText );
+                    if( res.success ){
+                        $("#archivar-ref").remove();                        
+                        Ext.MessageBox.hide();
+                    }
+                }
+            });
+        }        
+    }
+
 
 
 

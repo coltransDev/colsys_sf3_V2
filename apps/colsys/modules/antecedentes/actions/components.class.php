@@ -66,7 +66,8 @@ class antecedentesComponents extends sfComponents {
      *
      */
     public function executeFileManager() {        
-        $this->edit=(($this->getRequestParameter("format")=="" && $this->format=="")?true:false);        
+        $this->edit=(($this->getRequestParameter("format")=="" && $this->format=="")?true:false);
+        
         $folder = "Referencias" . DIRECTORY_SEPARATOR . $this->ref->getCaReferencia();
         $directory = sfConfig::get('app_digitalFile_root') . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR;
 

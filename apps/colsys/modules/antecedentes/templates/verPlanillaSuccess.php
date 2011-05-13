@@ -37,6 +37,7 @@ if( $format!="email" ){
         $asunto  = "Envio de Antecedentes ".$ref->getCaReferencia();
         $mensaje = "Adjunto encontrará los antecedentes de la referencia ".$ref->getCaReferencia();
         include_component("email", "formEmail", array("subject"=>$asunto,"message"=>$mensaje, "contacts"=>$contactos));
+        
         ?>
         <br />
         <input type="submit" value="Enviar" class="button" />
@@ -47,7 +48,7 @@ if( $format!="email" ){
     </div>
     <?
     }
-    $master=explode("|",$ref->getCaMbls());
+    //$master=$ref->getCaMbls();
     ?>
     <table class="tableList alignLeft" width="100%">
          <tr>
@@ -60,10 +61,10 @@ if( $format!="email" ){
                 <b>Referencia:</b> <?=$ref->getCaReferencia()?>
             </td>
             <td>
-                <b>Master:</b> <?=($master[0])?$master[0]:""?>
+                <b>Master:</b> <?=$ref->getCaMbls()?>
             </td>
             <td>
-                <b>Fecha Master:</b> <?=($master[0])?$master[1]:""?>
+                <b>Fecha Master:</b> <?=$ref->getCaFchmbls()?>
             </td>
         </tr>
 

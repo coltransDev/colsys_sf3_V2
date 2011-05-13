@@ -11,8 +11,10 @@ $i=1;
 <script language="javascript" type="text/javascript">
 button=0;
  Ext.onReady(function(){
-//    function agregar_fileupload()
-    {
+     <?
+     if($format!="coloader")
+     {
+     ?>
         var uploadButton = new WidgetUploadButton({
             text: "Agregar Archivo",
             iconCls: 'arrow_up',
@@ -21,17 +23,15 @@ button=0;
             confirm: true,
             callback:"actualizar"
         });
-        uploadButton.render("button1");
-    }
-   
+        uploadButton.render("button1");  
+     <?
+     }
+     ?>
 });
     function actualizar(file)
     {
         $("#archivos").append("<tr><td ><b>"+(button++)+".</b>&nbsp;&nbsp;&nbsp;&nbsp;<b>Archivo "+file+" </b><div id='hbl_defs'><a href='<?=url_for("gestDocumental/verArchivo?idarchivo=")?>"+Base64.encode("<?=$folder?>/"+file)+"'>"+file+"</a></div></td><td>&nbsp;</td></tr>");
     }
-
-
-
 
     function eliminar(file,idtr)
     {
@@ -96,6 +96,12 @@ button=0;
                 ?>
                 &nbsp;&nbsp;
                 <a href="#" onclick="eliminar('<?=base64_encode($folder."/".$file["file"])?>','<?=$id_tr?>')"><?=image_tag( "16x16/delete.gif" ,'size=18x18 border=0' )?></a>
+                <?
+                }
+                else if($format=="coloader")
+                {
+                ?>
+                <input type="checkbox" name="files[]" id="files" value="<?=$folder."/".$file["file"]?>"/>
                 <?
                 }
                 ?>
