@@ -116,7 +116,7 @@ $cliente = $reporte->getCliente();
     ?>
 	<tr>
 		<td><b>Mercanc&iacute;a</b></td>
-		<td colspan="5"><?=$reporte->getCaMercanciaDesc()?></td>
+		<td colspan="5"><?=$reporte->getCaMercanciaDesc()?> <?=($reporte->getCaMciaPeligrosa())?"<br><b>Mercacia Peligrosa</b>":""?></td>
 	</tr>
 	<?
 	$inoCliente = $reporte->getInoClientesSea();
