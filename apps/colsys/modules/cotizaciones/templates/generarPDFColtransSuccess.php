@@ -838,7 +838,7 @@ endfor; //transportes
 $pdf->beginGroup();
 $pdf->SetFont($font,'B',8);
 $pdf->Ln(2);
-$pdf->MultiCell(0, 4, "Nota Importante: En caso de aceptación de nuestros servicios, estos se prestaran basados en nuestras condiciones generales de Contrato de Agenciamiento de Carga el cual se encuentra  en la pagina web www.coltrans.com.co", 0,'J',0);
+$pdf->MultiCell(0, 4, "Nota Importante: En caso de aceptación de la presente oferta de servicios se entenderá leído y aceptado el contrato de agenciamiento de carga que se encuentra en la página web www.coltrans.com.co y que regirá nuestra relación comercial", 0,'J',0);
 $pdf->Ln(2);
 $pdf->flushGroup();
 
