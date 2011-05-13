@@ -458,6 +458,28 @@ class Reporte extends BaseReporte {
           } */
         return $q->execute();
     }
+    
+    public function getEsOtm() {
+
+        if($this->getCaContinuacion()=="OTM" || $this->getCaContOrigen()!="")
+        {
+            return true;
+        }
+        else
+        {
+            $nreg = Doctrine::getTable("RepGasto")
+                        ->createQuery("g")
+                        ->select("count(*) as nreg")
+                        ->addWhere("g.ca_idrecargo = ? and ca_idreporte=?", array("61",$this->getCaIdreporte()))
+                        ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)
+                        ->execute();
+            if($nreg>0)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 
     /*
      * Retorna el objetos RepAduana asociados al reporte
