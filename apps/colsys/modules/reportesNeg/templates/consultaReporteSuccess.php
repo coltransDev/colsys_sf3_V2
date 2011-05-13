@@ -107,7 +107,7 @@ include_component("reportesNeg","mainPanel");
 include_component("reportesNeg","panelConceptosFletes", array("reporte"=>$reporte));
 $panelConceptosFletes = true;
 
-if($reporte->getCaContinuacion()=="OTM" || $reporte->getCaContOrigen()!="")
+if($reporte->getEsOtm())
 {
     include_component("reportesNeg","panelConceptosOtm", array("reporte"=>$reporte));
     $panelConceptosOtm = true;
