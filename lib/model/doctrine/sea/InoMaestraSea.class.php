@@ -52,8 +52,8 @@ class InoMaestraSea extends BaseInoMaestraSea
         $email = Doctrine::getTable("Email")
                         ->createQuery("e")
                         ->select("ca_subject")
-                        ->addWhere("ca_tipo=? and ca_subject like ?", array('Antecedentes',"%" . $referencia ))
-                        ->addOrderBy("e.ca_idemail DESC")
+                        ->addWhere("ca_tipo=? and ca_subject like ?", array('Antecedentes',"%" . $referencia."%" ))
+                        ->addOrderBy("e.ca_idemail DESC")                        
                         //->setHydrationMode(Doctrine::HYDRATE_SCALAR)
                         ->fetchOne();
                 //print_r($email);
