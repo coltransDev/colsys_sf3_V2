@@ -142,7 +142,7 @@ require_once("menu.php");
     echo "<FORM METHOD=post NAME='informe' ACTION='idg_maritimo.php'>";       // Hace una llamado nuevamente a este script pero con
     echo "<TABLE WIDTH=720 CELLSPACING=1>";                                    // un boton de comando definido para hacer mantemientos
     echo "<TR>";
-    echo "  <TH Class=titulo COLSPAN=10>COLTRANS S.A.<BR>$titulo - $reporte - ".(($sucursal=='%')?'Todas las Sucursales':$sucursal)."</TH>";
+    echo "  <TH Class=titulo COLSPAN=10>COLTRANS S.A.S.<BR>$titulo - $reporte - ".(($sucursal=='%')?'Todas las Sucursales':$sucursal)."</TH>";
     echo "</TR>";
     echo "<TH>No.</TH>";
     echo "<TH>Referencia</TH>";
@@ -278,7 +278,7 @@ require_once("menu.php");
     echo "<FORM METHOD=post NAME='informe' ACTION='idg_maritimo.php'>";       // Hace una llamado nuevamente a este script pero con
     echo "<TABLE WIDTH=680 CELLSPACING=1>";                                    // un boton de comando definido para hacer mantemientos
     echo "<TR>";
-    echo "  <TH Class=titulo COLSPAN=10>COLTRANS S.A.<BR>$titulo - $reporte - ".(($sucursal=='%')?'Todas las Sucursales':$sucursal)."</TH>";
+    echo "  <TH Class=titulo COLSPAN=10>COLTRANS S.A.S.<BR>$titulo - $reporte - ".(($sucursal=='%')?'Todas las Sucursales':$sucursal)."</TH>";
     echo "</TR>";
     echo "<TH>No.</TH>";
     echo "<TH>Referencia</TH>";
