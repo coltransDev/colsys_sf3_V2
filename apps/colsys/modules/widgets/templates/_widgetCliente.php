@@ -44,8 +44,7 @@ WidgetCliente = function( config ){
     WidgetCliente.superclass.constructor.call(this, {
         valueField: 'idcliente',
         displayField:'compania',
-        loadingText: 'Buscando...',
-        typeAhead: true,
+        loadingText: 'Buscando...',        
         forceSelection: true,
         minChars: 3,        
         triggerAction: 'all',
@@ -53,12 +52,8 @@ WidgetCliente = function( config ){
         selectOnFocus: true,        
         lazyRender:true,  
         submitValue: true,
-        emptyText: 'Escriba el nombre del cliente...'        
-
+        emptyText: 'Escriba el nombre del cliente...'
     });
-
-
-
 };
 
 
