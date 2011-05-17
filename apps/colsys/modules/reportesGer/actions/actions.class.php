@@ -10,6 +10,8 @@
  */
 class reportesGerActions extends sfActions
 {
+    
+    const RUTINA = 105;
 	/**
 	* Muestra un menu donde el usuario puede seleccionar las comisiones que desa sacar 
 	*
@@ -27,6 +29,39 @@ class reportesGerActions extends sfActions
         $response = sfContext::getInstance()->getResponse();		
 		$response->addJavaScript("extExtras/SuperBoxSelect",'last');
         
+        
+		$this->nivel = $this->getUser()->getNivelAcceso( reportesGerActions::RUTINA );
+        //echo $this->nivel;
+		if( $this->nivel==-1 ){
+			$this->forward404();
+		}
+		if($this->nivel=="1")
+        {
+        
+            $origenes = Doctrine::getTable("TraficoUsers")
+                                    ->createQuery("tu")
+                                    ->select("tu.*")
+									->where("tu.ca_login=? and tu.ca_impo=true",array($this->getUser()->getUserId()) )
+                                    ->execute();
+			$this->pais_origen="";
+			if($origenes)
+			{
+				foreach($origenes as $origen)
+				{
+					$this->pais_origen.=($this->pais_origen!="")?",".$origen->getCaIdtrafico():$origen->getCaIdtrafico();
+				}
+			}
+			if($this->pais_origen=="")
+			{
+				$this->pais_origen="CO-057";
+			}
+        }
+        if($this->nivel=="2")
+        {
+            $this->pais_origen="todos";
+        }
+        
+			
         
         $this->fechainicial=$request->getParameter("fechaInicial");
         $this->fechafinal=$request->getParameter("fechaFinal");
@@ -51,47 +86,12 @@ class reportesGerActions extends sfActions
         $this->agente=$request->getParameter("agente");
         $this->idsucursalagente=$request->getParameter("idsucursalagente");
         $this->sucursalagente=$request->getParameter("sucursalagente");
+        
+        $this->idcliente=$request->getParameter("idcliente");
+        $this->cliente=$request->getParameter("cliente");
 
         if($this->opcion)
         {
-
-
-/*            $q = Doctrine::getTable("RepCargaTraficos")
-                            ->createQuery("ct")
-                            ->select("*")                            
-                            ->setHydrationMode(Doctrine::HYDRATE_ARRAY);
-
-            if($this->idmodalidad)
-                $q->addWhere("ca_modalidad=?",$this->idmodalidad);
-
-            if($this->fechainicial && $this->fechafinal)
-                    $q->addWhere ("(ca_fchreferencia between ? and ?)",array($this->fechainicial,$this->fechafinal));
-            if($this->fechaembinicial && $this->fechaembfinal)
-                    $q->addWhere ("(ca_fchembarque between ? and ?)",array($this->fechaembinicial,$this->fechaembfinal));
-            if($this->fechaarrinicial && $this->fechaarrfinal)
-                    $q->addWhere ("(ca_fcharribo between ? and ?)",array($this->fechaarrinicial,$this->fechaarrfinal));
-            if($this->idpais_origen)
-                $q->addWhere("ori_ca_idtrafico=?",$this->idpais_origen);
-            if($this->idorigen)
-                $q->addWhere("ca_origen=?",$this->idorigen);
-            if($this->idpais_destino)
-                $q->addWhere("des_ca_idtrafico=?",$this->idpais_destino);
-            if($this->iddestino)
-                $q->addWhere("ca_destino=?",$this->iddestino);
-            if($this->idlinea)
-                $q->addWhere("ca_idlinea=?",$this->idlinea);
-
-            if($this->incoterms)
-                $q->addWhere("ca_incoterms like ?","%".$this->incoterms."%");
-
-            if($this->idagente)
-                    $q->addWhere("ca_idagente = ?",$this->idagente);
-
-            if($this->idsucursalagente)
-                    $q->addWhere("ca_idsucursalagente = ?",$this->idsucursalagente);
-   
-            $this->resul=$q->execute();            
-*/
             
             if($this->idmodalidad)
                 $where.=" and m.ca_modalidad='".$this->idmodalidad."'";
@@ -102,8 +102,19 @@ class reportesGerActions extends sfActions
                     $where.=" and (m.ca_fchembarque between '".$this->fechaembinicial."' and '".$this->fechaembfinal."')";
             if($this->fechaarrinicial && $this->fechaarrfinal)
                     $where.=" and (m.ca_fcharribo between '".$this->fechaarrinicial."' and '".$this->fechaarrfinal."')";
+            
             if($this->idpais_origen)
                 $where.=" and ori.ca_idtrafico='".$this->idpais_origen."'";
+            else if($this->nivel=="1")
+            {
+                $paises="";
+                $pais_origen=explode(",", $this->pais_origen);
+                foreach($pais_origen as $pais)
+                {
+                    $paises.=($paises!="")?","."'".$pais."'":"'".$pais."'";
+                }
+                $where.=" and ori.ca_idtrafico in (".$paises.")";
+            }
             if($this->idorigen)
                 $where.=" and m.ca_origen='".$this->idorigen."'";
             if($this->idpais_destino)
@@ -113,9 +124,10 @@ class reportesGerActions extends sfActions
             if($this->idlinea)
                 $where.=" and m.ca_idlinea='".$this->idlinea."'";
 
+            $joinreportes="JOIN tb_reportes r ON c.ca_idreporte = r.ca_idreporte ";
+            $joinclientes="";
             if($this->incoterms && count($this->incoterms)>0)
-            {
-                
+            {                
                 $where.=" and (";
                 foreach ($this->incoterms as $key => $inco)                    
                 {
@@ -124,14 +136,28 @@ class reportesGerActions extends sfActions
                     $where.=" r.ca_incoterms like '".$inco."%'";
                 }
                 $where.=" )";
-                
+                $joinreportes="JOIN tb_reportes r ON c.ca_idreporte = r.ca_idreporte ";
              }
 
             if($this->idagente)
+            {
+                $joinreportes="JOIN tb_reportes r ON c.ca_idreporte = r.ca_idreporte ";
                 $where.=" and r.ca_idagente = '".$this->idagente."'";
-
+            }
+            
+            
             if($this->idsucursalagente)
+            {
+                $joinreportes="JOIN tb_reportes r ON c.ca_idreporte = r.ca_idreporte ";
                 $where.=" and r.ca_idsucursalagente = '".$this->idsucursalagente."'";
+            }
+            
+            if($this->idcliente)
+            {
+                $joinreportes="JOIN tb_reportes r ON c.ca_idreporte = r.ca_idreporte ";
+                $joinclientes="JOIN tb_concliente cc ON cc.ca_idcontacto=r.ca_idconcliente";
+                $where.=" and cc.ca_idcliente = '".$this->idcliente."'";
+            }
             
     $sql="SELECT m.ca_referencia, tt.ca_concepto,tt.ca_idconcepto, m.ca_fchembarque, m.ca_fcharribo, m.ca_fchreferencia, m.ca_origen, ori.ca_ciudad AS ori_ca_ciudad, m.ca_destino, des.ca_ciudad AS des_ca_ciudad, tra_ori.ca_idtrafico AS ori_ca_idtrafico, tra_ori.ca_nombre AS ori_ca_nombre, tra_des.ca_idtrafico AS des_ca_idtrafico, tra_des.ca_nombre AS des_ca_nombre, m.ca_modalidad, m.ca_idlinea, ids.ca_nombre,
     (( SELECT sum(t.ca_liminferior) AS sum
@@ -149,7 +175,8 @@ class reportesGerActions extends sfActions
 
     FROM tb_inomaestra_sea m
     JOIN tb_inoclientes_sea c ON c.ca_referencia = m.ca_referencia
-    JOIN tb_reportes r ON c.ca_idreporte = r.ca_idreporte 
+    $joinreportes
+    $joinclientes
     JOIN tb_inoequipos_sea e ON e.ca_referencia = m.ca_referencia
     JOIN tb_conceptos tt ON e.ca_idconcepto = tt.ca_idconcepto   
     JOIN ids.tb_proveedores p ON p.ca_idproveedor = m.ca_idlinea

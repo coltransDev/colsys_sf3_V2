@@ -3,16 +3,15 @@ include_component("widgets", "widgetModalidad");
 include_component("widgets", "widgetPais");
 include_component("widgets", "widgetCiudad");
 include_component("widgets", "widgetLinea");
-//include_component("widgets", "widgetIncoterms");
+
 include_component("widgets", "widgetMultiIncoterms");
 include_component("widgets", "widgetAgente");
+include_component("widgets", "widgetCliente");
 include_component("widgets", "widgetSucursalAgente");
 $agente = $sf_data->getRaw("agente");
 $linea = $sf_data->getRaw("linea");
 $sucursalagente = $sf_data->getRaw("sucursalagente");
 $incoterms = $sf_data->getRaw("incoterms");
-//print_r($incoterms);
-//echo implode(",", $incoterms);
 $resul = $sf_data->getRaw("resul");
 ?>
 
@@ -28,7 +27,7 @@ $resul = $sf_data->getRaw("resul");
 var tabs = new Ext.FormPanel({
 	labelWidth: 75,
 	border:true,
-	fame:true,
+	frame:true,
     deferredRender:false,
 	width: 900,
 	standardSubmit: true,
@@ -44,7 +43,6 @@ var tabs = new Ext.FormPanel({
 			defaultType: 'textfield',
 			id: 'estadisticas',
             labelWidth: 75,
-
 			items: [
                 {
                         xtype:'fieldset',
@@ -98,7 +96,7 @@ var tabs = new Ext.FormPanel({
                                     },
                                     {
                                             xtype:'datefield',
-                                            fieldLabel: 'Fecha Ini',
+                                            fieldLabel: 'Fecha Ref Ini',
                                             name : 'fechaInicial',
                                             format: 'Y-m-d',
                                             value: '<?=$fechainicial?>'
@@ -117,7 +115,7 @@ var tabs = new Ext.FormPanel({
                                                         id: 'pais_origen',
                                                         name: 'pais_origen',
                                                         hiddenName: "idpais_origen",
-                                                        pais:"todos",
+                                                        pais:"<?=$pais_origen?>",
                                                         value:"<?=$idpais_origen?>"
                                                         }),                                    
                                     new WidgetPais({title: 'Pais destino',
@@ -169,7 +167,7 @@ var tabs = new Ext.FormPanel({
                                     },
                                     {
                                             xtype:'datefield',
-                                            fieldLabel: 'Fecha final',
+                                            fieldLabel: 'Fecha Ref final',
                                             name : 'fechaFinal',
                                             format: 'Y-m-d',
                                             value: '<?=$fechafinal?>'
@@ -210,7 +208,13 @@ var tabs = new Ext.FormPanel({
                                                       width:250,                                                      
                                                       hiddenValue:"<?=$sucursalagente?>",
                                                       value:"<?=$idsucursalagente?>"
-                                                    })
+                                                    }),
+                                     new WidgetCliente({fieldLabel:'Cliente ',
+                                                   width:280,
+                                                   id:"cliente",
+                                                   name:"cliente",
+                                                   hiddenName:"idcliente"
+                                                  })
                              ]
                          }
                      ]
@@ -226,8 +230,7 @@ var tabs = new Ext.FormPanel({
                     var owner=Ext.getCmp("formPanel");
                     if( tp.getActiveTab().getId()=="estadisticas"){
                         owner.getForm().getEl().dom.action='<?=url_for("reportesGer/reporteCargaTraficos")?>';
-                    }                    
-                    //alert(Ext.getCmp("incoterms").getValue());
+                    }
                     owner.getForm().submit();
             }
 	}],
@@ -257,6 +260,15 @@ var tabs = new Ext.FormPanel({
             Ext.getCmp("sucursalagente").setValue(idsucagente_sel);
             $("#sucursalagente").val(suc_agente_sel);
         }
+        
+        cliente_sel='<?=$cliente?>';
+        idcliente_sel='<?=$idcliente?>';
+        if(cliente_sel!="")
+        {
+            Ext.getCmp("cliente").setValue(idcliente_sel);
+            $("#cliente").val(cliente_sel);
+        }
+        
         
     }
 
@@ -394,14 +406,7 @@ if( $incoterms ){
                         <tr><td ><?=  Utils::mesLargo($mes)?></td><td><?=$valor1["volumen"]?></td><td><?=$valor1["teus"]?></td></tr>
             <?
                         }
-            /*          echo "<pre>";
-                      print_r($key);
-                      print_r($valor);
-                      echo "</pre>";
-             *
-             */
                     }
-                    //$totales[$arrtmp[4]]["meses"][$arrtmp[2]]["volumen"]
                     ?>
                 </table>
 
@@ -455,8 +460,3 @@ if( $incoterms ){
 <?
 }
 ?>
-<script>
-    //Ext.getCmp('incoterms').mode="local";
-    //Ext.getCmp('incoterms').onStoreLoad();
-    //Ext.getCmp('incoterms').setValue('<?=implode(",", $incoterms)?>');
-    //Ext.getCmp('incoterms').setValue('<?=implode(",", $incoterms)?>');</script>
