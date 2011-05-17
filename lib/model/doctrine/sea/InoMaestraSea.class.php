@@ -18,7 +18,7 @@ class InoMaestraSea extends BaseInoMaestraSea
     public function getEmails() {
         $this->emails = Doctrine::getTable("Email")
                         ->createQuery("e")
-                        ->addWhere("ca_subject like ?", "%" . $this->getCaReferencia() . "%")
+                        ->addWhere("ca_tipo=? and ca_subject like ?", array('Antecedentes',"%" . $this->getCaReferencia()."%" ) )
                         ->addOrderBy("e.ca_idemail DESC")
                         ->execute();
         $this->countemails=count($this->emails);
@@ -30,7 +30,7 @@ class InoMaestraSea extends BaseInoMaestraSea
             $this->countemails = Doctrine::getTable("Email")
                         ->createQuery("e")
                         ->select("count(*) as nreg")
-                        ->addWhere("ca_subject like ?", "%" . $this->getCaReferencia() . "%")
+                        ->addWhere("ca_tipo=? and ca_subject like ?", array('Antecedentes',"%" . $this->getCaReferencia()."%" ))
                         ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)
                         ->execute();
         }
@@ -59,6 +59,4 @@ class InoMaestraSea extends BaseInoMaestraSea
                 //print_r($email);
         return $email;
     }
-    
-    
 }
