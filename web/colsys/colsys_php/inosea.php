@@ -157,7 +157,7 @@ elseif (!isset($boton) and !isset($accion) and isset($criterio)) {
     echo "<FORM METHOD=post NAME='cabecera' ACTION='inosea.php'>";             // Hace una llamado nuevamente a este script pero con
     echo "<TABLE WIDTH=600 CELLSPACING=1>";                                    // un boton de comando definido para hacer mantemientos
     echo "<TR>";
-    echo "  <TH Class=titulo COLSPAN=3>COLTRANS S.A.<BR>$titulo</TH>";
+    echo "  <TH Class=titulo COLSPAN=3>COLTRANS S.A.S.<BR>$titulo</TH>";
     echo "</TR>";
     echo "<TH>Referencia</TH>";
     echo "<TH>Linea</TH>";
@@ -254,9 +254,15 @@ elseif (isset($boton)) {                                                       /
                     }
                     };";
 
-                echo "function archivos(id){";
-                echo "    document.location.href = '/antecedentes/verArchivos?ref='+id";
-                echo "}";
+                echo "
+                    function archivos(id){
+                        document.location.href = '/antecedentes/verArchivos?ref='+id;
+                    }
+                    
+                    function emailColoader(id){
+                        document.location.href = '/antecedentes/emailColoader?ref='+id;
+                    }
+                ";
                 echo "function ver_pdf(id){";
                 echo "    window.open(\"reporteneg.php?id=\"+id);"; //toolbar=no, location=no, directories=no, menubar=no
                 echo "}";
@@ -273,7 +279,7 @@ elseif (isset($boton)) {                                                       /
                 echo "<INPUT TYPE='HIDDEN' NAME='referencia' id='referencia'  VALUE=\"".$id."\">";             // Hereda el Id de la Referencia que se esta modificando
                 echo "<TABLE WIDTH=620 CELLSPACING=1>";                                    // un boton de comando definido para hacer mantemientos
                 echo "<TR>";
-                echo "  <TH Class=titulo COLSPAN=6>COLTRANS S.A.<BR>$titulo</TH>";
+                echo "  <TH Class=titulo COLSPAN=6>COLTRANS S.A.S.<BR>$titulo</TH>";
                 echo "</TR>";
                 echo "<TH></TH>";
                 echo "<TH COLSPAN=4>Descripción</TH>";
@@ -337,6 +343,8 @@ elseif (isset($boton)) {                                                       /
                     }
                     echo "    <IMG style='cursor:pointer' src='./graficos/muisca.gif' alt='Informacion Muisca' border=0 onclick='elegir(\"Muisca\", \"".$rs->Value('ca_referencia')."\", 0, 0);'><BR>";
                     echo "    <BR><IMG style='cursor:pointer' src='./graficos/fileopen.png' alt='Archivos adjuntos a la referencia' border=0 onclick='archivos( \"".$rs->Value('ca_referencia')."\", 0, 0);'><BR>";
+                    echo "    <BR><IMG style='cursor:pointer' src='./graficos/mail_forward.gif' alt='Email a coloader' border=0 onclick='emailColoader( \"".$rs->Value('ca_referencia')."\", 0, 0);'><BR>";
+                    
                     if ($dm->value("ca_usuenvio") != ''){
                         $fch_envio = explode(" ",$dm->value("ca_fchenvio"));
                         echo "<br /><b>Radicado:</b><br />".$dm->value("ca_usuenvio")."<br />".$fch_envio[0]."<br />".$fch_envio[1]."<br />";
@@ -5021,7 +5029,7 @@ elseif (isset($accion)) {                                                      /
                 $bodyhtml.= "Quedamos pendientes,<br /><br />";
                 $bodyhtml.= $us->Value('ca_nombre')."<br />";
                 $bodyhtml.= $us->Value('ca_cargo')."<br />";
-                $bodyhtml.= "COLTRANS S.A."."<br />";
+                $bodyhtml.= "COLTRANS S.A.S."."<br />";
                 $bodyhtml.= $us->Value('ca_direccion')."<br />";
                 $bodyhtml.= "Tel.:".$us->Value('ca_telefono')." ".$us->Value('ca_extension')."<br />";
                 $bodyhtml.= "Fax :".$us->Value('ca_fax')."<br />";
@@ -5081,7 +5089,7 @@ elseif (isset($accion)) {                                                      /
                 $bodyhtml.= "Quedamos pendientes,<br /><br />";
                 $bodyhtml.= $us->Value('ca_nombre')."<br />";
                 $bodyhtml.= $us->Value('ca_cargo')."<br />";
-                $bodyhtml.= "COLTRANS S.A."."<br />";
+                $bodyhtml.= "COLTRANS S.A.S."."<br />";
                 $bodyhtml.= $us->Value('ca_direccion')."<br />";
                 $bodyhtml.= "Tel.:".$us->Value('ca_telefono')." ".$us->Value('ca_extension')."<br />";
                 $bodyhtml.= "Fax :".$us->Value('ca_fax')."<br />";
