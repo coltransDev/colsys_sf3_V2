@@ -1080,7 +1080,7 @@ if( $empresa->getCaIdempresa()==2 ){
     $pdf->Ln(15);
     $pdf->Cell(0, 4, "Atentamente,",0,1);
     $pdf->Ln(10);
-    $pdf->Cell(0, 4, "COLTRANS S.A.",0,1);
+    $pdf->Cell(0, 4, sfConfig::get('app_branding_name1'),0,1);
     $pdf->Ln(4);
     $pdf->Cell(0, 4, "DEPARTAMENTO MARITIMO",0,1);
     $pdf->AddPage();
