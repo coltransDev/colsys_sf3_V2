@@ -138,7 +138,7 @@ require_once("menu.php");
     echo "<FORM METHOD=post NAME='informe' ACTION='comisiones.php'>";          // Hace una llamado nuevamente a este script pero con
     echo "<TABLE CELLSPACING=1>";                                              // un boton de comando definido para hacer mantemientos
     echo "<TR>";
-    echo "  <TH Class=titulo COLSPAN=9>COLTRANS S.A.<BR>$titulo<BR>$meses[$mes]/$ano</TH>";
+    echo "  <TH Class=titulo COLSPAN=9>".COLTRANS."<BR>$titulo<BR>$meses[$mes]/$ano</TH>";
     echo "</TR>";
     echo "<TH>Referencia</TH>";
     echo "<TH>Cliente</TH>";
@@ -371,7 +371,7 @@ elseif (isset($boton)) {                                                       /
             echo "<INPUT TYPE='HIDDEN' NAME='id'>";
             echo "<TABLE CELLSPACING=1>";                                              // un boton de comando definido para hacer mantemientos
             echo "<TR>";
-            echo "  <TH Class=titulo COLSPAN=8>COLTRANS S.A.<BR>$titulo<BR>$ano</TH>";
+            echo "  <TH Class=titulo COLSPAN=8>".COLTRANS."<BR>$titulo<BR>$ano</TH>";
             echo "</TR>";
             echo "<TH>Referencia</TH>";
             echo "<TH>Hbls</TH>";

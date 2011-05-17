@@ -1,7 +1,8 @@
 <?
 $programa = 57;
-  $titulo = 'Generador de Reportes Gerenciales - Coltrans S.A.';
+  
   require_once("checklogin.php");                                                                 // Captura las variables de la sessión abierta
+  $titulo = 'Generador de Reportes Gerenciales - '.COLTRANS;
   if (!isset($usuario)) {                                                        // Verifica si el usuario ya inicio su sessión
       echo "<script>document.location.href = 'entrada.php';</script>";
      }

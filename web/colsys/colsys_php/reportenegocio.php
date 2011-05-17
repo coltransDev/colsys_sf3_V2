@@ -12,7 +12,7 @@
 // Copyright:     Coltrans S.A. - 2004                                        \\
 /*================-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*\
 */
-$programa = 18;
+//$programa = 18;
 
 $titulo = 'Sistema Reportes de Negocio';
 $imporexpor = array("Importación","Triangulación","OTM/DTA");                              // Arreglo con los tipos de Trayecto
@@ -220,7 +220,7 @@ elseif (!isset($boton) and !isset($accion) and isset($criterio)) {
     echo "<FORM METHOD=post NAME='cabecera' ACTION='reportenegocio.php'>";             // Hace una llamado nuevamente a este script pero con
     echo "<TABLE WIDTH=670 CELLSPACING=1>";                                    // un boton de comando definido para hacer mantemientos
     echo "<TR>";
-    echo "  <TH Class=titulo COLSPAN=4>COLTRANS S.A.<BR>$titulo</TH>";
+    echo "  <TH Class=titulo COLSPAN=4>".COLTRANS."<BR>$titulo</TH>";
     echo "</TR>";
     if ($opcion != 'ca_contenido') {
         if (isset($criterio) and strlen(trim($criterio)) != 0 and !isset($condicion)) {

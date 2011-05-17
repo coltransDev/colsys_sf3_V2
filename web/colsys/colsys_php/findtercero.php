@@ -193,7 +193,7 @@ echo "</BODY>";
 //           include_once 'include/seguridad.php';                             // Control de Acceso al módulo
              $tm =& DlRecordset::NewRecordset($conn);
              echo "<HEAD>";
-             echo "<TITLE>Tabla de Terceros Coltrans S.A.</TITLE>";
+             echo "<TITLE>Tabla de Terceros ".COLTRANS."</TITLE>";
              echo "<script language='JavaScript' type='text/JavaScript'>";     // Código en JavaScript para validar las opciones de mantenimiento
              echo "function validar(){";
              echo "  if (document.adicionar.nombre.value == '')";
@@ -311,7 +311,7 @@ echo "</BODY>";
                 }
              $tm->MoveFirst();
              echo "<HEAD>";
-             echo "<TITLE>Tabla de Terceros Coltrans S.A.</TITLE>";
+             echo "<TITLE>Tabla de Terceros ".COLTRANS."</TITLE>";
              echo "<script language='JavaScript' type='text/JavaScript'>";     // Código en JavaScript para validar las opciones de mantenimiento
              echo "function validar(){";
              echo "  if (document.modificar.nombre.value == '')";
@@ -424,7 +424,7 @@ echo "</BODY>";
                  exit;
                 }
              echo "<HEAD>";
-             echo "<TITLE>Tabla de Terceros Coltrans S.A.</TITLE>";
+             echo "<TITLE>Tabla de Terceros ".COLTRANS."</TITLE>";
              echo "</HEAD>";
              echo "<BODY>";
 //require_once("menu.php");
@@ -490,7 +490,7 @@ elseif (isset($accion)) {                                                      /
     switch(trim($accion)) {                                                    // Switch que evalua cual botòn de comando fue pulsado por el usuario
         case 'Guardar': {                                                      // El Botón Guardar fue pulsado
              $vendedor = ($nivel >= 1)?"":$usuario;
-             if (!$rs->Open("insert into tb_terceros (ca_nombre, ca_contacto, ca_direccion, ca_telefonos, ca_fax, ca_idciudad, ca_email, ca_vendedor, ca_tipo, ca_identificacion, ca_usucreado, ca_fchcreado) values(upper('$nombre'), '$contacto', '$direccion', '$telefonos', '$fax', '$idciudad', lower('$email'), '$vendedor', '".$tipos[substr($suf,0,4)]."', '$identificacion-$digito', '$usuario', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'))")) {
+             if (!$rs->Open("insert into tb_terceros (ca_nombre, ca_contacto, ca_direccion, ca_telefonos, ca_fax, ca_idciudad, ca_email, ca_vendedor, ca_tipo, ca_identificacion) values(upper('$nombre'), '$contacto', '$direccion', '$telefonos', '$fax', '$idciudad', lower('$email'), '$vendedor', '".$tipos[substr($suf,0,4)]."', '$identificacion-$digito')")) {
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                  echo "<script>location.href = 'findtercero.php';</script>";
                  exit;
@@ -499,7 +499,7 @@ elseif (isset($accion)) {                                                      /
              }
         case 'Actualizar': {                                                   // El Botón Actualizar fue pulsado
              $vendedor = ($nivel >= 1)?$vendedor:$usuario;
-             if (!$rs->Open("update tb_terceros set ca_nombre = upper('$nombre'), ca_contacto = upper('$contacto'), ca_direccion = '$direccion', ca_telefonos = '$telefonos', ca_fax = '$fax', ca_idciudad = '$idciudad', ca_vendedor = '$vendedor', ca_email = lower('$email'), ca_identificacion = '$identificacion-$digito', ca_usuactualizado = '$usuario', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss') where ca_idtercero = $id")) {
+             if (!$rs->Open("update tb_terceros set ca_nombre = upper('$nombre'), ca_contacto = upper('$contacto'), ca_direccion = '$direccion', ca_telefonos = '$telefonos', ca_fax = '$fax', ca_idciudad = '$idciudad', ca_vendedor = '$vendedor', ca_email = lower('$email'), ca_identificacion = '$identificacion-$digito' where ca_idtercero = $id")) {
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                  echo "<script>location.href = 'findtercero.php';</script>";
                  exit;

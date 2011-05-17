@@ -1,7 +1,7 @@
 <?
-  $programa = 58;
-  $titulo = 'Generador de Reportes Gerenciales - Coltrans S.A.';
+  $programa = 58;  
   require_once("checklogin.php");                                                               // Captura las variables de la sessión abierta
+  $titulo = 'Generador de Reportes Gerenciales - '.COLTRANS;
   if (!isset($usuario)) {                                                        // Verifica si el usuario ya inicio su sessión
       echo "<script>document.location.href = 'entrada.php';</script>";
      }
@@ -62,6 +62,9 @@ require_once("menu.php");
   echo "</TR>";
   echo "<TR>";
   echo "  <TD Class=mostrar><A HREF='repauditoria.php'; class='mudacor'>Reporte de Auditoria</A></TD><TD Class=mostrar>Informe sobre Rastros de Auditoría</TD>";
+  echo "</TR>";
+  echo "<TR>";
+  echo "  <TD Class=mostrar><A HREF='/reportesGer/reporteCargaTraficos'; class='mudacor'>Listado carga por Tráficos</A></TD><TD Class=mostrar>lista de cargas por tráficos</TD>";
   echo "</TR>";
   echo "</TABLE><BR><BR>";
 

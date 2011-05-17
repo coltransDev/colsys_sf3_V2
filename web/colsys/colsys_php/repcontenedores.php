@@ -103,7 +103,7 @@ require_once("menu.php");
     echo "<FORM METHOD=post NAME='informe' ACTION='repcontenedores.php'>";       // Hace una llamado nuevamente a este script pero con
     echo "<TABLE WIDTH=700 CELLSPACING=1>";                                    // un boton de comando definido para hacer mantemientos
     echo "<TR>";
-    echo "  <TH Class=titulo COLSPAN=3>COLTRANS S.A.<BR>$titulo</TH>";
+    echo "  <TH Class=titulo COLSPAN=3>".COLTRANS."<BR>$titulo</TH>";
     echo "</TR>";
     echo "<TH COLSPAN=3>Referencia</TH>";
     $oid_mem = 0;

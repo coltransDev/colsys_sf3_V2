@@ -122,7 +122,7 @@ elseif (!isset($boton) and !isset($accion) and isset($criterio)) {
     echo "<FORM METHOD=post NAME='cabecera' ACTION='confirma_puerto.php'>";             // Hace una llamado nuevamente a este script pero con
     echo "<TABLE WIDTH=600 CELLSPACING=1>";                                    // un boton de comando definido para hacer mantemientos
     echo "<TR>";
-    echo "  <TH Class=titulo COLSPAN=7>COLTRANS S.A.<BR>$titulo</TH>";
+    echo "  <TH Class=titulo COLSPAN=7>".COLTRANS."<BR>$titulo</TH>";
     echo "</TR>";
     echo "<TH>Referencia</TH>";
     echo "<TH>Linea</TH>";
@@ -193,7 +193,7 @@ elseif (isset($boton)) {                                                       /
                 echo "<INPUT TYPE='HIDDEN' NAME='id' VALUE='".$rs->Value('ca_referencia')."'>";              // Hereda el Id del registro que se esta modificando
                 echo "<TABLE WIDTH=600 CELLSPACING=1>";                                    // un boton de comando definido para hacer mantemientos
                 echo "<TR>";
-                echo "  <TH Class=titulo COLSPAN=6>COLTRANS S.A.<BR>$titulo</TH>";
+                echo "  <TH Class=titulo COLSPAN=6>".COLTRANS."<BR>$titulo</TH>";
                 echo "</TR>";
                 echo "<TH></TH>";
                 echo "<TH COLSPAN=4>Descripción</TH>";
@@ -467,7 +467,7 @@ elseif (isset($accion)) {                                                      /
                 $mensaje.= "Cordial Saludo.<br><br><br>";
                 $mensaje.= "<b>".strtoupper($us->Value('ca_nombre'))."</b><br>";
                 $mensaje.= $us->Value('ca_cargo')."<br>";
-                $mensaje.= "COLTRANS S.A.<br>";
+                $mensaje.= "".COLTRANS."<br>";
                 $mensaje.= $us->Value('ca_direccion')."<br>";
                 $mensaje.= "Tel.:".$us->Value('ca_telefono')." ".$us->Value('ca_extension')."<br>";
                 $mensaje.= "Fax :".$us->Value('ca_fax')."<br>";

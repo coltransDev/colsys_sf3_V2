@@ -129,7 +129,7 @@ require_once("menu.php");
     echo "<FORM METHOD=post NAME='informe' ACTION='repnavieras.php'>";       // Hace una llamado nuevamente a este script pero con
     echo "<TABLE WIDTH=540 CELLSPACING=1>";                                    // un boton de comando definido para hacer mantemientos
     echo "<TR>";
-    echo "  <TH Class=titulo COLSPAN=7>COLTRANS S.A.<BR>$titulo<BR>$meses[$mes]/$ano</TH>";
+    echo "  <TH Class=titulo COLSPAN=7>".COLTRANS."<BR>$titulo<BR>$meses[$mes]/$ano</TH>";
     echo "</TR>";
     echo "<TH>Agente</TH>";
     echo "<TH>FCL</TH>";

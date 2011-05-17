@@ -116,7 +116,7 @@ require_once("menu.php");
     echo "<FORM METHOD=post NAME='cabecera' ACTION='reporteventas.php'>";             // Hace una llamado nuevamente a este script pero con
     echo "<TABLE WIDTH=600 CELLSPACING=1>";                                    // un boton de comando definido para hacer mantemientos
     echo "<TR>";
-    echo "  <TH Class=titulo COLSPAN=3>COLTRANS S.A.<BR>$titulo</TH>";
+    echo "  <TH Class=titulo COLSPAN=3>".COLTRANS."<BR>$titulo</TH>";
     echo "</TR>";
     echo "<TH>ID Reporte</TH>";
     echo "<TH>Trayecto</TH>";

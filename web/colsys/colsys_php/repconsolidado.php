@@ -118,7 +118,7 @@ require_once("menu.php");
     echo "<FORM METHOD=post NAME='informe' ACTION='repconsolidado.php'>";       // Hace una llamado nuevamente a este script pero con
     echo "<TABLE WIDTH=500 CELLSPACING=1>";                                    // un boton de comando definido para hacer mantemientos
     echo "<TR>";
-    echo "  <TH Class=titulo COLSPAN=8>COLTRANS S.A.<BR>$titulo</TH>";
+    echo "  <TH Class=titulo COLSPAN=8>".COLTRANS."<BR>$titulo</TH>";
     echo "</TR>";
     echo "<TH WIDTH=30>No.</TH>";
     echo "<TH>Tráfico</TH>";

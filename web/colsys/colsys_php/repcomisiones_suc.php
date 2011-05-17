@@ -162,7 +162,7 @@ require_once("menu.php");
     echo "<FORM METHOD=post NAME='informe' ACTION='repcomisiones_suc.php'>";             // Hace una llamado nuevamente a este script pero con
     echo "<TABLE WIDTH=780 CELLSPACING=1>";                                    // un boton de comando definido para hacer mantemientos
     echo "<TR>";
-    echo "  <TH Class=titulo COLSPAN=9>COLTRANS S.A.<BR>$titulo<BR>$meses[$mes]/$ano</TH>";
+    echo "  <TH Class=titulo COLSPAN=9>".COLTRANS."<BR>$titulo<BR>$meses[$mes]/$ano</TH>";
     echo "</TR>";
     echo "<TH>Referencia</TH>";
     echo "<TH>Cliente</TH>";

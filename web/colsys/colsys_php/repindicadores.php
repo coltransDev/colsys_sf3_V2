@@ -613,7 +613,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
         exit; }
 
     echo "<TR>";
-    echo "  <TH Class=titulo COLSPAN=".($tot_cols+$add_cols).">COLTRANS S.A.<BR>$titulo<BR>Indicador $indicador $mes_tit / $ano_tit</TH>";
+    echo "  <TH Class=titulo COLSPAN=".($tot_cols+$add_cols).">".COLTRANS."<BR>$titulo<BR>Indicador $indicador $mes_tit / $ano_tit</TH>";
     echo "</TR>";
     $saltos = array();
     $titems = array();
@@ -1388,7 +1388,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
 
     echo "<BR />";
     echo "<TABLE WIDTH=500 BORDER=0 CELLSPACING=1 CELLPADDING=1>";
-    echo "<TH Class=titulo COLSPAN=7>COLTRANS S.A.<BR>$titulo<BR>Indicador $indicador $mes_tit / $ano_tit</TH>";
+    echo "<TH Class=titulo COLSPAN=7>".COLTRANS."<BR>$titulo<BR>Indicador $indicador $mes_tit / $ano_tit</TH>";
 
     echo "<TR>";
     echo "  <TD Class=listar ROWSPAN=4><b>Sucursal(es):</b><br /> - ".str_replace(",","<br /> - ",str_replace("%","Todas",$suc_tit))."</TD>";

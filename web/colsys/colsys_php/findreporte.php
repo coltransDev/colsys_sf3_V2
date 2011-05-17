@@ -145,7 +145,7 @@ if (!isset($contents) and !isset($boton) and !isset($accion)) {
                 echo "<CENTER>";
                 echo "<TABLE WIDTH=600 CELLSPACING=1>";                                    // un boton de comando definido para hacer mantemientos
                 echo "<TR>";
-                echo "  <TH Class=titulo COLSPAN=4>COLTRANS S.A.<BR>$titulo</TH>";
+                echo "  <TH Class=titulo COLSPAN=4>".COLTRANS."<BR>$titulo</TH>";
                 echo "</TR>";
                 echo "<TH>ID Reporte</TH>";
                 echo "<TH>Versión</TH>";
@@ -333,7 +333,7 @@ if (!isset($contents) and !isset($boton) and !isset($accion)) {
                 echo "<CENTER>";
                 echo "<TABLE WIDTH=100% CELLSPACING=1>";                                    // un boton de comando definido para hacer mantemientos
                 echo "<TR>";
-                echo "  <TH Class=titulo COLSPAN=4>COLTRANS S.A.<BR>$titulo</TH>";
+                echo "  <TH Class=titulo COLSPAN=4>".COLTRANS."<BR>$titulo</TH>";
                 echo "</TR>";
                 echo "<TH>ID Reporte</TH>";
                 echo "<TH>Trayecto</TH>";

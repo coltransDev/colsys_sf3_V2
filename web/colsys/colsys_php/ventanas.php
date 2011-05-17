@@ -87,7 +87,7 @@ if (isset($suf) and $suf == 'findDianDeposito') {
     echo "<CENTER>";
     echo "<TABLE WIDTH=600 CELLSPACING=1>";                                    // un boton de comando definido para hacer mantemientos
     echo "<TR>";
-    echo "  <TH Class=titulo COLSPAN=4>COLTRANS S.A.<BR>$titulo</TH>";
+    echo "  <TH Class=titulo COLSPAN=4>".COLTRANS."<BR>$titulo</TH>";
     echo "</TR>";
     echo "<TH>Cod.Depósito</TH>";
     echo "<TH>Nombre</TH>";

@@ -211,7 +211,7 @@ require_once("menu.php");
     echo "<TABLE WIDTH=670 CELLSPACING=1>";                                    // un boton de comando definido para hacer mantemientos
     if (isset($compania) and strlen($compania) == 0) {
 		echo "<TR>";
-		echo "  <TH Class=titulo COLSPAN=8>COLTRANS S.A.<BR>$titulo<BR>$meses[$mes]/$ano</TH>";
+		echo "  <TH Class=titulo COLSPAN=8>".COLTRANS."<BR>$titulo<BR>$meses[$mes]/$ano</TH>";
 		echo "</TR>";
         echo "<TH>Puerto</TH>";
         echo "<TH>Destino</TH>";
@@ -335,7 +335,7 @@ require_once("menu.php");
 		echo "</TR>";
     }else {
 		echo "<TR>";
-		echo "  <TH Class=titulo COLSPAN=9>COLTRANS S.A.<BR>$titulo<BR>$meses[$mes]/$ano</TH>";
+		echo "  <TH Class=titulo COLSPAN=9>".COLTRANS."<BR>$titulo<BR>$meses[$mes]/$ano</TH>";
 		echo "</TR>";
         echo "<TH>ID Cliente</TH>";
         echo "<TH>Referencia</TH>";

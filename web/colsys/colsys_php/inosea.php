@@ -157,7 +157,7 @@ elseif (!isset($boton) and !isset($accion) and isset($criterio)) {
     echo "<FORM METHOD=post NAME='cabecera' ACTION='inosea.php'>";             // Hace una llamado nuevamente a este script pero con
     echo "<TABLE WIDTH=600 CELLSPACING=1>";                                    // un boton de comando definido para hacer mantemientos
     echo "<TR>";
-    echo "  <TH Class=titulo COLSPAN=3>COLTRANS S.A.S.<BR>$titulo</TH>";
+    echo "  <TH Class=titulo COLSPAN=3>".COLTRANS."<BR>$titulo</TH>";
     echo "</TR>";
     echo "<TH>Referencia</TH>";
     echo "<TH>Linea</TH>";
@@ -279,7 +279,7 @@ elseif (isset($boton)) {                                                       /
                 echo "<INPUT TYPE='HIDDEN' NAME='referencia' id='referencia'  VALUE=\"".$id."\">";             // Hereda el Id de la Referencia que se esta modificando
                 echo "<TABLE WIDTH=620 CELLSPACING=1>";                                    // un boton de comando definido para hacer mantemientos
                 echo "<TR>";
-                echo "  <TH Class=titulo COLSPAN=6>COLTRANS S.A.S.<BR>$titulo</TH>";
+                echo "  <TH Class=titulo COLSPAN=6>".COLTRANS."<BR>$titulo</TH>";
                 echo "</TR>";
                 echo "<TH></TH>";
                 echo "<TH COLSPAN=4>Descripción</TH>";
@@ -5029,7 +5029,7 @@ elseif (isset($accion)) {                                                      /
                 $bodyhtml.= "Quedamos pendientes,<br /><br />";
                 $bodyhtml.= $us->Value('ca_nombre')."<br />";
                 $bodyhtml.= $us->Value('ca_cargo')."<br />";
-                $bodyhtml.= "COLTRANS S.A.S."."<br />";
+                $bodyhtml.= COLTRANS."<br />";
                 $bodyhtml.= $us->Value('ca_direccion')."<br />";
                 $bodyhtml.= "Tel.:".$us->Value('ca_telefono')." ".$us->Value('ca_extension')."<br />";
                 $bodyhtml.= "Fax :".$us->Value('ca_fax')."<br />";
@@ -5089,7 +5089,7 @@ elseif (isset($accion)) {                                                      /
                 $bodyhtml.= "Quedamos pendientes,<br /><br />";
                 $bodyhtml.= $us->Value('ca_nombre')."<br />";
                 $bodyhtml.= $us->Value('ca_cargo')."<br />";
-                $bodyhtml.= "COLTRANS S.A.S."."<br />";
+                $bodyhtml.= COLTRANS."<br />";
                 $bodyhtml.= $us->Value('ca_direccion')."<br />";
                 $bodyhtml.= "Tel.:".$us->Value('ca_telefono')." ".$us->Value('ca_extension')."<br />";
                 $bodyhtml.= "Fax :".$us->Value('ca_fax')."<br />";

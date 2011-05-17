@@ -101,7 +101,7 @@ require_once("menu.php");
     echo "<FORM METHOD=post NAME='cabecera' ACTION='inosea_sucu.php'>";             // Hace una llamado nuevamente a este script pero con
     echo "<TABLE WIDTH=600 CELLSPACING=1>";                                    // un boton de comando definido para hacer mantemientos
     echo "<TR>";
-    echo "  <TH Class=titulo COLSPAN=7>COLTRANS S.A.<BR>$titulo<BR>$meses[$mes]/$ano</TH>";
+    echo "  <TH Class=titulo COLSPAN=7>".COLTRANS."<BR>$titulo<BR>$meses[$mes]/$ano</TH>";
     echo "</TR>";
     echo "<TH>Referencia</TH>";
     echo "<TH>Linea</TH>";
@@ -180,7 +180,7 @@ require_once("menu.php");
              echo "<FORM METHOD=post NAME='cabecera' ACTION='inosea_sucu.php'>";        // Hace una llamado nuevamente a este script pero con
              echo "<TABLE WIDTH=650 CELLSPACING=1>";                                    // un boton de comando definido para hacer mantemientos
              echo "<TR>";
-             echo "  <TH Class=titulo COLSPAN=6>COLTRANS S.A.<BR>$titulo</TH>";
+             echo "  <TH Class=titulo COLSPAN=6>".COLTRANS."<BR>$titulo</TH>";
              echo "</TR>";
              echo "<TH></TH>";
              echo "<TH COLSPAN=4>Descripción</TH>";

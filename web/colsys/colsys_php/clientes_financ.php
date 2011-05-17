@@ -188,7 +188,7 @@ elseif (!isset($boton) and !isset($accion) and isset($criterio)){
 
 	echo "<HTML>";
 	echo "<HEAD>";
-	echo "<TITLE>Tabla de Clientes Coltrans S.A.</TITLE>";
+	echo "<TITLE>Tabla de Clientes ".COLTRANS."</TITLE>";
 	echo "<script language='JavaScript' type='text/JavaScript'>";              // Código en JavaScript para validar las opciones de mantenimiento
 	echo "function elegir(opcion, id){";
 	echo "    document.location.href = 'clientes_financ.php?boton='+opcion+'\&id='+id;";

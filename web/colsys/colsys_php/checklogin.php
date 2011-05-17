@@ -26,6 +26,8 @@ $smtpHost = $appConfig["all"]["smtp"]["host"];
 $smtpUser = $appConfig["all"]["smtp"]["user"];
 $smtpPasswd = $appConfig["all"]["smtp"]["passwd"];
 
+define("COLTRANS",$appConfig["all"]["branding"]["name1"]);
+
 if( isset($programa) ){ //Si esta definido quiere decir que esta en una opcion del menu
 	$nivel = -1;
 }else{
@@ -68,8 +70,6 @@ if($conn->Open()){
             $attributes = $data["symfony/user/sfUser/attributes"]["symfony/user/sfUser/attributes"];           
             $usuario = $attributes["user_id"];
             $regional = $attributes["idtrafico"];
-
-
             $cache->set($session_id."_lr", time());
             
             if( isset($programa) ){

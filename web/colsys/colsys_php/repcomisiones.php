@@ -158,7 +158,7 @@ require_once("menu.php");
     echo "<FORM METHOD=post NAME='informe' ACTION='repcomisiones.php'>";             // Hace una llamado nuevamente a este script pero con
     echo "<TABLE WIDTH=680 CELLSPACING=1>";                                    // un boton de comando definido para hacer mantemientos
     echo "<TR>";
-    echo "  <TH Class=titulo COLSPAN=13>COLTRANS S.A.<BR>$titulo<BR>$meses[$mes]/$ano</TH>";
+    echo "  <TH Class=titulo COLSPAN=13>".COLTRANS."<BR>$titulo<BR>$meses[$mes]/$ano</TH>";
     echo "</TR>";
     $log_ven = '';
     $cia_mem = '';
@@ -466,7 +466,7 @@ require_once("menu.php");
             echo "<INPUT TYPE='HIDDEN' NAME='id'>";
             echo "<TABLE CELLSPACING=1>";                                              // un boton de comando definido para hacer mantemientos
             echo "<TR>";
-            echo "  <TH Class=titulo COLSPAN=8>COLTRANS S.A.<BR>$titulo<BR>".$meses[substr(100+$mes,1,2)]."/".$ano."</TH>";
+            echo "  <TH Class=titulo COLSPAN=8>".COLTRANS."<BR>$titulo<BR>".$meses[substr(100+$mes,1,2)]."/".$ano."</TH>";
             echo "</TR>";
             echo "<TH>Referencia</TH>";
             echo "<TH>Hbls</TH>";

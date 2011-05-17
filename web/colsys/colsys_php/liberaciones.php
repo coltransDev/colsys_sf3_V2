@@ -100,7 +100,7 @@ require_once("menu.php");
     echo "<INPUT TYPE='HIDDEN' NAME='modalidad' VALUE=".$modalidad.">";        
     echo "<TABLE CELLSPACING=1>";                                    // un boton de comando definido para hacer mantemientos
     echo "<TR>";
-    echo "  <TH Class=titulo COLSPAN=10>SISTEMA COLTRANS S.A.<BR>$titulo</TH>";
+    echo "  <TH Class=titulo COLSPAN=10>SISTEMA ".COLTRANS."<BR>$titulo</TH>";
     echo "</TR>";
     echo "<TH>ID</TH>";
     echo "<TH>Cliente</TH>";
