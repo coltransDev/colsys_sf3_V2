@@ -33,9 +33,9 @@ var crearTicket = function(){
             <div style="padding:10px 0 0;">
                 <div class="left-column">
                     <?
-                    
+
                     include_component("homepage", "novedades", array( "nivelNoticias"=>$nivelNoticias )) ;
-                    
+
                     include_component("notificaciones","tareasPendientes");
 
                     include_component("survey","listaEvaluaciones");
@@ -47,15 +47,42 @@ var crearTicket = function(){
                     <div class="side-box"><div class="side-box-inner">
                             <h5>Links</h5>
                             <ul class="features">
-
                                 <li><a href="#" onClick="crearTicket()">Nuevo ticket</a></li>
-                                <li><a href="http://<?=sfConfig::get("app_branding_url")?>/intranet" target="blank">Intranet</a></li>
-                                <li><a href="https://<?=sfConfig::get("app_branding_url")?>/tracking/login/novell" target="blank">Tracking</a></li>
-                                <li><a href="http://<?=sfConfig::get("app_branding_url")?>/mail" target="blank">Webmail</a></li>
+                                <li><a href="http://www.coltrans.com.co/intranet" target="blank">Intranet</a></li>
+                                <li><a href="https://www.coltrans.com.co/tracking/login/novell" target="blank">Tracking</a></li>
+                                <li><a href="http://www.coltrans.com.co/mail" target="blank">Webmail</a></li>
                             </ul>
 
                         </div>
                     </div>
+                    <br />
+
+                    <div class="side-box"><div class="side-box-inner">
+                            <h5>Plantillas</h5>
+                            <h4>Coltrans S.A.S.</h4>
+                            <ul class="features">
+                                <li><a href="./plantillas/coltrans/plantillaColtransBarranquilla2011.doc" target="blank">Barranquilla</a></li>
+                                <li><a href="./plantillas/coltrans/plantillaColtransBogota2011.doc" target="blank">Bogot&aacute; D.C.</a></li>
+                                <li><a href="./plantillas/coltrans/plantillaColtransBucaramaga2011.doc" target="blank">Bucaramaga</a></li>
+                                <li><a href="./plantillas/coltrans/plantillaColtransBuenaventura2011.doc" target="blank">Buenaventura</a></li>
+                                <li><a href="./plantillas/coltrans/plantillaColtransCali2011.doc" target="blank">Cali</a></li>
+                                <li><a href="./plantillas/coltrans/plantillaColtransCartagena2011.doc" target="blank">Cartagena</a></li>
+                                <li><a href="./plantillas/coltrans/plantillaColtransMedellin2011.doc" target="blank">Medell&iacute;n</a></li>
+                                <li><a href="./plantillas/coltrans/plantillaColtransPereira2011.doc" target="blank">Pereira</a></li>
+                            </ul>
+
+                            <h4>Colmas Ltda.</h4>
+                            <ul class="features">
+                                <li><a href="./plantillas/colmas/plantillaColmasBarranquilla2011.doc" target="blank">Barranquilla</a></li>
+                                <li><a href="./plantillas/colmas/plantillaColmasBogota2011.doc" target="blank">Bogota</a></li>
+                                <li><a href="./plantillas/colmas/plantillaColmasBuenaventura2011.doc" target="blank">Buenaventura</a></li>
+                                <li><a href="./plantillas/colmas/plantillaColmasCali2011.doc" target="blank">Cali</a></li>
+                                <li><a href="./plantillas/colmas/plantillaColmasCartagena2011.doc" target="blank">Cartagena</a></li>
+                                <li><a href="./plantillas/colmas/plantillaColmasMedellin2011.doc" target="blank">Medell&iacute;n</a></li>
+                            </ul>
+                        </div>
+                    </div>
+
                 </div>
             </div>
 
@@ -109,7 +136,7 @@ foreach ($grupos as $key => $grupo) {
 ?>
 
         ];
-    
+
 
         for(var i = 0, c; c = catalog[i]; i++){
             c.id = 'sample-' + i;
@@ -214,5 +241,3 @@ foreach ($grupos as $key => $grupo) {
     });
 
 </script>
-
-
