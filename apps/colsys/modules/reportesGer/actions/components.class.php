@@ -49,6 +49,12 @@ class reportesGerComponents extends sfComponents
 
     }
 
+    public function executeFiltrosEstadisticasTraficos()
+    {
+        $this->opcion=$this->getRequestParameter("opcion");
+        $this->fechainicial=$this->getRequestParameter("fechaInicial");
+        $this->fechafinal=$this->getRequestParameter("fechaFinal");        
+    }
 	
 }
 ?>

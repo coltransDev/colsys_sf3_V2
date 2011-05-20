@@ -204,5 +204,119 @@ class reportesGerActions extends sfActions
         }
 		
 	}
+    
+    public function executeEstadisticasTraficos(sfWebRequest $request)
+	{
+        $this->opcion=$request->getParameter("opcion");
+        $this->fechainicial=$request->getParameter("fechaInicial");
+        $this->fechafinal=$request->getParameter("fechaFinal");
+        
+        $this->fechainicial1=   Utils::addDate($request->getParameter("fechaInicial"),0,0,-1);
+        $this->fechafinal1=     Utils::addDate($request->getParameter("fechaFinal"),0,0,-1);
+        
+        $this->fechainicial2=   Utils::addDate($request->getParameter("fechaInicial"),0,0,-2);
+        $this->fechafinal2=     Utils::addDate($request->getParameter("fechaFinal"),0,0,-2);
+		//$this->userid = $this->getUser()->getUserId();	
+        if($this->opcion)
+        {   
+            
+            $this->nmeses=ceil(Utils::diffTime($this->fechainicial,$this->fechafinal)/720);
+                        
+            $sql="select count(*) as valor,ca_year,ca_mes,ca_traorigen as origen from vi_reportes_estadisticas where ca_fchreporte between '".$this->fechainicial."' and '".$this->fechafinal."' and ca_sucursal='Bogotá D.C.'
+                group by ca_year,ca_mes,ca_traorigen
+                order by 4,2,3";
+            $con = Doctrine_Manager::getInstance()->connection();
+            $st = $con->execute($sql);
+            $this->resul = $st->fetchAll();
+            $origen="";
+            $this->grid= array();
+            $this->totales= array();
+            foreach($this->resul as $r)
+            {
+                $this->grid[$r["origen"]][$r["ca_year"]."-".$r["ca_mes"]]=$r["valor"];
+                $this->totales[$r["ca_year"]."-".$r["ca_mes"]]+=$r["valor"];
+            }
+            
+            $sql="select count(*) as valor,ca_traorigen as origen,ca_year from vi_reportes_estadisticas 
+            where (ca_fchreporte between '".$this->fechainicial."' and '".$this->fechafinal."' or ca_fchreporte between '".$this->fechainicial1."' and '".$this->fechafinal1."' or ca_fchreporte between '".$this->fechainicial2."' and '".$this->fechafinal2."') and ca_sucursal='Bogotá D.C.'
+            group by ca_traorigen,ca_year
+            order by 2,3,1";            
+            $st = $con->execute($sql);
+            $this->compara = $st->fetchAll();
+            
+            $this->gridCompara= array();
+            $this->totalesCompara= array();
+            foreach($this->compara as $r)
+            {
+                $this->gridCompara[$r["origen"]][$r["ca_year"]]=$r["valor"];
+                $this->totalesCompara[$r["ca_year"]]+=$r["valor"];
+            }
+            
+            
+
+            $sql="select count(*) as valor,ca_traorigen as origen,ca_nombre_cli as cliente 
+                from vi_reportes_estadisticas 
+                where ca_fchreporte between '".$this->fechainicial."' and '".$this->fechafinal."' and ca_sucursal='Bogotá D.C.'
+                group by ca_traorigen,ca_nombre_cli
+                order by 2 ,1 desc";
+            $st = $con->execute($sql);
+            $this->clientes = $st->fetchAll();
+            
+            
+            $this->gridClientes= array();   
+            $this->totalesCliente= array();
+            foreach($this->clientes as $r)
+            {
+                $this->gridClientes[$r["origen"]][$r["cliente"]]["totales"]=$r["valor"];
+                $this->totalesCliente[$r["origen"]]["totales"]+=$r["valor"];
+                $this->totalesCliente["totales"]["totales"]+=$r["valor"];
+            }
+            
+            
+            $sql="select count(*) as valor,ca_year,ca_mes,ca_traorigen as origen ,ca_nombre_cli as cliente 
+                from vi_reportes_estadisticas 
+                where ca_fchreporte between '".$this->fechainicial."' and '".$this->fechafinal."' and ca_sucursal='Bogotá D.C.'
+                group by ca_year,ca_mes,ca_traorigen,ca_nombre_cli
+                order by 4,2,3,5";
+            $st = $con->execute($sql);
+            $this->clientes = $st->fetchAll();
+            
+                         
+            foreach($this->clientes as $r)
+            {
+                $this->gridClientes[$r["origen"]][$r["cliente"]][$r["ca_year"]."-".$r["ca_mes"]]=$r["valor"];
+                $this->totalesCliente[$r["origen"]][$r["ca_year"]."-".$r["ca_mes"]]+=$r["valor"];
+                $this->totalesCliente["totales"][$r["ca_year"]."-".$r["ca_mes"]]+=$r["valor"];
+            }
+            
+            
+             $sql="select count(*) as valor,ca_year,ca_mes,ca_login as vendedor
+                from vi_reportes_estadisticas 
+                where ca_fchreporte between '".$this->fechainicial."' and '".$this->fechafinal."' and ca_sucursal='Bogotá D.C.'
+                group by ca_year,ca_mes,ca_login
+                order by 4                
+                ";
+            $st = $con->execute($sql);
+            
+            $this->clientes = $st->fetchAll();
+
+            $this->gridVendedores= array();   
+            $this->totalesVendedores= array();
+            foreach($this->clientes as $r)
+            {
+                $this->gridVendedores[$r["vendedor"]][$r["ca_year"]."-".$r["ca_mes"]]=$r["valor"];
+                $this->gridVendedores[$r["vendedor"]]["totales"]+=$r["valor"];
+                $this->totalesVendedores[$r["ca_year"]."-".$r["ca_mes"]]+=$r["valor"];
+                $this->totalesVendedores["totales"]+=$r["valor"];
+            }
+            
+            
+//            echo "<pre>";print_r($this->gridClientes);echo "</pre>";
+//            echo "<pre>";print_r($this->compara);echo "</pre>";
+            
+//            exit;
+        }
+	}
+    
 }
 ?>
