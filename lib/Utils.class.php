@@ -124,6 +124,7 @@ class Utils{
 		
 		return date( $format ,  mktime(0, 0, 0, $mm   , $dd + $days, $yy) );		
 	} 
+    
 	
 	/**
 	from php.net
@@ -304,6 +305,14 @@ class Utils{
 		$dd = Utils::parseDate($date, "d");	
 		
 		return date( $format ,  mktime(0, 0, 0, $mm   , $dd + $days, $yy) );		
+	} 
+    
+    public static function addDate( $date, $days=0,$month=0,$year=0, $format="Y-m-d" ){
+		$yy = Utils::parseDate($date, "Y");
+		$mm = Utils::parseDate($date, "m");	
+		$dd = Utils::parseDate($date, "d");	
+		
+		return date( $format ,  mktime(0, 0, 0, $mm+$month   , $dd + $days, $yy+$year) );
 	} 
 	
 	
