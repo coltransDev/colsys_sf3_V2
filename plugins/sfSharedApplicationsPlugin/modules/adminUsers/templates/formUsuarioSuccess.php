@@ -576,7 +576,7 @@ $teloficinas = $sf_data->getRaw("teloficinas");
 								</td>
 								<td>
 									<div align="left">
-										<input type="checkbox" name="activo" id="activo"  <?=($usuario->getCaActivo()||!$usuario->getCaLogin())?'checked="checked"':''?> />
+										<input type="checkbox" name="activo" id="activo"  <?=($usuario->getCaActivo()||!$usuario->getCaLogin())?'checked="checked"':''?> <?if(!($nivel==3)){?>disabled="disabled"<?}?>/>
 									</div>
 								</td>
 							</tr>

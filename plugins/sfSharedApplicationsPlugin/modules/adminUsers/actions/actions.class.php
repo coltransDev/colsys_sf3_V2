@@ -363,18 +363,20 @@ class adminUsersActions extends sfActions {
         if ($request->getParameter("passwd1") && $request->getParameter("passwd1") == $request->getParameter("passwd2")) {
             $usuario->setPasswd($request->getParameter("passwd1"));
         }
+        
+        if( $this->nivel>=3 ){
+            if ($request->getParameter("activo")) {
+                $usuario->setCaActivo(true);
+            } else {
+                $usuario->setCaActivo(false);
+            }
 
-        if ($request->getParameter("activo")) {
-            $usuario->setCaActivo(true);
-        } else {
-            $usuario->setCaActivo(false);
+            if ($request->getParameter("forcechange")) {
+                $usuario->setCaForcechange(true);
+            } else {
+                $usuario->setCaForcechange(false);
+            }       
         }
-
-        if ($request->getParameter("forcechange")) {
-            $usuario->setCaForcechange(true);
-        } else {
-            $usuario->setCaForcechange(false);
-        }       
         if (isset($_FILES['foto'])) {
             if (is_uploaded_file($_FILES['foto']['tmp_name'])) {
 
