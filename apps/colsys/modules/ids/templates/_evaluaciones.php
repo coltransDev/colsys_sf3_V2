@@ -79,12 +79,9 @@ $numYears = $actualYear-$initialYear+1;
             if( $nivel>=2 ){
             ?>
             <select id="tipo_evaluacion">
-                <?
-                if( $nivel>=4 ){
-                ?>
+                
                 <option value="seleccion">Selecci&oacute;n</option>
-                <?
-                }
+                <?              
 
 
                 if( $ids->getIdsProveedor()->getCaTipo()=="TRI" ){

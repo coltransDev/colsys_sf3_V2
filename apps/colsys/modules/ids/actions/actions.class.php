@@ -726,10 +726,7 @@ class idsActions extends sfActions {
             $this->tipo = $request->getParameter("tipo");
             $this->proveedor = Doctrine::getTable("IdsProveedor")->find($request->getParameter("id"));
         }
-
-        if ($this->nivel <= 3 && $this->tipo == "seleccion") {
-            $this->forward404();
-        }
+        
 
         $this->modo = $request->getParameter("modo");
         $this->forward404Unless($this->ids);
