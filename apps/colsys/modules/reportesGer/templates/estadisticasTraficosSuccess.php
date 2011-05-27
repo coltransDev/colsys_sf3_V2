@@ -24,7 +24,7 @@ if($opcion)
 <div  >
 <div align="center">
 <br>
-<h3>Estadisticas de cargas</h3>  <br>
+<h3>Estadisticas de cargas  <br>
 <?
 if( $fechainicial && $fechafinal ){
     echo " fechas de : ".$fechainicial." - ".$fechafinal;
@@ -52,7 +52,7 @@ if( $fechainicial && $fechafinal ){
         $dataFechas=array();
         foreach($grid as $key=> $r)
         {
-            $serieX[]=utf8_encode($key);
+            $serieX[]=".     ".utf8_encode($key);
             
         ?>
             <tr><td><?=$c++?></td><td><?=$key?></td>
@@ -133,12 +133,14 @@ if( $fechainicial && $fechafinal ){
 <br>
 <br>
 <br>
+<div align="center">
 <h3>Resumen Comparativo de Negocios Manejados</h3>  <br>
+</div>
 <div>
     <table class="tableList" width="900px" border="1" id="mainTable" align="center">
     <tr><th>No</th><th>Trafico</th>
         <?
-        $year=Utils::addDate( $fechainicial,0,0,0,"Y");
+        $year=Utils::addDate( $fechainicial2,0,0,0,"Y");
         $c=1;
         for($i=$year-2;$i<=$year;$i++)
         {
@@ -154,11 +156,11 @@ if( $fechainicial && $fechafinal ){
         $dataFechas=array();
         foreach($gridCompara as $key=> $r)
         {
-            $serieX[]=utf8_encode($key);
+            $serieX[]=".     ".utf8_encode($key);
         ?>
         <tr><td><?=$c++?></td><td><?=$key?></td>
         <?
-        $year=Utils::addDate( $fechainicial,0,0,0,"Y");
+        $year=Utils::addDate( $fechainicial2,0,0,0,"Y");
         for($i=$year-2;$i<=$year;$i++)
         {
         ?>
@@ -186,7 +188,7 @@ if( $fechainicial && $fechafinal ){
         ?>
             <tr class="b number"><td colspan="2">totales</td>
         <?
-        $year=Utils::addDate( $fechainicial,0,0,0,"Y");
+        $year=Utils::addDate( $fechainicial2,0,0,0,"Y");
         for($i=$year-2;$i<=$year;$i++)
         {
         ?>
@@ -206,7 +208,9 @@ if( $fechainicial && $fechafinal ){
 <br>
 <br>
 <br>
+<div align="center">
 <h3>Resumen Comparativo de Negocios Manejados</h3>  <br>
+</div>
     <table align="center" width="90%">
     <tr>
         <td style=" margin: 0 auto" >
@@ -232,16 +236,18 @@ if( $fechainicial && $fechafinal ){
 <br>
 <br>
 <br>
+<div align="center">
 <h3>Clientes</h3>  <br>
+</div>
 
 
 <table class="tableList" width="900px" border="1" id="mainTable" align="center" id="panel1">
     <tr><th>Trafico</th><th>Cliente</th>
         <?
-        for($i=0;$i<$nmeses;$i++)
+        for($i=0;$i<$mes;$i++)
         {
         ?>
-        <th><?=(Utils::addDate( $fechainicial,0,$i,0,"Y-n"))?></th>
+        <th><?=(Utils::addDate( $fechainicial2,0,$i,0,"Y-n"))?></th>
         <?
         }
         ?>
@@ -269,10 +275,10 @@ if( $fechainicial && $fechafinal ){
         ?>
             <td ><?=$cliente?></td>
         <?
-            for($i=0;$i<$nmeses;$i++)
+            for($i=0;$i<$mes;$i++)
             {
         ?>
-                <td class="number"><?=$c[Utils::addDate( $fechainicial,0,$i,0,"Y-n")] ?></td>
+                <td class="number"><?=$c[Utils::addDate( $fechainicial2,0,$i,0,"Y-n")] ?></td>
         <?
             }
             
@@ -288,10 +294,10 @@ if( $fechainicial && $fechafinal ){
             ?>
                 <tr class="b number" style="background: #EAEAEA"><td colspan="1">totales</td>
             <?
-                for($i=0;$i<$nmeses;$i++)
+                for($i=0;$i<$mes;$i++)
                 {
             ?>
-                <td><?=$totalesCliente[$key][Utils::addDate( $fechainicial,0,$i,0,"Y-n")] ?></td>
+                <td><?=$totalesCliente[$key][Utils::addDate( $fechainicial2,0,$i,0,"Y-n")] ?></td>
             <?
                 }
             ?>
@@ -308,10 +314,10 @@ if( $fechainicial && $fechafinal ){
             ?>
                 <tr class="b number" style="background: #D9D9D9"><td colspan="2">totales</td>
             <?
-                for($i=0;$i<$nmeses;$i++)
+                for($i=0;$i<$mes;$i++)
                 {
             ?>
-                <td><?=$totalesCliente["totales"][Utils::addDate( $fechainicial,0,$i,0,"Y-n")] ?></td>
+                <td><?=$totalesCliente["totales"][Utils::addDate( $fechainicial2,0,$i,0,"Y-n")] ?></td>
             <?
                 }
             ?>
@@ -348,17 +354,19 @@ if( $fechainicial && $fechafinal ){
 <br>
 <br>
 <br>
+<div align="center">    
 <h3>Vendedores</h3>  <br>
+</div>
 <br />
 <br />
 </div>
 <table class="tableList" width="900px" border="1" id="mainTable" align="center" id="panel1">
     <tr><th>No</th><th>Vendedor</th>
         <?
-        for($i=0;$i<$nmeses;$i++)
+        for($i=0;$i<$mes;$i++)
         {
         ?>
-        <th><?=(Utils::addDate( $fechainicial,0,$i,0,"Y-n"))?></th>
+        <th><?=(Utils::addDate( $fechainicial2,0,$i,0,"Y-n"))?></th>
         <?
         }
         ?>
@@ -373,10 +381,10 @@ if( $fechainicial && $fechafinal ){
         ?>
             <tr><td><?=$c++?></td><td><?=$key?></td>
         <?
-            for($i=0;$i<$nmeses;$i++)
+            for($i=0;$i<$mes;$i++)
             {
         ?>
-                <td class="number"><?=$r[Utils::addDate( $fechainicial,0,$i,0,"Y-n")] ?></td>
+                <td class="number"><?=$r[Utils::addDate( $fechainicial2,0,$i,0,"Y-n")] ?></td>
         <?
             }            
         ?>
@@ -390,10 +398,10 @@ if( $fechainicial && $fechafinal ){
         ?>
             <tr class="b number"><td colspan="2">totales</td>
         <?
-            for($i=0;$i<$nmeses;$i++)
+            for($i=0;$i<$mes;$i++)
             {
         ?>
-            <td><?=$totalesVendedores[Utils::addDate( $fechainicial,0,$i,0,"Y-n")] ?></td>
+            <td><?=$totalesVendedores[Utils::addDate( $fechainicial2,0,$i,0,"Y-n")] ?></td>
         <?
             }
         ?>
