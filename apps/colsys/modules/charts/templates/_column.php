@@ -45,10 +45,8 @@ ChartsColumn = function( config ){
 						}
 					}), 
            legend:((config.legend)?config.legend:{
-						align: 'right',
-						x: -100,
-						verticalAlign: 'top',
-						y: 20,
+						align: 'center',
+                        verticalAlign:'bottom',
 						floating: true,
 						backgroundColor: '#FFFFFF',
 						borderColor: '#CCC',
