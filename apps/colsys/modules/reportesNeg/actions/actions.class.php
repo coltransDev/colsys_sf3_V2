@@ -3053,7 +3053,7 @@ class reportesNegActions extends sfActions
                 $row["cobrar_tar"] = $recargo->getCaCobrarTar();
                 $row["cobrar_min"] = $recargo->getCaCobrarMin();
                 $row["cobrar_idm"] = $recargo->getCaIdmoneda();
-                $row["observaciones"] = $recargo->getCaDetalles();
+                $row["observaciones"] = utf8_encode($recargo->getCaDetalles());
                 $row['tipo']="recargo";
                 $row['orden']="Y-".utf8_encode($recargo->getTipoRecargo()->getCaRecargo());
                 $conceptos[] = $row;
