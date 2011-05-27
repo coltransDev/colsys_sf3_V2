@@ -96,7 +96,7 @@ class antecedentesActions extends sfActions {
      *
      * @param sfRequest $request A request object
      */
-    public function executeListadoReferencias(sfWebRequest $request) {
+    public function executeListadoReferencias(sfWebRequest $request) {        
         //error_reporting(E_ALL);
         $this->user=$this->getUser();
         $this->format = $this->getRequestParameter("format");
@@ -125,28 +125,30 @@ class antecedentesActions extends sfActions {
         $where="";
         if($this->format=="")
         {
-            $where = " and (m.ca_provisional = true and ((m.ca_modalidad='".constantes::FCL."' and u.ca_idsucursal='".$this->user->getIdSucursal()."') or m.ca_modalidad<>'".constantes::FCL."') ) ";
+            $where = " and (m.ca_provisional = true and ((m.ca_modalidad='".constantes::FCL."' and u.ca_idsucursal='".$this->user->getIdSucursal()."') or m.ca_modalidad<>'".constantes::FCL."') )  
+                and COALESCE(strpos((SELECT ca_subject FROM tb_emails where ca_tipo='Antecedentes' and ca_subject like '%'||m.ca_referencia||'%' order by ca_idemail DESC limit 1), 'Envio de Antecedentes'),-1)<=0";
             
         }
         else
         {
-            $where =" and ( (m.ca_provisional = true and ((m.ca_modalidad='".constantes::FCL."' and u.ca_idsucursal='".$this->user->getIdSucursal()."') or m.ca_modalidad<>'".constantes::FCL."') ) OR (m.ca_provisional = false AND m.ca_fchmuisca IS NULL ))";
+            $where =" and ( (m.ca_provisional = true and ((m.ca_modalidad='".constantes::FCL."' and u.ca_idsucursal='".$this->user->getIdSucursal()."') or m.ca_modalidad<>'".constantes::FCL."') 
+                and strpos((SELECT ca_subject FROM tb_emails where ca_tipo='Antecedentes' and ca_subject like '%'||m.ca_referencia||'%' order by ca_idemail DESC limit 1), 'Envio de Antecedentes')>0
+                ) OR (m.ca_provisional = false AND m.ca_fchmuisca IS NULL ))";
+            $whereEmail="" ;
         }
         
         $sql="select m.ca_referencia,m.ca_fchreferencia,m.ca_provisional,m.ca_modalidad,m.ca_motonave,m.ca_fchembarque,m.ca_fcharribo,m.ca_usucreado,ori.ca_ciudad ca_ciu_origen,des.ca_ciudad ca_ciu_destino,u.ca_idsucursal,m.ca_fchmuisca
+                ,COALESCE(strpos((SELECT ca_subject FROM tb_emails where ca_tipo='Antecedentes' and ca_subject like '%'||m.ca_referencia||'%' order by ca_idemail DESC limit 1), 'Envio de Antecedentes'),-1) as refbloqueada
                 from tb_inomaestra_sea m
                 JOIN tb_ciudades ori ON ori.ca_idciudad = m.ca_origen
                 JOIN tb_ciudades des ON des.ca_idciudad = m.ca_destino
                 JOIN control.tb_usuarios u ON u.ca_login = m.ca_usucreado
-                where m.ca_fchreferencia>='2011-03-01' $where" ;
+                where m.ca_fchreferencia>='2011-03-01' $where order by m.ca_referencia "  ;
             
             $con = Doctrine_Manager::getInstance()->connection();
             $st = $con->execute($sql);
             $referencias = $st->fetchAll();
-       
-/*        $this->refBloqueadas=$referencias;//array();
-        $this->refRechazadas=$referencias;//array();
-        $this->refSinMuisca=$referencias;//array();*/
+
         $this->refBloqueadas=array();
         $this->refRechazadas=array();
         $this->refSinMuisca=array();
@@ -154,28 +156,18 @@ class antecedentesActions extends sfActions {
         {
             if( trim($ref["ca_provisional"])=="1" )
             {
-                $email=InoMaestraSea::getUltEmailR(trim($ref["ca_referencia"]));
+
                 if($this->format=="maritimo" )
                 {
-                    if($email)
-                    {
-                        if( strpos($email->getCaSubject(), 'Envio de Antecedentes')!==false  )
-                            $this->refBloqueadas[]=$ref;
-                        else if($email && $email->getCaSubject()== 'Rechazo de Antecedentes '.$ref["ca_referencia"])
-                            $this->refRechazadas[]=$ref;
-                    }
+                    $this->refBloqueadas[]=$ref;
                 }
                 else
                 {
-                    //if($email)
-                    {
-                        if($email== null )
-                        {
-                            $this->refBloqueadas[]=$ref;
-                        }
-                        else if($email  && $email->getCaSubject()== 'Rechazo de Antecedentes '.$ref["ca_referencia"])
-                            $this->refRechazadas[]=$ref;
-                    }
+                    if( $ref["refbloqueada"]<0 )
+                        $this->refBloqueadas[]=$ref;
+                    else 
+                        $this->refRechazadas[]=$ref;
+                    
                 }                
             }
             else
@@ -184,22 +176,12 @@ class antecedentesActions extends sfActions {
             }
         }
 
-        //$this->referencias = $q->fetchArray();
-
         $this->sucursal=$this->user->getIdSucursal();
 
         $this->login=$this->user->getUserId();
         if($this->sucursal=="BOG")
-        //if($this->login=="maquinche")
         {
-  /*          $q = Doctrine::getTable("InoMaestraSea")
-                            ->createQuery("m")                             
-                            ->select("m.ca_referencia,m.ca_modalidad,m.ca_motonave,m.ca_fchembarque,m.ca_fcharribo,m.ca_usucreado,o.ca_ciudad ca_ciu_origen,d.ca_ciudad ca_ciu_destino")
-                            ->innerJoin("m.Origen o")
-                            ->innerJoin("m.Destino d")
-                            ->where("m.ca_fchmuisca is not null and m.ca_carpeta=false");
-            $this->refcarpetas = $q->fetchArray();
-*/            
+              
             $sql="select m.ca_referencia,m.ca_modalidad,m.ca_motonave,m.ca_fchembarque,m.ca_fcharribo,m.ca_usucreado,ori.ca_ciudad ca_ciu_origen,des.ca_ciudad ca_ciu_destino
                 from tb_inomaestra_sea m
                 JOIN tb_ciudades ori ON ori.ca_idciudad = m.ca_origen
@@ -210,9 +192,6 @@ class antecedentesActions extends sfActions {
             $st = $con->execute($sql);
             $this->refcarpetas = $st->fetchAll();
 
-       
-//            print_r($this->refcarpetas);
-            //exit;
         }
 
         $this->sufijos = ParametroTable::retrieveByCaso("CU010");
@@ -529,26 +508,7 @@ class antecedentesActions extends sfActions {
                         ->where("c.ca_referencia = ?", $numref)
                         ->execute();
 
-        if ($format == "email") {
-
-            /*foreach ($this->hijas as $hija) {
-                $reporte = $hija->getReporte();
-                if ($reporte) {
-                    if($reporte->getCaIdtareaAntecedente()>0)
-                    {
-                        $tarea = $reporte->getNotTareaAntecedente();
-                        //echo $reporte->getCaIdreporte()."<br>";
-
-                        if ($tarea) {
-                            $tarea->setCaFchterminada(date("Y-m-d H:i:s"));
-                            $tarea->setCaUsuterminada($this->getUser()->getuserId());
-                            $tarea->save();
-                            echo $reporte->getCaConsecutivo();
-                        }
-                    }
-                }
-            }
-            */
+        if ($format == "email") {            
 
             $this->setLayout($format);
         }
@@ -556,11 +516,7 @@ class antecedentesActions extends sfActions {
         $this->user = $this->getUser();
         $this->format = $format;
 
-        $this->emails = Doctrine::getTable("Email")
-                        ->createQuery("e")
-                        ->addWhere("ca_subject like ?", "%" . $numref . "%")
-                        ->addOrderBy("e.ca_fchenvio DESC")
-                        ->execute();
+        $this->emails = $ref->getEmails();
 
 
 

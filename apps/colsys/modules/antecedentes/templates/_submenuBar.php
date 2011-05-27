@@ -245,7 +245,8 @@ switch($action){
                 success:function(response,options){
                     var res = Ext.util.JSON.decode( response.responseText );
                     if( res.success ){
-                        $("#archivar-ref").remove();                        
+                        $("#archivar-ref").remove();
+                        location.href="/antecedentes/listadoReferencias/format/maritimo";
                         Ext.MessageBox.hide();
                     }
                 }

@@ -75,7 +75,10 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU010"));
         }
         ?>
     </table>
-
+<?
+if( $format=="" )
+{
+?>
     <br>
     <h2> Referencias rechazadas</h2>
     <br />
@@ -144,7 +147,9 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU010"));
         }
         ?>
     </table>
-
+<?
+}
+?>
     <br />
 
 <?
