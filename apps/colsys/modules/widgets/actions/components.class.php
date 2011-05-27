@@ -72,10 +72,10 @@ class widgetsComponents extends sfComponents {
         $this->incoterms="[";
         $incotmp="";
         foreach ($incoterms as $incoterm) {
-            $incotmp=($incotmp!="")?",":"";
+            $incotmp.=($incotmp!="")?",":"";
             $incotmp.="['". $incoterm->getCaValor()."']";
         }
-        $this->incoterms.="]";
+        $this->incoterms.=$incotmp."]";
     }
 
     public function executeTransportes() {
