@@ -399,7 +399,7 @@ class clientesActions extends sfActions {
                 $email->setCaTipo("ComunicacionCircular");
                 $email->setCaIdcaso("9999");
 
-                $email->setCaFchenvio(date("Y-m-d H:i:s"));
+                $email->setCaFchenvio(date("Y-m-d H:i:s")); // Hay que quitar cuando salga de seguimiento la rutina
 
                 $comercial = $cliente->getUsuario();
 
@@ -589,7 +589,7 @@ class clientesActions extends sfActions {
             $email->setCaFromname("Administrador Sistema Colsys");
             $email->setCaReplyto("admin@coltrans.com.co");
 
-            $email->setCaFchenvio(date("Y-m-d H:i:s"));
+            $email->setCaFchenvio(date("Y-m-d H:i:s"));  // Hay que quitar cuando salga de seguimiento la rutina
 
             $email->addTo($comercial->getCaEmail());
             reset($defaultEmail);
