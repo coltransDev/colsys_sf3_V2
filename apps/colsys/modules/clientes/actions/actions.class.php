@@ -51,12 +51,12 @@ class clientesActions extends sfActions {
         $yml = sfYaml::load($config);
 
 
-        $contentPlain = sprintf($yml['email'], "https://".sfConfig::get("app_branding_url").$link, "http://".sfConfig::get("app_branding_url"));
-        $contentHTML = sprintf(Utils::replace($yml['email']), "<a href='https://".sfConfig::get("app_branding_url").$link."'>https://".sfConfig::get("app_branding_url").$link."</a>", "<a href='http://".sfConfig::get("app_branding_url")."'>http://".sfConfig::get("app_branding_url")."</a>");
+        $contentPlain = sprintf($yml['email'], "https://www.coltrans.com.co".$link, "http://www.coltrans.com.co");
+        $contentHTML = sprintf(Utils::replace($yml['email']), "<a href='https://www.coltrans.com.co".$link."'>https://www.coltrans.com.co".$link."</a>", "<a href='http://www.coltrans.com.co'>http://www.coltrans.com.co</a>");
         ;
 
-        $from = sfConfig::get("app_branding_from");
-        $fromName = sfConfig::get("app_branding_name")." - Servicio al cliente";
+        $from = "serclientebog@coltrans.com.co";
+        $fromName = "Coltrans S.A. - Servicio al cliente";
         //$to = array($contacto->getCaNombres()." ".$contacto->getCaPapellido()=>$contacto->getCaEmail() );
         //$to = array($contacto->getCaNombres()." ".$contacto->getCaPapellido()=>$contacto->getCaEmail() );
         $to = array($contacto->getCaNombres()." ".$contacto->getCaPapellido() => $contacto->getCaEmail(), $this->getUser()->getNombre() => $this->getUser()->getEmail());
@@ -70,7 +70,7 @@ class clientesActions extends sfActions {
         $email->setCaFromname($fromName);
         $email->addTo($contacto->getCaEmail());
         $email->addCc($this->getUser()->getEmail());
-        $email->setCaSubject("Activación Clave ".sfConfig::get("app_branding_name"));
+        $email->setCaSubject("Activación Clave Coltrans.com.co");
         $email->setCaBodyhtml($contentHTML);
         $email->setCaBody($contentPlain);
         $email->save();
@@ -298,7 +298,7 @@ class clientesActions extends sfActions {
 
     public function executeVerificaEstados($request) {
         // registro de control > 4622685
-        
+
         set_time_limit(0);              // Estas rutina revisa todos los clientes y verifica si están adecuadamenten clasificados en su estado
         $empresas = array("Coltrans","Colmas");
 
@@ -319,7 +319,7 @@ class clientesActions extends sfActions {
                         print_r($row1);
                         echo "$fch_ini, $fch_fin | ";
                         echo $row["ca_estado"]." ".$estado_cal." ".$resultado." ".$empresa." ".$row1["ca_numnegocios"];
-                        
+
                         die();
                     }*/
                     if($row["ca_estado"]!="Vetado" and $resultado != "OK"){
@@ -397,7 +397,9 @@ class clientesActions extends sfActions {
                 $email = new Email();
                 $email->setCaUsuenvio("Administrador");
                 $email->setCaTipo("ComunicacionCircular");
-                $email->setCaIdcaso("1");
+                $email->setCaIdcaso("9999");
+
+                $email->setCaFchenvio(date("Y-m-d H:i:s"));
 
                 $comercial = $cliente->getUsuario();
 
@@ -412,6 +414,8 @@ class clientesActions extends sfActions {
                 $email->setCaFromname($comercial->getCaNombre());
                 $email->setCaReplyto($comercial->getCaEmail());
                 $email->addCc($comercial->getCaEmail());
+
+                $email->addCc("clopez@coltrans.com.co");    // Pruebas de envio controlado
 
                 $sucursal_obj = $comercial->getSucursal();
                 $direccion_suc = $sucursal_obj->getCaDireccion()." ".$sucursal_obj->getCaNombre();
@@ -443,7 +447,6 @@ class clientesActions extends sfActions {
                 $bodyHtml.= "<b>Recuerde que esta información se debe actualizar cada año.</b>";
 
                 $email->setCaBodyhtml($bodyHtml);
-                // $email->setCaFchenvio(date("Y-m-d H:i:s"));
                 $email->addAttachment("Attachements/CARTA_CIRCULAR_184.doc");
                 $email->addAttachment("Attachements/NUEVA_CIRC_ 170.xls");
 
@@ -581,10 +584,12 @@ class clientesActions extends sfActions {
             $email = new Email();
             $email->setCaUsuenvio("Administrador");
             $email->setCaTipo("CircularClientes");
-            $email->setCaIdcaso("1");
+            $email->setCaIdcaso("8888");
             $email->setCaFrom("admin@coltrans.com.co");
             $email->setCaFromname("Administrador Sistema Colsys");
             $email->setCaReplyto("admin@coltrans.com.co");
+
+            $email->setCaFchenvio(date("Y-m-d H:i:s"));
 
             $email->addTo($comercial->getCaEmail());
             reset($defaultEmail);
@@ -595,6 +600,7 @@ class clientesActions extends sfActions {
             while (list ($clave, $val) = each($ccEmails)) {
                 $email->addCc($val);
             }
+            $email->addCc("clopez@coltrans.com.co");    // Pruebas de envio controlado
 
             $inicio = $this->getRequestParameter("fchStart");
             $final = $this->getRequestParameter("fchEnd");
@@ -1028,5 +1034,4 @@ class clientesActions extends sfActions {
     }
 
 }
-
 ?>
