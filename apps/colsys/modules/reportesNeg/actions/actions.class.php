@@ -3327,7 +3327,7 @@ class reportesNegActions extends sfActions
         
         Doctrine::getTable("NotTarea")
                   ->createQuery("t")
-                  ->update()                  
+                  ->update()
                   ->set("t.ca_fchterminada","'". date('Y-m-d H:i:s')."'")
                   ->set("t.ca_usuterminada","'". $this->getUser()->getUserId()."'")
                   ->where("t.ca_titulo like ?", "%Seguimiento RN".$consecutivo."%")
