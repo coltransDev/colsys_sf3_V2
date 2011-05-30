@@ -3294,13 +3294,14 @@ class reportesNegActions extends sfActions
         {
             $reporte = Doctrine::getTable("Reporte")->find( $request->getParameter("id") );
             $this->forward404Unless($reporte);
-
+            $consecutivo=$reporte->getCaConsecutivo();
             $user = $this->getUser();
             $reporte->setCaUsuanulado( $user->getUserId() );
             $reporte->setCaFchanulado( date("Y-m-d H:i:s") );
             $reporte->setCaDetanulado( trim($request->getParameter("motivo")));
             $reporte->save();
             $q->addWhere("r.ca_idreporte = ?", $request->getParameter("id") );
+            
         }
         else if($consecutivo)
         {
@@ -3322,6 +3323,17 @@ class reportesNegActions extends sfActions
             $tarea->setCaUsuterminada( $this->getUser()->getUserId());
             $tarea->save();
         }
+        
+        
+        Doctrine::getTable("NotTarea")
+                  ->createQuery("t")
+                  ->update()                  
+                  ->set("t.ca_fchterminada","'". date('Y-m-d H:i:s')."'")
+                  ->set("t.ca_usuterminada","'". $this->getUser()->getUserId()."'")
+                  ->where("t.ca_titulo like ?", "%Seguimiento RN".$consecutivo."%")
+                  ->execute();
+        
+        
 
 
         $this->responseArray = array("success"=>true);
