@@ -227,7 +227,7 @@ class idsActions extends sfActions {
                 $bindValues["tipo_proveedor"] = $request->getParameter("tipo_proveedor");
                 $bindValues["controladoporsig"] = $request->getParameter("controladoporsig");
                 $bindValues["critico"] = $request->getParameter("critico");
-                $bindValues["esporadico"] = $request->getParameter("esporadico");
+                //$bindValues["esporadico"] = $request->getParameter("esporadico");
                 $bindValues["aprobado"] = $request->getParameter("aprobado");
                 $bindValues["activo_impo"] = $request->getParameter("activo_impo");
                 $bindValues["activo_expo"] = $request->getParameter("activo_expo");
@@ -328,11 +328,11 @@ class idsActions extends sfActions {
                             $proveedor->setCaCritico(false);
                         }
 
-                        if ($bindValues["esporadico"]) {
+                        /*if ($bindValues["esporadico"]) {
                             $proveedor->setCaEsporadico(true);
                         } else {
                             $proveedor->setCaEsporadico(false);
-                        }
+                        }*/
 
 
                         if ($bindValues["aprobado"]) {

@@ -326,16 +326,10 @@
             ?>
             </div>
         </td>
-        <td> <b>Esporadico</b></td>
+        <td>&nbsp;</td>
 		<td colspan="3">
             <div align="left">
-            <?
-            echo $form['esporadico']->renderError();
-            if( $proveedor ){
-                $form->setDefault('esporadico', $proveedor->getCaEsporadico() );
-            }
-            echo $form['esporadico']->render();
-            ?>
+            &nbsp;
             </div>
 
         </td>

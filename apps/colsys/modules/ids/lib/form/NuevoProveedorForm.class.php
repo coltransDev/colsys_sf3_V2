@@ -27,7 +27,7 @@ class NuevoProveedorForm extends BaseForm{
         $widgets['tipo_proveedor'] = new sfWidgetFormDoctrineChoice(array('model' => 'IdsTipo', 'add_empty' => false, 'query' => $q), array("onChange"=>"changeTipo()"));
 
         $widgets['critico'] = new sfWidgetFormInputCheckbox();
-        $widgets['esporadico'] = new sfWidgetFormInputCheckbox();
+        //$widgets['esporadico'] = new sfWidgetFormInputCheckbox();
         $widgets['controladoporsig'] = new sfWidgetFormInputCheckbox();
         $widgets['aprobado'] = new sfWidgetFormExtDate();
         $widgets['activo_impo'] = new sfWidgetFormInputCheckbox();
@@ -53,8 +53,8 @@ class NuevoProveedorForm extends BaseForm{
         $validator["critico"] =new sfValidatorBoolean( array('required' => false ),
 														array('required' => 'Este campo es requerido'));
 
-        $validator["esporadico"] =new sfValidatorBoolean( array('required' => false ),
-														array('required' => 'Este campo es requerido'));
+        /*$validator["esporadico"] =new sfValidatorBoolean( array('required' => false ),
+														array('required' => 'Este campo es requerido'));*/
 
 
         $validator["controladoporsig"] =new sfValidatorBoolean( array('required' => false ),
