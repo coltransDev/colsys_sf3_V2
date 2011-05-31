@@ -70,6 +70,8 @@ if($conn->Open()){
             $attributes = $data["symfony/user/sfUser/attributes"]["symfony/user/sfUser/attributes"];           
             $usuario = $attributes["user_id"];
             $regional = $attributes["idtrafico"];
+            $usuario_sucursal = $attributes["idsucursal"] ;
+            //print_r($attributes);
             $cache->set($session_id."_lr", time());
             
             if( isset($programa) ){
