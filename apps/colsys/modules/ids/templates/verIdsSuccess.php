@@ -193,10 +193,10 @@ var eliminarAgente = function(){
                        <div align="left"><?=$proveedor->getCaActivoImpo()?"S&iacute;":"<span class='rojo'>No</span>"?></div>
                    </td>
                    <td>
-                       <div align="left"><b>Esporadico</b></div>
+                       <div align="left">&nbsp;</div>
                    </td>
                    <td>
-                       <div align="left"><div align="left"><?=$proveedor->getCaEsporadico()?"S&iacute;":"No"?></div></div>
+                       <div align="left">&nbsp;</div>
                    </td>
                 </tr>
                 <tr>

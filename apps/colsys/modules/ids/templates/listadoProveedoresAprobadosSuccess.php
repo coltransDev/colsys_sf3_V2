@@ -25,8 +25,7 @@ $counts = array();
             <th rowspan="2">Vencimiento <br />Polizas</th>
             <th rowspan="2">Vencimiento <br />BASC</th>
             <th rowspan="2">Ciudad</th>
-            <th rowspan="2">Critico</th>
-            <th rowspan="2">Esporadico</th>
+            <th rowspan="2">Critico</th>           
             <th colspan="<?=$numYears?>">Evaluaci&oacute;n</th>
             <th colspan="3">Desempeño</th>
         </tr>
@@ -115,8 +114,7 @@ $counts = array();
                 ?>
                 </div>
             </td>
-            <td><div align="center"><?=$proovedor->getCaCritico()?"X":""?></div></td>
-             <td><div align="center"><?=$proovedor->getCaEsporadico()?"X":""?></div></td>
+            <td><div align="center"><?=$proovedor->getCaCritico()?"X":""?></div></td>             
             <?
 
             $evaluaciones = $ids->getCalificaciones();
