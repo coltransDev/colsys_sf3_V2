@@ -6,6 +6,9 @@
 
 if (count($usuarios)>0):
 ?>
+ <h1 class="show"><span>Cumplea&ntilde;os</span></h1>
+<?=image_tag("birthday/".date("d").".gif")?>                                        
+<br />
 <div class="jamod-content">
     <?
     $hoy=0;
@@ -47,7 +50,7 @@ if (count($usuarios)>0):
         	}
         }
     ?>
-        <b><a href="<?=url_for('adminUsers/viewUser?login='.$usuario->getCaLogin()) ?>"><?=$usuario->getCaNombre()?></a></b> <small><?=$usuario->getSucursal()->getCa_Nombre()?></small><br />
+        <b><a href="<?=url_for('adminUsers/viewUser?login='.$usuario->getCaLogin()) ?>"><?=$usuario->getCaNombre()?></a></b> <small><?=$usuario->getSucursal()->getEmpresa()->getCaNombre()?> - <?=$usuario->getSucursal()->getCaNombre()?></small><br />
     <?
     }endif;
     ?>

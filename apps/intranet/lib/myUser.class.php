@@ -21,7 +21,8 @@ class myUser extends sfBasicSecurityUser
 	}
 
     public function getNivelAcceso( $rutina ){
-		$usuario = Doctrine::getTable('Usuario')->createQuery('u')->where('u.ca_login = ? ', $this->getUserId() )->fetchOne();
+		//$usuario = Doctrine::getTable('Usuario')->createQuery('u')->where('u.ca_login = ? ', $this->getUserId() )->fetchOne();
+        $usuario = Doctrine::getTable('Usuario')->createQuery('u')->where('u.ca_login = ? ', "dmvargas" )->fetchOne();
         return $usuario->getNivelAcceso( $rutina );
 	}
 

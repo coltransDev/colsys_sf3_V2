@@ -14,7 +14,7 @@ default:
 
   stylesheets:    [style.css, ext/css/ext-all, ext/css/xtheme-gray, ext/css/ext-all, ext/css/xtheme-gray,  blog]
 
-  javascripts:    [jquery/jquery.js, jquery/jquery.tooltip.js, jquery/jquery.dimensions.js ,ext/adapter/ext/ext-base, ext/ext-all-debug, ext/src/locale/ext-lang-es.js, Base64]
+  javascripts:    [ext/adapter/ext/ext-base, ext/ext-all-debug, ext/src/locale/ext-lang-es.js]
 
   has_layout:     true
   layout:         layout

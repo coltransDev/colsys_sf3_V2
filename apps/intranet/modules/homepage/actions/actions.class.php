@@ -50,7 +50,7 @@ class homepageActions extends sfActions
     }
     public function executeEditarNoticia(sfWebRequest $request){
 
-        $this->setLayout("layout2col");
+        
 
         $this->nivel = $this->getNivel();
 
@@ -91,7 +91,7 @@ class homepageActions extends sfActions
     */
     public function executeGuardarNoticia(sfWebRequest $request){
 
-        $this->setLayout("layout2col");
+        
 
         $idnoticia = $request->getParameter("idnoticia");
 

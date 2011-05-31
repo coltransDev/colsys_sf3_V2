@@ -7,161 +7,54 @@
         <link rel="shortcut icon" href="/favicon.ico" />
         <?php include_stylesheets() ?>
         <?php include_javascripts() ?>
-        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-        <title>Intranet</title>
-        <meta name="keywords" content="" />
-        <meta name="description" content="" />
-        <link href="style.css" rel="stylesheet" type="text/css" media="screen" />
-    
-    <script language="Javascript" type="text/javascript">
-		mis_imagenes = new Array("<?=image_path("logos/coltrans_logo.jpg")?>","<?=image_path("logos/colmas_logo.jpg")?>","<?=image_path("logos/consolcargo1.png")?>","<?=image_path("logos/coltrans_usa1.png")?>")
-		mi_imagen = 0
-		imgCt = mis_imagenes.length
-		function rotacion() {
-			if (document.images) {
-				mi_imagen++
-				if (mi_imagen == imgCt) {
-					mi_imagen = 0
-				}
-				document.anuncio.src=mis_imagenes[mi_imagen]
-				setTimeout("rotacion()", 5 * 500)
-			}
-		}
-	</script>
-    
+        
+
+
     </head>
-    <body onload="rotacion()">
-        <div class="out">
-            <div class="wrapper">
-                <div class="int">
+    <body >
 
-                    <!--Top Area Start-->
-                    <div class="top">
-                        <div class="logo">
-
-                            <a href="index.php" title="">
-                            	<img src="http://illiweb.com/fa/empty.gif" name="anuncio" alt="Anuncios" />
-                                <?// echo image_tag('colmas_logo.jpg',array('border'=>'none')) ?>
-                            </a>
-                        </div>
-
-                        <div class="search">
-                            <div class="searchint">
-                                <div class="moduletable">
-
-                                </div>
-                            </div>
-                            <?include_component('adminUsers','loginInformation')?>
-                        </div>
-
-                        <div class="topmenu">
-
-                        </div>
-
-                    </div>
-                    <!--Top Area End-->
+        <!--Top Area Start-->
+        <div class="header_content">
+            <div class="top">
+                <div class="logo"  >
+                    <? include_component('homepage', 'logos') ?>
+                </div>                
+            </div>                        
+        </div>
+        <!--Top Area End-->
 
 
-                    <!--Header Start-->
-                    <div class="header">
-                        <div class="header_foot"> </div>
-                    </div>
+        <!--Header Start-->
+        
+        <div class="header_foot">
+        </div>
 
 
-                    <!--Header End-->
+        <!--Header End-->
 
 
-                    <!--Content Area Start-->
-                    <div class="content">
-
-
-
-                        <!--Left Column Start-->
-
-                        <div class="left">
-                            <div class="moduletable_menu">
-                                <?//include_component('homepage','mainMenu')?>
-                            </div>
-                            <br />
-
-                        </div>
-                        <!--Center Column Start-->
-
-                        <div class="center">
-
-                            <table class="blog" cellpadding="0" cellspacing="0">
-                                <tr>
-                                    <td valign="top">
-                                        <div>
-
-                                            <div class="contentpaneopen">
-
-                                                <h2 class="contentheading">
-			Bienvenido a Intranet</h2>
-
-
-
-                                                <div class="article-content">
-                                                     <?//include_component('homepage','noticias')?>
-                                                     <?php echo $sf_content ?>
-                                                </div>
-                                            </div>
-
-                                            <span class="article_separator">&nbsp;</span>
-                                        </div>
-                                    </td>
-                                </tr>
-
-
-
-                            </table>
-
-                        </div>
-                        <!--Center Column End End-->
-
-                        <!--right Column Start-->
-
-                        <!--Right Column End-->
-
-
-
-                        <!--Left Column End-->
-
-                        <!--Center Column Start-->
-                        <?php /*if ($this->countModules('right')): ?>
-                        <div class="center">
-                            <?php else: ?>
-                            <div class="centerleft">
-                                <?php endif; ?>
-                                <jdoc:include type="component" />
-                            </div>
-                            <!--Center Column End End-->
-
-                            <!--right Column Start-->
-                            <?php if ($this->countModules('right')): ?>
-                            <div class="right">
-                                <jdoc:include type="modules" name="right" style="jarounded" />
-                            </div>
-                            <?php endif;*/ ?>
-
-                        <!--Right Column End-->
-
-
-                    </div>
-                    <!--Content Area End-->
-                    <div class="footer">
-
-
-                        <div class="copyright">
-                            <div>Copyright &#169; 2010. Todos los derechos reservados.<br /></div>
-                            <br />
-                        </div>
-
-                    </div>
+        <!--Content Area Start-->
+        <div class="content_wrapper">
+            <div class="content">
+                
+                <div class="centerlogin" align="center">
+                    <div class="contentheading">Bienvenido al Intranet</div>
+                    <?php echo $sf_content ?>                            
                 </div>
+                <!--Center Column End End-->            
+            </div>
+        </div>
+        <!--Content Area End-->
 
+        <div class="footer">
+            <div class="copyright">
+                <div>Copyright &#169;. Todos los derechos reservados.<br /></div>
+                <br />
             </div>
         </div>
 
+<!--                    <a href="https://www.coltrans.com.co/"><img src="images/colsys.png" border="none" alt="Colsys" /></a>
+                 <a href="https://www.coltrans.com.co/tracking"><img src="images/tracking.png" border="none" alt="Colsys" /></a>
+                 <a href="http://www.coltrans.com.co/mail"><img src="images/webmail.png" border="none" alt="Colsys" /></a>-->
     </body>
 </html>
