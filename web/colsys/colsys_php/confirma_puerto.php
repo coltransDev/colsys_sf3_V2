@@ -323,7 +323,9 @@ elseif (isset($boton)) {                                                       /
 
                     $query = "select ca_nombre, ca_email from control.tb_usuarios where ca_login in (select DISTINCT ca_usucreado as ca_usuario from tb_inoclientes_sea where ca_referencia = '".$rs->Value('ca_referencia')."'";
                     $query.= "UNION select DISTINCT ca_usuactualizado as ca_usuario from tb_inoclientes_sea where ca_referencia = '".$rs->Value('ca_referencia')."'
-                              UNION select DISTINCT ca_usumuisca as ca_usuario from tb_inomaestra_sea where ca_referencia = '".$rs->Value('ca_referencia')."'
+                              UNION select DISTINCT ca_usumuisca as ca_usuario from tb_inomaestra_sea where ca_referencia = '".$rs->Value('ca_referencia')."' 
+                              UNION select DISTINCT ca_usucreado as ca_usuario from tb_dianclientes where ca_referencia = '".$rs->Value('ca_referencia')."'
+                              UNION select DISTINCT ca_usuactualizado as ca_usuario from tb_dianclientes where ca_referencia = '".$rs->Value('ca_referencia')."'
                         )";
                     if (!$in->Open($query)) {  // Selecciona todos los correos electrónicos para enviar confirmación
                         echo "<script>alert(\"".addslashes($in->mErrMsg)."\");</script>";      // Muestra el mensaje de error
