@@ -18,10 +18,10 @@ $resul = $sf_data->getRaw("resul");
 
 <div align="center" >
     <br />
-    <h3> Reporte de carga tráficos </h3>
+    <h3> Reporte de carga en continuaci&oacute;n </h3>
     <br />
 </div>
-<div align="left" id="container"></div>
+<div align="center" id="container"></div>
 <script language="javascript">
     var tabs = new Ext.FormPanel({
         labelWidth: 75,
@@ -111,21 +111,12 @@ $resul = $sf_data->getRaw("resul");
                                             value:"<?= $idmodalidad ?>"
                                         })
                                         ,
-                                        new WidgetPais({title: 'Pais origen',
-                                            fieldLabel: 'Pais origen',
-                                            id: 'pais_origen',
-                                            name: 'pais_origen',
-                                            hiddenName: "idpais_origen",
-                                            pais:"todos",
-                                            value:"<?= $idpais_origen ?>"
-                                        }),
-                                        new WidgetPais({title: 'Pais destino',
-                                            fieldLabel: 'Pais destino',
-                                            id: 'pais_destino',
-                                            name: 'pais_destino',
-                                            hiddenName: "idpais_destino",
-                                            pais:"todos",
-                                            value:"<?= $idpais_destino ?>"
+                                        new WidgetCiudad({fieldLabel: 'origen',
+                                            id: 'origen',
+                                            idciudad:"origen",
+                                            hiddenName:"idorigen",
+                                            value:"<?= $origen ?>",                                            
+                                            hiddenValue:"<?= $idorigen ?>"
                                         }),
                                         new WidgetCliente({fieldLabel: 'Cliente',
                                             id:"Cliente",
@@ -178,29 +169,18 @@ $resul = $sf_data->getRaw("resul");
                                             value:"<?= $idlinea ?>",
                                             width:300
                                         }),
-                                        new WidgetCiudad({fieldLabel: 'origen',
-                                            id: 'origen',
-                                            idciudad:"origen",
-                                            hiddenName:"idorigen",
-                                            tipo:"3",
-                                            traficoParent:"pais_origen",
-                                            impoexpo: "impoexpo",
-                                            value:"<?= $origen ?>",
-                                            hiddenValue:"<?= $idorigen ?>"
-                                        }),
+
                                         new WidgetCiudad({fieldLabel: 'destino',
                                             id: 'destino',
                                             idciudad:"destino",
                                             hiddenName:"iddestino",
-                                            tipo:"3",
-                                            traficoParent:"pais_destino",
-                                            impoexpo: "impoexpo",
                                             value:"<?= $destino ?>",
                                             hiddenValue:"<?= $iddestino ?>"
                                         }),
                                         new WidgetSucursales({fieldLabel: 'Sucursal',
-                                            id:"Sucursal",
-                                            hiddenName:"sucursal",
+                                            id:"sucursal",
+                                            name:"sucursal",
+                                            hiddenName:"idsucursal",
                                             width:120,
                                             value:"<?= $sucursal ?>",
                                             hiddenValue:"<?= $sucursal ?>"
@@ -332,11 +312,11 @@ $resul = $sf_data->getRaw("resul");
             $teus+=$r["teus"];
             $totales["modalidad"][$r["ca_modalidad"]]["origen"][$r["ori_ca_nombre"]]+=$r["teus"];
             $totales["modalidad"][$r["ca_modalidad"]]["destino"][$r["des_ca_ciudad"]]+=$r["teus"];
-            if ($r["ca_referencia"] == $ref) {
+            /*if ($r["ca_referencia"] == $ref) {
                 $volumen = "";
                 $piezas = "";
                 $peso = "";
-            } else {
+            } else*/ {
 
                 $tvolumen+=$r["volumen"];
                 $volumen = number_format($r["volumen"], 2);

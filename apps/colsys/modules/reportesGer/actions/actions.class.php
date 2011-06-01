@@ -324,42 +324,6 @@ class reportesGerActions extends sfActions {
         $this->sucursal = $request->getParameter("sucursal");
 
         if ($this->opcion) {
-            /* $q = Doctrine::getTable("RepCargaTraficos")
-              ->createQuery("ct")
-              ->select("*")
-              ->setHydrationMode(Doctrine::HYDRATE_ARRAY);
-
-              if($this->idmodalidad)
-              $q->addWhere("ca_modalidad=?",$this->idmodalidad);
-
-              if($this->fechainicial && $this->fechafinal)
-              $q->addWhere ("(ca_fchreferencia between ? and ?)",array($this->fechainicial,$this->fechafinal));
-              if($this->fechaembinicial && $this->fechaembfinal)
-              $q->addWhere ("(ca_fchembarque between ? and ?)",array($this->fechaembinicial,$this->fechaembfinal));
-              if($this->fechaarrinicial && $this->fechaarrfinal)
-              $q->addWhere ("(ca_fcharribo between ? and ?)",array($this->fechaarrinicial,$this->fechaarrfinal));
-              if($this->idpais_origen)
-              $q->addWhere("ori_ca_idtrafico=?",$this->idpais_origen);
-              if($this->idorigen)
-              $q->addWhere("ca_origen=?",$this->idorigen);
-              if($this->idpais_destino)
-              $q->addWhere("des_ca_idtrafico=?",$this->idpais_destino);
-              if($this->iddestino)
-              $q->addWhere("ca_destino=?",$this->iddestino);
-              if($this->idlinea)
-              $q->addWhere("ca_idlinea=?",$this->idlinea);
-
-              if($this->incoterms)
-              $q->addWhere("ca_incoterms like ?","%".$this->incoterms."%");
-
-              if($this->idagente)
-              $q->addWhere("ca_idagente = ?",$this->idagente);
-
-              if($this->idsucursalagente)
-              $q->addWhere("ca_idsucursalagente = ?",$this->idsucursalagente);
-
-              $this->resul=$q->execute();
-             */
 
             if ($this->idmodalidad)
                 $where.=" and m.ca_modalidad='" . $this->idmodalidad . "'";
@@ -370,14 +334,10 @@ class reportesGerActions extends sfActions {
                 $where.=" and (m.ca_fchembarque between '" . $this->fechaembinicial . "' and '" . $this->fechaembfinal . "')";
             if ($this->fechaarrinicial && $this->fechaarrfinal)
                 $where.=" and (m.ca_fcharribo between '" . $this->fechaarrinicial . "' and '" . $this->fechaarrfinal . "')";
-            if ($this->idpais_origen)
-                $where.=" and ori.ca_idtrafico='" . $this->idpais_origen . "'";
             if ($this->idorigen)
-                $where.=" and m.ca_origen='" . $this->idorigen . "'";
-            if ($this->idpais_destino)
-                $where.=" and des.ca_idtrafico='" . $this->idpais_destino . "'";
+                $where.=" and m.ca_destino='" . $this->idorigen . "'";
             if ($this->iddestino)
-                $where.=" and m.ca_destino='" . $this->iddestino . "'";
+                $where.=" and r.ca_continuacion_dest='" . $this->iddestino . "'";
             if ($this->idlinea)
                 $where.=" and m.ca_idlinea='" . $this->idlinea . "'";
 
@@ -400,10 +360,9 @@ class reportesGerActions extends sfActions {
 
             $sql = "SELECT m.ca_referencia, cl.ca_compania, u.ca_sucursal, c.ca_hbls, r.ca_consecutivo, r.ca_seguro, r.ca_colmas, b1.ca_nombre as ca_bodega, t.ca_nombre as ca_operador, m.ca_fchembarque, m.ca_fcharribo, m.ca_fchreferencia, m.ca_origen, ori.ca_ciudad AS ori_ca_ciudad, m.ca_destino, des.ca_ciudad AS des_ca_ciudad, tra_ori.ca_idtrafico AS ori_ca_idtrafico, tra_ori.ca_nombre AS ori_ca_nombre, tra_des.ca_idtrafico AS des_ca_idtrafico, tra_des.ca_nombre AS des_ca_nombre, m.ca_modalidad,
                 count(DISTINCT c.ca_hbls) AS nhbls,
-                sum(c.ca_numpiezas) piezas,
-                    sum(c.ca_peso) peso,
-                    sum(c.ca_volumen) volumen
-
+                (c.ca_numpiezas) piezas,
+                    (c.ca_peso) peso,
+                    (c.ca_volumen) volumen
                 FROM tb_inomaestra_sea m
                 JOIN tb_inoclientes_sea c ON c.ca_referencia = m.ca_referencia
                 JOIN tb_clientes cl ON c.ca_idcliente = cl.ca_idcliente
@@ -416,11 +375,12 @@ class reportesGerActions extends sfActions {
                 JOIN tb_ciudades des ON des.ca_idciudad = m.ca_destino
                 JOIN tb_traficos tra_des ON tra_des.ca_idtrafico = des.ca_idtrafico
 
-                WHERE date_part('year', m.ca_fchreferencia) > (date_part('year', m.ca_fchreferencia) - 2) and r.ca_continuacion != 'N/A'
+                WHERE date_part('year', m.ca_fchreferencia) > (date_part('year', m.ca_fchreferencia) - 2) and r.ca_continuacion = 'OTM'
                 $where
-                group by m.ca_referencia, cl.ca_compania, u.ca_sucursal, c.ca_hbls, r.ca_consecutivo, r.ca_seguro, r.ca_colmas, b1.ca_nombre, t.ca_nombre, m.ca_fchembarque, m.ca_fcharribo, m.ca_fchreferencia, m.ca_origen, ori.ca_ciudad , m.ca_destino, des.ca_ciudad, tra_ori.ca_idtrafico, tra_ori.ca_nombre, tra_des.ca_idtrafico, tra_des.ca_nombre, m.ca_modalidad";
+                group by m.ca_referencia, cl.ca_compania, u.ca_sucursal, c.ca_hbls, r.ca_consecutivo, r.ca_seguro, r.ca_colmas, b1.ca_nombre, t.ca_nombre, m.ca_fchembarque, m.ca_fcharribo, m.ca_fchreferencia, m.ca_origen, ori.ca_ciudad , m.ca_destino, des.ca_ciudad, tra_ori.ca_idtrafico, tra_ori.ca_nombre, tra_des.ca_idtrafico, tra_des.ca_nombre, m.ca_modalidad,c.ca_numpiezas,c.ca_peso,c.ca_volumen";
 
             $con = Doctrine_Manager::getInstance()->connection();
+            //echo $sql;
             $st = $con->execute($sql);
             $this->resul = $st->fetchAll();
         }
