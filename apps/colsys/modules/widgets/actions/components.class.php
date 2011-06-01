@@ -639,6 +639,16 @@ class widgetsComponents extends sfComponents {
     public function executeWidgetTicket() {
 
     }
+    
+    public function executeWidgetUploadImages() {
+
+        $response = sfContext::getInstance()->getResponse();
+		$response->addJavaScript("swfupload/swfupload",'last');
+        $response->addJavaScript("swfupload/js/handlers",'last');
+        
+        
+    }
+    
 
 }
 
