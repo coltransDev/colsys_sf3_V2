@@ -189,8 +189,14 @@ class reportesGerActions extends sfActions {
 
     public function executeEstadisticasTraficos(sfWebRequest $request) {
         $this->opcion = $request->getParameter("opcion");
-        $this->mes = Utils::parseDate($request->getParameter("fechaFinal"), "m");
-        $this->fechafinal = Utils::addDate(Utils::addDate($request->getParameter("fechaFinal"), 0, 1, 0, "Y-m-01"), -1);
+        list($nom_mes,$ano)=explode("-", $request->getParameter("fechaFinal"));        
+        
+        
+        $this->mes = Utils::nmes($nom_mes);
+        $this->idsucursal = $request->getParameter("idsucursal");
+        	//echo $this->idsucursal;
+            //exit;
+        $this->fechafinal = Utils::addDate(Utils::addDate($ano."-".$this->mes."-01", 0, 1, 0, "Y-m-01"), -1);
 
         $this->fechainicial = Utils::addDate(Utils::addDate($this->fechafinal, 1, 0, 0, "Y-m-01"), 0, -3, 0, "Y-m-d");
 
@@ -216,9 +222,12 @@ class reportesGerActions extends sfActions {
                 $this->grid[$r["origen"]][$r["ca_year"] . "-" . $r["ca_mes"]] = $r["valor"];
                 $this->totales[$r["ca_year"] . "-" . $r["ca_mes"]]+=$r["valor"];
             }
+            
+            if($this->idsucursal)
+                $where=" and ca_sucursal='".$this->idsucursal."'";
 
             $sql = "select count(*) as valor,ca_traorigen as origen,ca_year from vi_reportes_estadisticas
-            where (ca_fchreporte between '" . (Utils::parseDate($this->fechafinal, "Y") . '-01-01') . "' and '" . $this->fechafinal . "' or ca_fchreporte between '" . (Utils::parseDate($this->fechafinal1, "Y") . '-01-01') . "' and '" . $this->fechafinal1 . "' or ca_fchreporte between '" . (Utils::parseDate($this->fechafinal2, "Y") . '-01-01') . "' and '" . $this->fechafinal2 . "') and ca_sucursal='Bogotá D.C.'
+            where (ca_fchreporte between '" . (Utils::parseDate($this->fechafinal, "Y") . '-01-01') . "' and '" . $this->fechafinal . "' or ca_fchreporte between '" . (Utils::parseDate($this->fechafinal1, "Y") . '-01-01') . "' and '" . $this->fechafinal1 . "' or ca_fchreporte between '" . (Utils::parseDate($this->fechafinal2, "Y") . '-01-01') . "' and '" . $this->fechafinal2 . "') $where
             group by ca_traorigen,ca_year order by 2,3,1";
             //echo "<br>".$sql;
             $st = $con->execute($sql);
@@ -234,7 +243,7 @@ class reportesGerActions extends sfActions {
 
             $sql = "select count(*) as valor,ca_traorigen as origen,ca_nombre_cli as cliente
                 from vi_reportes_estadisticas 
-                where ca_fchreporte between '" . Utils::parseDate($this->fechainicial, "Y-01-01") . "' and '" . $this->fechafinal . "' and ca_sucursal='Bogotá D.C.'
+                where ca_fchreporte between '" . Utils::parseDate($this->fechainicial, "Y-01-01") . "' and '" . $this->fechafinal . "' $where
                 group by ca_traorigen,ca_nombre_cli
                 order by 2 ,1 desc";
             //echo "<br>".$sql;
@@ -253,7 +262,7 @@ class reportesGerActions extends sfActions {
 
             $sql = "select count(*) as valor,ca_year,ca_mes,ca_traorigen as origen ,ca_nombre_cli as cliente
                 from vi_reportes_estadisticas 
-                where ca_fchreporte between '" . Utils::parseDate($this->fechainicial, "Y-01-01") . "' and '" . $this->fechafinal . "' and ca_sucursal='Bogotá D.C.'
+                where ca_fchreporte between '" . Utils::parseDate($this->fechainicial, "Y-01-01") . "' and '" . $this->fechafinal . "' $where
                 group by ca_year,ca_mes,ca_traorigen,ca_nombre_cli
                 order by 4,2,3,5";
             //echo "<br>".$sql;
@@ -270,7 +279,7 @@ class reportesGerActions extends sfActions {
 
             $sql = "select count(*) as valor,ca_year,ca_mes,ca_login as vendedor
                 from vi_reportes_estadisticas 
-                where ca_fchreporte between '" . Utils::parseDate($this->fechainicial, "Y-01-01") . "' and '" . $this->fechafinal . "' and ca_sucursal='Bogotá D.C.'
+                where ca_fchreporte between '" . Utils::parseDate($this->fechainicial, "Y-01-01") . "' and '" . $this->fechafinal . "' $where
                 group by ca_year,ca_mes,ca_login
                 order by 4";
             //echo "<br>".$sql;

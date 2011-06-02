@@ -1,6 +1,8 @@
 <?
 //echo $nmeses;
 include_component("charts","column");
+
+
 $dataJSON=array();
 ?>
 <div align="center" >

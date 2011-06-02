@@ -4,6 +4,8 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
+include_component("widgets","widgetSucursales");
+$idsucursal= $sf_data->getRaw("idsucursal");
 ?>
 
 
@@ -52,29 +54,28 @@ var tabs = new Ext.FormPanel({
                                 border:false,
                                 items:
                                 [
-                                    {
+                                    new WidgetSucursales({fieldLabel: 'Sucursal',
+                                                        id: 'sucursal',
+                                                        name: 'sucursal',
+                                                        hiddenName: "idsucursal",                                                        
+                                                        value:"<?=$idsucursal?>"
+                                                        })
+                                  ]
+                             },
+                             {
+                                    columnWidth:.5,
+                                    border:false,
+                                    items:
+                                    [
+                                        {
                                             xtype:'datefield',
-                                            fieldLabel: 'Fecha Ini',
-                                            name : 'fechaInicial',
-                                            format: 'Y-m-d',
-                                            value: '<?=$fechainicial?>'
-                                    }
-                              ]
-                         },
-                         {
-                                columnWidth:.5,
-                                border:false,
-                                items:
-                                [
-                                    {
-                                        xtype:'datefield',
-                                        fieldLabel: 'Fecha final',
-                                        name : 'fechaFinal',
-                                        format: 'Y-m-d',
-                                        value: '<?=$fechafinal?>'
-                                    }
-                             ]
-                         }
+                                            fieldLabel: 'Fecha final',
+                                            name : 'fechaFinal',
+                                            format: "F-Y",
+                                            value: '<?=$fechafinal?>'
+                                        }
+                                 ]
+                             }
                      ]
                 }
 			]
