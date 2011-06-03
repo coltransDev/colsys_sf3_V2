@@ -981,6 +981,8 @@ class widgetsActions extends sfActions
     {        
         sfConfig::set('sf_web_debug', false) ;
 		$folder = base64_decode($this->getRequestParameter("folder"));
+        $thumbnails = $this->getRequestParameter("thumbnails");
+        //$dimension = $this->getRequestParameter("dimension");
         $tam_max=($this->getRequestParameter("tam_max"))?$this->getRequestParameter("tam_max"):"200";
 		$this->forward404Unless($folder);
         $directory = sfConfig::get('app_digitalFile_root').DIRECTORY_SEPARATOR.$folder.DIRECTORY_SEPARATOR;
@@ -1039,7 +1041,7 @@ class widgetsActions extends sfActions
                             imagejpeg($image,$directory.$fileNameMin.".jpg",80);
                         }
                         //exit(0);
-                        $this->responseArray = array( "success"=>true,"filename"=>$fileNameMin.".jpg","folder"=>$folder,"filebase"=>base64_encode($folder."/".$fileNameMin.".jpg"));
+                        $this->responseArray = array( "success"=>true,"filename"=>$fileNameMin.".jpg","folder"=>$folder,"filebase"=>base64_encode($folder."/".$fileNameMin.".jpg"),"thumbnails"=>$thumbnails,"dimension"=>$tam_max);
                     }
                     catch(Exception $e)
                     {
