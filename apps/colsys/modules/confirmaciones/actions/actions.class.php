@@ -128,6 +128,7 @@ class confirmacionesActions extends sfActions
 		
 		
 		$this->modo = $request->getParameter("modo");
+        
 		$this->coordinadores = array();
 		$parametros = ParametroTable::retrieveByCaso("CU046");
 		foreach( $parametros as $parametro ){
@@ -138,6 +139,7 @@ class confirmacionesActions extends sfActions
 		
 		$config = sfConfig::get('sf_app_module_dir').DIRECTORY_SEPARATOR."confirmaciones".DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."textos.yml";
 		$this->textos = sfYaml::load($config);	
+        
 		
 		
 		/*
@@ -181,8 +183,7 @@ class confirmacionesActions extends sfActions
         if( $this->modo=="otm"){
             $q->addWhere("c.ca_continuacion != ?", 'N/A');
         }
-        $this->inoClientes = $q->execute();
-		
+        $this->inoClientes = $q->execute();		
 		
 		
 								
@@ -202,8 +203,8 @@ class confirmacionesActions extends sfActions
 		$oids = $request->getParameter( "oid" );
 		
 		$inoClientes = array();
-			
-		if( $modo=="conf" && $tipo_msg=="Conf" ){
+
+		if( ( $modo=="conf" && $tipo_msg=="Conf") ||  $modo=="puerto" ){
 			if( $request->getParameter( "fchconfirmacion" ) ){	
 				$referencia->setCaFchconfirmacion( Utils::parseDate($request->getParameter( "fchconfirmacion" )) );
 			}
@@ -270,6 +271,12 @@ class confirmacionesActions extends sfActions
 				copy( $attachment2['tmp_name'] , $file ); 
 				$attachments[] = $reporte->getDirectorioBase().$attachment2['name'];
 			}
+            
+            $files=$this->getRequestParameter("files_".$oid);
+            foreach ($files as $archivo) {
+                $name =  $archivo;            
+                $attachments[]=$name;
+            }
 				
 			$ultimostatus = $reporte->getUltimoStatus();
 			
@@ -392,7 +399,13 @@ class confirmacionesActions extends sfActions
 		}				
 		
 	}
-	
+
+    
+        
+    public function executePruebaUpload($request)
+    {
+        echo "sdffsd";
+    }
 	
 }
 

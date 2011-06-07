@@ -26,10 +26,9 @@
 			  <b>Que contenga la cadena:</b><br />
 			  <div id="cadena">
 			  	<input type="text" size="60" name="cadena" id="cadena" />
-			 </div>
-				
+			 </div>				
 		   </td>
-		  <td width="64"  ><input  type='submit' name='buscar' value=' Buscar' /></td>
+		  <td width="64"><input  type='submit' name='buscar' value=' Buscar' /></td>
 		</tr>
 	</table>
 </form>	

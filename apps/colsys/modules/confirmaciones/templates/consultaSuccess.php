@@ -6,20 +6,28 @@ $inoClientes = $sf_data->getRaw("inoClientes");
 
 switch( $modo ){
 	case "otm":
-		$titulo = "Módulo de Avisos de OTM";
-        
+		$titulo = "Módulo de Avisos de OTM";        
+		break;
+    case "puerto":
+		$titulo = "Módulo de Notificaciones para Puerto";        
 		break;
 	default: 
 		$titulo = "Módulo de Status y Confirmaciones de Llegada";
 		$modo="conf";
 		break;
 }
+$textos=$sf_data->getRaw("textos");
+
 ?>
 <script language="javascript" type="text/javascript">
-
+var modo='<?=$modo?>'
 function validarFormConfirmacion(){	
 
+    
     <?
+    if( $modo!="puerto"){
+        
+    
     $oids = array();
     foreach( $inoClientes as $inoCliente ){
         $oids[] = $inoCliente->getOid();
@@ -54,10 +62,9 @@ function validarFormConfirmacion(){
     }
    
 	<?
+    }
 	if( $modo=="otm"){
-		?>
-		
-		
+		?>		
 		for( i in oids ){
             if(  typeof(oids[i])=="number" ){
                 var checkbox = document.getElementById("checkbox_"+oids[i]);
@@ -118,15 +125,18 @@ function validarFormConfirmacion(){
 }
 
 function modFcharribo(){
-    campo = document.getElementById('mod_fcharribo');
-    objeto = document.getElementById('mod_fcharribo_id');
+    campo = $('#mod_fcharribo');
+    objeto = $('#mod_fcharribo_id');
 
-    if(campo.checked) {
-	  objeto.style.display = "inline";
-   }
-   else {
-	  objeto.style.display = "none";
-	}
+    if(campo)
+    {
+        if(campo.attr("checked")) {
+          objeto.show();
+       }
+       else {
+          objeto.hide();
+        }
+    }
 }
 
 function habilitar( oid ){
@@ -163,11 +173,6 @@ function mostrarFchllegada(oid){
 	}else{
         objeto_1.style.display = 'none';
     }
-
-
-    
-
-   
 }
 
 function mostrar(oid){
@@ -249,22 +254,27 @@ function mostrar(oid){
 function cambiarTextosOTM( value ){
     if( value=="Fact" ){
         var msg = "<?=str_replace("\n", "<br />",$textos['mensajeFact'])?>";
-        document.getElementById('status_body').value= msg.split("<br />").join("\n");
+        
+            $("#status_body").val(msg.split("<br />").join("\n"));
     }else if( value=="Desc" ){
         var msg = "<?=str_replace("\n", "<br />",$textos['mensajeDesc'])?>";
-        document.getElementById('status_body').value= msg.split("<br />").join("\n");
+        
+            $("#status_body").val(msg.split("<br />").join("\n")) ;
     }else{
         var msg = "<?=str_replace("\n", "<br />",$textos['mensajeStatus'])?>";
-        document.getElementById('status_body').value= msg.split("<br />").join("\n");
+        
+            $("#status_body").val(msg.split("<br />").join("\n"));
     }
 
     <?
     foreach( $inoClientes as $inoCliente ){
         ?>
         if( value=="Fact" ){
-            document.getElementById('mensaje_<?=$inoCliente->getOid()?>').value="";
+            if($("#mensaje_<?=$inoCliente->getOid()?>"))
+                document.getElementById('mensaje_<?=$inoCliente->getOid()?>').value="";
         }else{
-            document.getElementById('mensaje_<?=$inoCliente->getOid()?>').value=document.getElementById('mensajeOTM_<?=$inoCliente->getOid()?>').value;
+            if($("#mensaje_<?=$inoCliente->getOid()?>"))
+                document.getElementById('mensaje_<?=$inoCliente->getOid()?>').value=document.getElementById('mensajeOTM_<?=$inoCliente->getOid()?>').value;
         }
         <?
     }
@@ -272,15 +282,22 @@ function cambiarTextosOTM( value ){
 }
 
 function cambiarTipoMsg( value ){    
-    if( value=="Conf" ){
-        document.getElementById('confirmacion_tbl').style.display='block';
-        document.getElementById('status_tbl').style.display='none';
+    
+    
+    
+    if( value=="Conf" || value=="Puerto" ){
+        //document.getElementById('confirmacion_tbl').style.display='block';
+        //document.getElementById('status_tbl').style.display='none';
+        $("#status_tbl").hide();
+        $("#confirmacion_tbl").show();
     }else{
-        document.getElementById('status_tbl').style.display='block';
-        document.getElementById('confirmacion_tbl').style.display='none';        
+        $("#status_tbl").show();
+        $("#confirmacion_tbl").hide();
+        //document.getElementById('status_tbl').style.display='block';
+        //document.getElementById('confirmacion_tbl').style.display='none';        
     }
-
-    cambiarTextosOTM( value );
+    if(modo!="puerto")
+        cambiarTextosOTM( value );
 }
 
 
@@ -420,18 +437,102 @@ function cambiarTipoMsg( value ){
 				<td class="partir">&nbsp;</td>
 				<td class="partir">Status OTM:&nbsp;</td>
 				<td class="mostrar" colspan="4"><b>Introducción al Mensaje:</b><br />
-					<textarea name='intro_body' wrap="virtual" rows="3" cols="93"><?=$textos['mensajeConfOTM']?>
-</textarea></td>
+					<textarea name='intro_body' wrap="virtual" rows="3" cols="93"><?=$textos['mensajeConfOTM']?></textarea>
+                </td>
 				
 			</tr>
 			<?
-			}else{
+			}else if($modo=="puerto")
+            {
+            ?>
+			<tr>
+				<td class="partir">&nbsp;</td>
+				<td class="partir">
+                        <input name="tipo_msg" id="tipo_msg" value="Puerto" checked="checked" onclick="cambiarTipoMsg(this.value)" type="radio">
+                        Llegada:
+                </td>
+				<td class="mostrar" colspan="4" rowspan="2">
+
+                    <table id="confirmacion_tbl" style="display: block;" cellspacing="1" width="100%">
+						<tbody>
+							<tr>
+								<td class="mostrar">Fecha Confirmación:<br>
+									<?
+									echo extDatePicker('fchconfirmacion', $referencia->getCaFchconfirmacion("Y-m-d"));
+									?>
+										
+								</td>								
+							
+								<td class="mostrar">Hora en Formato 24h:<br>
+									<input name="horaconfirmacion" value="<?=$referencia->getCaHoraconfirmacion()?>" onblur="CheckTime(this)" size="9" maxlength="8" type="text">
+									00-23hrs</td>
+								<td class="mostrar">Registro Aduanero:<br>
+									<input name="registroadu" value="<?=$referencia->getCaRegistroadu()?>" size="22" maxlength="20" type="text"></td>
+								<td class="mostrar">Fecha Registro:<br>									
+									<?
+									echo extDatePicker('fchregistroadu', $referencia->getCaFchregistroadu("Y-m-d"));
+									?>									
+									</td>
+							</tr>
+							<tr>
+								<td class="mostrar">Reg. Capitania:<br>
+									<input name="registrocap" value="<?=$referencia->getCaRegistrocap()?>" size="20" maxlength="20" type="text"></td>
+								<td class="mostrar">Bandera:<br>
+									<input name="bandera" value="<?=$referencia->getCaBandera()?>" size="20" maxlength="20" type="text"></td>
+								
+								<td class="mostrar">Motonave Llegada:<br>
+									<input name="mnllegada" value="<?=$referencia->getCaMnllegada()?>" size="20" maxlength="50" type="text"></td>
+                                <td class="mostrar" style="display: block">Fecha Desconsolidación:<br>								
+									<?
+									echo extDatePicker('fchdesconsolidacion', $referencia->getCaFchdesconsolidacion("Y-m-d"));
+									?>	
+								</td>
+							</tr>
+							<tr>
+								<td class="mostrar" colspan="4"><b>Introducción al Mensaje de Confirmación:</b><br>
+									<textarea name="intro_body" wrap="virtual" rows="3" cols="93"><?=($modo=="puerto")?$textos['mensajeConfPuerto']:$textos['mensajeConf']?></textarea></td>
+							</tr>
+						</tbody>
+					</table>
+                    <table id="status_tbl" style="display: none;" cellspacing="1" width="100%">
+						<tbody>
+							<tr>
+								<td class="mostrar" colspan="4"><b>Introducci&oacute;n al Status:</b><br>
+									<textarea name="status_body_intro" wrap="virtual" rows="2" cols="93"><?=$textos['mensajeStatusIntro']?></textarea></td>
+							</tr>
+							<tr>
+								<td class="mostrar" colspan="4"><b>Mensaje de Status:</b><br>
+									<textarea name="status_body" id="status_body" wrap="virtual" rows="3" cols="93"></textarea></td>
+							</tr>
+                            <tr>
+								<td class="mostrar" colspan="4"><b>Fecha de arribo</b><br>
+                                    Modificar Fch. Arribo: <input type="checkbox" name="mod_fcharribo" id="mod_fcharribo" onClick="modFcharribo()" />
+                                    <div id="mod_fcharribo_id">
+                                    <?
+                                    echo extDatePicker('fcharribo', $referencia->getCaFcharribo());
+                                    ?>
+                                    </div>
+							</tr>
+						</tbody>
+					</table>
+					
+                </td>
+				
+			</tr>
+             <tr>
+				<td class="partir">&nbsp;</td>
+				<td class="partir"><input name="tipo_msg" id="tipo_msg" value="Desc" onclick="cambiarTipoMsg(this.value)" type="radio">
+					Desconsolidaci&oacute;n:</td>
+			</tr>
+			<?  
+            }
+            else{
 			?>
 			<tr>
 				<td class="partir">&nbsp;</td>
 				<td class="partir">
-                        <input name="tipo_msg" id="tipo_msg" value="Conf" checked="checked" onclick="cambiarTipoMsg(this.value)" type="radio">
-                        Confirmaci&oacute;n:
+                        <input name="tipo_msg" id="tipo_msg" value="<?=($modo=="puerto")?"Puerto":"Conf"?>" checked="checked" onclick="cambiarTipoMsg(this.value)" type="radio">
+                        <?=($modo=="puerto")?"Llegada":"Confirmaci&oacute;n"?>:
                 </td>
 				<td class="mostrar" colspan="4" rowspan="4">
 
@@ -461,18 +562,18 @@ function cambiarTipoMsg( value ){
 									<input name="registrocap" value="<?=$referencia->getCaRegistrocap()?>" size="20" maxlength="20" type="text"></td>
 								<td class="mostrar">Bandera:<br>
 									<input name="bandera" value="<?=$referencia->getCaBandera()?>" size="20" maxlength="20" type="text"></td>
-								<td class="mostrar">Fecha Desconsolidación:<br>								
+								
+								<td class="mostrar">Motonave Llegada:<br>
+									<input name="mnllegada" value="<?=$referencia->getCaMnllegada()?>" size="20" maxlength="50" type="text"></td>
+                                <td class="mostrar" style="display: block">Fecha Desconsolidación:<br>								
 									<?
 									echo extDatePicker('fchdesconsolidacion', $referencia->getCaFchdesconsolidacion("Y-m-d"));
 									?>	
 								</td>
-								<td class="mostrar">Motonave Llegada:<br>
-									<input name="mnllegada" value="<?=$referencia->getCaMnllegada()?>" size="20" maxlength="50" type="text"></td>
 							</tr>
 							<tr>
 								<td class="mostrar" colspan="4"><b>Introducción al Mensaje de Confirmación:</b><br>
-									<textarea name="intro_body" wrap="virtual" rows="3" cols="93"><?=$textos['mensajeConf']?>
-</textarea></td>
+									<textarea name="intro_body" wrap="virtual" rows="3" cols="93"><?=($modo=="puerto")?$textos['mensajeConfPuerto']:$textos['mensajeConf']?></textarea></td>
 							</tr>
 						</tbody>
 					</table>
@@ -502,13 +603,31 @@ function cambiarTipoMsg( value ){
 			</tr>
 			<tr>
 				<td class="partir">&nbsp;</td>
-				<td class="partir"><input name="tipo_msg" id="tipo_msg" value="Status" onclick="cambiarTipoMsg(this.value)" type="radio">
-					Status:</td>
+				<td class="partir">
+                    <? 
+                    if($modo!="puerto")
+                    {
+                    ?>
+                    <input name="tipo_msg" id="tipo_msg" value="Status" onclick="cambiarTipoMsg(this.value)" type="radio">
+					Status:
+                    <?
+                    }
+                    ?>
+                </td>
 			</tr>
             <tr>
 				<td class="partir">&nbsp;</td>
-				<td class="partir"><input name="tipo_msg" id="tipo_msg" value="Fact" onclick="cambiarTipoMsg(this.value)" type="radio">
-					Factura Fletes:</td>
+				<td class="partir">
+                    <? 
+                    if($modo!="puerto")
+                    {
+                    ?>
+                    <input name="tipo_msg" id="tipo_msg" value="Fact" onclick="cambiarTipoMsg(this.value)" type="radio">
+					Factura Fletes:
+                    <?
+                    }
+                    ?>
+                </td>
 			</tr>
             <tr>
 				<td class="partir">&nbsp;</td>
@@ -564,91 +683,21 @@ function cambiarTipoMsg( value ){
 			</tr>
 			<?
 			}
-			?>
 
-            
-			<tr>
-				<th class="titulo" colspan="6">Seleccione los Clientes para enviar Confirmación</th>
-			</tr>
-			<tr height="5">
-				<td class="captura" colspan="6">&nbsp;</td>
-			</tr>
-            
-			<?
-			foreach( $inoClientes as $inoCliente ){
-				$cliente = $inoCliente->getCliente();
-				$reporte = $inoCliente->getReporte();
-			?>
-			<tr>
-				<td class="listar" style='font-size: 11px; vertical-align:bottom'><b>Reporte:</b><br />
-					<?=$reporte?$reporte->getCaConsecutivo():"&nbsp;"?>
-                    <input type="hidden" id='consolidar_comunicaciones_<?=$inoCliente->getOid()?>' value="<?=$cliente->getProperty("consolidar_comunicaciones")?>" />
-                    <input type="hidden" id='nombre_cliente_<?=$inoCliente->getOid()?>' value="<?=$cliente->getCaCompania()?>" />
-                </td>
-				<td class="listar" style='font-size: 11px; vertical-align:bottom'><span class="listar" style="font-size: 11px; vertical-align:bottom"><b>Id Cliente:</b><br />
-					<?=number_format($inoCliente->getCaIdcliente())?>
-					</span></td>
-				<td class="listar" style='font-size: 11px;' colspan="3"><b>Nombre del Cliente:</b><br />
-					<?=Utils::replace($cliente->getCaCompania())?></td>
-				<td class="listar" >
-					<div align="right">
-					<?
-					if( $reporte ){                        
-					?>					
-						<input type="checkbox" name='oid[]' onclick="habilitar('<?=$inoCliente->getOid()?>');" id="checkbox_<?=$inoCliente->getOid()?>"  value="<?=$inoCliente->getOid()?>" />                        
-                        <input type="hidden" name='idcliente_<?=$inoCliente->getOid()?>' value="<?=$inoCliente->getCaIdcliente()?>" />
-                        <input type="hidden" name='hbls_<?=$inoCliente->getOid()?>' value="<?=$inoCliente->getCaHbls()?>" />
-					<?
-					}else{
-                        echo "&nbsp;";
-                    }
-					?>				
-					</div></td>
-			</tr>
-			<?
-                if( $reporte ){
-			?>
-			<tr>
+            if($modo!="puerto")
+                include_component("confirmaciones", "notClientes",array("inoClientes"=>$inoClientes,"modo"=>$modo,"etapas"=>$etapas,"coordinadores"=>$coordinadores, "textos"=>$textos, $bodegas="bodegas"));
+            ?>
 			
-			<td class="invertir" colspan="6">
-				<?                
-                include_component("confirmaciones","formConfirmacion", array("inoCliente"=>$inoCliente, "modo"=>$modo, "reporte"=>$reporte, "cliente"=>$cliente, "etapas"=>$etapas, "coordinadores"=>$coordinadores, "textos"=>$textos, $bodegas="bodegas"))
-                ?>
-            </td>
-			</tr>
-			
-			<?
-                $statusList = $reporte->getRepStatus();
-			
-                if( count( $statusList )>0 ){
-			?>
-			<tr id="rowstatusinfo_<?=$inoCliente->getOid()?>">
-				<td colspan="6" class="invertir"><a href="#rowstatusinfo_<?=$inoCliente->getOid()?>" onclick="window.open('<?=url_for("traficos/verHistorialStatus?idreporte=".$reporte->getCaIdreporte() )?>')">Ver historial de status</a></td>
-			</tr>
-			<?		
-                    }
-                }else{//if( $reporte )
-			?>
-			<tr height="5">
-				<td class="invertir" colspan="6"><?=image_tag("22x22/alert.gif")?>
-					Debe tener reporte para poder hacer un status</td>
-			</tr>
-			<?	
-                }
-            }
-			?>
 			<tr height="5">
 				<td class="invertir" colspan="6">&nbsp;</td>
 			</tr>
 			<tr>
 				<td class="mostrar" colspan="6"><b>Ingrese mensaje adicional para el correo:</b><br />
-					<textarea name='email_body' wrap="virtual" rows="3" cols="113"></textarea></td>
+					<textarea name='email_body' wrap="virtual" rows="3" cols="113"><?=($modo=="puerto")?"La información ha sido registrada en el sistema, favor proceder a informar a los clientes.":""?></textarea></td>
 			</tr>
 			<tr height="5">
 				<td class="invertir" colspan="6"></td>
 			</tr>
-
-             
 		</table>
 
        
@@ -659,8 +708,14 @@ function cambiarTipoMsg( value ){
 				<th><input class="submit" type='button' name='accion' value='Enviar Correo' onClick="javascript:validarFormConfirmacion()" /></th>
 				<th><input class="button" type='button' name='boton' value=' Regresar ' onclick="javascript:document.location.href = '<?=url_for("confirmaciones/index?modo=".$modo)?>'" /></th>
 			</tr>
-		</table>
+		</table>        
 	</form>
+        <table width="850" border="0" class="tableList">
+              <?
+            if($modo=="puerto")
+                include_component("confirmaciones", "uploadClientes",array("inoClientes"=>$inoClientes,"modo"=>$modo));
+            ?>
+        </table>
 </div>
 <script language="javascript" type="text/javascript">
 	<?
@@ -670,12 +725,14 @@ function cambiarTipoMsg( value ){
 			mostrar( '<?=$inoCliente->getOid()?>' );
 	<?
 	}
+    if( $modo!="puerto" ){
 	?>
 	habilitar( '<?=$inoCliente->getOid()?>' );	
 	<?
+    }
 	}
 
-    if( $modo!="otm" ){
+    if( $modo!="otm" and $modo!="puerto" ){
 	?>
     
         radioObj = document.form1.tipo_msg;

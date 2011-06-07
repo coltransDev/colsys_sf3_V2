@@ -65,5 +65,17 @@ class confirmacionesComponents extends sfComponents
 			$this->tercero = TerceroPeer::retrieveByPk( $this->idtercero );
 		} 
 	}
+    
+    public function executeNotClientes()
+	{
+        
+    }
+    
+    public function executeUploadClientes()
+	{
+        $response = sfContext::getInstance()->getResponse();
+		$response->addJavaScript("swfupload/swfupload",'last');
+        $response->addJavaScript("swfupload/js/handlers",'last');        
+    }
 }
 ?>

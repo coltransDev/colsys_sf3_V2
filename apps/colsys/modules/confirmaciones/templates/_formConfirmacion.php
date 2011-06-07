@@ -8,6 +8,10 @@
 if( $modo=="otm" ){
     $bodegas = $sf_data->getRaw("bodegas");
 }
+
+$narchivos=count($archivos);
+$alto=ceil($narchivos/9)*$dimension;
+$j=0;
 ?>
 <a name="oid_<?=$inoCliente->getOid()?>" >&nbsp;</a>
 <table id="tb_<?=$inoCliente->getOid()?>" style='display:none' cellspacing="1" width="100%">
@@ -220,4 +224,66 @@ if( $modo=="otm" ){
         <td class="mostrar">Adjunto para Cliente : </td>
         <td class="mostrar" colspan="4"><input type='file' name='attachment_<?=$inoCliente->getOid()?>' size="75" /></td>
     </tr>
+    
+    <tr height="<?=$alto+20?>">
+                <td colspan="9" style="vertical-align: top" >
+                    <div id="thumbnails_<?=$i?>">
+		<?php
+			// Read the files from the saved images folder
+            
+            //echo $archivos
+			foreach ($archivos as $file) {
+                //echo $file."<br>";
+				$archivo =explode("/", $file );
+                $filename = $archivo[count($archivo)-1];
+                $id_base=base64_encode($folder.$filename);
+                //echo $folder."/".$filename."<br>";
+				echo '<div style="width:'.$dimension.'px;height:'.$dimension.'px;float: left;margin: 5px;" id="file_'.$j.'">
+                        <div style="position:relative ">
+                            <div style="position:absolute;" >
+                                <img style=" vertical-align: middle;" src="/gestDocumental/verArchivo?idarchivo='.$id_base . '" width="'.$dimension.'" height="'.$dimension.'" />
+                            </div>
+                            <div style="position:absolute;top:0px;right:0px" >
+                                <img src="/images/16x16/button_cancel.gif" style="cursor: pointer" onclick="deleteFile(&quot;'.$id_base.'&quot;,&quot;file_'.$j++.'&quot;)" />
+                            </div>
+                            <div style="position:absolute;top:20px;right:0px" >
+                                <input type="checkbox" value="'.$folder.$filename.'" name="files_'.$inoCliente->getOid().'[]" />
+                            </div>
+                        </div>                        
+                      </div>';
+			}
+		?>
+	</div>
+                </td>
+            </tr>
 </table>
+<script>
+    
+    function deleteFile(file,idtr)
+    {
+        if(window.confirm("Realmente desea eliminar este archivo?"))
+        {
+            Ext.MessageBox.wait('Guardando, Espere por favor', '---');
+            Ext.Ajax.request(
+            {
+                waitMsg: 'Guardando cambios...',
+                url: '<?= url_for("gestDocumental/borrarArchivo") ?>',
+                params :	{
+                    idarchivo:file
+                },
+                failure:function(response,options){
+                    var res = Ext.util.JSON.decode( response.responseText );
+                    if(res.err)
+                        Ext.MessageBox.alert("Mensaje",'Se presento un error guardando por favor informe al Depto. de Sistemas<br>'+res.err);
+                    else
+                        Ext.MessageBox.alert("Mensaje",'Se produjo un error, vuelva a intentar o informe al Depto. de Sistema<br>'+res.texto);
+                },
+                success:function(response,options){
+                    var res = Ext.util.JSON.decode( response.responseText );
+                    $("#"+idtr).remove();
+                    Ext.MessageBox.hide();
+                }
+            });
+        }
+    }
+        </script>
