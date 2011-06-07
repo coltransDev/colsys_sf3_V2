@@ -326,7 +326,10 @@ class cotseguimientosActions extends sfActions
 	}
 
     public function executeAprobarSeguimiento( $param ){
-        $idproducto=$param["idproducto"];
+        
+       $seg = new CotSeguimiento();       
+        $seg->aprobarSeguimiento($param);
+        /*$idproducto=$param["idproducto"];
         $etapa=$param["etapa"];
         $seguimientos=(isset($param["seguimiento"])?$param["seguimiento"]:"");
         $fchseguimiento=(isset($param["fchseguimiento"])?$param["fchseguimiento"]:"");
@@ -380,16 +383,20 @@ class cotseguimientosActions extends sfActions
                 $producto->setCaIdtarea( $tarea->getCaIdtarea() );
                 $producto->save();
             }
-        }
+        }*/
 	}
 
     public function executeAprobarSeguimientos( $request){
+        
         $idproductos=$request->getParameter("idproducto");
         $etapa=$request->getParameter("etapa");
         $seguimientos=$request->getParameter("seguimiento");        
         $fchseguimientos=$request->getParameter("fchseguimiento");
+        $j=0;
+        
         for($i=0;$i<count($idproductos);$i++)
         {
+            $param=array();
             $param["idproducto"]=$idproductos[$i];
             $param["etapa"]=$etapa[$i];
             if($seguimientos[$i]!="")
@@ -402,9 +409,39 @@ class cotseguimientosActions extends sfActions
                 $param["fchseguimiento"]=$fchseguimientos[$i];
             else
                 $param["fchseguimiento"]="";
-            //echo "<pre>";print_r($param);echo "</pre>";
+            
+            $param["user"]=$this->getUser()->getUserId();
+           // echo "<pre>";print_r($param);echo "</pre>";
             $this->executeAprobarSeguimiento( $param );
         }
+        
+        
+        $idcotizaciones=$request->getParameter("idcotizacioncot");
+        
+        $etapa=$request->getParameter("etapacot");
+        $seguimientos=$request->getParameter("seguimientocot");
+        $fchseguimientos=$request->getParameter("fchseguimientocot");
+        $j=0;
+        for($i=0;$i<count($idcotizaciones);$i++)
+        {
+            $param=array();
+            $param["cotizacion"]=$idcotizaciones[$i];
+            $param["etapa"]=$etapa[$i];
+            if($seguimientos[$i]!="")
+                $param["seguimiento"]=$seguimientos[$i];
+            else
+                $param["seguimiento"]="";
+            $param["user"]=$this->getUser()->getUserId();
+            //if($prog_seguimientos[$i]!="")
+                //$param["prog_seguimiento"]=$prog_seguimientos[$i];
+            if($etapa[$i]=="SEG")
+            {                
+                $param["fchseguimiento"]=$fchseguimientos[$j++];
+            }
+           // echo "<pre>";print_r($param);echo "</pre>";
+            $this->executeAprobarSeguimiento( $param );
+        }        
+        
         $this->responseArray = array("success"=>true);
         $this->setTemplate("responseTemplate");
     }
