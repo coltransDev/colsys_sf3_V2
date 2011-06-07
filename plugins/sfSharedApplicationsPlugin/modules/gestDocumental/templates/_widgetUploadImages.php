@@ -7,7 +7,7 @@ WidgetUploadImages = function( config ){
     
         swfu = new SWFUpload({
             
-            upload_url: "<?=url_for('widgets/uploadImages')?>",
+            upload_url: "<?=url_for('gestDocumental/uploadImages')?>",
             post_params: config.post_params,            
             file_size_limit : (config.file_size_limit)?config.file_size_limit:"10 MB",
             file_types : (config.file_size_limit)?config.file_size_limit:"*.jpg;*.png;*.gif",

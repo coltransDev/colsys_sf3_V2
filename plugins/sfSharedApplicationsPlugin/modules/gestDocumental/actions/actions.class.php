@@ -246,6 +246,105 @@ class gestDocumentalActions extends sfActions
 
     }
 
+    
+    public function open_image($file) {
+        //detect type and process accordinally
+        global $type;
+        $size = getimagesize($file);
+        switch ($size["mime"]) {
+            case "image/jpeg":
+                $im = imagecreatefromjpeg($file); //jpeg file
+                break;
+            case "image/gif":
+                $im = imagecreatefromgif($file); //gif file
+                break;
+            case "image/png":
+                $im = imagecreatefrompng($file); //png file
+                break;
+            default:
+                $im = false;
+                break;
+        }
+        return $im;
+    }
+
+    public function executeUploadImages($request) {
+        sfConfig::set('sf_web_debug', false);
+        $folder = base64_decode($this->getRequestParameter("folder"));
+        $thumbnails = $this->getRequestParameter("thumbnails");
+        //$dimension = $this->getRequestParameter("dimension");
+        $tam_max = ($this->getRequestParameter("tam_max")) ? $this->getRequestParameter("tam_max") : "200";
+        $this->forward404Unless($folder);
+        $directory = sfConfig::get('app_digitalFile_root') . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR;
+        //error_reporting(E_ALL);
+        if (!is_dir($directory)) {
+            mkdir($directory, 0777, true);
+        }
+        chmod($directory, 0777);
+        //echo count($_FILES);
+        try {
+            if (count($_FILES) > 0) {
+
+
+                foreach ($_FILES as $uploadedFile) {
+                    try {
+
+                        $fileName = $uploadedFile['name'];
+                        $tmp = explode(".", $fileName);
+                        $fileNameMin = $tmp[0];
+
+                        $name_tmp = $uploadedFile['tmp_name'];
+
+                        $image = $this->open_image($uploadedFile['tmp_name']);
+
+                        $w = imagesx($image);
+                        $h = imagesy($image);
+                        //$tam_max=200;
+                        if ($w > $tam_max || $h > $tam_max) {
+                            $control = ($h >= $w);
+                            if ($control) {
+                                $porcen = $tam_max / $h;
+                            } else {
+                                $porcen = $tam_max / $w;
+                            }
+                            //echo $porcen;
+                            $new_w = $w * $porcen;
+                            $new_h = $h * $porcen;
+                            //echo $new_w."-".$new_h;
+
+                            $im2 = ImageCreateTrueColor($new_w, $new_h);
+                            imagecopyResampled($im2, $image, 0, 0, 0, 0, $new_w, $new_h, $w, $h);
+                            $w = imagesx($im2);
+                            $h = imagesy($im2);
+                            //echo "<br>".$w."-".$h;
+                            imagejpeg($im2, $directory . $fileNameMin . ".jpg", 80);
+                            //imagejpeg($img2,$name_tmp);
+                        } else {
+                            imagejpeg($image, $directory . $fileNameMin . ".jpg", 80);
+                        }
+                        //exit(0);
+                        $this->responseArray = array("success" => true, "filename" => $fileNameMin . ".jpg", "folder" => $folder, "filebase" => base64_encode($folder . "/" . $fileNameMin . ".jpg"), "thumbnails" => $thumbnails, "dimension" => $tam_max);
+                    } catch (Exception $e) {
+                        $this->responseArray = array("error" => $e->getMessage(), "filename" => $fileName, "folder" => $folder, "success" => false);
+                    }
+                    //echo $name_tmp;
+                    /* if(move_uploaded_file("/tmp/".$fileName,$directory.$fileName )){
+                      $this->responseArray = array("id"=>base64_encode($fileName), "filename"=>$fileName, "folder"=>$folder, "success"=>true);
+                      }else{
+                      $this->responseArray = array("error"=>"No se pudo mover el archivo", "success"=>false);
+                      } */
+                }
+            } else {
+                $this->responseArray = array("success" => false);
+            }
+        } catch (Exception $e) {
+            //print_r( $e);
+            $this->responseArray = array("error" => $e->getMessage(), "success" => false);
+        }
+
+//            exit;
+        $this->setTemplate("responseTemplate");
+    }
 
 
 

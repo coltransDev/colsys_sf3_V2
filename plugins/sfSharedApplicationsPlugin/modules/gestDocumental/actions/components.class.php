@@ -42,6 +42,15 @@ class gestDocumentalComponents extends sfComponents
 
 
 	}
+    
+    public function executeWidgetUploadImages() {
 
+        $response = sfContext::getInstance()->getResponse();
+		$response->addJavaScript("swfupload/swfupload",'last');
+        $response->addJavaScript("swfupload/js/handlers",'last');
+        
+        
+    }
+	
 }
 ?>
