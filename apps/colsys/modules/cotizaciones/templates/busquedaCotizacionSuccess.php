@@ -149,10 +149,8 @@ $pagerLayout->display();
             <tr>
                 <td width="65%" class="listar" colspan="2" >
                 Sin trayectos</td>             
-                <td width="35%" class="listar">
-                    <?
-
-                    $seg = $cotizacion->getUltSeguimiento();
+                <?
+                $seg = $cotizacion->getUltSeguimiento();
                     if($seg)
                     {
                         $eta=isset($estados[$seg->getCaEtapa()]) && $cotizacion->getCaFchanulado()=="" ?$seg->getCaEtapa():Cotizacion::EN_SEGUIMIENTO;
@@ -161,6 +159,11 @@ $pagerLayout->display();
                     {
                         $eta=Cotizacion::EN_SEGUIMIENTO;
                     }
+                ?>
+                <td width="35%" class="listar">
+                    <?
+
+                    
                     echo $estados[$eta];
                     if( ($eta==Cotizacion::EN_SEGUIMIENTO )&& $cotizacion->getCaFchanulado() =="" ){
                         //$seg = $cotizacion->getUltSeguimiento();
@@ -178,6 +181,53 @@ $pagerLayout->display();
                     }
                     ?>
                 </td>
+                <?
+                if(!$seg)
+                {
+                ?>
+                <td  width="182" style="width: 182px; background-color: #FFFFCC">
+                        <input type="hidden" name="idcotizacioncot[]" class="idcotizacion" value="<?=$cotizacion->getCaConsecutivo()?>" >
+                        <select name="etapacot[]" id="etapacot_<?=$cotizacion->getCaIdcotizacion()?>" onchange="chseguimientocot('<?=$cotizacion->getCaIdcotizacion()?>')" >
+                                <option value="">...</option>
+                                <option value="APR">Aprobar</option>
+                                <option value="NAP">No Aprobar</option>
+                                <option value="SEG">Seguimiento</option>
+                        </select>
+                        <br/>
+                        <div id="NAPCOT_<?=$cotizacion->getCaIdcotizacion()?>" style="display:none;" >
+                            <select name="seguimientocot[]" id="segcot_<?=$cotizacion->getCaIdcotizacion()?>" disabled style="width: 250px"  >
+                                <option value="Tarifa NO competitiva" title="Tarifa NO competitiva">Tarifa NO competitiva</option>
+                                <option value="No se realizo el embarque" title="No se realizo el embarque">No se realizo el embarque</option>
+                                <option value="Asignado a la competencia por preferencia del cliente" title="Asignado a la competencia por preferencia del cliente">Asignado a la competencia por preferencia del cliente</option>
+                                <option value="Cot. solicitada para efectos de presupuesto del cliente" title="Cot. solicitada para efectos de presupuesto del cliente">Cot. solicitada para efectos de presupuesto del cliente</option>
+                                <option value="Embarque asignado y anulado por el cliente" title="Embarque asignado y anulado por el cliente">Embarque asignado y anulado por el cliente</option>
+                                <option value="Cambio de Modalidad" title="Cambio de Modalidad">Cambio de Modalidad</option>
+                            </select>
+                        </div>
+                        <div id="SEGCOT_<?=$cotizacion->getCaIdcotizacion()?>" style="display:none">
+                            <textarea name="seguimientocot[]" id="segcot_<?=$cotizacion->getCaIdcotizacion()?>" style="width: 100%"  rows="3" disabled></textarea>
+                            <br>
+                            <b>recordar seguimiento:</b>
+                                <input type="checkbox" id="prog_seguimientocot_<?=$cotizacion->getCaIdcotizacion()?>" name="prog_seguimientocot[]" onclick="fchsegcot('<?=$cotizacion->getCaIdcotizacion()?>')" disabled>
+                            
+                            <div id="fchasegcot_<?=$cotizacion->getCaIdcotizacion()?>" style="display: none">
+                                <input type="text" size="10" id="fchseguimientocot_<?=$cotizacion->getCaIdcotizacion()?>" name="fchseguimientocot[]" disabled  />
+                                <script type="text/javascript">
+                                     new Ext.form.DateField({
+                                                     applyTo: 'fchseguimientocot_<?=$cotizacion->getCaIdcotizacion()?>',
+                                                     value: '',
+                                                     width: 100,
+                                                     format: 'Y-m-d',
+                                                     enable:false
+                                            });
+                                </script>
+                            </div>
+                        </div>
+                </td>
+                
+                <?
+                }
+                ?>
               </tr>
             <?
         }
@@ -252,6 +302,52 @@ $pagerLayout->display();
             }
         });
         
+        
+        
+        objs=$(".idcotizacion");
+        $.each(objs, function(i,item){
+            if($("#etapacot_"+item.value).val()!="")
+            {
+                 //$("#NAP_"+item.value+">input,#NAP_"+item.value+">textaera,#NAP_"+item.value+">select").attr("disabled",false);
+                 //$("#SEG_"+item.value+">input,#SEG_"+item.value+">textaera,#SEG_"+item.value+">select").attr("disabled",false);
+
+                $("#NAPCOT_"+id+">*,#NAPCOT_"+id+">*>*,#NAPCOT_"+id+">*>*>*").attr("disabled",false);
+                $("#SEGCOT_"+id+">*,#SEGCOT_"+id+">*>*,#SEGCOT_"+id+">*>*>*").attr("disabled",false);
+
+                 //$("#fchseguimiento_"+item.value).attr("disabled",false);
+
+                if($("#etapacot_"+item.value).val()=="NAP")
+                {                    
+                    $("#SEGCOT_"+item.value+">#segcot_"+item.value).attr("disabled",true);
+                }
+                else if($("#etapacot_"+item.value).val()=="SEG")
+                {
+                    $("#NAPCOT_"+item.value+">#segcot_"+item.value).attr("disabled",true);
+                }
+                else
+                {
+                    $("#NAPCOT_"+item.value+">#segcot_"+item.value).attr("disabled",true);
+                    $("#SEGCOT_"+item.value+">#segcot_"+item.value).attr("disabled",false);
+                }
+            }
+            else
+            {
+                item.disabled=true;
+                $("#etapacot_"+item.value).attr("disabled",true)
+
+                if($("#etapacot_"+item.value).val()=="NAP")
+                {
+                    $("#NAPCOT_"+item.value+">input,#NAPCOT_"+item.value+">textaera,#NAPCOT_"+item.value+">select").attr("disabled",true);
+                }
+                else if($("#etapacot_"+item.value).val()=="SEG")
+                {
+                    $("#SEGCOT_"+item.value+">input,#SEGCOT_"+item.value+">textaera,#SEGCOT_"+item.value+">select").attr("disabled",true);
+                    $("#fchseguimiento_"+item.value).attr("disabled",true);
+                }
+            }
+            
+        });
+        
         Ext.Ajax.request(
         {
             waitMsg: 'Guardando cambios...',
@@ -315,6 +411,39 @@ $pagerLayout->display();
         else
         {
             $("#fchaseg_"+id).hide();      
+        }
+    }
+    
+    function chseguimientocot(id)
+    {
+        tipo=$("#etapacot_"+id).attr("value");
+        $("#NAPCOT_"+id).hide();        
+        $("#NAPCOT_"+id+">*,#NAPCOT_"+id+">*>*,#NAPCOT_"+id+">*>*>*").attr("disabled",true);
+        $("#SEGCOT_"+id).hide();        
+        $("#SEGCOT_"+id+">*,#SEGCOT_"+id+">*>*,#SEGCOT_"+id+">*>*>*").attr("disabled",true);        
+        
+        if(tipo=="NAP")
+        {            
+            $("#NAPCOT_"+id).show();            
+            $("#NAPCOT_"+id+">*,#NAPCOT_"+id+">*>*,#NAPCOT_"+id+">*>*>*").attr("disabled",false);
+        }
+        else if(tipo=="SEG")
+        {         
+
+            $("#SEGCOT_"+id).show();
+            $("#SEGCOT_"+id+">*,#SEGCOT_"+id+">*>*,#SEGCOT_"+id+">*>*>*").attr("disabled",false);
+        }
+    }
+    function fchsegcot(id)
+    {
+        val=$("#prog_seguimientocot_"+id).attr("checked");
+        if(val==true)
+        {
+            $("#fchasegcot_"+id).show();      
+        }
+        else
+        {
+            $("#fchasegcot_"+id).hide();      
         }
     }
 </script>
