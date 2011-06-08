@@ -186,7 +186,7 @@ $pagerLayout->display();
                 {
                 ?>
                 <td  width="182" style="width: 182px; background-color: #FFFFCC">
-                        <input type="hidden" name="idcotizacioncot[]" class="idcotizacion" value="<?=$cotizacion->getCaConsecutivo()?>" >
+                        <input type="hidden" name="idcotizacioncot[]" class="idcotizacion" value="<?=$cotizacion->getCaIdcotizacion()?>" >
                         <select name="etapacot[]" id="etapacot_<?=$cotizacion->getCaIdcotizacion()?>" onchange="chseguimientocot('<?=$cotizacion->getCaIdcotizacion()?>')" >
                                 <option value="">...</option>
                                 <option value="APR">Aprobar</option>
