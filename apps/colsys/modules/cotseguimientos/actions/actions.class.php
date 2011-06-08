@@ -328,62 +328,7 @@ class cotseguimientosActions extends sfActions
     public function executeAprobarSeguimiento( $param ){
         
        $seg = new CotSeguimiento();       
-        $seg->aprobarSeguimiento($param);
-        /*$idproducto=$param["idproducto"];
-        $etapa=$param["etapa"];
-        $seguimientos=(isset($param["seguimiento"])?$param["seguimiento"]:"");
-        $fchseguimiento=(isset($param["fchseguimiento"])?$param["fchseguimiento"]:"");
-
-        if( $idproducto ){
-            $producto = Doctrine::gettable("CotProducto")->find( $idproducto );
-            $this->forward404Unless( $producto );
-
-            if( $producto->getCaIdtarea() ){
-                $tarea  =  Doctrine::gettable("NotTarea")->find( $producto->getCaIdtarea() );
-                $tarea->setCaFchterminada( date("Y-m-d H:i:s") );
-                $tarea->save();
-            }
-        }
-
-        $cotizacion = Doctrine::gettable("Cotizacion")->find( $producto->getCaIdcotizacion() );
-        $this->forward404Unless( $cotizacion );
-
-        $seguimiento = new CotSeguimiento();
-        if( $idproducto ){
-            $seguimiento->setCaIdproducto( $idproducto );
-            $producto->setCaEtapa( $etapa );
-            $producto->save();
-        }
-
-        $seguimiento->setCaLogin( $this->getUser()->getUserId() );
-        $seguimiento->setCaFchseguimiento( date("Y-m-d H:i:s") );
-        $seguimiento->setCaSeguimiento( $seguimientos );
-        $seguimiento->setCaEtapa( $etapa );
-        $seguimiento->save();
-
-        if( $fchseguimiento )
-        {
-            $titulo = "Seguimiento Cotización ".$cotizacion->getCaConsecutivo()." ".$cotizacion->getCliente()->getCaCompania()."";
-            $texto = "Ha programado un seguimiento para una cotización, por favor haga click en el link para realizar esta tarea";
-            $tarea = new NotTarea();
-            $tarea->setCaUrl( "/cotseguimientos/verSeguimiento/idcotizacion/".$cotizacion->getCaIdcotizacion() );
-            $tarea->setCaIdlistatarea( 7 );
-
-            $tarea->setCaFchvencimiento( $fchseguimiento." 23:59:59" );
-            $tarea->setCaFchvisible( $fchseguimiento." 00:00:00" );
-            $tarea->setCaUsucreado( $this->getUser()->getUserId() );
-            $tarea->setCaTitulo( $titulo );
-            $tarea->setCaTexto( $texto );
-            $tarea->save();
-            $loginsAsignaciones = array( $this->getUser()->getUserId(), $cotizacion->getCaUsuario() );
-            $loginsAsignaciones = array_unique( $loginsAsignaciones );
-            $tarea->setAsignaciones( $loginsAsignaciones );
-
-            if( $idproducto ){
-                $producto->setCaIdtarea( $tarea->getCaIdtarea() );
-                $producto->save();
-            }
-        }*/
+       $seg->aprobarSeguimiento($param);        
 	}
 
     public function executeAprobarSeguimientos( $request){
@@ -402,19 +347,15 @@ class cotseguimientosActions extends sfActions
             if($seguimientos[$i]!="")
                 $param["seguimiento"]=$seguimientos[$i];
             else
-                $param["seguimiento"]="";
-            //if($prog_seguimientos[$i]!="")
-                //$param["prog_seguimiento"]=$prog_seguimientos[$i];
+                $param["seguimiento"]="";            
             if($fchseguimientos[$i]!="")
                 $param["fchseguimiento"]=$fchseguimientos[$i];
             else
                 $param["fchseguimiento"]="";
             
-            $param["user"]=$this->getUser()->getUserId();
-           // echo "<pre>";print_r($param);echo "</pre>";
+            $param["user"]=$this->getUser()->getUserId();           
             $this->executeAprobarSeguimiento( $param );
-        }
-        
+        }        
         
         $idcotizaciones=$request->getParameter("idcotizacioncot");
         
@@ -425,20 +366,18 @@ class cotseguimientosActions extends sfActions
         for($i=0;$i<count($idcotizaciones);$i++)
         {
             $param=array();
-            $param["cotizacion"]=$idcotizaciones[$i];
+            $param["idcotizacion"]=$idcotizaciones[$i];
             $param["etapa"]=$etapa[$i];
             if($seguimientos[$i]!="")
                 $param["seguimiento"]=$seguimientos[$i];
             else
                 $param["seguimiento"]="";
             $param["user"]=$this->getUser()->getUserId();
-            //if($prog_seguimientos[$i]!="")
-                //$param["prog_seguimiento"]=$prog_seguimientos[$i];
+            
             if($etapa[$i]=="SEG")
             {                
                 $param["fchseguimiento"]=$fchseguimientos[$j++];
-            }
-           // echo "<pre>";print_r($param);echo "</pre>";
+            }           
             $this->executeAprobarSeguimiento( $param );
         }        
         
