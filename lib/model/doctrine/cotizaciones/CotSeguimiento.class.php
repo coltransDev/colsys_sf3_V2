@@ -29,6 +29,7 @@ class CotSeguimiento extends BaseCotSeguimiento
         $seguimientos=(isset($param["seguimiento"])?$param["seguimiento"]:"");
         $fchseguimiento=(isset($param["fchseguimiento"])?$param["fchseguimiento"]:"");
         $coti=(isset($param["cotizacion"])?$param["cotizacion"]:"");
+        $idcoti=(isset($param["idcotizacion"])?$param["idcotizacion"]:"");
 
         if( $idproducto !="" ){
             $producto = Doctrine::gettable("CotProducto")->find( $idproducto );
@@ -49,6 +50,10 @@ class CotSeguimiento extends BaseCotSeguimiento
         {
             $cotizacion = Doctrine::gettable("Cotizacion")->findOneBy("ca_consecutivo", $coti);
         }
+        else if($idcoti!="")
+        {
+            $cotizacion = Doctrine::gettable("Cotizacion")->find($idcoti);
+        }
         
         if(!$cotizacion)
             return 0;
@@ -60,7 +65,7 @@ class CotSeguimiento extends BaseCotSeguimiento
             $producto->setCaEtapa( $etapa );
             $producto->save();
         }
-        else if($coti!="")
+        else if($cotizacion)
         {
             $seguimiento->setCaIdcotizacion( $cotizacion->getCaIdcotizacion() );
             $cotizacion->setCaEtapa($etapa);
