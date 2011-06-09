@@ -24,7 +24,9 @@ class subastasComponents extends sfComponents {
                                ->addOrderBy("ca_fchcreado DESC")        
                                ->execute();  
     }
-        
+    
+    
+   
     
 
 }

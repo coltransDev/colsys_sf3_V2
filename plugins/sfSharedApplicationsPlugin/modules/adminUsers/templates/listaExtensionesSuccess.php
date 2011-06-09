@@ -1,6 +1,6 @@
 <?php
 ?>
-<div class="content"  align="center">
+<div align="center">
     
     <?
     if($criterio=='buttondirnal'){
@@ -8,7 +8,7 @@
     <h2 style="font-size: 200%">Directorio Telef&oacute;nico Nacional</h2>
     <br />
     
-    <table class="tableList" border="1" width="680">
+    <table class="tableList" border="1" width="95%">
         <tr>
             <th >Usuario</th>
             <th >Cargo</th>
@@ -62,7 +62,7 @@
     ?>
     <h2 style="font-size: 200%">Directorio Telef&oacute;nico por Empresa</h2>
     <br />
-    <table class="tableList" border="1" width="680">
+    <table class="tableList" border="1" width="95%">
         <tr>
             <th >Usuario</th>
             <th >Cargo</th>
@@ -117,7 +117,7 @@
 
     <h2 style="font-size: 200%">Directorio Telef&oacute;nico por Sucursal</h2>
     <br />
-    <table class="tableList" border="1" width="720">
+    <table class="tableList" border="1" width="95%">
         <tr>
             <th >Usuario</th>
             <th >Cargo</th>
@@ -171,7 +171,7 @@
 
     <h2 style="font-size: 200%">Directorio Telef&oacute;nico por Departamento</h2>
     <br />
-    <table class="tableList" border="1" width="680">
+    <table class="tableList" border="1" width="95%">
         <tr>
             <th >Usuario</th>
             <th >Cargo</th>

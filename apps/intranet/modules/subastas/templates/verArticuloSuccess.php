@@ -122,20 +122,34 @@ $(document).ready(function(){
   </div>
 </div>
 
+<?
+if( $articulo->getCaUsucomprador() ){
+?>
+  <br />
+  <div class="yellowbox">
+      <b>Lo sentimos este articulo ya fue vendido</b>
+  </div>  
+  <br />
+<?
+}
+?>  
 
 
-
-<div class="">
-    <b>Descripción:</b>
-    <br />
+<div class="box1">
+    <div class="title">Descripción:</div>  
+    <div class="body">
     <?=$articulo->getCaDescripcion()?>    
-    <br />
-    <b>Forma de Pago:</b>
-    
-    <br />
-    <?=$articulo->getCaFormapago()?>    
-    
+    </div>
 </div>
+<br />
+<div class="box1">    
+    <div class="title">Forma de Pago:</div>
+    
+    <div class="body">
+    <?=$articulo->getCaFormapago()?>    
+    </div>
+</div>    
+
 
       
 <div id="resultados">
@@ -154,13 +168,8 @@ if( !$articulo->getCaUsucomprador() ){
           ?>
     <?  
     }
-}else{
-    echo "Lo sentimos este articulo ya fue vendido";
 }
-?>
-
-
-    
+?>    
 </div>
 
 

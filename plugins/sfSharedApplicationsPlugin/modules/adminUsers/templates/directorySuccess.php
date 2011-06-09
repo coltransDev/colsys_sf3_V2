@@ -65,7 +65,7 @@ function cambiarValores(){
 
 
 </script>
-    <table class="tableList">
+    <table class="tableList" width="100%">
         <th colspan="3" style="border-bottom: none"><b>Buscar Personas</b></th>
         <tr>
             <td>
@@ -110,8 +110,9 @@ function cambiarValores(){
             <td><input type="button" value="Buscar" OnClick="buscar()"></td>
         </tr>
     </table>
+<br />
 
-<div class="content" align="center">
+<div align="center">
     <div id="resultados"></div>
 </div>
 <script language="javascript" type="text/javascript">

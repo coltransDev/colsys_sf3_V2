@@ -6,10 +6,12 @@
 
 if (count($usuarios)>0):
 ?>
- <h1 class="show"><span>Cumplea&ntilde;os</span></h1>
-<?=image_tag("birthday/".date("d").".gif")?>                                        
+ 
+                                     
 <br />
-<div class="jamod-content">
+<div class="storybox">
+    <div class="title"><span>Cumplea&ntilde;os</span></div>
+    <div class="body">
     <?
     $hoy=0;
     $manana=0;
@@ -20,7 +22,7 @@ if (count($usuarios)>0):
             $day='HOY';
             if($hoy==0){
     ?>
-            <br/><b>HOY</b><br/>
+            <b>Hoy</b><br/>
     <?
             $hoy=$hoy+1;
             }
@@ -28,7 +30,7 @@ if (count($usuarios)>0):
             $day='MA&Ntilde;ANA';
             if($manana==0){
     ?>
-            <br/><b>MA&Ntilde;ANA</b><br/>
+            <b>Ma&ntilde;ana</b><br/>
     <?
             $manana=$manana+1;
             }
@@ -36,7 +38,7 @@ if (count($usuarios)>0):
             $day='PASADO MA&Ntilde;ANA';
             if($pasado==0){
     ?>
-            <br/><b>PASADO MA&Ntilde;ANA</b><br/>
+            <b>Pasado ma&ntilde;ana</b><br/>
     <?
             $pasado=$pasado+1;
             }
@@ -50,8 +52,9 @@ if (count($usuarios)>0):
         	}
         }
     ?>
-        <b><a href="<?=url_for('adminUsers/viewUser?login='.$usuario->getCaLogin()) ?>"><?=$usuario->getCaNombre()?></a></b> <small><?=$usuario->getSucursal()->getEmpresa()->getCaNombre()?> - <?=$usuario->getSucursal()->getCaNombre()?></small><br />
+       <a href="<?=url_for('adminUsers/viewUser?login='.$usuario->getCaLogin()) ?>"><?=$usuario->getCaNombre()?></a> <small><?=$usuario->getSucursal()->getEmpresa()->getCaNombre()?> - <?=$usuario->getSucursal()->getCaNombre()?></small><br />
     <?
     }endif;
     ?>
+    </div>
 </div>

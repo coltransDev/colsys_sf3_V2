@@ -1,5 +1,5 @@
 <div class="content" align="center">
-    <table width="700"  class="tableList" >
+    <table width="100%"  class="tableList" >
         <tr>
             <td style="border:none; border-bottom: 1px solid #D0D0D0;text-align:left" <?if(($userinicio->getUserId()==$user->getCaLogin()) or $nivel>=1){?>colspan="3"<?}else{?>colspan="2"<?}?> scope="col">Perfil del usuario</td>
             <td></td>
@@ -28,9 +28,9 @@
 
     <br />
 
-    <div class="box1">
+   
         <?//echo $nivel;?>
-        <table width="680" border="0" class="tableList" >
+        <table width="100%" border="0" class="tableList" >
             <tr>
                 <td align="left">Login:</td><td align="left"><b><?=$user->getCaLogin()?></b></td>
             </tr>
@@ -47,7 +47,7 @@
                 <td align="left">Departamento:</td><td align="left"><b><?=$user->getCaDepartamento()?></b></td>
             </tr>
             <tr>
-                <td align="left">Sucursal:</td><td align="left"><b><?=$user->getSucursal()->getCa_Nombre()?></b></td>
+                <td align="left">Sucursal:</td><td align="left"><b><?=$user->getSucursal()->getCaNombre()?></b></td>
             </tr>
             <tr>
                 <td align="left">Email:</td><td align="left"><b><?=$user->getCa_Email()?></b></td>
@@ -96,5 +96,11 @@
             }
             ?>
         </table>
-    </div>
+        
+        <br />
+        <?
+        include_component("adminUsers", "directorio");
+        ?>
+        <br />
+    
 </div>

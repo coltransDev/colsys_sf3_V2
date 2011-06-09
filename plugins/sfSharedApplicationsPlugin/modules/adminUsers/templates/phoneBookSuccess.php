@@ -72,7 +72,9 @@ function cambiarValores(){
             </div>
         </div>
 </div>
-<br />
+
+
+<br />    
 <br />
 <?
 if($criterio=='buttoncom'){
@@ -150,6 +152,9 @@ if($criterio=='buttondep'){
 <?
 }
 ?>
+
+
+
 <script language="javascript" type="text/javascript">
     <?
     if($criterio  ){

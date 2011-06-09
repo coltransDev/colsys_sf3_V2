@@ -1,16 +1,22 @@
 <?
 if( count( $usuarios )>0 ){
 ?>
-<h1>Nuevos Colaboradores</h1>
+<div class="storybox">
+    <div class="title">Nuevos Colaboradores</div>
+    <div class="body">
 <?
 	foreach ($usuarios as $usuario) {
 ?>		
-		<b><a href="<?=url_for('adminUsers/viewUser?login='.$usuario->getCaLogin()) ?>"><?=$usuario->getCaNombre()?></a></b> 
+		<a href="<?=url_for('adminUsers/viewUser?login='.$usuario->getCaLogin()) ?>"><?=$usuario->getCaNombre()?></a>
 		
 			<small><?=$usuario->getSucursal()->getEmpresa()->getCaNombre()?> - <?=$usuario->getSucursal()->getCaNombre()?><br />
 			&nbsp;&nbsp;&nbsp;<?=$usuario->getCaCargo()?></small>
 		<br />
 <?	
 	}
+?>
+   </div>
+</div>        
+<?
 }
 ?>

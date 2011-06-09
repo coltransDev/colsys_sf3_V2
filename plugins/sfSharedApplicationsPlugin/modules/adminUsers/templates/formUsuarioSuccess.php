@@ -159,9 +159,9 @@ $teloficinas = $sf_data->getRaw("teloficinas");
 </script>
 
 <form name="form1" action="<?=url_for("adminUsers/guardarUsuario")?>" method="post" onsubmit="return checkForm()" enctype="multipart/form-data" >
-<div align="center">
+<div class="content" align="center">
     
-    <table width="700" border="0" class="tableList">
+    <table width="100%" border="0" class="tableList">
         <tr>
             <th colspan="4" scope="col"><?=$usuario?"Edici&oacute;n de ":"Creaci&oacute;n de "?>usuario</th>
         </tr>
@@ -178,7 +178,7 @@ $teloficinas = $sf_data->getRaw("teloficinas");
 		</tr>
 	</table>
 
-	<table width="700" border="0" class="tableList">
+	<table width="100%" border="0" class="tableList">
         <tr>
             <td colspan="2">
                 <div class="tab-pane" id="tab-pane-1">

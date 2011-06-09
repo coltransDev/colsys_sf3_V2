@@ -1,4 +1,4 @@
-
+<?=link_to("Nuevo", "subastas/formArticulo")?>
 
 
 <table class="tableList" >

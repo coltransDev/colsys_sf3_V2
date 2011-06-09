@@ -31,7 +31,8 @@ class adminUsersActions extends sfActions {
         }
 
         $this->nivel = $this->getUser()->getNivelAcceso($rutina);
-        if (!$this->nivel) {
+                
+        if ($this->nivel<0 && $app=="intranet" ) {
             $this->nivel = 0;
         }
 
@@ -41,7 +42,7 @@ class adminUsersActions extends sfActions {
     }
 
     public function executeDirectory(sfWebRequest $request) {
-        $this->setLayout("layout2col");
+        
 
         $this->empresas = Doctrine::getTable("Empresa")
                         ->createQuery("e")
@@ -76,54 +77,7 @@ class adminUsersActions extends sfActions {
         }
     }
 
-    public function executeDoSearch(sfWebRequest $request) {
-
-        $criterio = ('%' . strtolower($request->getParameter('criterio')) . '%');
-        $opcion = $request->getParameter("opcion");
-        $departamento = utf8_decode($request->getParameter("departamento"));
-        $sucursal = utf8_decode($request->getParameter("sucursal"));
-        $empresa = utf8_decode($request->getParameter("empresa"));
-        $sangre = $request->getParameter("type");
-
-        $q = Doctrine::getTable('Usuario')
-                        ->createQuery('u')
-                        ->innerJoin('u.Sucursal s')
-                        ->innerJoin('s.Empresa e')
-                        ->addWhere('u.ca_activo = ?', true);
-        if ($criterio) {
-            switch ($opcion) {
-                case "login":
-                    $q->addWhere('LOWER(u.ca_login) LIKE ?', $criterio);
-                    break;
-                case "nombre":
-                    $q->addWhere('(LOWER(u.ca_nombre) LIKE ? OR LOWER(u.ca_nombres) LIKE ? OR LOWER(u.ca_apellidos) LIKE ? )', array($criterio, $criterio, $criterio));
-                    break;
-                case "apellido":
-                    $q->addWhere('(LOWER(u.ca_apellidos) LIKE ?)', $criterio);
-                    break;
-                case "correo":
-                    $q->addWhere('LOWER(u.ca_email) LIKE ?', $criterio);
-                    break;
-                case "tiposangre":
-                    $q->addWhere('LOWER(u.ca_tiposangre) LIKE ?', $criterio);
-                    break;
-                case "cargo":
-                    $q->addWhere('LOWER(u.ca_cargo) LIKE ?', $criterio);
-                    break;
-            }
-        }
-        if ($departamento) {
-            $q->addWhere('LOWER(u.ca_departamento) LIKE ?', strtolower($departamento));
-        }
-        if ($sucursal) {
-            $q->addWhere('u.ca_idsucursal = ?', $sucursal);
-        }
-        if ($empresa) {
-            $q->addWhere('s.ca_idempresa = ?', $empresa);
-        }
-        $q->distinct();
-        $this->usuarios = $q->execute();
-    }
+    
 
     public function executeFormUsuario($request) {
 
@@ -139,7 +93,7 @@ class adminUsersActions extends sfActions {
 
         switch ($app) {
             case "intranet":
-                $this->setLayout("layout2col");
+                
                 break;
         }
         if (!($this->nivel == 0 and $request->getParameter("login") == $this->getUser()->getUserId())) {
@@ -272,7 +226,7 @@ class adminUsersActions extends sfActions {
 
         switch ($app) {
             case "intranet":
-                $this->setLayout("layout2col");
+                
                 break;
         }
 
@@ -289,7 +243,7 @@ class adminUsersActions extends sfActions {
     public function executeGuardarUsuario($request) {
         switch ($app) {
             case "intranet":
-                $this->setLayout("layout2col");
+                
                 break;
         }
         $usuario = Doctrine::getTable("Usuario")->find($request->getParameter("login"));
@@ -549,7 +503,7 @@ class adminUsersActions extends sfActions {
 
         switch ($app) {
             case "intranet":
-                $this->setLayout("layout2col");
+                
                 break;
         }
 
@@ -674,7 +628,7 @@ class adminUsersActions extends sfActions {
     }
 
     public function executeListaExtensiones(sfWebRequest $request) {
-        $this->setLayout("layout2col");
+        
         $this->user = Doctrine::getTable('Usuario')->find($request->getParameter('login'));
         $this->nivel = $this->getNivel();
         $criterio = $request->getParameter('criterio');
@@ -754,14 +708,14 @@ class adminUsersActions extends sfActions {
     }
 
     public function executeMainUsers(sfWebRequest $request) {
-        $this->setLayout("layout2col");
+        
         $this->userinicio = sfContext::getInstance()->getUser();
         $this->nivel = $this->getNivel();
     }
 
     public function executePhoneBook(sfWebRequest $request) {
 
-        $this->setLayout("layout2col");
+        
         $this->criterio = $request->getParameter('criterio');
 
         $this->sucursales = Doctrine::getTable("Sucursal")
@@ -810,7 +764,7 @@ class adminUsersActions extends sfActions {
     }
 
     public function executeViewOrganigrama(sfWebRequest $request) {
-        $this->setLayout("layout2col");
+        
         $this->manager = Doctrine::getTable('Usuario')->find($request->getParameter('login'));
         $this->forward404Unless($this->manager);
 
@@ -827,7 +781,7 @@ class adminUsersActions extends sfActions {
         $app = sfContext::getInstance()->getConfiguration()->getApplication();
         switch ($app) {
             case "intranet":
-                $this->setLayout("layout2col");
+                
                 break;
         }
         $this->userinicio = sfContext::getInstance()->getUser();
@@ -849,20 +803,106 @@ class adminUsersActions extends sfActions {
                 $searchString = "(&(cn=" . $request->getParameter('login') . "))";
                 $sr = ldap_search($connect, "o=coltrans_bog", $searchString, array("networkAddress"));
                 $entry = ldap_first_entry($connect, $sr);
-                $attrs = ldap_get_attributes($connect, $entry);
-                $result = $attrs["networkAddress"];
-                foreach ($result as $key => $val) {
-                    if (trim($key) != "count") {
-                        $this->addresses[] = Utils::LDAPNetAddr($val);
+                @$attrs = ldap_get_attributes($connect, $entry);
+                @$result = $attrs["networkAddress"];
+                if(is_array($result)){
+                    foreach ($result as $key => $val) {
+                        if (trim($key) != "count") {
+                            $this->addresses[] = Utils::LDAPNetAddr($val);
+                        }
                     }
                 }
             }
         }
     }
-
+    
+    
+    /*
+     * Busqueda general
+     */
     public function executeSearch(sfWebRequest $request) {
+        $criterio = ('%' . strtolower($request->getParameter('buscar')) . '%');
+       
 
-        $this->setLayout("layout2col");
+        $q = Doctrine::getTable('Usuario')
+                        ->createQuery('u')
+                        ->innerJoin('u.Sucursal s')
+                        ->innerJoin('s.Empresa e')
+                        ->addWhere('u.ca_activo = ?', true);
+        
+        
+        
+        $q->addWhere('(LOWER(u.ca_login) LIKE ? OR LOWER(u.ca_nombre) LIKE ? 
+                        OR LOWER(u.ca_nombres) LIKE ? OR LOWER(u.ca_apellidos) LIKE ?
+                        OR LOWER(u.ca_apellidos) LIKE ? OR LOWER(u.ca_email) LIKE ?
+                        OR LOWER(u.ca_cargo) LIKE ? OR LOWER(u.ca_departamento) LIKE ?
+                        OR LOWER(s.ca_nombre) LIKE ? OR LOWER(e.ca_nombre) LIKE ?)
+                        
+                     ', array($criterio, $criterio, $criterio, $criterio, $criterio,
+                              $criterio, $criterio, $criterio, $criterio, $criterio));
+       
+        
+        $q->addOrderBy("u.ca_nombre ASC");       
+        $q->distinct();
+        $this->usuarios = $q->execute();
+        
+        $this->setTemplate("doSearch");
+    }
+    /*
+     * Busqueda personalizada
+     */
+    public function executeDoSearch(sfWebRequest $request) {
+
+        $criterio = ('%' . strtolower($request->getParameter('criterio')) . '%');
+        $opcion = $request->getParameter("opcion");
+        $departamento = utf8_decode($request->getParameter("departamento"));
+        $sucursal = utf8_decode($request->getParameter("sucursal"));
+        $empresa = utf8_decode($request->getParameter("empresa"));
+        $sangre = $request->getParameter("type");
+
+        $q = Doctrine::getTable('Usuario')
+                        ->createQuery('u')
+                        ->innerJoin('u.Sucursal s')
+                        ->innerJoin('s.Empresa e')
+                        ->addWhere('u.ca_activo = ?', true);
+        if ($criterio) {
+            switch ($opcion) {
+                case "login":
+                    $q->addWhere('LOWER(u.ca_login) LIKE ?', $criterio);
+                    break;
+                case "nombre":
+                    $q->addWhere('(LOWER(u.ca_nombre) LIKE ? OR LOWER(u.ca_nombres) LIKE ? OR LOWER(u.ca_apellidos) LIKE ? )', array($criterio, $criterio, $criterio));
+                    break;
+                case "apellido":
+                    $q->addWhere('(LOWER(u.ca_apellidos) LIKE ?)', $criterio);
+                    break;
+                case "correo":
+                    $q->addWhere('LOWER(u.ca_email) LIKE ?', $criterio);
+                    break;
+                case "tiposangre":
+                    $q->addWhere('LOWER(u.ca_tiposangre) LIKE ?', $criterio);
+                    break;
+                case "cargo":
+                    $q->addWhere('LOWER(u.ca_cargo) LIKE ?', $criterio);
+                    break;
+            }
+        }
+        if ($departamento) {
+            $q->addWhere('LOWER(u.ca_departamento) LIKE ?', strtolower($departamento));
+        }
+        if ($sucursal) {
+            $q->addWhere('u.ca_idsucursal = ?', $sucursal);
+        }
+        if ($empresa) {
+            $q->addWhere('s.ca_idempresa = ?', $empresa);
+        }
+        $q->distinct();
+        $this->usuarios = $q->execute();
+    }
+    
+    /*public function executeSearch(sfWebRequest $request) {
+
+        
         $query = trim($request->getParameter('buscar'));
 
         //$query = str_replace(' ', ' and ', $query);
@@ -883,7 +923,7 @@ class adminUsersActions extends sfActions {
         $this->forwardUnless($query, "homepage", "index");
 
         $this->usuarios = Doctrine_Core::getTable('Usuario') ->getForLuceneQuery($query);
-    }
+    }*/
 
 }
 

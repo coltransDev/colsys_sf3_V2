@@ -34,7 +34,7 @@
     </table>
 </div>
 
-
+<table bgcolor="#fdfdfd" border="0" cellpadding="0" cellspacing="0" align="center">
 <?
    $numUsuarios = count($usuarios);
    for ($i=0; $i<$numUsuarios; $i++){
@@ -84,3 +84,5 @@
  <?
    }
  ?>
+
+    </table>
