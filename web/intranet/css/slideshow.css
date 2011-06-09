@@ -4,7 +4,7 @@
 #slideshow {
 	margin:0 auto;
 	width:640px;
-	height:263px;
+	height:400px;
 	background:transparent url(../images/slideshow/bg_slideshow.jpg) no-repeat 0 0;
 	position:relative;        
 }
@@ -13,7 +13,7 @@
 #slideshow #slidesContainer {
   margin:0 auto;
   width:560px;
-  height:263px;
+  height:400px;
   overflow:auto; /* allow scrollbar */
   position:relative;
   color: #FFFFFF;
@@ -21,7 +21,7 @@
 #slideshow #slidesContainer .slide {
   margin:0 auto;
   width:540px; /* reduce by 20 pixels of #slidesContainer to avoid horizontal scroll */
-  height:263px;
+  height:400px;
 }
 
 /** 
@@ -30,7 +30,7 @@
 .control {
   display:block;
   width:39px;
-  height:263px;
+  height:400px;
   text-indent:-10000px;
   position:absolute;
   cursor: pointer;
