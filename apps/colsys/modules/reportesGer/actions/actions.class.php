@@ -394,6 +394,41 @@ class reportesGerActions extends sfActions {
             $this->resul = $st->fetchAll();
         }
     }
-
+    
+    public function executeLibroReferenciasAereo(sfWebRequest $request) {
+        $anio = $request->getParameter( "anio" );
+        $mes = $request->getParameter( "mes" );        
+        $idtrafico = $request->getParameter( "idtrafico" );
+        
+        $this->detalle = $request->getParameter( "detalle" );
+               
+        if( $request->isMethod("post") ){
+            
+            $q = Doctrine::getTable("InoMaestraAir")
+                                ->createQuery("m")
+                                ->innerJoin("m.Origen o")
+                                ->addWhere("SUBSTR(m.ca_referencia, 8,2) LIKE ?", $mes)
+                                ->addWhere("SUBSTR(m.ca_referencia, 15,1) LIKE ?", $anio)
+                                ->addWhere("o.ca_idtrafico LIKE ?", $idtrafico);
+            
+            if( $this->detalle ){
+                $q->innerJoin("m.InoClientesAir c");
+                $q->innerJoin("c.Cliente cl");
+            }
+            
+            $this->refs = $q->execute();
+                                
+            $this->setTemplate("libroReferenciasAereoResult");
+        }else{
+            $this->traficos = Doctrine::getTable("Trafico")
+                                        ->createQuery("t")
+                                        ->addOrderBy("t.ca_nombre")
+                                        ->execute();            
+        }
+        
+        
+        
+                
+    }
 }
 ?>
