@@ -191,7 +191,6 @@ class reportesGerActions extends sfActions {
         $this->opcion = $request->getParameter("opcion");
         list($nom_mes,$ano)=explode("-", $request->getParameter("fechaFinal"));        
         
-        
         $this->mes = Utils::nmes($nom_mes);
         $this->idsucursal = $request->getParameter("idsucursal");
         	//echo $this->idsucursal;
@@ -207,8 +206,13 @@ class reportesGerActions extends sfActions {
         $this->fechafinal2 = Utils::addDate($this->fechafinal, 0, 0, -2);
         //$this->userid = $this->getUser()->getUserId();
         if ($this->opcion) {
+            
+            if($this->idsucursal)
+                $where=" and ca_sucursal='".$this->idsucursal."'";
+
+            
             $this->nmeses = 3; //ceil(Utils::diffTime($this->fechainicial,$this->fechafinal)/720);
-            $sql = "select count(*) as valor,ca_year,ca_mes,ca_traorigen as origen from vi_reportes_estadisticas where ca_fchreporte between '" . $this->fechainicial . "' and '" . $this->fechafinal . "' and ca_sucursal='Bogotá D.C.'
+            $sql = "select count(*) as valor,ca_year,ca_mes,ca_traorigen as origen from vi_reportes_estadisticas where ca_fchreporte between '" . $this->fechainicial . "' and '" . $this->fechafinal . "'  $where
                 group by ca_year,ca_mes,ca_traorigen
                 order by 4,2,3";
             //echo "<br>".$sql;
@@ -223,8 +227,6 @@ class reportesGerActions extends sfActions {
                 $this->totales[$r["ca_year"] . "-" . $r["ca_mes"]]+=$r["valor"];
             }
             
-            if($this->idsucursal)
-                $where=" and ca_sucursal='".$this->idsucursal."'";
 
             $sql = "select count(*) as valor,ca_traorigen as origen,ca_year from vi_reportes_estadisticas
             where (ca_fchreporte between '" . (Utils::parseDate($this->fechafinal, "Y") . '-01-01') . "' and '" . $this->fechafinal . "' or ca_fchreporte between '" . (Utils::parseDate($this->fechafinal1, "Y") . '-01-01') . "' and '" . $this->fechafinal1 . "' or ca_fchreporte between '" . (Utils::parseDate($this->fechafinal2, "Y") . '-01-01') . "' and '" . $this->fechafinal2 . "') $where
@@ -392,6 +394,69 @@ class reportesGerActions extends sfActions {
             //echo $sql;
             $st = $con->execute($sql);
             $this->resul = $st->fetchAll();
+        }
+    }
+    
+    
+    
+    public function executeEstadisticasIndicadoresTT(sfWebRequest $request) {        
+        
+        $this->opcion = $request->getParameter("opcion");
+        $this->fechafinal = $request->getParameter("fechaFinal");
+        list($nom_mes,$ano)=explode("-", $this->fechafinal);
+        $this->mes = Utils::nmes($nom_mes);
+        $this->mesp=$this->mes;
+        $indi_LCL=4;
+        $indi_FCL=8;
+        if ($this->opcion) 
+        {
+            $this->grid = array();
+            $sql = "select * 
+                from vi_repindicadores 
+                LEFT OUTER JOIN (select rp.ca_consecutivo as ca_consecutivo_sub, rs.ca_fchsalida, rs.ca_fchllegada, max(to_date((rs.ca_fchenvio::timestamp)::text,'yyyy-mm-dd')) as ca_fchenvio, rs.ca_fchllegada-rs.ca_fchsalida as ca_diferencia , rs.ca_peso as ca_peso,extract(YEAR from rs.ca_fchsalida) as ca_ano1 ,extract(MONTH from rs.ca_fchsalida) as ca_mes1 from tb_repstatus rs INNER JOIN tb_reportes rp ON (rp.ca_idreporte = rs.ca_idreporte) where rs.ca_idetapa in ('IACAD','IMCPD') group by ca_consecutivo, ca_fchsalida, ca_fchllegada, ca_diferencia,ca_peso,extract(YEAR from rs.ca_fchsalida) ,extract(MONTH from rs.ca_fchsalida)) sq ON (vi_repindicadores.ca_consecutivo = sq.ca_consecutivo_sub) 
+                where ca_impoexpo = '".Constantes::IMPO."' and ca_transporte = '".constantes::MARITIMO."' 
+                and upper(ca_compania) like upper('%henkel%')   
+                and ca_ano::numeric = ".$ano." and ca_mes::numeric <= ".$this->mes." 
+                order by ca_ano,ca_mes";
+            //echo $sql;
+            $con = Doctrine_Manager::getInstance()->connection();
+            $st = $con->execute($sql);
+            $this->resul = $st->fetchAll();
+            $this->indicador = array();
+            foreach ($this->resul as $r)
+            {
+               if(!$r["ca_diferencia"])
+                    continue;
+                if($r["ca_modalidad"]==Constantes::FCL)
+                {
+                    if($r["ca_diferencia"]>$indi_FCL)
+                    {
+                        $this->indicador[(int)($r["ca_mes1"])]["incumplimiento"]++;                        
+                    }
+                    else
+                    {
+                        $this->indicador[(int)($r["ca_mes1"])]["cumplimiento"]++;
+                    }
+                }
+                else if($r["ca_modalidad"]==Constantes::LCL)
+                {
+                    if($r["ca_diferencia"]>$indi_LCL)
+                    {
+                        $this->indicador[(int)($r["ca_mes1"])]["incumplimiento"]++;
+                    }
+                    else
+                    {
+                        $this->indicador[(int)($r["ca_mes1"])]["cumplimiento"]++;
+                    }
+                }
+                $this->grid[$r["ca_ano1"]][$r["ca_modalidad"]][(int)($r["ca_mes1"])]["conta"]=(isset ($this->grid[$r["ca_ano1"]][$r["ca_modalidad"]][(int)($r["ca_mes1"])]["conta"]))? ($this->grid[$r["ca_ano1"]][$r["ca_modalidad"]][(int)($r["ca_mes1"])]["conta"]+1) : "1";
+                $this->grid[$r["ca_ano1"]][$r["ca_modalidad"]][(int)($r["ca_mes1"])]["diferencia"]+=$r["ca_diferencia"];
+                list($peso,$medida)=explode("|", $r["ca_peso"]);
+                $this->grid[$r["ca_ano1"]][$r["ca_modalidad"]][(int)($r["ca_mes1"])]["peso"]+=$peso;
+//                        []=array("diferencia"=>$r["ca_diferencia"],"peso"=>$r["ca_peso"]);
+            }
+            
+            echo "<pre>";print_r($this->resul);echo "</pre>";
         }
     }
     
