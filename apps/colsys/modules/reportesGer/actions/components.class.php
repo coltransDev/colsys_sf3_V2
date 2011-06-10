@@ -56,6 +56,12 @@ class reportesGerComponents extends sfComponents
         $this->fechafinal=$this->getRequestParameter("fechaFinal");        
         $this->idsucursal = $this->getRequestParameter("idsucursal");
     }
+    
+    public function executeFiltrosEstadisticasIndicadoresTT()
+    {
+        $this->opcion=$this->getRequestParameter("opcion");        
+        $this->fechafinal=$this->getRequestParameter("fechaFinal");        
+    }
 	
 }
 ?>
