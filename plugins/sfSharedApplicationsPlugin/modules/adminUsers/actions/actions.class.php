@@ -241,11 +241,7 @@ class adminUsersActions extends sfActions {
     }
 
     public function executeGuardarUsuario($request) {
-        switch ($app) {
-            case "intranet":
-                
-                break;
-        }
+       
         $usuario = Doctrine::getTable("Usuario")->find($request->getParameter("login"));
         $this->nivel = $this->getNivel();
         $cambiodireccion = 0;
