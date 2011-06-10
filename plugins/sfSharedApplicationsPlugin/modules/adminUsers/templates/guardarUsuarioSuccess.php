@@ -10,7 +10,7 @@
                 <?
                 foreach($recips as $recip){
                 ?>
-                    <tr><td>Jefe Dpto. Administrativo: <b><?=$recip->getCaNombre()?></td></b></tr>
+                    <tr><td><?=$cargo?>: <b><?=$recip->getCaNombre()?></td></b></tr>
                 <?
                 }
             }

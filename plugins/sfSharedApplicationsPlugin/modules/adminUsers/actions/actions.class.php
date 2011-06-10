@@ -258,16 +258,24 @@ class adminUsersActions extends sfActions {
 
             $this->direccion = $direccion;
             $this->suc = $suc;
-
+            
+            
+            if( $suc != "Bogotá D.C." ){
+                $cargo = 'Jefe Dpto. Administrativo';
+            }else{            
+                $cargo = 'Jefe Dpto. Talento Humano';
+            }
+            
             $recips = Doctrine::getTable("Usuario")
                             ->createQuery('r')
                             ->innerJoin('r.Sucursal s')
                             ->addWhere('s.ca_nombre = ?', $suc)
                             ->addWhere('r.ca_activo=?', true)
-                            ->addWhere('r.ca_cargo=?', 'Jefe Dpto. Administrativo')
+                            ->addWhere('r.ca_cargo=?', $cargo)
                             ->execute();
 
             $this->recips = $recips;
+            $this->cargo = $cargo;
         }
         if (!($this->nivel == 0 and $request->getParameter("login") == $this->getUser()->getUserId())) {
             if (!($this->nivel > 1)) {
