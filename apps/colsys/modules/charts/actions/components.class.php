@@ -24,6 +24,11 @@ class chartsComponents extends sfComponents {
     public function executeColumn() {
         $response = sfContext::getInstance()->getResponse();
 		$response->addJavaScript("highcharts/js/highcharts",'last');
+        $response->addJavaScript("highcharts/js/modules/exporting",'last');        
+    }
+    public function executeLine() {
+        $response = sfContext::getInstance()->getResponse();
+		$response->addJavaScript("highcharts/js/highcharts",'last');
         $response->addJavaScript("highcharts/js/modules/exporting",'last');
         
     }
