@@ -115,7 +115,7 @@
                     </table>
                 </td></tr>
             <!-- COPYRIGHT -->
-            <tr><td><font size="1" face="arial, helvetica, sans-serif" color="#666666">&copy; Coltrans S.A. </font></td></tr>
+            <tr><td><font size="1" face="arial, helvetica, sans-serif" color="#666666">&copy; <?=sfConfig::get('app_branding_name1');?> </font></td></tr>
         </table>
 
     </body>
