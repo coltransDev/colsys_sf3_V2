@@ -58,6 +58,7 @@ $office_types = $sf_data->getRaw("office_types");
                     title: 'Principal',
                     autoHeight:true,
                     activeTab: 0,
+                    deferredRender: false, 
                     items: [
                     {
                         xtype:'fieldset',
@@ -254,6 +255,7 @@ $office_types = $sf_data->getRaw("office_types");
                                                 triggerAction:  'all',
                                                 forceSelection: true,
                                                 editable:       true,
+                                                width: 250,
                                                 fieldLabel:     'S.O.',
                                                 name:           'so',
                                                 hiddenName:     'so',
@@ -280,6 +282,7 @@ $office_types = $sf_data->getRaw("office_types");
                                                 triggerAction:  'all',
                                                 forceSelection: true,
                                                 editable:       true,
+                                                width: 250,
                                                 fieldLabel:     'Office',
                                                 name:           'office',
                                                 hiddenName:     'office',
