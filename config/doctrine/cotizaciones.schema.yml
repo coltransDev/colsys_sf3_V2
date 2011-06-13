@@ -12,6 +12,7 @@ Cotizacion:
       autoincrement: true
     ca_idcontacto: integer
     ca_consecutivo: string
+    ca_version: integer
     ca_saludo: string
     ca_asunto: string
     ca_entrada: string
@@ -19,17 +20,20 @@ Cotizacion:
     ca_anexos: string
     ca_usuario: string
     ca_empresa: string
-    ca_fuente: string
+    ca_fuente: string    
     ca_idg_envio_oportuno: integer
     ca_etapa: string
     ca_idtarea: integer
+    ca_tasa_cambio: float
+    ca_trm: float
+    ca_valor_mcia: float
     ca_usucreado: string(20)
     ca_fchcreado: timestamp
     ca_usuactualizado: string(20)
     ca_fchactualizado: timestamp
     ca_usuanulado: string(20)
     ca_fchanulado: timestamp
-    ca_version: integer
+    
   relations:
     Usuario:
       local: ca_usuario
@@ -180,6 +184,7 @@ CotOpcion:
     ca_usuactualizado: string(20)
     ca_fchactualizado: timestamp
     ca_idequipo: integer
+    ca_cantidad: numeric
   relations:
     CotProducto:
       local: ca_idproducto
@@ -226,6 +231,7 @@ CotRecargo:
     ca_usuactualizado: string(20)
     ca_fchactualizado: timestamp
     ca_idequipo: integer
+    ca_cantidad: numeric
   relations:    
     Concepto:
       local: ca_idconcepto

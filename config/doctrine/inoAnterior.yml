@@ -1,18 +1,3 @@
-InoMaestraAir:
-  options:
-    symfony:
-      form: false
-      filter: false
-  generatePath: inoAnterior
-  tableName: tb_inomaestra_air
-  columns:
-    ca_referencia:
-      type: string(16)
-      primary: true
-      autoincrement: true
-    ca_idlinea: integer
-
-
 
 InoMaestraSea:
   options:
@@ -212,36 +197,7 @@ InoEquiposSea:
        local: ca_idconcepto
        foreign: ca_idconcepto
        type: one
-       
-InoEquipoxClienteSea:
-  options:
-    symfony:
-      form: false
-      filter: false
-  generatePath: sea
-  tableName: tb_inoequipos_sea
-  columns:
-    ca_referencia:
-      type: string
-      primary: true
-    ca_idcliente:
-      type: integer
-      primary: true
-    ca_idequipo:
-      type: integer
-      primary: true
-    ca_hbls:
-      type: string
-      primary: true
-    ca_volumen: numeric
-    ca_peso: numeric
-    ca_piezas: integer    
-    ca_fchcreado: timestamp
-    ca_usucreado: string
-    ca_fchactualizado: timestamp
-    ca_usuactualizado: string
 
-    
 
 InoContratosSea:
   options:
@@ -297,3 +253,104 @@ ExpoAlerta:
       type: one
       
 
+
+
+InoMaestraAir:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: inoAnterior
+  tableName: tb_inomaestra_air
+  columns:
+    ca_referencia:
+      type: string(16)
+      primary: true
+      autoincrement: true
+    ca_idlinea: integer
+    ca_origen: string
+    ca_destino: string
+    ca_mawb: string
+    ca_piezas: string
+    ca_peso: string
+    ca_pesovolumen: string
+  relations:
+    InoClientesAir:
+      local: ca_referencia
+      foreign: ca_referencia
+      type: many    
+    IdsProveedor:
+      local: ca_idlinea
+      foreign: ca_idproveedor
+      type: one   
+    Origen:
+      local: ca_origen
+      foreign: ca_idciudad
+      type: one
+      class: Ciudad
+    Destino:
+      local: ca_destino
+      foreign: ca_idciudad
+      type: one
+      class: Ciudad
+    UsuCreado:
+      local: ca_usucreado
+      foreign: ca_login
+      type: one
+      class: Usuario
+   
+ 
+
+InoClientesAir:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: inoAnterior
+  tableName: tb_inoclientes_air
+  columns:
+    ca_referencia:
+      type: string
+      primary: true
+    ca_idcliente:
+      type: integer
+      primary: true
+    ca_hawb:
+      type: string
+      primary: true
+    oid: integer
+    ca_idreporte: string
+    ca_idproveedor: integer
+    ca_proveedor: string
+    ca_numpiezas: decimal
+    ca_peso: decimal
+    ca_volumen: decimal
+    ca_numorden: decimal    
+    ca_loginvendedor: string    
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string    
+  relations:    
+     InoMaestraAir:
+       local: ca_referencia
+       foreign: ca_referencia
+       type: one
+     Cliente:
+       local: ca_idcliente
+       foreign: ca_idcliente
+       type: one
+     Tercero:
+       local: ca_idproveedor
+       foreign: ca_idtercero
+       type: one
+     Proveedor:
+       local: ca_idproveedor
+       foreign: ca_idtercero
+       type: one
+       class: Tercero     
+     Vendedor:
+      local: ca_loginvendedor
+      foreign: ca_login
+      type: one
+      class: Usuario

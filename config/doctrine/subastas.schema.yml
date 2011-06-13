@@ -1,0 +1,68 @@
+SubArticulo:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: subastas
+  tableName: subastas.tb_articulo
+  columns:
+    ca_idarticulo:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_titulo: string
+    ca_descripcion: string
+    ca_formapago: string
+    ca_valor: float
+    ca_fchvencimiento: timestamp
+    ca_directa: boolean
+    ca_incremento: integer
+    ca_usucomprador: string
+    ca_valorventa: numeric
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string
+  relations:
+    UsuCreado:
+      local: ca_usucreado
+      foreign: ca_login
+      type: one
+      class: Usuario
+    UsuActualizado:
+      local: ca_usuactualizado
+      foreign: ca_login
+      type: one
+      class: Usuario
+    UsuComprador:
+      local: ca_usucomprador
+      foreign: ca_login
+      type: one
+      class: Usuario
+  
+SubOferta:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: subastas
+  tableName: subastas.tb_ofertas
+  columns:
+    ca_idoferta:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_idarticulo: integer    
+    ca_valor: float    
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+  relations:
+    SubArticulo:
+      local: ca_idarticulo
+      foreign: ca_idarticulo
+      type: one     
+    UsuCreado:
+      local: ca_usucreado
+      foreign: ca_login
+      type: one
+      class: Usuario
