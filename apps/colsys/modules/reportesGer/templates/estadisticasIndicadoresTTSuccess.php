@@ -2,9 +2,11 @@
 //echo $nmeses;
 include_component("charts","column");
 include_component("charts","pie");
+include_component("charts","line");
 
 $dataJSON=array();
 $grid = $sf_data->getRaw("grid");
+$indicador = $sf_data->getRaw("indicador");
 //echo "<pre>";print_r($grid);echo "</pre>";
 ?>
 <div align="center" >
@@ -40,75 +42,15 @@ if( $fechainicial && $fechafinal ){
 </div>
 <div>
     <table class="tableList" width="900px" border="1" id="mainTable" align="center">
-    <tr><th>No</th><th>Trafico</th>
-        <?
-        $year=Utils::addDate( $fechainicial2,0,0,0,"Y");
-        $c=1;
-        for($i=$year-2;$i<=$year;$i++)
-        {
-        ?>
-        <th><?=$i?></th>
-        <th width="12%">Variacion <?=$i?>/<?=$i-1?></th>
-        <?
-        }
-        ?>
-        </tr>
-        <?
-        $serieX=array();
-        $dataFechas=array();
-        foreach($gridCompara as $key=> $r)
-        {
-            $serieX[]=".     ".utf8_encode($key);
-        ?>
-        <tr><td><?=$c++?></td><td><?=$key?></td>
-        <?
-        $year=Utils::addDate( $fechainicial2,0,0,0,"Y");
-        for($i=$year-2;$i<=$year;$i++)
-        {
-        ?>
-        <td class="number"><?=$r[$i]?></td>
-        <?
-        $var=($r[$i]/$r[$i-1]);
-        ?>
-        <td class="number"><?=($var>0)?Utils::formatNumber($var-1,2)*100:"0"?>%</td>
-        <?
-        $dataFechas[$i][]=$r[$i];
-        }
-        ?>
-        </tr>
-        <?
-        }
-        //print_r($serieX);
-        $dataJSON=array();
-        foreach($dataFechas as $fech => $d)
-        {
-            $dataJSON[]=array("name"=>$fech,"data"=>$d);
-        }
-        
-        if($totalesCompara)
-        {
-        ?>
-            <tr class="b number"><td colspan="2">totales</td>
-        <?
-        $year=Utils::addDate( $fechainicial2,0,0,0,"Y");
-        for($i=$year-2;$i<=$year;$i++)
-        {
-        ?>
-            <td><?=$totalesCompara[$i] ?></td>
-            <td></td>
-        <?
-            }            
 
-        ?>
-            </tr>            
         <?
-        }
-        //$serieX[]="FCL";
-        //$serieX[]="LCL";
-        //$serieX[]=$mes;
-            $data=array();
-            $data_peso=array();
-            //$name=$mes;
+        //print_r($serieX);
+        
+ 
+        
+       
+        $data=array();
+        $data_peso=array();
             
         foreach($grid["2011"] as $modalidad=> $gridMod)
         {
@@ -121,7 +63,7 @@ if( $fechainicial && $fechafinal ){
             }
             
         }
-        
+        $serieM=$serieX;
         $dataJSON[]=array("name"=>"FCL","data"=>$data["FCL"]);
         $dataJSON[]=array("name"=>"LCL","data"=>$data["LCL"]);
         
@@ -154,7 +96,7 @@ USA LCL 4 días <span style="width: 120px" >&nbsp;</span>USA FCL 8 días
     var chart1;
         chart1=new ChartsColumn({
 					renderTo: 'grafica1',
-                    height: 800,
+                    height: 600,
                     title:"Movimientos de Traficos",
                     titleY:"Numero de Reportes",
                     plotBands: [
@@ -218,15 +160,13 @@ foreach($data_peso as $mes => $d)
 <script type="text/javascript">
     new ChartsColumn({
 					renderTo: 'grafica2',
-                    height: 800,
+                    height: 600,
                     title:"Movimientos de Traficos",
-                    titleY:"Numero de Reportes",                                       
-					serieX: <?=json_encode($serieX)?>,					
+                    titleY:"Numero de Reportes",
+					serieX: <?=json_encode($serieX)?>,
 				    series: <?=json_encode($dataJSON)?>
-				});	
+				});
 </script>
-
-
 
 <br>
 <br>
@@ -268,6 +208,47 @@ $dataJSON[]=array("Incumplimiento",(($indicador[$mes]["incumplimiento"]/$total)*
 				});	
 </script>
 
+
+<br>
+<br>
+<div align="center">
+<h3>Tendencia del cumplimiento</h3>  <br>
+</div>
+    <table align="center" width="90%">
+    <tr>
+        <td style=" margin: 0 auto" >
+            
+<div align="center" id="grafica4" ></div>
+        </td>
+    </tr>
+</table>
+
+<?
+//$serieX=array();
+$serieX=$serieM;
+
+$dataJSON=array();
+//print_r($indicador);
+foreach($indicador as $mes => $d)
+{
+    $total=$d["cumplimiento"]+$d["incumplimiento"];
+    $porcentajeMes[]=(($d["cumplimiento"]/$total)*100);
+}
+
+    $total=$d["cumplimiento"]+$d["incumplimiento"];
+    $dataJSON[]=array("name"=>"Cumplimiento","data"=>$porcentajeMes);
+
+?>
+<script type="text/javascript">
+    new ChartsLine({
+					renderTo: 'grafica4',
+                    height: 400,
+                    title:"Movimientos de Traficos",
+                    titleY:"Numero de Reportes",                                       
+					serieX: <?=json_encode($serieX)?>,					
+				    series: <?=json_encode($dataJSON)?>
+				});	
+</script>
 
 
 <script>
