@@ -38,6 +38,15 @@ class subastasActions extends sfActions {
                      ->addOrderBy("a.ca_fchcreado DESC")
                      ->execute();
         
+        
+        $this->articulosVendidos = Doctrine::getTable("SubArticulo")
+                     ->createQuery("a") 
+                     ->addWhere("a.ca_usucomprador IS NOT NULL")
+                     ->addWhere("a.ca_usucreado = ? ", $this->getUser()->getuserId())
+                     ->addOrderBy("a.ca_fchcreado DESC")
+                     ->limit(15)
+                     ->execute();
+        
         $this->nivel = $this->getNivel();
     }
     
@@ -187,49 +196,9 @@ class subastasActions extends sfActions {
             $articulo->setCaValorventa( $articulo->getCaValor() );
             $articulo->setCaUsucomprador( $this->getUser()->getUserId() );
             $articulo->save( $conn );
-            
-            $user = Doctrine::getTable("Usuario")->find( $this->getUser()->getUserId() );
-            $email = new Email();
-            $email->setCaUsuenvio($this->getUser()->getUserId());
-            $email->setCaTipo("Subasta"); //Envío de Avisos
-            $email->setCaIdcaso($articulo->getCaIdarticulo());
-            $email->setCaFrom("colsys@coltrans.com.co");
-            $email->setCaFromname("Intranet");
-            $email->setCaReplyto("colsys@coltrans.com.co");            
-            $email->addTo($user->getCaEmail());
-            $mensaje = "Felicitaciones, usted ha adquirido este articulo.";            
-            $request->setParameter("mensaje", $mensaje);            
-            $texto = sfContext::getInstance()->getController()->getPresentationFor('subastas', 'verArticuloEmail');             
-            $email->setCaSubject('Oferta Subasta');            
-            $email->setCaBodyhtml($texto);
-            $email->save( $conn );
-            
-            
-            
-            $user = Doctrine::getTable("Usuario")->find( $articulo->getCaUsucreado() );
-            
-            $email = new Email();
-            $email->setCaUsuenvio($this->getUser()->getUserId());
-            $email->setCaTipo("Subasta"); //Envío de Avisos
-            $email->setCaIdcaso($articulo->getCaIdarticulo());
-            $email->setCaFrom("colsys@coltrans.com.co");
-            $email->setCaFromname("Intranet");
-
-            $email->setCaReplyto("colsys@coltrans.com.co");
-            
-            $email->addTo( $user->getCaEmail() );
-            
-            
-            $mensaje = "El articulo en referencia ha sido vendido!";
-            
-            $request->setParameter("mensaje", $mensaje);
-            
-            $texto = sfContext::getInstance()->getController()->getPresentationFor('subastas', 'verArticuloEmail');
-             
-            $email->setCaSubject('Oferta Subasta');            
-            $email->setCaBodyhtml($texto);
-            $email->save( $conn );
-                        
+            $mensaje = "Felicitaciones, usted ha adquirido este articulo.";     
+            $articulo->notifyUser( $this->getUser()->getUserId() , 'Usted ha ganado una subasta' ,$mensaje, $conn );          
+                                   
         }else{                      
             $valor = Doctrine::getTable("SubOferta")
                                ->createQuery("o")
@@ -244,27 +213,15 @@ class subastasActions extends sfActions {
                 $valorOferta = $valor+$articulo->getCaIncremento();                
             }
             
-            if( $valorOferta>$articulo->getCaTope() ){
+            if( $valorOferta>=$articulo->getCaTope() ){
                 $valorOferta = $articulo->getCaTope();
                 $articulo->setCaValorventa( $valorOferta );
                 $articulo->setCaUsucomprador( $this->getUser()->getUserId() );
                 $articulo->save( $conn );
                 
-                $user = Doctrine::getTable("Usuario")->find( $this->getUser()->getUserId() );
-                $email = new Email();
-                $email->setCaUsuenvio($this->getUser()->getUserId());
-                $email->setCaTipo("Subasta"); //Envío de Avisos
-                $email->setCaIdcaso($articulo->getCaIdarticulo());
-                $email->setCaFrom("colsys@coltrans.com.co");
-                $email->setCaFromname("Intranet");
-                $email->setCaReplyto("colsys@coltrans.com.co");            
-                $email->addTo($user->getCaEmail());
-                $mensaje = "Felicitaciones, usted ha adquirido este articulo.";            
-                $request->setParameter("mensaje", $mensaje);            
-                $texto = sfContext::getInstance()->getController()->getPresentationFor('subastas', 'verArticuloEmail');             
-                $email->setCaSubject('Oferta Subasta');            
-                $email->setCaBodyhtml($texto);
-                $email->save( $conn );
+                $mensaje = "Felicitaciones, usted ha adquirido este articulo.";         
+                $articulo->notifyUser( $this->getUser()->getUserId() , $mensaje, 'Oferta Subasta', $conn );          
+                
             }
             
             
@@ -285,28 +242,11 @@ class subastasActions extends sfActions {
             foreach( $ofertas as $usuoferta ){
                 
                 if( $usuoferta["o_ca_usucreado"]!=$this->getUser()->getUserId() ){
-                    $email = new Email();
-                    $email->setCaUsuenvio(  $articulo->getCaUsucreado() );
-                    $email->setCaTipo("Subasta"); //Envío de Avisos
-                    $email->setCaIdcaso($articulo->getCaIdarticulo());
-                    $email->setCaFrom("colsys@coltrans.com.co");
-                    $email->setCaFromname("Intranet");
-                    $email->setCaReplyto("colsys@coltrans.com.co");
-
-                    $user = Doctrine::getTable("Usuario")->find($usuoferta["o_ca_usucreado"]);
-
-                    $email->addTo( $user->getCaEmail() );
-
-                    $mensaje = "Se ha creado una oferta mayor a la suya, alguien ofertó ".Utils::formatNumber($valorOferta);
-
-                    $request->setParameter("mensaje", $mensaje);
-                    $request->setParameter("idarticulo", $articulo->getCaIdarticulo());
-                    $texto = sfContext::getInstance()->getController()->getPresentationFor('subastas', 'verArticuloEmail');
-
-                    $email->setCaSubject('Aguien hizo una oferta mayor a la suya.');            
-                    $email->setCaBodyhtml($texto);
-                    $email->save( $conn );
-                    $email->send();
+                    
+                    $asunto = 'Alguien hizo una oferta mayor a la suya.'; 
+                    $mensaje = "Se ha creado una oferta mayor a la suya, alguien ofertó ".Utils::formatNumber($valorOferta);                                       
+                    
+                    $articulo->notifyUser( $usuoferta["o_ca_usucreado"] , $mensaje, $asunto, $conn ); 
                 }
             }
             

@@ -12,4 +12,23 @@
  */
 class SubArticulo extends BaseSubArticulo
 {
+    public function notifyUser( $userId, $mensaje, $asunto, $conn=null ){
+        $user = Doctrine::getTable("Usuario")->find( $userId );
+        $email = new Email();
+        $email->setCaUsuenvio( $userId );
+        $email->setCaTipo("Subasta"); //Envío de Avisos
+        $email->setCaIdcaso($this->getCaIdarticulo());
+        $email->setCaFrom("colsys@coltrans.com.co");
+        $email->setCaFromname("Intranet");
+        $email->setCaReplyto("colsys@coltrans.com.co");            
+        $email->addTo($user->getCaEmail());
+        
+        $request = sfContext::getInstance()->getRequest();
+        $request->setParameter("idarticulo", $this->getCaIdarticulo());
+        $request->setParameter("mensaje", $mensaje);            
+        $texto = sfContext::getInstance()->getController()->getPresentationFor('subastas', 'verArticuloEmail');             
+        $email->setCaSubject($asunto);            
+        $email->setCaBodyhtml($texto);
+        $email->save( $conn );
+    }
 }
