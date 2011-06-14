@@ -407,9 +407,13 @@ class reportesGerActions extends sfActions {
         $this->ano=$ano;
         $this->mes = Utils::nmes($nom_mes);
         $this->mesp = $this->mes;
+
+        $this->indi_LCL=array();
+        $this->indi_FCL=array();
+
         $this->indi_LCL["Estados Unidos"] = 4;
         $this->indi_FCL["Estados Unidos"] = 8;
-        
+
         $this->indi_LCL["Mexico"] = 5;
         $this->indi_FCL["Mexico"] = 5;
         
