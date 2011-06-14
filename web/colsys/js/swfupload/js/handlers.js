@@ -1,3 +1,4 @@
+var j=1000;
 function preLoad() {
 	if (!this.support.loading) {
 		alert("You need the Flash Player to use SWFUpload.");
@@ -20,7 +21,7 @@ function fileQueueError(file, errorCode, message) {
 		}
 
 		if (errorName !== "") {
-			alert(errorName);
+			alert(SWFUpload.errorCode_QUEUE_LIMIT_EXCEEDED+" "+errorName);
 			return;
 		}
 
@@ -34,7 +35,7 @@ function fileQueueError(file, errorCode, message) {
 		case SWFUpload.QUEUE_ERROR.ZERO_BYTE_FILE:
 		case SWFUpload.QUEUE_ERROR.INVALID_FILETYPE:
 		default:
-			alert(message);
+			//alert(message);
 			break;
 		}
 
@@ -74,7 +75,16 @@ function uploadSuccess(file, serverData) {
 	try {
 		var progress = new FileProgress(file,  this.customSettings.upload_target);
 
-		if (serverData.substring(0, 7) === "FILEID:") {
+         var res = Ext.util.JSON.decode( serverData );
+         if(res.success)
+         {
+             //alert(res.filename)
+             addImage(res.folder,res.filename,res.filebase,res.thumbnails,res.dimension);
+             
+             progress.setStatus("Upload Complete.");
+             progress.toggleCancel(false);
+         }
+/*		if (serverData.substring(0, 7) === "FILEID:") {
 			addImage("thumbnail.php?id=" + serverData.substring(7));
 
 			progress.setStatus("Upload Complete.");
@@ -87,7 +97,7 @@ function uploadSuccess(file, serverData) {
 
 		}
 
-
+*/
 	} catch (ex) {
 		this.debug(ex);
 	}
@@ -152,13 +162,27 @@ function uploadError(file, errorCode, message) {
 }
 
 
-function addImage(src) {
+function addImage(folder,filename,filebase,thumbnails,dimension) {
+    
+    if(!thumbnails)
+        thumbnails="thumbnails";
 	var newImg = document.createElement("img");
 	newImg.style.margin = "5px";
 	newImg.style.verticalAlign = "middle";
-
-	var divThumbs = document.getElementById("thumbnails");
-	divThumbs.insertBefore(newImg, divThumbs.firstChild);
+    
+    $("#"+thumbnails).append('<div style="width:'+dimension+'px;height:'+dimension+'px;float: left;margin: 5px;" id="file_'+(j)+'">'
+                        +'<div style="position:relative ">'
+                            +'<div style="position:absolute;" >'
+                                +'<img style=" vertical-align: middle;" src="/gestDocumental/verArchivo?idarchivo='+filebase+ '" width="'+dimension+'" height="'+dimension+'" />'
+                            +'</div>'
+                            +'<div style="position:absolute;top:0px;right:0px" >'
+                                +'<a href=""><img src="/images/16x16/button_cancel.gif" onclick="deleteFile(&quot;'+filebase+'&quot;,&quot;file_'+(j++)+'&quot;) /></a>'                            
+                            +'</div>'
+                            
+                        +'</div>'
+                      +'</div>');
+	//var divThumbs = document.getElementById(thumbnails);
+	//divThumbs.insertBefore(newImg, divThumbs.firstChild);
 	//document.getElementById("thumbnails").appendChild(newImg);
 	if (newImg.filters) {
 		try {
