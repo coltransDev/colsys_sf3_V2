@@ -6,14 +6,19 @@
  */
 ?>
 <b> 
-Ofertar $
+ &nbsp;&nbsp;Ofertar $
 <?
-echo Utils::formatNumber($valor + $articulo->getCaIncremento());
+echo Utils::formatNumber( $valor );
 ?>
 </b>
 <br />
+<br />
 <?
 foreach( $ofertas as $oferta ){
-    echo Utils::fechaMes($oferta->getCaFchcreado())." ".Utils::formatNumber($oferta->getCaValor())."<br />";    
+    
+    if( $user->getUserId()==$articulo->getCaUsucreado() ){
+        echo $oferta->getCaUsucreado()." ";
+    }
+    echo Utils::fechaMes($oferta->getCaFchcreado())." <b>".Utils::formatNumber($oferta->getCaValor())."</b><br />";    
 }
 ?>

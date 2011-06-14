@@ -5,7 +5,7 @@
  * 
  */
 
-if( $articulo->getcaDirecta() ){
+if( $articulo->getcaDirecta() || $articulo->getCaUsucomprador() ){
 ?>
     Felicitaciones!, usted ha adquirido este producto.
 <?

@@ -4,11 +4,8 @@
  * (c) Coltrans S.A. - Colmas Ltda.
  * 
  */
-
-  
     
 ?>
-
 
 <div align="center">
     <form action="<?=url_for("subastas/formArticulo")?>" method="post">
@@ -63,27 +60,41 @@
                     <b>Tipo de Subasta:</b><br />
                     <?
                     echo $form['directa']->renderError();
-                    $form->setDefault('directa', $articulo->getCaDirecta() );
+                    $form->setDefault('directa', $articulo->getCaDirecta()?"1":"0" );
                     echo $form['directa']->render();
                     ?>
                 </td>
             </tr>
             <tr>
                 <td>
-                    <b>¿Cuanto se debe incrementar la subasta entre cada oferta?:</b><br />
-                    <?
-                    echo $form['incremento']->renderError();
-                    $form->setDefault('incremento', $articulo->getCaIncremento() );
-                    echo $form['incremento']->render();
-                    ?>
+                    <div id="incremento_div">
+                        <b>¿Cuanto se debe incrementar la subasta entre cada oferta?:</b><br />
+                        <?
+                        echo $form['incremento']->renderError();
+                        $form->setDefault('incremento', $articulo->getCaIncremento() );
+                        echo $form['incremento']->render();
+                        ?>
+                    </div>
                 </td>
             </tr>
+            <tr>
+                <td>
+                    <div id="tope_div">
+                        <b>¿Cual es el tope maximo de una oferta?:</b><br />
+                        <?
+                        echo $form['tope']->renderError();
+                        $form->setDefault('tope', $articulo->getCaTope() );
+                        echo $form['tope']->render();
+                        ?>
+                    </div>
+                </td>
+            </tr> 
             <tr>
                 <td>
                     <b>Vencimiento:</b><br />
                     <?
                     echo $form['fchvencimiento']->renderError();
-                    $form->setDefault('fchvencimiento', $articulo->getCaFchvencimiento() );
+                    $form->setDefault('fchvencimiento', Utils::parseDate($articulo->getCaFchvencimiento(), "Y-m-d") );
                     echo $form['fchvencimiento']->render();
                     ?>
                 </td>
@@ -106,3 +117,18 @@
         </table>
     </form>
 </div>
+
+<script type="text/javascript">
+    var verificarDirecta = function(){
+        var fld = document.getElementById("directa").value;
+        if( fld=="1" ){
+            document.getElementById("incremento_div").style.display = "none";
+            document.getElementById("tope_div").style.display = "none";
+        }else{
+            document.getElementById("incremento_div").style.display = "";
+            document.getElementById("tope_div").style.display = "";
+        }
+    }
+    
+    verificarDirecta();
+</script>

@@ -13,9 +13,13 @@ class ArticuloForm extends BaseForm{
           'formapago' => new sfWidgetFormTextarea(array(), array("rows"=>3, "cols"=>80 ) ),
           'fchvencimiento' => new sfWidgetFormExtDate(),
           'valor' => new sfWidgetFormInputText(array(), array("maxlength"=>"15" ,"size"=>"20")),
+          'tope' => new sfWidgetFormInputText(array(), array("maxlength"=>"15" ,"size"=>"20")),
           'directa' => new sfWidgetFormChoice(array(
-										  'choices' => array('true'=>'Compra Directa', 'false'=>'Subasta Normal'),          
-						)),
+										  'choices' => array('1'=>'Compra Directa', '0'=>'Subasta Normal')
+                                          
+						), 
+                        array("onchange"=>"verificarDirecta()")
+                  ),
           'incremento'      => new sfWidgetFormInputText(array(), array("maxlength"=>"15" ,"size"=>"20"))
 		));
 	
@@ -26,7 +30,8 @@ class ArticuloForm extends BaseForm{
           'formapago'      => new sfValidatorString(array('required' => true)),
           'valor'      => new sfValidatorNumber(array('required' => true, 'min'=>1)),
           'directa'      => new sfValidatorBoolean(array('required' => true)),
-          'incremento'      => new sfValidatorNumber(array('required' => true, 'min'=>1)),
+          'incremento'      => new sfValidatorNumber(array('required' => false, 'min'=>1)),
+          'tope'      => new sfValidatorNumber(array('required' => false, 'min'=>1)),
 		  //'direccion'   => new sfValidatorString(array('required' => true)),
           'fchvencimiento'   => new sfValidatorDate(array('required' => false ), 
                                     array('required' => 'Por favor coloque la fecha de vencimiento') )
@@ -39,6 +44,13 @@ class ArticuloForm extends BaseForm{
 	
 	
 	public function bind(array $taintedValues = null, array $taintedFiles = null){		
+        
+        
+        
+        if( !$taintedValues["directa"] ){
+            $this->validatorSchema['incremento']->setOption('required', true);
+            $this->validatorSchema['tope']->setOption('required', true);
+        }
         
 		parent::bind($taintedValues,  $taintedFiles);
 	}

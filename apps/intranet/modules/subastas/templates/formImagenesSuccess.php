@@ -11,18 +11,14 @@ include_component("gestDocumental", "widgetUploadImages" );
 
 ?>
 
-<h2><?=$articulo->getCaTitulo()?></h2>
+<div class="maintitle"><?=$articulo->getCaTitulo()?></div>
 
 <div id="panel-archivos">
     
 </div>
 
  
-<?
-$url = "subastas/verArticulo?idarticulo=".$articulo->getCaIdarticulo();
 
-
-?>
 <br />
 
 
@@ -32,6 +28,12 @@ $url = "subastas/verArticulo?idarticulo=".$articulo->getCaIdarticulo();
 		</div>
 	</form>
 <div id="div"></div>
+
+<?
+$url = "subastas/verArticulo?idarticulo=".$articulo->getCaIdarticulo();
+?>
+<br />
+
 <input type="button" class="button" value="Volver" onClick="document.location.href='<?=url_for($url)?>'" />   
 
 <div id="thumbnails"></div>
