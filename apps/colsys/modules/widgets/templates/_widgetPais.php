@@ -38,6 +38,7 @@ WidgetPais = function( config ){
         lazyRender:true,
         mode: 'local',
         listClass: 'x-combo-list-small',
+        submitValue: true,
         listeners: {
             render  : function(a ){
                 if( this.pais && this.pais!="todos" ){
