@@ -15,12 +15,29 @@ function extDatePicker( $field_id, $value=null , $html_options=null , $mindate=n
                  width: 100,
                 format: 'Y-m-d'
 			});
-		</script>
-	
-	";
+		</script>";
 					
 	
 	return $html;
+}
+
+function extTimePicker($field_id, $value=null)
+{
+    $html="
+        
+            <input type='text' id='".$field_id."' name='".$field_id."' />
+    <script language='javascript' type='text/javascript'>
+        new Ext.form.TimeField({
+        format: 'H:i:s',
+        increment: 15,
+        width: 120,
+        applyTo: '".$field_id."',
+        value: '".$value."'
+        });
+    </script>
+    ";
+    
+    return $html;
 }
 
 ?>
