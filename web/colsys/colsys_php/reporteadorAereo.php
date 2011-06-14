@@ -51,14 +51,14 @@ $programa = 56;
     <TD Class=mostrar><A HREF='/Coltrans/Reportes/RepFactHijaAction.do'; class='mudacor'>Facturación a Clientes</A></TD><TD Class=mostrar>Informe con Sumatoria de Facturas y HAWB por Cliente</TD>
   </TR>
   <TR>
-    <TD Class=mostrar><A HREF='/Coltrans/Reportes/BusquedaRepRefAction.do'; class='mudacor'>Libro de Referencias</A></TD><TD Class=mostrar>Informe de Referencias Procesadas</TD>
+    <TD Class=mostrar><A HREF='/reportesGer/libroReferenciasAereo'; class='mudacor'>Libro de Referencias</A></TD><TD Class=mostrar>Informe de Referencias Procesadas</TD>
   </TR>
   <TR>
     <TD Class=mostrar><A HREF='/Coltrans/Reportes/RepAuditoriaAction.do?cliente=1'; class='mudacor'>Reporte de Auditoria</A></TD><TD Class=mostrar>Informe sobre Rastros de Auditoría</TD>
   </TR>
   </TABLE><BR><BR>
   <TABLE CELLSPACING=10>
-    <TH><INPUT Class=button TYPE='BUTTON' NAME='boton' VALUE='Terminar' ONCLICK='javascript:document.location.href = "entrada.php"'></TH>
+    <TH><INPUT Class=button TYPE='BUTTON' NAME='boton' VALUE='Terminar' ONCLICK='javascript:document.location.href = "/"'></TH>
   </TABLE>
   </CENTER>
   <?

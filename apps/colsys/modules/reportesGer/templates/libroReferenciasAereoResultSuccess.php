@@ -116,6 +116,6 @@
     <br />
     
     <div class="noprint" align="center">
-        <input type="button" value="Volver" onclick="document.location='/Coltrans/InoAir/ConsultaReferenciaAction.do?referencia='"        
+        <input type="button" value="Volver" onclick="document.location='/colsys_php/reporteadorAereo.php'"        
     </div>
 </div>

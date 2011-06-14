@@ -70,7 +70,7 @@
             <tbody><tr>
                     <th>
 
-                        <input class="button" name="boton" value="Terminar" onclick='document.location = "reporteadorAereo.php"' type="BUTTON">
+                        <input class="button" name="boton" value="Terminar" onclick='document.location = "/colsys_php/reporteadorAereo.php"' type="BUTTON">
                     </th>
                 </tr>
             </tbody></table>
