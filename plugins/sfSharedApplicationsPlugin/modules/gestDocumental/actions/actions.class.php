@@ -21,12 +21,12 @@ class gestDocumentalActions extends sfActions
 	}
 
     /*
-	* Sube un archivo a la carpeta especificada
+	* 
 	* @author: Andres Botero
 	*/
 	public function executeDataArchivos(){
 
-
+    
         $folder = base64_decode($this->getRequestParameter("folder"));
         $directory = sfConfig::get('app_digitalFile_root').DIRECTORY_SEPARATOR.$folder.DIRECTORY_SEPARATOR;
 
@@ -59,36 +59,43 @@ class gestDocumentalActions extends sfActions
         if(!is_dir($directory)){
             mkdir($directory, 0777, true);
         }
-        
-		if ( count( $_FILES )>0 ){
+        chmod ( $directory , 0777 );
+        try
+        {
+            if ( count( $_FILES )>0 ){
 
-            $filePrefix = $this->getRequestParameter("filePrefix");
-            if( $filePrefix ){
-                $archivos = sfFinder::type('file')->maxDepth(0)->in($directory);
-                foreach($archivos as $archivo ){
-                    if( substr(basename($archivo),0, strlen($filePrefix))==$filePrefix ){
-                        @unlink($archivo);
+                $filePrefix = $this->getRequestParameter("filePrefix");
+                if( $filePrefix ){
+                    $archivos = sfFinder::type('file')->maxDepth(0)->in($directory);
+                    foreach($archivos as $archivo ){
+                        if( substr(basename($archivo),0, strlen($filePrefix))==$filePrefix ){
+                            @unlink($archivo);
+                        }
                     }
                 }
+
+                foreach ( $_FILES as $uploadedFile){
+                    if( $filePrefix ){
+                        $fileName  = $filePrefix."_".$uploadedFile['name'] ;
+                    }else{
+                        $fileName  = $uploadedFile['name'] ;
+                    }
+
+
+                    if(move_uploaded_file($uploadedFile['tmp_name'],$directory.$fileName )){
+                        $this->responseArray = array("id"=>base64_encode($fileName), "filename"=>$fileName, "folder"=>$folder, "success"=>true);
+                    }else{
+                        $this->responseArray = array("error"=>"No se pudo mover el archivo", "success"=>false);
+                    }
+                }
+            }else{
+                $this->responseArray = array("success"=>false);
             }
-
-			foreach ( $_FILES as $uploadedFile){
-                if( $filePrefix ){
-                    $fileName  = $filePrefix."_".$uploadedFile['name'] ;
-                }else{
-				$fileName  = $uploadedFile['name'] ;
-                }
-
-                
-                if(move_uploaded_file($uploadedFile['tmp_name'],$directory.$fileName )){
-                    $this->responseArray = array("id"=>base64_encode($fileName), "filename"=>$fileName, "folder"=>$folder, "success"=>true);
-                }else{
-                    $this->responseArray = array("error"=>"No se pudo mover el archivo", "success"=>false);
-                }
-		  	}
-		}else{
-			$this->responseArray = array("success"=>false);
-		}
+        }
+        catch(Exception $e)
+        {
+            $this->responseArray = array("error"=>$e->getMessage(), "success"=>false);
+        }
 
 		$this->setTemplate("responseTemplate");
 	}
@@ -114,6 +121,74 @@ class gestDocumentalActions extends sfActions
         }
 
     	//session_cache_limiter('public');
+	}
+    
+    /*
+	* Permite visualizar un archivo del panel
+	* @author: Andres Botero
+	*/
+	public function executeVerImagen(){
+//         echo "hgfhgf";
+//        exit;
+        //sfConfig::set('sf_web_debug', false) ;
+        try
+        {
+            $archivo = base64_decode( $this->getRequestParameter("idarchivo") );
+            $tam_max = ($this->getRequestParameter("tam_max"))?$this->getRequestParameter("tam_max"):200;
+
+            $this->forward404Unless( $archivo );
+
+            $folder = base64_decode($this->getRequestParameter("folder"));
+            $directory = sfConfig::get('app_digitalFile_root').DIRECTORY_SEPARATOR.$folder.DIRECTORY_SEPARATOR;
+
+            $this->archivo = $directory.$archivo;
+            
+    $image = imagecreatefromjpeg($this->archivo);
+
+    if ($image === false) {
+        echo "error";
+        exit;
+    }
+            $w = imagesx($image);
+            $h = imagesy($image);
+            //$tam_max=200;
+            if($w>$tam_max || $h>$tam_max)
+            {
+                $control=($h>=$w);                    
+                if($control)
+                {
+                    $porcen=$tam_max/$h;
+                }
+                else {
+                    $porcen=$tam_max/$w;
+                }
+                $new_w= $w * $porcen;
+                $new_h= $h * $porcen;
+
+                $im2 = ImageCreateTrueColor($new_w, $new_h);
+                imagecopyResampled ($im2, $image, 0, 0, 0, 0, $new_w, $new_h, $w, $h);
+                
+                //imagejpeg($img2,NULL,80); 
+                imagejpeg($img2);
+                imagedestroy($img2);
+            }
+            else
+            {
+                //imagejpeg($image,NULL,80);
+                imagejpeg($image);
+                imagedestroy($image);
+                //$this->im=$image;
+            }
+//imagejpeg($im,NULL,80);
+//header ('Content-type: image/jpeg');
+//imagejpeg($im, NULL, 80);
+
+        }
+        catch(Exception $e)
+        {
+            print_r($e);
+        }
+exit;
 	}
 
 	/*
@@ -217,7 +292,7 @@ class gestDocumentalActions extends sfActions
 
         if(!is_dir($directory)){
             @mkdir($directory, 0777, true);
-}
+        }
         /*
         $archivos = sfFinder::type('file')->maxDepth(0)->in($directory);
         $this->files = array();
@@ -242,7 +317,7 @@ class gestDocumentalActions extends sfActions
 		}
 
         print json_encode($data);
-
+         
 
     }
 
@@ -274,6 +349,8 @@ class gestDocumentalActions extends sfActions
         $thumbnails = $this->getRequestParameter("thumbnails");
         //$dimension = $this->getRequestParameter("dimension");
         $tam_max = ($this->getRequestParameter("tam_max")) ? $this->getRequestParameter("tam_max") : "200";
+        $dimVisual = ($this->getRequestParameter("tam_max_visual")) ? $this->getRequestParameter("tam_max_visual") : $tam_max;
+        
         $this->forward404Unless($folder);
         $directory = sfConfig::get('app_digitalFile_root') . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR;
         //error_reporting(E_ALL);
@@ -298,8 +375,7 @@ class gestDocumentalActions extends sfActions
                         $image = $this->open_image($uploadedFile['tmp_name']);
 
                         $w = imagesx($image);
-                        $h = imagesy($image);
-                        //$tam_max=200;
+                        $h = imagesy($image);                        
                         if ($w > $tam_max || $h > $tam_max) {
                             $control = ($h >= $w);
                             if ($control) {
@@ -307,46 +383,33 @@ class gestDocumentalActions extends sfActions
                             } else {
                                 $porcen = $tam_max / $w;
                             }
-                            //echo $porcen;
+                            
                             $new_w = $w * $porcen;
                             $new_h = $h * $porcen;
-                            //echo $new_w."-".$new_h;
-
+                            
                             $im2 = ImageCreateTrueColor($new_w, $new_h);
                             imagecopyResampled($im2, $image, 0, 0, 0, 0, $new_w, $new_h, $w, $h);
                             $w = imagesx($im2);
                             $h = imagesy($im2);
-                            //echo "<br>".$w."-".$h;
-                            imagejpeg($im2, $directory . $fileNameMin . ".jpg", 80);
-                            //imagejpeg($img2,$name_tmp);
+                            
+                            imagejpeg($im2, $directory . $fileNameMin . ".jpg", 80);                            
                         } else {
                             imagejpeg($image, $directory . $fileNameMin . ".jpg", 80);
                         }
                         //exit(0);
-                        $this->responseArray = array("success" => true, "filename" => $fileNameMin . ".jpg", "folder" => $folder, "filebase" => base64_encode($folder . "/" . $fileNameMin . ".jpg"), "thumbnails" => $thumbnails, "dimension" => $tam_max);
+                        $this->responseArray = array("success" => true, "filename" => $fileNameMin . ".jpg", "folder" => $folder, "filebase" => base64_encode($folder . "/" . $fileNameMin . ".jpg"), "thumbnails" => $thumbnails, "dimension" => $dimVisual);
                     } catch (Exception $e) {
                         $this->responseArray = array("error" => $e->getMessage(), "filename" => $fileName, "folder" => $folder, "success" => false);
                     }
-                    //echo $name_tmp;
-                    /* if(move_uploaded_file("/tmp/".$fileName,$directory.$fileName )){
-                      $this->responseArray = array("id"=>base64_encode($fileName), "filename"=>$fileName, "folder"=>$folder, "success"=>true);
-                      }else{
-                      $this->responseArray = array("error"=>"No se pudo mover el archivo", "success"=>false);
-                      } */
                 }
             } else {
                 $this->responseArray = array("success" => false);
             }
         } catch (Exception $e) {
-            //print_r( $e);
             $this->responseArray = array("error" => $e->getMessage(), "success" => false);
         }
 
-//            exit;
         $this->setTemplate("responseTemplate");
     }
-
-
-
 }
 ?>
