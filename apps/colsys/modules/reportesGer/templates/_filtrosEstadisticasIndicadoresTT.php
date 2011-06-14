@@ -60,7 +60,17 @@ var tabs = new Ext.FormPanel({
                                             name : 'fechaFinal',
                                             format: "F-Y",
                                             value: '<?=$fechafinal?>'
-                                        }
+                                        },
+                                        new WidgetPais({title: 'Pais origen',
+                                                    fieldLabel: 'Pais origen',
+                                                        id: 'pais_origen',
+                                                        name: 'pais_origen',
+                                                        hiddenName: "idpais_origen",
+                                                        pais:"<?=$pais_origen?>",
+                                                        value:"<?=$idpais_origen?>",
+                                                        pais:"todos",
+                                                        allowBlank:false
+                                                        })
                                  ]
                              }
                      ]

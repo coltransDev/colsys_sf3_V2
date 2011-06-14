@@ -399,8 +399,12 @@ class reportesGerActions extends sfActions {
     public function executeEstadisticasIndicadoresTT(sfWebRequest $request) {
 
         $this->opcion = $request->getParameter("opcion");
-        $this->fechafinal = $request->getParameter("fechaFinal");
+        $this->idpais_origen=$this->getRequestParameter("idpais_origen");
+        $this->pais_origen=$this->getRequestParameter("pais_origen");
+        $this->fechafinal = $request->getParameter("fechaFinal");        
         list($nom_mes, $ano) = explode("-", $this->fechafinal);
+        $this->nom_mes=$nom_mes;
+        $this->ano=$ano;
         $this->mes = Utils::nmes($nom_mes);
         $this->mesp = $this->mes;
         $indi_LCL = 4;
@@ -412,9 +416,10 @@ class reportesGerActions extends sfActions {
                 LEFT OUTER JOIN (select rp.ca_consecutivo as ca_consecutivo_sub, rs.ca_fchsalida, rs.ca_fchllegada, max(to_date((rs.ca_fchenvio::timestamp)::text,'yyyy-mm-dd')) as ca_fchenvio, rs.ca_fchllegada-rs.ca_fchsalida as ca_diferencia , rs.ca_peso as ca_peso,extract(YEAR from rs.ca_fchsalida) as ca_ano1 ,extract(MONTH from rs.ca_fchsalida) as ca_mes1 from tb_repstatus rs INNER JOIN tb_reportes rp ON (rp.ca_idreporte = rs.ca_idreporte) where rs.ca_idetapa in ('IACAD','IMCPD') group by ca_consecutivo, ca_fchsalida, ca_fchllegada, ca_diferencia,ca_peso,extract(YEAR from rs.ca_fchsalida) ,extract(MONTH from rs.ca_fchsalida)) sq ON (vi_repindicadores.ca_consecutivo = sq.ca_consecutivo_sub) 
                 where ca_impoexpo = '" . Constantes::IMPO . "' and ca_transporte = '" . constantes::MARITIMO . "'
                 and upper(ca_compania) like upper('%henkel%')   
-                and ca_ano::numeric = " . $ano . " and ca_mes::numeric <= " . $this->mes . "
+                and ca_ano::numeric = " . $ano . " and ca_mes::numeric <= " . $this->mes . " and ca_traorigen='".$this->pais_origen."'
                 order by ca_ano,ca_mes";
             //echo $sql;
+            //exit;
             $con = Doctrine_Manager::getInstance()->connection();
             $st = $con->execute($sql);
             $this->resul = $st->fetchAll();
@@ -441,10 +446,8 @@ class reportesGerActions extends sfActions {
                 $this->grid[$r["ca_ano1"]][$r["ca_modalidad"]][(int) ($r["ca_mes1"])]["peso"]+=$peso;
 //                        []=array("diferencia"=>$r["ca_diferencia"],"peso"=>$r["ca_peso"]);
             }
-
-            echo "<pre>";
-            print_r($this->resul);
-            echo "</pre>";
+            
+            //echo "<pre>";print_r($this->resul);echo "</pre>";
         }
     }
 
@@ -577,5 +580,7 @@ class reportesGerActions extends sfActions {
             $this->resul = $st->fetchAll();
         }
     }
+
 }
+
 ?>

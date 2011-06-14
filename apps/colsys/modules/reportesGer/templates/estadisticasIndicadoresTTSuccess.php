@@ -3,19 +3,30 @@
 include_component("charts","column");
 include_component("charts","pie");
 include_component("charts","line");
-
+include_component("widgets", "widgetPais");
 $dataJSON=array();
 $grid = $sf_data->getRaw("grid");
 $indicador = $sf_data->getRaw("indicador");
 //echo "<pre>";print_r($grid);echo "</pre>";
 ?>
-<div align="center" >
+<div align="center" class="esconder" >
 <br />
 <h3> Estadisticas Indicadores de Gesti&oacute;n </h3>
 <br />
 <br />
 </div>
 <div align="center" class="esconder" ><img src="/images/22x22/printmgr.png" onclick="imprimir()" style="cursor: pointer"/></div>
+<div align="center"  class="mostrar" style="display: none">
+    <div style="height: 1500px;">
+        <div style="font-size: 50px;height: 250px"><b>INDICADORES DE GESTION</b></div>
+        <div style="height: 600px"><img src="/images/clientes/henkel_logo.jpg" /></div>
+        <div style="font-size: 32px;height: 300px">Enero-<?=$nom_mes?> de <?=$ano?></div><br><br><br>
+        <div style="height: 250px"><img src="/images/logos/logoCOLTRANS.png" /></div>
+        </div>
+        
+        
+    </div>
+</div>
 <div align="center" id="container" class="esconder"></div>
 <div align="center" id="container1"></div>
 <?
@@ -149,10 +160,10 @@ USA LCL 4 días <span style="width: 120px" >&nbsp;</span>USA FCL 8 días
 
 <?
 $serieX=array();
-$serieX[]="Estados Unidos";
+$serieX[]=$pais_origen;
 $dataJSON=array();
 foreach($data_peso as $mes => $d)
-{
+{    
     $dataJSON[]=array("name"=>Utils::mesLargo ($mes),"data"=>$d);
 }
 
@@ -167,7 +178,6 @@ foreach($data_peso as $mes => $d)
 				    series: <?=json_encode($dataJSON)?>
 				});
 </script>
-
 <br>
 <br>
 <div align="center">
@@ -255,6 +265,7 @@ foreach($indicador as $mes => $d)
     function imprimir()
     {
         $(".esconder").hide();
+        $(".mostrar").show();
         Ext.getCmp("tab-panel").hidden=true;
         //alert("")
         window.print();

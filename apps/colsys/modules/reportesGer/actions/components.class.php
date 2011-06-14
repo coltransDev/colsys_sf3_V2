@@ -61,6 +61,9 @@ class reportesGerComponents extends sfComponents
     {
         $this->opcion=$this->getRequestParameter("opcion");        
         $this->fechafinal=$this->getRequestParameter("fechaFinal");        
+        $this->idpais_origen=$this->getRequestParameter("idpais_origen");
+        $this->pais_origen=$this->getRequestParameter("pais_origen");
+        
     }
 	
 }
