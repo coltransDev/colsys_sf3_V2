@@ -577,7 +577,5 @@ class reportesGerActions extends sfActions {
             $this->resul = $st->fetchAll();
         }
     }
-
 }
-
 ?>
