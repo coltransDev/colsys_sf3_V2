@@ -1,5 +1,5 @@
 <?
-include_component("widgets", "widgetUploadImages");
+include_component("gestDocumental", "widgetUploadImages");
 ?>
 <tr>
 				<th class="titulo" colspan="6">Adjuntar Fotos de averias en la carga de los clientes</th>
@@ -9,7 +9,8 @@ include_component("widgets", "widgetUploadImages");
 			</tr>
             
 			<?
-            $dimension=100;
+            $dimension=640;
+            $dimVisual=100;
             $i=0;
             $j=0;
 			foreach( $inoClientes as $inoCliente ){
@@ -20,7 +21,7 @@ include_component("widgets", "widgetUploadImages");
                 $directory = sfConfig::get('app_digitalFile_root') . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR;
                 $archivos = sfFinder::type('file')->maxDepth(0)->in($directory);            
                 $narchivos=count($archivos);
-                $alto=ceil($narchivos/4)*$dimension;
+                $alto=ceil($narchivos/4)*$dimVisual;
                 
 			?>
 			<tr>
@@ -47,6 +48,7 @@ include_component("widgets", "widgetUploadImages");
                             post_params: {
                               "folder": "<?=base64_encode($folder)?>",
                               "tam_max": "<?=$dimension?>",
+                              "tam_max_visual": <?=$dimVisual?>,
                               "thumbnails":"thumbnails_<?=$i?>"
                             },                            
                             button_placeholder_id : "but<?=$i?>",
@@ -68,10 +70,10 @@ include_component("widgets", "widgetUploadImages");
                 $filename = $archivo[count($archivo)-1];
                 $id_base=base64_encode($folder.$filename);
                 //echo $folder."/".$filename."<br>";
-				echo '<div style="width:'.$dimension.'px;height:'.$dimension.'px;float: left;margin: 5px;">
+				echo '<div style="width:'.$dimVisual.'px;height:'.$dimVisual.'px;float: left;margin: 5px;" id="file_'.$j.'">
                         <div style="position:relative ">
                             <div style="position:absolute;" >
-                                <img style=" vertical-align: middle;" src="/gestDocumental/verArchivo?idarchivo='.base64_encode($folder."/".$filename) . '" width="'.$dimension.'" height="'.$dimension.'" />
+                                <img style=" vertical-align: middle;" src="/gestDocumental/verArchivo?idarchivo='.base64_encode($folder."/".$filename) . '" width="'.$dimVisual.'" height="'.$dimVisual.'" />
                             </div>
                             <div style="position:absolute;top:0px;right:0px" >
                                 <img src="/images/16x16/button_cancel.gif" style="cursor: pointer" onclick="deleteFile(&quot;'.$id_base.'&quot;,&quot;file_'.$j++.'&quot;)" />
@@ -90,8 +92,6 @@ include_component("widgets", "widgetUploadImages");
             //break;
             }
 			?>
-            
-
 <script>
     
     function deleteFile(file,idtr)

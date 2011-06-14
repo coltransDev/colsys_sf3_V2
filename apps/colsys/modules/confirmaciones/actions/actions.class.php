@@ -197,214 +197,304 @@ class confirmacionesActions extends sfActions
 	public function executeCrearStatus(sfWebRequest $request){	
 		$referencia = Doctrine::getTable("InoMaestraSea")->find( $request->getParameter( "referencia" ) );
 		$this->forward404Unless( $referencia );
-		
+		$ca_referencia=$referencia->getCaReferencia();
 		$modo = $request->getParameter( "modo" );
-		$tipo_msg = $request->getParameter( "tipo_msg" );		
+		$tipo_msg = $request->getParameter( "tipo_msg" );
 		$oids = $request->getParameter( "oid" );
 		
 		$inoClientes = array();
-
-		if( ( $modo=="conf" && $tipo_msg=="Conf") ||  $modo=="puerto" ){
-			if( $request->getParameter( "fchconfirmacion" ) ){	
-				$referencia->setCaFchconfirmacion( Utils::parseDate($request->getParameter( "fchconfirmacion" )) );
-			}
-			$referencia->setCaHoraconfirmacion( $request->getParameter( "horaconfirmacion" ) );
-			$referencia->setCaRegistroadu( $request->getParameter( "registroadu" ) );
-			if( $request->getParameter( "fchregistroadu" ) ){
-				$referencia->setCaFchregistroadu( Utils::parseDate($request->getParameter( "fchregistroadu" )) );
-			}
-			$referencia->setCaRegistrocap( $request->getParameter( "registrocap" ) );
-			$referencia->setCaBandera( $request->getParameter( "bandera" ) );
-			$referencia->setCaMensaje( $request->getParameter( "email_body" ) );
-			if( $request->getParameter( "fchdesconsolidacion" ) ){
-				$referencia->setCaFchdesconsolidacion( Utils::parseDate($request->getParameter( "fchdesconsolidacion" )) );
-			}		
-			$referencia->setCaMnllegada( $request->getParameter( "mnllegada" ) );
-			$referencia->setCaFchconfirmado( date("Y-m-d H:i:s") );
-			$referencia->setCaUsuconfirmado( $this->getUser()->getUserId() );
-			$referencia->save();				
-		}
-		
-		/*
-		* attachments 
-		*/		
-		if( is_uploaded_file ( $_FILES['attachment']['tmp_name'] ) ){
-			$attachment = $_FILES['attachment'];
-		}else{
-			$attachment = null;
-		}
-		
-		foreach( $oids as $oid ){
-					
-			if( is_uploaded_file ( $_FILES['attachment_'.$oid]['tmp_name'] ) ){
-				$attachment2 = $_FILES['attachment_'.$oid];
-			}else{
-				$attachment2 = null;
-			}
-           
-            $idcliente = $this->getRequestParameter("idcliente_".$oid);
-            $hbls = $this->getRequestParameter("hbls_".$oid);
-
-
-            
-            
-			$inoCliente = Doctrine::getTable("InoClientesSea")->find(array($referencia->getCaReferencia(), $idcliente, $hbls));
-           
-			
-			$reporte = $inoCliente->getReporte();
-			$directory = $reporte->getDirectorio();
-			
-			if(!file_exists($directory)){
-				@mkdir( $directory ); 
-			}
-			
-			$attachments = array();
-			
-			if( $attachment ){
-				$file = $directory.DIRECTORY_SEPARATOR.$attachment['name'];
-				copy( $attachment['tmp_name'] , $file ); 
-				$attachments[] = $reporte->getDirectorioBase().$attachment['name'];
-			}
-			
-			if( $attachment2 ){
-				$file = $directory.DIRECTORY_SEPARATOR.$attachment2['name'];
-				copy( $attachment2['tmp_name'] , $file ); 
-				$attachments[] = $reporte->getDirectorioBase().$attachment2['name'];
-			}
-            
-            $files=$this->getRequestParameter("files_".$oid);
-            foreach ($files as $archivo) {
-                $name =  $archivo;            
-                $attachments[]=$name;
+        
+        
+        if( ( $modo=="conf" && $tipo_msg=="Conf") || ($modo=="puerto" && $tipo_msg=="Puerto")  ){
+            if( $request->getParameter( "fchconfirmacion" ) ){	
+                $referencia->setCaFchconfirmacion( Utils::parseDate($request->getParameter( "fchconfirmacion" )) );
             }
-				
-			$ultimostatus = $reporte->getUltimoStatus();
-			
-			$status = new RepStatus();
-						
-			$status->setCaIdreporte( $reporte->getCaIdreporte() );
-			$status->setCaFchstatus( date("Y-m-d H:i:s") );
-			
-			
-			$status->setCaComentarios( $this->getRequestParameter("notas") );			
-			$status->setCaFchenvio( date("Y-m-d H:i:s") );
-			$status->setCaUsuenvio( $this->getUser()->getUserId() );
-
-            
-
-			if( $ultimostatus ){
-				$status->setCaPiezas( $ultimostatus->getCaPiezas() );
-				$status->setCaPeso( $ultimostatus->getCaPeso() );
-				$status->setCaVolumen( $ultimostatus->getCaVolumen() );
-				$status->setCaIdnave( $ultimostatus->getCaIdnave() );
-				$status->setCaFchsalida( $ultimostatus->getCaFchsalida() );
-				$status->setCaFchllegada( $ultimostatus->getCaFchllegada() );
-				$status->setCaFchcontinuacion( $ultimostatus->getCaFchcontinuacion() );
-				$status->setCaDoctransporte( $ultimostatus->getCaDoctransporte() );
-			}
-
-            if( substr($referencia->getCaReferencia(),0,1)=="7" ){                
-                $status->setCaPiezas( $inoCliente->getCaNumpiezas() );
-				$status->setCaPeso( $inoCliente->getCaPeso() );
-				$status->setCaVolumen( $inoCliente->getCaVolumen() );				
-				$status->setCaFchsalida( $referencia->getCaFchembarque() );
-				$status->setCaFchllegada( $referencia->getCaFcharribo() );
-                $status->setCaIdnave( $referencia->getCaMotonave() );
-				$status->setCaDoctransporte( $inoCliente->getCaHbls() );                                
+            $referencia->setCaHoraconfirmacion( $request->getParameter( "horaconfirmacion" ) );
+            $referencia->setCaRegistroadu( $request->getParameter( "registroadu" ) );
+            if( $request->getParameter( "fchregistroadu" ) ){
+                $referencia->setCaFchregistroadu( Utils::parseDate($request->getParameter( "fchregistroadu" )) );
             }
-			
-			switch( $modo ){
-				case "conf":
-                    switch( $tipo_msg ){
-                        case "Conf":
-                            $status->setCaIdetapa("IMCPD");
-                            $status->setCaFchllegada( $referencia->getCaFchconfirmacion() );
-                            break;
-                        case "Desc":
-                                $status->setCaIdetapa("IMDES");
-                            break;
-                        default:
-                            $status->setCaIdetapa("88888");
-                            break;
+            $referencia->setCaRegistrocap( $request->getParameter( "registrocap" ) );
+            $referencia->setCaBandera( $request->getParameter( "bandera" ) );
+            $referencia->setCaMensaje( $request->getParameter( "email_body" ) );
+            if( $request->getParameter( "fchdesconsolidacion" ) ){
+                $referencia->setCaFchdesconsolidacion( Utils::parseDate($request->getParameter( "fchdesconsolidacion" )) );
+            }		
+            $referencia->setCaMnllegada( $request->getParameter( "mnllegada" ) );
+            $referencia->setCaFchconfirmado( date("Y-m-d H:i:s") );
+            $referencia->setCaUsuconfirmado( $this->getUser()->getUserId() );
+            $referencia->save();
+        }
+        else if ($modo=="puerto" && $tipo_msg=="Desc")
+        {
+            if( $request->getParameter( "ca_fchvaciado" ) || $request->getParameter( "ca_horavaciado" ) )
+            {
+                $referencia->setCaFchvaciado( Utils::parseDate($request->getParameter( "ca_fchvaciado" )) );            
+                $referencia->setCaHoravaciado( $request->getParameter( "ca_horavaciado" ) );
+                $referencia->save();
+            }
+        }
 
-                    }
-										
-					if( $referencia->getCaMnllegada() ){
-						$status->setCaIdnave( $referencia->getCaMnllegada() );
-					}else{
-						$status->setCaIdnave( $referencia->getCaMotonave() );
-					}
+        /*
+        * attachments 
+        */		
+        if( is_uploaded_file ( $_FILES['attachment']['tmp_name'] ) ){
+            $attachment = $_FILES['attachment'];
+        }else{
+            $attachment = null;
+        }
+        
+        if($modo=="puerto")
+        {            
+            $sql = "SELECT ca_nombre, ca_email FROM control.tb_usuarios WHERE ca_login in (SELECT DISTINCT ca_usucreado as ca_usuario FROM tb_inoclientes_sea where ca_referencia = '".$ca_referencia."' 
+                    UNION SELECT DISTINCT ca_usuactualizado as ca_usuario FROM tb_inoclientes_sea WHERE ca_referencia = '".$ca_referencia."'
+                              UNION SELECT DISTINCT ca_usumuisca as ca_usuario FROM tb_inomaestra_sea WHERE ca_referencia = '".$ca_referencia."' 
+                              UNION SELECT DISTINCT ca_usucreado as ca_usuario FROM tb_dianclientes WHERE ca_referencia = '".$ca_referencia."'
+                              UNION SELECT DISTINCT ca_usuactualizado as ca_usuario FROM tb_dianclientes WHERE ca_referencia = '".$ca_referencia."'
+                              UNION SELECT DISTINCT ca_usucreado as ca_usuario FROM tb_inomaestra_sea WHERE ca_referencia = '".$ca_referencia."'
+                        )";
                     
-                    if( $request->getParameter("mod_fcharribo") ){
-                        $referencia->setCaFcharribo( $request->getParameter("fcharribo") );
-                        $referencia->save();
-                        $status->setCaFchllegada( $request->getParameter("fcharribo") );
-                    }
-					
-					
-					break;
-				case "otm":				
-					$etapa =  $this->getRequestParameter("tipo_".$oid);
+            $con = Doctrine_Manager::getInstance()->connection();
+            $st = $con->execute($sql);
+            $this->resul = $st->fetchAll();
+            $destinatarios = array();
+            foreach($this->resul as $r)
+            {
+                $destinatarios[]= $r["ca_email"];
+            }
+            if( is_uploaded_file ( $_FILES['attachment']['tmp_name'] ) ){
+                $attachment = $_FILES['attachment'];
+            }else{
+                $attachment = null;
+            }
+            if( $attachment ){
+                $file = $directory.DIRECTORY_SEPARATOR.$attachment['name'];
+                copy( $attachment['tmp_name'] , $file ); 
+                $attachments[] = $reporte->getDirectorioBase().$attachment['name'];
+            }            
+            
+            $user = sfContext::getInstance()->getUser();
 
-                    if( $etapa=="IMCOL" || $this->getRequestParameter("modfchllegada_".$oid) ){
-                        $status->setCaFchcontinuacion( Utils::parseDate($this->getRequestParameter("fchllegada_".$oid)));	
-                    }
+            $email = new Email();
 
-					if( $etapa=="IMCOL" ){
-						$idbodega = $this->getRequestParameter("bodega_".$oid); 						
-						
-						$status->setProperty("idbodega", $idbodega);				
-					}
+            $email->setCaUsuenvio( $user->getUserId() );
+            $email->setCaTipo( "Not.".(($tipo_msg=="Puerto")?"Llegada":"Desconsolidación") );
+            $email->setCaIdcaso( null );
+            $email->setCaFrom( $user->getEmail() );            
+            $email->setCaFromname( $user->getNombre() );
+            $email->setCaReplyto( $user->getEmail() );
 
-                    if( $etapa=="99999" ){
-						$fchplanilla = $this->getRequestParameter("fchplanilla_".$oid);						
-						$status->setProperty("fchplanilla", Utils::parseDate($fchplanilla));
-					}
 
-					$status->setCaIdetapa($etapa);
-					break;				
-				default:	
-					$status->setCaIdetapa("88888");
-					break;	
-			}
-			
-			if( $tipo_msg=="Conf" ){
-				$status->setCaIntroduccion( $this->getRequestParameter("intro_body") );
-				$status->setStatus( $this->getRequestParameter("mensaje_".$oid) );
-			}else{
-				$status->setCaIntroduccion( $this->getRequestParameter("status_body_intro") );				
-				$mensaje = $this->getRequestParameter("status_body");
-				if( $this->getRequestParameter("mensaje_".$oid) ){
-					$mensaje .= "\n".$this->getRequestParameter("mensaje_".$oid);
-				}
-				$status->setStatus( $mensaje );			
-			}
-						
-			$destinatarios = array();
-			
-			$checkbox = $request->getParameter("em_".$oid);
-            if( $checkbox ){
-                foreach($checkbox as $check ){
-                    $destinatarios[]=$request->getParameter("ar_".$oid."_".$check);
+            foreach( $destinatarios as $recip ){
+                $recip = str_replace(" ", "", $recip );
+                if( $recip ){
+                    $email->addTo( $recip );
                 }
             }
-           
-							
-			$status->save();			
-			$status->send($destinatarios, array(), $attachments );		
-			
-			$this->status = $status;	
-			$this->modo = $modo;	
-			$this->referencia = $referencia;			
-		}				
+
+            $asunto = $asunto = "Notificación de ".(($tipo_msg=="Puerto")?"Llegada":"Desconsolidación")." desde el Puerto de ".$referencia->getOrigen()->getCaCiudad()." Ref.: ".$referencia->getCaReferencia();
+
+            $email->setCaSubject( substr($asunto, 0, 250) );
+
+            if( $attachments ){
+                $email->setCaAttachment( implode( "|", $attachments ) );
+            }
+
+            sfContext::getInstance()->getRequest()->setParameter("referencia", $referencia->getCaReferencia());
+            sfContext::getInstance()->getRequest()->setParameter("tipo", $tipo_msg );
+            sfContext::getInstance()->getRequest()->setParameter("intro_body", $request->getParameter( "intro_body" ) );
+            
+            if($tipo_msg=="Desc")
+            {
+                sfContext::getInstance()->getRequest()->setParameter("fchsyga", $request->getParameter( "fchsyga" ) );
+            }
+            $modo = $request->getParameter( "modo" );
+            $email->setCaBodyhtml(  sfContext::getInstance()->getController()->getPresentationFor( 'confirmaciones', 'emailConfirmacion') );
+            //echo $email->getCaBodyhtml();
+            //exit;
+            $email->save( $conn );
+            //$this->setCaIdemail( $email->getCaIdemail() );
+            //$this->save( $conn );
+            //exit;
+        }
+         else {            
+
+            foreach( $oids as $oid ){
+
+                if( is_uploaded_file ( $_FILES['attachment_'.$oid]['tmp_name'] ) ){
+                    $attachment2 = $_FILES['attachment_'.$oid];
+                }else{
+                    $attachment2 = null;
+                }
+
+                $idcliente = $this->getRequestParameter("idcliente_".$oid);
+                $hbls = $this->getRequestParameter("hbls_".$oid);
+
+                $inoCliente = Doctrine::getTable("InoClientesSea")->find(array($referencia->getCaReferencia(), $idcliente, $hbls));
+
+                $reporte = $inoCliente->getReporte();
+                $directory = $reporte->getDirectorio();
+
+                if(!file_exists($directory)){
+                    @mkdir( $directory ); 
+                }
+
+                $attachments = array();
+
+                if( $attachment ){
+                    $file = $directory.DIRECTORY_SEPARATOR.$attachment['name'];
+                    copy( $attachment['tmp_name'] , $file ); 
+                    $attachments[] = $reporte->getDirectorioBase().$attachment['name'];
+                }
+
+                if( $attachment2 ){
+                    $file = $directory.DIRECTORY_SEPARATOR.$attachment2['name'];
+                    copy( $attachment2['tmp_name'] , $file ); 
+                    $attachments[] = $reporte->getDirectorioBase().$attachment2['name'];
+                }
+
+                $files=$this->getRequestParameter("files_".$oid);
+                foreach ($files as $archivo) {
+                    $name =  $archivo;            
+                    $attachments[]=$name;
+                }
+
+                $ultimostatus = $reporte->getUltimoStatus();
+
+                $status = new RepStatus();
+
+                $status->setCaIdreporte( $reporte->getCaIdreporte() );
+                $status->setCaFchstatus( date("Y-m-d H:i:s") );
+
+
+                $status->setCaComentarios( $this->getRequestParameter("notas") );			
+                $status->setCaFchenvio( date("Y-m-d H:i:s") );
+                $status->setCaUsuenvio( $this->getUser()->getUserId() );
+
+
+
+                if( $ultimostatus ){
+                    $status->setCaPiezas( $ultimostatus->getCaPiezas() );
+                    $status->setCaPeso( $ultimostatus->getCaPeso() );
+                    $status->setCaVolumen( $ultimostatus->getCaVolumen() );
+                    $status->setCaIdnave( $ultimostatus->getCaIdnave() );
+                    $status->setCaFchsalida( $ultimostatus->getCaFchsalida() );
+                    $status->setCaFchllegada( $ultimostatus->getCaFchllegada() );
+                    $status->setCaFchcontinuacion( $ultimostatus->getCaFchcontinuacion() );
+                    $status->setCaDoctransporte( $ultimostatus->getCaDoctransporte() );
+                }
+
+                if( substr($referencia->getCaReferencia(),0,1)=="7" ){                
+                    $status->setCaPiezas( $inoCliente->getCaNumpiezas() );
+                    $status->setCaPeso( $inoCliente->getCaPeso() );
+                    $status->setCaVolumen( $inoCliente->getCaVolumen() );				
+                    $status->setCaFchsalida( $referencia->getCaFchembarque() );
+                    $status->setCaFchllegada( $referencia->getCaFcharribo() );
+                    $status->setCaIdnave( $referencia->getCaMotonave() );
+                    $status->setCaDoctransporte( $inoCliente->getCaHbls() );                                
+                }
+
+                switch( $modo ){
+                    case "conf":
+                    case "puerto":    
+                        switch( $tipo_msg ){
+                            case "Conf":
+                                $status->setCaIdetapa("IMCPD");
+                                $status->setCaFchllegada( $referencia->getCaFchconfirmacion() );
+                                break;
+                            case "Desc":
+                                    $status->setCaIdetapa("IMDES");
+                                break;                            
+                            default:
+                                $status->setCaIdetapa("88888");
+                                break;
+
+                        }
+
+                        if( $referencia->getCaMnllegada() ){
+                            $status->setCaIdnave( $referencia->getCaMnllegada() );
+                        }else{
+                            $status->setCaIdnave( $referencia->getCaMotonave() );
+                        }
+
+                        if( $request->getParameter("mod_fcharribo") ){
+                            $referencia->setCaFcharribo( $request->getParameter("fcharribo") );
+                            $referencia->save();
+                            $status->setCaFchllegada( $request->getParameter("fcharribo") );
+                        }
+
+
+                        break;
+                    case "otm":				
+                        $etapa =  $this->getRequestParameter("tipo_".$oid);
+
+                        if( $etapa=="IMCOL" || $this->getRequestParameter("modfchllegada_".$oid) ){
+                            $status->setCaFchcontinuacion( Utils::parseDate($this->getRequestParameter("fchllegada_".$oid)));	
+                        }
+
+                        if( $etapa=="IMCOL" ){
+                            $idbodega = $this->getRequestParameter("bodega_".$oid); 						
+
+                            $status->setProperty("idbodega", $idbodega);				
+                        }
+
+                        if( $etapa=="99999" ){
+                            $fchplanilla = $this->getRequestParameter("fchplanilla_".$oid);						
+                            $status->setProperty("fchplanilla", Utils::parseDate($fchplanilla));
+                        }
+
+                        $status->setCaIdetapa($etapa);
+                        break;				
+                    default:	
+                        $status->setCaIdetapa("88888");
+                        break;	
+                }
+
+                if( $tipo_msg=="Conf" || $tipo_msg=="Puerto" ){
+                    $status->setCaIntroduccion( $this->getRequestParameter("intro_body") );
+                    $status->setStatus( $this->getRequestParameter("mensaje_".$oid) );
+                }else{
+                    $status->setCaIntroduccion( $this->getRequestParameter("status_body_intro") );				
+                    $mensaje = $this->getRequestParameter("status_body");
+                    if( $this->getRequestParameter("mensaje_".$oid) ){
+                        $mensaje .= "\n".$this->getRequestParameter("mensaje_".$oid);
+                    }
+                    $status->setStatus( $mensaje );			
+                }
+
+                $destinatarios = array();
+
+
+                $checkbox = $request->getParameter("em_".$oid);
+                if( $checkbox ){
+                    foreach($checkbox as $check ){
+                        $destinatarios[]=$request->getParameter("ar_".$oid."_".$check);
+                    }
+                }
+
+                $status->save();			
+                $status->send($destinatarios, array(), $attachments );		
+
+                $this->status = $status;	
+                $this->modo = $modo;	
+                $this->referencia = $referencia;			
+            }			
+         }
 		
 	}
 
     
-        
-    public function executePruebaUpload($request)
+    public function executeEmailConfirmacion($request)
     {
-        echo "sdffsd";
+        $this->referencia = Doctrine::getTable("InoMaestraSea")->find( $request->getParameter( "referencia" ) );
+		$this->forward404Unless( $this->referencia );        
+        $this->usuario = Doctrine::getTable("Usuario")->find( $this->getUser()->getUserId() );
+        
+        $this->tipo=$request->getParameter( "tipo" );
+        $this->intro_body=$request->getParameter( "intro_body" );
+        $this->fchsyga=$request->getParameter( "fchsyga" );
+        //echo $this->usuario->getCaLogin();
+        $this->setLayout("email");
     }
 	
 }

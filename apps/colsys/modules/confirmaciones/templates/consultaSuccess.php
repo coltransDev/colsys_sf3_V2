@@ -2,7 +2,7 @@
 use_helper("ExtCalendar");
 
 $inoClientes = $sf_data->getRaw("inoClientes");
-
+$confirmaciones = $sf_data->getRaw("confirmaciones");
 
 switch( $modo ){
 	case "otm":
@@ -25,9 +25,7 @@ function validarFormConfirmacion(){
 
     
     <?
-    if( $modo!="puerto"){
-        
-    
+    if( $modo!="puerto"){    
     $oids = array();
     foreach( $inoClientes as $inoCliente ){
         $oids[] = $inoCliente->getOid();
@@ -112,10 +110,20 @@ function validarFormConfirmacion(){
         }
 
    }else{
-	  if (document.form1.status_body.value == ''){
-		  alert('Debe incluir un mensaje de status!');
-          return false;
-      }	  
+       <?
+    if( $modo!="puerto"){
+        ?>
+                    
+      if($("#tipo_msg").val()!="Conf")
+      {
+          if (document.form1.status_body.value == ''){
+              alert('Debe incluir un mensaje de status!');
+              return false;
+          }	 
+      } 
+      <?
+        }
+      ?>
     }
    <?
    }
@@ -452,7 +460,6 @@ function cambiarTipoMsg( value ){
                         Llegada:
                 </td>
 				<td class="mostrar" colspan="4" rowspan="2">
-
                     <table id="confirmacion_tbl" style="display: block;" cellspacing="1" width="100%">
 						<tbody>
 							<tr>
@@ -463,9 +470,9 @@ function cambiarTipoMsg( value ){
 										
 								</td>								
 							
-								<td class="mostrar">Hora en Formato 24h:<br>
-									<input name="horaconfirmacion" value="<?=$referencia->getCaHoraconfirmacion()?>" onblur="CheckTime(this)" size="9" maxlength="8" type="text">
-									00-23hrs</td>
+								<td class="mostrar">Hora en Formato 24h:<br>									
+                                    <? echo extTimePicker("horaconfirmacion",$referencia->getCaHoraconfirmacion() );?>
+                                </td>
 								<td class="mostrar">Registro Aduanero:<br>
 									<input name="registroadu" value="<?=$referencia->getCaRegistroadu()?>" size="22" maxlength="20" type="text"></td>
 								<td class="mostrar">Fecha Registro:<br>									
@@ -490,19 +497,15 @@ function cambiarTipoMsg( value ){
 							</tr>
 							<tr>
 								<td class="mostrar" colspan="4"><b>Introducción al Mensaje de Confirmación:</b><br>
-									<textarea name="intro_body" wrap="virtual" rows="3" cols="93"><?=($modo=="puerto")?$textos['mensajeConfPuerto']:$textos['mensajeConf']?></textarea></td>
+									<textarea name="intro_body" wrap="virtual" rows="3" cols="93"><?=$textos['mensajeConf']?></textarea></td>
 							</tr>
 						</tbody>
 					</table>
                     <table id="status_tbl" style="display: none;" cellspacing="1" width="100%">
 						<tbody>
 							<tr>
-								<td class="mostrar" colspan="4"><b>Introducci&oacute;n al Status:</b><br>
-									<textarea name="status_body_intro" wrap="virtual" rows="2" cols="93"><?=$textos['mensajeStatusIntro']?></textarea></td>
-							</tr>
-							<tr>
-								<td class="mostrar" colspan="4"><b>Mensaje de Status:</b><br>
-									<textarea name="status_body" id="status_body" wrap="virtual" rows="3" cols="93"></textarea></td>
+								<td class="mostrar" colspan="4"><b>Introducción al Mensaje de Confirmación:</b><br>
+									<textarea name="intro_body" wrap="virtual" rows="3" cols="93"><?=$textos['mensajeDesc']?></textarea></td>
 							</tr>
                             <tr>
 								<td class="mostrar" colspan="4"><b>Fecha de arribo</b><br>
@@ -513,6 +516,22 @@ function cambiarTipoMsg( value ){
                                     ?>
                                     </div>
 							</tr>
+                            <tr>
+								<td class="mostrar">Fecha Vaciado:<br>
+									<?
+									echo extDatePicker('ca_fchvaciado', $referencia->getCaFchvaciado("Y-m-d"));
+									?>
+								</td>
+							
+								<td class="mostrar">Hora Vaciado::<br>
+                                    <? echo extTimePicker("ca_horavaciado","" );?>
+                                </td>
+                                <td class="mostrar">SYGA:<br>
+									<?
+									echo extDatePicker('fchsyga', "");
+									?>
+								</td>
+                            </tr>
 						</tbody>
 					</table>
 					
