@@ -11,7 +11,10 @@ class ArticuloForm extends BaseForm{
 		  'titulo'      => new sfWidgetFormInputText(array(), array("maxlength"=>"255" ,"size"=>"60")),
           'descripcion' => new sfWidgetFormTextarea(array(), array("rows"=>20, "cols"=>80 ) ),   
           'formapago' => new sfWidgetFormTextarea(array(), array("rows"=>3, "cols"=>80 ) ),
+          'fchinicio' => new sfWidgetFormExtDate(),
           'fchvencimiento' => new sfWidgetFormExtDate(),
+          'horainicio' => new sfWidgetFormTime(),
+          'horavencimiento' => new sfWidgetFormTime(),
           'valor' => new sfWidgetFormInputText(array(), array("maxlength"=>"15" ,"size"=>"20")),
           'tope' => new sfWidgetFormInputText(array(), array("maxlength"=>"15" ,"size"=>"20")),
           'directa' => new sfWidgetFormChoice(array(
@@ -33,8 +36,15 @@ class ArticuloForm extends BaseForm{
           'incremento'      => new sfValidatorNumber(array('required' => false, 'min'=>1)),
           'tope'      => new sfValidatorNumber(array('required' => false, 'min'=>1)),
 		  //'direccion'   => new sfValidatorString(array('required' => true)),
-          'fchvencimiento'   => new sfValidatorDate(array('required' => false ), 
-                                    array('required' => 'Por favor coloque la fecha de vencimiento') )
+          'fchinicio'   => new sfValidatorDate(array('required' => true ), 
+                                    array('required' => 'Por favor coloque la fecha de inicio') ),
+          'horainicio' => new sfValidatorTime(array('required' => true ), 
+														array('required' => 'Por favor coloque la hora de inicio')),						 
+          'fchvencimiento'   => new sfValidatorDate(array('required' => true ), 
+                                    array('required' => 'Por favor coloque la fecha de vencimiento') ),
+          'horavencimiento' => new sfValidatorTime(array('required' => true ), 
+														array('required' => 'Por favor coloque la hora de vencimiento')),						 
+         
 		  
 		));												
 																												

@@ -35,6 +35,7 @@ class subastasActions extends sfActions {
         $this->articulos = Doctrine::getTable("SubArticulo")
                      ->createQuery("a") 
                      ->addWhere("a.ca_usucomprador IS NULL")
+                     ->addWhere("a.ca_fchvencimiento >= ? ", date("Y-m-d H:i:s"))
                      ->addOrderBy("a.ca_fchcreado DESC")
                      ->execute();
         
@@ -43,6 +44,15 @@ class subastasActions extends sfActions {
                      ->createQuery("a") 
                      ->addWhere("a.ca_usucomprador IS NOT NULL")
                      ->addWhere("a.ca_usucreado = ? ", $this->getUser()->getuserId())
+                     ->addOrderBy("a.ca_fchcreado DESC")
+                     ->limit(15)
+                     ->execute();
+        
+        $this->articulosSinOfertas = Doctrine::getTable("SubArticulo")
+                     ->createQuery("a") 
+                     ->addWhere("a.ca_usucomprador IS NULL")
+                     ->addWhere("a.ca_usucreado = ? ", $this->getUser()->getuserId())
+                     ->addWhere("a.ca_fchvencimiento < ? ", date("Y-m-d H:i:s"))
                      ->addOrderBy("a.ca_fchcreado DESC")
                      ->limit(15)
                      ->execute();
@@ -81,7 +91,10 @@ class subastasActions extends sfActions {
             $bindValues["idarticulo"] = $request->getParameter("idarticulo");
             $bindValues["titulo"] = $request->getParameter("titulo");
             $bindValues["descripcion"] = $request->getParameter("descripcion");
+            $bindValues["fchinicio"] = $request->getParameter("fchinicio");
+            $bindValues["horainicio"] = $request->getParameter("horainicio");
             $bindValues["fchvencimiento"] = $request->getParameter("fchvencimiento");
+            $bindValues["horavencimiento"] = $request->getParameter("horavencimiento");
             $bindValues["valor"] = $request->getParameter("valor");
             $bindValues["incremento"] = $request->getParameter("incremento");
             $bindValues["formapago"] = $request->getParameter("formapago");
@@ -92,7 +105,32 @@ class subastasActions extends sfActions {
 				
                 $articulo->setCaTitulo( $bindValues["titulo"] );
                 $articulo->setCaDescripcion( $bindValues["descripcion"] );
-                $articulo->setCaFchvencimiento( $bindValues["fchvencimiento"] );
+                
+                if( $bindValues["fchinicio"] ){                    
+                    $horainicio =  $request->getParameter("horainicio");
+                    if( !$horainicio['minute'] ){
+                        $horainicio['minute']='00';
+                    }
+
+                    $horainicio['hour']=str_pad($horainicio['hour'],2, "0", STR_PAD_LEFT );
+                    $horainicio['minute']=str_pad($horainicio['minute'],2, "0", STR_PAD_LEFT );
+                    $horainicio = implode(":", $horainicio );
+                    $articulo->setCaFchinicio( Utils::parseDate($request->getParameter("fchinicio"), "Y-m-d")." ".$horainicio );
+                }
+                
+                if( $bindValues["fchvencimiento"] ){
+                    
+                    $horavencimiento =  $request->getParameter("horavencimiento");
+                    if( !$horavencimiento['minute'] ){
+                        $horavencimiento['minute']='00';
+                    }
+
+                    $horavencimiento['hour']=str_pad($horavencimiento['hour'],2, "0", STR_PAD_LEFT );
+                    $horavencimiento['minute']=str_pad($horavencimiento['minute'],2, "0", STR_PAD_LEFT );
+                    $horavencimiento = implode(":", $horavencimiento );
+                    $articulo->setCaFchvencimiento( Utils::parseDate($request->getParameter("fchvencimiento"), "Y-m-d")." ".$horavencimiento );
+                }                
+               
                 $articulo->setCaValor( $bindValues["valor"] );
                 if( $bindValues["incremento"] ){
                     $articulo->setCaIncremento( $bindValues["incremento"] );

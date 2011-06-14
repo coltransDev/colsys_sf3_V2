@@ -15,7 +15,10 @@ if( $nivel>=1 ){
         </th>        
         <th>
             Valor
-        </th>        
+        </th>  
+        <th>
+            Inicia
+        </th>
         <th>
             Vence
         </th>
@@ -32,10 +35,13 @@ if( $nivel>=1 ){
                 <?=link_to($articulo->getCaTitulo(), "subastas/verArticulo?idarticulo=".$articulo->getCaIdarticulo())?>
             </td> 
             <td>
-                <?=Utils::formatNumber($articulo->getCaValor())?>
+                <?=Utils::formatNumber($articulo->getCaValor(), "Y-m-d H:i:s")?>
             </td> 
             <td>
-                <?=Utils::fechaMes($articulo->getCaFchvencimiento())?>
+                <?=Utils::fechaMes( Utils::parseDate($articulo->getCaFchinicio(), "Y-m-d") )." ".Utils::parseDate($articulo->getCaFchinicio(), "h:i A")?>
+            </td>
+            <td>
+                <?=Utils::fechaMes( Utils::parseDate($articulo->getCaFchvencimiento(), "Y-m-d") )." ".Utils::parseDate($articulo->getCaFchvencimiento(), "h:i A")?>
             </td>
             <td>
                 <?=$articulo->getCaDirecta()?"Compra directa":"Subasta normal"?>
@@ -73,6 +79,9 @@ if( count($articulosVendidos) ){
         </th>        
         <th>
             Valor
+        </th>  
+        <th>
+            Inicio
         </th>        
         <th>
             Vence
@@ -99,7 +108,81 @@ if( count($articulosVendidos) ){
             <?=Utils::formatNumber($articulo->getCaValor())?>
         </td> 
         <td>
-            <?=Utils::fechaMes($articulo->getCaFchvencimiento())?>
+            <?=Utils::fechaMes( Utils::parseDate($articulo->getCaFchinicio(), "Y-m-d") )." ".Utils::parseDate($articulo->getCaFchinicio(), "h:i A")?>
+        </td>
+        <td>
+            <?=Utils::fechaMes( Utils::parseDate($articulo->getCaFchvencimiento(), "Y-m-d") )." ".Utils::parseDate($articulo->getCaFchvencimiento(), "h:i A")?>
+        </td>
+        <td>
+            <?=$articulo->getCaDirecta()?"Compra directa":"Subasta normal"?>
+        </td>
+        <td>
+            <?=$articulo->getUsuComprador()->getCaNombre()?>
+        </td> 
+         <td>
+            <?=Utils::formatNumber($articulo->getCaValorventa())?>
+        </td> 
+    </tr>
+    <?
+        
+    }?>
+    
+</table>
+<?
+}
+?>
+
+
+
+<?
+if( count($articulosSinOfertas) ){
+?>
+
+<br />
+<br />
+<div class="maintitle">Articulos Sin ofertas</div>
+<br />
+
+<table class="tableList" width="100%">
+    <tr>
+        <th>
+            Articulo
+        </th>        
+        <th>
+            Valor
+        </th>  
+        <th>
+            Inicio
+        </th>        
+        <th>
+            Vence
+        </th>
+        <th>
+            Tipo de Subasta
+        </th>
+        <th>
+            Vendido a 
+        </th>
+        <th>
+            Valor
+        </th>
+    </tr>
+    <?
+    
+    foreach( $articulosSinOfertas as $articulo ){
+    ?>
+    <tr>
+        <td>
+            <?=link_to($articulo->getCaTitulo(), "subastas/verArticulo?idarticulo=".$articulo->getCaIdarticulo())?>
+        </td> 
+        <td>
+            <?=Utils::formatNumber($articulo->getCaValor())?>
+        </td> 
+        <td>
+            <?=Utils::fechaMes( Utils::parseDate($articulo->getCaFchinicio(), "Y-m-d") )." ".Utils::parseDate($articulo->getCaFchinicio(), "h:i A")?>
+        </td>
+        <td>
+            <?=Utils::fechaMes( Utils::parseDate($articulo->getCaFchvencimiento(), "Y-m-d") )." ".Utils::parseDate($articulo->getCaFchvencimiento(), "h:i A")?>
         </td>
         <td>
             <?=$articulo->getCaDirecta()?"Compra directa":"Subasta normal"?>

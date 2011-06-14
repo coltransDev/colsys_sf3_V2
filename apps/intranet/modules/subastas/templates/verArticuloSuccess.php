@@ -171,20 +171,27 @@ if ($articulo->getCaUsucomprador()) {
 <?
 if (!$articulo->getCaUsucomprador()) {
 ?>
-<div class="yellowbox" id="resultados">
+<div class="yellowbox" id="resultados">    
     <?
-    if ($articulo->getCaDirecta()) {
-    ?>
-        <input type="button" value="Comprar" onclick="ofertar()" />
-        <?
-    } else {
+    if( $articulo->getCaFchinicio()<=date("Y-m-d H:i:s") && $articulo->getCaFchvencimiento()<=date("Y-m-d H:i:s")){    
+        echo "Se reciben ofertas hasta <b>".Utils::fechaMes( Utils::parseDate($articulo->getCaFchvencimiento(), "Y-m-d") )." ".Utils::parseDate($articulo->getCaFchvencimiento(), "h:i A")."</b> <br />";
+        if ($articulo->getCaDirecta()) {
         ?>
-        <input type="button" value="Realizar una oferta" onclick="ofertar()" /> 
+            <input type="button" value="Comprar" onclick="ofertar()" />
+            <?
+        } else {
+            ?>
+            <input type="button" value="Realizar una oferta" onclick="ofertar()" /> 
 
-        <?
-        include_component("subastas", "listaOfertas", array("articulo" => $articulo));
-        ?>
-        <?
+            <?
+            include_component("subastas", "listaOfertas", array("articulo" => $articulo));
+            ?>
+            <?
+        }
+    }else{
+        echo "El articulo no esta disponible para ofertar en este momento. <br />Solo se puede ofertar desde ";        
+        echo "<b>".Utils::fechaMes( Utils::parseDate($articulo->getCaFchinicio(), "Y-m-d") )." ".Utils::parseDate($articulo->getCaFchinicio(), "h:i A")."</b>";
+        echo " hasta <b>".Utils::fechaMes( Utils::parseDate($articulo->getCaFchvencimiento(), "Y-m-d") )." ".Utils::parseDate($articulo->getCaFchvencimiento(), "h:i A")."</b>";
     }
     ?>
     </div>    

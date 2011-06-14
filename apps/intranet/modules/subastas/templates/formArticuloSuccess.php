@@ -88,14 +88,32 @@
                         ?>
                     </div>
                 </td>
-            </tr> 
+            </tr>
+            <tr>
+                <td>
+                    <b>Inicio:</b><br />
+                    <?
+                    echo $form['fchinicio']->renderError();
+                    $form->setDefault('fchinicio', $articulo->getCaFchinicio()?Utils::parseDate($articulo->getCaFchinicio(), "Y-m-d"):date("Y-m-d") );
+                    echo $form['fchinicio']->render();
+                    
+                    echo $form['horainicio']->renderError();
+                    $form->setDefault('horainicio', $articulo->getCaFchinicio()?Utils::parseDate($articulo->getCaFchinicio(), "H:i:s"):date("H:i:s", time()+86400*3) );
+                    echo $form['horainicio']->render();
+                    ?>
+                </td>
+            </tr>
             <tr>
                 <td>
                     <b>Vencimiento:</b><br />
                     <?
                     echo $form['fchvencimiento']->renderError();
-                    $form->setDefault('fchvencimiento', Utils::parseDate($articulo->getCaFchvencimiento(), "Y-m-d") );
+                    $form->setDefault('fchvencimiento', $articulo->getCaFchvencimiento()?Utils::parseDate($articulo->getCaFchvencimiento(), "Y-m-d"):date("Y-m-d", time()+86400*3) );
                     echo $form['fchvencimiento']->render();
+                    
+                    echo $form['horavencimiento']->renderError();
+                    $form->setDefault('horavencimiento', $articulo->getCaFchvencimiento()?Utils::parseDate($articulo->getCaFchvencimiento(), "H:i:s"):date("H:i:s", time()+86400*3) );
+                    echo $form['horavencimiento']->render();
                     ?>
                 </td>
             </tr>
