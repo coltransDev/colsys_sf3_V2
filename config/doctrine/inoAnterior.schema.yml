@@ -52,6 +52,8 @@ InoMaestraSea:
     ca_usuconfirmado: string
     ca_fchconfirma_otm: timestamp
     ca_usuconfirma_otm: string
+    ca_fchvaciado: date
+    ca_horavaciado: time
     ca_fchmuisca: timestamp
     ca_usumuisca: string
     ca_fchmbls: date
