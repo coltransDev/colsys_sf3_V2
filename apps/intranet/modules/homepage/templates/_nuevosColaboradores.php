@@ -1,6 +1,7 @@
 <?
 if( count( $usuarios )>0 ){
 ?>
+<br />
 <div class="storybox">
     <div class="title">Nuevos Colaboradores</div>
     <div class="body">

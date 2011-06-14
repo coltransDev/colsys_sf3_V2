@@ -4,7 +4,7 @@
  * and open the template in the editor.
 */
 
-if (count($usuarios)>0):
+if (count($usuarios)>0){
 ?>
  
                                      
@@ -54,7 +54,10 @@ if (count($usuarios)>0):
     ?>
        <a href="<?=url_for('adminUsers/viewUser?login='.$usuario->getCaLogin()) ?>"><?=$usuario->getCaNombre()?></a> <small><?=$usuario->getSucursal()->getEmpresa()->getCaNombre()?> - <?=$usuario->getSucursal()->getCaNombre()?></small><br />
     <?
-    }endif;
+    }
     ?>
     </div>
 </div>
+<?
+}
+?>

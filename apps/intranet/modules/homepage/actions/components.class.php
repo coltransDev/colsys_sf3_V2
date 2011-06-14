@@ -29,6 +29,7 @@ class homepageComponents extends sfComponents {
                 $rutina = homepageComponents::RUTINA_INTRANET;
                 break;
         }
+               
 
         $this->nivel = $this->getUser()->getNivelAcceso($rutina);
         if (!$this->nivel) {
@@ -69,7 +70,7 @@ class homepageComponents extends sfComponents {
         
     }
 
-    public function executeIncomeLast() {
+    public function executeNuevosColaboradores() {
 
         $final = date('Y-m-d');
         $inicial = date('Y-m-d', time() - 86400 * 30);

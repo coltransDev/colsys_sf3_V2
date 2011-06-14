@@ -12,76 +12,88 @@
 
     </head>
     <body >
+        <div class="main_container">
+            <div class="main_wrapper">
+            <div class="content_wrapper">
+                <div class="top"></div>
+                <!--Top Area Start-->
+                <div class="header_content">
+                    
+                    <div class="logo"  >
+                        <? include_component('homepage', 'logos') ?>
+                    </div>
+                    <div class="searchbox">
+                        <div class="searchint">
+                            <? include_component('homepage', 'search') ?>
+                        </div>
+                    </div>
+                    <div class="topmenu">
+                    </div>
+                </div>                        
+                
+                <!--Top Area End-->
 
-        <!--Top Area Start-->
-        <div class="header_content">
-            <div class="top">
-                <div class="logo"  >
-                    <? include_component('homepage', 'logos') ?>
+
+                <!--Header Start-->
+                <div class="header">
+
+                    <? include_component('homepage', 'mainMenu') ?>
+
                 </div>
-                <div class="searchbox">
-                    <div class="searchint">
-                        <? include_component('homepage', 'search') ?>
+
+                <div class="header_foot">
+                </div>
+
+
+                <!--Header End-->
+
+
+                <!--Content Area Start-->
+
+                <div class="main_content">
+                    <div class="center">
+                        <?php echo $sf_content ?>                            
+                    </div>
+
+
+                    <!--Center Column End End-->
+
+                    <!--right Column Start-->
+
+                    <div class="right">
+                        <? include_component('adminUsers', 'loginInformation') ?>
+                        <br />      
+                        <? include_component('subastas', 'listaSubastas'); ?>                    
+                        
+                        <? include_component('homepage', 'birthday'); ?>                    
+                        
+                        <? include_component('homepage', 'nuevosColaboradores'); ?>
+                        <br />
+                        <a href="https://www.coltrans.com.co/"><?=image_tag("colsys.png", array("border"=>"none"))?></a>
+                        <br />
+                        <a href="https://www.coltrans.com.co/tracking"><?=image_tag("tracking.png", array("border"=>"none"))?></a>
+                        <br />
+                        <a href="http://www.coltrans.com.co/mail"><?=image_tag("webmail.png", array("border"=>"none"))?></a>
+                        <br />
                     </div>
                 </div>
-                <div class="topmenu">
-                </div>
-            </div>                        
-        </div>
-        <!--Top Area End-->
+
+                <!--Content Area End-->
+
+                <div class="footer">
 
 
-        <!--Header Start-->
-        <!--                    <div class="header">
-                                <div class="header_content">
-        
-                                </div>
-                            </div>-->
-        <div class="header_foot">
-        </div>
+                    <div class="copyright">
+                        <div>Copyright &#169;. Todos los derechos reservados.<br /></div>
+                        <br />
+                    </div>
 
-
-        <!--Header End-->
-
-
-        <!--Content Area Start-->
-        <div class="content_wrapper">
-            <div class="content">
-                <div class="center">
-                    <?php echo $sf_content ?>                            
                 </div>
 
-
-                <!--Center Column End End-->
-
-                <!--right Column Start-->
-
-                <div class="right">
-                    <? include_component('adminUsers', 'loginInformation') ?>
-                    <br />
-                    <br />
-                    <? include_component('homepage', 'mainMenu') ?>
-                    <br />
-                    <? include_component('homepage', 'birthday');?>                    
-                    <br />
-                    <? include_component('homepage', 'incomeLast'); ?>
-                </div>
-            </div>
-        </div>
-        <!--Content Area End-->
-
-        <div class="footer">
-
-
-            <div class="copyright">
-                <div>Copyright &#169;. Todos los derechos reservados.<br /></div>
-                <br />
             </div>
 
-        </div>
 
-<!--                    <a href="https://www.coltrans.com.co/"><img src="images/colsys.png" border="none" alt="Colsys" /></a>
-                 <a href="https://www.coltrans.com.co/tracking"><img src="images/tracking.png" border="none" alt="Colsys" /></a>
-                 <a href="http://www.coltrans.com.co/mail"><img src="images/webmail.png" border="none" alt="Colsys" /></a>-->
+             </div>       
+        </div>      
     </body>
 </html>

@@ -6,7 +6,7 @@
 
 use_helper("ExtCalendar");
 
-$folder = "Noticia";
+
 $noticia = $sf_data->getRaw("noticia");
 
 $info = str_replace("\"", "'",str_replace("\n", "<br />",str_replace("\r\n", "<br />", $noticia->getCaDetalle())));
@@ -21,14 +21,14 @@ $info = str_replace("</b>", "</strong>", $info);
     <br />
 
        
-        <form action="<?=url_for("homepage/guardarNoticia")?>" method="post">
+        <form action="<?=url_for("noticias/guardarNoticia")?>" method="post">
             <input type="hidden" name="idnoticia" value="<?=$idnoticia?>"/>
             
-            <table class="tableList">
+            <table class="tableList" width="100%">
                 <tr>
                     <td colspan="3">
                         <b >Titulo:</b><br />
-                        <input type="text" name="title" value="<?=$noticia->getCaAsunto()?>" size ="98" maxlength="255" />
+                        <input type="text" name="title" value="<?=$noticia->getCaAsunto()?>" size ="70" maxlength="255" />
                     </td>
                 </tr>
                 <tr>
@@ -65,13 +65,36 @@ $info = str_replace("</b>", "</strong>", $info);
                 </tr>
                 <tr>
                     <td align="left" colspan="3" size ="80">
-                         <b>Icono</b>
-                    <input type="text" name="icon" value="<?=$noticia->getCaIcon()?>"/>
+                    <b>Icono</b>
+                    <select name="icon">
+                        
+                        <?
+                        foreach ($archivos as $archivo) {
+                            $ext = strtolower(substr($archivo, -3, 3));
+                            if ($ext != "jpg" && $ext != "png" && $ext != "gif") {
+                                continue;
+                            }                        
+                            
+                            $url = url_for("gestDocumental/verArchivo?folder=" . base64_encode($folder.DIRECTORY_SEPARATOR."Iconos") . "&idarchivo=" . base64_encode(basename($archivo)));
+                        ?>                        
+                        <option value="<?=$url ?>" <?=($noticia&&$noticia->getCaIcon()==$url)?"selected='selected'":"" ?> >
+                            <?=basename($archivo)?> 
+                        </option>                        
+                        <?
+                        }
+                        ?>
+                    </select>
+                    
+                    
+                    <a href="<?=url_for("noticias/agregarIcono?idnoticia=5")?>">Agregar iconos</a>
                     </td>
                 </tr>
                 <tr>
                     <td colspan="3">
-                        <div align="center"><input type="submit" value="Guardar" class="button"/></div>
+                        <div align="center">
+                            <input type="submit" value="Guardar" class="button"/> &nbsp;
+                            <input type="button" value="Cancelar" class="button" onclick="document.location='<?=url_for("homepage")?>'"/>
+                        </div>
                     </td>
                 </tr>
             </table>
@@ -87,13 +110,13 @@ $info = str_replace("</b>", "</strong>", $info);
 YAHOO.widget.Logger.enableBrowserConsole();
 var myEditor = new YAHOO.widget.Editor('info', {
 	    height: '300px',
-	    width: '700px',
+	    width: '100%',
         handleSubmit: true,
 
 	    dompath: true,
 	    animate: true
 	});
-    yuiImgUploader(myEditor, 'info', '<?=url_for("gestDocumental/uploadImage?folder=".$folder)?>','image');
+    yuiImgUploader(myEditor, 'info', '<?=url_for("gestDocumental/uploadImage?folder=".$folder.DIRECTORY_SEPARATOR."Imagenes")?>','image');
 	myEditor.render();         
 
 

@@ -7,54 +7,67 @@
         <link rel="shortcut icon" href="/favicon.ico" />
         <?php include_stylesheets() ?>
         <?php include_javascripts() ?>
-        
+
 
 
     </head>
     <body >
-
-        <!--Top Area Start-->
-        <div class="header_content">
-            <div class="top">
-                <div class="logo"  >
-                    <? include_component('homepage', 'logos') ?>
-                </div>                
-            </div>                        
-        </div>
-        <!--Top Area End-->
-
-
-        <!--Header Start-->
-        
-        <div class="header_foot">
-        </div>
-
-
-        <!--Header End-->
-
-
-        <!--Content Area Start-->
-        <div class="content_wrapper">
-            <div class="content">
+        <div class="main_container">
+            <div class="main_wrapper">
+            <div class="content_wrapper">
+                <div class="top"></div>
+                <!--Top Area Start-->
+                <div class="header_content">
+                    
+                    <div class="logo"  >
+                        <? include_component('homepage', 'logos') ?>
+                    </div>                    
+                    
+                </div>                        
                 
-                <div class="centerlogin" align="center">
-                    <div class="contentheading">Bienvenido al Intranet</div>
-                    <?php echo $sf_content ?>                            
+                <!--Top Area End-->
+
+
+                <!--Header Start-->
+               
+                <div class="header_foot">
                 </div>
-                <!--Center Column End End-->            
-            </div>
-        </div>
-        <!--Content Area End-->
 
-        <div class="footer">
-            <div class="copyright">
-                <div>Copyright &#169;. Todos los derechos reservados.<br /></div>
-                <br />
-            </div>
-        </div>
 
-<!--                    <a href="https://www.coltrans.com.co/"><img src="images/colsys.png" border="none" alt="Colsys" /></a>
-                 <a href="https://www.coltrans.com.co/tracking"><img src="images/tracking.png" border="none" alt="Colsys" /></a>
-                 <a href="http://www.coltrans.com.co/mail"><img src="images/webmail.png" border="none" alt="Colsys" /></a>-->
+                <!--Header End-->
+
+
+                <!--Content Area Start-->
+
+                <div class="main_content" >
+                    <div class="centerlogin" align="center">
+                        <?php echo $sf_content ?>                            
+                    </div>
+
+
+                    <!--Center Column End End-->
+
+                    <!--right Column Start-->
+
+                    
+                </div>
+
+                <!--Content Area End-->
+
+                <div class="footer">
+
+
+                    <div class="copyright">
+                        <div>Copyright &#169;. Todos los derechos reservados.<br /></div>
+                        <br />
+                    </div>
+
+                </div>
+
+            </div>
+
+
+             </div>       
+        </div>      
     </body>
 </html>

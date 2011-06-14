@@ -12,7 +12,7 @@ default:
     #language:     en
     #robots:       index, follow
 
-  stylesheets:    [style.css, ext/css/ext-all, ext/css/xtheme-gray, ext/css/ext-all, ext/css/xtheme-gray,  blog]
+  stylesheets:    [intranet.css, ext/css/ext-all, ext/css/xtheme-gray, ext/css/ext-all, ext/css/xtheme-gray,  blog]
 
   javascripts:    [ext/adapter/ext/ext-base, ext/ext-all-debug, ext/src/locale/ext-lang-es.js]
 
