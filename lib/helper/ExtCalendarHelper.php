@@ -21,21 +21,21 @@ function extDatePicker( $field_id, $value=null , $html_options=null , $mindate=n
 	return $html;
 }
 
-function extTimePicker($field_id, $value=null)
+function extTimePicker($field_id, $value='')
 {
+    
     $html="
-        
-            <input type='text' id='".$field_id."' name='".$field_id."' />
+    <input type='text' id='".$field_id."' name='".$field_id."' />
     <script language='javascript' type='text/javascript'>
         new Ext.form.TimeField({
         format: 'H:i:s',
-        increment: 15,
-        width: 120,
+        increment: 15,       
         applyTo: '".$field_id."',
-        value: '".$value."'
+        value: '".$value."',
+        width: 120
         });
     </script>
-    ";
+";
     
     return $html;
 }
