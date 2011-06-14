@@ -15,8 +15,7 @@ body{
     background: url(../images/layout/background.png);
     height: 100%;
 	width: 100%;
-    background-color: #80919E;
-    border: 1px solid #cccccc;
+    background-color: #80919E;    
     clear: both;
     float: left;
 }
@@ -98,11 +97,13 @@ input {
     height: 20px;
     vertical-align:bottom;
 }
-a:link, a:visited {color:#062A7D;
+a:link, a:visited {
+    color:#062A7D;
+    text-decoration:none;     
 }
 
 a:hover {
-    text-decoration:none;
+    color:#8F9295;
 }
 
 .topcontent, .bottomcontent {
@@ -228,11 +229,9 @@ a:hover {
 .main_content {
     padding-top:24px;
     width:100%;
+    min-height:450px;
     margin-right: auto;
     margin-left: auto;    
-    
-    
-
 
 }
 
@@ -250,6 +249,7 @@ a:hover {
 .content_wrapper{
     float: left;
     background: #FFFFFF;
+    
 }
 
 
@@ -396,6 +396,16 @@ div.box1 {
     color: #333;
     line-height: 1.5;
     padding: 10px;
+    
+    -moz-border-radius-topright : 6px;
+    border-top-right-radius : 6px;
+    -moz-border-radius-topleft : 6px;
+    border-top-left-radius : 6px;
+    -moz-border-radius-bottomright : 6px;
+    border-bottom-right-radius : 6px;
+    -moz-border-radius-bottomleft : 6px;
+    border-bottom-left-radius : 6px;
+
 }
 
 
@@ -420,6 +430,15 @@ div.yellowbox {
     color: #333;
     line-height: 1.5;
     padding: 10px;
+    
+    -moz-border-radius-topright : 6px;
+    border-top-right-radius : 6px;
+    -moz-border-radius-topleft : 6px;
+    border-top-left-radius : 6px;
+    -moz-border-radius-bottomright : 6px;
+    border-bottom-right-radius : 6px;
+    -moz-border-radius-bottomleft : 6px;
+    border-bottom-left-radius : 6px;
 }
 
 
@@ -899,6 +918,14 @@ div.storybox {
     line-height: 1.5;
     
     width: 100%;
+    -moz-border-radius-topright : 6px;
+    border-top-right-radius : 6px;
+    -moz-border-radius-topleft : 6px;
+    border-top-left-radius : 6px;
+    -moz-border-radius-bottomright : 6px;
+    border-bottom-right-radius : 6px;
+    -moz-border-radius-bottomleft : 6px;
+    border-bottom-left-radius : 6px;
 }
 
 
@@ -907,10 +934,40 @@ div.storybox .title {
     padding: 3px 4px;
     background-color: #062A7D;
     color: #FFFFFF;
+    -moz-border-radius-topright : 6px;
+    border-top-right-radius : 6px;
+    -moz-border-radius-topleft : 6px;
+    border-top-left-radius : 6px;
+    
 }
 div.storybox .body {
     
     font-size: 0.9em;
     text-align: justify;
     padding: 10px;
+}
+
+
+
+.maintitle
+ {
+	color:#062A7D;	
+	
+	font-weight: 600;
+	font-size: 20px;
+	line-height: 20px;
+}
+
+
+
+.form_error
+{  
+  color: #FF9900; 
+  font-size:11px;
+}
+
+.error_list
+{
+  color:#FF0000;
+   font-size:11px;
 }
