@@ -407,8 +407,18 @@ class reportesGerActions extends sfActions {
         $this->ano=$ano;
         $this->mes = Utils::nmes($nom_mes);
         $this->mesp = $this->mes;
-        $indi_LCL = 4;
-        $indi_FCL = 8;
+        $this->indi_LCL["Estados Unidos"] = 4;
+        $this->indi_FCL["Estados Unidos"] = 8;
+        
+        $this->indi_LCL["Mexico"] = 5;
+        $this->indi_FCL["Mexico"] = 5;
+        
+        $this->indi_LCL["Chile"] = 10;
+        $this->indi_FCL["Chile"] = 10;
+        
+        $this->indi_LCL["Holanda"] = 22;
+        $this->indi_FCL["Holanda"] = 22;
+        
         if ($this->opcion) {
             $this->grid = array();
             $sql = "select * 
@@ -418,7 +428,7 @@ class reportesGerActions extends sfActions {
                 and upper(ca_compania) like upper('%henkel%')   
                 and ca_ano::numeric = " . $ano . " and ca_mes::numeric <= " . $this->mes . " and ca_traorigen='".$this->pais_origen."'
                 order by ca_ano,ca_mes";
-            //echo $sql;
+            
             //exit;
             $con = Doctrine_Manager::getInstance()->connection();
             $st = $con->execute($sql);
@@ -428,13 +438,13 @@ class reportesGerActions extends sfActions {
                 if (!$r["ca_diferencia"])
                     continue;
                 if ($r["ca_modalidad"] == Constantes::FCL) {
-                    if ($r["ca_diferencia"] > $indi_FCL) {
+                    if ($r["ca_diferencia"] > $this->indi_FCL[$this->pais_origen]) {
                         $this->indicador[(int) ($r["ca_mes1"])]["incumplimiento"]++;
                     } else {
                         $this->indicador[(int) ($r["ca_mes1"])]["cumplimiento"]++;
                     }
                 } else if ($r["ca_modalidad"] == Constantes::LCL) {
-                    if ($r["ca_diferencia"] > $indi_LCL) {
+                    if ($r["ca_diferencia"] > $this->indi_LCL[$this->pais_origen]) {
                         $this->indicador[(int) ($r["ca_mes1"])]["incumplimiento"]++;
                     } else {
                         $this->indicador[(int) ($r["ca_mes1"])]["cumplimiento"]++;
