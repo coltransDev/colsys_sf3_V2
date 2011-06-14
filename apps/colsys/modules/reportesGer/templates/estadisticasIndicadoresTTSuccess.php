@@ -93,7 +93,7 @@ La meta para este indicador está dada por el tiempo transcurrido desde la <br>
 fecha de zarpe del buque hasta el arribo al mismo al puerto Colombiano.<br>
 
 Las metas según la ruta y el servicio son las siguientes:<br>
-USA LCL 4 días <span style="width: 120px" >&nbsp;</span>USA FCL 8 días
+<?=$pais_origen?> LCL <?=$indi_LCL[$pais_origen]?> días <span style="width: 120px" >&nbsp;</span><?=$pais_origen?> FCL <?=$indi_FCL[$pais_origen]?> días
 </div>
     <table align="center" width="90%">
     <tr>
