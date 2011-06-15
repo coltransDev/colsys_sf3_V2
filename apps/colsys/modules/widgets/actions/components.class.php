@@ -315,12 +315,12 @@ class widgetsComponents extends sfComponents {
             $this->data[] = array("id"=>$sucursal["s_ca_idsucursal"],"valor" => utf8_encode($sucursal["s_ca_nombre"]));
         }
     }
-    
-    public function executeWidgetSucursales() {
+
+    public function executeWidgetDeptos() {
         $this->data = array();
         $user = $this->getUser();
         //$user->getIdempresa();
-        $deptos = Doctrine::getTable("Departamento")
+        $rows = Doctrine::getTable("Departamento")
                         ->createQuery("d")
                         ->select("d.ca_iddepartamento,d.ca_nombre")
                         ->addOrderBy("d.ca_nombre")
@@ -328,11 +328,10 @@ class widgetsComponents extends sfComponents {
                         ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
                         ->execute();
 
-        foreach ($deptos as $d) {
-            $this->data[] = array("id"=>$d["d_ca_iddepartamento"],"valor" => utf8_encode($sucursal["d_ca_nombre"]));
+        foreach ($rows as $r) {
+            $this->data[] = array("id"=>$r["d_ca_iddepartamento"],"valor" => utf8_encode($r["d_ca_nombre"]));
         }
     }
-
     public function executeWidgetModalidad() {
         $this->data = array();
 
@@ -657,7 +656,14 @@ class widgetsComponents extends sfComponents {
 
     }
     
-    
+    public function executeWidgetUploadImages() {
+
+        $response = sfContext::getInstance()->getResponse();
+		$response->addJavaScript("swfupload/swfupload",'last');
+        $response->addJavaScript("swfupload/js/handlers",'last');
+        
+        
+    }
     
 
 }
