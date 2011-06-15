@@ -4,28 +4,17 @@ echo nl2br($introduccion);
 <br />
 
 <?
-if($reporte->getCaTiporep()>0)
-{
-    if( $reporte->getCaTransporte()==Constantes::MARITIMO ){
-        include_component("reporteExt","reporteMaritimoExtNew", array("reporte"=>$reporte));
-    }
+//echo $reporte->getCaTransporte();
+//echo $reporte->getCaTiporep();
 
-    if( $reporte->getCaTransporte()==Constantes::AEREO ){
-        include_component("reporteExt","reporteAereoExtNew", array("reporte"=>$reporte));
-    }
-
-
+if( $reporte->getCaTransporte()==Constantes::MARITIMO ){
+    include_component("reporteExt","reporteMaritimoExtNew", array("reporte"=>$reporte));
 }
-else
-{
-    if( $reporte->getCaTransporte()==Constantes::MARITIMO ){
-        include_component("reporteExt","reporteMaritimoExt", array("reporte"=>$reporte));
-    }
 
-    if( $reporte->getCaTransporte()==Constantes::AEREO ){
-        include_component("reporteExt","reporteAereoExt", array("reporte"=>$reporte));
-    }
+if( $reporte->getCaTransporte()==Constantes::AEREO ){
+    include_component("reporteExt","reporteAereoExtNew", array("reporte"=>$reporte));
 }
+
 ?>
 
 <br /><b>Shipping Instructions :</b><br />
