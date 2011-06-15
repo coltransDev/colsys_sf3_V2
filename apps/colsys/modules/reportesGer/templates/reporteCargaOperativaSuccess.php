@@ -10,6 +10,7 @@ include_component("widgets", "widgetCliente");
 include_component("widgets", "widgetAgente");
 include_component("widgets", "widgetSucursales");
 include_component("widgets", "widgetUsuario");
+include_component("widgets", "widgetDeptos");
 $cliente = $sf_data->getRaw("cliente");
 $agente = $sf_data->getRaw("agente");
 $linea = $sf_data->getRaw("linea");
@@ -127,6 +128,14 @@ $resul = $sf_data->getRaw("resul");
                                             value:"<?= $agente ?>",
                                             hiddenValue:"<?= $idagente ?>"
                                         }),
+                                        new WidgetLinea({fieldLabel: 'Naviera',
+                                            linkTransporte: "transporte",
+                                            name:"linea",
+                                            id:"linea",
+                                            hiddenName: "idlinea",
+                                            value:"<?= $idlinea ?>",
+                                            width:300
+                                        }),
                                         new WidgetMultiIncoterms({title: 'Terminos',
                                             fieldLabel:"Incoterms",
                                             id: 'incoterms',
@@ -182,18 +191,17 @@ $resul = $sf_data->getRaw("resul");
                                             value:"<?= $sucursal ?>",
                                             hiddenValue:"<?= $sucursal ?>"
                                         }),
-                                        new WidgetLinea({fieldLabel: 'Naviera',
-                                            linkTransporte: "transporte",
-                                            name:"linea",
-                                            id:"linea",
-                                            hiddenName: "idlinea",
-                                            value:"<?= $idlinea ?>",
-                                            width:300
+                                        new WidgetDeptos({fieldLabel: 'Departamento',
+                                            id:"departamento",
+                                            hiddenName:"departamento",
+                                            width:150,
+                                            value:"<?= $departamento ?>",
+                                            hiddenValue:"<?= $departamento ?>"
                                         }),
                                         new WidgetUsuario({fieldLabel: 'Usuario',
                                             id:"usuenvio",
                                             hiddenName:"usuenvio",
-                                            width:300,
+                                            width:250,
                                             value:"<?= $nomoperativo ?>",
                                             hiddenValue:"<?= $usuenvio ?>"
                                         })

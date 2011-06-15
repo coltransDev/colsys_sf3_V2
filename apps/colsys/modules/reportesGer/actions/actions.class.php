@@ -520,6 +520,7 @@ class reportesGerActions extends sfActions {
         $this->idcliente = $request->getParameter("idcliente");
         $this->sucursal = $request->getParameter("sucursal");
         $this->usuenvio = $request->getParameter("usuenvio");
+        $this->departamento = $request->getParameter("departamento");
         $this->nomoperativo = $request->getParameter("nomoperativo");
 
         if ($this->opcion) {
@@ -562,11 +563,14 @@ class reportesGerActions extends sfActions {
             if ($this->usuenvio)
                 $where.=" and rf.ca_usuenvio = '" . $this->usuenvio . "'";
 
+            if ($this->departamento)
+                $where.=" and op.ca_departamento = '" . $this->departamento . "'";
+
             $sql = "SELECT
                 rp.ca_idreporte, rp.ca_fchreporte, rp.ca_consecutivo, rx.ca_version, substr(rx.ca_fchreporte::text,1,4) as ca_ano, substr(rx.ca_fchreporte::text,6,2) as ca_mes, sc.ca_nombre as ca_sucursal,
                 tro.ca_idtrafico, tro.ca_nombre as ca_traorigen, rp.ca_origen, cio.ca_ciudad as ca_ciuorigen, trd.ca_idtrafico, trd.ca_nombre as ca_tradestino, cid.ca_ciudad as ca_ciudestino, rp.ca_transporte,
                 rp.ca_modalidad, rp.ca_impoexpo, ccl.ca_idcliente, ccl.ca_compania, lin.ca_idlinea, lin.ca_nomtransportista, agt.ca_idagente, agt.ca_nombre as ca_nomagente, nn.ca_referencia, nn.ca_cant_negocios,
-                rf.ca_cant_emails, rf.ca_usuenvio, op.ca_nombre as ca_nomoperativo
+                rf.ca_cant_emails, rf.ca_usuenvio, op.ca_nombre as ca_nomoperativo, op.ca_departamento
 
                 from tb_reportes rp
                 -- La última versión del reporte
