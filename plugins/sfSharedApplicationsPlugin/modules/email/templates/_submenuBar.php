@@ -7,6 +7,7 @@ switch($action){
 		$button[1]["tooltip"]="reenviar email";
 		$button[1]["image"]="22x22/email.gif"; 			
 		$button[1]["link"]= 'email/reenviar?id='.$this->getRequestParameter("id");
+        $button[1]["confirm"]= 'Esta seguro que desea reenviar este email?';
 		break;	
 
 			
