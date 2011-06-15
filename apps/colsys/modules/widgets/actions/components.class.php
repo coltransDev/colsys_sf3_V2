@@ -315,6 +315,23 @@ class widgetsComponents extends sfComponents {
             $this->data[] = array("id"=>$sucursal["s_ca_idsucursal"],"valor" => utf8_encode($sucursal["s_ca_nombre"]));
         }
     }
+    
+    public function executeWidgetSucursales() {
+        $this->data = array();
+        $user = $this->getUser();
+        //$user->getIdempresa();
+        $deptos = Doctrine::getTable("Departamento")
+                        ->createQuery("d")
+                        ->select("d.ca_iddepartamento,d.ca_nombre")
+                        ->addOrderBy("d.ca_nombre")
+                        ->addWhere("d.ca_idempresa=?",$user->getIdempresa())
+                        ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                        ->execute();
+
+        foreach ($deptos as $d) {
+            $this->data[] = array("id"=>$d["d_ca_iddepartamento"],"valor" => utf8_encode($sucursal["d_ca_nombre"]));
+        }
+    }
 
     public function executeWidgetModalidad() {
         $this->data = array();
