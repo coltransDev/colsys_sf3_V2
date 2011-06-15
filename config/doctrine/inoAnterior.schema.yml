@@ -58,6 +58,7 @@ InoMaestraSea:
     ca_usumuisca: string
     ca_fchmbls: date
     ca_carpeta: boolean
+    ca_muelle: integer
   relations:
     InoClientesSea:
       local: ca_referencia
@@ -70,11 +71,7 @@ InoMaestraSea:
     IdsProveedor:
       local: ca_idlinea
       foreign: ca_idproveedor
-      type: one
-    Reporte:
-      local: ca_idreporte
-      foreign: ca_idreporte
-      type: one
+      type: one    
     Origen:
       local: ca_origen
       foreign: ca_idciudad
@@ -90,6 +87,9 @@ InoMaestraSea:
       foreign: ca_login
       type: one
       class: Usuario
+    InoDianDepositos:
+      local: ca_muelle
+      foreign: ca_codigo
 
 
 InoClientesSea:
@@ -356,3 +356,21 @@ InoClientesAir:
       foreign: ca_login
       type: one
       class: Usuario
+      
+InoDianDepositos:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: sea
+  tableName: tb_diandepositos
+  columns:
+    ca_codigo:
+      type: integer
+      primary: true
+    ca_nombre : string
+    ca_administracion: string
+    ca_tipo_deposito: string
+    ca_direccion: string
+    ca_fchdesde: string
+    ca_fchhasta: string
