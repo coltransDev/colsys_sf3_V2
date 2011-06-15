@@ -37,5 +37,45 @@ class emailActions extends sfActions
 
 
 	}
+    
+    
+    /*
+	* 
+	*/
+	public function executeReenviar( $request ){
+        
+        $this->forward404Unless( $request->getParameter("id") );
+        $email = Doctrine::getTable("Email")->find( $request->getParameter("id") );
+		$this->forward404Unless( $email );
+        
+        if( !$email->getCaFchenvio() ){
+            $this->mensaje = "No se puede reenviar una cotizacion en cola de envío";
+            $this->email = $email;
+            return sfView::ERROR;
+        }
+        
+        $dias = 8;
+        if( $email->getCaFchenvio()<=date("Y-m-d H:i:s", time()-86400*$dias) ){
+            $this->mensaje = "No se puede reenviar un email enviado hace mas de ".$dias." días";
+            $this->email = $email;
+            return sfView::ERROR;
+        }    
+        
+        $minutos = 10;
+        if( $email->getCaFchenvio()<=date("Y-m-d H:i:s") && $email->getCaFchenvio()>=date("Y-m-d H:i:s", time()-$minutos*60 ) ){
+            $this->mensaje = "Debe esperar por lo menos  ".$minutos." minutos para poder reenviar este email";
+            $this->email = $email;
+            return sfView::ERROR;
+        }    
+        
+        $newemail = $email->copy( false );
+        $newemail->setCaFchenvio(null);
+        $newemail->save();
+        
+        $this->redirect( "email/verEmail?id=".$newemail->getCaIdemail() );
+
+	}
+    
+    
 	
 }
