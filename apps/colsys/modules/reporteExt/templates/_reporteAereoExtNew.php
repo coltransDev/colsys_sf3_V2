@@ -1,6 +1,7 @@
 <?
 $master = $sf_data->getRaw("master");
 $notify_h = $sf_data->getRaw("notify_h");
+$notify_m = $sf_data->getRaw("notify_m");
 $hijo = $sf_data->getRaw("hijo");
 
 $consignatario_h = $sf_data->getRaw("consignatario_h");
@@ -100,6 +101,7 @@ if($reporte->getCaModalidad()!="DIRECTO" && $master)
 	<td><b>CONSIGNED TO:</b></td>
 	<td colspan="3"><?=$master?></td>
 </tr>
+
 <tr>
 	<td><b>FINAL DESTINATION:</b></td>
 	<td colspan="3"><?=$reporte->getDestino()->__toString()?></td>
@@ -114,7 +116,19 @@ if($reporte->getCaModalidad()!="DIRECTO" && $master)
 </tr>
 <?
 }
+
+if( $idtrafico=="PE-051" ){
 ?>
+<tr>
+	<td><b>NOTIFY:</b></td>
+	<td colspan="3"><?=$notify_m?></td>
+</tr>
+<?
+}
+
+?>
+
+
 <tr>
 	<td colspan="4"><center><b>HAWB INSTRUCTIONS</b></center></td>
 </tr>
@@ -124,15 +138,6 @@ if($reporte->getCaModalidad()!="DIRECTO" && $master)
 	<td colspan="3"><?=$hijo?></td>
 </tr>
 <?
-/*
-if (strlen($consignatario_h) != 0){
-?>
-<tr>
-	<td><b>NOTIFY:</b></td>
-	<td colspan="3"><?=$consignatario_h?></td>
-</tr>
-<?
-}*/
 
 if ( $reporte->getCaContinuacion() != 'N/A' ){
 ?>

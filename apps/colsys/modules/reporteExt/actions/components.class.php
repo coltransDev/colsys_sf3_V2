@@ -195,9 +195,10 @@ class reporteExtComponents extends sfComponents
         }else {
             if($reporte->getCaImpoexpo()!=constantes::TRIANGULACION)
             {
-                $idempresa=sfConfig::get('app_branding_idempresa');
+                $idempresa=sfConfig::get('app_branding_idempresa2')?sfConfig::get('app_branding_idempresa2'):sfConfig::get('app_branding_idempresa');
                 $consignatario = Doctrine::getTable("Cliente")->find( $idempresa );
                 $master = $consignatario->getCaCompania().($idtrafico=="CO-057"?" Nit. ".number_format($consignatario->getCaIdcliente(),0)."-".$consignatario->getCaDigito():"")."<br />";
+                
             }
             else
             {
@@ -213,22 +214,37 @@ class reporteExtComponents extends sfComponents
                 else
                     $master="";
             }
-
+            
             if($master!="")
             {
-                $sucursal = Doctrine::getTable("Sucursal")
+                $sucursal = Doctrine::getTable("IdsSucursal")
                                       ->createQuery("s")
-                                      ->where("s.ca_nombre = ?", $reporte->getDestino()->getCaCiudad() )
+                                      ->where("s.ca_idciudad = ?", $reporte->getCaDestino() )
+                                      ->where("s.ca_id = ?", $idempresa )        
                                       ->fetchOne();
 
-
+                
+                
+                if( !$sucursal ){
+                    
+                   $sucursal = Doctrine::getTable("IdsSucursal")
+                                      ->createQuery("s")
+                                      ->where("s.ca_principal = ?", true )
+                                      ->where("s.ca_id = ?", $idempresa )        
+                                      ->fetchOne(); 
+                }
+                
                 if( $sucursal ){
-                    $master.=$sucursal->getCaDireccion()."<br />Teléfonos:".$sucursal->getCaTelefono()." Fax:".$sucursal->getCaFax()."<br />";
+                    $master.=$sucursal->getCaDireccion()."<br />Teléfonos:".$sucursal->getCaTelefonos();                    
+                    if( $sucursal->getCaFax() ){
+                        $master.= " Fax:".$sucursal->getCaFax();
+                    }
+                    $master.="<br />";
                 }
                 $master.=$reporte->getDestino()->getCaCiudad()." - ".$reporte->getDestino()->getTrafico()->getCaNombre();
             }
         }
-
+        
         if( $reporte->getCaIdconsignatario() ){
             $consignatario = Doctrine::getTable("Tercero")->find( $reporte->getCaIdconsignatario() );
             if($reporte->getCaImpoexpo()==constantes::TRIANGULACION)
@@ -245,7 +261,7 @@ class reporteExtComponents extends sfComponents
 
             $consignatario_final = $cliente->getCaCompania()." Nit. ".number_format($cliente->getCaIdcliente(),0)."-".$cliente->getCaDigito()."<br />".$cliente->getDireccion();
         }
-
+        
         $bodega1 = $reporte->getBodegaConsignar();
         $bodega2 = Doctrine::getTable("Bodega")->find( $reporte->getCaIdbodega() );
 
@@ -277,7 +293,7 @@ class reporteExtComponents extends sfComponents
             $contacto = $reporte->getContacto();
             $cliente = $reporte->getContacto()->getCliente();
 
-            $consignatario_h = $cliente->getCaCompania()."<br /><br />".$cliente->getDireccion()."<br />".$cliente->getCiudad()->getTrafico()->getcaNombre();
+            $consignatario_h = $cliente->getCaCompania()."<br /><br />".$cliente->getDireccion()."<br />".$cliente->getCiudad()->getTrafico()->getCaNombre();
         }else{
             if( $reporte->getCaNotify()==1 ) {
                 $notify = Doctrine::getTable("Tercero")->find( $reporte->getCaIdconsignatario() );
@@ -294,6 +310,17 @@ class reporteExtComponents extends sfComponents
 
 
         }
+        
+        
+        if( $idtrafico=="PE-051" ){
+            
+            $idempresa=sfConfig::get('app_branding_idempresa');
+            $cliente = Doctrine::getTable("Cliente")->find( $idempresa );
+            
+
+            $notify_m = $cliente->getCaCompania()."<br />".$cliente->getDireccion()."<br />TLF ".$cliente->getCaTelefonos()."<br />".$cliente->getCiudad()->getCaCiudad()." ".$cliente->getCiudad()->getTrafico()->getCaNombre();
+        }
+        
 
         if ( $reporte->getCaMastersame() == 'Sí' ){
             $master = $hijo;
@@ -303,8 +330,10 @@ class reporteExtComponents extends sfComponents
 
         $this->master = $master;
         $this->hijo = $hijo;
+        @$this->notify_m = $notify_m;
         @$this->notify_h = $notify_h;
         $this->consignatario_h = $consignatario_h;
+        $this->idtrafico = $idtrafico;
 	}
 }
 ?>
