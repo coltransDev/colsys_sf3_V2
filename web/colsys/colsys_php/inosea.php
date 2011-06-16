@@ -18,7 +18,7 @@ $programa = 43;
 
 $titulo = 'Sistema Administrador de Referencias Marítimas';
 $meses  = array( "01" => "Enero", "02" => "Febrero", "03" => "Marzo", "04" => "Abril", "05" => "Mayo", "06" => "Junio", "07" => "Julio", "08" => "Agosto", "09" => "Septiembre", "10" => "Octubre", "11" => "Noviembre", "12" => "Diciembre" );
-$columnas = array("Número de Referencia"=>"ca_referencia", "BL Master"=>"ca_mbls", "Motonave"=>"ca_motonave", "Nombre Naviera"=>"ca_nombre", "Sigla Naviera"=>"ca_sigla", "No. Contenedor"=>"ca_idequipo", "BL Hijo"=>"ca_hbls", "Nombre del Cliente"=>"ca_compania", "Reporte de Negocio"=>"ca_consecutivo", "Factura Cliente"=>"ca_factura", "N.i.t."=>"ca_idcliente", "Nombre del Proveedor"=>"ca_nombre", "Factura Proveedor"=>"ca_factura_prov", "Observaciones"=>"ca_observaciones");  // Arreglo con las opciones de busqueda
+$columnas = array("Número de Referencia"=>"ca_referencia", "BL Master"=>"ca_mbls", "Motonave"=>"ca_motonave", "Nombre Naviera"=>"ca_nombre", "Sigla Naviera"=>"ca_sigla", "No. Contenedor"=>"ca_idequipo", "BL Hijo"=>"ca_hbls", "Nombre del Cliente"=>"ca_compania", "Reporte de Negocio"=>"ca_consecutivo", "Factura Cliente"=>"ca_factura", "N.i.t."=>"ca_idcliente", "Nombre del Proveedor"=>"ca_nombre||ca_sigla", "Factura Proveedor"=>"ca_factura_prov", "Observaciones"=>"ca_observaciones");  // Arreglo con las opciones de busqueda
 $imporexpor = array("Importación","Triangulación","OTM/DTA");                              // Arreglo con los tipos de Trayecto
 $modalidades= array("LCL","FCL","COLOADING","PROYECTOS","PARTICULARES");                     // Arreglo con los tipos de Modalidades de Carga
 $continuaciones = array("N/A","OTM","DTA");                          // Arreglo con los tipos de Transportes
