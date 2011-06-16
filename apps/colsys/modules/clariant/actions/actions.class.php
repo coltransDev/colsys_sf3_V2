@@ -65,7 +65,7 @@ class clariantActions extends sfActions {
                         }
 
                         if ($fields[2] != $docCompra){
-                            list($dia, $mes, $ano) = sscanf($fields[8], "%d.%d.%d");
+                            list($dia, $mes, $ano) = sscanf($fields[9], "%d.%d.%d");
                             $documentoFch = date ("Y-m-d",mktime(0,0,0,$mes,$dia,$ano));
 
                             $clariant = new Clariant();
@@ -73,7 +73,7 @@ class clariantActions extends sfActions {
                             $clariant->setCaProveedor($fields[1]);
                             $clariant->setCaOrden($fields[2]);
                             $clariant->setCaDocumentoFch($documentoFch);
-                            $clariant->setCaIncoterm($fields[9]);
+                            $clariant->setCaIncoterm($fields[8]);
                             $docCompra = $fields[2];
                         }
 
