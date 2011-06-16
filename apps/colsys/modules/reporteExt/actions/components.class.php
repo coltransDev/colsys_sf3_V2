@@ -223,19 +223,16 @@ class reporteExtComponents extends sfComponents
                                       ->where("s.ca_id = ?", $idempresa )        
                                       ->fetchOne();
 
-                
-                
                 if( !$sucursal ){
-                    
                    $sucursal = Doctrine::getTable("IdsSucursal")
                                       ->createQuery("s")
                                       ->where("s.ca_principal = ?", true )
-                                      ->where("s.ca_id = ?", $idempresa )        
-                                      ->fetchOne(); 
+                                      ->where("s.ca_id = ?", $idempresa )
+                                      ->fetchOne();
                 }
                 
                 if( $sucursal ){
-                    $master.=$sucursal->getCaDireccion()."<br />Teléfonos:".$sucursal->getCaTelefonos();                    
+                    $master.=$sucursal->getCaDireccion()."<br />Teléfonos:".$sucursal->getCaTelefonos();
                     if( $sucursal->getCaFax() ){
                         $master.= " Fax:".$sucursal->getCaFax();
                     }
