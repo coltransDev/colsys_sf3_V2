@@ -121,10 +121,20 @@ $cliente = $reporte->getCliente();
 	<?
 	$inoCliente = $reporte->getInoClientesSea();
 	if( $inoCliente ){		
+        $fchfinmuisca=$inoCliente->getInoMaestraSea()->getCaFchfinmuisca();
 	?>
 	<tr>
 		<td><b>Referencia</b></td>
-		<td colspan="5"><?=$inoCliente->getCaReferencia()?></td>	
+		<td colspan="<?=((!$fchfinmuisca)?"5":"") ?>"><?=$inoCliente->getCaReferencia()?></td>
+        <?
+        if($fchfinmuisca)
+        {
+        ?>
+        <td>Fecha Finalizaci&oacute;n MUISCA</td>
+        <td colspan="3"><?=$fchfinmuisca?></td>
+        <?
+        }
+        ?>
 	</tr>
     <?
     }
