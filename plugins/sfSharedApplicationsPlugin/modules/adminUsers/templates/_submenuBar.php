@@ -14,6 +14,11 @@ switch($action){
 		$button[1]["tooltip"]="Crear un nuevo Usuario";
 		$button[1]["image"]="22x22/add_user.gif"; 			
 		$button[1]["link"]= 'adminUsers/formUsuario';
+        
+        $button[2]["name"]="Buscar";
+		$button[2]["tooltip"]="opciones de busqueda avanzadas";
+		$button[2]["image"]="22x22/lupa.gif"; 			
+		$button[2]["link"]= 'adminUsers/directory';
 		break;	
 
 	case "formUsuario":	

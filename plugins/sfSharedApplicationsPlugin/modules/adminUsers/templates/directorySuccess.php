@@ -65,7 +65,8 @@ function cambiarValores(){
 
 
 </script>
-    <table class="tableList" width="100%">
+<div class="content" align="center">
+    <table class="tableList" width="400px">
         <th colspan="3" style="border-bottom: none"><b>Buscar Personas</b></th>
         <tr>
             <td>
@@ -114,6 +115,8 @@ function cambiarValores(){
 
 <div align="center">
     <div id="resultados"></div>
+</div>
+
 </div>
 <script language="javascript" type="text/javascript">
 	cambiarValores();
