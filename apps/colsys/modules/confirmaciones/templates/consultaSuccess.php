@@ -1,6 +1,8 @@
 <?
 use_helper("ExtCalendar");
 
+include_component("widgets", "widgetMuelles",array("ciudad"=>$referencia->getCaDestino() ));
+
 $inoClientes = $sf_data->getRaw("inoClientes");
 $confirmaciones = $sf_data->getRaw("confirmaciones");
 
@@ -488,12 +490,22 @@ function cambiarTipoMsg( value ){
 									<input name="bandera" value="<?=$referencia->getCaBandera()?>" size="20" maxlength="20" type="text"></td>
 								
 								<td class="mostrar">Motonave Llegada:<br>
-									<input name="mnllegada" value="<?=$referencia->getCaMnllegada()?>" size="20" maxlength="50" type="text"></td>
-                                <td class="mostrar" style="display: block">Fecha Desconsolidación:<br>								
-									<?
-									echo extDatePicker('fchdesconsolidacion', $referencia->getCaFchdesconsolidacion("Y-m-d"));
-									?>	
-								</td>
+									<input name="mnllegada" value="<?=$referencia->getCaMnllegada()?>" size="20" maxlength="50" type="text">
+                                </td>
+                                <td class="mostrar">Muelle:<br>
+                                    
+                                    <input type='text' id='muelle' name='muelle' />
+                                    <script>
+                                    var mu=new WidgetMuelles({
+                                        id: 'muelle',
+                                        name: 'muelle',
+                                        hiddenName: "idmuelle",
+                                        value:"<?=$referencia->getInoDianDepositos()->getCaNombre()?>",
+                                        hiddenValue:"<?=$referencia->getCaMuelle()?>",
+                                        applyTo: "muelle"
+                                    })
+                                    </script>                                    
+                                </td>                                
 							</tr>
 							<tr>
 								<td class="mostrar" colspan="4"><b>Introducción al Mensaje de Confirmación:</b><br>
@@ -515,18 +527,23 @@ function cambiarTipoMsg( value ){
                                     echo extDatePicker('fcharribo', $referencia->getCaFcharribo());
                                     ?>
                                     </div>
-							</tr>
+							</tr>                            
                             <tr>
-								<td class="mostrar">Fecha Vaciado:<br>
+                                <td class="mostrar" width="25%" >Fecha Desconsolidación:<br>								
+									<?
+									echo extDatePicker('fchdesconsolidacion', $referencia->getCaFchdesconsolidacion("Y-m-d"));
+									?>	
+								</td>
+								<td class="mostrar" width="25%">Fecha Vaciado:<br>
 									<?
 									echo extDatePicker('ca_fchvaciado', $referencia->getCaFchvaciado("Y-m-d"));
 									?>
 								</td>
 							
-								<td class="mostrar">Hora Vaciado::<br>
+								<td class="mostrar" width="25%">Hora Vaciado::<br>
                                     <? echo extTimePicker("ca_horavaciado","" );?>
                                 </td>
-                                <td class="mostrar">SYGA:<br>
+                                <td class="mostrar" width="25%">Fecha finalizaci&oacute;n MUISCA:<br>
 									<?
 									echo extDatePicker('fchsyga', "");
 									?>

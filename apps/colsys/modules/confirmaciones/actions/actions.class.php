@@ -219,16 +219,23 @@ class confirmacionesActions extends sfActions
             $referencia->setCaMensaje( $request->getParameter( "email_body" ) );
             if( $request->getParameter( "fchdesconsolidacion" ) ){
                 $referencia->setCaFchdesconsolidacion( Utils::parseDate($request->getParameter( "fchdesconsolidacion" )) );
-            }		
+            }            
             $referencia->setCaMnllegada( $request->getParameter( "mnllegada" ) );
             $referencia->setCaFchconfirmado( date("Y-m-d H:i:s") );
             $referencia->setCaUsuconfirmado( $this->getUser()->getUserId() );
+            $referencia->setCaMuelle( $request->getParameter( "idmuelle" ) );
+            if( $request->getParameter( "fchsyga" ) ){
+                $referencia->setCaFchfinmuisca( Utils::parseDate($request->getParameter( "fchsyga" )) );
+            }
             $referencia->save();
         }
         else if ($modo=="puerto" && $tipo_msg=="Desc")
         {
             if( $request->getParameter( "ca_fchvaciado" ) || $request->getParameter( "ca_horavaciado" ) )
             {
+                if( $request->getParameter( "fchdesconsolidacion" ) ){
+                    $referencia->setCaFchdesconsolidacion( Utils::parseDate($request->getParameter( "fchdesconsolidacion" )) );
+                }
                 $referencia->setCaFchvaciado( Utils::parseDate($request->getParameter( "ca_fchvaciado" )) );            
                 $referencia->setCaHoravaciado( $request->getParameter( "ca_horavaciado" ) );
                 $referencia->save();
@@ -267,10 +274,16 @@ class confirmacionesActions extends sfActions
             }else{
                 $attachment = null;
             }
+            $directory = sfConfig::get('app_digitalFile_root').DIRECTORY_SEPARATOR.$folder.DIRECTORY_SEPARATOR;
+            $subdirectory="Referencias/".$ca_referencia."/";
+            
+            if(!file_exists($directory.$subdirectory)){
+                    @mkdir( $directory.$subdirectory ); 
+                }
             if( $attachment ){
-                $file = $directory.DIRECTORY_SEPARATOR.$attachment['name'];
+                $file = $directory.$subdirectory.$attachment['name'];
                 copy( $attachment['tmp_name'] , $file ); 
-                $attachments[] = $reporte->getDirectorioBase().$attachment['name'];
+                $attachments[] = $subdirectory.$attachment['name'];
             }            
             
             $user = sfContext::getInstance()->getUser();
@@ -291,6 +304,10 @@ class confirmacionesActions extends sfActions
                     $email->addTo( $recip );
                 }
             }
+            
+            $email->addCC($user->getEmail());
+            if($tipo_msg!="Puerto")
+                $email->addCC("parteaga@coltrans.com.co");
 
             $asunto = $asunto = "Notificación de ".(($tipo_msg=="Puerto")?"Llegada":"Desconsolidación")." desde el Puerto de ".$referencia->getOrigen()->getCaCiudad()." Ref.: ".$referencia->getCaReferencia();
 
@@ -303,6 +320,8 @@ class confirmacionesActions extends sfActions
             sfContext::getInstance()->getRequest()->setParameter("referencia", $referencia->getCaReferencia());
             sfContext::getInstance()->getRequest()->setParameter("tipo", $tipo_msg );
             sfContext::getInstance()->getRequest()->setParameter("intro_body", $request->getParameter( "intro_body" ) );
+            sfContext::getInstance()->getRequest()->setParameter("email_body", $request->getParameter( "email_body" ) );
+            
             
             if($tipo_msg=="Desc")
             {

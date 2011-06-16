@@ -6,15 +6,17 @@
  */
 
 $referencia = $sf_data->getRaw("referencia");
+$intro_body = $sf_data->getRaw("intro_body");
+$email_body = $sf_data->getRaw("email_body");
 ?>
 
 
-<table width="50%" border="0" class="tableList">
+<table width="85%" border="0" class="tableList" align="center">
     <tr>
         <td colspan="3">
             <?=$intro_body?>
             <br/>
-            <?=(($fchsyga)?"Fecha SYGA : ".$fchsyga:"")?>
+            <?=(($fchsyga)?"Fecha finalizaci&oacute;n MUISCA : ".$fchsyga:"")?>
         </td>
     </tr>
     <tr>
@@ -33,14 +35,19 @@ $referencia = $sf_data->getRaw("referencia");
         <td width="33%"><b>Reg.Capitania :</b><?=$referencia->getCaRegistrocap()?></td>        
     </tr>
         <tr>
-        <td width="33%"><b>Reg.Aduanero :</b><?=$referencia->getCaRegistroadu()?></td>
-        <td width="33%"><b>Fch.Registro :</b><?=$referencia->getCaFchregistroadu()?></td>
-        <td width="33%"><b>Reg.Capitania :</b><?=$referencia->getCaRegistrocap()?></td>        
+        <td width="33%"><b>Fecha Vaciado :</b><?=$referencia->getCaFchvaciado()?> - <?=$referencia->getCaHoravaciado()?></td>
+        <td width="33%"><b>Fecha. Desconsolidacion :</b><?=$referencia->getCaFchdesconsolidacion()?></td>
+        <td width="33%"><b>Muelle</b>: <?=$referencia->getCaMuelle()."-".$referencia->getInoDianDepositos()->getCaNombre()?></td>
     </tr>
     <tr>
         <td colspan="3">
             La información ha sido registrada en el sistema, favor proceder a informar a los clientes.<br/>
             Cordial Saludo.
+        </td>
+    </tr>
+    <tr>
+        <td colspan="3">
+            <?=$email_body?>
         </td>
     </tr>
     <tr>
