@@ -56,9 +56,9 @@ if ( $status->getCaIdetapa() == "IMCPD" ) { //confirmación de llegada
 			<b>Hora: </b>
 			<?=$inoMaestra->getCaHoraconfirmacion()?>		</td>
 		<?
-					if ( $inoMaestra->getCaFchdesconsolidacion() ) {
-					
-				?>
+            if ( $inoMaestra->getCaFchdesconsolidacion() ) {
+
+        ?>
 		<td><b>Desconsolidación:</b></td>
 		<td><?=$inoMaestra->getCaFchdesconsolidacion()?></td>
 		<?	  
@@ -90,8 +90,8 @@ if ( $status->getCaIdetapa() == "IMCPD" ) { //confirmación de llegada
 		<td><?=$inoMaestra->getCaRegistrocap()?></td>
 		<td><b>Bandera:</b></td>
 		<td><?=$inoMaestra->getCaBandera()?></td>
-		<td>&nbsp;</td>
-		<td>&nbsp;</td>
+		<td>Muelle</td>
+		<td><?=$inoMaestra->getCaMuelle()."-".$inoMaestra->getInoDianDepositos()->getCaNombre()?></td>
 	</tr>
 	<tr>
 		<td><b>Mercanc&iacute;a</b></td>
