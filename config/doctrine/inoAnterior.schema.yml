@@ -59,6 +59,7 @@ InoMaestraSea:
     ca_fchmbls: date
     ca_carpeta: boolean
     ca_muelle: integer
+    ca_fchfinmuisca: date
   relations:
     InoClientesSea:
       local: ca_referencia
