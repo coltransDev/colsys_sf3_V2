@@ -61,7 +61,7 @@ class confirmacionesActions extends sfActions
                 $q->addWhere("m.ca_motonave like ? OR m.ca_mnllegada like ? ", array($cadena."%", $cadena."%"));					
 				break;
 			case "hbl":
-                $q->addWhere("c.ca_hbls like ?", $cadena."%" );							
+                $q->addWhere("c.ca_hbls like ?", "%".$cadena."%" );							
 				break;
 			case "cliente":
                 $q->innerJoin("c.Cliente cl");
@@ -74,7 +74,7 @@ class confirmacionesActions extends sfActions
 			case "contenedor":
                 $q->innerJoin("c.InoMaestraSea mm");
                 $q->innerJoin("mm.InoEquiposSea e");
-                $q->addWhere("e.ca_idequipo like ? ", $cadena."%");
+                $q->addWhere("e.ca_idequipo like ? ", "%".$cadena."%");
 				break;
 		}
 		
@@ -332,6 +332,7 @@ class confirmacionesActions extends sfActions
             //echo $email->getCaBodyhtml();
             //exit;
             $email->save( $conn );
+            $this->modo = $modo;
             //$this->setCaIdemail( $email->getCaIdemail() );
             //$this->save( $conn );
             //exit;
