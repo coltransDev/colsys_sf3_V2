@@ -5244,7 +5244,8 @@ elseif (isset($accion)) {                                                      /
                 }
                 else
                 {
-                    //finalizarTarea();
+                    $tmp =& DlRecordset::NewRecordset($conn);
+                    finalizarTarea($tmp,$idreporte,$usuario);
                 }
 
                 $values="";
@@ -5315,6 +5316,8 @@ elseif (isset($accion)) {                                                      /
                     else
                     {
                         //quitar tarea
+                        $tmp =& DlRecordset::NewRecordset($conn);
+                        finalizarTarea($tmp,$idreporte,$usuario);
                     }
                     if (!$rs->Open("delete from tb_inoequiposxcliente where ca_referencia='$referencia' and ca_idcliente=$idcliente and ca_hbls='$hbls' "))
                     {
@@ -5372,6 +5375,8 @@ elseif (isset($accion)) {                                                      /
                     else
                     {
                         //quitar tarea
+                        $tmp =& DlRecordset::NewRecordset($conn);
+                        finalizarTarea($tmp,$idreporte,$usuario);
                     }
                     $sql="delete from tb_inoequiposxcliente where ca_referencia='$referencia' and ca_idcliente=$idcliente and ca_hbls='$hbls' ";
                     if (!$rs->Open($sql))
