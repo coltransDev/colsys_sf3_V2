@@ -399,7 +399,7 @@ class clientesActions extends sfActions {
                 $email->setCaTipo("ComunicacionCircular");
                 $email->setCaIdcaso("9999");
 
-                $email->setCaFchenvio(date("Y-m-d H:i:s")); // Hay que quitar cuando salga de seguimiento la rutina
+                // $email->setCaFchenvio(date("Y-m-d H:i:s")); // Hay que quitar cuando salga de seguimiento la rutina
 
                 $comercial = $cliente->getUsuario();
 
@@ -415,7 +415,7 @@ class clientesActions extends sfActions {
                 $email->setCaReplyto($comercial->getCaEmail());
                 $email->addCc($comercial->getCaEmail());
 
-                $email->addCc("clopez@coltrans.com.co");    // Pruebas de envio controlado
+                // $email->addCc("clopez@coltrans.com.co");    // Pruebas de envio controlado
 
                 $sucursal_obj = $comercial->getSucursal();
                 $direccion_suc = $sucursal_obj->getCaDireccion()." ".$sucursal_obj->getCaNombre();
@@ -589,7 +589,7 @@ class clientesActions extends sfActions {
             $email->setCaFromname("Administrador Sistema Colsys");
             $email->setCaReplyto("admin@coltrans.com.co");
 
-            $email->setCaFchenvio(date("Y-m-d H:i:s"));  // Hay que quitar cuando salga de seguimiento la rutina
+            // $email->setCaFchenvio(date("Y-m-d H:i:s"));  // Hay que quitar cuando salga de seguimiento la rutina
 
             $email->addTo($comercial->getCaEmail());
             reset($defaultEmail);
@@ -600,7 +600,7 @@ class clientesActions extends sfActions {
             while (list ($clave, $val) = each($ccEmails)) {
                 $email->addCc($val);
             }
-            $email->addCc("clopez@coltrans.com.co");    // Pruebas de envio controlado
+            // $email->addCc("clopez@coltrans.com.co");    // Pruebas de envio controlado
 
             $inicio = $this->getRequestParameter("fchStart");
             $final = $this->getRequestParameter("fchEnd");
