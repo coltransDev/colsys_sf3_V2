@@ -38,7 +38,10 @@
 <?
    $numUsuarios = count($usuarios);
    for ($i=0; $i<$numUsuarios; $i++){
-    $usuario = $usuarios[$i];
+       $usuario = $usuarios[$i];
+       if( !$usuario->getcaActivo() ){
+           continue;
+       }
 
 ?>
     <tr>
