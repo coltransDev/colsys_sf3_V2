@@ -31,6 +31,26 @@ if( $nivel==0 ) {
     header("Location: inosea_cons.php");
     exit();
 }
+function finalizarTarea($rs,$idreporte,$usua)
+{
+    try
+    {
+        $sql="select r.ca_idtarea_antecedente from tb_reportes r,notificaciones.tb_tareas t  
+            where r.ca_idreporte=".$idreporte." and  r.ca_idtarea_antecedente=t.ca_idtarea and ca_fchterminada is null";
+        $rs->Open($sql);
+
+        if($rs->Value('ca_idtarea_antecedente')>0)
+        {
+            $sql="update notificaciones.tb_tareas set ca_fchterminada='".date("Y-m-d H:i:s")."', ca_usuterminada='".$usua."' where ca_idtarea=".$rs->Value('ca_idtarea_antecedente');
+            $rs->Open($sql);
+        }
+    }
+    catch(Exception $e)
+    {
+        return false;
+    }
+    //$rs->Open("insert into tb_inoclientes_sea (ca_referencia, ca_idcliente, ca_idreporte, ca_hbls, ca_fchhbls, ca_imprimirorigen, ca_idproveedor, ca_proveedor, ca_numpiezas, ca_peso, ca_volumen, ca_numorden, ca_login, ca_continuacion, ca_continuacion_dest, ca_idbodega, ca_observaciones,  ca_fchantecedentes, ca_fchcreado, ca_usucreado) values('$referencia', $idcliente, $idreporte, '$hbls', '$fchhbls', '$imprimirorigen', $idproveedor, '$proveedor', $numpiezas, $peso, $volumen, '$numorden', '$login', '$continuacion', '$continuacion_dest', '$idbodega', '', $fchantecedentes, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")    
+}
 
 set_time_limit(0);
 $rs =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
@@ -5215,10 +5235,16 @@ elseif (isset($accion)) {                                                      /
                 $contenedores = substr($cadena,0,strlen($cadena)-1);
  * 
  */
-                if (!$rs->Open("insert into tb_inoclientes_sea (ca_referencia, ca_idcliente, ca_idreporte, ca_hbls, ca_fchhbls, ca_imprimirorigen, ca_idproveedor, ca_proveedor, ca_numpiezas, ca_peso, ca_volumen, ca_numorden, ca_login, ca_continuacion, ca_continuacion_dest, ca_idbodega, ca_observaciones,  ca_fchantecedentes, ca_fchcreado, ca_usucreado) values('$referencia', $idcliente, $idreporte, '$hbls', '$fchhbls', '$imprimirorigen', $idproveedor, '$proveedor', $numpiezas, $peso, $volumen, '$numorden', '$login', '$continuacion', '$continuacion_dest', '$idbodega', '', $fchantecedentes, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
+                
+                if (!$rs->Open("insert into tb_inoclientes_sea (ca_referencia, ca_idcliente, ca_idreporte, ca_hbls, ca_fchhbls, ca_imprimirorigen, ca_idproveedor, ca_proveedor, ca_numpiezas, ca_peso, ca_volumen, ca_numorden, ca_login, ca_continuacion, ca_continuacion_dest, ca_idbodega, ca_observaciones,  ca_fchantecedentes, ca_fchcreado, ca_usucreado) values('$referencia', $idcliente, $idreporte, '$hbls', '$fchhbls', '$imprimirorigen', $idproveedor, '$proveedor', $numpiezas, $peso, $volumen, '$numorden', '$login', '$continuacion', '$continuacion_dest', '$idbodega', '', $fchantecedentes, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) 
+                {
                     echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                     echo "<script>document.location.href = 'inosea.php';</script>";
                     exit;
+                }
+                else
+                {
+                    //finalizarTarea();
                 }
 
                 $values="";
@@ -5279,11 +5305,16 @@ elseif (isset($accion)) {                                                      /
  * 
  */
                 if ( $hbl != $hbls ) {                    
-                    if (!$rs->Open("insert into tb_inoclientes_sea (ca_referencia, ca_idcliente, ca_idreporte, ca_hbls, ca_fchhbls, ca_imprimirorigen, ca_idproveedor, ca_proveedor, ca_numpiezas, ca_peso, ca_volumen, ca_numorden, ca_login, ca_continuacion, ca_continuacion_dest, ca_idbodega, ca_observaciones,  ca_fchantecedentes, ca_fchcreado, ca_usucreado) values('$referencia', $idcliente, $idreporte, '$hbls', '$fchhbls', '$imprimirorigen', $idproveedor, '$proveedor', $numpiezas, $peso, $volumen, '$numorden', '$login', '$continuacion', '$continuacion_dest', '$idbodega', '', $fchantecedentes, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
+                    if (!$rs->Open("insert into tb_inoclientes_sea (ca_referencia, ca_idcliente, ca_idreporte, ca_hbls, ca_fchhbls, ca_imprimirorigen, ca_idproveedor, ca_proveedor, ca_numpiezas, ca_peso, ca_volumen, ca_numorden, ca_login, ca_continuacion, ca_continuacion_dest, ca_idbodega, ca_observaciones,  ca_fchantecedentes, ca_fchcreado, ca_usucreado) values('$referencia', $idcliente, $idreporte, '$hbls', '$fchhbls', '$imprimirorigen', $idproveedor, '$proveedor', $numpiezas, $peso, $volumen, '$numorden', '$login', '$continuacion', '$continuacion_dest', '$idbodega', '', $fchantecedentes, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) 
+                    {                        
                         //echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                         //echo "<script>document.location.href = 'inosea.php';</script>";
                         echo $rs->mErrMsg;
                         exit;
+                    }
+                    else
+                    {
+                        //quitar tarea
                     }
                     if (!$rs->Open("delete from tb_inoequiposxcliente where ca_referencia='$referencia' and ca_idcliente=$idcliente and ca_hbls='$hbls' "))
                     {
@@ -5322,9 +5353,11 @@ elseif (isset($accion)) {                                                      /
                     }
                     if($rs->Value('conta')>0)
                     {
-                        if($usuario_sucursal=="BOG")
+/*                        if($usuario_sucursal=="BOG")
                             $sql_inocli="update tb_inoclientes_sea set ca_idreporte = $idreporte, ca_idcliente = '$idcliente', ca_hbls = '$hbls', ca_fchhbls = '$fchhbls', ca_imprimirorigen = '$imprimirorigen', ca_idproveedor = $idproveedor, ca_proveedor = '$proveedor', ca_numpiezas = $numpiezas, ca_peso = $peso, ca_volumen = $volumen, ca_numorden = '$numorden', ca_login = '$login', ca_continuacion = '$continuacion', ca_continuacion_dest = '$continuacion_dest', ca_idbodega = '$idbodega', ca_observaciones = '',  ca_fchantecedentes = $fchantecedentes  where oid = '$oid'";
                         else
+*/
+
                             $sql_inocli="update tb_inoclientes_sea set ca_idreporte = $idreporte, ca_idcliente = '$idcliente', ca_hbls = '$hbls', ca_fchhbls = '$fchhbls', ca_imprimirorigen = '$imprimirorigen', ca_idproveedor = $idproveedor, ca_proveedor = '$proveedor', ca_numpiezas = $numpiezas, ca_peso = $peso, ca_volumen = $volumen, ca_numorden = '$numorden', ca_login = '$login', ca_continuacion = '$continuacion', ca_continuacion_dest = '$continuacion_dest', ca_idbodega = '$idbodega', ca_observaciones = '',  ca_fchantecedentes = $fchantecedentes, ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where oid = '$oid'";
                     }
                     else
@@ -5335,6 +5368,10 @@ elseif (isset($accion)) {                                                      /
                     if (!$rs->Open($sql_inocli)) {
                         echo $rs->mErrMsg;
                         exit;
+                    }
+                    else
+                    {
+                        //quitar tarea
                     }
                     $sql="delete from tb_inoequiposxcliente where ca_referencia='$referencia' and ca_idcliente=$idcliente and ca_hbls='$hbls' ";
                     if (!$rs->Open($sql))
