@@ -39,18 +39,19 @@ class clariantActions extends sfActions {
             set_time_limit(270);
             $directory = sfConfig::get('app_clariant_input');
             $processed = "processed";
-            $separador = chr(9);
+            $separador = chr(9);    // Tabulador
 
             $files = sfFinder::type('file')->name('Ordenes*.csv')->maxDepth(0)->in($directory);
 
             foreach( $files as $file ) {
-
                 $handle = fopen($file, "r");
                 $input = fread($handle, filesize($file));
-                $input = str_replace(chr(13),"",str_replace(chr(34), "", $input));
 
-                $records = explode(chr(10),$input); // Divide el archivo por los Saltos de Línea
-                $docCompra = null;
+                $input = str_replace(chr(13),"",str_replace(chr(34), "", $input)); // Quita las comillas dobles chr(34) y el CR chr(13)
+
+                $records = explode(chr(10),$input); // Divide el archivo por los Saltos de Línea LF chr(10)
+                $idclariant = null;
+                $docCompra  = null;
 
                 foreach($records as $record){       // Hace una primera lectura para verificar la estructura del archivo
 
@@ -74,7 +75,10 @@ class clariantActions extends sfActions {
                             $clariant->setCaOrden($fields[2]);
                             $clariant->setCaDocumentoFch($documentoFch);
                             $clariant->setCaIncoterm($fields[8]);
-                            $docCompra = $fields[2];
+                            $clariant->save();
+                            
+                            $idclariant = $clariant->getCaIdclariant();
+                            $docCompra  = $fields[2];
                         }
 
                         if(strrchr($fields[6], ".") > strrchr($fields[6], ",")){
@@ -84,17 +88,13 @@ class clariantActions extends sfActions {
                         }
 
                         $clarDetail = new ClarDetail();
+                        $clarDetail->setCaIdclariant($idclariant);
                         $clarDetail->setCaPosicion($fields[3]);
                         $clarDetail->setCaMaterial($fields[4]);
                         $clarDetail->setCaDescripcion($fields[5]);
                         $clarDetail->setCaCantidad($cantidad);
                         $clarDetail->setCaDespacho($cantidad);
                         $clarDetail->setCaUnidad($fields[7]);
-
-                        if(!$clariant->getCaIdclariant()){
-                            $clariant->save();
-                        }
-                        $clarDetail->setCaIdclariant($clariant->getCaIdclariant());
                         $clarDetail->save();
                     }
                 }
