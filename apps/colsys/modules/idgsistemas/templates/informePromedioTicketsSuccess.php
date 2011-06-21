@@ -17,7 +17,7 @@
            Valor
         </th>
         <th>
-           # Tickets
+           # Evaluaciones
         </th>
     </tr>
 <?
@@ -38,7 +38,7 @@ foreach( $eval as $e ){
             <b><?=round($sumPromedio/$countPromedio,2)?></b>
         </td>
         <td>
-            <b><?=round($e["c_numeval"],2)?></b>
+            <b><?=round($numEval,2)?></b>
         </td>
         
     </tr>
@@ -61,6 +61,7 @@ foreach( $eval as $e ){
 
 
     $lastUser=$e["us_ca_nombre"];
+    $numEval = $e["c_numeval"];
 
     $url = "idgsistemas/informeListadoEvaluacionesCriterio?login=".$e["us_ca_login"]."&idcriterio=".$e["c_ca_idcriterio"];
     if( $fchinicio ){

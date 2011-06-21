@@ -41,8 +41,9 @@ class idgsistemasActions extends sfActions {
                             ->select("c.ca_idcriterio,c.ca_criterio, us.ca_login, us.ca_nombre, AVG(ca_valor) as promedio, COUNT(*) as numeval")
                             ->from("SurvCriterio c")
                             ->innerJoin("c.SurvEvaluacionxCriterio exc")
-                            ->innerJoin("exc.SurvEvaluacion ev")                            
-                            ->innerJoin("ev.UsuCreado us")
+                            ->innerJoin("exc.SurvEvaluacion ev")
+                            ->innerJoin( "ev.HdeskTicket t" )
+                            ->innerJoin("t.AssignedTo us")
                             ->addGroupBy("c.ca_criterio")
                             ->addGroupBy("us.ca_login")
                             ->addGroupBy("us.ca_nombre")
@@ -51,7 +52,7 @@ class idgsistemasActions extends sfActions {
                             ->addOrderBy("c.ca_criterio");
                            
         if( $idgroup ){
-            $q->innerJoin( "ev.HdeskTicket t" );
+            
             $q->addWhere("t.ca_idgroup=?",$idgroup );
 
             if( $login ){
@@ -99,18 +100,21 @@ class idgsistemasActions extends sfActions {
         $login = $request->getParameter("login");
 
         $q = Doctrine_Query::create()
-                            ->select("ev.ca_idevaluacion, AVG(ca_valor) as promedio, ev.ca_titulo, us.ca_nombre, ev.ca_comentarios")
+                            ->select("ev.ca_idevaluacion, AVG(ca_valor) as promedio, ev.ca_titulo, us.ca_nombre, us2.ca_nombre, ev.ca_comentarios")
                             ->from("SurvEvaluacion ev")
                             ->innerJoin("ev.SurvEvaluacionxCriterio exc")
-                            ->innerJoin("ev.UsuCreado us")
+                            ->innerJoin( "ev.HdeskTicket t" )
+                            ->innerJoin("t.AssignedTo us")
+                            ->innerJoin("t.Usuario us2")
                             ->addGroupBy("ev.ca_idevaluacion")
                             ->addGroupBy("ev.ca_titulo")
                             ->addGroupBy("us.ca_nombre")
+                            ->addGroupBy("us2.ca_nombre")
                             ->addGroupBy("ev.ca_comentarios")
                             ->addOrderBy("us.ca_nombre");
                             
         if( $idgroup ){
-            $q->innerJoin( "ev.HdeskTicket t" );
+            
             $q->addWhere("t.ca_idgroup=?",$idgroup );
             if( $login ){
                 $q->addWhere("t.ca_assignedto=?",$login );
@@ -148,6 +152,13 @@ class idgsistemasActions extends sfActions {
         $this->evaluacion = Doctrine::getTable("SurvEvaluacion")->find( $idevaluacion );
         $this->forward404Unless( $this->evaluacion );
 
+
+        $this->ticket = Doctrine::getTable("HDeskTicket")
+                        ->createQuery("h")
+                        ->addWhere("h.ca_idevaluacion=?", $this->evaluacion->getCaIdevaluacion())
+                        ->fetchOne();
+
+
     }
 
 
@@ -162,14 +173,17 @@ class idgsistemasActions extends sfActions {
 
 
         $q = Doctrine_Query::create()
-                            ->select("cr.ca_criterio, ev.ca_titulo, cr.ca_criterio, exc.ca_valor, exc.ca_ponderacion, exc.ca_observaciones")
+                            ->select("cr.ca_criterio,  ev.ca_idevaluacion, ev.ca_titulo, cr.ca_criterio, exc.ca_valor, exc.ca_ponderacion, us.ca_nombre, us2.ca_nombre, exc.ca_observaciones")
                             ->from("SurvEvaluacionxCriterio exc")
                             ->innerJoin("exc.SurvCriterio cr")
                             ->innerJoin("exc.SurvEvaluacion ev")
+                            ->innerJoin( "ev.HdeskTicket t" )
+                            ->innerJoin("t.AssignedTo us")
+                            ->innerJoin("t.Usuario us2")
                             ->addOrderBy("ev.ca_idevaluacion");
 
         if( $idgroup ){
-            $q->innerJoin( "ev.HdeskTicket t" );
+            
             $q->addWhere("t.ca_idgroup=?",$idgroup );
             if( $login ){
                 $q->addWhere("t.ca_assignedto=?",$login );

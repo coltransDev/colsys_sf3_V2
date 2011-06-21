@@ -14,8 +14,21 @@
         <tr>
             <th colspan="4">
                 <?=$evaluacion->getCaTitulo()?>
+
+                <?
+                if( $ticket ){
+
+                    echo link_to(" Ver ticket", "pm/verTicket?format=email&id=".$ticket->getCaIdticket(), array("target"=>"_blank"));
+
+                }
+
+                ?>
+
             </th>
         </tr>
+
+
+
         <tr class="row0">
             <td>
                 Criterio
@@ -77,12 +90,17 @@
                 &nbsp;
             </td>            
         </tr>
-
         <tr class="row0">
             <td colspan="4">
                 <b>usuario</b><br />
                 <?=$evaluacion->getUsuario()->getCaNombre()?>
                 <?=Utils::fechaMes($evaluacion->getCaFchcreado())?>
+            </td>
+        </tr>
+        <tr class="row0">
+            <td colspan="4">
+                <b>Usuario evaluado</b><br />
+                <?=$evaluacion->getCaUsucreado()?>
             </td>
         </tr>
 
@@ -98,7 +116,8 @@
         </tr>
         <?
         }
-        ?>
+        ?>       
+        
     </table>
     
     Generado <?=Utils::fechaMes(date("Y-m-d H:i:s"))?>
