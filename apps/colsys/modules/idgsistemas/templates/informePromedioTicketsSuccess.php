@@ -22,6 +22,10 @@
     </tr>
 <?
 $lastUser = null;
+$sumPromedioTotal = 0;
+$countPromedioTotal = 0;
+$numEvalTotal = 0;
+
 foreach( $eval as $e ){
 
     /*print_r($e);
@@ -43,6 +47,9 @@ foreach( $eval as $e ){
         
     </tr>
     <?
+        $sumPromedioTotal += round($sumPromedio/$countPromedio,2);
+        $countPromedioTotal++;
+        $numEvalTotal += $numEval;
     }
     
     if( !$lastUser || $lastUser!=$e["us_ca_nombre"] ){
@@ -106,7 +113,24 @@ foreach( $eval as $e ){
             <b><?=round($sumPromedio/$countPromedio,2)?></b>
         </td>
         <td>
-            <b><?=round($e["c_numeval"],2)?></b>
+            <b><?=round($numEval,2)?></b>
+        </td>
+    </tr>
+    <?
+    $sumPromedioTotal += round($sumPromedio/$countPromedio,2);
+    $countPromedioTotal++;
+    $numEvalTotal += $numEval;
+    ?>
+    
+    <tr class="row0">
+        <td colspan="2">
+            <b>Gran Total</b>
+        </td>
+        <td>
+            <b><?=round($sumPromedioTotal/$countPromedioTotal,2)?></b>
+        </td>
+        <td>
+            <b><?=round($numEvalTotal,2)?></b>
         </td>
     </tr>
 </table>
