@@ -29,9 +29,15 @@ $modulo = "00100000";                                                          /
 //  include_once 'include/seguridad.php';                                      // Control de Acceso al módulo
 
 $rs =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
+
+$patron = '/(\d+)-(20\d\d)/';
+//if (preg_match($patron, $id)) {
 if (strpos($id, '-') === false){
     $condition = "ca_idreporte = $id";
-    if ($rs->Open("select count(ca_tiporep) as ca_contador from tb_reportes where $condition and ca_tiporep > 0")) { // Verfica si se trata de un reporte de negocios con el nuevo módulo
+    $sql="select count(ca_tiporep) as ca_contador from tb_reportes where $condition and ca_tiporep > 0";
+    //echo $sql;
+    //exit;
+    if ($rs->Open($sql)) { // Verfica si se trata de un reporte de negocios con el nuevo módulo
         if($rs->Value('ca_contador')!=0){
            echo "<script>document.location.href = '/reportesNeg/verReporte/id/$id';</script>";
            exit;
@@ -51,6 +57,7 @@ if (true){
          echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
          echo "<script>document.location.href = 'entrada.php';</script>";
          exit; }
+     echo "<script>document.location.href = '/reportesNeg/verReporte/id/".$rs->Value('ca_idreporte')."';</script>";
      $fch_mem = ($rs->Value('ca_fchactualizado')!='')?$rs->Value('ca_fchactualizado'):$rs->Value('ca_fchcreado');
      $usu_mem = ($rs->Value('ca_fchactualizado')!='')?$rs->Value('ca_usuactualizado'):$rs->Value('ca_usucreado');
      list($anno, $mes, $dia, $hor, $min, $seg) = sscanf($fch_mem,"%d-%d-%d %d:%d:%d");
