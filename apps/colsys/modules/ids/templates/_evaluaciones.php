@@ -62,8 +62,11 @@ $numYears = $actualYear-$initialYear+1;
         <td width="15%">
             <b>Fecha </b>
         </td>
-        <td width="10%">
+        <td width="5%">
             <b>A&ntilde;o</b>
+        </td>
+        <td width="5%">
+            <b>Periodo</b>
         </td>
         <td width="20%">
            <b>Tipo</b>
@@ -122,6 +125,10 @@ $numYears = $actualYear-$initialYear+1;
         </td>
         <td>
             <?=$evaluacion->getCaAno() ?>
+
+        </td>
+        <td>
+            <?=$evaluacion->getCaPeriodo() ?>
 
         </td>
         <td>

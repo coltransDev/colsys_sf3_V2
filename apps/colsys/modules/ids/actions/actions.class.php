@@ -729,12 +729,18 @@ class idsActions extends sfActions {
         
         $defAno = date("Y");
         
-        if( date("Y-m-d")>=date('Y')."-07-01" ){
+        
+        //echo date("Y-m-d")."  -----  entre ".date('Y')."-02-01"."    ".date('Y')."-07-01" ;
+        
+        if( date("Y-m-d")>=date('Y')."-04-01" && date("Y-m-d")<=date('Y')."-09-01" ){            
             $defPeriodo = 1;
         }else{
             $defPeriodo = 2;
-            $defAno--;
+            if( date('Y')."-01-01">=date("Y-m-d") ){
+                $defAno--;
+            }
         }
+        
         
         $this->defAno = $defAno;
         $this->defPeriodo = $defPeriodo;
