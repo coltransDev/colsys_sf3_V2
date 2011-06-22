@@ -21,11 +21,11 @@
             </tr>
             <tr>
                 <td> <b>Fecha Evaluaci&oacute;n:</b><br /><?=Utils::fechaMes($evaluacion->getCaFchevaluacion())?></td>
-                <td> <b>A&ntilde;o:</b><br /><?=$evaluacion->getCaAno()?></td>
+                <td> <b>Concepto:</b><br /><?=$evaluacion->getCaConcepto()?></td>
             </tr>
             <tr>
-                <td> <b>Concepto:</b><br /><?=$evaluacion->getCaConcepto()?></td>
-                <td> &nbsp;</td>
+                <td> <b>A&ntilde;o:</b><br /><?=$evaluacion->getCaAno()?></td>                
+                <td> <b>Periodo:</b><br /><?=$evaluacion->getCaPeriodo()?></td>                
             </tr>
              <tr>
                 <td> <b>Fecha Creaci&oacute;n:</b><br /><?=Utils::fechaMes($evaluacion->getCaFchcreado())?></td>

@@ -27,7 +27,8 @@ class NuevaEvaluacionForm extends BaseForm{
 
 		$widgets['concepto'] = new sfWidgetFormInputHidden();
         $widgets['fchevaluacion'] = new sfWidgetFormExtDate();
-        $widgets['ano'] = new sfWidgetFormInputText(array(), array("size"=>10 ));
+        $widgets['ano'] = new sfWidgetFormInputText(array(), array("size"=>10, "readOnly"=>"true" ));
+        $widgets['periodo'] = new sfWidgetFormInputText(array(), array("size"=>10, "readOnly"=>"true" ));
         $criterios = $this->getCriterios();
         if( $criterios ){            
             foreach( $criterios as $criterio ){
@@ -45,13 +46,14 @@ class NuevaEvaluacionForm extends BaseForm{
 														array('required' => 'Este campo es requerido'));
         $validator["concepto"] =new sfValidatorString( array('required' => false ),
 														array('required' => 'Este campo es requerido'));
-        $validator["fchevaluacion"] =new sfValidatorString( array('required' => true ),
-														array('required' => 'Este campo es requerido'));
+        /*$validator["fchevaluacion"] =new sfValidatorString( array('required' => true ),
+														array('required' => 'Este campo es requerido'));*/
 
         $validator["ano"] =new sfValidatorString( array('required' => true ),
 														array('required' => 'Este campo es requerido'));
 
-
+        $validator["periodo"] =new sfValidatorString( array('required' => true ),
+														array('required' => 'Este campo es requerido'));
 
         if( $criterios ){
             foreach( $criterios as $criterio ){

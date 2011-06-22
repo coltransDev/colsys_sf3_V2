@@ -332,6 +332,7 @@ IdsEvaluacion:
     ca_tipo: string(15)
     ca_concepto: string(15)
     ca_ano: integer
+    ca_periodo: integer
     ca_fchevaluacion: date
     ca_usucreado: string(20)
     ca_fchcreado: timestamp
@@ -455,6 +456,7 @@ Cliente:
         type: integer
         primary: true
     ca_compania: string
+    ca_digito: integer
     ca_papellido: string
     ca_sapellido: string
     ca_nombres: string

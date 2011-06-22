@@ -727,6 +727,18 @@ class idsActions extends sfActions {
             $this->proveedor = Doctrine::getTable("IdsProveedor")->find($request->getParameter("id"));
         }
         
+        $defAno = date("Y");
+        
+        if( date("Y-m-d")>=date('Y')."-07-01" ){
+            $defPeriodo = 1;
+        }else{
+            $defPeriodo = 2;
+            $defAno--;
+        }
+        
+        $this->defAno = $defAno;
+        $this->defPeriodo = $defPeriodo;
+        
 
         $this->modo = $request->getParameter("modo");
         $this->forward404Unless($this->ids);
@@ -788,10 +800,11 @@ class idsActions extends sfActions {
 
             $bindValues = array();
 
-            $bindValues["fchevaluacion"] = $request->getParameter("fchevaluacion");
+            //$bindValues["fchevaluacion"] = $request->getParameter("fchevaluacion");
             $bindValues["concepto"] = $request->getParameter("concepto");
             $bindValues["tipo"] = $request->getParameter("tipo");
             $bindValues["ano"] = $request->getParameter("ano");
+            $bindValues["periodo"] = $request->getParameter("periodo");
             foreach ($this->criterios as $criterio) {
                 $bindValues["ponderacion_" . $criterio->getCaIdcriterio()] = $request->getParameter("ponderacion_" . $criterio->getCaIdcriterio());
                 $bindValues["calificacion_" . $criterio->getCaIdcriterio()] = $request->getParameter("calificacion_" . $criterio->getCaIdcriterio());
@@ -802,8 +815,9 @@ class idsActions extends sfActions {
             if ($this->form->isValid()) {
 
                 $evaluacion->setCaId($this->ids->getCaId());
-                $evaluacion->setCaFchevaluacion(Utils::parseDate($request->getParameter('fchevaluacion')));
+                $evaluacion->setCaFchevaluacion(date("Y-m-d"));
                 $evaluacion->setCaAno($request->getParameter('ano'));
+                $evaluacion->setCaPeriodo($request->getParameter('periodo'));
                 $evaluacion->setCaConcepto($request->getParameter('concepto'));
 
                 $evaluacion->setCaTipo($request->getParameter('tipo'));
@@ -841,6 +855,9 @@ class idsActions extends sfActions {
         foreach ($evaluacionxCriterios as $evaluacionxCriterio) {
             $this->evaluacionxCriterios[$evaluacionxCriterio->getCaIdcriterio()] = $evaluacionxCriterio;
         }
+        
+        
+        
     }
 
     /*

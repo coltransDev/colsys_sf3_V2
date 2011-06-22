@@ -62,31 +62,31 @@ use_helper("ExtCalendar");
             </td>
         </tr>
         <tr>
-            <td>
-                <b>Fecha:</b><br />
-                <?
-                echo $form["fchevaluacion"]->renderError();
-                if( $evaluacion->getCaFchevaluacion() ){
-                    $form->setDefault('fchevaluacion', $evaluacion->getCaFchevaluacion() );
-                }else{
-                    $form->setDefault('fchevaluacion', date("Y-m-d") );
-                }
-                echo $form["fchevaluacion"]->render();
-                ?>
-
-            </td>
-        
-            <td>
+            <td>                
                 <b>A&ntilde;o:</b><br />
                 <?
                 echo $form["ano"]->renderError();
                 if( $evaluacion->getCaAno() ){
                     $form->setDefault('ano', $evaluacion->getCaAno() );
+                }else{
+                    $form->setDefault('ano', $defAno );
                 }
                 echo $form["ano"]->render();
                 ?>
-
+            </td>        
+            <td>
+               <b>Periodo:</b><br />
+                <?
+                echo $form["periodo"]->renderError();
+                if( $evaluacion->getCaAno() ){
+                    $form->setDefault('periodo', $evaluacion->getCaPeriodo() );
+                }else{
+                    $form->setDefault('periodo', $defPeriodo );
+                }
+                echo $form["periodo"]->render();
+                ?>
             </td>
+            
         </tr>
         
         <tr>
