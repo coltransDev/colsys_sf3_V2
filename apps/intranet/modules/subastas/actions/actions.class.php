@@ -335,9 +335,13 @@ class subastasActions extends sfActions {
                 $mensaje = "Felicitaciones usted ha adquirido este articulo!";            
                 $articulo->notifyUser( $articulo->getCaUsucomprador(), $mensaje, $mensaje, $conn );                 
                             
-            }else{                
-                $mensaje = "El articulo en referencia finalizó sin ninguna oferta!";        
-                $articulo->notifyUser( $articulo->getCaUsucreado(), $mensaje, $mensaje, $conn );                 
+            }else{           
+                if( !$articulo->getCaFchnotificacion() ){
+                    $mensaje = "El articulo en referencia finalizó sin ninguna oferta!";        
+                    $articulo->notifyUser( $articulo->getCaUsucreado(), $mensaje, $mensaje, $conn );     
+                    $articulo->setCaFchnotificacion( date("Y-m-d H:i:s") );
+                    $articulo->save( $conn );
+                }
             }            
         }
         $conn->commit();

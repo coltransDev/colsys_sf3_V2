@@ -14,6 +14,7 @@ SubArticulo:
     ca_descripcion: string
     ca_formapago: string
     ca_valor: float
+    ca_fchinicio: timestamp
     ca_fchvencimiento: timestamp
     ca_directa: boolean
     ca_incremento: integer
@@ -24,6 +25,7 @@ SubArticulo:
     ca_usucreado: string
     ca_fchactualizado: timestamp
     ca_usuactualizado: string
+    ca_fchnotificacion: timestamp
   relations:
     UsuCreado:
       local: ca_usucreado

@@ -24,9 +24,9 @@ Cotizacion:
     ca_idg_envio_oportuno: integer
     ca_etapa: string
     ca_idtarea: integer
-    ca_tasa_cambio: float
-    ca_trm: float
-    ca_valor_mcia: float
+#    ca_tasa_cambio: float
+#    ca_trm: float
+#    ca_valor_mcia: float
     ca_usucreado: string(20)
     ca_fchcreado: timestamp
     ca_usuactualizado: string(20)
@@ -184,7 +184,7 @@ CotOpcion:
     ca_usuactualizado: string(20)
     ca_fchactualizado: timestamp
     ca_idequipo: integer
-    ca_cantidad: numeric
+#    ca_cantidad: numeric
   relations:
     CotProducto:
       local: ca_idproducto
@@ -231,7 +231,7 @@ CotRecargo:
     ca_usuactualizado: string(20)
     ca_fchactualizado: timestamp
     ca_idequipo: integer
-    ca_cantidad: numeric
+#    ca_cantidad: numeric
   relations:    
     Concepto:
       local: ca_idconcepto
