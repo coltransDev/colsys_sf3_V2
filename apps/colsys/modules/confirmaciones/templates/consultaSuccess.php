@@ -509,7 +509,7 @@ function cambiarTipoMsg( value ){
 							</tr>
 							<tr>
 								<td class="mostrar" colspan="4"><b>Introducción al Mensaje de Confirmación:</b><br>
-									<textarea name="intro_body" wrap="virtual" rows="3" cols="93"><?=$textos['mensajeConf']?></textarea></td>
+									<textarea name="intro_body" wrap="virtual" rows="3" cols="93">Se Notifica que la carga arribo con la siguiente informacion.</textarea></td>
 							</tr>
 						</tbody>
 					</table>
@@ -517,7 +517,7 @@ function cambiarTipoMsg( value ){
 						<tbody>
 							<tr>
 								<td class="mostrar" colspan="4"><b>Introducción al Mensaje de Confirmación:</b><br>
-									<textarea name="intro_body" wrap="virtual" rows="3" cols="93"><?=$textos['mensajeDesc']?></textarea></td>
+									<textarea name="intro_body_desc" wrap="virtual" rows="3" cols="93">Se desconsolido la carga con la siguiente informacion:</textarea></td>
 							</tr>
                             <tr>
 								<td class="mostrar" colspan="4"><b>Fecha de arribo</b><br>

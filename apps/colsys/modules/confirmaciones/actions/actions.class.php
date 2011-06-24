@@ -47,18 +47,18 @@ class confirmacionesActions extends sfActions
 		switch( $criterio ){
 			case "referencia":
                 $cadena = str_replace("-", ".", $cadena );
-                $q->addWhere("m.ca_referencia like ? ", $cadena."%");				
+                $q->addWhere("m.ca_referencia like ? ", "%".$cadena."%");				
 				break;
 			case "reporte":
 
                 $q->innerJoin("c.Reporte r");
-                $q->addWhere("r.ca_consecutivo like ? ", $cadena."%");
+                $q->addWhere("r.ca_consecutivo like ? ", "%".$cadena."%");
 				break;
 			case "blmaster":
-                $q->addWhere("m.ca_mbls like ? ", $cadena."%");				
+                $q->addWhere("m.ca_mbls like ? ","%". $cadena."%");				
 				break;
 			case "motonave":
-                $q->addWhere("m.ca_motonave like ? OR m.ca_mnllegada like ? ", array($cadena."%", $cadena."%"));					
+                $q->addWhere("m.ca_motonave like ? OR m.ca_mnllegada like ? ", array("%".$cadena."%", "%".$cadena."%"));					
 				break;
 			case "hbl":
                 $q->addWhere("c.ca_hbls like ?", "%".$cadena."%" );							
@@ -223,7 +223,10 @@ class confirmacionesActions extends sfActions
             $referencia->setCaMnllegada( $request->getParameter( "mnllegada" ) );
             $referencia->setCaFchconfirmado( date("Y-m-d H:i:s") );
             $referencia->setCaUsuconfirmado( $this->getUser()->getUserId() );
-            $referencia->setCaMuelle( $request->getParameter( "idmuelle" ) );
+            if($request->getParameter( "idmuelle" ))
+                $referencia->setCaMuelle( $request->getParameter( "idmuelle" ) );
+            else
+                $referencia->setCaMuelle( null );
             if( $request->getParameter( "fchsyga" ) ){
                 $referencia->setCaFchfinmuisca( Utils::parseDate($request->getParameter( "fchsyga" )) );
             }
@@ -309,7 +312,7 @@ class confirmacionesActions extends sfActions
             if($tipo_msg!="Puerto")
                 $email->addCC("parteaga@coltrans.com.co");
 
-            $asunto = $asunto = "Notificación de ".(($tipo_msg=="Puerto")?"Llegada":"Desconsolidación")." desde el Puerto de ".$referencia->getOrigen()->getCaCiudad()." Ref.: ".$referencia->getCaReferencia();
+            $asunto = $asunto = "Notificación de ".(($tipo_msg=="Puerto")?"Llegada":"Desconsolidación")." desde el Puerto de ".$referencia->getDestino()->getCaCiudad()." Ref.: ".$referencia->getCaReferencia();
 
             $email->setCaSubject( substr($asunto, 0, 250) );
 
@@ -319,9 +322,8 @@ class confirmacionesActions extends sfActions
 
             sfContext::getInstance()->getRequest()->setParameter("referencia", $referencia->getCaReferencia());
             sfContext::getInstance()->getRequest()->setParameter("tipo", $tipo_msg );
-            sfContext::getInstance()->getRequest()->setParameter("intro_body", $request->getParameter( "intro_body" ) );
-            sfContext::getInstance()->getRequest()->setParameter("email_body", $request->getParameter( "email_body" ) );
-            
+            sfContext::getInstance()->getRequest()->setParameter("intro_body", (($tipo_msg=="Puerto")?$request->getParameter( "intro_body" ):$request->getParameter( "intro_body_desc" ) ) );
+            sfContext::getInstance()->getRequest()->setParameter("email_body", $request->getParameter( "email_body" ) );            
             
             if($tipo_msg=="Desc")
             {
@@ -329,16 +331,10 @@ class confirmacionesActions extends sfActions
             }
             $modo = $request->getParameter( "modo" );
             $email->setCaBodyhtml(  sfContext::getInstance()->getController()->getPresentationFor( 'confirmaciones', 'emailConfirmacion') );
-            //echo $email->getCaBodyhtml();
-            //exit;
             $email->save( $conn );
             $this->modo = $modo;
-            //$this->setCaIdemail( $email->getCaIdemail() );
-            //$this->save( $conn );
-            //exit;
         }
-         else {            
-
+         else {
             foreach( $oids as $oid ){
 
                 if( is_uploaded_file ( $_FILES['attachment_'.$oid]['tmp_name'] ) ){

@@ -1,3 +1,14 @@
+<?
+if($modo=="puerto")
+{
+?>
+<script>
+    alert("El mensaje se ha enviado correctamente");
+    location.href="/confirmaciones/index/modo/puerto";
+</script>
+<?
+}
+?>
 <div align="center">
 El mensaje se ha enviado correctamente
 <br />
