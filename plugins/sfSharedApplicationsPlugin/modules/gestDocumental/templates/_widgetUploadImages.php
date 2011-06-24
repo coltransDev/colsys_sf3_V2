@@ -34,8 +34,8 @@ WidgetUploadImages = function( config ){
             button_window_mode: SWFUpload.WINDOW_MODE.TRANSPARENT,
             button_cursor: SWFUpload.CURSOR.HAND,
 
-            flash_url : "/js/swfupload/swfupload.swf",
-            flash9_url : "/js/swfupload/swfupload_fp9.swf",
+            flash_url : "<?=$baseUrl?>/swfupload.swf",
+            flash9_url : "<?=$baseUrl?>/swfupload_fp9.swf",
 
             custom_settings : {
                 upload_target : config.upload_target,

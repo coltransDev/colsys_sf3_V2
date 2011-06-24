@@ -49,6 +49,20 @@ class gestDocumentalComponents extends sfComponents
 		$response->addJavaScript("swfupload/swfupload",'last');
         $response->addJavaScript("swfupload/js/handlers",'last');
         
+        $app = sfContext::getInstance()->getConfiguration()->getApplication();
+                
+        //   return 5;
+        switch ($app) {
+            case "colsys":
+                $this->baseUrl = "/js/swfupload/";
+                break;
+            case "intranet":
+                $this->baseUrl = "/intranet/js/swfupload";
+                break;
+        }
+        
+        
+        
         
     }
 	
