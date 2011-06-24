@@ -47,8 +47,8 @@ WidgetCiudad = function( config ){
         itemSelector: 'div.search-item',
         listClass: 'x-combo-list-small',
         submitValue: true,
-        filterBy: this.filterFn        
-    });   
+        filterBy: this.filterFn
+    });
 };
 
 
