@@ -332,6 +332,33 @@ class widgetsComponents extends sfComponents {
             $this->data[] = array("id"=>$r["d_ca_iddepartamento"],"valor" => utf8_encode($r["d_ca_nombre"]));
         }
     }
+    
+    public function executeWidgetMuelles() {
+    //echo $this->ciudad;
+        $this->data = array();
+     
+        if($this->ciudad=="CTG-0005")
+        {
+            $this->data[] = array("id"=>"2257","valor" =>"Muelles El Bosque S.A." );
+            $this->data[] = array("id"=>"2261","valor" =>"Soc.Portuaria Reg.Decartagenas.Adeposito" );
+            $this->data[] = array("id"=>"2259","valor" =>"Contecar Tnal C/Nedor.C/Genas.A.Deposito" );
+        }
+        else if($this->ciudad=="BUN-0002")
+        {
+            $this->data[] = array("id"=>"2366","valor" =>"Soc.Port.Regional B/Tura S.A." );
+            $this->data[] = array("id"=>"2918","valor" =>"SOCIEDAD PORTUARIA TERMINAL DE CONTENEDORES DE BUENAVENTURA S.A. T.C.BUENA S.A." );
+        }
+        else if($this->ciudad=="BAQ-0005")
+        {
+            $this->data[] = array("id"=>"2031","valor" =>"Soc.Port.Regionalde B/Quillas.A.Deposito" );
+        }
+        else if($this->ciudad=="STA-0005")
+        {
+            $this->data[] = array("id"=>"2435","valor" =>"SOCIEDAD PORTUARIA REGIONAL DE SANTA MARTA S.A" );
+        }
+        
+    }
+    
     public function executeWidgetModalidad() {
         $this->data = array();
 
