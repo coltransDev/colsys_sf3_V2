@@ -2,7 +2,7 @@
 <div id="entry-list">
 <? 
 if ($nivel == 1) {
-    echo link_to(image_tag("new.png"), "noticias/editarNoticia")."<br />";
+    echo link_to(image_tag("new.png"), "noticias/formNoticia")."<br />";
 } 
 ?>
 
@@ -27,7 +27,7 @@ foreach ($noticias as $noticia) {
                 </div>
                 <p class="readmore">
                     <? if ($nivel == 1) { ?>
-                        <a href="<?= url_for('noticias/editarNoticia?idnoticia=' . $noticia->getCaIdnoticia()) ?>">Editar</a>
+                        <a href="<?= url_for('noticias/formNoticia?idnoticia=' . $noticia->getCaIdnoticia()) ?>">Editar</a>
                     <? } ?>
                 </p>
             </div>

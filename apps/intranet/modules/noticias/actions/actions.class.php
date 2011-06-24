@@ -35,25 +35,59 @@ class noticiasActions extends sfActions {
         return $this->nivel;
     }
     
-    public function executeEditarNoticia(sfWebRequest $request) {
-
-
+    public function executeFormNoticia(sfWebRequest $request) {
 
         $this->nivel = $this->getNivel();
 
         if ($this->nivel == 0) {
             $this->forward("adminUsers", "noAccess");
         }
-
+        
+        $this->form = new NoticiaForm();
+        
+        
+        
         $idnoticia = $request->getParameter("idnoticia");
-        $this->noticia = Doctrine::getTable("Noticia")->find($idnoticia);
 
-        if (!$this->noticia) {
-            $this->noticia = new Noticia();
+        if ($idnoticia) {
+            $noticia = Doctrine::getTable("Noticia")->find($idnoticia);
+            $this->forward404Unless($noticia);
+        } else {
+            $noticia = new Noticia();
         }
+        
+        if ($request->isMethod('post')){	
+            
+            $bindValues = array();
+            $bindValues["idnoticia"] = $request->getParameter("idnoticia");
+            $bindValues["title"] = $request->getParameter("title");
+            $bindValues["info"] = $request->getParameter("info");
+            $bindValues["fchpublicacion"] = $request->getParameter("fchpublicacion");
+            $bindValues["fcharchivar"] = $request->getParameter("fcharchivar");
+            $bindValues["icon"] = $request->getParameter("icon");
+           
+            $this->form->bind( $bindValues ); 
+            
+            if( $this->form->isValid() ){			
 
-        $this->forward404Unless($this->noticia);
+                $noticia->setCaCategoria($request->getParameter("categoria"));
+                $noticia->setCaAsunto($request->getParameter("title"));
+                $noticia->setCaDetalle($request->getParameter("info"));
+                $noticia->setCaFchpublicacion($request->getParameter("fchpublicacion"));
+                $noticia->setCaFcharchivar($request->getParameter("fcharchivar"));             
+                $noticia->setCaIcon($request->getParameter("icon"));
+                $noticia->save();
+                
+                $this->redirect("homepage/index");
+            }
+            
+        }    
+        
+        $this->noticia = $noticia;
         $this->idnoticia = $idnoticia;
+        
+        
+        
         $response = sfContext::getInstance()->getResponse();
 
         //Utility Dependencies
@@ -71,42 +105,10 @@ class noticiasActions extends sfActions {
         $response->addStyleSheet("yui/assets/skins/sam/skin.css", 'last');
         
         
-        $this->folder = "Noticias";
-        $directory = sfConfig::get('app_digitalFile_root').DIRECTORY_SEPARATOR.$this->folder.DIRECTORY_SEPARATOR."Iconos";         
-        $this->archivos = sfFinder::type('file')->maxDepth(0)->in($directory);
+        
     }
 
-    /**
-     * Guarda los datos del formulario
-     *
-     * @param sfRequest $request A request object
-     */
-    public function executeGuardarNoticia(sfWebRequest $request) {
-
-
-
-        $idnoticia = $request->getParameter("idnoticia");
-
-        if ($idnoticia) {
-            $noticia = Doctrine::getTable("Noticia")->find($idnoticia);
-            $this->forward404Unless($noticia);
-        } else {
-            $noticia = new Noticia();
-        }
-
-        $noticia->setCaCategoria($request->getParameter("categoria"));
-        $noticia->setCaAsunto($request->getParameter("title"));
-        $noticia->setCaDetalle($request->getParameter("info"));
-        $noticia->setCaFchpublicacion($request->getParameter("fchpublicacion"));
-        $noticia->setCaFcharchivar($request->getParameter("fcharchivar"));
-        $noticia->setCaFchcreado(date("Y-m-d H:i:s"));
-        $noticia->setCaUsucreado($this->getUser()->getUserId());
-        $noticia->setCaIcon($request->getParameter("icon"));
-
-        $noticia->save();
-
-        $this->idnoticia = $idnoticia;
-    }
+   
 
     /**
      * Guarda los datos del formulario

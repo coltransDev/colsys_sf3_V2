@@ -19,7 +19,7 @@ include_component("gestDocumental", "widgetUploadImages" );
 
  
 <?
-$url = "noticias/editarNoticia?idnoticia=".$idnoticia;
+$url = "noticias/formNoticia?idnoticia=".$idnoticia;
 
 
 ?>
