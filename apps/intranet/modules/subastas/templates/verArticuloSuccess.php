@@ -171,13 +171,17 @@ if ($articulo->getCaUsucomprador()) {
 <?
 if (!$articulo->getCaUsucomprador()) {
 ?>
-<div class="yellowbox" id="resultados">    
-    <?
-    if( $articulo->getCaFchinicio()<=date("Y-m-d H:i:s") && $articulo->getCaFchvencimiento()<=date("Y-m-d H:i:s")){    
+<div class="yellowbox" >        
+    <?    
+    echo "Hora del Sistema <b>".Utils::fechaMes( date("Y-m-d h:i A") )."</b> <br />";
+    if( date("Y-m-d H:i:s")>=$articulo->getCaFchinicio() && date("Y-m-d H:i:s")<=$articulo->getCaFchvencimiento()){    
         echo "Se reciben ofertas hasta <b>".Utils::fechaMes( Utils::parseDate($articulo->getCaFchvencimiento(), "Y-m-d") )." ".Utils::parseDate($articulo->getCaFchvencimiento(), "h:i A")."</b> <br />";
+        ?>
+    <div id="resultados">
+        <?
         if ($articulo->getCaDirecta()) {
         ?>
-            <input type="button" value="Comprar" onclick="ofertar()" />
+            <input type="button" value="Comprar" onclick="ofertar()" /> Valor: <?=Utils::formatNumber($articulo->getCaValor());?>
             <?
         } else {
             ?>
@@ -188,6 +192,9 @@ if (!$articulo->getCaUsucomprador()) {
             ?>
             <?
         }
+    ?>
+    </div>        
+    <?        
     }else{
         echo "El articulo no esta disponible para ofertar en este momento. <br />Solo se puede ofertar desde ";        
         echo "<b>".Utils::fechaMes( Utils::parseDate($articulo->getCaFchinicio(), "Y-m-d") )." ".Utils::parseDate($articulo->getCaFchinicio(), "h:i A")."</b>";

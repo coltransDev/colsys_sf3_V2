@@ -42,6 +42,7 @@ class subastasComponents extends sfComponents {
         $this->articulos = Doctrine::getTable("SubArticulo")
                      ->createQuery("a") 
                      ->addWhere("a.ca_usucomprador IS NULL")
+                     ->addWhere("a.ca_fchvencimiento >= ? ", date("Y-m-d H:i:s"))
                      ->addOrderBy("a.ca_fchcreado DESC")
                      ->limit(5)
                      ->execute();

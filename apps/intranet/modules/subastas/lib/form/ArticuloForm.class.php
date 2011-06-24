@@ -46,7 +46,14 @@ class ArticuloForm extends BaseForm{
 														array('required' => 'Por favor coloque la hora de vencimiento')),						 
          
 		  
-		));												
+		));	
+        
+        $this->validatorSchema->setPostValidator(
+          new sfValidatorSchemaCompare('valor', sfValidatorSchemaCompare::LESS_THAN_EQUAL, 'tope',
+            array(),
+            array('invalid' => 'El tope ("%right_field%") debe ser mayor que el valor ("%left_field%")')
+          )
+        );
 																												
 				
 				

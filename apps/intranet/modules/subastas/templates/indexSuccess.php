@@ -8,7 +8,7 @@ if( $nivel>=1 ){
 <div class="maintitle">Articulos en venta</div>
 <br />
 
-<table class="tableList" width="100%">
+<table class="tableList alignLeft" width="100%">
     <tr>
         <th>
             Articulo
@@ -72,7 +72,7 @@ if( count($articulosVendidos) ){
 <div class="maintitle">Articulos vendidos</div>
 <br />
 
-<table class="tableList" width="100%">
+<table class="tableList alignLeft" width="100%">
     <tr>
         <th>
             Articulo
@@ -143,7 +143,7 @@ if( count($articulosSinOfertas) ){
 <div class="maintitle">Articulos Sin ofertas</div>
 <br />
 
-<table class="tableList" width="100%">
+<table class="tableList alignLeft" width="100%">
     <tr>
         <th>
             Articulo

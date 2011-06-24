@@ -14,7 +14,7 @@
         $form->setDefault('idarticulo', $articulo->getCaIdarticulo() );
         echo $form['idarticulo']->render();
         ?>
-        <table class="tableList">
+        <table class="tableList alignLeft">
             <tr>
                 <td>
                     <b>Titulo:</b> <br />
