@@ -28,7 +28,7 @@ WidgetDeptos = function( config ){
     });
 
     WidgetDeptos.superclass.constructor.call(this, {
-        valorField: 'id',
+        valueField: 'id',
         displayField: 'valor',
         typeAhead: true,
         forceSelection: true,
