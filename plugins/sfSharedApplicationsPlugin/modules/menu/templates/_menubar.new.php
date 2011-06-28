@@ -1,8 +1,7 @@
 
 
 
-
-<div id="demo-bar">
+<div id="demo-bar" style="display:none">
 
         <ul>
             <li alt="Home"><a href="<?=url_for("homepage/index")?>"><img src="/images/toolbar/home.png" alt=" " /></a></li>
@@ -21,14 +20,14 @@
                     <!--
                     <li onmouseover="showMenu('sub<?=str_replace("-", "" ,$key )?>')" onmouseout="hideMenu('sub<?=str_replace("-", "" ,$key )?>')" >
                     -->
-                    <li onmouseover="document.getElementById('sub<?=str_replace("-", "" ,$key )?>')" onmouseout="hideMenu('sub<?=str_replace("-", "" ,$key )?>')" >
+                    <li  >
                         <a href="#">&nbsp;&nbsp;&nbsp; <?=$key?></a>
 
                         <?
                         
                         if( count($grupos)>0 ){
                         ?>
-                        <ul id="sub<?=str_replace("-", "" ,$key )?>" style="display:none">
+                        <ul class="level2"  >
                         <?
                         foreach( $grupo as $rutina ){
                         ?>
@@ -65,18 +64,9 @@
         <ul  class="jx-bar-button-right">
             <li alt="<?=$userid?>"><a href="#"><img src="/images/toolbar/personal.png" alt="<?=$userid?>" /></a></li>
         </ul>
-      
-
-       
-
-        
-
-          <ul>
+        <ul>
             <li alt="Favoritos"><a href="#"><img src="/images/toolbar/bookmark.png" alt="Favoritos" /></a></li>
-
         </ul>
-
-
         <ul class="jx-bar-button-right">
 			<li alt="Feeds"><a href="#"><img src="/images/toolbar/internet.png" alt=" " /></a>
                 <ul>

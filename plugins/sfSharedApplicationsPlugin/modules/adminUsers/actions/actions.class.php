@@ -8,6 +8,11 @@
  * @author     Your name here
  * @version    SVN: $Id: actions.class.php 12479 2008-10-31 10:54:40Z fabien $
  */
+//implementamos la función
+        function hello ($name){
+            return "Hola $name.";
+        }
+
 class adminUsersActions extends sfActions {
     /**
      * Executes index action
@@ -904,31 +909,68 @@ class adminUsersActions extends sfActions {
         $this->usuarios = $q->execute();
     }
     
-    /*public function executeSearch(sfWebRequest $request) {
-
+    
+    
+    public function executeWSTest( $request ){
         
-        $query = trim($request->getParameter('buscar'));
+        
+        
+        
+        //$server = new soap_server;
 
-        //$query = str_replace(' ', ' and ', $query);
-        //$query = $query.'*';
+        //registramos la función que vamos a implementar
+        
+      
+        
+        //$server->register('hello');
+        
+        $ns="http://localhost/Agriver/nusoap";
+        $server = new soap_server();
+        $server->configureWSDL('CanadaTaxCalculator',$ns);
+        $server->wsdl->schemaTargetNamespace=$ns;
+        $server->register('CalculateOntarioTax', array('amount' => 'xsd:string'), array('return' => 'xsd:string'),$ns);
 
-        $queryarray=explode(' ',$query);
-
-        foreach($queryarray as $key=>$value){
-            if(strlen($queryarray[$key])>=3){
-                $queryarray[$key].='*';
-            }
+        function CalculateOntarioTax($amount){
+            $taxcalc=$amount*.15;
+            return new soapval('return','string',$taxcalc);
         }
 
-        $query = implode(' and ', $queryarray);
+        $server->service($HTTP_RAW_POST_DATA); 
+        
+        $this->setLayout("none");
 
-
-        //echo $query;
-        $this->forwardUnless($query, "homepage", "index");
-
-        $this->usuarios = Doctrine_Core::getTable('Usuario') ->getForLuceneQuery($query);
-    }*/
-
+    }
+    
+    public function executeWSClientTest( $request ){
+        //creamos el objeto de tipo soapclient.
+        //http://www.mydomain.com/server.php se refiere a la url
+        //donde se encuentra el servicio SOAP que vamos a utilizar.
+        $client = new nusoap_client( null, array('location'=> 'https://localhost/colsys_soap.php/adminUsers/WSTest', 
+                                                  'uri' => "http://tempuri.org",
+                                                  'trace'=>1,
+                                                  'exceptions'=>0  ));
+        
+        //Llamamos la función que habíamos implementado en el Web Service
+        //e imprimimos lo que nos devuelve
+        $result = $client->call('hello',array( 'name'=>'Mundo'));
+        
+        $err = $client->getError();
+        if ($err) {
+                // Mensaje de salida por pantalla
+                // En este punto puede modificar para mostrar el mensaje de otra forma o
+                // Almacenar la información si asi es requerido.
+            echo '<h2>Constructor error</h2><pre>' . $err . '</pre>';
+            echo '<h2>Debug</h2><pre>'.htmlspecialchars($client->getDebug(), ENT_QUOTES) . '</pre>';
+            exit();
+        }
+        
+        $salida = htmlspecialchars($client->response, ENT_QUOTES);
+        $iniCampo=strpos(trim($salida),'&lt;?xml');
+        $salida = substr($salida,$iniCampo,strlen($salida));
+        $salida = html_entity_decode($salida);
+    
+        return sfView::NONE;
+    }
 }
 
 ?>
