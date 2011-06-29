@@ -21,7 +21,7 @@ class Cliente extends BaseCliente
 	* @author Andres Botero
 	*/
 	public function getCoordinador(){
-		$coordinador = UsuarioPeer::retrieveByPk( $this->getCaCoordinador() );
+		$coordinador = Doctrine::getTable("Usuario")->find( $this->getCaCoordinador() );
 		return $coordinador;
 	}
 
@@ -46,13 +46,13 @@ class Cliente extends BaseCliente
 
 		return $direccion;
 	}
-/*
-    public function getCaCompania(){
+
+    /*public function getCaCompania(){
         return $this->getIds()->getCaNombre();
     }
 
     public function getCaDigito(){
         return $this->getIds()->getCaDv();
-    }
- */
+    }*/
+ 
 }
