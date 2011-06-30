@@ -1,0 +1,172 @@
+GincomexMaestra:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: gincomex
+  tableName: tb_gincomex_maestra
+  columns:
+    ca_idgincomex:
+      type: integer
+      primary: true
+      autoincrement: false
+    ca_idcliente: integer
+    ca_orden_clie: string
+    ca_impoexpo: string
+    ca_consecutivo: string
+    ca_referencia: string
+    ca_fchrecibido: timestamp
+    ca_fcharchivado: timestamp
+    ca_usuarchivado: string
+  relations:
+    GincomexDetalle:
+      local: ca_idgincomex
+      foreign: ca_idgincomex
+      type: one
+    GincomexMercancia:
+      local: ca_idgincomex
+      foreign: ca_idgincomex
+      type: many
+    GincomexNovedades:
+      local: ca_idgincomex
+      foreign: ca_idgincomex
+      type: many
+
+GincomexDetalle:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: gincomex
+  tableName: tb_gincomex_detalle
+  columns:
+    ca_idgincomex:
+      type: integer
+      primary: true
+      autoincrement: false
+    ca_estado_ord: string
+    ca_observaciones_cliente: string
+    ca_transporte_cod: integer
+    ca_transporte_nom: string
+    ca_origen_cod: integer
+    ca_origen_nom: string
+    ca_destino_cod: integer
+    ca_destino_nom: string
+    ca_incoterms_cod: integer
+    ca_incoterms_nom: string
+    ca_requiere_dta: bool
+    ca_aduana_ing_cod: integer
+    ca_aduana_ing_nom: string
+    ca_aduana_fin_cod: integer
+    ca_aduana_fin_nom: string
+    ca_transporte_mult: bool
+    ca_tipo_carga: string
+    ca_tipo_nombre: string
+    ca_moneda_codigo: integer
+    ca_modena_nombre: string
+    ca_respuesta_ord: integer
+    ca_requiere_reg: bool
+    ca_observaciones_agente: string
+    ca_fchrecibido: timestamp
+  relations:
+    GincomexMaestra:
+      local: ca_idgincomex
+      foreign: ca_idgincomex
+      type: one
+    GincomexMultimodal:
+      local: ca_idgincomex
+      foreign: ca_idgincomex
+      type: one
+
+GincomexMultimodal:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: gincomex
+  tableName: tb_gincomex_multimodal
+  columns:
+    ca_idgincomex:
+      type: integer
+      primary: true
+      autoincrement: false
+    ca_direccion_recogida: string
+    ca_codpostal_recogida: string
+    ca_pais_recogida: string
+    ca_ciudad_recogida: string
+    ca_contacto_recogida: string
+    ca_telefono_recogida: string
+    ca_email_recogida: string
+    ca_fecha_recogida: date
+    ca_direccion_entrega: string
+    ca_codpostal_entrega: string
+    ca_pais_entrega: string
+    ca_ciudad_entrega: string
+    ca_instrucciones_entrega: string
+    ca_fchrecibido: timestamp
+  relations:
+    GincomexDetalle:
+      local: ca_idgincomex
+      foreign: ca_idgincomex
+      type: one
+
+GincomexMercancia:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: gincomex
+  tableName: tb_gincomex_mercancia
+  columns:
+    ca_idgincomex:
+      type: integer
+      primary: true
+      autoincrement: false
+    ca_item_num:
+      type: integer
+      primary: true
+      autoincrement: false
+    ca_codigo_mercancia: string
+    ca_nombre_mercancia: string
+    ca_comercial_mercancia: string
+    ca_cantidad_mercancia: numeric
+    ca_codigo_unidad: integer
+    ca_nombre_unidad: string
+    ca_valor_unitario: numeric
+    ca_peligrosa_mercancia: bool
+    ca_codigo_imo: string
+    ca_instrucciones_especiales: string
+    ca_fchrecibido: timestamp
+  relations:
+    GincomexMaestra:
+      local: ca_idgincomex
+      foreign: ca_idgincomex
+      type: one
+
+GincomexNovedades:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: gincomex
+  tableName: tb_gincomex_novedades
+  columns:
+    ca_idgincomex:
+      type: integer
+      primary: true
+      autoincrement: false
+    ca_idnovedad:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_fchnovedad: date
+    ca_novedad_cod: integer
+    ca_numdocumento: string
+    ca_comentario: string
+    ca_fchreportado: timestamp
+    ca_usureportado: string
+  relations:
+    GincomexMaestra:
+      local: ca_idgincomex
+      foreign: ca_idgincomex
+      type: one
