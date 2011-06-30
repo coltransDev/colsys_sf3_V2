@@ -8,10 +8,8 @@
  * @author     Your name here
  * @version    SVN: $Id: actions.class.php 12479 2008-10-31 10:54:40Z fabien $
  */
-//implementamos la función
-        function hello ($name){
-            return "Hola $name.";
-        }
+//implementamos la función        
+
 
 class adminUsersActions extends sfActions {
     /**
@@ -247,6 +245,12 @@ class adminUsersActions extends sfActions {
 
     public function executeGuardarUsuario($request) {
        
+        $conn = Doctrine::getTable("Usuario")->getConnection();
+        $conn->beginTransaction();
+        
+        $config = sfConfig::get("app_soap_adminUsers");
+       
+        
         $usuario = Doctrine::getTable("Usuario")->find($request->getParameter("login"));
         $this->nivel = $this->getNivel();
         $cambiodireccion = 0;
@@ -383,6 +387,8 @@ class adminUsersActions extends sfActions {
         }
         if ($request->getParameter("cumpleanos")) {
             $usuario->setCaCumpleanos($request->getParameter("cumpleanos"));
+        }else{
+            $usuario->setCaCumpleanos( null );
         }
 
         if ($request->getParameter("fchingreso")) {
@@ -391,30 +397,44 @@ class adminUsersActions extends sfActions {
 
         if ($request->getParameter("nombres")) {
             $usuario->setCaNombres(strtoupper($request->getParameter("nombres")));
+        }else{
+            $usuario->setCaNombres( null );
         }
 
         if ($request->getParameter("apellidos")) {
             $usuario->setCaApellidos(strtoupper($request->getParameter("apellidos")));
+        }else{
+            $usuario->setCaApellidos( null );
         }
 
         if ($request->getParameter("teloficina")) {
             $usuario->setCaTeloficina($request->getParameter("teloficina"));
+        }else{
+            $usuario->setCaTeloficina( null );
         }
 
         if ($request->getParameter("telparticular")) {
             $usuario->setCaTelparticular($request->getParameter("telparticular"));
+        }else{
+            $usuario->setCaTelparticular( null );
         }
 
         if ($request->getParameter("telfamiliar")) {
             $usuario->setCaTelfamiliar($request->getParameter("telfamiliar"));
+        }else{
+            $usuario->setCaTelfamiliar( null );
         }
 
         if ($request->getParameter("nombrefamiliar")) {
             $usuario->setCaNombrefamiliar(strtoupper($request->getParameter("nombrefamiliar")));
+        }else{
+            $usuario->setCaNombrefamiliar(null);            
         }
 
         if ($request->getParameter("movil")) {
             $usuario->setCaMovil($request->getParameter("movil"));
+        }else{
+            $usuario->setCaMovil( null );           
         }
 
         if ($request->getParameter("manager")) {
@@ -424,15 +444,33 @@ class adminUsersActions extends sfActions {
         $this->direccion = $request->getParameter("direccion");
         if ($request->getParameter("direccion")) {
             $usuario->setCaDireccion($request->getParameter("direccion"));
+        }else{
+            $usuario->setCaDireccion( null );
         }
 
         if ($request->getParameter("tiposangre")) {
             $usuario->setCaTiposangre($request->getParameter("tiposangre"));
+        }else{
+            $usuario->setCaTiposangre( null );
         }
         if ($request->getParameter("parentesco")) {
             $usuario->setCaParentesco($request->getParameter("parentesco"));
+        }else{
+            $usuario->setCaParentesco( null );
         }
-        $usuario->save();
+        $usuario->save( $conn );
+        
+        if( $config["updateUser"] ){
+            ProjectConfiguration::registerZend();   
+            $wsdl_uri = $config["wsdl_uri"];            
+            $client = new Zend_Soap_Client( $wsdl_uri, array('encoding'=>'ISO-8859-1'));        
+            $error =  $client->updateUser( sfConfig::get("app_soap_secret"),serialize($usuario) );
+            
+            if( $error ){
+                throw new Exception( $error );                
+            }
+        }
+        
 
         $this->usuario = $usuario;
 
@@ -461,13 +499,14 @@ class adminUsersActions extends sfActions {
                 $email->setCaSubject('Cambio de Direccion');
                 $email->setCaBody($texto);
                 $email->setCaBodyhtml(Utils::replace($texto));
-                $email->save();
+                $email->save( $conn );
 
                 $cambiodireccion = $cambiodireccion + 1;
-
-                //$email->send();
+                
             }
         }
+        $conn->commit();
+        
         $this->cambiodireccion = $cambiodireccion;
     }
 
@@ -911,66 +950,7 @@ class adminUsersActions extends sfActions {
     
     
     
-    public function executeWSTest( $request ){
-        
-        
-        
-        
-        //$server = new soap_server;
-
-        //registramos la función que vamos a implementar
-        
-      
-        
-        //$server->register('hello');
-        
-        $ns="http://localhost/Agriver/nusoap";
-        $server = new soap_server();
-        $server->configureWSDL('CanadaTaxCalculator',$ns);
-        $server->wsdl->schemaTargetNamespace=$ns;
-        $server->register('CalculateOntarioTax', array('amount' => 'xsd:string'), array('return' => 'xsd:string'),$ns);
-
-        function CalculateOntarioTax($amount){
-            $taxcalc=$amount*.15;
-            return new soapval('return','string',$taxcalc);
-        }
-
-        $server->service($HTTP_RAW_POST_DATA); 
-        
-        $this->setLayout("none");
-
-    }
     
-    public function executeWSClientTest( $request ){
-        //creamos el objeto de tipo soapclient.
-        //http://www.mydomain.com/server.php se refiere a la url
-        //donde se encuentra el servicio SOAP que vamos a utilizar.
-        $client = new nusoap_client( null, array('location'=> 'https://localhost/colsys_soap.php/adminUsers/WSTest', 
-                                                  'uri' => "http://tempuri.org",
-                                                  'trace'=>1,
-                                                  'exceptions'=>0  ));
-        
-        //Llamamos la función que habíamos implementado en el Web Service
-        //e imprimimos lo que nos devuelve
-        $result = $client->call('hello',array( 'name'=>'Mundo'));
-        
-        $err = $client->getError();
-        if ($err) {
-                // Mensaje de salida por pantalla
-                // En este punto puede modificar para mostrar el mensaje de otra forma o
-                // Almacenar la información si asi es requerido.
-            echo '<h2>Constructor error</h2><pre>' . $err . '</pre>';
-            echo '<h2>Debug</h2><pre>'.htmlspecialchars($client->getDebug(), ENT_QUOTES) . '</pre>';
-            exit();
-        }
-        
-        $salida = htmlspecialchars($client->response, ENT_QUOTES);
-        $iniCampo=strpos(trim($salida),'&lt;?xml');
-        $salida = substr($salida,$iniCampo,strlen($salida));
-        $salida = html_entity_decode($salida);
-    
-        return sfView::NONE;
-    }
 }
 
 ?>
