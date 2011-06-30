@@ -169,8 +169,13 @@ class TimeUtils{
         $horas=floor($minutos/60);
         $minutos2=$minutos%60;
         $segundos2=$segundos%60%60%60;
-        return substr(100+$horas,1,2).":".substr(100+$minutos2,1,2).":".substr(100+$segundos2,1,2);
+        if($horas<99){
+            return substr(100+$horas,1,2).":".substr(100+$minutos2,1,2).":".substr(100+$segundos2,1,2);
+        }else{
+            return $horas.":".substr(100+$minutos2,1,2).":".substr(100+$segundos2,1,2);
+        }
     }
+
 
 
     /*
@@ -201,8 +206,8 @@ class TimeUtils{
 	* @author: Andres Botero
 	*/
 	static function addTimeWorkingHours($festiv, $inicio, $segundos ){
-        
-		$result = 0;
+
+        $result = 0;
 		$start = strtotime($inicio);
 		//$time = ($segundos/60)*60;
         $time = $segundos;
@@ -235,6 +240,32 @@ class TimeUtils{
 		return $start;
 	}
 
+    static function array_avg($array,$precision="2"){
+
+        try
+        {
+            $a=0;
+            if(is_array($array)) {
+                foreach($array as $value):
+                    if(!is_numeric($value)) {
+                        $a++;
+                    }
+                endforeach;
+                if($a==0) {
+                    $cuantos=count($array);
+                    return round(array_sum($array)/$cuantos,$precision);
+                }else {
+                    return "ERROR in function array_avg(): the array contains one or more non-numeric values";
+                }
+            }else {
+                return "ERROR in function array_avg(): this is a not array";
+            }
+        }
+        catch(Exception $e)
+        {
+            print_r($e);
+        }
+    }
 
 }
 ?>
