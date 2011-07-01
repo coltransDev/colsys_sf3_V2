@@ -2302,7 +2302,7 @@ elseif (isset($accion)) {                                                      /
              }
 
              if (!isset($vendedor)){
-                $vendedor = ($nivel >= 2)?'null':"'$usuario'";
+                $vendedor = "'$usuario'";
              }else{
                 $vendedor = $vendedor?"'$vendedor'":"null";
              }
@@ -2349,7 +2349,7 @@ elseif (isset($accion)) {                                                      /
                 $direccion = isset($direccion)?implode("|",$direccion):"";
              }
              if (!isset($vendedor)){
-                 $vendedor = ($nivel >= 2)?:$usuario;
+                 $vendedor = $usuario;
              }
              $fchcotratoag= (strlen($fchcotratoag)!=0)?"'".$fchcotratoag."'":'date(null)';
              $status = ($listaclinton=='Sí')?"Vetado":$status;
