@@ -544,5 +544,16 @@ class Utils{
         $str=str_replace($metaChars,$quotedMetaChars,$str); //replace them
         return ($str);
     }
+    
+    public static function deleteCache()
+    {
+        error_reporting(E_ALL);
+        $directory=sfConfig::get('app_digitalFile_root').DIRECTORY_SEPARATOR."cache".DIRECTORY_SEPARATOR;
+        $archivos = sfFinder::type('file')->maxDepth(0)->in($directory);
+        foreach($archivos as $archivo)
+        {
+            unlink($archivo);
+        }
+    }
 }
 ?>
