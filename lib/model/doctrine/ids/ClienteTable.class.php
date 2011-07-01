@@ -20,7 +20,7 @@ class ClienteTable extends Doctrine_Table {
         //list($ano, $mes, $dia) = sscanf($fch_fin, "%d-%d-%d");
         //$fch_fin = date('Y-m-d h:i:s',mktime(23,59,59, $mes, $dia, $ano)); // Incrementa en un día para tener en cuenta los registros el último día dentro de la consulta
         $query = "select std0.*,cl.ca_compania, cl.ca_vendedor, cl.ca_tipo, cl.ca_entidad, u.ca_sucursal from tb_stdcliente std0 INNER JOIN tb_clientes cl ON (std0.ca_idcliente = cl.ca_idcliente) ";
-        $query.= "INNER JOIN control.tb_usuarios u ON (cl.ca_vendedor = u.ca_login) ";
+        $query.= "INNER JOIN vi_usuarios u ON (cl.ca_vendedor = u.ca_login) ";
         $query.= "INNER JOIN (select ca_idcliente, max(ca_fchestado) as ca_fchestado, ca_empresa from tb_stdcliente where ca_fchestado between '$fch_ini' and '$fch_fin' group by ca_idcliente, ca_empresa order by ca_idcliente) std1 ON (std0.ca_idcliente = std1.ca_idcliente) ";
         $query.= "where std0.ca_fchestado = std1.ca_fchestado and std0.ca_empresa = std1.ca_empresa and std0.ca_empresa = '$empresa' and cl.ca_tipo IS NULL ";
         if ($idcliente != null) {
@@ -181,7 +181,7 @@ class ClienteTable extends Doctrine_Table {
 
         $query = "select c.ca_idcliente, c.ca_digito, c.ca_compania, replace(c.ca_direccion,'|',' ') as ca_direccion, c.ca_oficina, c.ca_torre, c.ca_bloque, c.ca_interior, c.ca_localidad, c.ca_complemento, c.ca_telefonos, c.ca_fax, d.ca_ciudad, ";
         $query.= "ca_fchcircular, to_date(to_char(to_char(ca_fchcircular, 'YYYY')::int+1, '9999')||'-'||to_char(ca_fchcircular, 'MM')||'-'||to_char(ca_fchcircular, 'DD'),'YYYY-MM-DD') as ca_vnccircular, ct.ca_coltrans_std, cm.ca_colmas_std, c.ca_vendedor, u.ca_nombre, u.ca_sucursal from tb_clientes c ";
-        $query.= "LEFT OUTER JOIN control.tb_usuarios u ON (c.ca_vendedor = u.ca_login) ";
+        $query.= "LEFT OUTER JOIN vi_usuarios u ON (c.ca_vendedor = u.ca_login) ";
         $query.= "LEFT OUTER JOIN tb_ciudades d ON (c.ca_idciudad = d.ca_idciudad) ";
         $query.= "LEFT OUTER JOIN (select colt.ca_idcliente as ca_idcliente_colt, colt.ca_estado as ca_coltrans_std, colt.ca_fchestado as ca_coltrans_fch from tb_stdcliente colt INNER JOIN (select ca_idcliente, max(ca_fchestado) as ca_fchestado from tb_stdcliente where ca_empresa = 'Coltrans' and ca_fchestado <= '$fch_fin' group by ca_idcliente order by ca_idcliente) sub ON (colt.ca_idcliente = sub.ca_idcliente and colt.ca_fchestado = sub.ca_fchestado and colt.ca_empresa = 'Coltrans')) ct ON (ct.ca_idcliente_colt = c.ca_idcliente) ";
         $query.= "LEFT OUTER JOIN (select colm.ca_idcliente as ca_idcliente_colm, colm.ca_estado as ca_colmas_std, colm.ca_fchestado as ca_colmas_fch from tb_stdcliente colm INNER JOIN (select ca_idcliente, max(ca_fchestado) as ca_fchestado from tb_stdcliente where ca_empresa = 'Colmas' and ca_fchestado <= '$fch_fin' group by ca_idcliente order by ca_idcliente) sub ON (colm.ca_idcliente = sub.ca_idcliente and colm.ca_fchestado = sub.ca_fchestado and colm.ca_empresa = 'Colmas')) cm ON (cm.ca_idcliente_colm = c.ca_idcliente) ";
@@ -213,7 +213,7 @@ class ClienteTable extends Doctrine_Table {
 
         $query = "select c.ca_idcliente, c.ca_digito, c.ca_compania, replace(c.ca_direccion,'|',' ') as ca_direccion, c.ca_oficina, c.ca_torre, c.ca_bloque, c.ca_interior, c.ca_localidad, c.ca_complemento, c.ca_telefonos, c.ca_fax, d.ca_ciudad, ";
         $query.= "ct.ca_coltrans_std, cm.ca_colmas_std, c.ca_vendedor, u.ca_nombre, u.ca_sucursal from tb_clientes c ";
-        $query.= "LEFT OUTER JOIN control.tb_usuarios u ON (c.ca_vendedor = u.ca_login) ";
+        $query.= "LEFT OUTER JOIN vi_usuarios u ON (c.ca_vendedor = u.ca_login) ";
         $query.= "LEFT OUTER JOIN tb_ciudades d ON (c.ca_idciudad = d.ca_idciudad) ";
         $query.= "LEFT OUTER JOIN (select colt.ca_idcliente as ca_idcliente_colt, colt.ca_estado as ca_coltrans_std, colt.ca_fchestado as ca_coltrans_fch from tb_stdcliente colt INNER JOIN (select ca_idcliente, max(ca_fchestado) as ca_fchestado from tb_stdcliente where ca_empresa = 'Coltrans' and ca_fchestado <= '$fch_fin' group by ca_idcliente order by ca_idcliente) sub ON (colt.ca_idcliente = sub.ca_idcliente and colt.ca_fchestado = sub.ca_fchestado and colt.ca_empresa = 'Coltrans')) ct ON (ct.ca_idcliente_colt = c.ca_idcliente) ";
         $query.= "LEFT OUTER JOIN (select colm.ca_idcliente as ca_idcliente_colm, colm.ca_estado as ca_colmas_std, colm.ca_fchestado as ca_colmas_fch from tb_stdcliente colm INNER JOIN (select ca_idcliente, max(ca_fchestado) as ca_fchestado from tb_stdcliente where ca_empresa = 'Colmas' and ca_fchestado <= '$fch_fin' group by ca_idcliente order by ca_idcliente) sub ON (colm.ca_idcliente = sub.ca_idcliente and colm.ca_fchestado = sub.ca_fchestado and colm.ca_empresa = 'Colmas')) cm ON (cm.ca_idcliente_colm = c.ca_idcliente) ";
@@ -245,7 +245,7 @@ class ClienteTable extends Doctrine_Table {
 
         $query = "select c.ca_idcliente, c.ca_digito, c.ca_compania, replace(c.ca_direccion,'|',' ') as ca_direccion, c.ca_oficina, c.ca_torre, c.ca_bloque, c.ca_interior, c.ca_localidad, c.ca_complemento, c.ca_telefonos, c.ca_fax, d.ca_ciudad, ";
         $query.= "ct.ca_coltrans_std, cm.ca_colmas_std, c.ca_vendedor, e.ca_fchvisita, u.ca_nombre, u.ca_sucursal from tb_clientes c ";
-        $query.= "LEFT OUTER JOIN control.tb_usuarios u ON (c.ca_vendedor = u.ca_login) ";
+        $query.= "LEFT OUTER JOIN vi_usuarios u ON (c.ca_vendedor = u.ca_login) ";
         $query.= "LEFT OUTER JOIN tb_ciudades d ON (c.ca_idciudad = d.ca_idciudad) ";
         $query.= "LEFT OUTER JOIN (select ca_idcliente, max(ca_fchvisita) as ca_fchvisita from tb_enccliente group by ca_idcliente) e ON (e.ca_idcliente = c.ca_idcliente) ";
         $query.= "LEFT OUTER JOIN (select colt.ca_idcliente as ca_idcliente_colt, colt.ca_estado as ca_coltrans_std, colt.ca_fchestado as ca_coltrans_fch from tb_stdcliente colt INNER JOIN (select ca_idcliente, max(ca_fchestado) as ca_fchestado from tb_stdcliente where ca_empresa = 'Coltrans' and ca_fchestado <= '$fch_fin' group by ca_idcliente order by ca_idcliente) sub ON (colt.ca_idcliente = sub.ca_idcliente and colt.ca_fchestado = sub.ca_fchestado and colt.ca_empresa = 'Coltrans')) ct ON (ct.ca_idcliente_colt = c.ca_idcliente) ";
@@ -279,7 +279,7 @@ class ClienteTable extends Doctrine_Table {
         $query = "select c.ca_idcliente, c.ca_digito, c.ca_compania, replace(c.ca_direccion,'|',' ') as ca_direccion, c.ca_oficina, c.ca_torre, c.ca_bloque, c.ca_interior, c.ca_localidad, c.ca_complemento, c.ca_telefonos, c.ca_fax, d.ca_ciudad, ";
         $query.= "ca_fchcircular, to_date(to_char(to_char(ca_fchcircular, 'YYYY')::int+1, '9999')||'-'||to_char(ca_fchcircular, 'MM')||'-'||to_char(ca_fchcircular, 'DD'),'YYYY-MM-DD') as ca_vnccircular, ct.ca_coltrans_std, cm.ca_colmas_std, c.ca_vendedor, u.ca_nombre, u.ca_sucursal, l.ca_cupo, l.ca_diascredito from tb_libcliente l ";
         $query.= "LEFT OUTER JOIN tb_clientes c ON (l.ca_idcliente = c.ca_idcliente)";
-        $query.= "LEFT OUTER JOIN control.tb_usuarios u ON (c.ca_vendedor = u.ca_login) ";
+        $query.= "LEFT OUTER JOIN vi_usuarios u ON (c.ca_vendedor = u.ca_login) ";
         $query.= "LEFT OUTER JOIN tb_ciudades d ON (c.ca_idciudad = d.ca_idciudad) ";
         $query.= "LEFT OUTER JOIN (select colt.ca_idcliente as ca_idcliente_colt, colt.ca_estado as ca_coltrans_std, colt.ca_fchestado as ca_coltrans_fch from tb_stdcliente colt INNER JOIN (select ca_idcliente, max(ca_fchestado) as ca_fchestado from tb_stdcliente where ca_empresa = 'Coltrans' and ca_fchestado <= '$fch_fin' group by ca_idcliente order by ca_idcliente) sub ON (colt.ca_idcliente = sub.ca_idcliente and colt.ca_fchestado = sub.ca_fchestado and colt.ca_empresa = 'Coltrans')) ct ON (ct.ca_idcliente_colt = c.ca_idcliente) ";
         $query.= "LEFT OUTER JOIN (select colm.ca_idcliente as ca_idcliente_colm, colm.ca_estado as ca_colmas_std, colm.ca_fchestado as ca_colmas_fch from tb_stdcliente colm INNER JOIN (select ca_idcliente, max(ca_fchestado) as ca_fchestado from tb_stdcliente where ca_empresa = 'Colmas' and ca_fchestado <= '$fch_fin' group by ca_idcliente order by ca_idcliente) sub ON (colm.ca_idcliente = sub.ca_idcliente and colm.ca_fchestado = sub.ca_fchestado and colm.ca_empresa = 'Colmas')) cm ON (cm.ca_idcliente_colm = c.ca_idcliente) ";
