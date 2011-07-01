@@ -1,6 +1,7 @@
 <?php
-$cachedir = $config = sfConfig::get('sf_app_module_dir').DIRECTORY_SEPARATOR."reportesNeg".DIRECTORY_SEPARATOR."cache".DIRECTORY_SEPARATOR;
-$cachetime = 14400;
+
+$cachedir = $config = sfConfig::get('app_digitalFile_root').DIRECTORY_SEPARATOR."cache".DIRECTORY_SEPARATOR;
+$cachetime = 86400;
 $cacheext = 'colsys';
 
 $nprov=count(explode("|", $reporte->getCaIdproveedor() ));

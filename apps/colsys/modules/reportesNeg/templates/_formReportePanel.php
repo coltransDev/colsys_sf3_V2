@@ -17,14 +17,14 @@ if($reporte->getCaIdreporte())
     else
         $panelConceptosOtm = false;
 
-    if($reporte->getCaContinuacion()=="OTM")
+    /*if($reporte->getCaContinuacion()=="OTM")
     {
         include_component("reportesNeg","panelConceptosOtm", array("reporte"=>$reporte));
         $panelConceptosOtm = true;
     }
     else
         $panelConceptosOtm = false;
-
+*/
     if( $reporte->getCaImpoexpo()!=Constantes::EXPO || $reporte->getCaTiporep()=="3" ){
             include_component("reportesNeg","panelRecargos", array("reporte"=>$reporte));
             $panelRecargos = true;
@@ -48,8 +48,8 @@ else
     $panelAduana = false;
 }
 
-$cachedir = $config = sfConfig::get('sf_app_module_dir').DIRECTORY_SEPARATOR."reportesNeg".DIRECTORY_SEPARATOR."cache".DIRECTORY_SEPARATOR;
-$cachetime = 14400;
+$cachedir = $config = sfConfig::get('app_digitalFile_root').DIRECTORY_SEPARATOR."cache".DIRECTORY_SEPARATOR;
+$cachetime = 86400;
 $cacheext = 'colsys';
 $cachepage = md5("formReporte-modo-$modo-impoexpo-$impoexpo-permiso-$permiso-nprov-$nprov-trafico-$trafico");
 $cachefile = $cachedir.$cachepage.'.'.$cacheext;

@@ -5,7 +5,8 @@ $nprov=count(explode("|", $reporte->getCaIdproveedor() ));
 
 //$cachedir = 'C:/desarrollo/colsys_sf3/apps/colsys/modules/reportesNeg/cache/';
 //$cachedir = '/srv/www/colsys_sf3/apps/colsys/modules/reportesNeg/cache/';
-$cachedir = $config = sfConfig::get('sf_app_module_dir').DIRECTORY_SEPARATOR."reportesNeg".DIRECTORY_SEPARATOR."cache".DIRECTORY_SEPARATOR;
+
+$cachedir = $config = sfConfig::get('app_digitalFile_root').DIRECTORY_SEPARATOR."cache".DIRECTORY_SEPARATOR;
 $cachetime = 86400;
 $cacheext = 'colsys';
 $cachepage = md5("formReporte-nprov-$nprov-tiporep-3");
@@ -17,7 +18,6 @@ if($cache=="refresh")
 unlink($cachefile);
 }
 $cachelast=0;
-
 
 if (file_exists($cachefile) ) {
     $cachelast = filemtime($cachefile);
