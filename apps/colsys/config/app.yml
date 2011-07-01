@@ -6,10 +6,14 @@ all:
 
 
   branding:
-    template: tplogistics
-    url: www.tplogistics.com.pe
-    name: TPLogistics
+    template: coltrans
+    url: www.coltrans.com.co
+    name: Coltrans S.A.S. - Colmas Ltda.
+    name1: Coltrans S.A.S.
+    name2: Colmas Ltda
     from: serclientebog@coltrans.com.co
+    idempresa: 623
+    idempresa2: 620 #PARA CORTE GUIAS AÉREAS PERÚ
 
   smtp:
     host: smtp.coltrans.com.co
@@ -46,5 +50,12 @@ all:
 #    input_processed: c:\fala\procesados\
   gestDocumental:
     noAuth: KBaseWeb, KBase
+  
+  soap:
+    secret: srTYudsa%&7dsa!Por#az+zX985>Fm
+    adminUsers:
+      updateUser: false
+      wsdl_uri: https://www.coltrans.com.co/ws/users/usersWS?wsdl
+
 
  
