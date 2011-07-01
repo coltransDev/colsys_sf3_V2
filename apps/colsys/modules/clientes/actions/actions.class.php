@@ -1022,7 +1022,7 @@ class clientesActions extends sfActions {
         $query.= "		from tb_inoclientes_sea ic";
         $query.= "		INNER JOIN tb_clientes cl ON ic.ca_idcliente = cl.ca_idcliente";
         $query.= "		INNER JOIN tb_inoingresos_sea ii ON ic.ca_referencia = ii.ca_referencia and ic.ca_idcliente = ii.ca_idcliente and ic.ca_hbls=ii.ca_hbls";
-        $query.= "		INNER JOIN control.tb_usuarios u ON u.ca_login = ic.ca_usuliberado";
+        $query.= "		INNER JOIN vi_usuarios u ON u.ca_login = ic.ca_usuliberado";
         $query.= "		where ic.ca_fchliberacion IS NOT NULL and ic.ca_fchliberacion BETWEEN '$fchinicial' and '$fchfinal'";
         $query.= "		and cl.ca_compania='$cliente'";
         $query.= "      order by ic.ca_fchliberacion DESC";
