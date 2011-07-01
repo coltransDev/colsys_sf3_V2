@@ -4,7 +4,7 @@ GincomexMaestra:
       form: false
       filter: false
   generatePath: gincomex
-  tableName: tb_gincomex_maestra
+  tableName: tb_maestra
   columns:
     ca_idgincomex:
       type: integer
@@ -38,7 +38,7 @@ GincomexDetalle:
       form: false
       filter: false
   generatePath: gincomex
-  tableName: tb_gincomex_detalle
+  tableName: tb_detalle
   columns:
     ca_idgincomex:
       type: integer
@@ -84,7 +84,7 @@ GincomexMultimodal:
       form: false
       filter: false
   generatePath: gincomex
-  tableName: tb_gincomex_multimodal
+  tableName: tb_multimodal
   columns:
     ca_idgincomex:
       type: integer
@@ -116,7 +116,7 @@ GincomexMercancia:
       form: false
       filter: false
   generatePath: gincomex
-  tableName: tb_gincomex_mercancia
+  tableName: tb_mercancia
   columns:
     ca_idgincomex:
       type: integer
@@ -149,7 +149,7 @@ GincomexNovedades:
       form: false
       filter: false
   generatePath: gincomex
-  tableName: tb_gincomex_novedades
+  tableName: tb_novedades
   columns:
     ca_idgincomex:
       type: integer
