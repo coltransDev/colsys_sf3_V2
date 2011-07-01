@@ -171,6 +171,7 @@ class bodegasActions extends sfActions {
 
         $this->forward404Unless($bodega = Doctrine::getTable('Bodega')->find(array($request->getParameter('ca_idbodega'))), sprintf('Object bodega does not exist (%s).', $request->getParameter('ca_idbodega')));
         $bodega->delete();
+        Utils::deleteCache();
 
         $this->redirect('bodegas/index');
     }
@@ -179,6 +180,7 @@ class bodegasActions extends sfActions {
         $form->bind($request->getParameter($form->getName()), $request->getFiles($form->getName()));
         if ($form->isValid()) {
             $bodega = $form->save();
+            Utils::deleteCache();
             $this->redirect('bodegas/edit?ca_idbodega=' . $bodega->getCaIdbodega());
         }
     }
@@ -235,6 +237,7 @@ class bodegasActions extends sfActions {
                 $form_bodega->setCaTransporte(utf8_decode($this->getRequestParameter("transporte")));
 
                 $form_bodega->save();
+                Utils::deleteCache();
                 $this->responseArray = array("success" => true, "idbodega" => $form_bodega->getCaIdbodega());
             }
         }
