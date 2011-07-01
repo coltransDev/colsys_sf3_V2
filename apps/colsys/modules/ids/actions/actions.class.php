@@ -377,6 +377,7 @@ class idsActions extends sfActions {
 
 
                     $agente->save();
+                    Utils::deleteCache();
                 }
 
                 // Guardar Sucursal
@@ -1440,6 +1441,7 @@ class idsActions extends sfActions {
                     $agente->delete($conn);
                     $ids->delete($conn);
                     $conn->commit();
+                    Utils::deleteCache();
 
                     $this->getUser()->log("Elimina agente: " . $ids->getCaId() . " " . $ids->getCaNombre());
                     $this->responseArray = array("success" => true);
