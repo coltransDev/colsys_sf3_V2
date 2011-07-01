@@ -217,13 +217,15 @@ class reporteExtComponents extends sfComponents
             
             if($master!="")
             {
+                
                 $sucursal = Doctrine::getTable("IdsSucursal")
                                       ->createQuery("s")
                                       ->where("s.ca_idciudad = ?", $reporte->getCaDestino() )
-                                      ->where("s.ca_id = ?", $idempresa )        
+                                      ->addWhere("s.ca_id = ?", $idempresa )        
                                       ->fetchOne();
-
+                
                 if( !$sucursal ){
+                    
                    $sucursal = Doctrine::getTable("IdsSucursal")
                                       ->createQuery("s")
                                       ->where("s.ca_principal = ?", true )
