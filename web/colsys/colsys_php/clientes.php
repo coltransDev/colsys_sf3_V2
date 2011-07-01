@@ -2304,7 +2304,7 @@ elseif (isset($accion)) {                                                      /
              if (!isset($vendedor)){
                 $vendedor = ($nivel >= 2)?'null':"'$usuario'";
              }else{
-                $vendedor = "'$vendedor'";
+                $vendedor = $vendedor?"'$vendedor'":"null";
              }
 
              $fchcotratoag = (strlen($fchcotratoag)!=0)?"'".$fchcotratoag."'":'date(null)';
@@ -2349,11 +2349,11 @@ elseif (isset($accion)) {                                                      /
                 $direccion = isset($direccion)?implode("|",$direccion):"";
              }
              if (!isset($vendedor)){
-                 $vendedor = ($nivel >= 2)?$comercial:$usuario;
+                 $vendedor = ($nivel >= 2)?:$usuario;
              }
              $fchcotratoag= (strlen($fchcotratoag)!=0)?"'".$fchcotratoag."'":'date(null)';
              $status = ($listaclinton=='Sí')?"Vetado":$status;
-             if (!$rs->Open("update tb_clientes set ca_idalterno = $id, ca_compania = upper('".addslashes($compania)."'), ca_papellido = '$papellido', ca_sapellido = '$sapellido', ca_nombres = '$nombres', ca_saludo = '$saludo', ca_sexo = '$sexo', ca_cumpleanos = '$cumpleanos', ca_direccion = '$direccion', ca_oficina = '$oficina', ca_torre = '$torre', ca_bloque = '$bloque', ca_interior = '$interior', ca_localidad = '$localidad', ca_complemento = '$complemento', ca_telefonos = '$telefonos', ca_fax = '$fax', ca_idciudad  ='$idciudad', ca_website = lower('$website'), ca_email = lower('$email'), ca_actividad = '$actividad', ca_sectoreco = '$sectoreco', ca_vendedor = '".(($vendedor!='')?$vendedor:"null")."', ca_fchcotratoag = $fchcotratoag, ca_listaclinton = '$listaclinton', ca_leyinsolvencia = '$leyinsolvencia', ca_comentario = '$comentario', ca_status = '$status', ca_calificacion = '$calificacion', ca_entidad = '$entidad', ca_preferencias = '$preferencias', ca_coordinador = '$coordinador', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where ca_idcliente = $id")) {
+             if (!$rs->Open("update tb_clientes set ca_idalterno = $id, ca_compania = upper('".addslashes($compania)."'), ca_papellido = '$papellido', ca_sapellido = '$sapellido', ca_nombres = '$nombres', ca_saludo = '$saludo', ca_sexo = '$sexo', ca_cumpleanos = '$cumpleanos', ca_direccion = '$direccion', ca_oficina = '$oficina', ca_torre = '$torre', ca_bloque = '$bloque', ca_interior = '$interior', ca_localidad = '$localidad', ca_complemento = '$complemento', ca_telefonos = '$telefonos', ca_fax = '$fax', ca_idciudad  ='$idciudad', ca_website = lower('$website'), ca_email = lower('$email'), ca_actividad = '$actividad', ca_sectoreco = '$sectoreco', ca_vendedor = ".(($vendedor!='')?"'".$vendedor."'":"null").", ca_fchcotratoag = $fchcotratoag, ca_listaclinton = '$listaclinton', ca_leyinsolvencia = '$leyinsolvencia', ca_comentario = '$comentario', ca_status = '$status', ca_calificacion = '$calificacion', ca_entidad = '$entidad', ca_preferencias = '$preferencias', ca_coordinador = '$coordinador', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where ca_idcliente = $id")) {
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                  echo "<script>document.location.href = 'clientes.php';</script>";
                  exit;
