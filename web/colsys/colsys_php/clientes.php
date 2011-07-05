@@ -92,7 +92,7 @@ require_once("menu.php");
 
     echo "<TR>";
     $us =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
-    if (!$us->Open("select ca_login, ca_nombre from vi_usuarios where ca_cargo = 'Gerente Regional' or ca_cargo like '%Ventas%' or ca_departamento like '%Ventas%' or ca_departamento like '%Comercial%'")) {
+    if (!$us->Open("select u.ca_login, ca_nombre from vi_usuarios u inner join control.tb_usuarios_perfil up on u.ca_login =up.ca_login where up.ca_perfil = 'comercial' and ca_activo = true")) {
         echo "<script>alert(\"".addslashes($us->mErrMsg)."\");</script>";
         echo "<script>document.location.href = 'repcomisiones.php';</script>";
         exit;
@@ -1186,7 +1186,7 @@ require_once("menu.php");
                  echo "  <TD Class=mostrar COLSPAN=2><SELECT NAME='vendedor'>";  // Llena el cuadro de lista con los valores de la tabla Vendedores
                  echo "  <OPTION VALUE=''>Sin Comercial</OPTION>";
                  $us->MoveFirst();
-                 if (!$us->Open("select ca_login, ca_nombre, ca_sucursal from vi_usuarios where ca_login != 'Administrador' and (ca_cargo = 'Gerente Regional' or ca_cargo like '%Ventas%' or ca_departamento like '%Ventas%' or ca_departamento like '%Comercial%') order by ca_login")) {
+                 if (!$us->Open("select u.ca_login, ca_nombre, u.ca_sucursal from vi_usuarios u inner join control.tb_usuarios_perfil up on u.ca_login =up.ca_login where up.ca_perfil = 'comercial' and ca_activo = true order by ca_nombre")) {
                      echo "<script>alert(\"".addslashes($us->mErrMsg)."\");</script>";
                      echo "<script>document.location.href = 'repcomisiones.php';</script>";
                      exit;
@@ -1565,7 +1565,7 @@ require_once("menu.php");
                  echo "  <TD Class=mostrar COLSPAN=2><SELECT NAME='vendedor'>";  // Llena el cuadro de lista con los valores de la tabla Vendedores
                  echo "  <OPTION VALUE=''>Sin Comercial</OPTION>";
                  $us->MoveFirst();
-                 if (!$us->Open("select ca_login, ca_nombre, ca_sucursal from vi_usuarios where ca_login != 'Administrador' and (ca_cargo = 'Gerente Regional' or ca_cargo like '%Ventas%' or ca_departamento like '%Ventas%' or ca_departamento like '%Comercial%') order by ca_login")) {
+                 if (!$us->Open("select u.ca_login, ca_nombre, u.ca_sucursal from vi_usuarios u inner join control.tb_usuarios_perfil up on u.ca_login =up.ca_login where up.ca_perfil = 'comercial' and ca_activo = true order by ca_nombre")) {
                      echo "<script>alert(\"".addslashes($us->mErrMsg)."\");</script>";
                      echo "<script>document.location.href = 'repcomisiones.php';</script>";
                      exit;
