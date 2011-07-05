@@ -2902,7 +2902,7 @@ elseif (isset($boton)) {                                                       /
                     echo "<script>document.location.href = 'inosea.php';</script>";
                     exit;
                 }
-                $tm =& DlRecordset::NewRecordset($conn);
+                $tm =& DlRecordset::NewRecordset($conn); 
                 if (!$tm->Open("select ca_idtrafico, ca_nombre from vi_traficos order by ca_nombre")) {       // Selecciona todos lo registros de la tabla Traficos
                     echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
                     echo "<script>document.location.href = 'inosea.php';</script>";
@@ -5061,7 +5061,7 @@ elseif (isset($accion)) {                                                      /
                 $bodyhtml.= "</body></html>";
 
                 $query = "select up.ca_login, us.ca_email, us.ca_sucursal from control.tb_usuarios_perfil up";
-                $query.= "  inner join control.tb_usuarios us on us.ca_login = up.ca_login";
+                $query.= "  inner join vi_usuarios us on us.ca_login = up.ca_login";
                 $query.= "  inner join vi_inomaestra_sea im on im.ca_ciudestino = us.ca_sucursal";
                 $query.= "  where im.ca_referencia = '$id' and up.ca_perfil like '%asistente-marítimo-puerto%' order by us.ca_sucursal";
                 if (!$us->Open("$query")) {
@@ -5121,7 +5121,7 @@ elseif (isset($accion)) {                                                      /
                 $bodyhtml.= "</body></html>";
 
                 $query = "select up.ca_login, us.ca_email, us.ca_sucursal from control.tb_usuarios_perfil up";
-                $query.= "  inner join control.tb_usuarios us on us.ca_login = up.ca_login";
+                $query.= "  inner join vi_usuarios us on us.ca_login = up.ca_login";
                 $query.= "  inner join vi_inomaestra_sea im on im.ca_ciudestino = us.ca_sucursal";
                 $query.= "  where im.ca_referencia = '$id' and up.ca_perfil like '%asistente-marítimo-puerto%' order by us.ca_sucursal";
                 if (!$us->Open("$query")) {
