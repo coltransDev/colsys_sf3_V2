@@ -55,12 +55,22 @@ Ext.onReady(function(){
                 animate: true
             },
             items: [
+                <?
+                $i=0;
+                foreach( $categorias as $categoria ){
+                    if( $i++!=0){
+                        echo ",";
+                    }
+                ?>
+                
                 new PanelCategorias({
-                        title: "Activos"
+                        title: "<?=$categoria->getCaName()?>",
+                        idcategoria: "<?=$categoria->getCaIdcategory()?>"
                         
                     })
-               
-
+                <?    
+                }
+                ?>
             ]
         },
         // in this instance the TabPanel is not wrapped by another panel

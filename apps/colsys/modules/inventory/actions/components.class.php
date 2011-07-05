@@ -78,7 +78,7 @@ class inventoryComponents extends sfComponents
         if($this->nivel==1){
 
             $ususucursal = $this->getUser()->getIdSucursal();
-            $categorias=Doctrine::getTable("InvCategory")->findBy("ca_parametro", $ususucursal);
+            $categorias=Doctrine::getTable("InvCategory")->findBy("ca_idsucursal", $ususucursal);
             $id_cate="";
             foreach($categorias as $categoria)
             {
@@ -108,15 +108,25 @@ class inventoryComponents extends sfComponents
             $idcategory = $this->getRequestParameter("idcategory");
 
             $categoria = Doctrine::getTable("InvCategory")->find($idcategory);
-            if(!$categoria)
+            if(!$categoria){
                 $categoria = new InvCategory();
-            $sucursal = $categoria->getCaParametro();
+            }
+            $sucursal = $categoria->getCaIdsucursal();
             $ususucursal = $this->getUser()->getIdSucursal();
             //echo $ususucursal;
             if($sucursal==$ususucursal){
                 $this->editable = "true";
             } 
         }
+        
+        $this->sucursales = Doctrine::getTable("Sucursal")
+                                      ->createQuery("s")
+                                      ->select("s.ca_idsucursal, s.ca_nombre, e.ca_nombre")                                      
+                                      ->innerJoin("s.Empresa e")
+                                      ->addOrderBy("e.ca_nombre")
+                                      ->addOrderBy("s.ca_nombre")
+                                      ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                                      ->execute();
 
     }
 

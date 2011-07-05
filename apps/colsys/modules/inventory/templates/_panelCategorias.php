@@ -27,7 +27,7 @@ PanelCategorias = function( config ){
         //iconCls:'settings',
         animate:true,
         loader: new Ext.tree.TreeLoader({
-            dataUrl:'<?=url_for("inventory/datosPanelCategorias")?>'
+            dataUrl:'<?=url_for("inventory/datosPanelCategorias")?>?idcategoria='+this.idcategoria
            
         }),
 
@@ -200,6 +200,7 @@ Ext.extend(PanelCategorias, Ext.tree.TreePanel, {
         var fp = Ext.getCmp("categoria-form");
         fp.getForm().findField("idcategory").setValue(n.attributes.idcategoria);
         fp.getForm().findField("parent").setValue(n.attributes.parentNode);
+        fp.getForm().findField("idsucursal").setValue(n.attributes.idsucursal);
         fp.getForm().findField("name").setValue(n.attributes.name);
         fp.getForm().findField("main").disable();
 

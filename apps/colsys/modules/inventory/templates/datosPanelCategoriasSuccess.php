@@ -19,6 +19,7 @@
         leaf: <?=$categoria->getCaMain()?"false":"true"?>,
         name:'<?=$categoria->getCaName()?> ',
         id: '<?=$categoria->getCaIdcategory()?>',
+        idsucursal: '<?=$categoria->getCaIdsucursal()?>',
         idcategoria: '<?=$categoria->getCaIdcategory()?>',
         parentNode: '<?=$categoria->getCaParent()?>',
         main: <?=$categoria->getCaMain()?"true":"false"?>

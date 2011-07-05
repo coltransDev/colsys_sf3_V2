@@ -30,6 +30,18 @@ class inventoryActions extends sfActions
 	{
 	
 		$this->nivel = $this->getNivel(self::RUTINA);
+        
+        
+        $q  = Doctrine::getTable("InvCategory")
+                                      ->createQuery("c")
+                                      ->addOrderBy("c.ca_parent")
+                                      ->addOrderBy("c.ca_order")
+                                      ->addOrderBy("c.ca_name");
+      
+        $q->addWhere("c.ca_parent IS NULL");
+        
+        $this->categorias = $q->execute();
+        
 	}
 
 
@@ -43,8 +55,8 @@ class inventoryActions extends sfActions
                                       ->addOrderBy("c.ca_parent")
                                       ->addOrderBy("c.ca_order")
                                       ->addOrderBy("c.ca_name");
-        $idcategoria = intval($request->getParameter("node"));
         
+        $idcategoria = intval($request->getParameter("node"))?intval($request->getParameter("node")):intval($request->getParameter("idcategoria"));       
         if( $idcategoria ){
             $q->addWhere("c.ca_parent = ?", $idcategoria );
         }else{
@@ -345,18 +357,26 @@ class inventoryActions extends sfActions
             $this->forward404Unless( $categoria );
         }else{
             $categoria = new InvCategory();
-            $main = $this->getRequestParameter("main");
+            $main = $request->getParameter("main");
             $categoria->setCaMain($main=="on");
             $categoria->setCaParametro($ususucursal);
         }
 
 
-        $categoria->setCaName(utf8_decode($this->getRequestParameter("name")));
-        if( $this->getRequestParameter("parent") ){
-            $categoria->setCaParent(utf8_decode($this->getRequestParameter("parent")));
+        $categoria->setCaName(utf8_decode($request->getParameter("name")));
+        if( $request->getParameter("parent") ){
+            $categoria->setCaParent(utf8_decode($request->getParameter("parent")));
         }else{
             $categoria->setCaParent(null);
         }
+        
+        if( $request->getParameter("idsucursal") ){
+            $categoria->setCaIdsucursal($request->getParameter("idsucursal"));
+        }else{
+            $categoria->setCaIdsucursal(null);
+        }
+        
+        
 
         try{
             $categoria->save();

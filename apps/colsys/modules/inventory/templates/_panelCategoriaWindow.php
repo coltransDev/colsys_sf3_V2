@@ -69,6 +69,32 @@ PanelCategoriaWindow = function( config ) {
                         allowBlank:false
                     },
                     {
+                        xtype:          'combo',
+                        mode:           'local',
+                        value:          '',
+                        triggerAction:  'all',
+                        forceSelection: true,
+                        editable:       true,
+                        fieldLabel:     'Sucursal',
+                        name:           'idsucursal',
+                        hiddenName:     'idsucursal',
+                        displayField:   'name',
+                        valueField:     'value',
+                        allowBlank: false,
+                        store:          new Ext.data.JsonStore({
+                            fields : ['name', 'value'],
+                            data   : [
+                                <?
+                                $i=0;    
+                                foreach( $sucursales as $s){
+                                    echo ($i++>0)?",":"";
+                                    echo "{name : '".$s["e_ca_nombre"]." - ".$s["s_ca_nombre"]."',   value: '".$s["s_ca_idsucursal"]."'}";
+                                }
+                                ?>
+                            ]
+                        })
+                    },
+                    {
                         xtype: 'checkbox',
                         width: 100,
                         fieldLabel: 'Folder',
