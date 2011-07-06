@@ -118,7 +118,7 @@ elseif (!isset($boton) and !isset($accion) and isset($traorigen)){
     if (!$proyectos){
         $subcond = " and ca_modalidad != 'PROYECTOS'";
     }
-    if (!$rs->Open("select distinct ca_sucursal from control.tb_usuarios where ca_sucursal like '%$sucursal%' order by ca_sucursal")) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
+    if (!$rs->Open("select distinct ca_sucursal from vi_usuarios where ca_sucursal like '%$sucursal%' order by ca_sucursal")) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
         echo "<script>document.location.href = 'entrada.php';</script>";
         exit; }
