@@ -579,8 +579,8 @@ class reportesGerActions extends sfActions {
                 -- Calcula el numero de negocios
                         LEFT OUTER JOIN (select ca_referencia, ca_consecutivo, count(ca_doctransporte) as ca_cant_negocios from (select ca_referencia, ca_hbls as ca_doctransporte, ca_consecutivo::text from tb_inoclientes_sea ics INNER JOIN tb_reportes rpt ON rpt.ca_idreporte = ics.ca_idreporte union  select ca_referencia, ca_hawb as ca_doctransporte, ca_idreporte::text as ca_consecutivo from tb_inoclientes_air) as cn where ca_consecutivo IS NOT NULL group by ca_referencia, ca_consecutivo order by ca_consecutivo) nn ON (rp.ca_consecutivo = nn.ca_consecutivo)
 
-                        INNER JOIN control.tb_usuarios us ON (rp.ca_login = us.ca_login)
-                        INNER JOIN control.tb_usuarios op ON (rf.ca_usuenvio = op.ca_login)
+                        INNER JOIN vi_usuarios us ON (rp.ca_login = us.ca_login)
+                        INNER JOIN vi_usuarios op ON (rf.ca_usuenvio = op.ca_login)
                         INNER JOIN control.tb_sucursales sc ON (us.ca_idsucursal = sc.ca_idsucursal)
                         INNER JOIN tb_ciudades cio ON (rp.ca_origen = cio.ca_idciudad)
                         INNER JOIN tb_traficos tro ON (cio.ca_idtrafico = tro.ca_idtrafico)
