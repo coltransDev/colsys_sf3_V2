@@ -358,7 +358,10 @@ if ($opcion) {
                 if($idcliente != 0){
     ?>
                 <tr>
-                    <td colspan="12" align="right"><b>Totales&nbsp;:</b></td>
+                    <td colspan="9" align="right"><b>Totales&nbsp;:</b></td>
+                    <td colspan="1" align="right"><b>Reportes&nbsp;:</b></td>
+                    <td><b><?= $cliente_tot[$idcliente][$ano_mem][$mes_mem]["cant_reportes"] ?></b></td>
+                    <td colspan="1" align="right"><b>Negocios&nbsp;:</b></td>
                     <td><b><?= $cliente_tot[$idcliente][$ano_mem][$mes_mem]["cant_negocios"] ?></b></td>
                     <td colspan="2" align="right"><b>Comunicaciones&nbsp;:</b></td>
                     <td><b><?= $cliente_tot[$idcliente][$ano_mem][$mes_mem]["cant_emails"] ?></b></td>
@@ -398,6 +401,7 @@ if ($opcion) {
                     <td><?= $r["ca_sucursal"] ?></td>
 
     <?
+                $cliente_tot[$idcliente][$ano_mem][$mes_mem]["cant_reportes"]+= 1;
                 $cliente_tot[$idcliente][$ano_mem][$mes_mem]["cant_negocios"]+= $r["ca_cant_negocios"];
                 $array_usuarios = array();
                 $imp_rep = false;
@@ -457,7 +461,10 @@ if ($opcion) {
         }
     ?>
         <tr>
-            <td colspan="12" align="right"><b>Totales&nbsp;:</b></td>
+            <td colspan="9" align="right"><b>Totales&nbsp;:</b></td>
+            <td colspan="1" align="right"><b>Reportes&nbsp;:</b></td>
+            <td><b><?= $cliente_tot[$idcliente][$ano_mem][$mes_mem]["cant_reportes"] ?></b></td>
+            <td colspan="1" align="right"><b>Negocios&nbsp;:</b></td>
             <td><b><?= $cliente_tot[$idcliente][$ano_mem][$mes_mem]["cant_negocios"] ?></b></td>
             <td colspan="2" align="right"><b>Comunicaciones&nbsp;:</b></td>
             <td><b><?= $cliente_tot[$idcliente][$ano_mem][$mes_mem]["cant_emails"] ?></b></td>
@@ -481,11 +488,7 @@ if ($opcion) {
                 <td><b>Tr&aacute;fico</b></td>
                 <td><b>Transporte</b></td>
                 <td><b>Modalidad</b></td>
-                <td><b>Mensajes</b></td>
-            </tr>
-
-            <tr>
-            <td colspan="5"><b><?= $reg_key ?></b></td>
+                <td><b><?= $reg_key ?></b></td>
             </tr>
         <?
         foreach($registros as $ope_key => $operativos){
