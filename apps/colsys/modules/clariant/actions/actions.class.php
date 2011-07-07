@@ -487,7 +487,7 @@ class clariantActions extends sfActions {
                             $salida.= str_pad($clariant->getCaOrden(), 10, "0", STR_PAD_LEFT)."|";  // 1
                             $salida.= str_pad($clarDetail->getCaPosicion(), 5, "0", STR_PAD_LEFT)."|";  // 2
                             $salida.= str_pad($notify->getCaClave(), 2, " ", STR_PAD_LEFT)."|";  // 3
-                            $fch_evento = Utils::transformDate($notify->getCaFecha(), $format="m.d.Y"); // 4
+                            $fch_evento = Utils::transformDate($notify->getCaFecha(), $format="d.m.Y"); // 4
                             $salida.= str_pad($fch_evento,10, " ")."|"; // 4
                             $salida.= str_pad(number_format($clarDetail->getCaDespacho(),3,",","."), 15, "0", STR_PAD_LEFT)."|";  // 5
                             $salida.= str_pad($notify->getCaTexto(),20, " ")."|";  // 6
