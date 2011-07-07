@@ -243,6 +243,7 @@ class idsActions extends sfActions {
             if ($this->modo == "agentes") {
                 $bindValues["tipo"] = $request->getParameter("tipo");
                 $bindValues["activo"] = $request->getParameter("activo");
+                $bindValues["tplogistics"] = $request->getParameter("tplogistics");
             }
 
             $this->form->bind($bindValues);
@@ -372,6 +373,12 @@ class idsActions extends sfActions {
                             $this->getUser()->log("Cambio Agente Activo: " . $bindValues["nombre"] . " pasa a inactivo");
                         }
                         $agente->setCaActivo(false);
+                    }
+                    
+                    if ($bindValues["tplogistics"]) {
+                        $agente->setCaTplogistics(true);
+                    } else {
+                        $agente->setCaTplogistics(false);
                     }
 
 

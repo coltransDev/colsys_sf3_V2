@@ -29,12 +29,14 @@ class NuevoAgenteForm extends BaseForm {
 															)
                                                     );
         $widgets['activo'] = new sfWidgetFormInputCheckbox();
+        $widgets['tplogistics'] = new sfWidgetFormInputCheckbox();
 		$this->setWidgets( $widgets );
 
 
         $validator["tipo"] =new sfValidatorString( array('required' => true ),
 														array('required' => 'El tipo es requerido'));
         $validator["activo"] =new sfValidatorBoolean( array('required' => false ) );
+        $validator["tplogistics"] =new sfValidatorBoolean( array('required' => false ) );
         $this->setValidators( $validator );
     }
 }

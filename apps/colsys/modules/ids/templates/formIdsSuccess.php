@@ -178,6 +178,22 @@
             echo $form['activo']->render();
             ?>
         </td>
+    </tr>    
+    <tr>        
+    
+        <td> <div align="left"><b>TP Logistics</b></div></td>
+        <td >
+            <?
+            echo $form['tplogistics']->renderError();
+            if( $agente ){
+                $form->setDefault('tplogistics', $agente->getCaTplogistics() );
+            }else{
+                $form->setDefault('tplogistics', false );
+            }
+            echo $form['tplogistics']->render();
+            ?>
+        </td>
+        <td colspan="5">&nbsp;</td>
 	</tr>
     <?
 

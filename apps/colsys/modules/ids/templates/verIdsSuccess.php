@@ -114,6 +114,15 @@ var eliminarAgente = function(){
                    <div align="left"><?=$agente->getCaActivo()?"S&iacute;":"<span class='rojo'>No</span>"?></div>
                </td>
             </tr>
+            <tr>
+                <td>
+                    <div align="left"><b>TPLogistics</b></div>
+               </td>
+               <td colspan="5">                   
+                   <div align="left"><?=$agente->getCaTplogistics()?"<span class='rojo'>S&iacute;</span>":"No"?></div>
+               </td>               
+               
+            </tr>
             <?
             }
                      

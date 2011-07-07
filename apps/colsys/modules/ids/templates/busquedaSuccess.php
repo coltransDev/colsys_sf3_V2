@@ -42,6 +42,13 @@ $pagerLayout->display();
 	<tr>
 		<th width="57" scope="col">Identificacion</th>
 		<th width="468" scope="col">Nombre</th>
+        <?
+        if( $modo=="agentes"){
+        ?>
+        <th width="100" scope="col">Opciones</th>
+        <?
+        }
+        ?>
         <th width="200" scope="col">Ciudad</th>
         
 	</tr>
@@ -51,9 +58,23 @@ $pagerLayout->display();
 
 	?>
 	<tr>
-	  <td  ><?=link_to( $identificacion, "ids/verIds?modo=".$modo."&id=".$ids->getCaId())?></td>
-	  <td ><?=link_to( $ids->getCaNombre(), "ids/verIds?modo=".$modo."&id=".$ids->getCaId())?></td>
-      <td >
+        <td  ><?=link_to( $identificacion, "ids/verIds?modo=".$modo."&id=".$ids->getCaId())?></td>
+        <td ><?=link_to( $ids->getCaNombre(), "ids/verIds?modo=".$modo."&id=".$ids->getCaId())?></td>
+        <?
+        if( $modo=="agentes"){
+            $agente = $ids->getIdsAgente();
+        ?>
+        <td >
+            <?=$agente->getCaTipo()=="Oficial"?$agente->getCaTipo():"<span class='rojo'>".$agente->getCaTipo()."</span>"?>
+            <br />
+            <?=$agente->getCaActivo()?"Activo":"<span class='rojo'>Inactivo</span>"?>
+            <br />
+            <?=$agente->getCaTplogistics()?"<span class='rojo'>Agente TPLogistics</span>":""?>
+        </td>
+        <?
+        }
+        ?>
+        <td >
               <?
                 $sucursales = $ids->getIdsSucursal();
                 foreach( $sucursales as $sucursal ){
@@ -68,7 +89,7 @@ $pagerLayout->display();
 	if( count($idsList)==0 ){
 	?>
 	<tr>
-		<td  colspan="3" ><div align="center"><b>No hay resultados</b></div></td>
+		<td  colspan="4" ><div align="center"><b>No hay resultados</b></div></td>
 	</tr>
 	<?
 	}

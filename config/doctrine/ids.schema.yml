@@ -149,6 +149,7 @@ IdsAgente:
       primary: true
     ca_tipo: string
     ca_activo: boolean
+    ca_tplogistics: boolean
   relations:
     Ids:
       local: ca_idagente
