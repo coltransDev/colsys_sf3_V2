@@ -90,7 +90,8 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
     echo "<FORM METHOD=post NAME='menuform' ACTION='inosea.php' >";
     echo "<TABLE WIDTH=450 BORDER=0 CELLSPACING=1 CELLPADDING=5>";
     echo "<TH COLSPAN=5 style='font-size: 12px; font-weight:bold;'><B>Ingrese un criterio para realizar las busqueda</TH>";
-    echo "<TH><IMG style='cursor:pointer' src='./graficos/new.gif' alt='Crear un Nuevo Registro' border=0 onclick='elegir(\"Adicionar\", 0);'></TH>";  // Botón para la creación de un Registro Nuevo
+    echo "<TH><IMG style='cursor:pointer' src='./graficos/new.gif' alt='Crear un Nuevo Registro' border=0 onclick='elegir(\"Adicionar\", 0);'>";    
+    echo "</TH>";  // Botón para la creación de un Registro Nuevo
     echo "<TR>";
     echo "  <TH ROWSPAN=2>&nbsp;</TH>";
     echo "  <TD Class=listar ROWSPAN=2><B>Buscar por:</B><BR><SELECT NAME='opcion' SIZE=7>";
@@ -183,7 +184,8 @@ elseif (!isset($boton) and !isset($accion) and isset($criterio)) {
     echo "</TR>";
     echo "<TH>Referencia</TH>";
     echo "<TH>Linea</TH>";
-    echo "<TH><IMG style='cursor:pointer' src='./graficos/new.gif' alt='Crear un Nuevo Registro' border=0 onclick='elegir(\"Adicionar\", 0);'></TH>";  // Botón para la creación de un Registro Nuevo
+    echo "<TH><IMG style='cursor:pointer' src='./graficos/new.gif' alt='Crear un Nuevo Registro' border=0 onclick='elegir(\"Adicionar\", 0);'>";
+    echo "</TH>";  // Botón para la creación de un Registro Nuevo
     $ano_mem = '';
     while (!$rs->Eof() and !$rs->IsEmpty()) {                                                      // Lee la totalidad de los registros obtenidos en la instrucción Select
         if ($rs->Value('ca_ano') != $ano_mem) {
@@ -305,7 +307,10 @@ elseif (isset($boton)) {                                                       /
                 echo "</TR>";
                 echo "<TH></TH>";
                 echo "<TH COLSPAN=4>Descripción</TH>";
-                echo "<TH><IMG style='cursor:pointer' src='./graficos/new.gif' alt='Crear un Nuevo Registro' border=0 onclick='elegir(\"Adicionar\", 0, 0, 0);'></TH>";  // Botón para la creación de un Registro Nuevo
+                echo "<TH><IMG style='cursor:pointer' src='./graficos/new.gif' alt='Crear un Nuevo Registro' border=0 onclick='elegir(\"Adicionar\", 0);'>";
+                if($id)
+                      echo  "<a href='/confirmaciones/consulta/referencia/".  str_replace(".", "-", $id)."/modo/conf' target='_blank'><img src='/images/16x16/preview-hide.gif' title='Confirmaciones'/></a>";
+                echo "</TH>";  // Botón para la creación de un Registro Nuevo
                 while (!$rs->Eof() and !$rs->IsEmpty()) {                                                      // Lee la totalidad de los registros obtenidos en la instrucción Select
                     if( $rs->Value('ca_provisional')=="t" ){
                         echo "<script type='text/javascript'>";
@@ -462,16 +467,22 @@ elseif (isset($boton)) {                                                       /
                     echo "  </TABLE>";
                     echo "  </TD>";
                     echo "</TR>";
-                    echo "<TR>";
-                    echo "  <TD Class=partir>Tránsito:<BR>&nbsp;</TD>";
-                    echo "  <TD Class=listar style='font-weight:bold;'>Fecha Estim.Embarque:</TD>";
-                    echo "  <TD Class=listar>".$rs->Value('ca_fchembarque')."</TD>";
-                    echo "  <TD Class=listar style='font-weight:bold;'>Fecha Estim.Arribo:</TD>";
-                    echo "  <TD Class=listar>".$rs->Value('ca_fcharribo')."</TD>";
-                    echo "  <TD Class=listar style='text-align: center;'>";
-                    echo "    <IMG style='visibility: $visible;cursor:pointer' src='./graficos/xml.gif'  alt='nerar Información para el Prevalidador' border=0 onclick='elegir(\"Prevalidador\", \"".$rs->Value('ca_referencia')."\", 0, 0);'><BR>";
-                    echo "  </TD>";
-                    echo "</TR>";
+                    echo "<TR>
+                    <TD Class=partir>Tránsito:<BR>&nbsp;</TD>
+                        <td colspan=4>
+                            <table width='100%' border='0' cellpadding='0' cellspacing='0'>
+                                <tr>
+                                    <TD Class='listar'><b>Fecha Estim.Embarque:</b><br>".$rs->Value('ca_fchembarque')."</TD>                                    
+                                    <TD Class='listar'><b>Fecha Estim.Arribo:</b><br>".$rs->Value('ca_fcharribo')."</TD>                                    
+                                    <TD Class='listar'><b>Fecha Confirmaci&oacute;n:</b><br>".$rs->Value('ca_fchconfirmacion')."</TD>";
+                    if($rs->Value('ca_fchvaciado'))
+                        echo "<TD Class='listar'><b>Fecha vaciado:</b><br>".$rs->Value('ca_fchvaciado')."</TD>";                    
+                    echo"            </tr>
+                            </table>
+                        <TD Class=listar style='text-align: center;'>
+                            <IMG style='visibility: $visible;cursor:pointer' src='./graficos/xml.gif'  alt='nerar Información para el Prevalidador' border=0 onclick='elegir(\"Prevalidador\", \"".$rs->Value('ca_referencia')."\", 0, 0);'><BR>
+                        </TD>
+                    </TR>";
                     echo "<TR HEIGHT=5>";
                     echo "  <TD Class=invertir COLSPAN=6></TD>";
                     echo "</TR>";
