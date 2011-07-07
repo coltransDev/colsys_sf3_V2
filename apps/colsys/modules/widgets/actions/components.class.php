@@ -494,15 +494,15 @@ class widgetsComponents extends sfComponents {
                         ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
                         ->execute();
         $this->agentes = array();
-        foreach ($agentes as $agente) {
-
+        foreach ($agentes as $agente) {                          
             $ag = array("idagente" => $agente["a_ca_idagente"],
                 "nombre" => utf8_encode($agente["i_ca_nombre"]),
                 "pais" => utf8_encode($agente["t_ca_nombre"]),
                 "idtrafico" => $agente["t_ca_idtrafico"],
                 "ciudad" => utf8_encode($agente["c_ca_ciudad"]),
                 "direccion" => utf8_encode($agente["s_ca_direccion"]),
-                "tipo" => utf8_encode($agente["a_ca_tipo"])
+                "tipo" => utf8_encode($agente["a_ca_tipo"]),
+                "tplogistics" => utf8_encode($agente["a_ca_tplogistics"])
             );
 
             $this->agentes[] = $ag;

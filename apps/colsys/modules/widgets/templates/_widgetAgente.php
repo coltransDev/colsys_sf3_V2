@@ -23,6 +23,7 @@ WidgetAgente = function( config ){
                         {name: 'pais'},
                         {name: 'ciudad'},
                         {name: 'direccion'},
+                        {name: 'tplogistics'},
                         {name: 'tipo'}
 					])
 				),
@@ -38,11 +39,16 @@ WidgetAgente = function( config ){
              '<tpl if="!this.oficial(tipo)">',
                 '<p><span class="rojo">{tipo}</span></p>',
             '</tpl>',
-
+            '<tpl if="this.tplogistics(tplogistics)">',
+                '<p><span class="rojo">Agente TPLogistics</span></p>',
+            '</tpl>',
             '</span> </div></tpl>'
             ,{
                 oficial: function(val){
                     return val == 'Oficial'
+                },
+                tplogistics: function(val){
+                    return val == true
                 }
             }
 
