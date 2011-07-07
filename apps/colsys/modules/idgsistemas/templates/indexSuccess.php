@@ -8,7 +8,7 @@
 
 <div class="content" align="center">
 
-    <h2>Listado de Informes</h2>
+    <h2>IDG Satisfacción del Usuario</h2>
     <br />
 
     <table class="tableList alignLeft" width="50%">
@@ -25,7 +25,12 @@
             <tr>
                 <td> <?=link_to("Informe Listado Evaluaciones","idgsistemas/informeListadoEvaluacionesForm")?>
                 </td>
-            </tr>            
+            </tr>      
+            <tr>
+                <td> <?=link_to("Reporte IDG Sistemas","idgsistemas/reporteIdgSistemas")?>
+                </td>
+            </tr>
+            
         </tbody>
     </table>
 </div>

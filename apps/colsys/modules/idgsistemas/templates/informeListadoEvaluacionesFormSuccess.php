@@ -6,6 +6,7 @@
 use_helper("ExtCalendar");
 
 
+include_component("pm", "widgetDepartamentos");
 include_component("pm", "widgetAsignaciones");
 include_component("pm", "widgetGrupos");
 ?>
@@ -45,6 +46,12 @@ include_component("pm", "widgetGrupos");
              <tr>
                 <td>
                     <b>Departamento:</b>
+                    <div id="wdg_departamentos"></div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <b>&Aacute;rea:</b>
                     <div id="wdg_grupo"></div>
                 </td>
             </tr>
@@ -64,26 +71,30 @@ include_component("pm", "widgetGrupos");
 
 
 <script type="text/javascript">
-     var wdg = new WidgetGrupos({
-                            name: 'grupo',//
-                            id:'grupo',
-                            linkAsignaciones: "usuario2",//
-                            listeners:{
-                                select:function(combo,record,index)
-                                {
-                                    if( this.linkAsignaciones ){
-                                        Ext.getCmp(this.linkAsignaciones).store.setBaseParam( "idgrupo",record.data.idgroup );
-                                        Ext.getCmp(this.linkAsignaciones).store.load();
-                                    }
-                                }
-                            }
+    var wdg = new WidgetDepartamentos({
+        hiddenName: 'departamento',
+        id: 'departamento_id',
+        linkGrupos: "grupo",//
+        linkAsignaciones: "usuario2"        
+    });
+    wdg.render("wdg_departamentos");
+    
+    
+    var wdg = new WidgetGrupos({
+        name: 'grupo',//
+        id:'grupo',
+        linkAsignaciones: "usuario2"
+        
 
-                        });
+    });
+
+
     wdg.render("wdg_grupo");
 
     var wdgAsignaciones = new WidgetAsignaciones({
-                            id: 'usuario2',
-                            name: 'usuario2'
-                        })
-     wdgAsignaciones.render("wdg_usuario");
+        id: 'usuario2',
+        name: 'usuario2'
+    })
+    wdgAsignaciones.render("wdg_usuario");
+    
 </script>

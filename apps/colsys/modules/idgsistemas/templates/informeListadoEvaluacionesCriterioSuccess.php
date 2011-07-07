@@ -1,6 +1,6 @@
 <div class="content" align="center">
 
-    <h2>Datos de Criterio </h2>
+    <h2>IDG Satisfacción del Usuario - Listado por Criterio </h2>
     <h2><?=Utils::fechaMes($fchinicio)?> - <?=Utils::fechaMes($fchfin)?></h2>
     <br />
 

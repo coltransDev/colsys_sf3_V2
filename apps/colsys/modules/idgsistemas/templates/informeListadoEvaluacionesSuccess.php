@@ -1,6 +1,6 @@
 <div class="content" align="center">
 
-    <h2>Listado de tickets </h2>
+    <h2>IDG Satisfacción del Usuario - Promedio por usuario </h2>
     <h2><?=Utils::fechaMes($fchinicio)?> - <?=Utils::fechaMes($fchfin)?></h2>
     <br />
 
