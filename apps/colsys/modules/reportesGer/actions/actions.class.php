@@ -208,7 +208,7 @@ class reportesGerActions extends sfActions {
         if ($this->opcion) {
 
             if ($this->idsucursal)
-                $where = " and ca_sucursal='" . $this->idsucursal . "'";
+                $where = " and ca_idsucursal='" . $this->idsucursal . "'";
 
 
             $this->nmeses = 3; //ceil(Utils::diffTime($this->fechainicial,$this->fechafinal)/720);
@@ -597,6 +597,23 @@ class reportesGerActions extends sfActions {
             $st = $con->execute($sql);
             $this->resul = $st->fetchAll();
         }
+    }
+    
+    
+    public function executeReporteDesconsolidacion(sfWebRequest $request) {
+        
+        $this->fechainicial = $request->getParameter("fechaInicial");
+        $this->fechafinal = $request->getParameter("fechaFinal");
+        //ca_fchvaciado-ca_fcharribo
+        $sql = "select (ca_fchvaciado-ca_fcharribo) as diferencia , ca_referencia
+            from tb_inomaestra_sea 
+            where ca_fcharribo between '" . $this->fechainicial . "' and '" . $this->fechafinal . "'            
+            order by 2 ,1 desc";
+        //echo "<br>".$sql;
+        $st = $con->execute($sql);
+        $this->clientes = $st->fetchAll();
+        
+        
     }
 
 }
