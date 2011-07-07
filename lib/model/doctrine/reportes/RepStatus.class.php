@@ -292,7 +292,7 @@ class RepStatus extends BaseRepStatus
                     {
                         $coordinadores = Doctrine::getTable("Usuario")
                            ->createQuery("u")
-                           ->select("u.ca_login,u.ca_nombre,u.ca_email,ca_sucursal")
+                           ->select("u.ca_login,u.ca_nombre,u.ca_email")
                            ->innerJoin("u.UsuarioPerfil up")
                            ->where("u.ca_activo=? AND up.ca_perfil=? ", array('TRUE','cordinador-de-otm'))
                            ->addWhere("u.ca_idsucursal=?",array($reporte->getCaContinuacionConf()))
