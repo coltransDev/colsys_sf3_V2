@@ -1020,6 +1020,35 @@ class idsActions extends sfActions {
                     $q->addWhere("c.ca_impoexpo = ?", Constantes::IMPO);
                     $q->addWhere("c.ca_transporte = ?", Constantes::AEREO);
                 }
+                
+                
+                if (substr($numreferencia, 0, 1) == "3") {
+                    $referencia = Doctrine::getTable("InoMaestraExpo")->find($numreferencia);
+                    $this->forward404Unless( $referencia );
+                    
+                    $linea = array();
+                    if( $referencia->getCaVia()=="Aereo" || $referencia->getCaVia()=="Aereo/Terrestre" ){
+                        $refAereo = Doctrine::getTable("InoMaestraExpoAir")->find($numreferencia);
+                        $this->forward404Unless( $refAereo );                        
+                        $linea[] = $refAereo->getCaIdaerolinea();
+                        $q->addWhere("c.ca_transporte = ?", Constantes::AEREO);
+                    }
+                    
+                    if( $referencia->getCaVia()=="Maritimo" || $referencia->getCaVia()=="Maritimo/Terrestre" ){
+                        $refMaritimo = Doctrine::getTable("InoMaestraExpoSea")->find($numreferencia);
+                        $this->forward404Unless( $refMaritimo );                        
+                        $linea[] = $refMaritimo->getCaIdnaviera();
+                        $q->addWhere("c.ca_transporte = ?", Constantes::MARITIMO);
+                    }
+                                        
+                                     
+
+                    $this->url = "/Coltrans/Expo/ConsultaReferenciaAction.do?referencia=" . $numreferencia;
+
+
+                    $q->addWhere("c.ca_impoexpo = ?", Constantes::EXPO);
+                    //
+                }
 
                 $q->addWhere("c.ca_tipo = ? or c.ca_tipo IS NULL", "TRI");
 
