@@ -231,30 +231,7 @@ InoContratosSea:
        foreign: ca_referencia
        type: one
 
-ExpoAlerta:
-  options:
-    symfony:
-      form: false
-      filter: false
-  generatePath: inoAnterior
-  tableName: tb_expo_alertas
-  columns:
-    ca_idalerta:
-      type: integer
-      primary: true
-      autoincrement: true
-    ca_cuerpoalerta: string
-    ca_fchrecordatorio: date
-    ca_referencia: string
-    ca_fchvencimiento: date
-    ca_fchcreacion: string
-    ca_usucreacion: date
-  relations:
-    Usuario:
-      local: ca_usucreacion
-      foreign: ca_login
-      type: one
-      
+    
 
 
 
@@ -358,6 +335,112 @@ InoClientesAir:
       type: one
       class: Usuario
       
+      
+      
+InoMaestraExpo:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: inoAnterior
+  tableName: tb_expo_maestra
+  columns:
+    ca_referencia:
+      type: string
+      primary: true
+    ca_fchreferencia: date
+    ca_idcliente: integer
+    ca_via: string
+    ca_modalidad: string
+    ca_origen: string
+    ca_destino: string
+ 
+    
+      
+InoMaestraExpoSea:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: inoAnterior
+  tableName: tb_expo_maritimo
+  columns:
+    ca_referencia:
+      type: string
+      primary: true    
+    ca_idexpo: integer
+    ca_idnaviera: string
+    
+InoMaestraExpoAir:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: inoAnterior
+  tableName: tb_expo_aerea
+  columns:
+    ca_referencia:
+      type: string
+      primary: true    
+    ca_idexpo: integer
+    ca_idaerolinea: string
+    ca_hawb: string
+    
+InoMaestraExpoSea:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: inoAnterior
+  tableName: tb_expo_maritimo
+  columns:
+    ca_referencia:
+      type: string
+      primary: true    
+    ca_idexpo: integer
+    ca_idnaviera: integer
+    ca_hija: string
+
+InoMaestraExpoTer:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: inoAnterior
+  tableName: tb_expo_terrestre
+  columns:
+    ca_referencia:
+      type: string
+      primary: true    
+    ca_idexpo: integer
+    ca_idtransportador: integer
+    ca_cartaporte: string    
+    
+ExpoAlerta:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: inoAnterior
+  tableName: tb_expo_alertas
+  columns:
+    ca_idalerta:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_cuerpoalerta: string
+    ca_fchrecordatorio: date
+    ca_referencia: string
+    ca_fchvencimiento: date
+    ca_fchcreacion: string
+    ca_usucreacion: date
+  relations:
+    Usuario:
+      local: ca_usucreacion
+      foreign: ca_login
+      type: one
+
+
 InoDianDepositos:
   options:
     symfony:
