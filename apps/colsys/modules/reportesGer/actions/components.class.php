@@ -66,6 +66,13 @@ class reportesGerComponents extends sfComponents
         $this->pais_origen=$this->getRequestParameter("pais_origen");
         
     }
-	
+
+    public function executeFiltrosReporteDesconsolidacion()
+    {
+        $this->fechainicial=$this->getRequestParameter("fechaInicial");
+        $this->fechafinal=$this->getRequestParameter("fechaFinal");
+        
+        
+    }
 }
 ?>

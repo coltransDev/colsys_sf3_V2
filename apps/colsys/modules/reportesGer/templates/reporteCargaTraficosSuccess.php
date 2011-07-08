@@ -350,14 +350,17 @@ if( $incoterms ){
             $peso=number_format($r["peso"],2);            
             $nreferencias++;
             $arrtmp=explode("-", $r["ca_fchreferencia"]);
-            //print_r($arrtmp);
-            //echo $arrtmp[4]."-";
+            $arrtmp1=explode(".", $r["ca_referencia"]);
+            
 
+            if($arrtmp1[2]==1)                
+                $arrtmp[0]=  substr($arrtmp[0], 0, 3).$arrtmp1[4];
         }
         $nhbls+=$r["nhbls"];
-        $totales["años"][$arrtmp[0]][$arrtmp[1]]["volumen"]+=$volumen;
-        $totales["años"][$arrtmp[0]][$arrtmp[1]]["teus"]+=$r["teus"];
-        
+        //if($volumen)
+        $totales["años"][$arrtmp[0]][$arrtmp1[2]]["volumen"]+=$volumen;
+        //if($r["teus"])
+        $totales["años"][$arrtmp[0]][$arrtmp1[2]]["teus"]+=$r["teus"];
 ?>
     <tr>
         <td><?=$nitem++?></td>

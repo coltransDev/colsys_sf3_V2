@@ -602,17 +602,21 @@ class reportesGerActions extends sfActions {
     
     public function executeReporteDesconsolidacion(sfWebRequest $request) {
         
-        $this->fechainicial = $request->getParameter("fechaInicial");
-        $this->fechafinal = $request->getParameter("fechaFinal");
-        //ca_fchvaciado-ca_fcharribo
-        $sql = "select (ca_fchvaciado-ca_fcharribo) as diferencia , ca_referencia
-            from tb_inomaestra_sea 
-            where ca_fcharribo between '" . $this->fechainicial . "' and '" . $this->fechafinal . "'            
-            order by 2 ,1 desc";
-        //echo "<br>".$sql;
-        $st = $con->execute($sql);
-        $this->clientes = $st->fetchAll();
-        
+        $this->opcion = $request->getParameter("opcion");
+        if ($this->opcion) {        
+            $this->fechainicial = $request->getParameter("fechaInicial");
+            $this->fechafinal = $request->getParameter("fechaFinal");
+            //ca_fchvaciado-ca_fcharribo
+            $sql = "select (ca_fchvaciado-ca_fchconfirmacion) as diferencia , ca_referencia, ca_fchcreado,ca_fchvaciado,ca_fchconfirmacion
+                from tb_inomaestra_sea 
+                where ca_fcharribo between '" . $this->fechainicial . "' and '" . $this->fechafinal . "' and ca_modalidad='LCL' and ca_fchconfirmacion is not null            
+                order by ca_fchconfirmacion desc, 3 desc";
+            //echo "<br>".$sql;
+            $con = Doctrine_Manager::getInstance()->connection();
+            $st = $con->execute($sql);
+            $this->ref = $st->fetchAll();
+            //print_r($this->ref);
+        }
         
     }
 

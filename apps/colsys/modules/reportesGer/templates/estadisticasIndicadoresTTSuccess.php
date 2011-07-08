@@ -109,12 +109,12 @@ Las metas según la ruta y el servicio son las siguientes:<br>
 					renderTo: 'grafica1',
                     height: 600,
                     title:"Movimientos de Traficos",
-                    titleY:"Numero de Reportes",
+                    titleY:"Dias",
                     plotBands: [
                         {
                             color: 'red',
                             width: 2,
-                            value: 4,
+                            value: <?=($indi_LCL[$pais_origen])?$indi_LCL[$pais_origen]:0?>,
                             label: {
                                 text: 'Limite LCL',
                                 style: {
@@ -127,7 +127,7 @@ Las metas según la ruta y el servicio son las siguientes:<br>
                         {
                             color: 'blue',
                             width: 2,
-                            value: 8,
+                            value: <?=($indi_FCL[$pais_origen])?$indi_FCL[$pais_origen]:0?>,
                             label: {
                                 text: 'Limite FCL',
                                 style: {
@@ -173,7 +173,7 @@ foreach($data_peso as $mes => $d)
 					renderTo: 'grafica2',
                     height: 600,
                     title:"Movimientos de Traficos",
-                    titleY:"Numero de Reportes",
+                    titleY:"Kg",
 					serieX: <?=json_encode($serieX)?>,
 				    series: <?=json_encode($dataJSON)?>
 				});
@@ -213,7 +213,7 @@ $dataJSON[]=array("Incumplimiento",(($indicador[$mes]["incumplimiento"]/$total)*
 					renderTo: 'grafica3',
                     height: 400,
                     title:"Movimientos de Traficos",
-                    titleY:"Numero de Reportes",					
+                    titleY:"",
 				    series: <?=json_encode($dataJSON)?>
 				});	
 </script>
@@ -254,7 +254,7 @@ foreach($indicador as $mes => $d)
 					renderTo: 'grafica4',
                     height: 400,
                     title:"Movimientos de Traficos",
-                    titleY:"Numero de Reportes",                                       
+                    titleY:"Porcentaje",                                       
 					serieX: <?=json_encode($serieX)?>,					
 				    series: <?=json_encode($dataJSON)?>
 				});	
