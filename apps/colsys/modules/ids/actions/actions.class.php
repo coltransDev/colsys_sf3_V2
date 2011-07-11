@@ -910,7 +910,7 @@ class idsActions extends sfActions {
             $this->forward404();
         }
 
-
+        
         $evaluacion = Doctrine::getTable("IdsEvaluacion")->find($request->getParameter("idevaluacion"));
 
         $ids = $evaluacion->getIds();
@@ -923,6 +923,8 @@ class idsActions extends sfActions {
         }
 
         $evaluacion->delete();
+        
+        $this->getUser()->log("Elimina evaluación: " . $evaluacion->getCaIdevaluacion(). " id prov:" . $ids->getCaId() . " " . $ids->getCaNombre());
 
         $this->redirect("ids/verIds?modo=" . $this->modo . "&id=" . $ids->getCaId());
     }
