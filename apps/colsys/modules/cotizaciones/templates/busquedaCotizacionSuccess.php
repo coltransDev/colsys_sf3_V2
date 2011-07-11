@@ -165,7 +165,7 @@ $pagerLayout->display();
 
                     
                     echo $estados[$eta];
-                    if( ($eta==Cotizacion::EN_SEGUIMIENTO )&& $cotizacion->getCaFchanulado() =="" ){
+                    if( ($eta==Cotizacion::EN_SEGUIMIENTO )&& !$cotizacion->getCaFchanulado()  ){
                         //$seg = $cotizacion->getUltSeguimiento();
                     ?>
                     <a style="cursor:pointer"  onclick="window.open('<?=url_for("cotseguimientos/formSeguimiento?idcotizacion=".$cotizacion->getCaIdcotizacion())?>')" title="Haga click aca para crear un seguimiento. Se abrira una nueva ventana.">
@@ -182,7 +182,7 @@ $pagerLayout->display();
                     ?>
                 </td>
                 <?
-                if(!$seg)
+                if(!$seg && !$cotizacion->getCaFchanulado())
                 {
                 ?>
                 <td  width="182" style="width: 182px; background-color: #FFFFCC">
