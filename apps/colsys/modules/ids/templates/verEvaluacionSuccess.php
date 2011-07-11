@@ -115,10 +115,11 @@
                             <div align="center">
                                 <input type="button" value="Volver" class="button" onClick="document.location='<?=url_for("ids/verIds?modo=".$modo."&id=".$ids->getCaId())?>'">
                                 <?
-                                //Ver ticket 3471
+                                //Ver ticket 3471 y 7143
                                 if( $nivel>=6 ){
                                 ?>
                                 <input type="button" value="Editar" class="button" onClick="document.location='<?=url_for("ids/formEvaluacion?modo=".$modo."&idevaluacion=".$evaluacion->getCaIdevaluacion())?>'">
+                                <input type="button" value="Eliminar" class="button" onClick="if(confirm('Esta seguro que desea eliminar esta evaluación?')){document.location='<?=url_for("ids/eliminarEvaluacion?modo=".$modo."&idevaluacion=".$evaluacion->getCaIdevaluacion())?>'}">
                                 <?
                                 }
                                 ?>
