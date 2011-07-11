@@ -678,6 +678,10 @@ class widgetsComponents extends sfComponents {
     public function executeWidgetReporte() {
 
     }
+    
+    public function executeWidgetHbls() {
+
+    }
 
     public function executeWidgetTicket() {
 

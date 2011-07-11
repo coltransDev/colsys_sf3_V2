@@ -764,6 +764,28 @@ class widgetsActions extends sfActions {
         $this->responseArray = array("root" => $cotizaciones, "total" => count($cotizaciones), "success" => true);
         $this->setTemplate("responseTemplate");
     }
+    
+    public function executeListaHblsJSON() {
+        $criterio = $this->getRequestParameter("query");
+
+        $q = Doctrine::getTable("InoMaestraSea")
+                        ->createQuery("m")
+                        ->select("m.*,ic.*")
+                        ->innerJoin('m.InoClientesSea ic')                        
+                        ->addWhere("m.ca_referencia like ?", array($criterio."%",$criterio."%"))
+                        ->limit(20);
+                        //->limit(40);
+//->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+        $datos = $q->setHydrationMode(Doctrine::HYDRATE_SCALAR)->execute();
+
+        //print_r($datos);
+/*        foreach ($datos as $key => $val) {
+            
+        }*/
+        //print_r($cotizaciones);
+        $this->responseArray = array("root" => $datos, "total" => count($datos), "success" => true);
+        $this->setTemplate("responseTemplate");
+    }
 
     /*
      * Datos de los conceptos según sea el medio de transporte y la modalidad
