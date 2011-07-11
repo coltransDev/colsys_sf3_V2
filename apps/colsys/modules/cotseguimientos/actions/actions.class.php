@@ -475,7 +475,7 @@ class cotseguimientosActions extends sfActions
 
  
 		$con = Doctrine_Manager::getInstance()->connection();
-		$sql="select c.ca_usuario,c.ca_consecutivo,u.ca_idsucursal,to_char(c.ca_fchcreado,'yyyy-mm-dd') as ca_fchcreado from tb_cotizaciones c
+		$sql="select c.ca_usuario,c.ca_consecutivo,c.ca_version ,u.ca_idsucursal,to_char(c.ca_fchcreado,'yyyy-mm-dd') as ca_fchcreado from tb_cotizaciones c
 			INNER JOIN control.tb_usuarios u ON c.ca_usuario = u.ca_login
 			WHERE
 			( c.ca_idcotizacion IN ( SELECT p.ca_idcotizacion FROM tb_cotProductos p left join tb_cotseguimientos s on p.ca_idproducto=s.ca_idproducto where p.ca_etapa='SEG' and s.ca_idproducto is null  )

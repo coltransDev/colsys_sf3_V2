@@ -35,8 +35,7 @@ Datos basados en <?=$numcotizaciones?> cotizaciones
 				<tr>
 					<td><?=$row["ca_fchcreado"]?></td>
 					<td><?=$row["ca_usuario"] ."-". $row["ca_idsucursal"]?></td>
-					<td><?=$row["ca_consecutivo"]?></td>
-
+					<td><?=$row["ca_consecutivo"]."-V".$row["ca_version"]?></td>
 				</tr>
 				<?
 				}
