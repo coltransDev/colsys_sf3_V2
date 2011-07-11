@@ -63,7 +63,7 @@ class cotizacionesActions extends sfActions {
 
         switch ($criterio) {
             case "mis_cotizaciones":
-                $q->addWhere("c.ca_usuario = ? OR c.ca_usucreado = ?", array($user->getUserId(), $user->getUserId()));
+                $q->addWhere("c.ca_usuario = ? OR c.ca_usucreado = ? ", array($user->getUserId(), $user->getUserId()));
                 break;
             case "consecutivo":
                 $cadena = str_replace("C", "", $cadena);
@@ -93,10 +93,10 @@ class cotizacionesActions extends sfActions {
                 $q->addWhere("LOWER(s.ca_nombre) like  ?", "%" . strtolower($cadena) . "%");
                 break;
             case "seguimiento":
-                $q->addWhere("c.ca_usuario = ? OR c.ca_usucreado = ?", array($user->getUserId(), $user->getUserId()));
+                $q->addWhere("c.ca_usuario = ? OR c.ca_usucreado = ? and ca_usuanulado is null", array($user->getUserId(), $user->getUserId()));
                 $q->addWhere("c.ca_usuanulado IS NULL");
                 $q->leftJoin("c.CotProducto p");
-                $q->addWhere("(p.ca_etapa=? AND p.ca_etapa IS NOT NULL) OR (c.ca_etapa = ? AND p.ca_etapa IS NULL) OR (p.ca_etapa IS NULL AND p.ca_etapa IS NULL)", array($seguimiento, $seguimiento));
+                $q->addWhere("(p.ca_etapa=? AND p.ca_etapa IS NOT NULL) OR (c.ca_etapa = ? AND c.ca_etapa IS NOT NULL) OR (c.ca_etapa IS NULL AND p.ca_etapa IS NULL)", array($seguimiento, $seguimiento));
                 break;
         }
 
