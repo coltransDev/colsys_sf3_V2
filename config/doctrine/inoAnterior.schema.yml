@@ -245,8 +245,10 @@ InoMaestraAir:
   columns:
     ca_referencia:
       type: string(16)
-      primary: true
-      autoincrement: true
+      primary: true      
+    ca_fchreferencia: date
+    ca_impoexpo: string(16)  
+    ca_modalidad: string
     ca_idlinea: integer
     ca_origen: string
     ca_destino: string
@@ -254,6 +256,15 @@ InoMaestraAir:
     ca_piezas: string
     ca_peso: string
     ca_pesovolumen: string
+    ca_fchpreaviso: date
+    ca_fchllegada: date
+    ca_observaciones: string
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string
+    ca_idagente: integer
+    ca_idnave: string
   relations:
     InoClientesAir:
       local: ca_referencia
@@ -262,6 +273,10 @@ InoMaestraAir:
     IdsProveedor:
       local: ca_idlinea
       foreign: ca_idproveedor
+      type: one   
+    IdsAgente:
+      local: ca_idagente
+      foreign: ca_idagente
       type: one   
     Origen:
       local: ca_origen
