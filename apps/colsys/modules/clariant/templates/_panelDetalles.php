@@ -32,7 +32,7 @@ PanelDetalles = function(){
       {
         header: "Posición",
         dataIndex: 'posicion',
-        sortable:false,
+        sortable:true,
         width: 55,
         locked: true
       },
@@ -49,7 +49,7 @@ PanelDetalles = function(){
       {
         header: "Descripcion",
         dataIndex: 'descripcion',
-        sortable:false,
+        sortable:true,
         width: 230,
         editor: new Ext.form.TextField({
             allowBlank: false
@@ -72,7 +72,7 @@ PanelDetalles = function(){
 				allowBlank: false ,
 				allowNegative: false,
 				style: 'text-align:right',
-				decimalPrecision :0
+				decimalPrecision :2
 			})
       },
       this.checkColumn
@@ -86,8 +86,8 @@ PanelDetalles = function(){
             {name: 'posicion', type: 'string', mapping: 'd_ca_posicion'},
             {name: 'material', type: 'string', mapping: 'd_ca_material'},
             {name: 'descripcion', type: 'string', mapping: 'd_ca_descripcion'},
-            {name: 'cantidad', type: 'int', mapping: 'd_ca_cantidad'},
-            {name: 'despacho', type: 'int', mapping: 'd_ca_despacho'},
+            {name: 'cantidad', type: 'float', mapping: 'd_ca_cantidad'},
+            {name: 'despacho', type: 'float', mapping: 'd_ca_despacho'},
             {name: 'unidad', type: 'string', mapping: 'd_ca_unidad'},
         ]);
 
