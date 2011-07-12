@@ -55,11 +55,16 @@ Ext.extend(WidgetModalidad, Ext.form.ComboBox, {
         var cmp = Ext.getCmp(this.linkTransporte);
         if( cmp ){
             var cmp2 = Ext.getCmp(this.linkImpoexpo);
-            if( cmp2 ){
+            var impoexpoVal = this.impoexpo;
+            if( cmp2 || impoexpoVal){
 				
                 var list = new Array();
                 var transporte = Ext.getCmp(this.linkTransporte).getValue();
-                var impoexpo = Ext.getCmp(this.linkImpoexpo).getValue();
+                if( impoexpoVal ){
+                    var impoexpo = impoexpoVal;
+                }else{
+                    var impoexpo = Ext.getCmp(this.linkImpoexpo).getValue();
+                }
                 if(impoexpo=='<?=constantes::OTMDTA?>' || impoexpo=='<?=constantes::OTMDTA1?>' )
                 {
                     impoexpo='<?=Constantes::IMPO?>'
