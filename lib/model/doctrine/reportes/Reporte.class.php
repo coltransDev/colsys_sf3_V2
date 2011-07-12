@@ -960,7 +960,7 @@ class Reporte extends BaseReporte {
      */
 
     public function getDirectorioBase() {
-        return "reportes" . DIRECTORY_SEPARATOR . $this->getCaConsecutivo() . DIRECTORY_SEPARATOR;
+        return "reportes" . DIRECTORY_SEPARATOR . substr($this->getCaConsecutivo(), -4).DIRECTORY_SEPARATOR . $this->getCaConsecutivo() . DIRECTORY_SEPARATOR;
     }
 
     /*
