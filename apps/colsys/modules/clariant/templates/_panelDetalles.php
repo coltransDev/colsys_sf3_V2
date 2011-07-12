@@ -56,14 +56,14 @@ PanelDetalles = function(){
         })
       },
       {
-        header: "#U. Pedidas",
+        header: "Kilos Pedidos",
         dataIndex: 'cantidad',
         sortable:false,
         width: 100,
         align: 'right'
       },
       {
-        header: "#U. Despachadas",
+        header: "Kilos Despachados",
         dataIndex: 'despacho',
         sortable:false,
         width: 100,
