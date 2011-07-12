@@ -693,6 +693,14 @@ class Reporte extends BaseReporte {
         }
         return null;
     }
+    
+    public function getCaDocmaster() {
+        $status = $this->getUltimoStatus();
+        if ($status) {
+            return $status->getCaDocmaster();
+        }
+        return null;
+    }
 
     /*
      * Devuelve el numero de la referencia asociada al reporte
