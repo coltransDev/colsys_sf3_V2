@@ -115,7 +115,7 @@ Ext.extend(WidgetTercero, Ext.form.ComboBox, {
     this.fireEvent('clear', this);
   },
   onTrigger2Click : function() {
-
+     
     var titulo = "";
     if( this.getValue() ){
         titulo = "Editar ";
@@ -123,8 +123,17 @@ Ext.extend(WidgetTercero, Ext.form.ComboBox, {
         titulo = "Nuevo ";
     }
     titulo+=this.tipo;
-
+    
     idtercero = this.hiddenField?this.hiddenField.value:this.getValue();
+
+    if(idtercero)
+    {
+        if(!window.confirm("Esta seguro que quiere sobreescribir la informacion de "+this.getRawValue()+"\n Para crear un registro nuevo debe dar click en el boton con la X"))
+        {
+            return;
+        }
+    }
+    
     win1 = Ext.getCmp("tercero-window");
     if(!win1)
     {
