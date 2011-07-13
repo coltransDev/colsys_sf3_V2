@@ -317,9 +317,11 @@ class RepStatus extends BaseRepStatus
 					$email->addCc( $coordinador->getCaEmail() );
 				}
 			}
-
-
-		}
+		}        
+        if ( $reporte->getCaDeclaracionant() == "true" || $reporte->getCaDeclaracionant() == "TRUE" || $reporte->getCaDeclaracionant() == "1" || $reporte->getCaDeclaracionant() == 1  ){
+            $email->setCaPriority(1);
+                
+        }
 
 		sfContext::getInstance()->getRequest()->setParameter("idstatus", $this->getCaIdstatus());
 		$email->setCaBodyhtml(  sfContext::getInstance()->getController()->getPresentationFor( 'traficos', 'verStatus') );
