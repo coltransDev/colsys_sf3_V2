@@ -66,7 +66,7 @@ class Email extends BaseEmail
 		$logHeader.= "Subject: ".$this->getCaSubject()." >> ";
 		$logHeader.= "To: ".$this->getCaAddress()." >> ";
 		$logHeader.= "CC: ".$this->getCaCc()." >> ";
-
+        
 		$transport = Swift_SmtpTransport::newInstance(sfConfig::get("app_smtp_host"), sfConfig::get("app_smtp_port"));
         if( sfConfig::get("app_smtp_user") ){
             $transport->setUsername(sfConfig::get("app_smtp_user"))
@@ -221,8 +221,13 @@ class Email extends BaseEmail
 		}
 
 		$failures = null;
-		try{
-			$mailer->send($message, $failures);
+		try{            
+            if($this->getCaPriority()>0)
+            {
+                $message->setPriority($this->getCaPriority());
+                $message->setImportance();
+            }
+			$mailer->send($message, $failures);           
 
 			if( $failures ){
 				$event= $logHeader;
@@ -269,9 +274,9 @@ class Email extends BaseEmail
             $message = Swift_Message::newInstance( "Error al enviar mensaje" );
             $message->setFrom(array( "no-reply@coltrans.com.co" => "no-reply@coltrans.com.co" ));
             $message->addTo( $this->getCaFrom() );
-            $message->addPart( $txt , 'text/plain', 'iso-8859-1');
+            $message->addPart( $txt , 'text/plain', 'iso-8859-1');           
             $mailer->send($message);            
-           
+            
         }
         
         return $result;
