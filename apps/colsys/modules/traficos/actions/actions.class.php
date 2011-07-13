@@ -79,12 +79,12 @@ class traficosActions extends sfActions
             $reporte = ReporteTable::retrieveByConsecutivo( $consecutivo );
 			$this->forward404Unless( $reporte ); 
             
-            if( $reporte->getCaTransporte()==Constantes::MARITIMO && $this->modo!="maritimo" ){
+            if( $reporte->getCaImpoexpo()==Constantes::IMPO && $reporte->getCaTransporte()==Constantes::MARITIMO && $this->modo!="maritimo" ){
                 
                 $this->redirect( "traficos/listaStatus?modo=maritimo&reporte=".$reporte->getCaConsecutivo() );	
             }
             
-            if( $reporte->getCaTransporte()==Constantes::AEREO && $this->modo!="aereo" ){
+            if( $reporte->getCaImpoexpo()==Constantes::IMPO && $reporte->getCaTransporte()==Constantes::AEREO && $this->modo!="aereo" ){
                 $this->redirect( "traficos/listaStatus?modo=aereo&reporte=".$reporte->getCaConsecutivo() );	
             }
             
