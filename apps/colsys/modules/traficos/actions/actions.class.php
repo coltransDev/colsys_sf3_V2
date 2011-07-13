@@ -73,6 +73,24 @@ class traficosActions extends sfActions
 		$this->idCliente = $this->getRequestParameter("idcliente");
 				
 		$this->modo = $this->getRequestParameter("modo");
+        
+        $consecutivo = $this->getRequestParameter("reporte");
+        if( $this->getRequestParameter("reporte") ){
+            $reporte = ReporteTable::retrieveByConsecutivo( $consecutivo );
+			$this->forward404Unless( $reporte ); 
+            
+            if( $reporte->getCaTransporte()==Constantes::MARITIMO && $this->modo!="maritimo" ){
+                
+                $this->redirect( "traficos/listaStatus?modo=maritimo&reporte=".$reporte->getCaConsecutivo() );	
+            }
+            
+            if( $reporte->getCaTransporte()==Constantes::AEREO && $this->modo!="aereo" ){
+                $this->redirect( "traficos/listaStatus?modo=aereo&reporte=".$reporte->getCaConsecutivo() );	
+            }
+            
+        }
+        
+        
 		if( $this->modo=="maritimo" ){
 			$this->nivel = $this->getUser()->getNivelAcceso( traficosActions::RUTINA_MARITIMO );
 		}		
@@ -90,14 +108,13 @@ class traficosActions extends sfActions
 		
         
 		if( $this->getRequestParameter("reporte") ){
-			$consecutivo = $this->getRequestParameter("reporte");
+			
 			
 			if( !$consecutivo ){
 				$this->redirect( "traficos/index?modo=".$this->modo );	
 			}
 			
-			$reporte = ReporteTable::retrieveByConsecutivo( $consecutivo );
-			$this->forward404Unless( $reporte ); 		
+				
 			
 			if( $reporte->getCaTransporte()==Constantes::MARITIMO ){
 				$this->modo="maritimo";
