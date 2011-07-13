@@ -14,6 +14,7 @@ class traficosActions extends sfActions
 	const RUTINA_MARITIMO = "78";
 	const RUTINA_AEREO = "79";
 	const RUTINA_EXPO = "80";
+    const RUTINA_OTM = "113";
 	/***********************************************************************************
 	* Pagina inicial y consulta de reportes
 	************************************************************************************/
@@ -28,7 +29,7 @@ class traficosActions extends sfActions
 		if( !$this->modo ){
 			$this->forward( "traficos", "seleccionModo" );	
 		}
-		
+
 		if( $this->modo=="maritimo" ){
 			$this->nivel = $this->getUser()->getNivelAcceso( traficosActions::RUTINA_MARITIMO );
 			
@@ -44,7 +45,12 @@ class traficosActions extends sfActions
 			$this->nivel = $this->getUser()->getNivelAcceso( traficosActions::RUTINA_EXPO );
 			$this->impoexpo=Constantes::EXPO;
 			$this->transporte=null;
-		}		
+		}
+        if( $this->modo=="otm" ){
+			$this->nivel = $this->getUser()->getNivelAcceso( traficosActions::RUTINA_OTM );
+			$this->impoexpo=Constantes::OTMDTA;
+			$this->transporte=constantes::MARITIMO;
+		}
 		if( $this->nivel==-1 ){
 			$this->forward404();
 		}			
@@ -61,7 +67,8 @@ class traficosActions extends sfActions
 	{		
 		$this->nivelMaritimo = $this->getUser()->getNivelAcceso( traficosActions::RUTINA_MARITIMO );
 		$this->nivelAereo = $this->getUser()->getNivelAcceso( traficosActions::RUTINA_AEREO );
-		$this->nivelExpo = $this->getUser()->getNivelAcceso( traficosActions::RUTINA_EXPO );		
+		$this->nivelExpo = $this->getUser()->getNivelAcceso( traficosActions::RUTINA_EXPO );
+        $this->nivelOTM = $this->getUser()->getNivelAcceso( traficosActions::RUTINA_OTM );
 	}
 
 
@@ -99,7 +106,10 @@ class traficosActions extends sfActions
 		}		
 		if( $this->modo=="expo" ){
 			$this->nivel = $this->getUser()->getNivelAcceso( traficosActions::RUTINA_EXPO );
-		}		
+		}
+        if( $this->modo=="otm" ){
+			$this->nivel = $this->getUser()->getNivelAcceso( traficosActions::RUTINA_OTM );
+		}
 		if( $this->nivel==-1 ){
 			$this->forward404();
 		}
@@ -126,6 +136,10 @@ class traficosActions extends sfActions
 			
 			if( $reporte->getCaImpoexpo()==Constantes::EXPO ){
 				$this->modo="expo";
+			}
+            
+            if( $reporte->getCaImpoexpo()==Constantes::OTMDTA ){
+				$this->modo="otm";
 			}
 			
 			$this->cliente = $reporte->getCliente(); 			
@@ -154,8 +168,10 @@ class traficosActions extends sfActions
 			case "expo":
 				$this->reportes = ReporteTable::getReportesActivos( $this->cliente->getCaIdcliente() , Constantes::EXPO);
 				break;	
-		}							
-		
+            case "otm":
+				$this->reportes = ReporteTable::getReportesActivos( $this->cliente->getCaIdcliente() );
+				break;	
+		}
 		
 		/*
 		* En caso que no se encuentre entre los activos
@@ -190,7 +206,10 @@ class traficosActions extends sfActions
 		}		
 		if( $this->modo=="expo" ){
 			$this->nivel = $this->getUser()->getNivelAcceso( traficosActions::RUTINA_EXPO );
-		}		
+		}
+        if( $this->modo=="otm" ){
+			$this->nivel = $this->getUser()->getNivelAcceso( traficosActions::RUTINA_OTM );
+		}
 		if( $this->nivel==-1 ){
 			$this->forward404();
 		}
@@ -230,7 +249,10 @@ class traficosActions extends sfActions
 		}		
 		if( $this->modo=="expo" ){
 			$this->nivel = $this->getUser()->getNivelAcceso( traficosActions::RUTINA_EXPO );
-		}		
+		}
+        if( $this->modo=="otm" ){
+			$this->nivel = $this->getUser()->getNivelAcceso( traficosActions::RUTINA_OTM );
+		}
 		if( $this->nivel<1 ){
 			$this->forward404();
 		}	
@@ -816,7 +838,10 @@ class traficosActions extends sfActions
 				break;
 			case "expo":
 				$this->reportes = ReporteTable::getReportesActivos( $this->cliente->getCaIdcliente() , Constantes::EXPO);
-				break;	
+				break;
+            case "otm":
+				$this->reportes = ReporteTable::getReportesActivos( $this->cliente->getCaIdcliente() );
+				break;
 		}
 
         $this->parametros = ParametroTable::retrieveByCaso("CU059", null, null, $this->cliente->getCaIdgrupo() );
@@ -854,7 +879,10 @@ class traficosActions extends sfActions
 				break;
 			case "expo":
 				$this->reportes = ReporteTable::getReportesActivos( $this->cliente->getCaIdcliente() , Constantes::EXPO);
-				break;	
+				break;
+            case "otm":
+				$this->reportes = ReporteTable::getReportesActivos( $this->cliente->getCaIdcliente() );
+				break;
 		}
         
 
@@ -1073,7 +1101,10 @@ class traficosActions extends sfActions
 		}		
 		if( $this->modo=="expo" ){
 			$this->nivel = $this->getUser()->getNivelAcceso( traficosActions::RUTINA_EXPO );
-		}		
+		}
+        if( $this->modo=="otm" ){
+			$this->nivel = $this->getUser()->getNivelAcceso( traficosActions::RUTINA_OTM );
+		}
 		if( $this->nivel==-1 ){
 			$this->forward404();
 		}	
