@@ -216,6 +216,7 @@ Email:
     ca_bodyhtml: string
     ca_readreceipt: boolean
     ca_fchcreado: timestamp
+    ca_priority: integer
   relations:
      Reporte:
        local: ca_idcaso
