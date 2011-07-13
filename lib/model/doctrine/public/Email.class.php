@@ -106,44 +106,45 @@ class Email extends BaseEmail
 		}else{
 
 			if( $this->getCaAddress() ){
-                $address = str_replace(";",",", $this->getCaAddress() );
-				$recips = array_unique(explode( ",", $address ));
+				$recips = array_unique(explode( ",", $this->getCaAddress() ));
 				foreach( $recips as $key=>$recip ){
 					$recip = str_replace(" ", "", $recip );
                     $recip = str_replace("\t", "", $recip );
+                    if( $recip ){
+                        try{
+                            $message->addTo( $recip  );
+                        }catch (Exception $e) {
+                            $event= $logHeader;
+                            $event.= $e->getMessage();
 
-					try{
-						$message->addTo( $recip  );
-					}catch (Exception $e) {
-						$event= $logHeader;
-						$event.= $e->getMessage();
+                            Utils::writeLog($logFile , $event );
 
-						Utils::writeLog($logFile , $event );
-
-                        $badAddresses[] = $recip;
-					}
+                            $badAddresses[] = $recip;
+                        }
+                    }
 				}
 			}
 
 			if( $this->getCaCc() ){
 				$recips = array_unique(explode( ",", $this->getCaCc() ));
-                $address = str_replace(";",",", $this->getCaAddress() );
-                $address = explode( ",", $address );
+
+                $address = explode( ",", $this->getCaAddress() );
 
 				foreach( $recips as $key=>$recip ){
 					$recip = str_replace(" ", "", $recip );
                     $recip = str_replace("\t", "", $recip );
+                    if( $recip ){
+                        if(!in_array($recip , $address) ){
+                            try{
+                                $message->addCc( $recip  );
+                            }catch (Exception $e) {
+                                $event= $logHeader;
+                                $event.= $e->getMessage();
 
-                    if(!in_array($recip , $address) ){
-                        try{
-                            $message->addCc( $recip  );
-                        }catch (Exception $e) {
-                            $event= $logHeader;
-                            $event.= $e->getMessage();
+                                Utils::writeLog( $logFile , $event );
 
-                            Utils::writeLog( $logFile , $event );
-
-                            $badAddresses[] = $recip;
+                                $badAddresses[] = $recip;
+                            }
                         }
                     }
 				}
