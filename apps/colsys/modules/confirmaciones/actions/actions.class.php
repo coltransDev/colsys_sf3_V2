@@ -243,6 +243,9 @@ class confirmacionesActions extends sfActions
                 $referencia->setCaHoravaciado( $request->getParameter( "ca_horavaciado" ) );
                 $referencia->save();
             }
+            if( $request->getParameter( "fchsyga" ) ){
+                $referencia->setCaFchfinmuisca( Utils::parseDate($request->getParameter( "fchsyga" )) );
+            }
         }
 
         /*
@@ -256,13 +259,25 @@ class confirmacionesActions extends sfActions
         
         if($modo=="puerto")
         {            
-            $sql = "SELECT ca_nombre, ca_email FROM control.tb_usuarios WHERE ca_login in (SELECT DISTINCT ca_usucreado as ca_usuario FROM tb_inoclientes_sea where ca_referencia = '".$ca_referencia."' 
+/*            $sql = "SELECT ca_nombre, ca_email FROM control.tb_usuarios WHERE ca_login in (SELECT DISTINCT ca_usucreado as ca_usuario FROM tb_inoclientes_sea where ca_referencia = '".$ca_referencia."' 
                     UNION SELECT DISTINCT ca_usuactualizado as ca_usuario FROM tb_inoclientes_sea WHERE ca_referencia = '".$ca_referencia."'
                               UNION SELECT DISTINCT ca_usumuisca as ca_usuario FROM tb_inomaestra_sea WHERE ca_referencia = '".$ca_referencia."' 
                               UNION SELECT DISTINCT ca_usucreado as ca_usuario FROM tb_dianclientes WHERE ca_referencia = '".$ca_referencia."'
                               UNION SELECT DISTINCT ca_usuactualizado as ca_usuario FROM tb_dianclientes WHERE ca_referencia = '".$ca_referencia."'
                               UNION SELECT DISTINCT ca_usucreado as ca_usuario FROM tb_inomaestra_sea WHERE ca_referencia = '".$ca_referencia."'
                         )";
+*/
+            $sql="SELECT distinct(ca_email) ca_email FROM control.tb_usuarios WHERE ca_login in (SELECT DISTINCT ca_usucreado as ca_usuario FROM tb_inoclientes_sea where ca_referencia = '".$ca_referencia."' 
+                    UNION SELECT DISTINCT ca_usuactualizado as ca_usuario FROM tb_inoclientes_sea WHERE ca_referencia = '".$ca_referencia."'
+                              UNION SELECT DISTINCT ca_usumuisca as ca_usuario FROM tb_inomaestra_sea WHERE ca_referencia = '".$ca_referencia."' 
+                              UNION SELECT DISTINCT ca_usucreado as ca_usuario FROM tb_dianclientes WHERE ca_referencia = '".$ca_referencia."'
+                              UNION SELECT DISTINCT ca_usuactualizado as ca_usuario FROM tb_dianclientes WHERE ca_referencia = '".$ca_referencia."'
+                              UNION SELECT DISTINCT ca_usucreado as ca_usuario FROM tb_inomaestra_sea WHERE ca_referencia = '".$ca_referencia."'
+                              UNION (Select distinct(ca_login) from control.tb_usuarios where ca_idsucursal in (
+                                select ca_idsucursal from control.tb_usuarios where ca_login in (
+                                select ca_vendedor from tb_clientes where ca_idcliente in (select ca_idcliente from tb_inoclientes_sea where ca_referencia='".$ca_referencia."' ) and ca_propiedades like 'cuentaglobal=true%')
+                                ) and ca_departamento = 'Cuentas Globales'))";
+            
                     
             $con = Doctrine_Manager::getInstance()->connection();
             $st = $con->execute($sql);
@@ -272,6 +287,8 @@ class confirmacionesActions extends sfActions
             {
                 $destinatarios[]= $r["ca_email"];
             }
+
+            
             if( is_uploaded_file ( $_FILES['attachment']['tmp_name'] ) ){
                 $attachment = $_FILES['attachment'];
             }else{
@@ -290,16 +307,13 @@ class confirmacionesActions extends sfActions
             }            
             
             $user = sfContext::getInstance()->getUser();
-
             $email = new Email();
-
             $email->setCaUsuenvio( $user->getUserId() );
             $email->setCaTipo( "Not.".(($tipo_msg=="Puerto")?"Llegada":"Desconsolidación") );
             $email->setCaIdcaso( null );
             $email->setCaFrom( $user->getEmail() );            
             $email->setCaFromname( $user->getNombre() );
             $email->setCaReplyto( $user->getEmail() );
-
 
             foreach( $destinatarios as $recip ){
                 $recip = str_replace(" ", "", $recip );
