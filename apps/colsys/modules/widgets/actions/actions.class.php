@@ -846,8 +846,10 @@ class widgetsActions extends sfActions {
 
         if ($criterio) {
 
-            $transporte = $this->getRequestParameter("transporte");
-
+            $transporte = utf8_decode($this->getRequestParameter("transporte"));
+            $impoexpo = utf8_decode($this->getRequestParameter("impoexpo"));
+            $openedOnly = $this->getRequestParameter("openedOnly");
+            
             $q = Doctrine::getTable("Reporte")
                     ->createQuery("r")
                     ->select("r.ca_idreporte, r.ca_consecutivo,r.ca_version ,o.ca_ciudad, d.ca_ciudad, o.ca_idciudad, d.ca_idciudad,o.ca_idtrafico, d.ca_idtrafico, r.ca_mercancia_desc,
@@ -862,8 +864,21 @@ class widgetsActions extends sfActions {
                     ->addWhere("r.ca_consecutivo LIKE ?", $criterio . "%")
                     ->addWhere("r.ca_usuanulado IS NULL");
             if ($transporte != "") {
-                $q->addWhere("r.ca_transporte = ?", utf8_decode($transporte));
+                $q->addWhere("r.ca_transporte = ?", $transporte);
             }
+            
+            if ($impoexpo != "") {
+                if( $impoexpo==Constantes::IMPO ){
+                    $q->addWhere("(r.ca_impoexpo = ? OR r.ca_impoexpo = ?)", array($impoexpo, Constantes::TRIANGULACION));
+                }else{
+                    $q->addWhere("r.ca_impoexpo = ?", $impoexpo);
+                }
+            }
+            
+            if( $openedOnly ){
+                $q->addWhere("r.ca_idetapa != ?", "99999");
+            }
+            
 
             $q->addOrderBy("to_number(SUBSTR(r.ca_consecutivo , 1 , (POSITION('-' in r.ca_consecutivo)-1) ),'999999')  desc");
             $q->addOrderBy("r.ca_version  desc");

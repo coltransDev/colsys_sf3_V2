@@ -16,7 +16,11 @@ WidgetReporte = function( config ){
         proxy: new Ext.data.HttpProxy({
             url: '<?=url_for("widgets/listaReportesJSON")?>'
         }),
-        baseParams: {query: '1478'},
+        baseParams: {
+            transporte: this.transporte,
+            impoexpo: this.impoexpo,
+            openedOnly: this.openedOnly            
+        },
         reader: new Ext.data.JsonReader({
             root: 'root',
             totalProperty: 'total'
