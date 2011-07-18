@@ -67,13 +67,10 @@ class inoAereoActions extends sfActions
                 //Se trae el numero del INO Nuevo
                 $numRef = InoMaestraAirTable::getNumReferencia($impoexpo, $transporte, $modalidad, $idorigen, $iddestino, date("m", $fchreferenciaTm), date("Y", $fchreferenciaTm));
                 $ino->setCaReferencia($numRef);
+                $ino->setCaImpoexpo($impoexpo);            
+                $ino->setCaModalidad($modalidad);
             }
-            
-            
-            
-            
-            $ino->setCaImpoexpo($impoexpo);            
-            $ino->setCaModalidad($modalidad);
+                        
             $ino->setCaFchreferencia($fchreferencia);
             $ino->setCaOrigen($idorigen);
             $ino->setCaDestino($iddestino);
@@ -86,7 +83,7 @@ class inoAereoActions extends sfActions
             $ino->setCaFchpreaviso($request->getParameter("ca_fchsalida"));
             $ino->setCaFchllegada($request->getParameter("ca_fchllegada"));
             
-            $ino->setCaIdnave( utf8_decode($request->getParameter("ca_idnave")) );
+            //$ino->setCaIdnave( utf8_decode($request->getParameter("ca_idnave")) );
             $ino->setCaPiezas( $request->getParameter("ca_piezas") );
             $ino->setCaPeso( $request->getParameter("ca_peso") );
             $ino->setCaPesovolumen( $request->getParameter("ca_volumen") );
@@ -132,7 +129,7 @@ class inoAereoActions extends sfActions
             $data["ca_master"]=$ino->getCaMawb();
             //$data["ca_fchmaster"]=$ino->getCaFchmaster();
 
-            $data["ca_idnave"]=utf8_encode($ino->getCaIdnave());
+            //$data["ca_idnave"]=utf8_encode($ino->getCaIdnave());
             $data["ca_fchsalida"]=$ino->getCaFchpreaviso();
             $data["ca_fchllegada"]=$ino->getCaFchllegada();
             
@@ -171,10 +168,10 @@ class inoAereoActions extends sfActions
         $data["origen"]=$reporte->getCaOrigen();
         $data["destino"]=$reporte->getCaDestino();
         $data["idlinea"]=$reporte->getCaIdlinea();
-        $data["linea"]=$reporte->getIdsProveedor()->getIds()->getCaNombre();
+        $data["linea"]=utf8_encode($reporte->getIdsProveedor()->getIds()->getCaNombre());
         
         $data["idagente"]=$reporte->getCaIdagente();
-        $data["ca_idnave"]=$reporte->getIdnave();
+        //$data["ca_idnave"]=$reporte->getIdnave();
         $data["ca_fchsalida"]=$reporte->getEts();
         $data["ca_fchllegada"]=$reporte->getEta();
         $data["ca_master"]=$reporte->getCaDocmaster();

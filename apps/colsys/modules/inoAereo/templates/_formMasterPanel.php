@@ -15,18 +15,79 @@ include_component("widgets", "widgetReporte");
 ?>
 
 <script type="text/javascript">
+    
+    Ext.apply(Ext.form.VTypes, {
+        daterange : function(val, field) {
+            var date = field.parseDate(val);
+
+            if(!date){
+                return false;
+            }
+            if (field.startDateField) {
+                var start = Ext.getCmp(field.startDateField);
+                if (!start.maxValue || (date.getTime() != start.maxValue.getTime())) {
+                    start.setMaxValue(date);
+                    start.validate();
+                }
+            }
+            else if (field.endDateField) {
+                var end = Ext.getCmp(field.endDateField);
+                if (!end.minValue || (date.getTime() != end.minValue.getTime())) {
+                    end.setMinValue(date);
+                    end.validate();
+                }
+            }
+            /*
+             * Always return true since we're only using this vtype to set the
+             * min/max allowed values (these are tested for after the vtype test)
+             */
+            return true;
+        },
+        validarMaster: function( val, field ){                        
+            if(val.length!=12){                
+                return false;
+            }else {
+                for(i=0;i<val.length;i++)    {
+                    if(i==3) {
+                        if(val.charAt(i)!='-'){                            
+                            return false;
+                        }
+                    }
+                    else {
+                        if(val.charAt(i)<'0' || val.charAt(i)>'9'){
+                            return false;
+                        }
+                    }
+                }
+            }
+            
+            return true;
+        },
+        
+        validarMasterText : 'este campo debe tener el formato XXX-XXXXXXXX'
+
+        
+
+            
+            
+        
+    });
+
+    
     FormMasterPanel = function( config ){
         Ext.apply(this, config);       
         
         this.widgetReporte = new WidgetReporte({
-                                              fieldLabel: "Reporte",
-                                              name: "consecutivo",
-                                              hiddenName: "idreporte",
-                                              hiddenId: "idreporte",
-                                              allowBlank: false,
-                                              tipo:1,
-                                              tabIndex:2
-                                              });
+            fieldLabel: "Reporte",
+            name: "consecutivo",
+            hiddenName: "idreporte",
+            hiddenId: "idreporte",
+            allowBlank: true,
+            tipo:1,
+            tabIndex:2,
+            transporte: "<?= Constantes::AEREO ?>",
+            impoexpo: "<?= Constantes::IMPO ?>"
+        });
         this.widgetReporte.addListener("select", this.onSelectReporte, this );
         
         FormMasterPanel.superclass.constructor.call(this, {
@@ -125,17 +186,20 @@ include_component("widgets", "widgetReporte");
                                     forceSelection: true,
                                     editable:       true,
                                     fieldLabel:     'Tipo',
-                                    id:           'impoexpo',
+                                    id:           'impoexpo_fld',
                                     name:           'impoexpo',
                                     hiddenName:     'impoexpo',
                                     displayField:   'value',
                                     valueField:     'value',
                                     allowBlank: false,
+                                    tabIndex:3,
+                                    disabled: !!this.referencia,
+                                    value: '<?= Constantes::IMPO ?>',
                                     store:          new Ext.data.JsonStore({
                                         fields : ['value'],
                                         data   : [
-                                            { value: '<?=Constantes::IMPO?>'},
-                                            { value: '<?=Constantes::TRIANGULACION?>'}                                            
+                                            { value: '<?= Constantes::IMPO ?>'},
+                                            { value: '<?= Constantes::TRIANGULACION ?>'}                                            
                                         ]
                                     })
                                 },                                
@@ -146,8 +210,8 @@ include_component("widgets", "widgetReporte");
                                     id: 'origen',
                                     allowBlank: false,
                                     tipo:"1",
-                                    impoexpo:"impoexpo",                                                  
-                                    tabIndex:6
+                                    impoexpo:"impoexpo_fld",                                                  
+                                    tabIndex:5
                                 }),
                                 new WidgetLinea({fieldLabel: 'Linea',
                                     linkTransporte: "transporte",
@@ -156,7 +220,7 @@ include_component("widgets", "widgetReporte");
                                     hiddenName: 'idlinea',
                                     hiddenId: "idlinea",
                                     allowBlank: false,
-                                    tabIndex:5
+                                    tabIndex:7
                                 })
                                 
                             ]
@@ -170,13 +234,7 @@ include_component("widgets", "widgetReporte");
                             layout: 'form',
                             border:false,
                             defaultType: 'textfield',
-                            items: [
-                                /*                                new WidgetTransporte({fieldLabel: 'Transporte',
-                                                      id: 'transporte',
-                                                      allowBlank: false,
-                                                      tabIndex:3
-                                                    }),
-                                 */
+                            items: [                                
                                 {
                                     xtype:"hidden",
                                     id: 'transporte',
@@ -187,9 +245,10 @@ include_component("widgets", "widgetReporte");
                                     id: 'modalidad',
                                     name: 'modalidad',
                                     linkTransporte: "transporte",
-                                    impoexpo: "<?=Constantes::IMPO?>",
+                                    impoexpo: "<?= Constantes::IMPO ?>",
                                     allowBlank: false,
-                                    tabIndex:4
+                                    tabIndex:4,
+                                    disabled: !!this.referencia
                                 }),
                                 
                                 new WidgetCiudad({fieldLabel: 'Ciudad Destino',
@@ -198,11 +257,11 @@ include_component("widgets", "widgetReporte");
                                     hiddenName: 'iddestino',
                                     allowBlank: false,
                                     tipo:"2",
-                                    impoexpo:"impoexpo",                                                  
-                                    tabIndex:7
+                                    impoexpo:"impoexpo_fld",                                                  
+                                    tabIndex:6
                                 }),
                                 new WidgetAgente({fieldLabel: 'Agente',
-                                    linkImpoExpo: "impoexpo",
+                                    linkImpoExpo: "impoexpo_fld",
                                     linkOrigen: "origen",
                                     linkDestino: "destino",
                                     linkListarTodos: "listar_todos",
@@ -215,7 +274,7 @@ include_component("widgets", "widgetReporte");
                                     xtype: "checkbox",
                                     fieldLabel: "Listar todos",
                                     id: "listar_todos",
-                                    tabIndex:9
+                                    tabIndex:10
                                 }
                                 
                             ]
@@ -249,39 +308,35 @@ include_component("widgets", "widgetReporte");
                                 {
                                     fieldLabel: 'Master',
                                     name: 'ca_master',
-                                    width: 200,
+                                    width: 120,                                    
+                                    tabIndex:15,
+                                    vtype: 'validarMaster',
+                                    allowBlank: false
+                                },
+                                {
+                                    fieldLabel: 'Peso',
+                                    name: 'ca_peso',
+                                    xtype: 'numberfield',
+                                    width: 120,
                                     allowBlank: false,
-                                    tabIndex:10
+                                    tabIndex:17,
+                                    allowNegative: false,
+                                    decimalPrecision: 3                                    
                                 },
                                 {
                                     xtype: 'datefield',
                                     fieldLabel: 'Fecha Salida',
                                     name: 'ca_fchsalida',
+                                    id: 'fchsalida',
                                     format:'Y-m-d',
-                                    width: 200,
+                                    vtype: 'daterange',
+                                    endDateField: 'fchllegada', // id of the end date field
+                                    width: 120,
                                     allowBlank: false,
-                                    tabIndex:12
-                                },
-                                {
-                                    fieldLabel: 'Piezas',
-                                    name: 'ca_piezas',
-                                    xtype: 'numberfield',
-                                    width: 200,
-                                    allowBlank: false,
-                                    tabIndex:10,
-                                    allowNegative: false,
-                                    allowDecimals: false
-                                },
-                                {
-                                    fieldLabel: 'Volumen',
-                                    name: 'ca_volumen',
-                                    xtype: 'numberfield',
-                                    width: 200,
-                                    allowBlank: false,
-                                    tabIndex:10,
-                                    allowNegative: false,
-                                    decimalPrecision: 3                                    
+                                    tabIndex:19
                                 }
+                                
+                                
                                 
                             ]
                         },
@@ -294,35 +349,42 @@ include_component("widgets", "widgetReporte");
                             layout: 'form',
                             border:false,
                             defaultType: 'textfield',
-                            items: [    
+                            items: [   
                                 {
-                                    fieldLabel: 'MN/Vuelo',
-                                    name: 'ca_idnave',
-                                    width: 200,
+                                    fieldLabel: 'Piezas',
+                                    name: 'ca_piezas',
+                                    xtype: 'numberfield',
+                                    width: 120,
                                     allowBlank: false,
-                                    tabIndex:14
+                                    tabIndex:16,
+                                    allowNegative: false,
+                                    allowDecimals: false
+                                },
+                                {
+                                    fieldLabel: 'Volumen',
+                                    name: 'ca_volumen',
+                                    xtype: 'numberfield',
+                                    width: 120,
+                                    allowBlank: false,
+                                    tabIndex:18,
+                                    allowNegative: false,
+                                    decimalPrecision: 3                                    
                                 },
                                 {
                                     xtype: 'datefield',
                                     fieldLabel: 'Fecha Llegada',
                                     name: 'ca_fchllegada',
+                                    id: 'fchllegada',
                                     format:'Y-m-d',
-                                    width: 200,
+                                    width: 120,
+                                    vtype: 'daterange',                                    
+                                    startDateField: 'fchsalida', // id of the start date field
                                     allowBlank: false,
-                                    tabIndex:13
-                                },
-                                {
-                                    fieldLabel: 'Peso',
-                                    name: 'ca_peso',
-                                    xtype: 'numberfield',
-                                    width: 200,
-                                    allowBlank: false,
-                                    tabIndex:10,
-                                    allowNegative: false,
-                                    decimalPrecision: 3                                    
+                                    tabIndex:20
                                 }
                             ]
                         }
+                       
                     ]
                 },
                 {
@@ -339,14 +401,14 @@ include_component("widgets", "widgetReporte");
                     },
                     items :
                         [
-                            {
-                                xtype: 'textarea',                                
-                                name: 'ca_observaciones',                                
-                                width: 200,
-                                allowBlank: true,
-                                tabIndex:13
-                            }
-                        ]
+                        {
+                            xtype: 'textarea',                                
+                            name: 'ca_observaciones',                                
+                            width: 200,
+                            allowBlank: true,
+                            tabIndex:24
+                        }
+                    ]
                 }
             ],
             buttons:[
@@ -384,7 +446,11 @@ include_component("widgets", "widgetReporte");
             }
         },
         onCancel: function(){
-            document.location = "/Coltrans/InoAir/ConsultaReferenciaAction.do?referencia="+this.referencia;
+            if( this.referencia ){
+                document.location = "/Coltrans/InoAir/ConsultaReferenciaAction.do?referencia="+this.referencia;
+            }else{
+                document.location = "/Coltrans/InoAir/AereoEntrada.jsp";
+            }
         },
         onRender:function() {
             FormMasterPanel.superclass.onRender.apply(this, arguments);
@@ -413,6 +479,7 @@ include_component("widgets", "widgetReporte");
             
             this.load({
                 url: '<?= url_for("inoAereo/datosReporteCarga") ?>',
+                waitMsg:'cargando...',
                 params :{
                     idreporte:record.data.idreporte
                 },
