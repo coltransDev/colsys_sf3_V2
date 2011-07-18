@@ -25,16 +25,23 @@
                     <input type="hidden" id='consolidar_comunicaciones_<?=$inoCliente->getOid()?>' value="<?=$cliente->getProperty("consolidar_comunicaciones")?>" />
                     <input type="hidden" id='nombre_cliente_<?=$inoCliente->getOid()?>' value="<?=$cliente->getCaCompania()?>" />
                 </td>
-				<td class="listar" style='font-size: 11px; vertical-align:bottom'><span class="listar" style="font-size: 11px; vertical-align:bottom"><b>Id Cliente:</b><br />
+				<td class="listar" style='font-size: 11px; vertical-align:bottom;'><span class="listar" style="font-size: 11px; vertical-align:bottom"><b>Id Cliente:</b><br />
 					<?=number_format($inoCliente->getCaIdcliente())?>
 					</span></td>
-				<td class="listar" style='font-size: 11px;' colspan="3"><b>Nombre del Cliente:</b><br />
+				<td class="listar" style='font-size: 11px; vertical-align:bottom;' colspan="3"><b>Nombre del Cliente:</b><br />
 					<?=Utils::replace($cliente->getCaCompania())?></td>
 				<td class="listar" >
 					<div align="right">
 					<?
-					if( $reporte ){                        
-					?>					
+					if( $reporte ){ 
+                      
+                        if($cliente->getProperty("cuentaglobal")=="true")
+                        {
+					?>	
+                        <img src="/images/CG30.png" title="Cliente de Cuentas Globales" />
+                     <?
+                        }
+                     ?>
 						<input type="checkbox" name='oid[]' onclick="habilitar('<?=$inoCliente->getOid()?>');" id="checkbox_<?=$inoCliente->getOid()?>"  value="<?=$inoCliente->getOid()?>" />
                         <input type="hidden" name='idcliente_<?=$inoCliente->getOid()?>' value="<?=$inoCliente->getCaIdcliente()?>" />
                         <input type="hidden" name='hbls_<?=$inoCliente->getOid()?>' value="<?=$inoCliente->getCaHbls()?>" />

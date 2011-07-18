@@ -2,12 +2,19 @@
 include_component("gestDocumental", "widgetUploadImages");
 ?>
 <tr>
-				<th class="titulo" colspan="6">Adjuntar Fotos de averias en la carga de los clientes</th>
+				<th class="titulo" colspan="7">Adjuntar Fotos de averias en la carga de los clientes</th>
 			</tr>
 			<tr height="5">
-				<td class="captura" colspan="6">&nbsp;</td>
+				<td class="captura" colspan="7">&nbsp;</td>
 			</tr>
             
+            <tr class="b">
+                <td class="listar" ><b>Reporte:</b></td>
+                <td class="listar">Hbl</td>
+                <td class="listar"><b>Id Cliente:</b></td>
+                <td class="listar" colspan="3" ><b>Nombre del Cliente:</b></td>
+                <td class="listar">Imagenes</td>                
+            </tr>            
 			<?
             $dimension=640;
             $dimVisual=100;
@@ -19,23 +26,24 @@ include_component("gestDocumental", "widgetUploadImages");
 				$reporte = $inoCliente->getReporte();
                 $folder="Referencias/".$inoCliente->getCaReferencia()."/".$inoCliente->getCaHbls()."/";
                 $directory = sfConfig::get('app_digitalFile_root') . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR;
-                $archivos = sfFinder::type('file')->maxDepth(0)->in($directory);            
+                $archivos = sfFinder::type('file')->maxDepth(0)->in($directory);
                 $narchivos=count($archivos);
                 $alto=ceil($narchivos/4)*$dimVisual;
                 
 			?>
 			<tr>
-				<td class="listar" style='font-size: 11px; vertical-align:bottom'><b>Reporte:</b><br />
+				<td class="listar"  style='font-size: 11px; vertical-align:bottom'>
 					<?=$reporte?$reporte->getCaConsecutivo():"&nbsp;"?>
                     <input type="hidden" id='consolidar_comunicaciones_<?=$inoCliente->getOid()?>' value="<?=$cliente->getProperty("consolidar_comunicaciones")?>" />
                     <input type="hidden" id='nombre_cliente_<?=$inoCliente->getOid()?>' value="<?=$cliente->getCaCompania()?>" />
                 </td>
-				<td class="listar" style='font-size: 11px; vertical-align:bottom'><span class="listar" style="font-size: 11px; vertical-align:bottom"><b>Id Cliente:</b><br />
+                <td class="listar"><?=$inoCliente->getCaHbls()?></td>
+				<td class="listar" style='font-size: 11px; vertical-align:bottom'><span class="listar" style="font-size: 11px; vertical-align:bottom">
 					<?=number_format($inoCliente->getCaIdcliente())?>
 					</span></td>
-				<td class="listar" style='font-size: 11px;' colspan="3"><b>Nombre del Cliente:</b><br />
+				<td class="listar" style='font-size: 11px;' colspan="3">
 					<?=Utils::replace($cliente->getCaCompania())?></td>
-				<td class="listar"  >
+				<td   >
                     <form>
 		<div style="width: 180px; height: 18px; border: solid 1px #7FAAFF; background-color: #C5D9FF; padding: 2px;">
 			<span id="but<?=$i?>"></span>

@@ -528,12 +528,7 @@ function cambiarTipoMsg( value ){
                                     ?>
                                     </div>
 							</tr>                            
-                            <tr>
-                                <td class="mostrar" width="25%" >Fecha Desconsolidación:<br>								
-									<?
-									echo extDatePicker('fchdesconsolidacion', $referencia->getCaFchdesconsolidacion("Y-m-d"));
-									?>	
-								</td>
+                            <tr>                                
 								<td class="mostrar" width="25%">Fecha Vaciado:<br>
 									<?
 									echo extDatePicker('ca_fchvaciado', $referencia->getCaFchvaciado("Y-m-d"));
@@ -541,7 +536,7 @@ function cambiarTipoMsg( value ){
 								</td>
 							
 								<td class="mostrar" width="25%">Hora Vaciado::<br>
-                                    <? echo extTimePicker("ca_horavaciado","" );?>
+                                    <? echo extTimePicker("ca_horavaciado",$referencia->getCaHoravaciado("Y-m-d") );?>
                                 </td>
                                 <td class="mostrar" width="25%">Fecha finalizaci&oacute;n MUISCA:<br>
 									<?
@@ -601,7 +596,21 @@ function cambiarTipoMsg( value ){
 								
 								<td class="mostrar">Motonave Llegada:<br>
 									<input name="mnllegada" value="<?=$referencia->getCaMnllegada()?>" size="20" maxlength="50" type="text"></td>
-                                <td class="mostrar" style="display: block">Fecha Desconsolidación:<br>								
+                                <td class="mostrar">Muelle:<br>
+                                    
+                                    <input type='text' id='muelle' name='muelle' />
+                                    <script>
+                                    var mu=new WidgetMuelles({
+                                        id: 'muelle',
+                                        name: 'muelle',
+                                        hiddenName: "idmuelle",
+                                        value:"<?=$referencia->getInoDianDepositos()->getCaNombre()?>",
+                                        hiddenValue:"<?=$referencia->getCaMuelle()?>",
+                                        applyTo: "muelle"
+                                    })
+                                    </script>                                    
+                                </td> 
+                                <td class="mostrar" style="display: none">Fecha Desconsolidación:<br>								
 									<?
 									echo extDatePicker('fchdesconsolidacion', $referencia->getCaFchdesconsolidacion("Y-m-d"));
 									?>	
