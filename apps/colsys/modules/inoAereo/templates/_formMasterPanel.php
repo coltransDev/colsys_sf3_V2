@@ -325,12 +325,12 @@ include_component("widgets", "widgetReporte");
                                 },
                                 {
                                     xtype: 'datefield',
-                                    fieldLabel: 'Fecha Salida',
+                                    fieldLabel: 'Fecha Preaviso',
                                     name: 'ca_fchsalida',
                                     id: 'fchsalida',
                                     format:'Y-m-d',
-                                    vtype: 'daterange',
-                                    endDateField: 'fchllegada', // id of the end date field
+                                    //vtype: 'daterange',
+                                    //endDateField: 'fchllegada', // id of the end date field
                                     width: 120,
                                     allowBlank: false,
                                     tabIndex:19
@@ -377,8 +377,8 @@ include_component("widgets", "widgetReporte");
                                     id: 'fchllegada',
                                     format:'Y-m-d',
                                     width: 120,
-                                    vtype: 'daterange',                                    
-                                    startDateField: 'fchsalida', // id of the start date field
+                                    //vtype: 'daterange',                                    
+                                    //startDateField: 'fchsalida', // id of the start date field
                                     allowBlank: false,
                                     tabIndex:20
                                 }
