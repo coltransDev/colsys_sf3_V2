@@ -441,6 +441,15 @@ class Swift_Mime_SimpleMessage extends Swift_Mime_MimePart
     return $this;
   }
   
+  public function setImportance()
+  {    
+    if (!$this->_setHeaderFieldModel('Importance','High'))
+    {
+      $this->getHeaders()->addTextHeader('Importance','High');
+    }
+    return $this;
+  }
+  
   /**
    * Get the priority of this message.
    * The returned value is an integer where 1 is the highest priority and 5
