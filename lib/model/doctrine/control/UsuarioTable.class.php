@@ -39,6 +39,24 @@ class UsuarioTable extends Doctrine_Table {
                 ->addOrderBy("u.ca_nombre")
                 ->execute();
     }
+    
+    public static function getCoordinadoresOTM( $idsucursal=null ) {
+
+        $q = Doctrine::getTable("Usuario")
+               ->createQuery("u")
+               ->select("u.ca_login,u.ca_nombre,u.ca_email,ca_sucursal,u.ca_idsucursal")
+               ->innerJoin("u.UsuarioPerfil up")
+               ->addWhere("u.ca_activo=? AND up.ca_perfil=? ", array('TRUE','cordinador-de-otm'))
+               ->addOrderBy("u.ca_idsucursal")
+               ->addOrderBy("u.ca_nombre");
+        if( $idsucursal ){
+            $q->addWhere("u.ca_idsucursal = ?", $idsucursal);
+        }
+               
+        return $q->execute();
+    }
+    
+    
 
     public function getLuceneIndex(){
 
