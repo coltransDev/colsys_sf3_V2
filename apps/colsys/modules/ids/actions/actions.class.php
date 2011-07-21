@@ -49,15 +49,15 @@ class idsActions extends sfActions {
         $this->nivel = $this->getNivel();
 
         $this->traficos = Doctrine::getTable('Trafico')->createQuery('t')
-                        ->where('t.ca_idtrafico != ?', '99-999')
-                        ->addOrderBy('t.ca_nombre ASC')
-                        ->execute();
+                ->where('t.ca_idtrafico != ?', '99-999')
+                ->addOrderBy('t.ca_nombre ASC')
+                ->execute();
 
         $ciudades = Doctrine::getTable('Ciudad')->createQuery('c')
-                        ->where('c.ca_idciudad != ?', '999-9999')
-                        ->addOrderBy('c.ca_idtrafico ASC')
-                        ->addOrderBy('c.ca_ciudad ASC')
-                        ->execute();
+                ->where('c.ca_idciudad != ?', '999-9999')
+                ->addOrderBy('c.ca_idtrafico ASC')
+                ->addOrderBy('c.ca_ciudad ASC')
+                ->execute();
 
         $result = array();
         foreach ($ciudades as $ciudad) {
@@ -105,9 +105,9 @@ class idsActions extends sfActions {
 
         switch ($criterio) {
             case "nombre":
-                if( $this->modo=="prov" ){
-                    $q->addWhere('i.ca_nombre like ? OR prov.ca_sigla like ?', array('%'.strtoupper($cadena).'%','%'.strtoupper($cadena).'%'));
-                }else{
+                if ($this->modo == "prov") {
+                    $q->addWhere('i.ca_nombre like ? OR prov.ca_sigla like ?', array('%' . strtoupper($cadena) . '%', '%' . strtoupper($cadena) . '%'));
+                } else {
                     $q->addWhere('i.ca_nombre like ?', '%' . strtoupper($cadena) . '%');
                 }
 
@@ -329,11 +329,11 @@ class idsActions extends sfActions {
                             $proveedor->setCaCritico(false);
                         }
 
-                        /*if ($bindValues["esporadico"]) {
-                            $proveedor->setCaEsporadico(true);
-                        } else {
-                            $proveedor->setCaEsporadico(false);
-                        }*/
+                        /* if ($bindValues["esporadico"]) {
+                          $proveedor->setCaEsporadico(true);
+                          } else {
+                          $proveedor->setCaEsporadico(false);
+                          } */
 
 
                         if ($bindValues["aprobado"]) {
@@ -374,7 +374,7 @@ class idsActions extends sfActions {
                         }
                         $agente->setCaActivo(false);
                     }
-                    
+
                     if ($bindValues["tplogistics"]) {
                         $agente->setCaTplogistics(true);
                     } else {
@@ -418,9 +418,9 @@ class idsActions extends sfActions {
         $idalterno = $request->getParameter("idalterno");
         $tipo_identificacion = $request->getParameter("tipo_identificacion");
         $id = Doctrine::getTable("Ids")
-                        ->createQuery("id")
-                        ->where("id.ca_idalterno = ? AND id.ca_tipoidentificacion = ? ", array($idalterno, $tipo_identificacion))
-                        ->fetchOne();
+                ->createQuery("id")
+                ->where("id.ca_idalterno = ? AND id.ca_tipoidentificacion = ? ", array($idalterno, $tipo_identificacion))
+                ->fetchOne();
         $this->responseArray = array();
         if ($id) {
             $this->responseArray["id"] = $id->getCaId();
@@ -552,6 +552,38 @@ class idsActions extends sfActions {
         $contacto->setCaUsueliminado($this->getUser()->getUserId());
         $contacto->save();
         $this->redirect("ids/verIds?modo=" . $this->modo . "&id=" . $this->sucursal->getCaId());
+    }
+
+    /*
+      Permite cambiar un contacto de una sucursal a otra
+     *
+     * @param sfRequest $request A request object
+     */
+
+    public function executeFormTransladarContacto(sfWebRequest $request) {
+        $this->nivel = $this->getNivel();
+
+        /* if( $this->nivel<=0 ){
+          $this->forward404();
+          } */
+
+        $this->modo = $request->getParameter("modo");
+
+        $this->contacto = Doctrine::getTable("IdsContacto")->find($request->getParameter("idcontacto"));
+        $this->forward404Unless($this->contacto);
+        $this->sucursal = $this->contacto->getIdsSucursal();
+
+        $this->sucursales = Doctrine::getTable("IdsSucursal")
+                ->createQuery("s")
+                ->addWhere("s.ca_id = ?" , $this->sucursal->getCaId())
+                ->execute();
+
+
+        if ($request->isMethod('post')) {
+            $this->contacto->setCaIdsucursal( $request->getParameter("idsucursal") );
+            $this->contacto->save();
+            $this->redirect("ids/verIds?modo=".$this->modo."&id=".$this->sucursal->getCaId());
+        }
     }
 
     /**
@@ -734,25 +766,25 @@ class idsActions extends sfActions {
             $this->tipo = $request->getParameter("tipo");
             $this->proveedor = Doctrine::getTable("IdsProveedor")->find($request->getParameter("id"));
         }
-        
+
         $defAno = date("Y");
-        
-        
+
+
         //echo date("Y-m-d")."  -----  entre ".date('Y')."-02-01"."    ".date('Y')."-07-01" ;
-        
-        if( date("Y-m-d")>=date('Y')."-04-01" && date("Y-m-d")<=date('Y')."-09-01" ){            
+
+        if (date("Y-m-d") >= date('Y') . "-04-01" && date("Y-m-d") <= date('Y') . "-09-01") {
             $defPeriodo = 1;
-        }else{
+        } else {
             $defPeriodo = 2;
-            if( date('Y')."-01-01">=date("Y-m-d") ){
+            if (date('Y') . "-01-01" >= date("Y-m-d")) {
                 $defAno--;
             }
         }
-        
-        
+
+
         $this->defAno = $defAno;
         $this->defPeriodo = $defPeriodo;
-        
+
 
         $this->modo = $request->getParameter("modo");
         $this->forward404Unless($this->ids);
@@ -794,7 +826,7 @@ class idsActions extends sfActions {
             if ($this->modo == "prov") {
                 $q->addWhere("c.ca_tipo = ? or c.ca_tipo IS NULL", $this->proveedor->getCaTipo());
                 if ($this->proveedor->getCaTipo()) {
-
+                    
                 }
             } else {
                 if ($this->modo == "agentes") {
@@ -869,9 +901,6 @@ class idsActions extends sfActions {
         foreach ($evaluacionxCriterios as $evaluacionxCriterio) {
             $this->evaluacionxCriterios[$evaluacionxCriterio->getCaIdcriterio()] = $evaluacionxCriterio;
         }
-        
-        
-        
     }
 
     /*
@@ -910,7 +939,7 @@ class idsActions extends sfActions {
             $this->forward404();
         }
 
-        
+
         $evaluacion = Doctrine::getTable("IdsEvaluacion")->find($request->getParameter("idevaluacion"));
 
         $ids = $evaluacion->getIds();
@@ -923,8 +952,8 @@ class idsActions extends sfActions {
         }
 
         $evaluacion->delete();
-        
-        $this->getUser()->log("Elimina evaluación: " . $evaluacion->getCaIdevaluacion(). " id prov:" . $ids->getCaId() . " " . $ids->getCaNombre());
+
+        $this->getUser()->log("Elimina evaluación: " . $evaluacion->getCaIdevaluacion() . " id prov:" . $ids->getCaId() . " " . $ids->getCaNombre());
 
         $this->redirect("ids/verIds?modo=" . $this->modo . "&id=" . $ids->getCaId());
     }
@@ -1022,28 +1051,28 @@ class idsActions extends sfActions {
                     $q->addWhere("c.ca_impoexpo = ?", Constantes::IMPO);
                     $q->addWhere("c.ca_transporte = ?", Constantes::AEREO);
                 }
-                
-                
+
+
                 if (substr($numreferencia, 0, 1) == "3") {
                     $referencia = Doctrine::getTable("InoMaestraExpo")->find($numreferencia);
-                    $this->forward404Unless( $referencia );
-                    
+                    $this->forward404Unless($referencia);
+
                     $linea = array();
-                    if( $referencia->getCaVia()=="Aereo" || $referencia->getCaVia()=="Aereo/Terrestre" ){
+                    if ($referencia->getCaVia() == "Aereo" || $referencia->getCaVia() == "Aereo/Terrestre") {
                         $refAereo = Doctrine::getTable("InoMaestraExpoAir")->find($numreferencia);
-                        $this->forward404Unless( $refAereo );                        
+                        $this->forward404Unless($refAereo);
                         $linea[] = $refAereo->getCaIdaerolinea();
                         $q->addWhere("c.ca_transporte = ?", Constantes::AEREO);
                     }
-                    
-                    if( $referencia->getCaVia()=="Maritimo" || $referencia->getCaVia()=="Maritimo/Terrestre" ){
+
+                    if ($referencia->getCaVia() == "Maritimo" || $referencia->getCaVia() == "Maritimo/Terrestre") {
                         $refMaritimo = Doctrine::getTable("InoMaestraExpoSea")->find($numreferencia);
-                        $this->forward404Unless( $refMaritimo );                        
+                        $this->forward404Unless($refMaritimo);
                         $linea[] = $refMaritimo->getCaIdnaviera();
                         $q->addWhere("c.ca_transporte = ?", Constantes::MARITIMO);
                     }
-                                        
-                                     
+
+
 
                     $this->url = "/Coltrans/Expo/ConsultaReferenciaAction.do?referencia=" . $numreferencia;
 
@@ -1061,11 +1090,11 @@ class idsActions extends sfActions {
             }
 
             $this->eventos = Doctrine::getTable("IdsEvento")
-                            ->createQuery("e")
-                            ->select("e.*")
-                            ->where("e.ca_referencia=?", $numreferencia)
-                            ->addOrderBy("e.ca_fchcreado ASC")
-                            ->execute();
+                    ->createQuery("e")
+                    ->select("e.*")
+                    ->where("e.ca_referencia=?", $numreferencia)
+                    ->addOrderBy("e.ca_fchcreado ASC")
+                    ->execute();
         }
         $q->addWhere("c.ca_activo = ?", true);
         $q->addWhere("c.ca_tipocriterio = ?", "desempeno");
@@ -1180,11 +1209,11 @@ class idsActions extends sfActions {
             }
 
             $this->eventos = Doctrine::getTable("IdsEvento")
-                            ->createQuery("e")
-                            ->select("e.*")
-                            ->where("e.ca_referencia=?", $numreferencia)
-                            ->addOrderBy("e.ca_fchcreado ASC")
-                            ->execute();
+                    ->createQuery("e")
+                    ->select("e.*")
+                    ->where("e.ca_referencia=?", $numreferencia)
+                    ->addOrderBy("e.ca_fchcreado ASC")
+                    ->execute();
         }
         $q->addWhere("c.ca_activo = ?", true);
         $criterios = $q->execute();
@@ -1232,30 +1261,30 @@ class idsActions extends sfActions {
 
     public function executeListadoProveedoresAprobados(sfWebRequest $request) {
         $this->proveedores = Doctrine::getTable("IdsProveedor")
-                        ->createQuery("p")
-                        ->innerJoin("p.Ids i")
-                        ->innerJoin("i.IdsSucursal s")
-                        ->innerJoin("s.Ciudad c")
-                        ->innerJoin("p.IdsTipo t")
-                        ->where("p.ca_fchaprobado IS NOT NULL")
-                        ->addWhere("p.ca_controladoporsig = true")
-                        ->addOrderBy("t.ca_nombre ASC")
-                        ->addOrderBy("p.ca_transporte ASC")
-                        ->addOrderBy("i.ca_nombre ASC")
-                        ->execute();
+                ->createQuery("p")
+                ->innerJoin("p.Ids i")
+                ->innerJoin("i.IdsSucursal s")
+                ->innerJoin("s.Ciudad c")
+                ->innerJoin("p.IdsTipo t")
+                ->where("p.ca_fchaprobado IS NOT NULL")
+                ->addWhere("p.ca_controladoporsig = true")
+                ->addOrderBy("t.ca_nombre ASC")
+                ->addOrderBy("p.ca_transporte ASC")
+                ->addOrderBy("i.ca_nombre ASC")
+                ->execute();
     }
 
     public function executeListadoProveedoresInactivos(sfWebRequest $request) {
         $this->proveedores = Doctrine::getTable("IdsProveedor")
-                        ->createQuery("p")
-                        ->innerJoin("p.Ids i")
-                        ->innerJoin("i.IdsSucursal s")
-                        ->innerJoin("s.Ciudad c")
-                        ->innerJoin("p.IdsTipo t")
-                        ->where("p.ca_fchaprobado IS NOT NULL")
-                        ->addWhere("p.ca_activo_impo = false OR p.ca_activo_expo=false")
-                        ->addOrderBy("i.ca_nombre ASC")
-                        ->execute();
+                ->createQuery("p")
+                ->innerJoin("p.Ids i")
+                ->innerJoin("i.IdsSucursal s")
+                ->innerJoin("s.Ciudad c")
+                ->innerJoin("p.IdsTipo t")
+                ->where("p.ca_fchaprobado IS NOT NULL")
+                ->addWhere("p.ca_activo_impo = false OR p.ca_activo_expo=false")
+                ->addOrderBy("i.ca_nombre ASC")
+                ->execute();
     }
 
     /*
@@ -1311,14 +1340,14 @@ class idsActions extends sfActions {
         $this->fecha = date("Y-m-d", time() + 86400 * 16);
         //echo$this->fecha ;
         $q = Doctrine::getTable("IdsDocumento")
-                        ->createQuery("d")
-                        ->select("i.ca_id, d.ca_iddocumento, d.ca_fchvencimiento, t.ca_tipo, i.ca_nombre")
-                        ->innerJoin("d.Ids i")
-                        ->innerJoin("d.IdsTipoDocumento t")
-                        ->where("d.ca_fchvencimiento<=?", $this->fecha)
-                        ->addWhere("d.ca_iddocumento IN (SELECT dd.ca_iddocumento FROM IdsDocumento dd WHERE dd.ca_idtipo=d.ca_idtipo AND dd.ca_id=d.ca_id ORDER BY dd.ca_fchvencimiento DESC LIMIT 1)")
-                        ->addOrderBy("d.ca_fchvencimiento ASC")
-                        ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
+                ->createQuery("d")
+                ->select("i.ca_id, d.ca_iddocumento, d.ca_fchvencimiento, t.ca_tipo, i.ca_nombre")
+                ->innerJoin("d.Ids i")
+                ->innerJoin("d.IdsTipoDocumento t")
+                ->where("d.ca_fchvencimiento<=?", $this->fecha)
+                ->addWhere("d.ca_iddocumento IN (SELECT dd.ca_iddocumento FROM IdsDocumento dd WHERE dd.ca_idtipo=d.ca_idtipo AND dd.ca_id=d.ca_id ORDER BY dd.ca_fchvencimiento DESC LIMIT 1)")
+                ->addOrderBy("d.ca_fchvencimiento ASC")
+                ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
         if ($this->modo == "prov") {
             $q->innerJoin("i.IdsProveedor p");
             $q->addWhere("p.ca_controladoporsig = ?", true);
@@ -1340,11 +1369,11 @@ class idsActions extends sfActions {
         $this->modo = $request->getParameter("modo");
 
         $usuarios = Doctrine::getTable("Usuario")
-                        ->createQuery("u")
-                        ->innerJoin("u.UsuarioPerfil p")
-                        ->where("p.ca_perfil = ? ", "asistente-de-pricing")
-                        ->addWhere("u.ca_activo = ?", true)
-                        ->execute();
+                ->createQuery("u")
+                ->innerJoin("u.UsuarioPerfil p")
+                ->where("p.ca_perfil = ? ", "asistente-de-pricing")
+                ->addWhere("u.ca_activo = ?", true)
+                ->execute();
 
         $contentHTML = sfContext::getInstance()->getController()->getPresentationFor('ids', 'alertasDocumentos');
 
@@ -1369,7 +1398,7 @@ class idsActions extends sfActions {
     public function executeVerificarListaClinton(sfWebRequest $request) {
         $id = $request->getParameter("id");
 
-        if( $id ){
+        if ($id) {
             $this->ids = Doctrine::getTable("Ids")->find($request->getParameter("id"));
             $this->forward404Unless($this->ids);
         }
@@ -1378,8 +1407,8 @@ class idsActions extends sfActions {
         $q = Doctrine_Manager::getInstance()->connection();
 
 
-        if( $request->getParameter("layout") ){
-            $this->setLayout( $request->getParameter("layout"));
+        if ($request->getParameter("layout")) {
+            $this->setLayout($request->getParameter("layout"));
         }
 
         $query = "select * from tb_parametros where ca_casouso = 'CU065' and ca_identificacion = 1";
@@ -1387,9 +1416,9 @@ class idsActions extends sfActions {
         $row = $stmt->fetch();
         $this->fechaActualizacion = $row["ca_valor2"];
         $cond = "";
-        if( $id ){
+        if ($id) {
             $from = "select * from ids.tb_ids where ca_id = $id";
-        }else{
+        } else {
             $from = "select * from ids.tb_ids ids inner join ids.tb_proveedores p on p.ca_idproveedor = ids.ca_id  where ca_controladoporsig= true";
         }
 
@@ -1412,7 +1441,7 @@ class idsActions extends sfActions {
         @$stmt->execute();
         $this->stmt = $stmt;
 
-        $this->id  = $id;
+        $this->id = $id;
     }
 
     /**
@@ -1421,7 +1450,7 @@ class idsActions extends sfActions {
      * @param sfRequest $request A request object
      */
     public function executeEmailListaClintonProveedores(sfWebRequest $request) {
-        
+
         $email = new Email();
         $email->setCaUsuenvio("Administrador");
         $email->setCaTipo("Not. Lista Clinton");
@@ -1429,14 +1458,14 @@ class idsActions extends sfActions {
         $email->setCaReplyto("no-reply@coltrans.com.co");
         $email->setCaFromname("Colsys");
         //$email->addTo("abotero@coltrans.com.co");
-        
-        
+
+
         $usuarios = Doctrine::getTable("Usuario")
-                        ->createQuery("u")
-                        ->innerJoin("u.UsuarioPerfil p")
-                        ->where("p.ca_perfil = ? ", "asistente-de-pricing")
-                        ->addWhere("u.ca_activo = ?", true)
-                        ->execute();
+                ->createQuery("u")
+                ->innerJoin("u.UsuarioPerfil p")
+                ->where("p.ca_perfil = ? ", "asistente-de-pricing")
+                ->addWhere("u.ca_activo = ?", true)
+                ->execute();
         foreach ($usuarios as $usuario) {
             $email->addTo($usuario->getCaEmail());
         }
@@ -1452,10 +1481,7 @@ class idsActions extends sfActions {
 
 
         return sfView::NONE;
-
-
     }
-
 
     /**
      * Muestra el formulario de creación y edicion de proveedores
@@ -1514,8 +1540,8 @@ class idsActions extends sfActions {
         $this->forward404Unless($this->modo);
 
         $q = Doctrine::getTable("IdsTipo")
-                        ->createQuery("t")
-                        ->addOrderBy("t.ca_nombre");
+                ->createQuery("t")
+                ->addOrderBy("t.ca_nombre");
 
         if ($this->modo == "prov") {
             $q->addWhere("t.ca_aplicacion = ? ", "Proveedores");
@@ -1629,17 +1655,17 @@ class idsActions extends sfActions {
         $this->fecha = date("Y-m-d", time() + 86400 * 16);
         //echo$this->fecha ;
         $q = Doctrine::getTable("IdsDocumento")
-                        ->createQuery("d")
-                        ->select("d.*, i.*, t.*")
-                        ->innerJoin("d.Ids i")
-                        ->innerJoin("d.IdsTipoDocumento t")
-                        ->innerJoin("t.IdsDocumentoPorTipo dxt")
-                        ->addWhere("d.ca_fchvencimiento<=?", $this->fecha)
-                        ->addWhere("dxt.ca_controladoxsig=?", true)
-                        ->addWhere("d.ca_iddocumento IN (SELECT dd.ca_iddocumento FROM IdsDocumento dd WHERE dd.ca_idtipo=d.ca_idtipo AND dd.ca_id=d.ca_id ORDER BY dd.ca_fchvencimiento DESC LIMIT 1)")
-                        ->addOrderBy("i.ca_nombre ASC")
-                        ->addOrderBy("d.ca_fchvencimiento ASC");
-                        
+                ->createQuery("d")
+                ->select("d.*, i.*, t.*")
+                ->innerJoin("d.Ids i")
+                ->innerJoin("d.IdsTipoDocumento t")
+                ->innerJoin("t.IdsDocumentoPorTipo dxt")
+                ->addWhere("d.ca_fchvencimiento<=?", $this->fecha)
+                ->addWhere("dxt.ca_controladoxsig=?", true)
+                ->addWhere("d.ca_iddocumento IN (SELECT dd.ca_iddocumento FROM IdsDocumento dd WHERE dd.ca_idtipo=d.ca_idtipo AND dd.ca_id=d.ca_id ORDER BY dd.ca_fchvencimiento DESC LIMIT 1)")
+                ->addOrderBy("i.ca_nombre ASC")
+                ->addOrderBy("d.ca_fchvencimiento ASC");
+
         if ($this->modo == "prov") {
             $q->innerJoin("i.IdsProveedor p");
             $q->select("d.*, i.*, p.*");
@@ -1659,8 +1685,8 @@ class idsActions extends sfActions {
 
         //Se agrupan los documentos por ID
         foreach ($documentos as $documento) {
-            
-            
+
+
             if (!isset($resultados[$documento->getCaId()])) {
                 $resultados[$documento->getCaId()] = array();
                 $resultados[$documento->getCaId()]["ids"] = $documento->getIds();
@@ -1671,61 +1697,60 @@ class idsActions extends sfActions {
         }
 
         //Se genera el correo y luego se despacha a cada contacto.
-        foreach( $resultados as $resultado ){
-            
+        foreach ($resultados as $resultado) {
+
             $email = new Email();
 
             $ids = $resultado["ids"];
             $contactos = Doctrine::getTable("IdsContacto")
-                          ->createQuery("c")
-                          ->innerJoin("c.IdsSucursal s")
-                          ->addWhere("s.ca_id = ?", $ids->getCaId() )
-                          ->addWhere("c.ca_notificar_vencimientos = ?", true)
-                          ->addWhere("c.ca_email IS NOT NULL")
-                          ->execute();
-            if( count($contactos)==0 ){
+                    ->createQuery("c")
+                    ->innerJoin("c.IdsSucursal s")
+                    ->addWhere("s.ca_id = ?", $ids->getCaId())
+                    ->addWhere("c.ca_notificar_vencimientos = ?", true)
+                    ->addWhere("c.ca_email IS NOT NULL")
+                    ->execute();
+            if (count($contactos) == 0) {
                 continue;
             }
 
-            foreach( $contactos as $contacto ){
-                $email->addTo( $contacto->getCaEmail() );
-            }            
+            foreach ($contactos as $contacto) {
+                $email->addTo($contacto->getCaEmail());
+            }
 
             $config = sfConfig::get('sf_app_module_dir') . DIRECTORY_SEPARATOR . "ids" . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "textos.yml";
             $textos = sfYaml::load($config);
 
             $txt = "";
-            
+
             $documentos = $resultado["docs"];
             foreach ($documentos as $documento) {
                 //echo $documento->getCaId()." ".$documento->getIds()->getCaNombre()." ".$documento->getIdsTipoDocumento()->getCaTipo()."<br />";
-                if( $documento->getCaFchvencimiento()<=date("Y-m-d")){
+                if ($documento->getCaFchvencimiento() <= date("Y-m-d")) {
                     $venc = "Venció";
-                }else{
+                } else {
                     $venc = "Vence";
                 }
-                $txt.=" - ". $documento->getIdsTipoDocumento()->getCaTipo()." ".$venc." ".Utils::fechaMes($documento->getCaFchvencimiento())."\n";
+                $txt.=" - " . $documento->getIdsTipoDocumento()->getCaTipo() . " " . $venc . " " . Utils::fechaMes($documento->getCaFchvencimiento()) . "\n";
             }
-           
+
 
             $msg = sprintf($textos['mensajeEmail'], $txt);
-            
+
             $email->setCaUsuenvio("Administrador");
             $email->setCaTipo("Sol. documentos");
             $email->setCaIdcaso($documento->getCaId());
             $email->setCaFrom("pricing@coltrans.com.co");
             $email->setCaFromname("Pricing & Procurement Coltrans S.A.");
-            $email->setCaSubject( $textos['asuntoEmail'] );
-            $email->setCaReplyto("pricing@coltrans.com.co");            
+            $email->setCaSubject($textos['asuntoEmail']);
+            $email->setCaReplyto("pricing@coltrans.com.co");
 
             //$mensaje = utf8_decode($this->getRequestParameter("mensaje")."\n\n");
 
-            $email->setCaBody($msg );
+            $email->setCaBody($msg);
             $email->setCaBodyhtml(Utils::replace($msg));
 
             $email->save(); //guarda el cuerpo del mensaje
             //$email->send();
-            
         }
         return sfView::NONE;
     }
@@ -1744,19 +1769,17 @@ class idsActions extends sfActions {
             $this->forward404();
         }
 
-        $this->forward404Unless( $request->getParameter("id") );
-        
+        $this->forward404Unless($request->getParameter("id"));
+
         $this->emails = Doctrine::getTable("Email")
-                                        ->createQuery("e")
-                                        ->addWhere("e.ca_tipo = ? ", "Sol. documentos")
-                                        ->addWhere("e.ca_idcaso = ? ", $request->getParameter("id"))
-                                        ->execute();
+                ->createQuery("e")
+                ->addWhere("e.ca_tipo = ? ", "Sol. documentos")
+                ->addWhere("e.ca_idcaso = ? ", $request->getParameter("id"))
+                ->execute();
 
         $this->id = $request->getParameter("id");
         $this->modo = $request->getParameter("modo");
     }
-
-
 
 }
 
