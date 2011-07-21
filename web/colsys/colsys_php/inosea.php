@@ -631,8 +631,13 @@ elseif (isset($boton)) {                                                       /
 
                             echo "  <TD ROWSPAN=2 WIDTH=80 Class=listar style='text-align: center;'>";                                              // Botones para hacer Mantenimiento a la Tabla
                             echo "    <IMG style='visibility: $visible;cursor:pointer' src='./graficos/edit.gif' alt='Editar el Registro' border=0 onclick='elegir(\"ModificarCl\", \"".$rs->Value('ca_referencia')."\", \"".$cl->Value('ca_idcliente')."\", \"".urlencode($cl->Value('ca_hbls'))."\");'>";
-                            echo "   <IMG style='visibility: $visible;cursor:pointer' src='./graficos/del.gif'  alt='Eliminar el Registro' border=0 onclick='elegir(\"EliminarCl\", \"".$rs->Value('ca_referencia')."\", \"".$cl->Value('ca_idcliente')."\", \"".urlencode($cl->Value('ca_hbls'))."\");'><BR><BR>";
-                            echo "    <IMG style='visibility: $digitable;cursor:pointer' src='./graficos/muisca.gif'  alt='Informacion Muisca' border=0 onclick='elegir(\"MuiscaCl\", \"".$rs->Value('ca_referencia')."\", \"".$cl->Value('ca_idcliente')."\", \"".urlencode($cl->Value('ca_hbls'))."\");'><BR>";
+                            echo "    <IMG style='visibility: $visible;cursor:pointer' src='./graficos/del.gif'  alt='Eliminar el Registro' border=0 onclick='elegir(\"EliminarCl\", \"".$rs->Value('ca_referencia')."\", \"".$cl->Value('ca_idcliente')."\", \"".urlencode($cl->Value('ca_hbls'))."\");'><BR><BR>";
+                            echo "    <IMG style='visibility: $digitable;cursor:pointer' src='./graficos/muisca.gif'  alt='Informacion Muisca' border=0 onclick='elegir(\"MuiscaCl\", \"".$rs->Value('ca_referencia')."\", \"".$cl->Value('ca_idcliente')."\", \"".urlencode($cl->Value('ca_hbls'))."\");'><BR><BR>";
+                            if ($cl->value('ca_usulibero') == ""){
+                                echo "    <IMG style='visibility: $digitable;cursor:pointer' src='./graficos/liberado.gif'  alt='Carga Liberada al Cliente' border=0 onclick='elegir(\"LiberadoCl\", \"".$rs->Value('ca_referencia')."\", \"".$cl->Value('ca_idcliente')."\", \"".urlencode($cl->Value('ca_hbls'))."\");'><BR>";
+                            }else{
+                                echo "    Liberó: ".$cl->value('ca_usulibero')." ".$cl->value('ca_fchlibero')."<BR>";
+                            }
                             echo "  </TD>";
                             echo "</TR>";
                             echo "<TR>";
@@ -3646,11 +3651,9 @@ elseif (isset($boton)) {                                                       /
                         }
                     }
                 }
-                else
+                else {
                     echo "<TH><INPUT Class=submit TYPE='SUBMIT' NAME='accion' VALUE='Grabar Encabezado'></TH>";     // Ordena Grabar el registro de forma permanente
-
-
-
+                }
                 echo "<TH><INPUT Class=button TYPE='BUTTON' NAME='boton' VALUE='Cancelar' ONCLICK='javascript:document.location.href = \"inosea.php?boton=Consultar\&id=$id\"'></TH>";  // Cancela la operación
                 echo "</TABLE>";
                 echo "</FORM>";
@@ -3937,6 +3940,134 @@ elseif (isset($boton)) {                                                       /
                 echo "</FORM>";
                 echo "</CENTER>";
                 //           echo "<P DIR='RTL'><A HREF=\"#\" ONCLICK='javascript:window.open(\"./help/$modulo.html\",\"Ayuda\",\"scrollbars=yes,width=600,height=400,top=200,left=150\")'><IMG SRC='./graficos/help.gif' border=0 ALT='Ayuda en Línea'><BR>Ayuda</A></P>";   // Link que proporciona la Ayuda en línea
+                require_once("footer.php");
+                echo "</BODY>";
+                break;
+            }
+        case 'LiberadoCl': {
+                $modulo = "00100100";                                             // Identificación del módulo para la ayuda en línea
+                //           include_once 'include/seguridad.php';                             // Control de Acceso al módulo
+                if (!$rs->Open("select * from vi_inoclientes_sea where ca_referencia = '".$id."' and ca_idcliente = ".$cl." and ca_hbls = '".$hb."'")) {    // Mueve el apuntador al registro que se desea modificar
+                    echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";     // Muestra el mensaje de error
+                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    exit;
+                }
+                $us =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
+                if (!$us->Open("select ca_login from control.tb_usuarios where ca_login != 'Administrador' order by ca_login")) {
+                    echo "<script>alert(\"".addslashes($us->mErrMsg)."\");</script>";
+                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    exit;
+                }
+                $us->MoveFirst();
+                echo "<HEAD>";
+                echo "<TITLE>$titulo</TITLE>";
+                echo "<script language='JavaScript' type='text/JavaScript'>";     // Código en JavaScript para validar las opciones de mantenimiento
+                echo "function validar(){";
+                echo "  return (true);";
+                echo "}";
+                echo "</script>";
+                echo "<script language='javascript' src='javascripts/popcalendar.js'></script>";
+                echo "</HEAD>";
+
+                echo "<BODY>";
+                require_once("menu.php");
+                echo "<STYLE>@import URL(\"Coltrans.css\");</STYLE>";             // Carga una hoja de estilo que estandariza las pantallas den sistema graficador
+                echo "<CENTER>";
+                echo "<H3>$titulo</H3>";
+                echo "<FORM METHOD=post NAME='eliminar' ACTION='inosea.php' ONSUBMIT='return validar();'>";// Crea una forma con los datos del registro
+                echo "<TABLE WIDTH=600 CELLSPACING=1>";
+                echo "<INPUT TYPE='HIDDEN' NAME='referencia' id='referencia' VALUE=\"".$id."\">";             // Hereda el Id de la Referencia que se esta modificando
+                echo "<INPUT TYPE='HIDDEN' NAME='idcliente' id='idcliente' VALUE=\"".$cl."\">";              // Hereda el Id del Cliente que se esta modificando
+                echo "<INPUT TYPE='HIDDEN' NAME='hbl' id='hbl' VALUE=\"".$hb."\">";                    // Hereda el Id del Cliente que se esta modificando
+                echo "<TH Class=titulo COLSPAN=5 style='font-size: 11px; vertical-align:bottom'>$id<BR>Información del Cliente</TH>";
+                echo "<TR>";
+                echo "  <TD Class=listar style='font-size: 11px;'><B>ID Reporte:</B><BR>".$rs->Value('ca_consecutivo')."</TD>";
+                echo "  <TD Class=listar style='font-size: 11px;'><B>Vendedor:</B><BR>".$rs->Value('ca_login')."</TD>";
+                echo "  <TD Class=listar style='font-size: 11px;'><B>ID Proveedor:</B><BR>".$rs->Value('ca_idproveedor')."</TD>";
+                echo "  <TD Class=listar style='font-size: 11px;' COLSPAN=2><B>Proveedor:</B><BR>".$rs->Value('ca_proveedor')."</TD>";
+                echo "</TR>";
+                echo "<TR>";
+                echo "  <TD Class=listar style='font-size: 11px;'><B>Id Cliente:</B><BR>".number_format($rs->Value('ca_idcliente'))."</TD>";
+                echo "  <TD Class=listar style='font-size: 11px;' COLSPAN=3><B>Nombre del Cliente:</B><BR>".$rs->Value('ca_compania')."</TD>";
+                echo "  <TD Class=mostrar>Orden Cliente No.<BR>".$rs->Value('ca_numorden')."</TD>";
+                echo "</TR>";
+
+                echo "<TR>";
+                echo " <TD Class=invertir COLSPAN=2>";
+                echo "  <TABLE WIDTH=100% CELLSPACING=1>";
+                echo "  <TR>";
+                echo "    <TD Class=mostrar COLSPAN=2>HBL:<BR>".$rs->Value('ca_hbls')."</TD>";
+                echo "    <TD Class=mostrar>Fch.HBL<BR>".$rs->Value('ca_fchhbls')."</TD>";
+                echo "  </TR>";
+                echo "  <TR>";
+                echo "    <TD Class=mostrar>No.Piezas:<BR>".$rs->Value('ca_numpiezas')."</TD>";
+                echo "    <TD Class=mostrar>No.Kilos:<BR>".$rs->Value('ca_peso')."</TD>";
+                echo "    <TD Class=mostrar>No.CMB:<BR>".$rs->Value('ca_volumen')."</TD>";
+                echo "  </TR>";
+                echo "  <TR>";
+                echo "  <TD Class=mostrar>Continua/Viaje:<BR>".$rs->Value('ca_continuacion')."</TD>";
+                echo "  <TD Class=mostrar COLSPAN=2>Destino Final:<BR>".$rs->Value('ca_continuacion_dest')."</TD>";
+                echo "  </TR>";
+                echo "  <TR>";
+                echo "  <TD Class=mostrar COLSPAN=5>Operador:<BR>".$rs->Value('ca_bodega')."</TD>";
+                echo "  <TR>";
+                echo "  <TD Class=mostrar COLSPAN=5>Fecha Recibo Antecedentes:<BR>".$rs->Value('ca_fchantecedentes')."</TD>";
+                echo "  </TR>";
+
+                echo "  </TR>";
+                echo "  </TABLE>";
+                echo " </TD>";
+
+                echo " <TD Class=invertir COLSPAN=3>";
+                $co =& DlRecordset::NewRecordset($conn);                                   // Apuntador que permite manejar la conexiòn a la base de datos
+                if (!$co->Open("select * from vi_inoequipos_sea where ca_referencia = '$id' and ca_idconcepto != 9")) {       // Selecciona todos lo registros de la tabla Equiposde una referencia Ino-Marítimo
+                    echo "<script>alert(\"".addslashes($co->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+                    echo "<script>document.location.href = 'entrada.php';</script>";
+                    exit; }
+                echo "  <TABLE WIDTH=100% CELLSPACING=1 style='letter-spacing:-1px;'>";
+                echo "  <TH>Concepto</TH>";
+                echo "  <TH>Id Equipo</TH>";
+                echo "  <TH>No.Precinto</TH>";
+                while (!$co->Eof() and !$co->IsEmpty()) {                                      // Lee la totalidad de los registros obtenidos en la instrucción Select
+                    echo "<TR>";
+                    echo "  <TD Class=listar>".$co->Value('ca_concepto')."</TD>";
+                    echo "  <TD Class=listar>".$co->Value('ca_idequipo')."</TD>";
+                    echo "  <TD Class=listar>".$co->Value('ca_numprecinto')."</TD>";
+                    echo "</TR>";
+                    $co->MoveNext();
+                }
+                echo "  </TABLE>";
+                echo " </TD>";
+                echo "</TR>";
+
+                echo "<TR>";
+                echo "  <TD Class=captura COLSPAN=5><TABLE CELLSPACING=1 WIDTH=100%>";
+                $num_reg = $rs->mRowCount + 1;
+                do {
+                    echo "<TR>";
+                    echo "  <TD Class=listar>Factura:<BR>".$rs->Value('ca_factura')."</TD>";
+                    echo "  <TD Class=listar>Fch.Factura:<BR>".$rs->Value('ca_fchfactura')."</TD>";
+                    echo "  <TD Class=listar>".$rs->Value('ca_idmoneda').":<BR>".$rs->Value('ca_neto')."</TD>";
+                    echo "  <TD Class=listar>T.R.M.:<BR>".$rs->Value('ca_tcambio')."</TD>";
+                    echo "  <TD Class=listar>Vlr.Pesos:<BR>".$rs->Value('ca_valor')."</TD>";
+                    echo "  <TD Class=listar>Observación IDG:<BR>".$rs->Value('ca_observaciones_fact')."</TD>";
+                    echo "</TR>";
+                    $rs->MoveNext();
+                } while(!$rs->Eof());
+                echo "</TABLE></TD></TR>";
+                echo "<TR HEIGHT=5>";
+                echo "  <TD Class=captura COLSPAN=5></TD>";
+                echo "</TR>";
+                echo "</TABLE><BR>";
+
+                echo "<TABLE CELLSPACING=10>";
+                echo "<TH><INPUT Class=submit TYPE='SUBMIT' NAME='accion' VALUE='Carga Liberada'></TH>";         // Ordena almacenar los datos ingresados
+                echo "<TH><INPUT Class=button TYPE='BUTTON' NAME='boton' VALUE='Cancelar' ONCLICK='javascript:document.location.href = \"inosea.php?boton=Consultar\&id=$id\"'></TH>";  // Cancela la operación
+                echo "<BR>";
+                echo "</TABLE>";
+                echo "</FORM>";
+                echo "</CENTER>";
+                //           echo "<P DIR='RTL'><A HREF=\"#\" ONCLICK='javascript:window.open(\"./help/$modulo.html\",\"Ayuda\",\"scrollbars=yes,width=600,height=400,top=200,left=150\")'><IMG SRC='./graficos/help.gif' border=0 ALT='Ayuda en Línea'><BR>Ayuda</A></P>";  // Link que proporciona la Ayuda en línea
                 require_once("footer.php");
                 echo "</BODY>";
                 break;
@@ -5099,6 +5230,15 @@ elseif (isset($accion)) {                                                      /
                 }
 
 
+                break;
+            }
+
+        case 'Carga Liberada': {                                                      // El Botón Carga Liberada fue pulsado
+                if (!$rs->Open("update tb_inoclientes_sea set ca_fchlibero = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usulibero = '$usuario' where ca_referencia = '$referencia' and ca_idcliente = '$idcliente' and ca_hbls = '$hbl'")) {
+                    echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
+                    echo "<script>document.location.href = 'inosea_abrir.php';</script>";
+                    exit;
+                }
                 break;
             }
 
