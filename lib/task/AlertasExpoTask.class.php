@@ -37,8 +37,8 @@ EOF;
             $email->setCaUsuenvio($user->getCaLogin());
             $email->setCaTipo("Alerta Expo");
             //$email->setCaIdcaso("");
-            $email->setCaFrom($user->getCaEmail());
-            $email->setCaFromname($user->getCaNombre());
+            $email->setCaFrom("colsys@coltrans.com.co");
+            $email->setCaFromname("Sistema de Alertas");
 
             if ($alerta->getCaFchvencimiento() == $hoy) {
                 $txt = "Vencimiento";
@@ -47,7 +47,7 @@ EOF;
                 $txt = "Recordatorio";
                 $mensaje = "Información de la tarea : " . $alerta->getCaCuerpoalerta() . "\n\nFecha de Vencimiento : \n\n" . Utils::fechaMes($alerta->getCaFchvencimiento()) . "\n\n";
             }
-            $email->setCaSubject($txt . " : Alerta de la referencia " . $alerta->getCaReferencia());
+            $email->setCaSubject($txt . " : ALERTA DE LA REFERENCIA " . $alerta->getCaReferencia());
 
 
             $email->setCaReplyto($user->getCaEmail());
