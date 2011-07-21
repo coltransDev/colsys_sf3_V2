@@ -31,6 +31,7 @@ EOF;
                         ->createQuery("e")
                         ->addWhere("e.ca_fchenvio IS NULL")
                         ->addWhere("e.ca_fchcreado <= ? ", date("Y-m-d H:i:s", time()-30))
+                        ->limit(15)
                         ->execute();
 	
 	foreach( $emails as $email ){
