@@ -491,14 +491,7 @@ class reportesNegComponents extends sfComponents
 		$impoexpo=$this->impoexpo;
         
 		$this->title=($impoexpo!= Constantes::EXPO)?"Continuación de viaje":"DTA";
-		$usuarios = Doctrine::getTable("Usuario")
-               ->createQuery("u")
-               ->select("u.ca_login,u.ca_nombre,u.ca_email,ca_sucursal,u.ca_idsucursal")
-               ->innerJoin("u.UsuarioPerfil up")
-               ->where("u.ca_activo=? AND up.ca_perfil=? ", array('TRUE','cordinador-de-otm'))
-               ->addOrderBy("u.ca_idsucursal")
-               ->addOrderBy("u.ca_nombre")
-               ->execute();
+		$usuarios = UsuarioTable::getCoordinadoresOTM();
         //echo count($usuarios);
         $this->usuarios=array();
         foreach($usuarios as $usuario)
