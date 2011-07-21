@@ -572,7 +572,7 @@ class idsActions extends sfActions {
         $this->contacto = Doctrine::getTable("IdsContacto")->find($request->getParameter("idcontacto"));
         $this->forward404Unless($this->contacto);
         $this->sucursal = $this->contacto->getIdsSucursal();
-
+        $idant = $this->sucursal->getCaIdsucursal();
         $this->sucursales = Doctrine::getTable("IdsSucursal")
                 ->createQuery("s")
                 ->addWhere("s.ca_id = ?" , $this->sucursal->getCaId())
@@ -582,6 +582,7 @@ class idsActions extends sfActions {
         if ($request->isMethod('post')) {
             $this->contacto->setCaIdsucursal( $request->getParameter("idsucursal") );
             $this->contacto->save();
+            $this->getUser()->log("ids: Translado de sucursal ".$this->contacto->getNombre()." de ".$idant." a ".$request->getParameter("idsucursal"));
             $this->redirect("ids/verIds?modo=".$this->modo."&id=".$this->sucursal->getCaId());
         }
     }
