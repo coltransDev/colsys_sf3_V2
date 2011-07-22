@@ -137,12 +137,12 @@ if(!$repexpo)
    $repexpo=new RepExpo();
 }
 
-$ordenes = array_combine(explode("|",$reporte->getCaIdproveedor()), explode("|",$reporte->getCaOrdenProv()));
-$terminos= array_combine(explode("|",$reporte->getCaIdproveedor()), explode("|",$reporte->getCaIncoterms()));
+$ordenes =  explode("|",$reporte->getCaOrdenProv());
+$terminos=  explode("|",$reporte->getCaIncoterms());
 
 $idproveedores = explode("|",$reporte->getCaIdproveedor());
 
-foreach( $idproveedores as $idprov ){
+foreach( $idproveedores as $key=>$idprov ){
     if($idprov=="")
         continue;
     $pdf->Ln(2);
@@ -150,8 +150,8 @@ foreach( $idproveedores as $idprov ){
     if(!$tercero)
         $tercero=new Tercero();
 
-    $orden = $ordenes[$idprov];
-    $termino = substr($terminos[$idprov],0,3);
+    $orden = $ordenes[$key];
+    $termino = substr($terminos[$key],0,3);
     $pdf->SetWidths(array(25,25,85,25,40));
     $pdf->SetFills(array(1,0,0,0,0,0,0));
     $pdf->SetStyles(array("B","B","","B",""));
@@ -541,7 +541,7 @@ $pdf->SetAligns ( array ("C" ) );
 $pdf->SetStyles ( array ("B" ) );
 
 $soloAduana = $reporte->esSoloAduana();
-if( !$soloAduana && $reporte->getCaTiporep()!="3" ){
+if( !$soloAduana  ){
     //$pdf->beginGroup();
     $pdf->Row ( array ('EMBARQUE ' . strtoupper ( $reporte->getCaTransporte () ) ) );
 
@@ -616,19 +616,19 @@ if( !$soloAduana && $reporte->getCaTiporep()!="3" ){
 
                 $sub_mem = 'Recargo en Origen';
 
-                $pdf->SetWidths ( array (5,40, 35, 40, 40, 40 ) );
+                $pdf->SetWidths ( array (5,50, 25, 40, 40, 40 ) );
                 $pdf->SetFills ( array (1,1, 1, 1, 1, 1 ) );
                 $pdf->SetStyles ( array ("","B", "B", "B", "B", "B" ) );
                 $pdf->SetAligns ( array ("","C", "C", "C", "C", "C" ) );
                 $pdf->Row ( array ("+",$sub_mem, 'Aplicación', 'Neta / Min.', 'Reportar / Min.', 'Cobrar / Min' ) );
 
-                $pdf->SetWidths ( array (5,40, 35, 20, 20, 20, 20, 20, 20 ) );
+                $pdf->SetWidths ( array (5,50, 25, 20, 20, 20, 20, 20, 20 ) );
                 $pdf->SetFills ( array (0,1, 0, 0, 0, 0, 0, 0, 0, 0 ) );
                 $pdf->SetStyles ( array ("","B", "", "", "", "", "", "", "", "" ) );
                 $pdf->SetAligns ( array ("","L", "L", "R", "R", "R", "R", "R", "R" ) );
 
                 foreach ( $gastos as $gasto ) {
-                    $pdf->SetWidths ( array (5,40, 35, 20, 20, 20, 20, 20, 20 ) );
+                    $pdf->SetWidths ( array (5,55, 25, 20, 20, 20, 20, 20, 20 ) );
                     $pdf->SetFills ( array (0,1, 0, 0, 0, 0, 0, 0, 0, 0 ) );
                     $pdf->SetStyles ( array ("","B", "", "", "", "", "", "", "", "" ) );
                     $pdf->SetAligns ( array ("","L", "L", "R", "R", "R", "R", "R", "R" ) );
@@ -677,19 +677,19 @@ if( !$soloAduana && $reporte->getCaTiporep()!="3" ){
 
                 $sub_mem = 'Recargo en Origen';
 
-                $pdf->SetWidths ( array (5,40, 35, 40, 40, 40 ) );
+                $pdf->SetWidths ( array (5,50, 25, 40, 40, 40 ) );
                 $pdf->SetFills ( array (1,1, 1, 1, 1, 1 ) );
                 $pdf->SetStyles ( array ("","B", "B", "B", "B", "B" ) );
                 $pdf->SetAligns ( array ("","C", "C", "C", "C", "C" ) );
                 $pdf->Row ( array ("+",$sub_mem, 'Aplicación', 'Neta / Min.', 'Reportar / Min.', 'Cobrar / Min' ) );
 
-                $pdf->SetWidths ( array (5,40, 35, 20, 20, 20, 20, 20, 20 ) );
+                $pdf->SetWidths ( array (5,50, 25, 20, 20, 20, 20, 20, 20 ) );
                 $pdf->SetFills ( array (0,1, 0, 0, 0, 0, 0, 0, 0, 0 ) );
                 $pdf->SetStyles ( array ("","B", "", "", "", "", "", "", "", "" ) );
                 $pdf->SetAligns ( array ("","L", "L", "R", "R", "R", "R", "R", "R" ) );
 
                 foreach ( $gastos as $gasto ) {
-                    $pdf->SetWidths ( array (5,40, 35, 20, 20, 20, 20, 20, 20 ) );
+                    $pdf->SetWidths ( array (5,50, 25, 20, 20, 20, 20, 20, 20 ) );
                     $pdf->SetFills ( array (0,1, 0, 0, 0, 0, 0, 0, 0, 0 ) );
                     $pdf->SetStyles ( array ("","B", "", "", "", "", "", "", "", "" ) );
                     $pdf->SetAligns ( array ("","L", "L", "R", "R", "R", "R", "R", "R" ) );
@@ -735,19 +735,19 @@ if( !$soloAduana && $reporte->getCaTiporep()!="3" ){
             //$pdf->Row ( array ('RELACIÓN DE RECARGOS' ) );
             $sub_mem = 'Recargo en Origen';
 
-            $pdf->SetWidths ( array (5,40, 35, 40, 40, 40 ) );
+            $pdf->SetWidths ( array (5,50, 25, 40, 40, 40 ) );
             $pdf->SetFills ( array (1,1, 1, 1, 1, 1 ) );
             $pdf->SetStyles ( array ("","B", "B", "B", "B", "B" ) );
             $pdf->SetAligns ( array ("","C", "C", "C", "C", "C" ) );
             $pdf->Row ( array ("+",$sub_mem, 'Aplicación', 'Neta / Min.', 'Reportar / Min.', 'Cobrar / Min' ) );
 
-            $pdf->SetWidths ( array (5,40, 35, 20, 20, 20, 20, 20, 20 ) );
+            $pdf->SetWidths ( array (5,50, 25, 20, 20, 20, 20, 20, 20 ) );
             $pdf->SetFills ( array (0,1, 0, 0, 0, 0, 0, 0, 0, 0 ) );
             $pdf->SetStyles ( array ("","B", "", "", "", "", "", "", "", "" ) );
             $pdf->SetAligns ( array ("","L", "L", "R", "R", "R", "R", "R", "R" ) );
 
             foreach ( $gastos as $gasto ) {
-                $pdf->SetWidths ( array (5,40, 35, 20, 20, 20, 20, 20, 20 ) );
+                $pdf->SetWidths ( array (5,50, 25, 20, 20, 20, 20, 20, 20 ) );
                 $pdf->SetFills ( array (0,1, 0, 0, 0, 0, 0, 0, 0, 0 ) );
                 $pdf->SetStyles ( array ("","B", "", "", "", "", "", "", "", "" ) );
                 $pdf->SetAligns ( array ("","L", "L", "R", "R", "R", "R", "R", "R" ) );
@@ -791,18 +791,18 @@ if( !$soloAduana && $reporte->getCaTiporep()!="3" ){
             $pdf->SetAligns(array("L"));
             $pdf->Row ( array ("Recargos generales del Trayecto" ) );
             $sub_mem = 'Recargo en Origen';
-            $pdf->SetWidths ( array (5,40, 35, 40, 40, 40 ) );
+            $pdf->SetWidths ( array (5,50, 25, 40, 40, 40 ) );
             $pdf->SetFills ( array (1,1, 1, 1, 1, 1 ) );
             $pdf->SetStyles ( array ("","B", "B", "B", "B", "B" ) );
             $pdf->SetAligns ( array ("","C", "C", "C", "C", "C" ) );
             $pdf->Row ( array ("+",$sub_mem, 'Aplicación', 'Neta / Min.', 'Reportar / Min.', 'Cobrar / Min' ) );
-            $pdf->SetWidths ( array (5,40, 35, 20, 20, 20, 20, 20, 20 ) );
+            $pdf->SetWidths ( array (5,50, 25, 20, 20, 20, 20, 20, 20 ) );
             $pdf->SetFills ( array (0,1, 0, 0, 0, 0, 0, 0, 0, 0 ) );
             $pdf->SetStyles ( array ("","B", "", "", "", "", "", "", "", "" ) );
             $pdf->SetAligns ( array ("","L", "L", "R", "R", "R", "R", "R", "R" ) );
 
             foreach ( $gastos as $gasto ) {
-                $pdf->SetWidths ( array (5,40, 35, 20, 20, 20, 20, 20, 20 ) );
+                $pdf->SetWidths ( array (5,50, 25, 20, 20, 20, 20, 20, 20 ) );
                 $pdf->SetFills ( array (0,1, 0, 0, 0, 0, 0, 0, 0, 0 ) );
                 $pdf->SetStyles ( array ("","B", "", "", "", "", "", "", "", "" ) );
                 $pdf->SetAligns ( array ("","L", "L", "R", "R", "R", "R", "R", "R" ) );
@@ -823,7 +823,7 @@ if( !$soloAduana && $reporte->getCaTiporep()!="3" ){
     }
   //  $pdf->flushGroup();
   //  $pdf->beginGroup();
-    if( $reporte->getCaImpoexpo () == Constantes::IMPO || $reporte->getCaImpoexpo ()==Constantes::OTMDTA || $reporte->getCaImpoexpo ()==Constantes::OTMDTA1 || $reporte->getCaImpoexpo () == Constantes::TRIANGULACION   ){
+    if( $reporte->getCaImpoexpo () == Constantes::IMPO || $reporte->getCaImpoexpo ()==Constantes::OTMDTA || $reporte->getCaImpoexpo ()==Constantes::OTMDTA1 || $reporte->getCaImpoexpo () == Constantes::TRIANGULACION || $reporte->getCaTiporep () == 3    ){
         $sub_mem = 'Recargo Local';
         $pdf->Ln ( 3 );
         $gastos = $reporte->getRecargos ( "local" );
