@@ -61,14 +61,28 @@ Ext.extend(PanelConsultaCiudades, Ext.tree.TreePanel, {
             if( typeof(n.attributes.idtrafico)!="undefined" ){
                 var idtrafico = n.attributes.idtrafico;
                 idcomponent+="_"+idtrafico;
+                var title = trafico;
             }else{
                 var idtrafico = "";
+                var title = "";
             }
 
             if( typeof(n.attributes.idciudad)!="undefined" ){                
-                var idciudad = n.attributes.idciudad;
+                var idciudad = n.attributes.idciudad;                
                 var idlinea = "";
                 idcomponent+="_"+idciudad;
+                title += "»"+n.attributes.ciudad;
+            }else{
+                idciudad = null;
+            }
+            
+            if( typeof(n.attributes.idciudad2)!="undefined" ){                
+                var idciudad2 = n.attributes.idciudad2;
+                var ciudad2 = n.attributes.ciudad2;
+                title += "»"+n.attributes.ciudad2;
+                idcomponent+="_"+idciudad2;
+            }else{
+                idciudad2 = null;
             }
 
             if( typeof(n.attributes.idlinea)!="undefined" ){
@@ -179,26 +193,7 @@ Ext.extend(PanelConsultaCiudades, Ext.tree.TreePanel, {
                                                              });
                         break;    
                         
-                    case "tarifario-aduana":
-                        /*
-                        * Se muestran la administracion de trayectos para el pais seleccionado
-                        */
-                        var newComponent = new PanelTarifarioAduana({id:idcomponent,                                                             
-                                                              title: "Tarifario Aduana General",
-                                                              closable: true,
-                                                              readOnly: this.readOnly
-                                                             });
-                        break;
-                    case "tarifario-aduana-cliente":
-                        /*
-                        * Se muestran la administracion de trayectos para el pais seleccionado
-                        */
-                        var newComponent = new PanelTarifarioAduanaCliente({id:idcomponent,
-                                                              title: "Tarifario Aduana x Cliente",
-                                                              closable: true,
-                                                              readOnly: this.readOnly
-                                                             });
-                        break;
+                    
                     default:
 
                         /*
@@ -211,8 +206,9 @@ Ext.extend(PanelConsultaCiudades, Ext.tree.TreePanel, {
                                                               transporte:transporte,
                                                               modalidad: modalidad,
                                                               idciudad: idciudad,
+                                                              idciudad2: idciudad2,
                                                               idlinea: idlinea,
-                                                              title: impoexpo.substring(0, 4)+"»"+transporte+"»"+modalidad+"»"+trafico,
+                                                              title: impoexpo.substring(0, 4)+"»"+transporte+"»"+modalidad+"»"+title,
                                                               closable: true,
                                                               readOnly: this.readOnly
                                                              });

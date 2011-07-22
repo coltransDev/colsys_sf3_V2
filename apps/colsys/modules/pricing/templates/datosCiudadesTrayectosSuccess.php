@@ -1,3 +1,6 @@
+<?
+$ciudades = $sf_data->getRaw("ciudades");
+?>
 [{
 	text:'Lineas',	
 	leaf:false,
@@ -34,25 +37,61 @@
 	children:[
 		<?
 		$k=0;
-		foreach( $ciudades as $ciudad ){            
+		foreach( $ciudades as $name=>$trayectos ){               
 			if( $k++!=0 ){
 				echo ",";
 			}
 		?>
-		{
-			text:'<?=$ciudad['c_ca_ciudad']?>',			
-			leaf:true,
-            opcion: 'fletesciudad',
-            trafico: '<?=$trafico->getCaNombre()?>',
-            impoexpo: '<?=$impoexpo?>',
-            transporte: '<?=$transporte?>',
-            modalidad: '<?=$modalidad?>',
-            idtrafico: '<?=$idtrafico?>',
-            idciudad: '<?=$ciudad['c_ca_idciudad']?>'
-           
-		}
-		<?
-		}
+        {
+            text:'<?=$name?>',	
+            leaf:false,
+            children:[
+                <?
+                $w=0;
+                foreach( $trayectos as $t ){
+                    if( $w++==0 ){
+                        ?>
+                        {
+                            text:'<?=count($trayectos)==1?$t['d_ca_ciudad']:"Todos los trayectos"?>',			
+                            leaf:true,
+                            opcion: 'fletesciudad',
+                            trafico: '<?=$trafico->getCaNombre()?>',
+                            impoexpo: '<?=$impoexpo?>',
+                            transporte: '<?=$transporte?>',
+                            modalidad: '<?=$modalidad?>',
+                            idtrafico: '<?=$idtrafico?>',
+                            idciudad: '<?=$t['c_ca_idciudad']?>',                            
+                            ciudad: '<?=$t['c_ca_ciudad']?>'
+                            
+                        }                   
+                        <?
+                        
+                    }
+                    if( count($trayectos)>1 ){    
+                ?>
+                ,
+                {
+                    text:'<?=$t['d_ca_ciudad']?>',			
+                    leaf:true,
+                    opcion: 'fletesciudad',
+                    trafico: '<?=$trafico->getCaNombre()?>',
+                    impoexpo: '<?=$impoexpo?>',
+                    transporte: '<?=$transporte?>',
+                    modalidad: '<?=$modalidad?>',
+                    idtrafico: '<?=$idtrafico?>',
+                    idciudad: '<?=$t['c_ca_idciudad']?>',
+                    idciudad2: '<?=$t['d_ca_idciudad']?>',
+                    ciudad: '<?=$t['c_ca_ciudad']?>',
+                    ciudad2: '<?=$t['d_ca_ciudad']?>'
+                }
+                <?
+                    }
+                }
+                ?>
+            ]
+        }
+        <?
+        }
 		?>
 	]
 }
