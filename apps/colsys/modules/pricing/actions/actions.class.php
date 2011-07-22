@@ -2163,7 +2163,7 @@ class pricingActions extends sfActions {
             
             $this->ciudades = array();
             foreach( $trayectos as $t ){
-               if( !isset($t["c_ca_ciudad"]) ){
+               if( !isset($this->ciudades[$t["c_ca_ciudad"]] ) ){
                    $this->ciudades[$t["c_ca_ciudad"]] = array();
                }  
                $this->ciudades[$t["c_ca_ciudad"]][] = $t;                
@@ -2171,12 +2171,14 @@ class pricingActions extends sfActions {
           
             $q = Doctrine_Query::create()
                             ->distinct()
-                            ->select("p.ca_idproveedor, p.ca_sigla, id.ca_nombre, t.ca_modalidad")
+                            ->select("p.ca_idproveedor, p.ca_sigla, id.ca_nombre, t.ca_modalidad, d.ca_idciudad, d.ca_ciudad")
                             ->from("Trayecto t");
             if ($impoexpo == Constantes::IMPO) {
                 $q->innerJoin("t.Origen c");
+                $q->innerJoin("t.Destino d");
             } else {
                 $q->innerJoin("t.Destino c");
+                $q->innerJoin("t.Origen d");
             }
             $q->innerJoin("t.IdsProveedor p");
             $q->innerJoin("p.Ids id");
@@ -2190,7 +2192,17 @@ class pricingActions extends sfActions {
             $q->addOrderBy("id.ca_nombre ASC");
             $q->distinct();
             $q->setHydrationMode(Doctrine::HYDRATE_SCALAR);
-            $this->lineas = $q->execute();
+            $trayectos = $q->execute();
+            
+            $this->lineas = array();
+            
+            foreach( $trayectos as $t ){    
+               $linea = ($t['p_ca_sigla']?$t['p_ca_sigla']." - ":"").$t['id_ca_nombre']; 
+               if( !isset($this->lineas[$linea]) ){
+                   $this->lineas[$linea] = array();
+               }  
+               $this->lineas[$linea][] = $t;                 
+            }
 
             $this->idtrafico = $idtrafico;
             $this->modalidad = $modalidad;

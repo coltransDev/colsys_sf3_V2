@@ -76,19 +76,21 @@ Ext.extend(PanelConsultaCiudades, Ext.tree.TreePanel, {
                 idciudad = null;
             }
             
-            if( typeof(n.attributes.idciudad2)!="undefined" ){                
-                var idciudad2 = n.attributes.idciudad2;
-                var ciudad2 = n.attributes.ciudad2;
-                title += "»"+n.attributes.ciudad2;
-                idcomponent+="_"+idciudad2;
-            }else{
-                idciudad2 = null;
-            }
+            
 
             if( typeof(n.attributes.idlinea)!="undefined" ){
                 var idciudad = "";
                 var idlinea = n.attributes.idlinea;
                 idcomponent+="_"+idlinea;
+                title += "»"+n.attributes.linea;
+            }
+            
+            if( typeof(n.attributes.idciudad2)!="undefined" ){                
+                var idciudad2 = n.attributes.idciudad2;                
+                title += "»"+n.attributes.ciudad2;
+                idcomponent+="_"+idciudad2;
+            }else{
+                idciudad2 = null;
             }
             
             if( impoexpo=="impo" ){

@@ -7,23 +7,59 @@ $ciudades = $sf_data->getRaw("ciudades");
 	children:[
 		<?
 		$k=0;
-		foreach( $lineas as $linea ){           
+		foreach( $lineas as $linea=>$trayectos ){           
 			if( $k++!=0 ){
 				echo ",";
 			}
-		?>
-		{
-			text:'<?=($linea['p_ca_sigla']?$linea['p_ca_sigla']." - ":"").$linea['id_ca_nombre']?>',
-			leaf:true,
-            opcion: 'fleteslinea',
-            trafico: '<?=$trafico->getCaNombre()?>',
-            impoexpo: '<?=$impoexpo?>',
-            transporte: '<?=$transporte?>',
-            modalidad: '<?=$modalidad?>',
-            idtrafico: '<?=$idtrafico?>',
-            idlinea: '<?=$linea['p_ca_idproveedor']?>'
-		}
-		<?
+            ?>
+            {
+            text:'<?=$linea?>',	
+            leaf:false,
+            children:[
+                <?
+                $w=0;
+                
+                
+                foreach( $trayectos as $t ){
+                    if( $w++==0 ){
+                        ?>
+                        {
+                            text:'<?=count($trayectos)>1?"Todos los trayectos":$t['d_ca_ciudad']?>',
+                            leaf:true,
+                            opcion: 'fleteslinea',
+                            trafico: '<?=$trafico->getCaNombre()?>',
+                            impoexpo: '<?=$impoexpo?>',
+                            transporte: '<?=$transporte?>',
+                            modalidad: '<?=$modalidad?>',
+                            idtrafico: '<?=$idtrafico?>',
+                            idlinea: '<?=$t['p_ca_idproveedor']?>',
+                            linea: '<?=$linea?>'
+                        }
+                        <?    
+                    }
+                    if( count($trayectos)>1 ){
+                    ?>
+                    ,
+                    {
+                        text:'<?=$t['d_ca_ciudad']?>',
+                        leaf:true,
+                        opcion: 'fleteslinea',
+                        trafico: '<?=$trafico->getCaNombre()?>',
+                        impoexpo: '<?=$impoexpo?>',
+                        transporte: '<?=$transporte?>',
+                        modalidad: '<?=$modalidad?>',
+                        idtrafico: '<?=$idtrafico?>',
+                        idlinea: '<?=$t['p_ca_idproveedor']?>',
+                        linea: '<?=$linea?>',
+                        idciudad2: '<?=$t['d_ca_idciudad']?>',
+                        ciudad2: '<?=$t['d_ca_ciudad']?>'
+                    }
+                    <?
+                    }
+                }
+                ?>
+           ]}
+           <?
 		}
 		?>
 	]
@@ -79,9 +115,9 @@ $ciudades = $sf_data->getRaw("ciudades");
                     transporte: '<?=$transporte?>',
                     modalidad: '<?=$modalidad?>',
                     idtrafico: '<?=$idtrafico?>',
-                    idciudad: '<?=$t['c_ca_idciudad']?>',
-                    idciudad2: '<?=$t['d_ca_idciudad']?>',
+                    idciudad: '<?=$t['c_ca_idciudad']?>',                    
                     ciudad: '<?=$t['c_ca_ciudad']?>',
+                    idciudad2: '<?=$t['d_ca_idciudad']?>',
                     ciudad2: '<?=$t['d_ca_ciudad']?>'
                 }
                 <?
