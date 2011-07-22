@@ -266,11 +266,11 @@ class RepStatus extends BaseRepStatus
 		}else{
 			$email->addCc( $user->getEmail() );
 		}
-
-		$asunto = $this->getIntroAsunto();
+		
 		if(isset($options["subject"]) && $options["subject"] ){
-			$asunto.=  $options["subject"];
+			$asunto=  $options["subject"];
 		}else{
+            $asunto = $this->getIntroAsunto();
 			$asunto.= $this->getAsunto();
 		}
 
