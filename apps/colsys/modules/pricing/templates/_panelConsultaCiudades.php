@@ -133,6 +133,8 @@ Ext.extend(PanelConsultaCiudades, Ext.tree.TreePanel, {
                                                               readOnly: this.readOnly
                                                              });
                         break;
+                    
+                             
                     case "reclin":
                         /*
                         * Se muestran la administracion de trayectos para el pais seleccionado
@@ -156,12 +158,27 @@ Ext.extend(PanelConsultaCiudades, Ext.tree.TreePanel, {
                                                               idlinea: idlinea,
                                                               transporte:transporte,
                                                               modalidad: modalidad,
-                                                              title: "Recargos Locales x Linea "+impoexpo.substring(0, 4)+"»"+transporte+"»"+modalidad+"»"+n.attributes.text,
+                                                              title: "Recargos Locales x Línea "+impoexpo.substring(0, 4)+"»"+transporte+"»"+modalidad+"»"+n.attributes.text,
                                                               closable: true,
                                                               readOnly: this.readOnly
                                                              });
                         break;
-
+                    case "recloclin":
+                        /*
+                        * Se muestran la administracion de trayectos para el pais seleccionado
+                        */
+                        var newComponent = new PanelRecargosPorLinea({id:idcomponent,
+                                                              impoexpo: impoexpo,
+                                                              idtrafico: "99-999",
+                                                              transporte:transporte,
+                                                              modalidad: modalidad,
+                                                              idlinea: idlinea,
+                                                              title: "Recargos Locales x Aerolínea "+impoexpo.substring(0, 4)+"»"+transporte+"»"+modalidad+"»"+n.attributes.text,
+                                                              closable: true,
+                                                              readOnly: this.readOnly
+                                                             });
+                        break;    
+                        
                     case "tarifario-aduana":
                         /*
                         * Se muestran la administracion de trayectos para el pais seleccionado

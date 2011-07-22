@@ -908,9 +908,7 @@ class pricingActions extends sfActions {
             $q->addWhere("t.ca_tipo = ?", Constantes::RECARGO_LOCAL);
             $q->addOrderBy("r.ca_idlinea");
             $q->addOrderBy("t.ca_recargo");
-            $recargos = $q->execute();
-//           echo count($recargos);
-//            exit;
+            $recargos = $q->execute();           
             foreach ($recargos as $recargo) {
                 $row = array(
                     'idtrafico' => $idtrafico,
