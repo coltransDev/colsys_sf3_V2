@@ -761,6 +761,8 @@ for( $k=0; $k<count($transportes); $k++ ):
                     ->select("p.ca_transporte, p.ca_modalidad")
                     ->from("CotProducto p")
                     ->where("p.ca_idcotizacion = ?  ", array($cotizacion->getCaIdcotizacion()) )
+                    ->addOrderBy("p.ca_transporte")
+                    ->addOrderBy("p.ca_modalidad")
                     ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
                     ->execute();
 
@@ -821,7 +823,11 @@ for( $k=0; $k<count($transportes); $k++ ):
 					$pdf->SetFills(array_fill(0, count($width_mem), 0));
 
 					foreach( $recargosLoc as $recargo ){
-						$row = array( $recargo->getTipoRecargo()->getCaRecargo(), $recargo->getTextoTarifa() );
+                        $txt = $recargo->getTipoRecargo()->getCaRecargo();
+                        if( $recargo->getCaIdconcepto() && $recargo->getCaIdconcepto()!=9999 ){
+                            $txt.=" ".$recargo->getConcepto()->getCaConcepto();
+                        }
+						$row = array( $txt, $recargo->getTextoTarifa() );
 						if( $imprimirObservaciones ){
 							array_push( $row,  $recargo->getCaObservaciones() );
 						}
