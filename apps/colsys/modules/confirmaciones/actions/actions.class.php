@@ -326,7 +326,7 @@ class confirmacionesActions extends sfActions
             if($tipo_msg!="Puerto")
                 $email->addCC("parteaga@coltrans.com.co");
 
-            $asunto = $asunto = "Notificación de ".(($tipo_msg=="Puerto")?"Llegada":"Desconsolidación")." desde el Puerto de ".$referencia->getDestino()->getCaCiudad()." Ref.: ".$referencia->getCaReferencia();
+            $asunto = "Notificación de ".(($tipo_msg=="Puerto")?"Llegada":"Desconsolidación")." desde el Puerto de ".$referencia->getDestino()->getCaCiudad()." Ref.: ".$referencia->getCaReferencia();
 
             $email->setCaSubject( substr($asunto, 0, 250) );
 
@@ -350,7 +350,7 @@ class confirmacionesActions extends sfActions
         }
          else {
             foreach( $oids as $oid ){
-
+                $options=array();
                 if( is_uploaded_file ( $_FILES['attachment_'.$oid]['tmp_name'] ) ){
                     $attachment2 = $_FILES['attachment_'.$oid];
                 }else{
@@ -434,11 +434,11 @@ class confirmacionesActions extends sfActions
                                 break;
                             case "Desc":
                                     $status->setCaIdetapa("IMDES");
+                                    $options["subject"]="Notificación de Desconsolidación";
                                 break;                            
                             default:
                                 $status->setCaIdetapa("88888");
                                 break;
-
                         }
 
                         if( $referencia->getCaMnllegada() ){
@@ -446,14 +446,11 @@ class confirmacionesActions extends sfActions
                         }else{
                             $status->setCaIdnave( $referencia->getCaMotonave() );
                         }
-
                         if( $request->getParameter("mod_fcharribo") ){
                             $referencia->setCaFcharribo( $request->getParameter("fcharribo") );
                             $referencia->save();
                             $status->setCaFchllegada( $request->getParameter("fcharribo") );
                         }
-
-
                         break;
                     case "otm":				
                         $etapa =  $this->getRequestParameter("tipo_".$oid);
@@ -461,21 +458,17 @@ class confirmacionesActions extends sfActions
                         if( $etapa=="IMCOL" || $this->getRequestParameter("modfchllegada_".$oid) ){
                             $status->setCaFchcontinuacion( Utils::parseDate($this->getRequestParameter("fchllegada_".$oid)));	
                         }
-
                         if( $etapa=="IMCOL" ){
-                            $idbodega = $this->getRequestParameter("bodega_".$oid); 						
-
+                            $idbodega = $this->getRequestParameter("bodega_".$oid);
                             $status->setProperty("idbodega", $idbodega);				
                         }
-
                         if( $etapa=="99999" ){
                             $fchplanilla = $this->getRequestParameter("fchplanilla_".$oid);						
                             $status->setProperty("fchplanilla", Utils::parseDate($fchplanilla));
                         }
-
                         $status->setCaIdetapa($etapa);
                         break;				
-                    default:	
+                    default:
                         $status->setCaIdetapa("88888");
                         break;	
                 }
@@ -502,8 +495,10 @@ class confirmacionesActions extends sfActions
                     }
                 }
 
-                $status->save();			
-                $status->send($destinatarios, array(), $attachments );		
+                $status->save();
+                //if()
+                    //$options["subject"]="Notificacion de Desconsolidacion";
+                $status->send($destinatarios, array(), $attachments,$options );		
 
                 $this->status = $status;	
                 $this->modo = $modo;	
