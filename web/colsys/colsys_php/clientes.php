@@ -36,7 +36,11 @@ $tipos = array("Llamada", "Visita", "Correo Electrónico", "Correspondencia", "Ce
 $estados = array("Potencial","Activo","Vetado");
 $libestados = array("Vigente","Congelada");
 $sstatus = array("","Vetado");
-$empresas= array("Coltrans","Colmas");
+if ($regional == 'CO-057'){
+    $empresas= array("Coltrans","Colmas");
+}else{
+    $empresas= array("Coltrans");
+}
 $circular=array("Sin","Vencido","Vigente");
 $presentacion=array("Detallado","Columnas");
 $entidades=array("Vigente","Fusionada","Disuelta","Liquidada");
@@ -143,11 +147,15 @@ require_once("menu.php");
     echo "  <TD Class=listar COLSPAN=4><TABLE WIDTH=100% BORDER=0 CELLSPACING=0>";
     echo "	<TR>";
 	echo "  	<TD Class=listar><B>Empresa:</B>";
-	$che_mem = "CHECKED";
-    for ($i=0; $i < count($empresas); $i++) {
-         echo "<BR /><INPUT TYPE='RADIO' NAME='empresa' VALUE='".$empresas[$i]."' $che_mem>".$empresas[$i];
-		 $che_mem = "";
+    if ($regional == 'CO-057'){
+        $che_mem = "CHECKED";
+        for ($i=0; $i < count($empresas); $i++) {
+             echo "<BR /><INPUT TYPE='RADIO' NAME='empresa' VALUE='".$empresas[$i]."' $che_mem>".$empresas[$i];
+             $che_mem = "";
         }
+    }else{
+         echo "<BR /><INPUT TYPE='RADIO' NAME='empresa' VALUE='Coltrans' CHECKED> TPLogistics";
+    }
 	echo "		</TD>";
 	
 	echo "  	<TD Class=listar><B>Estado:</B>";
