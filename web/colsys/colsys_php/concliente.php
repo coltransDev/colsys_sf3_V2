@@ -48,7 +48,7 @@ require_once("menu.php");
     echo "<TR>";
     echo "  <TH Class=titulo COLSPAN=8>$titulo</TH>";
     echo "</TR>";
-    echo "<TH>Nit Cliente</TH>";
+    echo "<TH>ID Cliente</TH>";
     echo "<TH COLSPAN=4>Nombre del Contacto</TH>";
     $visible = ($rs->Value('ca_vendedor')== $usuario or $rs->Value('ca_vendedor')=='' or $nivel >= 2)?'visible':'hidden';
     echo "<TH><IMG style='visibility: $visible;' src='./graficos/new.gif' alt='Crear un Nuevo Registro' border=0 onclick='elegir(\"Adicionar\", ".$id.", 0);'></TH>";  // Botón para la creación de un Registro Nuevo
@@ -57,7 +57,7 @@ require_once("menu.php");
        if ($rs->Value('ca_idcliente') != $id_temp) {
            $complemento = (($rs->Value('ca_oficina')!='')?" Oficina : ".$rs->Value('ca_oficina'):"").(($rs->Value('ca_torre')!='')?" Torre : ".$rs->Value('ca_torre'):"").(($rs->Value('ca_interior')!='')?" Interior : ".$rs->Value('ca_interior'):"").(($rs->Value('ca_complemento')!='')?" - ".$rs->Value('ca_complemento'):"");
            echo "<TR>";
-           echo "<TD Class=mostrar style='vertical-align: top;'>".number_format($rs->Value('ca_idcliente'))."-".$rs->Value('ca_digito')."</TD>";
+           echo "<TD Class=mostrar style='vertical-align: top;'>".number_format($rs->Value('ca_idalterno')?$rs->Value('ca_idalterno'):$rs->Value('ca_idcliente'))."-".$rs->Value('ca_digito')."</TD>";
            echo "<TD WIDTH=430 Class=mostrar COLSPAN=4 style='font-size: 11px; text-align:left;'><B>".$rs->Value('ca_compania')."<BR>Dirección: </B>".str_replace ("|"," ",$rs->Value('ca_direccion_cl')).$complemento. "&nbsp;&nbsp;<B>Localidad: </B>" . $rs->Value('ca_localidad')."<BR><B>Teléfonos: </B>".$rs->Value('ca_telefonos_cl')."&nbsp;&nbsp;&nbsp;&nbsp;<B>Fax: </B>".$rs->Value('ca_fax_cl')."</TD>";
            echo "<TD Class=mostrar></TD>";
            echo "</TR>";
