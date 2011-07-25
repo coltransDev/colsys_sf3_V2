@@ -152,9 +152,9 @@ class reportesGerActions extends sfActions {
            FROM tb_inoequipos_sea eq
           WHERE eq.ca_referencia::text = m.ca_referencia::text AND eq.ca_idconcepto = tt.ca_idconcepto) AS ncontenedores, 
     count(DISTINCT c.ca_hbls) AS nhbls,
-    sum(c.ca_numpiezas) piezas,
-	sum(c.ca_peso) peso,
-	sum(c.ca_volumen) volumen
+    ( SELECT sum(ca_peso) AS count FROM tb_inoclientes_sea ics WHERE ics.ca_referencia::text = m.ca_referencia::text ) AS peso, 
+( SELECT sum(ca_numpiezas) AS count FROM tb_inoclientes_sea ics WHERE ics.ca_referencia::text = m.ca_referencia::text ) AS piezas, 
+( SELECT sum(ca_volumen) AS count FROM tb_inoclientes_sea ics WHERE ics.ca_referencia::text = m.ca_referencia::text ) AS volumen
 
     FROM tb_inomaestra_sea m
     JOIN tb_inoclientes_sea c ON c.ca_referencia = m.ca_referencia
@@ -182,6 +182,7 @@ class reportesGerActions extends sfActions {
           WHERE eq.ca_referencia = m.ca_referencia AND eq.ca_idconcepto = tt.ca_idconcepto)
     ORDER BY m.ca_fchreferencia";
             $con = Doctrine_Manager::getInstance()->connection();
+//            echo $sql;
             $st = $con->execute($sql);
             $this->resul = $st->fetchAll();
         }
@@ -193,6 +194,8 @@ class reportesGerActions extends sfActions {
 
         $this->mes = Utils::nmes($nom_mes);
         $this->idsucursal = $request->getParameter("idsucursal");
+        $this->departamento = $request->getParameter("departamento");
+        $this->iddepartamento = $request->getParameter("iddepartamento");
         //echo $this->idsucursal;
         //exit;
         $this->fechafinal = Utils::addDate(Utils::addDate($ano . "-" . $this->mes . "-01", 0, 1, 0, "Y-m-01"), -1);
@@ -208,9 +211,14 @@ class reportesGerActions extends sfActions {
         if ($this->opcion) {
 
             if ($this->idsucursal)
-                $where = " and ca_idsucursal='" . $this->idsucursal . "'";
+                $where .= " and ca_idsucursal='" . $this->idsucursal . "'";
 
-
+            if($this->departamento=="Cuentas Globales")
+                $where .= " and ca_idcliente in (select ca_idcliente from tb_clientes where ca_propiedades like '%cuentaglobal=true%') ";
+            else if($this->departamento=="Tráficos")
+                $where .= " and ca_idcliente not in (select ca_idcliente from tb_clientes where ca_propiedades like '%cuentaglobal=true%') ";
+                
+            
             $this->nmeses = 3; //ceil(Utils::diffTime($this->fechainicial,$this->fechafinal)/720);
             $sql = "select count(*) as valor,ca_year,ca_mes,ca_traorigen as origen from vi_reportes_estadisticas where ca_fchreporte between '" . $this->fechainicial . "' and '" . $this->fechafinal . "'  $where
                 group by ca_year,ca_mes,ca_traorigen
@@ -226,7 +234,6 @@ class reportesGerActions extends sfActions {
                 $this->grid[$r["origen"]][$r["ca_year"] . "-" . $r["ca_mes"]] = $r["valor"];
                 $this->totales[$r["ca_year"] . "-" . $r["ca_mes"]]+=$r["valor"];
             }
-
 
             $sql = "select count(*) as valor,ca_traorigen as origen,ca_year from vi_reportes_estadisticas
             where (ca_fchreporte between '" . (Utils::parseDate($this->fechafinal, "Y") . '-01-01') . "' and '" . $this->fechafinal . "' or ca_fchreporte between '" . (Utils::parseDate($this->fechafinal1, "Y") . '-01-01') . "' and '" . $this->fechafinal1 . "' or ca_fchreporte between '" . (Utils::parseDate($this->fechafinal2, "Y") . '-01-01') . "' and '" . $this->fechafinal2 . "') $where
@@ -261,7 +268,6 @@ class reportesGerActions extends sfActions {
                 $this->totalesCliente["totales"]["totales"]+=$r["valor"];
             }
 
-
             $sql = "select count(*) as valor,ca_year,ca_mes,ca_traorigen as origen ,ca_nombre_cli as cliente
                 from vi_reportes_estadisticas 
                 where ca_fchreporte between '" . Utils::parseDate($this->fechainicial, "Y-01-01") . "' and '" . $this->fechafinal . "' $where
@@ -270,7 +276,6 @@ class reportesGerActions extends sfActions {
             //echo "<br>".$sql;
             $st = $con->execute($sql);
             $this->clientes = $st->fetchAll();
-
 
             foreach ($this->clientes as $r) {
                 $this->gridClientes[$r["origen"]][$r["cliente"]][$r["ca_year"] . "-" . $r["ca_mes"]] = $r["valor"];
@@ -607,10 +612,11 @@ class reportesGerActions extends sfActions {
             $this->fechainicial = $request->getParameter("fechaInicial");
             $this->fechafinal = $request->getParameter("fechaFinal");
             //ca_fchvaciado-ca_fcharribo
-            $sql = "select (ca_fchvaciado-ca_fchconfirmacion) as diferencia , ca_referencia, ca_fchcreado,ca_fchvaciado,ca_fchconfirmacion
-                from tb_inomaestra_sea 
-                where ca_fcharribo between '" . $this->fechainicial . "' and '" . $this->fechafinal . "' and ca_modalidad='LCL' and ca_fchconfirmacion is not null            
-                order by ca_fchconfirmacion desc, 3 desc";
+            $sql = "select (ca_fchvaciado-ca_fchconfirmacion) as diferencia , ca_referencia, ca_fchcreado,ca_fchvaciado,ca_fchconfirmacion,des.ca_ciudad
+                from tb_inomaestra_sea m
+                inner join tb_ciudades des on m.ca_destino=des.ca_idciudad
+                where m.ca_fcharribo between '" . $this->fechainicial . "' and '" . $this->fechafinal . "' and m.ca_modalidad='LCL' and m.ca_fchconfirmacion is not null            
+                order by m.ca_fchconfirmacion desc, 3 desc";
             //echo "<br>".$sql;
             $con = Doctrine_Manager::getInstance()->connection();
             $st = $con->execute($sql);

@@ -5,6 +5,7 @@
  * and open the template in the editor.
  */
 include_component("widgets","widgetSucursales");
+include_component("widgets","widgetDeptos");
 $idsucursal= $sf_data->getRaw("idsucursal");
 ?>
 
@@ -60,6 +61,13 @@ var tabs = new Ext.FormPanel({
                                                         hiddenName: "idsucursal",                                                        
                                                         value:"<?=$sucursal?>",
                                                         hiddenValue:"<?=$idsucursal?>"
+                                                        }),
+                                                        new WidgetDeptos({fieldLabel: 'Departamento',
+                                                            id: 'departamento',
+                                                            name: 'departamento',
+                                                            hiddenName: "iddepartamento",
+                                                            value:"<?=$departamento?>",
+                                                            hiddenValue:"<?=$iddepartamento?>"
                                                         })
                                   ]
                              },

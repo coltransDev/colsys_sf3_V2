@@ -1,8 +1,5 @@
 <?
-//echo $nmeses;
 include_component("charts","column");
-
-
 $dataJSON=array();
 ?>
 <div align="center" >
@@ -16,10 +13,7 @@ $dataJSON=array();
 <div align="center" id="container1"></div>
 <?
 include_component("reportesGer","filtrosEstadisticasTraficos");
-?>
 
-
-<?
 if($opcion)
 {
 ?>
