@@ -490,7 +490,7 @@ elseif (!isset($boton) and !isset($accion) and isset($criterio)){
 		   echo "  <TD Class=mostrar style='$vetado'>".$rs->Value('ca_fax')."</TD>";
 		   echo "</TR>";
 		   echo "<TR>";
-		   echo "  <TD Class=mostrar style='$vetado'>Localidad :</TD>";
+		   echo "  <TD Class=mostrar style='$vetado'>".($regional!="PE-051"?"Localidad":"Distrito")." :</TD>";
 		   echo "  <TD Class=mostrar style='$vetado'>".$rs->Value('ca_localidad')."</TD>";
 		   echo "  <TD Class=mostrar style='$vetado'>Ciudad :</TD>";
 		   echo "  <TD Class=mostrar style='$vetado'>".$rs->Value('ca_ciudad')."</TD>";
@@ -1014,7 +1014,7 @@ require_once("menu.php");
                   echo " <OPTION VALUE='".$sexos[$i]."'>".$sexos[$i];
                   }
              echo "  </SELECT></TD>";
-             echo "</TR>";
+             echo "</TR>";             
              if( $regional!="PE-051" ){
                  echo "<TR>";
                  echo "  <TD Class=captura>Dirección:</TD>";
@@ -1101,6 +1101,13 @@ require_once("menu.php");
                  echo "  <TD Class=captura>Dirección:</TD>";
                  echo "  <TD Class=mostrar colspan='2'><INPUT TYPE='TEXT' NAME='direccion' SIZE=47 MAXLENGTH=50 ONCHANGE='completar(adicionar.elements[\"direccion[]\"]);'></TD>";
                  echo "</TR>";
+                 echo "<TR>";
+                 echo "  <TD Class=captura>Distrito:</TD>";
+                 echo "  <TD Class=mostrar COLSPAN=2>";                 
+                 echo "     <input NAME='localidad' maxlength='20' />";
+                 echo "  </TD>";
+                 echo "</TR>";
+                 echo "<TR>";
              }
              
              echo "  <TD Class=captura>Teléfonos:</TD>";
@@ -1464,8 +1471,15 @@ require_once("menu.php");
              }else{
                   echo "<TR>";
                  echo "  <TD Class=captura>Direccion:</TD>";
-                 echo "  <TD Class=mostrar><INPUT TYPE='TEXT' NAME='direccion' VALUE='".$rs->Value('ca_direccion')."' SIZE=47 MAXLENGTH=50 ONCHANGE='completar(modificar.elements[\"direccion[]\"]);'></TD>";
+                 echo "  <TD Class=mostrar COLSPAN=2><INPUT TYPE='TEXT' NAME='direccion' VALUE='".$rs->Value('ca_direccion')."' SIZE=47 MAXLENGTH=50 ONCHANGE='completar(modificar.elements[\"direccion[]\"]);'></TD>";
                  echo "</TR>";
+                 echo "<TR>";
+                 echo "  <TD Class=captura>Distrito:</TD>";
+                 echo "  <TD Class=mostrar COLSPAN=2>";                 
+                 echo "     <input NAME='localidad' maxlength='20' value='".$rs->Value('ca_localidad')."' />";
+                 echo "  </TD>";
+                 echo "</TR>";
+                 echo "<TR>";
              }
              echo "<TR>";
              echo "  <TD Class=captura>Teléfonos:</TD>";
