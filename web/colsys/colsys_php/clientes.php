@@ -255,7 +255,7 @@ elseif (!isset($boton) and !isset($accion) and isset($criterio)){
 //  include_once 'include/seguridad.php';                                      // Control de Acceso al módulo
     if (isset($criterio) and !isset($condicion)) {        
 		if ($modalidad == "N.i.t."){
-			$condicion = "where $campos[$modalidad] = '".$criterio."'";
+			$condicion = "where ca_idcliente = '".$criterio."'";
 		}elseif($modalidad == "RUT"){
            $condicion = "where ca_idalterno LIKE '".$criterio."%'";        
         }else{
