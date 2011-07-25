@@ -14,6 +14,10 @@
 */
 $programa = 10;
 
+include_once 'include/datalib.php';                                                // Incorpora la libreria de funciones, para accesar leer bases de datos
+require("checklogin.php");  
+
+
 $titulo = 'Maestra de Clientes Colsys';
 $saludos= array( "Señor" => "Señor", "Señora" => "Señora", "Doctor" => "Doctor", "Doctora" => "Doctora", "Ingeniero" => "Ingeniero", "Ingeniera" => "Ingeniera", "Arquitecto" => "Arquitecto", "Arquitecta" => "Arquitecta" );
 $letras  = array(" ","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P", "Q", "R", "S");
@@ -24,7 +28,9 @@ $numero = array("No.","");
 $sexos = array("Femenino","Masculino");
 $calificaciones = array("A","B","C","D","E");
 $riesgos = array("Sin","Mínimo","Medio","Alto");
-$campos = array("Nombre del Cliente" => "ca_compania", "Representante Legal" => "ca_ncompleto", "N.i.t." => "ca_idcliente", "Calificación" => "ca_calificacion", "Coordinador Aduana" => "ca_coordinador", "Actividad Económica" => "ca_actividad", "Sector Económico" => "ca_sector", "Localidad" => "ca_localidad", "Ciudad" => "ca_ciudad", "Contrato Agenciamiento" => "ca_stdcotratoag");  // Arreglo con las opciones de busqueda
+
+$col = ( $regional=="PE-051" ?"RUT":"N.i.t.");
+$campos = array("Nombre del Cliente" => "ca_compania", "Representante Legal" => "ca_ncompleto", $col => "ca_idcliente", "Calificación" => "ca_calificacion", "Coordinador Aduana" => "ca_coordinador", "Actividad Económica" => "ca_actividad", "Sector Económico" => "ca_sector", "Localidad" => "ca_localidad", "Ciudad" => "ca_ciudad", "Contrato Agenciamiento" => "ca_stdcotratoag");  // Arreglo con las opciones de busqueda
 $bdatos = array("Maestra Clientes", "Mis Clientes", "Clientes Libres");  // Arreglo con los lugares donde buscar
 $tipos = array("Llamada", "Visita", "Correo Electrónico", "Correspondencia", "Cerrar Caso");
 $estados = array("Potencial","Activo","Vetado");
@@ -37,8 +43,7 @@ $entidades=array("Vigente","Fusionada","Disuelta","Liquidada");
 $tiposnits=array("","Agente","Proveedor");
 $operaciones=array("I" => "Nuevo Registro", "U" => "Actualización", "D" => "Borrado");
 
-include_once 'include/datalib.php';                                                // Incorpora la libreria de funciones, para accesar leer bases de datos
-require("checklogin.php");                                                                 // Captura las variables de la sessión abierta
+                                                               // Captura las variables de la sessión abierta
 
 if ($regional == 'CO-057'){
     $localidades = array(
@@ -241,17 +246,19 @@ require_once("menu.php");
     echo "</BODY>";
     echo "</HTML>";
     }
-elseif (!isset($boton) and !isset($accion) and isset($criterio)){
+elseif (!isset($boton) and !isset($accion) and isset($criterio)){   
     /*header ("Pragma: no-cache");
     header ("Content-type: application/x-msexcel");
     header ("Content-Disposition: attachment; filename=prueba.xls" );*/
     set_time_limit(360);
     $modulo = "00100000";                                                      // Identificación del módulo para la ayuda en línea
 //  include_once 'include/seguridad.php';                                      // Control de Acceso al módulo
-    if (isset($criterio) and !isset($condicion)) {
+    if (isset($criterio) and !isset($condicion)) {        
 		if ($modalidad == "N.i.t."){
 			$condicion = "where $campos[$modalidad] = '".$criterio."'";
-		}else {
+		}elseif($modalidad == "RUT"){
+           $condicion = "where ca_idalterno LIKE '".$criterio."%'";        
+        }else{
 			$condicion = "where lower($campos[$modalidad]) like lower('%".$criterio."%')";
 		}
 	}
@@ -310,7 +317,7 @@ elseif (!isset($boton) and !isset($accion) and isset($criterio)){
         }
 	if (!$rs->Open("select * from vi_clientes $condicion")) {                  // Selecciona todos lo registros de la tabla Trasportistas
 		echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
-		echo "<script>document.location.href = 'clientes.php';</script>";
+		//echo "<script>document.location.href = 'clientes.php';</script>";
 		exit; }
 	$registros = (!$rs->IsEmpty())?"ca_idcliente = ".$rs->Value('ca_idcliente'):"false";
 	$cn =& DlRecordset::NewRecordset($conn);
@@ -320,7 +327,8 @@ elseif (!isset($boton) and !isset($accion) and isset($criterio)){
 	echo "<HEAD>";
 	echo "<TITLE>Tabla de Clientes ".COLTRANS."</TITLE>";
 	if ($salida[0] == "Columnas"){		
-		$columnas = array("N.i.t."=>"ca_idcliente","DV"=>"ca_digito","Cliente"=>"ca_compania","Dirección"=>array("ca_direccion","ca_oficina","ca_torre","ca_bloque","ca_interior","ca_localidad","ca_complemento"),"Teléfonos"=>"ca_telefonos","Fax"=>"ca_fax","Ciudad"=>"ca_ciudad","Vendedor"=>"ca_vendedor","Sucursal"=>"ca_sucursal","Circular 170"=>array("ca_fchcircular","ca_stdcircular"),"Carta Grtia."=>array("ca_fchvencimiento","ca_stdcarta_gtia"),"Nivel/Riesgo"=>"ca_nvlriesgo","Coord.Colmas"=>"ca_nombre_coor","Lista Clinton"=>"ca_listaclinton","Ley/Insolvencia"=>"ca_leyinsolvencia","Estado/Coltrans"=>array("ca_coltrans_std","ca_coltrans_fch"),"Estado/Colmas"=>array("ca_colmas_std","ca_colmas_fch"),"Días/Crédito"=>"ca_diascredito","Cupo/Crédito"=>"ca_cupo","Observaciones"=>"ca_observaciones");
+        $col = ( $regional=="PE-051" )?"RUC":"N.i.t.";
+		$columnas = array($col=>"ca_idcliente","DV"=>"ca_digito","Cliente"=>"ca_compania","Dirección"=>array("ca_direccion","ca_oficina","ca_torre","ca_bloque","ca_interior","ca_localidad","ca_complemento"),"Teléfonos"=>"ca_telefonos","Fax"=>"ca_fax","Ciudad"=>"ca_ciudad","Vendedor"=>"ca_vendedor","Sucursal"=>"ca_sucursal","Circular 170"=>array("ca_fchcircular","ca_stdcircular"),"Carta Grtia."=>array("ca_fchvencimiento","ca_stdcarta_gtia"),"Nivel/Riesgo"=>"ca_nvlriesgo","Coord.Colmas"=>"ca_nombre_coor","Lista Clinton"=>"ca_listaclinton","Ley/Insolvencia"=>"ca_leyinsolvencia","Estado/Coltrans"=>array("ca_coltrans_std","ca_coltrans_fch"),"Estado/Colmas"=>array("ca_colmas_std","ca_colmas_fch"),"Días/Crédito"=>"ca_diascredito","Cupo/Crédito"=>"ca_cupo","Observaciones"=>"ca_observaciones");
 		echo "</HEAD>";
 		echo "<BODY>";
                 require_once("menu.php");
@@ -403,7 +411,7 @@ elseif (!isset($boton) and !isset($accion) and isset($criterio)){
 		   $alerta = ($rs->Value('ca_coltrans_std')=='Vetado' or $rs->Value('ca_colmas_std')=='Vetado' )?'<IMG src=\'./graficos/izquierda.gif\' border=0>':'';
 		   if (!$cn->Open("select * from vi_concliente where ca_idcliente = ".$rs->Value('ca_idcliente')." and ca_idcontacto != 0")) {          // Selecciona todos lo registros de la tabla Contacos de Clientes
 				echo "<script>alert(\"".addslashes($cn->mErrMsg)."\");</script>";      // Muestra el mensaje de error
-				echo "<script>document.location.href = 'clientes.php';</script>";
+				//echo "<script>document.location.href = 'clientes.php';</script>";
 				exit; }
 		   echo "<TR>";
 		   echo "<TD Class=titulo style='vertical-align: top;'>".number_format($rs->Value('ca_idalterno')?$rs->Value('ca_idalterno'):$rs->Value('ca_idcliente'))."-".$rs->Value('ca_digito')."</TD>";
@@ -637,7 +645,7 @@ elseif (!isset($boton) and !isset($accion) and isset($criterio)){
 		if($rs->GetRowCount() == 1) {
                     if (!$tm->Open("select * from audit.tb_clientes_audit where $registros order by ca_stamp DESC")) {          // Selecciona todos lo registros de la tabla Eventos de Clientes
                         echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
-                        echo "<script>document.location.href = 'clientes.php';</script>";
+                        //echo "<script>document.location.href = 'clientes.php';</script>";
                         exit;
                     }
                     echo "<TABLE WIDTH=600 CELLSPACING=1>";                                    // un boton de comando definido para hacer mantemientos
@@ -669,7 +677,7 @@ elseif (!isset($boton) and !isset($accion) and isset($criterio)){
 
                     if (!$tm->Open("select * from vi_evecliente where $registros")) {          // Selecciona todos lo registros de la tabla Eventos de Clientes
                         echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
-                        echo "<script>document.location.href = 'clientes.php';</script>";
+                        //echo "<script>document.location.href = 'clientes.php';</script>";
                         exit;
                     }
                     echo "<TABLE WIDTH=600 CELLSPACING=1>";                                    // un boton de comando definido para hacer mantemientos
@@ -725,7 +733,7 @@ elseif (isset($boton)) {                                                       /
              $tm =& DlRecordset::NewRecordset($conn);
              if (!$tm->Open("select ca_idevento, ca_asunto from tb_evecliente where ca_idcliente = $id and ca_idantecedente=0 order by ca_idevento desc")) {       // Selecciona todos lo registros de la tabla Eventos Clientes
                  echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";          // Muestra el mensaje de error
-                 echo "<script>document.location.href = 'clientes.php';</script>";
+                 //echo "<script>document.location.href = 'clientes.php';</script>";
                  exit; }
              echo "<HEAD>";
              echo "<TITLE>Tabla de Eventos por Cliente</TITLE>";
@@ -807,19 +815,19 @@ require_once("menu.php");
              $tm =& DlRecordset::NewRecordset($conn);
              if (!$tm->Open("select ca_idciudad, ca_ciudad, ca_nombre from vi_ciudades where ca_idtrafico='$regional'")) {       // Selecciona todos lo registros de la tabla Ciudades
                  echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";          // Muestra el mensaje de error
-                 echo "<script>document.location.href = 'clientes.php';</script>";
+                 //echo "<script>document.location.href = 'clientes.php';</script>";
                  exit; }
              if (isset($nit)) {
                  $po =& DlRecordset::NewRecordset($conn);
                  if (!$po->Open("select * from vi_potenciales where ca_idcliente=$nit")) {  // Selecciona todos lo registros de la tabla Clientes Potenciales
                      echo "<script>alert(\"".addslashes($po->mErrMsg)."\");</script>";      // Muestra el mensaje de error
-                     echo "<script>document.location.href = 'clientes.php';</script>";
+                     //echo "<script>document.location.href = 'clientes.php';</script>";
                      exit; }
              }
              $us =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
              if (!$us->Open("select ca_login, ca_nombre from control.tb_usuarios where upper(ca_departamento) like '%ADUANAS%' order by ca_login")) {
                  echo "<script>alert(\"".addslashes($us->mErrMsg)."\");</ script>";
-                 echo "<script>document.location.href = 'inosea.php';</ script>";
+                 //echo "<script>document.location.href = 'inosea.php';</ script>";
                  exit;
                 }
              $us->MoveFirst();
@@ -936,7 +944,7 @@ require_once("menu.php");
                  echo "<TR>";
                  echo "  <TD Class=captura style='vertical-align:top;'>Base de Datos:<BR><B>Quintero Hermanos Ltda.</B></TD>";
                  echo "  <TD Class=invertir COLSPAN=2>";
-                 echo "    <B>N.i.t. : </B>".$po->Value('ca_idcliente')."<BR>";
+                 echo "    <B>".( $regional=="PE-051" ?"RUC":"N.i.t.")." : </B>".$po->Value('ca_idcliente')."<BR>";
                  echo "    <B>Cliente : </B>".$po->Value('ca_compania')."<BR>";
                  echo "    <B>Representante : </B>".$po->Value('ca_ncompleto')."<BR>";
                  echo "    <B>Dirección : </B>".$po->Value('ca_direccion')."<BR>";
@@ -947,7 +955,7 @@ require_once("menu.php");
                  echo "  </TD>";
                  echo "</TR>";
                  echo "<TR>";
-                 echo "  <TD Class=captura>N.i.t.:</TD>";
+                 echo "  <TD Class=captura>".( $regional=="PE-051" ?"RUT":"N.i.t.")."</TD>";
                  echo "  <TD Class=mostrar COLSPAN=2><INPUT TYPE='TEXT' NAME='id' VALUE='".$po->Value('ca_idcliente')."' SIZE=13 MAXLENGTH=11 ONBLUR='validacion(\"validcliente\",this);'>";
                  if( $regional!="PE-051" ){
                     echo "-<INPUT TYPE='TEXT' NAME='digito' SIZE=2 MAXLENGTH=1 ONBLUR='verificar();'></TD>";
@@ -1217,7 +1225,7 @@ require_once("menu.php");
              $tm =& DlRecordset::NewRecordset($conn);
              if (!$tm->Open("select case when id.ca_idalterno::text is null then id.ca_id::text else id.ca_idalterno end from ids.tb_proveedores pv INNER JOIN ids.tb_ids id ON id.ca_id =  pv.ca_idproveedor where ca_idalterno = '$id'")) {       // Selecciona todos lo registros de la tabla Ciudades
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
-                 echo "<script>document.location.href = 'clientes.php';</script>";
+                 //echo "<script>document.location.href = 'clientes.php';</script>";
                  exit; }
              $es_proveedor = "";
              if ($tm->GetRowCount() > 0){
@@ -1225,11 +1233,11 @@ require_once("menu.php");
              }
              if (!$tm->Open("select ca_idciudad, ca_ciudad, ca_nombre from vi_ciudades where ca_idtrafico='$regional'")) {       // Selecciona todos lo registros de la tabla Ciudades
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
-                 echo "<script>document.location.href = 'clientes.php';</script>";
+                 //echo "<script>document.location.href = 'clientes.php';</script>";
                  exit; }
              if (!$rs->Open("select * from vi_clientes where ca_idcliente = ".$id)) {    // Mueve el apuntador al registro que se desea modificar
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";     // Muestra el mensaje de error
-                 echo "<script>document.location.href = 'clientes.php';</script>";
+                 //echo "<script>document.location.href = 'clientes.php';</script>";
                  exit;
                 }
              $us =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
@@ -1596,7 +1604,7 @@ require_once("menu.php");
 //           include_once 'include/seguridad.php';                             // Control de Acceso al módulo
              if (!$rs->Open("select * from tb_clientes where ca_idcliente = ".$id)) {    // Mueve el apuntador al registro que se desea eliminar
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
-                 echo "<script>document.location.href = 'clientes.php';</script>";
+                 //echo "<script>document.location.href = 'clientes.php';</script>";
                  exit;
                 }
              echo "<HEAD>";
@@ -1624,7 +1632,7 @@ require_once("menu.php");
 
              $complemento = (($rs->Value('ca_oficina')!='')?" Oficina : ".$rs->Value('ca_oficina'):"").(($rs->Value('ca_torre')!='')?" Torre : ".$rs->Value('ca_torre'):"").(($rs->Value('ca_interior')!='')?" Interior : ".$rs->Value('ca_interior'):"").(($rs->Value('ca_complemento')!='')?" - ".$rs->Value('ca_complemento'):"");
              echo "<TR>";
-             echo "  <TD WIDTH=500 Class=mostrar COLSPAN=3 style='font-size: 11px; text-align:left;'><B>N.i.t.: </B>".number_format($rs->Value('ca_idcliente'))."-".$rs->Value('ca_digito')."<BR><B>".$rs->Value('ca_compania')."<BR>Dirección: </B>".str_replace ("|"," ",$rs->Value('ca_direccion')).$complemento. "&nbsp;&nbsp;<B>Localidad: </B>" . $rs->Value('ca_localidad')."<BR><B>Teléfonos: </B>".$rs->Value('ca_telefonos')."&nbsp;&nbsp;&nbsp;&nbsp;<B>Fax: </B>".$rs->Value('ca_fax')."</TD>";
+             echo "  <TD WIDTH=500 Class=mostrar COLSPAN=3 style='font-size: 11px; text-align:left;'><B>".( $regional=="PE-051" ?"RUC":"N.i.t.").": </B>".number_format($rs->Value('ca_idcliente'))."-".$rs->Value('ca_digito')."<BR><B>".$rs->Value('ca_compania')."<BR>Dirección: </B>".str_replace ("|"," ",$rs->Value('ca_direccion')).$complemento. "&nbsp;&nbsp;<B>Localidad: </B>" . $rs->Value('ca_localidad')."<BR><B>Teléfonos: </B>".$rs->Value('ca_telefonos')."&nbsp;&nbsp;&nbsp;&nbsp;<B>Fax: </B>".$rs->Value('ca_fax')."</TD>";
              echo "</TR>";
 
              echo "<TR>";
@@ -1675,7 +1683,7 @@ require_once("menu.php");
 			 // echo $query;
              if (!$rs->Open($query)) {    // Mueve el apuntador al registro que se desea Consultar en Lista Clinton
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
-                 echo "<script>document.location.href = 'clientes.php';</script>";
+                 //echo "<script>document.location.href = 'clientes.php';</script>";
                  exit;
                 }
 		    $tm =& DlRecordset::NewRecordset($conn);
@@ -1741,7 +1749,7 @@ require_once("menu.php");
 //           include_once 'include/seguridad.php';                             // Control de Acceso al módulo
              if (!$rs->Open("select * from vi_clientes where ca_idcliente = ".$id)) {    // Mueve el apuntador al registro que se desea eliminar
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
-                 echo "<script>document.location.href = 'clientes.php';</script>";
+                 //echo "<script>document.location.href = 'clientes.php';</script>";
                  exit;
                 }
              echo "<HEAD>";
@@ -1816,13 +1824,13 @@ require_once("menu.php");
 //           include_once 'include/seguridad.php';                             // Control de Acceso al módulo
              if (!$rs->Open("select * from vi_clientes where ca_idcliente = ".$id)) {    // Mueve el apuntador al registro que se desea eliminar
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
-                 echo "<script>document.location.href = 'clientes.php';</script>";
+                 //echo "<script>document.location.href = 'clientes.php';</script>";
                  exit;
                 }
              $tm =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
              if (!$tm->Open("select oid as ca_oid, * from tb_comcliente where ca_idcliente = ".$id." and ca_usuanulado is null order by ca_fchfirmado DESC")) {    // Mueve el apuntador al registro que se desea eliminar
                  echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
-                 echo "<script>document.location.href = 'clientes.php';</script>";
+                 //echo "<script>document.location.href = 'clientes.php';</script>";
                  exit;
                 }
              echo "<HEAD>";
@@ -1908,13 +1916,13 @@ require_once("menu.php");
 //           include_once 'include/seguridad.php';                             // Control de Acceso al módulo
              if (!$rs->Open("select * from vi_clientes where ca_idcliente = ".$id)) {    // Mueve el apuntador al registro que se desea eliminar
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
-                 echo "<script>document.location.href = 'clientes.php';</script>";
+                 //echo "<script>document.location.href = 'clientes.php';</script>";
                  exit;
                 }
              $tm =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
              if (!$tm->Open("select * from tb_porcentajescomisiones where ca_idcliente = ".$id." order by ca_inicio, ca_fin DESC")) {    // Mueve el apuntador al registro que se desea eliminar
                  echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
-                 echo "<script>document.location.href = 'clientes.php';</script>";
+                 //echo "<script>document.location.href = 'clientes.php';</script>";
                  exit;
                 }
              echo "<HEAD>";
@@ -2006,13 +2014,13 @@ require_once("menu.php");
 //           include_once 'include/seguridad.php';                             // Control de Acceso al módulo
              if (!$rs->Open("select * from vi_clientes where ca_idcliente = ".$id)) {    // Mueve el apuntador al registro que se desea eliminar
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
-                 echo "<script>document.location.href = 'clientes.php';</script>";
+                 //echo "<script>document.location.href = 'clientes.php';</script>";
                  exit;
                 }
              $tm =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
              if (!$tm->Open("select * from tb_libestados where ca_idcliente = ".$id." order by ca_idlibestado DESC")) {    // Mueve el apuntador al registro que se desea eliminar
                  echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
-                 echo "<script>document.location.href = 'clientes.php';</script>";
+                 //echo "<script>document.location.href = 'clientes.php';</script>";
                  exit;
                 }
              if ($nivel >= 2){
@@ -2099,7 +2107,7 @@ require_once("menu.php");
 //           include_once 'include/seguridad.php';                             // Control de Acceso al módulo
              if (!$rs->Open("select * from vi_clientes where ca_idcliente = ".$id)) {    // Mueve el apuntador al registro que se desea eliminar
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
-                 echo "<script>document.location.href = 'clientes.php';</script>";
+                 //echo "<script>document.location.href = 'clientes.php';</script>";
                  exit;
                 }
              echo "<BODY>";
@@ -2217,7 +2225,7 @@ elseif (isset($accion)) {                                                      /
         case 'Nueva Vigencia': {                                               // El Botón Guardar fue pulsado
              if (!$rs->Open("insert into tb_comcliente (ca_idcliente, ca_fchfirmado, ca_fchvencimiento, ca_fchcreado, ca_usucreado) values($id, '$fchfirmado', '$fchvencimiento', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
-                 echo "<script>document.location.href = 'clientes.php';</script>";
+                 //echo "<script>document.location.href = 'clientes.php';</script>";
                  exit;
                 }
              break;
@@ -2229,7 +2237,7 @@ elseif (isset($accion)) {                                                      /
              $fin = date("Y-m-d", mktime(0, 0, 0, $mes+1, 0, $ano));
              if (!$rs->Open("insert into tb_porcentajescomisiones (ca_idcliente, ca_inicio, ca_fin, ca_porcentaje, ca_empresa, ca_fchcreado, ca_usucreado) values($id, '$inicio', '$fin', $porcentaje, '$empresa', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
-                 echo "<script>document.location.href = 'clientes.php';</script>";
+                 //echo "<script>document.location.href = 'clientes.php';</script>";
                  exit;
                 }
              break;
@@ -2239,7 +2247,7 @@ elseif (isset($accion)) {                                                      /
              $inicio = date("Y-m-d", mktime(0, 0, 0, $mes, 1, $ano));
              if (!$rs->Open("insert into tb_libestados (ca_idcliente, ca_fchestado, ca_libestado, ca_observaciones, ca_fchcreado, ca_usucreado) values($id, '$fchestado', '$libestado', '$observaciones', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
-                 echo "<script>document.location.href = 'clientes.php';</script>";
+                 //echo "<script>document.location.href = 'clientes.php';</script>";
                  exit;
                 }
              break;
@@ -2249,7 +2257,7 @@ elseif (isset($accion)) {                                                      /
 			 $contactos = (isset($contactos))?implode(",",array_filter($contactos, "vacios")):"";           // Retira las posiciones en blanco del arreglo
              if (!$rs->Open("update tb_clientes set ca_confirmar = '$contactos', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where ca_idcliente = $id")) {
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
-                 echo "<script>document.location.href = 'clientes.php';</script>";
+                 //echo "<script>document.location.href = 'clientes.php';</script>";
                  exit;
                 }
              break;
@@ -2257,19 +2265,19 @@ elseif (isset($accion)) {                                                      /
         case 'Aprobar Lib.Automática': {                                        // El Botón Guardar fue pulsado
              if (!$rs->Open("select ca_idcliente from tb_libcliente where ca_idcliente = $id")) {
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
-                 echo "<script>document.location.href = 'clientes.php';</script>";
+                 //echo "<script>document.location.href = 'clientes.php';</script>";
                  exit;
                 }
              if ($rs->GetRowCount() == 0){
                  if (!$rs->Open("insert into tb_libcliente (ca_idcliente, ca_diascredito, ca_cupo, ca_observaciones, ca_fchcreado, ca_usucreado) values($id, $diascredito, $cupo, '".addslashes($observaciones)."', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
                      echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
-                     echo "<script>document.location.href = 'clientes.php';</script>";
+                     //echo "<script>document.location.href = 'clientes.php';</script>";
                      exit;
                     }
              }else{
                  if (!$rs->Open("update tb_libcliente set ca_diascredito = $diascredito, ca_cupo = $cupo, ca_observaciones = '".addslashes($observaciones)."', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where ca_idcliente = $id")) {
                      echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
-                     echo "<script>document.location.href = 'clientes.php';</script>";
+                     //echo "<script>document.location.href = 'clientes.php';</script>";
                      exit;
                     }
              }
@@ -2278,7 +2286,7 @@ elseif (isset($accion)) {                                                      /
         case 'Eliminar Aprobación': {                                           // El Botón Guardar fue pulsado
              if (!$rs->Open("delete from tb_libcliente where ca_idcliente = $id")) {
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
-                 echo "<script>document.location.href = 'clientes.php';</script>";
+                 //echo "<script>document.location.href = 'clientes.php';</script>";
                  exit;
                 }
              break;
@@ -2286,7 +2294,7 @@ elseif (isset($accion)) {                                                      /
         case 'Registrar': {                                                      // El Botón Guardar fue pulsado
              if (!$rs->Open("insert into tb_evecliente (ca_idcliente, ca_fchevento, ca_tipo, ca_asunto, ca_detalle, ca_compromisos, ca_fchcompromiso, ca_idantecedente, ca_usuario) values($id, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$tipo', '".addslashes($asunto)."', '".addslashes($detalle)."', '".addslashes($compromisos)."', '$fchcompromiso', '$idantecedente', '$usuario')")) {
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
-                 echo "<script>document.location.href = 'clientes.php';</script>";
+                 //echo "<script>document.location.href = 'clientes.php';</script>";
                  exit;
                 }
              break;
@@ -2355,7 +2363,7 @@ elseif (isset($accion)) {                                                      /
              $status = ($listaclinton=='Sí')?"Vetado":$status;
              if (!$rs->Open("update tb_clientes set ca_idalterno = $id, ca_compania = upper('".addslashes($compania)."'), ca_papellido = '$papellido', ca_sapellido = '$sapellido', ca_nombres = '$nombres', ca_saludo = '$saludo', ca_sexo = '$sexo', ca_cumpleanos = '$cumpleanos', ca_direccion = '$direccion', ca_oficina = '$oficina', ca_torre = '$torre', ca_bloque = '$bloque', ca_interior = '$interior', ca_localidad = '$localidad', ca_complemento = '$complemento', ca_telefonos = '$telefonos', ca_fax = '$fax', ca_idciudad  ='$idciudad', ca_website = lower('$website'), ca_email = lower('$email'), ca_actividad = '$actividad', ca_sectoreco = '$sectoreco', ca_vendedor = ".(($vendedor!='')?"'".$vendedor."'":"null").", ca_fchcotratoag = $fchcotratoag, ca_listaclinton = '$listaclinton', ca_leyinsolvencia = '$leyinsolvencia', ca_comentario = '$comentario', ca_status = '$status', ca_calificacion = '$calificacion', ca_entidad = '$entidad', ca_preferencias = '$preferencias', ca_coordinador = '$coordinador', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where ca_idcliente = $id")) {
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
-                 echo "<script>document.location.href = 'clientes.php';</script>";
+                 //echo "<script>document.location.href = 'clientes.php';</script>";
                  exit;
                 }
              break;
@@ -2363,7 +2371,7 @@ elseif (isset($accion)) {                                                      /
         case 'Liberar': {                                                   // El Botón Actualizar fue pulsado
              if (!$rs->Open("update tb_clientes set ca_vendedor = null, ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where ca_idcliente = $id")) {
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
-                 echo "<script>document.location.href = 'clientes.php';</script>";
+                 //echo "<script>document.location.href = 'clientes.php';</script>";
                  exit;
                 }
              break;
@@ -2371,7 +2379,7 @@ elseif (isset($accion)) {                                                      /
         case 'Eliminar': {                                                     // El Botón Eliminar fue pulsado
              if (!$rs->Open("delete from tb_clientes where ca_idcliente = $id")) {
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
-                 echo "<script>document.location.href = 'clientes.php';</script>";
+                 //echo "<script>document.location.href = 'clientes.php';</script>";
                  exit;
                 }
              break;
@@ -2379,7 +2387,7 @@ elseif (isset($accion)) {                                                      /
         case 'anular_vig': {                                                     // Anula una Vigencia de Carta de Garantía de un Cliente
              if (!$rs->Open("update tb_comcliente set ca_usuanulado = '$usuario', ca_fchanulado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss') where oid = $oid")) {
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
-                 echo "<script>document.location.href = 'clientes.php';</script>";
+                 //echo "<script>document.location.href = 'clientes.php';</script>";
                  exit;
                 }
              break;
