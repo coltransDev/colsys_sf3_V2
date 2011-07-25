@@ -133,7 +133,7 @@ require_once("menu.php");
            $us->MoveNext();
           }
     echo "  </SELECT></TD>";
-    echo "  <TD Class=listar><B>Tipo de Nit:</B><BR><SELECT NAME='tiponit'>";
+    echo "  <TD Class=listar><B>Tipo:</B><BR><SELECT NAME='tiponit'>";
     $che_mem = "SELECTED";
     for ($i=0; $i < count($tiposnits); $i++) {
          echo " <OPTION VALUE='".$tiposnits[$i]."' $che_mem>".$tiposnits[$i];
