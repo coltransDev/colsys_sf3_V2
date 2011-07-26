@@ -10,6 +10,26 @@
  */
 class inoAereoActions extends sfActions
 {
+    const RUTINA = 6;
+    
+    /**
+	* 
+	*/
+	public function getNivel(){		
+        
+		
+		$this->user = $this->getUser();
+		
+		$this->nivel = $this->getUser()->getNivelAcceso( inoAereoActions::RUTINA );
+		
+		if( $this->nivel<0 ){            
+			$this->redirect("users/noAccess");
+		}
+        
+        return $this->nivel;
+        
+	}
+    
     /**
     * Executes index action
     *
@@ -25,7 +45,11 @@ class inoAereoActions extends sfActions
     * @param sfRequest $request A request object
     */
     public function executeFormMaster(sfWebRequest $request){
+        $nivel = $this->getNivel();
         
+        if( $nivel<=0 ){
+			$this->redirect("users/noAccess");
+		}
         if( $request->getParameter("referencia") ){
             $this->referencia = Doctrine::getTable("InoMaestraAir")->find( $request->getParameter("referencia") );
             $this->forward404Unless($this->referencia);
@@ -87,7 +111,7 @@ class inoAereoActions extends sfActions
             $ino->setCaPiezas( $request->getParameter("ca_piezas") );
             $ino->setCaPeso( $request->getParameter("ca_peso") );
             $ino->setCaPesovolumen( $request->getParameter("ca_volumen") );
-            $ino->setCaObservaciones( $request->getParameter("ca_observaciones") );
+            $ino->setCaObservaciones( utf8_decode($request->getParameter("ca_observaciones")) );
             
             $ino->save();
             
@@ -137,7 +161,7 @@ class inoAereoActions extends sfActions
             $data["ca_peso"]=$ino->getCaPeso();
             $data["ca_volumen"]=$ino->getCaPesovolumen();
             
-            $data["ca_observaciones"]=$ino->getCaObservaciones();
+            $data["ca_observaciones"]=utf8_encode($ino->getCaObservaciones());
             
             $this->responseArray = array("success" => true,"data"=>$data);
         } catch (Exception $e) {
