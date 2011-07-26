@@ -102,7 +102,7 @@ class inventoryComponents extends sfComponents
     public function executePanelCategoriaWindow( ){
         $this->nivel = $this->getUser()->getNivelAcceso( inventoryActions::RUTINA );
 
-        $this->editable = "false";
+        
 
         if($this->nivel>=1){
             $idcategory = $this->getRequestParameter("idcategory");
@@ -111,12 +111,8 @@ class inventoryComponents extends sfComponents
             if(!$categoria){
                 $categoria = new InvCategory();
             }
-            $sucursal = $categoria->getCaIdsucursal();
-            $ususucursal = $this->getUser()->getIdSucursal();
-            //echo $ususucursal;
-            if($sucursal==$ususucursal){
-                $this->editable = "true";
-            } 
+            
+            
         }
         
         $this->sucursales = Doctrine::getTable("Sucursal")

@@ -27,7 +27,7 @@ PanelCategorias = function( config ){
         //iconCls:'settings',
         animate:true,
         loader: new Ext.tree.TreeLoader({
-            dataUrl:'<?=url_for("inventory/datosPanelCategorias")?>?idcategoria='+this.idcategoria
+            dataUrl:'<?=url_for("inventory/datosPanelCategorias")?>'
            
         }),
 
@@ -46,8 +46,7 @@ Ext.extend(PanelCategorias, Ext.tree.TreePanel, {
     onClick: function(n){
         //var sn = this.selModel.selNode || {}; // selNode is null on initial selection
         if( n.leaf ){  // ignore clicks on folders           
-            //var nodeoptions = n.id.split("_");
-            
+            //var nodeoptions = n.id.split("_");            
             var action = n.attributes.action;
             var idcategory = n.attributes.idcategoria;
             
@@ -71,7 +70,9 @@ Ext.extend(PanelCategorias, Ext.tree.TreePanel, {
                         var newComponent = new PanelReading({id:idcomponent,
                                                               title: title,
                                                               idcategory: idcategory,
-                                                              closable: true                                                              
+                                                              idsucursal: this.idsucursal,
+                                                              closable: true,
+                                                              editable: true
                                                              });
 
 

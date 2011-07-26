@@ -32,15 +32,15 @@ class inventoryActions extends sfActions
 		$this->nivel = $this->getNivel(self::RUTINA);
         
         
-        $q  = Doctrine::getTable("InvCategory")
-                                      ->createQuery("c")
-                                      ->addOrderBy("c.ca_parent")
-                                      ->addOrderBy("c.ca_order")
-                                      ->addOrderBy("c.ca_name");
+        $q  = Doctrine::getTable("Sucursal")
+                                      ->createQuery("s")
+                                      ->addWhere("s.ca_idempresa = ?", 2)
+                                      ->addOrderBy("s.ca_nombre");
+                                      
       
-        $q->addWhere("c.ca_parent IS NULL");
         
-        $this->categorias = $q->execute();
+        
+        $this->sucursales = $q->execute();
         
 	}
 
@@ -73,12 +73,15 @@ class inventoryActions extends sfActions
 
         $idcategory = $request->getParameter("idcategory");
         $this->forward404Unless( $idcategory );
+        $idsucursal = $request->getParameter("idsucursal");
+        $this->forward404Unless( $idsucursal );
         
         $q  = Doctrine::getTable("InvActivo")
                         ->createQuery("a");
-                        
-                                      
+                       
+                     
         $q->addWhere("a.ca_idcategory = ?", $idcategory );
+        $q->addWhere("a.ca_idsucursal = ?", $idsucursal );
         //$q->setHydrationMode(Doctrine::HYDRATE_SCALAR);
         $q->limit(500);
 		$activos = $q->execute();

@@ -256,7 +256,8 @@
             autoLoad : true,
             url: '<?= url_for("inventory/datosPanelActivos") ?>',
             baseParams : {
-                idcategory: this.idcategory
+                idcategory: this.idcategory,
+                idsucursal: this.idsucursal
             
             },
             reader: new Ext.data.JsonReader(

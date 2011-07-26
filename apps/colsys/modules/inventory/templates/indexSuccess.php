@@ -57,15 +57,15 @@ Ext.onReady(function(){
             items: [
                 <?
                 $i=0;
-                foreach( $categorias as $categoria ){
+                foreach( $sucursales as $sucursal ){
                     if( $i++!=0){
                         echo ",";
                     }
                 ?>
                 
                 new PanelCategorias({
-                        title: "<?=$categoria->getCaName()?>",
-                        idcategoria: "<?=$categoria->getCaIdcategory()?>"
+                        title: "<?=$sucursal->getCaNombre()?>",                        
+                        idsucursal: "<?=$sucursal->getCaIdsucursal()?>"
                         
                     })
                 <?    
