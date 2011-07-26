@@ -359,7 +359,7 @@ class pricingActions extends sfActions {
                 $sql = "select ca_observaciones
 					from pric.log_trayectos t
 					WHERE
-						t.ca_fchcreado<= '" . $fchcorte . "' and ca_idtrayecto=" . $trayecto["t_ca_idtrayecto"] . " limit 1";
+						t.ca_fchcreado<= '" . $fchcorte . "' and ca_idtrayecto=" . $trayecto["t_ca_idtrayecto"] . " ORDER BY t.ca_fchcreado DESC limit 1";
                 $st = $con->execute($sql);
                 //recuperamos las tuplas de resultados
                 $obs_tmp = $st->fetchAll();
