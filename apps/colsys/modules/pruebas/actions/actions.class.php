@@ -3823,13 +3823,130 @@ ORDER BY ca_idtrayecto,ca_idconcepto,log_pricrecargosxconcepto.ca_idrecargo, ca_
             }
 
         }
+        $this->setTemplate("blank");
+    }
 
+
+
+    /*
+     *
+     *
+     * @author: Andres Botero
+     */
+
+    public function executePruebaEnvioEmail($request) {        
+
+        $user = $this->getUser();
+
+        $email = new Email();
+        $email->setCaUsuenvio($user->getUserId());
+        $email->setCaTipo("Envío de cotización");
+        $email->setCaIdcaso($this->getRequestParameter("id"));
+        $email->setCaFrom($user->getEmail());
+        $email->setCaFromname($user->getNombre());
+        $email->setCaSubject("asdsa");
+       
+
+        $email->setCaReplyto($user->getEmail());
+
+        $email->addTo($user->getEmail());
+
+       
+        //$mensaje = utf8_decode($this->getRequestParameter("mensaje")."\n\n");
+        $mensaje = "Text message";
         
+        $email->setCaBody($mensaje );
+        $email->setCaBodyhtml(Utils::replace($mensaje));
+
+        $email->save(); //guarda el cuerpo del mensaje
+
+        $cotizacion = Doctrine::getTable("Cotizacion")->find(70);
+
+        if (!$cotizacion->enBlanco()) {
+            $directory = $email->getDirectorio();
+            if (!is_dir($directory)) {
+                @mkdir($directory, 0777, true);
+            }
+
+            $fileName = "cotizacion" . $cotizacion->getCaConsecutivo() . ".pdf";
+            if (file_exists($fileName)) {
+                @unlink($fileName);
+            }
+
+            $this->getRequest()->setParameter('id', $cotizacion->getCaIdcotizacion());
+            $this->getRequest()->setParameter('filename', $directory . $fileName);
+            sfContext::getInstance()->getController()->getPresentationFor('cotizaciones', 'generarPDF');
+
+            $email->addAttachment($email->getDirectorioBase() . $fileName);
+        }
+
+       
+        $email->save();
+
+        $email->send();
+
         $this->setTemplate("blank");
 
+    }
+
+
+    public function executePruebasAlertas(){
+        exit();
+        /*
+         * Alertas.recordatorio = select ca_referencia, ca_cuerpoalerta, ca_fchvencimiento, ca_usucreacion from tb_expo_alertas where ca_fchrecordatorio <= ? and ca_fchvencimiento >= ?
+            Alertas.vencimiento  = select ca_referencia, ca_cuerpoalerta, ca_fchvencimiento, ca_usucreacion from tb_expo_alertas where ca_fchvencimiento = ?
+         */
+
+        $hoy = date("Y-m-d");
+        $alertas = Doctrine::getTable("ExpoAlerta")
+                            ->createQuery("a")
+                            ->addWhere("a.ca_fchrecordatorio <= ? and a.ca_fchvencimiento >= ?", array($hoy, $hoy))
+                            ->execute();
+
+        foreach( $alertas as  $alerta ){
+            $user = $alerta->getUsuario();
+            $email = new Email();
+            $email->setCaUsuenvio($user->getCaLogin());
+            $email->setCaTipo("Alerta Expo");
+            //$email->setCaIdcaso("");
+            $email->setCaFrom($user->getCaEmail());
+            $email->setCaFromname($user->getCaNombre());
+
+            if( $alerta->getCaFchvencimiento()==$hoy ){
+                $txt = "Vencimiento";
+                $mensaje = "La alerta asignada a ".$user->getCaNombre()." vence hoy.\n\nInformación de la tarea : ".$alerta->getCaCuerpoalerta()."\n\nFecha de Vencimiento : \n\n".Utils::fechaMes($alerta->getCaFchvencimiento())."\n\n";
+            }else{
+                $txt = "Recordatorio";
+                $mensaje = "Información de la tarea : ".$alerta->getCaCuerpoalerta()."\n\nFecha de Vencimiento : \n\n".Utils::fechaMes($alerta->getCaFchvencimiento())."\n\n";
+            }
+            $email->setCaSubject($txt." : Alerta de la referencia ".$alerta->getCaReferencia());
+
+
+            $email->setCaReplyto($user->getCaEmail());
+
+            $email->addTo($user->getCaEmail());
+
+
+            //$mensaje = utf8_decode($this->getRequestParameter("mensaje")."\n\n");
+
+            
+
+            $email->setCaBody($mensaje.$user->getFirma() );
+            $email->setCaBodyhtml(Utils::replace($mensaje).$user->getFirmaHtml());
+
+            $email->save();
+            $email->send();  
+
+        }
+
+        $this->setTemplate("blank");
+
+    }
 
 
 
+    public function executeMigrarInoAereo(){
+        
     }
 }
 ?>
