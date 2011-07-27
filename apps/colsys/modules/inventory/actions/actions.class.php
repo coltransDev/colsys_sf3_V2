@@ -208,6 +208,7 @@ class inventoryActions extends sfActions
         }
         
         $activo->setCaIdcategory( $request->getParameter("idcategory") );
+        $activo->setCaIdsucursal( $request->getParameter("idsucursal") );
         $activo->setCaNoinventario( strtoupper($request->getParameter("noinventario")) );
         if( $request->getParameter("identificador") ){
             $activo->setCaIdentificador( utf8_decode(strtoupper($request->getParameter("identificador"))) );

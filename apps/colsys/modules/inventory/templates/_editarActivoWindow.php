@@ -24,6 +24,7 @@ EditarActivoWindow = function( config ) {
        readOnly: this.readOnly,
        idactivo: this.idactivo,
        idcategory: this.idcategory,
+       idsucursal: this.idsucursal,
        gridopener: this.gridopener,
        items: this.items,
        copy: this.copy

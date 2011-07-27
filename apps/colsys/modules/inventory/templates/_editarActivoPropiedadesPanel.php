@@ -49,6 +49,12 @@ $office_types = $sf_data->getRaw("office_types");
                 },
                 {
                     xtype:'hidden',
+                    name: 'idsucursal',
+                    value: this.idsucursal,
+                    anchor:'95%'
+                },
+                {
+                    xtype:'hidden',
                     name: 'copy',
                     value: this.copy,
                     anchor:'95%'

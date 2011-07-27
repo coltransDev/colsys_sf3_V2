@@ -328,7 +328,9 @@
     Ext.extend(PanelActivos, Ext.grid.GridPanel, {
 
         crearActivo: function(){
-            this.win = new EditarActivoWindow( {idcategory:this.idcategory,
+            this.win = new EditarActivoWindow( {
+                idcategory:this.idcategory,
+                idsucursal:this.idsucursal,
                 gridopener: this.id} );
             this.win.show();
         },
