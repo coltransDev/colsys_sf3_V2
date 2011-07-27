@@ -32,7 +32,18 @@ class emailActions extends sfActions
 		$this->archivo = sfConfig::get('app_digitalFile_root').DIRECTORY_SEPARATOR.$id;
        
         if(!file_exists($this->archivo)){
-            $this->forward404("No se encuentra el archivo especificado");
+            
+            if(strpos($id, "reportes/")!==false){
+                $array = explode("/", $id);
+                $folderRep = substr($array[1], -4, 4 ); 
+                $id = $array[0]."/".$folderRep."/".$array[1]."/".$array[2];
+                $this->archivo = sfConfig::get('app_digitalFile_root').DIRECTORY_SEPARATOR.$id;
+                if(!file_exists($this->archivo)){
+                    $this->forward404("No se encuentra el archivo especificado");
+                }
+            }else{
+                $this->forward404("No se encuentra el archivo especificado");
+            }
         }
 
 

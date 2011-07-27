@@ -307,12 +307,7 @@ class adminUsersActions extends sfActions {
 
         if ($request->getParameter("idsucursal")) {
             $usuario->setCaIdsucursal($request->getParameter("idsucursal"));
-
-            /*
-             * FIX-ME: Se deben arreglar las opciones del prrograma donde se use el nombre de la sucursal */
-
-            $sucursal = Doctrine::getTable("Sucursal")->find($request->getParameter("idsucursal"));
-            $usuario->setCaSucursal($sucursal->getCaNombre());
+            
         }
 
         if ($request->getParameter("email")) {
@@ -712,7 +707,7 @@ class adminUsersActions extends sfActions {
                     $q->addWhere('e.ca_idempresa = ?', $empresa);
                     $q->addWhere('(u.ca_idsucursal) LIKE ?', '%' . $sucursal . '%');
                     $q->addWhere('(u.ca_departamento) LIKE ?', $departamento);
-                    $q->addOrderBy("u.ca_sucursal");
+                    $q->addOrderBy("s.ca_nombre");
                     break;
             }
             $q->distinct();
