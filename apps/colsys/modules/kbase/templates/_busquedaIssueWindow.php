@@ -16,7 +16,8 @@ BusquedaIssueWindow = function( config ) {
 
 
     this.items = [
-        new PanelIssues({height:400,
+        new PanelIssues({height:300,
+                        y:20,
                         id: 'kbase-search-grid',
                         idticket: this.idticket,
                         opener: this.opener

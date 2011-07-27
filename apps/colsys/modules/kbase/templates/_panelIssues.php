@@ -160,7 +160,9 @@ PanelIssues = function( config ){
        }),
        enableDragDrop   : true,
        ddGroup : 'TreeDD',
+       
        view: new Ext.grid.GroupingView({
+            emptyText: "No hay resultados",
             forceFit:true,
             enableRowBody:true,
             showPreview:true,
@@ -288,7 +290,8 @@ Ext.extend(PanelIssues, Ext.grid.GridPanel, {
                 //listeners: FeedViewer.LinkInterceptor,
                 autoScroll:true,
                 border:true,
-                height: 500
+                y:20,
+                height: 300
             });
 
             var win = new Ext.Window({

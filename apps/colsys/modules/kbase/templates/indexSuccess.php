@@ -10,12 +10,18 @@ include_component("kbase", "panelIssues");
 include_component("kbase", "panelReadingKBase");
 include_component("kbase", "panelCategoriaWindow");
 
+include_component("kbase", "busquedaIssueWindow");
 
 include_component("gestDocumental", "panelArchivos", array("readOnly"=>false) );
 include_component("users","panelUsers");
 
 ?>
 <script type="text/javascript">
+
+var buscarSolucion = function(){
+    var win = new BusquedaIssueWindow();
+    win.show();
+}
 
 
 Ext.onReady(function(){
@@ -118,16 +124,14 @@ Ext.onReady(function(){
 
 
     <div id="cpanel" style="margin: 20px;">
-        <!--
         <div style="float:left;">
             <div class="icon">
-                <a href="#" onClick="window.open('<?=url_for("pm/crearTicket")?>')">
-                    <?=image_tag("48x48/edit_add.png")?>
-                    <span>Nuevo Documento</span>
+                <a href="#" onClick="buscarSolucion()">
+                    <?=image_tag("48x48/testbed_protocol.png")?>
+                    <span>Buscar una soluci&oacute;n</span>
                 </a>
             </div>
         </div>
-        -->
    </div>
 
 
