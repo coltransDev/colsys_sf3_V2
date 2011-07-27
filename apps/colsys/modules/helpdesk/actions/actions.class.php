@@ -190,7 +190,7 @@ class helpdeskActions extends sfActions
 		}
 
         if( $this->nivel>0 ){
-            //$this->redirect("pm/index?idticket=".$idticket);
+            $this->redirect("pm/index?idticket=".$idticket);
         }
         
 		
@@ -349,107 +349,7 @@ class helpdeskActions extends sfActions
     }
 
 
-
-    public function executeReporteIdgSistemas($request)
-    {
-        $this->idgroup = $request->getParameter( "idgroup" );
-        $this->login = $request->getParameter( "login" );
-        $this->type_est = $request->getParameter( "type_est" );
-        $this->porcentaje = $request->getParameter( "porcentaje" );
-        $this->fechaInicial = Utils::parseDate($request->getParameter("fechaInicial"));
-        $this->fechaFinal = Utils::parseDate($request->getParameter("fechaFinal"));
-        $this->fechaUltSeg = Utils::parseDate($request->getParameter("ultimoseg"));
-        $this->lcs = $request->getParameter("lcs");
-        $this->lc = $request->getParameter("lc");
-        $this->lci = $request->getParameter("lci");
-        $opcion=$this->getRequestParameter("opcion");
-        $checkboxGrupo = $request->getParameter( "checkboxGrupo" );
-        $checkboxUsuario = $request->getParameter( "checkboxUsuario" );
-        $checkboxOpenTicket = $request->getParameter( "checkboxOpenTicket" );
-
-        $this->idgsistemas="";
-        $type_est = $this->type_est;
-        $porcentaje = $this->porcentaje;
-
-        if( $checkboxGrupo ){
-            $sql_grupo=" AND gr.ca_idgroup = '".$this->idgroup."'";
-        }else{
-            $this->idgroup = "";
-            $sql_grupo = "";
-        }
-
-        if( $checkboxUsuario ){
-            $assigned=" AND tk.ca_assignedto = '".$this->login."'";
-        }else{
-            $this->login = "";
-            $assigned = "";
-        }
-
-        if($opcion=="buscar"){
-            $con = Doctrine_Manager::getInstance()->connection();
-            switch($type_est){
-                case 1:
-                     $sql="SELECT date_part('month',tk.ca_opened) as mes, tk.ca_idticket, tk.ca_title, tk.ca_assignedto,
-                            to_char( nt.ca_fchcreado, 'YYYY-MM-DD') as fechacreado,to_char( nt.ca_fchcreado, 'HH24:MI:SS') as horacreado,
-                            to_char( nt.ca_fchterminada, 'YYYY-MM-DD') as fechaterminada, to_char( nt.ca_fchterminada, 'HH24:MI:SS') as horaterminada,
-                            gr.ca_name, tk.ca_login, nt.ca_observaciones, nt.ca_fchcreado, nt.ca_fchterminada
-                        FROM helpdesk.tb_tickets tk
-                            LEFT OUTER JOIN helpdesk.tb_groups gr ON (tk.ca_idgroup = gr.ca_idgroup)
-                            LEFT OUTER JOIN notificaciones.tb_tareas nt ON nt.ca_idtarea = tk.ca_idtarea
-                        WHERE to_char( nt.ca_fchcreado, 'YYYY-MM-DD') BETWEEN '".$this->fechaInicial."' AND '".$this->fechaFinal."' $sql_grupo $assigned
-                        ORDER BY tk.ca_opened, tk.ca_idticket";
-                break;
-                case 2:
-                    $sql="SELECT date_part('month',tk.ca_opened) as mes,tk.ca_idticket, tk.ca_title, tk.ca_assignedto,
-                            to_char( tk.ca_opened, 'YYYY-MM-DD') as fechacreado, to_char( tk.ca_opened, 'HH24:MI:SS') as horacreado,
-                            to_char(tk.ca_closedat, 'YYYY-MM-DD') as close_fch, to_char(tk.ca_closedat, 'HH24:MI:SS') as close_hou,
-                            gr.ca_name, tk.ca_login, tk.ca_opened as ca_fchcreado, tk.ca_closedat as fch_close
-                        FROM helpdesk.tb_tickets tk
-                                LEFT OUTER JOIN helpdesk.tb_groups gr ON (tk.ca_idgroup = gr.ca_idgroup)
-                        WHERE tk.ca_action = 'Cerrado' and to_char(tk.ca_closedat, 'YYYY-MM-DD') BETWEEN '".$this->fechaInicial."' AND '".$this->fechaFinal."' $sql_grupo $assigned
-                        ORDER BY tk.ca_idticket";
-                break;
-                case 3:
-                    $sql="SELECT *
-                        FROM (
-                            SELECT date_part('month',tk.ca_opened) as mes,tk.ca_idticket, tk.ca_title, tk.ca_assignedto,
-                                to_char( tk.ca_opened, 'YYYY-MM-DD') as fechacreado, to_char( tk.ca_opened, 'HH24:MI:SS') as horacreado,
-                                to_char(MAX(rs.ca_createdat), 'YYYY-MM-DD') as ult_fch, to_char(MAX(rs.ca_createdat), 'HH24:MI:SS') as ult_hou,
-                                gr.ca_name, tk.ca_login, tk.ca_opened as ca_fchcreado, MAX(rs.ca_createdat) as fch_ultseg, tk.ca_percentage
-                            FROM helpdesk.tb_tickets tk
-                                INNER JOIN helpdesk.tb_responses rs ON tk.ca_idticket=rs.ca_idticket
-                                LEFT OUTER JOIN helpdesk.tb_groups gr ON (tk.ca_idgroup = gr.ca_idgroup)
-                            WHERE tk.ca_action = 'Abierto' $sql_grupo $assigned
-                            GROUP BY tk.ca_opened, tk.ca_idticket, tk.ca_title, tk.ca_assignedto, fechacreado, horacreado, tk.ca_login, gr.ca_name, tk.ca_percentage
-                            ORDER BY tk.ca_idticket
-                             ) as consulta
-                        WHERE ult_fch < '".$this->fechaUltSeg."' AND ca_percentage<='".$porcentaje."'";
-                break;
-                case 4:
-                    $sql="SELECT date_part('month',tk.ca_opened) as mes,tk.ca_idticket, tk.ca_title, tk.ca_assignedto,
-                            to_char( tk.ca_opened, 'YYYY-MM-DD') as fechacreado, to_char( tk.ca_opened, 'HH24:MI:SS') as horacreado,
-                            to_char(tk.ca_closedat, 'YYYY-MM-DD') as close_fch, to_char(tk.ca_closedat, 'HH24:MI:SS') as close_hou,
-                            gr.ca_name, tk.ca_login, tk.ca_opened as ca_fchcreado, tk.ca_closedat as fch_close
-                        FROM helpdesk.tb_tickets tk
-                            LEFT OUTER JOIN helpdesk.tb_groups gr ON (tk.ca_idgroup = gr.ca_idgroup)
-                        WHERE to_char(tk.ca_closedat, 'YYYY-MM-DD') BETWEEN '".$this->fechaInicial."' AND '".$this->fechaFinal."' $sql_grupo $assigned
-                        ORDER BY tk.ca_idticket";
-                    $abiertos=
-                            "SELECT date_part('month',tk.ca_opened) as mes,tk.ca_idticket, tk.ca_title, tk.ca_assignedto,
-                            to_char( tk.ca_opened, 'YYYY-MM-DD') as fechacreado, to_char( tk.ca_opened, 'HH24:MI:SS') as horacreado,
-                            to_char(tk.ca_closedat, 'YYYY-MM-DD') as close_fch, to_char(tk.ca_closedat, 'HH24:MI:SS') as close_hou,
-                            gr.ca_name, tk.ca_login, tk.ca_opened as ca_fchcreado, tk.ca_closedat as fch_close
-                        FROM helpdesk.tb_tickets tk
-                            LEFT OUTER JOIN helpdesk.tb_groups gr ON (tk.ca_idgroup = gr.ca_idgroup)
-                        WHERE to_char(tk.ca_opened, 'YYYY-MM-DD') BETWEEN '".$this->fechaInicial."' AND '".$this->fechaFinal."' $sql_grupo $assigned
-                        ORDER BY tk.ca_idticket";
-                    $sta = $con->execute($abiertos);
-                    $this->abiertos = $sta->fetchAll();
-                break;
-            }
-        $st = $con->execute($sql);
-        $this->idgsistemas = $st->fetchAll();
-        }
-    }
+    
+    
 }
 ?>
