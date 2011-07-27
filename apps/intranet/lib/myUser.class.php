@@ -43,6 +43,7 @@ class myUser extends sfBasicSecurityUser
 			$this->setAttribute('cargo', $user->getCaCargo() );
 			$this->setAttribute('extension', $user->getCaExtension());
             $this->setAttribute('nombres', $user->getCaNombres());
+            $this->setAttribute('forcechange', $user->getCaForcechange() );
 		}
     }
     

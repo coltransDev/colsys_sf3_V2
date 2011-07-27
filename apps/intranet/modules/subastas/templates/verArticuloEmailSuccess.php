@@ -21,7 +21,7 @@
 <div class="box1">
     <div class="title"><b>Descripción:</b></div>  
     <div class="body">
-<?= $articulo->getCaDescripcion() ?>    
+    <?=nl2br($articulo->getCaDescripcion()) ?>    
     </div>
 </div>
 <br />

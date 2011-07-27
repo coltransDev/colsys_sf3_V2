@@ -54,6 +54,12 @@ class loginValidationFilter extends sfFilter
             
 		}else{
             if( sfContext::getInstance()->getUser()->isAuthenticated() ){
+                $module = sfContext::getInstance()->getModuleName ();
+                $action = sfContext::getInstance()->getActionName ();                
+                
+                if( sfContext::getInstance()->getUser()->getAttribute("forcechange") && !($module=="adminUsers" && $action=="changePasswd") ){
+                    sfContext::getInstance()->getController()->redirect("adminUsers/changePasswd");
+                }
                 $filterChain->execute();
             }else{
                 sfContext::getInstance()->getController()->forward("adminUsers","login");
