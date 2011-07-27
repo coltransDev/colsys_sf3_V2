@@ -40,13 +40,16 @@ class crmActions extends sfActions {
                 $ids = new Ids();                
                 $cliente = new Cliente();                                
             }
-
+            
             $ids->setCaIdalterno( $request->getParameter("idalterno") );
             $ids->setCaDv( $request->getParameter("dv") );
             $ids->setCaTipoidentificacion( $request->getParameter("tipo_identificacion") );
-            $ids->setCaNombre( $request->getParameter("compania") );
+            $ids->setCaNombre( strtoupper($request->getParameter("compania")) );
             
             $ids->setCaWebsite( $request->getParameter("website") );
+            
+            
+            $cliente->setCaCompania( strtoupper($request->getParameter("compania")) );
             $cliente->setCaSaludo( utf8_decode($request->getParameter("title")) );
             $cliente->setCaPapellido( utf8_decode($request->getParameter("apellido")) );
             $cliente->setCaNombres( utf8_decode($request->getParameter("nombre")) );
@@ -61,7 +64,7 @@ class crmActions extends sfActions {
                 $direccion.=$request->getParameter("dir_".$i);
             }
             $cliente->setCaDireccion(utf8_decode($direccion));
-
+            
             $cliente->setCaBloque($request->getParameter("bloque") );
             $cliente->setCaTorre($request->getParameter("torre") );
             $cliente->setCaInterior($request->getParameter("interior") );
@@ -85,10 +88,14 @@ class crmActions extends sfActions {
             $cliente->setCaListaclinton( utf8_decode($request->getParameter("listaclinton")) );
 
             $ids->save( $conn );
-            $cliente->setCaIdcliente( $ids->getCaId() );
             $cliente->setCaIdgrupo( $ids->getCaId() );
+            $cliente->setCaIdcliente( $ids->getCaId() );
+            $cliente->setIds( $ids );
+            //
+            
             $cliente->save( $conn );
-            $this->responseArray = array( "success"=>true );
+            
+            $this->responseArray = array( "success"=>true, "idcliente"=>$ids->getCaId() );
             $conn->commit();
         }catch (Exception $e){
             $conn->rollBack();
@@ -158,6 +165,12 @@ class crmActions extends sfActions {
         
         $this->responseArray = array("success" => true, "data" => $data);
         $this->setTemplate("responseTemplate");
+    }
+
+
+
+    public function executeVerCliente( sfWebRequest $request ){
+        
     }
 
 }

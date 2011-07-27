@@ -81,10 +81,13 @@ include_component("widgets", "widgetCiudad");
                                         forceSelection: true,
                                         editable:       false,
                                         fieldLabel:     'Tipo Identificación',
+                                        id:             'tipo_identificacion_id',
                                         name:           'tipo_identificacion',
                                         hiddenName:     'tipo_identificacion',
                                         displayField:   'name',
                                         valueField:     'value',
+                                        value:          '1',
+                                        allowBlank:     false,
                                         store:          new Ext.data.JsonStore({
                                             fields : [ 'name', 'value'],
                                             data   : [
@@ -96,7 +99,10 @@ include_component("widgets", "widgetCiudad");
                                                 }
                                                 ?>
                                             ]
-                                        })
+                                        }),
+                                        listeners : {
+                                            "select": this.getDv
+                                        }
                                     },
                                     {
                                         xtype: 'compositefield',
@@ -110,11 +116,15 @@ include_component("widgets", "widgetCiudad");
                                                 xtype:'numberfield',
                                                 fieldLabel: 'ID',
                                                 name: 'idalterno',
+                                                id:   'idalterno_id',
                                                 value: '',
                                                 allowBlank:false,
                                                 allowNegative:false,
                                                 decimalPrecision : 2,
-                                                width: 200
+                                                width: 200,
+                                                listeners : {
+                                                    "change": this.getDv
+                                                }
                                             },
                                             {
                                                xtype: 'displayfield',
@@ -124,13 +134,15 @@ include_component("widgets", "widgetCiudad");
                                                 xtype:'numberfield',
                                                 fieldLabel: 'DV',
                                                 name: 'dv',
+                                                id:   'dv_id',
                                                 value: '',
                                                 allowBlank:false,
                                                 allowNegative:false,
                                                 decimalPrecision : 2,
                                                 minValue: 0,
                                                 maxValue: 9,
-                                                width: 20
+                                                width: 20,
+                                                disabled: true
                                             }
 
                                         ]
@@ -252,7 +264,7 @@ include_component("widgets", "widgetCiudad");
                                         fieldLabel: 'Cumpleaños',
                                         name: 'cumpleanos',
                                         value: '',
-                                        allowBlank:false,
+                                        allowBlank:true,
                                         width: 200,
                                         format: "Y-m-d"
                                     }
@@ -805,8 +817,13 @@ include_component("widgets", "widgetCiudad");
             },
             {
                 text: 'Cancelar',
-                handler: function(){
-                    Ext.getCmp("edit-factura-win").close();
+                scope: this,
+                handler: function(){                    
+                    if( this.idcliente ){
+                        document.location = "/colsys_php/clientes.php?modalidad=N.i.t.&criterio="+this.idcliente;
+                    }else{
+                        document.location = "/colsys_php/clientes.php";
+                    }
                 }
             }
 
@@ -822,6 +839,8 @@ include_component("widgets", "widgetCiudad");
             buttons: this.buttonns
         
         });
+
+
 
         //this.addEvents({add:true});
     }
@@ -851,6 +870,9 @@ include_component("widgets", "widgetCiudad");
                                 grid.recargar();
                             }
                         }
+
+                        //document.location = "<?=url_for("crm/verCliente")?>?idcliente=?"+action.result.idcliente;
+                        document.location = "/colsys_php/clientes.php?modalidad=N.i.t.&criterio="+action.result.idcliente;
 
 
 
@@ -890,16 +912,47 @@ include_component("widgets", "widgetCiudad");
                         //form.findField("ids").setRawValue(this.res.data.ids);
                         //form.findField("ids").hiddenField.value = this.res.data.ids_id;
                     }
-
                 });
             }
+        },
 
+        getDv: function(){
+            var tipo = Ext.getCmp("tipo_identificacion_id");           
+            if( tipo.getValue()=="3" ){
+                Ext.getCmp("idalterno_id").setValue("");
+                Ext.getCmp("idalterno_id").setDisabled(true);                
+            }else{
+                Ext.getCmp("idalterno_id").setDisabled(false);
+            }
+
+
+            if( tipo.getValue()=="1" ){
+                var dv = d_verificacion(Ext.getCmp("idalterno_id").getValue());
+                Ext.getCmp("dv_id").setValue(dv);
+                
+                Ext.Ajax.request(
+                {
+                    waitMsg: 'Comprobando ID...',
+                    url: '<?=url_for("ids/comprobarId")?>',
+                    //Solamente se envian los cambios
+                    params :	{idalterno:Ext.getCmp("idalterno_id").getValue(),
+                                 tipo_identificacion:tipo.getValue()
+                                },
+
+                    callback :function(options, success, response){
+
+                        var res = Ext.util.JSON.decode( response.responseText );
+                        //alert(res.id);
+                        if(res.id){
+                            document.location = '<?=url_for("crm/formCliente")?>?idcliente='+res.id
+                        }
+                    }
+                 }
+                );
+            }else{
+                Ext.getCmp("dv_id").setValue("");
+            }
         }
-
-        
-
-
-
     });
 
 </script>
