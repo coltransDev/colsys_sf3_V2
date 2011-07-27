@@ -10,8 +10,7 @@ $grupos = $sf_data->getRaw("grupos");
     EditarTicketPropiedadesPanel = function( config ) {
         Ext.apply(this, config);
 
-        this.dataDepartamentos = <?=json_encode(array("departamentos" => $sf_data->getRaw("departamentos")))
-?>;
+        this.dataDepartamentos = <?=json_encode(array("departamentos" => $sf_data->getRaw("departamentos")))?>;
 
 
 

@@ -299,7 +299,22 @@ class pmComponents extends sfComponents
 
     }
 
+    public function executeWidgetDepartamentos(){
+        $departamentos = Doctrine::getTable("Departamento")
+                         ->createQuery("d")
+                         ->where("d.ca_inhelpdesk = ?", true)
+                         ->execute();
 
+
+		$this->departamentos = array();
+
+		foreach( $departamentos as $departamento ){
+			$this->departamentos[] = array("iddepartamento"=>$departamento->getCaIddepartamento(),
+										 "nombre"=>$departamento->getCaNombre()
+										);
+		}
+
+    }
 	
 	
 }

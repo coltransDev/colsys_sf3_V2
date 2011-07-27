@@ -266,7 +266,7 @@ PanelTickets = function( config ){
         ),
         sortInfo:{field: 'idticket', direction: "ASC"},
         //groupOnSort: true,
-        groupField: 'action'
+        groupField: 'assignedto'
         
 
     });

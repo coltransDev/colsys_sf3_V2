@@ -89,7 +89,7 @@ class pmActions extends sfActions {
         if ($request->getParameter("idproject")) {
             $q->addWhere("h.ca_idproject = ? ", $request->getParameter("idproject"));
         }
-
+        
         if ($request->getParameter("priority")) {
             $q->addWhere("h.ca_priority = ? ", $request->getParameter("priority"));
         }
@@ -124,6 +124,7 @@ class pmActions extends sfActions {
 
         $q->addOrderBy("h.ca_idgroup ASC");
         $q->addOrderBy("h.ca_idproject ASC");
+        $q->addOrderBy("h.ca_idticket DESC");
         $q->addOrderBy("h.ca_closedat");
         $q->addOrderBy("h.ca_opened ASC");
         
@@ -143,14 +144,14 @@ class pmActions extends sfActions {
         }
 
         if ($nivel == 2 || $nivel == 3) {
-            $q->addWhere("(h.ca_login = ? OR g.ca_iddepartament = ?)", array($this->getUser()->getUserid(), $this->getUser()->getIddepartamento()));
+            $q->addWhere("(h.ca_login = ? OR g.ca_iddepartament = ?)", array($this->getUser()->getUserid(), $this->getUser()->getIddepartamento()));            
         }
 
 
         $q->distinct();
         //exit($q->getSqlQuery());
         $q->setHydrationMode(Doctrine::HYDRATE_SCALAR);
-        $q->limit(200);
+        //$q->limit(400);
         $tickets = $q->execute();
 
         foreach ($tickets as $key => $val) {
