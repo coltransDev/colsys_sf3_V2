@@ -37,8 +37,11 @@ class inventoryActions extends sfActions
                                       ->addWhere("s.ca_idempresa = ?", 2)
                                       ->addOrderBy("s.ca_nombre");
                                       
-      
         
+        if( $this->nivel<2 ){
+            $user = $this->getUser();
+            $q->addWhere("s.ca_idsucursal = ? ", $user->getIdsucursal() );
+        }
         
         $this->sucursales = $q->execute();
         
