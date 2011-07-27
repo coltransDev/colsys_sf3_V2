@@ -168,7 +168,8 @@ if( !$cotizacion->getCaUsuanulado() ){
                         }else{
                             echo $diff;
                         }
-                        ?>				</td>
+                        ?>				
+                    </td>
                 </tr>
                 <tr>
                     <td>
@@ -185,41 +186,6 @@ if( !$cotizacion->getCaUsuanulado() ){
                         </select>
                     </td>
                 </tr>
-            </table>
-            <br />
-            <?
-            }else{
-            ?>
-            <table width="700px" border="0" cellspacing="0" cellpadding="0" class="tableList">
-                <tr>
-                    <th><div align="left"><b>IDG Oferta y Contrataci&oacute;n:</b>
-                    </div></th>
-                </tr>
-                <tr>
-                    <td>
-                        <b>Fecha de solicitud:</b> <?=Utils::fechaMes($dateFormat->format($tarea->getCaFchcreado(), "yyyy-MM-dd") ) ?>  <?=$dateFormat->format($tarea->getCaFchcreado(), "HH:mm:ss")?>
-                        <br />
-                        <b>Fecha de presentaci&oacute;n:</b> <?=Utils::fechaMes( $dateFormat->format($tarea->getCaFchterminada(), "yyyy-MM-dd")) ?> <?=$dateFormat->format($tarea->getCaFchterminada(), "HH:mm:ss")?>
-                        <br />
-                        <b>Horas habiles:</b>
-                        <?
-                        echo $tarea->getTiempo( $festivos );
-                        ?>
-
-                    </td>
-                </tr>
-                <?
-                if($tarea->getCaObservaciones() ){
-                ?>
-                <tr>
-                    <td>
-                        Observaciones:
-                        <?=$tarea->getCaObservaciones()?>
-                    </td>
-                </tr>
-                <?
-                }
-                ?>
             </table>
             <br />
             <?
@@ -281,6 +247,45 @@ if( count($emails)>0 ){
 <?
 
 }
+
+if( $tarea && $tarea->getCaFchterminada() ){
+            
 ?>
+    <br /><br />
+    <table width="700px" border="0" cellspacing="0" cellpadding="0" class="tableList">
+        <tr>
+            <th><div align="left"><b>IDG Oferta y Contrataci&oacute;n:</b>
+            </div></th>
+        </tr>
+        <tr>
+            <td>
+                <b>Fecha de solicitud:</b> <?=Utils::fechaMes($dateFormat->format($tarea->getCaFchcreado(), "yyyy-MM-dd") ) ?>  <?=$dateFormat->format($tarea->getCaFchcreado(), "HH:mm:ss")?>
+                <br />
+                <b>Fecha de presentaci&oacute;n:</b> <?=Utils::fechaMes( $dateFormat->format($tarea->getCaFchterminada(), "yyyy-MM-dd")) ?> <?=$dateFormat->format($tarea->getCaFchterminada(), "HH:mm:ss")?>
+                <br />
+                <b>Horas habiles:</b>
+                <?
+                echo $tarea->getTiempo( $festivos );
+                ?>
+
+            </td>
+        </tr>
+        <?
+        if($tarea->getCaObservaciones() ){
+        ?>
+        <tr>
+            <td>
+                Observaciones:
+                <?=$tarea->getCaObservaciones()?>
+            </td>
+        </tr>
+        <?
+        }
+        ?>
+    </table>
+<?
+}
+?>
+
 <br />
 </div>
