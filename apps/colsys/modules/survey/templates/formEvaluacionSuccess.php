@@ -117,7 +117,7 @@ $ticket = $sf_data->getRaw( "ticket" );
                         ?>
 
                         <div style="display:none" id="obs_<?=$criterio->getCaIdcriterio()?>">
-                            <b>¿Por que?</b>
+                            <b>¿Por que?</b><br />
                            <?
                             echo $form["observaciones_".$criterio->getCaIdcriterio()]->renderError();
                             if( $evaluacionXCriterio ){

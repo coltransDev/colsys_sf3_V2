@@ -24,26 +24,25 @@ class NuevaEvaluacionForm extends BaseForm {
 
         $choices = array();
 
-        for( $i=5; $i>=2; $i--){
-            $txt = $i;
+        for( $i=5; $i>=1; $i-=1.25){
+            
             if( $i==5 ){
-                $txt.=" - Excelente";
+                $txt ="Excelente";
             }
-            if( $i==4 ){
-                $txt.=" - Bueno";
+            if( $i==3.75 ){
+                $txt ="Bueno";
             }
-            if( $i==3 ){
-                $txt.=" - Regular";
-            }
-
-            if( $i==2 ){
-                $txt.=" - Malo";
+            if( $i==2.5 ){
+                $txt ="Regular";
             }
 
+            if( $i==1.25 ){
+                $txt ="Malo";
+            }
 
-            $choices[$i] = $txt;
+            $choices[(string)$i] = $txt;
         }
-
+        
         $widgets['idtipo'] = new sfWidgetFormInputHidden();
         $widgets['comentarios'] = new sfWidgetFormTextarea();
         $criterios = $this->getCriterios();
