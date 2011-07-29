@@ -450,7 +450,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
             $tm->MoveNext();
         }
         $ind_mem  = 8;
-        $add_cols = 5;
+        $add_cols = 6;
         $tot_cols--;
         $cot_ant  = null;
         $campos.= ", to_number(substr(ca_consecutivo,0,position('-' in ca_consecutivo)),'99999999')";
@@ -621,6 +621,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
     echo "	<TH>#</TH>";
     if ($ind_mem == 8) {
         echo "	<TH>Cotización</TH>";
+        echo "	<TH>Ver.</TH>";
     }else if (!in_array($ind_mem, array(10,11))) {
             echo "	<TH>Reporte</TH>";
             echo "	<TH>Ver.</TH>";
@@ -744,6 +745,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
         echo "  <TD Class=mostrar style='font-size: 9px;'>".$contador++."</TD>";
         if ($ind_mem == 8) {
             echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_consecutivo')."</TD>";
+            echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_version')."</TD>";
         }else if (!in_array($ind_mem, array(10,11))) {
             echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_consecutivo')."</TD>";
             echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_version')."</TD>";
@@ -933,7 +935,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
                     echo "  <TD Class=invertir style='font-size: 9px;'>".$rs->Value('ca_ciudestino')."</TD>";
                     echo "  <TD Class=invertir style='font-size: 9px;'>".$rs->Value('ca_transporte')."</TD>";
                     echo "  <TD Class=invertir style='font-size: 9px;'>".$rs->Value('ca_modalidad')."</TD>";
-                    echo "  <TD Class=mostrar style='font-size: 9px;' COLSPAN=6>&nbsp;</TD>";
+                    echo "  <TD Class=mostrar style='font-size: 9px;' COLSPAN=7>&nbsp;</TD>";
                     echo "</TR>";
                     $rs->MoveNext();
                 }
