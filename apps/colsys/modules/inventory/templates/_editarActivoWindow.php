@@ -6,6 +6,8 @@
  */
 
 include_component("inventory", "editarActivoPropiedadesPanel");
+include_component("inventory", "editarActivoHardwarePropiedadesPanel");
+include_component("inventory", "editarActivoSoftwarePropiedadesPanel");
 include_component("gestDocumental", "panelArchivos", array("readOnly"=>false) );
 
 
@@ -19,16 +21,41 @@ EditarActivoWindow = function( config ) {
 
     
        
-
-    this.subpanel = new EditarActivoPropiedadesPanel({
-       readOnly: this.readOnly,
-       idactivo: this.idactivo,
-       idcategory: this.idcategory,
-       idsucursal: this.idsucursal,
-       gridopener: this.gridopener,
-       items: this.items,
-       copy: this.copy
-    });
+    switch( this.parameter ){   
+        case "Hardware":
+            this.subpanel = new EditarActivoHardwarePropiedadesPanel({
+               readOnly: this.readOnly,
+               idactivo: this.idactivo,
+               idcategory: this.idcategory,
+               idsucursal: this.idsucursal,
+               gridopener: this.gridopener,
+               items: this.items,
+               copy: this.copy
+            });
+            break;
+        case "Software":
+            this.subpanel = new EditarActivoSoftwarePropiedadesPanel({
+               readOnly: this.readOnly,
+               idactivo: this.idactivo,
+               idcategory: this.idcategory,
+               idsucursal: this.idsucursal,
+               gridopener: this.gridopener,
+               items: this.items,
+               copy: this.copy
+            });
+            break;
+        default: 
+            this.subpanel = new EditarActivoPropiedadesPanel({
+               readOnly: this.readOnly,
+               idactivo: this.idactivo,
+               idcategory: this.idcategory,
+               idsucursal: this.idsucursal,
+               gridopener: this.gridopener,
+               items: this.items,
+               copy: this.copy
+            });
+        break;
+    }
     
    
 

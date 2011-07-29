@@ -21,7 +21,8 @@
         id: '<?=$categoria->getCaIdcategory()?>',        
         idcategoria: '<?=$categoria->getCaIdcategory()?>',
         parentNode: '<?=$categoria->getCaParent()?>',
-        main: <?=$categoria->getCaMain()?"true":"false"?>
+        main: <?=$categoria->getCaMain()?"true":"false"?>,
+        parameter: '<?=$categoria->getCaParameter()?>'
     }
     <?
     }

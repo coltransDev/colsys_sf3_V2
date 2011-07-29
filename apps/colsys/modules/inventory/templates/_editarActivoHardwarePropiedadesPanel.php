@@ -4,11 +4,12 @@
  * 
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
-
+$so_types = $sf_data->getRaw("so_types");
+$office_types = $sf_data->getRaw("office_types");
 
 ?>
 <script type="text/javascript">
-    EditarActivoPropiedadesPanel = function( config ) {
+    EditarActivoHardwarePropiedadesPanel = function( config ) {
         Ext.apply(this, config);
 
         this.buttons = [
@@ -25,7 +26,7 @@
             }
         ];
     
-        EditarActivoPropiedadesPanel.superclass.constructor.call(this, {
+        EditarActivoHardwarePropiedadesPanel.superclass.constructor.call(this, {
             title: 'Propiedades',
             id: 'form-activo-panel',
             autoHeight: true,
@@ -231,8 +232,123 @@
                         ]
                     },
                 
-                    //---------------Panel 2-----------                    
-                    
+                    //---------------Panel 2-----------
+                    {
+                        layout: 'form',
+                        title: 'Software',                       
+                        items: [
+                            {
+                                xtype:'fieldset',
+                                title: 'Software',
+                                autoHeight:true,
+                                layout:'column',
+                                columns: 2,
+                                defaults:{
+                                    columnWidth:0.5,
+                                    layout:'form',
+                                    border:false,
+                                    bodyStyle:'padding:4px'
+                                },
+                                items:[{
+                                        columnWidth:.5,
+                                        layout: 'form',
+                                        xtype:'fieldset',
+                                        items: [
+                                            {
+                                                xtype:          'combo',
+                                                mode:           'local',
+                                                value:          '',
+                                                triggerAction:  'all',
+                                                forceSelection: true,
+                                                editable:       true,
+                                                width: 250,
+                                                fieldLabel:     'S.O.',
+                                                name:           'so',
+                                                hiddenName:     'so',
+                                                displayField:   'name',
+                                                valueField:     'value',
+                                                allowBlank: false,
+                                                store:          new Ext.data.JsonStore({
+                                                    fields : ['name', 'value'],
+                                                    data   : [
+                                                        <?
+                                                        $i=0;
+                                                        foreach($so_types as $type ){
+                                                            echo ($i++>0)?",":"";
+                                                            echo "{name : '".$type->getCaValor()."',   value: '".$type->getCaValor()."'}";
+                                                        }
+                                                        ?>
+                                                    ]
+                                                })
+                                            },
+                                            {
+                                                xtype:          'combo',
+                                                mode:           'local',
+                                                value:          '',
+                                                triggerAction:  'all',
+                                                forceSelection: true,
+                                                editable:       true,
+                                                width: 250,
+                                                fieldLabel:     'Office',
+                                                name:           'office',
+                                                hiddenName:     'office',
+                                                displayField:   'name',
+                                                valueField:     'value',
+                                                allowBlank: false,
+                                                store:          new Ext.data.JsonStore({
+                                                    fields : ['name', 'value'],
+                                                    data   : [
+                                                        <?
+                                                        $i=0;
+                                                        foreach($office_types as $type ){
+                                                            echo ($i++>0)?",":"";
+                                                            echo "{name : '".$type->getCaValor()."',   value: '".$type->getCaValor()."'}";
+                                                        }
+                                                        ?>
+                                                    ]
+                                                })
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        columnWidth:.5,
+                                        layout: 'form',
+                                        xtype:'fieldset',
+                                        items: [
+                                            {
+                                                xtype:'textfield',
+                                                fieldLabel: 'Serial',
+                                                name: 'so_serial',
+                                                allowBlank: false
+                                            },
+                                            {
+                                                xtype:'textfield',
+                                                fieldLabel: 'Serial',
+                                                name: 'office_serial',
+                                                allowBlank: false
+                                            },
+
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                xtype:'htmleditor',
+                                name:'software',
+                                fieldLabel:'Otro Software',
+                                height:100,
+                                anchor:'98%',
+                                enableFont: false,
+                                enableFontSize: false,
+                                enableLinks:  false,
+                                enableSourceEdit : false,
+                                enableColors : false,
+                                enableLists: false,
+                                allowBlank: false
+                            }
+                        ]
+                    }
+                    ,
                     {
                         xtype:'fieldset',
                         title: 'Detalles',
@@ -286,7 +402,7 @@
         this.addEvents({add:true});
     }
 
-    Ext.extend(EditarActivoPropiedadesPanel, Ext.FormPanel, {
+    Ext.extend(EditarActivoHardwarePropiedadesPanel, Ext.FormPanel, {
 
         validarVigencia:function(){
             //alert( this.nivel );
@@ -299,7 +415,7 @@
 
         onRender: function(){
             // call parent
-            EditarActivoPropiedadesPanel.superclass.onRender.apply(this, arguments);
+            EditarActivoHardwarePropiedadesPanel.superclass.onRender.apply(this, arguments);
 
             // set wait message target
             this.getForm().waitMsgTarget = this.getEl();

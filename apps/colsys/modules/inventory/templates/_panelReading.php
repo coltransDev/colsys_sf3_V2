@@ -13,7 +13,7 @@ PanelReading = function( config ){
 
     Ext.apply(this, config);
 
-    
+       
     
     this.grid = new PanelActivos(
                      {id:idcomponent,
@@ -21,7 +21,8 @@ PanelReading = function( config ){
                       readOnly: this.readOnly,
                       region: 'center',
                       idsucursal: this.idsucursal,
-                      editable:this.editable
+                      editable:this.editable,
+                      parameter: this.parameter
                      });
 
     var idcomponent = this.id;

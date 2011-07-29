@@ -47,13 +47,13 @@ Ext.extend(PanelCategorias, Ext.tree.TreePanel, {
         //var sn = this.selModel.selNode || {}; // selNode is null on initial selection
         if( n.leaf ){  // ignore clicks on folders           
             //var nodeoptions = n.id.split("_");            
-            var action = n.attributes.action;
+            var parameter = n.attributes.parameter;
             var idcategory = n.attributes.idcategoria;
             
             
             //Coloca un identificador unico para evitar que el componente se cree dos veces
-            var idcomponent = 'categoria-'+idcategory;
-            var title =  n.attributes.name;
+            var idcomponent = 'categoria-'+idcategory+"-"+this.idsucursal;
+            var title =  this.idsucursal+" "+n.attributes.name;
             /*
             * Todo debe quedar de esta manera
             **/
@@ -61,7 +61,7 @@ Ext.extend(PanelCategorias, Ext.tree.TreePanel, {
                 Ext.getCmp('tab-panel').setActiveTab(idcomponent);
             }else{
                 //alert( action );                
-                switch( action ){                   
+                switch( parameter ){                   
                     default:
 
                         /*
@@ -72,7 +72,8 @@ Ext.extend(PanelCategorias, Ext.tree.TreePanel, {
                                                               idcategory: idcategory,
                                                               idsucursal: this.idsucursal,
                                                               closable: true,
-                                                              editable: true
+                                                              editable: true,
+                                                              parameter: parameter
                                                              });
 
 
@@ -201,9 +202,10 @@ Ext.extend(PanelCategorias, Ext.tree.TreePanel, {
         var fp = Ext.getCmp("categoria-form");
         fp.getForm().findField("idcategory").setValue(n.attributes.idcategoria);
         fp.getForm().findField("parent").setValue(n.attributes.parentNode);
-        fp.getForm().findField("idsucursal").setValue(n.attributes.idsucursal);
+        fp.getForm().findField("parameter").setValue(n.attributes.parameter);
         fp.getForm().findField("name").setValue(n.attributes.name);
         fp.getForm().findField("main").disable();
+        fp.getForm().findField("parameter").disable();
 
     },
     eliminar: function( ){

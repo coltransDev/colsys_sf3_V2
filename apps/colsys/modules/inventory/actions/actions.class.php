@@ -1,7 +1,7 @@
 <?php
 
 /**
- * kbase actions.
+ * inventory actions.
  *
  * @package    colsys
  * @subpackage kbase
@@ -118,6 +118,7 @@ class inventoryActions extends sfActions
             $row["so_office"]=utf8_encode($activo->getCaOffice());
             $row["so_office_serial"]=utf8_encode($activo->getCaOfficeSerial());
             $row["mantenimiento"] = $activo->getCaMantenimiento();
+            $row["idsucursal"] = $activo->getCaIdsucursal();
             if( $activo->getCaAsignadoa() ){
                 $row["asignadoa"] = utf8_encode($activo->getCaAsignadoa());
                 $row["asignadoaNombre"] = utf8_encode($activo->getUsuario()->getCaNombre());
@@ -168,7 +169,9 @@ class inventoryActions extends sfActions
         $data["observaciones"] = utf8_encode($activo->getCaObservaciones());
         $data["software"] = utf8_encode($activo->getCaSoftware());
         $data["mantenimiento"] = $activo->getCaMantenimiento();
-
+        $data["cantidad"] = $activo->getCaCantidad();
+        
+        
         if( !$copy ){
             $data["idactivo"] = $activo->getCaIdactivo();
             $data["identificador"] = $activo->getCaIdentificador();
@@ -208,10 +211,11 @@ class inventoryActions extends sfActions
             $this->forward404Unless( $activo );
         }else{
             $activo = new InvActivo();
+            $activo->setCaIdsucursal( $request->getParameter("idsucursal") );
         }
         
         $activo->setCaIdcategory( $request->getParameter("idcategory") );
-        $activo->setCaIdsucursal( $request->getParameter("idsucursal") );
+        
         $activo->setCaNoinventario( strtoupper($request->getParameter("noinventario")) );
         if( $request->getParameter("identificador") ){
             $activo->setCaIdentificador( utf8_decode(strtoupper($request->getParameter("identificador"))) );
@@ -267,6 +271,12 @@ class inventoryActions extends sfActions
             $activo->setCaMantenimiento( $request->getParameter("mantenimiento") );
         }else{
             $activo->setCaMantenimiento( null);
+        }
+        
+        if( $request->getParameter("cantidad") ){
+            $activo->setCaCantidad( $request->getParameter("cantidad") );
+        }else{
+            $activo->setCaCantidad( null);
         }
 
 
@@ -366,7 +376,7 @@ class inventoryActions extends sfActions
             $categoria = new InvCategory();
             $main = $request->getParameter("main");
             $categoria->setCaMain($main=="on");
-            $categoria->setCaParametro($ususucursal);
+            $categoria->setCaParameter($request->getParameter("parameter"));
         }
 
 
@@ -377,11 +387,7 @@ class inventoryActions extends sfActions
             $categoria->setCaParent(null);
         }
         
-        if( $request->getParameter("idsucursal") ){
-            $categoria->setCaIdsucursal($request->getParameter("idsucursal"));
-        }else{
-            $categoria->setCaIdsucursal(null);
-        }
+        
         
         
 

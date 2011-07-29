@@ -56,15 +56,35 @@ class inventoryComponents extends sfComponents
     public function executeEditarActivoWindow( ){
         
     }
-
+    
+   
     /*
 	* Editar propiedades basicas
 	* @author: Andres Botero
 	*/
     public function executeEditarActivoPropiedadesPanel( ){
+        
+    }
+    
+    /*
+	* Editar propiedades basicas
+	* @author: Andres Botero
+	*/
+    public function executeEditarActivoSoftwarePropiedadesPanel( ){
+        
+    }
+    
+    
+    /*
+	* Editar propiedades basicas
+	* @author: Andres Botero
+	*/
+    public function executeEditarActivoHardwarePropiedadesPanel( ){
         $this->so_types = ParametroTable::retrieveByCaso("CU095");
         $this->office_types = ParametroTable::retrieveByCaso("CU096");
     }
+    
+    
 
     /*
 	* Panel de vista previa
@@ -115,14 +135,7 @@ class inventoryComponents extends sfComponents
             
         }
         
-        $this->sucursales = Doctrine::getTable("Sucursal")
-                                      ->createQuery("s")
-                                      ->select("s.ca_idsucursal, s.ca_nombre, e.ca_nombre")                                      
-                                      ->innerJoin("s.Empresa e")
-                                      ->addOrderBy("e.ca_nombre")
-                                      ->addOrderBy("s.ca_nombre")
-                                      ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
-                                      ->execute();
+        $this->parameters = ParametroTable::retrieveByCaso("CU099");
 
     }
 

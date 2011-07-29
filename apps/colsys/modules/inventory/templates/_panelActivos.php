@@ -121,10 +121,10 @@
             ]
         });
 
-
-   
-
-    
+        
+        
+        
+       
 
         this.columns = [
             {
@@ -173,7 +173,8 @@
                 dataIndex: 'procesador',
                 hideable: false,
                 sortable: true,
-                width: 80
+                width: 80,
+                hidden: this.parameter!="Hardware"
         
             },
      
@@ -182,14 +183,16 @@
                 dataIndex: 'memoria',
                 hideable: false,
                 sortable: true,
-                width: 80
+                width: 80,
+                hidden: this.parameter!="Hardware"
             },
             {
                 header: "Disco",
                 dataIndex: 'disco',
                 hideable: false,
                 sortable: true,
-                width: 80
+                width: 80,
+                hidden: this.parameter!="Hardware"
             },
       
             {
@@ -245,6 +248,7 @@
             {name: 'proveedor', type: 'string'},
             {name: 'asignadoa', type: 'string'},
             {name: 'asignadoaNombre', type: 'string'},
+            {name: 'idsucursal', type: 'string'},
             {name: 'mantenimiento', type: 'string'},
             {name: 'folder', type: 'string'},
             {name: 'deleted', type: 'boolean'}
@@ -328,10 +332,14 @@
     Ext.extend(PanelActivos, Ext.grid.GridPanel, {
 
         crearActivo: function(){
+           
             this.win = new EditarActivoWindow( {
                 idcategory:this.idcategory,
                 idsucursal:this.idsucursal,
-                gridopener: this.id} );
+                gridopener: this.id,
+                parameter: this.parameter
+            } );
+            
             this.win.show();
         },
         recargar: function(){
@@ -361,7 +369,7 @@
         onRowcontextMenu: function(grid, index, e){
             if( !this.readOnly ){
                 rec = this.store.getAt(index);
-
+                var parameter = this.parameter;
                 if(!this.menu){ // create context menu on first right click
 
                     this.menu = new Ext.menu.Menu({
@@ -378,8 +386,10 @@
                                         var win = new EditarActivoWindow({
                                             idactivo: record.data.idactivo,
                                             idcategory: record.data.idcategory,
+                                            idsucursal:record.data.idsucursal,
                                             folder: record.data.folder,
-                                            gridopener: grid.id
+                                            gridopener: grid.id,
+                                            parameter: parameter
                                         });
                                         win.show();
                                     }
@@ -396,6 +406,7 @@
                                         var win = new EditarActivoWindow({
                                             idactivo: record.data.idactivo,
                                             idcategory: record.data.idcategory,
+                                            idsucursal:record.data.idsucursal,
                                             folder: record.data.folder,
                                             gridopener: grid.id,
                                             copy: true
@@ -450,7 +461,9 @@
                     idactivo: record.data.idactivo,
                     idcategory: record.data.idcategory,
                     folder: record.data.folder,
-                    gridopener: grid.id
+                    gridopener: grid.id,
+                    parameter: this.parameter,
+                    idsucursal: this.idsucursal
                 });
                 win.show();
             

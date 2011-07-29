@@ -8,7 +8,7 @@
 
 ?>
 <script type="text/javascript">
-    EditarActivoPropiedadesPanel = function( config ) {
+    EditarActivoSoftwarePropiedadesPanel = function( config ) {
         Ext.apply(this, config);
 
         this.buttons = [
@@ -25,7 +25,7 @@
             }
         ];
     
-        EditarActivoPropiedadesPanel.superclass.constructor.call(this, {
+        EditarActivoSoftwarePropiedadesPanel.superclass.constructor.call(this, {
             title: 'Propiedades',
             id: 'form-activo-panel',
             autoHeight: true,
@@ -71,16 +71,16 @@
                         autoHeight:true,
                         border:true,
                         layout:'column',
-                        columns: 3,
+                        columns: 2,
                         width: 890,
                         defaults:{
-                            columnWidth:0.33,
+                            columnWidth:0.5,
                             layout:'form',
                             border:false,
                             bodyStyle:'padding:4px'
                         },
                         items:[{
-                                columnWidth:.3,
+                                columnWidth:.5,
                                 layout: 'form',
                                 xtype:'fieldset',
                                 defaults:{
@@ -126,7 +126,7 @@
                                     }
                                 ]
                             },{
-                                columnWidth:.4,
+                                columnWidth:.5,
                                 layout: 'form',
                                 xtype:'fieldset',
                                 items: [
@@ -148,86 +148,25 @@
                                         name: 'serial',
                                         allowBlank: false
                                     },                                                                        
-                                    new WidgetUsuario({fieldLabel: 'Asignado a',
-                                        name: 'asignadoa',
-                                        hiddenName: 'asignadoa'
-                                    }),
+                                    
+                                    {
+                                        xtype:'numberfield',
+                                        fieldLabel: 'Cantidad',
+                                        name: 'cantidad',
+                                        allowBlank: false,
+                                        value: '1',
+                                        allowNegative: false,
+                                        allowDecimals: false
+                                    },
                                     {
                                         xtype:'textfield',
-                                        fieldLabel: 'Vlr. Reposición',
+                                        fieldLabel: 'Valor',
                                         name: 'reposicion',
                                         allowBlank: false
-                                    },
-                                    {
-                                        xtype:          'combo',
-                                        mode:           'local',
-                                        value:          '',
-                                        triggerAction:  'all',
-                                        forceSelection: true,
-                                        editable:       true,
-                                        fieldLabel:     'Mantenimiento',
-                                        name:           'mantenimiento',
-                                        hiddenName:     'mantenimiento',
-                                        displayField:   'name',
-                                        valueField:     'value',
-                                        allowBlank: false,
-                                        store:          new Ext.data.JsonStore({
-                                            fields : ['name', 'value'],
-                                            data   : [
-                                                <?
-                                                
-                                                for( $i=1; $i<=12; $i++ ){
-                                                    echo ($i>1)?",":"";
-                                                    echo "{name : '".Utils::mesLargo($i)."',   value: '".Utils::mesLargo($i)."'}";
-                                                }
-                                                ?>
-                                            ]
-                                        })
                                     }
-                                ]
-                            },
-                            {
-                                columnWidth:.3,
-                                layout: 'form',
-                                xtype:'fieldset',
-                                defaults:{
-                                    width: 130
-                                },
-                                items: [
-
-                                    {
-                                        xtype:'textfield',
-                                        fieldLabel: 'Procesador',
-                                        name: 'procesador',
-                                        allowBlank: false
-                                    },
-                                    {
-                                        xtype:'textfield',
-                                        fieldLabel: 'Disco',
-                                        name: 'disco',
-                                        allowBlank: false
-                                    },
-                                    {
-                                        xtype:'textfield',
-                                        fieldLabel: 'Memoria',
-                                        name: 'memoria',
-                                        allowBlank: false
-                                    },
-                                     {
-                                        xtype:'textfield',
-                                        fieldLabel: 'Un. Optica',
-                                        name: 'optica',
-                                        allowBlank: false
-                                    },
-                                    {
-                                        xtype:'textfield',
-                                        fieldLabel: 'Dirección IP',
-                                        name: 'ipaddress',
-                                        allowBlank: true
-                                    }
-                                    
                                 ]
                             }
+                            
                         ]
                     },
                 
@@ -286,7 +225,7 @@
         this.addEvents({add:true});
     }
 
-    Ext.extend(EditarActivoPropiedadesPanel, Ext.FormPanel, {
+    Ext.extend(EditarActivoSoftwarePropiedadesPanel, Ext.FormPanel, {
 
         validarVigencia:function(){
             //alert( this.nivel );
@@ -299,7 +238,7 @@
 
         onRender: function(){
             // call parent
-            EditarActivoPropiedadesPanel.superclass.onRender.apply(this, arguments);
+            EditarActivoSoftwarePropiedadesPanel.superclass.onRender.apply(this, arguments);
 
             // set wait message target
             this.getForm().waitMsgTarget = this.getEl();
@@ -315,10 +254,7 @@
                     },
 
                     success:function(response,options){
-                        this.res = Ext.util.JSON.decode( options.response.responseText );
-                        var fld = form.findField("asignadoa");
-                        fld.setRawValue(this.res.data.asignadoaNombre);
-                        fld.hiddenField.value = this.res.data.asignadoa;
+                        this.res = Ext.util.JSON.decode( options.response.responseText );                        
                     }
 
                 });                

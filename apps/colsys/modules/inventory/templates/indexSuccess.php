@@ -8,7 +8,9 @@
 include_component("inventory", "panelCategorias");
 include_component("inventory", "panelCategoriaWindow");
 include_component("inventory", "panelActivos");
+
 include_component("inventory", "editarActivoWindow");
+
 include_component("inventory", "panelReading");
 include_component("inventory", "panelAsignaciones");
 

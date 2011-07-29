@@ -75,9 +75,9 @@ PanelCategoriaWindow = function( config ) {
                         triggerAction:  'all',
                         forceSelection: true,
                         editable:       true,
-                        fieldLabel:     'Sucursal',
-                        name:           'idsucursal',
-                        hiddenName:     'idsucursal',
+                        fieldLabel:     'Tipo',
+                        name:           'parameter',
+                        hiddenName:     'parameter',
                         displayField:   'name',
                         valueField:     'value',
                         allowBlank: false,
@@ -85,10 +85,10 @@ PanelCategoriaWindow = function( config ) {
                             fields : ['name', 'value'],
                             data   : [
                                 <?
-                                $i=0;    
-                                foreach( $sucursales as $s){
+                                $i=0;
+                                foreach($parameters as $p ){
                                     echo ($i++>0)?",":"";
-                                    echo "{name : '".$s["e_ca_nombre"]." - ".$s["s_ca_nombre"]."',   value: '".$s["s_ca_idsucursal"]."'}";
+                                    echo "{name : '".$p->getCaValor()."',   value: '".$p->getCaValor()."'}";
                                 }
                                 ?>
                             ]
