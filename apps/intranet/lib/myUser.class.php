@@ -44,6 +44,15 @@ class myUser extends sfBasicSecurityUser
 			$this->setAttribute('extension', $user->getCaExtension());
             $this->setAttribute('nombres', $user->getCaNombres());
             $this->setAttribute('forcechange', $user->getCaForcechange() );
+            
+            $departamento = Doctrine::getTable("Departamento")
+                                      ->createQuery("d")
+                                      ->where("d.ca_nombre = ?", $user->getCaDepartamento())
+                                      ->fetchOne();
+			if( $departamento ){
+				$this->setAttribute('iddepartamento', $departamento->getCaIddepartamento() );
+			}									
+
 		}
     }
     
@@ -57,5 +66,9 @@ class myUser extends sfBasicSecurityUser
 
     public function getNombres(){
 		return $this->getAttribute('nombres');
+	}
+    
+    public function getIddepartamento(){
+		return $this->getAttribute('iddepartamento' );
 	}
 }

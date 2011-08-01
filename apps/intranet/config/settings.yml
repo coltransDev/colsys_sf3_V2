@@ -40,3 +40,6 @@ all:
       - adminUsers
       - adminPerfiles
       - gestDocumental
+      - pm
+      - helpdesk
+      - menu
