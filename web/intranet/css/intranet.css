@@ -212,6 +212,14 @@ a:hover {
     
 }
 
+.center1col{
+    float:left;
+    width:100%;
+    
+    
+}
+
+
 .centerlogin {
     
     width:100%;
@@ -970,4 +978,87 @@ div.storybox .body {
 {
   color:#FF0000;
    font-size:11px;
+}
+
+
+
+
+/*
+* Estilos para la barra de herramientas
+*/
+
+
+.toolbar{
+	color: #333333;
+	background: #F0F0F0;
+	margin-top: 0px;
+	margin-bottom: 0px;
+	padding:0px;
+	height: 30px;
+	width:95%;
+	background-image: url(../images/layout/submenu/submenubg.gif);
+
+
+}
+
+.toolbarbtnWraper{
+  float:left;
+  margin-left: 5px;
+  padding: 2px ;
+}
+
+.toolbarbtnhelp{
+    float: right; right: 20px; padding: 2px
+
+}
+
+.toolbar a.toolbarBtn{
+	padding-left: 4px;
+	padding-right: 4px;
+
+	color: #333333;
+	display: block;
+	font-size:9px;
+	max-width: 150px;
+}
+
+.toolbar a.toolbarBtn:hover{
+	border: 1px solid #CCCCCC;
+
+}
+
+.submenuleft{
+	float:left;
+}
+
+.submenuright{
+	float:right;
+}
+
+
+
+
+.x-form-file-wrap {
+    position: relative;
+    height: 22px;
+}
+.x-form-file-wrap .x-form-file {
+	position: absolute;
+	right: 0;
+	moz-opacity: 0;
+	filter:alpha(opacity: 0);
+	opacity: 0;
+	z-index: 2;
+    height: 22px;
+}
+.x-form-file-wrap .x-form-file-btn {
+	position: absolute;
+	right: 0;
+	z-index: 1;
+}
+.x-form-file-wrap .x-form-file-text {
+    position: absolute;
+    left: 0;
+    z-index: 3;
+    color: #777;
 }

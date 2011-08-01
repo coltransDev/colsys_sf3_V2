@@ -8,6 +8,7 @@
 .commentlist{
     margin:20px;
 }
+
 .entry {
     border-bottom: 1px solid #DDDDDD;
 	clear:both;	
@@ -16,9 +17,6 @@
 
 
 .entry-even {
-    
-   
-    
     background-color:#F6F6F6;
     border-color:#CCCCCC;
     border-style:dotted;
@@ -29,13 +27,23 @@
 }
 
 .entry-odd {
-   
+    background-color:#FFFFFF;
     border-color:#CCCCCC;
     border-style:dotted;
     border-width:1px;
     margin:12px 0 0;
     padding:12px 12px 24px;
 }
+
+.entry-yellow {
+    background-color:#FFFFCC;
+    border-color:#CCCCCC;
+    border-style:dotted;
+    border-width:1px;
+    margin:12px 0 0;
+    padding:12px 12px 24px;
+}
+
 
 
 
