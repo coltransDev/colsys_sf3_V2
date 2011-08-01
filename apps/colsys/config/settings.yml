@@ -114,3 +114,5 @@ all:
       - email
       - menu
       - fileManager
+      - pm
+      - helpdesk
