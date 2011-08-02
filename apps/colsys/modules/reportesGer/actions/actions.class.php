@@ -622,8 +622,40 @@ class reportesGerActions extends sfActions {
             $st = $con->execute($sql);
             $this->ref = $st->fetchAll();
             //print_r($this->ref);
+        }        
+    }
+    
+    
+    public function executeReporteRecibosCaja(sfWebRequest $request) {        
+        $this->opcion = $request->getParameter("opcion");
+        if ($this->opcion) {
+            $this->fechainicial = $request->getParameter("fechaInicial");
+            $this->fechafinal = $request->getParameter("fechaFinal");
+            $this->tipo = $request->getParameter("tipo");
+            $tipos=array("tb_inoingresos_sea","tb_inoingresos_air","tb_expo_ingresos","tb_brk_ingresos");
+            
+            if($this->tipo >=0 && $this->tipo<4)
+            {
+                if($this->fechainicial && $this->fechafinal)
+                    $where=" t.ca_fchcreado between '" . $this->fechainicial . "' and '" . $this->fechafinal . "' and ";
+                $join="";
+                if($this->tipo<3)
+                        $join="inner join tb_clientes c on t.ca_idcliente=c.ca_idcliente";
+                else if($this->tipo==3)
+                {
+                    $join="inner join tb_brk_maestra m on t.ca_referencia = m.ca_referencia
+                        inner join tb_clientes c on m.ca_idcliente=c.ca_idcliente";
+                }
+                $sql="select t.*,c.ca_compania from ".$tipos[$this->tipo]." t
+                        $join
+                        where $where (t.ca_reccaja is null or t.ca_reccaja='') ";
+
+                $con = Doctrine_Manager::getInstance()->connection();
+                $st = $con->execute($sql);
+                $this->ref = $st->fetchAll();
+            }
+            
         }
-        
     }
 
 }

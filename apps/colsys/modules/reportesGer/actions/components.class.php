@@ -72,9 +72,17 @@ class reportesGerComponents extends sfComponents
     public function executeFiltrosReporteDesconsolidacion()
     {
         $this->fechainicial=$this->getRequestParameter("fechaInicial");
-        $this->fechafinal=$this->getRequestParameter("fechaFinal");
+        $this->fechafinal=$this->getRequestParameter("fechaFinal");        
+    }
+    
+    public function executeFiltrosReporteRecibosCaja()
+    {
+        $this->fechainicial=$this->getRequestParameter("fechaInicial");
+        $this->fechafinal=$this->getRequestParameter("fechaFinal");        
+        $this->tipo=$this->getRequestParameter("tipo");
+        $this->ntipo=$this->getRequestParameter("ntipo");
         
-        
+        //echo $this->tipo." ".$this->ntipo;
     }
 }
 ?>

@@ -60,7 +60,6 @@ if( $fechainicial && $fechafinal ){
         <?            
             $dataFechas[Utils::addDate( $fechainicial,0,$i,0,"Y-n")][]=$r[Utils::addDate( $fechainicial,0,$i,0,"Y-n")];
             }
-            
         ?>
             </tr>
         <?

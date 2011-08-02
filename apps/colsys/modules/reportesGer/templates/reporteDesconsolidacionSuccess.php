@@ -37,13 +37,13 @@ if( $fechainicial && $fechafinal ){
 <br />
 </div>
 <table class="tableList" width="900px" border="1" id="mainTable" align="center" id="panel1">
-    <tr><th>Fecha confirmaci&oacute;n</th><th>Fecha Vaciado</th><th>Referencia</th><th>Diferencia</th></tr>
+    <tr><th>Fecha confirmaci&oacute;n</th><th>Fecha Vaciado</th><th>Referencia</th><th>Destino</th><th>Diferencia</th></tr>
         <?        
         foreach($ref as $key=> $r)
         {            
             
         ?>
-            <tr><td><?=$r["ca_fchconfirmacion"]?></td><td><?=$r["ca_fchvaciado"]?></td><td><?=$r["ca_referencia"]?></td><td><?=$r["diferencia"]?></td></tr>
+    <tr><td><?=$r["ca_fchconfirmacion"]?></td><td><?=$r["ca_fchvaciado"]?></td><td><a href="/colsys_php/inosea.php?boton=Consultar&id=<?=$r["ca_referencia"]?>" target="_blank"><?=$r["ca_referencia"]?></a></td><td><?=$r["ca_ciudad"]?></td><td><?=$r["diferencia"]?></td></tr>
         <?
         }        
         ?>
