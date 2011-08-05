@@ -16,7 +16,10 @@ InvCategory:
     ca_parent: integer
     ca_name: string
     ca_order: integer
-    ca_main: boolean    
+    ca_main: boolean 
+    ca_parameter: string
+    ca_prefix: string
+    ca_autonumeric: boolean 
   relations:
     SubCategory:
       local: ca_idcategory
@@ -71,6 +74,7 @@ InvActivo:
     ca_software: string
     ca_mantenimiento: string
     ca_idsucursal: string
+    ca_cantidad: integer
     ca_fchcreado: timestamp
     ca_usucreado: string
     ca_fchactualizado: timestamp
@@ -149,3 +153,60 @@ InvAsignacion:
       local: ca_login
       foreign: ca_login
       type: one
+
+
+
+
+InvAsignacionSoftware:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: inv
+  tableName: inv.tb_asignaciones_software
+  columns:
+    ca_idasignacion_software:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_idactivo: integer
+    ca_idequipo: integer
+    ca_usucreado: string
+    ca_fchcreado: timestamp
+  relations:
+    InvActivo:
+      local: ca_idactivo
+      foreign: ca_idactivo
+      type: one
+    Equipo:
+      local: ca_idequipo
+      foreign: ca_idactivo
+      type: one
+      class: InvActivo
+    UsuCreado:
+      local: ca_fchcreado
+      foreign: ca_login
+      type: one
+      class: Usuario
+
+
+InvProducto:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: inv
+  tableName: inv.tb_productos
+  columns:
+    ca_idproducto:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_idcategoria: integer
+    ca_nombre: string    
+  relations:
+    InvCategory:
+      local: ca_idcategoria
+      foreign: ca_idcategory
+      type: one
+
