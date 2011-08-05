@@ -147,6 +147,31 @@ class inventoryComponents extends sfComponents
     public function executePanelAsignaciones( ){
 
     }
+    
+    /*
+	* Panel que permite asignar un software a un equipo
+	* @author: Andres Botero
+	*/
+    public function executePanelAsignacionesSoftware( ){
+
+    }
+    
+    
+    /*
+	* Panel que permite asignar un software a un equipo
+	* @author: Andres Botero
+	*/
+    public function executeWidgetEquipo( ){
+
+    }
+    
+    /*
+	* Panel que permite asignar un software a un equipo
+	* @author: Andres Botero
+	*/
+    public function executeWidgetProducto( ){
+
+    }
 
 
 

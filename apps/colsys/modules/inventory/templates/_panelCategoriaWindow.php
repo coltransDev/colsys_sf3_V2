@@ -102,9 +102,25 @@ PanelCategoriaWindow = function( config ) {
                         value: '',
                         checked: false,
                         allowBlank:false
+                    },
+                    {
+                        xtype: 'checkbox',
+                        width: 100,
+                        fieldLabel: 'Autonumerar',
+                        id: 'autonumeric',
+                        value: '',
+                        checked: false,
+                        allowBlank:false
+                    },
+                    {
+                        xtype: 'textfield',
+                        width: 100,
+                        fieldLabel: 'Prefijo',
+                        id: 'prefix',
+                        name: 'prefix',
+                        value: '',                        
+                        allowBlank:true
                     }
-                   
-                    
                 ]
         })
 
@@ -147,6 +163,7 @@ Ext.extend(PanelCategoriaWindow, Ext.Window, {
                         }else{
                             node.setText(name);
                         }
+                        node.attributes.autonumeric = fp.getForm().findField("autonumeric").getValue();
                     }
 
 

@@ -13,7 +13,6 @@ PanelReading = function( config ){
 
     Ext.apply(this, config);
 
-       
     
     this.grid = new PanelActivos(
                      {id:idcomponent,
@@ -22,7 +21,9 @@ PanelReading = function( config ){
                       region: 'center',
                       idsucursal: this.idsucursal,
                       editable:this.editable,
-                      parameter: this.parameter
+                      parameter: this.parameter,
+                      autonumeric: this.autonumeric,
+                      prefix: this.prefix
                      });
 
     var idcomponent = this.id;
@@ -83,16 +84,28 @@ PanelReading = function( config ){
                                 height: 400
 
                             });
-
-    this.asignacionesPanel = new PanelAsignaciones({
+                            
+                        
+    if( this.parameter=="Software" ){                
+        this.asignacionesPanel = new PanelAsignacionesSoftware({
                                     closable: false,
-                                    title: "Asignaciones"                                   
+                                    title: "Asignaciones",
+                                    autoScroll: true,
+                                    enableTabScroll:true
                                  });
+    }else{
+        this.asignacionesPanel = new PanelAsignaciones({
+                                    closable: false,
+                                    title: "Hist. Asignaciones",
+                                    autoScroll: true
+                                 });
+        
+    }
 
     this.tabPanel = new Ext.TabPanel({
             region: 'south',
             deferredRender: false,
-            activeTab: 0,     // first tab initially active
+            activeTab: 3,     // first tab initially active
             height: 400,
             enableTabScroll:true,            
             items: [
@@ -132,13 +145,8 @@ PanelReading = function( config ){
                     border:false,
                     region:'south'
                 }
-
             ]
         }
-
-      
-      
-      
     });
 
 
@@ -226,7 +234,8 @@ Ext.extend(PanelReading, Ext.Panel, {
         this.filePanel.setFolder( record.data.folder ); 
         this.filePanel.store.setBaseParam("folder",record.data.folder );
         this.filePanel.store.reload();
-
+        
+        this.asignacionesPanel.idactivo = record.data.idactivo;
         this.asignacionesPanel.store.setBaseParam("idactivo",record.data.idactivo );
         this.asignacionesPanel.store.reload();
 

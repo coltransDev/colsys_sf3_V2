@@ -17,6 +17,8 @@ include_component("inventory", "panelAsignaciones");
 
 include_component("inventory", "nuevoSeguimientoWindow");
 include_component("widgets", "widgetUsuario");
+include_component("inventory", "widgetEquipo");
+include_component("inventory", "widgetProducto");
 ?>
 <script type="text/javascript">
 
@@ -229,11 +231,14 @@ Ext.onReady(function(){
 <div style="height:100%"></div>
 <script type="text/javascript">
     Ext.onReady(function(){
-       /* var newComponent = new PanelReading({
+        /*var newComponent = new PanelReading({
                                              id: 'asdad',
                                              closable: true,
-                                             idcategory: 11,
-                                             title: 'Panel prueba'
+                                             idcategory: 21,
+                                             idsucursal: 'BAQ',
+                                             parameter: 'Software',
+                                             title: 'Panel prueba',
+                                             editable: true
                                             });
                     Ext.getCmp('tab-panel').add(newComponent);
                     Ext.getCmp('tab-panel').setActiveTab(newComponent);

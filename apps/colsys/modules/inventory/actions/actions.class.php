@@ -212,16 +212,37 @@ class inventoryActions extends sfActions
         }else{
             $activo = new InvActivo();
             $activo->setCaIdsucursal( $request->getParameter("idsucursal") );
+            
+            $activo->setCaIdcategory( $request->getParameter("idcategory") );
+            $cat = Doctrine::getTable("InvCategory")->find($request->getParameter("idcategory"));
+        
+            if( !$cat->getCaAutonumeric() ){
+                if( $request->getParameter("identificador") ){
+                    $activo->setCaIdentificador( utf8_decode(strtoupper($request->getParameter("identificador"))) );
+                }else{
+                    $activo->setCaIdentificador( null );
+                }
+            }else{
+                
+                $value = Doctrine::getTable("InvActivo")
+                          ->createQuery("a")
+                          ->select("a.ca_identificador")  
+                          ->addWhere("a.ca_identificador LIKE ?", $cat->getCaPrefix()."%")
+                          ->addOrderBy("a.ca_identificador DESC")        
+                          ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)
+                          ->execute();
+                
+                if( $value ){
+                    $value = str_replace( $cat->getCaPrefix() , "", $value);
+                    $identificador = $cat->getCaPrefix().str_pad(intval($value)+1, 5, "0", STR_PAD_LEFT);
+                }else{
+                    $identificador = $cat->getCaPrefix().str_pad("1", 5, "0", STR_PAD_LEFT);
+                }                    
+                $activo->setCaIdentificador( $identificador );
+            }
         }
         
-        $activo->setCaIdcategory( $request->getParameter("idcategory") );
-        
-        $activo->setCaNoinventario( strtoupper($request->getParameter("noinventario")) );
-        if( $request->getParameter("identificador") ){
-            $activo->setCaIdentificador( utf8_decode(strtoupper($request->getParameter("identificador"))) );
-        }else{
-            $activo->setCaIdentificador( null );
-        }
+        $activo->setCaNoinventario( strtoupper($request->getParameter("noinventario")) );        
         $activo->setCaSerial( $request->getParameter("serial") );
         $activo->setCaMarca( utf8_decode($request->getParameter("marca")) );
         $activo->setCaModelo( utf8_decode($request->getParameter("modelo")) );
@@ -378,13 +399,23 @@ class inventoryActions extends sfActions
             $categoria->setCaMain($main=="on");
             $categoria->setCaParameter($request->getParameter("parameter"));
         }
-
+        
+        
+        
 
         $categoria->setCaName(utf8_decode($request->getParameter("name")));
         if( $request->getParameter("parent") ){
             $categoria->setCaParent(utf8_decode($request->getParameter("parent")));
         }else{
             $categoria->setCaParent(null);
+        }
+        
+        $autonumeric = $request->getParameter("autonumeric");
+        $categoria->setCaAutonumeric($autonumeric=="on");
+        if( $request->getParameter("prefix") ){
+            $categoria->setCaPrefix($request->getParameter("prefix"));
+        }else{
+            $categoria->setCaPrefix(null);
         }
         
         
@@ -497,14 +528,151 @@ class inventoryActions extends sfActions
 
 
 
-    /*
+    
+
+     
+     /*
+     * 
+     */
+     public function executeDatosPanelAsignacionesSoftware( $request ){
+        $idactivo = $request->getParameter("idactivo");
+       
+
+        if( $idactivo ){
+            $equipos = Doctrine::getTable("InvAsignacionSoftware")
+                            ->createQuery("a")
+                            ->select("e.ca_identificador, a.ca_idasignacion_software,  a.ca_idactivo, a.ca_idequipo, u.ca_nombre,s.ca_nombre")
+                            ->innerJoin("a.Equipo e")
+                            ->leftJoin("e.Usuario u")
+                            ->leftJoin("u.Sucursal s")
+                            ->addWhere("a.ca_idactivo = ? ", $idactivo)
+                            ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                            ->execute();
+            
+            $i=0;
+            foreach( $equipos as $key=>$val ){
+                $equipos[$key]["s_ca_nombre"] = utf8_encode($equipos[$key]["s_ca_nombre"]);
+                $equipos[$key]["u_ca_nombre"] = utf8_encode($equipos[$key]["u_ca_nombre"]);
+                $equipos[$key]["orden"] = $i++;
+            }               
+            
+            $equipos[] = array("e_ca_identificador"=>"", "orden"=>"Z");
+            $this->responseArray = array("success"=>true, "root"=>$equipos);
+        }else{
+            $this->responseArray = array("success"=>false);
+        }
+
+
+        $this->setTemplate("responseTemplate");
+     }
+     
+     
+     /*
+     * 
+     */
+     public function executeGuardarPanelAsignacionesSoftware( $request ){
+         try{
+             $idactivo = $request->getParameter("idactivo");
+             $this->forward404Unless( $idactivo );
+             $idequipo = $request->getParameter("idequipo");
+             $this->forward404Unless( $idequipo );
+
+
+             if( $request->getParameter("idasignacion_software") ){
+                 $asignacion = Doctrine::getTable("InvAsignacionSoftware")->find( $request->getParameter("idasignacion_software") );
+                 $this->forward404Unless( $asignacion );
+             }else{
+                 $asignacion = new InvAsignacionSoftware();   
+                 $asignacion->setCaIdactivo( $idactivo );
+             }
+             $asignacion->setCaIdequipo( $idequipo );
+             $asignacion->save();
+             
+             $this->responseArray = array("success"=>true, "id"=>$request->getParameter("id"), "idasignacion_software"=>$asignacion->getCaIdasignacionSoftware());
+         }catch( Exception $e ){
+            $this->responseArray = array("success"=>false, "errorInfo"=>$e->getMessage());
+        }
+
+        $this->setTemplate("responseTemplate");
+     }
+     
+     /*
+     * 
+     */
+     public function executeEliminarPanelAsignacionSoftware( $request ){
+         try{
+             
+
+             $this->forward404Unless($request->getParameter("idasignacion_software") );
+             $asignacion = Doctrine::getTable("InvAsignacionSoftware")->find( $request->getParameter("idasignacion_software") );
+             $this->forward404Unless( $asignacion );             
+             
+             $asignacion->delete();
+             
+             $this->responseArray = array("success"=>true, "id"=>$request->getParameter("id"));
+         }catch( Exception $e ){
+            $this->responseArray = array("success"=>false, "errorInfo"=>$e->getMessage());
+         }
+
+
+        $this->setTemplate("responseTemplate");
+     }
+     
+     
+     /*
+     * 
+     */
+     public function executeDatosWidgetEquipo( $request ){
+        $query = "%".strtoupper($request->getParameter("query"))."%";
+         
+        $equipos = Doctrine_Query::create()
+                ->select("a.ca_identificador, a.ca_idactivo, u.ca_nombre,s.ca_nombre")
+                ->from("InvActivo a")
+                ->innerJoin("a.Usuario u")
+                ->innerJoin("u.Sucursal s")
+                ->innerJoin("a.InvCategory c")
+                ->addWhere("UPPER(a.ca_identificador) LIKE ? OR UPPER(u.ca_nombre) LIKE ? ", array($query, $query) )
+                ->addWhere("c.ca_parameter = ?", "Hardware" )
+                ->addOrderBy("a.ca_identificador")
+                ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                ->execute();
+        foreach( $equipos as $key=>$val ){
+            $equipos[$key]["s_ca_nombre"] = utf8_encode($equipos[$key]["s_ca_nombre"]);
+            $equipos[$key]["u_ca_nombre"] = utf8_encode($equipos[$key]["u_ca_nombre"]);
+        }
+        $this->responseArray = array("root" => $equipos, "total" => count($equipos), "success" => true);
+        $this->setTemplate("responseTemplate");
+     }
+     
+     
+     /*
+     * 
+     */
+     public function executeDatosWidgetProducto( $request ){
+        $idcategoria = $request->getParameter("idcategory");
+         
+        $productos = Doctrine_Query::create()                
+                ->select("p.ca_nombre, p.ca_idproducto")
+                ->from("InvProducto p")                
+                ->addWhere("p.ca_idcategoria = ?", $idcategoria )                
+                ->addOrderBy("p.ca_nombre")
+                ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                ->execute();
+        foreach( $productos as $key=>$val ){
+            $productos[$key]["p_ca_nombre"] = utf8_encode($productos[$key]["p_ca_nombre"]);            
+        }
+        $this->responseArray = array("root" => $productos, "total" => count($productos), "success" => true);
+        $this->setTemplate("responseTemplate");
+     }
+     
+     
+     
+     /*
      * Informes
      */
      public function executeInformes( $request ){
 
      }
-
-
-
+     
 }
 ?>

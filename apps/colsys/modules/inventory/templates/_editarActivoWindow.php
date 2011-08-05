@@ -8,6 +8,8 @@
 include_component("inventory", "editarActivoPropiedadesPanel");
 include_component("inventory", "editarActivoHardwarePropiedadesPanel");
 include_component("inventory", "editarActivoSoftwarePropiedadesPanel");
+
+
 include_component("gestDocumental", "panelArchivos", array("readOnly"=>false) );
 
 
@@ -18,8 +20,6 @@ EditarActivoWindow = function( config ) {
     Ext.apply(this, config);
     
     this.ctxRecord = null;
-
-    
        
     switch( this.parameter ){   
         case "Hardware":
@@ -30,7 +30,8 @@ EditarActivoWindow = function( config ) {
                idsucursal: this.idsucursal,
                gridopener: this.gridopener,
                items: this.items,
-               copy: this.copy
+               copy: this.copy,
+               autonumeric: this.autonumeric
             });
             break;
         case "Software":
@@ -41,7 +42,8 @@ EditarActivoWindow = function( config ) {
                idsucursal: this.idsucursal,
                gridopener: this.gridopener,
                items: this.items,
-               copy: this.copy
+               copy: this.copy,
+               autonumeric: this.autonumeric
             });
             break;
         default: 
@@ -52,7 +54,8 @@ EditarActivoWindow = function( config ) {
                idsucursal: this.idsucursal,
                gridopener: this.gridopener,
                items: this.items,
-               copy: this.copy
+               copy: this.copy,
+               autonumeric: this.autonumeric
             });
         break;
     }

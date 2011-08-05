@@ -4,13 +4,12 @@
  * 
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
-
+include_component("inventory", "panelAsignacionesSoftware");
 
 ?>
 <script type="text/javascript">
     EditarActivoSoftwarePropiedadesPanel = function( config ) {
-        Ext.apply(this, config);
-
+        Ext.apply(this, config);        
         this.buttons = [
             {
                 text: 'Guardar',
@@ -24,47 +23,9 @@
                 }
             }
         ];
-    
-        EditarActivoSoftwarePropiedadesPanel.superclass.constructor.call(this, {
-            title: 'Propiedades',
-            id: 'form-activo-panel',
-            autoHeight: true,
-            autoWidth: true,
-            
-            bodyStyle:'padding:5px 5px 0',
-            url: '<?= url_for('inventory/formActivoGuardar') ?>',
-            buttons: this.buttons,
-            items: [
-                {
-                    xtype:'hidden',
-                    name: 'idactivo',
-                    anchor:'95%'
-                },
-                {
-                    xtype:'hidden',
-                    name: 'idcategory',
-                    value: this.idcategory,
-                    anchor:'95%'
-                },
-                {
-                    xtype:'hidden',
-                    name: 'idsucursal',
-                    value: this.idsucursal,
-                    anchor:'95%'
-                },
-                {
-                    xtype:'hidden',
-                    name: 'copy',
-                    value: this.copy,
-                    anchor:'95%'
-                },
-                {
-                    xtype:'tabpanel',
-                    title: 'Principal',
-                    autoHeight:true,
-                    activeTab: 0,
-                    deferredRender: false, 
-                    items: [
+        
+        
+        this.tabItems = [
                     {
                         xtype:'fieldset',
                         title: 'Componentes Basicos',
@@ -84,7 +45,7 @@
                                 layout: 'form',
                                 xtype:'fieldset',
                                 defaults:{
-                                    width: 130
+                                    width: 180
                                 },
                                 items: [
                                     {
@@ -111,36 +72,32 @@
                                         fieldLabel: 'Marca',
                                         name: 'marca',
                                         allowBlank: false
-                                    },
-                                    {
-                                        xtype:'textfield',
+                                    },                                    
+                                    new WidgetProducto({
                                         fieldLabel: 'Modelo',
                                         name: 'modelo',
-                                        allowBlank: false
-                                    },
-                                    {
-                                        xtype:'textfield',
-                                        fieldLabel: 'Version',
-                                        name: 'version',
-                                        allowBlank: true
-                                    }
+                                        allowBlank: false,
+                                        idcategory:this.idcategory,
+                                        width: 250
+                                    })
                                 ]
                             },{
                                 columnWidth:.5,
                                 layout: 'form',
                                 xtype:'fieldset',
                                 items: [
-                                    {
+                                    /*{
                                         xtype:'textfield',
                                         fieldLabel: 'No Inventario',
                                         name: 'noinventario',
                                         allowBlank: true
-                                    },
+                                    },*/
                                     {
                                         xtype:'textfield',
                                         fieldLabel: 'Identificador',
                                         name: 'identificador',
-                                        allowBlank: true
+                                        allowBlank: true,
+                                        disabled: this.autonumeric
                                     },
                                     {
                                         xtype:'textfield',
@@ -217,8 +174,55 @@
                             }
                             
                         ]
-                    }
-                ]}
+                    }                    
+                ];
+        
+        
+        
+        
+    
+        EditarActivoSoftwarePropiedadesPanel.superclass.constructor.call(this, {
+            title: 'Propiedades',
+            id: 'form-activo-panel',
+            autoHeight: true,
+            autoWidth: true,
+            
+            bodyStyle:'padding:5px 5px 0',
+            url: '<?= url_for('inventory/formActivoGuardar') ?>',
+            buttons: this.buttons,
+            items: [
+                {
+                    xtype:'hidden',
+                    name: 'idactivo',
+                    anchor:'95%'
+                },
+                {
+                    xtype:'hidden',
+                    name: 'idcategory',
+                    value: this.idcategory,
+                    anchor:'95%'
+                },
+                {
+                    xtype:'hidden',
+                    name: 'idsucursal',
+                    value: this.idsucursal,
+                    anchor:'95%'
+                },
+                {
+                    xtype:'hidden',
+                    name: 'copy',
+                    value: this.copy,
+                    anchor:'95%'
+                },
+                {
+                    xtype:'tabpanel',
+                    title: 'Principal',
+                    autoHeight:true,
+                    activeTab: 0,
+                    deferredRender: false, 
+                    items: this.tabItems
+                
+                }
             ]
         });
 

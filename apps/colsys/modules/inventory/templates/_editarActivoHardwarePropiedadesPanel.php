@@ -131,17 +131,18 @@ $office_types = $sf_data->getRaw("office_types");
                                 layout: 'form',
                                 xtype:'fieldset',
                                 items: [
-                                    {
+                                    /*{
                                         xtype:'textfield',
                                         fieldLabel: 'No Inventario',
                                         name: 'noinventario',
                                         allowBlank: true
-                                    },
+                                    },*/
                                     {
                                         xtype:'textfield',
                                         fieldLabel: 'Identificador',
                                         name: 'identificador',
-                                        allowBlank: true
+                                        allowBlank: true,
+                                        disabled: this.autonumeric
                                     },
                                     {
                                         xtype:'textfield',
@@ -254,60 +255,21 @@ $office_types = $sf_data->getRaw("office_types");
                                         layout: 'form',
                                         xtype:'fieldset',
                                         items: [
-                                            {
-                                                xtype:          'combo',
-                                                mode:           'local',
-                                                value:          '',
-                                                triggerAction:  'all',
-                                                forceSelection: true,
-                                                editable:       true,
-                                                width: 250,
-                                                fieldLabel:     'S.O.',
-                                                name:           'so',
-                                                hiddenName:     'so',
-                                                displayField:   'name',
-                                                valueField:     'value',
+                                        
+                                            new WidgetProducto({
+                                                fieldLabel: 'S.O.',
+                                                name: 'so',
                                                 allowBlank: false,
-                                                store:          new Ext.data.JsonStore({
-                                                    fields : ['name', 'value'],
-                                                    data   : [
-                                                        <?
-                                                        $i=0;
-                                                        foreach($so_types as $type ){
-                                                            echo ($i++>0)?",":"";
-                                                            echo "{name : '".$type->getCaValor()."',   value: '".$type->getCaValor()."'}";
-                                                        }
-                                                        ?>
-                                                    ]
-                                                })
-                                            },
-                                            {
-                                                xtype:          'combo',
-                                                mode:           'local',
-                                                value:          '',
-                                                triggerAction:  'all',
-                                                forceSelection: true,
-                                                editable:       true,
-                                                width: 250,
-                                                fieldLabel:     'Office',
-                                                name:           'office',
-                                                hiddenName:     'office',
-                                                displayField:   'name',
-                                                valueField:     'value',
+                                                idcategory: 22,
+                                                width: 250
+                                            }),
+                                            new WidgetProducto({
+                                                fieldLabel: 'Office',
+                                                name: 'office',
                                                 allowBlank: false,
-                                                store:          new Ext.data.JsonStore({
-                                                    fields : ['name', 'value'],
-                                                    data   : [
-                                                        <?
-                                                        $i=0;
-                                                        foreach($office_types as $type ){
-                                                            echo ($i++>0)?",":"";
-                                                            echo "{name : '".$type->getCaValor()."',   value: '".$type->getCaValor()."'}";
-                                                        }
-                                                        ?>
-                                                    ]
-                                                })
-                                            }
+                                                idcategory: 21,
+                                                width: 250
+                                            })
                                         ]
                                     },
                                     {

@@ -15,116 +15,6 @@
 
         Ext.apply(this, config);
     
-        /*
-         * Crea el expander
-         */
-        this.expander = new Ext.grid.RowExpander({
-            lazyRender : false,
-            width: 15,
-            tpl : new Ext.Template(
-            '<p><div class=\'btnComentarios\' id=\'obs_{_id}\'>&nbsp; {text}</div></p>'
-
-        ),
-            getRowClass : function(record, rowIndex, p, ds){
-                p.cols = p.cols-1;
-
-                var content = this.bodyContent[record.id];
-
-                //if(!content && !this.lazyRender){		//hace que los comentarios no se borren cuando se guarda
-                content = this.getBodyContent(record, rowIndex);
-                //}
-
-                if(content){
-                    p.body = content;
-                }
-
-                var color;
-                if( record.data.action=="Cerrado" ){
-                    color = "blue";
-                }else{
-                    if( record.data.tipo=="Defecto" ){
-                        color = "pink";
-                    }else{
-                        switch( record.data.priority ){
-                            case "Media":
-                                color = "yellow";
-                                break;
-                            case "Alta":
-                                color = "pink";
-                                break;
-                            default:
-                                color = "";
-                                break;
-                        }
-                    }
-                }
-                color = "row_"+color;
-                return this.state[record.id] ? 'x-grid3-row-expanded '+color : 'x-grid3-row-collapsed '+color;
-            }
-        });
-
-
-        this.filters = new Ext.ux.grid.GridFilters({
-            // encode and local configuration options defined previously for easier reuse
-            encode: false, // json encode the filter query
-            local: true,   // defaults to false (remote filtering)
-            filters: [{
-                    type: 'numeric',
-                    dataIndex: 'idticket'
-                }, {
-                    type: 'string',
-                    dataIndex: 'project'
-
-                }, {
-                    type: 'string',
-                    dataIndex: 'title'
-
-                },
-                {
-                    type: 'string',
-                    dataIndex: 'tipo'
-
-                },
-                {
-                    type: 'string',
-                    dataIndex: 'login'
-
-                },
-                {
-                    type: 'string',
-                    dataIndex: 'asignadoaNombre'
-
-                }
-                , {
-                    type: 'list',
-                    dataIndex: 'priority',
-                    options: ['Alta', 'Media', 'Baja']
-
-                }, {
-                    type: 'list',
-                    dataIndex: 'action',
-                    options: ['Abierto', 'Cerrado']
-
-                },
-                {
-                    type: 'date',
-                    dataIndex: 'opened'
-                },
-                {
-                    type: 'date',
-                    dataIndex: 'respuesta'
-                },
-                {
-                    type: 'date',
-                    dataIndex: 'ultseg'
-                }
-            ]
-        });
-
-        
-        
-        
-       
 
         this.columns = [
             {
@@ -150,14 +40,14 @@
                 dataIndex: 'marca',
                 //hideable: false,
                 sortable: true,
-                width: 280
+                width: 180
             },
             {
                 header: "Modelo",
                 dataIndex: 'modelo',
                 hideable: false,
                 sortable: true,
-                width: 80
+                width: 180
 
             },
             {
@@ -165,7 +55,8 @@
                 dataIndex: 'ubicacion',
                 //hideable: false,
                 sortable: true,
-                width: 280
+                width: 280,
+                hidden: this.parameter!="Hardware"
 
             },
             {
@@ -207,14 +98,16 @@
                 dataIndex: 'asignadoaNombre',
                 hideable: false,
                 width: 100,
-                sortable: true
+                sortable: true,
+                hidden: this.parameter!="Hardware"
             },
             {
                 header: "Mantenimiento",
                 dataIndex: 'mantenimiento',
                 hideable: false,
                 width: 100,
-                sortable: true
+                sortable: true,
+                hidden: this.parameter!="Hardware"
             }
 
       
@@ -307,9 +200,7 @@
             ddGroup : 'TreeDD',
             enableDragDrop   : true,
             autoScroll:true,
-            plugins: [
-                this.filters
-            ],
+            
             view: new Ext.grid.GroupingView({
 
                 forceFit:true,
@@ -332,12 +223,17 @@
     Ext.extend(PanelActivos, Ext.grid.GridPanel, {
 
         crearActivo: function(){
-           
+            
+            if( !this.editable ){
+                return;
+            }
+            
             this.win = new EditarActivoWindow( {
                 idcategory:this.idcategory,
                 idsucursal:this.idsucursal,
                 gridopener: this.id,
-                parameter: this.parameter
+                parameter: this.parameter,
+                autonumeric:this.autonumeric                
             } );
             
             this.win.show();
@@ -370,6 +266,7 @@
             if( !this.readOnly ){
                 rec = this.store.getAt(index);
                 var parameter = this.parameter;
+                var autonumeric = this.autonumeric;
                 if(!this.menu){ // create context menu on first right click
 
                     this.menu = new Ext.menu.Menu({
@@ -381,6 +278,9 @@
                                 iconCls: 'page_white_edit',
                                 scope:this,
                                 handler: function(){
+                                    if( !this.editable ){
+                                        return;
+                                    }
                                     if( this.ctxRecord.data.idactivo  ){
                                         var record = this.ctxRecord;
                                         var win = new EditarActivoWindow({
@@ -389,7 +289,8 @@
                                             idsucursal:record.data.idsucursal,
                                             folder: record.data.folder,
                                             gridopener: grid.id,
-                                            parameter: parameter
+                                            parameter: parameter,
+                                            autonumeric:autonumeric
                                         });
                                         win.show();
                                     }
@@ -400,7 +301,10 @@
                                 text: 'Copiar en nuevo registro',
                                 iconCls: 'page_copy',
                                 scope:this,
-                                handler: function(){
+                                handler: function(){                                    
+                                    if( !this.editable ){
+                                        return;
+                                    }
                                     if( this.ctxRecord.data.idactivo  ){
                                         var record = this.ctxRecord;
                                         var win = new EditarActivoWindow({
@@ -421,6 +325,9 @@
                                 iconCls: 'delete',
                                 scope:this,
                                 handler: function(){
+                                    if( !this.editable ){
+                                        return;
+                                    }
                                     if( this.ctxRecord.data.idactivo  ){
                                         this.eliminar(this.ctxRecord);
                                     }
@@ -463,7 +370,8 @@
                     folder: record.data.folder,
                     gridopener: grid.id,
                     parameter: this.parameter,
-                    idsucursal: this.idsucursal
+                    idsucursal: this.idsucursal,
+                    autonumeric: this.autonumeric
                 });
                 win.show();
             

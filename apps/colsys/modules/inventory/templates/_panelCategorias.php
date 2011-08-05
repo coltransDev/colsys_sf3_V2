@@ -49,7 +49,8 @@ Ext.extend(PanelCategorias, Ext.tree.TreePanel, {
             //var nodeoptions = n.id.split("_");            
             var parameter = n.attributes.parameter;
             var idcategory = n.attributes.idcategoria;
-            
+            var autonumeric = n.attributes.autonumeric;
+            var prefix = n.attributes.prefix;
             
             //Coloca un identificador unico para evitar que el componente se cree dos veces
             var idcomponent = 'categoria-'+idcategory+"-"+this.idsucursal;
@@ -73,7 +74,9 @@ Ext.extend(PanelCategorias, Ext.tree.TreePanel, {
                                                               idsucursal: this.idsucursal,
                                                               closable: true,
                                                               editable: true,
-                                                              parameter: parameter
+                                                              parameter: parameter,
+                                                              autonumeric: autonumeric,
+                                                              prefix:prefix
                                                              });
 
 
@@ -204,6 +207,8 @@ Ext.extend(PanelCategorias, Ext.tree.TreePanel, {
         fp.getForm().findField("parent").setValue(n.attributes.parentNode);
         fp.getForm().findField("parameter").setValue(n.attributes.parameter);
         fp.getForm().findField("name").setValue(n.attributes.name);
+        fp.getForm().findField("autonumeric").setValue(n.attributes.autonumeric);
+        fp.getForm().findField("prefix").setValue(n.attributes.prefix)
         fp.getForm().findField("main").disable();
         fp.getForm().findField("parameter").disable();
 

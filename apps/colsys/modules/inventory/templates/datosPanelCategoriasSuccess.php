@@ -22,7 +22,9 @@
         idcategoria: '<?=$categoria->getCaIdcategory()?>',
         parentNode: '<?=$categoria->getCaParent()?>',
         main: <?=$categoria->getCaMain()?"true":"false"?>,
-        parameter: '<?=$categoria->getCaParameter()?>'
+        parameter: '<?=$categoria->getCaParameter()?>',
+        autonumeric: <?=$categoria->getCaAutonumeric()?"true":"false"?>,
+        prefix: '<?=$categoria->getCaPrefix()?>'
     }
     <?
     }
