@@ -17,7 +17,7 @@ class reportesNegComponents extends sfComponents
     public function load_category()
     {
         $this->impoexpo=$this->getRequestParameter("impoexpo");
-
+        
         if($this->impoexpo==Constantes::IMPO || utf8_decode($this->impoexpo)==Constantes::IMPO)
         {
             $this->impoexpo=Constantes::IMPO;
@@ -31,8 +31,7 @@ class reportesNegComponents extends sfComponents
             {
                 $this->modo=Constantes::MARITIMO;
                 $this->idcategory="32";
-            }
-            
+            }           
         }
         else if($this->impoexpo==Constantes::EXPO || utf8_decode($this->impoexpo)==Constantes::EXPO)
         {
@@ -68,7 +67,6 @@ class reportesNegComponents extends sfComponents
                 $this->modo=Constantes::MARITIMO;
                 $this->idcategory="32";
             }
-
         }
         else if($this->impoexpo==Constantes::OTMDTA || utf8_decode($this->impoexpo)==Constantes::OTMDTA)
         {
@@ -84,6 +82,11 @@ class reportesNegComponents extends sfComponents
                 $this->modo=Constantes::MARITIMO;
                 $this->idcategory="32";
             }
+            else if($this->modo==Constantes::TERRESTRE || utf8_decode($this->modo)==Constantes::TERRESTRE)
+            {
+                $this->modo=Constantes::TERRESTRE;
+                $this->idcategory="32";
+            }            
         }
         else
         {
@@ -103,8 +106,7 @@ class reportesNegComponents extends sfComponents
                 $this->modo=Constantes::TRIANGULACION;
                 $this->idcategory="38";
             }
-        }
-
+        }        
     }
     
 	/*
@@ -336,6 +338,32 @@ class reportesNegComponents extends sfComponents
         }
 
     }
+    
+    /*
+	* Panel principal que contiene los demas paneles
+	* @author: Mauricio Quinche
+	*/
+	public function executeFormReportePanelOtm()
+	{
+
+        $this->cache=$this->getRequestParameter("cache");
+
+        $this->user=$this->getUser();
+        $this->permiso = $this->user->getNivelAcceso( "87" );
+        $this->load_category();
+//        if($this->permiso=="3")
+        {
+        //    $this->load_category();
+//            echo $this->idcategory;
+            $this->issues = Doctrine::getTable("KBTooltip")
+                                ->createQuery("t")
+                                ->select("t.ca_idcategory, t.ca_title, t.ca_info, t.ca_field_id")
+                                ->where("t.ca_idcategory = ?", $this->idcategory)
+                                ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                                ->execute();
+        }
+
+    }
 
     public function executeFormReportePanel1()
 	{
@@ -442,6 +470,30 @@ class reportesNegComponents extends sfComponents
 
         $this->user=$this->getUser();
     }
+    
+    
+    public function executeFormReportePanelOtmmin()
+	{
+        $this->permiso = $this->getUser()->getNivelAcceso( "87" );
+        $this->cache=$this->getRequestParameter("cache");
+        if($this->permiso=="3")
+        {
+            $this->load_category();
+
+            $this->issues = Doctrine::getTable("KBTooltip")
+                                ->createQuery("t")
+                                ->select("t.ca_idcategory, t.ca_title, t.ca_info, t.ca_field_id")
+                                ->where("t.ca_idcategory = ?", $this->idcategory)
+                                ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                                ->execute();
+        }       
+
+        $this->pais2="todos";
+        
+        $this->modo=constantes::MARITIMO;
+        $this->impoexpo=constantes::OTMDTA;
+        $this->user=$this->getUser();
+    }
 
     
     /*
@@ -460,14 +512,15 @@ class reportesNegComponents extends sfComponents
 
 	public function executeFormMercanciaPanel()
 	{
-		$this->sia = Doctrine::getTable("Sia")
+		
+
+        if($this->impoexpo==constantes::EXPO)
+        {
+            $this->sia = Doctrine::getTable("Sia")
                                      ->createQuery("s")
                                      ->select("s.ca_idsia,s.ca_nombre")
                                      ->addOrderBy("s.ca_nombre")                                     
                                      ->execute();
-
-        if($this->impoexpo==constantes::EXPO)
-        {
             $this->nave="";
             if($this->modo==constantes::AEREO)
             {
@@ -482,8 +535,8 @@ class reportesNegComponents extends sfComponents
             {
                 $this->nave="Motonave";
             }
-
         }
+        
 	}
 
 	public function executeFormContinuacionPanel()
@@ -541,8 +594,12 @@ class reportesNegComponents extends sfComponents
 	* @author:
 	*/
     public function executeFormTrayectoPanel()
-    {        
-        $this->load_category();        
+    {   
+        //echo $this->impoexpo;
+        $this->load_category();
+        //echo $this->getRequestParameter("impoexpo");
+        //echo $this->impoexpo;
+        //echo $this->modo;
         $this->origen="Ciudad Origen";
         $this->destino="Ciudad Destino";
         if($this->modo==constantes::AEREO)
@@ -571,9 +628,14 @@ class reportesNegComponents extends sfComponents
             $this->pais1="todos";
             $this->pais2="todos";
         }
+        else if($this->impoexpo==constantes::OTMDTA)
+        {
+            $this->pais1="todos";
+            $this->pais2="todos";
+        }
         $usuarios = Doctrine::getTable("Usuario")
                ->createQuery("u")
-               ->select("u.ca_login,u.ca_nombre,u.ca_email,ca_sucursal")
+               ->select("u.ca_login,u.ca_nombre,u.ca_email,ca_idsucursal")
                ->innerJoin("u.UsuarioPerfil up")
                ->where("u.ca_activo=? AND up.ca_perfil=? ", array('TRUE','cordinador-de-otm'))
                ->addOrderBy("u.ca_idsucursal")
@@ -583,9 +645,9 @@ class reportesNegComponents extends sfComponents
         $this->usuarios=array();
         foreach($usuarios as $usuario)
         {
-            if(!isset($this->usuarios[$usuario->getCaSucursal()]))
-                $this->usuarios[$usuario->getCaSucursal()]="";
-            $this->usuarios[$usuario->getCaSucursal()].=$usuario->getCaEmail();
+            if(!isset($this->usuarios[$usuario->getCaIdsucursal()]))
+                $this->usuarios[$usuario->getCaIdsucursal()]="";
+            $this->usuarios[$usuario->getCaIdsucursal()].=$usuario->getCaEmail();
         }
         //print_r($this->usuarios);
     }
@@ -624,7 +686,7 @@ class reportesNegComponents extends sfComponents
         }
         $usuarios = Doctrine::getTable("Usuario")
                ->createQuery("u")
-               ->select("u.ca_login,u.ca_nombre,u.ca_email,ca_sucursal")
+               ->select("u.ca_login,u.ca_nombre,u.ca_email,ca_idsucursal")
                ->innerJoin("u.UsuarioPerfil up")
                ->where("u.ca_activo=? AND up.ca_perfil=? ", array('TRUE','cordinador-de-otm'))
                ->addOrderBy("u.ca_idsucursal")
@@ -634,9 +696,9 @@ class reportesNegComponents extends sfComponents
         $this->usuarios=array();
         foreach($usuarios as $usuario)
         {
-            if(!isset($this->usuarios[$usuario->getCaSucursal()]))
-                $this->usuarios[$usuario->getCaSucursal()]="";
-            $this->usuarios[$usuario->getCaSucursal()].=$usuario->getCaEmail();
+            if(!isset($this->usuarios[$usuario->getCaIdsucursal()]))
+                $this->usuarios[$usuario->getCaIdsucursal()]="";
+            $this->usuarios[$usuario->getCaIdsucursal()].=$usuario->getCaEmail();
         }
         //print_r($this->usuarios);
     }
