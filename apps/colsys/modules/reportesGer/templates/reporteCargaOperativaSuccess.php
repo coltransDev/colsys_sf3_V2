@@ -323,39 +323,18 @@ if ($opcion) {
         $mes_sub = 0;
 
         $cliente_tot = array();
+        $reporte_tot = array();
         $operativo_tot = array();
         $comunicaciones_tot = array();
         $facturacion_tot = array();
 
         foreach ($resul as $r) {
-            if ($r["ca_ano"] != $ano_mem) {
-                $ano_mem = $r["ca_ano"];
-                $ano_tot+= $ano_sub;
-                $ano_sub = 0;
-    ?>
-                <tr>
-                    <td><b><?= $ano_mem ?></b></td>
-                    <td colspan="17"></td>
-                </tr>
-    <?
-            }
 
-            if ($r["ca_mes"] != $mes_mem) {
-                $mes_mem = $r["ca_mes"];
-                $mes_tot+= $mes_sub;
-                $mes_sub = 0;
-    ?>
-                <tr>
-                    <td></td>
-                    <td colspan="2"><b><?= Utils::mesLargo( $mes_mem ) ?></b></td>
-                    <td colspan="15"></td>
-                </tr>
-    <?
-            }
-
-            if ($r["ca_idcliente"] != $idcliente) {
-
-                if($idcliente != 0){
+            if (($r["ca_ano"] != $ano_mem and $ano_mem != "") or ($r["ca_mes"] != $mes_mem and $mes_mem != "") or ($r["ca_idcliente"] != $idcliente and $idcliente != 0)) {
+                $reporte_tot[$ano_mem][$mes_mem]["cant_reportes"]+= $cliente_tot[$idcliente][$ano_mem][$mes_mem]["cant_reportes"];
+                $reporte_tot[$ano_mem][$mes_mem]["cant_negocios"]+= $cliente_tot[$idcliente][$ano_mem][$mes_mem]["cant_negocios"];
+                $reporte_tot[$ano_mem][$mes_mem]["cant_emails"]+= $cliente_tot[$idcliente][$ano_mem][$mes_mem]["cant_emails"];
+                $reporte_tot[$ano_mem][$mes_mem]["cant_facturas"]+= $cliente_tot[$idcliente][$ano_mem][$mes_mem]["cant_facturas"];
     ?>
                 <tr>
                     <td colspan="9" align="right"><b>Totales&nbsp;:</b></td>
@@ -369,7 +348,50 @@ if ($opcion) {
                     <td><b><?= $cliente_tot[$idcliente][$ano_mem][$mes_mem]["cant_facturas"] ?></b></td>
                 </tr>
     <?
+            }
+
+            if ($r["ca_ano"] != $ano_mem) {
+                $ano_mem = $r["ca_ano"];
+                $ano_tot+= $ano_sub;
+                $ano_sub = 0;
+    ?>
+                <tr>
+                    <td><b><?= $ano_mem ?></b></td>
+                    <td colspan="17"></td>
+                </tr>
+    <?
+            }
+
+            if ($r["ca_mes"] != $mes_mem) {
+
+                if ($mes_mem != ''){
+    ?>
+                <tr>
+                    <td colspan="9" align="right"><b>Totales&nbsp;mes&nbsp;<?= Utils::mesLargo( $mes_mem ) ?>:</b></td>
+                    <td colspan="1" align="right"><b>Reportes&nbsp;:</b></td>
+                    <td><b><?= $reporte_tot[$ano_mem][$mes_mem]["cant_reportes"] ?></b></td>
+                    <td colspan="1" align="right"><b>Negocios&nbsp;:</b></td>
+                    <td><b><?= $reporte_tot[$ano_mem][$mes_mem]["cant_negocios"] ?></b></td>
+                    <td colspan="2" align="right"><b>Comunicaciones&nbsp;:</b></td>
+                    <td><b><?= $reporte_tot[$ano_mem][$mes_mem]["cant_emails"] ?></b></td>
+                    <td colspan="1" align="right"><b>Facturas&nbsp;:</b></td>
+                    <td><b><?= $reporte_tot[$ano_mem][$mes_mem]["cant_facturas"] ?></b></td>
+                </tr>
+    <?
                 }
+                $mes_mem = $r["ca_mes"];
+                $mes_tot+= $mes_sub;
+                $mes_sub = 0;
+    ?>
+                <tr>
+                    <td></td>
+                    <td colspan="2"><b><?= Utils::mesLargo( $mes_mem ) ?></b></td>
+                    <td colspan="15"></td>
+                </tr>
+    <?
+            }
+
+            if ($r["ca_idcliente"] != $idcliente) {
     ?>
                 <tr>
                     <td colspan="2"></td>
@@ -379,10 +401,12 @@ if ($opcion) {
                 $idcliente = $r["ca_idcliente"];
                 $consecutivo = "";
             }
+
             if($r["ca_consecutivo"] != $consecutivo){
                 $imp_rep = true;
                 $consecutivo = $r["ca_consecutivo"];
             }
+
             if($imp_rep){
     ?>
                 <tr>
@@ -405,6 +429,7 @@ if ($opcion) {
                 $cliente_tot[$idcliente][$ano_mem][$mes_mem]["cant_negocios"]+= $r["ca_cant_negocios"];
                 $array_usuarios = array();
                 $imp_rep = false;
+                $first_time = true;
             }else{
     ?>
                 <tr>
@@ -421,26 +446,29 @@ if ($opcion) {
                         }else if ($r["ca_transporte"] == "Marítimo"){
                             $array_facturas = InoClientesSeaTable::facturasPorReporte($r["ca_referencia"], $r["ca_idcliente"], $r["ca_consecutivo"], $usuenvio);
                         }
+
                         if (count($array_facturas) != 0){
-                            $multiples = (count($array_facturas)>1)?true:false;
+                            // $multiples = (count($array_facturas)>1)?true:false;
+
                             foreach($array_facturas as $factura){
                                 if (!in_array($factura[0], $array_usuarios)){
-                                    if (!$multiples){
+
+                                    if ($first_time){
                                         ?>
                                             <td><?= $factura[0] ?></td>
                                             <td><?= $factura[1] ?></td>
                                         <?
-                                        $multiples = false;
+                                        $first_time = false;
                                     }else {
-                                        $num_cols = (!$imp_rep)?"13":"15";
                                         ?>
                                         <tr>
-                                            <td colspan=<?= $num_cols ?>></td>
+                                            <td colspan="16"></td>
                                             <td><?= $factura[0] ?></td>
                                             <td><?= $factura[1] ?></td>
                                         </tr>
                                         <?
                                     }
+
                                     $array_usuarios[] = $factura[0];
                                     $cliente_tot[$idcliente][$ano_mem][$mes_mem]["cant_facturas"]+= $factura[1];
                                     $operativo_tot["Facturas"][$r["ca_nomoperativo"]][$r["ca_traorigen"]][$r["ca_transporte"]][$r["ca_modalidad"]]+= $factura[1];
@@ -471,15 +499,26 @@ if ($opcion) {
             <td colspan="1" align="right"><b>Facturas&nbsp;:</b></td>
             <td><b><?= $cliente_tot[$idcliente][$ano_mem][$mes_mem]["cant_facturas"] ?></b></td>
         </tr>
+        <tr>
+            <td colspan="9" align="right"><b>Totales&nbsp;mes&nbsp;<?= Utils::mesLargo( $mes_mem ) ?>:</b></td>
+            <td colspan="1" align="right"><b>Reportes&nbsp;:</b></td>
+            <td><b><?= $reporte_tot[$ano_mem][$mes_mem]["cant_reportes"] ?></b></td>
+            <td colspan="1" align="right"><b>Negocios&nbsp;:</b></td>
+            <td><b><?= $reporte_tot[$ano_mem][$mes_mem]["cant_negocios"] ?></b></td>
+            <td colspan="2" align="right"><b>Comunicaciones&nbsp;:</b></td>
+            <td><b><?= $reporte_tot[$ano_mem][$mes_mem]["cant_emails"] ?></b></td>
+            <td colspan="1" align="right"><b>Facturas&nbsp;:</b></td>
+            <td><b><?= $reporte_tot[$ano_mem][$mes_mem]["cant_facturas"] ?></b></td>
+        </tr>
     </table>
     <br />
     <br />
     <table class="tableList" width="900px" border="1" id="mainTable" align="center">
     <tr>
 <?
-    $sub_com = 0;
-    $tot_com = 0;
     foreach($operativo_tot as $reg_key => $registros){
+        $sub_com = 0;
+        $tot_com = 0;
         ?>
         <td valign="top">
             <table class="tableList" width="450px" border="1" id="subTable" align="center">
