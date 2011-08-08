@@ -49,7 +49,7 @@ class traficosActions extends sfActions
         if( $this->modo=="otm" ){
 			$this->nivel = $this->getUser()->getNivelAcceso( traficosActions::RUTINA_OTM );
 			$this->impoexpo=Constantes::OTMDTA;
-			$this->transporte=constantes::MARITIMO;
+			$this->transporte=constantes::TERRESTRE;
 		}
 		if( $this->nivel==-1 ){
 			$this->forward404();
