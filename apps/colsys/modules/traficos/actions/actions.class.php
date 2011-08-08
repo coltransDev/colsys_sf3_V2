@@ -64,7 +64,7 @@ class traficosActions extends sfActions
 	 * @author: Andres Botero
 	 */
 	public function executeSeleccionModo()
-	{		
+	{
 		$this->nivelMaritimo = $this->getUser()->getNivelAcceso( traficosActions::RUTINA_MARITIMO );
 		$this->nivelAereo = $this->getUser()->getNivelAcceso( traficosActions::RUTINA_AEREO );
 		$this->nivelExpo = $this->getUser()->getNivelAcceso( traficosActions::RUTINA_EXPO );
@@ -86,7 +86,11 @@ class traficosActions extends sfActions
             $reporte = ReporteTable::retrieveByConsecutivo( $consecutivo );
 			$this->forward404Unless( $reporte ); 
             
-            if( $reporte->getCaImpoexpo()==Constantes::IMPO && $reporte->getCaTransporte()==Constantes::MARITIMO && $this->modo!="maritimo" ){
+            if($this->modo=="otm")
+            {
+                //$this->redirect( "traficos/listaStatus?modo=otm&reporte=".$reporte->getCaConsecutivo() );
+            }
+            else if( $reporte->getCaImpoexpo()==Constantes::IMPO && $reporte->getCaTransporte()==Constantes::MARITIMO && $this->modo!="maritimo" ){
                 
                 $this->redirect( "traficos/listaStatus?modo=maritimo&reporte=".$reporte->getCaConsecutivo() );	
             }
@@ -112,9 +116,7 @@ class traficosActions extends sfActions
 		}
 		if( $this->nivel==-1 ){
 			$this->forward404();
-		}
-		
-		
+		}		
 		
         
 		if( $this->getRequestParameter("reporte") ){
@@ -125,22 +127,18 @@ class traficosActions extends sfActions
 			}
 			
 				
-			
-			if( $reporte->getCaTransporte()==Constantes::MARITIMO ){
-				$this->modo="maritimo";
-			}
-			
-			if( $reporte->getCaTransporte()==Constantes::AEREO ){
-				$this->modo="aereo";
-			}
-			
-			if( $reporte->getCaImpoexpo()==Constantes::EXPO ){
-				$this->modo="expo";
-			}
-            
-            if( $reporte->getCaImpoexpo()==Constantes::OTMDTA ){
+			if($this->modo=="otm" ){
 				$this->modo="otm";
 			}
+			else if( $reporte->getCaTransporte()==Constantes::MARITIMO ){
+				$this->modo="maritimo";
+			}			
+			else if( $reporte->getCaTransporte()==Constantes::AEREO ){
+				$this->modo="aereo";
+			}			
+			else if( $reporte->getCaImpoexpo()==Constantes::EXPO ){
+				$this->modo="expo";
+			}            
 			
 			$this->cliente = $reporte->getCliente(); 			
 			$this->idreporte = $reporte->getCaIdreporte();
@@ -285,43 +283,42 @@ class traficosActions extends sfActions
 		}
 
         $cliente = $reporte->getCLiente();
-        $fijos = Doctrine::getTable("Contacto")
-                                   ->createQuery("c")
-                                   ->addWhere("c.ca_idcliente = ?", $cliente->getCaIdcliente() )
-                                   ->addWhere("ca_cargo != ?", 'Extrabajador')
-                                   ->addWhere("ca_fijo = ?", true)
-                                   ->execute();
+        $fijos = $reporte->getContacto('1');
         
         $this->form->setDestinatariosFijos( $fijos );
 		//Etapas			
 
         $q = Doctrine::getTable("TrackingEtapa")->createQuery("t");
-		if(  $reporte->getCaImpoexpo()==Constantes::TRIANGULACION ){
+        if($this->modo=="otm")
+        {
+//            $q->addWhere("t.ca_impoexpo = ? OR t.ca_impoexpo IS NULL", Constantes::OTMDTA);
+            $q->addWhere("t.ca_departamento = ? ", Constantes::OTMDTA1);
+        }
+		else if(  $reporte->getCaImpoexpo()==Constantes::TRIANGULACION ){
             $q->addWhere("t.ca_impoexpo = ? OR t.ca_impoexpo IS NULL", Constantes::IMPO);
 		}else{
             $q->addWhere("t.ca_impoexpo = ? OR t.ca_impoexpo IS NULL", $reporte->getCaImpoexpo());
 		}	
 				
-		if( $reporte->getCaImpoexpo()==Constantes::IMPO || $reporte->getCaImpoexpo()==Constantes::TRIANGULACION  ){
+		if( ($reporte->getCaImpoexpo()==Constantes::IMPO || $reporte->getCaImpoexpo()==Constantes::TRIANGULACION) && $this->modo!="otm"   ){
             $q->addWhere("t.ca_transporte = ? OR t.ca_transporte IS NULL", $reporte->getCaTransporte());
 		}
-        $q->addWhere("t.ca_departamento = ? OR t.ca_departamento IS NULL","Tráficos");
+        
+        if($this->modo!="otm")
+            $q->addWhere("t.ca_departamento = ? OR t.ca_departamento IS NULL","Tráficos");
 		$q->addOrderBy("t.ca_orden");
-		
 		$this->form->setQueryIdEtapa( $q );
 		$this->etapas = $q->execute();
 		
 		// Tipos de piezas			
 		$this->form->setQueryPiezas( ParametroTable::retrieveQueryByCaso( "CU047" ) );
-		$this->form->setQueryPeso( ParametroTable::retrieveQueryByCaso( "CU049" ) );
-	
+		$this->form->setQueryPeso( ParametroTable::retrieveQueryByCaso( "CU049" ) );	
 		
 		if( $reporte->getCaTransporte()==Constantes::AEREO ){
 			$this->form->setQueryVolumen( ParametroTable::retrieveQueryByCaso( "CU058" ) );
 		}else{
 			$this->form->setQueryVolumen( ParametroTable::retrieveQueryByCaso( "CU050" ) );
 		}
-			
 		
         $q = Doctrine_Query::create()->from("Concepto c")->where("c.ca_modalidad = ? ", "FCL");
 
@@ -366,8 +363,25 @@ class traficosActions extends sfActions
 			for( $i=0; $i<NuevoStatusForm::NUM_CC ; $i++ ){
 				$bindValues["cc_".$i] = trim($request->getParameter("cc_".$i));
 			}
-						
-			$bindValues["remitente"] = $request->getParameter("remitente");
+
+            if($request->getParameter("empresa_remitente")>0)
+            {
+                switch($request->getParameter("empresa_remitente"))
+                {
+                    case "1":
+                        $bindValues["remitente"]="syepes@coltrans.com.co";
+                        break;
+                    case "2":
+                        $bindValues["remitente"]="syepes@colsolcargo.com";
+                        break;
+                    case "3":
+                        $bindValues["remitente"]="syepes@colotm.com.co";
+                       break;
+                }
+            }
+            else
+                $bindValues["remitente"] = $request->getParameter("remitente");
+            
 			$bindValues["idetapa"] = $request->getParameter("idetapa");
 			
 			$bindValues["fchsalida"] = $request->getParameter("fchsalida");
