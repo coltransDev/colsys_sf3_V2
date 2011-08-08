@@ -52,11 +52,11 @@ var enviarFormulario=function(){
     if( numChecked>0 || <?=$reporte->getCliente()->getProperty("consolidar_comunicaciones")?"true":"false"?>  ){
         document.getElementById("form1").submit();
     }else{
-        if(<?=($reporte->getCaTiporep()==4)?"false":"true"?>)
-            alert("debe seleccionar al menos un contacto fijo.");
-        else
-            $("#form1").submit();
-    }    
+        alert("debe seleccionar al menos un contacto fijo.");
+    }
+
+    
+    
 }
 
 var validarMensaje=function(){	
@@ -187,7 +187,11 @@ var crearSeguimiento=function(){
 		document.getElementById("row_seguimiento").style.display="none";
 	}
 }
+
+
+
 </script>
+
 
 <div class="content" align="center">
 
@@ -231,24 +235,13 @@ echo $form['mensaje_mask']->render();
 	<tr>
 		<td valign="top"><div align="left"><b>Remitente:</b>
 			<?
-            if($modo!="otm")
-            {
-                if($user->getEmail()=="traficos1@coltrans.com.co" || $user->getEmail()=="traficos2@coltrans.com.co" ){			
-                    echo $form['remitente']->renderError(); 	
-                    $form->setDefault('remitente', $user->getEmail() ); 			
-                    echo $form['remitente']->render();					
-                }else{
-                    echo $usuario->getCaNombre()." &lt;".$usuario->getCaEmail()."&gt;";
-                }
-            }
-            else
-            {
-            ?>
-                <input type="radio" value="1" name="empresa_remitente"> Coltrans</input>&nbsp;&nbsp;&nbsp;&nbsp;
-                <input type="radio" value="2" name="empresa_remitente"> Consolcargo</input>&nbsp;&nbsp;&nbsp;&nbsp;
-                <input type="radio" value="3" name="empresa_remitente"> ColOtm</input>
-            <?
-            }
+			if($user->getEmail()=="traficos1@coltrans.com.co" || $user->getEmail()=="traficos2@coltrans.com.co" ){			
+				echo $form['remitente']->renderError(); 	
+				$form->setDefault('remitente', $user->getEmail() ); 			
+				echo $form['remitente']->render();					
+			}else{
+				echo $usuario->getCaNombre()." &lt;".$usuario->getCaEmail()."&gt;";
+			}
 			?>	
 		</div></td>
 		<td valign="top"><div align="left">&nbsp;</div></td>
@@ -471,20 +464,13 @@ echo $form['mensaje_mask']->render();
 			<tr>
 				<td><div align="left"><b>Piezas</b>:<br />
 					<?
-					 echo $form['piezas']->renderError();
-                     if($reporte->getCaTiporep()=="4")
-                     {
-                        $form->setDefault('piezas', $reporte->getRepOtm()->getCaNumpiezas()); 
-                        $form->setDefault('un_piezas', '');                      
-                         
-                     }
-					 else if( $ultStatus && $ultStatus->getCaPiezas() ){	
+					 echo $form['piezas']->renderError(); 					 
+					 if( $ultStatus && $ultStatus->getCaPiezas() ){	
 					 	$piezasArr = explode("|",$ultStatus->getCaPiezas());
 						$piezas = $piezasArr[0];
-						$piezasTipo = isset($piezasArr[1])?$piezasArr[1]:"";
-                            $form->setDefault('piezas', $piezas); 
-                            $form->setDefault('un_piezas', $piezasTipo); 
-
+						$piezasTipo = isset($piezasArr[1])?$piezasArr[1]:"";								
+					 	$form->setDefault('piezas', $piezas); 
+						$form->setDefault('un_piezas', $piezasTipo); 
 					 }					 
 					 echo $form['piezas']->render()."&nbsp;";
 					 echo $form['un_piezas']->render()."&nbsp;";
@@ -492,34 +478,22 @@ echo $form['mensaje_mask']->render();
 				</div></td>
 				<td><div align="left"><b>Peso</b>:<br />
 					<?				
-					 echo $form['peso']->renderError();
-                     if($reporte->getCaTiporep()=="4")
-                     {
-                        $form->setDefault('peso', $reporte->getRepOtm()->getCaPeso()); 
-                        $form->setDefault('un_peso', '');                         
-                     }
-					 else if( $ultStatus && $ultStatus->getCaPeso() )
-                     {	
-                        $pesoArr = explode("|",$ultStatus->getCaPeso());
-                        $peso = $pesoArr[0];
-                        $pesoTipo = isset($pesoArr[1])?$pesoArr[1]:"";
-                        $form->setDefault('peso', $peso); 
-                        $form->setDefault('un_peso', $pesoTipo);                          
-                     }
+					 echo $form['peso']->renderError(); 					 
+					 if( $ultStatus && $ultStatus->getCaPeso() ){	
+					 	$pesoArr = explode("|",$ultStatus->getCaPeso());
+						$peso = $pesoArr[0];
+						$pesoTipo = isset($pesoArr[1])?$pesoArr[1]:"";								
+					 	$form->setDefault('peso', $peso); 
+						$form->setDefault('un_peso', $pesoTipo); 
+					 }
 					 echo $form['peso']->render()."&nbsp;";						
 					 echo $form['un_peso']->render()."&nbsp;";
 					 ?>				
 				</div></td>
 				<td><div align="left"><b>Volumen</b>:<br />
 						<?
-					 echo $form['volumen']->renderError();
-                     
-					 if($reporte->getCaTiporep()=="4")
-                     {
-                        $form->setDefault('volumen', $reporte->getRepOtm()->getCaVolumen()); 
-                        $form->setDefault('un_volumen', '');
-                     }
-					 else if( $ultStatus && $ultStatus->getCaVolumen() ){	
+					 echo $form['volumen']->renderError(); 
+					 if( $ultStatus && $ultStatus->getCaVolumen() ){	
 					 	$volArr = explode("|",$ultStatus->getCaVolumen());
 						$vol = $volArr[0];
 						$volTipo = isset($volArr[1])?$volArr[1]:"";								
