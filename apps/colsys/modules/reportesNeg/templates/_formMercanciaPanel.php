@@ -4,7 +4,9 @@
  *
  *  (c) Coltrans S.A. - Colmas Ltda.
 */
+
 include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047,CU049,CU050,CU058,CU011,CU089,CU092"));
+
 ?>
 <script type="text/javascript">
     FormMercanciaPanel = function( config ){
@@ -32,106 +34,152 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047,CU049,C
                             id:"ca_mcia_peligrosa",
 							name:"ca_mcia_peligrosa",
                             tabIndex:this.tabIndex++
+                        }                        
+                        <?
+                        
+                        //if($impoexpo==Constantes::IMPO )
+                        {
+                        ?>
+                        ,{
+                            xtype:"checkbox",
+                            fieldLabel:"Declaración Anticipada",
+                            id:"ca_declaracionant",
+							name:"ca_declaracionant",
+                            tabIndex:this.tabIndex++
                         }
 						<?
-						if($impoexpo==Constantes::EXPO)
+                        }
+						if($impoexpo==Constantes::EXPO || $impoexpo==Constantes::OTMDTA)
 						{
 						?>
 						,
 						{                         
-                                autoHeight:true,
-                                layout:'column',                                
+                            autoHeight:true,
+                            layout:'column',                                
+                            items:[
+                            {
+                                layout:'column',
+                                border:false,
+                                title:"Piezas",
+                                columns:2,
+                                columnWidth:.25,
+                                fieldLabel:"Piezas",
                                 items:[
-                                {
-                                    layout:'column',
-                                    border:false,
-                                    title:"Piezas",
-                                    columns:2,
-                                    columnWidth:.25,
-                                    fieldLabel:"Piezas",
-                                    items:[
-                                        {
-                                            xtype:"numberfield",
-                                            name:"npiezas",
-                                            id:"npiezas",
-                                            width:60
-                                        }
-                                        ,
-                                        new WidgetParametros({
-                                                    id:'mpiezas',
-                                                    name:'mpiezas',
-                                                    caso_uso:"CU047",
-                                                    width:80,
-                                                    idvalor:"valor"
-                                                    })
-                                    ]
-                                },
-                                {
-                                    layout:'column',
-                                    border:false,
-                                    defaultType:'textfield',
-                                    columns:2,
-                                    columnWidth:.25,
-                                    title:"Peso",
-                                    items:[
                                     {
                                         xtype:"numberfield",
-                                        name:"npeso",
-                                        id:"npeso",
-										width:60
+                                        name:"npiezas",
+                                        id:"npiezas",
+                                        width:60
+                                    }
+                                    ,
+                                    new WidgetParametros({
+                                                id:'mpiezas',
+                                                name:'mpiezas',
+                                                caso_uso:"CU047",
+                                                width:80,
+                                                idvalor:"valor"
+                                                })
+                                ]
+                            },
+                            {
+                                layout:'column',
+                                border:false,
+                                defaultType:'textfield',
+                                columns:2,
+                                columnWidth:.25,
+                                title:"Peso",
+                                items:[
+                                {
+                                    xtype:"numberfield",
+                                    name:"npeso",
+                                    id:"npeso",
+                                    width:60
+                                },
+                                new WidgetParametros({
+                                                id:'mpeso',
+                                                name:'mpeso',
+                                                caso_uso:"CU049",
+                                                width:80,
+                                                idvalor:"valor"
+                                                })
+                                ]
+                            },                                
+                            {
+                                layout:'column',
+                                border:false,
+                                defaultType:'textfield',
+                                columns:2,
+                                columnWidth:.25,
+                                title:"Volumen",
+                                items:[
+                                    {
+                                        xtype:"numberfield",
+                                        name:"nvolumen",
+                                        id:"nvolumen",
+                                        width:60
                                     },
                                     new WidgetParametros({
-                                                    id:'mpeso',
-                                                    name:'mpeso',
-                                                    caso_uso:"CU049",
-                                                    width:80,
-                                                    idvalor:"valor"
-                                                    })
-                                    ]
-                                },                                
-                                {
-                                    layout:'column',
-                                    border:false,
-                                    defaultType:'textfield',
-                                    columns:2,
-                                    columnWidth:.25,
-                                    title:"Volumen",
-                                    items:[
-										{
-											xtype:"numberfield",
-											name:"nvolumen",
-											id:"nvolumen",
-											width:60
-										},
-                                        new WidgetParametros({
-                                                    id:'mvolumen',
-                                                    name:'mvolumen',
-                                                    caso_uso:"<?=($modo==Constantes::AEREO)?"CU058":"CU050"?>",
-                                                    width:80,
-                                                    idvalor:"valor"
-                                                    })
-                                    ]
-                                },
-								{
-                                    layout:'column',
-                                    border:false,
-                                    defaultType:'textfield',
-                                    columns:4,
-                                    columnWidth:.25,
-                                    title:"Dimensiones",
-                                    items:[
-										{
-											xtype:'textarea',
-											name:'dimensiones',
-											width:'80%',
-											grow:true,
-											id:"dimensiones"
-										}
-									]
-								}								
+                                                id:'mvolumen',
+                                                name:'mvolumen',
+                                                caso_uso:"<?=($modo==Constantes::AEREO)?"CU058":"CU050"?>",
+                                                width:80,
+                                                idvalor:"valor"
+                                                })
                                 ]
-                            }						
+                            },
+                            <?
+                            if($impoexpo==Constantes::EXPO)
+                            {
+                            ?>
+                            {
+                                layout:'column',
+                                border:false,
+                                defaultType:'textfield',
+                                columns:4,
+                                columnWidth:.25,
+                                title:"Dimensiones",
+                                items:[
+                                    {
+                                        xtype:'textarea',
+                                        name:'dimensiones',
+                                        width:'80%',
+                                        grow:true,
+                                        id:"dimensiones"
+                                    }
+                                ]
+                            }
+                            <?
+                            }
+                            else
+                            {
+                            ?>
+                                                            {
+                                layout:'column',
+                                border:false,
+                                defaultType:'textfield',
+                                columns:4,
+                                columnWidth:.25,
+                                title:"Valor Fob (USD)",
+                                items:[
+                                    {
+                                        xtype:'numberfield',
+                                        name:'valor_fob',
+                                        width:'80%',
+                                        grow:true,
+                                        id:"valor_fob"
+                                    }
+                                ]
+                            }                                
+                            <?
+                            }
+                            ?>
+                            ]
+                        }						
 						,
+                        <? 
+                        if($impoexpo==Constantes::EXPO)
+                        {
+                        ?>
 						{
 							autoHeight:true,
 							layout:'column',
@@ -176,7 +224,7 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047,CU049,C
 											typeAhead:true,
 											forceSelection:true,
 											triggerAction:'all',
-											selectOnFocus:true,
+											selectOnFocus:true,//10670-2011, 10681-2011, 400.05.08.023.1
 											lazyRender:true
 										}
 									]
@@ -256,6 +304,7 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047,CU049,C
                         <?
                         }
 						}
+                        }
 						?>
 						
                     ]
