@@ -56,6 +56,8 @@ class Reporte extends BaseReporte {
                 return Doctrine::getTable("Contacto")->find($this->getCaIdconcliente());
             else if($tipo=='1')//CONTACTO FIJO
             {
+                if(!$this->cliente)
+                     $this->getCliente();   
                 return  Doctrine::getTable("Contacto")
                                        ->createQuery("c")
                                        ->addWhere("c.ca_idcliente = ?", $this->cliente->getCaIdcliente() )
@@ -65,12 +67,11 @@ class Reporte extends BaseReporte {
             }
         }
     }
-
+    
     /*
      * Retorna el objeto cliente asociado al contacto del reporte
      * @author Andres Botero
      */
-
     public function getCliente() {
         if(!$this->cliente)
         {
