@@ -20,6 +20,7 @@ class Reporte extends BaseReporte {
     private $ultimaVersion = null;
     private $repExterior = null;
     private $cerrado = null;
+    private $cliente = null;
 
 
     const IDLISTASEG = 3;
@@ -30,8 +31,39 @@ class Reporte extends BaseReporte {
      * @author Andres Botero
      */
 
-    public function getContacto() {
-        return Doctrine::getTable("Contacto")->find($this->getCaIdconcliente());
+    public function getContacto($tipo='0') {        
+        if($this->getCaTiporep()==4)
+        {
+            if(!$this->cliente)
+                $this->getCliente();
+            if(!$this->cliente)
+                    $this->cliente=new Tercero();
+            $contacto=new Contacto();            
+            $contacto->setCaEmail($this->cliente->getCaEmail());
+            $contacto->setCaNombres($this->cliente->getCaCompania());
+            $contacto->setCaIdcliente($this->cliente->getCaIdcliente());
+            $contacto->setCaFijo("true");
+            $contacto->setCaTelefonos($this->cliente->getCaTelefonos());
+            $contacto->setCaCargo($this->cliente->getCaEmail());            
+            if($tipo=='2')
+                return $contacto;
+            else
+                return array($contacto);
+        }
+        else
+        {
+            if($tipo=='0')//contacto No fijo
+                return Doctrine::getTable("Contacto")->find($this->getCaIdconcliente());
+            else if($tipo=='1')//CONTACTO FIJO
+            {
+                return  Doctrine::getTable("Contacto")
+                                       ->createQuery("c")
+                                       ->addWhere("c.ca_idcliente = ?", $this->cliente->getCaIdcliente() )
+                                       ->addWhere("ca_cargo != ?", 'Extrabajador')
+                                       ->addWhere("ca_fijo = ?", true)
+                                       ->execute();
+            }
+        }
     }
 
     /*
@@ -40,13 +72,33 @@ class Reporte extends BaseReporte {
      */
 
     public function getCliente() {
-
-        return Doctrine::getTable("Cliente")
-                ->createQuery("cl")
-                ->innerJoin("cl.Contacto c")
-                ->where("c.ca_idcontacto = ?", $this->getCaIdconcliente())
-                ->distinct()
-                ->fetchOne();
+        if(!$this->cliente)
+        {
+            if($this->getCaTiporep()==4)
+            {
+                $this->cliente = new Cliente();                
+                $tercero=Doctrine::getTable("Tercero")->find($this->getRepOtm()->getCaIdcliente());                
+                if($tercero)
+                {                    
+                    $this->cliente->setCaIdcliente($tercero->getCaIdtercero());
+                    $this->cliente->setCaCompania($tercero->getCaNombre());
+                    $this->cliente->setCaEmail($tercero->getCaEmail());
+                    $this->cliente->setCaTelefonos($tercero->getCaTelefonos());
+                    $this->cliente->setCaFax($tercero->getCaFax());
+                    $this->cliente->setCaIdciudad($tercero->getCaIdciudad());
+                }
+            }
+            else
+            {
+                $this->cliente=Doctrine::getTable("Cliente")
+                    ->createQuery("cl")
+                    ->innerJoin("cl.Contacto c")
+                    ->where("c.ca_idcontacto = ?", $this->getCaIdconcliente())
+                    ->distinct()
+                    ->fetchOne();
+            }
+        }
+        return $this->cliente;
     }
 
     /*
