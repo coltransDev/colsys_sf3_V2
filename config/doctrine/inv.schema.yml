@@ -1,5 +1,4 @@
-
-    
+   
 
 InvCategory:
   options:
@@ -17,9 +16,7 @@ InvCategory:
     ca_name: string
     ca_order: integer
     ca_main: boolean 
-    ca_parameter: string
-    ca_prefix: string
-    ca_autonumeric: boolean 
+    ca_parameter: string    
   relations:
     SubCategory:
       local: ca_idcategory
@@ -27,6 +24,11 @@ InvCategory:
       type: many
       class: InvCategory
       orderBy: ca_order ASC
+    Parent:
+      local: ca_parent
+      foreign: ca_idcategory
+      type: one
+      class: InvCategory      
     InvActivo:
       local: ca_idcategory
       foreign: ca_idcategory
@@ -210,3 +212,30 @@ InvProducto:
       foreign: ca_idcategory
       type: one
 
+
+InvPrefijo:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: inv
+  tableName: inv.tb_prefijos
+  columns:
+    ca_idcategory:
+      type: integer
+      primary: true
+    ca_idsucursal:
+      type: string
+      primary: true             
+    ca_prefix: string
+    ca_autonumeric: boolean 
+    ca_padlength: integer    
+  relations:
+    InvCategory:
+      local: ca_idcategory
+      foreign: ca_idcategory
+      type: one
+    Sucursal:
+      local: ca_idsucursal
+      foreign: ca_idsucursal
+      type: one

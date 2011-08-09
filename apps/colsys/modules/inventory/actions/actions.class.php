@@ -761,5 +761,38 @@ class inventoryActions extends sfActions
      }
      
      
+     /*
+      * Listados de activos
+      */
+     public function executeInformeListadoActivos( $request ){
+         $q  = Doctrine::getTable("Sucursal")
+                                      ->createQuery("s")
+                                      ->addWhere("s.ca_idempresa = ?", 2)
+                                      ->addOrderBy("s.ca_nombre");
+        
+        if( $this->nivel<2 ){
+            $user = $this->getUser();
+            $q->addWhere("s.ca_idsucursal = ? ", $user->getIdsucursal() );
+        }
+        
+        $this->sucursales = $q->execute();
+     }
+     
+     public function executeInformeListadoActivosResult( $request ){
+         $idsucursal = $request->getParameter("idsucursal");
+         $q = Doctrine::getTable("InvActivo")
+                 ->createQuery("a")
+                 ->innerJoin("a.InvCategory c")
+                 ->leftJoin("c.Parent p")
+                 ->leftJoin("a.Usuario u")
+                 ->leftJoin("a.Sucursal s")
+                 ->addWhere("a.ca_idsucursal = ?", $idsucursal )
+                 ->addOrderBy("c.ca_name ASC")
+                 ->addOrderBy("a.ca_identificador ASC");
+         
+         $this->activos = $q->execute();
+     }
+     
+     
 }
 ?>

@@ -12,6 +12,11 @@
         </tr>
         <tr>
             <td>                
+                <?=link_to("Listados de Activos", "inventory/informeListadoActivos");?>  
+            </td>
+        </tr>
+        <tr>
+            <td>                
                 <?=link_to("Licencias de Software", "inventory/informeLicenciasResult");?>  
             </td>
         </tr>
