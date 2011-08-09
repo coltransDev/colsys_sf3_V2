@@ -92,7 +92,7 @@ Reporte:
     ca_idcotizacionotm: string
     ca_idproductootm: integer
     ca_tiporep: integer
-    ca_declaracionant : boolean
+    ca_declaracionant: boolean
   relations:
     RepStatus:
       local: ca_idreporte
@@ -209,6 +209,10 @@ Reporte:
       local: ca_idreporte
       foreign: ca_idreporte
       type: many
+    RepOtm:
+      local: ca_idreporte
+      foreign: ca_idreporte
+      type: one
 
 RepStatus:
   options:
@@ -660,3 +664,71 @@ RepCosto:
       local: ca_idcosto
       foreign: ca_idcosto
       type: one
+      
+      
+      
+RepOtm:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: reportes
+  tableName: tb_repotm
+  attributes:
+    export: tables
+  columns:
+    ca_idreporte:
+      type: integer
+      primary: true    
+    ca_referencia: string,
+    ca_idcliente: integer,  
+    ca_hbls: string,
+    ca_origenimpo: string,
+    ca_idproveedor: integer,
+    ca_numpiezas: numeric,
+    ca_peso: numeric,
+    ca_volumen: numeric,
+    ca_valorfob: numeric,
+    ca_fcharribo: date,
+    ca_manifiesto: string,
+    ca_idtransportador: integer,
+    ca_doctransporte: string,
+    ca_fchdoctransporte: date,
+    ca_codadupartida: integer,
+    ca_codadudestino: integer,
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string,
+    ca_idcliente: integer,
+    ca_numpiezasun: numeric,
+    ca_pesoun: numeric,
+    ca_volumenun: numeric
+  relations:
+    Reporte:
+      local: ca_idreporte
+      foreign: ca_idreporte
+      type: one
+    Referencia:
+      local: ca_referencia
+      foreign: ca_referencia
+      type: one
+    Origenimp:
+      local: ca_origenimpo
+      foreign: ca_idciudad
+      type: one
+      class: Ciudad
+    Cliente:
+      local: ca_idcliente
+      foreign: ca_idtercero
+      type: one
+      class: Tercero
+    Tercero:
+       local: ca_idproveedor
+       foreign: ca_idtercero
+       type: one
+    Importador:
+      local: ca_idcliente
+      foreign: ca_idtercero
+      type: one
+      class: Tercero
