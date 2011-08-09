@@ -282,6 +282,10 @@ include_component("inventory", "panelAsignacionesSoftware");
                                 grid.store.reload();
                             }
                         }
+                        
+                        if( action.result.identificador ){
+                            Ext.MessageBox.alert('', "guardo correctamente con el ID: "+action.result.identificador); 
+                        }
 
                         
                     },

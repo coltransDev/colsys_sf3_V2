@@ -420,6 +420,10 @@ $office_types = $sf_data->getRaw("office_types");
                                 grid.store.reload();
                             }
                         }
+                        
+                        if( action.result.identificador ){
+                            Ext.MessageBox.alert('', "guardo correctamente con el ID: "+action.result.identificador); 
+                        }
 
                         
                     },

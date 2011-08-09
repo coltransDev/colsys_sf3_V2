@@ -90,8 +90,8 @@ PanelReading = function( config ){
         this.asignacionesPanel = new PanelAsignacionesSoftware({
                                     closable: false,
                                     title: "Asignaciones",
-                                    autoScroll: true,
-                                    enableTabScroll:true
+                                    autoScroll: true,                                    
+                                    autoHeight: true
                                  });
     }else{
         this.asignacionesPanel = new PanelAsignaciones({
@@ -107,7 +107,8 @@ PanelReading = function( config ){
             deferredRender: false,
             activeTab: 3,     // first tab initially active
             height: 400,
-            enableTabScroll:true,            
+            enableTabScroll:true,   
+            autoScroll: true,                                    
             items: [
                 this.preview,
                 this.responses,

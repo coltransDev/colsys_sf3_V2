@@ -25,16 +25,7 @@
                 sortable: true,
                 renderer: this.formatItem
 
-            },
-            {
-                header: "Activo",
-                dataIndex: 'noinventario',
-                //hideable: false,
-                width: 63,
-                sortable: true,
-                renderer: this.formatItem
-        
-            },
+            },            
             {
                 header: "Marca",
                 dataIndex: 'marca',
@@ -108,6 +99,14 @@
                 width: 100,
                 sortable: true,
                 hidden: this.parameter!="Hardware"
+            },
+            {
+                header: "Cantidad",
+                dataIndex: 'cantidad',
+                hideable: false,
+                width: 100,
+                sortable: true,
+                hidden: this.parameter!="Software"
             }
 
       
@@ -144,7 +143,8 @@
             {name: 'idsucursal', type: 'string'},
             {name: 'mantenimiento', type: 'string'},
             {name: 'folder', type: 'string'},
-            {name: 'deleted', type: 'boolean'}
+            {name: 'deleted', type: 'boolean'},
+            {name: 'cantidad', type: 'integer'}
 
 
         ]);
@@ -164,7 +164,7 @@
             },
             this.record
         ),
-            sortInfo:{field: 'noinventario', direction: "ASC"}
+            sortInfo:{field: 'identificador', direction: "ASC"}
             //groupOnSort: true,
             //groupField: 'noinventario'
         

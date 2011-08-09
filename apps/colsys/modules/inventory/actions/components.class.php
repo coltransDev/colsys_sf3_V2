@@ -95,16 +95,6 @@ class inventoryComponents extends sfComponents
 
         $this->editable = "false";
 
-        if($this->nivel==1){
-
-            $ususucursal = $this->getUser()->getIdSucursal();
-            $categorias=Doctrine::getTable("InvCategory")->findBy("ca_idsucursal", $ususucursal);
-            $id_cate="";
-            foreach($categorias as $categoria)
-            {
-                $this->id_cate.=$categoria->getCaIdcategory().",";
-            }
-        }
     }
 
     /*

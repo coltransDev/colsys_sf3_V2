@@ -127,16 +127,16 @@ Ext.onReady(function(){
 
 
     <div id="cpanel" style="margin: 20px;">
-        <!--
+        
         <div style="float:left;">
             <div class="icon">
-                <a href="#" onClick="window.open('<?=url_for("pm/crearTicket")?>')">
-                    <?=image_tag("48x48/edit_add.png")?>
-                    <span>Nuevo Documento</span>
+                <a href="<?=url_for("inventory/informes")?>" >
+                    <?=image_tag("48x48/kspread_ksp.gif")?>
+                    <span>Informes</span>
                 </a>
             </div>
         </div>
-        -->
+        
    </div>
 
 

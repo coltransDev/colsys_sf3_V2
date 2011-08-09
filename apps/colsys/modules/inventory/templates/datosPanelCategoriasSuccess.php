@@ -13,6 +13,8 @@
             $subcategorias = $categoria->getSubCategory();
             $text.=" (".count($subcategorias).")";
         }
+        
+        $prefijo = $categoria->getPrefijo( $idsucursal );
     ?>
     {
         text:'<?=$text?> ',
@@ -20,11 +22,12 @@
         name:'<?=$categoria->getCaName()?> ',
         id: '<?=$categoria->getCaIdcategory()?>',        
         idcategoria: '<?=$categoria->getCaIdcategory()?>',
+        idsucursal: '<?=$idsucursal?>',
         parentNode: '<?=$categoria->getCaParent()?>',
         main: <?=$categoria->getCaMain()?"true":"false"?>,
         parameter: '<?=$categoria->getCaParameter()?>',
-        autonumeric: <?=$categoria->getCaAutonumeric()?"true":"false"?>,
-        prefix: '<?=$categoria->getCaPrefix()?>'
+        autonumeric: <?=$prefijo&&$prefijo->getCaAutonumeric()?"true":"false"?>,
+        prefix: '<?=$prefijo?$prefijo->getCaPrefix():""?>'
     }
     <?
     }

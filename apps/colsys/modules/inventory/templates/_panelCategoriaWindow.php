@@ -55,6 +55,13 @@ PanelCategoriaWindow = function( config ) {
                         allowBlank:false
                     },
                     {
+                        id: 'idsucursal',
+                        xtype:'hidden',
+                        name: 'idsucursal',
+                        value: '',
+                        allowBlank:false
+                    },
+                    {
                         id: 'parent',
                         xtype:'hidden',
                         name: 'parent',
