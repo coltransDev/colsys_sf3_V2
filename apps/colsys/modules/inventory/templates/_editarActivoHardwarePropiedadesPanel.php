@@ -4,8 +4,8 @@
  * 
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
-$so_types = $sf_data->getRaw("so_types");
-$office_types = $sf_data->getRaw("office_types");
+/*$so_types = $sf_data->getRaw("so_types");
+$office_types = $sf_data->getRaw("office_types");*/
 
 ?>
 <script type="text/javascript">
@@ -141,7 +141,7 @@ $office_types = $sf_data->getRaw("office_types");
                                         xtype:'textfield',
                                         fieldLabel: 'Identificador',
                                         name: 'identificador',
-                                        allowBlank: true,
+                                        allowBlank: this.autonumeric,
                                         disabled: this.autonumeric
                                     },
                                     {
@@ -155,10 +155,11 @@ $office_types = $sf_data->getRaw("office_types");
                                         hiddenName: 'asignadoa'
                                     }),
                                     {
-                                        xtype:'textfield',
+                                        xtype:'numberfield',
                                         fieldLabel: 'Vlr. Reposición',
                                         name: 'reposicion',
-                                        allowBlank: false
+                                        allowBlank: false,
+                                        allowNegative: false
                                     },
                                     {
                                         xtype:          'combo',
@@ -236,7 +237,7 @@ $office_types = $sf_data->getRaw("office_types");
                     //---------------Panel 2-----------
                     {
                         layout: 'form',
-                        title: 'Software',                       
+                        title: 'Software OEM (No comprado en caja)',                       
                         items: [
                             {
                                 xtype:'fieldset',
@@ -293,7 +294,7 @@ $office_types = $sf_data->getRaw("office_types");
                                         ]
                                     }
                                 ]
-                            },
+                            }/*,
                             {
                                 xtype:'htmleditor',
                                 name:'software',
@@ -307,7 +308,7 @@ $office_types = $sf_data->getRaw("office_types");
                                 enableColors : false,
                                 enableLists: false,
                                 allowBlank: false
-                            }
+                            }*/
                         ]
                     }
                     ,

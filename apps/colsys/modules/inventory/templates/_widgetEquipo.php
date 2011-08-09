@@ -4,7 +4,7 @@
  *
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
-$data = $sf_data->getRaw("data");
+
 //echo $trafico."widget";
 ?>
 

@@ -96,7 +96,7 @@ include_component("inventory", "panelAsignacionesSoftware");
                                         xtype:'textfield',
                                         fieldLabel: 'Identificador',
                                         name: 'identificador',
-                                        allowBlank: true,
+                                        allowBlank: this.autonumeric,
                                         disabled: this.autonumeric
                                     },
                                     {
@@ -116,10 +116,11 @@ include_component("inventory", "panelAsignacionesSoftware");
                                         allowDecimals: false
                                     },
                                     {
-                                        xtype:'textfield',
+                                        xtype:'numberfield',
                                         fieldLabel: 'Valor',
                                         name: 'reposicion',
-                                        allowBlank: false
+                                        allowBlank: false,
+                                        allowNegative: false
                                     }
                                 ]
                             }

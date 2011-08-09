@@ -186,13 +186,14 @@ Ext.extend(PanelCategorias, Ext.tree.TreePanel, {
 
     },
     crear: function( ){
-        var n = this.ctxNode;
+        var n = this.ctxNode;        
         if( !n.attributes.leaf ){
             this.win = new PanelCategoriaWindow({node: n, action:"add"});
             this.win.show();
             var fp = Ext.getCmp("categoria-form");
             fp.getForm().findField("parent").setValue(n.attributes.idcategoria);
-            fp.getForm().findField("main").enable();
+            fp.getForm().findField("main").enable();            
+            fp.getForm().findField("idsucursal").setValue(this.idsucursal);
         }else{
             Ext.MessageBox.alert("Error","No es posible agregar un nodo en este punto");
         }

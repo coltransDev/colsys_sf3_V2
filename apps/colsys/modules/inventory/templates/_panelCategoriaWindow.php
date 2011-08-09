@@ -115,6 +115,7 @@ PanelCategoriaWindow = function( config ) {
                         width: 100,
                         fieldLabel: 'Autonumerar',
                         id: 'autonumeric',
+                        name: 'autonumeric',
                         value: '',
                         checked: false,
                         allowBlank:false
@@ -157,6 +158,8 @@ Ext.extend(PanelCategoriaWindow, Ext.Window, {
             var node = this.node;
             var act = this.action;
             var name = fp.getForm().findField("name").getValue();
+            var autonumeric = fp.getForm().findField("autonumeric").getValue();
+            var prefix = fp.getForm().findField("prefix").getValue();
             fp.getForm().submit({url:'<?=url_for('inventory/panelCategoriaGuardar')?>',
                 waitMsg:'Salvando Datos...',
                 // standardSubmit: false,
@@ -170,7 +173,8 @@ Ext.extend(PanelCategoriaWindow, Ext.Window, {
                         }else{
                             node.setText(name);
                         }
-                        node.attributes.autonumeric = fp.getForm().findField("autonumeric").getValue();
+                        node.attributes.autonumeric = autonumeric;
+                        node.attributes.prefix = prefix;
                     }
 
 

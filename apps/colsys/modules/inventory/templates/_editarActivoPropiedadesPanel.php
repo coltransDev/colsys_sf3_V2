@@ -74,13 +74,13 @@
                         columns: 3,
                         width: 890,
                         defaults:{
-                            columnWidth:0.33,
+                            columnWidth:0.5,
                             layout:'form',
                             border:false,
                             bodyStyle:'padding:4px'
                         },
                         items:[{
-                                columnWidth:.3,
+                                columnWidth:.5,
                                 layout: 'form',
                                 xtype:'fieldset',
                                 defaults:{
@@ -117,30 +117,20 @@
                                         fieldLabel: 'Modelo',
                                         name: 'modelo',
                                         allowBlank: false
-                                    },
-                                    {
-                                        xtype:'textfield',
-                                        fieldLabel: 'Version',
-                                        name: 'version',
-                                        allowBlank: true
                                     }
+                                    
                                 ]
                             },{
                                 columnWidth:.4,
                                 layout: 'form',
                                 xtype:'fieldset',
-                                items: [
-                                    {
-                                        xtype:'textfield',
-                                        fieldLabel: 'No Inventario',
-                                        name: 'noinventario',
-                                        allowBlank: true
-                                    },
+                                items: [                                    
                                     {
                                         xtype:'textfield',
                                         fieldLabel: 'Identificador',
                                         name: 'identificador',
-                                        allowBlank: true
+                                        allowBlank: this.autonumeric,
+                                        disabled: this.autonumeric
                                     },
                                     {
                                         xtype:'textfield',
@@ -153,79 +143,12 @@
                                         hiddenName: 'asignadoa'
                                     }),
                                     {
-                                        xtype:'textfield',
+                                        xtype:'numberfield',
                                         fieldLabel: 'Vlr. Reposición',
                                         name: 'reposicion',
-                                        allowBlank: false
-                                    },
-                                    {
-                                        xtype:          'combo',
-                                        mode:           'local',
-                                        value:          '',
-                                        triggerAction:  'all',
-                                        forceSelection: true,
-                                        editable:       true,
-                                        fieldLabel:     'Mantenimiento',
-                                        name:           'mantenimiento',
-                                        hiddenName:     'mantenimiento',
-                                        displayField:   'name',
-                                        valueField:     'value',
-                                        allowBlank: false,
-                                        store:          new Ext.data.JsonStore({
-                                            fields : ['name', 'value'],
-                                            data   : [
-                                                <?
-                                                
-                                                for( $i=1; $i<=12; $i++ ){
-                                                    echo ($i>1)?",":"";
-                                                    echo "{name : '".Utils::mesLargo($i)."',   value: '".Utils::mesLargo($i)."'}";
-                                                }
-                                                ?>
-                                            ]
-                                        })
+                                        allowBlank: true,
+                                        allowNegative: false
                                     }
-                                ]
-                            },
-                            {
-                                columnWidth:.3,
-                                layout: 'form',
-                                xtype:'fieldset',
-                                defaults:{
-                                    width: 130
-                                },
-                                items: [
-
-                                    {
-                                        xtype:'textfield',
-                                        fieldLabel: 'Procesador',
-                                        name: 'procesador',
-                                        allowBlank: false
-                                    },
-                                    {
-                                        xtype:'textfield',
-                                        fieldLabel: 'Disco',
-                                        name: 'disco',
-                                        allowBlank: false
-                                    },
-                                    {
-                                        xtype:'textfield',
-                                        fieldLabel: 'Memoria',
-                                        name: 'memoria',
-                                        allowBlank: false
-                                    },
-                                     {
-                                        xtype:'textfield',
-                                        fieldLabel: 'Un. Optica',
-                                        name: 'optica',
-                                        allowBlank: false
-                                    },
-                                    {
-                                        xtype:'textfield',
-                                        fieldLabel: 'Dirección IP',
-                                        name: 'ipaddress',
-                                        allowBlank: true
-                                    }
-                                    
                                 ]
                             }
                         ]

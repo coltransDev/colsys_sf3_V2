@@ -230,20 +230,22 @@ class inventoryActions extends sfActions
                         $activo->setCaIdentificador( null );
                     }
                 }else{
-
+                    
+                    $pre = $prefijo->getCaPrefix()."-";
                     $value = Doctrine::getTable("InvActivo")
                               ->createQuery("a")
                               ->select("a.ca_identificador")  
-                              ->addWhere("a.ca_identificador LIKE ?", $prefijo->getCaPrefix()."%")
+                              ->addWhere("a.ca_identificador LIKE ?", $pre."%")
                               ->addOrderBy("a.ca_identificador DESC")        
                               ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)
                               ->execute();
+                    
 
                     if( $value ){
-                        $value = str_replace( $prefijo->getCaPrefix() , "", $value);
-                        $identificador = $prefijo->getCaPrefix().str_pad(intval($value)+1, $prefijo->getCaPadlength(), "0", STR_PAD_LEFT);
+                        $value = str_replace( $pre , "", $value);
+                        $identificador = $prefijo->getCaPrefix()."-".str_pad(intval($value)+1, $prefijo->getCaPadlength(), "0", STR_PAD_LEFT);
                     }else{
-                        $identificador = $prefijo->getCaPrefix().str_pad("1", $prefijo->getCaPadlength(), "0", STR_PAD_LEFT);
+                        $identificador = $prefijo->getCaPrefix()."-".str_pad("1", $prefijo->getCaPadlength(), "0", STR_PAD_LEFT);
                     }                    
                     $activo->setCaIdentificador( $identificador );
 
@@ -416,8 +418,9 @@ class inventoryActions extends sfActions
      *
      */
     public function executePanelCategoriaGuardar( $request ){
-        $idcategory = $request->getParameter("idcategory");
+        $idcategory = $request->getParameter("idcategory");        
         $idsucursal = $request->getParameter("idsucursal");
+        $this->forward404Unless( $idsucursal );
         try{        
             $ususucursal = $this->getUser()->getIdSucursal();
 
@@ -438,6 +441,7 @@ class inventoryActions extends sfActions
                 $categoria->setCaParent(null);
             }
             $categoria->save();
+            $idcategory = $categoria->getCaIdcategory();
             
             if( $request->getParameter("prefix") ){
                 
@@ -451,7 +455,8 @@ class inventoryActions extends sfActions
                 
                 $autonumeric = $request->getParameter("autonumeric");
                 $prefijo->setCaAutonumeric($autonumeric=="on");
-                $prefijo->setCaPrefix($request->getParameter("prefix"));                
+                $prefix = strtoupper(str_replace(" ", "", str_replace("-", "", $request->getParameter("prefix"))));
+                $prefijo->setCaPrefix( $prefix );                
                 $prefijo->save();
             }
             
