@@ -95,6 +95,9 @@ Ext.extend(PanelCategorias, Ext.tree.TreePanel, {
     },
 
     onContextMenu: function( node,  e ) {
+        if( this.readOnly ){
+            return false;
+        }
         var id = node.id;
 
         this.ctxNode = node;
@@ -138,6 +141,9 @@ Ext.extend(PanelCategorias, Ext.tree.TreePanel, {
 
     },
     onBeforeNodeDrop: function( e ){
+        if( this.readOnly ){
+            return false;
+        }
         var ddSource = e.source;
         var selectedRecords = ddSource.dragData.selections;
         var node = e.target;
@@ -200,6 +206,7 @@ Ext.extend(PanelCategorias, Ext.tree.TreePanel, {
 
     },
     editar: function( ){
+        
         var n = this.ctxNode;
         this.win = new PanelCategoriaWindow({node: n, action:"edit"});
         this.win.show();
@@ -216,6 +223,7 @@ Ext.extend(PanelCategorias, Ext.tree.TreePanel, {
 
     },
     eliminar: function( ){
+        
         var n = this.ctxNode;
         if( n ){
             Ext.Ajax.request(

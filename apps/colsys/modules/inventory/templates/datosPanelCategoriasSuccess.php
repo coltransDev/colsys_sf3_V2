@@ -6,8 +6,6 @@
             echo ",";
         }
 
-        
-
         $text = $categoria->getCaName();
         if( $categoria->getCaMain() ){
             $subcategorias = $categoria->getSubCategory();
@@ -20,7 +18,8 @@
         text:'<?=$text?> ',
         leaf: <?=$categoria->getCaMain()?"false":"true"?>,
         name:'<?=$categoria->getCaName()?> ',
-        id: '<?=$categoria->getCaIdcategory()?>',        
+        id: '<?=$categoria->getCaIdcategory()?>',  
+        data: '<?=($parent?$parent->getCaName()." - ":"").$categoria->getCaName()?> ',
         idcategoria: '<?=$categoria->getCaIdcategory()?>',
         idsucursal: '<?=$idsucursal?>',
         parentNode: '<?=$categoria->getCaParent()?>',

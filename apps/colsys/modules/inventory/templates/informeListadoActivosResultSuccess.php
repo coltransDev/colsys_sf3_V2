@@ -4,6 +4,14 @@
  * (c) Coltrans S.A. - Colmas Ltda.
  * 
  */
+
+if( $param=="Software" ){
+    $cols = 9;
+}elseif( $param=="Hardware" ){
+    $cols = 20;
+}else{
+    $cols = 10;
+}
 ?>
 <div class="content" align="center">
     <h2>Listados de Activos</h2>
@@ -31,15 +39,65 @@
             <th>
                 Proveedor
             </th>
+            <?
+            if( $param!="Software" ){
+            ?>
             <th>
                 Asignado a
             </th>
             <th>
                 Ubicación
             </th>
+            <?
+            }
+            ?>
             <th>
                 Sucursal
             </th>
+            <?
+            if( $param=="Software" ){
+            ?>
+            <th>
+                Cantidad
+            </th>
+            
+            <?
+            }
+            if( $param=="Hardware" ){
+            ?>
+            <th>
+                Mantenimiento
+            </th>
+            <th>
+                Procesador
+            </th>
+            <th>
+                Memoria
+            </th>
+            <th>
+                Disco
+            </th>
+            <th>
+                Un. Optica
+            </th>
+            <th>
+                Dirección IP
+            </th>
+            <th>
+                S.O. (OEM)
+            </th>
+            <th>
+                Serial
+            </th>
+            <th>
+                Office (OEM)
+            </th>
+            <th>
+                Serial
+            </th>
+            <?
+            }
+            ?>
         </tr>
      
     <?
@@ -51,7 +109,7 @@
             $parent = $cat->getParent();
             ?>
             <tr class="row0">
-                <td colspan="10"><b><?=($parent?$parent->getCaName()." - ":"").$cat->getCaName()?></b></td>
+                <td colspan="<?=$cols?>"><b><?=($parent?$parent->getCaName()." - ":"").$cat->getCaName()?></b></td>
             </tr>
             <?
         }
@@ -78,15 +136,67 @@
             <td>
                 <?=$activo->getCaProveedor()?>
             </td>
+            <?
+            if( $param!="Software" ){
+            ?>
             <td>
                 <?=$activo->getUsuario()?$activo->getUsuario()->getCaNombre():"&nbsp;"?>
             </td>
             <td>
                 <?=$activo->getUsuario()?$activo->getUsuario()->getCaDepartamento():"&nbsp;"?>
             </td>
+            <?
+            }
+            ?>
             <td>
                 <?=$activo->getSucursal()?$activo->getSucursal()->getCaNombre():"&nbsp;"?>
             </td>
+            <?
+            if( $param=="Software" ){
+            ?>
+            <td>
+                <div align="right"><?=$activo->getCaCantidad()?></div>
+            </td>
+            
+            <?
+            }            
+            if( $param=="Hardware" ){
+            ?>
+            <td>
+                <?=$activo->getCaMantenimiento()?>
+            </td>
+            <td>
+                <?=$activo->getCaProcesador()?>
+            </td>
+            <td>
+                <?=$activo->getCaMemoria()?>
+            </td>
+            <td>
+                <?=$activo->getCaDisco()?>
+            </td>
+            <td>
+                <?=$activo->getCaOptica()?>
+            </td>
+            <td>
+                <?=$activo->getCaIpaddress()?>
+            </td>
+            <td>
+                <?=$activo->getCaSo()?>
+            </td>
+            <td>
+                <?=$activo->getCaSoSerial()?>
+            </td>
+            <td>
+                <?=$activo->getCaOffice()?>
+            </td>
+            <td>
+                <?=$activo->getCaOfficeSerial()?>
+            </td>
+            <?
+            }
+            ?>
+            
+            
         </tr>
         <?
     }
