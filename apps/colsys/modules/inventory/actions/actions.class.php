@@ -736,8 +736,8 @@ class inventoryActions extends sfActions {
         $this->software = Doctrine::getTable("InvActivo")
                 ->createQuery("a")
                 ->innerJoin("a.InvCategory c")
-                ->leftJoin("a.InvAsignacionSoftware as")
-                ->select("c.ca_name,a.ca_modelo, a.ca_cantidad as q, count(*) as assigned")
+                ->leftJoin("a.InvAsignacionSoftwareActivo as")
+                ->select("a.ca_idactivo,c.ca_name,a.ca_modelo, a.ca_cantidad as q, count(as.ca_idactivo) as assigned")
                 ->addWhere("c.ca_parameter=?", "Software")
                 ->addGroupBy("a.ca_idactivo, c.ca_name, a.ca_modelo, a.ca_cantidad")
                 ->addOrderBy("a.ca_idactivo, c.ca_name, a.ca_modelo, a.ca_cantidad")
@@ -777,6 +777,9 @@ class inventoryActions extends sfActions {
     public function executeInformeListadoActivosResult($request) {
         $idsucursal = $request->getParameter("idsucursal");
         $idcategory = $request->getParameter("idcategory");
+        $idasignacion = $request->getParameter("idasignacion");
+        $so = $request->getParameter("so");
+        $office = $request->getParameter("office");
         $q = Doctrine::getTable("InvActivo")
                 ->createQuery("a")
                 ->innerJoin("a.InvCategory c")
@@ -798,6 +801,19 @@ class inventoryActions extends sfActions {
             $q->addWhere("a.ca_idsucursal = ?", $idsucursal);
         }
         
+        if( $so ){
+            $q->addWhere("a.ca_so = ?", $so);
+        }
+        
+        if( $office ){
+            $q->addWhere("a.ca_office = ?", $office);
+        }
+        
+        if( $idasignacion ){
+            $q->innerJoin("a.InvAsignacionSoftware as");
+            $q->addWhere("as.ca_idactivo = ? ", $idasignacion);
+        }
+        
         $this->nivel = $this->getNivel();
         if ($this->nivel < 2) {
             $user = $this->getUser();
@@ -806,6 +822,9 @@ class inventoryActions extends sfActions {
         
         $this->activos = $q->execute();
     }
+    
+    
+    
 
 }
 

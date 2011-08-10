@@ -26,7 +26,7 @@
                 <?=$s["a_ca_so"]?>
             </td>
             <td>
-                <?=$s["a_q"]?>
+                <?=link_to($s["a_q"], "inventory/informeListadoActivosResult?so=".$s["a_ca_so"], array("target"=>"_blank"))?>
             </td>
         </tr>
         <?
@@ -64,7 +64,7 @@
                 <?=$s["a_ca_office"]?>
             </td>
             <td>
-                <?=$s["a_q"]?>
+                <?=link_to($s["a_q"], "inventory/informeListadoActivosResult?office=".$s["a_ca_office"], array("target"=>"_blank"))?>
             </td>
         </tr>
         <?
@@ -101,7 +101,7 @@
         
         foreach( $software as $s ){
             $total+=$s["a_q"];
-            $totalAs+=$s["a_assigned"];
+            $totalAs+=$s["as_assigned"];
             if( $lastCat!= $s["c_ca_name"]){
                 $lastCat = $s["c_ca_name"];
                 ?>
@@ -119,10 +119,13 @@
                 <?=$s["a_ca_modelo"]?>
             </td>
             <td>
-                <?=$s["a_q"]?>
+                <?=$s["a_q"]?>                
             </td>
             <td>
-                <?=$s["a_assigned"]<=$s["a_q"]?$s["a_assigned"]:"<span class='rojo'>".$s["a_assigned"]."</span>"?>
+                <?                
+                $a = $s["as_assigned"]<=$s["a_q"]?$s["as_assigned"]:"<span class='rojo'>".$s["as_assigned"]."</span>";                
+                echo link_to($a, "inventory/informeListadoActivosResult?idasignacion=".$s["a_ca_idactivo"], array("target"=>"_blank"));
+                ?>
             </td>
         </tr>
         <?

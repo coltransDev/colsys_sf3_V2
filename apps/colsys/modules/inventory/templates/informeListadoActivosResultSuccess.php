@@ -6,11 +6,11 @@
  */
 
 if( $param=="Software" ){
-    $cols = 9;
-}elseif( $param=="Hardware" ){
-    $cols = 20;
-}else{
     $cols = 10;
+}elseif( $param=="Hardware" ){
+    $cols = 21;
+}else{
+    $cols = 11;
 }
 ?>
 <div class="content" align="center">
@@ -32,6 +32,9 @@ if( $param=="Software" ){
             </th>
             <th>
                 Factura
+            </th>
+            <th>
+                Vlr. Reposici&oacute;n
             </th>
             <th>
                 Serial
@@ -129,6 +132,9 @@ if( $param=="Software" ){
             </td>
             <td>
                 <?=$activo->getCaFactura()?>
+            </td>
+            <td>
+                <div align="right"><?=Utils::formatNumber($activo->getCaReposicion())?></div>
             </td>
             <td>
                 <?=$activo->getCaSerial()?>

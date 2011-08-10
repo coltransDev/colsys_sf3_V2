@@ -94,6 +94,15 @@ InvActivo:
       local: ca_idactivo
       foreign: ca_idactivo
       type: many
+    InvAsignacionSoftware:
+      local: ca_idactivo
+      foreign: ca_idequipo
+      type: many
+    InvAsignacionSoftwareActivo:
+      local: ca_idactivo
+      foreign: ca_idactivo
+      type: one
+      class: InvAsignacionSoftware
     Usuario:
       local: ca_asignadoa
       foreign: ca_login
