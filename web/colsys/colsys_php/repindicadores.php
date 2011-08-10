@@ -436,10 +436,14 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
         $source   = "vi_repindicadores";
         $ind_mem  = 7;
         $add_cols = 3;
-    } else if ($indicador == "Oportunidad en la Entrega de Cotizaciones") {
+    } else if ($indicador == "Oportunidad en la Entrega de Cotizaciones - Coltrans" or $indicador == "Oportunidad en la Entrega de Cotizaciones - Colmas") {
+        if ($indicador == "Oportunidad en la Entrega de Cotizaciones - Coltrans")
+            $empresa = "Coltrans";
+        else if ($indicador == "Oportunidad en la Entrega de Cotizaciones - Colmas")
+            $empresa = "Colmas";
         $format_avg = "H:i:s";
         $source   = "vi_cotindicadores";
-        $impoexpo = "ca_impoexpo like '%'";
+        $impoexpo = "ca_impoexpo like '%' and ca_empresa = '$empresa' ";
         if (!$tm->Open("select ca_fchfestivo from tb_festivos")) {        // Selecciona todos lo registros de la tabla Festivos
             echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
             echo "<script>document.location.href = 'entrada.php';</script>";
