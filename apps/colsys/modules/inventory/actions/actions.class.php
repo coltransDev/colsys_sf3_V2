@@ -663,14 +663,15 @@ class inventoryActions extends sfActions {
         $equipos = Doctrine_Query::create()
                 ->select("a.ca_identificador, a.ca_idactivo, u.ca_nombre,s.ca_nombre")
                 ->from("InvActivo a")
-                ->innerJoin("a.Usuario u")
-                ->innerJoin("u.Sucursal s")
                 ->innerJoin("a.InvCategory c")
+                ->leftJoin("a.Usuario u")
+                ->leftJoin("u.Sucursal s")                
                 ->addWhere("UPPER(a.ca_identificador) LIKE ? OR UPPER(u.ca_nombre) LIKE ? ", array($query, $query))
                 ->addWhere("c.ca_parameter = ?", "Hardware")
                 ->addOrderBy("a.ca_identificador")
                 ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
                 ->execute();
+        
         foreach ($equipos as $key => $val) {
             $equipos[$key]["s_ca_nombre"] = utf8_encode($equipos[$key]["s_ca_nombre"]);
             $equipos[$key]["u_ca_nombre"] = utf8_encode($equipos[$key]["u_ca_nombre"]);
