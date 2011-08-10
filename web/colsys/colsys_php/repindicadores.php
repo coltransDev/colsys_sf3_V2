@@ -314,12 +314,47 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
     $mes_mem = "'".implode("','",$mes)."'";
     $mes = "ca_mes ".((count($mes)==1)?"like '$mes[0]'":"in ('".implode("','",$mes)."')");
     $sucursal = "ca_sucursal ".((count($sucursal)==1)?"like '$sucursal[0]'":"in ('".implode("','",$sucursal)."')");
-    $ciudestino = "ca_ciudestino ".((count($ciudestino)==1)?"like '$ciudestino[0]'":"in ('".implode("','",$ciudestino)."')");
-    $cliente = ((strlen($cliente)!=0)?"and upper(ca_compania) like upper('%$cliente%')":"");
-    $traorigen = "ca_traorigen ".((count($traorigen)==1)?"like '$traorigen[0]'":"in ('".implode("','",$traorigen)."')");
-    $modalidad = "ca_modalidad ".((count($modalidad)==1)?"like '$modalidad[0]'":"in ('".implode("','",$modalidad)."')");
-    $transporte = "ca_transporte ".((count($transporte)==1)?"like '$transporte[0]'":"in ('".implode("','",$transporte)."')");
-    $impoexpo = "ca_impoexpo = 'Importación'";
+    
+    
+    if ($indicador == "Oportunidad en la Entrega de Cotizaciones - Coltrans" or $indicador == "Oportunidad en la Entrega de Cotizaciones - Colmas") {
+        if( in_array("%", $ciudestino) ){
+            $ciudestino = "";
+        }else{
+            $ciudestino = "ca_ciudestino ".((count($ciudestino)==1)?"like '$ciudestino[0]'":"in ('".implode("','",$ciudestino)."')");            
+        }
+        
+        if( in_array("%", $traorigen) ){
+            $traorigen = "";
+        }else{
+            $traorigen = "ca_traorigen ".((count($traorigen)==1)?"like '$traorigen[0]'":"in ('".implode("','",$traorigen)."')");
+        }
+        
+        if( in_array("%", $modalidad) ){
+            $modalidad = "";
+        }else{
+            $modalidad = "ca_modalidad ".((count($modalidad)==1)?"like '$modalidad[0]'":"in ('".implode("','",$modalidad)."')");
+        }
+        
+        if( in_array("%", $transporte) ){
+            $transporte = "";
+        }else{
+            $transporte = "ca_transporte ".((count($transporte)==1)?"like '$transporte[0]'":"in ('".implode("','",$transporte)."')");
+        }   
+               
+        $impoexpo = "";
+        
+    }else{
+        $ciudestino = "ca_ciudestino ".((count($ciudestino)==1)?"like '$ciudestino[0]'":"in ('".implode("','",$ciudestino)."')");   
+        $traorigen = "ca_traorigen ".((count($traorigen)==1)?"like '$traorigen[0]'":"in ('".implode("','",$traorigen)."')");
+        $modalidad = "ca_modalidad ".((count($modalidad)==1)?"like '$modalidad[0]'":"in ('".implode("','",$modalidad)."')");
+        $transporte = "ca_transporte ".((count($transporte)==1)?"like '$transporte[0]'":"in ('".implode("','",$transporte)."')");
+        $impoexpo = "ca_impoexpo = 'Importación'";
+    }  
+    
+    
+    
+    $cliente = ((strlen($cliente)!=0)?"and upper(ca_compania) like upper('%$cliente%')":"");    
+    
 
     $campos = "";
     while (list ($clave, $val) = each ($agrupamiento)) {
@@ -443,7 +478,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
             $empresa = "Colmas";
         $format_avg = "H:i:s";
         $source   = "vi_cotindicadores";
-        $impoexpo = "ca_impoexpo like '%' and ca_empresa = '$empresa' ";
+        $impoexpo = " ca_empresa = '$empresa' ";
         if (!$tm->Open("select ca_fchfestivo from tb_festivos")) {        // Selecciona todos lo registros de la tabla Festivos
             echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
             echo "<script>document.location.href = 'entrada.php';</script>";
@@ -606,10 +641,10 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
         $cot_ant  = null;
         $campos.= ", $source.ca_referencia";
     }
-
-    $queries = "select * from $source $subque where $impoexpo and $sucursal and $ciudestino $cliente and $transporte and $ano and $mes";
+    
+    $queries = "select * from $source $subque where ".($impoexpo?$impoexpo." and ":"")."  $sucursal $cliente and ".($ciudestino?$ciudestino." and":"")."   ".($transporte?$transporte." and":"")." $ano and $mes";
     $queries.= " order by $campos";
-    // die($queries);
+    //die($queries);
 
     if (!$rs->Open("$queries")) {                       							// Selecciona todos lo registros de la vista vi_repgerencia_sea
         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      		// Muestra el mensaje de error
