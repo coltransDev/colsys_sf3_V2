@@ -15,10 +15,10 @@ include_component("widgets", "widgetComerciales");
     var entrada = ''
 
     var anexos = ''
-
+    
     TabGeneralPanel = function( config ){
         Ext.apply(this, config);
-
+       
         this.wgContactoCliente = new WidgetContactoCliente({fieldLabel:'Cliente',
             width:400,
             id:"cliente",
@@ -127,7 +127,28 @@ include_component("widgets", "widgetComerciales");
                     id: 'vendedor',
                     name: 'vendedor',
                     hiddenName: "idvendedor"
-                })
+                }),
+                {
+                    xtype:          'combo',
+                    mode:           'local',
+                    value:          '<?=Constantes::COLTRANS?>',
+                    triggerAction:  'all',
+                    forceSelection: true,
+                    editable:       true,
+                    fieldLabel:     'Empresa',
+                    name:           'empresa',                    
+                    displayField:   'name',
+                    valueField:     'name',
+                    disabled:       this.idcotizacion, 
+                    allowBlank:     true,
+                    store:          new Ext.data.JsonStore({
+                        fields : ['name'],
+                        data   : [
+                            {name : '<?=Constantes::COLTRANS?>'},
+                            {name : '<?=Constantes::COLMAS?>'}
+                        ]
+                    })
+                }
             ]
             
         });

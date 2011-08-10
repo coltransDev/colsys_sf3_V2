@@ -200,8 +200,8 @@ class cotizacionesActions extends sfActions {
                 $cotizacion = Doctrine::getTable("Cotizacion")->find($this->getRequestParameter("idcotizacion"));
                 $this->forward404Unless($cotizacion);
             } else {
-                $cotizacion = new Cotizacion();
-                $sig = CotizacionTable::siguienteConsecutivo(date("Y"), $this->getRequestParameter("empresa"));
+                $cotizacion = new Cotizacion();               
+                $sig = CotizacionTable::siguienteConsecutivo(date("Y"));
                 $cotizacion->setCaConsecutivo($sig);
             }
             if ($this->getRequestParameter("empresa")) {
@@ -522,7 +522,7 @@ class cotizacionesActions extends sfActions {
 
         $config = sfConfig::get('sf_app_module_dir') . DIRECTORY_SEPARATOR . "cotizaciones" . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "textos.yml";
         $textos = sfYaml::load($config);
-        $this->asunto = sprintf($textos['asuntoEmail'], $this->cotizacion->getCaConsecutivo());
+        $this->asunto = sprintf($textos['asuntoEmail'], strtoupper($this->cotizacion->getCaEmpresa()), $this->cotizacion->getCaConsecutivo());
         $this->mensaje = sprintf($textos['mensajeEmail'], $this->cotizacion->getContacto()->getNombre(), $this->cotizacion->getCaConsecutivo());
         $this->tarea = $this->cotizacion->getTareaIDGEnvioOportuno();
 
@@ -2141,7 +2141,8 @@ class cotizacionesActions extends sfActions {
 
                     $data["idvendedor"] = utf8_encode($cotizacion->getCaUsuario());
                     $data["vendedor"] = utf8_encode($cotizacion->getUsuario()->getCaNombre());
-
+                    $data["empresa"] = $cotizacion->getCaEmpresa();
+                    
                     $data["asunto"] = utf8_encode($cotizacion->getCaAsunto());
                     $data["saludo"] = utf8_encode($cotizacion->getCaSaludo());
                     $data["entrada"] = utf8_encode($cotizacion->getCaEntrada());

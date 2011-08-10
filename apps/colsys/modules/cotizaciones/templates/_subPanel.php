@@ -10,11 +10,7 @@ if( $cotizacion->getCaEmpresa() == Constantes::COLTRANS ){
 //    include_component("cotizaciones","panelContViajes",array("cotizacion"=>$cotizacion));
     include_component("cotizaciones","panelSeguros",array("cotizacion"=>$cotizacion));
     include_component("cotizaciones","panelAgentes",array("cotizacion"=>$cotizacion));
-}else if( $cotizacion->getCaEmpresa() == Constantes::COLMAS ){
-    include_component("cotizaciones","panelProductos",array("cotizacion"=>$cotizacion));
-    include_component("cotizaciones","panelTarifarioAduana",array("cotizacion"=>$cotizacion));
 }
-
 
 
 /*
@@ -30,20 +26,17 @@ if( $cotizacion->getCaIdcotizacion() ){
 
 
 SubPanel = function(){
-    this.gridProductos = new PanelProductos({tipo:'Trayecto',empresa:'<?=$cotizacion->getCaEmpresa()?>',id:'grid_productos',title:'Tarifas de trayectos'});
+    
     <?
     if( $cotizacion->getCaEmpresa() == Constantes::COLTRANS  ){
         ?>
+        this.gridProductos = new PanelProductos({tipo:'Trayecto',empresa:'<?=$cotizacion->getCaEmpresa()?>',id:'grid_productos',title:'Tarifas de trayectos'});
         this.gridRecargos = new PanelRecargosCotizacion();
         this.gridContviajes = new PanelProductos({tipo:'OTM/DTA',empresa:'<?=$cotizacion->getCaEmpresa()?>',id:'grid_productos1',title:'Tarifas para OTM/DTA'});
 
         this.gridSeguros = new PanelSeguros();
         this.gridAgentes = new PanelAgentes();
 
-        <?
-    }else if( $cotizacion->getCaEmpresa() == Constantes::COLMAS ){
-        ?>
-        this.gridTarifarioAduana = new PanelTarifarioAduana();
         <?
     }
     ?>
@@ -67,20 +60,15 @@ SubPanel = function(){
             height:250,
             autoWidth : true,
             items:[
-                this.gridProductos,
+                
                 <?
                 if( $cotizacion->getCaEmpresa() == Constantes::COLTRANS  ){
-                ?>
+                ?>                      
+                   this.gridProductos,                     
                    this.gridRecargos,
                    this.gridContviajes,
                    this.gridSeguros,
                    this.gridAgentes,
-                <?
-                }else if( $cotizacion->getCaEmpresa() == Constantes::COLMAS  ){
-                ?>
-
-                   this.gridTarifarioAduana,
-
                 <?
                 }
                 ?>

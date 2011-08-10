@@ -42,7 +42,7 @@ include_component("cotizaciones", "fieldsEncabezado");
                     },
 
                     items:[
-                        new TabGeneralPanel({bodyStyle:bodyStyle,lazyRender:true}),
+                        new TabGeneralPanel({bodyStyle:bodyStyle,lazyRender:true, idcotizacion: this.idcotizacion}),
                         new TabEntradaPanel({bodyStyle:bodyStyle,lazyRender:true}),
                         new TabSalidaPanel({bodyStyle:bodyStyle,lazyRender:true}),
                         new TabIdgPanel({bodyStyle:bodyStyle,lazyRender:true}),
