@@ -114,13 +114,13 @@ PanelNotasDet = function(){
         sortable:false,
         width: 90,
         align: 'right',
-        renderer: 'usMoney' /*,
+        renderer: 'usMoney',
         editor: new Ext.form.NumberField({
 				allowBlank: false ,
 				allowNegative: false,
 				style: 'text-align:right',
 				decimalPrecision :2
-			})*/
+			})
       }
     ];
 

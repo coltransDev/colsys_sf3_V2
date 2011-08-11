@@ -19,11 +19,9 @@ PanelFacturacion = function(){
         dataIndex: 'numdocumento',
         sortable:false,
         width: 90,
-        editor: new Ext.form.NumberField({
-				allowBlank: false ,
-				allowNegative: false,				
-				decimalPrecision :3
-			})
+        editor: new Ext.form.TextField({
+            allowBlank: false
+        })
       },
       {
         header: "Fch. Emisión",
@@ -84,12 +82,12 @@ PanelFacturacion = function(){
         sortable:false,
         width: 90,
         align: 'right',
-        renderer: 'usMoney'/*,
+        renderer: 'usMoney',
         editor: new Ext.form.NumberField({
 				allowBlank: false ,
 				allowNegative: false,				
 				decimalPrecision :3
-			})*/
+			})
       },
       {
         header: "vlr. Exento",
