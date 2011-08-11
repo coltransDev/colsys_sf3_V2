@@ -594,23 +594,23 @@ class inventoryActions extends sfActions {
             $this->forward404Unless($idactivo);
             $idequipo = $request->getParameter("idequipo");
             $this->forward404Unless($idequipo);
-
+            
+            $activo = Doctrine::getTable("InvActivo")->find( $idactivo );
             //Verifica que no hayan mas licencias asignadas que las registradas                          
-            $asig = Doctrine::getTable("InvActivo")
-                    ->createQuery("a")
-                    ->innerJoin("a.InvCategory c")
-                    ->leftJoin("a.InvAsignacionSoftware as")
-                    ->select("a.ca_cantidad as q, count(*) as assigned")
-                    ->addWhere("a.ca_idactivo=?", $idactivo)
-                    ->addGroupBy("a.ca_cantidad")
-                    ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+            $q = Doctrine::getTable("InvAsignacionSoftware")
+                    ->createQuery("a")                    
+                    ->select("count(*) as assigned")
+                    ->addWhere("a.ca_idactivo=?", $idactivo);
+                    
+            
+            $asig = $q->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)
                     ->execute();
-            if ($asig) {
-                if ($asig[0]["a_q"] <= $asig[0]["a_assigned"]) {
-                    throw new Exception(" No hay mas licencias disponibles. Cantidad: " . $asig[0]["a_q"] . " Asignadas: " . $asig[0]["a_assigned"]);
-                }
+           
+                        
+            if ($activo->getCaCantidad() <= $asig ) {
+                throw new Exception(" No hay mas licencias disponibles. Cantidad: " . $activo->getCaCantidad() . " Asignadas: " . $asig);
             }
-
+            
 
             if ($request->getParameter("idasignacion_software")) {
                 $asignacion = Doctrine::getTable("InvAsignacionSoftware")->find($request->getParameter("idasignacion_software"));
