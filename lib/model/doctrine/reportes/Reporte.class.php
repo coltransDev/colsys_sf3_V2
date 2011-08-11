@@ -44,7 +44,8 @@ class Reporte extends BaseReporte {
             $contacto->setCaIdcliente($this->cliente->getCaIdcliente());
             $contacto->setCaFijo("true");
             $contacto->setCaTelefonos($this->cliente->getCaTelefonos());
-            $contacto->setCaCargo($this->cliente->getCaEmail());            
+            $contacto->setCaCargo($this->cliente->getCaEmail());
+            $contacto->setCliente($this->cliente);
             if($tipo=='2')
                 return $contacto;
             else
@@ -52,7 +53,7 @@ class Reporte extends BaseReporte {
         }
         else
         {
-            if($tipo=='0')//contacto No fijo
+            if($tipo!='1')//contacto No fijo
                 return Doctrine::getTable("Contacto")->find($this->getCaIdconcliente());
             else if($tipo=='1')//CONTACTO FIJO
             {
@@ -86,7 +87,7 @@ class Reporte extends BaseReporte {
                     $this->cliente->setCaEmail($tercero->getCaEmail());
                     $this->cliente->setCaTelefonos($tercero->getCaTelefonos());
                     $this->cliente->setCaFax($tercero->getCaFax());
-                    $this->cliente->setCaIdciudad($tercero->getCaIdciudad());
+                    $this->cliente->setCaIdciudad($tercero->getCaIdciudad());                    
                 }
             }
             else
@@ -106,7 +107,6 @@ class Reporte extends BaseReporte {
      * Retorna verdadero si es la ultima version del reporte de lo contrario retorna falso
      * Author: Andres Botero
      */
-
     public function esUltimaVersion() {
         $version = $this->getCaVersion();
 
