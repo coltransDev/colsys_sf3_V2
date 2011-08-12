@@ -415,6 +415,10 @@ IdsCriterio:
       local: ca_idcriterio
       foreign: ca_idcriterio
       type: many
+    IdsTipo:
+      local: ca_tipo
+      foreign: ca_tipo
+      type: one
 
 IdsEvento:
   options:
