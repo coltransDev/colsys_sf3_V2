@@ -47,8 +47,8 @@ use_helper("MimeType");
 				
 			},
 			failure:function(response,options){
-                var res = Ext.util.JSON.decode( response.responseText );
-                Ext.MessageBox.alert('Error Message', "Se ha presentado un error"+(res.errorInfo?": "+res.errorInfo:"")+" - "+(response.status?"\n Codigo HTTP "+response.status:""));
+                //var res = Ext.util.JSON.decode( response.responseText );
+                Ext.MessageBox.alert('Error Message', "Se ha presentado un error: "+(response.status?"\n Codigo HTTP "+response.status:""));
             }
 		});	
 		
@@ -266,4 +266,3 @@ if( $idreporte ){
 <?
 }
 ?>
-
