@@ -321,6 +321,7 @@ TrackingEtapa:
     ca_message_default: string
     ca_intro: string
     ca_title: string
+    ca_preasunto: string
 
 Tercero:
   options:
@@ -700,10 +701,9 @@ RepOtm:
     ca_usucreado: string
     ca_fchactualizado: timestamp
     ca_usuactualizado: string,
-    ca_idcliente: integer,
-    ca_numpiezasun: numeric,
-    ca_pesoun: numeric,
-    ca_volumenun: numeric
+    ca_numpiezasun: string,
+    ca_pesoun: string,
+    ca_volumenun: string
   relations:
     Reporte:
       local: ca_idreporte
