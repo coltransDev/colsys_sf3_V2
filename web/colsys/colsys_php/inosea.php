@@ -722,8 +722,8 @@ elseif (isset($boton)) {                                                       /
                         echo "<TR>";
                         echo "  <TD Class=listar><B>T.R.M.:</B><BR>$ ".number_format($cs->Value('ca_tcambio'), 2)."</TD>";
                         echo "  <TD Class=listar><B>Neto:</B><BR><B>".$cs->Value('ca_idmoneda').'</B> '.number_format($cs->Value('ca_neto'), 2)."</TD>";
-                        echo "  <TD Class=listar><B>Costo en Pesos:</B><BR>$ ".number_format($cos_mem)."</TD>";
-                        echo "  <TD Class=listar><B>Venta en Pesos:</B><BR>$ ".number_format($cs->Value('ca_venta'))."</TD>";
+                        echo "  <TD Class=listar><B>Costo en Moneda Local:</B><BR>$ ".number_format($cos_mem)."</TD>";
+                        echo "  <TD Class=listar><B>Venta en Moneda Local:</B><BR>$ ".number_format($cs->Value('ca_venta'))."</TD>";
                         echo "  <TD Class=listar><B>Util. x Sobreventa:</B><BR>$ ".number_format($cs->Value('ca_utilidad'))."</TD>";
                         echo "</TR>";
                         $cs->MoveNext();
@@ -1081,7 +1081,7 @@ elseif (isset($boton)) {                                                       /
                 echo "  else if (document.adicionar.neto.value == '' || document.adicionar.neto.value == 0)";
                 echo "      alert('El campo Valor Neto no puede ser igual a 0');";
                 echo "  else if (document.adicionar.venta.value == '')";
-                echo "      alert('El campo Venta en Pesos no ha sido diligenciado');";
+                echo "      alert('El campo Venta en Moneda Local no ha sido diligenciado');";
                 echo "  else if (document.adicionar.utilidad.value !=  document.adicionar.total.value)";
                 echo "      alert('No concuerda la utilidad en Venta con la Distribución x Sobreventa');";
                 echo "  else if (document.adicionar.proveedor.value == '')";
@@ -1122,8 +1122,8 @@ elseif (isset($boton)) {                                                       /
                 echo "</TR>";
                 echo "<TR>";
                 echo "  <TD Class=listar>Valor Neto:<BR><INPUT TYPE='TEXT' NAME='neto' SIZE=14 MAXLENGTH=15 ONCHANGE='javascript:netopesos.value = Math.round(eval(neto.value * tcambio.value),2);'></TD>";
-                echo "  <TD Class=listar>Neto en Pesos:<BR><INPUT TYPE='TEXT' READONLY NAME='netopesos' SIZE=14 MAXLENGTH=15></TD>";
-                echo "  <TD Class=listar>Venta en Pesos:<BR><INPUT TYPE='TEXT' NAME='venta' SIZE=14 MAXLENGTH=15 ONCHANGE='javascript:utilidad.value=venta.value-Math.round(eval(neto.value * tcambio.value),2);' ONFOCUS='javascript:utilidad.value=venta.value-Math.round(eval(neto.value * tcambio.value),2);'></TD>";
+                echo "  <TD Class=listar>Neto en Moneda Local:<BR><INPUT TYPE='TEXT' READONLY NAME='netopesos' SIZE=14 MAXLENGTH=15></TD>";
+                echo "  <TD Class=listar>Venta en Moneda Local:<BR><INPUT TYPE='TEXT' NAME='venta' SIZE=14 MAXLENGTH=15 ONCHANGE='javascript:utilidad.value=venta.value-Math.round(eval(neto.value * tcambio.value),2);' ONFOCUS='javascript:utilidad.value=venta.value-Math.round(eval(neto.value * tcambio.value),2);'></TD>";
                 echo "  <TD Class=listar>Utilidad en Venta:<BR><INPUT TYPE='TEXT' READONLY NAME='utilidad' SIZE=15 MAXLENGTH=15></TD>";
                 echo "  <TD Class=listar COLSPAN=2 ROWSPAN=3>Distribución Utilidad x Sobreventa:<BR>";
                 echo "  <TABLE CELLSPACING=1>";
@@ -1219,7 +1219,7 @@ elseif (isset($boton)) {                                                       /
                 echo "  else if (document.modificar.neto.value == '' || document.modificar.neto.value == 0)";
                 echo "      alert('El campo Valor Neto no puede ser igual a 0');";
                 echo "  else if (document.modificar.venta.value == '')";
-                echo "      alert('El campo Venta en Pesos no ha sido diligenciado');";
+                echo "      alert('El campo Venta en Moneda Local no ha sido diligenciado');";
                 echo "  else if (document.modificar.utilidad.value !=  document.modificar.total.value)";
                 echo "      alert('No concuerda la utilidad en Venta con la Distribución x Sobreventa');";
                 echo "  else if (document.modificar.proveedor.value == '')";
@@ -1269,8 +1269,8 @@ elseif (isset($boton)) {                                                       /
                 echo "</TR>";
                 echo "<TR>";
                 echo "  <TD Class=listar>Valor Neto:<BR><INPUT TYPE='TEXT' NAME='neto' VALUE='".$rs->Value('ca_neto')."' SIZE=14 MAXLENGTH=15 ONCHANGE='javascript:netopesos.value = Math.round(eval(neto.value * tcambio.value),2);'></TD>";
-                echo "  <TD Class=listar>Neto en Pesos:<BR><INPUT TYPE='TEXT' READONLY NAME='netopesos' SIZE=14 MAXLENGTH=15></TD>";
-                echo "  <TD Class=listar>Venta en Pesos:<BR><INPUT TYPE='TEXT' NAME='venta' VALUE='".$rs->Value('ca_venta')."' SIZE=14 MAXLENGTH=15 ONCHANGE='javascript:utilidad.value=venta.value-Math.round(eval(neto.value * tcambio.value),2);' ONFOCUS='javascript:utilidad.value=venta.value-Math.round(eval(neto.value * tcambio.value),2);'></TD>";
+                echo "  <TD Class=listar>Neto en Moneda Local:<BR><INPUT TYPE='TEXT' READONLY NAME='netopesos' SIZE=14 MAXLENGTH=15></TD>";
+                echo "  <TD Class=listar>Venta en Moneda Local:<BR><INPUT TYPE='TEXT' NAME='venta' VALUE='".$rs->Value('ca_venta')."' SIZE=14 MAXLENGTH=15 ONCHANGE='javascript:utilidad.value=venta.value-Math.round(eval(neto.value * tcambio.value),2);' ONFOCUS='javascript:utilidad.value=venta.value-Math.round(eval(neto.value * tcambio.value),2);'></TD>";
                 echo "  <TD Class=listar>Utilidad en Venta:<BR><INPUT TYPE='TEXT' READONLY NAME='utilidad' SIZE=15 MAXLENGTH=15></TD>";
                 echo "  <TD Class=listar COLSPAN=2 ROWSPAN=3>Distribución Utilidad x Sobreventa:<BR>";
                 echo "  <TABLE CELLSPACING=1>";
@@ -1352,7 +1352,7 @@ elseif (isset($boton)) {                                                       /
                 echo "</TR>";
                 echo "<TR>";
                 echo "  <TD Class=mostrar>Valor Neto:<BR>".$rs->Value('ca_neto')."</TD>";
-                echo "  <TD Class=mostrar>Venta en Pesos:<BR>".$rs->Value('ca_venta')."</TD>";
+                echo "  <TD Class=mostrar>Venta en Moneda Local:<BR>".$rs->Value('ca_venta')."</TD>";
                 echo "  <TD Class=mostrar>Utilidad en Venta:<BR>$util_mem</TD>";
                 echo "  <TD Class=mostrar>Vendedor:<BR>".$rs->Value('ca_login')."</TD>";
                 echo "</TR>";
@@ -1838,7 +1838,7 @@ elseif (isset($boton)) {                                                       /
                         $mn->MoveNext(); }
                     echo "   </SELECT></TD>";
                     echo "  <TD Class=mostrar>T.R.M.:<BR><INPUT ID=tcambio_$i TYPE='TEXT' NAME='facturacion[$i][tcambio]' onchange='pesosCalc(this);' SIZE=7 MAXLENGTH=7></TD>";
-                    echo "  <TD Class=mostrar>Vlr.Pesos:<BR><INPUT ID=valor_$i TYPE='TEXT' NAME='facturacion[$i][valor]' SIZE=10 MAXLENGTH=15></TD>";
+                    echo "  <TD Class=mostrar>Vlr.Moneda Local:<BR><INPUT ID=valor_$i TYPE='TEXT' NAME='facturacion[$i][valor]' SIZE=10 MAXLENGTH=15></TD>";
                     echo "  <TD Class=mostrar>Observación IDG:<BR><SELECT ID=observacion_$i NAME='facturacion[$i][observacion]'>";
                     echo "  <OPTION VALUE=''></OPTION>";
                     for ($x=0; $x < count($observaciones); $x++) {
@@ -1866,7 +1866,7 @@ elseif (isset($boton)) {                                                       /
                     echo "  </SELECT></TD>";
                     echo "  <TD Class=mostrar>Aplicar/Factura:<BR><SELECT ID=dedfactura_$i NAME='deducibles[$i][dedfactura]' ONCHANGE='aplica_trm(this);'></SELECT></TD>";
                     echo "  <TD Class=mostrar>Valor:<BR><INPUT TYPE='TEXT' ID=dedneto_$i NAME='deducibles[$i][dedneto]' SIZE=10 MAXLENGTH=15 ONCHANGE='aplica_trm(this);'></TD>";
-                    echo "  <TD Class=mostrar>Vlr.Pesos *:<BR><INPUT TYPE='TEXT' ID=deduccion_$i NAME='deducibles[$i][deduccion]' SIZE=10 MAXLENGTH=15 ONFOCUS='aplica_trm(this);'></TD>";
+                    echo "  <TD Class=mostrar>Vlr.Moneda Local *:<BR><INPUT TYPE='TEXT' ID=deduccion_$i NAME='deducibles[$i][deduccion]' SIZE=10 MAXLENGTH=15 ONFOCUS='aplica_trm(this);'></TD>";
                     echo "</TR>";
                 }
                 echo "<TR>";
@@ -2306,7 +2306,7 @@ elseif (isset($boton)) {                                                       /
                         $mn->MoveNext(); }
                     echo "   </SELECT></TD>";
                     echo "  <TD Class=mostrar>T.R.M.:<BR><INPUT ID=tcambio_$i TYPE='TEXT' NAME='facturacion[$i][tcambio]' onchange='pesosCalc(this);' VALUE='".$rs->Value('ca_tcambio')."' SIZE=9 MAXLENGTH=7></TD>";
-                    echo "  <TD Class=mostrar>Vlr.Pesos:<BR><INPUT ID=valor_$i TYPE='TEXT' NAME='facturacion[$i][valor]' VALUE='".$rs->Value('ca_valor')."' SIZE=12 MAXLENGTH=15></TD>";
+                    echo "  <TD Class=mostrar>Vlr.Moneda Local:<BR><INPUT ID=valor_$i TYPE='TEXT' NAME='facturacion[$i][valor]' VALUE='".$rs->Value('ca_valor')."' SIZE=12 MAXLENGTH=15></TD>";
                     echo "  <TD Class=mostrar>Observación IDG:<BR><SELECT ID=observacion_$i NAME='facturacion[$i][observacion]'>";
                     echo "  <OPTION VALUE=''></OPTION>";
                     for ($x=0; $x < count($observaciones); $x++) {
@@ -2333,7 +2333,7 @@ elseif (isset($boton)) {                                                       /
                     $mn->MoveNext(); }
                 echo "   </SELECT></TD>";
                 echo "  <TD Class=mostrar>T.R.M.:<BR><INPUT ID=tcambio_$i TYPE='TEXT' NAME='facturacion[$i][tcambio]' onchange='pesosCalc(this);' SIZE=9 MAXLENGTH=7></TD>";
-                echo "  <TD Class=mostrar>Vlr.Pesos:<BR><INPUT ID=valor_$i TYPE='TEXT' NAME='facturacion[$i][valor]' onchange='pesosCalc(this);' SIZE=12 MAXLENGTH=15></TD>";
+                echo "  <TD Class=mostrar>Vlr.Moneda Local:<BR><INPUT ID=valor_$i TYPE='TEXT' NAME='facturacion[$i][valor]' onchange='pesosCalc(this);' SIZE=12 MAXLENGTH=15></TD>";
                 echo "  <TD Class=mostrar>Observación IDG:<BR><SELECT ID=observacion_$i NAME='facturacion[$i][observacion]'>";
                 echo "  <OPTION VALUE=''></OPTION>";
                 for ($x=0; $x < count($observaciones); $x++) {
@@ -2377,7 +2377,7 @@ elseif (isset($boton)) {                                                       /
                     }
                     echo "  </SELECT></TD>";
                     echo "  <TD Class=mostrar>Valor:<BR><INPUT TYPE='TEXT' ID=dedneto_$j NAME='deducibles[$j][dedneto]' VALUE='".$dd->Value('ca_neto')."' SIZE=10 MAXLENGTH=15 ONCHANGE='aplica_trm(this);'></TD>";
-                    echo "  <TD Class=mostrar>Vlr.Pesos *:<BR><INPUT TYPE='TEXT' ID=deduccion_$j NAME='deducibles[$j][deduccion]' VALUE='".$dd->Value('ca_valor')."' SIZE=10 MAXLENGTH=15 ONFOCUS='aplica_trm(this);'>&nbsp;<IMG ID=borrar_$j src='graficos/no.gif' alt='Eliminar entrada' hspace='0' vspace='0' onclick='borrar_deduccion(this)'></TD>";
+                    echo "  <TD Class=mostrar>Vlr.Moneda Local *:<BR><INPUT TYPE='TEXT' ID=deduccion_$j NAME='deducibles[$j][deduccion]' VALUE='".$dd->Value('ca_valor')."' SIZE=10 MAXLENGTH=15 ONFOCUS='aplica_trm(this);'>&nbsp;<IMG ID=borrar_$j src='graficos/no.gif' alt='Eliminar entrada' hspace='0' vspace='0' onclick='borrar_deduccion(this)'></TD>";
                     echo "</TR>";
                     $dd->MoveNext();
                     $j++;
@@ -2403,7 +2403,7 @@ elseif (isset($boton)) {                                                       /
                     }
                     echo "  </SELECT></TD>";
                     echo "  <TD Class=mostrar>Valor:<BR><INPUT TYPE='TEXT' ID=dedneto_$i NAME='deducibles[$i][dedneto]' SIZE=10 MAXLENGTH=15 ONCHANGE='aplica_trm(this);'></TD>";
-                    echo "  <TD Class=mostrar>Vlr.Pesos *:<BR><INPUT TYPE='TEXT' ID=deduccion_$i NAME='deducibles[$i][deduccion]' SIZE=10 MAXLENGTH=15 ONFOCUS='aplica_trm(this);'></TD>";
+                    echo "  <TD Class=mostrar>Vlr.Moneda Local *:<BR><INPUT TYPE='TEXT' ID=deduccion_$i NAME='deducibles[$i][deduccion]' SIZE=10 MAXLENGTH=15 ONFOCUS='aplica_trm(this);'></TD>";
                     echo "</TR>";
                 }
                 echo "<TR>";
@@ -2530,7 +2530,7 @@ elseif (isset($boton)) {                                                       /
                     echo "  <TD Class=listar>Fch.Factura:<BR>".$rs->Value('ca_fchfactura')."</TD>";
                     echo "  <TD Class=listar>".$rs->Value('ca_idmoneda').":<BR>".$rs->Value('ca_neto')."</TD>";
                     echo "  <TD Class=listar>T.R.M.:<BR>".$rs->Value('ca_tcambio')."</TD>";
-                    echo "  <TD Class=listar>Vlr.Pesos:<BR>".$rs->Value('ca_valor')."</TD>";
+                    echo "  <TD Class=listar>Vlr.Moneda Local:<BR>".$rs->Value('ca_valor')."</TD>";
                     echo "  <TD Class=listar>Observación IDG:<BR>".$rs->Value('ca_observaciones_fact')."</TD>";
                     echo "</TR>";
                     $rs->MoveNext();
@@ -4049,7 +4049,7 @@ elseif (isset($boton)) {                                                       /
                     echo "  <TD Class=listar>Fch.Factura:<BR>".$rs->Value('ca_fchfactura')."</TD>";
                     echo "  <TD Class=listar>".$rs->Value('ca_idmoneda').":<BR>".$rs->Value('ca_neto')."</TD>";
                     echo "  <TD Class=listar>T.R.M.:<BR>".$rs->Value('ca_tcambio')."</TD>";
-                    echo "  <TD Class=listar>Vlr.Pesos:<BR>".$rs->Value('ca_valor')."</TD>";
+                    echo "  <TD Class=listar>Vlr.Moneda Local:<BR>".$rs->Value('ca_valor')."</TD>";
                     echo "  <TD Class=listar>Observación IDG:<BR>".$rs->Value('ca_observaciones_fact')."</TD>";
                     echo "</TR>";
                     $rs->MoveNext();
