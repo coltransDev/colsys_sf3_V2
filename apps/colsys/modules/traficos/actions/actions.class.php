@@ -84,66 +84,62 @@ class traficosActions extends sfActions
         $consecutivo = $this->getRequestParameter("reporte");
         if( $this->getRequestParameter("reporte") ){
             $reporte = ReporteTable::retrieveByConsecutivo( $consecutivo );
-			$this->forward404Unless( $reporte ); 
-            
+			$this->forward404Unless( $reporte );
+
             if($this->modo=="otm")
             {
                 //$this->redirect( "traficos/listaStatus?modo=otm&reporte=".$reporte->getCaConsecutivo() );
             }
-            else if( $reporte->getCaImpoexpo()==Constantes::IMPO && $reporte->getCaTransporte()==Constantes::MARITIMO && $this->modo!="maritimo" ){
-                
+            else if( $reporte->getCaImpoexpo()==Constantes::IMPO && $reporte->getCaTransporte()==Constantes::MARITIMO && $this->modo!="maritimo" ){                
                 $this->redirect( "traficos/listaStatus?modo=maritimo&reporte=".$reporte->getCaConsecutivo() );	
             }
             
-            if( $reporte->getCaImpoexpo()==Constantes::IMPO && $reporte->getCaTransporte()==Constantes::AEREO && $this->modo!="aereo" ){
-                $this->redirect( "traficos/listaStatus?modo=aereo&reporte=".$reporte->getCaConsecutivo() );	
+            if( $reporte->getCaImpoexpo()==Constantes::IMPO && $reporte->getCaTransporte()==Constantes::AEREO && $this->modo!="aereo" ){               
+                $this->redirect( "traficos/listaStatus?modo=aereo&reporte=".$reporte->getCaConsecutivo() );
             }
-            
         }
         
-        
 		if( $this->modo=="maritimo" ){
+            
 			$this->nivel = $this->getUser()->getNivelAcceso( traficosActions::RUTINA_MARITIMO );
 		}		
 		if( $this->modo=="aereo" ){
+            
 			$this->nivel = $this->getUser()->getNivelAcceso( traficosActions::RUTINA_AEREO );
 		}		
 		if( $this->modo=="expo" ){
+            
 			$this->nivel = $this->getUser()->getNivelAcceso( traficosActions::RUTINA_EXPO );
 		}
         if( $this->modo=="otm" ){
+           
 			$this->nivel = $this->getUser()->getNivelAcceso( traficosActions::RUTINA_OTM );
 		}
 		if( $this->nivel==-1 ){
 			$this->forward404();
-		}		
-		
+		}
         
 		if( $this->getRequestParameter("reporte") ){
-			
-			
 			if( !$consecutivo ){
 				$this->redirect( "traficos/index?modo=".$this->modo );	
-			}
-			
+			}			
 				
 			if($this->modo=="otm" ){
 				$this->modo="otm";
 			}
-			else if( $reporte->getCaTransporte()==Constantes::MARITIMO ){
+			else if( $reporte->getCaImpoexpo()==Constantes::EXPO ){
+				$this->modo="expo";
+			}
+            else if( $reporte->getCaTransporte()==Constantes::MARITIMO ){
 				$this->modo="maritimo";
 			}			
 			else if( $reporte->getCaTransporte()==Constantes::AEREO ){
 				$this->modo="aereo";
-			}			
-			else if( $reporte->getCaImpoexpo()==Constantes::EXPO ){
-				$this->modo="expo";
-			}            
+			}
 			
 			$this->cliente = $reporte->getCliente(); 			
 			$this->idreporte = $reporte->getCaIdreporte();
 			$this->getRequest()->setParameter("idcliente", $this->cliente->getCaIdcliente() ); // Para el submenu
-			
 		}else{		
 			if( !$this->idCliente ){
 				$this->redirect( "traficos/index?modo=".$this->modo );	
@@ -170,7 +166,6 @@ class traficosActions extends sfActions
 				$this->reportes = ReporteTable::getReportesActivos( $this->cliente->getCaIdcliente() );
 				break;	
 		}
-		
 		/*
 		* En caso que no se encuentre entre los activos
 		*/
@@ -185,10 +180,9 @@ class traficosActions extends sfActions
 			if( !$flag ){
 				$this->reportes[] = $reporte;
 			}
-		}					
+		}        
 		//$this->getUser()->clearFiles();	
 	}
-	
 	
 	/*
 	* Muestra la información de los reporte
