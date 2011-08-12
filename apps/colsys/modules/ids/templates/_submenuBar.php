@@ -29,6 +29,8 @@ switch ($action) {
             $button[$i]["link"] = "ids/formIds?modo=" . $this->getRequestParameter("modo");
             $i++;
         }
+        
+        
 
         break;
 
@@ -99,6 +101,12 @@ if ($this->getRequestParameter("modo") == "prov" && $action != "listadoProveedor
         $button[$i]["tooltip"] = "Listado de documentos proximos a vencerse";
         $button[$i]["image"] = "22x22/package_editors.png";
         $button[$i]["link"] = "ids/documentosPorTipo?modo=" . $this->getRequestParameter("modo");
+        $i++;
+        
+        $button[$i]["name"] = "Listado de Criterios";
+        $button[$i]["tooltip"] = "";
+        $button[$i]["image"] = "22x22/kfind.gif";
+        $button[$i]["link"] = "ids/listadoCriteriosEval?modo=" . $this->getRequestParameter("modo");
         $i++;
     }
 }

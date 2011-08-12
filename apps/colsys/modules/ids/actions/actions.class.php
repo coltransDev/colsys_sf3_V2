@@ -1781,6 +1781,121 @@ class idsActions extends sfActions {
         $this->id = $request->getParameter("id");
         $this->modo = $request->getParameter("modo");
     }
+    
+    
+     /*
+     *  Lista los criterios de evaluació n para su posterior edición.
+     *
+     * @param sfRequest $request A request object
+     */
+
+    public function executeListadoCriteriosEval(sfWebRequest $request) {
+        $this->nivel = $this->getNivel();
+
+        if ($this->nivel < 2) {
+            $this->forward404();
+        }
+        $this->nivel = 6;
+        
+        $q =Doctrine::getTable("IdsCriterio")
+                ->createQuery("c")
+                ->innerJoin("c.IdsTipo t") 
+                ->addWhere("c.ca_activo=?", true)
+                ->addWhere("c.ca_tipo != ?", "AGE")  
+                ->addOrderBy("t.ca_nombre, c.ca_tipocriterio, c.ca_impoexpo, c.ca_transporte");                
+        
+        $this->criterios = $q->execute();
+        
+        
+    }
+    
+    /*
+     *  Lista los criterios de evaluació n para su posterior edición.
+     *
+     * @param sfRequest $request A request object
+     */
+
+    public function executeFormCriterios(sfWebRequest $request) {
+        
+        
+        $this->nivel = $this->getNivel();
+        $this->nivel = 6;
+        
+        if ($this->nivel < 6) {
+            $this->forward404();
+        }
+        
+        
+        
+        $this->modo = $request->getParameter("modo");
+        
+        $tipoprov = $request->getParameter("tipoprov");   
+        $this->tipoProv = Doctrine::getTable("IdsTipo")->find($tipoprov);
+        $this->forward404unless( $this->tipoProv );
+        
+        $tipo = $request->getParameter("tipo");
+        $impoexpo = $request->getParameter("impoexpo");
+        $transporte = $request->getParameter("transporte");
+
+        $q = Doctrine::getTable("IdsCriterio")->createQuery("c");
+        $q->addWhere("c.ca_tipocriterio = ?", $tipo );
+        $q->addWhere("c.ca_tipo = ?", $tipoprov );
+        if( $impoexpo ){
+            $q->addWhere("c.ca_impoexpo = ?", $impoexpo);
+        }else{
+            $q->addWhere("c.ca_impoexpo IS NULL");
+        }
+        
+        if( $transporte ){
+            $q->addWhere("c.ca_transporte = ?", $transporte);
+        }else{
+            $q->addWhere("c.ca_transporte IS NULL");
+        }
+        
+        $q->addWhere("c.ca_activo = ?", true);
+        $this->criterios = $q->execute();
+
+
+        $this->form = new CriteriosForm();
+        $this->form->setCriterios($this->criterios);
+        $this->form->configure();
+
+        if ($request->isMethod('post')) {
+
+            $bindValues = array();
+            
+            $bindValues["impoexpo"] = $request->getParameter("impoexpo");
+            $bindValues["transporte"] = $request->getParameter("transporte");
+            $bindValues["tipoprov"] = $request->getParameter("tipoprov");
+            $bindValues["tipo"] = $request->getParameter("tipo");
+            foreach ($this->criterios as $criterio) {
+                $bindValues["ponderacion_" . $criterio->getCaIdcriterio()] = $request->getParameter("ponderacion_" . $criterio->getCaIdcriterio());
+                
+            }
+
+            $this->form->bind($bindValues);
+            if ($this->form->isValid()) {
+                $criterios = $request->getParameter("idcriterio");
+                foreach ($criterios as $idcriterio) {
+                    $crit = Doctrine::getTable("IdsCriterio")->find( $idcriterio );                    
+                    $pond = trim($request->getParameter("ponderacion_" . $idcriterio));
+                    $crit->setCaPonderacion( $pond ); 
+                    if( $pond==0 ){
+                        $crit->setCaActivo( false ); 
+                    }
+                    $crit->save();
+                }
+
+                $this->redirect("ids/listadoCriteriosEval?modo=" . $this->modo);
+            }
+        }
+                
+        
+        $this->tipo = $tipo;
+        $this->tipoprov = $tipoprov;
+        $this->transporte = $transporte;
+        $this->impoexpo = $impoexpo;
+    }
 
 }
 
