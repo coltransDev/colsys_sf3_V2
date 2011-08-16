@@ -3948,5 +3948,55 @@ ORDER BY ca_idtrayecto,ca_idconcepto,log_pricrecargosxconcepto.ca_idrecargo, ca_
     public function executeMigrarInoAereo(){
         
     }
+    
+    
+    public function executeImportarInv1($request){
+      
+        /*$file="/home/abotero/hauri.csv";
+        $content=file_get_contents($file);
+        $lines=explode("\n",$content);
+        foreach($lines as $line){                
+
+            $activo = Doctrine::getTable("InvActivo")
+                      ->createQuery("a")  
+                      ->addWhere("a.ca_identificador = ? " , $line )
+                      ->fetchOne();
+
+            if( $activo ){ 
+                echo "INSERT INTO inv.tb_asignaciones_software (ca_idactivo, ca_idequipo, ca_usucreado, ca_fchcreado) VALUES (622, ".$activo->getCaIdactivo().", 'abotero', '".date("Y-m-d H:i:s")."' );";                    
+                echo "<br />";
+            }else{
+                //echo $line.'<br />';                    
+            }
+
+        }*/
+        
+        
+        $file="/home/abotero/sophos.csv";
+        $content=file_get_contents($file);
+        $lines=explode("\n",$content);
+        foreach($lines as $line){                
+
+            $activo = Doctrine::getTable("InvActivo")
+                      ->createQuery("a")  
+                      ->addWhere("a.ca_identificador = ? " , $line )
+                      ->fetchOne();
+
+            if( $activo ){ 
+                echo "INSERT INTO inv.tb_asignaciones_software (ca_idactivo, ca_idequipo, ca_usucreado, ca_fchcreado) VALUES (621, ".$activo->getCaIdactivo().", 'abotero', '".date("Y-m-d H:i:s")."' );";                    
+                echo "<br />";
+            }else{
+                //echo $line.'<br />';                    
+            }
+
+        }
+            //echo 'Los datos no coinciden'.'<br />';
+
+        $this->setTemplate("blank");
+        
+    }
+    
+    
+    
 }
 ?>
