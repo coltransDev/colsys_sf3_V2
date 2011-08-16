@@ -58,8 +58,8 @@ class usersActions extends sfActions
 					)
 				); 
 			if( $this->form->isValid() ){	
-				//Se valido correctamente
-                if( $this->getUser()->getAttribute("path_info") ){
+				//Se valido correctamente                
+                if( $this->getUser()->getAttribute("path_info") && $this->getUser()->getAttribute("path_info")!="/users/logout"){
                     $url = $this->getUser()->getAttribute("path_info");
                     $params = $this->getUser()->getAttribute("request_parameters");
                     
@@ -81,6 +81,9 @@ class usersActions extends sfActions
                 }else{
                     $url = "homepage/index";
                 }
+                
+                
+               
                 
 				$this->redirect( $url );
 				//echo "OK";	
