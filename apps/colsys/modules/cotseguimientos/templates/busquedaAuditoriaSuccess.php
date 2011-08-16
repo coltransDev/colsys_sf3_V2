@@ -42,14 +42,42 @@ var tabs = new Ext.FormPanel({
                     format: 'Y-m-d',
 					value: '<?=date("Y-m-d")?>'					
 					
-				}
+				},
+                
+                {
+                    xtype:          'combo',
+                    mode:           'local',
+                    value:          '',
+                    triggerAction:  'all',
+                    forceSelection: true,
+                    editable:       true,
+                    fieldLabel:     'Estado',
+                    name:           'estado',
+                    hiddenName:     'est',
+                    displayField:   'name',
+                    valueField:     'value',                    
+                    allowBlank:     true,
+                    store:          new Ext.data.JsonStore({
+                        fields : ['value','name'],
+                        data   : [
+                            {value: 'SIN', name : 'Sin Seguimientos'}
+                            <?
+                            foreach( $estados as $estado ){
+                            ?>
+                                ,{value: '<?=$estado->getCaValor()?>', name : '<?=$estado->getCaValor2()?>'}
+                            <?
+                            }
+                            ?>                            
+                        ]
+                    })
+                }
 				
                 <? 
                 if($nivel=="0")
                 {
                 ?>
-                ,				
-				{
+                				
+				,{
 				xtype:'fieldset',
 				checkboxToggle:true,
 				title: 'Filtrar por vendedor',

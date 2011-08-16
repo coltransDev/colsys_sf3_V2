@@ -469,77 +469,67 @@ class cotseguimientosActions extends sfActions
 		$this->fechaInicial = Utils::parseDate($request->getParameter("fechaInicial"));
 		$this->fechaFinal = Utils::parseDate($request->getParameter("fechaFinal"));
 		$checkboxVendedor = $request->getParameter( "checkboxVendedor" );
+        
+        
+		
+        
         $checkboxSucursal = $request->getParameter( "checkboxSucursal" );
-		$this->login = $request->getParameter( "login" );
-		$this->usuario = Doctrine::getTable("Usuario")->find( $this->login );
-
- 
-		$con = Doctrine_Manager::getInstance()->connection();
-		$sql="select c.ca_usuario,c.ca_consecutivo,c.ca_version ,u.ca_idsucursal,to_char(c.ca_fchcreado,'yyyy-mm-dd') as ca_fchcreado from tb_cotizaciones c
-			INNER JOIN control.tb_usuarios u ON c.ca_usuario = u.ca_login
-			WHERE
-			( c.ca_idcotizacion IN ( SELECT p.ca_idcotizacion FROM tb_cotProductos p left join tb_cotseguimientos s on p.ca_idproducto=s.ca_idproducto where p.ca_etapa='SEG' and s.ca_idproducto is null  )
-			and  c.ca_idcotizacion  NOT IN ( SELECT ca_idcotizacion FROM tb_cotProductos  WHERE ca_etapa='NAP' or ca_etapa='APR' )
-            and c.ca_idcotizacion NOT IN ( SELECT distinct(p.ca_idcotizacion) FROM  tb_cotProductos p inner join tb_cotseguimientos s on p.ca_idproducto=s.ca_idproducto )
-			or  c.ca_idcotizacion  NOT IN ( SELECT ca_idcotizacion FROM tb_cotProductos  )  )
-			and 
-			( ca_usuanulado is  null or ca_usuanulado='' ) and c.ca_fchcreado between '".$this->fechaInicial."' and '".$this->fechaFinal."'
-		";
-		if( $checkboxVendedor ){
-            $sql.=" and c.ca_usuario = '". $this->login."'" ;
-		}
-
-		if( $checkboxSucursal ){
-			$this->sucursal = $request->getParameter( "sucursal_est" );
-			$sql.=" and u.ca_idsucursal = '". $this->sucursal."'" ;
-            //$q->addWhere("u.ca_idsucursal = ?", $this->sucursal );
-		}else{
-			$this->sucursal = "";
-		}
-		$sql.=" and c.ca_idcotizacion NOT IN ( SELECT s.ca_idcotizacion FROM tb_cotseguimientos s WHERE s.ca_idcotizacion IS NOT null OR s.ca_idcotizacion>0 )";
-
-		$sql.=" order by c.ca_fchcreado ";
-		$st = $con->execute($sql);
-	//recuperamos las tuplas de resultados
-		$this->seguimientos = $st->fetchAll();
-		$this->numcotizaciones=count($this->seguimientos);	
-//exit;
-/*				->where(" ( c.ca_idcotizacion IN ( SELECT p.ca_idcotizacion FROM CotProducto p WHERE p.ca_etapa='SEG' ) )
-					and ( c.ca_idcotizacion  NOT IN ( SELECT p1.ca_idcotizacion FROM CotProducto p1 WHERE p1.ca_etapa<>'SEG' ) )
-					or ( c.ca_idcotizacion  IN ( SELECT p2.ca_idcotizacion FROM CotProducto p2)  ) ")
- *
- */
-/*		$q = Doctrine_Query::create()
-				->select("c.ca_usuario,c.ca_consecutivo,u.ca_idsucursal")
-				->from("Cotizacion c")
-				->innerJoin("c.Usuario u")
-				->where("  ( c.ca_idcotizacion IN ( SELECT p.ca_idcotizacion FROM tb_cotProductos p WHERE p.ca_etapa='SEG' )
-					and  t.ca_idcotizacion  NOT IN ( SELECT p1.ca_idcotizacion FROM tb_cotProductos p1 WHERE p1.ca_etapa<>'SEG' )
-					or  t.ca_idcotizacion  IN ( SELECT p2.ca_idcotizacion FROM CotProducto p2 )  )  ")
-//				->where("(ca_usuanulado is  null or ca_usuanulado='') and c.ca_fchcreado between ? and ?", array($this->fechaInicial,$this->fechaFinal));
-//				->where(" c.ca_idcotizacion IN ( SELECT p.ca_idcotizacion FROM CotProducto p WHERE p.ca_etapa='SEG' )")
-//				->addWhere("c.ca_idcotizacion NOT IN ( SELECT p1.ca_idcotizacion FROM CotProducto p1 WHERE p1.ca_etapa<>'SEG' )")
-//				->orWhere("c.ca_idcotizacion NOT IN ( SELECT p2.ca_idcotizacion FROM CotProducto p2  ) ");
-				->addWhere(" ( ca_usuanulado is  null or ca_usuanulado='' ) and c.ca_fchcreado between ? and ?", array($this->fechaInicial,$this->fechaFinal));
-
-		if( $checkboxVendedor ){
-            $q->addWhere("c.ca_usuario = ?", $this->login );
-		}
-
-		if( $checkboxSucursal ){
-			$this->sucursal = $request->getParameter( "sucursal_est" );
-            $q->addWhere("u.ca_idsucursal = ?", $this->sucursal );
-		}else{
-			$this->sucursal = "";
-		}
-
-		$this->seguimientos = $q->addWhere("c.ca_idcotizacion NOT IN ( SELECT s.ca_idcotizacion FROM CotSeguimiento s WHERE s.ca_idcotizacion IS NOT null OR s.ca_idcotizacion>0 )")
-                        ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
-                        ->execute();
-		echo(count($this->seguimientos));
-		$this->numcotizaciones=count($this->seguimientos);
- *
- */
+        $idsucursal = $request->getParameter( "sucursal_est" );
+        
+        
+        if( $checkboxSucursal && $idsucursal){
+            $this->sucursal =Doctrine::getTable("Sucursal")->find( $idsucursal )->getCaNombre();
+        }        
+        
+        $q = Doctrine::getTable("Cotizacion")
+                  ->createQuery("c")
+                  ->select("c.ca_consecutivo, c.ca_version, c.ca_fchcreado, c.ca_etapa, p.ca_etapa, o.ca_ciudad, d.ca_ciudad, u.*, s.*, seg.*, seg2.*")  
+                  ->innerJoin("c.CotProducto p")
+                  ->innerJoin("p.Origen o")
+                  ->innerJoin("p.Destino d")
+                  ->leftJoin( "c.CotSeguimiento seg" )
+                  ->leftJoin( "p.CotSeguimiento seg2" )                 
+                  ->innerJoin("c.Usuario u")  
+                  ->innerJoin("u.Sucursal s")                    
+                  ->addOrderBy("c.ca_consecutivo DESC, c.ca_version DESC, seg.ca_fchseguimiento DESC");
+                  
+                  
+        $q->addWhere("c.ca_fchcreado BETWEEN ? AND ?", array( $this->fechaInicial, $this->fechaFinal ));          
+        
+        if( $idsucursal ){
+            $q->addWhere("u.ca_idsucursal = ?", $idsucursal );
+        }
+        
+        $login = $request->getParameter( "login" );
+        if( $login ){
+            $this->usuario = Doctrine::getTable("Usuario")->find( $login );            
+            $q->addWhere("u.ca_login = ?", $this->usuario->getCaLogin() );
+        }
+        
+        
+        $est = $request->getParameter( "est" );
+        if( $est ){            
+            if( $est=="SIN" ){
+                $q->addWhere("seg.ca_idseguimiento IS NULL AND seg2.ca_idseguimiento IS NULL");
+            }else{
+                $q->addWhere("c.ca_etapa = ? OR p.ca_etapa = ?", array($est, $est));
+            }
+            
+        }
+        
+        $q->setHydrationMode(Doctrine::HYDRATE_ARRAY);
+        
+        
+        $this->cotizaciones = $q->execute();
+        
+        $this->est = $est; 
+        
+        $estados = ParametroTable::retrieveByCaso( "CU074" );
+        $this->estados = array();
+        foreach( $estados as $e ){
+            $this->estados[$e->getCaValor()] = $e->getCaValor2(); 
+        }
+        
 	}
 
 
