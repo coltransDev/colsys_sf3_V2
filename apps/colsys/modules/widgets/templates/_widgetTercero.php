@@ -7,7 +7,7 @@
 include_component("widgets", "widgetTerceroWindow");
 ?>
 <script type="text/javascript">
-
+win1=null;
 WidgetTercero = function( config ){
     Ext.apply(this, config);
     
@@ -138,10 +138,14 @@ Ext.extend(WidgetTercero, Ext.form.ComboBox, {
     if(!win1)
     {
         win1 = new WidgetTerceroWindow({idcomponent: this.id,
-                                        title: titulo,                                        
+                                        title: titulo,
                                         tipo: this.tipo
                                        });        
-    }    
+    }
+    else
+    {
+        win1.precarga(this.id,this.tipo,titulo);        
+    }
     win1.show();
     win1.cargar(idtercero);
   },

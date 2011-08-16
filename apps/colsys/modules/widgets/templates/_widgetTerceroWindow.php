@@ -19,7 +19,6 @@ WidgetTerceroWindow = function( config ){
         autoDestroy :false,
         id: 'tercero-window',
         width       : 500,			
-			closeAction :'close',
 			plain       : true,
 
 			items       : new Ext.FormPanel({
@@ -109,7 +108,7 @@ WidgetTerceroWindow = function( config ){
 				text     : 'Cancelar',
                 scope: this, 
 				handler  : function(){
-					this.close();
+					win1.hide();
 				}
 			}]
     });
@@ -159,20 +158,23 @@ Ext.extend(WidgetTerceroWindow, Ext.Window, {
                                 Ext.getCmp(res.idcomponent).hiddenField.value = res.idtercero;
                             }
                         }
-                        Ext.getCmp('tercero-window').hide();                        
-                        
+                        win1.hide();
                     }else{
                         alert("Ha ocurrido un error al guardar el registro");
                     }
-                    
                 }
              }
         );
         }
     },
-    cargar :function(idtercero)
+    precarga : function(id,tipo,titulo)
     {
-        
+        this.idcomponent=id;
+        this.title=titulo;
+        this.tipo=tipo;
+    },
+    cargar :function(idtercero)
+    {        
         if( idtercero ){
             Ext.Ajax.request(
             {
@@ -199,7 +201,21 @@ Ext.extend(WidgetTerceroWindow, Ext.Window, {
 
                 }
             });
-	}
+        }
+        else
+        {
+            var fp = Ext.getCmp("tercero-form");
+            fp.getForm().findField("idtercero").setValue("");
+            fp.getForm().findField("nombre").setValue("");
+            fp.getForm().findField("identificacion").setValue("");
+            fp.getForm().findField("direccion").setValue("");
+            fp.getForm().findField("telefono").setValue("");
+            fp.getForm().findField("email").setValue("");
+            fp.getForm().findField("fax").setValue("");
+            fp.getForm().findField("contacto").setValue("");
+            fp.getForm().findField("ciudad").setRawValue("");
+            fp.getForm().findField("ciudad").hiddenField.value = "";
+        }
 
     }
 
