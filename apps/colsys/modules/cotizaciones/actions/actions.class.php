@@ -520,10 +520,15 @@ class cotizacionesActions extends sfActions {
                         ->addOrderBy("e.ca_fchenvio")
                         ->execute();
 
+        
+        
         $config = sfConfig::get('sf_app_module_dir') . DIRECTORY_SEPARATOR . "cotizaciones" . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "textos.yml";
         $textos = sfYaml::load($config);
+        
+        $mensajeEmail = $textos['mensajeEmail'.$this->cotizacion->getCaEmpresa()];
+        
         $this->asunto = sprintf($textos['asuntoEmail'], strtoupper($this->cotizacion->getCaEmpresa()), $this->cotizacion->getCaConsecutivo());
-        $this->mensaje = sprintf($textos['mensajeEmail'], $this->cotizacion->getContacto()->getNombre(), $this->cotizacion->getCaConsecutivo());
+        $this->mensaje = sprintf($mensajeEmail , $this->cotizacion->getContacto()->getNombre(), $this->cotizacion->getCaConsecutivo());
         $this->tarea = $this->cotizacion->getTareaIDGEnvioOportuno();
 
         $this->observacionesIdg = ParametroTable::retrieveByCaso("CU076");
