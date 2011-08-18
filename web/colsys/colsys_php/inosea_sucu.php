@@ -333,7 +333,7 @@ require_once("menu.php");
                 echo "  <TD Class=listar><B>Actualización:</B>&nbsp;".$rs->Value('ca_usuactualizado')."<BR>".$rs->Value('ca_fchactualizado')."</TD>";
                 echo "  <TD Class=listar><B>Liquidación:</B>&nbsp;".$rs->Value('ca_usuliquidado')."<BR>".$rs->Value('ca_fchliquidado')."</TD>";
                 echo "  <TD Class=listar><B>Cierre:</B>&nbsp;".$rs->Value('ca_usucerrado')."<BR>".$rs->Value('ca_fchcerrado')."</TD>";
-                echo "  <TD Class=listar style='font-weight:bold; text-align: center; vertical-align: middle;'><B>".(($rs->Value('ca_provisional')=="t")?"Cierre<br>Provisional":"")."</TD>";
+                echo "  <TD Class=listar style='font-weight:bold; text-align: center; vertical-align: middle;'></TD>";
                 echo "</TR>";
                 echo "<TR HEIGHT=5>";
                 echo "  <TD Class=invertir COLSPAN=6></TD>";
