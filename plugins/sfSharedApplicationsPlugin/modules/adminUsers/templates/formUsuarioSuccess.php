@@ -356,7 +356,7 @@ $teloficinas = $sf_data->getRaw("teloficinas");
 											<?
 											foreach( $teloficinas as $teloficina ){
 											?>
-											<option value="<?=$teloficina['ca_teloficina']?>"<?=$usuario->getCaTeloficina()==$teloficina['ca_teloficina']?'selected="selected"':''?> > <?=($teloficina['ca_teloficina'])?></option>
+											<option value="<?=$teloficina['u_ca_teloficina']?>"<?=$usuario->getCaTeloficina()==$teloficina['u_ca_teloficina']?'selected="selected"':''?> > <?=($teloficina['u_ca_teloficina'])?></option>
 											<?
 											}
 											?>

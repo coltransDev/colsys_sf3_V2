@@ -188,30 +188,17 @@ class adminUsersActions extends sfActions {
 
         $this->parentescos = ParametroTable::retrieveByCaso('CU093');
 
+        
+                
+        $this->teloficinas = Doctrine::getTable("Usuario")
+                    ->createQuery("u")
+                    ->distinct()
+                    ->select("ca_teloficina")
+                    ->addOrderBy("ca_teloficina ASC")
+                    ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                    ->execute();
 
-        $s = Doctrine_Manager::getInstance()->connection();
-        $query = "SELECT DISTINCT ca_teloficina";
-        $query.= "	from control.tb_usuarios";
-        $query.= "  order by ca_teloficina ASC";
-
-        $this->teloficinas = $s->execute($query);
-
-        /*
-          $this->teloficinas = Doctrine::getTable("Usuario")
-          ->createQuery("u")
-          ->select('u.ca_idsucursal, s.ca_telefono')
-          ->innerJoin('u.Sucursal s')
-          ->innerJoin('s.Empresa e')
-          ->addWhere('e.ca_activo = ?', true)
-          ->addOrderBy("u.ca_activo DESC")
-          ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
-          ->execute();
-
-          foreach( $this->teloficinas as $key=>$val){
-          $this->teloficinas[$key]["s_ca_telefono"] = utf8_encode($this->teloficinas[$key]["s_ca_telefono"]);
-          }
-         * 
-         */
+        
 
         //$this->manager=Doctrine::getTable('Usuario')->find($request->getParameter('login'));
         //$this->manager = $this->manager->getManager();
@@ -523,12 +510,31 @@ class adminUsersActions extends sfActions {
             );
 
             if ($this->form->isValid()) {
+                
+                $conn = Doctrine::getTable("Usuario")->getConnection();
+                $conn->beginTransaction();
+                
                 $user = $this->getUser()->getUserId();
                 $user = Doctrine::getTable("Usuario")->find($this->getUser()->getUserId());
                 $user->setPasswd($this->getRequestParameter("clave1"));
                 $user->setCaForcechange(false);
-                $user->save();
+                $user->save( $conn );
+                
+                $config = sfConfig::get("app_soap_adminUsers");
+                if( $config["updateUser"] ){
+                    ProjectConfiguration::registerZend();   
+                    $wsdl_uri = $config["wsdl_uri"];            
+                    $client = new Zend_Soap_Client( $wsdl_uri, array('encoding'=>'ISO-8859-1'));        
+                    $error =  $client->updateUser( sfConfig::get("app_soap_secret"),serialize($user) );
 
+                    if( $error ){
+                        throw new Exception( $error );                
+                    }
+                }
+                
+                
+                
+                $conn->commit();
                 $this->getUser()->setAttribute('forcechange', false);
 
                 $this->setTemplate("changePasswdOk");
