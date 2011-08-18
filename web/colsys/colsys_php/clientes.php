@@ -69,11 +69,13 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)){
     echo "<TITLE>$titulo</TITLE>";
     echo "<script language='JavaScript' type='text/JavaScript'>";              // Código en JavaScript para validar las opciones de mantenimiento
     echo "function elegir(opcion, id){";
-    // echo "  if(opcion=='Modificar'){";
-    // echo "    document.location.href = '/crm/formCliente/idcliente/'+id";
-    // echo "  }else{";
+    echo "  if(opcion=='Modificar'){";
+    echo "    document.location.href = '/crm/formCliente/idcliente/'+id";
+    echo "  }else if(opcion=='Adicionar'){";
+    echo "    document.location.href = '/crm/formCliente'";
+    echo "  }else{";
     echo "    document.location.href = 'clientes.php?boton='+opcion+'\&id='+id;";
-    // echo "  }";
+    echo "  }";
     echo "}";
     echo "</script>";
     echo "</HEAD>";
@@ -380,11 +382,13 @@ elseif (!isset($boton) and !isset($accion) and isset($criterio)){
 	}else{
 		echo "<script language='JavaScript' type='text/JavaScript'>";              // Código en JavaScript para validar las opciones de mantenimiento
 		echo "function elegir(opcion, id){";
-                //echo "  if(opcion=='Modificar'){";
-		//echo "    document.location.href = '/crm/formCliente/idcliente/'+id";
-                //echo "  }else{";
-                echo "    document.location.href = 'clientes.php?boton='+opcion+'\&id='+id;";
-                //echo "  }";
+        echo "  if(opcion=='Modificar'){";
+        echo "    document.location.href = '/crm/formCliente/idcliente/'+id";
+        echo "  }else if(opcion=='Adicionar'){";
+        echo "    document.location.href = '/crm/formCliente'";
+        echo "  }else{";
+        echo "    document.location.href = 'clientes.php?boton='+opcion+'\&id='+id;";
+        echo "  }";
 		echo "}";
 		echo "function liberar(id) {";
 		echo "    document.cabecera.accion.value = \"Liberar\";";
