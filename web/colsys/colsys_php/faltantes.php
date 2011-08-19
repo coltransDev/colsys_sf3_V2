@@ -24,13 +24,13 @@ if (!isset($boton) and !isset($accion)){
     $modulo = "00100000";                                                      // Identificación del módulo para la ayuda en línea
     echo "<STYLE>@import URL(\"Coltrans.css\");</STYLE>";                      // Carga una hoja de estilo que estandariza las pantallas den sistema graficador
 
-    if (!$rs->Open("select * from tb_potenciales where ca_idcliente not in (select ca_idcliente from tb_clientes where ca_idcliente in (select DISTINCT ca_idcliente from tb_inoingresos_sea)) and ca_idcliente in (select DISTINCT ca_idcliente from tb_inoingresos_sea)")) {
+    if (!$rs->Open("select * from tb_potenciales where ca_idcliente not in (select ca_idcliente from vi_clientes_reduc where ca_idcliente in (select DISTINCT ca_idcliente from tb_inoingresos_sea)) and ca_idcliente in (select DISTINCT ca_idcliente from tb_inoingresos_sea)")) {
         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";                   // Muestra el mensaje de error
         echo "<script>document.location.href = 'entrada.php';</script>";
         exit; }
 	$i = 0;
 
-    if (!$tr->Open("select ca_idcliente, ca_compania from tb_clientes order by ca_idcliente")) {                  // Selecciona todos lo registros de la tabla Agentes
+    if (!$tr->Open("select ca_idcliente, ca_compania from vi_clientes_reduc order by ca_idcliente")) {                  // Selecciona todos lo registros de la tabla Agentes
         echo "<script>alert(\"".addslashes($tr->mErrMsg)."\");</script>";      // Muestra el mensaje de error
         echo "<script>document.location.href = 'entrada.php';</script>";
         exit; }
