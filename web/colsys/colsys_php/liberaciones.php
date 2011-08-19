@@ -75,7 +75,7 @@ elseif (!isset($boton) and !isset($accion) and isset($criterio)){
        }
     $sql = "select cl.ca_idcliente, cl.ca_compania, cl.ca_vendedor, us.ca_sucursal, lc.ca_cupo, lc.ca_diascredito, lc.ca_usucreado, lc.ca_fchcreado, lc.ca_usuactualizado, lc.ca_fchactualizado, lc.ca_observaciones, CASE WHEN cl.ca_tipo IS NOT NULL OR length(cl.ca_tipo::text) <> 0 THEN 'Vigente'::text ELSE CASE WHEN cl.ca_fchcircular IS NULL THEN 'Sin'::text ELSE CASE WHEN (cl.ca_fchcircular + 365) < now() THEN 'Vencido'::text ELSE 'Vigente'::text END END END AS ca_stdcircular, ";
     $sql.= "    st.ca_fchestado, st.ca_libestado, st.ca_libestobservaciones, st.ca_fchcreado_le, st.ca_usucreado_le from tb_libcliente lc ";
-    $sql.= "    INNER JOIN tb_clientes cl ON lc.ca_idcliente = cl.ca_idcliente ";
+    $sql.= "    INNER JOIN vi_clientes_reduc cl ON lc.ca_idcliente = cl.ca_idcliente ";
     $sql.= "    LEFT JOIN ( SELECT les.ca_idcliente, les.ca_fchestado, les.ca_libestado, les.ca_observaciones as ca_libestobservaciones, les.ca_fchcreado as ca_fchcreado_le, les.ca_usucreado as ca_usucreado_le FROM tb_libestados les RIGHT OUTER JOIN (select ca_idcliente, max(ca_idlibestado) as ca_idlibestado from tb_libestados group by ca_idcliente) ule ON (les.ca_idcliente = ule.ca_idcliente and les.ca_idlibestado = ule.ca_idlibestado) ) st ON st.ca_idcliente = lc.ca_idcliente ";
     $sql.= "    LEFT OUTER JOIN vi_usuarios us ON cl.ca_vendedor = us.ca_login $condicion order by ca_sucursal, ca_compania";
     if (!$rs->Open("$sql")) {  // Selecciona todos lo registros de la tabla tb_libcliente
@@ -209,7 +209,7 @@ elseif (isset($boton)) {                                                       /
 //           include_once 'include/seguridad.php';                             // Control de Acceso al módulo
              require('include/fpdf.php');                                                   // Incorpora la librería de funciones, para generara Archivos en formato PDF
              require('include/cpdf.php');                                                   // Incorpora la plantilla con formato de Coltrans
-             if (!$rs->Open("select cl.ca_idcliente, cl.ca_compania, cl.ca_vendedor, us.ca_sucursal, lc.ca_cupo, lc.ca_diascredito, lc.ca_usucreado, lc.ca_fchcreado, lc.ca_usuactualizado, lc.ca_fchactualizado, lc.ca_observaciones from tb_libcliente lc INNER JOIN tb_clientes cl ON lc.ca_idcliente = cl.ca_idcliente LEFT OUTER JOIN vi_usuarios us ON cl.ca_vendedor = us.ca_login order by ca_sucursal, ca_compania")) {  // Selecciona todos lo registros de la tabla tb_libcliente
+             if (!$rs->Open("select cl.ca_idcliente, cl.ca_compania, cl.ca_vendedor, us.ca_sucursal, lc.ca_cupo, lc.ca_diascredito, lc.ca_usucreado, lc.ca_fchcreado, lc.ca_usuactualizado, lc.ca_fchactualizado, lc.ca_observaciones from tb_libcliente lc INNER JOIN vi_clientes_reduc cl ON lc.ca_idcliente = cl.ca_idcliente LEFT OUTER JOIN vi_usuarios us ON cl.ca_vendedor = us.ca_login order by ca_sucursal, ca_compania")) {  // Selecciona todos lo registros de la tabla tb_libcliente
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";                   // Muestra el mensaje de error
                  echo "<script>document.location.href = 'entrada.php';</script>";
                  exit; }

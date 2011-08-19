@@ -3673,7 +3673,7 @@ elseif (isset($boton)) {                                                       /
                 }
                 $tm =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
                 $query = "select DISTINCT ic.ca_idreporte, ic.ca_login, ic.ca_idproveedor, ic.ca_proveedor, ic.ca_idcliente, cl.ca_compania, ic.ca_numorden, ic.ca_hbls, ic.ca_fchhbls, ic.ca_numpiezas, ic.ca_peso, ic.ca_volumen, ic.ca_continuacion, ic.ca_continuacion_dest, bg.ca_nombre as ca_bodega, dc.*, dd.ca_nombre as ca_nomdeposito from tb_inoclientes_sea ic";
-                $query.= " LEFT OUTER JOIN tb_clientes cl ON (ic.ca_idcliente = cl.ca_idcliente) LEFT OUTER JOIN tb_bodegas bg ON (ic.ca_idbodega = bg.ca_idbodega)";
+                $query.= " LEFT OUTER JOIN vi_clientes_reduc cl ON (ic.ca_idcliente = cl.ca_idcliente) LEFT OUTER JOIN tb_bodegas bg ON (ic.ca_idbodega = bg.ca_idbodega)";
                 $query.= " LEFT OUTER JOIN tb_dianclientes dc ON (ic.ca_referencia = dc.ca_referencia AND ic.ca_idcliente = dc.ca_idcliente AND ic.ca_hbls = dc.ca_house)";
                 $query.= " LEFT OUTER JOIN tb_diandepositos dd ON (dc.ca_coddeposito = dd.ca_codigo::text)";
                 $query.= " where ic.ca_referencia = '$id' and ic.ca_idcliente = '$cl' and ic.ca_hbls = '$hb' order by ca_idinfodian DESC";
@@ -3684,7 +3684,7 @@ elseif (isset($boton)) {                                                       /
                 }
                 $rp =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
                 $query = "select uv.ca_idconsignatario, cl.ca_idcliente, cl.ca_digito, cl.ca_compania as ca_nombre_cli, tr.ca_identificacion as ca_identificacion_con, tr.ca_nombre as ca_nombre_con, uv.ca_mercancia_desc, uv.ca_idconsignar, b1.ca_nombre as ca_consignar, b2.ca_tipo as ca_tipobodega, b2.ca_nombre as ca_bodega, uv.ca_continuacion from tb_reportes uv ";
-                $query.= " INNER JOIN tb_concliente cc ON (cc.ca_idcontacto = uv.ca_idconcliente) INNER JOIN tb_clientes cl ON (cl.ca_idcliente = cc.ca_idcliente) LEFT OUTER JOIN tb_terceros tr ON (tr.ca_idtercero = uv.ca_idconsignatario) LEFT OUTER JOIN tb_bodegas b1 ON (b1.ca_idbodega = uv.ca_idconsignar) LEFT OUTER JOIN tb_bodegas b2 ON (b2.ca_idbodega = uv.ca_idbodega) ";
+                $query.= " INNER JOIN tb_concliente cc ON (cc.ca_idcontacto = uv.ca_idconcliente) INNER JOIN vi_clientes_reduc cl ON (cl.ca_idcliente = cc.ca_idcliente) LEFT OUTER JOIN tb_terceros tr ON (tr.ca_idtercero = uv.ca_idconsignatario) LEFT OUTER JOIN tb_bodegas b1 ON (b1.ca_idbodega = uv.ca_idconsignar) LEFT OUTER JOIN tb_bodegas b2 ON (b2.ca_idbodega = uv.ca_idbodega) ";
                 $query.= " INNER JOIN (select ca_consecutivo, max(ca_version) as ca_version from tb_reportes where ca_consecutivo = (select ca_consecutivo from tb_reportes where ca_idreporte = ".$tm->Value("ca_idreporte").") group by ca_consecutivo) sr ON (sr.ca_consecutivo = uv.ca_consecutivo and sr.ca_version = uv.ca_version)";
                 if (!$rp->Open("$query")) {    // Trae de la Tabla de Reportes la Ultima Versión del Reporte.
                     echo "<script>alert(\"".addslashes($rp->mErrMsg)."\");</script>";     // Muestra el mensaje de error
