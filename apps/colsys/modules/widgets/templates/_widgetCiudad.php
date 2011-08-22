@@ -53,7 +53,12 @@ WidgetCiudad = function( config ){
 
 
 Ext.extend(WidgetCiudad, Ext.form.ComboBox, {
-
+    setIdtrafico: function( v ){        
+        if( v && this.trafico!=v ){
+            this.setValue("");
+        }
+        this.trafico = v;
+    },    
     doQuery : function(q, forceAll){
         
         q = Ext.isEmpty(q) ? '' : q;
@@ -85,99 +90,117 @@ Ext.extend(WidgetCiudad, Ext.form.ComboBox, {
                         var traf=Ext.getCmp(this.traficoParent)?Ext.getCmp(this.traficoParent).getValue():"";
                         i=0;
                         
-                        if(this.tipo && this.impoexpo)
-                        {
+                        if(this.tipo && this.impoexpo){                        
                             
                             this.store.filterBy(function(record, id){                          
 
-                            if( nomimpoexpo=="<?=constantes::IMPO?>")
-                            {
-                                var str=record.get("ciudad_trafico");
-                                var txt=new RegExp(q,"ig");
-                                if(tipo=="1")
+                                if( nomimpoexpo=="<?=constantes::IMPO?>"){
+
+                                    var str=record.get("ciudad_trafico");
+                                    var txt=new RegExp(q,"ig");
+                                    if(tipo=="1")
+                                    {
+                                        if(record.get("idtrafico")!=trafico)
+                                        {
+                                            if(str.search(txt) == -1  )
+                                                return false;
+                                            else
+                                                return true;
+                                        }
+                                        else
+                                            return false;
+                                    }
+                                    else if(tipo=="2")
+                                    {                                    
+                                        if(record.get("idtrafico")==trafico)
+                                        {
+                                            if(str.search(txt) == -1  )
+                                                return false;
+                                            else
+                                                return true;
+                                        }
+                                        else
+                                            return false;
+                                    }
+                                    else if(tipo=="3")
+                                    {
+
+                                        if(record.get("idtrafico")==traf)
+                                        {
+                                            if(str.search(txt) == -1  )
+                                                return false;
+                                            else
+                                                return true;
+                                        }
+                                        else
+                                            return false;
+                                    }
+                                     return true;
+                                }
+                                else if( nomimpoexpo=="<?=constantes::EXPO?>")
                                 {
-                                    if(record.get("idtrafico")!=trafico)
+                                    var str=record.get("ciudad_trafico");
+                                    var txt=new RegExp(q,"ig");
+                                    if(tipo=="2")
                                     {
-                                        if(str.search(txt) == -1  )
-                                            return false;
+                                        if(record.get("idtrafico")!=trafico)
+                                        {
+                                            if(str.search(txt) == -1  )
+                                                return false;
+                                            else
+                                                return true;
+                                        }
                                         else
-                                            return true;
+                                            return false;
                                     }
-                                    else
-                                        return false;
-                                }
-                                else if(tipo=="2")
-                                {                                    
-                                    if(record.get("idtrafico")==trafico)
+                                    else if(tipo=="1")
                                     {
-                                        if(str.search(txt) == -1  )
-                                            return false;
+                                        if(record.get("idtrafico")==trafico)
+                                        {
+                                            if(str.search(txt) == -1  )
+                                                return false;
+                                            else
+                                                return true;
+                                        }
                                         else
-                                            return true;
+                                            return false;
                                     }
-                                    else
-                                        return false;
+                                        return true;
                                 }
-                                else if(tipo=="3")
+                                else if( nomimpoexpo=="<?=constantes::TRIANGULACION?>")
                                 {
-                                    
-                                    if(record.get("idtrafico")==traf)
-                                    {
-                                        if(str.search(txt) == -1  )
-                                            return false;
-                                        else
-                                            return true;
-                                    }
-                                    else
+                                    var str=record.get("ciudad_trafico");
+                                    var txt=new RegExp(q,"ig");
+                                    if(str.search(txt) == -1  )
                                         return false;
-                                }
-                                 return true;
-                            }
-                            else if( nomimpoexpo=="<?=constantes::EXPO?>")
-                            {
-                                var str=record.get("ciudad_trafico");
-                                var txt=new RegExp(q,"ig");
-                                if(tipo=="2")
-                                {
-                                    if(record.get("idtrafico")!=trafico)
-                                    {
-                                        if(str.search(txt) == -1  )
-                                            return false;
-                                        else
-                                            return true;
-                                    }
                                     else
-                                        return false;
+                                        return true;
                                 }
-                                else if(tipo=="1")
-                                {
-                                    if(record.get("idtrafico")==trafico)
-                                    {
-                                        if(str.search(txt) == -1  )
-                                            return false;
-                                        else
-                                            return true;
-                                    }
-                                    else
-                                        return false;
-                                }
-                                    return true;
-                            }
-                            else if( nomimpoexpo=="<?=constantes::TRIANGULACION?>")
-                            {
-                                var str=record.get("ciudad_trafico");
-                                var txt=new RegExp(q,"ig");
-                                if(str.search(txt) == -1  )
-                                    return false;
                                 else
                                     return true;
-                            }
-                            else
-                                return true;
-                            });
+                                }
+                            );
                          }
-                         else
+                         else if( trafico ){
+                            this.store.filterBy(function(record, id){                          
+
+                                
+                                if(record.get("idtrafico")==trafico)
+                                {
+                                    var str=record.get("ciudad_trafico");
+                                    var txt=new RegExp(q,"ig");
+                                    if(str.search(txt) == -1  ){
+                                        return false;
+                                    }else{
+                                        return true;
+                                    }
+                                }
+                            });
+                                        
+                         }else{
                             this.store.filter(this.searchField, q, true);
+                         }
+                         
                     }
                     this.onLoad();
                 }else{

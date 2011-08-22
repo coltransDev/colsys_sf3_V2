@@ -696,6 +696,14 @@ class widgetsComponents extends sfComponents {
         
     }
     
+    public function executeWidgetTipoIdentificacion() {
+        $this->tipos = Doctrine::getTable("IdsTipoIdentificacion")
+                                ->createQuery("t")
+                                ->leftJoin("t.Trafico tt")
+                                ->addOrderBy("t.ca_tipoidentificacion")
+                                ->execute();
+    }
+    
 
 }
 
