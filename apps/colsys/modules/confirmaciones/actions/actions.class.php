@@ -275,7 +275,7 @@ class confirmacionesActions extends sfActions
                               UNION SELECT DISTINCT ca_usucreado as ca_usuario FROM tb_inomaestra_sea WHERE ca_referencia = '".$ca_referencia."'
                               UNION (Select distinct(ca_login) from control.tb_usuarios where ca_idsucursal in (
                                 select ca_idsucursal from control.tb_usuarios where ca_login in (
-                                select ca_vendedor from tb_clientes where ca_idcliente in (select ca_idcliente from tb_inoclientes_sea where ca_referencia='".$ca_referencia."' ) and ca_propiedades like 'cuentaglobal=true%')
+                                select ca_vendedor from vi_clientes_reduc where ca_idcliente in (select ca_idcliente from tb_inoclientes_sea where ca_referencia='".$ca_referencia."' ) and ca_propiedades like 'cuentaglobal=true%')
                                 ) and ca_departamento = 'Cuentas Globales'))";
             
                     

@@ -214,9 +214,9 @@ class reportesGerActions extends sfActions {
                 $where .= " and ca_idsucursal='" . $this->idsucursal . "'";
 
             if($this->departamento=="Cuentas Globales")
-                $where .= " and ca_idcliente in (select ca_idcliente from tb_clientes where ca_propiedades like '%cuentaglobal=true%') ";
+                $where .= " and ca_idcliente in (select ca_idcliente from vi_clientes_reduc where ca_propiedades like '%cuentaglobal=true%') ";
             else if($this->departamento=="Tráficos")
-                $where .= " and ca_idcliente not in (select ca_idcliente from tb_clientes where ca_propiedades like '%cuentaglobal=true%') ";
+                $where .= " and ca_idcliente not in (select ca_idcliente from vi_clientes_reduc where ca_propiedades like '%cuentaglobal=true%') ";
                 
             
             $this->nmeses = 3; //ceil(Utils::diffTime($this->fechainicial,$this->fechafinal)/720);
@@ -640,11 +640,11 @@ class reportesGerActions extends sfActions {
                     $where=" t.ca_fchcreado between '" . $this->fechainicial . "' and '" . $this->fechafinal . "' and ";
                 $join="";
                 if($this->tipo<3)
-                        $join="inner join tb_clientes c on t.ca_idcliente=c.ca_idcliente";
+                        $join="inner join vi_clientes_reduc c on t.ca_idcliente=c.ca_idcliente";
                 else if($this->tipo==3)
                 {
                     $join="inner join tb_brk_maestra m on t.ca_referencia = m.ca_referencia
-                        inner join tb_clientes c on m.ca_idcliente=c.ca_idcliente";
+                        inner join vi_clientes_reduc c on m.ca_idcliente=c.ca_idcliente";
                 }
                 $sql="select t.*,c.ca_compania from ".$tipos[$this->tipo]." t
                         $join
