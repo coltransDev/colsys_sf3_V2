@@ -15,7 +15,7 @@ class crmActions extends sfActions {
 
     public function getNivel( ){ 
         
-        
+                
         $this->nivel = $this->getUser()->getNivelAcceso( crmActions::RUTINA );		
         return $this->nivel;
     }

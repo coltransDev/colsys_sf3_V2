@@ -577,7 +577,8 @@ include_component("widgets", "widgetComerciales");
                                         name: 'complemento',
                                         value: '',
                                         allowBlank:true,
-                                        width: 200
+                                        width: 200,
+                                        
                                     }
                                     
                                 ]
@@ -949,7 +950,7 @@ include_component("widgets", "widgetComerciales");
                         //form.findField("ids").setRawValue(this.res.data.ids);
                         //form.findField("ids").hiddenField.value = this.res.data.ids_id;
                         
-                        var idtrafico = this.res.data.idtrafico;
+                        var idtrafico = this.res.data.idtrafico;                       
                         Ext.getCmp("ciudad_id").setIdtrafico( idtrafico );
                         Ext.getCmp("ciudad_id").setValue( this.res.data.idciudad );
                         if( idtrafico=="CO-057" ){
@@ -969,6 +970,10 @@ include_component("widgets", "widgetComerciales");
                 }
                 
                 
+            }else{
+                var tipo = Ext.getCmp("tipo_identificacion_id");  
+                var idtrafico = tipo.getIdtrafico();
+                Ext.getCmp("ciudad_id").setIdtrafico( idtrafico );
             }
         },
 
