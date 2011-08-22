@@ -51,8 +51,30 @@ Ids:
       local: ca_id
       foreign: ca_id
       type: many
+    IdsTipoIdentificacion:
+      local: ca_tipoidentificacion
+      foreign: ca_tipoidentificacion
+      type: one
     
-
+IdsTipoIdentificacion:  
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: ids
+  tableName: ids.tb_tiposidentificacion
+  columns:
+    ca_tipoidentificacion:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_nombre: string
+    ca_idtrafico: string
+  relations:
+    Trafico:
+      local: ca_idtrafico
+      foreign: ca_idtrafico
+      type: one
       
 IdsSucursal:
   options:
@@ -448,14 +470,15 @@ IdsEvento:
       foreign: ca_id
       type: one
 
-
+#Hace referencia a una vista  
+#Se cambió por motivos de compatibilidad 
 Cliente:
   options:
     symfony:
       form: false
       filter: false
   generatePath: ids
-  tableName: tb_clientes
+  tableName: vi_clientes_reduc
   columns:
     ca_idcliente:
         type: integer
@@ -531,3 +554,85 @@ Cliente:
       foreign: ca_idcliente
       type: one
   
+
+#Hace referencia a la tabla
+#No contiene el nombre de la compañia ya que esta en Ids
+IdsCliente:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: ids
+  tableName: tb_clientes
+  columns:
+    ca_idcliente:
+        type: integer
+        primary: true    
+    ca_papellido: string
+    ca_sapellido: string
+    ca_nombres: string
+    ca_saludo: string
+    ca_sexo: string
+    ca_cumpleanos: string
+    ca_direccion: string
+    ca_oficina: string
+    ca_torre: string
+    ca_bloque: string
+    ca_interior: string
+    ca_localidad: string
+    ca_nombres: string
+    ca_complemento: string
+    ca_telefonos: string
+    ca_fax: string
+    ca_idciudad: string
+    ca_website: string
+    ca_email: string
+    ca_actividad: string
+    ca_sectoreco: string
+    ca_vendedor: string
+    ca_status: string
+    ca_calificacion: string
+    ca_preferencias: string
+    ca_confirmar: string
+    ca_coordinador: string
+    ca_fchcircular: date
+    ca_nvlriesgo: string
+    ca_fchcotratoag: date
+    ca_listaclinton: string
+    ca_leyinsolvencia: string
+    ca_comentario: string
+    ca_idgrupo: string
+    ca_tipo: string
+    ca_propiedades: string
+    ca_entidad: string
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string
+    ca_fchfinanciero: timestamp
+    ca_usufinanciero: string
+  relations:
+    Ids:
+      local: ca_idcliente
+      foreign: ca_id
+      type: one
+    Contacto:
+      local: ca_idcliente
+      foreign: ca_idcliente
+      type: many
+    Usuario:
+      local: ca_vendedor
+      foreign: ca_login
+      type: one
+    Ciudad:
+      local: ca_idciudad
+      foreign: ca_idciudad
+      type: one
+    StdCliente:
+      local: ca_idcliente
+      foreign: ca_idcliente
+      type: many
+    LibCliente:
+      local: ca_idcliente
+      foreign: ca_idcliente
+      type: one

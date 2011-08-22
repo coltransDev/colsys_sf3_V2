@@ -33,19 +33,16 @@ $entidades=array("Vigente","Fusionada","Disuelta","Liquidada");
 $tiposnits=array("","Agente","Proveedor");
 
 
-$tipos = $sf_data->getRaw("tipos");
+
 
 include_component("widgets", "widgetCiudad");
-
-
+include_component("widgets", "widgetTipoIdentificacion");
+include_component("widgets", "widgetComerciales");
 ?>
 <script type="text/javascript">
     ClienteFormPanel = function( config ) {
         Ext.apply(this, config);
         this.ctxRecord = null;
-
-
-        
 
         this.items = [{
                 xtype:'tabpanel',
@@ -74,39 +71,25 @@ include_component("widgets", "widgetCiudad");
                                 },
 
                                 items: [
-                                    {                                       
-                                        xtype:          'combo',
-                                        mode:           'local',
-                                        triggerAction:  'all',
-                                        forceSelection: true,
-                                        editable:       false,
+                                    new WidgetTipoIdentificacion({                                       
+                                       
+                                       
                                         fieldLabel:     'Tipo Identificación',
                                         id:             'tipo_identificacion_id',
                                         name:           'tipo_identificacion',
                                         hiddenName:     'tipo_identificacion',
-                                        displayField:   'name',
-                                        valueField:     'value',
+                                        
                                         value:          '1',
                                         allowBlank:     false,
-                                        store:          new Ext.data.JsonStore({
-                                            fields : [ 'name', 'value'],
-                                            data   : [
-                                                <?
-                                                $i=0;
-                                                foreach( $tipos as $val ){
-                                                    echo ($i++!=0)?",":"";
-                                                    echo "{ value: '".$val->getCaIdentificacion()."', name: '".$val->getCaValor()."'}";
-                                                }
-                                                ?>
-                                            ]
-                                        }),
+                                        
+                                        
                                         listeners : {
                                             "select": this.getDv
                                         }
-                                    },
+                                    }),
                                     {
                                         xtype: 'compositefield',
-                                        fieldLabel: 'NIT',
+                                        fieldLabel: '',
                                         msgTarget : 'side',
                                         defaults: {
                                             //flex: 1
@@ -114,7 +97,7 @@ include_component("widgets", "widgetCiudad");
                                         items: [
                                             {
                                                 xtype:'numberfield',
-                                                fieldLabel: 'ID',
+                                                fieldLabel: '',
                                                 name: 'idalterno',
                                                 id:   'idalterno_id',
                                                 value: '',
@@ -132,7 +115,7 @@ include_component("widgets", "widgetCiudad");
                                             },
                                             {
                                                 xtype:'numberfield',
-                                                fieldLabel: 'DV',
+                                                fieldLabel: '',
                                                 name: 'dv',
                                                 id:   'dv_id',
                                                 value: '',
@@ -142,7 +125,7 @@ include_component("widgets", "widgetCiudad");
                                                 minValue: 0,
                                                 maxValue: 9,
                                                 width: 20,
-                                                disabled: true
+                                                readOnly: true
                                             }
 
                                         ]
@@ -154,7 +137,15 @@ include_component("widgets", "widgetCiudad");
                                         value: '',
                                         allowBlank:false,
                                         width: 400
-                                    }
+                                    },
+                                    new WidgetComerciales({
+                                        fieldLabel: 'Comercial',
+                                        disabled: this.nivel<2,                                        
+                                        name: 'login',
+                                        hiddenName: 'vendedor'
+                                        
+                                    })
+                                    
                            
                                 ]
                             },
@@ -205,7 +196,12 @@ include_component("widgets", "widgetCiudad");
                                                         }
                                                         ?>
                                                     ]
-                                                })
+                                                }),
+                                                getIdtrafico: function(){
+                                                    var idtrafico = null;            
+                                                    var store = this.store;
+                                                    return idtrafico;
+                                                }
                                             },
                                             {
                                                xtype: 'displayfield',
@@ -274,7 +270,9 @@ include_component("widgets", "widgetCiudad");
                             {
                                 xtype: 'fieldset',
                                 border: true,
-                                title: 'Contacto',
+                                title: 'Dirección',
+                                id:    'dir_other',
+                                hidden: true,
                                 defaults: {
                                     // applied to each contained panel
                                     bodyStyle:'padding-right:20px',
@@ -282,7 +280,28 @@ include_component("widgets", "widgetCiudad");
                                 },
 
                                 items: [
+                                    {
+                                        xtype: 'textfield',
+                                        fieldLabel: 'Dirección',
+                                        msgTarget : 'side',
+                                        width: 500,
+                                        name: 'dir_ot'                                       
+                                    }
+                                        
+                                ]
+                            },
+                            {
+                                xtype: 'fieldset',
+                                border: true,
+                                title: 'Dirección',
+                                id:    'dir_col',
+                                defaults: {
+                                    // applied to each contained panel
+                                    bodyStyle:'padding-right:20px',
+                                    border: false
+                                },
 
+                                items: [
                                     {
                                         xtype: 'compositefield',
                                         fieldLabel: 'Dirección',
@@ -559,7 +578,30 @@ include_component("widgets", "widgetCiudad");
                                         value: '',
                                         allowBlank:true,
                                         width: 200
-                                    },
+                                    }
+                                    
+                                ]
+                            },
+
+                            {
+                                xtype: 'fieldset',
+                                border: true,
+                                title: 'Contacto',
+                                defaults: {
+                                    // applied to each contained panel
+                                    bodyStyle:'padding-right:20px',
+                                    border: false
+                                },
+                                items: [
+                                    
+                                    new WidgetCiudad({
+                                        name      : 'ciudad',
+                                        hiddenName      : 'idciudad',
+                                        id: 'ciudad_id',
+                                        fieldLabel: 'Ciudad',
+                                        width: 200,
+                                        allowBlank: false
+                                    }),
                                     {
                                         xtype: 'compositefield',
                                         fieldLabel: 'Teléfono',
@@ -588,13 +630,6 @@ include_component("widgets", "widgetCiudad");
                                             }
                                         ]
                                     },
-                                    new WidgetCiudad({
-                                        name      : 'ciudad',
-                                        hiddenName      : 'idciudad',
-                                        fieldLabel: 'Ciudad',
-                                        width: 200,
-                                        allowBlank: false
-                                    }),
                                     {
                                         xtype     : 'textfield',
                                         name      : 'email',
@@ -902,6 +937,8 @@ include_component("widgets", "widgetCiudad");
             if( this.idcliente ){
                 this.getForm().waitMsgTarget = this.getEl();
                 var form  = this.getForm();
+                
+                
                 this.load({
                     url:'<?= url_for("crm/datosClienteFormPanel") ?>',
                     waitMsg:'Cargando...',
@@ -911,8 +948,27 @@ include_component("widgets", "widgetCiudad");
                         this.res = Ext.util.JSON.decode( options.response.responseText );
                         //form.findField("ids").setRawValue(this.res.data.ids);
                         //form.findField("ids").hiddenField.value = this.res.data.ids_id;
+                        
+                        var idtrafico = this.res.data.idtrafico;
+                        Ext.getCmp("ciudad_id").setIdtrafico( idtrafico );
+                        Ext.getCmp("ciudad_id").setValue( this.res.data.idciudad );
+                        if( idtrafico=="CO-057" ){
+                            Ext.getCmp("dir_col").setVisible(true);
+                            Ext.getCmp("dir_other").setVisible(false);
+                        }else{
+                            Ext.getCmp("dir_col").setVisible(false);
+                            Ext.getCmp("dir_other").setVisible(true);
+                        }
                     }
                 });
+                
+                if( this.nivel<4 ){
+                    Ext.getCmp("idalterno_id").disable();  
+                    Ext.getCmp("dv_id").disable();
+                    Ext.getCmp("tipo_identificacion_id").disable();                      
+                }
+                
+                
             }
         },
 
@@ -929,6 +985,7 @@ include_component("widgets", "widgetCiudad");
             if( tipo.getValue()=="1" ){
                 var dv = d_verificacion(Ext.getCmp("idalterno_id").getValue());
                 Ext.getCmp("dv_id").setValue(dv);
+                Ext.getCmp("dv_id").enable();
                 
                 Ext.Ajax.request(
                 {
@@ -951,7 +1008,21 @@ include_component("widgets", "widgetCiudad");
                 );
             }else{
                 Ext.getCmp("dv_id").setValue("");
+                Ext.getCmp("dv_id").disable();
             }
+            
+            
+            var idtrafico = tipo.getIdtrafico();
+            Ext.getCmp("ciudad_id").setIdtrafico( idtrafico );
+            
+            if( idtrafico=="CO-057" ){
+                Ext.getCmp("dir_col").setVisible(true);
+                Ext.getCmp("dir_other").setVisible(false);
+            }else{
+                Ext.getCmp("dir_col").setVisible(false);
+                Ext.getCmp("dir_other").setVisible(true);
+            }
+            
         }
     });
 

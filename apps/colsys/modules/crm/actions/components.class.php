@@ -16,7 +16,8 @@ class crmComponents extends sfComponents {
      * 
      */
     public function executeClienteFormPanel() {
-        $this->tipos = ParametroTable::retrieveByCaso("CU097");
+        $this->login = $this->getUser()->getUserId();
+                
     }
 
 }

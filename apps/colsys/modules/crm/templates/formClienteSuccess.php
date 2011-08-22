@@ -18,7 +18,9 @@ include_component("crm", "clienteFormPanel");
 
 <script type="text/javascript">
     var panel = new ClienteFormPanel({
-                                       <?=$idcliente?"idcliente:$idcliente":""?>
+                                        nivel: <?=$nivel?>
+                                       <?=$idcliente?",idcliente:$idcliente":""?>
+                                       
                                       });
     panel.render("main-panel");
 
