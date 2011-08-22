@@ -8,9 +8,9 @@
 if( $param=="Software" ){
     $cols = 10;
 }elseif( $param=="Hardware" ){
-    $cols = 21;
+    $cols = 22;
 }else{
-    $cols = 11;
+    $cols = 12;
 }
 ?>
 <div class="content" align="center">
@@ -119,7 +119,7 @@ if( $param=="Software" ){
         ?>
         <tr>
             <td>
-                <?=$activo->getCaIdentificador()?>
+                <?=link_to($activo->getCaIdentificador(), "inventory/detalleActivo?idactivo=".$activo->getCaIdactivo(), array("target"=>"_blank"))?>
             </td>
             <td>
                 <?=$activo->getCaMarca()?>
@@ -208,4 +208,5 @@ if( $param=="Software" ){
     }
     ?>
     </table>    
+    
 </div>

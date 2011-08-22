@@ -14,6 +14,7 @@ include_component("inventory", "editarActivoWindow");
 include_component("inventory", "panelReading");
 include_component("inventory", "panelAsignaciones");
 
+include_component("inventory", "panelProductos");
 
 include_component("inventory", "nuevoSeguimientoWindow");
 include_component("widgets", "widgetUsuario");
@@ -240,10 +241,18 @@ Ext.onReady(function(){
                                              title: 'Panel prueba',
                                              editable: true
                                             });
-                    Ext.getCmp('tab-panel').add(newComponent);
-                    Ext.getCmp('tab-panel').setActiveTab(newComponent);
+        */
 
-
+        /*newComponent = new PanelProductos({
+                                             id: 'asdad',
+                                             closable: true,
+                                             idcategory: 21,
+                                             idsucursal: 'BAQ',
+                                             parameter: 'Software',
+                                             title: 'Panel prueba',
+                                             editable: true
+                                            });            
+                    
         Ext.getCmp('tab-panel').add(newComponent);
         Ext.getCmp('tab-panel').setActiveTab(newComponent);*/
 

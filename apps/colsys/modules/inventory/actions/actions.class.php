@@ -824,8 +824,102 @@ class inventoryActions extends sfActions {
     }
     
     
+    public function executeDatosPanelProductos($request) {
+        $idcategory = $request->getParameter("idcategory");
+        
+        $productos = Doctrine::getTable("InvProducto")
+                ->createQuery("p")             
+                ->addWhere("p.ca_idcategoria = ?", $idcategory )
+                ->addOrderBy("p.ca_nombre ASC")                
+                ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                ->execute();
+        
+        foreach( $productos as $key=>$val ){
+            $productos[$key]["p_ca_nombre"] = utf8_encode( $productos[$key]["p_ca_nombre"] ); 
+        }
+        
+        $productos[] = array("p_ca_nombre"=>"+", "orden"=>"Z");
+        
+        $this->responseArray = array("root" => $productos, "total" => count($productos), "success" => true);
+        $this->setTemplate("responseTemplate");
+        
+    }
     
+    public function executeGuardarPanelProductos($request) {
+        $idcategory = $request->getParameter("idcategory");
+        $idproducto = $request->getParameter("idproducto");
+        
+        try{
+            $this->forward404Unless( $idcategory );
+            if( $idproducto ){
+                $prod = Doctrine::getTable("InvProducto")->find( $idproducto );
+                $this->forward404Unless( $prod );
+            }else{
+                $prod = new InvProducto();   
+                $prod->setCaIdcategoria( $idcategory );
+            }
+            
+            $prod->setCaNombre( $request->getParameter("nombre") );
+            $prod->save();
+            $this->responseArray = array("success" => true, "idproducto"=>$prod->getCaIdproducto(), "id"=>$request->getParameter("id") );
+        }catch( Exception $e ){
+            $this->responseArray = array("success" => false, "errorInfo"=>$e->getMessage() );
+        }
+        $this->setTemplate("responseTemplate");
+        
+    }
+    
+    public function executeEliminarPanelProductos($request) {        
+        
+        try{
+            $idproducto = $request->getParameter("idproducto");
+            $this->forward404Unless( $idproducto );
+            $prod = Doctrine::getTable("InvProducto")->find( $idproducto );
+            $this->forward404Unless( $prod );
+            $prod->delete();
+            $this->responseArray = array("success" => true,  "id"=>$request->getParameter("id") );
+        }catch( Exception $e ){
+            $this->responseArray = array("success" => false, "errorInfo"=>$e->getMessage() );
+        }
+        $this->setTemplate("responseTemplate");    
+    }
+    
+    
+    public function executeDetalleActivo($request) {
+        $idactivo = $request->getParameter("idactivo");
+        $this->forward404Unless( $idactivo );
+        $this->activo = Doctrine::getTable("InvActivo")->find( $idactivo );
+        $this->forward404Unless( $this->activo );
+        
+        $cat = $this->activo->getInvCategory();
+        
+        $this->parameter =  $cat->getCaParameter();
+        
+        if( $this->parameter=="Hardware" ){        
+            $q = Doctrine::getTable("InvActivo")
+                    ->createQuery("a")
+                    ->innerJoin("a.InvAsignacionSoftwareActivo so")                
+                    ->addWhere("so.ca_idequipo = ? ", $idactivo )
+                    ->addOrderBy("a.ca_identificador ASC");
 
+            $this->asig = $q->execute();
+        }
+        
+        if( $this->parameter=="Software" ){        
+            
+            $q = Doctrine::getTable("InvActivo")
+                    ->createQuery("a")
+                    ->innerJoin("a.InvAsignacionSoftware so")                
+                    ->addWhere("so.ca_idactivo = ? ", $idactivo )
+                    ->addOrderBy("a.ca_identificador ASC");
+            
+            $this->asig = $q->execute();
+        }
+        
+    }
+    
+   
+    
 }
 
 ?>

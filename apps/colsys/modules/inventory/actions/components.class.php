@@ -163,6 +163,13 @@ class inventoryComponents extends sfComponents
 
     }
 
+    /*
+	* Panel agregar nuevas marcas para software
+	* @author: Andres Botero
+	*/
+    public function executePanelProductos( ){
+
+    }
 
 
 
