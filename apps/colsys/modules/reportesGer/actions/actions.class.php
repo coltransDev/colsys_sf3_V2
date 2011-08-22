@@ -380,7 +380,7 @@ class reportesGerActions extends sfActions {
                     (c.ca_volumen) volumen
                 FROM tb_inomaestra_sea m
                 JOIN tb_inoclientes_sea c ON c.ca_referencia = m.ca_referencia
-                JOIN tb_clientes cl ON c.ca_idcliente = cl.ca_idcliente
+                JOIN vi_clientes_reduc cl ON c.ca_idcliente = cl.ca_idcliente
                 JOIN vi_usuarios u ON c.ca_login = u.ca_login
                 JOIN tb_reportes r ON c.ca_idreporte = r.ca_idreporte
                 JOIN tb_bodegas b1 ON r.ca_idbodega = b1.ca_idbodega
@@ -594,7 +594,7 @@ class reportesGerActions extends sfActions {
                         INNER JOIN vi_agentes agt ON (rp.ca_idagente = agt.ca_idagente)
                         INNER JOIN tb_concliente ccn ON (rp.ca_idconcliente = ccn.ca_idcontacto)
                         INNER JOIN vi_transporlineas lin ON (rp.ca_idlinea = lin.ca_idlinea)
-                        INNER JOIN tb_clientes ccl ON (ccn.ca_idcliente = ccl.ca_idcliente)
+                        INNER JOIN vi_clientes_reduc ccl ON (ccn.ca_idcliente = ccl.ca_idcliente)
                 $where
                 order by ca_ano, ca_mes, ca_compania, ca_traorigen, to_number(substr(rp.ca_consecutivo,0,position('-' in rp.ca_consecutivo)),'99999999')";
 
