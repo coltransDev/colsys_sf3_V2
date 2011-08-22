@@ -830,7 +830,7 @@ require_once("menu.php");
         case 'Libreta': {
              $modulo = "00100300";                                             // Identificación del módulo para la ayuda en línea
 //           include_once 'include/seguridad.php';                             // Control de Acceso al módulo
-             if (!$rs->Open("select * from tb_clientes where ca_idcliente = ".$id)) {    // Mueve el apuntador al registro que se desea eliminar
+             if (!$rs->Open("select * from vi_clientes_reduc where ca_idcliente = ".$id)) {    // Mueve el apuntador al registro que se desea eliminar
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
                  //echo "<script>document.location.href = 'clientes.php';</script>";
                  exit;
@@ -895,7 +895,7 @@ require_once("menu.php");
 //           include_once 'include/seguridad.php';                             // Control de Acceso al módulo
 
 			 $query = "select 	cl.ca_idcliente, cl.ca_compania, cl.ca_nombres, cl.ca_papellido, cl.ca_sapellido, cl.ca_vendedor, ciu.ca_ciudad, sdnm.*, sdid.*, sdal.*, sdak.* ";
-			 $query.= "		from (select * from tb_clientes where ca_idcliente = $id) cl ";
+			 $query.= "		from (select * from vi_clientes_reduc where ca_idcliente = $id) cl ";
 			 $query.= "		LEFT OUTER JOIN tb_sdn sdnm ";
 			 $query.= "		ON ( fun_similarpercent(cl.ca_compania, textcat(case when sdnm.ca_firstname IS NULL then '' else sdnm.ca_firstname end, case when sdnm.ca_lastname IS NULL then '' else sdnm.ca_lastname end)) >90 ) ";
 			 $query.= "		LEFT OUTER JOIN tb_sdnid sdid ";
