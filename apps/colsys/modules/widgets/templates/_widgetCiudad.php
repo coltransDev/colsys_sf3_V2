@@ -54,10 +54,10 @@ WidgetCiudad = function( config ){
 
 Ext.extend(WidgetCiudad, Ext.form.ComboBox, {
     setIdtrafico: function( v ){        
-        if( v && this.trafico!=v ){
+        if( v && this.idtrafico!=v ){
             this.setValue("");
         }
-        this.trafico = v;
+        this.idtrafico = v;
     },    
     doQuery : function(q, forceAll){
         
@@ -83,10 +83,12 @@ Ext.extend(WidgetCiudad, Ext.form.ComboBox, {
                         this.store.clearFilter();
                     }else{
                         var tipo=this.tipo;
-                        var trafico=this.trafico;
+                        var trafico=this.trafico;                        
                         var impoexpo=this.impoexpo;
+                        
+                        var idtrafico=this.idtrafico;
 
-                        var nomimpoexpo=(Ext.getCmp(impoexpo))?Ext.getCmp(impoexpo).getValue():"";
+                        var nomimpoexpo=(Ext.getCmp(impoexpo))?Ext.getCmp(impoexpo).getValue():impoexpo;
                         var traf=Ext.getCmp(this.traficoParent)?Ext.getCmp(this.traficoParent).getValue():"";
                         i=0;
                         
@@ -181,11 +183,11 @@ Ext.extend(WidgetCiudad, Ext.form.ComboBox, {
                                 }
                             );
                          }
-                         else if( trafico ){
+                         else if( idtrafico ){
                             this.store.filterBy(function(record, id){                          
 
                                 
-                                if(record.get("idtrafico")==trafico)
+                                if(record.get("idtrafico")==idtrafico)
                                 {
                                     var str=record.get("ciudad_trafico");
                                     var txt=new RegExp(q,"ig");
