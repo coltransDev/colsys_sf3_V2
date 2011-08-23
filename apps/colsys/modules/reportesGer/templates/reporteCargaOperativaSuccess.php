@@ -11,6 +11,9 @@ include_component("widgets", "widgetAgente");
 include_component("widgets", "widgetSucursales");
 include_component("widgets", "widgetUsuario");
 include_component("widgets", "widgetDeptos");
+// Grafica
+include_component("charts","column");
+// Variables
 $cliente = $sf_data->getRaw("cliente");
 $agente = $sf_data->getRaw("agente");
 $linea = $sf_data->getRaw("linea");
@@ -324,6 +327,7 @@ if ($opcion) {
 
         $cliente_tot = array();
         $reporte_tot = array();
+        $operativo_sub = array();
         $operativo_tot = array();
         $comunicaciones_tot = array();
         $facturacion_tot = array();
@@ -398,6 +402,7 @@ if ($opcion) {
                     <td colspan="16"><b><?= $r["ca_compania"] ?></b></td>
                 </tr>
     <?
+                $tit_tmp = $r["ca_compania"];
                 $idcliente = $r["ca_idcliente"];
                 $consecutivo = "";
             }
@@ -471,7 +476,9 @@ if ($opcion) {
 
                                     $array_usuarios[] = $factura[0];
                                     $cliente_tot[$idcliente][$ano_mem][$mes_mem]["cant_facturas"]+= $factura[1];
+                                    $operativo_sub["Facturas"][$ano_mem][Utils::mesLargo ($mes_mem)]+= $factura[1];
                                     $operativo_tot["Facturas"][$r["ca_nomoperativo"]][$r["ca_traorigen"]][$r["ca_transporte"]][$r["ca_modalidad"]]+= $factura[1];
+
                                 }
                             }
                         }else{
@@ -485,8 +492,13 @@ if ($opcion) {
             </tr>
     <?
             $cliente_tot[$idcliente][$ano_mem][$mes_mem]["cant_emails"]+= $r["ca_cant_emails"];
+            $operativo_sub["Comunicaciones"][$ano_mem][Utils::mesLargo ($mes_mem)]+= $r["ca_cant_emails"];
             $operativo_tot["Comunicaciones"][$r["ca_nomoperativo"]][$r["ca_traorigen"]][$r["ca_transporte"]][$r["ca_modalidad"]]+= $r["ca_cant_emails"];
+            if(!in_array(Utils::mesLargo ($mes_mem)."-".$ano_mem, $mesesX)){
+                $mesesX[]=Utils::mesLargo ($mes_mem)."-".$ano_mem;
+            }
         }
+
     ?>
         <tr>
             <td colspan="9" align="right"><b>Totales&nbsp;:</b></td>
@@ -516,6 +528,7 @@ if ($opcion) {
     <table class="tableList" width="900px" border="1" id="mainTable" align="center">
     <tr>
 <?
+    $data = array();
     foreach($operativo_tot as $reg_key => $registros){
         $sub_com = 0;
         $tot_com = 0;
@@ -559,6 +572,10 @@ if ($opcion) {
                             </tr>
                         <?
                         $sub_com+= $modalidad;
+                        if(!in_array($ope_key, $serieX)){
+                            $serieX[]=$ope_key;
+                            $data[$reg_key][$ope_key]+= $modalidad;
+                        }
                     }
                 }
             }
@@ -585,8 +602,183 @@ if ($opcion) {
     </tr>
 </table>
 
-    <script>
-        //Ext.getCmp('incoterms').mode="local";
-        //Ext.getCmp('incoterms').onStoreLoad();
-        //Ext.getCmp('incoterms').setValue('<?= implode(",", $incoterms) ?>');
-        //Ext.getCmp('incoterms').setValue('<?= implode(",", $incoterms) ?>');</script>
+
+<?
+if (count($cliente_tot) == 1){
+    $tit_mem = "Gráfica por Cliente - ".$tit_tmp;
+    $dataC = array();
+    foreach($cliente_tot as $cli_tit => $ano_dat){
+        foreach($ano_dat as $ano_tit => $mes_dat) {
+            foreach ($mes_dat as $mes_tit => $dat_dat){
+                $mes_temp = Utils::mesLargo ($mes_tit)."-".$ano_tit;
+                if(!in_array($mes_temp, $ejeX)){
+                    $ejeX[]=$mes_temp;
+                }
+                $dataC["Reportes"][] = ($dat_dat["cant_reportes"])?($dat_dat["cant_reportes"]):0;
+                $dataC["Negocios"][] = ($dat_dat["cant_negocios"])?($dat_dat["cant_negocios"]):0;
+                $dataC["Facturas"][] = ($dat_dat["cant_facturas"])?($dat_dat["cant_facturas"]):0;
+                $dataC["Comunicaciones"][] = ($dat_dat["cant_emails"])?($dat_dat["cant_emails"]):0;
+            }
+        }
+    }
+    $clieJSON[] = array("name" => "Reportes", "data" => $dataC["Reportes"]);
+    $clieJSON[] = array("name" => "Negocios", "data" => $dataC["Negocios"]);
+    $clieJSON[] = array("name" => "Facturas", "data" => $dataC["Facturas"]);
+    $clieJSON[] = array("name" => "Comunicaciones", "data" => $dataC["Comunicaciones"]);
+}
+
+if (count($serieX) > 1){
+    $tit_mem = "Carga Operativa";
+    $dataN = $dataX = array();
+
+    foreach($operativo_tot as $reg_key => $registros){
+        foreach($registros as $ope_key => $operativos){
+            foreach($operativos as $tra_key => $traficos){
+                foreach($traficos as $tns_key => $transportes){
+                    foreach($transportes as $mod_key => $modalidad){
+                        $dataN[$reg_key][$ope_key]+= $modalidad;
+                    }
+                }
+            }
+        }
+    }
+    foreach($dataN as $modalidad => $usuario){
+        foreach($serieX as $serie){
+            $dataX[$modalidad][] = ($usuario[$serie])?($usuario[$serie]):0;
+        }
+    }
+
+    $serieM=$serieX;
+    $dataJSON[] = array("name" => "Comunicaciones", "data" => $dataX["Comunicaciones"]);
+    $dataJSON[] = array("name" => "Facturas", "data" => $dataX["Facturas"]);
+}else if (count($serieX) == 1){
+    $tit_mem = "Gráfica por Funcionario - ".$serieX[0];
+    $dataN = array();
+    foreach($operativo_sub as $modalidad => $usuario){
+        foreach($mesesX as $mes){
+            list($mes_mem, $ano_mem) = explode("-",$mes);
+            $dataN[$modalidad][] = ($usuario[$ano_mem][$mes_mem])?($usuario[$ano_mem][$mes_mem]):0;
+        }
+    }
+    $serieM=$serieX=$mesesX;
+    $dataJSON[] = array("name" => "Comunicaciones", "data" => $dataN["Comunicaciones"]);
+    $dataJSON[] = array("name" => "Facturas", "data" => $dataN["Facturas"]);
+}
+?>
+
+<table align="center" width="90%">
+    <tr>
+        <td style=" margin: 0 auto" >
+            <div align="center" id="grafica1" ></div>
+        </td>
+    </tr>
+    <tr>
+        <td style=" margin: 0 auto" >
+            <div align="center" id="grafica2" ></div>
+        </td>
+    </tr>
+</table>
+<script type="text/javascript">
+    var chart1;
+    var chart2;
+    chart1=new ChartsColumn({
+        renderTo: 'grafica1',
+        height: 600,
+        title:"<?= $tit_mem ?>",
+        titleY:"Cantidad",
+        xRotation: -30,
+        plotBands: [
+            {
+                color: 'red',
+                width: 2,
+                value: 'Comunicaciones',
+                label: {
+                    text: 'Envío de Comunicaciones',
+                    style: {
+                        color: 'red',
+                        fontWeight: 'bold'
+                    }
+                }
+            }
+            ,
+            {
+                color: 'blue',
+                width: 2,
+                value: 'Facturacion',
+                label: {
+                    text: 'Elaboración de Facturas',
+                    style: {
+                        color: 'blue',
+                        fontWeight: 'bold'
+                    }
+                }
+            }
+        ],
+        serieX: <?= json_encode($serieX) ?>,
+        series: <?= json_encode($dataJSON) ?>
+    });
+
+    chart2=new ChartsColumn({
+        renderTo: 'grafica2',
+        height: 600,
+        title:"<?= $tit_cli ?>",
+        titleY:"Cantidad",
+        xRotation: -30,
+        plotBands: [
+            {
+                color: 'red',
+                width: 2,
+                value: 'Reportes',
+                label: {
+                    text: 'Reportes de Negocio',
+                    style: {
+                        color: 'red',
+                        fontWeight: 'bold'
+                    }
+                }
+            }
+            ,
+            {
+                color: 'blue',
+                width: 2,
+                value: 'Negocios',
+                label: {
+                    text: 'Número de Negocios',
+                    style: {
+                        color: 'blue',
+                        fontWeight: 'bold'
+                    }
+                }
+            }
+            ,
+            {
+                color: 'green',
+                width: 2,
+                value: 'Facturas',
+                label: {
+                    text: 'Número de Facturas',
+                    style: {
+                        color: 'blue',
+                        fontWeight: 'bold'
+                    }
+                }
+            }
+            ,
+            {
+                color: 'yellow',
+                width: 2,
+                value: 'Comunicaciones',
+                label: {
+                    text: 'Número de Comunicaciones',
+                    style: {
+                        color: 'blue',
+                        fontWeight: 'bold'
+                    }
+                }
+            }
+        ],
+        serieX: <?= json_encode($ejeX) ?>,
+        series: <?= json_encode($clieJSON) ?>
+    });
+
+</script>
