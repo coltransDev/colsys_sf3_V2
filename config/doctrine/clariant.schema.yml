@@ -1,0 +1,196 @@
+Clariant:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: clariant
+  tableName: tb_clariant
+  columns:
+    ca_idclariant:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_pais: string
+    ca_proveedor: string
+    ca_orden: string
+    ca_documento_fch: date
+    ca_incoterm: string
+    ca_consecutivo: string
+    ca_doctransporte: string
+    ca_fchanulado: timestamp
+    ca_usuanulado: string
+    ca_fchreportado: timestamp
+    ca_usureportado: string
+    ca_fcharchivado: timestamp
+    ca_usuarchivado: string
+  relations:
+    Reporte:
+      local: ca_consecutivo
+      foreign: ca_consecutivo
+      type: many
+    ClarDetail:
+      local: ca_idclariant
+      foreign: ca_idclariant
+      type: many
+    ClarEmbarque:
+      local: ca_orden
+      foreign: ca_orden
+      type: many
+
+
+ClarDetail:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: clariant
+  tableName: tb_clardetails
+  columns:
+    ca_iddetail:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_idclariant: integer
+    ca_posicion: integer
+    ca_material: string
+    ca_descripcion: string
+    ca_cantidad: decimal
+    ca_despacho: decimal
+    ca_unidad: string
+  relations:
+    Clariant:
+      local: ca_idclariant
+      foreign: ca_idclariant
+      type: one
+    ClarNotify:
+      local: ca_iddetail
+      foreign: ca_iddetail
+      type: many
+
+
+ClarNotify:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: clariant
+  tableName: tb_clarnotifys
+  columns:
+    ca_idnotify:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_iddetail: integer
+    ca_clave: string
+    ca_fecha: date
+    ca_texto: string
+    ca_fchreportado: timestamp
+    ca_usureportado: string
+  relations:
+    ClarDetail:
+      local: ca_iddetail
+      foreign: ca_iddetail
+      type: one
+
+
+
+ClarFacturacion:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: clariant
+  tableName: tb_clarfacturacion
+  columns:
+    ca_idclariant:
+      type: integer
+      primary: true
+    ca_numdocumento:
+      type: string
+      primary: true
+    ca_emision_fch: date
+    ca_vencimiento_fch: date
+    ca_moneda: string
+    ca_tipo_cambio: decimal
+    ca_afecto_vlr: decimal
+    ca_iva_vlr: decimal
+    ca_exento_vlr: decimal
+    ca_usucreado: string(20)
+    ca_fchcreado: timestamp
+    ca_usuactualizado: string(20)
+    ca_fchactualizado: timestamp
+  relations:
+    Clariant:
+      local: ca_idclariant
+      foreign: ca_idclariant
+      type: one
+
+
+ClarNotaCab:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: clariant
+  tableName: tb_clarnota_cab
+  columns:
+    ca_idclariant:
+      type: integer
+      primary: true
+    ca_numdocumento:
+      type: string
+      primary: true
+    ca_emision_fch: date
+    ca_vlrdocumento: decimal
+    ca_tipo_cambio: decimal
+    ca_usucreado: string(20)
+    ca_fchcreado: timestamp
+    ca_usuactualizado: string(20)
+    ca_fchactualizado: timestamp
+  relations:
+    Clariant:
+      local: ca_idclariant
+      foreign: ca_idclariant
+      type: one
+    ClarNotaDet:
+      local: ca_idclariant
+      local: ca_numdocumento
+      foreign: ca_idclariant
+      foreign: ca_numdocumento
+      type: many
+
+
+ClarNotaDet:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: clariant
+  tableName: tb_clarnota_det
+  columns:
+    ca_idclariant:
+      type: integer
+      primary: true
+    ca_numdocumento:
+      type: string
+      primary: true
+    ca_idconcepto:
+      type: integer
+      primary: true
+    ca_nit_ter: string
+    ca_tipo: string
+    ca_factura_ter: string
+    ca_factura_fch: date
+    ca_factura_vlr: decimal
+    ca_factura_iva: decimal
+    ca_usucreado: string(20)
+    ca_fchcreado: timestamp
+    ca_usuactualizado: string(20)
+    ca_fchactualizado: timestamp
+  relations:
+    ClarNotaCab:
+      local: ca_idclariant
+      local: ca_numdocumento
+      foreign: ca_idclariant
+      foreign: ca_numdocumento
+      type: one
