@@ -25,7 +25,7 @@ ChartsColumn = function( config ){
                {
                 categories:config.serieX,
                 labels: {
-							rotation: -90,
+							rotation: (config.xRotation)?config.xRotation:-90,
 							align: 'right',
 							style: {
 								 font: 'normal 11px Verdana, sans-serif'
