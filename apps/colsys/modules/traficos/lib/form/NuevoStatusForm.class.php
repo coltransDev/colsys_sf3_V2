@@ -265,7 +265,7 @@ class NuevoStatusForm extends BaseForm{
 			$this->validatorSchema['mensaje']->setOption('required', false);
 		}
 		
-		if( $taintedValues["idetapa"]=="IAETA"||$taintedValues["idetapa"]=="IMETA" || $taintedValues["idetapa"]=="EEETD" ){
+		if( $taintedValues["idetapa"]=="IAETA"||$taintedValues["idetapa"]=="IMETT"||$taintedValues["idetapa"]=="IMETA" || $taintedValues["idetapa"]=="EEETD" ){
 			 $this->validatorSchema['piezas']->setOption('required', true);
 			 $this->validatorSchema['peso']->setOption('required', true);
 			 $this->validatorSchema['volumen']->setOption('required', true);
