@@ -42,6 +42,7 @@ WidgetTransporte = function( config ){
         selectOnFocus: true,        
         lazyRender:true,
         mode: 'local',
+        submitValue: true,
         listClass: 'x-combo-list-small'        
     });
 };
