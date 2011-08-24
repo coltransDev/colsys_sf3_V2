@@ -5,6 +5,12 @@ $reporte = $sf_data->getRaw("reporte");
 $files = $sf_data->getRaw("files");
 $att = $sf_data->getRaw("att");
 
+if($reporte->getCaImpoexpo()==Constantes::OTMDTA)
+{        
+    if($reporte->getCaTransporte()==Constantes::TERRESTRE)
+        $reporte->setCaTransporte(Constantes::MARITIMO);
+    $reporte->setCaImpoexpo(Constantes::IMPO);
+}
 if( $reporte->getCaImpoexpo()==Constantes::EXPO ){
 	$contacto = $reporte->getContacto();	
 		
@@ -38,7 +44,7 @@ var enviarFormulario=function(){
     
     var numChecked = 0;
     for(var i=0; i<<?=count($destinatariosFijos)?>; i++ ){
-       var checkFld = document.getElementById("destinatariosfijos_"+i);    
+       var checkFld = document.getElementById("destinatariosfijos_"+i);
        if( checkFld.checked && checkFld.value.trim()!="" ){
            numChecked++;
        }
@@ -48,15 +54,15 @@ var enviarFormulario=function(){
            return 0;
        }
     }
-    
+
     if( numChecked>0 || <?=$reporte->getCliente()->getProperty("consolidar_comunicaciones")?"true":"false"?>  ){
         document.getElementById("form1").submit();
     }else{
-        alert("debe seleccionar al menos un contacto fijo.");
+        if(<?=($reporte->getCaTiporep()==4)?"true":"false"?>)
+            document.getElementById("form1").submit();
+        else
+            alert("debe seleccionar al menos un contacto fijo.");
     }
-
-    
-    
 }
 
 var validarMensaje=function(){	
@@ -357,9 +363,17 @@ echo $form['mensaje_mask']->render();
 	$destino = $reporte->getDestino()->getCaCiudad();
 	$cliente = $reporte->getCliente();			
 	
-	if( $reporte->getCaImpoexpo()=="Importación" || $reporte->getCaImpoexpo()=="Triangulación" ){
+    if($reporte->getCaTiporep()=="4")
+    {
+        $importador=$reporte->getRepOtm()->getImportador()->getCaNombre();
+        if($importador)
+            $asunto .= $importador." / ".$cliente." [".$origen." -> ".$destino."] ".$reporte->getCaOrdenClie(). "-".$reporte->getRepOtm()->getCaHbls();
+        else            
+            $asunto .= $cliente." [".$origen." -> ".$destino."] ".$reporte->getCaOrdenClie()."-".$reporte->getRepOtm()->getCaHbls();
+    }
+	else if( $reporte->getCaImpoexpo()=="Importación" || $reporte->getCaImpoexpo()=="Triangulación" ){
 		$proveedor = substr($reporte->getProveedoresStr(),0,130);					
-		$asunto .= $proveedor." / ".$cliente." [".$origen." -> ".$destino."] ".$reporte->getCaOrdenClie();					
+		$asunto .= $proveedor." / ".$cliente." [".$origen." -> ".$destino."] ".$reporte->getCaOrdenClie();
 	}else{
 		$consignatario = $reporte->getConsignatario();
 		$asunto .= $consignatario." / ".$cliente." [".$origen." -> ".$destino."] ";	
@@ -376,25 +390,19 @@ echo $form['mensaje_mask']->render();
 			 echo $form['asunto']->renderError();
 			 $form->setDefault('asunto', $asunto);
 			 echo $form['asunto']->render();
-
-             
-			 ?>		
+			?>
 		</div></td>
 	</tr>
-	<?
-	
-	?>
 	<tr>
 		<td><div align="left"><b>Informaci&oacute;n de la carga</b></div></td>
 		<td><div align="left"></div></td>
-		</tr>
+	</tr>
 	<tr>
 		<td colspan="2">
 			<table width="100%" border="0" class="tableList">
 			<tr>
 				<td width="34%"><div align="left"><b>Origen</b>:<br />
-						<?=$reporte->getOrigen()?>	
-									
+						<?=$reporte->getOrigen()?>
 				</div></td>
 				<td width="31%"><div align="left"><b>Fecha de salida:</b><br />
 					<?			
@@ -464,58 +472,101 @@ echo $form['mensaje_mask']->render();
 			<tr>
 				<td><div align="left"><b>Piezas</b>:<br />
 					<?
-					 echo $form['piezas']->renderError(); 					 
-					 if( $ultStatus && $ultStatus->getCaPiezas() ){	
-					 	$piezasArr = explode("|",$ultStatus->getCaPiezas());
-						$piezas = $piezasArr[0];
-						$piezasTipo = isset($piezasArr[1])?$piezasArr[1]:"";								
-					 	$form->setDefault('piezas', $piezas); 
-						$form->setDefault('un_piezas', $piezasTipo); 
-					 }					 
+					 echo $form['piezas']->renderError(); 
+                     
+                     $piezas=""; 
+                     $piezasTipo=""; 
+                     if($reporte->getCaTiporep()=="4")
+                     {
+                         $piezas=$reporte->getRepOtm()->getCaNumpiezas();
+                         $piezasTipo=$reporte->getRepOtm()->getCaNumpiezasun();
+                     }
+                     else        
+                     {
+                         if( $ultStatus && $ultStatus->getCaPiezas() ){	
+                            $piezasArr = explode("|",$ultStatus->getCaPiezas());
+                            $piezas = $piezasArr[0];
+                            $piezasTipo = isset($piezasArr[1])?$piezasArr[1]:"";								
+                            
+                         }
+                     }
+                     $form->setDefault('piezas', $piezas); 
+                     $form->setDefault('un_piezas', $piezasTipo); 
+                     
 					 echo $form['piezas']->render()."&nbsp;";
 					 echo $form['un_piezas']->render()."&nbsp;";
 					 ?>				
 				</div></td>
 				<td><div align="left"><b>Peso</b>:<br />
 					<?				
-					 echo $form['peso']->renderError(); 					 
-					 if( $ultStatus && $ultStatus->getCaPeso() ){	
-					 	$pesoArr = explode("|",$ultStatus->getCaPeso());
-						$peso = $pesoArr[0];
-						$pesoTipo = isset($pesoArr[1])?$pesoArr[1]:"";								
-					 	$form->setDefault('peso', $peso); 
-						$form->setDefault('un_peso', $pesoTipo); 
-					 }
+					 echo $form['peso']->renderError();
+                     $peso=""; 
+                     $pesoTipo=""; 
+                     if($reporte->getCaTiporep()=="4")
+                     {
+                         $peso=$reporte->getRepOtm()->getCaPeso();
+                         $pesoTipo=$reporte->getRepOtm()->getCaPesoun();
+                     }
+                     else        
+                     {
+                         if( $ultStatus && $ultStatus->getCaPeso() ){	
+                            $pesoArr = explode("|",$ultStatus->getCaPeso());
+                            $peso = $pesoArr[0];
+                            $pesoTipo = isset($pesoArr[1])?$pesoArr[1]:"";								
+                            
+                         }
+                     }
+                     $form->setDefault('peso', $peso); 
+                     $form->setDefault('un_peso', $pesoTipo); 
 					 echo $form['peso']->render()."&nbsp;";						
 					 echo $form['un_peso']->render()."&nbsp;";
 					 ?>				
 				</div></td>
 				<td><div align="left"><b>Volumen</b>:<br />
 						<?
-					 echo $form['volumen']->renderError(); 
-					 if( $ultStatus && $ultStatus->getCaVolumen() ){	
-					 	$volArr = explode("|",$ultStatus->getCaVolumen());
-						$vol = $volArr[0];
-						$volTipo = isset($volArr[1])?$volArr[1]:"";								
-					 	$form->setDefault('volumen', $vol); 
-						$form->setDefault('un_volumen', $volTipo); 
-					 }					 
+					 echo $form['volumen']->renderError();
+                     
+                     $vol=""; 
+                     $volTipo=""; 
+                     if($reporte->getCaTiporep()=="4")
+                     {
+                         $vol=$reporte->getRepOtm()->getCaVolumen();
+                         $volTipo=$reporte->getRepOtm()->getCaVolumenun();
+                     }
+                     else        
+                     {
+                         if( $ultStatus && $ultStatus->getCaVolumen() ){	
+                            $volArr = explode("|",$ultStatus->getCaVolumen());
+                            $vol = $volArr[0];
+                            $volTipo = isset($volArr[1])?$volArr[1]:"";                            
+                         }					 
+                     }
+                     $form->setDefault('volumen', $vol); 
+                     $form->setDefault('un_volumen', $volTipo); 
+                     
 					 echo $form['volumen']->render()."&nbsp;";
 					 echo $form['un_volumen']->render()."&nbsp;";
 					 ?>				
 				</div></td>
 			</tr>
 			<tr>
-				<td><div align="left"><b><?=$reporte->getCaTransporte()==Constantes::MARITIMO?"HBL:":"HAWB:"?></b><br />
+				<td><div align="left"><b><?=($reporte->getCaTransporte()==Constantes::MARITIMO)?"HBL:":"HAWB:"?></b><br />
 						<?
-					 echo $form['doctransporte']->renderError(); 
-					 if( $ultStatus ){	
-					 	$form->setDefault('doctransporte', $ultStatus->getCaDoctransporte() ); 
-					 }
+					 echo $form['doctransporte']->renderError();
+                     if($reporte->getCaTiporep()=="4")
+                     {
+                         $form->setDefault('doctransporte', $reporte->getRepOtm()->getCaHbls() );
+                     }
+                     else        
+                     {
+                         if( $ultStatus ){	
+                            $form->setDefault('doctransporte', $ultStatus->getCaDoctransporte() ); 
+                         }
+                     }
 					 echo $form['doctransporte']->render();
 					 ?>				
 				</div></td>
-				<td><div align="left"><b><?=$reporte->getCaTransporte()==Constantes::MARITIMO?"Motonave:":"Vuelo:"?></b><br />
+				<td><div align="left"><b><?=($reporte->getCaTiporep()!="4")?(($reporte->getCaTransporte()==Constantes::MARITIMO)?"Motonave:":"Vuelo:"):"Vehiculo"?></b><br />
 					
 						<?
 					 echo $form['idnave']->renderError(); 
@@ -530,27 +581,30 @@ echo $form['mensaje_mask']->render();
 			
 			
 			<?
-			$widgets = $form->getWidgetsClientes();
-			if( count($widgets)>0 ){
-				foreach( $widgets as $name=>$val ){									
-			?>
-					<tr>
-						<td colspan="3">
-						
-							<div align="left">
-								<?
-							 echo "<b>".$val["label"].":</b><br />"; 
-							 echo $form[$name]->renderError(); 
-							 if( $ultStatus ){	
-								$form->setDefault($name, $reporte->getProperty($name) ); 
-							 }
-							 echo $form[$name]->render();
-							 ?>
-								</div></td>
-					</tr>						
-			<?
-				}
-			}
+            if($reporte->getCaTiporep()!=4)
+            {        
+                $widgets = $form->getWidgetsClientes();
+                if( count($widgets)>0 ){
+                    foreach( $widgets as $name=>$val ){									
+                ?>
+                        <tr>
+                            <td colspan="3">
+
+                                <div align="left">
+                                    <?
+                                 echo "<b>".$val["label"].":</b><br />"; 
+                                 echo $form[$name]->renderError(); 
+                                 if( $ultStatus ){	
+                                    $form->setDefault($name, $reporte->getProperty($name) ); 
+                                 }
+                                 echo $form[$name]->render();
+                                 ?>
+                                    </div></td>
+                        </tr>						
+                <?
+                    }
+                }
+            }
 			
 			if( $reporte->getcaModalidad()=="FCL" ){
 			?>
