@@ -484,6 +484,8 @@ Cliente:
         type: integer
         primary: true
     ca_compania: string
+    ca_idalterno: string(20)
+    ca_tipoidentificacion: integer
     ca_digito: integer
     ca_papellido: string
     ca_sapellido: string
