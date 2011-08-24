@@ -196,6 +196,8 @@ class reportesGerActions extends sfActions {
         $this->idsucursal = $request->getParameter("idsucursal");
         $this->departamento = $request->getParameter("departamento");
         $this->iddepartamento = $request->getParameter("iddepartamento");
+        $this->idtransporte = $this->getRequestParameter("idtransporte");
+        $this->transporte = $this->getRequestParameter("transporte");
         //echo $this->idsucursal;
         //exit;
         $this->fechafinal = Utils::addDate(Utils::addDate($ano . "-" . $this->mes . "-01", 0, 1, 0, "Y-m-01"), -1);
@@ -217,7 +219,9 @@ class reportesGerActions extends sfActions {
                 $where .= " and ca_idcliente in (select ca_idcliente from vi_clientes_reduc where ca_propiedades like '%cuentaglobal=true%') ";
             else if($this->departamento=="Tráficos")
                 $where .= " and ca_idcliente not in (select ca_idcliente from vi_clientes_reduc where ca_propiedades like '%cuentaglobal=true%') ";
-                
+
+            if($this->transporte)
+                $where .= " and ca_transporte ='".$this->transporte."'";
             
             $this->nmeses = 3; //ceil(Utils::diffTime($this->fechainicial,$this->fechafinal)/720);
             $sql = "select count(*) as valor,ca_year,ca_mes,ca_traorigen as origen from vi_reportes_estadisticas where ca_fchreporte between '" . $this->fechainicial . "' and '" . $this->fechafinal . "'  $where

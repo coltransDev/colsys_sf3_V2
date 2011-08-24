@@ -6,6 +6,7 @@
  */
 include_component("widgets","widgetSucursales");
 include_component("widgets","widgetDeptos");
+include_component("widgets","widgetTransporte");
 $idsucursal= $sf_data->getRaw("idsucursal");
 ?>
 
@@ -82,7 +83,14 @@ var tabs = new Ext.FormPanel({
                                             name : 'fechaFinal',
                                             format: "F-Y",
                                             value: '<?=$fechafinal?>'
-                                        }
+                                        },
+                                        new WidgetTransporte({fieldLabel: 'Transporte',
+                                                            id: 'transporte',
+                                                            name: 'transporte',
+                                                            hiddenName: "idtransporte",
+                                                            value:"<?=$transporte?>",
+                                                            hiddenValue:"<?=$idtransporte?>"
+                                                        })
                                  ]
                              }
                      ]

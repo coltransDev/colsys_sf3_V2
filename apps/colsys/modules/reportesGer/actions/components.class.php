@@ -58,6 +58,8 @@ class reportesGerComponents extends sfComponents
         $this->sucursal = $this->getRequestParameter("sucursal");
         $this->iddepartamento = $this->getRequestParameter("iddepartamento");
         $this->departamento = $this->getRequestParameter("departamento");
+        $this->idtransporte = $this->getRequestParameter("idtransporte");
+        $this->transporte = $this->getRequestParameter("transporte");
     }
     
     public function executeFiltrosEstadisticasIndicadoresTT()
