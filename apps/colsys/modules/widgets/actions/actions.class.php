@@ -255,6 +255,9 @@ class widgetsActions extends sfActions {
         if ($this->getRequestParameter("impoexpo") == Constantes::TRIANGULACION || utf8_decode($this->getRequestParameter("impoexpo")) == Constantes::TRIANGULACION) {
             $impoexpo = constantes::TRIANGULACION;
         }
+        if ($this->getRequestParameter("impoexpo") == Constantes::OTMDTA || utf8_decode($this->getRequestParameter("impoexpo")) == Constantes::OTMDTA) {
+            $impoexpo = constantes::OTMDTA;
+        }
 
 
         $q = Doctrine_Query::create()
@@ -293,7 +296,7 @@ class widgetsActions extends sfActions {
         if ($request->getParameter("estado") == "activo") {
             $q->addWhere("r.ca_idetapa != ?", "99999");
         }
-
+        
         $reportes = $q->fetchArray();
 
         $this->reportes = array();
@@ -388,8 +391,9 @@ class widgetsActions extends sfActions {
 
     public function executeListaContactosClientesJSON() {
         $criterio = utf8_decode($this->getRequestParameter("query"));
+        $tipo = $this->getRequestParameter("tipo");
         if ($criterio) {
-            $rows = Doctrine_Query::create()
+            $q = Doctrine_Query::create()
                     ->select("c.ca_idcontacto, cl.ca_idcliente, cl.ca_compania, c.ca_nombres,
                                       c.ca_papellido, c.ca_sapellido, c.ca_cargo,c.ca_fijo,c.ca_email,
                                       cl.ca_preferencias, cl.ca_confirmar, cl.ca_vendedor, cl.ca_coordinador,
@@ -404,9 +408,12 @@ class widgetsActions extends sfActions {
                     ->addOrderBy("cl.ca_compania ASC")
                     ->addOrderBy("c.ca_nombres ASC")
                     ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
-                    ->limit(40)
-                    ->execute();
-
+                    ->limit(40);
+            if($tipo)
+            {
+                $q->addWhere("ca_tipo=?",$tipo);
+            }
+            $rows=$q->execute();
             foreach ($rows as $row) {
                 $result = array();
                 $result["ca_idcontacto"] = $row["c_ca_idcontacto"];
@@ -567,6 +574,7 @@ class widgetsActions extends sfActions {
         if ($idreporte) {
             $q->addWhere("t.ca_idtercero not in (" . implode(",", $notIn) . ")");
         }
+        //echo $q->getSqlQuery();
 
         $rows = $q->execute();
 

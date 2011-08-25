@@ -356,6 +356,16 @@ class widgetsComponents extends sfComponents {
         {
             $this->data[] = array("id"=>"2435","valor" =>"SOCIEDAD PORTUARIA REGIONAL DE SANTA MARTA S.A" );
         }
+        else
+        {
+            $this->data[] = array("id"=>"2257","valor" =>"Muelles El Bosque S.A." );
+            $this->data[] = array("id"=>"2261","valor" =>"Soc.Portuaria Reg.Decartagenas.Adeposito" );
+            $this->data[] = array("id"=>"2259","valor" =>"Contecar Tnal C/Nedor.C/Genas.A.Deposito" );
+            $this->data[] = array("id"=>"2366","valor" =>"Soc.Port.Regional B/Tura S.A." );
+            $this->data[] = array("id"=>"2918","valor" =>"SOCIEDAD PORTUARIA TERMINAL DE CONTENEDORES DE BUENAVENTURA S.A. T.C.BUENA S.A." );
+            $this->data[] = array("id"=>"2031","valor" =>"Soc.Port.Regionalde B/Quillas.A.Deposito" );
+            $this->data[] = array("id"=>"2435","valor" =>"SOCIEDAD PORTUARIA REGIONAL DE SANTA MARTA S.A" );
+        }
         
     }
     
