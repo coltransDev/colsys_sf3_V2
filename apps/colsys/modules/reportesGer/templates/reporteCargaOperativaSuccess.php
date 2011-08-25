@@ -168,7 +168,7 @@ $resul = $sf_data->getRaw("resul");
                                             value:"<?= $idmodalidad ?>"
                                         }),
                                         new WidgetCiudad({fieldLabel: 'origen',
-                                            id: 'origen',
+                                            id: 'idOrigen',
                                             idciudad:"origen",
                                             hiddenName:"idorigen",
                                             tipo:"3",
@@ -178,7 +178,7 @@ $resul = $sf_data->getRaw("resul");
                                             hiddenValue:"<?= $idorigen ?>"
                                         }),
                                         new WidgetCiudad({fieldLabel: 'destino',
-                                            id: 'destino',
+                                            id: 'idDestino',
                                             idciudad:"destino",
                                             hiddenName:"iddestino",
                                             tipo:"3",
@@ -188,21 +188,21 @@ $resul = $sf_data->getRaw("resul");
                                             hiddenValue:"<?= $iddestino ?>"
                                         }),
                                         new WidgetSucursales({fieldLabel: 'Sucursal',
-                                            id:"Sucursal",
+                                            id:"idSucursal",
                                             hiddenName:"sucursal",
                                             width:120,
                                             value:"<?= $sucursal ?>",
                                             hiddenValue:"<?= $sucursal ?>"
                                         }),
                                         new WidgetDeptos({fieldLabel: 'Departamento',
-                                            id:"departamento",
+                                            id:"idDepartamento",
                                             hiddenName:"departamento",
                                             width:150,
                                             value:"<?= $departamento ?>",
                                             hiddenValue:"<?= $departamento ?>"
                                         }),
                                         new WidgetUsuario({fieldLabel: 'Usuario',
-                                            id:"usuenvio",
+                                            id:"idUsuenvio",
                                             hiddenName:"usuenvio",
                                             width:250,
                                             value:"<?= $nomoperativo ?>",

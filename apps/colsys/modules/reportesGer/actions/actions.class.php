@@ -505,6 +505,7 @@ class reportesGerActions extends sfActions {
                             ->execute();
         }
     }
+    
 
     public function executeReporteCargaOperativa(sfWebRequest $request) {
 
@@ -567,7 +568,7 @@ class reportesGerActions extends sfActions {
                 $where.=" and agt.ca_idagente = '" . $this->idcliente . "'";
 
             if ($this->sucursal)
-                $where.=" and sc.ca_nombre = '" . $this->sucursal . "'";
+                $where.=" and sc.ca_nombre = (select ca_nombre from control.tb_sucursales where ca_idsucursal = '" . $this->sucursal . "')";
 
             if ($this->usuenvio)
                 $where.=" and rf.ca_usuenvio = '" . $this->usuenvio . "'";
