@@ -704,6 +704,9 @@ RepOtm:
     ca_numpiezasun: string,
     ca_pesoun: string,
     ca_volumenun: string
+    ca_idimportador: string
+    ca_motonave: string
+    ca_muelle : integer
   relations:
     Reporte:
       local: ca_idreporte
@@ -728,7 +731,10 @@ RepOtm:
        foreign: ca_idtercero
        type: one
     Importador:
-      local: ca_idcliente
+      local: ca_idimportador
       foreign: ca_idtercero
       type: one
       class: Tercero
+    InoDianDepositos:
+      local: ca_muelle
+      foreign: ca_codigo
