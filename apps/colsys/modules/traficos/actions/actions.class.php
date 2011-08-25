@@ -376,8 +376,7 @@ class traficosActions extends sfActions
             else
                 $bindValues["remitente"] = $request->getParameter("remitente");
             
-			$bindValues["idetapa"] = $request->getParameter("idetapa");
-			
+			$bindValues["idetapa"] = $request->getParameter("idetapa");			
 			$bindValues["fchsalida"] = $request->getParameter("fchsalida");
 			$bindValues["horasalida"] = $request->getParameter("horasalida");
 			$bindValues["fchllegada"] = $request->getParameter("fchllegada");
@@ -405,8 +404,6 @@ class traficosActions extends sfActions
 			$bindValues["horarecibo"] = $request->getParameter("horarecibo");
             
             $bindValues["observaciones_idg"] = $request->getParameter("observaciones_idg");
-
-
 						
 			for( $i=0; $i<NuevoStatusForm::NUM_EQUIPOS ; $i++ ){
 				$bindValues["equipos_tipo_".$i] = $request->getParameter("equipos_tipo_".$i);
@@ -430,8 +427,6 @@ class traficosActions extends sfActions
 				$this->executeGuardarStatus( $request );				
 			}				
 		}
-					
-		
 		
 		$this->ultStatus = $reporte->getUltimoStatus();	
 		
@@ -494,9 +489,6 @@ class traficosActions extends sfActions
             }
             $status->setCaIdetapa( $request->getParameter("idetapa") );
 
-
-
-
             if( $request->getParameter("fchrecibo") ){
                 $horaRecibo =  $request->getParameter("horarecibo");
                 if( !$horaRecibo['minute'] ){
@@ -538,7 +530,6 @@ class traficosActions extends sfActions
             if( $request->getParameter("docmaster") ){
                 $status->setCaDocmaster( $request->getParameter("docmaster") );
             }
-
 
             if( $request->getParameter("idnave") ){
                 $status->setCaIdnave( $request->getParameter("idnave") );

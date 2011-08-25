@@ -65,7 +65,7 @@ $cliente = $reporte->getCliente();
 	<tr>
 		<td><b>Destino:</b></td>
 		<td><?=$reporte->getDestino()->getCaCiudad()?></td>
-		<td><b><?=$etapa->getCaDepartamento()=="Tráficos"?"Fch. Estimada de Llegada:":"Fch.Llegada:" //ticket #4032?></b></td>
+		<td><b><?=$etapa->getCaDepartamento()=="Tráficos"?"Fch. Estimada de Llegada:":"Fch. Estimada de Llegada:" //ticket #4032?></b></td>
 		<td><?=$status->getCaFchllegada()?$status->getCaFchllegada():"&nbsp;"?></td>		
 		<td>&nbsp;</td>		
 		<td>&nbsp;</td>
