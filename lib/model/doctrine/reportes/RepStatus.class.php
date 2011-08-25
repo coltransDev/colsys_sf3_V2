@@ -231,7 +231,6 @@ class RepStatus extends BaseRepStatus
 
 		$email->setCaReplyto( $user->getEmail() );
 
-
 		foreach( $addresses as $recip ){
 			$recip = str_replace(" ", "", $recip );
 			if( $recip ){
@@ -268,7 +267,7 @@ class RepStatus extends BaseRepStatus
 		}
 		$asunto = $this->getIntroAsunto();
 		if(isset($options["subject"]) && $options["subject"] ){
-            if($options["subject"]=="Notificación de Desconsolidación")
+            if($options["subject"]=="Notificación de Desconsolidación id: ".$reporte->getCaConsecutivo());
                 $asunto="";
 			$asunto.=  $options["subject"];
 		}else{            
