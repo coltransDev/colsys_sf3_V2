@@ -219,7 +219,8 @@ class reportesGerActions extends sfActions {
                 $where .= " and ca_idcliente in (select ca_idcliente from vi_clientes_reduc where ca_propiedades like '%cuentaglobal=true%') ";
             else if($this->departamento=="Tráficos")
                 $where .= " and ca_idcliente not in (select ca_idcliente from vi_clientes_reduc where ca_propiedades like '%cuentaglobal=true%') ";
-
+            else if($this->departamento=="Aéreo")
+                $where .= " and ca_idcliente not in (select ca_idcliente from vi_clientes_reduc where ca_propiedades like '%cuentaglobal=true%') ";
             if($this->transporte)
                 $where .= " and ca_transporte ='".$this->transporte."'";
             
