@@ -29,7 +29,7 @@ $sexos = array("Femenino","Masculino");
 $calificaciones = array("A","B","C","D","E");
 $riesgos = array("Sin","Mínimo","Medio","Alto");
 
-$col = ( $regional=="PE-051" ?"RUT":"N.i.t.");
+$col = ( $regional=="PE-051" ?"RUC":"N.i.t.");
 $campos = array("Nombre del Cliente" => "ca_compania", "Representante Legal" => "ca_ncompleto", $col => "ca_idcliente", "Calificación" => "ca_calificacion", "Coordinador Aduana" => "ca_coordinador", "Actividad Económica" => "ca_actividad", "Sector Económico" => "ca_sector", "Localidad" => "ca_localidad", "Ciudad" => "ca_ciudad", "Contrato Agenciamiento" => "ca_stdcotratoag");  // Arreglo con las opciones de busqueda
 $bdatos = array("Maestra Clientes", "Mis Clientes", "Clientes Libres");  // Arreglo con los lugares donde buscar
 $tipos = array("Llamada", "Visita", "Correo Electrónico", "Correspondencia", "Cerrar Caso");
@@ -263,10 +263,15 @@ elseif (!isset($boton) and !isset($accion) and isset($criterio)){
     set_time_limit(360);
     $modulo = "00100000";                                                      // Identificación del módulo para la ayuda en línea
 //  include_once 'include/seguridad.php';                                      // Control de Acceso al módulo
+    $criterio = trim( $criterio );
     if (isset($criterio) and !isset($condicion)) {        
-		if ($modalidad == "N.i.t."){
-			$condicion = "where ca_idcliente = '".$criterio."'";
-		}elseif($modalidad == "RUT"){
+		if($modalidad == "RUC" or $modalidad == "N.i.t." ){
+           $criterio = str_replace(",","",$criterio) ;
+           $criterio = str_replace(".","",$criterio) ;
+           $pos = strpos($criterio,"-");
+           if( $pos!==false ){
+               $criterio = substr($criterio, 0, $pos );
+           }
            $condicion = "where ca_idalterno LIKE '".$criterio."%'";        
         }else{
 			$condicion = "where lower($campos[$modalidad]) like lower('%".$criterio."%')";
