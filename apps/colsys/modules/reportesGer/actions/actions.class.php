@@ -509,7 +509,6 @@ class reportesGerActions extends sfActions {
     
 
     public function executeReporteCargaOperativa(sfWebRequest $request) {
-
         $response = sfContext::getInstance()->getResponse();
         $response->addJavaScript("extExtras/SuperBoxSelect", 'last');
 
@@ -535,11 +534,18 @@ class reportesGerActions extends sfActions {
         $this->nomoperativo = $request->getParameter("nomoperativo");
 
         if ($this->opcion) {
-
             if ($this->idmodalidad)
                 $where.=" and rp.ca_modalidad='" . $this->idmodalidad . "'";
-            if ($this->fechainicial && $this->fechafinal)
-                $where.=" and (rp.ca_fchreporte between '" . $this->fechainicial . "' and '" . $this->fechafinal . "')";
+            if ($request->getParameter("tipoInforme") == "Volumen de Trabajo"){
+                $filtro = "";
+                if ($this->fechainicial && $this->fechafinal)
+                    $filtro ="(rps.ca_fchenvio between '" . $this->fechainicial . "' and '" . $this->fechafinal . "') and ";
+                $filtroTipoInforme = "RIGHT JOIN (select rpt.ca_consecutivo, substr(rps.ca_fchenvio::text,1,4) as ca_ano, substr(rps.ca_fchenvio::text,6,2) as ca_mes, rps.ca_usuenvio, count(rps.ca_idemail) as ca_cant_emails from tb_repstatus rps, tb_reportes rpt where $filtro rpt.ca_idreporte = rps.ca_idreporte group by ca_ano, ca_mes, ca_consecutivo, ca_usuenvio) rf ON (rp.ca_consecutivo = rf.ca_consecutivo)";
+            }else{
+                if ($this->fechainicial && $this->fechafinal)
+                    $where.=" and (rp.ca_fchreporte between '" . $this->fechainicial . "' and '" . $this->fechafinal . "')";
+                $filtroTipoInforme   = "INNER JOIN (select rpt.ca_consecutivo, substr(rpt.ca_fchreporte::text,1,4) as ca_ano, substr(rpt.ca_fchreporte::text,6,2) as ca_mes, rps.ca_usuenvio, count(rps.ca_idemail) as ca_cant_emails from tb_repstatus rps, tb_reportes rpt where rpt.ca_idreporte = rps.ca_idreporte group by ca_ano, ca_mes, ca_consecutivo, ca_usuenvio) rf ON (rp.ca_consecutivo = rf.ca_consecutivo)";
+            }
             if ($this->idpais_origen)
                 $where.=" and tro.ca_idtrafico='" . $this->idpais_origen . "'";
             if ($this->idorigen)
@@ -578,7 +584,7 @@ class reportesGerActions extends sfActions {
                 $where.=" and op.ca_departamento = '" . $this->departamento . "'";
 
             $sql = "SELECT
-                rp.ca_idreporte, rp.ca_fchreporte, rp.ca_consecutivo, rx.ca_version, substr(rx.ca_fchreporte::text,1,4) as ca_ano, substr(rx.ca_fchreporte::text,6,2) as ca_mes, sc.ca_nombre as ca_sucursal,
+                rf.ca_ano, rf.ca_mes, rp.ca_idreporte, rp.ca_fchreporte, rp.ca_consecutivo, rx.ca_version, sc.ca_nombre as ca_sucursal,
                 tro.ca_idtrafico, tro.ca_nombre as ca_traorigen, rp.ca_origen, cio.ca_ciudad as ca_ciuorigen, trd.ca_idtrafico, trd.ca_nombre as ca_tradestino, cid.ca_ciudad as ca_ciudestino, rp.ca_transporte,
                 rp.ca_modalidad, rp.ca_impoexpo, ccl.ca_idcliente, ccl.ca_compania, lin.ca_idlinea, lin.ca_nomtransportista, agt.ca_idagente, agt.ca_nombre as ca_nomagente, nn.ca_referencia, nn.ca_cant_negocios,
                 rf.ca_cant_emails, rf.ca_usuenvio, op.ca_nombre as ca_nomoperativo, op.ca_departamento
@@ -586,7 +592,8 @@ class reportesGerActions extends sfActions {
                 from tb_reportes rp
                 -- La última versión del reporte
                         INNER JOIN (select ca_consecutivo, ca_fchreporte, max(ca_version) as ca_version, min(ca_fchcreado) as ca_fchcreado from tb_reportes where ca_usuanulado IS NULL group by ca_consecutivo, ca_fchreporte order by ca_consecutivo) rx ON (rp.ca_consecutivo = rx.ca_consecutivo and rp.ca_version = rx.ca_version)
-                        INNER JOIN (select rpt.ca_consecutivo, rps.ca_usuenvio, count(rps.ca_idemail) as ca_cant_emails from tb_repstatus rps, tb_reportes rpt where rpt.ca_idreporte = rps.ca_idreporte group by ca_consecutivo, ca_usuenvio) rf ON (rp.ca_consecutivo = rf.ca_consecutivo)
+                -- Dependiendo el tipo de Informe, toma los registros
+                        $filtroTipoInforme
                 -- Calcula el numero de negocios
                         LEFT OUTER JOIN (select ca_referencia, ca_consecutivo, count(ca_doctransporte) as ca_cant_negocios from (select ca_referencia, ca_hbls as ca_doctransporte, ca_consecutivo::text from tb_inoclientes_sea ics INNER JOIN tb_reportes rpt ON rpt.ca_idreporte = ics.ca_idreporte union  select ca_referencia, ca_hawb as ca_doctransporte, ca_idreporte::text as ca_consecutivo from tb_inoclientes_air) as cn where ca_consecutivo IS NOT NULL group by ca_referencia, ca_consecutivo order by ca_consecutivo) nn ON (rp.ca_consecutivo = nn.ca_consecutivo)
 

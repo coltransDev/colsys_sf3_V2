@@ -11,6 +11,7 @@ include_component("widgets", "widgetAgente");
 include_component("widgets", "widgetSucursales");
 include_component("widgets", "widgetUsuario");
 include_component("widgets", "widgetDeptos");
+include_component("widgets", "widgetParametros",array("caso_uso"=>"CU101"));
 // Grafica
 include_component("charts","column");
 // Variables
@@ -207,6 +208,13 @@ $resul = $sf_data->getRaw("resul");
                                             width:250,
                                             value:"<?= $nomoperativo ?>",
                                             hiddenValue:"<?= $usuenvio ?>"
+                                        }),
+                                        new WidgetParametros({fieldLabel: 'Tipo/Informe',
+                                            id:'idTipoInforme',
+                                            name:'tipoInforme',
+                                            caso_uso:"CU101",
+                                            width:200,
+                                            idvalor:"valor"
                                         })
                                     ]
                                 }
@@ -263,7 +271,7 @@ $resul = $sf_data->getRaw("resul");
 </script>
 
 <?
-if ($opcion) {
+if ($opcion and $tipoInforme != "") {
 ?>
 
     <div align="center">
