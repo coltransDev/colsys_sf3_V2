@@ -27,6 +27,7 @@ class inoMaritimoActions extends sfActions {
     public function executeFormCostos(sfWebRequest $request) {
         
         
+        
         $this->forward404Unless($request->getParameter("referencia"));
         $referencia = Doctrine::getTable("InoMaestraSea")->find($request->getParameter("referencia"));
         $this->forward404Unless($referencia);
@@ -51,18 +52,15 @@ class inoMaritimoActions extends sfActions {
         } else {
             $inoCosto = new InoCostosSea();
         }
-
         
         
-
-
         $this->inoClientes = Doctrine::getTable("InoClientesSea")
                 ->createQuery("u")
                 ->innerJoin("u.Cliente cl")
                 ->addWhere("u.ca_referencia = ?", $referencia->getCaReferencia())
                 ->addOrderBy("u.ca_hbls")
                 ->execute();
-
+        
         $this->form = new CostosForm();
         $this->form->setReferencia($referencia);
         $this->form->setInoClientes($this->inoClientes);
@@ -83,7 +81,7 @@ class inoMaritimoActions extends sfActions {
             $bindValues["proveedor"] = $request->getParameter("proveedor");
 
             foreach ($this->inoClientes as $ic) {
-                $bindValues["util_" . $ic->getCaHbls()] = $request->getParameter("util_" . $ic->getCaHbls());
+                $bindValues["util_" . $ic->getCaIdinocliente()] = $request->getParameter("util_" . $ic->getCaIdinocliente());
             }
 
             $this->form->bind($bindValues);
@@ -120,17 +118,16 @@ class inoMaritimoActions extends sfActions {
                     foreach ($bindValues as $key => $val) {
                         if (substr($key, 0, 4) == "util") {
                             if ($val) {
-                                $hbl = substr($key, 5);
-
+                                $oid = substr($key, 5);                                
                                 $ic = Doctrine::getTable("InoClientesSea")
                                         ->createQuery("ic")
-                                        ->addWhere("ic.ca_hbls = ? ", $hbl)
+                                        ->addWhere("ic.ca_idinocliente = ? ", $oid)
                                         ->fetchOne();
 
                                 $ut = new InoUtilidadSea();
                                 $ut->setCaReferencia($bindValues["referencia"]);
                                 $ut->setCaIdcliente($ic->getCaIdcliente());
-                                $ut->setCaHbls($hbl);
+                                $ut->setCaHbls($ic->getCaHbls());
                                 $ut->setCaIdcosto($bindValues["idcosto"]);
                                 $ut->setCaFactura($bindValues["factura"]);
                                 $ut->setCaValor($val);

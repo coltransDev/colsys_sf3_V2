@@ -53,8 +53,8 @@ class CostosForm extends BaseForm{
         
 		
         foreach( $this->inoclientes as $ic ){
-            $widgets["util_".$ic->getCaHbls()] = new sfWidgetFormInputText(array(), array("size"=>15, "maxlength"=>15, "onchange"=>"calcular()" ));
-            $validator["util_".$ic->getCaHbls()] = new sfValidatorNumber(array('required' => true, "min"=>0 ), 
+            $widgets["util_".$ic->getCaIdinocliente()] = new sfWidgetFormInputText(array(), array("size"=>15, "maxlength"=>15, "onchange"=>"calcular()" ));
+            $validator["util_".$ic->getCaIdinocliente()] = new sfValidatorNumber(array('required' => true, "min"=>0 ), 
 														array('required' => 'Requerido',
 																'invalid' => 'No valido'));
         }

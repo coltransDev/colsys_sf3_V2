@@ -52,7 +52,7 @@
         }        
         echo $form['factura_ant']->render();
         ?>
-        <table class="tableList">
+        <table class="tableList alignLeft" width="80%">
             <tr>
                 <th colspan="6">
                     <div align="center">
@@ -206,14 +206,14 @@
                             <tr>
                                 <td><div title="<?=$ic->getCliente()->getCaCompania()?>" ><?=$ic->getCaHbls()?></div></td>
                                 <td>  
-                                <?
-                                echo $form['util_'.$ic->getCaHbls()]->renderError();  
+                                <?                                
+                                echo $form['util_'.$ic->getCaIdinocliente()]->renderError();  
                                 if( isset( $utilidades[ $ic->getCaHbls() ] )  ){
-                                    $form->setDefault('util_'.$ic->getCaHbls(),  $utilidades[ $ic->getCaHbls() ]  );
+                                    $form->setDefault('util_'.$ic->getCaIdinocliente(),  $utilidades[ $ic->getCaHbls() ]  );
                                 }else{
-                                    $form->setDefault('util_'.$ic->getCaHbls(), 0 );
+                                    $form->setDefault('util_'.$ic->getCaIdinocliente(), 0 );
                                 }
-                                echo $form['util_'.$ic->getCaHbls()]->render();
+                                echo $form['util_'.$ic->getCaIdinocliente()]->render();
                                 ?>                                
                                 </td>
                             </tr>    
