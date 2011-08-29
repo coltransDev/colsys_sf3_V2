@@ -37,7 +37,6 @@ class antecedentesActions extends sfActions {
                         ->innerJoin('m.InoClientesSea ic')
                         ->addWhere("m.ca_provisional = ?", true);
 
-
         $q->distinct();
         if($this->getRequestParameter("reporte"))
         {
@@ -53,7 +52,7 @@ class antecedentesActions extends sfActions {
         switch ($criterio) {
             case "reporte":
                 $q->innerJoin('ic.Reporte r');
-                $q->addWhere("r.ca_consecutivo like ?", $cadena . "%");
+                $q->addWhere("r.ca_consecutivo like ?", "%".$cadena . "%");
                 break;
             case "referencia":
                 $q->addWhere("m.ca_referencia like ?", $cadena . "%");
@@ -99,29 +98,8 @@ class antecedentesActions extends sfActions {
     public function executeListadoReferencias(sfWebRequest $request) {        
         //error_reporting(E_ALL);
         $this->user=$this->getUser();
-        $this->format = $this->getRequestParameter("format");
-        
-        
-/*            $q = Doctrine::getTable("InoMaestraSea")
-                        ->createQuery("m")
-                        ->select("m.ca_referencia,m.ca_fchreferencia,m.ca_provisional,m.ca_modalidad,m.ca_motonave,m.ca_fchembarque,m.ca_fcharribo,m.ca_usucreado,o.ca_ciudad ca_ciu_origen,d.ca_ciudad ca_ciu_destino,u.ca_idsucursal,m.ca_fchmuisca")
-                        ->innerJoin("m.Origen o")
-                        ->innerJoin("m.Destino d")
-                        ->addWhere("m.ca_fchreferencia>=?", "2011-02-28")
-                        //->leftJoin('m.InoClientesSea ic')                        
-                        ->innerJoin('m.UsuCreado u');
-                
-        $q->distinct();
-        if($this->format=="")
-        {
-//            $q->addWhere("(m.ca_provisional = ? and ((m.ca_modalidad=? and u.ca_idsucursal=?) or m.ca_modalidad<>?) )", array(true,constantes::FCL,$this->user->getIdSucursal(),constantes::FCL));
-            $q->addWhere("(m.ca_provisional = ? and ((m.ca_modalidad=? and u.ca_idsucursal=?) or m.ca_modalidad<>?) ) OR (m.ca_provisional = ? AND m.ca_fchmuisca IS NULL)", array(true,constantes::FCL,$this->user->getIdSucursal(),constantes::FCL,false));
-        }
-        else
-        {
-            $q->addWhere("(m.ca_provisional = ? and ((m.ca_modalidad=? and u.ca_idsucursal=?) or m.ca_modalidad<>?) ) OR (m.ca_provisional = ? AND m.ca_fchmuisca IS NULL)", array(true,constantes::FCL,$this->user->getIdSucursal(),constantes::FCL,false));
-        }
-       */
+        $this->format = $this->getRequestParameter("format");        
+
         $where="";
         if($this->format=="")
         {
@@ -133,7 +111,7 @@ class antecedentesActions extends sfActions {
         {
             $where =" and ( (m.ca_provisional = true and ((m.ca_modalidad='".constantes::FCL."' and u.ca_idsucursal='".$this->user->getIdSucursal()."') or m.ca_modalidad<>'".constantes::FCL."') 
                 and strpos((SELECT ca_subject FROM tb_emails where ca_tipo='Antecedentes' and ca_subject like '%'||m.ca_referencia||'%' order by ca_idemail DESC limit 1), 'Envio de Antecedentes')>0
-                ) OR (m.ca_provisional = false AND m.ca_fchmuisca IS NULL ))";
+                ) OR (m.ca_provisional = false AND m.ca_fchmuisca IS NULL and SUBSTR(ca_referencia,1,3) NOT IN ('700','710','720') ))";
             $whereEmail="" ;
         }
         
@@ -180,8 +158,7 @@ class antecedentesActions extends sfActions {
 
         $this->login=$this->user->getUserId();
         if($this->sucursal=="BOG")
-        {
-              
+        {              
             $sql="select m.ca_referencia,m.ca_modalidad,m.ca_motonave,m.ca_fchembarque,m.ca_fcharribo,m.ca_usucreado,ori.ca_ciudad ca_ciu_origen,des.ca_ciudad ca_ciu_destino
                 from tb_inomaestra_sea m
                 JOIN tb_ciudades ori ON ori.ca_idciudad = m.ca_origen
@@ -783,11 +760,11 @@ exit;
                             $tarea->setCaUsuterminada($this->getUser()->getuserId());
                             $tarea->save();
                         }
-                    }
-                    $hija->setCaFchantecedentes(date("Y-m-d H:i:s"));
-                    $hija->stopBlaming();
-                    $hija->save();
+                    }                    
                 }
+                $hija->setCaFchantecedentes(date("Y-m-d H:i:s"));
+                $hija->stopBlaming();
+                $hija->save();
             }
 //            $this->setLayout($format);
 //        }
@@ -874,9 +851,21 @@ exit;
  */
 
             $master = Doctrine::getTable("InoMaestraSea")->find($numref);
+            //$master= new InoMaestraSea();
+            $emails=$master->getEmails();
             $master->delete($conn);
 
-            $this->getUser()->log( "Eliminacion Referencia ".$numref );
+            $this->getUser()->log( "Eliminacion Referencia ".$numref ); 
+            
+            foreach($emails as $email)
+            {
+                $email->setCaSubject( str_replace(".", "-", $email->getCaSubject()));
+                $email->save($conn);
+            }
+            
+            
+            
+            
 
             $conn->commit();
             $this->responseArray = array("success" => true);
@@ -1083,7 +1072,7 @@ exit;
         $email = new Email();
 
         $email->setCaUsuenvio($user->getUserId());
-        $email->setCaTipo("Antecedentes"); //Envío de Avisos
+        $email->setCaTipo("EmailColoader"); //Envío de Avisos
         $email->setCaIdcaso(null);
 
         $from = $this->getRequestParameter("from");
@@ -1142,7 +1131,7 @@ exit;
             $email->AddAttachment($name);            
         }
         $email->send();
-       // $email->save();
+        $email->save();
  
     }
 

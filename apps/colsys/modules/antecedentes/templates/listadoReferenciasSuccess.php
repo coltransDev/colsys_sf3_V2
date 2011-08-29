@@ -207,15 +207,15 @@ if($format!="")
             $i++;
 
             $url = "antecedentes/verPlanilla?ref=".str_replace(".","|",$referencia["ca_referencia"]);
-
-            if( $format ){
+            $url = "/colsys_php/inosea.php?boton=Consultar&id=".$referencia["ca_referencia"];
+            /*if( $format ){
                 $url.="&format=".$format;
-            }
+            }*/
             $arrRef=explode(".", $referencia["ca_referencia"]);
             //if($i==1)
             //print_r($arrRef);
         ?>
-        <tr class="tipo<?=(int)$arrRef[1]?>" id="tipos">
+        <tr class="tipo<?=(int)$arrRef[1]?>" id="id_<?=str_replace(".","",$referencia["ca_referencia"])?>">
             <td  >
                 <?=link_to($referencia["ca_referencia"], $url)?>
             </td>
@@ -312,7 +312,7 @@ if($sucursal=="BOG")
 
             $url = "antecedentes/verPlanilla?ref=".str_replace(".","|",$referencia["ca_referencia"]);
             $url.="&format=".$format;
-            
+            $url = "/colsys_php/inosea.php?boton=Consultar&id=".$referencia["ca_referencia"];
             $arrRef=explode(".", $referencia["ca_referencia"]);
             //if($i==1)
             //print_r($arrRef);
@@ -368,6 +368,37 @@ if($sucursal=="BOG")
             {
                 waitMsg: 'Guardando cambios...',
                 url: '<?= url_for("antecedentes/archivarReferencia") ?>',
+                params :	{
+                    referencia: ref
+                },
+                failure:function(response,options){
+                    //alert( response.responseText );
+                    Ext.Msg.hide();
+                    success = false;
+                    Ext.MessageBox.hide();
+                },
+                success:function(response,options){
+                    var res = Ext.util.JSON.decode( response.responseText );
+                    if( res.success ){
+                        $("#"+id).html("");
+                        $("#"+id).remove();
+                        Ext.MessageBox.hide();
+                    }
+                }
+            });
+        }        
+    }
+    
+    
+    function radicar(ref,id)
+    {
+        if(window.confirm("Ya creo la carpeta para archivar?"))
+        {
+            Ext.MessageBox.wait('Espere por favor', '');
+            Ext.Ajax.request(
+            {
+                waitMsg: 'Guardando cambios...',
+                url: '<?= url_for("antecedentes/radicarReferencia") ?>',
                 params :	{
                     referencia: ref
                 },
