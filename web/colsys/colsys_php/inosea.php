@@ -62,6 +62,13 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
     echo "function elegir(opcion, id, cl){";
     echo "    document.location.href = 'inosea.php?boton='+opcion+'\&id='+id+'\&cl='+cl;";
     echo "}";
+    echo "function elegir(opcion, id, cl){";
+    echo "    if(opcion=='AdicionarCs' || opcion=='ModificarCs'){";
+    echo "      document.location.href = '/inoMaritimo/formCostos?referencia='+id+'\&cl='+cl;";
+    echo "    }else{";
+    echo "      document.location.href = 'inosea.php?boton='+opcion+'\&id='+id+'\&cl='+cl;";
+    echo "    }";
+    echo "}";
     echo "function habilitar() {";
     echo "	elemento = document.getElementById('rango');";
     echo "	if (elemento.checked){";
@@ -163,7 +170,11 @@ elseif (!isset($boton) and !isset($accion) and isset($criterio)) {
     echo "<TITLE>$titulo</TITLE>";
     echo "<script language='JavaScript' type='text/JavaScript'>";              // Código en JavaScript para validar las opciones de mantenimiento
     echo "function elegir(opcion, id, cl){";
-    echo "    document.location.href = 'inosea.php?boton='+opcion+'\&id='+id+'\&cl='+cl;";
+    echo "    if(opcion=='AdicionarCs' || opcion=='ModificarCs'){";
+    echo "      document.location.href = '/inoMaritimo/formCostos?referencia='+id+'\&cl='+cl;";
+    echo "    }else{";
+    echo "      document.location.href = 'inosea.php?boton='+opcion+'\&id='+id+'\&cl='+cl;";
+    echo "    }";
     echo "}";
     echo "function uno(src,color_entrada) {";
     echo "    src.style.background=color_entrada;src.style.cursor='hand'";
@@ -252,9 +263,13 @@ elseif (isset($boton)) {                                                       /
                 echo "<HTML>";
                 echo "<HEAD>";
                 echo "<TITLE>$titulo</TITLE>";
-                echo "<script language='JavaScript' type='text/JavaScript'>";              // Código en JavaScript para validar las opciones de mantenimiento
+                echo "<script language='JavaScript' type='text/JavaScript'>";              // Código en JavaScript para validar las opciones de mantenimiento                
                 echo "function elegir(opcion, id, cl, hb){";
-                echo "    document.location.href = 'inosea.php?boton='+opcion+'\&id='+id+'\&cl='+cl+'\&hb='+hb;";
+                echo "    if(opcion=='AdicionarCs' || opcion=='ModificarCs'){";
+                echo "      document.location.href = '/inoMaritimo/formCostos?referencia='+id+'\&cl='+cl+'\&hb='+hb;";
+                echo "    }else{";
+                echo "      document.location.href = 'inosea.php?boton='+opcion+'\&id='+id+'\&cl='+cl+'\&hb='+hb;";
+                echo "    }";
                 echo "}";
                 echo "function apertura(opcion, id){";
                 echo "    if (confirm(\"¿Esta seguro que desea abrir la Referencia?\")) {";
@@ -544,7 +559,7 @@ elseif (isset($boton)) {                                                       /
                     }
                     echo "  </TABLE></TD>";
 
-                    echo "  <TD Class='listar b'>Utilidad Consolidado:</TD>";
+                    echo "  <TD Class='listar b'>INO Consolidado:</TD>";
                     echo "  <TD Class='listar b' style='text-align: right;$col_mem'>".number_format($rs->Value('ca_facturacion') - $rs->Value('ca_deduccion') - $rs->Value('ca_utilidad'))."</TD>";
                     echo "</TR>";
                     echo "<TR>
@@ -724,7 +739,7 @@ elseif (isset($boton)) {                                                       /
                         echo "  <TD Class=listar><B>Neto:</B><BR><B>".$cs->Value('ca_idmoneda').'</B> '.number_format($cs->Value('ca_neto'), 2)."</TD>";
                         echo "  <TD Class=listar><B>Costo en Moneda Local:</B><BR>$ ".number_format($cos_mem)."</TD>";
                         echo "  <TD Class=listar><B>Venta en Moneda Local:</B><BR>$ ".number_format($cs->Value('ca_venta'))."</TD>";
-                        echo "  <TD Class=listar><B>Util. x Sobreventa:</B><BR>$ ".number_format($cs->Value('ca_utilidad'))."</TD>";
+                        echo "  <TD Class=listar><B>INO. x Sobreventa:</B><BR>$ ".number_format($cs->Value('ca_utilidad'))."</TD>";
                         echo "</TR>";
                         $cs->MoveNext();
                     }
