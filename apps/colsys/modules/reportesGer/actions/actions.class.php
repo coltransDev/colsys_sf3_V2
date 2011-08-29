@@ -512,6 +512,7 @@ class reportesGerActions extends sfActions {
         $response = sfContext::getInstance()->getResponse();
         $response->addJavaScript("extExtras/SuperBoxSelect", 'last');
 
+        $this->tipoInforme = $request->getParameter("tipoInforme");
         $this->fechainicial = $request->getParameter("fechaInicial");
         $this->fechafinal = $request->getParameter("fechaFinal");
 
@@ -536,7 +537,7 @@ class reportesGerActions extends sfActions {
         if ($this->opcion) {
             if ($this->idmodalidad)
                 $where.=" and rp.ca_modalidad='" . $this->idmodalidad . "'";
-            if ($request->getParameter("tipoInforme") == "Volumen de Trabajo"){
+            if ($this->tipoInforme == "Volumen de Trabajo"){
                 $filtro = "";
                 if ($this->fechainicial && $this->fechafinal)
                     $filtro ="(rps.ca_fchenvio between '" . $this->fechainicial . "' and '" . $this->fechafinal . "') and ";
@@ -544,7 +545,7 @@ class reportesGerActions extends sfActions {
             }else{
                 if ($this->fechainicial && $this->fechafinal)
                     $where.=" and (rp.ca_fchreporte between '" . $this->fechainicial . "' and '" . $this->fechafinal . "')";
-                $filtroTipoInforme   = "INNER JOIN (select rpt.ca_consecutivo, substr(rpt.ca_fchreporte::text,1,4) as ca_ano, substr(rpt.ca_fchreporte::text,6,2) as ca_mes, rps.ca_usuenvio, count(rps.ca_idemail) as ca_cant_emails from tb_repstatus rps, tb_reportes rpt where rpt.ca_idreporte = rps.ca_idreporte group by ca_ano, ca_mes, ca_consecutivo, ca_usuenvio) rf ON (rp.ca_consecutivo = rf.ca_consecutivo)";
+                $filtroTipoInforme = "INNER JOIN (select rpt.ca_consecutivo, substr(rpt.ca_fchreporte::text,1,4) as ca_ano, substr(rpt.ca_fchreporte::text,6,2) as ca_mes, rps.ca_usuenvio, count(rps.ca_idemail) as ca_cant_emails from tb_repstatus rps, tb_reportes rpt where rpt.ca_idreporte = rps.ca_idreporte group by ca_ano, ca_mes, ca_consecutivo, ca_usuenvio) rf ON (rp.ca_consecutivo = rf.ca_consecutivo)";
             }
             if ($this->idpais_origen)
                 $where.=" and tro.ca_idtrafico='" . $this->idpais_origen . "'";
