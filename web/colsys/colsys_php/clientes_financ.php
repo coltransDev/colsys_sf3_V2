@@ -222,7 +222,7 @@ require_once("menu.php");
                 echo "<script>document.location.href = 'clientes_financ.php';</script>";
                 exit; }
 	   echo "<TR>";
-	   echo "<TD Class=titulo style='vertical-align: top;'>".number_format($rs->Value('ca_idcliente'))."-".$rs->Value('ca_digito')."</TD>";
+           echo "<TD Class=titulo style='vertical-align: top;'>".number_format($rs->Value('ca_idalterno')?$rs->Value('ca_idalterno'):$rs->Value('ca_idcliente')).($rs->Value('ca_digito')?"-".$rs->Value('ca_digito'):"")."</TD>";
 	   echo "<TD Class=titulo COLSPAN=5 style='font-size: 12px; font-weight:bold; text-align:left;'>".$rs->Value('ca_compania')."</TD>";
 	   echo "</TR>";
 
