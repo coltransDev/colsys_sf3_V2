@@ -22,7 +22,7 @@ $statusList = $sf_data->getRaw("statusList");
 	?>
 	<tr>
 		<td valign="top"><?=$i==0?"<b>":""?><?=$lstatus->getCaFchenvio()?><?=$i==0?"</b>":""?></td>
-		<td valign="top"><?=$i==0?"<b>":""?><?=Utils::replace($lstatus->getStatus())?><?=$i==0?"</b>":""?></td>
+		<td valign="top"><?=$i==0?"<b>":""?><?=html_entity_decode(Utils::replace($lstatus->getStatus()))?><?=$i==0?"</b>":""?></td>
 		<?
 		if( $linkEmail   ){
 		?>
