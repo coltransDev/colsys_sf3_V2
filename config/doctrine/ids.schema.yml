@@ -146,6 +146,8 @@ IdsContacto:
     ca_activo: boolean
     ca_notificar_vencimientos: boolean
     ca_codigoarea: string
+    ca_skype: string
+    ca_celular: string
     ca_usucreado: string(20)
     ca_fchcreado: timestamp
     ca_usuactualizado: string(20)

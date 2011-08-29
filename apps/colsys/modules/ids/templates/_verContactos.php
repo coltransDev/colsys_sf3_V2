@@ -1,14 +1,14 @@
  <table class="tableList" width="100%">
      <tr class="row0">
-         <td width="15%"><b>Nombre</b></td>
-         <td width="10%"><b>C&oacute;digo &Aacute;rea</b></td>
-         <td width="10%"><b>Tel&eacute;fono</b></td>
-          <td width="10%"><b>Fax</b></td>
-          <td width="20%"><b>e-mail</b></td>
-          <td width="15%"><b>Cargo</b></td>
-          <td width="15%"><b>Impo/Expo</b></td>
-          <td width="10%"><b>Transporte</b></td>
-          <td width="5%">
+        <td width="15%"><b>Nombre</b></td>
+        <td width="10%"><b>C&oacute;digo &Aacute;rea</b></td>
+        <td width="10%"><b>Tel&eacute;fono</b></td>
+        <td width="10%"><b>Fax</b></td>
+        <td width="20%"><b>e-mail</b></td>
+        <td width="10%"><b>Cargo</b></td>
+        <td width="10%"><b>Impo/Expo</b></td>
+        <td width="10%"><b>Transporte</b></td>
+        <td width="5%">
               <div align="center">
                 <?
                 if( $nivel>=3 ){
@@ -42,16 +42,26 @@
       }else{
          $class = "";
       }
+      
+      $text = $contacto->getCaObservaciones()?"<br />".$contacto->getCaObservaciones():"";
+      
+      
+      if( $contacto->getCaCelular() ){
+          $text.="<br /><b>Celular:</b>".$contacto->getCaCelular();
+      }
+      if( $contacto->getCaSkype() ){
+          $text.="<br /><b>Skype:</b>".$contacto->getCaSkype();
+      }
       ?>
       <tr class="<?=$class?>">
-           <td><div align="left"><div class="qtip" title="<?=$contacto->getCaObservaciones()?>"><?=$contacto->getNombre()?> <?=!$contacto->getCaActivo()?"(INACTIVO)":""?></div></div></td>
-           <td><div align="left" class="qtip" title="<?=$contacto->getCaObservaciones()?>">(<?=$sucursal->getCiudad()->getTrafico()->getCodigoarea()?>)(<?=$contacto->getCodigoarea()?>)</div></td>
-           <td><div align="left" class="qtip" title="<?=$contacto->getCaObservaciones()?>"><?=$contacto->getCaTelefonos()?></div></td>
-           <td><div align="left" class="qtip" title="<?=$contacto->getCaObservaciones()?>"><?=$contacto->getCaFax()?></div></td>
-           <td><div align="left" class="qtip" title="<?=$contacto->getCaObservaciones()?>"><?=$contacto->getCaEmail()?></div></td>
-           <td><div align="left" class="qtip" title="<?=$contacto->getCaObservaciones()?>"><?=$contacto->getCaCargo()?></div></td>
-           <td><div align="left" class="qtip" title="<?=$contacto->getCaObservaciones()?>"><?=str_replace( "|", ",",$contacto->getCaImpoexpo())?></div></td>
-           <td><div align="left" class="qtip" title="<?=$contacto->getCaObservaciones()?>"><?=str_replace( "|", ",", $contacto->getCaTransporte())?></div></td>
+           <td><div align="left"><div class="qtip" title="<?=$text?>"><?=$contacto->getNombre()?> <?=!$contacto->getCaActivo()?"(INACTIVO)":""?> <?=$contacto->getCaCelular()?image_tag("16x16/mobile.gif"):""?> <?=$contacto->getCaSkype()?image_tag("16x16/skype.png"):""?></div></div></td>
+           <td><div align="left" class="qtip" title="<?=$text?>">(<?=$sucursal->getCiudad()->getTrafico()->getCodigoarea()?>)(<?=$contacto->getCodigoarea()?>)</div></td>
+           <td><div align="left" class="qtip" title="<?=$text?>"><?=$contacto->getCaTelefonos()?></div></td>
+           <td><div align="left" class="qtip" title="<?=$text?>"><?=$contacto->getCaFax()?></div></td>           
+           <td><div align="left" class="qtip" title="<?=$text?>"><?=$contacto->getCaEmail()?></div></td>
+           <td><div align="left" class="qtip" title="<?=$text?>"><?=$contacto->getCaCargo()?></div></td>
+           <td><div align="left" class="qtip" title="<?=$text?>"><?=str_replace( "|", ",",$contacto->getCaImpoexpo())?></div></td>
+           <td><div align="left" class="qtip" title="<?=$text?>"><?=str_replace( "|", ",", $contacto->getCaTransporte())?></div></td>
            <td><div align="center">
             <?
             if( $nivel>=3 ){

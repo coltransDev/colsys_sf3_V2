@@ -63,7 +63,7 @@ switch ($action) {
                 $i++;
             }
         }
-
+        break;
     case "formContactosIds":
 
 

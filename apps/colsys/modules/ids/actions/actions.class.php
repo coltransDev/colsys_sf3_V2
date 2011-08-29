@@ -22,8 +22,8 @@ class idsActions extends sfActions {
         if (!$this->modo) {
             $this->forward("ids", "seleccionModo");
         }
-
-        if ($this->modo == "agentes") {
+        
+        if ($this->modo == "agentes") {            
             $this->nivel = $this->getUser()->getNivelAcceso(idsActions::RUTINA_AGENTES);
         }
 
@@ -465,6 +465,8 @@ class idsActions extends sfActions {
             //$bindValues["idciudad"] = $request->getParameter("idciudad");
             $bindValues["telefonos"] = $request->getParameter("telefonos");
             $bindValues["fax"] = $request->getParameter("fax");
+            $bindValues["celular"] = $request->getParameter("celular");
+            $bindValues["skype"] = $request->getParameter("skype");
             $bindValues["email"] = trim($request->getParameter("email"));
             $bindValues["cargo"] = $request->getParameter("cargo");
             $bindValues["otro_cargo"] = $request->getParameter("otro_cargo");
@@ -492,6 +494,18 @@ class idsActions extends sfActions {
                 //$contacto->setCaIdciudad( $bindValues["idciudad"] );
                 $contacto->setCaTelefonos($bindValues["telefonos"]);
                 $contacto->setCaFax($bindValues["fax"]);
+                if ($bindValues["celular"]) {
+                    $contacto->setCaCelular($bindValues["celular"]);
+                }else{
+                    $contacto->setCaCelular(null);
+                }
+                
+                if ($bindValues["skype"]) {
+                    $contacto->setCaSkype($bindValues["skype"]);
+                }else{
+                    $contacto->setCaSkype(null);
+                }
+                
                 $contacto->setCaEmail($bindValues["email"]);
                 $contacto->setCaImpoexpo(implode("|", $bindValues["impoexpo"]));
                 $contacto->setCaTransporte(implode("|", $bindValues["transporte"]));

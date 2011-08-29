@@ -25,7 +25,8 @@ class NuevoContactoForm extends BaseForm{
           'codigoarea'   => new sfWidgetFormInputText(array(), array("maxlength"=>"4" ,"size"=>"10") ),
 		  'telefonos'   => new sfWidgetFormInputText(array(), array("maxlength"=>"30" ,"size"=>"60") ),
 		  'fax'         => new sfWidgetFormInputText(array(), array("maxlength"=>"30" ,"size"=>"60")),
-		
+          'celular'   => new sfWidgetFormInputText(array(), array("maxlength"=>"30" ,"size"=>"60") ),  
+          'skype'   => new sfWidgetFormInputText(array(), array("maxlength"=>"30" ,"size"=>"60") ),  
 		  'email'       => new sfWidgetFormInputText( array(), array("maxlength"=>"40" ,"size"=>"60")),
 		  'impoexpo'     => new sfWidgetFormChoice(array(
   								'choices' => array( Constantes::IMPO=>Constantes::IMPO,
@@ -62,6 +63,8 @@ class NuevoContactoForm extends BaseForm{
           'codigoarea'   => new sfValidatorString(array('required' => false)),
 		  'telefonos'   => new sfValidatorString(array('required' => true)),
 		  'fax'         => new sfValidatorString(array('required' => false)),
+          'celular'         => new sfValidatorString(array('required' => false)),
+          'skype'         => new sfValidatorString(array('required' => false)),
 		
 		  'email'       => new sfValidatorEmail(array('required' => false), 
 														array('invalid' => 'La dirección es invalida')),

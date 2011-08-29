@@ -121,20 +121,28 @@ var verificarCargo = function(){
 				 echo $form['fax']->render();
 				 ?>				</td>
 			</tr>
-            <!--
-			<tr>
-				<td><b>Ciudad:</b></td>
+            <tr>
+				<td><b>Celular:</b></td>
 				<td colspan="3">
 				<?
-                /*
-				 echo $form['idciudad']->renderError();
+				 echo $form['celular']->renderError();
 				 if( $contacto ){
-					$form->setDefault('idciudad', $contacto->getCaIdciudad() );
+					$form->setDefault('celular', $contacto->getCaCelular() );
 				 }
-				 echo $form['idciudad']->render();*/
+				 echo $form['celular']->render();
 				 ?>				</td>
 			</tr>
-            -->
+            <tr>
+				<td><b>Skype:</b></td>
+				<td colspan="3">
+				<?
+				 echo $form['skype']->renderError();
+				 if( $contacto ){
+					$form->setDefault('skype', $contacto->getCaSkype() );
+				 }
+				 echo $form['skype']->render();
+				 ?>				</td>
+			</tr>
 			<tr>
 				<td><b>Correo Electr&oacute;nico:</b></td>
 				<td colspan="3">
