@@ -289,7 +289,7 @@ $office_types = $sf_data->getRaw("office_types");*/
                                                 fieldLabel: 'Serial',
                                                 name: 'office_serial',
                                                 allowBlank: false
-                                            },
+                                            }
 
                                         ]
                                     }
