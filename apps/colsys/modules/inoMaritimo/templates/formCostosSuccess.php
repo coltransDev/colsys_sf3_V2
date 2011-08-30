@@ -7,8 +7,8 @@
         var venta = document.getElementById("venta");
         var neto = document.getElementById("neto");
         var tcambio = document.getElementById("tcambio");
-        
-        to.value = Math.round(venta.value - eval(neto.value * tcambio.value));
+       
+        to.value = Math.round(venta.value - Math.round(neto.value * tcambio.value));
     }
     
     function calc_neto(){

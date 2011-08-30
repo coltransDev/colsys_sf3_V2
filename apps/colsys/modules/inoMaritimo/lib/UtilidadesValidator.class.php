@@ -11,14 +11,26 @@ class UtilidadesValidator extends sfValidatorBase
  
 	protected function doClean($values)
 	{			
+        //echo $values["venta"] ."  --       ". round(+0.1,0)."<br />";
         
-        $util = round($values["venta"] - $values["neto"]*$values["tcambio"], 0 );
+        $neto = $values["neto"]*$values["tcambio"];
+        
+        
+        if( $neto<0 ){            
+            if( abs($neto-ceil($neto))==0.5 ){
+                //Al redondear un numero negativo, php hace la operacion incorrectamente y aproxima por encima de 0.5                
+                $neto+=0.1;
+            }
+        }
+                
+        $util = round($values["venta"] - round($neto));
         $sum = 0;
         foreach( $values as $key=>$val ){
             if( substr($key, 0, 4)=="util" ){
                 $sum+=$val;
             }            
         }
+        
         //echo $sum."  ---  " .$util;
         if( $sum!=$util ){
             throw new sfValidatorErrorSchema($this, array($this->getOption('username_field') => new sfValidatorError($this, 'invalid')));	

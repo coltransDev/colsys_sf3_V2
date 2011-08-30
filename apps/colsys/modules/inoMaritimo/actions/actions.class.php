@@ -137,8 +137,7 @@ class inoMaritimoActions extends sfActions {
                     }
                     $conn->commit();
                     $this->redirect("/colsys_php/inosea.php?boton=Consultar&id=" . $referencia->getCaReferencia());
-                } catch (Exception $e) {
-                    $conn->rollBack();
+                } catch (Exception $e) {                    
                     throw $e;
                 }
             }

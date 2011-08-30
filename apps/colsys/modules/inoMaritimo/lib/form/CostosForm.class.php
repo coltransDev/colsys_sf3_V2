@@ -54,7 +54,7 @@ class CostosForm extends BaseForm{
 		
         foreach( $this->inoclientes as $ic ){
             $widgets["util_".$ic->getCaIdinocliente()] = new sfWidgetFormInputText(array(), array("size"=>15, "maxlength"=>15, "onchange"=>"calcular()" ));
-            $validator["util_".$ic->getCaIdinocliente()] = new sfValidatorNumber(array('required' => true, "min"=>0 ), 
+            $validator["util_".$ic->getCaIdinocliente()] = new sfValidatorNumber(array('required' => true ), 
 														array('required' => 'Requerido',
 																'invalid' => 'No valido'));
         }
@@ -85,11 +85,11 @@ class CostosForm extends BaseForm{
 														array('required' => 'Requerido',
 																'invalid' => 'No valido'));	
         
-        $validator['neto'] = new sfValidatorNumber(array('required' => true, "min"=>1  ), 
+        $validator['neto'] = new sfValidatorNumber(array('required' => true  ), 
 														array('required' => 'Requerido',
 																'invalid' => 'No valido'));
         
-        $validator['venta'] = new sfValidatorNumber(array('required' => true, "min"=>1  ), 
+        $validator['venta'] = new sfValidatorNumber(array('required' => true  ), 
 														array('required' => 'Requerido',
 																'invalid' => 'No valido'));
 		
@@ -112,9 +112,9 @@ class CostosForm extends BaseForm{
 	
 	public function bind(array $taintedValues = null, array $taintedFiles = null){
         
-        if( $taintedValues['factura']==0 ){
+        /*if( $taintedValues['factura']=="0" ){
             $taintedValues['factura'] = "";
-        }
+        }*/
         
                
         
