@@ -70,8 +70,9 @@ class inoMaritimoActions extends sfActions {
 
             $bindValues = array();
             $bindValues["referencia"] = $request->getParameter("referencia");
-            $bindValues["idcosto"] = $request->getParameter("idcosto");
+            $bindValues["idcosto"] = intval($request->getParameter("idcosto"));
             $bindValues["idmoneda"] = $request->getParameter("idmoneda");
+            $bindValues["fchcreado"] = $request->getParameter("fchcreado");
             $bindValues["factura"] = $request->getParameter("factura");
             $bindValues["factura_ant"] = $request->getParameter("factura_ant");
             $bindValues["fchfactura"] = $request->getParameter("fchfactura");

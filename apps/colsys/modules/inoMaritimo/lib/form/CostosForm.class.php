@@ -43,6 +43,7 @@ class CostosForm extends BaseForm{
 															  
 															) );
         
+        $widgets["fchcreado"] = new sfWidgetFormInputHidden();
         $widgets["factura_ant"] = new sfWidgetFormInputHidden();
         $widgets["factura"] = new sfWidgetFormInputText(array(), array("size"=>15, "maxlength"=>15 ));
 		$widgets["fchfactura"] = new sfWidgetFormExtDate();
@@ -75,13 +76,15 @@ class CostosForm extends BaseForm{
 														array('required' => 'Requerido',
 																'invalid' => 'No valido'));	
         
+        $validator['fchcreado'] = new sfValidatorString(array('required' => false));	
+        
         $validator['factura_ant'] = new sfValidatorString(array('required' => false));	
         
         $validator['factura'] = new sfValidatorString(array('required' => true), 
 														array('required' => 'Requerido',
 																'invalid' => 'No valido'));	
 										
-		$validator['tcambio'] = new sfValidatorNumber(array('required' => true, "min"=>1 ), 
+		$validator['tcambio'] = new sfValidatorNumber(array('required' => true, "min"=>1, "max"=>99999 ), 
 														array('required' => 'Requerido',
 																'invalid' => 'No valido'));	
         
@@ -106,6 +109,7 @@ class CostosForm extends BaseForm{
 		$this->setValidators( $validator );
 		
 		$this->validatorSchema->setPostValidator(new UtilidadesValidator());
+        $this->validatorSchema->setPostValidator(new UnicoCostoValidator());
 		
 	}	
 	

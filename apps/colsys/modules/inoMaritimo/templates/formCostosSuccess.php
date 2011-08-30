@@ -51,6 +51,12 @@
             $form->setDefault('factura_ant', $inoCosto->getCaFactura() );
         }        
         echo $form['factura_ant']->render();
+        
+        echo $form['fchcreado']->renderError(); 
+        if( $inoCosto ){                                     
+            $form->setDefault('fchcreado', $inoCosto->getCaFchcreado() );
+        }        
+        echo $form['fchcreado']->render();
         ?>
         <table class="tableList alignLeft" width="80%">
             <tr>
