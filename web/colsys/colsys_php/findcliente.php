@@ -87,15 +87,16 @@ elseif (isset($boton)) {                                                       /
                  $condicion = $condicion." and ca_vendedor = '".$usuario."'"; }
              else if ($buscaren == 'Clientes Libres') {
                  $condicion = $condicion." and ca_vendedor = ''"; }
-             if (!$rs->Open("select ca_idcliente, ca_compania, ca_vendedor, ca_ciudad from vi_clientes $condicion")) {               // Selecciona todos lo registros de la tabla de Clientes
+             if (!$rs->Open("select ca_idcliente, ca_idalterno, ca_compania, ca_vendedor, ca_ciudad from vi_clientes $condicion")) {               // Selecciona todos lo registros de la tabla de Clientes
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
                  echo "<script>document.location.href = 'entrada.php';</script>";
                  exit; }
              echo "<HEAD>";
              echo "<TITLE>$titulo</TITLE>";
              echo "<script language='JavaScript' type='text/JavaScript'>";              // Código en JavaScript para validar las opciones de mantenimiento
-             echo "function seleccion(idcliente, cliente, vendedor) {";
+             echo "function seleccion(idcliente, idalterno, cliente, vendedor) {";
              echo "    window.parent.frames.adicionar.idcliente.value=idcliente;";
+             echo "    window.parent.frames.adicionar.idalterno.value=idalterno;";
              echo "    window.parent.frames.adicionar.cliente.value=cliente;";
              echo "    window.parent.frames.adicionar.vendedor.value=vendedor;";
              echo "    window.parent.frames.asignar();";
@@ -124,7 +125,7 @@ require_once("menu.php");
              echo "<TH>Vendedor</TH>";
              echo "<TH>Ciudad</TH>";
              while (!$rs->Eof() and !$rs->IsEmpty()) {                                  // Lee la totalidad de los registros obtenidos en la instrucción Select
-                echo "<TR style='background:\"F0F0F0\"' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" ONCLICK=\"javascript:seleccion(".$rs->Value('ca_idcliente').",'".AddSlashes($rs->Value('ca_compania'))."','".$rs->Value('ca_vendedor')."')\">";
+                echo "<TR style='background:\"F0F0F0\"' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" ONCLICK=\"javascript:seleccion(".$rs->Value('ca_idcliente').",".$rs->Value('ca_idalterno').",'".AddSlashes($rs->Value('ca_compania'))."','".$rs->Value('ca_vendedor')."')\">";
                 echo "  <TD>".number_format($rs->Value('ca_idcliente'))."</TD>";
                 echo "  <TD>".$rs->Value('ca_compania')."</TD>";
                 echo "  <TD>".$rs->Value('ca_vendedor')."</TD>";

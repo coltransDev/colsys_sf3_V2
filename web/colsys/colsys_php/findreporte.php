@@ -231,7 +231,7 @@ if (!isset($contents) and !isset($boton) and !isset($accion)) {
                         $condicion.= " and lower($opcion) like lower('%" . $contents . "%')";
                     }
                 }
-                $command = "select rp.ca_idreporte, rp.ca_consecutivo, re.ca_referencia, rp.ca_version, rf.ca_idemail, rp.ca_idcliente, rp.ca_idclientefac, rp.ca_nombre_cli, rp.ca_identificacion_con, rp.ca_orden_clie, rp.ca_transporte, rp.ca_modalidad, rp.ca_nombre, rp.ca_ciuorigen, rp.ca_traorigen, rp.ca_ciudestino, rp.ca_tradestino,";
+                $command = "select rp.ca_idreporte, rp.ca_consecutivo, re.ca_referencia, rp.ca_version, rf.ca_idemail, rp.ca_idcliente, rp.ca_idalterno, rp.ca_idclientefac, rp.ca_nombre_cli, rp.ca_identificacion_con, rp.ca_orden_clie, rp.ca_transporte, rp.ca_modalidad, rp.ca_nombre, rp.ca_ciuorigen, rp.ca_traorigen, rp.ca_ciudestino, rp.ca_tradestino,";
                 $command.= "  rp.ca_fchdespacho, rp.ca_incoterms, rp.ca_idcotizacion, rp.ca_idproveedor, rp.ca_orden_prov, rp.ca_continuacion, rp.ca_continuacion_dest, rp.ca_final_dest, rp.ca_idconsignar, rp.ca_idbodega, rp.ca_login, ra.ca_idemail, ra.ca_idnave, ra.ca_doctransporte, ra.ca_piezas, ra.ca_peso, ra.ca_volumen from vi_reportes rp";
                 $command.= "  RIGHT JOIN (select ca_consecutivo as ca_consecutivo_f, max(ca_idreporte) as ca_idreporte from tb_reportes where ca_usuanulado IS NULL and ca_transporte = 'Marítimo' group by ca_consecutivo_f) rx ON (rp.ca_idreporte = rx.ca_idreporte)";
                 $command.= "  LEFT JOIN (select srp.ca_consecutivo as ca_consecutivo_r, sic.ca_referencia from tb_reportes srp INNER JOIN tb_inoclientes_sea sic ON srp.ca_idreporte = sic.ca_idreporte) re ON (rp.ca_consecutivo = re.ca_consecutivo_r)";
@@ -259,6 +259,9 @@ if (!isset($contents) and !isset($boton) and !isset($accion)) {
                 echo "    }else{";
                 echo "    	elemento.value = source.value;";
                 echo "    }";
+                echo "    source = document.getElementById('idalterno_'+i);";
+                echo "    elemento = window.parent.document.getElementById('idalterno');";
+                echo "    elemento.value = source.value;";
                 echo "    source = document.getElementById('idreporte_'+i);";
                 echo "    elemento = window.parent.document.getElementById('idreporte');";
                 echo "    elemento.value = source.value;";
@@ -419,6 +422,7 @@ if (!isset($contents) and !isset($boton) and !isset($accion)) {
                     } else {
                         echo "  <INPUT ID=idcliente_$i TYPE='HIDDEN' NAME='idcliente_$i' VALUE='" . $rs->Value('ca_idcliente') . "'>";
                     }
+                    echo "  <INPUT ID=idalterno_$i TYPE='HIDDEN' NAME='idalterno_$i' VALUE='" . $rs->Value('ca_idalterno') . "'>";
                     echo "  <INPUT ID=nombre_con_$i TYPE='HIDDEN' NAME='nombre_con_$i' VALUE='" . $rs->Value('ca_nombre_cli') . "'>";
                     echo "  <INPUT ID=hbls_$i TYPE='HIDDEN' NAME='hbls_$i' VALUE='" . $rs->Value('ca_doctransporte') . "'>";
                     echo "  <INPUT ID=numpiezas_$i TYPE='HIDDEN' NAME='numpiezas_$i' VALUE='$piezas'>";

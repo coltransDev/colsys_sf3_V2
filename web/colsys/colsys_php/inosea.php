@@ -636,7 +636,7 @@ elseif (isset($boton)) {                                                       /
                             echo "  <TD Class=captura COLSPAN=6></TD>";
                             echo "</TR>";
                             echo "<TR>";
-                            echo "  <TD Class=listar style='font-size: 11px; vertical-align:bottom'><B>Id Cliente:</B><BR>".number_format($cl->Value('ca_idcliente'))."</TD>";
+                            echo "  <TD Class=listar style='font-size: 11px; vertical-align:top'><B>Id Cliente:</B><BR>".number_format($cl->Value('ca_idalterno'))."</TD>";
                             if ($rs->Value('ca_modalidad')=='FCL'){
                                 echo "  <TD Class=listar style='font-size: 11px;' COLSPAN=3><B>Nombre del Cliente:</B><BR>".$cl->Value('ca_compania')."</TD>";
                                 echo "  <TD Class=listar><B>Vence Comodato:</B><BR>".$cl->Value('ca_fchvencimiento')."</TD>";
@@ -1561,6 +1561,7 @@ elseif (isset($boton)) {                                                       /
                 echo "<INPUT TYPE='HIDDEN' NAME='vigencia' id='vigencia' VALUE=\"".((mktime(0, 0, 0, $mes, 1, $ano)>=mktime(0, 0, 0, 4, 1, 2008))?'true':'false')."\">"; // Verifica si la Referencia es después de 1 abril/2008
                 echo "<INPUT TYPE='HIDDEN' NAME='vendedor' id='vendedor'>";
                 echo "<INPUT TYPE='HIDDEN' NAME='idreporte' id='idreporte'>";
+                echo "<INPUT TYPE='HIDDEN' NAME='idcliente' id='idcliente'>";
                 echo "<INPUT TYPE='HIDDEN' NAME='validado' id='validado'>";
                 echo "<INPUT TYPE='HIDDEN' NAME='explicacion' id='explicacion'>";
                 echo "<TH Class=titulo COLSPAN=5 style='font-size: 11px; vertical-align:bottom'>$id<BR>Información del Cliente</TH>";
@@ -1583,7 +1584,7 @@ elseif (isset($boton)) {                                                       /
                 echo "  <TD Class=mostrar COLSPAN=2>Proveedor:<BR><INPUT TYPE='TEXT' NAME='proveedor' SIZE=40 MAXLENGTH=50></TD>";
                 echo "</TR>";
                 echo "<TR>";
-                echo "  <TD Class=mostrar style='vertical-align:bottom'>Id Cliente:<BR><INPUT TYPE='TEXT' NAME='idcliente' SIZE=11 MAXLENGTH=9>&nbsp;<a><IMG ID=client_lupa src='graficos/lupa.gif' onclick='buscar_cliente();' alt='Buscar' hspace='0' vspace='0'></a></TD>";
+                echo "  <TD Class=mostrar style='vertical-align:bottom'>Id Cliente:<BR><INPUT TYPE='TEXT' NAME='idalterno' SIZE=11 MAXLENGTH=9>&nbsp;<a><IMG ID=client_lupa src='graficos/lupa.gif' onclick='buscar_cliente();' alt='Buscar' hspace='0' vspace='0'></a></TD>";
                 echo "  <TD Class=mostrar COLSPAN=3>Nombre del Cliente:<BR><INPUT TYPE='TEXT' READONLY NAME='cliente' SIZE=60 MAXLENGTH=60></TD>";
                 echo "  <TD Class=mostrar>Orden Cliente No.<BR><INPUT TYPE='TEXT' NAME='numorden' SIZE=17 MAXLENGTH=100></TD>";
                 echo "</TR>";
@@ -2001,6 +2002,7 @@ elseif (isset($boton)) {                                                       /
                 echo "<INPUT TYPE='HIDDEN' NAME='hbl' id='hbl' VALUE=\"".$rs->Value('ca_hbls')."\">";
                 echo "<INPUT TYPE='HIDDEN' NAME='peso_ant' id='peso_ant' VALUE=\"".$rs->Value('ca_peso')."\">";
                 echo "<INPUT TYPE='HIDDEN' NAME='volumen_ant' id='volumen_ant' VALUE=\"".$rs->Value('ca_volumen')."\">";
+                echo "<INPUT TYPE='HIDDEN' NAME='idcliente' id='idcliente' VALUE=\"".$rs->Value('ca_idcliente')."\">";
                 echo "<INPUT TYPE='HIDDEN' NAME='idreporte' id='idreporte' VALUE=\"".$rs->Value('ca_idreporte')."\">";
                 echo "<INPUT TYPE='HIDDEN' NAME='validado' id='validado'>";
                 echo "<INPUT TYPE='HIDDEN' NAME='explicacion' id='explicacion'>";
@@ -2027,7 +2029,7 @@ elseif (isset($boton)) {                                                       /
                 echo "  <TD Class=mostrar COLSPAN=2>Proveedor:<BR><INPUT TYPE='TEXT' NAME='proveedor' VALUE='".$rs->Value('ca_proveedor')."' SIZE=40 MAXLENGTH=50></TD>";
                 echo "</TR>";
                 echo "<TR>";
-                echo "  <TD Class=mostrar style='vertical-align:bottom'>Id Cliente:<BR><INPUT TYPE='TEXT' NAME='idcliente' VALUE='".$rs->Value('ca_idcliente')."' SIZE=11 MAXLENGTH=9 READONLY></TD>";
+                echo "  <TD Class=mostrar style='vertical-align:bottom'>Id Cliente:<BR><INPUT TYPE='TEXT' NAME='idalterno' VALUE='".$rs->Value('ca_idalterno')."' SIZE=11 MAXLENGTH=9 READONLY></TD>";
                 echo "  <TD Class=mostrar COLSPAN=3>Nombre del Cliente:<BR><INPUT TYPE='TEXT' READONLY NAME='cliente' VALUE='".$rs->Value('ca_compania')."' SIZE=60 MAXLENGTH=60 READONLY></TD>";
                 echo "  <TD Class=mostrar>Orden Cliente No.<BR><INPUT TYPE='TEXT' NAME='numorden' VALUE='".$rs->Value('ca_numorden')."' SIZE=17 MAXLENGTH=100></TD>";
                 echo "</TR>";
@@ -2326,7 +2328,7 @@ elseif (isset($boton)) {                                                       /
                 echo "  <TD Class=listar style='font-size: 11px;' COLSPAN=2><B>Proveedor:</B><BR>".$rs->Value('ca_proveedor')."</TD>";
                 echo "</TR>";
                 echo "<TR>";
-                echo "  <TD Class=listar style='font-size: 11px;'><B>Id Cliente:</B><BR>".number_format($rs->Value('ca_idcliente'))."</TD>";
+                echo "  <TD Class=listar style='font-size: 11px;'><B>Id Cliente:</B><BR>".number_format($rs->Value('ca_idalterno'))."</TD>";
                 echo "  <TD Class=listar style='font-size: 11px;' COLSPAN=3><B>Nombre del Cliente:</B><BR>".$rs->Value('ca_compania')."</TD>";
                 echo "  <TD Class=mostrar>Orden Cliente No.<BR>".$rs->Value('ca_numorden')."</TD>";
                 echo "</TR>";
@@ -3531,7 +3533,7 @@ elseif (isset($boton)) {                                                       /
                     exit;
                 }
                 $tm =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
-                $query = "select DISTINCT ic.ca_idreporte, ic.ca_login, ic.ca_idproveedor, ic.ca_proveedor, ic.ca_idcliente, cl.ca_compania, ic.ca_numorden, ic.ca_hbls, ic.ca_fchhbls, ic.ca_numpiezas, ic.ca_peso, ic.ca_volumen, ic.ca_continuacion, ic.ca_continuacion_dest, bg.ca_nombre as ca_bodega, dc.*, dd.ca_nombre as ca_nomdeposito from tb_inoclientes_sea ic";
+                $query = "select DISTINCT ic.ca_idreporte, ic.ca_login, ic.ca_idproveedor, ic.ca_proveedor, ic.ca_idcliente, cl.ca_idalterno, cl.ca_compania, ic.ca_numorden, ic.ca_hbls, ic.ca_fchhbls, ic.ca_numpiezas, ic.ca_peso, ic.ca_volumen, ic.ca_continuacion, ic.ca_continuacion_dest, bg.ca_nombre as ca_bodega, dc.*, dd.ca_nombre as ca_nomdeposito from tb_inoclientes_sea ic";
                 $query.= " LEFT OUTER JOIN vi_clientes_reduc cl ON (ic.ca_idcliente = cl.ca_idcliente) LEFT OUTER JOIN tb_bodegas bg ON (ic.ca_idbodega = bg.ca_idbodega)";
                 $query.= " LEFT OUTER JOIN tb_dianclientes dc ON (ic.ca_referencia = dc.ca_referencia AND ic.ca_idcliente = dc.ca_idcliente AND ic.ca_hbls = dc.ca_house)";
                 $query.= " LEFT OUTER JOIN tb_diandepositos dd ON (dc.ca_coddeposito = dd.ca_codigo::text)";
@@ -3542,7 +3544,7 @@ elseif (isset($boton)) {                                                       /
                     exit;
                 }
                 $rp =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
-                $query = "select uv.ca_idconsignatario, cl.ca_idcliente, cl.ca_digito, cl.ca_compania as ca_nombre_cli, tr.ca_identificacion as ca_identificacion_con, tr.ca_nombre as ca_nombre_con, uv.ca_mercancia_desc, uv.ca_idconsignar, b1.ca_nombre as ca_consignar, b2.ca_tipo as ca_tipobodega, b2.ca_nombre as ca_bodega, uv.ca_continuacion from tb_reportes uv ";
+                $query = "select uv.ca_idconsignatario, cl.ca_idcliente, cl.ca_idalterno, cl.ca_digito, cl.ca_compania as ca_nombre_cli, tr.ca_identificacion as ca_identificacion_con, tr.ca_nombre as ca_nombre_con, uv.ca_mercancia_desc, uv.ca_idconsignar, b1.ca_nombre as ca_consignar, b2.ca_tipo as ca_tipobodega, b2.ca_nombre as ca_bodega, uv.ca_continuacion from tb_reportes uv ";
                 $query.= " INNER JOIN tb_concliente cc ON (cc.ca_idcontacto = uv.ca_idconcliente) INNER JOIN vi_clientes_reduc cl ON (cl.ca_idcliente = cc.ca_idcliente) LEFT OUTER JOIN tb_terceros tr ON (tr.ca_idtercero = uv.ca_idconsignatario) LEFT OUTER JOIN tb_bodegas b1 ON (b1.ca_idbodega = uv.ca_idconsignar) LEFT OUTER JOIN tb_bodegas b2 ON (b2.ca_idbodega = uv.ca_idbodega) ";
                 $query.= " INNER JOIN (select ca_consecutivo, max(ca_version) as ca_version from tb_reportes where ca_consecutivo = (select ca_consecutivo from tb_reportes where ca_idreporte = ".$tm->Value("ca_idreporte").") group by ca_consecutivo) sr ON (sr.ca_consecutivo = uv.ca_consecutivo and sr.ca_version = uv.ca_version)";
                 if (!$rp->Open("$query")) {    // Trae de la Tabla de Reportes la Ultima Versión del Reporte.
@@ -3551,7 +3553,7 @@ elseif (isset($boton)) {                                                       /
                     exit;
                 }
 
-                $consignatario = ($rp->Value('ca_idconsignatario')!=0)?$rp->Value('ca_nombre_con')." Nit. ".$rp->Value('ca_identificacion_con'):$rp->Value('ca_nombre_cli')." Nit. ".number_format($rp->Value('ca_idcliente'),0)."-".$rp->Value('ca_digito');
+                $consignatario = ($rp->Value('ca_idconsignatario')!=0)?$rp->Value('ca_nombre_con')." Nit. ".$rp->Value('ca_identificacion_con'):$rp->Value('ca_nombre_cli')." Nit. ".number_format($rp->Value('ca_idalterno'),0)."-".$rp->Value('ca_digito');
                 $consignatario = (($rp->Value('ca_idconsignar')==1)?$consignatario:$rp->Value('ca_consignar')).(($rp->Value('ca_tipobodega')!= "Coordinador Logistico")?" / ".$rp->Value('ca_tipobodega')." ".(($rp->Value('ca_bodega')!='N/A')?$rp->Value('ca_bodega'):""):"");
                 $consignatario = ($rp->Value('ca_continuacion')!="N/A" and $rp->Value('ca_idconsignatario')!=0)?$rp->Value('ca_nombre_con')." Nit. ".$rp->Value('ca_identificacion_con').(($rp->Value('ca_tipobodega')!= "Coordinador Logistico")?" / ".$rp->Value('ca_tipobodega')." ".(($rp->Value('ca_bodega')!='N/A')?$rp->Value('ca_bodega'):""):""):$consignatario; //" / ".$rp->Value('ca_tipobodega')." ".(($rp->Value('ca_bodega')!='N/A')?$rp->Value('ca_bodega'):"")
                 $descripcion_merc = (strlen(trim($tm->Value('ca_mercancia_desc')))!=0)?$tm->Value('ca_mercancia_desc'):$rp->Value('ca_mercancia_desc');
@@ -3605,7 +3607,7 @@ elseif (isset($boton)) {                                                       /
                 echo "  <TD Class=listar style='font-size: 11px;' COLSPAN=2><B>Proveedor:</B><BR>".$tm->Value('ca_proveedor')."</TD>";
                 echo "</TR>";
                 echo "<TR>";
-                echo "  <TD Class=listar style='font-size: 11px;'><B>Id Cliente:</B><BR>".number_format($tm->Value('ca_idcliente'))."</TD>";
+                echo "  <TD Class=listar style='font-size: 11px;'><B>Id Cliente:</B><BR>".number_format($tm->Value('ca_idalterno'))."</TD>";
                 echo "  <TD Class=listar style='font-size: 11px;' COLSPAN=3><B>Nombre del Cliente:</B><BR>".$tm->Value('ca_compania')."</TD>";
                 echo "  <TD Class=mostrar>Orden Cliente No.<BR>".$tm->Value('ca_numorden')."</TD>";
                 echo "</TR>";
@@ -3846,7 +3848,7 @@ elseif (isset($boton)) {                                                       /
                 echo "  <TD Class=listar style='font-size: 11px;' COLSPAN=2><B>Proveedor:</B><BR>".$rs->Value('ca_proveedor')."</TD>";
                 echo "</TR>";
                 echo "<TR>";
-                echo "  <TD Class=listar style='font-size: 11px;'><B>Id Cliente:</B><BR>".number_format($rs->Value('ca_idcliente'))."</TD>";
+                echo "  <TD Class=listar style='font-size: 11px;'><B>Id Cliente:</B><BR>".number_format($rs->Value('ca_idalterno'))."</TD>";
                 echo "  <TD Class=listar style='font-size: 11px;' COLSPAN=3><B>Nombre del Cliente:</B><BR>".$rs->Value('ca_compania')."</TD>";
                 echo "  <TD Class=mostrar>Orden Cliente No.<BR>".$rs->Value('ca_numorden')."</TD>";
                 echo "</TR>";
@@ -4435,7 +4437,7 @@ elseif (isset($boton)) {                                                       /
                             }
                         } else {
                             $xml_hijo->setAttribute("hdo3", 31);
-                            $xml_hijo->setAttribute("hni3", $rp->Value("ca_idcliente"));
+                            $xml_hijo->setAttribute("hni3", $rp->Value("ca_idalterno"));
                             $xml_hijo->setAttribute("hdv3", $rp->Value("ca_digito"));
                             // $xml_hijo->setAttribute("hdir", htmlentities($rp->Value("ca_direccion_cli")));
 
