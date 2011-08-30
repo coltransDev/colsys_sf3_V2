@@ -435,7 +435,7 @@ elseif (!isset($boton) and !isset($accion) and isset($criterio)){
 				//echo "<script>document.location.href = 'clientes.php';</script>";
 				exit; }
 		   echo "<TR>";
-		   echo "<TD Class=titulo style='vertical-align: top;'>".number_format($rs->Value('ca_idalterno')?$rs->Value('ca_idalterno'):$rs->Value('ca_idcliente')).($rs->Value('ca_digito')?"-".$rs->Value('ca_digito'):"")."</TD>";
+		   echo "<TD Class=titulo style='vertical-align: top;'>".number_format($rs->Value('ca_idalterno')?$rs->Value('ca_idalterno'):$rs->Value('ca_idcliente')).($rs->Value('ca_tipoidentificacion')==1&&$rs->Value('ca_digito')!==0?"-".$rs->Value('ca_digito'):"")."</TD>";
 		   echo "<TD Class=titulo COLSPAN=4 style='font-size: 12px; font-weight:bold; text-align:left;'>".$rs->Value('ca_compania')."</TD>";
 		   echo "  <TD Class=titulo style='vertical-align: top; text-align: center;'>";                                            // Botones para hacer Mantenimiento a la Tabla
 		   echo "    <IMG style='visibility: $visible;' src='./graficos/edit.gif' alt='Editar el Registro' border=0 onclick='elegir(\"Modificar\", ".$rs->Value('ca_idcliente').");'>";
