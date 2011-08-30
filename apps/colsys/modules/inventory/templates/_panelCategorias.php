@@ -202,6 +202,8 @@
                 fp.getForm().findField("parent").setValue(n.attributes.idcategoria);
                 fp.getForm().findField("main").enable();            
                 fp.getForm().findField("idsucursal").setValue(this.idsucursal);
+                fp.getForm().findField("autonumeric").setValue(n.attributes.autonumeric);
+                fp.getForm().findField("prefix").setValue(n.attributes.prefix)
             }else{
                 Ext.MessageBox.alert("Error","No es posible agregar un nodo en este punto");
             }
