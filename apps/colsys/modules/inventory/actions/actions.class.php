@@ -223,6 +223,7 @@ class inventoryActions extends sfActions {
 
                 $activo->setCaIdcategory($request->getParameter("idcategory"));
                 $cat = Doctrine::getTable("InvCategory")->find($request->getParameter("idcategory"));
+                                
                 $prefijo = $cat->getPrefijo($request->getParameter("idsucursal"));
                 if (($prefijo && !$prefijo->getCaAutonumeric()) || !$prefijo) {
                     if ($request->getParameter("identificador")) {
@@ -426,7 +427,7 @@ class inventoryActions extends sfActions {
                 $categoria->setCaParameter($request->getParameter("parameter"));
             }
 
-            $categoria->setCaName(utf8_decode($request->getParameter("name")));
+            $categoria->setCaName(utf8_decode(trim(ucwords(strtolower($request->getParameter("name"))))));
             if ($request->getParameter("parent")) {
                 $categoria->setCaParent(utf8_decode($request->getParameter("parent")));
             } else {
@@ -716,8 +717,10 @@ class inventoryActions extends sfActions {
     public function executeInformeLicenciasResult($request) {
         $this->soOEM = Doctrine::getTable("InvActivo")
                 ->createQuery("a")
+                ->innerJoin("a.InvCategory c")                
+                ->addWhere("LOWER(c.ca_name) NOT LIKE ?", '%dados de baja%')
                 ->select("a.ca_so, count(*) as q")
-                ->addWhere("a.ca_so IS NOT NULL  AND a.ca_so!='' AND a.ca_so!=?", "No Aplica")
+                ->addWhere("a.ca_so IS NOT NULL  AND a.ca_so!='' AND a.ca_so!=?", "No tiene ")
                 ->addGroupBy("a.ca_so")
                 ->addOrderBy("a.ca_so")
                 ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
@@ -725,6 +728,8 @@ class inventoryActions extends sfActions {
 
         $this->ofOEM = Doctrine::getTable("InvActivo")
                 ->createQuery("a")
+                ->innerJoin("a.InvCategory c")                
+                ->addWhere("LOWER(c.ca_name) NOT LIKE ?", '%dados de baja%')
                 ->select("a.ca_office, count(*) as q")
                 ->addWhere("a.ca_office IS NOT NULL  AND a.ca_office!='' AND a.ca_office!=?", "No tiene")
                 ->addGroupBy("a.ca_office")
@@ -735,12 +740,13 @@ class inventoryActions extends sfActions {
 
         $this->software = Doctrine::getTable("InvActivo")
                 ->createQuery("a")
-                ->innerJoin("a.InvCategory c")
+                ->innerJoin("a.InvCategory c")                      
+                ->addWhere("LOWER(c.ca_name) NOT LIKE ?", '%dados de baja%')
                 ->leftJoin("a.InvAsignacionSoftwareActivo as")
                 ->select("a.ca_idactivo,c.ca_name,a.ca_modelo, a.ca_cantidad as q, count(as.ca_idactivo) as assigned")
-                ->addWhere("c.ca_parameter=?", "Software")
+                ->addWhere("c.ca_parameter=?", "Software")                
                 ->addGroupBy("a.ca_idactivo, c.ca_name, a.ca_modelo, a.ca_cantidad")
-                ->addOrderBy("a.ca_idactivo, c.ca_name, a.ca_modelo, a.ca_cantidad")
+                ->addOrderBy("c.ca_name, a.ca_idactivo, c.ca_name, a.ca_modelo, a.ca_cantidad")
                 ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
                 ->execute();
     }
@@ -782,7 +788,7 @@ class inventoryActions extends sfActions {
         $office = $request->getParameter("office");
         $q = Doctrine::getTable("InvActivo")
                 ->createQuery("a")
-                ->innerJoin("a.InvCategory c")
+                ->innerJoin("a.InvCategory c")                               
                 ->leftJoin("c.Parent p")
                 ->leftJoin("a.Usuario u")
                 ->leftJoin("a.Sucursal s")                
@@ -898,7 +904,9 @@ class inventoryActions extends sfActions {
         if( $this->parameter=="Hardware" ){        
             $q = Doctrine::getTable("InvActivo")
                     ->createQuery("a")
-                    ->innerJoin("a.InvAsignacionSoftwareActivo so")                
+                    ->innerJoin("a.InvAsignacionSoftwareActivo so")  
+                    ->innerJoin("a.InvCategory c")                
+                    ->addWhere("LOWER(c.ca_name) NOT LIKE ?", '%dados de baja%')
                     ->addWhere("so.ca_idequipo = ? ", $idactivo )
                     ->addOrderBy("a.ca_identificador ASC");
 
@@ -909,7 +917,9 @@ class inventoryActions extends sfActions {
             
             $q = Doctrine::getTable("InvActivo")
                     ->createQuery("a")
-                    ->innerJoin("a.InvAsignacionSoftware so")                
+                    ->innerJoin("a.InvAsignacionSoftware so")   
+                    ->innerJoin("a.InvCategory c")                
+                    ->addWhere("LOWER(c.ca_name) NOT LIKE ?", '%dados de baja%')
                     ->addWhere("so.ca_idactivo = ? ", $idactivo )
                     ->addOrderBy("a.ca_identificador ASC");
             
