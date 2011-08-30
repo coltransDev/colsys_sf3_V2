@@ -105,17 +105,29 @@ if( $param=="Software" ){
      
     <?
     $lastCat = null;
+    $cant = 0;
     foreach( $activos as $activo ){
         if( $lastCat!=$activo->getcaIdcategory() ){
+            
+            if( $lastCat!==null ){
+            ?>            
+            <tr class="row0">
+                <td colspan="<?=$cols?>"><div align="right"><b>Total: <?=$cant?></b></div></td>
+            </tr>
+            <?    
+            }
             $lastCat=$activo->getcaIdcategory();
             $cat = $activo->getInvCategory();
             $parent = $cat->getParent();
-            ?>
+            
+            $cant = 0;
+            ?>            
             <tr class="row0">
                 <td colspan="<?=$cols?>"><b><?=($parent?$parent->getCaName()." - ":"").$cat->getCaName()?></b></td>
             </tr>
             <?
         }
+        $cant++;
         ?>
         <tr>
             <td>
@@ -207,6 +219,9 @@ if( $param=="Software" ){
         <?
     }
     ?>
+        <tr class="row0">
+            <td colspan="<?=$cols?>"><div align="right"><b>Total: <?=$cant?></b></div></td>
+        </tr>
     </table>    
     
 </div>
