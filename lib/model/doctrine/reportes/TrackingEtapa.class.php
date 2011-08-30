@@ -24,8 +24,7 @@ class TrackingEtapa extends BaseTrackingEtapa
             }else{
                 $asunto = "Status";
             }
-        }
-		
+        }		
 		return $asunto;
 	}
 }

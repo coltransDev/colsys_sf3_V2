@@ -265,15 +265,16 @@ class RepStatus extends BaseRepStatus
 		}else{
 			$email->addCc( $user->getEmail() );
 		}
-		$asunto = $this->getIntroAsunto();
+		$asunto = $this->getIntroAsunto();        
 		if(isset($options["subject"]) && $options["subject"] ){
-            if($options["subject"]=="Notificación de Desconsolidación id: ".$reporte->getCaConsecutivo());
+            if($options["subject"]=="Notificación de Desconsolidación id: ".$reporte->getCaConsecutivo())
+            {
                 $asunto="";
+            }
 			$asunto.=  $options["subject"];
-		}else{            
+		}else{
 			$asunto.= $this->getAsunto();
 		}
-
 		$email->setCaSubject( substr($asunto, 0, 250) );
 
 		if( $attachments ){

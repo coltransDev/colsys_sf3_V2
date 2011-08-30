@@ -329,8 +329,8 @@ class Reporte extends BaseReporte {
 //        echo $this->user->getUserId();
 //        $user = sfContext::getInstance()->getUser();
 //        echo $user->getUserId();
-        //if(!$this->editable)
-        if ($permiso < 4 ) {
+        //if(!$this->editable)        
+        if ($permiso < 4 && $this->getCaTiporep()!=4 ) {
 
             //echo "::".$this->editable."::<br>";
             if ($this->esUltimaVersion()) {
@@ -349,7 +349,7 @@ class Reporte extends BaseReporte {
                 }
             }
         }else
-            $this->editable = true;;
+            $this->editable = true;
         return $this->editable;
     }
 
