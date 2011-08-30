@@ -124,7 +124,14 @@
                                 columnWidth:.4,
                                 layout: 'form',
                                 xtype:'fieldset',
-                                items: [                                    
+                                items: [   
+                                    {
+                                        xtype:'textfield',
+                                        fieldLabel: 'Detalle',
+                                        name: 'detalle',                                        
+                                        maxLength: 60,        
+                                        allowBlank: false
+                                    },
                                     {
                                         xtype:'textfield',
                                         fieldLabel: 'Identificador',

@@ -124,6 +124,7 @@ class inventoryActions extends sfActions {
             $row["mantenimiento"] = $activo->getCaMantenimiento();
             $row["idsucursal"] = $activo->getCaIdsucursal();
             $row["cantidad"] = $activo->getCaCantidad();
+            $row["detalle"] = utf8_encode($activo->getCaDetalle());
             if ($activo->getCaAsignadoa()) {
                 $row["asignadoa"] = utf8_encode($activo->getCaAsignadoa());
                 $row["asignadoaNombre"] = utf8_encode($activo->getUsuario()->getCaNombre());
@@ -175,7 +176,7 @@ class inventoryActions extends sfActions {
         $data["software"] = utf8_encode($activo->getCaSoftware());
         $data["mantenimiento"] = $activo->getCaMantenimiento();
         $data["cantidad"] = $activo->getCaCantidad();
-
+        $data["detalle"] = utf8_encode($activo->getCaDetalle());
 
         if (!$copy) {
             $data["idactivo"] = $activo->getCaIdactivo();
@@ -303,6 +304,12 @@ class inventoryActions extends sfActions {
                 $activo->setCaMantenimiento($request->getParameter("mantenimiento"));
             } else {
                 $activo->setCaMantenimiento(null);
+            }
+            
+            if ($request->getParameter("detalle")) {
+                $activo->setCaDetalle(utf8_decode($request->getParameter("detalle")));
+            } else {
+                $activo->setCaDetalle(null);
             }
 
             if ($request->getParameter("cantidad")) {
@@ -438,7 +445,7 @@ class inventoryActions extends sfActions {
 
             if ($request->getParameter("prefix")) {
 
-
+                
                 $prefijo = Doctrine::getTable("InvPrefijo")->find(array($idcategory, $idsucursal));
                 if (!$prefijo) {
                     $prefijo = new InvPrefijo();
@@ -448,7 +455,7 @@ class inventoryActions extends sfActions {
 
                 $autonumeric = $request->getParameter("autonumeric");
                 $prefijo->setCaAutonumeric($autonumeric == "on");
-                $prefix = strtoupper(str_replace(" ", "", str_replace("-", "", $request->getParameter("prefix"))));
+                $prefix = strtoupper(str_replace(" ", "", str_replace("-", "", $request->getParameter("prefix"))));                
                 $prefijo->setCaPrefix($prefix);
                 $prefijo->save();
             }

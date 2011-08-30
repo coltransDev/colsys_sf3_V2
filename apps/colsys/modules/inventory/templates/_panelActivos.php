@@ -14,7 +14,7 @@
     PanelActivos = function( config ){
 
         Ext.apply(this, config);
-    
+        
 
         this.columns = [
             {
@@ -25,7 +25,15 @@
                 sortable: true,
                 renderer: this.formatItem
 
-            },            
+            },  
+            {
+                header: "Detalle",
+                dataIndex: 'detalle',
+                hideable: false,
+                sortable: true,
+                width: 80,
+                hidden: this.parameter!="Otro"                
+            },
             {
                 header: "Marca",
                 dataIndex: 'marca',
@@ -144,9 +152,8 @@
             {name: 'mantenimiento', type: 'string'},
             {name: 'folder', type: 'string'},
             {name: 'deleted', type: 'boolean'},
-            {name: 'cantidad', type: 'integer'}
-
-
+            {name: 'cantidad', type: 'integer'},
+            {name: 'detalle', type: 'string'}
         ]);
     
         this.store = new Ext.data.GroupingStore({
