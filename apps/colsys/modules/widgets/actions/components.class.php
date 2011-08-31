@@ -714,6 +714,27 @@ class widgetsComponents extends sfComponents {
                                 ->execute();
     }
     
+    public function executeWidgetConcepto() {
+            $this->data = array();
+
+            $q = Doctrine_Query::create()
+                            ->select("c.ca_idconcepto, c.ca_concepto, c.ca_transporte, c.ca_modalidad, c.ca_liminferior")
+                            ->from("Concepto c")
+                            ->addOrderBy("c.ca_liminferior");
+
+            $q->fetchArray();
+
+            $conceptos = $q->execute();
+
+            $this->data = array();
+            foreach ($conceptos as $concepto) {
+                $this->data[] = array("idconcepto" => $concepto['ca_idconcepto'],
+                    "concepto" => $concepto['ca_concepto'],
+                    "transporte" => utf8_encode($concepto['ca_transporte']),
+                    "modalidad" => utf8_encode($concepto['ca_modalidad'])
+                );
+            }
+        }
 
 }
 
