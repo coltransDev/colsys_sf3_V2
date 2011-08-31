@@ -33,8 +33,6 @@ if( date("G")<12 ){
 	$saludo .= "buenas noches:"; 
 }*/
 
-$mensaje=str_replace("\n",' ',$mensaje);
-$mensaje=ereg_replace('[[:space:]]+',' ',$mensaje);
 
 $destinatariosFijos = $form->getDestinatariosFijos();
 ?>
@@ -55,11 +53,6 @@ var enviarFormulario=function(){
            alert("Un contacto fijo seleccionado no tiene e-mail, por favor seleccione otro");
            return 0;
        }
-    }
-    if(Ext.getCmp('mensaje').getValue()=="")
-    {
-        alert("Por favor llene la descipcion del status");
-        return 0;
     }
 
     if( numChecked>0 || <?=$reporte->getCliente()->getProperty("consolidar_comunicaciones")?"true":"false"?>  ){
@@ -136,17 +129,14 @@ var mostrar=function( oid ){
 			foreach( $etapas as $etapa ){
 			?>
 			case '<?=$etapa->getCaIdetapa()?>':
-                    var val = '<?=str_replace("\n", "<br />", html_entity_decode($etapa->getCaMessageDefault()))?>';
-                if(Ext.getCmp('mensaje' ))
-                    Ext.getCmp('mensaje').setValue(unescape(val.split("<br />").join("\n")));
-				//mensaje.value = val.split("<br />").join("\n");
+				var val = '<?=str_replace("\n", "<br />", $etapa->getCaMessageDefault())?>';
+				mensaje.value = val.split("<br />").join("\n");
 				break;
 			<?
 			}
 			?>
 			default:			
-				if(Ext.getCmp('mensaje' ))
-                    Ext.getCmp('mensaje').setValue("");
+				mensaje.value = '';
 				break;
 		}	
 	}
@@ -746,27 +736,11 @@ echo $form['mensaje_mask']->render();
 	</tr>
 	<tr>
 		<td colspan="2"><div align="left"><b>Descripci&oacute;n del Status</b><br />
-            <div id="divmensaje"></div>
-            <div id="divmensaje1"></div>
-            <script>
-            eh=new Ext.form.HtmlEditor({
-                id:"mensaje",
-                name:"mensaje",
-                renderTo: 'divmensaje1',
-                width:800,
-                height: 180,
-                //enableAlignments:false,
-                /*enableColors:false,*/
-                /*enableFont:false,
-                enableFontSize:false,
-                enableFormat:false,*/
-                enableLinks:false,
-                enableLists:false,
-                enableSourceEdit:true,
-                defaultValue :'<?=html_entity_decode($mensaje)?>'
-            });           
-            
-            </script>
+			<div id="divmensaje"></div>
+			<?
+			 echo $form['mensaje']->renderError(); 
+			 echo $form['mensaje']->render();
+			 ?>		
 		</div></td>
 		</tr>
 	<?

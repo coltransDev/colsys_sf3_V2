@@ -53,7 +53,7 @@ class NuevoStatusForm extends BaseForm{
 										
 		$widgets['asunto'] = new sfWidgetFormInputText(array(), array("size"=>120 ));
 		$widgets['introduccion'] = new sfWidgetFormTextarea(array(), array("rows"=>3, "cols"=>140 ));
-//		$widgets['mensaje'] = new sfWidgetFormTextarea(array(), array("rows"=>5, "cols"=>140, "onChange"=>"validarMensaje()" ));
+		$widgets['mensaje'] = new sfWidgetFormTextarea(array(), array("rows"=>5, "cols"=>140, "onChange"=>"validarMensaje()" ));
 		$widgets['notas'] = new sfWidgetFormTextarea(array(), array("rows"=>3, "cols"=>140 ));
 		
 		
@@ -180,8 +180,8 @@ class NuevoStatusForm extends BaseForm{
 		$validator['introduccion'] = new sfValidatorString(array('required' => true ), 
 														array('required' => 'Por favor coloque la introducción o el saludo del mensaje'));	
 		
-//		$validator['mensaje'] = new sfValidatorString(array('required' => false ), 
-//														array('required' => 'Por favor coloque el status'));	
+		$validator['mensaje'] = new sfValidatorString(array('required' => true ), 
+														array('required' => 'Por favor coloque el status'));	
 		$validator['mensaje_dirty'] = new sfValidatorString(array('required' => false ));
 		$validator['notas'] = new sfValidatorString(array('required' => false ));
 		
@@ -262,10 +262,10 @@ class NuevoStatusForm extends BaseForm{
 		}*/
 		
 		if( $taintedValues["mensaje_mask"] ){
-//			$this->validatorSchema['mensaje']->setOption('required', false);
+			$this->validatorSchema['mensaje']->setOption('required', false);
 		}
 		
-		if( $taintedValues["idetapa"]=="IAETA"||$taintedValues["idetapa"]=="IMETT"||$taintedValues["idetapa"]=="IMETA" || $taintedValues["idetapa"]=="EEETD" ){
+		if( $taintedValues["idetapa"]=="IAETA"||$taintedValues["idetapa"]=="IMETA" || $taintedValues["idetapa"]=="EEETD" ){
 			 $this->validatorSchema['piezas']->setOption('required', true);
 			 $this->validatorSchema['peso']->setOption('required', true);
 			 $this->validatorSchema['volumen']->setOption('required', true);

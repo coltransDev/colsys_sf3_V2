@@ -56,11 +56,11 @@ if ( $status->getCaIdetapa() == "IMCPD" ) { //confirmación de llegada
 			<b>Hora: </b>
 			<?=$inoMaestra->getCaHoraconfirmacion()?>		</td>
 		<?
-            if ( $inoMaestra->getCaFchvaciado() ) {
+            if ( $inoMaestra->getCaFchdesconsolidacion() ) {
 
         ?>
-		<td><b>Vaciado:</b></td>
-		<td><?=$inoMaestra->getCaFchvaciado()?></td>
+		<td><b>Desconsolidación:</b></td>
+		<td><?=$inoMaestra->getCaFchdesconsolidacion()?></td>
 		<?	  
 					} else {
 					?>

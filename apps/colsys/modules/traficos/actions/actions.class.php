@@ -392,7 +392,7 @@ class traficosActions extends sfActions
 			
 			$bindValues["asunto"] = $request->getParameter("asunto");
 			$bindValues["introduccion"] = $request->getParameter("introduccion");
-			//$bindValues["mensaje"] = $request->getParameter("mensaje");
+			$bindValues["mensaje"] = $request->getParameter("mensaje");
             $bindValues["mensaje_dirty"] = $request->getParameter("mensaje_dirty");
 			$bindValues["notas"] = $request->getParameter("notas");
 			
@@ -422,15 +422,11 @@ class traficosActions extends sfActions
 				$bindValues["fchseguimiento"] = $request->getParameter("fchseguimiento");
 				$bindValues["txtseguimiento"] = $request->getParameter("txtseguimiento");
 			}
-            
-			$this->form->bind( $bindValues );
-			if( $this->form->isValid() ){
-                $bindValues["mensaje"] = $request->getParameter("mensaje");
-                $this->form->bind( $bindValues );
+			$this->form->bind( $bindValues ); 
+			if( $this->form->isValid() ){					
 				$this->executeGuardarStatus( $request );				
-			}
+			}				
 		}
-        $this->mensaje=$request->getParameter("mensaje");
 		
 		$this->ultStatus = $reporte->getUltimoStatus();	
 		
@@ -446,7 +442,8 @@ class traficosActions extends sfActions
 		$this->att = array();
 		if( $attachments ){
 			foreach( $attachments as $attachment){				
-				$this->att[]=$this->user->getFile( $attachment );				
+				$this->att[]=$this->user->getFile( $attachment );
+				
 			}
 		}
 		
