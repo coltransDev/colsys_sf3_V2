@@ -15,7 +15,7 @@ class confirmacionesComponents extends sfComponents
 	 en el atributo id.
 	*/
 	public function executeFormConfirmacion()
-	{
+	{        
 		if( $this->modo=="otm" ){
 
 			$tipos = array('Zona Franca', 'Zona Aduanera','Depósito Aduanero', 'Depósito Privado', 'Industria Militar');

@@ -26,7 +26,6 @@ $j=0;
                 <?=Utils::formatNumber($inoCliente->getCaPeso())?></td>
         <td width="8%" class="listar"><b>Volumen CMB:</b><br />
                 <?=Utils::formatNumber($inoCliente->getCaVolumen())?></td>
-
         <td width="50%" class="listar" colspan="2" valign="top" rowspan="<?=$modo=="otm"?6:4?>" ><b>Correos Electr&oacute;nicos a enviar Confirmaci&oacute;n:</b><br />
             <?
             $i=0;
@@ -35,7 +34,6 @@ $j=0;
             <div class="box1 qtip" id="divfijos_<?=$inoCliente->getOid()?>" title="Debe seleccionar al menos un contacto fijo">
                &nbsp;
                 <b>Contactos fijos</b><br />
-
                 <table>
 
                 <?
@@ -45,8 +43,7 @@ $j=0;
                     $email = $fijo->getCaEmail();
                     if( $email ){
                         $i++;
-                        ?>
-                        
+                        ?>                        
                         <tr>
                             <td>
                                 <?
@@ -67,7 +64,6 @@ $j=0;
                             <td colspan="2">
                                 <?=$fijo->getNombre();?>
                                 <span class="rojo">Contacto fijo sin e-mail</span>
-
                             </td>
                         </tr>
                         <?
@@ -120,8 +116,7 @@ $j=0;
         <td class="listar"><b>ID Proveedor:</b><br />
                 <?=$inoCliente->getCaIdproveedor()?></td>
         <td class="listar" colspan="4"><b>Proveedor:</b><br />
-                <?=$inoCliente->getCaProveedor()?></td>
-        
+                <?=$inoCliente->getCaProveedor()?></td>        
     </tr>
     <?
             if( $modo=="otm" ){
@@ -171,8 +166,7 @@ $j=0;
                         echo extDatePicker('fchplanilla_'.$inoCliente->getOid(), date("Y-m-d"));
                         ?>
             </div>
-
-              </td>
+            </td>
     </tr>
     <tr>
         <td class="listar" colspan="5" style='vertical-align:bottom;'><div id="divbodega_<?=$inoCliente->getOid()?>"> <b>Bodega:</b><br />
@@ -192,8 +186,6 @@ $j=0;
     </tr>
     <?
                 }
-
-
                 if( $modo=="otm" ){
                     $mensaje = "";
                 }else{
@@ -209,14 +201,14 @@ $j=0;
                     }else{
                         $mensaje = "";
                     }
-
                 }
-
             ?>
     <tr>
         <td class="listar" colspan="5"><b>Ingrese mensaje exclusivo para este cliente:</b><br />
                 <div id="divmessage_<?=$inoCliente->getOid()?>"></div>
             <textarea name='mensaje_<?=$inoCliente->getOid()?>' id='mensaje_<?=$inoCliente->getOid()?>' wrap="virtual" rows="5" cols="65"></textarea>
+            
+
             <input type="hidden" id='mensajeOTM_<?=$inoCliente->getOid()?>' value="<?=$inoCliente->getCaMensaje().$mensaje?>" />
     </td>
     </tr>
@@ -286,4 +278,4 @@ $j=0;
             });
         }
     }
-        </script>
+</script>

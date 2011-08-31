@@ -113,6 +113,8 @@ class confirmacionesActions extends sfActions
 		
 		//$response = sfContext::getInstance()->getResponse();
 		//$response->addJavaScript("popcalendar",'last');
+//        $response = sfContext::getInstance()->getResponse();
+//        $response->addJavaScript("ckeditor/ckeditor.js",'last');
 		
 		$referenciaParam = str_replace("-",".",$request->getParameter( "referencia" ));		
 		$this->referencia = Doctrine::getTable("InoMaestraSea")->find( $referenciaParam );

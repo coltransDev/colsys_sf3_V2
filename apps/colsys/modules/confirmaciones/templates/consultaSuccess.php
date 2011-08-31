@@ -185,8 +185,7 @@ function mostrarFchllegada(oid){
     }
 }
 
-function mostrar(oid){
-	
+function mostrar(oid){	
 	
 	eval('var tipo = document.form1.tipo_'+oid );
 	var value='';	
@@ -220,22 +219,25 @@ function mostrar(oid){
 		<?
 		foreach( $etapas as $etapa ){
 		?>
-		case '<?=$etapa->getCaIdetapa()?>':
-			objeto_4.value = '<?=$etapa->getCaMessageDefault()?>';
+		case '<?=$etapa->getCaIdetapa()?>':                
+                var val = '<?=str_replace("\n", "<br />", $etapa->getCaMessageDefault())?>';
+				objeto_4.value = val.split("<br />").join("\n");
+                //objeto_4.value='<?=str_replace("\n", "<br>", html_entity_decode($etapa->getCaMessageDefault()))?>';
 			break;
 		<?
 		}
 		if( $modo=="otm" ){
 		?>
-		case '99999':
+		case '99999':            
+                objeto_4.value='<?=str_replace("\n", "<br>", $textos['mensajeCierreOTM'])?>';
 			
-			objeto_4.value = '<?=str_replace("\n", "", $textos['mensajeCierreOTM'])?>';
 			break;
 		<?
 		}
 		?>
-		default:			
-			objeto_4.value = '';
+		default:
+            		
+                objeto_4.value="";
 			break;
 	}
 
@@ -281,10 +283,12 @@ function cambiarTextosOTM( value ){
         ?>
         if( value=="Fact" ){
             if($("#mensaje_<?=$inoCliente->getOid()?>"))
-                document.getElementById('mensaje_<?=$inoCliente->getOid()?>').value="";
+                Ext.getCmp('mensaje_+ oid' ).setValue("");
+                //document.getElementById('mensaje_<?=$inoCliente->getOid()?>').value="";
         }else{
             if($("#mensaje_<?=$inoCliente->getOid()?>"))
-                document.getElementById('mensaje_<?=$inoCliente->getOid()?>').value=document.getElementById('mensajeOTM_<?=$inoCliente->getOid()?>').value;
+                Ext.getCmp('mensaje_+ oid' ).setValue(document.getElementById('mensajeOTM_<?=$inoCliente->getOid()?>').value);
+                //document.getElementById('mensaje_<?=$inoCliente->getOid()?>').value=document.getElementById('mensajeOTM_<?=$inoCliente->getOid()?>').value;
         }
         <?
     }
