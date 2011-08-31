@@ -247,7 +247,7 @@ foreach( $reportes as $reporte ){
 	
 	$objPHPExcel->getActiveSheet()->setCellValue('P'.$i, utf8_encode($reporte->getConsignedTo()));
 	
-	$objPHPExcel->getActiveSheet()->setCellValue('Q'.$i, utf8_encode(str_replace("\r", "", $reporte->getTextoStatus())));
+	$objPHPExcel->getActiveSheet()->setCellValue('Q'.$i, utf8_encode(str_replace("\r", "", strip_tags($reporte->getTextoStatus()))));
 	
 	$ref = $reporte->getNumReferencia()?" ".$reporte->getNumReferencia():"";
 	
