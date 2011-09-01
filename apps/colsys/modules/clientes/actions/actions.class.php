@@ -346,7 +346,6 @@ class clientesActions extends sfActions {
                     }
                 }
             }
-
             echo "<table border=1>";
             foreach($clientes as $cliente){
                 foreach($cliente as $key => $campos){
@@ -1032,6 +1031,198 @@ class clientesActions extends sfActions {
         $this->fchinicial = $fchinicial;
         $this->fchfinal = $fchfinal;
     }
+    
+    public function executeRc()
+    {
 
+    }
+
+    public function executeProcesarRc(sfWebRequest $request)
+    {
+        try
+        {
+            $con = Doctrine_Manager::getInstance()->connection();
+            $estadisticas=array();
+            $folder="Rc";
+            $file=sfConfig::get('app_digitalFile_root').$folder.DIRECTORY_SEPARATOR.$request->getParameter("archivo");
+            
+            chmod ( $file , 0777 );
+            $lines = file($file);
+
+            $resultado=array();
+            $resultado1=array();
+            $tipos=array("tb_inoingresos_sea","tb_inoingresos_air","tb_expo_ingresos","tb_brk_ingresos");
+            $pk=array("tb_inoingresos_sea"=>  explode(",", "ca_referencia,ca_idcliente,ca_hbls,ca_factura"),
+                "tb_inoingresos_air"=>explode(",", "ca_referencia,ca_idcliente,ca_hawb,ca_factura"),
+                "tb_expo_ingresos"=>explode(",", "ca_referencia,ca_idcliente,ca_documento,ca_factura"),
+                "tb_brk_ingresos"=>explode(",", "ca_referencia,ca_factura"));
+            
+            $sql_update="";
+            $total=count($lines);
+            
+            $sucRec=array("1"=>"BOG","2"=>"MDE","3"=>"CLO","4"=>"BAQ","5"=>"DOLARES","6"=>"PEI","7"=>"BUN","8"=>"CTG","9"=>"BUC");
+            $sucFacAssoc=array("BOG"=>"1","CLO"=>"2","MDE"=>"3","BAQ"=>"4","PEI"=>"5","BUN"=>"7","ABO"=>"1");
+            $sucFac=array("1"=>"BOG","2"=>"CLO","3"=>"MDE","4"=>"BAQ","5"=>"PEI","7"=>"PEI");
+            $sqltmp="";
+            for($i=0;$i<count($lines);$i++)
+            {                
+                $sql_update="";
+                $datos=explode(",", $lines[$i]);
+                
+                $suc_recibo= (int)str_replace("\"", "", $datos[1]);
+                $suc_factura= (int)str_replace("\"", "", $datos[11]);
+                
+                $tipo_comp= (int)str_replace("\"", "", $datos[10]);
+                
+                $nfact= (int)str_replace("\"", "", $datos[12]);
+                $pre=str_replace("\"", "", $datos[0]).((int)str_replace("\"", "", $datos[1]));
+                
+                $nrecibo= (int)str_replace("\"", "", $datos[2]);
+                $fecha_pago=Utils::parseDate((int)str_replace("\"", "", $datos[7]));
+                $comienzo_log="<b>linea</b>=".$i.":::<b>Factura</b>=".$nfact.":::<b>Recibo</b>=".$nrecibo." ::: ";
+                if(count($datos)!=13)
+                {
+                    $resultado[$i]=$comienzo_log."Existen cantidad de campos diferente a los establecidos<br>";
+                    $estadisticas["formato_incorrecto"]++;
+                    continue;
+                }                
+                //echo $sucRec[$suc_recibo].'-'.$sucFac[$suc_factura]."<br>";
+                if($sucRec[$suc_recibo]!=$sucFac[$suc_factura])
+                {
+                    $resultado[$i]=$comienzo_log."La sucursal registrada en el recibo es diferente a la de la factura";
+                    $estadisticas["direfente_sucursal"]++;
+                    continue;
+                }
+                
+                if(!$nfact || $tipo_comp!="F")
+                {
+                    $resultado[$i]=$comienzo_log."No posee No Factura";
+                    $estadisticas["sin_factura"]++;
+                    continue;
+                }
+                if($datos[2]=="" && $datos[7]=="")
+                {
+                    $resultado[$i]=$comienzo_log."No posee No Recibo de caja ni fecha de pago";
+                    $estadisticas["sin_recibo"]++;
+                    $estadisticas["sin_fecha"]++;
+                    continue;
+                }
+                if($datos[2]=="")
+                {
+                    $resultado[$i]=$comienzo_log."No posee No Recibo de caja";
+                    $estadisticas["sin_recibo"]++;
+                }
+                if($datos[7]=="")
+                {
+                    $resultado[$i]=$comienzo_log."No posee fecha de pago";
+                    $estadisticas["sin_fecha"]++;
+                }
+
+                $encontro=false;
+                $actualizo=false;
+
+                $sucursal=$sucRec[$suc_recibo];
+                if($sucursal=="BOG" || $sucursal=="ABO")
+                    $sucursal="'BOG','ABO'";
+                else
+                    $sucursal="'$sucursal'";
+                
+                
+                foreach($tipos as $tabla)
+                {
+                    $sql="select t.*,u.ca_idsucursal from ".$tabla." t,control.tb_usuarios u where ca_factura ='".$nfact."' and t.ca_usucreado=u.ca_login and u.ca_idsucursal in ($sucursal) ";
+                    //echo  $sql."<br>";
+                    $st = $con->execute($sql);
+                    $ref = $st->fetch();
+                    
+                    if($ref)
+                    {
+                        //echo "$i<br>";
+                        $set="";
+                        $sql_update="update ".$tabla." set ";
+                        $where="";
+                        if($nrecibo)
+                        {
+                            //if($ref["ca_reccaja"]=="" || $ref["ca_reccaja"]=="''"  )
+                            {
+                                $set=" ca_reccaja='".$pre." ".$nrecibo."'";
+                            }
+                            /*else
+                            {
+                                $resultado[$i].=($resultado[$i]=="")?$comienzo_log:"";
+                                $resultado[$i].="-".$tabla.":: Recibo de caja ya cargado 'No se actualizo',";
+                            }*/
+                        }
+                        
+                        if($fecha_pago)
+                        {
+                            //if($ref["ca_fchpago"]=="")
+                            {
+                                $set.=($set!="")?",":"";
+                                $set.=" ca_fchpago='".$fecha_pago."'";                                
+                            }
+                            /*else
+                            {
+                                $resultado[$i].=($resultado[$i]=="")?$comienzo_log:"";
+                                $resultado[$i].=$tabla.":: Fecha de pago ya cargada 'No se actualizo',";
+                            }*/
+                        }
+                        
+                        if($set!="")
+                        {
+                            foreach($pk[$tabla] as $p)
+                            {
+                                $where.= " and $p='".$ref[$p]."' ";
+                            }
+                            //$sql.=$where;
+                            $sql_update.=$set." where 1=1 $where;";
+//                            $st = $con->execute($sql_update);
+                            $sqltmp.=$sql_update."<br>";
+                            $actualizo=true;
+                        }
+                        else
+                        {
+                            $actualizo=false;
+                        }
+                        
+                        $encontro=true;
+                    }
+                    else
+                    {
+                        $resultado[$i].=($resultado[$i]=="")?$comienzo_log:"";
+                        $resultado[$i].=$tabla.":: Registro NO ENCONTRADO --";
+                    }
+                }
+                
+                if(!$encontro || !$actualizo)
+                {
+                    $resultado[$i].=($resultado[$i]=="")?$comienzo_log:"";
+                    if(!$encontro)
+                    {
+                        $resultado[$i].="factura no encontrada";
+                        $estadisticas["no_encontrado"]++;
+                    }
+                    if(!$actualizo)
+                    {
+                        $resultado[$i].="Registro no actualizado";
+                        $estadisticas["no_actualizado"]++;
+                    }
+                }
+                else
+                {
+                    $estadisticas["actualizada"]++;
+                }
+            }
+            $estadisticas["total"]=$total;
+            //print_r($estadisticas);
+            //echo $sqltmp;
+            $this->responseArray=array("success"=>"true","resultado"=>  implode("<br>", $resultado),"estadisticas"=>$estadisticas,"sqlimpor"=>$sqltmp);
+        }
+        catch(Exception $e)
+        {
+            $this->responseArray=array("success"=>"false","errorInfo"=>$e->getMessage());
+        }
+        $this->setTemplate("responseTemplate");
+    }
 }
 ?>
