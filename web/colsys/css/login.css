@@ -41,7 +41,7 @@ margin: 0px 30px 0px 0px;
 
 width:100%;
 float:left;
-background-color:#2E4B66;
+background-color:#062A7D;
 }
 
 .headerspace{
@@ -97,7 +97,7 @@ table.table1 th {
 	margin: 0px;
 	padding: 6px 4px 2px 4px;
 	height: 25px;
-	background: #2E4B66;
+	background: #062A7D;
 	font-size: 11px;
 	color: #FFFFFF;
 }
@@ -323,7 +323,7 @@ color:#CCCCCC;
 
 .story_coment{
 	font-size: 11px;
-	color: #2E4B66;
+	color: #062A7D;
 	text-align:left;
 	cursor:pointer;
 }

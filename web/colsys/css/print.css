@@ -716,3 +716,8 @@ ul.error_list{
 
 
 }
+
+
+.noprint{
+    display: none;    
+}

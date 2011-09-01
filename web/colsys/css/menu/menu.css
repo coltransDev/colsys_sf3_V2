@@ -70,7 +70,7 @@
 */
 #navigation li ul {
 	list-style-type: none;
-	width: 127px;
+	width: 130px;
 	position: absolute;
 	
     background-color:#e5e5e5;
@@ -112,7 +112,7 @@
 	
 	float: left;
 	font-size: 10px;
-	width: 127px;
+	width: 129px;
 	font-weight: normal;
     border-top: 1px solid #F7F7F7 ;
     text-align: left;
