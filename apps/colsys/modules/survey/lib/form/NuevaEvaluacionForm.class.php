@@ -56,7 +56,7 @@ class NuevaEvaluacionForm extends BaseForm {
                 );
 
                 new sfWidgetFormInputText(array(), array("size" => 5));
-                $widgets['observaciones_' . $criterio->getCaIdcriterio()] = new sfWidgetFormInputText(array(), array("size" => 30));
+                $widgets['observaciones_' . $criterio->getCaIdcriterio()] = new sfWidgetFormInputText(array(), array("size" => 30, "maxlength" => 255));
             }
         }
 
