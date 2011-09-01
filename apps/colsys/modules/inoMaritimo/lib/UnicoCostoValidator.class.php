@@ -18,7 +18,7 @@ class UnicoCostoValidator extends sfValidatorBase
                       ->select("count(*)")
                       ->addWhere("c.ca_referencia = ?", $values["referencia"] )
                       ->addWhere("c.ca_factura = ?", $values["factura"] )
-                      ->addWhere("c.ca_idcosto = ?", $values["idcosto"] )
+                      ->addWhere("c.ca_idcosto = ?", intval($values["idcosto"]) )
                       ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)
                       ->execute();
 
