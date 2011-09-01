@@ -182,7 +182,9 @@ class idsActions extends sfActions {
         $this->nivel = $this->getNivel();
         $this->modo = $request->getParameter("modo");
         $this->form = new NuevoIdsForm();
-
+        
+        $this->idtrafico = $this->getUser()->getIdtrafico();        
+        
         $formSucursal = new NuevaSucursalForm();
         $this->form->mergeForm($formSucursal);
 

@@ -249,6 +249,9 @@
 
         </td>
     </tr>
+    <?
+    if( $idtrafico=="CO-057" ){
+    ?>
     <tr >
         <td> <div align="left"><b>Empresa:</b></div></td>
 		<td >
@@ -267,7 +270,9 @@
                &nbsp;
         </td>
 	</tr>
-
+    <?
+    }
+    ?>
     <tr id="prov_tri">
         <td> <div align="left"><b>Sigla:</b></div></td>
 		<td >
