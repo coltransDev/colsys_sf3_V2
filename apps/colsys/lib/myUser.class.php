@@ -264,7 +264,7 @@ class myUser extends sfBasicSecurityUser
 		
 		//setcookie("JSESSIONID", "" );	
 		$cache = myCache::getInstance();
-        $cookie = $_COOKIE["colsys"];
+        $cookie = isset($_COOKIE["colsys"])?$_COOKIE["colsys"]:"";
         list($session_id, $signature) = explode(':', $cookie, 2);
         $cache->set($session_id."_menu", "");
 			

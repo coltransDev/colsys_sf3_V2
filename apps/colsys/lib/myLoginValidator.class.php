@@ -41,7 +41,7 @@ class myLoginValidator extends sfValidatorBase
                 $this->setMessage('invalid', 'La cuenta de NOVELL se encuentra bloqueada');
                 break;
             default :
-                $this->setMessage('invalid', 'El usuario o la clave es invalida, Cod: '.$errorno);
+                $this->setMessage('invalid', 'El usuario o la clave es invalida'.(isset($errorno)?', Cod: '.$errorno:''));
                 break;
         }
         

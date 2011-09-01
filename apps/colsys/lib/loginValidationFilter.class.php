@@ -27,7 +27,7 @@ class loginValidationFilter extends sfFilter
             $cache = myCache::getInstance();
 
 
-            $cookie = $_COOKIE["colsys"];
+            $cookie = isset($_COOKIE["colsys"])?$_COOKIE["colsys"]:"";
             list($session_id, $signature) = explode(':', $cookie, 2);
             $time = $cache->get($session_id."_lr", "");
 
