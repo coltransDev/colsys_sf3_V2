@@ -17,6 +17,12 @@ class crmComponents extends sfComponents {
      */
     public function executeClienteFormPanel() {
         $this->login = $this->getUser()->getUserId();
+        
+        if( $this->getUser()->getIdtrafico()=="PE-051"){
+            $this->tipoIdentificacionId = 4;
+        }else{
+            $this->tipoIdentificacionId = 1;
+        }
                 
     }
 

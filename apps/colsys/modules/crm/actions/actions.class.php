@@ -78,7 +78,8 @@ class crmActions extends sfActions {
             $ids->setCaWebsite( $request->getParameter("website") );            
             //$cliente->setCaCompania( strtoupper($request->getParameter("compania")) );
             $cliente->setCaSaludo( utf8_decode($request->getParameter("title")) );
-            $cliente->setCaPapellido( utf8_decode($request->getParameter("apellido")) );
+            $cliente->setCaPapellido( utf8_decode($request->getParameter("papellido")) );
+            $cliente->setCaSapellido( utf8_decode($request->getParameter("sapellido")) );
             $cliente->setCaNombres( utf8_decode($request->getParameter("nombre")) );
             $cliente->setCaSexo( $request->getParameter("sexo") );
             $cliente->setCaCumpleanos( $request->getParameter("cumpleanos") );
@@ -86,7 +87,11 @@ class crmActions extends sfActions {
             
             
             if( $nivel>=2 ){
-                $cliente->setCaVendedor( $request->getParameter("vendedor", null) );
+                if( $request->getParameter("vendedor") ){
+                    $cliente->setCaVendedor( $request->getParameter("vendedor") );
+                }else{
+                    $cliente->setCaVendedor( null );
+                }
             }else{
                 $cliente->setCaVendedor( $this->getUser()->getUserId() );
             }
@@ -176,7 +181,8 @@ class crmActions extends sfActions {
         
         
         $data["title"] = utf8_encode($cliente->getCaSaludo());
-        $data["apellido"] = utf8_encode($cliente->getCaPapellido());
+        $data["papellido"] = utf8_encode($cliente->getCaPapellido());
+        $data["sapellido"] = utf8_encode($cliente->getCaSapellido());
         $data["nombre"] = utf8_encode($cliente->getCaNombres());
         $data["sexo"] = $cliente->getCaSexo();
         $data["cumpleanos"] = $cliente->getCaCumpleanos();

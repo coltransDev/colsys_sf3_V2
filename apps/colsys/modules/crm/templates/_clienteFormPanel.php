@@ -79,11 +79,12 @@ include_component("widgets", "widgetComerciales");
                                         name:           'tipo_identificacion',
                                         hiddenName:     'tipo_identificacion',
                                         
-                                        value:          '1',
+                                        value:          '<?=$tipoIdentificacionId?>',
                                         allowBlank:     false,
                                         
                                         
                                         listeners : {
+                                            scope: this,
                                             "select": this.getDv
                                         }
                                     }),
@@ -154,6 +155,7 @@ include_component("widgets", "widgetComerciales");
                                 xtype: 'fieldset',
                                 border: true,
                                 title: 'Representante Legal',
+                                
                                 defaults: {
                                     // applied to each contained panel
                                     bodyStyle:'padding-right:20px',
@@ -165,7 +167,7 @@ include_component("widgets", "widgetComerciales");
                                     {
                                         xtype: 'compositefield',
                                         fieldLabel: 'Titulo',
-                                        msgTarget : 'side',
+                                        msgTarget : 'side',                                        
                                         defaults: {
                                         //    flex: 1
                                         },
@@ -211,19 +213,33 @@ include_component("widgets", "widgetComerciales");
                                                 xtype     : 'textfield',
                                                 name      : 'nombre',
                                                 fieldLabel: 'Nombre',
-                                                width: 200,
-                                                allowBlank:     false
+                                                width: 150,
+                                                allowBlank:     false,
+                                                maxLength: 30
                                             },
                                             {
                                                xtype: 'displayfield',
-                                               value: 'Apellido:'
+                                               value: '1er Apellido:'
                                             },
                                             {
                                                 xtype     : 'textfield',
-                                                name      : 'apellido',
-                                                fieldLabel: 'Apellido:',
-                                                width: 200,
-                                                allowBlank:     false
+                                                name      : 'papellido',
+                                                fieldLabel: '1er Apellido:',
+                                                width: 150,
+                                                allowBlank:     false,
+                                                maxLength: 15
+                                            },    
+                                            {
+                                               xtype: 'displayfield',
+                                               value: '2do Apellido:'
+                                            },
+                                            {
+                                                xtype     : 'textfield',
+                                                name      : 'sapellido',
+                                                fieldLabel: '2doApellido:',
+                                                width: 150,
+                                                allowBlank:     true,
+                                                maxLength: 15
                                             }
                                         ]
                                     },
@@ -285,6 +301,7 @@ include_component("widgets", "widgetComerciales");
                                         fieldLabel: 'Dirección',
                                         msgTarget : 'side',
                                         width: 500,
+                                        maxLength: 80,
                                         name: 'dir_ot'                                       
                                     }
                                         
@@ -578,6 +595,7 @@ include_component("widgets", "widgetComerciales");
                                         value: '',
                                         allowBlank:true,
                                         width: 200,
+                                        maxLength: 50
                                         
                                     }
                                     
@@ -617,7 +635,8 @@ include_component("widgets", "widgetComerciales");
                                                 xtype     : 'textfield',
                                                 name      : 'phone',
                                                 fieldLabel: 'phone',
-                                                width: 80
+                                                width: 80,
+                                                maxLength: 30
                                             },
                                             {
                                                xtype: 'displayfield',
@@ -627,7 +646,8 @@ include_component("widgets", "widgetComerciales");
                                                 xtype     : 'textfield',
                                                 name      : 'fax',
                                                 fieldLabel: 'fax',
-                                                width: 80
+                                                width: 80,
+                                                maxLength: 30
                                             }
                                         ]
                                     },
@@ -635,13 +655,15 @@ include_component("widgets", "widgetComerciales");
                                         xtype     : 'textfield',
                                         name      : 'email',
                                         fieldLabel: 'e-mail',
-                                        width: 200
+                                        width: 200,
+                                        maxLength: 40
                                     },
                                     {
                                         xtype     : 'textfield',
                                         name      : 'website',
                                         fieldLabel: 'Página Web',
-                                        width: 200
+                                        width: 200,
+                                        maxLength: 60
                                     }
                                 ]
                             },
@@ -671,7 +693,8 @@ include_component("widgets", "widgetComerciales");
                                         name: 'sectoreco',
                                         value: '',
                                         allowBlank:false,
-                                        width: 400
+                                        width: 400,
+                                        maxLength: 30
                                     },
                                     {
                                         //the width of this field in the HBox layout is set directly
@@ -702,7 +725,8 @@ include_component("widgets", "widgetComerciales");
                                         name: 'comentario',
                                         value: '',
                                         allowBlank:true,
-                                        width: 400
+                                        width: 400,
+                                        maxLength: 255
                                     }
 
                                 ]
@@ -975,9 +999,7 @@ include_component("widgets", "widgetComerciales");
                 var idtrafico = tipo.getIdtrafico();
                 Ext.getCmp("ciudad_id").setIdtrafico( idtrafico );
             }
-        },
-
-        getDv: function(){
+            
             var tipo = Ext.getCmp("tipo_identificacion_id");           
             if( tipo.getValue()=="3" ){
                 Ext.getCmp("idalterno_id").setValue("");
@@ -985,13 +1007,65 @@ include_component("widgets", "widgetComerciales");
             }else{
                 Ext.getCmp("idalterno_id").setDisabled(false);
             }
+            
+            var idtrafico = tipo.getIdtrafico();
+            Ext.getCmp("ciudad_id").setIdtrafico( idtrafico );
+            
+            if( idtrafico=="CO-057" ){
+                Ext.getCmp("dir_col").setVisible(true);
+                Ext.getCmp("dir_other").setVisible(false);
+            }else{
+                Ext.getCmp("dir_col").setVisible(false);
+                Ext.getCmp("dir_other").setVisible(true);
+            }
+            
+            if( tipo.getValue()!="1" ){                
+                Ext.getCmp("dv_id").disable();
+            }else{                
+                Ext.getCmp("dv_id").enable();
+            }
+        },
+        
+        
 
-
+        getDv: function(){
+            
+            
+            
+            var tipo = Ext.getCmp("tipo_identificacion_id");           
             if( tipo.getValue()=="1" ){
                 var dv = d_verificacion(Ext.getCmp("idalterno_id").getValue());
                 Ext.getCmp("dv_id").setValue(dv);
-                Ext.getCmp("dv_id").enable();
+            }else{
+                Ext.getCmp("dv_id").setValue("");
+            }
                 
+            var tipo = Ext.getCmp("tipo_identificacion_id");           
+            if( tipo.getValue()=="3" ){
+                Ext.getCmp("idalterno_id").setValue("");
+                Ext.getCmp("idalterno_id").setDisabled(true);                
+            }else{
+                Ext.getCmp("idalterno_id").setDisabled(false);
+            }
+            
+            var idtrafico = tipo.getIdtrafico();
+            Ext.getCmp("ciudad_id").setIdtrafico( idtrafico );
+            
+            if( idtrafico=="CO-057" ){
+                Ext.getCmp("dir_col").setVisible(true);
+                Ext.getCmp("dir_other").setVisible(false);
+            }else{
+                Ext.getCmp("dir_col").setVisible(false);
+                Ext.getCmp("dir_other").setVisible(true);
+            }
+            
+            if( tipo.getValue()!="1" ){                
+                Ext.getCmp("dv_id").disable();
+            }else{                
+                Ext.getCmp("dv_id").enable();
+            }
+                
+            if( tipo.getValue()!="3" ){    
                 Ext.Ajax.request(
                 {
                     waitMsg: 'Comprobando ID...',
@@ -1011,22 +1085,10 @@ include_component("widgets", "widgetComerciales");
                     }
                  }
                 );
-            }else{
-                Ext.getCmp("dv_id").setValue("");
-                Ext.getCmp("dv_id").disable();
             }
             
             
-            var idtrafico = tipo.getIdtrafico();
-            Ext.getCmp("ciudad_id").setIdtrafico( idtrafico );
             
-            if( idtrafico=="CO-057" ){
-                Ext.getCmp("dir_col").setVisible(true);
-                Ext.getCmp("dir_other").setVisible(false);
-            }else{
-                Ext.getCmp("dir_col").setVisible(false);
-                Ext.getCmp("dir_other").setVisible(true);
-            }
             
         }
     });
