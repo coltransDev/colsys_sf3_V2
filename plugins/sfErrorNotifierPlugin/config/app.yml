@@ -1,4 +1,4 @@
-cli:
+prod:
   sfErrorNotifier:
     enabled:    true  # Global enable or disable per env
     emailTo:      abotero@coltrans.com.co # ,maquinche@coltrans.com.co, alramirez@coltrans.com.co, clopez@coltrans.com.co  # EDIT THIS
