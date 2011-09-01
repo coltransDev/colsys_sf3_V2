@@ -1,6 +1,7 @@
 /**
  * Default theme for jixedbar
  * written by Ryan Yonzon, http://ryan.rawswift.com/
+ * Last update: August 13, 2010
  */
 				
 /*----- bar style -----*/
@@ -14,28 +15,41 @@
 
 	/* rounded top-left corner */
 	.jx-bar-rounded-tl {
-		-webkit-border-bottom-left-radius:3px;
-		-khtml-border-radius-bottomleft:3px;
-		-moz-border-radius-bottomleft:3px;
-		border-bottom-left-radius:3px;
+		-webkit-border-top-left-radius:5px;
+		-khtml-border-radius-topleft:5px;	
+		-moz-border-radius-topleft:5px;
+		border-top-left-radius:5px;
+	}
 
-       
+	/* rounded bottom-left corner */
+	.jx-bar-rounded-bl {
+		-webkit-border-bottom-left-radius:5px;
+		-khtml-border-radius-bottomleft:5px;	
+		-moz-border-radius-bottomleft:5px;
+		border-bottom-left-radius:5px;
 	}
 
 	/* rounded top-right corner */
 	.jx-bar-rounded-tr {
-		-webkit-border-bottom-right-radius:3px;
-		-khtml-border-radius-bottomright:3px;
-		-moz-border-radius-bottomright:3px;
-		border-bottom-right-radius:3px;
+		-webkit-border-top-right-radius:5px;
+		-khtml-border-radius-topright:5px;	
+		-moz-border-radius-topright:5px;
+		border-top-right-radius:5x;
+	}
 
+	/* rounded bottom-right corner */
+	.jx-bar-rounded-br {
+		-webkit-border-bottom-right-radius:5px;
+		-khtml-border-radius-bottomright:5px;	
+		-moz-border-radius-bottomright:5px;
+		border-bottom-right-radius:5x;
 	}
 
 /*----- bar separator -----*/
 .jx-bar span {
 	width:1px;
 	height:100%;
-	background-color:#CCCCCC;
+	background-color:#ccc;
 }
 
 	.jx-separator-left {
@@ -73,8 +87,8 @@
 	
 	/*	button hover effect	*/
 	.jx-bar-button li:hover {
-		background-color:#EEEEEE;
-		border:#CCCCCC solid 1px;
+		background-color:#eee;
+		border:#ccc solid 1px;
 		padding:4px 8px 4px 8px;
 		margin:2px;
 	}
@@ -91,7 +105,7 @@
 	.jx-bar-button li a:link, .jx-bar-button li a:visited {
 		font-family:Verdana, Arial, Helvetica, sans-serif;
 		font-size:11px;
-		color:#666666;
+		color:#666;
 		text-decoration:none;
 		padding:1px;
 	}
@@ -99,37 +113,41 @@
 	.jx-bar-button li a:hover {
 		font-family:Verdana, Arial, Helvetica, sans-serif;
 		font-size:11px;
-		color:#333333;
+		color:#333;
 		text-decoration:none;
 	}
 
-/*----- bar text container -----*/
-.jx-bar-button div, .jx-bar-button iframe {
+    ul.level2{
+            margin : -40px 0 0 180px;
+            position: absolute;
+            color: #eee;
+
+
+    }
+
+/*----- bar text container and button arrow indicator -----*/
+.jx-bar div, .jx-bar iframe {
 	float:left;
 }
 
-.jx-bar-button-right div, .jx-bar-button-right iframe {
-	float:right;
-}
-
-.jx-bar-button div {
+.jx-bar div {
 	font-family:Verdana, Arial, Helvetica, sans-serif;
 	font-size:11px;
-	color:#666666;
+	color:#666;
 	padding:4px 8px 4px 8px;
 	margin:4px 0px 4px 0px;
 }
 
-.jx-bar-button iframe {
+.jx-bar iframe {
 	margin:4px 0px 4px 10px;
 }
 
-	.jx-bar-button div a:link, .jx-bar-button div a:visited {
-		color:#666666;
+	.jx-bar div a:link, .jx-bar div a:visited {
+		color:#666;
 		text-decoration:none;
 	}
 
-	.jx-bar-button div a:hover {
+	.jx-bar div a:hover {
 		color:#0099FF;
 		text-decoration:none;
 	}
@@ -138,7 +156,7 @@
 .jx-bar-button-tooltip {
 	height:auto;
 	padding:5px 10px 5px 10px;
-	color:#FFFFFF;
+	color:#fff;
 	background-color:#36393D;
 	font-family:Verdana, Arial, Helvetica, sans-serif;
 	font-size:11px;
@@ -146,52 +164,51 @@
 
 	/* rounded tooltip */
 	.jx-bar-button-tooltip {
-		-moz-border-radius:3px;
-		-webkit-border-radius:3px;	
+		-moz-border-radius: 3px;
+		-webkit-border-radius:3px;
 	}
 
 /*----- nav menu -----*/
 .jx-nav-menu {
 	font-family:Verdana, Arial, Helvetica, sans-serif;
 	font-size:11px;
+	padding:2px;
 	background-color:#eee;
+	border:#ccc solid 1px;
 }
+
+	.jx-nav-menu-rounded {
+		-webkit-border-radius:3px;
+		-khtml-border-radius:3px;	
+		-moz-border-radius:3px;
+		border-radius:3px;
+	}
 
 .jx-nav-menu ul {
-	margin: 0;
-	padding: 0;
-	list-style: none;
-	width: 150px; /* Width of Menu Items */
-	border-bottom: 1px solid #ccc;
-}
-
-.jx-nav-menu ul li {
-	position:relative;
+	margin:0;
+	padding:0;
+	list-style:none;
+	width:150px; /* width of menu items */
 }
 
 .jx-nav-menu a:hover {
 	background-color:#4096EE;
-	color:#FFFFFF;
+	color:#fff;
+	text-decoration:none;	
 }
 	
-.jx-nav-menu li ul {
-	position:absolute;
-	left: 149px; /* Set 1px less than menu width */
-	top: 0;
-	display: none;
-}
-
-/* Styles for Menu Items */
+/* styles for menu items */
 .jx-nav-menu ul li a {
-	display: block;
-	text-decoration: none;
-	color: #777;
-	background: #eee; /* IE6 Bug */
-	padding: 8px;
-	border: 1px solid #ccc; /* IE6 Bug */
-	border-bottom: 0;
+	display:block;
+	text-decoration:none;
+	color:#777;
+	background:#fff; /* IE6 Bug */
+	padding:8px;
+	border:1px solid #eee; /* IE6 Bug */
+	border-bottom:0px;
 }
 
+/* active menu button */
 .jx-nav-menu-active {
 	font-family:Verdana, Arial, Helvetica, sans-serif;
 	font-size:11px;
@@ -201,6 +218,7 @@
 	margin:2px;
 }
 
+/* active menu button (rounded) */
 .jx-nav-menu-active-rounded {
 	-webkit-border-radius:3px;
 	-khtml-border-radius:3px;	
@@ -208,27 +226,38 @@
 	border-radius:3px;
 }
 
+/* menu indicator UP state */
 .jx-arrow-up {
 	background-image:url('up.gif');
 	background-repeat:no-repeat;
-	background-position: center;
+	background-position:center;
 }
 
+/* menu indicator DOWN state */
 .jx-arrow-down {
 	background-image:url('dn.gif');
 	background-repeat:no-repeat;
-	background-position: center;	
+	background-position:center;
 }
 
-.jx-tool-arrow {
-	background-image:url('tt.gif');
+/* tooltip point direction */
+.jx-tool-point-dir-down {
+	background-image:url('ttd.gif');
 	background-repeat:no-repeat;
 	background-position:center bottom;
 	height:5px;
 	width:auto;
 }
 
-/* Hide and unhide item */
+.jx-tool-point-dir-up {
+	background-image:url('ttu.gif');
+	background-repeat:no-repeat;
+	background-position:center bottom;
+	height:5px;
+	width:auto;
+}
+
+/* hide and show/unhide item */
 .jx-hide {
 	float:right;
 	background-image:url('hide.gif');
@@ -237,7 +266,16 @@
 	width:16px;
 }
 
-.jx-unhide {
+	/* if showOnTop is TRUE, use "show.gif" instead of "hide.gif" */
+	.jx-hide-top {
+		float:right;
+		background-image:url('show.gif');
+		background-repeat:no-repeat;
+		height:16px;
+		width:16px;
+	}
+
+.jx-show {
 	height:30px;
 	padding:0px;
 	width:40px;
@@ -245,10 +283,26 @@
 	border:#b5b5b5 solid 1px;
 }
 
-.jx-unhide-button {
+.jx-show-button {
 	float:right;
 	background-image:url('show.gif');
 	background-repeat:no-repeat;
 	height:16px;
 	width:16px;
+}
+
+	/* if showOnTop is TRUE, use "hide.gif" instead of "show.gif" */
+	.jx-show-button-top {
+		float:right;
+		background-image:url('hide.gif');
+		background-repeat:no-repeat;
+		height:16px;
+		width:16px;
+	}
+
+.jx-hide-separator {
+	width:1px;
+	height:100%;
+	background-color:#ccc;
+	float:right;
 }
