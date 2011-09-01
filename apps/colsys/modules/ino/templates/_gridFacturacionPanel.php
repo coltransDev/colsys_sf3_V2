@@ -62,10 +62,10 @@ GridFacturacionPanel = function( config ){
         hideable: false,
         sortable: true,
         width: 80,
-        renderer: Ext.util.Format.dateRenderer('Y-m-d'),
-        editor: new Ext.form.DateField({
+        renderer: Ext.util.Format.dateRenderer('Y-m-d')
+        /*editor: new Ext.form.DateField({
             format: 'Y-m-d'
-        })
+        })*/
 
       },
       {
@@ -75,13 +75,13 @@ GridFacturacionPanel = function( config ){
         sortable: true,
         width: 80,
         align: 'right',
-        renderer: Ext.util.Format.numberRenderer('0,0.00'),
-        editor: new Ext.form.NumberField({
+        renderer: Ext.util.Format.numberRenderer('0,0.00')
+        /*editor: new Ext.form.NumberField({
             allowBlank: false ,
             allowNegative: false,
             style: 'text-align:right',
             decimalPrecision :2
-        })
+        })*/
       },
       {
         header: "Cambio",
@@ -98,10 +98,10 @@ GridFacturacionPanel = function( config ){
         hideable: false,
         sortable: true,
         width: 80,
-        align: 'left',
-        editor: new WidgetMoneda({
+        align: 'left'
+        /*editor: new WidgetMoneda({
             allowBlank: false 
-        })
+        })*/
       },
       {
         header: "Valor Pesos",
@@ -196,7 +196,7 @@ GridFacturacionPanel = function( config ){
 
 };
 
-Ext.extend(GridFacturacionPanel, Ext.grid.EditorGridPanel, {
+Ext.extend(GridFacturacionPanel, Ext.grid.GridPanel, {
 
     recargar: function(){
 

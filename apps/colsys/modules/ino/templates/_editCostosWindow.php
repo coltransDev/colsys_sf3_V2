@@ -52,60 +52,82 @@ $conceptos = $sf_data->getRaw("conceptos");
 
         this.items = [
             {
-                columnWidth:.5,
-                layout: 'form',
-                labelAlign: "top",
-                items: [{
-                        xtype:'textfield',
-                        fieldLabel: 'Comprobante',
-                        name: 'tipo',
-                        anchor:'95%',
-                        allowBlank: false
-                    },
-                    {
-                        xtype:'numberfield',
-                        fieldLabel: 'Numero',
-                        name: 'numero',
-                        anchor:'95%',
-                        allowBlank: false
-                    },
-                    this.editorConceptos,
-                    new WidgetIds({
-                        name: 'ids',
-                        hiddenName: 'id',
-                        fieldLabel: 'Proveedor'
-                    }),
-                    {
-                        xtype:'numberfield',
-                        fieldLabel: 'Valor',
-                        name: 'valor',
-                        anchor:'95%',
-                        allowBlank: false,
-                        allowNegative: false
-                    },
-                    {
-                        xtype:'numberfield',
-                        fieldLabel: 'Cambio',
-                        name: 'valor',
-                        anchor:'95%',
-                        allowBlank: false,
-                        allowNegative: false
-                    },
-                    {
-                        xtype:'numberfield',
-                        fieldLabel: 'Pesos',
-                        name: 'valor_pesos',
-                        anchor:'95%',
-                        allowBlank: false,
-                        allowNegative: false
-                    }
-                    
+                        xtype: 'fieldset',
+                        title: 'General',
+                        autoHeight:true,
+                        layout:'column',
+                        columns: 2,
+                        items :
+                        [
+                            /*
+                             * =========================Column 1 =========================
+                             **/
+            
+                            {
+                                columnWidth:.5,
+                                layout: 'form',
+                                labelAlign: "top",
+                                items: [
 
 
-
-                    
-
-                ]
+                                    {
+                                        xtype:'textfield',
+                                        fieldLabel: 'Comprobante',
+                                        name: 'tipo',
+                                        anchor:'95%',
+                                        allowBlank: false
+                                    },
+                                    {
+                                        xtype:'numberfield',
+                                        fieldLabel: 'Numero',
+                                        name: 'numero',
+                                        anchor:'95%',
+                                        allowBlank: false
+                                    },
+                                    this.editorConceptos,
+                                    new WidgetIds({
+                                        name: 'ids',
+                                        hiddenName: 'id',
+                                        fieldLabel: 'Proveedor'
+                                    })
+                                ]
+                            },
+                              /*
+                             * =========================Column 2 =========================
+                             **/
+            
+                            {
+                                columnWidth:.5,
+                                layout: 'form',
+                                labelAlign: "top",
+                                items: [
+                                    {
+                                        xtype:'numberfield',
+                                        fieldLabel: 'Valor',
+                                        name: 'valor',
+                                        anchor:'95%',
+                                        allowBlank: false,
+                                        allowNegative: false
+                                    },
+                                    {
+                                        xtype:'numberfield',
+                                        fieldLabel: 'Cambio',
+                                        name: 'valor',
+                                        anchor:'95%',
+                                        allowBlank: false,
+                                        allowNegative: false
+                                    },
+                                    {
+                                        xtype:'numberfield',
+                                        fieldLabel: 'Pesos',
+                                        name: 'valor_pesos',
+                                        anchor:'95%',
+                                        allowBlank: false,
+                                        allowNegative: false
+                                    }
+                                ]
+                            }
+                        ]                        
             }
         ];
 

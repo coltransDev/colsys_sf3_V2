@@ -18,74 +18,85 @@ GridCostosPanel = function( config ){
 
     
     this.columns = [
-      {
-        header: "Comprobante",
-        dataIndex: 'comprobante',
-        //hideable: false,
-        sortable: true,
-        width: 80,
-        renderer: this.formatComprobante,
-        editor: new Ext.form.TextField()
-
-      },
-      {
-        header: "Costo",
-        dataIndex: 'concepto',
-        //hideable: false,
-        width: 100,
-        sortable: true,
-        renderer: this.formatItem
-
-      },
+           
       {
         header: "Proveedor",
         dataIndex: 'proveedor',
         //hideable: false,
         sortable: true,
-        width: 80,
-        editor: new WidgetIds()
-      },   
+        width: 80
+      },  
       {
-        header: "Fecha",
-        dataIndex: 'fchcomprobante',
-        hideable: false,
+        header: "Costo",
+        dataIndex: 'costo',
+        //hideable: false,
         sortable: true,
         width: 80,
-        renderer: Ext.util.Format.dateRenderer('Y-m-d'),
-        editor: new Ext.form.DateField({
-            format: 'Y-m-d'
-        })
+        renderer: this.formatItem
+      }, 
+      {
+        header: "Factura",
+        dataIndex: 'factura',
+        hideable: false,
+        sortable: true,
+        width: 80        
 
       },
       {
-        header: "Valor",
-        dataIndex: 'valor',
+        header: "Neta",
+        dataIndex: 'neto',
         hideable: false,
         sortable: true,
         width: 80,
         align: 'right',
-        renderer: Ext.util.Format.numberRenderer('0,0.00'),
-        editor: new Ext.form.NumberField({
-            allowBlank: false ,
-            allowNegative: false,
-            style: 'text-align:right',
-            decimalPrecision :2
-        })
+        renderer: Ext.util.Format.numberRenderer('0,0.00')
+       
       },
       {
         header: "Cambio",
-        dataIndex: 'cambio',
+        dataIndex: 'tcambio',
         hideable: false,
         sortable: true,
         width: 80,
         align: 'right',
-        renderer: Ext.util.Format.numberRenderer('0,0.00'),
-        editor: new Ext.form.NumberField({
-            allowBlank: false ,
-            allowNegative: false,
-            style: 'text-align:right',
-            decimalPrecision :2
-        })
+        renderer: Ext.util.Format.numberRenderer('0,0.00')       
+      },
+      {
+        header: "Cambio USD",
+        dataIndex: 'tcambio_usd',
+        hideable: false,
+        sortable: true,
+        width: 80,
+        align: 'right',
+        renderer: Ext.util.Format.numberRenderer('0,0.00')       
+      },
+      {
+        header: "Valor Pesos",
+        dataIndex: 'valor_pesos',
+        hideable: false,
+        sortable: false,
+        width: 80,
+        align: 'right',
+        renderer: this.valorPesos
+      },      
+      {
+        header: "Venta",
+        dataIndex: 'venta',
+        hideable: false,
+        sortable: false,
+        width: 80,
+        align: 'right',
+        renderer: Ext.util.Format.numberRenderer('0,0.00')
+       
+      },
+      {
+        header: "INO x Sobreventa",
+        dataIndex: 'utilidad',
+        hideable: false,
+        sortable: true,
+        width: 80,
+        align: 'right',
+        renderer: this.utilidad
       },
       {
         header: "Moneda",
@@ -93,20 +104,9 @@ GridCostosPanel = function( config ){
         hideable: false,
         sortable: true,
         width: 80,
-        align: 'left',
-        editor: new WidgetMoneda({
-            allowBlank: false 
-        })
-      },
-      {
-        header: "Valor Pesos",
-        dataIndex: 'valor_pesos',
-        hideable: false,
-        sortable: true,
-        width: 80,
-        align: 'right',
-        renderer: this.valorPesos
+        align: 'left'
       }
+      
 
 
      ];
@@ -114,20 +114,20 @@ GridCostosPanel = function( config ){
 
     this.record = Ext.data.Record.create([
             
-            {name: 'idmaster', type: 'integer'},
-            {name: 'idconcepto', type: 'integer'},
-            {name: 'concepto', type: 'string'},
-            {name: 'idproveedor', type: 'integer'},
-            {name: 'proveedor', type: 'string'},
-            {name: 'comprobante', type: 'string'},
-            {name: 'idcomprobante', type: 'string'},
-            {name: 'idmoneda', type: 'string'},
-
-            {name: 'fchcomprobante', type: 'date', dateFormat:'Y-m-d'},
-            {name: 'group', type: 'string'},
-            {name: 'valor', type: 'float'},
-            {name: 'cambio', type: 'float'},
-            {name: 'idmoneda', type: 'string'},
+            {name: 'idmaster', type: 'integer', mapping: 'c_ca_idmaster'},
+            {name: 'idinocosto', type: 'integer', mapping: 'c_ca_idinocosto'},
+            {name: 'idcosto', type: 'integer', mapping: 'c_ca_idcosto'},
+            {name: 'costo', type: 'string', mapping: 'cs_ca_costo'},
+            {name: 'idproveedor', type: 'integer', mapping: 'c_ca_idproveedor'},
+            {name: 'proveedor', type: 'string', mapping: 'i_ca_nombre'},
+            {name: 'factura', type: 'string', mapping: 'c_ca_factura'},
+            {name: 'idmoneda', type: 'string', mapping: 'c_ca_idmoneda'},            
+            {name: 'neto', type: 'float', mapping: 'c_ca_neto'},
+            {name: 'venta', type: 'float', mapping: 'c_ca_venta'},
+            {name: 'tcambio', type: 'float', mapping: 'c_ca_tcambio' },
+            {name: 'tcambio_usd', type: 'float', mapping: 'c_ca_tcambio_usd'},   
+            {name: 'valor_pesos', type: 'float' },
+            {name: 'utilidad', type: 'float' },            
             {name: 'color', type: 'string'}
     ]);
 
@@ -146,8 +146,8 @@ GridCostosPanel = function( config ){
             },
             this.record
         ),
-        sortInfo:{field: 'proveedor', direction: "ASC"},
-        groupField: 'proveedor'
+        sortInfo:{field: 'proveedor', direction: "ASC"}
+        //groupField: 'proveedor'
 
     });
 
@@ -195,11 +195,10 @@ GridCostosPanel = function( config ){
 
 };
 
-Ext.extend(GridCostosPanel, Ext.grid.EditorGridPanel, {
+Ext.extend(GridCostosPanel, Ext.grid.GridPanel, {
 
     newItem: function(){
-        this.win = new EditCostoWindow();
-        this.win.show();
+        document.location = "<?=url_for("ino/formCosto")?>?idmaster="+ this.idmaster;
     },
 
     recargar: function(){
@@ -222,7 +221,11 @@ Ext.extend(GridCostosPanel, Ext.grid.EditorGridPanel, {
 
     valorPesos: function(value, p, record) {
         //Ext.util.Format.numberRenderer('0,0.00')
-        return Ext.util.Format.number( record.data.valor * record.data.cambio, '0,0.00' );
+        return Ext.util.Format.number( record.data.neto * record.data.tcambio/record.data.tcambio_usd, '0,0.00' );
+    },
+    utilidad: function(value, p, record) {
+        //Ext.util.Format.numberRenderer('0,0.00')
+        return Ext.util.Format.number( record.data.venta-(record.data.neto * record.data.tcambio/record.data.tcambio_usd), '0,0.00' );
     },
 
     formatComprobante: function(value, p, record) {
@@ -302,7 +305,7 @@ Ext.extend(GridCostosPanel, Ext.grid.EditorGridPanel, {
     onRowDblclick: function( grid , rowIndex, e ){
 		if( !this.readOnly ){
             record =  this.store.getAt( rowIndex );
-            this.editHouse( record.data.idhouse );
+            document.location = "<?=url_for("ino/formCosto?idinocosto=")?>"+record.data.idinocosto;
         }
 	}
     ,

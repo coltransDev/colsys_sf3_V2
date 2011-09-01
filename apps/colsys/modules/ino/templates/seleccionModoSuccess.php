@@ -20,7 +20,7 @@
 
 ?>
         <td align="left">
-			<?=link_to("Aéreo", "ino/formIno?modo=Aéreo&impoexpo=Importación" )?>
+			<?=link_to("Aéreo", "ino/formIno?transporte=Aéreo&impoexpo=Importación" )?>
 		</td>
 <?
 	}
@@ -30,7 +30,7 @@
 
 ?>
         <td><div align="left">
-			<?=link_to("Marítimo", "ino/formIno?modo=Marítimo&impoexpo=Importación")?>
+			<?=link_to("Marítimo", "ino/formIno?transporte=Marítimo&impoexpo=Importación")?>
 		</div></td>
 <?
 	}
@@ -44,7 +44,7 @@
 
 ?>
         <td align="left">
-            <?=link_to("Aéreo", "ino/formIno?modo=Aéreo&impoexpo=Exportación" )?>
+            <?=link_to("Aéreo", "ino/formIno?transporte=Aéreo&impoexpo=Exportación" )?>
 	</td>
 <?
 	}
@@ -54,7 +54,7 @@
 
 ?>
         <td><div align="left">
-            <?=link_to("Marítimo", "ino/formIno?modo=Marítimo&impoexpo=Exportación")?>
+            <?=link_to("Marítimo", "ino/formIno?transporte=Marítimo&impoexpo=Exportación")?>
 	</div></td>
 <?
 	}
@@ -70,7 +70,7 @@
 
 ?>
         <td align="left">
-			<?=link_to("Aéreo", "ino/formIno?modo=Aéreo&impoexpo=Triangulación" )?>
+			<?=link_to("Aéreo", "ino/formIno?transporte=Aéreo&impoexpo=Triangulación" )?>
 		</td>
 <?
 	}
@@ -80,7 +80,7 @@
 
 ?>
         <td><div align="left">
-			<?=link_to("Marítimo", "ino/formIno?modo=Marítimo&impoexpo=Triangulación")?>
+			<?=link_to("Marítimo", "ino/formIno?transporte=Marítimo&impoexpo=Triangulación")?>
 		</div></td>
 <?
 	}

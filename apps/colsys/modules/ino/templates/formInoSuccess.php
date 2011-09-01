@@ -23,8 +23,10 @@ Ext.onReady(function(){
     Ext.form.Field.prototype.msgTarget = 'side';
     
     var formPanel = new FormMasterPanel({
-        title: "<?=$id?"Edición de Referencia ".$referencia->getCaReferencia():"Nueva Referencia"?>"
-        <?=$id?",idmaster:".$id:""?>
+        title: "<?=$id?"Edición de Referencia ".$referencia->getCaReferencia():"Nueva Referencia"?>",
+        idmaster: <?=$id?$id:"null"?>,
+        impoexpo: "<?=$impoexpo?>",
+        transporte: "<?=$transporte?>"
     });
 
     formPanel.render("panel");

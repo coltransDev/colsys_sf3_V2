@@ -147,7 +147,7 @@ class inoActions extends sfActions {
         $this->refList = $this->pager->execute();
         /*if ($this->pager->getResultsInPage() == 1 && $this->pager->getPage() == 1) {
             $refs = $this->refList;
-            $this->redirect("ino/verReferencia?id=" . $refs[0]->getCaIdmaster());
+            $this->redirect("ino/verReferencia?idmaster=" . $refs[0]->getCaIdmaster());
         }*/
         $this->criterio = $criterio;
         $this->cadena = $cadena;        
@@ -161,14 +161,22 @@ class inoActions extends sfActions {
     public function executeFormIno(sfWebRequest $request) {
         $this->modo = $request->getParameter("modo");
         $this->impoexpo = $request->getParameter("impoexpo");
+        $this->transporte = $request->getParameter("transporte");
         $this->id = $request->getParameter("id");
         if($this->id>0)
         {
             $this->referencia = Doctrine::getTable("InoMaster")->find($this->id);
             $this->modo = $this->referencia->getCaTransporte();
         }
-        else
+        else{
             $this->nivel = $this->getNivel();
+        }
+        
+        //$response = sfContext::getInstance()->getResponse();
+        //$response->addJavaScript("ext4/ext-all-debug.js", 'last');
+        //$response->addJavaScript("ext4/ext3-core-compat", 'last');
+        //$response->addJavaScript("ext4/ext3-compat", 'last');
+        //$response->addStylesheet("extjs4/css/ext-all.css", 'last');
     }
 
     /**
@@ -192,12 +200,14 @@ class inoActions extends sfActions {
             $fchreferencia = $request->getParameter("fchreferencia");
             $fchreferenciaTm = strtotime($fchreferencia);
 
-            $this->id=($request->getParameter("id")!="")?$request->getParameter("id"):"0";
+            $idmaster=$request->getParameter("idmaster");
 
-            $ino = Doctrine::getTable("InoMaster")->find($this->id);
-
-            if(!$ino)
+            if( $idmaster ){
+                $ino = Doctrine::getTable("InoMaster")->find($idmaster);
+                $this->forward404Unless( $ino );
+            }else{
                 $ino = new InoMaster();
+            }
             
             $numRef = InoMasterTable::getNumReferencia($impoexpo, $transporte, $modalidad, $idorigen, $iddestino, date("m", $fchreferenciaTm), date("Y", $fchreferenciaTm));
             $ino->setCaReferencia($numRef);
@@ -231,10 +241,11 @@ class inoActions extends sfActions {
      * @param sfRequest $request A request object
      */
     public function executeDatosMaster(sfWebRequest $request) {        
-        $this->id = $request->getParameter("id");
-        $this->forward404Unless($this->id);
+        $idmaster = $request->getParameter("idmaster");
+        $this->forward404Unless($idmaster);
 
-        $ino = Doctrine::getTable("InoMaster")->find($this->id);
+        $ino = Doctrine::getTable("InoMaster")->find($idmaster);
+        $this->forward404Unless($ino);
      
         try {
             $data["impoexpo"]=utf8_encode($ino->getCaImpoexpo());
@@ -273,10 +284,47 @@ class inoActions extends sfActions {
         $this->modo = $request->getParameter("modo");
         // $this->nivel = $this->getNivel();
 
-        $this->forward404Unless($request->getParameter("id"));
-        $this->referencia = Doctrine::getTable("InoMaster")->find($request->getParameter("id"));
+        $this->forward404Unless($request->getParameter("idmaster"));
+        $this->referencia = Doctrine::getTable("InoMaster")->find($request->getParameter("idmaster"));
 
         $this->forward404Unless($this->referencia);
+    }
+
+
+    /**
+     *
+     *
+     * @param sfRequest $request A request object
+     */
+    public function executeBalanceReferencia(sfWebRequest $request) {
+        $this->modo = $request->getParameter("modo");
+        // $this->nivel = $this->getNivel();
+
+        $this->forward404Unless($request->getParameter("id"));
+        $ref = Doctrine::getTable("InoMaster")->find($request->getParameter("id"));
+
+        $this->forward404Unless($ref);
+
+
+        $totales = array();
+
+
+        $hijas = $ref->getInoHouse();
+
+        foreach( $hijas as $hija ){  
+            $comprobantes = $hija->getInoComprobante();
+            $totales["factCliente"] = 0;
+            foreach( $comprobantes as $comp ){
+                print_r( $comp->getValor() );
+                $totales["factCliente"]+=$comp->getValor();
+            }
+        }
+
+
+        $this->totales = $totales;
+
+
+
     }
 
     /*     * ***********************************************************************
@@ -427,6 +475,36 @@ class inoActions extends sfActions {
 
 
         $this->setTemplate("responseTemplate");
+    }
+    
+    /**
+     * Carga los datos del reporte al crear una hija
+     *
+     * @param sfRequest $request A request object
+     */
+    public function executeDatosReporteCarga(sfWebRequest $request) {
+
+        $data=array();
+        $reporte = Doctrine::getTable("Reporte")->find( $request->getParameter("idreporte")  );
+
+        $prov=$reporte->getProveedores();
+        if(count($prov)>0)
+        {
+            $data["idproveedor"]=$prov[0]->getCaIdtercero();
+            $data["proveedor"]=$prov[0]->getCaNombre();
+        }
+
+        $data["doctransporte"]=$reporte->getDocTransporte();
+
+        $data["numpiezas"]=preg_replace( "{[a-zA-Z]+}", '', $reporte->getPiezas());
+        $data["mpiezas"]=trim(preg_replace( "{[0-9.]+}", '', $reporte->getPiezas()));
+        $data["peso"]=preg_replace( "{[a-zA-Z]+}", '', $reporte->getPeso());
+        $vol=(explode(" ", preg_replace( "{[a-zA-Z]+}", '', $reporte->getVolumen())));
+        $data["volumen"]=$vol[0];
+        $this->responseArray=array("success"=>true,"data"=>$data);
+        $this->setTemplate("responseTemplate");
+
+
     }
 
     /*     * ***********************************************************************
@@ -626,57 +704,25 @@ class inoActions extends sfActions {
     public function executeDatosGridCostosPanel(sfWebRequest $request) {
         $idmaster = $request->getParameter("idmaster");
         $this->forward404Unless($idmaster);
-        /* $inoHouses = Doctrine::getTable("InoHouse")
-          ->createQuery("c")
-          ->select("c.*, cl.*")
-          //->innerJoin("c.Ids cl")
-          ->innerJoin("c.Cliente cl")
-          ->leftJoin( "c.InoComprobante comp" )
-          ->leftJoin( "comp.InoTipoComprobante tcomp" )
-          ->where("c.ca_idmaster = ?", $idmaster)
-          ->addOrderBy( "cl.ca_compania" )
-          ->execute(); */
-
-        $transacciones = Doctrine::getTable("InoTransaccion")
-                        ->createQuery("t")
-                        ->select("t.*, c.ca_idcomprobante, c.ca_consecutivo, con.ca_concepto, id.ca_nombre, tp.ca_tipo, tp.ca_comprobante")
-                        ->innerJoin("t.InoComprobante c")
-                        ->innerJoin("c.InoTipoComprobante tp")
-                        ->innerJoin("t.InoConcepto con")
-                        ->innerJoin("c.Ids id")
-                        ->where("t.ca_idmaster = ?", $idmaster)
-                        //->addWhere("c.ca_estado = ?", InoComprobante::TRANSFERIDO)
-                        //->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+        
+        $costos = Doctrine::getTable("InoCosto")
+                        ->createQuery("c")
+                        ->select("c.ca_idinocosto, c.ca_idmaster, c.ca_neto, c.ca_venta, c.ca_factura, 
+                                  c.ca_tcambio, c.ca_tcambio_usd, c.ca_idcosto, p.ca_sigla, i.ca_nombre, 
+                                  c.ca_idmoneda, cs.ca_costo")                        
+                        ->innerJoin("c.Costo cs")
+                        ->innerJoin("c.IdsProveedor p")
+                        ->innerJoin("p.Ids i")
+                        ->where("c.ca_idmaster = ?", $idmaster)                        
+                        ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
                         ->execute();
-        $data = array();
+        
+        foreach( $costos as $key=>$val ){
+            $costos[$key]["i_ca_nombre"] = utf8_encode($costos[$key]["i_ca_nombre"]);
+            $costos[$key]["cs_ca_costo"] = utf8_encode($costos[$key]["cs_ca_costo"]);
+        } 
 
-        foreach ($transacciones as $transaccion) {
-
-
-            $comprobante = $transaccion->getInoComprobante();
-            $k = 0;
-
-            $tipo = $comprobante->getInoTipoComprobante();
-
-            $row = array();
-            $row["idmaster"] = $idmaster;
-            $row["idconcepto"] = $transaccion->getCaIdconcepto();
-            $row["concepto"] = $transaccion->getInoConcepto()->getCaConcepto();
-            $row["idproveedor"] = $comprobante->getCaId();
-            $row["proveedor"] = utf8_encode($comprobante->getIds()->getCaNombre());
-            $row["comprobante"] = utf8_encode($tipo . " " . str_pad($comprobante->getCaConsecutivo(), 6, "0", STR_PAD_LEFT));
-            $row["fchcomprobante"] = utf8_encode($comprobante->getCaFchcomprobante());
-            $row["idcomprobante"] = $comprobante->getCaIdcomprobante();
-            $row["valor"] = $comprobante->getValor();
-            $row["cambio"] = $comprobante->getCaTasacambio();
-            $row["idmoneda"] = $comprobante->getCaIdmoneda();
-            $row["color"] = "";
-
-            $data[] = $row;
-        }
-
-
-        $this->responseArray = array("success" => true, "root" => $data, "total" => count($data));
+        $this->responseArray = array("success" => true, "root" => $costos, "total" => count($costos));
         $this->setTemplate("responseTemplate");
     }
     
@@ -741,6 +787,152 @@ class inoActions extends sfActions {
 
         $this->setTemplate("responseTemplate");
     }
+    
+    
+    
+    /*     * ***********************************************************************
+     *
+     *   Acciones para el cuadro de auditoria
+     *
+     * ************************************************************************* */
+
+    /**
+     *
+     *
+     * @param sfRequest $request A request object
+     */
+    public function executeFormCosto(sfWebRequest $request) {
+        
+        $this->utilidades = array();
+        
+        $idinocosto = $request->getParameter("idinocosto");
+        if ($idinocosto) {
+            $inoCosto = Doctrine::getTable("InoCosto")->find($idinocosto);
+            $this->forward404Unless($inoCosto);
+            
+            $referencia = $inoCosto->getInoMaster();
+            
+            /*$utilidades = Doctrine::getTable("InoUtilidadSea")
+                ->createQuery("u")
+                ->addWhere("u.ca_referencia = ?", $referencia->getCaReferencia())
+                ->addWhere("u.ca_idcosto = ?", $inoCosto->getCaIdcosto())  
+                ->addWhere("u.ca_factura = ?", $inoCosto->getCaFactura())        
+                ->execute();
+            foreach ($utilidades as $ut) {
+                $this->utilidades[$ut->getCaHbls()] = $ut->getCaValor();
+            }*/
+            
+        } else {
+            $inoCosto = new InoCosto();
+            
+            $this->forward404Unless($request->getParameter("idmaster"));
+            $referencia = Doctrine::getTable("InoMaster")->find($request->getParameter("idmaster"));
+            $this->forward404Unless($referencia);
+
+        }
+        
+        $this->inoClientes = array();
+        /*$this->inoClientes = Doctrine::getTable("InoClientesSea")
+                ->createQuery("u")
+                ->innerJoin("u.Cliente cl")
+                ->addWhere("u.ca_referencia = ?", $referencia->getCaReferencia())
+                ->addOrderBy("u.ca_hbls")
+                ->execute();*/
+        
+        $this->form = new CostosForm();
+        $this->form->setReferencia($referencia);
+        $this->form->setInoClientes($this->inoClientes);
+        $this->form->configure();
+
+        if ($request->isMethod('post')) {
+
+            $bindValues = array();
+            $bindValues["idmaster"] = intval($request->getParameter("idmaster"));
+            $bindValues["idinocosto"] = intval($request->getParameter("idinocosto"));
+            $bindValues["idcosto"] = intval($request->getParameter("idcosto"));
+            $bindValues["idmoneda"] = $request->getParameter("idmoneda");            
+            $bindValues["factura"] = $request->getParameter("factura");
+            $bindValues["factura_ant"] = $request->getParameter("factura_ant");
+            $bindValues["fchfactura"] = $request->getParameter("fchfactura");
+            $bindValues["neto"] = $request->getParameter("neto");
+            $bindValues["venta"] = $request->getParameter("venta");
+            $bindValues["tcambio"] = $request->getParameter("tcambio");
+            $bindValues["tcambio_usd"] = $request->getParameter("tcambio_usd");
+            $bindValues["idproveedor"] = $request->getParameter("idproveedor");
+
+            /*foreach ($this->inoClientes as $ic) {
+                $bindValues["util_" . $ic->getCaIdinocliente()] = $request->getParameter("util_" . $ic->getCaIdinocliente());
+            }*/
+
+            $this->form->bind($bindValues);
+            if ($this->form->isValid()) {
+                $conn = Doctrine::getTable("Reporte")->getConnection();
+                $conn->beginTransaction();
+                try {
+
+                    if ($bindValues["factura_ant"]) {
+                        $utils = Doctrine::getTable("InoUtilidadSea")
+                                ->createQuery("u")
+                                ->addWhere("u.ca_referencia = ?", $bindValues["referencia"])
+                                ->addWhere("u.ca_idcosto = ?", $bindValues["idcosto"])
+                                ->addWhere("u.ca_factura = ?", $bindValues["factura_ant"])
+                                ->execute();
+                        foreach ($utils as $u) {
+                            $u->delete($conn);
+                        }
+                    }
+
+                    if (!$idinocosto) {
+                        $inoCosto->setCaIdmaster($bindValues["idmaster"]);
+                    }
+                    $inoCosto->setCaIdcosto($bindValues["idcosto"]);
+                    $inoCosto->setCaIdmoneda($bindValues["idmoneda"]);
+                    $inoCosto->setCaFactura($bindValues["factura"]);
+                    $inoCosto->setCaFchfactura($bindValues["fchfactura"]);
+                    $inoCosto->setCaNeto($bindValues["neto"]);
+                    $inoCosto->setCaVenta($bindValues["venta"]);
+                    $inoCosto->setCaTcambio($bindValues["tcambio"]);
+                    $inoCosto->setCaTcambioUsd($bindValues["tcambio_usd"]);
+                    $inoCosto->setCaIdproveedor($bindValues["idproveedor"]);
+                    $inoCosto->save($conn);
+
+
+                    foreach ($bindValues as $key => $val) {
+                        if (substr($key, 0, 4) == "util") {
+                            if ($val) {
+                                $oid = substr($key, 5);                                
+                                $ic = Doctrine::getTable("InoClientesSea")
+                                        ->createQuery("ic")
+                                        ->addWhere("ic.ca_idinocliente = ? ", $oid)
+                                        ->fetchOne();
+
+                                $ut = new InoUtilidadSea();
+                                $ut->setCaReferencia($bindValues["referencia"]);
+                                $ut->setCaIdcliente($ic->getCaIdcliente());
+                                $ut->setCaHbls($ic->getCaHbls());
+                                $ut->setCaIdcosto($bindValues["idcosto"]);
+                                $ut->setCaFactura($bindValues["factura"]);
+                                $ut->setCaValor($val);
+                                $ut->save($conn);
+                            }
+                        }
+                    }
+                    $conn->commit();
+                    $this->redirect("ino/verReferencia?idmaster=" . $referencia->getCaIdmaster());
+                } catch (Exception $e) {                    
+                    throw $e;
+                }
+            }
+        }
+                
+        $this->referencia = $referencia;
+
+        $this->inoCosto = $inoCosto;
+    }
+    
+    
+    
+    
 
     /*     * ***********************************************************************
      *
@@ -776,27 +968,11 @@ class inoActions extends sfActions {
         $this->setTemplate("responseTemplate");
     }
 
-    public function executeDatosReporteCarga(sfWebRequest $request) {
-
-        $data=array();
-        $reporte = Doctrine::getTable("Reporte")->find( $request->getParameter("idreporte")  );
-
-        $prov=$reporte->getProveedores();
-        if(count($prov)>0)
-        {
-            $data["idproveedor"]=$prov[0]->getCaIdtercero();
-            $data["proveedor"]=$prov[0]->getCaNombre();
-        }
-
-        $data["doctransporte"]=$reporte->getDocTransporte();
-
-        $data["numpiezas"]=preg_replace( "{[a-zA-Z]+}", '', $reporte->getPiezas());
-        $data["mpiezas"]=trim(preg_replace( "{[0-9.]+}", '', $reporte->getPiezas()));
-        $data["peso"]=preg_replace( "{[a-zA-Z]+}", '', $reporte->getPeso());
-        $vol=(explode(" ", preg_replace( "{[a-zA-Z]+}", '', $reporte->getVolumen())));
-        $data["volumen"]=$vol[0];
-        $this->responseArray=array("success"=>true,"data"=>$data);
-        $this->setTemplate("responseTemplate");
-    }
+    
+    
+    
+    
+    
+    
 }
 

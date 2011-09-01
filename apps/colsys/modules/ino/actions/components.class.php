@@ -28,7 +28,7 @@ class inoComponents extends sfComponents {
      */
 
     public function executeFormMasterPanel() {
-        $this->impoexpo=$this->getRequestParameter("impoexpo");        
+        
     }
 
     /*
@@ -69,24 +69,24 @@ class inoComponents extends sfComponents {
         $q = Doctrine::getTable("InoTipoComprobante")
                         ->createQuery("t")
                         ->select("t.ca_idtipo, t.ca_tipo, t.ca_comprobante, t.ca_titulo, e.ca_sigla")
-                        ->innerJoin("t.IdsSucursal s")
-                        ->innerJoin("s.Ids i")
-                        ->innerJoin("i.IdsEmpresa e")
+                        //->innerJoin("t.IdsSucursal s")
+                        //->innerJoin("s.Ids i")
+                        //->innerJoin("s.Empresa e")
                         ->addWhere("t.ca_tipo = ?", "F")
                         ->addOrderBy("t.ca_tipo, t.ca_comprobante");
         
 
-        if (isset($this->empresa)) {
-            $q->addWhere("e.ca_sigla = ?", $this->empresa);
+        if (isset($this->empresa) && $this->empresa ) {
+            //$q->addWhere("e.ca_sigla = ?", $this->empresa);
         }
-
-
+                
         $tipos = $q->setHydrationMode(Doctrine::HYDRATE_SCALAR)->execute();
+        
         $tiposArray = array();
         foreach ($tipos as $tipo) {
             $tipoStr = "";
             if (!isset($this->empresa)) {
-                $tipoStr .= $tipo["e_ca_sigla"] . " » ";
+                //$tipoStr .= $tipo["e_ca_sigla"] . " » ";
             }
             $tipoStr .= $tipo["t_ca_tipo"] . "-" . str_pad($tipo["t_ca_comprobante"], 2, "0", STR_PAD_LEFT) . " " . $tipo["t_ca_titulo"];
             $tiposArray[] = array("idtipo" => $tipo["t_ca_idtipo"], "tipo" => utf8_encode($tipoStr));

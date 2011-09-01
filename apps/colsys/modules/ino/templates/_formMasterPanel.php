@@ -13,7 +13,7 @@ include_component("widgets", "widgetAgente");
 ?>
 <script type="text/javascript">
     FormMasterPanel = function( config ){
-        Ext.apply(this, config);
+        Ext.apply(this, config);        
         FormMasterPanel.superclass.constructor.call(this, {
             deferredRender:false,
             autoHeight:true,
@@ -74,7 +74,7 @@ include_component("widgets", "widgetAgente");
                                         xtype:"hidden",
                                         id: 'impoexpo',
                                         name: 'impoexpo',
-                                        value:'<?=$impoexpo?>'
+                                        value: this.impoexpo
                                     },
                                 new WidgetModalidad({fieldLabel: 'Modalidad',
                                                     id: 'modalidad',
@@ -131,7 +131,7 @@ include_component("widgets", "widgetAgente");
                                         xtype:"hidden",
                                         id: 'transporte',
                                         name: 'transporte',
-                                        value:'<?=  Constantes::MARITIMO?>'
+                                        value: this.transporte
                                 },
                                 new WidgetLinea({fieldLabel: 'Linea',
                                                  linkTransporte: "transporte",
@@ -258,9 +258,9 @@ include_component("widgets", "widgetAgente");
                     url: "<?=url_for("ino/guardarMaster")?>",
                     waitMsg:'Guardando...',
                     waitTitle:'Por favor espere...',
-                    params:{id:this.id},
+                    params:{idmaster:this.idmaster},
                     success:function(form,action){
-                        document.location = "/<?="ino/verReferencia"?>?id="+action.result.idmaestra;
+                        document.location = "/<?="ino/verReferencia"?>?idmaster="+action.result.idmaestra;
                     },
                     failure:function(form,action){
                         Ext.MessageBox.alert('Error Message', "Se ha presentado un error"+(action.result?": "+action.result.errorInfo:"")+" "+(action.response?"\n Codigo HTTP "+action.response.status:""));
@@ -281,7 +281,7 @@ include_component("widgets", "widgetAgente");
                 this.load({
                     url:'<?=url_for("ino/datosMaster")?>',
                     waitMsg:'cargando...',
-                    params:{id:this.idmaster},
+                    params:{idmaster:this.idmaster},
                     success:function(response,options){
 
                         res = Ext.util.JSON.decode( options.response.responseText );
