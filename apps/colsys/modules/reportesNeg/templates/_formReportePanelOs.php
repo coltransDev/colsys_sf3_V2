@@ -239,7 +239,7 @@ var idreporte='<?=$idreporte?>';
        onAfterload:function()
        {
 <?
-                foreach( $issues as $issue ){
+                /*foreach( $issues as $issue ){
                     $info = str_replace("\"", "'",str_replace("\n", "<br />",$issue["t_ca_title"].":<br />".$issue["t_ca_info"]));
                     ?>
                     info = "<?=$info?>";
@@ -258,7 +258,7 @@ var idreporte='<?=$idreporte?>';
                     }
                     ?>
 <?
-                }
+                }*/
 ?>
                 $('.help').tooltip({track: true, fade: 250, opacity: 1, top: -15, extraClass: "pretty fancy" });
                 $('.helpL').tooltip({track: true, fade: 250, opacity: 1, top: -15, extraClass: "prettyL fancyL" });

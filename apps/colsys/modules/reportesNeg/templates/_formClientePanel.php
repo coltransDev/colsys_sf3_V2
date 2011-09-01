@@ -69,7 +69,7 @@ include_component("widgets", "widgetContactoCliente");
                             width:100
                         }
                         <?
-                        if($modo==Constantes::MARITIMO && $impoexpo==constantes::IMPO)
+                        if(isset($modo) && $modo==Constantes::MARITIMO && $impoexpo==constantes::IMPO)
                         {
                         ?>
                         ,
@@ -82,7 +82,7 @@ include_component("widgets", "widgetContactoCliente");
 
                         <?
                         }
-                        else if($impoexpo==constantes::EXPO)
+                        else if(isset($impoexpo) && $impoexpo==constantes::EXPO)
                         {
                         ?>
                         ,
@@ -98,7 +98,7 @@ include_component("widgets", "widgetContactoCliente");
                     ]
                 }
 				<?
-				if($impoexpo != Constantes::EXPO)
+				if( isset($impoexpo) && $impoexpo != Constantes::EXPO)
 				{
 				?>
 				,                
