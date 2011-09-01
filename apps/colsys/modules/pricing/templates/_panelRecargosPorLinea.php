@@ -419,6 +419,11 @@
                     if( record.data.idrecargo && field=="recargo" ){
                         return false;
                     }
+                    
+                    if( record.data.consecutivo && field=="concepto" ){
+                        return false;
+                    }
+                    
                 }
 
                 return Ext.grid.ColumnModel.prototype.isCellEditable.call(this, colIndex, rowIndex);
@@ -697,6 +702,7 @@ foreach ($parametros as $aplicacion) {
                                     changes['transporte']=this.transporte;
                                     changes['idlinea']=r.data.idlinea;
                                     changes['idrecargo']=r.data.idrecargo;
+                                    changes['idconcepto']=r.data.idconcepto;
                                     changes['idmoneda']=r.data.idmoneda;
                                     if(changes['inicio']){
                                         changes['inicio']=Ext.util.Format.date(changes['inicio'],'Y-m-d');
@@ -725,6 +731,7 @@ foreach ($parametros as $aplicacion) {
                                                 if( res.id && res.success){
                                                     var rec = storeRecargos.getById( res.id );
                                                     rec.set("sel", false); //Quita la seleccion de todas las columnas
+                                                    rec.set("consecutivo", 1);//Para evitar que editen las llaves primarias                                                    
                                                     rec.commit();
                                                 }else{
                                                     Ext.MessageBox.alert('Error', "Ha ocurrido el siguiente error"+res.errorInfo);
