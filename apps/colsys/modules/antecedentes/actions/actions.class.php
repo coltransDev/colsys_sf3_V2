@@ -157,7 +157,7 @@ class antecedentesActions extends sfActions {
         $this->sucursal=$this->user->getIdSucursal();
 
         $this->login=$this->user->getUserId();
-        if($this->sucursal=="BOG")
+        /*if($this->sucursal=="BOG")
         {              
             $sql="select m.ca_referencia,m.ca_modalidad,m.ca_motonave,m.ca_fchembarque,m.ca_fcharribo,m.ca_usucreado,ori.ca_ciudad ca_ciu_origen,des.ca_ciudad ca_ciu_destino
                 from tb_inomaestra_sea m
@@ -169,7 +169,7 @@ class antecedentesActions extends sfActions {
             $st = $con->execute($sql);
             $this->refcarpetas = $st->fetchAll();
 
-        }
+        }*/
 
         $this->sufijos = ParametroTable::retrieveByCaso("CU010");
 

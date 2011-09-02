@@ -258,8 +258,7 @@ if($format!="")
 <br />
 
 <?
-if($sucursal=="BOG")
-//if($login=="maquinche")
+if($sucursal=="BOG" && 1==2)
 {
 ?>
     <h2> Referencias sin crear Carpeta</h2>
