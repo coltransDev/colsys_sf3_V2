@@ -29,25 +29,23 @@ class CostosForm extends BaseForm{
 															) );
         
         
-        $queryMoneda = Doctrine::getTable("Moneda")
-                        ->createQuery("c")                        
-                        ->addWhere("c.ca_idmoneda = ? OR c.ca_idmoneda = ?", array("USD", "COP"))                        
-                        ->addOrderBy("c.ca_nombre");
+        
         
 		$widgets['idmoneda'] = new sfWidgetFormDoctrineChoice(array(
 															  'model' => 'Moneda',
 															  'add_empty' => false,
 															  'method' => "getCaNombre",
-                                                              'order_by' => array("ca_nombre","ASC"),
-                                                              'query' => $queryMoneda
+                                                              'order_by' => array("ca_nombre","ASC")
+                                                              
 															  
-															) );
+															), array( "onchange"=>"calc_neto()" ) );
         
         $widgets["fchcreado"] = new sfWidgetFormInputHidden();
         $widgets["factura_ant"] = new sfWidgetFormInputHidden();
         $widgets["factura"] = new sfWidgetFormInputText(array(), array("size"=>15, "maxlength"=>15 ));
 		$widgets["fchfactura"] = new sfWidgetFormExtDate();
         $widgets['tcambio'] = new sfWidgetFormInputText(array(), array("size"=>9, "maxlength"=>9 , "onchange"=>"calc_neto()" ));
+        $widgets['tcambio_usd'] = new sfWidgetFormInputText(array(), array("size"=>9, "maxlength"=>9 , "onchange"=>"calc_neto()" ));
         $widgets['neto'] = new sfWidgetFormInputText(array(), array("size"=>15, "maxlength"=>15, "onchange"=>"calc_neto()" ));
         $widgets['venta'] = new sfWidgetFormInputText(array(), array("size"=>15, "maxlength"=>15, "onfocus"=>"calc_utilidad()",  "onchange"=>"calc_utilidad()" ));
         $widgets['proveedor'] = new sfWidgetFormInputText(array(), array("size"=>71, "maxlength"=>50 ));
@@ -87,6 +85,9 @@ class CostosForm extends BaseForm{
 		$validator['tcambio'] = new sfValidatorNumber(array('required' => true, "min"=>1, "max"=>99999 ), 
 														array('required' => 'Requerido',
 																'invalid' => 'No valido'));	
+        $validator['tcambio_usd'] = new sfValidatorNumber(array('required' => true, "min"=>1, "max"=>99999 ), 
+														array('required' => 'Requerido',
+																'invalid' => 'No valido'));
         
         $validator['neto'] = new sfValidatorNumber(array('required' => true  ), 
 														array('required' => 'Requerido',

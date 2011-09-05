@@ -7,16 +7,36 @@
         var venta = document.getElementById("venta");
         var neto = document.getElementById("neto");
         var tcambio = document.getElementById("tcambio");
+        var tcambio_usd = document.getElementById("tcambio_usd");
        
-        to.value = Math.round(venta.value - Math.round(neto.value * tcambio.value));
+        to.value = Math.round(venta.value - Math.round(neto.value * tcambio.value * tcambio_usd.value));
     }
     
     function calc_neto(){
-        var to= document.getElementById("netopesos");        
+        var netopesos= document.getElementById("netopesos");   
+        var netousd= document.getElementById("netousd");     
         var neto = document.getElementById("neto");
         var tcambio = document.getElementById("tcambio");
-         
-        to.value =Math.round(eval(neto.value * tcambio.value),2);
+        var tcambio_usd = document.getElementById("tcambio_usd");
+        
+        var idmoneda = document.getElementById("idmoneda");
+        
+        if( idmoneda.value=="USD" || idmoneda.value=="<?=$monedaLocal?>" ){
+            tcambio_usd.value=1;
+            tcambio_usd.disabled = true;
+        }else{
+            tcambio_usd.disabled = false;
+        }
+        
+        if( idmoneda.value=="<?=$monedaLocal?>" ){
+            tcambio.value=1;
+            tcambio.disabled = true;
+        }else{
+            tcambio.disabled = false;
+        }
+        
+        netousd.value =Math.round(eval(neto.value * tcambio_usd.value),2);
+        netopesos.value =Math.round(eval(neto.value * tcambio.value * tcambio_usd.value),2);
         
         calc_utilidad();
     }
@@ -58,7 +78,7 @@
         }        
         echo $form['fchcreado']->render();
         ?>
-        <table class="tableList alignLeft" width="80%">
+        <table class="tableList alignLeft" width="80%" border="0">
             <tr>
                 <th colspan="6">
                     <div align="center">
@@ -126,83 +146,7 @@
                     echo $form['idmoneda']->render();
                     ?>
                 </td>
-                <td>
-<!--                    <b>Tasa de Cambio a USD:</b><br />-->
-                   
-
-                </td>
-                <td>
-                   
-
-                </td>
-
-            </tr>   
-            <tr>
-                <td>
-                    <b>Valor Neto:</b><br />
-                    <?
-                    echo $form['neto']->renderError(); 
-                    if( $inoCosto  ){                                     
-                        $form->setDefault('neto', $inoCosto->getCaNeto() );
-                    }
-                    echo $form['neto']->render();
-                    ?>
-                    
-                </td>
-                <td>
-                    
-                </td>
-                <td>
-                    &nbsp;                    
-                </td>
-                <td>
-                   <b>Tasa de Cambio Moneda Local:</b><br />
-                    <?
-                    echo $form['tcambio']->renderError(); 
-                    if( $inoCosto  ){                                     
-                        $form->setDefault('tcambio', $inoCosto->getCaTcambio() );
-                    }
-                    echo $form['tcambio']->render();
-                    ?>
-                    
-                </td>
-                <td>
-                   <b>Neto en Moneda Local:</b><br />
-                    <input type="text" id="netopesos" maxlength="15" size="14" readOnly="true" />
-
-                </td>
-                
-            </tr> 
-            <tr>
-               <td>
-                    <b>Venta en Moneda Local:</b><br />
-                    <?
-                    echo $form['venta']->renderError(); 
-                    if( $inoCosto  ){                                     
-                        $form->setDefault('venta', $inoCosto->getCaVenta() );
-                    }
-                    echo $form['venta']->render();
-                    ?>
-                    
-                </td>
-                <td>
-                    <b>INO en Venta:</b><br />
-                    <input type="text" id="utilidad" maxlength="15" size="14" readOnly="true" />
-
-                </td>
-                <td>
-                    <b></b><br />
-                    <?
-                    
-                    ?>
-                    
-                </td>
-                <td>
-                    <b></b><br />
-                   
-
-                </td>
-                <td colspan="2" rowspan="2" valign="top">
+                <td colspan="2" rowspan="4" valign="top">
                     <b>Distribuci&oacute;n INO x Sobreventa:</b><br />
                     <div id="utils">
                         <table border="0">
@@ -237,6 +181,83 @@
                         </table>          
                     </div>
                 </td>
+               
+            </tr>   
+            <tr>
+                <td>
+                    <b>Valor Neto:</b><br />
+                    <?
+                    echo $form['neto']->renderError(); 
+                    if( $inoCosto  ){                                     
+                        $form->setDefault('neto', $inoCosto->getCaNeto() );
+                    }
+                    echo $form['neto']->render();
+                    ?>
+                    
+                </td>
+                <td>
+                    <b>Tasa de Cambio a USD:</b><br />
+                    <?
+                    echo $form['tcambio_usd']->renderError(); 
+                    if( $inoCosto && $inoCosto->getCaTcambio() ){                                     
+                        $form->setDefault('tcambio_usd', $inoCosto->getCaTcambioUsd() );
+                    }else{
+                        $form->setDefault('tcambio_usd', 1 );                        
+                    }
+                    
+                    echo $form['tcambio_usd']->render();
+                    ?>
+                     
+                </td>
+                <td>                    
+                   <b>Neto en USD:</b><br />
+                    <input type="text" id="netousd" maxlength="15" size="14" readOnly="true" />
+
+                </td>           
+                </td>
+                <td>
+                   <b>Tasa de Cambio <?=$monedaLocal?>:</b><br />
+                    <?
+                    echo $form['tcambio']->renderError(); 
+                    if( $inoCosto  ){                                     
+                        $form->setDefault('tcambio', $inoCosto->getCaTcambio() );
+                    }
+                    echo $form['tcambio']->render();
+                    ?>
+                    
+                </td>
+               
+            </tr> 
+            <tr>
+               <td>
+                    <b>Neto <?=$monedaLocal?>:</b><br />
+                    <input type="text" id="netopesos" maxlength="15" size="14" readOnly="true" />
+                    
+                </td>
+                
+               <td>
+                    <b>Venta <?=$monedaLocal?>:</b><br />
+                    <?
+                    echo $form['venta']->renderError(); 
+                    if( $inoCosto  ){                                     
+                        $form->setDefault('venta', $inoCosto->getCaVenta() );
+                    }
+                    echo $form['venta']->render();
+                    ?>
+                    
+                </td>
+                <td>
+                    <b>INO en Venta:</b><br />
+                    <input type="text" id="utilidad" maxlength="15" size="14" readOnly="true" />
+
+                </td>
+                
+                <td>
+                    <b></b><br />
+                   
+
+                </td>
+                
             </tr>
             <tr>
                 <td colspan="4">

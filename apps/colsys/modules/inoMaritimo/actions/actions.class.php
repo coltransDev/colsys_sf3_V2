@@ -34,6 +34,9 @@ class inoMaritimoActions extends sfActions {
 
         $this->utilidades = array();
         
+        
+        $monedaLocal = $this->getUser()->getIdmoneda();
+        
         $oid = $request->getParameter("cl");
         if ($oid) {
             $inoCosto = Doctrine::getTable("InoCostosSea")->find($oid);
@@ -79,6 +82,7 @@ class inoMaritimoActions extends sfActions {
             $bindValues["neto"] = $request->getParameter("neto");
             $bindValues["venta"] = $request->getParameter("venta");
             $bindValues["tcambio"] = $request->getParameter("tcambio");
+            $bindValues["tcambio_usd"] = $request->getParameter("tcambio_usd");
             $bindValues["proveedor"] = $request->getParameter("proveedor");
 
             foreach ($this->inoClientes as $ic) {
@@ -112,6 +116,7 @@ class inoMaritimoActions extends sfActions {
                     $inoCosto->setCaNeto($bindValues["neto"]);
                     $inoCosto->setCaVenta($bindValues["venta"]);
                     $inoCosto->setCaTcambio($bindValues["tcambio"]);
+                    $inoCosto->setCaTcambioUsd($bindValues["tcambio_usd"]);
                     $inoCosto->setCaProveedor($bindValues["proveedor"]);
                     $inoCosto->save($conn);
 
@@ -149,6 +154,8 @@ class inoMaritimoActions extends sfActions {
         $this->referencia = $referencia;
 
         $this->inoCosto = $inoCosto;
+        
+        $this->monedaLocal = $monedaLocal;
     }
 
 }
