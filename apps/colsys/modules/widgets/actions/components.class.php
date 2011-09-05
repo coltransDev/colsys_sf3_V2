@@ -550,6 +550,16 @@ class widgetsComponents extends sfComponents {
             );
         }
     }
+    
+     public function executeWidgetCoordinadoresAduana() {
+        $usuarios = UsuarioTable::getCoordinadoresAduana();
+        $this->usuarios = array();
+        foreach ($usuarios as $usuario) {
+            $this->usuarios[] = array("login" => $usuario->getCaLogin(),
+                "nombre" => utf8_encode($usuario->getCaNombre())
+            );
+        }
+    }
 
     public function executeWidgetContinuacion() {
         $this->data = array();
