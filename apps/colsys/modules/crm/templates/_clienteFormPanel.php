@@ -940,7 +940,7 @@ include_component("widgets", "widgetCoordinadoresAduana");
                 scope: this,
                 handler: function(){                    
                     if( this.idcliente ){
-                        document.location = "/colsys_php/clientes.php?modalidad=N.i.t.&criterio="+this.idcliente;
+                        document.location = "/colsys_php/clientes.php?modalidad=idcliente&criterio="+this.idcliente;
                     }else{
                         document.location = "/colsys_php/clientes.php";
                     }
@@ -992,7 +992,7 @@ include_component("widgets", "widgetCoordinadoresAduana");
                         }
 
                         //document.location = "<?=url_for("crm/verCliente")?>?idcliente=?"+action.result.idcliente;
-                        document.location = "/colsys_php/clientes.php?modalidad=N.i.t.&criterio="+action.result.idcliente;
+                        document.location = "/colsys_php/clientes.php?modalidad=idcliente&criterio="+action.result.idcliente;
 
 
 
