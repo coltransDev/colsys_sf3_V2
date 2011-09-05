@@ -1144,6 +1144,14 @@ class traficosActions extends sfActions
 		$directory = $reporte->getDirectorio();			
 		$this->name = $directory.DIRECTORY_SEPARATOR.$file;
 		$this->setLayout("none");
+        
+        if(!file_exists($this->name) && !file_exists($this->name.".gz")){
+            $this->forward404("No se encuentra el archivo especificado");
+        }
+        
+        if( file_exists($this->name.".gz") ){
+            $this->name.=".gz";
+        }
 	}
 	
 	/***********************************************************************************

@@ -7,10 +7,15 @@ use_helper("MimeType");
 <?
 foreach( $files as $file ){
 	//$fileIdx = $user->addFile( $file );
+    if( substr($file, -3,3)==".gz"){
+        $nombreArchivo = substr($file,0, strlen($file)-3);
+    }else{
+        $nombreArchivo = $file;
+    }
 	?>
 	<li>
 		<?=mime_type_icon( basename($file) )?> 
-        <a href="<?=url_for("traficos/fileViewer?idreporte=".$reporte->getCaIdreporte()."&file=".base64_encode(basename($file)) )?>" target="_blank"><?=basename( $file )?></a>
+        <a href="<?=url_for("traficos/fileViewer?idreporte=".$reporte->getCaIdreporte()."&file=".base64_encode(basename($file)) )?>" target="_blank"><?=basename( $nombreArchivo )?></a>
 		
 		<?
 		if( $nivel>0 ){
