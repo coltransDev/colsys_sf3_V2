@@ -12,7 +12,7 @@ class myUser extends sfBasicSecurityUser
     }
 
 
-	public function setUserId( $userId  ){
+	/*public function setUserId( $userId  ){
 		$this->setAttribute('user_id', $userId );
 		$user = Doctrine::getTable("Usuario")->find( $userId );
 				
@@ -24,9 +24,10 @@ class myUser extends sfBasicSecurityUser
 			$this->setAttribute('email', $user->getCaEmail() );
 			$this->setAttribute('cargo', $user->getCaCargo() );
 			$this->setAttribute('extension', $user->getCaExtension() );
-			$this->setAttribute('idtrafico',  $user->getSucursal()->getEmpresa()->getCaIdtrafico());
+            $idtrafico = $user->getSucursal()->getEmpresa()->getCaIdtrafico();
+			$this->setAttribute('idtrafico',  $idtrafico );
             $this->setAttribute('idempresa',  $user->getSucursal()->getEmpresa()->getCaIdempresa());
-
+            $this->setAttribute('idmoneda',  $user->getSucursal()->getEmpresa()->getCaIdtrafico());
 			
 			$c = new Criteria();
 			$c->add(DepartamentoPeer::CA_NOMBRE, $user->getCaDepartamento() );
@@ -35,7 +36,7 @@ class myUser extends sfBasicSecurityUser
 				$this->setAttribute('iddepartamento', $departamento->getCaIddepartamento() );
 			}
 		}
-	}
+	}*/
 	
 	public function getUserId(){
 		return $this->getAttribute('user_id' );
@@ -51,6 +52,10 @@ class myUser extends sfBasicSecurityUser
 	
 	public function getIdSucursal(){
 		return $this->getAttribute('idsucursal' );
+	}
+    
+    public function getIdmoneda(){
+		return $this->getAttribute('idmoneda' );
 	}
 	
 	public function getIddepartamento(){
@@ -181,18 +186,28 @@ class myUser extends sfBasicSecurityUser
 			$this->setAttribute('email', $user->getCaEmail() );
 			$this->setAttribute('cargo', $user->getCaCargo() );			
 			$this->setAttribute('extension', $user->getCaExtension() );
-            $this->setAttribute('idtrafico', $user->getSucursal()->getEmpresa()->getCaIdtrafico() );
+            $idtrafico = $user->getSucursal()->getEmpresa()->getCaIdtrafico();
+            $this->setAttribute('idtrafico', $idtrafico );
             $this->setAttribute('idempresa', $user->getSucursal()->getEmpresa()->getCaIdempresa() );
 			$this->setAttribute('authmethod', $user->getCaAuthmethod() );
 			$this->setAttribute('forcechange', false );					
 			
+            
+            
 			$departamento = Doctrine::getTable("Departamento")
                                       ->createQuery("d")
                                       ->where("d.ca_nombre = ?", $user->getCaDepartamento())
                                       ->fetchOne();
 			if( $departamento ){
 				$this->setAttribute('iddepartamento', $departamento->getCaIddepartamento() );
-			}									
+			}
+            
+            $trafico = Doctrine::getTable("Trafico")->find( $idtrafico );
+            
+			if( $trafico ){
+                exit( $trafico->getCaIdmoneda() );
+				$this->setAttribute('idmoneda', $trafico->getCaIdmoneda() );
+			}
 
             $this->log("Login LDAP");            
 		}
@@ -219,7 +234,8 @@ class myUser extends sfBasicSecurityUser
 			$this->setAttribute('email', $user->getCaEmail() );
 			$this->setAttribute('cargo', $user->getCaCargo() );			
 			$this->setAttribute('extension', $user->getCaExtension() );
-            $this->setAttribute('idtrafico', $user->getSucursal()->getEmpresa()->getCaIdtrafico() );
+            $idtrafico = $user->getSucursal()->getEmpresa()->getCaIdtrafico();
+            $this->setAttribute('idtrafico', $idtrafico );
             $this->setAttribute('idempresa', $user->getSucursal()->getEmpresa()->getCaIdempresa() );
 			$this->setAttribute('authmethod', $user->getCaAuthmethod() );			
 			$this->setAttribute('forcechange', $user->getCaForcechange() );
@@ -231,6 +247,14 @@ class myUser extends sfBasicSecurityUser
 			if( $departamento ){
 				$this->setAttribute('iddepartamento', $departamento->getCaIddepartamento() );
 			}
+            
+            
+            $trafico = Doctrine::getTable("Trafico")->find( $idtrafico );
+            
+			if( $trafico ){
+				$this->setAttribute('idmoneda', $trafico->getCaIdmoneda() );
+			}
+            
             $this->log("Login SHA1");
             
 		}
