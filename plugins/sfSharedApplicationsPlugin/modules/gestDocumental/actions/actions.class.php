@@ -37,8 +37,14 @@ class gestDocumentalActions extends sfActions
         $archivos = sfFinder::type('file')->maxDepth(0)->in($directory);
         $this->files = array();
         foreach($archivos as $archivo ){
+            if( substr($archivo, -3,3)==".gz"){
+                $nombreArchivo = substr($archivo,0, strlen($archivo)-3);
+            }else{
+                $nombreArchivo = $archivo;
+            }
+            
 			$this->files[]=array("idarchivo"=>base64_encode(basename($archivo)),
-							"name"=>utf8_encode(basename($archivo)),
+							"name"=>utf8_encode(basename($nombreArchivo)),
                             "lastmod"=>time()
 					);
 		}
@@ -116,8 +122,12 @@ class gestDocumentalActions extends sfActions
         $this->archivo = $directory.$archivo;
 
 
-        if(!file_exists($this->archivo)){
+        if(!file_exists($this->archivo) && !file_exists($this->archivo.".gz")){
             $this->forward404("No se encuentra el archivo especificado");
+        }
+        
+        if( file_exists($this->archivo.".gz") ){
+            $this->archivo.=".gz";
         }
 
     	//session_cache_limiter('public');
