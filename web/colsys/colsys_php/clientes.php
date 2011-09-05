@@ -273,6 +273,8 @@ elseif (!isset($boton) and !isset($accion) and isset($criterio)){
                $criterio = substr($criterio, 0, $pos );
            }
            $condicion = "where ca_idalterno LIKE '".$criterio."%'";        
+        }else if( $modalidad == "idcliente"){           
+           $condicion = "where ca_idcliente = ".$criterio."";   
         }else{
 			$condicion = "where lower($campos[$modalidad]) like lower('%".$criterio."%')";
 		}
