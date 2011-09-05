@@ -204,8 +204,7 @@ class myUser extends sfBasicSecurityUser
             
             $trafico = Doctrine::getTable("Trafico")->find( $idtrafico );
             
-			if( $trafico ){
-                exit( $trafico->getCaIdmoneda() );
+			if( $trafico ){                
 				$this->setAttribute('idmoneda', $trafico->getCaIdmoneda() );
 			}
 
