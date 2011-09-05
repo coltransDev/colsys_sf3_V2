@@ -158,6 +158,7 @@ include_component("widgets", "widgetCoordinadoresAduana");
                                     new WidgetCoordinadoresAduana({
                                         fieldLabel: 'Coordinador Aduana',                                                                             
                                         name: 'login2',
+                                        allowBlank:false,
                                         hiddenName: 'coordinador'                                        
                                     })
                                     
