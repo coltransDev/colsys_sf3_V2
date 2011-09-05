@@ -95,7 +95,12 @@ class crmActions extends sfActions {
             }else{
                 $cliente->setCaVendedor( $this->getUser()->getUserId() );
             }
-                        
+           
+            if( $request->getParameter("coordinador") ){
+                $cliente->setCaCoordinador( $request->getParameter("coordinador") );
+            }else{
+                $cliente->setCaCoordinador( null );
+            }
             
             $idtrafico = $ids->getIdsTipoIdentificacion()->getCaIdtrafico();
             
@@ -113,10 +118,10 @@ class crmActions extends sfActions {
                 $cliente->setCaInterior($request->getParameter("interior") );
                 $cliente->setCaOficina($request->getParameter("oficina") );
                 $cliente->setCaComplemento($request->getParameter("complemento") );
-                $cliente->setCaLocalidad($request->getParameter("localidad") );
+                $cliente->setCaLocalidad(utf8_decode($request->getParameter("localidad")) );
             }else{
                 $cliente->setCaDireccion(utf8_decode($request->getParameter("dir_ot") )); 
-                $cliente->setCaLocalidad($request->getParameter("localidad_ot") );
+                $cliente->setCaLocalidad(utf8_decode($request->getParameter("localidad_ot")) );
             }
             
             
@@ -181,7 +186,7 @@ class crmActions extends sfActions {
         $data["website"] = $ids->getCaWebsite();
         
         $data["vendedor"] = $cliente->getCaVendedor();
-        
+        $data["coordinador"] = $cliente->getCaCoordinador();
         
         
         $data["title"] = utf8_encode($cliente->getCaSaludo());

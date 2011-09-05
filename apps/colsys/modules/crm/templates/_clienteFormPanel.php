@@ -38,6 +38,7 @@ $tiposnits=array("","Agente","Proveedor");
 include_component("widgets", "widgetCiudad");
 include_component("widgets", "widgetTipoIdentificacion");
 include_component("widgets", "widgetComerciales");
+include_component("widgets", "widgetCoordinadoresAduana");
 ?>
 <script type="text/javascript">
     ClienteFormPanel = function( config ) {
@@ -153,7 +154,14 @@ include_component("widgets", "widgetComerciales");
                                         name: 'login',
                                         hiddenName: 'vendedor'
                                         
+                                    }),
+                                    new WidgetCoordinadoresAduana({
+                                        fieldLabel: 'Coordinador Aduana',                                                                             
+                                        name: 'login2',
+                                        hiddenName: 'coordinador'                                        
                                     })
+                                    
+                                    
                                     
                            
                                 ]
