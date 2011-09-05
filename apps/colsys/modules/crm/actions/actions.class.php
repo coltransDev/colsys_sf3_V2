@@ -113,8 +113,10 @@ class crmActions extends sfActions {
                 $cliente->setCaInterior($request->getParameter("interior") );
                 $cliente->setCaOficina($request->getParameter("oficina") );
                 $cliente->setCaComplemento($request->getParameter("complemento") );
+                $cliente->setCaLocalidad($request->getParameter("localidad") );
             }else{
-                $cliente->setCaDireccion(utf8_decode($request->getParameter("dir_ot") ));                
+                $cliente->setCaDireccion(utf8_decode($request->getParameter("dir_ot") )); 
+                $cliente->setCaLocalidad($request->getParameter("localidad_ot") );
             }
             
             
@@ -168,10 +170,12 @@ class crmActions extends sfActions {
 
         $data = array();
         $ids = $cliente->getIds();
-        $data["idcliente"] = $cliente->getCaIdcliente();
+        $data["idcliente"] = $cliente->getCaIdcliente();        
         $data["compania"] = ($ids->getCaNombre());
         $data["idalterno"] = $ids->getCaIdalterno();
         $data["tipo_identificacion"] = $ids->getCaTipoidentificacion();
+        $data["idalterno_ant"] = $ids->getCaIdalterno();
+        $data["tipo_identificacion_ant"] = $ids->getCaTipoidentificacion();
         $data["idtrafico"] = $ids->getIdsTipoIdentificacion()->getCaIdtrafico();
         $data["dv"] = $ids->getCaDv();
         $data["website"] = $ids->getCaWebsite();
@@ -215,6 +219,9 @@ class crmActions extends sfActions {
         }else{
             $data["dir_ot"] = $cliente->getCaDireccion();
         }
+        
+        $data["localidad"] = utf8_encode($cliente->getCaLocalidad());
+        $data["localidad_ot"] = utf8_encode($cliente->getCaLocalidad());
         
         $data["idciudad"] = $cliente->getCaIdciudad();
         $data["ciudad"] = utf8_encode($cliente->getCiudad()->getCaCiudad());

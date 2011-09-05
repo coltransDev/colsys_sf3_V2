@@ -61,6 +61,14 @@ include_component("widgets", "widgetComerciales");
                                 name: 'idcliente'
                             },
                             {
+                                xtype:'hidden',
+                                id: 'idalterno_ant'
+                            },
+                            {
+                                xtype:'hidden',
+                                id: 'tipo_identificacion_ant'
+                            },
+                            {
                                 xtype: 'fieldset',
                                 border: true,
                                 title: 'Identificación',
@@ -303,6 +311,15 @@ include_component("widgets", "widgetComerciales");
                                         width: 500,
                                         maxLength: 80,
                                         name: 'dir_ot'                                       
+                                    },
+                                    {
+                                        xtype: 'textfield',
+                                        fieldLabel: 'Localidad',
+                                        msgTarget : 'side',
+                                        width: 200,
+                                        maxLength: 80,
+                                        name: 'localidad_ot',
+                                        allowBlank: true
                                     }
                                         
                                 ]
@@ -597,7 +614,41 @@ include_component("widgets", "widgetComerciales");
                                         width: 200,
                                         maxLength: 50
                                         
-                                    }
+                                    },
+                                    {
+                                                //the width of this field in the HBox layout is set directly
+                                                //the other 2 items are given flex: 1, so will share the rest of the space
+                                                width:          200,
+                                                xtype:          'combo',
+                                                mode:           'local',
+                                                triggerAction:  'all',
+                                                forceSelection: true,
+                                                editable:       false,
+                                                fieldLabel:     'Localidad',
+                                                name:           'localidad',                                                
+                                                displayField:   'name',
+                                                valueField:     'name',
+                                                allowBlank:     true,
+                                                itemSelector: 'div.search-item',
+                                                tpl:new Ext.XTemplate(
+                                                        '<tpl for="."><div class="search-item"><b>{name}</b><br /><span>{group} </span> </div></tpl>'
+                                                ),
+                                                store:          new Ext.data.JsonStore({
+                                                    fields : ['name',  'group'],
+                                                    data   : [
+                                                        <?
+                                                        $i=0;
+                                                        foreach($localidades as $key => $grupo){                                                             
+                                                             foreach($grupo as $localidad){
+                                                                 echo ($i++!=0)?",":"";
+                                                                 echo "{name : '$localidad',   group:'$key'}";
+                                                             }
+                                                        }  
+                                                        ?>
+                                                    ]
+                                                })
+                                                
+                                            }
                                     
                                 ]
                             },
@@ -1030,7 +1081,8 @@ include_component("widgets", "widgetComerciales");
 
         getDv: function(){
             
-            
+            var idalterno_ant = Ext.getCmp("idalterno_ant").getValue(); 
+            var tipo_ant = Ext.getCmp("tipo_identificacion_ant").getValue(); 
             
             var tipo = Ext.getCmp("tipo_identificacion_id");           
             if( tipo.getValue()=="1" ){
@@ -1065,26 +1117,30 @@ include_component("widgets", "widgetComerciales");
                 Ext.getCmp("dv_id").enable();
             }
                 
-            if( tipo.getValue()!="3" ){    
-                Ext.Ajax.request(
-                {
-                    waitMsg: 'Comprobando ID...',
-                    url: '<?=url_for("ids/comprobarId")?>',
-                    //Solamente se envian los cambios
-                    params :	{idalterno:Ext.getCmp("idalterno_id").getValue(),
-                                 tipo_identificacion:tipo.getValue()
-                                },
+            if( tipo.getValue()!="3" ){  
+                
+                if( !(idalterno_ant==Ext.getCmp("idalterno_id").getValue() && tipo_ant==tipo.getValue()) ){
+                   
+                    Ext.Ajax.request(
+                    {
+                        waitMsg: 'Comprobando ID...',
+                        url: '<?=url_for("ids/comprobarId")?>',
+                        //Solamente se envian los cambios
+                        params :	{idalterno:Ext.getCmp("idalterno_id").getValue(),
+                                     tipo_identificacion:tipo.getValue()
+                                    },
 
-                    callback :function(options, success, response){
+                        callback :function(options, success, response){
 
-                        var res = Ext.util.JSON.decode( response.responseText );
-                        //alert(res.id);
-                        if(res.id){
-                            document.location = '<?=url_for("crm/formCliente")?>?idcliente='+res.id
+                            var res = Ext.util.JSON.decode( response.responseText );
+                            //alert(res.id);
+                            if(res.id){
+                                document.location = '<?=url_for("crm/formCliente")?>?idcliente='+res.id
+                            }
                         }
-                    }
-                 }
-                );
+                     }
+                    );
+                }
             }
             
             
