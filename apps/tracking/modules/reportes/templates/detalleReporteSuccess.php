@@ -384,13 +384,20 @@ $statuss = $reporte->getRepStatus();
 	//Los archivos en la carpeta
 	if ($files) {
 		foreach ( $files as $file ) {
+            
+            if( substr($file, -3,3)==".gz"){
+                $nombreArchivo = substr($file,0, strlen($file)-3);
+            }else{
+                $nombreArchivo = $file;
+            }
+            
 			$user->addFile ( $file, $fileIdx );
 			$url = "general/fileViewer?idx=" . $fileIdx . "&token=" . md5 ( time().basename($file));
 		?>
 	<tr>
 		<td width="70%">
-		<div align="left" class="info"><?=mime_type_icon ( basename ( $file ) )?> 
-			<a href="#archivos" onClick="popup('<?=url_for($url)?>', '800', '600' , '')"><?=basename ( $file )?></a>
+		<div align="left" class="info"><?=mime_type_icon ( basename ( $nombreArchivo ) )?> 
+			<a href="#archivos" onClick="popup('<?=url_for($url)?>', '800', '600' , '')"><?=basename ( $nombreArchivo )?></a>
 		</div>
 		</td>
 	</tr>

@@ -13,7 +13,9 @@ class generalActions extends sfActions
  
  	public function executeFileViewer(){
 		$idx = $this->getRequestParameter("idx"); 
-		$this->name = $this->getUser()->getFile( $idx );		
+		$this->name = $this->getUser()->getFile( $idx );	
+        
+        
 	}
 	
 	public function executeAttachmentViewer(){
