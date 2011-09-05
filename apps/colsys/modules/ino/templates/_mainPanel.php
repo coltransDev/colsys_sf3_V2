@@ -48,7 +48,7 @@ MainPanel = function(){
     MainPanel.superclass.constructor.call(this, {        
         id: 'tpanel',
         plain:true,
-        activeTab: 3,
+        activeTab: 2,
         height:450,
         autoHeight: true,
         autoWidth : true,

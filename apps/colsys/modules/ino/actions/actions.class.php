@@ -553,7 +553,9 @@ class inoActions extends sfActions {
                     $row["comprobante"] = utf8_encode($tipo . " " . str_pad($comprobante->getCaConsecutivo(), 6, "0", STR_PAD_LEFT));
                     $row["fchcomprobante"] = utf8_encode($comprobante->getCaFchcomprobante());
                     $row["idcomprobante"] = $comprobante->getCaIdcomprobante();
-                    $row["valor"] = $comprobante->getValor();
+                    $row["valor"] = $comprobante->getCaValor();   
+                    $row["tasacambio"] = $comprobante->getCaTasacambio(); 
+                    $row["idmoneda"] = $comprobante->getCaIdmoneda();
                     $row["color"] = "";
 
                     $data[] = $row;
@@ -604,12 +606,14 @@ class inoActions extends sfActions {
             $conn = $comprobante->getTable()->getConnection();
             $conn->beginTransaction();
             $idhouse = $request->getParameter("idhouse");
+            $house = Doctrine::getTable("InoHouse")->find( $idhouse );
+            
             $comprobante->setCaIdhouse($idhouse);
             
             $comprobante->setCaConsecutivo($request->getParameter("consecutivo"));            
             $comprobante->setCaIdtipo($request->getParameter("idtipo"));
             $comprobante->setCaFchcomprobante($request->getParameter("fchcomprobante"));
-            $comprobante->setCaId($request->getParameter("ids_id"));
+            $comprobante->setCaId($house->getCaIdcliente());
             $comprobante->setCaValor($request->getParameter("valor"));
             $comprobante->setCaIdmoneda($request->getParameter("idmoneda"));            
             $comprobante->setCaTasacambio($request->getParameter("tasacambio"));
@@ -668,7 +672,8 @@ class inoActions extends sfActions {
         $data["plazo"] = $comprobante->getCaPlazo();
         $data["observaciones"] = $comprobante->getCaObservaciones();
         $data["tasacambio"] = $comprobante->getCaTasacambio();
-        $data["valor"] = $comprobante->getValor();
+        $data["valor"] = $comprobante->getCaValor();
+        $data["idmoneda"] = $comprobante->getCaIdmoneda();
         
 
         $this->responseArray = array("success" => true, "data" => $data);

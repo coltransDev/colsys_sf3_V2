@@ -85,7 +85,7 @@ GridFacturacionPanel = function( config ){
       },
       {
         header: "Cambio",
-        dataIndex: 'cambio',
+        dataIndex: 'tasacambio',
         hideable: false,
         sortable: true,
         width: 80,
@@ -130,7 +130,7 @@ GridFacturacionPanel = function( config ){
             {name: 'fchcomprobante', type: 'date', dateFormat:'Y-m-d'},
             {name: 'group', type: 'string'},
             {name: 'valor', type: 'float'},
-            {name: 'cambio', type: 'float'},
+            {name: 'tasacambio', type: 'float'},
             {name: 'idmoneda', type: 'string'},
             {name: 'color', type: 'string'}
     ]);
@@ -218,7 +218,7 @@ Ext.extend(GridFacturacionPanel, Ext.grid.GridPanel, {
 
     valorPesos: function(value, p, record) {
         //Ext.util.Format.numberRenderer('0,0.00')
-        return Ext.util.Format.number( record.data.valor * record.data.cambio, '0,0.00' );
+        return Ext.util.Format.number( record.data.valor * record.data.tasacambio, '0,0.00' );
     },
 
     formatComprobante: function(value, p, record) {

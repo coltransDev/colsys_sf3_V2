@@ -7,32 +7,15 @@
 
 $tipos = $sf_data->getRaw("tipos");
 $inoHouses = $sf_data->getRaw("inoHouses");
+
+
 ?>
 <script type="text/javascript">
     GridFacturacionFormPanel = function( config ) {
         Ext.apply(this, config);
         this.ctxRecord = null;
 
-        this.ids = new WidgetIds({
-            value: '',
-            id: 'ids',
-            name: "ids",
-            hiddenName: "ids_id",
-            forceSelection:true,
-            fieldLabel: "Facturar a",
-            width: 400,
-            allowBlank:false,
-            onSelect: function(record, index){ // override default onSelect to do redirect
-                if(this.fireEvent('beforeselect', this, record, index) !== false){
-                    this.setValue(record.data[this.valueField || this.displayField]);
-                    this.collapse();
-                    this.fireEvent('select', this, record, index);
-                }
-
-                Ext.getCmp("id").setValue(record.get("id"));
-                //Ext.getCmp("contacto").setValue(record.get("nombre")+' '+record.get("papellido")+' '+record.get("sapellido") );
-            }
-        });
+        
        
         
 
@@ -64,16 +47,7 @@ $inoHouses = $sf_data->getRaw("inoHouses");
                     ])
                 ),
                 proxy: new Ext.data.MemoryProxy(<?= json_encode($tipos) ?>)
-            })
-            /*
-            onSelect: function(record, index){ // override default onSelect to do redirect
-                if(this.fireEvent('beforeselect', this, record, index) !== false){
-                    this.setValue(record.data[this.valueField || this.displayField]);
-                    this.collapse();
-                    this.fireEvent('select', this, record, index);
-                }
-                Ext.getCmp("idtipo").setValue(record.get("idtipo"));
-            }*/
+            })           
         });
 
 
@@ -130,8 +104,6 @@ $inoHouses = $sf_data->getRaw("inoHouses");
                 items: [
                     this.inoHouses,
                     this.tipos,
-                    this.ids,
-
                     {
 				    layout:'column',
 				    border: false,
@@ -148,12 +120,15 @@ $inoHouses = $sf_data->getRaw("inoHouses");
                                 columnWidth:.5,
                                 items: [
                                     {
-                                        xtype:'textfield',
+                                        xtype:'numberfield',
                                         fieldLabel: 'Consecutivo',
                                         name: 'consecutivo',
                                         value: '',
                                         allowBlank:false,
-                                        width: 100
+                                        width: 100,
+                                        allowNegative:false,
+                                        decimalPrecision : 0,
+                                        tabIndex: 1
                                     },
                                     {
                                         xtype:'numberfield',
@@ -163,7 +138,8 @@ $inoHouses = $sf_data->getRaw("inoHouses");
                                         allowBlank:false,
                                         allowNegative:false,
                                         decimalPrecision : 2,
-                                        width: 80
+                                        width: 80,
+                                        tabIndex: 3
                                     }
                                     ,
                                                                         
@@ -171,7 +147,14 @@ $inoHouses = $sf_data->getRaw("inoHouses");
                                         xtype:'hidden',
                                         id: 'idcomprobante',
                                         value: ''
-                                    }
+                                    },                                    
+                                    new WidgetMoneda({
+                                        width: 120,
+                                        fieldLabel: 'Moneda',
+                                        allowBlank: false,
+                                        name: 'idmoneda',
+                                        tabIndex: 5
+                                    })
                                 ]
 
                             },
@@ -187,17 +170,19 @@ $inoHouses = $sf_data->getRaw("inoHouses");
                                     name: 'fchcomprobante',
                                     value: '',
                                     allowBlank:false,
-                                    width: 100
+                                    width: 100,
+                                    tabIndex: 2
                                 },
                                 {
                                     xtype:'numberfield',
-                                    fieldLabel: 'Plazo',
-                                    name: 'plazo',
+                                    fieldLabel: 'Valor',
+                                    name: 'valor',
                                     value: '',
                                     allowBlank:false,
-                                    allowNegative:false,
-                                    decimalPrecision : 0,
-                                    width: 80
+                                    allowNegative:true,
+                                    decimalPrecision : 2,
+                                    width: 80,
+                                    tabIndex: 4
                                 }
                                 ]
                             }
@@ -207,7 +192,7 @@ $inoHouses = $sf_data->getRaw("inoHouses");
                 
 				]
             },{
-                title:'Notas',
+                title:'Deducciones',
                 layout:'form',
                 defaults: {width: 230},
                 defaultType: 'textfield',
