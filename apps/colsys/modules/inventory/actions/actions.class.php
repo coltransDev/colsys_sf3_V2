@@ -865,6 +865,7 @@ class inventoryActions extends sfActions {
         }
         
         $this->activos = $q->execute();
+        $this->bajasChkbox = $bajasChkbox;
     }
     
     

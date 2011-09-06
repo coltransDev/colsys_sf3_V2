@@ -12,6 +12,10 @@ if( $param=="Software" ){
 }else{
     $cols = 12;
 }
+
+if( $bajasChkbox ){
+    $cols++;
+}
 ?>
 <div class="content" align="center">
     <h2>Listados de Activos</h2>
@@ -100,6 +104,14 @@ if( $param=="Software" ){
             </th>
             <?
             }
+            if( $bajasChkbox ){
+            ?>
+            <th>
+                Dado de baja
+            </th>
+            <?
+            }
+            
             ?>
         </tr>
      
@@ -209,6 +221,13 @@ if( $param=="Software" ){
             </td>
             <td>
                 <?=$activo->getCaOfficeSerial()?>
+            </td>
+            <?
+            }
+            if( $bajasChkbox ){
+            ?>
+            <td>
+                <?=Utils::fechaMes($activo->getCaFchbaja())?>
             </td>
             <?
             }
