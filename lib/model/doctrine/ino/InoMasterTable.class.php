@@ -68,9 +68,12 @@ class InoMasterTable extends Doctrine_Table
             if($transporte==Constantes::AEREO)
             {
                 $p_origen= Doctrine::getTable("Ciudad")->find( $origen );
-                $c_origen = ParametroTable::retrieveByCaso("CU002",null ,$p_origen->getTrafico()->getCaIdtrafico());
-                $c_destino = ParametroTable::retrieveByCaso("CU003", null ,$destino);
-
+                $c_origen = ParametroTable::retrieveByCaso("CU002",null,$p_origen->getTrafico()->getCaIdtrafico());
+                
+                
+                $c_destino = ParametroTable::retrieveByCaso("CU003", null, $destino);
+                
+                //print_r( $c_destino  );
                 if(count($c_destino)>0)
                 {
                     $referencia[0]="1".$c_destino[0]->getCaIdentificacion();

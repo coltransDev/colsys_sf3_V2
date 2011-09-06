@@ -35,17 +35,15 @@ class InoComprobante extends BaseInoComprobante
         $q->addGroupBy("t.ca_db");
         $vals = $q->setHydrationMode(Doctrine::HYDRATE_SCALAR)->execute();
         
-
-
         $total = 0;
+        
         foreach( $vals as $val ){
             if( $val["t_ca_db"] ){
                 $total+=$val["t_valor"];
             }else{
                 $total-=$val["t_valor"];
             }
-        }
-        
+        }        
         return $total;
     }
     
