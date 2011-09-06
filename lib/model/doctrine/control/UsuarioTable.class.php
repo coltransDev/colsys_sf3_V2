@@ -43,8 +43,7 @@ class UsuarioTable extends Doctrine_Table {
     public static function getCoordinadoresOTM( $idsucursal=null ) {
 
         $q = Doctrine::getTable("Usuario")
-               ->createQuery("u")
-               ->select("u.ca_login,u.ca_nombre,u.ca_email,ca_sucursal,u.ca_idsucursal")
+               ->createQuery("u")               
                ->innerJoin("u.UsuarioPerfil up")
                ->addWhere("u.ca_activo=? AND up.ca_perfil=? ", array('TRUE','cordinador-de-otm'))
                ->addOrderBy("u.ca_idsucursal")
