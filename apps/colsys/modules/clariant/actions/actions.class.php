@@ -208,7 +208,7 @@ class clariantActions extends sfActions {
 
         $new_clariant = $clariant->copy(FALSE);
         $new_clariant->setCaOrden($ord_mem);
-        // $new_clariant->setCaConsecutivo(NULL);
+        $new_clariant->setCaConsecutivo(NULL);
         $new_clariant->save();
 
         $new_id = $new_clariant->getCaIdclariant();
