@@ -4,7 +4,18 @@
  * 
  */
 include_component("inventory", "panelCategorias");
+use_helper("ExtCalendar");
 ?>
+
+<script type="text/javascript">
+    showHideBajas = function(){
+        if( document.getElementById("bajasChkbox").checked ){
+            document.getElementById("bajas").style.display = "";
+        }else{
+            document.getElementById("bajas").style.display = "none";
+        }
+    }
+</script>
 <div class="content" align="center">
     <h2>Listados de Activos</h2>
     <br />
@@ -46,6 +57,20 @@ include_component("inventory", "panelCategorias");
             </tr>
             <tr>
                 <td colspan="2">
+                   <input type="checkbox" name="bajasChkbox" id="bajasChkbox" onClick="showHideBajas()" /> Incluir dados de baja
+                   <div id="bajas" >
+                       <b>Fecha de Inicio</b>
+                       
+                       <?=extDatePicker("fchbajainicio", date("Y-m-d", time()-86400*120))?>
+                       <br />
+                       <b>Fecha Final</b>
+                       
+                       <?=extDatePicker("fchbajafinal", date("Y-m-d", time()))?>
+                   </div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
                     <div align="center">
                         <input type="submit" value="Consultar" />
                     </div>
@@ -58,7 +83,8 @@ include_component("inventory", "panelCategorias");
 
 <script type="text/javascript">
     Ext.onReady(function(){
-    
+        showHideBajas();
+        
         var panelConsulta = new PanelCategorias({
             title: "",                        
             idsucursal: "",

@@ -739,7 +739,7 @@ class inventoryActions extends sfActions {
         $this->soOEM = Doctrine::getTable("InvActivo")
                 ->createQuery("a")
                 ->innerJoin("a.InvCategory c")                
-                ->addWhere("LOWER(c.ca_name) NOT LIKE ?", '%dados de baja%')
+                ->addWhere("a.ca_fchbaja IS NULL")
                 ->select("a.ca_so, count(*) as q")
                 ->addWhere("a.ca_so IS NOT NULL  AND a.ca_so!='' AND a.ca_so!=?", "No tiene ")
                 ->addGroupBy("a.ca_so")
@@ -750,7 +750,7 @@ class inventoryActions extends sfActions {
         $this->ofOEM = Doctrine::getTable("InvActivo")
                 ->createQuery("a")
                 ->innerJoin("a.InvCategory c")                
-                ->addWhere("LOWER(c.ca_name) NOT LIKE ?", '%dados de baja%')
+                ->addWhere("a.ca_fchbaja IS NULL")
                 ->select("a.ca_office, count(*) as q")
                 ->addWhere("a.ca_office IS NOT NULL  AND a.ca_office!='' AND a.ca_office!=?", "No tiene")
                 ->addGroupBy("a.ca_office")
@@ -762,7 +762,7 @@ class inventoryActions extends sfActions {
         $this->software = Doctrine::getTable("InvActivo")
                 ->createQuery("a")
                 ->innerJoin("a.InvCategory c")                      
-                ->addWhere("LOWER(c.ca_name) NOT LIKE ?", '%dados de baja%')
+                ->addWhere("a.ca_fchbaja IS NULL")
                 ->leftJoin("a.InvAsignacionSoftwareActivo as")
                 ->select("a.ca_idactivo,c.ca_name,a.ca_modelo, a.ca_cantidad as q, count(as.ca_idactivo) as assigned")
                 ->addWhere("c.ca_parameter=?", "Software")                
@@ -807,6 +807,10 @@ class inventoryActions extends sfActions {
         $idasignacion = $request->getParameter("idasignacion");
         $so = $request->getParameter("so");
         $office = $request->getParameter("office");
+        $bajasChkbox = $request->getParameter("bajasChkbox");
+        $fchbajainicio = $request->getParameter("fchbajainicio");
+        $fchbajafinal = $request->getParameter("fchbajafinal");
+        
         $q = Doctrine::getTable("InvActivo")
                 ->createQuery("a")
                 ->innerJoin("a.InvCategory c")                               
@@ -836,6 +840,8 @@ class inventoryActions extends sfActions {
             $q->addWhere("a.ca_office = ?", $office);
         }
         
+        
+        
         if( $idasignacion ){
             $q->innerJoin("a.InvAsignacionSoftware as");
             $q->addWhere("as.ca_idactivo = ? ", $idasignacion);
@@ -845,6 +851,17 @@ class inventoryActions extends sfActions {
         if ($this->nivel < 2) {
             $user = $this->getUser();
             $q->addWhere("s.ca_idsucursal = ? ", $user->getIdsucursal());
+        }
+        
+        if( $bajasChkbox ){
+            
+            if( $fchbajainicio ){                
+                $q->addWhere("a.ca_fchbaja >= ? ", $fchbajainicio );
+            }
+            
+            if( $fchbajafinal ){                
+                $q->addWhere("a.ca_fchbaja <= ? ", $fchbajafinal );
+            }
         }
         
         $this->activos = $q->execute();
@@ -927,7 +944,7 @@ class inventoryActions extends sfActions {
                     ->createQuery("a")
                     ->innerJoin("a.InvAsignacionSoftwareActivo so")  
                     ->innerJoin("a.InvCategory c")                
-                    ->addWhere("LOWER(c.ca_name) NOT LIKE ?", '%dados de baja%')
+                    ->addWhere("a.ca_fchbaja IS NULL")
                     ->addWhere("so.ca_idequipo = ? ", $idactivo )
                     ->addOrderBy("a.ca_identificador ASC");
 
@@ -940,7 +957,7 @@ class inventoryActions extends sfActions {
                     ->createQuery("a")
                     ->innerJoin("a.InvAsignacionSoftware so")   
                     ->innerJoin("a.InvCategory c")                
-                    ->addWhere("LOWER(c.ca_name) NOT LIKE ?", '%dados de baja%')
+                    ->addWhere("a.ca_fchbaja IS NULL")
                     ->addWhere("so.ca_idactivo = ? ", $idactivo )
                     ->addOrderBy("a.ca_identificador ASC");
             
