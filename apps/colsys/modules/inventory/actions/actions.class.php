@@ -86,7 +86,13 @@ class inventoryActions extends sfActions {
         $q = Doctrine::getTable("InvActivo")
                 ->createQuery("a");
 
-
+        $mostrarBajas = $request->getParameter("mostrarBajas");
+        
+        if( $mostrarBajas=="true" ){
+            $q->addWhere("a.ca_fchbaja IS NOT NULL");
+        }else{
+            $q->addWhere("a.ca_fchbaja IS NULL");
+        }
         $q->addWhere("a.ca_idcategory = ?", $idcategory);
         $q->addWhere("a.ca_idsucursal = ?", $idsucursal);
         //$q->setHydrationMode(Doctrine::HYDRATE_SCALAR);
@@ -177,7 +183,7 @@ class inventoryActions extends sfActions {
         $data["mantenimiento"] = $activo->getCaMantenimiento();
         $data["cantidad"] = $activo->getCaCantidad();
         $data["detalle"] = utf8_encode($activo->getCaDetalle());
-
+        $data["fchbaja"] = $activo->getCaFchbaja();
         if (!$copy) {
             $data["idactivo"] = $activo->getCaIdactivo();
             $data["identificador"] = $activo->getCaIdentificador();
@@ -283,6 +289,13 @@ class inventoryActions extends sfActions {
             } else {
                 $activo->setCaFchcompra(null);
             }
+            
+            if ($request->getParameter("fchbaja")) {
+                $activo->setCaFchbaja($request->getParameter("fchbaja"));
+            } else {
+                $activo->setCaFchbaja(null);
+            }
+            
             if (floatval($request->getParameter("reposicion"))) {
                 $activo->setCaReposicion(floatval($request->getParameter("reposicion")));
             } else {

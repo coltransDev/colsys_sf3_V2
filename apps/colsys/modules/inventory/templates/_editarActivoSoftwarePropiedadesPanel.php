@@ -121,6 +121,13 @@ include_component("inventory", "panelAsignacionesSoftware");
                                         name: 'reposicion',
                                         allowBlank: false,
                                         allowNegative: false
+                                    },
+                                    {
+                                        xtype:'datefield',
+                                        fieldLabel: 'Dado de baja',
+                                        name: 'fchbaja',
+                                        format: 'Y-m-d',
+                                        allowBlank: true
                                     }
                                 ]
                             }

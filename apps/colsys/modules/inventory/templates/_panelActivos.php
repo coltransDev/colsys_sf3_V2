@@ -200,19 +200,39 @@
          
             ];
         }
+        
+        this.tbar.push({
+            text: 'Dados de baja',
+            scope: this,
+            iconCls: 'refresh',  // reference to our css            
+            handler: function(btn , e){
+                var store = this.store;
+                
+                
+                if( btn.getText()=='Dados de baja'){
+                    btn.setText( "Activos" );
+                    store.setBaseParam("mostrarBajas", true );
+                }else{
+                    btn.setText( "Dados de baja" );
+                    store.setBaseParam("mostrarBajas", false );
+                }
+                store.reload();
+
+            }
+        });
     
         PanelActivos.superclass.constructor.call(this, {
             loadMask: {msg:'Cargando...'},
             //boxMinHeight: 300,
             ddGroup : 'TreeDD',
             enableDragDrop   : true,
-            autoScroll:true,
-            
+            autoScroll:true,            
             view: new Ext.grid.GroupingView({
 
                 forceFit:true,
                 enableRowBody:true,
-                hideGroupedColumn: true
+                hideGroupedColumn: true,
+                emptyText: "No hay resultados"
                 //showPreview:true,
                 //hideGroupedColumn: true,
             

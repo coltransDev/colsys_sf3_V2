@@ -186,6 +186,13 @@ $office_types = $sf_data->getRaw("office_types");*/
                                                 ?>
                                             ]
                                         })
+                                    },
+                                    {
+                                        xtype:'datefield',
+                                        fieldLabel: 'Dado de baja',
+                                        name: 'fchbaja',
+                                        format: 'Y-m-d',
+                                        allowBlank: true
                                     }
                                 ]
                             },

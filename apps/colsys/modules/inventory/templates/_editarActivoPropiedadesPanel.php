@@ -117,6 +117,13 @@
                                         fieldLabel: 'Modelo',
                                         name: 'modelo',
                                         allowBlank: false
+                                    },
+                                    {
+                                        xtype:'datefield',
+                                        fieldLabel: 'Dado de baja',
+                                        name: 'fchbaja',
+                                        format: 'Y-m-d',
+                                        allowBlank: true
                                     }
                                     
                                 ]
