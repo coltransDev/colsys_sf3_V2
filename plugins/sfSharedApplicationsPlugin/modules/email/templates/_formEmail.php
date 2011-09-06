@@ -1,3 +1,6 @@
+<?
+$message=$sf_data->getRaw("message");
+?>
 
 <script language="javascript">
 var textFocus="destinatario";
