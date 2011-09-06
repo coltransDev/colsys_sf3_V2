@@ -1143,29 +1143,29 @@ class clientesActions extends sfActions {
                         $where="";
                         if($nrecibo)
                         {
-                            //if($ref["ca_reccaja"]=="" || $ref["ca_reccaja"]=="''"  )
+                            if($ref["ca_reccaja"]=="" || $ref["ca_reccaja"]=="''"  )
                             {
                                 $set=" ca_reccaja='".$pre." ".$nrecibo."'";
                             }
-                            /*else
+                            else
                             {
                                 $resultado[$i].=($resultado[$i]=="")?$comienzo_log:"";
                                 $resultado[$i].="-".$tabla.":: Recibo de caja ya cargado 'No se actualizo',";
-                            }*/
+                            }
                         }
                         
                         if($fecha_pago)
                         {
-                            //if($ref["ca_fchpago"]=="")
+                            if($ref["ca_fchpago"]=="")
                             {
                                 $set.=($set!="")?",":"";
                                 $set.=" ca_fchpago='".$fecha_pago."'";                                
                             }
-                            /*else
+                            else
                             {
                                 $resultado[$i].=($resultado[$i]=="")?$comienzo_log:"";
                                 $resultado[$i].=$tabla.":: Fecha de pago ya cargada 'No se actualizo',";
-                            }*/
+                            }
                         }
                         
                         if($set!="")
@@ -1176,7 +1176,7 @@ class clientesActions extends sfActions {
                             }
                             //$sql.=$where;
                             $sql_update.=$set." where 1=1 $where;";
-//                            $st = $con->execute($sql_update);
+                            $st = $con->execute($sql_update);
                             $sqltmp.=$sql_update."<br>";
                             $actualizo=true;
                         }
@@ -1190,7 +1190,7 @@ class clientesActions extends sfActions {
                     else
                     {
                         $resultado[$i].=($resultado[$i]=="")?$comienzo_log:"";
-                        $resultado[$i].=$tabla.":: Registro NO ENCONTRADO --";
+                        $resultado[$i].=$tabla.":: factura NO ENCONTRADA --";
                     }
                 }
                 

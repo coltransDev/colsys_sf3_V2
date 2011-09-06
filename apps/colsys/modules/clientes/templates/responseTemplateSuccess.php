@@ -1,4 +1,3 @@
 <?
-echo json_encode($responseArray);
-exit; 
+echo json_encode( $sf_data->getRaw('responseArray') );
 ?>
