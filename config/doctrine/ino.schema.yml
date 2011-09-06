@@ -194,6 +194,57 @@ InoHouse:
       class: Usuario
 
 
+InoCosto:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: ino
+  tableName: ino.tb_costos
+  columns:  
+    ca_idinocosto:
+      type: integer
+      autoincrement: true
+      primary: true
+    ca_idmaster: integer      
+    ca_idcosto: integer             
+    ca_factura: string                 
+    ca_fchfactura: date
+    ca_idproveedor: integer    
+    ca_idmoneda: string
+    ca_tcambio: decimal
+    ca_tcambio_usd: decimal
+    ca_neto: decimal
+    ca_venta: decimal    
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string    
+  relations:
+     Costo:
+       local: ca_idcosto
+       foreign: ca_idcosto
+       type: one
+     InoMaster:
+       local: ca_idmaster
+       foreign: ca_idmaster
+       type: one    
+     IdsProveedor:
+      local: ca_idproveedor
+      foreign: ca_idproveedor
+      type: one      
+     UsuCreado:
+      local: ca_usucreado
+      foreign: ca_login
+      type: one
+      class: Usuario
+     UsuActualizado:
+      local: ca_usuactualizado
+      foreign: ca_login
+      type: one
+      class: Usuario
+
+
 InoComprobante:
   options:
     symfony:
