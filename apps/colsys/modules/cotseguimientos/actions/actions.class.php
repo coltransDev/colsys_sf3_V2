@@ -490,7 +490,8 @@ class cotseguimientosActions extends sfActions
                   ->leftJoin( "c.CotSeguimiento seg" )
                   ->leftJoin( "p.CotSeguimiento seg2" )                 
                   ->innerJoin("c.Usuario u")  
-                  ->innerJoin("u.Sucursal s")                    
+                  ->innerJoin("u.Sucursal s")
+                  ->where("c.ca_fchanulado is null")                
                   ->addOrderBy("c.ca_consecutivo DESC, c.ca_version DESC, seg.ca_fchseguimiento DESC");
                   
                   
