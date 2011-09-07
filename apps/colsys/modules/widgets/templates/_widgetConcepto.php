@@ -40,7 +40,8 @@ $data = $sf_data->getRaw("data");
             selectOnFocus: true,        
             lazyRender:true,
             mode: 'local',
-            listClass: 'x-combo-list-small'
+            listClass: 'x-combo-list-small',
+            submitValue: true
         });
     };
 
