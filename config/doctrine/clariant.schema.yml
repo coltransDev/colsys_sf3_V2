@@ -23,6 +23,7 @@ Clariant:
     ca_usureportado: string
     ca_fcharchivado: timestamp
     ca_usuarchivado: string
+    ca_fchimportado: timestamp
   relations:
     Reporte:
       local: ca_consecutivo

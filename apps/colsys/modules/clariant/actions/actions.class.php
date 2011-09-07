@@ -26,7 +26,7 @@ class clariantActions extends sfActions {
                         ->createQuery("c")
                         ->where("c.ca_usuarchivado IS NULL")
                         ->andWhere("c.ca_usuanulado IS NULL")
-                        ->addOrderBy("c.ca_idclariant desc")
+                        ->addOrderBy("c.ca_fchimportado desc, c.ca_idclariant desc")
                         //->getSqlQuery();
                         ->execute();
     }

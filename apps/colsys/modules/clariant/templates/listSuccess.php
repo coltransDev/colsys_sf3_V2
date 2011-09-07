@@ -13,6 +13,7 @@
   <th>Reporte Neg.</th>
   <th>Fch.Documento</th>
   <th>Incoterm</th>
+  <th>Importado</th>
 </tr>
 </thead>
 <tbody>
@@ -25,7 +26,7 @@
         <td><?php echo $clariant_notify->getCaConsecutivo() ?></td>
         <td><?php echo $clariant_notify->getCaDocumentoFch() ?></td>
         <td><?php echo $clariant_notify->getCaIncoterm() ?></td>
-
+        <td><?php echo $clariant_notify->getCaImportado() ?></td>
 </tr>
 <?php 
 	endforeach; 
