@@ -1,7 +1,8 @@
 <?php
  
 class myUser extends sfBasicSecurityUser
-{
+{    
+    
 	public function signIn( $login ){
 		$this->setAuthenticated( true );
 		$this->setAttribute('user_id', $login );
@@ -10,33 +11,6 @@ class myUser extends sfBasicSecurityUser
 	public function __toString() {
         return $this->getUserId();
     }
-
-
-	/*public function setUserId( $userId  ){
-		$this->setAttribute('user_id', $userId );
-		$user = Doctrine::getTable("Usuario")->find( $userId );
-				
-		if( $user ){		
-			//$sucursal = $user->getSucursal();
-						
-			$this->setAttribute('idsucursal',  $user->getCaIdsucursal() );		
-			$this->setAttribute('nombre', $user->getCaNombre() );		
-			$this->setAttribute('email', $user->getCaEmail() );
-			$this->setAttribute('cargo', $user->getCaCargo() );
-			$this->setAttribute('extension', $user->getCaExtension() );
-            $idtrafico = $user->getSucursal()->getEmpresa()->getCaIdtrafico();
-			$this->setAttribute('idtrafico',  $idtrafico );
-            $this->setAttribute('idempresa',  $user->getSucursal()->getEmpresa()->getCaIdempresa());
-            $this->setAttribute('idmoneda',  $user->getSucursal()->getEmpresa()->getCaIdtrafico());
-			
-			$c = new Criteria();
-			$c->add(DepartamentoPeer::CA_NOMBRE, $user->getCaDepartamento() );
-			$departamento = DepartamentoPeer::doSelectOne( $c );
-			if( $departamento ){
-				$this->setAttribute('iddepartamento', $departamento->getCaIddepartamento() );
-			}
-		}
-	}*/
 	
 	public function getUserId(){
 		return $this->getAttribute('user_id' );
@@ -79,8 +53,15 @@ class myUser extends sfBasicSecurityUser
 	}
 
 	public function getNivelAcceso( $rutina ){        
-		$usuario = Doctrine::getTable('Usuario')->createQuery('u')->where('u.ca_login = ? ', $this->getUserId() )->fetchOne();		
-        return $usuario->getNivelAcceso( $rutina );
+        
+        $niveles = $this->getAttribute('niveles');
+        if( !isset($niveles[ $rutina ]) ){
+            $usuario = Doctrine::getTable('Usuario')->createQuery('u')->where('u.ca_login = ? ', $this->getUserId() )->fetchOne();		
+            $niveles[ $rutina ] = $usuario->getNivelAcceso( $rutina );
+            $this->setAttribute('niveles', $niveles);
+        }
+        
+        return $niveles[ $rutina ];
 	}
 	
 	public function getGrupos( ){		

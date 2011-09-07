@@ -43,9 +43,7 @@ class menuComponents extends sfComponents
 	*/	
 	public function executeMenubar(){				
 
-		$usuario = Doctrine::getTable("Usuario")->find( $this->getUser()->getUserId() );
-        
-        
+		
 		$this->grupos = $this->getUser()->getMenu();
 		$this->userid = $this->getUser()->getUserId();
 
