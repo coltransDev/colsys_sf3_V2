@@ -26,7 +26,7 @@
         <td><?php echo $clariant_notify->getCaConsecutivo() ?></td>
         <td><?php echo $clariant_notify->getCaDocumentoFch() ?></td>
         <td><?php echo $clariant_notify->getCaIncoterm() ?></td>
-        <td><?php echo $clariant_notify->getCaImportado() ?></td>
+        <td><?php echo $clariant_notify->getCaFchimportado() ?></td>
 </tr>
 <?php 
 	endforeach; 
