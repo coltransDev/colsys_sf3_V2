@@ -5,7 +5,7 @@
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
 
-include_component("crm", "clienteFormPanel");
+include_component("crm", "clienteFormPanel", array("nivel"=>$nivel));
 
 
 
