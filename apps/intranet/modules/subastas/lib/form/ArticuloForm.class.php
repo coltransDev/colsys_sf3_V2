@@ -48,12 +48,7 @@ class ArticuloForm extends BaseForm{
 		  
 		));	
         
-        $this->validatorSchema->setPostValidator(
-          new sfValidatorSchemaCompare('valor', sfValidatorSchemaCompare::LESS_THAN_EQUAL, 'tope',
-            array(),
-            array('invalid' => 'El tope ("%right_field%") debe ser mayor que el valor ("%left_field%")')
-          )
-        );
+        
 																												
 				
 				
@@ -67,6 +62,12 @@ class ArticuloForm extends BaseForm{
         if( !$taintedValues["directa"] ){
             $this->validatorSchema['incremento']->setOption('required', true);
             $this->validatorSchema['tope']->setOption('required', true);
+            $this->validatorSchema->setPostValidator(
+              new sfValidatorSchemaCompare('valor', sfValidatorSchemaCompare::LESS_THAN_EQUAL, 'tope',
+                array(),
+                array('invalid' => 'El tope ("%right_field%") debe ser mayor que el valor ("%left_field%")')
+              )
+            );
         }
         
 		parent::bind($taintedValues,  $taintedFiles);
