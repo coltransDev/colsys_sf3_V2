@@ -28,7 +28,7 @@ $libestados = array("Vigente","Congelada");
 
 $sstatus = array();
 $sstatus[] = "";
-if ($nivel >= 3){
+if ($nivel >= 2){
     $sstatus[] = "Vetado";
 }
 
