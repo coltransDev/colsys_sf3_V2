@@ -454,7 +454,7 @@ require_once("menu.php");
                    echo "  <TD Class=listar COLSPAN=2><B>Proveedor:</B><BR>".$cs->Value('ca_proveedor')."</TD>";
                    echo "  <TD ROWSPAN=2 WIDTH=80 Class=listar></TD>";                                             // Botones para hacer Mantenimiento a la Tabla
                    echo "</TR>";
-                   $cos_mem = $cs->Value('ca_neto') * $cs->Value('ca_tcambio');
+                   $cos_mem = $cs->Value('ca_neto') * $cs->Value('ca_tcambio')/$cs->Value('ca_tcambio_usd');
                    echo "<TR>";
                    echo "  <TD Class=listar><B>T.R.M.:</B><BR>$ ".number_format($cs->Value('ca_tcambio'), 2)."</TD>";
                    echo "  <TD Class=listar><B>Neto:</B><BR><B>".$cs->Value('ca_idmoneda').'</B> '.number_format($cs->Value('ca_neto'), 2)."</TD>";

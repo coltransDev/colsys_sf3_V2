@@ -636,7 +636,7 @@ elseif (isset($boton)) {                                                       /
                             echo "  <TD Class=captura COLSPAN=6></TD>";
                             echo "</TR>";
                             echo "<TR>";
-                            echo "  <TD Class=listar style='font-size: 11px; vertical-align:top'><B>Id Cliente:</B><BR>".number_format($cl->Value('ca_idalterno'))."</TD>";
+                            echo "  <TD Class=listar style='font-size: 11px; vertical-align:top'><div title='Creó: ".$cl->Value('ca_usucreado_cl')." ".$cl->Value('ca_fchcreado_cl')." ".($cl->Value('ca_usuactualizado_cl')?"Actualizó: ".$cl->Value('ca_usuactualizado_cl')." ".$cl->Value('ca_fchactualizado_cl'):"")." '><B>Id Cliente:</B><BR>".number_format($cl->Value('ca_idalterno'))."</div></TD>";
                             if ($rs->Value('ca_modalidad')=='FCL'){
                                 echo "  <TD Class=listar style='font-size: 11px;' COLSPAN=3><B>Nombre del Cliente:</B><BR>".$cl->Value('ca_compania')."</TD>";
                                 echo "  <TD Class=listar><B>Vence Comodato:</B><BR>".$cl->Value('ca_fchvencimiento')."</TD>";
@@ -697,7 +697,7 @@ elseif (isset($boton)) {                                                       /
                             $hbl_mem = $cl->Value('ca_hbls');
                         }
                         echo "<TR>";
-                        echo "  <TD Class=invertir><B>Factura Nro.:</B><BR>".$cl->Value('ca_factura')."</TD>";
+                        echo "  <TD Class=invertir><div title='Creó: ".$cl->Value('ca_usucreado_fc')." ".$cl->Value('ca_fchcreado_fc')." ".($cl->Value('ca_usuactualizado_fc')?"Actualizó: ".$cl->Value('ca_usuactualizado_fc')." ".$cl->Value('ca_fchactualizado_fc'):"")." '><B>Factura Nro.:</B><BR>".$cl->Value('ca_factura')."</div></TD>";
                         echo "  <TD Class=invertir><B>".$cl->Value('ca_idmoneda').":</B><BR>".number_format($cl->Value('ca_neto'),2)."<BR><B>Tasa Cambio:</B><BR>".number_format($cl->Value('ca_tcambio'),2)."</TD>";
                         echo "  <TD Class=invertir><B>Valor Factura:</B><BR>".number_format($cl->Value('ca_valor'),2)."</TD>";
                         echo "  <TD Class=invertir><B>Deducciones:</B><BR>".number_format($cl->Value('ca_deduccion'),2)."</TD>";
@@ -732,7 +732,7 @@ elseif (isset($boton)) {                                                       /
                         echo "<TR HEIGHT=5>";
                         echo "  <TD Class=invertir COLSPAN=7></TD>";
                         echo "</TR>";
-                        echo "  <TD Class=invertir style='font-size: 12px;' COLSPAN=3><B>".$cs->Value('ca_costo')."</B><BR></TD>";
+                        echo "  <TD Class=invertir style='font-size: 12px;' COLSPAN=3><B><div title='Creó: ".$cs->Value('ca_usucreado')." ".$cs->Value('ca_fchcreado')." ".($cs->Value('ca_usuactualizado')?"Actualizó: ".$cs->Value('ca_usuactualizado')." ".$cs->Value('ca_fchactualizado'):"")." '>".$cs->Value('ca_costo')."</div></B><BR></TD>";
                         echo "  <TD Class=listar><B>Factura:</B><BR>".$cs->Value('ca_factura')."</TD>";
                         echo "  <TD Class=listar COLSPAN=2><B>Proveedor:</B><BR>".$cs->Value('ca_proveedor')."</TD>";
                         echo "  <TD ROWSPAN=2 WIDTH=80 Class=listar>";                                              // Botones para hacer Mantenimiento a la Tabla
@@ -740,7 +740,7 @@ elseif (isset($boton)) {                                                       /
                         echo "    <IMG style='visibility: $visible;cursor:pointer' src='./graficos/del.gif'  alt='Eliminar el Registro' border=0 onclick='elegir(\"EliminarCs\", \"".$cs->Value('ca_referencia')."\", \"".$cs->Value('ca_oid')."\");'>";
                         echo "  </TD>";
                         echo "</TR>";
-                        $cos_mem = $cs->Value('ca_neto') * $cs->Value('ca_tcambio')*$cs->Value('ca_tcambio_usd');
+                        $cos_mem = $cs->Value('ca_neto') * $cs->Value('ca_tcambio')/$cs->Value('ca_tcambio_usd');
                         echo "<TR>";
                         echo "  <TD Class=listar><B>Cambio a USD.:</B><BR>$ ".number_format($cs->Value('ca_tcambio_usd'), 4)."</TD>";
                         echo "  <TD Class=listar><B>T.R.M.:</B><BR>$ ".number_format($cs->Value('ca_tcambio'), 2)."</TD>";
