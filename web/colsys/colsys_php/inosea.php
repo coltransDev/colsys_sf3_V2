@@ -717,15 +717,22 @@ elseif (isset($boton)) {                                                       /
                     echo "<TR>";
                     echo "  <TD Class=imprimir COLSPAN=6>&nbsp;</TD>";
                     echo "</TR>";
-                    echo "<TH Class=titulo COLSPAN=5>Cuadro de Costos de la Referencia</TH>";
+                    
+                    //
+                    echo "<TR>";
+                    echo "  <TD COLSPAN=6>";
+                    echo "  <TABLE WIDTH='100%'>";
+                    
+                    echo "<TR>";                    
+                    echo "<TH Class=titulo COLSPAN=6>Cuadro de Costos de la Referencia</TH>";
                     echo "<TH><IMG style='visibility: $visible;cursor:pointer' src='./graficos/new.gif' alt='Crear un Nuevo Registro' border=0 onclick='elegir(\"AdicionarCs\",  \"".$rs->Value('ca_referencia')."\", 0);'>";  // Botón para la creación de un Registro Nuevo
                     echo "<IMG style='cursor:pointer' src='./graficos/post.gif' onClick=\"document.location='/ids/formEventos?referencia=".$rs->Value('ca_referencia')."'\" title='Eventos Proveedores' ></TH>";
                     while (!$cs->Eof() and !$cs->IsEmpty()) {                                      // Lee la totalidad de los registros obtenidos en la instrucción Select
-                        echo "<TR>";
+                        
                         echo "<TR HEIGHT=5>";
-                        echo "  <TD Class=invertir COLSPAN=6></TD>";
+                        echo "  <TD Class=invertir COLSPAN=7></TD>";
                         echo "</TR>";
-                        echo "  <TD Class=invertir style='font-size: 12px;' COLSPAN=2><B>".$cs->Value('ca_costo')."</B><BR></TD>";
+                        echo "  <TD Class=invertir style='font-size: 12px;' COLSPAN=3><B>".$cs->Value('ca_costo')."</B><BR></TD>";
                         echo "  <TD Class=listar><B>Factura:</B><BR>".$cs->Value('ca_factura')."</TD>";
                         echo "  <TD Class=listar COLSPAN=2><B>Proveedor:</B><BR>".$cs->Value('ca_proveedor')."</TD>";
                         echo "  <TD ROWSPAN=2 WIDTH=80 Class=listar>";                                              // Botones para hacer Mantenimiento a la Tabla
@@ -733,16 +740,24 @@ elseif (isset($boton)) {                                                       /
                         echo "    <IMG style='visibility: $visible;cursor:pointer' src='./graficos/del.gif'  alt='Eliminar el Registro' border=0 onclick='elegir(\"EliminarCs\", \"".$cs->Value('ca_referencia')."\", \"".$cs->Value('ca_oid')."\");'>";
                         echo "  </TD>";
                         echo "</TR>";
-                        $cos_mem = $cs->Value('ca_neto') * $cs->Value('ca_tcambio');
+                        $cos_mem = $cs->Value('ca_neto') * $cs->Value('ca_tcambio')*$cs->Value('ca_tcambio_usd');
                         echo "<TR>";
+                        echo "  <TD Class=listar><B>Cambio a USD.:</B><BR>$ ".number_format($cs->Value('ca_tcambio_usd'), 4)."</TD>";
                         echo "  <TD Class=listar><B>T.R.M.:</B><BR>$ ".number_format($cs->Value('ca_tcambio'), 2)."</TD>";
                         echo "  <TD Class=listar><B>Neto:</B><BR><B>".$cs->Value('ca_idmoneda').'</B> '.number_format($cs->Value('ca_neto'), 2)."</TD>";
                         echo "  <TD Class=listar><B>Costo en Moneda Local:</B><BR>$ ".number_format($cos_mem)."</TD>";
                         echo "  <TD Class=listar><B>Venta en Moneda Local:</B><BR>$ ".number_format($cs->Value('ca_venta'))."</TD>";
-                        echo "  <TD Class=listar><B>INO. x Sobreventa:</B><BR>$ ".number_format($cs->Value('ca_utilidad'))."</TD>";
+                        echo "  <TD Class=listar><B>INO. x Sobreventa:</B><BR>$ ".($cs->Value('ca_utilidad')?number_format($cs->Value('ca_utilidad')):"0")."</TD>";
                         echo "</TR>";
                         $cs->MoveNext();
                     }
+                    
+                    //
+                    echo "</TABLE>";
+                    echo "  </TD>";
+                    echo "</TR>";                    
+                   
+                    
                     echo "<TR HEIGHT=5>";
                     echo "  <TD Class=captura COLSPAN=6></TD>";
                     echo "</TR>";
