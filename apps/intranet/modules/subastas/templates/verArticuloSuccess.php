@@ -82,6 +82,8 @@
     });
 </script>
 
+<a href="http://www.coltrans.com.co/uploads/subastas/TERMINOS%20Y%20CONDICIONES%20DE%20LA%20SUBASTA.pdf" target="_blank"><div class="maintitle">Terminos y Condiciones</div></a>
+<br />
 
 <a class="maintitle"><?= $articulo->getCaTitulo() ?></a>
 <br />
@@ -199,13 +201,14 @@ if (!$articulo->getCaUsucomprador()) {
         echo "El articulo no esta disponible para ofertar en este momento. <br />Solo se puede ofertar desde ";        
         echo "<b>".Utils::fechaMes( Utils::parseDate($articulo->getCaFchinicio(), "Y-m-d") )." ".Utils::parseDate($articulo->getCaFchinicio(), "h:i A")."</b>";
         echo " hasta <b>".Utils::fechaMes( Utils::parseDate($articulo->getCaFchvencimiento(), "Y-m-d") )." ".Utils::parseDate($articulo->getCaFchvencimiento(), "h:i A")."</b>";
+        echo "<br />Valor: ".Utils::formatNumber( $articulo->getCaValor() );    
+    
     }
     ?>
     </div>    
 <?
 }else{
-
-
+    
     if( $user->getUserId()==$articulo->getCaUsucreado() && !$articulo->getCaDirecta() ){
     ?>    
     <div class="yellowbox" >

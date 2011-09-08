@@ -5,6 +5,11 @@ if( $nivel>=1 ){
 }
 
 ?>
+
+
+<a href="http://www.coltrans.com.co/uploads/subastas/TERMINOS%20Y%20CONDICIONES%20DE%20LA%20SUBASTA.pdf" target="_blank"><div class="maintitle">Terminos y Condiciones</div></a>
+<br />
+
 <div class="maintitle">Articulos en venta</div>
 <br />
 
