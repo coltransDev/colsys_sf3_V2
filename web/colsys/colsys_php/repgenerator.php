@@ -317,7 +317,7 @@ require_once("menu.php");
 	$gran_tot = false;
 	echo "<TH># Hbls</TH>";
 	echo "<TH>Facturación</TH>";
-	echo "<TH>Utilidad</TH>";
+	echo "<TH>INO</TH>";
 	echo "<TH>Sobreventa</TH>";
 	echo "<TH>CBM's</TH>";
 	echo "<TH>TEU's</TH>";
