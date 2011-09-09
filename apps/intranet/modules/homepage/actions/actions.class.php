@@ -20,6 +20,15 @@ class homepageActions extends sfActions {
         // $this->forward('default', 'module');
         $this->user = sfContext::getInstance()->getUser();
     }
-
+    public function executeVideos(sfWebRequest $request) {
+        // $this->forward('default', 'module');
+        
+        $response = sfContext::getInstance()->getResponse();
+		$response->addJavaScript("flowplayer/flowplayer-3.2.6.min.js",'last');        
+        
+        
+        $this->user = sfContext::getInstance()->getUser();
+        
+    }
 
 }
