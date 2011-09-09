@@ -62,22 +62,7 @@ Trafico:
       type: integer(2)
       unsigned: false
       notnull: true
-      primary: false
-    ca_link:
-      type: string(256)
-      fixed: false
-      notnull: false
-      primary: false
-    ca_conceptos:
-      type: string(255)
-      fixed: false
-      notnull: false
-      primary: false
-    ca_recargos:
-      type: string(255)
-      fixed: false
-      notnull: false
-      primary: false
+      primary: false    
   relations:
     TraficoGrupo:
       local: ca_idgrupo
