@@ -39,7 +39,7 @@ if (!isset($boton) and !isset($accion) and !isset($buscar)) {
     echo "<FORM METHOD=post NAME='menuform' ACTION='comisiones.php'>";
     echo "<TABLE WIDTH=550 BORDER=0 CELLSPACING=1 CELLPADDING=5>";
     echo "<TH COLSPAN=7 style='font-size: 12px; font-weight:bold;'><B>Ingrese los parámetros para el Reporte</TH>";
-    if (!$rs->Open("select DISTINCT c.ca_comprobante, c.ca_fchliquidacion from tb_inocomisiones_sea c, vi_inoingresos_sea i where c.ca_referencia = i.ca_referencia and c.ca_idcliente = i.ca_idcliente and c.ca_hbls = i.ca_hbls and i.ca_login = '$usuario' order by c.ca_comprobante DESC")) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
+    if (!$rs->Open("select DISTINCT c.ca_comprobante, c.ca_fchliquidacion from tb_inocomisiones_sea c, tb_inoclientes_sea i where c.ca_referencia = i.ca_referencia and c.ca_idcliente = i.ca_idcliente and c.ca_hbls = i.ca_hbls and i.ca_login = '$usuario' order by c.ca_comprobante DESC")) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
         echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
         echo "<script>document.location.href = 'entrada.php';</script>";
         exit;
