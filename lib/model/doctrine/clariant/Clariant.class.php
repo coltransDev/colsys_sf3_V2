@@ -10,6 +10,14 @@
  * @author     Your name here
  * @version    SVN: $Id: Builder.php 6820 2009-11-30 17:27:49Z jwage $
  */
-class Clariant extends BaseClariant
-{
+class Clariant extends BaseClariant {
+
+    public function getNumOrdenNeto() {
+        $ord_mem = $this->getCaOrden();
+        $pos_mem = strpos($ord_mem, "-");
+        $pos_mem = (($pos_mem === FALSE) ? strlen($ord_mem) : $pos_mem - 1);
+        $sku_mem = substr($ord_mem, 0, $pos_mem);
+        return $ord_mem;
+    }
+
 }
