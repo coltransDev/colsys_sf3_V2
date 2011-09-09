@@ -49,7 +49,7 @@
         var netousd= document.getElementById("netousd");             
         var tcambio_usd = document.getElementById("tcambio_usd");
                     
-        tcambio_usd.value = Math.round(eval(neto.value/netousd.value *10000))/10000;        
+        tcambio_usd.value = Math.round(eval(neto.value/netousd.value*100000))/100000;        
         
         calc_neto();
     }
