@@ -20,7 +20,7 @@ class inoMaritimoActions extends sfActions {
     }
 
     /**
-     * Executes index action
+     * Esta accion se eliminará cuando se haga la capacitación a nivel nacional del nuevo formulario
      *
      * @param sfRequest $request A request object
      */
@@ -223,7 +223,17 @@ class inoMaritimoActions extends sfActions {
             $bindValues["tcambio"] = $request->getParameter("tcambio");
             $bindValues["tcambio_usd"] = $request->getParameter("tcambio_usd");
             $bindValues["proveedor"] = $request->getParameter("proveedor");
-
+            
+            
+            
+            if( $bindValues["idmoneda"]=="USD" || $bindValues["idmoneda"]=="COP" ){                   
+                $bindValues["tcambio_usd"] = 1;
+            }
+            
+            if( $bindValues["idmoneda"]=="COP" ){
+               $bindValues["tcambio"] = 1;  
+            }
+            
             foreach ($this->inoClientes as $ic) {
                 $bindValues["util_" . $ic->getCaIdinocliente()] = $request->getParameter("util_" . $ic->getCaIdinocliente());
             }
