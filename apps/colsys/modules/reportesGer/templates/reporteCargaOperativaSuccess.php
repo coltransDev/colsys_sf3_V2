@@ -192,7 +192,7 @@ $resul = $sf_data->getRaw("resul");
                                             id:"idSucursal",
                                             hiddenName:"sucursal",
                                             width:120,
-                                            value:"<?= $sucursal ?>",
+                                            value:"<?= $idSucursal ?>",
                                             hiddenValue:"<?= $sucursal ?>"
                                         }),
                                         new WidgetDeptos({fieldLabel: 'Departamento',
@@ -483,10 +483,10 @@ if ($opcion and $tipoInforme != "") {
                                         <?
                                     }
 
-                                    $array_usuarios[] = $factura[0];
+                                    $array_usuarios[] = $factura[2];
                                     $cliente_tot[$idcliente][$ano_mem][$mes_mem]["cant_facturas"]+= $factura[1];
                                     $operativo_sub["Facturas"][$ano_mem][Utils::mesLargo ($mes_mem)]+= $factura[1];
-                                    $operativo_tot["Facturas"][$r["ca_nomoperativo"]][$r["ca_traorigen"]][$r["ca_transporte"]][$r["ca_modalidad"]]+= $factura[1];
+                                    $operativo_tot["Facturas"][$factura[2]][$r["ca_traorigen"]][$r["ca_transporte"]][$r["ca_modalidad"]]+= $factura[1];
 
                                 }
                             }
