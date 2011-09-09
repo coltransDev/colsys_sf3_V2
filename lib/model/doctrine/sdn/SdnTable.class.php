@@ -27,7 +27,7 @@ class SdnTable extends Doctrine_Table
 		$query.= " sdid.ca_uid_id as sdid_uid_id, sdid.ca_idtype as sdid_idtype, sdid.ca_idnumber as sdid_idnumber, sdid.ca_idcountry as sdid_idcountry, sdid.ca_issuedate as sdid_issuedate, sdid.ca_expirationdate as sdid_expirationdate,";
 		$query.= " sdal.ca_uid_aka as sdal_uid_aka, sdal.ca_type as sdal_type, sdal.ca_category as sdal_category, sdal.ca_firstname as sdal_firstname, sdal.ca_lastname as sdal_lastname,";
 		$query.= " sdak.ca_uid_aka as sdak_uid_aka, sdak.ca_type as sdak_type, sdak.ca_category as sdak_category, sdak.ca_firstname as sdak_firstname, sdak.ca_lastname as sdak_lastname ";
-		$query.= "from tb_clientes cl ";
+		$query.= "from vi_clientes cl ";
 
                 $query.= "	RIGHT JOIN (select ca_idcliente, ca_coltrans_std, ca_colmas_std from vi_clientes where ca_coltrans_std = 'Activo' or ca_colmas_std = 'Activo' order by ca_idcliente) as std";
 		$query.= "	ON ( cl.ca_idcliente = std.ca_idcliente )";
