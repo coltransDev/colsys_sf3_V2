@@ -15,10 +15,10 @@
 <body>
 	<div class="top">
 		<div class="logo1"> 			 
-            <?=image_tag("branding/".sfConfig::get("app_branding_template")."/logo_left.jpg")?>
+            <?=image_tag("branding/".sfConfig::get("app_branding_template")."/logo_left.gif")?>
 		</div>
 		<div class="logo2">
-            <?=image_tag("branding/".sfConfig::get("app_branding_template")."/logo_right.jpg")?>
+            <?=image_tag("branding/".sfConfig::get("app_branding_template")."/logo_right.gif")?>
 		</div>			
 			
 	</div>
