@@ -25,13 +25,7 @@ $bdatos = array("Maestra Clientes", "Mis Clientes", "Clientes Libres");  // Arre
 $tipos = array("Llamada", "Visita", "Correo Electrónico", "Correspondencia", "Cerrar Caso");
 $estados = array("Potencial","Activo","Vetado");
 $libestados = array("Vigente","Congelada");
-
-$sstatus = array();
-$sstatus[] = "";
-if ($nivel >= 2){
-    $sstatus[] = "Vetado";
-}
-
+$sstatus = array("","Vetado");
 $empresas= array("Coltrans","Colmas");
 $circular=array("Sin","Vencido","Vigente");
 $presentacion=array("Detallado","Columnas");
@@ -156,7 +150,7 @@ include_component("widgets", "widgetCoordinadoresAduana");
                                     },
                                     new WidgetComerciales({
                                         fieldLabel: 'Comercial',
-                                        disabled: this.nivel<2,
+                                        disabled: this.nivel<2,                                        
                                         name: 'login',
                                         hiddenName: 'vendedor'
                                         
@@ -856,13 +850,8 @@ include_component("widgets", "widgetCoordinadoresAduana");
                                         store:          new Ext.data.JsonStore({
                                             fields : ['name', 'value'],
                                             data   : [
-                                                <?
-                                                $i=0;
-                                                foreach( $sstatus as $key=>$val ){
-                                                    echo ($i++!=0)?",":"";
-                                                    echo "{name : '$val',   value: '$val'}";
-                                                }
-                                                ?>
+                                                {name : '',   value: ''},
+                                                {name : 'Vetado',  value: 'Vetado'}
                                             ]
                                         })
                                     },
