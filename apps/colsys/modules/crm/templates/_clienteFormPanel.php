@@ -1055,6 +1055,12 @@ include_component("widgets", "widgetCoordinadoresAduana");
                             Ext.getCmp("dir_col").setVisible(false);
                             Ext.getCmp("dir_other").setVisible(true);
                         }
+                        
+                        if( tipo.getValue()!="1" ){                
+                            Ext.getCmp("dv_id").disable();
+                        }else{                
+                            Ext.getCmp("dv_id").enable();                
+                        }
                     }
                 });
                 
@@ -1090,10 +1096,11 @@ include_component("widgets", "widgetCoordinadoresAduana");
                 Ext.getCmp("dir_other").setVisible(true);
             }
             
+            
             if( tipo.getValue()!="1" ){                
                 Ext.getCmp("dv_id").disable();
             }else{                
-                Ext.getCmp("dv_id").enable();
+                Ext.getCmp("dv_id").enable();                
             }
         },
         
