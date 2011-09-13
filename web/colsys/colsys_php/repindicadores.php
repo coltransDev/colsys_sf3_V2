@@ -85,6 +85,8 @@ if (!isset($boton) and !isset($agrupamiento)) {
     echo "      trans_element[trans_element.length] = new Option('Aéreo','Aéreo',false,false);";
     echo "  }else if (process_element.value=='Marítimo'){";
     echo "      trans_element[trans_element.length] = new Option('Marítimo','Marítimo',false,false);";
+    echo "  }else if (process_element.value=='OTM'){";
+    echo "      trans_element[trans_element.length] = new Option('Terrestre','Terrestre',false,false);";
     echo "  }else if (process_element.value=='Aduana'){";
     echo "      trans_element.options[trans_element.length] = new Option();";
     echo "  }else {";
@@ -351,10 +353,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
         $impoexpo = "ca_impoexpo = 'Importación'";
     }  
     
-    
-    
     $cliente = ((strlen($cliente)!=0)?"and upper(ca_compania) like upper('%$cliente%')":"");    
-    
 
     $campos = "";
     while (list ($clave, $val) = each ($agrupamiento)) {
@@ -411,11 +410,17 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
             $subque = " LEFT OUTER JOIN (select rp.ca_consecutivo as ca_consecutivo_conf, rs.ca_fchllegada, rs.ca_fchcontinuacion, min(rs.ca_fchenvio) as ca_fchconf_lleg from tb_repstatus rs INNER JOIN tb_reportes rp ON (rs.ca_idreporte = rp.ca_idreporte and rs.ca_idetapa = 'IACAD') group by rp.ca_consecutivo, rs.ca_fchllegada, rs.ca_fchcontinuacion order by rp.ca_consecutivo) rs1 ON ($source.ca_consecutivo = rs1.ca_consecutivo_conf) ";
             $subque.= " LEFT OUTER JOIN (select ca_referencia as ca_referencia_fac, ca_idcliente as ca_idcliente_fac, ca_hawb as ca_hawb_fac, ca_fchfactura, ca_observaciones from tb_inoingresos_air where ((string_to_array(ca_referencia,'.'))[5]::int) in ($ano_mem) and ((string_to_array(ca_referencia,'.'))[3])::text in ($mes_mem) order by ca_referencia, ca_idcliente, ca_hawb, ca_fchfactura) ii ON ($source.ca_referencia = ii.ca_referencia_fac and $source.ca_idcliente = ii.ca_idcliente_fac and $source.ca_hawb = ii.ca_hawb_fac) ";
             $campos.= ", ca_referencia, ca_idcliente_fac, ca_hawb, ca_fchfactura";
-        } else if ($tra_mem == 'Marítimo') {
+        } else if ($tra_mem == 'Marítimo' or $tra_mem == 'Terrestre') {
                 $source = "vi_repindicador_sea";
                 $subque = " LEFT OUTER JOIN (select substring(rs.ca_fchllegada::text,1,4) as ca_ano_new, substring(rs.ca_fchllegada::text,6,2) as ca_mes_new, rp.ca_consecutivo as ca_consecutivo_conf, rs.ca_fchllegada, min(rs.ca_fchenvio) as ca_fchconf_lleg from tb_repstatus rs INNER JOIN tb_reportes rp ON (rs.ca_idreporte = rp.ca_idreporte and rs.ca_idetapa in ('IMCPD')) group by rp.ca_consecutivo, rs.ca_fchllegada order by rp.ca_consecutivo) rs1 ON ($source.ca_consecutivo = rs1.ca_consecutivo_conf) ";
                 $subque.= " LEFT OUTER JOIN (select rp.ca_consecutivo as ca_consecutivo_cont, (string_to_array(rs.ca_propiedades, '='::text))[2] as ca_fchplanilla, min(rs.ca_fchenvio) as ca_fchconf_plan from tb_repstatus rs INNER JOIN tb_reportes rp ON (rs.ca_idreporte = rp.ca_idreporte and rs.ca_idetapa = '99999') group by rp.ca_consecutivo, rs.ca_propiedades order by rp.ca_consecutivo) rs2 ON ($source.ca_consecutivo = rs2.ca_consecutivo_cont) ";
-                $subque.= " LEFT OUTER JOIN (select ca_referencia as ca_referencia_fac, ca_idcliente as ca_idcliente_fac, ca_hbls as ca_hbls_fac, ca_fchfactura, ca_observaciones from tb_inoingresos_sea where substr(ca_observaciones,1,12) != 'Contenedores' order by ca_referencia, ca_idcliente, ca_hbls, ca_fchfactura) ii ON ($source.ca_referencia = ii.ca_referencia_fac and $source.ca_idcliente = ii.ca_idcliente_fac and $source.ca_hbls = ii.ca_hbls_fac) "; //and ((string_to_array(ca_referencia,'.'))[5]::int) in ($ano_mem) and ((string_to_array(ca_referencia,'.'))[3])::text in ($mes_mem)
+                if ($procesos == "Marítimo"){
+                    $subque.= " LEFT OUTER JOIN (select ca_referencia as ca_referencia_fac, ca_idcliente as ca_idcliente_fac, ca_hbls as ca_hbls_fac, ca_fchfactura, ca_observaciones from tb_inoingresos_sea where substr(ca_observaciones,1,12) != 'Contenedores' and substr(ca_observaciones,1,7) != 'OTM/DTA' order by ca_referencia, ca_idcliente, ca_hbls, ca_fchfactura) ii ON ($source.ca_referencia = ii.ca_referencia_fac and $source.ca_idcliente = ii.ca_idcliente_fac and $source.ca_hbls = ii.ca_hbls_fac) "; //and ((string_to_array(ca_referencia,'.'))[5]::int) in ($ano_mem) and ((string_to_array(ca_referencia,'.'))[3])::text in ($mes_mem)
+                }else if ($procesos == "OTM"){
+                    $transporte = "ca_transporte = 'Marítimo' ";   // Esta variable viene con valor "Terrestre"
+                    $subque.= " RIGHT OUTER JOIN (select ca_referencia as ca_referencia_fac, ca_idcliente as ca_idcliente_fac, ca_hbls as ca_hbls_fac, ca_fchfactura, ca_observaciones from tb_inoingresos_sea where substr(ca_observaciones,1,12) != 'Contenedores' and substr(ca_observaciones,1,7) = 'OTM/DTA' order by ca_referencia, ca_idcliente, ca_hbls, ca_fchfactura) ii ON ($source.ca_referencia = ii.ca_referencia_fac and $source.ca_idcliente = ii.ca_idcliente_fac and $source.ca_hbls = ii.ca_hbls_fac) ";
+                }
+
                 $campos.= ", ca_referencia, ca_idcliente_fac, ca_hbls, ca_fchfactura";
                 
                 $ano = str_replace("ca_ano", "ca_ano_new", $ano);
@@ -644,7 +649,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
     
     $queries = "select * from $source $subque where ".($impoexpo?$impoexpo." and ":"")."  $sucursal $cliente and ".($ciudestino?$ciudestino." and":"")."   ".($transporte?$transporte." and":"")." $ano and $mes";
     $queries.= " order by $campos";
-    //die($queries);
+    // die($queries);
 
     if (!$rs->Open("$queries")) {                       							// Selecciona todos lo registros de la vista vi_repgerencia_sea
         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      		// Muestra el mensaje de error
@@ -697,8 +702,10 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
             if ($tra_mem == 'Aéreo') {
                 echo "	<TH>Fch.Llegada</TH>";
             } else if ($tra_mem == 'Marítimo') {
-                    echo "	<TH>Fch.Llegada/Planilla</TH>";
-                }
+                echo "	<TH>Fch.Llegada</TH>";
+            } else if ($tra_mem == 'Terrestre') {
+                echo "	<TH>Fch.Planilla</TH>";
+            }
             echo "	<TH>Fch.Factura</TH>";
             echo "	<TH>Observaciones</TH>";
             echo "	<TH>Dif.</TH>";
