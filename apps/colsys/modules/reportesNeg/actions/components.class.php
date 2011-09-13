@@ -118,7 +118,8 @@ class reportesNegComponents extends sfComponents
 	{
         if($this->reporte)
         {
-            $transporte=($this->reporte->getCaTransporte()==constantes::TERRESTRE ) ?constantes::MARITIMO:$this->reporte->getCaTransporte();
+            //$transporte=($this->reporte->getCaTransporte()==constantes::TERRESTRE ) ?constantes::MARITIMO:$this->reporte->getCaTransporte();
+            $transporte=$this->reporte->getCaTransporte();
             $this->conceptos = Doctrine::getTable("Concepto")
                                      ->createQuery("c")
                                      ->select("ca_idconcepto, ca_concepto")
@@ -166,6 +167,8 @@ class reportesNegComponents extends sfComponents
 
             if($this->reporte->getCaTransporte()==constantes::AEREO)
                 $this->aplicaciones1 = ParametroTable::retrieveByCaso("CU064", null, Constantes::AEREO );
+            else if($this->reporte->getCaTransporte()==constantes::TERRESTRE)
+                $this->aplicaciones1 = ParametroTable::retrieveByCaso("CU064", null, Constantes::MARITIMO );
             else
                 $this->aplicaciones1 = ParametroTable::retrieveByCaso("CU064", null, Constantes::MARITIMO );
 
@@ -942,9 +945,37 @@ class reportesNegComponents extends sfComponents
         //echo $this->getRequestParameter("sucursal");
         $this->sucursal = $this->getRequestParameter("sucursal");
         //echo $this->sucursal;
-
-        $this->continuacion = $this->getRequestParameter("continuacion");
+        $this->continuacion = $this->getRequestParameter("continuacion");        
    }
+   
+   
+   public function executeFileManager() {        
+       $year=explode("-", $this->reporte->getCaConsecutivo());
+       $this->year=$year[1];
+       
+        $folder = "reportes/".$this->year."/". $this->reporte->getCaConsecutivo()."/instrucciones";
+        //echo $folder;
+        $directory = sfConfig::get('app_digitalFile_root') . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR;
+
+        if (!is_dir($directory)) {
+            @mkdir($directory, 0777, true);
+        }
+        chmod ( $directory , 0777 );
+
+        $archivos = sfFinder::type('file')->maxDepth(0)->in($directory);
+        //echo print_r($archivos);
+
+        $filenames = array();
+
+        $fileTypes = $this->filetypes;
+
+        foreach ($archivos as $archivo) {            
+            $file=explode("/", $archivo);
+            $filenames[]["file"] = $file[count($file)-1];
+        }
+        $this->folder = $folder;
+        $this->filenames = $filenames;        
+    }
 
 }
 ?>
