@@ -41,7 +41,7 @@ margin: 0px 0px 0px 30px;
 
 width:100%;
 float:left;
-background-color:#2E4B66;
+background-color:#062A7D;
 }
 
 .headerspace{
@@ -79,7 +79,7 @@ padding:12px 24px;
 .search input {
 color:#999;
 }
-a:link, a:visited {color:#1C3A56;
+a:link, a:visited {color:#062A7D;
 }
 
 a:hover {
@@ -110,7 +110,7 @@ table.table1 th {
 	margin: 0px;
 	padding: 6px 4px 2px 4px;
 	height: 25px;
-	background: #2E4B66;
+	background: #062A7D;
 	font-size: 11px;
 	color: #FFFFFF;
 }
@@ -372,7 +372,7 @@ color:#CCCCCC;
 
 .story_coment{
 	font-size: 11px;
-	color: #2E4B66;
+	color: #062A7D;
 	text-align:left;
 	cursor:pointer;
 }
