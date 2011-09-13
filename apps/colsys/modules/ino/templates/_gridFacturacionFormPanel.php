@@ -14,9 +14,7 @@ $inoHouses = $sf_data->getRaw("inoHouses");
     GridFacturacionFormPanel = function( config ) {
         Ext.apply(this, config);
         this.ctxRecord = null;
-
         
-       
         
 
         this.tipos = new Ext.form.ComboBox({
@@ -49,7 +47,11 @@ $inoHouses = $sf_data->getRaw("inoHouses");
                 proxy: new Ext.data.MemoryProxy(<?= json_encode($tipos) ?>)
             })           
         });
-
+        
+        this.recHouses = Ext.data.Record.create([
+            {name: 'idhouse', type: 'string'},
+            {name: 'value', type: 'string'}
+        ]);
 
         this.inoHouses = new Ext.form.ComboBox({
             fieldLabel: 'House',
@@ -67,17 +69,14 @@ $inoHouses = $sf_data->getRaw("inoHouses");
             mode:'local',
             triggerAction: 'all',
             store: new Ext.data.Store({
-                autoLoad : true,
+                autoLoad : false,
                 reader: new Ext.data.JsonReader({
                     root: 'root',
                         totalProperty: 'total'
                     },
-                    Ext.data.Record.create([
-                        {name: 'idhouse', type: 'string'},
-                        {name: 'value', type: 'string'}
-                    ])
+                    this.recHouses
                 ),
-                proxy: new Ext.data.MemoryProxy(<?= json_encode($inoHouses) ?>)
+                proxy: new Ext.data.MemoryProxy({})
             }),
 
             onSelect: function(record, index){ // override default onSelect to do redirect
@@ -120,6 +119,16 @@ $inoHouses = $sf_data->getRaw("inoHouses");
                                 columnWidth:.5,
                                 items: [
                                     {
+                                        xtype:'hidden',
+                                        id: 'idcomprobante',
+                                        value: this.idcomprobante
+                                    }, 
+                                    {
+                                        xtype:'hidden',
+                                        id: 'modo',
+                                        value: this.modo
+                                    }, 
+                                    {
                                         xtype:'numberfield',
                                         fieldLabel: 'Consecutivo',
                                         name: 'consecutivo',
@@ -141,13 +150,7 @@ $inoHouses = $sf_data->getRaw("inoHouses");
                                         width: 80,
                                         tabIndex: 3
                                     }
-                                    ,
-                                                                        
-                                    {
-                                        xtype:'hidden',
-                                        id: 'idcomprobante',
-                                        value: ''
-                                    },                                    
+                                    ,                                
                                     new WidgetMoneda({
                                         width: 120,
                                         fieldLabel: 'Moneda',
@@ -191,21 +194,15 @@ $inoHouses = $sf_data->getRaw("inoHouses");
                 }
                 
 				]
-            },{
-                title:'Deducciones',
-                layout:'form',
-                defaults: {width: 230},
-                defaultType: 'textfield',
-                labelAlign: "top",
-                items: [{
-					xtype: 'textarea',
-					width: 500,
-					fieldLabel: 'Observaciones',
-					name: 'observaciones',
-					value: '',
-                    allowBlank:true
-                }]
-            }]
+            }/*,
+            new GridDeduccionesPanel(
+                {
+                    idhouse: this.idhouse,
+                    title: "Deducciones",
+                    id: 'grid-deduccion-panel'
+                }
+            )*/
+            ]
 
         }];
 
@@ -262,9 +259,7 @@ $inoHouses = $sf_data->getRaw("inoHouses");
                                 grid.recargar();
                             }
                         }
-
-
-
+                        
                     },
                     // standardSubmit: false,
                     failure:function(form,action){
@@ -288,29 +283,41 @@ $inoHouses = $sf_data->getRaw("inoHouses");
 
             // set wait message target
            
+            
+            
+            var store = Ext.getCmp("grid-house-panel").store;
+            var records = store.getRange();
+            
+            for( var i=0; i<records.length; i++ ){
+                var newRec = new this.recHouses({
+                    idhouse: records[i].data.idhouse,
+                    value: records[i].data.doctransporte+" - "+records[i].data.cliente
+                });
+                
+                this.inoHouses.store.addSorted( newRec );
+            }
+            
+            
             if( this.idcomprobante ){
                 this.getForm().waitMsgTarget = this.getEl();
                 var form  = this.getForm();
                 this.load({
                     url:'<?=url_for("ino/datosGridFacturacionFormPanel")?>',
                     waitMsg:'Cargando...',
-                    params:{idcomprobante:this.idcomprobante},
+                    params:{idcomprobante:this.idcomprobante,
+                            modo:this.modo},
 
                     success:function(response,options){
                         this.res = Ext.util.JSON.decode( options.response.responseText );
-                        form.findField("ids").setRawValue(this.res.data.ids);
-                        form.findField("ids").hiddenField.value = this.res.data.ids_id;                        
+                        //form.findField("ids").setRawValue(this.res.data.ids);
+                        //form.findField("ids").hiddenField.value = this.res.data.ids_id;                        
                     }
 
                 });
             }
-
+            this.inoHouses.setValue(this.idhouse);
+            
         }
-
-        
-
-
-
     });
 
 </script>

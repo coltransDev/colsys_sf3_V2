@@ -9,89 +9,41 @@
 <div class="content" align="center">
 	<table width="50%" border="0" class="tableList">
 	<tr>
-        <th scope="col" colspan="3" align="left"><b>Crear un nueva referencia, seleccione el servicio</b></th>
+        <th scope="col" colspan="<?=$maxSpan;?>" align="left"><b>Crear un nueva referencia, seleccione el servicio</b></th>
 	</tr>
-    <tr><td colspan="3"><b>Importaci&oacute;n</b></td></tr>
-
-    <tr style="padding: 10px">
-<?
-//	if( $nivelAereo>=0 )
-    {
-
-?>
-        <td align="left">
-			<?=link_to("Aéreo", "ino/formIno?transporte=Aéreo&impoexpo=Importación" )?>
-		</td>
-<?
-	}
-
-//	if( $nivelMaritimo>=0 )
-    {
-
-?>
-        <td><div align="left">
-			<?=link_to("Marítimo", "ino/formIno?transporte=Marítimo&impoexpo=Importación")?>
-		</div></td>
-<?
-	}
-?>
-	</tr>
-    <tr><td colspan="3" ><b>Exportaci&oacute;n</b></td></tr>
-    <tr style="padding: 10px">
-<?
-//	if( $nivelAereo>=0 )
-    {
-
-?>
-        <td align="left">
-            <?=link_to("Aéreo", "ino/formIno?transporte=Aéreo&impoexpo=Exportación" )?>
-	</td>
-<?
-	}
-
-//	if( $nivelMaritimo>=0 )
-    {
-
-?>
-        <td><div align="left">
-            <?=link_to("Marítimo", "ino/formIno?transporte=Marítimo&impoexpo=Exportación")?>
-	</div></td>
-<?
-	}
-?>
-	</tr>
-
-
-    <tr><td colspan="2" ><b>Triangulaci&oacute;n</b></td></tr>
-    <tr style="padding: 10px">
-<?
-//	if( $nivelAereo>=0 )
-    {
-
-?>
-        <td align="left">
-			<?=link_to("Aéreo", "ino/formIno?transporte=Aéreo&impoexpo=Triangulación" )?>
-		</td>
-<?
-	}
-
-//	if( $nivelMaritimo>=0 )
-    {
-
-?>
-        <td><div align="left">
-			<?=link_to("Marítimo", "ino/formIno?transporte=Marítimo&impoexpo=Triangulación")?>
-		</div></td>
-<?
-	}
-?>
-	</tr>
-     <tr><td colspan="2" ><b>Otros</b></td></tr>
-    <tr>
-        <td><div align="left">
-			<?=link_to("Otros Servicios", "ino/formInoOs")?>
-		</div></td>
+    <?
+    foreach($modos as $impoexpo=>$val ){
+    ?>
+    <tr class="row0">
+        <td colspan="<?=$maxSpan;?>">
+            <b><?=$impoexpo?></b>
+        </td>
     </tr>
+    
+    <tr>
+        <?
+        $i=0;
+        foreach( $val as $transporte=>$id ){
+            $i++;
+        ?>    
+        <td >
+            <?=link_to($transporte, "ino/index?modo=".$id)?>
+        </td>
+        <?
+        }
+        
+        for( $j=$i;$j<$maxSpan;$j++ ){
+        ?>    
+        <td >
+            &nbsp;
+        </td>
+        <?    
+        }
+        ?>
+    </tr>
+    <?
+    }
+    ?>           
 
 </table>
 
@@ -100,5 +52,5 @@
 <br />
 
 <?
-include_component("ino","panelFiltro");
+//include_component("ino","panelFiltro");
 ?>

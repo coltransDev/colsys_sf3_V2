@@ -3,9 +3,8 @@
 * Muestra los resultados de la busqueda de la cotización 
 * @author Andres Botero
 */
-include_component("ino","panelFiltro");
+include_component("ino","panelFiltro", array("modo"=>$modo));
 ?>
-
 
 
 <div align="center">
@@ -49,7 +48,7 @@ $pagerLayout->display();
 	?>
 	<tr style="border-bottom: #A0A0A0 solid 2px">
 	  <td >
-        <?=link_to($referencia->getCaReferencia(), "ino/verReferencia?modo=".$referencia->getCaTransporte()."&idmaster=".$referencia->getCaIdmaster())?>
+        <?=link_to($referencia->getCaReferencia(), "ino/verReferencia?modo=".$modo->getCaIdmodo()."&idmaster=".$referencia->getCaIdmaster())?>
           <?=$referencia->getCaFchanulado()?"<br />Anulada":""?>
       </td>
       <td width="100%">

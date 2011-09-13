@@ -141,7 +141,8 @@ GridFacturacionPanel = function( config ){
         autoLoad : true,
         url: '<?=url_for("ino/datosGridFacturacionPanel")?>',
         baseParams : {
-            idmaster: this.idmaster
+            idmaster: this.idmaster,
+            modo: this.modo
         },
         reader: new Ext.data.JsonReader(
             {
@@ -180,10 +181,12 @@ GridFacturacionPanel = function( config ){
        //boxMinHeight: 300,
        tbar: this.tbar,
        autoHeight: true,
+       id: 'grid-facturacion-panel',
        view: new Ext.grid.GroupingView({
             enableGroupingMenu: false,
             forceFit:true,
-            enableRowBody:false
+            enableRowBody:false,
+            emptyText: 'No hay datos'
             //showPreview:true,
        }),
        listeners:{
@@ -319,13 +322,13 @@ Ext.extend(GridFacturacionPanel, Ext.grid.GridPanel, {
         return color;
     },
 
-    crearFactura: function( idhouse , gridId){
-        this.win = new GridFacturacionWindow( {gridId:gridId} );
+    crearFactura: function( idhouse , gridId){        
+        this.win = new GridFacturacionWindow( {gridId:gridId, modo:this.modo, idhouse:idhouse} );
         this.win.show();
     },
 
     editarFactura: function( idhouse, idcomprobante, gridId ){
-        this.win = new GridFacturacionWindow( {gridId:gridId, idcomprobante:idcomprobante} );
+        this.win = new GridFacturacionWindow( {gridId:gridId, idcomprobante:idcomprobante, modo:this.modo} );
         this.win.show();
 
     },

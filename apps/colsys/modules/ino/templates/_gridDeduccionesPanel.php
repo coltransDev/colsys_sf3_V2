@@ -6,93 +6,41 @@
  */
 ?>
 <script type="text/javascript">
-GridHousePanel = function( config ){
+GridDeduccionesPanel = function( config ){
     Ext.apply(this, config);    
     this.columns = [      
       {
-        header: "House",
-        dataIndex: 'doctransporte',
+        header: "Concepto",
+        dataIndex: 'deduccion',
         width: 100,
         sortable: true,
         renderer: this.formatItem
       },
       {
-        header: "Idcliente",
-        dataIndex: 'idcliente',
+        header: "Neta",
+        dataIndex: 'neto',
         sortable: true,
         width: 80
       },
       {
-        header: "Cliente",
-        dataIndex: 'cliente',
+        header: "Valor",
+        dataIndex: 'valor',
         hideable: false,
         sortable: true,
         width: 280
-      },
-      {
-        header: "Reporte",
-        dataIndex: 'reporte',
-        sortable: true,
-        width: 80
-      },
-      {
-        header: "Vendedor",
-        dataIndex: 'vendedor',
-        hideable: false,
-        sortable: true,
-        width: 80
-      },
-      {
-        header: "Piezas",
-        dataIndex: 'numpiezas',
-        hideable: false,
-        sortable: true,
-        width: 80
-      },
-       {
-        header: "Peso",
-        dataIndex: 'peso',
-        hideable: false,
-        sortable: true,
-        width: 80
-      },
-
-      {
-        header: "Volumen",
-        dataIndex: 'volumen',
-        hideable: false,
-        width: 80,
-        sortable: true
-      },
-      {
-        header: "Proveedor",
-        dataIndex: 'proveedor',
-        hideable: false,
-        width: 200,
-        sortable: true
       }
      ];
 
-    this.record = Ext.data.Record.create([
-            {name: 'idmaster', type: 'integer'},
+    this.record = Ext.data.Record.create([            
             {name: 'idhouse', type: 'integer'},
-            {name: 'doctransporte', type: 'string'},
-            {name: 'fchdoctransporte', type: 'date', dateFormat:'Y-m-d'},
-            {name: 'idcliente', type: 'integer'},
-            {name: 'cliente', type: 'string'},
-            {name: 'idreporte', type: 'integer'},
-            {name: 'proveedor', type: 'string'},
-            {name: 'vendedor', type: 'string'},
-            {name: 'idproveedor', type: 'integer'},
-            {name: 'reporte', type: 'string'},
-            {name: 'numpiezas', type: 'string'},
-            {name: 'peso', type: 'float'},
-            {name: 'volumen', type: 'float'}
+            {name: 'iddeduccion', type: 'integer'},            
+            {name: 'neto', type: 'float'},
+            {name: 'valor', type: 'float'}
     ]);
 
     this.store = new Ext.data.GroupingStore({
         autoLoad : true,
-        url: '<?=url_for("ino/datosGridHousePanel")?>',
+        url: '<?=url_for("ino/datosGridDeduccionesPanel")?>',
         baseParams : {
             idmaster: this.idmaster,
             modo: this.modo
@@ -104,7 +52,7 @@ GridHousePanel = function( config ){
             },
             this.record
         ),
-        sortInfo:{field: 'doctransporte', direction: "ASC"}
+        sortInfo:{field: 'deduccion', direction: "ASC"}
     });
 
     this.tbar = [{
@@ -123,11 +71,11 @@ GridHousePanel = function( config ){
         });
     }
 
-    GridHousePanel.superclass.constructor.call(this, {
+    GridDeduccionesPanel.superclass.constructor.call(this, {
        loadMask: {msg:'Cargando...'},       
        tbar: this.tbar,
        autoHeight: true,
-       id: 'grid-house-panel',
+       
        view: new Ext.grid.GridView({
             forceFit:true,
             enableRowBody:false,
@@ -140,7 +88,7 @@ GridHousePanel = function( config ){
     });
 };
 
-Ext.extend(GridHousePanel, Ext.grid.GridPanel, {
+Ext.extend(GridDeduccionesPanel, Ext.grid.GridPanel, {
     newHouse: function(){
         if( !this.readOnly ){
             var win = Ext.getCmp("edit-house-win");
@@ -198,7 +146,7 @@ Ext.extend(GridHousePanel, Ext.grid.GridPanel, {
                var store = this.store;
                Ext.Ajax.request({
                     waitMsg: 'Eliminando...',
-                    url: '<?=url_for("ino/eliminarGridHousePanel")?>',
+                    url: '<?=url_for("ino/eliminarGridDeduccionesPanel")?>',
                     params :	{
                         idhouse: idhouse,
                         modo: modo

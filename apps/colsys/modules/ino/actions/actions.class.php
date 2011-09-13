@@ -8,39 +8,28 @@
  * @author     Andres Botero
  * @version    SVN: $Id: actions.class.php 12479 2008-10-31 10:54:40Z fabien $
  */
-class inoActions extends sfActions {
-    const RUTINA_AEREO = 15;
-    const RUTINA_MARITIMO = 15;
-    const RUTINA_ADUANA = 15;
-    const RUTINA_EXPO = 15;
+class inoActions extends sfActions {    
 
-    public function getNivel( ){
-        $this->modo = $this->getRequestParameter("modo");
-        $this->impoexpo = $this->getRequestParameter("impoexpo");
-
-        $this->nivel = -1;
-
-		if( $this->modo==Constantes::AEREO  || utf8_decode($this->modo) == Constantes::AEREO ){
-            $this->modo=Constantes::AEREO;
-			$this->nivel = $this->getUser()->getNivelAcceso( inoActions::RUTINA_AEREO );
-		}else if( $this->modo==Constantes::MARITIMO || utf8_decode($this->modo)==Constantes::MARITIMO  ){
-            $this->modo=Constantes::MARITIMO;
-			$this->nivel = $this->getUser()->getNivelAcceso( inoActions::RUTINA_MARITIMO );
-		}else if( $this->modo==Constantes::TERRESTRE || utf8_decode($this->modo)==Constantes::TERRESTRE ){
-            $this->modo=Constantes::TERRESTRE;
-			$this->nivel = $this->getUser()->getNivelAcceso( inoActions::RUTINA_EXPO );
-		}
-
-        if( $this->impoexpo==Constantes::IMPO || utf8_decode($this->impoexpo) == Constantes::IMPO ){
-            $this->impoexpo=Constantes::IMPO;
-		}
-        else if( $this->impoexpo==Constantes::EXPO || utf8_decode($this->impoexpo) == Constantes::EXPO ){
-            $this->impoexpo=Constantes::EXPO;
-        }else if( $this->impoexpo==Constantes::TRIANGULACION || utf8_decode($this->impoexpo) == Constantes::TRIANGULACION ){
-            $this->impoexpo=Constantes::TRIANGULACION;
-        }
+    public function preExecute() {
         
-
+        $this->idmodo = $this->getRequestParameter("modo");
+        
+        $this->modo = Doctrine::getTable("Modo")->find($this->idmodo);   
+                
+        if (!$this->idmodo || !$this->modo) {            
+            $action = $this->getContext()->getActionName ();
+            if( $action!="seleccionModo" ){
+                $this->redirect("ino/seleccionModo");
+            }
+        }        
+        
+        if( $this->modo ){
+            $this->nivel = $this->getUser()->getNivelAcceso( $this->modo->getCaRutina() );
+        }
+        parent::preExecute();
+    }
+    
+    public function getNivel() {
         return $this->nivel;
     }
 
@@ -49,9 +38,30 @@ class inoActions extends sfActions {
      * @author: Andres Botero
      */
     public function executeSeleccionModo() {
-        $this->nivelAereo = $this->getUser()->getNivelAcceso(inoActions::RUTINA_AEREO);
-        $this->nivelMaritimo = $this->getUser()->getNivelAcceso(inoActions::RUTINA_MARITIMO);
-        $this->nivelExpo = $this->getUser()->getNivelAcceso(inoActions::RUTINA_EXPO);
+        
+        $modos = Doctrine::getTable("Modo")
+                       ->createQuery("m")
+                       ->addWhere("m.ca_modulo=?", "INO")
+                       ->addOrderBy("m.ca_impoexpo")
+                       ->addOrderBy("m.ca_transporte")
+                       ->execute();
+        
+        $this->modos = array();
+        $maxSpan=0;
+        $span=0;
+        foreach( $modos as $m ){
+            if( !isset($this->modos[$m->getCaImpoexpo()] ) ){
+                $this->modos[$m->getCaImpoexpo()] = array();
+                $span=0;
+            }
+            $this->modos[$m->getCaImpoexpo()][$m->getCaTransporte()] = $m->getCaIdmodo();
+            $span++;
+            if( $span>$maxSpan){
+                $maxSpan = $span;
+            }
+        }        
+        $this->maxSpan = $maxSpan;
+        
     }
 
     /**
@@ -60,10 +70,7 @@ class inoActions extends sfActions {
      * @param sfRequest $request A request object
      */
     public function executeIndex(sfWebRequest $request) {
-        $this->modo = $request->getParameter("modo");
-        if (!$this->modo) {
-            $this->redirect("ino/seleccionModo");
-        }
+        
         $this->nivel = $this->getNivel();
         $this->comerciales = UsuarioTable::getComerciales();
     }
@@ -75,16 +82,17 @@ class inoActions extends sfActions {
     public function executeBusqueda(sfWebRequest $request) {
         $criterio = $request->getParameter("criterio");
         $cadena = $request->getParameter("cadena");
-
-        $q = Doctrine_Query::create()->from('InoMaster m')
-                ;
+        
+        $q = Doctrine_Query::create()->from('InoMaster m');
+                
 
         $q = Doctrine::getTable("InoMaster")
                         ->createQuery("m")
                         ->select("*");
-
-
-
+        
+        
+        $q->addWhere("m.ca_transporte=?", $this->modo->getCaTransporte() );
+        $q->addWhere("m.ca_impoexpo=?", $this->modo->getCaImpoexpo() );        
         switch ($criterio) {
             case "ca_referencia":
             case "ca_motonave":
@@ -132,6 +140,8 @@ class inoActions extends sfActions {
 
         $q->addOrderBy("m.ca_referencia");
         $q->limit(200);
+        
+        
 
         // Defining initial variables
         $currentPage = $this->getRequestParameter('page', 1);
@@ -143,6 +153,8 @@ class inoActions extends sfActions {
                         $currentPage,
                         $resultsPerPage
         );
+        
+        
 
         $this->refList = $this->pager->execute();
         /*if ($this->pager->getResultsInPage() == 1 && $this->pager->getPage() == 1) {
@@ -150,7 +162,9 @@ class inoActions extends sfActions {
             $this->redirect("ino/verReferencia?idmaster=" . $refs[0]->getCaIdmaster());
         }*/
         $this->criterio = $criterio;
-        $this->cadena = $cadena;        
+        $this->cadena = $cadena;    
+        
+        
     }
 
     /**
@@ -159,24 +173,16 @@ class inoActions extends sfActions {
      * @param sfRequest $request A request object
      */
     public function executeFormIno(sfWebRequest $request) {
-        $this->modo = $request->getParameter("modo");
-        $this->impoexpo = $request->getParameter("impoexpo");
-        $this->transporte = $request->getParameter("transporte");
-        $this->id = $request->getParameter("id");
-        if($this->id>0)
-        {
-            $this->referencia = Doctrine::getTable("InoMaster")->find($this->id);
-            $this->modo = $this->referencia->getCaTransporte();
+        
+        $this->impoexpo = $this->modo->getCaImpoexpo();
+        $this->transporte = $this->modo->getCaTransporte();
+        $this->idmaster = $request->getParameter("idmaster");
+        if( $this->idmaster ){
+            $this->referencia = Doctrine::getTable("InoMaster")->find($this->idmaster);            
         }
         else{
-            $this->nivel = $this->getNivel();
-        }
-        
-        //$response = sfContext::getInstance()->getResponse();
-        //$response->addJavaScript("ext4/ext-all-debug.js", 'last');
-        //$response->addJavaScript("ext4/ext3-core-compat", 'last');
-        //$response->addJavaScript("ext4/ext3-compat", 'last');
-        //$response->addStylesheet("extjs4/css/ext-all.css", 'last');
+            $this->referencia = new InoMaster();
+        }                
     }
 
     /**
@@ -281,7 +287,7 @@ class inoActions extends sfActions {
      * @param sfRequest $request A request object
      */
     public function executeVerReferencia(sfWebRequest $request) {
-        $this->modo = $request->getParameter("modo");
+        
         // $this->nivel = $this->getNivel();
 
         $this->forward404Unless($request->getParameter("idmaster"));
@@ -297,7 +303,7 @@ class inoActions extends sfActions {
      * @param sfRequest $request A request object
      */
     public function executeBalanceReferencia(sfWebRequest $request) {
-        $this->modo = $request->getParameter("modo");
+       
         // $this->nivel = $this->getNivel();
 
         $this->forward404Unless($request->getParameter("id"));
@@ -687,7 +693,7 @@ class inoActions extends sfActions {
      * @param sfRequest $request A request object
      */
     public function executeFormComprobante(sfWebRequest $request) {
-        $this->modo = $request->getParameter("modo");
+        
         //$this->nivel = $this->getNivel();
 
         $request->setParameter("tipo", "F");
@@ -809,7 +815,7 @@ class inoActions extends sfActions {
     public function executeFormCosto(sfWebRequest $request) {
         
         $this->utilidades = array();
-        
+        $monedaLocal = $this->getUser()->getIdmoneda();
         $idinocosto = $request->getParameter("idinocosto");
         if ($idinocosto) {
             $inoCosto = Doctrine::getTable("InoCosto")->find($idinocosto);
@@ -817,15 +823,13 @@ class inoActions extends sfActions {
             
             $referencia = $inoCosto->getInoMaster();
             
-            /*$utilidades = Doctrine::getTable("InoUtilidadSea")
-                ->createQuery("u")
-                ->addWhere("u.ca_referencia = ?", $referencia->getCaReferencia())
-                ->addWhere("u.ca_idcosto = ?", $inoCosto->getCaIdcosto())  
-                ->addWhere("u.ca_factura = ?", $inoCosto->getCaFactura())        
+            $utilidades = Doctrine::getTable("InoUtilidad")
+                ->createQuery("u")                
+                ->addWhere("u.ca_idinocosto = ?", $inoCosto->getCaIdinocosto())                  
                 ->execute();
             foreach ($utilidades as $ut) {
-                $this->utilidades[$ut->getCaHbls()] = $ut->getCaValor();
-            }*/
+                $this->utilidades[$ut->getCaIdhouse()] = $ut->getCaValor();
+            }
             
         } else {
             $inoCosto = new InoCosto();
@@ -836,17 +840,17 @@ class inoActions extends sfActions {
 
         }
         
-        $this->inoClientes = array();
-        /*$this->inoClientes = Doctrine::getTable("InoClientesSea")
-                ->createQuery("u")
-                ->innerJoin("u.Cliente cl")
-                ->addWhere("u.ca_referencia = ?", $referencia->getCaReferencia())
-                ->addOrderBy("u.ca_hbls")
-                ->execute();*/
+        $this->inoHouses = array();
+        $this->inoHouses = Doctrine::getTable("InoHouse")
+                ->createQuery("h")
+                ->innerJoin("h.Cliente cl")
+                ->addWhere("h.ca_idmaster = ?", $referencia->getCaIdmaster())
+                ->addOrderBy("h.ca_doctransporte")
+                ->execute();
         
-        $this->form = new CostosForm();
+        $this->form = new CostosINOForm();
         $this->form->setReferencia($referencia);
-        $this->form->setInoClientes($this->inoClientes);
+        $this->form->setInoHouses($this->inoHouses);
         $this->form->configure();
 
         if ($request->isMethod('post')) {
@@ -864,10 +868,18 @@ class inoActions extends sfActions {
             $bindValues["tcambio"] = $request->getParameter("tcambio");
             $bindValues["tcambio_usd"] = $request->getParameter("tcambio_usd");
             $bindValues["idproveedor"] = $request->getParameter("idproveedor");
+            
+            if( $bindValues["idmoneda"]=="USD" || $bindValues["idmoneda"]==$monedaLocal ){                   
+                $bindValues["tcambio_usd"] = 1;
+            }
+            
+            if( $bindValues["idmoneda"]==$monedaLocal ){
+               $bindValues["tcambio"] = 1;  
+            }
 
-            /*foreach ($this->inoClientes as $ic) {
-                $bindValues["util_" . $ic->getCaIdinocliente()] = $request->getParameter("util_" . $ic->getCaIdinocliente());
-            }*/
+            foreach ($this->inoHouses as $ic) {
+                $bindValues["util_" . $ic->getCaIdhouse()] = $request->getParameter("util_" . $ic->getCaIdhouse());
+            }
 
             $this->form->bind($bindValues);
             if ($this->form->isValid()) {
@@ -875,12 +887,10 @@ class inoActions extends sfActions {
                 $conn->beginTransaction();
                 try {
 
-                    if ($bindValues["factura_ant"]) {
-                        $utils = Doctrine::getTable("InoUtilidadSea")
+                    if ($bindValues["idinocosto"]) {
+                        $utils = Doctrine::getTable("InoUtilidad")
                                 ->createQuery("u")
-                                ->addWhere("u.ca_referencia = ?", $bindValues["referencia"])
-                                ->addWhere("u.ca_idcosto = ?", $bindValues["idcosto"])
-                                ->addWhere("u.ca_factura = ?", $bindValues["factura_ant"])
+                                ->addWhere("u.ca_idinocosto = ?", $bindValues["idinocosto"])                                
                                 ->execute();
                         foreach ($utils as $u) {
                             $u->delete($conn);
@@ -904,26 +914,18 @@ class inoActions extends sfActions {
 
                     foreach ($bindValues as $key => $val) {
                         if (substr($key, 0, 4) == "util") {
-                            if ($val) {
-                                $oid = substr($key, 5);                                
-                                $ic = Doctrine::getTable("InoClientesSea")
-                                        ->createQuery("ic")
-                                        ->addWhere("ic.ca_idinocliente = ? ", $oid)
-                                        ->fetchOne();
-
-                                $ut = new InoUtilidadSea();
-                                $ut->setCaReferencia($bindValues["referencia"]);
-                                $ut->setCaIdcliente($ic->getCaIdcliente());
-                                $ut->setCaHbls($ic->getCaHbls());
-                                $ut->setCaIdcosto($bindValues["idcosto"]);
-                                $ut->setCaFactura($bindValues["factura"]);
+                            if ($val) {   
+                                $idhouse = substr($key, 5);
+                                $ut = new InoUtilidad();                                                      
+                                $ut->setCaIdhouse($idhouse);
+                                $ut->setCaIdinocosto( $inoCosto->getCaIdinocosto() );                                
                                 $ut->setCaValor($val);
                                 $ut->save($conn);
                             }
                         }
                     }
                     $conn->commit();
-                    $this->redirect("ino/verReferencia?idmaster=" . $referencia->getCaIdmaster());
+                    $this->redirect("ino/verReferencia?modo=".$this->modo->getCaIdmodo()."&idmaster=" . $referencia->getCaIdmaster());
                 } catch (Exception $e) {                    
                     throw $e;
                 }
@@ -933,6 +935,7 @@ class inoActions extends sfActions {
         $this->referencia = $referencia;
 
         $this->inoCosto = $inoCosto;
+        $this->monedaLocal = $monedaLocal;
     }
     
     

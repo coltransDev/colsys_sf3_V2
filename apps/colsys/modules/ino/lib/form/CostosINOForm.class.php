@@ -1,8 +1,8 @@
 <?
-class CostosForm extends BaseForm{
+class CostosINOForm extends BaseForm{
 	
     private $referencia = null;
-    private $inoclientes = array();
+    private $inoHouses = array();
     
 	public function configure(){
 		
@@ -19,7 +19,7 @@ class CostosForm extends BaseForm{
                         ->addWhere("c.ca_modalidad = ? ", $this->referencia?$this->referencia->getCaModalidad():"")
                         ->addOrderBy("c.ca_costo");
         
-        
+        $widgets["referencia"] = new sfWidgetFormInputHidden();
         
 		$widgets['idcosto'] = new sfWidgetFormDoctrineChoice(array(
 															  'model' => 'Costo',
@@ -29,21 +29,18 @@ class CostosForm extends BaseForm{
 															) );
         
         
-        $queryMoneda = Doctrine::getTable("Moneda")
-                        ->createQuery("c")                        
-                        ->addWhere("c.ca_idmoneda = ? OR c.ca_idmoneda = ?", array("USD", "COP"))                        
-                        ->addOrderBy("c.ca_nombre");
+        
         
 		$widgets['idmoneda'] = new sfWidgetFormDoctrineChoice(array(
 															  'model' => 'Moneda',
 															  'add_empty' => false,
 															  'method' => "getCaNombre",
-                                                              'order_by' => array("ca_nombre","ASC"),
-                                                              'query' => $queryMoneda
+                                                              'order_by' => array("ca_nombre","ASC")
+                                                              
 															  
-															) );
+															), array( "onchange"=>"calc_neto()" ) );
         
-        $widgets["idinocosto"] = new sfWidgetFormInputHidden();        
+        $widgets["idinocosto"] = new sfWidgetFormInputHidden();
         $widgets["factura_ant"] = new sfWidgetFormInputHidden();
         $widgets["factura"] = new sfWidgetFormInputText(array(), array("size"=>15, "maxlength"=>15 ));
 		$widgets["fchfactura"] = new sfWidgetFormExtDate();
@@ -54,20 +51,19 @@ class CostosForm extends BaseForm{
         $widgets['idproveedor'] = new sfWidgetFormInputText(array(), array("size"=>71, "maxlength"=>50 ));
         
 		
-        foreach( $this->inoclientes as $ic ){
-            $widgets["util_".$ic->getCaIdinocliente()] = new sfWidgetFormInputText(array(), array("size"=>15, "maxlength"=>15, "onchange"=>"calcular()" ));
-            $validator["util_".$ic->getCaIdinocliente()] = new sfValidatorNumber(array('required' => true ), 
+        foreach( $this->inoHouses as $ic ){
+            $widgets["util_".$ic->getCaIdhouse()] = new sfWidgetFormInputText(array(), array("size"=>15, "maxlength"=>15, "onchange"=>"calcular()" ));
+            $validator["util_".$ic->getCaIdhouse()] = new sfValidatorNumber(array('required' => true ), 
 														array('required' => 'Requerido',
 																'invalid' => 'No valido'));
         }
         
-		
         
 		$this->setWidgets( $widgets );
 		
-        $validator['idmaster'] = new sfValidatorNumber(array('required' => true, "min"=>0 ), 
+        $validator['idmaster'] = new sfValidatorString(array('required' => true ), 
 														array('required' => 'Requerido',
-																'invalid' => 'No valido'));	        
+																'invalid' => 'No valido'));	
         
         $validator['idcosto'] = new sfValidatorNumber(array('required' => true, "min"=>0 ), 
 														array('required' => 'Requerido',
@@ -88,10 +84,9 @@ class CostosForm extends BaseForm{
 		$validator['tcambio'] = new sfValidatorNumber(array('required' => true, "min"=>1, "max"=>99999 ), 
 														array('required' => 'Requerido',
 																'invalid' => 'No valido'));	
-        
-        $validator['tcambio_usd'] = new sfValidatorNumber(array('required' => true, "min"=>1, "max"=>99999 ), 
+        $validator['tcambio_usd'] = new sfValidatorNumber(array('required' => true, "min"=>0, "max"=>99999 ), 
 														array('required' => 'Requerido',
-																'invalid' => 'No valido'));	
+																'invalid' => 'No valido'));
         
         $validator['neto'] = new sfValidatorNumber(array('required' => true  ), 
 														array('required' => 'Requerido',
@@ -108,26 +103,22 @@ class CostosForm extends BaseForm{
 														array('required' => 'Requerido',
 																'invalid' => 'No valido'));	
 		
+		
 																												
 		
-		//echo isset($validator['fchdoctransporte'])."<br />";															
+																
 		$this->setValidators( $validator );
-		
-		$this->validatorSchema->setPostValidator(new UtilidadesValidator());
-        $this->validatorSchema->setPostValidator(new UnicoCostoValidator());
-		
+        
+        
+        $this->validatorSchema->setPostValidator(new sfValidatorAnd( array(
+                new UnicoCostoValidator(),
+                new InoUtilidadesValidator()
+            ))
+        );		
 	}	
 	
 	
-	public function bind(array $taintedValues = null, array $taintedFiles = null){
-        
-        /*if( $taintedValues['factura']=="0" ){
-            $taintedValues['factura'] = "";
-        }*/
-        
-               
-        
-        
+	public function bind(array $taintedValues = null, array $taintedFiles = null){              
 		parent::bind($taintedValues,  $taintedFiles);
 	}
     
@@ -136,8 +127,8 @@ class CostosForm extends BaseForm{
         $this->referencia = $v;
     }
     
-    public function setInoClientes( $v ){
-        $this->inoclientes = $v;
+    public function setInoHouses( $v ){
+        $this->inoHouses = $v;
     }
     
 	

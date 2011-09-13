@@ -9,6 +9,10 @@ include_component("widgets", "widgetCliente");
 include_component("widgets", "widgetUsuario");
 include_component("widgets", "widgetTercero");
 include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047"));
+
+
+
+
 ?>
 <script type="text/javascript">
     Ext.form.Field.prototype.msgTarget = 'side';
@@ -20,7 +24,9 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047"));
                                               hiddenName: "idreporte",
                                               hiddenId: "idreporte",
                                               allowBlank: false,
-                                              tipo:1
+                                              tipo:1,
+                                              impoexpo: this.impoexpo,
+                                              transporte: this.transporte
                                               });
         this.widgetReporte.addListener("select", this.onSelectReporte, this );
 
@@ -65,6 +71,11 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047"));
                                         xtype: "hidden",
                                         name: "idmaster",
                                         value: this.idmaster
+                                    },
+                                    {
+                                        xtype: "hidden",
+                                        name: "modo",
+                                        value: this.modo
                                     },
                                     {
                                         xtype: "hidden",
@@ -233,6 +244,13 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047"));
                                 grid.recargar();
                             }
                         }
+                        
+                        var panel = Ext.getCmp("grid-facturacion-panel");
+                        if( panel ){
+                            panel.recargar();
+                        }else{
+                            alert("no se encontro el panel");
+                        }
                     },
                     failure:function(form,action){
                         Ext.MessageBox.alert('Error Message', "Se ha presentado un error"+(action.result?": "+action.result.errorInfo:"")+" "+(action.response?"\n Codigo HTTP "+action.response.status:""));
@@ -281,7 +299,8 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047"));
             this.load({
                 url: '<?= url_for("ino/datosReporteCarga") ?>',
                 params :{
-                    idreporte:record.data.idreporte
+                    idreporte:record.data.idreporte,
+                    modo: this.modo
                 },
                 failure:function(response,options){
                     var res = Ext.util.JSON.decode( response.responseText );

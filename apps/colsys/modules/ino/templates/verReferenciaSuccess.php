@@ -134,7 +134,11 @@ include_component("widgets", "widgetIds");
 
 
 <script type="text/javascript">
-    var mainPanel = new MainPanel();
+    var mainPanel = new MainPanel({
+        modo: '<?=$modo->getCaIdmodo()?>',
+        impoexpo: '<?=$modo->getCaImpoexpo()?>',
+        transporte: '<?=$modo->getCaTransporte()?>'
+    });
 
 
 

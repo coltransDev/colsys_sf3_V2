@@ -23,8 +23,9 @@ Ext.onReady(function(){
     Ext.form.Field.prototype.msgTarget = 'side';
     
     var formPanel = new FormMasterPanel({
-        title: "<?=$id?"Edición de Referencia ".$referencia->getCaReferencia():"Nueva Referencia"?>",
-        idmaster: <?=$id?$id:"null"?>,
+        title: "Sistema INO <?=$modo->getCaImpoexpo()?> <?=$modo->getCaTransporte()?> <?=$idmaster?"Edición de Referencia ".$referencia->getCaReferencia():"Nueva Referencia"?>",
+        idmaster: <?=$idmaster?$idmaster:"null"?>,
+        modo: '<?=$modo->getCaIdmodo()?>',
         impoexpo: "<?=$impoexpo?>",
         transporte: "<?=$transporte?>"
     });

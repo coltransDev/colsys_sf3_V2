@@ -48,10 +48,10 @@ include_component("widgets", "widgetCiudad");
         cambiarCriterio();
     });
 </script>
-<form action="<?=url_for( "ino/busqueda" )?>" method="post" >
+<form action="<?=url_for( "ino/busqueda?modo=".$modo->getCaIdmodo() )?>" method="post" >
 <table class="tableList" width="550px" align="center" border="0" cellpadding="5px" cellspacing="1px" >
 	<tr>
-		<th colspan="3" style='font-size: 12px; font-weight:bold;'>Sistema INO</th>
+		<th colspan="3" style='font-size: 12px; font-weight:bold;'>Sistema INO <?=$modo->getCaImpoexpo()?> <?=$modo->getCaTransporte()?></th>
     </tr>
 	<tr>
 		<td colspan="3" style='font-size: 10px;'>Ingrese un criterio para realizar las busqueda</td>
@@ -59,7 +59,7 @@ include_component("widgets", "widgetCiudad");
 	<tr>
 		<td width="88" ><b>Buscar por:</b> <br />
             <select name="criterio" id="criterio" size="7" onChange='cambiarCriterio(this)'>
-                <option value="ca_referencia" <?=($criterio=="ca_referencia")?"selected":""?>>N&uacute;mero de referencia</option>
+                <option value="ca_referencia" <?=($criterio=="ca_referencia"||!$criterio)?"selected":""?>>N&uacute;mero de referencia</option>
                 <option value="cliente" <?=($criterio=="cliente")?"selected":""?>>Cliente</option>
                 <option value="proveedor" <?=($criterio=="ca_nombre_pro")?"selected":""?>>Nombre del Proveedor </option>
                 <option value="linea" <?=($criterio=="linea")?"selected":""?>>Linea</option>

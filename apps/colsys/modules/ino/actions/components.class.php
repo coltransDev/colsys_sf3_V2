@@ -155,7 +155,18 @@ class inoComponents extends sfComponents {
                         ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
                         ->execute();
     }
+    
+    
+    
+    /*
+     * Cuadro de eventos de auditoria
+     */
+    public function executeGridDeduccionesPanel() {
 
+    }
+    
+    
+    
     /*
      * Cuadro de eventos de auditoria
      */

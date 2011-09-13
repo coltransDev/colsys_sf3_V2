@@ -36,7 +36,7 @@ switch($action){
 		$button[$i]["name"]="Editar";
 		$button[$i]["tooltip"]="Edita los valores de esta referencia";
 		$button[$i]["image"]="22x22/edit.gif";
-		$button[$i]["link"]= "ino/formIno?id=".$this->getRequestParameter("id");
+		$button[$i]["link"]= "ino/formIno?modo=".$this->getRequestParameter("modo")."&idmaster=".$this->getRequestParameter("idmaster");
 		$i++;
 		
 		break;

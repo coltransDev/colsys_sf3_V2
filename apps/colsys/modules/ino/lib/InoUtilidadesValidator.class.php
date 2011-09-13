@@ -1,6 +1,6 @@
 <?php
  
-class UtilidadesValidator extends sfValidatorBase
+class InoUtilidadesValidator extends sfValidatorBase
 {    
 	public function configure($options = array(), $messages = array()){
 				
@@ -10,10 +10,11 @@ class UtilidadesValidator extends sfValidatorBase
   
  
 	protected function doClean($values)
-	{			
+	{	
+       
         //echo $values["venta"] ."  --       ". round(+0.1,0)."<br />";
         
-        $neto = $values["neto"]*$values["tcambio"];
+        $neto = $values["neto"]*$values["tcambio"]/$values["tcambio_usd"];
         
         
         if( $neto<0 ){            
@@ -30,8 +31,7 @@ class UtilidadesValidator extends sfValidatorBase
                 $sum+=$val;
             }            
         }
-        
-        //echo $sum."  ---  " .$util;
+                
         if( $sum!=$util ){
             throw new sfValidatorErrorSchema($this, array($this->getOption('username_field') => new sfValidatorError($this, 'invalid')));	
         }

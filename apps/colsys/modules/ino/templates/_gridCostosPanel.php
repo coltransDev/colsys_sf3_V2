@@ -137,7 +137,8 @@ GridCostosPanel = function( config ){
         autoLoad : true,
         url: '<?=url_for("ino/datosGridCostosPanel")?>',
         baseParams : {
-            idmaster: this.idmaster
+            idmaster: this.idmaster,
+            modo: this.modo
         },
         reader: new Ext.data.JsonReader(
             {
@@ -180,7 +181,8 @@ GridCostosPanel = function( config ){
        view: new Ext.grid.GroupingView({
             enableGroupingMenu: false,
             forceFit:true,
-            enableRowBody:false
+            enableRowBody:false,
+            emptyText: 'No hay datos'
             //showPreview:true,
        }),
        listeners:{
@@ -198,7 +200,7 @@ GridCostosPanel = function( config ){
 Ext.extend(GridCostosPanel, Ext.grid.GridPanel, {
 
     newItem: function(){
-        document.location = "<?=url_for("ino/formCosto")?>?idmaster="+ this.idmaster;
+        document.location = "<?=url_for("ino/formCosto")?>?modo="+this.modo+"&idmaster="+ this.idmaster;
     },
 
     recargar: function(){
@@ -305,7 +307,7 @@ Ext.extend(GridCostosPanel, Ext.grid.GridPanel, {
     onRowDblclick: function( grid , rowIndex, e ){
 		if( !this.readOnly ){
             record =  this.store.getAt( rowIndex );
-            document.location = "<?=url_for("ino/formCosto?idinocosto=")?>"+record.data.idinocosto;
+            document.location = "<?=url_for("ino/formCosto")?>?modo="+this.modo+"&idinocosto="+record.data.idinocosto;
         }
 	}
     ,
@@ -318,16 +320,7 @@ Ext.extend(GridCostosPanel, Ext.grid.GridPanel, {
         }        
         return color;
     },
-
-    crearFactura: function( idhouse ){
-        document.location = "<?=url_for("inocomprobantes/formComprobante?tipo=F")?>?idhouse="+idhouse;
-
-    },
-
-    editarFactura: function( idhouse, idfactura ){
-        document.location = "<?=url_for("inocomprobantes/formComprobante?tipo=F")?>?idhouse="+idhouse+"&idcomprobante="+idfactura;
-
-    },
+   
 
     guardar: function(){
         var store = this.store;

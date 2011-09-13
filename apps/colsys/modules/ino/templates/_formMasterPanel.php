@@ -253,14 +253,18 @@ include_component("widgets", "widgetAgente");
     Ext.extend(FormMasterPanel, Ext.form.FormPanel, {
         onSave: function(){        
             var form  = this.getForm();
+            var modo = this.modo;
             if( form.isValid() ){
                 form.submit({
                     url: "<?=url_for("ino/guardarMaster")?>",
                     waitMsg:'Guardando...',
                     waitTitle:'Por favor espere...',
-                    params:{idmaster:this.idmaster},
+                    params:{
+                        idmaster:this.idmaster,
+                        modo:this.modo
+                    },
                     success:function(form,action){
-                        document.location = "/<?="ino/verReferencia"?>?idmaster="+action.result.idmaestra;
+                        document.location = "/<?="ino/verReferencia"?>?modo="+modo+"&idmaster="+action.result.idmaestra;
                     },
                     failure:function(form,action){
                         Ext.MessageBox.alert('Error Message', "Se ha presentado un error"+(action.result?": "+action.result.errorInfo:"")+" "+(action.response?"\n Codigo HTTP "+action.response.status:""));

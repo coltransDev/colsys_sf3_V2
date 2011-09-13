@@ -13,13 +13,15 @@ include_component("ino", "gridFacturacionFormPanel", array("referencia"=>$refere
     GridFacturacionWindow = function( config ) {
         Ext.apply(this, config);
         this.ctxRecord = null;
-
+        
         
 
         this.items = [
             new GridFacturacionFormPanel({
                 gridId: this.gridId,
-                idcomprobante: this.idcomprobante
+                idcomprobante: this.idcomprobante,
+                modo:this.modo,
+                idhouse: this.idhouse
             })
         ];
         
