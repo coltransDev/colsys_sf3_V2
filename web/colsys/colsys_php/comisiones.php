@@ -373,7 +373,7 @@ if (!isset($boton) and !isset($accion) and !isset($buscar)) {
                 require_once("menu.php");
                 echo "<STYLE>@import URL(\"Coltrans.css\");</STYLE>";                      // Carga una hoja de estilo que estandariza las pantallas den sistema graficador
                 echo "<CENTER>";
-                echo "<FORM METHOD=post NAME='informe' ACTION='comisiones.php' ONSUBMIT='confirm(\"¿Esta seguro de Registrar el Cobro de Comisiones?\")'>";             // Hace una llamado nuevamente a este script pero con
+                echo "<FORM METHOD=post NAME='informe' ACTION='comisiones.php' ONSUBMIT='return confirm(\"¿Esta seguro de Registrar el Cobro de Comisiones?\")'>";             // Hace una llamado nuevamente a este script pero con
                 echo "<INPUT TYPE='HIDDEN' NAME='id'>";
                 echo "<INPUT TYPE='HIDDEN' NAME='accion' VALUE='" . base64_encode('Registrar') . "'>";
                 echo "<TABLE CELLSPACING=1>";                                              // un boton de comando definido para hacer mantemientos

@@ -3837,11 +3837,6 @@ elseif (isset($boton)) {                                                       /
                 $us->MoveFirst();
                 echo "<HEAD>";
                 echo "<TITLE>$titulo</TITLE>";
-                echo "<script language='JavaScript' type='text/JavaScript'>";     // Código en JavaScript para validar las opciones de mantenimiento
-                echo "function validar(){";
-                echo "  return (true);";
-                echo "}";
-                echo "</script>";
                 echo "<script language='javascript' src='javascripts/popcalendar.js'></script>";
                 echo "</HEAD>";
 
@@ -3850,7 +3845,7 @@ elseif (isset($boton)) {                                                       /
                 echo "<STYLE>@import URL(\"Coltrans.css\");</STYLE>";             // Carga una hoja de estilo que estandariza las pantallas den sistema graficador
                 echo "<CENTER>";
                 echo "<H3>$titulo</H3>";
-                echo "<FORM METHOD=post NAME='eliminar' ACTION='inosea.php' ONSUBMIT='return validar();'>";// Crea una forma con los datos del registro
+                echo "<FORM METHOD=post NAME='eliminar' ACTION='inosea.php' ONSUBMIT='return confirm(\"¿Está seguro que desea marcar el registro como Carga Liberada?\")'>";// Crea una forma con los datos del registro
                 echo "<TABLE WIDTH=600 CELLSPACING=1>";
                 echo "<INPUT TYPE='HIDDEN' NAME='referencia' id='referencia' VALUE=\"".$id."\">";             // Hereda el Id de la Referencia que se esta modificando
                 echo "<INPUT TYPE='HIDDEN' NAME='idcliente' id='idcliente' VALUE=\"".$cl."\">";              // Hereda el Id del Cliente que se esta modificando
