@@ -2271,7 +2271,7 @@ elseif (isset($boton)) {                                                       /
                     echo "  <TD Class=mostrar>Aplicar/Factura:<BR><SELECT ID=dedfactura_$i NAME='deducibles[$i][dedfactura]' ONCHANGE='aplica_trm(this);'>";
                     $rs->MoveFirst();
                     while (!$rs->Eof()) {
-                        echo"<OPTION VALUE=".$rs->Value('ca_factura');
+                        echo"<OPTION VALUE='".$rs->Value('ca_factura')."'";
                         if ($rs->Value('ca_factura')==$dd->Value('ca_factura')) {
                             echo " SELECTED"; }
                         echo">".$rs->Value('ca_factura')."</OPTION>";
