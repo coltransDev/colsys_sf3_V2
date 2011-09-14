@@ -590,6 +590,7 @@ class widgetsActions extends sfActions {
         $con = 0;
         $rows = array_merge($terceros, $rows);
         $terceros = array();
+        $name = null;
         if (count($rows) > 0) {
             foreach ($rows as $row) {
                 $row["c_ca_ciudad"] = (trim($row["c_ca_ciudad"]) != "Todas las Ciudades" && $row["c_ca_ciudad"] != "") ? utf8_encode($row["c_ca_ciudad"]) : " ";
