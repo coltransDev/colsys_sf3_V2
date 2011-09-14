@@ -275,7 +275,7 @@ class RepStatus extends BaseRepStatus
 		}else{
 			$asunto.= $this->getAsunto();
 		}
-		$email->setCaSubject( substr($asunto, 0, 250) );
+		
 
 		if( $attachments ){
 			$email->setCaAttachment( implode( "|", $attachments ) );
@@ -320,9 +320,10 @@ class RepStatus extends BaseRepStatus
 			}
 		}        
         if ( $reporte->getCaDeclaracionant() == "true" || $reporte->getCaDeclaracionant() == "TRUE" || $reporte->getCaDeclaracionant() == "1" || $reporte->getCaDeclaracionant() == 1  ){
-            $email->setCaPriority(1);
-                
+            $asunto="*ANT*".$asunto;
+            $email->setCaPriority(1);                
         }
+        $email->setCaSubject( substr($asunto, 0, 250) );
 
 		sfContext::getInstance()->getRequest()->setParameter("idstatus", $this->getCaIdstatus());
 		$email->setCaBodyhtml(  sfContext::getInstance()->getController()->getPresentationFor( 'traficos', 'verStatus') );
