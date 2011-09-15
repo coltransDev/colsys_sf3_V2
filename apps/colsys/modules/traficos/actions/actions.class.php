@@ -303,6 +303,13 @@ class traficosActions extends sfActions
 		$q->addOrderBy("t.ca_orden");
 		$this->form->setQueryIdEtapa( $q );
 		$this->etapas = $q->execute();
+        
+        
+        $u = Doctrine::getTable("Usuario")->createQuery("u");
+        $u->where("ca_idsucursal = ? and ca_activo=true",$this->getUser()->getSucursal());
+        $u->orderBy("ca_nombre");
+        $this->form->setQueryUsuario( $u );
+        //$this->usuarios = $q->execute();
 		
 		// Tipos de piezas			
 		$this->form->setQueryPiezas( ParametroTable::retrieveQueryByCaso( "CU047" ) );
@@ -675,7 +682,7 @@ class traficosActions extends sfActions
                     $tarea->setCaNotificar( $request->getParameter("remitente") );
                 }
                 $tarea->save( $conn );
-                $loginsAsignaciones = array( $this->getUser()->getUserId() );
+                $loginsAsignaciones = array_merge(array( $this->getUser()->getUserId() ) , $request->getParameter("emailusuario"));
                 $tarea->setAsignaciones( $loginsAsignaciones, $conn );
 
                 /*$reporte->setCaIdseguimiento( $tarea->getCaIdtarea() );
@@ -752,7 +759,7 @@ class traficosActions extends sfActions
             }
             $conn->commit();            
 
-        } catch (Exception $e) {            
+        } catch (Exception $e) {
             $conn->rollBack();
             throw $e;
         }

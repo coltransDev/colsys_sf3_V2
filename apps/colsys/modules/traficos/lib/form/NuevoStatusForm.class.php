@@ -6,6 +6,7 @@ class NuevoStatusForm extends BaseForm{
 	const NUM_EQUIPOS = 5;
 	
 	private $queryIdEtapa  = null;
+    private $queryUsuario  = null;
 	private $queryPiezas  = null;
 	private $queryPeso = null;
 	private $queryVolumen = null;
@@ -135,6 +136,15 @@ class NuevoStatusForm extends BaseForm{
 		$widgets["prog_seguimiento"] = new sfWidgetFormInputCheckbox( array(), array("onClick"=>"crearSeguimiento()") );
 		$widgets["fchseguimiento"] = new sfWidgetFormExtDate();
 		$widgets['txtseguimiento'] = new sfWidgetFormTextarea(array(), array("rows"=>3, "cols"=>140 ));
+        
+        $widgets['emailusuario'] = new sfWidgetFormDoctrineChoice(array(
+															  'model' => 'Usuario',
+                                                              'method' => "getCaNombre",
+															  'key_method' => "getCaLogin",
+															  'query' => $this->queryUsuario,
+                                                              'multiple'=>'true','expanded'=>true
+															)															
+															);
 		
 		
         $widgets['inspeccion_fisica'] = new sfWidgetFormInputCheckbox();
@@ -315,6 +325,10 @@ class NuevoStatusForm extends BaseForm{
 	
 	public function setQueryIdEtapa( $c ){
 		$this->queryIdEtapa = $c;
+	}
+    
+    public function setQueryUsuario( $c ){
+		$this->queryUsuario = $c;
 	}
 	
 	public function setQueryPiezas( $c ){

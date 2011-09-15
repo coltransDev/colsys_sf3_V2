@@ -827,7 +827,15 @@ echo $form['mensaje_mask']->render();
 				<?
 			 echo $form['txtseguimiento']->renderError(); 			 
 			 echo $form['txtseguimiento']->render();
+             ?>
+            <br>
+            <b>Notificar tambien a:</b>
+            <div style="overflow:scroll; height: 200px">
+            <?
+             echo $form['emailusuario']->renderError(); 			 
+			 echo $form['emailusuario']->render();             
 			 ?>
+             </div>
 			</div></td>
 		</tr>
 	<tr>

@@ -188,7 +188,14 @@ if( $reporte->getCaUsuanulado() ){
 						
 					}
 					echo link_to(image_tag("22x22/edit_add.gif")." Status","traficos/nuevoStatus?idreporte=".$reporte->getCaIdreporte()."&modo=".$modo."&tipo=status&token=".md5(time()));
-					
+                    $cliente=$reporte->getCliente();
+                    
+                    if($cliente->getProperty("cuentaglobal"))
+                    {
+                    ?>
+                        &nbsp;&nbsp;<img src="/images/CG30.png" title="Cliente de Cuentas Globales" />
+                    <?
+                    }					
 					
 									
 				}	
