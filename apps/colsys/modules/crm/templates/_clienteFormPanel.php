@@ -41,6 +41,7 @@ include_component("widgets", "widgetComerciales");
 include_component("widgets", "widgetCoordinadoresAduana");
 ?>
 <script type="text/javascript">
+    Ext.form.Field.prototype.msgTarget = 'side';
     ClienteFormPanel = function( config ) {
         Ext.apply(this, config);
         this.ctxRecord = null;
