@@ -55,7 +55,7 @@ require_once("menu.php");
   echo "  <TD Class=mostrar><A HREF='repconsolidado.php'; class='mudacor'>Consolidado de Casos</A></TD><TD Class=mostrar>Consolidación de Referencias detallada por Tráficos</TD>";
   echo "</TR>";
   echo "<TR>";
-  echo "  <TD Class=mostrar><A HREF='/Coltrans/Reportes/FactMarEntrada.jsp'; class='mudacor'>Elaboración de Facturas</A></TD><TD Class=mostrar>Informe con Fecha de Creación de facturas</TD>";
+  echo "  <TD Class=mostrar><A HREF='/reportesGer/listadoFacturas'; class='mudacor'>Elaboración de Facturas</A></TD><TD Class=mostrar>Informe con Fecha de Creación de facturas</TD>";
   echo "</TR>";
   echo "<TR>";
   echo "  <TD Class=mostrar><A HREF='repreferencia.php'; class='mudacor'>Libro de Referencias</A></TD><TD Class=mostrar>Informe de Referencias Procesadas</TD>";
