@@ -10,7 +10,17 @@
  */
 class reportesGerActions extends sfActions {
     const RUTINA = 105;
-
+    
+    
+    /**
+     * Muestra un menu donde el usuario puede seleccionar las comisiones que desa sacar
+     *
+     * @param sfRequest $request A request object
+     */
+    public function executeIndex(sfWebRequest $request) {
+        
+    }
+    
     /**
      * Muestra un menu donde el usuario puede seleccionar las comisiones que desa sacar
      *
@@ -676,6 +686,37 @@ class reportesGerActions extends sfActions {
             
         }
     }
+    
+    public function executeListadoFacturas(sfWebRequest $request) {   
+        
+        if( $request->isMethod("post") ){           
+            
+            $q = Doctrine::getTable("InoCostosSea")
+                            ->createQuery("c")
+                            ->addWhere("substr(ca_referencia,5,2) like ?", $request->getParameter("sufijo") )
+                            ->addWhere("ca_fchfactura >= ?", $request->getParameter("fchInicial"))
+                            ->addWhere("ca_fchfactura <= ?", $request->getParameter("fchFinal"))
+                            ->addWhere("ca_usucreado like ?", $request->getParameter("login"));
+            
+            if( $request->getParameter("proveedor") ){
+                $q->addWhere("UPPER(ca_proveedor) like ?", strtoupper($request->getParameter("proveedor"))."%");
+            }
+            $this->costos = $q->execute();
+            
+           
+            
+            $this->setTemplate("listadoFacturasResult");
+            //$sql = "select ca_referencia, ca_factura, ca_fchfactura, ca_proveedor, ca_idmoneda, ca_tcambio, ca_tcambio_usd, ca_neto, ca_venta, ca_fchcreado, ca_usucreado from tb_inocostos_sea where order by substr(ca_referencia,5,2)";
+        }else{
+            $this->usuarios = Doctrine::getTable("Usuario")
+                                    ->createQuery("u")
+                                    ->addWhere("u.ca_activo = ? ", true)
+                                    ->addOrderBy("u.ca_nombre")
+                                    ->execute();
+        }
+    }
+    
+    
 
 }
 
