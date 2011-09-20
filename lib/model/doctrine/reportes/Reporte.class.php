@@ -925,7 +925,7 @@ class Reporte extends BaseReporte {
     public function getConsignedTo() {
 
         if ($this->getCaIdconsignar() == 1) {
-            $consignatario_final = ($this->getCaIdconsignatario() != 0) ? $this->getConsignatario()->getCaNombre() : $this->getCliente()->getCaCompania();
+            $consignatario_final = ($this->getCaIdconsignatario() != 0) ? ($this->getConsignatario()?$this->getConsignatario()->getCaNombre():"") : $this->getCliente()->getCaCompania();
             return $consignatario_final;
         } else {
             $str = $this->getBodegaConsignar()->getCaNombre();
