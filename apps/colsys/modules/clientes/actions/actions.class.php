@@ -446,8 +446,8 @@ class clientesActions extends sfActions {
                 $bodyHtml.= "<b>Recuerde que esta información se debe actualizar cada año.</b>";
 
                 $email->setCaBodyhtml($bodyHtml);
-                $email->addAttachment("Attachements/CARTA_CIRCULAR_184.doc");
-                $email->addAttachment("Attachements/NUEVA_CIRC_ 170.xls");
+                $email->addAttachment("ids/formatos/CARTA_CIRCULAR_184.doc");
+                $email->addAttachment("ids/formatos/NUEVA_CIRC_ 170.xls");
 
                 $email->save();
             }
