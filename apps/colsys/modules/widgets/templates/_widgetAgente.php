@@ -72,15 +72,23 @@ WidgetAgente = function( config ){
 
 Ext.extend(WidgetAgente, Ext.form.ComboBox, {
     doQuery : function(q, forceAll){        
-        q = Ext.isEmpty(q) ? '' : q;        
-       var impoexpo = (Ext.getCmp(this.linkImpoExpo))?Ext.getCmp(this.linkImpoExpo).getValue():this.linkImpoExpo;
-        if( impoexpo=="<?=Constantes::EXPO?>" ){
-            var link = this.linkDestino;
-        }else{
-            var link = this.linkOrigen;
-        }       
+        q = Ext.isEmpty(q) ? '' : q;      
         
-        var trafico ;
+        
+        if(this.linkTrafico ){
+            var trafico = Ext.getCmp(this.linkTrafico).getValue();
+            
+        }else{
+            var impoexpo = (Ext.getCmp(this.linkImpoExpo))?Ext.getCmp(this.linkImpoExpo).getValue():this.linkImpoExpo;
+            if( impoexpo=="<?=Constantes::EXPO?>" ){
+                var link = this.linkDestino;
+            }else{
+                var link = this.linkOrigen;
+            }       
+
+            var record = Ext.getCmp(link).getRecord();
+            var trafico = record.data.idtrafico;
+        }
 
         var listarTodos = "";
 
@@ -89,10 +97,7 @@ Ext.extend(WidgetAgente, Ext.form.ComboBox, {
             listarTodos=true;
         }
         else
-        {
-            record = Ext.getCmp(link).getRecord();
-            var trafico = record.data.idtrafico;
-
+        {      
             if( Ext.getCmp(this.linkListarTodos) && Ext.getCmp(this.linkListarTodos)){
                 listarTodos = Ext.getCmp(this.linkListarTodos).getValue();
             }
