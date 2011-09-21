@@ -556,7 +556,7 @@ class clariantActions extends sfActions {
 
                 foreach ($notifies as $notify) {
                     if (!$notify->getCaUsureportado() and !$notify->getCaFchreportado()) {
-                        $salida.= str_pad($clariant->getCaOrden(), 10, "0", STR_PAD_LEFT) . "|";  // 1
+                        $salida.= str_pad($clariant->getNumOrdenNeto(), 10, "0", STR_PAD_LEFT) . "|";  // 1
                         $salida.= str_pad($clarDetail->getCaPosicion(), 5, "0", STR_PAD_LEFT) . "|";  // 2
                         $salida.= str_pad($notify->getCaClave(), 2, " ", STR_PAD_LEFT) . "|";  // 3
                         $fch_evento = Utils::transformDate($notify->getCaFecha(), $format = "d.m.Y"); // 4
