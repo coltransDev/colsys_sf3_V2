@@ -8,7 +8,7 @@ all:
     root:  /srv/www/digitalFile/
 
   branding:
-    template: tplogistics
+    template: coltrans
     url: www.tplogistics.com.pe
     name: TPLogistics
     from: info@tplogistics.com.pe
