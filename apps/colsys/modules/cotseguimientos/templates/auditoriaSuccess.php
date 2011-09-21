@@ -20,6 +20,7 @@ if( $est ){
 
 ?>
 </h3>
+Datos basados en <?=count($cotizaciones)?> cotizaciones 
 <br />
 <br />
 <table width="80%" border="1" class="tableList">

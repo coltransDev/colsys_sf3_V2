@@ -60,7 +60,7 @@ var tabs = new Ext.FormPanel({
                     store:          new Ext.data.JsonStore({
                         fields : ['value','name'],
                         data   : [
-                            {value: 'SIN', name : 'Sin Seguimientos'}
+                            {value: 'SIN', name : 'Sin ningún seguimiento'}
                             <?
                             foreach( $estados as $estado ){
                             ?>
