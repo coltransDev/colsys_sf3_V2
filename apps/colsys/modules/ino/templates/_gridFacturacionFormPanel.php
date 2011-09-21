@@ -6,7 +6,7 @@
  */
 
 $tipos = $sf_data->getRaw("tipos");
-$inoHouses = $sf_data->getRaw("inoHouses");
+
 
 
 ?>

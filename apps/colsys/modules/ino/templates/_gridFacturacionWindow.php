@@ -5,7 +5,7 @@
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
 
-include_component("ino", "gridFacturacionFormPanel", array("referencia"=>$referencia));
+include_component("ino", "gridFacturacionFormPanel");
 
 
 ?>

@@ -3,43 +3,165 @@
  *  This file is part of the Colsys Project.
  *
  *  (c) Coltrans S.A. - Colmas Ltda.
-*/
+ */
 //include_component("widgets", "widgetImpoexpo");
 //include_component("widgets", "widgetTransporte");
 include_component("widgets", "widgetModalidad");
 include_component("widgets", "widgetLinea");
 include_component("widgets", "widgetCiudad");
 include_component("widgets", "widgetAgente");
+
+include_component("widgets", "widgetReporte");
 ?>
+
 <script type="text/javascript">
+    
+    Ext.apply(Ext.form.VTypes, {
+        daterange : function(val, field) {
+            var date = field.parseDate(val);
+
+            if(!date){
+                return false;
+            }
+            if (field.startDateField) {
+                var start = Ext.getCmp(field.startDateField);
+                if (!start.maxValue || (date.getTime() != start.maxValue.getTime())) {
+                    start.setMaxValue(date);
+                    start.validate();
+                }
+            }
+            else if (field.endDateField) {
+                var end = Ext.getCmp(field.endDateField);
+                if (!end.minValue || (date.getTime() != end.minValue.getTime())) {
+                    end.setMinValue(date);
+                    end.validate();
+                }
+            }
+            /*
+             * Always return true since we're only using this vtype to set the
+             * min/max allowed values (these are tested for after the vtype test)
+             */
+            return true;
+        },
+        validarMaster: function( val, field ){     
+            var transporte = Ext.getCmp("transporte").getValue();
+            if( transporte=='<?=Constantes::AEREO?>' ){
+                if(val.length!=12){                
+                    return false;
+                }else {
+                    for(i=0;i<val.length;i++)    {
+                        if(i==3) {
+                            if(val.charAt(i)!='-'){                            
+                                return false;
+                            }
+                        }
+                        else {
+                            if(val.charAt(i)<'0' || val.charAt(i)>'9'){
+                                return false;
+                            }
+                        }
+                    }
+                }
+            }
+            return true;
+        },
+        
+        validarMasterText : 'este campo debe tener el formato XXX-XXXXXXXX'
+
+        
+
+            
+            
+        
+    });
+
+    
     FormMasterPanel = function( config ){
-        Ext.apply(this, config);        
+        Ext.apply(this, config);       
+        
+        this.widgetReporte = new WidgetReporte({
+            fieldLabel: "Reporte",
+            name: "consecutivo",
+            hiddenName: "idreporte",
+            hiddenId: "idreporte",
+            allowBlank: true,
+            tipo:1,
+            tabIndex:2,
+            transporte: this.transporte,
+            impoexpo: this.impoexpo
+        });
+        this.widgetReporte.addListener("select", this.onSelectReporte, this );
+        
+               
+        this.recImpoexpo = Ext.data.Record.create([            
+            {name: 'value', type: 'string'}
+        ]);
+        
         FormMasterPanel.superclass.constructor.call(this, {
             deferredRender:false,
             autoHeight:true,
             bodyStyle:"padding: 5px",
             buttonAlign: 'center',            
             items: [{
-                        xtype: 'fieldset',
-                        title: 'General',
-                        autoHeight:true,
+                    xtype: 'fieldset',
+                    title: 'General',
+                    autoHeight:true,
+                    layout:'column',
+                    defaults: {width: 200},
+                    columns: 2,
+                    defaults:{
+                        columnWidth:0.5,
                         layout:'form',
-                        defaults: {width: 200},
-                        items :
-                        [
-                            {
-                                xtype: "datefield",
-                                fieldLabel: "Fecha de Registro",
-                                id: "fchreferencia",
-                                name: "fchreferencia",
-                                allowBlank: false,
-                                format:'Y-m-d',
-                                value: "<?=date("Y-m-d")?>",
-                                tabIndex:1
-                            }
-                        ]
+                        border:false,
+                        bodyStyle:'padding:4px'
                     },
-                    {
+                    items :
+                        [
+                        /*
+                         * =========================Column 1 =========================
+                         **/
+                        {
+                            xtype:"hidden",
+                            id: 'idmaster',
+                            name: 'idmaster',
+                            value: this.idmaster
+                        },
+                        {
+                            xtype:'fieldset',
+                            columnWidth:.5,
+                            layout: 'form',
+                            border:false,
+                            defaultType: 'textfield',
+                            items: [
+                                {
+                                    xtype: "datefield",
+                                    fieldLabel: "Fecha de Registro",
+                                    id: "fchreferencia",
+                                    name: "fchreferencia",
+                                    allowBlank: false,
+                                    format:'Y-m-d',
+                                    value: "<?= date("Y-m-d") ?>",
+                                    tabIndex:1
+                                }
+                            ]
+                        },
+                            
+                        /*
+                         * =========================Column 2 =========================
+                         **/
+                        {
+                            xtype:'fieldset',
+                            columnWidth:.5,
+                            layout: 'form',
+                            border:false,
+                            defaultType: 'textfield',
+                            items: [
+                                this.widgetReporte
+                            ]
+                        }
+                    ]
+                },
+                {
                     xtype:'fieldset',
                     title: 'Información del trayecto',
                     autoHeight:true,
@@ -63,52 +185,56 @@ include_component("widgets", "widgetAgente");
                             border:false,
                             defaultType: 'textfield',
                             items: [
-/*                                new WidgetImpoexpo({fieldLabel: 'Clase',
-                                                    id: 'impoexpo',
-                                                    name: 'impoexpo',
-                                                    allowBlank: false,
-                                                    tabIndex:2
-                                                    }),
-*/
-                                    {
-                                        xtype:"hidden",
-                                        id: 'impoexpo',
-                                        name: 'impoexpo',
-                                        value: this.impoexpo
-                                    },
-                                new WidgetModalidad({fieldLabel: 'Modalidad',
-                                                    id: 'modalidad',
-                                                    name: 'modalidad',
-                                                    linkTransporte: "transporte",
-                                                    linkImpoexpo: "impoexpo",
-                                                    allowBlank: false,
-                                                    tabIndex:4
-                                                    }),
-                                new WidgetCiudad({fieldLabel: 'Ciudad Origen',
-                                                  name: 'origen',
-                                                  hiddenName: 'idorigen',
-                                                  id: 'origen',
-                                                  allowBlank: false,
-                                                  tipo:"1",
-                                                  impoexpo:"impoexpo",                                                  
-                                                  tabIndex:6
-                                                }),
-                                new WidgetAgente({fieldLabel: 'Agente',
-                                                  linkImpoExpo: "impoexpo",
-                                                  linkOrigen: "origen",
-                                                  linkDestino: "destino",
-                                                  linkListarTodos: "listar_todos",
-                                                  name:"agente",
-                                                  hiddenName: 'idagente',
-                                                  allowBlank: false,
-                                                  tabIndex:8
-                                                }),
                                 {
-                                    xtype: "checkbox",
-                                    fieldLabel: "Listar todos",
-                                    id: "listar_todos",
-                                    tabIndex:9
-                                }
+                                    xtype:          'combo',
+                                    mode:           'local',
+                                    value:          '',
+                                    triggerAction:  'all',
+                                    forceSelection: true,
+                                    editable:       true,
+                                    fieldLabel:     'Tipo',
+                                    id:             'impoexpo_fld',
+                                    name:           'impoexpo',
+                                    hiddenName:     'impoexpo',
+                                    displayField:   'value',
+                                    valueField:     'value',
+                                    allowBlank: false,
+                                    tabIndex:3,
+                                    disabled: !!this.idmaster,
+                                    value: this.impoexpo,
+                                    store: new Ext.data.Store({
+                                        autoLoad : false,
+                                        reader: new Ext.data.JsonReader({
+                                            root: 'root',
+                                                totalProperty: 'total'
+                                            },
+                                            this.recImpoexpo
+                                        ),
+                                        proxy: new Ext.data.MemoryProxy({})
+                                    })
+                                    
+                                    
+                                },                                
+                                
+                                new WidgetCiudad({fieldLabel: 'Ciudad Origen',
+                                    name: 'origen',
+                                    hiddenName: 'idorigen',
+                                    id: 'origen',
+                                    allowBlank: false,
+                                    tipo:"1",
+                                    impoexpo:"impoexpo_fld",                                                  
+                                    tabIndex:5
+                                }),
+                                new WidgetLinea({fieldLabel: 'Linea',
+                                    linkTransporte: "transporte",
+                                    name: 'linea',
+                                    id: 'linea',
+                                    hiddenName: 'idlinea',
+                                    hiddenId: "idlinea",
+                                    allowBlank: false,
+                                    tabIndex:7
+                                })
+                                
                             ]
                         },
                         /*
@@ -120,36 +246,49 @@ include_component("widgets", "widgetAgente");
                             layout: 'form',
                             border:false,
                             defaultType: 'textfield',
-                            items: [
-/*                                new WidgetTransporte({fieldLabel: 'Transporte',
-                                                      id: 'transporte',
-                                                      allowBlank: false,
-                                                      tabIndex:3
-                                                    }),
-*/
+                            items: [                                
                                 {
-                                        xtype:"hidden",
-                                        id: 'transporte',
-                                        name: 'transporte',
-                                        value: this.transporte
+                                    xtype:"hidden",
+                                    id: 'transporte',
+                                    name: 'transporte',
+                                    value: this.transporte
                                 },
-                                new WidgetLinea({fieldLabel: 'Linea',
-                                                 linkTransporte: "transporte",
-                                                 name: 'linea',
-                                                 id: 'linea',
-                                                 hiddenName: 'idlinea',
-                                                 allowBlank: false,
-                                                 tabIndex:5
-                                                }),
+                                new WidgetModalidad({fieldLabel: 'Modalidad',
+                                    id: 'modalidad',
+                                    name: 'modalidad',
+                                    linkTransporte: "transporte",
+                                    impoexpo: this.impoexpo,
+                                    allowBlank: false,
+                                    tabIndex:4,
+                                    disabled: !!this.idmaster
+                                }),
+                                
                                 new WidgetCiudad({fieldLabel: 'Ciudad Destino',
-                                                  name: 'destino',
-                                                  id: 'destino',
-                                                  hiddenName: 'iddestino',
-                                                  allowBlank: false,
-                                                  tipo:"2",
-                                                  impoexpo:"impoexpo",                                                  
-                                                  tabIndex:7
-                                                })
+                                    name: 'destino',
+                                    id: 'destino',
+                                    hiddenName: 'iddestino',
+                                    allowBlank: false,
+                                    tipo:"2",
+                                    impoexpo:"impoexpo_fld",                                                  
+                                    tabIndex:6
+                                }),
+                                new WidgetAgente({fieldLabel: 'Agente',
+                                    linkImpoExpo: "impoexpo_fld",
+                                    linkOrigen: "origen",
+                                    linkDestino: "destino",
+                                    linkListarTodos: "listar_todos",
+                                    name:"agente",
+                                    hiddenName: 'idagente',
+                                    allowBlank: false,
+                                    tabIndex:8
+                                }),
+                                {
+                                    xtype: "checkbox",
+                                    fieldLabel: "Listar todos",
+                                    id: "listar_todos",
+                                    tabIndex:10
+                                }
+                                
                             ]
                         }
                     ]
@@ -181,26 +320,36 @@ include_component("widgets", "widgetAgente");
                                 {
                                     fieldLabel: 'Master',
                                     name: 'ca_master',
-                                    width: 200,
+                                    width: 120,                                    
+                                    tabIndex:15,
+                                    vtype: 'validarMaster',
+                                    allowBlank: false
+                                },
+                                {
+                                    fieldLabel: 'Peso',
+                                    name: 'ca_peso',
+                                    xtype: 'numberfield',
+                                    width: 120,
                                     allowBlank: false,
-                                    tabIndex:10
+                                    tabIndex:17,
+                                    allowNegative: false,
+                                    decimalPrecision: 3                                    
                                 },
                                 {
                                     xtype: 'datefield',
-                                    fieldLabel: 'Fecha Salida',
+                                    fieldLabel: 'Fecha Preaviso',
                                     name: 'ca_fchsalida',
+                                    id: 'fchsalida',
                                     format:'Y-m-d',
-                                    width: 200,
+                                    //vtype: 'daterange',
+                                    //endDateField: 'fchllegada', // id of the end date field
+                                    width: 120,
                                     allowBlank: false,
-                                    tabIndex:12
-                                },
-                                {
-                                    fieldLabel: 'MN/Vuelo',
-                                    name: 'ca_motonave',
-                                    width: 200,
-                                    allowBlank: false,
-                                    tabIndex:14
+                                    tabIndex:19
                                 }
+                                
+                                
+                                
                             ]
                         },
                         /*
@@ -212,26 +361,64 @@ include_component("widgets", "widgetAgente");
                             layout: 'form',
                             border:false,
                             defaultType: 'textfield',
-                            items: [
+                            items: [   
                                 {
-                                    xtype: 'datefield',
-                                    fieldLabel: 'Fecha Master',
-                                    name: 'ca_fchmaster',
-                                    format:'Y-m-d',
-                                    width: 200,
+                                    fieldLabel: 'Piezas',
+                                    name: 'ca_piezas',
+                                    xtype: 'numberfield',
+                                    width: 120,
                                     allowBlank: false,
-                                    tabIndex:11
+                                    tabIndex:16,
+                                    allowNegative: false,
+                                    allowDecimals: false
+                                },
+                                {
+                                    fieldLabel: 'Volumen',
+                                    name: 'ca_volumen',
+                                    xtype: 'numberfield',
+                                    width: 120,
+                                    allowBlank: false,
+                                    tabIndex:18,
+                                    allowNegative: false,
+                                    decimalPrecision: 3                                    
                                 },
                                 {
                                     xtype: 'datefield',
                                     fieldLabel: 'Fecha Llegada',
                                     name: 'ca_fchllegada',
+                                    id: 'fchllegada',
                                     format:'Y-m-d',
-                                    width: 200,
+                                    width: 120,
+                                    //vtype: 'daterange',                                    
+                                    //startDateField: 'fchsalida', // id of the start date field
                                     allowBlank: false,
-                                    tabIndex:13
+                                    tabIndex:20
                                 }
                             ]
+                        }
+                       
+                    ]
+                },
+                {
+                    xtype:'fieldset',
+                    title: 'Observaciones',
+                    autoHeight:true,
+                    layout:'column',
+                    columns: 2,
+                    defaults:{
+                        columnWidth:0.5,
+                        layout:'form',
+                        border:false,
+                        bodyStyle:'padding:4px'
+                    },
+                    items :
+                        [
+                        {
+                            xtype: 'textarea',                                
+                            name: 'ca_observaciones',                                
+                            width: 200,
+                            allowBlank: true,
+                            tabIndex:24
                         }
                     ]
                 }
@@ -256,15 +443,15 @@ include_component("widgets", "widgetAgente");
             var modo = this.modo;
             if( form.isValid() ){
                 form.submit({
-                    url: "<?=url_for("ino/guardarMaster")?>",
+                    url: "<?= url_for("ino/guardarMaster") ?>",
                     waitMsg:'Guardando...',
                     waitTitle:'Por favor espere...',
                     params:{
                         idmaster:this.idmaster,
-                        modo:this.modo
+                        modo: this.modo
                     },
                     success:function(form,action){
-                        document.location = "/<?="ino/verReferencia"?>?modo="+modo+"&idmaster="+action.result.idmaestra;
+                        document.location = "<?=url_for("ino/verReferencia")?>?modo="+modo+"&idmaster="+action.result.idmaster;
                     },
                     failure:function(form,action){
                         Ext.MessageBox.alert('Error Message', "Se ha presentado un error"+(action.result?": "+action.result.errorInfo:"")+" "+(action.response?"\n Codigo HTTP "+action.response.status:""));
@@ -275,6 +462,11 @@ include_component("widgets", "widgetAgente");
             }
         },
         onCancel: function(){
+            if( this.idmaster ){
+                document.location = "<?=url_for("ino/verReferencia")?>?idmaster="+this.idmaster;
+            }else{
+                document.location = "<?=url_for("ino/index")?>";
+            }
         },
         onRender:function() {
             FormMasterPanel.superclass.onRender.apply(this, arguments);
@@ -283,9 +475,12 @@ include_component("widgets", "widgetAgente");
             if(this.idmaster )
             {
                 this.load({
-                    url:'<?=url_for("ino/datosMaster")?>',
+                    url:'<?= url_for("ino/datosMaster") ?>',
                     waitMsg:'cargando...',
-                    params:{idmaster:this.idmaster},
+                    params:{
+                        idmaster:this.idmaster,
+                        modo:this.modo
+                    },
                     success:function(response,options){
 
                         res = Ext.util.JSON.decode( options.response.responseText );
@@ -295,9 +490,47 @@ include_component("widgets", "widgetAgente");
                     }
                 });
             }
+            
+            
+            var field = Ext.getCmp("impoexpo_fld");
+            
+            var newRec = new this.recImpoexpo({                
+                value: this.impoexpo
+            });
 
+            field.store.addSorted( newRec );
+            
+            if( this.impoexpo=='<?=  Constantes::IMPO?>'){
+                var newRec = new this.recImpoexpo({                
+                    value: '<?=  Constantes::TRIANGULACION?>'
+                });
 
-
+                field.store.addSorted( newRec );
+            }
+        },
+        onSelectReporte: function( combo, record, idx ){
+            var form = this.getForm();
+            //form.findField("nombreVendedor").setRawValue(record.data.nombreVendedor);
+            //form.findField("nombreVendedor").hiddenField.value = record.data.vendedor;
+            
+            this.load({
+                url: '<?= url_for("ino/datosReporteCarga") ?>',
+                waitMsg:'cargando...',
+                params :{
+                    idreporte:record.data.idreporte,
+                    modo:this.modo
+                },
+                failure:function(response,options){
+                    var res = Ext.util.JSON.decode( response.responseText );
+                    if(res.err)
+                        Ext.MessageBox.alert("Mensaje",'Se presento un error cargando <br />'+res.err);
+                },
+                success:function(response,options){
+                    var res = Ext.util.JSON.decode( options.response.responseText );                   
+                    $("#idlinea").val(res.data.idlinea);                    
+                    Ext.getCmp("linea").lastQuery=res.data.linea;
+                }
+            });
         }
     });
 </script>

@@ -71,9 +71,9 @@ include_component("widgets", "widgetIds");
             <td>
                 <?=$referencia->getCaMaster()?>
             </td>
-            <td><b>Fch Master</b></td>
+            <td>&nbsp;</td>
             <td>
-                 <?=$referencia->getCaFchmaster()?>
+                &nbsp;
             </td>
         </tr>        
     </table>
@@ -128,6 +128,15 @@ include_component("widgets", "widgetIds");
         </table>
 
 </div>
+
+
+<div id="balance" class="x-hide-display">
+<?
+include_component("ino", "balanceReferencia", array("referencia"=>$referencia));
+?>
+</div>
+
+
 
 
 

@@ -6,7 +6,7 @@
  */
 
 
-include_component("ino", "gridFacturacionWindow", array("referencia"=>$referencia ));
+include_component("ino", "gridFacturacionWindow");
 
 ?>
 
@@ -104,13 +104,13 @@ GridFacturacionPanel = function( config ){
         })*/
       },
       {
-        header: "Valor Pesos",
-        dataIndex: 'valor_pesos',
+        header: "Valor "+this.monedaLocal,
+        dataIndex: 'valor_local',
         hideable: false,
         sortable: true,
         width: 80,
         align: 'right',
-        renderer: this.valorPesos
+        renderer: this.valorLocal
       }
 
 
@@ -219,7 +219,7 @@ Ext.extend(GridFacturacionPanel, Ext.grid.GridPanel, {
         );
     },
 
-    valorPesos: function(value, p, record) {
+    valorLocal: function(value, p, record) {
         //Ext.util.Format.numberRenderer('0,0.00')
         return Ext.util.Format.number( record.data.valor * record.data.tasacambio, '0,0.00' );
     },
