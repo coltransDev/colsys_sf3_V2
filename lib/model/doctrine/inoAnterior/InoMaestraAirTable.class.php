@@ -13,30 +13,39 @@ class InoMaestraAirTable extends Doctrine_Table
             if($transporte==Constantes::AEREO)
             {
                 $p_origen= Doctrine::getTable("Ciudad")->find( $origen );
-                $c_origen = ParametroTable::retrieveByCaso("CU002",null,$p_origen->getTrafico()->getCaIdtrafico());
                 
                 
-                $c_destino = ParametroTable::retrieveByCaso("CU003", null, $destino);
+                
+                
                 
                 //print_r( $c_destino  );
-                if(count($c_destino)>0)
-                {
-                    $referencia[0]="1".$c_destino[0]->getCaIdentificacion();
-                    $referencia[0]=str_pad($referencia[0], 3, "0", STR_PAD_RIGHT);
+                
+                if( !($impoexpo == Constantes::TRIANGULACION || $modalidad==Constantes::COURIER) ){
+                    $c_destino = ParametroTable::retrieveByCaso("CU003", null, $destino);
+                    if(count($c_destino)>0)
+                    {
+                        $referencia[0]="1".$c_destino[0]->getCaIdentificacion();
+                        $referencia[0]=str_pad($referencia[0], 3, "0", STR_PAD_RIGHT);
+                    }else{
+                        throw new Exception("Destino no valido");
+                    }
+                }else{
+                    $referencia[0]="190";
                 }
                 
                 
-                
+                $c_origen = ParametroTable::retrieveByCaso("CU002",null,$p_origen->getTrafico()->getCaIdtrafico());
                 if(count($c_origen)>0)
                 {
-                   
+
                     $referencia[1]=$c_origen[0]->getCaIdentificacion();
                 }
                 else
                 {
-                     
+
                     $referencia[1]="50";
                 }
+               
             }
         }
         

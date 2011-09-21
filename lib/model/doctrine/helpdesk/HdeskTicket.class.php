@@ -187,7 +187,7 @@ class HdeskTicket extends BaseHdeskTicket {
         $index->commit();
     }
 
-    public function save(Doctrine_Connection $conn = null) {
+    /*public function save(Doctrine_Connection $conn = null) {
         // ...
 
         $conn = $conn ? $conn : $this->getTable()->getConnection();
@@ -215,7 +215,7 @@ class HdeskTicket extends BaseHdeskTicket {
         }
 
         return parent::delete($conn);
-    }
+    }*/
 
     public function getReadonly( $nivel ) {
 

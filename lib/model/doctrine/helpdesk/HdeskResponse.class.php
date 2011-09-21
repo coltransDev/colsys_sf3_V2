@@ -39,7 +39,7 @@ class HdeskResponse extends BaseHdeskResponse
         $index->commit();
     }
 
-    public function save(Doctrine_Connection $conn = null) {
+    /*public function save(Doctrine_Connection $conn = null) {
         // ...
 
         $conn = $conn ? $conn : $this->getTable()->getConnection();
@@ -67,6 +67,6 @@ class HdeskResponse extends BaseHdeskResponse
         }
 
         return parent::delete($conn);
-    }
+    }*/
 
 }
