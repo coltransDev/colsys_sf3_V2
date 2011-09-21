@@ -20,7 +20,7 @@ class inoComponents extends sfComponents {
      */
 
     public function executeMainPanel() {
-        
+        $this->monedaLocal = $this->getUser()->getIdmoneda();
     }
 
     /*
@@ -96,32 +96,7 @@ class inoComponents extends sfComponents {
 
 
         
-        $inoHouses = Doctrine::getTable("InoHouse")
-                             ->createQuery("c")
-                             ->select("c.*, cl.*")
-                             //->innerJoin("c.Ids cl")
-                             ->innerJoin("c.Cliente cl")
-                             ->leftJoin( "c.InoComprobante comp" )
-                             ->leftJoin( "comp.InoTipoComprobante tcomp" )
-                             ->where("c.ca_idmaster = ?", $this->referencia->getCaIdmaster())
-                             ->addOrderBy( "cl.ca_compania" )
-                             ->execute();
-                            
-
-        $data = array();
-
-        foreach( $inoHouses as $inoHouse ){
-            $row = array();
-            $row["idmaster"] = $inoHouse->getCaIdmaster();
-            $row["idhouse"] = $inoHouse->getCaIdhouse();
-            $row["doctransporte"] = utf8_encode($inoHouse->getCaDoctransporte());
-            $row["idcliente"] = $inoHouse->getCliente()->getCaIdcliente();
-            $row["value"] =  utf8_encode($inoHouse->getCaDoctransporte())." ".utf8_encode($inoHouse->getCliente()->getCaCompania());
-            $row["cliente"] = utf8_encode($inoHouse->getCliente()->getCaCompania());
-            $data[] = $row;
-        }
-
-        $this->inoHouses = array("root" => $data, "total" => count($data));
+        
     }
 
     /*
@@ -165,29 +140,18 @@ class inoComponents extends sfComponents {
 
     }
     
-    
-    
-    /*
-     * Cuadro de eventos de auditoria
-     */
-
-    public function executeGridAuditoriaPanel() {
-
-    }
-
-    /*
-     * Ventana para editar un evento
-     */
-
-    public function executeEditAuditoriaWindow() {
-        
-    }
+           
 
     public function executePanelFiltro(sfWebRequest $request)
 	{
         $this->criterio = $request->getParameter("criterio");
         $this->cadena = $request->getParameter("cadena");
         $this->field = $request->getParameter("field");
+
+    }
+    
+    public function executeBalanceReferencia(sfWebRequest $request){
+        $this->monedaLocal = $this->getUser()->getIdmoneda();
 
     }
 

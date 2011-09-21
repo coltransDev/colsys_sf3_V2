@@ -207,16 +207,17 @@ class inoActions extends sfActions {
             $fchreferenciaTm = strtotime($fchreferencia);
 
             $idmaster=$request->getParameter("idmaster");
-
+            
             if( $idmaster ){
                 $ino = Doctrine::getTable("InoMaster")->find($idmaster);
-                $this->forward404Unless( $ino );
+                $this->forward404Unless( $ino );                
             }else{
                 $ino = new InoMaster();
+                $numRef = InoMasterTable::getNumReferencia($impoexpo, $transporte, $modalidad, $idorigen, $iddestino, date("m", $fchreferenciaTm), date("Y", $fchreferenciaTm));
+                $ino->setCaReferencia($numRef);
             }
             
-            $numRef = InoMasterTable::getNumReferencia($impoexpo, $transporte, $modalidad, $idorigen, $iddestino, date("m", $fchreferenciaTm), date("Y", $fchreferenciaTm));
-            $ino->setCaReferencia($numRef);
+            
             $ino->setCaImpoexpo($impoexpo);
             $ino->setCaTransporte($transporte);
             $ino->setCaModalidad($modalidad);
@@ -227,14 +228,18 @@ class inoActions extends sfActions {
             $ino->setCaIdagente($request->getParameter("idagente"));
 
             $ino->setCaMaster($request->getParameter("ca_master"));
-            $ino->setCaFchmaster($request->getParameter("ca_fchmaster"));
+            
 
             $ino->setCaFchsalida($request->getParameter("ca_fchsalida"));
             $ino->setCaFchllegada($request->getParameter("ca_fchllegada"));
             $ino->setCaMotonave(utf8_decode($request->getParameter("ca_motonave")));
+            
+            $ino->setCaPiezas($request->getParameter("ca_piezas"));
+            $ino->setCaPeso($request->getParameter("ca_peso"));
+            $ino->setCaVolumen($request->getParameter("ca_volumen"));
 
             $ino->save();
-            $this->responseArray = array("success" => true, "idmaestra" => $ino->getCaIdmaster(),"modo" => utf8_decode($this->modo) );
+            $this->responseArray = array("success" => true, "idmaster" => $ino->getCaIdmaster());
             
         } catch (Exception $e) {
             $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
@@ -266,12 +271,16 @@ class inoActions extends sfActions {
 
             $data["idagente"]=$ino->getCaIdagente();
 
-            $data["ca_master"]=$ino->getCaMaster();
-            $data["ca_fchmaster"]=$ino->getCaFchmaster();
+            $data["ca_master"]=$ino->getCaMaster();           
 
             $data["ca_motonave"]=utf8_encode($ino->getCaMotonave());
             $data["ca_fchsalida"]=$ino->getCaFchsalida();
             $data["ca_fchllegada"]=$ino->getCaFchllegada();
+            
+            $data["ca_piezas"]=$ino->getCaPiezas();
+            $data["ca_peso"]=$ino->getCaPeso();
+            $data["ca_volumen"]=$ino->getCaVolumen();
+            
             
             $this->responseArray = array("success" => true,"data"=>$data);
         } catch (Exception $e) {
@@ -499,14 +508,24 @@ class inoActions extends sfActions {
             $data["idproveedor"]=$prov[0]->getCaIdtercero();
             $data["proveedor"]=$prov[0]->getCaNombre();
         }
+        
+        $data["origen"]=$reporte->getDocTransporte();
 
-        $data["doctransporte"]=$reporte->getDocTransporte();
-
-        $data["numpiezas"]=preg_replace( "{[a-zA-Z]+}", '', $reporte->getPiezas());
-        $data["mpiezas"]=trim(preg_replace( "{[0-9.]+}", '', $reporte->getPiezas()));
-        $data["peso"]=preg_replace( "{[a-zA-Z]+}", '', $reporte->getPeso());
-        $vol=(explode(" ", preg_replace( "{[a-zA-Z]+}", '', $reporte->getVolumen())));
-        $data["volumen"]=$vol[0];
+        $data["impoexpo"]=utf8_encode($reporte->getCaImpoexpo());
+        $data["transporte"]=utf8_encode($reporte->getCaTransporte());
+        $data["modalidad"]=$reporte->getCaModalidad();
+        $data["origen"]=$reporte->getCaOrigen();
+        $data["destino"]=$reporte->getCaDestino();
+        $data["idlinea"]=$reporte->getCaIdlinea();
+        $data["linea"]=utf8_encode($reporte->getIdsProveedor()->getIds()->getCaNombre());
+        
+        $data["idagente"]=$reporte->getCaIdagente();
+        //$data["ca_idnave"]=$reporte->getIdnave();
+        $data["ca_fchsalida"]=$reporte->getEts();
+        $data["ca_fchllegada"]=$reporte->getEta();
+        $data["ca_master"]=$reporte->getCaDocmaster();
+        
+        
         $this->responseArray=array("success"=>true,"data"=>$data);
         $this->setTemplate("responseTemplate");
 
@@ -560,7 +579,7 @@ class inoActions extends sfActions {
                     $row["fchcomprobante"] = utf8_encode($comprobante->getCaFchcomprobante());
                     $row["idcomprobante"] = $comprobante->getCaIdcomprobante();
                     $row["valor"] = $comprobante->getCaValor();   
-                    $row["tasacambio"] = $comprobante->getCaTasacambio(); 
+                    $row["tasacambio"] = $comprobante->getCaTcambio(); 
                     $row["idmoneda"] = $comprobante->getCaIdmoneda();
                     $row["color"] = "";
 
@@ -622,7 +641,7 @@ class inoActions extends sfActions {
             $comprobante->setCaId($house->getCaIdcliente());
             $comprobante->setCaValor($request->getParameter("valor"));
             $comprobante->setCaIdmoneda($request->getParameter("idmoneda"));            
-            $comprobante->setCaTasacambio($request->getParameter("tasacambio"));
+            $comprobante->setCaTcambio($request->getParameter("tasacambio"));
             $comprobante->setCaPlazo($request->getParameter("plazo"));
             $comprobante->setCaObservaciones($request->getParameter("observaciones"));
             
@@ -677,7 +696,7 @@ class inoActions extends sfActions {
         $data["consecutivo"] = $comprobante->getCaConsecutivo();
         $data["plazo"] = $comprobante->getCaPlazo();
         $data["observaciones"] = $comprobante->getCaObservaciones();
-        $data["tasacambio"] = $comprobante->getCaTasacambio();
+        $data["tasacambio"] = $comprobante->getCaTcambio();
         $data["valor"] = $comprobante->getCaValor();
         $data["idmoneda"] = $comprobante->getCaIdmoneda();
         
@@ -780,7 +799,7 @@ class inoActions extends sfActions {
                 $comprobante->setCaIdmoneda($request->getParameter("idmoneda"));
             }
             if ($request->getParameter("cambio")) {
-                $comprobante->setCaTasacambio($request->getParameter("cambio"));
+                $comprobante->setCaTcambio($request->getParameter("cambio"));
             }
 
             $comprobante->save($conn);
