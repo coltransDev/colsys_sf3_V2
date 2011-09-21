@@ -28,7 +28,7 @@ class ProjectConfiguration extends sfProjectConfiguration
         sfConfig::set('doctrine_model_builder_options', $options);
 
         $manager->setAttribute(Doctrine_Core::ATTR_SEQNAME_FORMAT, '%s_id');
-
+        $manager->setAttribute(Doctrine_Core::ATTR_QUERY_LIMIT, Doctrine_Core::LIMIT_ROWS);
         $manager->registerExtension('Blameable');
 
 
@@ -41,7 +41,7 @@ class ProjectConfiguration extends sfProjectConfiguration
 	    }
 
 	    set_include_path(sfConfig::get('sf_lib_dir').'/vendor'.PATH_SEPARATOR.get_include_path());
-	    require_once sfConfig::get('sf_lib_dir').'/vendor/Zend/Loader/Autoloader.php';
+	    require_once sfConfig::get('sf_lib_dir').'/vendor/Zend/Loader/Autoloader.php';        
 	    Zend_Loader_Autoloader::getInstance();
 	    self::$zendLoaded = true;
 	}

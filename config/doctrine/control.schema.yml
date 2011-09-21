@@ -21,8 +21,7 @@ Usuario:
     ca_passwd: string(40)
     ca_salt: string(40)
     ca_activo: boolean
-    ca_forcechange: boolean
-    ca_sucursal: string(40)
+    ca_forcechange: boolean    
     ca_cumpleanos: date
     ca_fchingreso: date
     ca_manager: string(15)

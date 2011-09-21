@@ -32,8 +32,7 @@ Cotizacion:
     ca_usuactualizado: string(20)
     ca_fchactualizado: timestamp
     ca_usuanulado: string(20)
-    ca_fchanulado: timestamp
-    
+    ca_fchanulado: timestamp    
   relations:
     Usuario:
       local: ca_usuario
@@ -66,19 +65,12 @@ Cotizacion:
     NotTarea:
       local: ca_idtarea
       foreign: ca_idtarea
-      type: one
-    CotTrayectoAduana:
-      local: ca_idcotizacion
-      foreign: ca_idcotizacion
-      type: many
-    CotConceptoAduana:
-      local: ca_idcotizacion
-      foreign: ca_idcotizacion
-      type: many
+      type: one    
     CotSeguimiento:
       local: ca_idcotizacion
       foreign: ca_idcotizacion
       type: many
+      orderBy: ca_fchseguimiento DESC
     Envio :
       local: ca_idcotizacion
       foreign: ca_idcaso
@@ -152,6 +144,7 @@ CotProducto:
       local: ca_idproducto
       foreign: ca_idproducto
       type: many
+      
           
     
 
@@ -390,134 +383,3 @@ CotSeguimiento:
       foreign: ca_login
       type: one
 
-
-#Cotizaciones aduana
-
-CotTrayectoAduana:
-  options:
-    symfony:
-      form: false
-      filter: false
-  generatePath: cotizaciones
-  tableName: tb_cotproductos
-  columns:
-    ca_idtrayecto:
-      type: integer
-      primary: true
-      autoincrement: true
-    ca_idcotizacion: integer
-    ca_origen: string
-    ca_destino: string
-    ca_producto: string
-    ca_observaciones: string
-    ca_vigencia: date
-    ca_usucreado: string(20)
-    ca_fchcreado: timestamp
-    ca_usuactualizado: string(20)
-    ca_fchactualizado: timestamp
-  relations:
-    Cotizacion:
-      local: ca_idcotizacion
-      foreign: ca_idcotizacion
-      type: one
-    Origen:
-      local: ca_origen
-      foreign: ca_idciudad
-      type: one
-      class: Ciudad
-    Destino:
-      local: ca_destino
-      foreign: ca_idciudad
-      type: one
-      class: Ciudad
-
-
-CotConceptoAduana:
-  options:
-    symfony:
-      form: true
-      filter: false
-  generatePath: cotizaciones
-  tableName: cot.tb_conceptoaduana
-  attributes:
-    export: tables
-  columns:
-    ca_consecutivo:
-      type: integer
-      primary: true
-      autoincrement: true
-    ca_idconcepto:
-      type: integer
-      notnull: true
-    ca_valor:
-      type: numeric
-      notnull: true
-    ca_aplicacion:
-      type: string
-      notnull: true
-    ca_valorminimo:
-      type: numeric
-      notnull: true
-    ca_parametro:
-      type: string
-      notnull: true
-    ca_aplicacionminimo:
-      type: string
-      notnull: true
-    ca_parametro:
-      type: string
-      notnull: true
-    ca_fchini:
-      type: date
-    ca_fchfin:
-      type: date
-    ca_fchcreado: timestamp
-    ca_usucreado: string
-    ca_observaciones:
-      type: string
-      notnull: true
-    ca_idcotizacion: integer
-  relations:
-    Costo:
-      local: ca_idconcepto
-      foreign: ca_idcosto
-      type: one
-    Cotizacion:
-      local: ca_idcotizacion
-      foreign: ca_idcotizacion
-      type: one    
-
-CotRecargosAduana:
-  options:
-    symfony:
-      form: true
-      filter: false
-  generatePath: cotizaciones
-  tableName: cot.tb_conceptoaduana
-  attributes:
-    export: tables
-  columns:
-    ca_consecutivo:
-      type: integer
-      primary: true
-      autoincrement: true
-    ca_idpadre:
-      type: integer
-      notnull: true
-    ca_idtrayecto:
-      type: integer
-      notnull: true
-    ca_recargo: string
-    ca_contenedor: string
-    ca_valor: numeric
-    ca_aplicacion: string
-    ca_detalles: string
-    ca_fchcreado: timestamp
-    ca_usucreado: string
-    ca_fchactualizado: timestamp
-    ca_usuactualizado: string
-  relations:
-    CotTrayectoAduana:
-      local: ca_idcotizacion
-      foreign: ca_idcotizacion
-      type: many

@@ -78,10 +78,11 @@ InvActivo:
     ca_idsucursal: string
     ca_cantidad: integer
     ca_detalle: string
+    ca_fchbaja: date
     ca_fchcreado: timestamp
     ca_usucreado: string
     ca_fchactualizado: timestamp
-    ca_usuactualizado: string    
+    ca_usuactualizado: string       
   relations:
     InvCategory:
       local: ca_idcategory

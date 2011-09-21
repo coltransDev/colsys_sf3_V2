@@ -101,16 +101,17 @@ InoClientesSea:
   generatePath: sea
   tableName: tb_inoclientes_sea
   columns:
+    ca_idinocliente:
+      type: integer      
     ca_referencia:
-      type: string
+      type: string   
       primary: true
     ca_idcliente:
-      type: integer
+      type: integer  
       primary: true
     ca_hbls:
-      type: string
+      type: string  
       primary: true
-    oid: integer
     ca_idreporte: integer
     ca_idproveedor: integer
     ca_proveedor: string
@@ -234,6 +235,103 @@ InoContratosSea:
     
 
 
+InoCostosSea:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: sea
+  tableName: tb_inocostos_sea
+  columns:
+    oid:
+      type: integer
+      primary: true
+    ca_referencia:
+      type: string      
+    ca_idcosto:
+      type: integer      
+    ca_factura:
+      type: string          
+    ca_fchfactura: date
+    #ca_idproveedor: integer
+    ca_proveedor: string
+    ca_idmoneda: string
+    ca_tcambio: decimal
+    ca_tcambio_usd: decimal
+    ca_neto: decimal
+    ca_venta: decimal    
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string    
+  relations:
+     Costo:
+       local: ca_idcosto
+       foreign: ca_idcosto
+       type: one
+     InoMaestraSea:
+       local: ca_referencia
+       foreign: ca_referencia
+       type: one     
+     UsuCreado:
+      local: ca_usucreado
+      foreign: ca_login
+      type: one
+      class: Usuario
+     UsuActualizado:
+      local: ca_usuactualizado
+      foreign: ca_login
+      type: one
+      class: Usuario
+
+
+InoutilidadSea:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: sea
+  tableName: tb_inoutilidad_sea
+  columns:    
+    ca_referencia:
+      type: string 
+      primary: true
+    ca_idcliente:
+      type: integer      
+      primary: true
+    ca_hbls:
+      type: string   
+      primary: true
+    ca_idcosto:
+      type: integer      
+      primary: true
+    ca_factura:
+      type: string      
+      primary: true
+    ca_valor: decimal    
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string    
+  relations:
+     Costo:
+       local: ca_idcosto
+       foreign: ca_idcosto
+       type: one
+     InoMaestraSea:
+       local: ca_referencia
+       foreign: ca_referencia
+       type: one     
+     UsuCreado:
+      local: ca_usucreado
+      foreign: ca_login
+      type: one
+      class: Usuario
+     UsuActualizado:
+      local: ca_usuactualizado
+      foreign: ca_login
+      type: one
+      class: Usuario
 
 InoMaestraAir:
   options:
@@ -263,8 +361,7 @@ InoMaestraAir:
     ca_usucreado: string
     ca_fchactualizado: timestamp
     ca_usuactualizado: string
-    ca_idagente: integer
-    ca_idnave: string
+    ca_idagente: integer    
   relations:
     InoClientesAir:
       local: ca_referencia
@@ -351,7 +448,6 @@ InoClientesAir:
       class: Usuario
       
       
-      
 InoMaestraExpo:
   options:
     symfony:
@@ -365,12 +461,32 @@ InoMaestraExpo:
       primary: true
     ca_fchreferencia: date
     ca_idcliente: integer
+    ca_producto: string
     ca_via: string
     ca_modalidad: string
     ca_origen: string
     ca_destino: string
- 
-    
+    ca_peso: float
+    ca_pesovolumen: float
+    ca_valorcarga: float
+    ca_idsia: integer
+    ca_contacto: string
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string
+    ca_fchliquidado: timestamp
+    ca_usuliquidado: string
+    ca_fchcerrado: timestamp
+    ca_usucerrado: string
+    ca_idagente: integer
+    ca_tipoexpo: integer
+    ca_incoterm: string
+    ca_nombrecons: string
+    ca_direccioncons: string
+    ca_consecutivo: string
+    ca_aplicaidg: boolean
+
       
 InoMaestraExpoSea:
   options:
@@ -430,6 +546,74 @@ InoMaestraExpoTer:
     ca_idexpo: integer
     ca_idtransportador: integer
     ca_cartaporte: string    
+    
+    
+InoCostoExpo:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: inoAnterior
+  tableName: tb_expo_costos
+  columns:
+    ca_referencia:
+      type: string
+      primary: true    
+    ca_idcosto: 
+      type: integer
+      primary: true    
+    ca_neta: float
+    ca_venta: float 
+    ca_factura: 
+      type: string
+      primary: true    
+    ca_fchfactura: date
+    ca_facturaing: string
+    ca_proveedor: string
+    ca_idproveedor: integer
+    ca_utilidad: float
+    ca_moneda: string
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string
+  
+ 
+InoIngresosExpo:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: inoAnterior
+  tableName: tb_expo_ingresos
+  columns:
+    ca_referencia:
+      type: string
+      primary: true    
+    ca_idcliente: 
+      type: integer
+      primary: true    
+    ca_documento: 
+      type: string
+      primary: true  
+    ca_shipper: string 
+    ca_loginvendedor: string 
+    ca_factura: 
+      type: string
+      primary: true    
+    ca_fchfactura: date
+    ca_valor: float
+    ca_reccaja: string
+    ca_tasacambio: float
+    ca_fchpago: string
+    ca_observaciones: string
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string
+    
+
+    
     
 ExpoAlerta:
   options:

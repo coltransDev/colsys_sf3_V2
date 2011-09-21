@@ -32,10 +32,7 @@ InoMaster:
     ca_referencia: string(15)
     ca_master:
         type: string
-        notnull: true
-    ca_fchmaster:
-        type: date
-        notnull: true
+        notnull: true    
     ca_piezas: decimal
     ca_peso: decimal
     ca_volumen: decimal
@@ -97,6 +94,14 @@ InoMaster:
       foreign: ca_login
       type: one
       class: Usuario
+    InoViCosto:
+      local: ca_idmaster
+      foreign: ca_idmaster
+      type: one
+    InoViIngreso:
+      local: ca_idmaster
+      foreign: ca_idmaster
+      type: one
 
 
 
@@ -128,6 +133,10 @@ InoHouse:
       notnull: true
     ca_proveedor:
       type: string
+    ca_consignatario:
+      type: string
+    ca_producto:
+      type: string
     ca_numpiezas:
       type: decimal
       notnull: true    
@@ -142,9 +151,7 @@ InoHouse:
       notnull: true
     ca_vendedor:
       type: string
-      notnull: true
-    ca_idsubtrayecto:
-      type: integer      
+      notnull: true    
     ca_idbodega:
       type: integer
     ca_observaciones:
@@ -215,7 +222,8 @@ InoCosto:
     ca_tcambio: decimal
     ca_tcambio_usd: decimal
     ca_neto: decimal
-    ca_venta: decimal    
+    ca_venta: decimal
+    ca_idcomprobante: integer    
     ca_fchcreado: timestamp
     ca_usucreado: string
     ca_fchactualizado: timestamp
@@ -244,6 +252,45 @@ InoCosto:
       type: one
       class: Usuario
 
+InoUtilidad:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: ino
+  tableName: ino.tb_utilidad
+  columns:  
+    ca_idutilidad:
+      type: integer
+      autoincrement: true
+      primary: true
+    ca_idhouse: integer      
+    ca_idinocosto: integer                 
+    ca_valor: decimal     
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string    
+  relations:
+     InoCosto:
+       local: ca_idinocosto
+       foreign: ca_idinocosto
+       type: one
+     InoHouse:
+       local: ca_idhouse
+       foreign: ca_idhouse
+       type: one         
+     UsuCreado:
+      local: ca_usucreado
+      foreign: ca_login
+      type: one
+      class: Usuario
+     UsuActualizado:
+      local: ca_usuactualizado
+      foreign: ca_login
+      type: one
+      class: Usuario
+
 
 InoComprobante:
   options:
@@ -259,12 +306,12 @@ InoComprobante:
       primary: true
     ca_id: integer
     ca_idtipo: integer    
-    ca_consecutivo: integer
+    ca_consecutivo: string
     ca_fchcomprobante: date
 #    ca_idmaster: integer
     ca_idhouse: integer
     ca_plazo: integer
-    ca_tasacambio: decimal
+    ca_tcambio: decimal
     ca_observaciones: string
     ca_estado: integer
     ca_valor: float
@@ -601,3 +648,50 @@ InoAuditor:
       local: ca_idevento
       foreign: ca_idantecedente
       type: many
+
+
+Modo:
+  generatePath: ino
+  tableName: tb_modos
+  columns:
+    ca_idmodo:
+      type: integer
+      autoincrement: true
+      primary: true
+    ca_modulo: string
+    ca_impoexpo: string
+    ca_transporte : string
+    ca_rutina : integer
+    
+    
+InoViCosto:
+  generatePath: ino
+  tableName: ino.vi_costos
+  columns:
+    ca_idmaster:
+      type: integer      
+      primary: true
+    ca_referencia: string
+    ca_valor: float
+    ca_venta: float    
+  relations:
+    InoMaster:
+      local: ca_idmaster
+      foreign: ca_idmaster
+      type: one
+  
+InoViIngreso:
+  generatePath: ino
+  tableName: ino.vi_ingresos
+  columns:
+    ca_idmaster:
+      type: integer      
+      primary: true
+    ca_referencia: string
+    ca_valor: float 
+  relations:
+    InoMaster:
+      local: ca_idmaster
+      foreign: ca_idmaster
+      type: one
+    
