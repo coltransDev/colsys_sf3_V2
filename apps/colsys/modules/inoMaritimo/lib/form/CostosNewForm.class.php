@@ -109,21 +109,19 @@ class CostosNewForm extends BaseForm{
 		//echo isset($validator['fchdoctransporte'])."<br />";															
 		$this->setValidators( $validator );
 		
-		$this->validatorSchema->setPostValidator(new UtilidadesValidator());
-        $this->validatorSchema->setPostValidator(new UnicoCostoValidator());
+		        
+        $this->validatorSchema->setPostValidator(new sfValidatorAnd( array(
+                new UnicoCostoValidator(),
+                new UtilidadesValidator()
+            ))
+        );	
 		
 	}	
 	
 	
 	public function bind(array $taintedValues = null, array $taintedFiles = null){
         
-        /*if( $taintedValues['factura']=="0" ){
-            $taintedValues['factura'] = "";
-        }*/
-        
-               
-        
-        
+                
 		parent::bind($taintedValues,  $taintedFiles);
 	}
     

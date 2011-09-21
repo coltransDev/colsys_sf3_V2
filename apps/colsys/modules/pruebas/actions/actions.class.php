@@ -3998,5 +3998,173 @@ ORDER BY ca_idtrayecto,ca_idconcepto,log_pricrecargosxconcepto.ca_idrecargo, ca_
     
     
     
+    public function executeImportINOExpo(){
+        //Creado para Perú
+        $masters = Doctrine::getTable("InoMaestraExpo")
+                    ->createQuery("m")
+                    ->execute();
+        
+        
+        $conn = Doctrine::getTable("Reporte")->getConnection();
+        $conn->beginTransaction();
+        foreach( $masters as $m ){
+            
+            
+            $newMaster = new InoMaster();
+            $newMaster->setCaImpoexpo(Constantes::EXPO);
+            $newMaster->setCaReferencia($m->getCaReferencia());            
+            $newMaster->setCaFchreferencia($m->getCaFchreferencia());            
+            $newMaster->setCaMaster($m->getCaReferencia());
+            //$newMaster->setCaFchmaster($m->getCaFchreferencia());
+            if( $m->getCaVia()=="Aereo" ){
+                $newMaster->setCaTransporte(Constantes::AEREO);
+            }
+            
+            if( $m->getCaVia()=="Maritimo" ){
+                $newMaster->setCaTransporte(Constantes::MARITIMO);
+            }
+            
+            $newMaster->setCaModalidad($m->getCaModalidad());
+            $newMaster->setCaOrigen($m->getCaOrigen());
+            $newMaster->setCaDestino($m->getCaDestino());
+            $newMaster->setCaPeso($m->getCaPeso());
+            $newMaster->setCaVolumen($m->getCaPesovolumen()); 
+                       
+            $newMaster->setCaFchcreado($m->getCaFchcreado());
+            $newMaster->setCaUsucreado($m->getCaUsucreado());
+            $newMaster->setCaFchactualizado($m->getCaFchactualizado());
+            $newMaster->setCaUsuactualizado($m->getCaUsuactualizado());
+            
+            $reporte = ReporteTable::retrieveByConsecutivo($m->getCaConsecutivo());
+            
+            $newMaster->setCaIdagente( $reporte->getCaIdagente() );
+            $newMaster->setCaIdlinea( $reporte->getCaIdlinea()?$reporte->getCaIdlinea():0 );
+            $newMaster->stopBlaming();
+            $newMaster->save($conn);
+            echo $m->getCaReferencia()." consecutivo: ".$reporte->getCaConsecutivo()." idlinea: ".$reporte->getCaIdlinea()."<br />";     
+            
+            
+            $newHouse = new InoHouse();
+            $newHouse->setCaIdmaster( $newMaster->getCaIdmaster() );
+            $newHouse->setCaIdcliente( $m->getCaIdcliente() );
+            $newHouse->setCaProducto($m->getCaProducto());
+            
+            $newHouse->setCaVendedor($reporte->getCaLogin());
+            $newHouse->setCaDoctransporte($m->getCaReferencia());
+            $newHouse->setCaFchdoctransporte($m->getCaFchreferencia());
+            
+            
+            $newHouse->setCaPeso($m->getCaPeso());
+            $newHouse->setCaVolumen($m->getCaPesovolumen());
+            $newHouse->setCaNumorden($reporte->getCaOrdenClie());
+            
+            $ultStatus = $reporte->getUltimoStatus();
+            if( $ultStatus ){
+                $newHouse->setCaDoctransporte( $ultStatus->getCaDoctransporte() );
+                $newHouse->setCaNumpiezas( $ultStatus->getCaNumpiezas() );
+            }else{
+                $newHouse->setCaNumpiezas( 0 );
+            }
+            
+            
+            $newHouse->setCaFchcreado($m->getCaFchcreado());
+            $newHouse->setCaUsucreado($m->getCaUsucreado());
+            $newHouse->setCaFchactualizado($m->getCaFchactualizado());
+            $newHouse->setCaUsuactualizado($m->getCaUsuactualizado());
+            
+            $newHouse->stopBlaming();
+            $newHouse->save( $conn );
+            
+            
+            $ingresos = Doctrine::getTable("InoIngresosExpo")
+                    ->createQuery("c")
+                    ->addWhere("c.ca_referencia = ?", $m->getCaReferencia() )
+                    ->execute();
+            
+            
+            foreach( $ingresos as $i ){
+                
+                $newIng = new InoComprobante();                
+                $newIng->setCaIdhouse( $newHouse->getCaIdhouse() );    
+                $newIng->setCaId( $newHouse->getCaIdcliente() );   
+                $newIng->setCaIdtipo( 1 );
+                $newIng->setCaConsecutivo( $i->getCaFactura() );
+                $newIng->setCaFchcomprobante( $i->getCaFchfactura() );
+                if( $i->getCaTasacambio()==1 ){
+                    $newIng->setCaIdmoneda("PEN");
+                }else{
+                    $newIng->setCaIdmoneda("USD");
+                }
+                $newIng->setCaTcambio( $i->getCaTasacambio() );
+                $newIng->setCaValor( $i->getCaValor() );
+                //$newIng->setCaIdMoneda( $i->getCaIdmoneda() );
+                $newIng->setCaObservaciones( $i->getCaObservaciones() );                               
+                $newIng->setCaFchcreado($i->getCaFchcreado());
+                $newIng->setCaUsucreado($i->getCaUsucreado());
+                $newIng->setCaFchactualizado($i->getCaFchactualizado());
+                $newIng->setCaUsuactualizado($i->getCaUsuactualizado());
+                $newIng->stopBlaming();
+                $newIng->save( $conn );
+                
+               
+            }
+            
+            $costos = Doctrine::getTable("InoCostoExpo")
+                    ->createQuery("c")
+                    ->addWhere("c.ca_referencia = ?", $m->getCaReferencia() )
+                    ->execute();
+            
+            foreach( $costos as $c ){
+                
+                $newCosto = new InoCosto();
+                $newCosto->setCaIdmaster( $newMaster->getCaIdmaster() );
+                $newCosto->setCaIdcosto( $c->getCaIdcosto() );
+                $newCosto->setCaFactura( $c->getCaFactura() );
+                $newCosto->setCaFchfactura( $c->getCaFchfactura() );
+                $newCosto->setCaNeto( $c->getCaNeta() );
+                $newCosto->setCaVenta( $c->getCaVenta() );
+                $newCosto->setCaIdmoneda( $c->getCaMoneda() );
+                $newCosto->setCaIdproveedor( $c->getCaIdproveedor() );
+                $newCosto->setCaTcambio( $c->getCaIdproveedor() );
+                $newCosto->setCaFchcreado($c->getCaFchcreado());
+                $newCosto->setCaUsucreado($c->getCaUsucreado());
+                $newCosto->setCaFchactualizado($c->getCaFchactualizado());
+                $newCosto->setCaUsuactualizado($c->getCaUsuactualizado());
+                
+                $ingreso = Doctrine::getTable("InoComprobante")
+                    ->createQuery("c")
+                    ->innerJoin("c.InoHouse h")    
+                    ->innerJoin("h.InoMaster m")    
+                    ->addWhere("c.ca_consecutivo like ?", $c->getCaFacturaing()."%" )
+                    ->addWhere("m.ca_referencia = ? ", $c->getCaReferencia() )    
+                    ->fetchOne();
+                
+                if( $ingreso ){
+                    $newCosto->setCaTcambio($ingreso->getCaTcambio());
+                    $newCosto->setCaIdcomprobante($ingreso->getCaIdcomprobante());
+                }else{
+                    $newCosto->setCaTcambio(1);
+                }
+                $newCosto->setCaTcambioUsd(1);
+                
+                $newCosto->stopBlaming();
+                $newCosto->save( $conn );
+                
+                if( $c->getCaVenta()-$c->getCaNeta()>0 ){
+                    $util = new InoUtilidad();
+                    $util->setCaValor( $c->getCaVenta()-$c->getCaNeta() );
+                    $util->setCaIdhouse( $newHouse->getCaIdhouse() );
+                    $util->setCaIdinocosto( $newCosto->getCaIdinocosto() );
+                    $util->save();
+                }
+            } 
+        }
+            
+         $conn->commit();            
+        
+        $this->setTemplate("blank");
+    }
+    
+    
 }
 ?>

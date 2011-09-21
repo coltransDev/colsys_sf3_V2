@@ -29,8 +29,8 @@ class inoMaritimoActions extends sfActions {
         
         
         $user = $this->getUser();
-        if( $user->getIdsucursal()=="BOG" ){
-            $this->forward("inoMaritimo", "formCostosNew");
+        if( $user->getIdsucursal()=="BOG" || $user->getIdsucursal()=="PER"){
+        //    $this->forward("inoMaritimo", "formCostosNew");
         }
         
         $this->forward404Unless($request->getParameter("referencia"));
@@ -226,11 +226,11 @@ class inoMaritimoActions extends sfActions {
             
             
             
-            if( $bindValues["idmoneda"]=="USD" || $bindValues["idmoneda"]=="COP" ){                   
+            if( $bindValues["idmoneda"]=="USD" || $bindValues["idmoneda"]==$monedaLocal ){                   
                 $bindValues["tcambio_usd"] = 1;
             }
             
-            if( $bindValues["idmoneda"]=="COP" ){
+            if( $bindValues["idmoneda"]==$monedaLocal ){
                $bindValues["tcambio"] = 1;  
             }
             

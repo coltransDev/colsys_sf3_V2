@@ -703,6 +703,8 @@ class reportesGerActions extends sfActions {
             }
             $this->costos = $q->execute();
             
+            $this->fchInicial = $request->getParameter("fchInicial");
+            $this->fchFinal = $request->getParameter("fchFinal");
            
             
             $this->setTemplate("listadoFacturasResult");

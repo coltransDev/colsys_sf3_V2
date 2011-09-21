@@ -14,7 +14,7 @@ $recargos = $sf_data->getRaw( "recargos" );
 FormComprobanteSubpanelConceptos = function(){
 
     
-    this.dataConceptos = <?=json_encode(array("root"=>$conceptos))?>;
+    this.dataConceptos = <?=json_encode(array("root"=>$recargos))?>;
 
     this.storeConceptos = new Ext.data.Store({
         autoLoad : true,

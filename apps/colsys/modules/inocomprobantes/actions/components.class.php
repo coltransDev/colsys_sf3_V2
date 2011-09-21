@@ -26,9 +26,9 @@ class inocomprobantesComponents extends sfComponents
             $q = Doctrine::getTable("InoTipoComprobante")
                                          ->createQuery("t")
                                          ->select("t.ca_idtipo, t.ca_tipo, t.ca_comprobante, t.ca_titulo, e.ca_sigla")
-                                         ->innerJoin("t.IdsSucursal s")
+                                         /*->innerJoin("t.IdsSucursal s")
                                          ->innerJoin("s.Ids i")
-                                         ->innerJoin("i.IdsEmpresa e")
+                                         ->innerJoin("i.IdsEmpresa e")*/
 
                                          ->addWhere("t.ca_tipo = ?", $this->tipo)
                                          ->addOrderBy("t.ca_tipo, t.ca_comprobante");
@@ -140,6 +140,8 @@ class inocomprobantesComponents extends sfComponents
              $this->recargos[$key]['centro'] = str_pad($this->recargos[$key]['cc_ca_centro'], 2, "0", STR_PAD_LEFT)."-".str_pad($this->recargos[$key]['cc_ca_subcentro'], 2, "0", STR_PAD_LEFT);
              $this->recargos[$key]['codigo'] = str_pad($this->recargos[$key]['cc_ca_centro'], 2, "0", STR_PAD_LEFT).str_pad($this->recargos[$key]['cc_ca_subcentro'], 2, "0", STR_PAD_LEFT).str_pad($this->recargos[$key]["c_ca_idconcepto"], 4, "0", STR_PAD_LEFT);
          }
+
+         
     }
 
     public function executeFormComprobanteSubpanelPDeducciones(){

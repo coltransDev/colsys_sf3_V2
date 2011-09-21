@@ -12,8 +12,11 @@ class UtilidadesValidator extends sfValidatorBase
 	protected function doClean($values)
 	{			
         //echo $values["venta"] ."  --       ". round(+0.1,0)."<br />";
-        
-        $neto = $values["neto"]*$values["tcambio"];
+        if( isset($values["tcambio_usd"]) ){
+            $neto = $values["neto"]*$values["tcambio"]/$values["tcambio_usd"];
+        }else{
+            $neto = $values["neto"]*$values["tcambio"];
+        }
         
         
         if( $neto<0 ){            
@@ -30,8 +33,7 @@ class UtilidadesValidator extends sfValidatorBase
                 $sum+=$val;
             }            
         }
-        
-        //echo $sum."  ---  " .$util;
+                
         if( $sum!=$util ){
             throw new sfValidatorErrorSchema($this, array($this->getOption('username_field') => new sfValidatorError($this, 'invalid')));	
         }

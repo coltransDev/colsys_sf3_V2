@@ -249,7 +249,7 @@ class inventoryActions extends sfActions {
                             ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)
                             ->execute();
                     
-                    echo $value;
+                    
 
                     if ($value) {
                         $value = str_replace($pre, "", $value);
