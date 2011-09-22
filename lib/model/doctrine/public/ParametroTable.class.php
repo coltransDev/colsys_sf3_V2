@@ -5,8 +5,7 @@ class ParametroTable extends Doctrine_Table
 {
     public static function retrieveByCaso( $casoUso, $valor1=null, $valor2=null, $id=null ){
         
-        $c = ParametroTable::retrieveQueryByCaso( $casoUso, $valor1, $valor2, $id );
-
+        $c = ParametroTable::retrieveQueryByCaso( $casoUso, $valor1, $valor2, $id );        
 		return $c->execute();
 	}
 
