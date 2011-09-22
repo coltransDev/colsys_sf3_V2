@@ -66,7 +66,7 @@ GridHousePanel = function( config ){
       },
       {
         header: "Proveedor",
-        dataIndex: 'proveedor',
+        dataIndex: 'tercero',
         hideable: false,
         width: 200,
         sortable: true
@@ -81,9 +81,9 @@ GridHousePanel = function( config ){
             {name: 'idcliente', type: 'integer'},
             {name: 'cliente', type: 'string'},
             {name: 'idreporte', type: 'integer'},
-            {name: 'proveedor', type: 'string'},
+            {name: 'tercero', type: 'string'},
             {name: 'vendedor', type: 'string'},
-            {name: 'idproveedor', type: 'integer'},
+            {name: 'idtercero', type: 'integer'},
             {name: 'reporte', type: 'string'},
             {name: 'numpiezas', type: 'string'},
             {name: 'peso', type: 'float'},

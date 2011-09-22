@@ -8,42 +8,44 @@
 
 <table border="1" class="tableList" width="80%">
     <tr >          
-        <td ><b>No.Total Piezas:</b></td>  
-        <td  style="text-align: right;"><?=Utils::formatNumber($referencia->getCaPiezas())?>&nbsp;</td>  
-        <td ><b>Facturación Clientes:</b></td>  
-        <td  style="text-align: right;"><?=$monedaLocal." ".Utils::formatNumber($referencia->getVlrFacturado())?>&nbsp;</td>  
+        <td><b>No.Total Piezas:</b></td>  
+        <td><div align="right"><?=Utils::formatNumber($referencia->getCaPiezas())?>&nbsp;</div></td>  
+        <td><b>Facturación Clientes:</b></td>  
+        <td><div align="right"><?=$monedaLocal." ".Utils::formatNumber($referencia->getVlrFacturado())?>&nbsp;</div></td>  
     </tr>
-    <tr>  <td ><b>Peso Total en Kilos:</b></td>  
-        <td  style="text-align: right;"><?=Utils::formatNumber($referencia->getCaPeso())?>&nbsp;</td>  
-        <td ><b>Menos Deducciones:</b></td>  
-        <td  style="text-align: right;"><?=$monedaLocal." ".Utils::formatNumber($referencia->getVlrDeducciones())?>&nbsp;</td>
-    </tr>
-    <tr>  
-        <td ><b>Volumen Total CBM:</b></td>  
-        <td  style="text-align: right;"><?=Utils::formatNumber($referencia->getCaVolumen())?>&nbsp;</td>  
-        <td ><b>Costo Neto Embarque:</b></td>  
-        <td  style="text-align: right;"><?=$monedaLocal." ".Utils::formatNumber($referencia->getVlrCosto())?>&nbsp;</td>
+    <tr><td><b>Peso Total en Kilos:</b></td>  
+        <td><div align="right"><?=Utils::formatNumber($referencia->getCaPeso())?>&nbsp;</div></td>  
+        <td><b>Menos Deducciones:</b></td>  
+        <td><div align="right"><?=$monedaLocal." ".Utils::formatNumber($referencia->getVlrDeducciones())?>&nbsp;</td>
     </tr>
     <tr>  
-        <td ><b>Total Hbl's Registradas:</b></td>  
-        <td  style="text-align: right;">1&nbsp;</td>  
-        <td ><b>INO x Sobreventa:</b></td>  
-        <td  style="text-align: right;"><?=$monedaLocal." ".Utils::formatNumber($referencia->getVlrSobreventa())?>&nbsp;</td>
+        <td><b>Volumen Total CBM:</b></td>  
+        <td><div align="right"><?=Utils::formatNumber($referencia->getCaVolumen())?>&nbsp;</div></td>  
+        <td><b>Costo Neto Embarque:</b></td>  
+        <td><div align="right"><?=$monedaLocal." ".Utils::formatNumber($referencia->getVlrCosto())?>&nbsp;</div></td>
+    </tr>
+    <tr>  
+        <td><b>Total Hbl's Registradas:</b></td>  
+        <td><div align="right"><?=count( $referencia->getInoHouse())?>&nbsp;</div></td>  
+        <td><b>INO x Sobreventa:</b></td>  
+        <td><div align="right"><?=$monedaLocal." ".Utils::formatNumber($referencia->getVlrSobreventa())?>&nbsp;</div></td>
     </tr>
     <tr height="5">
         <td class="invertir" colspan="4"></td>
     </tr>
-    <tr>         
-        <td class="listar b">INO comisionable:</td>  
-        <td class="listar b" > </td>
-    </tr>
-    <tr>         
-        <td class="listar b">INO No comisionable:</td>  
-        <td class="listar b" > </td>
-    </tr>
+    <?
+    $inoConsolidado = $referencia->getVlrFacturado()-$referencia->getVlrDeducciones()-$referencia->getVlrCosto();
+    $inoTotal = $inoConsolidado+$referencia->getVlrSobreventa()
+    ?>
+     <tr >
+        <td colspan="2" rowspan="2">&nbsp;</td>
+           
+        <td class="listar b">INO Consolidado (Sin sobreventa):</td>  
+        <td class="listar b" ><div align="right"><?=$monedaLocal." ".Utils::formatNumber($inoConsolidado)?>&nbsp;</div></td>
+    </tr>    
     <tr>         
         <td class="listar b">INO Total:</td>  
-        <td class="listar b" > </td>
+        <td class="listar b" ><div align="right"><?=$monedaLocal." ".Utils::formatNumber($inoTotal)?>&nbsp;</div></td>
     </tr>
 <!--    <tr>         
         <td class="listar b">INO Consolidado:</td>  
@@ -84,6 +86,8 @@
     ?>
 
 </table>
+
+
 
 <!--
 

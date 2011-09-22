@@ -9,7 +9,7 @@ include_component("widgets", "widgetCliente");
 include_component("widgets", "widgetUsuario");
 include_component("widgets", "widgetTercero");
 include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047"));
-
+include_component("widgets", "widgetCiudad");
 
 
 
@@ -44,6 +44,16 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047"));
                                               hiddenName: "vendedor",
                                               allowBlank: false
                                               });
+                                  
+        this.widgetTercero = new WidgetTercero({
+                                            fieldLabel:this.impoexpo=='<?=Constantes::EXPO?>'?'Consignatario':'Proveedor',                        
+                                            tipo: this.impoexpo=='<?=Constantes::EXPO?>'?'Consignatario':'Proveedor',
+                                            width: 250,
+                                            name: "tercero",           
+                                            id: "tercero_id",           
+                                            hiddenName: "idtercero",                                                   
+                                            allowBlank: false                                            
+                                           });
         FormHousePanel.superclass.constructor.call(this, {
             deferredRender:false,
             autoHeight:true,
@@ -83,16 +93,7 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047"));
                                     },
                                     this.widgetReporte,
                                     this.widgetVendedor,
-                                    new WidgetTercero({fieldLabel:"Proveedor",
-                                            tipo: 'Proveedor',
-                                            width: 250,
-                                            name: "proveedor",
-                                            id: "proveedor",
-                                            hiddenName: "idproveedor",
-                                            hiddenId: "idproveedor",
-                                            allowBlank: false,
-                                            idreporte: "idreporte"
-                                           })
+                                    this.widgetTercero
                                 ]
                             },
                             /*
@@ -274,17 +275,21 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047"));
                 this.load({
                     url:'<?=url_for("ino/datosFormHousePanel")?>',
                     waitMsg:'Cargando...',
-                    params:{idhouse:this.idhouse},
-                    success:function(response,options){
+                    params:{
+                        idhouse:this.idhouse,
+                        modo:this.modo
+                    },
+                    success:function(response,options){                        
                         this.res = Ext.util.JSON.decode( options.response.responseText );
+                        
                         form.findField("compania").setRawValue(this.res.data.cliente);
                         form.findField("compania").hiddenField.value = this.res.data.idcliente;
                         form.findField("nombreVendedor").setRawValue(this.res.data.nombreVendedor);
                         form.findField("nombreVendedor").hiddenField.value = this.res.data.vendedor;
                         form.findField("idreporte").setRawValue(this.res.data.reporte);
-                        form.findField("idreporte").hiddenField.value = this.res.data.idreporte;
-                        form.findField("proveedor").setRawValue(this.res.data.proveedor);
-                        form.findField("proveedor").hiddenField.value = this.res.data.idproveedor;
+                        form.findField("idreporte").hiddenField.value = this.res.data.idreporte;                        
+                        form.findField("tercero_id").setRawValue(this.res.data.tercero);
+                        form.findField("tercero_id").hiddenField.value = this.res.data.idtercero;
                     }
                 });
             }
@@ -309,8 +314,8 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047"));
                 },
                 success:function(response,options){
                     var res = Ext.util.JSON.decode( options.response.responseText );
-                    $("#idproveedor").val(res.data.idproveedor);                    
-                    Ext.getCmp("proveedor").lastQuery=res.data.proveedor;
+                    //$("#idtercero").val(res.data.idtercero);                     
+                    //Ext.getCmp("tercero").lastQuery=res.data.tercero;
                 }
             });
         }

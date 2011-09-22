@@ -93,13 +93,14 @@ $tipos = $sf_data->getRaw("tipos");
             xtype:'tabpanel',
             buttonAlign: 'left',
             activeTab: 0,
-            defaults:{autoHeight:true, bodyStyle:'padding:10px'},
+            defaults:{autoHeight:true},
             deferredRender:false,
             
             
             items:[{
                 title:'Información General',
                 layout:'form',
+                bodyStyle:'padding:10px',
                 items: [
                     this.inoHouses,
                     this.tipos,
@@ -166,27 +167,27 @@ $tipos = $sf_data->getRaw("tipos");
                                 layout: 'form',
                                 columnWidth:.5,
                                 items: [
-                                {
-                                    xtype:'datefield',
-                                    fieldLabel: 'Fecha',
-                                    format: 'Y-m-d',
-                                    name: 'fchcomprobante',
-                                    value: '',
-                                    allowBlank:false,
-                                    width: 100,
-                                    tabIndex: 2
-                                },
-                                {
-                                    xtype:'numberfield',
-                                    fieldLabel: 'Valor',
-                                    name: 'valor',
-                                    value: '',
-                                    allowBlank:false,
-                                    allowNegative:true,
-                                    decimalPrecision : 2,
-                                    width: 80,
-                                    tabIndex: 4
-                                }
+                                    {
+                                        xtype:'datefield',
+                                        fieldLabel: 'Fecha',
+                                        format: 'Y-m-d',
+                                        name: 'fchcomprobante',
+                                        value: '',
+                                        allowBlank:false,
+                                        width: 100,
+                                        tabIndex: 2
+                                    },
+                                    {
+                                        xtype:'numberfield',
+                                        fieldLabel: 'Valor',
+                                        name: 'valor',
+                                        value: '',
+                                        allowBlank:false,
+                                        allowNegative:true,
+                                        decimalPrecision : 2,
+                                        width: 80,
+                                        tabIndex: 4
+                                    }
                                 ]
                             }
                             
@@ -196,10 +197,13 @@ $tipos = $sf_data->getRaw("tipos");
 				]
             }/*,
             new GridDeduccionesPanel(
-                {
-                    idhouse: this.idhouse,
+                {                    
+                    idcomprobante: this.idcomprobante,
                     title: "Deducciones",
-                    id: 'grid-deduccion-panel'
+                    id: 'grid-deduccion-panel',
+                    modo: this.modo,
+                    transporte: this.transporte,
+                    modalidad: this.modalidad 
                 }
             )*/
             ]

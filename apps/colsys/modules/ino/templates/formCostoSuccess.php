@@ -4,9 +4,8 @@
  * (c) Coltrans S.A. - Colmas Ltda.
  * 
  */
-?>
-<?
 
+include_component("widgets", "widgetIds");
 ?>
 <script type="text/javascript">
     function calc_utilidad(){
@@ -279,13 +278,22 @@
             <tr>
                 <td colspan="4">
                     <b>Proveedor:</b><br />
-                    <?
+                    
+                    <?                    
                     echo $form['idproveedor']->renderError(); 
                     if( $inoCosto  ){                                     
                         $form->setDefault('idproveedor', $inoCosto->getCaIdproveedor() );
                     }
                     echo $form['idproveedor']->render();
+                    
+                    echo $form['proveedor']->renderError(); 
+                    if( $inoCosto && $inoCosto->getIds() ){                                     
+                        $form->setDefault('proveedor', $inoCosto->getIds()->getCaNombre() );
+                    }
+                    echo $form['proveedor']->render();
                     ?>
+                    
+                    
                 </td>
             </tr>             
             <tr>
@@ -302,7 +310,8 @@
 </div>
 
 <script type="text/javascript" >
-        calc_neto();
-        calcular();
+    calc_neto();
+    calcular();    
+    
 </script>
 

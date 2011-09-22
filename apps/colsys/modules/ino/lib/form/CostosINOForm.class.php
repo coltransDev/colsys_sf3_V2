@@ -10,13 +10,14 @@ class CostosINOForm extends BaseForm{
 				
 		$widgets = array();		
 		$validator = array();	
-		
+		$transporte = $this->referencia?$this->referencia->getCaTransporte():"";
+        $impoexpo = $this->referencia?$this->referencia->getCaImpoexpo():"";
         $queryCosto = Doctrine::getTable("Costo")
                         ->createQuery("c")
                         ->select("c.ca_idcosto, c.ca_costo")
-                        ->addWhere("c.ca_impoexpo = ? ", Constantes::IMPO)
-                        ->addWhere("c.ca_transporte = ? ", Constantes::MARITIMO)
-                        ->addWhere("c.ca_modalidad = ? ", $this->referencia?$this->referencia->getCaModalidad():"")
+                        ->addWhere("c.ca_impoexpo = ? ", $impoexpo)
+                        ->addWhere("c.ca_transporte = ? ", $transporte)
+                        //->addWhere("c.ca_modalidad = ? ", $this->referencia?$this->referencia->getCaModalidad():"")
                         ->addOrderBy("c.ca_costo");
         
         $widgets["referencia"] = new sfWidgetFormInputHidden();
@@ -48,7 +49,8 @@ class CostosINOForm extends BaseForm{
         $widgets['tcambio_usd'] = new sfWidgetFormInputText(array(), array("size"=>9, "maxlength"=>9 , "onchange"=>"calc_neto()" ));
         $widgets['neto'] = new sfWidgetFormInputText(array(), array("size"=>15, "maxlength"=>15, "onchange"=>"calc_neto()" ));
         $widgets['venta'] = new sfWidgetFormInputText(array(), array("size"=>15, "maxlength"=>15, "onfocus"=>"calc_utilidad()",  "onchange"=>"calc_utilidad()" ));
-        $widgets['idproveedor'] = new sfWidgetFormInputText(array(), array("size"=>71, "maxlength"=>50 ));
+        $widgets['idproveedor'] = new sfWidgetFormInputHidden(array(), array("size"=>71, "maxlength"=>50 ));
+        $widgets['proveedor'] = new sfWidgetFormIds(array("idproveedor"=>"idproveedor"), array());
         
 		
         foreach( $this->inoHouses as $ic ){
@@ -104,7 +106,9 @@ class CostosINOForm extends BaseForm{
 																'invalid' => 'No valido'));	
 		
 		
-																												
+		$validator['proveedor'] = new sfValidatorString(array('required' => true), 
+														array('required' => 'Requerido',
+																'invalid' => 'No valido'));																											
 		
 																
 		$this->setValidators( $validator );

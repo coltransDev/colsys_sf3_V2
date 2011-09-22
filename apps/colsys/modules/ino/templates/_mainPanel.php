@@ -13,7 +13,7 @@ include_component("ino", "gridCostosPanel");
 include_component("ino", "gridCostosPanel");
 //include_component("ino", "gridAuditoriaPanel");
 
-//include_component("ino", "gridDeduccionesPanel");
+include_component("ino", "gridDeduccionesPanel");
 ?>
 <script type="text/javascript">
 
@@ -24,27 +24,32 @@ include_component("ino", "gridCostosPanel");
 
 MainPanel = function( config ){
     Ext.apply(this, config); 
-
+    
     this.gridHouse = new GridHousePanel({
         title: "House",
         modo: this.modo,
         impoexpo: this.impoexpo,
         transporte: this.transporte,        
-        idmaster: <?=$referencia->getCaIdmaster()?>
+        idmaster: <?=$referencia->getCaIdmaster()?>,
+        readOnly: this.readOnly
     });
 
     this.gridFacturacion = new GridFacturacionPanel({
         title: "Facturación",
         modo: this.modo,
         monedaLocal: '<?=$monedaLocal?>',
-        idmaster: <?=$referencia->getCaIdmaster()?>
+        transporte: this.transporte, 
+        modalidad: this.modalidad,
+        idmaster: <?=$referencia->getCaIdmaster()?>,
+        readOnly: this.readOnly
     });
 
     this.gridCostos = new GridCostosPanel({
         title: "Costos",
         modo: this.modo,
         monedaLocal: '<?=$monedaLocal?>',
-        idmaster: <?=$referencia->getCaIdmaster()?>
+        idmaster: <?=$referencia->getCaIdmaster()?>,
+        readOnly: this.readOnly
     });
 
 
@@ -58,7 +63,7 @@ MainPanel = function( config ){
     MainPanel.superclass.constructor.call(this, {        
         id: 'tpanel',
         plain:true,
-        activeTab: 4,
+        activeTab: 0,
         height:450,
         autoHeight: true,
         autoWidth : true,

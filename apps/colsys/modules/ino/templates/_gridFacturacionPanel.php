@@ -323,12 +323,12 @@ Ext.extend(GridFacturacionPanel, Ext.grid.GridPanel, {
     },
 
     crearFactura: function( idhouse , gridId){        
-        this.win = new GridFacturacionWindow( {gridId:gridId, modo:this.modo, idhouse:idhouse} );
+        this.win = new GridFacturacionWindow( {gridId:gridId, modo:this.modo, idhouse:idhouse, transporte: this.transporte, modalidad: this.modalidad  } );
         this.win.show();
     },
 
     editarFactura: function( idhouse, idcomprobante, gridId ){
-        this.win = new GridFacturacionWindow( {gridId:gridId, idcomprobante:idcomprobante, modo:this.modo} );
+        this.win = new GridFacturacionWindow( {gridId:gridId, idcomprobante:idcomprobante, modo:this.modo, transporte: this.transporte, modalidad: this.modalidad } );
         this.win.show();
 
     },

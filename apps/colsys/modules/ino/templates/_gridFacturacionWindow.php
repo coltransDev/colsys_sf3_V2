@@ -21,7 +21,9 @@ include_component("ino", "gridFacturacionFormPanel");
                 gridId: this.gridId,
                 idcomprobante: this.idcomprobante,
                 modo:this.modo,
-                idhouse: this.idhouse
+                idhouse: this.idhouse,
+                transporte: this.transporte, 
+                modalidad: this.modalidad 
             })
         ];
         

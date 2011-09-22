@@ -178,7 +178,11 @@ class inoActions extends sfActions {
         $this->transporte = $this->modo->getCaTransporte();
         $this->idmaster = $request->getParameter("idmaster");
         if( $this->idmaster ){
-            $this->referencia = Doctrine::getTable("InoMaster")->find($this->idmaster);            
+            $this->referencia = Doctrine::getTable("InoMaster")->find($this->idmaster);  
+            
+            if( $this->referencia->getCaUsuliquidado() || $this->referencia->getCaUsucerrado() ){
+                $this->redirect("ino/verReferencia?modo=".$this->modo->getCaIdmodo()."&idmaster=" . $this->referencia->getCaIdmaster());
+            }
         }
         else{
             $this->referencia = new InoMaster();
@@ -367,7 +371,7 @@ class inoActions extends sfActions {
             $house->setCaIdreporte($request->getParameter("idreporte"));
             $house->setCaIdcliente($request->getParameter("idcliente"));
             $house->setCaVendedor($request->getParameter("vendedor"));
-            $house->setCaIdproveedor($request->getParameter("idproveedor"));
+            $house->setCaIdtercero($request->getParameter("idtercero"));
             $house->setCaNumorden($request->getParameter("numorden"));
             $house->setCaNumpiezas($request->getParameter("numpiezas"));
             $house->setCaMpiezas(utf8_decode($request->getParameter("mpiezas")));
@@ -418,8 +422,8 @@ class inoActions extends sfActions {
             $row["numpiezas"] = $inoHouse->getCaNumpiezas()." ".utf8_encode($inoHouse->getCaMpiezas());
             $row["peso"] = $inoHouse->getCaPeso();
             $row["volumen"] = $inoHouse->getCaVolumen();
-            $row["idproveedor"] = $inoHouse->getCaIdproveedor();
-            $row["proveedor"] = utf8_encode($inoHouse->getProveedor()->getCaNombre());
+            $row["idtercero"] = $inoHouse->getCaIdtercero();
+            $row["tercero"] = utf8_encode($inoHouse->getTercero()->getCaNombre());
             $data[] = $row;
         }
 
@@ -460,8 +464,8 @@ class inoActions extends sfActions {
         $data["mpiezas"] = utf8_encode($inoHouse->getCaMpiezas());
         $data["peso"] = $inoHouse->getCaPeso();
         $data["volumen"] = $inoHouse->getCaVolumen();
-        $data["idproveedor"] = $inoHouse->getCaIdproveedor();
-        $data["proveedor"] = utf8_encode($inoHouse->getProveedor()->getCaNombre());
+        $data["idtercero"] = $inoHouse->getCaIdtercero();
+        $data["tercero"] = utf8_encode($inoHouse->getTercero()->getCaNombre());
 
 
 
@@ -501,12 +505,22 @@ class inoActions extends sfActions {
 
         $data=array();
         $reporte = Doctrine::getTable("Reporte")->find( $request->getParameter("idreporte")  );
-
-        $prov=$reporte->getProveedores();
-        if(count($prov)>0)
-        {
-            $data["idproveedor"]=$prov[0]->getCaIdtercero();
-            $data["proveedor"]=$prov[0]->getCaNombre();
+        $this->forward404Unless( $reporte );
+        
+        if( $reporte->getCaImpoexpo()==Constantes::EXPO ){
+            $cons=$reporte->getConsignatario();            
+            if($cons)
+            {                
+                $data["idtercero"]=$cons->getCaIdtercero();
+                $data["tercero"]=$cons->getCaNombre();
+            }
+        }else{
+            $prov=$reporte->getProveedores();
+            if(count($prov)>0)
+            {
+                $data["idtercero"]=$prov[0]->getCaIdtercero();
+                $data["tercero"]=$prov[0]->getCaNombre();
+            }
         }
         
         $data["origen"]=$reporte->getDocTransporte();
@@ -741,8 +755,7 @@ class inoActions extends sfActions {
                                   c.ca_tcambio, c.ca_tcambio_usd, c.ca_idcosto, p.ca_sigla, i.ca_nombre, 
                                   c.ca_idmoneda, cs.ca_costo")                        
                         ->innerJoin("c.Costo cs")
-                        ->innerJoin("c.IdsProveedor p")
-                        ->innerJoin("p.Ids i")
+                        ->innerJoin("c.Ids i")                        
                         ->where("c.ca_idmaster = ?", $idmaster)                        
                         ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
                         ->execute();
@@ -832,7 +845,7 @@ class inoActions extends sfActions {
      * @param sfRequest $request A request object
      */
     public function executeFormCosto(sfWebRequest $request) {
-        
+        $this->proveedor = null;
         $this->utilidades = array();
         $monedaLocal = $this->getUser()->getIdmoneda();
         $idinocosto = $request->getParameter("idinocosto");
@@ -853,7 +866,7 @@ class inoActions extends sfActions {
         } else {
             $inoCosto = new InoCosto();
             
-            $this->forward404Unless($request->getParameter("idmaster"));
+            $this->forward404Unless($request->getParameter("idmaster"));           
             $referencia = Doctrine::getTable("InoMaster")->find($request->getParameter("idmaster"));
             $this->forward404Unless($referencia);
 
@@ -887,7 +900,7 @@ class inoActions extends sfActions {
             $bindValues["tcambio"] = $request->getParameter("tcambio");
             $bindValues["tcambio_usd"] = $request->getParameter("tcambio_usd");
             $bindValues["idproveedor"] = $request->getParameter("idproveedor");
-            
+            $bindValues["proveedor"] = $request->getParameter("proveedor");
             if( $bindValues["idmoneda"]=="USD" || $bindValues["idmoneda"]==$monedaLocal ){                   
                 $bindValues["tcambio_usd"] = 1;
             }
@@ -950,6 +963,8 @@ class inoActions extends sfActions {
                 }
             }
         }
+        
+        
                 
         $this->referencia = $referencia;
 
@@ -997,9 +1012,92 @@ class inoActions extends sfActions {
 
     
     
+    public function executeCerrarCaso(sfWebRequest $request) {
+        $idmaster = $request->getParameter("idmaster");
+        $this->forward404Unless($idmaster);
+        
+        $ref = Doctrine::getTable("InoMaster")->find($request->getParameter("idmaster"));
+        $this->forward404Unless($ref);
+        
+        $ref->setCaUsucerrado( $this->getUser()->getUserId() );
+        $ref->setCaFchcerrado( date("Y-m-d H:i:s") );
+        $ref->save();
+        $this->redirect("ino/verReferencia?modo=".$this->modo->getCaIdmodo()."&idmaster=".$ref->getCaIdmaster());
+    }  
+    
+    public function executeAbrirCaso(sfWebRequest $request) {
+        $idmaster = $request->getParameter("idmaster");
+        $this->forward404Unless($idmaster);
+        
+        $ref = Doctrine::getTable("InoMaster")->find($request->getParameter("idmaster"));
+        $this->forward404Unless($ref);
+        
+        $ref->setCaUsucerrado( null );
+        $ref->setCaFchcerrado( null );
+        $ref->save();
+        $this->redirect("ino/verReferencia?modo=".$this->modo->getCaIdmodo()."&idmaster=".$ref->getCaIdmaster());
+    }  
     
     
+    public function executeLiquidarCaso(sfWebRequest $request) {
+        $idmaster = $request->getParameter("idmaster");
+        $this->forward404Unless($idmaster);
+        
+        $ref = Doctrine::getTable("InoMaster")->find($request->getParameter("idmaster"));
+        $this->forward404Unless($ref);
+        
+        $ref->setCaUsuliquidado( $this->getUser()->getUserId() );
+        $ref->setCaFchliquidado( date("Y-m-d H:i:s") );
+        $ref->save();
+        $this->redirect("ino/verReferencia?modo=".$this->modo->getCaIdmodo()."&idmaster=".$ref->getCaIdmaster());
+    }  
     
+    public function executeCancelarLiquidarCaso(sfWebRequest $request) {
+        $idmaster = $request->getParameter("idmaster");
+        $this->forward404Unless($idmaster);
+        
+        $ref = Doctrine::getTable("InoMaster")->find($request->getParameter("idmaster"));
+        $this->forward404Unless($ref);
+        
+        $ref->setCaUsuliquidado( null );
+        $ref->setCaFchliquidado( null );
+        $ref->save();
+        $this->redirect("ino/verReferencia?modo=".$this->modo->getCaIdmodo()."&idmaster=".$ref->getCaIdmaster());
+    }  
+    
+    
+    public function executeDatosGridDeduccionesPanel(sfWebRequest $request) {
+        $idcomprobante = $request->getParameter("idcomprobante");
+        $data = array();
+        if( $idcomprobante ){ 
+            $inoDeducciones = Doctrine::getTable("InoDeduccion")
+                            ->createQuery("d")
+                            ->select("d")
+                            ->innerJoin("d.Deduccion ded")                                                
+                            ->where("d.ca_idcomprobante = ?", $idcomprobante)
+                            ->addOrderBy("ded.ca_deduccion")
+                            ->execute();
+
+
+            $i=0;
+            foreach ($inoDeducciones as $d) {                
+                $row = array();
+                $row["iddeduccion"] = $d->getCaIddeduccion();
+                $row["deduccion"] = $d->getCaIdhouse();                
+                $row["valor"] = $d->getCaNeto();
+                $row["neto"] = $d->getCaValor();
+                $row["orden"] = $i++;
+                $data[] = $row;            
+            }
+        }
+        
+        $data[] = array("iddeduccion"=>"", "deduccion"=>"+");
+
+
+        $this->responseArray = array("success" => true, "root" => $data, "total" => count($data));
+
+        $this->setTemplate("responseTemplate");
+    }
     
 }
 

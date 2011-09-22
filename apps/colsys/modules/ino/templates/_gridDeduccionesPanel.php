@@ -4,17 +4,25 @@
  * 
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
+
+include_component("widgets", "widgetDeduccion");
+
 ?>
 <script type="text/javascript">
 GridDeduccionesPanel = function( config ){
-    Ext.apply(this, config);    
+    Ext.apply(this, config);  
+    
     this.columns = [      
       {
         header: "Concepto",
         dataIndex: 'deduccion',
         width: 100,
         sortable: true,
-        renderer: this.formatItem
+        renderer: this.formatItem,
+        editor: new WidgetDeduccion({
+            transporte: this.transporte,
+            modalidad: this.modalidad            
+        })
       },
       {
         header: "Neta",
@@ -32,8 +40,9 @@ GridDeduccionesPanel = function( config ){
      ];
 
     this.record = Ext.data.Record.create([            
-            {name: 'idhouse', type: 'integer'},
-            {name: 'iddeduccion', type: 'integer'},            
+            {name: 'idcomprobante', type: 'integer'},
+            {name: 'iddeduccion', type: 'integer'}, 
+            {name: 'deduccion', type: 'string'},
             {name: 'neto', type: 'float'},
             {name: 'valor', type: 'float'}
     ]);
@@ -42,7 +51,7 @@ GridDeduccionesPanel = function( config ){
         autoLoad : true,
         url: '<?=url_for("ino/datosGridDeduccionesPanel")?>',
         baseParams : {
-            idmaster: this.idmaster,
+            idcomprobante: this.idcomprobante,
             modo: this.modo
         },
         reader: new Ext.data.JsonReader(
@@ -61,21 +70,13 @@ GridDeduccionesPanel = function( config ){
         handler : this.recargar,
         scope: this
     }];
-
-    if( !this.readOnly ){
-        this.tbar.push({
-            text: 'Nuevo House',
-            iconCls: 'add',            
-            handler : this.newHouse,
-            scope: this
-        });
-    }
+    
 
     GridDeduccionesPanel.superclass.constructor.call(this, {
        loadMask: {msg:'Cargando...'},       
        tbar: this.tbar,
        autoHeight: true,
-       
+       boxMinHeight: 200,
        view: new Ext.grid.GridView({
             forceFit:true,
             enableRowBody:false,
@@ -83,61 +84,13 @@ GridDeduccionesPanel = function( config ){
        }),
        listeners:{
             rowcontextmenu: this.onRowcontextMenu,
-            rowdblclick : this.onRowDblclick
+            validateedit: this.onValidateEdit            
        }
     });
 };
 
-Ext.extend(GridDeduccionesPanel, Ext.grid.GridPanel, {
-    newHouse: function(){
-        if( !this.readOnly ){
-            var win = Ext.getCmp("edit-house-win");
-            if( win ){
-                win.close();
-            }
-            var idmaster = this.idmaster;
-            var gridOpener = this.id;
-            this.win = new Ext.Window({
-                title: "Nuevo House",
-                id: "edit-house-win",
-                modal: true,
-                items: new FormHousePanel( {idmaster:idmaster,
-                                            gridOpener: gridOpener,
-                                            modo: this.modo,
-                                            impoexpo: this.impoexpo,
-                                            transporte: this.transporte
-                                            } ),
-                closeAction: 'close',
-                width: 800
-            });
-            this.win.show();
-        }
-    },
-    editHouse: function(idhouse){
-       if( !this.readOnly ){           
-           var win = Ext.getCmp("edit-house-win");
-           if( win ){
-                win.close();
-           }
-           var idmaster = this.idmaster;
-           var gridOpener = this.id;
-           this.win = new Ext.Window({
-                title: "Editar House",
-                id: "edit-house-win",
-                modal: true,
-                items: new FormHousePanel({idmaster:idmaster,
-                                           idhouse:idhouse,
-                                           gridOpener: gridOpener,
-                                           modo: this.modo,
-                                           impoexpo: this.impoexpo,
-                                           transporte: this.transporte
-                                        }),
-                closeAction: 'close',
-                width: 800
-            });
-            this.win.show();
-       }
-    },
+Ext.extend(GridDeduccionesPanel, Ext.grid.EditorGridPanel, {
+    
 
     deleteHouse: function(idhouse){
        var modo = this.modo;
@@ -233,36 +186,60 @@ Ext.extend(GridDeduccionesPanel, Ext.grid.GridPanel, {
             this.ctxGridId = null;
         }
     },
-    onRowDblclick: function( grid , rowIndex, e ){
-		if( !this.readOnly ){
-            record =  this.store.getAt( rowIndex );
-            this.editHouse( record.data.idhouse );
-        }
-	},
-    getRowClass : function(record, rowIndex, p, ds){
-        p.cols = p.cols-1;
-        var color;
-        if( record.data.action=="Cerrado" ){
-            color = "blue";
-        }else{
-            if( record.data.tipo=="Defecto" ){
-                color = "pink";
-            }else{
-                switch( record.data.priority ){
-                    case "Media":
-                        color = "yellow";
-                        break;
-                    case "Alta":
-                        color = "pink";
-                        break;
-                    default:
-                        color = "";
-                        break;
+    
+    onValidateEdit : function(e){    
+        if( e.field == "deduccion"){
+            
+            var rec = e.record;
+            var ed = this.colModel.getCellEditor(e.column, e.row);
+            var store = ed.field.store;
+
+            var recordConcepto = this.record;
+            var storeGrid = this.store;
+
+            store.each( function( r ){                   
+                if( r.data.idconcepto==e.value ){      
+                    
+                    var existe = false;
+                    recordsConceptos = storeGrid.getRange();
+                    for( var j=0; j< recordsConceptos.length&&!existe; j++){
+                        if( recordsConceptos[j].data.iddeduccion==r.data.idconcepto){
+                            existe=true;                                    
+                        }                                                    
+                    }
+                    
+                    if( !existe ){
+                        if( !rec.data.iditem  ){
+                            var newRec = new recordConcepto({
+                                
+                                iddeduccion: '',                                
+                                deduccion: '+', 
+                                neto: 0,
+                                valor: 0,
+                                orden: 'Z' 
+                            });
+                                                       
+                           
+                            storeGrid.addSorted(newRec);
+                            storeGrid.sort("orden", "ASC");
+                            
+                        }
+                        idconcepto=e.value;
+                        e.value = r.data.concepto;
+                        
+                        
+                        
+                    }else{
+                        alert("Esta agregando un concepto que ya existe");
+                        e.value = "+";
+                        return false;
+                    }
+                    return true;
                 }
             }
+        )
         }
-        color = "row_"+color;
-        return this.state[record.id] ? 'x-grid3-row-expanded '+color : 'x-grid3-row-collapsed '+color;
     }
+    
 });
 </script>
