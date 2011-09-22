@@ -553,7 +553,15 @@ class widgetsActions extends sfActions {
         $rows = array();
         if ($idreporte) {
             $reporte = Doctrine::getTable("Reporte")->find($idreporte);
-            $proveedores = $reporte->getProveedores();
+            $proveedores = array();
+            if( $reporte->getCaImpoexpo()==Constantes::EXPO ){
+                if( $reporte->getCaIdconsignatario() ){
+                    $proveedores = array( $reporte->getCaIdconsignatario() );
+                }
+            }else{
+                $proveedores = $reporte->getProveedores();
+            }
+            
             foreach ($proveedores as $prov) {
                 $terceros[] = array("t_ca_idtercero" => $prov->getCaIdtercero(), "t_ca_nombre" => $prov->getCaNombre(), "c_ca_ciudad" => $prov->getCiudad()->getCaCiudad(), "p_ca_nombre" => $prov->getCiudad()->getTrafico()->getCaNombre(), "t_ca_direccion" => $prov->getCaDireccion(), "t_ca_contacto" => $prov->getCaContacto(), "idreporte" => true);
                 $notIn[] = $prov->getCaIdtercero();
@@ -571,7 +579,7 @@ class widgetsActions extends sfActions {
                 ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
                 ->distinct()
                 ->limit(40);
-        if ($idreporte) {
+        if ($idreporte && $notIn) {
             $q->addWhere("t.ca_idtercero not in (" . implode(",", $notIn) . ")");
         }
         //echo $q->getSqlQuery();
