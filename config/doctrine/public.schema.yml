@@ -433,6 +433,26 @@ Costo:
     ca_parametros: string
 
 
+
+Deduccion:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: public
+  tableName: tb_deducciones
+  columns:
+    ca_iddeduccion:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_deduccion: string    
+    ca_transporte: string
+    ca_modalidad: string
+    ca_habilitado: boolean
+   
+
+
 ColNovedad:
   options:
     symfony:
