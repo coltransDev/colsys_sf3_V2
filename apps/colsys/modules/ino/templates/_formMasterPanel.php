@@ -462,10 +462,11 @@ include_component("widgets", "widgetReporte");
             }
         },
         onCancel: function(){
+        
             if( this.idmaster ){
-                document.location = "<?=url_for("ino/verReferencia")?>?idmaster="+this.idmaster;
+                document.location = "<?=url_for("ino/verReferencia")?>?modo="+this.modo+"&idmaster="+this.idmaster;
             }else{
-                document.location = "<?=url_for("ino/index")?>";
+                document.location = "<?=url_for("ino/index")?>?modo="+this.modo;
             }
         },
         onRender:function() {

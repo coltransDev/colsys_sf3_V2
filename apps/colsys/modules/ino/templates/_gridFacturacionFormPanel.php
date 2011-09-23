@@ -85,7 +85,9 @@ $tipos = $sf_data->getRaw("tipos");
                     this.collapse();
                     this.fireEvent('select', this, record, index);
                 }
-                Ext.getCmp("idtipo").setValue(record.get("idtipo"));
+                if( Ext.getCmp("idtipo") ){
+                    Ext.getCmp("idtipo").setValue(record.get("idtipo"));
+                }
             }
         });
 
@@ -126,6 +128,10 @@ $tipos = $sf_data->getRaw("tipos");
                                     }, 
                                     {
                                         xtype:'hidden',
+                                        id: 'deducciones'                                        
+                                    },
+                                    {
+                                        xtype:'hidden',
                                         id: 'modo',
                                         value: this.modo
                                     }, 
@@ -144,12 +150,16 @@ $tipos = $sf_data->getRaw("tipos");
                                         xtype:'numberfield',
                                         fieldLabel: 'Tasa de Cambio',
                                         name: 'tasacambio',
+                                        id: 'tasacambio_id',
                                         value: '',
                                         allowBlank:false,
                                         allowNegative:false,
                                         decimalPrecision : 2,
                                         width: 80,
-                                        tabIndex: 3
+                                        tabIndex: 3,
+                                        listeners: {
+                                            change: this.cambiarTasaCambio
+                                        }
                                     }
                                     ,                                
                                     new WidgetMoneda({
@@ -195,7 +205,7 @@ $tipos = $sf_data->getRaw("tipos");
                 }
                 
 				]
-            }/*,
+            },
             new GridDeduccionesPanel(
                 {                    
                     idcomprobante: this.idcomprobante,
@@ -205,7 +215,7 @@ $tipos = $sf_data->getRaw("tipos");
                     transporte: this.transporte,
                     modalidad: this.modalidad 
                 }
-            )*/
+            )
             ]
 
         }];
@@ -245,6 +255,26 @@ $tipos = $sf_data->getRaw("tipos");
             var form = panel.getForm();
             var gridId = this.gridId;
             if( form.isValid() ){
+                
+                var grid = Ext.getCmp("grid-deduccion-panel");
+                
+                
+                var records = grid.store.getRange();
+                
+                var result = [];
+                for( var i=0; i<records.length; i++){
+                    rec = records[i];
+                    if( rec.get("iddeduccion") ){
+                        var str = "iddeduccion="+rec.get("iddeduccion")+" ";
+                        str += "neto="+rec.get("neto");
+                        result.push( str );
+                    }
+                    
+                }
+                
+                form.findField("deducciones").setValue(result.join("|"));
+                
+                
                 var gridOpener = this.gridOpener;
                 form.submit({
                     url: "<?=url_for("ino/guardarGridFacturacionPanel")?>",
@@ -275,7 +305,15 @@ $tipos = $sf_data->getRaw("tipos");
             }
 
         },
-
+        
+        cambiarTasaCambio: function(){
+            var grid = Ext.getCmp("grid-deduccion-panel");
+            var records = grid.store.getRange();            
+            for( var i=0; i<records.length; i++){
+                var rec = records[i];
+                rec.set("valor", rec.get("neto")*this.getValue());
+            }
+        },
 
         /**
         * Form onRender override
@@ -321,7 +359,7 @@ $tipos = $sf_data->getRaw("tipos");
             }
             this.inoHouses.setValue(this.idhouse);
             
-        }
+        }        
     });
 
 </script>

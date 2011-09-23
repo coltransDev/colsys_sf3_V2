@@ -16,8 +16,8 @@ GridDeduccionesPanel = function( config ){
       {
         header: "Concepto",
         dataIndex: 'deduccion',
-        width: 100,
-        sortable: true,
+        width: 200,
+        sortable: false,
         renderer: this.formatItem,
         editor: new WidgetDeduccion({
             transporte: this.transporte,
@@ -27,15 +27,19 @@ GridDeduccionesPanel = function( config ){
       {
         header: "Neta",
         dataIndex: 'neto',
-        sortable: true,
-        width: 80
+        sortable: false,
+        width: 100,
+        editor: new Ext.form.NumberField({
+            decimalPrecition: 2,
+            allowNegative: false
+        })
       },
       {
         header: "Valor",
         dataIndex: 'valor',
         hideable: false,
-        sortable: true,
-        width: 280
+        sortable: false,        
+        width: 100
       }
      ];
 
@@ -44,7 +48,8 @@ GridDeduccionesPanel = function( config ){
             {name: 'iddeduccion', type: 'integer'}, 
             {name: 'deduccion', type: 'string'},
             {name: 'neto', type: 'float'},
-            {name: 'valor', type: 'float'}
+            {name: 'valor', type: 'float'},
+            {name: 'orden', type: 'string'}
     ]);
 
     this.store = new Ext.data.GroupingStore({
@@ -61,7 +66,7 @@ GridDeduccionesPanel = function( config ){
             },
             this.record
         ),
-        sortInfo:{field: 'deduccion', direction: "ASC"}
+        sortInfo:{field: 'orden', direction: "ASC"}
     });
 
     this.tbar = [{
@@ -134,6 +139,7 @@ Ext.extend(GridDeduccionesPanel, Ext.grid.EditorGridPanel, {
             value
         );
     },
+        
     onRowcontextMenu: function(grid, index, e){
         if( !this.readOnly ){
             rec = this.store.getAt(index);
@@ -187,7 +193,14 @@ Ext.extend(GridDeduccionesPanel, Ext.grid.EditorGridPanel, {
         }
     },
     
-    onValidateEdit : function(e){    
+    onValidateEdit : function(e){   
+        if( e.field == "neto" ){
+            var cmp = Ext.getCmp("tasacambio_id");        
+            if( cmp && cmp.getValue() ){        
+                value = record.get("neto")*cmp.getValue();
+                e.record.set("valor", value);
+            }  
+        }
         if( e.field == "deduccion"){
             
             var rec = e.record;
@@ -209,7 +222,7 @@ Ext.extend(GridDeduccionesPanel, Ext.grid.EditorGridPanel, {
                     }
                     
                     if( !existe ){
-                        if( !rec.data.iditem  ){
+                        if( !rec.data.iddeduccion  ){
                             var newRec = new recordConcepto({
                                 
                                 iddeduccion: '',                                
@@ -221,17 +234,21 @@ Ext.extend(GridDeduccionesPanel, Ext.grid.EditorGridPanel, {
                                                        
                            
                             storeGrid.addSorted(newRec);
+                            rec.set("orden","B");
                             storeGrid.sort("orden", "ASC");
                             
-                        }
-                        idconcepto=e.value;
+                        }                        
                         e.value = r.data.concepto;
-                        
+                        rec.set("iddeduccion",r.data.idconcepto);
                         
                         
                     }else{
                         alert("Esta agregando un concepto que ya existe");
-                        e.value = "+";
+                        if( !rec.data.iddeduccion  ){
+                            e.value = "+";
+                        }else{
+                            e.value = rec.data.deduccion;
+                        }
                         return false;
                     }
                     return true;

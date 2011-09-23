@@ -661,7 +661,34 @@ class inoActions extends sfActions {
             
 
             $comprobante->save($conn);
-
+            
+            if ($idcomprobante) {
+                $deducciones = Doctrine::getTable("InoDeduccion")
+                                ->createQuery("d")
+                                ->addWhere("d.ca_idcomprobante=?", $idcomprobante)
+                                ->execute();
+                foreach( $deducciones as $d ){
+                    $d->delete( $conn );
+                }
+            }
+            
+            
+            $deducciones = $request->getParameter("deducciones");
+            if( $deducciones ){
+                $deducciones = explode("|", $deducciones);
+                
+                foreach( $deducciones as $d ){
+                    $params =  $array = sfToolkit::stringToArray( $d );   
+                    if( $params["neto"] ){
+                        $inoDeduccion = new InoDeduccion();
+                        $inoDeduccion->setCaIddeduccion( $params["iddeduccion"] );
+                        $inoDeduccion->setCaIdcomprobante( $comprobante->getCaIdcomprobante() );
+                        $inoDeduccion->setCaNeto( $params["neto"] );
+                        $inoDeduccion->setCaTcambio( $comprobante->getCaTcambio() );
+                        $inoDeduccion->save( $conn );
+                    }
+                }
+            }
 
             $conn->commit();
             //$conn->rollBack();
@@ -678,7 +705,42 @@ class inoActions extends sfActions {
 
         $this->setTemplate("responseTemplate");
     }
+    
+    
+    public function executeDatosGridDeduccionesPanel(sfWebRequest $request) {
+        $idcomprobante = $request->getParameter("idcomprobante");
+        $data = array();
+        if( $idcomprobante ){ 
+            $inoDeducciones = Doctrine::getTable("InoDeduccion")
+                            ->createQuery("d")
+                            ->select("d.*, ded.*")
+                            ->innerJoin("d.Deduccion ded")                                                
+                            ->where("d.ca_idcomprobante = ?", $idcomprobante)
+                            ->addOrderBy("ded.ca_deduccion")
+                            ->execute();
 
+
+            
+            foreach ($inoDeducciones as $d) {                
+                $row = array();
+                $row["iddeduccion"] = $d->getCaIddeduccion();
+                $row["deduccion"] = utf8_encode($d->getDeduccion()->getCaDeduccion());                
+                $row["neto"] = $d->getCaNeto();
+                $row["tcambio"] = $d->getCaTcambio();
+                $row["valor"] = $d->getCaNeto()*$d->getCaTcambio();
+                $row["orden"] = "A";
+                $data[] = $row;            
+            }
+        }
+        
+        $data[] = array("iddeduccion"=>"", "deduccion"=>"+", "orden"=>"Z");
+
+
+        $this->responseArray = array("success" => true, "root" => $data, "total" => count($data));
+
+        $this->setTemplate("responseTemplate");
+    }
+    
     /**
      *
      *
@@ -1066,38 +1128,7 @@ class inoActions extends sfActions {
     }  
     
     
-    public function executeDatosGridDeduccionesPanel(sfWebRequest $request) {
-        $idcomprobante = $request->getParameter("idcomprobante");
-        $data = array();
-        if( $idcomprobante ){ 
-            $inoDeducciones = Doctrine::getTable("InoDeduccion")
-                            ->createQuery("d")
-                            ->select("d")
-                            ->innerJoin("d.Deduccion ded")                                                
-                            ->where("d.ca_idcomprobante = ?", $idcomprobante)
-                            ->addOrderBy("ded.ca_deduccion")
-                            ->execute();
-
-
-            $i=0;
-            foreach ($inoDeducciones as $d) {                
-                $row = array();
-                $row["iddeduccion"] = $d->getCaIddeduccion();
-                $row["deduccion"] = $d->getCaIdhouse();                
-                $row["valor"] = $d->getCaNeto();
-                $row["neto"] = $d->getCaValor();
-                $row["orden"] = $i++;
-                $data[] = $row;            
-            }
-        }
-        
-        $data[] = array("iddeduccion"=>"", "deduccion"=>"+");
-
-
-        $this->responseArray = array("success" => true, "root" => $data, "total" => count($data));
-
-        $this->setTemplate("responseTemplate");
-    }
+    
     
 }
 
