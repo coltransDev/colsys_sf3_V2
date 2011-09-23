@@ -1130,7 +1130,8 @@ class clientesActions extends sfActions {
                 
                 foreach($tipos as $tabla)
                 {
-                    $sql="select t.*,u.ca_idsucursal from ".$tabla." t,control.tb_usuarios u where ca_factura ='".$nfact."' and t.ca_usucreado=u.ca_login and u.ca_idsucursal in ($sucursal) ";
+                    //$sql="select t.*,u.ca_idsucursal from ".$tabla." t,control.tb_usuarios u where (ca_factura ='".$nfact."' or ca_factura ='F".$suc_factura."-".$nfact."' ) and t.ca_usucreado=u.ca_login and u.ca_idsucursal in ($sucursal) ";
+                    $sql="select t.*,u.ca_idsucursal from ".$tabla." t,control.tb_usuarios u where (ca_factura ='".$nfact."' or ca_factura ='F".$suc_factura."-".$nfact."' ) and t.ca_usucreado=u.ca_login and u.ca_idsucursal in ($sucursal) ";
                     //echo  $sql."<br>";
                     $st = $con->execute($sql);
                     $ref = $st->fetch();
@@ -1187,11 +1188,11 @@ class clientesActions extends sfActions {
                         
                         $encontro=true;
                     }
-                    else
+                    /*else
                     {
                         $resultado[$i].=($resultado[$i]=="")?$comienzo_log:"";
                         $resultado[$i].=$tabla.":: factura NO ENCONTRADA --";
-                    }
+                    }*/
                 }
                 
                 if(!$encontro || !$actualizo)
@@ -1199,7 +1200,7 @@ class clientesActions extends sfActions {
                     $resultado[$i].=($resultado[$i]=="")?$comienzo_log:"";
                     if(!$encontro)
                     {
-                        $resultado[$i].="factura no encontrada";
+                        $resultado[$i].="FACTURA NO ENCONTRADA";
                         $estadisticas["no_encontrado"]++;
                     }
                     if(!$actualizo)
@@ -1211,6 +1212,8 @@ class clientesActions extends sfActions {
                 else
                 {
                     $estadisticas["actualizada"]++;
+                    
+                    $resultado[$i]=$comienzo_log." REGISTRO IMPORTADO";
                 }
             }
             $estadisticas["total"]=$total;
