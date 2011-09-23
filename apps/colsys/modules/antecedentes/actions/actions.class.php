@@ -10,6 +10,7 @@
  */
 class antecedentesActions extends sfActions {
 
+    const RUTINA = 104;
     private $filetypes = array("MBL", "HBL");
     /**
      *
@@ -96,16 +97,17 @@ class antecedentesActions extends sfActions {
      * @param sfRequest $request A request object
      */
     public function executeListadoReferencias(sfWebRequest $request) {        
-        //error_reporting(E_ALL);
+        //error_reporting(E_ALL);        
         $this->user=$this->getUser();
+        $this->nivel = $this->user->getNivelAcceso( antecedentesActions::RUTINA );
+        //echo $this->nivel;
         $this->format = $this->getRequestParameter("format");        
 
         $where="";
         if($this->format=="")
         {
             $where = " and (m.ca_provisional = true and ((m.ca_modalidad='".constantes::FCL."' and u.ca_idsucursal='".$this->user->getIdSucursal()."') or m.ca_modalidad<>'".constantes::FCL."') )  
-                and COALESCE(strpos((SELECT ca_subject FROM tb_emails where ca_tipo='Antecedentes' and ca_subject like '%'||m.ca_referencia||'%' order by ca_idemail DESC limit 1), 'Envio de Antecedentes'),-1)<=0";
-            
+                and COALESCE(strpos((SELECT ca_subject FROM tb_emails where ca_tipo='Antecedentes' and ca_subject like '%'||m.ca_referencia||'%' order by ca_idemail DESC limit 1), 'Envio de Antecedentes'),-1)<=0";            
         }
         else
         {
@@ -115,7 +117,7 @@ class antecedentesActions extends sfActions {
             $whereEmail="" ;
         }
         
-        $sql="select m.ca_referencia,m.ca_fchreferencia,m.ca_provisional,m.ca_modalidad,m.ca_motonave,m.ca_fchembarque,m.ca_fcharribo,m.ca_usucreado,ori.ca_ciudad ca_ciu_origen,des.ca_ciudad ca_ciu_destino,u.ca_idsucursal,m.ca_fchmuisca
+        $sql="select m.ca_referencia,m.ca_fchreferencia,m.ca_provisional,m.ca_modalidad,m.ca_motonave,m.ca_fchembarque,m.ca_fcharribo,m.ca_usucreado,ori.ca_ciudad as ca_ciu_origen,des.ca_ciudad as ca_ciu_destino,u.ca_idsucursal,m.ca_fchmuisca
                 ,COALESCE(strpos((SELECT ca_subject FROM tb_emails where ca_tipo='Antecedentes' and ca_subject like '%'||m.ca_referencia||'%' order by ca_idemail DESC limit 1), 'Envio de Antecedentes'),-1) as refbloqueada
                 from tb_inomaestra_sea m
                 JOIN tb_ciudades ori ON ori.ca_idciudad = m.ca_origen
@@ -1017,9 +1019,27 @@ exit;
        }
        $this->setTemplate("responseTemplate");
     }
+    
+    
+    public function executeRadicarReferencia(sfWebRequest $request)  
+    {
+        try{
+            $numref = str_replace("|", ".", $request->getParameter("referencia"));
+            $this->forward404Unless($numref);
+            $ref = Doctrine::getTable("InoMaestraSea")->find($numref);
+            $this->forward404Unless($ref);
+            $ref->setCaUsumuisca($this->getUser()->getUserId());
+            $ref->setCaFchmuisca(date('Y-m-d H:i:s'));
+            $ref->save();  
+            $this->responseArray = array("success" => true);
+       }
+       catch(Exception $e)
+       {
+           $this->responseArray = array("success" => false,"errorInfo"=>$e->getMessage());
+       }
+       $this->setTemplate("responseTemplate");
+    }    
  
-    
-    
     public function executeEmailColoader(sfWebRequest $request) {
 
         $numref = str_replace("|", ".", $request->getParameter("ref"));
@@ -1131,9 +1151,6 @@ exit;
             $email->AddAttachment($name);            
         }
         $email->send();
-        $email->save();
- 
-    }
-
-   
+        $email->save(); 
+    }   
 }

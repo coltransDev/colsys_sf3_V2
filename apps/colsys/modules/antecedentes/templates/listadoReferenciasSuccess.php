@@ -186,7 +186,35 @@ if($format!="")
     sufijo.addListener("select", recargar, this);
     sufijo.addListener("clear", limpiar, this);
 
-
+    function radicar(ref,id)
+    {
+        if(window.confirm("esta seguro que desea marca esta ref como radicada?"))
+        {
+            Ext.MessageBox.wait('Espere por favor', '');
+            Ext.Ajax.request(
+            {
+                waitMsg: 'Guardando cambios...',
+                url: '<?= url_for("antecedentes/radicarReferencia") ?>',
+                params :	{
+                    referencia: ref
+                },
+                failure:function(response,options){
+                    //alert( response.responseText );
+                    Ext.Msg.hide();
+                    success = false;
+                    Ext.MessageBox.hide();
+                },
+                success:function(response,options){
+                    var res = Ext.util.JSON.decode( response.responseText );
+                    if( res.success ){
+                        $("#"+id).html("");
+                        $("#"+id).remove();
+                        Ext.MessageBox.hide();
+                    }
+                }
+            });
+        }        
+    }
     </script>
 
     <table class="tableList" width="900px" border="1" id="mainTable">
@@ -198,6 +226,14 @@ if($format!="")
             <th width="70" scope="col">Motonave</th>
             <th width="70" scope="col">ETD</th>
             <th width="70" scope="col">ETA</th>
+<?
+    if($nivel==1)
+    {
+?>
+            <th width="20" scope="col">&nbsp;</th>
+<?
+    }
+?>
         </tr>
         <?
         $i=0;
@@ -237,6 +273,16 @@ if($format!="")
             <td  >
                 <?=$referencia["ca_fcharribo"]?>
             </td>
+<?
+    if($nivel==1)
+    {
+?>
+            <td>
+                <img src="/images/16x16/edit.gif" style="cursor: pointer" onclick="radicar('<?=$referencia["ca_referencia"]?>','id_<?=str_replace(".","",$referencia["ca_referencia"])?>')" width="16" height="16"/>
+            </td>
+<?
+    }
+?>       
         </tr>
         <?
 
@@ -344,7 +390,6 @@ if($sucursal=="BOG" && 1==2)
         </tr>
         <?
         }
-
         if( $i==0 ){
             ?>
             <tr>
