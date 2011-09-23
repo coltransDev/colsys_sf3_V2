@@ -27,12 +27,12 @@ if( $fechainicial && $fechafinal ){
 <br />
 </div>
 <table class="tableList" width="900px" border="1" id="mainTable" align="center" id="panel1">
-    <tr><th>Fecha</th><th>Referencia</th><th>Fecha Factura</th><th>Factura</th><th>Cliente</th></tr>
+    <tr><th>Fecha</th><th>Referencia</th><th>Fecha Factura</th><th>Factura</th><th>Valor</th><th>Cliente</th></tr>
         <?        
         foreach($ref as $key=> $r)
         {
         ?>
-    <tr><td><?=$r["ca_fchcreado"]?></td><td><?=$r["ca_referencia"]?></td><td><?=$r["ca_fchfactura"]?></td><td><?=$r["ca_factura"]?></td><td><?=$r["ca_compania"]?></td></tr>
+    <tr><td><?=$r["ca_fchcreado"]?></td><td><?=$r["ca_referencia"]?></td><td><?=$r["ca_fchfactura"]?></td><td><?=$r["ca_factura"]?></td><td align="right"><?=  Utils::formatNumber($r["ca_valor"],0)?></td><td><?=$r["ca_compania"]?></td></tr>
         <?
         }
         ?>
