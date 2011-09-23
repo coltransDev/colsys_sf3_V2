@@ -55,7 +55,7 @@ class reportesNegPlugActions extends sfActions
     }
     
     
-    
+
     
 }
 ?>
