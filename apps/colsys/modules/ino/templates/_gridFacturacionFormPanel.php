@@ -136,7 +136,7 @@ $tipos = $sf_data->getRaw("tipos");
                                         value: this.modo
                                     }, 
                                     {
-                                        xtype:'numberfield',
+                                        xtype:'textfield',
                                         fieldLabel: 'Consecutivo',
                                         name: 'consecutivo',
                                         value: '',
@@ -212,6 +212,7 @@ $tipos = $sf_data->getRaw("tipos");
                     title: "Deducciones",
                     id: 'grid-deduccion-panel',
                     modo: this.modo,
+                    impoexpo: this.impoexpo,
                     transporte: this.transporte,
                     modalidad: this.modalidad 
                 }

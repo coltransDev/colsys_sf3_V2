@@ -20,6 +20,7 @@ GridDeduccionesPanel = function( config ){
         sortable: false,
         renderer: this.formatItem,
         editor: new WidgetDeduccion({
+            impoexpo: this.impoexpo,
             transporte: this.transporte,
             modalidad: this.modalidad            
         })
@@ -157,11 +158,10 @@ Ext.extend(GridDeduccionesPanel, Ext.grid.EditorGridPanel, {
     },
     
     onValidateEdit : function(e){   
-        if( e.field == "neto" ){
+        if( e.field == "neto" ){            
             var cmp = Ext.getCmp("tasacambio_id");        
-            if( cmp && cmp.getValue() ){        
-                value = record.get("neto")*cmp.getValue();
-                e.record.set("valor", value);
+            if( cmp && cmp.getValue() ){                        
+                e.record.set("valor", e.value*cmp.getValue());
             }  
         }
         if( e.field == "deduccion"){

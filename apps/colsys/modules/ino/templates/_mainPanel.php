@@ -38,6 +38,7 @@ MainPanel = function( config ){
         title: "Facturación",
         modo: this.modo,
         monedaLocal: '<?=$monedaLocal?>',
+        impoexpo: this.impoexpo,
         transporte: this.transporte, 
         modalidad: this.modalidad,
         idmaster: <?=$referencia->getCaIdmaster()?>,

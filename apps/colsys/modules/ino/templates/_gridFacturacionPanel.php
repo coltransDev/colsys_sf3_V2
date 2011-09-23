@@ -322,13 +322,27 @@ Ext.extend(GridFacturacionPanel, Ext.grid.GridPanel, {
         return color;
     },
 
-    crearFactura: function( idhouse , gridId){        
-        this.win = new GridFacturacionWindow( {gridId:gridId, modo:this.modo, idhouse:idhouse, transporte: this.transporte, modalidad: this.modalidad  } );
+    crearFactura: function( idhouse , gridId){         
+        this.win = new GridFacturacionWindow( {
+            gridId:gridId, 
+            modo:this.modo, 
+            idhouse:idhouse, 
+            transporte: this.transporte, 
+            modalidad: this.modalidad,
+            impoexpo: this.impoexpo
+        } );
         this.win.show();
     },
 
     editarFactura: function( idhouse, idcomprobante, gridId ){
-        this.win = new GridFacturacionWindow( {gridId:gridId, idcomprobante:idcomprobante, modo:this.modo, transporte: this.transporte, modalidad: this.modalidad } );
+        this.win = new GridFacturacionWindow( {
+            gridId:gridId, 
+            idcomprobante:idcomprobante, 
+            modo:this.modo, 
+            transporte: this.transporte, 
+            modalidad: this.modalidad,
+            impoexpo: this.impoexpo
+        } );
         this.win.show();
 
     },

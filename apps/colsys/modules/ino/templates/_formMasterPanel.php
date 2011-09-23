@@ -259,8 +259,8 @@ include_component("widgets", "widgetReporte");
                                     linkTransporte: "transporte",
                                     impoexpo: this.impoexpo,
                                     allowBlank: false,
-                                    tabIndex:4,
-                                    disabled: !!this.idmaster
+                                    tabIndex:4
+                                    //disabled: !!this.idmaster
                                 }),
                                 
                                 new WidgetCiudad({fieldLabel: 'Ciudad Destino',
