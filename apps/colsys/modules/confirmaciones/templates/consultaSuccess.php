@@ -76,9 +76,7 @@ function validarFormConfirmacion(){
                     }
                 }
             }
-		}	
-		
-		
+		}
 		
 		<?	
 	}else{
@@ -229,8 +227,7 @@ function mostrar(oid){
 		if( $modo=="otm" ){
 		?>
 		case '99999':            
-                objeto_4.value='<?=str_replace("\n", "<br>", $textos['mensajeCierreOTM'])?>';
-			
+                objeto_4.value='<?=str_replace("\n", "<br>", $textos['mensajeCierreOTM'])?>';			
 			break;
 		<?
 		}
@@ -283,12 +280,12 @@ function cambiarTextosOTM( value ){
         ?>
         if( value=="Fact" ){
             if($("#mensaje_<?=$inoCliente->getOid()?>"))
-                Ext.getCmp('mensaje_+ oid' ).setValue("");
-                //document.getElementById('mensaje_<?=$inoCliente->getOid()?>').value="";
+                //Ext.getCmp('mensaje_+ oid' ).setValue("");
+                document.getElementById('mensaje_<?=$inoCliente->getOid()?>').value="";
         }else{
             if($("#mensaje_<?=$inoCliente->getOid()?>"))
-                Ext.getCmp('mensaje_+ oid' ).setValue(document.getElementById('mensajeOTM_<?=$inoCliente->getOid()?>').value);
-                //document.getElementById('mensaje_<?=$inoCliente->getOid()?>').value=document.getElementById('mensajeOTM_<?=$inoCliente->getOid()?>').value;
+                //Ext.getCmp('mensaje_+ oid' ).setValue(document.getElementById('mensajeOTM_<?=$inoCliente->getOid()?>').value);
+                document.getElementById('mensaje_<?=$inoCliente->getOid()?>').value=document.getElementById('mensajeOTM_<?=$inoCliente->getOid()?>').value;
         }
         <?
     }
@@ -402,8 +399,7 @@ function cambiarTipoMsg( value ){
 							<th colspan="3">Contratos de Comodato</th>
 						</tr>
 						<?
-						foreach( $inoEquipos as $inoEquipo ){
-						
+						foreach( $inoEquipos as $inoEquipo ){						
 							$inoContrato = $inoEquipo->getInoContratosSea();
 						?>
 						<tr>
@@ -415,8 +411,6 @@ function cambiarTipoMsg( value ){
 							<td  class="listar"><?=$inoContrato?$inoContrato->getCaObservaciones():"&nbsp;"?></td>
 						</tr>
 						<?
-						
-						
 						}
 						?>
 						<tr>
@@ -452,8 +446,7 @@ function cambiarTipoMsg( value ){
 				<td class="partir">Status OTM:&nbsp;</td>
 				<td class="mostrar" colspan="4"><b>Introducción al Mensaje:</b><br />
 					<textarea name='intro_body' wrap="virtual" rows="3" cols="93"><?=$textos['mensajeConfOTM']?></textarea>
-                </td>
-				
+                </td>				
 			</tr>
 			<?
 			}else if($modo=="puerto")
@@ -732,7 +725,6 @@ function cambiarTipoMsg( value ){
 			</tr>
 			<?
 			}
-
             if($modo!="puerto")
                 include_component("confirmaciones", "notClientes",array("inoClientes"=>$inoClientes,"modo"=>$modo,"etapas"=>$etapas,"coordinadores"=>$coordinadores, "textos"=>$textos, $bodegas="bodegas"));
             ?>
@@ -748,9 +740,6 @@ function cambiarTipoMsg( value ){
 				<td class="invertir" colspan="6"></td>
 			</tr>
 		</table>
-
-       
-
 		<br />
 		<table cellspacing="10">
 			<tr>
@@ -760,8 +749,8 @@ function cambiarTipoMsg( value ){
 		</table>        
 	</form>
         <table width="850" border="0" class="tableList">
-              <?
-            if($modo=="puerto")
+            <?
+            if($modo=="puerto" || $modo=="otm")
                 include_component("confirmaciones", "uploadClientes",array("inoClientes"=>$inoClientes,"modo"=>$modo));
             ?>
         </table>
@@ -794,7 +783,5 @@ function cambiarTipoMsg( value ){
     }
     ?>
     modFcharribo();
-    //;
-
 </script>
 

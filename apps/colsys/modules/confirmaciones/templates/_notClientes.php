@@ -28,8 +28,10 @@
 				<td class="listar" style='font-size: 11px; vertical-align:bottom;'><span class="listar" style="font-size: 11px; vertical-align:bottom"><b>Id Cliente:</b><br />
 					<?=number_format($inoCliente->getCaIdcliente())?>
 					</span></td>
-				<td class="listar" style='font-size: 11px; vertical-align:bottom;' colspan="3"><b>Nombre del Cliente:</b><br />
-					<?=Utils::replace($cliente->getCaCompania())?></td>
+				<td class="listar" style='font-size: 11px; vertical-align:bottom;' colspan="3">
+                    <b>Nombre del Cliente:</b> &nbsp;&nbsp;&nbsp;<a href="<?="/reportesNeg/emailInstruccionesOtm/idreporte/" . $reporte->getCaIdreporte() . "/impoexpo/" . $reporte->getCaImpoexpo() . "/modo/" . $reporte->getCaTransporte()?>" target="_blank"><img src="/images/22x22/email.gif" title="Enviar Instrucciones" style="vertical-align:middle" ></a><br />
+					<?=Utils::replace($cliente->getCaCompania())?>
+                </td>
 				<td class="listar" >
 					<div align="right">
 					<?
