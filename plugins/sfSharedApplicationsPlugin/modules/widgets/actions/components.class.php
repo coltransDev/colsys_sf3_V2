@@ -52,10 +52,10 @@ class widgetsComponents extends sfComponents {
     public function executeMonedas() {
 
         $this->monedas = Doctrine::getTable("Moneda")
-                        ->createQuery("m")
-                        ->addOrderBy("m.ca_sugerido desc")
-                        ->addOrderBy("m.ca_idmoneda")
-                        ->execute();
+                ->createQuery("m")
+                ->addOrderBy("m.ca_sugerido desc")
+                ->addOrderBy("m.ca_idmoneda")
+                ->execute();
     }
 
     public function executeWidgetIncoterms() {
@@ -65,17 +65,17 @@ class widgetsComponents extends sfComponents {
             $this->incoterms[] = array("valor" => $incoterm->getCaValor());
         }
     }
-    
+
     public function executeWidgetMultiIncoterms() {
-        $incoterms = ParametroTable::retrieveByCaso("CU062");        
+        $incoterms = ParametroTable::retrieveByCaso("CU062");
         //$this->incoterms = array();
-        $this->incoterms="[";
-        $incotmp="";
+        $this->incoterms = "[";
+        $incotmp = "";
         foreach ($incoterms as $incoterm) {
-            $incotmp.=($incotmp!="")?",":"";
-            $incotmp.="['". $incoterm->getCaValor()."']";
+            $incotmp.=($incotmp != "") ? "," : "";
+            $incotmp.="['" . $incoterm->getCaValor() . "']";
         }
-        $this->incoterms.=$incotmp."]";
+        $this->incoterms.=$incotmp . "]";
     }
 
     public function executeTransportes() {
@@ -111,10 +111,10 @@ class widgetsComponents extends sfComponents {
      */
     public function executePaises() {
         $traficos_rs = Doctrine::getTable("Trafico")
-                        ->createQuery("t")
-                        ->where("t.ca_idtrafico != '99-999' ")
-                        ->addOrderBy("t.ca_nombre ASC")
-                        ->execute();
+                ->createQuery("t")
+                ->where("t.ca_idtrafico != '99-999' ")
+                ->addOrderBy("t.ca_nombre ASC")
+                ->execute();
 
 
         $this->traficos = array();
@@ -154,7 +154,7 @@ class widgetsComponents extends sfComponents {
      * Muestra un select con todas las ciudades y las encadena con los paises
      */
     public function executeContinuaciones() {
-
+        
     }
 
     /**
@@ -170,7 +170,7 @@ class widgetsComponents extends sfComponents {
      * Muestra un select con las empresas Coltrans, Colmas
      */
     public function executeEmpresa() {
-
+        
     }
 
     /**
@@ -254,7 +254,7 @@ class widgetsComponents extends sfComponents {
      */
 
     public function executeComboReportes() {
-
+        
     }
 
     /*
@@ -304,15 +304,15 @@ class widgetsComponents extends sfComponents {
         $user = $this->getUser();
         //$user->getIdempresa();
         $sucursales = Doctrine::getTable("Sucursal")
-                        ->createQuery("s")
-                        ->select("s.ca_idsucursal,s.ca_nombre")
-                        ->addOrderBy("s.ca_nombre")
-                        ->addWhere("s.ca_idempresa=?",$user->getIdempresa())
-                        ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
-                        ->execute();
+                ->createQuery("s")
+                ->select("s.ca_idsucursal,s.ca_nombre")
+                ->addOrderBy("s.ca_nombre")
+                ->addWhere("s.ca_idempresa=?", $user->getIdempresa())
+                ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                ->execute();
 
         foreach ($sucursales as $sucursal) {
-            $this->data[] = array("id"=>$sucursal["s_ca_idsucursal"],"valor" => utf8_encode($sucursal["s_ca_nombre"]));
+            $this->data[] = array("id" => $sucursal["s_ca_idsucursal"], "valor" => utf8_encode($sucursal["s_ca_nombre"]));
         }
     }
 
@@ -321,64 +321,54 @@ class widgetsComponents extends sfComponents {
         $user = $this->getUser();
         //$user->getIdempresa();
         $rows = Doctrine::getTable("Departamento")
-                        ->createQuery("d")
-                        ->select("d.ca_iddepartamento,d.ca_nombre")
-                        ->addOrderBy("d.ca_nombre")
-                        ->addWhere("d.ca_idempresa=?",$user->getIdempresa())
-                        ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
-                        ->execute();
+                ->createQuery("d")
+                ->select("d.ca_iddepartamento,d.ca_nombre")
+                ->addOrderBy("d.ca_nombre")
+                ->addWhere("d.ca_idempresa=?", $user->getIdempresa())
+                ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                ->execute();
 
         foreach ($rows as $r) {
-            $this->data[] = array("id"=>$r["d_ca_iddepartamento"],"valor" => utf8_encode($r["d_ca_nombre"]));
+            $this->data[] = array("id" => $r["d_ca_iddepartamento"], "valor" => utf8_encode($r["d_ca_nombre"]));
         }
     }
-    
+
     public function executeWidgetMuelles() {
-    //echo $this->ciudad;
+        //echo $this->ciudad;
         $this->data = array();
-     
-        if($this->ciudad=="CTG-0005")
-        {
-            $this->data[] = array("id"=>"2257","valor" =>"Muelles El Bosque S.A." );
-            $this->data[] = array("id"=>"2261","valor" =>"Soc.Portuaria Reg.Decartagenas.Adeposito" );
-            $this->data[] = array("id"=>"2259","valor" =>"Contecar Tnal C/Nedor.C/Genas.A.Deposito" );
+
+        if ($this->ciudad == "CTG-0005") {
+            $this->data[] = array("id" => "2257", "valor" => "Muelles El Bosque S.A.");
+            $this->data[] = array("id" => "2261", "valor" => "Soc.Portuaria Reg.Decartagenas.Adeposito");
+            $this->data[] = array("id" => "2259", "valor" => "Contecar Tnal C/Nedor.C/Genas.A.Deposito");
+        } else if ($this->ciudad == "BUN-0002") {
+            $this->data[] = array("id" => "2366", "valor" => "Soc.Port.Regional B/Tura S.A.");
+            $this->data[] = array("id" => "2918", "valor" => "SOCIEDAD PORTUARIA TERMINAL DE CONTENEDORES DE BUENAVENTURA S.A. T.C.BUENA S.A.");
+        } else if ($this->ciudad == "BAQ-0005") {
+            $this->data[] = array("id" => "2031", "valor" => "Soc.Port.Regionalde B/Quillas.A.Deposito");
+        } else if ($this->ciudad == "STA-0005") {
+            $this->data[] = array("id" => "2435", "valor" => "SOCIEDAD PORTUARIA REGIONAL DE SANTA MARTA S.A");
+        } else {
+            $this->data[] = array("id" => "2257", "valor" => "Muelles El Bosque S.A.");
+            $this->data[] = array("id" => "2261", "valor" => "Soc.Portuaria Reg.Decartagenas.Adeposito");
+            $this->data[] = array("id" => "2259", "valor" => "Contecar Tnal C/Nedor.C/Genas.A.Deposito");
+            $this->data[] = array("id" => "2366", "valor" => "Soc.Port.Regional B/Tura S.A.");
+            $this->data[] = array("id" => "2918", "valor" => "SOCIEDAD PORTUARIA TERMINAL DE CONTENEDORES DE BUENAVENTURA S.A. T.C.BUENA S.A.");
+            $this->data[] = array("id" => "2031", "valor" => "Soc.Port.Regionalde B/Quillas.A.Deposito");
+            $this->data[] = array("id" => "2435", "valor" => "SOCIEDAD PORTUARIA REGIONAL DE SANTA MARTA S.A");
         }
-        else if($this->ciudad=="BUN-0002")
-        {
-            $this->data[] = array("id"=>"2366","valor" =>"Soc.Port.Regional B/Tura S.A." );
-            $this->data[] = array("id"=>"2918","valor" =>"SOCIEDAD PORTUARIA TERMINAL DE CONTENEDORES DE BUENAVENTURA S.A. T.C.BUENA S.A." );
-        }
-        else if($this->ciudad=="BAQ-0005")
-        {
-            $this->data[] = array("id"=>"2031","valor" =>"Soc.Port.Regionalde B/Quillas.A.Deposito" );
-        }
-        else if($this->ciudad=="STA-0005")
-        {
-            $this->data[] = array("id"=>"2435","valor" =>"SOCIEDAD PORTUARIA REGIONAL DE SANTA MARTA S.A" );
-        }
-        else
-        {
-            $this->data[] = array("id"=>"2257","valor" =>"Muelles El Bosque S.A." );
-            $this->data[] = array("id"=>"2261","valor" =>"Soc.Portuaria Reg.Decartagenas.Adeposito" );
-            $this->data[] = array("id"=>"2259","valor" =>"Contecar Tnal C/Nedor.C/Genas.A.Deposito" );
-            $this->data[] = array("id"=>"2366","valor" =>"Soc.Port.Regional B/Tura S.A." );
-            $this->data[] = array("id"=>"2918","valor" =>"SOCIEDAD PORTUARIA TERMINAL DE CONTENEDORES DE BUENAVENTURA S.A. T.C.BUENA S.A." );
-            $this->data[] = array("id"=>"2031","valor" =>"Soc.Port.Regionalde B/Quillas.A.Deposito" );
-            $this->data[] = array("id"=>"2435","valor" =>"SOCIEDAD PORTUARIA REGIONAL DE SANTA MARTA S.A" );
-        }
-        
     }
-    
+
     public function executeWidgetModalidad() {
         $this->data = array();
 
         $modalidades = Doctrine::getTable("Modalidad")
-                        ->createQuery("m")
-                        ->orderBy("m.ca_impoexpo")
-                        ->orderBy("m.ca_transporte")
-                        ->orderBy("m.ca_modalidad")
-                        ->where("ca_fcheliminado is null")
-                        ->execute();
+                ->createQuery("m")
+                ->orderBy("m.ca_impoexpo")
+                ->orderBy("m.ca_transporte")
+                ->orderBy("m.ca_modalidad")
+                ->where("ca_fcheliminado is null")
+                ->execute();
 
         $this->data = array();
         foreach ($modalidades as $modalidad) {
@@ -395,10 +385,10 @@ class widgetsComponents extends sfComponents {
         $this->data = array();
 
         $monedas = Doctrine::getTable("Moneda")
-                        ->createQuery("m")
-                        ->addOrderBy("m.ca_sugerido desc")
-                        ->addOrderBy("m.ca_idmoneda")
-                        ->execute();
+                ->createQuery("m")
+                ->addOrderBy("m.ca_sugerido desc")
+                ->addOrderBy("m.ca_idmoneda")
+                ->execute();
 
 //        echo count($monedas);
         foreach ($monedas as $moneda) {
@@ -410,10 +400,10 @@ class widgetsComponents extends sfComponents {
         $this->data = array();
 
         $q = Doctrine_Query::create()
-                        ->select("p.ca_idproveedor, p.ca_sigla, id.ca_nombre, p.ca_transporte, p.ca_activo_impo, p.ca_activo_expo ")
-                        ->from("IdsProveedor p")
-                        ->innerJoin("p.Ids id")
-                        ->addOrderBy("id.ca_nombre");
+                ->select("p.ca_idproveedor, p.ca_sigla, id.ca_nombre, p.ca_transporte, p.ca_activo_impo, p.ca_activo_expo ")
+                ->from("IdsProveedor p")
+                ->innerJoin("p.Ids id")
+                ->addOrderBy("id.ca_nombre");
         $q->addWhere("p.ca_tipo = ? OR p.ca_tipo = ?", array("TRI", "TRN"));
 
         //$q->addWhere("p.ca_activo = ?", true );
@@ -436,9 +426,9 @@ class widgetsComponents extends sfComponents {
     public function executeWidgetPais() {
         //echo $this->excluidos;
         $traficos = Doctrine::getTable('Trafico')->createQuery('t')
-                        ->where('t.ca_idtrafico != ?', '99-999')
-                        ->addOrderBy('t.ca_nombre ASC')
-                        ->execute();
+                ->where('t.ca_idtrafico != ?', '99-999')
+                ->addOrderBy('t.ca_nombre ASC')
+                ->execute();
 
         $this->data = array();
         foreach ($traficos as $trafico) {
@@ -452,10 +442,10 @@ class widgetsComponents extends sfComponents {
         $this->data = array();
 
         $ciudades = Doctrine::getTable('Ciudad')->createQuery('c')
-                        ->innerJoin('c.Trafico t')
-                        ->addOrderBy('c.ca_ciudad ASC')
-                        ->addOrderBy('t.ca_nombre ASC')
-                        ->execute();
+                ->innerJoin('c.Trafico t')
+                ->addOrderBy('c.ca_ciudad ASC')
+                ->addOrderBy('t.ca_nombre ASC')
+                ->execute();
         $this->data = array();
         $con = 0;
         $name = "";
@@ -464,7 +454,7 @@ class widgetsComponents extends sfComponents {
             if (trim(utf8_encode($ciudad->getCaCiudad())) == trim($name))
                 $con++;
             else
-                $con=0;
+                $con = 0;
             $name = trim(utf8_encode($ciudad->getCaCiudad()));
             $this->data[] = array("idciudad" => $ciudad->getCaIdciudad(),
                 "ciudad" => utf8_encode($ciudad->getCaCiudad()) . (($con) ? "(" . ($con + 1) . ")" : ""),
@@ -481,30 +471,30 @@ class widgetsComponents extends sfComponents {
         //echo $this->getRequestParameter("perfil");
 
         $this->usuarios = Doctrine::getTable("Usuario")
-                        ->createQuery("u")
-                        ->innerJoin("u.UsuarioPerfil up")
-                        ->where("u.ca_activo=? AND up.ca_perfil=? ", array('TRUE', $this->perfil))
-                        ->addOrderBy("u.ca_idsucursal")
-                        ->addOrderBy("u.ca_nombre")
-                        ->execute();
+                ->createQuery("u")
+                ->innerJoin("u.UsuarioPerfil up")
+                ->where("u.ca_activo=? AND up.ca_perfil=? ", array('TRUE', $this->perfil))
+                ->addOrderBy("u.ca_idsucursal")
+                ->addOrderBy("u.ca_nombre")
+                ->execute();
     }
 
     public function executeWidgetAgente() {
 
         $agentes = Doctrine_Query::create()
-                        ->select("a.*, i.ca_nombre, t.ca_idtrafico, t.ca_nombre,c.ca_ciudad,s.ca_direccion")
-                        ->from("IdsAgente a")
-                        ->innerJoin("a.Ids i")
-                        ->innerJoin("i.IdsSucursal s")
-                        ->innerJoin("s.Ciudad c")
-                        ->innerJoin("c.Trafico t")
-                        ->where("s.ca_principal = ?", true)
-                        ->addWhere("a.ca_activo = ?", true)                        
-                        ->addOrderBy("i.ca_nombre")
-                        ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
-                        ->execute();
+                ->select("a.*, i.ca_nombre, t.ca_idtrafico, t.ca_nombre,c.ca_ciudad,s.ca_direccion")
+                ->from("IdsAgente a")
+                ->innerJoin("a.Ids i")
+                ->innerJoin("i.IdsSucursal s")
+                ->innerJoin("s.Ciudad c")
+                ->innerJoin("c.Trafico t")
+                ->where("s.ca_principal = ?", true)
+                ->addWhere("a.ca_activo = ?", true)
+                ->addOrderBy("i.ca_nombre")
+                ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                ->execute();
         $this->agentes = array();
-        foreach ($agentes as $agente) {                          
+        foreach ($agentes as $agente) {
             $ag = array("idagente" => $agente["a_ca_idagente"],
                 "nombre" => utf8_encode($agente["i_ca_nombre"]),
                 "pais" => utf8_encode($agente["t_ca_nombre"]),
@@ -516,28 +506,22 @@ class widgetsComponents extends sfComponents {
             );
 
             $this->agentes[] = $ag;
-            if ( $agente["t_ca_idtrafico"] == "CN-086") {
+            if ($agente["t_ca_idtrafico"] == "CN-086") {
 
                 $ag["pais"] = "Hong Kong";
                 $ag["idtrafico"] = "HK-852";
                 $this->agentes[] = $ag;
-                
             }
 
-            if ( $agente["t_ca_idtrafico"] == "HK-852") {
+            if ($agente["t_ca_idtrafico"] == "HK-852") {
                 $ag["pais"] = "China";
                 $ag["idtrafico"] = "CN-086";
                 $this->agentes[] = $ag;
-                
             }
-
-
         }
     }
 
-
     public function executeWidgetSucursalAgente() {
-
         
     }
 
@@ -550,12 +534,12 @@ class widgetsComponents extends sfComponents {
             );
         }
     }
-    
-     public function executeWidgetCoordinadoresAduana() {
+
+    public function executeWidgetCoordinadoresAduana() {
         $usuarios = UsuarioTable::getCoordinadoresAduana();
         $this->usuarios = array();
-        
-        
+
+
         $this->usuarios[] = array("login" => '',
             "nombre" => utf8_encode("Ninguno Asignado")
         );
@@ -602,15 +586,15 @@ class widgetsComponents extends sfComponents {
     }
 
     public function executeWidgetIds() {
-
+        
     }
 
     public function executeWidgetTercero() {
-
+        
     }
 
     public function executeWidgetUsuario() {
-
+        
     }
 
     public function executeWidgetTerceroWindow() {
@@ -619,13 +603,13 @@ class widgetsComponents extends sfComponents {
 
     public function executeWidgetConsignar() {
         $this->data = Doctrine::getTable("Bodega")
-                        ->createQuery("b")
-                        ->select("b.*")
-                        ->addOrderBy("b.ca_tipo ASC")
-                        ->addOrderBy("b.ca_nombre ASC")
-                        ->where("b.ca_tipo = ? OR b.ca_tipo = ?", array('Coordinador Logístico', 'Operador Multimodal'))
-                        ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
-                        ->execute();
+                ->createQuery("b")
+                ->select("b.*")
+                ->addOrderBy("b.ca_tipo ASC")
+                ->addOrderBy("b.ca_nombre ASC")
+                ->where("b.ca_tipo = ? OR b.ca_tipo = ?", array('Coordinador Logístico', 'Operador Multimodal'))
+                ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                ->execute();
 
         foreach ($this->data as $key => $val) {
             $this->data[$key]["b_ca_tipo"] = utf8_encode($this->data[$key]["b_ca_tipo"]);
@@ -636,13 +620,13 @@ class widgetsComponents extends sfComponents {
 
     public function executeWidgetTipoBodega() {
         $this->data = Doctrine::getTable("Bodega")
-                        ->createQuery("b")
-                        ->select("b.ca_tipo, b.ca_transporte")
-                        ->addOrderBy("b.ca_tipo ASC")
-                        ->where("b.ca_tipo != ? AND b.ca_tipo != ?", array('Coordinador Logístico', 'Operador Multimodal'))
-                        ->distinct()
-                        ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
-                        ->execute();
+                ->createQuery("b")
+                ->select("b.ca_tipo, b.ca_transporte")
+                ->addOrderBy("b.ca_tipo ASC")
+                ->where("b.ca_tipo != ? AND b.ca_tipo != ?", array('Coordinador Logístico', 'Operador Multimodal'))
+                ->distinct()
+                ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                ->execute();
 
         foreach ($this->data as $key => $val) {
             $this->data[$key]["b_ca_tipo"] = utf8_encode($this->data[$key]["b_ca_tipo"]);
@@ -654,23 +638,23 @@ class widgetsComponents extends sfComponents {
 
 //        $casos=$this->transporte;
 
-        if ($this->modo == Constantes::TERRESTRE){
+        if ($this->modo == Constantes::TERRESTRE) {
             $modo = constantes::MARITIMO;
-        }else{
-            $modo=$this->modo;
+        } else {
+            $modo = $this->modo;
         }
 
         $this->data = Doctrine::getTable("Bodega")
-                        ->createQuery("b")
-                        ->select("b.*")
-                        ->addOrderBy("b.ca_tipo ASC")
-                        ->addOrderBy("b.ca_nombre ASC")
-                        ->distinct()
-                        ->where("b.ca_transporte like ? and b.ca_nombre<>'-'", "%" . $modo . "%")
-                        ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
-                        ->execute();
+                ->createQuery("b")
+                ->select("b.*")
+                ->addOrderBy("b.ca_tipo ASC")
+                ->addOrderBy("b.ca_nombre ASC")
+                ->distinct()
+                ->where("b.ca_transporte like ? and b.ca_nombre<>'-'", "%" . $modo . "%")
+                ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                ->execute();
 
-        
+
         foreach ($this->data as $key => $val) {
             $arrTransporte = explode("|", $this->data[$key]["b_ca_transporte"]);
 
@@ -678,14 +662,11 @@ class widgetsComponents extends sfComponents {
             $this->data[$key]["b_ca_tipo"] = utf8_encode($this->data[$key]["b_ca_tipo"]);
             $this->data[$key]["b_ca_nombre"] = utf8_encode($this->data[$key]["b_ca_nombre"]) . "-" . $this->data[$key]["b_ca_tipo"];
             $this->data[$key]["b_ca_transporte"] = $modo;
-
-            
-            
         }
     }
 
     public function executeWidgetCotizacion() {
-
+        
     }
 
     public function executeWidgetParametros() {
@@ -701,55 +682,79 @@ class widgetsComponents extends sfComponents {
     }
 
     public function executeWidgetReporte() {
-
+        
     }
-    
-    public function executeWidgetHbls() {
 
+    public function executeWidgetHbls() {
+        
     }
 
     public function executeWidgetTicket() {
-
+        
     }
-    
+
     public function executeWidgetUploadImages() {
 
         $response = sfContext::getInstance()->getResponse();
-		$response->addJavaScript("swfupload/swfupload",'last');
-        $response->addJavaScript("swfupload/js/handlers",'last');
-        
-        
+        $response->addJavaScript("swfupload/swfupload", 'last');
+        $response->addJavaScript("swfupload/js/handlers", 'last');
     }
-    
+
     public function executeWidgetTipoIdentificacion() {
         $this->tipos = Doctrine::getTable("IdsTipoIdentificacion")
-                                ->createQuery("t")
-                                ->leftJoin("t.Trafico tt")
-                                ->addOrderBy("t.ca_tipoidentificacion")
-                                ->execute();
+                ->createQuery("t")
+                ->leftJoin("t.Trafico tt")
+                ->addOrderBy("t.ca_tipoidentificacion")
+                ->execute();
+    }
+
+    public function executeWidgetConcepto() {
+        $this->data = array();
+
+        $q = Doctrine_Query::create()
+                ->select("c.ca_idconcepto, c.ca_concepto, c.ca_transporte, c.ca_modalidad, c.ca_liminferior")
+                ->from("Concepto c")
+                ->addOrderBy("c.ca_liminferior");
+
+        $q->fetchArray();
+
+        $conceptos = $q->execute();
+
+        $this->data = array();
+        foreach ($conceptos as $concepto) {
+            $this->data[] = array("idconcepto" => $concepto['ca_idconcepto'],
+                "concepto" => $concepto['ca_concepto'],
+                "transporte" => utf8_encode($concepto['ca_transporte']),
+                "modalidad" => utf8_encode($concepto['ca_modalidad'])
+            );
+        }
     }
     
-    public function executeWidgetConcepto() {
-            $this->data = array();
+    public function executeWidgetDeduccion() {
+        $this->data = array();
 
-            $q = Doctrine_Query::create()
-                            ->select("c.ca_idconcepto, c.ca_concepto, c.ca_transporte, c.ca_modalidad, c.ca_liminferior")
-                            ->from("Concepto c")
-                            ->addOrderBy("c.ca_liminferior");
+        $q = Doctrine_Query::create()
+                ->select("c.ca_iddeduccion as ca_idconcepto, c.ca_deduccion as ca_concepto, c.ca_impoexpo, c.ca_transporte, c.ca_modalidad")
+                ->from("Deduccion c")
+                ->addWhere("c.ca_habilitado = ?", true)
+                ->addOrderBy("ca_concepto");
 
-            $q->fetchArray();
+        $q->fetchArray();
 
-            $conceptos = $q->execute();
+        $conceptos = $q->execute();
 
-            $this->data = array();
-            foreach ($conceptos as $concepto) {
-                $this->data[] = array("idconcepto" => $concepto['ca_idconcepto'],
-                    "concepto" => $concepto['ca_concepto'],
-                    "transporte" => utf8_encode($concepto['ca_transporte']),
-                    "modalidad" => utf8_encode($concepto['ca_modalidad'])
-                );
-            }
+        $this->data = array();
+        foreach ($conceptos as $concepto) {
+            
+            
+            $this->data[] = array("idconcepto" => $concepto['ca_idconcepto'],
+                "concepto" => utf8_encode($concepto['ca_concepto']),
+                "impoexpo" => utf8_encode($concepto['ca_impoexpo']),
+                "transporte" => utf8_encode($concepto['ca_transporte']),
+                "modalidad" => utf8_encode($concepto['ca_modalidad'])
+            );
         }
+    }
 
 }
 
