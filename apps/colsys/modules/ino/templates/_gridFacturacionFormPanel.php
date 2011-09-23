@@ -359,6 +359,8 @@ $tipos = $sf_data->getRaw("tipos");
             }
             this.inoHouses.setValue(this.idhouse);
             
+            //Ext.getCmp("edit-factura-win").close();
+            
         }        
     });
 

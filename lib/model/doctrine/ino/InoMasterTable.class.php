@@ -91,15 +91,18 @@ class InoMasterTable extends Doctrine_Table
             }
         }
         else if($impoexpo == Constantes::EXPO)
-        {
+        {          
+            
             $c_origen = ParametroTable::retrieveByCaso("CU003", null ,$origen);
-            $c_transporte = ParametroTable::retrieveByCaso("CU005", null ,$transporte);
+            $c_transporte = ParametroTable::retrieveByCaso("CU102", $transporte);
 
             
             if(count($c_origen)>0)
             {
                 $referencia[0]="3".$c_origen[0]->getCaIdentificacion();
                 $referencia[0]=str_pad($referencia[0], 3, "0", STR_PAD_RIGHT);
+            }else{
+                $referencia[0]="340";
             }         
             if(count($c_transporte)>0)
             {
@@ -111,7 +114,8 @@ class InoMasterTable extends Doctrine_Table
         $referencia[3] = str_pad($mes, 2, "0", STR_PAD_LEFT);
         $referencia[4] = "%";
         $referencia[5] = $ano%10;
-
+        
+                
         $ref = Doctrine::getTable("InoMaster")
                          ->createQuery("m")
                          ->select( "m.ca_referencia" )

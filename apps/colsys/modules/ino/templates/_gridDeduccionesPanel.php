@@ -96,35 +96,6 @@ GridDeduccionesPanel = function( config ){
 
 Ext.extend(GridDeduccionesPanel, Ext.grid.EditorGridPanel, {
     
-
-    deleteHouse: function(idhouse){
-       var modo = this.modo;
-       if( !this.readOnly ){
-           if( confirm("Esta seguro que desea eliminar este item?") ){
-               var store = this.store;
-               Ext.Ajax.request({
-                    waitMsg: 'Eliminando...',
-                    url: '<?=url_for("ino/eliminarGridDeduccionesPanel")?>',
-                    params :	{
-                        idhouse: idhouse,
-                        modo: modo
-                    },
-                    failure:function(response,options){
-                        var res = Ext.util.JSON.decode( response.responseText );
-                        Ext.MessageBox.alert('Error Message', "Se ha presentado un error"+(res.errorInfo?": "+res.errorInfo:"")+" - "+(response.status?"\n Codigo HTTP "+response.status:""));
-                    },
-                    success:function(response,options){
-                        var res = Ext.util.JSON.decode( response.responseText );
-                        if( res.success ){
-                            store.reload();
-                        }else{
-                            Ext.MessageBox.alert('Error Message', "Se ha presentado un error"+(res.errorInfo?": "+res.errorInfo:"")+" - "+(response.status?"\n Codigo HTTP "+response.status:""));
-                        }
-                    }
-                });
-            }
-       }
-    },
     recargar: function(){
         if(this.store.getModifiedRecords().length>0){
             if(!confirm("Se perderan los cambios no guardados, desea continuar?")){
@@ -142,30 +113,22 @@ Ext.extend(GridDeduccionesPanel, Ext.grid.EditorGridPanel, {
         
     onRowcontextMenu: function(grid, index, e){
         if( !this.readOnly ){
-            rec = this.store.getAt(index);
+            var store = this.store;
+            rec = store.getAt(index);
             var idmaster = rec.data.idmaster;
             var idhouse = rec.data.idhouse;
             if(!this.menu){
                 this.menu = new Ext.menu.Menu({
                 enableScrolling : false,
                 items: [
-                        {
-                            text: 'Editar',
-                            iconCls: 'page_white_edit',
-                            scope:this,
-                            handler: function(){                              
-                                if( this.ctxRecord.data.idhouse  ){
-                                    this.editHouse( this.ctxRecord.data.idhouse );
-                                }
-                            }
-                        },
+                        
                         {
                             text: 'Eliminar',
                             iconCls: 'delete',
                             scope:this,
                             handler: function(){
-                                if( this.ctxRecord.data.idhouse  ){
-                                    this.deleteHouse( this.ctxRecord.data.idhouse );
+                                if( this.ctxRecord.data.iddeduccion  ){
+                                    store.remove( rec );                                    
                                 }
                             }
                         }

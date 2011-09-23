@@ -128,13 +128,9 @@ InoHouse:
     ca_idreporte:
       type: integer
       notnull: true
-    ca_idproveedor:
+    ca_idtercero:
       type: integer
-      notnull: true
-    ca_proveedor:
-      type: string
-    ca_consignatario:
-      type: string
+      notnull: true    
     ca_producto:
       type: string
     ca_numpiezas:
@@ -175,11 +171,10 @@ InoHouse:
       local: ca_idhouse
       foreign: ca_idhouse
       type: many
-    Proveedor:
-      local: ca_idproveedor
+    Tercero:
+      local: ca_idtercero
       foreign: ca_idtercero
-      type: one
-      class: Tercero
+      type: one      
     Reporte:
       local: ca_idreporte
       foreign: ca_idreporte
@@ -233,24 +228,24 @@ InoCosto:
        local: ca_idcosto
        foreign: ca_idcosto
        type: one
+     Ids:
+       local: ca_idproveedor
+       foreign: ca_id
+       type: one  
      InoMaster:
        local: ca_idmaster
        foreign: ca_idmaster
-       type: one    
-     IdsProveedor:
-      local: ca_idproveedor
-      foreign: ca_idproveedor
-      type: one      
+       type: one             
      UsuCreado:
-      local: ca_usucreado
-      foreign: ca_login
-      type: one
-      class: Usuario
+       local: ca_usucreado
+       foreign: ca_login
+       type: one
+       class: Usuario
      UsuActualizado:
-      local: ca_usuactualizado
-      foreign: ca_login
-      type: one
-      class: Usuario
+       local: ca_usuactualizado
+       foreign: ca_login
+       type: one
+       class: Usuario
 
 InoUtilidad:
   options:
@@ -650,6 +645,7 @@ InoAuditor:
       type: many
 
 
+
 Modo:
   generatePath: ino
   tableName: tb_modos
@@ -695,3 +691,31 @@ InoViIngreso:
       foreign: ca_idmaster
       type: one
     
+    
+    
+InoDeduccion:
+  generatePath: ino
+  tableName: ino.tb_deducciones
+  columns:
+    ca_iddeduccion:
+      type: integer
+      primary: true
+    ca_idcomprobante:
+      type: integer      
+      primary: true
+    ca_neto: float
+    ca_tcambio: float 
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string
+  relations:
+    InoComprobante:
+      local: ca_idcomprobante
+      foreign: ca_idcomprobante
+      type: one
+    Deduccion:
+      local: ca_iddeduccion
+      foreign: ca_iddeduccion
+      type: one
+
