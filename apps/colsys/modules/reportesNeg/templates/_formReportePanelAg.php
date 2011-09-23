@@ -35,6 +35,7 @@ include_component("widgets", "widgetModalidad");
 include_component("widgets", "widgetLinea");
 include_component("widgets", "widgetCiudad");
 include_component("widgets", "widgetAgente");
+include_component("widgets", "widgetSucursalAgente");
 include_component("widgets", "widgetComerciales");
 include_component("widgets", "widgetIncoterms");
 
@@ -42,7 +43,7 @@ if(!$modo ||  $modo=="")
     include_component("widgets", "widgetTransporte");
 //if(!$impoexpo)
     include_component("widgets", "widgetImpoexpo");
-include_component("reportesNeg", "formMercanciaPanel",array("modo"=>$modo,"impoexpo"=>$impoexpo));
+include_component("reportesNegPlug", "formMercanciaPanel",array("modo"=>$modo,"impoexpo"=>$impoexpo));
 
 include_component("widgets", "widgetContactoCliente");
 ?>
@@ -204,9 +205,7 @@ include_component("widgets", "widgetContactoCliente");
                                                     linkImpoexpo: "impoexpo",
                                                     tabIndex:3
                                                     })
-
                                 ,
-
                                 new WidgetCiudad({fieldLabel: 'Ciudad Destino',                                                  
                                                   id: 'destino',
                                                   idciudad:"destino",
@@ -234,6 +233,13 @@ include_component("widgets", "widgetContactoCliente");
                                                           width:350,
                                                           tabIndex:8
                                                         }),
+                                new WidgetSucursalAgente({fieldLabel: 'Sucursal',
+                                                      linkAgente: "agente",
+                                                      id:"sucursalagente",
+                                                      hiddenName:"idsucursalagente",
+                                                      width:250,
+                                                      tabIndex:8
+                                                    }),
                                         {
                                             xtype: "checkbox",
                                             fieldLabel: "Listar todos",
@@ -647,9 +653,7 @@ include_component("widgets", "widgetContactoCliente");
                         if(res.err)
                             Ext.MessageBox.alert("Mensaje",'Se presento un error guardando por favor informe al Depto. de Sistemas<br>'+res.err);
                         else
-                            Ext.MessageBox.alert("Mensaje",'No es posible crear un reporte ya que posee errores en la digitacion, verifique los siguientes campos<br>'+res.texto);
-
-                        //Ext.MessageBox.alert("Mensaje",'No es posible crear un reporte ya que posee errores en la digitacion, verifique');
+                            Ext.MessageBox.alert("Mensaje",'No es posible crear un reporte ya que posee errores en la digitacion, verifique los siguientes campos<br>'+res.texto);                        
                     }
                 });
             }else{

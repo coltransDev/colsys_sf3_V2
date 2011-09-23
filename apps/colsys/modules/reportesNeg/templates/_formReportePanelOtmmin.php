@@ -9,7 +9,8 @@ $nprov=count(explode("|", $reporte->getCaIdproveedor() ));
 $trafico=$user->getIdtrafico();
 $cachepage = md5("formReporteOtmmin");
 $cachefile = $cachedir.$cachepage.'.'.$cacheext;
-//$cache=false;
+$cache="false";
+
 if($cache=="refresh")
 {
     unlink($cachefile);
@@ -29,7 +30,9 @@ if (time() - $cachetime <$cachelast && $cache!="false" )
 }
 else
 {
+    
 ob_start();
+
 include_component("widgets", "widgetTercero");
 include_component("widgets", "widgetModalidad");
 include_component("widgets", "widgetLinea");
@@ -37,19 +40,22 @@ include_component("widgets", "widgetCiudad");
 include_component("widgets", "widgetAgente");
 include_component("widgets", "widgetSucursalAgente");
 include_component("widgets", "widgetIncoterms");
+include_component("widgets", "widgetMuelles");
+include_component("reportesNegPlug", "formMercanciaPanel",array("modo"=>$modo,"impoexpo"=>$impoexpo,"tipo"=>"4"));
 
-include_component("reportesNeg", "formMercanciaPanel",array("modo"=>$modo,"impoexpo"=>$impoexpo));
+include_component("widgets", "widgetBodega",array("modo"=>Constantes::MARITIMO,"impoexpo"=>Constantes::IMPO ));
 
-include_component("widgets", "widgetContactoCliente");
 ?>
 <script type="text/javascript">
     FormReportePanelOtmmin = function( config ){
+        
         Ext.apply(this, config);
-        var bodyStyle = 'padding: 5px 5px 5px 5px;';
+        var bodyStyle = 'padding:5px 5px 5px 5px;';
         this.res="";
         this.buttons = [];
-        
-        this.buttons.push({
+        //if( this.editable )
+        {
+            this.buttons.push({
                 text:'Guardar',
                 formBind:true,
                 scope:this,
@@ -60,52 +66,34 @@ include_component("widgets", "widgetContactoCliente");
                 formBind:true,
                 scope:this,
                 handler:this.onFinalizar
-            } );      
-
-        this.buttons.push( {
-                text   : 'Cancelar',
-                 handler: this.onCancel
             } );
-
-        /*this.wgContactoCliente = new WidgetContactoCliente({fieldLabel: 'Cliente',
-                                                   width: 500,
-                                                   id: "cliente",
-                                                   hiddenName: "idcliente",
-                                                   allowBlank:false,
-                                                   displayField:"compania",
-                                                   tabIndex:16,
-                                                   tipo:"Agente"
-                                                  });
-
-        this.wgContactoCliente.addListener("select", this.onSelectContactoCliente, this);*/
-
-        this.tabindex=25;
-
+        }
+       
+        this.buttons.push({
+                text:'Cancelar',
+                 handler:this.onCancel
+            });
         FormReportePanelOtmmin.superclass.constructor.call(this, {
             labelWidth:120,
             frame: true,
             buttonAlign: 'center',
             layout:'fit',
-            monitorValid:true,            
-            items: [
+            monitorValid:true,
+            id:'idFormReportePanel',
+            items: [ 
                 {
-                    xtype: "hidden",
-                    id: "transporte",
-                    name: "transporte",
-                    value:"<?=Constantes::MARITIMO?>"
+                    xtype:"hidden",
+                    id: 'transporte',
+                    name: 'transporte',
+                    value:'<?=  Constantes::MARITIMO?>'
                 },
                 {
-                    xtype: "hidden",                    
-                    id: "fchdespacho",
-                    name: "fchdespacho",                    
-                    value:'<?=date('Y-m-d')?>'                    
-                },
-                {
-                    xtype: "hidden",                    
-                    id: "impoexpo",
-                    name: "impoexpo",
-                    value:'<?=  Constantes::IMPO?>'                    
-                },
+                    xtype:"hidden",
+                    id: 'impoexpo',
+                    name: 'impoexpo',
+                    value:'<?=Constantes::IMPO?>'
+                }
+                ,
                 {
                     xtype:'fieldset',
                     title: 'Información general',
@@ -119,13 +107,22 @@ include_component("widgets", "widgetContactoCliente");
                         bodyStyle:'padding:4px'
                     },
                     items :
-                        [
+                    [
                         {
                             columnWidth:.5,
                             layout: 'form',
                             border:false,
                             defaultType: 'textfield',
                             items: [
+                                new WidgetCiudad({fieldLabel: 'Puerto Origen',
+                                                  id: 'origenimpo',
+                                                  idciudad:"origenimpo",
+                                                  hiddenName:"ca_origenimpo",
+                                                  tipo:"1",
+                                                  impoexpo:'<?=Constantes::IMPO?>',
+                                                  tabIndex:1
+                                                })
+                                ,
                                 new WidgetCiudad({fieldLabel: 'Ciudad Origen',                                                  
                                                   id: 'origen',
                                                   idciudad:"origen",
@@ -133,7 +130,30 @@ include_component("widgets", "widgetContactoCliente");
                                                   tipo:"2",
                                                   impoexpo:"impoexpo",
                                                   tabIndex:1
-                                                })
+                                                }),
+                                {
+                                    fieldLabel: "Manifiesto",
+                                    name: "manifiesto",
+                                    id: "ca_manifiesto",
+                                    width:200,
+                                    tabIndex:7
+                                },
+                                {
+                                    xtype: "datefield",
+                                    fieldLabel: "Fecha de Arribo",
+                                    id: "ca_fcharribo",
+                                    name: "ca_fcharribo",
+                                    format: 'Y-m-d'
+                                },
+                                new WidgetMuelles({
+                                    fieldLabel: "Muelle",
+                                        id: 'muelle',
+                                        name: 'muelle',
+                                        hiddenName: "idmuelle",
+                                        value:'',
+                                        hiddenValue:'',
+                                        width:330
+                                    })
                             ]
                         },
                         {
@@ -141,7 +161,14 @@ include_component("widgets", "widgetContactoCliente");
                             layout: 'form',
                             border:false,
                             defaultType: 'textfield',
-                            items: [                                
+                            items: [
+                                new WidgetModalidad({fieldLabel: 'Tipo Envio',
+                                                    id: 'modalidad',
+                                                    hiddenName: "idmodalidad",
+                                                    linkTransporte: "transporte",
+                                                    linkImpoexpo: "impoexpo",
+                                                    tabIndex:3
+                                                    }),
                                 new WidgetCiudad({fieldLabel: 'Ciudad Destino',                                                  
                                                   id: 'destino',
                                                   idciudad:"destino",
@@ -150,16 +177,22 @@ include_component("widgets", "widgetContactoCliente");
                                                   impoexpo:"impoexpo",
                                                   tabIndex:7
                                                 }),
-                                new WidgetModalidad({fieldLabel: 'Tipo Envio',
-                                                    id: 'modalidad',
-                                                    hiddenName: "idmodalidad",
-                                                    linkTransporte: "transporte",
-                                                    linkImpoexpo: "impoexpo",
-                                                    tabIndex:3
-                                                    })
+                                {
+                                    fieldLabel: "Hbl",
+                                    name: "hbl",
+                                    id: "ca_hbl",
+                                    width:200,
+                                    tabIndex:7
+                                },
+                                {
+                                    fieldLabel: "Motonave",
+                                    name: "ca_motonave",
+                                    id: "ca_motonave",
+                                    width:200,
+                                    tabIndex:7
+                                }
                             ]
-                        }
-                        ,
+                        },                                                
                         {
                             columnWidth:1,
                             layout: 'form',
@@ -183,15 +216,16 @@ include_component("widgets", "widgetContactoCliente");
                                                       width:250,
                                                       tabIndex:8
                                                     }),
-                                        {
-                                            xtype: "checkbox",
-                                            fieldLabel: "Listar todos",
-                                            id: "listar_todos",
-                                            name:"listar_todos",
-                                            tabIndex:9
-                                        }
+                                {
+                                    xtype: "checkbox",
+                                    fieldLabel: "Listar todos",
+                                    id: "listar_todos",
+                                    name:"listar_todos",
+                                    tabIndex:9
+                                }
                             ]
                         }
+                        
                     ]
                 },
                 {
@@ -210,7 +244,6 @@ include_component("widgets", "widgetContactoCliente");
                             xtype:'fieldset',
                             border:false,
                             layout:'column',
-
                             items: [
                                 {
                                     layout:'column',
@@ -234,12 +267,12 @@ include_component("widgets", "widgetContactoCliente");
                                     title: "Incoterms ",
                                     items: [
                                        new WidgetIncoterms(
-                                               {
-                                                  id: 'terminos0',
-                                                  hiddenName:"incoterms0",
-												  width:200,
-                                                  tabIndex:12
-                                                })
+                                       {
+                                          id: 'terminos0',
+                                          hiddenName:"incoterms0",
+                                          width:200,
+                                          tabIndex:12
+                                        })
                                     ]
                                 },
                                 {
@@ -259,37 +292,23 @@ include_component("widgets", "widgetContactoCliente");
                             ]
                         }
                     ]
-                }
+                },                
+                new FormMercanciaPanel({tabIndex:14})
                 ,
-                new FormMercanciaPanel({tabIndex:14}),
                 {
 
                     xtype:'fieldset',
                     title: 'Información del Cliente',
                     autoHeight:true,
-                    items: [                        
-                        /*this.wgContactoCliente,
-                        {
-                            xtype: "hidden",
-                            id: "idconcliente",
-                            name: "idconcliente"
-                        },
-                        {
-                            xtype: "textfield",
-                            fieldLabel: "Contacto",
-                            name: "contacto",
-                            id: "contacto",
-                            readOnly: true,
-                            width: 600
-                        },*/
+                    items: [
                         new WidgetTercero({fieldLabel:"Cliente",
-                                                    tipo: 'Consolcargo',
-                                                    width: 600,
-                                                    hiddenName: "idcliente",
-                                                    id:"cliente",
-                                                    name:"cliente",
-                                                    tabIndex:19
-                                                   }),
+                                            tipo: 'Consolcargo',
+                                            width: 600,
+                                            hiddenName: "idcliente",
+                                            id:"cliente",
+                                            name:"cliente",
+                                            tabIndex:19
+                                           }),
                         {
                             xtype: "textfield",
                             fieldLabel: "Orden Cliente",
@@ -297,8 +316,15 @@ include_component("widgets", "widgetContactoCliente");
                             id: "orden_clie",
                             width: 300,
                             tabIndex:17
-                        }                        
-                        
+                        },
+                        new WidgetTercero({fieldLabel:"Importador",
+                                            tipo: 'Importador',
+                                            width: 600,
+                                            hiddenName: "ca_idimportador",
+                                            id:"idimportador",
+                                            name:"idimportador",
+                                            tabIndex:19
+                                           })
                     ]
                 },
                 {
@@ -315,6 +341,13 @@ include_component("widgets", "widgetContactoCliente");
                                                     tabIndex:19
                                                    })
                         ,
+                        new WidgetBodega({fieldLabel:"Trasladar a",
+                                            id:"bodega_consignar",
+                                            hiddenName:"idbodega_hd",
+                                            width:500,                                            
+                                            autoSelect:false
+                                           })
+                        ,
                         new WidgetTercero({fieldLabel:"Notificar a",
                                                     tipo: 'Notify',
                                                     width: 600,
@@ -329,10 +362,56 @@ include_component("widgets", "widgetContactoCliente");
                                                     id: "idrepresentante",
                                                     hiddenName: "idrepres",
                                                     tabIndex:21
-                                                   })
+                                                   }),
+                        {
+                            xtype:'fieldset',
+                            title:'Liberar A',
+                            autoHeight:true,
+                            layout:'column',
+                            columns:2,
+                            defaults:{
+                                columnWidth:'0.5',
+                                layout:'form',
+                                border:false
+                            },
+                            items :[
+
+                            {
+                                columnWidth:'0.2',
+                                layout:'form',
+                                border:false,
+                                defaultType:'textfield',
+                                items: [
+                                    {
+                                        xtype:"radio",
+                                        fieldLabel:"Coltrans",
+                                        labelStyle:'width:150px',
+                                        name:"liberacion",
+                                        id:"liberacion_Coltrans",
+                                        inputValue:"Coltrans"
+                                    }
+                                ]
+                            },
+                            {
+                                columnWidth:'0.2',
+                                layout:'form',
+                                border:false,
+                                defaultType:'textfield',
+                                items: [                                    
+                                    {
+                                        xtype:"radio",
+                                        fieldLabel:"Consolcargo",
+                                        labelStyle:'width:150px',
+                                        name:"liberacion_conf",
+                                        id:"liberacion_Consolcargo",
+                                        inputValue:"Consolcargo"
+                                    }
+                                ]
+                            }
+                            ]
+                        }
                     ]
-                }
-                ,
+                },                
                 {
                     xtype:'fieldset',
                     title:'Informaciones a:',
@@ -348,7 +427,7 @@ include_component("widgets", "widgetContactoCliente");
                             columnWidth:0.5,
                             items:[
                                 <?
-                                for( $i=0; $i<20; $i++ )
+                                for( $i=0; $i<10; $i++ )
                                 {
                                     if( $i!=0){
                                         echo ",";
@@ -380,7 +459,6 @@ include_component("widgets", "widgetContactoCliente");
                                                     width:250,
                                                     height:20
                                                 }
-
                                             ]
                                         },
                                         {
@@ -403,78 +481,12 @@ include_component("widgets", "widgetContactoCliente");
                                 }
                                 ?>
                             ]
-                        }
-                        ,
-                        {
-                            border:false,
-                            title:'Contactos fijos',
-                            autoHeight:true,
-                            columnWidth:0.5,
-                            items:[
-                                <?
-                                for( $i=0; $i<20; $i++ )
-                                {
-                                    if( $i!=0){
-                                        echo ",";
-                                    }
-                                ?>
-                                {
-                                   border:false,
-                                    title:'',
-                                    autoHeight:true,
-                                    layout:'column',
-                                    columns:2,
-                                    defaults:{
-                                        layout:'form',
-                                        border:false,
-
-                                        hideLabels:true,
-                                        border:true
-                                    },
-                                    items:[
-                                        {
-                                            defaultType:'textfield',
-                                            items:[
-                                                {
-                                                    xtype:"textfield",
-                                                    fieldLabel:"",
-                                                    name:"contacto_fijos<?=$i?>",
-                                                    id:"contacto_fijos<?=$i?>",
-                                                    readOnly:true,
-                                                    width:250,
-                                                    height:20
-                                                }
-
-                                            ]
-                                        },
-                                        {
-                                            defaults:{width:20},
-                                            items:[
-                                                {
-                                                    xtype:"checkbox",
-                                                    fieldLabel:"",
-                                                    name:"chkcontacto_fijos<?=$i?>",
-                                                    id:"chkcontacto_fijos<?=$i?>",
-                                                    width:20,
-                                                    height:20
-                                                }
-
-                                            ]
-                                        }
-                                    ]
-                                }
-                                <?
-                                }
-                                ?>
-                            ]
-                        }
+                        }                        
                     ]
                  }
-
-
             ],
             buttons: this.buttons,
-            listeners:{
+             listeners:{
                 afterrender:this.onAfterload
             }
         });
@@ -488,9 +500,7 @@ include_component("widgets", "widgetContactoCliente");
         $cntACmp=str_replace("\n",' ',$cntACmp);
         $cntACmp=ereg_replace('[[:space:]]+',' ',$cntACmp);
         fwrite($fp, ($cntACmp));
-        //@fwrite($fp, trim(gzcompress($cntACmp,6)));
         fclose($fp);
-    //    ob_end_flush();
         echo "<script>location.href=location.href.replace('cache/refresh','');</script>";
         exit;
     }
@@ -498,6 +508,7 @@ include_component("widgets", "widgetContactoCliente");
 ?>
     var i=0;
     var idreporte='<?=$idreporte?>';
+    
     Ext.extend(FormReportePanelOtmmin, Ext.form.FormPanel, {
         
         onFinalizar:function(){
@@ -562,61 +573,8 @@ include_component("widgets", "widgetContactoCliente");
         },
        onAfterload:function()
        {
-<?
-                foreach( $issues as $issue ){
-                    $info = str_replace("\"", "'",str_replace("\n", "<br />",$issue["t_ca_title"].":<br />".$issue["t_ca_info"]));
-                    ?>
-                    info = "<?=$info?>";
-                    target = $('#<?=$issue["t_ca_field_id"]?>').addClass("help").attr("title",info);
-<?
-                }
-?>
-                $('.help').tooltip({track: true, fade: 250, opacity: 1, top: -15, extraClass: "pretty fancy" });
-       },
-       onSelectContactoCliente: function( combo, record, index){
 
-            Ext.getCmp("idconcliente").setValue(record.get("idcontacto"));
-            Ext.getCmp("contacto").setValue(record.get("nombre")+' '+record.get("papellido")+' '+record.get("sapellido") );
-            
-            store=combo.store;
-            j=0;
-            confirmacionesF=new Array();
-            {
-                store.each( function( r ){
-                    if(r.data.compania==record.get("compania") && r.data.fijo && r.data.email!="")
-                    {
-                        if( Ext.getCmp("contacto_fijos"+j) ){
-                            Ext.getCmp("contacto_fijos"+j).setValue(r.data.email);
-                            Ext.getCmp("contacto_fijos"+j).setReadOnly( false );
-                            Ext.getCmp("chkcontacto_fijos"+j).setValue( true );
-                            confirmacionesF.push(r.data.email);
-                            j++;
-                        }
-                    }
-                });
-            }
-
-
-            var confirmar =  record.get("confirmar") ;
-			var brokenconfirmar="";
-			if(confirmar)
-			{
-				brokenconfirmar=confirmar.split(",");
-				var i=0;
-				for(i=0; i<brokenconfirmar.length; i++){
-					Ext.getCmp("contacto_"+i).setValue(brokenconfirmar[i]);
-					Ext.getCmp("contacto_"+i).setReadOnly( true );
-					Ext.getCmp("chkcontacto_"+i).setValue( true );
-				}
-			}
-			for( i=brokenconfirmar.length; i<20; i++ ){
-				if( Ext.getCmp("contacto_"+i) ){
-					Ext.getCmp("contacto_"+i).setValue("");
-					Ext.getCmp("contacto_"+i).setReadOnly( false );
-					Ext.getCmp("chkcontacto_"+i).setValue( false );
-				}
-			}
-        }        
+       }     
         ,
         agregarProv:function()
         {
@@ -645,7 +603,6 @@ include_component("widgets", "widgetContactoCliente");
                                     id: "orden_pro"+i,
                                     width:200
                                 }
-
                             ]
                         });
             tb.render('panel-proveedor');
@@ -684,12 +641,11 @@ include_component("widgets", "widgetContactoCliente");
                         };
 
                         $("#idconsignatario").val(res.data.consignatario);
-                        if(Ext.getCmp("notify"))
+                        if(Ext.getCmp("idnotify"))
                         {
-                            Ext.getCmp("notify").setValue(res.data.idnotify);
-                            $("#notify").val(res.data.notify);
+                            Ext.getCmp("idnotify").setValue(res.data.idnotify);
+                            $("#idnotify").val(res.data.notify);
                         }
-
                         if(Ext.getCmp("idrepresentante"))
                         {
                             Ext.getCmp("idrepresentante").setValue(res.data.idrepresentante);
@@ -697,6 +653,12 @@ include_component("widgets", "widgetContactoCliente");
                         }
                          Ext.getCmp("agente").setValue(res.data.idagente);
                         $("#agente").attr("value",res.data.agente);
+                        
+                        Ext.getCmp("muelle").setValue(res.data.idmuelle);
+                        $("#muelle").attr("value",res.data.muelle);
+                        
+                        Ext.getCmp("idimportador").setValue(res.data.ca_idimportador);
+                        $("#idimportador").attr("value",res.data.idimportador);
                         
                         for(i=0;i<<?=($nprov>0)?$nprov:0?>;i++)
                         {
@@ -712,5 +674,7 @@ include_component("widgets", "widgetContactoCliente");
                 });
             }
         }
+        
     });
+    //alert(idreporte);
 </script>

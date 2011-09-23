@@ -4,6 +4,7 @@
  *
  *  (c) Coltrans S.A. - Colmas Ltda.
 */
+
 if($impoexpo!=Constantes::EXPO)
 {
 include_component("widgets","widgetContinuacion");
@@ -110,20 +111,20 @@ include_component("widgets","widgetBodega");
                             {
 ?>
                             {
-                            columnWidth:'<?=(1/$conta)?>',
-                            layout:'form',
-                            border:false,
-                            defaultType:'textfield',
-                            items: [
-                                {
-                                    xtype:"radio",
-                                    fieldLabel:"<?=$usuarios[$keys[$i]]?>",
-                                    labelStyle:'width:150px',
-                                    name:"ca_continuacion_conf",
-                                    id:"ca_continuacion_conf_<?=$keys[$i]?>",
-                                    inputValue:"<?=$keys[$i]?>"
-                                }
-                            ]
+                                columnWidth:'<?=(1/$conta)?>',
+                                layout:'form',
+                                border:false,
+                                defaultType:'textfield',
+                                items: [
+                                    {
+                                        xtype:"radio",
+                                        fieldLabel:"<?=$usuarios[$keys[$i]]?>",
+                                        labelStyle:'width:150px',
+                                        name:"ca_continuacion_conf",
+                                        id:"ca_continuacion_conf_<?=$keys[$i]?>",
+                                        inputValue:"<?=$keys[$i]?>"
+                                    }
+                                ]
                             },
 <?
                             }

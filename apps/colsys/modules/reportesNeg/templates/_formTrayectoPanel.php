@@ -12,15 +12,19 @@ include_component("widgets", "widgetCiudad");
 include_component("widgets", "widgetAgente");
 include_component("widgets", "widgetSucursalAgente");
 include_component("widgets", "widgetIncoterms");
-include_component("reportesNeg", "formMercanciaPanel",array("modo"=>$modo,"impoexpo"=>$impoexpo));
-if($impoexpo!= Constantes::TRIANGULACION)
+include_component("reportesNeg", "formMercanciaPanel",array("modo"=>$modo,"impoexpo"=>$impoexpo,"tipo"=>$tipo));
+if($impoexpo!= Constantes::TRIANGULACION )
 {
 	include_component("reportesNeg", "formContinuacionPanel",array("modo"=>$modo,"impoexpo"=>$impoexpo));
 }
 
+if($impoexpo==Constantes::OTMDTA)
+{
+    include_component("widgets", "widgetHbls");
+}
 
 include_component("widgets", "widgetComerciales");
-
+            
 ?>
 <script type="text/javascript">
     FormTrayectoPanel = function( config ){
@@ -34,7 +38,26 @@ include_component("widgets", "widgetComerciales");
                                               valueField:"consecutivo"
                                               });
         this.widgetCotizacion.addListener("select", this.onSelectCotizacion, this );
-
+        <?
+        if($tipo=="4")
+        {
+        ?>
+            this.widgetReferencia = new WidgetHbls({
+                                              fieldLabel: "Referencia",
+                                              id:"referencia",
+                                              hiddenName: "ca_referencia"
+                                              });
+            this.widgetReferencia.addListener("select", this.onSelectHbls, this );
+                
+            this.widgetHbls = new WidgetHbls({
+                                              fieldLabel: "Hbl",
+                                              id:"hbls",
+                                              hiddenName: "idhbl"
+                                              });
+            this.widgetHbls.addListener("select", this.onSelectHbls, this );
+        <?
+        }
+        ?>
         
 
 		this.wgModalidad=new WidgetModalidad({fieldLabel: 'Tipo Envio',
@@ -55,6 +78,7 @@ include_component("widgets", "widgetComerciales");
 			labelWidth: 100,
             title: 'General',
             deferredRender:false,
+            id:"form-trayecto-panel",
             
             autoHeight:true,
             
@@ -74,6 +98,38 @@ include_component("widgets", "widgetComerciales");
                             }
                             ,
                             this.widgetCotizacion,
+                            <?
+                            if($tipo=="4")
+                            {
+                            ?>
+                            this.widgetReferencia,
+                            this.widgetHbls,
+                            {
+                                xtype: "datefield",
+                                fieldLabel: "Fecha de Arribo",
+                                id: "fcharribo",
+                                name: "fcharribo",
+                                format: 'Y-m-d'
+                            },
+                            {
+                                xtype:"textfield",
+                                fieldLabel:"Manifiesto",
+                                name:"manifiesto",
+                                id:"manifiesto",
+                                width:300
+                            },
+                            new WidgetCiudad({fieldLabel: 'Puerto Origen',
+                                                      id: 'porigen',
+                                                      idciudad:"porigen",
+                                                      hiddenName:"pidorigen",
+                                                      tipo:"2",
+                                                      impoexpo:"impoexpo"
+                                                    }),
+                            <?
+                            }
+                            else
+                            {
+                            ?>
                             {
                                 xtype: "datefield",
                                 fieldLabel: "Fecha de Despacho",
@@ -81,7 +137,10 @@ include_component("widgets", "widgetComerciales");
                                 name: "fchdespacho",
                                 format: 'Y-m-d'
                             },
-
+                            
+                            <?
+                            }
+                            ?>
                             new WidgetComerciales({fieldLabel: 'Vendedor',
                                                     id: 'vendedor',
                                                     name: 'vendedor',
@@ -121,7 +180,7 @@ include_component("widgets", "widgetComerciales");
                                                       idciudad:"origen",
                                                       hiddenName:"idorigen",
                                                       tipo:"1",
-                                                      impoexpo:"impoexpo"                                                      
+                                                      impoexpo:"impoexpo"
                                                     })
                                 ]
                             },                       
@@ -142,13 +201,13 @@ include_component("widgets", "widgetComerciales");
                                                      id:"linea",
                                                      hiddenName: "idlinea",
                                                      width:300
-                                                    }),                                    
-                                    new WidgetCiudad({fieldLabel: '<?=$destino?>',                                                      
+                                                    }),
+                                    new WidgetCiudad({fieldLabel: '<?=$destino?>',
                                                       id: 'destino',
                                                       idciudad:"destino",
                                                       hiddenName:"iddestino",
                                                       tipo:"2",
-                                                      impoexpo:"impoexpo"                                                      
+                                                      impoexpo:"impoexpo"
                                                     })
     <?
                                     if($impoexpo==constantes::EXPO)
@@ -197,7 +256,7 @@ include_component("widgets", "widgetComerciales");
                         ]
                     },
                 <?
-                if($impoexpo!="Triangulación")
+                if($impoexpo!= Constantes::TRIANGULACION )
                 {
 
                 ?>
@@ -336,7 +395,140 @@ include_component("widgets", "widgetComerciales");
 
             if(Ext.getCmp("preferencias").getValue()=="")
                 Ext.getCmp("preferencias").setValue(record.get("preferencias"));
+        }
+        <?
+        if($impoexpo== Constantes::OTMDTA)
+        {
+        ?>,
+        onSelectHbls: function( combo, record, index){
+            
+             Ext.getCmp("referencia").setValue(record.data.referencia);
+             Ext.getCmp("hbls").setValue(record.data.hbls);
+            
+            if(record.data.idreporte )
+            {
+                Ext.getCmp("idFormReportePanel").load({
+                    url:'<?=url_for("reportesNeg/datosReporte")?>',
+                    waitMsg:'cargando...',
+                    params:{idreporte:record.data.idreporte},
+                    success:function(response,options){
+                        res = Ext.util.JSON.decode( options.response.responseText );
+                        if(Ext.getCmp('ca_colmas'))
+                        {
+                            if(Ext.getCmp('ca_colmas').getValue()=="Sí")
+                                Ext.getCmp('aduanas').expand();
+                            else
+                                Ext.getCmp('aduanas').collapse();
+                        }
+
+                        if(Ext.getCmp('ca_seguro').getValue()=="Sí")
+                            Ext.getCmp('seguros').expand();
+                        else
+                            Ext.getCmp('seguros').collapse();
+                        
+
+                        Ext.getCmp("cotizacion").setValue(res.data.cotizacion);
+                        if(Ext.getCmp("cotizacionotm"))
+                            Ext.getCmp("cotizacionotm").setValue(res.data.cotizacionotm);
+
+                        Ext.getCmp("linea").setValue(res.data.idlinea);
+                        $("#linea").val(res.data.linea);
+                        
+                        Ext.getCmp("cliente").setValue(res.data.idcliente);
+                        $("#cliente").attr("value",res.data.cliente);
+
+                        Ext.getCmp("bodega_consignar").setValue(res.data.idbodega_hd);
+                        $("#bodega_consignar").attr("value",res.data.bodega_consignar);
+                        for(i=0;i<<?=($nprov>0)?$nprov:0?>;i++)
+                        {
+                            {
+                                if(Ext.getCmp("proveedor"+i))
+                                {
+                                    Ext.getCmp("proveedor"+i).setValue(eval("res.data.idproveedor"+i));
+                                    $("#proveedor"+i).attr("value",eval("res.data.proveedor"+i));
+                                }
+                            }
+                        };
+                        for( i=0; i<20; i++ ){
+                            if( Ext.getCmp("contacto_"+i) && Ext.getCmp("contacto_"+i).getValue()!="" ){
+                                Ext.getCmp("contacto_"+i).setReadOnly( true );
+                            };
+                            if( Ext.getCmp("contacto_fijos"+i) && Ext.getCmp("contacto_fijos"+i).getValue()!="" ){
+                                Ext.getCmp("contacto_fijos"+i).setReadOnly( true );
+                            }
+                        };
+
+                        Ext.getCmp("origen").setValue(res.data.idorigen);
+                        $("#origen").attr("value",res.data.origen);
+
+                        Ext.getCmp("destino").setValue(res.data.iddestino);
+                        $("#destino").attr("value",res.data.destino);
+
+                        Ext.getCmp("cliente-impoexpo").setValue(res.data.idclientefac);
+                        $("#cliente-impoexpo").attr("value",res.data.clientefac);
+
+                        if(Ext.getCmp("agente-impoexpo"))
+                        {
+                            Ext.getCmp("agente-impoexpo").setValue(res.data.idclienteag);
+                            $("#agente-impoexpo").attr("value",res.data.clienteag);
+                        }
+
+                        if(Ext.getCmp("otro-aduana"))
+                        {
+                            Ext.getCmp("otro-aduana").setValue(res.data.idclienteotro);
+                            $("#otro-aduana").attr("value",res.data.clienteotro);
+                        }
+                        if(!Ext.getCmp("idvendedor"))
+                        {
+                            Ext.getCmp("vendedor").setValue(res.data.idvendedor);
+                            $("#vendedor").attr("value",res.data.vendedor);
+                        }
+
+                        Ext.getCmp("agente").setValue(res.data.idagente);
+                        $("#agente").attr("value",res.data.agente);
+
+                        Ext.getCmp("sucursalagente").setValue(res.data.idsucursalagente);
+                        $("#sucursalagente").attr("value",res.data.sucursalagente);
+
+                        if(Ext.getCmp("notify"))
+                        {
+                            Ext.getCmp("notify").setValue(res.data.idnotify);
+                            $("#notify").val(res.data.notify);
+                        }
+                        $("#idconsignatario").val(res.data.consignatario);
+
+                        if(Ext.getCmp("idconsigmaster"))
+                        {
+                            Ext.getCmp("idconsigmaster").setValue(res.data.idconsigmaster);
+                            $("#idconsigmaster").val(res.data.consigmaster);
+                        }
+
+                        if(Ext.getCmp("idrepresentante"))
+                        {
+                            Ext.getCmp("idrepresentante").setValue(res.data.idrepresentante);
+                            $("#idrepresentante").val(res.data.representante);
+                        }
+
+                        if(Ext.getCmp("tipoexpo"))
+                        {
+                            Ext.getCmp("tipoexpo").setValue(res.data.idtipoexpo);
+                            $("#tipoexpo").val(res.data.tipoexpo);
+                        }
+                        if(Ext.getCmp('panel-conceptos-fletes'))
+                            Ext.getCmp('panel-conceptos-fletes').store.reload();
+                    }
+                });
+            }
+            Ext.getCmp("npeso").setValue(record.data.peso);
+            Ext.getCmp("npiezas").setValue(record.data.numpiezas);
+            Ext.getCmp("nvolumen").setValue(record.data.volumen);
+            
+            Ext.getCmp("fcharribo").setValue(record.data.fcharribo);
+            Ext.getCmp("manifiesto").setValue(record.data.manifiesto);
         } 
+        <?
+        }
+        ?>
 		,
         onSelectModalidad: function( combo, record, index)
         {

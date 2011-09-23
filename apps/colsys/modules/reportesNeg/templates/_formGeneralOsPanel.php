@@ -6,7 +6,7 @@
 */
 include_component("widgets", "widgetCotizacion");
 include_component("widgets", "widgetIncoterms");
-include_component("reportesNeg", "formMercanciaPanel",array("modo"=>$modo,"impoexpo"=>$impoexpo));
+include_component("reportesNegPlug", "formMercanciaPanel",array("modo"=>$modo,"impoexpo"=>$impoexpo));
 
 include_component("widgets", "widgetComerciales");
 include_component("widgets", "widgetTransporte");

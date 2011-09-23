@@ -141,10 +141,6 @@ var idreporte='<?=$idreporte?>';
             }
             else if(!opt && idreporte!="")
             {opt="4"}
-            //if(idreporte!="")
-
-
-
             var form  = this.getForm();
             if( form.isValid() ){
                 form.submit({

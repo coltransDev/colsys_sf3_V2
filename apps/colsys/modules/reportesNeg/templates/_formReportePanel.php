@@ -51,10 +51,11 @@ else
 $cachedir = $config = sfConfig::get('app_digitalFile_root').DIRECTORY_SEPARATOR."cache".DIRECTORY_SEPARATOR;
 $cachetime = 86400;
 $cacheext = 'colsys';
-$cachepage = md5("formReporte-modo-$modo-impoexpo-$impoexpo-permiso-$permiso-nprov-$nprov-trafico-$trafico");
+$cachepage = md5("formReporte-modo-$modo-impoexpo-$impoexpo-permiso-$permiso-nprov-$nprov-trafico-$trafico-tipo-".$reporte->getCaTiporep());
 $cachefile = $cachedir.$cachepage.'.'.$cacheext;
 //echo $cachefile;
-//$cache="false";
+if($impoexpo==Constantes::OTMDTA)
+    $cache="false";
 if($cache=="refresh")
 {
 unlink($cachefile);
@@ -80,7 +81,7 @@ else
 ob_start();
 
 
-include_component("reportesNeg", "formTrayectoPanel",array("modo"=>$modo,"impoexpo"=>$impoexpo,"permiso"=>$permiso,"trafico"=>$trafico));
+include_component("reportesNeg", "formTrayectoPanel",array("modo"=>$modo,"impoexpo"=>$impoexpo,"permiso"=>$permiso,"trafico"=>$trafico,"tipo"=>$reporte->getCaTiporep()));
 
 include_component("reportesNeg", "formClientePanel",array("modo"=>$modo,"impoexpo"=>$impoexpo,"permiso"=>$permiso,"nprov"=>$nprov  ));
 include_component("reportesNeg", "formFacturacionPanel",array("modo"=>$modo,"impoexpo"=>$impoexpo,"permiso"=>$permiso));
@@ -282,8 +283,8 @@ var idreporte='<?=$idreporte?>';
        onAfterload:function()
        {
 <?
-                foreach( $issues as $issue ){
-                    $info = str_replace("\"", "'",str_replace("\n", "<br />",$issue["t_ca_title"].":<br />".$issue["t_ca_info"]));
+/*                foreach( $issues as $issue ){
+                   $info = str_replace("\"", "'",str_replace("\n", "<br />",$issue["t_ca_title"].":<br />".html_entity_decode($issue["t_ca_info"])));
                     ?>
                     info = "<?=$info?>";
                     <?
@@ -301,7 +302,7 @@ var idreporte='<?=$idreporte?>';
                     }
                     ?>
 <?
-                }
+                }*/
 ?>
                 $('.help').tooltip({track:true, fade:250, opacity:1, top:-15, extraClass:"pretty fancy" });
                 $('.helpL').tooltip({track:true, fade:250, opacity:1, top:-15, extraClass:"prettyL fancyL" });
@@ -419,10 +420,6 @@ var idreporte='<?=$idreporte?>';
                             Ext.getCmp("idrepresentante").setValue(res.data.idrepresentante);
                             $("#idrepresentante").attr("value",res.data.representante);
                         }
-//                        $("#tra_origen_id").val(res.data.tra_origen_id);
-//                        $("#idtra_origen_id").val(res.data.idtra_origen_id);
-
-//                        $("#tra_destino_id").val(res.data.tra_destino_id);
 
                         if(res.data.idmodalidad=="CONSOLIDADO")
                         {

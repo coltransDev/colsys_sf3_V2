@@ -15,7 +15,7 @@ $sucursal=$sf_data->getRaw("sucursal");
 <br />
 <br />
 
-<form action="<?=url_for( "reportesNeg/busquedaReporte")?>" method="post">
+<form action="<?=url_for( "reportesNeg/busquedaReporte".($opcion!=""?"?opcion=".$opcion:""))?>" method="post">
     <input type="hidden" name="idimpo" id="idimpo" value="<?=$idimpo?>"/>
 <table width="550px" align="center" border="0" cellpadding="5px" cellspacing="1px" class="tableList alignLeft">
 	<tr>
@@ -28,7 +28,22 @@ $sucursal=$sf_data->getRaw("sucursal");
         <td width="123" valign="top"  ><b>Buscar por:</b> <br />
             <select name="criterio" size="7">
                 <option value="ca_consecutivo" <?=($criterio=="ca_consecutivo")?"selected":""?>>N&uacute;mero de reporte</option>
+                        
+                        <?
+                        if($this->opcion=="otmmin")
+                        {
+                        ?>
+                        <option value="ca_nombre_cli_otm" <?=($criterio=="ca_nombre_cli")?"selected":""?>>Cliente</option>
+                        <option value="ca_importador" <?=($criterio=="importador")?"selected":""?>>Importador</option>
+                        <?
+                        }
+                        else
+                        {
+                        ?>
                         <option value="ca_nombre_cli" <?=($criterio=="ca_nombre_cli")?"selected":""?>>Cliente</option>
+                        <?
+                        }
+                        ?>
                         <option value="ca_nombre_con" <?=($criterio=="ca_nombre_con")?"selected":""?>>Nombre del Consignatario </option>
                         <option value="ca_login" <?=($criterio=="ca_login")?"selected":""?>>Mis Reportes </option>
                         <option value="ca_nombre_pro" <?=($criterio=="ca_nombre_pro")?"selected":""?>>Nombre del Proveedor </option>
@@ -39,6 +54,7 @@ $sucursal=$sf_data->getRaw("sucursal");
                         <option value="ca_login" <?=($criterio=="ca_login")?"selected":""?>>Vendedor </option>
                         <option value="ca_traorigen" <?=($criterio=="ca_traorigen")?"selected":""?>>Tráficos </option>
                         <option value="ca_ciuorigen" <?=($criterio=="ca_ciuorigen")?"selected":""?>>Puerto  </option>
+                        <option value="ca_hbls" <?=($criterio=="ca_hbls")?"selected":""?>>Hbl</option>
             </select>
             <div ><b>Sucursal</b><br><span id="divsucursales"></span>
             </div>

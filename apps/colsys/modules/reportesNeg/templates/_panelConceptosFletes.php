@@ -20,7 +20,7 @@ var iditemtmp="";
 PanelConceptosFletes = function( config ){
 
     Ext.apply(this, config);
-//    this.iditemtmp="";
+
 
     this.storeConceptos = new Ext.data.Store({
         autoLoad : false,
@@ -361,16 +361,13 @@ PanelConceptosFletes = function( config ){
 
         
         if( !record.data.iditem && field!="item"  ){
-            //return false;/**/
+
         }
 
-        //alert(record.data.iditem+ "-"+record.data.tipo+"-"+record.data.iditem)
+
         if( record.data.iditem && field=="item" && record.data.tipo=="concepto" ){
             iditemtmp=record.data.iditem
-            //alert(iditemtmp)
 
-            //alert(record.data.iditem);
-            //return false;/**/
         }
         else
             iditemtmp="";
@@ -385,8 +382,8 @@ PanelConceptosFletes = function( config ){
         if( record.data.tipo=="concepto" && (field=="tipo_app" || field=="aplicacion") ){
             return false;
         }
-
-        if( record.data.tipo=="recargo" && (field=="cantidad" || field=="neta_idm" || field=="reportar_idm_idm") ){
+        
+        if( record.data.tipo=="recargo" && (field=="cantidad" || field=="neta_idm" || field=="reportar_idm") ){
             return false;
         }
 
@@ -505,7 +502,7 @@ Ext.extend(PanelConceptosFletes, Ext.grid.EditorGridPanel, {
     onBeforeEdit: function( e ){
         
         if(e.field=="item"){
-           //alert("ddd:"+iditemtmp);
+
            this.dataConceptos = <?=json_encode(array("root"=>$conceptos))?>;
            this.dataRecargos = <?=json_encode(array("root"=>$recargos))?>;
 
@@ -620,19 +617,6 @@ Ext.extend(PanelConceptosFletes, Ext.grid.EditorGridPanel, {
                             }
                             idconcepto=e.value;
                             e.value = r.data.concepto;
-
-                            
-                            //alert("antes:"+iditemtmp+ "-nuevo:"+r.data.idconcepto);
-                           /* storeGrid.each( function( t ){
-                                if( t.data.tipo=="recargo" && t.data.idconcepto == iditemtmp){
-                                    //alert("nuevos:"+t.data.idconcepto +"-x cambio"+ iditemtmp)
-                                    //alert()
-                                    //t.set("idconcepto", t.data.idconcepto);
-                                    t.set("idconcepto", idconcepto);
-
-                                    //t.set("iditem", iditemtmp);
-                                }
-                            });*/
 
                         }else{
                             alert("Esta agregando un concepto que ya existe");

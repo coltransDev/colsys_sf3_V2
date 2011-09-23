@@ -239,8 +239,6 @@ class reportesNegActions extends sfActions
         $this->sucursal = $this->getRequestParameter("sucursal");
 
         $this->continuacion = $this->getRequestParameter("continuacion");
-        
-
 
         //echo $this->continuacion."-".$this->idsucursal;
 
@@ -310,7 +308,6 @@ class reportesNegActions extends sfActions
         {
             $condicion.=" and r.ca_transporte = '$this->transporte'";
         }
-
 
         if( ($this->idimpo && $criterio) || !$this->idimpo ){
             $con = Doctrine_Manager::getInstance()->connection();
@@ -799,6 +796,7 @@ class reportesNegActions extends sfActions
                 $reporte->setCaFchdespacho(Utils::parseDate($request->getParameter("fchdespacho")));
             }else
             {
+                $reporte->setCaFchdespacho(date("Y-m-d"));
                 $errors["fchdespacho"]="Debe seleccionar una fecha de despacho";
                 $texto.="Fecha de despacho<br>";
             }
@@ -4502,6 +4500,8 @@ class reportesNegActions extends sfActions
     }
     public function executeEmailReporte($request)
     {
+        //$user=$this->getUser();
+        $this->user = Doctrine::getTable("Usuario")->find( $this->getUser()->getUserId() );
         $this->tipo=$request->getParameter("tipo");
 
         if($this->tipo=="AG")
@@ -4546,14 +4546,43 @@ class reportesNegActions extends sfActions
     
     public function executeEmailInstruccionesOtm($request)
     {
-        
         $idreporte = $request->getParameter("idreporte");
         $this->forward404Unless($idreporte);
 
         $this->reporte = Doctrine::getTable("Reporte")->find($idreporte);
         $this->forward404Unless($this->reporte);
+        //$this->reporte =  new Reporte();
+
+        //$this->repotm=$this->reporte->getRepOtm();
+        $this->repotm = Doctrine::getTable("RepOtm")->find($idreporte);
+        //print_r($this->repotm);
+        //$repOtm=$reporte->getRepOtm();                
+        if(!$this->repotm)
+        {
+            //$inocliente=new InoClientesSea();
+            
+            $this->repotm = new RepOtm();
+            //$master= new InoMaestraSea();
+            $inocliente=$this->reporte->getInoClientesSea();
+            if($inocliente!==false)
+            {
+                $master=$inocliente->getInoMaestraSea();
+
+                if($inocliente)
+                {
+                    $this->repotm->setCaMotonave($master->getCaMotonave());
+                    $this->repotm->setCaMuelle($master->getCaMuelle());
+                    $this->repotm->setCaHbls($inocliente->getCaHbls());                
+                    $this->repotm->setCaFcharribo($master->getCaFcharribo());
+                    $this->repotm->setCaOrigenimpo($this->reporte->getCaOrigen());                
+                }
+            }
+            
+            $this->reporte->setCaOrigen($this->reporte->getCaDestino());
+            $this->reporte->setCaDestino($this->reporte->getCaContinuacionDest());            
+            //$this->repotm->set
+        }
         
-        $this->repotm=$this->reporte->getRepOtm();
         //$this->setLayout("email");
 
         $this->user = $this->getUser();
@@ -4566,26 +4595,6 @@ class reportesNegActions extends sfActions
         }
         
 
-/*        $usuarios = Doctrine::getTable("Usuario")
-                        ->createQuery("u")
-                        ->addWhere("u.ca_departamento = ? and u.ca_activo=true or (u.ca_login =? or u.ca_login =? or u.ca_login =? ) ", array("Marítimo","nmrey","mflecompte","mjortiz"))
-                        ->addOrderBy("u.ca_email")
-                        ->execute();
-        $contactos = array();
-        foreach ($usuarios as $usuario) {
-            if ($usuario->getCaEmail() != "-") {
-                $contactos[] = $usuario->getCaEmail();
-            }
-        }   
-*/
-        /*$this->conta = ParametroTable::retrieveByCaso("CU098", $this->ref->getCaIdlinea());
-        if($this->conta[0])
-        {        
-            $this->contactos = $this->conta[0]->getCaValor2();
-        }
-        
-        $this->filenames = $filenames;
-*/
     }
     
     public function executeEnviarEmailInstrucciones(sfWebRequest $request) {
@@ -4650,7 +4659,21 @@ class reportesNegActions extends sfActions
         $email->setCaBody($this->getRequestParameter("mensaje"));
 
         $mensaje = Utils::replace($this->getRequestParameter("mensaje")) . "<br />";
-        $html = Utils::replace($this->getRequestParameter("html")) . "<br />";
+        
+        //$html = Utils::replace($this->getRequestParameter("html")) . "<br />";
+        $html ="<table class='tableList alignLeft' width='40%'><tr><th colspan='2'>".$this->getRequestParameter("cliente")."</th></tr>";
+        $html .="<tr><td style='width: 30%'>HBL No. :</td><td>".$this->getRequestParameter("hbls")."</td></tr>";
+        $html .="<tr><td>ETA: </td><td>".$this->getRequestParameter("eta")."</td></tr>";
+        $html .="<tr><td>MOTONAVE : </td><td>".$this->getRequestParameter("motonave")."</td></tr>";
+        $html .="<tr><td>MUELLE: </td><td>".$this->getRequestParameter("muelle")."</td></tr>";
+        $html .="<tr><td>REF: </td><td>".$this->getRequestParameter("ref")."</td></tr>";
+        $html .="<tr><td>TERMINO DE NEGOCIACION: </td><td>".$this->getRequestParameter("incoterm")."</td></tr>";
+        $html .="<tr><td>BODEGA: </td><td>".$this->getRequestParameter("bodega")."</td></tr>";
+        $html .="<tr><td>DESCRIPCION : </td><td>".$this->getRequestParameter("mercancia")."</td></tr>";
+        $html .="<tr><td>Datos de liberación: </td><td>".(($user->getIdempresa()=="4")?"CONSOLCARGO":"COLTRANS")."</td></tr>";
+        $html .="<tr><td>DATOS DEL ACI:</td><td>".(($user->getIdempresa()=="4")?"CONSOLCARGO":"COLTRANS")."</td></tr></table>";
+        
+        
         $this->getRequest()->setParameter('tipo',"INSTRUCCIONES");
         $this->getRequest()->setParameter('mensaje',$mensaje);
         $this->getRequest()->setParameter('html',$html);
@@ -4665,7 +4688,6 @@ class reportesNegActions extends sfActions
             $name =  $archivo;            
             $email->AddAttachment($name);            
         }
-
         $email->save();
         $email->send();
     }

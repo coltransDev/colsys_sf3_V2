@@ -15,7 +15,8 @@ include_component("reportesNeg", "formReportePanelOtmmin",array("reporte"=>$repo
 Ext.onReady(function(){
 Ext.QuickTips.init();
     var formPanel = new FormReportePanelOtmmin({
-        title: "Reportes de Negocio OTM simplificado  ",
+        title: "Reportes de Negocio OTM simplificado <?=$reporte->getCaIdreporte()?$reporte->getCaConsecutivo()." ".$reporte->getCaVersion()."/".$reporte->numVersiones():""?> ",
+
         idreporte:'<?=$reporte->getCaIdreporte()?>',
         renderTo:'panel'
     });

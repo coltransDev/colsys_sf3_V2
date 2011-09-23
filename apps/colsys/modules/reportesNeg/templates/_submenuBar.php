@@ -7,6 +7,7 @@
 ini_set('default_charset', 'UTF8');
 $buttonHelp = array();
 $i = 0;
+
 //if($user->getUserId()=="maquinche")
 //    echo $action;
 $permiso = $user->getNivelAcceso("87");
@@ -20,7 +21,7 @@ if ($this->getRequestParameter("id")) {
 }
 else
     $editable=false;
-$opcion = ($this->getRequestParameter("opcion") ? "&opcion=" . $this->getRequestParameter("opcion") : "");
+$opcion = ($this->getRequestParameter("opcion") ? "?opcion=" . $this->getRequestParameter("opcion") : "");
 
 $modo = $this->getRequestParameter("modo");
 
@@ -47,10 +48,14 @@ if ($impoexpo == Constantes::TRIANGULACION || utf8_decode($impoexpo) == Constant
 }
 
 if ($action != "index") {
+    if($action=="formReporteOtmmin")
+    {
+        $opcion="/opcion/otmmin";        
+    }
     $button[$i]["name"] = "Inicio ";
     $button[$i]["tooltip"] = "Pagina inicial del reporte de negocios";
     $button[$i]["image"] = "22x22/home.gif";
-    $button[$i]["link"] = "/reportesNeg/index?token=" . md5(time()) . $opcion;
+    $button[$i]["link"] = "/reportesNeg/index".$opcion;
     $i++;
     if ($impoexpo != "") {
         $buttonHelp["tooltip"] = "Instructivo de Ayuda";
@@ -61,7 +66,15 @@ if ($action != "index") {
 }
 
 switch ($action) {
-    case "index":
+    case "index":        
+        if("otmmin"==$this->getRequestParameter("opcion"))
+        {
+            $button[$i]["name"] = "Nuevo";
+            $button[$i]["tooltip"] = "Crear un nuevo reporte de negocios";
+            $button[$i]["image"] = "22x22/new.gif";
+            $button[$i]["link"] = "/reportesNeg/formReporteOtmmin";
+            $i++;
+        }
     break;
     case "indexAg":
         $button[$i]["name"] = "Nuevo";
@@ -69,7 +82,7 @@ switch ($action) {
         $button[$i]["image"] = "22x22/new.gif";
         $button[$i]["link"] = "/reportesNeg/formReporteAg?token=" . md5(time()) . $opcion . $modo;
         $i++;
-        break;
+        break;    
     case "indexOs":
         $button[$i]["name"] = "Nuevo";
         $button[$i]["tooltip"] = "Crear un nuevo reporte de negocios";
@@ -79,13 +92,26 @@ switch ($action) {
         break;
     case "consultaReporte":
 
+         if("otmmin"==$this->getRequestParameter("opcion"))
+        {
+            $button[$i]["name"] = "Nuevo";
+            $button[$i]["tooltip"] = "Crear un nuevo reporte de negocios";
+            $button[$i]["image"] = "22x22/new.gif";
+            $button[$i]["link"] = "/reportesNeg/formReporteOtmmin";
+            $i++;
+        }
+        
         if ($editable) {
             $button[$i]["name"] = "Editar";
             $button[$i]["tooltip"] = "Modificar este reporte";
             $button[$i]["image"] = "22x22/edit.gif";
             if($reporte->getCaTiporep()=="3")
                 $button[$i]["link"] = "/reportesNeg/formReporteOs/id/" . $this->getRequestParameter("id");
-            else //if($reporte->getCaTiporep()!="")
+            else if($reporte->getCaTiporep()=="4")
+            {
+                $button[$i]["link"] = "/reportesNeg/formReporteOtmmin/id/" . $this->getRequestParameter("id");
+            }
+            else
                 $button[$i]["link"] = "/reportesNeg/formReporte/id/" . $this->getRequestParameter("id") . "/impoexpo/" . $impoexpo . "/modo/" . $modo;
 //            else
 //                $button[$i]["link"] = "/colsys_php/reportenegocio.php?boton=Editar&id=" . $this->getRequestParameter("id");
@@ -112,8 +138,7 @@ switch ($action) {
                 $button[$i]["image"] = "22x22/cancel.gif";
                 $button[$i]["onClick"] = "ventanaAnularReporte()";                
                 $i++;
-            }
-            
+            }            
         }
         if ($editable) {
             $button[$i]["name"] = "Unificar ";
@@ -122,10 +147,17 @@ switch ($action) {
             $button[$i]["link"] = "/reportesNeg/unificarReporte/id/" . $this->getRequestParameter("id") . "/impoexpo/" . $impoexpo . "/modo/" . $modo;
             $i++;
         }
+        
+        if($tipo!=4)
+        {
+            $l="/traficos/verHistorialStatus/idreporte/" . $this->getRequestParameter("id") ;
+        }
+        else   
+            $l="/traficos/listaStatus/modo/otm?reporte=".$reporte->getCaConsecutivo();
         $button[$i]["name"] = "Status ";
         $button[$i]["tooltip"] = "Historial de Status";
         $button[$i]["image"] = "22x22/txt.gif";
-        $button[$i]["onClick"] = "window.open('/traficos/verHistorialStatus/idreporte/" . $this->getRequestParameter("id") . "')";
+        $button[$i]["onClick"] = "window.open('$l')";
         $i++;
 
         if ($editable) {
@@ -135,8 +167,6 @@ switch ($action) {
             $button[$i]["onClick"] = "location.href='/reportesNeg/busquedaReporte/idimpo/" . $this->getRequestParameter("id") . "'";
             $i++;
         }
-
-
 
         if (!$cerrado) {
             $button[$i]["name"] = "Nueva version";
@@ -172,6 +202,15 @@ switch ($action) {
             $button[$i]["onClick"] = "cerrarAbrir('" . $this->getRequestParameter("id") . "','2')";
             $i++;
         }
+        
+        if($tipo=="4" || $reporte->getEsOtm())
+        {
+            $button[$i]["name"] = "Instrucciones";
+            $button[$i]["tooltip"] = "Enviar Instrucciones";
+            $button[$i]["image"] = "22x22/email.gif";
+            $button[$i]["link"] = "/reportesNeg/emailInstruccionesOtm/idreporte/" . $this->getRequestParameter("id") . "/impoexpo/" . $reporte->getCaImpoexpo() . "/modo/" . $reporte->getCaTransporte();
+            $i++;
+        }
         break;
     case "verReporte":
         $button[$i]["name"] = "Volver ";
@@ -186,8 +225,7 @@ switch ($action) {
         $button[$i]["link"] = "/reportesNeg/enviarNotificacion/idreporte/" . $this->getRequestParameter("id") . "/token/" . md5(time());
         $i++;
 
-
-        if($reporte->getCaUsuanulado()==$user->getUserId() && !$reporte->getCaIdgrupo())
+        if(($reporte->getCaUsuanulado()==$user->getUserId() && !$reporte->getCaIdgrupo()) || $permiso > 2 )
         {
             $button[$i]["id"] = "revivir-reporte";
             $button[$i]["name"] = "Revivir";
@@ -207,8 +245,18 @@ switch ($action) {
         $i++;
         break;
 
+    
     case "formReporte":
     case "formReporte1":
+    case "formReporteOtmmin":
+        if($action=="formReporteOtmmin")
+        {
+            $button[$i]["name"] = "Nuevo";
+            $button[$i]["tooltip"] = "Crear un nuevo reporte de negocios";
+            $button[$i]["image"] = "22x22/new.gif";
+            $button[$i]["link"] = "/reportesNeg/formReporteOtmmin";
+            $i++;
+        }
         if ($this->getRequestParameter("id") != "") {
 
             $button[$i]["name"] = "Transp.";
@@ -287,6 +335,14 @@ switch ($action) {
                 $button[$i]["onClick"] = "cerrarAbrir('" . $this->getRequestParameter("id") . "','2')";
                 $i++;
             }
+            if($tipo=="4" || $reporte->getEsOtm())
+            {
+                $button[$i]["name"] = "Instrucciones";
+                $button[$i]["tooltip"] = "Enviar Instrucciones";
+                $button[$i]["image"] = "22x22/email.gif";
+                $button[$i]["link"] = "/reportesNeg/emailInstruccionesOtm/idreporte/" . $this->getRequestParameter("id") . "/impoexpo/" . $reporte->getCaImpoexpo() . "/modo/" . $reporte->getCaTransporte();
+                $i++;
+            }
         }
         break;
 }
@@ -313,12 +369,11 @@ switch ($action) {
                 success:function(response,options){
                     var res = Ext.util.JSON.decode( response.responseText );
                     if( res.success ){
-
                         location.href="/reportesNeg/consultaReporte/id/<?= $this->getRequestParameter("id") ?>/impoexpo/<?= $impoexpo ?>/modo/<?= $modo ?>";
                     }
                 }
             });
-        }        
+        }
     }
     
     function nuevoRep()

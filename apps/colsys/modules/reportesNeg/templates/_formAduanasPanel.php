@@ -11,7 +11,6 @@
     FormAduanasPanel = function( config ){
 
         Ext.apply(this, config);
-
         
         FormAduanasPanel.superclass.constructor.call(this, {
             activeTab:0,

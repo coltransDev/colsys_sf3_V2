@@ -356,21 +356,16 @@ Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
                   straplica=records[i].data.aplicacion[0];
 
  
-        //        alert(records[i].data.aplicacion);
-          //      if(records[i].data.aplicacion.length>0)
-                    //
-          //      else
-//                    straplica=records[i].data.aplicacion;
-//          alert(records[i].data.aplicacion+":::"+straplica)
+
                 records[i].data.aplicacion=straplica;
                 
                 changes[i]=records[i].data;
             }
         }
 
-        //alert(changes.toSource());
+
         var str= JSON.stringify(changes);
-        //alert(str.toSource());
+
 
         if(str.length>5)
         {

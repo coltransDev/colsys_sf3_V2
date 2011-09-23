@@ -415,10 +415,6 @@ var idreporte='<?=$idreporte?>';
                             Ext.getCmp("idrepresentante").setValue(res.data.idrepresentante);
                             $("#idrepresentante").attr("value",res.data.representante);
                         }
-//                        $("#tra_origen_id").val(res.data.tra_origen_id);
-//                        $("#idtra_origen_id").val(res.data.idtra_origen_id);
-
-//                        $("#tra_destino_id").val(res.data.tra_destino_id);
 
                         if(res.data.idmodalidad=="CONSOLIDADO")
                         {

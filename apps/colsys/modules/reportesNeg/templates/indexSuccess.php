@@ -5,6 +5,10 @@
 */
 ?>
 
+<?
+if($opcion!="otmmin")
+{
+?>
 <div class="content" align="center">
 	<table width="50%" border="0" class="tableList">
 	<tr>
@@ -33,7 +37,7 @@
 		</div></td>
 
         <td align="left">
-            <?=link_to("OTM-DTA ", "reportesNeg/formReporte?modo=Marítimo&impoexpo=".constantes::OTMDTA )?>
+            <?=link_to("OTM-DTA ", "reportesNeg/formReporte?modo=Terrestre&impoexpo=".constantes::OTMDTA )?>
 	</td>
 <?
 	}
@@ -117,7 +121,9 @@
 </table>
 
 </div>
-
+<?
+}
+?>
 
 <?
 include_component("reportesNeg", "filtrosBusqueda");
