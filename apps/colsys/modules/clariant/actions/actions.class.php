@@ -196,33 +196,46 @@ class clariantActions extends sfActions {
                         ->setHydrationMode(Doctrine::HYDRATE_RECORD)
                         ->fetchOne();
 
-        $ord_mem = $clariant->getNumOrdenNeto();
-
-        $ord_num = Doctrine::getTable("clariant")
-                        ->createQuery("d")
-                        ->where("d.ca_orden like ?", "$ord_mem%")
-                        ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
-                        ->execute();
-
-        $ord_mem.= "-" . count($ord_num);
-
-        $new_clariant = $clariant->copy(FALSE);
-        $new_clariant->setCaOrden($ord_mem);
-        $new_clariant->setCaConsecutivo(NULL);
-        $new_clariant->save();
-
-        $new_id = $new_clariant->getCaIdclariant();
-
-        foreach ($clariant->getClarDetail() as $clarDetail) {
-            $new_cant = $clarDetail->getCaCantidad() - $clarDetail->getCaDespacho();        // Ajusta cantidades con el faltante productos
+        $reg_detalles = false;
+        $new_id = $clariant->getCaIdclariant();                                         // Redirecciona a la orden anterior sino se duplica el registro
+        foreach ($clariant->getClarDetail() as $clarDetail) {                           // Valida si la orden tiene cantidades faltantes
+            $new_cant = $clarDetail->getCaCantidad() - $clarDetail->getCaDespacho();    // Calcula cantidades con el faltante productos
             if ($new_cant > 0) {
-                $new_clarDetail = $clarDetail->copy(FALSE);
-                $new_clarDetail->setCaIdclariant($new_id);
-                $new_clarDetail->setCaCantidad($new_cant);
-                $new_clarDetail->setCaDespacho($new_cant);
-                $new_clarDetail->save();
+                $reg_detalles = true;
             }
         }
+
+        if ($reg_detalles){
+            $ord_mem = $clariant->getNumOrdenNeto();
+
+            $ord_num = Doctrine::getTable("clariant")
+                            ->createQuery("d")
+                            ->where("d.ca_orden like ?", "$ord_mem%")
+                            ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
+                            ->execute();
+
+            $ord_mem.= "-" . count($ord_num);
+
+            $new_clariant = $clariant->copy(FALSE);
+            $new_clariant->setCaOrden($ord_mem);
+            $new_clariant->setCaConsecutivo(NULL);
+            $new_clariant->save();
+
+            $new_id = $new_clariant->getCaIdclariant();
+
+            foreach ($clariant->getClarDetail() as $clarDetail) {
+                $new_cant = $clarDetail->getCaCantidad() - $clarDetail->getCaDespacho();        // Ajusta cantidades con el faltante productos
+                if ($new_cant > 0) {
+                    $new_clarDetail = $clarDetail->copy(FALSE);
+                    $new_clarDetail->setCaIdclariant($new_id);
+                    $new_clarDetail->setCaCantidad($new_cant);
+                    $new_clarDetail->setCaDespacho(0);
+                    $new_clarDetail->save();
+                    $reg_detalles = true;
+                }
+            }
+        }
+
         $this->redirect("clariant/procesarOrden?idclariant=" . $new_id);
         return sfView::NONE;
     }

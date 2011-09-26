@@ -24,6 +24,10 @@ Clariant:
     ca_fcharchivado: timestamp
     ca_usuarchivado: string
     ca_fchimportado: timestamp
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string
   relations:
     Reporte:
       local: ca_consecutivo
@@ -58,6 +62,10 @@ ClarDetail:
     ca_cantidad: decimal
     ca_despacho: decimal
     ca_unidad: string
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string
   relations:
     Clariant:
       local: ca_idclariant
