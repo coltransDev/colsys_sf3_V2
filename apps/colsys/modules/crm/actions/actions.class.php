@@ -14,8 +14,7 @@ class crmActions extends sfActions {
     const RUTINA = 10;
 
     public function getNivel( ){ 
-        
-                
+                       
         $this->nivel = $this->getUser()->getNivelAcceso( crmActions::RUTINA );		
         return $this->nivel;
     }
@@ -131,10 +130,12 @@ class crmActions extends sfActions {
             $cliente->setCaSectoreco( utf8_decode($request->getParameter("sectoreco")) );
             $cliente->setCaActividad( utf8_decode($request->getParameter("actividad")) );
             
-            if( $request->getParameter("status") ){
-                $cliente->setCaStatus( $request->getParameter("status") );
-            }else{
-                $cliente->setCaStatus( null );
+            if( $nivel>=2 ){
+                if( $request->getParameter("status") ){
+                    $cliente->setCaStatus( $request->getParameter("status") );
+                }else{
+                    $cliente->setCaStatus( null );
+                }
             }
             
             $cliente->setCaCalificacion( $request->getParameter("calificacion") );

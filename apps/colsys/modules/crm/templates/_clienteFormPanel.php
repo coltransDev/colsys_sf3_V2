@@ -846,6 +846,7 @@ include_component("widgets", "widgetCoordinadoresAduana");
                                         fieldLabel:     'Status',
                                         name:           'status',
                                         hiddenName:     'status',
+                                        disabled: this.nivel<2,    
                                         displayField:   'name',
                                         valueField:     'value',
                                         store:          new Ext.data.JsonStore({
