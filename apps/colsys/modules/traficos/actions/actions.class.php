@@ -899,7 +899,8 @@ class traficosActions extends sfActions
         $this->emails = Doctrine::getTable("Email")
                                   ->createQuery("e")
                                   ->where("e.ca_tipo = ? AND e.ca_subject LIKE ?", array("Envío de cuadro", "%".$this->cliente->getCaCompania()."%" ))
-                                  ->addOrderBy("e.ca_fchenvio")
+                                  ->addOrderBy("e.ca_fchenvio DESC")
+                                  ->limit(20)
                                   ->execute();
 		
 	}

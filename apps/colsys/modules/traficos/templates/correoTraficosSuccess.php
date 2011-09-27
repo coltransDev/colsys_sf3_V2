@@ -153,7 +153,7 @@ if( count($emails)>0 ){
 			<td><?=$email->getCaAddress()?></td>
 
 			<td>
-				<a href='#' onClick=window.open('<?=url_for("email/verEmail?id=".$email->getCaIdemail())?>')><?=image_tag("22x22/email.gif")?></a>
+				<a href='<?=url_for("email/verEmail?id=".$email->getCaIdemail())?>' target="_blank"><?=image_tag("22x22/email.gif")?></a>
 			</td>
 		</tr>
 		<?
