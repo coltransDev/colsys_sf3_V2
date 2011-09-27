@@ -197,6 +197,7 @@ class Email extends BaseEmail
             $event.= $e->getMessage();
 
             Utils::writeLog($logFile , $event );
+            return false;
         }
 
 
@@ -217,6 +218,7 @@ class Email extends BaseEmail
 				$event.= $logger->dump();
 
 				Utils::writeLog($logFile , $event );
+                return false;
 			}
 		}
 
