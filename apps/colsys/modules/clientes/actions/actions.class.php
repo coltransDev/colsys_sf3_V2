@@ -56,7 +56,7 @@ class clientesActions extends sfActions {
         ;
 
         $from = "serclientebog@coltrans.com.co";
-        $fromName = "Coltrans S.A. - Servicio al cliente";
+        $fromName = "Coltrans S.A.S. - Servicio al cliente";
         //$to = array($contacto->getCaNombres()." ".$contacto->getCaPapellido()=>$contacto->getCaEmail() );
         //$to = array($contacto->getCaNombres()." ".$contacto->getCaPapellido()=>$contacto->getCaEmail() );
         $to = array($contacto->getCaNombres()." ".$contacto->getCaPapellido() => $contacto->getCaEmail(), $this->getUser()->getNombre() => $this->getUser()->getEmail());
@@ -430,7 +430,7 @@ class clientesActions extends sfActions {
                   }
                  */
 
-                $email->setCaSubject("Vencimiento de Circular 0170 Coltrans S.A.");
+                $email->setCaSubject("Vencimiento de Circular 0170 Coltrans S.A.S.");
 
                 $mes_esp = array("01" => "Enero", "02" => "Febrero", "03" => "Marzo", "04" => "Abril", "05" => "Mayo", "06" => "Junio", "07" => "Julio", "08" => "Agosto", "09" => "Septiembre", "10" => "Octubre", "11" => "Noviembre", "12" => "Diciembre");
                 $siguiente_mes = mktime(0, 0, 0, $month + 1, 5, $year);
