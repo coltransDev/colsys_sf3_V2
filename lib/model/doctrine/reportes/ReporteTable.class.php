@@ -25,9 +25,12 @@ class ReporteTable extends Doctrine_Table
 	public static function getReportesActivos( $idCliente , $impoexpo, $transporte=null,  $query=false, $order="", $historial=false ){
         $q = Doctrine_Query::create()
                             ->from("Reporte r")
-                            ->select("r.*")
+                            ->select("r.*, o.*, d.*, t.*")
                             ->innerJoin("r.Contacto c")
                             ->innerJoin("c.Cliente cl")
+                            ->innerJoin("r.Origen o")
+                            ->innerJoin("r.Destino d")
+                            ->leftJoin("r.TrackingEtapa t")
                             ->where("cl.ca_idgrupo = ? OR cl.ca_idcliente = ? ", array($idCliente, $idCliente))
                             ->addWhere("r.ca_usuanulado IS NULL");
 
@@ -42,20 +45,7 @@ class ReporteTable extends Doctrine_Table
             $q->addWhere("r.ca_transporte = ? ", $transporte );
         }
 
-		$defaultOrder = false;
-		switch( $order ){
-			case "orden":
-                $q->addOrderBy("r.ca_orden_clie");				
-				break;
-			default:                
-                /*$q->leftJoin("r.Proveedor p ON r.ca_idproveedor=p.ca_idtercero");
-                $q->addOrderBy("p.ca_nombre");*/
-                $q->addOrderBy("r.ca_idproveedor");
-                $q->addOrderBy("r.ca_orden_clie");
-                $defaultOrder = true;
-				break;
-
-		}
+		
 
 		//TODO parametrizar
 		if( $idCliente==860048626 ||$idCliente==830512518 ){ //Este cliente (Minipak) solicita especialmente que siempre la aparezcan todos los reportes del mes
@@ -80,14 +70,45 @@ class ReporteTable extends Doctrine_Table
         }
 
         $q->addWhere("r.ca_fchultstatus>=? OR (r.ca_idetapa!= ? AND r.ca_idetapa!= ?) OR r.ca_idetapa IS NULL", array($fecha, "99999", "00000"));
+        
+		$orderByETS =false;
+        //TODO parametrizar
 		
+        
+        
+        
+        $defaultOrder = false;
+		switch( $order ){
+			case "orden":
+                $q->addOrderBy("r.ca_orden_clie");				
+				break;
+			default:                
+                /*$q->leftJoin("r.Proveedor p ON r.ca_idproveedor=p.ca_idtercero");
+                $q->addOrderBy("p.ca_nombre");*/
+                $q->addOrderBy("r.ca_idproveedor");
+                $q->addOrderBy("r.ca_orden_clie");
+                $defaultOrder = true;
+				break;
+
+		}
+        
+        
 		if( $query ){
 			return $q;
 		}else{
-            $results = $q->execute();
-            if( $defaultOrder ){
+            $reps = $q->execute();
+            
+            $k=count($reps);
+            $results = array();
+            for( $i=1; $i<$k; $i++){
+                if( $reps[$i]->esUltimaVersion() ){
+                    $results[] = $reps[$i];
+                }
+            }            
+            
+            if( $defaultOrder && $idCliente!=860000615 ){
                 $k=count($results);
-                for( $i=1; $i<$k; $i++){
+                for( $i=1; $i<$k; $i++){                   
                     for( $j=0; $j<$k-1; $j++){
                        $prov1 = $results[$j]->getProveedoresStr();
                        $prov2 = $results[$j+1]->getProveedoresStr();
@@ -96,9 +117,41 @@ class ReporteTable extends Doctrine_Table
                            $results[$j] = $results[$j+1];
                            $results[$j+1] = $tmp;
                        }
-                    }
+                    }                    
                 }
             }
+            
+            //TODO parametrizar
+            if( $idCliente==860000615 ){ //Este cliente (DISTRIBUIDORA CORDOBA) solicita que se ordene por nombre y luego por ETS
+                $k=count($results);
+                for( $i=1; $i<$k; $i++){                    
+                    for( $j=0; $j<$k-1; $j++){
+                       $prov1 = $results[$j]->getETS();
+                       $prov2 = $results[$j+1]->getETS();
+                       if( $prov1<$prov2 ){
+                           $tmp = $results[$j];
+                           $results[$j] = $results[$j+1];
+                           $results[$j+1] = $tmp;
+                       }
+                    }                    
+                }
+                
+                for( $i=1; $i<$k; $i++){
+                    for( $j=0; $j<$k-1; $j++){                       
+                       $prov1 = $results[$j]->getCaOrdenClie();
+                       $prov2 = $results[$j+1]->getCaOrdenClie();
+                       if( $prov1>$prov2 ){
+                           $tmp = $results[$j];
+                           $results[$j] = $results[$j+1];
+                           $results[$j+1] = $tmp;
+                       }
+                       
+                    }
+                }                
+                //Yo y mi bocota
+            }
+            
+                        
 			return $results;
 		}
 	}

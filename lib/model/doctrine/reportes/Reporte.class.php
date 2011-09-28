@@ -21,6 +21,7 @@ class Reporte extends BaseReporte {
     private $repExterior = null;
     private $cerrado = null;
     private $cliente = null;
+    private $esUltimaVersion = null;
 
 
     const IDLISTASEG = 3;
@@ -108,23 +109,27 @@ class Reporte extends BaseReporte {
      * Author: Andres Botero
      */
     public function esUltimaVersion() {
-        $version = $this->getCaVersion();
+        
+        if( $this->esUltimaVersion===null ){
+            $version = $this->getCaVersion();
 
-        $count = Doctrine::getTable("Reporte")
-                        ->createQuery("r")
-                        ->select("count(*) as count")
-                        ->where("r.ca_consecutivo = ? AND r.ca_version> ? AND r.ca_fchanulado IS NULL", array($this->getCaConsecutivo(), $version))
-                        ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)
-                        ->execute();
+            $count = Doctrine::getTable("Reporte")
+                            ->createQuery("r")
+                            ->select("count(*) as count")
+                            ->where("r.ca_consecutivo = ? AND r.ca_version> ? AND r.ca_fchanulado IS NULL", array($this->getCaConsecutivo(), $version))
+                            ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)
+                            ->execute();
 
 
-        if ($count > 0) {
-            $this->editable = false;
-            return false;
-        } else {
-            $this->editable = true;
-            return true;
+            if ($count > 0) {
+                $this->editable = false;
+                $this->esUltimaVersion = false;                
+            } else {
+                $this->editable = true;
+                $this->esUltimaVersion = true;                
+            }
         }
+        return $this->esUltimaVersion;
     }
 
     /*
@@ -214,9 +219,7 @@ class Reporte extends BaseReporte {
      */
 
     public function getUltimoStatus() {
-        if ($this->ultimoStatus) {
-            return $this->ultimoStatus;
-        } else {
+        if( $this->ultimoStatus===null ){
             $this->ultimoStatus = Doctrine::getTable("RepStatus")
                             ->createQuery("s")
                             ->innerJoin("s.Reporte r")
@@ -225,12 +228,9 @@ class Reporte extends BaseReporte {
                             ->limit(1)
                             ->fetchOne();
 
-            if ($this->ultimoStatus) {
-                return $this->ultimoStatus;
-            } else {
-                return null;
-            }
+            
         }
+        return $this->ultimoStatus;
     }
 
     /*     * **************************************************************
