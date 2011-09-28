@@ -92,7 +92,7 @@ class clariantActions extends sfActions {
                     $clarDetail->setCaMaterial($fields[4]);
                     $clarDetail->setCaDescripcion($fields[5]);
                     $clarDetail->setCaCantidad($cantidad);
-                    $clarDetail->setCaDespacho($cantidad);
+                    $clarDetail->setCaDespacho(0);
                     $clarDetail->setCaUnidad($fields[7]);
                     $clarDetail->save();
                 }
@@ -198,10 +198,12 @@ class clariantActions extends sfActions {
 
         $reg_detalles = false;
         $new_id = $clariant->getCaIdclariant();                                         // Redirecciona a la orden anterior sino se duplica el registro
-        foreach ($clariant->getClarDetail() as $clarDetail) {                           // Valida si la orden tiene cantidades faltantes
-            $new_cant = $clarDetail->getCaCantidad() - $clarDetail->getCaDespacho();    // Calcula cantidades con el faltante productos
-            if ($new_cant > 0) {
-                $reg_detalles = true;
+        if($clariant->getCaConsecutivo()){
+            foreach ($clariant->getClarDetail() as $clarDetail) {                           // Valida si la orden tiene cantidades faltantes
+                $new_cant = $clarDetail->getCaCantidad() - $clarDetail->getCaDespacho();    // Calcula cantidades con el faltante productos
+                if ($new_cant > 0) {
+                    $reg_detalles = true;
+                }
             }
         }
 
