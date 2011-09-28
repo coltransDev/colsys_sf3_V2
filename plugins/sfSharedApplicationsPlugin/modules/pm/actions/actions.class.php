@@ -354,7 +354,9 @@ class pmActions extends sfActions {
             } else {
                 $usuarios = Doctrine::getTable("HdeskUserGroup")
                                 ->createQuery("h")
-                                ->where("h.ca_idgroup = ? ", $ticket->getCaIdgroup())
+                                ->innerJoin("h.Usuario u")        
+                                ->addWhere("h.ca_idgroup = ? ", $ticket->getCaIdgroup())  
+                                ->addWhere("u.ca_activo = ? ", true )  
                                 ->addOrderBy("h.ca_login")
                                 ->execute();
                 foreach ($usuarios as $usuario) {

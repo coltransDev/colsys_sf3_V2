@@ -126,7 +126,8 @@ class HdeskTicket extends BaseHdeskTicket {
     public function getUsuarios() {
         return Doctrine::getTable("Usuario")->createQuery("u")
                 ->innerJoin("u.HdeskTicketUser ug")
-                ->where("ug.ca_idticket = ?", $this->getCaIdticket())
+                ->addWhere("ug.ca_idticket = ?", $this->getCaIdticket())
+                ->addWhere("u.ca_activo = ?", true)
                 ->addOrderBy("u.ca_nombre")
                 ->execute();
     }
