@@ -100,11 +100,11 @@ class ReporteTable extends Doctrine_Table
             
             $k=count($reps);
             $results = array();
-            for( $i=1; $i<$k; $i++){
+            for( $i=0; $i<$k; $i++){
                 if( $reps[$i]->esUltimaVersion() ){
                     $results[] = $reps[$i];
                 }
-            }            
+            } 
             
             if( $defaultOrder && $idCliente!=860000615 ){
                 $k=count($results);
