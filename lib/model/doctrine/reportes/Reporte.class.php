@@ -133,6 +133,10 @@ class Reporte extends BaseReporte {
      */
 
     public function getColorStatus() {
+        if($this->getCaUsucreado()=="web")
+        {
+            return "orange1";
+        }
         $etapa = $this->getTrackingEtapa();
         if ($etapa && $etapa->getCaClass()) {
             return $etapa->getCaClass();
@@ -141,7 +145,6 @@ class Reporte extends BaseReporte {
         if (Utils::parseDate($this->getCaFchultstatus(), "Y-m-d") == date("Y-m-d")) {
             return "green";
         }
-
         return "";
     }
 
@@ -214,7 +217,6 @@ class Reporte extends BaseReporte {
         if ($this->ultimoStatus) {
             return $this->ultimoStatus;
         } else {
-
             $this->ultimoStatus = Doctrine::getTable("RepStatus")
                             ->createQuery("s")
                             ->innerJoin("s.Reporte r")
@@ -234,13 +236,6 @@ class Reporte extends BaseReporte {
     /*     * **************************************************************
      *
      * ************************************************************** */
-
-
-
-
-
-
-
 
     /*
      * Retorna la fecha del ultimo status, avisos, referencia, otm, etc.
@@ -513,9 +508,10 @@ class Reporte extends BaseReporte {
     }
     
     public function getEsOtm() {
-
-        if($this->getCaContinuacion()=="OTM" || $this->getCaContOrigen()!="")
+//echo $this->getCaImpoexpo();
+        if($this->getCaContinuacion()=="OTM" || $this->getCaContOrigen()!="" || $this->getCaImpoexpo()==Constantes::OTMDTA1 || $this->getCaImpoexpo()==Constantes::OTMDTA)
         {
+            //echo $this->getCaImpoexpo();
             return true;
         }
         else
