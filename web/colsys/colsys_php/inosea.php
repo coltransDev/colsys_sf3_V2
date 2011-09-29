@@ -677,8 +677,8 @@ elseif (isset($boton)) {                                                       /
                             echo "</TR>";
                             if ($cl->value('ca_usulibero') != ""){
                                 echo "<TR>";
-                                echo "  <TD Class=listar><B>Ag. Aduana:</B></TD>";
-                                echo "  <TD Class=listar COLSPAN=4>".$cl->Value('ca_aduana_ag')."</TD>";
+                                echo "  <TD Class=listar COLSPAN=3><B>Ag. Aduana:</B><br />".$cl->Value('ca_aduana_ag')."</TD>";
+                                echo "  <TD Class=listar COLSPAN=3><B>Detalles de la Liberación:</B><br />".$cl->Value('ca_detlibero')."</TD>";
                                 echo "</TR>";
                             }
                             echo "<TR HEIGHT=5>";
@@ -3939,8 +3939,7 @@ elseif (isset($boton)) {                                                       /
                     echo "<script>document.location.href = 'entrada.php';</script>";
                     exit; }
                 echo "<TR>";
-                echo "  <TD Class=captura>Agente de Aduana: </TD>";
-                echo "  <TD Class=listar COLSPAN=4><SELECT NAME='idaduana'>";
+                echo "  <TD Class=listar COLSPAN=3>Agente de Aduana:<br /><SELECT NAME='idaduana'>";
                 $ad->MoveFirst();
                 while (!$ad->Eof()) {
                     echo "    <OPTION VALUE='".$ad->Value('ca_idproveedor')."'>".$ad->Value('ca_nombre')."</OPTION>";
@@ -3948,6 +3947,7 @@ elseif (isset($boton)) {                                                       /
                 }
                 echo "    </SELECT>";
                 echo "  </TD>";
+                echo "  <TD Class=listar COLSPAN=2>Detalles de la Liberación:<br /><INPUT ID=detlibero TYPE='TEXT' NAME='detlibero' SIZE=50 MAXLENGTH=200'></TD>";
                 echo "</TR>";
 
                 echo "<TR HEIGHT=5>";
@@ -5129,7 +5129,7 @@ elseif (isset($accion)) {                                                      /
             }
 
         case 'Carga Liberada': {                                                      // El Botón Carga Liberada fue pulsado
-                if (!$rs->Open("update tb_inoclientes_sea set ca_idaduana = $idaduana, ca_fchlibero = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usulibero = '$usuario' where ca_referencia = '$referencia' and ca_idcliente = '$idcliente' and ca_hbls = '$hbl'")) {
+                if (!$rs->Open("update tb_inoclientes_sea set ca_fchlibero = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usulibero = '$usuario', ca_idaduana = $idaduana, ca_detlibero = '$detlibero' where ca_referencia = '$referencia' and ca_idcliente = '$idcliente' and ca_hbls = '$hbl'")) {
                     echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                     echo "<script>document.location.href = 'inosea_abrir.php';</script>";
                     exit;
