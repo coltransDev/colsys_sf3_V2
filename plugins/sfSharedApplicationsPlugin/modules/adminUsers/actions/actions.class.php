@@ -367,32 +367,42 @@ class adminUsersActions extends sfActions {
                 }
             }
         }
-        if ($request->getParameter("cumpleanos")) {
-            $usuario->setCaCumpleanos($request->getParameter("cumpleanos"));
-        }else{
-            $usuario->setCaCumpleanos( null );
-        }
+        
+        
+        if($nivel>0){
+            if ($request->getParameter("cumpleanos")) {
+                $usuario->setCaCumpleanos($request->getParameter("cumpleanos"));
+            }else{
 
-        if ($request->getParameter("fchingreso")) {
-            $usuario->setCaFchingreso($request->getParameter("fchingreso"));
-        }
+                $usuario->setCaCumpleanos( null );
+            }
 
-        if ($request->getParameter("nombres")) {
-            $usuario->setCaNombres(strtoupper($request->getParameter("nombres")));
-        }else{
-            $usuario->setCaNombres( null );
-        }
+            if ($request->getParameter("fchingreso")) {
+                $usuario->setCaFchingreso($request->getParameter("fchingreso"));
+            }
 
-        if ($request->getParameter("apellidos")) {
-            $usuario->setCaApellidos(strtoupper($request->getParameter("apellidos")));
-        }else{
-            $usuario->setCaApellidos( null );
-        }
+            if ($request->getParameter("nombres")) {
+                $usuario->setCaNombres(strtoupper($request->getParameter("nombres")));
+            }else{
+                $usuario->setCaNombres( null );
+            }
 
-        if ($request->getParameter("teloficina")) {
-            $usuario->setCaTeloficina($request->getParameter("teloficina"));
-        }else{
-            $usuario->setCaTeloficina( null );
+            if ($request->getParameter("apellidos")) {
+                $usuario->setCaApellidos(strtoupper($request->getParameter("apellidos")));
+            }else{
+                $usuario->setCaApellidos( null );
+            }
+
+            if ($request->getParameter("teloficina")) {
+                $usuario->setCaTeloficina($request->getParameter("teloficina"));
+            }else{
+                $usuario->setCaTeloficina( null );
+            }
+            if ($request->getParameter("tiposangre")) {
+                $usuario->setCaTiposangre($request->getParameter("tiposangre"));
+            }else{
+                $usuario->setCaTiposangre( null );
+        }
         }
 
         if ($request->getParameter("telparticular")) {
@@ -430,11 +440,7 @@ class adminUsersActions extends sfActions {
             $usuario->setCaDireccion( null );
         }
 
-        if ($request->getParameter("tiposangre")) {
-            $usuario->setCaTiposangre($request->getParameter("tiposangre"));
-        }else{
-            $usuario->setCaTiposangre( null );
-        }
+        
         if ($request->getParameter("parentesco")) {
             $usuario->setCaParentesco($request->getParameter("parentesco"));
         }else{
