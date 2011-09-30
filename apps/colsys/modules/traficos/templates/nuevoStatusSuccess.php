@@ -257,7 +257,6 @@ echo $form['mensaje_mask']->render();
 		<td valign="top">
 			<div align="left">
             <?
-			
             if( count($destinatariosFijos)>0 ){
             ?>
                 <div class="qtip box1" title="Debe seleccionar al menos un contacto fijo" >
@@ -265,7 +264,8 @@ echo $form['mensaje_mask']->render();
                <?
                for( $i=0; $i< count($destinatariosFijos) ; $i++ ){
                      echo $form['destinatariosfijos_'.$i]->renderError();
-                     $form->setDefault('destinatariosfijos_'.$i, 1 );
+                     
+                     $form->setDefault('destinatariosfijos_'.$i, (stripos($reporte->getCaConfirmarClie(),trim($destinatariosFijos[$i]->getCaEmail()))!==false) );
                      echo $form['destinatariosfijos_'.$i]->render().$form['destinatariosfijos_'.$i]->renderLabel()."<br />";
                 }
                ?>
