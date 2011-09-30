@@ -1112,7 +1112,7 @@ class Reporte extends BaseReporte {
                 $repAduanaNew = $repAduana->copy();
                 $repAduanaNew->setCaIdreporte($reporte->getCaIdreporte());
                 $repAduanaNew->save();
-            }
+            }            
 
             if ($this->getCaSeguro() == "Sí") {
                 $repSeguro = $this->getRepSeguro();
@@ -1120,6 +1120,18 @@ class Reporte extends BaseReporte {
                 $repSeguroNew->setCaIdreporte($reporte->getCaIdreporte());
                 $repSeguroNew->save();
             }
+            
+            if ($this->getCaTiporep() == "4") {
+                $repOtm = $this->getRepOtm();
+                if($repOtm)
+                {
+                    $repOtmNew = $repOtm->copy();
+                    $repOtmNew->setCaIdreporte($reporte->getCaIdreporte());
+                    $repOtmNew->save();
+                }
+            }
+            
+            
             $conn->commit();
         } catch (Exception $e) {
 
@@ -1326,6 +1338,16 @@ class Reporte extends BaseReporte {
         }
 
         return $bodega;
+    }
+    
+     public function getEmails($tipo="Orden OTM") {
+        $emails = Doctrine::getTable("Email")
+                        ->createQuery("e")
+                        ->addWhere("ca_tipo=? and ca_subject like ?", array($tipo,"%" . $this->getCaIdreporte()."%" ) )
+                        ->addOrderBy("e.ca_idemail DESC")
+                        ->execute();
+        //$this->countemails=count($this->emails);
+        return $emails;
     }
 
 }
