@@ -369,7 +369,7 @@ class adminUsersActions extends sfActions {
         }
         
         
-        if($nivel>0){
+        if($this->nivel>0){
             if ($request->getParameter("cumpleanos")) {
                 $usuario->setCaCumpleanos($request->getParameter("cumpleanos"));
             }else{
