@@ -54,7 +54,7 @@ $sucursal=$sf_data->getRaw("sucursal");
                         <option value="ca_login" <?=($criterio=="ca_login")?"selected":""?>>Vendedor </option>
                         <option value="ca_traorigen" <?=($criterio=="ca_traorigen")?"selected":""?>>Tráficos </option>
                         <option value="ca_ciuorigen" <?=($criterio=="ca_ciuorigen")?"selected":""?>>Puerto  </option>
-                        <option value="ca_hbls" <?=($criterio=="ca_hbls")?"selected":""?>>Hbl</option>
+                        <!--<option value="ca_hbls" <?=($criterio=="ca_hbls")?"selected":""?>>Hbl</option>-->
             </select>
             <div ><b>Sucursal</b><br><span id="divsucursales"></span>
             </div>

@@ -12,7 +12,7 @@ include_component("widgets", "widgetCiudad");
 include_component("widgets", "widgetAgente");
 include_component("widgets", "widgetSucursalAgente");
 include_component("widgets", "widgetIncoterms");
-include_component("reportesNeg", "formMercanciaPanel",array("modo"=>$modo,"impoexpo"=>$impoexpo,"tipo"=>$tipo));
+include_component("reportesNegPlug", "formMercanciaPanel",array("modo"=>$modo,"impoexpo"=>$impoexpo,"tipo"=>$tipo));
 if($impoexpo!= Constantes::TRIANGULACION )
 {
 	include_component("reportesNeg", "formContinuacionPanel",array("modo"=>$modo,"impoexpo"=>$impoexpo));

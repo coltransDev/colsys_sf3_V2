@@ -113,8 +113,7 @@ switch ($action) {
             }
             else
                 $button[$i]["link"] = "/reportesNeg/formReporte/id/" . $this->getRequestParameter("id") . "/impoexpo/" . $impoexpo . "/modo/" . $modo;
-//            else
-//                $button[$i]["link"] = "/colsys_php/reportenegocio.php?boton=Editar&id=" . $this->getRequestParameter("id");
+
             $i++;
 
             $button[$i]["name"] = "Transp.";
@@ -402,16 +401,23 @@ switch ($action) {
                     Ext.MessageBox.alert("Mensaje",'Se guardo correctamente el reporte');
                     if(res.redirect)
                         <?
-                            if($tipo!="3")
+                            if($tipo=="3")
                             {
                         ?>
-                            location.href="/reportesNeg/formReporte/id/"+res.idreporte+"/impoexpo/<?= $impoexpo ?>/modo/<?= $modo ?>";
+                            location.href="/reportesNeg/formReporteOs/id/"+res.idreporte;
+                            
                         <?
+                            }
+                            else if($tipo=="4")
+                            {
+                         ?>
+                            location.href="/reportesNeg/formReporteOtmmin/id/"+res.idreporte;
+                         <?
                             }
                             else
                             {
                         ?>
-                            location.href="/reportesNeg/formReporteOs/id/"+res.idreporte;
+                            location.href="/reportesNeg/formReporte/id/"+res.idreporte+"/impoexpo/<?= $impoexpo ?>/modo/<?= $modo ?>";
                             
                         <?
                             }

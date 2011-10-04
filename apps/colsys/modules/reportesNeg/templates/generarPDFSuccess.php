@@ -735,19 +735,19 @@ if( !$soloAduana  ){
             //$pdf->Row ( array ('RELACIÓN DE RECARGOS' ) );
             $sub_mem = 'Recargo en Origen';
 
-            $pdf->SetWidths ( array (5,50, 25, 40, 40, 40 ) );
+            $pdf->SetWidths ( array (5,55, 20, 40, 40, 40 ) );
             $pdf->SetFills ( array (1,1, 1, 1, 1, 1 ) );
             $pdf->SetStyles ( array ("","B", "B", "B", "B", "B" ) );
             $pdf->SetAligns ( array ("","C", "C", "C", "C", "C" ) );
             $pdf->Row ( array ("+",$sub_mem, 'Aplicación', 'Neta / Min.', 'Reportar / Min.', 'Cobrar / Min' ) );
 
-            $pdf->SetWidths ( array (5,50, 25, 20, 20, 20, 20, 20, 20 ) );
+            $pdf->SetWidths ( array (5,55, 20, 20, 20, 20, 20, 20, 20 ) );
             $pdf->SetFills ( array (0,1, 0, 0, 0, 0, 0, 0, 0, 0 ) );
             $pdf->SetStyles ( array ("","B", "", "", "", "", "", "", "", "" ) );
             $pdf->SetAligns ( array ("","L", "L", "R", "R", "R", "R", "R", "R" ) );
 
             foreach ( $gastos as $gasto ) {
-                $pdf->SetWidths ( array (5,50, 25, 20, 20, 20, 20, 20, 20 ) );
+                $pdf->SetWidths ( array (5,55, 20, 20, 20, 20, 20, 20, 20 ) );
                 $pdf->SetFills ( array (0,1, 0, 0, 0, 0, 0, 0, 0, 0 ) );
                 $pdf->SetStyles ( array ("","B", "", "", "", "", "", "", "", "" ) );
                 $pdf->SetAligns ( array ("","L", "L", "R", "R", "R", "R", "R", "R" ) );

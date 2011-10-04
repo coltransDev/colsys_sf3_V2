@@ -160,6 +160,16 @@ class reportesNegActions extends sfActions
         $this->modo = $this->getRequestParameter("modo");
         $this->impoexpo = $this->getRequestParameter("impoexpo");
         $this->load_category();
+        
+        if($this->opcion=="otmmin")
+        {
+            $con = Doctrine_Manager::getInstance()->connection();
+            $sql="select * from vi_reportes2 r where ca_usucreado='web' and ca_versiones=1 ";
+            $st = $con->execute($sql);
+            $this->reportes = $st->fetchAll();
+        
+  
+        }
 	}
 
     public function executeIndexAg()
@@ -721,7 +731,7 @@ class reportesNegActions extends sfActions
                 $reporte = $reporte->copiar(2);
                 break;
         }
-        if($reporte->getCaTiporep()!="3")
+        if($reporte->getCaTiporep()!="3" && $reporte->getCaTiporep()!="4")
             $reporte->setCaTiporep( 1 );
 //        echo $opcion;
 /*        if( $opcion!=0 ) //Al copiar el reporte ya se coloco el usuario y la fecha
@@ -977,8 +987,6 @@ class reportesNegActions extends sfActions
                         $ca_confirmar_clie=$coor->getCaEmail();
                 }
             }
-
-
 
             if($ca_confirmar_clie!="" )
             {
@@ -2411,6 +2419,63 @@ class reportesNegActions extends sfActions
             {
                 $repOtm->setCaLiberacion(null);
             }
+            
+            
+            if($reporte->getCaVersion()=="1")
+            {
+                if($request->getParameter("cb_hbl")=="on")
+                {
+                    $repOtm->setProperty("hbl", 1);
+                }
+                else
+                {
+                    $repOtm->setProperty("hbl", 0);
+                }
+                
+                
+                if($request->getParameter("cb_factura")=="on")
+                {
+                    $repOtm->setProperty("factura", 1);
+                }
+                else
+                {
+                    $repOtm->setProperty("factura", 0);
+                }
+                
+                
+                if($request->getParameter("cb_empaque")=="on")
+                {
+                    $repOtm->setProperty("empaque", 1);
+                }
+                else
+                {
+                    $repOtm->setProperty("empaque", 0);
+                }
+                
+                
+                if($request->getParameter("cb_seguro")=="on")
+                {
+                    $repOtm->setProperty("seguro", 1);
+                }
+                else
+                {
+                    $repOtm->setProperty("seguro", 0);
+                }
+                
+                
+                if($request->getParameter("cb_invima")=="on")
+                {
+                    $repOtm->setProperty("invima", 1);
+                }
+                else
+                {
+                    $repOtm->setProperty("invima", 0);
+                }
+                
+                
+            }
+            
+            
             
             $repOtm->save();            
             
@@ -4692,5 +4757,7 @@ class reportesNegActions extends sfActions
         $email->send();
     }
     
+    
+
 }
 ?>

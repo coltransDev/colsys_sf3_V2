@@ -45,6 +45,10 @@ include_component("reportesNegPlug", "formMercanciaPanel",array("modo"=>$modo,"i
 
 include_component("widgets", "widgetBodega",array("modo"=>Constantes::MARITIMO,"impoexpo"=>Constantes::IMPO ));
 
+if($reporte->getCaVersion()=="1")
+{
+include_component("reportesNeg", "checkListOtm");
+}
 ?>
 <script type="text/javascript">
     FormReportePanelOtmmin = function( config ){
@@ -93,6 +97,15 @@ include_component("widgets", "widgetBodega",array("modo"=>Constantes::MARITIMO,"
                     name: 'impoexpo',
                     value:'<?=Constantes::IMPO?>'
                 }
+                <?
+                if($reporte->getCaVersion()=="1")
+                {
+                ?>
+                ,
+                new FormCheckListOtmPanel()
+                <?
+                }
+                ?>
                 ,
                 {
                     xtype:'fieldset',

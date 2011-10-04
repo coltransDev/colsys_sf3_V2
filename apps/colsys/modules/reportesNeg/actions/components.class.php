@@ -977,5 +977,27 @@ class reportesNegComponents extends sfComponents
         $this->filenames = $filenames;        
     }
 
+    
+    public function executeCheckListOtm(sfWebRequest $request) 
+    {
+        $idreporte = $this->getRequestParameter("id");//$this->getRequestParameter("id");
+        
+        //$this->forward404Unless($idreporte);
+
+        $this->reporte = Doctrine::getTable("Reporte")->find($idreporte);
+        if(!$this->reporte)
+        {
+            $this->reporte=new Reporte();
+        }
+
+        
+        $this->contactos = $this->reporte->getCaConfirmarClie();
+        if($this->reporte->getConsignatario())
+        {
+            $this->contactos .=",". $this->reporte->getConsignatario()->getCaEmail();
+        }
+    }
+    
+    
 }
 ?>
