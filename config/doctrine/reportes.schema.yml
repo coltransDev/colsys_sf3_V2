@@ -431,6 +431,7 @@ RepTarifa:
     ca_tipo:
       type: integer
       notnull: true
+    ca_idequipo: integer
   relations:
     Reporte:
       local: ca_idreporte
@@ -472,6 +473,7 @@ RepGasto:
     ca_usucreado: string
     ca_fchactualizado: timestamp
     ca_usuactualizado: string
+    ca_tiporecargo: integer
   relations:
     Reporte:
       local: ca_idreporte
@@ -490,7 +492,6 @@ RepGasto:
       foreign: ca_idconcepto
       type: one
       class: Concepto
-
 
 RepSeguro:
   options:
@@ -707,6 +708,8 @@ RepOtm:
     ca_idimportador: string
     ca_motonave: string
     ca_muelle : integer
+    ca_liberacion : string
+    ca_propiedades : string
   relations:
     Reporte:
       local: ca_idreporte
