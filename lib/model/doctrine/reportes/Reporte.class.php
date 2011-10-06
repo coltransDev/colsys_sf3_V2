@@ -477,11 +477,11 @@ class Reporte extends BaseReporte {
         return $gastos;
     }
 
-    public function getRepTarifa() {
+    public function getRepTarifa($tipo='1') {
         $q = Doctrine::getTable("RepTarifa")
                 ->createQuery("t")
                 ->innerJoin("t.Concepto c")
-                ->where("t.ca_idreporte = ? and t.ca_idconcepto!=9999 ", $this->getCaIdreporte())
+                ->where("t.ca_idreporte = ? and t.ca_idconcepto!=9999 and ca_tipo = ? ", array($this->getCaIdreporte(),$tipo))
                 ->orderBy("to_char(t.ca_idconcepto, '999')")
                 ->execute();
         return $q;
@@ -516,10 +516,10 @@ class Reporte extends BaseReporte {
         }
         else
         {
-            $nreg = Doctrine::getTable("RepGasto")
+            $nreg = Doctrine::getTable("RepTarifa")
                         ->createQuery("g")
                         ->select("count(*) as nreg")
-                        ->addWhere("g.ca_idrecargo = ? and ca_idreporte=?", array("61",$this->getCaIdreporte()))
+                        ->addWhere("g.ca_tipo = ? and ca_idreporte=?", array("2",$this->getCaIdreporte()))
                         ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)
                         ->execute();
             if($nreg>0)
