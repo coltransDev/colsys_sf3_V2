@@ -73,7 +73,7 @@ class crmActions extends sfActions {
             
            
             
-            $ids->setCaNombre( strtoupper($request->getParameter("compania")) );
+            $ids->setCaNombre( utf8_decode(strtoupper($request->getParameter("compania"))) );
             $ids->setCaWebsite( $request->getParameter("website") );            
             //$cliente->setCaCompania( strtoupper($request->getParameter("compania")) );
             $cliente->setCaSaludo( utf8_decode($request->getParameter("title")) );
@@ -177,7 +177,7 @@ class crmActions extends sfActions {
         $data = array();
         $ids = $cliente->getIds();
         $data["idcliente"] = $cliente->getCaIdcliente();        
-        $data["compania"] = ($ids->getCaNombre());
+        $data["compania"] = utf8_encode($ids->getCaNombre());
         $data["idalterno"] = $ids->getCaIdalterno();
         $data["tipo_identificacion"] = $ids->getCaTipoidentificacion();
         $data["idalterno_ant"] = $ids->getCaIdalterno();
