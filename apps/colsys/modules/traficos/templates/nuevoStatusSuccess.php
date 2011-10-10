@@ -213,6 +213,11 @@ echo $form['mensaje_mask']->render();
 <br />
 <?
 }*/
+$form->setDefault('impoexpo', $reporte->getCaImpoexpo() ); 
+echo $form['impoexpo']->render();
+$form->setDefault('transporte', $reporte->getCaTransporte() ); 
+echo $form['transporte']->render();
+
 ?>
 
 

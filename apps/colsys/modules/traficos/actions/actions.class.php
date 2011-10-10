@@ -380,8 +380,12 @@ class traficosActions extends sfActions
                        break;
                 }
             }
-            else
+            else{
                 $bindValues["remitente"] = $request->getParameter("remitente");
+            }
+            
+            $bindValues["impoexpo"] = $request->getParameter("impoexpo");		
+            $bindValues["transporte"] = $request->getParameter("transporte");		
             
 			$bindValues["idetapa"] = $request->getParameter("idetapa");			
 			$bindValues["fchsalida"] = $request->getParameter("fchsalida");
@@ -786,7 +790,7 @@ class traficosActions extends sfActions
 
         $this->modo = $this->getRequestParameter("modo");
 		$this->forward404unless( $this->modo );
-
+        $reporte->setCaFchultstatus(date("Y-m-d H:i:s", time()-86400*21));
         $reporte->setCaIdetapa("99999");
         $reporte->save();
 

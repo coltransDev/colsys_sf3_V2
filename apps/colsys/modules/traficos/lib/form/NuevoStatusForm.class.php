@@ -21,6 +21,9 @@ class NuevoStatusForm extends BaseForm{
 				
 		$widgets = array();		
 		$validator = array();	
+        
+        $widgets['impoexpo'] = new sfWidgetFormInputHidden();
+        $widgets['transporte'] = new sfWidgetFormInputHidden();
 		
 		$destinatarios = $this->getDestinatarios();
         $destinatariosFijos = $this->getDestinatariosFijos();
@@ -148,10 +151,17 @@ class NuevoStatusForm extends BaseForm{
 		
 		
         $widgets['inspeccion_fisica'] = new sfWidgetFormInputCheckbox();
-
+        
+        
+        
 		$this->setWidgets( $widgets );
 		
+        $validator["impoexpo"] =new sfValidatorString( array('required' => true ), 
+														array('invalid' => 'Impo/Expo Required'));
 		
+        
+        $validator["transporte"] =new sfValidatorString( array('required' => true ), 
+														array('invalid' => 'Transporte Required'));
 		
 		for( $i=0; $i< count($destinatarios) ; $i++ ){
 			$validator["destinatarios_".$i] =new sfValidatorEmail( array('required' => false ), 
@@ -312,9 +322,20 @@ class NuevoStatusForm extends BaseForm{
         $fest = TimeUtils::getFestivos();
         $dif = TimeUtils::calcDiff( $fest, strtotime($fch), time() );
         
-        if( !$taintedValues["observaciones_idg"] && $dif>RepStatus::IDG ){
-			$this->validatorSchema['observaciones_idg']->setOption('required', true);
-		}
+        
+        if( $taintedValues["impoexpo"]==Constantes::IMPO && ($taintedValues["transporte"]==Constantes::MARITIMO||$taintedValues["transporte"]==Constantes::AEREO) ){
+            $maxTime = 0;            
+            if( $taintedValues["transporte"]==Constantes::MARITIMO ){
+                $maxTime = RepStatus::IDG_MARITIMO;
+            }
+            if( $taintedValues["transporte"]==Constantes::AEREO ){
+                $maxTime = RepStatus::IDG_AEREO;
+            }
+            
+            if( !$taintedValues["observaciones_idg"] && $dif>$maxTime ){
+                $this->validatorSchema['observaciones_idg']->setOption('required', true);
+            }               
+        }
 
 
         $destinatariosFijos = $this->getDestinatariosFijos();
