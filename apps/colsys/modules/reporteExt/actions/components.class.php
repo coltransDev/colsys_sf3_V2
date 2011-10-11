@@ -46,8 +46,14 @@ class reporteExtComponents extends sfComponents
             {
                 $idempresa=sfConfig::get('app_branding_idempresa');
                 $consignatario = Doctrine::getTable("Cliente")->find( $idempresa );
-
-                $consignatario_m1 = $consignatario->getCaCompania().($idtrafico=="CO-057"?" Nit. ".number_format($consignatario->getCaIdcliente(),0)."-".$consignatario->getCaDigito():"")."<br />Dirección: ".$consignatario->getDireccion()."<br />Teléfonos:".$consignatario->getCaTelefonos()." Fax:".$consignatario->getCaFax()."<br />".$consignatario->getCiudad()->getCaCiudad()." ".$consignatario->getCiudad()->getTrafico()->getCaNombre();
+                
+                if( $consignatario->getIds()->getCaTipoidentificacion()!=3 ){
+                    $id = $consignatario->getIds()->getIdsTipoIdentificacion()->getCaNombre()." ".number_format($consignatario->getCaIdalterno(),0).($consignatario->getCaDigito()?"-".$consignatario->getCaDigito():"");
+                    
+                }else{
+                    $id = "";
+                }
+                $consignatario_m1 = $consignatario->getCaCompania().$id."<br />Dirección: ".$consignatario->getDireccion()."<br />Teléfonos:".$consignatario->getCaTelefonos()." Fax:".$consignatario->getCaFax()."<br />".$consignatario->getCiudad()->getCaCiudad()." ".$consignatario->getCiudad()->getTrafico()->getCaNombre();
 
                 if($reporte->getCaIdconsignarmaster() && $reporte->getCaIdconsignarmaster()>3)
                 {
@@ -94,7 +100,7 @@ class reporteExtComponents extends sfComponents
             $contacto = $reporte->getContacto();
             $cliente = $reporte->getContacto()->getCliente();
 
-            $consignatario_final = $cliente->getCaCompania()." Nit. ".number_format($cliente->getCaIdcliente(),0)."-".$cliente->getCaDigito();
+            $consignatario_final = $cliente->getCaCompania()." Nit. ".number_format($cliente->getCaIdalterno(),0)."-".$cliente->getCaDigito();
             
             if($reporte->getCaContinuacion()!="OTM")
             {
@@ -124,29 +130,40 @@ class reporteExtComponents extends sfComponents
             else
                 $hijo .=" / ".$bodega2->getCaTipo()." ".(($bodega2->getCaNombre()!='N/A')?$bodega2->getCaNombre():"")." ".(($reporte->getCaContinuacion()!="N/A")? $reporte->getDestinoCont()->getCaCiudad()." - ".$reporte->getDestinoCont()->getTrafico()->getCaNombre():"");
         }
+        
+        /*
+         * Notify
+         */
+        if( $idtrafico=="PE-051" ){
+            $idempresa=sfConfig::get('app_branding_idempresa');
+            $cliente = Doctrine::getTable("Cliente")->find( $idempresa );
 
-        if( !$reporte->getCaNotify() ){
-            $contacto = $reporte->getContacto();
-            $cliente = $reporte->getContacto()->getCliente();
+            $notify_h = $cliente->getCaCompania()."<br />".$cliente->getDireccion()." ".$cliente->getCiudad()->getCaCiudad()." ".$cliente->getCiudad()->getTrafico()->getCaNombre()."<br />TLF:".$contacto->getCaTelefonos();
 
-            $notify_h = $cliente->getCaCompania()." Nit. ".number_format($cliente->getCaIdcliente(),0)."-".$cliente->getCaDigito()."<br />Contacto: ".$contacto->getCaNombres()." ".$contacto->getCaPapellido()." ".$contacto->getCaSapellido()."<br />Dirección: ".$cliente->getDireccion()." ".$cliente->getCiudad()->getCaCiudad()."<br />Teléfonos:".$contacto->getCaTelefonos()." Fax:".$contacto->getCaFax()."<br /> Email:".$contacto->getCaEmail()."<br />".$cliente->getCiudad()->getTrafico()->getcaNombre();
         }else{
+            if( !$reporte->getCaNotify() ){
+                $contacto = $reporte->getContacto();
+                $cliente = $reporte->getContacto()->getCliente();
 
-            if( $reporte->getCaNotify()==1 ) {
-                $notify = Doctrine::getTable("Tercero")->find( $reporte->getCaIdconsignatario() );
-            }elseif(  $reporte->getCaNotify()==2 ){
-                $notify = Doctrine::getTable("Tercero")->find( $reporte->getCaIdnotify() );
-            }elseif(  $reporte->getCaNotify()==3 ){
-                $notify = Doctrine::getTable("Tercero")->find( $reporte->getCaIdmaster() );
-            }
-
-            if( $notify ){
-                $notify_h = $notify->getCaNombre()." Nit. ".$notify->getCaIdentificacion()."<br />Contacto: ".$notify->getCaContacto()."<br />Dirección: ".$notify->getCaDireccion()."<br />Teléfonos:".$notify->getCaTelefonos()." Fax:".$notify->getCaFax()."<br />Email: ".$notify->getCaEmail();
+                $notify_h = $cliente->getCaCompania()." Nit. ".number_format($cliente->getCaIdalterno(),0)."-".$cliente->getCaDigito()."<br />Contacto: ".$contacto->getCaNombres()." ".$contacto->getCaPapellido()." ".$contacto->getCaSapellido()."<br />Dirección: ".$cliente->getDireccion()." ".$cliente->getCiudad()->getCaCiudad()."<br />Teléfonos:".$contacto->getCaTelefonos()." Fax:".$contacto->getCaFax()."<br /> Email:".$contacto->getCaEmail()."<br />".$cliente->getCiudad()->getTrafico()->getcaNombre();
             }else{
-                $notify_h = "";
+
+                if( $reporte->getCaNotify()==1 ) {
+                    $notify = Doctrine::getTable("Tercero")->find( $reporte->getCaIdconsignatario() );
+                }elseif(  $reporte->getCaNotify()==2 ){
+                    $notify = Doctrine::getTable("Tercero")->find( $reporte->getCaIdnotify() );
+                }elseif(  $reporte->getCaNotify()==3 ){
+                    $notify = Doctrine::getTable("Tercero")->find( $reporte->getCaIdmaster() );
+                }
+
+                if( $notify ){
+                    $notify_h = $notify->getCaNombre()." Nit. ".$notify->getCaIdentificacion()."<br />Contacto: ".$notify->getCaContacto()."<br />Dirección: ".$notify->getCaDireccion()."<br />Teléfonos:".$notify->getCaTelefonos()." Fax:".$notify->getCaFax()."<br />Email: ".$notify->getCaEmail();
+                }else{
+                    $notify_h = "";
+                }
             }
         }
-
+        
         if ( $reporte->getCaMastersame() == 'Sí' ){
             $master = $hijo;
         }else{
@@ -197,7 +214,7 @@ class reporteExtComponents extends sfComponents
             {
                 $idempresa=sfConfig::get('app_branding_idempresa2')?sfConfig::get('app_branding_idempresa2'):sfConfig::get('app_branding_idempresa');
                 $consignatario = Doctrine::getTable("Cliente")->find( $idempresa );
-                $master = $consignatario->getCaCompania().($idtrafico=="CO-057"?" Nit. ".number_format($consignatario->getCaIdcliente(),0)."-".$consignatario->getCaDigito():"")."<br />";
+                $master = $consignatario->getCaCompania().($idtrafico=="CO-057"?" Nit. ".number_format($consignatario->getCaIdalterno(),0)."-".$consignatario->getCaDigito():"")."<br />";
                 
             }
             else
@@ -258,7 +275,7 @@ class reporteExtComponents extends sfComponents
             $contacto = $reporte->getContacto();
             $cliente = $reporte->getContacto()->getCliente();
 
-            $consignatario_final = $cliente->getCaCompania()." Nit. ".number_format($cliente->getCaIdcliente(),0)."-".$cliente->getCaDigito()."<br />".$cliente->getDireccion();
+            $consignatario_final = $cliente->getCaCompania()." Nit. ".number_format($cliente->getCaIdalterno(),0)."-".$cliente->getCaDigito()."<br />".$cliente->getDireccion();
         }
         
         $bodega1 = $reporte->getBodegaConsignar();
