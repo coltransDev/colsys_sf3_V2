@@ -327,7 +327,7 @@ include_component("widgets", "widgetCoordinadoresAduana");
                                         fieldLabel: 'Localidad',
                                         msgTarget : 'side',
                                         width: 200,
-                                        maxLength: 80,
+                                        maxLength: 20,
                                         name: 'localidad_ot',
                                         allowBlank: true
                                     }
