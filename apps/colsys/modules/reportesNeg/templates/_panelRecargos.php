@@ -416,7 +416,8 @@ Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
                 params :
                 {
                     idreporte: '<?=$reporte->getCaIdreporte()?>',
-                    tipo:"All-recargos"
+                    tipo:"All-recargos",
+                    tiporecargo:"1"
                 },
 
                 failure:function(response,options){

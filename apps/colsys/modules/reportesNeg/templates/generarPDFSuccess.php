@@ -780,7 +780,7 @@ if( !$soloAduana  ){
                      ->innerJoin("t.TipoRecargo r")
                      ->where("t.ca_idreporte = ?", $reporte->getCaIdreporte())
                      ->addWhere("t.ca_idconcepto = ?", "9999" )
-                     ->addWhere("t.ca_recargoorigen = true")
+                     ->addWhere("t.ca_recargoorigen = true and (t.ca_tiporecargo = 1 or t.ca_tiporecargo is null)  ")
                      ->orderBy("r.ca_recargo")
                      ->execute();
     if(count($gastos)>0)
@@ -857,43 +857,158 @@ if( !$soloAduana  ){
     }
 //   $pdf->flushGroup();
 //   $pdf->beginGroup();
-    if( $reporte->getCaImpoexpo () == Constantes::IMPO || $reporte->getCaImpoexpo ()==Constantes::OTMDTA || $reporte->getCaImpoexpo ()==Constantes::OTMDTA1 || ($reporte->getCaImpoexpo () == Constantes::EXPO && $reporte->getCaTransporte()==Constantes::MARITIMO) ){
-        $sub_mem = 'OTM-DTA';
+    
+    if($reporte->getEsOtm())
+    {
         $pdf->Ln ( 3 );
+        $pdf->SetWidths ( array (200 ) );
+        $pdf->SetFills ( array (1 ) );
+        $pdf->SetAligns ( array ("C" ) );
+        $pdf->SetStyles ( array ("B" ) );
 
-        $gastos = $reporte->getRecargos ( constantes::OTMDTA );
+        $pdf->Row (array (Constantes::OTMDTA ) );
+
+        $conceptos = $reporte->getRepTarifa('2');
+
+        if( $reporte->getCaTransporte()==Constantes::AEREO ){
+            if($reporte->getCaImpoexpo()!=constantes::EXPO)
+            {
+
+
+                $pdf->SetWidths(array(40,40,40,40,40));
+                $pdf->SetFills(array(1,1,1,1,1));
+                $pdf->SetStyles(array("B","B","B","B","B"));
+                $pdf->SetAligns(array("C","C","C","C","C"));
+                $pdf->Row(array('Concepto:','Neta / Min.','Reportar / Min.','Cobrar / Min', 'Observaciones'));
+
+            }
+            else
+            {
+                $pdf->SetWidths(array(40,40,40,40,40));
+                $pdf->SetFills(array(1,1,1,1,1));
+                $pdf->SetStyles(array("B","B","B","B","B"));
+                $pdf->SetAligns(array("C","C","C","C","C"));
+                $pdf->Row(array('Concepto:','Neta / Min.','Reportar / Min.','Cobrar / Min', 'Observaciones'));
+            }
+        }else{
+            $pdf->SetWidths(array(40,10,40,40,40,30));
+            $pdf->SetFills(array(1,1,1,1,1,1));
+            $pdf->SetStyles(array("B","B","B","B","B","B"));
+            $pdf->SetAligns(array("C","C","C","C","C","C"));
+            $pdf->Row(array('Concepto:','Cant.','Neta / Min.','Reportar / Min.','Cobrar / Min', 'Observaciones'));
+        }
+
+        foreach ( $conceptos as $concepto ) {
+     //       $pdf->beginGroup();
+            if($concepto->getCaIdconcepto()=="9999")
+                    continue;
+
+            {             
+                $pdf->SetWidths(array(40,10,20,20,20,20,20,20,30));
+                $pdf->SetFills(array(1,0,0,0,0,0,0,0,0,0));
+                $pdf->SetStyles(array("B","","","","","","","","",""));
+                $pdf->SetAligns(array("L","C","R","R","R","R","R","R","L"));
+
+                $pdf->Row ( array ($concepto->getConcepto ()->getCaConcepto (), $concepto->getCaCantidad (), Utils::formatNumber($concepto->getCaNetaTar ()) . " " . $concepto->getCaNetaIdm (), $concepto->getCaNetaMin () . " " . $concepto->getCaNetaIdm (), Utils::formatNumber ( $concepto->getCaReportarTar () ). " " . $concepto->getCaReportarIdm (), $concepto->getCaReportarMin () . " " . $concepto->getCaReportarIdm (), Utils::formatNumber ($concepto->getCaCobrarTar ()) . " " . $concepto->getCaCobrarIdm (), Utils::formatNumber ($concepto->getCaCobrarMin () ) . " " . $concepto->getCaCobrarIdm (), utf8_decode($concepto->getCaObservaciones ()) ) );
+
+                $gastos = Doctrine::getTable("RepGasto")
+                                 ->createQuery("t")
+                                 ->innerJoin("t.TipoRecargo r")
+                                 ->where("t.ca_idreporte = ?", $reporte->getCaIdreporte())
+                                 ->addWhere("t.ca_idconcepto = ?", $concepto->getCaIdconcepto() )
+                                 ->addWhere("t.ca_recargoorigen = true")
+                                 ->orderBy("r.ca_recargo")
+                                 ->execute();
+                if(count($gastos)<=0)
+                    continue;
+                //$pdf->Row ( array ('RELACIÓN DE RECARGOS' ) );
+                $sub_mem = 'Recargo en Origen';
+
+                $pdf->SetWidths ( array (5,55, 20, 40, 40, 40 ) );
+                $pdf->SetFills ( array (1,1, 1, 1, 1, 1 ) );
+                $pdf->SetStyles ( array ("","B", "B", "B", "B", "B" ) );
+                $pdf->SetAligns ( array ("","C", "C", "C", "C", "C" ) );
+                $pdf->Row ( array ("+",$sub_mem, 'Aplicación', 'Neta / Min.', 'Reportar / Min.', 'Cobrar / Min' ) );
+
+                $pdf->SetWidths ( array (5,55, 20, 20, 20, 20, 20, 20, 20 ) );
+                $pdf->SetFills ( array (0,1, 0, 0, 0, 0, 0, 0, 0, 0 ) );
+                $pdf->SetStyles ( array ("","B", "", "", "", "", "", "", "", "" ) );
+                $pdf->SetAligns ( array ("","L", "L", "R", "R", "R", "R", "R", "R" ) );
+
+                foreach ( $gastos as $gasto ) {
+                    $pdf->SetWidths ( array (5,55, 20, 20, 20, 20, 20, 20, 20 ) );
+                    $pdf->SetFills ( array (0,1, 0, 0, 0, 0, 0, 0, 0, 0 ) );
+                    $pdf->SetStyles ( array ("","B", "", "", "", "", "", "", "", "" ) );
+                    $pdf->SetAligns ( array ("","L", "L", "R", "R", "R", "R", "R", "R" ) );
+
+                    $des_rec = $gasto->getTipoRecargo ()->getCaRecargo ();
+                    if ($gasto->getCaIdconcepto () != '9999') {
+    //                    $des_rec .= " -> " . $gasto->getConcepto ()->getCaConcepto ();
+                    }
+
+                    if ($gasto->getCaTipo () == "$") {
+                        $pdf->Row ( array ("",$des_rec, utf8_decode($gasto->getCaAplicacion ()), Utils::formatNumber ( $gasto->getCaNetaTar (), 3 ) . " " . $gasto->getCaIdmoneda (), Utils::formatNumber ( $gasto->getCaNetaMin (), 3 ) . " " . $gasto->getCaIdmoneda (), Utils::formatNumber ( $gasto->getCaReportarTar (), 3 ) . " " . $gasto->getCaIdmoneda (), Utils::formatNumber ( $gasto->getCaReportarMin (), 3 ) . " " . $gasto->getCaIdmoneda (), Utils::formatNumber ( $gasto->getCaCobrarTar (), 3 ) . " " . $gasto->getCaIdmoneda (), Utils::formatNumber ($gasto->getCaCobrarMin (), 3 ) . " " . $gasto->getCaIdmoneda () ) );
+                    } else {
+                        $pdf->Row ( array ("",$des_rec, utf8_decode($gasto->getCaAplicacion ()), Utils::formatNumber ( $gasto->getCaNetaTar (), 3 ) . " " . $gasto->getCaTipo (), Utils::formatNumber ( $gasto->getCaNetaMin (), 3 ) . " " . $gasto->getCaIdmoneda (), Utils::formatNumber ( $gasto->getCaReportarTar (), 3 ) . " " . $gasto->getCaTipo (), Utils::formatNumber ( $gasto->getCaReportarMin (), 3 ) . " " . $gasto->getCaIdmoneda (), Utils::formatNumber ( $gasto->getCaCobrarTar (), 3 ) . " " . $gasto->getCaTipo (), Utils::formatNumber ( $gasto->getCaCobrarMin (), 3 ) . " " . $gasto->getCaIdmoneda () ) );
+                    }
+
+                    if ($gasto->getCaDetalles ()) {
+                        $pdf->SetWidths ( array (200 ) );
+                        $pdf->SetStyles ( array ("" ) );
+                        $pdf->SetFills ( array (0 ) );
+                        $pdf->Row ( array ("* Observaciones: " . utf8_decode($gasto->getCaDetalles ()) ) );
+                    }
+                }            
+                $pdf->Ln ( 1 );
+            }
+            $pdf->flushGroup();
+        }
+     //$pdf->beginGroup();
+        $gastos = Doctrine::getTable("RepGasto")
+                         ->createQuery("t")
+                         ->innerJoin("t.TipoRecargo r")
+                         ->where("t.ca_idreporte = ?", $reporte->getCaIdreporte())
+                         ->addWhere("t.ca_idconcepto = ?", "9999" )
+                         ->addWhere("t.ca_recargoorigen = true and t.ca_tiporecargo = 2")                     
+                         ->orderBy("r.ca_recargo")
+                         ->execute();
         if(count($gastos)>0)
         {
-            $pdf->SetWidths ( array (100, 40, 60 ) );
-            $pdf->SetFills ( array (1, 1, 1 ) );
-            $pdf->SetStyles ( array ("B", "B", "B" ) );
-            $pdf->SetAligns ( array ("C", "C", "C" ) );
-            $pdf->Row ( array ($sub_mem, 'Aplicacion', 'Cobrar / Min' ) );
+                $pdf->SetWidths(array(200));
+                $pdf->SetFills(array(1));
+                $pdf->SetStyles(array("B"));
+                $pdf->SetAligns(array("L"));
+                $pdf->Row ( array ("Recargos generales del Trayecto" ) );
+                $sub_mem = 'Recargo en Origen';
+                $pdf->SetWidths ( array (5,50, 25, 40, 40, 40 ) );
+                $pdf->SetFills ( array (1,1, 1, 1, 1, 1 ) );
+                $pdf->SetStyles ( array ("","B", "B", "B", "B", "B" ) );
+                $pdf->SetAligns ( array ("","C", "C", "C", "C", "C" ) );
+                $pdf->Row ( array ("+",$sub_mem, 'Aplicación', 'Neta / Min.', 'Reportar / Min.', 'Cobrar / Min' ) );
+                $pdf->SetWidths ( array (5,50, 25, 20, 20, 20, 20, 20, 20 ) );
+                $pdf->SetFills ( array (0,1, 0, 0, 0, 0, 0, 0, 0, 0 ) );
+                $pdf->SetStyles ( array ("","B", "", "", "", "", "", "", "", "" ) );
+                $pdf->SetAligns ( array ("","L", "L", "R", "R", "R", "R", "R", "R" ) );
 
-            foreach ( $gastos as $gasto ) {
-
-                $pdf->SetWidths ( array (100, 40, 30, 30 ) );
-                $pdf->SetFills ( array (1, 0, 0, 0 ) );
-                $pdf->SetStyles ( array ("B", "", "", "" ) );
-                $pdf->SetAligns ( array ("L", "L", "R", "R" ) );
-
-                $des_rec = ($gasto->getConcepto()?$gasto->getConcepto()->getCaConcepto():"" ). (($gasto->getEquipo())?"->".$gasto->getEquipo()->getCaConcepto():"");
-                /*if ($gasto->getCaIdconcepto () != '9999') {
-                    $des_rec .= " -> " . $gasto->getConcepto ()->getCaConcepto ();
-                }*/
-
-                if ($gasto->getCaTipo () == "$") {
-                    $pdf->Row ( array ($des_rec, utf8_decode($gasto->getCaAplicacion ()) ,Utils::formatNumber (  $gasto->getCaCobrarTar (), 3) . " " . $gasto->getCaIdmoneda (), Utils::formatNumber ( $gasto->getCaCobrarMin (), 3) . " " . $gasto->getCaIdmoneda () ) );
-                } else {
-                    $pdf->Row ( array ($des_rec, utf8_decode($gasto->getCaAplicacion ()), $gasto->getCaTipo () . " " . Utils::formatNumber ( $gasto->getCaCobrarTar (), 3 ), Utils::formatNumber ( $gasto->getCaCobrarMin () ,3) . " " . $gasto->getCaIdmoneda () ) );
+                foreach ( $gastos as $gasto ) {
+                    $pdf->SetWidths ( array (5,50, 25, 20, 20, 20, 20, 20, 20 ) );
+                    $pdf->SetFills ( array (0,1, 0, 0, 0, 0, 0, 0, 0, 0 ) );
+                    $pdf->SetStyles ( array ("","B", "", "", "", "", "", "", "", "" ) );
+                    $pdf->SetAligns ( array ("","L", "L", "R", "R", "R", "R", "R", "R" ) );
+                    $des_rec = $gasto->getTipoRecargo ()->getCaRecargo ();
+                    if ($gasto->getCaTipo () == "$") {
+                        $pdf->Row ( array ("",$des_rec, utf8_decode($gasto->getCaAplicacion ()), Utils::formatNumber ( $gasto->getCaNetaTar (), 3 ) . " " . $gasto->getCaIdmoneda (), Utils::formatNumber ( $gasto->getCaNetaMin (), 3 ) . " " . $gasto->getCaIdmoneda (), Utils::formatNumber ( $gasto->getCaReportarTar (), 3 ) . " " . $gasto->getCaIdmoneda (), Utils::formatNumber ( $gasto->getCaReportarMin (), 3 ) . " " . $gasto->getCaIdmoneda (), Utils::formatNumber ( $gasto->getCaCobrarTar (), 3 ) . " " . $gasto->getCaIdmoneda (), Utils::formatNumber ($gasto->getCaCobrarMin (), 3 ) . " " . $gasto->getCaIdmoneda () ) );
+                    } else {
+                        $pdf->Row ( array ("",$des_rec, utf8_decode($gasto->getCaAplicacion ()), Utils::formatNumber ( $gasto->getCaNetaTar (), 3 ) . " " . $gasto->getCaTipo (), Utils::formatNumber ( $gasto->getCaNetaMin (), 3 ) . " " . $gasto->getCaIdmoneda (), Utils::formatNumber ( $gasto->getCaReportarTar (), 3 ) . " " . $gasto->getCaTipo (), Utils::formatNumber ( $gasto->getCaReportarMin (), 3 ) . " " . $gasto->getCaIdmoneda (), Utils::formatNumber ( $gasto->getCaCobrarTar (), 3 ) . " " . $gasto->getCaTipo (), Utils::formatNumber ( $gasto->getCaCobrarMin (), 3 ) . " " . $gasto->getCaIdmoneda () ) );
+                    }
+                    if ($gasto->getCaDetalles ()) {
+                        $pdf->SetWidths ( array (200 ) );
+                        $pdf->SetStyles ( array ("" ) );
+                        $pdf->SetFills ( array (0 ) );
+                        $pdf->Row ( array ("* Observaciones: " . ($gasto->getCaDetalles ()) ) );
+                    }
                 }
-                if ($gasto->getCaDetalles ()) {
-                    $pdf->SetWidths ( array (200 ) );
-                    $pdf->SetStyles ( array ("" ) );
-                    $pdf->SetFills ( array (0));
-                    $pdf->Row ( array ("* Observaciones: " . ($gasto->getCaDetalles () ) ) );
-                }
-            }
+                $pdf->Ln ( 1 );
         }
     }
 //    $pdf->flushGroup();

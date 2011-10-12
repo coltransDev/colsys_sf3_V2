@@ -427,7 +427,8 @@ Ext.extend(PanelConceptosFletes, Ext.grid.EditorGridPanel, {
                     waitMsg: 'Guardando cambios...',
                     url: '<?=url_for("reportesNeg/guardarConceptoFletes")?>',
                     params :	{
-                        datos:str
+                        datos:str,
+                        tipo:'1'
                     },
                     failure:function(response,options){
                         var res = Ext.util.JSON.decode( response.responseText );
@@ -469,7 +470,8 @@ Ext.extend(PanelConceptosFletes, Ext.grid.EditorGridPanel, {
                 params :
                 {
                     idreporte: '<?=$reporte->getCaIdreporte()?>',
-                    tipo:"All-conceptos"
+                    tipo:"All-conceptos",
+                    tiporecargo:"1"
                 },
 
                 failure:function(response,options){
@@ -703,7 +705,8 @@ Ext.extend(PanelConceptosFletes, Ext.grid.EditorGridPanel, {
                     idconcepto: idconcepto,
                     idrecargo: idrecargo,
                     tipo: tipo,
-                    idreporte: idreporte
+                    idreporte: idreporte,
+                    tiporecargo:"1"
                     
                 },
 

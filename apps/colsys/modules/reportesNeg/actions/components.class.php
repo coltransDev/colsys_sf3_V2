@@ -183,7 +183,7 @@ class reportesNegComponents extends sfComponents
 
     public function executePanelConceptosOtm()
     {
-		$this->conceptos = Doctrine::getTable("Concepto")
+		/*$this->conceptos = Doctrine::getTable("Concepto")
                                      ->createQuery("c")
                                      ->select("ca_idconcepto, ca_concepto")
                                      ->where("c.ca_transporte = 'Terrestre'" )
@@ -208,9 +208,7 @@ class reportesNegComponents extends sfComponents
         $this->recargos = Doctrine::getTable("TipoRecargo")
                                      ->createQuery("c")
                                      ->select("ca_idrecargo as ca_idconcepto, ca_recargo as ca_concepto")
-                                     ->addWhere("c.ca_tipo like ? ", "%".Constantes::RECARGO_EN_ORIGEN."%" )
-                                     /*->addWhere("c.ca_impoexpo LIKE ? ", $impoexpo )
-                                     ->addWhere("c.ca_transporte LIKE ? ", $this->reporte->getCaTransporte() )*/
+                                     ->addWhere("c.ca_tipo like ? ", "%".Constantes::RECARGO_EN_ORIGEN."%" )          
                                      ->addOrderBy("c.ca_recargo")
                                      ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
                                      ->execute();
@@ -227,7 +225,84 @@ class reportesNegComponents extends sfComponents
             }else{
                 $this->editable = false;
             }
+*/
+        if($this->reporte)
+        {
+            //$transporte=($this->reporte->getCaTransporte()==constantes::TERRESTRE ) ?constantes::MARITIMO:$this->reporte->getCaTransporte();
+            $transporte=$this->reporte->getCaTransporte();
+            $this->conceptos = Doctrine::getTable("Concepto")
+                                     ->createQuery("c")
+                                     ->select("ca_idconcepto, ca_concepto")
+                                     ->where("c.ca_transporte = 'Terrestre'" )
+                                     ->addWhere("c.ca_modalidad = 'OTM-DTA'" )
+                                     ->addWhere("c.ca_fcheliminado is null " )
+                                     ->addOrderBy("c.ca_liminferior")
+                                     ->addOrderBy("c.ca_concepto")
+                                     ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
+                                     ->execute();
 
+        foreach( $this->conceptos as $key=>$val){
+            $this->conceptos[$key]['ca_concepto'] = utf8_encode($this->conceptos[$key]['ca_concepto']);
+        }
+
+        array_push( $this->conceptos , array("ca_idconcepto"=>"9999", "ca_concepto"=>"Recargo general del trayecto"));
+
+        $impoexpo = $this->reporte->getCaImpoexpo();
+        if( $impoexpo==Constantes::TRIANGULACION ){
+            $impoexpo=Constantes::IMPO;
+        }
+        $this->recargos = Doctrine::getTable("InoConcepto")
+                                  ->createQuery("c")
+                                 ->select("ca_idconcepto, ca_concepto")
+                                 ->innerJoin("c.InoConceptoModalidad cm")
+                                 ->innerJoin("cm.Modalidad m")
+                                 ->addWhere("m.ca_transporte = ? ", Constantes::TERRESTRE )
+                                 ->addWhere("c.ca_recargootmdta = ? ", true )
+                                 ->addWhere("c.ca_usueliminado IS NULL" )
+                                 ->distinct()
+                                 ->addOrderBy( "c.ca_concepto" )
+                                 ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
+                                 ->execute();
+            //print_r($this->recargos);
+             foreach( $this->recargos as $key=>$val){
+                 $this->recargos[$key]['ca_concepto'] = utf8_encode($this->recargos[$key]['ca_concepto']);
+
+             }
+             
+           /* $this->recargos = Doctrine::getTable("TipoRecargo")
+                                     ->createQuery("c")
+                                     ->select("ca_idrecargo as ca_idconcepto, ca_recargo as ca_concepto")
+                                     ->addWhere("c.ca_tipo like ? ", "%".Constantes::RECARGO_EN_ORIGEN."%" )          
+                                     ->addOrderBy("c.ca_recargo")
+                                     ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
+                                     ->execute();
+
+             foreach( $this->recargos as $key=>$val){
+                 $this->recargos[$key]['ca_concepto'] = utf8_encode($this->recargos[$key]['ca_concepto']);
+
+             }*/
+             $reporte=$this->reporte;
+             $user = $this->getUser();
+             $this->permiso = $user->getNivelAcceso( "87" );
+             if( $reporte->getEditable($this->permiso,$user)  ){
+                    $this->editable = true;
+                }else{
+                    $this->editable = false;
+                }
+
+            if($this->reporte->getCaTransporte()==constantes::AEREO)
+                $this->aplicaciones1 = ParametroTable::retrieveByCaso("CU064", null, Constantes::AEREO );
+            else if($this->reporte->getCaTransporte()==constantes::TERRESTRE)
+                $this->aplicaciones1 = ParametroTable::retrieveByCaso("CU064", null, Constantes::MARITIMO );
+            else
+                $this->aplicaciones1 = ParametroTable::retrieveByCaso("CU064", null, Constantes::MARITIMO );
+
+        }
+        else
+        {
+            $this->conceptos=array();
+            $this->recargos=array();
+        }
 	}
     /*
 	* Muestra los conceptos del reporte y un formulario para agregar un nuevo registro, tambien

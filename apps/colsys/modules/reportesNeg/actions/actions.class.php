@@ -975,8 +975,7 @@ class reportesNegActions extends sfActions
             {                
                 $coor=Doctrine::getTable("Usuario")->find( $request->getParameter("ca_coordinador") );
                 if($coor)
-                {
-                    
+                {                    
                     if($ca_confirmar_clie!="")
                     {
 
@@ -985,6 +984,47 @@ class reportesNegActions extends sfActions
                     }
                     else
                         $ca_confirmar_clie=$coor->getCaEmail();
+                }
+            }
+            
+            if($request->getParameter("aduanas-checkbox")== "on" )
+            {
+                if($reporte->getCaTransporte()==constantes::MARITIMO && $reporte->getCaContinuacion()!="OTM")
+                {                    
+                    $cargo="Jefe de Aduanas Puerto";
+                }
+                else if($reporte->getCaTransporte()==constantes::AEREO || $reporte->getCaContinuacion()=="OTM")
+                {
+                    $cargo="Jefe Dpto. Aduana";
+                }
+                
+                if($sucursal=="ABG" || $sucursal=="BGA" || $sucursal=="PEI"  )
+                {
+                    $suc="BOG";
+                }                    
+                $sucursal=Doctrine::getTable("Sucursal")->find( $suc );
+                if(!$sucursal)
+                    $sucursal=new Sucursal();                    
+                   
+                {    
+                    $q = Doctrine::getTable("Usuario")
+                                    ->createQuery("c")
+                                    ->select("c.ca_email")
+                                    ->innerJoin("c.Sucursal s")
+                                    ->where(" c.ca_cargo= ? and s.ca_nombre = ?", array($cargo,$sucursal->getCaNombre()));
+                    //echo $q->getSqlQuery();
+                    $jef_adu=$q->fetchOne();                    
+                    if($jef_adu)
+                    {
+                        //echo $jef_adu->getCaEmail();
+                        if($ca_confirmar_clie!="")
+                        {
+                            if (stripos(strtolower($ca_confirmar_clie), $jef_adu->getCaEmail()) === false)
+                                $ca_confirmar_clie.=",".$jef_adu->getCaEmail();
+                        }
+                        else
+                            $ca_confirmar_clie=$jef_adu->getCaEmail();
+                    }
                 }
             }
 
@@ -3059,12 +3099,9 @@ class reportesNegActions extends sfActions
                     $data["muelle"] =utf8_encode($repOtm->getInoDianDepositos()->getCaNombre());
                     $data["idmuelle"] =$repOtm->getCaMuelle();
                     //echo $repOtm->getCaLiberacion();
-                    $data["liberacion_".$repOtm->getCaLiberacion()]= $repOtm->getCaLiberacion();
-                    
+                    $data["liberacion_".$repOtm->getCaLiberacion()]= $repOtm->getCaLiberacion();                    
                 }
             }
-                
-
         }
 
         $this->responseArray=array("success"=>true,"data"=>$data);
@@ -3078,7 +3115,7 @@ class reportesNegActions extends sfActions
     public function executePanelConceptosData(sfWebRequest $request){
         $reporte = Doctrine::getTable("Reporte")->find( $this->getRequestParameter("id") );
         $this->forward404Unless( $reporte );
-        $tipo=($this->getRequestParameter("tipo"))?$this->getRequestParameter("tipo"):"1";
+        $tipo=($request->getParameter("tipo")!="")?$request->getParameter("tipo"):"1";
 
         $conceptos = array();
 
@@ -3142,13 +3179,13 @@ class reportesNegActions extends sfActions
         $recargos = Doctrine::getTable("RepGasto")
                             ->createQuery("t")
                             ->innerJoin("t.TipoRecargo tr")
-                            ->where("t.ca_idreporte = ?", $reporte->getCaIdreporte())
-                            ->addWhere("t.ca_idconcepto = ?", 9999 )
-                            ->addWhere("tr.ca_tipo like ?", "%".Constantes::RECARGO_EN_ORIGEN."%" )
-                            ->addWhere("t.ca_recargoorigen = true " )                            
+                            ->where("t.ca_idreporte = ?", $reporte->getCaIdreporte())                                                                                 
+                            ->addWhere("(t.ca_tiporecargo = ? or t.ca_tiporecargo is null ) and t.ca_idreporte = ? and t.ca_idconcepto = ? and t.ca_recargoorigen='true'", array($tipo, $reporte->getCaIdreporte() , 9999) )
                             ->orderBy("t.ca_fchcreado ASC")
-                             ->execute();
-        if($tipo=="1")
+                            ->execute();
+        //echo count($recargos);
+        //exit;
+        //if($tipo=="1")        
         {
             if( count($recargos)>0){
 
@@ -3205,7 +3242,7 @@ class reportesNegActions extends sfActions
         $this->responseArray=array("id"=>$id,  "success"=>false);
         $idreporte = $request->getParameter("idreporte");
 
-        $tipo = $request->getParameter("tipo");
+        $tipo = ($request->getParameter("tipo")=="")?"1":$request->getParameter("tipo");
 
         if( $tipo=="concepto" ){
             $idconcepto = $request->getParameter("iditem");
@@ -3281,7 +3318,6 @@ class reportesNegActions extends sfActions
             }
             $this->responseArray["success"]=true;
         }
-
 
         if( $tipo=="recargo" ){
             $idconcepto = $request->getParameter("idconcepto");
@@ -3403,6 +3439,7 @@ class reportesNegActions extends sfActions
     public function executeGuardarConceptoFletes(sfWebRequest $request)
     {
         $datos = $request->getParameter("datos");
+        $tipo=($request->getParameter("tipo")=="")?"1":$request->getParameter("tipo");
         $idreporte=0;
 
         $tarifas = json_decode($datos);
@@ -3427,6 +3464,7 @@ class reportesNegActions extends sfActions
                         }
 
                         $tarifa->setCaIdconcepto( $idconcepto );
+                        $tarifa->setCaTipo( $tipo );
 
                         if( $t->cantidad){
                             $tarifa->setCaCantidad( $t->cantidad );
@@ -3519,6 +3557,7 @@ class reportesNegActions extends sfActions
                     $idreporte=$t->idreporte;
                     $tarifa->setCaIdconcepto( $idconcepto );
                     $tarifa->setCaIdequipo( $idequipo );
+                    $tarifa->setCaTiporecargo( $tipo );
 
                     if( $t->aplicacion ){
                         $tarifa->setCaAplicacion( $t->aplicacion );
@@ -3573,16 +3612,13 @@ class reportesNegActions extends sfActions
                         $tarifa->setCaReportarMin( 0 );
                     }
 
-
-                    if( $t->reportar_idm || $t->cobrar_idm ){
-                        
+                    if( $t->reportar_idm || $t->cobrar_idm ){                        
                         $tarifa->setCaIdmoneda( ($t->reportar_idm!="")?$t->reportar_idm:$t->cobrar_idm );                       
                     }
                     else
                     {
                         $error="Falta la moneda";
                     }
-
 
                     if( $t->cobrar_tar ){
                         $tarifa->setCaCobrarTar( $t->cobrar_tar );
@@ -3611,6 +3647,7 @@ class reportesNegActions extends sfActions
                     {                        
                         $tarifa->setCaRecargoorigen( "true" );
                     }
+                    
                     if($error!="")
                         $errorInfo.="Error en item ".($t->item).": ".$error." <br>";
                     else
@@ -3648,34 +3685,36 @@ class reportesNegActions extends sfActions
     public function executeEliminarPanelConceptosFletes(sfWebRequest $request){
 
         $tipo = $request->getParameter("tipo");
+        $tiporecargo = ($request->getParameter("tiporecargo")=="")?"1":$request->getParameter("tiporecargo");
         $idreporte = $request->getParameter("idreporte");
         $success=true;
+        
+        if($tiporecargo=="1")
+            $where=" or g.ca_tiporecargo is null";
+        
         if($tipo=="All-conceptos")
         {
             Doctrine_Query::create()
                    ->delete()
                    ->from("RepGasto g")
-                   ->where("g.ca_idreporte = ? and ca_recargoorigen=true ", array($idreporte))
+                   ->where("g.ca_idreporte = ? and (ca_tiporecargo=? $where) and ca_recargoorigen=true ", array($idreporte,$tiporecargo))
                    ->execute();
 
             Doctrine_Query::create()
                    ->delete()
                    ->from("RepTarifa t")
-                   ->where("t.ca_idreporte = ? ", array($idreporte))
+                   ->where("t.ca_idreporte = ? and  ca_tipo=?", array($idreporte,$tiporecargo))
                    ->execute();
-
         }
         else if($tipo=="All-recargos")
         {
             Doctrine_Query::create()
                    ->delete()
                    ->from("RepGasto g")
-                   ->where("g.ca_idreporte = ? and ca_recargoorigen=false and ca_idrecargo!=61 ", array($idreporte))
+                   ->where("g.ca_idreporte = ? and (ca_tiporecargo=? $where) and ca_recargoorigen=false ", array($idreporte,$tiporecargo))
                    ->execute();
-
-
         }
-        else if($tipo=="All-recargos-otm")
+        /*else if($tipo=="All-recargos-otm")
         {
             Doctrine_Query::create()
                    ->delete()
@@ -3683,24 +3722,29 @@ class reportesNegActions extends sfActions
                    ->where("g.ca_idreporte = ? and ca_recargoorigen=false and ca_idrecargo=61 ", array($idreporte))
                    ->execute();
 
-
-        }
+        }*/
         else
         {
             $idconcepto = $request->getParameter("idconcepto");
 
             if( $tipo=="concepto" ){
 //                $tarifa = Doctrine::getTable("RepTarifa")->find(array($idreporte, $idconcepto));
-                $tarifa = Doctrine::getTable("RepTarifa")
+                if($idconcepto!="9999")
+                {
+                    $tarifa = Doctrine::getTable("RepTarifa")
                              ->createQuery("t")
-                             ->where("t.ca_idreporte = ? and t.ca_idconcepto=? ", array($idreporte,$idconcepto))
+                             ->where("t.ca_idreporte = ? and t.ca_idconcepto=? and ca_tipo=? ", array($idreporte,$idconcepto,$tiporecargo))
                              ->fetchOne();
+                }                
+                else
+                    $tarifa=new RepTarifa();                
 
+                
                 $gastos = Doctrine_Query::create()
                                     ->select("g.*")
                                     ->from("RepGasto g")
                                     ->innerJoin("g.TipoRecargo t")
-                                    ->where("g.ca_idreporte = ? AND g.ca_idconcepto = ?", array($idreporte, $idconcepto))
+                                    ->where("g.ca_idreporte = ? AND g.ca_idconcepto = ? and (g.ca_tiporecargo=? $where )", array($idreporte, $idconcepto,$tiporecargo))
                                     ->addWhere("t.ca_tipo like ?", "%".Constantes::RECARGO_EN_ORIGEN."%")
                                     ->execute();
 
