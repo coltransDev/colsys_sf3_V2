@@ -659,7 +659,8 @@ class widgetsActions extends sfActions {
      */
 
     public function executeDatosTercero() {
-        $tercero = Doctrine::getTable("Tercero")->find($this->getRequestParameter("idtercero"));
+        $idtercero = intval($this->getRequestParameter("idtercero"));
+        $tercero = Doctrine::getTable("Tercero")->find( $idtercero );
         $this->forward404Unless($tercero);
 
         $this->responseArray = array("success" => true,
