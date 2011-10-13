@@ -1075,6 +1075,15 @@ class Reporte extends BaseReporte {
                 $newConcepto->setCaIdreptarifa(null);
                 $newConcepto->save($conn);
             }
+            
+            $conceptos = $this->getRepTarifa(2);
+            foreach ($conceptos as $concepto) {
+                $newConcepto = $concepto->copy();
+                $newConcepto->setCaIdconcepto($concepto->getCaIdconcepto());
+                $newConcepto->setCaIdreporte($reporte->getCaIdreporte());
+                $newConcepto->setCaIdreptarifa(null);
+                $newConcepto->save($conn);
+            }
 
             //Copia los gastos
             $gastos = $this->getRecargos();
@@ -1091,6 +1100,27 @@ class Reporte extends BaseReporte {
                     $newGasto->setCaRecargoorigen("true");
                 $newGasto->save($conn);
             }
+            
+            
+
+            //Copia los gastos
+            /*$gastos = $this->getRecargos();
+            foreach ($gastos as $gasto) {
+                $newGasto = $gasto->copy();
+                $newGasto->setCaIdconcepto($gasto->getCaIdconcepto());
+                $newGasto->setCaIdrecargo($gasto->getCaIdrecargo());
+                $newGasto->setCaIdreporte($reporte->getCaIdreporte());
+                $newGasto->setCaIdequipo($gasto->getCaIdequipo());
+                $newGasto->setCaIdrepgasto(null);
+                if ($gasto->getCaRecargoorigen() == false)
+                    $newGasto->setCaRecargoorigen("false");
+                if ($gasto->getCaRecargoorigen() == true)
+                    $newGasto->setCaRecargoorigen("true");
+                $newGasto->save($conn);
+            }*/
+            
+            
+            
 
             $costos = $this->getCostos();
             foreach ($costos as $costo) {
@@ -1215,6 +1245,15 @@ class Reporte extends BaseReporte {
                 }
 
                 $conceptos = $reporteNew->getRepTarifa();
+                foreach ($conceptos as $concepto) {
+                    $newConcepto = $concepto->copy();
+                    $newConcepto->setCaIdconcepto($concepto->getCaIdconcepto());
+                    $newConcepto->setCaIdreporte($this->getCaIdreporte());
+                    $newConcepto->setCaIdreptarifa(null);
+                    $newConcepto->save($conn);
+                }
+                
+                $conceptos = $reporteNew->getRepTarifa(2);
                 foreach ($conceptos as $concepto) {
                     $newConcepto = $concepto->copy();
                     $newConcepto->setCaIdconcepto($concepto->getCaIdconcepto());
