@@ -196,6 +196,10 @@ class reportesGerActions extends sfActions {
             $st = $con->execute($sql);
             $this->resul = $st->fetchAll();
         }
+        
+    if (count($this->incoterms)<= 0) {
+        $this->incoterms=array();
+    }
     }
 
     public function executeEstadisticasTraficos(sfWebRequest $request) {
@@ -703,8 +707,6 @@ class reportesGerActions extends sfActions {
             }
             $this->costos = $q->execute();
             
-            $this->fchInicial = $request->getParameter("fchInicial");
-            $this->fchFinal = $request->getParameter("fchFinal");
            
             
             $this->setTemplate("listadoFacturasResult");
