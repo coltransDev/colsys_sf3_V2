@@ -436,7 +436,7 @@ class confirmacionesActions extends sfActions
                                 break;
                             case "Desc":
                                     $status->setCaIdetapa("IMDES");
-                                    $options["subject"]="Notificación de Desconsolidación";
+                                    //$options["subject"]="Notificación de Desconsolidación";
                                 break;                            
                             default:
                                 $status->setCaIdetapa("88888");
