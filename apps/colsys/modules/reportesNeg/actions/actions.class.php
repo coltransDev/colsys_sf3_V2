@@ -2985,7 +2985,7 @@ class reportesNegActions extends sfActions
                     $data["consignatario"]="Coltrans/Consignatario";
                 }
                 else
-                    $data["consignatario"] =utf8_encode($reporte->getConsignatario()->getCaNombre());
+                    $data["consignatario"] =($reporte->getConsignatario())?utf8_encode($reporte->getConsignatario()->getCaNombre()):"";
             }
             else
             {
