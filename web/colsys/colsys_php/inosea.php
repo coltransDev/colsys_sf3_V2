@@ -5166,10 +5166,23 @@ elseif (isset($accion)) {                                                      /
                 $bodyhtml.= "www.coltrans.com.co";
                 $bodyhtml.= "</body></html>";
 
+                if (!$rs->Open("select ca_ciudestino from vi_inomaestra_sea where ca_referencia = '$id'")) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
+                    echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+                    echo "<script>document.location.href = 'entrada.php';</script>";
+                    exit;
+                 }
+                
+                if($rs->Value('ca_ciudestino')=="Santa Marta")
+                {
+                    $ciudad="Barranquilla";
+                }
+                else
+                    $ciudad=$rs->Value('ca_ciudestino');
+                
                 $query = "select up.ca_login, us.ca_email, us.ca_sucursal from control.tb_usuarios_perfil up";
-                $query.= "  inner join vi_usuarios us on us.ca_login = up.ca_login";
-                $query.= "  inner join vi_inomaestra_sea im on im.ca_ciudestino = us.ca_sucursal";
-                $query.= "  where im.ca_referencia = '$id' and up.ca_perfil like '%asistente-marítimo-puerto%' order by us.ca_sucursal";
+                $query.= "  inner join vi_usuarios us on us.ca_login = up.ca_login";                
+                $query.= "  where us.ca_sucursal = '$ciudad' and up.ca_perfil like '%asistente-marítimo-puerto%'";                
+                
                 if (!$us->Open("$query")) {
                     echo "<script>alert(\"".addslashes($us->mErrMsg)."\");</script>";
                     echo "<script>document.location.href = 'cotizaciones.php';</script>";
