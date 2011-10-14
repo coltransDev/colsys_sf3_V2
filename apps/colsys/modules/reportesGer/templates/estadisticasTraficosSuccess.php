@@ -114,8 +114,8 @@ if( $fechainicial && $fechafinal ){
 						column: {
                             dataLabels: {
 								enabled: true                                
-							},
-							stacking: 'percent'
+							}//,
+							//stacking: 'percent'
 						}
                     },
 					serieX: <?=json_encode($serieX)?>,					
@@ -128,6 +128,109 @@ if( $fechainicial && $fechafinal ){
 <br>
 <br>
 <br>
+
+
+<table class="tableList" width="900px" border="1" id="mainTable" align="center" id="panel1">
+    <tr><th>No</th><th>Trafico</th>
+        <?
+        for($i=0;$i<$nmeses;$i++)
+        {
+        ?>
+        <th><?=(Utils::addDate( $fechainicial,0,$i,0,"Y-n"))?></th>
+        <?
+        }
+        ?>
+   </tr>
+        <?
+        $origentmp="";
+        $c=1;
+        $serieX=array();
+        $dataJSON=array();
+        $dataFechas=array();
+        foreach($grid_s as $key=> $r)
+        {
+            $serieX[]=".     ".utf8_encode($key);
+            
+        ?>
+            <tr><td><?=$c++?></td><td><?=$key?></td>
+        <?
+            for($i=0;$i<$nmeses;$i++)
+            {
+        ?>
+                <td class="number"><?=$r[Utils::addDate( $fechainicial,0,$i,0,"Y-n")] ?></td>
+        <?            
+            $dataFechas[Utils::addDate( $fechainicial,0,$i,0,"Y-n")][]=$r[Utils::addDate( $fechainicial,0,$i,0,"Y-n")];
+            }
+        ?>
+            </tr>
+        <?
+        }
+        //echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;".count($serieX)."-".count($dataFechas);
+        //echo "<pre>";print_r($dataFechas);echo "</pre>";
+        
+        if($totales)
+        {
+        ?>
+            <tr class="b number"><td colspan="2">totales</td>
+        <?
+            for($i=0;$i<$nmeses;$i++)
+            {
+        ?>
+            <td><?=$totales_s[Utils::addDate( $fechainicial,0,$i,0,"Y-n")] ?></td>
+        <?
+            }            
+
+        ?>
+            </tr>            
+        <?
+        }
+        foreach($dataFechas as $fech => $d)
+        {
+            $dataJSON[]=array("name"=>$fech,"data"=>$d);
+        }
+        //print_r(json_decode($serieX));
+        //echo "2"print_r(json_encode($serieX));
+        ?>
+</table>
+    <br>
+    <br>
+    <br>
+    <br>
+
+<table align="center" width="90%">
+    <tr>
+        <td style=" margin: 0 auto" >
+            
+<div align="center" id="grafica_s" ></div>
+        </td>
+    </tr>
+</table>
+<script type="text/javascript">
+    var chart;
+        chart=new ChartsColumn({            
+					renderTo: 'grafica_s',
+                    title:"Movimientos de Traficos",
+                    titleY:"Numero de Reportes",
+                    plotOptions:{
+						column: {
+                            dataLabels: {
+								enabled: true                                
+							}//,
+							//stacking: 'percent'
+						}
+                    },
+					serieX: <?=json_encode($serieX)?>,					
+				    series: <?=json_encode($dataJSON)?>
+				});	
+</script>
+</div>
+
+<br>
+<br>
+<br>
+<br>
+
+
 <div align="center">
 <h3>Resumen Comparativo de Negocios Manejados</h3>  <br>
 </div>
@@ -231,6 +334,107 @@ if( $fechainicial && $fechafinal ){
 <br>
 <br>
 <br>
+<table class="tableList" width="900px" border="1" id="mainTable" align="center">
+    <tr><th>No</th><th>Trafico</th>
+        <?
+        $year=Utils::addDate( $fechainicial2,0,0,0,"Y");
+        $c=1;
+        for($i=$year-2;$i<=$year;$i++)
+        {
+        ?>
+        <th><?=$i?></th>
+        <th width="12%">Variacion <?=$i?>/<?=$i-1?></th>
+        <?
+        }
+        ?>
+        </tr>
+        <?
+        $serieX=array();
+        $dataFechas=array();
+        $dataJSON=array();
+        foreach($gridCompara_s as $key=> $r)
+        {
+            $serieX[]=".     ".utf8_encode($key);
+        ?>
+        <tr><td><?=$c++?></td><td><?=$key?></td>
+        <?
+        $year=Utils::addDate( $fechainicial2,0,0,0,"Y");
+        for($i=$year-2;$i<=$year;$i++)
+        {
+        ?>
+        <td class="number"><?=$r[$i]?></td>
+        <?
+        $var=($r[$i]/$r[$i-1]);
+        ?>
+        <td class="number"><?=($var>0)?Utils::formatNumber($var-1,2)*100:"0"?>%</td>
+        <?
+        $dataFechas[$i][]=$r[$i];
+        }
+        ?>
+        </tr>
+        <?
+        }
+        //print_r($serieX);
+        
+        foreach($dataFechas as $fech => $d)
+        {
+            $dataJSON[]=array("name"=>$fech,"data"=>$d);
+        }
+        
+        if($totalesCompara)
+        {
+        ?>
+            <tr class="b number"><td colspan="2">totales</td>
+        <?
+        $year=Utils::addDate( $fechainicial2,0,0,0,"Y");
+        for($i=$year-2;$i<=$year;$i++)
+        {
+        ?>
+            <td><?=$totalesCompara[$i] ?></td>
+            <td></td>
+        <?
+            }            
+
+        ?>
+            </tr>            
+        <?
+        }
+        ?>
+
+</table>
+    <br>
+<br>
+<br>
+<br>
+<div align="center">
+<h3>Resumen Comparativo de Negocios Manejados</h3>  <br>
+</div>
+    <table align="center" width="90%">
+    <tr>
+        <td style=" margin: 0 auto" >
+            
+<div align="center" id="grafica1_s" ></div>
+        </td>
+    </tr>
+</table>
+<script type="text/javascript">
+    var chart1;
+        chart1=new ChartsColumn({
+					renderTo: 'grafica1_s',
+                    height: 800,
+                    title:"Movimientos de Traficos",
+                    titleY:"Numero de Reportes",
+					serieX: <?=json_encode($serieX)?>,					
+				    series: <?=json_encode($dataJSON)?>
+				});	
+</script>
+
+
+<br>
+<br>
+<br>
+<br>
+
 <div align="center">
 <h3>Clientes</h3>  <br>
 </div>
