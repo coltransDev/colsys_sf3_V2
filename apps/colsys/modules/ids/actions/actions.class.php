@@ -733,7 +733,7 @@ class idsActions extends sfActions {
                     if (!is_dir($directorio)) {
                         mkdir($directorio, 0777, true);
                     }
-                    print_r($bindFiles["archivo"]);
+                   
                     move_uploaded_file($bindFiles["archivo"]["tmp_name"], $directorio . DIRECTORY_SEPARATOR . $bindFiles["archivo"]["name"]);
                     $documento->setCaUbicacion($bindFiles["archivo"]["name"]);
                     $documento->save();
