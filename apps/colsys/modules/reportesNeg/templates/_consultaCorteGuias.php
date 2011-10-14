@@ -85,16 +85,19 @@ if( $reporte->getCaImpoexpo()==Constantes::EXPO){
         <td colspan="2" align="center">
             <input type="button" value="Ver rep. al exterior" onclick="popup('<?=url_for("reporteExt/verReporte?idreporte=".$reporte->getCaIdreporte()."&layout=popup")?>')" class="button" />
          </td>
+
     </tr>
 </table>
 <?
 }
 ?>
+
 <br />
 
 <table class="tableList alignLeft" width="100%">
         <tr>
-            <th colspan="6"><b>Otros datos</b></th>            
+            <th colspan="6"><b>Otros datos</b></th>
+            
         </tr>
         <?
         if( $reporte->getCaIdconsignatario() ){
