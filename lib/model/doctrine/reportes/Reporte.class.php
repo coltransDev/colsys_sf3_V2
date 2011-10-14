@@ -604,7 +604,7 @@ class Reporte extends BaseReporte {
         if ($this->getCaImpoexpo() == constantes::EXPO && $this->getCaIdconsignar()>0) {
 
             
-            if($this->getCaIdconsignar()<4)
+            if($this->getCaIdconsignar()<=4)
             {
                 $consignar = ParametroTable::retrieveByCaso("CU048", null, null, $this->getCaIdconsignar());
                 if ($consignar) {
@@ -1100,8 +1100,6 @@ class Reporte extends BaseReporte {
                     $newGasto->setCaRecargoorigen("true");
                 $newGasto->save($conn);
             }
-            
-            
 
             //Copia los gastos
             /*$gastos = $this->getRecargos();
