@@ -54,12 +54,13 @@ class reporteExtComponents extends sfComponents
                 }
                 $consignatario_m1 = $consignatario->getCaCompania().$id."<br />Dirección: ".$consignatario->getDireccion()."<br />Teléfonos:".$consignatario->getCaTelefonos()." Fax:".$consignatario->getCaFax()."<br />".$consignatario->getCiudad()->getCaCiudad()." ".$consignatario->getCiudad()->getTrafico()->getCaNombre();
 
-                if($reporte->getCaIdconsignarmaster() && $reporte->getCaIdconsignarmaster()>3)
+                if($reporte->getCaIdconsignarmaster() && $reporte->getCaIdconsignarmaster()>4)
                 {
                      $consignatario1 = Doctrine::getTable("Tercero")->find($reporte->getCaIdconsignarmaster());
-                    if(!$consignatario1)
+                    if(!$consignatario1){
                         $consignatario1=new Tercero();
-                    $consignatario_m = $consignatario1->getCaNombre()." Nit. ".number_format($consignatario1->getCaIdtercero(),0)."<br />Dirección: ".$consignatario1->getCaDireccion()."<br />Teléfonos:".$consignatario1->getCaTelefonos()." Fax:".$consignatario1->getCaFax()."<br />".$consignatario1->getCiudad()->getCaCiudad()." ".$consignatario1->getCiudad()->getTrafico()->getCaNombre();
+                    }                    
+                    $consignatario_m = $consignatario1->getCaNombre()." Nit. ".$consignatario1->getCaIdentificacion()."<br />Dirección: ".$consignatario1->getCaDireccion()."<br />Teléfonos:".$consignatario1->getCaTelefonos()." Fax:".$consignatario1->getCaFax()."<br />".$consignatario1->getCiudad()->getCaCiudad()." ".$consignatario1->getCiudad()->getTrafico()->getCaNombre();
                 }
                 else{
                     $consignatario_m=$consignatario_m1;
@@ -72,7 +73,8 @@ class reporteExtComponents extends sfComponents
                     if(!$consignatario1){
                         $consignatario1=new Tercero();
                     }
-                    $consignatario_m = $consignatario1->getCaNombre()." Nit. ".number_format($consignatario1->getCaIdtercero(),0)."<br />Dirección: ".$consignatario1->getCaDireccion()."<br />Teléfonos:".$consignatario1->getCaTelefonos()." Fax:".$consignatario1->getCaFax()."<br />".$consignatario1->getCiudad()->getCaCiudad()." ".$consignatario1->getCiudad()->getTrafico()->getCaNombre();
+                    echo $consignatario1->getCaIdentificacion();
+                    $consignatario_m = $consignatario1->getCaNombre()." Nit. ".$consignatario1->getCaIdentificacion()."<br />Dirección: ".$consignatario1->getCaDireccion()."<br />Teléfonos:".$consignatario1->getCaTelefonos()." Fax:".$consignatario1->getCaFax()."<br />".$consignatario1->getCiudad()->getCaCiudad()." ".$consignatario1->getCiudad()->getTrafico()->getCaNombre();
                 }
                 else{
                     $consignatario_m="";
@@ -168,7 +170,7 @@ class reporteExtComponents extends sfComponents
         if ( $reporte->getCaMastersame() == 'Sí' ){
             $master = $hijo;
         }else{
-            if(!$reporte->getCaIdconsignarmaster() || $reporte->getCaIdconsignarmaster()>3 )
+            if(!$reporte->getCaIdconsignarmaster() || $reporte->getCaIdconsignarmaster()>4 )
             {
                 if($reporte->getCaImpoexpo()==constantes::IMPO)
                     $master = $consignatario_m1;
@@ -227,7 +229,7 @@ class reporteExtComponents extends sfComponents
                     $consignatario1 = Doctrine::getTable("Tercero")->find($reporte->getCaIdconsignarmaster());
                     if(!$consignatario1)
                         $consignatario1=new Tercero();
-                    $master = $consignatario1->getCaNombre()." Nit. ".number_format($consignatario1->getCaIdtercero(),0)."<br />Dirección: ".$consignatario1->getCaDireccion()."<br />Teléfonos:".$consignatario1->getCaTelefonos()." Fax:".$consignatario1->getCaFax()."<br />".$consignatario1->getCiudad()->getCaCiudad()." ".$consignatario1->getCiudad()->getTrafico()->getCaNombre();
+                    $master = $consignatario1->getCaNombre()." Nit. ".number_format($consignatario1->getCaIdentificacion(),0)."<br />Dirección: ".$consignatario1->getCaDireccion()."<br />Teléfonos:".$consignatario1->getCaTelefonos()." Fax:".$consignatario1->getCaFax()."<br />".$consignatario1->getCiudad()->getCaCiudad()." ".$consignatario1->getCiudad()->getTrafico()->getCaNombre();
                 }
                 else
                     $master="";
