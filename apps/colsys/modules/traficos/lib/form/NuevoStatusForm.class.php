@@ -101,6 +101,9 @@ class NuevoStatusForm extends BaseForm {
 
         $widgets['fchrecibo'] = new sfWidgetFormExtDate();
         $widgets['horarecibo'] = new sfWidgetFormTime();
+        
+        //solo para validación
+        $widgets['fchhorarecibo'] = new sfWidgetFormInputHidden();
 
         for ($i = 0; $i < self::NUM_EQUIPOS; $i++) {
             $widgets["equipos_tipo_" . $i] = new sfWidgetFormDoctrineChoice(array(
@@ -260,8 +263,9 @@ class NuevoStatusForm extends BaseForm {
 
         $validator['ca_inspeccion_fisica'] = new sfValidatorBoolean(array('required' => false));
 
-        $validator['fchactual'] = new sfValidatorDate(array('required' => false),
-                        array('required' => 'Por favor coloque en una fecha valida'));
+        $validator['fchactual'] = new sfValidatorString(array('required' => false));
+        $validator['fchhorarecibo'] = new sfValidatorString(array('required' => false));
+        
 
         //echo isset($validator['fchdoctransporte'])."<br />";															
         $this->setValidators($validator);
@@ -270,7 +274,7 @@ class NuevoStatusForm extends BaseForm {
         $this->validatorSchema->setPostValidator(
                 new sfValidatorAnd(array(
                     new sfValidatorSchemaCompare('fchrecordar', '<=', 'fchseguimiento', array(), array("invalid" => "Esta fecha debe ser menor que la fecha de seguimiento")),
-                    new sfValidatorSchemaCompare('fchrecibo', '<=', 'fchactual', array(), array("invalid" => "Esta fecha debe ser menor que la fecha actual"))
+                    new sfValidatorSchemaCompare('fchhorarecibo', '<=', 'fchactual', array(), array("invalid" => "Esta fecha debe ser menor que la fecha actual"))
                         )
                 )
         );
@@ -337,6 +341,9 @@ class NuevoStatusForm extends BaseForm {
             }
         }
 
+       
+        
+        $taintedValues["fchhorarecibo"] = $fch;
         $taintedValues["fchactual"] = date("Y-m-d H:i:s");
         $destinatariosFijos = $this->getDestinatariosFijos();
 

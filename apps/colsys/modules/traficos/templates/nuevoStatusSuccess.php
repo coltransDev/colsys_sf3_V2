@@ -787,7 +787,8 @@ echo $form['transporte']->render();
 	?>
 	<tr>
 		<td><div align="left"><b>Fecha Recibido Status:</b><br />
-				<?			
+			<?			            
+            echo $form['fchhorarecibo']->renderError();         
 			echo $form['fchrecibo']->renderError(); 
 			echo $form['fchrecibo']->render();
 			?>		
