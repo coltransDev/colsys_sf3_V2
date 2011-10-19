@@ -247,7 +247,8 @@ class NuevoStatusForm extends BaseForm {
         }
 
         $validator['mensaje_mask'] = new sfValidatorString(array('required' => false));
-
+        
+        $validator['inspeccion_fisica'] = new sfValidatorString(array('required' => false));        
 
         $validator['datosbl'] = new sfValidatorString(array('required' => false),
                         array('required' => 'Por favor coloque los datos para reclamar el BL en destino'));
