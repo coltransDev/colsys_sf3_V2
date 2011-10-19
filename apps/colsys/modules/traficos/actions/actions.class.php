@@ -410,6 +410,8 @@ class traficosActions extends sfActions
 			$bindValues["mensaje_mask"] = $request->getParameter("mensaje_mask");
 			
 			$bindValues["datosbl"] = $request->getParameter("datosbl");		
+            $bindValues["inspeccion_fisica"] = $request->getParameter("inspeccion_fisica");
+            
 			
 			$bindValues["fchrecibo"] = $request->getParameter("fchrecibo");
 			$bindValues["horarecibo"] = $request->getParameter("horarecibo");
@@ -614,13 +616,13 @@ class traficosActions extends sfActions
                 if( $request->getParameter("datosbl") ){
                     $repExpo->setCaDatosbl( $request->getParameter("datosbl") );
                 }
-                if( $request->getParameter("inspeccion_fisica")!==null ){
-                    if( $request->getParameter("inspeccion_fisica") ){
-                        $repExpo->setCaInspeccionFisica( true );
-                    }else{
-                        $repExpo->setCaInspeccionFisica( false );
-                    }
+                
+                if( $request->getParameter("inspeccion_fisica") ){
+                    $repExpo->setCaInspeccionFisica( true );
+                }else{
+                    $repExpo->setCaInspeccionFisica( false );
                 }
+                
                 $repExpo->save( $conn );
             }
 
