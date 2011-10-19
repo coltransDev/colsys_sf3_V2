@@ -41,7 +41,8 @@
                 <input type="hidden" name="idtipo" value="<?=$documento->getCaIdtipo()?>" />
                 <?
             }else{
-                echo $form['idtipo']->renderError();
+                echo $form['idtipo']->renderError();                
+                $form->setDefault('idtipo', $idtipodocumento );            
                 echo $form['idtipo']->render();
             }
             

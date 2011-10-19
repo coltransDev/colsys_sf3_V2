@@ -31,7 +31,7 @@
     ?>
         <tr class="row0">
             <td colspan="4">
-                <?=$tipo->getCaNombre()?>
+                <b><?=$tipo->getCaNombre()?></b>
             </td>
             <td >
                 <?=link_to(image_tag("16x16/edit_add.gif"), "ids/formDocumentosPorTipo?modo=".$modo."&tipo=".$tipo->getCaTipo())?>

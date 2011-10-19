@@ -745,7 +745,40 @@ class idsActions extends sfActions {
         }
         $this->documento = $documento;
         $this->ids = $ids;
+        
+        $this->idtipodocumento = $request->getParameter("idtipodocumento");
     }
+    
+    
+    /*
+     * Manejo de documentos
+     *
+     * @param sfRequest $request A request object
+     */
+
+    public function executeEliminarDocumentos(sfWebRequest $request) {
+        $this->nivel = $this->getNivel();
+
+        if ($this->nivel < 3) {
+            $this->forward404();
+        }
+        $this->modo = $request->getParameter("modo");
+
+        $this->forward404Unless( $request->getParameter("iddocumento") );
+        $documento = Doctrine::getTable("IdsDocumento")->find($request->getParameter("iddocumento"));
+        $this->forward404Unless($documento);        
+        $ids = $documento->getIds();        
+        $this->forward404Unless($ids);
+        
+        $documento->delete();
+        $imagen = $documento->getArchivo();
+        $this->redirect("ids/verIds?modo=" . $this->modo . "&id=" . $ids->getCaId());
+        
+
+        
+    }
+    
+    
 
     /*
      * Visualiza documentos

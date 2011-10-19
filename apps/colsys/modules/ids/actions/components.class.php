@@ -36,14 +36,30 @@ class idsComponents  extends sfComponents
     public function executeDocumentos()
 	{
 		
-        $this->documentos = Doctrine::getTable("IdsDocumento")
+        $documentos = Doctrine::getTable("IdsDocumento")
                             ->createQuery("d")
                             ->innerJoin("d.IdsTipoDocumento td")
                             ->where("d.ca_id = ?",  $this->ids->getCaId() )
                             ->addOrderBy( "td.ca_tipo ASC" )
-                            ->addOrderBy( "d.ca_fchcreado DESC" )
+                            ->addOrderBy( "d.ca_fchcreado ASC" )
                             ->execute();
+        
+        
+        $this->documentos = array();
+        foreach( $documentos as $documento ){
+            if( !isset( $this->documentos[$documento->getCaIdtipo()] ) ){
+                $this->documentos[$documento->getCaIdtipo()] = array();                
+            }
+            $this->documentos[$documento->getCaIdtipo()] = $documento;
+        }
+        
+        
 
+        $this->user = $this->getUser();
+        
+        $tipo = $this->ids->getIdsProveedor()->getIdsTipo();
+        $this->documentosPorTipo = $tipo->getIdsDocumentoPorTipo();
+        
         
 
 
