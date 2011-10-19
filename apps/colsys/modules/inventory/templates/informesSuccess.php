@@ -17,7 +17,7 @@
         </tr>
         <tr>
             <td>                
-                <?=link_to("Licencias de Software", "inventory/informeLicenciasResult");?>  
+                <?=link_to("Licencias de Software", "inventory/informeLicencias");?>  
             </td>
         </tr>
     </table>

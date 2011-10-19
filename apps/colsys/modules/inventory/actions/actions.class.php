@@ -64,9 +64,9 @@ class inventoryActions extends sfActions {
             $q->addWhere("c.ca_parent IS NULL");
             $this->parent = null;
         }
-        
-        
-        
+
+
+
         $this->categorias = $q->execute();
 
         $this->idsucursal = $idsucursal;
@@ -87,10 +87,10 @@ class inventoryActions extends sfActions {
                 ->createQuery("a");
 
         $mostrarBajas = $request->getParameter("mostrarBajas");
-        
-        if( $mostrarBajas=="true" ){
+
+        if ($mostrarBajas == "true") {
             $q->addWhere("a.ca_fchbaja IS NOT NULL");
-        }else{
+        } else {
             $q->addWhere("a.ca_fchbaja IS NULL");
         }
         $q->addWhere("a.ca_idcategory = ?", $idcategory);
@@ -230,7 +230,7 @@ class inventoryActions extends sfActions {
 
                 $activo->setCaIdcategory($request->getParameter("idcategory"));
                 $cat = Doctrine::getTable("InvCategory")->find($request->getParameter("idcategory"));
-                                
+
                 $prefijo = $cat->getPrefijo($request->getParameter("idsucursal"));
                 if (($prefijo && !$prefijo->getCaAutonumeric()) || !$prefijo) {
                     if ($request->getParameter("identificador")) {
@@ -248,8 +248,8 @@ class inventoryActions extends sfActions {
                             ->addOrderBy("a.ca_identificador DESC")
                             ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)
                             ->execute();
-                    
-                    
+
+
 
                     if ($value) {
                         $value = str_replace($pre, "", $value);
@@ -289,13 +289,13 @@ class inventoryActions extends sfActions {
             } else {
                 $activo->setCaFchcompra(null);
             }
-            
+
             if ($request->getParameter("fchbaja")) {
                 $activo->setCaFchbaja($request->getParameter("fchbaja"));
             } else {
                 $activo->setCaFchbaja(null);
             }
-            
+
             if (floatval($request->getParameter("reposicion"))) {
                 $activo->setCaReposicion(floatval($request->getParameter("reposicion")));
             } else {
@@ -319,7 +319,7 @@ class inventoryActions extends sfActions {
             } else {
                 $activo->setCaMantenimiento(null);
             }
-            
+
             if ($request->getParameter("detalle")) {
                 $activo->setCaDetalle(utf8_decode($request->getParameter("detalle")));
             } else {
@@ -459,7 +459,7 @@ class inventoryActions extends sfActions {
 
             if ($request->getParameter("prefix")) {
 
-                
+
                 $prefijo = Doctrine::getTable("InvPrefijo")->find(array($idcategory, $idsucursal));
                 if (!$prefijo) {
                     $prefijo = new InvPrefijo();
@@ -469,7 +469,7 @@ class inventoryActions extends sfActions {
 
                 $autonumeric = $request->getParameter("autonumeric");
                 $prefijo->setCaAutonumeric($autonumeric == "on");
-                $prefix = strtoupper(str_replace(" ", "", str_replace("-", "", $request->getParameter("prefix"))));                
+                $prefix = strtoupper(str_replace(" ", "", str_replace("-", "", $request->getParameter("prefix"))));
                 $prefijo->setCaPrefix($prefix);
                 $prefijo->save();
             }
@@ -616,23 +616,23 @@ class inventoryActions extends sfActions {
             $this->forward404Unless($idactivo);
             $idequipo = $request->getParameter("idequipo");
             $this->forward404Unless($idequipo);
-            
-            $activo = Doctrine::getTable("InvActivo")->find( $idactivo );
+
+            $activo = Doctrine::getTable("InvActivo")->find($idactivo);
             //Verifica que no hayan mas licencias asignadas que las registradas                          
             $q = Doctrine::getTable("InvAsignacionSoftware")
-                    ->createQuery("a")                    
+                    ->createQuery("a")
                     ->select("count(*) as assigned")
                     ->addWhere("a.ca_idactivo=?", $idactivo);
-                    
-            
+
+
             $asig = $q->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)
                     ->execute();
-           
-                        
-            if ($activo->getCaCantidad() <= $asig ) {
+
+
+            if ($activo->getCaCantidad() <= $asig) {
                 throw new Exception(" No hay mas licencias disponibles. Cantidad: " . $activo->getCaCantidad() . " Asignadas: " . $asig);
             }
-            
+
 
             if ($request->getParameter("idasignacion_software")) {
                 $asignacion = Doctrine::getTable("InvAsignacionSoftware")->find($request->getParameter("idasignacion_software"));
@@ -687,13 +687,13 @@ class inventoryActions extends sfActions {
                 ->from("InvActivo a")
                 ->innerJoin("a.InvCategory c")
                 ->leftJoin("a.Usuario u")
-                ->leftJoin("u.Sucursal s")                
+                ->leftJoin("u.Sucursal s")
                 ->addWhere("UPPER(a.ca_identificador) LIKE ? OR UPPER(u.ca_nombre) LIKE ? ", array($query, $query))
                 ->addWhere("c.ca_parameter = ?", "Hardware")
                 ->addOrderBy("a.ca_identificador")
                 ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
                 ->execute();
-        
+
         foreach ($equipos as $key => $val) {
             $equipos[$key]["s_ca_nombre"] = utf8_encode($equipos[$key]["s_ca_nombre"]);
             $equipos[$key]["u_ca_nombre"] = utf8_encode($equipos[$key]["u_ca_nombre"]);
@@ -732,43 +732,73 @@ class inventoryActions extends sfActions {
     }
 
     public function executeInformeLicencias($request) {
-        
+        $q = Doctrine::getTable("Sucursal")
+                ->createQuery("s")
+                ->addWhere("s.ca_idempresa = ?", 2)
+                ->addOrderBy("s.ca_nombre");
+
+        $this->nivel = $this->getNivel();
+        if ($this->nivel < 2) {
+            $user = $this->getUser();
+            $q->addWhere("s.ca_idsucursal = ? ", $user->getIdsucursal());
+        }
+
+        $this->sucursales = $q->execute();
     }
 
     public function executeInformeLicenciasResult($request) {
-        $this->soOEM = Doctrine::getTable("InvActivo")
+
+        $idsucursal = $request->getParameter("idsucursal");
+        
+        $q = Doctrine::getTable("InvActivo")
                 ->createQuery("a")
-                ->innerJoin("a.InvCategory c")                
+                ->innerJoin("a.InvCategory c")
                 ->addWhere("a.ca_fchbaja IS NULL")
                 ->select("a.ca_so, count(*) as q")
                 ->addWhere("a.ca_so IS NOT NULL  AND a.ca_so!='' AND a.ca_so!=?", "No tiene ")
                 ->addGroupBy("a.ca_so")
-                ->addOrderBy("a.ca_so")
-                ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                ->addOrderBy("a.ca_so");
+
+
+        if ($idsucursal) {
+            $q->addWhere("a.ca_idsucursal = ?", $idsucursal);
+        }
+
+        $this->soOEM = $q->setHydrationMode(Doctrine::HYDRATE_SCALAR)
                 ->execute();
 
-        $this->ofOEM = Doctrine::getTable("InvActivo")
+        $q = Doctrine::getTable("InvActivo")
                 ->createQuery("a")
-                ->innerJoin("a.InvCategory c")                
+                ->innerJoin("a.InvCategory c")
                 ->addWhere("a.ca_fchbaja IS NULL")
                 ->select("a.ca_office, count(*) as q")
                 ->addWhere("a.ca_office IS NOT NULL  AND a.ca_office!='' AND a.ca_office!=?", "No tiene")
                 ->addGroupBy("a.ca_office")
-                ->addOrderBy("a.ca_office")
-                ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                ->addOrderBy("a.ca_office");
+        
+        if ($idsucursal) {
+            $q->addWhere("a.ca_idsucursal = ?", $idsucursal);
+        }
+
+        $this->ofOEM = $q->setHydrationMode(Doctrine::HYDRATE_SCALAR)
                 ->execute();
 
 
-        $this->software = Doctrine::getTable("InvActivo")
+        $q = Doctrine::getTable("InvActivo")
                 ->createQuery("a")
-                ->innerJoin("a.InvCategory c")                      
+                ->innerJoin("a.InvCategory c")
                 ->addWhere("a.ca_fchbaja IS NULL")
                 ->leftJoin("a.InvAsignacionSoftwareActivo as")
                 ->select("a.ca_idactivo,c.ca_name,a.ca_modelo, a.ca_cantidad as q, count(as.ca_idactivo) as assigned")
-                ->addWhere("c.ca_parameter=?", "Software")                
+                ->addWhere("c.ca_parameter=?", "Software")
                 ->addGroupBy("a.ca_idactivo, c.ca_name, a.ca_modelo, a.ca_cantidad")
-                ->addOrderBy("c.ca_name, a.ca_idactivo, c.ca_name, a.ca_modelo, a.ca_cantidad")
-                ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                ->addOrderBy("c.ca_name, a.ca_idactivo, c.ca_name, a.ca_modelo, a.ca_cantidad");
+        
+        if ($idsucursal) {
+            $q->addWhere("a.ca_idsucursal = ?", $idsucursal);
+        }
+        
+        $this->software = $q->setHydrationMode(Doctrine::HYDRATE_SCALAR)
                 ->execute();
     }
 
@@ -789,16 +819,13 @@ class inventoryActions extends sfActions {
         }
 
         $this->sucursales = $q->execute();
-        
-        
+
+
         $this->cats = Doctrine::getTable("InvCategory")
-                ->createQuery("c")                
+                ->createQuery("c")
                 ->addOrderBy("c.ca_parent")
-                ->addOrderBy("c.ca_order")                
+                ->addOrderBy("c.ca_order")
                 ->execute();
-        
-        
-        
     }
 
     public function executeInformeListadoActivosResult($request) {
@@ -810,165 +837,158 @@ class inventoryActions extends sfActions {
         $bajasChkbox = $request->getParameter("bajasChkbox");
         $fchbajainicio = $request->getParameter("fchbajainicio");
         $fchbajafinal = $request->getParameter("fchbajafinal");
-        
+
         $q = Doctrine::getTable("InvActivo")
                 ->createQuery("a")
-                ->innerJoin("a.InvCategory c")                               
+                ->innerJoin("a.InvCategory c")
                 ->leftJoin("c.Parent p")
                 ->leftJoin("a.Usuario u")
-                ->leftJoin("a.Sucursal s")                
+                ->leftJoin("a.Sucursal s")
                 ->addOrderBy("c.ca_name ASC")
                 ->addOrderBy("a.ca_identificador ASC");
-        
+
         //Dependiendo del parametro se muestran otras columnas en el informe
         $this->param = $request->getParameter("param");
-        if( $idcategory ){
+        if ($idcategory) {
             $cat = Doctrine::getTable("InvCategory")->find($idcategory);
             $this->param = $cat->getCaParameter();
-            $q->addWhere("a.ca_idcategory = ?", $idcategory );
+            $q->addWhere("a.ca_idcategory = ?", $idcategory);
         }
-        
-        if( $idsucursal ){
+
+        if ($idsucursal) {
             $q->addWhere("a.ca_idsucursal = ?", $idsucursal);
         }
-        
-        if( $so ){
+
+        if ($so) {
             $q->addWhere("a.ca_so = ?", $so);
         }
-        
-        if( $office ){
+
+        if ($office) {
             $q->addWhere("a.ca_office = ?", $office);
         }
-        
-        
-        
-        if( $idasignacion ){
+
+
+
+        if ($idasignacion) {
             $q->innerJoin("a.InvAsignacionSoftware as");
             $q->addWhere("as.ca_idactivo = ? ", $idasignacion);
         }
-        
+
         $this->nivel = $this->getNivel();
         if ($this->nivel < 2) {
             $user = $this->getUser();
             $q->addWhere("s.ca_idsucursal = ? ", $user->getIdsucursal());
         }
-        
-        if( $bajasChkbox ){
-            
-            if( $fchbajainicio ){                
-                $q->addWhere("a.ca_fchbaja >= ? ", $fchbajainicio );
+
+        if ($bajasChkbox) {
+
+            if ($fchbajainicio) {
+                $q->addWhere("a.ca_fchbaja >= ? ", $fchbajainicio);
             }
-            
-            if( $fchbajafinal ){                
-                $q->addWhere("a.ca_fchbaja <= ? ", $fchbajafinal );
+
+            if ($fchbajafinal) {
+                $q->addWhere("a.ca_fchbaja <= ? ", $fchbajafinal);
             }
         }
-        
+
         $this->activos = $q->execute();
         $this->bajasChkbox = $bajasChkbox;
     }
-    
-    
+
     public function executeDatosPanelProductos($request) {
         $idcategory = $request->getParameter("idcategory");
-        
+
         $productos = Doctrine::getTable("InvProducto")
-                ->createQuery("p")             
-                ->addWhere("p.ca_idcategoria = ?", $idcategory )
-                ->addOrderBy("p.ca_nombre ASC")                
+                ->createQuery("p")
+                ->addWhere("p.ca_idcategoria = ?", $idcategory)
+                ->addOrderBy("p.ca_nombre ASC")
                 ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
                 ->execute();
-        
-        foreach( $productos as $key=>$val ){
-            $productos[$key]["p_ca_nombre"] = utf8_encode( $productos[$key]["p_ca_nombre"] ); 
+
+        foreach ($productos as $key => $val) {
+            $productos[$key]["p_ca_nombre"] = utf8_encode($productos[$key]["p_ca_nombre"]);
         }
-        
-        $productos[] = array("p_ca_nombre"=>"+", "orden"=>"Z");
-        
+
+        $productos[] = array("p_ca_nombre" => "+", "orden" => "Z");
+
         $this->responseArray = array("root" => $productos, "total" => count($productos), "success" => true);
         $this->setTemplate("responseTemplate");
-        
     }
-    
+
     public function executeGuardarPanelProductos($request) {
         $idcategory = $request->getParameter("idcategory");
         $idproducto = $request->getParameter("idproducto");
-        
-        try{
-            $this->forward404Unless( $idcategory );
-            if( $idproducto ){
-                $prod = Doctrine::getTable("InvProducto")->find( $idproducto );
-                $this->forward404Unless( $prod );
-            }else{
-                $prod = new InvProducto();   
-                $prod->setCaIdcategoria( $idcategory );
+
+        try {
+            $this->forward404Unless($idcategory);
+            if ($idproducto) {
+                $prod = Doctrine::getTable("InvProducto")->find($idproducto);
+                $this->forward404Unless($prod);
+            } else {
+                $prod = new InvProducto();
+                $prod->setCaIdcategoria($idcategory);
             }
-            
-            $prod->setCaNombre( $request->getParameter("nombre") );
+
+            $prod->setCaNombre($request->getParameter("nombre"));
             $prod->save();
-            $this->responseArray = array("success" => true, "idproducto"=>$prod->getCaIdproducto(), "id"=>$request->getParameter("id") );
-        }catch( Exception $e ){
-            $this->responseArray = array("success" => false, "errorInfo"=>$e->getMessage() );
+            $this->responseArray = array("success" => true, "idproducto" => $prod->getCaIdproducto(), "id" => $request->getParameter("id"));
+        } catch (Exception $e) {
+            $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
         }
         $this->setTemplate("responseTemplate");
-        
     }
-    
-    public function executeEliminarPanelProductos($request) {        
-        
-        try{
+
+    public function executeEliminarPanelProductos($request) {
+
+        try {
             $idproducto = $request->getParameter("idproducto");
-            $this->forward404Unless( $idproducto );
-            $prod = Doctrine::getTable("InvProducto")->find( $idproducto );
-            $this->forward404Unless( $prod );
+            $this->forward404Unless($idproducto);
+            $prod = Doctrine::getTable("InvProducto")->find($idproducto);
+            $this->forward404Unless($prod);
             $prod->delete();
-            $this->responseArray = array("success" => true,  "id"=>$request->getParameter("id") );
-        }catch( Exception $e ){
-            $this->responseArray = array("success" => false, "errorInfo"=>$e->getMessage() );
+            $this->responseArray = array("success" => true, "id" => $request->getParameter("id"));
+        } catch (Exception $e) {
+            $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
         }
-        $this->setTemplate("responseTemplate");    
+        $this->setTemplate("responseTemplate");
     }
-    
-    
+
     public function executeDetalleActivo($request) {
         $idactivo = $request->getParameter("idactivo");
-        $this->forward404Unless( $idactivo );
-        $this->activo = Doctrine::getTable("InvActivo")->find( $idactivo );
-        $this->forward404Unless( $this->activo );
-        
+        $this->forward404Unless($idactivo);
+        $this->activo = Doctrine::getTable("InvActivo")->find($idactivo);
+        $this->forward404Unless($this->activo);
+
         $cat = $this->activo->getInvCategory();
-        
-        $this->parameter =  $cat->getCaParameter();
-        
-        if( $this->parameter=="Hardware" ){        
+
+        $this->parameter = $cat->getCaParameter();
+
+        if ($this->parameter == "Hardware") {
             $q = Doctrine::getTable("InvActivo")
                     ->createQuery("a")
-                    ->innerJoin("a.InvAsignacionSoftwareActivo so")  
-                    ->innerJoin("a.InvCategory c")                
+                    ->innerJoin("a.InvAsignacionSoftwareActivo so")
+                    ->innerJoin("a.InvCategory c")
                     ->addWhere("a.ca_fchbaja IS NULL")
-                    ->addWhere("so.ca_idequipo = ? ", $idactivo )
+                    ->addWhere("so.ca_idequipo = ? ", $idactivo)
                     ->addOrderBy("a.ca_identificador ASC");
 
             $this->asig = $q->execute();
         }
-        
-        if( $this->parameter=="Software" ){        
-            
+
+        if ($this->parameter == "Software") {
+
             $q = Doctrine::getTable("InvActivo")
                     ->createQuery("a")
-                    ->innerJoin("a.InvAsignacionSoftware so")   
-                    ->innerJoin("a.InvCategory c")                
+                    ->innerJoin("a.InvAsignacionSoftware so")
+                    ->innerJoin("a.InvCategory c")
                     ->addWhere("a.ca_fchbaja IS NULL")
-                    ->addWhere("so.ca_idactivo = ? ", $idactivo )
+                    ->addWhere("so.ca_idactivo = ? ", $idactivo)
                     ->addOrderBy("a.ca_identificador ASC");
-            
+
             $this->asig = $q->execute();
         }
-        
     }
-    
-   
-    
+
 }
 
 ?>
