@@ -989,43 +989,46 @@ class reportesNegActions extends sfActions
             
             if($request->getParameter("aduanas-checkbox")== "on"  )
             {
-                if( ($reporte->getCaTransporte()==constantes::MARITIMO && $reporte->getCaImpoexpo()==constantes::IMPO) && $reporte->getCaContinuacion()!="OTM")
-                {                    
-                    $cargo="Jefe de Aduanas Puerto";
-                }
-                else if(($reporte->getCaTransporte()==constantes::AEREO && $reporte->getCaImpoexpo()==constantes::IMPO) || $reporte->getCaContinuacion()=="OTM")
+                if($reporte->getCaImpoexpo()==constantes::IMPO)
                 {
-                    $cargo="Jefe Dpto. Aduana";
-                }
-                $suc=$this->getUser()->getIdSucursal();
-                if($suc=="ABG" || $suc=="BGA" || $suc=="PEI"  )
-                {
-                    $suc="BOG";
-                }
-                $sucursal=Doctrine::getTable("Sucursal")->find( $suc );                
-                if(!$sucursal)
-                    $sucursal=new Sucursal();                    
-                
-                //echo $cargo.'--Coordinador Control Riesgo Aduana---'.$sucursal->getCaNombre();
-                   
-                {    
-                    $q = Doctrine::getTable("Usuario")
-                                    ->createQuery("c")
-                                    ->select("c.ca_email")
-                                    ->innerJoin("c.Sucursal s")
-                                    ->where(" (c.ca_cargo= ? or c.ca_cargo=?) and s.ca_nombre = ?", array($cargo,'Coordinador Control Riesgo Aduana',$sucursal->getCaNombre()));
-                    //echo $q->getSqlQuery();
-                    $jef_adu=$q->execute();
-                    foreach($jef_adu as $j)
+                    if( ($reporte->getCaTransporte()==constantes::MARITIMO && $reporte->getCaImpoexpo()==constantes::IMPO) && $reporte->getCaContinuacion()!="OTM")
+                    {                    
+                        $cargo="Jefe de Aduanas Puerto";
+                    }
+                    else if(($reporte->getCaTransporte()==constantes::AEREO && $reporte->getCaImpoexpo()==constantes::IMPO) || $reporte->getCaContinuacion()=="OTM")
                     {
-                        //echo $jef_adu->getCaEmail();
-                        if($ca_confirmar_clie!="")
+                        $cargo="Jefe Dpto. Aduana";
+                    }
+                    $suc=$this->getUser()->getIdSucursal();
+                    if($suc=="ABG" || $suc=="BGA" || $suc=="PEI"  )
+                    {
+                        $suc="BOG";
+                    }
+                    $sucursal=Doctrine::getTable("Sucursal")->find( $suc );                
+                    if(!$sucursal)
+                        $sucursal=new Sucursal();                    
+
+                    //echo $cargo.'--Coordinador Control Riesgo Aduana---'.$sucursal->getCaNombre();
+
+                    {    
+                        $q = Doctrine::getTable("Usuario")
+                                        ->createQuery("c")
+                                        ->select("c.ca_email")
+                                        ->innerJoin("c.Sucursal s")
+                                        ->where(" (c.ca_cargo= ? or c.ca_cargo=?) and s.ca_nombre = ?", array($cargo,'Coordinador Control Riesgo Aduana',$sucursal->getCaNombre()));
+                        //echo $q->getSqlQuery();
+                        $jef_adu=$q->execute();
+                        foreach($jef_adu as $j)
                         {
-                            if (stripos(strtolower($ca_confirmar_clie), $j->getCaEmail()) === false)
-                                $ca_confirmar_clie.=",".$j->getCaEmail();
+                            //echo $jef_adu->getCaEmail();
+                            if($ca_confirmar_clie!="")
+                            {
+                                if (stripos(strtolower($ca_confirmar_clie), $j->getCaEmail()) === false)
+                                    $ca_confirmar_clie.=",".$j->getCaEmail();
+                            }
+                            else
+                                $ca_confirmar_clie=$j->getCaEmail();
                         }
-                        else
-                            $ca_confirmar_clie=$j->getCaEmail();
                     }
                 }
                 //echo $ca_confirmar_clie;

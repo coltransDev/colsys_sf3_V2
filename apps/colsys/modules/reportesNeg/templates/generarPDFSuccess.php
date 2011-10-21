@@ -767,7 +767,7 @@ if( !$soloAduana  ){
                     $pdf->SetWidths ( array (200 ) );
                     $pdf->SetStyles ( array ("" ) );
                     $pdf->SetFills ( array (0 ) );
-                    $pdf->Row ( array ("* Observaciones: " . utf8_decode($gasto->getCaDetalles ()) ) );
+                    $pdf->Row ( array ("* Observaciones: " . ($gasto->getCaDetalles ()) ) );
                 }
             }            
             $pdf->Ln ( 1 );
@@ -873,14 +873,11 @@ if( !$soloAduana  ){
         if( $reporte->getCaTransporte()==Constantes::AEREO ){
             if($reporte->getCaImpoexpo()!=constantes::EXPO)
             {
-
-
                 $pdf->SetWidths(array(40,40,40,40,40));
                 $pdf->SetFills(array(1,1,1,1,1));
                 $pdf->SetStyles(array("B","B","B","B","B"));
                 $pdf->SetAligns(array("C","C","C","C","C"));
                 $pdf->Row(array('Concepto:','Neta / Min.','Reportar / Min.','Cobrar / Min', 'Observaciones'));
-
             }
             else
             {
@@ -909,7 +906,7 @@ if( !$soloAduana  ){
                 $pdf->SetStyles(array("B","","","","","","","","",""));
                 $pdf->SetAligns(array("L","C","R","R","R","R","R","R","L"));
 
-                $pdf->Row ( array ($concepto->getConcepto ()->getCaConcepto (), $concepto->getCaCantidad (), Utils::formatNumber($concepto->getCaNetaTar ()) . " " . $concepto->getCaNetaIdm (), $concepto->getCaNetaMin () . " " . $concepto->getCaNetaIdm (), Utils::formatNumber ( $concepto->getCaReportarTar () ). " " . $concepto->getCaReportarIdm (), $concepto->getCaReportarMin () . " " . $concepto->getCaReportarIdm (), Utils::formatNumber ($concepto->getCaCobrarTar ()) . " " . $concepto->getCaCobrarIdm (), Utils::formatNumber ($concepto->getCaCobrarMin () ) . " " . $concepto->getCaCobrarIdm (), utf8_decode($concepto->getCaObservaciones ()) ) );
+                $pdf->Row ( array ($concepto->getConcepto ()->getCaConcepto (), $concepto->getCaCantidad (), Utils::formatNumber($concepto->getCaNetaTar ()) . " " . $concepto->getCaNetaIdm (), $concepto->getCaNetaMin () . " " . $concepto->getCaNetaIdm (), Utils::formatNumber ( $concepto->getCaReportarTar () ). " " . $concepto->getCaReportarIdm (), $concepto->getCaReportarMin () . " " . $concepto->getCaReportarIdm (), Utils::formatNumber ($concepto->getCaCobrarTar ()) . " " . $concepto->getCaCobrarIdm (), Utils::formatNumber ($concepto->getCaCobrarMin () ) . " " . $concepto->getCaCobrarIdm (), ($concepto->getCaObservaciones ()) ) );
 
                 $gastos = Doctrine::getTable("RepGasto")
                                  ->createQuery("t")
@@ -1014,8 +1011,8 @@ if( !$soloAduana  ){
 //    $pdf->flushGroup();
 }
 
-if( ( ($reporte->getCaImpoexpo()==constantes::IMPO || $reporte->getCaImpoexpo ()==Constantes::OTMDTA || $reporte->getCaImpoexpo ()==Constantes::OTMDTA1 ) && $reporte->getCaColmas()=="Sí") ||($reporte->getCaTiporep()=="3") ||($reporte->getCaImpoexpo()==constantes::EXPO /*&& ($repexpo->getCaIdsia()==17 || $repexpo->getCaIdsia()==9 )*/ ) ){
-
+if( ( ($reporte->getCaImpoexpo()==constantes::IMPO || $reporte->getCaImpoexpo ()==Constantes::OTMDTA || $reporte->getCaImpoexpo ()==Constantes::OTMDTA1 ) && $reporte->getCaColmas()=="Sí") ||($reporte->getCaTiporep()=="3") ||($reporte->getCaImpoexpo()==constantes::EXPO /*&& ($repexpo->getCaIdsia()==17 || $repexpo->getCaIdsia()==9 )*/ ) )
+{
 	$costosAduana = $reporte->getCostos ( "aduana" );
 	if (count ( $costosAduana )) {
 //        $pdf->beginGroup();

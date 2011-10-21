@@ -79,8 +79,8 @@ include_component("widgets","widgetBodega");
                         new WidgetCiudad({fieldLabel:'Destino Final',
                                                   name:'continuacion_destino',
                                                   id:'continuacion_destino',
-                                                  hiddenName:'continuacion_dest',
-                                                  idtrafico: 'CO-057'
+                                                  hiddenName:'continuacion_dest',                                                  
+                                                  impoexpo:"<?=constantes::TRIANGULACION?>"                                                  
                                                 })
                         <?
                         if($modo==Constantes::MARITIMO )
