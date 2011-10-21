@@ -123,6 +123,10 @@ $cliente = $reporte->getCliente();
 	if( $inoCliente ){		
         $fchfinmuisca=$inoCliente->getInoMaestraSea()->getCaFchfinmuisca();
         $fchfinvaciado=$inoCliente->getInoMaestraSea()->getCaFchvaciado();
+        if($inoCliente->getCaMuelle()!="")
+            $muelle=$inoCliente->getCaMuelle()."-".$inoCliente->getInoDianDepositos()->getCaNombre();
+        else
+            $muelle="";
 	?>
 	<tr>
 		<td><b>Referencia</b></td>
@@ -132,10 +136,24 @@ $cliente = $reporte->getCliente();
         <td ><?=$fchfinmuisca?></td>
         
         <td><b>Fecha Finalizaci&oacute;n Vaciado</b></td>
-        <td ><?=$fchfinvaciado?></td>
-        
+        <td ><?=$fchfinvaciado?></td>        
 	</tr>
     <?
+        if($muelle!="")
+        {
+    ?>
+    <tr>
+		<td><b>Muelle</b></td>
+		<td colspan="2"><?=$muelle?></td>
+        
+        <td>&nbsp;</td>        
+        
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+	</tr>
+    <?
+        }
+   
     }
     if($reporte->getCaImpoexpo()==Constantes::EXPO){
         $repexpo = $reporte->getRepexpo();
