@@ -426,7 +426,7 @@ class confirmacionesActions extends sfActions
 
                 switch( $modo ){
                     case "conf":
-                    case "puerto":    
+                    case "puerto":
                         switch( $tipo_msg ){
                             case "Conf":
                                 $status->setCaIdetapa("IMCPD");
@@ -452,7 +452,7 @@ class confirmacionesActions extends sfActions
                             $status->setCaFchllegada( $request->getParameter("fcharribo") );
                         }
                         break;
-                    case "otm":				
+                    case "otm":
                         $etapa =  $this->getRequestParameter("tipo_".$oid);
 
                         if( $etapa=="IMCOL" || $this->getRequestParameter("modfchllegada_".$oid) ){
