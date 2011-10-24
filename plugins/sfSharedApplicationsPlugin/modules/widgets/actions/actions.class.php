@@ -435,6 +435,13 @@ class widgetsActions extends sfActions {
                 $result["ca_diascredito"] = $row["lc_ca_diascredito"];
                 $result["ca_cupo"] = $row["lc_ca_cupo"];
                 $result["ca_propiedades"] = $row["cl_ca_propiedades"];
+                if(trim($row["cl_ca_propiedades"])!="")
+                {
+                    if(strpos($row["cl_ca_propiedades"], "cuentaglobal=true") !== false)
+                    {
+                        $result["cg"] = "si";
+                    }
+                }
                 $clientes[] = $result;
             }
         }
