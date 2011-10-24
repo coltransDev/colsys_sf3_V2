@@ -539,7 +539,6 @@ class widgetsComponents extends sfComponents {
         $usuarios = UsuarioTable::getCoordinadoresAduana();
         $this->usuarios = array();
 
-
         $this->usuarios[] = array("login" => '',
             "nombre" => utf8_encode("Ninguno Asignado")
         );
@@ -568,6 +567,9 @@ class widgetsComponents extends sfComponents {
         $this->data[] = array("impoexpo" => utf8_encode(Constantes::IMPO),
             "transporte" => utf8_encode(Constantes::MARITIMO),
             "modalidad" => "TRASLADO");
+        $this->data[] = array("impoexpo" => utf8_encode(Constantes::IMPO),
+            "transporte" => utf8_encode(Constantes::MARITIMO),
+            "modalidad" => "TRANSBORDO");
         $this->data[] = array("impoexpo" => utf8_encode(Constantes::EXPO),
             "transporte" => utf8_encode(Constantes::AEREO),
             "modalidad" => "DTA");
