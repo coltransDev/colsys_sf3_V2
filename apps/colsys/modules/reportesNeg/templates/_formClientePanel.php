@@ -33,6 +33,12 @@ include_component("widgets", "widgetContactoCliente");
                     items:[                        
                         this.wgContactoCliente,
                         {
+                            xtype:"label",
+                            id:"img_cli",
+                            name:"img_cli"
+                        }
+                        ,
+                        {
                             xtype:"hidden",
                             id:"idconcliente",
                             name:"idconcliente"
@@ -238,7 +244,12 @@ var ij=parseInt(<?=($nprov>1)?($nprov):1?>);
                         }
                     }
                 });
-            }
+            }            
+            
+            if(record.get("cg"))
+                $("#img_cli").html('<img src="/images/CG30.png" />');
+            else
+                $("#img_cli").html('');
             Ext.getCmp("idconcliente").setValue(record.get("idcontacto"));
             Ext.getCmp("contacto").setValue(record.get("nombre")+' '+record.get("papellido")+' '+record.get("sapellido"));
 

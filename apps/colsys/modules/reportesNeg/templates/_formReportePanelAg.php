@@ -327,6 +327,12 @@ include_component("widgets", "widgetContactoCliente");
                     items: [
                         this.wgContactoCliente,
                         {
+                            xtype:"label",
+                            id:"img_cli",
+                            name:"img_cli"
+                        }
+                        ,
+                        {
                             xtype: "hidden",
                             id: "idconcliente",
                             name: "idconcliente"
@@ -702,6 +708,10 @@ include_component("widgets", "widgetContactoCliente");
                 });
             }
 
+            if(record.get("cg"))
+                $("#img_cli").html('<img src="/images/CG30.png" />');
+            else
+                $("#img_cli").html('');
 
             var confirmar =  record.get("confirmar") ;
 			var brokenconfirmar="";
