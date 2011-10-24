@@ -57,11 +57,10 @@
 			<?
                 if( $reporte ){
 			?>
-			<tr>
-			
+			<tr>			
 			<td class="invertir" colspan="6">
 				<?                
-                include_component("confirmaciones","formConfirmacion", array("inoCliente"=>$inoCliente, "modo"=>$modo, "reporte"=>$reporte, "cliente"=>$cliente, "etapas"=>$etapas, "coordinadores"=>$coordinadores, "textos"=>$textos, $bodegas="bodegas","archivos"=>$archivos,"dimension"=>$dimension,"folder"=>$folder))
+                include_component("confirmaciones","formConfirmacion", array("inoCliente"=>$inoCliente, "modo"=>$modo, "reporte"=>$reporte->getRepUltVersion(), "cliente"=>$cliente, "etapas"=>$etapas, "coordinadores"=>$coordinadores, "textos"=>$textos, $bodegas="bodegas","archivos"=>$archivos,"dimension"=>$dimension,"folder"=>$folder))
                 ?>
             </td>
 			</tr>

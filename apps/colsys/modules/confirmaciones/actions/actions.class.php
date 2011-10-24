@@ -243,11 +243,11 @@ class confirmacionesActions extends sfActions
                 }
                 $referencia->setCaFchvaciado( Utils::parseDate($request->getParameter( "ca_fchvaciado" )) );            
                 $referencia->setCaHoravaciado( $request->getParameter( "ca_horavaciado" ) );
+                if( $request->getParameter( "fchsyga" ) ){
+                    $referencia->setCaFchfinmuisca( Utils::parseDate($request->getParameter( "fchsyga" )) );
+                }
                 $referencia->save();
-            }
-            if( $request->getParameter( "fchsyga" ) ){
-                $referencia->setCaFchfinmuisca( Utils::parseDate($request->getParameter( "fchsyga" )) );
-            }
+            }            
         }
 
         /*
@@ -402,8 +402,6 @@ class confirmacionesActions extends sfActions
                 $status->setCaComentarios( $this->getRequestParameter("notas") );			
                 $status->setCaFchenvio( date("Y-m-d H:i:s") );
                 $status->setCaUsuenvio( $this->getUser()->getUserId() );
-
-
 
                 if( $ultimostatus ){
                     $status->setCaPiezas( $ultimostatus->getCaPiezas() );
