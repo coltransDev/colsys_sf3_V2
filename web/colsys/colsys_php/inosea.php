@@ -636,12 +636,25 @@ elseif (isset($boton)) {                                                       /
                             echo "  <TD Class=captura COLSPAN=6></TD>";
                             echo "</TR>";
                             echo "<TR>";
+                            $sql="select ca_propiedades from tb_clientes where ca_idcliente = ".$cl->Value('ca_idcliente');
+                            
+                            $tmp =& DlRecordset::NewRecordset($conn);  
+                            $tmp->Open($sql);
+                            $img="";                            
+                            if($tmp->Value('ca_propiedades')!="")
+                            {
+                                if(strpos($tmp->Value('ca_propiedades'), "cuentaglobal=true") !== false)
+                                {
+                                    $img='<img src="/images/CG30.png" title="Cliente de Cuentas Globales" />';
+                                }
+                                
+                            }
                             echo "  <TD Class=listar style='font-size: 11px; vertical-align:top'><div title='Creó: ".$cl->Value('ca_usucreado_cl')." ".$cl->Value('ca_fchcreado_cl')." ".($cl->Value('ca_usuactualizado_cl')?"Actualizó: ".$cl->Value('ca_usuactualizado_cl')." ".$cl->Value('ca_fchactualizado_cl'):"")." '><B>Id Cliente:</B><BR>".number_format($cl->Value('ca_idalterno'))."</div></TD>";
                             if ($rs->Value('ca_modalidad')=='FCL'){
-                                echo "  <TD Class=listar style='font-size: 11px;' COLSPAN=3><B>Nombre del Cliente:</B><BR>".$cl->Value('ca_compania')."</TD>";
+                                echo "  <TD Class=listar style='font-size: 11px;' COLSPAN=3><B>Nombre del Cliente:</B><BR>".$cl->Value('ca_compania')." $img</TD>";
                                 echo "  <TD Class=listar><B>Vence Comodato:</B><BR>".$cl->Value('ca_fchvencimiento')."</TD>";
                             }else{
-                                echo "  <TD Class=listar style='font-size: 11px;' COLSPAN=4><B>Nombre del Cliente:</B><BR>".$cl->Value('ca_compania')."</TD>";
+                                echo "  <TD Class=listar style='font-size: 11px;' COLSPAN=4><B>Nombre del Cliente:</B><BR>".$cl->Value('ca_compania')." $img</TD>";
                             }
 
                             echo "  <TD ROWSPAN=2 WIDTH=80 Class=listar style='text-align: center;'>";                                              // Botones para hacer Mantenimiento a la Tabla
@@ -1600,6 +1613,8 @@ elseif (isset($boton)) {                                                       /
                     echo"<OPTION VALUE=".$us->Value('ca_login').">".$us->Value('ca_nombre')."</OPTION>";
                     $us->MoveNext();
                 }
+                
+                
                 echo "  </SELECT></TD>";
                 echo "  <TD Class=mostrar>ID Proveedor:<BR><INPUT TYPE='TEXT' NAME='idproveedor' SIZE=10 MAXLENGTH=8></TD>";
                 echo "  <TD Class=mostrar COLSPAN=2>Proveedor:<BR><INPUT TYPE='TEXT' NAME='proveedor' SIZE=40 MAXLENGTH=50></TD>";
@@ -2045,13 +2060,26 @@ elseif (isset($boton)) {                                                       /
                     echo">".$us->Value('ca_nombre')."</OPTION>";
                     $us->MoveNext();
                 }
+                $tmp =& DlRecordset::NewRecordset($conn);  
+                $sql="select ca_propiedades from tb_clientes where ca_idcliente = ".$rs->Value('ca_idcliente');
+                $tmp->Open($sql);
+                $img="";
+                
+                if($tmp->Value('ca_propiedades')!="")
+                {
+                    if(strpos($tmp->Value('ca_propiedades'), "cuentaglobal=true") !== false)
+                    {
+                        $img='<img src="/images/CG30.png" title="Cliente de Cuentas Globales" />';
+                    }
+
+                }
                 echo "  </SELECT></TD>";
                 echo "  <TD Class=mostrar>ID Proveedor:<BR><INPUT TYPE='TEXT' NAME='idproveedor' VALUE='".$rs->Value('ca_idproveedor')."' SIZE=10 MAXLENGTH=8></TD>";
                 echo "  <TD Class=mostrar COLSPAN=2>Proveedor:<BR><INPUT TYPE='TEXT' NAME='proveedor' VALUE='".$rs->Value('ca_proveedor')."' SIZE=40 MAXLENGTH=50></TD>";
                 echo "</TR>";
                 echo "<TR>";
                 echo "  <TD Class=mostrar style='vertical-align:bottom'>Id Cliente:<BR><INPUT TYPE='TEXT' NAME='idalterno' VALUE='".$rs->Value('ca_idalterno')."' SIZE=11 MAXLENGTH=9 READONLY></TD>";
-                echo "  <TD Class=mostrar COLSPAN=3>Nombre del Cliente:<BR><INPUT TYPE='TEXT' READONLY NAME='cliente' VALUE='".$rs->Value('ca_compania')."' SIZE=60 MAXLENGTH=60 READONLY></TD>";
+                echo "  <TD Class=mostrar COLSPAN=3>Nombre del Cliente:<BR><INPUT TYPE='TEXT' READONLY NAME='cliente' VALUE='".$rs->Value('ca_compania')."' SIZE=60 MAXLENGTH=60 READONLY> $img</TD>";
                 echo "  <TD Class=mostrar>Orden Cliente No.<BR><INPUT TYPE='TEXT' NAME='numorden' VALUE='".$rs->Value('ca_numorden')."' SIZE=17 MAXLENGTH=100></TD>";
                 echo "</TR>";
                 echo "<TR>";
@@ -2349,8 +2377,21 @@ elseif (isset($boton)) {                                                       /
                 echo "  <TD Class=listar style='font-size: 11px;' COLSPAN=2><B>Proveedor:</B><BR>".$rs->Value('ca_proveedor')."</TD>";
                 echo "</TR>";
                 echo "<TR>";
+                $tmp =& DlRecordset::NewRecordset($conn);  
+                $sql="select ca_propiedades from tb_clientes where ca_idcliente = ".$rs->Value('ca_idcliente');
+                $tmp->Open($sql);
+                $img="";
+                
+                if($tmp->Value('ca_propiedades')!="")
+                {
+                    if(strpos($tmp->Value('ca_propiedades'), "cuentaglobal=true") !== false)
+                    {
+                        $img='<img src="/images/CG30.png" title="Cliente de Cuentas Globales" />';
+                    }
+
+                }
                 echo "  <TD Class=listar style='font-size: 11px;'><B>Id Cliente:</B><BR>".number_format($rs->Value('ca_idalterno'))."</TD>";
-                echo "  <TD Class=listar style='font-size: 11px;' COLSPAN=3><B>Nombre del Cliente:</B><BR>".$rs->Value('ca_compania')."</TD>";
+                echo "  <TD Class=listar style='font-size: 11px;' COLSPAN=3><B>Nombre del Cliente:</B><BR>".$rs->Value('ca_compania')." $img</TD>";
                 echo "  <TD Class=mostrar>Orden Cliente No.<BR>".$rs->Value('ca_numorden')."</TD>";
                 echo "</TR>";
 
@@ -3629,7 +3670,20 @@ elseif (isset($boton)) {                                                       /
                 echo "</TR>";
                 echo "<TR>";
                 echo "  <TD Class=listar style='font-size: 11px;'><B>Id Cliente:</B><BR>".number_format($tm->Value('ca_idalterno'))."</TD>";
-                echo "  <TD Class=listar style='font-size: 11px;' COLSPAN=3><B>Nombre del Cliente:</B><BR>".$tm->Value('ca_compania')."</TD>";
+                
+                $tmp =& DlRecordset::NewRecordset($conn);
+                $sql="select ca_propiedades from tb_clientes where ca_idcliente = ".$tm->Value('ca_idcliente');
+                $tmp->Open($sql);
+                $img="";
+                
+                if($tmp->Value('ca_propiedades')!="")
+                {
+                    if(strpos($tmp->Value('ca_propiedades'), "cuentaglobal=true") !== false)
+                    {
+                        $img='<img src="/images/CG30.png" title="Cliente de Cuentas Globales" />';
+                    }
+                }
+                echo "  <TD Class=listar style='font-size: 11px;' COLSPAN=3><B>Nombre del Cliente:</B><BR>".$tm->Value('ca_compania')." $img</TD>";
                 echo "  <TD Class=mostrar>Orden Cliente No.<BR>".$tm->Value('ca_numorden')."</TD>";
                 echo "</TR>";
                 echo "<TR>";
@@ -3865,7 +3919,19 @@ elseif (isset($boton)) {                                                       /
                 echo "</TR>";
                 echo "<TR>";
                 echo "  <TD Class=listar style='font-size: 11px;'><B>Id Cliente:</B><BR>".number_format($rs->Value('ca_idalterno'))."</TD>";
-                echo "  <TD Class=listar style='font-size: 11px;' COLSPAN=3><B>Nombre del Cliente:</B><BR>".$rs->Value('ca_compania')."</TD>";
+                
+                $tmp =& DlRecordset::NewRecordset($conn);  
+                $sql="select ca_propiedades from tb_clientes where ca_idcliente = ".$rs->Value('ca_idcliente');
+                $tmp->Open($sql);
+                $img="";                
+                if($tmp->Value('ca_propiedades')!="")
+                {
+                    if(strpos($tmp->Value('ca_propiedades'), "cuentaglobal=true") !== false)
+                    {
+                        $img='<img src="/images/CG30.png" title="Cliente de Cuentas Globales" />';
+                    }
+                }
+                echo "  <TD Class=listar style='font-size: 11px;' COLSPAN=3><B>Nombre del Cliente:</B><BR>".$rs->Value('ca_compania')." $img</TD>";
                 echo "  <TD Class=mostrar>Orden Cliente No.<BR>".$rs->Value('ca_numorden')."</TD>";
                 echo "</TR>";
 
