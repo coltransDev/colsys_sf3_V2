@@ -6,6 +6,7 @@ class myUser extends sfBasicSecurityUser
 	public function signIn( $login ){
 		$this->setAuthenticated( true );
 		$this->setAttribute('user_id', $login );
+        $this->setAttribute('niveles', null);
 	}
 		
 	public function __toString() {
@@ -171,7 +172,8 @@ class myUser extends sfBasicSecurityUser
             $this->setAttribute('idtrafico', $idtrafico );
             $this->setAttribute('idempresa', $user->getSucursal()->getEmpresa()->getCaIdempresa() );
 			$this->setAttribute('authmethod', $user->getCaAuthmethod() );
-			$this->setAttribute('forcechange', false );					
+			$this->setAttribute('forcechange', false );	
+            $this->setAttribute('niveles', null);
 			
             
             
@@ -219,6 +221,7 @@ class myUser extends sfBasicSecurityUser
             $this->setAttribute('idempresa', $user->getSucursal()->getEmpresa()->getCaIdempresa() );
 			$this->setAttribute('authmethod', $user->getCaAuthmethod() );			
 			$this->setAttribute('forcechange', $user->getCaForcechange() );
+            $this->setAttribute('niveles', null);
 			
 			$departamento = Doctrine::getTable("Departamento")
                                       ->createQuery("d")
@@ -262,6 +265,7 @@ class myUser extends sfBasicSecurityUser
 		$this->setAttribute('iddepartamento', null);
 		$this->setAttribute('authmethod', null);
         $this->setAttribute('menu', null);
+        $this->setAttribute('niveles', null);
 
         
         $this->setAttribute('menu',  null );
