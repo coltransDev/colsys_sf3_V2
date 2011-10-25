@@ -97,7 +97,17 @@ $documentos = $sf_data->getRaw( "documentos" );
         }else{
         ?>
         <td colspan="3">
-           <?=image_tag("16x16/alert.png")?> <span class="rojo">Este documento es requerido y no se ha subido al sistema.</span>
+           <?
+           if( $docRequired->getCaSoloSiAplica() ){
+           ?>
+            Este documento debe subirse en caso que aplique para este proveedor
+           <?
+           }else{
+           ?>
+           <?=image_tag("16x16/alert.png")?> <span class="rojo">Este documento es requerido y no se ha subido al sistema.</span> 
+           <?
+           }
+           ?>
         </td>
         <td>
             <?            

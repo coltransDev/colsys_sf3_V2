@@ -29,6 +29,7 @@ class NuevoDocumentoPorTipoForm extends BaseForm{
         $widgets['idtipo'] = new sfWidgetFormDoctrineChoice(array('model' => 'IdsTipoDocumento', 'add_empty' => false, 'query' => $q), array("onChange"=>"changeTipo()"));
        
         $widgets['controladoporsig'] = new sfWidgetFormInputCheckbox();
+        $widgets['solo_si_aplica'] = new sfWidgetFormInputCheckbox();
         $widgets['transporte'] = new sfWidgetFormChoice(array('choices' => array( ""=>"",
                                                                                   Constantes::AEREO=>Constantes::AEREO,
                                                                                  Constantes::MARITIMO=>Constantes::MARITIMO,
@@ -52,6 +53,9 @@ class NuevoDocumentoPorTipoForm extends BaseForm{
 
       
         $validator["controladoporsig"] =new sfValidatorBoolean( array('required' => false ),
+														array('required' => 'Este campo es requerido'));
+        
+        $validator["solo_si_aplica"] =new sfValidatorBoolean( array('required' => false ),
 														array('required' => 'Este campo es requerido'));
 
         

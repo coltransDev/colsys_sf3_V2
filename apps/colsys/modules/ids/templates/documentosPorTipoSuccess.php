@@ -23,6 +23,9 @@
                Transporte
             </th>
             <th >
+               Solo si aplica
+            </th>
+            <th >
                Opciones
             </th>
         </tr>
@@ -30,7 +33,7 @@
     foreach( $tipos as $tipo ){
     ?>
         <tr class="row0">
-            <td colspan="4">
+            <td colspan="5">
                 <b><?=$tipo->getCaNombre()?></b>
             </td>
             <td >
@@ -58,6 +61,9 @@
                     <?=$documentoPorTipo->getCaTransporte()?>
                 </td>
                 <td >
+                    <?=$documentoPorTipo->getCaSoloSiAplica()?"S&iacute;":"No"?>
+                </td>
+                <td >
                     <?=link_to(image_tag("16x16/edit.gif"), "ids/formDocumentosPorTipo?modo=".$modo."&tipo=".$documentoPorTipo->getCaTipo()."&iddocumentosxtipo=".$documentoPorTipo->getCaIddocumentosxtipo())?>
                     <?=link_to(image_tag("16x16/delete.gif"), "ids/eliminarDocumentosPorTipo?modo=".$modo."&tipo=".$documentoPorTipo->getCaTipo()."&iddocumentosxtipo=".$documentoPorTipo->getCaIddocumentosxtipo(), array("confirm"=>"Esta seguro que desea eliminar este registro?"))?>
                 </td>
@@ -69,7 +75,7 @@
         }else{
             ?>
             <tr >
-                <td colspan="5">
+                <td colspan="6">
                     <span class="rojo">No se han creado documentos para este tipo de proveedor</a>
                 </td>
             </tr>

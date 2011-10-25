@@ -30,7 +30,7 @@ class NuevoCriterioForm extends BaseForm{
                                                                                 )
 															)
                                                     );        
-        $widgets['nombre'] = new sfWidgetFormInputText(array(), array("size"=>100));
+        $widgets['nombre'] = new sfWidgetFormInputText(array(), array("size"=>100, "maxlength"=>80));
         $this->setWidgets( $widgets );
         
         

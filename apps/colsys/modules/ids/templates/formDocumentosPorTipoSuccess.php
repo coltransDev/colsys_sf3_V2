@@ -73,6 +73,16 @@
                 </td>
             </tr>
             <tr>
+                <td>
+                    <b>Solo si aplica</b><br/>
+                    <?
+                    echo $form['solo_si_aplica']->renderError();
+                    $form->setDefault('solo_si_aplica', $docPortipo->getCaSoloSiAplica() );
+                    echo $form['solo_si_aplica']->render();
+                    ?>
+                </td>
+            </tr>
+            <tr>
                 <td colspan="6">
                     <div align="center">
                         <input type="submit" value="Guardar" class="button" />&nbsp;

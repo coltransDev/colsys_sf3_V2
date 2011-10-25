@@ -1631,6 +1631,7 @@ class idsActions extends sfActions {
             $bindValues["tipo"] = $request->getParameter("tipo");
             $bindValues["idtipo"] = $request->getParameter("idtipo");
             $bindValues["controladoporsig"] = $request->getParameter("controladoporsig");
+            $bindValues["solo_si_aplica"] = $request->getParameter("solo_si_aplica");
             if ($bindValues["tipo"] == "TRI" || $bindValues["tipo"] == "TRN") {
                 $bindValues["transporte"] = $request->getParameter("transporte");
                 $bindValues["impoexpo"] = $request->getParameter("impoexpo");
@@ -1656,6 +1657,11 @@ class idsActions extends sfActions {
                 $docPorTipo->setCaTransporte($bindValues["transporte"]);
                 $docPorTipo->setCaControladoxsig($bindValues["controladoporsig"]);
                 $docPorTipo->setCaImpoexpo($bindValues["impoexpo"]);
+                if( $bindValues["solo_si_aplica"] ){
+                    $docPorTipo->setCaSoloSiAplica(true);                
+                }else{
+                    $docPorTipo->setCaSoloSiAplica(false);                
+                }
                 $docPorTipo->save();
                 $this->redirect("ids/documentosPorTipo?modo=" . $this->modo);
             }
