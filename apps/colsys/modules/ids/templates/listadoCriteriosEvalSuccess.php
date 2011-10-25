@@ -31,7 +31,8 @@
                 $lastTipoProv=$tipo->getCaNombre();  
                 ?>
                 <tr class="row0">
-                    <td colspan="2"><b><?=$lastTipoProv?></b></td>
+                    <td ><b><?=$lastTipoProv?></b></td>
+                    <td><?=$nivel>=6?link_to(image_tag("16x16/edit_add.gif"), "ids/formNuevoCriterio?modo=".$modo."&tipoprov=".$tipo->getCaTipo()):"&nbsp;"?></td>
                     
                 </tr>
                 <?
@@ -44,14 +45,19 @@
                 ?>
                 <tr class="row0">
                     <td ><?=ucfirst($lastTipoCrit)?></b></td>
-                    <td><?=$nivel>=6?link_to(image_tag("16x16/edit.gif"), "ids/formCriterios?modo=".$modo."&tipoprov=".$tipo->getCaTipo()."&tipo=".$criterio->getCaTipocriterio().($criterio->getCaImpoexpo()?"&impoexpo=".$criterio->getCaImpoexpo():"").($criterio->getCaTransporte()?"&transporte=".$criterio->getCaTransporte():"")):"&nbsp;"?></td>
+                    <td>
+                        <?=$nivel>=6?link_to(image_tag("16x16/edit.gif"), "ids/formCriterios?modo=".$modo."&tipoprov=".$tipo->getCaTipo()."&tipo=".$criterio->getCaTipocriterio().($criterio->getCaImpoexpo()?"&impoexpo=".$criterio->getCaImpoexpo():"").($criterio->getCaTransporte()?"&transporte=".$criterio->getCaTransporte():"")):"&nbsp;"?>
+                    </td>
                 </tr>
                 <?
             }   
         ?>
         <tr>
             <td><?=$criterio->getCaCriterio()?></td>
-            <td><?=$criterio->getCaPonderacion()?>%</td>
+            <td>
+                <?=$criterio->getCaPonderacion()?>% 
+                <?=($nivel>=6&&$criterio->getCaPonderacion()==0)?link_to(image_tag("16x16/delete.gif"), "ids/desactivarCriterio?modo=".$modo."&idcriterio=".$criterio->getCaIdcriterio()):""?>
+            </td>
         </tr>
         <?
         }

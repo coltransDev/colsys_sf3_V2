@@ -1929,9 +1929,9 @@ class idsActions extends sfActions {
                     $crit = Doctrine::getTable("IdsCriterio")->find( $idcriterio );                    
                     $pond = trim($request->getParameter("ponderacion_" . $idcriterio));
                     $crit->setCaPonderacion( $pond ); 
-                    if( $pond==0 ){
+                    /*if( $pond==0 ){
                         $crit->setCaActivo( false ); 
-                    }
+                    }*/
                     $crit->save();
                 }
 
@@ -1945,6 +1945,90 @@ class idsActions extends sfActions {
         $this->transporte = $transporte;
         $this->impoexpo = $impoexpo;
     }
+    
+    
+    /*
+     *  Lista los criterios de evaluació n para su posterior edición.
+     *
+     * @param sfRequest $request A request object
+     */
+
+    public function executeFormNuevoCriterio(sfWebRequest $request) {
+        
+        
+        $this->nivel = $this->getNivel();
+        $this->nivel = 6;
+        
+        if ($this->nivel < 6) {
+            $this->forward404();
+        }
+        
+        
+        $modo = $request->getParameter("modo");
+        
+        $tipoprov = $request->getParameter("tipoprov");   
+        $this->tipoProv = Doctrine::getTable("IdsTipo")->find($tipoprov);
+        $this->forward404unless( $this->tipoProv );
+        
+        $this->form = new NuevoCriterioForm();
+        $this->form->setCriterios($this->criterios);
+        $this->form->configure();
+
+        if ($request->isMethod('post')) {
+            
+            $bindValues = array();
+            
+            $bindValues["tipoprov"] = $request->getParameter("tipoprov");
+            $bindValues["tipo_eval"] = $request->getParameter("tipo_eval");
+            $bindValues["nombre"] = $request->getParameter("nombre");
+           
+
+            $this->form->bind($bindValues);
+            if ($this->form->isValid()) {            
+                $criterio = new IdsCriterio( $bindValues["tipoprov"] );
+                $criterio->setCaTipo( $bindValues["tipoprov"] );
+                $criterio->setCaTipocriterio( $bindValues["tipo_eval"] );
+                $criterio->setCaCriterio( $bindValues["nombre"] );
+                $criterio->setCaActivo( true );
+                $criterio->setCaPonderacion( 0 );
+                $criterio->save();
+                
+                $this->redirect("ids/listadoCriteriosEval?modo=".$modo);
+            }
+        }
+        $this->modo = $modo;
+    }
+    
+    
+    /*
+     *  Lista los criterios de evaluació n para su posterior edición.
+     *
+     * @param sfRequest $request A request object
+     */
+
+    public function executeDesactivarCriterio(sfWebRequest $request) {
+        
+        
+        $this->nivel = $this->getNivel();
+        $this->nivel = 6;
+        
+        if ($this->nivel < 6) {
+            $this->forward404();
+        }
+        
+        
+        $modo = $request->getParameter("modo");
+        
+        $idcriterio = $request->getParameter("idcriterio");  
+        $this->forward404unless( $idcriterio );
+        $criterio = Doctrine::getTable("IdsCriterio")->find($idcriterio);
+        $this->forward404unless( $criterio );
+        $criterio->setCaActivo( false );
+        $criterio->save();
+        $this->redirect("ids/listadoCriteriosEval?modo=".$modo);
+        
+    }
+    
 
 }
 

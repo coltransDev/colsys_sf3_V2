@@ -57,6 +57,7 @@ $numYears = $actualYear-$initialYear+1;
      </tr>
 </table>
 <br>
+
 <table class="tableList alignLeft" width="100%" border="1">
     <tr class="row0">
         <td width="15%">
