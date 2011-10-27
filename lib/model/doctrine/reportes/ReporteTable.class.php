@@ -46,25 +46,24 @@ class ReporteTable extends Doctrine_Table
         }
 
 		
-
-		//TODO parametrizar
-		if( $idCliente==860048626 ||$idCliente==830512518 ){ //Este cliente (Minipak) solicita especialmente que siempre la aparezcan todos los reportes del mes
+        $cliente = Doctrine::getTable("Cliente")->find( $idCliente );
+        
+        $cierre_status_mes_completo = $cliente->getProperty("cierre_status_mes_completo");		
+        
+		if($cierre_status_mes_completo ){ 
 			$fecha =  date("Y-m-")."01";
-		}else{
-			//Muestra los reportes con estado carga recogida de los ultimos 3 dias o 6 en caso de que sea lunes y 5 en caso de que sea martes
-			$today = date( "N" );
-
-			if( $today==1 ){
-				$add = -7;
-
-			}elseif( $today ==2 ){
-				$add = -6;
-			}else{
-				$add = -5;
-			}
-			$fecha = Utils::addDays( date("Y-m-d"), $add );
+		}else{                       
+            $dias_cierre_status = $cliente->getProperty("dias_cierre_status");
+            if( $dias_cierre_status ){            
+                $numDays = $dias_cierre_status;  
+            }else{
+                $numDays = 5;  
+            }            
+            //28800 horas habiles x día
+            $timeStamp = TimeUtils::addTimeWorkingHours( TimeUtils::getFestivos(date("Y")), date("Y-m-d H:i:s"), 28800*$numDays  );             
+			$fecha = date("Y-m-d", $timeStamp);
 		}
-
+        
         if( $historial ){
             $fecha = date("Y-m-d", time()-86400*365);
         }
@@ -73,10 +72,7 @@ class ReporteTable extends Doctrine_Table
         
 		$orderByETS =false;
         //TODO parametrizar
-		
-        
-        
-        
+		        
         $defaultOrder = false;
 		switch( $order ){
 			case "orden":
@@ -106,7 +102,9 @@ class ReporteTable extends Doctrine_Table
                 }
             } 
             
-            if( $defaultOrder && $idCliente!=860000615 ){
+            $orden_status_x_ets = $cliente->getProperty("orden_status_x_ets");
+            
+            if( $defaultOrder && !$orden_status_x_ets  ){ 
                 $k=count($results);
                 for( $i=1; $i<$k; $i++){                   
                     for( $j=0; $j<$k-1; $j++){
@@ -120,9 +118,8 @@ class ReporteTable extends Doctrine_Table
                     }                    
                 }
             }
-            
-            //TODO parametrizar
-            if( $idCliente==860000615 ){ //Este cliente (DISTRIBUIDORA CORDOBA) solicita que se ordene por nombre y luego por ETS
+                        
+            if($orden_status_x_ets ){ //Se ordena por orden y luego por ETS                
                 $k=count($results);
                 for( $i=1; $i<$k; $i++){                    
                     for( $j=0; $j<$k-1; $j++){
