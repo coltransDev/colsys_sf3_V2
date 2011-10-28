@@ -23,23 +23,20 @@ class Reporte extends BaseReporte {
     private $cliente = null;
     private $esUltimaVersion = null;
 
-
     const IDLISTASEG = 3;
     const IDLISTACONS = 6;
-
     /*
      * Retorna el objeto Contacto asociado al reporte
      * @author Andres Botero
      */
-
-    public function getContacto($tipo='0') {        
+    public function getContacto($tipo='0') {
         if($this->getCaTiporep()==4)
         {
             if(!$this->cliente)
                 $this->getCliente();
             if(!$this->cliente)
                     $this->cliente=new Tercero();
-            $contacto=new Contacto();            
+            $contacto=new Contacto();
             $contacto->setCaEmail($this->cliente->getCaEmail());
             $contacto->setCaNombres($this->cliente->getCaCompania());
             $contacto->setCaIdcliente($this->cliente->getCaIdcliente());
@@ -68,8 +65,7 @@ class Reporte extends BaseReporte {
                                        ->execute();
             }
         }
-    }
-    
+    }    
     /*
      * Retorna el objeto cliente asociado al contacto del reporte
      * @author Andres Botero
@@ -79,16 +75,16 @@ class Reporte extends BaseReporte {
         {
             if($this->getCaTiporep()==4)
             {
-                $this->cliente = new Cliente();                
-                $tercero=Doctrine::getTable("Tercero")->find($this->getRepOtm()->getCaIdcliente());                
+                $this->cliente = new Cliente();
+                $tercero=Doctrine::getTable("Tercero")->find($this->getRepOtm()->getCaIdcliente());
                 if($tercero)
-                {                    
+                {
                     $this->cliente->setCaIdcliente($tercero->getCaIdtercero());
                     $this->cliente->setCaCompania($tercero->getCaNombre());
                     $this->cliente->setCaEmail($tercero->getCaEmail());
                     $this->cliente->setCaTelefonos($tercero->getCaTelefonos());
                     $this->cliente->setCaFax($tercero->getCaFax());
-                    $this->cliente->setCaIdciudad($tercero->getCaIdciudad());                    
+                    $this->cliente->setCaIdciudad($tercero->getCaIdciudad());
                 }
             }
             else
@@ -119,7 +115,6 @@ class Reporte extends BaseReporte {
                             ->where("r.ca_consecutivo = ? AND r.ca_version> ? AND r.ca_fchanulado IS NULL", array($this->getCaConsecutivo(), $version))
                             ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)
                             ->execute();
-
 
             if ($count > 0) {
                 $this->editable = false;
@@ -227,8 +222,6 @@ class Reporte extends BaseReporte {
                             ->addOrderBy("s.ca_fchenvio DESC")
                             ->limit(1)
                             ->fetchOne();
-
-            
         }
         return $this->ultimoStatus;
     }
@@ -312,6 +305,16 @@ class Reporte extends BaseReporte {
         }
         return $this->ultimaVersion;
     }
+    
+    public function getRepUltVersion() {
+        return Doctrine::getTable("Reporte")
+                        ->createQuery("r")
+                        ->select("*")
+                        ->where("r.ca_consecutivo = ? AND ca_fchanulado IS NULL", $this->getCaConsecutivo())
+                        ->orderBy("r.ca_version DESC")
+                        ->limit(1)
+                        ->fetchOne();        
+    }
 
     /*
      * Retorna si el reporte puede ser modificado o no
@@ -319,15 +322,7 @@ class Reporte extends BaseReporte {
      */
 
     public function getEditable($permiso=0, $user=null) {
-
-//        $this->user= sfContext::getInstance()->getUser();
-//        echo $this->user->getUserId();
-//        $user = sfContext::getInstance()->getUser();
-//        echo $user->getUserId();
-        //if(!$this->editable)        
         if ($permiso < 4 && $this->getCaTiporep()!=4 ) {
-
-            //echo "::".$this->editable."::<br>";
             if ($this->esUltimaVersion()) {
                 if ($this->getCerrado()) {
                     $this->editable = false;
@@ -375,8 +370,6 @@ class Reporte extends BaseReporte {
      */
 
     public function getRepEquipos() {
-
-
         return Doctrine::getTable("RepEquipo")
                 ->createQuery("e")
                 ->select("e.*")
@@ -451,7 +444,6 @@ class Reporte extends BaseReporte {
             }
             
             if ($this->getCaImpoexpo() != Constantes::EXPO) {
-                //echo "::".$tipo."::";
                 if ($tipo == "local") {
                     $q->addWhere("r.ca_recargoorigen = ?", false);
                 }
@@ -499,16 +491,10 @@ class Reporte extends BaseReporte {
                         ->innerJoin("c.Costo co")
                         ->orderBy("c.ca_fchcreado ASC");
         $q->addWhere("c.ca_idreporte = ? ", $this->getCaIdreporte());
-        /* if( $this->getCaImpoexpo()==Constantes::EXPO ){
-          $q->addWhere( "co.ca_impoexpo = ? OR co.ca_impoexpo = ? " , array("Aduanas", Constantes::EXPO) );
-          }else{
-          $q->addWhere( "co.ca_impoexpo = ? " , "Aduanas" );
-          } */
         return $q->execute();
     }
     
     public function getEsOtm() {
-//echo $this->getCaImpoexpo();
         if($this->getCaContinuacion()=="OTM" || $this->getCaContOrigen()!="" || $this->getCaImpoexpo()==Constantes::OTMDTA1 || $this->getCaImpoexpo()==Constantes::OTMDTA)
         {
             //echo $this->getCaImpoexpo();
@@ -991,15 +977,6 @@ class Reporte extends BaseReporte {
         } else {
             return false;
         }
-        /*
-          Deberia ser algo asi
-          foreach( $modalidadesAduana as $modalidad ){
-          if( $this->getCaModalidad()==$modalidad["ca_idmodalidad"] ){
-          return true;
-          }
-
-          }
-          return false; */
     }
 
     /*
@@ -1034,8 +1011,6 @@ class Reporte extends BaseReporte {
             $conn->beginTransaction();
 
             if ($opcion == 1) {
-                //echo ReporteTable::siguienteConsecutivo(date("Y"));
-                //exit();
                 $reporte->setCaConsecutivo(ReporteTable::siguienteConsecutivo(date("Y")));
                 $reporte->setCaVersion(1);
                 $reporte->setCaIdetapa(null);
@@ -1049,13 +1024,6 @@ class Reporte extends BaseReporte {
                 $reporte->setCaVersion($this->numVersiones() + 1);                
             }
 
-/*            if($request->getParameter("continuacion")== "OTM")
-            {
-                $reporte->setCaIdconsignatario($request->getParameter("consig"));
-                if($request->getParameter("continuacion")== "OTM")
-                    $reporte->setCaIdconsignar(1);
-            }
-*/
             $reporte->setCaDetanulado(null);
             $reporte->setCaFchcreado(null);
             $reporte->setCaUsucreado(null);
@@ -1101,25 +1069,6 @@ class Reporte extends BaseReporte {
                 $newGasto->save($conn);
             }
 
-            //Copia los gastos
-            /*$gastos = $this->getRecargos();
-            foreach ($gastos as $gasto) {
-                $newGasto = $gasto->copy();
-                $newGasto->setCaIdconcepto($gasto->getCaIdconcepto());
-                $newGasto->setCaIdrecargo($gasto->getCaIdrecargo());
-                $newGasto->setCaIdreporte($reporte->getCaIdreporte());
-                $newGasto->setCaIdequipo($gasto->getCaIdequipo());
-                $newGasto->setCaIdrepgasto(null);
-                if ($gasto->getCaRecargoorigen() == false)
-                    $newGasto->setCaRecargoorigen("false");
-                if ($gasto->getCaRecargoorigen() == true)
-                    $newGasto->setCaRecargoorigen("true");
-                $newGasto->save($conn);
-            }*/
-            
-            
-            
-
             $costos = $this->getCostos();
             foreach ($costos as $costo) {
                 $newCosto = $costo->copy();
@@ -1158,8 +1107,6 @@ class Reporte extends BaseReporte {
                     $repOtmNew->save();
                 }
             }
-            
-            
             $conn->commit();
         } catch (Exception $e) {
 
@@ -1251,6 +1198,11 @@ class Reporte extends BaseReporte {
                     $newConcepto->save($conn);
                 }
                 
+                $conceptos = $this->getRepTarifa(2);
+                foreach ($conceptos as $concepto) {
+                    $concepto->delete();
+                }
+                
                 $conceptos = $reporteNew->getRepTarifa(2);
                 foreach ($conceptos as $concepto) {
                     $newConcepto = $concepto->copy();
@@ -1317,21 +1269,16 @@ class Reporte extends BaseReporte {
                     $repSeguro = $reporteNew->getRepSeguro();
                     if ($repSeguro) {
                         $repSeguroNew = $repSeguro->copy();
-                        //echo "ss".$repSeguroNew->getCaSeguroConf();
-                        //exit;
                         $repSeguroNew->setCaIdreporte($this->getCaIdreporte());
                         $repSeguroNew->save($conn);
                     }
-                }
-                //$reporte = $reporte->importar($idreportenew);
+                }                
                 $conn->commit();
                 return true;
             } else {
                 $conn->rollBack();
                 return false;
             }
-
-
             //Copia los conceptos
         } catch (Exception $e) {
 
@@ -1339,7 +1286,6 @@ class Reporte extends BaseReporte {
             $conn->rollBack();
             return false;
         }
-        //return $reporte;
     }
 
     public function getTareas($idlista=null) {
@@ -1383,8 +1329,6 @@ class Reporte extends BaseReporte {
                         ->addWhere("ca_tipo=? and ca_subject like ?", array($tipo,"%" . $this->getCaIdreporte()."%" ) )
                         ->addOrderBy("e.ca_idemail DESC")
                         ->execute();
-        //$this->countemails=count($this->emails);
         return $emails;
     }
-
 }

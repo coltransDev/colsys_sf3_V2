@@ -47,6 +47,9 @@ class ReporteTable extends Doctrine_Table
 
 		
         $cliente = Doctrine::getTable("Cliente")->find( $idCliente );
+        if( !$cliente ){
+            $cliente = new Cliente();
+        }
         
         $cierre_status_mes_completo = $cliente->getProperty("cierre_status_mes_completo");		
         
