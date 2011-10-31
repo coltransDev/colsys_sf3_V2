@@ -62,9 +62,18 @@ class ReporteTable extends Doctrine_Table
             }else{
                 $numDays = 5;  
             }            
-            //28800 horas habiles x día
-            $timeStamp = TimeUtils::addTimeWorkingHours( TimeUtils::getFestivos(date("Y")), date("Y-m-d H:i:s"), 28800*$numDays  );             
-			$fecha = date("Y-m-d", $timeStamp);
+                       
+            $today = date( "N" );
+
+			if( $today==1 ){
+				$add = ($numDays*-1)-2;
+
+			}elseif( $today ==2 ){
+				$add = ($numDays*-1)-1;
+			}else{
+				$add = ($numDays*-1);
+			}
+			$fecha = Utils::addDays( date("Y-m-d"), $add );                        
 		}
         
         if( $historial ){
