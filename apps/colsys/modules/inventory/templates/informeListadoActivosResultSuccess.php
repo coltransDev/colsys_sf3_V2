@@ -18,7 +18,7 @@ if( $bajasChkbox ){
 }
 ?>
 <div class="content" align="center">
-    <h2>Listados de Activos</h2>
+    <h2>Listados de Activos <br /> <?=$param?> <?=$sucursal?"Sucursal ".$sucursal->getCaNombre():""?> <?=$so?"S.O. ".$so:""?> <?=$office?"Office ".$office:""?> <?=$bajasChkbox?"Bajas desde ".$fchbajainicio." hasta ".$fchbajafinal:""?></h2>
     <br />
     <table class="tableList alignLeft">
         <tr>

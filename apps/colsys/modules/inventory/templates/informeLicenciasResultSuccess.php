@@ -6,7 +6,12 @@
  */
 ?>
 <div class="content">
-    <h2>Licencias OEM Sistema operativo</h2>
+    <h2>Informe Listados de licencias <?=$sucursal?"Sucursal ".$sucursal->getCaNombre():""?><br /> </h2>
+    <br />
+    
+    <h2>Licencias OEM Sistema operativo </h2>
+    
+    
     <table class="tableList alignLeft" width="400px" >
         <tr>
             <th width="70%">
@@ -20,13 +25,18 @@
         $total = 0;
         foreach( $soOEM as $s ){
             $total+=$s["a_q"];
+            
+            $url = "inventory/informeListadoActivosResult?so=".str_replace(".","_",$s["a_ca_so"]);
+            if( $idsucursal ){
+                $url .= "&idsucursal=".$idsucursal;
+            }
         ?>
         <tr>
             <td>
                 <?=$s["a_ca_so"]?>
             </td>
             <td>
-                <?=link_to($s["a_q"], "inventory/informeListadoActivosResult?so=".$s["a_ca_so"], array("target"=>"_blank"))?>
+                <?=link_to($s["a_q"], $url, array("target"=>"_blank"))?>
             </td>
         </tr>
         <?
@@ -58,13 +68,17 @@
         $total = 0;
         foreach( $ofOEM as $s ){
             $total+=$s["a_q"];
+            $url = "inventory/informeListadoActivosResult?office=".str_replace(".","_",$s["a_ca_office"]);
+            if( $idsucursal ){
+                $url .= "&idsucursal=".$idsucursal;
+            }
         ?>
         <tr>
             <td>
                 <?=$s["a_ca_office"]?>
             </td>
             <td>
-                <?=link_to($s["a_q"], "inventory/informeListadoActivosResult?office=".$s["a_ca_office"], array("target"=>"_blank"))?>
+                <?=link_to($s["a_q"], $url, array("target"=>"_blank"))?>
             </td>
         </tr>
         <?
@@ -113,6 +127,11 @@
                 <?
             }
             
+            $url = "inventory/informeListadoActivosResult?idasignacion=".$s["a_ca_idactivo"];
+            if( $idsucursal ){
+                $url .= "&idsucursal=".$idsucursal;
+            }
+            
         ?>
         <tr>
             <td>
@@ -124,7 +143,7 @@
             <td>
                 <?                
                 $a = $s["as_assigned"]<=$s["a_q"]?$s["as_assigned"]:"<span class='rojo'>".$s["as_assigned"]."</span>";                
-                echo link_to($a, "inventory/informeListadoActivosResult?idasignacion=".$s["a_ca_idactivo"], array("target"=>"_blank"));
+                echo link_to($a, $url, array("target"=>"_blank"));
                 ?>
             </td>
         </tr>

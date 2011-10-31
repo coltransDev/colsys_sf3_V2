@@ -759,9 +759,10 @@ class inventoryActions extends sfActions {
                 ->addGroupBy("a.ca_so")
                 ->addOrderBy("a.ca_so");
 
-
+        $sucursal = null;
         if ($idsucursal) {
             $q->addWhere("a.ca_idsucursal = ?", $idsucursal);
+            $sucursal = Doctrine::getTable("Sucursal")->find($idsucursal);   
         }
 
         $this->soOEM = $q->setHydrationMode(Doctrine::HYDRATE_SCALAR)
@@ -800,6 +801,9 @@ class inventoryActions extends sfActions {
         
         $this->software = $q->setHydrationMode(Doctrine::HYDRATE_SCALAR)
                 ->execute();
+        
+        $this->idsucursal = $idsucursal;
+        $this->sucursal = $sucursal;
     }
 
     /*
@@ -820,7 +824,7 @@ class inventoryActions extends sfActions {
 
         $this->sucursales = $q->execute();
 
-
+        
         $this->cats = Doctrine::getTable("InvCategory")
                 ->createQuery("c")
                 ->addOrderBy("c.ca_parent")
@@ -854,17 +858,18 @@ class inventoryActions extends sfActions {
             $this->param = $cat->getCaParameter();
             $q->addWhere("a.ca_idcategory = ?", $idcategory);
         }
-
+        $sucursal = null;
         if ($idsucursal) {
             $q->addWhere("a.ca_idsucursal = ?", $idsucursal);
+            $sucursal = Doctrine::getTable("Sucursal")->find($idsucursal);            
         }
 
         if ($so) {
-            $q->addWhere("a.ca_so = ?", $so);
+            $q->addWhere("REPLACE(a.ca_so, '.', '_') = ?", $so);
         }
 
         if ($office) {
-            $q->addWhere("a.ca_office = ?", $office);
+            $q->addWhere("REPLACE(a.ca_office, '.', '_') = ?", $office);
         }
 
 
@@ -889,10 +894,24 @@ class inventoryActions extends sfActions {
             if ($fchbajafinal) {
                 $q->addWhere("a.ca_fchbaja <= ? ", $fchbajafinal);
             }
+        }else{
+            $q->addWhere("a.ca_fchbaja IS NULL");
         }
 
         $this->activos = $q->execute();
         $this->bajasChkbox = $bajasChkbox;
+        
+        
+        $this->sucursal = $sucursal;
+        $this->idcategory = $idcategory;
+        $this->idasignacion = $idasignacion;
+        $this->so = $so;
+        $this->office = $office;
+        
+        $this->fchbajainicio = $fchbajainicio;
+        $this->fchbajafinal = $fchbajafinal;
+        
+        
     }
 
     public function executeDatosPanelProductos($request) {
