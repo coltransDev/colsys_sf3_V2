@@ -320,7 +320,8 @@ include_component("widgets", "widgetCoordinadoresAduana");
                                         msgTarget : 'side',
                                         width: 500,
                                         maxLength: 80,
-                                        name: 'dir_ot'                                       
+                                        name: 'dir_ot',
+                                        id: 'dir_ot'
                                     },
                                     {
                                         xtype: 'textfield',
@@ -329,6 +330,7 @@ include_component("widgets", "widgetCoordinadoresAduana");
                                         width: 200,
                                         maxLength: 20,
                                         name: 'localidad_ot',
+                                        id: 'localidad_ot',
                                         allowBlank: true
                                     }
                                         
@@ -685,7 +687,7 @@ include_component("widgets", "widgetCoordinadoresAduana");
                                     {
                                         xtype: 'compositefield',
                                         fieldLabel: 'Teléfono',
-                                        msgTarget : 'side',
+                                        msgTarget : 'side',                                        
                                         //hideLabel: true,
                                         defaults: {
                                         //    flex: 1
@@ -697,7 +699,8 @@ include_component("widgets", "widgetCoordinadoresAduana");
                                                 name      : 'phone',
                                                 fieldLabel: 'phone',
                                                 width: 80,
-                                                maxLength: 30
+                                                maxLength: 30,
+                                                allowBlank: false
                                             },
                                             {
                                                xtype: 'displayfield',
@@ -1042,9 +1045,17 @@ include_component("widgets", "widgetCoordinadoresAduana");
                         if( idtrafico=="CO-057" ){
                             Ext.getCmp("dir_col").setVisible(true);
                             Ext.getCmp("dir_other").setVisible(false);
+                            Ext.getCmp("dir_ot").allowBlank = true;
+                            Ext.getCmp("dir_ot").validate();
+                            Ext.getCmp("localidad_ot").allowBlank = true;
+                            Ext.getCmp("localidad_ot").validate();
                         }else{
                             Ext.getCmp("dir_col").setVisible(false);
                             Ext.getCmp("dir_other").setVisible(true);
+                            Ext.getCmp("dir_ot").allowBlank = false;
+                            Ext.getCmp("dir_ot").validate();
+                            Ext.getCmp("localidad_ot").allowBlank = false;
+                            Ext.getCmp("localidad_ot").validate();
                         }
                         
                         if( tipo.getValue()!="1" ){                
@@ -1082,9 +1093,17 @@ include_component("widgets", "widgetCoordinadoresAduana");
             if( idtrafico=="CO-057" ){
                 Ext.getCmp("dir_col").setVisible(true);
                 Ext.getCmp("dir_other").setVisible(false);
+                Ext.getCmp("dir_ot").allowBlank = true;
+                Ext.getCmp("dir_ot").validate();
+                Ext.getCmp("localidad_ot").allowBlank = true;
+                Ext.getCmp("localidad_ot").validate();
             }else{
                 Ext.getCmp("dir_col").setVisible(false);
                 Ext.getCmp("dir_other").setVisible(true);
+                Ext.getCmp("dir_ot").allowBlank = false;
+                Ext.getCmp("dir_ot").validate();
+                Ext.getCmp("localidad_ot").allowBlank = false;
+                Ext.getCmp("localidad_ot").validate();
             }
             
             
@@ -1124,9 +1143,17 @@ include_component("widgets", "widgetCoordinadoresAduana");
             if( idtrafico=="CO-057" ){
                 Ext.getCmp("dir_col").setVisible(true);
                 Ext.getCmp("dir_other").setVisible(false);
+                Ext.getCmp("dir_ot").allowBlank = true;
+                Ext.getCmp("dir_ot").validate();
+                Ext.getCmp("localidad_ot").allowBlank = true;
+                Ext.getCmp("localidad_ot").validate();
             }else{
                 Ext.getCmp("dir_col").setVisible(false);
                 Ext.getCmp("dir_other").setVisible(true);
+                Ext.getCmp("dir_ot").allowBlank = false;
+                Ext.getCmp("dir_ot").validate();
+                Ext.getCmp("localidad_ot").allowBlank = false;
+                Ext.getCmp("localidad_ot").validate();
             }
             
             if( tipo.getValue()!="1" ){                
