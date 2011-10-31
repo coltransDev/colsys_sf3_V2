@@ -15,8 +15,7 @@ class inventoryActions extends sfActions {
         $this->nivel = $this->getUser()->getNivelAcceso(inventoryActions::RUTINA);
         if ($this->nivel == -1) {
             $this->forward404();
-        }
-
+        }        
         return $this->nivel;
     }
 
@@ -35,11 +34,8 @@ class inventoryActions extends sfActions {
                 ->addWhere("s.ca_idempresa = ?", 2)
                 ->addOrderBy("s.ca_nombre");
 
-
-        if ($this->nivel < 2) {
-            $user = $this->getUser();
-            $q->addWhere("s.ca_idsucursal = ? ", $user->getIdsucursal());
-        }
+        
+        $this->user = $this->getUser();
 
         $this->sucursales = $q->execute();
     }
@@ -47,7 +43,6 @@ class inventoryActions extends sfActions {
     /*
      * 
      */
-
     public function executeDatosPanelCategorias($request) {
         $idsucursal = $request->getParameter("idsucursal");
         $q = Doctrine::getTable("InvCategory")
@@ -595,8 +590,10 @@ class inventoryActions extends sfActions {
                 $equipos[$key]["u_ca_nombre"] = utf8_encode($equipos[$key]["u_ca_nombre"]);
                 $equipos[$key]["orden"] = $i++;
             }
-
-            $equipos[] = array("e_ca_identificador" => "", "orden" => "Z");
+            if( $request->getParameter("readOnly")!="true" ){
+                $equipos[] = array("e_ca_identificador" => "", "orden" => "Z");
+            }
+            
             $this->responseArray = array("success" => true, "root" => $equipos);
         } else {
             $this->responseArray = array("success" => false);

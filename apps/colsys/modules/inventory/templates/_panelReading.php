@@ -23,7 +23,8 @@ PanelReading = function( config ){
                       editable:this.editable,
                       parameter: this.parameter,
                       autonumeric: this.autonumeric,
-                      prefix: this.prefix
+                      prefix: this.prefix,
+                      readOnly: this.readOnly
                      });
 
     var idcomponent = this.id;
@@ -51,6 +52,19 @@ PanelReading = function( config ){
             //items.get('win').disable();
         }
     });
+    
+    var tbar = [];
+    
+    if( !this.readOnly ){
+        tbar.push({
+            id:'response-'+idcomponent,
+            text: 'Nuevo',
+            iconCls: 'add',
+            disabled:true,
+            handler : this.newResponse,
+            scope: this
+        });
+    }
 
     this.responses = new Ext.Panel({
         //id: 'preview',
@@ -59,14 +73,7 @@ PanelReading = function( config ){
         autoScroll: true,
         //listeners: FeedViewer.LinkInterceptor,
 
-        tbar: [{
-            id:'response-'+idcomponent,
-            text: 'Nuevo',
-            iconCls: 'add',
-            disabled:true,
-            handler : this.newResponse,
-            scope: this
-        }],
+        tbar: tbar,
 
         clear: function(){
             this.body.update('');
@@ -81,7 +88,8 @@ PanelReading = function( config ){
                                 //folder: this.folder,
                                 closable: false,
                                 title: "Archivos",
-                                height: 400
+                                height: 400,
+                                readOnly: this.readOnly
 
                             });
                             
@@ -91,13 +99,15 @@ PanelReading = function( config ){
                                     closable: false,
                                     title: "Asignaciones",
                                     autoScroll: true,                                    
-                                    autoHeight: true
+                                    autoHeight: true,
+                                    readOnly: this.readOnly
                                  });
     }else{
         this.asignacionesPanel = new PanelAsignaciones({
                                     closable: false,
                                     title: "Hist. Asignaciones",
-                                    autoScroll: true
+                                    autoScroll: true,
+                                    readOnly: this.readOnly
                                  });
         
     }

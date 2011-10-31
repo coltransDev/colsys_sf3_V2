@@ -60,7 +60,8 @@
             autoLoad : false,
             url: '<?= url_for("inventory/datosPanelAsignacionesSoftware") ?>',     
             baseParams: {
-                idactivo: this.idactivo
+                idactivo: this.idactivo,
+                readOnly: this.readOnly
             },
             reader: new Ext.data.JsonReader(
             {
@@ -80,15 +81,18 @@
                 iconCls: 'refresh',  // reference to our css
                 scope: this,
                 handler: this.recargar
-            },
-            {
+            }            
+        ];
+        
+        if( !this.readOnly ){
+            this.tbar.push({
                 text: 'Guardar Cambios',
                 tooltip: 'Guarda los cambios hechos en la base de datos.',
                 iconCls: 'disk', 
                 scope: this,
                 handler: this.guardar
-            }
-        ];
+            });
+        }
 
     
         PanelAsignacionesSoftware.superclass.constructor.call(this, {
@@ -226,73 +230,74 @@
             }
         },
         onRowContextMenu: function(grid, index, e){
-        
-            var items = [{
-                    text: 'Eliminar item',
-                    iconCls: 'delete',
-                    scope:this,
-                    handler: function(){                        
-                        if( this.ctxRecord && this.ctxRecord.data.idasignacion_software ){
-                            var id = this.ctxRecord.id;
-                            var idasignacion_software = this.ctxRecord.data.idasignacion_software;
-                            var idequipo = this.ctxRecord.data.idequipo;
-                            
-                            if( idequipo && confirm("Esta seguro?") ){
-                                if( idasignacion_software ){
-                                    Ext.Ajax.request(
-                                    {
-                                        waitMsg: 'Guardando cambios...',
-                                        url: '<?= url_for("inventory/eliminarPanelAsignacionSoftware") ?>',
-                                        //method: 'POST',
-                                        //Solamente se envian los cambios
-                                        params :	{
-                                            idasignacion_software: idasignacion_software,                                        
-                                            id: id
-                                        },
-                                        success:function(response,options){
-                                            var res = Ext.util.JSON.decode( response.responseText );
-                                            if( res.id && res.success){
-                                                var rec = storeRecargos.getById( res.id );
-                                                storeRecargos.remove(rec);
-                                                rec.set("deleted", true);
-                                            }else{
-                                                Ext.MessageBox.alert('Error', "Ha ocurrido el siguiente error"+res.errorInfo);
+            if( !this.readOnly ){
+                var items = [{
+                        text: 'Eliminar item',
+                        iconCls: 'delete',
+                        scope:this,
+                        handler: function(){                        
+                            if( this.ctxRecord && this.ctxRecord.data.idasignacion_software ){
+                                var id = this.ctxRecord.id;
+                                var idasignacion_software = this.ctxRecord.data.idasignacion_software;
+                                var idequipo = this.ctxRecord.data.idequipo;
+
+                                if( idequipo && confirm("Esta seguro?") ){
+                                    if( idasignacion_software ){
+                                        Ext.Ajax.request(
+                                        {
+                                            waitMsg: 'Guardando cambios...',
+                                            url: '<?= url_for("inventory/eliminarPanelAsignacionSoftware") ?>',
+                                            //method: 'POST',
+                                            //Solamente se envian los cambios
+                                            params :	{
+                                                idasignacion_software: idasignacion_software,                                        
+                                                id: id
+                                            },
+                                            success:function(response,options){
+                                                var res = Ext.util.JSON.decode( response.responseText );
+                                                if( res.id && res.success){
+                                                    var rec = storeRecargos.getById( res.id );
+                                                    storeRecargos.remove(rec);
+                                                    rec.set("deleted", true);
+                                                }else{
+                                                    Ext.MessageBox.alert('Error', "Ha ocurrido el siguiente error"+res.errorInfo);
+                                                }
+                                            },
+                                            failure:function(response,options){
+                                                Ext.MessageBox.alert('Error Message', "Se ha presentado un error "+(response?"\n Codigo HTTP "+response.status:""));
                                             }
-                                        },
-                                        failure:function(response,options){
-                                            Ext.MessageBox.alert('Error Message', "Se ha presentado un error "+(response?"\n Codigo HTTP "+response.status:""));
-                                        }
-                                    });
-                                }else{
-                                    var rec = storeRecargos.getById( id );
-                                    storeRecargos.remove(rec);
+                                        });
+                                    }else{
+                                        var rec = storeRecargos.getById( id );
+                                        storeRecargos.remove(rec);
+                                    }
                                 }
                             }
                         }
                     }
+                ];
+
+
+
+                rec = this.store.getAt(index);           
+                var storeRecargos = this.store;
+                if( !this.menu ){
+                    this.menu = new Ext.menu.Menu({
+                        items: items
+                    });
                 }
-            ];
+                this.menu.on('hide', this.onContextHide, this);
 
-
-        
-            rec = this.store.getAt(index);           
-            var storeRecargos = this.store;
-            if( !this.menu ){
-                this.menu = new Ext.menu.Menu({
-                    items: items
-                });
+                e.stopEvent();
+                if(this.ctxRow){
+                    Ext.fly(this.ctxRow).removeClass('x-node-ctx');
+                    this.ctxRow = null;
+                }
+                this.ctxRecord = rec;
+                this.ctxRow = this.view.getRow(index);
+                Ext.fly(this.ctxRow).addClass('x-node-ctx');
+                this.menu.showAt(e.getXY());
             }
-            this.menu.on('hide', this.onContextHide, this);
-
-            e.stopEvent();
-            if(this.ctxRow){
-                Ext.fly(this.ctxRow).removeClass('x-node-ctx');
-                this.ctxRow = null;
-            }
-            this.ctxRecord = rec;
-            this.ctxRow = this.view.getRow(index);
-            Ext.fly(this.ctxRow).addClass('x-node-ctx');
-            this.menu.showAt(e.getXY());
 
         },
         

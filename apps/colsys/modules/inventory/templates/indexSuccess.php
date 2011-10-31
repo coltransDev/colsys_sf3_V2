@@ -66,11 +66,23 @@ Ext.onReady(function(){
                     if( $i++!=0){
                         echo ",";
                     }
+                    
+                    $readOnly = true;
+                    
+                    if( $nivel==1 && $sucursal->getCaIdsucursal()==$user->getIdsucursal() ){
+                        $readOnly = false;
+                    }
+                    
+                    if( $nivel==2 ){
+                        $readOnly = false;
+                    }
+                    
                 ?>
                 
                 new PanelCategorias({
                         title: "<?=$sucursal->getCaNombre()?>",                        
-                        idsucursal: "<?=$sucursal->getCaIdsucursal()?>"
+                        idsucursal: "<?=$sucursal->getCaIdsucursal()?>",
+                        readOnly: <?=$readOnly?"true":"false"?>
                         
                     })
                 <?    

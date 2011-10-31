@@ -76,6 +76,7 @@
                                 editable: true,
                                 parameter: parameter,
                                 autonumeric: autonumeric,
+                                readOnly: this.readOnly,
                                 prefix:prefix
                             });
 

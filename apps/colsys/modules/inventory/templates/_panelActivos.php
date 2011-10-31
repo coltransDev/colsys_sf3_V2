@@ -178,28 +178,25 @@
 
         });
 
-        if(this.editable)
-        {
-            this.tbar = [
-         
-                {
-                    text: 'Nuevo',
-                    tooltip: '',
-                    iconCls: 'add',  // reference to our css
-                    scope: this,
-                    handler: this.crearActivo
-                },
-
-                {
-                    text: 'Recargar',
-                    tooltip: 'Actualiza losdatos del panel',
-                    iconCls: 'refresh',  // reference to our css
-                    scope: this,
-                    handler: this.recargar
-                }
-         
-            ];
+        
+        this.tbar = [{
+                text: 'Recargar',
+                tooltip: 'Actualiza losdatos del panel',
+                iconCls: 'refresh',  // reference to our css
+                scope: this,
+                handler: this.recargar
+            }];
+        
+        if( !this.readOnly ){
+            this.tbar.push({
+                text: 'Nuevo',
+                tooltip: '',
+                iconCls: 'add',  // reference to our css
+                scope: this,
+                handler: this.crearActivo
+            });
         }
+        
         
         this.tbar.push({
             text: 'Dados de baja',
@@ -385,9 +382,10 @@
         },
 
         onRowDblclick: function( grid , rowIndex, e ){
-            if(!this.editable){
+            if( this.readOnly ){
                 return;
             }
+            
             record =  this.store.getAt( rowIndex );
         
             if( typeof(record)!="undefined" ){
@@ -405,6 +403,9 @@
             }
         },
         eliminar: function(ctxRecord){
+            if( this.readOnly ){
+                return;
+            }
             if( confirm("Esta seguro que desea eliminar este registro?") ){
                 var store = this.store;
                 
