@@ -53,14 +53,14 @@ class Usuario extends BaseUsuario {
         $sucursal = $this->getSucursal();
         $empresa = $sucursal->getEmpresa();
         $resultado = "<strong>" . Utils::replace(strtoupper($this->getCaNombre())) . "</strong><br />";
-        $resultado .= $this->getCaCargo() . "- " . strtoupper($empresa->getCaNombre()) . "<br />";
+        $resultado .= $this->getCaCargo() . "-" . strtoupper($empresa->getCaNombre()) . "<br />";
 
         if ($sucursal) {
             $resultado .= $sucursal->getCaDireccion() . "<br />";
             $resultado .= "Tel.: " . $sucursal->getCaTelefono() . " " . $this->getCaExtension() . "<br />";
             $resultado .= "Fax.: " . $sucursal->getCaFax() . "<br />";
         }
-        $resultado .= Utils::replace($sucursal->getCaNombre()) . "- " . $empresa->getTrafico()->getCaNombre() . "<br />";
+        $resultado .= Utils::replace($sucursal->getCaNombre()) . "-" . $empresa->getTrafico()->getCaNombre() . "<br />";
         $resultado .= "<a href=\"http://" . $empresa->getCaUrl() . "\">" . $empresa->getCaUrl() . "</a>";
         return $resultado;
     }
