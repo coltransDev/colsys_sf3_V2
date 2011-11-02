@@ -43,7 +43,7 @@ WidgetIds = function( config ){
         triggerAction: 'all',
         emptyText:'',              
         lazyRender:true,                
-        emptyText: 'Escriba el nombre del cliente...',
+        emptyText: 'Escriba la compañia...',
         itemSelector: 'div.search-item'
         
 
