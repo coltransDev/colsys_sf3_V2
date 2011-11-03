@@ -4581,7 +4581,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                         }else{
                             $xml_hijo->setAttribute("hdo3", 43);
                             $xml_hijo->setAttribute("hrs3", $tm->Value("ca_nombre"));
-                            $xml_hijo->setAttribute("hdir", $tm->Value("ca_direccion"));
+                            $xml_hijo->setAttribute("hdir", substr($tm->Value("ca_direccion"),0,50));
                             
                             $arribo_array = array();
                             $cu->MoveFirst();
@@ -4629,7 +4629,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                         }else{
                             $xml_hijo->setAttribute("hdo3", 43);
                             $xml_hijo->setAttribute("hrs3", $tm->Value("ca_nombre"));
-                            $xml_hijo->setAttribute("hdir", $tm->Value("ca_direccion"));
+                            $xml_hijo->setAttribute("hdir", substr($tm->Value("ca_direccion"),0,50));
                             
                             $arribo_array = array();
                             $cu->MoveFirst();
@@ -4671,7 +4671,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                         }else{
                             $xml_hijo->setAttribute("hdo3", 43);
                             $xml_hijo->setAttribute("hrs3", $rp->Value("ca_nombre_cli"));
-                            $xml_hijo->setAttribute("hdir", $rp->Value("ca_direccion_cli"));
+                            $xml_hijo->setAttribute("hdir", substr($rp->Value("ca_direccion_cli"),0,50));
                             
                             $arribo_array = array();
                             $cu->MoveFirst();
