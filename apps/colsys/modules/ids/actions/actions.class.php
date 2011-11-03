@@ -34,8 +34,7 @@ class idsActions extends sfActions {
 
         if ($this->nivel == -1) {
             $this->forward404();
-        }
-        return 0;
+        }        
         return $this->nivel;
     }
 
