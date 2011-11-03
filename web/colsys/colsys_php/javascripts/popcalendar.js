@@ -610,5 +610,3 @@ function elegir_item(source, indice) {
         }
     }
 }
-
-
