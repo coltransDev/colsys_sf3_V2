@@ -87,7 +87,12 @@ if ($this->getRequestParameter("modo") == "prov" && $action != "listadoProveedor
     $button[$i]["image"] = "22x22/gohome.gif";
     $button[$i]["link"] = "ids/listadoProveedoresInactivos?modo=" . $this->getRequestParameter("modo");
     $i++;
-
+    
+    $button[$i]["name"] = "Docs. Por Proveedor";
+    $button[$i]["tooltip"] = "Documentos por cada tipo de proveedor";
+    $button[$i]["image"] = "22x22/package_editors.png";
+    $button[$i]["link"] = "ids/documentosPorTipo?modo=" . $this->getRequestParameter("modo");
+    $i++;
 
     @$nivel = idsActions::getNivel();
     if ($nivel >= 2) {
@@ -97,11 +102,7 @@ if ($this->getRequestParameter("modo") == "prov" && $action != "listadoProveedor
         $button[$i]["link"] = "ids/alertasDocumentos?modo=" . $this->getRequestParameter("modo");
         $i++;
 
-        $button[$i]["name"] = "Docs. Por Proveedor";
-        $button[$i]["tooltip"] = "Listado de documentos proximos a vencerse";
-        $button[$i]["image"] = "22x22/package_editors.png";
-        $button[$i]["link"] = "ids/documentosPorTipo?modo=" . $this->getRequestParameter("modo");
-        $i++;
+        
         
         $button[$i]["name"] = "Listado de Criterios";
         $button[$i]["tooltip"] = "";

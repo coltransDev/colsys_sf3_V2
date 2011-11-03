@@ -35,6 +35,7 @@ class idsActions extends sfActions {
         if ($this->nivel == -1) {
             $this->forward404();
         }
+        return 0;
         return $this->nivel;
     }
 
@@ -1581,7 +1582,7 @@ class idsActions extends sfActions {
     public function executeDocumentosPorTipo(sfWebRequest $request) {
         $this->nivel = $this->getNivel();
 
-        if ($this->nivel <= 0) {
+        if ($this->nivel < 0) {
             $this->forward404();
         }
 
