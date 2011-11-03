@@ -36,7 +36,7 @@ $perfilesUsuario = $sf_data->getRaw("perfilesUsuario");
                     <tr class="row0">
                         <td colspan="3">
                             <div align="left">
-                                <?=$lastDep?$lastDep:"Sin departamento"?>
+                                <b><?=$lastDep?$lastDep:"Sin departamento"?></b>
                             </div>
                         </td>
                         
