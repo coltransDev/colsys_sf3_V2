@@ -23,12 +23,26 @@ $perfilesUsuario = $sf_data->getRaw("perfilesUsuario");
 		<td><table width="100%" border="1" class="tableList">
 			<tr>
 				<th scope="col">&nbsp;</th>
-				<th scope="col">Perfil</th>
-				<th width="23%" scope="col">Departamento</th>
-				<th width="42%" scope="col">Descripci&oacute;n</th>
+				<th scope="col">Perfil</th>				
+				<th width="60%" scope="col">Descripci&oacute;n</th>
 			</tr>
-			<?			
+			<?	
+            
+            $lastDep = null;
 			foreach( $perfiles as $perfil ){
+                if( $lastDep!=$perfil->getCaDepartamento()  ){
+                    $lastDep=$perfil->getCaDepartamento();
+                    ?>
+                    <tr class="row0">
+                        <td colspan="3">
+                            <div align="left">
+                                <?=$lastDep?$lastDep:"Sin departamento"?>
+                            </div>
+                        </td>
+                        
+                    </tr>
+                    <?
+                }
 			?>
 			<tr>
 				<td width="13%">
@@ -36,7 +50,7 @@ $perfilesUsuario = $sf_data->getRaw("perfilesUsuario");
 						<input type="checkbox" name="perfiles[]" value="<?=$perfil->getCaPerfil()?>" <?=in_array($perfil->getCaPerfil(), $perfilesUsuario )?'checked="checked"':'' ?> />
 						</div></td>
 				<td width="22%"><?=$perfil->getCaNombre()?></td>
-				<td><?=$perfil->getCaDepartamento()?></td>
+				
 				<td><?=$perfil->getCaDescripcion()?></td>
 			</tr>
 			<?
