@@ -22,7 +22,7 @@ class SdnTable extends Doctrine_Table
 	*/
 	public static function evaluaClientes(){
 
-        $query = "select cl.ca_idalterno, std.ca_compania, cl.ca_nombres, cl.ca_papellido, cl.ca_sapellido, cl.ca_vendedor,";
+        $query = "select cl.ca_idalterno as ca_idcliente, std.ca_compania, cl.ca_nombres, cl.ca_papellido, cl.ca_sapellido, cl.ca_vendedor,";
 		$query.= " sdnm.ca_uid as sdnm_uid, sdnm.ca_firstname as sdnm_firstname, sdnm.ca_lastname as sdnm_lastname, sdnm.ca_title as sdnm_title, sdnm.ca_sdntype as sdnm_sdntype, sdnm.ca_remarks as sdnm_remarks,";
 		$query.= " sdid.ca_uid_id as sdid_uid_id, sdid.ca_idtype as sdid_idtype, sdid.ca_idnumber as sdid_idnumber, sdid.ca_idcountry as sdid_idcountry, sdid.ca_issuedate as sdid_issuedate, sdid.ca_expirationdate as sdid_expirationdate,";
 		$query.= " sdal.ca_uid_aka as sdal_uid_aka, sdal.ca_type as sdal_type, sdal.ca_category as sdal_category, sdal.ca_firstname as sdal_firstname, sdal.ca_lastname as sdal_lastname,";
