@@ -15,7 +15,7 @@ $programa = 31;
 
 $titulo = 'Maestra de Clientes Colsys';
 $riesgos = array("","Mínimo","Medio","Alto");
-$campos = array("Nombre del Cliente" => "ca_compania", "Representante Legal" => "ca_ncompleto", "N.i.t." => "ca_idcliente", "Calificación" => "ca_calificacion", "Coordinador Aduana" => "ca_coordinador", "Actividad Económica" => "ca_actividad", "Sector Económico" => "ca_sector", "Localidad" => "ca_localidad", "Ciudad" => "ca_ciudad", "Circular 170" => "ca_stdcircular", "Contrato Agenciamiento" => "ca_stdcotratoag", "Nivel Riesgo" => "ca_nvlriesgo", "Lista Clinton" => "ca_listaclinton", "Ley Insolvencia Eco." => "ca_leyinsolvencia");  // Arreglo con las opciones de busqueda
+$campos = array("Nombre del Cliente" => "ca_compania", "Representante Legal" => "ca_ncompleto", "N.i.t." => "ca_idalterno", "Calificación" => "ca_calificacion", "Coordinador Aduana" => "ca_coordinador", "Actividad Económica" => "ca_actividad", "Sector Económico" => "ca_sector", "Localidad" => "ca_localidad", "Ciudad" => "ca_ciudad", "Circular 170" => "ca_stdcircular", "Contrato Agenciamiento" => "ca_stdcotratoag", "Nivel Riesgo" => "ca_nvlriesgo", "Lista Clinton" => "ca_listaclinton", "Ley Insolvencia Eco." => "ca_leyinsolvencia");  // Arreglo con las opciones de busqueda
 $bdatos = array("Mestra Clientes", "Mis Clientes", "Clientes Libres");  // Arreglo con los lugares donde buscar
 $estados = array("Potencial","Activo","Vetado");
 $empresas= array("Coltrans","Colmas");
