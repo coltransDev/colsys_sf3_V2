@@ -1072,7 +1072,7 @@ class clientesActions extends sfActions {
                 $suc_recibo= (int)str_replace("\"", "", $datos[1]);
                 $suc_factura= (int)str_replace("\"", "", $datos[11]);
                 
-                $tipo_comp= (int)str_replace("\"", "", $datos[10]);
+                $tipo_comp= str_replace("\"", "", $datos[10]);
                 
                 $nfact= (int)str_replace("\"", "", $datos[12]);
                 $pre=str_replace("\"", "", $datos[0]).((int)str_replace("\"", "", $datos[1]));
@@ -1085,7 +1085,7 @@ class clientesActions extends sfActions {
                     $resultado[$i]=$comienzo_log."Existen cantidad de campos diferente a los establecidos<br>";
                     $estadisticas["formato_incorrecto"]++;
                     continue;
-                }                
+                }
                 //echo $sucRec[$suc_recibo].'-'.$sucFac[$suc_factura]."<br>";
                 if($sucRec[$suc_recibo]!=$sucFac[$suc_factura])
                 {
@@ -1093,13 +1093,21 @@ class clientesActions extends sfActions {
                     $estadisticas["direfente_sucursal"]++;
                     continue;
                 }
-                
-                if(!$nfact || $tipo_comp!="F")
+                //echo $nfact."".$tipo_comp."<br>";
+                if(!$nfact )
                 {
+                    
                     $resultado[$i]=$comienzo_log."No posee No Factura";
                     $estadisticas["sin_factura"]++;
                     continue;
+                }                
+                if( strcmp($tipo_comp, 'F') != 0 )
+                {                    
+                    $resultado[$i]=$comienzo_log."No posee No Factura ".$tipo_comp." ";
+                    $estadisticas["sin_factura"]++;
+                    continue;
                 }
+               
                 if($datos[2]=="" && $datos[7]=="")
                 {
                     $resultado[$i]=$comienzo_log."No posee No Recibo de caja ni fecha de pago";
@@ -1125,8 +1133,7 @@ class clientesActions extends sfActions {
                 if($sucursal=="BOG" || $sucursal=="ABO")
                     $sucursal="'BOG','ABO'";
                 else
-                    $sucursal="'$sucursal'";
-                
+                    $sucursal="'$sucursal'";                
                 
                 foreach($tipos as $tabla)
                 {
