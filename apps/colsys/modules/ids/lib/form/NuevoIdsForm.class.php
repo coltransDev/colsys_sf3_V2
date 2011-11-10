@@ -9,16 +9,16 @@ class NuevoIdsForm extends BaseForm{
 		$widgets = array();		
 		$validator = array();	
 
+        $q = Doctrine_Query::create()
+                             ->from("IdsTipoIdentificacion c")
+                             ->innerJoin("c.Trafico t")
+                             ->addOrderBy("c.ca_tipoidentificacion");
+        $widgets['tipo_identificacion'] = new sfWidgetFormDoctrineChoice(array('model' => 'IdsTipoIdentificacion',                                                                               
+                                                                               'add_empty' => false,
+                                                                               'query' => $q),
+                                                                         array("onChange"=>"getDV(true)"));
         
-        $widgets['tipo_identificacion'] = new sfWidgetFormChoice(array(
-															  'choices' => array('1'=>'N.I.T',
-                                                                                 '2'=>'C.C.',
-                                                                                 '3'=>'Consecutivo Interno Colsys',
-                                                                                 //'4'=>'Otro'
-                                                                                ),
-															),
-                                                            array("onChange"=>"getDV(true)")
-                                                    );
+       
         $widgets['id'] = new sfWidgetFormInputHidden();
         $widgets['idalterno'] = new sfWidgetFormInputText(array(), array("size"=>30, "onChange"=>"getDV(true)" ));
         $widgets['dv'] = new sfWidgetFormInputText(array(), array("size"=>3, "readOnly"=>"true" ));
