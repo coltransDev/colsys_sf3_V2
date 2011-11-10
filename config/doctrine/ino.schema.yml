@@ -50,6 +50,8 @@ InoMaster:
     ca_motonave : string
     ca_fchsalida : date
     ca_fchllegada : date
+    ca_fchmaster : date
+    ca_idnave : string
   relations:
     InoHouse:
       local: ca_idmaster
@@ -102,6 +104,15 @@ InoMaster:
       local: ca_idmaster
       foreign: ca_idmaster
       type: one
+    InoViDeduccion:
+      local: ca_idmaster
+      foreign: ca_idmaster
+      type: one
+    InoViUtilidad:
+      local: ca_idmaster
+      foreign: ca_idmaster
+      type: one  
+    
 
 
 
@@ -130,7 +141,9 @@ InoHouse:
       notnull: true
     ca_idtercero:
       type: integer
-      notnull: true    
+      notnull: true  
+    ca_tercero:
+      type: string      
     ca_producto:
       type: string
     ca_numpiezas:
@@ -224,9 +237,9 @@ InoCosto:
     ca_fchactualizado: timestamp
     ca_usuactualizado: string    
   relations:
-     Costo:
+     InoConcepto:
        local: ca_idcosto
-       foreign: ca_idcosto
+       foreign: ca_idconcepto
        type: one
      Ids:
        local: ca_idproveedor
@@ -307,6 +320,7 @@ InoComprobante:
     ca_idhouse: integer
     ca_plazo: integer
     ca_tcambio: decimal
+    ca_tcambio_usd: decimal
     ca_observaciones: string
     ca_estado: integer
     ca_valor: float
@@ -334,7 +348,7 @@ InoComprobante:
       local: ca_idhouse
       foreign: ca_idhouse
       type: one
-    InoTransaccion:
+    InoDetalle:
       local: ca_idcomprobante
       foreign: ca_idcomprobante
       type: many
@@ -344,15 +358,15 @@ InoComprobante:
       type: one
     
 
-InoTransaccion:
+InoDetalle:
   options:
     symfony:
       form: false
       filter: false
   generatePath: ino
-  tableName: ino.tb_transacciones
+  tableName: ino.tb_detalles
   columns:
-    ca_idtransaccion:
+    ca_iddetalle:
       type: integer
       autoincrement: true
       primary: true
@@ -361,10 +375,10 @@ InoTransaccion:
     ca_idconcepto: integer
     ca_idccosto: integer
     ca_idmaster: integer
+    ca_idhouse: integer
     ca_id: integer
-    ca_db: boolean
-    ca_valor: decimal
-    ca_idmoneda: string
+    ca_db: decimal
+    ca_cr: decimal    
     ca_observaciones: timestamp
     ca_fchcreado: timestamp
     ca_usucreado: string
@@ -372,6 +386,10 @@ InoTransaccion:
     InoHouse:
       local: ca_idhouse
       foreign: ca_idhouse
+      type: one
+    Ids:
+      local: ca_id
+      foreign: ca_id
       type: one
     InoCentroCosto:
       local: ca_idccosto
@@ -409,7 +427,7 @@ InoConcepto:
   columns:
     ca_idconcepto:
       type: integer
-      autoincrement: true
+#      autoincrement: true
       primary: true
     ca_concepto:
       type: string
@@ -659,7 +677,61 @@ Modo:
     ca_transporte : string
     ca_rutina : integer
     
-    
+InoDeduccion:
+  generatePath: ino
+  tableName: ino.tb_deducciones
+  columns:
+    ca_iddeduccion:
+      type: integer
+      primary: true
+    ca_idcomprobante:
+      type: integer      
+      primary: true
+    ca_neto: float
+    ca_tcambio: float 
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string
+  relations:
+    InoComprobante:
+      local: ca_idcomprobante
+      foreign: ca_idcomprobante
+      type: one
+    Deduccion:
+      local: ca_iddeduccion
+      foreign: ca_iddeduccion
+      type: one
+
+
+InoEquipo:
+  generatePath: ino
+  tableName: ino.tb_equipos
+  columns:
+    ca_idequipo:
+      type: integer      
+      primary: true
+    ca_idconcepto: integer
+    ca_idmaster: integer
+    ca_cantidad: float
+    ca_serial: string
+    ca_numprecinto: string 
+    ca_observaciones: string 
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string
+  relations:
+    InoMaster:
+      local: ca_idmaster
+      foreign: ca_idmaster
+      type: one
+    Concepto:
+      local: ca_idconcepto
+      foreign: ca_idconcepto
+      type: one
+      
+        
 InoViCosto:
   generatePath: ino
   tableName: ino.vi_costos
@@ -690,32 +762,34 @@ InoViIngreso:
       local: ca_idmaster
       foreign: ca_idmaster
       type: one
-    
-    
-    
-InoDeduccion:
+      
+      
+InoViDeduccion:
   generatePath: ino
-  tableName: ino.tb_deducciones
+  tableName: ino.vi_deducciones
   columns:
-    ca_iddeduccion:
-      type: integer
-      primary: true
-    ca_idcomprobante:
+    ca_idmaster:
       type: integer      
       primary: true
-    ca_neto: float
-    ca_tcambio: float 
-    ca_fchcreado: timestamp
-    ca_usucreado: string
-    ca_fchactualizado: timestamp
-    ca_usuactualizado: string
+    ca_referencia: string
+    ca_valor: float 
   relations:
-    InoComprobante:
-      local: ca_idcomprobante
-      foreign: ca_idcomprobante
+    InoMaster:
+      local: ca_idmaster
+      foreign: ca_idmaster
       type: one
-    Deduccion:
-      local: ca_iddeduccion
-      foreign: ca_iddeduccion
+      
+InoViUtilidad:
+  generatePath: ino
+  tableName: ino.vi_utilidades
+  columns:
+    ca_idmaster:
+      type: integer      
+      primary: true
+    ca_referencia: string
+    ca_valor: float 
+  relations:
+    InoMaster:
+      local: ca_idmaster
+      foreign: ca_idmaster
       type: one
-

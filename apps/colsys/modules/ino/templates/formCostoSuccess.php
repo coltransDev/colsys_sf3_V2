@@ -191,14 +191,11 @@ include_component("widgets", "widgetIds");
                                 <td>  
                                 <input type="text" id="utilidad_sobreventa" maxlength="15" size="15" readOnly="true" />                       
                                 </td>
-                            </tr> 
-
-
-                        </table>          
+                            </tr>
+                        </table>
                     </div>
                 </td>
-               
-            </tr>   
+            </tr>
             <tr>
                 <td>
                     <b>Valor Neto:</b><br />
@@ -209,7 +206,6 @@ include_component("widgets", "widgetIds");
                     }
                     echo $form['neto']->render();
                     ?>
-                    
                 </td>
                 <td>
                     <b>Tasa de Cambio a USD:</b><br />
@@ -223,7 +219,6 @@ include_component("widgets", "widgetIds");
                     
                     echo $form['tcambio_usd']->render();
                     ?>
-                     
                 </td>
                 <td>                    
                    <b>Neto en USD:</b><br />

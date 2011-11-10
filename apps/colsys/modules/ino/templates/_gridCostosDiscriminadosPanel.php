@@ -6,13 +6,13 @@
  */
 
 
-include_component("ino", "editCostosWindow");
+
 ?>
 
 <script type="text/javascript">
 
 
-GridCostosPanel = function( config ){
+GridCostosDiscriminadosPanel = function( config ){
 
     Ext.apply(this, config);
 
@@ -28,7 +28,7 @@ GridCostosPanel = function( config ){
       },  
       {
         header: "Costo",
-        dataIndex: 'concepto',
+        dataIndex: 'costo',
         //hideable: false,
         sortable: true,
         width: 80,
@@ -114,10 +114,10 @@ GridCostosPanel = function( config ){
 
     this.record = Ext.data.Record.create([
             
-            {name: 'idmaster', type: 'integer', mapping: 'c_ca_idmaster'},
-            {name: 'idinocosto', type: 'integer', mapping: 'c_ca_idinocosto'},
+            {name: 'idmaster', type: 'integer', mapping: 'd_ca_idmaster'},
+            {name: 'idcomprobante', type: 'integer', mapping: 'c_ca_idcomprobante'},
             {name: 'idcosto', type: 'integer', mapping: 'c_ca_idcosto'},
-            {name: 'concepto', type: 'string', mapping: 'cs_ca_concepto'},
+            {name: 'costo', type: 'string', mapping: 'cs_ca_concepto'},
             {name: 'idproveedor', type: 'integer', mapping: 'c_ca_idproveedor'},
             {name: 'proveedor', type: 'string', mapping: 'i_ca_nombre'},
             {name: 'factura', type: 'string', mapping: 'c_ca_factura'},
@@ -135,7 +135,7 @@ GridCostosPanel = function( config ){
     this.store = new Ext.data.GroupingStore({
 
         autoLoad : true,
-        url: '<?=url_for("ino/datosGridCostosPanel")?>',
+        url: '<?=url_for("ino/datosGridCostosDiscriminadosPanel")?>',
         baseParams : {
             idmaster: this.idmaster,
             modo: this.modo
@@ -173,7 +173,7 @@ GridCostosPanel = function( config ){
     
 
     
-    GridCostosPanel.superclass.constructor.call(this, {
+    GridCostosDiscriminadosPanel.superclass.constructor.call(this, {
        loadMask: {msg:'Cargando...'},
        //boxMinHeight: 300,
        //tbar: this.tbar,
@@ -186,7 +186,7 @@ GridCostosPanel = function( config ){
             //showPreview:true,
        }),
        listeners:{
-            rowcontextmenu: this.onRowcontextMenu,
+            //rowcontextmenu: this.onRowcontextMenu,
             validateedit: this.onValidateEdit,
             rowdblclick : this.onRowDblclick
 
@@ -197,10 +197,10 @@ GridCostosPanel = function( config ){
 
 };
 
-Ext.extend(GridCostosPanel, Ext.grid.GridPanel, {
+Ext.extend(GridCostosDiscriminadosPanel, Ext.grid.GridPanel, {
 
     newItem: function(){
-        document.location = "<?=url_for("ino/formCosto")?>?modo="+this.modo+"&idmaster="+ this.idmaster;
+        document.location = "<?=url_for("ino/formCostoDiscriminados")?>?modo="+this.modo+"&idmaster="+ this.idmaster;
     },
 
     recargar: function(){
@@ -254,15 +254,28 @@ Ext.extend(GridCostosPanel, Ext.grid.GridPanel, {
                 enableScrolling : false,
                 items: [
                         {
-                            text: 'Eliminar',
-                            iconCls: 'delete',
+                            text: 'Editar Factura',
+                            iconCls: 'page_white_edit',
                             scope:this,
                             handler: function(){
                               
-                                if( this.ctxRecord.data.idinocosto  ){
-                                    if( confirm("Esta seguro que desea eliminar este registro?") ){
-                                        this.eliminar( this.ctxRecord.data.idinocosto, grid.id );
+                                if( this.ctxRecord.data.idhouse  ){
+                                    if( this.ctxRecord.data.idcomprobante ){
+                                        this.editarFactura( this.ctxRecord.data.idhouse, this.ctxRecord.data.idcomprobante );
+                                    }else{
+                                        alert("Este item no se ha facturado");
                                     }
+                                }
+                            }
+                        },
+                        {
+                            text: 'Agregar Factura',
+                            iconCls: 'add',
+                            scope:this,
+                            handler: function(){
+
+                                if( this.ctxRecord.data.idhouse  ){
+                                    this.crearFactura( this.ctxRecord.data.idhouse );
                                 }
                             }
                         }
@@ -290,41 +303,11 @@ Ext.extend(GridCostosPanel, Ext.grid.GridPanel, {
             this.ctxGridId = null;
         }
     },
-    
-    eliminar: function( idinocosto, gridId ){
-        
-        var modo = this.modo;
-        Ext.Ajax.request(
-            {               
-                url: '<?=url_for("ino/eliminarGridCostosPanel")?>',
-                params :	{
-                    idinocosto: idinocosto,
-                    modo: modo                        
-                },
-
-                failure:function(response,options){
-                    var res = Ext.util.JSON.decode( response.responseText );
-                    Ext.MessageBox.alert('Error Message', "Se ha presentado un error"+(res.errorInfo?": "+res.errorInfo:"")+" - "+(response.status?"\n Codigo HTTP "+response.status:""));
-                },
-                success:function(response,options){
-                    var res = Ext.util.JSON.decode( response.responseText );
-                    if( res.success ){
-                        if( gridId ){
-                            var grid = Ext.getCmp(gridId);
-                            grid.store.reload();
-                        }
-                    }else{
-                        Ext.MessageBox.alert('Error Message', "Se ha presentado un error"+(res.errorInfo?": "+res.errorInfo:"")+" - "+(response.status?"\n Codigo HTTP "+response.status:""));
-                    }
-                }
-             }
-        );
-    },
 
     onRowDblclick: function( grid , rowIndex, e ){
 		if( !this.readOnly ){
             record =  this.store.getAt( rowIndex );
-            document.location = "<?=url_for("ino/formCosto")?>?modo="+this.modo+"&idinocosto="+record.data.idinocosto;
+            document.location = "<?=url_for("ino/formCostoDiscriminados")?>?modo="+this.modo+"&idmaster="+record.data.idmaster+"&idcomprobante="+record.data.idcomprobante;
         }
 	}
     ,
@@ -370,7 +353,7 @@ Ext.extend(GridCostosPanel, Ext.grid.GridPanel, {
                 Ext.Ajax.request(
                     {
                         waitMsg: 'Guardando cambios...',
-                        url: '<?=url_for("ino/guardarGridCostosPanel")?>',
+                        url: '<?=url_for("ino/guardarGridCostosDiscriminadosPanel")?>',
                         params :	changes,
 
                         callback :function(options, success, response){

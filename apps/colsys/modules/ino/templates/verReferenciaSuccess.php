@@ -75,7 +75,22 @@ include_component("widgets", "widgetIds");
             <td>
                 &nbsp;
             </td>
-        </tr>        
+        </tr>  
+        <?
+        if( $referencia->getCaObservaciones() ){
+        ?>
+        <tr class="row0">
+                <td colspan="4"><b>Observaciones</b></td>
+            </tr>
+        <tr>
+            
+            <td colspan="4">
+                <?=$referencia->getCaObservaciones()?>
+            </td>            
+        </tr>  
+        <?
+        }
+        ?>
     </table>
 
 </div>

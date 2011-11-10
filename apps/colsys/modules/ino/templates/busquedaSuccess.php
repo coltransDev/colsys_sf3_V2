@@ -9,7 +9,7 @@ include_component("ino","panelFiltro", array("modo"=>$modo));
 
 <div align="center">
 <?
-$url = "ino/busqueda?modo=".$modo."&criterio=".$criterio;
+$url = "ino/busqueda?modo=".$modo->getCaIdmodo()."&criterio=".$criterio;
 if( $cadena ){
 	$url.="&cadena=".$cadena;
 }

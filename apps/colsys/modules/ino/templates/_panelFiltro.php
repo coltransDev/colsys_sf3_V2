@@ -61,6 +61,7 @@ include_component("widgets", "widgetCiudad");
             <select name="criterio" id="criterio" size="7" onChange='cambiarCriterio(this)'>
                 <option value="ca_referencia" <?=($criterio=="ca_referencia"||!$criterio)?"selected":""?>>N&uacute;mero de referencia</option>
                 <option value="cliente" <?=($criterio=="cliente")?"selected":""?>>Cliente</option>
+                <option value="ca_master" <?=($criterio=="ca_master")?"selected":""?>>Master</option>
                 <option value="proveedor" <?=($criterio=="ca_nombre_pro")?"selected":""?>>Nombre del Proveedor </option>
                 <option value="linea" <?=($criterio=="linea")?"selected":""?>>Linea</option>
                 <option value="ca_doctransporte" <?=($criterio=="ca_doctransporte")?"selected":""?>>Documento de Transporte</option>

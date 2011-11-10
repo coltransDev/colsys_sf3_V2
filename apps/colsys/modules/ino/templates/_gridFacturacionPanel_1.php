@@ -21,15 +21,6 @@ GridFacturacionPanel = function( config ){
     this.columns = [
       {
         header: "House",
-        dataIndex: 'group',
-        //hideable: false,
-        hidden: true,
-        width: 100,
-        sortable: true,
-        renderer: this.formatItem
-      },  
-      {
-        header: "House",
         dataIndex: 'doctransporte',
         //hideable: false,
         hidden: true,
@@ -46,8 +37,8 @@ GridFacturacionPanel = function( config ){
         width: 80
       },
       {
-        header: "Facturado a",
-        dataIndex: 'fact',
+        header: "Cliente",
+        dataIndex: 'cliente',
         hideable: false,
         sortable: true,
         width: 280
@@ -125,12 +116,10 @@ GridFacturacionPanel = function( config ){
             {name: 'idmaster', type: 'integer'},
             {name: 'idhouse', type: 'integer'},
             {name: 'doctransporte', type: 'string'},
-            {name: 'group', type: 'string'},            
             {name: 'cliente', type: 'string'},
             {name: 'idcliente', type: 'integer'},
             {name: 'comprobante', type: 'string'},
             {name: 'idcomprobante', type: 'string'},
-            {name: 'fact', type: 'string'},
             {name: 'fchcomprobante', type: 'date', dateFormat:'Y-m-d'},
             {name: 'group', type: 'string'},
             {name: 'valor', type: 'float'},
@@ -155,8 +144,8 @@ GridFacturacionPanel = function( config ){
             },
             this.record
         ),
-        sortInfo:{field: 'group', direction: "ASC"},
-        groupField: 'group'
+        sortInfo:{field: 'doctransporte', direction: "ASC"},
+        groupField: 'doctransporte'
 
     });
 
@@ -250,18 +239,7 @@ Ext.extend(GridFacturacionPanel, Ext.grid.GridPanel, {
 
                 this.menu = new Ext.menu.Menu({                
                 enableScrolling : false,
-                items: [                        
-                        {
-                            text: 'Agregar Factura',
-                            iconCls: 'add',
-                            scope:this,
-                            handler: function(){
-
-                                if( this.ctxRecord.data.idhouse  ){
-                                    this.crearFactura( this.ctxRecord.data.idhouse , grid.id);
-                                }
-                            }
-                        },
+                items: [
                         {
                             text: 'Editar Factura',
                             iconCls: 'page_white_edit',
@@ -278,17 +256,13 @@ Ext.extend(GridFacturacionPanel, Ext.grid.GridPanel, {
                             }
                         },
                         {
-                            text: 'Eliminar Factura',
-                            iconCls: 'delete',
+                            text: 'Agregar Factura',
+                            iconCls: 'add',
                             scope:this,
                             handler: function(){
 
                                 if( this.ctxRecord.data.idhouse  ){
-                                    if( this.ctxRecord.data.idcomprobante ){
-                                        this.eliminarFactura( this.ctxRecord.data.idhouse, this.ctxRecord.data.idcomprobante, grid.id );
-                                    }else{
-                                        alert("Este item no se ha facturado");
-                                    }
+                                    this.crearFactura( this.ctxRecord.data.idhouse , grid.id);
                                 }
                             }
                         }
@@ -342,8 +316,6 @@ Ext.extend(GridFacturacionPanel, Ext.grid.GridPanel, {
     },
 
     crearFactura: function( idhouse , gridId){         
-                
-        //document.location = "<?=url_for("inocomprobantes/formComprobante?tipo=F")?>?modo="+this.modo;
         this.win = new GridFacturacionWindow( {
             gridId:gridId, 
             modo:this.modo, 
@@ -366,37 +338,6 @@ Ext.extend(GridFacturacionPanel, Ext.grid.GridPanel, {
         } );
         this.win.show();
 
-    },
-    
-    eliminarFactura: function( idhouse, idcomprobante, gridId ){
-        if( confirm("Esta seguro que desea eliminar este registro?") ){
-            var modo = this.modo;
-            Ext.Ajax.request(
-                {               
-                    url: '<?=url_for("ino/eliminarGridFacturacionPanel")?>',
-                    params :	{
-                        idcomprobante: idcomprobante,
-                        modo: modo                        
-                    },
-
-                    failure:function(response,options){
-                        var res = Ext.util.JSON.decode( response.responseText );
-                        Ext.MessageBox.alert('Error Message', "Se ha presentado un error"+(res.errorInfo?": "+res.errorInfo:"")+" - "+(response.status?"\n Codigo HTTP "+response.status:""));
-                    },
-                    success:function(response,options){
-                        var res = Ext.util.JSON.decode( response.responseText );
-                        if( res.success ){
-                            if( gridId ){
-                                var grid = Ext.getCmp(gridId);
-                                grid.store.reload();
-                            }
-                        }else{
-                            Ext.MessageBox.alert('Error Message', "Se ha presentado un error"+(res.errorInfo?": "+res.errorInfo:"")+" - "+(response.status?"\n Codigo HTTP "+response.status:""));
-                        }
-                    }
-                 }
-            );
-        }
     },
 
     guardar: function(){

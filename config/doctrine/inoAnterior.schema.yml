@@ -186,8 +186,9 @@ InoEquiposSea:
       type: integer
       primary: true
     ca_idconcepto: integer
-    ca_cantidad: integer
+    ca_cantidad: float
     ca_observaciones: string
+    ca_numprecinto: string
     ca_fchcreado: timestamp
     ca_usucreado: string
     ca_fchactualizado: timestamp
@@ -233,7 +234,43 @@ InoContratosSea:
        type: one
 
     
-
+InoIngresosSea:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: inoAnterior
+  tableName: tb_inoingresos_sea
+  columns:
+    ca_referencia:
+      type: string
+      primary: true
+    ca_idcliente:
+      type: integer
+      primary: true
+    ca_hbls:
+      type: string
+      primary: true
+    ca_factura:
+      type: string
+      primary: true
+    ca_fchfactura: date
+    ca_idmoneda: string
+    ca_neto: decimal
+    ca_valor: decimal
+    ca_reccaja: string    
+    ca_fchpago: date
+    ca_tcambio: decimal
+    ca_observaciones: string    
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string    
+  relations:    
+     InoMaestraSea:
+       local: ca_referencia
+       foreign: ca_referencia
+       type: one        
 
 InoCostosSea:
   options:
@@ -263,7 +300,8 @@ InoCostosSea:
     ca_fchcreado: timestamp
     ca_usucreado: string
     ca_fchactualizado: timestamp
-    ca_usuactualizado: string    
+    ca_usuactualizado: string 
+    ca_idproveedor: integer
   relations:
      Costo:
        local: ca_idcosto
@@ -361,6 +399,10 @@ InoMaestraAir:
     ca_usucreado: string
     ca_fchactualizado: timestamp
     ca_usuactualizado: string
+    ca_fchliquidado: timestamp
+    ca_usuliquidado: string
+    ca_fchcerrado: timestamp
+    ca_usucerrado: string
     ca_idagente: integer    
   relations:
     InoClientesAir:
@@ -418,7 +460,8 @@ InoClientesAir:
     ca_peso: decimal
     ca_volumen: decimal
     ca_numorden: decimal    
-    ca_loginvendedor: string    
+    ca_loginvendedor: string  
+    ca_idbodega: integer
     ca_fchcreado: timestamp
     ca_usucreado: string
     ca_fchactualizado: timestamp
@@ -446,6 +489,110 @@ InoClientesAir:
       foreign: ca_login
       type: one
       class: Usuario
+
+InoIngresosAir:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: inoAnterior
+  tableName: tb_inoingresos_air
+  columns:
+    ca_referencia:
+      type: string
+      primary: true
+    ca_idcliente:
+      type: integer
+      primary: true
+    ca_hawb:
+      type: string
+      primary: true
+    ca_factura:
+      type: string
+      primary: true
+    ca_fchfactura: date
+    ca_valor: decimal
+    ca_reccaja: string
+    ca_reccaja: string
+    ca_fchpago: date
+    ca_tcalaico: decimal
+    ca_observaciones: string    
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string    
+  relations:    
+     InoMaestraAir:
+       local: ca_referencia
+       foreign: ca_referencia
+       type: one          
+      
+InoCostosAir:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: inoAnterior
+  tableName: tb_inocostos_air
+  columns:
+    ca_referencia:
+      type: string
+      primary: true
+    ca_idcosto:
+      type: integer
+      primary: true    
+    ca_factura:
+      type: string
+      primary: true
+    ca_fchfactura: date    
+    ca_factura: string
+    ca_idmoneda: string
+    ca_trm: decimal
+    ca_trm_usd: decimal
+    ca_neto: decimal
+    ca_venta: decimal    
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string   
+    ca_idproveedor: integer
+  relations:    
+     InoMaestraAir:
+       local: ca_referencia
+       foreign: ca_referencia
+       type: one          
+ 
+InoUtilidadAir:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: inoAnterior
+  tableName: tb_inoutilidad_air
+  columns:
+    ca_referencia:
+      type: string
+      primary: true
+    ca_idcliente:
+      type: integer
+      primary: true    
+    ca_hawb:
+      type: string
+      primary: true
+    ca_idcosto:
+      type: integer
+      primary: true
+    ca_factura:
+      type: string
+      primary: true 
+    ca_valor: decimal    
+    ca_fchcreado: timestamp
+    ca_usucreado: string    
+  relations:    
+     InoMaestraAir:
+       local: ca_referencia
+       foreign: ca_referencia
+       type: one      
       
       
 InoMaestraExpo:

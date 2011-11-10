@@ -12,7 +12,7 @@ if( $action!="index" ){
 	$button[$i]["name"]="Inicio ";
 	$button[$i]["tooltip"]="Pagina inicial del módulo";
 	$button[$i]["image"]="22x22/gohome.gif"; 			
-	$button[$i]["link"]= "ino/seleccionModo";
+	$button[$i]["link"]= "ino/index?modo=".$this->getRequestParameter("modo");
 	$i++;
 }
 

@@ -34,8 +34,8 @@
         <td class="invertir" colspan="4"></td>
     </tr>
     <?
-    $inoConsolidado = $referencia->getVlrFacturado()-$referencia->getVlrDeducciones()-$referencia->getVlrCosto();
-    $inoTotal = $inoConsolidado+$referencia->getVlrSobreventa()
+    $inoConsolidado = $referencia->getVlrFacturado()-$referencia->getVlrDeducciones()-$referencia->getVlrCosto()-$referencia->getVlrSobreventa();
+    $inoTotal = $inoConsolidado+$referencia->getVlrSobreventa();
     ?>
      <tr >
         <td colspan="2" rowspan="2">&nbsp;</td>

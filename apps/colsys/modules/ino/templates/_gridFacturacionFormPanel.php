@@ -90,6 +90,16 @@ $tipos = $sf_data->getRaw("tipos");
                 }
             }
         });
+        
+        
+        this.ids = new WidgetIds({
+            fieldLabel: "Facturado a",
+            id: "ids",
+            name: "id",
+            hiddenName: 'id',
+            width: 400,
+            allowBlank: false
+        });
 
         this.items = [{
             xtype:'tabpanel',
@@ -106,6 +116,7 @@ $tipos = $sf_data->getRaw("tipos");
                 items: [
                     this.inoHouses,
                     this.tipos,
+                    this.ids,
                     {
 				    layout:'column',
 				    border: false,
@@ -352,8 +363,8 @@ $tipos = $sf_data->getRaw("tipos");
 
                     success:function(response,options){
                         this.res = Ext.util.JSON.decode( options.response.responseText );
-                        //form.findField("ids").setRawValue(this.res.data.ids);
-                        //form.findField("ids").hiddenField.value = this.res.data.ids_id;                        
+                        form.findField("ids").setRawValue(this.res.data.ids);
+                        form.findField("ids").hiddenField.value = this.res.data.ids_id;                        
                     }
 
                 });
