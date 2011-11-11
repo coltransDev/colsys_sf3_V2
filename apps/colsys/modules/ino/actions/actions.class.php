@@ -213,6 +213,24 @@ class inoActions extends sfActions {
 
             $idmaster=$request->getParameter("idmaster");
             
+            /*
+             * Validaciones
+             */
+            $q = Doctrine::getTable("InoMaster")
+                           ->createQuery("m")
+                           ->addWhere("m.ca_master = ?", $request->getParameter("ca_master") );
+            
+            if( $idmaster ){
+                $q->addWhere("m.ca_idmaster != ?", $idmaster);
+            }            
+            $m = $q->fetchOne();
+            if( $m ){               
+                throw new Exception("El numero de master ya se incluyo en la referencia ".$m->getCaReferencia());
+            }
+            
+            /*
+             * Guarda los datos
+             */
             if( $idmaster ){
                 $ino = Doctrine::getTable("InoMaster")->find($idmaster);
                 $this->forward404Unless( $ino );                
@@ -634,7 +652,28 @@ class inoActions extends sfActions {
      */
     public function executeGuardarGridFacturacionPanel(sfWebRequest $request) {
         try {            
+            
             $idcomprobante = $request->getParameter("idcomprobante");
+            
+            
+            /*
+             * Validaciones
+             */
+            $q = Doctrine::getTable("InoComprobante")
+                           ->createQuery("c")
+                           ->addWhere("c.ca_consecutivo = ?", $request->getParameter("consecutivo") );
+            
+            if( $idcomprobante ){
+                $q->addWhere("c.ca_idcomprobante != ?", $idcomprobante);
+            }            
+            $m = $q->fetchOne();
+            if( $m ){               
+                throw new Exception("El comprobante ".$request->getParameter("consecutivo")." ya se encuentra incluido" );
+            }
+            
+            /*
+             * Guarda los datos
+             */            
             if ($idcomprobante) {
                 $comprobante = Doctrine::getTable("InoComprobante")->find($idcomprobante);
                 $this->forward404Unless($comprobante);
@@ -734,9 +773,7 @@ class inoActions extends sfActions {
             //$conn->rollBack();
 
             $this->responseArray = array("success" => true, "id" => $request->getParameter("id"), "idcomprobante" => $comprobante->getCaIdcomprobante());
-        } catch (Exception $e) {
-            
-            $conn->rollBack();
+        } catch (Exception $e) {                        
             $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
         }
 
