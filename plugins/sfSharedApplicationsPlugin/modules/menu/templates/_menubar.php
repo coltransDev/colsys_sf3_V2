@@ -65,7 +65,7 @@
         var Digital=new Date(<?=time()*1000?>+secsElapsed)
         var hours=Digital.getHours();
         var minutes=Digital.getMinutes();
-        var seconds=Digital.getSeconds();
+        //var seconds=Digital.getSeconds();
         var dn="AM"
         
         if (hours==12){
@@ -85,11 +85,11 @@
             minutes="0"+minutes
         }
         
-        if (seconds<=9){
+        /*if (seconds<=9){
             seconds="0"+seconds
-        }
+        }*/
         
-        clockobj.innerHTML=hours+":"+minutes+":"+seconds+" "+dn+"";
+        clockobj.innerHTML=hours+":"+minutes+" "+dn+"";
         secsElapsed+=1000;
         setTimeout("show()",1000)
     }
