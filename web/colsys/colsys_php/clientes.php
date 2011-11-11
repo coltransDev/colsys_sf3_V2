@@ -1,6 +1,7 @@
 <?
+error_reporting(E_ALL);
 /*================-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*\
-// Archivo:       CLIENTES.PHP                                                \\
+// Archivo:       clientes.php                                                \\
 // Creado:        2004-11-30                                                  \\
 // Autor:         Carlos Gilberto López M.                                    \\
 // Ver:           1.00                                                        \\
@@ -343,7 +344,7 @@ elseif (!isset($boton) and !isset($accion) and isset($criterio)){
 	echo "<HTML>";
 	echo "<HEAD>";
 	echo "<TITLE>Tabla de Clientes ".COLTRANS."</TITLE>";
-	if ($salida[0] == "Columnas"){		        
+	if ($salida[0] == "Columnas"){
         if( $regional=="PE-051" ){
             $columnas = array("RUC"=>"ca_idcliente","Cliente"=>"ca_compania","Dirección"=>array("ca_direccion","ca_oficina","ca_torre","ca_bloque","ca_interior","ca_localidad","ca_complemento"),"Teléfonos"=>"ca_telefonos","Fax"=>"ca_fax","Ciudad"=>"ca_ciudad","Vendedor"=>"ca_vendedor","Sucursal"=>"ca_sucursal","Circular 170"=>array("ca_fchcircular","ca_stdcircular"),"Carta Grtia."=>array("ca_fchvencimiento","ca_stdcarta_gtia"),"Nivel/Riesgo"=>"ca_nvlriesgo","Coord.Colmas"=>"ca_nombre_coor","Lista Clinton"=>"ca_listaclinton","Ley/Insolvencia"=>"ca_leyinsolvencia","Estado/TPLogistics"=>array("ca_coltrans_std","ca_coltrans_fch"),"Días/Crédito"=>"ca_diascredito","Cupo/Crédito"=>"ca_cupo","Observaciones"=>"ca_observaciones");
         }else{
@@ -370,14 +371,25 @@ elseif (!isset($boton) and !isset($accion) and isset($criterio)){
                     $vetado = ($rs->Value('ca_coltrans_std')=='Vetado' or $rs->Value('ca_colmas_std')=='Vetado' )?'background-color:#FFb2b2;':'';
                     echo "<TR>";
                     foreach($columnas as $campos ){
+                        $img="";
+                        if($campos=="ca_compania")
+                        {
+                            if($rs->Value('ca_propiedades')!="")
+                            {
+                                if(strpos($rs->Value('ca_propiedades'), "cuentaglobal=true") !== false)
+                                {
+                                    $img='<img src="/images/CG30.png" title="Cliente de Cuentas Globales" width="20" height="20" />';
+                                }
+                            }
+                        }
                         if (is_array($campos)){
                             echo "<TD Class=mostrar style='font-size: 9px; center; $vetado'>";
                             foreach($campos as $campo){
-                                    echo str_replace("|","",$rs->Value($campo))." ";
+                                    echo str_replace("|","",$rs->Value($campo))." $img";
                             }
                             echo "</TD>";
                         }else{
-                            echo "<TD Class=mostrar style='font-size: 9px; center; $vetado'>".$rs->Value($campos)."</TD>";
+                            echo "<TD Class=mostrar style='font-size: 9px; center; $vetado'>".$rs->Value($campos)." $img</TD>";
                         }
                     }
                     echo "</TR>";
@@ -438,7 +450,15 @@ elseif (!isset($boton) and !isset($accion) and isset($criterio)){
 				exit; }
 		   echo "<TR>";
 		   echo "<TD Class=titulo style='vertical-align: top;'>".number_format($rs->Value('ca_idalterno')?$rs->Value('ca_idalterno'):$rs->Value('ca_idcliente')).($rs->Value('ca_tipoidentificacion')==1&&$rs->Value('ca_digito')!==0?"-".$rs->Value('ca_digito'):"")."</TD>";
-		   echo "<TD Class=titulo COLSPAN=4 style='font-size: 12px; font-weight:bold; text-align:left;'>".$rs->Value('ca_compania')."</TD>";
+            $img="";
+            if($rs->Value('ca_propiedades')!="")
+            {
+                if(strpos($rs->Value('ca_propiedades'), "cuentaglobal=true") !== false)
+                {
+                    $img='<img src="/images/CG30.png" title="Cliente de Cuentas Globales" width="20" height="20" />';
+                }
+            }
+		   echo "<TD Class=titulo COLSPAN=4 style='font-size: 12px; font-weight:bold; text-align:left;'>".$rs->Value('ca_compania')." $img</TD>";
 		   echo "  <TD Class=titulo style='vertical-align: top; text-align: center;'>";                                            // Botones para hacer Mantenimiento a la Tabla
 		   echo "    <IMG style='visibility: $visible;' src='./graficos/edit.gif' alt='Editar el Registro' border=0 onclick='elegir(\"Modificar\", ".$rs->Value('ca_idcliente').");'>";
 		   echo "    <IMG style='visibility: $visible;' src='./graficos/del.gif'  alt='Eliminar el Registro' border=0 onclick='elegir(\"Eliminar\", ".$rs->Value('ca_idcliente').");'>";
@@ -867,7 +887,15 @@ require_once("menu.php");
 
              $complemento = (($rs->Value('ca_oficina')!='')?" Oficina : ".$rs->Value('ca_oficina'):"").(($rs->Value('ca_torre')!='')?" Torre : ".$rs->Value('ca_torre'):"").(($rs->Value('ca_interior')!='')?" Interior : ".$rs->Value('ca_interior'):"").(($rs->Value('ca_complemento')!='')?" - ".$rs->Value('ca_complemento'):"");
              echo "<TR>";
-             echo "  <TD WIDTH=500 Class=mostrar COLSPAN=3 style='font-size: 11px; text-align:left;'><B>".( $regional=="PE-051" ?"RUC":"N.i.t.").": </B>".number_format($rs->Value('ca_idcliente'))."-".$rs->Value('ca_digito')."<BR><B>".$rs->Value('ca_compania')."<BR>Dirección: </B>".str_replace ("|"," ",$rs->Value('ca_direccion')).$complemento. "&nbsp;&nbsp;<B>Localidad: </B>" . $rs->Value('ca_localidad')."<BR><B>Teléfonos: </B>".$rs->Value('ca_telefonos')."&nbsp;&nbsp;&nbsp;&nbsp;<B>Fax: </B>".$rs->Value('ca_fax')."</TD>";
+            $img="";
+            if($rs->Value('ca_propiedades')!="")
+            {
+                if(strpos($rs->Value('ca_propiedades'), "cuentaglobal=true") !== false)
+                {
+                    $img='<img src="/images/CG30.png" title="Cliente de Cuentas Globales" width="20" height="20" />';
+                }
+            }
+             echo "  <TD WIDTH=500 Class=mostrar COLSPAN=3 style='font-size: 11px; text-align:left;'><B>".( $regional=="PE-051" ?"RUC":"N.i.t.").": </B>".number_format($rs->Value('ca_idcliente'))."-".$rs->Value('ca_digito')."<BR><B>".$rs->Value('ca_compania')."$img <BR>Dirección: </B>".str_replace ("|"," ",$rs->Value('ca_direccion')).$complemento. "&nbsp;&nbsp;<B>Localidad: </B>" . $rs->Value('ca_localidad')."<BR><B>Teléfonos: </B>".$rs->Value('ca_telefonos')."&nbsp;&nbsp;&nbsp;&nbsp;<B>Fax: </B>".$rs->Value('ca_fax')."</TD>";
              echo "</TR>";
 
              echo "<TR>";
@@ -1011,7 +1039,16 @@ require_once("menu.php");
              echo "<TH Class=titulo COLSPAN=3>Información del Cliente</TH>";
              echo "<TR>";
              echo "  <TD Class=mostrar style='vertical-align: top;' ROWSPAN=5>".number_format($rs->Value('ca_idcliente'))."-".$rs->Value('ca_digito')."</TD>";
-             echo "  <TD Class=mostrar COLSPAN=2 style='font-size: 12px; font-weight:bold; text-align:left;'>".$rs->Value('ca_compania')."</TD>";
+             
+             $img="";
+            if($rs->Value('ca_propiedades')!="")
+            {
+                if(strpos($rs->Value('ca_propiedades'), "cuentaglobal=true") !== false)
+                {
+                    $img='<img src="/images/CG30.png" title="Cliente de Cuentas Globales" width="20" height="20" />';
+                }
+            }
+             echo "  <TD Class=mostrar COLSPAN=2 style='font-size: 12px; font-weight:bold; text-align:left;'>".$rs->Value('ca_compania')." $img </TD>";
              echo "</TR>";
              echo "<TR>";
              $complemento = (($rs->Value('ca_oficina')!='')?" Oficina : ".$rs->Value('ca_oficina'):"").(($rs->Value('ca_torre')!='')?" Torre : ".$rs->Value('ca_torre'):"").(($rs->Value('ca_interior')!='')?" Interior : ".$rs->Value('ca_interior'):"").(($rs->Value('ca_complemento')!='')?" - ".$rs->Value('ca_complemento'):"");
@@ -1097,7 +1134,15 @@ require_once("menu.php");
              echo "<TH Class=titulo COLSPAN=4>Información del Cliente</TH>";
              echo "<TR>";
              echo "  <TD Class=mostrar style='vertical-align: top;' ROWSPAN=5>".number_format($rs->Value('ca_idcliente'))."-".$rs->Value('ca_digito')."</TD>";
-             echo "  <TD Class=mostrar COLSPAN=3 style='font-size: 12px; font-weight:bold; text-align:left;'>".$rs->Value('ca_compania')."</TD>";
+             $img="";
+            if($rs->Value('ca_propiedades')!="")
+            {
+                if(strpos($rs->Value('ca_propiedades'), "cuentaglobal=true") !== false)
+                {
+                    $img='<img src="/images/CG30.png" title="Cliente de Cuentas Globales" width="20" height="20" />';
+                }
+            }
+             echo "  <TD Class=mostrar COLSPAN=3 style='font-size: 12px; font-weight:bold; text-align:left;'>".$rs->Value('ca_compania')." $img </TD>";
              echo "</TR>";
              echo "<TR>";
              $complemento = (($rs->Value('ca_oficina')!='')?" Oficina : ".$rs->Value('ca_oficina'):"").(($rs->Value('ca_torre')!='')?" Torre : ".$rs->Value('ca_torre'):"").(($rs->Value('ca_interior')!='')?" Interior : ".$rs->Value('ca_interior'):"").(($rs->Value('ca_complemento')!='')?" - ".$rs->Value('ca_complemento'):"");
@@ -1186,7 +1231,15 @@ require_once("menu.php");
              echo "<TH Class=titulo COLSPAN=5>Información del Cliente</TH>";
              echo "<TR>";
              echo "  <TD Class=mostrar style='vertical-align: top;' ROWSPAN=5>".number_format($rs->Value('ca_idcliente'))."-".$rs->Value('ca_digito')."</TD>";
-             echo "  <TD Class=mostrar COLSPAN=4 style='font-size: 12px; font-weight:bold; text-align:left;'>".$rs->Value('ca_compania')."</TD>";
+             $img="";
+            if($rs->Value('ca_propiedades')!="")
+            {
+                if(strpos($rs->Value('ca_propiedades'), "cuentaglobal=true") !== false)
+                {
+                    $img='<img src="/images/CG30.png" title="Cliente de Cuentas Globales" width="20" height="20" />';
+                }
+            }
+             echo "  <TD Class=mostrar COLSPAN=4 style='font-size: 12px; font-weight:bold; text-align:left;'>".$rs->Value('ca_compania')." $img</TD>";
              echo "</TR>";
              echo "<TR>";
              $complemento = (($rs->Value('ca_oficina')!='')?" Oficina : ".$rs->Value('ca_oficina'):"").(($rs->Value('ca_torre')!='')?" Torre : ".$rs->Value('ca_torre'):"").(($rs->Value('ca_interior')!='')?" Interior : ".$rs->Value('ca_interior'):"").(($rs->Value('ca_complemento')!='')?" - ".$rs->Value('ca_complemento'):"");
@@ -1280,7 +1333,16 @@ require_once("menu.php");
              echo "<TH Class=titulo COLSPAN=5>Información del Cliente</TH>";
              echo "<TR>";
              echo "  <TD Class=mostrar style='vertical-align: top;' ROWSPAN=5>".number_format($rs->Value('ca_idcliente'))."-".$rs->Value('ca_digito')."</TD>";
-             echo "  <TD Class=mostrar COLSPAN=4 style='font-size: 12px; font-weight:bold; text-align:left;'>".$rs->Value('ca_compania')."</TD>";
+             $img="";
+            if($rs->Value('ca_propiedades')!="")
+            {
+                if(strpos($rs->Value('ca_propiedades'), "cuentaglobal=true") !== false)
+                {
+                    $img='<img src="/images/CG30.png" title="Cliente de Cuentas Globales" width="20" height="20" />';
+                }
+            }
+
+             echo "  <TD Class=mostrar COLSPAN=4 style='font-size: 12px; font-weight:bold; text-align:left;'>".$rs->Value('ca_compania')." $img</TD>";
              echo "</TR>";
              echo "<TR>";
              $complemento = (($rs->Value('ca_oficina')!='')?" Oficina : ".$rs->Value('ca_oficina'):"").(($rs->Value('ca_torre')!='')?" Torre : ".$rs->Value('ca_torre'):"").(($rs->Value('ca_interior')!='')?" Interior : ".$rs->Value('ca_interior'):"").(($rs->Value('ca_complemento')!='')?" - ".$rs->Value('ca_complemento'):"");
@@ -1360,7 +1422,15 @@ require_once("menu.php");
              echo "</TR>";
              echo "<TR>";
              echo "  <TD Class=captura>Compañia:</TD>";
-             echo "  <TD Class=mostrar>".$rs->Value('ca_compania')."</TD>";
+             $img="";
+            if($rs->Value('ca_propiedades')!="")
+            {
+                if(strpos($rs->Value('ca_propiedades'), "cuentaglobal=true") !== false)
+                {
+                    $img='<img src="/images/CG30.png" title="Cliente de Cuentas Globales" width="20" height="20" />';
+                }
+            }
+             echo "  <TD Class=mostrar>".$rs->Value('ca_compania')." $img</TD>";
              echo "</TR>";
              echo "<TR>";
              echo "  <TD Class=captura>Saludo:</TD>";
