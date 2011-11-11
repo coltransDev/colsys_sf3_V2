@@ -4501,21 +4501,21 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                     }
                     
                     $xml_hijo->setAttribute("hdca", $dc->Value("ca_dispocarga"));
-                    if ($ic->Value("ca_continuacion") != "TRANSBORDO"){
-                        $destino = ($ic->Value("ca_continuacion") == "N/A") ? $rs->Value("ca_destino") : $ic->Value("ca_continuacion_dest");
-                        $destino = (strlen($dc->Value("ca_iddestino")) != 0) ? $dc->Value("ca_iddestino") : $destino;
+                    $destino = ($ic->Value("ca_continuacion") == "N/A") ? $rs->Value("ca_destino") : $ic->Value("ca_continuacion_dest");
+                    $destino = (strlen($dc->Value("ca_iddestino")) != 0) ? $dc->Value("ca_iddestino") : $destino;
 
-                        $arribo_array = array();
-                        $cu->MoveFirst();
-                        while (!$cu->Eof()) {
-                            if ($cu->Value('ca_identificacion') == 9 and $cu->Value('ca_valor') == $destino) {
-                                $arribo_array = explode("|", $cu->Value('ca_valor2'));
-                                break;
-                            }
-                            $cu->MoveNext();
+                    $arribo_array = array();
+                    $cu->MoveFirst();
+                    while (!$cu->Eof()) {
+                        if ($cu->Value('ca_identificacion') == 9 and $cu->Value('ca_valor') == $destino) {
+                            $arribo_array = explode("|", $cu->Value('ca_valor2'));
+                            break;
                         }
-                        $xml_hijo->setAttribute("hdpt", $arribo_array[0]);
-                        $xml_hijo->setAttribute("hciu", $arribo_array[1]);
+                        $cu->MoveNext();
+                    }
+                    $xml_hijo->setAttribute("hdpt", $arribo_array[0]);
+                    $xml_hijo->setAttribute("hciu", $arribo_array[1]);
+                    if ($ic->Value("ca_continuacion") != "TRANSBORDO"){
                         $xml_hijo->setAttribute("hpa", $arribo_array[2]);
 
                         if ($dc->Value("ca_dispocarga") != "21") {
