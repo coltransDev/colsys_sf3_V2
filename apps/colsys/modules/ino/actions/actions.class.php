@@ -14,9 +14,29 @@ class inoActions extends sfActions {
         
         $this->idmodo = $this->getRequestParameter("modo");
         
-        $this->modo = Doctrine::getTable("Modo")->find($this->idmodo);   
+        if( !$this->idmodo && $this->getRequestParameter("idmaster") ){
+            $master = Doctrine::getTable("InoMaster")->find( $this->getRequestParameter("idmaster") );
+            
+            if( $master ){
                 
-        if (!$this->idmodo || !$this->modo) {            
+                $this->modo = Doctrine::getTable("Modo")
+                                  ->createQuery("m")
+                                  ->addWhere("m.ca_impoexpo = ?", $master->getCaImpoexpo())
+                                  ->addWhere("m.ca_transporte = ?", $master->getCaTransporte())
+                                  ->fetchOne();
+                
+                $this->idmodo = $this->modo->getCaIdmodo();  
+                sfContext::getInstance()->getRequest()->setParameter("modo", $this->idmodo );
+            }else{
+                $this->modo = null;
+            }
+        }else{
+            $this->modo = Doctrine::getTable("Modo")->find($this->idmodo);   
+        }
+        
+        
+                
+        if (!$this->idmodo || !$this->modo) {                
             $action = $this->getContext()->getActionName ();
             if( $action!="seleccionModo" ){
                 $this->redirect("ino/seleccionModo");
@@ -98,6 +118,7 @@ class inoActions extends sfActions {
             case "ca_master":
             case "ca_motonave":
             case "ca_origen":
+            case "ca_observaciones":
             case "ca_destino":
                 $q->addWhere("lower(m.$criterio) LIKE ?","%". strtolower($cadena) . "%");
                 break;
@@ -115,13 +136,18 @@ class inoActions extends sfActions {
             case "ca_numorden":
             case "reporte":
             case "proveedor":
+            case "ca_house":
             case "ca_doctransporte":
                 $q->innerJoin("m.InoHouse h");
                 if($criterio=="cliente")
                 {                    
                     $q->innerJoin("h.Cliente cl");
                     $q->addWhere("lower(cl.ca_compania) like ?", "%". strtolower($cadena) ."%");
-                }            
+                }  
+                if($criterio=="ca_house")
+                { 
+                    $q->addWhere("lower(h.ca_doctransporte) like ?", "%". strtolower($cadena) ."%");
+                }
                 else if($criterio=="proveedor")
                 {
                     $q->innerJoin("h.Tercero pr");
@@ -136,6 +162,15 @@ class inoActions extends sfActions {
                 {
                     $q->addWhere("lower(h.$criterio) like ?", "%". strtolower($cadena) ."%");
                 }
+                break;
+            case "factura_clie":
+                $q->innerJoin("m.InoHouse h");
+                $q->innerJoin("h.InoComprobante comp");
+                $q->addWhere("lower(comp.ca_consecutivo) like ?", "%". strtolower($cadena) ."%");
+                break;
+            case "factura_prov":
+                $q->innerJoin("m.InoCosto cost");                
+                $q->addWhere("lower(cost.ca_factura) like ?", "%". strtolower($cadena) ."%");
                 break;
         }
 
@@ -1484,7 +1519,7 @@ class inoActions extends sfActions {
             $equipo->setCaSerial($request->getParameter("serial"));
             $equipo->setCaNumprecinto($request->getParameter("numprecinto"));
             $equipo->setCaObservaciones($request->getParameter("observaciones")); 
-            $equipo->setCaCantidad($request->getParameter("cantidad")); 
+            //$equipo->setCaCantidad($request->getParameter("cantidad")); 
             $equipo->save($conn);
             
             $conn->commit();

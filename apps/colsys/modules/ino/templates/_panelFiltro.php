@@ -61,7 +61,8 @@ include_component("widgets", "widgetCiudad");
             <select name="criterio" id="criterio" size="7" onChange='cambiarCriterio(this)'>
                 <option value="ca_referencia" <?=($criterio=="ca_referencia"||!$criterio)?"selected":""?>>N&uacute;mero de referencia</option>
                 <option value="cliente" <?=($criterio=="cliente")?"selected":""?>>Cliente</option>
-                <option value="ca_master" <?=($criterio=="ca_master")?"selected":""?>>Master</option>
+                <option value="ca_master" <?=($criterio=="ca_master")?"selected":""?>>Guia Master</option>
+                <option value="ca_house" <?=($criterio=="ca_house")?"selected":""?>>Guia Hija</option>
                 <option value="proveedor" <?=($criterio=="ca_nombre_pro")?"selected":""?>>Nombre del Proveedor </option>
                 <option value="linea" <?=($criterio=="linea")?"selected":""?>>Linea</option>
                 <option value="ca_doctransporte" <?=($criterio=="ca_doctransporte")?"selected":""?>>Documento de Transporte</option>
@@ -72,6 +73,9 @@ include_component("widgets", "widgetCiudad");
                 <option value="ca_motonave" <?=($criterio=="ca_motonave")?"selected":""?>>Motonave</option>
                 <option value="ca_fchsalida" <?=($criterio=="ca_fchsalida")?"selected":""?>>fecha de Salida</option>
                 <option value="ca_fchllegada" <?=($criterio=="ca_fchllegada")?"selected":""?>>fecha de Llegada</option>
+                <option value="factura_clie" <?=($criterio=="factura_clie")?"selected":""?>>Factura Cliente</option>
+                <option value="factura_prov" <?=($criterio=="factura_prov")?"selected":""?>>Factura Proveedor</option>
+                <option value="ca_observaciones" <?=($criterio=="ca_observaciones")?"selected":""?>>Observaciones</option>
             </select>
 	    </td>
 		<td width="337" >&nbsp;
