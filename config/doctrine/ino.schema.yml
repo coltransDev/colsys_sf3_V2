@@ -112,7 +112,10 @@ InoMaster:
       local: ca_idmaster
       foreign: ca_idmaster
       type: one  
-    
+    InoViUnidadesMaster:
+      local: ca_idmaster
+      foreign: ca_idmaster
+      type: one  
 
 
 
@@ -788,6 +791,23 @@ InoViUtilidad:
       primary: true
     ca_referencia: string
     ca_valor: float 
+  relations:
+    InoMaster:
+      local: ca_idmaster
+      foreign: ca_idmaster
+      type: one
+      
+InoViUnidadesMaster:
+  generatePath: ino
+  tableName: ino.vi_unidades_master
+  columns:
+    ca_idmaster:
+      type: integer      
+      primary: true
+    ca_referencia: string
+    ca_numpiezas: float 
+    ca_peso: float 
+    ca_volumen: float 
   relations:
     InoMaster:
       local: ca_idmaster

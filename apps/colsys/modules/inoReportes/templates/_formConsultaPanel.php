@@ -155,12 +155,12 @@ include_component("widgets", "widgetCliente");
                             border:false,
                             defaultType: 'textfield',
                             items: [
-                                new WidgetCliente({
+                                /*new WidgetCliente({
                                     fieldLabel:'Cliente ',
                                     width:500,
                                     id:"cliente",
                                     hiddenName:"idcliente"                                                  
-                                }),
+                                }),*/
                                 
                                 {
                                     xtype:          'combo',
@@ -201,11 +201,11 @@ include_component("widgets", "widgetCliente");
                             defaultType: 'textfield',
                             items: [   
                                 
-                                new WidgetComerciales({
+                                /*new WidgetComerciales({
                                     fieldLabel:'Comercial',
                                     name: 'vendedor',
                                     hiddenName: 'login'
-                                }),
+                                }),*/
                                 {
                                     xtype:          'combo',
                                     mode:           'local',

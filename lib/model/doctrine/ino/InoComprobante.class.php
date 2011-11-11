@@ -17,7 +17,13 @@ class InoComprobante extends BaseInoComprobante
     const PARA_TRANSFERIR = 1;
     const TRANSFERIDO = 1;
 
-    const IDTIPO_F_INO = 10;
+    const IDTIPO_F_INO = 1;
+    const IDTIPO_P_INO = 2;
+    
+    const ID_FACTURACION = 663;
+    const ID_DEUDORES = 664;
+    const ID_PORPAGAR = 665;
+    const ID_UTILIDAD_X_SOBREVENTA = 666;
 
     public function __toString(){
         $tipo = $this->getInoTipoComprobante();

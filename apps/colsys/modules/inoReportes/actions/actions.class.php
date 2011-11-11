@@ -45,11 +45,59 @@ class inoReportesActions extends sfActions {
                 ->innerJoin("p.Ids i")
                 ->leftJoin("m.InoViCosto cost")
                 ->leftJoin("m.InoViIngreso ing")
-                ->select("m.ca_idmaster, m.ca_referencia, m.ca_peso, m.ca_volumen, 
+                ->leftJoin("m.InoViDeduccion ded")
+                ->leftJoin("m.InoViUtilidad uti")
+                ->leftJoin("m.InoViUnidadesMaster uni")
+                ->select("m.ca_idmaster, m.ca_referencia, uni.ca_numhijas, uni.ca_numpiezas, uni.ca_peso, uni.ca_volumen, 
                             o.ca_ciudad, d.ca_ciudad, p.ca_idproveedor, i.ca_nombre, 
-                            cost.ca_valor, cost.ca_venta,ing.ca_valor")
+                            cost.ca_valor, cost.ca_venta, ing.ca_valor, ded.ca_valor, uti.ca_valor")
                 ->addWhere("substr(m.ca_referencia,15,1) = ?", $aa%10 );
                 
+        $impoexpo = $request->getParameter("impoexpo");
+        $transporte = $request->getParameter("transporte");
+        $idlinea = $request->getParameter("idlinea");
+        $idtrafico = $request->getParameter("idtrafico");        
+        $modalidad = $request->getParameter("modalidad");
+        $idagente = $request->getParameter("idagente");
+        $aa = $request->getParameter("aa");
+        $mm = $request->getParameter("mm");
+        
+        if( $impoexpo ){
+            $q->addWhere("m.ca_impoexpo = ? ", $impoexpo);
+        }
+        
+        if( $transporte ){
+            $q->addWhere("m.ca_transporte = ? ", $transporte);
+        }
+        
+        if( $modalidad ){
+            $q->addWhere("m.ca_modalidad = ? ", $modalidad);
+        }
+        
+        if( $idtrafico ){
+            if( $impoexpo==Constantes::EXPO ){
+                $q->addWhere("m.ca_destino = ? ", $idtrafico);
+            }else{
+                $q->addWhere("m.ca_origen = ? ", $idtrafico);
+            }
+        }
+        
+        if( $idlinea ){
+            $q->addWhere("m.ca_idlinea = ? ", $idlinea);
+        }
+        
+        if( $idagente ){
+            $q->addWhere("m.ca_idagente = ? ", $idagente);
+        }
+        
+        if( $mm ){
+            $q->addWhere("SUBSTR(m.ca_referencia,8,2) = ? ", str_pad($mm, 2, "0", STR_PAD_LEFT ));
+        }
+        
+        if( $aa ){
+            $q->addWhere("SUBSTR(m.ca_referencia,15,1) = ? ", $aa%10);
+        }
+        
         
         
         $this->refs = $q->setHydrationMode(Doctrine::HYDRATE_ARRAY)->execute();
