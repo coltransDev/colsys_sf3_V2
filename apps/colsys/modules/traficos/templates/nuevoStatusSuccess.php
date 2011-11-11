@@ -767,9 +767,11 @@ echo $form['transporte']->render();
 			<div align="left"><b>Adjuntar documento:</b><br />
 				
 					<?		
+                   
+                    
 			foreach( $files as $file ){
 				
-				if(  array_search( $file, $att )!==false ){
+				if(  array_search( base64_encode(basename($file)), $att )!==false ){
 					$option = 'checked="checked"';					
 				}else{
 					$option = '';

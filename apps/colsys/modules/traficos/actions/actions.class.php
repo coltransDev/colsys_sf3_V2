@@ -454,11 +454,13 @@ class traficosActions extends sfActions
 		$attachments = $this->getRequestParameter( "attachments" );
 		$this->att = array();
 		if( $attachments ){
-			foreach( $attachments as $attachment){				
-				$this->att[]=$this->user->getFile( $attachment );
+			foreach( $attachments as $key=>$attachment){	                
+				$this->att[]=$attachment;
 				
 			}
 		}
+        
+        //$att[]=$reporte->getDirectorioBase().base64_decode( $attachment );
 		
 		//Busca los archivos del reporte
 		$this->files=$this->reporte->getFiles();
