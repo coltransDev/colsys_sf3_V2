@@ -29,7 +29,10 @@ include_once 'include/functions.php';                                          /
 require_once("checklogin.php"); // Captura las variables de la sessión abierta
 
 if ($nivel == 0) {
-    header("location:inosea_cons.php?boton=Consultar&id=$id");
+    $param="";
+    if($id!="")
+        $param="?boton=Consultar&id=$id";
+    header("location:inosea_cons.php$param");
     exit();
 }
 
