@@ -104,95 +104,100 @@ class inoActions extends sfActions {
         $cadena = $request->getParameter("cadena");
         
         $q = Doctrine_Query::create()->from('InoMaster m');
-                
+         
+        $this->message = "";
 
         $q = Doctrine::getTable("InoMaster")
                         ->createQuery("m")
                         ->select("*");
         
+        if( $cadena ){
         
-        $q->addWhere("m.ca_transporte=?", $this->modo->getCaTransporte() );
-        $q->addWhere("m.ca_impoexpo=?", $this->modo->getCaImpoexpo() );        
-        switch ($criterio) {
-            case "ca_referencia":
-            case "ca_master":
-            case "ca_motonave":
-            case "ca_origen":
-            case "ca_observaciones":
-            case "ca_destino":
-                $q->addWhere("lower(m.$criterio) LIKE ?","%". strtolower($cadena) . "%");
-                break;
-            case "ca_fchsalida":
-            case "ca_fchllegada":
-                $q->addWhere("m.$criterio = ?","'". $cadena . "'");
-                break;
-            case "linea":
-                $q->innerJoin("m.IdsProveedor pr");
-                $q->innerJoin("pr.Ids ids");
-                $q->addWhere("lower(ids.ca_nombre) like ?", "%". strtolower($cadena) ."%");
+            $q->addWhere("m.ca_transporte=?", $this->modo->getCaTransporte() );
+            $q->addWhere("m.ca_impoexpo=?", $this->modo->getCaImpoexpo() );        
+            switch ($criterio) {
+                case "ca_referencia":
+                case "ca_master":
+                case "ca_motonave":
+                case "ca_idnave":
+                case "ca_origen":
+                case "ca_observaciones":
+                case "ca_destino":
+                    $q->addWhere("lower(m.$criterio) LIKE ?","%". strtolower($cadena) . "%");
+                    break;
+                case "ca_fchsalida":
+                case "ca_fchllegada":
+                    $q->addWhere("m.$criterio = ?","'". $cadena . "'");
+                    break;
+                case "linea":
+                    $q->innerJoin("m.IdsProveedor pr");
+                    $q->innerJoin("pr.Ids ids");
+                    $q->addWhere("lower(ids.ca_nombre) like ?", "%". strtolower($cadena) ."%");
 
-                break;
-            case "cliente":
-            case "ca_numorden":
-            case "reporte":
-            case "proveedor":
-            case "ca_house":
-            case "ca_doctransporte":
-                $q->innerJoin("m.InoHouse h");
-                if($criterio=="cliente")
-                {                    
-                    $q->innerJoin("h.Cliente cl");
-                    $q->addWhere("lower(cl.ca_compania) like ?", "%". strtolower($cadena) ."%");
-                }  
-                if($criterio=="ca_house")
-                { 
-                    $q->addWhere("lower(h.ca_doctransporte) like ?", "%". strtolower($cadena) ."%");
-                }
-                else if($criterio=="proveedor")
-                {
-                    $q->innerJoin("h.Tercero pr");
-                    $q->addWhere("lower(pr.ca_nombre) like ?", "%". strtolower($cadena) ."%");
-                }
-                else if($criterio=="reporte")
-                {
-                    $q->innerJoin("h.Reporte rep");
-                    $q->addWhere("lower(rep.ca_consecutivo) like ?", "%". strtolower($cadena) ."%");
-                }
-                else
-                {
-                    $q->addWhere("lower(h.$criterio) like ?", "%". strtolower($cadena) ."%");
-                }
-                break;
-            case "factura_clie":
-                $q->innerJoin("m.InoHouse h");
-                $q->innerJoin("h.InoComprobante comp");
-                $q->addWhere("lower(comp.ca_consecutivo) like ?", "%". strtolower($cadena) ."%");
-                break;
-            case "factura_prov":
-                $q->innerJoin("m.InoCosto cost");                
-                $q->addWhere("lower(cost.ca_factura) like ?", "%". strtolower($cadena) ."%");
-                break;
+                    break;
+                case "cliente":
+                case "ca_numorden":
+                case "reporte":
+                case "proveedor":
+                case "ca_house":
+                case "ca_doctransporte":
+                    $q->innerJoin("m.InoHouse h");
+                    
+                    if($criterio=="cliente")
+                    {   
+                        $q->innerJoin("h.Cliente cl");
+                        $q->addWhere("lower(cl.ca_compania) like ?", "%". strtolower($cadena) ."%");
+                    }
+                    else if($criterio=="ca_house")
+                    {                         
+                        $q->addWhere("lower(h.ca_doctransporte) like ?", "%". strtolower($cadena) ."%");
+                    }                    
+                    else if($criterio=="proveedor")
+                    {
+                        $q->innerJoin("h.Tercero pr");
+                        $q->addWhere("lower(pr.ca_nombre) like ?", "%". strtolower($cadena) ."%");
+                    }
+                    else if($criterio=="reporte")
+                    {
+                        $q->innerJoin("h.Reporte rep");
+                        $q->addWhere("lower(rep.ca_consecutivo) like ?", "%". strtolower($cadena) ."%");
+                    }
+                    else
+                    {                       
+                        $q->addWhere("lower(h.$criterio) like ?", "%". strtolower($cadena) ."%");
+                    }
+                    break;
+                case "factura_clie":
+                    $q->innerJoin("m.InoHouse h");
+                    $q->innerJoin("h.InoComprobante comp");
+                    $q->addWhere("lower(comp.ca_consecutivo) like ?", "%". strtolower($cadena) ."%");
+                    break;
+                case "factura_prov":
+                    $q->innerJoin("m.InoCosto cost");                
+                    $q->addWhere("lower(cost.ca_factura) like ?", "%". strtolower($cadena) ."%");
+                    break;
+            }
+
+            $q->addOrderBy("m.ca_referencia");
+            $q->limit(200);
+
+
+
+            // Defining initial variables
+            $currentPage = $this->getRequestParameter('page', 1);
+            $resultsPerPage = 30;
+
+            // Creating pager object
+            $this->pager = new Doctrine_Pager(
+                            $q,
+                            $currentPage,
+                            $resultsPerPage
+            );
+
+            $this->refList = $this->pager->execute();
+        }else{
+            $this->message = "Por favor coloque un criterio valido";
         }
-
-        $q->addOrderBy("m.ca_referencia");
-        $q->limit(200);
-        
-        
-
-        // Defining initial variables
-        $currentPage = $this->getRequestParameter('page', 1);
-        $resultsPerPage = 30;
-
-        // Creating pager object
-        $this->pager = new Doctrine_Pager(
-                        $q,
-                        $currentPage,
-                        $resultsPerPage
-        );
-        
-        
-
-        $this->refList = $this->pager->execute();
         /*if ($this->pager->getResultsInPage() == 1 && $this->pager->getPage() == 1) {
             $refs = $this->refList;
             $this->redirect("ino/verReferencia?idmaster=" . $refs[0]->getCaIdmaster());

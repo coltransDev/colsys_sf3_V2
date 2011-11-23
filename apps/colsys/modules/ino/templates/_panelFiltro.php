@@ -75,6 +75,7 @@ include_component("widgets", "widgetCiudad");
                 <option value="ca_fchllegada" <?=($criterio=="ca_fchllegada")?"selected":""?>>fecha de Llegada</option>
                 <option value="factura_clie" <?=($criterio=="factura_clie")?"selected":""?>>Factura Cliente</option>
                 <option value="factura_prov" <?=($criterio=="factura_prov")?"selected":""?>>Factura Proveedor</option>
+                <option value="ca_idnave" <?=($criterio=="ca_idnave")?"selected":""?>>Motonave</option>
                 <option value="ca_observaciones" <?=($criterio=="ca_observaciones")?"selected":""?>>Observaciones</option>
             </select>
 	    </td>
