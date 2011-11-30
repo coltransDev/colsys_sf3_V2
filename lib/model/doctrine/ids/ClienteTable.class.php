@@ -20,7 +20,7 @@ class ClienteTable extends Doctrine_Table {
         //list($ano, $mes, $dia) = sscanf($fch_fin, "%d-%d-%d");
         //$fch_fin = date('Y-m-d h:i:s',mktime(23,59,59, $mes, $dia, $ano)); // Incrementa en un día para tener en cuenta los registros el último día dentro de la consulta
         $query = "select std0.*,cl.ca_compania, cl.ca_vendedor, cl.ca_tipo, cl.ca_entidad, u.ca_sucursal from tb_stdcliente std0 INNER JOIN vi_clientes_reduc cl ON (std0.ca_idcliente = cl.ca_idcliente) ";
-        $query.= "INNER JOIN vi_usuarios u ON (cl.ca_vendedor = u.ca_login) ";
+        $query.= "LEFT JOIN vi_usuarios u ON (cl.ca_vendedor = u.ca_login) ";
         $query.= "INNER JOIN (select ca_idcliente, max(ca_fchestado) as ca_fchestado, ca_empresa from tb_stdcliente where ca_fchestado between '$fch_ini' and '$fch_fin' group by ca_idcliente, ca_empresa order by ca_idcliente) std1 ON (std0.ca_idcliente = std1.ca_idcliente) ";
         $query.= "where std0.ca_fchestado = std1.ca_fchestado and std0.ca_empresa = std1.ca_empresa and std0.ca_empresa = '$empresa' and cl.ca_tipo IS NULL ";
         if ($idcliente != null) {
@@ -94,14 +94,15 @@ class ClienteTable extends Doctrine_Table {
             $fch_fin = date('Y-m-d');
         }
 
-        $query = "select cl.ca_idcliente, ca_fchnegocio, ca_numnegocios from vi_clientes_reduc cl ";
+        $query = "select cl.ca_idcliente, ca_fchnegocio, ca_numnegocios, ca_estado from vi_clientes_reduc cl ";
         if ($empresa == 'Coltrans') {
-            $query.= "  LEFT OUTER JOIN (select ca_idcliente, $fun(ca_fchcreado) as ca_fchnegocio from (select ca_idcliente, ca_fchcreado from tb_inoclientes_air where ca_fchcreado between '$fch_ini' and '$fch_fin' UNION select ca_idcliente, ca_fchcreado from tb_inoclientes_sea where ca_fchcreado between '$fch_ini' and '$fch_fin') fc group by ca_idcliente) neg_fch ON (cl.ca_idcliente = neg_fch.ca_idcliente) ";
-            $query.= "  LEFT OUTER JOIN (select ca_idcliente, count(ca_idcliente) as ca_numnegocios from (select ca_idcliente from tb_inoclientes_air where to_date(ca_fchcreado::text,'YYYY-MM-DD') between '$fch_ini' and '$fch_fin' UNION select ca_idcliente from tb_inoclientes_sea where to_date(ca_fchcreado::text,'YYYY-MM-DD') between '$fch_ini' and '$fch_fin') fc group by ca_idcliente) cant_neg ON (cl.ca_idcliente = cant_neg.ca_idcliente) ";
+            $query.= "  LEFT JOIN (select ca_idcliente, $fun(ca_fchcreado) as ca_fchnegocio from (select ca_idcliente, ca_fchcreado from tb_inoclientes_air where ca_fchcreado between '$fch_ini' and '$fch_fin' UNION select ca_idcliente, ca_fchcreado from tb_inoclientes_sea where ca_fchcreado between '$fch_ini' and '$fch_fin') fc group by ca_idcliente) neg_fch ON (cl.ca_idcliente = neg_fch.ca_idcliente) ";
+            $query.= "  LEFT JOIN (select ca_idcliente, count(ca_idcliente) as ca_numnegocios from (select ca_idcliente from tb_inoclientes_air where to_date(ca_fchcreado::text,'YYYY-MM-DD') between '$fch_ini' and '$fch_fin' UNION select ca_idcliente from tb_inoclientes_sea where to_date(ca_fchcreado::text,'YYYY-MM-DD') between '$fch_ini' and '$fch_fin') fc group by ca_idcliente) cant_neg ON (cl.ca_idcliente = cant_neg.ca_idcliente) ";
         } else {
-            $query.= "  LEFT OUTER JOIN (select ca_idcliente, $fun(ca_fchfactura) as ca_fchnegocio from (select ca_idcliente, ca_fchfactura from tb_brk_ingresos LEFT OUTER JOIN tb_brk_maestra ON tb_brk_ingresos.ca_referencia = tb_brk_maestra.ca_referencia where ca_fchfactura between '$fch_ini' and '$fch_fin' UNION select ca_idcliente, ca_fchfactura from tb_expo_ingresos where ca_fchfactura between '$fch_ini' and '$fch_fin') fc group by ca_idcliente) fac_fch ON (cl.ca_idcliente = fac_fch.ca_idcliente) ";
-            $query.= "  LEFT OUTER JOIN (select ca_idcliente, count(ca_factura) as ca_numnegocios from (select ca_idcliente, ca_factura from tb_brk_ingresos LEFT OUTER JOIN tb_brk_maestra ON tb_brk_ingresos.ca_referencia = tb_brk_maestra.ca_referencia where ca_fchfactura between '$fch_ini' and '$fch_fin' UNION select ca_idcliente, ca_factura from tb_expo_ingresos where ca_fchfactura between '$fch_ini' and '$fch_fin') fc group by ca_idcliente) cant_neg ON (cl.ca_idcliente = cant_neg.ca_idcliente) ";
+            $query.= "  LEFT JOIN (select ca_idcliente, $fun(ca_fchfactura) as ca_fchnegocio from (select ca_idcliente, ca_fchfactura from tb_brk_ingresos LEFT OUTER JOIN tb_brk_maestra ON tb_brk_ingresos.ca_referencia = tb_brk_maestra.ca_referencia where ca_fchfactura between '$fch_ini' and '$fch_fin' UNION select ca_idcliente, ca_fchfactura from tb_expo_ingresos where ca_fchfactura between '$fch_ini' and '$fch_fin') fc group by ca_idcliente) fac_fch ON (cl.ca_idcliente = fac_fch.ca_idcliente) ";
+            $query.= "  LEFT JOIN (select ca_idcliente, count(ca_factura) as ca_numnegocios from (select ca_idcliente, ca_factura from tb_brk_ingresos LEFT OUTER JOIN tb_brk_maestra ON tb_brk_ingresos.ca_referencia = tb_brk_maestra.ca_referencia where ca_fchfactura between '$fch_ini' and '$fch_fin' UNION select ca_idcliente, ca_factura from tb_expo_ingresos where ca_fchfactura between '$fch_ini' and '$fch_fin') fc group by ca_idcliente) cant_neg ON (cl.ca_idcliente = cant_neg.ca_idcliente) ";
         }
+        $query.= "LEFT JOIN (select std.ca_idcliente, std.ca_fchestado, std.ca_estado, std.ca_empresa from tb_stdcliente std join ( select sc.ca_idcliente, max(sc.ca_fchestado) AS ca_fchestado, sc.ca_empresa from tb_stdcliente sc where sc.ca_empresa::text = '$empresa'::text and sc.ca_fchestado <= '$fch_fin' group by sc.ca_idcliente, sc.ca_empresa) max on std.ca_idcliente = max.ca_idcliente AND std.ca_fchestado = max.ca_fchestado AND std.ca_empresa::text = max.ca_empresa::text) st1 ON cl.ca_idcliente::numeric = st1.ca_idcliente::numeric ";
         $query.= "where cl.ca_idcliente = $idcliente";
 
         // echo "<br />".$query."<br />";
