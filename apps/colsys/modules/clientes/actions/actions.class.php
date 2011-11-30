@@ -571,63 +571,99 @@ class clientesActions extends sfActions {
     }
 
     public function executeReporteCircularEmail() {
-        $parametro = Doctrine::getTable("Parametro")->find(array("CU067", 1, "defaultEmails"));
-        if ($parametro) {
-            if (stripos($parametro->getCaValor2(), ',') !== false) {
-                $defaultEmail = explode(",", $parametro->getCaValor2());
-            } else {
-                $defaultEmail = array($parametro->getCaValor2());
+        try {               //  Controla cualquier error el la ejecución de la rutina
+            $parametro = Doctrine::getTable("Parametro")->find(array("CU067", 1, "defaultEmails"));
+            if ($parametro) {
+                if (stripos($parametro->getCaValor2(), ',') !== false) {
+                    $defaultEmail = explode(",", $parametro->getCaValor2());
+                } else {
+                    $defaultEmail = array($parametro->getCaValor2());
+                }
             }
-        }
-        $parametro = Doctrine::getTable("Parametro")->find(array("CU067", 2, "ccEmails"));
-        if ($parametro) {
-            if (stripos($parametro->getCaValor2(), ',') !== false) {
-                $ccEmails = explode(",", $parametro->getCaValor2());
-            } else {
-                $ccEmails = array($parametro->getCaValor2());
+            $parametro = Doctrine::getTable("Parametro")->find(array("CU067", 2, "ccEmails"));
+            if ($parametro) {
+                if (stripos($parametro->getCaValor2(), ',') !== false) {
+                    $ccEmails = explode(",", $parametro->getCaValor2());
+                } else {
+                    $ccEmails = array($parametro->getCaValor2());
+                }
             }
-        }
 
-        $comerciales = UsuarioTable::getComerciales();
-        foreach ($comerciales as $comercial) {
+            $comerciales = UsuarioTable::getComerciales();
+            foreach ($comerciales as $comercial) {
 
+                $email = new Email();
+                $email->setCaUsuenvio("Administrador");
+                $email->setCaTipo("CircularClientes");
+                $email->setCaIdcaso("8888");
+                $email->setCaFrom("admin@coltrans.com.co");
+                $email->setCaFromname("Administrador Sistema Colsys");
+                $email->setCaReplyto("admin@coltrans.com.co");
+
+                // $email->setCaFchenvio(date("Y-m-d H:i:s"));  // Hay que quitar cuando salga de seguimiento la rutina
+
+                $email->addTo($comercial->getCaEmail());
+                reset($defaultEmail);
+                while (list ($clave, $val) = each($defaultEmail)) {
+                    $email->addCc($val);
+                }
+                reset($ccEmails);
+                while (list ($clave, $val) = each($ccEmails)) {
+                    $email->addCc($val);
+                }
+                // $email->addCc("clopez@coltrans.com.co");    // Pruebas de envio controlado
+
+                $inicio = $this->getRequestParameter("fchStart");
+                $final = $this->getRequestParameter("fchEnd");
+                $sucursal = $comercial->getCaSucursal();
+                $vendedor = $comercial->getCaLogin();
+
+                $this->getRequest()->setParameter("fchStart", $inicio);
+                $this->getRequest()->setParameter("fchEnd", $final);
+                $this->getRequest()->setParameter("sucursal", $sucursal);
+                $this->getRequest()->setParameter("vendedor", $vendedor);
+
+                $this->getRequest()->setParameter("layout", "email");
+
+                $email->setCaSubject("Clientes Activos con Vencimiento de Circular 170 a : $inicio - $vendedor");
+                $email->setCaBodyhtml(sfContext::getInstance()->getController()->getPresentationFor('clientes', 'reporteCircular'));
+
+                $email->save();
+            }
+        } catch (Exception $e) {
+            echo $e->getMessage()."\n\n".$e->getTraceAsString();
+            $usuarios = Doctrine::getTable("Usuario")
+                            ->createQuery("u")
+                            ->innerJoin("u.UsuarioPerfil p")
+                            ->where("p.ca_perfil = ? ", "sistemas")
+                            ->execute();
+            /* $parametro = Doctrine::getTable("Parametro")->find(array("CU065",3,"ccEmails"));
+              if (stripos($parametro->getCaValor2(), ',') !== false) {
+              $ccEmails = explode(",", $parametro->getCaValor2());
+              }else {
+              $ccEmails = array($parametro->getCaValor2());
+              } */
+
+            //Crea el correo electronico
             $email = new Email();
             $email->setCaUsuenvio("Administrador");
-            $email->setCaTipo("CircularClientes");
-            $email->setCaIdcaso("8888");
+            $email->setCaTipo("Circular0170");
+            $email->setCaIdcaso("1");
             $email->setCaFrom("admin@coltrans.com.co");
             $email->setCaFromname("Administrador Sistema Colsys");
             $email->setCaReplyto("admin@coltrans.com.co");
 
-            // $email->setCaFchenvio(date("Y-m-d H:i:s"));  // Hay que quitar cuando salga de seguimiento la rutina
-
-            $email->addTo($comercial->getCaEmail());
-            reset($defaultEmail);
-            while (list ($clave, $val) = each($defaultEmail)) {
-                $email->addCc($val);
+            foreach ($usuarios as $usuario) {
+                $email->addTo($usuario->getCaEmail());
             }
-            reset($ccEmails);
-            while (list ($clave, $val) = each($ccEmails)) {
-                $email->addCc($val);
-            }
-            // $email->addCc("clopez@coltrans.com.co");    // Pruebas de envio controlado
+            /* reset($ccEmails);
+              while (list ($clave, $val) = each ($ccEmails)) {
+              $email->addTo( $val );
+              } */
 
-            $inicio = $this->getRequestParameter("fchStart");
-            $final = $this->getRequestParameter("fchEnd");
-            $sucursal = $comercial->getCaSucursal();
-            $vendedor = $comercial->getCaLogin();
-
-            $this->getRequest()->setParameter("fchStart", $inicio);
-            $this->getRequest()->setParameter("fchEnd", $final);
-            $this->getRequest()->setParameter("sucursal", $sucursal);
-            $this->getRequest()->setParameter("vendedor", $vendedor);
-
-            $this->getRequest()->setParameter("layout", "email");
-
-            $email->setCaSubject("Clientes Activos con Vencimiento de Circular 170 a : $inicio - $vendedor");
-            $email->setCaBodyhtml(sfContext::getInstance()->getController()->getPresentationFor('clientes', 'reporteCircular'));
-
-            $email->save();
+            $email->setCaSubject("¡Error en Informe sobre vencimiento Circular0170!");
+            $email->setCaBodyhtml("Caught exception: ".$e->getMessage()."\n\n".$e->getTraceAsString()."\n\n Se ha presentado un error en el proceso que lee la información de Lista Clinton y la compara con la Maestra de Clientes Activos de COLSYS. Agradecemos confirmar que el Departamento de Sistemas esté enterado de esta falla. Gracias!");
+            $email->save(); //guarda el cuerpo del mensaje
         }
     }
 
