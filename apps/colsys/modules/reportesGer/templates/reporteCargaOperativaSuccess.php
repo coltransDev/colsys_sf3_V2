@@ -20,9 +20,10 @@ $agente = $sf_data->getRaw("agente");
 $linea = $sf_data->getRaw("linea");
 $sucursalagente = $sf_data->getRaw("sucursalagente");
 $sucursal = $sf_data->getRaw("sucursal");
+$idDepartamento = $sf_data->getRaw("idDepartamento");
+$idUsuenvio = $sf_data->getRaw("idUsuenvio");
 $incoterms = $sf_data->getRaw("incoterms");
-//print_r($incoterms);
-//echo implode(",", $incoterms);
+$tipoInforme = $sf_data->getRaw("tipoInforme");
 $resul = $sf_data->getRaw("resul");
 ?>
 
@@ -199,14 +200,14 @@ $resul = $sf_data->getRaw("resul");
                                             id:"idDepartamento",
                                             hiddenName:"departamento",
                                             width:150,
-                                            value:"<?= $departamento ?>",
-                                            hiddenValue:"<?= $departamento ?>"
+                                            value:"<?= $idDepartamento ?>",
+                                            hiddenValue:"<?= $idDepartamento ?>"
                                         }),
                                         new WidgetUsuario({fieldLabel: 'Usuario',
                                             id:"idUsuenvio",
                                             hiddenName:"usuenvio",
                                             width:250,
-                                            value:"<?= $nomoperativo ?>",
+                                            value:"<?= $idUsuenvio ?>",
                                             hiddenValue:"<?= $usuenvio ?>"
                                         }),
                                         new WidgetParametros({fieldLabel: 'Tipo/Informe',
@@ -456,9 +457,9 @@ if ($opcion and $tipoInforme != "") {
                     <?
                         $array_facturas = array();
                         if ($r["ca_transporte"] == "Aéreo"){
-                            $array_facturas = InoClientesAirTable::facturasPorReporte($r["ca_referencia"], $r["ca_idcliente"], $r["ca_consecutivo"], $usuenvio);
+                            $array_facturas = InoClientesAirTable::facturasPorReporte($r["ca_referencia"], $r["ca_idcliente"], $r["ca_consecutivo"], $usuenvio, $fechainicial, $fechafinal);
                         }else if ($r["ca_transporte"] == "Marítimo"){
-                            $array_facturas = InoClientesSeaTable::facturasPorReporte($r["ca_referencia"], $r["ca_idcliente"], $r["ca_consecutivo"], $usuenvio);
+                            $array_facturas = InoClientesSeaTable::facturasPorReporte($r["ca_referencia"], $r["ca_idcliente"], $r["ca_consecutivo"], $usuenvio, $fechainicial, $fechafinal);
                         }
 
                         if (count($array_facturas) != 0){

@@ -606,8 +606,9 @@ class reportesGerActions extends sfActions {
         $this->sucursal = $request->getParameter("sucursal");
         $this->idSucursal = $request->getParameter("idSucursal");
         $this->usuenvio = $request->getParameter("usuenvio");
-        $this->departamento = $request->getParameter("departamento");
+        $this->idDepartamento = $request->getParameter("idDepartamento");
         $this->nomoperativo = $request->getParameter("nomoperativo");
+        $this->tipoInforme = $request->getParameter("tipoInforme");
 
         if ($this->opcion) {
             if ($this->idmodalidad)
@@ -616,10 +617,10 @@ class reportesGerActions extends sfActions {
                 $filtro = "";
                 if ($this->fechainicial && $this->fechafinal)
                     list($ano, $mes, $dia) = sscanf($this->fechainicial, "%d-%d-%d");
-                    $fchinicial = date("Y-m-d H:i:s", mktime( 0, 0, 0, $mes, $dia, $ano));
+                    $fechainicial = date("Y-m-d H:i:s", mktime( 0, 0, 0, $mes, $dia, $ano));
                     list($ano, $mes, $dia) = sscanf($this->fechafinal, "%d-%d-%d");
                     $fechafinal = date("Y-m-d H:i:s", mktime( 23, 59, 59, $mes, $dia, $ano));
-                    $filtro ="(rps.ca_fchenvio between '$fchinicial' and '$fechafinal') and ";
+                    $filtro ="(rps.ca_fchenvio between '$fechainicial' and '$fechafinal') and ";
                 $filtroTipoInforme = "RIGHT JOIN (select rpt.ca_consecutivo, substr(rps.ca_fchenvio::text,1,4) as ca_ano, substr(rps.ca_fchenvio::text,6,2) as ca_mes, rps.ca_usuenvio, count(rps.ca_idemail) as ca_cant_emails from tb_repstatus rps, tb_reportes rpt where $filtro rpt.ca_idreporte = rps.ca_idreporte group by ca_ano, ca_mes, ca_consecutivo, ca_usuenvio) rf ON (rp.ca_consecutivo = rf.ca_consecutivo)";
             }else{
                 if ($this->fechainicial && $this->fechafinal)
@@ -660,8 +661,8 @@ class reportesGerActions extends sfActions {
             if ($this->usuenvio)
                 $where.=" and rf.ca_usuenvio = '" . $this->usuenvio . "'";
 
-            if ($this->departamento)
-                $where.=" and op.ca_departamento = '" . $this->departamento . "'";
+            if ($this->idDepartamento)
+                $where.=" and op.ca_departamento = '" . $this->idDepartamento . "'";
 
             $sql = "SELECT
                 rf.ca_ano, rf.ca_mes, rp.ca_idreporte, rp.ca_fchreporte, rp.ca_consecutivo, rx.ca_version, sc.ca_nombre as ca_sucursal,
