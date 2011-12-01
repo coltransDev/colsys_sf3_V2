@@ -57,7 +57,8 @@ WidgetUsuario = function( config ){
         selectOnFocus: true,        
         lazyRender:true,
         tpl: this.resultTpl,
-        itemSelector: 'div.search-item'
+        itemSelector: 'div.search-item',
+        submitValue: true
     });
 };
 
