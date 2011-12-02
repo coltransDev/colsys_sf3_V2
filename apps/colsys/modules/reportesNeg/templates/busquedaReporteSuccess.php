@@ -62,6 +62,14 @@ function importar(id,idnew)
                     echo "<br>Anulado";
                 else if($reporte["ca_usucerrado"]!="")
                     echo "<br>Cerrado";
+                
+                
+                if(strpos($reporte["ca_propiedades_cli"], "cuentaglobal=true") !== false)
+                {
+                ?>
+                <br><img src="/images/CG30.png" title="Cliente de Cuentas Globales" />
+                <?
+                }
                 ?>
             </td>
 
