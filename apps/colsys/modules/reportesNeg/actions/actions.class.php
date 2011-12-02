@@ -188,8 +188,8 @@ class reportesNegActions extends sfActions
             $sql1.="and ca_login='".$this->getUser()->getUserId()."'";
         }
 
-        $sql.=" and ca_tiporep=2 and ca_versiones=1 and ca_usuanulado is null and ca_usucerrado is null ";
-        $sql1.=" and ca_tiporep=2 and ca_versiones=1 and ca_usuanulado is null and ca_usucerrado is null ";
+        $sql.=" and ca_tiporep=2 and ca_versiones=1 and ca_usuanulado is null and ca_usucerrado is null and ca_fchcreado>= (CURRENT_TIMESTAMP - CAST('5 months' AS INTERVAL)) ";
+        $sql1.=" and ca_tiporep=2 and ca_versiones=1 and ca_usuanulado is null and ca_usucerrado is null and ca_fchcreado>= (CURRENT_TIMESTAMP - CAST('5 months' AS INTERVAL)) ";
 
         $st1 = $con->execute($sql1);
 
@@ -436,7 +436,7 @@ class reportesNegActions extends sfActions
     */
     public function executeFormReporte(sfWebRequest $request){
 
-        $this->nivel = $this->getNivel();        
+        $this->nivel = $this->getNivel();
         $this->impoexpo = $this->getRequestParameter("impoexpo");
         $this->load_category();
         $user = $this->getUser();
@@ -446,8 +446,8 @@ class reportesNegActions extends sfActions
         else if($this->modo==Constantes::MARITIMO)
             $this->nomLinea="Naviera";
         else
-            $this->nomLinea="Linea";        
-        
+            $this->nomLinea="Linea";
+
 		if( $this->getRequestParameter("id") ){
 			$reporte = Doctrine::getTable("Reporte")->findOneBy("ca_idreporte", $this->getRequestParameter("id")) ;
 			$this->forward404Unless( $reporte );
@@ -1648,9 +1648,24 @@ class reportesNegActions extends sfActions
         $reporte->setCaIdconsignarmaster(0);
         $reporte->setCaIdlinea(0);
 
-        $reporte->setCaContinuacion("N/A");
+        if($request->getParameter("continuacion")   )
+        {
+            $reporte->setCaContinuacion($request->getParameter("continuacion"));
+        }
+        else
+        {
+            $reporte->setCaContinuacion("N/A");
+        }
 
-        $reporte->setCaContinuacionDest($request->getParameter("iddestino"));
+        if($request->getParameter("continuacion_dest")   )
+        {
+            $reporte->setCaContinuacionDest($request->getParameter("continuacion_dest"));
+        }
+        else
+        {
+            $reporte->setCaContinuacionDest($request->getParameter("iddestino"));
+        }
+
         $texto="";
         if($request->getParameter("fchdespacho") )
         {
