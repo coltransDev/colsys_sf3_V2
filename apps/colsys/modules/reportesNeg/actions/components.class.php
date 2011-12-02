@@ -508,7 +508,9 @@ class reportesNegComponents extends sfComponents
     public function executeFormReportePanelAg()
 	{
         $this->permiso = $this->getUser()->getNivelAcceso( "87" );
-        $this->cache=$this->getRequestParameter("cache");
+        $this->cache=$this->getRequestParameter("cache");        
+        if(!$this->tipo)
+            $this->tipo="";
         if($this->permiso=="3")
         {
             $this->load_category();
