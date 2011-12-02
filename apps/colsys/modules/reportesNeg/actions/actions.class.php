@@ -187,9 +187,9 @@ class reportesNegActions extends sfActions
             $sql.="and ca_login='".$this->getUser()->getUserId()."'";
             $sql1.="and ca_login='".$this->getUser()->getUserId()."'";
         }
-
-        $sql.=" and ca_tiporep=2 and ca_versiones=1 and ca_usuanulado is null and ca_usucerrado is null and ca_fchcreado>= (CURRENT_TIMESTAMP - CAST('5 months' AS INTERVAL)) ";
-        $sql1.=" and ca_tiporep=2 and ca_versiones=1 and ca_usuanulado is null and ca_usucerrado is null and ca_fchcreado>= (CURRENT_TIMESTAMP - CAST('5 months' AS INTERVAL)) ";
+ 
+        $sql.=" and ca_tiporep=2 and ca_versiones=1 and ca_usuanulado is null and ca_usucerrado is null and ca_fchcreado >= (CURRENT_TIMESTAMP - CAST('4 months' AS INTERVAL)) ";
+        $sql1.=" and ca_tiporep=2 and ca_versiones=1 and ca_usuanulado is null and ca_usucerrado is null and ca_fchcreado >= (CURRENT_TIMESTAMP - CAST('4 months' AS INTERVAL)) ";
 
         $st1 = $con->execute($sql1);
 
