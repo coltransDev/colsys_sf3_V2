@@ -33,7 +33,7 @@ include_component("widgets", "widgetBodega",array("modo"=>$modo,"impoexpo"=>$imp
         var camposNotificar = new Array();
 
         <?
-        if($impoexpo=="Importación" && $modo=="Marítimo")
+        if(($impoexpo=="Importación" && $modo=="Marítimo") || ($impoexpo==constantes::OTMDTA  ) )
         {
         ?>
             this.wgBodega.fieldLabel="Usuario";            
