@@ -19,8 +19,9 @@ class ClienteTable extends Doctrine_Table {
 
         //list($ano, $mes, $dia) = sscanf($fch_fin, "%d-%d-%d");
         //$fch_fin = date('Y-m-d h:i:s',mktime(23,59,59, $mes, $dia, $ano)); // Incrementa en un día para tener en cuenta los registros el último día dentro de la consulta
-        $query = "select std0.*,cl.ca_compania, cl.ca_vendedor, cl.ca_tipo, cl.ca_entidad, u.ca_sucursal from tb_stdcliente std0 INNER JOIN vi_clientes_reduc cl ON (std0.ca_idcliente = cl.ca_idcliente) ";
+        $query = "select std0.*, vs.ca_fchvisita, cl.ca_compania, cl.ca_vendedor, cl.ca_tipo, cl.ca_entidad, u.ca_sucursal from tb_stdcliente std0 INNER JOIN vi_clientes_reduc cl ON (std0.ca_idcliente = cl.ca_idcliente) ";
         $query.= "LEFT JOIN vi_usuarios u ON (cl.ca_vendedor = u.ca_login) ";
+        $query.= "LEFT JOIN (select ca_idcliente, max(ca_fchvisita) as ca_fchvisita from tb_enccliente where ca_fchvisita between '$fch_ini' and '$fch_fin' group by ca_idcliente order by ca_idcliente) vs ON (cl.ca_idcliente = vs.ca_idcliente) ";
         $query.= "INNER JOIN (select ca_idcliente, max(ca_fchestado) as ca_fchestado, ca_empresa from tb_stdcliente where ca_fchestado between '$fch_ini' and '$fch_fin' group by ca_idcliente, ca_empresa order by ca_idcliente) std1 ON (std0.ca_idcliente = std1.ca_idcliente) ";
         $query.= "where std0.ca_fchestado = std1.ca_fchestado and std0.ca_empresa = std1.ca_empresa and std0.ca_empresa = '$empresa' and cl.ca_tipo IS NULL ";
         if ($idcliente != null) {

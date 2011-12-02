@@ -71,7 +71,6 @@ use_helper('ExtCalendar');
 		<td><input class="submit" type='submit' name='buscar' value=' Buscar' /></td>
 	</tr>
             <td  colspan="7">
-                <span ><b>Simulaci&oacute;n :</b> Use &eacute;sta opci&oacute;n s&oacute;lo para efectos de evaluar el comportamiento del indicador frente a un eventual cambio en la forma de calcularlo.<br />
                     <center>
                     <input type='radio' name='simulacion' value='dos' checked />Indicador de Gesti&oacute;n&nbsp;&nbsp;
                     <input type='radio' name='simulacion' value='sin' />An&aacute;lisis Estado de Clientes
