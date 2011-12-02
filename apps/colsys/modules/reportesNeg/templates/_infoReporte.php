@@ -72,7 +72,17 @@
                 <table cellspacing="1" width="100%" border="0">
                     <tbody>
                         <tr>
-                            <td width="33%" ><b>Nombre:</b> <?=Utils::replace($cliente->getCaCompania())?></td>
+                            <td width="33%" ><b>Nombre:</b> <?=Utils::replace($cliente->getCaCompania())?>
+                                &nbsp;&nbsp;
+                            <?
+                                if($cliente->getProperty("cuentaglobal")=="true")
+                                {
+                            ?>	
+                                <img src="/images/CG30.png" title="Cliente de Cuentas Globales" width="20" height="20" />
+                             <?
+                                }
+                             ?>
+                            </td>
                             <td width="33%" ><b>Contacto:</b> <?=Utils::replace($contacto->getCaNombres())?></td>
                             <td width="33%" ><b>Orden:</b><?=$reporte->getCaOrdenClie()?></td>
                         </tr>
