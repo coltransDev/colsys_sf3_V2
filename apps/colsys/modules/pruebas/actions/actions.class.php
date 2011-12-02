@@ -3999,6 +3999,7 @@ ORDER BY ca_idtrayecto,ca_idconcepto,log_pricrecargosxconcepto.ca_idrecargo, ca_
     
     
     public function executeImportINOExpo(){
+        exit();
         //Creado para Perú
         $masters = Doctrine::getTable("InoMaestraExpo")
                     ->createQuery("m")
@@ -4048,7 +4049,7 @@ ORDER BY ca_idtrayecto,ca_idconcepto,log_pricrecargosxconcepto.ca_idrecargo, ca_
             $newHouse->setCaIdmaster( $newMaster->getCaIdmaster() );
             $newHouse->setCaIdcliente( $m->getCaIdcliente() );
             $newHouse->setCaProducto($m->getCaProducto());
-            
+            $newHouse->setCaIdreporte( $reporte->getCaIdreporte() );
             $newHouse->setCaVendedor($reporte->getCaLogin());
             $newHouse->setCaDoctransporte($m->getCaReferencia());
             $newHouse->setCaFchdoctransporte($m->getCaFchreferencia());
@@ -4164,6 +4165,535 @@ ORDER BY ca_idtrayecto,ca_idconcepto,log_pricrecargosxconcepto.ca_idrecargo, ca_
         
         $this->setTemplate("blank");
     }
+    
+    
+    
+    public function executeImportarCostosEnConceptos($request){
+        
+        $costos=Doctrine::getTable('Costo')
+                        ->createQuery("c")                        
+                        ->addWhere("c.ca_impoexpo = ?", 'Importación')
+                        ->addWhere("c.ca_transporte = ?", 'Aéreo')
+                        ->execute();
+        
+        
+        $conn = Doctrine::getTable("InoCosto")->getConnection();
+        $conn->beginTransaction();
+        foreach( $costos as $c ){
+            $concepto = new InoConcepto();
+            $concepto->setCaIdconcepto( $c->getCaIdcosto() );
+            $concepto->setCaConcepto( $c->getCaCosto() );
+            $concepto->setCaCosto( true );
+            $concepto->save( $conn );
+           
+          
+            if( $c->getCaTransporte()==Constantes::MARITIMO ){
+                $cmodalidad = new InoConceptoModalidad();
+                $cmodalidad->setCaIdconcepto( $c->getCaIdcosto() );
+                $cmodalidad->setCaIdmodalidad( 2 );            
+                $cmodalidad->save( $conn );
+                
+                $cmodalidad = new InoConceptoModalidad();
+                $cmodalidad->setCaIdconcepto( $c->getCaIdcosto() );
+                $cmodalidad->setCaIdmodalidad( 3 );            
+                $cmodalidad->save( $conn );
+                
+                $cmodalidad = new InoConceptoModalidad();
+                $cmodalidad->setCaIdconcepto( $c->getCaIdcosto() );
+                $cmodalidad->setCaIdmodalidad( 4 );            
+                $cmodalidad->save( $conn );
+            }
+            
+            if( $c->getCaTransporte()==Constantes::AEREO ){
+                $cmodalidad = new InoConceptoModalidad();
+                $cmodalidad->setCaIdconcepto( $c->getCaIdcosto() );
+                $cmodalidad->setCaIdmodalidad( 7 );            
+                $cmodalidad->save( $conn );
+                
+                $cmodalidad = new InoConceptoModalidad();
+                $cmodalidad->setCaIdconcepto( $c->getCaIdcosto() );
+                $cmodalidad->setCaIdmodalidad( 8 );            
+                $cmodalidad->save( $conn );
+            }
+            
+            
+            
+        }
+        
+        $conn->commit();
+        
+        $this->setTemplate("blank");
+    }
+    
+    public function executeFixComprobantesDetalles($request){
+        
+        exit();
+        $comp =Doctrine::getTable('InoComprobante')
+                        ->createQuery("c")                        
+                        ->addWhere("c.ca_idcomprobante != ?", 40)
+                        ->execute();
+        
+        
+        $conn = Doctrine::getTable("InoComprobante")->getConnection();
+        $conn->beginTransaction();
+        foreach( $comp as $c ){
+            $det = new InoDetalle();
+            $det->setCaIdcomprobante( $c->getCaIdcomprobante() );
+            $det->setCaId( $c->getCaId() );
+            $det->setCaIdconcepto( 663 );
+            $house = Doctrine::getTable("InoHouse")->find( $c->getCaIdhouse() );
+            $det->setCaIdhouse( $house->getCaIdhouse() );            
+            $det->setCaIdmaster( $house->getCaIdmaster() );            
+            $det->setCaCr( $c->getCaValor() );
+            $det->save( $conn );
+            
+            
+            $det = new InoDetalle();
+            $det->setCaIdcomprobante( $c->getCaIdcomprobante() );
+            $det->setCaId( $c->getCaId() );
+            $det->setCaIdconcepto( 664 );
+            $house = Doctrine::getTable("InoHouse")->find( $c->getCaIdhouse() );
+            $det->setCaIdhouse( $house->getCaIdhouse() );            
+            $det->setCaIdmaster( $house->getCaIdmaster() );            
+            $det->setCaDb( $c->getCaValor() );
+            $det->save( $conn );
+           
+        }
+        
+        $conn->commit();
+        
+        $this->setTemplate("blank");
+    }
+    
+    
+    
+    
+    public function executeImportINOAereo(){
+        exit();
+        //Creado para Perú
+        $masters = Doctrine::getTable("InoMaestraAir")
+                    ->createQuery("m")
+                    ->execute();
+        
+        
+        $conn = Doctrine::getTable("Reporte")->getConnection();
+        $conn->beginTransaction();
+        foreach( $masters as $m ){
+            
+            
+            $newMaster = new InoMaster();
+            $newMaster->setCaImpoexpo(Constantes::IMPO);
+            $newMaster->setCaTransporte(Constantes::AEREO);
+            $newMaster->setCaReferencia($m->getCaReferencia());            
+            $newMaster->setCaFchreferencia($m->getCaFchreferencia());            
+            $newMaster->setCaMaster($m->getCaReferencia());
+            //$newMaster->setCaFchmaster($m->getCaFchreferencia());
+            $newMaster->setCaOrigen($m->getCaOrigen());
+            $newMaster->setCaDestino($m->getCaDestino());            
+            $newMaster->setCaModalidad($m->getCaModalidad());
+            $newMaster->setCaIdlinea($m->getCaIdlinea());            
+            /*
+             // En coltrans no hay agente a partir de una fecha
+            $reporte = ReporteTable::retrieveByConsecutivo($m->getCaConsecutivo());            
+            $newMaster->setCaIdagente( $reporte->getCaIdagente() ); 
+             */
+            $newMaster->setCaIdagente($m->getCaIdagente()); 
+            $newMaster->setCaPiezas($m->getCaPiezas());
+            $newMaster->setCaPeso($m->getCaPeso());
+            $newMaster->setCaVolumen($m->getCaPesovolumen()); 
+                       
+            $newMaster->setCaMaster($m->getCaMawb());            
+            
+            $newMaster->setCaObservaciones( $m->getCaObservaciones() );
+            
+            $newMaster->setCaFchsalida( $m->getCaFchpreaviso() );
+            $newMaster->setCaFchllegada( $m->getCaFchllegada() );
+            
+            $newMaster->setCaFchcreado($m->getCaFchcreado());
+            $newMaster->setCaUsucreado($m->getCaUsucreado());
+            $newMaster->setCaFchactualizado($m->getCaFchactualizado());
+            $newMaster->setCaUsuactualizado($m->getCaUsuactualizado());
+            $newMaster->setCaFchliquidado($m->getCaFchliquidado());
+            $newMaster->setCaUsuliquidado($m->getCaUsuliquidado());
+            $newMaster->setCaFchliquidado($m->getCaFchcerrado());
+            $newMaster->setCaUsuliquidado($m->getCaUsucerrado());
+            
+            
+            
+            $newMaster->stopBlaming();
+            $newMaster->save($conn);
+            echo "<br /><br /><b>Master</b> ".$m->getCaReferencia()." idlinea: ".$m->getCaIdlinea()."<br />";     
+            
+            
+            $houses = Doctrine::getTable("InoClientesAir")
+                    ->createQuery("c")
+                    ->addWhere("c.ca_referencia = ?", $m->getCaReferencia() )
+                    ->execute();
+            
+            
+            foreach( $houses as $h ){
+                $newHouse = new InoHouse();
+                $newHouse->setCaIdmaster( $newMaster->getCaIdmaster() );
+                $newHouse->setCaIdcliente( $h->getCaIdcliente() );                                
+                
+                $reporte = ReporteTable::retrieveByConsecutivo($h->getCaIdreporte());                                            
+                $newHouse->setCaIdreporte( $reporte->getCaIdreporte() );
+                $newHouse->setCaVendedor($h->getCaLoginvendedor());               
+                $newHouse->setCaDoctransporte($h->getCaHawb());
+                $newHouse->setCaFchdoctransporte($m->getCaFchreferencia());
+                
+               
+                $newHouse->setCaNumpiezas($h->getCaNumpiezas());
+                $newHouse->setCaPeso($h->getCaPeso());
+                $newHouse->setCaVolumen($h->getCaVolumen());
+                $newHouse->setCaNumorden($h->getCaNumorden());
+                $newHouse->setCaIdtercero($reporte->getCaIdproveedor());
+                $newHouse->setCaTercero($h->getCaProveedor());
+                
+
+
+                $newHouse->setCaFchcreado($h->getCaFchcreado());
+                $newHouse->setCaUsucreado($h->getCaUsucreado());
+                $newHouse->setCaFchactualizado($h->getCaFchactualizado());
+                $newHouse->setCaUsuactualizado($h->getCaUsuactualizado());
+                $newHouse->setCaIdbodega( $h->getCaIdbodega() );
+                $newHouse->stopBlaming();
+                $newHouse->save( $conn );
+
+
+                $ingresos = Doctrine::getTable("InoIngresosAir")
+                        ->createQuery("c")
+                        ->addWhere("c.ca_referencia = ?", $m->getCaReferencia() )
+                        ->addWhere("c.ca_idcliente = ?", $h->getCaIdcliente() )
+                        ->addWhere("c.ca_hawb = ?", $h->getCaHawb() )
+                        ->execute();
+
+
+                foreach( $ingresos as $i ){
+
+                    $newIng = new InoComprobante();                
+                    $newIng->setCaIdhouse( $newHouse->getCaIdhouse() );    
+                    $newIng->setCaId( $newHouse->getCaIdcliente() );   
+                    $newIng->setCaIdtipo( 1 );
+                    $newIng->setCaConsecutivo( $i->getCaFactura() );
+                    $newIng->setCaFchcomprobante( $i->getCaFchfactura() );
+                    
+                    $newIng->setCaIdmoneda("PEN");
+                    $newIng->setCaTcambio( $i->getCaTcalaico() );
+                    $newIng->setCaTcambioUsd( 1 );
+                    $newIng->setCaValor( $i->getCaValor() );
+                    //$newIng->setCaIdMoneda( $i->getCaIdmoneda() );
+                    $newIng->setCaObservaciones( $i->getCaObservaciones() );                               
+                    $newIng->setCaFchcreado($i->getCaFchcreado());
+                    $newIng->setCaUsucreado($i->getCaUsucreado());
+                    $newIng->setCaFchactualizado($i->getCaFchactualizado());
+                    $newIng->setCaUsuactualizado($i->getCaUsuactualizado());
+                    $newIng->stopBlaming();
+                    $newIng->save( $conn );
+                    
+                    
+                    $det = new InoDetalle();
+                    $det->setCaIdcomprobante( $newIng->getCaIdcomprobante() );
+                    $det->setCaId( $newIng->getCaId() );
+                    $det->setCaIdconcepto( 663 );
+                    
+                    $det->setCaIdhouse( $newHouse->getCaIdhouse() );            
+                    $det->setCaIdmaster( $newHouse->getCaIdmaster() );            
+                    $det->setCaCr( $newIng->getCaValor() );
+                    $det->save( $conn );
+
+
+                    $det = new InoDetalle();
+                    $det->setCaIdcomprobante( $newIng->getCaIdcomprobante() );
+                    $det->setCaId( $newIng->getCaId() );
+                    $det->setCaIdconcepto( 664 );
+                    
+                    $det->setCaIdhouse( $newHouse->getCaIdhouse() );            
+                    $det->setCaIdmaster( $newHouse->getCaIdmaster() );             
+                    $det->setCaDb( $newIng->getCaValor() );
+                    $det->save( $conn );
+                }
+            }
+            
+            $costos = Doctrine::getTable("InoCostosAir")
+                    ->createQuery("c")
+                    ->addWhere("c.ca_referencia = ?", $m->getCaReferencia() )
+                    ->execute();
+            
+            foreach( $costos as $c ){
+                
+                $newCosto = new InoCosto();
+                $newCosto->setCaIdmaster( $newMaster->getCaIdmaster() );
+                $newCosto->setCaIdcosto( $c->getCaIdcosto() );
+                $newCosto->setCaFactura( $c->getCaFactura() );
+                $newCosto->setCaFchfactura( $c->getCaFchfactura() );
+                $newCosto->setCaNeto( $c->getCaNeto() );
+                $newCosto->setCaVenta( $c->getCaVenta() );
+                $newCosto->setCaIdmoneda( $c->getCaIdmoneda() );
+                
+                $newCosto->setCaTcambio( $c->getCaTrm() );
+                $newCosto->setCaTcambioUsd($c->getCaTrmUsd());
+                $newCosto->setCaFchcreado($c->getCaFchcreado());
+                $newCosto->setCaUsucreado($c->getCaUsucreado());
+                $newCosto->setCaFchactualizado($c->getCaFchactualizado());
+                $newCosto->setCaUsuactualizado($c->getCaUsuactualizado());                
+                $newCosto->setCaIdproveedor( $c->getCaIdproveedor() );
+                
+                $newCosto->stopBlaming();
+                $newCosto->save( $conn );
+                
+                $utils = Doctrine::getTable("InoUtilidadAir")
+                    ->createQuery("c")
+                    ->addWhere("c.ca_referencia = ?", $m->getCaReferencia() )
+                    ->addWhere("c.ca_idcosto = ?", $c->getCaIdcosto()  )
+                    ->addWhere("c.ca_factura = ?", $c->getCaFactura()  )                
+                    ->execute();
+                
+                foreach( $utils as $u ){    
+                    
+                    $house = Doctrine::getTable("InoHouse")
+                    ->createQuery("c")
+                    ->innerJoin("c.InoMaster m")        
+                    ->addWhere("m.ca_referencia = ?", $m->getCaReferencia() )
+                    ->addWhere("c.ca_idcliente = ?", $u->getCaIdcliente()  )
+                    ->addWhere("c.ca_doctransporte = ?", $u->getCaHawb()  )                
+                    ->fetchOne();
+                    
+                    $util = new InoUtilidad();
+                    $util->setCaValor( $u->getCaValor() );
+                    $util->setCaIdhouse( $house->getCaIdhouse() );
+                    $util->setCaIdinocosto( $newCosto->getCaIdinocosto() );
+                    $util->save( $conn );                    
+                
+                }
+            } 
+         }
+            
+         $conn->commit();            
+        
+        $this->setTemplate("blank");
+    }
+    
+    
+    public function executeImportINOMaritimo(){
+        
+
+        //Creado para Perú
+        $masters = Doctrine::getTable("InoMaestraSea")
+                    ->createQuery("m")
+                    ->execute();
+        
+        
+        $conn = Doctrine::getTable("Reporte")->getConnection();
+        $conn->beginTransaction();
+        foreach( $masters as $m ){
+            echo "<br /><br /><b>Master</b> ".$m->getCaReferencia();
+            
+            $houses = Doctrine::getTable("InoClientesSea")
+                    ->createQuery("c")
+                    ->addWhere("c.ca_referencia = ?", $m->getCaReferencia() )
+                    ->execute();
+            
+            $newMaster = new InoMaster();
+            $newMaster->setCaImpoexpo(Constantes::IMPO);
+            $newMaster->setCaTransporte(Constantes::MARITIMO);
+            $newMaster->setCaReferencia($m->getCaReferencia());            
+            $newMaster->setCaFchreferencia($m->getCaFchreferencia());            
+            $newMaster->setCaMaster($m->getCaReferencia());
+            //$newMaster->setCaFchmaster($m->getCaFchmbls());
+            $newMaster->setCaOrigen($m->getCaOrigen());
+            $newMaster->setCaDestino($m->getCaDestino());            
+            $newMaster->setCaModalidad($m->getCaModalidad());
+            $newMaster->setCaIdlinea($m->getCaIdlinea());            
+            
+             // En coltrans no hay agente a partir de una fecha
+            
+            if( $houses[0] && $houses[0]->getCaIdreporte()){            
+                $reporte = Doctrine::getTable("Reporte")->find($houses[0]->getCaIdreporte());            
+                $newMaster->setCaIdagente( $reporte->getCaIdagente() ); 
+            }else{
+                echo "<SPAN CLASS='rojo'> AGENTE NO ENCONTRADO </SPAN>";
+                if( $newMaster->getOrigen()->getCaIdtrafico()=="CO-057" ){
+                    $newMaster->setCaIdagente( 800024075 ); 
+                }else{
+                    $newMaster->setCaIdagente( 622 );                     
+                }
+            }
+            
+            //$newMaster->setCaIdagente($m->getCaIdagente()); 
+            /*$newMaster->setCaPiezas($m->getCaPiezas());
+            $newMaster->setCaPeso($m->getCaPeso());
+            $newMaster->setCaVolumen($m->getCaPesovolumen()); */
+                       
+            $newMaster->setCaMaster($m->getCaMbls());            
+            
+            $newMaster->setCaObservaciones( $m->getCaObservaciones() );
+            
+            $newMaster->setCaFchsalida( $m->getCaFchembarque() );
+            $newMaster->setCaFchllegada( $m->getCaFcharribo() );
+            
+            $newMaster->setCaFchcreado($m->getCaFchcreado());
+            $newMaster->setCaUsucreado($m->getCaUsucreado());
+            $newMaster->setCaFchactualizado($m->getCaFchactualizado());
+            $newMaster->setCaUsuactualizado($m->getCaUsuactualizado());
+            $newMaster->setCaFchliquidado($m->getCaFchliquidado());
+            $newMaster->setCaUsuliquidado($m->getCaUsuliquidado());
+            $newMaster->setCaFchliquidado($m->getCaFchcerrado());
+            $newMaster->setCaUsuliquidado($m->getCaUsucerrado());
+            
+            
+            
+            $newMaster->stopBlaming();
+            $newMaster->save($conn);
+            echo "<br /><br />"." idagente: ".$newMaster->getCaIdagente() ." origen".$newMaster->getCaOrigen()." "." dest".$newMaster->getCaDestino(). "<br />";     
+            
+            
+            $houses = Doctrine::getTable("InoClientesSea")
+                    ->createQuery("c")
+                    ->addWhere("c.ca_referencia = ?", $m->getCaReferencia() )
+                    ->execute();
+            
+            
+            foreach( $houses as $h ){
+                $newHouse = new InoHouse();
+                $newHouse->setCaIdmaster( $newMaster->getCaIdmaster() );
+                $newHouse->setCaIdcliente( $h->getCaIdcliente() );                                
+                                
+                $newHouse->setCaIdreporte( $h->getCaIdreporte() );
+                $newHouse->setCaVendedor($h->getCaLogin());               
+                $newHouse->setCaDoctransporte($h->getCaHbls());
+                $newHouse->setCaFchdoctransporte($h->getCaFchhbls());
+                $newHouse->setCaNumpiezas($h->getCaNumpiezas());
+                $newHouse->setCaPeso($h->getCaPeso());
+                $newHouse->setCaVolumen($h->getCaVolumen());
+                $newHouse->setCaNumorden($h->getCaNumorden());
+                $newHouse->setCaIdtercero($reporte->getCaIdproveedor());
+                $newHouse->setCaTercero($h->getCaProveedor());
+                $newHouse->setCaIdbodega( $h->getCaIdbodega() );
+
+
+                $newHouse->setCaFchcreado($h->getCaFchcreado());
+                $newHouse->setCaUsucreado($h->getCaUsucreado());
+                $newHouse->setCaFchactualizado($h->getCaFchactualizado());
+                $newHouse->setCaUsuactualizado($h->getCaUsuactualizado());
+                
+                $newHouse->stopBlaming();
+                $newHouse->save( $conn );
+
+
+                $ingresos = Doctrine::getTable("InoIngresosSea")
+                        ->createQuery("c")
+                        ->addWhere("c.ca_referencia = ?", $m->getCaReferencia() )
+                        ->addWhere("c.ca_idcliente = ?", $h->getCaIdcliente() )
+                        ->addWhere("c.ca_hbls = ?", $h->getCaHbls() )
+                        ->execute();
+
+
+                foreach( $ingresos as $i ){
+
+                    $newIng = new InoComprobante();                
+                    $newIng->setCaIdhouse( $newHouse->getCaIdhouse() );    
+                    $newIng->setCaId( $newHouse->getCaIdcliente() );   
+                    $newIng->setCaIdtipo( 1 );
+                    $newIng->setCaConsecutivo( $i->getCaFactura() );
+                    $newIng->setCaFchcomprobante( $i->getCaFchfactura() );
+                    
+                    $newIng->setCaIdmoneda($i->getCaIdmoneda());
+                    $newIng->setCaTcambio( $i->getCaTcambio() );
+                    $newIng->setCaTcambioUsd( 1 );
+                    $newIng->setCaValor( $i->getCaNeto() );
+                    //$newIng->setCaIdMoneda( $i->getCaIdmoneda() );
+                    $newIng->setCaObservaciones( $i->getCaObservaciones() );                               
+                    $newIng->setCaFchcreado($i->getCaFchcreado());
+                    $newIng->setCaUsucreado($i->getCaUsucreado());
+                    $newIng->setCaFchactualizado($i->getCaFchactualizado());
+                    $newIng->setCaUsuactualizado($i->getCaUsuactualizado());
+                    $newIng->stopBlaming();
+                    $newIng->save( $conn );
+                    
+                    
+                    $det = new InoDetalle();
+                    $det->setCaIdcomprobante( $newIng->getCaIdcomprobante() );
+                    $det->setCaId( $newIng->getCaId() );
+                    $det->setCaIdconcepto( 663 );
+                    
+                    $det->setCaIdhouse( $newHouse->getCaIdhouse() );            
+                    $det->setCaIdmaster( $newHouse->getCaIdmaster() );            
+                    $det->setCaCr( $newIng->getCaValor() );
+                    $det->save( $conn );
+
+
+                    $det = new InoDetalle();
+                    $det->setCaIdcomprobante( $newIng->getCaIdcomprobante() );
+                    $det->setCaId( $newIng->getCaId() );
+                    $det->setCaIdconcepto( 664 );
+                    
+                    $det->setCaIdhouse( $newHouse->getCaIdhouse() );            
+                    $det->setCaIdmaster( $newHouse->getCaIdmaster() );             
+                    $det->setCaDb( $newIng->getCaValor() );
+                    $det->save( $conn );
+                }
+            }
+            
+            $costos = Doctrine::getTable("InoCostosSea")
+                    ->createQuery("c")
+                    ->addWhere("c.ca_referencia = ?", $m->getCaReferencia() )
+                    ->execute();
+            
+            foreach( $costos as $c ){
+                
+                $newCosto = new InoCosto();
+                $newCosto->setCaIdmaster( $newMaster->getCaIdmaster() );
+                $newCosto->setCaIdcosto( $c->getCaIdcosto() );
+                $newCosto->setCaFactura( $c->getCaFactura() );
+                $newCosto->setCaFchfactura( $c->getCaFchfactura() );
+                $newCosto->setCaNeto( $c->getCaNeto() );
+                $newCosto->setCaVenta( $c->getCaVenta() );
+                $newCosto->setCaIdmoneda( $c->getCaIdmoneda() );
+                
+                $newCosto->setCaTcambio( $c->getCaTrm() );
+                $newCosto->setCaTcambioUsd($c->getCaTrmUsd());
+                $newCosto->setCaFchcreado($c->getCaFchcreado());
+                $newCosto->setCaUsucreado($c->getCaUsucreado());
+                $newCosto->setCaFchactualizado($c->getCaFchactualizado());
+                $newCosto->setCaUsuactualizado($c->getCaUsuactualizado());                
+                $newCosto->setCaIdproveedor( $c->getCaIdproveedor() );
+                
+                $newCosto->stopBlaming();
+                $newCosto->save( $conn );
+                
+                $utils = Doctrine::getTable("InoUtilidadAir")
+                    ->createQuery("c")
+                    ->addWhere("c.ca_referencia = ?", $m->getCaReferencia() )
+                    ->addWhere("c.ca_idcosto = ?", $c->getCaIdcosto()  )
+                    ->addWhere("c.ca_factura = ?", $c->getCaFactura()  )                
+                    ->execute();
+                
+                foreach( $utils as $u ){    
+                    
+                    $house = Doctrine::getTable("InoHouse")
+                    ->createQuery("c")
+                    ->innerJoin("c.InoMaster m")        
+                    ->addWhere("m.ca_referencia = ?", $m->getCaReferencia() )
+                    ->addWhere("c.ca_idcliente = ?", $u->getCaIdcliente()  )
+                    ->addWhere("c.ca_doctransporte = ?", $u->getCaHawb()  )                
+                    ->fetchOne();
+                    
+                    $util = new InoUtilidad();
+                    $util->setCaValor( $u->getCaValor() );
+                    $util->setCaIdhouse( $house->getCaIdhouse() );
+                    $util->setCaIdinocosto( $newCosto->getCaIdinocosto() );
+                    $util->save( $conn );                    
+                
+                }
+            } 
+         }
+            
+         //$conn->commit();            
+        
+        $this->setTemplate("blank");
+    }
+    
     
     
 }
