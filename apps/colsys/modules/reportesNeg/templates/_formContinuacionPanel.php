@@ -36,7 +36,7 @@ include_component("widgets","widgetBodega");
 			this.wgContinuacion.addListener("select",this.onSelectContinuacion, this );
 		<?
             }
-			if($modo==Constantes::MARITIMO)
+			if(($modo==Constantes::MARITIMO || $modo==Constantes::TERRESTRE) && $tipo!="AG")
 			{
 		?>
                         this.widgetCotizacionOtm = new WidgetCotizacion({
@@ -68,7 +68,7 @@ include_component("widgets","widgetBodega");
 							$keys=array_keys($usuarios);
 							$conta=count($keys);
 
-                            if($modo==Constantes::MARITIMO )
+                            if( ($modo==Constantes::MARITIMO || $modo==Constantes::TERRESTRE ) && $tipo!="AG" )
                             {
 						?>
                         this.widgetCotizacionOtm,
@@ -83,7 +83,7 @@ include_component("widgets","widgetBodega");
                                                   impoexpo:"<?=constantes::TRIANGULACION?>"                                                  
                                                 })
                         <?
-                        if($modo==Constantes::MARITIMO )
+                        if( ($modo==Constantes::MARITIMO || $modo==Constantes::TERRESTRE ) && $tipo!="AG" )
                         {
                         ?>,
                         {
@@ -145,7 +145,7 @@ include_component("widgets","widgetBodega");
 						else
 						{
 
-                        if($modo==Constantes::MARITIMO )
+                        if($modo==Constantes::MARITIMO && $tipo!="AG" )
                             {
 						?>
                         {
@@ -170,7 +170,7 @@ include_component("widgets","widgetBodega");
                                             linkTransporte:"transporte"
                                            }),
                           <?
-                          if($modo==Constantes::MARITIMO )
+                          if($modo==Constantes::MARITIMO && $tipo!="AG" )
                           {
                           ?>
 							new WidgetBodega({fieldLabel:"Destino",
