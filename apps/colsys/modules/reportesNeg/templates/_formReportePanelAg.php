@@ -30,6 +30,7 @@ else
 {
 ob_start();
 
+
 include_component("widgets", "widgetTercero");
 include_component("widgets", "widgetModalidad");
 include_component("widgets", "widgetLinea");
@@ -44,6 +45,7 @@ if(!$modo ||  $modo=="")
 //if(!$impoexpo)
     include_component("widgets", "widgetImpoexpo");
 include_component("reportesNegPlug", "formMercanciaPanel",array("modo"=>$modo,"impoexpo"=>$impoexpo));
+include_component("reportesNeg", "formContinuacionPanel",array("tipo"=>"AG","modo"=>$modo,"impoexpo"=>$impoexpo));
 
 include_component("widgets", "widgetContactoCliente");
 ?>
@@ -317,6 +319,8 @@ include_component("widgets", "widgetContactoCliente");
                         }
                     ]
                 }
+                ,
+                new FormContinuacionPanel()
                 ,
                 new FormMercanciaPanel({tabIndex:14}),
                 {
