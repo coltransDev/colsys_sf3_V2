@@ -24,7 +24,7 @@
 <tbody>
 <?php foreach ($clientesCircular as $cliente): ?>
 <tr >
-      <td><?php echo $cliente["ca_idcliente"] ?></td>
+      <td><?php echo $cliente["ca_idalterno"] ?></td>
       <td><?php echo $cliente["ca_digito"] ?></td>
       <td><?php echo $cliente["ca_compania"] ?></td>
       <td><?php echo $cliente["ca_direccion"]." ".$cliente["ca_oficina"]." ".$cliente["ca_torre"]." ".$cliente["ca_bloque"]." ".$cliente["ca_interior"]." ".$cliente["ca_complemento"] ?></td>
@@ -75,7 +75,7 @@
 <tbody>
 <?php foreach ($clientesVenCircular as $cliente): ?>
 <tr >
-      <td><?php echo $cliente["ca_idcliente"] ?></td>
+      <td><?php echo $cliente["ca_idalterno"] ?></td>
       <td><?php echo $cliente["ca_digito"] ?></td>
       <td><?php echo $cliente["ca_compania"] ?></td>
       <td><?php echo $cliente["ca_direccion"]." ".$cliente["ca_oficina"]." ".$cliente["ca_torre"]." ".$cliente["ca_bloque"]." ".$cliente["ca_interior"]." ".$cliente["ca_complemento"] ?></td>
@@ -125,7 +125,7 @@
 
 <?php foreach ($clientesSinCircular as $cliente): ?>
 <tr >
-      <td><?php echo $cliente["ca_idcliente"] ?></td>
+      <td><?php echo $cliente["ca_idalterno"] ?></td>
       <td><?php echo $cliente["ca_digito"] ?></td>
       <td><?php echo $cliente["ca_compania"] ?></td>
       <td><?php echo $cliente["ca_direccion"]." ".$cliente["ca_oficina"]." ".$cliente["ca_torre"]." ".$cliente["ca_bloque"]." ".$cliente["ca_interior"]." ".$cliente["ca_complemento"] ?></td>
@@ -172,7 +172,7 @@
 
 <?php foreach ($clientesSinVisita as $visita): ?>
 <tr >
-      <td><?php echo $visita["ca_idcliente"] ?></td>
+      <td><?php echo $visita["ca_idalterno"] ?></td>
       <td><?php echo $visita["ca_digito"] ?></td>
       <td><?php echo $visita["ca_compania"] ?></td>
       <td><?php echo $visita["ca_direccion"]." ".$visita["ca_oficina"]." ".$visita["ca_torre"]." ".$visita["ca_bloque"]." ".$visita["ca_interior"]." ".$visita["ca_complemento"] ?></td>

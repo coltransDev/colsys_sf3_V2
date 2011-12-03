@@ -19,7 +19,9 @@ class ClienteTable extends Doctrine_Table {
 
         //list($ano, $mes, $dia) = sscanf($fch_fin, "%d-%d-%d");
         //$fch_fin = date('Y-m-d h:i:s',mktime(23,59,59, $mes, $dia, $ano)); // Incrementa en un día para tener en cuenta los registros el último día dentro de la consulta
-        $query = "select std0.*, vs.ca_fchvisita, cl.ca_compania, cl.ca_vendedor, cl.ca_tipo, cl.ca_entidad, u.ca_sucursal from tb_stdcliente std0 INNER JOIN vi_clientes_reduc cl ON (std0.ca_idcliente = cl.ca_idcliente) ";
+        $query = "select std0.*, vs.ca_fchvisita, u.ca_sucursal, cl.ca_idalterno, cl.ca_compania, cl.ca_vendedor, cl.ca_tipo, cl.ca_entidad, cl.ca_fchcircular, ";
+        $query.= "  CASE WHEN cl.ca_tipo IS NOT NULL OR length(cl.ca_tipo::text) <> 0 THEN 'Vigente'::text ELSE CASE WHEN cl.ca_fchcircular IS NULL THEN 'Sin'::text ELSE CASE WHEN (cl.ca_fchcircular + 365) < now() THEN 'Vencido'::text ELSE 'Vigente'::text END END END AS ca_stdcircular ";
+        $query.= "FROM tb_stdcliente std0 INNER JOIN vi_clientes_reduc cl ON (std0.ca_idcliente = cl.ca_idcliente) ";
         $query.= "LEFT JOIN vi_usuarios u ON (cl.ca_vendedor = u.ca_login) ";
         $query.= "LEFT JOIN (select ca_idcliente, max(ca_fchvisita) as ca_fchvisita from tb_enccliente where ca_fchvisita between '$fch_ini' and '$fch_fin' group by ca_idcliente order by ca_idcliente) vs ON (cl.ca_idcliente = vs.ca_idcliente) ";
         $query.= "INNER JOIN (select ca_idcliente, max(ca_fchestado) as ca_fchestado, ca_empresa from tb_stdcliente where ca_fchestado between '$fch_ini' and '$fch_fin' group by ca_idcliente, ca_empresa order by ca_idcliente) std1 ON (std0.ca_idcliente = std1.ca_idcliente) ";
@@ -56,7 +58,7 @@ class ClienteTable extends Doctrine_Table {
             if ($fch_fin == null){
                     $fch_fin = date('Y-m-d'); }
 
-            $query = "select cl.ca_idcliente, ca_fchnegocio, CASE WHEN ca_numnegocios IS NULL THEN 0 ELSE ca_numnegocios END as ca_numnegocios, CASE WHEN ca_totnegocios IS NULL THEN 0 ELSE ca_totnegocios END as ca_totnegocios                from vi_clientes_reduc cl ";
+            $query = "select cl.ca_idcliente, cl.ca_idalterno, ca_fchnegocio, CASE WHEN ca_numnegocios IS NULL THEN 0 ELSE ca_numnegocios END as ca_numnegocios, CASE WHEN ca_totnegocios IS NULL THEN 0 ELSE ca_totnegocios END as ca_totnegocios                from vi_clientes_reduc cl ";
             if ($empresa == 'Coltrans'){
                 $query.= "LEFT JOIN (select ca_idcliente, max(ca_fchcreado) as ca_fchnegocio, count(ca_fchcreado) as ca_totnegocios ";
                 $query.= "  from (select ca_idcliente, ca_fchcreado from tb_inoclientes_sea where ca_fchcreado <= '$fch_fin' UNION select ca_idcliente, ca_fchcreado from tb_inoclientes_air  where ca_fchcreado <= '$fch_fin') fc group by ca_idcliente) neg_tot ON (cl.ca_idcliente = neg_tot.ca_idcliente)";
@@ -181,7 +183,7 @@ class ClienteTable extends Doctrine_Table {
             $fch_fin = date('Y-m-d', mktime(0, 0, 0, date('m') + 2, 0, date('Y')));
         }
 
-        $query = "select c.ca_idcliente, c.ca_digito, c.ca_compania, replace(c.ca_direccion,'|',' ') as ca_direccion, c.ca_oficina, c.ca_torre, c.ca_bloque, c.ca_interior, c.ca_localidad, c.ca_complemento, c.ca_telefonos, c.ca_fax, d.ca_ciudad, ";
+        $query = "select c.ca_idcliente, c.ca_idalterno, c.ca_digito, c.ca_compania, replace(c.ca_direccion,'|',' ') as ca_direccion, c.ca_oficina, c.ca_torre, c.ca_bloque, c.ca_interior, c.ca_localidad, c.ca_complemento, c.ca_telefonos, c.ca_fax, d.ca_ciudad, ";
         $query.= "ca_fchcircular, to_date(to_char(to_char(ca_fchcircular, 'YYYY')::int+1, '9999')||'-'||to_char(ca_fchcircular, 'MM')||'-'||to_char(ca_fchcircular, 'DD'),'YYYY-MM-DD') as ca_vnccircular, ct.ca_coltrans_std, cm.ca_colmas_std, c.ca_vendedor, u.ca_nombre, u.ca_sucursal from vi_clientes_reduc c ";
         $query.= "LEFT OUTER JOIN vi_usuarios u ON (c.ca_vendedor = u.ca_login) ";
         $query.= "LEFT OUTER JOIN tb_ciudades d ON (c.ca_idciudad = d.ca_idciudad) ";
@@ -213,7 +215,7 @@ class ClienteTable extends Doctrine_Table {
             $fch_fin = date('Y-m-d', mktime(0, 0, 0, date('m') + 2, 0, date('Y')));
         }
 
-        $query = "select c.ca_idcliente, c.ca_digito, c.ca_compania, replace(c.ca_direccion,'|',' ') as ca_direccion, c.ca_oficina, c.ca_torre, c.ca_bloque, c.ca_interior, c.ca_localidad, c.ca_complemento, c.ca_telefonos, c.ca_fax, d.ca_ciudad, ";
+        $query = "select c.ca_idcliente, c.ca_idalterno, c.ca_digito, c.ca_compania, replace(c.ca_direccion,'|',' ') as ca_direccion, c.ca_oficina, c.ca_torre, c.ca_bloque, c.ca_interior, c.ca_localidad, c.ca_complemento, c.ca_telefonos, c.ca_fax, d.ca_ciudad, ";
         $query.= "ct.ca_coltrans_std, cm.ca_colmas_std, c.ca_vendedor, u.ca_nombre, u.ca_sucursal from vi_clientes_reduc c ";
         $query.= "LEFT OUTER JOIN vi_usuarios u ON (c.ca_vendedor = u.ca_login) ";
         $query.= "LEFT OUTER JOIN tb_ciudades d ON (c.ca_idciudad = d.ca_idciudad) ";
@@ -245,7 +247,7 @@ class ClienteTable extends Doctrine_Table {
             $fch_fin = date('Y-m-d', mktime(0, 0, 0, date('m') + 2, 0, date('Y')));
         }
 
-        $query = "select c.ca_idcliente, c.ca_digito, c.ca_compania, replace(c.ca_direccion,'|',' ') as ca_direccion, c.ca_oficina, c.ca_torre, c.ca_bloque, c.ca_interior, c.ca_localidad, c.ca_complemento, c.ca_telefonos, c.ca_fax, d.ca_ciudad, ";
+        $query = "select c.ca_idcliente, c.ca_idalterno, c.ca_digito, c.ca_compania, replace(c.ca_direccion,'|',' ') as ca_direccion, c.ca_oficina, c.ca_torre, c.ca_bloque, c.ca_interior, c.ca_localidad, c.ca_complemento, c.ca_telefonos, c.ca_fax, d.ca_ciudad, ";
         $query.= "ct.ca_coltrans_std, cm.ca_colmas_std, c.ca_vendedor, e.ca_fchvisita, u.ca_nombre, u.ca_sucursal from vi_clientes_reduc c ";
         $query.= "LEFT OUTER JOIN vi_usuarios u ON (c.ca_vendedor = u.ca_login) ";
         $query.= "LEFT OUTER JOIN tb_ciudades d ON (c.ca_idciudad = d.ca_idciudad) ";

@@ -17,6 +17,7 @@ $i=1;
   <th>Empresa</th>
   <th>Vendedor</th>
   <th>Sucursal</th>
+  <th>Circular 0170</th>
   <th>Ult.Encuesta</th>
   <th>Fecha Estado Anterior</th>
   <th>Estado Anterior</th>
@@ -37,13 +38,14 @@ $i=1;
 <?php foreach ($clientesEstados as $clienteEstado): ?>
 <tr >
       <td><?php echo $i++ ?></td>
-      <td><?php echo $clienteEstado["ca_idcliente"] ?></td>
+      <td><?php echo $clienteEstado["ca_idalterno"] ?></td>
       <td><?php echo $clienteEstado["ca_compania"] ?></td>
       <td><?php echo $clienteEstado["ca_fchestado"] ?></td>
       <td><?php echo $clienteEstado["ca_estado"] ?></td>
       <td><?php echo $clienteEstado["ca_empresa"] ?></td>
       <td><?php echo $clienteEstado["ca_vendedor"] ?></td>
       <td><?php echo $clienteEstado["ca_sucursal"] ?></td>
+      <td><?php echo $clienteEstado["ca_stdcircular"]. " " .$clienteEstado["ca_fchcircular"] ?></td>
       <td><?php echo $clienteEstado["ca_fchvisita"] ?></td>
       <td><?php echo $clienteEstado["ca_fchestado_ant"] ?></td>
       <td><?php echo $clienteEstado["ca_estado_ant"] ?></td>
@@ -58,20 +60,20 @@ $i=1;
 	if( count($clientesEstados)==0 ){
 ?>
 	<tr>
-	    <td colspan="14"><div align="center">Reporte sin Registros</div></td>
+	    <td colspan="15"><div align="center">Reporte sin Registros</div></td>
         </tr>
 <?
 	}else{
 ?>
 	<tr>
-	    <td colspan="14"><div align="left"><b>Total Clientes Potenciales al Iniciar el Peri&oacute;do: <?=$poblacion?></b></div></td>
+	    <td colspan="15"><div align="left"><b>Total Clientes Potenciales al Iniciar el Peri&oacute;do: <?=$poblacion?></b></div></td>
         </tr>
 <?
 	}
 ?>
 
 <tr>
-    <td colspan="14"><div align="center">Fin del Reporte</div></td>
+    <td colspan="15"><div align="center">Fin del Reporte</div></td>
 </tr>
 </tbody>
 </table>

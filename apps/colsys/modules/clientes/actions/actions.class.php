@@ -1064,7 +1064,7 @@ class clientesActions extends sfActions {
 
 
         $q = Doctrine_Manager::getInstance()->connection();
-        $query = "select ic.ca_referencia, ic.ca_idcliente, cl.ca_compania, ic.ca_fchliberacion, ic.ca_notaliberacion, ic.ca_fchliberado, ii.ca_factura, ii.ca_hbls, u.ca_nombre, u.ca_sucursal";
+        $query = "select ic.ca_referencia, ic.ca_idcliente, ic.ca_idalterno, cl.ca_compania, ic.ca_fchliberacion, ic.ca_notaliberacion, ic.ca_fchliberado, ii.ca_factura, ii.ca_hbls, u.ca_nombre, u.ca_sucursal";
         $query.= "		from tb_inoclientes_sea ic";
         $query.= "		INNER JOIN vi_clientes_reduc cl ON ic.ca_idcliente = cl.ca_idcliente";
         $query.= "		INNER JOIN tb_inoingresos_sea ii ON ic.ca_referencia = ii.ca_referencia and ic.ca_idcliente = ii.ca_idcliente and ic.ca_hbls=ii.ca_hbls";
