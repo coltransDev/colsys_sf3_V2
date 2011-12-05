@@ -26,9 +26,16 @@ class traficosComponents extends sfComponents
 			}
 			
 			$this->reportesExt = $this->reporte->getReporteExterior();
-		}		
-		
-	} 
+            
+            /*Muestra información adicional para generacion de IDG*/
+            $parametros = ParametroTable::retrieveByCaso("CU103", null, null, $this->reporte->getCliente()->getCaIdgrupo() );
+            $this->enableparam = false;
+            if(count($parametros)>0){
+                $this->enableparam = true;
+            }
+            $this->parametros = $parametros;
+       }        
+    } 
 	
 	
 	/*

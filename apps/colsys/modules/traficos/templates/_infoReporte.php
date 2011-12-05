@@ -236,7 +236,31 @@ if( $reporte->getCaUsuanulado() ){
         <?=link_to(image_tag("16x16/endturn.png")." Cerrar (Sacar del tracking)", "traficos/cerrarCaso?idreporte=".$reporte->getCaIdreporte()."&modo=".$modo, array("confirm"=>"Esta seguro que desea cerrar el caso?") )?>
         </div>
         </div>
-		
-		</td>
-	</tr>
+        <br />
+        <?
+            if($enableparam){
+        ?>
+            <div class="post-info" align="left">
+            <b>Información adicional para IDG</b><br />
+                <?
+                    if(count($parametros)>0){
+                        foreach ($parametros as $parametro) {
+
+                            $valor = explode(":", $parametro->getCaValor());
+                            $name = $valor[0];
+                            $type = $valor[1];
+
+                            $this->widgetsClientes[$name] = array("type" => $type, "label" => $parametro->getCaValor2());
+                            echo "<b>".$parametro->getCaValor2().": </b>".$reporte->getProperty($name)."</br>";
+                        }
+                    $url = url_for("traficos/formParametros?idreporte=".$reporte->getCaIdreporte());
+                    echo link_to(image_tag("22x22/edit.gif")." Editar", $url);
+                    }
+                ?>
+            </div>
+        <?
+            }
+        ?>
+        </td>
+   </tr>
 </table>
