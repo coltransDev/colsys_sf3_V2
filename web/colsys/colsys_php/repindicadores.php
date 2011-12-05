@@ -418,7 +418,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
                     $subque.= " LEFT OUTER JOIN (select ca_referencia as ca_referencia_fac, ca_idcliente as ca_idcliente_fac, ca_hbls as ca_hbls_fac, ca_fchfactura, ca_observaciones from tb_inoingresos_sea where substr(ca_observaciones,1,12) != 'Contenedores' and substr(ca_observaciones,1,7) != 'OTM/DTA' order by ca_referencia, ca_idcliente, ca_hbls, ca_fchfactura) ii ON ($source.ca_referencia = ii.ca_referencia_fac and $source.ca_idcliente = ii.ca_idcliente_fac and $source.ca_hbls = ii.ca_hbls_fac) "; //and ((string_to_array(ca_referencia,'.'))[5]::int) in ($ano_mem) and ((string_to_array(ca_referencia,'.'))[3])::text in ($mes_mem)
                 }else if ($procesos == "OTM"){
                     $transporte = "ca_transporte = 'Marítimo' ";   // Esta variable viene con valor "Terrestre"
-                    $subque.= " RIGHT OUTER JOIN (select ca_referencia as ca_referencia_fac, ca_idcliente as ca_idcliente_fac, ca_hbls as ca_hbls_fac, ca_fchfactura, ca_observaciones from tb_inoingresos_sea where substr(ca_observaciones,1,12) != 'Contenedores' and substr(ca_observaciones,1,7) = 'OTM/DTA' order by ca_referencia, ca_idcliente, ca_hbls, ca_fchfactura) ii ON ($source.ca_referencia = ii.ca_referencia_fac and $source.ca_idcliente = ii.ca_idcliente_fac and $source.ca_hbls = ii.ca_hbls_fac) ";
+                    $subque.= " RIGHT OUTER JOIN (select ca_referencia as ca_referencia_fac, ca_idcliente as ca_idcliente_fac, ca_hbls as ca_hbls_fac, ca_fchfactura, ca_observaciones from tb_inoingresos_sea where substr(ca_observaciones,1,12) != 'Contenedores' and substr(ca_observaciones,1,7) = 'OTM/DTA' order by ca_referencia, ca_idcliente, ca_hbls, ca_fchfactura) ii ON ($source.ca_referencia = ii.ca_referencia_fac and $source.ca_idcliente = ii.ca_idcliente_fac and $source.ca_hbls = ii.ca_hbls_fac and $source.ca_modalidad = 'FCL') ";
                 }
 
                 $campos.= ", ca_referencia, ca_idcliente_fac, ca_hbls, ca_fchfactura";
@@ -836,7 +836,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
                 $ref_tmp = $rs->Value('ca_referencia');
                 $idc_tmp = $rs->Value('ca_idcliente');
                 $hbl_tmp = $rs->Value('ca_hbls');
-                $fch_llegada = $rs->Value('ca_fchllegada');
+                $fch_llegada = ($procesos == "OTM")?$rs->Value('ca_fchplanilla'):$rs->Value('ca_fchllegada');
                 echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_referencia')."</TD>";
                 echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_continuacion')."</TD>";
                 if (in_array(trim($rs->Value("ca_observaciones")), array("Facturación al Agente","Reemplazo Factura","Cierre contable de Clientes","Referencia Particulares","Acuerdos Comerciales") )) {
@@ -853,36 +853,39 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
                 echo "  <TD Class=$color style='font-size: 9px; text-align:left;'>".$rs->Value('ca_fchfactura')."</TD>";
                 echo "  <TD Class=$color style='font-size: 9px; text-align:left;'>".$rs->Value("ca_observaciones")."</TD>";
                 echo "  <TD Class=$color style='font-size: 9px; text-align:right;'>".$dif_mem."</TD>";
-                $avanza = false;
-                if ($rs->Value('ca_continuacion') == "N/A") {
-                    $avanza = true;
-                    while ($rs->Value('ca_referencia') == $ref_tmp and $rs->Value('ca_idcliente') == $idc_tmp and $rs->Value('ca_hbls') == $hbl_tmp and !$rs->Eof()) {
-                        $rs->MoveNext();	// Omite las facturas adicionales sobre una misma carga.
-                    }
-                }else if ($rs->Value('ca_continuacion') == "OTM" or $rs->Value('ca_continuacion') == "DTA") {
+                echo "</TR>";
+                if ($procesos != "OTM"){
+                    $avanza = false;
+                    if ($rs->Value('ca_continuacion') == "N/A") {
                         $avanza = true;
                         while ($rs->Value('ca_referencia') == $ref_tmp and $rs->Value('ca_idcliente') == $idc_tmp and $rs->Value('ca_hbls') == $hbl_tmp and !$rs->Eof()) {
-                            if (trim($rs->Value('ca_observaciones')) == "OTM/DTA") { // Busca la Factura por el OTM o el DTA
-                                echo "<TR>";
-                                echo "  <TD Class=mostrar style='font-size: 9px;'>".$contador++."</TD>";
-                                echo "  <TD Class=mostrar COLSPAN=12></TD>";
-                                if (in_array($rs->Value("ca_observaciones"), array("Facturación al Agente","Reemplazo Factura","Cierre contable de Clientes") )) {
-                                    $dif_mem = null;
-                                }else {
-                                    $dif_mem = workDiff($festi, $rs->Value('ca_fchplanilla'),$rs->Value('ca_fchfactura'));
-                                }
-                                $color = analizar_dif("D", $lci_var, $lcs_var, $dif_mem, $array_avg, $array_pnc, $array_pmc, $array_null); // Función que retorna un Arreglo con el resultado de Dif
-                                echo "  <TD Class=$color style='font-size: 9px; text-align:left;'>".$rs->Value('ca_fchplanilla')."</TD>";
-                                echo "  <TD Class=$color style='font-size: 9px; text-align:left;'>".$rs->Value('ca_fchfactura')."</TD>";
-                                echo "  <TD Class=$color style='font-size: 9px; text-align:left;'>".$rs->Value("ca_observaciones")."</TD>";
-                                echo "  <TD Class=$color style='font-size: 9px; text-align:right;'>".$dif_mem."</TD>";
-                                echo "</TR>";
-                            }
-                            $rs->MoveNext();
+                            $rs->MoveNext();	// Omite las facturas adicionales sobre una misma carga.
                         }
+                    }else if ($rs->Value('ca_continuacion') == "OTM" or $rs->Value('ca_continuacion') == "DTA") {
+                            $avanza = true;
+                            while ($rs->Value('ca_referencia') == $ref_tmp and $rs->Value('ca_idcliente') == $idc_tmp and $rs->Value('ca_hbls') == $hbl_tmp and !$rs->Eof()) {
+                                if (trim($rs->Value('ca_observaciones')) == "OTM/DTA") { // Busca la Factura por el OTM o el DTA
+                                    echo "<TR>";
+                                    echo "  <TD Class=mostrar style='font-size: 9px;'>".$contador++."</TD>";
+                                    echo "  <TD Class=mostrar COLSPAN=12></TD>";
+                                    if (in_array($rs->Value("ca_observaciones"), array("Facturación al Agente","Reemplazo Factura","Cierre contable de Clientes") )) {
+                                        $dif_mem = null;
+                                    }else {
+                                        $dif_mem = workDiff($festi, $rs->Value('ca_fchplanilla'),$rs->Value('ca_fchfactura'));
+                                    }
+                                    $color = analizar_dif("D", $lci_var, $lcs_var, $dif_mem, $array_avg, $array_pnc, $array_pmc, $array_null); // Función que retorna un Arreglo con el resultado de Dif
+                                    echo "  <TD Class=$color style='font-size: 9px; text-align:left;'>".$rs->Value('ca_fchplanilla')."</TD>";
+                                    echo "  <TD Class=$color style='font-size: 9px; text-align:left;'>".$rs->Value('ca_fchfactura')."</TD>";
+                                    echo "  <TD Class=$color style='font-size: 9px; text-align:left;'>".$rs->Value("ca_observaciones")."</TD>";
+                                    echo "  <TD Class=$color style='font-size: 9px; text-align:right;'>".$dif_mem."</TD>";
+                                    echo "</TR>";
+                                }
+                                $rs->MoveNext();
+                            }
+                        }
+                    if ($avanza and !$rs->Eof()) {           // Retrocede un registro para quedar en la última factura del Hbl de una Referencia
+                        $rs->MovePrevious();
                     }
-                if ($avanza and !$rs->Eof()) {           // Retrocede un registro para quedar en la última factura del Hbl de una Referencia
-                    $rs->MovePrevious();
                 }
                 break;
             case 5:
