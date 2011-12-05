@@ -9,7 +9,7 @@ $url = "traficos/formParametros?&idreporte=".$reporte->getCaIdreporte();
 
 <form action="<?=url_for( $url )?>" method="post" name="form1" >
 
-<table width="60%" border="0" class="tableList">
+<table width="15%" border="0" class="tableList">
 <?
 $widgets = $form->getWidgetsClientes();
 if( count($widgets)>0 ){
