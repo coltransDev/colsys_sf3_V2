@@ -1302,6 +1302,51 @@ class traficosActions extends sfActions
             $this->redirect( "traficos/listaStatus?modo=".$this->modo."&reporte=".$reporte->getCaConsecutivo() );
         }
     }
+    
+    public function executeFormParametros( $request ){
+        
+        $idreporte = $this->getRequestParameter("idreporte");
+		$reporte = Doctrine::getTable("Reporte")->find( $idreporte );
+		
+		$this->getRequest()->setParameter("reporte", $reporte->getCaConsecutivo());
+        
+        $this->form = new NuevoParametroForm();
+        
+        //Busca los parametros definidos en CU059 
+		//Campos personalizados por cliente			
+		$parametros = ParametroTable::retrieveByCaso("CU103", null, null, $reporte->getCliente()->getCaIdgrupo() );
+		$this->form->setWidgetsClientes( $parametros );
+		$this->form->configure();	
+        
+        if ($request->isMethod('post')){		
+			$bindValues = array();
+			$widgets = $this->form->getWidgetsClientes();
+			
+			foreach( $widgets as $name=>$val ){						
+				$bindValues[$name] = $request->getParameter($name);		
+			}
+			
+			$this->form->bind( $bindValues ); 
+			if( $this->form->isValid() ){					
+				$parametros = ParametroTable::retrieveByCaso("CU103", null, null, $reporte->getCliente()->getCaIdgrupo() );
+                
+
+                foreach( $parametros as $parametro ){
+                    $valor = explode(":",$parametro->getCaValor());
+                    $name = $valor[0];
+                    $type = $valor[1];
+                                        
+                    if( $request->getParameter($name ) ){
+                        $reporte->setProperty($name, $request->getParameter($name));
+                    }
+                }
+                
+                $reporte->save();
+                $this->redirect("traficos/listaStatus?&reporte=".$reporte->getCaConsecutivo());
+        	}				
+		}
+        $this->reporte = $reporte;
+    }
 	
 }
 ?>
