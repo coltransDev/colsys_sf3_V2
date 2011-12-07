@@ -153,8 +153,9 @@
                                         allowBlank: false
                                     },                                                                        
                                     new WidgetUsuario({fieldLabel: 'Asignado a',
-                                        name: 'asignadoa',
-                                        hiddenName: 'asignadoa'
+                                        name: 'asignadoa_name',
+                                        hiddenName: 'asignadoa',
+                                        id: 'asignadoa_id'
                                     }),
                                     {
                                         xtype:'numberfield',
@@ -253,7 +254,7 @@
 
                     success:function(response,options){
                         this.res = Ext.util.JSON.decode( options.response.responseText );
-                        var fld = form.findField("asignadoa");
+                        var fld = Ext.getCmp("asignadoa_id");
                         fld.setRawValue(this.res.data.asignadoaNombre);
                         fld.hiddenField.value = this.res.data.asignadoa;
                     }
