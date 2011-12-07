@@ -3504,7 +3504,7 @@ if (isset($suf) and $suf == 'findDianDeposito') {
             $pdf->SetFont('Arial', 'B', 10);
             $pdf->SetWidths(array(100, 70));
             $pdf->SetAligns(array("L", "L"));
-            $pdf->Row(array($rs->Value('ca_compania'), " Nit.: " . number_format($rs->Value('ca_idcliente')) . "-" . $rs->Value('ca_digito')));
+            $pdf->Row(array($rs->Value('ca_compania'), " Nit.: " . number_format($rs->Value('ca_idalterno')) . "-" . $rs->Value('ca_digito')));
             $pdf->SetFont('Arial', 'B', 8);
             $pdf->SetWidths(array(50, 120));
             $pdf->SetAligns(array("L", "L"));

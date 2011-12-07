@@ -58,7 +58,7 @@ require_once("menu.php");
 	   if ($rs->Value('ca_idcliente') != $id_temp) {
 	       $complemento = (($rs->Value('ca_oficina')!='')?" Oficina : ".$rs->Value('ca_oficina'):"").(($rs->Value('ca_torre')!='')?" Torre : ".$rs->Value('ca_torre'):"").(($rs->Value('ca_interior')!='')?" Interior : ".$rs->Value('ca_interior'):"").(($rs->Value('ca_complemento')!='')?" - ".$rs->Value('ca_complemento'):"");
 	       echo "<TR>";
-	       echo "<TD WIDTH=430 Class=mostrar COLSPAN=5 style='font-size: 11px; text-align:left;'><B>".$rs->Value('ca_compania')."</B> &nbsp&nbsp&nbsp<B>Nit.: </B>".number_format($rs->Value('ca_idcliente'))."-".$rs->Value('ca_digito')."<BR><B>Dirección: </B>".str_replace ("|"," ",$rs->Value('ca_direccion_cl')).$complemento. "&nbsp&nbsp<B>Localidad: </B>" . $rs->Value('ca_localidad')."<BR><B>Teléfonos: </B>".$rs->Value('ca_telefonos_cl')."&nbsp&nbsp&nbsp&nbsp<B>Fax: </B>".$rs->Value('ca_fax_cl')."</TD>";
+	       echo "<TD WIDTH=430 Class=mostrar COLSPAN=5 style='font-size: 11px; text-align:left;'><B>".$rs->Value('ca_compania')."</B> &nbsp&nbsp&nbsp<B>Nit.: </B>".number_format($rs->Value('ca_idalterno'))."-".$rs->Value('ca_digito')."<BR><B>Dirección: </B>".str_replace ("|"," ",$rs->Value('ca_direccion_cl')).$complemento. "&nbsp&nbsp<B>Localidad: </B>" . $rs->Value('ca_localidad')."<BR><B>Teléfonos: </B>".$rs->Value('ca_telefonos_cl')."&nbsp&nbsp&nbsp&nbsp<B>Fax: </B>".$rs->Value('ca_fax_cl')."</TD>";
            echo "<TD Class=mostrar></TD>";
 	       echo "</TR>";
 		   $id_temp = $rs->Value('ca_idcliente');
@@ -220,7 +220,7 @@ require_once("menu.php");
              echo "<INPUT TYPE='HIDDEN' NAME='id' VALUE='".$id."'>";           // Hereda el Id del registro que se esta eliminando
              echo "<TH Class=titulo COLSPAN=5>Datos de la Encuesta</TH>";
 	         echo "<TR>";
-	         echo "  <TD Class=mostrar COLSPAN=5 style='font-size: 11px; font-weight:bold;'>".number_format($tm->Value('ca_idcliente'))."-".$tm->Value('ca_digito')."&nbsp".$tm->Value('ca_compania')."</TD>";
+	         echo "  <TD Class=mostrar COLSPAN=5 style='font-size: 11px; font-weight:bold;'>".number_format($tm->Value('ca_idalterno'))."-".$tm->Value('ca_digito')."&nbsp".$tm->Value('ca_compania')."</TD>";
 	         echo "</TR>";
 
 	         echo "<TR>";
