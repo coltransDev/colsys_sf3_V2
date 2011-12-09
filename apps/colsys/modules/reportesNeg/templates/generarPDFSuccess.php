@@ -125,11 +125,12 @@ if ($reporte->getCaImpoexpo () == Constantes::EXPO && $reporte->getCaTiporep()!=
         $sucAgente = $agente->getIds()->getSucursalPrincipal();
 
         $pdf->SetWidths ( array (5, 25, 170 ) );
-        $pdf->Row ( array ('', 'Dirección:', str_replace ( "|", " ", $sucAgente->getCaDireccion () . " " . $sucAgente->getCaZipcode () ) ) );
+         
+        $pdf->Row ( array ('', 'Dirección:', str_replace ( "|", " ", $sucursalag->getCaDireccion() . " " . $sucursalag->getCiudad()->getCaCiudad() ) ) );
         $pdf->SetWidths ( array (5, 25, 40, 15, 30, 18, 67 ) );
         $pdf->SetFills ( array (1, 0, 0, 0, 0, 0, 0 ) );
         $pdf->SetStyles ( array ("B", "B", "", "B", "", "B", "" ) );
-        $pdf->Row ( array ('', 'Teléfono:', $sucAgente->getCaTelefonos (), 'Fax:', $sucAgente->getCaFax () ) );
+        $pdf->Row ( array ('', 'Teléfono:', $sucursalag->getCaTelefonos (), 'Fax:', $sucursalag->getCaFax () ) );
     }
 }
 if(!$repexpo)
