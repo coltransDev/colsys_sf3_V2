@@ -395,3 +395,44 @@ Session:
     max_inactive: integer
     ip_address: string
 
+
+
+
+ColsysConfig:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: control
+  tableName: control.tb_config
+  columns:
+    ca_idconfig:
+      type: string
+      primary: true   
+      autoincrement: true
+    ca_module: string
+    ca_param: string
+    ca_description: string
+  
+
+ColsysConfigValue:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: control
+  tableName: control.tb_config_values
+  columns:
+    ca_idvalue:
+      type: string
+      primary: true   
+      autoincrement: true
+    ca_idconfig: integer
+    ca_ident: string
+    ca_value: string
+    ca_value2: string
+  relations:
+    ColsysConfig:
+      local: ca_idconfig
+      foreign: ca_idconfig
+      type: one
