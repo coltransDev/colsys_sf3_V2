@@ -4696,5 +4696,41 @@ ORDER BY ca_idtrayecto,ca_idconcepto,log_pricrecargosxconcepto.ca_idrecargo, ca_
     
     
     
+    public function executeImportParametros(){
+        
+        $params = Doctrine::getTable("Parametro")
+                            ->createQuery("p")
+                            ->addOrderBy("p.ca_casouso")
+                            ->execute();
+        
+        $conn = Doctrine::getTable("InoCosto")->getConnection();
+        $conn->beginTransaction();
+        
+        $lastCu = null;
+        foreach( $params as $p ){
+            echo $p->getCaCasouso()."<br />";
+            
+            if( $lastCu!=$p->getCaCasouso() ){            
+                $config = new ColsysConfig();
+                $config->setCaParam( $p->getCaCasouso() );
+                $config->save( $conn );
+                $lastCu=$p->getCaCasouso();
+            }
+            
+            $value = new ColsysConfigValue();
+            $value->setCaIdent( $p->getCaIdentificacion() );
+            $value->setCaValue( $p->getCaValor() );
+            $value->setCaValue2( $p->getCaValor2() );
+            $value->setCaIdconfig( $config->getCaIdconfig() );
+            $value->save( $conn );            
+        }
+        
+        
+        $conn->commit();            
+        
+        $this->setTemplate("blank");
+    }
+    
+    
 }
 ?>
