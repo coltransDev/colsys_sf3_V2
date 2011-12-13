@@ -27,13 +27,16 @@ class reporteExtComponents extends sfComponents
 
 		$this->tarifas = Doctrine::getTable("RepTarifa")
                                    ->createQuery("t")
-                                   ->where("t.ca_idreporte = ? ", $reporte->getCaIdreporte())
+                                   ->innerJoin("t.Concepto c")
+                                   ->addWhere("t.ca_idreporte = ? ", $reporte->getCaIdreporte())
+                                   ->addWhere("c.ca_modalidad != ? ", "OTM-DTA")
                                    ->execute();
 
 
         $this->gastos = Doctrine::getTable("RepGasto")
                                    ->createQuery("g")
-                                   ->where("g.ca_idreporte = ? ", $reporte->getCaIdreporte())
+                                   ->innerJoin("g.TipoRecargo t") 
+                                   ->addWhere("g.ca_idreporte = ? ", $reporte->getCaIdreporte())                                   
                                    ->execute();
 
 
@@ -103,7 +106,7 @@ class reporteExtComponents extends sfComponents
             $contacto = $reporte->getContacto();
             $cliente = $reporte->getContacto()->getCliente();
 
-            $consignatario_final = $cliente->getCaCompania()." Nit. ".number_format($cliente->getCaIdalterno(),0)."-".$cliente->getCaDigito();
+            $consignatario_final = $cliente->getCaCompania()." Nit. ".$cliente->getCaIdalterno()."-".$cliente->getCaDigito();
             
             if($reporte->getCaContinuacion()!="OTM")
             {
