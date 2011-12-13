@@ -291,7 +291,7 @@ echo $form['transporte']->render();
 				 echo $form['destinatarios_'.$i]->render().$form['destinatarios_'.$i]->renderLabel()."<br />";
 			}
 						
-			if ( $reporte->getCaContinuacion()!="N/A" && $reporte->getCaTransporte()==Constantes::MARITIMO && $reporte->getCaImpoexpo()!=Constantes::EXPO) {
+			if ( ($reporte->getCaContinuacion()!="N/A" && $reporte->getCaContinuacion()!="TRANSBORDO") && $reporte->getCaTransporte()==Constantes::MARITIMO && $reporte->getCaImpoexpo()!=Constantes::EXPO) {
 				echo " &nbsp;&nbsp;&nbsp;Coordinador OTM/DTA<br />";		
 			}
 			
@@ -454,7 +454,7 @@ echo $form['transporte']->render();
 				<td>&nbsp;					</td>
 			</tr>
 			<?				
-			if( $reporte->getCaImpoexpo()!=Constantes::EXPO && $reporte->getCaContinuacion()!="N/A" ){
+			if( $reporte->getCaImpoexpo()!=Constantes::EXPO && ($reporte->getCaContinuacion()!="N/A" && $reporte->getCaContinuacion()!="TRANSBORDO") ){
 			?>
 			<tr>
 				<td><div align="left"><b>Continuación:</b><br />

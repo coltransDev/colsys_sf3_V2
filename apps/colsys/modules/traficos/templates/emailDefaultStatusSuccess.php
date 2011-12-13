@@ -123,8 +123,8 @@ $cliente = $reporte->getCliente();
 	if( $inoCliente ){		
         $fchfinmuisca=$inoCliente->getInoMaestraSea()->getCaFchfinmuisca();
         $fchfinvaciado=$inoCliente->getInoMaestraSea()->getCaFchvaciado();
-        if($inoCliente->getCaMuelle()!="")
-            $muelle=$inoCliente->getCaMuelle()."-".$inoCliente->getInoDianDepositos()->getCaNombre();
+        if($inoCliente->getInoMaestraSea()->getCaMuelle()!="")
+            $muelle=$inoCliente->getInoMaestraSea()->getCaMuelle()."-".$inoCliente->getInoMaestraSea()->getInoDianDepositos()->getCaNombre();
         else
             $muelle="";
 	?>
