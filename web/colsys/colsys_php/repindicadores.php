@@ -443,7 +443,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
     } else if ($indicador == "Oportunidad en el Envío de Comunicaciones") {
         $format_avg = "H:i:s";
         $source   = "vi_repindicadores";
-        $subque   = "LEFT OUTER JOIN (select ca_ciudad as ca_ciuorigen, ca_consecutivo as ca_consecutivo_sub, ca_fchrecibo, ca_fchenvio, ca_observaciones_idg from tb_repstatus rs LEFT OUTER JOIN tb_reportes rp ON (rp.ca_idreporte = rs.ca_idreporte) INNER JOIN tb_ciudades pd ON (rp.ca_origen = pd.ca_idciudad) where ".str_replace("ca_ano","to_char(ca_fchrecibo,'YYYY')",$ano)." and ".str_replace("ca_mes","to_char(ca_fchrecibo,'MM')",$mes)." order by ca_consecutivo, ca_fchrecibo) sq ON (vi_repindicadores.ca_consecutivo = sq.ca_consecutivo_sub) ";
+        $subque   = "LEFT OUTER JOIN (select ca_ciudad as ca_ciuorigen, ca_consecutivo as ca_consecutivo_sub, ca_fchrecibo, ca_fchenvio, ca_observaciones_idg from tb_repstatus rs LEFT OUTER JOIN tb_reportes rp ON (rs.ca_idetapa != 'IAVAR' and rp.ca_idreporte = rs.ca_idreporte) INNER JOIN tb_ciudades pd ON (rp.ca_origen = pd.ca_idciudad) where ".str_replace("ca_ano","to_char(ca_fchrecibo,'YYYY')",$ano)." and ".str_replace("ca_mes","to_char(ca_fchrecibo,'MM')",$mes)." order by ca_consecutivo, ca_fchrecibo) sq ON (vi_repindicadores.ca_consecutivo = sq.ca_consecutivo_sub) ";
         if (!$tm->Open("select ca_fchfestivo from tb_festivos")) {        // Selecciona todos lo registros de la tabla Festivos
             echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
             echo "<script>document.location.href = 'entrada.php';</script>";
