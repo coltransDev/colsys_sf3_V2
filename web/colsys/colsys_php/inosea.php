@@ -3385,7 +3385,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                     exit;
                 }
                 $cu = & DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
-                if (!$cu->Open("select ca_identificacion, ca_valor, ca_valor2 from tb_parametros where ca_casouso = 'CU073'")) {          // Selecciona los correos de la tabla Parametros
+                if (!$cu->Open("select ca_identificacion, ca_valor, ca_valor2 from tb_parametros where ca_casouso = 'CU073' order by ca_identificacion, ca_valor2")) {          // Selecciona los correos de la tabla Parametros
                     echo "<script>alert(\"" . addslashes($cu->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
                     echo "<script>document.location.href = 'inosea.php';</script>";
                     exit;
@@ -3680,7 +3680,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 $checked = ($tm->Value('ca_sinidentificacion') == 't') ? "CHECKED" : "";
 
                 $cu = & DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
-                if (!$cu->Open("select ca_identificacion, ca_valor, ca_valor2 from tb_parametros where ca_casouso = 'CU073'")) {          // Selecciona los correos de la tabla Parametros
+                if (!$cu->Open("select ca_identificacion, ca_valor, ca_valor2 from tb_parametros where ca_casouso = 'CU073' order by ca_identificacion, ca_valor2")) {          // Selecciona los correos de la tabla Parametros
                     echo "<script>alert(\"" . addslashes($cu->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
                     echo "<script>document.location.href = 'inosea.php';</script>";
                     exit;
@@ -4281,7 +4281,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                     exit;
                 }
                 $cu = & DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
-                if (!$cu->Open("select ca_identificacion, ca_valor, ca_valor2 from tb_parametros where ca_casouso = 'CU073'")) {          // Selecciona los correos de la tabla Parametros
+                if (!$cu->Open("select ca_identificacion, ca_valor, ca_valor2 from tb_parametros where ca_casouso = 'CU073' order by ca_identificacion, ca_valor2")) {          // Selecciona los correos de la tabla Parametros
                     echo "<script>alert(\"" . addslashes($cu->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
                     echo "<script>document.location.href = 'inosea.php';</script>";
                     exit;
