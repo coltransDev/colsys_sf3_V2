@@ -36,11 +36,11 @@
                     <b>Modulo</b>
                     <br />
                     <?
-                    echo $form['module']->renderError();
+                    echo $form['module_param']->renderError();
 					if( $config){
-						$form->setDefault('module', $config->getCaModule() );
+						$form->setDefault('module_param', $config->getCaModule() );
 					}
-					echo $form['module']->render();  
+					echo $form['module_param']->render();  
                     ?>                   
                 </td>
             </tr>        

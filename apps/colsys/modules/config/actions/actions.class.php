@@ -46,13 +46,13 @@ class configActions extends sfActions {
         if( $request->isMethod("post") ){
             $bindValues = array();
             $bindValues["idconfig"] = $request->getParameter("idconfig");
-            $bindValues["module"] = $request->getParameter("module");
+            $bindValues["module_param"] = $request->getParameter("module_param");
             $bindValues["param"] = $request->getParameter("param");
             $bindValues["description"] = $request->getParameter("description");
             
             $this->form->bind( $bindValues );
             if( $this->form->isValid() ){
-                $config->setCaModule( $request->getParameter("module") );
+                $config->setCaModule( $request->getParameter("module_param") );
                 $config->setCaParam( $request->getParameter("param") );
                 $config->setCaDescription( $request->getParameter("description") );
                 $config->save();                 

@@ -21,7 +21,7 @@ class ParamForm extends BaseForm{
 		$widgets = array();
 
 		$widgets['idconfig'] = new sfWidgetFormInputHidden();
-        $widgets['module'] = new sfWidgetFormInputText();
+        $widgets['module_param'] = new sfWidgetFormInputText();
         $widgets['param'] = new sfWidgetFormInputText();
         $widgets['description'] = new sfWidgetFormTextarea(array(),array("size"=>"50x20" ));
         
@@ -31,7 +31,7 @@ class ParamForm extends BaseForm{
 
         $validator["idconfig"] =new sfValidatorString( array('required' => false ),
 														array('required' => 'Este campo es requerido'));
-        $validator["module"] =new sfValidatorString( array('required' => false ),
+        $validator["module_param"] =new sfValidatorString( array('required' => false ),
 														array('required' => 'Este campo es requerido'));
        
 
