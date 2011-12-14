@@ -656,6 +656,14 @@ class traficosActions extends sfActions
                     $cc[] = trim($request->getParameter("cc_".$i));
                 }
             }
+            
+            $copiasAut = ParametroTable::retrieveByCaso("CU104");
+            
+            foreach( $copiasAut as $c ){
+                if( $c->getCaValor() ){
+                    $cc[] = trim($c->getCaValor());
+                }
+            }
 
             $user = $this->getUser();
             $attachments = $this->getRequestParameter( "attachments" );
