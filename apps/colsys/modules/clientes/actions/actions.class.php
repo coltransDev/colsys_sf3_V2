@@ -708,8 +708,14 @@ class clientesActions extends sfActions {
                         if ($item->nodeName == 'publshInformation') {
                             foreach ($item->childNodes as $element) {
                                 if ($element->nodeName == 'Publish_Date') {  // Captura la Fecha de Publicación del Archivo
-                                    $ultimo = Doctrine::getTable("Parametro")->find(array("CU065", 1, "publishInformation"));
-                                    if ($ultimo->getCaValor2() == $element->nodeValue) { // Compara con el Caso de Uso
+                                    // $ultimo = Doctrine::getTable("Parametro")->find(array("CU065", 1, "publishInformation"));
+                                    $ultimo = Doctrine::getTable("ColsysConfigValue")
+                                        ->createQuery("v")
+                                        ->innerJoin("v.ColsysConfig c")
+                                        ->where("c.ca_param = ? ", "CU065")
+                                        ->addWhere("v.ca_value = ? ", "publishInformation")
+                                        ->fetchOne();
+                                    if ($ultimo->getCaValue2() == $element->nodeValue) { // Compara con el Caso de Uso
                                         die('Finaliza sin Actualizaciones');
                                     } else {
                                         SdnTable::eliminarRegistros();    // Crea objeto Sdn solo para invocar método que limpia las tablas
@@ -996,7 +1002,7 @@ class clientesActions extends sfActions {
             $email->save(); //guarda el cuerpo del mensaje
 
             if (isset($ultimo)) {
-                $ultimo->setCaValor2($nueva_fecha);
+                $ultimo->setCaValue2($nueva_fecha);
                 $ultimo->save();
             }
             echo "Finaliza comparativo con Maestra de Clientes: ".date("h:i:s A")."\n\n";
