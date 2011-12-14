@@ -245,7 +245,8 @@ foreach ($reportes as $reporte) {
 
     $objPHPExcel->getActiveSheet()->setCellValue('P' . $i, utf8_encode($reporte->getConsignedTo()));
 
-    $objPHPExcel->getActiveSheet()->setCellValue('Q' . $i, utf8_encode(str_replace("\r", "", strip_tags($reporte->getTextoStatus()))));
+    $txtStatus = str_replace("\r", "", strip_tags($reporte->getTextoStatus()));
+    $objPHPExcel->getActiveSheet()->setCellValue('Q' . $i, utf8_encode($txtStatus));
 
     $ref = $reporte->getNumReferencia() ? " " . $reporte->getNumReferencia() : "";
 
@@ -320,11 +321,18 @@ foreach ($reportes as $reporte) {
 
     $objPHPExcel->getActiveSheet()->getStyle('A' . $i)->getBorders()->getLeft()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
     $objPHPExcel->getActiveSheet()->getStyle('Q' . $i)->getBorders()->getRight()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
-
-    $objPHPExcel->getActiveSheet()->getRowDimension($i)->setRowHeight(70);
-
+    
+    //Calcula el alto estimado de la columna de acuerdo a la longitud del texto. 
+    $lenFactor = intval(strlen( $txtStatus ) / 60);
+    $height = 14*$lenFactor;    
+    //echo strlen( $txtStatus ) ." ".$lenFactor." ".$height."<br />";    
+    if( $height<70 ){
+        $height=70;
+    }
+    $objPHPExcel->getActiveSheet()->getRowDimension($i)->setRowHeight($height);
     $i++;
 }
+
 
 $objPHPExcel->getActiveSheet()->duplicateStyleArray(
         array(
