@@ -123,7 +123,7 @@ class antecedentesActions extends sfActions {
                 JOIN tb_ciudades ori ON ori.ca_idciudad = m.ca_origen
                 JOIN tb_ciudades des ON des.ca_idciudad = m.ca_destino
                 JOIN control.tb_usuarios u ON u.ca_login = m.ca_usucreado
-                where m.ca_fchreferencia>='2011-03-01' $where order by m.ca_referencia "  ;
+                where m.ca_fchcreado>='2011-03-01' $where order by m.ca_referencia "  ;
             
             $con = Doctrine_Manager::getInstance()->connection();
             $st = $con->execute($sql);
