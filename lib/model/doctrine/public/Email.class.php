@@ -185,8 +185,15 @@ class Email extends BaseEmail
                     if( file_exists($file) ){
                         $message->attach(Swift_Attachment::fromPath($file)->setFilename(Utils::replace(basename($file))));
                     }else{                        
-                        $event= "No existe el archivo: ".$file;                        
-                        throw new Exception($event);
+                        
+                        if( file_exists($file.".gz") ){
+                            $data = gzfile( $file.".gz" );
+                            $data = implode($data);                            
+                            $message->attach( Swift_Attachment::newInstance($data, Utils::replace(basename($file)), Utils::mimetype(basename($file))) );
+                        }else{                        
+                            $event= "No existe el archivo: ".$file;                        
+                            throw new Exception($event);
+                        }
 
                     }
                 }
