@@ -17,8 +17,6 @@ include_component("widgets", "widgetCiudad");
     PanelMasterAntecedentes = function( config ){
 
         Ext.apply(this, config);
-
-
         this.items = [{
                 xtype: 'fieldset',
                 title: 'General',
@@ -27,12 +25,12 @@ include_component("widgets", "widgetCiudad");
                 columns: 2,
                 items :
                     [
-                    {
+                    /*{
                         xtype: "hidden",
                         id: "impoexpo",
                         name: "impoexpo",
                         value: "<?=Constantes::IMPO?>"
-                    },
+                    },*/
                     {
                         xtype: "hidden",
                         id: "transporte",
@@ -50,14 +48,12 @@ include_component("widgets", "widgetCiudad");
                         id: "imprimirorigen",
                         name: "imprimirorigen",
                         allowBlank: false
-
                     },
                     {
                         xtype: "hidden",
                         id: "referencia",
                         name: "referencia",
                         allowBlank: false
-
                     },
                     {
                         columnWidth:.5,
@@ -66,6 +62,14 @@ include_component("widgets", "widgetCiudad");
                         border:false,
                         defaultType: 'textfield',
                         items: [
+                            new WidgetImpoexpo(
+                            {
+                                fieldLabel: 'Impoexpo',                        
+                                id: 'impoexpo',
+                                name:'impoexpo',
+                                tabIndex:1,
+                                value:'<?=Constantes::IMPO?>'
+                           }),
                             new WidgetModalidad({fieldLabel: 'Modalidad',
                                 id: 'modalidad',
                                 name: 'modalidad',
@@ -73,8 +77,7 @@ include_component("widgets", "widgetCiudad");
                                 linkImpoexpo: "impoexpo",
                                 allowBlank: false
                             }),
-
-                            new WidgetCiudad({fieldLabel: 'Ciudad Origen',
+                            new WidgetCiudad({fieldLabel: 'Ciudad Origen.',
                                 id: 'origen',
                                 name: 'origen',
                                 hiddenName: 'idorigen',
@@ -99,7 +102,6 @@ include_component("widgets", "widgetCiudad");
                                 type: 'textfield',
                                 allowBlank: false
                             }
-
                         ]
                     },
                     {
@@ -109,6 +111,7 @@ include_component("widgets", "widgetCiudad");
                         xtype: 'fieldset',
                         defaultType: 'textfield',
                         items: [  
+                            {xtype: "label",fieldLabel: ' '},
                             new WidgetLinea({fieldLabel: 'Linea',
                                 linkTransporte: "transporte",
                                 name: 'linea',

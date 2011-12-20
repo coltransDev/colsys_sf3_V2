@@ -365,7 +365,7 @@ class antecedentesActions extends sfActions {
 
         $data["referencia"] =   $ref->getCaReferencia();
         $data["motonave"]   =   $ref->getCaMotonave();
-        $data["impoexpo"]   =   utf8_encode(Constantes::IMPO);
+        $data["impoexpo"]   =   utf8_encode($ref->getCaImpoexpo());
         $data["transporte"] =   utf8_encode(Constantes::MARITIMO);
         $data["modalidad"]  =   $ref->getCaModalidad();
         $data["origen"]     =   $ref->getOrigen()->getCaCiudad();
@@ -843,14 +843,6 @@ exit;
          try {
             $numref = str_replace("|", ".", $request->getParameter("ref"));
             $this->forward404Unless( trim($request->getParameter("motivo")) );
-     
-/*            Doctrine_Query::create()
-                   ->delete()
-                   ->from("InoClientesSea ic")
-                   ->where("ic.ca_referencia = ? ", $numRef)
-                   ->execute($conn);
- *
- */
 
             $master = Doctrine::getTable("InoMaestraSea")->find($numref);
             //$master= new InoMaestraSea();
@@ -864,10 +856,6 @@ exit;
                 $email->setCaSubject( str_replace(".", "-", $email->getCaSubject()));
                 $email->save($conn);
             }
-            
-            
-            
-            
 
             $conn->commit();
             $this->responseArray = array("success" => true);
@@ -935,7 +923,6 @@ exit;
                 if($tmp)
                 {
                     $reporte=$tmp->getUltReporte();
-                   // $resultado=$reporte->getCaIdreporte()."<br>";
                     if($reporte->getInoClientesSea())
                     {
                         $resultado.="2.1-linea :".($i+1)."->".$lines[$i]." :El RN esta asociado ya a otra referencia<br>";
@@ -965,7 +952,6 @@ exit;
                 }
             }
         }
-
         $this->responseArray = array("success" => true,"reportes"=>$reportes,"resultado"=>$resultado);
         $this->setTemplate("responseTemplate");
    }
@@ -973,8 +959,6 @@ exit;
 
    public function executeEliminarReporte(sfWebRequest $request)
    {
-
-
        try{
             $numref = str_replace("|", ".", $request->getParameter("referencia"));
             $idreporte = $request->getParameter("idreporte");
@@ -991,8 +975,6 @@ exit;
                   ->set("ca_subject","replcace(ca_subject,'.','-')")
                   ->addWhere("ca_subject like ?", "%" . $this->getCaReferencia() . "%")
                   ->execute();
-
-
             $this->responseArray = array("success" => true);
        }
        catch(Exception $e)
@@ -1020,7 +1002,25 @@ exit;
        $this->setTemplate("responseTemplate");
     }
     
-    
+    public function executeRadicarReferencia(sfWebRequest $request)  
+    {
+        try{
+            $numref = str_replace("|", ".", $request->getParameter("referencia"));
+            $this->forward404Unless($numref);
+            $ref = Doctrine::getTable("InoMaestraSea")->find($numref);
+            $this->forward404Unless($ref);
+            $ref->setCaUsumuisca($this->getUser()->getUserId());
+            $ref->setCaFchmuisca(date('Y-m-d H:i:s'));
+            $ref->save();  
+            $this->responseArray = array("success" => true);
+       }
+       catch(Exception $e)
+       {
+           $this->responseArray = array("success" => false,"errorInfo"=>$e->getMessage());
+       }
+       $this->setTemplate("responseTemplate");
+    }    
+ 
     public function executeRadicarReferencia(sfWebRequest $request)  
     {
         try{
@@ -1049,7 +1049,6 @@ exit;
         $this->forward404Unless($ref);
 
         $this->setLayout($format);
-
         $this->ref = $ref;
         $this->user = $this->getUser();
         $this->format = $format;
@@ -1081,14 +1080,11 @@ exit;
             $filenames[]["file"] = $file[count($file)-1];
         }
         $this->filenames = $filenames;
-        
     }
     
     public function executeEnviarEmailColoader(sfWebRequest $request) {
 
-        $user = $this->getUser();
-       
-        
+        $user = $this->getUser();        
         $email = new Email();
 
         $email->setCaUsuenvio($user->getUserId());
@@ -1102,7 +1098,6 @@ exit;
             $email->setCaFrom($user->getEmail());
         }
         $email->setCaFromname($user->getNombre());
-
 
         if ($this->getRequestParameter("readreceipt")) {
             $email->setCaReadreceipt(true);
@@ -1120,7 +1115,6 @@ exit;
                 $email->addTo($recip);
             }
         }
-        //$email->addTo($user->getEmail());
 
         $recips = explode(",", $this->getRequestParameter("cc"));
         foreach ($recips as $recip) {
@@ -1147,7 +1141,7 @@ exit;
         $files=$this->getRequestParameter("files");
         foreach ($files as $archivo) {
             
-            $name =  $archivo;            
+            $name =  $archivo;
             $email->AddAttachment($name);            
         }
         $email->send();
