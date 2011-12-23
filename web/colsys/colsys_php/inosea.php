@@ -2700,6 +2700,8 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 echo "      }";
                 echo "      if (check && !none)";
                 echo "          return (confirm('El sistema ha asignado automáticamente el número de Referencia\\n¿Esta correcta la asignación?'));";
+                echo "      else if (document.getElementById('modalidad').value == 'PARTICULARES')";
+                echo "          return (confirm('El sistema ha asignado automáticamente el número de Referencia\\n¿Esta correcta la asignación?'));";
                 echo "      else if (none)";
                 echo "          alert('Diligencie Cuadro Datos Relacionados con la Carga');";
                 echo "  }";
