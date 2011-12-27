@@ -22,7 +22,9 @@ $refs = $sf_data->getRaw("refs");
 <!--           <th>Deducciones: </th>-->
            <th>INO Sobreventa: </th>
            <th>INO Consolidado: </th>
-           <th>INO Total: </th>           
+           <th>INO Total: </th>
+           <th>Estado: </th>
+           <th>Observaciones: </th>
          </tr>
          
          <?
@@ -50,6 +52,24 @@ $refs = $sf_data->getRaw("refs");
                ?>           
                <td><div align="right"><?=Utils::formatNumber($inoCons)?> </div></td>
                <td><div align="right"><?=Utils::formatNumber($inoCons+$r["InoViUtilidad"]["ca_valor"])?></div> </td>
+               <td>
+                   <div align="right">
+                   <?
+                   if( $r["ca_fchcerrado"] ){
+                       echo "Cerrado";
+                   }elseif( $r["ca_fchliquidado"] ){
+                       echo "Liquidado";
+                   }else{
+                       echo "Abierto";
+                   }
+                   ?>            
+                    </div>
+               </td>
+               <td>
+                   <div align="left">
+                   <?=$r["ca_observaciones"]?>            
+                    </div>
+               </td>
              </tr>
              <?
                 if( !isset($totales["ca_numpiezas"]) ){
@@ -112,6 +132,8 @@ $refs = $sf_data->getRaw("refs");
                ?>           
                <td><div align="right"><b><?=Utils::formatNumber($inoCons)?></b> </div></td>
                <td><div align="right"><b><?=Utils::formatNumber($inoCons+$totales["utilidad"])?></b></div> </td>           
+               <td>&nbsp;</td>   
+               <td>&nbsp;</td>  
              </tr>
          <?
          }else{

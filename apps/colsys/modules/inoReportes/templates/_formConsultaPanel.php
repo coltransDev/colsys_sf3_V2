@@ -81,7 +81,7 @@ include_component("widgets", "widgetCliente");
                                     allowBlank: true,                                                                                                                    
                                     tabIndex:5,
                                     pais:"todos"
-                                }),
+                                })
                                 
                             ]
                         },
