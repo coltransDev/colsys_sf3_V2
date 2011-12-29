@@ -126,7 +126,8 @@ include_component("widgets", "widgetComerciales");
                 new WidgetComerciales({fieldLabel: 'Rep. Comercial',
                     id: 'vendedor',
                     name: 'vendedor',
-                    hiddenName: "idvendedor"
+                    hiddenName: "idvendedor",
+                    disabled: <?=$nivel>0?"false":"true"?>
                 }),
                 {
                     xtype:          'combo',

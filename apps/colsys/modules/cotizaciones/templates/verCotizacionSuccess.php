@@ -103,7 +103,7 @@ if( !$cotizacion->getCaUsuanulado() ){
             <?php
             }
 
-            if(count($archivos)>0 && $cotizacion->getCaEmpresa()==Constantes::COLTRANS){
+            if(count($archivos)>0){
                 ?>
                 <tr>
                     <th>

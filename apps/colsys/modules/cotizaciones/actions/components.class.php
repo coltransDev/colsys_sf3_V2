@@ -15,6 +15,7 @@
  * @version    SVN: $Id: actions.class.php 2692 2006-11-15 21:03:55Z fabien $
  */
 class cotizacionesComponents extends sfComponents {
+       
     /*
      * Panel principal inferior
      */
@@ -178,6 +179,8 @@ class cotizacionesComponents extends sfComponents {
 
     public function executeFieldsEncabezado() {
         //echo $this->getRequestParameter("id");
+        $this->nivel = $this->getUser()->getNivelAcceso(cotizacionesActions::RUTINA);
+        
     }
 
     public function executeChart() {
