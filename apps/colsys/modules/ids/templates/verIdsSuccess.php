@@ -202,10 +202,10 @@ var eliminarAgente = function(){
                        <div align="left"><?=$proveedor->getCaActivoImpo()?"S&iacute;":"<span class='rojo'>No</span>"?></div>
                    </td>
                    <td>
-                       <div align="left">&nbsp;</div>
+                       <div align="left"><b>Obliga Firma Contrato Comodato:</b></div>
                    </td>
                    <td>
-                       <div align="left">&nbsp;</div>
+                       <div align="left"><?=$proveedor->getCaContratoComodato()?"<span class='rojo'>S&iacute;</span>":"No"?></div>
                    </td>
                 </tr>
                 <tr>

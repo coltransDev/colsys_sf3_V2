@@ -347,10 +347,16 @@
             ?>
             </div>
         </td>
-        <td>&nbsp;</td>
+        <td> <div align="left"><b>Obliga Firma Contrato Comodato:</b></td>
 		<td colspan="3">
-            <div align="left">
-            &nbsp;
+             <div align="left">
+            <?
+            echo $form['contrato_comodato']->renderError();
+            if( $proveedor ){
+                $form->setDefault('contrato_comodato', $proveedor->getCaContratoComodato() );
+            }
+            echo $form['contrato_comodato']->render();
+            ?>
             </div>
 
         </td>

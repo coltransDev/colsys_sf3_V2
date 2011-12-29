@@ -233,6 +233,7 @@ class idsActions extends sfActions {
                 $bindValues["aprobado"] = $request->getParameter("aprobado");
                 $bindValues["activo_impo"] = $request->getParameter("activo_impo");
                 $bindValues["activo_expo"] = $request->getParameter("activo_expo");
+                $bindValues["contrato_comodato"] = $request->getParameter("contrato_comodato");
                 $bindValues["empresa"] = $request->getParameter("empresa");
 
 
@@ -300,9 +301,13 @@ class idsActions extends sfActions {
                     } else {
                         $proveedor->setCaActivoExpo(false);
                     }
-
-
-
+                    
+                    if ($bindValues["contrato_comodato"]) {
+                        $proveedor->setCaContratoComodato(true);
+                    } else {
+                        $proveedor->setCaContratoComodato(false);
+                    }
+                   
                     if ($bindValues["empresa"]) {
                         $proveedor->setCaEmpresa($bindValues["empresa"]);
                     } else {
@@ -418,10 +423,11 @@ class idsActions extends sfActions {
      */
     public function executeComprobarId(sfWebRequest $request) {
         $idalterno = $request->getParameter("idalterno");
+        
         $tipo_identificacion = $request->getParameter("tipo_identificacion");
         $id = Doctrine::getTable("Ids")
                 ->createQuery("id")
-                ->where("id.ca_idalterno = ? AND id.ca_tipoidentificacion = ? ", array($idalterno, $tipo_identificacion))
+                ->where("id.ca_idalterno = ? ", array($idalterno))
                 ->fetchOne();
         $this->responseArray = array();
         if ($id) {

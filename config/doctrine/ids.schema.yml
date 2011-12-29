@@ -205,6 +205,7 @@ IdsProveedor:
     ca_empresa: string    
     ca_activo_impo: boolean
     ca_activo_expo: boolean
+    ca_contrato_comodato: boolean
   relations:
     Ids:
       local: ca_idproveedor
@@ -302,7 +303,7 @@ IdsTipoDocumento:
     ca_tipo: string(60)
     ca_equivalentea: integer
     ca_vigencia: string(15)
-    ca_observaciones: string(15)
+    ca_observaciones: string(15)    
     ca_usucreado: string(20)
     ca_fchcreado: timestamp
     ca_usuactualizado: string(20)
@@ -329,6 +330,7 @@ IdsDocumentoPorTipo:
     ca_controladoxsig: boolean
     ca_impoexpo: string
     ca_transporte: string
+    ca_solo_si_aplica: boolean
   relations:
     IdsTipoDocumento:
       local: ca_idtipo

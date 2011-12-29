@@ -44,6 +44,8 @@ class NuevoProveedorForm extends BaseForm{
                                                                                   Constantes::COLTRANS=>Constantes::COLTRANS,
                                                                                  Constantes::COLMAS=>Constantes::COLMAS
                                                                                 )));
+        $widgets['contrato_comodato'] = new sfWidgetFormInputCheckbox();
+        
 		$this->setWidgets( $widgets );
 
 
@@ -72,6 +74,8 @@ class NuevoProveedorForm extends BaseForm{
         $validator["sigla"] =new sfValidatorString( array('required' => false ) );
 
         $validator["empresa"] =new sfValidatorString( array('required' => false ) );
+        
+        $validator["contrato_comodato"] =new sfValidatorBoolean( array('required' => false ) );
         $this->setValidators( $validator );
     }
 }
