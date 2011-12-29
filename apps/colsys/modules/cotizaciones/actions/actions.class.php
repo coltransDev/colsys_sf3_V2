@@ -1163,6 +1163,10 @@ class cotizacionesActions extends sfActions {
             if ($tipo != "OTM-DTA") {
                 if ($linea) {
                     $lineaStr = $linea->getIds()->getCaNombre();
+                    
+                    if( $linea->getCaContratoComodato() ){
+                        $lineaStr.=" <span class='rojo'>(Requiere firma Comodato)</span>";
+                    }
                 } else {
                     $lineaStr = "";
                 }
