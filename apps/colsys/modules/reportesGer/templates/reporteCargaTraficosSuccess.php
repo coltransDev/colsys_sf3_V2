@@ -331,8 +331,9 @@ if( $incoterms ){
     //print_r($r);
 
         $teus+=$r["teus"];
-        $totales["modalidad"][$r["ca_modalidad"]]["origen"][$r["ori_ca_nombre"]]+=$r["teus"];
-        $totales["modalidad"][$r["ca_modalidad"]]["destino"][$r["des_ca_ciudad"]]+=$r["teus"];
+        $totales["modalidad"][$r["ca_modalidad"]]["origen"][$r["ori_ca_nombre"]][$r["ca_liminferior"]]+=$r["teus"];
+        $totales["modalidad"][$r["ca_modalidad"]]["destino"][$r["des_ca_ciudad"]][$r["ca_liminferior"]]+=$r["teus"];
+        //$totales["modalidad"][$r["ca_modalidad"]]["destino"][$r["des_ca_ciudad"]]["peso"]+=$r["peso"];
         if($r["ca_referencia"]==$ref)
         {
             $volumen="";
@@ -355,6 +356,9 @@ if( $incoterms ){
 
             if($arrtmp1[2]==1)                
                 $arrtmp[0]=  substr($arrtmp[0], 0, 3).$arrtmp1[4];
+            
+            $totales["modalidad"][$r["ca_modalidad"]]["origen"][$r["ori_ca_nombre"]]["volumen"]+=$r["volumen"];
+            $totales["modalidad"][$r["ca_modalidad"]]["destino"][$r["des_ca_ciudad"]]["volumen"]+=$r["volumen"];
         }
         $nhbls+=$r["nhbls"];
         //if($volumen)
@@ -422,6 +426,7 @@ if( $incoterms ){
 
                 <?
                 $totales1=$totales["modalidad"];
+                //print_r($totales1);
                 foreach($totales1 as $modalidad => $valor)
                 {
 
@@ -436,9 +441,17 @@ if( $incoterms ){
                        <td width="100%">
                             <table width="100%">
                                 <tr>
-                                    <th>País</th><th width="40%">Teus</th>
+                                    <th>País</th><th width="15%">CMB</th><th width="15%">20</th><th width="15%">40</th><th width="20%">Teus</th>
                                 </tr>
-                                <? foreach($ori as $key => $value){?><tr><td><?=$key?></td><td><?=$value?></td><?}?></tr>
+                                <? 
+                                    foreach($ori as $key => $value)
+                                    {
+                                        $tmod=$value["20"]+$value["40"];
+                                ?>
+                                    <tr><td><?=$key?></td><td><?=$value["volumen"]?></td><td><?=$value["20"]?></td><td><?=$value["40"]?></td><td><?=$tmod?></td></tr>
+                                <?                                
+                                    }
+                                ?>
                             </table>
                         </td>
                     </tr>
@@ -446,9 +459,16 @@ if( $incoterms ){
                         <td width="100%">
                             <table width="100%">
                                 <tr>
-                                    <th>Puerto</th><th width="40%">Teus</th>
+                                    <th>Puerto</th><th width="15%">CMB</th><th width="15%">20</th><th width="15%">40</th><th width="20%">Teus</th>
                                 </tr>
-                                <? foreach($des as $key => $value){?><tr><td><?=$key?></td><td><?=$value?></td><?}?></tr>
+                                <? 
+                                    foreach($des as $key => $value)
+                                    {
+                                        $tmod=$value["20"]+$value["40"];
+                                ?>
+                                    <tr><td><?=$key?></td><td><?=$value["volumen"]?></td><td><?=$value["20"]?></td><td><?=$value["40"]?></td><td><?=$tmod?></td></tr>
+                                <?  }
+                                ?>
                             </table>
                         </td>
                     </tr>

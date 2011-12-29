@@ -152,7 +152,7 @@ class reportesGerActions extends sfActions {
                 $where.=" and cc.ca_idcliente = '" . $this->idcliente . "'";
             }
 
-            $sql = "SELECT m.ca_referencia, tt.ca_concepto,tt.ca_idconcepto, m.ca_fchembarque, m.ca_fcharribo, m.ca_fchreferencia, m.ca_origen, ori.ca_ciudad AS ori_ca_ciudad, m.ca_destino, des.ca_ciudad AS des_ca_ciudad, tra_ori.ca_idtrafico AS ori_ca_idtrafico, tra_ori.ca_nombre AS ori_ca_nombre, tra_des.ca_idtrafico AS des_ca_idtrafico, tra_des.ca_nombre AS des_ca_nombre, m.ca_modalidad, m.ca_idlinea, ids.ca_nombre,
+            $sql = "SELECT tt.ca_liminferior,m.ca_referencia, tt.ca_concepto,tt.ca_idconcepto, m.ca_fchembarque, m.ca_fcharribo, m.ca_fchreferencia, m.ca_origen, ori.ca_ciudad AS ori_ca_ciudad, m.ca_destino, des.ca_ciudad AS des_ca_ciudad, tra_ori.ca_idtrafico AS ori_ca_idtrafico, tra_ori.ca_nombre AS ori_ca_nombre, tra_des.ca_idtrafico AS des_ca_idtrafico, tra_des.ca_nombre AS des_ca_nombre, m.ca_modalidad, m.ca_idlinea, ids.ca_nombre,
     (( SELECT sum(t.ca_liminferior) AS sum
            FROM tb_inoequipos_sea eq
       JOIN tb_conceptos t ON eq.ca_idconcepto = t.ca_idconcepto
@@ -181,7 +181,7 @@ class reportesGerActions extends sfActions {
    
     WHERE date_part('year', m.ca_fchreferencia) > (date_part('year', m.ca_fchreferencia) - 2)  
     $where
-    group by m.ca_referencia, tt.ca_concepto, tt.ca_idconcepto ,m.ca_fchembarque, m.ca_fcharribo, m.ca_fchreferencia, m.ca_origen, ori.ca_ciudad , m.ca_destino, des.ca_ciudad , tra_ori.ca_idtrafico , tra_ori.ca_nombre , tra_des.ca_idtrafico , tra_des.ca_nombre , m.ca_modalidad, m.ca_idlinea, ids.ca_nombre,
+    group by tt.ca_liminferior,m.ca_referencia, tt.ca_concepto, tt.ca_idconcepto ,m.ca_fchembarque, m.ca_fcharribo, m.ca_fchreferencia, m.ca_origen, ori.ca_ciudad , m.ca_destino, des.ca_ciudad , tra_ori.ca_idtrafico , tra_ori.ca_nombre , tra_des.ca_idtrafico , tra_des.ca_nombre , m.ca_modalidad, m.ca_idlinea, ids.ca_nombre,
     (( SELECT sum(t.ca_liminferior) AS sum
            FROM tb_inoequipos_sea eq
       JOIN tb_conceptos t ON eq.ca_idconcepto = t.ca_idconcepto
@@ -192,7 +192,7 @@ class reportesGerActions extends sfActions {
           WHERE eq.ca_referencia = m.ca_referencia AND eq.ca_idconcepto = tt.ca_idconcepto)
     ORDER BY m.ca_fchreferencia";
             $con = Doctrine_Manager::getInstance()->connection();
-//            echo $sql;
+            //echo $sql;
             $st = $con->execute($sql);
             $this->resul = $st->fetchAll();
         }
@@ -613,8 +613,19 @@ class reportesGerActions extends sfActions {
         if ($this->opcion) {
             if ($this->idmodalidad)
                 $where.=" and rp.ca_modalidad='" . $this->idmodalidad . "'";
+            if ($this->fechainicial && $this->fechafinal){
+                list($ano, $mes, $dia) = sscanf($this->fechainicial, "%d-%d-%d");
+                $fechainicial = date("Y-m-d H:i:s", mktime( 0, 0, 0, $mes, $dia, $ano));
+                list($ano, $mes, $dia) = sscanf($this->fechafinal, "%d-%d-%d");
+                $fechafinal = date("Y-m-d H:i:s", mktime( 23, 59, 59, $mes, $dia, $ano));
+            }
             if ($this->tipoInforme == "Volumen de Trabajo"){
-                $filtro = "";
+                $filtroTipoInforme = "RIGHT JOIN (select rpt.ca_consecutivo, substr(rps.ca_fchenvio::text,1,4) as ca_ano, substr(rps.ca_fchenvio::text,6,2) as ca_mes, rps.ca_usuenvio, count(rps.ca_idemail) as ca_cant_emails from tb_repstatus rps, tb_reportes rpt where rps.ca_fchenvio between '$fechainicial' and '$fechafinal' and  rpt.ca_idreporte = rps.ca_idreporte group by ca_ano, ca_mes, ca_consecutivo, ca_usuenvio) rf ON (rp.ca_consecutivo = rf.ca_consecutivo)";
+            }else if ($this->tipoInforme == "Reporte al Exterior"){
+                $filtroTipoInforme = "RIGHT JOIN (select rpt.ca_consecutivo, substr(rpa.ca_fchenvio::text,1,4) as ca_ano, substr(rpa.ca_fchenvio::text,6,2) as ca_mes, rpa.ca_usuenvio, count(rpa.ca_idemail) as ca_cant_emails from tb_emails rpa, tb_reportes rpt where rpa.ca_tipo like '%Rep.%Exterior%' and rpa.ca_fchenvio between '$fechainicial' and '$fechafinal' and rpt.ca_idreporte = rpa.ca_idcaso group by ca_ano, ca_mes, ca_consecutivo, ca_usuenvio) rf ON (rp.ca_consecutivo = rf.ca_consecutivo) ";
+            }else if ($this->tipoInforme == "Reportes AG"){
+                $filtroTipoInforme = "RIGHT JOIN (select rpt.ca_consecutivo, substr(rpa.ca_fchenvio::text,1,4) as ca_ano, substr(rpa.ca_fchenvio::text,6,2) as ca_mes, rpa.ca_usuenvio, count(rpa.ca_idemail) as ca_cant_emails from tb_emails rpa, tb_reportes rpt where rpa.ca_tipo like '%Reporte Negocios AG%' and rpa.ca_fchenvio between '$fechainicial' and '$fechafinal' and rpt.ca_idreporte = rpa.ca_idcaso group by ca_ano, ca_mes, ca_consecutivo, ca_usuenvio) rf ON (rp.ca_consecutivo = rf.ca_consecutivo) ";
+            }else if ($this->tipoInforme == "Negocios nuevos"){
                 if ($this->fechainicial && $this->fechafinal)
                     list($ano, $mes, $dia) = sscanf($this->fechainicial, "%d-%d-%d");
                     $fechainicial = date("Y-m-d H:i:s", mktime( 0, 0, 0, $mes, $dia, $ano));
