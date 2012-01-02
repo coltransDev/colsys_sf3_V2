@@ -48,7 +48,7 @@ $resul = $sf_data->getRaw("resul");
             activeTab: 0,
             defaults:{autoHeight:true, bodyStyle:'padding:10px'},
             id: 'tab-panel',
-            items:[{
+            items:[{    
                     title:'Estadisticas',
                     layout:'form',
                     defaultType: 'textfield',
@@ -279,6 +279,7 @@ if ($opcion and $tipoInforme != "") {
     <div align="center">
         <br>
         <h3>Estad&iacute;sticas de Carga Operativa <br>
+            Informe : <?=$tipoInforme?> <br>
         <?
         if ($fechainicial && $fechafinal) {
             echo " fechas de Creacion referencia: " . $fechainicial . " - " . $fechafinal;
@@ -301,7 +302,7 @@ if ($opcion and $tipoInforme != "") {
         if ($usuenvio) {
             echo " Operativo: " . $usuenvio . " - ";
         }
-        if ($incoterms) {
+        if (strlen(implode(",", $incoterms))!=0) {
             echo "<br>Incoterms: " . implode(",", $incoterms) . " - ";
         }
         ?>
@@ -462,7 +463,7 @@ if ($opcion and $tipoInforme != "") {
                             $array_facturas = InoClientesSeaTable::facturasPorReporte($r["ca_referencia"], $r["ca_idcliente"], $r["ca_consecutivo"], $usuenvio, $fechainicial, $fechafinal);
                         }
 
-                        if (count($array_facturas) != 0){
+                        if (count($array_facturas) != 0 and ($tipoInforme == "Volumen de Trabajo" or $tipoInforme == "Negocios nuevos")){
                             // $multiples = (count($array_facturas)>1)?true:false;
 
                             foreach($array_facturas as $factura){
@@ -615,7 +616,7 @@ if ($opcion and $tipoInforme != "") {
 
 <?
 if (count($cliente_tot) == 1){
-    $tit_mem = "Gráfica por Cliente - ".$tit_tmp;
+    $tit_cli = "Gráfica por Cliente - ".$tit_tmp;
     $dataC = array();
     foreach($cliente_tot as $cli_tit => $ano_dat){
         foreach($ano_dat as $ano_tit => $mes_dat) {
@@ -638,7 +639,7 @@ if (count($cliente_tot) == 1){
 }
 
 if (count($serieX) > 1){
-    $tit_mem = "Carga Operativa";
+    $tit_mem = "Carga Operativa - ".$tipoInforme;
     $dataN = $dataX = array();
 
     foreach($operativo_tot as $reg_key => $registros){
@@ -662,7 +663,7 @@ if (count($serieX) > 1){
     $dataJSON[] = array("name" => "Comunicaciones", "data" => $dataX["Comunicaciones"]);
     $dataJSON[] = array("name" => "Facturas", "data" => $dataX["Facturas"]);
 }else if (count($serieX) == 1){
-    $tit_mem = "Gráfica por Funcionario - ".$serieX[0];
+    $tit_mem = "Gráfica por Funcionario - ".$tipoInforme." - ".$serieX[0];
     $dataN = array();
     foreach($operativo_sub as $modalidad => $usuario){
         foreach($mesesX as $mes){
@@ -677,16 +678,21 @@ if (count($serieX) > 1){
 ?>
 
 <table align="center" width="90%">
-    <tr>
-        <td style=" margin: 0 auto" >
-            <div align="center" id="grafica1" ></div>
-        </td>
-    </tr>
-    <tr>
-        <td style=" margin: 0 auto" >
-            <div align="center" id="grafica2" ></div>
-        </td>
-    </tr>
+    <?if ($tipoInforme != "") {?>
+        <tr>
+            <td style=" margin: 0 auto" >
+                <div align="center" id="grafica1" ></div>
+            </td>
+        </tr>
+        <?if (count($cliente_tot) == 1) {?>
+            <tr>
+                <td style=" margin: 0 auto" >
+                    <div align="center" id="grafica2" ></div>
+                </td>
+            </tr>
+    <?  }
+    }
+    ?>
 </table>
 <script type="text/javascript">
     var chart1;
