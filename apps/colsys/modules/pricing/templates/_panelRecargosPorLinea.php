@@ -149,6 +149,7 @@
             {name: 'aplicacion_min', type: 'string'},
             {name: 'idmoneda', type: 'string'},
             {name: 'observaciones', type: 'string'},
+            {name: 'aplicaciones', type: 'string'},
             {name: 'deleted', type: 'bool'}
         ]);
 
@@ -172,7 +173,9 @@
                 successProperty: 'success'
             },
             this.record
-        )/*,
+        ),
+        groupField: 'aplicaciones'    
+        /*,
         sortInfo:{field: 'id', direction: "ASC"}*/
         });
 
@@ -324,7 +327,14 @@
                 dataIndex: 'idmoneda',
                 hideable: false,
                 editor: <?= include_component("widgets", "monedas", array("id" => "")) ?>			
-            }
+            },
+            {
+                header: "Clasificación",
+                width: 80,
+                sortable: false,
+                hideable: false,
+                dataIndex: 'aplicaciones'			
+            }	
 		
 
         ];
@@ -379,8 +389,10 @@
             height: 500,
             plugins: [this.checkColumn, this.expander],             
             tbar: this.tbar,
-            view: new Ext.grid.GridView({
-                forceFit :true
+            view: new Ext.grid.GroupingView({
+                forceFit :true,
+                enableNoGroups:false,
+                hideGroupedColumn: true
             }),
             listeners:{
                 rowcontextmenu: this.onRowContext,
@@ -595,7 +607,8 @@ foreach ($parametros as $aplicacion) {
                                                     aplicacion: '',
                                                     aplicacion_min: '',
                                                     idmoneda: '',
-                                                    observaciones: ''
+                                                    observaciones: '',
+                                                    aplicaciones: ''
                                                 });
                                                 newRec.id = rec.data.id+1;
                                                 //Inserta una columna en blanco al final
@@ -658,7 +671,8 @@ foreach ($parametros as $aplicacion) {
                                                     aplicacion: '',
                                                     aplicacion_min: '',
                                                     idmoneda: '',
-                                                    observaciones: ''
+                                                    observaciones: '',
+                                                    aplicaciones: ''
                                                 });
                                                 newRec.id = rec.data.id+1;
                                                 //Inserta una columna en blanco al final

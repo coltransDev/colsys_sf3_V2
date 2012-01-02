@@ -117,6 +117,7 @@ PanelRecargosPorCiudad = function( config ){
         {name: 'observaciones', type: 'string'},
         {name: 'idlinea', type: 'string'},
         {name: 'linea', type: 'string'},
+        {name: 'aplicaciones', type: 'string'},
         {name: 'deleted', type: 'bool'}
     ]);
 
@@ -149,7 +150,8 @@ PanelRecargosPorCiudad = function( config ){
                 successProperty: 'success'
             },
             this.record
-        )
+        ),
+        groupField: 'aplicaciones'
         //,sortInfo:{field: 'id', direction: "ASC"}
     });
 
@@ -343,7 +345,14 @@ PanelRecargosPorCiudad = function( config ){
 			hideable: false,
             hidden: this.idcotizacion?false:true
 
-		}
+		},
+        {
+            header: "Clasificación",
+            width: 80,
+            sortable: false,
+            hideable: false,
+            dataIndex: 'aplicaciones'			
+        }
 	];
 
     
@@ -389,8 +398,10 @@ PanelRecargosPorCiudad = function( config ){
         width: 780,
         plugins: [this.checkColumn, this.expander], //expander,
         closable: true,
-        view: new Ext.grid.GridView({
-             forceFit :true
+        view: new Ext.grid.GroupingView({
+             forceFit :true,
+             enableNoGroups:false,
+             hideGroupedColumn: true
         }),
         listeners:{
             rowcontextmenu: this.onRowContextMenu,
@@ -567,7 +578,8 @@ Ext.extend(PanelRecargosPorCiudad, Ext.grid.EditorGridPanel, {
                                    aplicacion: '',
                                    aplicacion_min: '',
                                    idmoneda: '',
-                                   observaciones: ''
+                                   observaciones: '',
+                                   aplicaciones: ''
                                 });
                                 newRec.id = rec.data.id+1;
                                 //Inserta una columna en blanco al final
@@ -614,7 +626,8 @@ Ext.extend(PanelRecargosPorCiudad, Ext.grid.EditorGridPanel, {
                                    aplicacion: '',
                                    aplicacion_min: '',
                                    idmoneda: '',
-                                   observaciones: ''
+                                   observaciones: '',
+                                    aplicaciones: ''
                                 });                                
                                 //Inserta una columna en blanco al final
                                 storeRecargos.addSorted(newRec);

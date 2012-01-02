@@ -7,6 +7,7 @@ $contacto = $cotizacion->getContacto();
 $cliente = $contacto->getCliente();
 $empresa = $usuario->getSucursal()->getEmpresa();
 
+$comodato = false;
 
 $meses = array("enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre");
 
@@ -106,6 +107,10 @@ foreach( $productos as $producto ){
 		if(!in_array($producto->getCaTransporte(), $transportes) ){
 					$transportes[] = $producto->getCaTransporte();
 		}
+        
+        if( $producto->getTransportador()->getCaContratoComodato() ){
+            $comodato = true;
+        }
 	}
 }
 
@@ -844,7 +849,10 @@ endfor; //transportes
 $pdf->beginGroup();
 $pdf->SetFont($font,'B',8);
 $pdf->Ln(2);
-$pdf->MultiCell(0, 4, "Nota Importante: En caso de aceptación de la presente oferta de servicios se entenderá leído y aceptado el contrato de agenciamiento de carga que se encuentra en la página web www.coltrans.com.co y que regirá nuestra relación comercial", 0,'J',0);
+$pdf->MultiCell(0, 4, "Nota Importante: En caso de aceptación de la presente oferta de servicios se entenderá leído y aceptado el contrato de agenciamiento de carga que se encuentra en la página web www.coltrans.com.co y que regirá nuestra relación comercial.", 0,'J',0);
+if( $comodato ){
+    $pdf->MultiCell(0, 4, "Cesa laobligación de demoras de contenedor una vez esté sea entregado en el Patio o lugar de entrega de vacios designado por la Naviera.", 0,'J',0);
+}
 $pdf->Ln(2);
 $pdf->flushGroup();
 

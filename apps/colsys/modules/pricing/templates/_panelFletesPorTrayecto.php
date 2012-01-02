@@ -433,7 +433,8 @@ PanelFletesPorTrayecto = function( config ){
             enableRowBody:true,
             enableGroupingMenu: false,
             startCollapsed : true,
-            groupTextTpl: this.groupGrillaTpl
+            groupTextTpl: this.groupGrillaTpl,
+            emptyText: 'No hay datos'  
             
         }),
         listeners:{

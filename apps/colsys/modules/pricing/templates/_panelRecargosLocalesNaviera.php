@@ -14,7 +14,7 @@ PanelRecargosLocalesNaviera = function( config ){
                                           transporte: this.transporte,
                                           modalidad: this.modalidad,
                                           idlinea: this.idlinea,
-                                          title: "Recargos locales y Parametros",
+                                          title: "Recargos locales y Cond. Especiales",
                                           closable: false,
                                           readOnly: this.readOnly
                                       });

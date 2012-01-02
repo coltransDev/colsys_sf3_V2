@@ -105,7 +105,7 @@ class pricingActions extends sfActions {
         }
 
         $q = Doctrine_Query::create()
-                        ->select("t.ca_idtrayecto, p.ca_sigla, id.ca_nombre, t.ca_origen,
+                        ->select("t.ca_idtrayecto, p.ca_sigla, p.ca_contrato_comodato, id.ca_nombre, t.ca_origen,
                               t.ca_destino, t.ca_idlinea, o.ca_ciudad, d.ca_ciudad,
                               ai.ca_nombre, a.ca_idagente, t.ca_transporte, t.ca_modalidad,
                               t.ca_impoexpo, t.ca_observaciones, t.ca_tiempotransito, t.ca_frecuencia, t.ca_netnet")
@@ -173,9 +173,13 @@ class pricingActions extends sfActions {
             $trayectoStr = strtoupper($trayecto["o_ca_ciudad"]) . "»" . strtoupper($trayecto["d_ca_ciudad"]) . " - ";
 
             $trayectoStr.=$trayecto["p_ca_sigla"] ? $trayecto["p_ca_sigla"] : $trayecto["id_ca_nombre"];
-
+            
+            if( $trayecto["p_ca_contrato_comodato"] ){
+                $trayectoStr.=" <span class='rojo'>(Requiere firma Comodato)</span>";
+            }
+            
             if ($trayecto["ai_ca_nombre"]) {
-                $trayectoStr.=" [" . $trayecto["ai_ca_nombre"] . "] ";
+                $trayectoStr.=" [" . $trayecto["ai_ca_nombre"]." ] ";
             }
             $trayectoStr.=" (TT " . $trayecto["t_ca_tiempotransito"] . " Freq. " . $trayecto["t_ca_frecuencia"] . ") " . $trayecto["t_ca_idtrayecto"];
             $trayectoStr = utf8_encode($trayectoStr);
@@ -894,7 +898,8 @@ class pricingActions extends sfActions {
                 'aplicacion' => utf8_encode($recargo->getCaAplicacion()),
                 'aplicacion_min' => utf8_encode($recargo->getCaAplicacionMin()),
                 'idmoneda' => $recargo->getCaIdmoneda(),
-                'observaciones' => utf8_encode($recargo->getCaObservaciones())
+                'observaciones' => utf8_encode($recargo->getCaObservaciones()),
+                'aplicaciones' => utf8_encode($recargo->getTipoRecargo()->getCaAplicaciones())
             );
             $this->data[] = $row;
         }
@@ -925,7 +930,8 @@ class pricingActions extends sfActions {
                     'aplicacion' => utf8_encode($recargo->getCaAplicacion()),
                     'aplicacion_min' => utf8_encode($recargo->getCaAplicacionMin()),
                     'idmoneda' => $recargo->getCaIdmoneda(),
-                    'observaciones' => utf8_encode(($recargo->getCaIdconcepto() != 9999 ? $recargo->getConcepto()->getCaConcepto() : "") . $recargo->getCaObservaciones())
+                    'observaciones' => utf8_encode(($recargo->getCaIdconcepto() != 9999 ? $recargo->getConcepto()->getCaConcepto() : "") . $recargo->getCaObservaciones()),
+                    'aplicaciones' => utf8_encode($recargo->getTipoRecargo()->getCaAplicaciones())
                 );
                 $this->data[] = $row;
             }
@@ -1239,7 +1245,8 @@ class pricingActions extends sfActions {
                 'aplicacion' => utf8_encode($recargo->getCaAplicacion()),
                 'aplicacion_min' => utf8_encode($recargo->getCaAplicacionMin()),
                 'idmoneda' => $recargo->getCaIdmoneda(),
-                'observaciones' => utf8_encode($recargo->getCaObservaciones())
+                'observaciones' => utf8_encode($recargo->getCaObservaciones()),
+                'aplicaciones' => utf8_encode($recargo->getTipoRecargo()->getCaAplicaciones()),
             );
             $this->data[] = $row;
         }
