@@ -8,10 +8,18 @@ class InoClientesSeaTable extends Doctrine_Table
      * @author Carlos G. López M.
      */
 
-    public static function facturasPorReporte($referencia, $idcliente, $consecutivo, $usuenvio) {
+    public static function facturasPorReporte($referencia, $idcliente, $consecutivo, $usuenvio, $fechainicial, $fechafinal) {
         $user_filter = "";
         if($usuenvio != ""){
             $user_filter = "and ii.ca_usucreado = '$usuenvio'";
+        }
+        $date_filter = "";
+        if ($fechainicial and $fechafinal){
+            list($ano, $mes, $dia) = sscanf($fechainicial, "%d-%d-%d");
+            $fechainicial = date("Y-m-d H:i:s", mktime( 0, 0, 0, $mes, $dia, $ano));
+            list($ano, $mes, $dia) = sscanf($fechafinal, "%d-%d-%d");
+            $fechafinal = date("Y-m-d H:i:s", mktime( 23, 59, 59, $mes, $dia, $ano));
+            $date_filter ="and ii.ca_fchcreado between '$fechainicial' and '$fechafinal'";
         }
         $result = array();
         if ($referencia != null and $idcliente != null and $consecutivo != null) {
@@ -20,7 +28,7 @@ class InoClientesSeaTable extends Doctrine_Table
             $query.= "  INNER JOIN tb_reportes rp ON (ic.ca_idreporte = rp.ca_idreporte) ";
             $query.= "  INNER JOIN tb_inoingresos_sea ii ON (ic.ca_referencia = ii.ca_referencia and ic.ca_idcliente = ii.ca_idcliente and ic.ca_hbls = ii.ca_hbls) ";
             $query.= "  INNER JOIN control.tb_usuarios us ON (ii.ca_usucreado = us.ca_login) ";
-            $query.= "  where ic.ca_referencia = '$referencia' and ic.ca_idcliente = $idcliente and rp.ca_consecutivo = '$consecutivo' $user_filter";
+            $query.= "  where ic.ca_referencia = '$referencia' and ic.ca_idcliente = $idcliente and rp.ca_consecutivo = '$consecutivo' $user_filter $date_filter";
             $query.= "  group by ic.ca_referencia, ic.ca_idcliente, rp.ca_consecutivo, ii.ca_usucreado, us.ca_nombre ";
 
             // echo "<br />".$query."<br />";
