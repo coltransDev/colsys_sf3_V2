@@ -126,7 +126,7 @@ class crmActions extends sfActions {
                 $cliente->setCaTorre($request->getParameter("torre") );
                 $cliente->setCaInterior($request->getParameter("interior") );
                 $cliente->setCaOficina($request->getParameter("oficina") );
-                $cliente->setCaComplemento($request->getParameter("complemento") );
+                $cliente->setCaComplemento(utf8_decode($request->getParameter("complemento")) );
                 $cliente->setCaLocalidad(utf8_decode($request->getParameter("localidad")) );
             }else{
                 $cliente->setCaDireccion(utf8_decode($request->getParameter("dir_ot") )); 
@@ -235,7 +235,7 @@ class crmActions extends sfActions {
                 $data["torre"] = $cliente->getCaTorre();
                 $data["interior"] = $cliente->getCaInterior();
                 $data["oficina"] = $cliente->getCaOficina();
-                $data["complemento"] = $cliente->getCaComplemento();
+                $data["complemento"] = utf8_encode($cliente->getCaComplemento());
             }else{
                 $data["dir_ot"] = $cliente->getCaDireccion();
             }
