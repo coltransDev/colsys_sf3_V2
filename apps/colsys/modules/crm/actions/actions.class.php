@@ -52,28 +52,38 @@ class crmActions extends sfActions {
             
             $conn = Doctrine::getTable("Cliente")->getConnection();
             $conn->beginTransaction();
+            
             if( $request->getParameter("idcliente") ){
+                
+                $ids = Doctrine::getTable("Ids")->find( $request->getParameter("idcliente") );
+                $this->forward404Unless( $ids );
+                
                 $cliente = Doctrine::getTable("IdsCliente")->find( $request->getParameter("idcliente") );
-                $this->forward404Unless( $cliente );
-                $ids = $cliente->getIds();
+                if( !$cliente ){
+                    $cliente = new IdsCliente();                    
+                }
+                
+                $prov = Doctrine::getTable("IdsProveedor")->find( $request->getParameter("idcliente") );
+                
             }else{
                 $ids = new Ids();                
-                $cliente = new IdsCliente();                                
+                $cliente = new IdsCliente();     
+                $prov = null;
             }
             
             
-            if( !$request->getParameter("idcliente") || $this->getNivel()>=4 ){
-                $ids->setCaIdalterno( $request->getParameter("idalterno") );  
-                if( $request->getParameter("tipo_identificacion")==1 ){
-                    $ids->setCaDv( $request->getParameter("dv") );
+            
+            
+            if( !$prov ){
+                if( !$request->getParameter("idcliente") || $this->getNivel()>=4 ){
+                    $ids->setCaIdalterno( $request->getParameter("idalterno") );  
+                    if( $request->getParameter("tipo_identificacion")==1 ){
+                        $ids->setCaDv( $request->getParameter("dv") );
+                    }
+                    $ids->setCaTipoidentificacion( $request->getParameter("tipo_identificacion") );
                 }
-                $ids->setCaTipoidentificacion( $request->getParameter("tipo_identificacion") );
+                $ids->setCaNombre( utf8_decode(strtoupper($request->getParameter("compania"))) );
             }
-            
-            
-           
-            
-            $ids->setCaNombre( utf8_decode(strtoupper($request->getParameter("compania"))) );
             $ids->setCaWebsite( $request->getParameter("website") );            
             //$cliente->setCaCompania( strtoupper($request->getParameter("compania")) );
             $cliente->setCaSaludo( utf8_decode($request->getParameter("title")) );
@@ -170,13 +180,14 @@ class crmActions extends sfActions {
      */
     public function executeDatosClienteFormPanel(sfWebRequest $request) {
         $this->forward404Unless( $request->getParameter("idcliente") );
-        $cliente = Doctrine::getTable("Cliente")->find( $request->getParameter("idcliente") );
-        $this->forward404Unless( $cliente );
-
-
-        $data = array();
-        $ids = $cliente->getIds();
-        $data["idcliente"] = $cliente->getCaIdcliente();        
+        
+        $ids = Doctrine::getTable("Ids")->find( $request->getParameter("idcliente") );
+        $this->forward404Unless( $ids );
+        
+        
+        
+        $data = array();        
+        $data["idcliente"] = $ids->getCaId();        
         $data["compania"] = utf8_encode($ids->getCaNombre());
         $data["idalterno"] = $ids->getCaIdalterno();
         $data["tipo_identificacion"] = $ids->getCaTipoidentificacion();
@@ -186,58 +197,61 @@ class crmActions extends sfActions {
         $data["dv"] = $ids->getCaDv();
         $data["website"] = $ids->getCaWebsite();
         
-        $data["vendedor"] = $cliente->getCaVendedor();
-        $data["coordinador"] = $cliente->getCaCoordinador();
         
-        
-        $data["title"] = utf8_encode($cliente->getCaSaludo());
-        $data["papellido"] = utf8_encode($cliente->getCaPapellido());
-        $data["sapellido"] = utf8_encode($cliente->getCaSapellido());
-        $data["nombre"] = utf8_encode($cliente->getCaNombres());
-        $data["sexo"] = $cliente->getCaSexo();
-        $data["cumpleanos"] = $cliente->getCaCumpleanos();
-        $data["email"] = $cliente->getCaEmail();
-        
+        $cliente = Doctrine::getTable("Cliente")->find( $request->getParameter("idcliente") );
+        if( $cliente ){
+            $data["vendedor"] = $cliente->getCaVendedor();
+            $data["coordinador"] = $cliente->getCaCoordinador();
 
-        $data["sectoreco"] = utf8_encode($cliente->getCaSectoreco());
-        $data["actividad"] = utf8_encode($cliente->getCaActividad());
-        $data["status"] = $cliente->getCaStatus();
-        $data["calificacion"] = $cliente->getCaCalificacion();
-        $data["fchcotratoag"] = $cliente->getCaFchcotratoag();
-        $data["entidad"] = $cliente->getCaEntidad();
-        $data["comentario"] = $cliente->getCaComentario();
-        $data["leyinsolvencia"] = utf8_encode($cliente->getCaLeyinsolvencia());
-        $data["listaclinton"] = utf8_encode($cliente->getCaListaclinton());
-        
-        
-        if( $data["idtrafico"]=="CO-057" ){
-            $direccion = explode("|",$cliente->getCaDireccion());
 
-            for($i=0; $i<count( $direccion ); $i++){
-                $data["dir_".($i+1)] = utf8_encode($direccion[$i]);
+            $data["title"] = utf8_encode($cliente->getCaSaludo());
+            $data["papellido"] = utf8_encode($cliente->getCaPapellido());
+            $data["sapellido"] = utf8_encode($cliente->getCaSapellido());
+            $data["nombre"] = utf8_encode($cliente->getCaNombres());
+            $data["sexo"] = $cliente->getCaSexo();
+            $data["cumpleanos"] = $cliente->getCaCumpleanos();
+            $data["email"] = $cliente->getCaEmail();
+
+
+            $data["sectoreco"] = utf8_encode($cliente->getCaSectoreco());
+            $data["actividad"] = utf8_encode($cliente->getCaActividad());
+            $data["status"] = $cliente->getCaStatus();
+            $data["calificacion"] = $cliente->getCaCalificacion();
+            $data["fchcotratoag"] = $cliente->getCaFchcotratoag();
+            $data["entidad"] = $cliente->getCaEntidad();
+            $data["comentario"] = $cliente->getCaComentario();
+            $data["leyinsolvencia"] = utf8_encode($cliente->getCaLeyinsolvencia());
+            $data["listaclinton"] = utf8_encode($cliente->getCaListaclinton());
+
+
+            if( $data["idtrafico"]=="CO-057" ){
+                $direccion = explode("|",$cliente->getCaDireccion());
+
+                for($i=0; $i<count( $direccion ); $i++){
+                    $data["dir_".($i+1)] = utf8_encode($direccion[$i]);
+                }
+
+                $data["bloque"] = $cliente->getCaBloque();
+                $data["torre"] = $cliente->getCaTorre();
+                $data["interior"] = $cliente->getCaInterior();
+                $data["oficina"] = $cliente->getCaOficina();
+                $data["complemento"] = $cliente->getCaComplemento();
+            }else{
+                $data["dir_ot"] = $cliente->getCaDireccion();
             }
 
-            $data["bloque"] = $cliente->getCaBloque();
-            $data["torre"] = $cliente->getCaTorre();
-            $data["interior"] = $cliente->getCaInterior();
-            $data["oficina"] = $cliente->getCaOficina();
-            $data["complemento"] = $cliente->getCaComplemento();
-        }else{
-            $data["dir_ot"] = $cliente->getCaDireccion();
+            $data["localidad"] = utf8_encode($cliente->getCaLocalidad());
+            $data["localidad_ot"] = utf8_encode($cliente->getCaLocalidad());
+
+            $data["idciudad"] = $cliente->getCaIdciudad();
+            $data["ciudad"] = utf8_encode($cliente->getCiudad()->getCaCiudad());
+
+
+            $data["phone"] = $cliente->getCaTelefonos();
+            $data["fax"] = $cliente->getCaFax();
+
+            $data["preferencias"] = utf8_encode($cliente->getCaPreferencias());
         }
-        
-        $data["localidad"] = utf8_encode($cliente->getCaLocalidad());
-        $data["localidad_ot"] = utf8_encode($cliente->getCaLocalidad());
-        
-        $data["idciudad"] = $cliente->getCaIdciudad();
-        $data["ciudad"] = utf8_encode($cliente->getCiudad()->getCaCiudad());
-
-
-        $data["phone"] = $cliente->getCaTelefonos();
-        $data["fax"] = $cliente->getCaFax();
-
-        $data["preferencias"] = utf8_encode($cliente->getCaPreferencias());
-        
         $this->responseArray = array("success" => true, "data" => $data);
         $this->setTemplate("responseTemplate");
     }
