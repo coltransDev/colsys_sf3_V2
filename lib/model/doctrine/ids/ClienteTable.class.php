@@ -183,7 +183,7 @@ class ClienteTable extends Doctrine_Table {
             $fch_fin = date('Y-m-d', mktime(0, 0, 0, date('m') + 2, 0, date('Y')));
         }
 
-        $query = "select c.ca_idcliente, c.ca_idalterno, c.ca_digito, c.ca_compania, replace(c.ca_direccion,'|',' ') as ca_direccion, c.ca_oficina, c.ca_torre, c.ca_bloque, c.ca_interior, c.ca_localidad, c.ca_complemento, c.ca_telefonos, c.ca_fax, d.ca_ciudad, ";
+        $query = "select c.ca_idalterno, c.ca_digito, c.ca_compania, replace(c.ca_direccion,'|',' ') as ca_direccion, c.ca_oficina, c.ca_torre, c.ca_bloque, c.ca_interior, c.ca_localidad, c.ca_complemento, c.ca_telefonos, c.ca_fax, d.ca_ciudad, ";
         $query.= "ca_fchcircular, to_date(to_char(to_char(ca_fchcircular, 'YYYY')::int+1, '9999')||'-'||to_char(ca_fchcircular, 'MM')||'-'||to_char(ca_fchcircular, 'DD'),'YYYY-MM-DD') as ca_vnccircular, ct.ca_coltrans_std, cm.ca_colmas_std, c.ca_vendedor, u.ca_nombre, u.ca_sucursal from vi_clientes_reduc c ";
         $query.= "LEFT OUTER JOIN vi_usuarios u ON (c.ca_vendedor = u.ca_login) ";
         $query.= "LEFT OUTER JOIN tb_ciudades d ON (c.ca_idciudad = d.ca_idciudad) ";
@@ -200,6 +200,54 @@ class ClienteTable extends Doctrine_Table {
         $query.= "order by ca_sucursal, ca_vendedor, ca_vnccircular ";
 
         // echo "<br />".$query."<br />";
+        $q = Doctrine_Manager::getInstance()->connection();
+        $stmt = $q->execute($query);
+        return $stmt;
+    }
+
+    /*
+     * Lista los Clientes Activos que tengan vencimiento de su Carta de Garantía en los próximos 30 días a partir de una fecha específicada.
+     * @author Carlos G. López M.
+     */
+
+    public static function cartaGarantiaClientes($fch_ini, $fch_fin, $sucursal, $vendedor) {
+        if ($fch_ini == null) {
+            $fch_ini = date('Y-m-d', mktime(0, 0, 0, date('m') + 1, 1, date('Y')));
+        }
+
+        if ($fch_fin == null) {
+            $fch_fin = date('Y-m-d', mktime(0, 0, 0, date('m') + 2, 0, date('Y')));
+        }
+
+        $query = "select c.ca_idalterno, c.ca_digito, c.ca_compania, replace(c.ca_direccion,'|',' ') as ca_direccion, c.ca_oficina, c.ca_torre, c.ca_bloque, c.ca_interior, c.ca_localidad, c.ca_complemento, c.ca_telefonos, c.ca_fax, d.ca_ciudad, cn.ca_fchfirmado, cn.ca_fchvencimiento, ct.ca_coltrans_std, cm.ca_colmas_std, c.ca_vendedor, u.ca_nombre, u.ca_sucursal from ";
+        $query.= "(SELECT cf.ca_idcliente, cf.ca_fchfirmado, cm.ca_fchvencimiento FROM ( SELECT tb_comcliente.ca_idcliente, max(tb_comcliente.ca_fchfirmado) AS ca_fchfirmado FROM tb_comcliente GROUP BY tb_comcliente.ca_idcliente) cf JOIN ( SELECT tb_comcliente.ca_idcliente, tb_comcliente.ca_fchfirmado, tb_comcliente.ca_fchvencimiento FROM tb_comcliente WHERE tb_comcliente.ca_fchanulado IS NULL) cm ON cf.ca_idcliente = cm.ca_idcliente AND cf.ca_fchfirmado = cm.ca_fchfirmado) cn ";
+        $query.= "INNER JOIN vi_clientes_reduc c ON c.ca_idcliente = cn.ca_idcliente ";
+        $query.= "LEFT OUTER JOIN vi_usuarios u ON (c.ca_vendedor = u.ca_login) ";
+        $query.= "LEFT OUTER JOIN tb_ciudades d ON (c.ca_idciudad = d.ca_idciudad) ";
+        $query.= "LEFT OUTER JOIN (select colt.ca_idcliente as ca_idcliente_colt, colt.ca_estado as ca_coltrans_std, colt.ca_fchestado as ca_coltrans_fch from tb_stdcliente colt INNER JOIN (select ca_idcliente, max(ca_fchestado) as ca_fchestado from tb_stdcliente where ca_empresa = 'Coltrans' and ca_fchestado <= '$fch_fin' group by ca_idcliente order by ca_idcliente) sub ON (colt.ca_idcliente = sub.ca_idcliente and colt.ca_fchestado = sub.ca_fchestado and colt.ca_empresa = 'Coltrans')) ct ON (ct.ca_idcliente_colt = c.ca_idcliente) ";
+        $query.= "LEFT OUTER JOIN (select colm.ca_idcliente as ca_idcliente_colm, colm.ca_estado as ca_colmas_std, colm.ca_fchestado as ca_colmas_fch from tb_stdcliente colm INNER JOIN (select ca_idcliente, max(ca_fchestado) as ca_fchestado from tb_stdcliente where ca_empresa = 'Colmas' and ca_fchestado <= '$fch_fin' group by ca_idcliente order by ca_idcliente) sub ON (colm.ca_idcliente = sub.ca_idcliente and colm.ca_fchestado = sub.ca_fchestado and colm.ca_empresa = 'Colmas')) cm ON (cm.ca_idcliente_colm = c.ca_idcliente) ";
+/*        
+        $query.= "RIGHT JOIN ( ";
+        $query.= "SELECT cf.ca_idcliente, cf.ca_fchfirmado, cm.ca_fchvencimiento ";
+        $query.= "   FROM ( SELECT tb_comcliente.ca_idcliente, max(tb_comcliente.ca_fchfirmado) AS ca_fchfirmado ";
+        $query.= "	   FROM tb_comcliente ";
+        $query.= "	  GROUP BY tb_comcliente.ca_idcliente) cf ";
+        $query.= "   JOIN ( SELECT tb_comcliente.ca_idcliente, tb_comcliente.ca_fchfirmado, tb_comcliente.ca_fchvencimiento ";
+        $query.= "	   FROM tb_comcliente ";
+        $query.= "	  WHERE tb_comcliente.ca_fchanulado IS NULL) cm ON cf.ca_idcliente = cm.ca_idcliente AND cf.ca_fchfirmado = cm.ca_fchfirmado ";
+        $query.= ") cn ON c.ca_idcliente = cn.ca_idcliente ";
+*/        
+        $query.= "where cn.ca_fchvencimiento between '$fch_ini' and '$fch_fin' and (ct.ca_coltrans_std = 'Activo' or cm.ca_colmas_std = 'Activo') ";
+        
+        if ($sucursal != null) {
+            $query.= "and u.ca_sucursal = '$sucursal' ";
+        }
+        if ($vendedor != null) {
+            $query.= "and u.ca_login = '$vendedor' ";
+        }
+        $query.= "order by ca_sucursal, ca_vendedor, ca_fchvencimiento ";
+
+        //echo "<br />".$query."<br />";
         $q = Doctrine_Manager::getInstance()->connection();
         $stmt = $q->execute($query);
         return $stmt;

@@ -92,6 +92,18 @@ class clientesActions extends sfActions {
     }
 
     /*
+     * Entrada Reporte de Carta de Garantía Clientes
+     */
+
+    public function executeListaCartaGarantia() {
+        $this->sucursales = Doctrine::getTable("Sucursal")
+                        ->createQuery("s")
+                        ->select("DISTINCT s.ca_nombre")
+                        ->addOrderBy("s.ca_nombre")
+                        ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                        ->execute();
+    }
+    /*
      * Entrada Reporte de Circular 170 Clientes
      */
 
@@ -376,6 +388,30 @@ class clientesActions extends sfActions {
         exit();
     }
 
+    public function executeReporteCartaGarantia($request) {
+        set_time_limit(0);
+        $inicio = $this->getRequestParameter("fchStart");
+        $final = $this->getRequestParameter("fchEnd");
+        $sucursal = $this->getRequestParameter("sucursal");
+        $vendedor = $this->getRequestParameter("vendedor");
+
+        $this->inicio = $inicio;
+        $this->final = $final;
+        $this->clientesCartaGarantia = array();
+        list($year, $month, $day) = sscanf($final, "%d-%d-%d");
+
+        // Lista los Clientes a los cuales se les vence la Carta de Garantía en el siguiente mes
+        $stmt = ClienteTable::cartaGarantiaClientes($inicio, $final, $sucursal, $vendedor);
+        while ($row = $stmt->fetch()) {
+            $this->clientesCartaGarantia[] = $row;
+        }
+
+        $layout = $this->getRequestParameter("layout");
+        if ($layout) {
+            $this->setLayout($layout);
+        }
+    }
+
     public function executeReporteCircular($request) {
         set_time_limit(0);
         $inicio = $this->getRequestParameter("fchStart");
@@ -570,6 +606,103 @@ class clientesActions extends sfActions {
         $email->save();
     }
 
+    public function executeReporteCartaGarantiaEmail() {
+        try {               //  Controla cualquier error el la ejecución de la rutina
+            $parametro = Doctrine::getTable("Parametro")->find(array("CU106", 1, "defaultEmails"));
+            if ($parametro) {
+                if (stripos($parametro->getCaValor2(), ',') !== false) {
+                    $defaultEmail = explode(",", $parametro->getCaValor2());
+                } else {
+                    $defaultEmail = array($parametro->getCaValor2());
+                }
+            }
+            $parametro = Doctrine::getTable("Parametro")->find(array("CU106", 2, "ccEmails"));
+            if ($parametro) {
+                if (stripos($parametro->getCaValor2(), ',') !== false) {
+                    $ccEmails = explode(",", $parametro->getCaValor2());
+                } else {
+                    $ccEmails = array($parametro->getCaValor2());
+                }
+            }
+
+            $comerciales = UsuarioTable::getComerciales();
+            foreach ($comerciales as $comercial) {
+
+                $email = new Email();
+                $email->setCaUsuenvio("Administrador");
+                $email->setCaTipo("CartaGarantiClientes");
+                $email->setCaIdcaso("1");
+                $email->setCaFrom("admin@coltrans.com.co");
+                $email->setCaFromname("Administrador Sistema Colsys");
+                $email->setCaReplyto("admin@coltrans.com.co");
+
+                // $email->setCaFchenvio(date("Y-m-d H:i:s"));  // Hay que quitar cuando salga de seguimiento la rutina
+
+                $email->addTo($comercial->getCaEmail());
+                reset($defaultEmail);
+                while (list ($clave, $val) = each($defaultEmail)) {
+                    $email->addCc($val);
+                }
+                reset($ccEmails);
+                while (list ($clave, $val) = each($ccEmails)) {
+                    $email->addCc($val);
+                }
+                // $email->addCc("clopez@coltrans.com.co");    // Pruebas de envio controlado
+
+                $inicio = $this->getRequestParameter("fchStart");
+                $final = $this->getRequestParameter("fchEnd");
+                $sucursal = $comercial->getCaSucursal();
+                $vendedor = $comercial->getCaLogin();
+
+                $this->getRequest()->setParameter("fchStart", $inicio);
+                $this->getRequest()->setParameter("fchEnd", $final);
+                $this->getRequest()->setParameter("sucursal", $sucursal);
+                $this->getRequest()->setParameter("vendedor", $vendedor);
+
+                $this->getRequest()->setParameter("layout", "email");
+
+                $email->setCaSubject("Clientes Activos con Vencimiento de Carta de Garantía a : $inicio - $vendedor");
+                $email->setCaBodyhtml(sfContext::getInstance()->getController()->getPresentationFor('clientes', 'reporteCartaGarantia'));
+
+                $email->save();
+            }
+        } catch (Exception $e) {
+            echo $e->getMessage()."\n\n".$e->getTraceAsString();
+            $usuarios = Doctrine::getTable("Usuario")
+                            ->createQuery("u")
+                            ->innerJoin("u.UsuarioPerfil p")
+                            ->where("p.ca_perfil = ? ", "sistemas")
+                            ->execute();
+            /* $parametro = Doctrine::getTable("Parametro")->find(array("CU065",3,"ccEmails"));
+              if (stripos($parametro->getCaValor2(), ',') !== false) {
+              $ccEmails = explode(",", $parametro->getCaValor2());
+              }else {
+              $ccEmails = array($parametro->getCaValor2());
+              } */
+
+            //Crea el correo electronico
+            $email = new Email();
+            $email->setCaUsuenvio("Administrador");
+            $email->setCaTipo("CartaGarantia");
+            $email->setCaIdcaso("1");
+            $email->setCaFrom("admin@coltrans.com.co");
+            $email->setCaFromname("Administrador Sistema Colsys");
+            $email->setCaReplyto("admin@coltrans.com.co");
+
+            foreach ($usuarios as $usuario) {
+                $email->addTo($usuario->getCaEmail());
+            }
+            /* reset($ccEmails);
+              while (list ($clave, $val) = each ($ccEmails)) {
+              $email->addTo( $val );
+              } */
+
+            $email->setCaSubject("¡Error en Informe sobre vencimiento Carta de Garantía!");
+            $email->setCaBodyhtml("Caught exception: ".$e->getMessage()."\n\n".$e->getTraceAsString()."\n\n Se ha presentado un error en el proceso que envía correo con el reporte Cartas de Garantía por vencer en Maestra de Clientes Activos de COLSYS. Agradecemos confirmar que el Departamento de Sistemas esté enterado de esta falla. Gracias!");
+            $email->save(); //guarda el cuerpo del mensaje
+        }
+    }
+
     public function executeReporteCircularEmail() {
         try {               //  Controla cualquier error el la ejecución de la rutina
             $parametro = Doctrine::getTable("Parametro")->find(array("CU067", 1, "defaultEmails"));
@@ -662,7 +795,7 @@ class clientesActions extends sfActions {
               } */
 
             $email->setCaSubject("¡Error en Informe sobre vencimiento Circular0170!");
-            $email->setCaBodyhtml("Caught exception: ".$e->getMessage()."\n\n".$e->getTraceAsString()."\n\n Se ha presentado un error en el proceso que lee la información de Lista Clinton y la compara con la Maestra de Clientes Activos de COLSYS. Agradecemos confirmar que el Departamento de Sistemas esté enterado de esta falla. Gracias!");
+            $email->setCaBodyhtml("Caught exception: ".$e->getMessage()."\n\n".$e->getTraceAsString()."\n\n Se ha presentado un error en el proceso que envía correo con el reporte Circular 0170 por vencer en Maestra de Clientes Activos de COLSYS. Agradecemos confirmar que el Departamento de Sistemas esté enterado de esta falla. Gracias!");
             $email->save(); //guarda el cuerpo del mensaje
         }
     }
