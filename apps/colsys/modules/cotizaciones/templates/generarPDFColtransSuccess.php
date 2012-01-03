@@ -108,7 +108,7 @@ foreach( $productos as $producto ){
 					$transportes[] = $producto->getCaTransporte();
 		}
         
-        if( $producto->getTransportador()->getCaContratoComodato() ){
+        if( $producto->getTransportador() && $producto->getTransportador()->getCaContratoComodato() ){
             $comodato = true;
         }
 	}
