@@ -1,0 +1,79 @@
+Idg:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: idg
+  tableName: idg.tb_idg
+  columns:
+    ca_idg:
+      type: integer
+      primary: true
+      autoincrement: true    
+    ca_nombre: string(255)
+    ca_iddepartamento: integer    
+    ca_usucreado: string(20)
+    ca_fchcreado: timestamp
+    ca_usuactualizado: string(20)
+    ca_fchactualizado: timestamp
+  relations:
+    IdgConfig:
+      local: ca_idg
+      foreign: ca_idg
+      type: many
+    Departamento:
+      local: ca_iddepartamento
+      foreign: ca_iddepartamento
+      type: one
+    UsuCreado:
+      local: ca_usucreado
+      foreign: ca_login
+      type: one
+      class: Usuario
+    UsuActualizado:
+      local: ca_usuactualizado
+      foreign: ca_login
+      type: one
+      class: Usuario
+    
+IdgConfig:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: idg
+  tableName: idg.tb_idgconfig
+  columns:
+    ca_idgconfig:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_idg: integer
+    ca_sucursal: string(3)
+    ca_lim1: numeric
+    ca_color1: string(10)
+    ca_lim2: numeric
+    ca_color2: string(10)
+    ca_lim3: numeric
+    ca_color3: string(10)
+    ca_fchini: date
+    ca_fchfin: date
+    ca_usucreado: string(20)
+    ca_fchcreado: timestamp
+    ca_usuactualizado: string(20)
+    ca_fchactualizado: timestamp
+  relations:
+    Idg:
+      local: ca_idg
+      foreign: ca_idg
+      type: one
+    UsuCreado:
+      local: ca_usucreado
+      foreign: ca_login
+      type: one
+      class: Usuario
+    UsuActualizado:
+      local: ca_usuactualizado
+      foreign: ca_login
+      type: one
+      class: Usuario
