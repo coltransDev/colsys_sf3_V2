@@ -6,6 +6,8 @@ $departamentos = $sf_data->getRaw("departamentos");
 $cargos = $sf_data->getRaw("cargos");
 $jefes = $sf_data->getRaw("jefes");
 $teloficinas = $sf_data->getRaw("teloficinas");
+$hijos = $sf_data->getRaw("hijos");
+
 ?>
 <script language="javascript" type="text/javascript">
 	Ext.onReady(function(){
@@ -41,6 +43,34 @@ $teloficinas = $sf_data->getRaw("teloficinas");
 			}
 		}
 	}
+    
+    function showFieldsEnf( field ){
+		if(field&&typeof(field)!='undefined'){
+            if( field.checked){
+				document.getElementById("enfermedad").disabled=false;
+			}else{
+				document.getElementById("enfermedad").disabled=true;
+			}
+		}
+	}
+    
+    function showFieldsAle( field ){
+		if(field&&typeof(field)!='undefined'){
+            if( field.checked){
+				document.getElementById("alergico").disabled=false;
+			}else{
+				document.getElementById("alergico").disabled=true;
+			}
+		}
+	}
+    
+     function validarSiNumero(e){
+         tecla = (document.all) ? e.keyCode : e.which;
+         if (tecla==8) return true;
+         patron =/[0-9\s]/;
+         te = String.fromCharCode(tecla);
+         return patron.test(te);
+        } 
 
 	function checkForm(){
 		if( document.getElementById('auth_method').value=="sha1"){
@@ -49,7 +79,7 @@ $teloficinas = $sf_data->getRaw("teloficinas");
 				return false;
 			}
 		}
-		return true;
+        return true;
 	}
 
 
@@ -364,7 +394,7 @@ $teloficinas = $sf_data->getRaw("teloficinas");
 									</div>
 								</td>
 							</tr>
-							<tr class="row0">
+                            <tr class="row0">
 								<td>
 									<div align="left">
 										<b>Extensi&oacute;n:</b>
@@ -399,10 +429,29 @@ $teloficinas = $sf_data->getRaw("teloficinas");
                     <div class="tab-page">
                         <h2 class="tab">Personal</h2>
 						<table width="100%" cellspacing="0"  class="tableList alignLeft">
+                            <tr class="row2" >
+								<td colspan="2">
+									<div align="left">  
+										<b>Datos Personales</b>
+									</div>
+								</td>
+                            </tr>
 							<tr class="row0">
 								<td>
 									<div align="left">
-										<b>M&oacute;vil</b>
+                                        <b>&nbsp;&nbsp;&nbsp;Documento de Identidad</b>
+									</div>
+								</td>
+								<td>
+									<div align="left">
+										<input type="text" name="docidentidad" onkeypress="return validarSiNumero(event)" value="<?=$usuario->getCaDocidentidad()?>" />
+									</div>
+								</td>
+							</tr>
+                            <tr class="row0">
+								<td>
+									<div align="left">  
+										<b>&nbsp;&nbsp;&nbsp;M&oacute;vil</b>
 									</div>
 								</td>
 								<td>
@@ -414,7 +463,7 @@ $teloficinas = $sf_data->getRaw("teloficinas");
 							<tr class="row0">
 								<td>
 									<div align="left">
-										<b>Fecha de Nacimiento</b>
+										<b>&nbsp;&nbsp;&nbsp;Fecha de Nacimiento</b>
 									</div>
 								</td>
 								<td>
@@ -424,7 +473,85 @@ $teloficinas = $sf_data->getRaw("teloficinas");
 							<tr class="row0">
 								<td>
 									<div align="left">
-										<b>Tipo de Sangre</b>
+										<b>&nbsp;&nbsp;&nbsp;Direcci&oacute;n Particular</b>
+									</div>
+								</td>
+								<td>
+									<div align="left">
+										<input type="text" name="direccion" value="<?=$usuario->getCaDireccion()?>" size="40"/>
+									</div>
+								</td>
+							</tr>
+							<tr class="row0">
+								<td>
+									<div align="left">
+											<b>&nbsp;&nbsp;&nbsp;Tel. Particular:</b>
+									</div>
+								</td>
+								<td>
+									<div align="left">
+										<input type="text" name="telparticular" value="<?=$usuario->getCaTelparticular()?>"/>
+									</div>
+								</td>
+							</tr>
+                            <tr class="row0">
+								<td>
+									<div align="left">
+											<b>&nbsp;&nbsp;&nbsp;Estrato:</b>
+									</div>
+								</td>
+								<td>
+									<div align="left">
+										<select name="estrato">
+											<?
+											for( $i=1; $i<7;$i++){
+											?>
+											<option value="<?=$i?>"<?=$usuario->getCaEstrato()==$i?'selected':''?> >    <?=($i)?></option>
+											<?
+											}
+											?>
+										</select>
+									</div>
+								</td>
+							</tr>
+							<tr class="row2" >
+								<td colspan="2">
+									<div align="left">  
+										<b>Escolaridad</b>
+									</div>
+								</td>
+                            </tr>
+                            <tr class="row0">
+								<td>
+									<div align="left">
+											<b>&nbsp;&nbsp;&nbsp;Nivel de Estudios:</b>
+									</div>
+								</td>
+                                <td>
+									<div align="left">
+										<select name="nivestudio">
+											<?
+											foreach( $nivestudios as $nivestudio ){
+											?>
+											<option value="<?=$nivestudio->getCaValor()?>"<?=$usuario->getCaNivestudios()==$nivestudio->getCaValor()?'selected="selected"':''?> > <?=($nivestudio->getCaValor())?></option>
+											<?
+											}
+											?>
+										</select>
+									</div>
+								</td>
+                            </tr>
+                            <tr class="row2" >
+								<td colspan="2">
+									<div align="left">  
+										<b>Brigada de Emergencia</b>
+									</div>
+								</td>
+                            </tr>
+                            <tr class="row0">
+								<td>
+									<div align="left">
+										<b>&nbsp;&nbsp;&nbsp;Tipo de Sangre</b>
 									</div>
 								</td>
 								<td>
@@ -441,34 +568,119 @@ $teloficinas = $sf_data->getRaw("teloficinas");
 									</div>
 								</td>
 							</tr>
-							<tr class="row0">
+                            <tr class="row0">
 								<td>
 									<div align="left">
-										<b>Direcci&oacute;n Particular</b>
+											<b>&nbsp;&nbsp;&nbsp;Donante de Sangre</b>
 									</div>
 								</td>
 								<td>
 									<div align="left">
-										<input type="text" name="direccion" value="<?=$usuario->getCaDireccion()?>" size="40"/>
+										<input type="checkbox" name="donante" id="donante"  <?=($usuario->getCaDonante()||!$usuario->getCaLogin())?'checked="checked"':''   ?>/>
 									</div>
 								</td>
-							</tr>
-							<tr class="row0">
+                            </tr>
+                            <tr class="row0">
 								<td>
 									<div align="left">
-											<b>Tel. Particular:</b>
+											<b>&nbsp;&nbsp;&nbsp;Padece alguna Enfermedad</b>
 									</div>
 								</td>
 								<td>
 									<div align="left">
-										<input type="text" name="telparticular" value="<?=$usuario->getCaTelparticular()?>"/>
+										<input type="checkbox" onclick='showFieldsEnf(this)' name="chk_enfermedad" id="chk_enfermedad" <?=$usuario->getCaEnfermedad()!=null?'checked="checked"':''?>/>
 									</div>
 								</td>
-							</tr>
-							<tr class="row0">
+                            </tr>
+                            <tr class="row0">
+                                <td>
+									<div align="left">
+											<b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Especifique</b>
+									</div>
+								</td>
 								<td>
 									<div align="left">
-											<b>Familiar de Contacto:</b>
+                                        <input type="text" name="enfermedad" id="enfermedad" value="<?=$usuario->getCaEnfermedad()?>" size="55" />
+									</div>
+								</td>
+                            
+                            </tr>
+                            <tr class="row0">
+								<td>
+									<div align="left">
+											<b>&nbsp;&nbsp;&nbsp;Alérgico algún medicamento</b>
+									</div>
+								</td>
+								<td>
+									<div align="left">
+										<input type="checkbox" onclick='showFieldsAle(this)' name="chk_alergico" id="chk_alergico" <?=$usuario->getCaAlergico()!=null?'checked="checked"':''?>/>
+									</div>
+                                </td>
+                            </tr>
+                            <tr class="row0">
+                                <td>
+									<div align="left">
+											<b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Especifique</b>
+									</div>
+								</td>
+								<td>
+									<div align="left">
+										<input type="text" name="alergico" id="alergico" disabled="disabled" value="<?=$usuario->getCaAlergico()?>" size="55"/>
+									</div>
+								</td>
+                            
+                            </tr>
+					   </table>
+                    </div>
+                    <div class="tab-page">
+                        <h2 class="tab">Familiar</h2>
+						<table width="100%" cellspacing="0"  class="tableList alignLeft">
+                            <tr class="row2" >
+								<td colspan="2">
+									<div align="left"> 
+										<b>Hijos</b><br />
+                                        
+                                        <?=link_to(image_tag("page_white_edit.png"),"adminUsers/formUsuario?login=".$usuario->getCaLogin())?>
+									</div>
+								</td>
+                                
+                            </tr>
+                            <?
+							foreach( $hijos as $hijo ){
+                            ?>
+                            <tr class="row0">
+                                
+                                <td>
+									<div align="left">
+                                        &nbsp;&nbsp;&nbsp;<b><?=$hijo['h_ca_nombres'];?></b>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div align="left">
+                                        <?
+                                        $fecha_actual = date("Y-m-d");
+                                        $fecha_nacimiento = $hijo['h_ca_fchnacimiento'];
+                                        $edad_dias = TimeUtils::dateDiff( $fecha_nacimiento,$fecha_actual);
+                                        $edad_meses = $edad_dias/30;
+                                        $edad_años = $edad_meses/12;
+                                        ?>
+                                        &nbsp;&nbsp;&nbsp;<?=$edad_meses<12?round($edad_meses)." meses":floor($edad_años)." años";?>
+                                    </div>
+                                </td>
+                            </tr>
+                            <?
+                            }?>
+                            <tr class="row2" >
+								<td colspan="2">
+									<div align="left">  
+										<b>Contacto</b>
+									</div>
+								</td>
+                            </tr>
+                            <tr class="row0">
+								<td>
+									<div align="left">
+											<b>&nbsp;&nbsp;&nbsp;Familiar de Contacto:</b>
 									</div>
 								</td>
 								<td>
@@ -480,7 +692,7 @@ $teloficinas = $sf_data->getRaw("teloficinas");
 							<tr class="row0">
 								<td>
 									<div align="left">
-											<b>Tel. Familiar:</b>
+											<b>&nbsp;&nbsp;&nbsp;Tel. Familiar:</b>
 									</div>
 								</td>
 								<td>
@@ -492,12 +704,12 @@ $teloficinas = $sf_data->getRaw("teloficinas");
                             <tr class="row0">
 								<td>
 									<div align="left">
-											<b>Parentesco:</b>
+											<b>&nbsp;&nbsp;&nbsp;Parentesco:</b>
 									</div>
 								</td>
 								<td>
 									<div align="left">
-										<select name="parentesco"                    >
+										<select name="parentesco">
 											<?
 											foreach( $parentescos as $parentesco ){
 											?>
@@ -509,7 +721,25 @@ $teloficinas = $sf_data->getRaw("teloficinas");
 									</div>
 								</td>
 							</tr>
-					   </table>
+                            
+                         </table>
+                    </div>
+                    <div class="tab-page">
+                        <h2 class="tab">Hoja de Vida</h2>
+						<table width="100%" cellspacing="0"  class="tableList alignLeft">
+                            <tr>
+                                <div align="left">
+                                    <b>Ingrese un resumen de su curr&iacute;culum:</b>
+                                </div>
+                            </tr><br />
+                            <tr class="row0">
+                                <td>
+									<div class="yui-skin-sam">
+                        				<textarea id="hoja_vida" cols="50" rows="30" wrap="virtual" name="hojavida"><?=$usuario->getCaHojavida()?></textarea>
+									</div>
+								</td>
+							</tr>
+                         </table>
                     </div>
                     <?
                     if($nivel>=1 ){
@@ -601,5 +831,24 @@ $teloficinas = $sf_data->getRaw("teloficinas");
 </form>
 <script language="javascript" type="text/javascript">
 	lockFields(document.getElementById('auth_method'));
+    showFieldsEnf(document.getElementById('chk_enfermedad'));
+    showFieldsAle(document.getElementById('chk_alergico'));
     cambiarValores('<?=$usuario->getCaIdsucursal()?>','<?=$usuario->getCaDepartamento()?>','<?=$usuario->getCaCargo()?>','<?=$usuario->getCaManager()?>');
+</script>
+
+
+<script type="text/javascript">
+YAHOO.widget.Logger.enableBrowserConsole();
+var myEditor = new YAHOO.widget.Editor('hoja_vida', {
+	    height: '300px',
+	    width: '100%',
+        handleSubmit: true,
+
+	    dompath: true,
+	    animate: true
+	});
+    /*yuiImgUploader(myEditor, 'info', '<? //url_for("gestDocumental/uploadImage?folder=".$folder.DIRECTORY_SEPARATOR."Imagenes")?>','image');*/
+	myEditor.render();         
+
+
 </script>

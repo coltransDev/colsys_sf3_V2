@@ -159,9 +159,22 @@ class adminUsersActions extends sfActions {
                         ->addOrderBy("j.ca_nombre")
                         ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
                         ->execute();
-
+        
         foreach ($this->jefes as $key => $val) {
             $this->jefes[$key]["j_ca_nombre"] = utf8_encode($this->jefes[$key]["j_ca_nombre"]);
+        }
+        
+        $this->hijos = Doctrine::getTable("Hijos")
+                        ->createQuery("h")
+                        ->select('h.ca_login, h.ca_nombres, h.ca_fchnacimiento')
+                        ->innerJoin('h.Usuario u')
+                        ->addWhere('h.ca_login = ?', $request->getParameter("login"))
+                        ->addOrderBy("h.ca_nombres")
+                        ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                        ->execute();
+
+        foreach ($this->hijos as $key => $val) {
+            $this->hijos[$key]["h_ca_nombres"] = $this->hijos[$key]["h_ca_nombres"];
         }
 
         $this->empresas = Doctrine::getTable("Empresa")
@@ -197,9 +210,10 @@ class adminUsersActions extends sfActions {
                     ->addOrderBy("ca_teloficina ASC")
                     ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
                     ->execute();
+        
+        $this->nivestudios = ParametroTable::retrieveByCaso('CU105');
 
         
-
         //$this->manager=Doctrine::getTable('Usuario')->find($request->getParameter('login'));
         //$this->manager = $this->manager->getManager();
         //$this->usuarios = $this->manager->getSubordinado();
@@ -209,6 +223,19 @@ class adminUsersActions extends sfActions {
         $response = sfContext::getInstance()->getResponse();
         $response->addJavaScript("tabpane/tabpane", 'last');
         $response->addStylesheet("tabpane/luna/tab", 'last');
+        
+        $response->addJavaScript("yui/yahoo-dom-event/yahoo-dom-event.js", 'last');
+        $response->addJavaScript("yui/element/element-min.js", 'last');
+        //Needed for Menus, Buttons and Overlays used in the Toolbar
+        $response->addJavaScript("yui/container/container_core-min.js", 'last');
+        $response->addJavaScript("yui/menu/menu-min.js", 'last');
+        $response->addJavaScript("yui/button/button-min.js", 'last');
+        //Source file for Rich Text Editor
+        $response->addJavaScript("yui/editor/editor-min.js", 'last');
+        $response->addJavaScript("yui/connection/connection-min.js", 'last');
+        $response->addJavaScript("yui/logger/logger-min.js", 'last');
+        $response->addJavaScript("yui-image-uploader26.js", 'last');
+        $response->addStyleSheet("yui/assets/skins/sam/skin.css", 'last');
     }
 
     public function executeIndex(sfWebRequest $request) {
@@ -402,7 +429,50 @@ class adminUsersActions extends sfActions {
                 $usuario->setCaTiposangre($request->getParameter("tiposangre"));
             }else{
                 $usuario->setCaTiposangre( null );
-        }
+            }
+            if ($request->getParameter("docidentidad")) {
+                $usuario->setCaDocidentidad($request->getParameter("docidentidad"));
+            }else{
+                $usuario->setCaDocidentidad( null );
+            }
+            if ($request->getParameter("estrato")) {
+                $usuario->setCaEstrato($request->getParameter("estrato"));
+            }else{
+                $usuario->setCaEstrato( null );
+            }
+            if ($request->getParameter("nivestudio")) {
+                $usuario->setCaNivestudios($request->getParameter("nivestudio"));
+            }else{
+                $usuario->setCaNivestudios( null );
+            }
+            if ($request->getParameter("donante")) {
+                $usuario->setCaDonante(true);
+            } else {
+                $usuario->setCaDonante(false);
+            }
+            if ($request->getParameter("chk_enfermedad")=='on') {
+                if ($request->getParameter("enfermedad")) {
+                    $usuario->setCaEnfermedad($request->getParameter("enfermedad"));
+                } else {
+                    $usuario->setCaEnfermedad($request->getParameter("enfermedad"));
+                }
+            }else{
+                $usuario->setCaEnfermedad(null);
+            }
+            if ($request->getParameter("chk_alergico")=='on') {
+                if ($request->getParameter("alergico")) {
+                    $usuario->setCaAlergico($request->getParameter("alergico"));
+                } else {
+                    $usuario->setCaAlergico($request->getParameter("alergico"));
+                }
+            }else{
+                $usuario->setCaAlergico(null);
+            }
+            if ($request->getParameter("hojavida")) {
+                $usuario->setCaHojavida($request->getParameter("hojavida"));
+            }else{
+                $usuario->setCaHojavida( null );    
+            }
         }
 
         if ($request->getParameter("telparticular")) {

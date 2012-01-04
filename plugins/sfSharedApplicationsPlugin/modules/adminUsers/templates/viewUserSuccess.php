@@ -81,7 +81,7 @@
                 <td align="left">Tel. Particular:</td><td align="left"><b><?=$user->getCa_Telparticular()?></b></td>
             </tr>
             <tr>
-                <td align="left">Tipo de Sangre:</td><td align="left"><b><?=$user->getCaTiposangre()?></b></td>
+                <td align="left">Ti po de Sangre:</td><td align="left"><b><?=$user->getCaTiposangre()?></b></td>
             </tr>
             <tr>
                 <td align="left">Familiar de Contacto:</td><td align="left"><b><?=$user->getCa_Nombrefamiliar()?></b></td>
