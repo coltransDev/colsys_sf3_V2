@@ -39,6 +39,13 @@ Usuario:
     ca_usucreado: string
     ca_fchactualizado: timestamp
     ca_usuactualizado: string
+    ca_docidentidad: integer
+    ca_nivestudios: string(20)
+    ca_estrato: smallint
+    ca_hojavida: text
+    ca_donante: boolean
+    ca_enfermedad: string(50)
+    ca_alergico: string(50)
   relations:
     AccesoUsuario:
       local: ca_login
@@ -74,6 +81,10 @@ Usuario:
       local: ca_cargo
       foreign: ca_cargo
       type: one
+    Hijos:
+      local: ca_login
+      foreign: ca_login
+      type: many
 
 
       
@@ -330,7 +341,20 @@ Sucursal:
       local: ca_idempresa
       foreign: ca_idempresa
       type: one
-
+      
+Hijos:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: control
+  tableName: control.tb_hijos
+  columns:
+    ca_login:
+      type: string(15)
+      primary: true
+    ca_nombres: string(250)
+    ca_fchnacimiento: date
 
 RutinaNivel:
   options:
