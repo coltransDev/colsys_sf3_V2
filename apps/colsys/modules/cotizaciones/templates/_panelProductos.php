@@ -776,12 +776,13 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
 
         if( e.field=="aplica_tar" || e.field=="aplica_min" ){
             var dataAereo = [
+                ['']
                 <?
                 $i=0;
                 foreach( $aplicacionesAereo as $aplicacion ){
-                    if( $i++!=0){
+                    //if( $i++!=0){
                         echo ",";
-                    }
+                    //}
                 ?>
                     ['<?=$aplicacion->getCaValor()?>']
                 <?
@@ -789,12 +790,13 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
                 ?>
             ];
             var dataMaritimo = [
+                ['']
                 <?
                 $i=0;
                 foreach( $aplicacionesMaritimo as $aplicacion ){
-                    if( $i++!=0){
+                    //if( $i++!=0){
                         echo ",";
-                    }
+                    //}
                 ?>
                     ['<?=$aplicacion->getCaValor()?>']
                 <?

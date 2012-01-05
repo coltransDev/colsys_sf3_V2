@@ -1015,12 +1015,20 @@ class cotizacionesActions extends sfActions {
                 $opcion->setCaValorMin($valor_min);
             }
 
-            if ($aplica_tar) {
-                $opcion->setCaAplicaTar($aplica_tar);
+            if ($aplica_tar !==null ) {                
+                if( $aplica_tar ){ 
+                    $opcion->setCaAplicaTar($aplica_tar);
+                }else{
+                    $opcion->setCaAplicaTar(null);
+                }
             }
 
             if ($aplica_min) {
-                $opcion->setCaAplicaMin($aplica_min);
+                if( $aplica_min ){ 
+                    $opcion->setCaAplicaMin($aplica_min);
+                }else{
+                    $opcion->setCaAplicaMin(null);
+                }
             }
 
             if ($equipo) {
@@ -1090,13 +1098,22 @@ class cotizacionesActions extends sfActions {
                     $recargo->setCaValorMin(null);
                 }
             }
-
-            if ($aplica_tar) {
-                $recargo->setCaAplicaTar($aplica_tar);
+            
+            
+            if ($aplica_tar !==null ) {                
+                if( $aplica_tar ){ 
+                    $recargo->setCaAplicaTar($aplica_tar);
+                }else{
+                    $recargo->setCaAplicaTar(null);
+                }
             }
 
             if ($aplica_min) {
-                $recargo->setCaAplicaMin($aplica_min);
+                if( $aplica_min ){ 
+                    $recargo->setCaAplicaMin($aplica_min);
+                }else{
+                    $recargo->setCaAplicaMin(null);
+                }
             }
 
             if ($observaciones !== null) {
@@ -1164,7 +1181,7 @@ class cotizacionesActions extends sfActions {
                 if ($linea) {
                     $lineaStr = $linea->getIds()->getCaNombre();
                     
-                    if( $linea->getCaContratoComodato() ){
+                    if( $linea->getCaContratoComodato() && $producto->getCaImpoexpo()==Constantes::IMPO ){
                         $lineaStr.=" <span class='rojo'>(Requiere firma Comodato)</span>";
                     }
                 } else {
