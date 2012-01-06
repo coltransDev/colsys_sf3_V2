@@ -609,6 +609,7 @@ class inventoryActions extends sfActions {
 
     public function executeGuardarPanelAsignacionesSoftware($request) {
         try {
+            $flash = "";
             $idactivo = $request->getParameter("idactivo");
             $this->forward404Unless($idactivo);
             $idequipo = $request->getParameter("idequipo");
@@ -618,8 +619,11 @@ class inventoryActions extends sfActions {
             //Verifica que no hayan mas licencias asignadas que las registradas                          
             $q = Doctrine::getTable("InvAsignacionSoftware")
                     ->createQuery("a")
+                    
                     ->select("count(*) as assigned")
-                    ->addWhere("a.ca_idactivo=?", $idactivo);
+                    ->addWhere("a.ca_idactivo=?", $idactivo)                    
+                    ->leftJoin("a.Equipo ac")
+                    ->addWhere("ac.ca_fchbaja IS NULL");
 
 
             $asig = $q->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)
@@ -627,7 +631,7 @@ class inventoryActions extends sfActions {
 
 
             if ($activo->getCaCantidad() <= $asig) {
-                throw new Exception(" No hay mas licencias disponibles. Cantidad: " . $activo->getCaCantidad() . " Asignadas: " . $asig);
+                $flash = "Alerta: No hay mas licencias disponibles. Cantidad: " . $activo->getCaCantidad() . " Asignadas: " . $asig;
             }
 
 
@@ -641,7 +645,7 @@ class inventoryActions extends sfActions {
             $asignacion->setCaIdequipo($idequipo);
             $asignacion->save();
 
-            $this->responseArray = array("success" => true, "id" => $request->getParameter("id"), "idasignacion_software" => $asignacion->getCaIdasignacionSoftware());
+            $this->responseArray = array("success" => true, "flash"=>$flash, "id" => $request->getParameter("id"), "idasignacion_software" => $asignacion->getCaIdasignacionSoftware());
         } catch (Exception $e) {
             $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
         }
@@ -784,17 +788,22 @@ class inventoryActions extends sfActions {
 
         $q = Doctrine::getTable("InvActivo")
                 ->createQuery("a")
-                ->innerJoin("a.InvCategory c")
-                ->addWhere("a.ca_fchbaja IS NULL")
+                ->innerJoin("a.InvCategory c")                
                 ->leftJoin("a.InvAsignacionSoftwareActivo as")
-                ->select("a.ca_idactivo,c.ca_name,a.ca_modelo, a.ca_cantidad as q, count(as.ca_idactivo) as assigned")
+                ->leftJoin("as.Equipo ac")
+                                              
+                ->select("a.ca_idactivo, c.ca_name,a.ca_modelo, a.ca_cantidad as q, count(as.ca_idactivo) as assigned, (SELECT count(*) FROM InvActivo aa INNER JOIN  aa.InvAsignacionSoftwareActivo aas INNER JOIN aas.Equipo acc WHERE aa.ca_idactivo=a.ca_idactivo AND aa.ca_fchbaja IS NULL AND acc.ca_fchbaja IS NULL ) as q2  ")
                 ->addWhere("c.ca_parameter=?", "Software")
+                ->addWhere("a.ca_fchbaja IS NULL")
+                ->addWhere("ac.ca_fchbaja IS NULL")
                 ->addGroupBy("a.ca_idactivo, c.ca_name, a.ca_modelo, a.ca_cantidad")
-                ->addOrderBy("c.ca_name, a.ca_idactivo, c.ca_name, a.ca_modelo, a.ca_cantidad");
+                ->addOrderBy("c.ca_name, a.ca_modelo");
         
         if ($idsucursal) {
-            $q->addWhere("a.ca_idsucursal = ?", $idsucursal);
+            $q->addWhere("ac.ca_idsucursal = ?", array( $idsucursal ));
+            
         }
+        //echo $q->getSqlQuery();
         
         $this->software = $q->setHydrationMode(Doctrine::HYDRATE_SCALAR)
                 ->execute();

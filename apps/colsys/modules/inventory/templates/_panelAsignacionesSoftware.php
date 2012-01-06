@@ -216,6 +216,10 @@
                                 rec.set("idasignacion_software",res.idasignacion_software);
                                 rec.commit();
                             }
+                            
+                            if( res.flash ){
+                                Ext.MessageBox.alert('', res.flash);
+                            }
 
                         }else{
                             Ext.MessageBox.alert('Error', "Ha ocurrido el siguiente error"+res.errorInfo);

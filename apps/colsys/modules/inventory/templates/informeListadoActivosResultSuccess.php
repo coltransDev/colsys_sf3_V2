@@ -16,6 +16,8 @@ if( $param=="Software" ){
 if( $bajasChkbox ){
     $cols++;
 }
+
+$granTotal = 0;
 ?>
 <div class="content" align="center">
     <h2>Listados de Activos <br /> <?=$param?> <?=$sucursal?"Sucursal ".$sucursal->getCaNombre():""?> <?=$so?"S.O. ".$so:""?> <?=$office?"Office ".$office:""?> <?=$bajasChkbox?"Bajas desde ".$fchbajainicio." hasta ".$fchbajafinal:""?></h2>
@@ -126,7 +128,8 @@ if( $bajasChkbox ){
             <tr class="row0">
                 <td colspan="<?=$cols?>"><div align="right"><b>Total: <?=$cant?></b></div></td>
             </tr>
-            <?    
+            <?   
+                $granTotal+=$cant;
             }
             $lastCat=$activo->getcaIdcategory();
             $cat = $activo->getInvCategory();
@@ -237,9 +240,13 @@ if( $bajasChkbox ){
         </tr>
         <?
     }
+        $granTotal+=$cant;
     ?>
         <tr class="row0">
             <td colspan="<?=$cols?>"><div align="right"><b>Total: <?=$cant?></b></div></td>
+        </tr>
+        <tr class="row0">
+            <td colspan="<?=$cols?>"><div align="right"><b>Gran Total: <?=$granTotal?></b></div></td>
         </tr>
     </table>    
     
