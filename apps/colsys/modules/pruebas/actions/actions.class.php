@@ -3648,7 +3648,7 @@ ORDER BY ca_idtrayecto,ca_idconcepto,log_pricrecargosxconcepto.ca_idrecargo, ca_
 
         //foreach($users as $user ){
             //$username = $user->getCaLogin();
-            $file="C:\\Users\\alramirez\\Desktop\\ldap.csv";
+            $file="\\home\\alramirez\\Desktop\\ldap.csv";
             $content=file_get_contents($file);
             $lines=explode("\n",$content);
             foreach($lines as $line){
@@ -3674,6 +3674,21 @@ ORDER BY ca_idtrayecto,ca_idconcepto,log_pricrecargosxconcepto.ca_idrecargo, ca_
             $this->setTemplate("blank");
         //}
     }
+    
+    public function executeImportarExcelActivos($request){
+        $file="/home/alramirez/active.csv";
+            $content=file_get_contents($file);
+            $lines=explode("\n",$content);
+            foreach($lines as $line){
+                //echo $line.'<br />';
+                $dato=explode(";",$line);
+                    $activos = Doctrine::getTable("InvActivo")->find( $dato[0] );
+                    echo $dato[0]." ->".$dato[1]."<-";
+                    $activos->setCaPrgmantenimiento($dato[1]);
+                    $activos->save();
+                }
+            }
+    
 
 
     public function executeRedimensionarImagen($request){
