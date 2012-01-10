@@ -74,7 +74,7 @@ InvActivo:
     ca_empresa: string
     ca_asignadoa: string
     ca_software: string
-    ca_mantenimiento: string
+    ca_mantenimiento: integer
     ca_idsucursal: string
     ca_cantidad: integer
     ca_detalle: string
@@ -82,7 +82,9 @@ InvActivo:
     ca_fchcreado: timestamp
     ca_usucreado: string
     ca_fchactualizado: timestamp
-    ca_usuactualizado: string       
+    ca_usuactualizado: string  
+    ca_prgmantenimiento: date
+    ca_fchmantenimiento: date
   relations:
     InvCategory:
       local: ca_idcategory
