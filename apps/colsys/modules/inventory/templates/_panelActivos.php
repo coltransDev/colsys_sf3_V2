@@ -101,12 +101,13 @@
                 hidden: this.parameter!="Hardware"
             },
             {
-                header: "Mantenimiento",
-                dataIndex: 'mantenimiento',
+                header: "Prg. Mantenimiento",
+                dataIndex: 'prgmantenimiento',
                 hideable: false,
                 width: 100,
                 sortable: true,
-                hidden: this.parameter!="Hardware"
+                hidden: this.parameter!="Hardware",
+                renderer: Ext.util.Format.dateRenderer('Y-m-d') 
             },
             {
                 header: "Cantidad",
@@ -149,7 +150,7 @@
             {name: 'asignadoa', type: 'string'},
             {name: 'asignadoaNombre', type: 'string'},
             {name: 'idsucursal', type: 'string'},
-            {name: 'mantenimiento', type: 'string'},
+            {name: 'prgmantenimiento', type: 'date', dateFormat:'Y-m-d'},
             {name: 'folder', type: 'string'},
             {name: 'deleted', type: 'boolean'},
             {name: 'cantidad', type: 'integer'},

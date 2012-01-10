@@ -149,6 +149,14 @@ Ext.onReady(function(){
                 </a>
             </div>
         </div>
+        <div style="float:left;">
+            <div class="icon">
+                <a href="<?=url_for("inventory/informeListadoMantenimientos")?>" >
+                    <?=image_tag("48x48/kgoldrunner.gif")?>
+                    <span>Mantenimientos</span>
+                </a>
+            </div>
+        </div>
         
    </div>
 

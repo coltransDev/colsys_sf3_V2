@@ -9,7 +9,6 @@ include_component("pm", "editarTicketPropiedadesPanel");
 
 
 ?>
-
 <script type="text/javascript">
 NuevoSeguimientoWindow = function( config ) {
     Ext.apply(this, config);
@@ -18,8 +17,7 @@ NuevoSeguimientoWindow = function( config ) {
 
     
 
-    this.subpanel = new Ext.FormPanel({
-                            id: "seguimiento-activo-panel",
+    this.subpanel = new Ext.FormPanel({id: "seguimiento-activo-panel",
                             url: '<?=url_for('inventory/guardarSeguimiento')?>',
                             hideLabel: true,
                             items: [
@@ -29,24 +27,179 @@ NuevoSeguimientoWindow = function( config ) {
                                 value: this.idactivo
                               },
                               {
-
-                                xtype:'htmleditor',
-                                name:'text',
-                                hideLabel: true,
-                                height:200,
-                                anchor:'98%',
-                                enableFont: false,
-                                enableFontSize: false,
-                                enableLinks:  false,
-                                enableSourceEdit : false,
-                                enableColors : false,
-                                enableLists: false,
-                                allowBlank: false
-
-                            }]
-                    })
-
-
+                                xtype:'fieldset',
+                                id:"chkmantenimiento",
+                                title: 'Mantenimiento',
+                                collapsed: true,
+                                checkboxToggle:true,
+                                listeners:{
+                                    collapse: function(p){
+                                        Ext.getCmp("chkseguimiento").expand();
+                                    },
+                                    expand: function(p){
+                                        Ext.getCmp("chkseguimiento").collapse();
+                                        Ext.getCmp("chkseguimiento").disable();
+                                        
+                                    }
+                                },
+                                defaults: {
+                                            // applied to each contained panel
+                                            bodyStyle:'padding-right:25px;background-color:#EEEEEE',
+                                            bodyStyle:'padding-left:25px;background-color:#EEEEEE',
+                                            border: false
+                                        },
+                                items:[
+                                    {
+                                        layout:'column',
+                                        columns:2,
+                                        columnWidth:.5,
+                                        border: false,
+                                        id:"total",
+                                        defaults: {
+                                            // applied to each contained panel
+                                            bodyStyle:'padding-right:15px;background-color:#EEEEEE',
+                                            bodyStyle:'padding-left:15px;background-color:#EEEEEE',
+                                            border: false
+                                        },
+                                        items:[
+                                            {
+                                            layout: 'form',
+                                            labelAlign: 'top',
+                                               items:[
+                                                   {
+                                                    xtype:'fieldset',
+                                                    autoHeight:true,
+                                                    id:"chkespecificaciones",
+                                                    title: 'Especificaciones Generales',
+                                                    checkboxName: "checkboxEspMantenimiento",
+                                                    layout:"form",
+                                                    anchor:'95%',
+                                                    items:[
+                                                        {
+                                                            xtype:'fieldset',                                                              
+                                                            border:false,
+                                                            items:[
+                                                                {
+                                                                    xtype:'datefield',
+                                                                    fieldLabel: 'Fecha Mantenimiento',
+                                                                    name : 'fchMantenimiento',
+                                                                    //anchor:'100%',
+                                                                    //height: 300,
+                                                                    width: 100,
+                                                                    format: 'Y-m-d',
+                                                                    value: '<?=date("Y-m-d")?>'
+                                                                }]
+                                                        },
+                                                        {
+                                                            layout:'table',
+                                                            layoutConfig: {
+                                                                columns: 1
+                                                                },
+                                                            border: false,
+                                                            bodyStyle:'padding-right:20px;background-color:#EEEEEE',
+                                                            autoHeight:true,
+                                                            items:[
+                                                                {
+                                                                    xtype: 'checkbox',
+                                                                    fieldLabel: '',
+                                                                    boxLabel: 'Limpieza General',
+                                                                    name: 'limpieza'
+                                                                },
+                                                                {
+                                                                    xtype: 'checkbox',
+                                                                    fieldLabel: '',
+                                                                    boxLabel: 'Borrado de Temporales y Cookies',
+                                                                    name: 'borrado'
+                                                                },
+                                                                {
+                                                                    xtype: 'checkbox',
+                                                                    fieldLabel: '',
+                                                                    boxLabel: 'Revisión de software no autorizado',
+                                                                    name: 'revision'
+                                                                },
+                                                                {
+                                                                    xtype: 'checkbox',
+                                                                    fieldLabel: '',
+                                                                    boxLabel: 'Revisión de políticas y usuarios',
+                                                                    name: 'politicas'
+                                                                },
+                                                                {
+                                                                    xtype: 'checkbox',
+                                                                    fieldLabel: '',
+                                                                    boxLabel: 'Verificación de Backup (Si aplica)',
+                                                                    name: 'backup'
+                                                                },
+                                                                {
+                                                                    xtype: 'checkbox',
+                                                                    fieldLabel: '',
+                                                                    boxLabel: 'Verificación de Actualización Antivirus',
+                                                                    name: 'antivirus'
+                                                                }]
+                                                        }]
+                                                   }]
+                                           },
+                                           {
+                                            layout: 'form',
+                                            labelAlign: 'top',
+                                            items: [
+                                                {
+                                                    xtype:'fieldset',
+                                                    id:"chkobservaciones",
+                                                    title: 'Observaciones',
+                                                    checkboxName: "checkboxObservaciones",
+                                                    height:210,
+                                                    anchor:'95%',
+                                                    bodyStyle:'padding-left:5px;',
+                                                    items:[
+                                                        {
+                                                            xtype:'htmleditor',
+                                                            name:'text',
+                                                            height:200,
+                                                            width: 400,
+                                                            enableFont: false,
+                                                            enableFontSize: false,
+                                                            enableLinks:  false,
+                                                            enableSourceEdit : false,
+                                                            enableColors : false,
+                                                            enableLists: false,
+                                                            allowBlank: false
+                                                        }]
+                                                }]
+                                           }]
+                                   }]
+                              },
+                              {
+                                xtype:'fieldset',
+                                id:"chkseguimiento",
+                                title: 'Seguimiento',
+                                collapsed: false,
+                                checkboxToggle:true,
+                                defaults: {
+                                            // applied to each contained panel
+                                            bodyStyle:'padding-right:25px;background-color:#EEEEEE',
+                                            bodyStyle:'padding-left:25px;background-color:#EEEEEE',
+                                            border: false
+                                        },
+                                items:[
+                                    {
+                                        xtype:'htmleditor',
+                                        name:'text',
+                                        title:'Seguimiento y/o Observaciones',
+                                        hideLabel: true,
+                                        height:200,
+                                        anchor:'98%',
+                                        enableFont: false,
+                                        enableFontSize: false,
+                                        enableLinks:  false,
+                                        enableSourceEdit : false,
+                                        enableColors : false,
+                                        enableLists: false,
+                                        allowBlank: false
+                                    }]
+                              
+                              }]
+                        })
+                                    
     this.buttons = [
         {
             text: 'Guardar',
@@ -131,3 +284,10 @@ Ext.extend(NuevoSeguimientoWindow, Ext.Window, {
 });
 
 </script>
+<?php
+
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+?>

@@ -163,30 +163,11 @@ $office_types = $sf_data->getRaw("office_types");*/
                                         allowNegative: false
                                     },
                                     {
-                                        xtype:          'combo',
-                                        mode:           'local',
-                                        value:          '',
-                                        triggerAction:  'all',
-                                        forceSelection: true,
-                                        editable:       true,
-                                        fieldLabel:     'Mantenimiento',
-                                        name:           'mantenimiento',
-                                        hiddenName:     'mantenimiento',
-                                        displayField:   'name',
-                                        valueField:     'value',
-                                        allowBlank: false,
-                                        store:          new Ext.data.JsonStore({
-                                            fields : ['name', 'value'],
-                                            data   : [
-                                                <?
-                                                
-                                                for( $i=1; $i<=12; $i++ ){
-                                                    echo ($i>1)?",":"";
-                                                    echo "{name : '".Utils::mesLargo($i)."',   value: '".Utils::mesLargo($i)."'}";
-                                                }
-                                                ?>
-                                            ]
-                                        })
+                                        xtype:'datefield',
+                                        fieldLabel: 'Fch. Prog. Mantenimiento',
+                                        name: 'prgmantenimiento',
+                                        format: 'Y-m-d',
+                                        allowBlank: false
                                     },
                                     {
                                         xtype:'datefield',

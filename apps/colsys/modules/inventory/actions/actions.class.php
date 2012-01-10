@@ -95,6 +95,7 @@ class inventoryActions extends sfActions {
         $activos = $q->execute();
         $result = array();
         foreach ($activos as $activo) {
+            
             $row = array();
             $row["idactivo"] = utf8_encode($activo->getCaIdactivo());
             $row["idcategory"] = utf8_encode($activo->getCaIdcategory());
@@ -122,7 +123,7 @@ class inventoryActions extends sfActions {
             $row["so_serial"] = utf8_encode($activo->getCaSoSerial());
             $row["so_office"] = utf8_encode($activo->getCaOffice());
             $row["so_office_serial"] = utf8_encode($activo->getCaOfficeSerial());
-            $row["mantenimiento"] = $activo->getCaMantenimiento();
+            $row["prgmantenimiento"] = $activo->getCaPrgmantenimiento();
             $row["idsucursal"] = $activo->getCaIdsucursal();
             $row["cantidad"] = $activo->getCaCantidad();
             $row["detalle"] = utf8_encode($activo->getCaDetalle());
@@ -175,7 +176,7 @@ class inventoryActions extends sfActions {
         $data["contrato"] = utf8_encode($activo->getCaContrato());
         $data["observaciones"] = utf8_encode($activo->getCaObservaciones());
         $data["software"] = utf8_encode($activo->getCaSoftware());
-        $data["mantenimiento"] = $activo->getCaMantenimiento();
+        $data["prgmantenimiento"] = $activo->getCaPrgmantenimiento();
         $data["cantidad"] = $activo->getCaCantidad();
         $data["detalle"] = utf8_encode($activo->getCaDetalle());
         $data["fchbaja"] = $activo->getCaFchbaja();
@@ -309,10 +310,10 @@ class inventoryActions extends sfActions {
                 $activo->setCaObservaciones(null);
             }
 
-            if ($request->getParameter("mantenimiento")) {
-                $activo->setCaMantenimiento($request->getParameter("mantenimiento"));
+            if ($request->getParameter("prgmantenimiento")) {
+                $activo->setCaPrgmantenimiento($request->getParameter("prgmantenimiento"));
             } else {
-                $activo->setCaMantenimiento(null);
+                $activo->setCaPrgmantenimiento(null);
             }
 
             if ($request->getParameter("detalle")) {
@@ -388,7 +389,6 @@ class inventoryActions extends sfActions {
         $this->nivel = $this->getNivel();
         $idactivo = $request->getParameter("idactivo");
         $this->forward404Unless($idactivo);
-
 
 
         $seguimiento = new InvSeguimiento();
@@ -916,6 +916,86 @@ class inventoryActions extends sfActions {
         
         $this->fchbajainicio = $fchbajainicio;
         $this->fchbajafinal = $fchbajafinal;
+        
+        
+    }
+    
+    public function executeInformeListadoMantenimientos($request) {
+        
+        $q = Doctrine::getTable("Sucursal")
+                ->createQuery("s")
+                ->addWhere("s.ca_idempresa = ?", 2)
+                ->addOrderBy("s.ca_nombre");
+
+        $this->nivel = $this->getNivel();
+        if ($this->nivel < 2) {
+            $user = $this->getUser();
+            $q->addWhere("s.ca_idsucursal = ? ", $user->getIdsucursal());
+        }
+
+        $this->sucursales = $q->execute();
+    }
+    
+    public function executeInformeListadoMantenimientosResult($request) {
+        
+        $idsucursal = $request->getParameter("idsucursal");
+        $mes = $request->getParameter("mes");
+        
+        $criterio = $request->getParameter("criterio");
+                
+        $q = Doctrine::getTable("InvActivo")
+                ->createQuery("a")
+                //->select("*,EXTRACT(MONTH FROM a.ca_prgmantenimiento)")
+                ->innerJoin("a.InvCategory c")
+                ->addWhere("a.ca_fchbaja IS NULL");
+        
+        $sucursal = null;
+        if ($idsucursal) {
+            $q->addWhere("a.ca_idsucursal = ?", $idsucursal);
+            $sucursal = Doctrine::getTable("Sucursal")->find($idsucursal);
+            
+        }
+            $q->addWhere("c.ca_parameter IN ('Hardware','Dispositivo')");
+        
+        //$mes = null;
+        //$fechames = Utils::fechaMes($activo->getCaPrgmantenimiento());
+        if($mes){
+            $q->addWhere("EXTRACT(MONTH FROM a.ca_prgmantenimiento) = ?", $mes);
+        }
+            
+        if($criterio=="mes"){
+            $q->addOrderBy("EXTRACT (MONTH FROM a.ca_prgmantenimiento)");
+        }
+            $q->addOrderBy("c.ca_idcategory");
+            $q->addOrderBy("a.ca_prgmantenimiento");
+        
+        $this->activos = $q->execute();
+        $result = array();
+        
+        $q = Doctrine::getTable("InvActivo")
+                ->createQuery("a")
+                ->innerJoin("a.InvCategory c")
+                ->addWhere("a.ca_fchbaja IS NULL");
+        $sucursal = null;
+        if ($idsucursal) {
+            $q->addWhere("a.ca_idsucursal = ?", $idsucursal);
+            $sucursal = Doctrine::getTable("Sucursal")->find($idsucursal);
+            
+        }
+            $q->addWhere("c.ca_parameter IN ('Hardware','Dispositivo')");
+            //$q->addOrderBy("c.ca_idcategory");
+            $q->addOrderBy("c.ca_parent DESC");
+            $q->addOrderBy("c.ca_name");
+            
+        
+        $this->resumenes = $q->execute();
+        $result = array();
+        
+        
+        
+        $this->criterio = $criterio;
+        $this->sucursal = $sucursal;
+        $this->mes = $mes;
         
         
     }
