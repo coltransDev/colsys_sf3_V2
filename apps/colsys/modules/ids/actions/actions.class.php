@@ -832,7 +832,8 @@ class idsActions extends sfActions {
             $defPeriodo = 1;
         } else {
             $defPeriodo = 2;
-            if (date('Y') . "-01-01" >= date("Y-m-d")) {
+                        
+            if (date('Y') . "-01-01" <= date("Y-m-d")) {
                 $defAno--;
             }
         }
