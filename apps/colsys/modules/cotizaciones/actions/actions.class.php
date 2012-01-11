@@ -1019,7 +1019,7 @@ class cotizacionesActions extends sfActions {
                 if( $aplica_tar ){ 
                     $opcion->setCaAplicaTar($aplica_tar);
                 }else{
-                    $opcion->setCaAplicaTar(null);
+                   // $opcion->setCaAplicaTar(null);
                 }
             }
 
@@ -1104,7 +1104,7 @@ class cotizacionesActions extends sfActions {
                 if( $aplica_tar ){ 
                     $recargo->setCaAplicaTar($aplica_tar);
                 }else{
-                    $recargo->setCaAplicaTar(null);
+                    //$recargo->setCaAplicaTar(null);
                 }
             }
 
