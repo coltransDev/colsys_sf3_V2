@@ -142,7 +142,7 @@ var crearSeguimiento=function(){
 			<div align="left">
 				<?
                 
-                if( $reporte->getCaTransporte()==Constantes::MARITIMO ){
+                if( $reporte->getCaTransporte()==Constantes::MARITIMO || $reporte->getCaTransporte()==Constantes::TERRESTRE ){
                     include_component("reporteExt","reporteMaritimoExtNew", array("reporte"=>$reporte));
                 }
 

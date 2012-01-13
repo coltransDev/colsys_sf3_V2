@@ -59,7 +59,7 @@ $cliente = $reporte->getCliente();
 		<td width="13%"><?=$reporte->getOrigen()->getCaCiudad()?></td>
 		<td width="15%"><b>Fch.Salida:</b></td>
 		<td width="17%"><?=$status->getCaFchsalida()?$status->getCaFchsalida()." ".$status->getCaHorasalida():"&nbsp;"?></td>
-		<td><b><?=$reporte->getCaTransporte()==Constantes::MARITIMO?"Motonave:":"Vuelo:"?></b></td>
+		<td><b><?=($reporte->getCaTransporte()==Constantes::MARITIMO || $reporte->getCaTransporte()==Constantes::TERRESTRE)?"Motonave:":"Vuelo:"?></b></td>
 		<td><?=$status->getCaIdnave()?></td>
 	</tr>
 	<tr>
@@ -93,7 +93,7 @@ $cliente = $reporte->getCliente();
 		<td><?=$status->getCaVolumen()?str_replace("|", " ",$status->getCaVolumen()):"&nbsp;"?></td>
 	</tr>
 	<tr>
-		<td><b><?=$reporte->getCaTransporte()==Constantes::MARITIMO?"HBL:":"HAWB:"?></b></td>
+		<td><b><?=($reporte->getCaTransporte()==Constantes::MARITIMO || $reporte->getCaTransporte()==Constantes::TERRESTRE)?"HBL:":"HAWB:"?></b></td>
 		<td><?=$status->getCaDoctransporte()?$status->getCaDoctransporte():"&nbsp;"?></td>
 		<td><?=$reporte->getCaModalidad()=="FCL"&&$status->getCaDocmaster()?"<b>Master:</b>":"&nbsp;"?></td>
 		<td><?=$reporte->getCaModalidad()=="FCL"&&$status->getCaDocmaster()?$status->getCaDocmaster():"&nbsp;"?></td>
@@ -167,7 +167,7 @@ $cliente = $reporte->getCliente();
 	<?
         }
 
-        if( $reporte->getCaTransporte()==Constantes::MARITIMO && $status->getCaIdetapa()=="EEETD" ) {
+        if( ($reporte->getCaTransporte()==Constantes::MARITIMO || $reporte->getCaTransporte()==Constantes::TERRESTRE) && $status->getCaIdetapa()=="EEETD" ) {
         ?>
         <tr>
             <td><b>Emisi&oacute;n BLs:</b></td>
@@ -176,7 +176,7 @@ $cliente = $reporte->getCliente();
         <?
         }
 
-        if( $reporte->getCaTransporte()==Constantes::MARITIMO && $status->getCaIdetapa()=="EEETD" ) {
+        if( ($reporte->getCaTransporte()==Constantes::MARITIMO || $reporte->getCaTransporte()==Constantes::TERRESTRE) && $status->getCaIdetapa()=="EEETD" ) {
         ?>
         <tr>
             <td><b>DATOS EN DESTINO PARA RECLAMAR BLs:</b></td>

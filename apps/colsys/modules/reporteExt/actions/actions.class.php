@@ -41,6 +41,11 @@ class reporteExtActions extends sfActions
 			$this->nivel = $this->getUser()->getNivelAcceso( reporteExtActions::RUTINA_AEREO );	
 			$this->modo = "aereo";	
 		}		
+        
+        if( $this->reporte->getCaTransporte()==Constantes::TERRESTRE ){
+            $this->nivel = $this->getUser()->getNivelAcceso( reporteExtActions::RUTINA_MARITIMO );
+			$this->modo = "maritimo";
+        }
 		
 		if( $this->nivel<1 ){
 			$this->forward404();
@@ -182,7 +187,7 @@ class reporteExtActions extends sfActions
 				$email = new Email();	
 								
 				$email->setCaUsuenvio( $user->getUserId() );	
-				if( $this->reporte->getCaTransporte()==Constantes::MARITIMO ){
+				if( $this->reporte->getCaTransporte()==Constantes::MARITIMO || $this->reporte->getCaTransporte()==Constantes::TERRESTRE ){
 					$email->setCaTipo( "Rep.MarítimoExterior" );
 				}
 				
@@ -258,8 +263,7 @@ class reporteExtActions extends sfActions
 
                 if( !$reporte->getCaIdetapa() ){
 
-
-                    if( $reporte->getCaTransporte()==Constantes::MARITIMO ){
+                    if( $reporte->getCaTransporte()==Constantes::MARITIMO || $reporte->getCaTransporte()==Constantes::TERRESTRE ){
                         $reporte->setCaIdetapa( "IMCAG" );
                     }
 

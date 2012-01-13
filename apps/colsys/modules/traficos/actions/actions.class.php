@@ -90,7 +90,7 @@ class traficosActions extends sfActions
             {
                 //$this->redirect( "traficos/listaStatus?modo=otm&reporte=".$reporte->getCaConsecutivo() );
             }
-            else if( $reporte->getCaImpoexpo()==Constantes::IMPO && $reporte->getCaTransporte()==Constantes::MARITIMO && $this->modo!="maritimo" ){                
+            else if( $reporte->getCaImpoexpo()==Constantes::IMPO && ($reporte->getCaTransporte()==Constantes::MARITIMO || $reporte->getCaTransporte()==Constantes::TERRESTRE) && $this->modo!="maritimo" ){
                 $this->redirect( "traficos/listaStatus?modo=maritimo&reporte=".$reporte->getCaConsecutivo() );	
             }
             
@@ -294,9 +294,13 @@ class traficosActions extends sfActions
             $q->addWhere("t.ca_impoexpo = ? OR t.ca_impoexpo IS NULL", $reporte->getCaImpoexpo());
 		}	
 				
-		if( ($reporte->getCaImpoexpo()==Constantes::IMPO || $reporte->getCaImpoexpo()==Constantes::TRIANGULACION) && $this->modo!="otm"   ){
-            $q->addWhere("t.ca_transporte = ? OR t.ca_transporte IS NULL", $reporte->getCaTransporte());
-		}
+		if( ($reporte->getCaImpoexpo()==Constantes::IMPO || $reporte->getCaImpoexpo()==Constantes::TRIANGULACION) && $this->modo!="otm"   ){            
+            if($reporte->getCaTransporte()==Constantes::TERRESTRE)
+            {
+                $reporte->setCaTransporte(Constantes::MARITIMO);
+            }
+            $q->addWhere("t.ca_transporte = ? OR t.ca_transporte IS NULL", $reporte->getCaTransporte());            
+		}        
         
         if($this->modo!="otm")
             $q->addWhere("t.ca_departamento = ? OR t.ca_departamento IS NULL","Tráficos");
