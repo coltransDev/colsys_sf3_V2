@@ -324,13 +324,14 @@ class NuevoStatusForm extends BaseForm {
         $horaRecibo = implode(":", $horaRecibo) . ":00";
         $fch = $taintedValues["fchrecibo"] . " " . $horaRecibo;
         //echo $fch;
+        
         $fest = TimeUtils::getFestivos();
         $dif = TimeUtils::calcDiff($fest, strtotime($fch), time());
 
 
-        if ($taintedValues["impoexpo"] == Constantes::IMPO && ($taintedValues["transporte"] == Constantes::MARITIMO || $taintedValues["transporte"] == Constantes::AEREO)) {
+        if ($taintedValues["impoexpo"] == Constantes::IMPO && ($taintedValues["transporte"] == Constantes::MARITIMO || $taintedValues["transporte"] == Constantes::AEREO || $taintedValues["transporte"] == Constantes::TERRESTRE)) {
             $maxTime = 0;
-            if ($taintedValues["transporte"] == Constantes::MARITIMO) {
+            if ($taintedValues["transporte"] == Constantes::MARITIMO || $taintedValues["transporte"] == Constantes::TERRESTRE) {
                 $maxTime = RepStatus::IDG_MARITIMO;
             }
             if ($taintedValues["transporte"] == Constantes::AEREO) {
