@@ -40,7 +40,7 @@ include_component("widgets", "widgetSucursalAgente");
 include_component("widgets", "widgetComerciales");
 include_component("widgets", "widgetIncoterms");
 
-if(!$modo ||  $modo=="")
+//if(!$modo ||  $modo=="")
     include_component("widgets", "widgetTransporte");
 //if(!$impoexpo)
     include_component("widgets", "widgetImpoexpo");
@@ -156,7 +156,7 @@ include_component("widgets", "widgetContactoCliente");
                             defaultType: 'textfield',
                             items: [
                                 <?
-                                if(!$modo ||  $modo=="")
+                                //if(!$modo ||  $modo=="")
                                 {
                                 ?>
                                 new WidgetTransporte({fieldLabel: 'Transporte',
@@ -166,7 +166,7 @@ include_component("widgets", "widgetContactoCliente");
                                                 value:'<?=$modo?>'
                                                })
                                 <?
-                                }else
+                                }/*else
                                 {
                                 ?>
                                    {
@@ -176,7 +176,7 @@ include_component("widgets", "widgetContactoCliente");
                                         value:'<?=$modo?>'
                                     }
                                 <?
-                                }
+                                }*/
                                 ?>
                                                ,
                                                this.wgImpoexpo
@@ -845,8 +845,13 @@ include_component("widgets", "widgetContactoCliente");
                             Ext.getCmp("idrepresentante").setValue(res.data.idrepresentante);
                             $("#idrepresentante").attr("value",res.data.representante);
                         }
-                         Ext.getCmp("agente").setValue(res.data.idagente);
+                        Ext.getCmp("agente").setValue(res.data.idagente);
                         $("#agente").attr("value",res.data.agente);
+                        
+                        
+                        Ext.getCmp("sucursalagente").setValue(res.data.idsucursalagente);
+                        $("#sucursalagente").attr("value",res.data.sucursalagente);
+                        
                         
                         for(i=0;i<<?=($nprov>0)?$nprov:0?>;i++)
                         {
