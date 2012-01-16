@@ -14,7 +14,7 @@ class RepStatus extends BaseRepStatus
 {
     var $bodega = null;
 
-    const IDG_MARITIMO = 24600; // 6h 50m
+    const IDG_MARITIMO = 19800; // 5h 50m
     const IDG_AEREO = 16200; // 4h 30
 
 	/*
