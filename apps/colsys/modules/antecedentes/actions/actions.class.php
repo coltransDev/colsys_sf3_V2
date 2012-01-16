@@ -843,7 +843,7 @@ exit;
          try {
             $numref = str_replace("|", ".", $request->getParameter("ref"));
             $this->forward404Unless( trim($request->getParameter("motivo")) );
-
+     
             $master = Doctrine::getTable("InoMaestraSea")->find($numref);
             //$master= new InoMaestraSea();
             $emails=$master->getEmails();
@@ -856,7 +856,7 @@ exit;
                 $email->setCaSubject( str_replace(".", "-", $email->getCaSubject()));
                 $email->save($conn);
             }
-
+            
             $conn->commit();
             $this->responseArray = array("success" => true);
         } catch (Exception $e) {
@@ -1002,25 +1002,8 @@ exit;
        $this->setTemplate("responseTemplate");
     }
     
-    public function executeRadicarReferencia(sfWebRequest $request)  
-    {
-        try{
-            $numref = str_replace("|", ".", $request->getParameter("referencia"));
-            $this->forward404Unless($numref);
-            $ref = Doctrine::getTable("InoMaestraSea")->find($numref);
-            $this->forward404Unless($ref);
-            $ref->setCaUsumuisca($this->getUser()->getUserId());
-            $ref->setCaFchmuisca(date('Y-m-d H:i:s'));
-            $ref->save();  
-            $this->responseArray = array("success" => true);
-       }
-       catch(Exception $e)
-       {
-           $this->responseArray = array("success" => false,"errorInfo"=>$e->getMessage());
-       }
-       $this->setTemplate("responseTemplate");
-    }    
- 
+     
+    
     public function executeRadicarReferencia(sfWebRequest $request)  
     {
         try{
@@ -1084,7 +1067,7 @@ exit;
     
     public function executeEnviarEmailColoader(sfWebRequest $request) {
 
-        $user = $this->getUser();        
+        $user = $this->getUser();
         $email = new Email();
 
         $email->setCaUsuenvio($user->getUserId());
@@ -1141,7 +1124,7 @@ exit;
         $files=$this->getRequestParameter("files");
         foreach ($files as $archivo) {
             
-            $name =  $archivo;
+            $name =  $archivo;            
             $email->AddAttachment($name);            
         }
         $email->send();
