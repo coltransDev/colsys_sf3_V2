@@ -360,7 +360,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                                 echo "<IMG  src='./graficos/digita_off.gif' alt='Digitación Muisca Ok Desbloquear' border=0 onclick='digitar(\"Digitacion_desbloqueo\", \"" . $rs->Value('ca_referencia') . "\", 0, 0);'><BR><BR>";
                             }
                         }
-                    } else {
+                    } else if($rs->Value('ca_impoexpo')!="Triangulación") {                        
                         $digitable = 'block';
                         $cl = & DlRecordset::NewRecordset($conn);                                   // Apuntador que permite manejar la conexiòn a la base de datos
                         if (!$cl->Open("select count(*) as conta from tb_inoclientes_sea where ca_referencia = '" . $rs->Value('ca_referencia') . "' and (ca_usuactualizado is null or ca_usuactualizado='' )")) {
