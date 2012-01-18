@@ -839,7 +839,7 @@ class Reporte extends BaseReporte {
     public function getReporteExterior() {
         if ($this->getCaImpoexpo() == Constantes::IMPO || $this->getCaImpoexpo() == Constantes::TRIANGULACION) {
             //Reportes al exterior
-            if ($this->getCaTransporte() == Constantes::MARITIMO) {
+            if ($this->getCaTransporte() == Constantes::MARITIMO || $this->getCaTransporte() == Constantes::TERRESTRE) {
                 $tipo = 'Rep.MarítimoExterior';
             } else {
                 $tipo = 'Rep.AéreoExterior';
