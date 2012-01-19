@@ -55,6 +55,21 @@ class UsuarioTable extends Doctrine_Table {
         return $q->execute();
     }
     
+    public static function getCoordinadoresMantenimiento($idsucursal=null) {
+
+        $q = Doctrine::getTable("Usuario")
+               ->createQuery("u")               
+               ->innerJoin("u.UsuarioPerfil up")
+               ->addWhere("u.ca_activo=? AND up.ca_perfil=? ", array('TRUE','coordinador-de-mantenimiento-colsys'))
+               ->addOrderBy("u.ca_idsucursal")
+               ->addOrderBy("u.ca_nombre");
+        if( $idsucursal ){
+            $q->addWhere("u.ca_idsucursal = ?", $idsucursal);
+        }
+               
+        return $q->execute();
+    }
+    
     
 
     public function getLuceneIndex(){
