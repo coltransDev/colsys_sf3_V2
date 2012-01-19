@@ -34,9 +34,6 @@ $cols = 12;
             <th scope="col" style=" text-align: center"><b>
                 Fecha Prog. Mantenimiento
             </b></th>
-            <th scope="col" style=" text-align: center"><b>
-                Fecha Mantenimiento
-            </b></th>
         </tr>
         <?
         
@@ -125,15 +122,12 @@ $cols = 12;
             <td style="text-align: right; width: 70px">
                 <?=$activo->getCaPrgmantenimiento()?>
             </td>
-            <td style="text-align: right; width: 70px">
-                <?=$activo->getCaFchmantenimiento()?>
-            </td>
         </tr>
         <?
         }
         if($contador_cat>0){
             ?>
-                <tr class="row_blue">
+                <tr class="row_blue"
                     <td colspan="<?=$cols?>"><b>Subtotal =<?=$contador_cat?> </b></td>
                 </tr>
             <?
