@@ -386,22 +386,138 @@ class inventoryActions extends sfActions {
      */
     public function executeGuardarSeguimiento(sfWebRequest $request) {
 
-        $this->nivel = $this->getNivel();
+        //$this->nivel = $this->getNivel();
         $idactivo = $request->getParameter("idactivo");
         $this->forward404Unless($idactivo);
+        $this->user = $this->getUser();
+        
+        $chkmantenimiento = $request->getParameter( "chkmantenimiento-checkbox" );
+        $chkseguimiento = $request->getParameter( "chkseguimiento-checkbox" );
+        $fchMantenimiento = Utils::parseDate($request->getParameter("fchMantenimiento"));
+        $textMantenimiento = $request->getParameter("text_mantenimiento");
+        $textSeguimiento = $request->getParameter("text_seguimiento");
+        
+        $usuarios = UsuarioTable::getCoordinadoresMantenimiento();
+        foreach( $usuarios as $usuario ){
+				$logins[]=$usuario->getCaLogin();
+        }
+        
+        $q = Doctrine::getTable("InvMantenimientoEtapas")
+                ->createQuery("e");
+        $etapas = $q->execute();
+        $result = array();
+        
+        $this->etapas = $etapas;
+        
+        if($chkmantenimiento&&$chkmantenimiento=='on'){
 
+            $mantenimiento = new InvMantenimiento();
+            $mantenimiento->setCaIdactivo($idactivo);
+            $mantenimiento->setCaFchmantenimiento($fchMantenimiento);
+            $mantenimiento->setCaObservaciones(utf8_decode($textMantenimiento));
+            $mantenimiento->save();
+            
+            $idman = $mantenimiento->getCaIdmantenimiento();
+            
+            $this->idman = $idman;
+            
+            $activo = Doctrine::getTable("InvActivo")->find($idactivo);
+            $activo->setCaPrgmantenimiento(Utils::addDate( $fchMantenimiento, 0,0,1));
+            $activo->save();
+            
+            $idsucursal = $activo->getCaIdsucursal();
+            
+            $contetapas = 0;
+            foreach($etapas as $etapa){
+                $contetapas++;
+            }
+                for( $i=1; $i<=$contetapas; $i++ ){
+                    $idetapa = $request->getParameter($i); 
+                    if($idetapa){
+                        $labores = new InvMantenimientoLabores();
+                        $labores->setCaIdetapa($i);
+                        $labores->setCaIdmantenimiento($idman);
+                        $labores->save();
+                    }
+                }
+            $mantenimiento = Doctrine::getTable("InvMantenimiento")->find($idman);
+        
+            //Envía email informando mantenimiento al usuario que tiene asignado el equipo
 
-        $seguimiento = new InvSeguimiento();
-        $seguimiento->setCaIdactivo($idactivo);
-        $seguimiento->setCaText(utf8_decode($request->getParameter("text")));
-        $seguimiento->save();
+            $email = new Email();		
+            $email->setCaUsuenvio($this->getUser()->getUserId());
+            $email->setCaTipo("Mantenimiento"); 		
+            $email->setCaIdcaso( $idman );
+            $email->setCaFrom("no-reply@coltrans.com.co");
+            $email->setCaFromname("Colsys Notificaciones");
 
+            $email->setCaSubject( "Mantenimiento Preventivo Activo # ".$mantenimiento->getInvActivo()->getCaIdentificador());				
+            $texto = "Se ha realizado un nuevo mantenimiento \n\n<br /><br />" ;					
+            $request->setParameter("format", "email" );	
+            $request->setParameter("idman", $idman );	
+            $texto.= sfContext::getInstance()->getController()->getPresentationFor( 'inventory', 'emailMantenimiento');
 
+            $email->setCaBodyhtml( $texto );
+            $email->addTo($mantenimiento->getInvActivo()->getUsuario()->getCaEmail());
 
-        $texto = sfContext::getInstance()->getController()->getPresentationFor('inventory', 'verSeguimientos');
+            foreach( $logins as $login ){
+                $usuario = Doctrine::getTable("Usuario")->find( $login );
+                $email->addCc( $usuario->getCaEmail() );
+            }
 
-        $this->responseArray = array("success" => true, "idactivo" => $idactivo, "info" => utf8_encode($texto));
-        $this->setTemplate("responseTemplate");
+            $this->setLayout("none");
+
+            $email->save();
+
+            $texto = sfContext::getInstance()->getController()->getPresentationFor('inventory', 'verSeguimientos');
+
+            $this->responseArray = array("success" => true, "idactivo" => $idactivo, "info" => utf8_encode($texto));
+            $this->setTemplate("responseTemplate");
+     
+        }elseif($chkseguimiento&&$chkseguimiento=='on'){
+            
+            $respuesta = $request->getParameter("respuesta");
+            $idman = $request->getParameter("idman");
+            
+            $mantenimiento = Doctrine::getTable("InvMantenimiento")->find($idman);
+            
+            $seguimiento = new InvSeguimiento();
+            $seguimiento->setCaIdactivo($idactivo);
+            $seguimiento->setCaText(utf8_decode($textSeguimiento));
+            $seguimiento->save();
+            
+            if($respuesta=="no"){
+                //$this->redirect("intranet");
+                $email = new Email();		
+                $email->setCaUsuenvio($this->getUser()->getUserId());
+                $email->setCaTipo("Rta. Mantenimiento"); 		
+                $email->setCaIdcaso( $idman );
+                $email->setCaFrom("no-reply@coltrans.com.co");
+                $email->setCaFromname("Colsys Notificaciones");
+
+                $email->setCaSubject( "Respuesta Mantenimiento Preventivo Activo # ".$mantenimiento->getInvActivo()->getCaIdentificador());				
+                $texto = "Se dado una respuesta al mantenimiento en referencia \n\n<br /><br />" ;					
+                $request->setParameter("format", "email" );	
+                $request->setParameter("idactivo", $idactivo );
+                $request->setParameter("idman", $idman );	
+                $request->setParameter("respuesta", "no" );	
+                $texto.= sfContext::getInstance()->getController()->getPresentationFor( 'inventory', 'emailMantenimiento');
+
+                $email->setCaBodyhtml( $texto );
+                $email->addTo($mantenimiento->getUsuario()->getManager()->getCaEmail());
+
+                foreach( $logins as $login ){
+                    $usuario = Doctrine::getTable("Usuario")->find( $login );
+                    $email->addCc( $usuario->getCaEmail() );
+                }
+
+                $this->setLayout("none");
+
+                $email->save();
+                $this->redirect("homepage");
+            }
+            
+        }
     }
 
     /**
@@ -411,7 +527,7 @@ class inventoryActions extends sfActions {
      */
     public function executeVerSeguimientos(sfWebRequest $request) {
 
-        $this->nivel = $this->getNivel();
+        //$this->nivel = $this->getNivel();
         $idactivo = $request->getParameter("idactivo");
         $this->forward404Unless($idactivo);
 
@@ -420,6 +536,35 @@ class inventoryActions extends sfActions {
                 ->addWhere("s.ca_idactivo = ? ", $idactivo)
                 ->addOrderBy("s.ca_fchcreado ASC")
                 ->execute();
+        
+        $this->mantenimientos = Doctrine::getTable("InvMantenimiento")
+                ->createQuery("m")
+                ->addWhere("m.ca_idactivo = ? ", $idactivo)
+                ->addOrderBy("m.ca_fchcreado ASC")
+                ->execute();
+    }
+    
+    public function executeEmailMantenimiento(sfWebRequest $request) {
+
+        //$this->nivel = $this->getNivel();
+        $idactivo = $request->getParameter("idactivo");
+        $this->forward404Unless($idactivo);
+        $respuesta = $request->getParameter("respuesta");
+        $idman = $request->getParameter("idman");
+        
+        $user = $this->getUser();
+        $this->user = $user;
+        $this->usuario = Doctrine::getTable("Usuario")->find($user);
+        
+        $this->respuesta = $respuesta;
+        $this->idactivo = $idactivo;
+        
+        $this->mantenimientos = Doctrine::getTable("InvMantenimiento")
+                ->createQuery("m")
+                ->addWhere("m.ca_idactivo = ? ", $idactivo)
+                ->addOrderBy("m.ca_fchcreado DESC")
+                ->execute();
+        
     }
 
     /*
@@ -1093,7 +1238,64 @@ class inventoryActions extends sfActions {
             $this->asig = $q->execute();
         }
     }
+    
+    public function executeNotificarPrgmantenimiento(sfWebRequest $request) {
 
+        $this->setLayout("email");
+
+        $hoy = date("Y-m-d");
+        $mesprg = (int) date('m', strtotime($hoy));
+        $anoprg = date('Y', strtotime($hoy));
+        $mesLargo = Utils::mesLargo($mesprg);
+
+        $activos = Doctrine::getTable("InvActivo")
+                        ->createQuery("a")
+                        ->addWhere("EXTRACT(MONTH FROM a.ca_prgmantenimiento) = ?", $mesprg)
+                        ->addWhere("EXTRACT(YEAR FROM a.ca_prgmantenimiento) = ?", $anoprg)
+                        ->execute();
+
+        $email = new Email();
+        $email->setCaUsuenvio("Administrador");
+        $email->setCaTipo("Prg. Mantenimiento");
+        $email->setCaIdcaso($mesprg.$anoprg);
+        $email->setCaFrom("no-reply@coltrans.com.co");
+        $email->setCaFromname("Colsys Notificaciones");
+
+        foreach ($activos as $activo) {
+            $email->addTo($activo->getUsuario()->getCaEmail());
+        }
+
+        $email->setCaSubject("Programación de Mantenimiento: ".$mesLargo." de ".$anoprg);
+        $contenido = sfContext::getInstance()->getController()->getPresentationFor('inventory', 'emailPrgmantenimiento');
+        $email->setCaBodyhtml($contenido);
+        $email->save( $conn );
+        $email->send();
+        
+    }
+    public function executeEmailPrgmantenimiento(sfWebRequest $request) {
+
+        $this->setLayout("email");
+        
+        $hoy = date("Y-m-d");
+        $mesprg = (int) date('m', strtotime($hoy));
+        $this->anoprg = date('Y', strtotime($hoy));;
+        $this->mesLargo = Utils::mesLargo($mesprg);
+        
+        $this->activos = Doctrine::getTable("InvActivo")
+                        ->createQuery("a")
+                        ->addWhere("EXTRACT(MONTH FROM a.ca_prgmantenimiento) = ?", $mesprg)
+                        ->addWhere("EXTRACT(YEAR FROM a.ca_prgmantenimiento) = ?", $this->anoprg)
+                        ->orderBy("a.ca_prgmantenimiento ASC")
+                        ->execute();
+        
+        $q = Doctrine::getTable("InvMantenimientoEtapas")
+                ->createQuery("e");
+        $etapas = $q->execute();
+        $result = array();
+        
+        $this->etapas = $etapas;
+        
+    }
 }
 
 ?>

@@ -102,7 +102,15 @@ class inventoryComponents extends sfComponents
 	* @author: Andres Botero
 	*/
     public function executeNuevoSeguimientoWindow( ){
-
+        
+        $q = Doctrine::getTable("InvMantenimientoEtapas")
+                ->createQuery("e");
+        
+        $etapas = $q->execute();
+        $result = array();
+        
+        $this->etapas = $etapas;
+        
     }
 
     /*

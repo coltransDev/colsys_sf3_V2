@@ -31,6 +31,7 @@ NuevoSeguimientoWindow = function( config ) {
                                 id:"chkmantenimiento",
                                 title: 'Mantenimiento',
                                 collapsed: true,
+                                disabled: true,
                                 checkboxToggle:true,
                                 listeners:{
                                     collapse: function(p){
@@ -99,41 +100,18 @@ NuevoSeguimientoWindow = function( config ) {
                                                             bodyStyle:'padding-right:20px;background-color:#EEEEEE',
                                                             autoHeight:true,
                                                             items:[
+                                                                <?foreach ($etapas as $etapa){?>
                                                                 {
                                                                     xtype: 'checkbox',
-                                                                    fieldLabel: '',
-                                                                    boxLabel: 'Limpieza General',
-                                                                    name: 'limpieza'
+                                                                    boxLabel: '<?=$etapa->getCaEtapa()?>',
+                                                                    id: '<?=$etapa->getCaIdetapa()?>',
+                                                                    name: '<?=$etapa->getCaIdetapa()?>'
                                                                 },
+                                                                <?}?>
                                                                 {
-                                                                    xtype: 'checkbox',
-                                                                    fieldLabel: '',
-                                                                    boxLabel: 'Borrado de Temporales y Cookies',
-                                                                    name: 'borrado'
-                                                                },
-                                                                {
-                                                                    xtype: 'checkbox',
-                                                                    fieldLabel: '',
-                                                                    boxLabel: 'Revisión de software no autorizado',
-                                                                    name: 'revision'
-                                                                },
-                                                                {
-                                                                    xtype: 'checkbox',
-                                                                    fieldLabel: '',
-                                                                    boxLabel: 'Revisión de políticas y usuarios',
-                                                                    name: 'politicas'
-                                                                },
-                                                                {
-                                                                    xtype: 'checkbox',
-                                                                    fieldLabel: '',
-                                                                    boxLabel: 'Verificación de Backup (Si aplica)',
-                                                                    name: 'backup'
-                                                                },
-                                                                {
-                                                                    xtype: 'checkbox',
-                                                                    fieldLabel: '',
-                                                                    boxLabel: 'Verificación de Actualización Antivirus',
-                                                                    name: 'antivirus'
+                                                                    xtype:'hidden',
+                                                                    name: 'idactivo',
+                                                                    value: this.idactivo
                                                                 }]
                                                         }]
                                                    }]
@@ -153,7 +131,7 @@ NuevoSeguimientoWindow = function( config ) {
                                                     items:[
                                                         {
                                                             xtype:'htmleditor',
-                                                            name:'text',
+                                                            name:'text_mantenimiento',
                                                             height:200,
                                                             width: 400,
                                                             enableFont: false,
@@ -183,7 +161,7 @@ NuevoSeguimientoWindow = function( config ) {
                                 items:[
                                     {
                                         xtype:'htmleditor',
-                                        name:'text',
+                                        name:'text_seguimiento',
                                         title:'Seguimiento y/o Observaciones',
                                         hideLabel: true,
                                         height:200,
