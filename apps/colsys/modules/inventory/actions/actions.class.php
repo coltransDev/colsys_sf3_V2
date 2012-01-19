@@ -1247,11 +1247,20 @@ class inventoryActions extends sfActions {
         $mesprg = (int) date('m', strtotime($hoy));
         $anoprg = date('Y', strtotime($hoy));
         $mesLargo = Utils::mesLargo($mesprg);
+        
+        $usuarios = UsuarioTable::getCoordinadoresMantenimiento();
+        foreach( $usuarios as $usuario ){
+				$logins[]=$usuario->getCaLogin();
+        }
 
         $activos = Doctrine::getTable("InvActivo")
                         ->createQuery("a")
+                        ->innerJoin("a.Usuario u")
+                        ->innerJoin("u.Sucursal s")
                         ->addWhere("EXTRACT(MONTH FROM a.ca_prgmantenimiento) = ?", $mesprg)
                         ->addWhere("EXTRACT(YEAR FROM a.ca_prgmantenimiento) = ?", $anoprg)
+                        ->addWhere("s.ca_nombre = ?", 'Bogotá D.C.')
+                        ->orderBy("a.ca_prgmantenimiento ASC")
                         ->execute();
 
         $email = new Email();
@@ -1260,16 +1269,22 @@ class inventoryActions extends sfActions {
         $email->setCaIdcaso($mesprg.$anoprg);
         $email->setCaFrom("no-reply@coltrans.com.co");
         $email->setCaFromname("Colsys Notificaciones");
-
+        
         foreach ($activos as $activo) {
             $email->addTo($activo->getUsuario()->getCaEmail());
+        }
+        
+        foreach( $logins as $login ){
+            $usuario = Doctrine::getTable("Usuario")->find( $login );
+            $email->addCc( $usuario->getCaEmail() );
         }
 
         $email->setCaSubject("Programación de Mantenimiento: ".$mesLargo." de ".$anoprg);
         $contenido = sfContext::getInstance()->getController()->getPresentationFor('inventory', 'emailPrgmantenimiento');
         $email->setCaBodyhtml($contenido);
-        $email->save( $conn );
+        $email->save();
         $email->send();
+        exit;
         
     }
     public function executeEmailPrgmantenimiento(sfWebRequest $request) {
@@ -1283,8 +1298,11 @@ class inventoryActions extends sfActions {
         
         $this->activos = Doctrine::getTable("InvActivo")
                         ->createQuery("a")
+                        ->innerJoin("a.Usuario u")
+                        ->innerJoin("u.Sucursal s")
                         ->addWhere("EXTRACT(MONTH FROM a.ca_prgmantenimiento) = ?", $mesprg)
                         ->addWhere("EXTRACT(YEAR FROM a.ca_prgmantenimiento) = ?", $this->anoprg)
+                        ->addWhere("s.ca_nombre = ?", 'Bogotá D.C.')
                         ->orderBy("a.ca_prgmantenimiento ASC")
                         ->execute();
         

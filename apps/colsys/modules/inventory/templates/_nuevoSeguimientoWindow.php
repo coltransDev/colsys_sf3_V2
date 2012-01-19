@@ -31,7 +31,6 @@ NuevoSeguimientoWindow = function( config ) {
                                 id:"chkmantenimiento",
                                 title: 'Mantenimiento',
                                 collapsed: true,
-                                disabled: true,
                                 checkboxToggle:true,
                                 listeners:{
                                     collapse: function(p){
