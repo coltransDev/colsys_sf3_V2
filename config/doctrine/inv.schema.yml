@@ -114,7 +114,7 @@ InvActivo:
     Sucursal:
       local: ca_idsucursal
       foreign: ca_idsucursal
-      type: one
+      type: one    
 
 
 
@@ -251,4 +251,81 @@ InvPrefijo:
     Sucursal:
       local: ca_idsucursal
       foreign: ca_idsucursal
+      type: one
+      
+InvMantenimiento:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: inv
+  tableName: inv.tb_mantenimientos
+  columns:
+    ca_idmantenimiento:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_idactivo: integer
+    ca_fchmantenimiento: date
+    ca_observaciones: text
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchfirma: date
+    ca_firma: string
+    ca_firmado: string
+  relations:
+    InvActivo:
+      local: ca_idactivo
+      foreign: ca_idactivo
+      type: one
+    Usuario:
+      local: ca_usucreado
+      foreign: ca_login
+      type: one
+    InvMantenimientoLabores:
+      local: ca_idmantenimiento
+      foreign: ca_idmantenimiento
+      type: many
+    UsuFirma:
+      local: ca_firma
+      foreign: ca_login
+      type: one
+      class: Usuario
+      
+InvMantenimientoEtapas:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: inv
+  tableName: inv.tb_mantenimientos_etapas
+  columns:
+    ca_idetapa:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_etapa: string
+    
+InvMantenimientoLabores:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: inv
+  tableName: inv.tb_mantenimientos_labores
+  columns:
+    ca_idmantenimiento:
+      type: integer
+      primary: true
+    ca_idetapa:
+      type: integer
+      primary: true
+  relations:
+    InvMantenimiento:
+      local: ca_idmantenimiento
+      foreign: ca_idmantenimiento
+      type: one
+    InvMantenimientoEtapas:
+      local: ca_idetapa
+      foreign: ca_idetapa
       type: one
