@@ -183,7 +183,7 @@ class ClienteTable extends Doctrine_Table {
             $fch_fin = date('Y-m-d', mktime(0, 0, 0, date('m') + 2, 0, date('Y')));
         }
 
-        $query = "select c.ca_idalterno, c.ca_digito, c.ca_compania, replace(c.ca_direccion,'|',' ') as ca_direccion, c.ca_oficina, c.ca_torre, c.ca_bloque, c.ca_interior, c.ca_localidad, c.ca_complemento, c.ca_telefonos, c.ca_fax, d.ca_ciudad, ";
+        $query = "select c.ca_idcliente, c.ca_idalterno, c.ca_digito, c.ca_compania, replace(c.ca_direccion,'|',' ') as ca_direccion, c.ca_oficina, c.ca_torre, c.ca_bloque, c.ca_interior, c.ca_localidad, c.ca_complemento, c.ca_telefonos, c.ca_fax, d.ca_ciudad, ";
         $query.= "ca_fchcircular, to_date(to_char(to_char(ca_fchcircular, 'YYYY')::int+1, '9999')||'-'||to_char(ca_fchcircular, 'MM')||'-'||to_char(ca_fchcircular, 'DD'),'YYYY-MM-DD') as ca_vnccircular, ct.ca_coltrans_std, cm.ca_colmas_std, c.ca_vendedor, u.ca_nombre, u.ca_sucursal from vi_clientes_reduc c ";
         $query.= "LEFT OUTER JOIN vi_usuarios u ON (c.ca_vendedor = u.ca_login) ";
         $query.= "LEFT OUTER JOIN tb_ciudades d ON (c.ca_idciudad = d.ca_idciudad) ";
