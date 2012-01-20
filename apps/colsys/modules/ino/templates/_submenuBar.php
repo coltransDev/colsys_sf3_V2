@@ -38,6 +38,12 @@ switch($action){
 		$button[$i]["image"]="22x22/edit.gif";
 		$button[$i]["link"]= "ino/formIno?modo=".$this->getRequestParameter("modo")."&idmaster=".$this->getRequestParameter("idmaster");
 		$i++;
+        
+        $button[$i]["name"]="Anular";
+		$button[$i]["tooltip"]="Anula esta referencia";
+		$button[$i]["image"]="22x22/cancel.gif";
+		$button[$i]["onClick"] = "anularReporte()";
+		$i++;
 		
 		break;
     case "verComprobante":
@@ -53,3 +59,34 @@ switch($action){
 
 
 ?>
+
+<script>
+    function anularReporte()
+    {
+        if(window.confirm("Realmente desea eliminar la referencia?"))
+        {
+            Ext.MessageBox.wait('Espere por favor', '---');
+            Ext.Ajax.request(
+            {
+                waitMsg: 'Guardando cambios...',
+                url: '<?= url_for("ino/anularReferencia") ?>',
+                params :	{
+                    idmaster:'<?= $this->getRequestParameter("idmaster") ?>'
+                },
+                failure:function(response,options){
+                    var res = Ext.util.JSON.decode( response.responseText );
+                    if(res.err)
+                        Ext.MessageBox.alert("Mensaje",'Se presento un error guardando por favor informe al Depto. de Sistemas<br>'+res.err);
+                    else
+                        Ext.MessageBox.alert("Mensaje",'Se produjo un error, vuelva a intentar o informe al Depto. de Sistema<br>'+res.texto);
+                },
+                success:function(response,options){
+                    var res = Ext.util.JSON.decode( response.responseText );
+                    Ext.MessageBox.alert("Mensaje",'Se guardo correctamente el reporte');
+                    //if(res.redirect)
+                        location.href="/reportesNeg/consultaReporte/id/"+res.idreporte+"/impoexpo/"+res.impoexpo+"/modo/"+res.trasnporte;
+                }
+            });
+        }
+    }
+</script>

@@ -1674,5 +1674,19 @@ class inoActions extends sfActions {
 
         $this->setTemplate("responseTemplate");
     }
+    
+    public function executeAnularReferencia(sfWebRequest $request) {
+
+        $master = Doctrine::getTable("InoMaster")->find( $this->getRequestParameter("idmaster") );
+        $master = new InoMaster();
+        
+        $master->setCaFchanulado(date('Y-m-d H:i:s'));
+        $master->setCaUsuanulado($this->getUser()->getUserId());
+        $master->save();
+        
+        $this->responseArray = array("success" => true);
+        
+    }
+    
 }
 
