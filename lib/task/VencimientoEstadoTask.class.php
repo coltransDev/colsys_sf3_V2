@@ -6,7 +6,7 @@ class VencimientoEstadoTask extends sfDoctrineBaseTask
   {
     $this->namespace        = 'colsys';
     $this->name             = 'vencimientoEstado';
-    $this->briefDescription = 'Cambia de Estado Clientes Activos y que tinene más de 1 año sin reportar negocios';
+    $this->briefDescription = 'Cambia de Estado Clientes Activos y que tiene más de 1 año sin reportar negocios';
     $this->detailedDescription = <<<EOF
 The [vencimientoEstado|INFO] task does things.
 Call it with:
