@@ -5,13 +5,13 @@ class CartaGarantiaClientesTask extends sfDoctrineBaseTask
   protected function configure()
   {
     $this->namespace        = 'colsys';
-    $this->name             = 'CartaGarantiaClientes';
+    $this->name             = 'cartaGarantiaClientes';
     $this->briefDescription = 'Genera Reporte Mensual de los Clientes que se les vence su Carta de Garantía';
     $this->detailedDescription = <<<EOF
-The [CartaGarantiaClientes|INFO] task does things.
+The [cartaGarantiaClientes|INFO] task does things.
 Call it with:
 
-  [php symfony CartaGarantiaClientes|INFO]
+  [php symfony cartaGarantiaClientes|INFO]
 EOF;
     // add arguments here, like the following:
     //$this->addArgument('application', sfCommandArgument::REQUIRED, 'The application name');
