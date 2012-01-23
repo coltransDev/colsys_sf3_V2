@@ -662,9 +662,12 @@ class clientesActions extends sfActions {
                 $this->getRequest()->setParameter("layout", "email");
 
                 $email->setCaSubject("Clientes Activos con Vencimiento de Carta de Garantía a : $inicio - $vendedor");
-                $email->setCaBodyhtml(sfContext::getInstance()->getController()->getPresentationFor('clientes', 'reporteCartaGarantia'));
-
-                $email->save();
+                
+                $bodyHtml = sfContext::getInstance()->getController()->getPresentationFor('clientes', 'reporteCartaGarantia');
+                if (strpos($bodyHtml, 'Reporte sin Registros') === false){
+                    $email->setCaBodyhtml($bodyHtml);
+                    $email->save();
+                }
             }
         } catch (Exception $e) {
             echo $e->getMessage()."\n\n".$e->getTraceAsString();
