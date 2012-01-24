@@ -465,8 +465,7 @@ class inventoryActions extends sfActions {
                 $email->addCc( $usuario->getCaEmail() );
             }
 
-            $this->setLayout("none");
-
+            
             $email->save();
 
             $texto = sfContext::getInstance()->getController()->getPresentationFor('inventory', 'verSeguimientos');
@@ -486,6 +485,10 @@ class inventoryActions extends sfActions {
             $seguimiento->setCaText(utf8_decode($textSeguimiento));
             $seguimiento->save();
             
+            
+            $this->responseArray = array("success" => true, "idactivo" => $idactivo);
+            $this->setTemplate("responseTemplate");
+                
             if($respuesta=="no"){
                 //$this->redirect("intranet");
                 $email = new Email();		
@@ -511,7 +514,7 @@ class inventoryActions extends sfActions {
                     $email->addCc( $usuario->getCaEmail() );
                 }
 
-                $this->setLayout("none");
+                
 
                 $email->save();
                 $this->redirect("homepage");
