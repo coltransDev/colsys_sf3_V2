@@ -81,10 +81,10 @@ switch($action){
                         Ext.MessageBox.alert("Mensaje",'Se produjo un error, vuelva a intentar o informe al Depto. de Sistema<br>'+res.texto);
                 },
                 success:function(response,options){
-                    var res = Ext.util.JSON.decode( response.responseText );
+                    //var res = Ext.util.JSON.decode( response.responseText );
                     Ext.MessageBox.alert("Mensaje",'Se guardo correctamente el reporte');
                     //if(res.redirect)
-                        location.href="/reportesNeg/consultaReporte/id/"+res.idreporte+"/impoexpo/"+res.impoexpo+"/modo/"+res.trasnporte;
+                        location.href="/ino/index/modo/<?=$this->getRequestParameter("modo")?>";
                 }
             });
         }

@@ -1602,8 +1602,6 @@ class inoActions extends sfActions {
         $this->responseArray = array("success" => true, "data" => $data);
         $this->setTemplate("responseTemplate");
     }
-    
-    
     /**
      *
      *
@@ -1622,7 +1620,6 @@ class inoActions extends sfActions {
         } catch (Exception $e) {
             $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
         }
-
 
         $this->setTemplate("responseTemplate");
     }
@@ -1671,22 +1668,17 @@ class inoActions extends sfActions {
             $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
         }
 
-
         $this->setTemplate("responseTemplate");
     }
     
     public function executeAnularReferencia(sfWebRequest $request) {
 
-        $master = Doctrine::getTable("InoMaster")->find( $this->getRequestParameter("idmaster") );
-        $master = new InoMaster();
+        $master = Doctrine::getTable("InoMaster")->find( $this->getRequestParameter("idmaster") );        
         
         $master->setCaFchanulado(date('Y-m-d H:i:s'));
         $master->setCaUsuanulado($this->getUser()->getUserId());
-        $master->save();
-        
+        $master->save();        
         $this->responseArray = array("success" => true);
-        
+        $this->setTemplate("responseTemplate");
     }
-    
 }
-
