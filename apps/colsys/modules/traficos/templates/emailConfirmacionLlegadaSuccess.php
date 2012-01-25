@@ -215,6 +215,15 @@ if( substr($inoMaestra->getcaReferencia(),0,1)=="4" ){
 <?
 }
 
+$cartaStd = $reporte->getCliente()->cartaGarantiaStd();
+if( $inoMaestra->getCaModalidad()=="FCL" and ($reporte->getIdsProveedor()->getIds()->getCaComodato() or $cartaStd['ca_stdcarta_gtia']  == 'Vigente'  ) ) {
+?>
+<br />
+<br />
+NOTA DE INSPECCION: Señor importador, favor una vez se realice la entrega fisica de la unidad REQUERIMOS nos envien INMEDIATAMENTE este documento para poderle dar cierre a su Contrato de Comodato.
+<br />
+<?
+}
 
 if( $status->getCaIdetapa()=="IMCPD" ) {
 ?>
