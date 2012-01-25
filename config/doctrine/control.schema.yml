@@ -41,11 +41,13 @@ Usuario:
     ca_usuactualizado: string
     ca_docidentidad: integer
     ca_nivestudios: string(20)
-    ca_estrato: smallint
-    ca_hojavida: text
+    ca_estrato: smallint    
     ca_donante: boolean
     ca_enfermedad: string(50)
     ca_alergico: string(50)
+    ca_cargoweb: string   
+    ca_profesion: string
+    ca_experiencia: string
   relations:
     AccesoUsuario:
       local: ca_login

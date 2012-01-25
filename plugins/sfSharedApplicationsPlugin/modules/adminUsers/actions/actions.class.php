@@ -23,7 +23,7 @@ class adminUsersActions extends sfActions {
     public function getNivel() {
 
         $app = sfContext::getInstance()->getConfiguration()->getApplication();
-        //   return 5;
+        return 1;
         switch ($app) {
             case "colsys":
                 $rutina = adminUsersActions::RUTINA_COLSYS;
@@ -100,7 +100,7 @@ class adminUsersActions extends sfActions {
                 break;
         }
         if (!($this->nivel == 0 and $request->getParameter("login") == $this->getUser()->getUserId())) {
-            if (!($this->nivel > 1)) {
+            if ( $this->nivel < 2 ) {
                 $this->forward("adminUsers", "noAccess");
             }
         }
@@ -164,7 +164,7 @@ class adminUsersActions extends sfActions {
             $this->jefes[$key]["j_ca_nombre"] = utf8_encode($this->jefes[$key]["j_ca_nombre"]);
         }
         
-        $this->hijos = Doctrine::getTable("Hijos")
+        /*$this->hijos = Doctrine::getTable("Hijos")
                         ->createQuery("h")
                         ->select('h.ca_login, h.ca_nombres, h.ca_fchnacimiento')
                         ->innerJoin('h.Usuario u')
@@ -175,7 +175,7 @@ class adminUsersActions extends sfActions {
 
         foreach ($this->hijos as $key => $val) {
             $this->hijos[$key]["h_ca_nombres"] = $this->hijos[$key]["h_ca_nombres"];
-        }
+        }*/
 
         $this->empresas = Doctrine::getTable("Empresa")
                         ->createQuery("e")
@@ -218,25 +218,72 @@ class adminUsersActions extends sfActions {
         //$this->manager = $this->manager->getManager();
         //$this->usuarios = $this->manager->getSubordinado();
         //$this->manager = $this->manager->getManager();
-
-
+       
+       
+        
         $response = sfContext::getInstance()->getResponse();
         $response->addJavaScript("tabpane/tabpane", 'last');
         $response->addStylesheet("tabpane/luna/tab", 'last');
         
-        $response->addJavaScript("yui/yahoo-dom-event/yahoo-dom-event.js", 'last');
-        $response->addJavaScript("yui/element/element-min.js", 'last');
-        //Needed for Menus, Buttons and Overlays used in the Toolbar
-        $response->addJavaScript("yui/container/container_core-min.js", 'last');
-        $response->addJavaScript("yui/menu/menu-min.js", 'last');
-        $response->addJavaScript("yui/button/button-min.js", 'last');
-        //Source file for Rich Text Editor
-        $response->addJavaScript("yui/editor/editor-min.js", 'last');
-        $response->addJavaScript("yui/connection/connection-min.js", 'last');
-        $response->addJavaScript("yui/logger/logger-min.js", 'last');
-        $response->addJavaScript("yui-image-uploader26.js", 'last');
-        $response->addStyleSheet("yui/assets/skins/sam/skin.css", 'last');
+        
     }
+    
+    /*
+     * Formulario de hoja de vida colmas web
+     */
+    public function executeFormColmas($request) {
+
+        $app = sfContext::getInstance()->getConfiguration()->getApplication();
+        $usuario = Doctrine::getTable("Usuario")->find($request->getParameter("login"));
+        $this->forward404Unless( $usuario );
+        $this->userinicio = sfContext::getInstance()->getUser();
+        $this->nivel = $this->getNivel();
+
+        
+        if ( $this->nivel !=1 ) {
+            $this->forward("adminUsers", "noAccess");
+        }
+        
+        
+        if( $request->isMethod("post") ){
+            
+            
+           
+            if ($request->getParameter("cargo_web")) {
+                $usuario->setCaCargoweb($request->getParameter("cargo_web"));
+            }else{
+                $usuario->setCaCargoweb( null );
+            }
+            
+            if ($request->getParameter("docidentidad")) {
+                $usuario->setCaDocidentidad($request->getParameter("docidentidad"));
+            }else{
+                $usuario->setCaDocidentidad( null );
+            }   
+                        
+            if ($request->getParameter("experiencia")) {
+                $usuario->setCaExperiencia($request->getParameter("experiencia"));
+            }else{
+                $usuario->setCaExperiencia( null );    
+            }
+            
+            if ($request->getParameter("profesion")) {
+                $usuario->setCaProfesion($request->getParameter("profesion"));
+            }else{
+                $usuario->setCaProfesion( null );    
+            }
+            
+            $usuario->save();
+            $this->redirect("adminUsers/viewUser?login=".$usuario->getCaLogin());
+        }
+        
+        $this->usuario = $usuario;
+        
+        $this->cargos_web = ParametroTable::retrieveByCaso("CU109");
+       
+    }
+    
+    
 
     public function executeIndex(sfWebRequest $request) {
         $app = sfContext::getInstance()->getConfiguration()->getApplication();
@@ -340,6 +387,8 @@ class adminUsersActions extends sfActions {
             $usuario->setPasswd($request->getParameter("passwd1"));
         }
         
+        
+        
         if( $this->nivel>=3 ){
             if ($request->getParameter("activo")) {
                 $usuario->setCaActivo(true);
@@ -396,6 +445,8 @@ class adminUsersActions extends sfActions {
         }
         
         
+        
+    
         if($this->nivel>0){
             if ($request->getParameter("cumpleanos")) {
                 $usuario->setCaCumpleanos($request->getParameter("cumpleanos"));
@@ -468,11 +519,7 @@ class adminUsersActions extends sfActions {
             }else{
                 $usuario->setCaAlergico(null);
             }
-            if ($request->getParameter("hojavida")) {
-                $usuario->setCaHojavida($request->getParameter("hojavida"));
-            }else{
-                $usuario->setCaHojavida( null );    
-            }
+            
         }
 
         if ($request->getParameter("telparticular")) {

@@ -6,7 +6,7 @@ $departamentos = $sf_data->getRaw("departamentos");
 $cargos = $sf_data->getRaw("cargos");
 $jefes = $sf_data->getRaw("jefes");
 $teloficinas = $sf_data->getRaw("teloficinas");
-$hijos = $sf_data->getRaw("hijos");
+//$hijos = $sf_data->getRaw("hijos");
 
 ?>
 <script language="javascript" type="text/javascript">
@@ -635,7 +635,7 @@ $hijos = $sf_data->getRaw("hijos");
                     <div class="tab-page">
                         <h2 class="tab">Familiar</h2>
 						<table width="100%" cellspacing="0"  class="tableList alignLeft">
-                            <tr class="row2" >
+<!--                            <tr class="row2" >
 								<td colspan="2">
 									<div align="left"> 
 										<b>Hijos</b><br />
@@ -644,9 +644,9 @@ $hijos = $sf_data->getRaw("hijos");
 									</div>
 								</td>
                                 
-                            </tr>
+                            </tr>-->
                             <?
-							foreach( $hijos as $hijo ){
+							/*foreach( $hijos as $hijo ){
                             ?>
                             <tr class="row0">
                                 
@@ -669,7 +669,8 @@ $hijos = $sf_data->getRaw("hijos");
                                 </td>
                             </tr>
                             <?
-                            }?>
+                            }*/
+                            ?>                             
                             <tr class="row2" >
 								<td colspan="2">
 									<div align="left">  
@@ -713,7 +714,7 @@ $hijos = $sf_data->getRaw("hijos");
 											<?
 											foreach( $parentescos as $parentesco ){
 											?>
-											<option value="<?=$parentesco->getCaValor()?>"<?=$usuario->getCaParentesco()==$parentesco->getCaValor()?'selected="selected"':''?> > <?=($parentesco->getCaValor())?></option>
+											<option value="<?=$parentesco->getCaValor()?>" <?=$usuario->getCaParentesco()==$parentesco->getCaValor()?'selected="selected"':''?> > <?=($parentesco->getCaValor())?></option>
 											<?
 											}
 											?>
@@ -723,26 +724,9 @@ $hijos = $sf_data->getRaw("hijos");
 							</tr>
                             
                          </table>
-                    </div>
-                    <div class="tab-page">
-                        <h2 class="tab">Hoja de Vida</h2>
-						<table width="100%" cellspacing="0"  class="tableList alignLeft">
-                            <tr>
-                                <div align="left">
-                                    <b>Ingrese un resumen de su curr&iacute;culum:</b>
-                                </div>
-                            </tr><br />
-                            <tr class="row0">
-                                <td>
-									<div class="yui-skin-sam">
-                        				<textarea id="hoja_vida" cols="50" rows="30" wrap="virtual" name="hojavida"><?=$usuario->getCaHojavida()?></textarea>
-									</div>
-								</td>
-							</tr>
-                         </table>
-                    </div>
+                    </div>                    
                     <?
-                    if($nivel>=1 ){
+                    if($nivel>=2 ){
                     ?>
                     <div class="tab-page">
 						<h2 class="tab">Sistemas</h2>
@@ -838,17 +822,16 @@ $hijos = $sf_data->getRaw("hijos");
 
 
 <script type="text/javascript">
-YAHOO.widget.Logger.enableBrowserConsole();
-var myEditor = new YAHOO.widget.Editor('hoja_vida', {
-	    height: '300px',
-	    width: '100%',
-        handleSubmit: true,
-
-	    dompath: true,
-	    animate: true
-	});
-    /*yuiImgUploader(myEditor, 'info', '<? //url_for("gestDocumental/uploadImage?folder=".$folder.DIRECTORY_SEPARATOR."Imagenes")?>','image');*/
-	myEditor.render();         
+    var editor = new Ext.form.HtmlEditor({
+        applyTo: "hoja_vida",
+        enableFont: false,
+        enableFontSize: false,
+        enableLinks:  false,
+        enableSourceEdit : false,
+        enableColors : false,
+        enableLists: false
+    });  
+       
 
 
 </script>

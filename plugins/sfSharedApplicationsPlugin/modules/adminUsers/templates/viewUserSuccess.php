@@ -4,9 +4,16 @@
             <td style="border:none; border-bottom: 1px solid #D0D0D0;text-align:left" <?if(($userinicio->getUserId()==$user->getCaLogin()) or $nivel>=1){?>colspan="3"<?}else{?>colspan="2"<?}?> scope="col">Perfil del usuario</td>
             <td></td>
                 <?
-                if(($userinicio->getUserId()==$user->getCaLogin()) or $nivel>=1 ){
+                if(($userinicio->getUserId()==$user->getCaLogin()) or $nivel>=2 ){
                 ?>
             <td width="5" style="border:none; border-bottom: 1px solid #D0D0D0;text-align:right" align="right" title="Editar"><?=link_to(image_tag("page_white_edit.png"),"adminUsers/formUsuario?login=".$user->getCaLogin())?></td>
+                <?
+                }
+                ?>
+                <?
+                if( $nivel==1 ){
+                ?>
+            <td width="5" style="border:none; border-bottom: 1px solid #D0D0D0;text-align:right" align="right" title="Editar"><?=link_to(image_tag("32x32/agt_web.png"),"adminUsers/formColmas?login=".$user->getCaLogin())?></td>
                 <?
                 }
                 ?>
