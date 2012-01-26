@@ -480,8 +480,10 @@ class pmActions extends sfActions {
             /*
              * Cambia el status
              */
-            $ticket->setCaStatus( $request->getParameter("status") ) ;
-            $ticket->save( $conn );
+            if( $request->getParameter("status")!==null ){
+                $ticket->setCaStatus( intval($request->getParameter("status")) ) ;
+                $ticket->save( $conn );
+            }
             
             $conn->commit();
             $request->setParameter("format", "");
