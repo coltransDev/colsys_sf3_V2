@@ -482,6 +482,18 @@ a.toolbar:active {
 	background-color:#CEFFCE !important;
 }
 
+.row_green{
+	background-color:#CEFFCE !important;
+}
+
+.row_purple{
+	background-color:#9999CC !important;	
+}
+
+.row_orange{
+	background-color:#FFCC66 !important;	
+}
+
 /*
 * Thumbnails
 */
@@ -644,6 +656,13 @@ a.toolbar:active {
     background: url('../images/fam/calendar_view_week.png') no-repeat 0 0 !important;
 }
 
+.arrow_left{
+    background: url('../images/fam/arrow_left.png') no-repeat 0 0 !important;
+}
+
+.arrow_right{
+    background: url('../images/fam/arrow_right.png') no-repeat 0 0 !important;
+}
 
 
 
@@ -662,8 +681,6 @@ a.toolbar:active {
 .new-tab {
     background: url('../images/16x16/new_tab.gif') no-repeat 0 0 !important;
 }
-
-
 
 
 
