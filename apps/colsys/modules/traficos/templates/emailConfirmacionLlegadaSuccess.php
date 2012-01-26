@@ -216,7 +216,7 @@ if( substr($inoMaestra->getcaReferencia(),0,1)=="4" ){
 }
 
 $cartaStd = $reporte->getCliente()->cartaGarantiaStd();
-if( $inoMaestra->getCaModalidad()=="FCL" and ($reporte->getIdsProveedor()->getIds()->getCaComodato() or $cartaStd['ca_stdcarta_gtia']  == 'Vigente'  ) ) {
+if( $inoMaestra->getCaModalidad()=="FCL" and ($reporte->getIdsProveedor()->getCaComodato() or $cartaStd['ca_stdcarta_gtia']  == 'Vigente'  ) ) {
 ?>
 <br />
 <br />
