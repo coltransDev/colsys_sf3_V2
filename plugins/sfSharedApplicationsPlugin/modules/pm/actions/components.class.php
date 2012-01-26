@@ -15,7 +15,9 @@ class pmComponents extends sfComponents
 	* @author: Andres Botero
 	*/
 	public function executeListaRespuestasTicket(){				
-
+        
+        $this->ticket = Doctrine::getTable("HdeskTicket")->find( $this->idticket );
+        
         $this->responses = Doctrine::getTable("HdeskResponse")
                            ->createQuery("r")
                            ->where("r.ca_idticket = ? ", $this->idticket )
@@ -31,6 +33,17 @@ class pmComponents extends sfComponents
                            ->addOrderBy("r.ca_createdat DESC")
                            ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)
                            ->execute();
+        
+        $parametros = ParametroTable::retrieveByCaso("CU110");
+        $status = array();
+        foreach( $parametros as $p ){
+            $status[ $p->getCaIdentificacion() ] = array("nombre"=>$p->getCaValor(), "color" => $p->getCaValor2());            
+        }
+        
+        $this->status_name = isset($status[ $this->ticket->getCaStatus() ])?utf8_encode($status[  $this->ticket->getCaStatus() ]["nombre"]):"";
+        
+        
+        
 	}
 
     /*
@@ -85,6 +98,9 @@ class pmComponents extends sfComponents
 
         $response->addJavaScript("extExtras/CheckColumn",'last');
         $response->addJavaScript("extExtras/GroupSummary",'last');
+        
+        
+        
     }
 
 
@@ -201,6 +217,15 @@ class pmComponents extends sfComponents
         }
 
         $this->reportedThroughtParams = ParametroTable::retrieveByCaso("CU094");
+        
+        
+        $this->status = array();
+        
+        $params = ParametroTable::retrieveByCaso("CU110");
+        foreach( $params as $p ){
+            $row  =array( "status"=>$p->getCaIdentificacion(), "valor"=>$p->getCaValor() );            
+            $this->status[] = $row;   
+        }
     }
 
 
@@ -222,6 +247,13 @@ class pmComponents extends sfComponents
         $this->data = array();
         foreach($parametros as $parametro){
             $this->data[]=array("texto"=>  utf8_encode($parametro->getCaValor()));
+        }
+        
+        $this->status = array();        
+        $params = ParametroTable::retrieveByCaso("CU110");
+        foreach( $params as $p ){
+            $row  =array( "status"=>$p->getCaIdentificacion(), "valor"=>$p->getCaValor() );            
+            $this->status[] = $row;   
         }
     }
 

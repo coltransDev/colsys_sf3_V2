@@ -70,8 +70,8 @@ class pmActions extends sfActions {
         $q->leftJoin("h.HdeskMilestone m");
         $q->leftJoin("h.NotTarea tar");
         $q->leftJoin("h.Usuario u");
-        $q->leftJoin("u.Sucursal s");
-
+        $q->leftJoin("u.Sucursal s");        
+        
         if ($request->getParameter("iddepartament")) {
 
             $q->addWhere("g.ca_iddepartament = ? ", $request->getParameter("iddepartament"));
@@ -128,6 +128,7 @@ class pmActions extends sfActions {
         $q->addOrderBy("h.ca_closedat");
         $q->addOrderBy("h.ca_opened ASC");
         
+        
         /*
          * Aplica restricciones de acuerdo al nivel de acceso.
          */
@@ -154,6 +155,13 @@ class pmActions extends sfActions {
         //$q->limit(400);
         $tickets = $q->execute();
 
+        $parametros = ParametroTable::retrieveByCaso("CU110");        
+        $status = array();
+        foreach( $parametros as $p ){
+            $status[ $p->getCaIdentificacion() ] = array("nombre"=>$p->getCaValor(), "color" => $p->getCaValor2());            
+        }
+                
+        
         foreach ($tickets as $key => $val) {
             $tickets[$key]["h_ca_action"] = $tickets[$key]["h_ca_closedat"]?"Cerrado":"Abierto";
             $tickets[$key]["g_ca_name"] = utf8_encode($tickets[$key]["g_ca_name"]);
@@ -164,6 +172,10 @@ class pmActions extends sfActions {
             $tickets[$key]["folder"] = base64_encode(HdeskProject::FOLDER . DIRECTORY_SEPARATOR . $tickets[$key]["h_ca_idticket"]);
             $tickets[$key]["contact"] = utf8_encode($tickets[$key]["s_ca_nombre"] . " " . $tickets[$key]["u_ca_extension"]);
             $tickets[$key]["u_ca_nombre"] = utf8_encode($tickets[$key]["u_ca_nombre"]);
+            $tickets[$key]["status_name"] = isset($status[ $tickets[$key]["h_ca_status"] ])?utf8_encode($status[ $tickets[$key]["h_ca_status"] ]["nombre"]):"";
+            $tickets[$key]["status_color"] = isset($status[ $tickets[$key]["h_ca_status"] ])?$status[ $tickets[$key]["h_ca_status"] ]["color"]:"";
+                        
+            
         }
 
         $this->responseArray = array("success" => true, "total"=>count($tickets), "root" => $tickets);
@@ -463,7 +475,14 @@ class pmActions extends sfActions {
             $email->save( $conn );
             //$email->send();
             //$this->ticket = $ticket;
-
+            
+            
+            /*
+             * Cambia el status
+             */
+            $ticket->setCaStatus( $request->getParameter("status") ) ;
+            $ticket->save( $conn );
+            
             $conn->commit();
             $request->setParameter("format", "");
             $texto = sfContext::getInstance()->getController()->getPresentationFor('pm', 'verRespuestas');
@@ -566,8 +585,8 @@ class pmActions extends sfActions {
                 $ticket->setCaAssignedto($request->getParameter("assignedto"));
             }
 
-            if ($request->getParameter("idmilestone")) {
-                $ticket->setCaIdmilestone($request->getParameter("idmilestone"));
+            if ($request->getParameter("status")!==null) {
+                $ticket->setCaStatus($request->getParameter("status"));
             }
 
             if ($request->getParameter("reportedby")) {
@@ -1335,7 +1354,17 @@ class pmActions extends sfActions {
         $data["type"] = $ticket->getCaType();
         $data["assignedto"] = $ticket->getCaAssignedto();
         $data["action"] = $ticket->getCaAction();
-        $data["idmilestone"] = $ticket->getCaIdmilestone();
+        $data["status"] = $ticket->getCaStatus();
+        
+        $parametros = ParametroTable::retrieveByCaso("CU110");
+        
+        $status = array();
+        foreach( $parametros as $p ){
+            $status[ $p->getCaIdentificacion() ] = array("nombre"=>$p->getCaValor(), "color" => $p->getCaValor2());            
+        }
+        $data["status_name"] = isset($status[ $ticket->getCaStatus() ])?utf8_encode($status[ $ticket->getCaStatus() ]["nombre"]):"";
+                
+        
         $data["percentage"] = $ticket->getCaPercentage();
         $data["folder"] = base64_encode($ticket->getDirectorioBase());
         $data["contact"] = utf8_encode($ticket->getUsuario() ? $ticket->getUsuario()->getSucursal()->getCaNombre() . " " . $ticket->getUsuario()->getCaExtension() : "");

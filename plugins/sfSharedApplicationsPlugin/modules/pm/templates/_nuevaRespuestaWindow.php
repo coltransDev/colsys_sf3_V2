@@ -8,7 +8,7 @@
 include_component("pm", "editarTicketPropiedadesPanel");
 
 $data = $sf_data->getRaw("data");
-    
+$status = $sf_data->getRaw("status");    
 ?>
 
 <script type="text/javascript">
@@ -16,7 +16,9 @@ NuevaRespuestaWindow = function( config ) {
     Ext.apply(this, config);
     this.ctxRecord = null;
     //alert( this.vencimiento+" "+this.respuesta  );
-
+    
+    this.dataStatus = <?=json_encode(array("root" => $status))?>;
+    
     this.combo = new Ext.form.ComboBox({
         fieldLabel: 'Mensaje',
         typeAhead: true,
@@ -101,7 +103,41 @@ NuevaRespuestaWindow = function( config ) {
                                 disabled: true,
                                 anchor:'100%',
                                 fieldLabel: "Observ. IDG"
-                            }
+                            },
+                            new Ext.form.ComboBox({
+                                fieldLabel: 'Status',
+                                typeAhead: true,
+                                forceSelection: true,
+                                triggerAction: 'all',
+                                emptyText:'',
+                                selectOnFocus: true,
+                                value: '',
+                                id: 'status_id',
+                                lazyRender: false,
+                                allowBlank: true,
+                                displayField: 'valor',
+                                valueField: 'status',
+                                hiddenName: 'status',
+                                listClass: 'x-combo-list-small',
+                                mode: 'local',
+
+                                store : new Ext.data.Store({                
+                                    autoLoad : true ,
+                                    proxy: new Ext.data.MemoryProxy( this.dataStatus ),
+                                    reader: new Ext.data.JsonReader(
+                                    {
+
+                                        root: 'root',
+                                        totalProperty: 'total',
+                                        successProperty: 'success'
+                                    },
+                                    Ext.data.Record.create([
+                                        {name: 'status'},
+                                        {name: 'valor'}
+                                    ])
+                                )
+                                })
+                            })
                         ]
                     })
 
@@ -134,7 +170,10 @@ NuevaRespuestaWindow = function( config ) {
         closeAction: 'close',
         buttons: this.buttons,
         items: this.subpanel,
-        tbar: [this.combo]
+        tbar: [this.combo],
+        listeners: {
+            afterrender: this.onAfterRender
+        }
     });
 
     
@@ -145,16 +184,7 @@ NuevaRespuestaWindow = function( config ) {
 Ext.extend(NuevaRespuestaWindow, Ext.Window, {
 
 
-    show : function(){
-        if(this.rendered){
-            //this.feedUrl.setValue('');
-        }
-
-        //this.grid.store.setBaseParam( "idproject", this.idproject);
-        //this.grid.store.load();
-
-        NuevaRespuestaWindow.superclass.show.apply(this, arguments);
-    },
+    
 
     enviarRespuesta: function(){
         var panel = Ext.getCmp("respuesta-ticket-panel");       
@@ -209,7 +239,13 @@ Ext.extend(NuevaRespuestaWindow, Ext.Window, {
         var res = panel.getForm().findField("respuesta").getValue();
         panel.getForm().findField("respuesta").setValue(res+"\n<br />"+record.data.texto);
         combo.setValue("");
+    },    
+    onAfterRender: function( cmp ){
+        Ext.getCmp("status_id").setRawValue(this.status_name);
+        Ext.getCmp("status_id").hiddenField.value = this.status;   
     }
+    
+    
 
 });
 

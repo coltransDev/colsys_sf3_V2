@@ -210,6 +210,13 @@ PanelTickets = function( config ){
         renderer: function(v){
             return (v?v:0)+"%";
         }
+      },
+      {
+        header: "Status",
+        dataIndex: 'status_name',
+        hideable: true,
+        width: 130,
+        sortable: true       
       }
 
       
@@ -242,7 +249,10 @@ PanelTickets = function( config ){
             {name: 'contact', type: 'string'},
             {name: 'readOnly', type: 'bool'},
             {name: 'starred', type: 'bool', mapping: 'h_ca_starred'},
-            {name: 'loginName', type: 'string', mapping: 'u_ca_nombre'}
+            {name: 'loginName', type: 'string', mapping: 'u_ca_nombre'},
+            {name: 'status', type: 'string', mapping: 'h_ca_status'},
+            {name: 'status_name', type: 'string', mapping: 'status_name'},
+            {name: 'status_color', type: 'string', mapping: 'status_color'}
             
     ]);
 
@@ -480,26 +490,17 @@ Ext.extend(PanelTickets, Ext.grid.GridPanel, {
         var color;
         if( record.data.action=="Cerrado" ){
             color = "blue";
-        }else{
-            if( record.data.tipo=="Defecto" ){
-                color = "pink";
-            }else{
-                if( record.data.respuesta ){
-                    switch( record.data.priority ){
-                        case "Media":
-                            color = "yellow";
-                            break;
-                        case "Alta":
-                            color = "pink";
-                            break;
-                        default:
-                            color = "";
-                            break;
-                    }
+        }else{            
+            if( record.data.respuesta ){
+                if( record.data.status_color ){
+                    color = record.data.status_color;
                 }else{
-                    color = "green";
-                }
-            }
+                    color = "";
+                }                    
+
+            }else{
+                color = "green";
+            }            
         }
         color = "row_"+color;
         return this.state[record.id] ? 'x-grid3-row-expanded '+color : 'x-grid3-row-collapsed '+color;

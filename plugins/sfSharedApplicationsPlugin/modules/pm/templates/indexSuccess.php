@@ -68,17 +68,19 @@ var buscarTicket = function(){
 }
 
 
-var newResponse = function( idticket , idresponse, vencimiento, respuesta, opener ){
+var newResponse = function( idticket , idresponse, vencimiento, respuesta, opener, status, status_name ){
     var win = Ext.getCmp("nueva-respuesta-ticket");
     if( win ){
         win.close();
     }
-
+    
     var win = new NuevaRespuestaWindow({idticket: idticket,
                                         idresponse: idresponse,
                                         vencimiento: vencimiento,
                                         respuesta: respuesta,
-                                        opener: opener
+                                        opener: opener,
+                                        status: status,
+                                        status_name: status_name
                                       });
     win.show();
 }

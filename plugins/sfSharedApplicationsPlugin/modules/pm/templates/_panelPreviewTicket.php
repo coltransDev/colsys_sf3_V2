@@ -251,6 +251,8 @@ Ext.extend(PanelPreviewTicket, Ext.TabPanel, {
         this.idticket = record.data.idticket;
         this.vencimiento = record.data.vencimiento;
         this.respuesta = record.data.respuesta;
+        this.status = record.data.status;
+        this.status_name = record.data.status_name;
 
         this.tpl.overwrite(this.preview.body, record.data);
 
@@ -332,8 +334,8 @@ Ext.extend(PanelPreviewTicket, Ext.TabPanel, {
     ,
     newResponse: function(){
         var idticket = this.idticket;
-
-        newResponse(idticket, null, this.vencimiento, this.respuesta, this.responses.id );
+        
+        newResponse(idticket, null, this.vencimiento, this.respuesta, this.responses.id, this.status, this.status_name );
     },
 
     editTicket: function(){

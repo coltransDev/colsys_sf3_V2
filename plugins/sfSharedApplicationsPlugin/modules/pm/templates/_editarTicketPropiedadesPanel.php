@@ -5,6 +5,9 @@
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
 $grupos = $sf_data->getRaw("grupos");
+$status = $sf_data->getRaw("status");
+
+
 ?>
 <script type="text/javascript">
     EditarTicketPropiedadesPanel = function( config ) {
@@ -12,7 +15,7 @@ $grupos = $sf_data->getRaw("grupos");
 
         this.dataDepartamentos = <?=json_encode(array("departamentos" => $sf_data->getRaw("departamentos")))?>;
 
-
+        this.dataStatus = <?=json_encode(array("root" => $status))?>;
 
         
         this.departamentos = new Ext.form.ComboBox({
@@ -138,7 +141,7 @@ $grupos = $sf_data->getRaw("grupos");
 
 
         this.milestones = new Ext.form.ComboBox({
-            fieldLabel: 'Milestone',
+            fieldLabel: 'Status',
             typeAhead: true,
             forceSelection: true,
             triggerAction: 'all',
@@ -148,16 +151,15 @@ $grupos = $sf_data->getRaw("grupos");
             id: 'milestone_id',
             lazyRender:true,
             allowBlank: true,
-            displayField: 'title',
-            valueField: 'idmilestone',
-            hiddenName: 'idmilestone',
+            displayField: 'valor',
+            valueField: 'status',
+            hiddenName: 'status',
             listClass: 'x-combo-list-small',
             mode: 'local',
 
-            store : new Ext.data.Store({
-                autoLoad : false ,
-                url: '<?=url_for("pm/datosMilestones")
-?>',
+            store : new Ext.data.Store({                
+                autoLoad : true ,
+                proxy: new Ext.data.MemoryProxy( this.dataStatus ),
                 reader: new Ext.data.JsonReader(
                 {
 
@@ -166,8 +168,8 @@ $grupos = $sf_data->getRaw("grupos");
                     successProperty: 'success'
                 },
                 Ext.data.Record.create([
-                    {name: 'idmilestone', mapping: 'h_ca_idmilestone'},
-                    {name: 'title', mapping: 'h_ca_title'}
+                    {name: 'status'},
+                    {name: 'valor'}
                 ])
             )
             })
@@ -543,8 +545,9 @@ $grupos = $sf_data->getRaw("grupos");
                         }
                         
                         Ext.getCmp('type_id').setValue( this.res.data.type );
-
-
+                                                
+                        Ext.getCmp("milestone_id").setRawValue(this.res.data.status_name);
+                        Ext.getCmp("milestone_id").hiddenField.value = this.res.data.status;
 
 
                         //

@@ -58,7 +58,7 @@ foreach( $responses as $response ){
         if( $format!="email"){
         ?>
         <br />
-        <div style="float:right;"><a href="#" onClick="newResponse(<?=$response->getCaIdticket()?>, <?=$response->getCaIdresponse()?> , null, '<?=$response->getCaCreatedat()?>', <?=isset($opener)&&$opener?"'".$opener."'":""?>)">Respuesta</a></div>
+        <div style="float:right;"><a href="#" onClick="newResponse(<?=$response->getCaIdticket()?>, <?=$response->getCaIdresponse()?> , null, '<?=$response->getCaCreatedat()?>', <?=isset($opener)&&$opener?"'".$opener."'":""?>, '<?=$ticket->getCaStatus()?>', '<?=$status_name?>')">Respuesta</a></div>
         <?
         }
         ?>
