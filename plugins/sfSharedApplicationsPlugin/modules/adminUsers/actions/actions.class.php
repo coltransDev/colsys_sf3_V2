@@ -23,7 +23,7 @@ class adminUsersActions extends sfActions {
     public function getNivel() {
 
         $app = sfContext::getInstance()->getConfiguration()->getApplication();
-        return 1;
+        //return 1;
         switch ($app) {
             case "colsys":
                 $rutina = adminUsersActions::RUTINA_COLSYS;
@@ -256,19 +256,24 @@ class adminUsersActions extends sfActions {
             }
             
             if ($request->getParameter("docidentidad")) {
-                $usuario->setCaDocidentidad($request->getParameter("docidentidad"));
+                $docidentidad = $request->getParameter("docidentidad");
+                $docidentidad =str_replace(".", "", $docidentidad);
+                $docidentidad =str_replace(",", "", $docidentidad);
+                $docidentidad =str_replace(" ", "", $docidentidad);
+                $docidentidad =str_replace("-", "", $docidentidad);
+                $usuario->setCaDocidentidad($docidentidad);
             }else{
                 $usuario->setCaDocidentidad( null );
             }   
                         
             if ($request->getParameter("experiencia")) {
-                $usuario->setCaExperiencia($request->getParameter("experiencia"));
+                $usuario->setCaExperiencia(strtoupper($request->getParameter("experiencia")));
             }else{
                 $usuario->setCaExperiencia( null );    
             }
             
             if ($request->getParameter("profesion")) {
-                $usuario->setCaProfesion($request->getParameter("profesion"));
+                $usuario->setCaProfesion(strtoupper($request->getParameter("profesion")));
             }else{
                 $usuario->setCaProfesion( null );    
             }
