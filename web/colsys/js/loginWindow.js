@@ -11,12 +11,13 @@ var checkLogin = function(){
     var fp = Ext.getCmp('login-form');
     if( fp.getForm().isValid() ){
         //ttransito = fp.getForm().findField("ttransito").getValue();
-        fp.getForm().submit({url:'/users/validateLogin',
+        fp.getForm().submit({
+            url:'/users/validateLogin',
             waitMsg:'Verificando...',
             // standardSubmit: false,
 
             success: function(form, action) {
-               if( action.result.success ){
+                if( action.result.success ){
                     if( action.result.login ){
                         document.getElementById("mask").style.display = 'none';
                         win.hide();
@@ -34,8 +35,8 @@ var checkLogin = function(){
                         Ext.Msg.alert('Failure', 'Ajax communication failed');
                         break;
                     case Ext.form.Action.SERVER_INVALID:
-                       Ext.Msg.alert('Failure', action.result.msg);
-               }
+                        Ext.Msg.alert('Failure', action.result.msg);
+                }
             }
 
 
@@ -47,7 +48,7 @@ var checkLogin = function(){
 
 }
 
- win = new Ext.Window({
+win = new Ext.Window({
     layout:'fit',
     width:350,
     height:150,
@@ -61,35 +62,36 @@ var checkLogin = function(){
     title: 'Colsys: Control de acceso',
 
     items: [
-        new Ext.form.FormPanel({
-            labelWidth: 75, // label settings here cascade unless overridden
-            frame:false,
+    new Ext.form.FormPanel({
+        labelWidth: 75, // label settings here cascade unless overridden
+        frame:false,
 
-            bodyStyle:'padding:15px 15px 15px 15px',
-            width: 200,
-            //defaults: {width: 230},
-            defaultType: 'textfield',
-            //bodyStyle: 'padding:10px;background-color:#fff',
-            id: 'login-form',
+        bodyStyle:'padding:15px 15px 15px 15px',
+        width: 200,
+        //defaults: {width: 230},
+        defaultType: 'textfield',
+        //bodyStyle: 'padding:10px;background-color:#fff',
+        id: 'login-form',
 
 
-            items: [{
-                    fieldLabel: 'Usuario',
-                    name: 'username',
-                    allowBlank:false
-                },{
-                    fieldLabel: 'Clave',
-                    name: 'passwd',
-                    inputType: 'password',
-                    allowBlank:false
-                }
-            ],
+        items: [{
+            fieldLabel: 'Usuario',
+            name: 'username',
+            allowBlank:false
+        },{
+            fieldLabel: 'Clave',
+            name: 'passwd',
+            inputType: 'password',
+            id: "passwdFld_loginForm",
+            allowBlank:false
+        }
+        ],
 
-            buttons: [{
-                text: 'Continuar',
-                handler: checkLogin
-            }]
-        })
+        buttons: [{
+            text: 'Continuar',
+            handler: checkLogin
+        }]
+    })
 
     ]
 
@@ -150,35 +152,67 @@ var getPageSize = function() {
 var checkAccess = function(){
 
     Ext.Ajax.request(
-        {
-            url: '/users/checkLogin',
-            //Solamente se envian los cambios
-            //params :	params,
+    {
+        url: '/users/checkLogin',
+        //Solamente se envian los cambios
+        //params :	params,
 
-            callback :function(options, success, response){
+        callback :function(options, success, response){
 
-                var res = Ext.util.JSON.decode( response.responseText );
-                if( res.success ){
-                    if( !res.login ){
-                        var pageSize = getPageSize();                       
+            var res = Ext.util.JSON.decode( response.responseText );
+            if( res.success ){
+                if( !res.login ){
+                    var pageSize = getPageSize();                       
                         
-                        document.getElementById("mask").style.display = 'inline';                        
-                        document.getElementById("mask").style.height = pageSize[1]+'px';
-                        win.show();
-                    }else{
-                        document.getElementById("mask").style.display = 'none';
-                        win.hide();
+                    document.getElementById("mask").style.display = 'inline';                        
+                    document.getElementById("mask").style.height = pageSize[1]+'px';
+                    Ext.getCmp("passwdFld_loginForm").setRawValue("");
+                    win.show();
+                }else{
+                    document.getElementById("mask").style.display = 'none';
+                    win.hide();
 
-                    }
                 }
+                if( res.timeLeft && res.timeLeft<=180 && res.timeLeft>120 ){
+                                            
+                    Ext.MessageBox.show({
+                        title: 'Atención!',
+                        msg: 'Su sesión se cerrara en menos de tres minutos por inactividad',
+                        buttons: Ext.MessageBox.OK,                           
+                        icon: Ext.MessageBox.WARNING
+                    });
+                        
+                }else{                 
+                    if( res.timeLeft && res.timeLeft<=120 && res.timeLeft>60 ){
+                        Ext.MessageBox.show({
+                            title: 'Atención!',
+                            msg: 'Su sesión se cerrara en menos de dos minutos por inactividad',
+                            buttons: Ext.MessageBox.OK,                           
+                            icon: Ext.MessageBox.WARNING
+                        });
+                    
+                    }else{
+                        if( res.timeLeft && res.timeLeft<=60 && res.timeLeft>0 ){
+                            Ext.MessageBox.show({
+                                title: 'Atención!',
+                                msg: 'Su sesión se cerrara en menos de un minutos por inactividad',
+                                buttons: Ext.MessageBox.OK,                           
+                                icon: Ext.MessageBox.ERROR
+                            });                        
+                        }
+                    }
+                }                        
+                    
             }
-         }
+        }
+    }
 
     );
-    window.setTimeout(checkAccess, 180000 );
-    //window.setTimeout(checkAccess, 3000 );
+    //Revisa el tiempo de sesión cada 2 minutos.
+    window.setTimeout(checkAccess, 120000 );
+    //window.setTimeout(checkAccess, 10000 );
 
 }
-//window.setTimeout(checkAccess, 3000 );
-window.setTimeout(checkAccess, 605000 );
+//window.setTimeout(checkAccess, 10000 );
+window.setTimeout(checkAccess, 1500000 );
 
