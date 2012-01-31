@@ -354,7 +354,8 @@ class usersActions extends sfActions
             $time = $cache->get($session_id."_lr", "");
 
             if( $time+sfConfig::get("app_session_maxinactive")>time() ){
-                $this->responseArray = array( "success"=>true, "login"=>true );
+                $timeLeft = $time+sfConfig::get("app_session_maxinactive")-time();
+                $this->responseArray = array( "success"=>true, "login"=>true, "timeLeft"=>$timeLeft );
             }else{
                 $this->responseArray = array( "success"=>true, "login"=>false );
             }
