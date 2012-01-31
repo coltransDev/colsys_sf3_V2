@@ -161,18 +161,7 @@ var checkAccess = function(){
 
             var res = Ext.util.JSON.decode( response.responseText );
             if( res.success ){
-                if( !res.login ){
-                    var pageSize = getPageSize();                       
-                        
-                    document.getElementById("mask").style.display = 'inline';                        
-                    document.getElementById("mask").style.height = pageSize[1]+'px';
-                    Ext.getCmp("passwdFld_loginForm").setRawValue("");
-                    win.show();
-                }else{
-                    document.getElementById("mask").style.display = 'none';
-                    win.hide();
-
-                }
+                var aboutToClose = false;
                 if( res.timeLeft && res.timeLeft<=180 && res.timeLeft>120 ){
                                             
                     Ext.MessageBox.show({
@@ -193,15 +182,24 @@ var checkAccess = function(){
                     
                     }else{
                         if( res.timeLeft && res.timeLeft<=60 && res.timeLeft>0 ){
-                            Ext.MessageBox.show({
-                                title: 'Atención!',
-                                msg: 'Su sesión se cerrara en menos de un minutos por inactividad',
-                                buttons: Ext.MessageBox.OK,                           
-                                icon: Ext.MessageBox.ERROR
-                            });                        
+                            aboutToClose = true;                        
                         }
                     }
-                }                        
+                } 
+                
+                
+                if( !res.login || aboutToClose ){
+                    var pageSize = getPageSize();                       
+                        
+                    document.getElementById("mask").style.display = 'inline';                        
+                    document.getElementById("mask").style.height = pageSize[1]+'px';
+                    Ext.getCmp("passwdFld_loginForm").setRawValue("");
+                    win.show();
+                }else{
+                    document.getElementById("mask").style.display = 'none';
+                    win.hide();
+
+                }
                     
             }
         }
@@ -214,5 +212,5 @@ var checkAccess = function(){
 
 }
 //window.setTimeout(checkAccess, 10000 );
-window.setTimeout(checkAccess, 1500000 );
+window.setTimeout(checkAccess, 1530000 );
 
