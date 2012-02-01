@@ -23,7 +23,7 @@ class adminUsersActions extends sfActions {
     public function getNivel() {
 
         $app = sfContext::getInstance()->getConfiguration()->getApplication();
-        //return 1;
+        return 1;
         switch ($app) {
             case "colsys":
                 $rutina = adminUsersActions::RUTINA_COLSYS;
@@ -277,6 +277,15 @@ class adminUsersActions extends sfActions {
             }else{
                 $usuario->setCaProfesion( null );    
             }
+            
+            if ($request->getParameter("hoja_vida")) {
+                $usuario->setCaHojaVida($request->getParameter("hoja_vida"));
+            }else{
+                $usuario->setCaHojaVida( null );    
+            }
+            
+            
+            
             
             $usuario->save();
             $this->redirect("adminUsers/viewUser?login=".$usuario->getCaLogin());

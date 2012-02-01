@@ -820,18 +820,3 @@ $teloficinas = $sf_data->getRaw("teloficinas");
     cambiarValores('<?=$usuario->getCaIdsucursal()?>','<?=$usuario->getCaDepartamento()?>','<?=$usuario->getCaCargo()?>','<?=$usuario->getCaManager()?>');
 </script>
 
-
-<script type="text/javascript">
-    var editor = new Ext.form.HtmlEditor({
-        applyTo: "hoja_vida",
-        enableFont: false,
-        enableFontSize: false,
-        enableLinks:  false,
-        enableSourceEdit : false,
-        enableColors : false,
-        enableLists: false
-    });  
-       
-
-
-</script>

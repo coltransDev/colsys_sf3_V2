@@ -60,6 +60,15 @@
             </td>
         </tr>
         <tr>
+            <td>
+                <div align="left">
+                    <b>Hoja de Vida</b>
+                    <br />
+                    <textarea name="hoja_vida" id="hoja_vida" cols="80" rows="50" /><?=$usuario->getCaHojaVida() ?></textarea>
+                </div>
+            </td>
+        </tr>
+        <tr>
             <td >
                 <div align="center">
                     <input type="submit" value="Guardar" class="button" />&nbsp;
@@ -71,7 +80,20 @@
 </div>
 </form>
 
-<script type="text/javascript">
+
   
+<script type="text/javascript">
+    var editor = new Ext.form.HtmlEditor({
+        applyTo: "hoja_vida",
+        enableFont: false,
+        enableFontSize: false,
+        enableLinks:  false,
+        enableSourceEdit : false,
+        enableColors : false,
+        enableLists: false
+    });  
+       
+
 
 </script>
+
