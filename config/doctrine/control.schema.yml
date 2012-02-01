@@ -48,6 +48,7 @@ Usuario:
     ca_cargoweb: string   
     ca_profesion: string
     ca_experiencia: string
+    ca_hoja_vida: string
   relations:
     AccesoUsuario:
       local: ca_login
