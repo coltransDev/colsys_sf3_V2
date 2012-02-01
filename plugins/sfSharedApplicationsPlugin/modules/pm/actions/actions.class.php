@@ -158,7 +158,7 @@ class pmActions extends sfActions {
         $parametros = ParametroTable::retrieveByCaso("CU110");        
         $status = array();
         foreach( $parametros as $p ){
-            $status[ $p->getCaIdentificacion() ] = array("nombre"=>$p->getCaValor(), "color" => $p->getCaValor2());            
+            $status[ $p->getCaIdentificacion() ] = array("nombre"=>utf8_encode($p->getCaValor()), "color" => $p->getCaValor2());            
         }
                 
         

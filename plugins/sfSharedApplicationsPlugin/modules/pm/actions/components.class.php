@@ -37,7 +37,7 @@ class pmComponents extends sfComponents
         $parametros = ParametroTable::retrieveByCaso("CU110");
         $status = array();
         foreach( $parametros as $p ){
-            $status[ $p->getCaIdentificacion() ] = array("nombre"=>$p->getCaValor(), "color" => $p->getCaValor2());            
+            $status[ $p->getCaIdentificacion() ] = array("nombre"=>utf8_encode($p->getCaValor()), "color" => $p->getCaValor2());            
         }
         
         $this->status_name = isset($status[ $this->ticket->getCaStatus() ])?utf8_encode($status[  $this->ticket->getCaStatus() ]["nombre"]):"";
@@ -223,7 +223,7 @@ class pmComponents extends sfComponents
         
         $params = ParametroTable::retrieveByCaso("CU110");
         foreach( $params as $p ){
-            $row  =array( "status"=>$p->getCaIdentificacion(), "valor"=>$p->getCaValor() );            
+            $row  =array( "status"=>utf8_encode($p->getCaIdentificacion()), "valor"=>$p->getCaValor() );            
             $this->status[] = $row;   
         }
     }
@@ -252,7 +252,7 @@ class pmComponents extends sfComponents
         $this->status = array();        
         $params = ParametroTable::retrieveByCaso("CU110");
         foreach( $params as $p ){
-            $row  =array( "status"=>$p->getCaIdentificacion(), "valor"=>$p->getCaValor() );            
+            $row  =array( "status"=>$p->getCaIdentificacion(), "valor"=>utf8_encode($p->getCaValor()) );            
             $this->status[] = $row;   
         }
     }
