@@ -23,7 +23,7 @@ class adminUsersActions extends sfActions {
     public function getNivel() {
 
         $app = sfContext::getInstance()->getConfiguration()->getApplication();
-        return 1;
+        //return 1;
         switch ($app) {
             case "colsys":
                 $rutina = adminUsersActions::RUTINA_COLSYS;

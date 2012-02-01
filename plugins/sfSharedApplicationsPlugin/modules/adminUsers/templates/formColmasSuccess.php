@@ -64,7 +64,7 @@
                 <div align="left">
                     <b>Hoja de Vida</b>
                     <br />
-                    <textarea name="hoja_vida" id="hoja_vida" cols="80" rows="50" /><?=$usuario->getCaHojaVida() ?></textarea>
+                    <textarea name="hoja_vida" id="hoja_vida" cols="80" rows="30" /><?=$usuario->getCaHojaVida() ?></textarea>
                 </div>
             </td>
         </tr>
