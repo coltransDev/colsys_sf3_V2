@@ -22,8 +22,8 @@ include_component('widgets', 'widgetSucursales');
             {
                 fieldLabel:'Cliente',
                 hiddenName: 'idcliente',
-                width: 330
-               
+                width: 330,
+               allowBlank: false
             }
         );
 
