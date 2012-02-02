@@ -94,6 +94,8 @@ $ticket = $sf_data->getRaw("ticket");
                                             <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Ticket # <?=$ticket->getCaIdticket().": ".$ticket->getCaTitle() ?></b></font><br />
                                             <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>&Aacute;rea:</b> <?=$ticket->getHdeskGroup()?$ticket->getHdeskGroup()->getCaName():""?></font><br />
                                             <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Reportado por:</b> <?=$ticket->getUsuario()?$ticket->getUsuario()->getCaNombre():$ticket->getCaLogin()?> <?=$ticket->getCaReportedby()?" por ".$ticket->getCaReportedby():""?></font><br />
+                                            <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Sucursal:</b> <?=$ticket->getUsuario()->getSucursal()->getCaNombre()?></font><br />
+                                            <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Extensi&oacute;n:</b> <?=$ticket->getUsuario()->getCaExtension()?></font><br />
                                             <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Fecha </b> <?=Utils::fechaMes($ticket->getCaOpened()) ?></font><br />
                                             <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Asignado a:</b> <?=$ticket->getAssignedTo()?$ticket->getAssignedTo():"Sin asignar"?></font><br />
                                             <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Tipo:</b> <?=$ticket->getCaType()?></font><br />
