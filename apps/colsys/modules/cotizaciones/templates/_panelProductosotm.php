@@ -481,6 +481,8 @@ Ext.extend(PanelProductosOtm, Ext.grid.EditorGridPanel, {
             changes['modalidad']=r.data.modalidad;
             changes['idequipo']=r.data.idequipo;
             changes['equipo']=r.data.equipo;
+            changes['aplica_tar']=r.data.aplica_tar;
+            changes['aplica_min']=r.data.aplica_min;
             r.set("inSave", true);
             //envia los datos al servidor
             Ext.Ajax.request(

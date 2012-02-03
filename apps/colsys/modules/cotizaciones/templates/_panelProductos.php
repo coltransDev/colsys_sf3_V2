@@ -428,7 +428,7 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
             if( !r.data.idequipo && r.data.modalidad =="FCL" && r.data.transporte=="<?=Constantes::TERRESTRE?>" )
             {
                alert('Por favor indique el equipo 1 del trayecto '+r.data.trayecto,'Alert');
-            }
+            }            
         }
         var numResponses = 0;
 
@@ -479,6 +479,9 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
             changes['idequipo']=r.data.idequipo;
             changes['equipo']=r.data.equipo;
             changes['idmoneda']=r.data.idmoneda;
+            changes['aplica_tar']=r.data.aplica_tar;
+            changes['aplica_min']=r.data.aplica_min;
+
             r.set("inSave", true);
 
             Ext.Ajax.request(

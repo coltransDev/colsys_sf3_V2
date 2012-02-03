@@ -806,6 +806,8 @@ Ext.extend(PanelRecargosCotizacion, Ext.grid.EditorGridPanel, {
                 changes['idconcepto']='9999'
                 changes['iditem']=r.data.idrecargo
                 changes['modalidad']=r.data.modalidad
+                changes['aplica_tar']=r.data.aplica_tar;
+                changes['aplica_min']=r.data.aplica_min;
 
 
 
