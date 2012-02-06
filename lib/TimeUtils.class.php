@@ -175,8 +175,62 @@ class TimeUtils{
             return $horas.":".substr(100+$minutos2,1,2).":".substr(100+$segundos2,1,2);
         }
     }
+    
+    public static function calcularEdad($fecha_nacimiento,$fecha_actual) {
+        
+        $array_nacimiento = explode ( "-", $fecha_nacimiento );
+        $array_actual = explode ( "-", $fecha_actual );
 
+        $anos =  $array_actual[0] - $array_nacimiento[0]; // calculamos años
+        $meses = $array_actual[1] - $array_nacimiento[1]; // calculamos meses
+        $dias =  $array_actual[2] - $array_nacimiento[2]; // calculamos días
 
+        //ajuste de posible negativo en $días
+        if ($dias < 0)
+        {
+            --$meses;
+
+            //ahora hay que sumar a $dias los dias que tiene el mes anterior de la fecha actual
+            switch ($array_actual[1]) {
+                   case 1:  $dias_mes_anterior=31; break;
+                   case 2:  $dias_mes_anterior=31; break;
+                   case 3:  $dias_mes_anterior=28; break;
+                   case 4:  $dias_mes_anterior=31; break;
+                   case 5:  $dias_mes_anterior=30; break;
+                   case 6:  $dias_mes_anterior=31; break;
+                   case 7:  $dias_mes_anterior=30; break;
+                   case 8:  $dias_mes_anterior=31; break;
+                   case 9:  $dias_mes_anterior=31; break;
+                   case 10: $dias_mes_anterior=30; break;
+                   case 11: $dias_mes_anterior=31; break;
+                   case 12: $dias_mes_anterior=30; break;
+            }
+
+            $dias=$dias + $dias_mes_anterior;
+        }
+
+        //ajuste de posible negativo en $meses
+        if ($meses < 0)
+        {
+            --$anos;
+            $meses=$meses + 12;
+        }
+
+        if($anos==1){
+            $edad = $anos.' año';
+        }elseif($anos>=1){
+            $edad = $anos.' años';
+        }elseif($anos==0 && $meses==1){
+            $edad = $meses.' mes';
+        }elseif($anos==0 && $meses>1){
+            $edad = $meses.' meses';
+        }elseif($anos==0 && $meses==0){
+            $edad = $dias.' días';
+        }
+        
+        return $edad;
+        
+    }
 
     /*
 	* Busca todos los dias festivos de un año en adelante
