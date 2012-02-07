@@ -133,8 +133,10 @@ class reporteExtComponents extends sfComponents
         {
             if($bodega2->getCaTipo()==$bodega2->getCaNombre() || $bodega2->getCaTipo()=="Entrega Urgente")
                 $hijo .=" / ".$bodega2->getCaTipo();
+            else if($reporte->getCaContinuacion()!="N/A")
+                $hijo .=" / ".(($bodega2->getCaNombre()!='N/A')?$bodega2->getCaNombre():"")." ".$bodega2->getCaTipo()." ".(($reporte->getCaContinuacion()!="N/A")? $reporte->getDestinoCont()->getCaCiudad()." - ".$reporte->getDestinoCont()->getTrafico()->getCaNombre():"");
             else
-                $hijo .=" / ".$bodega2->getCaTipo()." ".(($bodega2->getCaNombre()!='N/A')?$bodega2->getCaNombre():"")." ".(($reporte->getCaContinuacion()!="N/A")? $reporte->getDestinoCont()->getCaCiudad()." - ".$reporte->getDestinoCont()->getTrafico()->getCaNombre():"");
+                $hijo .=" / ".$bodega2->getCaTipo()." ".(($bodega2->getCaNombre()!='N/A')?$bodega2->getCaNombre():"");
         }
         
         /*
