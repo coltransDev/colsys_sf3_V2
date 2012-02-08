@@ -29,9 +29,7 @@ class inoMaritimoActions extends sfActions {
         
         
         $user = $this->getUser();
-        if( $user->getIdsucursal()=="BOG" || $user->getIdsucursal()=="PER"){
-        //    $this->forward("inoMaritimo", "formCostosNew");
-        }
+        $this->forward("inoMaritimo", "formCostosNew");
         
         $this->forward404Unless($request->getParameter("referencia"));
         $referencia = Doctrine::getTable("InoMaestraSea")->find($request->getParameter("referencia"));
