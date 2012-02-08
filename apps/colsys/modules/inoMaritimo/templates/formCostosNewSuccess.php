@@ -85,6 +85,12 @@
         }        
         echo $form['factura_ant']->render();
         
+        echo $form['idcosto_ant']->renderError(); 
+        if( $inoCosto ){                                     
+            $form->setDefault('idcosto_ant', $inoCosto->getCaIdcosto() );
+        }        
+        echo $form['idcosto_ant']->render();
+        
         echo $form['fchcreado']->renderError(); 
         if( $inoCosto ){                                     
             $form->setDefault('fchcreado', $inoCosto->getCaFchcreado() );

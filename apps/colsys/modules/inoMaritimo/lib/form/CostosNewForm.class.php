@@ -42,6 +42,7 @@ class CostosNewForm extends BaseForm{
         
         $widgets["fchcreado"] = new sfWidgetFormInputHidden();
         $widgets["factura_ant"] = new sfWidgetFormInputHidden();
+        $widgets["idcosto_ant"] = new sfWidgetFormInputHidden();
         $widgets["factura"] = new sfWidgetFormInputText(array(), array("size"=>15, "maxlength"=>15 ));
 		$widgets["fchfactura"] = new sfWidgetFormExtDate();
         $widgets['tcambio'] = new sfWidgetFormInputText(array(), array("size"=>9, "maxlength"=>9 , "onchange"=>"calc_neto()" ));
@@ -77,6 +78,7 @@ class CostosNewForm extends BaseForm{
         $validator['fchcreado'] = new sfValidatorString(array('required' => false));	
         
         $validator['factura_ant'] = new sfValidatorString(array('required' => false));	
+        $validator['idcosto_ant'] = new sfValidatorString(array('required' => false));	
         
         $validator['factura'] = new sfValidatorString(array('required' => true), 
 														array('required' => 'Requerido',
