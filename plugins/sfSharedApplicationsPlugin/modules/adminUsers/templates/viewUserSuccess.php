@@ -68,6 +68,7 @@
             <tr>
                 <td align="left">Fch. Cumplea&ntilde;os:</td><td align="left"><b><?=(Utils::getMonth(Utils::parseDate($user->getCaCumpleanos(), 'm'))."-".Utils::parseDate($user->getCaCumpleanos(), 'd'))?></b></td>
             </tr>
+            
             <?
             foreach( $addresses as $address ){
             ?>
@@ -76,8 +77,11 @@
             </tr>
             <?
             }
-            if( $user->getEsJefe( $userinicio->getUserId() ) or $userinicio->getUserId()==$user->getCaLogin() or $nivel>=1 ){
+            if( $user->getEsJefe( $userinicio->getUserId() ) or $userinicio->getUserId()==$user->getCaLogin() or $nivel>=2 ){
             ?>
+            <tr>
+                <td align="left">Nivel de estudios:</td><td align="left"><b><?=$user->getCaNivestudios()?></b></td>
+            </tr>
             <tr>
                 <td align="left">Fch. Ingreso:</td><td align="left"><b><?=(Utils::parseDate($user->getCa_Fchingreso(), 'Y-m-d'))?></b></td>
             </tr>

@@ -530,6 +530,7 @@ $teloficinas = $sf_data->getRaw("teloficinas");
                                 <td>
 									<div align="left">
 										<select name="nivestudio">
+                                            <option value="">Por favor seleccione una opci&oacute;n</option>
 											<?
 											foreach( $nivestudios as $nivestudio ){
 											?>
