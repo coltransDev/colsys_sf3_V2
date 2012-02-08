@@ -12,22 +12,22 @@ class UnicoCostoValidator extends sfValidatorBase
 	protected function doClean($values)
 	{			
         
-        if( !$values["fchcreado"] ){
-            $val = Doctrine::getTable("InoCostosSea")
-                      ->createQuery("c")
-                      ->select("count(*)")
-                      ->addWhere("c.ca_referencia = ?", $values["referencia"] )
-                      ->addWhere("c.ca_factura = ?", $values["factura"] )
-                      ->addWhere("c.ca_idcosto = ?", intval($values["idcosto"]) )
-                      ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)
-                      ->execute();
+
+        $val = Doctrine::getTable("InoCostosSea")
+                    ->createQuery("c")
+                    ->select("count(*)")
+                    ->addWhere("c.ca_referencia = ?", $values["referencia"] )
+                    ->addWhere("c.ca_factura = ?", $values["factura"] )
+                    ->addWhere("c.ca_idcosto = ?", intval($values["idcosto"]) )
+                    ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)
+                    ->execute();
 
 
 
-            if( $val>0 ){
-                throw new sfValidatorErrorSchema($this, array("factura" => new sfValidatorError($this, 'invalid')));	
-            }
+        if( $val>0 ){
+            throw new sfValidatorErrorSchema($this, array("factura" => new sfValidatorError($this, 'invalid')));	
         }
+        
         return $values;
 	}
 }
