@@ -12,8 +12,8 @@ class UnicoCostoValidator extends sfValidatorBase
 	protected function doClean($values)
 	{			
         
-
-        $val = Doctrine::getTable("InoCostosSea")
+        if( $values["idcosto"]!=$values["idcosto_ant"] || $values["factura"]!=$values["factura_ant"]  || !$values["fchcreado"] ){
+            $val = Doctrine::getTable("InoCostosSea")
                     ->createQuery("c")
                     ->select("count(*)")
                     ->addWhere("c.ca_referencia = ?", $values["referencia"] )
@@ -24,8 +24,9 @@ class UnicoCostoValidator extends sfValidatorBase
 
 
 
-        if( $val>0 ){
-            throw new sfValidatorErrorSchema($this, array("factura" => new sfValidatorError($this, 'invalid')));	
+            if( $val>0 ){
+                throw new sfValidatorErrorSchema($this, array("factura" => new sfValidatorError($this, 'invalid')));	
+            }
         }
         
         return $values;
