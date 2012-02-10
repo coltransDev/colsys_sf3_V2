@@ -152,6 +152,7 @@
             var node = e.target;
         
             var idcategoria = node.attributes.idcategoria;
+            var idsucursal = node.attributes.idsucursal;
             //alert( selectedRecord.data.idissue+" "+node.attributes.idcategoria );
 
             var grid = ddSource.grid;
@@ -169,7 +170,8 @@
                         params :	{
                             idactivo: idactivo,
                             idcategory: idcategoria,
-                            id: selectedRecord.id
+                            id: selectedRecord.id,
+                            idsucursal: idsucursal
                         },
 
                         //Ejecuta esta accion en caso de fallo

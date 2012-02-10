@@ -657,6 +657,7 @@ class inventoryActions extends sfActions {
     public function executeCambiarCategoria($request) {
         $idactivo = $request->getParameter("idactivo");
         $idcategory = $request->getParameter("idcategory");
+        $idsucursal = $request->getParameter("idsucursal");
 
         if ($idactivo) {
             $activo = Doctrine::getTable("InvActivo")->find($idactivo);
@@ -664,6 +665,7 @@ class inventoryActions extends sfActions {
 
             try {
                 $activo->setCaIdcategory($idcategory);
+                $activo->setCaIdsucursal($idsucursal);
                 $activo->stopBlaming();
                 $activo->save();
                 $this->responseArray = array("success" => true, "id" => $request->getParameter("id"));
