@@ -282,7 +282,7 @@ if (!isset($boton) and !isset($accion) and !isset($buscar)) {
                     $annos_mem.="'" . substr($i, -1) . "',";
                 }
                 $annos_mem = substr($annos_mem, 0, strlen($annos_mem) - 1);
-                $condicion = "substr(ca_referencia,15)::text in ($annos_mem) and ca_login like '$usuario' and ca_estado <> 'Abierto' and ca_observaciones <> 'Contenedores'";
+                $condicion = "substr(ca_referencia,15)::text in ($annos_mem) and ca_login like '$usuario' and ca_estado <> 'Abierto'"; // and ca_observaciones <> 'Contenedores'
 
                 if (!$rs->Open("select * from vi_inoingresos_sea where $condicion")) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
                     echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
