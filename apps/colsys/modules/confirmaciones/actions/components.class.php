@@ -18,7 +18,7 @@ class confirmacionesComponents extends sfComponents
 	{        
 		if( $this->modo=="otm" ){
 
-			$tipos = array('Zona Franca', 'Zona Aduanera','Depósito Aduanero', 'Depósito Privado', 'Industria Militar');
+			$tipos = array('Zona Franca', 'Zona Aduanera','Depósito Aduanero', 'Depósito Privado', 'Industria Militar','Zona Franca Bogota SA');
 
 			$this->bodegas = Doctrine::getTable("Bodega")
                                        ->createQuery("b")
