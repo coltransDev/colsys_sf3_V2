@@ -105,52 +105,7 @@ foreach( $mantenimientos as $mantenimiento ){
         .entry-date{
             float: right;
             color: #0464BB;
-        }
-        .button {
-
-            /*basico*/
-            width: 140px;  height: 30px;  color: #fff; background-color: #125182;
-            text-align: center;  font-size: 20px;  line-height: 50px;
-
-
-            /*gradiente*/
-            background: -webkit-gradient(linear, left top, left bottom, color-stop(0, #125182), color-stop(.5, #1269ab), color-stop(.51, #004375), to(#00345b));
-            background: -moz-linear-gradient(top, #125182, #1269ab 50%, #004375 51%, #00345b);  
-
-            /*bordes*/
-            -moz-border-radius: 30px;
-            -webkit-border-radius: 30px;
-            border-radius: 30px;
-
-            -moz-box-shadow:inset 0 0 10px #000000;
-            -webkit-box-shadow:inset 0 0 10px #000000;
-            box-shadow:inset 0 0 10px #000000;
-        }
-
-
-        .button p {
-            font-size: 20px;
-            line-height: 30px;
-            font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
-            font-weight: 300;
-            text-shadow: 0px 0px 3px #555;
-
-        }
-
-        a {
-            text-decoration: none;
-            color: fff;
-        }
-
-        .button:hover {
-            -moz-box-shadow:inset 0 0 50px #000000;
-            -webkit-box-shadow:inset 0 0 50px #000000;
-            box-shadow:inset 0 0 50px #000000;
-        }
-
-        .button p:hover {
-            text-shadow: 0px 0px 3px #888;
-        }
+        }        
     </style>
         <!-- GREY BORDER -->
         <table width="100%" border="0" cellspacing="15" cellpadding="0" bgcolor="#E1E1E1"><tr><td>
