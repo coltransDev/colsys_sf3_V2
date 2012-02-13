@@ -430,7 +430,7 @@ include_component("widgets", "widgetContactoCliente");
                         }
                         ,
                         {
-                            xtype: 'htmleditor',
+                            xtype: 'textarea',
                             fieldLabel: 'Mensaje adicional',
                             name: 'mensaje_comercial',
                             width: 600,
@@ -847,11 +847,9 @@ include_component("widgets", "widgetContactoCliente");
                         }
                         Ext.getCmp("agente").setValue(res.data.idagente);
                         $("#agente").attr("value",res.data.agente);
-                        
-                        
+
                         Ext.getCmp("sucursalagente").setValue(res.data.idsucursalagente);
                         $("#sucursalagente").attr("value",res.data.sucursalagente);
-                        
                         
                         for(i=0;i<<?=($nprov>0)?$nprov:0?>;i++)
                         {
@@ -863,7 +861,6 @@ include_component("widgets", "widgetContactoCliente");
                                 }
                             }
                         };
-
                     }
                 });
             }
