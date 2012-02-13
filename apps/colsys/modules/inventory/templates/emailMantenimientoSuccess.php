@@ -6,7 +6,8 @@ foreach( $mantenimientos as $mantenimiento ){
     if($mantenimiento&&$i==0){
         $activo = $mantenimiento->getInvActivo()->getCaIdentificador();
         $marca = $mantenimiento->getInvActivo()->getCaMarca();
-        $modelo = $mantenimiento->getInvActivo()->getCaModelo();
+            $modelo = $mantenimiento->getInvActivo()->getCaModelo();
+        $login_asig = $mantenimiento->getInvActivo()->getUsuario()->getCaLogin();
         $asignacion = $mantenimiento->getInvActivo()->getUsuario()->getCaNombre();
         $fchmantenimiento = Utils::fechaLarga($mantenimiento->getCaFchmantenimiento());
         $observaciones = str_replace("\n","<br />",$mantenimiento->getCaObservaciones());
@@ -176,85 +177,107 @@ foreach( $mantenimientos as $mantenimiento ){
                                                             </tr>
                                                         </table>
                                                     </div>
-                                                   
-                                                    
                                                    <?
                                                     }
                                                     if($respuesta=="si"){
-                                                        if($fchfirma == NULL){
-                                                            $mantenimiento->setCaFchfirma(date("Y-m-d"));
-                                                            $mantenimiento->setCaFirma($user);
-                                                            $mantenimiento->setCaFirmado("firmado");
-                                                            $mantenimiento->save();
+                                                        if($user==$login_asig){
+                                                            if($fchfirma == NULL){
+                                                                $mantenimiento->setCaFchfirma(date("Y-m-d"));
+                                                                $mantenimiento->setCaFirma($user);
+                                                                $mantenimiento->setCaFirmado("firmado");
+                                                                $mantenimiento->save();
                                                     ?>
-                                                        <div class="entry-yellow">
-                                                            <b>Firma Digital,<br /><br /><br />
-                                                            <font color="blue"><u><?=$usuario->getCaNombre()?></u></font></b><br />
-                                                            <font color="blue"><?=date('Y-m-d')?></font><br /><br />
-                                                            Damos por hecho que se ha realizado correctamente el Mantenimiento Preventivo y usted de encuentra conforme con esta labor. <br />
-                                                            Esta aceptación será valida como firma de Registro de mantenimiento.<br />
+                                                                <div class="entry-yellow">
+                                                                    <b>Firma Digital,<br /><br /><br />
+                                                                    <font color="blue"><u><?=$usuario->getCaNombre()?></u></font></b><br />
+                                                                    <font color="blue"><?=date('Y-m-d')?></font><br /><br />
+                                                                    Damos por hecho que se ha realizado correctamente el Mantenimiento Preventivo y usted de encuentra conforme con esta labor. <br />
+                                                                    Esta aceptación será valida como firma de Registro de mantenimiento.<br />
 
-                                                            Gracias.<br />
-                                                            Cordialmente: <br />
-                                                            DEPARTAMENTO DE SISTEMAS
-                                                        </div>
+                                                                    Gracias.<br />
+                                                                    Cordialmente: <br />
+                                                                    DEPARTAMENTO DE SISTEMAS
+                                                                </div>
                                                     <?
-                                                        }else{
+                                                            }else{
                                                     ?>
-                                                        <div class="entry-orange">
-                                                            Este documento ya fue firmado por <font color="blue"><u><?=$usuario->getCaNombre()?></u></font></b> , el día <?=$fchfirma?> <br />
-                                                            Cualquier requerimiento, por favor comunicarse con este usuario.
-                                                        </div>
+                                                                <div class="entry-orange">
+                                                                    Este documento ya fue firmado por <font color="blue"><u><?=$usuario->getCaNombre()?></u></font></b> , el día <?=$fchfirma?> <br />
+                                                                    Cualquier requerimiento, por favor comunicarse con este usuario.
+                                                                </div>
                                                     <?
+                                                            }
+                                                        }else{
+                                                    ?>        
+                                                            <div class="entry-red">
+                                                                <b>Error en la firma<br /><br /><br />
+
+                                                                Este documento solo puede ser firmado por la persona a la cuál está asignada la máquina.<br />
+
+                                                                Gracias.<br />
+                                                                Cordialmente: <br />
+                                                                DEPARTAMENTO DE SISTEMAS
+                                                            </div>
+                                                    <?              
                                                         }
                                                     }
                                                     if($respuesta=="no"){
-                                                        if($fchfirma == NULL){
-                                                            $mantenimiento->setCaFchfirma(date("Y-m-d"));
-                                                            $mantenimiento->setCaFirma($user);
-                                                            $mantenimiento->setCaFirmado("noaceptado");
-                                                            $mantenimiento->save();
-                                                        ?>
-                                                        <div class="entry-red">
-                                                            <b>ESTE DOCUMENTO NO HA SIDO FIRMADO</b> <br /><br />
+                                                        if($user==$login_asig){
+                                                            if($fchfirma == NULL){
+                                                                $mantenimiento->setCaFchfirma(date("Y-m-d"));
+                                                                $mantenimiento->setCaFirma($user);
+                                                                $mantenimiento->setCaFirmado("noaceptado");
+                                                                $mantenimiento->save();
+                                                    ?>
+                                                            <div class="entry-red">
+                                                                <b>ESTE DOCUMENTO NO HA SIDO FIRMADO</b> <br /><br />
 
-                                                            De acuerdo a su elección, por favor indiquenos las razones por las cuáles no está conforme con el mantenimiento realizado en su equipo. <br />
-                                                            Las tomaremos como referencia para mejorar el servicio y evaluaremos la opción de programar un nuevo mantenimiento.<br />
+                                                                De acuerdo a su elección, por favor indiquenos las razones por las cuáles no está conforme con el mantenimiento realizado en su equipo. <br />
+                                                                Las tomaremos como referencia para mejorar el servicio y evaluaremos la opción de programar un nuevo mantenimiento.<br />
 
-                                                            Gracias.<br /><br/>
-                                                            Cordialmente: <br /><br/>
-                                                            DEPARTAMENTO DE SISTEMAS<br>
-                                                        </div>
-                                                        <div class="entry-odd">
-                                                            <form action="<?=url_for("inventory/guardarSeguimiento?idactivo=$idactivo&chkseguimiento-checkbox=on&idman=$idman&respuesta=no")?>" method="post">
-                                                                <b>Observaciones Mantenimiento</b><br /><br /> 
-                                                                <textarea name="text_seguimiento" style="width:500px" rows="5">El mantenimiento no fue aceptado
-Razones:
-1. 
-                                                                </textarea><br />
-                                                                <input type="submit" value="Guardar" />
-                                                                </form>
-                                                        </div>
-                                                        
-                                                        
+                                                                Gracias.<br /><br/>
+                                                                Cordialmente: <br /><br/>
+                                                                DEPARTAMENTO DE SISTEMAS<br>
+                                                            </div>
+                                                            <div class="entry-odd">
+                                                                <form action="<?=url_for("inventory/guardarSeguimiento?idactivo=$idactivo&chkseguimiento-checkbox=on&idman=$idman&respuesta=no")?>" method="post">
+                                                                    <b>Observaciones Mantenimiento</b><br /><br /> 
+                                                                    <textarea name="text_seguimiento" style="width:500px" rows="5">El mantenimiento no fue aceptado
+    Razones:
+    1. 
+                                                                    </textarea><br />
+                                                                    <input type="submit" value="Guardar" />
+                                                                    </form>
+                                                            </div>
                                                     <?  
-                                                    
-                                                        }elseif($firmado=="firmado"){
+                                                            }elseif($firmado=="firmado"){
                                                     ?>    
-                                                      <div class="entry-orange">
-                                                            Este documento ya fue firmado por <font color="blue"><u><?=$usuario->getCaNombre()?></u></font></b> , el día <?=$fchfirma?> <br />
-                                                            Cualquier requerimiento, por favor comunicarse con este usuario.
-                                                        </div>
+                                                                <div class="entry-orange">
+                                                                    Este documento ya fue firmado por <font color="blue"><u><?=$usuario->getCaNombre()?></u></font></b> , el día <?=$fchfirma?> <br />
+                                                                    Cualquier requerimiento, por favor comunicarse con este usuario.
+                                                                </div>
                                                     <?    
-                                                        }elseif($firmado=="noaceptado"){
+                                                            }elseif($firmado=="noaceptado"){
                                                     ?>    
-                                                        <div class="entry-orange">
-                                                            Este documento NO FUE ACEPTADO por <font color="blue"><u><?=$usuario->getCaNombre()?></u></font></b> , el día <?=$fchfirma?> <br />
-                                                            La aceptación se deberá realizar sobre el próximo mantenimiento realizado.
-                                                        </div>
+                                                                <div class="entry-orange">
+                                                                    Este documento NO FUE ACEPTADO por <font color="blue"><u><?=$usuario->getCaNombre()?></u></font></b> , el día <?=$fchfirma?> <br />
+                                                                    La aceptación se deberá realizar sobre el próximo mantenimiento realizado.
+                                                                </div>
                                                     <?    
+                                                            }
+                                                        }else{
+                                                    ?>        
+                                                            <div class="entry-red">
+                                                                <b>Error en la firma<br /><br /><br />
+
+                                                                Este documento solo puede ser firmado por la persona a la cuál está asignada la máquina.<br />
+
+                                                                Gracias.<br />
+                                                                Cordialmente: <br />
+                                                                DEPARTAMENTO DE SISTEMAS
+                                                            </div>
+                                                    <?              
                                                         }
-                                                        
                                                     }
                                                     ?>
                                                         </div>
