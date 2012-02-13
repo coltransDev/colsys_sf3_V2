@@ -208,14 +208,14 @@ foreach( $mantenimientos as $mantenimiento ){
                                                         <table>
                                                             <tr>
                                                                 <td>
-                                                                    <div class="button">
-                                                                        <a href='https://localhost<?=url_for("/inventory/emailMantenimiento?idactivo=".$idactivo.'&respuesta=si')?>'><p>Acepto &#x270E; </p></a>
+                                                                    <div>
+                                                                        <a href='https://www.coltrans.com.co<?=url_for("inventory/emailMantenimiento?idactivo=".$idactivo.'&respuesta=si')?>'><font color="blue"><u><h2>Acepto</h2></u></font></a>
                                                                     </div>
                                                                 </td>
-                                                                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                                                <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
                                                                 <td>
-                                                                    <div class="button">
-                                                                        <a href='https://localhost<?=url_for("/inventory/emailMantenimiento?idactivo=".$idactivo.'&respuesta=no')?>'><p>No acepto &#x270E; </p></a>
+                                                                    <div>
+                                                                        <a href='https://www.coltrans.com.co<?=url_for("inventory/emailMantenimiento?idactivo=".$idactivo.'&respuesta=no')?>'><font color="blue"><u><h2>No acepto</h2></u></font></a>
                                                                     </div>
                                                                 </td>
                                                             </tr>
@@ -328,7 +328,7 @@ Razones:
     {
         
     }
-</script>l
+</script>
 </html>
 <?
     }
