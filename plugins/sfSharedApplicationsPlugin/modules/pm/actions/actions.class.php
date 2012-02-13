@@ -588,7 +588,7 @@ class pmActions extends sfActions {
             }
 
             if ($request->getParameter("status")!==null) {
-                $ticket->setCaStatus($request->getParameter("status"));
+                $ticket->setCaStatus(intval($request->getParameter("status")));
             }
 
             if ($request->getParameter("reportedby")) {
