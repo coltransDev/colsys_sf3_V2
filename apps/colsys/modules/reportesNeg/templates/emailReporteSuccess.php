@@ -15,7 +15,7 @@ $user = $sf_data->getRaw("user");
 <?
             if($tipo=="AG")
             {
-                $mensaje_comercial = $sf_data->getRaw("mensaje_comercial");
+                $mensaje_comercial = Utils::replace($sf_data->getRaw("mensaje_comercial"));
                 $reporte = $sf_data->getRaw("reporte");
                 $agente = $sf_data->getRaw("agente");
                 $trayecto = $sf_data->getRaw("trayecto");
