@@ -325,28 +325,44 @@ class cotizacionesActions extends sfActions {
      */
 
     public function executeGuardarAgentes() {
-        $cotizacion = Doctrine::getTable("Cotizacion")->find($this->getRequestParameter("idcotizacion"));
-        $this->forward404Unless($cotizacion);
-        $datosag = $this->getRequestParameter("datosag");
-        $this->forward404Unless($datosag !== null);
-        if ($datosag !== null) {
-            Doctrine_Query::create()
-                    ->delete()
-                    ->from("CotContactoAg ct")
-                    ->where("ct.ca_idcotizacion = ?", $cotizacion->getCaIdcotizacion())
-                    ->execute();
 
-            if ($datosag) {
-                $idcontactos = array_unique(explode("|", $datosag));
-                foreach ($idcontactos as $idcontacto) {
-                    $contactoAg = new CotContactoAg();
-                    $contactoAg->setCaIdcotizacion($cotizacion->getCaIdcotizacion());
-                    $contactoAg->setCaIdcontacto($idcontacto);
-                    $contactoAg->save();
+        try {
+            $cotizacion = Doctrine::getTable("Cotizacion")->find($this->getRequestParameter("idcotizacion"));
+            $this->forward404Unless($cotizacion);
+            $datosag = $this->getRequestParameter("datosag");
+            $this->forward404Unless($datosag !== null);
+            if ($datosag !== null) {
+
+                $conn = Doctrine::getTable("CotContactoAg")->getConnection();
+                $conn->beginTransaction();
+
+
+                $contactos = Doctrine_Query::create()
+                        ->select()
+                        ->from("CotContactoAg ct")
+                        ->where("ct.ca_idcotizacion = ?", $cotizacion->getCaIdcotizacion())
+                        ->execute();
+                foreach ($contactos as $contacto) {
+                    $contactos->delete($conn);
                 }
+
+
+                if ($datosag) {
+                    $idcontactos = array_unique(explode("|", $datosag));
+                    foreach ($idcontactos as $idcontacto) {
+                        $contactoAg = new CotContactoAg();
+                        $contactoAg->setCaIdcotizacion($cotizacion->getCaIdcotizacion());
+                        $contactoAg->setCaIdcontacto($idcontacto);
+                        $contactoAg->save($conn);
+                    }
+                }
+                $conn->commit();
+                $this->responseArray = array("success" => true);
             }
+        } catch (Exception $e) {            
+            $this->responseArray = array("success" => false, "errorInfo" => utf8_encode($e->getMessage()));
         }
-        $this->responseArray = array("success" => true);
+
         $this->setTemplate("responseTemplate");
     }
 
@@ -835,12 +851,7 @@ class cotizacionesActions extends sfActions {
                 $newContacto->setCaIdcotizacion($newCotizacion->getCaIdcotizacion());
                 $newContacto->save($conn);
             }
-            $tarifas = $cotizacion->getCotConceptoAduana();
-            foreach ($tarifas as $tarifa) {
-                $newTarifa = $tarifa->copy(false);
-                $newTarifa->setCaIdcotizacion($newCotizacion->getCaIdcotizacion());
-                $newTarifa->save($conn);
-            }
+
 
             $conn->commit();
         } catch (Exception $e) {
