@@ -343,7 +343,7 @@ class cotizacionesActions extends sfActions {
                         ->where("ct.ca_idcotizacion = ?", $cotizacion->getCaIdcotizacion())
                         ->execute();
                 foreach ($contactos as $contacto) {
-                    $contactos->delete($conn);
+                    $contacto->delete($conn);
                 }
 
 
