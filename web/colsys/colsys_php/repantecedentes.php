@@ -205,7 +205,7 @@ elseif (!isset($boton) and !isset($accion) and isset($traorigen)) {
         }
         
         $dif_mem = dateDiff($ent_opo,$rs->Value('ca_fchantecedentes'));
-        $back_col= (($dif_mem < 0)?" background: #FF0000":((!$dif_mem)?" background: #9999CC":(($rs->Value('ca_estado')=='Abierto')?" background: #CCCCCC":" background: #F0F0F0")));
+        $back_col= (($dif_mem > $rs->Value('ca_numdias'))?" background: #FF0000":((!$dif_mem)?" background: #9999CC":" background: #F0F0F0"));
         
         echo "<TR>";
         echo "  <TD Class=listar style='font-size: 9px;$back_col'>".$rs->Value('ca_referencia')." </TD>";
