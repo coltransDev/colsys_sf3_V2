@@ -180,7 +180,6 @@ elseif (!isset($boton) and !isset($accion) and isset($traorigen)) {
     $nom_tra = '';
     $sub_ref = '';
     while (!$rs->Eof() and !$rs->IsEmpty()) {                                                      // Lee la totalidad de los registros obtenidos en la instrucción Select
-        $back_col= ($rs->Value('ca_estado')=='Provisional')?" background: #CCCC99":(($rs->Value('ca_estado')=='Abierto')?" background: #CCCCCC":" ");
 
         if ($nom_tra != $rs->Value('ca_traorigen')) {
             echo "<TR>";
@@ -206,26 +205,22 @@ elseif (!isset($boton) and !isset($accion) and isset($traorigen)) {
         }
         
         $dif_mem = dateDiff($ent_opo,$rs->Value('ca_fchantecedentes'));
-        if ($dif_mem < 0){
-            $class = "negativo";
-        }else{
-            $class = "listar";
-        }
-
+        $back_col= (($dif_mem < 0)?" background: #FF0000":((!$dif_mem)?" background: #9999CC":(($rs->Value('ca_estado')=='Abierto')?" background: #CCCCCC":" background: #F0F0F0")));
+        
         echo "<TR>";
         echo "  <TD Class=listar style='font-size: 9px;$back_col'>".$rs->Value('ca_referencia')." </TD>";
         echo "  <TD Class=listar style='font-size: 9px;$back_col'>".$rs->Value('ca_ciuorigen')."</TD>";
-        echo "  <TD Class=$class style='font-size: 9px;$back_col'>".$rs->Value('ca_ciudestino')."</TD>";
-        echo "  <TD Class=$class style='font-size: 9px;$back_col'>".$rs->Value('ca_modalidad')."</TD>";
-        echo "  <TD Class=$class style='font-size: 9px;$back_col'>".$rs->Value('ca_idcliente')."</TD>";
-        echo "  <TD Class=$class style='font-size: 9px;$back_col'>".$rs->Value('ca_compania')."</TD>";
-        echo "  <TD Class=$class style='font-size: 9px;$back_col'>".$rs->Value('ca_consecutivo')."</TD>";
-        echo "  <TD Class=$class style='font-size: 9px;$back_col'>".$rs->Value('ca_hbls')."</TD>";
-        echo "  <TD Class=$class style='font-size: 9px;$back_col'>".$rs->Value('ca_sucursal')."</TD>";
-        echo "  <TD Class=$class style='font-size: 9px;$back_col'>".$rs->Value('ca_fchembarque')."</TD>";
-        echo "  <TD Class=$class style='font-size: 9px;$back_col'>".$ent_opo.$num_dia."</TD>";
-        echo "  <TD Class=$class style='font-size: 9px;$back_col'>".$rs->Value('ca_fchantecedentes')."</TD>";
-        echo "  <TD Class=$class style='font-size: 9px;$back_col'>".$dif_mem."</TD>";
+        echo "  <TD Class=listar style='font-size: 9px;$back_col'>".$rs->Value('ca_ciudestino')."</TD>";
+        echo "  <TD Class=listar style='font-size: 9px;$back_col'>".$rs->Value('ca_modalidad')."</TD>";
+        echo "  <TD Class=listar style='font-size: 9px;$back_col'>".$rs->Value('ca_idcliente')."</TD>";
+        echo "  <TD Class=listar style='font-size: 9px;$back_col'>".$rs->Value('ca_compania')."</TD>";
+        echo "  <TD Class=listar style='font-size: 9px;$back_col'>".$rs->Value('ca_consecutivo')."</TD>";
+        echo "  <TD Class=listar style='font-size: 9px;$back_col'>".$rs->Value('ca_hbls')."</TD>";
+        echo "  <TD Class=listar style='font-size: 9px;$back_col'>".$rs->Value('ca_sucursal')."</TD>";
+        echo "  <TD Class=listar style='font-size: 9px;$back_col'>".$rs->Value('ca_fchembarque')."</TD>";
+        echo "  <TD Class=valores style='font-size: 9px;$back_col'>".$ent_opo.$num_dia."</TD>";
+        echo "  <TD Class=listar style='font-size: 9px;$back_col'>".$rs->Value('ca_fchantecedentes')."</TD>";
+        echo "  <TD Class=valores style='font-size: 9px;$back_col'>".$dif_mem."</TD>";
         echo "</TR>";
         $rs->MoveNext();
     }
