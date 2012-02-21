@@ -66,7 +66,7 @@ class usersActions extends sfActions
                     $p = "";
                     $i=0;
                     foreach( $params as $key=>$val ){
-                        if( $i==0 ){
+                        if( $i++==0 ){
                             $p.="?";
                         }else{
                             $p.="&";
@@ -75,8 +75,8 @@ class usersActions extends sfActions
                         $p.=$key."=".$val;
                         $request->setParameter($key, $val);
                     }
-
-                    $url.= $p;
+                    
+                    $url.= $p;                   
                    
                 }else{
                     $url = "homepage/index";
