@@ -67,6 +67,17 @@ class Email extends BaseEmail
 		$logHeader.= "To: ".$this->getCaAddress()." >> ";
 		$logHeader.= "CC: ".$this->getCaCc()." >> ";
         
+        
+        if( !$this->getCaAddress() && !$this->getCaCc()){        
+            $user = Doctrine::getTable("Usuario")->find($this->getCaUsuenvio());
+            if( $user ){
+                $this->setCaAddress($user->getCaEmail());
+                Utils::writeLog( $logFile , "email sin destinatarios, se envia al creador" );
+            }else{
+                Utils::writeLog( $logFile , "email sin destinatarios, no se envia a nadie" );
+            }            
+        }
+        
 		$transport = Swift_SmtpTransport::newInstance(sfConfig::get("app_smtp_host"), sfConfig::get("app_smtp_port"));
         if( sfConfig::get("app_smtp_user") ){
             $transport->setUsername(sfConfig::get("app_smtp_user"))
