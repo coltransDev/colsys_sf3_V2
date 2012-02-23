@@ -8,14 +8,20 @@ $etapa = $sf_data->getRaw("etapa");
 <?
 $reporte = $status->getReporte();
 $cliente = $reporte->getCliente();
-
 ?>
 
-<div align="center"><h3><?=($etapa&&$etapa->getCaTitle())?$etapa->getCaTitle():"SEGUIMIENTO DE CARGA"?></h3></div>
+<div align="center"><h3><?=($etapa && $etapa->getCaTitle())?$etapa->getCaTitle():"SEGUIMIENTO DE CARGA"?></h3></div>
 
 <div align="left">
-	
 
+<?
+if($user->getSucursal()->getEmpresa()->getCaNombre()==sfConfig::get("app_branding_name1") && $reporte->getCaTransporte()==Constantes::MARITIMO && $status->getCaIdetapa()=="IMETA" )
+{
+?>
+<div style="float:right"><img src="https://www.coltrans.com.co/images/publicidad/mexico230212.jpg"/></div>
+<?
+}
+?>
 	Señores:<br />
 	<b>
 	<?=strtoupper($cliente->getCaCompania())?>
