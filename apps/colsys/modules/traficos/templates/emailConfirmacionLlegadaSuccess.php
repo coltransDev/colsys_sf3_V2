@@ -12,7 +12,7 @@ $cliente = $inoCliente->getCliente();
 
 <?
 
-if($user->getSucursal()->getEmpresa()->getCaNombre()==sfConfig::get("app_branding_name1") && $reporte->getCaTransporte()==Constantes::MARITIMO && $status->getCaIdetapa()=="IMETA" )
+if($user->getSucursal()->getEmpresa()->getCaNombre()==sfConfig::get("app_branding_name1") && $reporte->getCaTransporte()==Constantes::MARITIMO )
 {
 ?>
 <div style="float:right"><img src="https://www.coltrans.com.co/images/publicidad/mexico230212.jpg"/></div>
