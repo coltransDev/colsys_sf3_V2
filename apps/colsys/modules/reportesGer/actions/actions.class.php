@@ -90,6 +90,7 @@ class reportesGerActions extends sfActions {
 
         $this->idcliente = $request->getParameter("idcliente");
         $this->cliente = $request->getParameter("cliente");
+        $this->proyectos = ($request->getParameter("proyectos"))?TRUE:FALSE;
 
         if ($this->opcion) {
 
@@ -121,7 +122,11 @@ class reportesGerActions extends sfActions {
                 $where.=" and m.ca_destino='" . $this->iddestino . "'";
             if ($this->idlinea)
                 $where.=" and m.ca_idlinea='" . $this->idlinea . "'";
-
+            if (!$this->proyectos)
+                $where.=" and m.ca_modalidad NOT IN ('PROYECTOS','PARTICULARES') and m.ca_impoexpo <> 'OTM/DTA'";
+            else
+                $where.=" and m.ca_modalidad NOT IN ('PARTICULARES') and m.ca_impoexpo <> 'OTM/DTA'";
+            
             $joinreportes = "JOIN tb_reportes r ON c.ca_idreporte = r.ca_idreporte ";
             $joinclientes = "";
             if ($this->incoterms && count($this->incoterms) > 0) {
@@ -192,7 +197,7 @@ class reportesGerActions extends sfActions {
           WHERE eq.ca_referencia = m.ca_referencia AND eq.ca_idconcepto = tt.ca_idconcepto)
     ORDER BY m.ca_fchreferencia";
             $con = Doctrine_Manager::getInstance()->connection();
-            //echo $sql;
+            // echo $sql;
             $st = $con->execute($sql);
             $this->resul = $st->fetchAll();
         }
