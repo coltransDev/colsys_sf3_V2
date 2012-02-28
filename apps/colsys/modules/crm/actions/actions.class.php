@@ -50,6 +50,9 @@ class crmActions extends sfActions {
         try{
             $nivel = $this->getNivel();
             
+            
+            
+            
             $conn = Doctrine::getTable("Cliente")->getConnection();
             $conn->beginTransaction();
             
@@ -61,6 +64,10 @@ class crmActions extends sfActions {
                 $cliente = Doctrine::getTable("IdsCliente")->find( $request->getParameter("idcliente") );
                 if( !$cliente ){
                     $cliente = new IdsCliente();                    
+                }else{
+                    if( $nivel<2 && $cliente->getCaVendedor( )!= $this->getUser()->getUserId()){
+                        throw new Exception("Esta tratando de modificar un cliente de otro comercial. Este cliente se encuentra actualmente asignado a ".$cliente->getCaVendedor( ));
+                    }
                 }
                 
                 $prov = Doctrine::getTable("IdsProveedor")->find( $request->getParameter("idcliente") );
