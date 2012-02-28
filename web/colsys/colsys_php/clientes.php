@@ -832,12 +832,12 @@ require_once("menu.php");
              echo "</TR>";
              echo "  <TD Class=captura>Evento Antecesor:</TD>";
              echo "  <TD Class=mostrar><SELECT NAME='idantecedente'>";             // Llena el cuadro de lista con los valores de la tabla Transportistas
+             echo "  <OPTION VALUE=0>Ninguno - Seguimiento Nuevo</OPTION>";
              $tm->MoveFirst();
              while ( !$tm->Eof()) {
                 echo " <OPTION VALUE=".$tm->Value('ca_idevento').">".$tm->Value('ca_asunto')."</OPTION>";
                 $tm->MoveNext();
                 }
-             echo "  <OPTION VALUE=0>Evento Raiz</OPTION>";
              echo "</TABLE><BR>";
              $cadena = "?modalidad=N.i.t.\&criterio=$id";
              echo "<TABLE CELLSPACING=10>";
@@ -1597,11 +1597,55 @@ elseif (isset($accion)) {                                                      /
              break;
              }
         case 'Registrar': {                                                      // El Botón Guardar fue pulsado
-             if (!$rs->Open("insert into tb_evecliente (ca_idcliente, ca_fchevento, ca_tipo, ca_asunto, ca_detalle, ca_compromisos, ca_fchcompromiso, ca_idantecedente, ca_usuario) values($id, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$tipo', '".addslashes($asunto)."', '".addslashes($detalle)."', '".addslashes($compromisos)."', '$fchcompromiso', '$idantecedente', '$usuario')")) {
+             $fchEvento = date('Y-m-d H:i:s');
+             list($ano, $mes, $dia) = sscanf($fchcompromiso, "%d-%d-%d");
+             $fchVencimiento = date('Y-m-d H:i:s', mktime(23, 59, 59, $mes, $dia, $ano));
+             
+             if (!$rs->Open("insert into tb_evecliente (ca_idcliente, ca_fchevento, ca_tipo, ca_asunto, ca_detalle, ca_compromisos, ca_fchcompromiso, ca_idantecedente, ca_usuario) values($id, '$fchEvento', '$tipo', '".addslashes($asunto)."', '".addslashes($detalle)."', '".addslashes($compromisos)."', '$fchcompromiso', '$idantecedente', '$usuario')")) {
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                  //echo "<script>document.location.href = 'clientes.php';</script>";
                  exit;
                 }
+             
+             $tm =& DlRecordset::NewRecordset($conn);
+             if ($idantecedente != 0){
+                 
+                if (!$tm->Open("select ca_asunto, ca_fchevento from tb_evecliente where ca_idevento = $idantecedente")) {
+                    echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";  // Muestra el mensaje de error
+                    //echo "<script>document.location.href = 'clientes.php';</script>";
+                    exit;
+                    }
+                if (!$rs->Open("update notificaciones.tb_tareas set ca_fchterminada = '$fchEvento', ca_usuterminada = '$usuario' where ca_titulo = '".$tm->Value("ca_asunto")." - ".$tm->Value("ca_fchevento")."' and ca_fchcreado = '".$tm->Value("ca_fchevento")."'")) {
+                    echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
+                    //echo "<script>document.location.href = 'clientes.php';</script>";
+                    exit;
+                    }
+             }else{
+                if (!$tm->Open("select nextval('notificaciones.tb_tareas_id') as ca_idtarea")) {
+                    echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";  // Muestra el mensaje de error
+                    //echo "<script>document.location.href = 'clientes.php';</script>";
+                    exit;
+                    }
+                $idtarea = $tm->Value('ca_idtarea');
+
+                if (!$tm->Open("select ca_idlistatarea, ca_descripcion from notificaciones.tb_listatareas where ca_idlistatarea = 9")) {
+                    echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";  // Muestra el mensaje de error
+                    //echo "<script>document.location.href = 'clientes.php';</script>";
+                    exit;
+                    }
+
+                if (!$rs->Open("insert into notificaciones.tb_tareas (ca_idtarea, ca_idlistatarea, ca_url, ca_titulo, ca_texto, ca_fchvisible, ca_fchvencimiento, ca_fchcreado, ca_usucreado) values ($idtarea, ".$tm->Value('ca_idlistatarea').", '/colsys_php/clientes.php?modalidad=idcliente&criterio=$id', '$asunto - $fchEvento', '".$tm->Value('ca_descripcion')."', '$fchcompromiso', '$fchVencimiento', '$fchEvento', '$usuario')")) {
+                    echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
+                    //echo "<script>document.location.href = 'clientes.php';</script>";
+                    exit;
+                    }
+
+                if (!$rs->Open("insert into notificaciones.tb_tareas_asignaciones (ca_idtarea, ca_login) values ($idtarea, '$usuario')")) {
+                    echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
+                    //echo "<script>document.location.href = 'clientes.php';</script>";
+                    exit;
+                    }
+                 }
              break;
              }
         
