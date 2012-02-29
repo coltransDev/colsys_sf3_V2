@@ -52,15 +52,20 @@ class Ids extends BaseIds
         $rows  = Doctrine::getTable("IdsEvaluacion")
                 ->createQuery("ev")
                 ->innerJoin("ev.IdsEvaluacionxCriterio e")
-                ->select("ev.ca_ano,SUM(e.ca_valor*e.ca_ponderacion )/SUM(e.ca_ponderacion ) as calificacion")
+                ->select("ev.ca_ano, ev.ca_periodo, SUM(e.ca_valor*e.ca_ponderacion )/SUM(e.ca_ponderacion ) as calificacion")
                 ->addWhere("ev.ca_id = ?",$this->getCaId() )
                 ->addWhere("ev.ca_tipo like ?",'desempeno%' )
-                ->addGroupBy("ev.ca_ano")
-                ->addOrderBy("ev.ca_ano")
+                ->addGroupBy("ev.ca_ano, ev.ca_periodo")                
+                ->addOrderBy("ev.ca_ano, ev.ca_periodo")
                 ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
                 ->execute();
-        foreach( $rows as $row ){           
-            $result[$row["ev_ca_ano"]]=round($row["e_calificacion"], 1);
+        foreach( $rows as $row ){       
+            if( $row["ev_ca_periodo"] ){
+                $per = $row["ev_ca_periodo"];
+            }else{
+                $per = 0;
+            }
+            $result[$row["ev_ca_ano"]][ $per ]=round($row["e_calificacion"], 1);
         }
         return $result;
 

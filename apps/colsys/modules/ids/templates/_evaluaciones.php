@@ -23,9 +23,13 @@ $numYears = $actualYear-$initialYear+1;
 <table class="tableList " width="100%" border="1">
     <tr class="row0">
         <?
-        for( $year=$initialYear;$year<=$actualYear; $year++ ){
-        ?>
-        <td><div align="center"><?=$year?></div></td>
+        
+        $years = array();
+        $evals = $ids->getCalificaciones();
+        
+        foreach( $evals as $key=>$val ){ 
+        ?>            
+            <td <?=!isset($val[0])?"colspan='2'":""?>><div align="center"  > <?=$key?></div></td>
         <?
         }
         ?>
@@ -35,20 +39,28 @@ $numYears = $actualYear-$initialYear+1;
     </tr>
     <tr>
             <?
-            $evals = $ids->getCalificaciones();
+            
 
             $evaluacionAnt=null;
             $evaluacion=null;
-            for( $year=$initialYear;$year<=$actualYear; $year++ ){
+            foreach( $evals as $key=>$val ){                             
                 $evaluacionAnt = $evaluacion;
                 $evaluacion=null;
-                
-                if( isset( $evals[$year] )){
-                    $evaluacion = $evals[$year];
+                if( isset($val[0]) ){ 
+                    if( isset( $evals[$key] )){
+                        $evaluacion = $val[0];
+                    }
+                    ?>
+                    <td><div align="left"><?=$evaluacion?$evaluacion:"&nbsp;"?></div></td>
+                    <?
+                }else{
+                    $evaluacion = $val[2];
+                    ?>
+                    <td><div align="left"><?=$val[1]?$val[1]:"&nbsp;"?></div></td>
+                    <td><div align="left"><?=$val[2]?$val[2]:"&nbsp;"?></div></td>
+                    <?
                 }
-                ?>
-                <td><div align="left"><?=$evaluacion?$evaluacion:"&nbsp;"?></div></td>
-                <?
+                
             }
             ?>
             <td><div align="center"><?=$evaluacionAnt&&$evaluacionAnt<$evaluacion?"X":"&nbsp;"?></div></td>

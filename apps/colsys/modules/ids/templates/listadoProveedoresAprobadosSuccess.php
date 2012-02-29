@@ -5,10 +5,17 @@
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
 
-$initialYear = 2007;
+$initialYear = date("Y")-2;
 $actualYear = date("Y");
-$numYears = $actualYear-$initialYear+1;
+$numYears = 0;
 
+for( $year=$initialYear;$year<=$actualYear; $year++ ){
+    if( $year<2011 ){
+        $numYears++;
+    }else{
+        $numYears+=2;
+    }  
+}
 
 $totals = array();
 $counts = array();
@@ -32,9 +39,16 @@ $counts = array();
          <tr>
             <?
             for( $year=$initialYear;$year<=$actualYear; $year++ ){
-            ?>
-            <th><div align="center"><?=$year?></div></th>
-            <?
+                if( $year<2011 ){
+                    ?>
+                    <th><div align="center"><?=$year?></div></th>
+                    <?
+                }else{
+                    ?>
+                    <th><div align="center"><?=$year?>/1</div></th>
+                    <th><div align="center"><?=$year?>/2</div></th>
+                    <?
+                }
             }
             ?>
             <th><div align="center">+</div></th>
@@ -125,34 +139,73 @@ $counts = array();
             for( $year=$initialYear;$year<=$actualYear; $year++ ){
                 
                 $evaluacion = null;
-                if( isset( $evaluaciones[$year] )){
+                $evaluacion1 = null;
+                $evaluacion2 = null;
+              
+                if( isset( $evaluaciones[$year])){
 
-
-
-                    $evaluacion = $evaluaciones[$year];
+                    if( $year>=2011 ){
+                        $evaluacion1 = isset($evaluaciones[$year][1])?$evaluaciones[$year][1]:"";
+                        $evaluacion2 = isset($evaluaciones[$year][2])?$evaluaciones[$year][2]:"";
+                        
+                        if( !isset($totals[$year."_1"]) ){
+                            $totals[$year."_1"] = 0;
+                            $counts[$year."_1"] = 0;                            
+                        }
+                        if( !isset($totals[$year."_2"]) ){
+                            $totals[$year."_2"] = 0;
+                            $counts[$year."_2"] = 0;                            
+                        }
+                        
+                        $counts[$year."_1"]++;
+                        $counts[$year."_2"]++;
+                        
+                        $totals[$year."_1"]+= isset($evaluaciones[$year][1])?$evaluaciones[$year][1]:0;
+                        $totals[$year."_2"]+= isset($evaluaciones[$year][2])?$evaluaciones[$year][2]:0;
+                    }else{
+                        $evaluacion = isset($evaluaciones[$year][0])?$evaluaciones[$year][0]:"";
+                        
+                        if( !isset($totals[$year]) ){
+                            $totals[$year] = 0;
+                            $counts[$year] = 0;
+                        }
+                        
+                        $counts[$year]++;
+                        $totals[$year]+= $evaluacion;
+                    }
+                    
+                    
+                    
+                    /*
                     if(isset($evaluaciones[$year-1]) ){
                         $evaluacionAct = $evaluacion;
                         $evaluacionAnt = $evaluaciones[$year-1];
                     }else{
                         $evaluacionAct = null;
                         $evaluacionAnt = null;
-                    }
+                    }*/
+                    $evaluacionAct = null;
+                    $evaluacionAnt = null;
 
-                    if( !isset($totals[$year]) ){
-                        $totals[$year] = 0;
-                        $counts[$year] = 0;
-                    }
-                    $totals[$year]+= $evaluacion;
-                    $counts[$year]++;
+                    
+                   // 
+                    
                 }
 
                 if( !$evaluacion && $year!=$actualYear){
                     $evaluacion = "N/A";
                 }
 
+                if( $year>=2011 ){     
+                ?>
+                <td><div align="left"><?=$evaluacion1?$evaluacion1:"&nbsp;"?></div></td>
+                <td><div align="left"><?=$evaluacion2?$evaluacion2:"&nbsp;"?></div></td>
+                <?
+                }else{    
                 ?>
                 <td><div align="left"><?=$evaluacion?$evaluacion:"&nbsp;"?></div></td>
                 <?
+                }
             }
             ?>
             <td><div align="center"><?=$evaluacionAct&&$evaluacionAnt<$evaluacionAct?"X":"&nbsp;"?></div></td>
@@ -168,9 +221,16 @@ $counts = array();
             <td colspan="8"><b>Promedio</b></td>
             <?
             for( $year=$initialYear;$year<=$actualYear; $year++ ){
-            ?>
-            <td><div align="center"><b><?=isset($totals[$year])&&$counts[$year]>0?round($totals[$year]/$counts[$year],2):"&nbsp;"?></b></div></td>
-            <?
+                if( $year<2011){
+                    ?>
+                    <td><div align="center"><b><?=isset($totals[$year])&&$counts[$year]>0?round($totals[$year]/$counts[$year],2):"&nbsp;"?></b></div></td>
+                    <?
+                }else{
+                    ?>
+                    <td><div align="center"><b><?=isset($totals[$year."_1"])&&$counts[$year."_1"]>0?round($totals[$year."_1"]/$counts[$year."_1"],2):"&nbsp;"?></b></div></td>
+                    <td><div align="center"><b><?=isset($totals[$year."_2"])&&$counts[$year."_2"]>0?round($totals[$year."_2"]/$counts[$year."_2"],2):"&nbsp;"?></b></div></td>
+                    <?
+                }
             }
             ?>
             <td colspan="3">&nbsp;</td>
