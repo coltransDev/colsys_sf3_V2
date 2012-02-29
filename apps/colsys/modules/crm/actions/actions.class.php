@@ -65,7 +65,7 @@ class crmActions extends sfActions {
                 if( !$cliente ){
                     $cliente = new IdsCliente();                    
                 }else{
-                    if( $nivel<2 && $cliente->getCaVendedor( )!= $this->getUser()->getUserId()){
+                    if( $nivel<2 && $cliente->getCaVendedor( ) && $cliente->getCaVendedor( )!= $this->getUser()->getUserId()){
                         throw new Exception("Esta tratando de modificar un cliente de otro comercial. Este cliente se encuentra actualmente asignado a ".$cliente->getCaVendedor( ));
                     }
                 }
