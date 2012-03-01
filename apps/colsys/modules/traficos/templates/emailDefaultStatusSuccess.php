@@ -18,7 +18,7 @@ $cliente = $reporte->getCliente();
 if($user->getSucursal()->getEmpresa()->getCaNombre()==sfConfig::get("app_branding_name1") && $reporte->getCaTransporte()==Constantes::MARITIMO && ($status->getCaIdetapa()=="IMETA" || $status->getCaIdetapa()=="IMCPD") )
 {
 ?>
-<div style="float:right"><img src="https://www.coltrans.com.co/images/publicidad/mexico230212.jpg"/></div>
+<div style="float:right"><img src="https://www.coltrans.com.co/images/publicidad/peru010312.png"/></div>
 <?
 }
 ?>

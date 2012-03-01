@@ -7,15 +7,12 @@ $etapa = $sf_data->getRaw("etapa");
 $inoCliente = $reporte->getInoClientesSea();
 $inoMaestra = $inoCliente->getInoMaestraSea();
 $cliente = $inoCliente->getCliente();
-?>
 
-
-<?
 
 if($user->getSucursal()->getEmpresa()->getCaNombre()==sfConfig::get("app_branding_name1") && $reporte->getCaTransporte()==Constantes::MARITIMO )
 {
 ?>
-<div style="float:right"><img src="https://www.coltrans.com.co/images/publicidad/mexico230212.jpg"/></div>
+<div style="float:right"><img src="https://www.coltrans.com.co/images/publicidad/peru010312.png"/></div>
 <?
 }
 ?>
@@ -65,20 +62,19 @@ if ( $status->getCaIdetapa() == "IMCPD" ) { //confirmación de llegada
 		<td><?=$inoMaestra->getCaFchconfirmacion()?>
 			<br />
 			<b>Hora: </b>
-			<?=$inoMaestra->getCaHoraconfirmacion()?>		</td>
+			<?=$inoMaestra->getCaHoraconfirmacion()?></td>
 		<?
             if ( $inoMaestra->getCaFchdesconsolidacion() ) {
-
         ?>
 		<td><b>Desconsolidación:</b></td>
 		<td><?=$inoMaestra->getCaFchdesconsolidacion()?></td>
-		<?	  
-					} else {
-					?>
+		<?
+        } else {
+        ?>
 		<td width="3%" colspan="2">&nbsp;</td>
 		<?
-					}
-					?>
+        }
+        ?>
 	</tr>
 	<tr>
 		<td><b>No.Piezas:</b></td>
@@ -119,8 +115,7 @@ if ( $status->getCaIdetapa() == "IMCPD" ) { //confirmación de llegada
 	}	
 	
 	if( $inoMaestra->getCaModalidad()=="FCL" ){
-		$equipos = $inoMaestra->getInoEquiposSea();
-		
+		$equipos = $inoMaestra->getInoEquiposSea();		
 		if (count($equipos)> 0){
 		?>
 		<tr>
