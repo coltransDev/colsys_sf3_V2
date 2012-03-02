@@ -136,6 +136,7 @@ $counts = array();
             $evaluacionAnt=null;
             $evaluacionAct=null;
             $evaluacion = null;
+            $lastEval2 = null;
             for( $year=$initialYear;$year<=$actualYear; $year++ ){
                 
                 $evaluacion = null;
@@ -162,6 +163,19 @@ $counts = array();
                         
                         $totals[$year."_1"]+= isset($evaluaciones[$year][1])?$evaluaciones[$year][1]:0;
                         $totals[$year."_2"]+= isset($evaluaciones[$year][2])?$evaluaciones[$year][2]:0;
+                        
+                        if( $evaluacion1 && $evaluacion2 ){
+                            if( $evaluacion2 ){
+                                $evaluacionAnt = $evaluacion1;
+                                $evaluacionAct = $evaluacion2;
+                            }else{
+                                $evaluacionAnt = $lastEval2;
+                                $evaluacionAct = $evaluacion1;                                
+                            }
+                        }
+                                                
+                        $lastEval2 =$evaluacion2;
+                            
                     }else{
                         $evaluacion = isset($evaluaciones[$year][0])?$evaluaciones[$year][0]:"";
                         
@@ -172,24 +186,7 @@ $counts = array();
                         
                         $counts[$year]++;
                         $totals[$year]+= $evaluacion;
-                    }
-                    
-                    
-                    
-                    /*
-                    if(isset($evaluaciones[$year-1]) ){
-                        $evaluacionAct = $evaluacion;
-                        $evaluacionAnt = $evaluaciones[$year-1];
-                    }else{
-                        $evaluacionAct = null;
-                        $evaluacionAnt = null;
-                    }*/
-                    $evaluacionAct = null;
-                    $evaluacionAnt = null;
-
-                    
-                   // 
-                    
+                    }                    
                 }
 
                 if( !$evaluacion && $year!=$actualYear){
