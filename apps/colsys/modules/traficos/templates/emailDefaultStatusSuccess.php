@@ -9,29 +9,33 @@ $etapa = $sf_data->getRaw("etapa");
 $reporte = $status->getReporte();
 $cliente = $reporte->getCliente();
 ?>
-
 <div align="center"><h3><?=($etapa && $etapa->getCaTitle())?$etapa->getCaTitle():"SEGUIMIENTO DE CARGA"?></h3></div>
-
 <div align="left">
+<table width="100%" cellspacing="1"  class="tableList">
 
-<?
-if($user->getSucursal()->getEmpresa()->getCaNombre()==sfConfig::get("app_branding_name1") && $reporte->getCaTransporte()==Constantes::MARITIMO && ($status->getCaIdetapa()=="IMETA" || $status->getCaIdetapa()=="IMCPD") )
-{
-?>
-<div style="float:right"><img src="https://www.coltrans.com.co/images/publicidad/peru010312.png"/></div>
-<?
-}
-?>
+<tr><td>
+
 	Señores:<br />
 	<b>
 	<?=strtoupper($cliente->getCaCompania())?>
 	</b><br />
 	<br />
-	
 	<br />
 	<?=$status->getCaIntroduccion()?>
-	<br />
-	<br />
+</td>
+<?
+if($user->getSucursal()->getEmpresa()->getCaNombre()==sfConfig::get("app_branding_name1") && $reporte->getCaTransporte()==Constantes::MARITIMO && ($status->getCaIdetapa()=="IMETA" || $status->getCaIdetapa()=="IMCPD") )
+{
+?>
+<td width="320">
+<div style="float:right"><img src="https://www.coltrans.com.co/images/publicidad/peru010312.png"/></div>
+</td>
+<?
+}
+?>
+</table>
+<br />
+<br />
 	<table width="100%" cellspacing="0" border="1" class="tableList">
 	<tr>
 		<td width="13%"><b>Orden:</b></td>
@@ -59,7 +63,6 @@ if($user->getSucursal()->getEmpresa()->getCaNombre()==sfConfig::get("app_brandin
 		<td width="20%"><b><?=$reporte->getCaOrdenProv()?"Orden Proveedor":"&nbsp;"?></b></td>
 		<td width="22%"><?=$reporte->getCaOrdenProv()?$reporte->getCaOrdenProv():"&nbsp;"?></td>
 	</tr>
-	
 	<tr>
 		<td><b>Origen:</b></td>
 		<td width="13%"><?=$reporte->getOrigen()->getCaCiudad()?></td>
@@ -150,16 +153,13 @@ if($user->getSucursal()->getEmpresa()->getCaNombre()==sfConfig::get("app_brandin
     ?>
     <tr>
 		<td><b>Muelle</b></td>
-		<td colspan="2"><?=$muelle?></td>
-        
-        <td>&nbsp;</td>        
-        
+		<td colspan="2"><?=$muelle?></td>        
+        <td>&nbsp;</td>
         <td>&nbsp;</td>
         <td>&nbsp;</td>
 	</tr>
     <?
         }
-   
     }
     if($reporte->getCaImpoexpo()==Constantes::EXPO){
         $repexpo = $reporte->getRepexpo();
@@ -168,8 +168,7 @@ if($user->getSucursal()->getEmpresa()->getCaNombre()==sfConfig::get("app_brandin
     <tr>
 		<td><b>Inspección Fisica</b></td>
 		<td colspan="5"><?=$repexpo->getCaInspeccionFisica()?"Sí":"No"?></td>
-	</tr>    
-
+	</tr>
 	<?
         }
 
@@ -190,7 +189,6 @@ if($user->getSucursal()->getEmpresa()->getCaNombre()==sfConfig::get("app_brandin
         </tr>
         <?
         }
-
 	}
 	$bodega =  $status->getBodega();
 	if($bodega){
@@ -210,7 +208,7 @@ if($user->getSucursal()->getEmpresa()->getCaNombre()==sfConfig::get("app_brandin
 		</tr>
 	<?	
 	}
-	
+
 	if ( $reporte->getCaColmas()== "Sí" && $reporte->getCaImpoexpo()!=Constantes::EXPO) {
 	?>
 		<tr>
@@ -219,8 +217,7 @@ if($user->getSucursal()->getEmpresa()->getCaNombre()==sfConfig::get("app_brandin
 		</tr> 
 	<?	
 	}
-		
-	
+
 	if( $reporte->getCaModalidad()=="FCL" ){
 		if( $inoCliente ){		
 			$referencia = $inoCliente->getInoMaestraSea();
@@ -313,7 +310,6 @@ if($user->getSucursal()->getEmpresa()->getCaNombre()==sfConfig::get("app_brandin
 	</tr>
 	<?
 	}
-
 ?>
 </table>
 <br />
@@ -330,12 +326,10 @@ if( $reporte->getCaTransporte()==Constantes::AEREO && ($status->getCaIdetapa()==
 	){
 	echo $textos['mensajeAereo']."<br />";
 }
-	
 
 if( $status->getCaIdetapa()=="IMCCR" ){
 	echo $textos['mensajeReservaMaritimo']."<br />";
 }
-
 
 if( $status->getCaIdetapa()=="IMETA" ){
 	echo $textos['mensajeEmbarqueMaritimo'];
@@ -346,7 +340,6 @@ if( $status->getCaIdetapa()=="IMETA" ){
 }
 ?>
 
-
 <?
 //Ticket # 1853
 if($reporte->getCaTransporte()==Constantes::AEREO && ($status->getCaIdetapa()=="IACCR" || $status->getCaIdetapa()=="IACAD" || $status->getCaIdetapa()=="IACDE") ){
@@ -355,7 +348,6 @@ if($reporte->getCaTransporte()==Constantes::AEREO && ($status->getCaIdetapa()=="
 La fecha de llegada de la mercancía es un estimado ya que puede variar por decisión de la aerolínea. 
 <?
 }
-
 
 echo $status->getCaComentarios()?"<strong>NOTA</strong><br />".Utils::replace($status->getCaComentarios()):"";
 
@@ -366,7 +358,6 @@ Sr. Exportador, por favor pìdale a su cliente importador, que verifique que el p
 <?
 }
 
-
 if( $status->getCaIdetapa()=="IMCPD" ) {
 ?>
 IMPORTANTE: Favor tener en cuenta la entrada en vigencia de la Resolución No. 7408,  Declaracion  Anticipada. En caso de requerir certificación de fletes en forma anticipada informarnos por escrito y con el mayor gusto la suministraremos.
@@ -374,9 +365,6 @@ IMPORTANTE: Favor tener en cuenta la entrada en vigencia de la Resolución No. 74
 <?
 }
 ?>
-
-
-
 
 <br />
 Cualquier información adicional que ustedes requieran, con gusto le será suministrada.<br />
@@ -387,7 +375,6 @@ Cordial Saludo.<br />
 <?
 echo $user->getFirmaHTML();
 ?>
-	
-	
+
 </div>
 </div>

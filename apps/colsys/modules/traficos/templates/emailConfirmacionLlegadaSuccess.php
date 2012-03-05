@@ -7,33 +7,37 @@ $etapa = $sf_data->getRaw("etapa");
 $inoCliente = $reporte->getInoClientesSea();
 $inoMaestra = $inoCliente->getInoMaestraSea();
 $cliente = $inoCliente->getCliente();
-
-
-if($user->getSucursal()->getEmpresa()->getCaNombre()==sfConfig::get("app_branding_name1") && $reporte->getCaTransporte()==Constantes::MARITIMO )
-{
 ?>
-<div style="float:right"><img src="https://www.coltrans.com.co/images/publicidad/peru010312.png"/></div>
-<?
-}
-?>
+<div class="htmlContent">
+<table width="100%" cellspacing="1"  class="tableList">
 
+<tr><td>
 Señores:<br />
 <b>
 <?=strtoupper($cliente->getCaCompania())?>
 </b><br />
 <br />
 <?=Utils::replace($status->getCaIntroduccion());?>
+</td>
+<?
+if($user->getSucursal()->getEmpresa()->getCaNombre()==sfConfig::get("app_branding_name1") && $reporte->getCaTransporte()==Constantes::MARITIMO )
+{
+?>
+<td width="320">
+<div style="float:right"><img src="https://www.coltrans.com.co/images/publicidad/peru010312.png"/></div>
+</td>
+<?
+}
+?>
+</table>
 <br />
-
 
 <table width="100%" cellspacing="1" border="1" class="tableList">
 <?
 if ( $status->getCaIdetapa() == "IMCPD" ) { //confirmación de llegada
-?>
-	
-	<?
-					if ( $inoCliente->getCaNumorden() ) {
-					?>
+
+    if ( $inoCliente->getCaNumorden() ) {
+    ?>
 	<tr>
 		<td width="23%"><b>Orden:</b></td>
 		<td colspan="5"><?=$inoCliente->getCaNumorden()?></td>
@@ -255,3 +259,5 @@ Cordial Saludo.<br />
 <?
 echo $user->getFirmaHTML();
 ?>
+
+</div>
