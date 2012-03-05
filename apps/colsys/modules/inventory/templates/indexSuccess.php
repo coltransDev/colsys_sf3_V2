@@ -20,9 +20,10 @@ include_component("inventory", "nuevoSeguimientoWindow");
 include_component("widgets", "widgetUsuario");
 include_component("inventory", "widgetEquipo");
 include_component("inventory", "widgetProducto");
+
+include_component("inventory", "nuevaAnotacionWindow");
 ?>
 <script type="text/javascript">
-
 
 Ext.onReady(function(){
 
@@ -121,7 +122,12 @@ Ext.onReady(function(){
 });
 
 
-
+function mostrarAnotacion(idman,idact,autoriza,activ)
+    {
+       var win = new NuevaAnotacionWindow({idmantenimiento: idman,idactivo: idact, autorizafirma: autoriza, activo: activ});
+       win.show();    
+    }
+    
 </script>
 
 <!-- use class="x-hide-display" to prevent a brief flicker of the content -->

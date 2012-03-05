@@ -107,9 +107,12 @@ class inventoryComponents extends sfComponents
                 ->createQuery("e");
         
         $etapas = $q->execute();
-        $result = array();
         
         $this->etapas = $etapas;
+        
+    }
+    
+    public function executeNuevaAnotacionWindow(){
         
     }
 
