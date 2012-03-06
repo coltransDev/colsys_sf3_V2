@@ -1317,18 +1317,25 @@ class idsActions extends sfActions {
      */
 
     public function executeListadoProveedoresAprobados(sfWebRequest $request) {
-        $this->proveedores = Doctrine::getTable("IdsProveedor")
+         $q= Doctrine::getTable("IdsProveedor")
                 ->createQuery("p")
                 ->innerJoin("p.Ids i")
                 ->innerJoin("i.IdsSucursal s")
                 ->innerJoin("s.Ciudad c")
-                ->innerJoin("p.IdsTipo t")
-                ->where("p.ca_fchaprobado IS NOT NULL")
+                ->innerJoin("p.IdsTipo t")                
                 ->addWhere("p.ca_controladoporsig = true")
                 ->addOrderBy("t.ca_nombre ASC")
                 ->addOrderBy("p.ca_transporte ASC")
-                ->addOrderBy("i.ca_nombre ASC")
-                ->execute();
+                ->addOrderBy("i.ca_nombre ASC");
+         
+         $this->type= $request->getParameter("type");
+         
+         if( $this->type=="noaprob" ){
+             $q->where("p.ca_fchaprobado IS NULL");
+         }else{
+            $q->where("p.ca_fchaprobado IS NOT NULL");
+         }
+         $this->proveedores = $q->execute();
     }
 
     public function executeListadoProveedoresInactivos(sfWebRequest $request) {

@@ -81,6 +81,12 @@ if ($this->getRequestParameter("modo") == "prov" && $action != "listadoProveedor
     $button[$i]["image"] = "22x22/gohome.gif";
     $button[$i]["link"] = "ids/listadoProveedoresAprobados?modo=" . $this->getRequestParameter("modo");
     $i++;
+    
+    $button[$i]["name"] = "Prov. NO Aprobados ";
+    $button[$i]["tooltip"] = "Listado de proveedores no aprobados";
+    $button[$i]["image"] = "22x22/gohome.gif";
+    $button[$i]["link"] = "ids/listadoProveedoresAprobados?type=noaprob&modo=" . $this->getRequestParameter("modo");
+    $i++;
 
     $button[$i]["name"] = "Prov. Inactivos ";
     $button[$i]["tooltip"] = "Listado de proveedores inactivos";

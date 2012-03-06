@@ -235,5 +235,8 @@ $counts = array();
         </tr>
     </tbody>
 </table>
+    <div align="center">
+     Generado <?=Utils::fechaMes(date("Y-m-d H:i:s"))?>
+    </div>
 </div>
 
