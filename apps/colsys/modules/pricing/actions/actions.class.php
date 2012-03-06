@@ -174,7 +174,7 @@ class pricingActions extends sfActions {
 
             $trayectoStr.=$trayecto["p_ca_sigla"] ? $trayecto["p_ca_sigla"] : $trayecto["id_ca_nombre"];
             
-            if( $trayecto["p_ca_contrato_comodato"] ){
+            if( $trayecto["p_ca_contrato_comodato"] && $trayecto["t_ca_impoexpo"]==Constantes::IMPO ){
                 $trayectoStr.=" <span class='rojo'>(Requiere firma Comodato)</span>";
             }
             
@@ -1222,11 +1222,17 @@ class pricingActions extends sfActions {
 
         $this->data = array();
         $i = 0;
-
+        $flag = false;
         foreach ($recargos as $recargo) {
             
             if ($recargo->getCaFcheliminado()) {
                 continue;
+            }
+            
+            $aplicaciones = $recargo->getTipoRecargo()->getCaAplicaciones();
+            if( $recargo->getIdsProveedor()->getCaContratoComodato()  ){
+                $aplicaciones.=" <span class='rojo'>(Requiere firma Comodato)</span>";
+                $flag = true;
             }
             $row = array(
                 'id' => $i++,
@@ -1246,7 +1252,7 @@ class pricingActions extends sfActions {
                 'aplicacion_min' => utf8_encode($recargo->getCaAplicacionMin()),
                 'idmoneda' => $recargo->getCaIdmoneda(),
                 'observaciones' => utf8_encode($recargo->getCaObservaciones()),
-                'aplicaciones' => utf8_encode($recargo->getTipoRecargo()->getCaAplicaciones()),
+                'aplicaciones' => utf8_encode($aplicaciones)
             );
             $this->data[] = $row;
         }
@@ -1268,7 +1274,8 @@ class pricingActions extends sfActions {
                 'aplicacion' => '',
                 'aplicacion_min' => '',
                 'idmoneda' => '',
-                'observaciones' => ''
+                'observaciones' => '',
+                'aplicaciones' => $flag?" <span class='rojo'>(Requiere firma Comodato)</span>":""            
             );
             $this->data[] = $row;
         }
