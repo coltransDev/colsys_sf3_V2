@@ -110,6 +110,8 @@ if( $fechainicial && $fechafinal ){
 					renderTo: 'grafica',                    
                     title:"Movimientos de Traficos",
                     titleY:"Numero de Reportes",
+                    height: 800,
+                    width:900,
                     plotOptions:{
 						column: {
                             dataLabels: {
@@ -123,12 +125,11 @@ if( $fechainicial && $fechafinal ){
 				});	
 </script>
 </div>
-
-<br>
-<br>
 <br>
 <br>
 
+<br>
+<br>
 
 <table class="tableList" width="900px" border="1" id="mainTable" align="center" id="panel1">
     <tr><th>No</th><th>Trafico</th>
@@ -168,7 +169,7 @@ if( $fechainicial && $fechafinal ){
         //echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;".count($serieX)."-".count($dataFechas);
         //echo "<pre>";print_r($dataFechas);echo "</pre>";
         
-        if($totales)
+        if($totales_s)
         {
         ?>
             <tr class="b number"><td colspan="2">totales</td>
@@ -211,6 +212,8 @@ if( $fechainicial && $fechafinal ){
 					renderTo: 'grafica_s',
                     title:"Movimientos de Traficos",
                     titleY:"Numero de Reportes",
+                    height: 800,
+                    width:900,
                     plotOptions:{
 						column: {
                             dataLabels: {
@@ -322,6 +325,7 @@ if( $fechainicial && $fechafinal ){
         chart1=new ChartsColumn({
 					renderTo: 'grafica1',
                     height: 800,
+                    width:900,
                     title:"Movimientos de Traficos",
                     titleY:"Numero de Reportes",
 					serieX: <?=json_encode($serieX)?>,					
@@ -381,7 +385,7 @@ if( $fechainicial && $fechafinal ){
             $dataJSON[]=array("name"=>$fech,"data"=>$d);
         }
         
-        if($totalesCompara)
+        if($totalesCompara_s)
         {
         ?>
             <tr class="b number"><td colspan="2">totales</td>
@@ -390,7 +394,7 @@ if( $fechainicial && $fechafinal ){
         for($i=$year-2;$i<=$year;$i++)
         {
         ?>
-            <td><?=$totalesCompara[$i] ?></td>
+            <td><?=$totalesCompara_s[$i] ?></td>
             <td></td>
         <?
             }            
@@ -422,6 +426,7 @@ if( $fechainicial && $fechafinal ){
         chart1=new ChartsColumn({
 					renderTo: 'grafica1_s',
                     height: 800,
+                    width:900,
                     title:"Movimientos de Traficos",
                     titleY:"Numero de Reportes",
 					serieX: <?=json_encode($serieX)?>,					
@@ -594,6 +599,7 @@ if( $fechainicial && $fechafinal ){
         
         if($totalesVendedores)
         {
+            //print_r($totalesVendedores);
         ?>
             <tr class="b number"><td colspan="2">totales</td>
         <?
@@ -625,9 +631,7 @@ if( $fechainicial && $fechafinal ){
     function imprimir()
     {
         $(".esconder").hide();
-        Ext.getCmp("tab-panel").hidden=true;
-        //alert("")
-        window.print();
-        //$(".esconder").show();
+        Ext.getCmp("tab-panel").hidden=true;        
+        window.print();        
     }
 </script>

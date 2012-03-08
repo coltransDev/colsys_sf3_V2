@@ -217,8 +217,6 @@ class reportesGerActions extends sfActions {
         $this->iddepartamento = $request->getParameter("iddepartamento");
         $this->idtransporte = $this->getRequestParameter("idtransporte");
         $this->transporte = $this->getRequestParameter("transporte");
-        //echo $this->idsucursal;
-        //exit;
         $this->fechafinal = Utils::addDate(Utils::addDate($ano . "-" . $this->mes . "-01", 0, 1, 0, "Y-m-01"), -1);
 
         $this->fechainicial = Utils::addDate(Utils::addDate($this->fechafinal, 1, 0, 0, "Y-m-01"), 0, -3, 0, "Y-m-d");
@@ -228,7 +226,7 @@ class reportesGerActions extends sfActions {
 
         $this->fechainicial2 = Utils::addDate($request->getParameter("fechaInicial"), 0, 0, -2);
         $this->fechafinal2 = Utils::addDate($this->fechafinal, 0, 0, -2);
-        //$this->userid = $this->getUser()->getUserId();
+
         if ($this->opcion) {
 
             if ($this->idsucursal)
@@ -243,13 +241,13 @@ class reportesGerActions extends sfActions {
             if($this->transporte)
                 $where .= " and ca_transporte ='".$this->transporte."'";
             
-            $this->nmeses = 3; //ceil(Utils::diffTime($this->fechainicial,$this->fechafinal)/720);
+            $this->nmeses = 3;
             $tra_principal="'Alemania','Argentina','Belgica','Brasil','Chile','China','España','Estados Unidos','Inglaterra', 'Italia', 'Mexico','Taiwan'";
             
             $sql = "select count(*) as valor,ca_year,ca_mes,ca_traorigen as origen from vi_reportes_estadisticas where ca_fchreporte between '" . $this->fechainicial . "' and '" . $this->fechafinal . "'  $where and ca_traorigen in ($tra_principal) and ca_ciuorigen!='Shanghai'
                 group by ca_year,ca_mes,ca_traorigen
                 order by 4,2,3";
-            //echo "<br>".$sql;
+
             $con = Doctrine_Manager::getInstance()->connection();
             $st = $con->execute($sql);
             $this->resul = $st->fetchAll();
@@ -264,8 +262,6 @@ class reportesGerActions extends sfActions {
             $sql = "select count(*) as valor,ca_year,ca_mes,ca_ciuorigen as origen from vi_reportes_estadisticas where ca_fchreporte between '" . $this->fechainicial . "' and '" . $this->fechafinal . "'  $where and ca_ciuorigen='Shanghai'
                 group by ca_year,ca_mes,ca_ciuorigen
                 order by 4,2,3";
-            //echo "<br>".$sql;
-            //$con = Doctrine_Manager::getInstance()->connection();
             $st = $con->execute($sql);
             $this->resul = $st->fetchAll();
             $origen = "";
@@ -273,14 +269,10 @@ class reportesGerActions extends sfActions {
                 $this->grid[$r["origen"]][$r["ca_year"] . "-" . $r["ca_mes"]] = $r["valor"];
                 $this->totales[$r["ca_year"] . "-" . $r["ca_mes"]]+=$r["valor"];
             }
-            
-            
-            
+
             $sql = "select count(*) as valor,ca_year,ca_mes,ca_traorigen as origen from vi_reportes_estadisticas where ca_fchreporte between '" . $this->fechainicial . "' and '" . $this->fechafinal . "'  $where and ca_traorigen not in ($tra_principal)
                 group by ca_year,ca_mes,ca_traorigen
                 order by 4,2,3";
-            //echo "<br>".$sql;
-            //$con = Doctrine_Manager::getInstance()->connection();
             $st = $con->execute($sql);
             $this->resul = $st->fetchAll();
             $origen = "";
@@ -305,11 +297,9 @@ class reportesGerActions extends sfActions {
                 $this->totalesCompara[$r["ca_year"]]+=$r["valor"];
             }
             
-            
             $sql = "select count(*) as valor,ca_ciuorigen as origen,ca_year from vi_reportes_estadisticas
             where (ca_fchreporte between '" . (Utils::parseDate($this->fechafinal, "Y") . '-01-01') . "' and '" . $this->fechafinal . "' or ca_fchreporte between '" . (Utils::parseDate($this->fechafinal1, "Y") . '-01-01') . "' and '" . $this->fechafinal1 . "' or ca_fchreporte between '" . (Utils::parseDate($this->fechafinal2, "Y") . '-01-01') . "' and '" . $this->fechafinal2 . "') $where and ca_ciuorigen='Shanghai'
             group by ca_ciuorigen,ca_year order by 2,3,1";
-            //echo "<br>".$sql;
             $st = $con->execute($sql);
             $this->compara = $st->fetchAll();
             
@@ -318,11 +308,9 @@ class reportesGerActions extends sfActions {
                 $this->totalesCompara[$r["ca_year"]]+=$r["valor"];
             }
             
-            
             $sql = "select count(*) as valor,ca_traorigen as origen,ca_year from vi_reportes_estadisticas
             where (ca_fchreporte between '" . (Utils::parseDate($this->fechafinal, "Y") . '-01-01') . "' and '" . $this->fechafinal . "' or ca_fchreporte between '" . (Utils::parseDate($this->fechafinal1, "Y") . '-01-01') . "' and '" . $this->fechafinal1 . "' or ca_fchreporte between '" . (Utils::parseDate($this->fechafinal2, "Y") . '-01-01') . "' and '" . $this->fechafinal2 . "') $where and ca_traorigen not in ($tra_principal) 
             group by ca_traorigen,ca_year order by 2,3,1";
-            //echo "<br>".$sql;
             $st = $con->execute($sql);
             $this->compara = $st->fetchAll();
 
@@ -333,16 +321,13 @@ class reportesGerActions extends sfActions {
                 $this->totalesCompara_s[$r["ca_year"]]+=$r["valor"];
             }
 
-
             $sql = "select count(*) as valor,ca_traorigen as origen,ca_nombre_cli as cliente
                 from vi_reportes_estadisticas 
-                where ca_fchreporte between '" . Utils::parseDate($this->fechainicial, "Y-01-01") . "' and '" . $this->fechafinal . "' $where
+                where ca_fchreporte between '" . Utils::parseDate($this->fechainicial, "{$ano}-01-01") . "' and '" . $this->fechafinal . "' $where
                 group by ca_traorigen,ca_nombre_cli
                 order by 2 ,1 desc";
-            //echo "<br>".$sql;
             $st = $con->execute($sql);
             $this->clientes = $st->fetchAll();
-
 
             $this->gridClientes = array();
             $this->totalesCliente = array();
@@ -354,7 +339,7 @@ class reportesGerActions extends sfActions {
 
             $sql = "select count(*) as valor,ca_year,ca_mes,ca_traorigen as origen ,ca_nombre_cli as cliente
                 from vi_reportes_estadisticas 
-                where ca_fchreporte between '" . Utils::parseDate($this->fechainicial, "Y-01-01") . "' and '" . $this->fechafinal . "' $where
+                where ca_fchreporte between '" . Utils::parseDate($this->fechainicial, "{$ano}-01-01") . "' and '" . $this->fechafinal . "' $where
                 group by ca_year,ca_mes,ca_traorigen,ca_nombre_cli
                 order by 4,2,3,5";
             //echo "<br>".$sql;
@@ -367,10 +352,9 @@ class reportesGerActions extends sfActions {
                 $this->totalesCliente["totales"][$r["ca_year"] . "-" . $r["ca_mes"]]+=$r["valor"];
             }
 
-
             $sql = "select count(*) as valor,ca_year,ca_mes,ca_login as vendedor
                 from vi_reportes_estadisticas 
-                where ca_fchreporte between '" . Utils::parseDate($this->fechainicial, "Y-01-01") . "' and '" . $this->fechafinal . "' $where
+                where ca_fchreporte between '" . Utils::parseDate($this->fechainicial, "{$ano}-01-01") . "' and '" . $this->fechafinal . "' $where
                 group by ca_year,ca_mes,ca_login
                 order by 4";
             //echo "<br>".$sql;
