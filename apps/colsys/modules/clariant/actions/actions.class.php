@@ -503,20 +503,20 @@ class clariantActions extends sfActions {
                     }
 
                     $doctranspor = str_replace(" ", "", $doctranspor);
-                    if (strlen($doctranspor) < 23) {
+                    if (strlen($doctranspor) < 16) {
                         $len_doc = strlen($doctranspor);
-                        $sob_doc = 23 - strlen($doctranspor);
+                        $sob_doc = 16 - strlen($doctranspor);
                     } else {
-                        $len_doc = 23;
+                        $len_doc = 16;
                         $sob_doc = 0;
                     }
 
                     $motonave = str_replace(" ", "", $motonave);
-                    if (strlen($motonave) < 23) {
+                    if (strlen($motonave) < 15) {
                         $len_mot = strlen($motonave);
-                        $sob_mot = 23 - strlen($motonave);
+                        $sob_mot = 15 - strlen($motonave);
                     } else {
-                        $len_mot = 23;
+                        $len_mot = 15;
                         $sob_mot = 0;
                     }
 
