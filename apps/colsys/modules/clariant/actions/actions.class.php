@@ -473,9 +473,9 @@ class clariantActions extends sfActions {
                                     ->andWhere("n.ca_texto != ?", "PREV ARRIBO PTO/CO")
                                     ->fetchOne();
                     if ($notify) {
-                        if ($notify->getCaFecha() != $arr_estimate or $notify->getCaTexto() != "PREV " . substr($motonave, 0, 12) . "/CO") {
+                        if ($notify->getCaFecha() != $arr_estimate or $notify->getCaTexto() != "PREV " . trim(substr($motonave, 0, 27)) . "/CO") {
                             $notify->setCaFecha($arr_estimate);
-                            $notify->setCaTexto("PREV " . substr($motonave, 0, 12) . "/CO");
+                            $notify->setCaTexto("PREV " . trim(substr($motonave, 0, 27)) . "/CO");
                             $notify->setCaFchreportado(NULL);
                             $notify->setCaUsureportado(NULL);
                             $notify->save();
@@ -485,7 +485,7 @@ class clariantActions extends sfActions {
                         $notify->setCaIddetail($clarDetail->getCaIddetail());
                         $notify->setCaClave("SD");
                         $notify->setCaFecha($arr_estimate);
-                        $notify->setCaTexto("PREV " . substr($motonave, 0, 12) . "/CO");
+                        $notify->setCaTexto("PREV " . trim(substr($motonave, 0, 27)) . "/CO");
                         $notify->save();
                     }
                 }
@@ -503,20 +503,20 @@ class clariantActions extends sfActions {
                     }
 
                     $doctranspor = str_replace(" ", "", $doctranspor);
-                    if (strlen($doctranspor) < 8) {
+                    if (strlen($doctranspor) < 23) {
                         $len_doc = strlen($doctranspor);
-                        $sob_doc = 8 - strlen($doctranspor);
+                        $sob_doc = 23 - strlen($doctranspor);
                     } else {
-                        $len_doc = 8;
+                        $len_doc = 23;
                         $sob_doc = 0;
                     }
 
                     $motonave = str_replace(" ", "", $motonave);
-                    if (strlen($motonave) < 8) {
+                    if (strlen($motonave) < 23) {
                         $len_mot = strlen($motonave);
-                        $sob_mot = 8 - strlen($motonave);
+                        $sob_mot = 23 - strlen($motonave);
                     } else {
-                        $len_mot = 8;
+                        $len_mot = 23;
                         $sob_mot = 0;
                     }
 
@@ -577,7 +577,7 @@ class clariantActions extends sfActions {
                         $fch_evento = Utils::transformDate($notify->getCaFecha(), $format = "d.m.Y"); // 4
                         $salida.= str_pad($fch_evento, 10, " ") . "|"; // 4
                         $salida.= str_pad(number_format($clarDetail->getCaDespacho(), 3, ",", "."), 15, "0", STR_PAD_LEFT) . "|";  // 5
-                        $salida.= str_pad($notify->getCaTexto(), 20, " ") . "|";  // 6
+                        $salida.= str_pad($notify->getCaTexto(), 35, " ") . "|";  // 6
                         $salida.= "\r\n";
 
                         $notify->setCaFchreportado(date("d M Y H:i:s"));
