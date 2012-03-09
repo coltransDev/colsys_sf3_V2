@@ -69,7 +69,7 @@ PanelIdg = function( config ){
 				text:'Guardar',
 				iconCls:'disk',
 				handler: this.guardarCambios
-			},
+			}
          ];
 
         PanelIdg.superclass.constructor.call(this, {
@@ -135,7 +135,6 @@ PanelIdg = function( config ){
                             var res = Ext.util.JSON.decode( response.responseText );
                             if( res.id && res.success)
                             {
-                                    
                                 id=res.id.split(",");
                                 idreg=res.idreg.split(",");
                                 for(i=0;i<id.length;i++)
@@ -167,9 +166,7 @@ PanelIdg = function( config ){
         onRowclick: function(grid, rowIndex, e)
         {
             var record = grid.getStore().getAt(rowIndex);  // Get the Record
-            //var fieldName = grid.getColumnModel().getDataIndex(columnIndex); // Get field name
-            //var data = record.get(fieldName);
-            //alert(record.data.toSource())
+
             if(this.ca_idg!=record.data.idreg)
             {
                 Ext.getCmp('config-idg').store.setBaseParam("ca_idg", record.data.idreg);
@@ -263,19 +260,8 @@ PanelIdg = function( config ){
             //alert(e.value);
             if( e.field == "departamento"){               
                 i=0;
-                store.each( function( r ){
-                    /*if(i==0)
-                    {
-                        alert(r.data.toSource());
-                        i++;
-                    }*/
-                    if( r.data.id==e.value ){
-                        
-                        /*if( r.data.referencia ){
-                            alert("El reporte que esta asociado a la referencia "+r.data.referencia);
-                            e.value = "";
-                            return false;
-                        }*/
+                store.each( function( r ){                    
+                    if( r.data.id==e.value ){                        
 
                         if( !rec.data.iddepartamento  ){
                             var newRec = new recordReportes({
