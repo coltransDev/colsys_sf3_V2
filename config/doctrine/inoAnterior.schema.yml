@@ -787,7 +787,10 @@ ExpoAlerta:
       local: ca_usucreado
       foreign: ca_login
       type: one
-
+    InoMaestraExpo:
+      local: ca_referencia
+      foreign: ca_referencia
+      type: one
 
 InoDianDepositos:
   options:
