@@ -748,7 +748,7 @@ elseif (!isset($boton) and !isset($accion) and isset($criterio)){
                         echo "  <TD WIDTH=60 Class=listar style='letter-spacing:-1px;'>".$tm->Value('ca_tipo')."</TD>";
                         echo "  <TD WIDTH=100 Class=listar style='letter-spacing:-1px;'>".$tm->Value('ca_asunto')."</TD>";
                         echo "  <TD WIDTH=170 Class=listar style='letter-spacing:-1px;'>".$tm->Value('ca_detalle')."<BR>Generó :".$tm->Value('ca_usuario')."</TD>";
-                        echo "  <TD WIDTH=200 Class=listar style='letter-spacing:-1px;'>".$tm->Value('ca_compromisos')."<BR>Pazo :".$tm->Value('ca_fchcompromiso')."</TD>";
+                        echo "  <TD WIDTH=200 Class=listar style='letter-spacing:-1px;'>".$tm->Value('ca_compromisos')."<BR>Plazo :".$tm->Value('ca_fchcompromiso')."</TD>";
                         echo "  <TD WIDTH=10 Class=listar style='letter-spacing:-1px;'>&nbsp;</TD>";
                         echo "</TR>";
                         $tm->MoveNext();
@@ -1609,7 +1609,6 @@ elseif (isset($accion)) {                                                      /
              
              $tm =& DlRecordset::NewRecordset($conn);
              if ($idantecedente != 0){
-                 
                 if (!$tm->Open("select ca_asunto, ca_fchevento from tb_evecliente where ca_idevento = $idantecedente")) {
                     echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                     //echo "<script>document.location.href = 'clientes.php';</script>";
@@ -1620,7 +1619,7 @@ elseif (isset($accion)) {                                                      /
                     //echo "<script>document.location.href = 'clientes.php';</script>";
                     exit;
                     }
-             }else{
+             }elseif ($fchcompromiso > date('Y-m-d')){
                 if (!$tm->Open("select nextval('notificaciones.tb_tareas_id') as ca_idtarea")) {
                     echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                     //echo "<script>document.location.href = 'clientes.php';</script>";
