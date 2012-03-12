@@ -158,11 +158,14 @@ $counts = array();
                             $counts[$year."_2"] = 0;                            
                         }
                         
-                        $counts[$year."_1"]++;
-                        $counts[$year."_2"]++;
-                        
-                        $totals[$year."_1"]+= isset($evaluaciones[$year][1])?$evaluaciones[$year][1]:0;
-                        $totals[$year."_2"]+= isset($evaluaciones[$year][2])?$evaluaciones[$year][2]:0;
+                        if( isset($evaluaciones[$year][1]) ){
+                            $totals[$year."_1"]+= $evaluaciones[$year][1];
+                            $counts[$year."_1"]++;
+                        }
+                        if( isset($evaluaciones[$year][2]) ){
+                            $totals[$year."_2"]+= $evaluaciones[$year][2];
+                            $counts[$year."_2"]++;
+                        }
                         
                         if( $evaluacion1 && $evaluacion2 ){
                             if( $evaluacion2 ){
