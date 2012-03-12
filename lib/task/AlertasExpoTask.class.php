@@ -54,6 +54,21 @@ EOF;
 
             $email->addTo($user->getCaEmail());
 
+            
+            if( $alerta->getCaNotificar() ){
+                $user2 = Doctrine::getTable("Usuario")->find( $alerta->getCaNotificar() );
+                if( $user2 ){
+                    $email->addTo($user2->getCaEmail());
+                }
+                
+                if( $alerta->getCaNotificarJefe() ){
+                    $user3 = $user2->getManager();
+                    if( $user3 ){
+                        $email->addTo($user3->getCaEmail());
+                    }
+                }
+            }
+            
             $email->setCaBody($mensaje . $user->getFirma());
             $email->setCaBodyhtml(Utils::replace($mensaje) . $user->getFirmaHtml());
 

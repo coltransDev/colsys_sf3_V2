@@ -778,11 +778,13 @@ ExpoAlerta:
     ca_fchrecordatorio: date
     ca_referencia: string
     ca_fchvencimiento: date
-    ca_fchcreacion: string
-    ca_usucreacion: date
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_notificar: string 
+    ca_notificar_jefe: boolean
   relations:
     Usuario:
-      local: ca_usucreacion
+      local: ca_usucreado
       foreign: ca_login
       type: one
 
