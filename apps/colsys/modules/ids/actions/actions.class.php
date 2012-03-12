@@ -1323,17 +1323,19 @@ class idsActions extends sfActions {
                 ->innerJoin("i.IdsSucursal s")
                 ->innerJoin("s.Ciudad c")
                 ->innerJoin("p.IdsTipo t")                
-                ->addWhere("p.ca_controladoporsig = true")
+                
                 ->addOrderBy("t.ca_nombre ASC")
                 ->addOrderBy("p.ca_transporte ASC")
                 ->addOrderBy("i.ca_nombre ASC");
          
          $this->type= $request->getParameter("type");
          
-         if( $this->type=="noaprob" ){
-             $q->where("p.ca_fchaprobado IS NULL");
+         if( $this->type=="nocontrol" ){
+             //$q->addWhere("p.ca_fchaprobado IS NULL");
+             $q->addWhere("p.ca_controladoporsig = false");
          }else{
-            $q->where("p.ca_fchaprobado IS NOT NULL");
+             $q->addWhere("p.ca_fchaprobado IS NOT NULL");
+             $q->addWhere("p.ca_controladoporsig = true");
          }
          $this->proveedores = $q->execute();
     }

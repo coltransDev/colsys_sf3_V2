@@ -12,7 +12,7 @@ use_helper("ExtCalendar");
 
 
 <div class="content" align="center">
-    <form action="<?=url_for("ids/formEvaluacion?modo=".$modo."&tipo=".$tipo."&id=".$ids->getCaId())?>" method="post">
+    <form action="<?=url_for("ids/formEvaluacion?modo=".$modo."&id=".$ids->getCaId())?>" method="post">
         <input type="hidden" name="idevaluacion" value="<?=$evaluacion->getCaIdevaluacion()?>">
         <?
         echo $form["concepto"]->renderError();
@@ -47,16 +47,18 @@ use_helper("ExtCalendar");
             <td colspan="2">
                 <b>Tipo de Evaluaci&oacute;n:</b> <br /> 
                 <?
-                switch($tipo){
-                    case "seleccion":
-                        echo "Selecci&oacute;n";
-                        break;
-                    case "desempeno":
-                        echo "Desempe&ntilde;o";
-                        break;
-                    case "reevaluacion":
-                        echo "Reevaluacion: Desempe&ntilde;o";
-                        break;
+                
+                if( $tipo=="seleccion"){
+                    echo "Selecci&oacute;n";
+                    ?>
+                    <input type="hidden" name="tipo" value="<?=$tipo?>" />
+                    <?
+                }else{
+                    echo $form["tipo"]->renderError();
+                    if( $evaluacion->getCaTipo() ){
+                        $form->setDefault('tipo', $evaluacion->getCaTipo() );
+                    }
+                    echo $form["tipo"]->render();
                 }
                 ?>
             </td>

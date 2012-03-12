@@ -29,6 +29,15 @@ class NuevaEvaluacionForm extends BaseForm{
         $widgets['fchevaluacion'] = new sfWidgetFormExtDate();
         $widgets['ano'] = new sfWidgetFormInputText(array(), array("size"=>10, "readOnly"=>"true" ));
         $widgets['periodo'] = new sfWidgetFormInputText(array(), array("size"=>10, "readOnly"=>"true" ));
+        $widgets['tipo'] = new sfWidgetFormChoice(array(
+  								'choices' => array( "desempeno"=>"Desempe&ntilde;o", 
+													"reevaluacion"=>"Reevaluacion: Desempe&ntilde;o" 
+                                                  )
+													
+								));
+        
+        
+        
         $criterios = $this->getCriterios();
         if( $criterios ){            
             foreach( $criterios as $criterio ){
