@@ -47,6 +47,13 @@ EOF;
                 $txt = "Recordatorio";
                 $mensaje = "Información de la tarea : " . $alerta->getCaCuerpoalerta() . "\n\nFecha de Vencimiento : \n\n" . Utils::fechaMes($alerta->getCaFchvencimiento()) . "\n\n";
             }
+            $ref = $alerta->getInoMaestraExpo();
+            $mensaje.="\nReferencia: ".$ref->getCaReferencia()."\n";
+            $mensaje.="Via: ".$ref->getCaVia()."\n";
+            $mensaje.="Tipo Mercancia: ".$ref->getCaProducto()."\n";
+            $mensaje.="Valor: ".$ref->getCaValorcarga()."\n\n\n";
+            //$mensaje.="<br />Piezas: ".$ref->getCaValorcarga()."<br />";
+            
             $email->setCaSubject($txt . " : ALERTA DE LA REFERENCIA " . $alerta->getCaReferencia());
 
 
