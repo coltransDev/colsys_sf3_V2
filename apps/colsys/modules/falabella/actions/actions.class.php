@@ -563,5 +563,134 @@ class falabellaActions extends sfActions {
                 
         $this->redirect("falabella/list");
 	}
+    
+    public function executeIndicadoresGestion(sfWebRequest $request){
+        
+        $this->opcion=$this->getRequestParameter("opcion");
+        $this->idpais_origen=$this->getRequestParameter("idpais_origen");
+        $this->pais_origen=$this->getRequestParameter("pais_origen");
+        $this->fechainicial = $request->getParameter("fechaInicial");
+        $this->fechafinal = $request->getParameter("fechaFinal");
+        $this->idtransporte = $this->getRequestParameter("idtransporte");
+        $this->transporte = $this->getRequestParameter("transporte");
+        //list($nom_mes, $ano) = explode("-", $this->fechafinal);
+        //$this->nom_mes=$nom_mes;
+        //$this->ano=$ano;
+        //$this->mes = Utils::nmes($nom_mes);
+        //$this->mesp = $this->mes;
+        
+        list($ano_ini, $mes_ini) = explode("-", $this->fechainicial);
+        $this->mesinicial = Utils::mesLargo($mes_ini);
+        $this->ano_ini = $ano_ini;
+        
+        list($ano_fin, $mes_fin) = explode("-", $this->fechafinal);
+        $this->mesfinal = Utils::mesLargo($mes_fin);
+        
+        $this->indicador = array();
+        $this->grid = array();
+        $this->entcarga = array();
+        
+        $this->indi_LCL=array();
+        $this->indi_FCL=array();
+        
+        $this->indi_LCL[$this->pais_origen] = 3;
+        $this->indi_FCL[$this->pais_origen] = 3;
+        
+        if ($this->opcion=='buscar') {
+            $sql = "SELECT * 
+                    FROM vi_repindicadores 
+                            LEFT OUTER JOIN (
+                                SELECT rp.ca_consecutivo as ca_consecutivo_sub, rs.ca_fchsalida, rs.ca_fchllegada, rs.ca_fchllegada-rs.ca_fchsalida as ca_diferencia, 
+                                    rs.ca_peso as ca_peso,extract(YEAR from rs.ca_fchsalida) as ca_ano1 ,extract(MONTH from rs.ca_fchsalida) as ca_mes1
+                                FROM tb_repstatus rs 
+                                    INNER JOIN tb_reportes rp ON rp.ca_idreporte = rs.ca_idreporte
+                                WHERE rs.ca_idetapa in ('IACAD','IMCPD') 
+                                GROUP BY ca_consecutivo, ca_fchsalida, ca_fchllegada, ca_diferencia,ca_peso,extract(YEAR from rs.ca_fchsalida) ,extract(MONTH from rs.ca_fchsalida)) sq ON (vi_repindicadores.ca_consecutivo = sq.ca_consecutivo_sub) 
+                    WHERE ca_impoexpo = '" . Constantes::IMPO . "' and ca_transporte = '".$this->transporte."' and upper(ca_compania) like upper('%falabella%')  
+                          and ca_traorigen= '".$this->pais_origen."' and ca_fchsalida BETWEEN '".$this->fechainicial."' and '".$this->fechafinal."'
+                    ORDER BY ca_fchsalida";
+            
+            //exit;
+            $con = Doctrine_Manager::getInstance()->connection();
+            $st = $con->execute($sql);
+            $this->resul = $st->fetchAll();
+            
+            foreach ($this->resul as $r) {
+                /*if (!$r["ca_diferencia"])
+                    continue;
+                if ($r["ca_modalidad"] == Constantes::FCL) {
+                    if ($r["ca_diferencia"] > $this->indi_FCL[$this->pais_origen]) {
+                        $this->indicador[(int) ($r["ca_mes1"])]["incumplimiento"]++;
+                    } else {
+                        $this->indicador[(int) ($r["ca_mes1"])]["cumplimiento"]++;
+                    }
+                } else if ($r["ca_modalidad"] == Constantes::LCL) {
+                    if ($r["ca_diferencia"] > $this->indi_LCL[$this->pais_origen]) {
+                        $this->indicador[(int) ($r["ca_mes1"])]["incumplimiento"]++;
+                    } else {
+                        $this->indicador[(int) ($r["ca_mes1"])]["cumplimiento"]++;
+                    }
+                }*/
+                $this->grid[$r["ca_ano1"]][(int) ($r["ca_mes1"])]["conta"] = (isset($this->grid[$r["ca_ano1"]][(int) ($r["ca_mes1"])]["conta"])) ? ($this->grid[$r["ca_ano1"]][(int) ($r["ca_mes1"])]["conta"] + 1) : "1";
+                $this->grid[$r["ca_ano1"]][(int) ($r["ca_mes1"])]["diferencia"]+=$r["ca_diferencia"];
+                if($this->grid[$r["ca_ano1"]][(int) ($r["ca_mes1"])]["diferencia"]==0){
+                    $this->grid[$r["ca_ano1"]][(int) ($r["ca_mes1"])]["diferencia"]+=1;
+                }
+                list($peso, $medida) = explode("|", $r["ca_peso"]);
+                $this->grid[$r["ca_ano1"]][(int) ($r["ca_mes1"])]["peso"]+=$peso;
+                // []=array("diferencia"=>$r["ca_diferencia"],"peso"=>$r["ca_peso"]);
+
+                
+                // Párametros necesarios para Gráficar Tiempo de Entrega de la carga en el Aeropuerto
+                
+                $this->entcarga[$r["ca_ano1"]][(int)($r["ca_mes1"])]["idreporte"] = $r["ca_idreporte"];
+                
+                $idreporte = $r["ca_idreporte"];
+                
+                $reporte = Doctrine::getTable("Reporte")->find($idreporte);
+                
+                $this->parametros = ParametroTable::retrieveByCaso("CU103", null, null, '900017447' );
+                $parametros = $this->parametros;
+                //echo "<pre>";print_r($this->entcarga);echo "</pre>";
+                
+                foreach($parametros as $parametro){
+                    
+                     $valor = explode(":", $parametro->getCaValor());
+                     $name = $valor[0];
+                     $type = $valor[1];
+                     
+                     switch($name){
+                         case "fchdocorig":
+                             $fchdocorig = $reporte->getProperty($name);
+                             break;
+                         case "fchentregamcia":
+                             $fchentregamcia = $reporte->getProperty($name);
+                             break;
+                         case "fchingresoasn":
+                             $fchingresoasn = $reporte->getProperty($name);
+                             break;
+                     }
+                }
+                
+                $fchsalida = $r["ca_fchsalida"];
+                
+                $this->entcarga[$r["ca_ano1"]][(int)($r["ca_mes1"])]["fchdocorig"]=  TimeUtils::dateDiff($fchdocorig, $fchsalida);
+                $this->entcarga[$r["ca_ano1"]][(int)($r["ca_mes1"])]["conta_fchdocorig"] = (isset($this->entcarga[$r["ca_ano1"]][(int)($r["ca_mes1"])]["conta_fchdocorig"]))?($this->entcarga[$r["ca_ano1"]][(int)($r["ca_mes1"])]["conta_fchdocorig"] + 1):"1";
+                $this->entcarga[$r["ca_ano1"]][(int)($r["ca_mes1"])]["diff_fchdocorig"]+=$this->entcarga[$r["ca_ano1"]][(int)($r["ca_mes1"])]["fchdocorig"];
+                
+                $this->entcarga[$r["ca_ano1"]][(int)($r["ca_mes1"])]["fchentregamcia"]=  TimeUtils::dateDiff($fchentregamcia, $fchsalida);
+                $this->entcarga[$r["ca_ano1"]][(int)($r["ca_mes1"])]["conta_fchentregamcia"] = (isset($this->entcarga[$r["ca_ano1"]][(int)($r["ca_mes1"])]["conta_fchentregamcia"]))?($this->entcarga[$r["ca_ano1"]][(int)($r["ca_mes1"])]["conta_fchentregamcia"] + 1):"1";
+                $this->entcarga[$r["ca_ano1"]][(int)($r["ca_mes1"])]["diff_fchentregamcia"]+=$this->entcarga[$r["ca_ano1"]][(int)($r["ca_mes1"])]["fchentregamcia"];
+                
+                $this->entcarga[$r["ca_ano1"]][(int)($r["ca_mes1"])]["fchingresoasn"]=  TimeUtils::dateDiff($fchsalida, $fchingresoasn);
+                $this->entcarga[$r["ca_ano1"]][(int)($r["ca_mes1"])]["conta_fchingresoasn"] = (isset($this->entcarga[$r["ca_ano1"]][(int)($r["ca_mes1"])]["conta_fchingresoasn"]))?($this->entcarga[$r["ca_ano1"]][(int)($r["ca_mes1"])]["conta_fchingresoasn"] + 1):"1";
+                $this->entcarga[$r["ca_ano1"]][(int)($r["ca_mes1"])]["diff_fchingresoasn"]+=$this->entcarga[$r["ca_ano1"]][(int)($r["ca_mes1"])]["fchingresoasn"];
+                
+                      
+            }   
+        }
+    }
+    //echo "<pre>";print_r($this->resul);echo "</pre>";
+    //echo "<pre>";print_r($this->entcarga);echo "</pre>";
 }
 ?>

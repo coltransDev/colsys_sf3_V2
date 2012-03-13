@@ -2,10 +2,16 @@
 
 switch($action){
 	case "list":		
-		$button[1]["name"]="Importar";
-		$button[1]["tooltip"]="Importar la informaci&oacute;n desde la carpeta OUT";
-		$button[1]["image"]="22x22/kexi_kexi.gif"; 			
-		$button[1]["link"]= "dataImport/importFile?fileHeader=1&proceso=Coltrans&token=".md5(time());
+		$button[0]["name"]="Importar";
+		$button[0]["tooltip"]="Importar la informaci&oacute;n desde la carpeta OUT";
+		$button[0]["image"]="22x22/kexi_kexi.gif"; 			
+		$button[0]["link"]= "dataImport/importFile?fileHeader=1&proceso=Coltrans&token=".md5(time());
+        
+        $button[1]["name"]="Indicadores";
+		$button[1]["tooltip"]="Genera los indicadores trimestrales";
+		$button[1]["image"]="22x22/statistics.png"; 			
+		$button[1]["link"]= "falabella/indicadoresGestion";
+        
 		break;	
 	case "details":		
 		$button[0]["name"]="Inicio";

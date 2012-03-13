@@ -40,6 +40,25 @@ class falabellaComponents extends sfComponents {
 
             $this->container = ParametroTable::retrieveByCaso("CU057");
 	}
-
+    
+    public function executeFormMenuIndicadoresPanel($request) {
+        
+        $this->grupos = Doctrine::getTable("HdeskGroup")
+                ->createQuery("g")
+                ->select("g.ca_idgroup, g.ca_name")
+                ->distinct()
+                ->addOrderBy("g.ca_idgroup")
+                ->where("g.ca_iddepartament=13")
+                ->execute();
+    
+        $this->idpais_origen=$this->getRequestParameter("idpais_origen");
+        $this->pais_origen=$this->getRequestParameter("pais_origen");
+        $this->opcion=$this->getRequestParameter("opcion");
+        $this->fechainicial = $request->getParameter("fechaInicial");
+        $this->fechafinal = $request->getParameter("fechaFinal");
+        $this->idtransporte = $this->getRequestParameter("idtransporte");
+        $this->transporte = $this->getRequestParameter("transporte");
+        
+    }
 }
 ?>
