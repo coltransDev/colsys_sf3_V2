@@ -1698,7 +1698,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 echo "  </SELECT></TD>";
                 echo "  </TR>";
                 echo "  <TR>";
-                echo "    <TD COLSPAN=5>Fecha Recibo Antecedentes:&nbsp;<INPUT TYPE='TEXT' NAME='fchantecedentes' SIZE=12 VALUE='' ONKEYDOWN=\"chkDate(this)\" ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\">&nbsp;<IMG SRC='./graficos/nuevo.gif' border=0 ALT=''></TD>";
+                echo "    <TD COLSPAN=5>Fecha Recibo Antecedentes:&nbsp;<INPUT TYPE='TEXT' NAME='fchantecedentes' SIZE=12 VALUE='' ONKEYDOWN=\"chkDate(this)\" ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
                 echo "  </TR>";
                 echo "  </TABLE>";
                 echo " </TD>";
@@ -2189,7 +2189,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 echo "  <script>cambiar(document.getElementById('continuacion'));</script>";
                 echo "  </TR>";
                 echo "  <TR>";
-                echo "    <TD COLSPAN=5>Fecha Recibo Antecedentes:&nbsp;<INPUT TYPE='TEXT' NAME='fchantecedentes' SIZE=12 VALUE='" . $rs->Value('ca_fchantecedentes') . "' ONKEYDOWN=\"chkDate(this)\" ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\">&nbsp;<IMG SRC='./graficos/nuevo.gif' border=0 ALT=''></TD>";
+                echo "    <TD COLSPAN=5>Fecha Recibo Antecedentes:&nbsp;<INPUT TYPE='TEXT' NAME='fchantecedentes' SIZE=12 VALUE='" . $rs->Value('ca_fchantecedentes') . "' ONKEYDOWN=\"chkDate(this)\" ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
                 echo "  </TR>";
                 echo "  </TABLE>";
                 echo " </TD>";
@@ -5539,6 +5539,51 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                         }
                     }
                 }
+                
+                $tm = & DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
+                if (!$tm->Open("select ca_fchreferencia from tb_inomaestra_sea where ca_referencia = '$referencia'")) {        // Selecciona todos lo registros de la tabla Festivos
+                    echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+                    echo "<script>document.location.href = 'entrada.php';</script>";
+                    exit; }
+                $fchreferencia = $tm->Value('ca_fchreferencia');
+                
+                if (!$tm->Open("select ca_consecutivo from tb_reportes where ca_idreporte = $idreporte")) {        // Selecciona todos lo registros de la tabla Festivos
+                    echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+                    echo "<script>document.location.href = 'entrada.php';</script>";
+                    exit; }
+                $consecutivo = $tm->Value('ca_consecutivo');
+                    
+                if (!$tm->Open("select substring(rs.ca_fchllegada::text,1,4) as ca_ano_new, substring(rs.ca_fchllegada::text,6,2) as ca_mes_new, rp.ca_consecutivo as ca_consecutivo_conf, rs.ca_fchllegada, min(rs.ca_fchenvio) as ca_fchconf_lleg from tb_repstatus rs INNER JOIN tb_reportes rp ON (rs.ca_idreporte = rp.ca_idreporte and rs.ca_idetapa in ('IMCPD')) where ca_consecutivo = '$consecutivo' group by rp.ca_consecutivo, rs.ca_fchllegada order by rp.ca_consecutivo")) {        // Selecciona todos lo registros de la tabla Festivos
+                    echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+                    echo "<script>document.location.href = 'entrada.php';</script>";
+                    exit; }
+                $fch_llegada = $tm->Value('ca_fchllegada');
+                
+                if (!$tm->Open("select cfg.* from idg.tb_idg idg inner join idg.tb_config cfg on idg.ca_idg = cfg.ca_idg inner join control.tb_departamentos dep on idg.ca_iddepartamento = dep.ca_iddepartamento where idg.ca_nombre = 'Oportunidad en la Facturación' and dep.ca_nombre = 'Marítimo' and '$fchreferencia' between cfg.ca_fchini and cfg.ca_fchfin")) {
+                    echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+                    echo "<script>document.location.href = 'entrada.php';</script>";
+                    exit; }
+                $num_dias = $tm->Value('ca_lim1');
+                
+                if (!$tm->Open("select ca_fchfestivo from tb_festivos")) {        // Selecciona todos lo registros de la tabla Festivos
+                    echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+                    echo "<script>document.location.href = 'entrada.php';</script>";
+                    exit; }
+                $festi = array();
+                while (!$tm->Eof() and !$tm->IsEmpty()) {
+                    $festi[] = $tm->Value('ca_fchfestivo');
+                    $tm->MoveNext();
+                }
+                while (list ($clave, $val) = each($facturacion)) {
+                    if (trim($val['observacion']) == "") {
+                        $dif_mem = workDiff($festi, $fch_llegada, $val['fchfactura']);
+                        if ($dif_mem > $num_dias){
+                            echo "<script>alert(\"Se ha superado tiempo oportuno para facturación, por favor indique la causa en la columna de Observación IDG!\");</script>";      // Muestra el mensaje de error
+                            echo "<script>document.location.href = 'inosea.php?boton=ModificarCl\&id=$referencia\&cl=$idcliente\&hb=$hbls';</script>";  // Retorna a la pantalla principal de la opción
+                        }
+                    }
+                }
+                
                 break;
             }
         case 'Actualizar Cliente': {                                                      // El Botón Guardar fue pulsado
@@ -5701,6 +5746,52 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                         exit;
                     }
                 }
+                
+                $tm = & DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
+                if (!$tm->Open("select ca_fchreferencia from tb_inomaestra_sea where ca_referencia = '$referencia'")) {        // Selecciona todos lo registros de la tabla Festivos
+                    echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+                    echo "<script>document.location.href = 'entrada.php';</script>";
+                    exit; }
+                $fchreferencia = $tm->Value('ca_fchreferencia');
+                
+                if (!$tm->Open("select ca_consecutivo from tb_reportes where ca_idreporte = $idreporte")) {        // Selecciona todos lo registros de la tabla Festivos
+                    echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+                    echo "<script>document.location.href = 'entrada.php';</script>";
+                    exit; }
+                $consecutivo = $tm->Value('ca_consecutivo');
+                    
+                if (!$tm->Open("select substring(rs.ca_fchllegada::text,1,4) as ca_ano_new, substring(rs.ca_fchllegada::text,6,2) as ca_mes_new, rp.ca_consecutivo as ca_consecutivo_conf, rs.ca_fchllegada, min(rs.ca_fchenvio) as ca_fchconf_lleg from tb_repstatus rs INNER JOIN tb_reportes rp ON (rs.ca_idreporte = rp.ca_idreporte and rs.ca_idetapa in ('IMCPD')) where ca_consecutivo = '$consecutivo' group by rp.ca_consecutivo, rs.ca_fchllegada order by rp.ca_consecutivo")) {        // Selecciona todos lo registros de la tabla Festivos
+                    echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+                    echo "<script>document.location.href = 'entrada.php';</script>";
+                    exit; }
+                $fch_llegada = $tm->Value('ca_fchllegada');
+                
+                if (!$tm->Open("select cfg.* from idg.tb_idg idg inner join idg.tb_config cfg on idg.ca_idg = cfg.ca_idg inner join control.tb_departamentos dep on idg.ca_iddepartamento = dep.ca_iddepartamento where idg.ca_nombre = 'Oportunidad en la Facturación' and dep.ca_nombre = 'Marítimo' and '$fchreferencia' between cfg.ca_fchini and cfg.ca_fchfin")) {
+                    echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+                    echo "<script>document.location.href = 'entrada.php';</script>";
+                    exit; }
+                $num_dias = $tm->Value('ca_lim1');
+                
+                if (!$tm->Open("select ca_fchfestivo from tb_festivos")) {        // Selecciona todos lo registros de la tabla Festivos
+                    echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+                    echo "<script>document.location.href = 'entrada.php';</script>";
+                    exit; }
+                $festi = array();
+                while (!$tm->Eof() and !$tm->IsEmpty()) {
+                    $festi[] = $tm->Value('ca_fchfestivo');
+                    $tm->MoveNext();
+                }
+                reset($facturacion);
+                while (list ($clave, $val) = each($facturacion)) {
+                    if (trim($val['observacion']) == "") {
+                        $dif_mem = workDiff($festi, $fch_llegada, $val['fchfactura']);
+                        if ($dif_mem > $num_dias){
+                            echo "<script>alert(\"Se ha superado tiempo oportuno para facturación, por favor indique la causa en la columna de Observación IDG!\");</script>";      // Muestra el mensaje de error
+                            echo "<script>document.location.href = 'inosea.php?boton=ModificarCl\&id=$referencia\&cl=$idcliente\&hb=$hbls';</script>";  // Retorna a la pantalla principal de la opción
+                        }
+                    }
+                }
+                
                 break;
             }
         case 'Eliminar Cliente': {                                                      // El Botón Guardar fue pulsado
