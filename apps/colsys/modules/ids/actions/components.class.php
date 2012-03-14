@@ -57,8 +57,12 @@ class idsComponents  extends sfComponents
 
         $this->user = $this->getUser();
         
-        $tipo = $this->ids->getIdsProveedor()->getIdsTipo();
-        $this->documentosPorTipo = $tipo->getIdsDocumentoPorTipo();
+        if( $this->ids->getIdsProveedor() ){
+            $tipo = $this->ids->getIdsProveedor()->getIdsTipo();
+            $this->documentosPorTipo = $tipo->getIdsDocumentoPorTipo();
+        }else{
+            $this->documentosPorTipo=null;
+        }
         
         
 

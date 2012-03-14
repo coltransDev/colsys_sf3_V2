@@ -48,8 +48,8 @@ use_helper("ExtCalendar");
                 <b>Tipo de Evaluaci&oacute;n:</b> <br /> 
                 <?
                 
-                if( $tipo=="seleccion"){
-                    echo "Selecci&oacute;n";
+                if( $tipo=="seleccion"||!$evaluacion->getCaIdevaluacion() ){
+                    echo ucfirst($tipo);
                     ?>
                     <input type="hidden" name="tipo" value="<?=$tipo?>" />
                     <?

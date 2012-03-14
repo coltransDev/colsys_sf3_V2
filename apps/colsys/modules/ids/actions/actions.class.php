@@ -850,7 +850,7 @@ class idsActions extends sfActions {
         if ($request->getParameter("idevaluacion")) {
             $q->innerJoin("c.IdsEvaluacionxCriterio ec");
             $q->addWhere("ec.ca_idevaluacion = ?", $request->getParameter("idevaluacion"));
-        } else {
+        } else {            
             switch ($this->tipo) {
                 case "reevaluacion":
                     $q->addWhere("c.ca_tipocriterio = ?", "desempeno");
