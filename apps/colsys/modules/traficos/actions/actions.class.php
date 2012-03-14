@@ -585,7 +585,6 @@ class traficosActions extends sfActions
             if( $reporte->getCaTiporep()==4 ){
                 $status->setProperty("manifiesto", $request->getParameter("manifiesto"));
                 $repotm = $reporte->getRepOtm();                
-                $repotm->setCaIdreporte( $reporte->getCaIdreporte() );
                 if($repotm)
                 {
                     $repotm->setCaManifiesto($request->getParameter("manifiesto"));

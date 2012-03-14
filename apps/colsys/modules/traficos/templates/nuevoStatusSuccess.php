@@ -611,7 +611,7 @@ echo $form['transporte']->render();
                 }
             }
 			
-			if( $reporte->getcaModalidad()=="FCL" ){
+			if( $reporte->getCaModalidad()=="FCL" ){
 			?>
 			<tr>
 				<td valign="top"><b>No. Master:</b>
@@ -621,9 +621,8 @@ echo $form['transporte']->render();
 					$form->setDefault('docmaster', $ultStatus->getCaDocmaster() ); 
 				 }
 				 echo $form['docmaster']->render();
-				 ?>				</td>
-				
-				
+				 ?>				
+                </td>
 				<td colspan="2">
 					<b> Equipos para el embarque :&nbsp;</b><br />
 					<table  width="100%" border="1" class="tableList">
@@ -690,6 +689,21 @@ echo $form['transporte']->render();
 						</tbody>
 					</table>				</td>				
 			</tr>
+            <?
+            }
+            if( $reporte->getCaTiporep()==4 ){
+            ?>
+            <tr>
+                <td valign="top" colspan="3"><b>Manifiesto:</b>
+				<?
+				 echo $form['manifiesto']->renderError(); 
+				 if( $ultStatus ){	
+					$form->setDefault('manifiesto', $ultStatus->getProperty("manifiesto") ); 
+				 }
+				 echo $form['manifiesto']->render();
+				 ?>				
+                </td>
+            </tr>
 			<?
 			}
 			?>		
