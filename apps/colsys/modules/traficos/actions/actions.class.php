@@ -580,6 +580,17 @@ class traficosActions extends sfActions
             if( trim($request->getParameter("fchcontinuacion")) && $reporte->getCaContinuacion()!="N/A" ){
                 $status->setCaFchcontinuacion( Utils::parseDate(trim($request->getParameter("fchcontinuacion")) ));
             }
+            
+            //Para OTM
+            if( $reporte->getCaTiporep()==4 ){
+                $status->setProperty("manifiesto", $request->getParameter("manifiesto"));
+                $repotm = $reporte->getRepotm();
+                if($repotm)
+                {
+                    $repotm->setCaManifiesto($request->getParameter("manifiesto"));
+                    $repotm->save( $conn );
+                }
+            }
 
             //borra los equipos viejos
             $repequipos = $reporte->getRepEquipos();
@@ -619,6 +630,7 @@ class traficosActions extends sfActions
 
             if( $reporte->getCaImpoexpo()==Constantes::EXPO && $reporte->getCaTiporep()!="3" ){
                 $repExpo = $reporte->getRepexpo();
+                $repExpo->setCaIdreporte( $reporte->getCaIdreporte() );
                 if( $request->getParameter("datosbl") ){
                     $repExpo->setCaDatosbl( $request->getParameter("datosbl") );
                 }
