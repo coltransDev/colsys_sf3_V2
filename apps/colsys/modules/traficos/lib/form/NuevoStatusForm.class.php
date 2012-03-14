@@ -1,6 +1,7 @@
 <?
 
 class NuevoStatusForm extends BaseForm {
+
     const NUM_CC = 7;
     const NUM_EQUIPOS = 5;
 
@@ -101,7 +102,7 @@ class NuevoStatusForm extends BaseForm {
 
         $widgets['fchrecibo'] = new sfWidgetFormExtDate();
         $widgets['horarecibo'] = new sfWidgetFormTime();
-        
+
         //solo para validación
         $widgets['fchhorarecibo'] = new sfWidgetFormInputHidden();
 
@@ -153,6 +154,8 @@ class NuevoStatusForm extends BaseForm {
         $widgets['inspeccion_fisica'] = new sfWidgetFormInputCheckbox();
 
         $widgets['fchactual'] = new sfWidgetFormInputText(array());
+
+        $widgets['manifiesto'] = new sfWidgetFormInputText(array(), array("size" => 120));
 
         $this->setWidgets($widgets);
 
@@ -247,8 +250,8 @@ class NuevoStatusForm extends BaseForm {
         }
 
         $validator['mensaje_mask'] = new sfValidatorString(array('required' => false));
-        
-        $validator['inspeccion_fisica'] = new sfValidatorString(array('required' => false));        
+
+        $validator['inspeccion_fisica'] = new sfValidatorString(array('required' => false));
 
         $validator['datosbl'] = new sfValidatorString(array('required' => false),
                         array('required' => 'Por favor coloque los datos para reclamar el BL en destino'));
@@ -266,7 +269,9 @@ class NuevoStatusForm extends BaseForm {
 
         $validator['fchactual'] = new sfValidatorString(array('required' => false));
         $validator['fchhorarecibo'] = new sfValidatorString(array('required' => false));
-        
+
+        $validator["manifiesto"] = new sfValidatorString(array('required' => false),
+                        array('invalid' => 'Required'));
 
         //echo isset($validator['fchdoctransporte'])."<br />";															
         $this->setValidators($validator);
@@ -324,7 +329,7 @@ class NuevoStatusForm extends BaseForm {
         $horaRecibo = implode(":", $horaRecibo) . ":00";
         $fch = $taintedValues["fchrecibo"] . " " . $horaRecibo;
         //echo $fch;
-        
+
         $fest = TimeUtils::getFestivos();
         $dif = TimeUtils::calcDiff($fest, strtotime($fch), time());
 
@@ -343,8 +348,8 @@ class NuevoStatusForm extends BaseForm {
             }
         }
 
-       
-        
+
+
         $taintedValues["fchhorarecibo"] = $fch;
         $taintedValues["fchactual"] = date("Y-m-d H:i:s");
         $destinatariosFijos = $this->getDestinatariosFijos();
