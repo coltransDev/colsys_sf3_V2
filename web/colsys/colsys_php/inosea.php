@@ -5575,7 +5575,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                     $tm->MoveNext();
                 }
                 while (list ($clave, $val) = each($facturacion)) {
-                    if (trim($val['observacion']) == "") {
+                    if (trim($val['observacion']) == "" and $val['valor'] != 0) {
                         $dif_mem = workDiff($festi, $fch_llegada, $val['fchfactura']);
                         if ($dif_mem > $num_dias){
                             echo "<script>alert(\"Se ha superado tiempo oportuno para facturación, por favor indique la causa en la columna de Observación IDG!\");</script>";      // Muestra el mensaje de error
