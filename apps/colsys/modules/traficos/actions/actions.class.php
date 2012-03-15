@@ -592,7 +592,9 @@ class traficosActions extends sfActions
                 if($repotm)
                 {
                     $repotm->setCaManifiesto($request->getParameter("manifiesto"));
-                    $repotm->setCaValorfob($request->getParameter("valor_fob"));
+                    if(is_numeric($request->getParameter("valor_fob")))
+                        $repotm->setCaValorfob($request->getParameter("valor_fob"));
+                    
                     $repotm->save( $conn );
                 }
                 
