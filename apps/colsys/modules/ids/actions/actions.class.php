@@ -822,12 +822,9 @@ class idsActions extends sfActions {
             $this->tipo = $request->getParameter("tipo");
             $this->proveedor = Doctrine::getTable("IdsProveedor")->find($request->getParameter("id"));
         }
-
+        
         $defAno = date("Y");
-
-
         //echo date("Y-m-d")."  -----  entre ".date('Y')."-02-01"."    ".date('Y')."-07-01" ;
-
         if (date("Y-m-d") >= date('Y') . "-04-01" && date("Y-m-d") <= date('Y') . "-09-01") {
             $defPeriodo = 1;
         } else {
@@ -837,12 +834,16 @@ class idsActions extends sfActions {
                 $defAno--;
             }
         }
-
-
+        //echo $defPeriodo." ".$defAno;
+        if ($request->getParameter("idevaluacion") && ($evaluacion->getCaPeriodo()!=$defPeriodo || $evaluacion->getCaAno()!=$defAno ) ) {
+            $this->error = "No puede editar una evaluación de un periodo anterior";
+        //    exit();
+            return sfView::ERROR;
+        }
+        
         $this->defAno = $defAno;
         $this->defPeriodo = $defPeriodo;
-
-
+              
         $this->modo = $request->getParameter("modo");
         $this->forward404Unless($this->ids);
 
@@ -995,13 +996,33 @@ class idsActions extends sfActions {
         if ($this->nivel < 6) {
             $this->forward404();
         }
-
+        
+        
+        
 
         $evaluacion = Doctrine::getTable("IdsEvaluacion")->find($request->getParameter("idevaluacion"));
 
         $ids = $evaluacion->getIds();
         $this->forward404Unless($evaluacion);
-
+        
+        
+        $defAno = date("Y");
+        //echo date("Y-m-d")."  -----  entre ".date('Y')."-02-01"."    ".date('Y')."-07-01" ;
+        if (date("Y-m-d") >= date('Y') . "-04-01" && date("Y-m-d") <= date('Y') . "-09-01") {
+            $defPeriodo = 1;
+        } else {
+            $defPeriodo = 2;
+                        
+            if (date('Y') . "-01-01" <= date("Y-m-d")) {
+                $defAno--;
+            }
+        }
+        //echo $defPeriodo." ".$defAno;
+        if ($request->getParameter("idevaluacion") && ($evaluacion->getCaPeriodo()!=$defPeriodo || $evaluacion->getCaAno()!=$defAno ) ) {
+            $this->error = "No puede editar una evaluación de un periodo anterior";
+        //    exit();
+            return sfView::ERROR;
+        }
 
         $evaluacionxCriterios = $evaluacion->getIdsEvaluacionxCriterio();
         foreach ($evaluacionxCriterios as $evaluacionxCriterio) {
@@ -1128,6 +1149,14 @@ class idsActions extends sfActions {
                         $linea[] = $refMaritimo->getCaIdnaviera();
                         $q->addWhere("c.ca_transporte = ?", Constantes::MARITIMO);
                     }
+                    
+                    if ($referencia->getCaVia() == "Terrestre" || $referencia->getCaVia() == "Maritimo/Terrestre") {
+                        $refTerrestre = Doctrine::getTable("InoMaestraExpoTer")->find($numreferencia);
+                        $this->forward404Unless($refTerrestre);
+                        $linea[] = $refTerrestre->getCaIdtransportador();
+                        $q->addWhere("c.ca_transporte = ?", Constantes::TERRESTRE);
+                    }
+
 
 
 
