@@ -156,6 +156,7 @@ class NuevoStatusForm extends BaseForm {
         $widgets['fchactual'] = new sfWidgetFormInputText(array());
 
         $widgets['manifiesto'] = new sfWidgetFormInputText(array(), array("size" => 120));
+        $widgets['valor_fob'] = new sfWidgetFormInputText(array(), array("size" => 60));
 
         $this->setWidgets($widgets);
 
@@ -271,6 +272,8 @@ class NuevoStatusForm extends BaseForm {
         $validator['fchhorarecibo'] = new sfValidatorString(array('required' => false));
 
         $validator["manifiesto"] = new sfValidatorString(array('required' => false),
+                        array('invalid' => 'Required'));
+        $validator["valor_fob"] = new sfValidatorString(array('required' => false),
                         array('invalid' => 'Required'));
 
         //echo isset($validator['fchdoctransporte'])."<br />";															

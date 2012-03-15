@@ -585,11 +585,17 @@ class traficosActions extends sfActions
             if( $reporte->getCaTiporep()==4 ){
                 $status->setProperty("manifiesto", $request->getParameter("manifiesto"));
                 $repotm = $reporte->getRepOtm();                
+                
+                
+                $status->setProperty("valor_fob", $request->getParameter("valor_fob"));
+                
                 if($repotm)
                 {
                     $repotm->setCaManifiesto($request->getParameter("manifiesto"));
+                    $repotm->setCaValorfob($request->getParameter("valor_fob"));
                     $repotm->save( $conn );
                 }
+                
             }
 
             //borra los equipos viejos

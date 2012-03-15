@@ -694,13 +694,25 @@ echo $form['transporte']->render();
             if( $reporte->getCaTiporep()==4 ){
             ?>
             <tr>
-                <td valign="top" colspan="3"><b>Manifiesto:</b>
+                <td valign="top" colspan="3"><b>Manifiesto:</b><br>
 				<?
 				 echo $form['manifiesto']->renderError(); 
 				 if( $ultStatus ){	
 					$form->setDefault('manifiesto', $ultStatus->getProperty("manifiesto") ); 
 				 }
 				 echo $form['manifiesto']->render();
+				 ?>				
+                </td>
+            </tr>
+            
+            <tr>
+                <td valign="top" colspan="3"><b>Valor Fob:</b>
+				<?
+				 echo $form['valor_fob']->renderError(); 
+				 if( $ultStatus ){	
+					$form->setDefault('valor_fob', $ultStatus->getProperty("valor_fob") ); 
+				 }
+				 echo $form['valor_fob']->render();
 				 ?>				
                 </td>
             </tr>
