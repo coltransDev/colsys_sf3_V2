@@ -592,6 +592,8 @@ class inventoryActions extends sfActions {
     public function executeEmailMantenimiento(sfWebRequest $request) {
 
         //$this->nivel = $this->getNivel();
+        $this->setLayout("email");
+        
         $idactivo = $request->getParameter("idactivo");
         $idman = $request->getParameter("idman");
         $this->forward404Unless($idactivo);
@@ -1304,49 +1306,56 @@ class inventoryActions extends sfActions {
         $mesprg = (int) date('m', strtotime($hoy));
         $anoprg = date('Y', strtotime($hoy));
         $mesLargo = Utils::mesLargo($mesprg);
+        $suc = array("BOG","MDE","CLO");
         
-        $usuarios = UsuarioTable::getCoordinadoresMantenimiento();
-        foreach( $usuarios as $usuario ){
-				$logins[]=$usuario->getCaLogin();
-        }
+        foreach($suc as $s){
+            
+            $usuarios = UsuarioTable::getCoordinadoresMantenimiento($s);
+            foreach( $usuarios as $usuario ){
+                    $logins[]=$usuario->getCaLogin();
+            }
 
-        $activos = Doctrine::getTable("InvActivo")
-                        ->createQuery("a")
-                        ->innerJoin("a.Usuario u")
-                        ->innerJoin("u.Sucursal s")
-                        ->addWhere("EXTRACT(MONTH FROM a.ca_prgmantenimiento) = ?", $mesprg)
-                        ->addWhere("EXTRACT(YEAR FROM a.ca_prgmantenimiento) = ?", $anoprg)
-                        ->addWhere("s.ca_nombre = ?", 'Bogotá D.C.')
-                        ->orderBy("a.ca_prgmantenimiento ASC")
-                        ->execute();
+            $activos = Doctrine::getTable("InvActivo")
+                            ->createQuery("a")
+                            ->innerJoin("a.Usuario u")
+                            ->innerJoin("u.Sucursal s")
+                            ->addWhere("EXTRACT(MONTH FROM a.ca_prgmantenimiento) = ?", $mesprg)
+                            ->addWhere("EXTRACT(YEAR FROM a.ca_prgmantenimiento) = ?", $anoprg)
+                            ->addWhere("s.ca_idsucursal = ?", $s)
+                            ->orderBy("a.ca_prgmantenimiento ASC")
+                            ->execute();
 
-        $email = new Email();
-        $email->setCaUsuenvio("Administrador");
-        $email->setCaTipo("Prg. Mantenimiento");
-        $email->setCaIdcaso($mesprg.$anoprg);
-        $email->setCaFrom("no-reply@coltrans.com.co");
-        $email->setCaFromname("Colsys Notificaciones");
-        
-        foreach ($activos as $activo) {
-            $email->addTo($activo->getUsuario()->getCaEmail());
-        }
-        
-        foreach( $logins as $login ){
-            $usuario = Doctrine::getTable("Usuario")->find( $login );
-            $email->addCc( $usuario->getCaEmail() );
-        }
+            $email = new Email();
+            $email->setCaUsuenvio("Administrador");
+            $email->setCaTipo("Prg. Mantenimiento");
+            $email->setCaIdcaso($mesprg.$anoprg);
+            $email->setCaFrom("no-reply@coltrans.com.co");
+            $email->setCaFromname("Colsys Notificaciones");
 
-        $email->setCaSubject("Programación de Mantenimiento: ".$mesLargo." de ".$anoprg);
-        $contenido = sfContext::getInstance()->getController()->getPresentationFor('inventory', 'emailPrgmantenimiento');
-        $email->setCaBodyhtml($contenido);
-        $email->save();
-        $email->send();
+            foreach ($activos as $activo) {
+                $email->addTo($activo->getUsuario()->getCaEmail());
+            }
+
+            foreach( $logins as $login ){
+                $usuario = Doctrine::getTable("Usuario")->find( $login );
+                $email->addCc( $usuario->getCaEmail() );
+            }
+            $a = "-Programación  de Mantenimiento: ".$mesLargo." de ".$anoprg;
+            $email->setCaSubject($s.$a);
+            $request->setParameter("idsucursal", $s );
+            $contenido = sfContext::getInstance()->getController()->getPresentationFor('inventory', 'emailPrgmantenimiento');
+            $email->setCaBodyhtml($contenido);
+            $email->save();
+            $email->send();
+        }
         exit;
         
     }
     public function executeEmailPrgmantenimiento(sfWebRequest $request) {
 
         $this->setLayout("email");
+        
+        $this->idsuc = $request->getParameter("idsucursal");
         
         $hoy = date("Y-m-d");
         $mesprg = (int) date('m', strtotime($hoy));
@@ -1359,7 +1368,7 @@ class inventoryActions extends sfActions {
                         ->innerJoin("u.Sucursal s")
                         ->addWhere("EXTRACT(MONTH FROM a.ca_prgmantenimiento) = ?", $mesprg)
                         ->addWhere("EXTRACT(YEAR FROM a.ca_prgmantenimiento) = ?", $this->anoprg)
-                        ->addWhere("s.ca_nombre = ?", 'Bogotá D.C.')
+                        ->addWhere("s.ca_idsucursal = ?", $this->idsuc)
                         ->orderBy("a.ca_prgmantenimiento ASC")
                         ->execute();
         
