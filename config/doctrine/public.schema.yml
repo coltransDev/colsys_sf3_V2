@@ -62,7 +62,8 @@ Trafico:
       type: integer(2)
       unsigned: false
       notnull: true
-      primary: false    
+      primary: false
+    ca_cod_dian: string
   relations:
     TraficoGrupo:
       local: ca_idgrupo
