@@ -69,6 +69,7 @@ HdeskTicket:
     ca_starred: boolean
     ca_closedat: timestamp
     ca_closedby: string(15)
+    ca_status: integer
   relations:    
     HdeskGroup:
       local: ca_idgroup
@@ -119,7 +120,6 @@ HdeskTicket:
     SurvEvaluacion:
       local: ca_idevaluacion
       foreign: ca_idevaluacion
-
 
 
 HdeskResponse:
