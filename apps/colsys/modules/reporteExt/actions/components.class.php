@@ -106,7 +106,7 @@ class reporteExtComponents extends sfComponents
             $contacto = $reporte->getContacto();
             $cliente = $reporte->getContacto()->getCliente();
 
-            $consignatario_final = $cliente->getCaCompania()." Nit. ".$cliente->getCaIdalterno()."-".$cliente->getCaDigito();
+            $consignatario_final = $cliente->getCaCompania().($idtrafico!="PE-051"?" Nit. ".$cliente->getCaIdalterno()."-".$cliente->getCaDigito():"");
             
             if($reporte->getCaContinuacion()!="OTM")
             {
