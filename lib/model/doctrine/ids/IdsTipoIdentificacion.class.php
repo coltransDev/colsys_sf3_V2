@@ -12,7 +12,7 @@
  */
 class IdsTipoIdentificacion extends BaseIdsTipoIdentificacion
 {
-    public function __toString(){        
-        return $this->getCaNombre()." ".($this->getCaIdtrafico()?" (".$this->getTrafico()->getCaNombre().")":"");
+    public function __toString(){
+        return $this->getCaNombre()."".($this->getTrafico()?"-".$this->getTrafico()->getCaNombre():"");
     }
 }
