@@ -62,6 +62,7 @@ class reporteExtActions extends sfActions
                 $impoexpo = $this->reporte->getCaImpoexpo();
             }
 
+            //$transporte=($this->reporte->getCaTransporte()==constantes::TERRESTRE)?constantes::MARITIMO:$this->reporte->getCaTransporte();
             $contactosAg = Doctrine::getTable("IdsContacto")
                                      ->createQuery("c")
                                      ->innerJoin("c.IdsSucursal s")
