@@ -48,8 +48,9 @@ class inoReportesActions extends sfActions {
                 ->leftJoin("m.InoViDeduccion ded")
                 ->leftJoin("m.InoViUtilidad uti")
                 ->leftJoin("m.InoViUnidadesMaster uni")
+                ->leftJoin("m.InoViTeus te")
                 ->select("m.ca_idmaster, m.ca_referencia, uni.ca_numhijas, uni.ca_numpiezas, uni.ca_peso, uni.ca_volumen, 
-                            o.ca_ciudad, d.ca_ciudad, p.ca_idproveedor, i.ca_nombre, 
+                            o.ca_ciudad, d.ca_ciudad, p.ca_idproveedor, i.ca_nombre, te.ca_valor,
                             cost.ca_valor, cost.ca_venta, ing.ca_valor, ded.ca_valor, uti.ca_valor, m.ca_fchcerrado, m.ca_fchliquidado, m.ca_observaciones")
                 ->addWhere("substr(m.ca_referencia,15,1) = ?", $aa%10 );
                 
@@ -61,6 +62,8 @@ class inoReportesActions extends sfActions {
         $idagente = $request->getParameter("idagente");
         $aa = $request->getParameter("aa");
         $mm = $request->getParameter("mm");
+        
+        $q->addWhere("m.ca_fchanulado IS NULL ");
         
         if( $impoexpo ){
             $q->addWhere("m.ca_impoexpo = ? ", $impoexpo);
@@ -125,9 +128,9 @@ class inoReportesActions extends sfActions {
                                     ->innerJoin("c.Ids id")                            
                                     ->leftJoin("c.InoHouse h")
                                     ->leftJoin("h.InoMaster m")
-                                    ->select("c.ca_consecutivo, c.ca_fchcomprobante, id.ca_nombre, id.ca_id, h.ca_doctransporte, m.ca_referencia");
+                                    ->select("c.ca_consecutivo, c.ca_valor, c.ca_tcambio, c.ca_idmoneda, c.ca_fchcomprobante, id.ca_nombre, id.ca_id, h.ca_doctransporte, m.ca_referencia, m.ca_impoexpo, m.ca_transporte, m.ca_modalidad, m.ca_observaciones");
 
-
+                $q->addWhere("m.ca_fchanulado IS NULL ");
                 if( $request->getParameter("fecIni") ){
                     $q->addWhere("c.ca_fchcomprobante >=? ", $request->getParameter("fecIni") );
                 }
@@ -170,7 +173,7 @@ class inoReportesActions extends sfActions {
                                     ->leftJoin("c.InoMaster m");
                                     //->select("c.ca_consecutivo, id.ca_nombre, id.ca_id, h.ca_doctransporte, m.ca_referencia");
 
-
+                $q->addWhere("m.ca_fchanulado IS NULL ");
                 if( $request->getParameter("fecIni") ){
                     $q->addWhere("c.ca_fchfactura >=? ", $request->getParameter("fecIni") );
                 }
@@ -202,9 +205,89 @@ class inoReportesActions extends sfActions {
                                     ->execute();
                 $this->setTemplate("listadoComprobantesProvResult");
             }
-        
+            $this->monedaLocal = $this->getUser()->getIdmoneda();
         }
+        
 
     }
+    
+    /**
+     *
+     *
+     * @param sfRequest $request A request object
+     */
+    public function executeGeneradorInformes(sfWebRequest $request) {
+        
+        $aa = $request->getParameter("aa");        
+        $q = Doctrine::getTable("InoMaster") 
+                ->createQuery("m")
+                ->innerJoin("m.Origen o")
+                ->innerJoin("m.Destino d")
+                ->innerJoin("m.IdsProveedor p")
+                ->innerJoin("p.Ids i")
+                ->leftJoin("m.InoViCosto cost")
+                ->leftJoin("m.InoViIngreso ing")
+                ->leftJoin("m.InoViDeduccion ded")
+                ->leftJoin("m.InoViUtilidad uti")
+                ->leftJoin("m.InoViUnidadesMaster uni")
+                ->select("m.ca_idmaster, m.ca_referencia, uni.ca_numhijas, uni.ca_numpiezas, uni.ca_peso, uni.ca_volumen, 
+                            o.ca_ciudad, d.ca_ciudad, p.ca_idproveedor, i.ca_nombre, 
+                            cost.ca_valor, cost.ca_venta, ing.ca_valor, ded.ca_valor, uti.ca_valor, m.ca_fchcerrado, m.ca_fchliquidado, m.ca_observaciones")
+                ->addWhere("substr(m.ca_referencia,15,1) = ?", $aa%10 );
+                
+        $impoexpo = $request->getParameter("impoexpo");
+        $transporte = $request->getParameter("transporte");
+        $idlinea = $request->getParameter("idlinea");
+        $idtrafico = $request->getParameter("idtrafico");        
+        $modalidad = $request->getParameter("modalidad");
+        $idagente = $request->getParameter("idagente");
+        $aa = $request->getParameter("aa");
+        $mm = $request->getParameter("mm");
+        
+        $q->addWhere("m.ca_fchanulado IS NULL ");
+        
+        if( $impoexpo ){
+            $q->addWhere("m.ca_impoexpo = ? ", $impoexpo);
+        }
+        
+        if( $transporte ){
+            $q->addWhere("m.ca_transporte = ? ", $transporte);
+        }
+        
+        if( $modalidad ){
+            $q->addWhere("m.ca_modalidad = ? ", $modalidad);
+        }
+        
+        if( $idtrafico ){
+            if( $impoexpo==Constantes::EXPO ){
+                $q->addWhere("m.ca_destino = ? ", $idtrafico);
+            }else{
+                $q->addWhere("m.ca_origen = ? ", $idtrafico);
+            }
+        }
+        
+        if( $idlinea ){
+            $q->addWhere("m.ca_idlinea = ? ", $idlinea);
+        }
+        
+        if( $idagente ){
+            $q->addWhere("m.ca_idagente = ? ", $idagente);
+        }
+        
+        if( $mm ){
+            $q->addWhere("SUBSTR(m.ca_referencia,8,2) = ? ", str_pad($mm, 2, "0", STR_PAD_LEFT ));
+        }
+        
+        if( $aa ){
+            $q->addWhere("SUBSTR(m.ca_referencia,15,1) = ? ", $aa%10);
+        }
+        
+        
+        
+        $this->refs = $q->setHydrationMode(Doctrine::HYDRATE_ARRAY)->execute();
+        
+        
+    }
+    
 
 }

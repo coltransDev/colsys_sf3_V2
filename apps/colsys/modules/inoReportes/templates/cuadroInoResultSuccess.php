@@ -13,6 +13,7 @@ $refs = $sf_data->getRaw("refs");
            <th>Origen</th>
            <th>Destino</th>
            <th >Linea</th>
+           <th>TEUS</th>
            <th># hijas</th>
            <th>Piezas</th>           
            <th>Peso</th>
@@ -39,6 +40,7 @@ $refs = $sf_data->getRaw("refs");
                <td><?=$r["Origen"]["ca_ciudad"]?></td>
                <td><?=$r["Destino"]["ca_ciudad"]?></td>
                <td><?=$r["IdsProveedor"]["Ids"]["ca_nombre"]?></td>
+               <td><div align="right"><?=Utils::formatNumber($r["InoViTeus"]["ca_valor"])?></div></td>
                <td><div align="right"><?=Utils::formatNumber($r["InoViUnidadesMaster"]["ca_numhijas"])?></div></td>
                <td><div align="right"><?=Utils::formatNumber($r["InoViUnidadesMaster"]["ca_numpiezas"])?></div></td>
                <td><div align="right"><?=Utils::formatNumber($r["InoViUnidadesMaster"]["ca_peso"])?></div></td>
@@ -76,6 +78,11 @@ $refs = $sf_data->getRaw("refs");
                     $totales["ca_numpiezas"] = 0;
                 }
                 $totales["ca_numpiezas"] += $r["InoViUnidadesMaster"]["ca_numpiezas"]; 
+                
+                if( !isset($totales["teus"]) ){
+                    $totales["teus"] = 0;
+                }
+                $totales["teus"] += $r["InoViTeus"]["ca_valor"]; 
                 
                 if( !isset($totales["ca_numhijas"]) ){
                     $totales["ca_numhijas"] = 0;
@@ -119,6 +126,7 @@ $refs = $sf_data->getRaw("refs");
                <td colspan="3"><div align="left"><b>Total</b></div></td>
                
                <td><div align="right"><b>Total Casos <?=Utils::formatNumber($totales["numrefs"])?></b></div></td>
+               <td><div align="right"><b><?=Utils::formatNumber($totales["teus"])?></b></div></td>
                <td><div align="right"><b><?=Utils::formatNumber($totales["ca_numhijas"])?></b></div></td>
                <td><div align="right"><b><?=Utils::formatNumber($totales["ca_numpiezas"])?></b></div></td>
                <td><div align="right"><b><?=Utils::formatNumber($totales["ca_peso"])?></b></div></td>
