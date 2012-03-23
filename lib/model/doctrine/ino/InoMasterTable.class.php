@@ -43,27 +43,7 @@ class InoMasterTable extends Doctrine_Table
                     $referencia[1] = '20';
                 }
             }
-            //OTM DTA
-            if( $modalidad==Constantes::OTMDTA ){
-
-                $referencia[0] = '7';
-
-                $parametros = ParametroTable::retrieveByCaso("CU010", $origen);
-               if( count( $parametros)>0 ){
-                    $parametro = $parametros[0];
-                    $referencia[0] .= str_pad($parametro->getCaIdentificacion(), 2, "0", STR_PAD_LEFT);
-                }else{
-                    $referencia[0] .= '00';
-                }
-
-                if( $modalidad == "FCL" ){
-                    $referencia[1] = '40';
-                }elseif( $modalidad == "LCL" ){
-                    $referencia[1] = '50';
-                }else{
-                    $referencia[1] = '00';
-                }
-            }
+            
 
             if($transporte==Constantes::AEREO)
             {
@@ -108,7 +88,31 @@ class InoMasterTable extends Doctrine_Table
             {
                 $referencia[1]=$c_transporte[0]->getCaIdentificacion();
             }
-        }
+        }else if( $impoexpo == Constantes::OTMDTA ){
+
+
+
+            $referencia[0] = '7';
+
+            $parametros = ParametroTable::retrieveByCaso("CU010", $origen);
+            if( count( $parametros)>0 ){
+                $parametro = $parametros[0];
+                $referencia[0] .= str_pad($parametro->getCaIdentificacion(), 2, "0", STR_PAD_LEFT);
+            }else{
+                $referencia[0] .= '00';
+            }
+
+            if( $modalidad == "FCL" ){
+                $referencia[1] = '40';
+            }elseif( $modalidad == "LCL" ){
+                $referencia[1] = '50';
+            }elseif( $modalidad == "COLOADING" ){
+                $referencia[1] = '60';                
+            }else{
+                $referencia[1] = '00';
+            }
+            
+        } 
         
 
         $referencia[3] = str_pad($mes, 2, "0", STR_PAD_LEFT);

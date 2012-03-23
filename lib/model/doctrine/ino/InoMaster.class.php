@@ -75,4 +75,8 @@ class InoMaster extends BaseInoMaster
         return $this->vlrSobreventa;
     }
     
+    public function getReadOnly(){
+        return $this->getCaFchliquidado()||$this->getCaFchcerrado()||$this->getCaFchanulado();
+    }
+    
 }
