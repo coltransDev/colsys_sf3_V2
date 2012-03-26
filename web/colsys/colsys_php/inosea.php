@@ -20,7 +20,7 @@ $programa = 43;
 $titulo = 'Sistema Administrador de Referencias Marítimas';
 $meses = array("01" => "Enero", "02" => "Febrero", "03" => "Marzo", "04" => "Abril", "05" => "Mayo", "06" => "Junio", "07" => "Julio", "08" => "Agosto", "09" => "Septiembre", "10" => "Octubre", "11" => "Noviembre", "12" => "Diciembre");
 $columnas = array("Número de Referencia" => "ca_referencia", "BL Master" => "ca_mbls", "Motonave" => "ca_motonave", "Nombre Naviera" => "ca_nombre", "Sigla Naviera" => "ca_sigla", "No. Contenedor" => "ca_idequipo", "BL Hijo" => "ca_hbls", "Nombre del Cliente" => "ca_compania", "Reporte de Negocio" => "ca_consecutivo", "Factura Cliente" => "ca_factura", "N.i.t." => "ca_idcliente", "Nombre del Proveedor" => "ca_proveedor", "Factura Proveedor" => "ca_factura_prov", "Observaciones" => "ca_observaciones");  // Arreglo con las opciones de busqueda
-$imporexpor = array("Importación", "Triangulación", "OTM/DTA");                              // Arreglo con los tipos de Trayecto
+$imporexpor = array("Importación", "Triangulación", "OTM/DTA", "Contenedores");                   // Arreglo con los tipos de Trayecto
 $modalidades = array("LCL", "FCL", "COLOADING", "PROYECTOS", "PARTICULARES");                     // Arreglo con los tipos de Modalidades de Carga
 $continuaciones = array("N/A", "OTM", "DTA", "TRANSBORDO");                          // Arreglo con los tipos de Continuación de Viajes
 $tipos = array("Observación", "Error Detectado", "Seguimiento", "Acción Tomada", "Cerrar el Evento");
@@ -2599,6 +2599,13 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 echo "               document.adicionar.idtradestino[document.adicionar.idtradestino.length] = new Option(nomtraficos[cont].value,idtraficos[cont].value,false,false);";
                 echo "           }";
                 echo "      }";
+                echo "  } else if (document.adicionar.impoexpo.value == 'Contenedores'){";
+                echo "      for (cont=0; cont<idtraficos.length; cont++) {";
+                echo "           if (idtraficos[cont].value == '$regional') {";
+                echo "               document.adicionar.idtraorigen[document.adicionar.idtraorigen.length] = new Option(nomtraficos[cont].value,idtraficos[cont].value,false,false);";
+                echo "               document.adicionar.idtradestino[document.adicionar.idtradestino.length] = new Option(nomtraficos[cont].value,idtraficos[cont].value,false,false);";
+                echo "           }";
+                echo "      }";
                 echo "  } else if (document.adicionar.impoexpo.value == 'Triangulación'){";
                 echo "      for (cont=0; cont<idtraficos.length; cont++){";
                 echo "           if (idtraficos[cont].value != '$regional'){";
@@ -2634,7 +2641,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 echo "      if (document.adicionar.idtradestino.value == ciutraficos.value){";
                 echo "          document.adicionar.idciudestino[document.adicionar.idciudestino.length] = new Option(nomciudades.value,idciudades.value,false,false);";
                 echo "      }";
-                echo "  } else if (document.adicionar.impoexpo.value != 'OTM/DTA'){";
+                echo "  } else if (document.adicionar.impoexpo.value != 'OTM/DTA' && document.adicionar.impoexpo.value != 'Contenedores'){";
                 echo "     for (cont=0; cont<idciudades.length; cont++) {";
                 echo "          if (document.adicionar.idtradestino.value == ciutraficos[cont].value){";
                 echo "              document.adicionar.idciudestino[document.adicionar.idciudestino.length] = new Option(nomciudades[cont].value,idciudades[cont].value,false,false);";
@@ -2661,7 +2668,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 echo "      alert('Seleccione la Ciudad de Origen');";
                 echo "  else if (document.adicionar.idciudestino.value == '')";
                 echo "      alert('Seleccione la Ciudad de Destino');";
-                echo "  else if (document.adicionar.motonave.value == '' && document.getElementById('impoexpo').value != 'OTM/DTA')";
+                echo "  else if (document.adicionar.motonave.value == '' && document.getElementById('impoexpo').value != 'OTM/DTA' && document.getElementById('impoexpo').value != 'Contenedores')";
                 echo "      alert('El campo Motonave no es válido');";
                 echo "  else if (document.getElementById('mbls_1').value == '')";
                 echo "      alert('El campo MBL no es válido');";
@@ -2738,13 +2745,17 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 echo "      origen = document.getElementById('idciuorigen').value;";
                 echo "      document.getElementById('idlinea').style.display = 'none';";
                 echo "      document.getElementById('motonave').style.display = 'none';";
+                echo "  }else if (document.getElementById('impoexpo').value == 'Contenedores'){";
+                echo "      departamento = 'Contenedores';";
+                echo "      origen = document.getElementById('idciuorigen').value;";
+                echo "      document.getElementById('motonave').style.display = 'none';";
                 echo "  } else {";
                 echo "      departamento = 'Marítimo';";
                 echo "      origen = document.getElementById('idtraorigen').value;";
                 echo "      document.getElementById('idlinea').style.display = 'block';";
                 echo "      document.getElementById('motonave').style.display = 'block';";
                 echo "  }";
-                echo "  if (document.getElementById('impoexpo').value == 'OTM/DTA' || document.getElementById('modalidad').value == 'PARTICULARES'){";
+                echo "  if (document.getElementById('impoexpo').value == 'OTM/DTA' || document.getElementById('impoexpo').value == 'Contenedores' || document.getElementById('modalidad').value == 'PARTICULARES'){";
                 echo "      document.getElementById('viaje').style.display = 'none';";
                 echo "  } else {";
                 echo "      document.getElementById('viaje').style.display = 'block';";
@@ -2973,7 +2984,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 echo "               document.modificar.idtradestino[document.modificar.idtradestino.length] = new Option(nomtraficos[cont].value,idtraficos[cont].value,false,seleccion);";
                 echo "           }";
                 echo "      }";
-                echo "  } else if (document.modificar.impoexpo.value == 'OTM/DTA'){";
+                echo "  } else if (document.modificar.impoexpo.value == 'OTM/DTA' || document.modificar.impoexpo.value == 'Contenedores'){";
                 echo "      for (cont=0; cont<idtraficos.length; cont++){";
                 echo "           if (idtraficos[cont].value == '$regional'){";
                 echo "               seleccion = (nomtraficos[cont].value == '" . $rs->Value('ca_traorigen') . "') ? true : false;";
@@ -3012,7 +3023,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 echo "      if (document.modificar.idtradestino.value == ciutraficos.value){";
                 echo "          document.modificar.idciudestino[document.modificar.idciudestino.length] = new Option(nomciudades.value,idciudades.value,false,false);";
                 echo "      }";
-                echo "  } else if (document.modificar.impoexpo.value != 'OTM/DTA'){";
+                echo "  } else if (document.modificar.impoexpo.value != 'OTM/DTA' && document.modificar.impoexpo.value != 'Contenedores'){";
                 echo "     for (cont=0; cont<idciudades.length; cont++) {";
                 echo "          if (document.modificar.idtradestino.value == ciutraficos[cont].value){";
                 echo "              seleccion = (idciudades[cont].value == '" . $rs->Value('ca_destino') . "') ? true : false;";
@@ -3029,7 +3040,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 echo "function validar(){";
                 echo "  if (!chkDate(document.modificar.fchreferencia))";
                 echo "      document.modificar.fchreferencia.focus();";
-                echo "  else if (document.modificar.motonave.value == '' && document.getElementById('impoexpo').value != 'OTM/DTA')";
+                echo "  else if (document.modificar.motonave.value == '' && document.getElementById('impoexpo').value != 'OTM/DTA' && document.getElementById('impoexpo').value != 'Contenedores')";
                 echo "      alert('El campo Motonave no es válido');";
                 echo "  else if (document.getElementById('mbls_1').value == '')";
                 echo "      alert('El campo MBL no es válido');";
@@ -3076,6 +3087,8 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 echo "function validacion(){";
                 echo "  if (document.getElementById('impoexpo').value == 'OTM/DTA'){";
                 echo "      document.getElementById('idlinea').style.display = 'none';";
+                echo "      document.getElementById('motonave').style.display = 'none';";
+                echo "  }else if (document.getElementById('impoexpo').value == 'Contenedores'){";
                 echo "      document.getElementById('motonave').style.display = 'none';";
                 echo "  } else {";
                 echo "      document.getElementById('idlinea').style.display = 'block';";
@@ -5138,7 +5151,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
         case 'Guardar': {                                                      // El Botón Guardar fue pulsado
                 $referencia = isset($referencia) ? implode(".", $referencia) : "";
                 $mes = $mes . '-' . substr($ano, 3, 1);
-                $departamento = ($impoexpo != 'OTM/DTA') ? 'Marítimo' : 'Terrestre';
+                $departamento = ($impoexpo == 'OTM/DTA') ? 'Terrestre' : (($impoexpo == 'Contenedores') ? 'Contenedores' : 'Marítimo');
                 $origen = ($impoexpo != 'OTM/DTA') ? $idtraorigen : $idciuorigen;
                 $idlinea = ($impoexpo != 'OTM/DTA') ? $idlinea : 0;
                 //$mbls = strtoupper(implode("|",$mbls));
