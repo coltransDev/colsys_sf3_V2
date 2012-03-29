@@ -284,6 +284,21 @@ PanelProductos = function( config ){
                         allowBlank: true
                     })
                 }
+                <?
+                if($modo!="consulta"){
+                ?>
+                ,
+                {
+                    xtype: 'actioncolumn',
+                    width: 25,
+                    items: [{
+                        icon   : '/images/fam/table_add.png',  // Use a URL in the icon config
+                        tooltip: 'Menu contextual'                        
+                    }]
+                }
+                <?
+                }
+                ?>
     ];
 
     PanelProductos.superclass.constructor.call(this, {
@@ -359,6 +374,7 @@ PanelProductos = function( config ){
         listeners:{
             validateedit: this.onValidateEdit,
             rowcontextmenu:this.onRowcontextmenu,
+            cellclick:this.onRowcellclick,
             beforeedit: this.onBeforeedit
         }
         <?
@@ -684,12 +700,9 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
             this.ctxRow = null;
         }
     },
-    onRowcontextmenu :  function(grid, index, e){
-        rec = this.store.getAt(index);
-        var storeProductos = this.store;
-        if(!this.menu){ // create context menu on first right click
-
-            this.menu = new Ext.menu.Menu({
+    
+    createMenu: function(){
+        var menu = new Ext.menu.Menu({
             id:'grid_productos-ctx',
             enableScrolling : false,
             items: [{
@@ -742,8 +755,19 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
                             }
                         }
                     }
-                    ]
-            });
+                ]
+            }
+        );
+        return menu;
+    },
+    
+    onRowcontextmenu :  function(grid, index, e){
+        rec = this.store.getAt(index);
+        var storeProductos = this.store;
+        if(!this.menu){ // create context menu on first right click
+
+            this.menu = this.createMenu();
+            
             this.menu.on('hide', this.onContextHide , this);
         }
         e.stopEvent();
@@ -756,6 +780,22 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
         Ext.fly(this.ctxRow).addClass('x-node-ctx');
         this.menu.showAt(e.getXY());
     },
+    
+    onRowcellclick: function( grid, rowIndex, columnIndex, e ){        
+        if( columnIndex == 9 ){
+            var store = this.store;
+            this.ctxRecord = this.store.getAt( rowIndex );
+
+            if(!this.menu){ // create context menu on first right click
+
+                this.menu = this.createMenu();
+
+                this.menu.on('hide', this.onContextHide , this);
+            }
+            this.menu.showAt(e.getXY());
+        }
+    },
+    
     /*
     * Determina que store se debe utilizar dependiendo si es un concepto o recargo
     */

@@ -200,6 +200,21 @@ this.storeEquipos = new Ext.data.Store({
 	                    allowBlank:true
 			})
 		}
+        <?
+        if($modo!="consulta"){
+        ?>
+        ,
+        {
+            xtype: 'actioncolumn',
+            width: 25,
+            items: [{
+                icon   : '/images/fam/table_add.png',  // Use a URL in the icon config
+                tooltip: 'Menu contextual'                        
+            }]
+        }
+        <?
+        }
+        ?>
 	];
 
 
@@ -320,7 +335,8 @@ this.storeEquipos = new Ext.data.Store({
         listeners:{
             rowcontextmenu:this.onRowContextMenu,
             validateedit: this.onValidateEdit,
-            beforeedit:this.onBeforeedit
+            beforeedit:this.onBeforeedit,
+            cellclick:this.onRowcellclick
         }
         <?
         }else{
@@ -561,15 +577,14 @@ Ext.extend(PanelRecargosCotizacion, Ext.grid.EditorGridPanel, {
         }
     },
 
+       
+
     /*
     * Menu contextual que se despliega sobre una fila con el boton derecho
     */
-
-    onRowContextMenu: function(grid, index, e){
-        rec = this.store.getAt(index);
-        var storeRecargosCot = this.store;
-        if(!this.menu){ // create context menu on first right click
-            this.menu = new Ext.menu.Menu({
+   
+    createMenu: function(){
+       var menu = new Ext.menu.Menu({
             id:'grid_recargos-ctx',
             enableScrolling : false,
             items: [
@@ -630,8 +645,16 @@ Ext.extend(PanelRecargosCotizacion, Ext.grid.EditorGridPanel, {
                             }
                         }
                     }
-                    ]
-            });
+                ]
+        });
+        return menu;
+    },
+
+    onRowContextMenu: function(grid, index, e){
+        rec = this.store.getAt(index);
+        var storeRecargosCot = this.store;
+        if(!this.menu){ // create context menu on first right click
+            this.menu = this.createMenu(); 
             this.menu.on('hide', this.onContextHide , this);
         }
         e.stopEvent();
@@ -644,7 +667,22 @@ Ext.extend(PanelRecargosCotizacion, Ext.grid.EditorGridPanel, {
         Ext.fly(this.ctxRow).addClass('x-node-ctx');
         this.menu.showAt(e.getXY());
     },
+    
+    onRowcellclick: function( grid, rowIndex, columnIndex, e ){          
+        if( columnIndex == 10 ){
+            storeRecargosCot = grid.store;
+            var store = this.store;
+            this.ctxRecord = this.store.getAt( rowIndex );
 
+            if(!this.menu){ // create context menu on first right click
+
+                this.menu = this.createMenu();
+
+                this.menu.on('hide', this.onContextHide , this);
+            }
+            this.menu.showAt(e.getXY());
+        }
+    },
 
     /*
     * Muestra una ventana con la informacion del tarifario y le permite al usuario

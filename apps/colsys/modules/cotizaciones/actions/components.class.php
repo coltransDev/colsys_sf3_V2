@@ -143,6 +143,10 @@ class cotizacionesComponents extends sfComponents {
                 'transporte' => utf8_encode($seguro->getCaTransporte())
             );
         }
+        
+        if (!isset($this->modo)) {
+            $this->modo = "";
+        }
     }
 
     /*

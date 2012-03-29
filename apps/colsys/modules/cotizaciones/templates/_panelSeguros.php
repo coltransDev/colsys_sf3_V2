@@ -142,6 +142,21 @@ PanelSeguros = function( config ){
                             name: 'observaciones'
                 })
             }
+            <?
+            if($modo!="consulta"){
+            ?>
+            ,
+            {
+                xtype: 'actioncolumn',
+                width: 25,
+                items: [{
+                    icon   : '/images/fam/table_add.png',  // Use a URL in the icon config
+                    tooltip: 'Menu contextual'                        
+                }]
+            }
+            <?
+            }
+            ?>
     ];
 
 
@@ -195,7 +210,8 @@ PanelSeguros = function( config ){
         })	,
 
         listeners:{
-            rowcontextmenu:this.onRowcontextMenu
+            rowcontextmenu:this.onRowcontextMenu,
+            cellclick:this.onRowcellclick
         }
     });
 }
@@ -208,13 +224,9 @@ Ext.extend(PanelSeguros, Ext.grid.EditorGridPanel, {
             this.ctxRow = null;
         }
     },
-
-    onRowcontextMenu: function(grid, index, e){
-        var storeSegurosCot = this.store;
-        rec = this.store.getAt(index);
-
-        if(!this.menu){ // create context menu on first right click
-            this.menu = new Ext.menu.Menu({
+    
+    createMenu: function(){
+        var menu = new Ext.menu.Menu({
             enableScrolling : false,
             items: [
                     {
@@ -254,8 +266,18 @@ Ext.extend(PanelSeguros, Ext.grid.EditorGridPanel, {
                             }
                         }
                     }
-                    ]
-            });
+                ]
+        });
+        return menu;
+            
+    },
+
+    onRowcontextMenu: function(grid, index, e){
+        var storeSegurosCot = this.store;
+        rec = this.store.getAt(index);
+
+        if(!this.menu){ // create context menu on first right click
+            this.menu = this.createMenu();
             this.menu.on('hide', this.onContextHide, this);
        }
         e.stopEvent();
@@ -267,6 +289,23 @@ Ext.extend(PanelSeguros, Ext.grid.EditorGridPanel, {
         this.ctxRow = this.view.getRow(index);
         Ext.fly(this.ctxRow).addClass('x-node-ctx');
         this.menu.showAt(e.getXY());
+    },
+    
+    onRowcellclick: function( grid, rowIndex, columnIndex, e ){    
+        
+        if( columnIndex == 9 ){
+            storeSegurosCot = grid.store;
+            var store = this.store;
+            this.ctxRecord = this.store.getAt( rowIndex );
+
+            if(!this.menu){ // create context menu on first right click
+
+                this.menu = this.createMenu();
+
+                this.menu.on('hide', this.onContextHide , this);
+            }
+            this.menu.showAt(e.getXY());
+        }
     },
 
     /*
