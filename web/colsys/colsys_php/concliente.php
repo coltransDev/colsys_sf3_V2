@@ -102,7 +102,7 @@ require_once("menu.php");
        }
     echo "</TABLE><BR>";
     echo "<TABLE CELLSPACING=10>";
-    echo "<TH><INPUT Class=button TYPE='BUTTON' NAME='boton' VALUE='Terminar' ONCLICK='javascript:document.location.href = \"clientes.php?modalidad=N.i.t.&\criterio=".$rs->Value('ca_idcliente')."\"'></TH>";  // Cancela la operación
+    echo "<TH><INPUT Class=button TYPE='BUTTON' NAME='boton' VALUE='Terminar' ONCLICK='javascript:document.location.href = \"clientes.php?modalidad=N.i.t.&\criterio=".$rs->Value('ca_idalterno')."\"'></TH>";  // Cancela la operación
     echo "</TABLE>";
     echo "</FORM>";
     echo "</CENTER>";
