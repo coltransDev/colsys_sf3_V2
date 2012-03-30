@@ -380,6 +380,21 @@ class widgetsComponents extends sfComponents {
         }
 //		echo "<pre>";print_r($this->data);echo "</pre>";
     }
+    
+    public function executeWidgetMes() {
+        $this->data = array();
+
+
+        $this->data = array();
+        foreach ($modalidades as $modalidad) {
+            $this->data[] = array("idmodalidad" => $modalidad->getCaIdmodalidad(),
+                "impoexpo" => utf8_encode($modalidad->getCaImpoexpo()),
+                "transporte" => utf8_encode($modalidad->getCaTransporte()),
+                "modalidad" => utf8_encode($modalidad->getCaModalidad())
+            );
+        }
+//		echo "<pre>";print_r($this->data);echo "</pre>";
+    }
 
     public function executeWidgetMoneda() {
         $this->data = array();
