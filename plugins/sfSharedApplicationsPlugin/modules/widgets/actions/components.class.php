@@ -386,13 +386,19 @@ class widgetsComponents extends sfComponents {
 
 
         $this->data = array();
-        foreach ($modalidades as $modalidad) {
-            $this->data[] = array("idmodalidad" => $modalidad->getCaIdmodalidad(),
-                "impoexpo" => utf8_encode($modalidad->getCaImpoexpo()),
-                "transporte" => utf8_encode($modalidad->getCaTransporte()),
-                "modalidad" => utf8_encode($modalidad->getCaModalidad())
-            );
-        }
+        $this->data[]=array("mes"=>"Enero","nmes"=>"1");
+        $this->data[]=array("mes"=>"Febrero","nmes"=>"2");
+        $this->data[]=array("mes"=>"Marzo","nmes"=>"3");
+        $this->data[]=array("mes"=>"Abril","nmes"=>"4");
+        $this->data[]=array("mes"=>"Mayo","nmes"=>"5");
+        $this->data[]=array("mes"=>"Junio","nmes"=>"6");
+        $this->data[]=array("mes"=>"Julio","nmes"=>"7");
+        $this->data[]=array("mes"=>"Agosto","nmes"=>"8");
+        $this->data[]=array("mes"=>"Septiembre","nmes"=>"9");
+        $this->data[]=array("mes"=>"Octubre","nmes"=>"10");
+        $this->data[]=array("mes"=>"Noviembre","nmes"=>"11");
+        $this->data[]=array("mes"=>"Diciembre","nmes"=>"12");
+        
 //		echo "<pre>";print_r($this->data);echo "</pre>";
     }
 
