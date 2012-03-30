@@ -206,6 +206,110 @@ class reportesGerActions extends sfActions {
         $this->incoterms=array();
     }
     }
+    
+    public function executeEstadisticasMaritimo(sfWebRequest $request) {
+
+        $response = sfContext::getInstance()->getResponse();
+        $response->addJavaScript("extExtras/SuperBoxSelect", 'last');
+
+        /*$this->nivel = $this->getUser()->getNivelAcceso(reportesGerActions::RUTINA);
+        if ($this->nivel == -1) {
+            $this->forward404();
+        }*/
+        $this->opcion = $request->getParameter("opcion");
+        $this->year = ($request->getParameter("year")!="")?$request->getParameter("year"):date("Y");
+        $this->mes = $request->getParameter("mes");
+        $this->nmes = $request->getParameter("nmes");
+        
+        if ($this->opcion) {
+
+            if ($this->year!="")
+                $where.=" and ca_ano in (".($this->year).")";
+            
+            if ($this->mes!="")
+                $where.=" and ca_mes::integer = ".($this->nmes)."";
+                //$where.=" and ca_ano in (" . $this->year. ",".($this->year-1).")";
+
+/*            $sql = "select ca_ano, ca_trafico, ca_traorigen, ca_ciudestino, sum(ca_20pies) as ca_20pies, sum(ca_40pies) as ca_40pies, 
+                sum(ca_teus) as ca_teus from vi_inotrafico_lcl where 1=1 and ca_impoexpo='".constantes::IMPO."' and ca_trafico='05' $where group by ca_ano, ca_trafico, ca_traorigen, ca_ciudestino order by ca_ano, ca_traorigen, ca_ciudestino";*/
+            $sql = "select ca_ano, ca_trafico, ca_traorigen, ca_ciudestino, sum(ca_volumen) as ca_volumen, sum(ca_20pies) as ca_20pies, sum(ca_40pies) as ca_40pies, 
+                sum(ca_teus) as ca_teus from vi_inotrafico_lcl where 1=1  $where group by ca_ano, ca_trafico, ca_traorigen, ca_ciudestino order by ca_ano, ca_traorigen, ca_ciudestino";
+            //echo $sql;
+            $con = Doctrine_Manager::getInstance()->connection();
+            $st = $con->execute($sql);
+            $this->lcl = $st->fetchAll();            
+            //echo "<pre>";print_r($this->lcl);echo "</pre>";
+            /*$sql = "select ca_ano, ca_trafico, ca_traorigen, ca_ciudestino, sum(ca_20pies) as ca_20pies, sum(ca_40pies) as ca_40pies, 
+                sum(ca_teus) as ca_teus from vi_inotrafico_fcl where 1=1 and ca_impoexpo='".constantes::IMPO."' and ca_trafico='05' $where group by ca_ano, ca_trafico, ca_traorigen, ca_ciudestino order by ca_ano, ca_traorigen, ca_ciudestino";
+             * 
+             */
+            $sql = "select ca_ano, ca_trafico, ca_traorigen, ca_ciudestino, sum(ca_20pies) as ca_20pies, sum(ca_40pies) as ca_40pies, 
+                sum(ca_teus) as ca_teus from vi_inotrafico_fcl where 1=1  $where group by ca_ano, ca_trafico, ca_traorigen, ca_ciudestino order by ca_ano, ca_traorigen, ca_ciudestino";
+                        
+            $st = $con->execute($sql);
+            $this->fcl = $st->fetchAll();
+            //echo "<pre>";print_r($this->fcl);echo "</pre>";
+            $this->grid=array();
+            $this->puertos=array("Barranquilla","Buenaventura","Cartagena","Santa Marta","Otros");
+            $this->grid["destino"]["Barranquilla"]=array();
+            
+            $this->grid["destino"]["Buenaventura"]=array();
+            $this->grid["destino"]["Cartagena"]=array();
+            $this->grid["destino"]["Santa Marta"]=array();
+            $this->grid["destino"]["Otros"]=array();
+            foreach($this->lcl as $l)
+            {             
+                if(!in_array($l["ca_ciudestino"],$this->puertos))
+                {
+                    $l["ca_ciudestino"]="Otros";
+                }
+                $this->grid["destino"][$l["ca_ciudestino"]]["LCL"][$l["ca_ano"]]["ca_volumen"]   += (int)$l["ca_volumen"];
+                $this->grid["destino"][$l["ca_ciudestino"]]["LCL"][$l["ca_ano"]]["ca_20pies"]    += (int)$l["ca_20pies"];
+                $this->grid["destino"][$l["ca_ciudestino"]]["LCL"][$l["ca_ano"]]["ca_40pies"]    += (int)$l["ca_40pies"];
+                $this->grid["destino"][$l["ca_ciudestino"]]["LCL"][$l["ca_ano"]]["ca_teus"]      += (int)$l["ca_teus"];                
+                
+                $this->grid["origen"][$l["ca_traorigen"]]["LCL"][$l["ca_ano"]][$l["ca_ciudestino"]]["ca_volumen"]    += (int)$l["ca_volumen"];
+                $this->grid["origen"][$l["ca_traorigen"]]["LCL"][$l["ca_ano"]][$l["ca_ciudestino"]]["ca_20pies"]    += (int)$l["ca_20pies"];
+                $this->grid["origen"][$l["ca_traorigen"]]["LCL"][$l["ca_ano"]][$l["ca_ciudestino"]]["ca_40pies"]    += (int)$l["ca_40pies"];
+                $this->grid["origen"][$l["ca_traorigen"]]["LCL"][$l["ca_ano"]][$l["ca_ciudestino"]]["ca_teus"]      += (int)$l["ca_teus"];
+                
+                $this->grid["origen"][$l["ca_traorigen"]]["LCL"][$l["ca_ano"]]["totales"]["ca_volumen"]    += (int)$l["ca_volumen"];
+                $this->grid["origen"][$l["ca_traorigen"]]["LCL"][$l["ca_ano"]]["totales"]["ca_20pies"]    += (int)$l["ca_20pies"];
+                $this->grid["origen"][$l["ca_traorigen"]]["LCL"][$l["ca_ano"]]["totales"]["ca_40pies"]    += (int)$l["ca_40pies"];
+                $this->grid["origen"][$l["ca_traorigen"]]["LCL"][$l["ca_ano"]]["totales"]["ca_teus"]      += (int)$l["ca_teus"];
+                
+                $this->grid["LCL"][$l["ca_ano"]]["totales"]["ca_volumen"]    += (int)$l["ca_volumen"];
+                $this->grid["LCL"][$l["ca_ano"]]["totales"]["ca_20pies"]    += (int)$l["ca_20pies"];
+                $this->grid["LCL"][$l["ca_ano"]]["totales"]["ca_40pies"]    += (int)$l["ca_40pies"];
+                $this->grid["LCL"][$l["ca_ano"]]["totales"]["ca_teus"]      += (int)$l["ca_teus"];                
+            }
+            
+            foreach($this->fcl as $l)
+            {                
+                if(!in_array($l["ca_ciudestino"],$this->puertos))
+                {
+                    $l["ca_ciudestino"]="Otros";
+                }
+                $this->grid["destino"][$l["ca_ciudestino"]]["FCL"][$l["ca_ano"]]["ca_20pies"]    += (int)$l["ca_20pies"];    
+                $this->grid["destino"][$l["ca_ciudestino"]]["FCL"][$l["ca_ano"]]["ca_40pies"]    += (int)$l["ca_40pies"];
+                $this->grid["destino"][$l["ca_ciudestino"]]["FCL"][$l["ca_ano"]]["ca_teus"]      += (int)$l["ca_teus"];
+                
+                $this->grid["origen"][$l["ca_traorigen"]]["FCL"][$l["ca_ano"]][$l["ca_ciudestino"]]["ca_20pies"]    += (int)$l["ca_20pies"];    
+                $this->grid["origen"][$l["ca_traorigen"]]["FCL"][$l["ca_ano"]][$l["ca_ciudestino"]]["ca_40pies"]    += (int)$l["ca_40pies"];
+                $this->grid["origen"][$l["ca_traorigen"]]["FCL"][$l["ca_ano"]][$l["ca_ciudestino"]]["ca_teus"]      += (int)$l["ca_teus"];
+                
+                $this->grid["origen"][$l["ca_traorigen"]]["FCL"][$l["ca_ano"]]["totales"]["ca_20pies"]    += (int)$l["ca_20pies"];    
+                $this->grid["origen"][$l["ca_traorigen"]]["FCL"][$l["ca_ano"]]["totales"]["ca_40pies"]    += (int)$l["ca_40pies"];
+                $this->grid["origen"][$l["ca_traorigen"]]["FCL"][$l["ca_ano"]]["totales"]["ca_teus"]      += (int)$l["ca_teus"];
+                
+                
+                $this->grid["FCL"][$l["ca_ano"]]["totales"]["ca_20pies"]    += (int)$l["ca_20pies"];    
+                $this->grid["FCL"][$l["ca_ano"]]["totales"]["ca_40pies"]    += (int)$l["ca_40pies"];
+                $this->grid["FCL"][$l["ca_ano"]]["totales"]["ca_teus"]      += (int)$l["ca_teus"];                
+            }
+            //echo "<pre>";print_r($this->grid["origen"]);echo "</pre>";
+        }
+    }
 
     public function executeEstadisticasTraficos(sfWebRequest $request) {
         $this->opcion = $request->getParameter("opcion");
