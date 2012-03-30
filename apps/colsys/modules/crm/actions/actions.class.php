@@ -156,13 +156,27 @@ class crmActions extends sfActions {
             }
             
             $cliente->setCaCalificacion( $request->getParameter("calificacion") );
-            $cliente->setCaComentario( $request->getParameter("comentario") );
+            
             $cliente->setCaFchcotratoag( $request->getParameter("fchcotratoag") );
             $cliente->setCaEntidad( $request->getParameter("entidad") );
             $cliente->setCaPreferencias( utf8_decode($request->getParameter("preferencias")) );
+            if( $request->getParameter("leyinsolvencia") ){
+                $cliente->setCaLeyinsolvencia( utf8_decode($request->getParameter("leyinsolvencia")) );
+            }else{
+                $cliente->setCaLeyinsolvencia( null );
+            }
             
-            $cliente->setCaLeyinsolvencia( utf8_decode($request->getParameter("leyinsolvencia")) );
-            $cliente->setCaListaclinton( utf8_decode($request->getParameter("listaclinton")) );
+            if( $request->getParameter("listaclinton") ){
+                $cliente->setCaListaclinton( utf8_decode($request->getParameter("listaclinton")) );
+            }else{
+                $cliente->setCaListaclinton( null);
+            }
+            
+            if( $request->getParameter("comentario") ){
+                $cliente->setCaComentario( $request->getParameter("comentario") );
+            }else{
+                $cliente->setCaComentario( null );
+            }
 
             $ids->save( $conn );
             $cliente->setCaIdgrupo( $ids->getCaId() );
