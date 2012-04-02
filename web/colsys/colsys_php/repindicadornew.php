@@ -1,6 +1,6 @@
 <?php
 /*================-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*\
-// Archivo:       repindicadornew.PHP                                          \\
+// Archivo:       repindicadornew.PHP                                         \\
 // Creado:        2004-05-11                                                  \\
 // Autor:         Carlos Gilberto López M.                                    \\
 // Ver:           1.00                                                        \\
@@ -16,7 +16,7 @@
 $titulo = 'Generador de Indicadores de Gestión';
 $meses  = array( "%" => "Todos los Meses", "01" => "Enero", "02" => "Febrero", "03" => "Marzo", "04" => "Abril", "05" => "Mayo", "06" => "Junio", "07" => "Julio", "08" => "Agosto", "09" => "Septiembre", "10" => "Octubre", "11" => "Noviembre", "12" => "Diciembre" );
 $criterios = array( "ca_ano" => "Año", "ca_mes" => "Mes", "ca_sucursal" => "Sucursal", "ca_traorigen" => "Tráfico", "ca_compania" => "Clientes");
-$transportes= array("Aéreo","Marítimo");                          // Arreglo con los tipos de Transportes
+$transportes= array("%" => "Todos", "Aéreo" => "Aéreo", "Marítimo" => "Marítimo");      // Arreglo con los tipos de Transportes
 
 include_once 'include/datalib.php';                                            // Incorpora la libreria de funciones, para accesar leer bases de datos
 require_once("checklogin.php");                                                               // Captura las variables de la sessión abierta
@@ -53,6 +53,10 @@ if (!isset($boton) and !isset($buscar)) {
     echo "     indicad_element[indicad_element.length] = new Option(objeto.value,objeto.value,false,false);";
     echo "     i++;";
     echo "  }";
+    echo "  if (department_element.value == 'Exportaciones'){";
+    echo "      document.getElementById('transporte').style.display = 'block';";
+    echo "  }else";
+    echo "      document.getElementById('transporte').style.display = 'none';";
     echo "}";
     echo "</script>";
     
@@ -171,7 +175,12 @@ if (!isset($boton) and !isset($buscar)) {
 
     echo "<TR>";
     echo "  <TD Class=listar>Departamento: </TD>";
-    echo "  <TD Class=listar COLSPAN=2><SELECT ID='departamento' NAME='departamento' ONCHANGE='llenar_indicadores(this);'></SELECT></TD>";
+    echo "  <TD Class=listar ><SELECT ID='departamento' NAME='departamento' ONCHANGE='llenar_indicadores(this);'></SELECT></TD>";
+    echo "  <TD Class=listar ><SELECT ID='transporte' NAME='transporte[]' style='display: none'>";
+    while (list ($clave, $val) = each ($transportes)) {
+        echo "   <OPTION VALUE='$clave'>$val</OPTION>";
+    }
+    echo "  </SELECT></TD>";
     echo "  <TD Class=listar COLSPAN=2><SELECT ID='indicador' NAME='indicador'></SELECT></TD>";
     echo "</TR>";
 
@@ -212,6 +221,8 @@ elseif (!isset($boton) and !isset($accion) and isset($buscar)) {
     $suc_tit = implode(',',$sucursal);
     $ciu_tit = implode(',',$ciudestino);
 
+    $tra_mem = $transporte[0];
+    
     $tot_cols = 11;
     $ano_fes = "to_char(ca_fchfestivo,'YYYY') ".((count($ano)==1)?"like '$ano[0]'":"in ('".implode("','",$ano)."')");
 
@@ -257,6 +268,7 @@ elseif (!isset($boton) and !isset($accion) and isset($buscar)) {
     }else{
         $ciudestino = "ca_ciudestino ".((count($ciudestino)==1)?"like '$ciudestino[0]'":"in ('".implode("','",$ciudestino)."')");   
         $traorigen = "ca_traorigen ".((count($traorigen)==1)?"like '$traorigen[0]'":"in ('".implode("','",$traorigen)."')");
+        $transporte = "ca_transporte ".((count($transporte)==1)?"like '$transporte[0]'":"in ('".implode("','",$transporte)."')");
     }  
     
     $cliente = ((strlen($cliente)!=0)?"and upper(ca_compania) like upper('%$cliente%')":"");    
@@ -289,7 +301,7 @@ elseif (!isset($boton) and !isset($accion) and isset($buscar)) {
     $array_pnc = array();  // Para el calculo del Producto no Conforme
     $array_null= array();  // Para el conteo de los Registros que nos pueden calcular
 
-    if (!$tm->Open("select suc.ca_nombre, ca_lim1 from idg.tb_idg idg inner join idg.tb_config cfg on idg.ca_idg = cfg.ca_idg inner join control.tb_departamentos dep on idg.ca_iddepartamento = dep.ca_iddepartamento left join control.tb_sucursales suc on suc.ca_idsucursal = cfg.ca_idsucursal where idg.ca_nombre = '$indicador'")) {        // Selecciona todos lo registros de la tabla Festivos
+    if (!$tm->Open("select suc.ca_nombre, ca_lim1 from idg.tb_idg idg inner join idg.tb_config cfg on idg.ca_idg = cfg.ca_idg inner join control.tb_departamentos dep on idg.ca_iddepartamento = dep.ca_iddepartamento left join control.tb_sucursales suc on suc.ca_idsucursal = cfg.ca_idsucursal where dep.ca_nombre = '".str_replace("_"," ",$departamento)."' and idg.ca_nombre = '$indicador'")) {        // Selecciona todos lo registros de la tabla Festivos
         echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
         echo "<script>document.location.href = 'entrada.php';</script>";
         exit; }
@@ -530,11 +542,11 @@ elseif (!isset($boton) and !isset($accion) and isset($buscar)) {
             $impoexpo.= " and ca_nomsia = 'COLMAS'";
         }
         $source = "vi_repindicador_exp";
-        $etapa = ($departamento == 'Aéreo')?"EECEM":"EEETA";
+        $etapa = ($tra_mem == 'Aéreo')?"EECEM":"EEETA";
         $subque = "LEFT OUTER JOIN (select ca_consecutivo as ca_consecutivo_sub, ca_fchsalida, ca_horasalida from tb_repstatus rps LEFT OUTER JOIN ( select max(srps.ca_idstatus) as ca_idstatus, srpt.ca_consecutivo from tb_repstatus srps LEFT OUTER JOIN tb_reportes srpt ON (srps.ca_idreporte = srpt.ca_idreporte) where srps.ca_idetapa = '$etapa'  and srpt.ca_impoexpo = 'Exportación'  group by ca_consecutivo) rpf ON (rps.ca_idstatus = rpf.ca_idstatus)) rs ON (rs.ca_consecutivo_sub = vi_repindicador_exp.ca_consecutivo) ";
         $subque = "LEFT OUTER JOIN (select ca_consecutivo as ca_consecutivo_sub, ca_fchsalida, ca_horasalida from tb_repstatus rps LEFT OUTER JOIN ( select max(srps.ca_idstatus) as ca_idstatus, srpt.ca_consecutivo from tb_repstatus srps LEFT OUTER JOIN tb_reportes srpt ON (srps.ca_idreporte = srpt.ca_idreporte) where srpt.ca_impoexpo = 'Exportación'  group by ca_consecutivo) rpf ON (rps.ca_idstatus = rpf.ca_idstatus)) rs ON (rs.ca_consecutivo_sub = vi_repindicador_exp.ca_consecutivo) ";
 
-        $evento = ($departamento == 'Marítimo')?"Recibo de Soportes desde Puerto":"DEX";
+        $evento = ($tra_mem == 'Marítimo')?"Recibo de Soportes desde Puerto":"DEX";
         $subque.= "LEFT OUTER JOIN (select exm.ca_referencia_exm, ext.ca_idevento, ext.ca_fchevento, ext.ca_fechadoc, pre.ca_valor from (select ca_referencia as ca_referencia_exm, ca_tipoexpo, ca_consecutivo from tb_expo_maestra) exm ";
         $subque.= "LEFT OUTER JOIN (select et.ca_referencia as ca_referencia_ext, et.ca_idevento, min(et.ca_fchevento) as ca_fchevento, min(ea.ca_fechadoc) as ca_fechadoc from tb_expo_tracking et LEFT JOIN tb_expo_aedex ea ON et.ca_referencia = ea.ca_referencia and et.ca_idevento = ea.ca_idevento where ca_realizado = 1 group by et.ca_referencia, et.ca_idevento) ext ON (ext.ca_referencia_ext = exm.ca_referencia_exm) ";
         $subque.= "INNER JOIN tb_parametros prm ON (prm.ca_casouso = 'CU011' and exm.ca_tipoexpo = prm.ca_identificacion) ";
@@ -1243,7 +1255,7 @@ elseif (!isset($boton) and !isset($accion) and isset($buscar)) {
                     $matriz_eventos["intervalo_1"]['Rec.Último Documento'] = $ult_mem;
                     $matriz_eventos["intervalo_1"]['SAE'] = $sae_mem;
                 }else if (substr($indicador, 0, 5)=='Carga'){
-                    if (!is_null($sae_mem) and $nom_sia=='COLMAS' and $tip_tra=='Marítimo'){
+                    if (!is_null($sae_mem) and $nom_sia=='COLMAS' and $transporte=='Marítimo'){
                         $matriz_eventos["intervalo_1"]['SAE'] = $sae_mem;
                     }else{
                         $matriz_eventos["intervalo_1"]['Rec.Último Documento'] = $ult_mem;
@@ -1292,19 +1304,19 @@ elseif (!isset($boton) and !isset($accion) and isset($buscar)) {
 
                 $matriz_eventos = array();
                 if (substr($indicador, 0, 6)=='Aduana'){
-                    if ($departamento == 'Aéreo') {
+                    if ($transporte == 'Aéreo') {
                         $matriz_eventos["intervalo_1"]['DEX'] = $rs->Value('ca_fechadoc');
-                    } else if ($departamento == 'Marítimo') {
+                    } else if ($transporte == 'Marítimo') {
                         $matriz_eventos["intervalo_1"]['Fch.Recibo Soportes'] = $rs->Value('ca_fchevento');
                     }
                 }else if (substr($indicador, 0, 5)=='Carga'){
-                    if ($departamento == 'Aéreo') {
+                    if ($transporte == 'Aéreo') {
                         if ($nom_sia=='COLMAS'){
                             $matriz_eventos["intervalo_1"]['DEX'] = $rs->Value('ca_fechadoc');
                         }else{
                             $matriz_eventos["intervalo_1"]['Fch.Carga Embarcada'] = $rs->Value('ca_fchsalida');
                         }
-                    } else if ($departamento == 'Marítimo') {
+                    } else if ($transporte == 'Marítimo') {
                         $matriz_eventos["intervalo_1"]['Fch.Confirmación Salida'] = $rs->Value('ca_fchsalida');
                     }
                 }
@@ -1418,9 +1430,8 @@ function analizar_dif($tipo, $lcs_var, $dif_mem, &$array_avg, &$array_pnc, &$arr
         $contar = false;
     } else {
         if ($tipo == "T") {
-            list($hor, $min, $seg) = sscanf($lcs_var, "%d:%d:%d");
-            $lcs_sec = ($hor * 3600) + ($min * 60) + $seg;
-
+            $lcs_sec = $lcs_var * 3600;
+            
             list($hor, $min, $seg) = sscanf($dif_mem, "%d:%d:%d");
             $dif_sec = ($hor * 3600) + ($min * 60) + $seg;
 
