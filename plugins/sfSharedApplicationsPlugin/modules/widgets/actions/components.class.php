@@ -77,6 +77,25 @@ class widgetsComponents extends sfComponents {
         }
         $this->incoterms.=$incotmp . "]";
     }
+    
+    public function executeWidgetMultiDatos() {
+        //$incoterms = ParametroTable::retrieveByCaso("CU062");
+        //$this->incoterms = array();
+        /*$this->incoterms = "[";
+        $incotmp = "";
+        foreach ($incoterms as $incoterm) {
+            $incotmp.=($incotmp != "") ? "," : "";
+            $incotmp.="['" . $incoterm->getCaValor() . "']";
+        }
+        $this->incoterms.=$incotmp . "]";
+         * 
+         */
+        $this->datos=array();
+//        $this->datos[] = array("id" => "1", "valor" => "uno");
+//        $this->datos[] = array("id" => "2", "valor" => "dos");
+//        $this->datos[] = array("id" => "3", "valor" =>"tres" );
+        //print_r($this->datos);
+    }
 
     public function executeTransportes() {
         $this->transportes = ParametroTable::retrieveByCaso("CU063");
