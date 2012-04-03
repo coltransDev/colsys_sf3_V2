@@ -1,10 +1,20 @@
 <?
 include_component("charts","column");
 include_component("widgets","widgetMes");
+include_component("widgets","widgetMultiDatos");
 
 $year = $sf_data->getRaw("year");
 $grid = $sf_data->getRaw("grid");
 $puertos = $sf_data->getRaw("puertos");
+
+$idorigen = $sf_data->getRaw("idorigen");
+
+$datos=array();
+$datos[] = array("id" => "1", "valor" => "uno");
+$datos[] = array("id" => "2", "valor" => "dos");
+$datos[] = array("id" => "3", "valor" =>"tres" );
+
+print_r($idorigen);
 ?>
 <style>
     caption{font-weight: bold;font-size: 16px;text-align: center; padding: 5px }
@@ -76,6 +86,36 @@ $puertos = $sf_data->getRaw("puertos");
                                                         hiddenName: "nmes",                                                        
                                                         value:"<?=$mes?>",
                                                         hiddenValue:"<?=$nmes?>"
+                                                        })
+                                         ,
+                                         new WidgetMultiDatos({title: 'Origen',
+                                                    fieldLabel: 'origen',
+                                                        id: 'origen',
+                                                        name: 'origen[]',
+                                                        hiddenName: "idorigen[]",                                                        
+                                                        //value:"<?=$origen?>",
+                                                        value:'<?= implode(",", $idorigen) ?>',
+                                                        
+                                                        listeners:{
+                                                            render:function()
+                                                            {
+                                                                //alert(this.store.data.length);
+                                                                if(this.store.data.length==0)
+                                                                {
+                                                                    data=<?=json_encode(array("root"=>$datos, "total"=>count($datos), "success"=>true) )?>;
+                                                                    this.store.loadData(data);
+                                                                }
+                                                            },
+                                                            focus:function()
+                                                            {
+                                                                //alert(this.store.data.length);
+                                                                if(this.store.data.length==0)
+                                                                {
+                                                                    data=<?=json_encode(array("root"=>$datos, "total"=>count($datos), "success"=>true) )?>;
+                                                                    this.store.loadData(data);
+                                                                }
+                                                            }
+                                                        }
                                                         })
                                     ]
                                 }

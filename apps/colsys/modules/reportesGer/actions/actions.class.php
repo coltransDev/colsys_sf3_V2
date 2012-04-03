@@ -221,6 +221,8 @@ class reportesGerActions extends sfActions {
         $this->mes = $request->getParameter("mes");
         $this->nmes = $request->getParameter("nmes");
         
+        $this->idorigen = $request->getParameter("idorigen");
+        
         if ($this->opcion) {
 
             if ($this->year!="")
