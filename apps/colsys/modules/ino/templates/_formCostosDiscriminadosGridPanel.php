@@ -5,14 +5,60 @@
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
 
-
+$data = $sf_data->getRaw("data");
 
 ?>
 <script type="text/javascript">
 FormCostosDiscriminadosGridPanel = function( config ){
     Ext.apply(this, config);  
     
+    
+    this.widgetConceptos = new Ext.form.ComboBox({
+        name: "concepto",
+        hiddenName: "idconcepto",
+        fieldLabel: "Concepto",
+        valueField: 'idconcepto',
+        displayField: 'concepto',
+        typeAhead: true,
+        forceSelection: true,
+        triggerAction: 'all',
+        emptyText:'',
+        selectOnFocus: true,        
+        lazyRender:true,
+        mode: 'local',
+        listClass: 'x-combo-list-small',
+        submitValue: true,
+        allowBlank: false,
+        tabIndex: 1,
+        store: new Ext.data.Store({
+            autoLoad : true,
+            reader: new Ext.data.JsonReader(
+            {
+                root: 'root',
+                totalProperty: 'total',
+                successProperty: 'success'
+            },
+            Ext.data.Record.create([
+                    {name: 'idconcepto'},
+                    {name: 'concepto'},
+                    {name: 'transporte'},
+                    {name: 'modalidad'}
+                ])
+            ),
+            proxy: new Ext.data.MemoryProxy( <?= json_encode(array("root" => $data, "total" => count($data))) ?> )
+        })
+    });
+    
     this.columns = [      
+       {
+        header: "Concepto",
+        dataIndex: 'idconcepto',
+        width: 200,
+        sortable: false,
+        renderer: this.formatItem,
+        editor: this.widgetConceptos
+        
+      },
       {
         header: "Cliente",
         dataIndex: 'cliente',
@@ -43,25 +89,14 @@ FormCostosDiscriminadosGridPanel = function( config ){
         hideable: false,
         sortable: false,        
         width: 100
-      },
-      {
-        header: "Venta",
-        dataIndex: 'venta',
-        hideable: false,
-        sortable: false,        
-        width: 100
-      },
-      {
-        header: "INO",
-        dataIndex: 'sobreventa',
-        hideable: false,
-        sortable: false,        
-        width: 100
       }
+      
      ];
 
     this.record = Ext.data.Record.create([            
             {name: 'idhouse', type: 'integer'},
+            {name: 'idconcepto', type: 'integer'},
+            {name: 'concepto', type: 'string'}, 
             {name: 'doctransporte', type: 'string'}, 
             {name: 'cliente', type: 'string'},
             {name: 'neto', type: 'float'},
@@ -175,6 +210,22 @@ Ext.extend(FormCostosDiscriminadosGridPanel, Ext.grid.EditorGridPanel, {
     },
     
     onValidateEdit : function(e){   
+        alert( e.field );
+        if( e.field == "concepto"){
+            var rec = e.record;
+            var ed = this.colModel.getCellEditor(e.column, e.row);
+
+            var store = ed.field.store;
+            store.each( function( r ){
+                    if( r.data.idconcepto==e.value ){
+                        e.value = r.data.concepto;
+                        rec.set("idconcepto", r.data.idconcepto);                        
+                        return true;
+                    }
+                }
+            );
+        }
+        
         if( e.field == "neto" ){            
             var cmp = Ext.getCmp("tasacambio_id");      
             var cmp2 = Ext.getCmp("tasacambiousd_id");       

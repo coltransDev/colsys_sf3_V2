@@ -12,20 +12,24 @@ class CostosINOForm extends BaseForm{
 		$validator = array();	
 		$transporte = $this->referencia?$this->referencia->getCaTransporte():"";
         $impoexpo = $this->referencia?$this->referencia->getCaImpoexpo():"";
-        $queryCosto = Doctrine::getTable("Costo")
+        $queryCosto = Doctrine::getTable("InoConcepto")
                         ->createQuery("c")
-                        ->select("c.ca_idcosto, c.ca_costo")
-                        ->addWhere("c.ca_impoexpo = ? ", $impoexpo)
-                        ->addWhere("c.ca_transporte = ? ", $transporte)
-                        //->addWhere("c.ca_modalidad = ? ", $this->referencia?$this->referencia->getCaModalidad():"")
-                        ->addOrderBy("c.ca_costo");
-        
+                        ->innerJoin("c.InoConceptoModalidad cm")
+                        ->innerJoin("cm.Modalidad m") 
+                        ->addWhere("c.ca_costo = ? ", true)
+                        ->addWhere("m.ca_impoexpo = ? ", $impoexpo)
+                        ->addWhere("m.ca_transporte = ? ", $transporte)                        
+                        ->addOrderBy("c.ca_concepto");
+        if( $this->referencia ){
+            $queryCosto->addWhere("m.ca_modalidad = ? ", $this->referencia->getCaModalidad());
+        }
+       
         $widgets["referencia"] = new sfWidgetFormInputHidden();
         
 		$widgets['idcosto'] = new sfWidgetFormDoctrineChoice(array(
-															  'model' => 'Costo',
+															  'model' => 'InoConcepto',
 															  'add_empty' => false,
-															  'method' => "getCaCosto",
+															  'method' => "getCaConcepto",
 															  'query' => $queryCosto
 															) );
         
@@ -50,7 +54,7 @@ class CostosINOForm extends BaseForm{
         $widgets['neto'] = new sfWidgetFormInputText(array(), array("size"=>15, "maxlength"=>15, "onchange"=>"calc_neto()" ));
         $widgets['venta'] = new sfWidgetFormInputText(array(), array("size"=>15, "maxlength"=>15, "onfocus"=>"calc_utilidad()",  "onchange"=>"calc_utilidad()" ));
         $widgets['idproveedor'] = new sfWidgetFormInputHidden(array(), array("size"=>71, "maxlength"=>50 ));
-        $widgets['proveedor'] = new sfWidgetFormIds(array("idproveedor"=>"idproveedor"), array());
+        $widgets['proveedor'] = new sfWidgetFormIds(array("idproveedor"=>"idproveedor"), array("Autocomplete"=>"off"));
         
 		
         foreach( $this->inoHouses as $ic ){

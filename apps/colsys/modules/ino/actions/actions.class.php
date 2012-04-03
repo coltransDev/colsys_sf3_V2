@@ -221,7 +221,7 @@ class inoActions extends sfActions {
         if( $this->idmaster ){
             $this->referencia = Doctrine::getTable("InoMaster")->find($this->idmaster);  
             
-            if( $this->referencia->getCaUsuliquidado() || $this->referencia->getCaUsucerrado() ){
+            if( $this->referencia->getReadOnly() ){
                 $this->redirect("ino/verReferencia?modo=".$this->modo->getCaIdmodo()."&idmaster=" . $this->referencia->getCaIdmaster());
             }
         }
@@ -290,7 +290,9 @@ class inoActions extends sfActions {
             $ino->setCaOrigen($idorigen);
             $ino->setCaDestino($iddestino);
             $ino->setCaIdlinea($request->getParameter("idlinea"));
-            $ino->setCaIdagente($request->getParameter("idagente"));
+            if( $request->getParameter("idagente") ){
+                $ino->setCaIdagente($request->getParameter("idagente"));
+            }
 
             $ino->setCaMaster($request->getParameter("ca_master"));
             
@@ -664,13 +666,14 @@ class inoActions extends sfActions {
 
                     $data[] = $row;
                 }
-            } else {
+            } else {                
                 $row = array();
                 $row["idmaster"] = $inoHouse->getCaIdmaster();
                 $row["idhouse"] = $inoHouse->getCaIdhouse();
                 $row["doctransporte"] = utf8_encode($inoHouse->getCaDoctransporte());
                 $row["idcliente"] = $inoHouse->getCliente()->getCaIdcliente();
                 $row["cliente"] = utf8_encode($inoHouse->getCliente()->getCaCompania());
+                $row["fact"] = utf8_encode($inoHouse->getCliente()->getCaCompania());
                 $row["comprobante"] = "";
                 $row["fchcomprobante"] = "";
                 $row["valor"] = 0;
@@ -1602,6 +1605,8 @@ class inoActions extends sfActions {
         $this->responseArray = array("success" => true, "data" => $data);
         $this->setTemplate("responseTemplate");
     }
+    
+    
     /**
      *
      *
@@ -1620,6 +1625,7 @@ class inoActions extends sfActions {
         } catch (Exception $e) {
             $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
         }
+
 
         $this->setTemplate("responseTemplate");
     }
@@ -1668,17 +1674,25 @@ class inoActions extends sfActions {
             $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
         }
 
+
         $this->setTemplate("responseTemplate");
     }
     
     public function executeAnularReferencia(sfWebRequest $request) {
 
+        
         $master = Doctrine::getTable("InoMaster")->find( $this->getRequestParameter("idmaster") );        
         
-        $master->setCaFchanulado(date('Y-m-d H:i:s'));
-        $master->setCaUsuanulado($this->getUser()->getUserId());
-        $master->save();        
+        
+        if( !$master->getCaFchanulado() ){        
+            $master->setCaFchanulado(date('Y-m-d H:i:s'));
+            $master->setCaUsuanulado($this->getUser()->getUserId());
+            $master->save();
+        }
         $this->responseArray = array("success" => true);
         $this->setTemplate("responseTemplate");
+        
     }
+    
 }
+

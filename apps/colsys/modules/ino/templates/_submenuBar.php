@@ -82,7 +82,7 @@ switch($action){
                 },
                 success:function(response,options){
                     //var res = Ext.util.JSON.decode( response.responseText );
-                    Ext.MessageBox.alert("Mensaje",'Se guardo correctamente el reporte');
+                    Ext.MessageBox.alert("Mensaje",'Se ha anulado la referencia correctamente');
                     //if(res.redirect)
                         location.href="/ino/index/modo/<?=$this->getRequestParameter("modo")?>";
                 }

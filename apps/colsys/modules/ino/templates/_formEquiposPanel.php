@@ -86,22 +86,14 @@ $data = $sf_data->getRaw("data");
                                     name: "modo",
                                     value: this.modo
                                 },
-                                this.widgetConceptos,  
-                                {
-                                    xtype: "numberfield",
-                                    fieldLabel: "Cantidad",
-                                    name: "cantidad",
-                                    allowBlank: true,
-                                    maxLength: 30,
-                                    tabIndex: 3
-                                },
+                                this.widgetConceptos,                                
                                 {
                                     xtype: "textfield",
                                     fieldLabel: "Precinto",
                                     name: "numprecinto",
                                     allowBlank: true,
                                     maxLength: 30,
-                                    tabIndex: 5
+                                    tabIndex: 3
                                 }
                             ]
                         },

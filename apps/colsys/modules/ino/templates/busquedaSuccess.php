@@ -65,7 +65,7 @@ if( $cadena ){
         <tr style="border-bottom: #A0A0A0 solid 2px">
           <td >
             <?=link_to($referencia->getCaReferencia(), "ino/verReferencia?modo=".$modo->getCaIdmodo()."&idmaster=".$referencia->getCaIdmaster())?>
-              <?=$referencia->getCaFchanulado()?"<br />Anulada":""?>
+              <?=$referencia->getCaFchanulado()?"<br /><span class='rojo'>Anulada</span>":""?>
           </td>
           <td width="100%">
               <table width="100%">

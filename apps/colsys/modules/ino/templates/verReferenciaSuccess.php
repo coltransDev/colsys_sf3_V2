@@ -12,6 +12,8 @@ include_component("ino", "mainPanel", array("referencia"=>$referencia));
 include_component("widgets", "widgetMoneda");
 include_component("widgets", "widgetIds");
 
+
+$readOnly = $referencia->getReadOnly();
 ?>
 
 
@@ -139,46 +141,64 @@ include_component("widgets", "widgetIds");
                 </td>
                 <td width="25%">
                     <div align="left">
-                        <b>Liquidado por:</b><br />
-                       <?
-                        if($referencia->getCaFchliquidado()){
-                        ?>
-                        <?=$referencia->getCaUsuliquidado()?>/<?=Utils::fechaMes($referencia->getCaFchliquidado())?>
                         <?
-                        if(!$referencia->getCaFchcerrado()){
-                            ?>
-                            <input type="button" class="button" value="Cancelar liquidación" onclick="document.location='<?=url_for("ino/cancelarLiquidarCaso?modo=".$modo->getCaIdmodo()."&idmaster=".$referencia->getCaIdmaster())?>'" />
+                        if( $referencia->getCaFchanulado() ){
+                            ?>                        
+                            <span class="rojo"><b>Anulado por:</b></span>
+                            <br />
+                            <?=$referencia->getCaUsuanulado()?>/<?=Utils::fechaMes($referencia->getCaFchanulado())?>                            
                             <?
-                            }
-                        
                         }else{
                         ?>
-                        El caso no se ha liquidado.
-                        <input type="button" class="button" value="Firmar liquidación" onclick="document.location='<?=url_for("ino/liquidarCaso?modo=".$modo->getCaIdmodo()."&idmaster=".$referencia->getCaIdmaster())?>'" />
-                        <?    
+                        
+                            <b>Liquidado por:</b><br />
+                            <?
+                            if($referencia->getCaFchliquidado()){
+                            ?>
+                            <?=$referencia->getCaUsuliquidado()?>/<?=Utils::fechaMes($referencia->getCaFchliquidado())?>
+                            <?
+                            if(!$referencia->getCaFchcerrado()){
+                                ?>
+                                <input type="button" class="button" value="Cancelar liquidación" onclick="document.location='<?=url_for("ino/cancelarLiquidarCaso?modo=".$modo->getCaIdmodo()."&idmaster=".$referencia->getCaIdmaster())?>'" />
+                                <?
+                                }
+
+                            }else{
+                            ?>
+                            El caso no se ha liquidado.
+                            <input type="button" class="button" value="Firmar liquidación" onclick="document.location='<?=url_for("ino/liquidarCaso?modo=".$modo->getCaIdmodo()."&idmaster=".$referencia->getCaIdmaster())?>'" />
+                            <?    
+                            }
+                        
                         }
                         ?>
                     </div>
                 </td>
                 <td width="25%">
                     <div align="left">
-                        <b>Cerrado por:</b><br />
-                       <?
-                        if($referencia->getCaFchcerrado()){
-                        ?>
-                        <?=$referencia->getCaUsucerrado()?>/<?=Utils::fechaMes($referencia->getCaFchcerrado())?>
-                        
-                        <input type="button" class="button" value="Abrir" onclick="document.location='<?=url_for("ino/abrirCaso?modo=".$modo->getCaIdmodo()."&idmaster=".$referencia->getCaIdmaster())?>'" />
                         <?
-                        }else{
-                        ?>
-                        El caso se encuentra abierto.
-                        <?
-                            if($referencia->getCaFchliquidado()){
+                        if( !$referencia->getCaFchanulado() ){
                             ?>
-                            <input type="button" class="button" value="Cerrar" onclick="document.location='<?=url_for("ino/cerrarCaso?modo=".$modo->getCaIdmodo()."&idmaster=".$referencia->getCaIdmaster())?>'" />
-                            <?    
+                            <b>Cerrado por:</b><br />
+                           <?
+                            if($referencia->getCaFchcerrado()){
+                            ?>
+                            <?=$referencia->getCaUsucerrado()?>/<?=Utils::fechaMes($referencia->getCaFchcerrado())?>
+
+                            <input type="button" class="button" value="Abrir" onclick="document.location='<?=url_for("ino/abrirCaso?modo=".$modo->getCaIdmodo()."&idmaster=".$referencia->getCaIdmaster())?>'" />
+                            <?
+                            }else{
+                            ?>
+                            El caso se encuentra abierto.
+                            <?
+                                if($referencia->getCaFchliquidado()){
+                                ?>
+                                <input type="button" class="button" value="Cerrar" onclick="document.location='<?=url_for("ino/cerrarCaso?modo=".$modo->getCaIdmodo()."&idmaster=".$referencia->getCaIdmaster())?>'" />
+                                <?    
+                                }
                             }
+                        }else{
+                            echo "&nbsp;";
                         }
                         ?>
                     </div>
@@ -209,7 +229,7 @@ include_component("ino", "balanceReferencia", array("referencia"=>$referencia, "
         impoexpo: '<?=$modo->getCaImpoexpo()?>',
         transporte: '<?=$modo->getCaTransporte()?>',
         modalidad: '<?=$referencia->getCaModalidad()?>',
-        readOnly: <?=$referencia->getCaFchliquidado()||$referencia->getCaFchcerrado()?"true":"false"?>
+        readOnly: <?=$readOnly?"true":"false"?>
     });
 
 

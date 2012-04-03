@@ -104,7 +104,7 @@ class inoComponents extends sfComponents {
      */
 
     public function executeGridCostosPanel() {
-        
+        $this->monedaLocal = $this->getUser()->getIdmoneda();
     }
 
     /*

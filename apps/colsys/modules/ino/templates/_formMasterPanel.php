@@ -279,7 +279,7 @@ include_component("widgets", "widgetReporte");
                                     linkListarTodos: "listar_todos",
                                     name:"agente",
                                     hiddenName: 'idagente',
-                                    allowBlank: false,
+                                    /*allowBlank: false,*/
                                     tabIndex:8
                                 }),
                                 {
