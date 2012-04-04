@@ -11,8 +11,8 @@ $recargos = $sf_data->getRaw( "recargos" );
 <script type="text/javascript">
 
 
-FormComprobanteSubpanel = function(){
-
+FormComprobanteSubpanel = function( config ){
+    Ext.apply(this, config);
     
     this.dataRecargos = <?=json_encode(array("root"=>$recargos))?>;
 
@@ -106,7 +106,10 @@ FormComprobanteSubpanel = function(){
     this.store = new Ext.data.Store({       
 
         autoLoad : true,
-        url: '<?=url_for("inocomprobantes/formComprobanteData?idcomprobante=".$comprobante->getCaIdcomprobante())?>',
+        url: '<?=url_for("inocomprobantes/formComprobanteData")?>',
+        baseParams: {
+            idcomprobante: this.idcomprobante            
+        },
         reader: new Ext.data.JsonReader(
             {
                 root: 'items',
@@ -122,6 +125,7 @@ FormComprobanteSubpanel = function(){
     FormComprobanteSubpanel.superclass.constructor.call(this, {
        loadMask: {msg:'Cargando...'},
        clicksToEdit: 1,
+       id: 'form-comprobante-subpanel',
        view: new Ext.grid.GridView({
        
             forceFit:true
@@ -133,15 +137,10 @@ FormComprobanteSubpanel = function(){
             validateedit: this.onValidateEdit,
             rowcontextmenu: this.onRowcontextMenu
             //dblclick:this.onDblClickHandler
-        },
-        tbar: [{
-            text:'Guardar',
-            iconCls: 'disk',
-            scope:this,
-            handler: this.guardarCambios
-        },
-        '-'
-        /*,
+        }
+        /*tbar: [
+        
+        ,
         {
             text:'Importar Cotizacion',
             iconCls: 'import',
@@ -153,9 +152,9 @@ FormComprobanteSubpanel = function(){
             iconCls: 'import',
             scope:this,
             handler: guardarCambios
-        }*/
+        }
 
-      ]
+      ]*/
 
 
     });
@@ -167,6 +166,7 @@ Ext.extend(FormComprobanteSubpanel, Ext.grid.EditorGridPanel, {
     height: 300
     ,
     onValidateEdit : function(e){
+        var idcomprobante = this.idcomprobante;
         if( e.field == "concepto"){            
             var rec = e.record;
             var ed = this.colModel.getCellEditor(e.column, e.row);
@@ -174,14 +174,13 @@ Ext.extend(FormComprobanteSubpanel, Ext.grid.EditorGridPanel, {
 
             var recordConcepto = this.record;
             var storeGrid = this.store;
+            
             store.each( function( r ){
 
                     if( r.data.idconcepto==e.value ){
                         if( !rec.data.idconcepto ){
-                            var newRec = new recordConcepto({
-
-                               idmaestra: '<? //=$comprobante->getCaIdmaestra()?>',
-                               idcomprobante: '<?=$comprobante->getCaIdcomprobante()?>',
+                            var newRec = new recordConcepto({                               
+                               idcomprobante: idcomprobante,
                                concepto: '+',
                                idconcepto: '',
                                idtransaccion: '',
@@ -229,7 +228,7 @@ Ext.extend(FormComprobanteSubpanel, Ext.grid.EditorGridPanel, {
                        
                         if( !rec.data.idconcepto ){
                             var newRec = new recordConcepto({                               
-                               idcomprobante: '<?=$comprobante->getCaIdcomprobante()?>',
+                               idcomprobante: idcomprobante,
                                concepto: '+',
                                idconcepto: '',
                                idtransaccion: '',
@@ -296,13 +295,14 @@ Ext.extend(FormComprobanteSubpanel, Ext.grid.EditorGridPanel, {
             changes['valor']=r.data.valor;
             changes['idtransaccion']=r.data.idtransaccion;
             changes['idccosto']=r.data.idccosto ;
+            changes["idcomprobante"]=this.idcomprobante;
             
             if( r.data.idconcepto ){
                 //envia los datos al servidor
                 Ext.Ajax.request(
                     {
                         waitMsg: 'Guardando cambios...',
-                        url: '<?=url_for("inocomprobantes/observeFormComprobanteSubpanel?idcomprobante=".$comprobante->getCaIdcomprobante())?>',
+                        url: '<?=url_for("inocomprobantes/observeFormComprobanteSubpanel")?>',
 						//method: 'POST',
                         //Solamente se envian los cambios
                         params :	changes,
@@ -367,16 +367,17 @@ Ext.extend(FormComprobanteSubpanel, Ext.grid.EditorGridPanel, {
         if( this.ctxRecord && this.ctxRecord.data.idtransaccion && confirm("Desea continuar?") ){
 
             var id = this.ctxRecord.id;
-
+            var idcomprobante = this.idcomprobante;
             
             Ext.Ajax.request(
             {
                 waitMsg: 'Eliminando...',
-                url: '<?=url_for("inocomprobantes/eliminarFormComprobanteSubpanel?idcomprobante=".$comprobante->getCaIdcomprobante())?>',
+                url: '<?=url_for("inocomprobantes/eliminarFormComprobanteSubpanel")?>',
                 //method: 'POST',
                 //Solamente se envian los cambios
                 params :	{
                     id: id,
+                    idcomprobante: idcomprobante,
                     idtransaccion: this.ctxRecord.data.idtransaccion
                 },
 

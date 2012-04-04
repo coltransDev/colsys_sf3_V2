@@ -21,7 +21,7 @@ class inocomprobantesComponents extends sfComponents
 
 
     public function executeFormComprobantePanel(){
-        if( !$this->comprobante->getCaIdcomprobante() ){
+        
 
             $q = Doctrine::getTable("InoTipoComprobante")
                                          ->createQuery("t")
@@ -33,9 +33,9 @@ class inocomprobantesComponents extends sfComponents
                                          ->addWhere("t.ca_tipo = ?", $this->tipo)
                                          ->addOrderBy("t.ca_tipo, t.ca_comprobante");
 
-            if( isset($this->empresa) ){
+            /*if( isset($this->empresa) ){
                 $q->addWhere("e.ca_sigla = ?", $this->empresa );                
-            }
+            }*/
                                          
 
             $tipos = $q->setHydrationMode(Doctrine::HYDRATE_SCALAR)->execute();
@@ -43,20 +43,14 @@ class inocomprobantesComponents extends sfComponents
             foreach( $tipos as $tipo ){
                 $tipoStr = "";
                 if( !isset($this->empresa) ){
-                    $tipoStr .= $tipo["e_ca_sigla"]." » ";
+                   // $tipoStr .= $tipo["e_ca_sigla"]." » ";
                 }
                 $tipoStr .= $tipo["t_ca_tipo"]."-".str_pad($tipo["t_ca_comprobante"], 2, "0", STR_PAD_LEFT)." ".$tipo["t_ca_titulo"];
                 $tiposArray[] = array("idtipo"=>$tipo["t_ca_idtipo"], "tipo"=>utf8_encode($tipoStr));
             }
 
             $this->tipos = array("root"=>$tiposArray, "total"=>count($tiposArray));
-            
-            if( isset($this->idhouse) && $this->idhouse ){
-                //$this->comprobante->setCaId( $this->inocliente->getCaIdcliente() );
-            }
-        }
-
-        $this->ids = Doctrine::getTable("Ids")->find($this->comprobante->getCaId());
+           
 
     }
 

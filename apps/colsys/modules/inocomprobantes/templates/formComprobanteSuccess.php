@@ -6,19 +6,22 @@
  */
 
 
-include_component("inocomprobantes", "formComprobantePanel", array("idhouse"=>isset($idhouse)?$idhouse:null, "comprobante"=>$comprobante, "tipo"=>$tipo ));
-if( $comprobante->getCaIdcomprobante() ){
-    switch( $comprobante->getInoTipoComprobante()->getcaTipo() ){
+include_component("inocomprobantes", "formComprobantePanel", array("tipo"=>$tipo ));
+include_component("inocomprobantes", "formComprobanteSubpanelF");
+
+
+//if( $comprobante->getCaIdcomprobante() ){
+    /*switch( $comprobante->getInoTipoComprobante()->getcaTipo() ){
         case "F":
-            include_component("inocomprobantes", "formComprobanteSubpanelF", array("comprobante"=>$comprobante ));
+           
             break;
         case "P":
             include_component("inocomprobantes", "formComprobanteSubpanelPConceptos", array("comprobante"=>$comprobante ));
             include_component("inocomprobantes", "formComprobanteSubpanelPDeducciones", array("comprobante"=>$comprobante ));
             include_component("inocomprobantes", "formComprobanteSubpanelP", array("comprobante"=>$comprobante ));
             break;
-    }
-}
+    }*/
+//}
 ?>
 <div class="content">
     <div id="main-panel"></div>
@@ -26,15 +29,19 @@ if( $comprobante->getCaIdcomprobante() ){
 </div>
 
 <script language="javascript">
-     var panel = new FormComprobantePanel();
+     var panel = new FormComprobantePanel({
+         idcomprobante: <?=$comprobante->getCaIdcomprobante()?$comprobante->getCaIdcomprobante():"null"?>
+     });
      panel.render("main-panel");
      <?
-     if( $comprobante->getCaIdcomprobante() ){
+    // if( $comprobante->getCaIdcomprobante() ){
          ?>
-         var subpanel = new FormComprobanteSubpanel();
+         var subpanel = new FormComprobanteSubpanel({
+             idcomprobante: <?=$comprobante->getCaIdcomprobante()?$comprobante->getCaIdcomprobante():"null"?>             
+         });
          subpanel.render("sub-panel");
          <?
-     }
+     //}
 
 
      ?>

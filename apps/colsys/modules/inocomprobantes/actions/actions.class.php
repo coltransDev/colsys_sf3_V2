@@ -31,13 +31,13 @@ class inocomprobantesActions extends sfActions
         $idhouse = $request->getParameter("idhouse");
        
         $this->tipo = $request->getParameter("tipo");
-
+        /*
         if( $request->getParameter("idhouse") ){
             $this->house = Doctrine::getTable("InoHouse")->find($request->getParameter("idhouse"));
             $this->forward404Unless( $this->house );
 
              $request->setParameter("idmaster", $this->house->getCaIdmaster());
-        }
+        }*/
 
        
 
@@ -57,43 +57,44 @@ class inocomprobantesActions extends sfActions
 
 
     }
-
+    
 
      /**
     *
     *
     * @param sfRequest $request A request object
     */
-    public function executeObserveFormComprobantePanel(sfWebRequest $request)
+    public function executeDatosComprobanteFormComprobantePanel(sfWebRequest $request)
     {
-
-        $idhouse = $request->getParameter("idhouse");
-        $this->responseArray=array("idhouse"=>$idhouse,  "success"=>false);
-
-
-        if( $request->getParameter("idcomprobante") ){
-            $comprobante = Doctrine::getTable("InoComprobante")->find($request->getParameter("idcomprobante"));
+        try{                
+            $idcomprobante = $request->getParameter("idcomprobante");
+            $this->forward404Unless( $idcomprobante );
+            
+            
+            $comprobante = Doctrine::getTable("InoComprobante")->find( $idcomprobante );
             $this->forward404Unless( $comprobante );
-        }else{
-            $comprobante = new InoComprobante();
-            $comprobante->setCaIdtipo($request->getParameter("idtipo"));
-            $comprobante->setCaConsecutivo(InoComprobanteTable::siguienteConsecutivo($request->getParameter("idtipo")));
+
+            //$comprobante = new InoComprobante();
+
+            $data["idcomprobante"]=$comprobante->getCaIdcomprobante();
+            $data["idtipo"]=$comprobante->getCaIdtipo();
+            $data["tipo"]=utf8_encode($comprobante->getInoTipoComprobante()->getCaTipo());
+            $data["consecutivo"]=$comprobante->getCaConsecutivo();
+            $data["fchcomprobante"]=$comprobante->getCaFchcomprobante();
+            $data["plazo"]=$comprobante->getCaPlazo();
+            $data["tcambio"]=$comprobante->getCaTcambio();
+            $data["tcambio_usd"]=$comprobante->getCaTcambioUsd();            
+            $data["ids_name"]=$comprobante->getIds()->getCaNombre();
+            $data["ids"]=$comprobante->getCaId();
+            $data["observaciones"]=utf8_encode($comprobante->getCaObservaciones());
+
+
+
+            $this->responseArray = array("success" => true,"data"=>$data);
+        } catch (Exception $e) {
+            $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
         }
-        if( $request->getParameter("consecutivo") ){
-            $comprobante->setCaConsecutivo( $request->getParameter("consecutivo") );
-        }
-        $comprobante->setCaFchcomprobante($request->getParameter("fechacomprobante"));
-        $comprobante->setCaIdhouse($idhouse);
-        $comprobante->setCaId($request->getParameter("ids"));
-        $comprobante->setCaPlazo($request->getParameter("plazo"));
-        $comprobante->setCaTasacambio($request->getParameter("tasacambio"));
-        $comprobante->save();
-
-        $this->responseArray["success"]=true;
-        $this->responseArray["idcomprobante"]=$comprobante->getCaIdcomprobante();
-
-        
-
+            
         $this->setTemplate("responseTemplate");
     }
 
@@ -106,150 +107,159 @@ class inocomprobantesActions extends sfActions
     {
 
         $this->modo = $request->getParameter("modo");
-
-        $this->forward404Unless( $request->getParameter("idcomprobante") );
-        $comprobante = Doctrine::getTable("InoComprobante")->find($request->getParameter("idcomprobante"));
-        $this->forward404Unless( $comprobante );
-
-
-        $tipo = $comprobante->getInoTipoComprobante();
-
-        $baseRow = array( "idinocliente"=>$comprobante->getCaIdhouse(),
-                          "idcomprobante"=>$comprobante->getCaIdcomprobante(),
-                        );
+        
         $items = array();
-
-        $q = Doctrine::getTable("InoTransaccion")
-                       ->createQuery("t")
-                       ->select("t.ca_idtransaccion, t.ca_idconcepto, t.ca_db, t.ca_valor,
-                                c.ca_idconcepto,c.ca_concepto, cc.ca_idccosto, cc.ca_centro,
-                                cc.ca_subcentro, cc.ca_nombre, cu.ca_cuenta, m.ca_referencia, m.ca_idmaster")
-                       ->innerJoin("t.InoConcepto c")
-                       ->leftJoin("t.InoCentroCosto cc")
-                       ->leftJoin("t.InoCuenta cu")
-                       ->leftJoin("t.InoMaster m")
-                       ->where("t.ca_idcomprobante = ? ", $comprobante->getCaIdcomprobante() )
-                       ->setHydrationMode(Doctrine::HYDRATE_SCALAR );
-
-        $transacciones = $q->execute();
+        if(  $request->getParameter("idcomprobante") ){
+            $comprobante = Doctrine::getTable("InoComprobante")->find($request->getParameter("idcomprobante"));
+            $this->forward404Unless( $comprobante );
 
 
-        $centros = Doctrine::getTable("InoCentroCosto")
-                              ->createQuery("c")
-                              ->select("c.*")
-                              ->where("c.ca_subcentro IS NULL")
-                              ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
-                              ->execute();
-         $centrosArray = array();
-         foreach( $centros as $centro ){
-            $centrosArray[ $centro["c_ca_centro"] ] = $centro["c_ca_nombre"];
-         }
+            $tipo = $comprobante->getInoTipoComprobante();
 
-        foreach( $transacciones as $transaccion ){
-            if( $transaccion["t_ca_db"]!==null ){
-                $db = $transaccion["t_ca_db"]?"D":"C";
-            }else{
-                $db = null;
+            $baseRow = array( "idinocliente"=>$comprobante->getCaIdhouse(),
+                              "idcomprobante"=>$comprobante->getCaIdcomprobante(),
+                            );
+            
+
+            $q = Doctrine::getTable("InoDetalle")
+                           ->createQuery("t")
+                           ->select("t.ca_iddetalle, t.ca_idconcepto, t.ca_db, t.ca_cr,
+                                    c.ca_idconcepto,c.ca_concepto, cc.ca_idccosto, cc.ca_centro,
+                                    cc.ca_subcentro, cc.ca_nombre, cu.ca_cuenta, m.ca_referencia, m.ca_idmaster")
+                           ->innerJoin("t.InoConcepto c")
+                           ->leftJoin("t.InoCentroCosto cc")
+                           ->leftJoin("t.InoCuenta cu")
+                           ->leftJoin("t.InoMaster m")
+                           ->where("t.ca_idcomprobante = ? ", $comprobante->getCaIdcomprobante() )
+                           ->setHydrationMode(Doctrine::HYDRATE_SCALAR );
+
+            $transacciones = $q->execute();
+
+
+            $centros = Doctrine::getTable("InoCentroCosto")
+                                  ->createQuery("c")
+                                  ->select("c.*")
+                                  ->where("c.ca_subcentro IS NULL")
+                                  ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                                  ->execute();
+             $centrosArray = array();
+             foreach( $centros as $centro ){
+                $centrosArray[ $centro["c_ca_centro"] ] = $centro["c_ca_nombre"];
+             }
+
+            foreach( $transacciones as $transaccion ){
+                if( $transaccion["t_ca_db"]!==null ){
+                    $db = $transaccion["t_ca_db"]?"D":"C";
+                }else{
+                    $db = null;
+                }
+                $items[] = array_merge($baseRow, array(
+                                "iddetalle"=>$transaccion["t_ca_iddetalle"],
+                                "idconcepto"=>$transaccion["t_ca_idconcepto"],
+                                "idccosto"=>$transaccion["cc_ca_idccosto"],
+//                                "concepto"=>utf8_encode($centrosArray[$transaccion['cc_ca_centro']]." ".$transaccion['cc_ca_nombre']." » ".$transaccion["c_ca_concepto"]),
+                                "centro" => str_pad($transaccion['cc_ca_centro'], 2, "0", STR_PAD_LEFT)."-".str_pad($transaccion['cc_ca_subcentro'], 2, "0", STR_PAD_LEFT),
+                                "codigo" => str_pad($transaccion['cc_ca_centro'], 2, "0", STR_PAD_LEFT).str_pad($transaccion['cc_ca_subcentro'], 2, "0", STR_PAD_LEFT).str_pad($transaccion["c_ca_idconcepto"], 4, "0", STR_PAD_LEFT),                            
+                                "valor"=>$transaccion["t_ca_cr"]-$transaccion["t_ca_db"],
+                                "referencia"=>$transaccion["m_ca_referencia"],
+                                "idmaster"=>$transaccion["m_ca_idmaster"]
+                         ));
+
             }
-            $items[] = array_merge($baseRow, array(
-                            "idtransaccion"=>$transaccion["t_ca_idtransaccion"],
-                            "idconcepto"=>$transaccion["t_ca_idconcepto"],
-                            "idccosto"=>$transaccion["cc_ca_idccosto"],
-                            "concepto"=>utf8_encode($centrosArray[$transaccion['cc_ca_centro']]." ".$transaccion['cc_ca_nombre']." » ".$transaccion["c_ca_concepto"]),
-                            "centro" => str_pad($transaccion['cc_ca_centro'], 2, "0", STR_PAD_LEFT)."-".str_pad($transaccion['cc_ca_subcentro'], 2, "0", STR_PAD_LEFT),
-                            "codigo" => str_pad($transaccion['cc_ca_centro'], 2, "0", STR_PAD_LEFT).str_pad($transaccion['cc_ca_subcentro'], 2, "0", STR_PAD_LEFT).str_pad($transaccion["c_ca_idconcepto"], 4, "0", STR_PAD_LEFT),
-                            "db"=>$db,
-                            "valor"=>$transaccion["t_ca_valor"],
-                            "referencia"=>$transaccion["m_ca_referencia"],
-                            "idmaster"=>$transaccion["m_ca_idmaster"]
-                     ));
-
         }
 
-        $items[] = array_merge($baseRow, array( "idcuenta"=>"",
+        $items[] = array( "idcuenta"=>"",
                             "idconcepto"=>"",
                             "concepto"=>"+"
-                     ));
+                     );
         $this->responseArray = array("items"=>$items);
         $this->setTemplate("responseTemplate");
     }
-
-    /**
+    
+    
+     /**
     *
     *
     * @param sfRequest $request A request object
     */
-    public function executeObserveFormComprobanteSubpanel(sfWebRequest $request)
+    public function executeSaveFormComprobantePanel(sfWebRequest $request)
     {
+        try{               
 
-        $id = $request->getParameter("id");
-        $this->responseArray=array("id"=>$id,  "success"=>false);
+            $idcomprobante = $request->getParameter("idcomprobante");
+            if( $idcomprobante ){
+                $comprobante = Doctrine::getTable("InoComprobante")->find( $idcomprobante );
+                $this->forward404Unless( $comprobante );
+            }else{
+                $comprobante = new InoComprobante();
+                $comprobante->setCaIdtipo($request->getParameter("idtipo"));
+                $comprobante->setCaConsecutivo(InoComprobanteTable::siguienteConsecutivo($request->getParameter("idtipo")));
+            }
 
 
-        $this->forward404Unless( $request->getParameter("idcomprobante") );
-        $comprobante = Doctrine::getTable("InoComprobante")->find($request->getParameter("idcomprobante"));
-        $this->forward404Unless( $comprobante );
+            $conn = $comprobante->getTable()->getConnection();
+            $conn->beginTransaction();
 
-        $tipo = $comprobante->getInoTipoComprobante();
+            if( $request->getParameter("consecutivo") ){
+                $comprobante->setCaConsecutivo( $request->getParameter("consecutivo") );
+            }
+            $comprobante->setCaFchcomprobante($request->getParameter("fchcomprobante"));
+            //$comprobante->setCaIdhouse($idhouse);
+            $comprobante->setCaId($request->getParameter("ids"));
+            $comprobante->setCaPlazo($request->getParameter("plazo"));
+            $comprobante->setCaTcambio($request->getParameter("tcambio"));
+            $comprobante->setCaTcambioUsd($request->getParameter("tcambio_usd"));
+            $comprobante->save( $conn );
+            
 
-        if( $request->getParameter("idtransaccion") ){
-            $transaccion = Doctrine::getTable("InoTransaccion")->find($request->getParameter("idtransaccion"));
-        }else{
-            $transaccion = new InoTransaccion();
-            $transaccion->setCaIdcomprobante( $request->getParameter("idcomprobante") );
+            if ($idcomprobante) {
+                $detalles = Doctrine::getTable("InoDetalle")
+                                ->createQuery("d")
+                                ->addWhere("d.ca_idcomprobante=?", $idcomprobante)
+                                ->execute();
+                foreach( $detalles as $d ){
+                    $d->delete( $conn );
+                }
+            }
+
+
+            $detalles = $request->getParameter("detalles");
+            $total = 0;
+            if( $detalles ){
+                $detalles = explode("|", $detalles);
+
+                foreach( $detalles as $d ){
+                    $params =  $array = sfToolkit::stringToArray( $d );   
+                    if( $params["idconcepto"] ){
+                        $inoDetalle = new InoDetalle();
+                        $inoDetalle->setCaIdconcepto( $params["idconcepto"] );
+                        $inoDetalle->setCaIdcomprobante( $comprobante->getCaIdcomprobante() );
+                        $inoDetalle->setCaCr( $params["valor"] );                        
+                        $inoDetalle->save( $conn );
+                        $total+=$params["valor"];
+                    }
+                }
+            }
+            
+            if( $total!=0 ){
+                $inoDetalle = new InoDetalle();
+                $inoDetalle->setCaIdconcepto( $params["idconcepto"] );
+                $inoDetalle->setCaIdcomprobante( $comprobante->getCaIdcomprobante() );
+                $inoDetalle->setCaCr( $params["valor"] );                        
+                $inoDetalle->save( $conn );                
+            }
+            
+            $conn->commit();
+        
+            $this->responseArray = array("success" => true, "id" => $request->getParameter("id"), "idcomprobante" => $comprobante->getCaIdcomprobante());
+        } catch (Exception $e) {            
+            $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
         }
-
-        //$transaccion->setCaId( 1 );
-        $transaccion->setCaIdconcepto( $request->getParameter("idconcepto") );
-        if( $request->getParameter("db")=="D"){
-            $transaccion->setCaDb( true );
-        }else{
-            $transaccion->setCaDb( false );
-        }
-        if( $request->getParameter("valor")!==null ){
-            $transaccion->setCaValor( $request->getParameter("valor") );
-        }
-
-        if( $request->getParameter("idmaster")!==null ){
-            $transaccion->setCaIdmaster( $request->getParameter("idmaster") );
-        }
-
-        $transaccion->setCaIdccosto( $request->getParameter("idccosto") );
-        $transaccion->setCaIdmoneda( "USD" );
-        $transaccion->save();
-
-        $this->responseArray["success"]= true;
-        $this->responseArray["idtransaccion"]= $transaccion->getCaIdtransaccion();
 
         $this->setTemplate("responseTemplate");
     }
-
-    /**
-    *
-    *
-    * @param sfRequest $request A request object
-    */
-    public function executeEliminarFormComprobanteSubpanel(sfWebRequest $request){
-        $id = $request->getParameter("id");
-        $this->responseArray=array("id"=>$id,  "success"=>false);
-
-
-        $this->forward404Unless( $request->getParameter("idcomprobante") );
-        $comprobante = Doctrine::getTable("InoComprobante")->find($request->getParameter("idcomprobante"));
-        $this->forward404Unless( $comprobante );
-
-        if( $request->getParameter("idtransaccion") ){
-            $transaccion = Doctrine::getTable("InoTransaccion")->find($request->getParameter("idtransaccion"));
-            $this->forward404Unless( $transaccion );
-            $transaccion->delete();
-            $this->responseArray["success"]= true;
-        }
-
-        $this->setTemplate("responseTemplate");
-    }
-
-
-
+    
+    
     /**
     * Vista previa del comprobante (Prefactura)
     *
@@ -495,12 +505,24 @@ class inocomprobantesActions extends sfActions
         $this->transacciones = $q->execute();
         $this->setLayout("none");
     }
-
     
-
-
-
-
+    /**
+    * Genera el archivo plano para transferir a SIIGO
+    *
+    * @param sfRequest $request A request object
+    */
+    public function executeTransferirFactura(sfWebRequest $request){
+        ProjectConfiguration::registerZend();   
+        
+        $client = new Zend_Soap_Client( "http://10.192.1.102/WebService2/Service1.asmx?wsdl", array('encoding'=>'ISO-8859-1', 'soap_version'=>SOAP_1_2 ));        
+        
+        $result = $client->Sumar(array("a" => "5", "b" =>"2"));
+        
+        print_r( $result);
+        exit();
+    }
+    
+    
     
 
 }
