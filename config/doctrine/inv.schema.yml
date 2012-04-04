@@ -329,3 +329,29 @@ InvMantenimientoLabores:
       local: ca_idetapa
       foreign: ca_idetapa
       type: one
+      
+InvMantenimientoAnotaciones:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: inv
+  tableName: inv.tb_mantenimientos_anotaciones
+  columns:
+    ca_idmantenimiento:
+      type: integer
+      primary: true
+    ca_anotacion:
+      type: string
+      primary: true
+    ca_usucreado: string
+    ca_fchcreado: timestamp
+  relations:
+    InvMantenimiento:
+      local: ca_idmantenimiento
+      foreign: ca_idmantenimiento
+      type: one
+    Usuario:
+      local: ca_usucreado
+      foreign: ca_login
+      type: one
