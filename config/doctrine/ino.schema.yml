@@ -116,6 +116,10 @@ InoMaster:
       local: ca_idmaster
       foreign: ca_idmaster
       type: one  
+    InoViTeus:
+      local: ca_idmaster
+      foreign: ca_idmaster
+      type: one 
 
 
 
@@ -808,6 +812,21 @@ InoViUnidadesMaster:
     ca_numpiezas: float 
     ca_peso: float 
     ca_volumen: float 
+  relations:
+    InoMaster:
+      local: ca_idmaster
+      foreign: ca_idmaster
+      type: one
+      
+InoViTeus:
+  generatePath: ino
+  tableName: ino.vi_teus
+  columns:
+    ca_idmaster:
+      type: integer      
+      primary: true
+    ca_referencia: string
+    ca_valor: integer     
   relations:
     InoMaster:
       local: ca_idmaster

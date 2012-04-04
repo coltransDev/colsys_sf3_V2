@@ -70,6 +70,7 @@ HdeskTicket:
     ca_closedat: timestamp
     ca_closedby: string(15)
     ca_status: integer
+    ca_idactivo: integer
   relations:    
     HdeskGroup:
       local: ca_idgroup
@@ -120,6 +121,9 @@ HdeskTicket:
     SurvEvaluacion:
       local: ca_idevaluacion
       foreign: ca_idevaluacion
+    InvActivo:
+      local: ca_idactivo
+      foreign: ca_idactivo
 
 
 HdeskResponse:

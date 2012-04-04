@@ -7,6 +7,7 @@
 $grupos = $sf_data->getRaw("grupos");
 $status = $sf_data->getRaw("status");
 
+include_component("inventory", "widgetEquipo");
 
 ?>
 <script type="text/javascript">
@@ -353,7 +354,12 @@ $status = $sf_data->getRaw("status");
             ]
         });
 
-        
+        this.activo = new WidgetEquipo({
+            fieldLabel: 'Activo',
+            name: 'activo',
+            hiddenName: 'idactivo',
+            id: 'activo_id'
+        });
     
         EditarTicketPropiedadesPanel.superclass.constructor.call(this, {            
             id: 'form-ticket-panel',
@@ -385,7 +391,8 @@ $status = $sf_data->getRaw("status");
                                 this.projectos,
                                 this.tipos,
                                 this.asignaciones,
-                                this.reportadoPor
+                                this.reportadoPor,
+                                this.activo
 
                             ]
                         },{
@@ -485,7 +492,8 @@ $status = $sf_data->getRaw("status");
             Ext.getCmp('reportedthrough_id').setDisabled(true);
             Ext.getCmp('reportedthrough_id').setValue("Web");
             Ext.getCmp('reportedby_id').setValue("");
-
+            Ext.getCmp('activo_id').setValue("");
+            Ext.getCmp('activo_id').setDisabled(true);
 
         },
 
@@ -499,7 +507,8 @@ $status = $sf_data->getRaw("status");
             Ext.getCmp('proyecto_id').setDisabled(false);
             Ext.getCmp('milestone_id').setDisabled(false);
             Ext.getCmp('reportedby_id').setDisabled(false);
-            Ext.getCmp('reportedthrough_id').setDisabled(false);
+            Ext.getCmp('reportedthrough_id').setDisabled(false);            
+            Ext.getCmp('activo_id').setDisabled(false);
         },
 
         onRender: function(){
@@ -548,7 +557,10 @@ $status = $sf_data->getRaw("status");
                                                 
                         Ext.getCmp("milestone_id").setRawValue(this.res.data.status_name);
                         Ext.getCmp("milestone_id").hiddenField.value = this.res.data.status;
-
+                        
+                        
+                        Ext.getCmp("activo_id").setRawValue(this.res.data.activo);
+                        Ext.getCmp("activo_id").hiddenField.value = this.res.data.idactivo;
 
                         //
 

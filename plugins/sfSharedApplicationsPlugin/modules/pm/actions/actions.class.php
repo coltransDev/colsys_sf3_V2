@@ -598,6 +598,14 @@ class pmActions extends sfActions {
             if ($request->getParameter("reportedthrough")) {
                 $ticket->setCaReportedby($request->getParameter("reportedthrough"));
             }
+            
+            if ($request->getParameter("idactivo")!==null) {
+                if( $request->getParameter("idactivo") ){
+                    $ticket->setCaIdactivo($request->getParameter("idactivo"));
+                }else{
+                    $ticket->setCaIdactivo(null);
+                }
+            }
 
             $ticket->save( $conn );
 
@@ -1357,6 +1365,8 @@ class pmActions extends sfActions {
         $data["assignedto"] = $ticket->getCaAssignedto();
         $data["action"] = $ticket->getCaAction();
         $data["status"] = $ticket->getCaStatus();
+        $data["idactivo"] = $ticket->getCaIdactivo();
+        $data["activo"] = $ticket->getInvActivo()->getCaIdentificador();
         
         $parametros = ParametroTable::retrieveByCaso("CU110");
         
