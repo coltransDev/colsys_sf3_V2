@@ -587,6 +587,14 @@ class inventoryActions extends sfActions {
                     ->addOrderBy("a.ca_fchcreado ASC")
                     ->execute();
         }
+        
+        
+        
+        $this->tickets = Doctrine::getTable("HdeskTicket")
+                ->createQuery("s")
+                ->addWhere("s.ca_idactivo = ? ", $idactivo)
+                ->addOrderBy("s.ca_opened ASC")
+                ->execute();
     }
     
     public function executeEmailMantenimiento(sfWebRequest $request) {

@@ -169,5 +169,38 @@ a.link:visited {
         </div>  
 <?
     }
+    
+    
+    $tickets = $sf_data->getRaw("tickets");
+    
+    $i=0;
+    foreach( $tickets as $ticket ){
+        if($ticket&&$i==0){
+?>
+            <b><font color="blue">Tickets:</font></b>
+<?
+        }
+?>
+        <div class="entry-<?=$i++%2==0?"even":"odd"?>">
+            <div class="entry-date"><?=Utils::fechaMes($ticket->getCaOpened())?></div>
+            <br />
+            <b>Ticket # <?=$ticket->getCaIdticket().": ".$ticket->getCaTitle() ?></b>
+            <br />
+            <b>&Aacute;rea:</b> <?=$ticket->getHdeskGroup()?$ticket->getHdeskGroup()->getCaName():""?>
+            <br />
+            <b>Reportador por: </b><?=($ticket->getUsuario()?$ticket->getUsuario()->getCaNombre():$ticket->getCaReportedby())?>
+            <br />
+            <b>Asignado a:</b> <?=$ticket->getAssignedTo()?$ticket->getAssignedTo():"Sin asignar"?>
+            <br />
+            <b>Estado: </b><?=($ticket->getCaClosedat()?"Cerrado":"Abierto")?>
+            <br />
+            <b><a href="<?=url_for("pm/verTicket?id=".$ticket->getCaIdticket())?>" target="_blank" >Haga click aca para ver mas detalles</a></b>
+            
+            <br />
+            <br />
+            <?=str_replace("\n","<br />",$ticket->getCaText())?>
+        </div><br /><br />
+<?
+    }
 ?>
 </div>
