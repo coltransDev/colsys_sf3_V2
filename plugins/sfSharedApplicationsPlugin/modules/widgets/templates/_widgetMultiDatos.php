@@ -1,6 +1,4 @@
 <?
-//$datos = $sf_data->getRaw("datos");
-//print_r($datos);
 $datos=array();
 ?>
 <script type="text/javascript">
@@ -8,7 +6,7 @@ WidgetMultiDatos = function( config ){
     Ext.apply(this, config);
 
     this.store = new Ext.data.Store({
-				autoLoad : true,
+				autoLoad : false,
 				reader: new Ext.data.JsonReader(
 					{
 						root: 'root'
@@ -18,7 +16,8 @@ WidgetMultiDatos = function( config ){
                         {name: 'valor'}
 					])
 				),
-				proxy: new Ext.data.MemoryProxy( <?=json_encode(array("root"=>$datos, "total"=>count($datos), "success"=>true) )?> )
+				proxy: new Ext.data.MemoryProxy( <?=json_encode(array("root"=>$datos, "total"=>count($datos), "success"=>true) )?> ),
+                sortInfo: {field: 'id', direction: 'ASC'}
 			});
 
     WidgetMultiDatos.superclass.constructor.call(this, {            	        

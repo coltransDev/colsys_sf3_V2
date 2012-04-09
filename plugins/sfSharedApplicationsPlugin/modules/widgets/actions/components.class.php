@@ -402,9 +402,6 @@ class widgetsComponents extends sfComponents {
     
     public function executeWidgetMes() {
         $this->data = array();
-
-
-        $this->data = array();
         $this->data[]=array("mes"=>"Enero","nmes"=>"1");
         $this->data[]=array("mes"=>"Febrero","nmes"=>"2");
         $this->data[]=array("mes"=>"Marzo","nmes"=>"3");
