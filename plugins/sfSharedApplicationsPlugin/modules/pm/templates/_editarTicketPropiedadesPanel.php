@@ -7,7 +7,7 @@
 $grupos = $sf_data->getRaw("grupos");
 $status = $sf_data->getRaw("status");
 
-include_component("inventory", "widgetEquipo");
+include_component("widgets", "widgetEquipo");
 
 ?>
 <script type="text/javascript">
