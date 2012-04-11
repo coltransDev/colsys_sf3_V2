@@ -64,7 +64,7 @@ $tbodegaJ = $sf_data->getRaw("tbodegas");
                 store: store,
                 id: "nombre",
                 name: "nombre",
-                maxLength: 80,
+                maxLength: 120,
                 width: 540
              });
         
