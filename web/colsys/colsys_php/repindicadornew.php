@@ -53,7 +53,7 @@ if (!isset($boton) and !isset($buscar)) {
     echo "     indicad_element[indicad_element.length] = new Option(objeto.value,objeto.value,false,false);";
     echo "     i++;";
     echo "  }";
-    echo "  if (department_element.value == 'Exportaciones'){";
+    echo "  if (department_element.value == 'Servicio_al_Cliente'){";
     echo "      document.getElementById('transporte').style.display = 'block';";
     echo "  }else";
     echo "      document.getElementById('transporte').style.display = 'none';";
@@ -262,12 +262,14 @@ elseif (!isset($boton) and !isset($accion) and isset($buscar)) {
         }else{
             $transporte = "ca_transporte ".((count($transporte)==1)?"like '$transporte[0]'":"in ('".implode("','",$transporte)."')");
         }   
-               
         $impoexpo = "";
-        
     }else{
         $ciudestino = "ca_ciudestino ".((count($ciudestino)==1)?"like '$ciudestino[0]'":"in ('".implode("','",$ciudestino)."')");   
         $traorigen = "ca_traorigen ".((count($traorigen)==1)?"like '$traorigen[0]'":"in ('".implode("','",$traorigen)."')");
+        if ($departamento == 'Exportaciones'){
+            $array_indicador = explode(" - ",$indicador);
+            $tra_mem = $transporte[] = $array_indicador[2];
+        }
         $transporte = "ca_transporte ".((count($transporte)==1)?"like '$transporte[0]'":"in ('".implode("','",$transporte)."')");
     }  
     
@@ -301,17 +303,17 @@ elseif (!isset($boton) and !isset($accion) and isset($buscar)) {
     $array_pnc = array();  // Para el calculo del Producto no Conforme
     $array_null= array();  // Para el conteo de los Registros que nos pueden calcular
 
-    if (!$tm->Open("select suc.ca_nombre, ca_lim1 from idg.tb_idg idg inner join idg.tb_config cfg on idg.ca_idg = cfg.ca_idg inner join control.tb_departamentos dep on idg.ca_iddepartamento = dep.ca_iddepartamento left join control.tb_sucursales suc on suc.ca_idsucursal = cfg.ca_idsucursal where dep.ca_nombre = '".str_replace("_"," ",$departamento)."' and idg.ca_nombre = '$indicador'")) {        // Selecciona todos lo registros de la tabla Festivos
+    if (!$tm->Open("select cfg.ca_idsucursal, suc.ca_nombre, ca_lim1 from idg.tb_idg idg inner join idg.tb_config cfg on idg.ca_idg = cfg.ca_idg inner join control.tb_departamentos dep on idg.ca_iddepartamento = dep.ca_iddepartamento left join control.tb_sucursales suc on suc.ca_idsucursal = cfg.ca_idsucursal where dep.ca_nombre = '".str_replace("_"," ",$departamento)."' and idg.ca_nombre = '$indicador'")) {        // Selecciona todos lo registros de la tabla Festivos
         echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
         echo "<script>document.location.href = 'entrada.php';</script>";
         exit; }
     $lcs_array = array();
     while (!$tm->Eof() and !$tm->IsEmpty()) {
-        $suc_mem = ($tm->Value('ca_idsucursal')=="")?"Todas":$tm->Value('ca_idsucursal');
+        $suc_mem = ($tm->Value('ca_idsucursal')=="999")?"Todas":$tm->Value('ca_idsucursal');
         $lcs_array[$suc_mem] = $tm->Value('ca_lim1');
         $tm->MoveNext();
     }
-    
+
     $format_avg = "d";
     if ($indicador == "Confirmación Salida de la Carga") {
         $source   = "vi_repindicadores";
@@ -327,7 +329,7 @@ elseif (!isset($boton) and !isset($accion) and isset($buscar)) {
         $source   = "vi_repindicadores";
         $ind_mem  = 3;
         $add_cols = 4;
-    } else if ($indicador == "Oportunidad en la Facturación" and $departamento != "Aduana" and $departamento != "Exportaciones") {
+    } else if ($indicador == "Oportunidad en la Facturación" and $departamento != "Aduanas_" and $departamento != "Exportaciones") {
         if ($departamento == 'Aéreo') {
             $source   = "vi_repindicador_air";
             $subque = " LEFT OUTER JOIN (select rp.ca_consecutivo as ca_consecutivo_conf, rs.ca_fchllegada, rs.ca_fchcontinuacion, min(rs.ca_fchenvio) as ca_fchconf_lleg from tb_repstatus rs INNER JOIN tb_reportes rp ON (rs.ca_idreporte = rp.ca_idreporte and rs.ca_idetapa = 'IACAD') group by rp.ca_consecutivo, rs.ca_fchllegada, rs.ca_fchcontinuacion order by rp.ca_consecutivo) rs1 ON ($source.ca_consecutivo = rs1.ca_consecutivo_conf) ";
@@ -363,9 +365,11 @@ elseif (!isset($boton) and !isset($accion) and isset($buscar)) {
 
         $ind_mem  = 4;
         $add_cols = 6;
-    } else if ($indicador == "Oportunidad en el Envío de Comunicaciones") {
+    } else if ($indicador == "Oportunidad en el Envio de Comunicaciones") {
         $format_avg = "H:i:s";
         $source   = "vi_repindicadores";
+        $transporte = "ca_transporte = '$departamento'";
+        $impoexpo = "ca_impoexpo = 'Importación'";
         $subque   = "LEFT OUTER JOIN (select ca_ciudad as ca_ciuorigen, ca_consecutivo as ca_consecutivo_sub, ca_fchrecibo, ca_fchenvio, ca_observaciones_idg from tb_repstatus rs LEFT OUTER JOIN tb_reportes rp ON (rs.ca_idetapa != 'IAVAR' and rp.ca_idreporte = rs.ca_idreporte) INNER JOIN tb_ciudades pd ON (rp.ca_origen = pd.ca_idciudad) where ".str_replace("ca_ano","to_char(ca_fchrecibo,'YYYY')",$ano)." and ".str_replace("ca_mes","to_char(ca_fchrecibo,'MM')",$mes)." order by ca_consecutivo, ca_fchrecibo) sq ON (vi_repindicadores.ca_consecutivo = sq.ca_consecutivo_sub) ";
         if (!$tm->Open("select ca_fchfestivo from tb_festivos")) {        // Selecciona todos lo registros de la tabla Festivos
             echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
@@ -485,7 +489,7 @@ elseif (!isset($boton) and !isset($accion) and isset($buscar)) {
         $add_cols = 3;
         $cot_ant  = null;
         $campos.= ", $source.ca_referencia, bke.ca_valor2";
-    } else if ($indicador == "Oportunidad en la Facturación" and $departamento == "Aduana") {
+    } else if ($indicador == "Oportunidad en la Facturación" and $departamento == "Aduanas_") {
         $tipo = "T";
         $format_avg = "H:i:s";
         $source = "vi_repindicador_brk";
@@ -506,7 +510,7 @@ elseif (!isset($boton) and !isset($accion) and isset($buscar)) {
         $add_cols = 4;
         $cot_ant  = null;
         $campos.= ", $source.ca_referencia, ca_valor2";
-    } else if (substr($indicador, -26) == "Oportunidad en Exportación" and $departamento == "Exportaciones") {
+    } else if (stripos($indicador, "Oportunidad en Exportación") !== FALSE and $departamento == "Exportaciones") {
         $tipo = "D";
         $impoexpo = "ca_impoexpo = 'Exportación'";
         if (substr($indicador, 0, 6)=='Aduana'){
@@ -534,16 +538,13 @@ elseif (!isset($boton) and !isset($accion) and isset($buscar)) {
         $add_cols = 7;
         $cot_ant  = null;
         $campos.= ", $source.ca_referencia, exe.ca_fchevento, exe.ca_idevento";
-    } else if (substr($indicador, -29) == "Oportunidad en la Facturación" and $departamento == "Exportaciones") {
+    } else if (stripos($indicador, "Oportunidad en la Facturación") !== FALSE and $departamento == "Exportaciones") {
         $tipo = "D";
-        
         $impoexpo = "ca_impoexpo = 'Exportación'";
         if (substr($indicador, 0, 6)=='Aduana'){
             $impoexpo.= " and ca_nomsia = 'COLMAS'";
         }
         $source = "vi_repindicador_exp";
-        $etapa = ($tra_mem == 'Aéreo')?"EECEM":"EEETA";
-        $subque = "LEFT OUTER JOIN (select ca_consecutivo as ca_consecutivo_sub, ca_fchsalida, ca_horasalida from tb_repstatus rps LEFT OUTER JOIN ( select max(srps.ca_idstatus) as ca_idstatus, srpt.ca_consecutivo from tb_repstatus srps LEFT OUTER JOIN tb_reportes srpt ON (srps.ca_idreporte = srpt.ca_idreporte) where srps.ca_idetapa = '$etapa'  and srpt.ca_impoexpo = 'Exportación'  group by ca_consecutivo) rpf ON (rps.ca_idstatus = rpf.ca_idstatus)) rs ON (rs.ca_consecutivo_sub = vi_repindicador_exp.ca_consecutivo) ";
         $subque = "LEFT OUTER JOIN (select ca_consecutivo as ca_consecutivo_sub, ca_fchsalida, ca_horasalida from tb_repstatus rps LEFT OUTER JOIN ( select max(srps.ca_idstatus) as ca_idstatus, srpt.ca_consecutivo from tb_repstatus srps LEFT OUTER JOIN tb_reportes srpt ON (srps.ca_idreporte = srpt.ca_idreporte) where srpt.ca_impoexpo = 'Exportación'  group by ca_consecutivo) rpf ON (rps.ca_idstatus = rpf.ca_idstatus)) rs ON (rs.ca_consecutivo_sub = vi_repindicador_exp.ca_consecutivo) ";
 
         $evento = ($tra_mem == 'Marítimo')?"Recibo de Soportes desde Puerto":"DEX";
@@ -1304,19 +1305,19 @@ elseif (!isset($boton) and !isset($accion) and isset($buscar)) {
 
                 $matriz_eventos = array();
                 if (substr($indicador, 0, 6)=='Aduana'){
-                    if ($transporte == 'Aéreo') {
+                    if ($tra_mem == 'Aéreo') {
                         $matriz_eventos["intervalo_1"]['DEX'] = $rs->Value('ca_fechadoc');
-                    } else if ($transporte == 'Marítimo') {
+                    } else if ($tra_mem == 'Marítimo') {
                         $matriz_eventos["intervalo_1"]['Fch.Recibo Soportes'] = $rs->Value('ca_fchevento');
                     }
                 }else if (substr($indicador, 0, 5)=='Carga'){
-                    if ($transporte == 'Aéreo') {
+                    if ($tra_mem == 'Aéreo') {
                         if ($nom_sia=='COLMAS'){
                             $matriz_eventos["intervalo_1"]['DEX'] = $rs->Value('ca_fechadoc');
                         }else{
                             $matriz_eventos["intervalo_1"]['Fch.Carga Embarcada'] = $rs->Value('ca_fchsalida');
                         }
-                    } else if ($transporte == 'Marítimo') {
+                    } else if ($tra_mem == 'Marítimo') {
                         $matriz_eventos["intervalo_1"]['Fch.Confirmación Salida'] = $rs->Value('ca_fchsalida');
                     }
                 }
