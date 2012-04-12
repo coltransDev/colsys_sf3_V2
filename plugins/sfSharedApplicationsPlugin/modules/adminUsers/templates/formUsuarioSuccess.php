@@ -166,7 +166,7 @@ $teloficinas = $sf_data->getRaw("teloficinas");
         for( i in jefes ){
             if( typeof(jefes[i]['j_ca_cargo'])!="undefined" ){
                 //alert(defaultValJef);
-                if( idempresa == jefes[i]['c_ca_idempresa'] || idempresa == 1 || idempresa == 2){
+                if( idempresa == jefes[i]['c_ca_idempresa'] || idempresa == 1 || idempresa == 2 || idempresa == 8){
                     //alert(jefes[i]["j_ca_login"]);
 
                     if( defaultValJef == jefes[i]["j_ca_login"]){
