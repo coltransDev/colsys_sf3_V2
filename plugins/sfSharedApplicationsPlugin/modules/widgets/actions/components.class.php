@@ -794,6 +794,10 @@ class widgetsComponents extends sfComponents {
             );
         }
     }
+    
+        public function executeWidgetEquipo( ){
+
+    }
 
 }
 
