@@ -145,7 +145,10 @@ Ext.extend(WidgetCiudad, Ext.form.ComboBox, {
                                     var txt=new RegExp(q,"ig");
                                     if(tipo=="2")
                                     {
-                                        return true;
+                                            if(str.search(txt) == -1  )
+                                                return false;
+                                            else
+                                                return true;
                                         /*if(record.get("idtrafico")!=trafico)
                                         {
                                             if(str.search(txt) == -1  )
