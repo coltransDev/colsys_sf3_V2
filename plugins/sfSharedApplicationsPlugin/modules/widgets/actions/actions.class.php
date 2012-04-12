@@ -274,7 +274,12 @@ class widgetsActions extends sfActions {
         }
 
         if ($transporte) {
-            $q->addWhere("r.ca_transporte = ?", $transporte);
+            if($transporte==Constantes::MARITIMO)
+            {
+                $q->addWhere("r.ca_transporte = ? OR r.ca_transporte = ? ", array(Constantes::MARITIMO,Constantes::TERRESTRE));
+            }
+            else
+                $q->addWhere("r.ca_transporte = ?", $transporte);
         }
 
         if ($impoexpo) {
