@@ -125,10 +125,11 @@ class inoReportesActions extends sfActions {
             
                 $q = Doctrine::getTable("InoComprobante")
                                     ->createQuery("c")
-                                    ->innerJoin("c.Ids id")                            
+                                    ->innerJoin("c.Ids id")  
+                                    ->innerJoin("c.InoTipoComprobante t") 
                                     ->leftJoin("c.InoHouse h")
                                     ->leftJoin("h.InoMaster m")
-                                    ->select("c.ca_consecutivo, c.ca_valor, c.ca_tcambio, c.ca_idmoneda, c.ca_fchcomprobante, id.ca_nombre, id.ca_id, h.ca_doctransporte, m.ca_referencia, m.ca_impoexpo, m.ca_transporte, m.ca_modalidad, m.ca_observaciones");
+                                    ->select("c.ca_consecutivo, c.ca_valor, t.ca_tipo, t.ca_comprobante, c.ca_tcambio, c.ca_idmoneda, c.ca_fchcomprobante, id.ca_nombre, id.ca_id, h.ca_doctransporte, m.ca_idmaster, m.ca_referencia, m.ca_impoexpo, m.ca_transporte, m.ca_modalidad, m.ca_observaciones");
 
                 $q->addWhere("m.ca_fchanulado IS NULL ");
                 if( $request->getParameter("fecIni") ){
