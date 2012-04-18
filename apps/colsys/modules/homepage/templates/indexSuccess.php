@@ -147,13 +147,13 @@ foreach ($grupos as $key => $grupo) {
 
         var tpl = new Ext.XTemplate(
         '<div id="sample-ct">',
-        '<tpl for=".">',
+        '<tpl for=".">',        
         '<div><a name="{id}" id="{id}"></a><h2><div unselectable="on">{title}</div></h2>',
         '<dl>',
         '<tpl for="samples">',
-        '<dd url="{url}"><img title="{text}" src="{icon}"/>',
+        '<dd ext:url="{url}"><img title="{text}" src="{icon}"/>',
         '<div><h4>{text}</h4><p>{desc}</p></div>',
-        '</dd>',
+        '</dd>',        
         '</tpl>',
         '<div style="clear:left"></div></dl></div>',
         '</tpl>',
