@@ -388,7 +388,9 @@ class inventoryActions extends sfActions {
         $idactivo = $request->getParameter("idactivo");
         $this->forward404Unless($idactivo);
         $this->user = $this->getUser();
-        
+        $recordatorio = $request->getParameter("recordatorio");
+        $idman = $request->getParameter("idman");
+                
         $chkmantenimiento = $request->getParameter( "chkmantenimiento-checkbox" );
         $chkseguimiento = $request->getParameter( "chkseguimiento-checkbox" );
         $fchMantenimiento = Utils::parseDate($request->getParameter("fchMantenimiento"));
@@ -408,47 +410,56 @@ class inventoryActions extends sfActions {
         $this->etapas = $etapas;
         
         if($chkmantenimiento&&$chkmantenimiento=='on'){
+            
+            if(!$recordatorio){
 
-            $mantenimiento = new InvMantenimiento();
-            $mantenimiento->setCaIdactivo($idactivo);
-            $mantenimiento->setCaFchmantenimiento($fchMantenimiento);
-            $mantenimiento->setCaObservaciones(utf8_decode($textMantenimiento));
-            $mantenimiento->save();
-            
-            $idman = $mantenimiento->getCaIdmantenimiento();
-            
-            $this->idman = $idman;
-            
-            $activo = Doctrine::getTable("InvActivo")->find($idactivo);
-            $activo->setCaPrgmantenimiento(Utils::addDate( $fchMantenimiento, 0,0,1));
-            $activo->save();
-            
-            $idsucursal = $activo->getCaIdsucursal();
-            
-            $contetapas = 0;
-            foreach($etapas as $etapa){
-                $contetapas++;
-            }
-                for( $i=1; $i<=$contetapas; $i++ ){
-                    $idetapa = $request->getParameter($i); 
-                    if($idetapa){
-                        $labores = new InvMantenimientoLabores();
-                        $labores->setCaIdetapa($i);
-                        $labores->setCaIdmantenimiento($idman);
-                        $labores->save();
-                    }
+                $mantenimiento = new InvMantenimiento();
+                $mantenimiento->setCaIdactivo($idactivo);
+                $mantenimiento->setCaFchmantenimiento($fchMantenimiento);
+                $mantenimiento->setCaObservaciones(utf8_decode($textMantenimiento));
+                $mantenimiento->save();
+
+                $idman = $mantenimiento->getCaIdmantenimiento();
+
+                $this->idman = $idman;
+
+                $activo = Doctrine::getTable("InvActivo")->find($idactivo);
+                $activo->setCaPrgmantenimiento(Utils::addDate( $fchMantenimiento, 0,0,1));
+                $activo->save();
+
+                $idsucursal = $activo->getCaIdsucursal();
+
+                $contetapas = 0;
+                foreach($etapas as $etapa){
+                    $contetapas++;
                 }
-            $mantenimiento = Doctrine::getTable("InvMantenimiento")->find($idman);
-        
+                    for( $i=1; $i<=$contetapas; $i++ ){
+                        $idetapa = $request->getParameter($i); 
+                        if($idetapa){
+                            $labores = new InvMantenimientoLabores();
+                            $labores->setCaIdetapa($i);
+                            $labores->setCaIdmantenimiento($idman);
+                            $labores->save();
+                        }
+                    }
+                $mantenimiento = Doctrine::getTable("InvMantenimiento")->find($idman);
+                $texto_rec = "";
+            
             //Envía email informando mantenimiento al usuario que tiene asignado el equipo
-
+            }
+            else{
+                $texto_rec = "Recordatorio->";
+                $mantenimiento = Doctrine::getTable("InvMantenimiento")->find($idman);
+                $idsucursal = $request->getParameter("idsucursal");
+                $mes_man = $request->getParameter("mes_man");                
+            }
             $email = new Email();		
             $email->setCaUsuenvio($this->getUser()->getUserId());
-            $email->setCaTipo("Mantenimiento"); 		
+            $email->setCaTipo($recordatorio?"Recordatorio Mtmto":"Mantenimiento"); 		
             $email->setCaIdcaso( $idman );
             $email->setCaFrom("no-reply@coltrans.com.co");
             $email->setCaFromname("Colsys Notificaciones");
-            $email->setCaSubject("Mantenimiento Preventivo Activo # ".$mantenimiento->getInvActivo()->getCaIdentificador()." : ".$mantenimiento->getInvActivo()->getUsuario()->getCaNombre());				
+            $email->setCaSubject($texto_rec."Mantenimiento Preventivo Activo # ".$mantenimiento->getInvActivo()->getCaIdentificador()." : ".$mantenimiento->getInvActivo()->getUsuario()->getCaNombre());				
             $texto = "Se ha realizado un nuevo mantenimiento \n\n<br /><br />" ;					
             $request->setParameter("format", "email" );	
             $request->setParameter("idman", $idman );	
@@ -460,9 +471,11 @@ class inventoryActions extends sfActions {
                 $usuario = Doctrine::getTable("Usuario")->find( $login );
                 $email->addCc( $usuario->getCaEmail() );
             }
-
             $email->save();
-
+            if($recordatorio){
+                $this->redirect("inventory/recordatorio?mes_man=".$mes_man.'&idsucursal='.$idsucursal);
+            }
+            
             $texto = sfContext::getInstance()->getController()->getPresentationFor('inventory', 'verSeguimientos');
 
             $this->responseArray = array("success" => true, "idactivo" => $idactivo, "info" => utf8_encode($texto));
@@ -492,6 +505,7 @@ class inventoryActions extends sfActions {
         $textAnotacion = $request->getParameter("text-anotacion");
         $autorizado = $request->getParameter("idfirma");
         $this->user = $this->getUser();
+        $this->recordatorio = $request->getParameter("recordatorio");
         
         $usuarios = UsuarioTable::getCoordinadoresMantenimiento();
         foreach( $usuarios as $usuario ){
@@ -606,7 +620,7 @@ class inventoryActions extends sfActions {
         $idman = $request->getParameter("idman");
         $this->forward404Unless($idactivo);
         $respuesta = $request->getParameter("respuesta");
-        $idman = $request->getParameter("idman");
+        $recordatorio = $request->getParameter("recordatorio");        
         
         $user = $this->getUser();
         $this->user = $user;
@@ -614,6 +628,7 @@ class inventoryActions extends sfActions {
         
         $this->respuesta = $respuesta;
         $this->idactivo = $idactivo;
+        $this->recordatorio = $recordatorio;
         
         $this->mantenimientos = Doctrine::getTable("InvMantenimiento")
                 ->createQuery("m")
@@ -1386,6 +1401,35 @@ class inventoryActions extends sfActions {
         $result = array();
         
         $this->etapas = $etapas;
+        
+    }
+    
+    public function executeInformeMantenimientosRealizados(sfWebRequest $request) {
+        
+        $this->opcion = $request->getParameter("opcion");
+        $this->idsucursal = $request->getParameter("idsucursal");
+        $this->mes_man = $request->getParameter("mes_man");
+        
+        $hoy = date("Y-m-d");
+        $this->anoprg = date('Y', strtotime($hoy));;
+        $this->mesLargo = Utils::mesLargo($mes_man);
+        
+        $this->mantenimientos = Doctrine::getTable("InvMantenimiento")
+                        ->createQuery("m")
+                        ->innerJoin("m.InvActivo a")
+                        ->addWhere("EXTRACT(MONTH FROM m.ca_fchmantenimiento) = ?", $this->mes_man)
+                        ->addWhere("a.ca_idsucursal = ?", $this->idsucursal)
+                        //->addWhere("s.ca_idsucursal = ?", $this->idsuc)
+                        //->orderBy("m.ca_fchmantenimiento ASC")
+                        ->execute();
+        
+         $result = array();
+    }
+    
+    public function executeRecordatorio(sfWebRequest $request){
+        
+        $this->idsucursal = $request->getParameter("idsucursal");
+        $this->mes_man = $request->getParameter("mes_man");     
         
     }
 }

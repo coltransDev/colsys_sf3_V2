@@ -181,6 +181,13 @@ class inventoryComponents extends sfComponents
     public function executePanelProductos( ){
 
     }
+    
+    public function executeFiltrosMantenimientosRealizados( ){
+        
+        $this->idsucursal = $this->getRequestParameter("idsucursal");
+        $this->sucursal = $this->getRequestParameter("sucursal");
+
+    }
 
 
 

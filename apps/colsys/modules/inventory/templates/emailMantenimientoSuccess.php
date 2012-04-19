@@ -99,6 +99,17 @@ a.link:visited {
     font-family: arial, helvetica, sans-serif;
 
 }
+.entry-blue {
+    background-color:#E3F8FB;
+    border-color:#CCCCCC;
+    border-style:dotted;
+    border-width:1px ;
+    margin:12px 0 0;
+    padding:12px 12px 24px;
+    font-size: 12px;
+    font-family: arial, helvetica, sans-serif;
+
+}
 .entry-date{
     float: right;
     color: #0464BB;
@@ -172,6 +183,15 @@ a.link:visited {
                                 </div>
 <?
                                 if(!$respuesta){
+                                    if($recordatorio){
+?>
+                                    <div class="entry-blue">
+                                        <b>Recordatorio:</b><br /><br />
+                                        Agradecemos su colaboración para la firma de este documento ya que es indispensable para el registro de esta labor.<br />
+                                        Para firmar, por favor escoja la opción en la sección de <b>Evaluacion</b>. El sistema le dirigirá a Colsys y se completará el proceso.<br />
+                                    </div>
+<?
+                                    }
 ?>
                                     <div class="entry-<?=$i++%2==0?"even":"odd"?>">
                                         <b>Evaluacion:</b><br /><br />

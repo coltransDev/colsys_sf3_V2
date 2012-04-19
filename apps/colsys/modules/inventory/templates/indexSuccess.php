@@ -163,6 +163,14 @@ function mostrarAnotacion(idman,idact,autoriza,activ)
                 </a>
             </div>
         </div>
+        <div style="float:left;">
+            <div class="icon">
+                <a href="<?=url_for("inventory/informeMantenimientosRealizados")?>" >
+                    <?=image_tag("48x48/signature.gif")?>
+                    <span>Registros Mantenimiento</span>
+                </a>
+            </div>
+        </div>
         
    </div>
 
