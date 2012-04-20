@@ -633,6 +633,11 @@ InoMaestraExpo:
     ca_direccioncons: string
     ca_consecutivo: string
     ca_aplicaidg: boolean
+  relations:         
+     Cliente:
+       local: ca_idcliente
+       foreign: ca_idcliente
+       type: one
 
       
 InoMaestraExpoSea:

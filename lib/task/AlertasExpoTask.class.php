@@ -49,6 +49,7 @@ EOF;
             }
             $ref = $alerta->getInoMaestraExpo();
             $mensaje.="\nReferencia: ".$ref->getCaReferencia()."\n";
+            $mensaje.="Cliente: ".$ref->getCliente()->getCaCompania()."\n";
             $mensaje.="Via: ".$ref->getCaVia()."\n";
             $mensaje.="Tipo Mercancia: ".$ref->getCaProducto()."\n";
             $mensaje.="Valor: ".$ref->getCaValorcarga()."\n\n\n";
