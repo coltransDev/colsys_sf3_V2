@@ -186,6 +186,22 @@ class inventoryComponents extends sfComponents
         
         $this->idsucursal = $this->getRequestParameter("idsucursal");
         $this->sucursal = $this->getRequestParameter("sucursal");
+        $this->opcion = $this->getRequestParameter("opcion");
+        $this->nmes = $this->getRequestParameter("nmes");
+        
+        $this->meses = array();
+        $this->meses[]=array("valor"=>"Enero"       ,"id"=>1);
+        $this->meses[]=array("valor"=>"Febrero"     ,"id"=>2);
+        $this->meses[]=array("valor"=>"Marzo"       ,"id"=>3);
+        $this->meses[]=array("valor"=>"Abril"       ,"id"=>4);
+        $this->meses[]=array("valor"=>"Mayo"        ,"id"=>5);
+        $this->meses[]=array("valor"=>"Junio"       ,"id"=>6);
+        $this->meses[]=array("valor"=>"Julio"       ,"id"=>7);
+        $this->meses[]=array("valor"=>"Agosto"      ,"id"=>8);
+        $this->meses[]=array("valor"=>"Septiembre"  ,"id"=>9);
+        $this->meses[]=array("valor"=>"Octubre"     ,"id"=>10);
+        $this->meses[]=array("valor"=>"Noviembre"   ,"id"=>11);
+        $this->meses[]=array("valor"=>"Diciembre"   ,"id"=>12);
 
     }
 

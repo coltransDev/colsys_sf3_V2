@@ -1406,24 +1406,25 @@ class inventoryActions extends sfActions {
     
     public function executeInformeMantenimientosRealizados(sfWebRequest $request) {
         
+        $response = sfContext::getInstance()->getResponse();
+        $response->addJavaScript("extExtras/SuperBoxSelect", 'last');
+        
         $this->opcion = $request->getParameter("opcion");
         $this->idsucursal = $request->getParameter("idsucursal");
-        $this->mes_man = $request->getParameter("mes_man");
+        $this->nmes = $request->getParameter("nmes");
         
-        $hoy = date("Y-m-d");
-        $this->anoprg = date('Y', strtotime($hoy));;
-        $this->mesLargo = Utils::mesLargo($mes_man);
+        if($this->opcion){
         
-        $this->mantenimientos = Doctrine::getTable("InvMantenimiento")
+            $this->mantenimientos = Doctrine::getTable("InvMantenimiento")
                         ->createQuery("m")
                         ->innerJoin("m.InvActivo a")
-                        ->addWhere("EXTRACT(MONTH FROM m.ca_fchmantenimiento) = ?", $this->mes_man)
                         ->addWhere("a.ca_idsucursal = ?", $this->idsucursal)
-                        //->addWhere("s.ca_idsucursal = ?", $this->idsuc)
-                        //->orderBy("m.ca_fchmantenimiento ASC")
+                        ->andWhereIn("EXTRACT(MONTH FROM m.ca_fchmantenimiento)", $this->nmes)
+                        ->orderBy("m.ca_fchmantenimiento ASC")
                         ->execute();
-        
-         $result = array();
+            $result = array();
+         
+        }
     }
     
     public function executeRecordatorio(sfWebRequest $request){

@@ -4,13 +4,18 @@
 <?
 include_component("inventory","filtrosMantenimientosRealizados");
 
+$nmes = $sf_data->getRaw("nmes");
+$meses = $sf_data->getRaw("meses");
+
+include_component("widgets","widgetSucursales");
+include_component("widgets","widgetMultiDatos");
+
+
 if($opcion){
-    
-    
 ?>
 
 
-<table width="70%" border="1"width="70%" class="tableList" align="center">
+<table width="90%" border="1" class="tableList" align="center">
     <tr>
         <th>Activo #</th>
         <th>Categoría</th>
@@ -20,6 +25,7 @@ if($opcion){
         <th>Departamento</th>
         <th>Fecha Programación</th>
         <th>Fecha Mantenimiento</th>
+        <th>Realizado Por</th>
         <th>Firma</th>
     <tr/>
 <?
@@ -29,7 +35,6 @@ if($opcion){
         
         $idactivo = $mantenimiento->getInvActivo()->getCaIdactivo();
         $idman = $mantenimiento->getCaIdmantenimiento();
-        $usuario = $mantenimiento->getInvActivo()->getUsuario()->getCaNombre();
     
 ?>
     <tr>
@@ -58,9 +63,12 @@ if($opcion){
             <?=$mantenimiento->getCaFchmantenimiento()?>
         </td>
         <td>
+            <?=$mantenimiento->getUsuario()->getCaNombre()?>
+        </td>
+        <td>
             <?if($mantenimiento->getCaFirmado()==null){
                     ?>
-                    <a href='https://localhost<?=url_for("inventory/guardarSeguimiento?chkmantenimiento-checkbox=on&recordatorio=si&idactivo=".$idactivo.'&idman='.$idman.'&idsucursal='.$idsucursal.'&mes_man='.$mes_man)?>'><img title="Enviar Recordatorio" alt="Enviar Recordatorio" src="https://www.coltrans.com.co/images/24x24/mailreminder.png" border="0"></a>
+                    <a href='https://www.coltrans.com.co<?=url_for("inventory/guardarSeguimiento?chkmantenimiento-checkbox=on&recordatorio=si&idactivo=".$idactivo.'&idman='.$idman.'&idsucursal='.$idsucursal.'&mes_man='.$mes_man)?>'><img title="Enviar Recordatorio" alt="Enviar Recordatorio" src="https://www.coltrans.com.co/images/24x24/mailreminder.png" border="0"></a>
                     <?
                 
             }else{
@@ -71,10 +79,5 @@ if($opcion){
     </tr>
     <?
     }
-    ?>
-
-
-
-<?
-    }
+}
 ?>

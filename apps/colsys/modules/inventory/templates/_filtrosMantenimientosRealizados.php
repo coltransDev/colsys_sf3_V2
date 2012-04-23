@@ -4,9 +4,11 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
+$nmes = $sf_data->getRaw("nmes");
+$meses = $sf_data->getRaw("meses");
+
 include_component("widgets","widgetSucursales");
-//include_component("widgets","widgetPais");
-//$idsucursal= $sf_data->getRaw("idsucursal");
+include_component("widgets","widgetMultiDatos");
 ?>
 
 
@@ -44,38 +46,37 @@ var tabs = new Ext.FormPanel({
                             //value:"<?//=$sucursal?>",
                             //hiddenValue:"<?//=$idsucursal?>"
                 }),
-                {
-                    xtype:          'combo',
-                    mode:           'local',
-                    value:          '',
-                    triggerAction:  'all',
-                    forceSelection: true,
-                    editable:       true,
-                    fieldLabel:     'Mes',
-                    name:           'mes_man',
-                    hiddenName:     'mes_man',
-                    displayField:   'name',
-                    valueField:     'value',
-                    allowBlank: false,
-                    store:          new Ext.data.JsonStore({
-                        fields : ['name', 'value'],
-                        data   : [
-                            <?
-
-                            for( $i=1; $i<=12; $i++ ){
-                                echo ($i>1)?",":"";
-                                echo "{name : '".Utils::mesLargo($i)."',   value: '".$i."'}";
+                new WidgetMultiDatos({title: 'Mes',
+                    fieldLabel: 'Mes',
+                        id: 'mes',
+                        name: 'mes[]',
+                        hiddenName: "nmes[]",
+                        //value:'<?//= implode(",", $nmes) ?>',
+                        listeners:{
+                            render:function()
+                            {
+                                if(this.store.data.length==0)
+                                {
+                                    data=<?=json_encode(array("root"=>$meses, "total"=>count($meses), "success"=>true) )?>;
+                                    this.store.loadData(data);
+                                }
+                            },
+                            focus:function()
+                            {
+                                if(this.store.data.length==0)
+                                {
+                                    data=<?=json_encode(array("root"=>$meses, "total"=>count($meses), "success"=>true) )?>;
+                                    this.store.loadData(data);
+                                }
                             }
-                            ?>
-                        ]
-                    })
-                }]
+                        }
+                })
+                ]
             }]
         },
-    buttons: [
-            {
-        text: 'Continuar',
-        handler: function(){
+    buttons: [{
+                text: 'Continuar',
+                handler: function(){
                     var tp = Ext.getCmp("tab-panel");                    
                     var owner=Ext.getCmp("formPanel");
                     if( tp.getActiveTab().getId()=="mtorealizado"){
@@ -83,7 +84,10 @@ var tabs = new Ext.FormPanel({
                     }
                     owner.getForm().submit();
             }
-    }]
+    }],
+    listeners:{afterrender:function(){        
+            }
+    }
 });
 tabs.render("container");
 
