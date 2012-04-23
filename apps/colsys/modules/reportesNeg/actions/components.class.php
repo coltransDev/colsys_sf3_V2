@@ -311,8 +311,8 @@ class reportesNegComponents extends sfComponents
 	*/
 	public function executePanelRecargos()
 	{
-        $impoexpo = $this->reporte->getCaImpoexpo();
-        if( $impoexpo==Constantes::TRIANGULACION ){
+        $this->impoexpo = $this->reporte->getCaImpoexpo();
+        if( $this->impoexpo==Constantes::TRIANGULACION ){
             $impoexpo=Constantes::IMPO;
         }
         $this->recargos = Doctrine::getTable("TipoRecargo")
@@ -529,16 +529,21 @@ class reportesNegComponents extends sfComponents
         $this->email="";
         //echo $this->dep;
         //13 es sistemas
-        if($this->dep==13 || $this->dep==14 || $this->dep==16)
+        if($this->dep==13 || $this->dep==16)
         {
             $this->modo=constantes::MARITIMO;
             $this->impoexpo=constantes::IMPO;
             $this->pais2="Colombia";
             $this->idpais2="CO-057";
-            $this->email=$this->getUser()->getEmail();
+            //$this->email=$this->getUser()->getEmail();
         }
-        else if($this->dep==18 || $this->dep==3)
+        else if($this->dep==18 || $this->dep==3 || $this->dep==14)
         {
+            if($this->dep==14)
+            {
+               $this->modo=constantes::MARITIMO;
+               $this->email=$this->getUser()->getEmail();
+            }
             $this->impoexpo=constantes::IMPO;
             $this->pais2="Colombia";
             $this->idpais2="CO-057";
