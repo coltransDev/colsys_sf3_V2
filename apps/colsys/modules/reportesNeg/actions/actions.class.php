@@ -672,9 +672,9 @@ class reportesNegActions extends sfActions
 	* @author Mauricio Quinche
     * @param sfRequest $request A request object
     */
-    public function executeCambioTransporte( sfWebRequest $request )
+    public function executeCambioParametros( sfWebRequest $request )
     {
-        $idreporte=($request->getParameter("idreporte")!="")?$request->getParameter("idreporte"):"0";        
+        $idreporte=($request->getParameter("idreporte")!="")?$request->getParameter("idreporte"):"0";
         $reporte = Doctrine::getTable("Reporte")->find( $idreporte );
 
         if($request->getParameter("transporte") )
@@ -686,7 +686,17 @@ class reportesNegActions extends sfActions
             $errors["transporte"]="Debe seleccionar un transporte";
             $texto.="Transporte<br>";
         }
-
+        
+        if($request->getParameter("impoexpo") )
+        {
+            $reporte->setCaImpoexpo(utf8_decode($request->getParameter("impoexpo")));
+        }
+        else
+        {
+            $errors["impoexpo"]="Debe seleccionar un impoexpo";
+            $texto.="Impoexpo<br>";
+        }
+        
         $reporte->save();
 
         $this->responseArray=array("success"=>true,"idreporte"=>$reporte->getCaIdreporte(),"redirect"=>"true","consecutivo"=>$reporte->getCaConsecutivo() );
@@ -885,7 +895,7 @@ class reportesNegActions extends sfActions
             $prov="";
             $incoterms="";
             $orden="";
-            for($i=0;$i<10;$i++)
+            for($i=0;$i<15;$i++)
             {
                 if($request->getParameter("prov".$i) && $request->getParameter("prov".$i)!=""  )
                 {
@@ -904,7 +914,7 @@ class reportesNegActions extends sfActions
                 $texto.="Proveedor<br>";
             }
 
-            for($i=0;$i<10;$i++)
+            for($i=0;$i<15;$i++)
             {
                 if($request->getParameter("incoterms".$i)!="" && ($request->getParameter("prov".$i)!="" || $reporte->getCaImpoexpo() == Constantes::EXPO)  )
                 {
@@ -923,7 +933,7 @@ class reportesNegActions extends sfActions
                 $texto.="Incoterms<br>";
             }
 
-            for($i=0;$i<10;$i++)
+            for($i=0;$i<15;$i++)
             {
                 if($request->getParameter("orden_pro".$i) && $request->getParameter("prov".$i)!=""  )
                 {
@@ -999,9 +1009,12 @@ class reportesNegActions extends sfActions
                     {
                         $cargo="Jefe Dpto. Aduana";
                     }
+                    $cargo1='Coordinador Control Riesgo Aduana';
                     $suc=$this->getUser()->getIdSucursal();
                     if($suc=="ABG" || $suc=="BGA" || $suc=="PEI"  )
                     {
+                        if($suc=="BGA")
+                            $cargo1='Sin cargo';
                         $suc="BOG";
                     }
                     $sucursal=Doctrine::getTable("Sucursal")->find( $suc );                
@@ -1015,7 +1028,7 @@ class reportesNegActions extends sfActions
                                         ->createQuery("c")
                                         ->select("c.ca_email")
                                         ->innerJoin("c.Sucursal s")
-                                        ->where(" (c.ca_cargo= ? or c.ca_cargo=?) and s.ca_nombre = ?", array($cargo,'Coordinador Control Riesgo Aduana',$sucursal->getCaNombre()));
+                                        ->where(" (c.ca_cargo= ? or c.ca_cargo=?) and s.ca_nombre = ?", array($cargo,$cargo1,$sucursal->getCaNombre()));
                         //echo $q->getSqlQuery();
                         $jef_adu=$q->execute();
                         foreach($jef_adu as $j)
@@ -1214,11 +1227,30 @@ class reportesNegActions extends sfActions
 
             if($request->getParameter("continuacion_dest")   )
             {
-                $reporte->setCaContinuacionDest($request->getParameter("continuacion_dest"));
+                if($reporte->getCaContinuacion()=="OTM")
+                {
+                    //if($request->getParameter("impoexpo")==constantes::OTMDTA)
+                    if($request->getParameter("continuacion_dest") != $request->getParameter("iddestino") || $request->getParameter("impoexpo")==constantes::OTMDTA1  )
+                        $reporte->setCaContinuacionDest($request->getParameter("continuacion_dest"));
+                    else
+                    {
+                        $errors["continuacion_destino"]="Debe asignar un destino final de Otm diferente al puerto de destino ";
+                        $texto.="Destino Final Continuacion de Viaje<br>";
+                    }
+                }
+                else
+                    $reporte->setCaContinuacionDest($request->getParameter("continuacion_dest"));
+                    
             }
             else
             {
-                $reporte->setCaContinuacionDest($request->getParameter("iddestino"));
+                if($reporte->getCaContinuacion()=="OTM")
+                {
+                    $errors["continuacion_destino"]="Debe asignar un destino final de Otm diferente al puerto de destino ";
+                    $texto.="Destino Final Continuacion de Viaje<br>";
+                }
+                else
+                    $reporte->setCaContinuacionDest($request->getParameter("iddestino"));
             }
 
             if($request->getParameter("ca_continuacion_conf") && $reporte->getCaContinuacion()=="OTM" )
@@ -1230,8 +1262,8 @@ class reportesNegActions extends sfActions
             }
             else if($reporte->getCaContinuacion()=="OTM" && $reporte->getCaImpoexpo()!=constantes::OTMDTA)
             {
-                $errors["ca_continuacion_conf"]="Debe asignar un grupo de confirmaci&oacute;n ";
-                $texto.="Confirmaci&oacute;n OTM<br>";
+//                $errors["ca_continuacion_conf"]="Debe asignar un grupo de confirmaci&oacute;n ";
+//                $texto.="Confirmaci&oacute;n OTM<br>";
             }else
             {
                 $reporte->setCaContinuacionConf(null);
@@ -1632,11 +1664,8 @@ class reportesNegActions extends sfActions
             $reporte = $reporte->copiar(1);
         }
 
-
         $errors =  array();
         $email_send=$request->getParameter("email_send");
-
-
 
         $reporte->setCaFchreporte( date("Y-m-d") );
         $reporte->setCaConsecutivo( ReporteTable::siguienteConsecutivo(date("Y")) );
@@ -1698,7 +1727,20 @@ class reportesNegActions extends sfActions
 
         if($request->getParameter("impoexpo"))
         {
-            $reporte->setCaImpoexpo(($request->getParameter("impoexpo")));
+            if($request->getParameter("impoexpo")=="Importaci&oacute;n")
+            {
+                $reporte->setCaImpoexpo(constantes::IMPO);
+            }
+            else if($request->getParameter("impoexpo")=="Exportaci&oacute;n")
+            {
+                $reporte->setCaImpoexpo(constantes::EXPO);
+            }
+            else if($request->getParameter("impoexpo")=="Triangulaci&oacute;n")
+            {
+                $reporte->setCaImpoexpo(constantes::TRIANGULACION);
+            }
+            else
+                $reporte->setCaImpoexpo($request->getParameter("impoexpo"));
         }
         else
         {
@@ -1792,7 +1834,7 @@ class reportesNegActions extends sfActions
         $prov="";
         $incoterms="";
         $orden="";
-        for($i=0;$i<10;$i++)
+        for($i=0;$i<15;$i++)
         {
             if($request->getParameter("prov".$i) && $request->getParameter("prov".$i)!=""  )
             {
@@ -1811,7 +1853,7 @@ class reportesNegActions extends sfActions
             $texto.="Proveedor <br>";
         }
 
-        for($i=0;$i<10;$i++)
+        for($i=0;$i<15;$i++)
         {
             if($request->getParameter("incoterms".$i) && $request->getParameter("prov".$i)!="" )
             {
@@ -1824,7 +1866,7 @@ class reportesNegActions extends sfActions
             $reporte->setCaIncoterms($incoterms);
         }
 
-        for($i=0;$i<10;$i++)
+        for($i=0;$i<15;$i++)
         {
             if($request->getParameter("orden_pro".$i) && $request->getParameter("prov".$i)!=""  )
             {
@@ -1893,7 +1935,12 @@ class reportesNegActions extends sfActions
         if($request->getParameter("transporte") )
         {
             //echo utf8_decode($request->getParameter("transporte"));
-            $reporte->setCaTransporte($request->getParameter("transporte"));
+            if($request->getParameter("transporte")=="A&eacute;reo")
+                $reporte->setCaTransporte(constantes::AEREO);
+            else if($request->getParameter("transporte")=="Mar&iacute;timo")
+                $reporte->setCaTransporte(constantes::MARITIMO);
+            else
+                $reporte->setCaTransporte($request->getParameter("transporte"));
         }
         else
         {
@@ -1903,7 +1950,10 @@ class reportesNegActions extends sfActions
 
         if($request->getParameter("ca_liberacion") )
         {
-            $reporte->setCaLiberacion(($request->getParameter("ca_liberacion")));
+            if($request->getParameter("ca_liberacion")=="S&iacute;" || $request->getParameter("ca_liberacion")== utf8_decode("Sí") || $request->getParameter("ca_liberacion")== utf8_encode("Sí")  ) 
+                $reporte->setCaLiberacion("Sí");
+            else
+                $reporte->setCaLiberacion(($request->getParameter("ca_liberacion")));
         }
         if($request->getParameter("ca_tiempocredito") )
         {
@@ -1946,7 +1996,7 @@ class reportesNegActions extends sfActions
             $this->responseArray=array("success"=>false,"redirect"=>false,"errors"=>$errors,"texto"=>$texto);
         else
         {            
-            $reporte->save();
+            $reporte->save();            
 
             $mail = new Email();
             $asunto=$request->getParameter("asunto")." - ".$reporte->getCaConsecutivo();
@@ -2150,7 +2200,7 @@ class reportesNegActions extends sfActions
             $prov="";
             $incoterms="";
             $orden="";
-            for($i=0;$i<10;$i++)
+            for($i=0;$i<15;$i++)
             {
                 if($request->getParameter("prov".$i) && $request->getParameter("prov".$i)!=""  )
                 {
@@ -2169,7 +2219,7 @@ class reportesNegActions extends sfActions
                 $texto.="Proveedor <br>";
             }
 
-            for($i=0;$i<10;$i++)
+            for($i=0;$i<15;$i++)
             {
                 if($request->getParameter("orden_pro".$i) && $request->getParameter("prov".$i)!=""  )
                 {
@@ -2182,7 +2232,7 @@ class reportesNegActions extends sfActions
                 $reporte->setCaOrdenProv($orden);
             }
             
-            for($i=0;$i<10;$i++)
+            for($i=0;$i<15;$i++)
             {
                 if($request->getParameter("incoterms".$i)!="" && ($request->getParameter("prov".$i)!="" || $reporte->getCaImpoexpo() == Constantes::EXPO)  )
                 {
@@ -2654,7 +2704,7 @@ class reportesNegActions extends sfActions
             $prov="";
             $incoterms="";
             $orden="";
-            for($i=0;$i<10;$i++)
+            for($i=0;$i<15;$i++)
             {
                 if($request->getParameter("prov".$i) && $request->getParameter("prov".$i)!=""  )
                 {
@@ -2671,7 +2721,7 @@ class reportesNegActions extends sfActions
                 $reporte->setCaIdproveedor(null);
            
 
-            for($i=0;$i<10;$i++)
+            for($i=0;$i<15;$i++)
             {
                 if($request->getParameter("orden_pro".$i) && $request->getParameter("prov".$i)!=""  )
                 {
@@ -4400,6 +4450,7 @@ class reportesNegActions extends sfActions
             $incoterms=array_merge($incoterms,$incoterms1);
             $ordenes=array_merge($ordenes,$ordenes1);
             
+            
             for($i=0;$i<count($proveedores);$i++)
             {
                 for($j=$i+1;$j<count($proveedores);$j++)
@@ -4429,16 +4480,10 @@ class reportesNegActions extends sfActions
             $reporte->setCaMercanciaDesc($tmp.$reporte2->getCaMercanciaDesc());
 
             $reporte->save();
-//        echo $reporte->getCaIdreporte() ."<br> ".$reporte->getCaTransporte()."<br> ".$reporte->getCaImpoexpo();
-//        exit;
-
-            //$this->redirect("reportesNeg/consultaReporte?id=".$reporte->getCaIdreporte());
             
             $this->redirect($this->generateUrl('default',
                     array('module' => 'reportesNeg','action' => 'consultaReporte','id' => $reporte->getCaIdreporte(),'modo' => urlencode($reporte->getCaTransporte()), 'impoexpo'=>  urlencode($reporte->getCaImpoexpo()) )));
 
-            //$this->redirect("reportesNeg/index");
-            //$this->redirect( $this->url_for("reportesNeg/consultaReporte?id=".$reporte->getCaIdreporte()."&modo=".$reporte->getCaTransporte()."&impoexpo=".$reporte->getCaImpoexpo()));
         }
         $this->reporte = $reporte;
     }
@@ -4822,7 +4867,19 @@ class reportesNegActions extends sfActions
         $email->send();
     }
     
-    
+    public function executePdfDTM(sfWebRequest $request) {    
 
+        $idreporte=($request->getParameter("idreporte")!="")?$request->getParameter("idreporte"):"0";
+        $this->reporte = Doctrine::getTable("Reporte")->find( $idreporte );
+        $this->forward404Unless( $this->reporte );
+        $this->setLayout("email");
+    }
+    
+    public function executePdfOTM(sfWebRequest $request) {
+        $idreporte=($request->getParameter("idreporte")!="")?$request->getParameter("idreporte"):"0";
+        $this->reporte = Doctrine::getTable("Reporte")->find( $idreporte );
+        $this->forward404Unless( $this->reporte );
+        $this->setLayout("email");
+    }
 }
 ?>
