@@ -7,6 +7,9 @@
 
 $cols = 12;
 
+$hoy = date("Y-m-d");
+$anoact = date('Y', strtotime($hoy));
+
 ?>
 <div class="content" align="center">
     <h2>INFORME DE MANTENIMIENTO<br /><?=$sucursal?"SUCURSAL: ".$sucursal->getCaNombre():""?><br /><?=strtoupper(Utils::mesLargo($mes))?> </h2>
@@ -99,8 +102,10 @@ $cols = 12;
             $contador_mes++;
             $lastCat=$activo->getCaIdcategory();
             $lastMes = ($mes_prg)?$mes_prg:-1;
+            $anoprg = date('Y', strtotime($activo->getCaPrgmantenimiento()));
+            
         ?>
-        <tr>
+        <tr  class="<?=$anoact!=$anoprg?row_yellow:black?>" >
             <td style="text-align: left">
                 <?=link_to($activo->getCaIdentificador(), "inventory/detalleActivo?idactivo=".$activo->getCaIdactivo(), array("target"=>"_blank"))?>
             </td>
@@ -135,7 +140,7 @@ $cols = 12;
         if($criterio=="mes"){
             if($contador_mes>0){
                 ?>
-                    <tr class="row_green">
+                    <tr class="row_blue">
                         <td colspan="<?=$cols?>"><b>Subtotal =<?=$contador_mes?> </b></td>
                     </tr>
                 <?

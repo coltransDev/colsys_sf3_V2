@@ -57,7 +57,7 @@ if($opcion){
             <?=$mantenimiento->getInvActivo()->getUsuario()->getCaDepartamento()?>
         </td>
         <td>
-            <?=$mantenimiento->getInvActivo()->getCaPrgmantenimiento()?>
+            <?=$mantenimiento->getCaFchprgmantenimiento()?>
         </td>
         <td>
             <?=$mantenimiento->getCaFchmantenimiento()?>

@@ -412,18 +412,21 @@ class inventoryActions extends sfActions {
         if($chkmantenimiento&&$chkmantenimiento=='on'){
             
             if(!$recordatorio){
-
+                
+                $activo = Doctrine::getTable("InvActivo")->find($idactivo);
+                $fchprgmantenimiento = $activo->getCaPrgmantenimiento();
+                
                 $mantenimiento = new InvMantenimiento();
                 $mantenimiento->setCaIdactivo($idactivo);
                 $mantenimiento->setCaFchmantenimiento($fchMantenimiento);
                 $mantenimiento->setCaObservaciones(utf8_decode($textMantenimiento));
+                $mantenimiento->setCaFchprgmantenimiento($fchprgmantenimiento);
                 $mantenimiento->save();
 
                 $idman = $mantenimiento->getCaIdmantenimiento();
 
                 $this->idman = $idman;
 
-                $activo = Doctrine::getTable("InvActivo")->find($idactivo);
                 $activo->setCaPrgmantenimiento(Utils::addDate( $fchMantenimiento, 0,0,1));
                 $activo->save();
 
@@ -1210,6 +1213,9 @@ class inventoryActions extends sfActions {
             
         }
             $q->addWhere("c.ca_parameter IN ('Hardware','Dispositivo')");
+        if($mes){
+            $q->addWhere("EXTRACT(MONTH FROM a.ca_prgmantenimiento) = ?", $mes);
+        }
             //$q->addOrderBy("c.ca_idcategory");
             $q->addOrderBy("c.ca_parent DESC");
             $q->addOrderBy("c.ca_name");
@@ -1340,11 +1346,9 @@ class inventoryActions extends sfActions {
 
             $activos = Doctrine::getTable("InvActivo")
                             ->createQuery("a")
-                            ->innerJoin("a.Usuario u")
-                            ->innerJoin("u.Sucursal s")
                             ->addWhere("EXTRACT(MONTH FROM a.ca_prgmantenimiento) = ?", $mesprg)
                             ->addWhere("EXTRACT(YEAR FROM a.ca_prgmantenimiento) = ?", $anoprg)
-                            ->addWhere("s.ca_idsucursal = ?", $s)
+                            ->addWhere("a.ca_idsucursal = ?", $s)
                             ->orderBy("a.ca_prgmantenimiento ASC")
                             ->execute();
 
@@ -1387,11 +1391,9 @@ class inventoryActions extends sfActions {
         
         $this->activos = Doctrine::getTable("InvActivo")
                         ->createQuery("a")
-                        ->innerJoin("a.Usuario u")
-                        ->innerJoin("u.Sucursal s")
                         ->addWhere("EXTRACT(MONTH FROM a.ca_prgmantenimiento) = ?", $mesprg)
                         ->addWhere("EXTRACT(YEAR FROM a.ca_prgmantenimiento) = ?", $this->anoprg)
-                        ->addWhere("s.ca_idsucursal = ?", $this->idsuc)
+                        ->addWhere("a.ca_idsucursal = ?", $this->idsuc)
                         ->orderBy("a.ca_prgmantenimiento ASC")
                         ->execute();
         
