@@ -1256,7 +1256,7 @@ elseif (!isset($boton) and !isset($accion) and isset($buscar)) {
                     $matriz_eventos["intervalo_1"]['Rec.Último Documento'] = $ult_mem;
                     $matriz_eventos["intervalo_1"]['SAE'] = $sae_mem;
                 }else if (substr($indicador, 0, 5)=='Carga'){
-                    if (!is_null($sae_mem) and $nom_sia=='COLMAS' and $transporte=='Marítimo'){
+                    if (!is_null($sae_mem) and $nom_sia=='COLMAS' and $tra_mem=='Marítimo'){
                         $matriz_eventos["intervalo_1"]['SAE'] = $sae_mem;
                     }else{
                         $matriz_eventos["intervalo_1"]['Rec.Último Documento'] = $ult_mem;
