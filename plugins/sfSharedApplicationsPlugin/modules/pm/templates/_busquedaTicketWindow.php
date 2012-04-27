@@ -38,10 +38,11 @@ BusquedaTicketWindow = function( config ) {
     listClass: 'x-combo-list-small',
     value: "index",
     store : [
-        ["index","Indexada"],
-        ["idticket","# ticket"],
         ["texto","Entre los textos"],
-        ["reportedBy","Reportado por"]
+        ["idticket","# ticket"],        
+        ["reportedBy","Reportado por"],
+        ["index","Indexada"]
+        
 
 	 ]})
 
