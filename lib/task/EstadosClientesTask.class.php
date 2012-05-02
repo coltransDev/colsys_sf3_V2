@@ -30,7 +30,7 @@ EOF;
 	sfContext::createInstance($this->configuration)->dispatch();
 		
 	$inicio  = mktime(0, 0, 0, date("m")-3, 1, date("Y"));
-	$final = mktime(0, 0, 0, date("m"), -1, date("Y"));
+	$final = mktime(0, 0, 0, date("m"),  0, date("Y"));
 	
 	$empresa =  "Coltrans";
 	sfContext::getInstance()->getRequest()->setParameter("fchStart", date('Y-m-d',$inicio));
