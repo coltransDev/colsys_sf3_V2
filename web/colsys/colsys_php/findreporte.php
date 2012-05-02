@@ -311,8 +311,6 @@ if (!isset($contents) and !isset($boton) and !isset($accion)) {
                 echo "    elemento.disabled = habilita;";
                 echo "    source = document.getElementById('idbodega_'+i);";
                 echo "    window.parent.elegir_item('idbodega',source.value);";
-                echo "    elemento = window.parent.document.getElementById('idbodega');";
-                echo "    elemento.disabled = habilita;";
                 echo "    source = document.getElementById('login_'+i);";
                 echo "    window.parent.elegir_item('login',source.value);";
                 echo "    window.parent.frames.findreporte.style.visibility = \"hidden\";";

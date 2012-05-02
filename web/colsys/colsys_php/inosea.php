@@ -1,5 +1,4 @@
 <?
-
 //echo "fuera de servicio temporalmente";
 //exit;
 /* ================-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*\
@@ -1463,7 +1462,6 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                             if (respuesta){";
                 echo "      	document.getElementById('continuacion_dest').disabled = false;";
                 echo "      	document.getElementById('login').disabled = false;";
-                echo "      	document.getElementById('idbodega').disabled = false;";
                 echo "      	}";
                 echo "      return (respuesta);";
                 echo "      }";
@@ -1534,11 +1532,9 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                         if(element)
                         {
                             if(element.value != 'N/A'){
-                            document.getElementById('idbodega').disabled = false;
                             document.getElementById('continuacion_dest').disabled = false;
                             }else{
                             document.getElementById('idbodega')[0].selected = true;
-                            document.getElementById('idbodega').disabled = true;
                             document.getElementById('continuacion_dest')[0].selected = true;
                             document.getElementById('continuacion_dest').disabled = true;
                             }
@@ -1918,7 +1914,6 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 echo "      if (respuesta){";
                 echo "      	document.getElementById('continuacion_dest').disabled = false;";
                 echo "      	document.getElementById('login').disabled = false;";
-                echo "      	document.getElementById('idbodega').disabled = false;";
                 echo "      	}";
                 echo "      return (respuesta);";
                 echo "      }";
@@ -1981,11 +1976,9 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                         if(element)
                         {
                             if(element.value != 'N/A'){
-                                document.getElementById('idbodega').disabled = false;
                                 document.getElementById('continuacion_dest').disabled = false;
                             }else{
                                 document.getElementById('idbodega')[0].selected = true;
-                                document.getElementById('idbodega').disabled = true;
                                 document.getElementById('continuacion_dest')[0].selected = true;
                                 document.getElementById('continuacion_dest').disabled = true;
                             }
