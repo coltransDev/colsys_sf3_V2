@@ -87,6 +87,7 @@
 </tr>
 </thead>
 <tbody>
+<? $resultadosVendedor = array(); ?>
 <?php foreach ($clientesActivos as $key_suc => $sucursal): ?>
     <tr><td colspan="9"><?php echo $key_suc ?></td></tr>
     <?php foreach ($sucursal as $key_ven => $vendedor): ?>
