@@ -318,7 +318,80 @@ class ClienteTable extends Doctrine_Table {
         return $stmt;
     }
 
+     /*
+     * Lista los Clientes Potenciales que no tengan seguimientos en los últimos 6 mese a partir de una fecha específicada.
+     * @author Carlos G. López M.
+     */
+
+    public static function actividadEnClientes($fch_ini, $fch_fin, $sucursal, $vendedor, $estado = 'Potencial') {
+        if ($fch_ini == null) {
+            $fch_ini = date('Y-m-d H:i:s', mktime(0, 0, 0, 1, 1, 1900));
+        }
+
+        if ($fch_fin == null) {
+            $fch_fin = date('Y-m-d H:i:s', mktime(23, 59, 59, date('m'), date('d'), date('Y')));
+        }
+
+        $query = "SELECT c.ca_idcliente, c.ca_idalterno, ca_digito, c.ca_compania, c.ca_vendedor, c.ca_sucursal, cot.ca_cotizacion_last, rep.ca_reporte_last, seg.ca_seguimiento_last, eve.ca_evento_max, c.ca_coltrans_std, c.ca_coltrans_fch::date, c.ca_colmas_std, c.ca_colmas_fch::date ";
+        $query.= "FROM vi_clientes c ";
+        $query.= "LEFT JOIN (select cl.ca_idcliente, max(co.ca_fchcreado)::date as ca_cotizacion_last, count(co.ca_idcotizacion) as ca_cotizaciones from tb_cotizaciones co inner join tb_concliente cl on co.ca_idcontacto = cl.ca_idcontacto where co.ca_fchcreado < '$fch_fin' group by cl.ca_idcliente order by cl.ca_idcliente) cot ON c.ca_idcliente = cot.ca_idcliente ";
+        $query.= "LEFT JOIN (select cl.ca_idcliente, max(rp.ca_fchreporte)::date as ca_reporte_last, count(rp.ca_idreporte) as ca_reportes from tb_reportes rp inner join tb_concliente cl on rp.ca_idconcliente = cl.ca_idcontacto where rp.ca_fchreporte < '$fch_fin' group by cl.ca_idcliente order by cl.ca_idcliente) rep ON c.ca_idcliente = rep.ca_idcliente ";
+        $query.= "LEFT JOIN (select cl.ca_idcliente, max(sg.ca_fchseguimiento)::date as ca_seguimiento_last, count(sg.ca_idseguimiento) as ca_seguimientos_cot from tb_cotseguimientos sg inner join tb_cotproductos pr on sg.ca_idproducto = pr.ca_idproducto inner join tb_cotizaciones ct on ct.ca_idcotizacion = pr.ca_idcotizacion inner join tb_concliente cl on ct.ca_idcontacto = cl.ca_idcontacto where sg.ca_fchseguimiento < '$fch_fin' group by cl.ca_idcliente order by cl.ca_idcliente) seg ON c.ca_idcliente = seg.ca_idcliente ";
+        $query.= "LEFT JOIN (select cl.ca_idcliente, max(ev.ca_fchevento)::date as ca_evento_max, count(ev.ca_idevento) as ca_seguimientos_cli from tb_evecliente ev inner join tb_clientes cl on ev.ca_idcliente = cl.ca_idcliente where ev.ca_fchevento < '$fch_fin' group by cl.ca_idcliente order by cl.ca_idcliente) eve ON c.ca_idcliente = eve.ca_idcliente ";
+        $query.= "where c.ca_coltrans_std = '$estado' and c.ca_colmas_std = '$estado' ";
+
+        if ($sucursal != null) {
+            $query.= "and c.ca_sucursal = '$sucursal' ";
+        }
+        if ($vendedor != null) {
+            $query.= "and c.ca_vendedor = '$vendedor' ";
+        }
+        $query.= "order by ca_sucursal, ca_vendedor, ca_compania ";
+
+        // echo "<br />".$query."<br />";
+        $q = Doctrine_Manager::getInstance()->connection();
+        $stmt = $q->execute($query);
+        return $stmt;
+    }
+
     /*
+     * Lista los Clientes Activos para hacer analisis de la fluctuación de sus negocios.
+     * @author Carlos G. López M.
+     */
+
+    public static function negociosEnClientes($fch_ini, $fch_fin, $sucursal, $vendedor, $estado = 'Activo') {
+        if ($fch_ini == null) {
+            $fch_ini = date('Y-m-d H:i:s', mktime(0, 0, 0, 1, 1, 1900));
+        }
+
+        if ($fch_fin == null) {
+            $fch_fin = date('Y-m-d H:i:s', mktime(23, 59, 59, date('m'), date('d'), date('Y')));
+        }
+        
+        $query = "select od.*, cl.ca_idalterno, cl.ca_digito, cl.ca_compania, cl.ca_vendedor, cl.ca_sucursal, cl.ca_coltrans_std, cl.ca_coltrans_fch, cl.ca_colmas_std, cl.ca_colmas_fch from ";
+        $query.= "( ";
+        $query.= "  select date_part('year', ai.ca_fchreferencia) as ca_ano, (string_to_array(ac.ca_referencia,'.'))[3] as ca_mes, ai.ca_fchreferencia, ac.ca_referencia, ac.ca_hawb as ca_doctransporte, ac.ca_idcliente from tb_inoclientes_air ac inner join tb_inomaestra_air ai on ac.ca_referencia = ai.ca_referencia union ";
+        $query.= "  select date_part('year', mi.ca_fchreferencia) as ca_ano, (string_to_array(mc.ca_referencia,'.'))[3] as ca_mes, mi.ca_fchreferencia, mc.ca_referencia, mc.ca_hbls as ca_doctransporte, mc.ca_idcliente from tb_inoclientes_sea mc inner join tb_inomaestra_sea mi on mc.ca_referencia = mi.ca_referencia union ";
+        $query.= "  select date_part('year', em.ca_fchreferencia) as ca_ano, (string_to_array(em.ca_referencia,'.'))[3] as ca_mes, em.ca_fchreferencia, em.ca_referencia, ei.ca_documento as ca_doctransporte, em.ca_idcliente from tb_expo_maestra em inner join tb_expo_ingresos ei on em.ca_referencia = ei.ca_referencia union ";
+        $query.= "  select date_part('year', am.ca_fchreferencia) as ca_ano, (string_to_array(am.ca_referencia,'.'))[3] as ca_mes, am.ca_fchreferencia, am.ca_referencia, am.ca_pedido as ca_doctransporte, am.ca_idcliente from tb_brk_maestra am ";
+        $query.= ") od inner join vi_clientes cl on cl.ca_idcliente = od.ca_idcliente ";
+        $query.= "where ca_fchreferencia between '$fch_ini' and '$fch_fin' and (cl.ca_coltrans_std = '$estado' or cl.ca_colmas_std = '$estado') ";
+
+        if ($sucursal != null) {
+            $query.= "and cl.ca_sucursal = '$sucursal' ";
+        }
+        if ($vendedor != null) {
+            $query.= "and cl.ca_vendedor = '$vendedor' ";
+        }
+        $query.= "order by ca_ano, ca_mes, ca_sucursal, ca_vendedor, ca_compania ";
+
+        // echo "<br />".$query."<br />";
+        $q = Doctrine_Manager::getInstance()->connection();
+        $stmt = $q->execute($query);
+        return $stmt;
+    }
+
+   /*
      * Lista los Clientes Activos que perderán Beneficios Crediticios, Tiempo y Cupo de Crédito por vencimiento de circular.
      * @author Carlos G. López M.
      */
