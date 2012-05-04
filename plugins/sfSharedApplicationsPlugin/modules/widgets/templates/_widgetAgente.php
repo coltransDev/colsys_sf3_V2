@@ -84,10 +84,14 @@ Ext.extend(WidgetAgente, Ext.form.ComboBox, {
                 var link = this.linkDestino;
             }else{
                 var link = this.linkOrigen;
-            }       
-
-            var record = Ext.getCmp(link).getRecord();
-            var trafico = record.data.idtrafico;
+            }
+            var record;
+            var trafico;
+            if(link)
+            {
+                record = Ext.getCmp(link).getRecord();            
+                trafico = record.data.idtrafico;
+            }
         }
 
         var listarTodos = "";
