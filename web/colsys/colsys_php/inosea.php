@@ -1461,6 +1461,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                             return true;
                             if (respuesta){";
                 echo "      	document.getElementById('continuacion_dest').disabled = false;";
+                echo "      	document.getElementById('idbodega').disabled = false;";
                 echo "      	document.getElementById('login').disabled = false;";
                 echo "      	}";
                 echo "      return (respuesta);";
@@ -1913,6 +1914,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 echo "          }";
                 echo "      if (respuesta){";
                 echo "      	document.getElementById('continuacion_dest').disabled = false;";
+                echo "      	document.getElementById('idbodega').disabled = false;";
                 echo "      	document.getElementById('login').disabled = false;";
                 echo "      	}";
                 echo "      return (respuesta);";
