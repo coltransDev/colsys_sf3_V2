@@ -710,6 +710,9 @@ RepOtm:
     ca_muelle : integer
     ca_liberacion : string
     ca_propiedades : string
+    ca_dtm: boolean
+    ca_continuacion: boolean
+    ca_presentacion: boolean
   relations:
     Reporte:
       local: ca_idreporte
