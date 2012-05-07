@@ -32,6 +32,8 @@ class Reporte extends BaseReporte {
     public function getContacto($tipo='0') {
         if($this->getCaTiporep()==4)
         {
+            if($tipo=='4')//contacto No fijo
+                return Doctrine::getTable("Contacto")->find($this->getCaIdconcliente());
             if(!$this->cliente)
                 $this->getCliente();
             if(!$this->cliente)
@@ -51,7 +53,7 @@ class Reporte extends BaseReporte {
         }
         else
         {
-            if($tipo!='1')//contacto No fijo
+            if($tipo!='1' && $tipo!='2')//contacto No fijo
                 return Doctrine::getTable("Contacto")->find($this->getCaIdconcliente());
             else if($tipo=='1')//CONTACTO FIJO
             {
@@ -63,6 +65,14 @@ class Reporte extends BaseReporte {
                                        ->addWhere("ca_cargo != ?", 'Extrabajador')
                                        ->addWhere("ca_fijo = ?", true)
                                        ->execute();
+            }else if($tipo=='2')//CONTACTO Internos coltrans
+            {
+                return Doctrine::getTable("Usuario")
+                       ->createQuery("c")
+                       ->select("c.ca_email")
+                       ->whereIn("c.ca_login",array("maquinche","alramirez","catalero","abotero"))
+                       ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
+                       ->execute();
             }
         }
     }    
@@ -80,6 +90,9 @@ class Reporte extends BaseReporte {
                 if($tercero)
                 {
                     $this->cliente->setCaIdcliente($tercero->getCaIdtercero());
+                    list($nit,$digito)=  explode("-",$tercero->getCaIdentificacion() );
+                    $this->cliente->setCaIdalterno(trim($nit));
+                    $this->cliente->setCaDigito(trim($digito));
                     $this->cliente->setCaCompania($tercero->getCaNombre());
                     $this->cliente->setCaEmail($tercero->getCaEmail());
                     $this->cliente->setCaTelefonos($tercero->getCaTelefonos());
@@ -1281,7 +1294,6 @@ class Reporte extends BaseReporte {
             }
             //Copia los conceptos
         } catch (Exception $e) {
-
             throw $e;
             $conn->rollBack();
             return false;
