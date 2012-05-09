@@ -87,6 +87,12 @@ if ($this->getRequestParameter("modo") == "prov" && $action != "listadoProveedor
     $button[$i]["image"] = "22x22/gohome.gif";
     $button[$i]["link"] = "ids/listadoProveedoresAprobados?type=nocontrol&modo=" . $this->getRequestParameter("modo");
     $i++;
+    
+    $button[$i]["name"] = "Prov. Criticos ";
+    $button[$i]["tooltip"] = "Listado de proveedores NO Controlados por el SIG";
+    $button[$i]["image"] = "22x22/gohome.gif";
+    $button[$i]["link"] = "ids/listadoProveedoresAprobados?type=criticos&modo=" . $this->getRequestParameter("modo");
+    $i++;
 
     $button[$i]["name"] = "Prov. Inactivos ";
     $button[$i]["tooltip"] = "Listado de proveedores inactivos";

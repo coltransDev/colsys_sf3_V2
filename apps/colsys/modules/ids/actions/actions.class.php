@@ -1362,6 +1362,8 @@ class idsActions extends sfActions {
          if( $this->type=="nocontrol" ){
              //$q->addWhere("p.ca_fchaprobado IS NULL");
              $q->addWhere("p.ca_controladoporsig = false");
+         }elseif( $this->type=="criticos" ){
+             $q->addWhere("p.ca_critico = true");
          }else{
              $q->addWhere("p.ca_fchaprobado IS NOT NULL");
              $q->addWhere("p.ca_controladoporsig = true");
