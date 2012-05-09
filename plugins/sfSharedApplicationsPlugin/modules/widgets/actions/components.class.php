@@ -795,8 +795,37 @@ class widgetsComponents extends sfComponents {
         }
     }
     
-        public function executeWidgetEquipo( ){
+    public function executeWidgetEquipo( ){
 
+    }
+    
+    public function executeWidgetCuentaContable( ){
+        $cuentas = Doctrine::getTable("InoCuenta")
+                        ->createQuery("c")
+                        ->select("c.ca_idcuenta, c.ca_cuenta, c.ca_descripcion")
+                        ->addOrderBy("c.ca_cuenta")
+                        ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
+                        ->execute();
+
+        $last = null;
+        $lastKey = null;
+        foreach( $cuentas as $key=>$val ){
+            //Evita que se cree movimiento en una cuenta que posee subcuentas
+            if( $last && strpos($cuentas[$key]["ca_cuenta"], $last)!==false  ){ 
+                unset( $cuentas[$lastKey] );
+            }
+            $cuentas[$key]["ca_cuenta"] = utf8_encode($cuentas[$key]["ca_cuenta"]);
+            $cuentas[$key]["ca_descripcion"] = utf8_encode($cuentas[$key]["ca_descripcion"]);
+            
+            $lastKey = $key;
+            $last = $cuentas[$key]["ca_cuenta"];
+        }
+
+        //Es necesario que la llave sea consecutivo o la funcion json_encode devolvera un valor incorrecto
+        $this->cuentas = array();
+        foreach( $cuentas as $cuenta ){
+            $this->cuentas[] = $cuenta;
+        }
     }
 
 }
