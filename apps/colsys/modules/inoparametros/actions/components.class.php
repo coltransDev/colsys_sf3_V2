@@ -68,7 +68,7 @@ class inoparametrosComponents extends sfComponents
             );
         }
 
-
+        /*
         $cuentas = Doctrine::getTable("InoCuenta")
                                 ->createQuery("c")
                                 ->select("c.ca_idcuenta, c.ca_cuenta, c.ca_descripcion")
@@ -94,7 +94,7 @@ class inoparametrosComponents extends sfComponents
         $this->cuentas = array();
         foreach( $cuentas as $cuenta ){
             $this->cuentas[] = $cuenta;
-        }
+        }*/
     }
 
 

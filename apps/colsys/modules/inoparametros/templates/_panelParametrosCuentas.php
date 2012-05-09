@@ -5,10 +5,10 @@
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
 
-
+include_component("widgets", "widgetCuentaContable" );
  
 $centros = $sf_data->getRaw("centros");
-$cuentas = $sf_data->getRaw("cuentas");
+
 ?>
 <script type="text/javascript">
 
@@ -16,42 +16,12 @@ PanelParametrosCuentas = function( config ){
 
     Ext.apply(this, config);
 
-    this.dataCuentas = <?=json_encode(array("root"=>$cuentas))?>;
+    
 
-    this.storeCuentas = new Ext.data.Store({
-        autoLoad : true,
-        proxy: new Ext.data.MemoryProxy( this.dataCuentas ),
-        reader: new Ext.data.JsonReader(
-            {
-                root: 'root',
-                totalProperty: 'total',
-                successProperty: 'success'
-            },
-            Ext.data.Record.create([
-                {name: 'idcuenta',  mapping: 'ca_idcuenta'},
-                {name: 'cuenta',  mapping: 'ca_cuenta'},
-                {name: 'descripcion',  mapping: 'ca_descripcion'}
-            ])
-        )
-    });
-
-    this.resultTpl = new Ext.XTemplate(
-            '<tpl for="."><div class="search-item"><b>{cuenta}</b><br /><span>{descripcion}</span> </div></tpl>'
-    );
-
-    this.editorCuentas = new Ext.form.ComboBox({
+    this.editorCuentas = new WidgetCuentaContable({
         typeAhead: true,
-        forceSelection: true,
-        triggerAction: 'all',
-        selectOnFocus: true,
-        mode: 'local',
-        displayField: 'cuenta',
-        valueField: 'idcuenta',
-        lazyRender:true,
-        listClass: 'x-combo-list-small',
-        tpl: this.resultTpl,
-        itemSelector: 'div.search-item',
-        store : this.storeCuentas
+        forceSelection: true,        
+        selectOnFocus: true        
     });
 
 
