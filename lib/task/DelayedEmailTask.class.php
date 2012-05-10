@@ -31,6 +31,8 @@ EOF;
                         ->createQuery("e")
                         ->addWhere("e.ca_fchenvio IS NULL")
                         ->addWhere("e.ca_fchcreado <= ? ", date("Y-m-d H:i:s", time()-30))
+                        ->addWhere("e.ca_fchcreado >= ? ", date("Y-m-d H:i:s", time()-86400*3)) // Deja de enviar despues de 3 dias de no haberlo podido enviar
+                        ->addOrderBy("e.ca_fchcreado", "ASC")
                         ->limit(15)
                         ->execute();
 	
