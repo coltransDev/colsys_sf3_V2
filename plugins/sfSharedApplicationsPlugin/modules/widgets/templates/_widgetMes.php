@@ -38,6 +38,7 @@ WidgetMes = function( config ){
         emptyText:'',
         selectOnFocus: true,        
         lazyRender:true,
+        submitValue: true,
         mode: 'local',
         listClass: 'x-combo-list-small'
     });
