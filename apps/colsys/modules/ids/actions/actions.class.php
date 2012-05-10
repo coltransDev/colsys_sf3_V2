@@ -1769,18 +1769,16 @@ class idsActions extends sfActions {
                 ->addOrderBy("i.ca_nombre ASC")
                 ->addOrderBy("d.ca_fchvencimiento ASC");
 
-        if ($this->modo == "prov") {
-            $q->innerJoin("i.IdsProveedor p");
-            $q->select("d.*, i.*, p.*");
-            $q->addWhere("p.ca_controladoporsig = ?", true);
-            $this->titulo = "Documentos de proveedores controlados por SIG";
-        }
-
+        
+        $q->innerJoin("i.IdsProveedor p");
+        $q->select("d.*, i.*, p.*");
+        $q->addWhere("p.ca_controladoporsig = ?", true);
+        $this->titulo = "Documentos de proveedores controlados por SIG";
+                
         if ($request->getParameter("layout")) {
             $this->setLayout($request->getParameter("layout"));
         }
-
-
+       
         $documentos = $q->execute();
 
         $resultados = array();
@@ -1810,6 +1808,7 @@ class idsActions extends sfActions {
                     ->innerJoin("c.IdsSucursal s")
                     ->addWhere("s.ca_id = ?", $ids->getCaId())
                     ->addWhere("c.ca_notificar_vencimientos = ?", true)
+                    ->addWhere("c.ca_fcheliminado IS NULL")
                     ->addWhere("c.ca_email IS NOT NULL")
                     ->execute();
             if (count($contactos) == 0) {
