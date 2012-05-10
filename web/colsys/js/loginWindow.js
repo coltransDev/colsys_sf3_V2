@@ -162,30 +162,43 @@ var checkAccess = function(){
             var res = Ext.util.JSON.decode( response.responseText );
             if( res.success ){
                 var aboutToClose = false;
-                if( res.timeLeft && res.timeLeft<=180 && res.timeLeft>120 ){
+                
+                if( res.timeLeft && res.timeLeft<=300 && res.timeLeft>180 ){
                                             
                     Ext.MessageBox.show({
                         title: 'Atención!',
-                        msg: 'Su sesión se cerrara en menos de tres minutos por inactividad',
+                        msg: 'Su sesión se cerrara en menos de cinco minutos por inactividad',
                         buttons: Ext.MessageBox.OK,                           
                         icon: Ext.MessageBox.WARNING
                     });
                         
-                }else{                 
-                    if( res.timeLeft && res.timeLeft<=120 && res.timeLeft>60 ){
+                }else{
+                
+                    if( res.timeLeft && res.timeLeft<=180 && res.timeLeft>120 ){
+
                         Ext.MessageBox.show({
-                            title: 'Atención!',
-                            msg: 'Su sesión se cerrara en menos de dos minutos por inactividad',
+                            title: 'Atención!!',
+                            msg: 'Su sesión se cerrara en menos de tres minutos por inactividad',
                             buttons: Ext.MessageBox.OK,                           
                             icon: Ext.MessageBox.WARNING
                         });
-                    
-                    }else{
-                        if( res.timeLeft && res.timeLeft<=60 && res.timeLeft>0 ){
-                            aboutToClose = true;                        
+
+                    }else{                 
+                        if( res.timeLeft && res.timeLeft<=120 && res.timeLeft>60 ){
+                            Ext.MessageBox.show({
+                                title: 'Atención!!!',
+                                msg: 'Su sesión se cerrara en menos de dos minutos por inactividad',
+                                buttons: Ext.MessageBox.OK,                           
+                                icon: Ext.MessageBox.ERROR
+                            });
+
+                        }else{
+                            if( res.timeLeft && res.timeLeft<=60 && res.timeLeft>0 ){
+                                aboutToClose = true;                        
+                            }
                         }
-                    }
-                } 
+                    } 
+                }
                 
                 
                 if( !res.login || aboutToClose ){
