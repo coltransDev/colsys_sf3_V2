@@ -30,7 +30,9 @@ include_component("inocomprobantes", "formComprobanteSubpanelF");
 
 <script language="javascript">
      var panel = new FormComprobantePanel({
-         idcomprobante: <?=$comprobante->getCaIdcomprobante()?$comprobante->getCaIdcomprobante():"null"?>
+         idcomprobante: <?=$comprobante->getCaIdcomprobante()?$comprobante->getCaIdcomprobante():"null"?>,
+         idmaster: <?=$idmaster?>,
+         modo: <?=$modo?>
      });
      panel.render("main-panel");
      <?

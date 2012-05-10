@@ -74,20 +74,20 @@ FormComprobantePanel = function( config ){
     if( this.idcomprobante ){
         this.tbar.push(
             {
-                text: 'Prefactura',
-                iconCls: 'page_white_acrobat',
+                text: 'Previsualizar',
+                iconCls: 'page_white_magnify',
                 handler : this.previsualizar,
                 scope: this
             }            
         );
-        /*this.tbar.push(  
+        this.tbar.push(  
             {
                 text: 'Generar',
                 iconCls: 'page_white_acrobat',
                 handler : this.generar,
                 scope: this
             }
-        );*/            
+        );            
     }   
     
     this.preview = new Ext.TabPanel({
@@ -126,9 +126,7 @@ FormComprobantePanel = function( config ){
                                     forceSelection:true,
                                     selectOnFocus:true,
                                     allowBlank:false,
-                                    id:'tipo_id',
                                     name:'tipo',
-                                    hiddenName: 'idtipo',
                                     mode:'local',
                                     triggerAction: 'all',
                                     disabled: this.idcomprobante,
@@ -156,15 +154,7 @@ FormComprobantePanel = function( config ){
                                         Ext.getCmp("idtipo").setValue(record.get("idtipo"));
                                     }
                                 }),                                   
-                                {
-                                    xtype:'textfield',
-                                    fieldLabel: 'Consecutivo',
-                                    name: 'consecutivo',
-                                    value: '',                                        
-                                    allowBlank:true,
-                                    readOnly: true,                                        
-                                    width: 120
-                                },                                    
+                                                                    
                                 {
                                     xtype:'hidden',
                                     id: 'idcomprobante'
@@ -186,25 +176,26 @@ FormComprobantePanel = function( config ){
                             layout: 'form',
                             items: [
                             {
+                                xtype:'textfield',
+                                fieldLabel: 'Consecutivo',
+                                name: 'consecutivo',
+                                value: '',                                        
+                                allowBlank:true,
+                                readOnly: true,                                        
+                                width: 120
+                            }
+                           ]
+                        },
+                        {
+                            layout: 'form',
+                            items: [
+                            {
                                 xtype:'datefield',
                                 fieldLabel: 'Fecha',
                                 format: 'Y-m-d',
                                 name: 'fchcomprobante',                                    
                                 allowBlank:false,
                                 width: 120
-                            }]
-                        },
-                        {
-                            layout: 'form',
-                            items: [
-                            {
-                                xtype:'numberfield',
-                                fieldLabel: 'Plazo',
-                                name: 'plazo',                                    
-                                allowBlank:false,
-                                allowNegative:false,
-                                decimalPrecision : 0,
-                                width: 80
                             }
                             ]
                         },
@@ -286,7 +277,7 @@ Ext.extend(FormComprobantePanel, Ext.FormPanel, {
 
         if( this.idcomprobante ){
             this.getForm().waitMsgTarget = this.getEl();
-            form  = this.getForm();
+            //var form  = this.getForm();
 
 
             this.load({
@@ -296,8 +287,8 @@ Ext.extend(FormComprobantePanel, Ext.FormPanel, {
 
                 success:function(response,options){
                     this.res = Ext.util.JSON.decode( options.response.responseText );
-                    form.findField("tipo_id").setRawValue(this.res.data.tipo);
-                    form.findField("tipo_id").hiddenField.value = this.res.data.idtipo;
+                    //form.findField("ids").setRawValue(this.res.data.ids);
+                    //form.findField("ids").hiddenField.value = this.res.data.ids_id;
                     /*
                     var idtrafico = this.res.data.idtrafico;                       
                     Ext.getCmp("ciudad_id").setIdtrafico( idtrafico );
@@ -326,8 +317,6 @@ Ext.extend(FormComprobantePanel, Ext.FormPanel, {
     guardar: function(){
         
         var idcomprobante = this.idcomprobante;
-        var modo = this.modo;
-        var idmaster = this.idmaster;
         var form = this.getForm();
         if( form.isValid() ){
             
@@ -337,9 +326,8 @@ Ext.extend(FormComprobantePanel, Ext.FormPanel, {
             for( var i=0; i<records.length; i++){
                 rec = records[i];
                 if( rec.get("idconcepto") ){
-                    var str = "idconcepto="+rec.get("idconcepto");
-                    str += " valor="+rec.get("valor");
-                    str += " idccosto="+rec.get("idccosto");
+                    var str = "idconcepto="+rec.get("idconcepto")+" ";
+                    str += "valor="+rec.get("valor");
                     result.push( str );
                 }
 
@@ -350,19 +338,15 @@ Ext.extend(FormComprobantePanel, Ext.FormPanel, {
                                     waitMsg:'Salvando Datos básicos...',
                                     success:function(response,options){
                                         
-                                        if( !idcomprobante ){                                                
-                                            document.location='<?=url_for($saveUrlOkRedirect)."?idcomprobante="?>'+options.result.idcomprobante+"&idmaster="+idmaster+"&modo="+modo;
-                                        }else{
-                                            for( var i=0; i<records.length; i++){
-                                                rec = records[i];
-                                                rec.commit();                                                
-                                            }
-                                        }                                        
-                                       
+                                        if( !idcomprobante ){                                        
+                                            document.location='<?=url_for($saveUrlOkRedirect)."?idcomprobante="?>'+options.result.idcomprobante;                                        
+                                        }
+                                        
+                                       //Ext.Msg.alert( "Msg "+response.responseText );
                                     },
                                     // standardSubmit: false,
-                                    failure:function(form,action){
-                                        Ext.MessageBox.alert('Error Message', "Se ha presentado un error"+(action.result?": "+action.result.errorInfo:"")+" "+(action.response?"\n Codigo HTTP "+action.response.status:""));                                    
+                                    failure:function(response,options){
+                                        Ext.Msg.alert( "Error "+response.responseText );
                                     }//end failure block
                                 });
         }else{

@@ -3,20 +3,22 @@
 switch($action){
 	case "formComprobante":
         $i = 0;
-		$button[$i]["name"]="Volver";
-		$button[$i]["tooltip"]="Volver al ticket";
-		$button[$i]["image"]="22x22/1leftarrow.gif";
-		$button[$i]["link"]= "ino/verReferencia?id=".$this->getRequestParameter("idmaster");
-		
+        if( $this->getRequestParameter("idmaster") ){
+            $button[$i]["name"]="Volver";
+            $button[$i]["tooltip"]="Volver al ticket";
+            $button[$i]["image"]="22x22/1leftarrow.gif";
+            $button[$i]["link"]= "ino/verReferencia?idmaster=".$this->getRequestParameter("idmaster")."&modo=".$this->getRequestParameter("modo");
+            $i++;
+        }
 		break;
 
     case "verComprobante":
         $i = 0;
         if( $this->getRequestParameter("idmaster") ){
             $button[$i]["name"]="Volver";
-            $button[$i]["tooltip"]="Volver al ticket";
+            $button[$i]["tooltip"]="Volver a la referencia";
             $button[$i]["image"]="22x22/1leftarrow.gif";
-            $button[$i]["link"]= "ino/verReferencia?id=".$this->getRequestParameter("idmaster");
+            $button[$i]["link"]= "ino/verReferencia?idmaster=".$this->getRequestParameter("idmaster")."&modo=".$this->getRequestParameter("modo");
             $i++;
         }
 

@@ -28,7 +28,8 @@ class inocomprobantesActions extends sfActions
     */
     public function executeFormComprobante(sfWebRequest $request)
     {
-        $idhouse = $request->getParameter("idhouse");
+        $this->idmaster = $request->getParameter("idmaster");
+        $this->modo = $request->getParameter("modo");
        
         $this->tipo = $request->getParameter("tipo");
         /*
@@ -49,7 +50,7 @@ class inocomprobantesActions extends sfActions
 
         }
 
-        $this->idhouse = $idhouse;
+ 
 
         /*if( $this->comprobante->getCaEstado()!=InoComprobante::ABIERTO ){
             $this->redirect("inocomprobantes/verComprobante?id=".$this->comprobante->getCaIdcomprobante());
@@ -78,7 +79,7 @@ class inocomprobantesActions extends sfActions
 
             $data["idcomprobante"]=$comprobante->getCaIdcomprobante();
             $data["idtipo"]=$comprobante->getCaIdtipo();
-            $data["tipo"]=utf8_encode($comprobante->getInoTipoComprobante()->getCaTipo());
+            $data["tipo"]=utf8_encode($comprobante->getInoTipoComprobante()->getCaTipo()."-".$comprobante->getInoTipoComprobante()->getCaComprobante()." ".$comprobante->getInoTipoComprobante()->getCaTitulo());
             $data["consecutivo"]=$comprobante->getCaConsecutivo();
             $data["fchcomprobante"]=$comprobante->getCaFchcomprobante();
             $data["plazo"]=$comprobante->getCaPlazo();
@@ -139,14 +140,14 @@ class inocomprobantesActions extends sfActions
             $centros = Doctrine::getTable("InoCentroCosto")
                                   ->createQuery("c")
                                   ->select("c.*")
-                                  ->where("c.ca_subcentro IS NULL")
+                                  //->where("c.ca_subcentro IS NULL")
                                   ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
                                   ->execute();
              $centrosArray = array();
              foreach( $centros as $centro ){
-                $centrosArray[ $centro["c_ca_centro"] ] = $centro["c_ca_nombre"];
+                $centrosArray[ $centro["c_ca_idccosto"] ] = $centro["c_ca_nombre"];
              }
-
+             
             foreach( $transacciones as $transaccion ){
                 if( $transaccion["t_ca_db"]!==null ){
                     $db = $transaccion["t_ca_db"]?"D":"C";
@@ -157,7 +158,7 @@ class inocomprobantesActions extends sfActions
                                 "iddetalle"=>$transaccion["t_ca_iddetalle"],
                                 "idconcepto"=>$transaccion["t_ca_idconcepto"],
                                 "idccosto"=>$transaccion["cc_ca_idccosto"],
-//                                "concepto"=>utf8_encode($centrosArray[$transaccion['cc_ca_centro']]." ".$transaccion['cc_ca_nombre']." » ".$transaccion["c_ca_concepto"]),
+                                "concepto"=>utf8_encode((isset($centrosArray[$transaccion['cc_ca_idccosto']])?$centrosArray[$transaccion['cc_ca_idccosto']]:"")." ".$transaccion['cc_ca_nombre']." » ".$transaccion["c_ca_concepto"]),
                                 "centro" => str_pad($transaccion['cc_ca_centro'], 2, "0", STR_PAD_LEFT)."-".str_pad($transaccion['cc_ca_subcentro'], 2, "0", STR_PAD_LEFT),
                                 "codigo" => str_pad($transaccion['cc_ca_centro'], 2, "0", STR_PAD_LEFT).str_pad($transaccion['cc_ca_subcentro'], 2, "0", STR_PAD_LEFT).str_pad($transaccion["c_ca_idconcepto"], 4, "0", STR_PAD_LEFT),                            
                                 "valor"=>$transaccion["t_ca_cr"]-$transaccion["t_ca_db"],
@@ -193,7 +194,8 @@ class inocomprobantesActions extends sfActions
             }else{
                 $comprobante = new InoComprobante();
                 $comprobante->setCaIdtipo($request->getParameter("idtipo"));
-                $comprobante->setCaConsecutivo(InoComprobanteTable::siguienteConsecutivo($request->getParameter("idtipo")));
+                $comprobante->setCaConsecutivo("A".InoComprobanteTable::siguienteConsecutivo($request->getParameter("idtipo")));                
+                
             }
 
 
@@ -227,12 +229,13 @@ class inocomprobantesActions extends sfActions
             $total = 0;
             if( $detalles ){
                 $detalles = explode("|", $detalles);
-
+                
                 foreach( $detalles as $d ){
                     $params =  $array = sfToolkit::stringToArray( $d );   
-                    if( $params["idconcepto"] ){
+                    if( $params["idconcepto"] && $params["idccosto"] ){
                         $inoDetalle = new InoDetalle();
                         $inoDetalle->setCaIdconcepto( $params["idconcepto"] );
+                        $inoDetalle->setCaIdccosto( $params["idccosto"] );
                         $inoDetalle->setCaIdcomprobante( $comprobante->getCaIdcomprobante() );
                         $inoDetalle->setCaCr( $params["valor"] );                        
                         $inoDetalle->save( $conn );
@@ -243,9 +246,9 @@ class inocomprobantesActions extends sfActions
             
             if( $total!=0 ){
                 $inoDetalle = new InoDetalle();
-                $inoDetalle->setCaIdconcepto( $params["idconcepto"] );
+                $inoDetalle->setCaIdconcepto( InoComprobante::ID_DEUDORES );
                 $inoDetalle->setCaIdcomprobante( $comprobante->getCaIdcomprobante() );
-                $inoDetalle->setCaCr( $params["valor"] );                        
+                $inoDetalle->setCaDb( $params["valor"] );                        
                 $inoDetalle->save( $conn );                
             }
             
@@ -290,8 +293,8 @@ class inocomprobantesActions extends sfActions
     * @param sfRequest $request A request object
     */
     public function executeGenerarComprobante(sfWebRequest $request){
-        $this->forward404Unless( $request->getParameter("id") );
-        $comprobante = Doctrine::getTable("InoComprobante")->find($request->getParameter("id"));
+        $this->forward404Unless( $request->getParameter("idcomprobante") );
+        $comprobante = Doctrine::getTable("InoComprobante")->find($request->getParameter("idcomprobante"));
         $this->forward404Unless( $comprobante );
         $modo = $request->getParameter("modo");
         $tipo = $comprobante->getInoTipoComprobante();
@@ -442,8 +445,8 @@ class inocomprobantesActions extends sfActions
     * @param sfRequest $request A request object
     */
     public function executeGenerarComprobantePDF(sfWebRequest $request){
-        $this->forward404Unless( $request->getParameter("id") );
-        $this->comprobante = Doctrine::getTable("InoComprobante")->find($request->getParameter("id"));
+        $this->forward404Unless( $request->getParameter("idcomprobante") );
+        $this->comprobante = Doctrine::getTable("InoComprobante")->find($request->getParameter("idcomprobante"));
         $this->forward404Unless( $this->comprobante );
 
 
@@ -467,7 +470,7 @@ class inocomprobantesActions extends sfActions
                 break;
             case "F":
                 $this->setTemplate("generarComprobanteF");
-                $this->transacciones = Doctrine::getTable("InoTransaccion")
+                $this->transacciones = Doctrine::getTable("InoDetalle")
                                          ->createQuery("t")
                                          ->select("t.*, con.*, p.*")
                                          ->innerJoin("t.InoConcepto con")

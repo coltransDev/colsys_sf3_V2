@@ -165,7 +165,7 @@ $pdf->Cell(0, 4, "VENDEDOR: "  ,0,1, "L");
 
 
 $pdf->SetXY($x+110,$y);
-$pdf->Cell(0, 4, Utils::formatNumber($comprobante->getCaTasacambio(), 2, ".", ",")  ,0,1, "L");
+$pdf->Cell(0, 4, Utils::formatNumber($comprobante->getCaTcambio(), 2, ".", ",")  ,0,1, "L");
 $pdf->SetXY($x+143,$y);
 $pdf->Cell(0, 4, $inoMaestra->getCaReferencia()  ,0,1, "L");
 
@@ -285,13 +285,13 @@ foreach( $transacciones as $transaccion ){
     //$pdf->Cell(0, 4, $transaccion->getCaCr() ,0,1, "L");
 
     $pdf->SetXY($x,$y+$k);
-    $pdf->Cell(172, 4, number_format($transaccion->getCaValor(), 2, ",", ".")  ,0,1, "R");
+    $pdf->Cell(172, 4, number_format($transaccion->getCaCr(), 2, ",", ".")  ,0,1, "R");
     $k+=$space;
 
     if( !isset($totales[$propios]) ){
         $totales[$propios] = 0;
     }
-    $totales[$propios] += $transaccion->getCaValor();
+    $totales[$propios] += $transaccion->getCaCr();
     
     $imp = $transaccion->getImpuestos();
 

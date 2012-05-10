@@ -80,12 +80,18 @@ Por favor tome unos minutos para contarnos su experiencia.
 Sus respuestas son muy importantes para mejorar nuestros servicios.
 <br />
 <br />
+
+<?
+if( $ticket ){
+?>
 Cordialmente,
 <br />
 <br />
-
-Departamento de Sistemas
-
+<?
+$group = $ticket->getHdeskGroup();
+echo  $group->getDepartamento()->getCaNombre();
+}
+?>
 
 
 

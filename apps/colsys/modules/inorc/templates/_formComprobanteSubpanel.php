@@ -51,24 +51,9 @@ FormComprobanteSubpanel = function( config ){
     });
 
     this.columns = [       
+      
       {
-        header: "Código",
-        dataIndex: 'codigo',
-        sortable:false,
-        width: 50,
-        editor: new Ext.form.TextField({
-				allowBlank: false 				
-			})
-        
-      },
-      {
-        header: "C. de Costos",
-        dataIndex: 'centro',
-        sortable:false,
-        width: 40
-      },
-      {
-        header: "Concepto",
+        header: "Factura",
         dataIndex: 'concepto',
         sortable:false,
         width: 420,
@@ -99,8 +84,7 @@ FormComprobanteSubpanel = function( config ){
             {name: 'idccosto', type: 'string'},
             {name: 'concepto', type: 'string'},
             {name: 'valor', type: 'float'},
-            {name: 'idcuenta', type: 'int'},
-            {name: 'deleted', type: 'boolean'}
+            {name: 'idcuenta', type: 'int'}
 
         ]);
 

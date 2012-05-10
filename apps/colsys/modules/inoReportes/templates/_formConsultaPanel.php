@@ -81,7 +81,14 @@ include_component("widgets", "widgetCliente");
                                     allowBlank: true,                                                                                                                    
                                     tabIndex:5,
                                     pais:"todos"
-                                })
+                                }),
+                                {
+                                    xtype: "checkbox",
+                                    fieldLabel: "Ver detalle de clientes",
+                                    name: 'detalle_clientes',
+                                    checked: true,
+                                    tabIndex:7
+                                }
                                 
                             ]
                         },

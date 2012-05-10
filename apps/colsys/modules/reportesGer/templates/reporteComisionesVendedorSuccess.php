@@ -61,6 +61,7 @@
        			</select>          	</td>
           <td class="listar">Año: <br />
             <select name="anio" id="anio">
+                <option value="2">2012</option>
                 <option value="1">2011</option>
                 <option value="0">2010</option>
             	<option value="9">2009</option>
