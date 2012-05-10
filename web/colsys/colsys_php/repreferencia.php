@@ -37,13 +37,14 @@ require_once("menu.php");
 
     echo "<TR>";
     echo "  <TD Class=captura ROWSPAN=2></TD>";
-    echo "  <TD Class=listar>Año:<BR><SELECT NAME='ano'>";
+    echo "  <TD Class=listar>Año:<BR><SELECT NAME='ano'>";    
     for ( $i=5; $i>=-1; $i-- ){
           $sel = (date('Y')==date('Y')-$i)?'SELECTED':'';
           echo " <OPTION VALUE=".(date('Y')-$i)." $sel>".(date('Y')-$i)."</OPTION>";
         }
     echo "  </SELECT></TD>";
     echo "  <TD Class=listar>Mes:<BR><SELECT NAME='mes'>";
+    echo " <OPTION VALUE='%'>Todos los meses</OPTION>";
     while (list ($clave, $val) = each ($meses)) {
         echo " <OPTION VALUE=$clave";
         if (date('m')==$clave) {
@@ -145,16 +146,26 @@ elseif (!isset($boton) and !isset($accion) and isset($traorigen)){
         echo "<script>document.location.href = 'entrada.php';</script>";
         exit; }
 */
+    
+    
 	$condicion = "where ca_mes::text like '$mes' and ca_ano::text = '$ano' and ca_trafico like '%$trafico%' and ca_traorigen like '%$traorigen%' and ca_ciudestino like '%$ciudestino%' and ".str_replace("\\","", str_replace("\"","'",$casos))." and ca_sucursal like '%$sucursal%'";
+    
     if (!$rs->Open("select DISTINCT ca_referencia, ca_trafico, ca_traorigen, ca_modal, ca_observaciones, ca_fcharribo, ca_iddocactual, ca_fchenvio, ca_usuenvio from vi_inoconsulta_sea $condicion order by ca_trafico, ca_modal, ca_referencia")) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
-        echo "<script>document.location.href = 'entrada.php';</script>";
+        //echo "<script>document.location.href = 'entrada.php';</script>";
         exit; }
 
 	$tm =& DlRecordset::NewRecordset($conn);
-	if (!$tm->Open("select ca_fchfestivo from tb_festivos where to_char(ca_fchfestivo,'YYYY')::int = $ano and to_char(ca_fchfestivo,'mm')::int = $mes")) {        // Selecciona todos lo registros de la tabla Festivos
+    $sql = "select ca_fchfestivo from tb_festivos where to_char(ca_fchfestivo,'YYYY')::int = $ano ";
+    
+    if( $mes!="%"){
+       $sql.=" and to_char(ca_fchfestivo,'mm')::int = $mes"; 
+    }
+    
+    
+	if (!$tm->Open( $sql )) {        // Selecciona todos lo registros de la tabla Festivos
 		echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
-		echo "<script>document.location.href = 'entrada.php';</script>";
+		//echo "<script>document.location.href = 'entrada.php';</script>";
 		exit; }
 	$festi = array();
 	while (!$tm->Eof() and !$tm->IsEmpty()) {
