@@ -557,7 +557,7 @@ $teloficinas = $sf_data->getRaw("teloficinas");
 								</td>
 								<td>
 									<div align="left">
-									   <select name="tiposangre" <?if($nivel==0){?>disabled="disabled"<?}?>>
+									   <select name="tiposangre" >
 											<?
 											foreach( $tiposangre as $sangre ){
 											?>
