@@ -827,6 +827,21 @@ class widgetsComponents extends sfComponents {
             $this->cuentas[] = $cuenta;
         }
     }
+    
+     public function executeWidgetTrackingEtapa( ){
+         $etapas = Doctrine::getTable("TrackingEtapa")
+                      ->createQuery("t")                      
+                      ->addWhere("t.ca_departamento = ?", constantes::OTMDTA1)                      
+                      ->orderBy("ca_orden")
+                      ->execute();
+        $this->data=array();
+        foreach($etapas as $e)
+        {
+            $this->data[]=array("id"=>$e->getCaIdetapa(),"nombre"=>utf8_encode($e->getCaEtapa()),"impoexpo"=>utf8_encode($e->getCaImpoexpo()),"departamento"=>utf8_encode($e->getCaDepartamento()),"transporte"=>utf8_encode($e->getCaTransporte()));
+        }
+    }
+    
+    
 
 }
 
