@@ -44,11 +44,11 @@ include_component("gestDocumental", "widgetUploadImages");
 				<td class="listar" style='font-size: 11px;' colspan="3">
 					<?=Utils::replace($cliente->getCaCompania())?></td>
 				<td   >
-    <form>
+                    <form>
 		<div style="width: 180px; height: 18px; border: solid 1px #7FAAFF; background-color: #C5D9FF; padding: 2px;">
 			<span id="but<?=$i?>"></span>
 		</div>
-    </form>
+	</form>
                     <div id="div<?=$i?>"></div>
                     <script>
                         

@@ -725,6 +725,7 @@ function cambiarTipoMsg( value ){
 			</tr>
 			<?
 			}
+
             if($modo!="puerto")
                 include_component("confirmaciones", "notClientes",array("inoClientes"=>$inoClientes,"modo"=>$modo,"etapas"=>$etapas,"coordinadores"=>$coordinadores, "textos"=>$textos, $bodegas="bodegas"));
             ?>
@@ -740,6 +741,9 @@ function cambiarTipoMsg( value ){
 				<td class="invertir" colspan="6"></td>
 			</tr>
 		</table>
+
+       
+
 		<br />
 		<table cellspacing="10">
 			<tr>
@@ -749,7 +753,7 @@ function cambiarTipoMsg( value ){
 		</table>        
 	</form>
         <table width="850" border="0" class="tableList">
-            <?
+              <?
             if($modo=="puerto" || $modo=="otm")
                 include_component("confirmaciones", "uploadClientes",array("inoClientes"=>$inoClientes,"modo"=>$modo));
             ?>
@@ -783,5 +787,7 @@ function cambiarTipoMsg( value ){
     }
     ?>
     modFcharribo();
+    //;
+
 </script>
 
