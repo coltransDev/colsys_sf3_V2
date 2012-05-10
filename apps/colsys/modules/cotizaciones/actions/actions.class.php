@@ -756,7 +756,12 @@ class cotizacionesActions extends sfActions {
             //echo $nv;
             //exit;
             if (isset($nv) && ($nv == "true" || $nv == true)) {
-                $newCotizacion->setCaVersion($cotizacion->getCaVersion() + 1);
+                
+                $sql =  "select (count(*)+1) as next from tb_cotizaciones where ca_consecutivo= '".$cotizacion->getCaConsecutivo()."'";
+                $q = Doctrine_Manager::getInstance()->connection();
+                $stmt = $q->execute($sql);
+                $row = $stmt->fetch();
+                $newCotizacion->setCaVersion($row["next"]);
             } else {
                 $sig = CotizacionTable::siguienteConsecutivo(date("Y"), $cotizacion->getCaEmpresa());
 
