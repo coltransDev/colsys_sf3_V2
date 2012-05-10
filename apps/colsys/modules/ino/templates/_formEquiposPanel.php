@@ -86,7 +86,7 @@ $data = $sf_data->getRaw("data");
                                     name: "modo",
                                     value: this.modo
                                 },
-                                this.widgetConceptos,                                
+                                this.widgetConceptos,                                  
                                 {
                                     xtype: "textfield",
                                     fieldLabel: "Precinto",

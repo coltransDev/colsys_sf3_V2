@@ -60,7 +60,8 @@ MainPanel = function( config ){
         transporte: this.transporte, 
         modalidad: this.modalidad,
         idmaster: <?=$referencia->getCaIdmaster()?>,
-        readOnly: this.readOnly
+        readOnly: this.readOnly,
+        facturacion: this.modo
     });
     this.items.push( this.gridFacturacion );
     
@@ -98,7 +99,7 @@ MainPanel = function( config ){
     MainPanel.superclass.constructor.call(this, {        
         id: 'tpanel',
         plain:true,
-        activeTab: 3,
+        activeTab: 0,
         height:450,
         autoHeight: true,
         autoWidth : true,

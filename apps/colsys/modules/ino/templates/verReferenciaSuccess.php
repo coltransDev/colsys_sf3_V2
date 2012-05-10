@@ -214,6 +214,7 @@ $readOnly = $referencia->getReadOnly();
 <div id="balance" class="x-hide-display">
 <?
 include_component("ino", "balanceReferencia", array("referencia"=>$referencia, "modo"=>$modo->getCaIdmodo()));
+
 ?>
 </div>
 
@@ -229,7 +230,8 @@ include_component("ino", "balanceReferencia", array("referencia"=>$referencia, "
         impoexpo: '<?=$modo->getCaImpoexpo()?>',
         transporte: '<?=$modo->getCaTransporte()?>',
         modalidad: '<?=$referencia->getCaModalidad()?>',
-        readOnly: <?=$readOnly?"true":"false"?>
+        readOnly: <?=$readOnly?"true":"false"?>,
+        facturacion: <?=$modo->getProperty("facturacion")?"true":"false"?>
     });
 
 

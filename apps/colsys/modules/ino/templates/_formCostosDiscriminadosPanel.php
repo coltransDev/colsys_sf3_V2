@@ -8,7 +8,7 @@ $tipos = $sf_data->getRaw("tipos");
 
 
 
-
+$data = $sf_data->getRaw("data");
 
 include_component("widgets", "widgetMoneda");
 include_component("widgets", "widgetIds");
@@ -49,7 +49,41 @@ include_component("widgets", "widgetIds");
             })           
         });
         
-        
+        this.widgetConceptos = new Ext.form.ComboBox({
+            name: "concepto",
+            hiddenName: "idconcepto",
+            fieldLabel: "Concepto",
+            valueField: 'idconcepto',
+            displayField: 'concepto',
+            typeAhead: true,
+            forceSelection: true,
+            triggerAction: 'all',
+            emptyText:'',
+            selectOnFocus: true,        
+            lazyRender:true,
+            mode: 'local',
+            listClass: 'x-combo-list-small',
+            submitValue: true,
+            allowBlank: false,
+            tabIndex: 1,
+            store: new Ext.data.Store({
+                autoLoad : true,
+                reader: new Ext.data.JsonReader(
+                {
+                    root: 'root',
+                    totalProperty: 'total',
+                    successProperty: 'success'
+                },
+                Ext.data.Record.create([
+                        {name: 'idconcepto'},
+                        {name: 'concepto'},
+                        {name: 'transporte'},
+                        {name: 'modalidad'}
+                    ])
+                ),
+                proxy: new Ext.data.MemoryProxy( <?= json_encode(array("root" => $data, "total" => count($data))) ?> )
+            })
+        });
         FormCostosDiscriminadosPanel.superclass.constructor.call(this, {
             deferredRender:false,
             autoHeight:true,
@@ -89,7 +123,8 @@ include_component("widgets", "widgetIds");
                                     xtype: "hidden",
                                     name: "detalles"
                                     
-                                },                                 
+                                }, 
+                                this.widgetConceptos,                                
                                 {
                                     xtype: "datefield",
                                     fieldLabel: "Fecha Factura",

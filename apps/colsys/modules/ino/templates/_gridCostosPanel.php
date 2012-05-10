@@ -71,7 +71,7 @@ GridCostosPanel = function( config ){
         renderer: Ext.util.Format.numberRenderer('0,0.00')       
       },
       {
-        header: "Valor Pesos",
+        header: "Valor <?=$monedaLocal?>",
         dataIndex: 'valor_pesos',
         hideable: false,
         sortable: false,

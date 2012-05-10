@@ -15,7 +15,7 @@ GridEquiposPanel = function( config ){
         width: 100,
         sortable: true,
         renderer: this.formatItem
-      },
+      },      
       {
         header: "Serial",
         dataIndex: 'serial',
@@ -40,6 +40,7 @@ GridEquiposPanel = function( config ){
     this.record = Ext.data.Record.create([
             {name: 'idmaster', type: 'integer'},
             {name: 'idequipo', type: 'integer'},
+            {name: 'cantidad', type: 'float'},
             {name: 'concepto', type: 'string'},
             {name: 'idconcepto', type: 'integer'},
             {name: 'serial', type: 'string'},

@@ -1680,15 +1680,38 @@ class inoActions extends sfActions {
     
     public function executeAnularReferencia(sfWebRequest $request) {
 
-        
-        $master = Doctrine::getTable("InoMaster")->find( $this->getRequestParameter("idmaster") );        
-        
-        
-        if( !$master->getCaFchanulado() ){        
-            $master->setCaFchanulado(date('Y-m-d H:i:s'));
-            $master->setCaUsuanulado($this->getUser()->getUserId());
-            $master->save();
+        try{
+            $idmaster = $this->getRequestParameter("idmaster");
+            $this->forward404Unless($idmaster);
+            $master = Doctrine::getTable("InoMaster")->find( $idmaster  );        
+            $this->forward404Unless( $master );
+
+            $noComp = Doctrine::getTable("InoHouse")
+                            ->createQuery("c")
+                            ->select("COUNT(*)")                        
+                            ->innerJoin("c.Cliente cl")
+                            ->innerJoin("c.InoComprobante comp")                        
+                            ->innerJoin("comp.InoTipoComprobante tcomp")
+                            ->where("c.ca_idmaster = ?", $idmaster)
+                            ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)
+                            ->execute();
+
+
+      
+            if( $noComp ){
+                throw new Exception( "No se puede anular una referencia con facturas. Primero elimine las facturas y luego proceda a anular la referencia." );
+            }else{
+                if( !$master->getCaFchanulado() ){        
+                    $master->setCaFchanulado(date('Y-m-d H:i:s'));
+                    $master->setCaUsuanulado($this->getUser()->getUserId());
+                    $master->save();
+                }
+                
+            }
+        }catch(Exception $e){
+            $this->responseArray = array("success" => false, "errorInfo"=>$e->getMessage());
         }
+        
         $this->responseArray = array("success" => true);
         $this->setTemplate("responseTemplate");
         

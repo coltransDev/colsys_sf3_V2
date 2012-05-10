@@ -51,7 +51,7 @@ include_component("widgets", "widgetIds");
         
         netousd.value =Math.round(eval(neto.value / tcambio_usd.value*100))/100;
         netopesos.value =Math.round(eval(neto.value * tcambio.value / tcambio_usd.value));
-        
+        calc_tasausd_inv();
         calc_utilidad();
     }
     
