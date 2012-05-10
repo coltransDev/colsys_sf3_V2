@@ -490,51 +490,56 @@ class adminUsersActions extends sfActions {
             }else{
                 $usuario->setCaTeloficina( null );
             }
-            if ($request->getParameter("tiposangre")) {
-                $usuario->setCaTiposangre($request->getParameter("tiposangre"));
-            }else{
-                $usuario->setCaTiposangre( null );
-            }
-            if ($request->getParameter("docidentidad")) {
-                $usuario->setCaDocidentidad($request->getParameter("docidentidad"));
-            }else{
-                $usuario->setCaDocidentidad( null );
-            }
-            if ($request->getParameter("estrato")) {
-                $usuario->setCaEstrato($request->getParameter("estrato"));
-            }else{
-                $usuario->setCaEstrato( null );
-            }
-            if ($request->getParameter("nivestudio")) {
-                $usuario->setCaNivestudios($request->getParameter("nivestudio"));
-            }else{
-                $usuario->setCaNivestudios( null );
-            }
-            if ($request->getParameter("donante")) {
-                $usuario->setCaDonante(true);
-            } else {
-                $usuario->setCaDonante(false);
-            }
-            if ($request->getParameter("chk_enfermedad")=='on') {
-                if ($request->getParameter("enfermedad")) {
-                    $usuario->setCaEnfermedad($request->getParameter("enfermedad"));
-                } else {
-                    $usuario->setCaEnfermedad($request->getParameter("enfermedad"));
-                }
-            }else{
-                $usuario->setCaEnfermedad(null);
-            }
-            if ($request->getParameter("chk_alergico")=='on') {
-                if ($request->getParameter("alergico")) {
-                    $usuario->setCaAlergico($request->getParameter("alergico"));
-                } else {
-                    $usuario->setCaAlergico($request->getParameter("alergico"));
-                }
-            }else{
-                $usuario->setCaAlergico(null);
-            }
+            
             
         }
+        
+        
+        if ($request->getParameter("tiposangre")) {
+            $usuario->setCaTiposangre($request->getParameter("tiposangre"));
+        }else{
+            $usuario->setCaTiposangre( null );
+        }
+        if ($request->getParameter("docidentidad")) {
+            $usuario->setCaDocidentidad($request->getParameter("docidentidad"));
+        }else{
+            $usuario->setCaDocidentidad( null );
+        }
+        if ($request->getParameter("estrato")) {
+            $usuario->setCaEstrato($request->getParameter("estrato"));
+        }else{
+            $usuario->setCaEstrato( null );
+        }
+        if ($request->getParameter("nivestudio")) {
+            $usuario->setCaNivestudios($request->getParameter("nivestudio"));
+        }else{
+            $usuario->setCaNivestudios( null );
+        }
+        if ($request->getParameter("donante")) {
+            $usuario->setCaDonante(true);
+        } else {
+            $usuario->setCaDonante(false);
+        }
+        if ($request->getParameter("chk_enfermedad")=='on') {
+            if ($request->getParameter("enfermedad")) {
+                $usuario->setCaEnfermedad($request->getParameter("enfermedad"));
+            } else {
+                $usuario->setCaEnfermedad($request->getParameter("enfermedad"));
+            }
+        }else{
+            $usuario->setCaEnfermedad(null);
+        }
+        if ($request->getParameter("chk_alergico")=='on') {
+            if ($request->getParameter("alergico")) {
+                $usuario->setCaAlergico($request->getParameter("alergico"));
+            } else {
+                $usuario->setCaAlergico($request->getParameter("alergico"));
+            }
+        }else{
+            $usuario->setCaAlergico(null);
+        }
+        
+        
 
         if ($request->getParameter("telparticular")) {
             $usuario->setCaTelparticular($request->getParameter("telparticular"));
