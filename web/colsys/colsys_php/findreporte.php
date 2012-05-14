@@ -231,8 +231,8 @@ if (!isset($contents) and !isset($boton) and !isset($accion)) {
                         $condicion.= " and lower($opcion) like lower('%" . $contents . "%')";
                     }
                 }
-                $command = "select rp.ca_idreporte, rp.ca_consecutivo, re.ca_referencia, rp.ca_version, rf.ca_idemail, rp.ca_idcliente, rp.ca_idalterno, rp.ca_idclientefac, rp.ca_nombre_cli, rp.ca_identificacion_con, rp.ca_orden_clie, rp.ca_transporte, rp.ca_modalidad, rp.ca_nombre, rp.ca_ciuorigen, rp.ca_traorigen, rp.ca_ciudestino, rp.ca_tradestino,";
-                $command.= "  rp.ca_fchdespacho, rp.ca_incoterms, rp.ca_idcotizacion, rp.ca_idproveedor, rp.ca_orden_prov, rp.ca_continuacion, rp.ca_continuacion_dest, rp.ca_final_dest, rp.ca_idconsignar, rp.ca_idbodega, rp.ca_login, ra.ca_idemail, ra.ca_idnave, ra.ca_doctransporte, ra.ca_piezas, ra.ca_peso, ra.ca_volumen from vi_reportes rp";
+                $command = "select rp.ca_idreporte, rp.ca_consecutivo, re.ca_referencia, rp.ca_version, rf.ca_idemail, rp.ca_idcliente, rp.ca_idalterno, rp.ca_idclientefac, rp.ca_nombre_cli, rp.ca_idconsignatario, rp.ca_identificacion_con, rp.ca_orden_clie, rp.ca_transporte, rp.ca_modalidad, rp.ca_nombre, rp.ca_ciuorigen, rp.ca_traorigen, rp.ca_ciudestino,";
+                $command.= "  rp.ca_tradestino, rp.ca_fchdespacho, rp.ca_incoterms, rp.ca_idcotizacion, rp.ca_idproveedor, rp.ca_orden_prov, rp.ca_continuacion, rp.ca_continuacion_dest, rp.ca_final_dest, rp.ca_idconsignar, rp.ca_idbodega, rp.ca_login, ra.ca_idemail, ra.ca_idnave, ra.ca_doctransporte, ra.ca_piezas, ra.ca_peso, ra.ca_volumen from vi_reportes rp";
                 $command.= "  RIGHT JOIN (select ca_consecutivo as ca_consecutivo_f, max(ca_idreporte) as ca_idreporte from tb_reportes where ca_usuanulado IS NULL and ca_transporte in ('Marítimo','Terrestre') group by ca_consecutivo_f) rx ON (rp.ca_idreporte = rx.ca_idreporte)";
                 $command.= "  LEFT JOIN (select srp.ca_consecutivo as ca_consecutivo_r, sic.ca_referencia from tb_reportes srp INNER JOIN tb_inoclientes_sea sic ON srp.ca_idreporte = sic.ca_idreporte) re ON (rp.ca_consecutivo = re.ca_consecutivo_r)";
                 $command.= "  LEFT JOIN (select ca_consecutivo as ca_consecutivo_n from tb_reportes srp INNER JOIN tb_inoclientes_sea sic ON srp.ca_idreporte = sic.ca_idreporte) ns ON (rp.ca_consecutivo = ns.ca_consecutivo_n and ns.ca_consecutivo_n IS NULL)";
@@ -255,6 +255,9 @@ if (!isset($contents) and !isset($boton) and !isset($accion)) {
                 echo "    elemento = window.parent.document.getElementById('idcliente');";
                 echo "    if (elemento.value.length != 0 && elemento.value != source.value){";
                 echo "    	alert('Error - El número de Nit del Reporte no corresponde con el Nit de la Referencia!');";
+                echo "    	return;";
+                echo "    }else if (document.getElementById('idconsignatario_'+i).value != '' && document.getElementById('identificacion_'+i).value == '') {";
+                echo "    	alert('Error - El reporte de negocio tiene definido un Consignatario pero NO su número de Nit!');";
                 echo "    	return;";
                 echo "    }else{";
                 echo "    	elemento.value = source.value;";
@@ -429,13 +432,15 @@ if (!isset($contents) and !isset($boton) and !isset($accion)) {
                     echo "  <INPUT ID=numorden_$i TYPE='HIDDEN' NAME='numorden_$i' VALUE='" . $rs->Value('ca_orden_clie') . "'>";
                     echo "  <INPUT ID=idreporte_$i TYPE='HIDDEN' NAME='idreporte_$i' VALUE='" . $rs->Value('ca_idreporte') . "'>";
                     echo "  <INPUT ID=idproveedor_$i TYPE='HIDDEN' NAME='idproveedor_$i' VALUE='" . $rs->Value('ca_idproveedor') . "'>";
+                    echo "  <INPUT ID=idconsignatario_$i TYPE='HIDDEN' NAME='idconsignatario_$i' VALUE='" . $rs->Value('ca_idconsignatario') . "'>";
+                    echo "  <INPUT ID=identificacion_$i TYPE='HIDDEN' NAME='identificacion_$i' VALUE='" . $rs->Value('ca_identificacion_con') . "'>";
                     echo "  <INPUT ID=proveedor_$i TYPE='HIDDEN' NAME='proveedor_$i' VALUE='$proveedor'>";
                     echo "  <INPUT ID=continuacion_$i TYPE='HIDDEN' NAME='continuacion_$i' VALUE='" . $rs->Value('ca_continuacion') . "'>";
                     echo "  <INPUT ID=continuacion_dest_$i TYPE='HIDDEN' NAME='continuacion_dest_$i' VALUE='" . $rs->Value('ca_continuacion_dest') . "'>";
 
                     if ($rs->Value('ca_continuacion') != 'N/A' and $rs->Value('ca_idconsignar') == 1) {
                         echo "  <INPUT ID=idbodega_$i TYPE='HIDDEN' NAME='idbodega_$i' VALUE='" . $tm->Value('ca_idbodega') . "'>";
-                    } else { //if ($rs->Value('ca_continuacion') != 'N/A' and $rs->Value('ca_idconsignar') == 1){
+                    } else {
                         echo "  <INPUT ID=idbodega_$i TYPE='HIDDEN' NAME='idbodega_$i' VALUE='" . $rs->Value('ca_idconsignar') . "'>";
                     }
 
