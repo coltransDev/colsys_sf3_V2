@@ -2,6 +2,7 @@
 $user = $sf_data->getRaw("user");
 $status = $sf_data->getRaw("status");
 $etapa = $sf_data->getRaw("etapa");
+$firmaotm= $sf_data->getRaw("firmaotm");
 ?>
 
 <div class="htmlContent">
@@ -24,11 +25,11 @@ $cliente = $reporte->getCliente();
 	<?=$status->getCaIntroduccion()?>
 </td>
 <?
-if($user->getSucursal()->getEmpresa()->getCaNombre()==sfConfig::get("app_branding_name1") && $reporte->getCaTransporte()==Constantes::MARITIMO && ($status->getCaIdetapa()=="IMETA" || $status->getCaIdetapa()=="IMCPD") )
+if($user->getSucursal()->getEmpresa()->getCaNombre()=="Coltrans S.A.S." && $reporte->getCaTransporte()==Constantes::MARITIMO && ($status->getCaIdetapa()=="IMETA" || $status->getCaIdetapa()=="IMCPD") )
 {
 ?>
 <td width="320">
-<div style="float:right"><img src="https://www.coltrans.com.co/images/publicidad/peru010312.png"/></div>
+<div style="float:right"><img src="https://www.coltrans.com.co/images/publicidad/argentina120412.jpg"/></div>
 </td>
 <?
 }
@@ -373,7 +374,10 @@ Cordial Saludo.<br />
 <br />
 <br />
 <?
-echo $user->getFirmaHTML();
+if($firmaotm==true)
+    echo $user->getFirmaOtmHTML($repotm->getCaLiberacion());
+else
+    echo $user->getFirmaHTML();
 ?>
 
 </div>
