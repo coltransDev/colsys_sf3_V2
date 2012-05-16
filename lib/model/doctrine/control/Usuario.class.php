@@ -80,6 +80,47 @@ class Usuario extends BaseUsuario {
         $resultado .= "http://" . $empresa->getCaUrl();
         return $resultado;
     }
+    
+    public function getFirmaOtmHTML($company) {
+        
+//        $empresa=Doctrine::getTable("Empresa")->findBy("ca_url","www.".$company);
+        
+        /*  
+        $empresa = Doctrine::getTable("Empresa")
+                        ->createQuery("t")
+                        ->where("t.ca_url=? ", "www.".$company)
+                        ->fetchOne();
+        */
+  //      $this->forward404Unless( $empresa );
+        
+        if($company=="coltrans.com.co")
+        {
+            $idsucursal="BOG";
+        }
+        else if($company=="consolcargo.com")
+        {
+            $idsucursal="CBO";
+            $ext="129-132";
+        }
+        else if($company=="colotm.com")
+        {
+            $idsucursal="OBO";
+        }
+        $sucursal = Doctrine::getTable("Sucursal")->find($idsucursal); 
+        
+        $empresa = $sucursal->getEmpresa();
+        $resultado = "<strong>" . Utils::replace(strtoupper($this->getCaNombre())) . "</strong><br />";
+        $resultado .= $this->getCaCargo() . "\n" . strtoupper($empresa->getCaNombre()) . "<br />";
+
+        if ($sucursal) {
+            $resultado .= $sucursal->getCaDireccion() . "<br />";
+            $resultado .= "Tel.: " . $sucursal->getCaTelefono() . " " . (($ext!="")?$ext:$this->getCaExtension()) . "<br />";
+            $resultado .= "Fax.: " . $sucursal->getCaFax() . "<br />";
+        }
+        $resultado .= $sucursal->getCaNombre() . " - " . $empresa->getTrafico()->getCaNombre(). "<br />";
+        $resultado .= "<a href=\"http://" . $empresa->getCaUrl() . "\">" . $empresa->getCaUrl() . "</a>";
+        return $resultado;
+    }
 
     public function setPasswd($passwd) {
         $salt = hash("md5", uniqid(rand(), true));
