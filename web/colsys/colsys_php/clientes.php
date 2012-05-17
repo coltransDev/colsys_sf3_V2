@@ -1036,7 +1036,7 @@ require_once("menu.php");
              echo "<FORM METHOD=post NAME='liberacion' ACTION='clientes.php' ONSUBMIT='return validar();'>";  // Llena la forma con los datos actuales del registro
              echo "<TABLE CELLSPACING=1 WIDTH=400>";
              echo "<INPUT TYPE='HIDDEN' NAME='id' VALUE=".$id.">";              // Hereda el Id del registro que se esta eliminando
-             echo "<TH Class=titulo COLSPAN=3>Información del Cliente</TH>";
+             echo "<TH Class=titulo COLSPAN=4>Información del Cliente</TH>";
              echo "<TR>";
              echo "  <TD Class=mostrar style='vertical-align: top;' ROWSPAN=5>".number_format($rs->Value('ca_idcliente'))."-".$rs->Value('ca_digito')."</TD>";
              
@@ -1048,33 +1048,35 @@ require_once("menu.php");
                     $img='<img src="/images/CG30.png" title="Cliente de Cuentas Globales" width="20" height="20" />';
                 }
             }
-             echo "  <TD Class=mostrar COLSPAN=2 style='font-size: 12px; font-weight:bold; text-align:left;'>".$rs->Value('ca_compania')." $img </TD>";
+             echo "  <TD Class=mostrar COLSPAN=3 style='font-size: 12px; font-weight:bold; text-align:left;'>".$rs->Value('ca_compania')." $img </TD>";
              echo "</TR>";
              echo "<TR>";
              $complemento = (($rs->Value('ca_oficina')!='')?" Oficina : ".$rs->Value('ca_oficina'):"").(($rs->Value('ca_torre')!='')?" Torre : ".$rs->Value('ca_torre'):"").(($rs->Value('ca_interior')!='')?" Interior : ".$rs->Value('ca_interior'):"").(($rs->Value('ca_complemento')!='')?" - ".$rs->Value('ca_complemento'):"");
-             echo "  <TD Class=mostrar COLSPAN=2>&nbsp;&nbsp;<B>Dirección : </B>".str_replace ("|"," ",$rs->Value('ca_direccion')).$complemento."</TD>";
+             echo "  <TD Class=mostrar COLSPAN=3>&nbsp;&nbsp;<B>Dirección : </B>".str_replace ("|"," ",$rs->Value('ca_direccion')).$complemento."</TD>";
              echo "</TR>";
              echo "<TR>";
-             echo "  <TD Class=mostrar COLSPAN=2>&nbsp;&nbsp;<B>Teléfonos : </B>".$rs->Value('ca_telefonos')."</TD>";
+             echo "  <TD Class=mostrar COLSPAN=3>&nbsp;&nbsp;<B>Teléfonos : </B>".$rs->Value('ca_telefonos')."</TD>";
              echo "</TR>";
              echo "<TR>";
-             echo "  <TD Class=mostrar COLSPAN=2>&nbsp;&nbsp;<B>Fax : </B>".$rs->Value('ca_fax')."</TD>";
+             echo "  <TD Class=mostrar COLSPAN=3>&nbsp;&nbsp;<B>Fax : </B>".$rs->Value('ca_fax')."</TD>";
              echo "</TR>";
              echo "<TR>";
-             echo "  <TD Class=mostrar COLSPAN=2>&nbsp;&nbsp;<B>Ciudad : </B>".$rs->Value('ca_ciudad')."</TD>";
+             echo "  <TD Class=mostrar COLSPAN=3>&nbsp;&nbsp;<B>Ciudad : </B>".$rs->Value('ca_ciudad')."</TD>";
              echo "</TR>";
-             echo "<TH Class=titulo COLSPAN=3>Datos para la Liberación Automática</TH>";
+             echo "<TH Class=titulo COLSPAN=4>Datos para la Liberación Automática</TH>";
              echo "<TR>";
              echo "  <TD Class=captura>No. de Días:&nbsp;&nbsp;&nbsp;</TD>";
              echo "  <TD Class=mostrar><INPUT TYPE='TEXT' NAME='diascredito' SIZE=5 VALUE='".$rs->Value('ca_diascredito')."' MAXLENGTH=5></TD>";
+             echo "  <TD Class=captura>Periodo de Gracia:&nbsp;&nbsp;&nbsp;</TD>";
+             echo "  <TD Class=mostrar><INPUT TYPE='TEXT' NAME='fchgracia' SIZE=12 VALUE='" . (($rs->Value('ca_fchgracia')!="")?$rs->Value('ca_fchgracia'):date("Y-m-d")) . "' ONKEYDOWN=\"chkDate(this)\" ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
              echo "</TR>";
              echo "<TR>";
              echo "  <TD Class=captura>Cupo Asignado:&nbsp;&nbsp;&nbsp;</TD>";
-             echo "  <TD Class=mostrar><INPUT TYPE='TEXT' NAME='cupo' SIZE=15 VALUE='".$rs->Value('ca_cupo')."' MAXLENGTH=12></TD>";
+             echo "  <TD Class=mostrar COLSPAN=3><INPUT TYPE='TEXT' NAME='cupo' SIZE=15 VALUE='".$rs->Value('ca_cupo')."' MAXLENGTH=12></TD>";
              echo "</TR>";
              echo "<TR>";
              echo "  <TD Class=captura style='vertical-align: top;'>Observaciones:&nbsp;&nbsp;&nbsp;</TD>";
-             echo "  <TD Class=mostrar COLSPAN=2><TEXTAREA NAME='observaciones' WRAP=virtual ROWS=5 COLS=58>".$rs->Value('ca_observaciones')."</TEXTAREA></TD>";
+             echo "  <TD Class=mostrar COLSPAN=3><TEXTAREA NAME='observaciones' WRAP=virtual ROWS=5 COLS=58>".$rs->Value('ca_observaciones')."</TEXTAREA></TD>";
              echo "</TR>";
              echo "</TABLE><BR>";
              $cadena = "?modalidad=N.i.t.\&criterio=$id";
@@ -1574,13 +1576,13 @@ elseif (isset($accion)) {                                                      /
                  exit;
                 }
              if ($rs->GetRowCount() == 0){
-                 if (!$rs->Open("insert into tb_libcliente (ca_idcliente, ca_diascredito, ca_cupo, ca_observaciones, ca_fchcreado, ca_usucreado) values($id, $diascredito, $cupo, '".addslashes($observaciones)."', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
+                 if (!$rs->Open("insert into tb_libcliente (ca_idcliente, ca_diascredito, ca_cupo, ca_fchgracia, ca_observaciones, ca_fchcreado, ca_usucreado) values($id, $diascredito, $cupo, '$fchgracia', '".addslashes($observaciones)."', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
                      echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                      //echo "<script>document.location.href = 'clientes.php';</script>";
                      exit;
                     }
              }else{
-                 if (!$rs->Open("update tb_libcliente set ca_diascredito = $diascredito, ca_cupo = $cupo, ca_observaciones = '".addslashes($observaciones)."', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where ca_idcliente = $id")) {
+                 if (!$rs->Open("update tb_libcliente set ca_diascredito = $diascredito, ca_cupo = $cupo, ca_fchgracia = '$fchgracia', ca_observaciones = '".addslashes($observaciones)."', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where ca_idcliente = $id")) {
                      echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                      //echo "<script>document.location.href = 'clientes.php';</script>";
                      exit;
