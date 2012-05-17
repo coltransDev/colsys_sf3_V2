@@ -56,7 +56,7 @@ require_once("menu.php");
     echo "<TABLE WIDTH=530 BORDER=0 CELLSPACING=1 CELLPADDING=5>";
     echo "<TH COLSPAN=7 style='font-size: 12px; font-weight:bold;'><B>Ingrese los parámetros para el Reporte</TH>";
     $tm =& DlRecordset::NewRecordset($conn);
-	if (!$tm->Open("select ca_nombre as ca_sucursal from control.tb_sucursales order by ca_sucursal")) {       // Selecciona todos lo registros de la tabla Sucursales
+	if (!$tm->Open("select distinct ca_nombre as ca_sucursal from control.tb_sucursales order by ca_sucursal")) {       // Selecciona todos lo registros de la tabla Sucursales
         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
         echo "<script>document.location.href = 'repreportes.php';</script>";
         exit; }
@@ -130,7 +130,7 @@ elseif (!isset($boton) and !isset($accion) and isset($login)){
 //  include_once 'include/seguridad.php';                                      // Control de Acceso al módulo
 
     $rsi =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
-    $condicion = "where ca_impoexpo = 'Importación'";
+    $condicion = "where (ca_impoexpo = 'Importación' or ca_impoexpo = 'Triangulación')";
     $condicion.= " and ca_ano like '$ano'";
     $condicion.= " and ca_mes like '$mes'";
     if ($sucursal != "%")
@@ -147,7 +147,7 @@ elseif (!isset($boton) and !isset($accion) and isset($login)){
         echo "<script>document.location.href = 'entrada.php';</script>";
         exit; }
 
-    $condicion = str_replace("Importación","Exportación",$condicion);
+    $condicion = str_replace("(ca_impoexpo = 'Importación' or ca_impoexpo = 'Triangulación')","ca_impoexpo = 'Exportación'",$condicion);
     $rse =& DlRecordset::NewRecordset($conn);                                   // Apuntador que permite manejar la conexiòn a la base de datos
     if (!$rse->Open("select * from vi_repreportes $condicion")) {               // Selecciona todos lo registros de la vista Vi_Reportes Importación
         echo "<script>alert(\"".addslashes($rse->mErrMsg)."\");</script>";      // Muestra el mensaje de error
