@@ -199,7 +199,7 @@ class clientesActions extends sfActions {
         $sql.= "	from tb_libcliente lb  ";
         $sql.= "	       LEFT OUTER JOIN (select st.ca_idcliente, st.ca_estado from tb_stdcliente st INNER JOIN (select sc.ca_idcliente, max(sc.ca_fchestado) as ca_fchestado, sc.ca_empresa from tb_stdcliente sc where ca_empresa = 'Coltrans' group by ca_idcliente, ca_empresa) ul ON (st.ca_idcliente = ul.ca_idcliente and st.ca_fchestado = ul.ca_fchestado and st.ca_empresa = ul.ca_empresa)) as st1 ON (lb.ca_idcliente = st1.ca_idcliente) ";
         $sql.= "	       LEFT OUTER JOIN (select st.ca_idcliente, st.ca_estado from tb_stdcliente st INNER JOIN (select sc.ca_idcliente, max(sc.ca_fchestado) as ca_fchestado, sc.ca_empresa from tb_stdcliente sc where ca_empresa = 'Colmas' group by ca_idcliente, ca_empresa) ul ON (st.ca_idcliente = ul.ca_idcliente and st.ca_fchestado = ul.ca_fchestado and st.ca_empresa = ul.ca_empresa)) as st2 ON (lb.ca_idcliente = st2.ca_idcliente) ";
-        $sql.= "	where st1.ca_estado = 'Potencial' and st2.ca_estado  = 'Potencial' ";
+        $sql.= "	where st1.ca_estado = 'Potencial' and st2.ca_estado  = 'Potencial' and (lb.ca_fchgracia is null or lb.ca_fchgracia <= now())";
         $sql.= ")";
 
         $q = Doctrine_Manager::getInstance()->connection();
