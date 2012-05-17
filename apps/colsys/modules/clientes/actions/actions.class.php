@@ -346,14 +346,14 @@ class clientesActions extends sfActions {
                     $estado_cal = ($row1["ca_numnegocios"] == "" or $row1["ca_numnegocios"] == 0 or $row1["ca_numnegocios"] == NULL) ? "Potencial" : "Activo";
                     $resultado = ($row["ca_estado"] != $estado_cal) ? "Error" : "OK";
                     /*
-                      if ($row["ca_idcliente"] == 80089103){     // Ruptura de Control ver Variables
+                    if ($row["ca_idcliente"] == 80089103){     // Ruptura de Control ver Variables
                       print_r($row);
                       print_r($row1);
                       echo "$fch_ini, $fch_fin | ";
                       echo $row["ca_estado"]." ".$estado_cal." ".$resultado." ".$empresa." ".$row1["ca_numnegocios"];
-
                       die();
-                      } */
+                    } 
+                    */
                     if ($row["ca_estado"] != "Vetado" and $resultado != "OK") {
                         if ($row1["ca_fchnegocio"] != "") {
                             list($ano, $mes, $dia, $hor, $min, $seg) = sscanf($row1["ca_fchnegocio"], "%d-%d-%d %d:%d:%d");
@@ -372,6 +372,16 @@ class clientesActions extends sfActions {
                         }
                         $clientes[] = array($row["ca_idcliente"] => array($row["ca_empresa"], $row["ca_estado"], $row["ca_fchestado"], $row1["ca_numnegocios"], $fchnegocio, $estado_cal, $resultado));
 
+                        if ($row["ca_estado"] != "Vetado" and $resultado != "OK") {
+                            Doctrine::getTable("StdCliente")                    // Elimina cualquier estado posterior al 
+                                ->createQuery("s")
+                                ->delete()
+                                ->where("s.ca_idcliente = ? ", $row["ca_idcliente"])
+                                ->andWhere("s.ca_empresa = ? ", $row["ca_empresa"])
+                                ->andWhere("s.ca_fchestado > ? ", $fchnegocio)
+                                ->execute();
+                        }
+
                         $estado = Doctrine::getTable("StdCliente")              // Valida si ya existe el estado en la base de datos.
                                 ->createQuery("s")
                                 ->where("s.ca_idcliente = ? ", $row["ca_idcliente"])
@@ -380,6 +390,7 @@ class clientesActions extends sfActions {
                                 ->andWhere("s.ca_fchestado = ? ", $fchnegocio)
                                 ->fetchOne();
                         if (!$estado) {
+                            echo "aca";
                             $stdcliente = new StdCliente();
                             $stdcliente->setCaIdcliente($row["ca_idcliente"]);
                             $stdcliente->setCaEmpresa($row["ca_empresa"]);
@@ -405,7 +416,6 @@ class clientesActions extends sfActions {
             }
             echo "</table>";
         }
-
         exit();
     }
 
