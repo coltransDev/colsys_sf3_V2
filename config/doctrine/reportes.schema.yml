@@ -713,6 +713,7 @@ RepOtm:
     ca_dtm: boolean
     ca_continuacion: boolean
     ca_presentacion: boolean
+    ca_contenedor: string
   relations:
     Reporte:
       local: ca_idreporte
@@ -744,3 +745,7 @@ RepOtm:
     InoDianDepositos:
       local: ca_muelle
       foreign: ca_codigo
+    IdsProveedor:
+      local: ca_idimportador
+      foreign: ca_idproveedor
+      type: one
