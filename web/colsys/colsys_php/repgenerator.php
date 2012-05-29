@@ -266,7 +266,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)){
 	}
 	$campos = substr($campos,0,strlen($campos)-1);
 	$queries = "select $campos";
-	$queries.= ", count(ca_hbls) as ca_hbls, sum(ca_facturacion) as ca_facturacion, sum(ca_utilidad) as ca_utilidad, sum(ca_sobreventa) as ca_sobreventa, sum(ca_cbm) as ca_cbm, sum(ca_teus) as ca_teus ";
+	$queries.= ", count(distinct ca_referencia) as ca_referencias, count(ca_hbls) as ca_hbls, sum(ca_facturacion) as ca_facturacion, sum(ca_utilidad) as ca_utilidad, sum(ca_sobreventa) as ca_sobreventa, sum(ca_cbm) as ca_cbm, sum(ca_teus) as ca_teus ";
 	$queries.= "from vi_repgerencia_sea where $sucursal and $vendedor $cliente $nomlinea $subcond ";
 	$queries.= "and ca_referencia in (select ca_referencia from vi_inomaestra_sea where $ano and $mes and $sufijo and $traorigen and $modalidad and $ciudestino) ";
 	$queries.= "group by $campos ";
@@ -315,13 +315,14 @@ require_once("menu.php");
 	}
 	$claves = array_values($agrupamiento);
 	$gran_tot = false;
+    echo "<TH># Refs</TH>";
 	echo "<TH># Hbls</TH>";
 	echo "<TH>Facturación</TH>";
 	echo "<TH>INO</TH>";
 	echo "<TH>Sobreventa</TH>";
 	echo "<TH>CBM's</TH>";
 	echo "<TH>TEU's</TH>";
-        echo "<TH>Rentabilidad</TH>";
+	echo "<TH>Rentabilidad</TH>";
 	echo "</TR>";
 	$rs->MoveFirst();
     while (!$rs->Eof() and !$rs->IsEmpty()){                                  // Lee la totalidad de los registros obtenidos en la instrucción Select
@@ -355,6 +356,7 @@ require_once("menu.php");
 						}
 					}else{
 						if ($clave == ($i - 1) and $i >= count($claves)){
+                            echo "  <TD Class=mostrar style='font-size: 9px; text-align:right;'>".number_format($rs->Value('ca_referencias'))."</TD>";
 							echo "  <TD Class=mostrar style='font-size: 9px; text-align:right;'>".number_format($rs->Value('ca_hbls'))."</TD>";
 							echo "  <TD Class=mostrar style='font-size: 9px; text-align:right;'>".number_format($rs->Value('ca_facturacion'))."</TD>";
 							echo "  <TD Class=mostrar style='font-size: 9px; text-align:right;'>".number_format($rs->Value('ca_utilidad'))."</TD>";
@@ -366,14 +368,15 @@ require_once("menu.php");
 							if(!isset(${$lst_prn})){
 								${$lst_prn} = array();
 							}
+                            ${$lst_prn}['referencias']+= $rs->Value('ca_referencias');
 							${$lst_prn}['hbls']+= $rs->Value('ca_hbls');
 							${$lst_prn}['facturacion']+= $rs->Value('ca_facturacion');
 							${$lst_prn}['utilidad']+= $rs->Value('ca_utilidad');
 							${$lst_prn}['sobreventa']+= $rs->Value('ca_sobreventa');
 							${$lst_prn}['cbm']+= $rs->Value('ca_cbm');
 							${$lst_prn}['teus']+= $rs->Value('ca_teus');
-                                                        ${$lst_prn}['rentabilidad']+= round($rs->Value('ca_utilidad')/$rs->Value('ca_facturacion'),4);
-                                                        ${$lst_prn}['items']+= 1;
+							${$lst_prn}['rentabilidad']+= round($rs->Value('ca_utilidad')/$rs->Value('ca_facturacion'),4);
+							${$lst_prn}['items']+= 1;
 							break;
 						}else{
 							echo "  <TD Class=invertir style='font-size: 9px;$back_col'></TD>";
@@ -416,22 +419,24 @@ function print_totals($nc,$ns,&$arreglo_1,&$arreglo_2,&$titulos,&$impr_grn){
 	echo "</TR>";
 	echo "<TR>";
 	echo "  <TD Class=resaltar style='font-weight:bold; font-size: 10px; text-align:right;' COLSPAN=$ns>$tipo_tot</TD>";
+    echo "  <TD Class=resaltar style='font-weight:bold; font-size: 10px; text-align:right;'>".number_format($arreglo_1['referencias'])."</TD>";
 	echo "  <TD Class=resaltar style='font-weight:bold; font-size: 10px; text-align:right;'>".number_format($arreglo_1['hbls'])."</TD>";
 	echo "  <TD Class=resaltar style='font-weight:bold; font-size: 10px; text-align:right;'>".number_format($arreglo_1['facturacion'])."</TD>";
 	echo "  <TD Class=resaltar style='font-weight:bold; font-size: 10px; text-align:right;'>".number_format($arreglo_1['utilidad'])."</TD>";
 	echo "  <TD Class=resaltar style='font-weight:bold; font-size: 10px; text-align:right;'>".number_format($arreglo_1['sobreventa'])."</TD>";
 	echo "  <TD Class=resaltar style='font-weight:bold; font-size: 10px; text-align:right;'>".number_format($arreglo_1['cbm'],2)."</TD>";
 	echo "  <TD Class=resaltar style='font-weight:bold; font-size: 10px; text-align:right;'>".number_format($arreglo_1['teus'],2)."</TD>";
-        echo "  <TD Class=resaltar style='font-weight:bold; font-size: 10px; text-align:right;'>" . number_format($arreglo_1['rentabilidad']/$arreglo_1['items']*100, 2) . "%</TD>";
+    echo "  <TD Class=resaltar style='font-weight:bold; font-size: 10px; text-align:right;'>".number_format($arreglo_1['rentabilidad']/$arreglo_1['items']*100, 2)."%</TD>";
 	echo "</TR>";
+    $arreglo_2['referencias']+= $arreglo_1['referencias'];
 	$arreglo_2['hbls']+= $arreglo_1['hbls'];
 	$arreglo_2['facturacion']+= $arreglo_1['facturacion'];
 	$arreglo_2['utilidad']+= $arreglo_1['utilidad'];
 	$arreglo_2['sobreventa']+= $arreglo_1['sobreventa'];
 	$arreglo_2['cbm']+= $arreglo_1['cbm'];
 	$arreglo_2['teus']+= $arreglo_1['teus'];
-        $arreglo_2['rentabilidad']+= round($arreglo_1['rentabilidad']/$arreglo_1['items'],4);
-        $arreglo_2['items']+= 1;
+    $arreglo_2['rentabilidad']+= round($arreglo_1['rentabilidad']/$arreglo_1['items'],4);
+    $arreglo_2['items']+= 1;
 	$arreglo_1 = array();
 }
 ?>
