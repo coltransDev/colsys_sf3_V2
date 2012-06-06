@@ -390,6 +390,9 @@ class clariantActions extends sfActions {
             $clarDetails = $clariant->getClarDetail();
             $reporte = $clariant->getCaConsecutivo();
             foreach ($clarDetails as $clarDetail) {
+                if ($clarDetail->getCaDespacho()==0){
+                    continue;
+                }
                 $reportes = Doctrine::getTable("Reporte")
                                 ->createQuery("rp")
                                 ->where("rp.ca_consecutivo = ?", $reporte)
@@ -570,7 +573,7 @@ class clariantActions extends sfActions {
                                 ->execute();
 
                 foreach ($notifies as $notify) {
-                    if (!$notify->getCaUsureportado() and !$notify->getCaFchreportado()) {
+                    if (!$notify->getCaUsureportado() and !$notify->getCaFchreportado() and $clarDetail->getCaDespacho()!=0) {
                         $salida.= str_pad($clariant->getNumOrdenNeto(), 10, "0", STR_PAD_LEFT) . "|";  // 1
                         $salida.= str_pad($clarDetail->getCaPosicion(), 5, "0", STR_PAD_LEFT) . "|";  // 2
                         $salida.= str_pad($notify->getCaClave(), 2, " ", STR_PAD_LEFT) . "|";  // 3
