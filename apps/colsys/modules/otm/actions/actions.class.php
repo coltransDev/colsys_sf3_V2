@@ -128,7 +128,7 @@ class otmActions extends sfActions
     public function executeListaPuerto()
 	{
         
-        $fields="r.ca_idreporte,r.ca_origen,r.ca_destino,r.ca_consecutivo, o.ca_fcharribo";        
+        $fields="r.ca_idreporte,r.ca_origen,r.ca_destino,r.ca_consecutivo, o.ca_fcharribo,o.ca_iddtm";        
         $fecha="2012-04-01";
 		$sql="select {$fields},cl.ca_compania, cl.ca_idalterno
             from tb_reportes r
@@ -232,7 +232,23 @@ class otmActions extends sfActions
         $this->responseArray=array("success"=>true);
         $this->setTemplate("responseTemplate");
     }
+
+    public function executeAsignarIdDtm(sfWebRequest $request)
+    {
+        $iddtm=$request->getParameter("ca_iddtm");
+        $idreporte=$request->getParameter("ca_idreporte");
+        
+        $repOtm = Doctrine::getTable("RepOtm")->find( $idreporte );
+        
+         if($repOtm)
+         {
+             $repOtm->setCaIddtm($iddtm);
+             $repOtm->save();
+         }
+        $this->responseArray=array("success"=>true);
+        $this->setTemplate("responseTemplate");
     
+    }
     
     
     public function executeGenerarStatus(sfWebRequest $request)

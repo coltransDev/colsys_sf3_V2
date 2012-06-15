@@ -22,7 +22,25 @@
         {
         ?>
         <tr ><td ><?=$r["ca_consecutivo"]?></td><td><?=$r["ca_idalterno"]?></td><td><?=$r["ca_compania"]?></td><td><?=$r["ca_origen"]?></td><td><?=$r["ca_destino"]?></td>
-            <td><a href="/otm/generarPdf/id/<?=$r["ca_consecutivo"]?>/tipo/OTM" target="_blank">Ver</a></td><td><a href="/otm/generarPdf/id/<?=$r["ca_consecutivo"]?>/tipo/DTM" target="_blank">Ver</a></td>
+            <td><a href="/otm/generarPdf/id/<?=$r["ca_consecutivo"]?>/tipo/OTM" target="_blank">Ver</a></td>
+            <td>
+                
+<?
+                if($r["ca_iddtm"]=="")
+                {
+?>
+                <a href="/otm/generarPdf/id/<?=$r["ca_consecutivo"]?>/tipo/DTM" target="_blank" style="display: none" id="a_iddtm_<?=$r["ca_idreporte"]?>">Ver</a>
+                <div id="div_iddtm_<?=$r["ca_idreporte"]?>"><input type="text" id="no_iddtm_<?=$r["ca_idreporte"]?>" value="" > <a href="javascript:asigna('<?=$r["ca_idreporte"]?>')">Asignar</a></div>
+<?
+                }
+                else
+                {
+?>
+                <a href="/otm/generarPdf/id/<?=$r["ca_consecutivo"]?>/tipo/DTM" target="_blank" >Ver</a>
+<?
+                }
+                ?>
+            </td>
             <td>
                 <select id="rep-<?=$r["ca_consecutivo"]?>" name="reportes[]" class="reportes" >
                     <option value="">...</option>
@@ -77,4 +95,40 @@
         });
         
     }
+    
+    
+    function asigna(id)
+    {
+        if(window.confirm("Esta seguro de asignar este numero?"))
+        {
+            Ext.MessageBox.wait('Espere por favor', '');
+            Ext.Ajax.request(
+            {
+                waitMsg: 'Guardando cambios...',
+                url: '<?= url_for("otm/asignarIdDtm") ?>',
+                params :	{                    
+                    ca_iddtm: $("#no_iddtm_"+id).val(),
+                    ca_idreporte:id
+                },
+                failure:function(response,options){
+                    //alert( response.responseText );
+                    Ext.Msg.hide();
+                    success = false;
+                    Ext.MessageBox.hide();
+                },
+                success:function(response,options){
+                    var res = Ext.util.JSON.decode( response.responseText );
+                    if( res.success ){
+                        //$("#"+id).html("");                        
+                        $("#div_iddtm_"+id).hide();
+                        $("#a_iddtm_"+id).show();
+                        //$("#"+id).remove();
+                        Ext.MessageBox.hide();
+                    }
+                }
+            });
+        }        
+    }
+    
+    
 </script>
