@@ -112,7 +112,11 @@ if ($parametros) {
         $idx++;
     }
 }
-
+$col = $cols[$key + $idx];
+$objPHPExcel->getActiveSheet()->setCellValue($col . $i, 'Modalidad');
+$idx++;
+$col = $cols[$key + $idx];
+$objPHPExcel->getActiveSheet()->setCellValue($col . $i, 'Trafico');
 
 
 $i++;
@@ -272,7 +276,17 @@ foreach ($reportes as $reporte) {
             $idx++;
         }
     }
-
+    
+    $col = $cols[$key + $idx];
+    $objPHPExcel->getActiveSheet()->setCellValue($col . $i, $reporte->getCaModalidad());
+    $objPHPExcel->getActiveSheet()->getColumnDimension($col)->setVisible(false);
+    $objPHPExcel->getActiveSheet()->getColumnDimension($col)->setWidth(20);
+    $idx++;
+    $col = $cols[$key + $idx];
+    $objPHPExcel->getActiveSheet()->setCellValue($col . $i, $reporte->getOrigen()->getTrafico()->getCaNombre());
+    $objPHPExcel->getActiveSheet()->getColumnDimension($col)->setVisible(false);
+    $objPHPExcel->getActiveSheet()->getColumnDimension($col)->setWidth(20);
+    
 
     $objPHPExcel->getActiveSheet()->getStyle('A' . $i)->getAlignment()->setWrapText(true);
     $objPHPExcel->getActiveSheet()->getStyle('B' . $i)->getAlignment()->setWrapText(true);
