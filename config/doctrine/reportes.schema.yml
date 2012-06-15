@@ -714,6 +714,7 @@ RepOtm:
     ca_continuacion: boolean
     ca_presentacion: boolean
     ca_contenedor: string
+    ca_iddtm: integer
   relations:
     Reporte:
       local: ca_idreporte
@@ -746,6 +747,6 @@ RepOtm:
       local: ca_muelle
       foreign: ca_codigo
     IdsProveedor:
-      local: ca_idimportador
+      local: ca_idtransportador
       foreign: ca_idproveedor
       type: one
