@@ -42,7 +42,7 @@ use_helper("ExtCalendar");
                 </tr>
                 
                 <tr>      
-                    <td class="listar" colspan="6">Ordenar por 
+                    <td class="listar" colspan="2">Ordenar por 
                         <br />
                         <select name="orden">
                             <option value="referencia">Referencia</option>
@@ -52,9 +52,9 @@ use_helper("ExtCalendar");
                             <option value="doctransporte">Doc. Transporte</option>
                         </select>
                     </td>
-                    
-                   
-
+                    <td class="listar" colspan="4">Emitido a
+                        <br>
+                        <input class="submit" name="emitido" id="emitido" value="" type="text">
                 </tr>
 
             </tbody>

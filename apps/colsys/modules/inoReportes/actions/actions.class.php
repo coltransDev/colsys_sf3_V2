@@ -140,6 +140,10 @@ class inoReportesActions extends sfActions {
                     $q->addWhere("c.ca_fchcomprobante <=? ", $request->getParameter("fecFin") );
                 }
                 
+                if( $request->getParameter("emitido") ){
+                    $q->addWhere("UPPER(id.ca_nombre) like ? ", strtoupper($request->getParameter("emitido"))."%" );
+                }
+                
                 
                 $orden = $request->getParameter("orden");
                 switch( $orden ){
@@ -181,6 +185,10 @@ class inoReportesActions extends sfActions {
 
                 if( $request->getParameter("fecFin") ){
                     $q->addWhere("c.ca_fchfactura <=? ", $request->getParameter("fecFin") );
+                }
+                
+                if( $request->getParameter("emitido") ){
+                    $q->addWhere("UPPER(id.ca_nombre) like ? ", strtoupper($request->getParameter("emitido"))."%" );
                 }
                 
                 $orden = $request->getParameter("orden");
