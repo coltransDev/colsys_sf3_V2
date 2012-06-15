@@ -56,7 +56,7 @@ else
        <td>
             <table border="1">
                 <tr>
-                    <td><?=$reporte->getCaIdreporte()?></td>
+                    <td><?=$repotm->getCaIddtm()?></td>
                 </tr>
                 <tr>
                     <td>NEGOTIABLE MULTIMODAL TRANSPORTATION ANDEAN<BR>DOCUMENT INTERNATIONATIONAL M.T.A.D.I<BR>Documento Andino de Transporte<br> Multimodal Internacional D.A.T.5.M.I.<br>
