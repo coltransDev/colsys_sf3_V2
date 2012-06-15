@@ -4,6 +4,8 @@
  *
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
+include_component("widgets", "widgetImpoexpo");
+include_component("widgets", "widgetTransporte");
 ini_set('default_charset', 'UTF8');
 $buttonHelp = array();
 $i = 0;
@@ -12,8 +14,13 @@ $i = 0;
 //    echo $action;
 $permiso = $user->getNivelAcceso("87");
 $tipo="1";
-if ($this->getRequestParameter("id")) {
-    $reporte = Doctrine::getTable("Reporte")->find($this->getRequestParameter("id"));
+if ($this->getRequestParameter("id") || $this->getRequestParameter("consecutivo") ) {
+    if( $this->getRequestParameter("id")!="" ){
+        $reporte = Doctrine::getTable("Reporte")->find($this->getRequestParameter("id"));
+    }else if($this->getRequestParameter("consecutivo")!="")
+    {            
+        $reporte = ReporteTable::retrieveByConsecutivo($this->getRequestParameter("consecutivo"));           
+    }
     $editable = $reporte->getEditable($permiso, $user);
     $cerrado = $reporte->getCerrado();
     $anulado = $reporte->getAnulado();
@@ -107,7 +114,7 @@ switch ($action) {
             $button[$i]["image"] = "22x22/edit.gif";
             if($reporte->getCaTiporep()=="3")
                 $button[$i]["link"] = "/reportesNeg/formReporteOs/id/" . $this->getRequestParameter("id");
-            else if($reporte->getCaTiporep()=="4")
+            else if(/*$reporte->getCaTiporep()=="4"*/"otmmin"==$this->getRequestParameter("opcion"))
             {
                 $button[$i]["link"] = "/reportesNeg/formReporteOtmmin/id/" . $this->getRequestParameter("id");
             }
@@ -116,8 +123,8 @@ switch ($action) {
 
             $i++;
 
-            $button[$i]["name"] = "Transp.";
-            $button[$i]["tooltip"] = "Cambiar el Tranporte";
+            $button[$i]["name"] = "Cambios Param.";
+            $button[$i]["tooltip"] = "Cambiar parametros";
             $button[$i]["image"] = "22x22/arrow_branch.png";
             $button[$i]["onClick"] = "changeTrans()";
             $i++;
@@ -146,12 +153,11 @@ switch ($action) {
             $button[$i]["link"] = "/reportesNeg/unificarReporte/id/" . $this->getRequestParameter("id") . "/impoexpo/" . $impoexpo . "/modo/" . $modo;
             $i++;
         }
-        
         if($tipo!=4)
         {
             $l="/traficos/verHistorialStatus/idreporte/" . $this->getRequestParameter("id") ;
         }
-        else   
+        else
             $l="/traficos/listaStatus/modo/otm?reporte=".$reporte->getCaConsecutivo();
         $button[$i]["name"] = "Status ";
         $button[$i]["tooltip"] = "Historial de Status";
@@ -167,7 +173,7 @@ switch ($action) {
             $i++;
         }
 
-        if (!$cerrado) {
+        if (!$cerrado || $editable || "otmmin"==$this->getRequestParameter("opcion") ) {
             $button[$i]["name"] = "Nueva version";
             $button[$i]["tooltip"] = "Crear una nueva version para un reporte";
             $button[$i]["image"] = "22x22/todo.gif";
@@ -299,7 +305,7 @@ switch ($action) {
                 $i++;
             }
 
-            if (!$cerrado) {
+            if (!$cerrado || $editable || "otmmin"==$this->getRequestParameter("opcion")) {
                 $button[$i]["name"] = "Nueva version";
                 $button[$i]["tooltip"] = "Crear una nueva version para un reporte";
                 $button[$i]["image"] = "22x22/todo.gif";
@@ -387,7 +393,8 @@ switch ($action) {
                 params :	{
                     idreporte:'<?= $this->getRequestParameter("id") ?>',
                     opcion:"2",
-                    tipo:"full"
+                    tipo:"full",
+                    opcion1:"<?=$this->getRequestParameter("opcion")?>"
                 },
                 failure:function(response,options){
                     var res = Ext.util.JSON.decode( response.responseText );
@@ -408,7 +415,7 @@ switch ($action) {
                             
                         <?
                             }
-                            else if($tipo=="4")
+                            else if($tipo=="4" || $this->getRequestParameter("opcion")=="otmmin")
                             {
                          ?>
                             location.href="/reportesNeg/formReporteOtmmin/id/"+res.idreporte;
@@ -418,7 +425,6 @@ switch ($action) {
                             {
                         ?>
                             location.href="/reportesNeg/formReporte/id/"+res.idreporte+"/impoexpo/<?= $impoexpo ?>/modo/<?= $modo ?>";
-                            
                         <?
                             }
                         ?>
@@ -506,11 +512,11 @@ switch ($action) {
     function changeTrans()
     {
         var win = new Ext.Window({
-            width:300
+            width:350
             ,id:'autoload-win'
-            ,height:90
+            ,height:150
             ,autoScroll:true
-            ,title:'Cambio de Transporte'
+            ,title:'Cambio de Parametros'
             ,items:new Ext.FormPanel({
                 autoWidth       : true,                
                 id: 'change-form',
@@ -521,16 +527,17 @@ switch ($action) {
                         handler: function(){
                         if(Ext.getCmp("transporte-change").getValue()!="")
                         {
-                            if(window.confirm("Realmente desea cambiar el transporte del reporte?"))
+                            if(window.confirm("Realmente desea cambiar los parametros del reporte?"))
                             {
                                 Ext.MessageBox.wait('Guardando, Espere por favor', '---');
                                 Ext.Ajax.request(
                                 {
                                     waitMsg: 'Guardando cambios...',
-                                    url: '<?= url_for("reportesNeg/cambioTransporte") ?>',
+                                    url: '<?= url_for("reportesNeg/cambioParametros") ?>',
                                     params :	{
                                         idreporte:'<?= $this->getRequestParameter("id") ?>',
                                         transporte:Ext.getCmp("transporte-change").getValue(),
+                                        impoexpo:Ext.getCmp("impoexpo-change").getValue(),
                                         tipo:"cambio-transporte"
                                     },
                                     failure:function(response,options){
@@ -557,26 +564,23 @@ switch ($action) {
                 ],
 
                 items: [
+                    new WidgetTransporte(
                         {
-
-                        fieldLabel:"Transporte",
-                        xtype: "combo",
-                        id: "transporte-change",
-                        name:"transporte-change",
-                        mode:'local',
-                        width:150,
-                        store : [
-                            ['','...'],
-                            ['Aéreo','Aéreo'],
-                            ['Marítimo','Marítimo'],
-                            ['Terrestre','Terrestre']
-
-                        ],
-                        forceSelection: true,
-                        triggerAction: 'all',
-                        selectOnFocus:true,
-                        lazyRender:true
-                    }
+                            fieldLabel: 'Transporte',                        
+                            id: 'transporte-change',
+                            name:'transporte-change',                            
+                            tabIndex:1,
+                            value:'<?=$modo?>'
+                       })
+                    ,
+                    new WidgetImpoexpo(
+                        {
+                            fieldLabel: 'Impoexpo',                        
+                            id: 'impoexpo-change',
+                            name:'impoexpo-change',
+                            tabIndex:2,
+                            value:'<?=$impoexpo?>'
+                       })
                 ]
             })
         });

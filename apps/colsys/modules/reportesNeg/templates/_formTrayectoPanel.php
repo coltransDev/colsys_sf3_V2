@@ -179,7 +179,7 @@ include_component("widgets", "widgetComerciales");
                                                       id: 'origen',
                                                       idciudad:"origen",
                                                       hiddenName:"idorigen",
-                                                      tipo:"1",
+                                                      tipo:<?=($impoexpo==constantes::OTMDTA)?"3":"1"?>,
                                                       impoexpo:"impoexpo"
                                                     })
                                 ]
@@ -206,7 +206,7 @@ include_component("widgets", "widgetComerciales");
                                                       id: 'destino',
                                                       idciudad:"destino",
                                                       hiddenName:"iddestino",
-                                                      tipo:"2",
+                                                      tipo:<?=($impoexpo==constantes::OTMDTA)?"3":"2"?>,
                                                       impoexpo:"impoexpo"
                                                     })
     <?

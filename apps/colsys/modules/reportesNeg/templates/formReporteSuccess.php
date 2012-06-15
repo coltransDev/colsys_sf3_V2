@@ -5,6 +5,7 @@
  *  (c) Coltrans S.A. - Colmas Ltda.
 */
 include_component("reportesNeg", "formReportePanel",array("reporte"=>$reporte,"idreporte"=>$reporte->getCaIdreporte(),"modo"=>$modo,"impoexpo"=>$impoexpo,"permiso"=>$permiso));
+
 include_component("widgets", "widgetTercero");
 ?>
 <div class="content">

@@ -14,7 +14,7 @@
 	<tr>
 		<td width="213" >
 			<b>Piezas:</b><br>
-			<?=str_replace("|", " ", $repexpo->getCaPiezas() )?>
+			<?=($repexpo->getCaPiezas())?str_replace("|", " ", $repexpo->getCaPiezas() ):""?>
 		</td>
 		<td width="201" ><b>Peso:</b> <br />
             <?=$repexpo->getCaPeso()?>
@@ -24,7 +24,6 @@
             
 		</td>
 		<td width="167" >
-
 			<b>Dimensiones:</b> <br />
 			<?=$repexpo->getCaDimensiones()?>
 		</td>
@@ -33,11 +32,9 @@
 		<td colspan="2" >
 			<b>Valor de Carga (USD):</b><br />
             <?=$repexpo->getCaValorcarga()?>
-
 		</td>
 		<td colspan="2"  valign="top"><b>Agente Aduanero:</b><br />
             <?=$repexpo->getSia()?>
-
         </td>
 	</tr>
 

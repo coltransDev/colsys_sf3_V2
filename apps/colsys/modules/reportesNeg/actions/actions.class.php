@@ -154,7 +154,7 @@ class reportesNegActions extends sfActions
 	* @author Mauricio Quinche
 	*/
 	public function executeIndex()
-	{
+	{        
         $this->nivel = $this->getNivel();
         $this->opcion = $this->getRequestParameter("opcion");
         $this->modo = $this->getRequestParameter("modo");
@@ -337,7 +337,7 @@ class reportesNegActions extends sfActions
 	public function executeConsultaReporte(){
 
 
-        $this->opcion = $this->getRequestParameter("opcion");
+        $this->opcion = $this->getRequestParameter("opcion");        
 		$reporte = Doctrine::getTable("Reporte")->find( $this->getRequestParameter("id") );
 		$this->forward404Unless( $reporte );
         $this->load_category();
@@ -396,7 +396,14 @@ class reportesNegActions extends sfActions
 
         $this->opcion = $this->getRequestParameter("opcion");
 
-		$reporte = Doctrine::getTable("Reporte")->find( $this->getRequestParameter("id") );
+        if($this->getRequestParameter("id")!="")
+        {
+            $reporte = Doctrine::getTable("Reporte")->find( $this->getRequestParameter("id") );
+        }
+        else if($this->getRequestParameter("consecutivo")!="")
+        {            
+            $reporte = ReporteTable::retrieveByConsecutivo($this->getRequestParameter("consecutivo"));           
+        }
 		$this->forward404Unless( $reporte );
         $this->user = $this->getUser();
 
@@ -436,6 +443,7 @@ class reportesNegActions extends sfActions
     */
     public function executeFormReporte(sfWebRequest $request){
 
+        
         $this->nivel = $this->getNivel();
         $this->impoexpo = $this->getRequestParameter("impoexpo");
         $this->load_category();
@@ -496,6 +504,7 @@ class reportesNegActions extends sfActions
             }
         }
         $this->reporte=$reporte;
+        $this->user=$user;
         $response = sfContext::getInstance()->getResponse();
 		$response->addJavaScript("extExtras/RowExpander",'last');
 		$response->addJavaScript("extExtras/CheckColumn",'last');
@@ -707,6 +716,8 @@ class reportesNegActions extends sfActions
     {
     try
     {
+     //   echo $request->getParameter("opcion");
+     //   exit;
         $this->permiso = $this->getUser()->getNivelAcceso( reportesNegActions::RUTINA );
         $idreporte=($request->getParameter("idreporte")!="")?$request->getParameter("idreporte"):"0";
         $tipo=$request->getParameter("tipo");
@@ -726,6 +737,14 @@ class reportesNegActions extends sfActions
         $redirect=($request->getParameter("redirect")!="")?$request->getParameter("redirect"):"true";
         $errors =  array();
         $texto ="";
+        
+        if($request->getParameter("opcion1")=="otmmin")
+        {
+            $reporte->setCaImpoexpo(Constantes::OTMDTA);
+            $reporte->setCaTransporte(Constantes::TERRESTRE);
+            $reporte->setCaTiporep( 4 );
+        }
+        
         switch( $opcion ){
             case 0:
                 if( !$reporte->getCaIdreporte() ){
@@ -743,6 +762,10 @@ class reportesNegActions extends sfActions
         }
         if($reporte->getCaTiporep()!="3" && $reporte->getCaTiporep()!="4")
             $reporte->setCaTiporep( 1 );
+        else if($request->getParameter("opcion1")=="otmmin")
+        {
+            $reporte->setCaTiporep( 4 );
+        }
 //        echo $opcion;
 /*        if( $opcion!=0 ) //Al copiar el reporte ya se coloco el usuario y la fecha
         {
@@ -1213,7 +1236,6 @@ class reportesNegActions extends sfActions
                     $reporte->setCaIdbodega(1);
                 else
                     $reporte->setCaIdbodega(1);
-
             }
     //ca_mastersame:
             if($request->getParameter("continuacion")   )
@@ -1227,27 +1249,25 @@ class reportesNegActions extends sfActions
 
             if($request->getParameter("continuacion_dest")   )
             {
-                if($reporte->getCaContinuacion()=="OTM")
+                if($reporte->getCaContinuacion()=="OTM" && $reporte->getCaImpoexpo() !=Constantes::OTMDTA1 ) 
                 {
-                    //if($request->getParameter("impoexpo")==constantes::OTMDTA)
-                    if($request->getParameter("continuacion_dest") != $request->getParameter("iddestino") || $request->getParameter("impoexpo")==constantes::OTMDTA1  )
+                    if($request->getParameter("continuacion_dest") != $request->getParameter("iddestino") || $request->getParameter("impoexpo")==constantes::OTMDTA  )
                         $reporte->setCaContinuacionDest($request->getParameter("continuacion_dest"));
                     else
                     {
                         $errors["continuacion_destino"]="Debe asignar un destino final de Otm diferente al puerto de destino ";
-                        $texto.="Destino Final Continuacion de Viaje<br>";
+                        $texto.=" Destino Final Continuacion de Viaje.<br>";
                     }
                 }
                 else
                     $reporte->setCaContinuacionDest($request->getParameter("continuacion_dest"));
-                    
             }
             else
-            {
-                if($reporte->getCaContinuacion()=="OTM")
+            {                
+                if($reporte->getCaContinuacion()=="OTM" && $reporte->getCaImpoexpo() !=Constantes::OTMDTA1 )
                 {
                     $errors["continuacion_destino"]="Debe asignar un destino final de Otm diferente al puerto de destino ";
-                    $texto.="Destino Final Continuacion de Viaje<br>";
+                    $texto.="Destino Final Continuacion de Viaje..<br>";
                 }
                 else
                     $reporte->setCaContinuacionDest($request->getParameter("iddestino"));
@@ -2078,9 +2098,8 @@ class reportesNegActions extends sfActions
     try
     {
         $idreporte=($request->getParameter("idreporte")!="")?$request->getParameter("idreporte"):"0";
-        $reporte = Doctrine::getTable("Reporte")->find( $idreporte );  
-        
-        
+        $reporte = Doctrine::getTable("Reporte")->find( $idreporte );
+
         $redirect=true;
         $opcion=$request->getParameter("opcion");
         $redirect=($request->getParameter("redirect")!="")?$request->getParameter("redirect"):"true";        
@@ -2088,10 +2107,10 @@ class reportesNegActions extends sfActions
         $nuevo=true;        
         if(!$reporte)
         {
-            $reporte = new Reporte();            
+            $reporte = new Reporte();
         }
         else
-        {            
+        {
             $reporte->setCaUsuactualizado($this->getUser()->getUserId());
             $reporte->setCaFchactualizado(date('Y-m-d H:i:s'));
             $nuevo=false;
@@ -2099,7 +2118,7 @@ class reportesNegActions extends sfActions
 
         $errors =  array();
         $texto ="";
-        
+        $reporte->setCaTiporep( 4 );
         switch( $opcion ){
             case 0:
                 if( !$reporte->getCaIdreporte() ){
@@ -2174,8 +2193,9 @@ class reportesNegActions extends sfActions
             }
             else 
             {
-                $errors["idagente"]="Debe seleccionar un agente";
-                $texto.="Agente<br>";
+                $reporte->setCaIdagente("800024075");
+                //$errors["idagente"]="Debe seleccionar un agente";
+                //$texto.="Agente<br>";
             }
 
             if($request->getParameter("idmodalidad") )
@@ -2186,6 +2206,31 @@ class reportesNegActions extends sfActions
             {
                 $errors["modalidad"]="Debe seleccionar una modalidad";
                 $texto.="Modalidad <br>";
+            }
+            
+            if($request->getParameter("ca_contenedor") )
+            {
+                $reporte->setCaContenedor($request->getParameter("ca_contenedor"));
+            }
+            else
+            {
+                if($reporte->setCaModalidad()==Constantes::FCL)
+                {
+                    $errors["ca_contenedor"]="Debe especificar el campo de contenedor";
+                    $texto.="Contenedor <br>";
+                }
+                
+            }
+            
+            if(($request->getParameter("idlinea") && $request->getParameter("idlinea")!="") || $request->getParameter("idlinea")=="0" )
+            {                
+                $reporte->setCaIdlinea($request->getParameter("idlinea"));
+            }
+            else
+            {
+                //if($reporte->getCaIdlinea()=="")
+                    $reporte->setCaIdlinea(0);
+//                $errors["linea"]="Debe seleccionar un linea";
             }
 
             if($request->getParameter("ca_mercancia_desc")  )
@@ -2323,6 +2368,19 @@ class reportesNegActions extends sfActions
             {
                 $reporte->setCaMciaPeligrosa(false);
             }
+            
+            if($request->getParameter("idbodega_hd") )
+            {
+                $reporte->setCaIdbodega($request->getParameter("idbodega_hd"));
+            }
+            else
+            {
+                if(utf8_decode($request->getParameter("impoexpo"))==constantes::TRIANGULACION)
+                    $reporte->setCaIdbodega(1);
+                else
+                    $reporte->setCaIdbodega(1);
+            }
+            
         }
 
 
@@ -2530,6 +2588,16 @@ class reportesNegActions extends sfActions
             {
                 $repOtm->setCaLiberacion(null);
             }
+            
+            if($request->getParameter("idlinea") )
+            {
+                $repOtm->setCaIdtransportador($request->getParameter("idlinea"));
+            }
+            else
+            {
+                $repOtm->setCaIdtransportador(null);
+            }
+            
             
             
             if($reporte->getCaVersion()=="1")
@@ -3129,12 +3197,9 @@ class reportesNegActions extends sfActions
     //                $data[""]=$repExpo->getCa();
                 }
             }
-            if($reporte->getCaTiporep()=="2")
-                $data["asunto"]="Nuevo Reporte AG ".$data["proveedor0"]." / ".$data["cliente"];
-            else if($reporte->getCaTiporep()=="4")
-            {
-                $repOtm=$reporte->getRepOtm();
-                if($repOtm)
+            
+            $repOtm=$reporte->getRepOtm();
+                if($repOtm && $reporte->getCaTiporep()=="4")
                 {    
                     $data["ca_referencia"]=$repOtm->getCaReferencia();
                     $data["referencia"]=$repOtm->getCaReferencia();
@@ -3170,9 +3235,14 @@ class reportesNegActions extends sfActions
                     $data["muelle"] =utf8_encode($repOtm->getInoDianDepositos()->getCaNombre());
                     $data["idmuelle"] =$repOtm->getCaMuelle();
                     //echo $repOtm->getCaLiberacion();
-                    $data["liberacion_".$repOtm->getCaLiberacion()]= $repOtm->getCaLiberacion();                    
+                    $data["liberacion_".$repOtm->getCaLiberacion()]= $repOtm->getCaLiberacion();
+                    
+                    //$data["idlinea"]=$repOtm->getCaIdtransportador();
+                    //$data["linea"]=utf8_encode($repOtm->getIdsProveedor()->getIds()->getCaNombre());
                 }
-            }
+            if($reporte->getCaTiporep()=="2")
+                $data["asunto"]="Nuevo Reporte AG ".$data["proveedor0"]." / ".$data["cliente"];
+            
         }
 
         $this->responseArray=array("success"=>true,"data"=>$data);
@@ -4570,7 +4640,7 @@ class reportesNegActions extends sfActions
         $con->beginTransaction();
 
         $sql="select count(ca_consecutivo) as count from tb_reportes r
-            inner join tb_repstatus s on  s.ca_idreporte=r.ca_idreporte and s.ca_idetapa in ('IMETA','IMETT')
+            inner join tb_repstatus s on  s.ca_idreporte=r.ca_idreporte and s.ca_idetapa in ('IMETA','IMETT','IACAD')
             where s.ca_fchenvio<=(CURRENT_TIMESTAMP - CAST('15 days' AS INTERVAL))
             and r.ca_usucerrado is null";
         $st = $con->execute($sql);
@@ -4583,12 +4653,12 @@ class reportesNegActions extends sfActions
         {
             $html="";
             $sql="select r.ca_consecutivo from tb_reportes r
-                inner join tb_repstatus s on  s.ca_idreporte=r.ca_idreporte and s.ca_idetapa in ('IMETA','IMETT')
+                inner join tb_repstatus s on  s.ca_idreporte=r.ca_idreporte and s.ca_idetapa in ('IMETA','IMETT','IACAD')
                 where s.ca_fchenvio<=(CURRENT_TIMESTAMP - CAST('15 days' AS INTERVAL))
                 and r.ca_usucerrado is null order by 1";
 
             $sql1="select r.ca_consecutivo from tb_reportes r
-                inner join tb_repstatus s on  s.ca_idreporte=r.ca_idreporte and s.ca_idetapa in ('IMETA','IMETT')
+                inner join tb_repstatus s on  s.ca_idreporte=r.ca_idreporte and s.ca_idetapa in ('IMETA','IMETT','IACAD')
                 where s.ca_fchenvio<=(CURRENT_TIMESTAMP - CAST('15 days' AS INTERVAL))
                 and r.ca_usucerrado is null order by 1 ";
 
@@ -4614,6 +4684,7 @@ class reportesNegActions extends sfActions
             $email->setCaFrom("no-reply@coltrans.com.co");
             $email->setCaFromname("Administrador");
             $email->setCaAddress("traficos1@coltrans.com.co");
+            $email->addTo("icastiblanco@coltrans.com.co");
             $email->addTo("maquinche@coltrans.com.co");
 
             $email->setCaSubject("Cierre de Reportes de negocios ".date("Y-m-d"));
@@ -4636,6 +4707,80 @@ class reportesNegActions extends sfActions
             //echo "Actualizacion:<br>".$sql2."<br><br>";
         //$con->rollBack();           
         }
+        
+        
+        //para expo
+        
+        $sql="select count(ca_consecutivo) as count from tb_reportes r
+            inner join tb_repstatus s on  s.ca_idreporte=r.ca_idreporte and s.ca_idetapa in ('EEETD')
+            where s.ca_fchenvio<=(CURRENT_TIMESTAMP - CAST('30 days' AS INTERVAL))
+            and r.ca_usucerrado is null";
+        $st = $con->execute($sql);
+        $count = $st->fetch();
+        
+        $nreg=2000;
+        $pages=ceil($count[0]/$nreg);
+        //echo "Pages:".$pages."<br><br>";
+        for($i=0;$i<$pages;$i++)
+        {
+            $html="";
+            $sql="select r.ca_consecutivo from tb_reportes r
+                inner join tb_repstatus s on  s.ca_idreporte=r.ca_idreporte and s.ca_idetapa in ('EEETD')
+                where s.ca_fchenvio<=(CURRENT_TIMESTAMP - CAST('30 days' AS INTERVAL))
+                and r.ca_usucerrado is null order by 1";
+
+            $sql1="select r.ca_consecutivo from tb_reportes r
+                inner join tb_repstatus s on  s.ca_idreporte=r.ca_idreporte and s.ca_idetapa in ('EEETD')
+                where s.ca_fchenvio<=(CURRENT_TIMESTAMP - CAST('30 days' AS INTERVAL))
+                and r.ca_usucerrado is null order by 1 ";
+
+            $offset=$i*$nreg;
+            $sql.=" limit ".$nreg;
+            $sql1.=" limit ".$nreg;
+
+            //echo $sql."<br><br>";
+            $st = $con->execute($sql);
+            $reportes = $st->fetchAll();
+
+            //$html="Se hizo el cierre de los siguientes reportes:";
+            foreach($reportes as $rep)
+            {
+                $html.=$rep["ca_consecutivo"]."|";
+            }
+
+            $email = new Email();
+            $email->setCaUsuenvio("Administrador");
+            $email->setCaTipo("Reporte de Negocios"); //Envío de Avisos
+            $email->setCaIdcaso(null);
+
+            $email->setCaFrom("no-reply@coltrans.com.co");
+            $email->setCaFromname("Administrador");
+            $email->setCaAddress("gperez@coltrans.com.co");            
+            $email->addTo("maquinche@coltrans.com.co");
+
+            $email->setCaSubject("Cierre de Reportes de negocios Exportaciones".date("Y-m-d"));
+            $email->setCaBody($this->getRequestParameter("mensaje"));
+
+            $this->getRequest()->setParameter('tipo',"CIERRE");
+
+            $this->getRequest()->setParameter('html',$html);
+            $html=sfContext::getInstance()->getController()->getPresentationFor( 'reportesNeg', 'emailReporte');
+
+            $email->setCaBodyhtml($html);
+            //$email->save();
+            $email->send($con);
+
+             $sql2="update tb_reportes set ca_usucerrado='Administrador' , ca_fchcerrado=now()
+             where ca_consecutivo in ($sql1)";
+
+            $st = $con->execute($sql2);
+
+            //echo "Actualizacion:<br>".$sql2."<br><br>";
+        //$con->rollBack();           
+        }
+        
+        
+        
         $con->commit();
 
      }
@@ -4869,9 +5014,71 @@ class reportesNegActions extends sfActions
     
     public function executePdfDTM(sfWebRequest $request) {    
 
+        $idreporte=$request->getParameter("idreporte");
+        $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, "LETTER", true, 'UTF-8', false);
+        $pdf->SetCreator(PDF_CREATOR);
+        $pdf->SetAuthor('Coltrans');
+
+        $pdf->SetMargins(1, 1, 1,true);
+
+        $pdf->setPrintHeader(false);
+
+        $pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
+
+        $pdf->SetFont('helvetica', '', 10);
+
+        $pdf->AddPage('', '',true);
+
+        $pdf->setCellPaddings(1, 1, 1, 1);
+        $pdf->setCellMargins(1, 1, 1, 1);
+        $pdf->SetFillColor(255, 255, 127);
+        $this->getRequest()->setParameter('idreporte',$idreporte);
+        $html=sfContext::getInstance()->getController()->getPresentationFor( 'reportesNeg', 'htmlDTM');
+        $html=  str_replace("#E1E1E1", "", $html);
+        //$pdf->MultiCell(55, 10, $html, 0, 'L', false, 1, '', '', true, 0, true);
+        $pdf->writeHTML($html,false, false, false, false, '');
+        $pdf->lastPage();
+
+
+        $pdf->Output('example.pdf', 'I');
+
+       exit;
+    }
+    
+    public function executeHtmlDTM(sfWebRequest $request) {    
+
         $idreporte=($request->getParameter("idreporte")!="")?$request->getParameter("idreporte"):"0";
         $this->reporte = Doctrine::getTable("Reporte")->find( $idreporte );
         $this->forward404Unless( $this->reporte );
+        $this->repotm=$this->reporte->getRepOtm();
+        if($this->reporte->getCaModalidad()=="FCL")
+        {
+            $this->marcas=$this->repotm->getCaContenedor();
+        }
+        else
+        {
+            $this->marcas="Carga Suelta";
+        }
+        /*$this->datos=array();
+          
+        $this->datos["bodega"]=$this->reporte->getBodega()->getCaNombre();
+        if($this->reporte->getCaTiporep()=="4")
+        {
+            $this->datos["puerto"]=$this->repOtm->getOrigenimp()->getCaCiudad();
+            $this->datos["origen"]=$this->reporte->getOrigen()->getCaCiudad();
+            $this->datos["destino"]=$this->reporte->getOrigen()->getCaContinuacionDest();
+            $this->datos["consignatario"]["nombre"]=$this->repOtm->getImportador()->getCaNombre();
+            $this->datos["consignatario"]["direccion"]=$this->repOtm->getImportador()->getCaDireccion();      
+        }
+        else
+        {
+            $this->datos["puerto"]=$this->reporte->getOrigen()->getCaCiudad();
+            $this->datos["origen"]=$this->reporte->getDestino()->getCaCiudad();
+            $this->datos["destino"]=$this->reporte->getDestinoCont()->getCaCiudad();            
+            $this->datos["consignatario"]["nombre"]=$this->reporte->getConsignatario()->getCaNombre();
+            $this->datos["consignatario"]["direccion"]=$this->reporte->getConsignatario()->getCaDireccion();      
+        }*/
+        
         $this->setLayout("email");
     }
     

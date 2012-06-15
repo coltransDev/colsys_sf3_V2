@@ -397,7 +397,6 @@ class reportesNegComponents extends sfComponents
 	*/
 	public function executeFormReportePanel()
 	{
-//        echo "categoria:".$this->getRequestParameter("idcategory")."<br>";
         $this->cache=$this->getRequestParameter("cache");
         //echo "cache:".$this->cache."<br>";
         $this->user=$this->getUser();
@@ -673,6 +672,8 @@ class reportesNegComponents extends sfComponents
                 $coma=($i==($conta-1))?"":",";
                 $this->seguro_conf.=$usuarios[$i]->getCaLogin().$coma;
             }
+            $this->user=$this->getUser();
+
     }
     /*
 	* Edita la informacion basica del trayecto
@@ -951,7 +952,7 @@ class reportesNegComponents extends sfComponents
      */
     public function executeCotizacionRecargosWindow()
 	{
-        $this->aplicaciones = ParametroTable::retrieveByCaso("CU082");        
+        $this->aplicaciones = ParametroTable::retrieveByCaso("CU082");
         if( $this->reporte->getCaIdproducto() ){
             $this->producto = Doctrine::getTable("CotProducto")->find( $this->reporte->getCaIdproducto() );
             $this->cotizacion = $this->producto->getCotizacion();

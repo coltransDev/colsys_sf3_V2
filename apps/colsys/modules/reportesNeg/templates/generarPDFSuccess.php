@@ -824,7 +824,7 @@ if( !$soloAduana  ){
     }
   //  $pdf->flushGroup();
   //  $pdf->beginGroup();
-    if( $reporte->getCaImpoexpo () == Constantes::IMPO || $reporte->getCaImpoexpo ()==Constantes::OTMDTA || $reporte->getCaImpoexpo ()==Constantes::OTMDTA1 || $reporte->getCaImpoexpo () == Constantes::TRIANGULACION || $reporte->getCaTiporep () == 3    ){
+    if( $reporte->getCaImpoexpo () == Constantes::IMPO || $reporte->getCaImpoexpo ()==Constantes::OTMDTA || $reporte->getCaImpoexpo ()==Constantes::OTMDTA1  || $reporte->getCaTiporep () == 3    ){
         $sub_mem = 'Recargo Local';
         $pdf->Ln ( 3 );
         $gastos = $reporte->getRecargos ( "local" );
@@ -847,6 +847,39 @@ if( !$soloAduana  ){
                 $pdf->Row ( array ($des_rec, utf8_decode($gasto->getCaAplicacion ()) ,Utils::formatNumber (  $gasto->getCaCobrarTar (), 3) . " " . $gasto->getCaIdmoneda (), Utils::formatNumber ( $gasto->getCaCobrarMin (), 3) . " " . $gasto->getCaIdmoneda () ) );
             } else {
                 $pdf->Row ( array ($des_rec, utf8_decode($gasto->getCaAplicacion ()), $gasto->getCaTipo () . " " . Utils::formatNumber ( $gasto->getCaCobrarTar (), 3 ), Utils::formatNumber ( $gasto->getCaCobrarMin () ,3) . " " . $gasto->getCaIdmoneda () ) );
+            }
+            if ($gasto->getCaDetalles ()) {
+                $pdf->SetWidths ( array (200 ) );
+                $pdf->SetStyles ( array ("" ) );
+                $pdf->SetFills ( array (0 ) );
+                $pdf->Row ( array ("* Observaciones: " . ($gasto->getCaDetalles () ) ) );
+            }
+        }
+    }
+    else if($reporte->getCaImpoexpo () == Constantes::TRIANGULACION)
+    {
+        $sub_mem = 'Recargo Local';
+        $pdf->Ln ( 3 );
+        $gastos = $reporte->getRecargos ( "local" );
+        $pdf->SetWidths ( array (70, 40, 30,30,30 ) );
+        $pdf->SetFills ( array (1, 1, 1,1,1 ) );
+        $pdf->SetStyles ( array ("B", "B", "B", "B", "B" ) );
+        $pdf->SetAligns ( array ("C", "C", "C", "C", "C" ) );
+        $pdf->Row ( array ($sub_mem, 'Observaciones', 'Neta / Min.', 'Reportar / Min.', 'Cobrar / Min' ) );
+
+        foreach ( $gastos as $gasto ) {
+
+            $pdf->SetWidths ( array (70, 40, 15,15,15,15,15,15 ) );
+            $pdf->SetFills ( array (1, 0, 0, 0 ) );
+            $pdf->SetStyles ( array ("B", "", "", "" ) );
+            $pdf->SetAligns ( array ("L", "L", "R", "R" ) );
+
+            $des_rec = $gasto->getTipoRecargo ()->getCaRecargo ().(($gasto->getEquipo())?"->".$gasto->getEquipo()->getCaConcepto():"");
+
+            if ($gasto->getCaTipo () == "$") {
+                $pdf->Row ( array ($des_rec, utf8_decode($gasto->getCaAplicacion ()), Utils::formatNumber ( $gasto->getCaNetaTar (), 3 ) . " " . $gasto->getCaIdmoneda (), Utils::formatNumber ( $gasto->getCaNetaMin (), 3 ) . " " . $gasto->getCaIdmoneda (), Utils::formatNumber ( $gasto->getCaReportarTar (), 3 ) . " " . $gasto->getCaIdmoneda (), Utils::formatNumber ( $gasto->getCaReportarMin (), 3 ) . " " . $gasto->getCaIdmoneda (), Utils::formatNumber ( $gasto->getCaCobrarTar (), 3 ) . " " . $gasto->getCaIdmoneda (), Utils::formatNumber ($gasto->getCaCobrarMin (), 3 ) . " " . $gasto->getCaIdmoneda () ) );
+            } else {
+                $pdf->Row ( array ($des_rec, utf8_decode($gasto->getCaAplicacion ()), Utils::formatNumber ( $gasto->getCaNetaTar (), 3 ) . " " . $gasto->getCaTipo (), Utils::formatNumber ( $gasto->getCaNetaMin (), 3 ) . " " . $gasto->getCaIdmoneda (), Utils::formatNumber ( $gasto->getCaReportarTar (), 3 ) . " " . $gasto->getCaTipo (), Utils::formatNumber ( $gasto->getCaReportarMin (), 3 ) . " " . $gasto->getCaIdmoneda (), Utils::formatNumber ( $gasto->getCaCobrarTar (), 3 ) . " " . $gasto->getCaTipo (), Utils::formatNumber ( $gasto->getCaCobrarMin (), 3 ) . " " . $gasto->getCaIdmoneda () ) );
             }
             if ($gasto->getCaDetalles ()) {
                 $pdf->SetWidths ( array (200 ) );
@@ -900,7 +933,7 @@ if( !$soloAduana  ){
      //       $pdf->beginGroup();
             if($concepto->getCaIdconcepto()=="9999")
                     continue;
-
+            
             {             
                 $pdf->SetWidths(array(40,10,20,20,20,20,20,20,30));
                 $pdf->SetFills(array(1,0,0,0,0,0,0,0,0,0));
@@ -952,7 +985,7 @@ if( !$soloAduana  ){
 
                     if ($gasto->getCaDetalles ()) {
                         $pdf->SetWidths ( array (200 ) );
-                        $pdf->SetStyles ( array ("" ) );
+                        $pdf->SetStyles ( array (""));
                         $pdf->SetFills ( array (0 ) );
                         $pdf->Row ( array ("* Observaciones: " . utf8_decode($gasto->getCaDetalles ()) ) );
                     }

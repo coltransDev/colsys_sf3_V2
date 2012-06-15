@@ -30,7 +30,6 @@ if (time() - $cachetime <$cachelast && $cache!="false" )
 }
 else
 {
-    
 ob_start();
 
 include_component("widgets", "widgetTercero");
@@ -89,7 +88,7 @@ include_component("reportesNeg", "checkListOtm");
                     xtype:"hidden",
                     id: 'transporte',
                     name: 'transporte',
-                    value:'<?=  Constantes::MARITIMO?>'
+                    value:'<?=  Constantes::TERRESTRE?>'
                 },
                 {
                     xtype:"hidden",
@@ -107,6 +106,70 @@ include_component("reportesNeg", "checkListOtm");
                 }
                 ?>
                 ,
+                {
+                            xtype:'fieldset',
+                            title:'Empresa Reporte',
+                            autoHeight:true,
+                            layout:'column',
+                            columns:2,
+                            defaults:{
+                                columnWidth:'0.5',
+                                layout:'form',
+                                border:false
+                            },
+                            items :[
+
+                            {
+                                columnWidth:'0.2',
+                                layout:'form',
+                                border:false,
+                                defaultType:'textfield',
+                                items: [
+                                    {
+                                        xtype:"radio",
+                                        fieldLabel:"ColOtm",
+                                        labelStyle:'width:150px',
+                                        name:"liberacion",
+                                        id:"liberacion_colotm.com",
+                                        inputValue:"colotm.com",
+                                        checked:true
+                                    }
+                                ]
+                            },
+                            {
+                                columnWidth:'0.2',
+                                layout:'form',
+                                border:false,
+                                defaultType:'textfield',
+                                items: [
+                                    {
+                                        xtype:"radio",
+                                        fieldLabel:"Coltrans",
+                                        labelStyle:'width:150px',
+                                        name:"liberacion",
+                                        id:"liberacion_coltrans.com.co",
+                                        inputValue:"coltrans.com.co"
+                                    }
+                                ]
+                            },
+                            {
+                                columnWidth:'0.2',
+                                layout:'form',
+                                border:false,
+                                defaultType:'textfield',
+                                items: [                                    
+                                    {
+                                        xtype:"radio",
+                                        fieldLabel:"Consolcargo",
+                                        labelStyle:'width:150px',
+                                        name:"liberacion",
+                                        id:"liberacion_consolcargo.com",
+                                        inputValue:"consolcargo.com"
+                                    }
+                                ]
+                            }
+                            ]
+                        },
                 {
                     xtype:'fieldset',
                     title: 'Información general',
@@ -127,7 +190,7 @@ include_component("reportesNeg", "checkListOtm");
                             border:false,
                             defaultType: 'textfield',
                             items: [
-                                new WidgetCiudad({fieldLabel: 'Puerto Origen',
+                                new WidgetCiudad({fieldLabel: 'Puerto Cargue',
                                                   id: 'origenimpo',
                                                   idciudad:"origenimpo",
                                                   hiddenName:"ca_origenimpo",
@@ -166,7 +229,14 @@ include_component("reportesNeg", "checkListOtm");
                                         value:'',
                                         hiddenValue:'',
                                         width:330
-                                    })
+                                    }),
+                                {
+                                    fieldLabel: "Contenedor FCL",
+                                    name: "contenedor",
+                                    id: "ca_contenedor",
+                                    width:200,
+                                    tabIndex:10
+                                }
                             ]
                         },
                         {
@@ -198,14 +268,27 @@ include_component("reportesNeg", "checkListOtm");
                                     tabIndex:7
                                 },
                                 {
+                                    xtype: "datefield",
+                                    fieldLabel: "Fecha hbl",
+                                    id: "ca_fchdoctransporte",
+                                    name: "ca_fchdoctransporte",
+                                    format: 'Y-m-d'
+                                },
+                                {
                                     fieldLabel: "Motonave",
                                     name: "ca_motonave",
                                     id: "ca_motonave",
                                     width:200,
                                     tabIndex:7
-                                }
+                                },
+                                new WidgetLinea({fieldLabel: 'Transportador',
+                                                     linkTransporte: "transporte",
+                                                     id:"linea",
+                                                     hiddenName: "idlinea",
+                                                     width:300
+                                                    })
                             ]
-                        },                                                
+                        }/*,                                                
                         {
                             columnWidth:1,
                             layout: 'form',
@@ -237,7 +320,7 @@ include_component("reportesNeg", "checkListOtm");
                                     tabIndex:9
                                 }
                             ]
-                        }
+                        }*/
                         
                     ]
                 },
@@ -375,54 +458,7 @@ include_component("reportesNeg", "checkListOtm");
                                                     id: "idrepresentante",
                                                     hiddenName: "idrepres",
                                                     tabIndex:21
-                                                   }),
-                        {
-                            xtype:'fieldset',
-                            title:'Liberar A',
-                            autoHeight:true,
-                            layout:'column',
-                            columns:2,
-                            defaults:{
-                                columnWidth:'0.5',
-                                layout:'form',
-                                border:false
-                            },
-                            items :[
-
-                            {
-                                columnWidth:'0.2',
-                                layout:'form',
-                                border:false,
-                                defaultType:'textfield',
-                                items: [
-                                    {
-                                        xtype:"radio",
-                                        fieldLabel:"Coltrans",
-                                        labelStyle:'width:150px',
-                                        name:"liberacion",
-                                        id:"liberacion_Coltrans",
-                                        inputValue:"Coltrans"
-                                    }
-                                ]
-                            },
-                            {
-                                columnWidth:'0.2',
-                                layout:'form',
-                                border:false,
-                                defaultType:'textfield',
-                                items: [                                    
-                                    {
-                                        xtype:"radio",
-                                        fieldLabel:"Consolcargo",
-                                        labelStyle:'width:150px',
-                                        name:"liberacion_conf",
-                                        id:"liberacion_Consolcargo",
-                                        inputValue:"Consolcargo"
-                                    }
-                                ]
-                            }
-                            ]
-                        }
+                                                   })
                     ]
                 },                
                 {
@@ -664,8 +700,20 @@ include_component("reportesNeg", "checkListOtm");
                             Ext.getCmp("idrepresentante").setValue(res.data.idrepresentante);
                             $("#idrepresentante").attr("value",res.data.representante);
                         }
-                         Ext.getCmp("agente").setValue(res.data.idagente);
-                        $("#agente").attr("value",res.data.agente);
+                        if(Ext.getCmp("agente"))
+                        {
+                            Ext.getCmp("agente").setValue(res.data.idagente);
+                            $("#agente").attr("value",res.data.agente);
+                        }
+                        
+                        if(Ext.getCmp("linea"))
+                        {
+                            Ext.getCmp("linea").setValue(res.data.idlinea);
+                            $("#linea").attr("value",res.data.linea);
+                        }
+                        
+                        Ext.getCmp("bodega_consignar").setValue(res.data.idbodega_hd);
+                        $("#bodega_consignar").attr("value",res.data.bodega_consignar);
                         
                         Ext.getCmp("muelle").setValue(res.data.idmuelle);
                         $("#muelle").attr("value",res.data.muelle);
@@ -683,6 +731,12 @@ include_component("reportesNeg", "checkListOtm");
                                 }
                             }
                         };
+                        
+                        Ext.getCmp("origen").setValue(res.data.idorigen);
+                        $("#origen").attr("value",res.data.origen);
+
+                        Ext.getCmp("destino").setValue(res.data.iddestino);
+                        $("#destino").attr("value",res.data.destino);
                     }
                 });
             }

@@ -2,7 +2,7 @@
 $reporte = $sf_data->getRaw("reporte");
 
 $cliente=$reporte->getCliente();
-        
+$repotm=$reporte->getRepOtm();        
         
 $stretching=100;
 $spacing=1.8;
@@ -89,18 +89,23 @@ $pdf->setFontSpacing(0);
 $txt=sprintf ("%30s %30s %30s %30s","Yepes","Leon","Sandra", "Lucia" );
 $pdf->MultiCell(500, 10, $txt, 0, 'L', 0, 1, $x+42, $y);
 
+$proveedor=$repotm->getIdsProveedor();
+$transportador=$proveedor->getIds();
+if(!$transportador)
+    $transportador=new Ids ();
 
-//Transportador
 
 $y=$y+8;
 $pdf->setFontSpacing($spacing);
-$txt="900451936";//sprintf ("%s %13s ",$cliente->getCaIdalterno(),$cliente->getCaDigito());
+$txt=$repotm->getCaIdtransportador();
 $pdf->MultiCell(500, 10, $txt, 0, 'L', 0, 1, $x, $y);
 
-$txt="8";
+$txt=$transportador->getCaDv();
 $pdf->MultiCell(500, 10, $txt, 0, 'L', 0, 1, $x+56, $y);
-
-
+//$reporte
+$pdf->setFontSpacing(0);
+$txt=$transportador->getCaNombre();
+$pdf->MultiCell(500, 10, $txt, 0, 'L', 0, 1, $x+65, $y);
 
 //garantia
 $pdf->setFontSpacing(0);
@@ -135,12 +140,34 @@ $txt="X";
 $pdf->MultiCell(500, 10, $txt, 0, 'L', 0, 1, $x+54, $y);
 
 //$reporte = new Reporte();
-$repotm=$reporte->getRepOtm();
+
 $txt=$repotm->getOrigenimp()->getCaCiudad();
 $pdf->MultiCell(500, 10, $txt, 0, 'L', 0, 1, $x+83, $y);
 
-
+//$reporte=new Reporte();
 $y=$y+9;
+//$aduana = ParametroTable::retrieveByCaso("CU111", null, $reporte->getCaOrigen() );
+
+$c = ParametroTable::retrieveQueryByCaso( "CU111", null, $reporte->getCaOrigen() );
+$adu_ori=$c->fetchOne();
+if($adu_ori)
+    $txt=$adu_ori->getCaIdentificacion();
+else
+    $txt="";
+
+
+$pdf->MultiCell(500, 10, $txt, 0, 'L', 0, 1, $x+10, $y);
+
+
+$c = ParametroTable::retrieveQueryByCaso( "CU111", null, $reporte->getCaDestino() );
+$des_ori=$c->fetchOne();
+if($des_ori)
+    $txt=$des_ori->getCaIdentificacion();
+else
+    $txt="";
+
+$pdf->MultiCell(500, 10, $txt, 0, 'L', 0, 1, $x+30, $y);
+
 
 $txt=$repotm->getCaManifiesto();
 $pdf->MultiCell(500, 10, $txt, 0, 'L', 0, 1, $x+54, $y);
@@ -168,22 +195,40 @@ $txt=$repotm->getCaValorfob();
 $pdf->MultiCell(500, 10, $txt, 0, 'L', 0, 1, $x+150, $y);
 
 //$ciu_ori = ParametroTable::retrieveByCaso("CU111", null, $repotm->getOrigenimp() );
-$c = ParametroTable::retrieveQueryByCaso( "CU111", null, $repotm->getOrigenimp() );
+/*$c = ParametroTable::retrieveQueryByCaso( "CU111", null, $repotm->getOrigenimp() );
 $ciu_ori=$c->fetchOne();
 if($ciu_ori)
     $txt=$ciu_ori->getCaIdentificacion();
 else
     $txt="";
 $pdf->MultiCell(500, 10, $txt, 0, 'L', 0, 1, $x+170, $y);
-
+*/
 //retrieveByCaso( $casoUso, $valor1=null, $valor2=null, $id=null ){
 //$reporte->getBodega()->getCaNombre()
+
+$y=$y+9;
+
+
+$txt=$repotm->getCaContenedor();
+$pdf->MultiCell(500, 10, $txt, 0, 'L', 0, 1, $x, $y);
+
+
+$y=$y+11;
+
+
+$txt=$reporte->getCaMercanciaDesc();
+$pdf->MultiCell(500, 10, $txt, 0, 'L', 0, 1, $x, $y);
+
+
+
+
+
 
 // reset pointer to the last page
 $pdf->lastPage();
 
 //Close and output PDF document
-$pdf->Output('example.pdf', 'D');
+$pdf->Output('example.pdf', 'I');
 
        exit;
 ?>
