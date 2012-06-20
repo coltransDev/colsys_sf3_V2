@@ -128,7 +128,7 @@ class NuevoStatusForm extends BaseForm {
                 $widgets[$name] = new sfWidgetFormExtDate();
                 $validator[$name] = new sfValidatorDate(array('required' => false));
             } else {
-                $widgets[$name] = new sfWidgetFormInputText();
+                $widgets[$name] = new sfWidgetFormInputText(array(), array("size" => 70));
                 $validator[$name] = new sfValidatorString(array('required' => false));
             }
         }
