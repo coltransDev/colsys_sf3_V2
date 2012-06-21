@@ -217,11 +217,12 @@ if (!isset($traorigen) and !isset($boton) and !isset($accion)) {
     echo "<TABLE WIDTH=670 CELLSPACING=1>";                                    // un boton de comando definido para hacer mantemientos
     if (isset($compania) and strlen($compania) == 0) {
         echo "<TR>";
-        echo "  <TH Class=titulo COLSPAN=8>" . COLTRANS . "<BR>$titulo<BR>$meses[$mes]/$ano</TH>";
+        echo "  <TH Class=titulo COLSPAN=9>" . COLTRANS . "<BR>$titulo<BR>$meses[$mes]/$ano</TH>";
         echo "</TR>";
         echo "<TH>Puerto</TH>";
         echo "<TH>Destino</TH>";
         echo "<TH>Modalidad</TH>";
+        echo "<TH>CBM x Ref.</TH>";
         echo "<TH>$col_one</TH>";
         echo "<TH>$col_two</TH>";
         echo "<TH>Equipos</TH>";
@@ -238,7 +239,7 @@ if (!isset($traorigen) and !isset($boton) and !isset($accion)) {
             $back_col = ($utl_cbm <= 0) ? " background: #FF6666" : $back_col;
             if ($ano_mem != $rs->Value('ca_ano') or $mes_mem != $rs->Value('ca_mes')) {
                 echo "<TR>";
-                echo "  <TD Class=invertir style='font-weight:bold; font-size: 11px;' COLSPAN=8>" . $meses[$rs->Value('ca_mes')] . "/" . $rs->Value('ca_ano') . "</TD>";
+                echo "  <TD Class=invertir style='font-weight:bold; font-size: 11px;' COLSPAN=9>" . $meses[$rs->Value('ca_mes')] . "/" . $rs->Value('ca_ano') . "</TD>";
                 echo "</TR>";
                 $ano_mem = $rs->Value('ca_ano');
                 $mes_mem = $rs->Value('ca_mes');
@@ -249,7 +250,7 @@ if (!isset($traorigen) and !isset($boton) and !isset($accion)) {
             if ($nom_tra != $rs->Value('ca_traorigen')) {
                 if (strlen($nom_tra) != 0) {
                     echo "<TR>";
-                    echo "  <TD Class=resaltar style='font-size: 9px; font-weight:bold;text-align:right' COLSPAN=4>SubTotal $nom_tra:</TD>";
+                    echo "  <TD Class=resaltar style='font-size: 9px; font-weight:bold;text-align:right' COLSPAN=5>SubTotal $nom_tra:</TD>";
                     echo "  <TD Class=resaltar style='font-size: 10px;font-weight:bold;text-align:right'>" . number_format($sub_tot) . "</TD>";
                     echo "  <TD Class=resaltar COLSPAN=3></TD>";
                     echo "</TR>";
@@ -257,7 +258,7 @@ if (!isset($traorigen) and !isset($boton) and !isset($accion)) {
                 $gra_tot+= $sub_tot;
                 $sub_tot = 0;
                 echo "<TR>";
-                echo "  <TD Class=invertir style='font-size: 10px;font-weight:bold;' COLSPAN=5>" . strtoupper($rs->Value('ca_traorigen')) . "</TD>";
+                echo "  <TD Class=invertir style='font-size: 10px;font-weight:bold;' COLSPAN=6>" . strtoupper($rs->Value('ca_traorigen')) . "</TD>";
                 echo "  <TD Class=invertir style='font-size: 9px;'>";
                 echo "   <TABLE CELLSPACING=1 style='letter-spacing:-1px;'>";
                 echo "    <TH WIDTH=90>Concepto</TH>";
@@ -272,6 +273,7 @@ if (!isset($traorigen) and !isset($boton) and !isset($accion)) {
             echo "  <TD Class=listar style='font-size: 9px;$back_col'>" . $rs->Value('ca_ciuorigen') . "</TD>";
             echo "  <TD Class=listar style='font-size: 9px;$back_col'>" . $rs->Value('ca_ciudestino') . "</TD>";
             echo "  <TD Class=listar style='font-size: 9px;$back_col'>" . $rs->Value('ca_modalidad') . "</TD>";
+            echo "  <TD Class=listar style='font-size: 9px;$back_col'>" . number_format($rs->Value('ca_volumen_total'),2) . "</TD>";
             if ($reportar == 'utilidad') {
                 echo "  <TD Class=valores style='font-size: 9px;$back_col'>" . number_format($rs->Value('ca_utilxcbm')) . "</TD>";
                 echo "  <TD Class=valores style='font-size: 9px;$back_col'>" . number_format($utl_cbm) . "</TD>";
@@ -326,24 +328,24 @@ if (!isset($traorigen) and !isset($boton) and !isset($accion)) {
             $rs->MoveNext();
             if ($mod_mem != $rs->Value('ca_modalidad')) {
                 echo "<TR HEIGHT=5>";
-                echo "  <TD Class=titulo COLSPAN=8></TD>";
+                echo "  <TD Class=titulo COLSPAN=9></TD>";
                 echo "</TR>";
                 $mod_mem = $rs->Value('ca_modalidad');
             }
         }
         echo "<TR>";
-        echo "  <TD Class=resaltar style='font-size: 9px; font-weight:bold;text-align:right' COLSPAN=4>SubTotal $nom_tra:</TD>";
+        echo "  <TD Class=resaltar style='font-size: 9px; font-weight:bold;text-align:right' COLSPAN=5>SubTotal $nom_tra:</TD>";
         echo "  <TD Class=resaltar style='font-size: 10px;font-weight:bold;text-align:right'>" . number_format($sub_tot) . "</TD>";
         echo "  <TD Class=resaltar COLSPAN=3></TD>";
         echo "</TR>";
         echo "<TR>";
-        echo "  <TD Class=titulo style='font-size: 9px; font-weight:bold;text-align:right' COLSPAN=4>GRAN TOTAL:</TD>";
+        echo "  <TD Class=titulo style='font-size: 9px; font-weight:bold;text-align:right' COLSPAN=5>GRAN TOTAL:</TD>";
         echo "  <TD Class=titulo style='font-size: 10px;font-weight:bold;text-align:right'>" . number_format($gra_tot) . "</TD>";
         echo "  <TD Class=titulo COLSPAN=3></TD>";
         echo "</TR>";
     } else {
         echo "<TR>";
-        echo "  <TH Class=titulo COLSPAN=10>" . COLTRANS . "<BR>$titulo<BR>$meses[$mes]/$ano</TH>";
+        echo "  <TH Class=titulo COLSPAN=11>" . COLTRANS . "<BR>$titulo<BR>$meses[$mes]/$ano</TH>";
         echo "</TR>";
         echo "<TH>ID Cliente</TH>";
         echo "<TH>Referencia</TH>";
@@ -365,7 +367,7 @@ if (!isset($traorigen) and !isset($boton) and !isset($accion)) {
             if ($cli_mem != $rs->Value('ca_idcliente')) {
                 echo "<TR>";
                 echo "  <TD Class=invertir style='text-align:right; font-weight:bold; font-size: 11px;'>" . number_format($rs->Value('ca_idcliente')) . "</TD>";
-                echo "  <TD Class=invertir style='font-weight:bold; font-size: 11px;' COLSPAN=9>" . $rs->Value('ca_compania') . "</TD>";
+                echo "  <TD Class=invertir style='font-weight:bold; font-size: 11px;' COLSPAN=10>" . $rs->Value('ca_compania') . "</TD>";
                 echo "</TR>";
                 $cli_mem = $rs->Value('ca_idcliente');
                 $tot_fac = 0;
@@ -396,7 +398,7 @@ if (!isset($traorigen) and !isset($boton) and !isset($accion)) {
                 echo "  <TD Class=valores style='font-size: 9px;$back_col'>" . $rs->Value('ca_sucursal') . "</TD>";
                 $ref_mem = $rs->Value('ca_referencia');
             } else {
-                echo "  <TD Class=mostrar style='font-size: 9px;$back_col' COLSPAN=4></TD>";
+                echo "  <TD Class=mostrar style='font-size: 9px;$back_col' COLSPAN=5></TD>";
             }
             echo "  <TD Class=valores style='font-size: 9px;$back_col'>" . $rs->Value('ca_hbls') . "</TD>";
             echo "  <TD Class=valores style='font-size: 9px;$back_col'>" . $rs->Value('ca_volumen') . "</TD>";
@@ -412,13 +414,13 @@ if (!isset($traorigen) and !isset($boton) and !isset($accion)) {
             $rs->MoveNext();
             if ($mes_mem != $rs->Value('ca_mes') or $ano_mem != $rs->Value('ca_ano') or $rs->Eof()) {
                 echo "<TR>";
-                echo "  <TD Class=invertir style='text-align:right; font-weight:bold; font-size: 10px;' COLSPAN=7>Sub-Totales</TD>";
+                echo "  <TD Class=invertir style='text-align:right; font-weight:bold; font-size: 10px;' COLSPAN=8>Sub-Totales</TD>";
                 echo "  <TD Class=invertir style='text-align:right; font-weight:bold; font-size: 10px;'>" . number_format($sub_fac) . "</TD>";
                 echo "  <TD Class=invertir style='text-align:right; font-weight:bold; font-size: 10px;'>" . number_format($sub_utl) . "</TD>";
                 echo "  <TD Class=invertir style='text-align:right; font-weight:bold; font-size: 10px;'>" . number_format($sub_sob) . "</TD>";
                 echo "</TR>";
                 echo "<TR HEIGHT=5>";
-                echo "  <TD Class=imprimir COLSPAN=10></TD>";
+                echo "  <TD Class=imprimir COLSPAN=11></TD>";
                 echo "</TR>";
                 $tot_fac+= $sub_fac;
                 $tot_utl+= $sub_utl;
@@ -427,10 +429,10 @@ if (!isset($traorigen) and !isset($boton) and !isset($accion)) {
             }
             if ($cli_mem != $rs->Value('ca_idcliente') or $rs->Eof()) {
                 echo "<TR HEIGHT=5>";
-                echo "  <TD Class=titulo COLSPAN=10></TD>";
+                echo "  <TD Class=titulo COLSPAN=11></TD>";
                 echo "</TR>";
                 echo "<TR>";
-                echo "  <TD Class=invertir style='text-align:right; font-weight:bold; font-size: 10px;' COLSPAN=7>Totales</TD>";
+                echo "  <TD Class=invertir style='text-align:right; font-weight:bold; font-size: 10px;' COLSPAN=8>Totales</TD>";
                 echo "  <TD Class=invertir style='text-align:right; font-weight:bold; font-size: 10px;'>" . number_format($tot_fac) . "</TD>";
                 echo "  <TD Class=invertir style='text-align:right; font-weight:bold; font-size: 10px;'>" . number_format($tot_utl) . "</TD>";
                 echo "  <TD Class=invertir style='text-align:right; font-weight:bold; font-size: 10px;'>" . number_format($tot_sob) . "</TD>";
