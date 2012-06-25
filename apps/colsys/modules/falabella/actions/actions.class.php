@@ -600,7 +600,7 @@ class falabellaActions extends sfActions {
             $sql = "SELECT * 
                     FROM vi_repindicadores 
                             LEFT OUTER JOIN (
-                                SELECT rp.ca_consecutivo as ca_consecutivo_sub, rs.ca_fchsalida, rs.ca_fchllegada, rs.ca_fchllegada-rs.ca_fchsalida as ca_diferencia, 
+                                SELECT rp.ca_consecutivo as ca_consecutivo_sub, rs.ca_fchsalida, rs.ca_fchllegada, CASE WHEN rs.ca_fchllegada-rs.ca_fchsalida <1 THEN '1'  else rs.ca_fchllegada-rs.ca_fchsalida  END AS ca_diferencia, 
                                     rs.ca_peso as ca_peso,extract(YEAR from rs.ca_fchsalida) as ca_ano1 ,extract(MONTH from rs.ca_fchsalida) as ca_mes1
                                 FROM tb_repstatus rs 
                                     INNER JOIN tb_reportes rp ON rp.ca_idreporte = rs.ca_idreporte
@@ -631,6 +631,10 @@ class falabellaActions extends sfActions {
                         $this->indicador[(int) ($r["ca_mes1"])]["cumplimiento"]++;
                     }
                 }*/
+                if($r["ca_diferencia"]<1){
+                    $r["ca_diferencia"]=1;
+                }
+                
                 $this->grid[$r["ca_ano1"]][(int) ($r["ca_mes1"])]["conta"] = (isset($this->grid[$r["ca_ano1"]][(int) ($r["ca_mes1"])]["conta"])) ? ($this->grid[$r["ca_ano1"]][(int) ($r["ca_mes1"])]["conta"] + 1) : "1";
                 $this->grid[$r["ca_ano1"]][(int) ($r["ca_mes1"])]["diferencia"]+=$r["ca_diferencia"];
                 if($this->grid[$r["ca_ano1"]][(int) ($r["ca_mes1"])]["diferencia"]==0){

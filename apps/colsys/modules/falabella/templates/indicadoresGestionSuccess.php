@@ -12,17 +12,25 @@ $dataJSON=array();
 $grid = $sf_data->getRaw("grid");
 $entcarga = $sf_data->getRaw("entcarga");
 $indicador = $sf_data->getRaw("indicador");
+
+if($transporte=="Aéreo"){
+    $rango=10;
+}elseif($transporte=="Marítimo"){
+    $rango=15;    
+}
 //echo "<pre>";print_r($grid);echo "</pre>";
 //echo "<pre>";print_r($entcarga);echo "</pre>";
 
 ?>
 <div align="center" class="esconder" ><img src="/images/22x22/printmgr.png" onclick="imprimir()" style="cursor: pointer"/></div><br />
 <div align="center"  class="mostrar" style="display: none">
-    <div style="height: 1500px;">
-        <div style="font-size: 50px;height: 250px"><b>INDICADORES DE GESTION</b></div>
-        <div style="height: 200px"><img src="/images/clientes/falabella_logo.jpg" /></div>
-        <div style="font-size: 32px;height: 200px"><?=$mesinicial?> a <?=$mesfinal?> de <?=$ano_ini?></div><br><br><br>
-        <div style="height: 150px"><img src="/images/logos/logoCOLTRANS.png" /></div>
+    <div style="height: 150px;">
+        <div style="font-size: 30px;height: 30px"><b>INDICADORES DE GESTION</b></div>
+        <div style="height: 50px"><img src="/images/clientes/falabella_logo.jpg" /></div>
+        <div style="font-size: 20px;height: 30px;color: blue"><b><?=strtoupper($pais_origen)?></b></div>
+        <div style="font-size: 15px;height: 30px"><b><?=strtoupper($transporte)?></b></div>
+        <!--<div style="font-size: 32px;height: 200px"><?=$mesinicial?> a <?=$mesfinal?> de <?=$ano_ini?></div><br><br><br>
+        <div style="height: 150px"><img src="/images/logos/logoCOLTRANS.png" /></div>-->
     </div>
 </div>
 
@@ -100,7 +108,7 @@ if($opcion=='buscar'){
 ?>        
 </table><br /><br /><br />       
         
-<table class="tableList" width="900px" border="1" id="mainTable" align="center">
+<table class="tableList" width="700px" border="1" id="mainTable" align="center">
     <?
     $data=array();
     $serieX=array();
@@ -121,22 +129,43 @@ if($opcion=='buscar'){
   
 ?>
 </table>
+
+<div align="center">
+</div>
 <table align="center" width="60%" border="2" class="box">
     <tr>
         <td>
             <div align="center" id="grafica1" ></div>
         </td>
-    </tr>    
+        <td>
+            <div align="center" id="grafica2" ></div>
+        </td>
+    </tr> 
+    <tr>
+        <td>
+            <div align="center" id="grafica3" ></div>
+        </td>
+        <td>
+            <div align="center" id="grafica4" ></div>
+        </td>
+    </tr> 
 </table>
+<!--<table align="center" width="40%" border="2" class="box">
+    <tr>
+        <td>
+            <div align="center" id="grafica1" ></div>
+        </td>
+    </tr>    
+</table>-->
 <script type="text/javascript">
     var chart1;
         chart1=new ChartsColumn({
 					renderTo: 'grafica1',
-                    height: 400,
-                    width: 700,
+                    height: 300,
+                    width: 500,
                     title:"TIEMPO DE TRANSITO",
                     titleY:"Dias",
-                    maxY: 10,
+                    maxY: <?=$rango?>,
                                         
                     /*plotBands: [
                         {
@@ -159,15 +188,15 @@ if($opcion=='buscar'){
 
 <br>
 <br>
-<div align="center">
+<!--<div align="center">
 </div>
-<table align="center" width="60%" border="2" class="box">
+<table align="center" width="30%" border="2" class="box">
     <tr>
         <td style=" margin: 0 auto" >
             <div align="center" id="grafica2" ></div>
         </td>
     </tr>
-</table>
+</table>-->
 
 <?
 
@@ -195,8 +224,8 @@ $serieX=array();
     var chart2;
         chart2=new ChartsColumn({
 					renderTo: 'grafica2',
-                    height: 400,
-                    width: 700,
+                    height: 300,
+                    width: 500,
                     title:"TIEMPO DE ENTREGA DE LA CARGA POR PARTE DEL SHIPPER",
                     titleY:"Dias",
                     maxY: 10,
@@ -211,15 +240,15 @@ $serieX=array();
 
 <br>
 <br>
-<div align="center">
+<!--<div align="center">
 </div>
-<table align="center" width="60%" border="2" class="box">
+<table align="center" width="50%" border="2" class="box">
     <tr>
         <td style=" margin: 0 auto" >
             <div align="center" id="grafica3" ></div>
         </td>
     </tr>
-</table>
+</table>-->
 
 <?
 
@@ -246,8 +275,8 @@ $serieX=array();
     var chart3;
         chart3=new ChartsColumn({
 					renderTo: 'grafica3',
-                    height: 400,
-                    width: 700,
+                    height: 300,
+                    width: 500,
                     title:"TIEMPO DE ENTREGA DOCUMENTACION",
                     titleY:"Dias",
                     maxY: 10,
@@ -262,18 +291,17 @@ $serieX=array();
 				});	
 </script>
 
-</div></div></div>
 <br>
 <br>
-<div align="center">
+<!--<div align="center">
 </div>
-<table align="center" width="60%" border="2" class="box">
+<table align="center" width="20%" border="2" class="box">
     <tr>
         <td style=" margin: 0 auto" >
             <div align="center" id="grafica4" ></div>
         </td>
     </tr>
-</table>
+</table>-->
 
 <?
 
@@ -300,8 +328,8 @@ $serieX=array();
     var chart4;
         chart4=new ChartsColumn({
 					renderTo: 'grafica4',
-                    height: 400,
-                    width: 700,
+                    height: 300,
+                    width: 500,
                     title:"INGRESO DE ASN",
                     titleY:"Dias",
                     maxY: 10,
@@ -311,7 +339,7 @@ $serieX=array();
                     
 				});	
 </script>
-</div></div></div>
+
         
 <script language="javascript">
    
