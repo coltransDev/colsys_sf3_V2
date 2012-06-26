@@ -212,24 +212,41 @@ class reportesGerActions extends sfActions {
         $response = sfContext::getInstance()->getResponse();
         $response->addJavaScript("extExtras/SuperBoxSelect", 'last');
 
-        /*$this->nivel = $this->getUser()->getNivelAcceso(reportesGerActions::RUTINA);
-        if ($this->nivel == -1) {
-            $this->forward404();
-        }*/
         $this->opcion = $request->getParameter("opcion");
         $this->year = ($request->getParameter("year")!="")?$request->getParameter("year"):date("Y");
         $this->mes = $request->getParameter("mes");
         $this->nmes = $request->getParameter("nmes");
         
-        $this->idorigen = $request->getParameter("idorigen");
+        $this->meses = array();
+        $this->meses[]=array("valor"=>"a-Enero"       ,"id"=>1);
+        $this->meses[]=array("valor"=>"b-Febrero"     ,"id"=>2);
+        $this->meses[]=array("valor"=>"c-Marzo"       ,"id"=>3);
+        $this->meses[]=array("valor"=>"d-Abril"       ,"id"=>4);
+        $this->meses[]=array("valor"=>"e-Mayo"        ,"id"=>5);
+        $this->meses[]=array("valor"=>"f-Junio"       ,"id"=>6);
+        $this->meses[]=array("valor"=>"g-Julio"       ,"id"=>7);
+        $this->meses[]=array("valor"=>"h-Agosto"      ,"id"=>8);
+        $this->meses[]=array("valor"=>"i-Septiembre"  ,"id"=>9);
+        $this->meses[]=array("valor"=>"j-Octubre"     ,"id"=>10);
+        $this->meses[]=array("valor"=>"k-Noviembre"   ,"id"=>11);
+        $this->meses[]=array("valor"=>"l-Diciembre"   ,"id"=>12);
+
+        foreach ($traficos_rs as $trafico) {
+            $row = array("id" => $trafico->getCaIdTrafico(), "valor" => $trafico->getCaNombre());
+            $this->traficos[] = $row;
+        }
+        
         
         if ($this->opcion) {
 
             if ($this->year!="")
-                $where.=" and ca_ano in (".($this->year).")";
+                $where.=" and ca_ano in (".($this->year).",".($this->year-1).")";
             
-            if ($this->mes!="")
-                $where.=" and ca_mes::integer = ".($this->nmes)."";
+            if (count($this->nmes)>0)
+            {
+                if( $this->nmes[0]!="" )                    
+                    $where.=" and ca_mes::integer in (".(implode (",", $this->nmes)).")";
+            }
                 //$where.=" and ca_ano in (" . $this->year. ",".($this->year-1).")";
 
 /*            $sql = "select ca_ano, ca_trafico, ca_traorigen, ca_ciudestino, sum(ca_20pies) as ca_20pies, sum(ca_40pies) as ca_40pies, 
@@ -239,7 +256,7 @@ class reportesGerActions extends sfActions {
             //echo $sql;
             $con = Doctrine_Manager::getInstance()->connection();
             $st = $con->execute($sql);
-            $this->lcl = $st->fetchAll();            
+            $this->lcl = $st->fetchAll();
             //echo "<pre>";print_r($this->lcl);echo "</pre>";
             /*$sql = "select ca_ano, ca_trafico, ca_traorigen, ca_ciudestino, sum(ca_20pies) as ca_20pies, sum(ca_40pies) as ca_40pies, 
                 sum(ca_teus) as ca_teus from vi_inotrafico_fcl where 1=1 and ca_impoexpo='".constantes::IMPO."' and ca_trafico='05' $where group by ca_ano, ca_trafico, ca_traorigen, ca_ciudestino order by ca_ano, ca_traorigen, ca_ciudestino";
@@ -336,8 +353,12 @@ class reportesGerActions extends sfActions {
         if ($this->opcion) {
 
             if ($this->idsucursal)
-                $where .= " and ca_idsucursal='" . $this->idsucursal . "'";
-
+            {
+                if($this->idsucursal=="BOG")
+                    $where .= " and ca_idsucursal in('" . $this->idsucursal . "','ABO')";
+                else
+                    $where .= " and ca_idsucursal='" . $this->idsucursal . "'";
+            }
             if($this->departamento=="Cuentas Globales")
                 $where .= " and ca_idcliente in (select ca_idcliente from vi_clientes_reduc where ca_propiedades like '%cuentaglobal=true%') ";
             else if($this->departamento=="Tráficos")
