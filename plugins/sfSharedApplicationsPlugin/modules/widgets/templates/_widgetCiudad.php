@@ -91,6 +91,8 @@ Ext.extend(WidgetCiudad, Ext.form.ComboBox, {
                         var nomimpoexpo=(Ext.getCmp(impoexpo))?Ext.getCmp(impoexpo).getValue():impoexpo;
                         var traf=Ext.getCmp(this.traficoParent)?Ext.getCmp(this.traficoParent).getValue():"";
                         i=0;
+                        if(nomimpoexpo=="<?=constantes::OTMDTA?>")
+                            nomimpoexpo="<?=constantes::TRIANGULACION?>";
                         
                         if(this.tipo && this.impoexpo){                        
                             
@@ -116,7 +118,7 @@ Ext.extend(WidgetCiudad, Ext.form.ComboBox, {
                                     {                                    
                                         if(record.get("idtrafico")==trafico)
                                         {
-                                            if(str.search(txt) == -1  )
+                                            if(str.search(txt) == -1 )
                                                 return false;
                                             else
                                                 return true;
@@ -126,7 +128,6 @@ Ext.extend(WidgetCiudad, Ext.form.ComboBox, {
                                     }
                                     else if(tipo=="3")
                                     {
-
                                         if(record.get("idtrafico")==traf)
                                         {
                                             if(str.search(txt) == -1  )
