@@ -273,8 +273,8 @@ class traficosActions extends sfActions
 		*/		
 		$this->form = new NuevoStatusForm();
 		if( $reporte->getCaConfirmarClie() ){
-				$this->form->setDestinatarios( explode(",",$reporte->getCaConfirmarClie()) );
-		}
+            $this->form->setDestinatarios( explode(",",$reporte->getCaConfirmarClie()) );
+		}        
 
         $cliente = $reporte->getCLiente();
         $fijos = $reporte->getContacto('1');
@@ -337,7 +337,7 @@ class traficosActions extends sfActions
 		
 		$this->form->setWidgetsClientes( $parametros );
 		
-		$this->form->configure();	
+		$this->form->configure();
 		/*
 		* Fin de la configuración
 		*/
@@ -421,34 +421,34 @@ class traficosActions extends sfActions
 			$bindValues["horarecibo"] = $request->getParameter("horarecibo");
             
             $bindValues["observaciones_idg"] = $request->getParameter("observaciones_idg");
-						
+
 			for( $i=0; $i<NuevoStatusForm::NUM_EQUIPOS ; $i++ ){
 				$bindValues["equipos_tipo_".$i] = $request->getParameter("equipos_tipo_".$i);
 				$bindValues["equipos_serial_".$i] = $request->getParameter("equipos_serial_".$i);
 				$bindValues["equipos_cant_".$i] = $request->getParameter("equipos_cant_".$i);
 			}
-			
+
 			$widgets = $this->form->getWidgetsClientes();
-			
-			foreach( $widgets as $name=>$val ){						
-				$bindValues[$name] = $request->getParameter($name);		
+
+			foreach( $widgets as $name=>$val ){
+				$bindValues[$name] = $request->getParameter($name);
 			}
-			
+
 			$bindValues["prog_seguimiento"] = $request->getParameter("prog_seguimiento");
 			if( $request->getParameter("prog_seguimiento") ){
 				$bindValues["fchseguimiento"] = $request->getParameter("fchseguimiento");
 				$bindValues["txtseguimiento"] = $request->getParameter("txtseguimiento");
 			}
-			$this->form->bind( $bindValues ); 
-			if( $this->form->isValid() ){					
-				$this->executeGuardarStatus( $request );				
-			}				
-		}
+			$this->form->bind( $bindValues );
+			if( $this->form->isValid() ){
+				$this->executeGuardarStatus( $request );
+			}
+                }
 		
 		$this->ultStatus = $reporte->getUltimoStatus();	
-		
+
 		$this->reporte = $reporte;
-		
+
 		
 		/*
 		Archivos del reporte
@@ -468,12 +468,12 @@ class traficosActions extends sfActions
 		
 		//Busca los archivos del reporte
 		$this->files=$this->reporte->getFiles();
-			
+		
 		
 		$this->usuario = Doctrine::getTable("Usuario")->find( $this->getuser()->getUserId() );
 		
 		$config = sfConfig::get('sf_app_module_dir').DIRECTORY_SEPARATOR."traficos".DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."textos.yml";
-		$this->textos = sfYaml::load($config);	
+		$this->textos = sfYaml::load($config);
 			
 	}
 	
@@ -642,7 +642,7 @@ class traficosActions extends sfActions
                 if( $request->getParameter("datosbl") ){
                     $repExpo->setCaDatosbl( $request->getParameter("datosbl") );
                 }
-                
+
                 if( $request->getParameter("inspeccion_fisica") ){
                     $repExpo->setCaInspeccionFisica( true );
                 }else{
@@ -697,7 +697,7 @@ class traficosActions extends sfActions
                     $att[]=$reporte->getDirectorioBase().base64_decode( $attachment );
                 }
             }
-
+//---////
             $options["from"] =  $request->getParameter("remitente");
 
             $options["subject"] =  $request->getParameter("asunto");
@@ -710,7 +710,7 @@ class traficosActions extends sfActions
 
                 $titulo = "Seguimiento RN".$reporte->getCaConsecutivo()." [".$reporte->getCaModalidad()." ".$reporte->getOrigen()->getCaCiudad()."->".$reporte->getDestino()->getCaCiudad()."]";
                 $texto = "";
-                
+
                 $tarea = new NotTarea();
                 $tarea->setCaUrl( "/traficos/listaStatus/modo/".$this->modo."/reporte/".$reporte->getCaConsecutivo() );
                 $tarea->setCaIdlistatarea( 3 );
@@ -748,7 +748,7 @@ class traficosActions extends sfActions
                         $tarea->save( $conn );
                     }
                 }
-            }           
+            }
             //Tarea de envio de antecedentes
             //$valido=Utils::compararFechas(date("Y-m-d") , "2011-02-28");
             if(  ( $reporte->getCaIdetapa()=="IMETA" || $reporte->getCaIdetapa()=="IMCMT") )
@@ -764,7 +764,7 @@ class traficosActions extends sfActions
                 }else{
                     $tarea = new NotTarea();
                     $tarea->setCaIdlistatarea( 8 );
-                }   
+                }
 
                 $titulo = "Antecedentes RN".$reporte->getCaConsecutivo()." [".$reporte->getCaModalidad()." ".$reporte->getOrigen()->getCaCiudad()."->".$reporte->getDestino()->getCaCiudad()."]";
                 $texto = "";
@@ -797,7 +797,7 @@ class traficosActions extends sfActions
                 $reporte->stopBlaming();
                 $reporte->save( $conn );
             }
-            $conn->commit();            
+            $conn->commit();
 
         } catch (Exception $e) {
             $conn->rollBack();
@@ -806,7 +806,7 @@ class traficosActions extends sfActions
 
 		$this->redirect("traficos/listaStatus?modo=".$this->modo."&reporte=".$reporte->getCaConsecutivo());
 	}
-	
+
 	/*
 	* Muestra un resumen de los status enviados al cliente
 	*/
@@ -840,7 +840,7 @@ class traficosActions extends sfActions
         $this->redirect("traficos/listaStatus?modo=".$this->modo."&reporte=".$reporte->getCaConsecutivo());
 
 	}
-	
+
 	
 	/***********************************************************************************
 	* Generación de cuadro en excel y correo electronico
@@ -863,7 +863,7 @@ class traficosActions extends sfActions
 				break;
 		}
 	}
-	
+
 	
 	public function executeInformeTraficosFormato1(  ){
 				
@@ -930,7 +930,7 @@ class traficosActions extends sfActions
 				$this->reportes = ReporteTable::getReportesActivos( $this->cliente->getCaIdcliente() );
 				break;
 		}
-        
+
 
 		$this->user = $this->getUser();
 		
@@ -1068,6 +1068,14 @@ class traficosActions extends sfActions
 		$this->status = Doctrine::getTable("RepStatus")->find( $this->getRequestParameter("idstatus") );
 		$this->forward404Unless( $this->status );
 		$this->reporte = $this->status->getReporte();
+        
+        $this->repotm = $this->reporte->getRepOtm();
+        $this->firmaotm=false;
+        
+        if($this->getUser()->getSucursal()=="OBO")
+        {
+            $this->firmaotm=true;
+        }
 			
 		$this->setTemplate("emailDefaultStatus");	
 			
@@ -1079,8 +1087,7 @@ class traficosActions extends sfActions
 			}				
 		} 
 		
-		$this->etapa = $etapa;
-		
+		$this->etapa = $etapa;		
 		
 		$config = sfConfig::get('sf_app_module_dir').DIRECTORY_SEPARATOR."traficos".DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."textos.yml";
 		$this->textos = sfYaml::load($config);	
