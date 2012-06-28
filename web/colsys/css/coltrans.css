@@ -556,6 +556,49 @@ a.toolbar:active {
 	margin:10px;
 }
 
+div.storybox {
+    
+    
+    /*background: #F0F0F0 url(../images/bg_newsitem.png) repeat-x;*/
+    border: 1px solid #EEE;
+    border-color: #EEE #EEE #DDD #EEE;
+    clear: both;
+    color: #333;
+    line-height: 1.5;
+    margin-left:35%;
+    height: 200px;
+    
+    width: 25%;
+    -moz-border-radius-topright : 6px;
+    border-top-right-radius : 6px;
+    -moz-border-radius-topleft : 6px;
+    border-top-left-radius : 6px;
+    -moz-border-radius-bottomright : 6px;
+    border-bottom-right-radius : 6px;
+    -moz-border-radius-bottomleft : 6px;
+    border-bottom-left-radius : 6px;
+}
+
+
+div.storybox .title {
+    color: #2A337C;    
+    padding: 3px 4px;
+    background-color: #062A7D;
+    color: #FFFFFF;
+    -moz-border-radius-topright : 6px;
+    border-top-right-radius : 6px;
+    -moz-border-radius-topleft : 6px;
+    border-top-left-radius : 6px;
+    
+}
+div.storybox .body {
+    
+    font-size: 11px;
+    text-align: center;
+    padding: 10px;
+    height: auto;
+}
+
 
 /*
 * Iconos usados en toolbars
