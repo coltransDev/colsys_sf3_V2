@@ -10,6 +10,7 @@
  */
 class reportesGerActions extends sfActions {
     const RUTINA = 105;
+    const ESTADISTICAS = 129;
     
     
     /**
@@ -900,8 +901,65 @@ class reportesGerActions extends sfActions {
         }
     }
     
+    public function executeImpresionbl(sfWebRequest $request) {
+        
+        $this->opcion = $request->getParameter("opcion");
+        
+        if ($this->opcion) {    
+            $this->fechaInicial = $request->getParameter("fechaInicial");
+            $this->fechaFinal = $request->getParameter("fechaFinal");
+            
+            $this->origen = $request->getParameter("origen");
+            $this->idorigen = $request->getParameter("idorigen");
+           
+            $this->idagente = $request->getParameter("idagente");
+            $this->agente = $request->getParameter("agente");
+            
+            $this->sucursal = $request->getParameter("sucursal");
+            $this->idsucursal = $request->getParameter("idsucursal");
+            
+            $q = Doctrine::getTable("Reporte")
+                            ->createQuery("r")
+                            ->select("r.ca_consecutivo , im.ca_fcharribo, ic.ca_referencia, ic.ca_idcliente, ic.ca_hbls, r.ca_idagente, r.ca_origen, c.ca_ciudad, r.ca_idagente, d.ca_nombre, ic.ca_idcliente, cl.ca_compania, r.ca_login, u.ca_idsucursal, s.ca_nombre")
+                            ->innerjoin("r.InoClientesSea ic")
+                            ->innerJoin("ic.InoMaestraSea im")
+                            ->innerJoin("ic.Cliente cl")
+                            ->innerJoin("r.IdsAgente i")
+                            ->innerJoin("i.Ids d")
+                            ->innerJoin("r.Origen c")
+                            ->innerJoin("r.Usuario u")
+                            ->innerJoin("u.Sucursal s")
+                            ->addWhere("ic.ca_imprimirorigen = true")
+                            ->addWhere("im.ca_fcharribo BETWEEN ? AND ?", array($this->fechaInicial, $this->fechaFinal))
+                            ->orderby("im.ca_fcharribo")
+                            ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
+                            
+                            if($this->idorigen){
+                                $q->addWhere("r.ca_origen = ?", $this->idorigen);
+                            }
+                            if($this->idagente){
+                                $q->addWhere("r.ca_idagente = ?", $this->idagente);
+                            }
+                            if($this->sucursal){
+                                $q->addWhere("u.ca_idsucursal = ?", $this->sucursal);
+                            }
+                            
+                            $this->bls=$q->execute();
+        }
+    }
     
-
+    public function executeMenuEstadisticas(sfWebRequest $request) {
+        
+        $this->setLayout("layout");
+        
+        $this->nivel = $this->getUser()->getNivelAcceso(reportesGerActions::ESTADISTICAS);
+        //echo $this->nivel;
+        if ($this->nivel < 1) {
+            $this->forward404();
+        }
+        
+    }
+    
 }
 
 ?>

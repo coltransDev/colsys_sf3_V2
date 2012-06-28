@@ -86,5 +86,21 @@ class reportesGerComponents extends sfComponents
         
         //echo $this->tipo." ".$this->ntipo;
     }
+    
+    public function executeFormMenuImpresionblPanel(){
+        
+        $this->fechaInicial=$this->getRequestParameter("fechaInicial");
+        $this->fechaFinal=$this->getRequestParameter("fechaFinal");
+        
+        $this->origen = $this->getRequestParameter("origen");
+        $this->idorigen = $this->getRequestParameter("idorigen");
+        
+        $this->idagente = $this->getRequestParameter("idagente");
+        $this->agente = $this->getRequestParameter("agente");
+        
+        $this->sucursal = $this->getRequestParameter("sucursal");
+        $this->idSucursal = $this->getRequestParameter("idSucursal");
+        
+    }
 }
 ?>
