@@ -55,6 +55,7 @@ class Ids extends BaseIds
                 ->select("ev.ca_ano, ev.ca_periodo, SUM(e.ca_valor*e.ca_ponderacion )/SUM(e.ca_ponderacion ) as calificacion")
                 ->addWhere("ev.ca_id = ?",$this->getCaId() )
                 ->addWhere("ev.ca_tipo like ?",'desempeno%' )
+                ->orWhere("ev.ca_tipo like ?",'reevalua%' )
                 ->addGroupBy("ev.ca_ano, ev.ca_periodo")                
                 ->addOrderBy("ev.ca_ano, ev.ca_periodo")
                 ->setHydrationMode(Doctrine::HYDRATE_SCALAR)

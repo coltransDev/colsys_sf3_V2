@@ -198,12 +198,12 @@ $counts = array();
 
                 if( $year>=2011 ){     
                 ?>
-                <td><div align="left"><?=$evaluacion1?$evaluacion1:"&nbsp;"?></div></td>
-                <td><div align="left"><?=$evaluacion2?$evaluacion2:"&nbsp;"?></div></td>
+                <td><div align="left"><?=$evaluacion1?$evaluacion1:"N/A"//&nbsp;?></div></td>
+                <td><div align="left"><?=$evaluacion2?$evaluacion2:"N/A"//&nbsp;?></div></td>
                 <?
                 }else{    
                 ?>
-                <td><div align="left"><?=$evaluacion?$evaluacion:"&nbsp;"?></div></td>
+                <td><div align="left"><?=$evaluacion?$evaluacion:"N/A"//&nbsp;?></div></td>
                 <?
                 }
             }
