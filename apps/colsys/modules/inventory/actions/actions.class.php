@@ -431,6 +431,7 @@ class inventoryActions extends sfActions {
                 $activo->save();
 
                 $idsucursal = $activo->getCaIdsucursal();
+                $suc_usu = $activo->getSucursal()->getCaNombre();
 
                 $contetapas = 0;
                 foreach($etapas as $etapa){
@@ -472,7 +473,10 @@ class inventoryActions extends sfActions {
 
             foreach( $logins as $login ){
                 $usuario = Doctrine::getTable("Usuario")->find( $login );
-                $email->addCc( $usuario->getCaEmail() );
+                $suc_cm = $usuario->getSucursal()->getCaNombre();
+                if($suc_usu==$suc_cm){
+                    $email->addCc( $usuario->getCaEmail() );
+                }
             }
             $email->save();
             if($recordatorio){
@@ -617,7 +621,7 @@ class inventoryActions extends sfActions {
     public function executeEmailMantenimiento(sfWebRequest $request) {
 
         //$this->nivel = $this->getNivel();
-        $this->setLayout("email");
+        $this->setLayout("none");
         
         $idactivo = $request->getParameter("idactivo");
         $idman = $request->getParameter("idman");
