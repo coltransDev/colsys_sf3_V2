@@ -60,12 +60,12 @@ $counts = array();
         <?
         $ultTipo=null;
         $ultTransporte=null;
-        foreach($proveedores as $proovedor ){
-            $ids = $proovedor->getIds();
+        foreach($proveedores as $proveedor ){
+            $ids = $proveedor->getIds();
             $sucursales = $ids->getIdsSucursal();
-            if( $ultTipo!=$proovedor->getCaTipo() ){
-                $ultTipo=$proovedor->getCaTipo();
-                $tipo = $proovedor->getIdsTipo();
+            if( $ultTipo!=$proveedor->getCaTipo() ){
+                $ultTipo=$proveedor->getCaTipo();
+                $tipo = $proveedor->getIdsTipo();
             ?>
             <tr class="row0">
                 <td  colspan="<?=12+$numYears?>"><div align="left"><b><?=$tipo->getCaNombre()?></b></div></td>
@@ -73,24 +73,27 @@ $counts = array();
             <?
             }
 
-            if( $proovedor->getCaTipo()=="TRI"&&$ultTransporte!=$proovedor->getCaTransporte() ){
-                $ultTransporte=$proovedor->getCaTransporte();
+            if( $proveedor->getCaTipo()=="TRI"&&$ultTransporte!=$proveedor->getCaTransporte() ){
+                $ultTransporte=$proveedor->getCaTransporte();
 
             ?>
             <tr class="row0">
-                <td  colspan="<?=12+$numYears?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<div align="left"><?=$proovedor->getCaTransporte()?$proovedor->getCaTransporte():"Sin definir"?></div></td>
+                <td  colspan="<?=12+$numYears?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<div align="left"><?=$proveedor->getCaTransporte()?$proveedor->getCaTransporte():"Sin definir"?></div></td>
             </tr>
             <?
             }
         ?>
         <tr>
             <td><div align="left"><?=link_to($ids->getCaNombre(), "ids/verIds?modo=prov&id=".$ids->getCaId())?></div></td>
-            <td><div align="left"><?=Utils::fechaMes($proovedor->getCaFchaprobado())?></div></td>
-            <td><div align="left"><?=$proovedor->getCaActivoImpo()?"Activo":"<span class='rojo'>Inactivo</span>"?></div></td>
-            <td><div align="left"><?=$proovedor->getCaActivoExpo()?"Activo":"<span class='rojo'>Inactivo</span>"?></div></td>
+            <td><div align="left"><?=Utils::fechaMes($proveedor->getCaFchaprobado())?></div></td>
+            <td><div align="left"><?=$proveedor->getCaActivoImpo()?"Activo":"<span class='rojo'>Inactivo</span>"?></div></td>
+            <td><div align="left"><?=$proveedor->getCaActivoExpo()?"Activo":"<span class='rojo'>Inactivo</span>"?></div></td>
             <td>
                 <div align="left">
                     <?
+                    $anno_apro = Utils::parseDate($proveedor->getCaFchaprobado(), "Y");
+                    $stre_apro = Utils::parseDate($proveedor->getCaFchaprobado(), "m");
+                    $stre_apro = floor($stre_apro/7)+1;
                     $doc = $ids->getDocumento( 4 );
                     
                     if( $doc ){
@@ -128,7 +131,7 @@ $counts = array();
                 ?>
                 </div>
             </td>
-            <td><div align="center"><?=$proovedor->getCaCritico()?"X":""?></div></td>             
+            <td><div align="center"><?=$proveedor->getCaCritico()?"X":""?></div></td>             
             <?
 
             $evaluaciones = $ids->getCalificaciones();
@@ -192,8 +195,17 @@ $counts = array();
                     }                    
                 }
 
-                if( !$evaluacion && $year!=$actualYear){
-                    $evaluacion = "N/A";
+                if( !$evaluacion && $year!=$actualYear ){
+                   $evaluacion = "N/A";
+                }
+                if( $anno_apro>$year ){
+                   $evaluacion = "N/A";
+                   $evaluacion1 = "N/A";
+                   $evaluacion2 = "N/A";
+                }else if( $anno_apro==$year ){
+                   if( $stre_apro>1 ){
+                      $evaluacion1 = "N/A";
+                   }
                 }
 
                 if( $year>=2011 ){     
