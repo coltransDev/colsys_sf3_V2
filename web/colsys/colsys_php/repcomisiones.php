@@ -68,9 +68,9 @@ require_once("menu.php");
        }
     $us->MoveFirst();
     while (!$us->Eof()) {
-           echo "<INPUT TYPE='HIDDEN' NAME='usu_login' VALUE='".$us->Value('ca_login')."'>";
-           echo "<INPUT TYPE='HIDDEN' NAME='usu_nombre' VALUE='".$us->Value('ca_nombre')."'>";
-           echo "<INPUT TYPE='HIDDEN' NAME='usu_sucursal' VALUE='".$us->Value('ca_sucursal')."'>";
+           echo "<INPUT TYPE='HIDDEN' ID='usu_login' NAME='usu_login' VALUE='".$us->Value('ca_login')."'>";
+           echo "<INPUT TYPE='HIDDEN' ID='usu_nombre' NAME='usu_nombre' VALUE='".$us->Value('ca_nombre')."'>";
+           echo "<INPUT TYPE='HIDDEN' ID='usu_sucursal' NAME='usu_sucursal' VALUE='".$us->Value('ca_sucursal')."'>";
            $us->MoveNext();
           }
 
@@ -89,7 +89,7 @@ require_once("menu.php");
         echo ">$val</OPTION>";
         }
     echo "  </SELECT></TD>";
-    echo "  <TD Class=mostrar>Sucursal:<BR><SELECT NAME='sucursal' ONCHANGE='llenar_vendedores();'>";
+    echo "  <TD Class=mostrar>Sucursal:<BR><SELECT ID='sucursal' NAME='sucursal' ONCHANGE='llenar_vendedores();'>";
     echo "  <OPTION VALUE=%>Sucursales (Todas)</OPTION>";
     $tm->MoveFirst();
     while (!$tm->Eof()) {
@@ -98,7 +98,7 @@ require_once("menu.php");
           }
 	
     echo "  </SELECT></TD>";
-    echo "  <TD Class=mostrar>Vendedor:<BR><SELECT NAME='login'>";                 // Llena el cuadro de lista con los valores de la tabla Vendedores
+    echo "  <TD Class=mostrar>Vendedor:<BR><SELECT ID='login' NAME='login'>";                 // Llena el cuadro de lista con los valores de la tabla Vendedores
     echo "  <OPTION VALUE=%>Vendedores (Todos)</OPTION>";
     echo "  </SELECT></TD>";
     echo "  <TD Class=listar ROWSPAN=2>Estado:<BR><SELECT NAME='casos'>";
