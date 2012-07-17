@@ -1442,7 +1442,7 @@ class idsActions extends sfActions {
                 ->innerJoin("d.Ids i")
                 ->innerJoin("d.IdsTipoDocumento t")
                 ->where("d.ca_fchvencimiento<=?", $this->fecha)
-                ->addWhere("d.ca_iddocumento IN (SELECT dd.ca_iddocumento FROM IdsDocumento dd WHERE dd.ca_idtipo=d.ca_idtipo AND dd.ca_id=d.ca_id ORDER BY dd.ca_fchvencimiento DESC LIMIT 1)")
+                ->addWhere("d.ca_iddocumento IN (SELECT dd.ca_iddocumento FROM IdsDocumento dd WHERE dd.ca_idtipo=d.ca_idtipo AND dd.ca_id=d.ca_id AND dd.ca_fchvencimiento IS NOT NULL ORDER BY dd.ca_fchvencimiento DESC LIMIT 1)")
                 ->addOrderBy("d.ca_fchvencimiento ASC")
                 ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
         if ($this->modo == "prov") {
