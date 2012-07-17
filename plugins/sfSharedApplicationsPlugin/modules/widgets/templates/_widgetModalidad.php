@@ -5,6 +5,7 @@
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
 $data = $sf_data->getRaw("data");
+//print_r($data);
 ?>
 
 <script type="text/javascript">
@@ -67,7 +68,7 @@ Ext.extend(WidgetModalidad, Ext.form.ComboBox, {
                 }
                 if(impoexpo=='<?=constantes::OTMDTA?>' || impoexpo=='<?=constantes::OTMDTA1?>' )
                 {
-                    impoexpo='<?=Constantes::IMPO?>'
+                    //impoexpo='<?=Constantes::IMPO?>'
                 }
                 for( k in this.data ){
                     var rec = this.data[k];					
