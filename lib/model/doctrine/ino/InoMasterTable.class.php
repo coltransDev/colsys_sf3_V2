@@ -108,6 +108,8 @@ class InoMasterTable extends Doctrine_Table
                 $referencia[1] = '50';
             }elseif( $modalidad == "COLOADING" ){
                 $referencia[1] = '60';                
+            }elseif( $modalidad == "DIRECTO" ){
+                $referencia[1] = '80';
             }else{
                 $referencia[1] = '00';
             }
