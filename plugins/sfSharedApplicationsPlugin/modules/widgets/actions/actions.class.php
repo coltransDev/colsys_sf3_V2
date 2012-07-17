@@ -300,8 +300,7 @@ class widgetsActions extends sfActions {
 
         if ($request->getParameter("estado") == "activo") {
             $q->addWhere("r.ca_idetapa != ?", "99999");
-        }
-        
+        }        
         $reportes = $q->fetchArray();
 
         $this->reportes = array();
@@ -330,7 +329,7 @@ class widgetsActions extends sfActions {
         }
 
 
-        $this->responseArray = array("totalCount" => count($this->reportes), "reportes" => $this->reportes);
+        $this->responseArray = array("totalCount" => count($this->reportes), "reportes" => $this->reportes,"debug"=>$q->getSqlQuery());
         $this->setTemplate("responseTemplate");
 
         $this->setLayout("none");
