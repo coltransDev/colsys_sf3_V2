@@ -2184,7 +2184,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 echo "  <script>cambiar(document.getElementById('continuacion'));</script>";
                 echo "  </TR>";
                 echo "  <TR>";
-                echo "    <TD COLSPAN=5>Fecha Recibo Antecedentes:&nbsp;<INPUT TYPE='TEXT' NAME='fchantecedentes' SIZE=12 VALUE='" . $rs->Value('ca_fchantecedentes') . "' ONKEYDOWN=\"chkDate(this)\" ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+                echo "    <TD COLSPAN=5>Fecha Recibo Antecedentes:&nbsp;<INPUT TYPE='TEXT' NAME='fchantecedentes' SIZE=12 VALUE='" . $rs->Value('ca_fchantecedentes') . "' READONLY></TD>";
                 echo "  </TR>";
                 echo "  </TABLE>";
                 echo " </TD>";
