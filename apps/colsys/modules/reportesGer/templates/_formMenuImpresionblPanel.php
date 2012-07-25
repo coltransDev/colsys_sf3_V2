@@ -83,8 +83,10 @@ include_component("widgets","widgetSucursales");
                                             id: 'origen',
                                             idciudad:"origen",
                                             hiddenName:"idorigen",
-                                            value:"<?=$origen ?>",
-                                            hiddenValue:"<?=$idorigen ?>"
+                                            tipo:"",
+                                            impoexpo: "<?= Constantes::TRIANGULACION ?>",
+                                            value:"<?= $origen ?>",
+                                            hiddenValue:"<?= $idorigen ?>"
                                         }),
                                         new WidgetAgente({
                                             fieldLabel: 'Agente',
