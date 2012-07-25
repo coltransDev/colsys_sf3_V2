@@ -934,7 +934,7 @@ class reportesGerActions extends sfActions {
                             ->orderby("im.ca_fcharribo")
                             ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
                             
-                            if($this->idorigen){
+                            if($this->idorigen && $this->idorigen != '999-9999'){
                                 $q->addWhere("r.ca_origen = ?", $this->idorigen);
                             }
                             if($this->idagente){
