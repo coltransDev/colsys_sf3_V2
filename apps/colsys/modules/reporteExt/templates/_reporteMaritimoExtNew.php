@@ -122,10 +122,26 @@ if ( (($reporte->getCaModalidad() != 'LCL' || ($reporte->getCaModalidad() != 'LC
 	<td style="vertical-align:top"><b>HBL CONSIGNED TO:</b></td>
 	<td colspan="3"><?=$hijo?></td>
 </tr>
+<?
+if( $idtrafico=="PE-051" ){
+?>
+<tr>
+	<td><b>NOTIFY:</b></td>
+	<td colspan="3"><?=$hijo?></td>
+</tr>
+<?
+}
+else
+{
+
+?>
 <tr>
 	<td style="vertical-align:top"><b>NOTIFY:</b></td>
 	<td colspan="3"><?=$notify_h?></td>
 </tr>
+<?
+}
+?>
 <tr>
 	<td bgcolor="#CCCCCC" colspan="4"><center>
 			<b>SELLING RATES</b>
