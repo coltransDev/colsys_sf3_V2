@@ -24,6 +24,7 @@
             
 		</td>
 		<td width="167" >
+
 			<b>Dimensiones:</b> <br />
 			<?=$repexpo->getCaDimensiones()?>
 		</td>
@@ -32,9 +33,11 @@
 		<td colspan="2" >
 			<b>Valor de Carga (USD):</b><br />
             <?=$repexpo->getCaValorcarga()?>
+
 		</td>
 		<td colspan="2"  valign="top"><b>Agente Aduanero:</b><br />
             <?=$repexpo->getSia()?>
+
         </td>
 	</tr>
 

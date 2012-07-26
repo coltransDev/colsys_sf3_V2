@@ -2134,12 +2134,32 @@ class reportesNegActions extends sfActions
                 $reporte = $reporte->copiar(2);
                 break;
         }
-        
+        $empresa=$request->getParameter("liberacion");
+        $comercial="";
+        $cliente="";
+        switch($empresa)
+        {
+            case "coltrans.com.co":
+                $comercial="Comercial";
+                $concliente="1112";
+                break;
+            case "colotm.com":
+                $comercial="Comercial";
+                $concliente="1112";//magda pulido
+                break;
+            case "consolcargo.com":
+                $comercial="Consolcargo";
+                $concliente="2707";//john jairo castro de consolcargo
+                break;
+        }
         if($tipo!="full")
         {
             $reporte->setCaTiporep( 4 );
-            $reporte->setCaLogin("Consolcargo");
-
+            if($empresa=="consolcargo.com")
+            {
+                $reporte->setCaLogin($comercial);
+                $reporte->setCaIdconcliente($concliente);
+            }
             $reporte->setCaIdconsignar(1);
             $reporte->setCaIdbodega(1);
             $reporte->setCaIdconsignarmaster(0);
@@ -2149,7 +2169,6 @@ class reportesNegActions extends sfActions
             $reporte->setCaTransporte(Constantes::TERRESTRE);
 
             $reporte->setCaImpoexpo(Constantes::OTMDTA);
-            $reporte->setCaIdconcliente("2707");//john jairo castro de consolcargo
 
             $reporte->setCaContinuacionDest($request->getParameter("iddestino"));
             $texto="";
@@ -2182,8 +2201,11 @@ class reportesNegActions extends sfActions
             }
             else
             {
-                $errors["cliente"]="Debe seleccionar un destino";
-                $texto.="cliente <br>";
+                if($request->getParameter("liberacion")=="consolcargo")
+                {
+                    $errors["cliente"]="Debe seleccionar un cliente";
+                    $texto.="cliente <br>";
+                }
             }
 
 
@@ -2208,19 +2230,7 @@ class reportesNegActions extends sfActions
                 $texto.="Modalidad <br>";
             }
             
-            if($request->getParameter("ca_contenedor") )
-            {
-                $reporte->setCaContenedor($request->getParameter("ca_contenedor"));
-            }
-            else
-            {
-                if($reporte->setCaModalidad()==Constantes::FCL)
-                {
-                    $errors["ca_contenedor"]="Debe especificar el campo de contenedor";
-                    $texto.="Contenedor <br>";
-                }
-                
-            }
+            
             
             if(($request->getParameter("idlinea") && $request->getParameter("idlinea")!="") || $request->getParameter("idlinea")=="0" )
             {                
@@ -2596,6 +2606,19 @@ class reportesNegActions extends sfActions
             else
             {
                 $repOtm->setCaIdtransportador(null);
+            }
+            if($request->getParameter("contenedor")!="")
+            {
+                $repOtm->setCaContenedor($request->getParameter("contenedor"));
+            }
+            else
+            {
+                if($reporte->getCaModalidad()==Constantes::FCL)
+                {
+                    $errors["contenedor"]="Debe especificar el campo de contenedor";
+                    $texto.="Contenedor <br>";
+                }
+                
             }
             
             
@@ -3234,8 +3257,14 @@ class reportesNegActions extends sfActions
                     
                     $data["muelle"] =utf8_encode($repOtm->getInoDianDepositos()->getCaNombre());
                     $data["idmuelle"] =$repOtm->getCaMuelle();
+                    $data["contenedor"] =$repOtm->getCaContenedor();
                     //echo $repOtm->getCaLiberacion();
                     $data["liberacion_".$repOtm->getCaLiberacion()]= $repOtm->getCaLiberacion();
+ 
+                    if($repOtm->getCaLiberacion()=="coltrans.com.co")
+                    {
+                         $data["idcliente"]="";
+                    }                    
                     
                     //$data["idlinea"]=$repOtm->getCaIdtransportador();
                     //$data["linea"]=utf8_encode($repOtm->getIdsProveedor()->getIds()->getCaNombre());
@@ -5035,8 +5064,140 @@ class reportesNegActions extends sfActions
         $this->getRequest()->setParameter('idreporte',$idreporte);
         $html=sfContext::getInstance()->getController()->getPresentationFor( 'reportesNeg', 'htmlDTM');
         $html=  str_replace("#E1E1E1", "", $html);
+        
+        /*$html=  str_replace('<html>
+    <head>        
+        <style type="text/css" >
+
+            img.img{
+                border: 0px;
+            }
+
+
+
+            a.link:link {
+               text-decoration:none;
+               color:#0000FF;
+            }
+            a.link:active {
+               text-decoration:none;
+               color:#0000FF;
+            }
+            a.link:visited {
+               text-decoration: none;
+               color: #062A7D;
+            }
+
+            .entry {
+                border-bottom: 1px solid #DDDDDD;
+                clear:both;
+                padding: 0 0 10px;
+            }
+
+
+            .entry-even {
+                background-color:#F6F6F6;
+                border-color:#CCCCCC;
+                border-style:dotted;
+                border-width:1px ;
+                margin:12px 0 0;
+                padding:12px 12px 24px;
+                font-size: 12px;
+                font-family: arial, helvetica, sans-serif;
+
+            }
+
+            .entry-odd {
+                background-color:#FFFFFF;
+                border-color:#CCCCCC;
+                border-style:dotted;
+                border-width:1px ;
+                margin:12px 0 0;
+                padding:12px 12px 24px;
+                font-size: 12px;
+                font-family: arial, helvetica, sans-serif;
+
+            }
+
+            .entry-yellow {
+                background-color:#FFFFCC;
+                border-color:#CCCCCC;
+                border-style:dotted;
+                border-width:1px ;
+                margin:12px 0 0;
+                padding:12px 12px 24px;
+                font-size: 12px;
+                font-family: arial, helvetica, sans-serif;
+
+            }
+            .entry-date{
+                float: right;
+                color: #0464BB;
+            }
+
+            .vigencia{
+            font-size:9px;
+            font-family:Arial, Helvetica, sans-serif;
+        }
+
+        .htmlContent{
+            font-size:12px;
+            font-family:Arial, Helvetica, sans-serif;
+        }
+
+        table.tableList th{
+
+            border:solid 0.5px #EBEBEB;
+            padding:2px;
+            font-size:11px;
+            font-family:Arial, Helvetica, sans-serif;
+            font-weight:bold;
+            background-color:#F8F8F8;
+        }
+
+        table.tableList td{
+
+            border:solid 1px #EBEBEB;
+            padding:2px;
+            font-size:11px;
+            font-family:Arial, Helvetica, sans-serif;
+            border-collapse:collapse;
+
+
+        }
+        </style>
+    </head>
+    <body>
+    
+        <!-- GREY BORDER -->
+        <table width="100%" border="0" cellspacing="15" cellpadding="0" bgcolor=""><tr><td>
+                    <!-- WHITE BACKGROUND -->
+                    <table width="100%" border="0" cellspacing="15" cellpadding="0" bgcolor="#FFFFFF"><tr><td>
+                                <!-- MAIN CONTENT TABLE -->','', $html);
+        $html=  str_replace('</td></tr>
+                    </table>
+                </td></tr>
+            <!-- COPYRIGHT -->
+            <tr><td><font size="1" face="arial, helvetica, sans-serif" color="#666666"><!--&copy; --> </font></td></tr>
+        </table>
+
+    </body>
+</html>','', $html);
+        */
+        //$html=  str_replace('border="0"', 'border="1"', $html);
+        
+        //echo $html;
+        //exit;
         //$pdf->MultiCell(55, 10, $html, 0, 'L', false, 1, '', '', true, 0, true);
-        $pdf->writeHTML($html,false, false, false, false, '');
+        //$pdf->writeHTML($html,false, false, false, false, '');
+        //$pdf->writeHTML($html, true, false, true, false, '');
+        //$pdf->MultiCell(0, 0, $html, 0, 'J', true, 0, '', '', true, 0, true) ;
+//        $pdf->writeHTMLCell($w, $h, $x, $y, $html='', $border=0, $ln=0, $fill=false, $reseth=true, $align='', $autopadding=true);
+//        $pdf->writeHTMLCell(0, 0, '', '', $html, 'LRTB' , 1, 0, true, 'L', true);
+        //echo $html;
+        //exit;
+        $pdf->writeHTML($html, true, false, true, false, '');
+        
         $pdf->lastPage();
 
 
@@ -5053,11 +5214,11 @@ class reportesNegActions extends sfActions
         $this->repotm=$this->reporte->getRepOtm();
         if($this->reporte->getCaModalidad()=="FCL")
         {
-            $this->marcas=$this->repotm->getCaContenedor();
+            $this->marcas=$this->reporte->getCliente()->getCaCompania()."<br>Contenedor<br> ".$this->repotm->getCaContenedor()."<br>FCL-FCL";
         }
         else
         {
-            $this->marcas="Carga Suelta";
+            $this->marcas="Carga Suelta<br>LCL-LCL";
         }
         /*$this->datos=array();
           
@@ -5079,7 +5240,7 @@ class reportesNegActions extends sfActions
             $this->datos["consignatario"]["direccion"]=$this->reporte->getConsignatario()->getCaDireccion();      
         }*/
         
-        $this->setLayout("email");
+        $this->setLayout("none");
     }
     
     public function executePdfOTM(sfWebRequest $request) {

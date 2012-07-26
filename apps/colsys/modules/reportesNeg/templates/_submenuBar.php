@@ -153,11 +153,12 @@ switch ($action) {
             $button[$i]["link"] = "/reportesNeg/unificarReporte/id/" . $this->getRequestParameter("id") . "/impoexpo/" . $impoexpo . "/modo/" . $modo;
             $i++;
         }
+        
         if($tipo!=4)
         {
             $l="/traficos/verHistorialStatus/idreporte/" . $this->getRequestParameter("id") ;
         }
-        else
+        else   
             $l="/traficos/listaStatus/modo/otm?reporte=".$reporte->getCaConsecutivo();
         $button[$i]["name"] = "Status ";
         $button[$i]["tooltip"] = "Historial de Status";

@@ -736,9 +736,14 @@ Ext.extend(PanelConceptosFletes, Ext.grid.EditorGridPanel, {
                         }
                     }
                 }
+
+
+
             });
+            
         }
-    },
+    }
+    ,
     nuevoRecargo: function(){
         rec = this.ctxRecord;
         if( rec.data.tipo=="recargo"){
@@ -848,6 +853,8 @@ Ext.extend(PanelConceptosFletes, Ext.grid.EditorGridPanel, {
             '<div style="background-color: #E9CCE9">{0}</div>',
             value
         );
+
     }
 });
+
 </script>

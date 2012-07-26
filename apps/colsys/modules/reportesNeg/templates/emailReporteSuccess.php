@@ -25,11 +25,14 @@ $user = $sf_data->getRaw("user");
             <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>No:<?=$reporte->getCaConsecutivo()?></b></font><br />
             <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Agente:</b><?=$agente?></font><br />
             <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Trayecto:</b><?=$trayecto?></font><br />
-            <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Proveedor:</b><?=$proveedor?></font><br />
+                <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Proveedor:</b><?=$proveedor?></font><br />
             <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Cliente:</b><?=$reporte->getContacto()->getCliente()->getCaCompania().' - '.$reporte->getCaOrdenClie()?></font><br />
             <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Mercancia:</b><?=$reporte->getCaMercanciaDesc()?></font><br />
 
+
+
             <div ><font size="2" face="arial, helvetica, sans-serif" color="#000000"><?=$mensaje_comercial?></font></div>
+
 <?
             }
             else if($tipo=="CIERRE")
@@ -56,7 +59,7 @@ $user = $sf_data->getRaw("user");
          </td>
     </tr>
     <tr>
-        <td colspan="2" >
+        <td colspan="8" >
 <?
 if($user!==false)
 {

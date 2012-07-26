@@ -15,9 +15,11 @@ include_component("reportesNeg","cotizacionRecargosWindow", array("reporte"=>$re
 ?>
 <script type="text/javascript">
 
+
 PanelRecargos = function( config ){
 
     Ext.apply(this, config);
+
     this.dataRecargos = <?=json_encode(array("root"=>$recargos))?>;
 
     this.storeConceptos = new Ext.data.Store({
@@ -331,7 +333,7 @@ PanelRecargos = function( config ){
 				iconCls:'disk',
 				handler: this.guardarCambios
 			},
-            {
+                        {
 				text:'Borrar Todo',
 				iconCls:'delete',
 				handler: this.borrarTodos
@@ -342,7 +344,7 @@ PanelRecargos = function( config ){
             {
                 text: 'Recargar',
                 tooltip: 'Recarga los datos de la base de datos',
-                iconCls: 'refresh',
+                iconCls: 'refresh', 
                 scope: this,
                 handler: function(){
 					Ext.getCmp('panel-recargos').store.reload();
@@ -370,12 +372,15 @@ PanelRecargos = function( config ){
         var record = storePanelRecargos.getAt(rowIndex);
         var field = this.getDataIndex(colIndex);
 
+
         if( !record.data.iditem && field!="item" ){
             return false;
         }
+
         if( record.data.iditem && field=="item" ){
             return false;
-        }        
+        }
+        
         return Ext.grid.ColumnModel.prototype.isCellEditable.call(this, colIndex, rowIndex);
     }
 
@@ -408,12 +413,17 @@ Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
                   straplica=records[i].data.aplicacion;
                else
                   straplica=records[i].data.aplicacion[0];
+
                 records[i].data.aplicacion=straplica;
+                
                 changes[i]=records[i].data;
             }
         }
 
+
         var str= JSON.stringify(changes);
+
+
         if(str.length>5)
         {
             Ext.Ajax.request(
@@ -452,7 +462,8 @@ Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
                  }
             );
         }
-    },
+    }
+    ,
     borrarTodos : function(a,b){
         if( confirm("Desea continuar?") ){
             Ext.Ajax.request(
@@ -465,23 +476,32 @@ Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
                     tipo:"All-recargos",
                     tiporecargo:"1"
                 },
+
                 failure:function(response,options){
                     alert( response.responseText );
                     success = false;
                 },
+
                 success:function(response,options){
                     Ext.getCmp('panel-recargos').store.reload();
                 }
             });
         }
-    },
+    }
+    ,
     formatItem: function(value, p, record) {
+        
         return String.format(
             '<b>{0}</b>',
             value
         );
+        
     },
+
     onBeforeEdit: function(e){
+        
+
+
         if( e.field=="aplicacion" || e.field=="aplicacion_min" ){
             var dataAereo = [
                 <?
@@ -544,6 +564,8 @@ Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
             }
         }
     },
+
+    
     onValidateEdit : function(e){
         var rec = e.record;
         var ed = this.colModel.getCellEditor(e.column, e.row);
@@ -562,6 +584,7 @@ Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
                             if( recordsConceptos[j].data.iditem==r.data.idconcepto && recordsConceptos[j].data.idequipo==r.data.idequipo){
                                 existe=true;
                             }
+
                         }
                         if( !existe ){
 
@@ -588,6 +611,8 @@ Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
                                    detalles: '',
                                    orden: 'Z' 
                                 });
+
+
 
                                 rec.set("iditem", r.data.idconcepto);
                                 rec.set("idreg", '0');
@@ -616,6 +641,7 @@ Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
                                 rec.set("iditem", r.data.idconcepto);
                             }
                             e.value = r.data.concepto;
+
                             return true;
                         }else{
                             alert("Esta tratando de agregar un concepto que ya existe");
@@ -636,7 +662,9 @@ Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
                     }
                 });
          }
-    },
+    }
+    ,
+
     onRowcontextMenu: function(grid, index, e){
         rec = this.store.getAt(index);
 
@@ -660,6 +688,7 @@ Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
                                 activeRow = this.ctxRecord;
                                 this.ventanaObservaciones( this.ctxRecord );
                             }
+
                         }
                     }
                     ]
@@ -675,7 +704,9 @@ Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
         this.ctxRow = this.view.getRow(index);
         Ext.fly(this.ctxRow).addClass('x-node-ctx');
         this.menu.showAt(e.getXY());
-    },
+    }
+    ,
+
     eliminarItem : function(){
         if( this.ctxRecord && this.ctxRecord.data.iditem && confirm("Desea continuar?") ){
             if( this.ctxRecord.data.tipo=="concepto" ){
@@ -685,6 +716,8 @@ Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
                 var idconcepto = this.ctxRecord.data.idconcepto;
                 var idrecargo = this.ctxRecord.data.iditem;
             }
+
+
 
             var id = this.ctxRecord.id;
             var tipo = this.ctxRecord.data.tipo;
@@ -714,6 +747,7 @@ Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
                         storeConceptosFletes.remove(record);
                         if(record.data.tipo=="concepto"){
                             storeConceptosFletes.remove(record);
+                            
                             storeConceptosFletes.each( function( r ){                                
                                 if( r.data.tipo=="recargo" && r.data.idconcepto==record.data.iditem ){
                                     
@@ -724,14 +758,17 @@ Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
                     }
                 }
             });
+            
         }
-    },
+    }
+    ,
     onContextHide: function(){
         if(this.ctxRow){
             Ext.fly(this.ctxRow).removeClass('x-node-ctx');
             this.ctxRow = null;
         }
-    },
+    }
+    ,
     onDblClickHandler: function(e) {
        
         var btn = e.getTarget('.btnComentarios');
@@ -744,6 +781,7 @@ Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
             activeRow = record;
             this.ventanaObservaciones( record );
         }
+       
     },
     ventanaObservaciones : function( record ){
         var activeRow = record;

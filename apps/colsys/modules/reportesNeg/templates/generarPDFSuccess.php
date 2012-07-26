@@ -165,20 +165,27 @@ foreach( $idproveedores as $key=>$idprov ){
     $pdf->Ln(1);
 }
 
-$pdf->Ln(2);
-$contacto = $reporte->getContacto();
-$cliente = $contacto->getCliente();
-$pdf->SetWidths ( array (25, 25, 85, 25, 40 ) );
-$pdf->SetFills ( array (1, 0, 0, 0, 0 ) );
-$pdf->SetStyles ( array ("B", "B", "", "B", "" ) );
-$pdf->Row ( array ('Cliente:', 'Nombre:', $cliente->getCaCompania ()." Nit : ".$cliente->getCaIdalterno()."-".$cliente->getCaDigito(), $reporte->getCaOrdenClie () != "''" ? 'Orden:' : ' ', $reporte->getCaOrdenClie () != "''" ? $reporte->getCaOrdenClie () : " " ) );
-$pdf->SetWidths ( array (5, 20, 70, 25, 80 ) );
-$pdf->Row ( array ('', 'Contacto:', ($contacto->getNombre ()) , 'Dirección:', $cliente->getDireccion ()  ) );
-$pdf->SetWidths ( array (5, 20, 40, 15, 30, 18, 72 ) );
-$pdf->SetFills ( array (1, 0, 0, 0, 0, 0, 0 ) );
-$pdf->SetStyles ( array ("B", "B", "", "B", "", "B", "" ) );
-$pdf->Row ( array ('', 'Teléfono:', $cliente->getCaTelefonos (), 'Fax:', $cliente->getCaFax (), 'E-mail:', $contacto->getCaEmail () ) );
 
+
+$contacto = $reporte->getContacto();
+if($contacto)
+{
+    $pdf->Ln(2);
+    $contacto = Doctrine::getTable("Contacto")->find($reporte->getCaIdconcliente());
+
+    $cliente = $contacto->getCliente();    
+//$cliente = $reporte->getCliente();
+    $pdf->SetWidths ( array (25, 25, 85, 25, 40 ) );
+    $pdf->SetFills ( array (1, 0, 0, 0, 0 ) );
+    $pdf->SetStyles ( array ("B", "B", "", "B", "" ) );
+    $pdf->Row ( array ('Cliente:', 'Nombre:', $cliente->getCaCompania ()." Nit : ".$cliente->getCaIdalterno()."-".$cliente->getCaDigito(), $reporte->getCaOrdenClie () != "''" ? 'Orden:' : ' ', $reporte->getCaOrdenClie () != "''" ? $reporte->getCaOrdenClie () : " " ) );
+    $pdf->SetWidths ( array (5, 20, 70, 25, 80 ) );
+    $pdf->Row ( array ('', 'Contacto:', ($contacto->getNombre ()) , 'Dirección:', $cliente->getDireccion ()  ) );
+    $pdf->SetWidths ( array (5, 20, 40, 15, 30, 18, 72 ) );
+    $pdf->SetFills ( array (1, 0, 0, 0, 0, 0, 0 ) );
+    $pdf->SetStyles ( array ("B", "B", "", "B", "", "B", "" ) );
+    $pdf->Row ( array ('', 'Teléfono:', $cliente->getCaTelefonos (), 'Fax:', $cliente->getCaFax (), 'E-mail:', $contacto->getCaEmail () ) );
+}
 
 
 if($reporte->getCaIdclienteag()>0)

@@ -6,12 +6,6 @@
 */
 
 include_component("widgets", "widgetMoneda");
-/*if($user->getUserId()=="maquinche")
-        {
-            echo "aqui 11";
-        }
- */
- 
 ?>
 <script type="text/javascript">
     FormSegurosPanel = function( config ){

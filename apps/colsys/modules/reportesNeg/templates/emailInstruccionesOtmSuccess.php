@@ -12,7 +12,7 @@
         $cli_txt=($this->repotm!==false)?$reporte->getCliente()->getCaCompania():(($repotm->getCaIdimportador()>0)?$repotm->getImportador()->getCaNombre():$repotm->getCliente()->getCaNombre());
         //echo $repotm->getCliente()->getCaNombre();
         //$clin_txt=$repotm->getCliente()->getCaNombre();
-        $asunto  = "DOC OTM:".$reporte->getOrigen()->getCaCiudad()."/".$reporte->getDestino()->getCaCiudad()." ".$cli_txt." HBL No.".$repotm->getCaHbls(). " ETA ".$repotm->getCaFcharribo();
+        $asunto  = "DOCUMENTOS OTM:".substr($reporte->getCaOrigen(), 0, 3)."/".substr($reporte->getCaDestino(), 0, 3)." ".$cli_txt." HBL No.".$repotm->getCaHbls(). " ETA ".$repotm->getCaFcharribo();
         
         /*$mensaje ="\nCLIENTE :".$cli_txt;
         $mensaje .="\nHBL No. :".$repotm->getCaHbls();

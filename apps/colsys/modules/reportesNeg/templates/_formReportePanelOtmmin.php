@@ -190,7 +190,7 @@ include_component("reportesNeg", "checkListOtm");
                             border:false,
                             defaultType: 'textfield',
                             items: [
-                                new WidgetCiudad({fieldLabel: 'Puerto Cargue',
+                                new WidgetCiudad({fieldLabel: 'Puerto Cargue Embarque en el exterior',
                                                   id: 'origenimpo',
                                                   idciudad:"origenimpo",
                                                   hiddenName:"ca_origenimpo",
@@ -199,13 +199,13 @@ include_component("reportesNeg", "checkListOtm");
                                                   tabIndex:1
                                                 })
                                 ,
-                                new WidgetCiudad({fieldLabel: 'Ciudad Origen',                                                  
+                                new WidgetCiudad({fieldLabel: 'Ciudad Origen  Col',                                                  
                                                   id: 'origen',
                                                   idciudad:"origen",
                                                   hiddenName:"idorigen",
-                                                  tipo:"2",
-                                                  impoexpo:"impoexpo",
-                                                  tabIndex:1
+                                                  tipo:"3",
+                                                  impoexpo:'<?=Constantes::TRIANGULACION?>',
+                                                  tabIndex:2
                                                 }),
                                 {
                                     fieldLabel: "Manifiesto",
@@ -252,12 +252,12 @@ include_component("reportesNeg", "checkListOtm");
                                                     linkImpoexpo: "impoexpo",
                                                     tabIndex:3
                                                     }),
-                                new WidgetCiudad({fieldLabel: 'Ciudad Destino',                                                  
+                                new WidgetCiudad({fieldLabel: 'Ciudad Destino Col',                                                  
                                                   id: 'destino',
                                                   idciudad:"destino",
                                                   hiddenName:"iddestino",
-                                                  tipo:"2",
-                                                  impoexpo:"impoexpo",
+                                                  tipo:"3",
+                                                  impoexpo:'<?=Constantes::TRIANGULACION?>',
                                                   tabIndex:7
                                                 }),
                                 {
