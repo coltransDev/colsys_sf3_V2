@@ -14,7 +14,7 @@ $meses = $sf_data->getRaw("meses");
 <style>
     caption{font-weight: bold;font-size: 16px;text-align: center; padding: 5px }
 </style>
-<div align="center" >
+<div align="center">
     <br />
     <h3> ESTADISTICAS MARITIMO</h3>
     <br />
@@ -135,36 +135,28 @@ if ($opcion) {
         <br>
         <h3>Estadisticas de cargas  <br>
             <?
-            if ($fechainicial && $fechafinal) {
-                echo " fechas de Creacion referencia: " . $fechainicial . " - " . $fechafinal;
+            //if ($year!="" ) 
+                {
+                echo " Año: " . $year . " - " . ($year-1)."<br>";
             }
-            if ($fechaembinicial && $fechaembfinal) {
-                echo " fechas de Embarque: " . $fechaembinicial . " - " . $fechaembfinal;
+            echo " Meses: ";
+            if (count($nmes)>0 ) {                
+                foreach($nmes as $n)
+                {
+                    echo Utils::mesLargo($n)."-";
+                }
             }
-            if ($fechaarrinicial && $fechaarrfinal) {
-                echo " fechas de Arribo: " . $fechaarrinicial . " - " . $fechaarrfinal;
-            }
-            if ($idmodalidad) {
-                echo " modalidad: " . $idmodalidad . " - ";
-            }
-            if ($origen) {
-                echo " origen: " . $origen . " - ";
-            }
-            if ($destino) {
-                echo " destino: " . $destino . " - ";
-            }
-            if ($incoterms) {
-                echo "<br>Incoterms: " . implode(",", $incoterms) . " - ";
-            }
+            else
+                echo "Todos";
             ?>
         </h3>
         <br />
         <br />
     </div>
-    <table class="tableList" width="750px" border="1" id="mainTable" align="center">
+    <table class="tableList" width="600px" border="1" id="mainTable" align="center">
         <caption>PORCENTAJE DE TEUS POR PUERTO LCL-FCL <?=$year?></caption>
-        <tr><th rowspan="2">POD</th><th colspan="4"><?=$year?></th><th colspan="4"><?=$year-1?></th></tr>
-        <tr><th>20 Pies</th><th>40 Pies</th><th>TEU's</th><th>Porcentaje</th></tr>
+        <tr style ="text-align:center"><th rowspan="2">POD</th><th colspan="4" ><?=$year?></th><th colspan="4" ><?=$year-1?></th><th >Var</th></tr>
+        <tr><th>20 Pies</th><th>40 Pies</th><th>TEU's</th><th>%</th><th>20 Pies</th><th>40 Pies</th><th>TEU's</th><th>%</th><th><?=$year?>-<?=$year-1?></th></tr>
         <?
         $totalTeus=($grid["LCL"][$year]["totales"]["ca_teus"]+$grid["FCL"][$year]["totales"]["ca_teus"]);
         $totalTeusM=($grid["LCL"][$year-1]["totales"]["ca_teus"]+$grid["FCL"][$year-1]["totales"]["ca_teus"]);
@@ -175,11 +167,11 @@ if ($opcion) {
             $total=round((($g["LCL"][$year]["ca_teus"]+$g["FCL"][$year]["ca_teus"])/$totalTeus)*100,2);
             $data[$p]=$total;
             
-            $totalM=round((($g["LCL"][$year]["ca_teus"]+$g["FCL"][$year]["ca_teus"])/$totalTeus)*100,2);
+            $totalM=round((($g["LCL"][$year-1]["ca_teus"]+$g["FCL"][$year-1]["ca_teus"])/$totalTeusM)*100,2);
             $dataM[$p]=$totalM;
             ?>
-            <tr>
-                <td><?=$p?></td>
+            <tr align="right">
+                <td align="left"><?=$p?></td>
                 <td><?=($g["LCL"][$year]["ca_20pies"]+$g["FCL"][$year]["ca_20pies"])?></td>
                 <td><?=($g["LCL"][$year]["ca_40pies"]+$g["FCL"][$year]["ca_40pies"])?></td>
                 <td><?=($g["LCL"][$year]["ca_teus"]+$g["FCL"][$year]["ca_teus"])?></td>                
@@ -187,8 +179,10 @@ if ($opcion) {
                 
                 <td><?=($g["LCL"][$year-1]["ca_20pies"]+$g["FCL"][$year-1]["ca_20pies"])?></td>
                 <td><?=($g["LCL"][$year-1]["ca_40pies"]+$g["FCL"][$year-1]["ca_40pies"])?></td>
-                <td><?=($g["LCL"][$year-1]["ca_teus"]+$g["FCL"][$year-1]["ca_teus"])?></td>                
+                <td><?=($g["LCL"][$year-1]["ca_teus"]+$g["FCL"][$year-1]["ca_teus"])?></td>
                 <td><?=$totalM?>%</td>
+                
+                <td><?=($g["LCL"][$year]["ca_teus"]+$g["FCL"][$year]["ca_teus"])-($g["LCL"][$year-1]["ca_teus"]+$g["FCL"][$year-1]["ca_teus"]) ?></td>
             </tr>
             <?            
         }
@@ -196,19 +190,24 @@ if ($opcion) {
         foreach($puertos as $p )
         {
             $data1[]=$data[$p];
+            $data2[]=$dataM[$p];
         }   
         {
-            $dataJSON[]=array("name"=>"teus","data"=>$data1);
+            $dataJSON[]=array("name"=>($year),"data"=>$data1);
+            $dataJSON[]=array("name"=>($year-1),"data"=>$data2);
         }
         //$dataJSON=array("name"=>$p,"data"=>$data);
+        //print_r($dataJSON);
         ?>
         <tr>
             <td align="right" colspan="3">Total Teus</td>
             <td align="right"><?=$totalTeus?></td>
+            <td></td>
             <td align="right" colspan="3"></td>
             <td align="right"><?=$totalTeusM?></td>
+            <td></td>
         </tr>
-        <tr><td colpan="9"></td></tr>
+        <tr><td colspan="10"><div align="center" id="grafica1" ></div></td></tr>
     </table>
 
 <script type="text/javascript">
@@ -217,58 +216,7 @@ if ($opcion) {
 					renderTo: 'grafica1',
                     height: 400,
                     title:" ",
-                    titleY:"Porcentaje",
-                    xRotation:-30,
-					serieX: <?=json_encode($puertos)?>,
-				    series: <?=json_encode($dataJSON)?>
-				});	
-</script>
-
-<br><br>
-<table class="tableList" width="750px" border="1" id="mainTable" align="center">
-        <caption>PORCENTAJE DE TEUS POR PUERTO LCL-FCL <?=$year-1?></caption>
-        <tr><th>POD</th><th>20 Pies</th><th>40 Pies</th><th>TEU's</th><th>Porcentaje</th><td rowspan="7" width="45%"><div align="center" id="grafica10" ></div></td></tr>
-        <?
-        $totalTeus=($grid["LCL"][$year-1]["totales"]["ca_teus"]+$grid["FCL"][$year-1]["totales"]["ca_teus"]);
-        $data=array();
-        $data1=array();
-        $dataJSON=array();
-        foreach ($grid["destino"] as $p=> $g) {
-            $total=round((($g["LCL"][$year-1]["ca_teus"]+$g["FCL"][$year-1]["ca_teus"])/$totalTeus)*100,2);
-            $data[$p]=$total;
-            ?>
-            <tr>
-                <td><?=$p?></td>
-                <td><?=($g["LCL"][$year-1]["ca_20pies"]+$g["FCL"][$year-1]["ca_20pies"])?></td>
-                <td><?=($g["LCL"][$year-1]["ca_40pies"]+$g["FCL"][$year-1]["ca_40pies"])?></td>
-                <td><?=($g["LCL"][$year-1]["ca_teus"]+$g["FCL"][$year-1]["ca_teus"])?></td>
-                <td><?=$total?>%</td>
-            </tr>
-            <?            
-        }
-        //print_r($data);
-        foreach($puertos as $p )
-        {
-            $data1[]=$data[$p];
-        }   
-        {
-            $dataJSON[]=array("name"=>"teus","data"=>$data1);
-        }
-        //$dataJSON=array("name"=>$p,"data"=>$data);
-        ?>
-        <tr>
-            <td align="right" colspan="3">Total Teus</td>
-            <td align="right"><?=$totalTeus?></td>
-        </tr>
-    </table>
-
-<script type="text/javascript">
-    var chart1;
-        chart1=new ChartsColumn({
-					renderTo: 'grafica10',
-                    height: 400,
-                    title:" ",
-                    titleY:"Porcentaje",
+                    titleY:"%",
                     xRotation:-30,
 					serieX: <?=json_encode($puertos)?>,
 				    series: <?=json_encode($dataJSON)?>
@@ -280,41 +228,64 @@ if ($opcion) {
 
 
 
-<table class="tableList" width="750px" border="1" id="mainTable" align="center">
+<table class="tableList" width="600px" border="1" id="mainTable" align="center">
         <caption>PORCENTAJE DE TEUS POR PUERTO FCL <?=$year?></caption>
-        <tr><th>POD</th><th>20 Pies</th><th>40 Pies</th><th>TEU's</th><th>Porcentaje</th><td rowspan="7" width="45%"><div align="center" id="grafica2" ></div></td></tr>
+        <tr style ="text-align:center"><th rowspan="2">POD</th><th colspan="4" ><?=$year?></th><th colspan="4" ><?=$year-1?></th><th >var</th></tr>
+        <tr><th>20 Pies</th><th>40 Pies</th><th>TEU's</th><th>%</th><th>20 Pies</th><th>40 Pies</th><th>TEU's</th><th>%</th><th><?=$year?>-<?=$year-1?></th></tr>
         <?
-        $totalTeus=$grid["FCL"][$year]["totales"]["ca_teus"];
+        $totalTeus=($grid["FCL"][$year]["totales"]["ca_teus"]);
+        $totalTeusM=($grid["FCL"][$year-1]["totales"]["ca_teus"]);
         $data=array();
+        $data1=array();
+        $data2=array();
+        $dataM=array();
+        $dataJSON=array();
+        
         foreach ($grid["destino"] as $p=> $g) {
             $total=round((($g["FCL"][$year]["ca_teus"])/$totalTeus)*100,2);
             $data[$p]=$total;
+            
+            $totalM=round((($g["FCL"][$year-1]["ca_teus"])/$totalTeusM)*100,2);
+            $dataM[$p]=$totalM;
             ?>
-            <tr>
-                <td><?=$p?></td>
+            <tr align="right">
+                <td align="left"><?=$p?></td>
                 <td><?=($g["FCL"][$year]["ca_20pies"])?></td>
                 <td><?=($g["FCL"][$year]["ca_40pies"])?></td>
-                <td><?=($g["FCL"][$year]["ca_teus"])?></td>
+                <td><?=($g["FCL"][$year]["ca_teus"])?></td>                
                 <td><?=$total?>%</td>
+                
+                <td><?=($g["FCL"][$year-1]["ca_20pies"])?></td>
+                <td><?=($g["FCL"][$year-1]["ca_40pies"])?></td>
+                <td><?=($g["FCL"][$year-1]["ca_teus"])?></td>
+                <td><?=$totalM?>%</td>
+                
+                <td><?=($g["FCL"][$year]["ca_teus"])-($g["FCL"][$year-1]["ca_teus"]) ?></td>
             </tr>
-            <?
+            <?            
         }
         //print_r($data);
-        $data1=array();
-        $dataJSON=array();
         foreach($puertos as $p )
         {
             $data1[]=$data[$p];
-        }
+            $data2[]=$dataM[$p];
+        }   
         {
-            $dataJSON[]=array("name"=>"teus","data"=>$data1);
+            $dataJSON[]=array("name"=>($year),"data"=>$data1);
+            $dataJSON[]=array("name"=>($year-1),"data"=>$data2);
         }
         //$dataJSON=array("name"=>$p,"data"=>$data);
+        //print_r($dataJSON);
         ?>
         <tr>
             <td align="right" colspan="3">Total Teus</td>
             <td align="right"><?=$totalTeus?></td>
+            <td></td>
+            <td align="right" colspan="3"></td>
+            <td align="right"><?=$totalTeusM?></td>
+            <td></td>
         </tr>
+        <tr><td colspan="10"><div align="center" id="grafica2" ></div></td></tr>
     </table>
 
 <script type="text/javascript">
@@ -323,59 +294,7 @@ if ($opcion) {
 					renderTo: 'grafica2',
                     height: 400,
                     title:" ",
-                    titleY:"Porcentaje",
-                    xRotation:-30,
-					serieX: <?=json_encode($puertos)?>,
-				    series: <?=json_encode($dataJSON)?>
-				});	
-</script>
-
-<br><br>
-
-<table class="tableList" width="750px" border="1" id="mainTable" align="center">
-        <caption>PORCENTAJE DE TEUS POR PUERTO FCL <?=$year-1?></caption>
-        <tr><th>POD</th><th>20 Pies</th><th>40 Pies</th><th>TEU's</th><th>Porcentaje</th><td rowspan="7" width="45%"><div align="center" id="grafica20" ></div></td></tr>
-        <?
-        $totalTeus=$grid["FCL"][$year-1]["totales"]["ca_teus"];
-        $data=array();
-        foreach ($grid["destino"] as $p=> $g) {
-            $total=round((($g["FCL"][$year-1]["ca_teus"])/$totalTeus)*100,2);
-            $data[$p]=$total;
-            ?>
-            <tr>
-                <td><?=$p?></td>
-                <td><?=($g["FCL"][$year-1]["ca_20pies"])?></td>
-                <td><?=($g["FCL"][$year-1]["ca_40pies"])?></td>
-                <td><?=($g["FCL"][$year-1]["ca_teus"])?></td>
-                <td><?=$total?>%</td>
-            </tr>
-            <?
-        }
-        //print_r($data);
-        $data1=array();
-        $dataJSON=array();
-        foreach($puertos as $p )
-        {
-            $data1[]=$data[$p];
-        }
-        {
-            $dataJSON[]=array("name"=>"teus","data"=>$data1);
-        }
-        //$dataJSON=array("name"=>$p,"data"=>$data);
-        ?>
-        <tr>
-            <td align="right" colspan="3">Total Teus</td>
-            <td align="right"><?=$totalTeus?></td>
-        </tr>
-    </table>
-
-<script type="text/javascript">
-    var chart1;
-        chart1=new ChartsColumn({
-					renderTo: 'grafica20',
-                    height: 400,
-                    title:" ",
-                    titleY:"Porcentaje",
+                    titleY:"%",
                     xRotation:-30,
 					serieX: <?=json_encode($puertos)?>,
 				    series: <?=json_encode($dataJSON)?>
@@ -385,41 +304,64 @@ if ($opcion) {
 <hr><hr>
 <br><br>
 
-<table class="tableList" width="750px" border="1" id="mainTable" align="center">
-        <caption>PORCENTAJE DE TEUS POR PUERTO LCL <?=$year?></caption>
-        <tr><th>POD</th><th>20 Pies</th><th>40 Pies</th><th>TEU's</th><th>Porcentaje</th><td rowspan="7" width="45%"><div align="center" id="grafica3" ></div></td></tr>
+<table class="tableList" width="600px" border="1" id="mainTable" align="center">
+        <caption>PORCENTAJE DE TEUS POR PUERTO LCL </caption>
+        <tr style ="text-align:center"><th rowspan="2">POD</th><th colspan="4" ><?=$year?></th><th colspan="4" ><?=$year-1?></th><th >Var</th></tr>
+        <tr><th>20 Pies</th><th>40 Pies</th><th>TEU's</th><th>%</th><th>20 Pies</th><th>40 Pies</th><th>TEU's</th><th>%</th><th><?=$year?>-<?=$year-1?></th></tr>
         <?
-        $totalTeus=$grid["LCL"][$year]["totales"]["ca_teus"];
+        $totalTeus=($grid["LCL"][$year]["totales"]["ca_teus"]);
+        $totalTeusM=($grid["LCL"][$year-1]["totales"]["ca_teus"]);
         $data=array();
+        $data1=array();
+        $data2=array();
+        $dataM=array();
+        $dataJSON=array();
+        
         foreach ($grid["destino"] as $p=> $g) {
             $total=round((($g["LCL"][$year]["ca_teus"])/$totalTeus)*100,2);
             $data[$p]=$total;
+            
+            $totalM=round((($g["LCL"][$year-1]["ca_teus"])/$totalTeusM)*100,2);
+            $dataM[$p]=$totalM;
             ?>
-            <tr>
-                <td><?=$p?></td>
+            <tr align="right">
+                <td align="left"><?=$p?></td>
                 <td><?=($g["LCL"][$year]["ca_20pies"])?></td>
                 <td><?=($g["LCL"][$year]["ca_40pies"])?></td>
-                <td><?=($g["LCL"][$year]["ca_teus"])?></td>
+                <td><?=($g["LCL"][$year]["ca_teus"])?></td>                
                 <td><?=$total?>%</td>
+                
+                <td><?=($g["LCL"][$year-1]["ca_20pies"])?></td>
+                <td><?=($g["LCL"][$year-1]["ca_40pies"])?></td>
+                <td><?=($g["LCL"][$year-1]["ca_teus"])?></td>
+                <td><?=$totalM?>%</td>
+                
+                <td><?=($g["LCL"][$year]["ca_teus"])-($g["LCL"][$year-1]["ca_teus"]) ?></td>
             </tr>
             <?
         }
         //print_r($data);
-        $data1=array();
-        $dataJSON=array();
         foreach($puertos as $p )
         {
             $data1[]=$data[$p];
-        }
+            $data2[]=$dataM[$p];
+        }   
         {
-            $dataJSON[]=array("name"=>"teus","data"=>$data1);
+            $dataJSON[]=array("name"=>($year),"data"=>$data1);
+            $dataJSON[]=array("name"=>($year-1),"data"=>$data2);
         }
         //$dataJSON=array("name"=>$p,"data"=>$data);
+        //print_r($dataJSON);
         ?>
         <tr>
             <td align="right" colspan="3">Total Teus</td>
             <td align="right"><?=$totalTeus?></td>
+            <td></td>
+            <td align="right" colspan="3"></td>
+            <td align="right"><?=$totalTeusM?></td>
+            <td></td>
         </tr>
+        <tr><td colspan="10"><div align="center" id="grafica3" ></div></td></tr>
     </table>
 
 <script type="text/javascript">
@@ -428,58 +370,7 @@ if ($opcion) {
 					renderTo: 'grafica3',
                     height: 400,
                     title:" ",
-                    titleY:"Porcentaje",
-                    xRotation:-30,
-					serieX: <?=json_encode($puertos)?>,
-				    series: <?=json_encode($dataJSON)?>
-				});	
-</script>
-<br><br>
-
-    <table class="tableList" width="750px" border="1" id="mainTable" align="center">
-        <caption>PORCENTAJE DE TEUS POR PUERTO LCL <?=$year-1?></caption>
-        <tr><th>POD</th><th>20 Pies</th><th>40 Pies</th><th>TEU's</th><th>Porcentaje</th><td rowspan="7" width="45%"><div align="center" id="grafica30" ></div></td></tr>
-        <?
-        $totalTeus=$grid["LCL"][$year-1]["totales"]["ca_teus"];
-        $data=array();
-        foreach ($grid["destino"] as $p=> $g) {
-            $total=round((($g["LCL"][$year-1]["ca_teus"])/$totalTeus)*100,2);
-            $data[$p]=$total;
-            ?>
-            <tr>
-                <td><?=$p?></td>
-                <td><?=($g["LCL"][$year-1]["ca_20pies"])?></td>
-                <td><?=($g["LCL"][$year-1]["ca_40pies"])?></td>
-                <td><?=($g["LCL"][$year-1]["ca_teus"])?></td>
-                <td><?=$total?>%</td>
-            </tr>
-            <?
-        }
-        //print_r($data);
-        $data1=array();
-        $dataJSON=array();
-        foreach($puertos as $p )
-        {
-            $data1[]=$data[$p];
-        }
-        {
-            $dataJSON[]=array("name"=>"teus","data"=>$data1);
-        }
-        //$dataJSON=array("name"=>$p,"data"=>$data);
-        ?>
-        <tr>
-            <td align="right" colspan="3">Total Teus</td>
-            <td align="right"><?=$totalTeus?></td>
-        </tr>
-    </table>
-
-<script type="text/javascript">
-    var chart1;
-        chart1=new ChartsColumn({
-					renderTo: 'grafica30',
-                    height: 400,
-                    title:" ",
-                    titleY:"Porcentaje",
+                    titleY:"%",
                     xRotation:-30,
 					serieX: <?=json_encode($puertos)?>,
 				    series: <?=json_encode($dataJSON)?>
@@ -487,7 +378,7 @@ if ($opcion) {
 </script>
 <hr><hr>
 <br><br>
-<table class="tableList" width="750px" border="1" id="mainTable" align="center">
+<table class="tableList" width="600px" border="1" id="mainTable" align="center">
     <caption>FCL</caption>
 </table>
 
@@ -511,8 +402,8 @@ foreach($grid["origen"] as $pais=> $gridO)
             $teus1+=$gridO["FCL"][$year-1][$p]["ca_teus"];
             $data[$p]=$total;
             ?>
-            <tr>
-                <td><?=$p?></td>
+            <tr align="right">
+                <td align="left"><?=$p?></td>
                 <td><?=($g["ca_20pies"])?></td>
                 <td><?=($g["ca_40pies"])?></td>
                 <td><?=($g["ca_teus"])?></td>
@@ -535,7 +426,7 @@ foreach($grid["origen"] as $pais=> $gridO)
 }
  ?> 
 <hr><hr>
-<table class="tableList" width="750px" border="1" id="mainTable" align="center">
+<table class="tableList" width="600px" border="1" id="mainTable" align="center">
     <caption>LCL</caption>
 </table>
 
@@ -559,7 +450,7 @@ foreach($grid["origen"] as $pais=> $gridO)
             $data[$p]=$total;
             ?>
             <tr align="right">
-                <td ><?=$p?></td>
+                <td align="left" ><?=$p?></td>
                 <td ><?=($g["ca_volumen"])?></td>
                 <td ><?=($g["ca_20pies"])?></td>
                 <td ><?=($g["ca_40pies"])?></td>
@@ -589,7 +480,7 @@ foreach($grid["origen"] as $pais=> $gridO)
 ?>
 <hr><hr>
 
-<table class="tableList" width="750px" border="1" id="mainTable" align="center">
+<table class="tableList" width="600px" border="1" id="mainTable" align="center">
     <caption>Participacion FCL</caption>
 </table>
 
@@ -608,7 +499,7 @@ $dataLCL=array();
 ?>
 <table class="tableList" width="400px" border="1" id="mainTable" align="center">    
     <tr><th rowspan="2">Pais</th><th colspan="2"><?=$year?></th><th colspan="2"><?=$year-1?></th></tr>
-    <tr><th>TEU's</th><th>Porcentaje</th> <th>TEU's</th><th>Porcentaje</th></tr>
+    <tr><th>TEU's</th><th>%</th> <th>TEU's</th><th>%</th></tr>
         <?
         foreach($grid["origen"] as $pais=> $g)
         {
@@ -661,7 +552,7 @@ $dataLCL=array();
 </table>
 
 <!--
-<table class="tableList" width="750px" border="1" id="mainTable" align="center">    
+<table class="tableList" width="600px" border="1" id="mainTable" align="center">    
     <tr>
         <td><div align="center" id="grafica4" ></div></td>
     </tr>
@@ -697,7 +588,7 @@ var chart1;
 
 <hr><hr>
 
-<table class="tableList" width="750px" border="1" id="mainTable" align="center">
+<table class="tableList" width="600px" border="1" id="mainTable" align="center">
     <caption>Participacion LCL</caption>
 </table>
 
@@ -707,7 +598,7 @@ var chart1;
 ?>
 <table class="tableList" width="400px" border="1" id="mainTable" align="center">    
     <tr><th rowspan="2">Pais</th><th colspan="2"><?=$year?></th><th colspan="2"><?=$year-1?></th></tr>
-    <tr><th>TEU's</th><th>Porcentaje</th> <th>TEU's</th><th>Porcentaje</th></tr>
+    <tr><th>TEU's</th><th>%</th> <th>TEU's</th><th>%</th></tr>
         <?
         foreach($grid["origen"] as $pais=> $g)
         {
@@ -761,7 +652,7 @@ var chart1;
     </tr>
 </table>
 
-<!--<table class="tableList" width="750px" border="1" id="mainTable" align="center">    
+<!--<table class="tableList" width="600px" border="1" id="mainTable" align="center">    
     <tr>
         <td><div align="center" id="grafica5" ></div></td>
     </tr>
@@ -851,17 +742,20 @@ foreach($dataLCL1_1 as $pais=>$d)
 
 <hr><hr>
 
-<table class="tableList" width="750px" border="1" id="mainTable" align="center">
+<table class="tableList" width="600px" border="1" id="mainTable" align="center">
     <caption>Ranking FCL</caption>
 </table>
-<table class="tableList" width="500px" border="1" id="mainTable" align="center">
+<table class="tableList" width="400px" border="1" id="mainTable" align="center">
     <tr><td width="50%"><table>
-    <tr><th>Pais</th><th>TEU's</th><th>Porcentaje</th></tr> 
+    <tr><th colspan="3"><?=$year?></th></tr>
+    <tr><th>Pos</th><th>Pais</th><th>TEU's</th><th>%</th></tr> 
 <?
+$i=0;
 foreach($dataFCLTop as $pais=>$d)
 {
 ?>
     <tr align="right" >
+        <td><?=++$i?></td>
         <td ><?=utf8_decode($pais)?></td>
         <td ><?=($d)?></td>
         <td ><?=round((($d/$totalTeusFCL[$year])*100),2)?>%</td>                
@@ -871,12 +765,15 @@ foreach($dataFCLTop as $pais=>$d)
 ?>
             </table></td>
     <td width="50%"><table>
-    <tr><th>Pais</th><th>TEU's</th><th>Porcentaje</th></tr> 
+    <tr><th colspan="3"><?=$year-1?></th></tr>
+    <tr><th>Pos</th><th>Pais</th><th>TEU's</th><th>%</th></tr> 
 <?
+$i=0;
 foreach($dataFCLTop_1 as $pais=>$d)
 {
 ?>
      <tr align="right" >
+         <td><?=++$i?></td>
         <td ><?=utf8_decode($pais)?></td>
         <td ><?=($d)?></td>
         <td ><?=round((($d/$totalTeusFCL[$year-1])*100),2)?>%</td>                
@@ -891,17 +788,20 @@ foreach($dataFCLTop_1 as $pais=>$d)
 
 <hr><hr>
 
-<table class="tableList" width="750px" border="1" id="mainTable" align="center">
+<table class="tableList" width="600px" border="1" id="mainTable" align="center">
     <caption>Ranking LCL</caption>
 </table>
-<table class="tableList" width="500px" border="1" id="mainTable" align="center">
+<table class="tableList" width="400px" border="1" id="mainTable" align="center">
     <tr><td width="50%"><table>
-    <tr><th>Pais</th><th>TEU's</th><th>Porcentaje</th></tr> 
+    <tr><th colspan="3"><?=$year?></th></tr>
+    <tr><th>Pos</th><th>Pais</th><th>TEU's</th><th>%</th></tr> 
 <?
+$i=0;
 foreach($dataLCLTop as $pais=>$d)
 {
 ?>
     <tr align="right" >
+        <td><?=++$i?></td>
         <td ><?=utf8_decode($pais)?></td>
         <td ><?=($d)?></td>
         <td ><?=round((($d/$totalTeusLCL[$year])*100),2)?>%</td>                
@@ -911,12 +811,15 @@ foreach($dataLCLTop as $pais=>$d)
 ?>
             </table></td>
     <td width="50%"><table>
-    <tr><th>Pais</th><th>TEU's</th><th>Porcentaje</th></tr> 
+    <tr><th colspan="3"><?=$year-1?></th></tr>
+    <tr><th>Pos</th><th>Pais</th><th>TEU's</th><th>%</th></tr> 
 <?
+$i=0;
 foreach($dataLCLTop_1 as $pais=>$d)
 {
 ?>
      <tr align="right" >
+         <td><?=++$i?></td>
         <td ><?=utf8_decode($pais)?></td>
         <td ><?=($d)?></td>
         <td ><?=round((($d/$totalTeusLCL[$year-1])*100),2)?>%</td>                
