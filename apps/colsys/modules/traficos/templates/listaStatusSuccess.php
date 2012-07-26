@@ -76,7 +76,6 @@ use_helper("MimeType");
 		});	
 	}
 	
-	
 	function eliminarArchivos( idreporte, file ){
 		if( confirm("Esta seguro que desea eliminar este archivo?") ){
 			Ext.Ajax.request({
@@ -149,9 +148,7 @@ use_helper("MimeType");
 					echo "CCNE";
 				}else{								
 					echo "Proveedor";
-					
 				}
-				
 			?>
 		</div></th>
         <th width="10%" scope="col"><div align="left">Orden </div></th>
@@ -160,10 +157,15 @@ use_helper("MimeType");
 	<?
 	$ultReporte = null;
 	$numReportes = 0;
-	foreach( $reportes as $reporte ){		
-		if( !$reporte->esUltimaVersion() ){
+    $reportetmp="";
+	foreach( $reportes as $reporte ){
+	/*	if( !$reporte->esUltimaVersion($modo) ){
 			continue;
-		}	
+		}
+     */
+        if($reportetmp==$reporte->getCaConsecutivo())
+            continue;
+        $reportetmp=$reporte->getCaConsecutivo();
 		$numReportes++;		
 		$ultReporte=  $reporte->getCaIdreporte();
 		$class= $reporte->getColorStatus();		
