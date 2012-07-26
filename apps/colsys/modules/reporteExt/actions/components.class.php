@@ -22,7 +22,7 @@ class reporteExtComponents extends sfComponents
         
 
         $idtrafico = $this->getUser()->getIdtrafico();
-
+        echo $idtrafico;
         
 
 		$this->tarifas = Doctrine::getTable("RepTarifa")
@@ -142,7 +142,7 @@ class reporteExtComponents extends sfComponents
         /*
          * Notify
          */
-        if( $idtrafico=="PE-051" ){
+        if( $idtrafico=="PE-05125" ){
             $idempresa=sfConfig::get('app_branding_idempresa');
             $cliente = Doctrine::getTable("Cliente")->find( $idempresa );
 
