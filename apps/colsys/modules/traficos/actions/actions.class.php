@@ -76,14 +76,22 @@ class traficosActions extends sfActions
 	 * permite ver el estado de cada  carga asi como las notificaciones avisos, status etc
 	 * @author: Andres Botero
 	 */
-	public function executeListaStatus(){
+	public function executeListaStatus($request){
 		$this->idCliente = $this->getRequestParameter("idcliente");
 				
 		$this->modo = $this->getRequestParameter("modo");
         
         $consecutivo = $this->getRequestParameter("reporte");
+        //echo "::".$this->getRequestParameter("modo");
         if( $this->getRequestParameter("reporte") ){
-            $reporte = ReporteTable::retrieveByConsecutivo( $consecutivo );
+            
+            if($this->modo =="maritimo" )
+            {
+                //echo $modo;
+                $tiporep=" AND r.ca_tiporep IN (1,2,3) ";
+                //print_r($tiporep);
+            }            
+            $reporte = ReporteTable::retrieveByConsecutivo( $consecutivo,$tiporep );
 			$this->forward404Unless( $reporte );
 
             if($this->modo=="otm")
@@ -180,7 +188,7 @@ class traficosActions extends sfActions
 			if( !$flag ){
 				$this->reportes[] = $reporte;
 			}
-		}        
+		}
 		//$this->getUser()->clearFiles();	
 	}
 	
@@ -904,9 +912,8 @@ class traficosActions extends sfActions
 	 */
 	public function executeCorreoTraficos(){
 		
-		
 		$idCliente = $this->getRequestParameter("idcliente");
-		$this->idCliente = $idCliente;		
+		$this->idCliente = $idCliente;
 		$this->modo = $this->getRequestParameter("modo");
 		
 		$this->consecutivo = $this->getRequestParameter("reporte");
@@ -1071,10 +1078,19 @@ class traficosActions extends sfActions
         
         $this->repotm = $this->reporte->getRepOtm();
         $this->firmaotm=false;
-        
-        if($this->getUser()->getSucursal()=="OBO")
+        $this->company="";
+        if($this->repotm)
         {
-            $this->firmaotm=true;
+                if($this->getUser()->getSucursal()=="OBO" )
+                {
+                    $this->firmaotm=true;
+                    $this->company=($this->repotm->getCaLiberacion()!="")?$this->repotm->getCaLiberacion():(($this->reporte->getCaTiporep()!="4")?"coltrans.com.co":"consolcargo.com");
+                }
+        }
+        else
+        {
+            if($this->getUser()->getSucursal()=="OBO" )
+                $this->company="coltrans.com.co";
         }
 			
 		$this->setTemplate("emailDefaultStatus");	
