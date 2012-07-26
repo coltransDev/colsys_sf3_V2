@@ -24,7 +24,7 @@ class ReporteTable extends Doctrine_Table
 	*/
 	public static function getReportesActivos( $idCliente , $impoexpo, $transporte=null,  $query=false, $order="", $historial=false ){
         $q = Doctrine_Query::create()
-                            ->from("Reporte r")
+                            ->from("Reporte r")                            
                             ->select("r.*, o.*, d.*, t.*")
                             ->innerJoin("r.Contacto c")
                             ->innerJoin("c.Cliente cl")
@@ -32,19 +32,24 @@ class ReporteTable extends Doctrine_Table
                             ->innerJoin("r.Destino d")
                             ->leftJoin("r.TrackingEtapa t")
                             ->where("cl.ca_idgrupo = ? OR cl.ca_idcliente = ? ", array($idCliente, $idCliente))
-                            ->addWhere("r.ca_usuanulado IS NULL");
-
+                            ->addWhere("r.ca_usuanulado IS NULL ");
 
         if( $impoexpo==Constantes::IMPO ){
-            $q->addWhere("r.ca_impoexpo = ? OR r.ca_impoexpo = ?", array(Constantes::IMPO, Constantes::TRIANGULACION));
+            $q->addWhere("r.ca_impoexpo = ? OR r.ca_impoexpo = ? OR r.ca_impoexpo = ?", array(Constantes::IMPO, Constantes::TRIANGULACION, Constantes::OTMDTA));
         }else{
             $q->addWhere("r.ca_impoexpo = ? ", $impoexpo );
         }
 
         if( $transporte  ){
-            $q->addWhere("r.ca_transporte = ? ", $transporte );
+            if($transporte==Constantes::MARITIMO)
+            {
+                $tmp="maritimo";
+                $q->addWhere("r.ca_tiporep IN (1,2,3)");
+                $q->addWhere(" r.ca_transporte = ? or r.ca_transporte = ? ",array(Constantes::MARITIMO,Constantes::TERRESTRE));
+            }
+            else
+                $q->addWhere("r.ca_transporte = ? ", $transporte );
         }
-
 		
         $cliente = Doctrine::getTable("Cliente")->find( $idCliente );
         if( !$cliente ){
@@ -95,6 +100,9 @@ class ReporteTable extends Doctrine_Table
                 $q->addOrderBy("p.ca_nombre");*/
                 $q->addOrderBy("r.ca_idproveedor");
                 $q->addOrderBy("r.ca_orden_clie");
+                
+                $q->addOrderBy("r.ca_consecutivo");
+                $q->addOrderBy("r.ca_version desc");
                 $defaultOrder = true;
 				break;
 
@@ -104,12 +112,13 @@ class ReporteTable extends Doctrine_Table
 		if( $query ){
 			return $q;
 		}else{
+            //echo $q->getSqlQuery();
             $reps = $q->execute();
             
             $k=count($reps);
             $results = array();
             for( $i=0; $i<$k; $i++){
-                if( $reps[$i]->esUltimaVersion() ){
+                if( $reps[$i]->esUltimaVersion($tmp) ){
                     $results[] = $reps[$i];
                 }
             } 
@@ -169,18 +178,21 @@ class ReporteTable extends Doctrine_Table
 	
 
 
-	public static function retrieveByConsecutivo( $consecutivo ){
+	public static function retrieveByConsecutivo( $consecutivo,$where='') {
 
-        $reporte = Doctrine::getTable("Reporte")
+        //$tiporep
+        
+        $q = Doctrine::getTable("Reporte")
                             ->createQuery("r")
-                            ->where("r.ca_consecutivo = ?", $consecutivo )
+                            ->where("1=1 AND r.ca_consecutivo = ? $where", $consecutivo )
                             ->addWhere("r.ca_fchanulado IS NULL")
-                            ->addOrderBy("r.ca_version DESC")
-                            ->limit(1)
-                            ->fetchOne();
-		
+                            ->addOrderBy("r.ca_version DESC")                
+                            ->limit(1);
+        if(count($tiporep)>0)
+            $q->whereIn("ca_tiporep" , $tiporep );
+		$reporte=$q->fetchOne();
+        
 		return $reporte;
-		
 	}
 	
 }

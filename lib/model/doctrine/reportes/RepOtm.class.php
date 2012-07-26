@@ -11,6 +11,34 @@
  * @version    SVN: $Id: Builder.php 6820 2009-11-30 17:27:49Z jwage $
  */
 class RepOtm extends BaseRepOtm
-{    
+{
+    private $reporte = null;
+    
+    
+    public function getConsecutivoDtm() {
+        
+        if(trim($this->getCaConsecutivo())=="")
+        {        
+            if($this->reporte==null)
+            {
+                $this->reporte=$this->getReporte();
+            }
+            if($this->reporte->getCaOrigen()=="CTG-0005")
+            {
+                $sql="select ('01-".date("my")."-'||lpad( COALESCE(((max(substring(ca_consecutivo from 9 for 12)::integer)+1)::text),'1'), 4, '0')) consecutivo   from tb_repotm 
+                where substring(ca_consecutivo from 1 for 2)::integer = 1";
 
+            }else  if($this->reporte->getCaOrigen()=="BUN-0002")
+            {
+                $sql="select ('02-".date("my")."-'||lpad((max(substring(ca_consecutivo from 9 for 12)::integer)+1)::text, 4, '0')) consecutivo   from tb_repotm 
+                where substring(ca_consecutivo from 1 for 2)::integer = 2";            
+            }
+            $con = Doctrine_Manager::getInstance()->connection();
+            $st = $con->execute($sql);
+            $data = $st->fetchAll();
+            return $data[0]["consecutivo"];
+        }
+        else
+            return $this->getCaConsecutivo();
+    }
 }

@@ -217,10 +217,26 @@ class RepStatus extends BaseRepStatus
 
 		$email->setCaIdcaso( $this->getCaIdreporte() );
 
-
+        $reporte = $this->getUltReporte();
+        $user1 = Doctrine::getTable("Usuario")->find( $user->getUserId() );
+        
+        if($user->getSucursal()=="OBO")
+        {
+            $host="coltrans.com.co";
+            $repotm=$reporte->getRepOtm();
+            if(!$repotm)
+                $repotm= new RepOtm();
+            
+            if($repotm->getCaLiberacion()=="" )
+                $options["from"]=$user1->getProperty("alias")."@".$host;
+            else 
+            {
+                $options["from"]=$user1->getProperty("alias")."@".$repotm->getCaLiberacion();
+            }            
+        }
 		if(isset($options["from"]) && $options["from"] ){
 			$email->setCaFrom( $options["from"] );
-		}else{
+		}else{            
 			$email->setCaFrom( $user->getEmail() );
 		}
 		$email->setCaFromname( $user->getNombre() );
@@ -228,8 +244,9 @@ class RepStatus extends BaseRepStatus
 		if( isset( $options['readreceipt'] ) && $options['readreceipt'] ){
 			$email->setCaReadReceipt( true );
 		}
-
-		$email->setCaReplyto( $user->getEmail() );
+        
+        
+		//$email->setCaReplyto( $user->getEmail() );
 
 		foreach( $addresses as $recip ){
 			$recip = str_replace(" ", "", $recip );
@@ -245,7 +262,7 @@ class RepStatus extends BaseRepStatus
 			}
 		}
 
-		$reporte = $this->getUltReporte();
+		//$reporte = $this->getUltReporte();
 
 		if ( $reporte->getCaSeguro()=="Sí" ) {
 			$email->addCc( "seguros@coltrans.com.co" );
@@ -262,10 +279,12 @@ class RepStatus extends BaseRepStatus
 
 		if(isset($options["from"]) && $options["from"] ){
 			$email->addCc( $options["from"] );
+            $email->setCaReplyto( $options["from"] );
 		}else{
 			$email->addCc( $user->getEmail() );
+            $email->setCaReplyto( $user->getEmail() );
 		}
-		$asunto = $this->getIntroAsunto();        
+		$asunto = $this->getIntroAsunto();
 		if(isset($options["subject"]) && $options["subject"] ){
             if($options["subject"]=="Notificación de Desconsolidación id: ".$reporte->getCaConsecutivo())
             {
@@ -275,7 +294,6 @@ class RepStatus extends BaseRepStatus
 		}else{
 			$asunto.= $this->getAsunto();
 		}
-		
 
 		if( $attachments ){
 			$email->setCaAttachment( implode( "|", $attachments ) );

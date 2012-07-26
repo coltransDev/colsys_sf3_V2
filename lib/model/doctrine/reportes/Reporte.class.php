@@ -53,7 +53,22 @@ class Reporte extends BaseReporte {
         }
         else
         {
-            if($tipo!='1' && $tipo!='2')//contacto No fijo
+           
+            if($tipo!='1')//contacto No fijo
+                return Doctrine::getTable("Contacto")->find($this->getCaIdconcliente());
+            else if($tipo=='1')//CONTACTO FIJO
+            {
+                if(!$this->cliente)
+                     $this->getCliente();   
+                return  Doctrine::getTable("Contacto")
+                                       ->createQuery("c")
+                                       ->addWhere("c.ca_idcliente = ?", $this->cliente->getCaIdcliente() )
+                                       ->addWhere("ca_cargo != ?", 'Extrabajador')
+                                       ->addWhere("ca_fijo = ?", true)
+                                       ->execute();
+            }
+           
+            /*if($tipo!='1' && $tipo!='2')//contacto No fijo
                 return Doctrine::getTable("Contacto")->find($this->getCaIdconcliente());
             else if($tipo=='1')//CONTACTO FIJO
             {
@@ -73,20 +88,21 @@ class Reporte extends BaseReporte {
                        ->whereIn("c.ca_login",array("maquinche","alramirez","catalero","abotero"))
                        ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
                        ->execute();
-            }
+            }*/
         }
     }    
     /*
      * Retorna el objeto cliente asociado al contacto del reporte
      * @author Andres Botero
      */
-    public function getCliente() {
+    public function getCliente($opcion) {
         if(!$this->cliente)
         {
-            if($this->getCaTiporep()==4)
+            if($this->getCaTiporep()==4 && ($this->getRepOtm()->getCaIdimportador()!="" || $this->getRepOtm()->getCaIdcliente() ) )
             {
                 $this->cliente = new Cliente();
-                $tercero=Doctrine::getTable("Tercero")->find($this->getRepOtm()->getCaIdcliente());
+                $idt=($opcion=="continuacion")?$this->getRepOtm()->getCaIdimportador():$this->getRepOtm()->getCaIdcliente();
+                $tercero=Doctrine::getTable("Tercero")->find($idt);
                 if($tercero)
                 {
                     $this->cliente->setCaIdcliente($tercero->getCaIdtercero());
@@ -117,15 +133,19 @@ class Reporte extends BaseReporte {
      * Retorna verdadero si es la ultima version del reporte de lo contrario retorna falso
      * Author: Andres Botero
      */
-    public function esUltimaVersion() {
-        
+    public function esUltimaVersion($modo='') {
         if( $this->esUltimaVersion===null ){
-            $version = $this->getCaVersion();
-
+            $add="";
+            $version = $this->getCaVersion();            
+            if($modo=="maritimo")
+            {
+                $add="and ca_tiporep in (1,2,3)";
+                //echo $this->getCaConsecutivo()."::".$add;
+            }
             $count = Doctrine::getTable("Reporte")
                             ->createQuery("r")
                             ->select("count(*) as count")
-                            ->where("r.ca_consecutivo = ? AND r.ca_version> ? AND r.ca_fchanulado IS NULL", array($this->getCaConsecutivo(), $version))
+                            ->where("r.ca_consecutivo = ? AND r.ca_version> ? AND r.ca_fchanulado IS NULL ". $add, array($this->getCaConsecutivo(), $version))
                             ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)
                             ->execute();
 
@@ -168,7 +188,7 @@ class Reporte extends BaseReporte {
 
     public function getProveedores() {
 
-        if ($this->getCaImpoexpo() == Constantes::IMPO || $this->getCaImpoexpo() == Constantes::TRIANGULACION || $this->getCaImpoexpo() == "OTM/DTA") {
+        if ($this->getCaImpoexpo() == Constantes::IMPO || $this->getCaImpoexpo() == Constantes::TRIANGULACION || $this->getCaImpoexpo() == Constantes::OTMDTA1 || $this->getCaImpoexpo() == Constantes::OTMDTA) {
             $provId = $this->getCaIdproveedor();
             if ($provId) {
                 $provId = explode("|", $provId);
@@ -187,7 +207,7 @@ class Reporte extends BaseReporte {
      * Author: Andres Botero
      */
 
-    public function getProveedoresStr() {
+    public function getProveedoresStr($dir=false) {
 
         if ($this->proveedoresStr == null) {
             $proveedoresStr = "";
@@ -197,7 +217,7 @@ class Reporte extends BaseReporte {
                     if ($proveedoresStr) {
                         $proveedoresStr.=" - ";
                     }
-                    $proveedoresStr.= $proveedor->getCaNombre();
+                    $proveedoresStr.= $proveedor->getCaNombre().(($dir!=false)?"<br>".htmlentities($proveedor->getCaDireccion()):"");
                 }
             }
             $this->proveedoresStr = $proveedoresStr;
@@ -601,7 +621,6 @@ class Reporte extends BaseReporte {
 
     public function getConsignar() {
         if ($this->getCaImpoexpo() == constantes::EXPO && $this->getCaIdconsignar()>0) {
-
             
             if($this->getCaIdconsignar()<=4)
             {
@@ -1087,14 +1106,14 @@ class Reporte extends BaseReporte {
                 $newCosto = $costo->copy();
                 $newCosto->setCaIdcosto($costo->getCaIdcosto());
                 $newCosto->setCaIdreporte($reporte->getCaIdreporte());
-                $newCosto->save();
+                $newCosto->save($conn);
             }
 
             if ($this->getCaImpoexpo() == Constantes::EXPO) {
                 $repExpo = $this->getRepExpo();
                 $repExpoNew = $repExpo->copy();
                 $repExpoNew->setCaIdreporte($reporte->getCaIdreporte());
-                $repExpoNew->save();
+                $repExpoNew->save($conn);
             }
 
             if ($this->getCaColmas() == "Sí") {
@@ -1108,17 +1127,104 @@ class Reporte extends BaseReporte {
                 $repSeguro = $this->getRepSeguro();
                 $repSeguroNew = $repSeguro->copy();
                 $repSeguroNew->setCaIdreporte($reporte->getCaIdreporte());
-                $repSeguroNew->save();
+                $repSeguroNew->save($conn);
             }
             
-            if ($this->getCaTiporep() == "4") {
+            if ($this->getCaTiporep() == "4" ) {
+                
+            $status = $this->getUltimoStatus();
+            if(!$status)
+                $status=new RepStatus();
+            
+            $house= $this->getInoClientesSea();
+            if(!$house)
+                $house=new InoClientesSea();
+            $master=$house->getInoMaestraSea();
+            
+            if(!$master)
+                $master=new InoMaestraSea();
+            
                 $repOtm = $this->getRepOtm();
                 if($repOtm)
                 {
                     $repOtmNew = $repOtm->copy();
                     $repOtmNew->setCaIdreporte($reporte->getCaIdreporte());
-                    $repOtmNew->save();
                 }
+                else
+                {
+                    $repOtmNew = new RepOtm();
+                    $repOtmNew->setCaIdreporte($reporte->getCaIdreporte());
+                    
+                }
+                $volumen = explode("|", $status->getCaVolumen());
+                if($repOtmNew->getCaVolumen()=="")
+                {
+                    $repOtmNew->setCaVolumen($volumen[0] ? $volumen[0] : 0);
+                }
+
+                $piezas = explode("|", $status->getCaPiezas());
+                if($repOtmNew->getCaNumpiezas()=="")
+                {
+                    $repOtmNew->setCaNumpiezas( $piezas[0] ? $piezas[0] : 0 );
+                }
+                
+                if($repOtmNew->getCaNumpiezasun()=="")
+                {
+                    $repOtmNew->setCaNumpiezasun( $piezas[1] ? $piezas[1] : "" );
+                }
+                
+                $peso = explode("|", $status->getCaPeso());
+                if($repOtmNew->getCaPeso()=="")
+                {
+                    $repOtmNew->setCaPeso($peso[0] ? $peso[0] : 0);
+                }
+                
+                if($repOtmNew->getCaOrigenimpo()=="")
+                {
+                    $repOtmNew->setCaOrigenimpo($this->getCaOrigen());
+                }
+                
+                if($repOtmNew->getCaHbls()=="")
+                {
+                    $repOtmNew->setCaHbls($house->getCaHbls());
+                }
+                
+                if($repOtmNew->getCaFcharribo()=="")
+                {
+                   $repOtmNew->setCaFcharribo($status->getCaFchllegada()) ;
+                }
+                
+                if($repOtmNew->getCaFchdoctransporte()=="")
+                {
+                    $repOtmNew->setCaFchdoctransporte($house->getCaFchhbls());
+                }
+
+                if($repOtmNew->getCaMotonave()=="")
+                {
+                    $repOtmNew->setCaMotonave($status->getCaIdnave());
+                }
+                
+                if($repOtmNew->getCaReferencia()=="")
+                {
+                    $repOtmNew->setCaReferencia($house->getCaReferencia());
+                }
+
+                if($repOtmNew->getCaLiberacion()=="")
+                {
+                    $repOtmNew->setCaLiberacion("coltrans.com.co");
+                }
+                
+                if($repOtmNew->getCaManifiesto()=="")
+                {
+                    $repOtmNew->setCaManifiesto($master->getCaFchregistroadu());
+                }
+                
+                if($repOtmNew->getCaMuelle()=="")
+                {
+                    $repOtmNew->setCaMuelle($master->getCaMuelle());
+                }
+
+                $repOtmNew->save($conn);
             }
             $conn->commit();
         } catch (Exception $e) {
