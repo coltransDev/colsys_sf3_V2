@@ -26,10 +26,10 @@ class Constantes{
 
     const FCL = "FCL";
     const LCL = "LCL";
+    const COLOADING = "COLOADING";
     const ADUANAFCL = "ADUANA-FCL";
     const ADUANALCL = "ADUANA-LCL";
     const COURIER = "COURIER";
-
 
     const FLETE = "Flete";
 	const RECARGO_LOCAL = "Recargo Local";
