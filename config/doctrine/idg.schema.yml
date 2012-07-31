@@ -11,7 +11,8 @@ Idg:
       primary: true
       autoincrement: true    
     ca_nombre: string(255)
-    ca_iddepartamento: integer    
+    ca_iddepartamento: integer
+    ca_tipo: string(12)
     ca_usucreado: string(20)
     ca_fchcreado: timestamp
     ca_usuactualizado: string(20)
@@ -42,14 +43,14 @@ IdgConfig:
       form: false
       filter: false
   generatePath: idg
-  tableName: idg.tb_idgconfig
+  tableName: idg.tb_config
   columns:
     ca_idgconfig:
       type: integer
       primary: true
       autoincrement: true
     ca_idg: integer
-    ca_sucursal: string(3)
+    ca_idsucursal: string(3)
     ca_lim1: numeric
     ca_color1: string(10)
     ca_lim2: numeric
@@ -58,6 +59,7 @@ IdgConfig:
     ca_color3: string(10)
     ca_fchini: date
     ca_fchfin: date
+    ca_tiempo: string(10)
     ca_usucreado: string(20)
     ca_fchcreado: timestamp
     ca_usuactualizado: string(20)
@@ -77,3 +79,7 @@ IdgConfig:
       foreign: ca_login
       type: one
       class: Usuario
+    Sucursal:
+      local: ca_idsucursal
+      foreign: ca_idsucursal
+      type: one
