@@ -398,7 +398,7 @@ Bodega:
     ca_usucreado: string
     ca_fchactualizado: timestamp
     ca_usuactualizado: string
-
+    ca_cod_dian: integer
 RepTarifa:
   options:
     symfony:
@@ -715,6 +715,7 @@ RepOtm:
     ca_presentacion: boolean
     ca_contenedor: string
     ca_iddtm: integer
+    ca_consecutivo: string
   relations:
     Reporte:
       local: ca_idreporte
@@ -750,3 +751,89 @@ RepOtm:
       local: ca_idtransportador
       foreign: ca_idproveedor
       type: one
+      
+RepAntecedentes:
+  options:
+    symfony:
+      form: true
+      filter: false
+  generatePath: reportes
+  tableName: tb_repantecedentes
+  columns:    
+    ca_idantecedente:
+      type: integer
+      autoincrement: true
+      primary: true
+    ca_idreporte: integer
+    ca_estado: string    
+    ca_login: string
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string
+    ca_fchaceptado: timestamp
+    ca_usuaceptado: string    
+  relations:
+    Reporte:
+      local: ca_idreporte
+      foreign: ca_idreporte
+      type: one    
+    UsuCreado:
+      local: ca_usuactualizado
+      foreign: ca_login
+      type: one
+    UsuActualizado:
+      local: ca_usucreado
+      foreign: ca_login
+      type: one
+    UsuAceptado:
+      local: ca_usuaceptado
+      foreign: ca_login
+      type: one
+      
+      
+RepAntUsuario:  
+  options:
+    symfony:
+      form: true
+      filter: false
+  generatePath: reportes
+  tableName: tb_repantusuario
+  columns:    
+    ca_idantecedente:
+      type: integer
+      autoincrement: true
+      primary: true
+    ca_login:
+      type: string
+      autoincrement: true
+      primary: true
+    ca_fchrevisado: timestamp
+    ca_usurevisado: string
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string
+  relations:
+    RepAntecedentes:
+      local: ca_idantecedente
+      foreign: ca_idantecedente
+      type: one
+    Usuario:
+      local: ca_login
+      foreign: ca_login
+      type: one
+    UsuActualizado:
+      local: ca_usucreado
+      foreign: ca_login
+      type: one
+    UsuCreado:
+      local: ca_usuaceptado
+      foreign: ca_login
+      type: one
+    UsuRevisado:
+      local: ca_usurevisado
+      foreign: ca_login
+      type: one
+      
+      
