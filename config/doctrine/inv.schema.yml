@@ -114,7 +114,11 @@ InvActivo:
     Sucursal:
       local: ca_idsucursal
       foreign: ca_idsucursal
-      type: one    
+      type: one
+    InvMantenimiento:
+      local: ca_idactivo
+      foreign: ca_idactivo
+      type: many
 
 
 
@@ -273,6 +277,7 @@ InvMantenimiento:
     ca_fchfirma: date
     ca_firma: string
     ca_firmado: string
+    ca_fchprgmantenimiento: date
   relations:
     InvActivo:
       local: ca_idactivo
