@@ -185,6 +185,7 @@ if (!isset($traorigen) and !isset($boton) and !isset($accion)) {
     }
     $condicion.= " ca_mes::text like '$mes' and ca_ano::text = '$ano' and iu.ca_traorigen like '%$traorigen%' and iu.ca_modalidad like '%$modalidad%' and " . str_replace("\"", "'", $casos);
 
+    // die($condicion);
     $co = & DlRecordset::NewRecordset($conn);                                   // Apuntador que permite manejar la conexiòn a la base de datos
     if (!$rs->Open("select $condicion")) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
         echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
@@ -354,6 +355,7 @@ if (!isset($traorigen) and !isset($boton) and !isset($accion)) {
         echo "<TH>Hbl's</TH>";
         echo "<TH>Volumen</TH>";
         echo "<TH>Peso</TH>";
+        echo "<TH>CBM x Ref.</TH>";
         echo "<TH>Facturación</TH>";
         echo "<TH>Util/Cliente</TH>";
         echo "<TH>Util/Sobreventa</TH>";
@@ -403,6 +405,7 @@ if (!isset($traorigen) and !isset($boton) and !isset($accion)) {
             echo "  <TD Class=valores style='font-size: 9px;$back_col'>" . $rs->Value('ca_hbls') . "</TD>";
             echo "  <TD Class=valores style='font-size: 9px;$back_col'>" . $rs->Value('ca_volumen') . "</TD>";
             echo "  <TD Class=valores style='font-size: 9px;$back_col'>" . $rs->Value('ca_peso') . "</TD>";
+            echo "  <TD Class=valores style='font-size: 9px;$back_col'>" . number_format($rs->Value('ca_volumen_r'),2) . "</TD>";
             echo "  <TD Class=valores style='font-size: 9px;$back_col'>" . number_format($rs->Value('ca_valor')) . "</TD>";
             echo "  <TD Class=valores style='font-size: 9px;$back_col'>" . number_format($rs->Value('ca_volumen') * $utl_cbm) . "</TD>";
             echo "  <TD Class=valores style='font-size: 9px;$back_col'>" . number_format($rs->Value('ca_valor_ded')) . "</TD>";
