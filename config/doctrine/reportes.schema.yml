@@ -399,6 +399,8 @@ Bodega:
     ca_fchactualizado: timestamp
     ca_usuactualizado: string
     ca_cod_dian: integer
+    ca_direccion: integer
+
 RepTarifa:
   options:
     symfony:
@@ -772,24 +774,29 @@ RepAntecedentes:
     ca_fchactualizado: timestamp
     ca_usuactualizado: string
     ca_fchaceptado: timestamp
-    ca_usuaceptado: string    
+    ca_usuaceptado: string   
+    ca_responder: string
   relations:
     Reporte:
       local: ca_idreporte
       foreign: ca_idreporte
       type: one    
-    UsuCreado:
-      local: ca_usuactualizado
-      foreign: ca_login
-      type: one
-    UsuActualizado:
+    Usucreado:
       local: ca_usucreado
       foreign: ca_login
       type: one
-    UsuAceptado:
+    Usuactualizado:
+      local: ca_usuactualizado
+      foreign: ca_login
+      type: one
+    Usuaceptado:
       local: ca_usuaceptado
       foreign: ca_login
       type: one
+    RepAntUsuario:
+      local: ca_idantecedente
+      foreign: ca_idantecedente
+      type: many
       
       
 RepAntUsuario:  
@@ -813,7 +820,7 @@ RepAntUsuario:
     ca_fchcreado: timestamp
     ca_usucreado: string
     ca_fchactualizado: timestamp
-    ca_usuactualizado: string
+    ca_usuactualizado: string    
   relations:
     RepAntecedentes:
       local: ca_idantecedente
