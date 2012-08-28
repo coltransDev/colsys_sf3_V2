@@ -78,6 +78,15 @@ var tabs = new Ext.FormPanel({
                                             linkImpoexpo: "impoexpo",
                                             value:"<?= $modalidad ?>"
                                         }),
+                                new WidgetCiudad({fieldLabel: 'Origen',
+                                    id: 'origen',
+                                    idciudad:"origen",
+                                    hiddenName:"idorigen",
+                                    tipo:"",
+                                    impoexpo: "<?= Constantes::TRIANGULACION ?>",
+                                    value:"<?= $origen ?>",
+                                    hiddenValue:"<?= $idorigen ?>"
+                                }),
                                 new WidgetTrackingEtapas({fieldLabel: 'Etapa',
                                             id: 'etapa',
                                             name: "etapa",
@@ -85,14 +94,7 @@ var tabs = new Ext.FormPanel({
                                             departamento: "<?=constantes::OTMDTA1?>",                                            
                                             value:"<?= $etapa ?>",
                                             hiddenValue:"<?= $idetapa ?>"
-                                        }),
-                                        {
-                                            xtype:'textfield',
-                                            fieldLabel: 'Referencia',
-                                            name : 'noreferencia',
-                                            id : 'noreferencia',
-                                            value: '<?=$noreferencia?>'
-                                        }
+                                        })
                             ]
                         },
                         {
@@ -107,22 +109,29 @@ var tabs = new Ext.FormPanel({
                                     format: "Y-m-d",
                                     value: '<?=$fechaFinal?>'
                                 },
-                                new WidgetCiudad({fieldLabel: 'Origen',
-                                            id: 'origen',
-                                            idciudad:"origen",
-                                            hiddenName:"idorigen",
-                                            tipo:"2",                                            
-                                            impoexpo: "impoexpo",
-                                            value:"<?= $origen ?>",
-                                            hiddenValue:"<?= $idorigen ?>"
-                                        }),
-                                        {
-                                            xtype:'textfield',
-                                            fieldLabel: 'No reporte',
-                                            name : 'noreporte',
-                                            id : 'noreporte',
-                                            value: '<?=$noreporte?>'
-                                        }
+                                {
+                                    xtype:'textfield',
+                                    fieldLabel: 'Referencia',
+                                    name : 'noreferencia',
+                                    id : 'noreferencia',
+                                    value: '<?=$noreferencia?>'
+                                },
+                                new WidgetCiudad({fieldLabel: 'Destino',
+                                    id: 'destino',
+                                    idciudad:"destino",
+                                    hiddenName:"iddestino",
+                                    tipo:"",
+                                    impoexpo: "<?= Constantes::TRIANGULACION ?>",
+                                    value:"<?= $destino ?>",
+                                    hiddenValue:"<?= $iddestino ?>"
+                                }),
+                                {
+                                    xtype:'textfield',
+                                    fieldLabel: 'No reporte',
+                                    name : 'noreporte',
+                                    id : 'noreporte',
+                                    value: '<?=$noreporte?>'
+                                }
                                   /*new WidgetReporte({
                                               fieldLabel: "Reporte",
                                               name: "No Reporte",
@@ -144,7 +153,7 @@ var tabs = new Ext.FormPanel({
 		text: 'Continuar',
 		handler: function(){
                     var owner=Ext.getCmp("formPanel");                    
-                    owner.getForm().getEl().dom.action='<?=url_for("otm/listaAprobacion")?>';
+                    owner.getForm().getEl().dom.action='<?=url_for($url)?>';
                     owner.getForm().submit();
             }
 	}]

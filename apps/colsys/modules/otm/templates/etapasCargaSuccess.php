@@ -5,7 +5,11 @@
  * and open the template in the editor.
  */
 //print_r($reportes);
+
 $etapas = $sf_data->getRaw("etapas");
+//$etapas=implode(",", $e["etapas"]);
+$reportes = $sf_data->getRaw("reportes");
+//echo count($reportes);
 ?>
 <style>
     caption{font-weight: bold;font-size: 16px;text-align: center; padding: 5px }
@@ -14,15 +18,24 @@ $etapas = $sf_data->getRaw("etapas");
 <div align="center" id="container" class="noprint"></div>
 <div align="center" id="container1"></div>
 <?
-include_component("otm","filtrosListados");
+include_component("otm","filtrosListados",array("url"=>"otm/etapasCarga"));
 
-if($opcion)
+//if($opcion)
 {
 ?>
 <form id="formdata" name="formdata" method="post" action="/otm/generarStatus">
 <table class="tableList" width="600px" border="1" id="mainTable" align="center">
-        <caption>APROBACION DTM Y CONTINUACION DE VIAJE</caption>        
-        <tr style ="text-align:center"><th >Reporte</th><th>Referencia</th><th>Fecha de Llegada</th><th>Nit</th><th  >Cliente</th><th>Importador</th><th>Modalidad</th><th>Origen</th><th  >Destino</th><th>Muelle</th> <th>Continuacion</th> <th>DTM</th><th></th></tr>
+        <caption>ETAPAS DE CARGAS</caption>        
+        <tr style ="text-align:center"><th >Reporte</th><th>Referencia</th><th>Fecha de Llegada</th><th>Nit</th><th  >Cliente</th><th>Importador</th><th>Modalidad</th><th>Origen</th><th  >Destino</th><th>Muelle</th> <th>Continuacion</th> <th>DTM</th>
+            <?
+                foreach($etapas as $e)
+                {
+            ?>
+                    <th width="90"><?=$e["nombre"]?></th>
+            <?
+                }
+            ?>
+        </tr>
         
         <?
         foreach($reportes as $r)
@@ -30,36 +43,24 @@ if($opcion)
         ?>
         <tr ><td ><a href="/reportesNeg/consultaReporte/id/<?=$r["ca_idreporte"]?>/modo/Terrestre/impoexpo/OTM-DTA/opcion/otmmin"><?=$r["ca_consecutivo"]?></a></td><td><?=$r["ca_referencia"]?></td><td><?=$r["ca_fcharribo"]?></td><td><?=$r["ca_idalterno"]?></td><td><?=$r["ca_compania"]?></td><td><?=$r["ca_importador"]?></td><td><?=$r["ca_modalidad"]?></td><td><?=$r["ca_origen"]?></td><td><?=$r["ca_destino"]?></td><td><?=$r["ca_bodega"]?></td>
             <td><a href="/otm/generarPdf/id/<?=$r["ca_consecutivo"]?>/tipo/OTM" target="_blank">Ver</a></td><td><a href="/otm/generarPdf/id/<?=$r["ca_consecutivo"]?>/tipo/DTM" target="_blank">Ver</a></td>
-            <td>
-                <input type="checkbox" id="id-<?=$r["ca_consecutivo"]?>" name="ids[]"  value="<?=$r["ca_consecutivo"]?>" t="<?=$r["ca_consecutivo"]?>" onclick="activacion(this)">
-                <div id="div-<?=$r["ca_consecutivo"]?>"><textarea id="idt-<?=$r["ca_consecutivo"]?>" name="observaciones[]" disabled ></textarea></div>
-            </td>
+            <?
+            foreach($etapas as $e)
+            {
+                $flag=(stripos($r["etapas"],$e["id"]) === false )?"":"<img src='/images/16x16/button_ok.gif'/>";
+            ?>
+                <td><?=$flag?></td>
+            <?
+            }
+            ?>
         </tr>
         <?
         }
         ?>
-        <tr >
-            <td colspan="11" align="right">
-                <select id="idetapa" name="idetapa">
-                    <?
-                    foreach($etapas as $e)
-                    {
-                    ?>
-                    <option value="<?=$e["id"]?>"><?=$e["nombre"]?></option>
-                    <?
-                    }
-                    ?>
-                </select>
-            </td>
-            <td ><input type="button"  value="Enviar" onclick="enviar_status()"></td>
-        </tr>
 </table>
 </form>
 <?
 }
 ?>
-
-
 <script>
     function enviar_status()
     {
@@ -88,7 +89,7 @@ if($opcion)
                         location.href=location.href;
                     }
                 }
-            });            
+            });
                        alert("Status enviados satisfactoriamente");
             */
         }
