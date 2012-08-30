@@ -322,6 +322,8 @@ class widgetsComponents extends sfComponents {
         $this->data = array();
         $user = $this->getUser();
         //$user->getIdempresa();
+        $suc=($user->getIdempresa()=="8")?"2":$user->getIdempresa();
+        
         $sucursales = Doctrine::getTable("Sucursal")
                 ->createQuery("s")
                 ->select("s.ca_idsucursal,s.ca_nombre")
@@ -696,10 +698,8 @@ class widgetsComponents extends sfComponents {
 
         foreach ($this->data as $key => $val) {
             $arrTransporte = explode("|", $this->data[$key]["b_ca_transporte"]);
-
-
             $this->data[$key]["b_ca_tipo"] = utf8_encode($this->data[$key]["b_ca_tipo"]);
-            $this->data[$key]["b_ca_nombre"] = utf8_encode($this->data[$key]["b_ca_nombre"]) . "-" . $this->data[$key]["b_ca_tipo"];
+            $this->data[$key]["b_ca_nombre"] = utf8_encode($this->data[$key]["b_ca_nombre"]." ".$this->data[$key]["b_ca_direccion"]) . "-" . $this->data[$key]["b_ca_tipo"];
             $this->data[$key]["b_ca_transporte"] = $modo;
         }
     }
