@@ -236,7 +236,9 @@ class widgetsActions extends sfActions {
         if ($this->getRequestParameter("transporte") == Constantes::AEREO || utf8_decode($this->getRequestParameter("transporte")) == Constantes::AEREO) {
             $transporte = constantes::AEREO;
         }
+
         if ($this->getRequestParameter("transporte") == Constantes::MARITIMO || utf8_decode($this->getRequestParameter("transporte")) == Constantes::MARITIMO) {
+            $wheretmp=" AND ca_tiporep IN (1,2,3)";
             $transporte = constantes::MARITIMO;
         }
         if ($this->getRequestParameter("transporte") == Constantes::TERRESTRE || utf8_decode($this->getRequestParameter("transporte")) == Constantes::TERRESTRE) {
@@ -259,13 +261,12 @@ class widgetsActions extends sfActions {
             $impoexpo = constantes::OTMDTA;
         }
 
-
         $q = Doctrine_Query::create()
                 ->select("r.ca_consecutivo, r.ca_idreporte, r.ca_version")
                 ->from("Reporte r")
                 ->where("r.ca_consecutivo LIKE ?", $criterio . "%")
-                ->addWhere("r.ca_usuanulado IS NULL")
-                ->addWhere("r.ca_version = (SELECT MAX(r2.ca_version) FROM Reporte r2 WHERE r2.ca_consecutivo = r.ca_consecutivo AND ca_usuanulado IS NULL ) ")
+                ->addWhere("r.ca_usuanulado IS NULL $wheretmp")
+                ->addWhere("r.ca_version = (SELECT MAX(r2.ca_version) FROM Reporte r2 WHERE r2.ca_consecutivo = r.ca_consecutivo AND ca_usuanulado IS NULL $wheretmp ) ")
                 ->addOrderBy("r.ca_fchcreado DESC")
                 ->limit(20);
 
@@ -407,7 +408,7 @@ class widgetsActions extends sfActions {
                     ->innerJoin("c.Cliente cl")
                     ->leftJoin("cl.LibCliente lc")
                     ->leftJoin("cl.Usuario v")
-                    ->where("UPPER(cl.ca_compania) like ?", "%" . strtoupper($criterio) . "%")
+                    ->where("UPPER(cl.ca_compania) like ? and c.ca_cargo!='Extrabajador'", "%" . strtoupper($criterio) . "%")
                     ->addOrderBy("cl.ca_compania ASC")
                     ->addOrderBy("c.ca_nombres ASC")
                     ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
