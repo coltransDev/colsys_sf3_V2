@@ -52,14 +52,14 @@ include_component("widgets","widgetTransporte");
                                             fieldLabel: 'Fecha Inicial',
                                             name : 'fechaInicial',
                                             format: 'Y-m-d',
-                                            value: '<?=date("Y-m-d")?>'//'<?//=date("2011-12-31")?>'
+                                            value: '<?=$fechainicial?>'//'<?//=date("2011-12-31")?>'
                                         },
                                         {
                                             xtype:'datefield',
                                             fieldLabel: 'Fecha final',
                                             name : 'fechaFinal',
                                             format: 'Y-m-d',
-                                            value: '<?=date("Y-m-d")?>'
+                                            value: '<?=$fechafinal?>'
                                         }]
                                 }]
                         },

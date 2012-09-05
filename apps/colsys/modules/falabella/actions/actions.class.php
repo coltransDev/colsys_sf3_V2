@@ -578,13 +578,15 @@ class falabellaActions extends sfActions {
         //$this->ano=$ano;
         //$this->mes = Utils::nmes($nom_mes);
         //$this->mesp = $this->mes;
-        
-        list($ano_ini, $mes_ini) = explode("-", $this->fechainicial);
-        $this->mesinicial = Utils::mesLargo($mes_ini);
-        $this->ano_ini = $ano_ini;
-        
-        list($ano_fin, $mes_fin) = explode("-", $this->fechafinal);
-        $this->mesfinal = Utils::mesLargo($mes_fin);
+        if($this->fechainicial){
+            list($ano_ini, $mes_ini) = explode("-", $this->fechainicial);
+            $this->mesinicial = Utils::mesLargo($mes_ini);
+            $this->ano_ini = $ano_ini;
+        }
+        if($this->fechafinal){
+            list($ano_fin, $mes_fin) = explode("-", $this->fechafinal);
+            $this->mesfinal = Utils::mesLargo($mes_fin);
+        }
         
         $this->indicador = array();
         $this->grid = array();
@@ -597,23 +599,54 @@ class falabellaActions extends sfActions {
         $this->indi_FCL[$this->pais_origen] = 3;
         
         if ($this->opcion=='buscar') {
-            $sql = "SELECT * 
-                    FROM vi_repindicadores 
-                            LEFT OUTER JOIN (
-                                SELECT rp.ca_consecutivo as ca_consecutivo_sub, rs.ca_fchsalida, rs.ca_fchllegada, CASE WHEN rs.ca_fchllegada-rs.ca_fchsalida <1 THEN '1'  else rs.ca_fchllegada-rs.ca_fchsalida  END AS ca_diferencia, 
-                                    rs.ca_peso as ca_peso,extract(YEAR from rs.ca_fchsalida) as ca_ano1 ,extract(MONTH from rs.ca_fchsalida) as ca_mes1
-                                FROM tb_repstatus rs 
-                                    INNER JOIN tb_reportes rp ON rp.ca_idreporte = rs.ca_idreporte
-                                WHERE rs.ca_idetapa in ('IACAD','IMCPD') 
-                                GROUP BY ca_consecutivo, ca_fchsalida, ca_fchllegada, ca_diferencia,ca_peso,extract(YEAR from rs.ca_fchsalida) ,extract(MONTH from rs.ca_fchsalida)) sq ON (vi_repindicadores.ca_consecutivo = sq.ca_consecutivo_sub) 
-                    WHERE ca_impoexpo = '" . Constantes::IMPO . "' and ca_transporte = '".$this->transporte."' and upper(ca_compania) like upper('%falabella%')  
-                          and ca_traorigen= '".$this->pais_origen."' and ca_fchsalida BETWEEN '".$this->fechainicial."' and '".$this->fechafinal."'
-                    ORDER BY ca_fchsalida";
-            
-            //exit;
-            $con = Doctrine_Manager::getInstance()->connection();
-            $st = $con->execute($sql);
-            $this->resul = $st->fetchAll();
+            if($this->transporte=="Aéreo"){
+                $sql = "SELECT * 
+                        FROM vi_repindicadores 
+                                LEFT OUTER JOIN (
+                                    SELECT rp.ca_consecutivo as ca_consecutivo_sub, rs.ca_fchsalida, rs.ca_fchllegada, CASE WHEN rs.ca_fchllegada-rs.ca_fchsalida <1 THEN '1'  else rs.ca_fchllegada-rs.ca_fchsalida  END AS ca_diferencia, 
+                                        rs.ca_peso as ca_peso, rs.ca_volumen as ca_volumen, extract(YEAR from rs.ca_fchsalida) as ca_ano1 ,extract(MONTH from rs.ca_fchsalida) as ca_mes1
+                                    FROM tb_repstatus rs 
+                                        INNER JOIN tb_reportes rp ON rp.ca_idreporte = rs.ca_idreporte
+                                    WHERE rs.ca_idetapa in ('IACAD','IMCPD') 
+                                    GROUP BY ca_consecutivo, ca_fchsalida, ca_fchllegada, ca_diferencia,ca_peso,ca_volumen,extract(YEAR from rs.ca_fchsalida) ,extract(MONTH from rs.ca_fchsalida)) sq ON (vi_repindicadores.ca_consecutivo = sq.ca_consecutivo_sub) 
+                        WHERE ca_impoexpo = '" . Constantes::IMPO . "' and ca_transporte = '".$this->transporte."' and upper(ca_compania) like upper('%falabella%')  
+                              and ca_traorigen= '".$this->pais_origen."' and ca_fchsalida BETWEEN '".$this->fechainicial."' and '".$this->fechafinal."'
+                        ORDER BY ca_fchsalida";
+
+                //exit;
+                $con = Doctrine_Manager::getInstance()->connection();
+                $st = $con->execute($sql);
+                //echo $sql;
+                $this->resul = $st->fetchAll();
+            }elseif($this->transporte=="Marítimo"){
+                $sql = "SELECT DISTINCT v.ca_idreporte, sq.ca_consecutivo_sub, sq.ca_fchsalida, sq.ca_fchllegada, sq.ca_diferencia, sq.ca_peso, sq.ca_ano1, sq.ca_mes1, v.ca_propiedades, v.ca_traorigen, v.ca_ciudestino, v.ca_transporte, v.ca_modalidad, tt.ca_concepto,
+                            ((SELECT sum(t.ca_liminferior) AS sum FROM tb_inoequipos_sea eq JOIN tb_conceptos t ON eq.ca_idconcepto = t.ca_idconcepto WHERE eq.ca_referencia = m.ca_referencia AND eq.ca_idconcepto = tt.ca_idconcepto)) / 20 AS teus, 
+                            (SELECT count(*) AS count FROM tb_inoequipos_sea eq WHERE eq.ca_referencia::text = m.ca_referencia::text AND eq.ca_idconcepto = tt.ca_idconcepto) AS ncontenedores, 
+                            (SELECT sum(ca_peso) AS count FROM tb_inoclientes_sea ics WHERE ics.ca_referencia::text = m.ca_referencia::text ) AS ca_peso, 
+                            (SELECT sum(ca_numpiezas) AS count FROM tb_inoclientes_sea ics WHERE ics.ca_referencia::text = m.ca_referencia::text ) AS piezas, 
+                            (SELECT sum(ca_volumen) AS count FROM tb_inoclientes_sea ics WHERE ics.ca_referencia::text = m.ca_referencia::text ) AS volumen 
+                        FROM vi_repindicadores v
+                                LEFT OUTER JOIN (
+                                    SELECT rp.ca_idreporte, rp.ca_consecutivo as ca_consecutivo_sub, rs.ca_fchsalida, rs.ca_fchllegada, CASE WHEN rs.ca_fchllegada-rs.ca_fchsalida <1 THEN '1'  else rs.ca_fchllegada-rs.ca_fchsalida  END AS ca_diferencia, 
+                                        rs.ca_peso as ca_peso,extract(YEAR from rs.ca_fchsalida) as ca_ano1 ,extract(MONTH from rs.ca_fchsalida) as ca_mes1
+                                    FROM tb_repstatus rs 
+                                        INNER JOIN tb_reportes rp ON rp.ca_idreporte = rs.ca_idreporte
+                                    WHERE rs.ca_idetapa in ('IACAD','IMCPD') 
+                                    GROUP BY rp.ca_idreporte, ca_consecutivo, ca_fchsalida, ca_fchllegada, ca_diferencia,ca_peso,extract(YEAR from rs.ca_fchsalida) ,extract(MONTH from rs.ca_fchsalida)) sq ON (v.ca_consecutivo = sq.ca_consecutivo_sub) 
+                                JOIN tb_inoclientes_sea ics ON ics.ca_idreporte = sq.ca_idreporte
+                                JOIN tb_inomaestra_sea m ON m.ca_referencia = ics.ca_referencia
+                                JOIN tb_inoequipos_sea e ON e.ca_referencia = ics.ca_referencia
+                                JOIN tb_conceptos tt ON e.ca_idconcepto = tt.ca_idconcepto
+                        WHERE v.ca_impoexpo = '" . Constantes::IMPO . "' and v.ca_transporte = '".$this->transporte."' and upper(ca_compania) like upper('%falabella%')  
+                              and ca_traorigen= '".$this->pais_origen."' and ca_fchsalida BETWEEN '".$this->fechainicial."' and '".$this->fechafinal."'
+                        ORDER BY ca_fchsalida";
+                //exit;
+                //echo $sql;
+                $con = Doctrine_Manager::getInstance()->connection();
+                $st = $con->execute($sql);
+                
+                $this->resul = $st->fetchAll();
+            }
             
             foreach ($this->resul as $r) {
                 /*if (!$r["ca_diferencia"])
@@ -652,7 +685,7 @@ class falabellaActions extends sfActions {
                 $idreporte = $r["ca_idreporte"];
                 
                 $reporte = Doctrine::getTable("Reporte")->find($idreporte);
-                
+                                
                 $this->parametros = ParametroTable::retrieveByCaso("CU103", null, null, '900017447' );
                 $parametros = $this->parametros;
                 //echo "<pre>";print_r($this->entcarga);echo "</pre>";
@@ -678,11 +711,11 @@ class falabellaActions extends sfActions {
                 
                 $fchsalida = $r["ca_fchsalida"];
                 
-                $this->entcarga[$r["ca_ano1"]][(int)($r["ca_mes1"])]["fchdocorig"]=  TimeUtils::dateDiff($fchdocorig, $fchsalida);
+                $this->entcarga[$r["ca_ano1"]][(int)($r["ca_mes1"])]["fchdocorig"]=  TimeUtils::dateDiff($fchsalida, $fchdocorig);
                 $this->entcarga[$r["ca_ano1"]][(int)($r["ca_mes1"])]["conta_fchdocorig"] = (isset($this->entcarga[$r["ca_ano1"]][(int)($r["ca_mes1"])]["conta_fchdocorig"]))?($this->entcarga[$r["ca_ano1"]][(int)($r["ca_mes1"])]["conta_fchdocorig"] + 1):"1";
                 $this->entcarga[$r["ca_ano1"]][(int)($r["ca_mes1"])]["diff_fchdocorig"]+=$this->entcarga[$r["ca_ano1"]][(int)($r["ca_mes1"])]["fchdocorig"];
                 
-                $this->entcarga[$r["ca_ano1"]][(int)($r["ca_mes1"])]["fchentregamcia"]=  TimeUtils::dateDiff($fchentregamcia, $fchsalida);
+                $this->entcarga[$r["ca_ano1"]][(int)($r["ca_mes1"])]["fchentregamcia"]=  TimeUtils::dateDiff($fchsalida, $fchentregamcia);
                 $this->entcarga[$r["ca_ano1"]][(int)($r["ca_mes1"])]["conta_fchentregamcia"] = (isset($this->entcarga[$r["ca_ano1"]][(int)($r["ca_mes1"])]["conta_fchentregamcia"]))?($this->entcarga[$r["ca_ano1"]][(int)($r["ca_mes1"])]["conta_fchentregamcia"] + 1):"1";
                 $this->entcarga[$r["ca_ano1"]][(int)($r["ca_mes1"])]["diff_fchentregamcia"]+=$this->entcarga[$r["ca_ano1"]][(int)($r["ca_mes1"])]["fchentregamcia"];
                 
@@ -693,8 +726,7 @@ class falabellaActions extends sfActions {
                       
             }   
         }
+        //echo "<pre>";print_r($this->resul);echo "</pre>";
     }
-    //echo "<pre>";print_r($this->resul);echo "</pre>";
-    //echo "<pre>";print_r($this->entcarga);echo "</pre>";
 }
 ?>

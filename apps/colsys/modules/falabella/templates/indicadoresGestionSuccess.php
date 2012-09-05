@@ -14,9 +14,9 @@ $entcarga = $sf_data->getRaw("entcarga");
 $indicador = $sf_data->getRaw("indicador");
 
 if($transporte=="Aéreo"){
-    $rango=10;
+    $rangoMax=10;
 }elseif($transporte=="Marítimo"){
-    $rango=15;    
+    $rangoMax=15;    
 }
 //echo "<pre>";print_r($grid);echo "</pre>";
 //echo "<pre>";print_r($entcarga);echo "</pre>";
@@ -40,11 +40,12 @@ if($transporte=="Aéreo"){
 <?
 if($opcion=='buscar'){
 ?>
-<table border="1" class="tableList" align="center" style="font-size: 10">
+<table border="1" class="tableList" align="center" style="font-size: 10" width="70%">
     <tr>
-        <th colspan="13" style="text-align: center"><b><?echo "ESTADISTICAS DE CARGA ".strtoupper($pais_origen).'<br />'.'Periodo: '.$fechainicial." a ".$fechafinal;
+        <th <?if($transporte=="Aéreo"){echo "colspan='15'";}elseif($transporte=="Marítimo"){echo "colspan='19'";}?> style="text-align: center"><b><?echo "ESTADISTICAS DE CARGA ".strtoupper($pais_origen).'<br />'.'Periodo: '.$fechainicial." a ".$fechafinal;
         ?></b></th>
     </tr>
+    <?if($transporte=="Aéreo"){?>
     <tr>
         <th scope="col" style=" text-align: center"><b>A&nacute;o</b></th>
         <th scope="col" style=" text-align: center"><b>Mes</b></th>
@@ -53,14 +54,39 @@ if($opcion=='buscar'){
         <th scope="col" style=" text-align: center"><b>Transporte</b></th>
         <th scope="col" style=" text-align: center"><b>Modalidad</b></th>
         <th scope="col" style=" text-align: center"><b>Reporte de Negocio</b></th>
+        <th scope="col" style=" text-align: center"><b>Peso</b></th>
+        <th scope="col" style=" text-align: center"><b>Volumen</b></th>
         <th scope="col" style=" text-align: center"><b>Fch. Salida</b></th>
         <th scope="col" style=" text-align: center"><b>Fch. Llegada</b></th>
         <th scope="col" style=" text-align: center;width: 80px"><b>Tiempo de Trán.</b></th>
-        <th scope="col" style=" text-align: center;width: 80px"><b>Fch. Doc. Orign</b></th>
+        <th scope="col" style=" text-align: center;width: 80px"><b>Fch. Envio Doc.</b></th>
+        <th scope="col" style=" text-align: center;width: 80px"><b>Fch. Ent. M/cia.</b></th>
+        <th scope="col" style=" text-align: center;width: 80px"><b>Fch. Ing. Asn</b></th>
+    </tr>
+    <?}elseif($transporte="Marítimo"){?>
+    <tr>
+        <th scope="col" style=" text-align: center"><b>A&nacute;o</b></th>
+        <th scope="col" style=" text-align: center"><b>Mes</b></th>
+        <th scope="col" style=" text-align: center"><b>Origen</b></th>
+        <th scope="col" style=" text-align: center"><b>Destino</b></th>
+        <th scope="col" style=" text-align: center"><b>Transporte</b></th>
+        <th scope="col" style=" text-align: center"><b>Modalidad</b></th>
+        <th scope="col" style=" text-align: center"><b>Reporte de Negocio</b></th>
+        <th scope="col" style=" text-align: center"><b>Tipo Contenedor</b></th>
+        <th scope="col" style=" text-align: center"><b># Conten.</b></th>
+        <th scope="col" style=" text-align: center"><b>Teus</b></th>
+        <th scope="col" style=" text-align: center"><b>Piezas</b></th>
+        <th scope="col" style=" text-align: center"><b>Peso</b></th>
+        <th scope="col" style=" text-align: center"><b>Volumen</b></th>
+        <th scope="col" style=" text-align: center"><b>Fch. Salida</b></th>
+        <th scope="col" style=" text-align: center"><b>Fch. Llegada</b></th>
+        <th scope="col" style=" text-align: center;width: 80px"><b>Tiempo de Trán.</b></th>
+        <th scope="col" style=" text-align: center;width: 80px"><b>Fch. Envio Doc.</b></th>
         <th scope="col" style=" text-align: center;width: 80px"><b>Fch. Ent. M/cia.</b></th>
         <th scope="col" style=" text-align: center;width: 80px"><b>Fch. Ing. Asn</b></th>
     </tr>
 <?
+    }
     foreach( $resul as  $r){
         
         $idreporte = $r["ca_idreporte"];
@@ -86,24 +112,51 @@ if($opcion=='buscar'){
                     break;
             }
         }
+        if($transporte=="Aéreo"){
 ?>
-    <tr>
-        <td><?=$r["ca_ano1"]?></td>
-        <td><?=$r["ca_mes1"]?></td>
-        <td><?=$r["ca_traorigen"]?></td>
-        <td><?=$r["ca_ciudestino"]?></td>
-        <td><?=$r["ca_transporte"]?></td>
-        <td><?=$r["ca_modalidad"]?></td>
-        <td><?=$r["ca_consecutivo"]?></td>
-        <td><?=$r["ca_fchsalida"]?></td>
-        <td><?=$r["ca_fchllegada"]?></td>
-        <td style=" text-align: center;"><?=$r["ca_diferencia"]?></td>
-        <td style=" text-align: center;"><?=$fchdocorig?></td>
-        <td style=" text-align: center;"><?=$fchentregamcia?></td>
-        <td style=" text-align: center;"><?=$fchingresoasn?></td>
-    </tr>
-
+            <tr>
+                <td><?=$r["ca_ano"]?></td>
+                <td><?=$r["ca_mes"]?></td>
+                <td><?=$r["ca_traorigen"]?></td>
+                <td><?=$r["ca_ciudestino"]?></td>
+                <td><?=$r["ca_transporte"]?></td>
+                <td><?=$r["ca_modalidad"]?></td>
+                <td><?=$r["ca_consecutivo"]?></td>
+                <td><?=$r["ca_peso"]?></td>
+                <td><?=$r["ca_volumen"]?></td>
+                <td><?=$r["ca_fchsalida"]?></td>
+                <td><?=$r["ca_fchllegada"]?></td>
+                <td style=" text-align: center;"><?=$r["ca_diferencia"]?></td>
+                <td style=" text-align: center;"><?=$fchdocorig?></td>
+                <td style=" text-align: center;"><?=$fchentregamcia?></td>
+                <td style=" text-align: center;"><?=$fchingresoasn?></td>
+            </tr>
 <?
+        }elseif($transporte=="Marítimo"){
+?>
+            <tr>
+                    <td><?=$r["ca_ano1"]?></td>
+                    <td><?=$r["ca_mes1"]?></td>
+                    <td><?=$r["ca_traorigen"]?></td>
+                    <td><?=$r["ca_ciudestino"]?></td>
+                    <td><?=$r["ca_transporte"]?></td>
+                    <td><?=$r["ca_modalidad"]?></td>
+                    <td><?=$r["ca_consecutivo_sub"]?></td>
+                    <td><?=$r["ca_concepto"]?></td>
+                    <td><?=$r["ncontenedores"]?></td>
+                    <td><?=$r["teus"]?></td>
+                    <td><?=$r["piezas"]?></td>
+                    <td><?=$r["ca_peso"]?></td>
+                    <td><?=$r["volumen"]?></td>
+                    <td><?=$r["ca_fchsalida"]?></td>
+                    <td><?=$r["ca_fchllegada"]?></td>
+                    <td style=" text-align: center;"><?=$r["ca_diferencia"]?></td>
+                    <td style=" text-align: center;"><?=$fchdocorig?></td>
+                    <td style=" text-align: center;"><?=$fchentregamcia?></td>
+                    <td style=" text-align: center;"><?=$fchingresoasn?></td>
+            </tr>
+<?           
+        }
     }       
 ?>        
 </table><br /><br /><br />       
@@ -165,8 +218,8 @@ if($opcion=='buscar'){
                     width: 500,
                     title:"TIEMPO DE TRANSITO",
                     titleY:"Dias",
-                    maxY: <?=$rango?>,
-                                        
+                    maxY: <?=$rangoMax?>,
+                                               
                     /*plotBands: [
                         {
                             color: 'blue',
@@ -228,7 +281,8 @@ $serieX=array();
                     width: 500,
                     title:"TIEMPO DE ENTREGA DE LA CARGA POR PARTE DEL SHIPPER",
                     titleY:"Dias",
-                    maxY: 10,
+                    //minY: <?//=$rangoMin?>,
+                    minY: -10,
                                         
 					serieX: <?=json_encode($serieX)?>,					
 				    series: <?=json_encode($dataJSON)?>
@@ -279,7 +333,7 @@ $serieX=array();
                     width: 500,
                     title:"TIEMPO DE ENTREGA DOCUMENTACION",
                     titleY:"Dias",
-                    maxY: 10,
+                    minY: -10,
                                         
 					serieX: <?=json_encode($serieX)?>,					
 				    series: <?=json_encode($dataJSON)?>,
@@ -321,7 +375,7 @@ $serieX=array();
         $dat3[]=$d3;        
     }
     $dataJSON[]=array("name"=>$ano_ini,"data"=>$dat3);
-}    
+ 
 ?>
 
 <script type="text/javascript">
@@ -339,7 +393,9 @@ $serieX=array();
                     
 				});	
 </script>
-
+<?
+}
+?>
         
 <script language="javascript">
    
