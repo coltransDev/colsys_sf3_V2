@@ -331,6 +331,7 @@ InoComprobante:
     ca_observaciones: string
     ca_estado: integer
     ca_valor: float
+    ca_valor2: float
     ca_idmoneda: string
     ca_fchcreado: timestamp
     ca_usucreado: string
