@@ -178,7 +178,7 @@ class inoActions extends sfActions {
                     break;
             }
 
-            $q->addOrderBy("m.ca_referencia");
+            $q->addOrderBy("m.ca_idmaster DESC");
             $q->limit(200);
 
 
@@ -281,9 +281,6 @@ class inoActions extends sfActions {
                 $ino->setCaImpoexpo($this->modo->getCaImpoexpo());
                 $ino->setCaTransporte($this->modo->getCaTransporte());
             }
-            
-            
-            
             
             $ino->setCaModalidad($modalidad);
             $ino->setCaFchreferencia($fchreferencia);
@@ -694,26 +691,23 @@ class inoActions extends sfActions {
      * @param sfRequest $request A request object
      */
     public function executeGuardarGridFacturacionPanel(sfWebRequest $request) {
-        try {            
-            
+        try {
+            //throw new Exception("El comprobante ".$request->getParameter("consecutivo")." ya se encuentra incluido" );
             $idcomprobante = $request->getParameter("idcomprobante");
-            
-            
             /*
              * Validaciones
              */
             $q = Doctrine::getTable("InoComprobante")
                            ->createQuery("c")
                            ->addWhere("c.ca_consecutivo = ?", $request->getParameter("consecutivo") );
-            
+
             if( $idcomprobante ){
                 $q->addWhere("c.ca_idcomprobante != ?", $idcomprobante);
             }            
             $m = $q->fetchOne();
-            if( $m ){               
+            if( $m ){
                 throw new Exception("El comprobante ".$request->getParameter("consecutivo")." ya se encuentra incluido" );
             }
-            
             /*
              * Guarda los datos
              */            
@@ -724,29 +718,40 @@ class inoActions extends sfActions {
                 $comprobante = new InoComprobante();
                 //$comprobante->setCaIdtipo( InoComprobante::IDTIPO_F_INO );
             }
-
             $valor = $request->getParameter("valor");
-
+            $valor2 = $request->getParameter("venta");
             $conn = $comprobante->getTable()->getConnection();
             $conn->beginTransaction();
             $idhouse = $request->getParameter("idhouse");
             $house = Doctrine::getTable("InoHouse")->find( $idhouse );
-            
             $comprobante->setCaIdhouse($idhouse);
-            
-            $comprobante->setCaConsecutivo($request->getParameter("consecutivo"));            
+
+            $comprobante->setCaConsecutivo($request->getParameter("consecutivo"));
             $comprobante->setCaIdtipo($request->getParameter("idtipo"));
             $comprobante->setCaFchcomprobante($request->getParameter("fchcomprobante"));
-            
+
             $comprobante->setCaId($request->getParameter("id"));
             $comprobante->setCaValor( $valor );
+            $comprobante->setCaValor2( $valor2 );
             $comprobante->setCaIdmoneda($request->getParameter("idmoneda"));            
             $comprobante->setCaTcambio($request->getParameter("tasacambio"));
             $comprobante->setCaPlazo($request->getParameter("plazo"));
             $comprobante->setCaObservaciones($request->getParameter("observaciones"));
-            
             $comprobante->save($conn);
             
+            if($this->getUser()->getIdsucursal()=="OBO")
+            {
+                $resultadoCosto=InoCostosSea::setCosto($comprobante,$conn);
+                if($resultadoCosto<0)
+                {
+                    throw new Exception("Error : $resultadoCosto");
+                }
+            }
+            //else
+            //    throw new Exception("Error : $resultadoCosto");
+            
+            //$costo=new InoCostosSea();
+
             if ($idcomprobante) {
                 $detalles = Doctrine::getTable("InoDetalle")
                                 ->createQuery("d")
@@ -766,61 +771,53 @@ class inoActions extends sfActions {
                 foreach( $deducciones as $d ){
                     $params =  $array = sfToolkit::stringToArray( $d );   
                     if( $params["neto"] ){
-                        
-                                                
                         $inoDetalle = new InoDetalle();
                         //$inoDetalle->setCaIddeduccion( $params["iddeduccion"] );                        
                         $inoDetalle->setCaIdcomprobante( $comprobante->getCaIdcomprobante() );
                         $inoDetalle->setCaCr( $params["neto"] );
-                        $inoDetalle->setCaIdconcepto( $params["iddeduccion"] );                        
-                        $inoDetalle->setCaIdhouse( $house->getCaIdhouse() );                        
+                        $inoDetalle->setCaIdconcepto( $params["iddeduccion"] );
+                        $inoDetalle->setCaIdhouse( $house->getCaIdhouse() );
                         $inoDetalle->setCaIdmaster( $house->getCaIdmaster() );
                         $inoDetalle->setCaId( $comprobante->getCaId() );
-                        $inoDetalle->save( $conn );  
-                        
+                        $inoDetalle->save( $conn );
                         $totalDed+=$params["neto"];
                     }
                 }
             }
-            
+
             if( $totalDed>$valor ){
                 throw new Exception("El total de las deducciones excede el valor total de la factura.");
             }
-            
             $vlrIngreso = $valor-$totalDed;
-            
             
             //Cuenta ingreso
             $inoDetalle = new InoDetalle();
             //$inoDetalle->setCaIddeduccion( $params["iddeduccion"] );                        
             $inoDetalle->setCaIdcomprobante( $comprobante->getCaIdcomprobante() );
             $inoDetalle->setCaCr( $vlrIngreso );
-            $inoDetalle->setCaIdconcepto( InoComprobante::ID_FACTURACION );                        
-            $inoDetalle->setCaIdhouse( $house->getCaIdhouse() );                        
+            $inoDetalle->setCaIdconcepto( InoComprobante::ID_FACTURACION );
+            $inoDetalle->setCaIdhouse( $house->getCaIdhouse() );
             $inoDetalle->setCaIdmaster( $house->getCaIdmaster() );
             $inoDetalle->setCaId( $comprobante->getCaId() );
-            $inoDetalle->save( $conn ); 
-            
+            $inoDetalle->save( $conn );
             //Cuenta deudores
             $inoDetalle = new InoDetalle();
-            //$inoDetalle->setCaIddeduccion( $params["iddeduccion"] );                        
+            //$inoDetalle->setCaIddeduccion( $params["iddeduccion"] );
             $inoDetalle->setCaIdcomprobante( $comprobante->getCaIdcomprobante() );
             $inoDetalle->setCaDb( $valor );
-            $inoDetalle->setCaIdconcepto( InoComprobante::ID_DEUDORES );                        
-            $inoDetalle->setCaIdhouse( $house->getCaIdhouse() );                        
+            $inoDetalle->setCaIdconcepto( InoComprobante::ID_DEUDORES );
+            $inoDetalle->setCaIdhouse( $house->getCaIdhouse() );
             $inoDetalle->setCaIdmaster( $house->getCaIdmaster() );
             $inoDetalle->setCaId( $comprobante->getCaId() );
-            $inoDetalle->save( $conn );            
-            
+            $inoDetalle->save( $conn );
+
             $conn->commit();
             //$conn->rollBack();
 
             $this->responseArray = array("success" => true, "id" => $request->getParameter("id"), "idcomprobante" => $comprobante->getCaIdcomprobante());
-        } catch (Exception $e) {                        
+        } catch (Exception $e) {
             $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
         }
-
-
 
         $this->setTemplate("responseTemplate");
     }
@@ -1680,42 +1677,137 @@ class inoActions extends sfActions {
     
     public function executeAnularReferencia(sfWebRequest $request) {
 
-        try{
-            $idmaster = $this->getRequestParameter("idmaster");
-            $this->forward404Unless($idmaster);
-            $master = Doctrine::getTable("InoMaster")->find( $idmaster  );        
-            $this->forward404Unless( $master );
-
-            $noComp = Doctrine::getTable("InoHouse")
-                            ->createQuery("c")
-                            ->select("COUNT(*)")                        
-                            ->innerJoin("c.Cliente cl")
-                            ->innerJoin("c.InoComprobante comp")                        
-                            ->innerJoin("comp.InoTipoComprobante tcomp")
-                            ->where("c.ca_idmaster = ?", $idmaster)
-                            ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)
-                            ->execute();
-
-
-      
-            if( $noComp ){
-                throw new Exception( "No se puede anular una referencia con facturas. Primero elimine las facturas y luego proceda a anular la referencia." );
-            }else{
-                if( !$master->getCaFchanulado() ){        
-                    $master->setCaFchanulado(date('Y-m-d H:i:s'));
-                    $master->setCaUsuanulado($this->getUser()->getUserId());
-                    $master->save();
-                }
-                
-            }
-        }catch(Exception $e){
-            $this->responseArray = array("success" => false, "errorInfo"=>$e->getMessage());
-        }
         
+        $master = Doctrine::getTable("InoMaster")->find( $this->getRequestParameter("idmaster") );        
+        
+        
+        if( !$master->getCaFchanulado() ){        
+            $master->setCaFchanulado(date('Y-m-d H:i:s'));
+            $master->setCaUsuanulado($this->getUser()->getUserId());
+            $master->save();
+        }
         $this->responseArray = array("success" => true);
         $this->setTemplate("responseTemplate");
         
     }
     
+    public function executeInstruccionesOtm(sfWebRequest $request) {
+        $this->idmaster=$request->getParameter("idmaster");
+        
+        $this->master = Doctrine::getTable("InoMaster")->find($this->idmaster);
+        
+        if(!$this->master)
+        {
+            echo "Noexiste<br>";
+            $this->master=new InoMaster();
+        }
+
+        //echo $this->idmaster;
+        $this->conta = ParametroTable::retrieveByCaso("CU098", $this->master->getCaIdlinea());
+        
+        if($this->conta[0])
+        {        
+            $this->contactos = $this->conta[0]->getCaValor2();
+        }
+        
+        if($this->master->getCaOrigen()=="CTG-0005")
+        {
+            $this->contactos .= ",cabolano@colotm.com.co,otmctg@colotm.com";
+        }
+        else if($idorigen=="BUN-0002")
+            $this->contactos .=",otmbun@colotm.com";
+
+    }
+    
+    public function executeEnviarInstruccionesOtm(sfWebRequest $request)
+    {
+        $user = $this->getUser();
+     //   exit;
+        
+        $this->idmaster=$request->getParameter("idmaster");
+        $this->master = Doctrine::getTable("InoMaster")->find($this->idmaster);
+
+        $house=$this->master->getInoHouse();
+        $totales=array();
+        foreach($house as $h)
+        {
+            $reporte = $h->getReporte();
+            $htmlReportes[]="<tr><td>".$reporte->getCaConsecutivo()."</td><td>".$h->getCaDoctransporte()."</td><td>".$reporte->getCliente("continuacion")->getCaCompania()."</td><td>".$reporte->getRepOtm()->getInoDianDepositos()->getCaNombre()."</td><td>".$reporte->getBodega()->getCaNombre()."/".$reporte->getBodega()->getCaTipo()."</td><td>".$h->getCaNumpiezas()." </td><td>".$h->getCaPeso()."</td><td>".$h->getCaVolumen()."</td></tr>";
+            $totales["volumen"]+=$h->getCaVolumen();
+            $totales["piezas"]+=$h->getCaNumpiezas();
+            $totales["peso"]+=$h->getCaPeso();            
+        }
+        $htmlReportes[]="<tr><td colspan=5>TOTALES</td><td>".$totales["piezas"]." </td><td>".$totales["peso"]."</td><td>".$totales["volumen"]."</td></tr>";
+        $email = new Email();
+
+        $email->setCaUsuenvio($user->getUserId());
+        $email->setCaTipo("InstruccionesOtm"); //Envío de Avisos
+        $email->setCaIdcaso(null);
+
+        $from = $request->getParameter("from");
+        if ($from) {
+            $email->setCaFrom($from);
+        } else {
+            $email->setCaFrom($user->getEmail());
+        }
+        $email->setCaFromname($user->getNombre());
+
+        if ($request->getParameter("readreceipt")) {
+            $email->setCaReadreceipt(true);
+        } else {
+            $email->setCaReadreceipt(false);
+        }
+        
+        $email->setCaReplyto($user->getEmail());
+
+        $recips = explode(",", $request->getParameter("destinatario"));
+        
+        foreach ($recips as $recip) {
+            $recip = str_replace(" ", "", $recip);
+            if ($recip) {
+                $email->addTo($recip);
+            }
+        }
+        
+        $recips = explode(",", $request->getParameter("cc"));
+        foreach ($recips as $recip) {
+            $recip = str_replace(" ", "", $recip);
+            if ($recip) {
+                $email->addCc($recip);
+            }
+        }
+        
+
+        if ($from) {
+            $email->addCc($from);
+        } else {
+            $email->addCc($this->getUser()->getEmail());
+        }
+
+        $email->setCaSubject($request->getParameter("asunto"));
+        $email->setCaBody($request->getParameter("mensaje"));
+
+        $mensaje = Utils::replace($request->getParameter("mensaje")) . "<br />";
+
+
+        $html ="<div>
+            <table class='tableList alignLeft'><tr><td>
+            <table class='tableList alignLeft' width='1000' >
+            <tr><th colspan='8'>Se Creo la Referencia No: ".$this->master->getCaReferencia()."</th></tr>
+            <tr><th>NO REPORTE</th><th>HBL</th><th>IMPORTADOR</th><th>MUELLE</th><th>BODEGA</th><th>PIEZAS</th><th>PESO</th><th>VOLUMEN</th></tr>";
+        $html.=implode("",$htmlReportes );
+        $html."</table></td></tr></table></div>";
+
+
+        $this->getRequest()->setParameter('tipo',"INSTRUCCIONES");
+        $this->getRequest()->setParameter('mensaje',$request->getParameter("mensaje"));
+        $this->getRequest()->setParameter('html',$html);
+        $request->setParameter("format", "email");
+
+        $mensaje = sfContext::getInstance()->getController()->getPresentationFor( 'reportesNeg', 'emailReporte');
+        $email->setCaBodyhtml($mensaje);
+
+        $email->save($conn);
+    }
 }
 

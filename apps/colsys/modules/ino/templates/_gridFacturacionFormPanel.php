@@ -6,6 +6,7 @@
  */
 
 $tipos = $sf_data->getRaw("tipos");
+$modo = $sf_data->getRaw("modo");
 
 
 
@@ -107,8 +108,6 @@ $tipos = $sf_data->getRaw("tipos");
             activeTab: 0,
             defaults:{autoHeight:true},
             deferredRender:false,
-            
-            
             items:[{
                 title:'Información General',
                 layout:'form',
@@ -208,7 +207,25 @@ $tipos = $sf_data->getRaw("tipos");
                                         decimalPrecision : 2,
                                         width: 80,
                                         tabIndex: 4
+                                    }<?
+                                    if($modo=="5")
+                                    {
+                                    ?>
+                                    ,
+                                    {
+                                        xtype:'numberfield',
+                                        fieldLabel: 'Valor Venta',
+                                        name: 'venta',
+                                        value: '',
+                                        allowBlank:false,
+                                        allowNegative:true,
+                                        decimalPrecision : 2,
+                                        width: 80,
+                                        tabIndex: 4
                                     }
+                                    <?
+                                    }
+                                    ?>
                                 ]
                             }
                             
@@ -281,11 +298,9 @@ $tipos = $sf_data->getRaw("tipos");
                         str += "neto="+rec.get("neto");
                         result.push( str );
                     }
-                    
                 }
                 
                 form.findField("deducciones").setValue(result.join("|"));
-                
                 
                 var gridOpener = this.gridOpener;
                 form.submit({
