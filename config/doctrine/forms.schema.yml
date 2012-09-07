@@ -1,0 +1,230 @@
+detect_relations: true
+options:
+  collate: latin1_spanish_ci
+  charset: latin1
+  type: InnoDB
+
+Formulario:
+  tableName: tb_formulario
+  columns:
+    ca_id:
+      type: integer(4)
+      primary: true
+      notnull: true
+      autoincrement: true
+    ca_alias:
+      type: string(100)
+    ca_titulo:
+      type: string(250)
+    ca_introduccion:
+      type: string(2000)
+    ca_activo:
+      type: boolean
+    ca_estilo:
+      type: boolean
+    ca_nombre_formato:
+      type: string(250)
+    ca_color:
+      type: string(45)
+
+Pregunta:
+  tableName: tb_pregunta
+  columns:
+    ca_id:
+      type: integer(4)
+      primary: true
+      notnull: true
+      autoincrement: true
+    tb_bloque_ca_id:
+      type: integer(4)
+      notnull: true
+    ca_alias:
+      type: string(45)
+    ca_texto:
+      type: string(1000)
+    ca_ayuda:
+      type: string(45)
+    ca_tipo:
+      type: integer(4)
+    ca_orden:
+      type: integer(4)
+    ca_activo:
+      type: boolean
+    ca_estilo:
+      type: boolean
+    ca_color:
+      type: string(45)
+  relations:
+    tbBloqueCa:
+      class: tbBloque
+      local: tb_bloque_ca_id
+      foreign: ca_id
+      foreignAlias: tb_preguntas
+  indexes:
+    fk_tb_pregunta_tb_bloque1:
+      fields: [tb_bloque_ca_id]
+
+Servicio:
+  tableName: tb_servicio
+  columns:
+    ca_id:
+      type: integer(4)
+      primary: true
+      notnull: true
+      autoincrement: true
+    ca_nombre:
+      type: string(45)
+
+tbId:
+  tableName: tb_ids
+  columns:
+    ca_id:
+      type: integer(4)
+      primary: true
+      notnull: true
+      autoincrement: true
+
+Bloque:
+  tableName: tb_bloque
+  columns:
+    ca_id:
+      type: integer(4)
+      primary: true
+      notnull: true
+      autoincrement: true
+    tb_formulario_ca_id:
+      type: integer(4)
+      notnull: true
+    ca_alias:
+      type: string(250)
+    ca_titulo:
+      type: string(250)
+    ca_introduccion:
+      type: string(2000)
+    ca_orden:
+      type: integer(4)
+    ca_activo:
+      type: boolean
+    ca_estilo:
+      type: boolean
+    ca_color:
+      type: string(45)
+  relations:
+    tbFormularioCa:
+      class: tbFormulario
+      local: tb_formulario_ca_id
+      foreign: ca_id
+      foreignAlias: tb_bloques
+  indexes:
+    fk_tb_bloque_tb_formulario1:
+      fields: [tb_formulario_ca_id]
+
+Opcion:
+  tableName: tb_opcion
+  columns:
+    ca_id:
+      type: integer(4)
+      primary: true
+      notnull: true
+      autoincrement: true
+    ca_label:
+      type: string(45)
+    ca_introduccion:
+      type: string(45)
+    ca_default:
+      type: boolean
+    ca_color:
+      type: string(45)
+    ca_extra1:
+      type: string(250)
+    ca_extra2:
+      type: string(250)
+    ca_extra3:
+      type: string(250)
+    tb_pregunta_ca_id:
+      type: integer(4)
+      notnull: true
+  relations:
+    tbPreguntaCa:
+      class: tbPregunta
+      local: tb_pregunta_ca_id
+      foreign: ca_id
+      foreignAlias: tb_opcions
+  indexes:
+    fk_tb_opciones_tb_pregunta1:
+      fields: [tb_pregunta_ca_id]
+
+ResultadoEncuesta:
+  tableName: tb_resultado_encuesta
+  columns:
+    ca_id:
+      type: integer(4)
+      primary: true
+      notnull: true
+      autoincrement: true
+    ca_resultado:
+      type: string(100000)
+    ca_timestamp:
+      type: string(45)
+    tb_servicio_ca_id:
+      type: integer(4)
+      notnull: true
+    tb_ids_ca_id:
+      type: integer(4)
+      notnull: true
+  relations:
+    tbServicioCa:
+      class: tbServicio
+      local: tb_servicio_ca_id
+      foreign: ca_id
+      foreignAlias: tb_resultado_encuestas
+    tbIdsCa:
+      class: Ids
+      local: tb_ids_ca_id
+      foreign: ca_id
+      foreignAlias: tb_resultado_encuestas
+  indexes:
+    fk_tb_resultado_encuesta_tb_servicio1:
+      fields: [tb_servicio_ca_id]
+    fk_tb_resultado_encuesta_tb_ids1:
+      fields: [tb_ids_ca_id]
+
+ControlEncuesta:
+  tableName: tb_control_encuesta
+  columns:
+    ca_id:
+      type: integer(4)
+      primary: true
+      notnull: true
+      autoincrement: true
+    ca_activo:
+      type: string(45)
+    valido:
+      type: timestamp
+    restante:
+      type: integer(4)
+    tb_servicio_ca_id:
+      type: integer(4)
+      primary: true
+      notnull: true
+    tb_ids_ca_id:
+      type: integer(4)
+      primary: true
+      notnull: true
+  relations:
+    tbServicioCa:
+      class: tbServicio
+      local: tb_servicio_ca_id
+      foreign: ca_id
+      foreignAlias: tb_control_encuestas
+    tbIdsCa:
+      class: Ids
+      local: tb_ids_ca_id
+      foreign: ca_id
+      foreignAlias: tb_control_encuestas
+  indexes:
+    fk_tb_control_encuesta_tb_servicio1:
+      fields: [tb_servicio_ca_id]
+    fk_tb_control_encuesta_tb_ids1:
+      fields: [tb_ids_ca_id]
+
