@@ -12,4 +12,70 @@
  */
 class InoCostosSea extends BaseInoCostosSea
 {
+    
+    static public function setCosto($comprobante,$conn ) {
+        try {
+            $idproveedor="2533";//colotm
+            $inoCliente = Doctrine::getTable("InoClientesSea")->findOneBy("ca_hbls", $comprobante->getInoHouse()->getCaDoctransporte());
+            if(!$inoCliente)
+                return "-1";
+            $inoMaestraSea=$inoCliente->getInoMaestraSea();
+
+            if($inoMaestraSea->getCaFchcerrado()=="")
+                return "-2";
+
+            $costos = Doctrine::getTable("InoCostosSea")
+                               ->createQuery("c")
+                               ->addWhere("c.ca_referencia = ? and ca_idproveedor = ? and ca_factura = ?", array($inoMaestraSea->getCaReferencia() , $idproveedor , $comprobante->getCaConsecutivo()) )
+                               ->execute();
+
+            if(count($costos)>0)
+                return "-3";
+
+            $inoCostosSea = new InoCostosSea();
+            //$comprobante = new InoComprobante();
+            $costo = Doctrine::getTable("Costo")
+                               ->createQuery("c")
+                               ->addWhere("c.ca_modalidad = ? and ca_costo = ? ", array($inoMaestraSea->getCaModalidad() , "OTM" ) )
+                               ->fetchOne();
+
+            //$inoCliente = Doctrine::getTable("InoClientesSea")->find("ca_hbls", $comprobante->getInoHouse()->getCaDoctransporte());
+
+            $inoCostosSea->setCaFactura($comprobante->getCaConsecutivo());
+            $inoCostosSea->setCaFchfactura($comprobante->getCaFchcomprobante());
+
+            $inoCostosSea->setCaIdcosto($costo->getCaIdcosto());
+            $inoCostosSea->setCaIdmoneda($comprobante->getCaIdmoneda());
+            $inoCostosSea->setCaIdproveedor($idproveedor);
+            $inoCostosSea->setCaProveedor("COL OTM - ".$comprobante->getInoHouse()->getCliente()->getCaCompania());
+            $inoCostosSea->setCaNeto($comprobante->getCaValor());
+            $inoCostosSea->setCaReferencia($inoMaestraSea->getCaReferencia());
+            $inoCostosSea->setCaTcambio($comprobante->getCaTcambio());
+            $inoCostosSea->setCaTcambioUsd($comprobante->getCaTcambioUsd());
+            $inoCostosSea->setCaVenta($comprobante->getCaValor2());
+            $inoCostosSea->save($conn);
+            
+            
+            
+            if($comprobante->getCaValor2()>$comprobante->getCaValor())
+            {
+                $inoutilidadSea = new InoutilidadSea();
+                $inoutilidadSea->setCaReferencia($inoMaestraSea->getCaReferencia());
+                $inoutilidadSea->setCaIdcliente($comprobante->getInoHouse()->getCaIdcliente());
+                $inoutilidadSea->setCaHbls($comprobante->getInoHouse()->getCaDoctransporte());
+                $inoutilidadSea->setCaIdcosto($costo->getCaIdcosto());
+                $inoutilidadSea->setCaFactura($comprobante->getCaConsecutivo());
+                $inoutilidadSea->setCaValor($comprobante->getCaValor2()-$comprobante->getCaValor());
+                $inoutilidadSea->save($conn);
+            }
+            return $inoCostosSea->getOid();
+            
+            
+        }
+        catch(Exception $e)
+        {
+            throw new Exception("Error : ".$e->getMessage());
+        }
+    }
+    
 }
