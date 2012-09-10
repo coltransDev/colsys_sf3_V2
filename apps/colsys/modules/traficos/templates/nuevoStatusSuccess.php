@@ -349,7 +349,11 @@ echo $form['transporte']->render();
 			 	if( $reporte->getCaImpoexpo()==Constantes::EXPO ){                   
 				 	$form->setDefault('idetapa', "EEETD" );
 				}else{
-				 	$form->setDefault('idetapa', "IMETA" ); 	
+               if ($user->getIdSucursal() == "PER"){
+                  $form->setDefault('idetapa', "IMCEM" );
+               }else{
+                  $form->setDefault('idetapa', "IMETA" );
+               }
 				}
 			 }else{
 			 	if( $ultStatus ){
