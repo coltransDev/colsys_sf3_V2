@@ -1362,6 +1362,11 @@ class traficosActions extends sfActions
         
         $idreporte = $this->getRequestParameter("idreporte");
 		$reporte = Doctrine::getTable("Reporte")->find( $idreporte );
+        
+        $this->modo = $this->getRequestParameter("modo");
+        $modo = $this->modo;
+        
+        
 		
 		$this->getRequest()->setParameter("reporte", $reporte->getCaConsecutivo());
         
@@ -1397,7 +1402,8 @@ class traficosActions extends sfActions
                 }
                 
                 $reporte->save();
-                $this->redirect("traficos/listaStatus?&reporte=".$reporte->getCaConsecutivo());
+                $this->redirect("traficos/listaStatus?modo=".$modo."&reporte=".$reporte->getCaConsecutivo());
+                
         	}				
 		}
         $this->reporte = $reporte;
