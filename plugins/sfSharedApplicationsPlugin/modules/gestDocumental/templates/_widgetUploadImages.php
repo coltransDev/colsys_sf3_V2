@@ -10,7 +10,7 @@ WidgetUploadImages = function( config ){
             upload_url: "<?=url_for('gestDocumental/uploadImages')?>",
             post_params: config.post_params,            
             file_size_limit : (config.file_size_limit)?config.file_size_limit:"10 MB",
-            file_types : (config.file_size_limit)?config.file_size_limit:"*.jpg;*.png;*.gif",
+            file_types : (config.file_size_limit)?config.file_size_limit:"*.JPG;*.jpg;*.png;*.gif",
             file_types_description : (config.file_types_description)?config.file_types_description:"JPG Images; PNG Image;GIF Images",
             file_upload_limit : 0,
             
@@ -27,7 +27,7 @@ WidgetUploadImages = function( config ){
             button_placeholder_id : config.button_placeholder_id,
             button_width: 180,
             button_height: 18,
-            button_text : '<span class="button">Select Images <span class="buttonSmall">(2 MB Max)</span></span>',
+            button_text : '<span class="button">Buscar Imagenes <span class="buttonSmall">(2 MB Max)</span></span>',
             button_text_style : '.button { font-family: Helvetica, Arial, sans-serif; font-size: 12pt; } .buttonSmall { font-size: 10pt; }',
             button_text_top_padding: 0,
             button_text_left_padding: 18,
