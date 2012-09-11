@@ -250,7 +250,7 @@ if( $reporte->getCaUsuanulado() ){
                             $this->widgetsClientes[$name] = array("type" => $type, "label" => $parametro->getCaValor2());
                             echo "<b>".$parametro->getCaValor2().": </b>".$reporte->getProperty($name)."</br>";
                         }
-                    $url = url_for("traficos/formParametros?idreporte=".$reporte->getCaIdreporte());
+                    $url = url_for("traficos/formParametros?idreporte=".$reporte->getCaIdreporte()."&modo=".$modo);
                     echo link_to(image_tag("22x22/edit.gif")." Editar", $url);
                     }
                 ?>
