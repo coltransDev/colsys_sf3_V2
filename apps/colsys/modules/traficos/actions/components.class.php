@@ -43,8 +43,8 @@ class traficosComponents extends sfComponents
 	* @author: Andres Botero
 	*/
 	public function executeVerArchivosReporte(){
-		$this->files=$this->reporte->getFiles(array(),array('*.jpeg*','*.jpg*','*.png*','*.gif*'));					
-		$this->user = $this->getUser();				
+		$this->files=$this->reporte->getFiles(array(),array('*.jpeg*','*.jpg*','*.png*','*.gif*','*.JPEG*','*.JPG*','*.PNG*','*.GIF*'));					
+		$this->user = $this->getUser();
 	}
 	
 	/*

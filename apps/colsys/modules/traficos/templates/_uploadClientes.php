@@ -17,7 +17,7 @@ include_component("gestDocumental", "widgetUploadImages");
                 
                 $folder=$reporte->getDirectorioBase();
                 $directory = $reporte->getDirectorio();
-                $archivos = sfFinder::type('file')->maxDepth(0)->name(array('*.jpeg*','*.jpg*','*.png*','*.gif*'))->in($directory) ;
+                $archivos = sfFinder::type('file')->maxDepth(0)->name(array('*.jpeg*','*.jpg*','*.png*','*.gif*','*.JPEG*','*.JPG*','*.PNG*','*.GIF*'))->in($directory) ;
                 $narchivos=count($archivos);
                 $alto=ceil($narchivos/4)*$dimVisual;
                 //echo "::".$reporte->getCaIdreporte()."-".$folder."::";
