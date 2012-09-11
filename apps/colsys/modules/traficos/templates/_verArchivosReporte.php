@@ -36,8 +36,8 @@ foreach( $files as $file ){
 <?
 if( $nivel>0 ){
 ?>
-<form action="<?=url_for("traficos/cargarArchivo")?>"  target="uploadFrame" enctype="multipart/form-data" method="post" />
-	<input type="hidden" name="idreporte" value="<?=$reporte->getCaIdreporte()?>" />
+<form action="<?=url_for("traficos/cargarArchivo")?>"  target="uploadFrame" enctype="multipart/form-data" method="post" >
+<input type="hidden" name="idreporte" value="<?=$reporte->getCaIdreporte()?>" />
 <table width="100%" border="0" class="tableForm">
 	
 	<tr>
