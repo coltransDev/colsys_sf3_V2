@@ -56,16 +56,23 @@ class gestDocumentalActions extends sfActions
 	* @author: Andres Botero
 	*/
 	public function executeSubirArchivo(){
-
+        
 		sfConfig::set('sf_web_debug', false) ;
 		$folder = base64_decode($this->getRequestParameter("folder"));
+        $this->referer=base64_decode($this->getRequestParameter("referer"));
+        $this->nameFileType=$this->getRequestParameter("namefiletype");
+        
+        $template = ($this->getRequestParameter("template")!="")?$this->getRequestParameter("template"):"responseTemplate";
+        
 		$this->forward404Unless($folder);
         $directory = sfConfig::get('app_digitalFile_root').DIRECTORY_SEPARATOR.$folder.DIRECTORY_SEPARATOR;
-
+        //echo $directory;
         if(!is_dir($directory)){
             mkdir($directory, 0777, true);
         }
         chmod ( $directory , 0777 );
+        //print_r($_FILES);
+        //error_reporting(E_ALL);
         try
         {
             if ( count( $_FILES )>0 ){
@@ -80,14 +87,28 @@ class gestDocumentalActions extends sfActions
                     }
                 }
 
-                foreach ( $_FILES as $uploadedFile){
+                foreach ( $_FILES as $nameFile =>$uploadedFile){
+                    if($uploadedFile['name']=="")
+                        continue;
+                    if($this->nameFileType=="static")
+                    {            
+                        $archivos=sfFinder::type('file')->name($nameFile.'--*')->maxDepth(0)->in($directory);        
+                        if(count($archivos)>0)
+                        {
+                            Unlink($archivos[0]);
+                        }
+                                                
+                        $filePrefix=$nameFile."--";
+                        //$fileName  = $uploadedFile['name'] ;
+                    }
+                    
                     if( $filePrefix ){
                         $fileName  = $filePrefix."_".$uploadedFile['name'] ;
                     }else{
                         $fileName  = $uploadedFile['name'] ;
                     }
-
-
+                    
+                    //echo $directory.$fileName;
                     if(move_uploaded_file($uploadedFile['tmp_name'],$directory.$fileName )){
                         $this->responseArray = array("id"=>base64_encode($fileName), "filename"=>$fileName, "folder"=>$folder, "success"=>true);
                     }else{
@@ -103,7 +124,7 @@ class gestDocumentalActions extends sfActions
             $this->responseArray = array("error"=>$e->getMessage(), "success"=>false);
         }
 
-		$this->setTemplate("responseTemplate");
+		$this->setTemplate($template);
 	}
 
 	/*
@@ -408,6 +429,93 @@ exit;
                         }
                         //exit(0);
                         $this->responseArray = array("success" => true, "filename" => $fileNameMin . ".jpg", "folder" => $folder, "filebase" => base64_encode($folder . "/" . $fileNameMin . ".jpg"), "thumbnails" => $thumbnails, "dimension" => $dimVisual);
+                    } catch (Exception $e) {
+                        $this->responseArray = array("error" => $e->getMessage(), "filename" => $fileName, "folder" => $folder, "success" => false);
+                    }
+                }
+            } else {
+                $this->responseArray = array("success" => false);
+            }
+        } catch (Exception $e) {
+            $this->responseArray = array("error" => $e->getMessage(), "success" => false);
+        }
+
+        $this->setTemplate("responseTemplate");
+    }
+    
+    public function executeUploadFiles($request) {
+        sfConfig::set('sf_web_debug', false);
+        $folder = base64_decode($this->getRequestParameter("folder"));
+        $thumbnails = $this->getRequestParameter("thumbnails");
+        //$dimension = $this->getRequestParameter("dimension");
+        $tam_max = ($this->getRequestParameter("tam_max")) ? $this->getRequestParameter("tam_max") : "200";
+        $dimVisual = ($this->getRequestParameter("tam_max_visual")) ? $this->getRequestParameter("tam_max_visual") : $tam_max;
+        
+        $this->forward404Unless($folder);
+        $directory = sfConfig::get('app_digitalFile_root') . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR;
+        error_reporting(E_ALL);
+        if (!is_dir($directory)) {
+            mkdir($directory, 0777, true);
+        }
+        chmod($directory, 0777);
+        
+        try {
+            if (count($_FILES) > 0) {
+
+                foreach ($_FILES as $uploadedFile) {
+                    try {
+                        
+                        //$tmp = explode(".", $fileName);
+                        
+                        $fileNameMin = $tmp[0];
+
+                        $name_tmp = $uploadedFile['tmp_name'];
+                        
+                        $fileName = $uploadedFile['name'];
+                        
+                        $tmp = explode(".", $fileName);
+                        $fileNameMin = $tmp[0];
+
+                        $name_tmp = $uploadedFile['tmp_name'];
+                        
+                        //echo $fileName."<br>";
+                        //echo (string)Utils::isImage($fileName);
+                        //exit;
+                        if(Utils::isImage($fileName))
+                        {
+                            $image = $this->open_image($uploadedFile['tmp_name']);
+
+                            $w = imagesx($image);
+                            $h = imagesy($image);                        
+                            if ($w > $tam_max || $h > $tam_max) {
+                                $control = ($h >= $w);
+                                if ($control) {
+                                    $porcen = $tam_max / $h;
+                                } else {
+                                    $porcen = $tam_max / $w;
+                                }
+
+                                $new_w = $w * $porcen;
+                                $new_h = $h * $porcen;
+
+                                $im2 = ImageCreateTrueColor($new_w, $new_h);
+                                imagecopyResampled($im2, $image, 0, 0, 0, 0, $new_w, $new_h, $w, $h);
+                                $w = imagesx($im2);
+                                $h = imagesy($im2);
+
+                                imagejpeg($im2, $directory . $fileNameMin . ".jpg", 80);                            
+                            } else {
+                                imagejpeg($image, $directory . $fileNameMin . ".jpg", 80);
+                            }
+                             $fileName=$fileNameMin."jpg";
+                             $this->responseArray = array("success" => true, "filename" => $fileName, "folder" => $folder, "filebase" => base64_encode($folder . "/" . $fileNameMin . ".jpg"), "thumbnails" => $thumbnails, "dimension" => $dimVisual,"tipo" => "Image");
+                        }
+                        else
+                        {
+                            move_uploaded_file($uploadedFile['tmp_name'],$directory.$fileName );
+                            $this->responseArray = array("success" => true, "filename" => $fileName, "folder" => $folder, "filebase" => base64_encode($folder . "/" . $fileName ), "thumbnails" => $thumbnails, "tipo" => "File");
+                        }
+                        
                     } catch (Exception $e) {
                         $this->responseArray = array("error" => $e->getMessage(), "filename" => $fileName, "folder" => $folder, "success" => false);
                     }
