@@ -42,8 +42,8 @@ class traficosComponents extends sfComponents
 	* Muestra las referencias que el usuario ha buscado
 	* @author: Andres Botero
 	*/
-	public function executeVerArchivosReporte(){				
-		$this->files=$this->reporte->getFiles();					
+	public function executeVerArchivosReporte(){
+		$this->files=$this->reporte->getFiles(array(),array('*.jpeg*','*.jpg*','*.png*','*.gif*'));					
 		$this->user = $this->getUser();				
 	}
 	
@@ -66,6 +66,12 @@ class traficosComponents extends sfComponents
 	public function executeHistorialStatus( ){					
 		$this->statusList = $this->reporte->getRepStatus();
 	}
-	
+
+    public function executeUploadClientes()
+	{
+             
+    }
+    
+    
 }
 ?>

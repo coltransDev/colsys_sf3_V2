@@ -222,6 +222,11 @@ if( $reporte->getCaUsuanulado() ){
 				?>
 				</div>
 				
+                <table class="tableForm" width="100%" border="0">
+            <?
+                include_component("traficos", "uploadClientes",array("reporte"=>$reporte,"modo"=>$modo));
+            ?>
+        </table>
 			
 		</div>
 		<br />

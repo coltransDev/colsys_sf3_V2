@@ -77,14 +77,16 @@ class traficosActions extends sfActions
 	 * @author: Andres Botero
 	 */
 	public function executeListaStatus($request){
+        $response = sfContext::getInstance()->getResponse();
+        $response->addJavaScript("swfupload/swfupload",'last');
+        $response->addJavaScript("swfupload/js/handlers",'last');
+
 		$this->idCliente = $this->getRequestParameter("idcliente");
-				
+
 		$this->modo = $this->getRequestParameter("modo");
-        
+
         $consecutivo = $this->getRequestParameter("reporte");
-        //echo "::".$this->getRequestParameter("modo");
         if( $this->getRequestParameter("reporte") ){
-            
             if($this->modo =="maritimo" )
             {
                 //echo $modo;
@@ -911,6 +913,7 @@ class traficosActions extends sfActions
 	 * @author: Andres Botero
 	 */
 	public function executeCorreoTraficos(){
+		
 		
 		$idCliente = $this->getRequestParameter("idcliente");
 		$this->idCliente = $idCliente;
