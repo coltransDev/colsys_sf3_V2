@@ -15,5 +15,19 @@ mensajeReservaMaritimo: |
 mensajeAereo: |
   De acuerdo a las condiciones del contrato de transporte, la persona con derecho a la entrega deberá reclamar por escrito al transportista en caso de daño visible a la mercancía; a mas tardar a los catorce (14) días a partir de la fecha de manifiesto o llegada de la misma al país.
 
+mensajeConfOTM: |
+  Respetado cliente buenos días, nos complace suministrarle nueva información en relación a su carga en OTM. 
+mensajeCierreOTM: |  
+  Confirmamos cierre y finalización de los documentos del proceso de OTM, los cuales se encuentran en nuestras oficinas para la correspondiente liberación.
   
-
+mensajeConfOTMCliente: |
+  Como requisito indispensable para efectuar el OTM necesitamos los siguientes documentos:
+  - HBL original
+  - Copia Factura Comercial con Término de Negociación
+  - Copia Lista de Empaque
+  - Copia Póliza de Seguro
+  
+  Si su mercancía requiere tramite Invima favor enviar original del certificado del proveedor de mercancia apta para el consumo humano+ el registro de importación.
+  
+  
+  Cualquier información adicional respecto al OTM favor contactar a  
