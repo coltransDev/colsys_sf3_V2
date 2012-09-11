@@ -33,21 +33,19 @@ use_helper("MimeType");
 	}
 	
 	function actualizar( id ){
-		histContent = document.getElementById('info_'+id);
-		
-		histContent.innerHTML = "<div id='indicator'></div>";			
+		histContent = document.getElementById('info_'+id);		
+		histContent.innerHTML = "<div id='indicator'></div>";
 		Ext.Ajax.request({
 			url: '<?=url_for("traficos/infoReporte");?>',
 			params: {							
 				idreporte: id,
 				modo: '<?=$modo?>'
 			},
-			success: function(xhr) {			
-				histContent.innerHTML = xhr.responseText;
+			success: function(xhr) {
+                $('#info_'+id).html(xhr.responseText);
 				
 			},
-			failure:function(response,options){
-                //var res = Ext.util.JSON.decode( response.responseText );
+			failure:function(response,options){                
                 Ext.MessageBox.alert('Error Message', "Se ha presentado un error: "+(response.status?"\n Codigo HTTP "+response.status:""));
             }
 		});	
@@ -161,8 +159,7 @@ use_helper("MimeType");
 	foreach( $reportes as $reporte ){
 	/*	if( !$reporte->esUltimaVersion($modo) ){
 			continue;
-		}
-     */
+		}        */
         if($reportetmp==$reporte->getCaConsecutivo())
             continue;
         $reportetmp=$reporte->getCaConsecutivo();
