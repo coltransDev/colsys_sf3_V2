@@ -1,5 +1,5 @@
 <?php
-$url = "traficos/formParametros?&idreporte=".$reporte->getCaIdreporte();
+$url = "traficos/formParametros?modo=".$modo."&idreporte=".$reporte->getCaIdreporte();
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
