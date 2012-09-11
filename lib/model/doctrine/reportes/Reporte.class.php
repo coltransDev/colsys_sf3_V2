@@ -95,13 +95,13 @@ class Reporte extends BaseReporte {
      * Retorna el objeto cliente asociado al contacto del reporte
      * @author Andres Botero
      */
-    public function getCliente($opcion) {
+    public function getCliente($opciontmp=null) {
         if(!$this->cliente)
         {
             if($this->getCaTiporep()==4 && ($this->getRepOtm()->getCaIdimportador()!="" || $this->getRepOtm()->getCaIdcliente() ) )
             {
                 $this->cliente = new Cliente();
-                $idt=($opcion=="continuacion")?$this->getRepOtm()->getCaIdimportador():$this->getRepOtm()->getCaIdcliente();
+                $idt=($opciontmp=="continuacion")?$this->getRepOtm()->getCaIdimportador():$this->getRepOtm()->getCaIdcliente();
                 $tercero=Doctrine::getTable("Tercero")->find($idt);
                 if($tercero)
                 {
@@ -841,12 +841,17 @@ class Reporte extends BaseReporte {
      * @author: Andres Botero
      */
 
-    public function getFiles() {
+    public function getFiles($name=array(),$not_name=array()) {
         $directory = $this->getDirectorio();
         if (!is_dir($directory)) {
             mkdir($directory, 0777, true);
         }
-        return sfFinder::type('file')->maxDepth(0)->in($directory);
+        if(count($name)>0)
+            return sfFinder::type('file')->maxDepth(0)->name($name)->in($directory);
+        else if(count($not_name)>0)            
+            return sfFinder::type('file')->maxDepth(0)->not_name($not_name)->in($directory);
+        else
+            return sfFinder::type('file')->maxDepth(0)->in($directory);
     }
 
     /*
