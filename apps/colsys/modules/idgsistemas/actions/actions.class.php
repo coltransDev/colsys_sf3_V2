@@ -231,10 +231,14 @@ class idgsistemasActions extends sfActions {
 
     }
     
-    public function executeReporteIdgSistemas($request)
-    {
-        $this->idgroup = $request->getParameter( "idgroup" );
-        $this->login = $request->getParameter( "login" );
+    public function executeReporteIdgSistemas($request){
+        
+        $response = sfContext::getInstance()->getResponse();
+        $response->addJavaScript("extExtras/SuperBoxSelect", 'last');
+        
+        $this->idgroup = $request->getParameter("idgroup");
+        $this->grupos = $request->getParameter("grupos");
+        $this->login = $request->getParameter("login");
         $this->type_est = $request->getParameter( "type_est" );
         $this->porcentaje = $request->getParameter( "porcentaje" );
         $this->fechaInicial = Utils::parseDate($request->getParameter("fechaInicial"));
@@ -253,7 +257,17 @@ class idgsistemasActions extends sfActions {
         $porcentaje = $this->porcentaje;
 
         if( $checkboxGrupo ){
-            $sql_grupo=" AND gr.ca_idgroup = '".$this->idgroup."'";
+            if ($this->grupos && count($this->grupos) > 0){
+                $sql_grupo = "";
+                $sql_grupo.=" and (";
+                foreach ($this->grupos as $key => $grupo) {
+                    if ($key > 0)
+                        $sql_grupo.=" or ";
+                    $sql_grupo.=" gr.ca_name like '" . $grupo . "%'";
+                }
+                $sql_grupo.=" )";
+            }
+          //  $sql_grupo=" AND gr.ca_idgroup = '".$this->idgroup."'";
         }else{
             $this->idgroup = "";
             $sql_grupo = "";

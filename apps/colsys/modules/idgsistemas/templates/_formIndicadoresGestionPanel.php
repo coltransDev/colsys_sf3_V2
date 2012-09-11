@@ -3,6 +3,8 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
 */
+include_component("idgsistemas", "widgetMultiGrupos");
+$grupos = $sf_data->getRaw("grupos");
 
 ?>
 <script type="text/javascript">
@@ -194,7 +196,7 @@
                     checkboxName: "checkboxGrupo",
                     
                     items :[
-                        new WidgetDepartamentos({
+                        /*new WidgetDepartamentos({
                             hiddenName: 'departamento',
                             id: 'departamento_id',
                             linkGrupos: "grupo",
@@ -212,7 +214,15 @@
                         new WidgetAsignaciones({
                             id: 'usuario2',
                             name: 'usuario2'
+                        })*/
+                        new WidgetMultiGrupos({title: 'Grupos',
+                            fieldLabel:"grupos",
+                            id: 'grupos',
+                            name: 'grupos[]',
+                            width:230/*,
+                            value:'<?//=implode(",", $grupos)?>'*/
                         })
+                        
                     ]
                 },
                 

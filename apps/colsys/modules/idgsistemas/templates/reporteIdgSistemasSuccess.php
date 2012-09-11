@@ -7,6 +7,7 @@ include_component("idgsistemas", "formIndicadoresGestionPanel");
 include_component("pm", "widgetDepartamentos");
 include_component("pm", "widgetAsignaciones");
 include_component("pm", "widgetGrupos");
+include_component("idgsistemas", "widgetMultiGrupos");
 
 $array = array();
 $cuantos_lcs = 0;
