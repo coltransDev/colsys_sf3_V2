@@ -32,7 +32,9 @@
         <thead>
             <tr>
                 <th>Id</th>
+                <th>Codigo Dian</th>
                 <th>Nombre</th>
+                <th>Direccion</th>
                 <th>Tipo</th>
                 <th>Transporte</th>
             </tr>
@@ -41,7 +43,9 @@
             <?php foreach ($bodegas as $bodega): ?>
             <tr>
                 <td><a href="<?=url_for('bodegas/formClientePanel?idbodega='.$bodega->getCaIdbodega()) ?>"><?php echo $bodega->getCaIdbodega() ?></a></td>
+                <td><?php echo $bodega->getCaCodDian() ?></td>
                 <td><?php echo $bodega->getCaNombre() ?></td>
+                <td><?php echo $bodega->getCaDireccion() ?></td>
                 <td><?php echo $bodega->getCaTipo() ?></td>
                 <td><?php echo $bodega->getCaTransporte() ?></td>
             </tr>

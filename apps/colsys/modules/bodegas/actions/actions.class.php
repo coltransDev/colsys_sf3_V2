@@ -235,6 +235,8 @@ class bodegasActions extends sfActions {
                 $form_bodega->setCaNombre(utf8_decode($this->getRequestParameter("nombre")));
                 $form_bodega->setCaTipo(utf8_decode($this->getRequestParameter("tipo")));
                 $form_bodega->setCaTransporte(utf8_decode($this->getRequestParameter("transporte")));
+                $form_bodega->setCaDireccion(utf8_decode($this->getRequestParameter("direccion")));                
+                
 
                 $form_bodega->save();
                 Utils::deleteCache();

@@ -42,12 +42,8 @@ $tbodegaJ = $sf_data->getRaw("tbodegas");
                     totalProperty: 'totalCount'
                 }, [
                     {name: 'nombre', mapping: 'ca_nombre'}
-
-
-
                 ])
             });
-
 
             var combo = new Ext.form.ComboBox({
                 fieldLabel: "Nombre",
@@ -64,7 +60,7 @@ $tbodegaJ = $sf_data->getRaw("tbodegas");
                 store: store,
                 id: "nombre",
                 name: "nombre",
-                maxLength: 120,
+                maxLength: 60,
                 width: 540
              });
         
@@ -108,6 +104,15 @@ $tbodegaJ = $sf_data->getRaw("tbodegas");
                 //defaults: {width: 210},
                 items: [
                     combo,
+                    {
+                        xtype: "textfield",
+                        fieldLabel: "Direccion",
+                        name: "direccion",
+                        id: "direccion",
+                        maxLength: 100,
+                        width: 540
+                    }
+                    ,
                     {
                         xtype: "hidden",
                         name: "idbodega",
