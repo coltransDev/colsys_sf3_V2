@@ -444,7 +444,7 @@ elseif (!isset($boton) and !isset($accion) and isset($criterio)){
 		   $visible = ($rs->Value('ca_vendedor')==$usuario or $rs->Value('ca_vendedor')=='' or $nivel>1)?'visible':'hidden';
 		   $vetado = ($rs->Value('ca_coltrans_std')=='Vetado' or $rs->Value('ca_colmas_std')=='Vetado' )?'background-color:#FFb2b2;':'';
 		   $alerta = ($rs->Value('ca_coltrans_std')=='Vetado' or $rs->Value('ca_colmas_std')=='Vetado' )?'<IMG src=\'./graficos/izquierda.gif\' border=0>':'';
-		   if (!$cn->Open("select * from vi_concliente where ca_idcliente = ".$rs->Value('ca_idcliente')." and ca_idcontacto != 0")) {          // Selecciona todos lo registros de la tabla Contacos de Clientes
+		   if (!$cn->Open("select * from vi_concliente where ca_idcliente = ".$rs->Value('ca_idcliente')." and ca_idcontacto != 0 and ca_cargo<>'Extrabajador'")) {          // Selecciona todos lo registros de la tabla Contacos de Clientes
 				echo "<script>alert(\"".addslashes($cn->mErrMsg)."\");</script>";      // Muestra el mensaje de error
 				//echo "<script>document.location.href = 'clientes.php';</script>";
 				exit; }
