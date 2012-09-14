@@ -79,7 +79,7 @@ require_once("menu.php");
               echo "<TD Class=mostrar>".$rs->Value('ca_cargo')."</TD>";
               echo "<TD Class=mostrar>Área o Departamento :</TD>";
               echo "<TD Class=mostrar>".$rs->Value('ca_departamento')."</TD>";
-              echo "<TD Class=listar ROWSPAN=4><IMG SRC='./graficos/nuevo.gif' border=0 ALT='Se modificó la opción para eliminar contatos en el cliente!'></TD>";
+              echo "<TD Class=listar ROWSPAN=4><!--<IMG SRC='./graficos/nuevo.gif' border=0 ALT='Se modificó la opción para eliminar contatos en el cliente!'>--></TD>";
               echo "</TR>";
               echo "<TR>";
               echo "<TD Class=mostrar>Teléfonos :</TD>";
@@ -388,7 +388,7 @@ require_once("menu.php");
              echo "<INPUT TYPE='HIDDEN' NAME='co' VALUE='".$co."'>";           // Hereda el Id del registro que se esta eliminando
              echo "<TH Class=titulo COLSPAN=3>Datos del Contacto a Eliminar</TH>";
              echo "<TR>";
-             echo "  <TD Class=destacar COLSPAN=3><IMG SRC='./graficos/nuevo.gif' border=0 ALT='Especifique una etapa para el proceso de Importación'><br /><B>El Contacto NO será eliminado de forma definitiva de la base de datos y en su lugar, el sistema automáticamente remplazará los campos Cargo y Departamente con la palabra 'Extrabajador'. Pulse el botón 'Eliminar' para proceder de ésta forma.</B></TD>";
+             echo "  <TD Class=destacar COLSPAN=3><!--<IMG SRC='./graficos/nuevo.gif' border=0 ALT='Especifique una etapa para el proceso de Importación'><br />--><B>El Contacto NO será eliminado de forma definitiva de la base de datos y en su lugar, el sistema automáticamente remplazará los campos Cargo y Departamente con la palabra 'Extrabajador'. Pulse el botón 'Eliminar' para proceder de ésta forma.</B></TD>";
              echo "</TR>";
              echo "<TR>";
              echo "  <TD Class=mostrar style='vertical-align: top;' ROWSPAN=4>".number_format($tm->Value('ca_idcliente'))."-".$tm->Value('ca_digito')."</TD>";
