@@ -592,7 +592,7 @@ elseif (!isset($boton) and !isset($accion) and isset($criterio)){
 		   echo "</TR>";
 
 		   echo "<TR>";
-		   echo "  <TD Class=mostrar style='$vetado' COLSPAN=5><b>Libreta de Direcciones del Cliente:</b> <IMG SRC='./graficos/nuevo.gif' border=0 ALT='Opción de mantenimiento a libreta de direcciones por cliente!'></TD>";
+		   echo "  <TD Class=mostrar style='$vetado' COLSPAN=5><b>Libreta de Direcciones del Cliente:</b> <!--<IMG SRC='./graficos/nuevo.gif' border=0 ALT='Opción de mantenimiento a libreta de direcciones por cliente!'> --></TD>";
 		   echo "  <TD Class=invertir style='vertical-align: top; text-align: center;'>";                                            // Botones para hacer Mantenimiento a la Tabla
 		   echo "    <IMG style='visibility: $visible;' src='./graficos/edit.gif' alt='Editar el Registro' border=0 onclick='elegir(\"Libreta\", ".$rs->Value('ca_idcliente').");'>";
 		   echo "  </TD>";
