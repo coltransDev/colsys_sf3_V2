@@ -51,7 +51,6 @@ class UsuarioTable extends Doctrine_Table {
         if( $idsucursal ){
             $q->addWhere("u.ca_idsucursal = ?", $idsucursal);
         }
-               
         return $q->execute();
     }
     
@@ -70,7 +69,20 @@ class UsuarioTable extends Doctrine_Table {
         return $q->execute();
     }
     
-    
+    public static function getUsuariosxPerfil($perfil,$idsucursal=null) {
+//servicio-al-cliente
+        $q = Doctrine::getTable("Usuario")
+               ->createQuery("u")               
+               ->innerJoin("u.UsuarioPerfil up")
+               ->addWhere("u.ca_activo=? AND up.ca_perfil=? ", array('TRUE',$perfil))
+               ->addOrderBy("u.ca_idsucursal")
+               ->addOrderBy("u.ca_nombre");
+        if( $idsucursal ){
+            $q->addWhere("u.ca_idsucursal = ?", $idsucursal);
+        }
+        //echo $q->getSqlQuery();
+        return $q->execute();
+    }
 
     public function getLuceneIndex(){
 
@@ -91,21 +103,21 @@ class UsuarioTable extends Doctrine_Table {
 
     public function getForLuceneQuery($query)
     {
-      $hits = self::getLuceneIndex()->find($query);     
-      $pks = array();
-      foreach ($hits as $hit)
-      {
-        $pks[] = $hit->pk;
-      }
+        $hits = self::getLuceneIndex()->find($query);     
+        $pks = array();
+        foreach ($hits as $hit)
+        {
+            $pks[] = $hit->pk;
+        }
 
-      if (empty($pks))
-      {
-        return array();
-      }
+        if (empty($pks))
+        {
+            return array();
+        }
 
-      $q = $this->createQuery('j')
-        ->whereIn('j.ca_login', $pks)
-        ->limit(40);
+        $q = $this->createQuery('j')
+            ->whereIn('j.ca_login', $pks)
+            ->limit(40);
 
 
       return $q->execute();
