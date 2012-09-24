@@ -524,6 +524,19 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
     {
         return array_search($conn, $this->_connections, true);
     }
+    
+    
+    /**
+     * Get the connections instance
+     *
+     * @param Doctrine_Connection $conn     connection object to be searched for
+     * @return array                       connections
+     */
+    
+    public function getArrayConnections()
+    {
+        return $this->_connections;
+    }
 
     /**
      * Binds given component to given connection
