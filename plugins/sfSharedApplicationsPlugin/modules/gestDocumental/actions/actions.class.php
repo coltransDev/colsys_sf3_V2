@@ -107,6 +107,7 @@ class gestDocumentalActions extends sfActions
                     }else{
                         $fileName  = $uploadedFile['name'] ;
                     }
+                    $fileName = preg_replace('/\s\s+/', ' ', $fileName);
                     
                     //echo $directory.$fileName;
                     if(move_uploaded_file($uploadedFile['tmp_name'],$directory.$fileName )){
