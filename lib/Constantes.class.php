@@ -9,8 +9,10 @@ class Constantes{
 	
 	const COLTRANS = "Coltrans";
 	const COLMAS = "Colmas";
+    const COLOTM = "COL OTM";
 	const COLTRANS_RAZONSOCIAL = "Coltrans S.A.";
 	const COLMAS_RAZONSOCIAL = "Colmas Agente de Aduana Ltda.";
+    const COLOTM_RAZONSOCIAL = "Colotm";
 	
 	const IMPO = "Importación";
 	const EXPO = "Exportación";
@@ -26,7 +28,7 @@ class Constantes{
 
     const FCL = "FCL";
     const LCL = "LCL";
-    const COLOADING = "COLOADING";
+    const COLOADING = "COLOADING";    
     const ADUANAFCL = "ADUANA-FCL";
     const ADUANALCL = "ADUANA-LCL";
     const COURIER = "COURIER";
