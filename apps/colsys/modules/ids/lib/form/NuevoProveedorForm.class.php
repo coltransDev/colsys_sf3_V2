@@ -40,9 +40,10 @@ class NuevoProveedorForm extends BaseForm{
                                                                                  "Agencia"=>"Agencia"
                                                                                 )));
 
-        $widgets['empresa'] = new sfWidgetFormChoice(array('choices' => array( ""=>"Ambas",
-                                                                                  Constantes::COLTRANS=>Constantes::COLTRANS,
-                                                                                 Constantes::COLMAS=>Constantes::COLMAS
+        $widgets['empresa'] = new sfWidgetFormChoice(array('choices' => array( ""=>"Todas",
+                                                                                 Constantes::COLTRANS=>Constantes::COLTRANS,
+                                                                                 Constantes::COLMAS=>Constantes::COLMAS,
+                                                                                 Constantes::COLOTM=>Constantes::COLOTM
                                                                                 )));
         $widgets['contrato_comodato'] = new sfWidgetFormInputCheckbox();
         
