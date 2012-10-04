@@ -12,7 +12,6 @@
  */
 class InoCostosSea extends BaseInoCostosSea
 {
-    
     static public function setCosto($comprobante,$conn ) {
         try {
             $idproveedor="2533";//colotm
@@ -21,7 +20,7 @@ class InoCostosSea extends BaseInoCostosSea
                 return "-1";
             $inoMaestraSea=$inoCliente->getInoMaestraSea();
 
-            if($inoMaestraSea->getCaFchcerrado()=="")
+            if($inoMaestraSea->getCaFchcerrado()!="")
                 return "-2";
 
             $costos = Doctrine::getTable("InoCostosSea")
@@ -32,14 +31,11 @@ class InoCostosSea extends BaseInoCostosSea
             if(count($costos)>0)
                 return "-3";
 
-            $inoCostosSea = new InoCostosSea();
-            //$comprobante = new InoComprobante();
+            $inoCostosSea = new InoCostosSea();            
             $costo = Doctrine::getTable("Costo")
                                ->createQuery("c")
                                ->addWhere("c.ca_modalidad = ? and ca_costo = ? ", array($inoMaestraSea->getCaModalidad() , "OTM" ) )
                                ->fetchOne();
-
-            //$inoCliente = Doctrine::getTable("InoClientesSea")->find("ca_hbls", $comprobante->getInoHouse()->getCaDoctransporte());
 
             $inoCostosSea->setCaFactura($comprobante->getCaConsecutivo());
             $inoCostosSea->setCaFchfactura($comprobante->getCaFchcomprobante());
@@ -47,15 +43,13 @@ class InoCostosSea extends BaseInoCostosSea
             $inoCostosSea->setCaIdcosto($costo->getCaIdcosto());
             $inoCostosSea->setCaIdmoneda($comprobante->getCaIdmoneda());
             $inoCostosSea->setCaIdproveedor($idproveedor);
-            $inoCostosSea->setCaProveedor("COL OTM - ".$comprobante->getInoHouse()->getCliente()->getCaCompania());
+            $inoCostosSea->setCaProveedor("COLOTM-".$comprobante->getInoHouse()->getCliente()->getCaCompania()."-".$comprobante->getInoHouse()->getCaDoctransporte());
             $inoCostosSea->setCaNeto($comprobante->getCaValor());
             $inoCostosSea->setCaReferencia($inoMaestraSea->getCaReferencia());
             $inoCostosSea->setCaTcambio($comprobante->getCaTcambio());
             $inoCostosSea->setCaTcambioUsd($comprobante->getCaTcambioUsd());
             $inoCostosSea->setCaVenta($comprobante->getCaValor2());
             $inoCostosSea->save($conn);
-            
-            
             
             if($comprobante->getCaValor2()>$comprobante->getCaValor())
             {
@@ -68,9 +62,7 @@ class InoCostosSea extends BaseInoCostosSea
                 $inoutilidadSea->setCaValor($comprobante->getCaValor2()-$comprobante->getCaValor());
                 $inoutilidadSea->save($conn);
             }
-            return $inoCostosSea->getOid();
-            
-            
+            return $inoCostosSea->getOid();            
         }
         catch(Exception $e)
         {
