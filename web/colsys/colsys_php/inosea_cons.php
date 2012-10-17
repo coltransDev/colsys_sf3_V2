@@ -24,10 +24,10 @@ include_once 'include/datalib.php';                                            /
 include_once 'include/functions.php';                                          // Funciones de Usuarios para PHP
 require_once("checklogin.php"); // Captura las variables de la sessión abierta
 
-if( $nivel>0 ){
-	header("Location: inosea.php");
-	exit();
-}
+//if( $nivel>0 ){
+//	header("Location: inosea.php");
+//	exit();
+//}
 
 $rs =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
 if (!isset($criterio) and !isset($boton) and !isset($accion)){
@@ -452,7 +452,7 @@ require_once("menu.php");
                    echo "  <TD Class=invertir style='font-size: 12px;' COLSPAN=2><B>".$cs->Value('ca_costo')."</B><BR></TD>";
                    echo "  <TD Class=listar><B>Factura:</B><BR>".$cs->Value('ca_factura')."</TD>";
                    echo "  <TD Class=listar COLSPAN=2><B>Proveedor:</B><BR>".$cs->Value('ca_proveedor')."</TD>";
-                   echo "  <TD ROWSPAN=2 WIDTH=80 Class=listar></TD>";                                             // Botones para hacer Mantenimiento a la Tabla
+                   echo "  <TD ROWSPAN=2 WIDTH=80 Class=listar>Creado: ".$cs->Value('ca_usucreado')." ".$cs->Value('ca_fchcreado')."<BR/>Modificó".$cs->Value('ca_usuactualizado')." ".$cs->Value('ca_fchactualizado')."</TD>"; // Botones para hacer Mantenimiento a la Tabla
                    echo "</TR>";
                    $cos_mem = $cs->Value('ca_neto') * $cs->Value('ca_tcambio')/$cs->Value('ca_tcambio_usd');
                    echo "<TR>";

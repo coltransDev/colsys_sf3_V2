@@ -1616,6 +1616,17 @@ if (isset($suf) and $suf == 'findDianDeposito') {
    echo "</CENTER>";
    echo "</BODY>";
    echo "</HTML>";
+} else if (isset($opcion) and $opcion == 'actualiza_facuras' and $oid != '' and $newfact != '') {
+   $tm = & DlRecordset::NewRecordset($conn);
+   if (!$tm->Open("update tb_inocostos_sea set ca_factura = '$newfact' where oid = '$oid'")) {
+      echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
+      echo "<script>document.location.href = 'inosea.php';</script>";
+      exit;
+   }
+   echo "<script>window.parent.document.location.href = 'inosea.php?boton=Consultar&id=$referencia';</script>";
+   // window.parent.document.body.
+   
+           
 } else if (isset($opcion) and $opcion == 'RecargosLoc' and $id != 0) {
    $tipos = array("$", "%");
    $tm = & DlRecordset::NewRecordset($conn);
