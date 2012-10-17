@@ -17,6 +17,7 @@ class CostosNewForm extends BaseForm{
                         ->addWhere("c.ca_impoexpo = ? ", Constantes::IMPO)
                         ->addWhere("c.ca_transporte = ? ", Constantes::MARITIMO)
                         ->addWhere("c.ca_modalidad = ? ", $this->referencia?$this->referencia->getCaModalidad():"")
+                        ->addWhere("c.ca_activo = ? ", TRUE)
                         ->addOrderBy("c.ca_costo");
         
         $widgets["referencia"] = new sfWidgetFormInputHidden();

@@ -63,7 +63,21 @@ Trafico:
       unsigned: false
       notnull: true
       primary: false
-    ca_cod_dian: string
+    ca_link:
+      type: string(256)
+      fixed: false
+      notnull: false
+      primary: false
+    ca_conceptos:
+      type: string(255)
+      fixed: false
+      notnull: false
+      primary: false
+    ca_recargos:
+      type: string(255)
+      fixed: false
+      notnull: false
+      primary: false
   relations:
     TraficoGrupo:
       local: ca_idgrupo
@@ -406,7 +420,7 @@ TipoRecargo:
     ca_incoterms: string
     ca_fcheliminado: timestamp
     ca_usueliminado: string
-    ca_aplicaciones: string
+#    ca_impoexpo: string
   relations:
     InoConceptoModalidad:
       local: ca_idrecargo
@@ -432,27 +446,7 @@ Costo:
     ca_modalidad: string
     ca_comisionable: string
     ca_parametros: string
-
-
-
-Deduccion:
-  options:
-    symfony:
-      form: false
-      filter: false
-  generatePath: public
-  tableName: tb_deducciones
-  columns:
-    ca_iddeduccion:
-      type: integer
-      primary: true
-      autoincrement: true
-    ca_deduccion: string    
-    ca_transporte: string
-    ca_modalidad: string
-    ca_habilitado: boolean
-   
-
+    ca_activo: boolean
 
 ColNovedad:
   options:
