@@ -208,7 +208,7 @@ require_once("menu.php");
        }
        $fac_mem = substr($fac_mem,0,strlen($fac_mem)-4);
        echo "<TR>";
-       echo "  <TD Class=listar  style='font-weight:bold; font-size: 9px;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:window.open(\"inosea_gere.php?boton=Consultar\&id=".$rs->Value('ca_referencia')."\");'>".$rs->Value('ca_referencia')."</TD>";
+       echo "  <TD Class=listar  style='font-weight:bold; font-size: 9px;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:window.open(\"inosea.php?boton=Consultar\&id=".$rs->Value('ca_referencia')."\");'>".$rs->Value('ca_referencia')."</TD>";
        echo "  <TD Class=listar  style='font-size: 9px;$back_col'>".substr(ucwords(strtolower($rs->Value('ca_compania'))),0,30)."</TD>";
        echo "  <TD Class=listar  style='font-size: 9px;$back_col'>$fac_mem</TD>";
        echo "  <TD Class=valores style='font-size: 9px;$back_col'>".number_format($rs->Value('ca_valor'))."</TD>";

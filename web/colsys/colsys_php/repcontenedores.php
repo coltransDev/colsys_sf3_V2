@@ -168,7 +168,7 @@ if (!isset($buscar) and !isset($accion)) {
          echo "<TR>";
          echo "<TD Class=invertir style='font-size: 9px;' COLSPAN=3><TABLE WIDTH=100% CELLSPACING=1>";
          echo "<TR>";
-         echo "  <TD Class=listar style='font-weight:bold; font-size: 9px;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:window.open(\"inosea_gere.php?boton=Consultar\&id=" . $rs->Value('ca_referencia') . "\");'>" . $rs->Value('ca_referencia') . "</TD>";
+         echo "  <TD Class=listar style='font-weight:bold; font-size: 9px;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:window.open(\"inosea.php?boton=Consultar\&id=" . $rs->Value('ca_referencia') . "\");'>" . $rs->Value('ca_referencia') . "</TD>";
          echo "  <TD Class=listar style='font-size: 9px;'><b>Tráfico:</b><br>" . $rs->Value('ca_traorigen') . "</TD>";
          echo "  <TD Class=listar style='font-size: 9px;'><b>Origen:</b><br>" . $rs->Value('ca_ciuorigen') . "</TD>";
          echo "  <TD Class=listar style='font-size: 9px;'><b>Destino:</b><br>" . $rs->Value('ca_ciudestino') . "</TD>";

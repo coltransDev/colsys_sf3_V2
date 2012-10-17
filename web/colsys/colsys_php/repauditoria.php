@@ -153,7 +153,7 @@ require_once("menu.php");
     while (!$rs->Eof() and !$rs->IsEmpty()) {                                                      // Lee la totalidad de los registros obtenidos en la instrucción Select
        if ($num_ref != $rs->Value('ca_referencia')) {
            echo "<TR>";
-           echo "  <TD Class=invertir style='font-size: 12px; font-weight:bold;' onMouseOver=\"uno(this,'FFFFFF');\" onMouseOut=\"dos(this,'CCCCCC');\" onclick='javascript:window.open(\"inosea_gere.php?boton=Consultar\&id=".$rs->Value('ca_referencia')."\");' COLSPAN=6>".$rs->Value('ca_referencia')." -> ".$rs->Value('ca_estado')."</TD>";
+           echo "  <TD Class=invertir style='font-size: 12px; font-weight:bold;' onMouseOver=\"uno(this,'FFFFFF');\" onMouseOut=\"dos(this,'CCCCCC');\" onclick='javascript:window.open(\"inosea.php?boton=Consultar\&id=".$rs->Value('ca_referencia')."\");' COLSPAN=6>".$rs->Value('ca_referencia')." -> ".$rs->Value('ca_estado')."</TD>";
            echo "</TR>";
            $num_ref = $rs->Value('ca_referencia');
           }

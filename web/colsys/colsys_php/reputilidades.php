@@ -324,7 +324,7 @@ if (!isset($traorigen) and !isset($boton) and !isset($accion)) {
             echo "  </TABLE>";
             echo "  </TD>";
 
-            echo "  <TD Class=listar  style='font-weight:bold; font-size: 9px;$back_col' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'" . substr($back_col, 14, 7) . "');\" onclick='javascript:window.open(\"inosea_gere.php?boton=Consultar\&id=" . $rs->Value('ca_referencia') . "\");'>" . $rs->Value('ca_referencia') . "</TD>";
+            echo "  <TD Class=listar  style='font-weight:bold; font-size: 9px;$back_col' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'" . substr($back_col, 14, 7) . "');\" onclick='javascript:window.open(\"inosea.php?boton=Consultar\&id=" . $rs->Value('ca_referencia') . "\");'>" . $rs->Value('ca_referencia') . "</TD>";
             echo "</TR>";
             $rs->MoveNext();
             if ($mod_mem != $rs->Value('ca_modalidad')) {
@@ -395,7 +395,7 @@ if (!isset($traorigen) and !isset($boton) and !isset($accion)) {
             echo "<TR>";
             if ($ref_mem != $rs->Value('ca_referencia')) {
                 echo "  <TD Class=mostrar style='font-weight:bold; font-size: 9px;$back_col'>$dat_imp</TD>";
-                echo "  <TD Class=listar  style='font-weight:bold; font-size: 9px;$back_col' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'" . substr($back_col, 14, 7) . "');\" onclick='javascript:window.open(\"inosea_gere.php?boton=Consultar\&id=" . $rs->Value('ca_referencia') . "\");'>" . $rs->Value('ca_referencia') . "</TD>";
+                echo "  <TD Class=listar  style='font-weight:bold; font-size: 9px;$back_col' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'" . substr($back_col, 14, 7) . "');\" onclick='javascript:window.open(\"inosea.php?boton=Consultar\&id=" . $rs->Value('ca_referencia') . "\");'>" . $rs->Value('ca_referencia') . "</TD>";
                 echo "  <TD Class=listar  style='font-size: 9px;$back_col'>" . $rs->Value('ca_estado') . "</TD>";
                 echo "  <TD Class=valores style='font-size: 9px;$back_col'>" . $rs->Value('ca_sucursal') . "</TD>";
                 $ref_mem = $rs->Value('ca_referencia');

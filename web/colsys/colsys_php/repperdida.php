@@ -153,7 +153,7 @@ require_once("menu.php");
        echo "  <TD Class=titulo COLSPAN=7></TD>";
        echo "</TR>";
        echo "<TR>";
-       echo "  <TD Class=listar style='font-weight:bold; font-size: 9px;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:window.open(\"inosea_gere.php?boton=Consultar\&id=".$rs->Value('ca_referencia')."\");'>".$rs->Value('ca_referencia')."</TD>";
+       echo "  <TD Class=listar style='font-weight:bold; font-size: 9px;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:window.open(\"inosea.php?boton=Consultar\&id=".$rs->Value('ca_referencia')."\");'>".$rs->Value('ca_referencia')."</TD>";
        echo "  <TD Class=listar>".$rs->Value('ca_ciuorigen')."</TD>";
        echo "  <TD Class=listar>".$rs->Value('ca_ciudestino')."</TD>";
        echo "  <TD Class=listar COLSPAN=2>".$rs->Value('ca_nombre')."</TD>";
