@@ -828,7 +828,7 @@ class idsActions extends sfActions {
         if (date("Y-m-d") >= date('Y') . "-04-01" && date("Y-m-d") <= date('Y') . "-09-01") {
             $defPeriodo = 1;
         }else if (date("Y-m-d") >= date('Y') . "-09-01" && date("Y-m-d") <= date('Y') . "-12-31") {
-            $defPeriodo = 1;
+            $defPeriodo = 2;
         } else {
             $defPeriodo = 2;
             if (date('Y') . "-01-01" <= date("Y-m-d")) {
