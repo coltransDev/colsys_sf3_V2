@@ -136,7 +136,8 @@ class Cotizacion extends BaseCotizacion
         if( $transporte ){
             if($transporte==constantes::OTMDTA || $transporte=="OTM" || $transporte=="DTA")
                 $transporte=constantes::TERRESTRE;
-            $q->addWhere("tr.ca_transporte = ? and r.ca_consecutivo is null ", $transporte );
+            $q->addWhere("tr.ca_transporte = ? and r.ca_consecutivo is null and r.ca_tipo='O' ", $transporte );
+            
 		}
 		if( $modalidad ){
             $q->addWhere("r.ca_modalidad = ? ", $modalidad );
