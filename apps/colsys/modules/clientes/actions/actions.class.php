@@ -637,6 +637,51 @@ class clientesActions extends sfActions {
                 $siguiente_mes = mktime(0, 0, 0, $month + 1, 5, $year);
                 $siguiente_mes = $mes_esp[date("m", $siguiente_mes)] . " " . date("d", $siguiente_mes) . " de " . date("Y", $siguiente_mes);
 
+                $bodyHtml = "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />
+                  <table style=\"width: 100%\">
+                     <tr>
+                        <td style=\"text-align: center; font-weight: bold\">
+                           DOCUMENTOS  IDENTIFICACIÓN  CLIENTES
+                        </td>
+                     </tr>
+                     <tr>
+                        <td style=\"text-align: left\">
+                           Apreciado Cliente:<br />
+                        </td>
+                     </tr>
+                     <tr>
+                        <td style=\"text-align: justify\">
+                           Es necesario para COLTRANS S.A.S. y/o AGENCIA DE ADUANAS COLMAS LTDA NIVEL 1 dar cumplimiento a la  Circular  0170 expedida  por la  DIAN el 10 de  octubre de 2002, siendo  nuestra  obligación  como  Agentes  de  Carga   Internacional / Agentes de Aduana, crear un  banco de datos de  nuestros clientes  cuyo  objetivo  es  la  'Prevención  y  Control de  lavado de Activos'.<br /><br />
+                           Por  lo anterior,   nuestro  Representante  Comercial  estará  retirando  de sus  instalaciones  los  siguientes  documentos:<br /><br />
+                        </td>
+                     </tr>
+                     <tr>
+                        <td style=\"text-align: justify\">
+                           <ol>
+                              <li>Original de la Circular 0170 debidamente diligenciada y firmada por el  Representante Legal o  la persona facultada según certificado de Cámara de Comercio.</li>
+                              <li>Certificado de Cámara de Comercio en original con vigencia no superior a 30 días.</li>
+                              <li>Copia  del  RUT</li>
+                              <li>Balance General, Estado de Resultados y las respectivas notas  a los  Estados  Financieros  (certificado y dictaminado por  Revisor Fiscal o Contador Público)  con fecha  de corte a 31 de  diciembre del año inmediatamente  anterior o balance inicial  si la  compañía  se  encuentra  recientemente  constituida.  En caso de personas naturales Declaración de Renta.</li>
+                              <li>Fotocopia del documento de identidad de la persona que  firma  la    Circular 0170  (Representante Legal o persona  facultada  según Cámara  de  Comercio)</li>
+                              <li>Resolución de la  DIAN que autoriza a  la  compañía  para  actuar  como  Comercializadoras Internacionales y/o  realizar  actividades como  importación de licores,  calzados,  textiles  y/o  confecciones. Si aplica.</li>
+                           </ol>
+                        </td>
+                     </tr>
+                     <tr>
+                        <td style=\"text-align: justify\">
+                           Está documentación  debe ser actualizada cada  año;  el incumplimiento de alguno de los puntos anteriores acarreará una sanción por parte de la DIAN.<br /><br />
+                           Esta información  reposará  en  nuestros  archivos y  tendrá  un  trato de  ABSOLUTA  RESERVA  Y  CONFIDENCIALIDAD.<br /><br />
+                           Cordialmente,<br /><br /><br />
+                           <strong>
+                              DEPARTAMENTO  COMERCIAL<br />
+                              COLTRANS S.A.S./<br />
+                              AGENCIA DE ADUANAS COLMAS LTDA NIVEL 1
+                           </strong>
+                        </td>
+                     </tr>
+                  </table>";
+                
+                /*
                 $bodyHtml = "Señores<br />";
                 $bodyHtml.= "<b>" . $cliente->getCaCompania() . "</b><br />";
                 $bodyHtml.= "La Ciudad<br /><br /><br />";
@@ -645,9 +690,10 @@ class clientesActions extends sfActions {
                 $bodyHtml.= "En cumplimiento con la Circular No 0170 de la DIAN expedida el 10 de Octubre de 2002, es nuestra Obligaciòn como Agentes de Carga Internacional, crear un banco de datos de nuestros clientes para <b>Prevenciòn y Control de Lavado de Activos</b>, solicitamos su colaboración con el diligenciamiento de la misma y enviarlo a la $direccion_suc con los documentos requeridos en la carta adjunta antes de <b>$siguiente_mes</b> o si lo prefiere puede contactarnos para que un funcionario recoja los documentos.<br /><br /><br />";
                 $bodyHtml.= "Agradezco su colaboración.<br /><br /><br />";
                 $bodyHtml.= "<b>Recuerde que esta información se debe actualizar cada año.</b>";
-
+                */
+                
                 $email->setCaBodyhtml($bodyHtml);
-                $email->addAttachment("ids/formatos/CARTA_CIRCULAR_184.doc");
+                // $email->addAttachment("ids/formatos/CARTA_CIRCULAR_184.doc");
                 $email->addAttachment("ids/formatos/NUEVA_CIRC_ 170.xls");
 
                 $email->save();
@@ -656,7 +702,7 @@ class clientesActions extends sfActions {
 
         // Lista los Clientes que hasta antes de iniciar el periodo solicitado, tienen vencida la Circular 0170
         $final = $inicio;
-        $inicio = date('Y-m-d', mktime(0, 0, 0, $month, 0, $year - 5));
+        $inicio = date('Y-m-d', mktime(0, 0, 0, $month, 0, 1900)); //$year - 5
         $stmt = ClienteTable::circularClientes($inicio, $final, $sucursal, $vendedor);
         while ($row = $stmt->fetch()) {
             $this->clientesVenCircular[] = $row;
@@ -1575,8 +1621,8 @@ class clientesActions extends sfActions {
                 $actualizo = false;
 
                 $sucursal = $sucRec[$suc_recibo];
-                if ($sucursal == "BOG" || $sucursal == "ABO")
-                    $sucursal = "'BOG','ABO'";
+                if ($sucursal == "BOG" || $sucursal == "ABO" || $sucursal == "OBO")
+                    $sucursal = "'BOG','ABO','OBO'";
                 else
                     $sucursal = "'$sucursal'";
 
