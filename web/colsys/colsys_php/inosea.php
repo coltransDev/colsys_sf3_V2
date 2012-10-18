@@ -625,13 +625,13 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                     echo "  <TD Class=listar><B>Creación:</B>&nbsp;" . $rs->Value('ca_usucreado') . "<BR>" . $rs->Value('ca_fchcreado') . "</TD>";
                     echo "  <TD Class=listar><B>Actualización:</B>&nbsp;" . $rs->Value('ca_usuactualizado') . "<BR>" . $rs->Value('ca_fchactualizado') . "</TD>";
                     if ($rs->Value('ca_usuliquidado') == '') {
-                        echo "  <TD Class=invertir style='text-align: center; vertical-align: middle;'><INPUT Class=submit onMouseOver=\"this.style.cursor='hand'\" onMouseOut=\"this.style.cursor='default'\" TYPE='SUBMIT' NAME='accion' VALUE='Firmar Liquidación'></TD>";
+                        echo "  <TD Class=invertir style='text-align: center; vertical-align: middle;'><INPUT style='$level0' Class=submit onMouseOver=\"this.style.cursor='hand'\" onMouseOut=\"this.style.cursor='default'\" TYPE='SUBMIT' NAME='accion' VALUE='Firmar Liquidación'></TD>";
                     } else {
                         echo "  <TD Class=listar><B>Liquidación:</B>&nbsp;" . $rs->Value('ca_usuliquidado') . "<BR>" . $rs->Value('ca_fchliquidado') . "</TD>";
                     }
                     if ($rs->Value('ca_usucerrado') == '') {
-                        echo "  <TD Class=invertir style='text-align: center; vertical-align: middle;'><INPUT Class=submit onMouseOver=\"this.style.cursor='hand'\" onMouseOut=\"this.style.cursor='default'\" TYPE='SUBMIT' NAME='accion' VALUE='Cerrar Caso'></TD>";
-                        echo "  <TD Class=invertir style='text-align: center; vertical-align: middle;'><div style='display:none'>Provisional:<BR><INPUT TYPE=CHECKBOX NAME='provisional'></div></TD>";
+                        echo "  <TD Class=invertir style='text-align: center; vertical-align: middle;'><INPUT style='$level0' Class=submit onMouseOver=\"this.style.cursor='hand'\" onMouseOut=\"this.style.cursor='default'\" TYPE='SUBMIT' NAME='accion' VALUE='Cerrar Caso'></TD>";
+                        echo "  <TD Class=invertir style='text-align: center; vertical-align: middle;'><div style='$level0 display:none'>Provisional:<BR><INPUT TYPE=CHECKBOX NAME='provisional'></div></TD>";
                     } else {
                         echo "  <TD Class=listar><B>Cierre:</B>&nbsp;" . $rs->Value('ca_usucerrado') . "<BR>" . $rs->Value('ca_fchcerrado') . "</TD>";
                         echo "  <TD Class=listar style='font-weight:bold; text-align: center; vertical-align: middle;'><B>" . (($rs->Value('ca_provisional') == "t") ? "Cierre<br>Provisional" : "") . "</TD>";
