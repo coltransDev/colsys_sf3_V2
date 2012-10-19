@@ -115,6 +115,9 @@ if (!isset($boton) and !isset($agrupamiento)) {
     echo "}";
     echo "</script>";
     echo "<script language='javascript' src='javascripts/popcalendar.js'></script>";
+    ?>
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <?php
     echo "</HEAD>";
     echo "<BODY>";
     require_once("menu.php");

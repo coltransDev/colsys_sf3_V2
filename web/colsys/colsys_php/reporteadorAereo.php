@@ -11,6 +11,7 @@ $programa = 56;
   <HEAD>
     <TITLE>COLSYS Sistema Reporteador</TITLE>
     <style type='text/css'></style>
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
   </HEAD>
   <STYLE>@import URL("Coltrans.css");</STYLE>
   <BODY>

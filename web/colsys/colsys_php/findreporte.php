@@ -26,6 +26,9 @@ if (!isset($contents) and !isset($boton) and !isset($accion)) {
     echo "<HTML>";
     echo "<HEAD>";
     echo "<TITLE>$titulo</TITLE>";
+    ?>
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <?php
     echo "</HEAD>";
     echo "<BODY style='margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; text-align: right; font-size: 11px; font-weight:bold;'>";
     echo "<STYLE>@import URL(\"Coltrans.css\");</STYLE>";             // Carga una hoja de estilo que estandariza las pantallas den sistema graficador

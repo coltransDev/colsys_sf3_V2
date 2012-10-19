@@ -16,7 +16,9 @@
   echo ".mudacor:hover { color: #FF6600}";
   echo "-->";
   echo "</style>";
-
+    ?>
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <?php
   echo "</HEAD>";
   echo "<STYLE>@import URL(\"Coltrans.css\");</STYLE>";
   echo "<BODY>";

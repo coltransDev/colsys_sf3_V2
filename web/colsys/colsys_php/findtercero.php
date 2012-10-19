@@ -31,6 +31,9 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)){
     $modulo = "00100000";                                                      // Identificación del módulo para la ayuda en línea
     echo "<HTML>";
     echo "<HEAD>";
+    ?>
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <?php
     echo "<TITLE>$titulo</TITLE>";
     echo "<script language='JavaScript' type='text/JavaScript'>";              // Código en JavaScript para validar las opciones de mantenimiento
     echo "function elegir(opcion, id){";

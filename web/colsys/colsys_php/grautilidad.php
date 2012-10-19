@@ -26,6 +26,9 @@ if (!isset($sucursal) and !isset($boton) and !isset($accion)){
     echo "<HEAD>";
     echo "<TITLE>$titulo</TITLE>";
     echo "<script language='javascript' src='javascripts/popcalendar.js'></script>";
+    ?>
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <?php
     echo "</HEAD>";
     echo "<BODY>";
 require_once("menu.php");

@@ -24,6 +24,9 @@ if (!isset($traorigen) and !isset($boton) and !isset($accion)){
     echo "<HTML>";
     echo "<HEAD>";
     echo "<TITLE>$titulo</TITLE>";
+    ?>
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <?php
     echo "</HEAD>";
     echo "<BODY>";
 require_once("menu.php");

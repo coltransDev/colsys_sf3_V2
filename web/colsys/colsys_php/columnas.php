@@ -36,6 +36,9 @@ if (!isset($boton) and !isset($accion)){
 	echo "    document.location.href = 'columnas.php?boton='+opcion+'\&id='+id+'\&co='+co;";
     echo "}";
     echo "</script>";
+    ?>
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <?php
     echo "</HEAD>";
     echo "<BODY>";
 require_once("menu.php");

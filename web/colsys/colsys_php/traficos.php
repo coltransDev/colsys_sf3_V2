@@ -36,6 +36,9 @@ if (!isset($boton) and !isset($accion)){
     echo "    document.location.href = 'traficos.php?boton='+opcion+'\&id='+id;";
     echo "}";
     echo "</script>";
+    ?>
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <?php
     echo "</HEAD>";
     echo "<BODY>";
 require_once("menu.php");

@@ -27,7 +27,8 @@ include_once 'include/datalib.php';                                            /
 include_once 'include/functions.php';                                          // Funciones de Usuarios para PHP
 require_once("checklogin.php"); // Captura las variables de la sessión abierta
 
-$level0 = ($nivel==0)?"display:none;":"";
+$level0 = ($nivel == 0) ? "display:none;" : "";
+
 function finalizarTarea($rs, $idreporte, $usua) {
     try {
         $sql = "select r.ca_idtarea_antecedente from tb_reportes r,notificaciones.tb_tareas t  
@@ -75,6 +76,9 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
     echo "}";
     echo "</script>";
     echo "<script language='javascript' src='javascripts/popcalendar.js'></script>";
+    ?>
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <?php
     echo "</HEAD>";
     echo "<BODY>";
     require_once("menu.php");
@@ -328,7 +332,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                         }
                     }
                 ";
-                
+
                 echo "function ver_pdf(id){";
                 echo "    window.open(\"reporteneg.php?id=\"+id);"; //toolbar=no, location=no, directories=no, menubar=no
                 echo "}";
@@ -389,7 +393,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                                 echo "<IMG style='$level0' src='./graficos/digita_off.gif' alt='Digitación Muisca Ok Desbloquear' border=0 onclick='digitar(\"Digitacion_desbloqueo\", \"" . $rs->Value('ca_referencia') . "\", 0, 0);'><BR><BR>";
                             }
                         }
-                    } else if($rs->Value('ca_impoexpo')!="Triangulación") {                        
+                    } else if ($rs->Value('ca_impoexpo') != "Triangulación") {
                         $digitable = 'block';
                         $cl = & DlRecordset::NewRecordset($conn);                                   // Apuntador que permite manejar la conexiòn a la base de datos
                         if (!$cl->Open("select count(*) as conta from tb_inoclientes_sea where ca_referencia = '" . $rs->Value('ca_referencia') . "' and (ca_usuactualizado is null or ca_usuactualizado='' )")) {
@@ -397,12 +401,12 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                             echo "<script>document.location.href = 'entrada.php';</script>";
                             exit;
                         }
-                        if ($nivel > 0){
-                           if ($cl->Value('conta') > 0) {
-                              echo "<IMG style='display: $digitable;cursor:pointer;border:#FF0000 1px solid' src='./graficos/digita.gif' alt='Actualice la informacion de los hbls primero' border=0 >por favor actualice la informaci&oacute;n de los hbl<BR><BR>";
-                           } else {
-                              echo "<IMG style='display: $digitable;cursor:pointer' src='./graficos/digita.gif' alt='Digitación Muisca Ok' border=0 onclick='digitar(\"Digitacion\", \"" . $rs->Value('ca_referencia') . "\", 0, 0);'><BR><BR>";
-                           }
+                        if ($nivel > 0) {
+                            if ($cl->Value('conta') > 0) {
+                                echo "<IMG style='display: $digitable;cursor:pointer;border:#FF0000 1px solid' src='./graficos/digita.gif' alt='Actualice la informacion de los hbls primero' border=0 >por favor actualice la informaci&oacute;n de los hbl<BR><BR>";
+                            } else {
+                                echo "<IMG style='display: $digitable;cursor:pointer' src='./graficos/digita.gif' alt='Digitación Muisca Ok' border=0 onclick='digitar(\"Digitacion\", \"" . $rs->Value('ca_referencia') . "\", 0, 0);'><BR><BR>";
+                            }
                         }
                     }
                     echo "    <IMG style='cursor:pointer; $level0' src='./graficos/muisca.gif' alt='Informacion Muisca' border=0 onclick='elegir(\"Muisca\", \"" . $rs->Value('ca_referencia') . "\", 0, 0);'><BR>";
@@ -498,9 +502,9 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                         echo "    <TD Class=listar style='font-weight:bold;'>$sub_tit</TD>";
                         echo "    <TD Class=listar style='font-weight:bold;'>" . formatNumber($val, 2) . "</TD>";
                         echo "    <TD Class=listar style='font-weight:bold;' COLSPAN=4>$clave</TD>";
-                        if ($bot_not){
-                           echo "    <TD Class=listar style='font-weight:bold;' ROWSPAN=".count($arr_equ)."><IMG style='$level0' src='graficos/mail_forward.gif' alt='Notificar Comodatos' onclick='emailComodato( \"" . $rs->Value('ca_referencia') . "\", 0, 0);'></TD>";
-                           $bot_not = false;
+                        if ($bot_not) {
+                            echo "    <TD Class=listar style='font-weight:bold;' ROWSPAN=" . count($arr_equ) . "><IMG style='$level0' src='graficos/mail_forward.gif' alt='Notificar Comodatos' onclick='emailComodato( \"" . $rs->Value('ca_referencia') . "\", 0, 0);'></TD>";
+                            $bot_not = false;
                         }
                         echo "  </TR>";
                         $sub_tit = "";
@@ -667,26 +671,23 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                             echo "</TR>";
                             echo "<TR>";
                             // echo "<TR>";
-                            $sql="select ca_propiedades from tb_clientes where ca_idcliente = ".$cl->Value('ca_idcliente');
-                            
-                            $tmp =& DlRecordset::NewRecordset($conn);  
+                            $sql = "select ca_propiedades from tb_clientes where ca_idcliente = " . $cl->Value('ca_idcliente');
+
+                            $tmp = & DlRecordset::NewRecordset($conn);
                             $tmp->Open($sql);
-                            $img="";                            
-                            if($tmp->Value('ca_propiedades')!="")
-                            {
-                                if(strpos($tmp->Value('ca_propiedades'), "cuentaglobal=true") !== false)
-                                {
-                                    $img='<img src="/images/CG30.png" title="Cliente de Cuentas Globales" />';
+                            $img = "";
+                            if ($tmp->Value('ca_propiedades') != "") {
+                                if (strpos($tmp->Value('ca_propiedades'), "cuentaglobal=true") !== false) {
+                                    $img = '<img src="/images/CG30.png" title="Cliente de Cuentas Globales" />';
                                 }
-                                
                             }
-                            $img.="<BR /><DIV style='font-size: 9px;'>Creado: ".$cl->Value('ca_usucreado_cl')." ".$cl->Value('ca_fchcreado_cl')." ".($cl->Value('ca_usuactualizado_cl')?"Actualizó: ".$cl->Value('ca_usuactualizado_cl')." ".$cl->Value('ca_fchactualizado_cl'):"")."</DIV>";
-                            echo "  <TD Class=listar style='font-size: 11px; vertical-align:top'><B>Id Cliente:</B><BR>".number_format($cl->Value('ca_idalterno'))."</TD>";
-                            if ($rs->Value('ca_modalidad')=='FCL'){
-                                echo "  <TD Class=listar style='font-size: 11px;' COLSPAN=3><B>Nombre del Cliente:</B><BR>".$cl->Value('ca_compania')." $img</TD>";
-                                echo "  <TD Class=listar><B>Vence Comodato:</B><BR>".$cl->Value('ca_fchvencimiento')."</TD>";
-                            }else{
-                                echo "  <TD Class=listar style='font-size: 11px;' COLSPAN=4><B>Nombre del Cliente:</B><BR>".$cl->Value('ca_compania')." $img</TD>";
+                            $img.="<BR /><DIV style='font-size: 9px;'>Creado: " . $cl->Value('ca_usucreado_cl') . " " . $cl->Value('ca_fchcreado_cl') . " " . ($cl->Value('ca_usuactualizado_cl') ? "Actualizó: " . $cl->Value('ca_usuactualizado_cl') . " " . $cl->Value('ca_fchactualizado_cl') : "") . "</DIV>";
+                            echo "  <TD Class=listar style='font-size: 11px; vertical-align:top'><B>Id Cliente:</B><BR>" . number_format($cl->Value('ca_idalterno')) . "</TD>";
+                            if ($rs->Value('ca_modalidad') == 'FCL') {
+                                echo "  <TD Class=listar style='font-size: 11px;' COLSPAN=3><B>Nombre del Cliente:</B><BR>" . $cl->Value('ca_compania') . " $img</TD>";
+                                echo "  <TD Class=listar><B>Vence Comodato:</B><BR>" . $cl->Value('ca_fchvencimiento') . "</TD>";
+                            } else {
+                                echo "  <TD Class=listar style='font-size: 11px;' COLSPAN=4><B>Nombre del Cliente:</B><BR>" . $cl->Value('ca_compania') . " $img</TD>";
                             }
 
                             echo "  <TD ROWSPAN=2 WIDTH=80 Class=listar style='text-align: center;'>";                                              // Botones para hacer Mantenimiento a la Tabla
@@ -748,8 +749,8 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                             $hbl_mem = $cl->Value('ca_hbls');
                         }
                         echo "<TR>";
-                        echo "  <TD Class=invertir><B>Factura Nro.:</B><BR>" . $cl->Value('ca_factura')."</TD>";
-                        
+                        echo "  <TD Class=invertir><B>Factura Nro.:</B><BR>" . $cl->Value('ca_factura') . "</TD>";
+
                         echo "  <TD Class=invertir COLSPAN=2>";
                         echo "      <table width='100%' border='0' cellpadding='0' cellspacing='0'>";
                         echo "        <tr>";
@@ -762,34 +763,34 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                         echo "        </tr>";
                         echo "      </table>";
                         echo "  </TD>";
-                      
-                        
+
+
                         echo "  <TD Class=invertir COLSPAN=2 ROWSPAN=2>";
                         echo "  <B>Deducciones:</B><BR>" . number_format($cl->Value('ca_deduccion'), 2) . "<IMG SRC='./graficos/nuevo.gif' border=0 ALT='Nuevo Detalle'>";
-                        if ($cl->Value('ca_deduccion') != 0){
-                           $tm = & DlRecordset::NewRecordset($conn);
-                           if (!$tm->Open("select idd.ca_iddeduccion, ddc.ca_deduccion, idd.ca_valor from tb_inodeduccion_sea idd inner join tb_deducciones ddc on idd.ca_iddeduccion = ddc.ca_iddeduccion where ca_referencia = '".$cl->Value('ca_referencia')."' and ca_idcliente = '".$cl->Value('ca_idcliente')."' and ca_hbls = '".$cl->Value('ca_hbls')."' and ca_factura = '".$cl->Value('ca_factura')."'")) {
-                              echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-                              echo "<script>document.location.href = 'entrada.php';</script>";
-                              exit;
-                           }
-                           $tm->MoveFirst();
-                           echo "<TABLE style='width: 100%;' border='0' cellpadding='0' cellspacing='0'>";
-                           while (!$tm->Eof() and !$tm->IsEmpty()) {
-                              echo "<TR>";
-                              echo "  <TD style='text-align: left ; vertical-align: top'>".$tm->Value('ca_deduccion')."</TD>";
-                              echo "  <TD style='text-align: right; vertical-align: top'>".number_format($tm->Value('ca_valor'),2)."</TD>";
-                              echo "</TR>";
-                              $tm->MoveNext();
-                           }
-                           echo "</TABLE>";
+                        if ($cl->Value('ca_deduccion') != 0) {
+                            $tm = & DlRecordset::NewRecordset($conn);
+                            if (!$tm->Open("select idd.ca_iddeduccion, ddc.ca_deduccion, idd.ca_valor from tb_inodeduccion_sea idd inner join tb_deducciones ddc on idd.ca_iddeduccion = ddc.ca_iddeduccion where ca_referencia = '" . $cl->Value('ca_referencia') . "' and ca_idcliente = '" . $cl->Value('ca_idcliente') . "' and ca_hbls = '" . $cl->Value('ca_hbls') . "' and ca_factura = '" . $cl->Value('ca_factura') . "'")) {
+                                echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
+                                echo "<script>document.location.href = 'entrada.php';</script>";
+                                exit;
+                            }
+                            $tm->MoveFirst();
+                            echo "<TABLE style='width: 100%;' border='0' cellpadding='0' cellspacing='0'>";
+                            while (!$tm->Eof() and !$tm->IsEmpty()) {
+                                echo "<TR>";
+                                echo "  <TD style='text-align: left ; vertical-align: top'>" . $tm->Value('ca_deduccion') . "</TD>";
+                                echo "  <TD style='text-align: right; vertical-align: top'>" . number_format($tm->Value('ca_valor'), 2) . "</TD>";
+                                echo "</TR>";
+                                $tm->MoveNext();
+                            }
+                            echo "</TABLE>";
                         }
                         echo "  </TD>";
                         echo "  <TD Class=invertir ROWSPAN=2><B>Rec.Caja:</B><BR />" . ((strlen($cl->Value('ca_reccaja')) == 0) ? "<BR />" : $cl->Value('ca_reccaja')) . "<BR /><B>Fch.Pago:</B><BR />" . $cl->Value('ca_fchpago') . "</TD>";
                         echo "</TR>";
                         echo "<TR>";
                         echo "  <TD Class=invertir COLSPAN=3>";
-                        echo "      <DIV style='font-size: 9px;'>Creado:&nbsp;" . $cl->Value('ca_usucreado_fc') . " " . $cl->Value('ca_fchcreado_fc')." ".($cl->Value('ca_usuactualizado_fc') ? "Actualizó:&nbsp;" . $cl->Value('ca_usuactualizado_fc') . " " . $cl->Value('ca_fchactualizado_fc') : "")."</DIV>";
+                        echo "      <DIV style='font-size: 9px;'>Creado:&nbsp;" . $cl->Value('ca_usucreado_fc') . " " . $cl->Value('ca_fchcreado_fc') . " " . ($cl->Value('ca_usuactualizado_fc') ? "Actualizó:&nbsp;" . $cl->Value('ca_usuactualizado_fc') . " " . $cl->Value('ca_fchactualizado_fc') : "") . "</DIV>";
                         echo "  </TD>";
                         echo "</TR>";
                         $con_mem = '';
@@ -822,33 +823,33 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                         echo "</TR>";
                         // <div title=' '></div>
                         echo "  <TD Class=invertir style='font-size: 12px;' ROWSPAN=2 COLSPAN=3><B>" . $cs->Value('ca_costo') . "</B></TD>";
-                        
-                         if($cs->Value('ca_factura') == "P" or $cs->Value('ca_factura') == "CE"){
-                           echo "   <TD Class=listar>";
-                           echo "      <TABLE style='width: 100%' border=0>";
-                           echo "         <TR style='display:block;cursor:pointer; width: 100%' id='edi" . $cs->Value('ca_oid') . "' name='edi" . $cs->Value('ca_oid') . "'>";
-                           echo "            <TD Class=listar >";
-                           echo "               <B>Factura:</B><BR>" . $cs->Value('ca_factura');
-                           echo "            </TD>";
-                           echo "            <TD Class=listar >";
-                           echo "               <IMG style='cursor:pointer;$level0' src='./graficos/edit.gif' alt='Cambiar número de factura' onclick='edifact(\"" . $cs->Value('ca_oid') . "\",\"Editar\");' hspace='0' vspace='0'></IMG>";
-                           echo "            </TD>";
-                           echo "         </TR>";
-                           echo "         <TR style='display:none;cursor:pointer; width: 100%' id='act" . $cs->Value('ca_oid') . "' name='act" . $cs->Value('ca_oid') . "'>";
-                           echo "            <TD Class=listar >";
-                           echo "               <B>Factura:</B><BR><INPUT TYPE='TEXT' ID='fac" . $cs->Value('ca_oid') . "' NAME='fac" . $cs->Value('ca_oid') . "' VALUE='".$cs->Value('ca_factura')."' SIZE=10 MAXLENGTH=50>";
-                           echo "            </TD>";
-                           echo "            <TD Class=listar >";
-                           echo "               <IMG style='cursor:pointer;$level0' src='./graficos/si.gif' alt='Guardar el Cambio' onclick='edifact(\"" . $cs->Value('ca_oid') . "\",\"Guardar\");' hspace='0' vspace='0'></IMG>";
-                           echo "               <IMG style='cursor:pointer;$level0' src='./graficos/no.gif' alt='Cancelar el Cambio' onclick='edifact(\"" . $cs->Value('ca_oid') . "\",\"Cancelar\");' hspace='0' vspace='0'></IMG>";
-                           echo "            </TD>";
-                           echo "         </TR>";
-                           echo "      </TABLE>";
-                           echo "   </TD>";
-                        }else{
-                           echo "  <TD Class=listar><B>Factura:</B><BR>" . $cs->Value('ca_factura') . "</TD>";
+
+                        if ($cs->Value('ca_factura') == "P" or $cs->Value('ca_factura') == "CE") {
+                            echo "   <TD Class=listar>";
+                            echo "      <TABLE style='width: 100%' border=0>";
+                            echo "         <TR style='display:block;cursor:pointer; width: 100%' id='edi" . $cs->Value('ca_oid') . "' name='edi" . $cs->Value('ca_oid') . "'>";
+                            echo "            <TD Class=listar >";
+                            echo "               <B>Factura:</B><BR>" . $cs->Value('ca_factura');
+                            echo "            </TD>";
+                            echo "            <TD Class=listar >";
+                            echo "               <IMG style='cursor:pointer;$level0' src='./graficos/edit.gif' alt='Cambiar número de factura' onclick='edifact(\"" . $cs->Value('ca_oid') . "\",\"Editar\");' hspace='0' vspace='0'></IMG>";
+                            echo "            </TD>";
+                            echo "         </TR>";
+                            echo "         <TR style='display:none;cursor:pointer; width: 100%' id='act" . $cs->Value('ca_oid') . "' name='act" . $cs->Value('ca_oid') . "'>";
+                            echo "            <TD Class=listar >";
+                            echo "               <B>Factura:</B><BR><INPUT TYPE='TEXT' ID='fac" . $cs->Value('ca_oid') . "' NAME='fac" . $cs->Value('ca_oid') . "' VALUE='" . $cs->Value('ca_factura') . "' SIZE=10 MAXLENGTH=50>";
+                            echo "            </TD>";
+                            echo "            <TD Class=listar >";
+                            echo "               <IMG style='cursor:pointer;$level0' src='./graficos/si.gif' alt='Guardar el Cambio' onclick='edifact(\"" . $cs->Value('ca_oid') . "\",\"Guardar\");' hspace='0' vspace='0'></IMG>";
+                            echo "               <IMG style='cursor:pointer;$level0' src='./graficos/no.gif' alt='Cancelar el Cambio' onclick='edifact(\"" . $cs->Value('ca_oid') . "\",\"Cancelar\");' hspace='0' vspace='0'></IMG>";
+                            echo "            </TD>";
+                            echo "         </TR>";
+                            echo "      </TABLE>";
+                            echo "   </TD>";
+                        } else {
+                            echo "  <TD Class=listar><B>Factura:</B><BR>" . $cs->Value('ca_factura') . "</TD>";
                         }
-                       
+
                         echo "  <TD Class=listar COLSPAN=2><B>Proveedor:</B><BR>" . $cs->Value('ca_proveedor') . "</TD>";
                         echo "  <TD ROWSPAN=3 Class=listar style='text-align: center'>";                                              // Botones para hacer Mantenimiento a la Tabla
                         echo "    <IMG style='visibility: $visible;$level0;cursor:pointer' src='./graficos/edit.gif' alt='Editar el Registro' border=0 onclick='elegir(\"ModificarCs\", \"" . $cs->Value('ca_referencia') . "\", \"" . $cs->Value('ca_oid') . "\");'>";
@@ -1432,7 +1433,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 echo "<TR HEIGHT=5>";
                 echo "  <TD Class=invertir COLSPAN=4></TD>";
                 echo "</TR>";
-                $entrega_comodato = ($rs->Value('ca_entrega_comodato') == "")?date("Y-m-d"):$rs->Value('ca_entrega_comodato');
+                $entrega_comodato = ($rs->Value('ca_entrega_comodato') == "") ? date("Y-m-d") : $rs->Value('ca_entrega_comodato');
                 echo "<TR>";
                 echo "  <TD Class=mostrar>Fch. Entrega Comodato:<BR><INPUT TYPE='TEXT' NAME='entrega_comodato' VALUE='$entrega_comodato' SIZE=12 ONKEYDOWN=\"chkDate(this)\" ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
                 echo "  <TD Class=mostrar>Nota Inspección:<BR><INPUT TYPE='TEXT' NAME='inspeccion_nta' VALUE='" . $rs->Value('ca_inspeccion_nta') . "' SIZE=12 MAXLENGTH=10></TD>";
@@ -1445,16 +1446,16 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 $tm->MoveFirst();
                 $ciu_mem = null;
                 while (!$tm->Eof()) {
-                  if ($ciu_mem != $tm->Value('ca_ciudad')){
-                     if ($ciu_mem != null){
-                        echo "</OPTGROUP>";
-                     }
-                     echo "<OPTGROUP LABEL='".$tm->Value('ca_ciudad')."'>";
-                     $ciu_mem = $tm->Value('ca_ciudad');
-                  }
-                  $selected = ($rs->Value('ca_idpatio') == $tm->Value('ca_idpatio'))?' SELECTED':'';
-                  echo "<OPTION VALUE=".$tm->Value('ca_idpatio')." $selected>".$tm->Value('ca_nombre')." - ".substr($tm->Value('ca_direccion'),0,25)."</OPTION>";
-                  $tm->MoveNext();
+                    if ($ciu_mem != $tm->Value('ca_ciudad')) {
+                        if ($ciu_mem != null) {
+                            echo "</OPTGROUP>";
+                        }
+                        echo "<OPTGROUP LABEL='" . $tm->Value('ca_ciudad') . "'>";
+                        $ciu_mem = $tm->Value('ca_ciudad');
+                    }
+                    $selected = ($rs->Value('ca_idpatio') == $tm->Value('ca_idpatio')) ? ' SELECTED' : '';
+                    echo "<OPTION VALUE=" . $tm->Value('ca_idpatio') . " $selected>" . $tm->Value('ca_nombre') . " - " . substr($tm->Value('ca_direccion'), 0, 25) . "</OPTION>";
+                    $tm->MoveNext();
                 }
                 echo "  </OPTGROUP>";
                 echo "  </SELECT></TD>";
@@ -2194,24 +2195,22 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 }
                 $us->MoveFirst();
                 while (!$us->Eof()) {
-                    echo"<OPTION VALUE=".$us->Value('ca_login');
-                    if ($rs->Value('ca_login')==$us->Value('ca_login')) {
-                        echo " SELECTED"; }
-                    echo">".$us->Value('ca_nombre')."</OPTION>";
+                    echo"<OPTION VALUE=" . $us->Value('ca_login');
+                    if ($rs->Value('ca_login') == $us->Value('ca_login')) {
+                        echo " SELECTED";
+                    }
+                    echo">" . $us->Value('ca_nombre') . "</OPTION>";
                     $us->MoveNext();
                 }
-                $tmp =& DlRecordset::NewRecordset($conn);  
-                $sql="select ca_propiedades from tb_clientes where ca_idcliente = ".$rs->Value('ca_idcliente');
+                $tmp = & DlRecordset::NewRecordset($conn);
+                $sql = "select ca_propiedades from tb_clientes where ca_idcliente = " . $rs->Value('ca_idcliente');
                 $tmp->Open($sql);
-                $img="";
-                
-                if($tmp->Value('ca_propiedades')!="")
-                {
-                    if(strpos($tmp->Value('ca_propiedades'), "cuentaglobal=true") !== false)
-                    {
-                        $img='<img src="/images/CG30.png" title="Cliente de Cuentas Globales" />';
-                    }
+                $img = "";
 
+                if ($tmp->Value('ca_propiedades') != "") {
+                    if (strpos($tmp->Value('ca_propiedades'), "cuentaglobal=true") !== false) {
+                        $img = '<img src="/images/CG30.png" title="Cliente de Cuentas Globales" />';
+                    }
                 }
                 echo "  </SELECT></TD>";
                 echo "  <TD Class=mostrar>ID Proveedor:<BR><INPUT TYPE='TEXT' NAME='idproveedor' VALUE='" . $rs->Value('ca_idproveedor') . "' SIZE=10 MAXLENGTH=8></TD>";
@@ -2539,22 +2538,19 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 echo "  <TD Class=listar style='font-size: 11px;' COLSPAN=2><B>Proveedor:</B><BR>" . $rs->Value('ca_proveedor') . "</TD>";
                 echo "</TR>";
                 echo "<TR>";
-                $tmp =& DlRecordset::NewRecordset($conn);  
-                $sql="select ca_propiedades from tb_clientes where ca_idcliente = ".$rs->Value('ca_idcliente');
+                $tmp = & DlRecordset::NewRecordset($conn);
+                $sql = "select ca_propiedades from tb_clientes where ca_idcliente = " . $rs->Value('ca_idcliente');
                 $tmp->Open($sql);
-                $img="";
-                
-                if($tmp->Value('ca_propiedades')!="")
-                {
-                    if(strpos($tmp->Value('ca_propiedades'), "cuentaglobal=true") !== false)
-                    {
-                        $img='<img src="/images/CG30.png" title="Cliente de Cuentas Globales" />';
-                    }
+                $img = "";
 
+                if ($tmp->Value('ca_propiedades') != "") {
+                    if (strpos($tmp->Value('ca_propiedades'), "cuentaglobal=true") !== false) {
+                        $img = '<img src="/images/CG30.png" title="Cliente de Cuentas Globales" />';
+                    }
                 }
-                echo "  <TD Class=listar style='font-size: 11px;'><B>Id Cliente:</B><BR>".number_format($rs->Value('ca_idalterno'))."</TD>";
-                echo "  <TD Class=listar style='font-size: 11px;' COLSPAN=3><B>Nombre del Cliente:</B><BR>".$rs->Value('ca_compania')." $img</TD>";
-                echo "  <TD Class=mostrar>Orden Cliente No.<BR>".$rs->Value('ca_numorden')."</TD>";
+                echo "  <TD Class=listar style='font-size: 11px;'><B>Id Cliente:</B><BR>" . number_format($rs->Value('ca_idalterno')) . "</TD>";
+                echo "  <TD Class=listar style='font-size: 11px;' COLSPAN=3><B>Nombre del Cliente:</B><BR>" . $rs->Value('ca_compania') . " $img</TD>";
+                echo "  <TD Class=mostrar>Orden Cliente No.<BR>" . $rs->Value('ca_numorden') . "</TD>";
                 echo "</TR>";
 
                 echo "<TR>";
@@ -3863,22 +3859,20 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 echo "  <TD Class=listar style='font-size: 11px;' COLSPAN=2><B>Proveedor:</B><BR>" . $tm->Value('ca_proveedor') . "</TD>";
                 echo "</TR>";
                 echo "<TR>";
-                echo "  <TD Class=listar style='font-size: 11px;'><B>Id Cliente:</B><BR>".number_format($tm->Value('ca_idalterno'))."</TD>";
-                
-                $tmp =& DlRecordset::NewRecordset($conn);
-                $sql="select ca_propiedades from tb_clientes where ca_idcliente = ".$tm->Value('ca_idcliente');
+                echo "  <TD Class=listar style='font-size: 11px;'><B>Id Cliente:</B><BR>" . number_format($tm->Value('ca_idalterno')) . "</TD>";
+
+                $tmp = & DlRecordset::NewRecordset($conn);
+                $sql = "select ca_propiedades from tb_clientes where ca_idcliente = " . $tm->Value('ca_idcliente');
                 $tmp->Open($sql);
-                $img="";
-                
-                if($tmp->Value('ca_propiedades')!="")
-                {
-                    if(strpos($tmp->Value('ca_propiedades'), "cuentaglobal=true") !== false)
-                    {
-                        $img='<img src="/images/CG30.png" title="Cliente de Cuentas Globales" />';
+                $img = "";
+
+                if ($tmp->Value('ca_propiedades') != "") {
+                    if (strpos($tmp->Value('ca_propiedades'), "cuentaglobal=true") !== false) {
+                        $img = '<img src="/images/CG30.png" title="Cliente de Cuentas Globales" />';
                     }
                 }
-                echo "  <TD Class=listar style='font-size: 11px;' COLSPAN=3><B>Nombre del Cliente:</B><BR>".$tm->Value('ca_compania')." $img</TD>";
-                echo "  <TD Class=mostrar>Orden Cliente No.<BR>".$tm->Value('ca_numorden')."</TD>";
+                echo "  <TD Class=listar style='font-size: 11px;' COLSPAN=3><B>Nombre del Cliente:</B><BR>" . $tm->Value('ca_compania') . " $img</TD>";
+                echo "  <TD Class=mostrar>Orden Cliente No.<BR>" . $tm->Value('ca_numorden') . "</TD>";
                 echo "</TR>";
                 echo "<TR>";
                 echo "  <TD Class=listar style='font-size: 11px;' COLSPAN=5><B>Carga Consignada a:</B><BR>$consignatario</TD>";
@@ -4062,7 +4056,8 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                     echo "<TH><INPUT Class=submit TYPE='SUBMIT' NAME='accion' VALUE='Grabar Cliente'></TH>";     // Ordena Grabar el Registro del Cliente
 
 
-                    
+
+
 // echo "<TH><INPUT Class=submit TYPE='SUBMIT' NAME='accion' VALUE='Grabar Cliente'></TH>";     // Ordena Grabar el Registro del Cliente
                 echo "<TH><INPUT Class=button TYPE='BUTTON' NAME='boton' VALUE='Cancelar' ONCLICK='javascript:document.location.href = \"inosea.php?boton=Consultar\&id=$id\"'></TH>";  // Cancela la operación
                 echo "</TABLE>";
@@ -4111,21 +4106,19 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 echo "  <TD Class=listar style='font-size: 11px;' COLSPAN=2><B>Proveedor:</B><BR>" . $rs->Value('ca_proveedor') . "</TD>";
                 echo "</TR>";
                 echo "<TR>";
-                echo "  <TD Class=listar style='font-size: 11px;'><B>Id Cliente:</B><BR>".number_format($rs->Value('ca_idalterno'))."</TD>";
-                
-                $tmp =& DlRecordset::NewRecordset($conn);  
-                $sql="select ca_propiedades from tb_clientes where ca_idcliente = ".$rs->Value('ca_idcliente');
+                echo "  <TD Class=listar style='font-size: 11px;'><B>Id Cliente:</B><BR>" . number_format($rs->Value('ca_idalterno')) . "</TD>";
+
+                $tmp = & DlRecordset::NewRecordset($conn);
+                $sql = "select ca_propiedades from tb_clientes where ca_idcliente = " . $rs->Value('ca_idcliente');
                 $tmp->Open($sql);
-                $img="";                
-                if($tmp->Value('ca_propiedades')!="")
-                {
-                    if(strpos($tmp->Value('ca_propiedades'), "cuentaglobal=true") !== false)
-                    {
-                        $img='<img src="/images/CG30.png" title="Cliente de Cuentas Globales" />';
+                $img = "";
+                if ($tmp->Value('ca_propiedades') != "") {
+                    if (strpos($tmp->Value('ca_propiedades'), "cuentaglobal=true") !== false) {
+                        $img = '<img src="/images/CG30.png" title="Cliente de Cuentas Globales" />';
                     }
                 }
-                echo "  <TD Class=listar style='font-size: 11px;' COLSPAN=3><B>Nombre del Cliente:</B><BR>".$rs->Value('ca_compania')." $img</TD>";
-                echo "  <TD Class=mostrar>Orden Cliente No.<BR>".$rs->Value('ca_numorden')."</TD>";
+                echo "  <TD Class=listar style='font-size: 11px;' COLSPAN=3><B>Nombre del Cliente:</B><BR>" . $rs->Value('ca_compania') . " $img</TD>";
+                echo "  <TD Class=mostrar>Orden Cliente No.<BR>" . $rs->Value('ca_numorden') . "</TD>";
                 echo "</TR>";
 
                 echo "<TR>";
@@ -4636,7 +4629,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                     if ($dm->Value("ca_iddocanterior") != "") {
                         $xml_hijo->setAttribute("hnfa", $dm->Value("ca_iddocanterior"));
                     }
-                    
+
                     $xml_hijo->setAttribute("hdca", $dc->Value("ca_dispocarga"));
                     $destino = ($ic->Value("ca_continuacion") == "N/A") ? $rs->Value("ca_destino") : $ic->Value("ca_continuacion_dest");
                     $destino = (strlen($dc->Value("ca_iddestino")) != 0) ? $dc->Value("ca_iddestino") : $destino;
@@ -4652,19 +4645,19 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                     }
                     $xml_hijo->setAttribute("hdpt", $arribo_array[0]);
                     $xml_hijo->setAttribute("hciu", $arribo_array[1]);
-                    if ($ic->Value("ca_continuacion") != "TRANSBORDO"){
+                    if ($ic->Value("ca_continuacion") != "TRANSBORDO") {
                         $xml_hijo->setAttribute("hpa", $arribo_array[2]);
 
                         if ($dc->Value("ca_dispocarga") != "21") {
                             $xml_hijo->setAttribute("hdep", $dc->Value("ca_coddeposito"));
                         }
-                    }else{
+                    } else {
                         if (!$tm->Open("select * from vi_ciudades where ca_idciudad::text = '" . $ic->Value("ca_continuacion_dest") . "'")) {    // Trae la información del Operador Multimodal de la Tabla Transportistas.
                             echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";     // Muestra el mensaje de error
                             echo "<script>document.location.href = 'inosea.php';</script>";
                             exit;
                         }
-                        $xml_hijo->setAttribute("hpa", substr($tm->Value('ca_idtrafico'),0,2));
+                        $xml_hijo->setAttribute("hpa", substr($tm->Value('ca_idtrafico'), 0, 2));
                     }
 
                     $xml_hijo->setAttribute("tdv2", $dc->Value("ca_tipodocviaje"));
@@ -4695,11 +4688,11 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                             echo "<script>document.location.href = 'inosea.php';</script>";
                             exit;
                         }
-                        if ($dc->Value("ca_sinidentificacion")=='f'){
+                        if ($dc->Value("ca_sinidentificacion") == 'f') {
                             $xml_hijo->setAttribute("hdo3", 31);
                             $xml_hijo->setAttribute("hni3", $tm->Value("ca_idtransportista"));
                             $xml_hijo->setAttribute("hdv3", $tm->Value("ca_digito"));
-                            
+
                             $arribo_array = array();
                             $cu->MoveFirst();
                             while (!$cu->Eof()) {
@@ -4715,11 +4708,11 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                             if (strlen($arribo_array[1]) != 0) {
                                 $xml_hijo->setAttribute("hci3", $arribo_array[1]);
                             }
-                        }else{
+                        } else {
                             $xml_hijo->setAttribute("hdo3", 43);
                             $xml_hijo->setAttribute("hrs3", utf8_encode($tm->Value("ca_nombre")));
-                            $xml_hijo->setAttribute("hdir", utf8_encode(substr($tm->Value("ca_direccion"),0,48)));
-                            
+                            $xml_hijo->setAttribute("hdir", utf8_encode(substr($tm->Value("ca_direccion"), 0, 48)));
+
                             $arribo_array = array();
                             $cu->MoveFirst();
                             while (!$cu->Eof()) {
@@ -4742,7 +4735,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                             echo "<script>document.location.href = 'inosea.php';</script>";
                             exit;
                         }
-                        if ($dc->Value("ca_sinidentificacion")=='f'){
+                        if ($dc->Value("ca_sinidentificacion") == 'f') {
                             $xml_hijo->setAttribute("hdo3", 31);
                             $idconsignatario = explode("-", str_replace(array(",", "."), "", $tm->Value("ca_identificacion")));
                             $xml_hijo->setAttribute("hni3", $idconsignatario[0]);
@@ -4763,11 +4756,11 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                             if (strlen($arribo_array[1]) != 0) {
                                 $xml_hijo->setAttribute("hci3", $arribo_array[1]);
                             }
-                        }else{
+                        } else {
                             $xml_hijo->setAttribute("hdo3", 43);
                             $xml_hijo->setAttribute("hrs3", utf8_encode($tm->Value("ca_nombre")));
-                            $xml_hijo->setAttribute("hdir", utf8_encode(substr($tm->Value("ca_direccion"),0,48)));
-                            
+                            $xml_hijo->setAttribute("hdir", utf8_encode(substr($tm->Value("ca_direccion"), 0, 48)));
+
                             $arribo_array = array();
                             $cu->MoveFirst();
                             while (!$cu->Eof()) {
@@ -4785,7 +4778,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                             }
                         }
                     } else {
-                        if ($dc->Value("ca_sinidentificacion")=='f'){
+                        if ($dc->Value("ca_sinidentificacion") == 'f') {
                             $xml_hijo->setAttribute("hdo3", 31);
                             $xml_hijo->setAttribute("hni3", $rp->Value("ca_idalterno"));
                             $xml_hijo->setAttribute("hdv3", $rp->Value("ca_digito"));
@@ -4805,11 +4798,11 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                             if (strlen($arribo_array[1]) != 0) {
                                 $xml_hijo->setAttribute("hci3", $arribo_array[1]);
                             }
-                        }else{
+                        } else {
                             $xml_hijo->setAttribute("hdo3", 43);
                             $xml_hijo->setAttribute("hrs3", utf8_encode($rp->Value("ca_nombre_cli")));
-                            $xml_hijo->setAttribute("hdir", utf8_encode(substr($rp->Value("ca_direccion_cli"),0,48)));
-                            
+                            $xml_hijo->setAttribute("hdir", utf8_encode(substr($rp->Value("ca_direccion_cli"), 0, 48)));
+
                             $arribo_array = array();
                             $cu->MoveFirst();
                             while (!$cu->Eof()) {
@@ -5525,7 +5518,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                     $us->MoveNext();
                 }
 
-                 $query = "select us.ca_email
+                $query = "select us.ca_email
                     from control.tb_usuarios_perfil up
                     inner join control.tb_usuarios us on us.ca_login = up.ca_login
                     inner join control.tb_sucursales sc on sc.ca_idsucursal=us.ca_idsucursal
@@ -5537,7 +5530,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                             inner join control.tb_sucursales s on s.ca_idsucursal=u.ca_idsucursal
                             where
                             c.ca_referencia='" . $id . "' and c.ca_continuacion <>'N/A'
-                            )"; 
+                            )";
                 if (!$us->Open("$query")) {
                     echo "<script>alert(\"" . addslashes($us->mErrMsg) . "\");</script>";
                     echo "<script>document.location.href = 'cotizaciones.php';</script>";
@@ -5673,36 +5666,41 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                         }
                     }
                 }
-                
+
                 $tm = & DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
                 if (!$tm->Open("select ca_fchreferencia from tb_inomaestra_sea where ca_referencia = '$referencia'")) {        // Selecciona todos lo registros de la tabla Festivos
-                    echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+                    echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
                     echo "<script>document.location.href = 'entrada.php';</script>";
-                    exit; }
+                    exit;
+                }
                 $fchreferencia = $tm->Value('ca_fchreferencia');
-                
+
                 if (!$tm->Open("select ca_consecutivo from tb_reportes where ca_idreporte = $idreporte")) {        // Selecciona todos lo registros de la tabla Festivos
-                    echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+                    echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
                     echo "<script>document.location.href = 'entrada.php';</script>";
-                    exit; }
+                    exit;
+                }
                 $consecutivo = $tm->Value('ca_consecutivo');
-                    
+
                 if (!$tm->Open("select substring(rs.ca_fchllegada::text,1,4) as ca_ano_new, substring(rs.ca_fchllegada::text,6,2) as ca_mes_new, rp.ca_consecutivo as ca_consecutivo_conf, rs.ca_fchllegada, min(rs.ca_fchenvio) as ca_fchconf_lleg from tb_repstatus rs INNER JOIN tb_reportes rp ON (rs.ca_idreporte = rp.ca_idreporte and rs.ca_idetapa in ('IMCPD')) where ca_consecutivo = '$consecutivo' group by rp.ca_consecutivo, rs.ca_fchllegada order by rp.ca_consecutivo")) {        // Selecciona todos lo registros de la tabla Festivos
-                    echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+                    echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
                     echo "<script>document.location.href = 'entrada.php';</script>";
-                    exit; }
+                    exit;
+                }
                 $fch_llegada = $tm->Value('ca_fchllegada');
-                
+
                 if (!$tm->Open("select cfg.* from idg.tb_idg idg inner join idg.tb_config cfg on idg.ca_idg = cfg.ca_idg inner join control.tb_departamentos dep on idg.ca_iddepartamento = dep.ca_iddepartamento where idg.ca_nombre = 'Oportunidad en la Facturación' and dep.ca_nombre = 'Marítimo' and '$fchreferencia' between cfg.ca_fchini and cfg.ca_fchfin")) {
-                    echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+                    echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
                     echo "<script>document.location.href = 'entrada.php';</script>";
-                    exit; }
+                    exit;
+                }
                 $num_dias = $tm->Value('ca_lim1');
-                
+
                 if (!$tm->Open("select ca_fchfestivo from tb_festivos")) {        // Selecciona todos lo registros de la tabla Festivos
-                    echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+                    echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
                     echo "<script>document.location.href = 'entrada.php';</script>";
-                    exit; }
+                    exit;
+                }
                 $festi = array();
                 while (!$tm->Eof() and !$tm->IsEmpty()) {
                     $festi[] = $tm->Value('ca_fchfestivo');
@@ -5711,13 +5709,13 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 while (list ($clave, $val) = each($facturacion)) {
                     if (trim($val['observacion']) == "" and $val['valor'] != 0) {
                         $dif_mem = workDiff($festi, $fch_llegada, $val['fchfactura']);
-                        if ($dif_mem > $num_dias){
+                        if ($dif_mem > $num_dias) {
                             echo "<script>alert(\"Se ha superado tiempo oportuno para facturación, por favor indique la causa en la columna de Observación IDG!\");</script>";      // Muestra el mensaje de error
                             echo "<script>document.location.href = 'inosea.php?boton=ModificarCl\&id=$referencia\&cl=$idcliente\&hb=$hbls';</script>";  // Retorna a la pantalla principal de la opción
                         }
                     }
                 }
-                
+
                 break;
             }
         case 'Actualizar Cliente': {                                                      // El Botón Guardar fue pulsado
@@ -5880,36 +5878,41 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                         exit;
                     }
                 }
-                
+
                 $tm = & DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
                 if (!$tm->Open("select ca_fchreferencia from tb_inomaestra_sea where ca_referencia = '$referencia'")) {        // Selecciona todos lo registros de la tabla Festivos
-                    echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+                    echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
                     echo "<script>document.location.href = 'entrada.php';</script>";
-                    exit; }
+                    exit;
+                }
                 $fchreferencia = $tm->Value('ca_fchreferencia');
-                
+
                 if (!$tm->Open("select ca_consecutivo from tb_reportes where ca_idreporte = $idreporte")) {        // Selecciona todos lo registros de la tabla Festivos
-                    echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+                    echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
                     echo "<script>document.location.href = 'entrada.php';</script>";
-                    exit; }
+                    exit;
+                }
                 $consecutivo = $tm->Value('ca_consecutivo');
-                    
+
                 if (!$tm->Open("select substring(rs.ca_fchllegada::text,1,4) as ca_ano_new, substring(rs.ca_fchllegada::text,6,2) as ca_mes_new, rp.ca_consecutivo as ca_consecutivo_conf, rs.ca_fchllegada, min(rs.ca_fchenvio) as ca_fchconf_lleg from tb_repstatus rs INNER JOIN tb_reportes rp ON (rs.ca_idreporte = rp.ca_idreporte and rs.ca_idetapa in ('IMCPD')) where ca_consecutivo = '$consecutivo' group by rp.ca_consecutivo, rs.ca_fchllegada order by rp.ca_consecutivo")) {        // Selecciona todos lo registros de la tabla Festivos
-                    echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+                    echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
                     echo "<script>document.location.href = 'entrada.php';</script>";
-                    exit; }
+                    exit;
+                }
                 $fch_llegada = $tm->Value('ca_fchllegada');
-                
+
                 if (!$tm->Open("select cfg.* from idg.tb_idg idg inner join idg.tb_config cfg on idg.ca_idg = cfg.ca_idg inner join control.tb_departamentos dep on idg.ca_iddepartamento = dep.ca_iddepartamento where idg.ca_nombre = 'Oportunidad en la Facturación' and dep.ca_nombre = 'Marítimo' and '$fchreferencia' between cfg.ca_fchini and cfg.ca_fchfin")) {
-                    echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+                    echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
                     echo "<script>document.location.href = 'entrada.php';</script>";
-                    exit; }
+                    exit;
+                }
                 $num_dias = $tm->Value('ca_lim1');
-                
+
                 if (!$tm->Open("select ca_fchfestivo from tb_festivos")) {        // Selecciona todos lo registros de la tabla Festivos
-                    echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+                    echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
                     echo "<script>document.location.href = 'entrada.php';</script>";
-                    exit; }
+                    exit;
+                }
                 $festi = array();
                 while (!$tm->Eof() and !$tm->IsEmpty()) {
                     $festi[] = $tm->Value('ca_fchfestivo');
@@ -5919,13 +5922,13 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 while (list ($clave, $val) = each($facturacion)) {
                     if (trim($val['observacion']) == "" and $val['valor'] != 0) {
                         $dif_mem = workDiff($festi, $fch_llegada, $val['fchfactura']);
-                        if ($dif_mem > $num_dias){
+                        if ($dif_mem > $num_dias) {
                             echo "<script>alert(\"Se ha superado tiempo oportuno para facturación, por favor indique la causa en la columna de Observación IDG!\");</script>";      // Muestra el mensaje de error
                             echo "<script>document.location.href = 'inosea.php?boton=ModificarCl\&id=$referencia\&cl=$idcliente\&hb=$hbls';</script>";  // Retorna a la pantalla principal de la opción
                         }
                     }
                 }
-                
+
                 break;
             }
         case 'Eliminar Cliente': {                                                      // El Botón Guardar fue pulsado
@@ -6068,5 +6071,4 @@ function display_xml_error($error, $xml) {
 
     return "$return\n\n--------------------------------------------\n\n";
 }
-
 ?>

@@ -43,6 +43,9 @@ if (!isset($traorigen) and !isset($boton) and !isset($accion)) {
     echo "    }";
     echo "}";
     echo "</script>";
+    ?>
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <?php
     echo "</HEAD>";
     echo "<BODY>";
     require_once("menu.php");
