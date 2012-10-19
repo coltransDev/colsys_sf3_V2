@@ -47,6 +47,9 @@ function finalizarTarea($rs, $idreporte, $usua) {
 
 set_time_limit(0);
 $rs = & DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
+?>
+<meta content="IE=edge" http-equiv="X-UA-Compatible">
+<?
 if (!isset($criterio) and !isset($boton) and !isset($accion)) {
     echo "<HTML>";
     echo "<HEAD>";
@@ -76,9 +79,6 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
     echo "}";
     echo "</script>";
     echo "<script language='javascript' src='javascripts/popcalendar.js'></script>";
-    ?>
-    <meta content="IE=edge" http-equiv="X-UA-Compatible">
-    <?php
     echo "</HEAD>";
     echo "<BODY>";
     require_once("menu.php");
