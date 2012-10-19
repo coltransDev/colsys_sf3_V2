@@ -336,6 +336,9 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 echo "function ver_pdf(id){";
                 echo "    window.open(\"reporteneg.php?id=\"+id);"; //toolbar=no, location=no, directories=no, menubar=no
                 echo "}";
+                echo "function ver_cot(id){";
+                echo "    window.open(\"/cotizaciones/verCotizacion/id/\"+id);"; //toolbar=no, location=no, directories=no, menubar=no
+                echo "}";
                 echo "function subir_hbl(id, hb){";
                 echo "    document.location.href = 'inosea.php?boton=subirHbl\&id='+id+'\&hb='+hb;";
                 echo "}";
@@ -708,10 +711,28 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                             echo "  <TD Class=listar><B>Peso en Kilos:</B><BR>" . formatNumber($cl->Value('ca_peso'), 3) . "</TD>";
                             echo "  <TD Class=listar><B>Volumen CMB:</B><BR>" . formatNumber($cl->Value('ca_volumen'), 3) . "</TD>";
                             echo "</TR>";
-                            $pdf_icon = ((strlen($cl->Value('ca_consecutivo')) != 0) ? "<IMG src='./graficos/pdf.gif' alt='Genera archivo PFD del Reporte' border=0 onclick='javascript:ver_pdf(\"" . $cl->Value('ca_consecutivo') . "\")'>" : "");
+                            $pdf_icon = ((strlen($cl->Value('ca_consecutivo')) != 0) ? "<BR /><IMG src='./graficos/pdf.gif' alt='Genera archivo PFD del Reporte' border=0 onclick='javascript:ver_pdf(\"" . $cl->Value('ca_consecutivo') . "\")'>" : "");
+                            
+                            $hay_cot = false;
+                            $tm = & DlRecordset::NewRecordset($conn);
+                            if($cl->Value('ca_idproducto') != ""){
+                              $hay_cot = true;
+                              if (!$tm->Open("select ca_idcotizacion from tb_cotproductos where ca_idproducto = ".$cl->Value('ca_idproducto'))) {
+                                 echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
+                                 echo "<script>document.location.href = 'entrada.php';</script>";
+                                 exit;
+                              }
+                            }else if($cl->Value('ca_cotizacion') != ""){
+                              $hay_cot = true;
+                              if (!$tm->Open("select ca_idcotizacion from tb_cotizaciones where ca_consecutivo = '".$cl->Value('ca_idproducto')."'")) {
+                                 echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
+                                 echo "<script>document.location.href = 'entrada.php';</script>";
+                                 exit;
+                              }
+                            }
                             echo "<TR>";
-                            echo "  <TD Class=listar><B>ID Reporte:</B><BR>" . $cl->Value('ca_consecutivo') . " $pdf_icon</TD>";
-                            echo "  <TD Class=listar><B>ID Proveedor:</B><BR>" . $cl->Value('ca_idproveedor') . "</TD>";
+                            echo "  <TD Class=listar><B>Reporte Neg.:</B><BR>" . $cl->Value('ca_consecutivo') . " $pdf_icon</TD>";
+                            echo "  <TD Class=listar><B>Cotizacion :</B><BR>" . $cl->Value('ca_cotizacion') . " $pdf_coti</TD>";
                             echo "  <TD Class=listar COLSPAN=2><B>Proveedor:</B><BR>" . $cl->Value('ca_proveedor') . "</TD>";
                             echo "  <TD Class=listar><B>Utilidad x Cliente:</B><BR>" . number_format($utl_cbm * $cl->Value('ca_volumen')) . "</TD>";
                             echo "  <TD Class=listar><B>Hbl Final: <IMG style='cursor:pointer;$level0' src='./graficos/fileopen.png' alt='Agregar Copia de Hbl Definitivo' border=0 onclick='javascript:subir_hbl(\"" . $cl->Value('ca_referencia') . "\",\"" . $cl->Value('ca_hbls') . "\")'>";
@@ -895,7 +916,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 echo "<TH WIDTH=80>Fecha</TH>";
                 echo "<TH>Tipo</TH>";
                 echo "<TH WIDTH=300 COLSPAN=3>Asunto</TH>";
-                echo "<TH><IMG style='cursor:pointer;$level0' src='./graficos/new.gif' alt='Crear un Nuevo Registro' border=0 onclick='elegir(\"Evento\", \"" . $rs->Value('ca_referencia') . "\");'></TH>";  // Botón para la creación de un Registro Nuevo
+                echo "<TH><IMG style='cursor:pointer' src='./graficos/new.gif' alt='Crear un Nuevo Registro' border=0 onclick='elegir(\"Evento\", \"" . $rs->Value('ca_referencia') . "\");'></TH>";  // Botón para la creación de un Registro Nuevo
                 $eve_ant = 0;
                 while (!$tm->Eof()) {
                     if ($eve_ant != $tm->Value('ca_idevento_ant')) {
@@ -4595,7 +4616,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                         echo "<script>document.location.href = 'inosea.php';</script>";
                         exit;
                     }
-                    if (!$rp->Open("select * from vi_reportes where ca_consecutivo = '" . $ic->Value("ca_consecutivo") . "' and ca_version = (select max(ca_version) as ca_version from tb_reportes where ca_fchanulado is null and ca_consecutivo = '" . $ic->Value("ca_consecutivo") . "')")) {    // Trae de la Tabla de la Reportes de Negocio última version.
+                    if (!$rp->Open("select * from vi_reportes where ca_consecutivo = '" . $ic->Value("ca_consecutivo") . "' and ca_version = (select max(ca_version) as ca_version from tb_reportes where ca_fchanulado is null and ca_consecutivo = '" . $ic->Value("ca_consecutivo") . "' and ca_tiporep != 4)")) {    // Trae de la Tabla de la Reportes de Negocio última version.
                         echo "<script>alert(\"" . addslashes($dm->mErrMsg) . "\");</script>";     // Muestra el mensaje de error
                         echo "<script>document.location.href = 'inosea.php';</script>";
                         exit;
