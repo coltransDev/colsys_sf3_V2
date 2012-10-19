@@ -12,7 +12,6 @@ class reportesGerActions extends sfActions {
     const RUTINA = 105;
     const ESTADISTICAS = 129;
     
-    
     /**
      * Muestra un menu donde el usuario puede seleccionar las comisiones que desa sacar
      *
@@ -203,6 +202,177 @@ class reportesGerActions extends sfActions {
             $this->resul = $st->fetchAll();
         }
         
+        if (count($this->incoterms)<= 0) {
+            $this->incoterms=array();
+        }
+    }
+    
+    public function executeReporteCargaTraficos2(sfWebRequest $request) {
+
+        $response = sfContext::getInstance()->getResponse();
+        $response->addJavaScript("extExtras/SuperBoxSelect", 'last');
+
+        $this->nivel = $this->getUser()->getNivelAcceso(reportesGerActions::RUTINA);
+        //echo $this->nivel;
+        /*if ($this->nivel == -1) {
+            $this->forward404();
+        }
+        if ($this->nivel == "1") {
+
+            $origenes = Doctrine::getTable("TraficoUsers")
+                            ->createQuery("tu")
+                            ->select("tu.*")
+                            ->where("tu.ca_login=? and tu.ca_impo=true", array($this->getUser()->getUserId()))
+                            ->execute();
+            $this->pais_origen = "";
+            if ($origenes) {
+                foreach ($origenes as $origen) {
+                    $this->pais_origen.= ( $this->pais_origen != "") ? "," . $origen->getCaIdtrafico() : $origen->getCaIdtrafico();
+                }
+            }
+            if ($this->pais_origen == "") {                
+                //$this->pais_origen = "CO-057";
+                $this->pais_origen = $this->getUser()->getIdtrafico();
+            }
+        }
+        if ($this->nivel == "2") {
+            $this->pais_origen = "todos";
+        }*/
+        $this->pais_origen = "todos";
+
+        $this->fechainicial = $request->getParameter("fechaInicial");
+        $this->fechafinal = $request->getParameter("fechaFinal");
+        $this->fechaembinicial = $request->getParameter("fechaEmbInicial");
+        $this->fechaembfinal = $request->getParameter("fechaEmbFinal");
+        $this->fechaarrinicial = $request->getParameter("fechaArrInicial");
+        $this->fechaarrfinal = $request->getParameter("fechaArrFinal");
+
+        $this->idpais_origen = $request->getParameter("idpais_origen");
+        $this->origen = $request->getParameter("origen");
+        $this->idorigen = $request->getParameter("idorigen");
+        $this->idpais_destino = $request->getParameter("idpais_destino");
+        $this->destino = $request->getParameter("destino");
+        $this->iddestino = $request->getParameter("iddestino");
+        $this->idmodalidad = $request->getParameter("idmodalidad");
+        $this->impoexpo = $request->getParameter("impoexpo");
+        $this->opcion = $request->getParameter("opcion");
+        $this->idlinea = $request->getParameter("idlinea");
+        $this->linea = $request->getParameter("linea");
+        $this->incoterms = $request->getParameter("incoterms");
+
+        $this->idagente = $request->getParameter("idagente");
+        $this->agente = $request->getParameter("agente");
+        $this->idsucursalagente = $request->getParameter("idsucursalagente");
+        $this->sucursalagente = $request->getParameter("sucursalagente");
+
+        $this->idcliente = $request->getParameter("idcliente");
+        $this->cliente = $request->getParameter("cliente");
+        $this->proyectos = ($request->getParameter("proyectos"))?TRUE:FALSE;
+
+        if ($this->opcion) {
+
+            if ($this->idmodalidad)
+                $where.=" and m.ca_modalidad='" . $this->idmodalidad . "'";
+            if ($this->fechainicial && $this->fechafinal)
+                $where.=" and (m.ca_fchreferencia between '" . $this->fechainicial . "' and '" . $this->fechafinal . "')";
+            if ($this->fechaembinicial && $this->fechaembfinal)
+                $where.=" and (m.ca_fchsalida between '" . $this->fechaembinicial . "' and '" . $this->fechaembfinal . "')";
+            if ($this->fechaarrinicial && $this->fechaarrfinal)
+                $where.=" and (m.ca_fchllegada between '" . $this->fechaarrinicial . "' and '" . $this->fechaarrfinal . "')";
+            if ($this->idpais_origen)
+                $where.=" and ori.ca_idtrafico='" . $this->idpais_origen . "'";
+            else if ($this->nivel == "1") {
+                $paises = "";
+                $pais_origen = explode(",", $this->pais_origen);
+                foreach ($pais_origen as $pais) {
+                    $paises.= ( $paises != "") ? "," . "'" . $pais . "'" : "'" . $pais . "'";
+                }
+                $where.=" and ori.ca_idtrafico in (" . $paises . ")";
+            }
+            if ($this->idorigen)
+                $where.=" and m.ca_origen='" . $this->idorigen . "'";
+            if ($this->idpais_destino)
+                $where.=" and des.ca_idtrafico='" . $this->idpais_destino . "'";
+            if ($this->iddestino)
+                $where.=" and m.ca_destino='" . $this->iddestino . "'";
+            if ($this->idlinea)
+                $where.=" and m.ca_idlinea='" . $this->idlinea . "'";
+            if ($this->impoexpo)
+                $where.=" and m.ca_impoexpo='" . $this->impoexpo . "'";
+            if (!$this->proyectos)
+                $where.=" and m.ca_modalidad NOT IN ('PROYECTOS','PARTICULARES') and m.ca_impoexpo <> 'OTM/DTA'";
+            else
+                $where.=" and m.ca_modalidad NOT IN ('PARTICULARES') and m.ca_impoexpo <> 'OTM/DTA'";
+            
+            $joinreportes = "JOIN tb_reportes r ON c.ca_idreporte = r.ca_idreporte ";
+            $joinclientes = "";
+            if ($this->incoterms && count($this->incoterms) > 0) {
+                $where.=" and (";
+                foreach ($this->incoterms as $key => $inco) {
+                    if ($key > 0)
+                        $where.=" or ";
+                    $where.=" r.ca_incoterms like '" . $inco . "%'";
+                }
+                $where.=" )";
+                $joinreportes = "JOIN tb_reportes r ON c.ca_idreporte = r.ca_idreporte ";
+            }
+
+            if ($this->idagente) {
+                $joinreportes = "JOIN tb_reportes r ON c.ca_idreporte = r.ca_idreporte ";
+                $where.=" and r.ca_idagente = '" . $this->idagente . "'";
+            }
+
+            if ($this->idsucursalagente) {
+                $joinreportes = "JOIN tb_reportes r ON c.ca_idreporte = r.ca_idreporte ";
+                $where.=" and r.ca_idsucursalagente = '" . $this->idsucursalagente . "'";
+            }
+
+            if ($this->idcliente) {
+                $joinreportes = "JOIN tb_reportes r ON c.ca_idreporte = r.ca_idreporte ";
+                $joinclientes = "JOIN tb_concliente cc ON cc.ca_idcontacto=r.ca_idconcliente";
+                $where.=" and cc.ca_idcliente = '" . $this->idcliente . "'";
+            }
+                
+            $sql = "SELECT tt.ca_liminferior,m.ca_referencia, tt.ca_concepto,tt.ca_idconcepto, m.ca_fchsalida, m.ca_fchllegada, 
+	m.ca_fchreferencia, m.ca_origen, ori.ca_ciudad AS ori_ca_ciudad, m.ca_destino, des.ca_ciudad AS des_ca_ciudad, 	
+	tra_ori.ca_idtrafico AS ori_ca_idtrafico, tra_ori.ca_nombre AS ori_ca_nombre, tra_des.ca_idtrafico AS des_ca_idtrafico, 
+	tra_des.ca_nombre AS des_ca_nombre, m.ca_modalidad, m.ca_idlinea, ids.ca_nombre,
+    (( SELECT sum(t.ca_liminferior) AS sum FROM ino.tb_equipos eq JOIN tb_conceptos t ON eq.ca_idconcepto = t.ca_idconcepto WHERE eq.ca_idmaster = m.ca_idmaster AND eq.ca_idconcepto = tt.ca_idconcepto)) / 20 AS teus, 
+	( SELECT count(*) AS count FROM ino.tb_equipos eq WHERE eq.ca_idmaster = m.ca_idmaster AND eq.ca_idconcepto = tt.ca_idconcepto) AS ncontenedores, 
+	count(DISTINCT c.ca_doctransporte) AS nhbls, 
+	( SELECT sum(ca_peso) AS count FROM ino.tb_house ics WHERE ics.ca_idmaster = m.ca_idmaster ) AS peso, 
+	( SELECT sum(ca_numpiezas) AS count FROM ino.tb_house ics WHERE ics.ca_idmaster = m.ca_idmaster ) AS piezas, 
+	( SELECT sum(ca_volumen) AS count FROM ino.tb_house ics WHERE ics.ca_idmaster = m.ca_idmaster ) AS volumen, 
+md.ca_idmodo,m.ca_idmaster
+
+    FROM ino.tb_master m
+    JOIN ino.tb_house c ON c.ca_idmaster = m.ca_idmaster
+    JOIN tb_modos md ON m.ca_impoexpo=md.ca_impoexpo and m.ca_transporte=md.ca_transporte
+    $joinreportes
+    $joinclientes
+    JOIN ino.tb_equipos e ON e.ca_idmaster = m.ca_idmaster
+    JOIN tb_conceptos tt ON e.ca_idconcepto = tt.ca_idconcepto   
+    JOIN ids.tb_proveedores p ON p.ca_idproveedor = m.ca_idlinea
+    JOIN ids.tb_ids ids ON p.ca_idproveedor = ids.ca_id
+    JOIN tb_ciudades ori ON ori.ca_idciudad = m.ca_origen
+    JOIN tb_traficos tra_ori ON tra_ori.ca_idtrafico = ori.ca_idtrafico
+    JOIN tb_ciudades des ON des.ca_idciudad = m.ca_destino
+    JOIN tb_traficos tra_des ON tra_des.ca_idtrafico = des.ca_idtrafico
+   
+    WHERE date_part('year', m.ca_fchreferencia) > (date_part('year', m.ca_fchreferencia) - 2)  
+    $where
+
+    group by tt.ca_liminferior,m.ca_referencia, tt.ca_concepto, tt.ca_idconcepto ,m.ca_fchsalida, m.ca_fchllegada, m.ca_fchreferencia, m.ca_origen, ori.ca_ciudad , m.ca_destino, des.ca_ciudad , tra_ori.ca_idtrafico , tra_ori.ca_nombre , tra_des.ca_idtrafico , tra_des.ca_nombre , m.ca_modalidad, m.ca_idlinea, ids.ca_nombre,
+    (( SELECT sum(t.ca_liminferior) AS sum FROM ino.tb_equipos eq JOIN tb_conceptos t ON eq.ca_idconcepto = t.ca_idconcepto WHERE eq.ca_idmaster = m.ca_idmaster AND eq.ca_idconcepto = tt.ca_idconcepto)) / 20 , 
+	( SELECT count(*) AS count FROM ino.tb_equipos eq WHERE eq.ca_idmaster = m.ca_idmaster AND eq.ca_idconcepto = tt.ca_idconcepto) , 
+    md.ca_idmodo,m.ca_idmaster
+    ORDER BY m.ca_fchreferencia";
+            $con = Doctrine_Manager::getInstance()->connection();
+            //echo $sql;
+            $st = $con->execute($sql);
+            $this->resul = $st->fetchAll();
+        }
+        
     if (count($this->incoterms)<= 0) {
         $this->incoterms=array();
     }
@@ -298,10 +468,10 @@ class reportesGerActions extends sfActions {
                 $this->grid["origen"][$l["ca_traorigen"]]["LCL"][$l["ca_ano"]]["totales"]["ca_40pies"]    += (int)$l["ca_40pies"];
                 $this->grid["origen"][$l["ca_traorigen"]]["LCL"][$l["ca_ano"]]["totales"]["ca_teus"]      += (int)$l["ca_teus"];
                 
-                $this->grid["LCL"][$l["ca_ano"]]["totales"]["ca_volumen"]    += (int)$l["ca_volumen"];
-                $this->grid["LCL"][$l["ca_ano"]]["totales"]["ca_20pies"]    += (int)$l["ca_20pies"];
-                $this->grid["LCL"][$l["ca_ano"]]["totales"]["ca_40pies"]    += (int)$l["ca_40pies"];
-                $this->grid["LCL"][$l["ca_ano"]]["totales"]["ca_teus"]      += (int)$l["ca_teus"];                
+                $this->grid["LCL"][$l["ca_ano"]]["totales"]["ca_volumen"] += (int)$l["ca_volumen"];
+                $this->grid["LCL"][$l["ca_ano"]]["totales"]["ca_20pies"] += (int)$l["ca_20pies"];
+                $this->grid["LCL"][$l["ca_ano"]]["totales"]["ca_40pies"] += (int)$l["ca_40pies"];
+                $this->grid["LCL"][$l["ca_ano"]]["totales"]["ca_teus"] += (int)$l["ca_teus"];                
             }
             
             foreach($this->fcl as $l)
@@ -534,6 +704,10 @@ class reportesGerActions extends sfActions {
 
         $this->idcliente = $request->getParameter("idcliente");
         $this->sucursal = $request->getParameter("sucursal");
+        $where="";
+        $where1.="and ca_version=( SELECT max(rr.ca_version) AS max
+           FROM tb_reportes rr
+          WHERE r.ca_consecutivo::text = rr.ca_consecutivo::text) ";
 
         if ($this->opcion) {
 
@@ -542,41 +716,61 @@ class reportesGerActions extends sfActions {
                 if($this->idmodalidad=="LCL")
                 {
                     $where.=" and m.ca_modalidad in ('" . $this->idmodalidad . "','".Constantes::COLOADING."')";
+                    $where1.=" and r.ca_modalidad in ('" . $this->idmodalidad . "','".Constantes::COLOADING."')";
                 }
                 else
                 {
                     $where.=" and m.ca_modalidad='" . $this->idmodalidad . "'";
+                    $where1.=" and r.ca_modalidad='" . $this->idmodalidad . "'";
                 }
             }
-            if ($this->fechainicial && $this->fechafinal)
-                $where.=" and (m.ca_fchreferencia between '" . $this->fechainicial . "' and '" . $this->fechafinal . "')";
-            if ($this->fechaembinicial && $this->fechaembfinal)
-                $where.=" and (m.ca_fchembarque between '" . $this->fechaembinicial . "' and '" . $this->fechaembfinal . "')";
+            
             if ($this->fechaarrinicial && $this->fechaarrfinal)
+            {
                 $where.=" and (m.ca_fcharribo between '" . $this->fechaarrinicial . "' and '" . $this->fechaarrfinal . "')";
+                $where1.=" and (o.ca_fcharribo between '" . $this->fechaarrinicial . "' and '" . $this->fechaarrfinal . "')";
+            }
             if ($this->idorigen)
+            {
                 $where.=" and m.ca_destino='" . $this->idorigen . "'";
+                $where1.=" and r.ca_origen='" . $this->idorigen . "'";
+            }
             if ($this->iddestino)
+            {
                 $where.=" and r.ca_continuacion_dest='" . $this->iddestino . "'";
+                $where1.=" and r.ca_destino='" . $this->iddestino . "'";
+            }
             if ($this->idlinea)
+            {
                 $where.=" and m.ca_idlinea='" . $this->idlinea . "'";
+                $where1.=" and r.ca_idlinea='" . $this->idlinea . "'";
+            }
 
             if ($this->incoterms && count($this->incoterms) > 0) {
 
                 $where.=" and (";
+                $where1.=" and (";
                 foreach ($this->incoterms as $key => $inco) {
                     if ($key > 0)
+                    {
                         $where.=" or ";
+                        $where1.=" or ";
+                    }
                     $where.=" r.ca_incoterms like '" . $inco . "%'";
+                    $where1.=" r.ca_incoterms like '" . $inco . "%'";
                 }
                 $where.=" )";
+                $where1.=" )";
             }
 
             if ($this->idcliente)
                 $where.=" and c.ca_idcliente = '" . $this->idcliente . "'";
 
             if ($this->sucursal)
+            {
                 $where.=" and u.ca_sucursal = '" . $this->sucursal . "'";
+                $where1.=" and u.ca_sucursal = '" . $this->sucursal . "'";
+            }
 
             $sql = "SELECT m.ca_referencia, cl.ca_compania, u.ca_sucursal, c.ca_hbls, r.ca_consecutivo, r.ca_seguro, r.ca_colmas, b1.ca_nombre as ca_bodega, t.ca_nombre as ca_operador, m.ca_fchembarque, m.ca_fcharribo, m.ca_fchreferencia, m.ca_origen, ori.ca_ciudad AS ori_ca_ciudad, m.ca_destino, des.ca_ciudad AS des_ca_ciudad, tra_ori.ca_idtrafico AS ori_ca_idtrafico, tra_ori.ca_nombre AS ori_ca_nombre, tra_des.ca_idtrafico AS des_ca_idtrafico, tra_des.ca_nombre AS des_ca_nombre, m.ca_modalidad, desfin.ca_ciudad AS desfin_ca_ciudad,
                 count(DISTINCT c.ca_hbls) AS nhbls,
@@ -595,7 +789,6 @@ class reportesGerActions extends sfActions {
                 JOIN tb_ciudades des ON des.ca_idciudad = m.ca_destino
                 JOIN tb_ciudades desfin ON desfin.ca_idciudad = r.ca_continuacion_dest
                 JOIN tb_traficos tra_des ON tra_des.ca_idtrafico = des.ca_idtrafico
-
                 WHERE date_part('year', m.ca_fchreferencia) > (date_part('year', m.ca_fchreferencia) - 2) and r.ca_continuacion = 'OTM'
                 $where
                 group by m.ca_referencia, cl.ca_compania, u.ca_sucursal, c.ca_hbls, r.ca_consecutivo, r.ca_seguro, r.ca_colmas, b1.ca_nombre, t.ca_nombre, m.ca_fchembarque, m.ca_fcharribo, m.ca_fchreferencia, m.ca_origen, ori.ca_ciudad , m.ca_destino, des.ca_ciudad, tra_ori.ca_idtrafico, tra_ori.ca_nombre, tra_des.ca_idtrafico, tra_des.ca_nombre, m.ca_modalidad,desfin.ca_ciudad,c.ca_numpiezas,c.ca_peso,c.ca_volumen";
@@ -604,6 +797,25 @@ class reportesGerActions extends sfActions {
             //echo $sql;
             $st = $con->execute($sql);
             $this->resul = $st->fetchAll();
+
+        $sql="select r.ca_idreporte,r.ca_origen,r.ca_destino,r.ca_consecutivo,r.ca_modalidad,COALESCE(t.ca_nombre,cl.ca_compania) as ca_compania, COALESCE(t.ca_identificacion,cl.ca_idalterno) as ca_idalterno,o.ca_hbls,o.ca_fcharribo,
+            ori.ca_ciudad ca_ciuorigen,des.ca_ciudad ca_ciudestino,o.ca_volumen,o.ca_numpiezas,o.ca_peso,u.ca_sucursal
+            from tb_reportes r
+                inner join tb_repotm o on r.ca_idreporte=o.ca_idreporte 
+                left join tb_terceros t on o.ca_idimportador=t.ca_idtercero
+                inner join tb_concliente ct on r.ca_idconcliente=ct.ca_idcontacto
+                inner join vi_clientes_reduc cl on cl.ca_idcliente::text=ct.ca_idcliente::text
+                inner join tb_ciudades ori on r.ca_origen=ori.ca_idciudad
+                inner join tb_ciudades des on r.ca_destino=des.ca_idciudad
+                JOIN vi_usuarios u ON r.ca_login = u.ca_login
+                where r.ca_tiporep=4
+                and  r.ca_fchcreado >='2012-04-01' and r.ca_login='consolcargo'
+                $where1 order by o.ca_fcharribo";
+
+            $con = Doctrine_Manager::getInstance()->connection();
+            $st = $con->execute($sql);
+            $this->resul2 = $st->fetchAll();
+            
         }
     }
 
@@ -612,12 +824,15 @@ class reportesGerActions extends sfActions {
         $this->opcion = $request->getParameter("opcion");
         $this->idpais_origen=$this->getRequestParameter("idpais_origen");
         $this->pais_origen=$this->getRequestParameter("pais_origen");
+        $this->idcliente=$this->getRequestParameter("idcliente");
         $this->fechafinal = $request->getParameter("fechaFinal");        
-        list($nom_mes, $ano) = explode("-", $this->fechafinal);
-        $this->nom_mes=$nom_mes;
-        $this->ano=$ano;
-        $this->mes = Utils::nmes($nom_mes);
-        $this->mesp = $this->mes;
+        if($this->fechafinal){
+            list($nom_mes, $ano) = explode("-", $this->fechafinal);
+            $this->nom_mes=$nom_mes;
+            $this->ano=$ano;
+            $this->mes = Utils::nmes($nom_mes);
+            $this->mesp = $this->mes;
+        }
 
         $this->indi_LCL=array();
         $this->indi_FCL=array();
@@ -634,13 +849,15 @@ class reportesGerActions extends sfActions {
         $this->indi_LCL["Holanda"] = 22;
         $this->indi_FCL["Holanda"] = 22;
         
+        $this->grid = array();
+        $this->indicador = array();
+        
         if ($this->opcion) {
-            $this->grid = array();
             $sql = "select * 
                 from vi_repindicadores 
                 LEFT OUTER JOIN (select rp.ca_consecutivo as ca_consecutivo_sub, rs.ca_fchsalida, rs.ca_fchllegada, max(to_date((rs.ca_fchenvio::timestamp)::text,'yyyy-mm-dd')) as ca_fchenvio, rs.ca_fchllegada-rs.ca_fchsalida as ca_diferencia , rs.ca_peso as ca_peso,extract(YEAR from rs.ca_fchsalida) as ca_ano1 ,extract(MONTH from rs.ca_fchsalida) as ca_mes1 from tb_repstatus rs INNER JOIN tb_reportes rp ON (rp.ca_idreporte = rs.ca_idreporte) where rs.ca_idetapa in ('IACAD','IMCPD') group by ca_consecutivo, ca_fchsalida, ca_fchllegada, ca_diferencia,ca_peso,extract(YEAR from rs.ca_fchsalida) ,extract(MONTH from rs.ca_fchsalida)) sq ON (vi_repindicadores.ca_consecutivo = sq.ca_consecutivo_sub) 
                 where ca_impoexpo = '" . Constantes::IMPO . "' and ca_transporte = '" . constantes::MARITIMO . "'
-                and upper(ca_compania) like upper('%henkel%')   
+                and ca_idcliente = ".$this->idcliente."   
                 and ca_ano::numeric = " . $ano . " and ca_mes::numeric <= " . $this->mes . " and ca_traorigen='".$this->pais_origen."'
                 order by ca_ano,ca_mes";
             
@@ -648,7 +865,6 @@ class reportesGerActions extends sfActions {
             $con = Doctrine_Manager::getInstance()->connection();
             $st = $con->execute($sql);
             $this->resul = $st->fetchAll();
-            $this->indicador = array();
             foreach ($this->resul as $r) {
                 if (!$r["ca_diferencia"])
                     continue;

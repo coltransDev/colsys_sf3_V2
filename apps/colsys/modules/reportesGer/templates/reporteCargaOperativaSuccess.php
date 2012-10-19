@@ -216,7 +216,8 @@ $resul = $sf_data->getRaw("resul");
                                             caso_uso:"CU101",
                                             width:200,
                                             value:"<?= $tipoInforme ?>",
-                                            hiddenValue:"<?= $tipoInforme ?>"
+                                            hiddenValue:"<?= $tipoInforme ?>",
+                                            allowBlank:false
                                         })
                                     ]
                                 }
