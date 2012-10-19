@@ -711,7 +711,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                             echo "  <TD Class=listar><B>Peso en Kilos:</B><BR>" . formatNumber($cl->Value('ca_peso'), 3) . "</TD>";
                             echo "  <TD Class=listar><B>Volumen CMB:</B><BR>" . formatNumber($cl->Value('ca_volumen'), 3) . "</TD>";
                             echo "</TR>";
-                            $pdf_icon = ((strlen($cl->Value('ca_consecutivo')) != 0) ? "<BR /><IMG src='./graficos/pdf.gif' alt='Genera archivo PFD del Reporte' border=0 onclick='javascript:ver_pdf(\"" . $cl->Value('ca_consecutivo') . "\")'>" : "");
+                            $pdf_icon = ((strlen($cl->Value('ca_consecutivo')) != 0) ? "<BR /><IMG style='cursor:pointer' src='./graficos/pdf.gif' alt='Genera archivo PFD del Reporte' border=0 onclick='javascript:ver_pdf(\"" . $cl->Value('ca_consecutivo') . "\")'>" : "");
                             
                             $hay_cot = false;
                             $tm = & DlRecordset::NewRecordset($conn);
@@ -722,7 +722,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                                  echo "<script>document.location.href = 'entrada.php';</script>";
                                  exit;
                               }
-                            }else if($cl->Value('ca_cotizacion') != ""){
+                            }else if($cl->Value('ca_cotizacion') != "" and $cl->Value('ca_cotizacion') != 0){
                               $hay_cot = true;
                               if (!$tm->Open("select ca_idcotizacion from tb_cotizaciones where ca_consecutivo = '".$cl->Value('ca_idproducto')."'")) {
                                  echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
@@ -730,6 +730,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                                  exit;
                               }
                             }
+                            $pdf_coti = $hay_cot ? "<BR /><IMG style='cursor:pointer'src='./graficos/pdf.gif' alt='Genera archivo PFD de la Cotización' border=0 onclick='javascript:ver_cot(\"" . $tm->Value('ca_idcotizacion') . "\")'>" : "";
                             echo "<TR>";
                             echo "  <TD Class=listar><B>Reporte Neg.:</B><BR>" . $cl->Value('ca_consecutivo') . " $pdf_icon</TD>";
                             echo "  <TD Class=listar><B>Cotizacion :</B><BR>" . $cl->Value('ca_cotizacion') . " $pdf_coti</TD>";
