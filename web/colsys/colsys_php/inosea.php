@@ -426,7 +426,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                         }
                     }
                     echo "    <IMG style='cursor:pointer; $level0' src='./graficos/muisca.gif' alt='Informacion Muisca' border=0 onclick='elegir(\"Muisca\", \"" . $rs->Value('ca_referencia') . "\", 0, 0);'><BR>";
-                    echo "    <BR><IMG style='cursor:pointer; $level0' src='./graficos/fileopen.png' alt='Archivos adjuntos a la referencia' border=0 onclick='archivos( \"" . $rs->Value('ca_referencia') . "\", 0, 0);'><BR>";
+                    echo "    <BR><IMG style='cursor:pointer' src='./graficos/fileopen.png' alt='Archivos adjuntos a la referencia' border=0 onclick='archivos( \"" . $rs->Value('ca_referencia') . "\", 0, 0);'><BR>";
                     echo "    <BR><IMG style='cursor:pointer; $level0' src='./graficos/mail_forward.gif' alt='Email a coloader' border=0 onclick='emailColoader( \"" . $rs->Value('ca_referencia') . "\", 0, 0);'><BR>";
 
                     if ($dm->value("ca_usuenvio") != '') {
