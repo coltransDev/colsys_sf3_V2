@@ -47,9 +47,6 @@ function finalizarTarea($rs, $idreporte, $usua) {
 
 set_time_limit(0);
 $rs = & DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
-?>
-<meta content="IE=edge" http-equiv="X-UA-Compatible">
-<?
 if (!isset($criterio) and !isset($boton) and !isset($accion)) {
     echo "<HTML>";
     echo "<HEAD>";
@@ -284,8 +281,9 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                     }
                     else
                     {
-                        if (confirm(\"¿Esta seguro que desea confirmar digitación Muisca OK?\"))
-                        {
+                        if (document.getElementById('equiposOk').value == 0) {
+                            alert('Error - Al menos uno de los contenedores registrados, no tiene carga asignada!');
+                        }else if (confirm(\"¿Esta seguro que desea confirmar digitación Muisca OK?\")) {
                             document.location.href = 'inosea.php?accion='+opcion+'\&id='+id;
                         }
                     }
@@ -399,6 +397,21 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                     } else if ($rs->Value('ca_impoexpo') != "Triangulación") {
                         $digitable = 'block';
                         $cl = & DlRecordset::NewRecordset($conn);                                   // Apuntador que permite manejar la conexiòn a la base de datos
+                        $sql = "select m.ca_referencia, m.ca_modalidad, e.ca_equipos, c.ca_clientes from tb_inomaestra_sea m";
+                        $sql.= " left join (select ca_referencia, count(ca_idequipo) as ca_equipos from tb_inoequipos_sea group by ca_referencia) e on m.ca_referencia = e.ca_referencia";
+                        $sql.= " left join (select ca_referencia, count(distinct ca_idequipo) as ca_clientes from tb_inoequiposxcliente group by ca_referencia) c on m.ca_referencia = c.ca_referencia";
+                        $sql.= " where m.ca_referencia = '" . $rs->Value('ca_referencia') . "'";
+                        
+                        if (!$cl->Open("$sql")) {
+                            echo "<script>alert(\"" . addslashes($cl->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
+                            echo "<script>document.location.href = 'entrada.php';</script>";
+                            exit;
+                        }
+                        $equiposOk = 1;
+                        if(($cl->Value('ca_modalidad') == "FCL" or $cl->Value('ca_modalidad') == "LCL") and $cl->Value('ca_equipos') <> $cl->Value('ca_clientes')){
+                           $equiposOk = 0;
+                        }
+                        echo "<INPUT TYPE='HIDDEN' NAME='equiposOk' id='equiposOk'  VALUE=\"$equiposOk\">";
                         if (!$cl->Open("select count(*) as conta from tb_inoclientes_sea where ca_referencia = '" . $rs->Value('ca_referencia') . "' and (ca_usuactualizado is null or ca_usuactualizado='' )")) {
                             echo "<script>alert(\"" . addslashes($cl->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
                             echo "<script>document.location.href = 'entrada.php';</script>";
@@ -3677,7 +3690,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 echo "  </TD>";
                 echo "</TR>";
                 echo "<TR>";
-                echo "  <TD Class=mostrar>Cod.Administración:<BR><SELECT NAME='codadministracion'>";  // Llena el cuadro de lista con los valores de la tabla Parametros
+                echo "  <TD Class=mostrar>Cod.Administración:<BR><SELECT ID='codadministracion' NAME='codadministracion'>";  // Llena el cuadro de lista con los valores de la tabla Parametros
                 $cu->MoveFirst();
                 while (!$cu->Eof()) {
                     if ($cu->Value('ca_identificacion') == 1) {
@@ -3689,10 +3702,10 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 $fchinicial = (strlen($tm->Value('ca_fchinicial')) == 0) ? date(date("Y") . "-" . "01" . "-" . "01") : $tm->Value('ca_fchinicial');
                 $fchfinal = (strlen($tm->Value('ca_fchfinal')) == 0) ? date(date("Y") . "-" . "12" . "-" . "31") : $tm->Value('ca_fchfinal');
                 echo "  </TD>";
-                echo "  <TD Class=mostrar>Depósito:<BR><INPUT TYPE='TEXT' NAME='coddeposito' VALUE='" . $tm->Value('ca_coddeposito') . "' SIZE=4 MAXLENGTH=4>&nbsp;<IMG src='graficos/lupa.gif' alt='Buscar' hspace='0' vspace='0' onclick='window_find();'></TD>";
-                echo "  <TD Class=mostrar>Fch.Inicial:<BR><INPUT TYPE='TEXT' NAME='fchinicial' VALUE='$fchinicial' SIZE=12 ONKEYDOWN=\"chkDate(this)\" ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
-                echo "  <TD Class=mostrar>Fch.Final:<BR><INPUT TYPE='TEXT' NAME='fchfinal' VALUE='$fchfinal' SIZE=12 ONKEYDOWN=\"chkDate(this)\" ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
-                echo "  <TD Class=mostrar>Condiciones:<BR><SELECT NAME='idcondiciones'>";  // Llena el cuadro de lista con los valores de la tabla Parametros
+                echo "  <TD Class=mostrar>Depósito:<BR><INPUT TYPE='TEXT' ID='coddeposito' NAME='coddeposito' VALUE='" . $tm->Value('ca_coddeposito') . "' SIZE=4 MAXLENGTH=4>&nbsp;<IMG src='graficos/lupa.gif' alt='Buscar' hspace='0' vspace='0' onclick='window_find();'></TD>";
+                echo "  <TD Class=mostrar>Fch.Inicial:<BR><INPUT TYPE='TEXT' ID='fchinicial' NAME='fchinicial' VALUE='$fchinicial' SIZE=12 ONKEYDOWN=\"chkDate(this)\" ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+                echo "  <TD Class=mostrar>Fch.Final:<BR><INPUT TYPE='TEXT' ID='fchfinal' NAME='fchfinal' VALUE='$fchfinal' SIZE=12 ONKEYDOWN=\"chkDate(this)\" ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+                echo "  <TD Class=mostrar>Condiciones:<BR><SELECT ID='idcondiciones' NAME='idcondiciones'>";  // Llena el cuadro de lista con los valores de la tabla Parametros
                 $cu->MoveFirst();
                 while (!$cu->Eof()) {
                     if ($cu->Value('ca_identificacion') == 4) {
