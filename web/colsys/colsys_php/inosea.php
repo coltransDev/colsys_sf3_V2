@@ -626,7 +626,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                     </TR>
                    <TR>
                     <TD Class='listar'>Ingr. x Sobreventa Otros:</TD>
-                     <TD Class='listar' style='text-align: right;$col_mem'>" . number_format($rs->Value('ca_comisionable') - $rs->Value('ca_otm') + $rs->Value('ca_ca_contenedor')) . "</TD>
+                     <TD Class='listar' style='text-align: right;$col_mem'>" . number_format($rs->Value('ca_comisionable') - $rs->Value('ca_otm') - $rs->Value('ca_contenedor')) . "</TD>
                     </TR>
                     ";
                     echo "<TR>";
