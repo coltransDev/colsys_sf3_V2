@@ -33,8 +33,9 @@ EOF;
 		
 	$listado = Doctrine::getTable("Email")
                         ->createQuery("e")
+                        ->select('*')
                         ->addWhere("e.ca_fchenvio IS NULL")
-                        ->addWhere("e.ca_fchcreado <= ? ", date("Y-m-d H:i:s", time()-86400))
+                        ->addWhere("e.ca_fchcreado <= ? ", date("Y-m-d H:i:s", time()-18300))
                         ->execute();
 	
     if(count($listado)>0){
@@ -45,24 +46,22 @@ EOF;
             $email->setCaFrom( "no-reply@coltrans.com.co" );
             $email->setCaFromname( "Colsys Notificaciones" );
             $email->setCaSubject(date("Y-m-d").": Correos sin despachar");
-            $email->setCaAddress("alramirez@coltrans.com.co");
-            $email->setCaAddress("maquinche@coltrans.com.co");
-            $email->setCaAddress("clopez@coltrans.com.co");
-            $email->setCaAddress("grmartinez@coltrans.com.co");
-            $email->setCaAddress("falopez@coltrans.com.co");
+            $email->addTo("alramirez@coltrans.com.co");
+            $email->addTo("maquinche@coltrans.com.co");
+            $email->addTo("clopez@coltrans.com.co");
+            $email->addTo("grmartinez@coltrans.com.co");
+            $email->addTo("falopez@coltrans.com.co");
 
             $texto = "Los siguientes correos no han sido despachados \n\n<br /><br />" ;
             
             
             $texto .= "<table border='0'><tr><th>Enviado Por:</th> <th>Tipo</th> <th>Asunto</th> <th>Fch. Creado</th></tr>";
             foreach( $listado as $lista ){
-                $fchCreado = date("Y-m-d", $lista->getCaFchcreado());
-                $texto .= "<tr><td>".$lista->getCaUsuenvio()."</td> <td>".$lista->getCaTipo()."</td> <td>".$lista->getCaSubject()."</td> <td>".$fchCreado."</td></tr>";
+                $texto .= "<tr><td>".$lista->getCaUsuenvio()."</td> <td>".$lista->getCaTipo()."</td> <td>".$lista->getCaSubject()."</td> <td>".$lista->getCaFchcreado()."</td></tr>";
             }
             $texto .= "</table>";
             
-            $email->setCaBodyhtml($texto);
-            
+            $email->setCaBodyhtml($texto);            
             $email->save();
             
 	}		
