@@ -144,5 +144,28 @@ class idgActions extends sfActions
         $this->responseArray = array("errorInfo"=>$errorInfo,"success" => true,"id"=>  implode(",", $id),"idreg"=>  implode(",", $idreg) );
 
         $this->setTemplate("responseTemplate");
-    }    
+    }
+    
+    public function executeEliminarIdg($request)
+    {
+        
+        
+    }
+    
+    public function executeEliminarIdgconfig($request)
+    {
+        try{
+            $idconfig=$request->getParameter("idconfig");
+            $config = Doctrine::getTable("IdgConfig")->find( $idconfig );
+            $config->delete();
+            $this->responseArray = array("success" => true);
+       }
+       catch(Exception $e)
+       {
+           $this->responseArray = array("success" => false,"errorInfo"=>$e->getMessage());
+       }
+       $this->setTemplate("responseTemplate");
+        
+    }
+    
 }

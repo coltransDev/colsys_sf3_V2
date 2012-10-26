@@ -469,15 +469,15 @@ PanelConfig = function( config ){
                             scope:this,
                             handler: function(){
                                 if( confirm("Esta seguro?") ){
-                                    if( this.ctxRecord.data.idreporte  && this.numRef){                                       
+                                    if( this.ctxRecord.data.idreg)
+                                    {
                                        var id=this.ctxRecord.id;
                                         Ext.Ajax.request(
                                         {
                                             waitMsg: 'Guardando cambios...',
-                                            url:'<?=url_for("antecedentes/eliminarReporte")?>',
+                                            url:'<?=url_for("idg/eliminarIdgconfig")?>',
                                             params : {
-                                                referencia: this.numRef,
-                                                idreporte: this.ctxRecord.data.idreporte
+                                                idconfig: this.ctxRecord.data.idreg
                                             },
                                             failure:function(response,options){
                                                 alert( response.responseText );
