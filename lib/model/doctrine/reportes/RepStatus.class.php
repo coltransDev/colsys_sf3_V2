@@ -310,11 +310,11 @@ class RepStatus extends BaseRepStatus
                         switch($reporte->getCaContinuacionConf())
                         {
                             case "BOG":
-                                $suc="OBO";
+                                $suc="'OBO','BOG'";
                             break;
                             case "MDE":
-                                $suc="OMD";
-                            break;                            
+                                $suc="'OMD','MDE'";
+                            break; 
                         }
                             
                         $coordinadores = Doctrine::getTable("Usuario")
@@ -322,7 +322,7 @@ class RepStatus extends BaseRepStatus
                            ->select("u.ca_login,u.ca_nombre,u.ca_email")
                            ->innerJoin("u.UsuarioPerfil up")
                            ->where("u.ca_activo=? AND up.ca_perfil=? ", array('TRUE','cordinador-de-otm'))
-                           ->addWhere("u.ca_idsucursal=?",array($suc))
+                           ->addWhere("u.ca_idsucursal in (?)",array($suc))
                            ->addOrderBy("u.ca_idsucursal")
                            ->addOrderBy("u.ca_nombre")
                            ->execute();
