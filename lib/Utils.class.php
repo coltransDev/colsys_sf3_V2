@@ -107,25 +107,24 @@ class Utils{
 	
 	
 	public static  function replace( $text ){
-		$trans = get_html_translation_table(HTML_ENTITIES);		
-		return str_replace( "\n","<br />",strtr( $text, $trans) );
+		$trans = get_html_translation_table(HTML_ENTITIES);		        
+    	return str_replace( "\n","<br />",strtr( $text, $trans) );
 	}
 	
 	public static function html_entities( $str ){
 		$trans = get_html_translation_table(HTML_ENTITIES);
 		return strtr($str, $trans);
 	}
-	
-	
+
 	public static function agregarDias( $date, $days=1, $format="Y-m-d" ){
 		$yy = Utils::parseDate($date, "Y");
 		$mm = Utils::parseDate($date, "m");	
 		$dd = Utils::parseDate($date, "d");	
 		
 		return date( $format ,  mktime(0, 0, 0, $mm   , $dd + $days, $yy) );		
-	} 
-    
-	
+	}
+
+
 	/**
 	from php.net
 	give the number of days from a date
@@ -388,11 +387,28 @@ class Utils{
     }
 
     static public function slugify($text){
-        // replace all non letters or digits by -
-        $text = preg_replace('/\W+/', '-', $text);
+        // replace non letter or digits by -
+        $text = preg_replace('#[^\\pL\d]+#u', '-', $text);
 
-        // trim and lowercase
-        $text = strtolower(trim($text, '-'));
+        // trim
+        $text = trim($text, '-');
+
+        // transliterate
+        if (function_exists('iconv'))
+        {
+          $text = iconv('utf-8', 'us-ascii//TRANSLIT', $text);
+        }
+
+        // lowercase
+        $text = strtolower($text);
+
+        // remove unwanted characters
+        $text = preg_replace('#[^-\w]+#', '', $text);
+
+        if (empty($text))
+        {
+          return 'n-a';
+        }
 
         return $text;
     }
@@ -555,5 +571,32 @@ class Utils{
             unlink($archivo);
         }
     }
+    
+    public static function sendEmail($data = array())
+    {
+        $mail = new Email();
+        $usuenvio=(isset($data["usuenvio"]))?$data["usuenvio"]:"Administrador";
+        $mail->setCaUsuenvio($usuenvio);
+        $tipo=(isset($data["tipo"]))?$data["tipo"]:"Error";
+        $mail->setCaTipo($tipo); //Envío de Avisos
+        $idcaso=(isset($data["idcaso"]))?$data["idcaso"]:null;
+        $mail->setCaIdcaso($idcaso);
+
+        $from=(isset($data["from"]))?$data["from"]:"nagios@correo.colsys.coltrans.com.co";
+        $mail->setCaFrom($from);
+        $fromname=(isset($data["fromname"]))?$data["fromname"]:"Nagios";
+        $mail->setCaFromname($fromname);        
+        $to=(isset($data["to"]))?$data["to"]:"admin@coltrans.com.co";
+        $mail->addTo($to);
+        $subject=(isset($data["subject"]))?$data["subject"]:"Email No enviado";
+        $mail->setCaSubject($subject);
+        $body=(isset($data["body"]))?$data["body"]:"Email No enviado";
+        $mail->setCaBody($body);
+        $mensaje=(isset($data["mensaje"]))?$data["mensaje"]:"Email No enviado";
+        //$mensaje = "Id Email: ".$email->getCaIdemail() . "<br />".$e->getMessage(). "<br />".$e->getTraceAsString();
+        $mail->setCaBodyhtml($mensaje);
+        $mail->send();
+    }
+    
 }
 ?>

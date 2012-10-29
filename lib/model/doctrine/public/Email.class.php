@@ -201,11 +201,11 @@ class Email extends BaseEmail
                             $data = gzfile( $file.".gz" );
                             $data = implode($data);                            
                             $message->attach( Swift_Attachment::newInstance($data, Utils::replace(basename($file)), Utils::mimetype(basename($file))) );
-                        }else{                        
-                            $event= "No existe el archivo: ".$file;                        
+                        }else{
+                            
+                            $event= "Id Email: ".$this->getCaIdemail() . "<br />".$this->getCaSubject(). "<br />No existe el archivo: ".$file;
                             throw new Exception($event);
                         }
-
                     }
                 }
             }
@@ -213,8 +213,10 @@ class Email extends BaseEmail
             $event= $logHeader;
             $event.= $logger->dump();
             $event.= $e->getMessage();
-
             Utils::writeLog($logFile , $event );
+            $data = array();
+            $data["mensaje"]=$event;
+            Utils::sendEmail($data);
             return false;
         }
 

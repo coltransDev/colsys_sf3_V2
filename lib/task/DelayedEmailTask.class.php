@@ -35,12 +35,18 @@ EOF;
                         ->addOrderBy("e.ca_fchcreado", "ASC")
                         ->limit(15)
                         ->execute();
-	
+    //$data = array();
+    //Utils::sendEmail($data);
 	foreach( $emails as $email ){
 		try{
             $email->send();
+            
         }catch(Exception $e){
             echo $e."<br />";
+            
+            $data = array();
+            $data["mensaje"]="Id Email: ".$email->getCaIdemail() . "<br />".$e->getMessage(). "<br />".$e->getTraceAsString();
+            Utils::sendEmail($data);            
         }
 	}		
   }
