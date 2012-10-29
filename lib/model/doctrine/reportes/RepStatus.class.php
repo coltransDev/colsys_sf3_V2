@@ -54,9 +54,6 @@ class RepStatus extends BaseRepStatus
 				foreach( $evalExprArray as $eval ){
 					$str .= "->get".ucfirst($eval)."()";
 				}
-
-
-
 				eval("\$result .= \$this".$str.";");
 
 			}else{
@@ -309,12 +306,23 @@ class RepStatus extends BaseRepStatus
                     }
                     else
                     {
+                        $suc="";
+                        switch($reporte->getCaContinuacionConf())
+                        {
+                            case "BOG":
+                                $suc="OBO";
+                            break;
+                            case "MDE":
+                                $suc="OMD";
+                            break;                            
+                        }
+                            
                         $coordinadores = Doctrine::getTable("Usuario")
                            ->createQuery("u")
                            ->select("u.ca_login,u.ca_nombre,u.ca_email")
                            ->innerJoin("u.UsuarioPerfil up")
                            ->where("u.ca_activo=? AND up.ca_perfil=? ", array('TRUE','cordinador-de-otm'))
-                           ->addWhere("u.ca_idsucursal=?",array($reporte->getCaContinuacionConf()))
+                           ->addWhere("u.ca_idsucursal=?",array($suc))
                            ->addOrderBy("u.ca_idsucursal")
                            ->addOrderBy("u.ca_nombre")
                            ->execute();
