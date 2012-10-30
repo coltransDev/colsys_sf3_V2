@@ -37,11 +37,12 @@ function dateDiff($startDate, $endDate) {
 } 
 
 function workDiff(&$festiv, $startDate, $endDate) {
+    
     if (strlen($startDate) == 0 or strlen($endDate) == 0) { // Valida si Inicio o Final viene en Blanco
         return (null);  // Retorna un Null cuando no se puede calcular la diferencia.
     }
 
-    if ($startDate > $endDate) {
+    if ($startDate > $endDate) {        
         $fact = -1;
         $tempDate = $startDate;
         $startDate= $endDate;
@@ -61,7 +62,28 @@ function workDiff(&$festiv, $startDate, $endDate) {
     // Convert dates to TimeStamp
     $startDate = mktime(0,0,0,$startArry["month"], $startArry["day"], $startArry["year"]);
     $endDate = mktime(0,0,0,$endArry["month"], $endArry["day"], $endArry["year"]);
-
+    
+    if(date("N", $startDate)==6)
+    {
+        $startArry["day"]=$startArry["day"]+2;
+        
+        $startDate = mktime(0,0,0,$startArry["month"], $startArry["day"], $startArry["year"]);
+    }
+    else if(date("N", $startDate)==7)
+    {
+        $startArry["day"]=$startArry["day"]+1;
+        $startDate = mktime(0,0,0,$startArry["month"], $startArry["day"], $startArry["year"]);
+    }
+    if(date("N", $endDate)==6)
+    {
+        $endArry["day"]=$endArry["day"]+2;
+        $endDate = mktime(0,0,0,$endArry["month"], $endArry["day"], $endArry["year"]);
+    }
+    else if(date("N", $startDate)==7)
+    {
+        $endArry["day"]=$endArry["day"]+1;
+        $endDate = mktime(0,0,0,$endArry["month"], $endArry["day"], $endArry["year"]);
+    }
     while ($startDate < $endDate) {
     // Parse dates for conversion
         $startArry = date_parse($start_Date);
