@@ -30,7 +30,19 @@ class InoCostosSea extends BaseInoCostosSea
 
             if(count($costos)>0)
                 return "-3";
+            
+            $iddeducciones=array(109,110,111,112,113);
+            $deduccion = Doctrine::getTable("InoDeduccionesSea")
+                               ->createQuery("c")
+                               ->addWhere("c.ca_referencia = ? and ca_idcliente = ? and ca_hbls = ? ", array($inoMaestraSea->getCaReferencia() , $inoCliente->getCaIdcliente() , $comprobante->getInoHouse()->getCaDoctransporte() ) )
+                               ->andWhereIn("ca_iddeduccion",$iddeducciones)
+                               ->fetchOne();
 
+            if(count($deduccion)<1)
+                return "-4";
+
+            $valor2=$deduccion->getCaValor();
+            
             $inoCostosSea = new InoCostosSea();            
             $costo = Doctrine::getTable("Costo")
                                ->createQuery("c")
@@ -51,7 +63,7 @@ class InoCostosSea extends BaseInoCostosSea
             $inoCostosSea->setCaVenta($comprobante->getCaValor2());
             $inoCostosSea->save($conn);
             
-            if($comprobante->getCaValor2()>$comprobante->getCaValor())
+            if($valor2>$comprobante->getCaValor())
             {
                 $inoutilidadSea = new InoutilidadSea();
                 $inoutilidadSea->setCaReferencia($inoMaestraSea->getCaReferencia());
@@ -59,7 +71,7 @@ class InoCostosSea extends BaseInoCostosSea
                 $inoutilidadSea->setCaHbls($comprobante->getInoHouse()->getCaDoctransporte());
                 $inoutilidadSea->setCaIdcosto($costo->getCaIdcosto());
                 $inoutilidadSea->setCaFactura($comprobante->getCaConsecutivo());
-                $inoutilidadSea->setCaValor($comprobante->getCaValor2()-$comprobante->getCaValor());
+                $inoutilidadSea->setCaValor($valor2-$comprobante->getCaValor());
                 $inoutilidadSea->save($conn);
             }
             return $inoCostosSea->getOid();            
