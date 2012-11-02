@@ -54,8 +54,8 @@ InoMaestraSea:
     ca_muelle: integer
     ca_fchfinmuisca: date
     ca_estado: string
-    ca_fchenvio: date
-    ca_fchrecibido: date
+    ca_fchenvio: timestamp
+    ca_fchrecibido: timestamp
   relations:
     InoClientesSea:
       local: ca_referencia
