@@ -33,13 +33,8 @@ InoMaestraSea:
     ca_mensaje: string
     ca_fchdesconsolidacion: date
     ca_mnllegada: string
-    ca_fchregistroadu: date
-    ca_asunto_otm: string
-    ca_mensaje_otm: string
-    ca_fchllegada_otm: date
-    ca_ciudad_otm: string
-    ca_provisional: boolean
-    ca_sitiodevolucion: string
+    ca_fchregistroadu: date    
+    ca_provisional: boolean    
     ca_fchcreado: timestamp
     ca_usucreado: string
     ca_fchactualizado: timestamp
@@ -50,8 +45,6 @@ InoMaestraSea:
     ca_usucerrado: string
     ca_fchconfirmado: timestamp
     ca_usuconfirmado: string
-    ca_fchconfirma_otm: timestamp
-    ca_usuconfirma_otm: string
     ca_fchvaciado: date
     ca_horavaciado: time
     ca_fchmuisca: timestamp
@@ -60,6 +53,9 @@ InoMaestraSea:
     ca_carpeta: boolean
     ca_muelle: integer
     ca_fchfinmuisca: date
+    ca_estado: string
+    ca_fchenvio: date
+    ca_fchrecibido: date
   relations:
     InoClientesSea:
       local: ca_referencia
@@ -91,7 +87,6 @@ InoMaestraSea:
     InoDianDepositos:
       local: ca_muelle
       foreign: ca_codigo
-
 
 InoClientesSea:
   options:
@@ -814,3 +809,43 @@ InoDianDepositos:
     ca_direccion: string
     ca_fchdesde: string
     ca_fchhasta: string
+
+
+InoDeduccionesSea:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: sea
+  tableName: tb_inodeduccion_sea
+  columns:
+    ca_referencia: 
+      type: string  
+      primary: true
+    ca_idcliente:
+      type: integer
+      primary: true
+    ca_hbls:
+      type: string
+      primary: true
+    ca_factura:
+      type: string
+      primary: true
+    ca_iddeduccion:
+      type: integer
+      primary: true
+    ca_neto: numeric
+    ca_valor: numeric
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string
+  relations:
+     InoMaestraSea:
+       local: ca_referencia
+       foreign: ca_referencia
+       type: one
+     Cliente:
+       local: ca_idcliente
+       foreign: ca_idcliente
+       type: one
