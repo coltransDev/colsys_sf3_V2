@@ -300,9 +300,15 @@ function cambiarTipoMsg( value ){
         //document.getElementById('confirmacion_tbl').style.display='block';
         //document.getElementById('status_tbl').style.display='none';
         $("#status_tbl").hide();
+        $("#status_cnt").hide();
         $("#confirmacion_tbl").show();
+    }else if( value=="Cont" ){
+        $("#status_cnt").show();
+        $("#status_tbl").hide();
+        $("#confirmacion_tbl").hide();
     }else{
         $("#status_tbl").show();
+        $("#status_cnt").hide();
         $("#confirmacion_tbl").hide();
         //document.getElementById('status_tbl').style.display='block';
         //document.getElementById('confirmacion_tbl').style.display='none';        
@@ -396,27 +402,37 @@ function cambiarTipoMsg( value ){
 							<th>Concepto</th>
 							<th>Cantidad</th>
 							<th>Id Equipo</th>
-							<th colspan="3">Contratos de Comodato</th>
+							<th colspan="3">Entrega de Comodato</th>
 						</tr>
 						<?
+                  $agente_aduana = "";
+                  /*
+                  $inoClientes = $referencia->getInoClientesSea();
+                  foreach($inoClientes as $inoCliente){
+                     $agente_aduana = $inoClienteSea; //;->getCaNombre()
+                  }
+                  */
+                  $intro_body_desc = "\n\n";
 						foreach( $inoEquipos as $inoEquipo ){						
 							$inoContrato = $inoEquipo->getInoContratosSea();
+                     $intro_body_desc.= "Equipo : ".$inoEquipo->getConcepto()->getCaConcepto()."\n";
+                     $intro_body_desc.= "Id Equipo : ".$inoEquipo->getCaIdequipo()."\n";
+                     $intro_body_desc.= "Entrega Comodato : ".($inoContrato?$inoContrato->getCaEntregaComodato():"")."\n";
+                     $intro_body_desc.= "Patio de Entrega : ".($inoContrato?$inoContrato->getPricPatio()->getCaNombre():"")."\n";
+                     $intro_body_desc.= "Agente Aduana : ".$agente_aduana."\n";
+                     $intro_body_desc.= "Observaciones : ".($inoContrato?$inoContrato->getCaObservaciones():"")."\n\n\n";
 						?>
 						<tr>
 							<td  class="listar"><?=$inoEquipo->getConcepto()->getCaConcepto()?></td>
 							<td  class="listar"><?=$inoEquipo->getCaCantidad()?></td>
 							<td  class="listar"><?=$inoEquipo->getCaIdequipo()?></td>
-							<td  class="listar"><?=$inoContrato?$inoContrato->getCaIdcontrato():"&nbsp;"?></td>
-							<td  class="listar"><?=$inoContrato?$inoContrato->getCaFchcontrato():"&nbsp;"?></td>
+							<td  class="listar"><?=$inoContrato?$inoContrato->getCaEntregaComodato():"&nbsp;"?></td>
+							<td  class="listar"><?=$inoContrato?$inoContrato->getPricPatio()->getCaNombre():"&nbsp;"?></td>
 							<td  class="listar"><?=$inoContrato?$inoContrato->getCaObservaciones():"&nbsp;"?></td>
 						</tr>
 						<?
 						}
 						?>
-						<tr>
-							<td class="listar">Sitio de Devolución:</td>
-							<td class="listar" colspan="5"><?=$referencia->getCaSitiodevolucion()?></td>
-						</tr>
 					</table>
 					<?
 					}else{
@@ -543,7 +559,7 @@ function cambiarTipoMsg( value ){
                             </tr>
 						</tbody>
 					</table>
-					
+
                 </td>
 				
 			</tr>
@@ -562,7 +578,7 @@ function cambiarTipoMsg( value ){
                         <input name="tipo_msg" id="tipo_msg" value="<?=($modo=="puerto")?"Puerto":"Conf"?>" checked="checked" onclick="cambiarTipoMsg(this.value)" type="radio">
                         <?=($modo=="puerto")?"Llegada":"Confirmaci&oacute;n"?>:
                 </td>
-				<td class="mostrar" colspan="4" rowspan="4">
+				<td class="mostrar" colspan="4" rowspan="5">
 
                     <table id="confirmacion_tbl" style="display: block;" cellspacing="1" width="100%">
 						<tbody>
@@ -640,8 +656,19 @@ function cambiarTipoMsg( value ){
 							</tr>
 						</tbody>
 					</table>
-                </td>
-				
+               <table id="status_cnt" style="display: none;" cellspacing="1" width="100%">
+						<tbody>
+							<tr>
+								<td class="mostrar" colspan="4"><b>Introducci&oacute;n al Mensaje de Contenedores:</b><br>
+									<textarea name="status_intro_cont" wrap="virtual" rows="2" cols="93"><?=$textos['mensajeStatusIntro']?></textarea></td>
+							</tr>
+							<tr>
+								<td class="mostrar" colspan="4"><b>Mensaje de Contenedores:</b><br>
+									<textarea name="status_body_cont" wrap="virtual" rows="7" cols="93">La siguiente es la informaci&oacute;n relacionada con la devoluci&oacute;n de contenedor(es)<?=$intro_body_desc?></textarea></td>
+							</tr>
+						</tbody>
+					</table>
+               </td>
 			</tr>
 			<tr>
 				<td class="partir">&nbsp;</td>
@@ -675,6 +702,11 @@ function cambiarTipoMsg( value ){
 				<td class="partir">&nbsp;</td>
 				<td class="partir"><input name="tipo_msg" id="tipo_msg" value="Desc" onclick="cambiarTipoMsg(this.value)" type="radio">
 					Desconsolidaci&oacute;n:</td>
+			</tr>
+            <tr>
+				<td class="partir">&nbsp;</td>
+				<td class="partir"><input name="tipo_msg" id="tipo_msg" value="Cont" onclick="cambiarTipoMsg(this.value)" type="radio">
+					Contenedores:</td>
 			</tr>
 			<?
 			}
