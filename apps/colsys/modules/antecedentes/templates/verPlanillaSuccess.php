@@ -3,8 +3,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
-
 if( $format!="email" ){
 ?>
 <script language="javascript" type="text/javascript">
@@ -168,7 +166,10 @@ if( $format!="email" ){
         $tpeso=0;
         $tvolumen=0;
         $tpiezas=0;
+        $fechaAnt="";
         foreach( $hijas as $hija ){
+            if($fechaAnt=="")
+                $fechaAnt=$hija->getCaFchantecedentes();
             $tpeso+=$hija->getCaPeso();
             $tvolumen+=$hija->getCaVolumen();
             $tpiezas+=$hija->getCaNumpiezas();
@@ -263,54 +264,41 @@ if( $format!="email" ){
     </table>
     </div>
     <?
-
-
 }
 ?>
 
-<?
-/*
-if( $format=="maritimo" ){
-
-    <br /><br />
-
-<div align="center">
-   <?=image_tag("22x22/unlock.gif")?> <a href="<?=url_for("antecedentes/aceptarReferencia?ref=".  str_replace(".", "|", $ref->getCaReferencia()))?>">Haga click aca para desbloquear esta referencia y<br /> confirmar la aceptaci&oacute;n de esta referencia</a>
-</div>
-
-
-}
- * 
- */
-?>
 <br />
 <?
     $usuario = $ref->getUsuCreado();
     $sucursal = $usuario->getSucursal();
-    //if($sucursal)
-    //   echo $sucursal->getCaNombre();
 ?>
 <table cellspacing="0" width="100%" class="tableList alignLeft">
         <tbody>
             <tr class="row0">
-                <td width="33%">
+                <td width="25%">
                     <div align="left">
                         <b>Ciudad:</b><br />
                         <?=$sucursal?$sucursal->getCaNombre():"&nbsp;"?>
                     </div>
                 </td>
-                <td width="33%">
+                <td width="25%">
                     <div align="left">
                         <b>Elaborado por:</b><br />
                         <?=$ref->getCaUsucreado()?> <?=UTils::fechaMes($ref->getCaFchcreado())?>
                     </div>
                 </td>
-                <td width="34%">
+                <td width="25%">
                     <div align="left">
                         <b>Actualizado por:</b><br />
                         <?=$ref->getCaUsuactualizado()?$ref->getCaUsuactualizado():"&nbsp;"?> <?=UTils::fechaMes( $ref->getCaFchactualizado() )?>
                     </div>
-                </td>                
+                </td>
+                <td width="25%">
+                    <div align="left">
+                        <b>Fecha Recibido:</b><br />
+                        <?=UTils::fechaMes( $fechaAnt )?>
+                    </div>
+                </td>
             </tr>
             </tbody>
         </table>

@@ -13,8 +13,6 @@ class antecedentesActions extends sfActions {
     const RUTINA = 104;
     private $filetypes = array("MBL", "HBL");
     /**
-     *
-     *
      * @param sfRequest $request A request object
      */
     public function executeIndex(sfWebRequest $request) {
@@ -113,20 +111,37 @@ class antecedentesActions extends sfActions {
         {
             $where =" and ( (m.ca_provisional = true and ((m.ca_modalidad='".constantes::FCL."' and u.ca_idsucursal='".$this->user->getIdSucursal()."') or m.ca_modalidad<>'".constantes::FCL."') 
                 and strpos((SELECT ca_subject FROM tb_emails where ca_tipo='Antecedentes' and ca_subject like '%'||m.ca_referencia||'%' order by ca_idemail DESC limit 1), 'Envio de Antecedentes')>0
-                ) OR (m.ca_provisional = false AND m.ca_fchmuisca IS NULL and SUBSTR(ca_referencia,1,3) NOT IN ('700','710','720') ))";
+                ) OR (m.ca_provisional = false AND m.ca_fchmuisca IS NULL and SUBSTR(ca_referencia,1,3) NOT IN ('700','710','720','800','810','820') and ca_impoexpo <> '".Constantes::TRIANGULACION."' ))";
             $whereEmail="" ;
         }
         
         $sql="select m.ca_referencia,m.ca_fchreferencia,m.ca_provisional,m.ca_modalidad,m.ca_motonave,m.ca_fchembarque,m.ca_fcharribo,m.ca_usucreado,ori.ca_ciudad as ca_ciu_origen,des.ca_ciudad as ca_ciu_destino,u.ca_idsucursal,m.ca_fchmuisca
-                ,COALESCE(strpos((SELECT ca_subject FROM tb_emails where ca_tipo='Antecedentes' and ca_subject like '%'||m.ca_referencia||'%' order by ca_idemail DESC limit 1), 'Envio de Antecedentes'),-1) as refbloqueada
+                ,COALESCE(strpos((SELECT ca_subject FROM tb_emails where ca_tipo='Antecedentes' and ca_subject like '%'||m.ca_referencia||'%' order by ca_idemail DESC limit 1), 'Envio de Antecedentes'),-1) as refbloqueada, m.ca_impoexpo
                 from tb_inomaestra_sea m
                 JOIN tb_ciudades ori ON ori.ca_idciudad = m.ca_origen
                 JOIN tb_ciudades des ON des.ca_idciudad = m.ca_destino
                 JOIN control.tb_usuarios u ON u.ca_login = m.ca_usucreado
                 where m.ca_fchcreado>='2011-03-01' $where order by m.ca_referencia "  ;
+        
+/*            if($this->user->getUserId()!="maquinche")
+            {
+                $con = Doctrine_Manager::connection();
+                $st = $con->execute($sql);
+            }
+            else    
+            {
+                $con = Doctrine_Manager::connection(new PDO('pgsql:dbname=Coltrans;host=10.192.1.65', 'Administrador', 'lmD125aC-c'));
+                $st = $con->execute(utf8_encode($sql));
+            }
+ * 
+ */
+        if($this->user->getUserId()=="maquinche")
+        {
+            echo $sql;
+        }
+            $con = Doctrine_Manager::connection(new PDO('pgsql:dbname=Coltrans;host=10.192.1.65', 'Administrador', 'lmD125aC-c'));
+            $st = $con->execute(utf8_encode($sql));
             
-            $con = Doctrine_Manager::getInstance()->connection();
-            $st = $con->execute($sql);
             $referencias = $st->fetchAll();
 
         $this->refBloqueadas=array();
@@ -136,7 +151,6 @@ class antecedentesActions extends sfActions {
         {
             if( trim($ref["ca_provisional"])=="1" )
             {
-
                 if($this->format=="maritimo" )
                 {
                     $this->refBloqueadas[]=$ref;
@@ -147,12 +161,12 @@ class antecedentesActions extends sfActions {
                         $this->refBloqueadas[]=$ref;
                     else 
                         $this->refRechazadas[]=$ref;
-                    
-                }                
+                }
             }
             else
             {
-                $this->refSinMuisca[]=$ref;
+                if($ref["ca_impoexpo"]!=Constantes::TRIANGULACION)
+                    $this->refSinMuisca[]=$ref;
             }
         }
 
@@ -160,7 +174,7 @@ class antecedentesActions extends sfActions {
 
         $this->login=$this->user->getUserId();
         /*if($this->sucursal=="BOG")
-        {              
+        {
             $sql="select m.ca_referencia,m.ca_modalidad,m.ca_motonave,m.ca_fchembarque,m.ca_fcharribo,m.ca_usucreado,ori.ca_ciudad ca_ciu_origen,des.ca_ciudad ca_ciu_destino
                 from tb_inomaestra_sea m
                 JOIN tb_ciudades ori ON ori.ca_idciudad = m.ca_origen
@@ -211,7 +225,6 @@ class antecedentesActions extends sfActions {
             $fchmaster = $request->getParameter("fchmaster");
 
             $idlinea = ($request->getParameter("idlinea")?$request->getParameter("idlinea"):"0");
-            //$idlinea = 0;
 
             $mmRef = Utils::parseDate($fchllegada, "m");
             $aaRef = substr(Utils::parseDate($fchllegada, "Y"), -1, 1);
@@ -232,6 +245,7 @@ class antecedentesActions extends sfActions {
                 $master = new InoMaestraSea();
                 $numref = InoMaestraSeaTable::getNumReferencia($impoexpo, $transporte, $modalidad, $idorigen, $iddestino, $mmRef, $aaRef);
                 $master->setCaReferencia($numref);
+                $master->setCaEstado("A");
             }
             $master->setCaImpoexpo($impoexpo);
             $master->setCaModalidad($modalidad);
@@ -318,6 +332,244 @@ class antecedentesActions extends sfActions {
         }
         $this->setTemplate("responseTemplate");
     }
+    
+    
+    
+    public function executeGuardarPanelMasterOTMAntecedentes(sfWebRequest $request) {
+        
+        $this->user=$this->getUser();
+        $conn = Doctrine::getTable("InoMaestraSea")->getConnection();
+        $conn->beginTransaction();
+        //try {
+            $impoexpo = utf8_decode($request->getParameter("impoexpo"));
+            $this->forward404Unless($impoexpo);
+            $transporte = utf8_decode($request->getParameter("transporte"));
+            $this->forward404Unless($transporte);
+            $modalidad = utf8_decode($request->getParameter("modalidad"));
+            $this->forward404Unless($modalidad);
+            $idorigen = $request->getParameter("idorigen");
+            $this->forward404Unless($idorigen);
+            $iddestino = $request->getParameter("iddestino");
+            $this->forward404Unless($iddestino);
+            $fchsalida = $request->getParameter("fchsalida");
+            $this->forward404Unless($fchsalida);
+            $fchllegada = $request->getParameter("fchllegada");
+            $this->forward404Unless($fchllegada);
+            $motonave = $request->getParameter("motonave");
+            $this->forward404Unless($motonave);
+            $consolidado = $request->getParameter("consolidado");
+            //$this->forward404Unless($consolidado);
+            $viaje = $request->getParameter("viaje");
+            $fchmaster = $request->getParameter("fchmaster");
+
+            $idlinea = ($request->getParameter("idlinea")?$request->getParameter("idlinea"):"0");
+
+            $mmRef = Utils::parseDate($fchllegada, "m");
+            $aaRef = substr(Utils::parseDate($fchllegada, "Y"), -1, 1);
+            if (Utils::parseDate($fchllegada, "d") >= "26") {
+                $mmRef = $mmRef + 1;
+                if ($mmRef >= 13) {
+                    $mmRef = "01";
+                    $aaRef = $aaRef + 1;
+                }
+            }
+
+            $numref = $request->getParameter("referencia");
+
+            if ($numref) {
+                $master = Doctrine::getTable("InoMaster")->find($numref);
+                $this->forward404Unless($master);
+            } else {
+                $master = new InoMaster();
+                $numref = InoMasterTable::getNumReferencia($impoexpo, $transporte, $modalidad, $idorigen, $iddestino, $mmRef, $aaRef);
+                $master->setCaReferencia($numref);
+                //$master->setCaEstado("A");
+            }
+            
+            $master->setCaImpoexpo($impoexpo);
+            $master->setCaTransporte($transporte);
+            
+            $master->setCaModalidad($modalidad);            
+            $master->setCaOrigen($idorigen);
+            $master->setCaDestino($iddestino);            
+            $master->setCaMotonave($motonave);
+            
+            $master->setCaFchsalida($fchsalida);
+            $master->setCaFchllegada($fchllegada);
+            
+            $master->setCaFchreferencia($fchllegada);
+            
+            $master->setCaIdlinea($idlinea);
+            
+            $master->setCaMaster(date("Y-m-d H:i:s"));
+
+            $master->save($conn);
+            $idmaster=$master->getCaIdmaster();
+            $q = $conn->createQuery()
+                            ->delete("ic.*")
+                            ->from('InoHouse ic')
+                            ->addWhere("ic.ca_idmaster = ? ", $idmaster);
+            $q->execute();
+
+            $kk=count(explode("|", $request->getParameter("reportes")));
+            $consecutivos = array_unique(explode("|", $request->getParameter("reportes")));
+
+            $i = 0;
+            $htmlReportes="";
+            for($i=0;$i<$kk;$i++) {
+                if(!isset($consecutivos[$i]))
+                    continue;
+                $consecutivo=$consecutivos[$i];                
+                $reporte = ReporteTable::retrieveByConsecutivo($consecutivo);
+                
+                if ($reporte) {
+                    $proveedores = $reporte->getProveedores();
+                    
+                    $otm=$reporte->getRepOtm();                    
+                    if($otm)
+                    {
+                        $numpiezas=$otm->getCaNumpiezas();
+                        $mpiezas=$otm->getCaNumpiezas();
+                        $peso=$otm->getCaPeso();
+                        $volumen=$otm->getCaVolumen();
+                        $doctransporte=$otm->getCaHbls();
+                        $fchdoctransporte=$otm->getCaFchdoctransporte();
+                        $deposito=$otm->getInoDianDepositos()->getCaNombre();
+                    }
+                    /*else
+                    {
+                        $status = $reporte->getUltimoStatus();                        
+                        $piezas = explode("|", $status->getCaPiezas());
+                        $numpiezas=$piezas[0] ? $piezas[0] : 0;
+                        $peso = explode("|", $status->getCaPeso());
+                        $peso=$peso[0] ? $peso[0] : 0;
+                        $volumen = explode("|", $status->getCaVolumen());
+                        $volumen=$volumen[0] ? $volumen[0] : 0;                                                
+                        $doctransporte=$status->getCaDoctransporte();
+                        $fchdoctransporte=date("Y-m-d");
+                        $deposito="";
+                    }*/
+                    $doctransporte=($doctransporte!="")?$doctransporte:"1";
+                    $fchdoctransporte=($fchdoctransporte!="")?$fchdoctransporte:date("Y-m-d");
+                    
+                    $numpiezas=($numpiezas!="")?$numpiezas:0;
+                    $mpiezas=($mpiezas!="")?$mpiezas:0;
+                    $peso=($peso!="")?$peso:0;
+                    $volumen=($volumen!="")?$volumen:0;                    
+                    
+                    if(count($proveedores)>0)
+                        $idtercero=$proveedores[0]->getCaIdtercero();
+                    
+                    if ($request->getParameter("idhouse")) {
+                        $house = Doctrine::getTable("InoHouse")->find($request->getParameter("idhouse"));
+                        $this->forward404Unless($house);
+                    } else {
+                        $house = new InoHouse();                        
+                    }
+                    
+                    $house->setCaIdmaster($idmaster);
+                    $house->setCaIdreporte($reporte->getCaIdreporte());                    
+                    $house->setCaIdcliente($reporte->getContacto("4")->getCaIdcliente());
+                    $house->setCaVendedor($reporte->getCaLogin());
+                    
+                    $house->setCaIdtercero($idtercero);
+                    $house->setCaNumorden($reporte->getCaOrdenClie());
+                    
+                    $house->setCaNumpiezas($numpiezas);
+                    $house->setCaMpiezas($mpiezas);
+                    $house->setCaPeso($peso);
+                    $house->setCaVolumen($volumen);
+                    $house->setCaDoctransporte($doctransporte);
+                    $house->setCaFchdoctransporte($fchdoctransporte);
+                    $house->save($conn);
+                    
+                    $htmlReportes[]="<tr><td>".$reporte->getCaConsecutivo()."</td><td>".$doctransporte."</td><td>".$reporte->getCliente("continuacion")->getCaCompania()."</td><th>".$deposito."</td><td>".$reporte->getBodega()->getCaNombre()."/".$reporte->getBodega()->getCaTipo()."</td><td>".$numpiezas." ".$mpiezas."</td><td>".$peso."</td><td>".$volumen."</td></tr>";
+                }                
+            }
+            
+            /******/
+            /*
+                $user = $this->getUser();
+                $email = new Email();
+
+                $email->setCaUsuenvio($user->getUserId());
+                $email->setCaTipo("InstruccionesOtm"); //Envío de Avisos
+                $email->setCaIdcaso(null);
+
+                //$from = $this->getRequestParameter("from");
+                if ($from) {
+                    $email->setCaFrom($from);
+                } else {
+                    $email->setCaFrom($user->getEmail());
+                }
+                $email->setCaFromname($user->getNombre());
+
+                if ($this->getRequestParameter("readreceipt")) {
+                    $email->setCaReadreceipt(true);
+                } else {
+                    $email->setCaReadreceipt(false);
+                }
+
+                $email->setCaReplyto($user->getEmail());
+
+                
+                if($idorigen=="CTG-0005")
+                {
+                    $recips[] = "cabolano@coltrans.com.co";
+                    $recips[] = "otmctg@colotm.com";
+                }
+                else if($idorigen=="BUN-0002")
+                    $recips[]="otmbun@colotm.com";
+
+                //$recips[]="maquinche@coltrans.com.co";
+                foreach ($recips as $recip) {
+                    $recip = str_replace(" ", "", $recip);
+                    if ($recip) {
+                        $email->addTo($recip);
+                    }
+                }
+
+                if ($from) {
+                    $email->addCc($from);
+                } else {
+                    $email->addCc($this->getUser()->getEmail());
+                }
+
+                $email->setCaSubject("Instrcciones de cargue de ".$master->getCaMaster()." Numero de referencia:".$numref);
+                $email->setCaBody($this->getRequestParameter("mensaje"));
+
+                $mensaje = Utils::replace($this->getRequestParameter("mensaje")) . "<br />";
+
+
+                $html ="<table class='tableList alignLeft'><tr><td>
+                    <table class='tableList alignLeft' >
+                    <tr><th colspan='8'>Se Creo la Referencia No: ".$numref."</th></tr>
+                    <tr><th>NO REPORTE</th><th>HBL</th><th>IMPORTADOR</th><th>MUELLE</th><th>BODEGA</th><th>PIEZAS</th><th>PESO</th><th>VOLUMEN</th></tr>";
+                $html.=implode("",$htmlReportes );
+                $html."</table></td></tr></table>";
+                
+
+                $this->getRequest()->setParameter('tipo',"INSTRUCCIONES");
+                $this->getRequest()->setParameter('mensaje',"Se genero el nuevo cargue no.".$master->getCaMaster());
+                $this->getRequest()->setParameter('html',$html);
+                $request->setParameter("format", "email");
+
+                $mensaje = sfContext::getInstance()->getController()->getPresentationFor( 'reportesNeg', 'emailReporte');
+                $email->setCaBodyhtml($mensaje);
+
+                $email->save($conn);
+             * 
+             */
+            /******/
+
+            $conn->commit();
+            $this->responseArray = array("success" => true, "numref" => $idmaster);
+        /*} catch (Exception $e) {
+            $conn->rollBack();
+            $this->responseArray = array("success" => false, "errorInfo" => utf8_encode($e->getMessage()).".bog:".$idbodega);
+        }*/
+        $this->setTemplate("responseTemplate");
+    }
     /**
      *
      *
@@ -327,7 +579,6 @@ class antecedentesActions extends sfActions {
 
         $response = sfContext::getInstance()->getResponse();
         $response->addJavaScript("extExtras/CheckColumn",'last');
-
 
         $this->numReferencia = $request->getParameter("numReferencia");
 
@@ -345,8 +596,35 @@ class antecedentesActions extends sfActions {
         }
 
         $this->ref = $ref;
+        $this->numRef = $numref;
+    }
+    
+    /**
+     *
+     *
+     * @param sfRequest $request A request object
+     */
+    public function executeAsignacionMasterOTM(sfWebRequest $request) {
 
+        $response = sfContext::getInstance()->getResponse();
+        $response->addJavaScript("extExtras/CheckColumn",'last');
 
+        $this->numReferencia = $request->getParameter("numReferencia");
+
+        $numref = str_replace("|", ".", $request->getParameter("ref"));
+
+        if ($numref) {
+            $ref = Doctrine::getTable("InoMaestraSea")
+                            ->createQuery("m")
+                            ->addWhere("m.ca_referencia = ? ", $numref)
+                            ->fetchOne();
+
+            $this->forward404Unless($ref);
+        } else {
+            $ref = new InoMaestraSea();
+        }
+
+        $this->ref = $ref;
         $this->numRef = $numref;
     }
 
@@ -422,6 +700,124 @@ class antecedentesActions extends sfActions {
 
         $this->responseArray = array("success" => true, "total" => count($reportes), "root" => $reportes);
 
+        $this->setTemplate("responseTemplate");
+    }
+    
+    public function executeDatosPanelReportesAntecedentesOTM(sfWebRequest $request) {
+        /*$q = Doctrine_Query::create()
+            ->select("r.ca_consecutivo, r.ca_idreporte, r.ca_origen, cl.ca_compania,r.ca_impoexpo,r.ca_destino")
+            ->from('Reporte r')
+            ->where("r.ca_impoexpo = ? or ca_continuacion=?", array(constantes::OTMDTA,"OTM"))
+            ->innerJoin('r.Contacto c')
+            ->innerJoin('c.Cliente cl')
+            ->innerJoin('r.RepStatus rs')
+                
+            ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+            ->limit(10);
+
+        $reportes = $q->execute();
+        //echo $q->getSqlQuery();
+        foreach ($reportes as $key => $val) {
+            if($val["r_ca_impoexpo"]==constantes::IMPO)
+            {
+                $reportes[$key]["r_ca_origen"] = utf8_encode($reportes[$key]["r_ca_destino"]);
+            }
+            else
+                $reportes[$key]["r_ca_origen"] = utf8_encode($reportes[$key]["cl_ca_origen"]);
+            
+            $reportes[$key]["cl_ca_compania"] = utf8_encode($reportes[$key]["cl_ca_compania"]);
+            $reportes[$key]["orden"] = $reportes[$key]["r_ca_consecutivo"];
+            $reportes[$key]["sel"] = $reportes[$key]["ic_ca_imprimirorigen"];
+        }
+
+        //$reportes[] = array("r_ca_consecutivo" => "+", "cl_ca_compania" => "", "orden" => "Z");
+*/
+        $origen = $request->getParameter("origen");
+        $idorigen = $request->getParameter("idorigen");
+        $destino = $request->getParameter("destino");
+        $iddestino = $request->getParameter("iddestino");
+        $modalidad = $request->getParameter("modalidad");
+        $where="";
+        if($origen!="")
+            $where .=" and r.ca_origen='{$origen}'";
+        if($destino!="")
+            $where .=" and r.ca_destino='{$destino}'";
+        if($modalidad!="")
+        {
+            if($modalidad=="LCL")
+                $where .=" and r.ca_modalidad in('{$modalidad}','COLOADING')";
+            else
+                $where .=" and r.ca_modalidad='{$modalidad}'";
+        }
+
+        $sql="select distinct(r.ca_consecutivo),
+            r.ca_idreporte, r.ca_origen, NULLIF(t.ca_nombre,cl.ca_compania ) as cl_ca_compania , r.ca_impoexpo, 
+            (CASE WHEN r.ca_tiporep=4 THEN r.ca_origen
+            ELSE r.ca_destino  END) as r_ca_origen, r.ca_fchcreado
+            ,COALESCE( ro.ca_numpiezas::text , s.ca_piezas  ) as ca_piezas
+            ,COALESCE(ro.ca_peso::text , s.ca_peso  ) as ca_peso
+            ,COALESCE(ro.ca_volumen::text , s.ca_volumen  ) as ca_volumen
+            ,COALESCE(ro.ca_hbls , s.ca_doctransporte  ) as ca_hbl,
+            ro.ca_fcharribo
+            from tb_repstatus s, tb_reportes r
+            left join tb_inoclientes_sea ic on r.ca_idreporte=ic.ca_idreporte
+            inner join tb_repotm ro on r.ca_idreporte=ro.ca_idreporte
+            left join tb_terceros t on ro.ca_idcliente=t.ca_idtercero
+            inner join tb_concliente ct on r.ca_idconcliente=ct.ca_idcontacto
+            inner join vi_clientes_reduc cl on cl.ca_idcliente::text=ct.ca_idcliente::text
+            where s.ca_idreporte=r.ca_idreporte  and s.ca_idetapa in ('IMCPD','IMPOD')
+            and ic.ca_idreporte is null $where 
+            and ((ca_transporte='Marítimo' and ca_impoexpo='Importación' and r.ca_continuacion='OTM') or ca_tiporep=4 ) and ca_usuanulado is null
+            and r.ca_fchcreado >'2012-04-01' ";
+
+        $sql="select distinct(r.ca_consecutivo), 
+            r.ca_idreporte, r.ca_origen, NULLIF(t.ca_nombre,cl.ca_compania ) as cl_ca_compania , r.ca_impoexpo, 
+            (CASE WHEN r.ca_tiporep=4 THEN r.ca_origen
+            ELSE r.ca_destino  END) as r_ca_origen, r.ca_fchcreado
+            ,COALESCE( ro.ca_numpiezas::text , s.ca_piezas  ) as ca_piezas
+            ,COALESCE(ro.ca_peso::text , s.ca_peso  ) as ca_peso
+            ,COALESCE(ro.ca_volumen::text , s.ca_volumen  ) as ca_volumen
+            ,COALESCE(ro.ca_hbls , s.ca_doctransporte  ) as ca_hbl
+            ,ro.ca_fcharribo, b.ca_nombre as ca_bodega,dp.ca_nombre as muelle
+            from tb_repstatus s
+            inner join tb_reportes r on s.ca_idreporte=r.ca_idreporte and r.ca_tiporep=4  and r.ca_usuanulado is null and r.ca_fchcreado >'2012-04-15'
+            left join ino.tb_house ic on r.ca_idreporte=ic.ca_idreporte
+            inner join tb_bodegas b on r.ca_idbodega=b.ca_idbodega
+            inner join tb_repotm ro on r.ca_idreporte=ro.ca_idreporte
+            left join tb_diandepositos dp on ro.ca_muelle=dp.ca_codigo
+            left join tb_terceros t on ro.ca_idcliente=t.ca_idtercero
+            inner join tb_concliente ct on r.ca_idconcliente=ct.ca_idcontacto
+            inner join vi_clientes_reduc cl on cl.ca_idalterno::text=ct.ca_idcliente::text
+            where s.ca_idetapa in ('IMCPD','IMPOD') and ic.ca_idreporte is null $where ";
+        
+        $sql="
+            select distinct(r.ca_consecutivo), r.ca_idreporte, r.ca_origen, COALESCE(t.ca_nombre,cl.ca_compania ) as cl_ca_compania,
+                r.ca_impoexpo, r.ca_origen, r.ca_fchcreado , ro.ca_numpiezas ,ro.ca_peso,ro.ca_volumen,
+                ro.ca_hbls as ca_hbl ,ro.ca_fcharribo, b.ca_nombre as ca_bodega,dp.ca_nombre as muelle
+            from  tb_reportes r
+                inner join tb_bodegas b on r.ca_idbodega=b.ca_idbodega
+                inner join tb_repotm ro on r.ca_idreporte=ro.ca_idreporte 
+                left join tb_diandepositos dp on ro.ca_muelle=dp.ca_codigo
+                left join tb_terceros t on ro.ca_idcliente=t.ca_idtercero
+                inner join tb_concliente ct on r.ca_idconcliente=ct.ca_idcontacto 
+                inner join vi_clientes_reduc cl on cl.ca_idcliente::text=ct.ca_idcliente::text
+            where
+                r.ca_consecutivo in ( select (rr.ca_consecutivo) from tb_repstatus ss,tb_reportes rr where ss.ca_idreporte=rr.ca_idreporte and ss.ca_idetapa in ('OTSDO','OTRDO','OTNDE','OTINS','OTLEV','IMPOD')   ) and
+                r.ca_consecutivo not in ( select (rrr.ca_consecutivo) from ino.tb_house icc,tb_reportes rrr where icc.ca_idreporte=rrr.ca_idreporte ) and
+                r.ca_tiporep=4 and r.ca_usuanulado is null and r.ca_fchcreado >'2012-06-01'
+                $where";
+
+        $con = Doctrine_Manager::getInstance()->connection();
+        $st = $con->execute($sql);
+        $this->datos = $st->fetchAll();
+
+        foreach($this->datos as $k=>$d)
+        {
+            $this->datos[$k]["ca_bodega"]=  utf8_decode($d["ca_bodega"]);
+            $this->datos[$k]["muelle"]=  utf8_decode($d["muelle"]);
+        }
+
+        $this->responseArray = array("success" => true, "total" => count($this->datos), "root" => $this->datos,"sql"=>$sql);
         $this->setTemplate("responseTemplate");
     }
 
@@ -534,7 +930,6 @@ class antecedentesActions extends sfActions {
     public function executeEnviarAntecedentes(sfWebRequest $request) {
         $user = $this->getUser();
 
-
         $this->numRef = str_replace("|", ".", $request->getParameter("ref"));
 
         $email = new Email();
@@ -567,8 +962,7 @@ class antecedentesActions extends sfActions {
             if ($recip) {
                 $email->addTo($recip);
             }
-        }
-        //$email->addTo($user->getEmail());
+        }        
 
         $recips = explode(",", $this->getRequestParameter("cc"));
         foreach ($recips as $recip) {
@@ -593,58 +987,14 @@ class antecedentesActions extends sfActions {
         $email->setCaBodyhtml($mensaje);
         $email->save();
 
-//        $folder = "Antecedentes" . DIRECTORY_SEPARATOR . $this->numRef;
-//        $directory = sfConfig::get('app_digitalFile_root') . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR;
-
-/*        if (!is_dir($directory)) {
-            @mkdir($directory, DEFAULT_PRIVILEGES, true);
-        }
-*/
-/*        $archivos = sfFinder::type('file')->maxDepth(0)->in($directory);
-
-        $fileTypes = $this->filetypes;
-        foreach ($fileTypes as $fileType) {
-            foreach ($archivos as $archivo) {
-                if (substr(basename($archivo), 0, strlen($fileType)) == $fileType) {
-                    $name = str_replace(sfConfig::get('app_digitalFile_root'), "", $archivo);
-                    $email->AddAttachment($name);
-                }
-            }
-        }
- *
- */
-/*
-        $folder = "Referencias" . DIRECTORY_SEPARATOR . $this->numRef;
-        $directory = sfConfig::get('app_digitalFile_root') . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR;
-
-        if (!is_dir($directory)) {
-            @mkdir($directory, DEFAULT_PRIVILEGES, true);
-        }
-
-
-        $archivos = sfFinder::type('file')->maxDepth(0)->in($directory);
-        echo print_r($archivos);
-exit;
- *
- */
-/*        $filenames = array();
-
-        $fileTypes = $this->filetypes;
-
-
-
-        foreach ($archivos as $archivo) {
-            $file=explode("/", $archivo);
-            $filenames[]["file"] = $file[count($file)-1];
-        }
-
-        $this->folder = $folder;
-        $this->filenames = $filenames;
-
-  */
-
-        $email->save();
+//        $email->save();
         $email->send();
+        
+        $ref = Doctrine::getTable("InoMaestraSea")->find($this->numRef);
+        $this->forward404Unless($ref);
+        $ref->setCaEstado("E");//Enviado
+        $ref->setCaFchenvio(date("Y-m-d H:i:s"));
+        $ref->save();
     }
 
     /*
@@ -742,6 +1092,8 @@ exit;
         $ref = Doctrine::getTable("InoMaestraSea")->find($numref);
         $this->forward404Unless($ref);
         $ref->setCaProvisional(false);
+        $ref->setCaFchrecibido(date("Y-m-d H:i:s"));
+        $ref->setCaEstado("D");//desbloqueado        
         $ref->save();
 
         $this->hijas = Doctrine::getTable("InoClientesSea")
@@ -823,6 +1175,12 @@ exit;
 
             $email->save();
             $email->send();
+            
+            $ref = Doctrine::getTable("InoMaestraSea")->find($this->numRef);
+            $this->forward404Unless($ref);
+            $ref->setCaEstado("R");//rechazado
+            
+            $ref->save();
             $this->responseArray = array("success" => true);
         }
         catch(Exception $e)

@@ -11,6 +11,7 @@ include_component("antecedentes", "panelMasterAntecedentes");
 
 <div class="content">    
     <div id="main-panel"></div>
+    <div id="contador"></div>
     <div id="sub-panel"></div>
     <div id="resul"></div>
 </div>

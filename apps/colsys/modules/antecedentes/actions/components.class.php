@@ -20,11 +20,22 @@ class antecedentesComponents extends sfComponents {
 
 
     }
+    
+    public function executePanelReportesOTMAntecedentes() {
+
+
+
+    }
 
     /**
      *
      */
     public function executePanelMasterAntecedentes() {
+
+        
+    }
+    
+     public function executePanelMasterOTMAntecedentes() {
 
         
     }
