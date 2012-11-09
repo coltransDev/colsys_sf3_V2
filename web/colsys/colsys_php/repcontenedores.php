@@ -47,7 +47,21 @@ if (!isset($buscar) and !isset($accion)) {
    echo "  <TD Class=listar><B>Devolución:</B><BR><INPUT TYPE='TEXT' NAME='fchdevolucion' SIZE=12 VALUE='" . date("Y-m-d", mktime(0, 0, 0, date("m"), date("d") + 10, date("Y"))) . "' ONKEYDOWN=\"chkDate(this)\" ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
    echo "  <TD Class=listar><B>Nombre del Cliente:</B><BR><INPUT TYPE='text' NAME='compania' VALUE='' size='30' maxlength='60'></TD>";
    echo "  <TD Class=listar><B>No.Contenedor:</B><BR><INPUT TYPE='text' NAME='idequipo' VALUE='' size='12' maxlength='12'></TD>";
-   echo "  <TD Class=listar><B>Línea Naviera:</B><BR><INPUT TYPE='text' NAME='ca_nombre' VALUE='' size='20' maxlength='40'></TD>";
+   
+   if (!$tm->Open("select ca_idlinea, ca_nombre from vi_transporlineas where ca_transporte = 'Marítimo' and ca_activo_impo=true order by ca_nombre")) {       // Selecciona todos los prefijos de la InoMaestra
+      echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
+      echo "<script>document.location.href = 'repreferencia.php';</script>";
+      exit;
+   }
+   $tm->MoveFirst();
+   echo "  <TD Class=listar><B>Línea Naviera:</B><BR><SELECT NAME='linea'>";
+    echo "    <OPTION VALUE=%>Todas las Líneas</OPTION>";
+    while (!$tm->Eof()) {
+        echo "    <OPTION VALUE='" . $tm->Value('ca_idlinea') . "'>" . $tm->Value('ca_nombre') . "</OPTION>";
+        $tm->MoveNext();
+    }
+    echo "    </SELECT>";
+   
    if (!$tm->Open("SELECT distinct substr(ca_referencia,1,3) as ca_modal FROM tb_inomaestra_sea order by 1")) {       // Selecciona todos los prefijos de la InoMaestra
       echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
       echo "<script>document.location.href = 'repreferencia.php';</script>";
@@ -83,9 +97,10 @@ if (!isset($buscar) and !isset($accion)) {
    $modulo = "00100000";                                                      // Identificación del módulo para la ayuda en línea
 //  include_once 'include/seguridad.php';                                      // Control de Acceso al módulo
 
-   $condicion = "where ca_fchconfirmacion = '$fchconfirmacion' and ca_fchdevolucion >= '$fchdevolucion' and ca_compania like '%$compania%' and (ca_nombre like '%$linea%' or ca_sigla like '%$linea%')";
+   $condicion = "where ca_fchconfirmacion = '$fchconfirmacion' and ca_fchdevolucion >= '$fchdevolucion' and ca_compania like '%$compania%'";
    $condicion.= (strlen($idequipo) != 0) ? " and ca_referencia in (select ca_referencia from tb_inoequipos_sea where ca_idequipo like '%$idequipo%')" : "";
    $condicion.= ($modal != "%")?" and ca_modal = '$modal'":"";
+   $condicion.= ($linea != "%")?" and ca_idlinea = '$linea'":"";
    if (!$rs->Open("select * from vi_inoctrlcontenedores_sea $condicion order by ca_fchconfirmacion, ca_fchdevolucion, ca_referencia")) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
       echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
       echo "<script>document.location.href = 'entrada.php';</script>";
@@ -143,7 +158,7 @@ if (!isset($buscar) and !isset($accion)) {
                $eq->MoveNext();
                continue;
             }
-            if ($eq->Value('ca_inspeccion_nta') == '' or $eq->Value('ca_inspeccion_fch') == ''){
+            if ($eq->Value('ca_inspeccion_fch') == ''){     //$eq->Value('ca_inspeccion_nta') == '' or 
                $cas_cer = FALSE;
             }
             $tabla_equipos.= "<TR>";
