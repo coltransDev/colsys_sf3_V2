@@ -997,7 +997,145 @@ class antecedentesActions extends sfActions {
         $ref->save();
     }
 
-    /*
+    /**
+    *
+    *
+    * @param sfRequest $request A request object
+    */
+   public function executeEmailComodato(sfWebRequest $request) {
+
+      $numRef = str_replace("|", ".", $request->getParameter("ref"));
+      $format = $request->getParameter("format");
+
+      $this->forward404Unless($numRef);
+
+      $ref = Doctrine::getTable("InoMaestraSea")->find($numRef);
+      $this->forward404Unless($ref);
+
+
+//        echo($ref->getCountEmails());
+      /*
+        $this->equipos = Doctrine::getTable("InoEquiposSea")
+        ->createQuery("c")
+        ->where("c.ca_referencia = ?", $numref)
+        ->execute();
+       * 
+       */
+      $q = Doctrine_Query::create()
+              ->select("ie.ca_referencia, ie.ca_idequipo, cp.ca_concepto, pt.ca_nombre, ic.ca_entrega_comodato, ic.ca_inspeccion_nta, ic.ca_inspeccion_fch, ic.ca_observaciones")
+              ->from('InoEquiposSea ie')
+              ->leftJoin('ie.InoContratosSea ic')
+              ->leftJoin('ie.Concepto cp')
+              ->leftJoin('ic.PricPatio pt')
+              ->addWhere('ie.ca_referencia = ? ', $numRef)
+              ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
+
+      $this->equipos = $q->execute();
+
+      $this->hijas = Doctrine::getTable("InoClientesSea")
+              ->createQuery("c")
+              ->where("c.ca_referencia = ?", $numRef)
+              ->execute();
+
+      if ($format == "email") {
+         $this->setLayout($format);
+      }
+
+      $this->ref = $ref;
+      $this->user = $this->getUser();
+      $this->format = $format;
+
+      $this->emails = $ref->getEmails();
+
+      $usuarios = Doctrine::getTable("Usuario")
+              ->createQuery("u")
+              ->addWhere("u.ca_departamento = ? and u.ca_activo=true ", array("Marítimo"))
+              ->addOrderBy("u.ca_email")
+              //->getSqlQuery();
+              ->execute();
+
+      $contactos = array();
+      foreach ($usuarios as $usuario) {
+         $tiene_perfil = false;
+         foreach ($usuario->getUsuarioPerfil() as $perfil) {
+            if (strpos($perfil->getCaPerfil(), "contenedores") !== FALSE) {
+               $tiene_perfil = true;
+            }
+         }
+         if ($usuario->getCaEmail() != "-" and $tiene_perfil) {
+            $contactos[] = $usuario->getCaEmail();
+         }
+      }
+      $this->contactos = implode(",", $contactos);
+   }
+
+   /**
+    *
+    *
+    * @param sfRequest $request A request object
+    */
+   public function executeEnviarContenedores(sfWebRequest $request) {
+      $user = $this->getUser();
+
+      $this->numRef = str_replace("|", ".", $request->getParameter("ref"));
+
+      $email = new Email();
+
+      $email->setCaUsuenvio($user->getUserId());
+      $email->setCaTipo("Contenedores"); //Envío de Avisos
+      $email->setCaIdcaso(null);
+
+      $from = $this->getRequestParameter("from");
+      if ($from) {
+         $email->setCaFrom($from);
+      } else {
+         $email->setCaFrom($user->getEmail());
+      }
+      $email->setCaFromname($user->getNombre());
+
+      if ($this->getRequestParameter("readreceipt")) {
+         $email->setCaReadreceipt(true);
+      } else {
+         $email->setCaReadreceipt(false);
+      }
+
+      $email->setCaReplyto($user->getEmail());
+
+      $recips = explode(",", $this->getRequestParameter("destinatario"));
+
+      foreach ($recips as $recip) {
+         $recip = str_replace(" ", "", $recip);
+         if ($recip) {
+            $email->addTo($recip);
+         }
+      }
+      $email->addTo($user->getEmail());
+
+      $recips = explode(",", $this->getRequestParameter("cc"));
+      foreach ($recips as $recip) {
+         $recip = str_replace(" ", "", $recip);
+         if ($recip) {
+            $email->addCc($recip);
+         }
+      }
+
+      if ($from) {
+         $email->addCc($from);
+      } else {
+         $email->addCc($this->getUser()->getEmail());
+      }
+
+      $email->setCaSubject($this->getRequestParameter("asunto"));
+      $email->setCaBody($this->getRequestParameter("mensaje"));
+
+      $mensaje = Utils::replace($this->getRequestParameter("mensaje")) . "<br />";
+      $request->setParameter("format", "email");
+      $mensaje .= sfContext::getInstance()->getController()->getPresentationFor('antecedentes', 'emailComodato');
+      $email->setCaBodyhtml($mensaje);
+      $email->save();
+   }
+
+   /*
      * Buscar una referencia de Aduana para el módulo de Falabella
      */
 

@@ -118,6 +118,17 @@ switch($action){
             }
         }
 		break;	
+    case "emailComodato":
+        if( $this->getRequestParameter("ref") ){
+            $button[$i]["name"]="Email ";
+            $button[$i]["tooltip"]="Enviar este reporte por e-mail";
+            $button[$i]["image"]="22x22/email.gif";
+            $button[$i]["link"]= "#";
+            $button[$i]["onClick"]= "showEmailForm()";
+            $i++;
+        }
+		$i++;
+		break;	
 }
 ?>
 
