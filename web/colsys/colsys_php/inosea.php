@@ -5269,12 +5269,12 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                             exit;
                         }
                     }
-                }
+                }/*
                 if (!$rs->Open("update tb_inomaestra_sea set ca_sitiodevolucion = '$sitiodevolucion' where ca_referencia = '$referencia'")) {
                     echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
                     echo "<script>document.location.href = 'inosea.php';</script>";
                     exit;
-                }
+                }*/
                 break;
             }
         case 'Registrar': {                                                      // El Botón Guardar fue pulsado
