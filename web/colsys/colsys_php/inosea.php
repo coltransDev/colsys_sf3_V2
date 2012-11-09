@@ -301,6 +301,10 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                     function emailComodato(id){
                         document.location.href = '/antecedentes/emailComodato?ref='+id;
                     }
+                    
+                    function verEntregaAntecedentes(id){
+                            document.location.href = '/antecedentes/verPlanilla?ref='+id;
+                    }
                 ";
                 echo "
                     function edifact(indice, accion){
@@ -428,7 +432,9 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                     echo "    <IMG style='cursor:pointer; $level0' src='./graficos/muisca.gif' alt='Informacion Muisca' border=0 onclick='elegir(\"Muisca\", \"" . $rs->Value('ca_referencia') . "\", 0, 0);'><BR>";
                     echo "    <BR><IMG style='cursor:pointer' src='./graficos/fileopen.png' alt='Archivos adjuntos a la referencia' border=0 onclick='archivos( \"" . $rs->Value('ca_referencia') . "\", 0, 0);'><BR>";
                     echo "    <BR><IMG style='cursor:pointer; $level0' src='./graficos/mail_forward.gif' alt='Email a coloader' border=0 onclick='emailColoader( \"" . $rs->Value('ca_referencia') . "\", 0, 0);'><BR>";
-
+                    if ($nivel > 2) {
+                       echo "    <BR><IMG style='cursor:pointer; $level0' src='./graficos/mail.gif' alt='Ver Entrega de Antecedentes' border=0 onclick='verEntregaAntecedentes( \"" . $rs->Value('ca_referencia') . "\", 0, 0);'><BR>";
+                    }
                     if ($dm->value("ca_usuenvio") != '') {
                         $fch_envio = explode(" ", $dm->value("ca_fchenvio"));
                         echo "<br /><b>Radicado:</b><br />" . $dm->value("ca_usuenvio") . "<br />" . $fch_envio[0] . "<br />" . $fch_envio[1] . "<br />";
@@ -494,8 +500,8 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                         echo "  <TD WIDTH=30 Class=listar>" . formatNumber($co->Value('ca_cantidad'), 3) . "</TD>";
                         echo "  <TD WIDTH=100 Class=listar>" . $co->Value('ca_idequipo') . " " . ((strlen($co->Value('ca_observaciones'))) ? "<IMG src='graficos/admira.gif' alt='" . $co->Value('ca_observaciones') . "'>" : "") . "</TD>";
                         echo "  <TD WIDTH=85 Class=listar>" . $co->Value('ca_numprecinto') . "</TD>";
-                        echo "  <TD WIDTH=90 Class=listar>" . $co->Value('ca_entrega_comodato') . " " . ((strlen($co->Value('ca_observaciones_con'))) ? "<IMG src='graficos/admira.gif' alt='" . $co->Value('ca_observaciones_con') . "'>" : "") . "</TD>";
-                        echo "  <TD WIDTH=85 Class=listar>" . $co->Value('ca_sitiodevolucion') . "</TD>";
+                        echo "  <TD WIDTH=90 Class=listar>Entrega:&nbsp;" . $co->Value('ca_entrega_comodato') . " " . ((strlen($co->Value('ca_observaciones_con'))) ? "<IMG src='graficos/admira.gif' alt='" . $co->Value('ca_observaciones_con') . "'>" : "") . "<BR />Devolución:&nbsp;" . $co->Value('ca_inspeccion_fch') . "</TD>";
+                        echo "  <TD WIDTH=85 Class=listar>Devolución:&nbsp;" . $co->Value('ca_sitiodevolucion') . "<BR />Nota:&nbsp;" . $co->Value('ca_inspeccion_nta') . "</TD>";
                         if ($ver == 'block' and $nivel > 0) {
                             echo "  <TD WIDTH=25 Class=listar onclick='elegir(\"Contrato\", \"" . $co->Value('ca_referencia') . "\", \"" . $co->Value('ca_idequipo') . "\");'><IMG src='graficos/contrato.gif' alt='Contrato de Comodato'></TD>";
                         } else {
@@ -1472,7 +1478,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 echo "<TR>";
                 echo "  <TD Class=mostrar>Fch. Entrega Comodato:<BR><INPUT TYPE='TEXT' NAME='entrega_comodato' VALUE='$entrega_comodato' SIZE=12 ONKEYDOWN=\"chkDate(this)\" ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
                 echo "  <TD Class=mostrar>Nota Inspección:<BR><INPUT TYPE='TEXT' NAME='inspeccion_nta' VALUE='" . $rs->Value('ca_inspeccion_nta') . "' SIZE=12 MAXLENGTH=10></TD>";
-                echo "  <TD Class=mostrar>Fch. Nota:<BR><INPUT TYPE='TEXT' NAME='inspeccion_fch' VALUE='" . $rs->Value('ca_inspeccion_fch') . "' SIZE=12 VALUE='" . date("Y-m-d") . "' ONKEYDOWN=\"chkDate(this)\" ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+                echo "  <TD Class=mostrar>Fch. Devolución:<BR><INPUT TYPE='TEXT' NAME='inspeccion_fch' VALUE='" . $rs->Value('ca_inspeccion_fch') . "' SIZE=12 VALUE='" . date("Y-m-d") . "' ONKEYDOWN=\"chkDate(this)\" ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
                 echo "  <TD Class=mostrar></TD>";
                 echo "</TR>";
                 echo "<TR>";
