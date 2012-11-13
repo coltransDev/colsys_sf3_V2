@@ -141,7 +141,11 @@ class inoReportesActions extends sfActions {
                 }
                 
                 if( $request->getParameter("emitido") ){
-                    $q->addWhere("UPPER(id.ca_nombre) like ? ", strtoupper($request->getParameter("emitido"))."%" );
+                    $q->addWhere("UPPER(id.ca_nombre) like ? ", "%".strtoupper($request->getParameter("emitido"))."%" );
+                }
+                
+                if( $request->getParameter("nofactura") ){
+                    $q->addWhere("UPPER(c.ca_consecutivo) like ? ", "%".strtoupper($request->getParameter("nofactura"))."%" );
                 }
                 
                 
@@ -188,7 +192,10 @@ class inoReportesActions extends sfActions {
                 }
                 
                 if( $request->getParameter("emitido") ){
-                    $q->addWhere("UPPER(id.ca_nombre) like ? ", strtoupper($request->getParameter("emitido"))."%" );
+                    $q->addWhere("UPPER(id.ca_nombre) like ? ", "%".strtoupper($request->getParameter("emitido"))."%" );
+                }
+                if( $request->getParameter("nofactura") ){
+                    $q->addWhere("UPPER(c.ca_factura) like ? ", "%".strtoupper($request->getParameter("nofactura"))."%" );
                 }
                 
                 $orden = $request->getParameter("orden");
@@ -290,11 +297,16 @@ class inoReportesActions extends sfActions {
         if( $aa ){
             $q->addWhere("SUBSTR(m.ca_referencia,15,1) = ? ", $aa%10);
         }
-        
-        
-        
         $this->refs = $q->setHydrationMode(Doctrine::HYDRATE_ARRAY)->execute();
-        
+    }
+    
+    
+        /**
+     *
+     *
+     * @param sfRequest $request A request object
+     */
+    public function executeReporteComisiones(sfWebRequest $request) {
         
     }
     
