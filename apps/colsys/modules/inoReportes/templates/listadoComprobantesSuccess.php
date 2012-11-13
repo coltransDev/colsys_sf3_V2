@@ -42,6 +42,14 @@ use_helper("ExtCalendar");
                 </tr>
                 
                 <tr>      
+                    <td class="listar" colspan="2">No factura
+                        <br>
+                        <input class="submit" name="nofactura" id="nofactura" value="" type="text">
+                    </td>
+                    <td class="listar" colspan="2">Emitido a
+                        <br>
+                        <input class="submit" name="emitido" id="emitido" value="" type="text">
+                    </td>
                     <td class="listar" colspan="2">Ordenar por 
                         <br />
                         <select name="orden">
@@ -52,9 +60,6 @@ use_helper("ExtCalendar");
                             <option value="doctransporte">Doc. Transporte</option>
                         </select>
                     </td>
-                    <td class="listar" colspan="4">Emitido a
-                        <br>
-                        <input class="submit" name="emitido" id="emitido" value="" type="text">
                 </tr>
 
             </tbody>
