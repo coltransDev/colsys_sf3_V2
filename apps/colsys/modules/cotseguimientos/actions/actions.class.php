@@ -196,6 +196,7 @@ class cotseguimientosActions extends sfActions
                              ->leftJoin("c.CotProducto p")
                              ->leftJoin("c.CotSeguimiento s" )
                              ->addGroupBy("c.ca_etapa")
+                             ->addGroupBy("s.ca_fchseguimiento")
                              ->addWhere("c.ca_fchcreado BETWEEN ? AND ? AND c.ca_etapa IS NOT NULL", array($fechaInicial, $fechaFinal))
                              ->addWhere("p.ca_idproducto IS NULL");
                              //->orderBy("c.ca_etapa");
@@ -484,9 +485,9 @@ class cotseguimientosActions extends sfActions
         $q = Doctrine::getTable("Cotizacion")
                   ->createQuery("c")
                   ->select("c.ca_consecutivo, c.ca_version, c.ca_fchcreado, c.ca_etapa, p.ca_etapa, o.ca_ciudad, d.ca_ciudad, u.*, s.*, seg.*, seg2.*")  
-                  ->innerJoin("c.CotProducto p")
-                  ->innerJoin("p.Origen o")
-                  ->innerJoin("p.Destino d")
+                  ->leftJoin("c.CotProducto p")
+                  ->leftJoin("p.Origen o")
+                  ->leftJoin("p.Destino d")
                   ->leftJoin( "c.CotSeguimiento seg" )
                   ->leftJoin( "p.CotSeguimiento seg2" )                 
                   ->innerJoin("c.Usuario u")  
@@ -517,6 +518,8 @@ class cotseguimientosActions extends sfActions
             }
             
         }
+        
+        
         
         $q->setHydrationMode(Doctrine::HYDRATE_ARRAY);
         
