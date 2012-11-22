@@ -3,8 +3,11 @@
 $reportes = $sf_data->getRaw("reportes");
 $cols = array("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "AA", "AB", "AB", "AC", "AD", "AE", "AF", "AG");
 
-
-$ultimaCol = "S";
+if($modo=="maritimo"){
+    $ultimaCol = "V";
+}else{
+    $ultimaCol = "S";
+}
 
 if ($parametros) {
     $key = array_search($ultimaCol, $cols);
@@ -102,7 +105,11 @@ $objPHPExcel->getActiveSheet()->setCellValue('P' . $i, 'Consignatario');
 $objPHPExcel->getActiveSheet()->setCellValue('Q' . $i, 'Status');
 $objPHPExcel->getActiveSheet()->setCellValue('R' . $i, 'Actualizado');
 $objPHPExcel->getActiveSheet()->setCellValue('S' . $i, 'Ref. ');
-
+if($modo=="maritimo"){
+$objPHPExcel->getActiveSheet()->setCellValue('T' . $i, 'Bandera');
+$objPHPExcel->getActiveSheet()->setCellValue('U' . $i, 'Reg. Aduanero');
+$objPHPExcel->getActiveSheet()->setCellValue('V' . $i, 'Fch. R. Aduanero');
+}
 
 if ($parametros) {
     $idx = 1;
@@ -257,9 +264,16 @@ foreach ($reportes as $reporte) {
 
     $objPHPExcel->getActiveSheet()->setCellValue('R' . $i, Utils::parseDate($reporte->getFchUltimoStatus(), "d/m/y") . $ref);
     $objPHPExcel->getActiveSheet()->setCellValue('S' . $i, $reporte->getCaConsecutivo() . $ref);
-
-
-
+    
+    $inoClientesSea = $reporte->getInoClientesSea();
+    
+    if($inoClientesSea){
+        $inoMaestraSea = $inoClientesSea->getInoMaestraSea();
+        $objPHPExcel->getActiveSheet()->setCellValue('T' . $i, $inoMaestraSea->getCaBandera());
+        $objPHPExcel->getActiveSheet()->setCellValue('U' . $i, $inoMaestraSea->getCaRegistroadu());
+        $objPHPExcel->getActiveSheet()->setCellValue('V' . $i, $inoMaestraSea->getCaFchregistroadu());
+    }
+    
     if ($parametros) {
 
 
@@ -304,6 +318,8 @@ foreach ($reportes as $reporte) {
     $objPHPExcel->getActiveSheet()->getStyle('Q' . $i)->getFont()->setSize(8);
 
     $objPHPExcel->getActiveSheet()->getStyle('S' . $i)->getAlignment()->setWrapText(true);
+    
+    $objPHPExcel->getActiveSheet()->getStyle('U' . $i)->getAlignment()->setWrapText(true);
 
 
     $objPHPExcel->getActiveSheet()->duplicateStyleArray(
@@ -416,7 +432,9 @@ $objPHPExcel->getActiveSheet()->getColumnDimension('P')->setWidth(21);
 $objPHPExcel->getActiveSheet()->getColumnDimension('Q')->setWidth(45);
 
 $objPHPExcel->getActiveSheet()->getColumnDimension('S')->setWidth(13);
-$objPHPExcel->getActiveSheet()->getColumnDimension('T')->setWidth(17);
+$objPHPExcel->getActiveSheet()->getColumnDimension('T')->setWidth(13);
+$objPHPExcel->getActiveSheet()->getColumnDimension('U')->setWidth(20);
+$objPHPExcel->getActiveSheet()->getColumnDimension('V')->setWidth(13);
 
 
 // Convenciones		
