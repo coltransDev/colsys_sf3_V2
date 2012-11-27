@@ -658,31 +658,61 @@ class adminUsersActions extends sfActions {
                 
                 $user = $this->getUser()->getUserId();
                 $user = Doctrine::getTable("Usuario")->find($this->getUser()->getUserId());
-                $user->setPasswd($this->getRequestParameter("clave1"));
-                $user->setCaForcechange(false);
-                $user->save( $conn );
+                //$user->setPasswd($this->getRequestParameter("clave1"));
+                $salt = hash("md5", uniqid(rand(), true));
+                $passwd = $this->getRequestParameter("clave1");
+                $new_pass = sha1($passwd);
                 
-                $config = sfConfig::get("app_soap_adminUsers");
-                if( $config["updateUser"] ){
-                    ProjectConfiguration::registerZend();   
-                    $wsdl_uri = $config["wsdl_uri"];            
-                    $client = new Zend_Soap_Client( $wsdl_uri, array('encoding'=>'ISO-8859-1'));        
-                    $error =  $client->updateUser( sfConfig::get("app_soap_secret"),serialize($user) );
-
-                    if( $error ){
-                        throw new Exception( $error );                
+                $claves = Doctrine::getTable("UsuarioClave")
+                        ->createQuery("c")
+                        ->addWhere("c.ca_login = ? ", $user->getCaLogin())
+                        ->addOrderBy("c.ca_fchcreado DESC")
+                        ->limit(5)
+                        ->execute();
+                
+                foreach($claves as $clave){
+                    if($clave->getCaClave()== $new_pass){
+                        $igual = 1;
+                        $this->setTemplate("changePasswdError");
                     }
                 }
                 
-                
-                
-                $conn->commit();
-                $this->getUser()->setAttribute('forcechange', false);
+                if($igual!=1){
+                    
+                    $dias_venc = 120;
+                    $hoy = date("Y-m-d");
+                    $fch_vencimiento = Utils::agregarDias($hoy, $dias_venc);
+                    
+                    $user->setCaPasswd(sha1($passwd . $salt));
+                    $user->setCaSalt($salt);
+                    $user->setCaForcechange(false);
+                    $user->setCaFchvencimiento($fch_vencimiento);
+                    $user->save( $conn );
+                    
+                    $usr_clave = new UsuarioClave();
+                    $usr_clave->setCaLogin($user->getCaLogin());
+                    $usr_clave->setCaClave($new_pass);
+                    $usr_clave->save();
 
-                $this->setTemplate("changePasswdOk");
+                    $config = sfConfig::get("app_soap_adminUsers");
+                    if( $config["updateUser"] ){
+                        ProjectConfiguration::registerZend();   
+                        $wsdl_uri = $config["wsdl_uri"];            
+                        $client = new Zend_Soap_Client( $wsdl_uri, array('encoding'=>'ISO-8859-1'));        
+                        $error =  $client->updateUser( sfConfig::get("app_soap_secret"),serialize($user) );
+
+                        if( $error ){
+                            throw new Exception( $error );                
+                        }
+                    }
+
+                    $conn->commit();
+                    $this->getUser()->setAttribute('forcechange', false);
+                    $this->setTemplate("changePasswdOk");
+                }
             }
         }
-    }
+    }    
 
     /*
      *
@@ -1091,9 +1121,22 @@ class adminUsersActions extends sfActions {
         $this->usuarios = $q->execute();
     }
     
-    
-    
-    
+    public function executeCambioClaveColsys($request) {
+        
+        $hoy = date("Y-m-d");
+        
+        $usuarios = Doctrine::getTable("Usuario")
+                        ->createQuery("u")
+                        ->addWhere("u.ca_authmethod = ? ", "sha1")
+                        ->addWhere("u.ca_fchvencimiento = ? ", $hoy)
+                        ->addOrderBy("u.ca_login DESC")
+                        ->execute();
+        
+        foreach($usuarios as $usuario){
+            $usuario->setCaForcechange(true);
+            $usuario->save();
+        }
+    }
 }
 
 ?>
