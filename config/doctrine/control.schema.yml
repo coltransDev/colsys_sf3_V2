@@ -50,6 +50,7 @@ Usuario:
     ca_experiencia: string
     ca_hoja_vida: string
     ca_propiedades: string
+    ca_fchvencimiento: date
   relations:
     AccesoUsuario:
       local: ca_login
@@ -463,4 +464,30 @@ ColsysConfigValue:
     ColsysConfig:
       local: ca_idconfig
       foreign: ca_idconfig
+      type: one
+
+UsuarioClave:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: control
+  tableName: control.tb_usuarios_claves
+  columns:
+    ca_login:
+      type: string(50)
+      primary: true
+    ca_clave:
+      type: string(50)
+      primary: true   
+    ca_fchcreado: 
+      type: timestamp
+      primary: true
+    ca_usucreado: 
+      type: string
+      primary: true
+  relations:
+    Usuario:
+      local: ca_login
+      foreign: ca_login
       type: one
