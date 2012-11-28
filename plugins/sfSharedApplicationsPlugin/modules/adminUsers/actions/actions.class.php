@@ -164,6 +164,15 @@ class adminUsersActions extends sfActions {
             $this->jefes[$key]["j_ca_nombre"] = utf8_encode($this->jefes[$key]["j_ca_nombre"]);
         }
         
+        $this->claves = Doctrine::getTable("UsuarioClave")
+                        ->createQuery("uc")
+                        ->innerJoin('uc.Usuario u')
+                        ->addWhere("u.ca_login = ? ", $request->getParameter("login"))
+                        ->addOrderBy("uc.ca_fchcreado DESC")
+                        ->limit(1)
+                        ->execute();
+                        
+        
         /*$this->hijos = Doctrine::getTable("Hijos")
                         ->createQuery("h")
                         ->select('h.ca_login, h.ca_nombres, h.ca_fchnacimiento')

@@ -794,6 +794,30 @@ $teloficinas = $sf_data->getRaw("teloficinas");
 										<input type="checkbox" name="activo" id="activo"  <?=($usuario->getCaActivo()||!$usuario->getCaLogin())?'checked="checked"':''?> <?if(!($nivel==3)){?>disabled="disabled"<?}?>/>
 									</div>
 								</td>
+                            <tr class="row0">
+								<td>
+									<div align="left">
+											<b>Ultimo Cambio de Contrase&ntilde;a</b>
+									</div>
+								</td>
+								<td>
+                                    <?foreach($claves as $clave){?>
+									<div align="left">
+										<?=$clave->getCaFchcreado()?>
+									</div>
+                                    <?}?>
+								</td>
+                                <tr class="row0">
+								<td>
+									<div align="left">
+											<b>Pr&oacute;ximo Cambio de Contrase&ntilde;a</b>
+									</div>
+								</td>
+								<td>
+                                    <div align="left">
+										<?=$usuario->getCaFchvencimiento()?>
+									</div>
+								</td>
 							</tr>
 						</table>
 					</div>
