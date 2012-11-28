@@ -188,7 +188,9 @@ $teloficinas = $sf_data->getRaw("teloficinas");
 
 </script>
 
-<form name="form1" action="<?=url_for("adminUsers/guardarUsuario")?>" method="post" onsubmit="return checkForm()" enctype="multipart/form-data" >
+<?if($key){$param="key=".$key;}else{$param="";}?>
+
+<form name="form1" action="<?=url_for("adminUsers/guardarUsuario?".$param)?>" method="post" onsubmit="return checkForm()" enctype="multipart/form-data" >
 <div class="content" align="center">
     
     <table width="100%" border="0" class="tableList">
