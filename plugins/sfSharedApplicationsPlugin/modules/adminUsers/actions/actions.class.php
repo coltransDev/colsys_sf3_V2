@@ -89,6 +89,8 @@ class adminUsersActions extends sfActions {
         $this->userinicio = sfContext::getInstance()->getUser();
         $this->nivel = $this->getNivel();
 
+        $this->key = $request->getParameter("key");
+        
         if ($this->usuario) {
             $this->manager = Doctrine::getTable('Usuario')->find($request->getParameter('login'));
             $this->manager = $this->manager->getManager();
@@ -336,11 +338,17 @@ class adminUsersActions extends sfActions {
        
         
         $usuario = Doctrine::getTable("Usuario")->find($request->getParameter("login"));
+        $new = $request->getParameter("key");
         $this->nivel = $this->getNivel();
         $cambiodireccion = 0;
         $nuevo = 0;
 
         if ($usuario) {
+            
+            if($new == "new"){
+                $this->redirect("adminUsers/noAccess?key=".$new);
+            }
+            
             $direccion = $usuario->getCaDireccion();
 
             $suc = $usuario->getSucursal()->getCaNombre();
@@ -408,6 +416,7 @@ class adminUsersActions extends sfActions {
 
         if ($request->getParameter("passwd1") && $request->getParameter("passwd1") == $request->getParameter("passwd2")) {
             $usuario->setPasswd($request->getParameter("passwd1"));
+            $usuario->setCaFchvencimiento(Utils::calcularVencimientoClave());
         }
         
         
@@ -592,6 +601,7 @@ class adminUsersActions extends sfActions {
             $usuario->setCaParentesco( null );
         }
         $usuario->save( $conn );
+        $conn->commit();
         
         if( $config["updateUser"] ){
             ProjectConfiguration::registerZend();   
@@ -604,9 +614,12 @@ class adminUsersActions extends sfActions {
             }
         }
         
-
+        $conn = Doctrine::getTable("Email")->getConnection();
+        $conn->beginTransaction();
+        
         $this->usuario = $usuario;
-
+        //Reporta al Jefe Administrativo el cambio de dirección de un empleado
+        //Reporta al Administrador SGCSC el ingreso de un nuevo trabajador a la intranet
         if ($nuevo == 0) {
             if ($direccion != $usuario->getCaDireccion()) {
                 $user = Doctrine::getTable('Usuario')->find($this->getUser()->getUserId());
@@ -637,10 +650,58 @@ class adminUsersActions extends sfActions {
                 $cambiodireccion = $cambiodireccion + 1;
                 
             }
+        }else{
+            
+                $filename = "Usuarios" . DIRECTORY_SEPARATOR . $usuario->getCaLogin() . DIRECTORY_SEPARATOR . "foto120x150.jpg";
+                
+                //echo $filename . "<br />";
+            
+                $email = new Email();
+                $email->setCaUsuenvio($this->getUser()->getUserId());
+                $email->setCaTipo("Nuevo Empleado");
+                $email->setCaIdcaso(null);
+                $email->setCaFrom('alramirez@coltrans.com.co');
+                $email->setCaFromname('ANDREA RAMIREZ');                
+                $email->setCaAddress("alramirez@coltrans.com.co");
+                $email->setCaAttachment($filename);
+                $texto = "Se ha registrado un nuevo ingreso \n\n<br /><br />" ;
+                
+                /*$html ="<div>
+                <table class='tableList alignLeft'><tr><td>
+                <table class='tableList alignLeft' width='1000' >
+                <tr><th colspan='8'>Se ha registrado un nuevo ingreso</th></tr>";
+                $html."</table></td></tr></table></div>";*/
+                $login = $usuario->getCaLogin();
+    
+                $request->setParameter('login', $login);
+                //$request->setParameter('html', $html);
+                $request->setParameter("format", "email" );	
+                $request->setParameter("asunto", "ingreso");                
+                $texto.= sfContext::getInstance()->getController()->getPresentationFor( 'adminUsers', 'emailIntranet');                
+                
+                
+                $email->setCaSubject('Ingreso Nuevo Empleado '.$usuario->getSucursal()->getEmpresa()->getCaNombre()." ".$usuario->getSucursal()->getCaNombre());
+                $email->setCaBody($texto);
+                $email->setCaBodyhtml(Utils::replace($texto));
+                $email->save($conn);
+                $email->send();
+            
         }
         $conn->commit();
         
-        $this->cambiodireccion = $cambiodireccion;
+        $this->cambiodireccion = $cambiodireccion;  
+        $this->setTemplate("guardarUsuario");
+    }
+    
+    public function executeEmailIntranet($request) {
+        
+        $usuario = Doctrine::getTable("Usuario")->find($request->getParameter("login"));
+        
+        $this->setLayout("email");
+        
+        $this->usuario = $usuario;
+         
+        
     }
 
     /*
@@ -688,9 +749,7 @@ class adminUsersActions extends sfActions {
                 
                 if($igual!=1){
                     
-                    $dias_venc = 120;
-                    $hoy = date("Y-m-d");
-                    $fch_vencimiento = Utils::agregarDias($hoy, $dias_venc);
+                    $fch_vencimiento = Utils::calcularVencimientoClave();
                     
                     $user->setCaPasswd(sha1($passwd . $salt));
                     $user->setCaSalt($salt);
@@ -981,7 +1040,9 @@ class adminUsersActions extends sfActions {
     }
 
     public function executeNoAccess($request) {
-
+        
+        $this->key = $request->getParameter("key");
+        
     }
 
     public function executeTraerImagen($request) {
