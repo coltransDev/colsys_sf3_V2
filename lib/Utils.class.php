@@ -123,6 +123,19 @@ class Utils{
 		
 		return date( $format ,  mktime(0, 0, 0, $mm   , $dd + $days, $yy) );		
 	}
+    
+    public static function calcularVencimientoClave(){
+        
+        $date = date("Y-m-d");
+        $days = 120;
+        $format="Y-m-d";
+        
+		$yy = Utils::parseDate($date, "Y");
+		$mm = Utils::parseDate($date, "m");	
+		$dd = Utils::parseDate($date, "d");	
+		
+		return date( $format ,  mktime(0, 0, 0, $mm   , $dd + $days, $yy) );		
+	}
 
 
 	/**
