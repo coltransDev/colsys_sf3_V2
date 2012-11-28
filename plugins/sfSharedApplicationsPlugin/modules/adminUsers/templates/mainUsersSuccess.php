@@ -44,7 +44,7 @@
 		<div id="cpanel">
 			<div style="float:left;">
 				<div class="icon">
-					<a href="<?=url_for("adminUsers/formUsuario")?>">
+					<a href="<?=url_for("adminUsers/formUsuario?key=new")?>">
 						<?=image_tag("64x64/user-new.png")?>
 						<span>Nuevo Usuario</span>
 					</a>
@@ -74,4 +74,3 @@
 	?>
 
 </table>
-
