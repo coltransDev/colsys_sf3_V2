@@ -370,46 +370,40 @@ if( $reporte->getCaImpoexpo()==Constantes::IMPO ){
     $pdf->Row ( array ('Seguro:', $reporte->getCaSeguro (), "Tiempo de Crédito:", $reporte->getCaTiempocredito()  ) );
 }
 
-if( ($reporte->getCaContinuacion()!= "N/A" && $reporte->getCaContinuacion()!= "" && $reporte->getCaImpoexpo() == constantes::IMPO ) ) {
+if( ($reporte->getCaContinuacion() != "N/A" &&  $reporte->getCaContinuacion() != ""  ) ) {
     $pdf->Ln(2);
     $pdf->SetWidths(array(200));
     $pdf->SetFills(array(1));
     $pdf->SetAligns(array("C"));
     $pdf->SetStyles(array("B"));
     $pdf->Row(array('CONTINUACIÓN DE VIAJE'));
-    $pdf->SetWidths(array(35,10,28,20,42,65));
-    $pdf->SetAligns(array("L","L","L","L","L","L"));
-    $pdf->SetStyles(array("B","","B","","B",""));
-    $pdf->SetFills(array(0,0,0,0,0,0));
+    $pdf->SetWidths(array(40,30,130));
+    $pdf->SetAligns(array("L","L","L"));
+    $pdf->SetStyles(array("B","B","B"));
+    $pdf->SetFills(array(0,0,0));
     $not_cont="";
-    if($reporte->getCaContinuacionConf()!="")
+    if($reporte->getCaContinuacionConf())
     {
-        $usuario = Doctrine::getTable("Usuario")->find($reporte->getCaContinuacionConf());
-        if($usuario)
+        $q = Doctrine::getTable("Usuario")
+                ->createQuery("u")
+                ->select("u.ca_login,u.ca_nombre,u.ca_email,ca_sucursal,u.ca_idsucursal")
+                ->innerJoin("u.UsuarioPerfil up")
+                ->where("u.ca_activo=? AND up.ca_perfil=? ", array('TRUE','cordinador-de-otm'))
+                 ->addWhere("u.ca_idsucursal = ?",$reporte->getCaContinuacionConf())
+                ->addOrderBy("u.ca_idsucursal")
+                ->addOrderBy("u.ca_nombre");                        
+         $usuarios=$q->execute();
+        foreach($usuarios as $usuario)
         {
-           $not_cont= $usuario->getCaEmail();
-        }
-        else
-        {
-            $usuarios = Doctrine::getTable("Usuario")
-               ->createQuery("u")
-               ->select("u.ca_login,u.ca_nombre,u.ca_email,ca_sucursal")
-               ->innerJoin("u.UsuarioPerfil up")
-               ->where("u.ca_activo=? AND up.ca_perfil=? ", array('TRUE','cordinador-de-otm'))
-               ->addWhere("u.ca_idsucursal=?",array($reporte->getCaContinuacionConf()))
-               ->addOrderBy("u.ca_idsucursal")
-               ->addOrderBy("u.ca_nombre")
-               ->execute();
-            foreach($usuarios as $usuario)
-            {
-                if($not_cont!="")
-                    $not_cont.=",";
-                $not_cont.=$usuario->getCaEmail();
-            }
+            if($not_cont!="")
+                $not_cont.=",";
+            $not_cont.=$usuario->getCaEmail();
         }
     }
 
-    $pdf->Row(array('Continuación/Viaje:',$reporte->getCaContinuacion(),'Destino final:',$reporte->getDestinoCont()->getCaCiudad(),'Notificar C/Viaje al email:',$not_cont));
+    $pdf->Row(array('Continuación/Viaje','Destino final','Notificar C/Viaje al email'));
+    $pdf->SetStyles(array("","",""));
+    $pdf->Row(array($reporte->getCaContinuacion(),$reporte->getDestinoCont()->getCaCiudad(),$not_cont));
 }
 else if ( $reporte->getCaImpoexpo () == Constantes::EXPO  && $reporte->getCaContOrigen()!="" && $reporte->getCaContDestino()!="" ) {
     $pdf->Ln(2);
@@ -472,7 +466,7 @@ if($reporte->getCaTiporep()!="3")
             if($bodega->getCaTipo()=="Entrega en Lugar de Arribo")
                 $cadena.=" / ".$bodega->getCaNombre();
             else
-                $cadena.=" / ".$bodega->getCaTipo()." ".$bodega->getCaNombre();
+                $cadena.=" / ".$bodega->getCaTipo()." ".$bodega->getCaNombre()." ".$bodega->getCaDireccion();
         }
         else if($reporte->getCaIdbodega()==1 && (trim($reporte->getCaContinuacion())!= "N/A" && trim($reporte->getCaContinuacion())!="") )
         {
@@ -939,15 +933,14 @@ if( !$soloAduana  ){
         foreach ( $conceptos as $concepto ) {
      //       $pdf->beginGroup();
             if($concepto->getCaIdconcepto()=="9999")
-                    continue;
-            
+                    continue;            
             {             
                 $pdf->SetWidths(array(40,10,20,20,20,20,20,20,30));
                 $pdf->SetFills(array(1,0,0,0,0,0,0,0,0,0));
                 $pdf->SetStyles(array("B","","","","","","","","",""));
                 $pdf->SetAligns(array("L","C","R","R","R","R","R","R","L"));
-
-                $pdf->Row ( array ($concepto->getConcepto ()->getCaConcepto (), $concepto->getCaCantidad (), Utils::formatNumber($concepto->getCaNetaTar ()) . " " . $concepto->getCaNetaIdm (), $concepto->getCaNetaMin () . " " . $concepto->getCaNetaIdm (), Utils::formatNumber ( $concepto->getCaReportarTar () ). " " . $concepto->getCaReportarIdm (), $concepto->getCaReportarMin () . " " . $concepto->getCaReportarIdm (), Utils::formatNumber ($concepto->getCaCobrarTar ()) . " " . $concepto->getCaCobrarIdm (), Utils::formatNumber ($concepto->getCaCobrarMin () ) . " " . $concepto->getCaCobrarIdm (), ($concepto->getCaObservaciones ()) ) );
+                $equipo=($concepto->getEquipo())?"-".$concepto->getEquipo()->getCaConcepto ():"";
+                $pdf->Row ( array ($concepto->getConcepto ()->getCaConcepto ().$equipo, $concepto->getCaCantidad (), Utils::formatNumber($concepto->getCaNetaTar ()) . " " . $concepto->getCaNetaIdm (), $concepto->getCaNetaMin () . " " . $concepto->getCaNetaIdm (), Utils::formatNumber ( $concepto->getCaReportarTar () ). " " . $concepto->getCaReportarIdm (), $concepto->getCaReportarMin () . " " . $concepto->getCaReportarIdm (), Utils::formatNumber ($concepto->getCaCobrarTar ()) . " " . $concepto->getCaCobrarIdm (), Utils::formatNumber ($concepto->getCaCobrarMin () ) . " " . $concepto->getCaCobrarIdm (), ($concepto->getCaObservaciones ()) ) );
 
                 $gastos = Doctrine::getTable("RepGasto")
                                  ->createQuery("t")
