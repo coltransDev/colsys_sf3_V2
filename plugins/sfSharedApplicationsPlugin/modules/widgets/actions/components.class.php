@@ -304,11 +304,10 @@ class widgetsComponents extends sfComponents {
 
     public function executeWidgetImpoexpo() {
         $this->data = array();
-
         $this->data[] = array("valor" => utf8_encode(Constantes::IMPO));
         $this->data[] = array("valor" => utf8_encode(Constantes::TRIANGULACION));
         $this->data[] = array("valor" => utf8_encode(Constantes::EXPO));
-        //$this->data[] = array( "valor"=>utf8_encode(Constantes::OTMDTA ));
+        $this->data[] = array("valor"=>utf8_encode(Constantes::OTMDTA ));
     }
 
     public function executeWidgetTransporte() {
@@ -841,7 +840,9 @@ class widgetsComponents extends sfComponents {
         }
     }
     
-    
+    public function executeMultiWidget( ){
+        
+    }    
 
 }
 
