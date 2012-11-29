@@ -31,7 +31,6 @@ WidgetModalidad = function( config ){
 				)
 				,proxy: new Ext.data.MemoryProxy( <?=json_encode(array("root"=>$data, "total"=>count($data), "success"=>true) )?> )
 			});
-
     WidgetModalidad.superclass.constructor.call(this, {
         valueField: 'modalidad',
         displayField: 'modalidad',
@@ -39,7 +38,7 @@ WidgetModalidad = function( config ){
         forceSelection: true,
         triggerAction: 'all',
         emptyText:'',
-        selectOnFocus: true,        
+        selectOnFocus: true,
         lazyRender:true,
         mode: 'local',
         listClass: 'x-combo-list-small',
@@ -48,7 +47,6 @@ WidgetModalidad = function( config ){
         }
     });
 };
-
 
 Ext.extend(WidgetModalidad, Ext.form.ComboBox, {
     onFocusWdg: function( field, newVal, oldVal ){
@@ -68,7 +66,7 @@ Ext.extend(WidgetModalidad, Ext.form.ComboBox, {
                 }
                 if(impoexpo=='<?=constantes::OTMDTA?>' || impoexpo=='<?=constantes::OTMDTA1?>' )
                 {
-                    //impoexpo='<?=Constantes::IMPO?>'
+                    /*impoexpo='<?=Constantes::IMPO?>'*/
                 }
                 for( k in this.data ){
                     var rec = this.data[k];					
