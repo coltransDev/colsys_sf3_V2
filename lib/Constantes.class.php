@@ -10,6 +10,7 @@ class Constantes{
 	const COLTRANS = "Coltrans";
 	const COLMAS = "Colmas";
     const COLOTM = "COL OTM";
+    const TPLOGISTICS = "TPLogistics";
 	const COLTRANS_RAZONSOCIAL = "Coltrans S.A.";
 	const COLMAS_RAZONSOCIAL = "Colmas Agente de Aduana Ltda.";
     const COLOTM_RAZONSOCIAL = "Colotm";
@@ -20,6 +21,8 @@ class Constantes{
     const OTMDTA = "OTM-DTA";
     const OTMDTA1 = "OTM/DTA";
     const NACIONALIZACION = "Nacionalización";
+    const INTERNO = "Interno";
+    
 	
 	const AEREO = "Aéreo";
 	const MARITIMO = "Marítimo";
