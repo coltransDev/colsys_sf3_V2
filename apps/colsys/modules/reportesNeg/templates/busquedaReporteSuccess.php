@@ -75,7 +75,14 @@ function importar(id,idnew)
                 <br><img src="/images/CG30.png" title="Cliente de Cuentas Globales" />
                 <?
                 }
+                if($reporte["ca_transporte"]==Constantes::AEREO)
+                    $class="aereo";
+                else if($reporte["ca_transporte"]==Constantes::MARITIMO)
+                    $class="maritimo";
+                else if($reporte["ca_transporte"]==Constantes::TERRESTRE)
+                    $class="terrestre";
                 ?>
+                <div class="trans_<?=$class?>"></div>                
             </td>
 
             <td  >
