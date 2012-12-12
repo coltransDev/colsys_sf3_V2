@@ -12,7 +12,6 @@ foreach( $aplicaciones1 as $aplicacion ){
     $aplicaciones[]=$aplicacion->getCaValor();
 }
 
-
 include_component("reportesNeg","cotizacionOtmWindow", array("reporte"=>$reporte));
 ?>
 <script type="text/javascript">
@@ -20,7 +19,6 @@ var iditemtmp="";
 PanelConceptosOtm = function( config ){
 
     Ext.apply(this, config);
-
 
     this.storeConceptos = new Ext.data.Store({
         autoLoad : false,
@@ -39,6 +37,27 @@ PanelConceptosOtm = function( config ){
         )
     });
 
+    this.storeEquipos = new Ext.data.Store({
+        autoLoad : true,
+        url: '<?=url_for("conceptos/datosConceptos")?>',
+        baseParams:{
+               transporte:"<?=Constantes::MARITIMO?>",
+               modalidad:"<?=Constantes::FCL?>",
+               impoexpo:"<?=Constantes::IMPO?>"
+        },
+        reader: new Ext.data.JsonReader({                
+                    root: 'root',
+                    totalProperty: 'total',
+                    successProperty: 'success'
+                },
+
+                Ext.data.Record.create([
+                    {name: 'idconcepto'},
+                    {name: 'concepto'}
+                ])
+        )
+    });
+    
     this.editorConceptos = new Ext.form.ComboBox({
         
         typeAhead: true,
@@ -65,6 +84,22 @@ PanelConceptosOtm = function( config ){
         listClass: 'x-combo-list-small',
         store : [["$","$"],["%","%"]]
     });
+    
+    this.editorEquipos = new Ext.form.ComboBox({
+        fieldLabel: 'Equipo',
+        typeAhead: true,
+        forceSelection: true,
+        triggerAction: 'all',
+        selectOnFocus: true,
+        name: 'equipo',
+        id: 'idequipo',
+        mode: 'local',
+        displayField: 'concepto',
+        valueField: 'idconcepto',
+        lazyRender:true,
+        listClass: 'x-combo-list-small',
+        store : this.storeEquipos
+    })
 
     this.editorAplicaciones = new Ext.form.ComboBox({
 
@@ -113,13 +148,22 @@ PanelConceptosOtm = function( config ){
         editor: this.editorConceptos
       },
       {
+        id: 'equipo',
+        header: "Equipo",
+        width: 200,
+        sortable: false,
+        dataIndex: 'equipo',
+        hideable: false,
+        editor: this.editorEquipos
+      },
+      {
         header: "Aplicacion",
         dataIndex: 'aplicacion',
         width: 80,
         hideable: false,
         sortable:false,
         editor: this.editorAplicaciones
-      },
+      },      
       {
         header: "Tipo",
         dataIndex: 'tipo_app',
@@ -253,6 +297,8 @@ PanelConceptosOtm = function( config ){
             {name: 'idreg', type: 'int'},
             {name: 'iditem', type: 'int'},
             {name: 'idconcepto', type: 'int'},
+            {name: 'idequipo', type: 'string'}, //Concepto al cual pertenece el recargo
+            {name: 'equipo', type: 'string'}, //Concepto al cual pertenece el recargo
             {name: 'aplicacion', type: 'string'},
             {name: 'tipo_app', type: 'string'},
             {name: 'item', type: 'string'},
@@ -287,7 +333,9 @@ PanelConceptosOtm = function( config ){
             field: 'orden',
             direction: 'ASC'
         }
-    });   
+    });  
+    
+    
 
 
     PanelConceptosOtm.superclass.constructor.call(this, {
@@ -360,15 +408,12 @@ PanelConceptosOtm = function( config ){
         var record = storePanelConceptosOtm.getAt(rowIndex);
         var field = this.getDataIndex(colIndex);
 
-        
         if( !record.data.iditem && field!="item"  ){
 
         }
 
-
         if( record.data.iditem && field=="item" && record.data.tipo=="concepto" ){
-            iditemtmp=record.data.iditem
-
+            iditemtmp=record.data.iditem;
         }
         else
             iditemtmp="";
@@ -384,10 +429,9 @@ PanelConceptosOtm = function( config ){
             return false;
         }
         
-        if( record.data.tipo=="recargo" && (field=="cantidad" || field=="neta_idm" || field=="reportar_idm") ){
+        if( record.data.tipo=="recargo" && (field=="cantidad" || field=="neta_idm" || field=="reportar_idm" || field=="equipo") ){
             return false;
         }
-
         return Ext.grid.ColumnModel.prototype.isCellEditable.call(this, colIndex, rowIndex);
     }
 
@@ -531,21 +575,19 @@ Ext.extend(PanelConceptosOtm, Ext.grid.EditorGridPanel, {
         }
     }
     ,
-    onValidateEdit : function(e){    
+    onValidateEdit : function(e){
+    
+        var rec = e.record;
+        var ed = this.colModel.getCellEditor(e.column, e.row);
+        var store = ed.field.store;
+        var recordConcepto = this.record;
+        var storeGrid = this.store;
+        recordsConceptos = storeGrid.getRange();
         if( e.field == "item"){
-            
-            var rec = e.record;
-            var ed = this.colModel.getCellEditor(e.column, e.row);
-            var store = ed.field.store;
-
-            var recordConcepto = this.record;
-            var storeGrid = this.store;
-
-            store.each( function( r ){                   
+            store.each( function( r ){
                     if( r.data.idconcepto==e.value ){      
                         
-                        var existe = false;
-                        recordsConceptos = storeGrid.getRange();
+                        var existe = false;                        
                         for( var j=0; j< recordsConceptos.length&&!existe; j++){
                             if( recordsConceptos[j].data.tipo=="concepto" ){
                                 if(recordsConceptos[j].data.tipo==r.data.tipo)
@@ -572,8 +614,10 @@ Ext.extend(PanelConceptosOtm, Ext.grid.EditorGridPanel, {
                                    iditem: '',
                                    idreg: '',
                                    tipo: 'concepto',
+                                   idequipo: '',
+                                   equipo: '',
                                    cantidad: '',
-                                   neta_tar: '',
+                                   neta_tar: '',                                   
                                    neta_min: '',
                                    neta_idm: '',
                                    reportar_tar: '',
@@ -596,6 +640,8 @@ Ext.extend(PanelConceptosOtm, Ext.grid.EditorGridPanel, {
                                     rec.set("iditem", r.data.idconcepto);
                                     rec.set("idreg", 0);
                                     rec.set("idconcepto", r.data.idconcepto);
+                                    rec.set("idequipo", r.data.idequipo );
+                                    rec.set("equipo", r.data.equipo );
                                     rec.set("neta_tar", 0);
                                     rec.set("neta_min", 0);
                                     rec.set("neta_idm", "USD");
@@ -627,6 +673,25 @@ Ext.extend(PanelConceptosOtm, Ext.grid.EditorGridPanel, {
                 }
             )
         }
+        else if( e.field == "equipo"){
+            for( var j=0; j< recordsConceptos.length; j++){
+                if( recordsConceptos[j].data.tipo=="concepto" ){
+                    if(recordsConceptos[j].data.idequipo==e.value)
+                    {
+                        alert(r.data.idequipo);
+                    }
+                }
+            }
+            
+        
+            store.each( function( r ){            
+                if( r.data.idconcepto==e.value ){
+                    rec.set("idequipo", r.data.idconcepto );
+                    e.value = r.data.concepto;
+                    return true;
+                }
+            });
+         }
     }
     ,
     onRowcontextMenu: function(grid, index, e){
@@ -790,8 +855,8 @@ Ext.extend(PanelConceptosOtm, Ext.grid.EditorGridPanel, {
             newRec.set("reportar_min", 0);
             newRec.set("cobrar_tar", 0);
             newRec.set("cobrar_min", 0);
-            newRec.set("cobrar_idm", "USD");
-            newRec.set("aplicacion", "<?=$aplicaciones[0]?>");
+            newRec.set("cobrar_idm", "");
+            newRec.set("aplicacion", "");
 
 
          }
