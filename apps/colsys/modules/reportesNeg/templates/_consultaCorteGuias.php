@@ -65,7 +65,7 @@ if( $reporte->getCaImpoexpo()==Constantes::EXPO){
             <?
             if( $reporte->getCaIdbodega() ){
                 $bodega = $reporte->getBodega();
-                echo $bodega->getCaTipo()." - ".$bodega->getCaNombre();
+                echo $bodega->getCaTipo()." - ".$bodega->getCaNombre()." ".$bodega->getCaDireccion();
             }
             ?>
         </td>
